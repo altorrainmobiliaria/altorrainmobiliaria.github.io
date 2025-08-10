@@ -1,330 +1,642 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Altorra | Inicio</title>
-
-<!-- Fuentes y librerías -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Altorra Inmobiliaria | Inicio</title>
+<meta name="description" content="Altorra - Expertos en administración de inmuebles. Asesoría legal, avalúos, reservas de apartamentos por días y más." />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
 <style>
-:root {
+  /* Variables */
+  :root {
     --primary-color: #B8860B;
     --secondary-color: #000000;
-    --text-color-light: #F8F8F8;
-    --background-color: #f0f0f0;
-    --title-font-family: 'Playfair Display', serif;
-    --font-family: 'Inter', sans-serif;
-}
+    --text-light: #F8F8F8;
+    --bg-light: #f0f0f0;
+    --font-title: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+  }
 
-/* Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-body {
-    font-family: var(--font-family);
-    background-color: var(--background-color);
+  /* Reset */
+  * {
+    margin: 0; padding: 0; box-sizing: border-box;
+  }
+  body {
+    font-family: var(--font-body);
+    background-color: var(--bg-light);
     color: var(--secondary-color);
-}
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-/* NAVBAR */
-header {
+  /* HEADER */
+  header {
     background: var(--secondary-color);
-    color: var(--text-color-light);
+    color: var(--text-light);
     position: sticky;
     top: 0;
-    z-index: 1000;
-}
-nav {
+    z-index: 10000;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+  }
+  nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 1200px;
+    margin: auto;
     padding: 10px 20px;
-}
-nav .logo {
-    max-height: 50px;
-}
-nav ul {
+  }
+  nav img.logo {
+    height: 50px;
+    object-fit: contain;
+  }
+  nav ul {
     list-style: none;
     display: flex;
-    gap: 20px;
-}
-nav ul li {
+    gap: 25px;
+  }
+  nav ul li {
     position: relative;
-}
-nav ul li a {
-    color: var(--text-color-light);
+  }
+  nav ul li a {
+    color: var(--text-light);
     text-decoration: none;
-    padding: 8px 5px;
+    font-weight: 600;
+    padding: 8px 6px;
     display: block;
-}
-nav ul li:hover > a {
+  }
+  nav ul li:hover > a {
     color: var(--primary-color);
-}
-nav ul li ul {
+  }
+  nav ul li ul {
     display: none;
     position: absolute;
     background: var(--secondary-color);
-    top: 100%;
+    top: 110%;
     left: 0;
-    min-width: 180px;
-}
-nav ul li:hover ul {
+    min-width: 190px;
+    border-radius: 6px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    z-index: 10001;
+  }
+  nav ul li:hover ul {
     display: block;
-}
-nav ul li ul li {
+  }
+  nav ul li ul li {
     border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-/* HERO SECTION */
-.hero {
-    background: url('https://i.ibb.co/93YTZc9t/Gemini-Generated-Image-slxfewslxfewslxf.png') center/cover no-repeat;
-    padding: 100px 20px;
-    text-align: center;
-    color: var(--text-color-light);
-}
-.hero h1 {
-    font-family: var(--title-font-family);
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-}
-.hero p {
-    font-size: 1.2rem;
-}
-
-/* SECTIONS */
-.section {
-    padding: 50px 20px;
-    max-width: 1200px;
-    margin: auto;
-}
-.section h2 {
-    font-family: var(--title-font-family);
-    font-size: 2rem;
-    color: var(--primary-color);
-    margin-bottom: 20px;
-    text-align: center;
-}
-.properties {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
-.property-card {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: transform 0.3s;
-}
-.property-card:hover {
-    transform: translateY(-5px);
-}
-.property-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-.property-card .info {
-    padding: 15px;
-}
-.property-card .info h3 {
-    font-size: 1.2rem;
-    margin-bottom: 5px;
-}
-.property-card .info p {
-    font-size: 0.9rem;
-    color: #555;
-}
-
-/* SERVICES */
-.services {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
-.service-card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    flex: 1 1 250px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-.service-card i {
-    font-size: 2rem;
-    color: var(--primary-color);
-    margin-bottom: 10px;
-}
-
-/* FOOTER */
-footer {
-    background: var(--secondary-color);
-    color: var(--text-color-light);
-    text-align: center;
-    padding: 20px;
-    margin-top: 50px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
+  }
+  nav ul li ul li:first-child {
+    border-top: none;
+  }
+  nav ul li ul li a {
+    padding: 10px 12px;
+    font-weight: 500;
+  }
+  /* Mobile menu toggle */
+  .menu-toggle {
+    display: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--text-light);
+  }
+  @media (max-width: 768px) {
     nav ul {
-        flex-direction: column;
-        display: none;
-        background: var(--secondary-color);
-        position: absolute;
-        top: 60px;
-        right: 0;
-        width: 200px;
+      flex-direction: column;
+      position: fixed;
+      top: 60px;
+      right: -100%;
+      background: var(--secondary-color);
+      width: 220px;
+      height: calc(100vh - 60px);
+      padding-top: 20px;
+      gap: 15px;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+      z-index: 10001;
     }
     nav ul.show {
-        display: flex;
+      right: 0;
+    }
+    nav ul li ul {
+      position: static;
+      box-shadow: none;
+      background: transparent;
+      border-radius: 0;
+      padding-left: 15px;
+    }
+    nav ul li:hover ul {
+      display: block;
+    }
+    nav ul li ul li a {
+      padding: 8px 0;
     }
     .menu-toggle {
-        display: block;
-        cursor: pointer;
+      display: block;
     }
-}
-.menu-toggle {
-    display: none;
-    font-size: 1.5rem;
-    color: var(--text-color-light);
-}
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    background: url('https://i.ibb.co/6RK5LRBN/pexels-rdne-8293771.jpg') center/cover no-repeat;
+    padding: 140px 20px 60px;
+    text-align: center;
+    color: var(--text-light);
+    box-shadow: inset 0 0 0 1000px rgba(0,0,0,0.4);
+  }
+  .hero h1 {
+    font-family: var(--font-title);
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    margin-bottom: 15px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+  .hero p {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: 600;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.6);
+    margin-bottom: 30px;
+  }
+
+  /* SEARCH BAR */
+  .search-bar {
+    max-width: 700px;
+    margin: auto;
+    background: rgba(255 255 255 / 0.95);
+    padding: 15px 20px;
+    border-radius: 40px;
+    display: flex;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .search-bar select,
+  .search-bar input {
+    flex: 1 1 120px;
+    padding: 10px 14px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    outline-offset: 2px;
+    transition: border-color 0.3s;
+  }
+  .search-bar select:focus,
+  .search-bar input:focus {
+    border-color: var(--primary-color);
+  }
+  .search-bar button {
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 26px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 6px 12px rgb(184 134 11 / 0.6);
+    transition: background-color 0.3s ease;
+  }
+  .search-bar button:hover {
+    background: #a67500;
+  }
+
+  /* SLIDER PROPERTIES */
+  .slider-container {
+    max-width: 1100px;
+    margin: 50px auto 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .slider-track {
+    display: flex;
+    transition: transform 0.4s ease-in-out;
+  }
+  .property-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgb(0 0 0 / 0.1);
+    margin-right: 20px;
+    min-width: 320px;
+    overflow: hidden;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  .property-card:last-child {
+    margin-right: 0;
+  }
+  .property-card:hover {
+    transform: scale(1.04);
+    box-shadow: 0 8px 28px rgb(0 0 0 / 0.18);
+  }
+  .property-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-bottom: 3px solid var(--primary-color);
+  }
+  .property-info {
+    padding: 15px 18px;
+  }
+  .property-info h3 {
+    font-size: 1.25rem;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .property-info p {
+    font-size: 0.95rem;
+    color: #444;
+  }
+  .slider-nav {
+    position: absolute;
+    top: 45%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    pointer-events: none;
+  }
+  .slider-btn {
+    background: rgba(0,0,0,0.3);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 1.6rem;
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: background-color 0.3s;
+  }
+  .slider-btn:hover {
+    background: var(--primary-color);
+  }
+
+  /* SECTIONS */
+  section.section {
+    max-width: 1100px;
+    margin: 40px auto 70px;
+    padding: 0 20px;
+  }
+  section.section h2 {
+    font-family: var(--font-title);
+    font-size: 2.4rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 35px;
+  }
+
+  /* PROPERTIES GRID */
+  .properties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+    gap: 25px;
+  }
+
+  /* SERVICES */
+  .services {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+  }
+  .service-card {
+    background: white;
+    padding: 25px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgb(0 0 0 / 0.1);
+    width: 280px;
+    text-align: center;
+    transition: box-shadow 0.3s ease;
+  }
+  .service-card i {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+  }
+  .service-card h3 {
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .service-card p {
+    font-size: 0.95rem;
+    color: #555;
+  }
+  .service-card:hover {
+    box-shadow: 0 10px 32px rgb(184 134 11 / 0.4);
+  }
+
+  /* TESTIMONIALS */
+  .testimonials {
+    max-width: 900px;
+    margin: 0 auto 70px;
+    padding: 0 20px;
+    text-align: center;
+  }
+  .testimonials h2 {
+    font-family: var(--font-title);
+    font-size: 2.4rem;
+    color: var(--primary-color);
+    margin-bottom: 40px;
+  }
+  .testimonial-item {
+    background: white;
+    padding: 25px 30px;
+    margin-bottom: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.1);
+    font-style: italic;
+    position: relative;
+  }
+  .testimonial-author {
+    margin-top: 15px;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-style: normal;
+  }
+
+  /* NEWS / BLOG */
+  .news {
+    max-width: 1100px;
+    margin: 0 auto 70px;
+    padding: 0 20px;
+  }
+  .news h2 {
+    font-family: var(--font-title);
+    font-size: 2.4rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 35px;
+  }
+  .news-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+    gap: 30px;
+  }
+  .news-item {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgb(0 0 0 / 0.1);
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+  }
+  .news-item:hover {
+    box-shadow: 0 10px 32px rgb(184 134 11 / 0.4);
+  }
+  .news-item img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  .news-content {
+    padding: 18px 22px;
+  }
+  .news-content h3 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+  }
+  .news-content p {
+    color: #555;
+    font-size: 0.95rem;
+  }
+
+  /* FOOTER */
+  footer {
+    background: var(--secondary-color);
+    color: var(--text-light);
+    text-align: center;
+    padding: 20px 10px;
+    font-size: 0.9rem;
+  }
+
+  /* WHATSAPP FLOAT */
+  .whatsapp-float {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    width: 56px;
+    height: 56px;
+    background: var(--primary-color);
+    border-radius: 14px;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+    z-index: 100000;
+  }
+  .whatsapp-float:hover {
+    transform: scale(1.1);
+  }
+  .whatsapp-float img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero {
+      padding: 120px 15px 50px;
+    }
+    .search-bar {
+      flex-direction: column;
+      gap: 12px;
+    }
+    .search-bar select,
+    .search-bar input {
+      flex: 1 1 100%;
+    }
+    .slider-container {
+      max-width: 100%;
+      margin: 40px 0 20px;
+    }
+  }
 </style>
 </head>
 <body>
 
 <header>
-    <nav>
-        <img src="https://i.ibb.co/9kvg1wzh/Chat-GPT-Image-9-ago-2025-10-31-20-p-m.png" alt="Logo" class="logo">
-        <div class="menu-toggle"><i class="fas fa-bars"></i></div>
+  <nav aria-label="Menú principal">
+    <img src="https://i.ibb.co/4nK8GB6n/IMG-4085-1-removebg-preview.png" alt="Logo Altorra Inmobiliaria" class="logo" />
+    <div class="menu-toggle" aria-label="Mostrar menú móvil" role="button" tabindex="0"><i class="fas fa-bars"></i></div>
+    <ul>
+      <li><a href="home.html" aria-current="page">Inicio</a></li>
+      <li>
+        <a href="#">Propiedades o Inmuebles</a>
         <ul>
-            <li><a href="home.html">Inicio</a></li>
-            <li>
-                <a href="#">Propiedades</a>
-                <ul>
-                    <li><a href="#">En venta</a></li>
-                    <li><a href="#">En arriendo</a></li>
-                    <li><a href="#">En proyecto</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">Servicios</a>
-                <ul>
-                    <li><a href="#">Asesoría legal</a></li>
-                    <li><a href="#">Avalúos</a></li>
-                    <li><a href="#">Administración de inmuebles</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">Quiénes somos</a>
-                <ul>
-                    <li><a href="#">Nuestra historia</a></li>
-                    <li><a href="#">Nuestro equipo</a></li>
-                    <li><a href="#">Misión y visión</a></li>
-                </ul>
-            </li>
-            <li><a href="#">Contacto</a></li>
+          <li><a href="#">Comprar</a></li>
+          <li><a href="#">Alquilar</a></li>
+          <li><a href="#">Proyectos Inmobiliarios</a></li>
+          <li><a href="#">Renta por días</a></li>
         </ul>
-    </nav>
+      </li>
+      <li>
+        <a href="#">Servicios</a>
+        <ul>
+          <li><a href="#">Administración de propiedades</a></li>
+          <li><a href="#">Servicios legales</a></li>
+          <li><a href="#">Avalúos</a></li>
+          <li><a href="#">Mantenimiento y reparaciones</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#">Quiénes somos</a>
+        <ul>
+          <li><a href="#">Misión</a></li>
+          <li><a href="#">Visión</a></li>
+          <li><a href="#">Nuestra historia</a></li>
+          <li><a href="#">Nuestro equipo</a></li>
+        </ul>
+      </li>
+      <li><a href="#contact-section">Contacto</a></li>
+    </ul>
+  </nav>
 </header>
 
-<section class="hero">
-    <h1>Bienvenido a Altorra Inmobiliaria</h1>
-    <p>Encuentra la propiedad perfecta en Cartagena</p>
+<section class="hero" role="banner" aria-label="Imagen principal de Altorra Inmobiliaria">
+  <h1>Gestión Integral en Soluciones Inmobiliarias</h1>
+  <p>Seguridad · Legalidad · Confianza</p>
+
+  <div class="search-bar" role="search" aria-label="Buscador rápido de propiedades">
+    <select id="search-type" aria-label="Tipo de propiedad">
+      <option value="">Tipo de propiedad</option>
+      <option value="comprar">Comprar</option>
+      <option value="alquilar">Alquilar</option>
+      <option value="renta-dias">Renta por días</option>
+      <option value="proyectos">Proyectos</option>
+    </select>
+    <input type="number" id="min-price" placeholder="Precio mínimo" aria-label="Precio mínimo" min="0" />
+    <input type="number" id="max-price" placeholder="Precio máximo" aria-label="Precio máximo" min="0" />
+    <button id="search-btn" aria-label="Buscar propiedades">Buscar</button>
+  </div>
 </section>
 
-<section class="section">
-    <h2>Propiedades en Venta Destacadas</h2>
-    <div class="properties">
-        <div class="property-card">
-            <img src="https://picsum.photos/400/200?1" alt="Propiedad 1">
-            <div class="info">
-                <h3>Apartamento en Bocagrande</h3>
-                <p>$450.000.000 • 3 Habitaciones</p>
-            </div>
-        </div>
-        <div class="property-card">
-            <img src="https://picsum.photos/400/200?2" alt="Propiedad 2">
-            <div class="info">
-                <h3>Casa en Manga</h3>
-                <p>$750.000.000 • 4 Habitaciones</p>
-            </div>
-        </div>
-        <div class="property-card">
-            <img src="https://picsum.photos/400/200?3" alt="Propiedad 3">
-            <div class="info">
-                <h3>Condominio en Serena del Mar</h3>
-                <p>$1.200.000.000 • 5 Habitaciones</p>
-            </div>
-        </div>
+<!-- Slider de propiedades destacadas -->
+<section class="slider-container" aria-label="Propiedades destacadas">
+  <h2>Propiedades Destacadas</h2>
+  <div class="slider-track" id="slider-track">
+    <!-- Cards -->
+    <div class="property-card" tabindex="0" aria-label="Apartamento en Bocagrande, Precio $480.000.000, 3 habitaciones">
+      <img src="https://i.ibb.co/hF4Y2F76/pexels-dada-design-240566386-12289396.jpg" alt="Apartamento en Bocagrande" />
+      <div class="property-info">
+        <h3>Apartamento en Bocagrande</h3>
+        <p>3 habitaciones · $480.000.000</p>
+      </div>
     </div>
-</section>
-
-<section class="section">
-    <h2>Propiedades en Arriendo Destacadas</h2>
-    <div class="properties">
-        <div class="property-card">
-            <img src="https://picsum.photos/400/200?4" alt="Propiedad 4">
-            <div class="info">
-                <h3>Apartamento en El Laguito</h3>
-                <p>$3.500.000 / mes • 2 Habitaciones</p>
-            </div>
-        </div>
-        <div class="property-card">
-            <img src="https://picsum.photos/400/200?5" alt="Propiedad 5">
-            <div class="info">
-                <h3>Casa en Crespo</h3>
-                <p>$5.000.000 / mes • 3 Habitaciones</p>
-            </div>
-        </div>
-        <div class="property-card">
-            <img src="https://picsum.photos/400/200?6" alt="Propiedad 6">
-            <div class="info">
-                <h3>Estudio en Centro Histórico</h3>
-                <p>$2.500.000 / mes • 1 Habitación</p>
-            </div>
-        </div>
+    <div class="property-card" tabindex="0" aria-label="Casa en El Cabrero, Precio $750.000.000, 4 habitaciones">
+      <img src="https://i.ibb.co/dQtWHvy/pexels-michael-morse-1115804.jpg" alt="Casa en El Cabrero" />
+      <div class="property-info">
+        <h3>Casa en El Cabrero</h3>
+        <p>4 habitaciones · $750.000.000</p>
+      </div>
     </div>
-</section>
-
-<section class="section">
-    <h2>Servicios</h2>
-    <div class="services">
-        <div class="service-card">
-            <i class="fas fa-gavel"></i>
-            <h3>Asesoría Legal</h3>
-            <p>Protegemos tu inversión con respaldo jurídico profesional.</p>
-        </div>
-        <div class="service-card">
-            <i class="fas fa-balance-scale"></i>
-            <h3>Avalúos</h3>
-            <p>Valoraciones precisas para venta o arriendo.</p>
-        </div>
-        <div class="service-card">
-            <i class="fas fa-building"></i>
-            <h3>Administración de Inmuebles</h3>
-            <p>Gestión integral para rentabilizar tu propiedad.</p>
-        </div>
+    <div class="property-card" tabindex="0" aria-label="Apartamento en Getsemaní, Precio $320.000.000, 2 habitaciones">
+      <img src="https://i.ibb.co/6RvPLrn/pexels-christina-morillo-1181294.jpg" alt="Apartamento en Getsemaní" />
+      <div class="property-info">
+        <h3>Apartamento en Getsemaní</h3>
+        <p>2 habitaciones · $320.000.000</p>
+      </div>
     </div>
+    <div class="property-card" tabindex="0" aria-label="Apartamento en Manga, Precio $450.000.000, 3 habitaciones">
+      <img src="https://i.ibb.co/3Yxh7kZ/pexels-lina-kivaka-106399.jpg" alt="Apartamento en Manga" />
+      <div class="property-info">
+        <h3>Apartamento en Manga</h3>
+        <p>3 habitaciones · $450.000.000</p>
+      </div>
+    </div>
+  </div>
+  <div class="slider-nav">
+    <button class="slider-btn" id="prev-slide" aria-label="Propiedad anterior"><i class="fas fa-chevron-left"></i></button>
+    <button class="slider-btn" id="next-slide" aria-label="Propiedad siguiente"><i class="fas fa-chevron-right"></i></button>
+  </div>
 </section>
 
+<!-- Sección Noticias/Blog -->
+<section class="news" aria-label="Noticias y blog inmobiliario">
+  <h2>Noticias y Actualizaciones</h2>
+  <div class="news-list">
+    <article class="news-item" tabindex="0" aria-label="Noticia: Nuevas regulaciones para alquileres en Cartagena">
+      <img src="https://i.ibb.co/c6NLq3V/pexels-pixabay-261146.jpg" alt="Regulaciones alquileres Cartagena" />
+      <div class="news-content">
+        <h3>Nuevas regulaciones para alquileres en Cartagena</h3>
+        <p>Conozca las últimas leyes y normativas que afectan el mercado inmobiliario local.</p>
+      </div>
+    </article>
+    <article class="news-item" tabindex="0" aria-label="Noticia: Tendencias en diseño de apartamentos modernos">
+      <img src="https://i.ibb.co/xGCpLg4/pexels-anete-lusina-6254225.jpg" alt="Diseño apartamentos modernos" />
+      <div class="news-content">
+        <h3>Tendencias en diseño de apartamentos modernos</h3>
+        <p>Ideas y consejos para hacer de su hogar un espacio contemporáneo y funcional.</p>
+      </div>
+    </article>
+    <article class="news-item" tabindex="0" aria-label="Noticia: Consejos para una buena inversión inmobiliaria">
+      <img src="https://i.ibb.co/x2gGKY8/pexels-karolina-grabowska-4386462.jpg" alt="Inversión inmobiliaria" />
+      <div class="news-content">
+        <h3>Consejos para una buena inversión inmobiliaria</h3>
+        <p>Aprenda a identificar oportunidades y evitar errores comunes en el mercado.</p>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- Footer -->
 <footer>
-    <p>&copy; 2025 Altorra Inmobiliaria - Todos los derechos reservados</p>
+  &copy; 2025 Altorra Inmobiliaria. Todos los derechos reservados.
 </footer>
 
+<!-- WhatsApp flotante -->
+<a href="https://wa.me/573235016747" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar vía WhatsApp">
+  <img src="https://i.ibb.co/SH3ShM6/whatsapp.png" alt="WhatsApp Icono" />
+</a>
+
 <script>
-// Toggle menú en móvil
-document.querySelector('.menu-toggle').addEventListener('click', () => {
-    document.querySelector('nav ul').classList.toggle('show');
-});
+  // Mobile menu toggle
+  const menuToggle = document.querySelector('.menu-toggle');
+  const navUl = document.querySelector('nav ul');
+
+  menuToggle.addEventListener('click', () => {
+    navUl.classList.toggle('show');
+  });
+  // Accessibility: allow enter key toggle menu
+  menuToggle.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      navUl.classList.toggle('show');
+    }
+  });
+
+  // Slider funcionalidad simple
+  const sliderTrack = document.getElementById('slider-track');
+  const prevBtn = document.getElementById('prev-slide');
+  const nextBtn = document.getElementById('next-slide');
+  const slideWidth = 340; // card width + margin approx
+
+  let currentPosition = 0;
+  const maxPosition = -(slideWidth * (sliderTrack.children.length - 3)); // show 3 cards approx
+
+  prevBtn.addEventListener('click', () => {
+    currentPosition += slideWidth;
+    if(currentPosition > 0) currentPosition = maxPosition;
+    sliderTrack.style.transform = `translateX(${currentPosition}px)`;
+  });
+  nextBtn.addEventListener('click', () => {
+    currentPosition -= slideWidth;
+    if(currentPosition < maxPosition) currentPosition = 0;
+    sliderTrack.style.transform = `translateX(${currentPosition}px)`;
+  });
+
+  // Buscador básico alert
+  document.getElementById('search-btn').addEventListener('click', () => {
+    const tipo = document.getElementById('search-type').value || 'cualquier tipo';
+    const min = document.getElementById('min-price').value || 'sin mínimo';
+    const max = document.getElementById('max-price').value || 'sin máximo';
+
+    alert(`Buscando propiedades de tipo: ${tipo}, precio entre ${min} y ${max}`);
+  });
 </script>
 
 </body>
