@@ -1,82 +1,159 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Altorra Inmobiliaria</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Altorra | Inmobiliaria</title>
 
-        header {
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            padding: 15px;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-        }
+<!-- Fuentes y librerías -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-        header h1 {
-            margin: 0;
-        }
+<style>
+:root {
+    --primary-color: #B8860B;
+    --secondary-color: #000000;
+    --text-color-light: #F8F8F8;
+    --background-color: #f0f0f0;
+    --title-font-family: 'Playfair Display', serif;
+    --font-family: 'Inter', sans-serif;
+}
 
-        .welcome-section {
-            min-height: 100vh;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: url('https://i.ibb.co/93YTZc9t/Gemini-Generated-Image-slxfewslxfewslxf.png') no-repeat center center;
-            background-size: cover;
-            color: white;
-            text-align: center;
-        }
+/* Reset y estilo base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html, body {
+    width: 100%;
+    min-height: 100%;
+    font-family: var(--font-family);
+    color: var(--secondary-color);
+    background-color: var(--background-color);
+}
 
-        .welcome-section img {
-            max-width: 300px;
-            margin-bottom: 20px;
-        }
+/* Sección principal */
+.welcome-section {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
 
-        .welcome-section h2 {
-            font-size: 2em;
-            margin-bottom: 10px;
-        }
+    /* Fondo en pantalla completa (actualizado) */
+    background-image: url('https://i.ibb.co/93YTZc9t/Gemini-Generated-Image-slxfewslxfewslxf.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: contrast(1.05) saturate(1.1);
+}
 
-        .welcome-section p {
-            font-size: 1.2em;
-            max-width: 600px;
-        }
+/* Logo */
+.logo {
+    max-width: 220px;
+    height: auto;
+    margin-bottom: 20px;
+    filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.15));
+}
 
-        footer {
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            text-align: center;
-            padding: 15px;
-        }
-    </style>
+/* Lista de servicios */
+.services-list {
+    list-style: none;
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+}
+.services-list li {
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-style: italic;
+    position: relative;
+    padding-left: 0;
+}
+
+/* Botón */
+.scroll-down-btn {
+    margin-top: 30px;
+    background-color: var(--primary-color);
+    color: var(--text-color-light);
+    padding: 12px 28px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.25s ease;
+    box-shadow: 0 0 15px rgba(184,134,11,0.6);
+    animation: bounce 1.5s infinite;
+}
+.scroll-down-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 0 22px rgba(184,134,11,0.9);
+}
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-6px); }
+    60% { transform: translateY(-3px); }
+}
+
+/* Ajuste responsivo */
+@media (max-width: 768px) {
+    .logo {
+        max-width: 180px;
+    }
+    .services-list {
+        gap: 10px;
+    }
+}
+</style>
 </head>
 <body>
 
-    <header>
-        <h1>Altorra Inmobiliaria</h1>
-    </header>
+<div class="welcome-section" id="welcome">
+    <img src="https://i.ibb.co/9kvg1wzh/Chat-GPT-Image-9-ago-2025-10-31-20-p-m.png" alt="Altorra Inmobiliaria Logo" class="logo">
+    <ul class="services-list">
+        <li>Administración de inmuebles</li>
+        <li>Compra, venta y arriendo</li>
+        <li>Soluciones para tu patrimonio</li>
+        <li>Seguridad • Legalidad • Confianza</li>
+        <li>Cartagena, Colombia</li>
+    </ul>
+    <a href="#" class="scroll-down-btn" id="startBtn">Explorar Propiedades <i class="fas fa-arrow-down"></i></a>
+</div>
 
-    <section class="welcome-section">
-        <img src="https://i.ibb.co/GYwWrrh/Chat-GPT-Image-9-ago-2025-10-19-28-p-m.png" alt="Logo Altorra Inmobiliaria">
-        <h2>Bienvenido a Altorra Inmobiliaria</h2>
-        <p>Tu mejor aliado para encontrar la propiedad de tus sueños. Compra, vende o arrienda con nosotros.</p>
-    </section>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const startBtn = document.getElementById('startBtn');
+    startBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('¡Listo para empezar a explorar! Publica tu sitio para que el botón funcione.');
+    });
 
-    <footer>
-        <p>&copy; 2025 Altorra Inmobiliaria - Todos los derechos reservados</p>
+    /* Ajustar altura automática del iframe en Google Sites */
+    function resizeIframe() {
+        const bodyHeight = document.documentElement.scrollHeight;
+        if (window.parent) {
+            window.parent.postMessage({
+                'type': 'setHeight',
+                'height': bodyHeight
+            }, '*');
+        }
+    }
+    new ResizeObserver(resizeIframe).observe(document.body);
+    resizeIframe();
+});
+</script>
+</body>
+</html>
+
     </footer>
 
 </body>
 </html>
+
