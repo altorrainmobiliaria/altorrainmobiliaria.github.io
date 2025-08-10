@@ -110,9 +110,7 @@ html, body {
 <body>
 
 <div class="welcome-section" id="welcome">
-    <!-- Aquí pegas tu imagen de logo -->
-    <img src="AQUI_URL_LOGO" alt="Altorra Inmobiliaria Logo" class="logo">
-    
+    <img src="https://ibb.co/pBPwMWGQ"><img src="https://i.ibb.co/9kvg1wzh/Chat-GPT-Image-9-ago-2025-10-31-20-p-m.png" alt="Altorra Inmobiliaria Logo" class="logo">
     <ul class="services-list">
         <li>Administración de inmuebles</li>
         <li>Compra, venta y arriendo</li>
@@ -120,10 +118,30 @@ html, body {
         <li>Seguridad • Legalidad • Confianza</li>
         <li>Cartagena, Colombia</li>
     </ul>
-
-    <!-- Cambia la URL del botón por tu página de propiedades -->
-    <a href="pagina-propiedades.html" class="scroll-down-btn">Explorar Propiedades <i class="fas fa-arrow-down"></i></a>
+    <a href="#" class="scroll-down-btn" id="startBtn">Explorar Propiedades <i class="fas fa-arrow-down"></i></a>
 </div>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const startBtn = document.getElementById('startBtn');
+    startBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        alert('¡Listo para empezar a explorar! Publica tu sitio para que el botón funcione.');
+    });
+
+    /* Ajustar altura automática del iframe en Google Sites */
+    function resizeIframe() {
+        const bodyHeight = document.documentElement.scrollHeight;
+        if (window.parent) {
+            window.parent.postMessage({
+                'type': 'setHeight',
+                'height': bodyHeight
+            }, '*');
+        }
+    }
+    new ResizeObserver(resizeIframe).observe(document.body);
+    resizeIframe();
+});
+</script>
 </body>
 </html>
