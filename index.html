@@ -1,189 +1,429 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Altorra | Inmobiliaria</title>
-
-<!-- Fuentes y librerías -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Altorra Inmobiliaria | Inicio</title>
+<meta name="description" content="Altorra - Expertos en administración de inmuebles. Asesoría legal, avalúos, reservas de apartamentos por días y más. +57 323 501 6747" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
 <style>
-:root {
-    --primary-color: #B8860B;
-    --secondary-color: #000000;
-    --text-color-light: #F8F8F8;
-    --background-color: #f0f0f0;
-    --title-font-family: 'Playfair Display', serif;
-    --font-family: 'Inter', sans-serif;
-}
-
-/* Reset y estilo base */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-html, body {
-    width: 100%;
-    min-height: 100%;
-    font-family: var(--font-family);
-    color: var(--secondary-color);
-    background-color: var(--background-color);
-}
-
-/* Sección principal */
-.welcome-section {
+  :root{
+    --accent:#ffb400;
+    --accent-2:#ffc933;
+    --white: #ffffff;
+    --overlay: rgba(0,0,0,0.56);
+    --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box}
+  html,body{
+    height:100%;
+    margin:0;
+    font-family:"Poppins",system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color:var(--white);
+    background:#000;
     min-height: 100vh;
-    width: 100%;
+    overflow-x: hidden;
+  }
+  /* Background */
+  .bg-layer{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    background-image:url('https://i.ibb.co/93YTZc9t/Gemini-Generated-Image-slxfewslxfewslxf.png');
+    background-size:cover;
+    background-position:center;
+    will-change:transform;
+    filter:brightness(0.66) saturate(1.02);
+    min-height: 100vh;
+    height: 100%;
+  }
+  .overlay{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    background:var(--overlay);
+  }
+
+  /* Top bar (fixed) */
+  .top-bar{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:6;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 28px;
+    gap:12px;
+  }
+  .top-left{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .brand-small{
+    display:none;
+  }
+  .top-right{
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
+  .icon-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 12px;
+    border-radius:999px;
+    background:var(--glass);
+    text-decoration:none;
+    color:var(--white);
+    font-weight:600;
+    font-size:0.95rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  }
+  .icon-btn svg{
+    width:18px;
+    height:18px;
+    flex:0 0 18px;
+    fill:var(--white);
+  }
+
+  /* Hero */
+  main{
+    position:relative;
+    z-index:3;
+    min-height:72vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:110px 20px 40px;
+    text-align:center;
+  }
+  .hero-card{
+    width:100%;
+    max-width:1100px;
+    padding:22px;
+    border-radius:12px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  }
+  .logo{
+    width:270px; /* Más grande */
+    height:auto;
+    margin:0 auto 4px auto; /* menos margen abajo para estar pegado al título */
+    display:block;
+  }
+  .title{
+    font-size:clamp(1.25rem,3.2vw,2.4rem);
+    font-weight:700;
+    margin:2px 0 8px;
+    opacity:0;
+    transform:translateY(8px);
+    animation:fadeIn .45s ease forwards;
+  }
+  .subtitle{
+    font-size:clamp(0.98rem,1.6vw,1.1rem);
+    margin:8px 0 6px;
+    opacity:0;
+    transform:translateY(8px);
+    animation:fadeIn .45s .06s ease forwards;
+  }
+  .features{
+    margin-top:10px;
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+    opacity:0;
+    transform:translateY(8px);
+    animation:fadeIn .45s .12s ease forwards;
+  }
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 14px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.03);
+    font-weight:600;
+    color:var(--white);
+    min-width:220px;
+    justify-content:center;
+  }
+
+  /* CTA area */
+  .cta-wrap{
+    margin-top:16px;
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    opacity:0;
+    transform:translateY(8px);
+    animation:fadeIn .45s .18s ease forwards;
+  }
+  .btn-primary{
+    background:var(--accent);
+    color:#000;
+    border:none;
+    padding:12px 22px;
+    border-radius:999px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 10px 30px rgba(0,0,0,0.28);
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+  }
+  .btn-primary:hover{
+    transform:translateY(-4px);
+    box-shadow:0 18px 40px rgba(0,0,0,0.36);
+  }
+  .pill-res{
+    background:rgba(255,255,255,0.04);
+    padding:10px 14px;
+    border-radius:999px;
+    font-weight:600;
+    color:var(--white);
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+  }
+
+  /* Reviews (moved up) */
+  .reviews{
+    margin-top:18px;
+    margin-bottom:8px;
+    display:flex;
+    justify-content:center;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .review-card{
+    background:rgba(0,0,0,0.35);
+    padding:12px 16px;
+    border-radius:10px;
+    min-width:220px;
+    max-width:320px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+  }
+
+  /* Impact counters */
+  .impact {
+    position: relative; /* Para z-index funcione */
+    z-index: 4; /* Por encima del overlay */
+    margin-top: 6px; /* menos margen para estar más arriba */
+    padding: 10px 12px 32px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    padding: 20px;
+  }
+  .counters{
+    display:flex;
+    gap:14px;
+    justify-content:space-around;
+    align-items:center;
+    flex-wrap:wrap;
+    width:100%;
+    max-width:1100px;
+  }
+  .counter{
+    background:rgba(255,255,255,0.03);
+    border-radius:10px;
+    padding:12px 18px;
+    min-width:150px;
+    text-align:center;
+    box-shadow:0 8px 22px rgba(0,0,0,0.22);
+  }
+  .counter .num{
+    font-size:1.5rem;
+    font-weight:700;
+    color:var(--accent);
+  }
+  .counter .label{
+    margin-top:6px;
+    font-size:0.95rem;
+    opacity:0.95;
+  }
 
-    /* Fondo */
-    background-image: url('https://i.ibb.co/93YTZc9t/Gemini-Generated-Image-slxfewslxfewslxf.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    filter: contrast(1.05) saturate(1.1);
-    position: relative;
-}
+  /* Floating Instagram (replaces whatsapp floating) */
+  .insta-float{
+    position:fixed;
+    right:18px;
+    bottom:18px;
+    z-index:8;
+    width:56px;
+    height:56px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    box-shadow:0 14px 30px rgba(0,0,0,0.25);
+    background:linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf);
+    color:white;
+  }
+  .insta-float svg{
+    width:22px;
+    height:22px;
+    fill:white;
+  }
 
-/* Capa oscura sutil para mejorar contraste */
-.welcome-section::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.35); /* más contraste */
-    z-index: 0;
-}
+  /* small screens */
+  @media (max-width:900px){
+    .logo{ width:210px } /* proporcional */
+    .pill{ min-width:180px }
+    .counter{ min-width:130px }
+  }
+  @media (max-width:520px){
+    .top-bar{ padding:8px 12px }
+    main{ padding:100px 12px 28px }
+    .title{ font-size:1.15rem }
+    .subtitle{ font-size:0.95rem }
+    .logo{ width:180px }
+  }
 
-/* Logo */
-.logo {
-    max-width: 220px;
-    height: auto;
-    margin-bottom: 20px;
-    filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.15));
-    z-index: 1;
-}
-
-/* Lista de servicios */
-.services-list {
-    list-style: none;
-    max-width: 600px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    text-align: center;
-    z-index: 1;
-}
-.services-list li {
-    font-size: clamp(1rem, 2.5vw, 1.2rem);
-    font-style: italic;
-    color: var(--text-color-light);
-    position: relative;
-}
-.services-list li::before {
-    content: "•";
-    color: var(--primary-color);
-    margin-right: 8px;
-}
-
-/* Botón */
-.scroll-down-btn {
-    margin-top: 30px;
-    background-color: var(--primary-color);
-    color: var(--text-color-light);
-    padding: 12px 28px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 0 15px rgba(184,134,11,0.6);
-    animation: bounce 1.5s infinite;
-    z-index: 1;
-}
-.scroll-down-btn:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 0 22px rgba(184,134,11,0.9);
-}
-@keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-6px); }
-    60% { transform: translateY(-3px); }
-}
-
-/* Ajustes responsivos */
-@media (max-width: 768px) {
-    .logo {
-        max-width: 180px;
-    }
-    .services-list {
-        gap: 10px;
-    }
-}
-@media (max-width: 480px) {
-    .services-list li {
-        font-size: 0.95rem;
-        padding: 0 10px;
-    }
-    .scroll-down-btn {
-        font-size: 0.9rem;
-        padding: 10px 24px;
-    }
-}
+  @keyframes fadeIn{ to{ opacity:1; transform:none } }
 </style>
 </head>
 <body>
 
-<main class="welcome-section" id="welcome">
-    <img src="https://i.ibb.co/9kvg1wzh/Chat-GPT-Image-9-ago-2025-10-31-20-p-m.png" alt="Altorra Inmobiliaria Logo" class="logo">
-    <ul class="services-list">
-        <li>Expertos en administración de inmuebles</li>
-        <li>Compra, venta y arriendo con respaldo legal</li>
-        <li>Protege y potencia tu patrimonio</li>
-        <li>Seguridad • Legalidad • Confianza</li>
-        <li>Cartagena, Colombia</li>
-    </ul>
-    <a href="home.html" class="scroll-down-btn">Explorar Propiedades <i class="fas fa-arrow-down"></i></a>
+  <!-- Background + overlay -->
+  <div class="bg-layer" aria-hidden="true"></div>
+  <div class="overlay" aria-hidden="true"></div>
 
-</main>
+  <!-- Top bar -->
+  <div class="top-bar" role="banner" aria-label="Barra superior">
+    <div class="top-left" aria-hidden="true">
+      <!-- left intentionally empty to keep logo in hero and reduce clutter -->
+    </div>
+
+    <div class="top-right" aria-label="Contacto rápido">
+      <a class="icon-btn" href="https://wa.me/573235016747" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+        <!-- WhatsApp icon -->
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="#25D366">
+          <path d="M20.52 3.48a11.91 11.91 0 00-16.85 0 11.845 11.845 0 00-3.57 8.4c0 2.09.55 4.15 1.6 5.95L2 21.5l4.9-1.32a11.79 11.79 0 005.97 1.5h.03c6.55 0 11.87-5.32 11.87-11.87 0-3.18-1.25-6.18-3.26-8.23zM12 20.37c-1.79 0-3.52-.48-4.97-1.36l-.36-.21-2.92.79.78-2.86-.23-.37a9.87 9.87 0 01-1.5-5.24c0-5.46 4.44-9.9 9.9-9.9 2.64 0 5.12 1.03 6.99 2.9a9.786 9.786 0 012.91 6.97c0 5.46-4.43 9.9-9.9 9.9z"/>
+          <path d="M17.57 14.4c-.27-.14-1.58-.78-1.83-.87-.25-.09-.43-.14-.62.14-.18.27-.7.87-.85 1.04-.15.18-.3.2-.56.07-.27-.14-1.14-.42-2.17-1.34-.8-.71-1.34-1.58-1.5-1.84-.15-.27-.02-.41.12-.55.12-.12.27-.3.41-.45.14-.15.18-.27.27-.45.09-.18.05-.34-.02-.48-.07-.14-.62-1.49-.85-2.05-.22-.53-.45-.46-.62-.47-.16 0-.35-.02-.54-.02-.18 0-.48.07-.73.34-.25.27-.97.95-.97 2.31s.99 2.68 1.13 2.87c.14.18 1.94 2.97 4.7 4.16.66.29 1.18.46 1.58.59.66.22 1.26.19 1.74.12.53-.08 1.58-.64 1.8-1.26.23-.62.23-1.15.16-1.26-.07-.11-.25-.18-.52-.32z"/>
+        </svg>
+        WhatsApp
+      </a>
+
+      <a class="icon-btn" href="tel:+573235016747" aria-label="Llamar a Altorra">
+        <!-- Phone icon -->
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+          <path d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 011.11-.21 11.36 11.36 0 003.55.57 1 1 0 011 1v3.61a1 1 0 01-1 1A19 19 0 013 5a1 1 0 011-1h3.6a1 1 0 011 1 11.36 11.36 0 00.57 3.55 1 1 0 01-.21 1.11l-2.2 2.2z"/>
+        </svg>
+        +57 323 501 6747
+      </a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <main role="main" aria-labelledby="hero-title">
+    <div class="hero-card" id="heroCard" style="margin:0 30px;">
+      <img src="https://i.ibb.co/9kvg1wzh/Chat-GPT-Image-9-ago-2025-10-31-20-p-m.png" alt="Altorra Logo" class="logo" />
+
+      <h1 id="hero-title" class="title">Expertos en Administración de Inmuebles</h1>
+
+      <p class="subtitle">Asesoría legal especializada en propiedades</p>
+
+      <div class="features" role="list">
+        <div class="pill" role="listitem">Compra y venta segura</div>
+        <div class="pill" role="listitem">Arrienda con confianza y sin estrés</div>
+        <div class="pill" role="listitem">Apartamentos amueblados para estancias cortas</div>
+      </div>
+
+      <div class="cta-wrap">
+        <a class="btn-primary" href="home.html" aria-label="Ir al Sitio Web">Ir al Sitio Web</a>
+        <div class="pill-res" aria-hidden="true">🔒 Soluciones integrales para tu patrimonio</div>
+      </div>
+
+      <!-- Reviews (moved up, visible) -->
+      <div class="reviews" aria-label="Reseñas destacadas" style="margin-top:18px;">
+        <div class="review-card">⭐⭐⭐⭐⭐ <strong>María G.</strong><br> “Excelente gestión: vendieron mi apartamento en 10 días.”</div>
+        <div class="review-card">⭐⭐⭐⭐⭐ <strong>Carlos R.</strong><br> “Asesoría legal impecable y pago puntual.”</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- IMPACT COUNTERS -->
+  <section class="impact" aria-label="Impacto Altorra">
+    <div class="counters" id="counters">
+      <div class="counter">
+        <div class="num" data-target="128">0</div>
+        <div class="label">Propiedades disponibles para venta</div>
+      </div>
+
+      <div class="counter">
+        <div class="num" data-target="560">0</div>
+        <div class="label">Apartamentos disponibles para arriendo</div>
+      </div>
+
+      <div class="counter">
+        <div class="num" data-target="15">0</div>
+        <div class="label">Años de experiencia</div>
+      </div>
+
+      <div class="counter">
+        <div class="num" data-target="450">0</div>
+        <div class="label">Clientes satisfechos</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Floating Instagram -->
+  <a class="insta-float" href="https://instagram.com/altorrainmobiliaria" target="_blank" rel="noopener" aria-label="Instagram Altorra">
+    <!-- Instagram SVG (inline) -->
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 5-5V7c0-2.8-2.2-5-5-5H7zm0 2h10c1.7 0 3 1.3 3 3v10c0 1.7-1.3 3-3 3H7c-1.7 0-3-1.3-3-3V7c0-1.7 1.3-3 3-3zm5 3.2a4.8 4.8 0 100 9.6 4.8 4.8 0 000-9.6zm0 2a2.8 2.8 0 110 5.6 2.8 2.8 0 010-5.6zM18.3 6a1.1 1.1 0 110 2.2 1.1 1.1 0 010-2.2z" fill="#fff"/>
+    </svg>
+  </a>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const startBtn = document.getElementById('startBtn');
-    startBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const target = document.querySelector('#propiedades');
-        if (target) {
-            target.scrollIntoView({ behavior: 'smooth' });
-        } else {
-            alert('¡Listo para empezar a explorar! Publica tu sitio para que el botón funcione.');
-        }
-    });
+/* Parallax background movement */
+(function(){
+  const bg = document.querySelector('.bg-layer');
+  let last = 0, ticking = false;
+  function onScroll(){ last = window.scrollY; if(!ticking){ requestAnimationFrame(update); ticking = true; } }
+  function update(){ const offset = last * 0.14; bg.style.transform = 'translateY(' + (-offset) + 'px)'; ticking = false; }
+  window.addEventListener('scroll', onScroll, {passive:true});
+})();
 
-    /* Ajuste altura automática del iframe (Google Sites) */
-    function resizeIframe() {
-        const bodyHeight = document.documentElement.scrollHeight;
-        if (window.parent) {
-            window.parent.postMessage({
-                'type': 'setHeight',
-                'height': bodyHeight
-            }, '*');
-        }
-    }
-    new ResizeObserver(resizeIframe).observe(document.body);
-    resizeIframe();
+/* Counters animation when visible */
+(function(){
+  const counters = document.querySelectorAll('.counter .num');
+  const el = document.getElementById('counters');
+  if(!el) return;
+  const io = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        counters.forEach(n => {
+          const to = parseInt(n.getAttribute('data-target'),10) || 0;
+          let start = 0;
+          const duration = 1200 + Math.random()*700;
+          const startTime = performance.now();
+          function step(now){
+            const t = Math.min((now - startTime)/duration, 1);
+            n.textContent = Math.floor(t * (to - start) + start);
+            if(t < 1) requestAnimationFrame(step);
+            else n.textContent = to;
+          }
+          requestAnimationFrame(step);
+        });
+        obs.disconnect();
+      }
+    });
+  }, {threshold:0.35});
+  io.observe(el);
+})();
+
+/* Accessibility: focus main CTA on load */
+window.addEventListener('load', () => {
+  const cta = document.querySelector('.btn-primary');
+  if(cta) cta.setAttribute('tabindex','0');
 });
 </script>
 </body>
 </html>
+
 
