@@ -3,81 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ALTORRA | Inmobiliaria - Administración de inmuebles, compraventa, arrendamiento y soluciones para tu patrimonio. Seguridad, legalidad y confianza.">
     <title>ALTORRA | Inmobiliaria</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="img/favicon.png" type="image/png">
 </head>
 <body>
+
     <!-- Encabezado -->
     <header>
         <div class="logo">
-            <img src="ruta_logo.png" alt="Logo de ALTORRA | Inmobiliaria">
+            <img src="img/logo.png" alt="ALTORRA | Inmobiliaria">
         </div>
         <nav>
             <ul>
-                <li><a href="#">Inicio</a></li>
-                <li><a href="#">Servicios</a></li>
-                <li><a href="#">Proyectos</a></li>
-                <li><a href="#">Contacto</a></li>
+                <li><a href="#servicios">Servicios</a></li>
+                <li><a href="#propiedades">Propiedades</a></li>
+                <li><a href="#contacto">Contacto</a></li>
             </ul>
         </nav>
-        <a href="#" class="btn">Cotiza Ahora</a>
     </header>
 
-    <!-- Hero -->
+    <!-- Banner principal -->
     <section class="hero">
-        <img src="ruta_imagen_hero.jpg" alt="Imagen principal">
         <div class="hero-text">
-            <h1>Soluciones integrales para tu patrimonio</h1>
-            <p>Seguridad, legalidad y confianza en cada proyecto.</p>
-            <a href="#" class="btn">Saber más</a>
+            <h1>ALTORRA | Inmobiliaria</h1>
+            <p>Administración de inmuebles • Compraventa • Arrendamiento</p>
+            <p class="slogan">Soluciones para tu patrimonio con <strong>seguridad, legalidad y confianza</strong></p>
+            <a href="#contacto" class="btn">Contáctanos</a>
+        </div>
+        <div class="hero-image">
+            <img src="img/banner-principal.jpg" alt="Bienes raíces en Cartagena">
         </div>
     </section>
 
-    <!-- Servicios -->
-    <section class="servicios">
-        <h2>Nuestros Servicios</h2>
-        <div class="servicio">
-            <img src="ruta_icono1.png" alt="Servicio 1">
-            <h3>Administración de Inmuebles</h3>
-            <p>Gestión completa de propiedades residenciales y comerciales.</p>
-        </div>
-        <div class="servicio">
-            <img src="ruta_icono2.png" alt="Servicio 2">
-            <h3>Compra y Venta</h3>
-            <p>Asesoría en compra y venta de inmuebles con respaldo legal.</p>
-        </div>
-        <div class="servicio">
-            <img src="ruta_icono3.png" alt="Servicio 3">
-            <h3>Arrendamiento</h3>
-            <p>Rápida colocación y administración de contratos de arriendo.</p>
+    <!-- Sección de Servicios -->
+    <section id="servicios" class="services">
+        <h2>Servicios</h2>
+        <div class="service-grid">
+            <div class="service-card">
+                <img src="img/admin-inmuebles.jpg" alt="Administración de inmuebles">
+                <h3>Administración de Inmuebles</h3>
+                <p>Gestionamos y cuidamos tu propiedad para maximizar su rentabilidad y valor en el tiempo.</p>
+            </div>
+            <div class="service-card">
+                <img src="img/compraventa.jpg" alt="Compra y venta de propiedades">
+                <h3>Compraventa</h3>
+                <p>Te acompañamos en todo el proceso de compra o venta, asegurando transacciones seguras y legales.</p>
+            </div>
+            <div class="service-card">
+                <img src="img/arrendamiento.jpg" alt="Arrendamiento de propiedades">
+                <h3>Arrendamiento</h3>
+                <p>Conectamos propietarios e inquilinos de forma efectiva, segura y transparente.</p>
+            </div>
         </div>
     </section>
 
-    <!-- Productos o propiedades destacadas -->
-    <section class="destacados">
+    <!-- Sección de Propiedades -->
+    <section id="propiedades" class="properties">
         <h2>Propiedades Destacadas</h2>
-        <div class="propiedad">
-            <img src="ruta_propiedad1.jpg" alt="Propiedad 1">
-            <h3>Apartamento en Cartagena</h3>
-            <p>$350,000,000 COP</p>
-        </div>
-        <div class="propiedad">
-            <img src="ruta_propiedad2.jpg" alt="Propiedad 2">
-            <h3>Casa Campestre</h3>
-            <p>$500,000,000 COP</p>
-        </div>
-        <div class="propiedad">
-            <img src="ruta_propiedad3.jpg" alt="Propiedad 3">
-            <h3>Local Comercial</h3>
-            <p>$120,000,000 COP</p>
+        <div class="property-grid">
+            <div class="property-card">
+                <img src="img/apartamento-playa.jpg" alt="Apartamento frente al mar">
+                <h3>Apartamento Frente al Mar</h3>
+                <p>Cartagena | 3 habitaciones | 2 baños</p>
+                <a href="#" class="btn">Ver más</a>
+            </div>
+            <div class="property-card">
+                <img src="img/casa-centro.jpg" alt="Casa en el centro histórico">
+                <h3>Casa en el Centro Histórico</h3>
+                <p>Cartagena | 4 habitaciones | 3 baños</p>
+                <a href="#" class="btn">Ver más</a>
+            </div>
+            <div class="property-card">
+                <img src="img/local-comercial.jpg" alt="Local comercial en zona turística">
+                <h3>Local Comercial</h3>
+                <p>Cartagena | 120 m²</p>
+                <a href="#" class="btn">Ver más</a>
+            </div>
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Contacto -->
+    <section id="contacto" class="contact">
+        <h2>Contáctanos</h2>
+        <p>¿Buscas administrar, comprar, vender o arrendar? Estamos para ayudarte.</p>
+        <form action="enviar.php" method="POST">
+            <input type="text" name="nombre" placeholder="Nombre" required>
+            <input type="email" name="email" placeholder="Correo electrónico" required>
+            <textarea name="mensaje" placeholder="Escribe tu mensaje..." required></textarea>
+            <button type="submit" class="btn">Enviar</button>
+        </form>
+    </section>
+
+    <!-- Pie de página -->
     <footer>
-        <p>© 2025 ALTORRA | Inmobiliaria - Todos los derechos reservados</p>
-        <p>Cartagena, Colombia | Tel: +57 3235016747 | Email: altorrainmobiliaria@gmail.com</p>
+        <p>© 2025 ALTORRA | Inmobiliaria - Cartagena, Colombia</p>
+        <p>Seguridad • Legalidad • Confianza</p>
     </footer>
+
 </body>
 </html>
-
