@@ -1,331 +1,83 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Altorra | Inicio</title>
-
-<!-- Fuentes y librerías -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-<style>
-:root {
-    --primary-color: #B8860B;
-    --secondary-color: #000000;
-    --text-color-light: #F8F8F8;
-    --background-color: #f0f0f0;
-    --title-font-family: 'Playfair Display', serif;
-    --font-family: 'Inter', sans-serif;
-}
-
-/* Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-body {
-    font-family: var(--font-family);
-    background-color: var(--background-color);
-    color: var(--secondary-color);
-}
-
-/* NAVBAR */
-header {
-    background: var(--secondary-color);
-    color: var(--text-color-light);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-}
-nav .logo {
-    max-height: 50px;
-}
-nav ul {
-    list-style: none;
-    display: flex;
-    gap: 20px;
-}
-nav ul li {
-    position: relative;
-}
-nav ul li a {
-    color: var(--text-color-light);
-    text-decoration: none;
-    padding: 8px 5px;
-    display: block;
-}
-nav ul li:hover > a {
-    color: var(--primary-color);
-}
-nav ul li ul {
-    display: none;
-    position: absolute;
-    background: var(--secondary-color);
-    top: 100%;
-    left: 0;
-    min-width: 180px;
-}
-nav ul li:hover ul {
-    display: block;
-}
-nav ul li ul li {
-    border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-/* HERO SECTION */
-.hero {
-    background: url('https://i.ibb.co/93YTZc9t/Gemini-Generated-Image-slxfewslxfewslxf.png') center/cover no-repeat;
-    padding: 100px 20px;
-    text-align: center;
-    color: var(--text-color-light);
-}
-.hero h1 {
-    font-family: var(--title-font-family);
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-}
-.hero p {
-    font-size: 1.2rem;
-}
-
-/* SECTIONS */
-.section {
-    padding: 50px 20px;
-    max-width: 1200px;
-    margin: auto;
-}
-.section h2 {
-    font-family: var(--title-font-family);
-    font-size: 2rem;
-    color: var(--primary-color);
-    margin-bottom: 20px;
-    text-align: center;
-}
-.properties {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-}
-.property-card {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: transform 0.3s;
-}
-.property-card:hover {
-    transform: translateY(-5px);
-}
-.property-card img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-}
-.property-card .info {
-    padding: 15px;
-}
-.property-card .info h3 {
-    font-size: 1.2rem;
-    margin-bottom: 5px;
-}
-.property-card .info p {
-    font-size: 0.9rem;
-    color: #555;
-}
-
-/* SERVICES */
-.services {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-}
-.service-card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    flex: 1 1 250px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-.service-card i {
-    font-size: 2rem;
-    color: var(--primary-color);
-    margin-bottom: 10px;
-}
-
-/* FOOTER */
-footer {
-    background: var(--secondary-color);
-    color: var(--text-color-light);
-    text-align: center;
-    padding: 20px;
-    margin-top: 50px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    nav ul {
-        flex-direction: column;
-        display: none;
-        background: var(--secondary-color);
-        position: absolute;
-        top: 60px;
-        right: 0;
-        width: 200px;
-    }
-    nav ul.show {
-        display: flex;
-    }
-    .menu-toggle {
-        display: block;
-        cursor: pointer;
-    }
-}
-.menu-toggle {
-    display: none;
-    font-size: 1.5rem;
-    color: var(--text-color-light);
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALTORRA | Inmobiliaria</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Encabezado -->
+    <header>
+        <div class="logo">
+            <img src="URL_DE_TU_LOGO" alt="ALTORRA | Inmobiliaria">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="home.html" class="active">Inicio</a></li>
+                <li><a href="propiedades.html">Propiedades</a></li>
+                <li><a href="servicios.html">Servicios</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
 
-<header>
-    <nav>
-        <img src="https://i.ibb.co/9kvg1wzh/Chat-GPT-Image-9-ago-2025-10-31-20-p-m.png" alt="Logo" class="logo">
-        <div class="menu-toggle"><i class="fas fa-bars"></i></div>
-        <ul>
-            <li><a href="home.html">Inicio</a></li>
-            <li>
-                <a href="#">Propiedades</a>
-                <ul>
-                    <li><a href="#">En venta</a></li>
-                    <li><a href="#">En arriendo</a></li>
-                    <li><a href="#">En proyecto</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">Servicios</a>
-                <ul>
-                    <li><a href="#">Asesoría legal</a></li>
-                    <li><a href="#">Avalúos</a></li>
-                    <li><a href="#">Administración de inmuebles</a></li>
-                </ul>
-            </li>
-            <li>
-                <a href="#">Quiénes somos</a>
-                <ul>
-                    <li><a href="#">Nuestra historia</a></li>
-                    <li><a href="#">Nuestro equipo</a></li>
-                    <li><a href="#">Misión y visión</a></li>
-                </ul>
-            </li>
-            <li><a href="#">Contacto</a></li>
-        </ul>
-    </nav>
-</header>
+    <!-- Hero principal -->
+    <section class="hero">
+        <div class="hero-text">
+            <h1>Encuentra la propiedad de tus sueños</h1>
+            <p>En ALTORRA, hacemos realidad tus proyectos en Cartagena y alrededores.</p>
+            <a href="propiedades.html" class="btn-principal">Explorar Propiedades</a>
+        </div>
+    </section>
 
-<section class="hero">
-    <h1>Bienvenido a Altorra Inmobiliaria</h1>
-    <p>Encuentra la propiedad perfecta en Cartagena</p>
-</section>
-
-<section class="section">
-    <h2>Propiedades en Venta Destacadas</h2>
-    <div class="properties">
-        <div class="property-card">
-            <img src="https://picsum.photos/400/200?1" alt="Propiedad 1">
-            <div class="info">
-                <h3>Apartamento en Bocagrande</h3>
-                <p>$450.000.000 • 3 Habitaciones</p>
+    <!-- Sección de propiedades destacadas -->
+    <section class="propiedades-destacadas">
+        <h2>Propiedades Destacadas</h2>
+        <div class="propiedades-grid">
+            <div class="propiedad-card">
+                <img src="URL_IMAGEN_1" alt="Propiedad 1">
+                <h3>Casa de lujo en Cartagena</h3>
+                <p>Desde $500,000 USD</p>
+                <a href="#" class="btn-detalles">Ver Detalles</a>
+            </div>
+            <div class="propiedad-card">
+                <img src="URL_IMAGEN_2" alt="Propiedad 2">
+                <h3>Apartamento frente al mar</h3>
+                <p>Desde $350,000 USD</p>
+                <a href="#" class="btn-detalles">Ver Detalles</a>
+            </div>
+            <div class="propiedad-card">
+                <img src="URL_IMAGEN_3" alt="Propiedad 3">
+                <h3>Terreno para inversión</h3>
+                <p>Desde $120,000 USD</p>
+                <a href="#" class="btn-detalles">Ver Detalles</a>
             </div>
         </div>
-        <div class="property-card">
-            <img src="https://picsum.photos/400/200?2" alt="Propiedad 2">
-            <div class="info">
-                <h3>Casa en Manga</h3>
-                <p>$750.000.000 • 4 Habitaciones</p>
+    </section>
+
+    <!-- Sección de servicios -->
+    <section class="servicios">
+        <h2>Nuestros Servicios</h2>
+        <div class="servicios-grid">
+            <div class="servicio-card">
+                <h3>Compra y Venta</h3>
+                <p>Te ayudamos a encontrar compradores y vendedores con total seguridad y confianza.</p>
+            </div>
+            <div class="servicio-card">
+                <h3>Arriendos</h3>
+                <p>Gestionamos propiedades para arriendo en las mejores zonas de Cartagena.</p>
+            </div>
+            <div class="servicio-card">
+                <h3>Administración de Inmuebles</h3>
+                <p>Cuidamos tu patrimonio como si fuera nuestro.</p>
             </div>
         </div>
-        <div class="property-card">
-            <img src="https://picsum.photos/400/200?3" alt="Propiedad 3">
-            <div class="info">
-                <h3>Condominio en Serena del Mar</h3>
-                <p>$1.200.000.000 • 5 Habitaciones</p>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
 
-<section class="section">
-    <h2>Propiedades en Arriendo Destacadas</h2>
-    <div class="properties">
-        <div class="property-card">
-            <img src="https://picsum.photos/400/200?4" alt="Propiedad 4">
-            <div class="info">
-                <h3>Apartamento en El Laguito</h3>
-                <p>$3.500.000 / mes • 2 Habitaciones</p>
-            </div>
-        </div>
-        <div class="property-card">
-            <img src="https://picsum.photos/400/200?5" alt="Propiedad 5">
-            <div class="info">
-                <h3>Casa en Crespo</h3>
-                <p>$5.000.000 / mes • 3 Habitaciones</p>
-            </div>
-        </div>
-        <div class="property-card">
-            <img src="https://picsum.photos/400/200?6" alt="Propiedad 6">
-            <div class="info">
-                <h3>Estudio en Centro Histórico</h3>
-                <p>$2.500.000 / mes • 1 Habitación</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="section">
-    <h2>Servicios</h2>
-    <div class="services">
-        <div class="service-card">
-            <i class="fas fa-gavel"></i>
-            <h3>Asesoría Legal</h3>
-            <p>Protegemos tu inversión con respaldo jurídico profesional.</p>
-        </div>
-        <div class="service-card">
-            <i class="fas fa-balance-scale"></i>
-            <h3>Avalúos</h3>
-            <p>Valoraciones precisas para venta o arriendo.</p>
-        </div>
-        <div class="service-card">
-            <i class="fas fa-building"></i>
-            <h3>Administración de Inmuebles</h3>
-            <p>Gestión integral para rentabilizar tu propiedad.</p>
-        </div>
-    </div>
-</section>
-
-<footer>
-    <p>&copy; 2025 Altorra Inmobiliaria - Todos los derechos reservados</p>
-</footer>
-
-<script>
-// Toggle menú en móvil
-document.querySelector('.menu-toggle').addEventListener('click', () => {
-    document.querySelector('nav ul').classList.toggle('show');
-});
-</script>
-
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 ALTORRA | Inmobiliaria - Cartagena, Colombia</p>
+    </footer>
 </body>
 </html>
