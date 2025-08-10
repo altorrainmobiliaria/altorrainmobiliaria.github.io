@@ -1,146 +1,84 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Altorra | Inmobiliaria</title>
-
-<!-- Fuentes y librerías -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
-<style>
-:root {
-    --primary-color: #B8860B;
-    --secondary-color: #000000;
-    --text-color-light: #F8F8F8;
-    --background-color: #f0f0f0;
-    --title-font-family: 'Playfair Display', serif;
-    --font-family: 'Inter', sans-serif;
-}
-
-/* Reset y estilo base */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-html, body {
-    width: 100%;
-    min-height: 100%;
-    font-family: var(--font-family);
-    color: var(--secondary-color);
-    background-color: var(--background-color);
-    overflow-x: hidden;
-}
-
-/* Fondo con imagen difuminada */
-body {
-    background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
-                url("https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1350&q=80") no-repeat center center/cover;
-}
-
-/* Animaciones */
-@keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Sección principal */
-.welcome-section {
-    min-height: 100vh;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    text-align: center;
-}
-
-/* Logo */
-.logo {
-    max-width: 220px;
-    height: auto;
-    margin-bottom: 20px;
-    filter: drop-shadow(0px 3px 6px rgba(0,0,0,0.5));
-    animation: fadeUp 1s ease forwards;
-}
-
-/* Lista de servicios */
-.services-list {
-    list-style: none;
-    max-width: 600px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    text-align: center;
-    animation: fadeUp 1s ease 0.3s forwards;
-    opacity: 0;
-}
-.services-list li {
-    font-size: clamp(1rem, 2.5vw, 1.2rem);
-    font-style: italic;
-    color: var(--text-color-light);
-}
-
-/* Botón */
-.scroll-down-btn {
-    margin-top: 30px;
-    background-color: var(--primary-color);
-    color: var(--text-color-light);
-    padding: 12px 28px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 1rem;
-    transition: all 0.25s ease;
-    box-shadow: 0 0 15px rgba(184,134,11,0.6);
-    animation: fadeUp 1s ease 0.6s forwards;
-    opacity: 0;
-}
-.scroll-down-btn:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 0 22px rgba(184,134,11,0.9);
-}
-
-/* Ajuste responsivo */
-@media (max-width: 768px) {
-    .logo {
-        max-width: 180px;
-    }
-    .services-list {
-        gap: 10px;
-    }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Altorra Inmobiliaria</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<div class="welcome-section" id="welcome">
-    <img src="https://i.ibb.co/9kvg1wzh/Chat-GPT-Image-9-ago-2025-10-31-20-p-m.png" alt="Altorra Inmobiliaria Logo" class="logo">
-    <ul class="services-list">
-        <li>Administración de inmuebles</li>
-        <li>Compra, venta y arriendo</li>
-        <li>Soluciones para tu patrimonio</li>
-        <li>Seguridad • Legalidad • Confianza</li>
-        <li>Cartagena, Colombia</li>
-    </ul>
-    <a href="#" class="scroll-down-btn" id="startBtn">Explorar Propiedades <i class="fas fa-arrow-down"></i></a>
-</div>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="logo.png" alt="Altorra Inmobiliaria">
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Propiedades</a></li>
+                <li><a href="#">Servicios</a></li>
+                <li><a href="#">Quiénes Somos</a></li>
+                <li><a href="#">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const startBtn = document.getElementById('startBtn');
-    startBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        alert('¡Listo para empezar a explorar!');
-    });
-});
-</script>
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-text">
+            <h1>Bienvenido a Altorra Inmobiliaria</h1>
+            <p>Conectamos personas con propiedades ideales</p>
+            <a href="#" class="btn">Explorar Propiedades</a>
+        </div>
+    </section>
+
+    <!-- Propiedades Destacadas -->
+    <section class="destacadas">
+        <h2>Propiedades Destacadas</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="prop1.jpg" alt="Propiedad 1">
+                <h3>Casa en Cartagena</h3>
+                <p>Desde $450,000,000</p>
+                <a href="#">Ver más</a>
+            </div>
+            <div class="card">
+                <img src="prop2.jpg" alt="Propiedad 2">
+                <h3>Apartamento en Bocagrande</h3>
+                <p>Desde $380,000,000</p>
+                <a href="#">Ver más</a>
+            </div>
+            <div class="card">
+                <img src="prop3.jpg" alt="Propiedad 3">
+                <h3>Finca Campestre</h3>
+                <p>Desde $520,000,000</p>
+                <a href="#">Ver más</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre nosotros -->
+    <section class="about">
+        <h2>Quiénes Somos</h2>
+        <p>Somos una inmobiliaria comprometida con encontrar la propiedad perfecta para cada cliente. Nuestro equipo cuenta con experiencia en compra, venta y arriendo de inmuebles en Cartagena y alrededores.</p>
+    </section>
+
+    <!-- Contacto -->
+    <section class="contacto">
+        <h2>Contáctanos</h2>
+        <form>
+            <input type="text" placeholder="Nombre" required>
+            <input type="email" placeholder="Correo" required>
+            <textarea placeholder="Mensaje" required></textarea>
+            <button type="submit">Enviar</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Altorra Inmobiliaria - Todos los derechos reservados</p>
+    </footer>
+
 </body>
 </html>
-
