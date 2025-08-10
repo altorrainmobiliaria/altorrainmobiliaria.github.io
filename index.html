@@ -60,7 +60,7 @@ html, body {
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.35); /* más contraste */
     z-index: 0;
 }
 
@@ -90,6 +90,11 @@ html, body {
     color: var(--text-color-light);
     position: relative;
 }
+.services-list li::before {
+    content: "•";
+    color: var(--primary-color);
+    margin-right: 8px;
+}
 
 /* Botón */
 .scroll-down-btn {
@@ -101,7 +106,7 @@ html, body {
     text-decoration: none;
     font-weight: 700;
     font-size: 1rem;
-    transition: all 0.25s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 0 15px rgba(184,134,11,0.6);
     animation: bounce 1.5s infinite;
     z-index: 1;
@@ -116,7 +121,7 @@ html, body {
     60% { transform: translateY(-3px); }
 }
 
-/* Ajuste responsivo */
+/* Ajustes responsivos */
 @media (max-width: 768px) {
     .logo {
         max-width: 180px;
@@ -125,31 +130,46 @@ html, body {
         gap: 10px;
     }
 }
+@media (max-width: 480px) {
+    .services-list li {
+        font-size: 0.95rem;
+        padding: 0 10px;
+    }
+    .scroll-down-btn {
+        font-size: 0.9rem;
+        padding: 10px 24px;
+    }
+}
 </style>
 </head>
 <body>
 
-<div class="welcome-section" id="welcome">
+<main class="welcome-section" id="welcome">
     <img src="https://i.ibb.co/9kvg1wzh/Chat-GPT-Image-9-ago-2025-10-31-20-p-m.png" alt="Altorra Inmobiliaria Logo" class="logo">
     <ul class="services-list">
-        <li>Administración de inmuebles</li>
-        <li>Compra, venta y arriendo</li>
-        <li>Soluciones para tu patrimonio</li>
+        <li>Expertos en administración de inmuebles</li>
+        <li>Compra, venta y arriendo con respaldo legal</li>
+        <li>Protege y potencia tu patrimonio</li>
         <li>Seguridad • Legalidad • Confianza</li>
         <li>Cartagena, Colombia</li>
     </ul>
-    <a href="#" class="scroll-down-btn" id="startBtn">Explorar Propiedades <i class="fas fa-arrow-down"></i></a>
-</div>
+    <a href="#propiedades" class="scroll-down-btn" id="startBtn">Explorar Propiedades <i class="fas fa-arrow-down"></i></a>
+</main>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const startBtn = document.getElementById('startBtn');
     startBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        alert('¡Listo para empezar a explorar! Publica tu sitio para que el botón funcione.');
+        const target = document.querySelector('#propiedades');
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            alert('¡Listo para empezar a explorar! Publica tu sitio para que el botón funcione.');
+        }
     });
 
-    /* Ajustar altura automática del iframe en Google Sites */
+    /* Ajuste altura automática del iframe (Google Sites) */
     function resizeIframe() {
         const bodyHeight = document.documentElement.scrollHeight;
         if (window.parent) {
@@ -165,5 +185,3 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
-
