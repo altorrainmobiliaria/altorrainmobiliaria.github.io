@@ -35,6 +35,16 @@
     will-change: transform;
     transition: filter 0.3s ease;
   }
+
+  /* Cambiar fondo en móvil */
+  @media (max-width: 520px) {
+    .bg-layer {
+      background-image: url('https://i.ibb.co/hF4Y2F76/pexels-dada-design-240566386-12289396.jpg'); /* Cambia aquí por la imagen optimizada móvil */
+      background-position: center top;
+      background-size: cover;
+    }
+  }
+
   .overlay {
     position: fixed;
     inset: 0;
