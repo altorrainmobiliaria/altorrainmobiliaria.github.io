@@ -12,6 +12,10 @@
     --white:#ffffff;
     --overlay: rgba(0,0,0,0.35);
     --glass: rgba(255,255,255,0.05);
+    --gold-strong: #d4af37;
+    --gold-soft: #ffd95e;
+    --trust-bg-a: rgba(24,22,20,0.62);
+    --trust-bg-b: rgba(10,8,6,0.45);
   }
   *{box-sizing:border-box;}
   html, body {
@@ -21,6 +25,8 @@
     color: var(--white);
     background: #000;
     overflow-x: hidden;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
   }
 
   /* Background */
@@ -36,12 +42,9 @@
     transition: filter 0.3s ease;
   }
 
-  /* Cambiar fondo en móvil */
   @media (max-width: 520px) {
     .bg-layer {
-      background-image: url('https://i.ibb.co/hF4Y2F76/pexels-dada-design-240566386-12289396.jpg'); /* Cambia aquí por la imagen optimizada móvil */
       background-position: center top;
-      background-size: cover;
     }
   }
 
@@ -65,11 +68,7 @@
     padding: 10px 28px;
     gap: 12px;
   }
-  .top-right {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
+  .top-right { display: flex; gap: 12px; align-items: center; }
   .icon-btn {
     display: inline-flex;
     align-items: center;
@@ -82,17 +81,10 @@
     font-weight: 600;
     font-size: 0.95rem;
     box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-    transition: background-color 0.3s ease;
+    transition: background-color 0.2s ease, transform 0.12s;
   }
-  .icon-btn:hover {
-    background-color: rgba(255 255 255 / 0.15);
-  }
-  .icon-btn img {
-    width: 22px;
-    height: 22px;
-    flex-shrink: 0;
-    object-fit: contain;
-  }
+  .icon-btn:hover { background-color: rgba(255 255 255 / 0.12); transform: translateY(-2px); }
+  .icon-btn img { width: 22px; height: 22px; flex-shrink: 0; object-fit: contain; }
 
   /* Hero */
   main {
@@ -107,53 +99,54 @@
     text-align: center;
     gap: 12px;
   }
-  .logo {
-    width: 400px; /* más grande */
-    height: auto;
-    margin-bottom: 2px;
-  }
+  .logo { width: 400px; height: auto; margin-bottom: 6px; }
+
+  /* LEMA */
   .title {
     font-size: clamp(1.6rem, 4vw, 2.8rem);
-    font-weight: 700;
-    margin: 0 0 5px;
-    line-height: 1.2;
+    font-weight: 800;
+    margin: 0 0 6px;
+    line-height: 1.1;
+    letter-spacing: 0.4px;
+    color: var(--white);
+    text-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    -webkit-text-stroke: 0.2px rgba(0,0,0,0.28);
+    animation: lemaIn 700ms ease both;
   }
+  @keyframes lemaIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
   .subtitle {
-    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-size: clamp(1rem, 2vw, 1.15rem);
     margin: 0 0 14px;
     font-weight: 500;
-    opacity: 0.9;
+    opacity: 0.95;
   }
-  .features {
-    display: flex;
-    gap: 14px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
+
+  /* Pills */
+  .features { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
   .pill {
-    background: rgba(255 255 255 / 0.08);
-    padding: 12px 18px;
+    background: rgba(255,255,255,0.06);
+    padding: 10px 16px;
     border-radius: 999px;
     font-weight: 600;
     color: var(--white);
-    min-width: 190px;
+    min-width: 170px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.22);
-    transition: background-color 0.3s ease;
+    transition: background 0.22s, box-shadow 0.22s;
   }
-  .pill:hover {
-    background: var(--accent);
-    color: #000;
-  }
+  .pill:hover { background: rgba(255,255,255,0.10); box-shadow: 0 12px 28px rgba(0,0,0,0.30); }
 
   /* CTA */
-  .cta-wrap {
-    margin-top: 18px;
-  }
+  .cta-wrap { margin-top: 16px; }
   .btn-primary {
-    background: var(--accent);
+    position: relative;
+    z-index: 1;
+    overflow: visible;
+    background: linear-gradient(90deg, var(--accent) 0%, #ffd95e 100%);
+    background-size: 200% 100%;
     color: #000;
     border: none;
-    padding: 14px 28px;
+    padding: 12px 26px;
     border-radius: 999px;
     font-weight: 700;
     cursor: pointer;
@@ -162,51 +155,117 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    font-size: 1.1rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    font-size: 1rem;
+    transition: transform 0.22s ease, box-shadow 0.28s ease, background-position 0.6s ease;
   }
-  .btn-primary:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 18px 40px rgba(0,0,0,0.36);
-  }
+  .btn-primary:hover { transform: translateY(-4px); background-position: 100% 50%; box-shadow: 0 22px 60px rgba(255,180,0,0.12), 0 12px 28px rgba(0,0,0,0.36); }
+  .btn-primary::after{ content:""; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:120%; height:120%; border-radius:999px; background: radial-gradient(circle at center, rgba(255,180,0,0.16) 0%, rgba(255,180,0,0.06) 40%, transparent 60%); z-index:-1; transition:opacity .28s; opacity:0; pointer-events:none; }
+  .btn-primary:hover::after{ opacity:1; }
 
-  /* Impact counters */
+  /* Contadores */
   .impact {
     z-index: 3;
-    margin-top: 30px;
+    margin-top: 28px;
     width: 100%;
     max-width: 1100px;
     display: flex;
     justify-content: center;
-    gap: 22px;
+    gap: 18px;
     flex-wrap: nowrap;
   }
   .counter {
-    background: rgba(255 255 255 / 0.1);
-    border-radius: 10px;
-    padding: 18px 24px;
-    min-width: 180px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 12px;
+    padding: 16px 20px;
+    min-width: 170px;
     text-align: center;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.25);
-    transition: background-color 0.3s ease;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.28);
+    transition: box-shadow 0.28s ease, opacity 0.28s ease, background 0.28s ease;
     color: var(--white);
+    opacity: 0;
+    transform: translateY(18px);
+    will-change: opacity, transform;
+    cursor: default;
   }
-  .counter:hover {
-    background: var(--accent);
-    color: #000;
+  .counter.visible { opacity: 1; transform: translateY(0); }
+  .counter:hover { box-shadow: 0 14px 36px rgba(0,0,0,0.45); background: rgba(255,255,255,0.08); }
+
+  .counter .icon { width:44px; height:44px; margin:0 auto 8px; display:grid; place-items:center; border-radius:10px; background: rgba(255,255,255,0.03); transition: transform .36s, box-shadow .36s; }
+  .counter .icon.pop { transform: translateY(-6px) scale(1.02); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
+  .counter .icon svg { width:20px; height:20px; color: var(--accent); display:block; }
+
+  .counter .num { font-size:1.7rem; font-weight:700; background: linear-gradient(45deg,#ffb400,#ffd95e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:6px; display:inline-block; }
+  .counter.visible .num { animation: popNum 580ms cubic-bezier(.2,.9,.2,1); }
+  @keyframes popNum { 0%{transform:scale(.88);opacity:0} 60%{transform:scale(1.06);opacity:1} 100%{transform:scale(1);opacity:1} }
+
+  /* etiqueta título + descripción (sin guion, descripción en cursiva) */
+  .counter .label { margin-top:8px; line-height:1.06; display:block; }
+  .counter .label-title { font-weight:700; font-size:0.98rem; margin-bottom:4px; color:var(--white); }
+  .counter .label-desc { font-size:0.86rem; font-style:italic; opacity:0.88; margin:0; color: rgba(255,255,255,0.9); }
+
+  /* TRUST block (diseño oscuro, compacto y con acento dorado) */
+  .trust-section {
+    z-index: 3;
+    margin-top: 22px;
+    width: 100%;
+    max-width: 1100px;
+    background: linear-gradient(180deg, var(--trust-bg-a), var(--trust-bg-b));
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.5), 0 2px 8px rgba(212,175,55,0.06) inset;
+    border: 1px solid rgba(212,175,55,0.14);
+    color: #fff;
+    transform: translateY(8px);
+    opacity: 0;
+    transition: transform 420ms ease, opacity 420ms ease;
   }
-  .counter .num {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--accent);
-    margin-bottom: 6px;
+  .trust-section.visible { transform: translateY(0); opacity: 1; }
+
+  /* trophy */
+  .trophy-wrap {
+    width: 76px;
+    height: 76px;
+    min-width: 76px;
+    min-height: 76px;
+    display: grid;
+    place-items: center;
+    position: relative;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.08));
+    box-shadow: 0 10px 26px rgba(0,0,0,0.45);
+    overflow: visible;
   }
-  .counter:hover .num {
-    color: #000;
+  .trophy-wrap::after{
+    content:"";
+    position:absolute;
+    inset: -20% -30%;
+    background: radial-gradient(circle at 30% 20%, rgba(255,210,120,0.06), transparent 30%);
+    pointer-events:none;
+    mix-blend-mode: screen;
+    filter: blur(8px);
   }
-  .counter .label {
-    font-size: 1rem;
-    opacity: 0.9;
+  .trophy-svg { animation: floaty 4s ease-in-out infinite; transform-origin:50% 50%; }
+
+  /* trust content */
+  .trust-content { display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
+  .trust-num { font-size: 2rem; font-weight: 800; line-height:1; color: var(--gold-strong);
+    background: linear-gradient(45deg, var(--gold-strong), var(--gold-soft));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .trust-title { font-weight:700; color: #fff; font-size: 1rem; margin: 0; }
+  .trust-desc { font-size: 0.92rem; font-style: italic; color: rgba(255,255,255,0.85); margin: 0; }
+
+  /* small screens: stack trust block */
+  @media (max-width: 720px) {
+    .trust-section { flex-direction: column; text-align:center; align-items:center; padding:12px; }
+    .trust-content { align-items:center; }
+    .impact { flex-wrap: wrap; gap: 14px; justify-content:center; }
+    .trust-num { font-size:1.6rem; }
+    .trophy-wrap { margin-bottom:6px; }
   }
 
   /* Floating Instagram */
@@ -225,74 +284,27 @@
     box-shadow: 0 14px 30px rgba(0,0,0,0.25);
     background: linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf);
     color: white;
-    transition: transform 0.3s ease;
+    transition: transform 0.18s ease;
   }
-  .insta-float:hover {
-    transform: scale(1.1);
-  }
-  .insta-float svg {
-    width: 24px;
-    height: 24px;
-    fill: white;
-  }
+  .insta-float:hover { transform: scale(1.08); }
+  .insta-float svg { width: 24px; height: 24px; fill: white; }
 
-  /* Responsive */
+  /* Responsive tweaks */
   @media (max-width: 900px) {
-    .logo {
-      width: 180px;
-    }
-    .pill {
-      min-width: 140px;
-      padding: 10px 14px;
-      font-size: 0.9rem;
-    }
-    .counter {
-      min-width: 140px;
-      padding: 16px 20px;
-    }
+    .logo { width: 180px; }
+    .pill { min-width: 140px; padding: 10px 14px; font-size: 0.9rem; }
+    .counter { min-width: 140px; padding: 14px 16px; }
   }
   @media (max-width: 520px) {
-    main {
-      padding: 120px 14px 40px;
-      gap: 8px;
-    }
-    .title {
-      font-size: 1.8rem;
-    }
-    .subtitle {
-      font-size: 1rem;
-      margin-bottom: 10px;
-    }
-    .features {
-      gap: 10px;
-    }
-    .counter {
-      min-width: 110px;
-      padding: 14px 16px;
-      font-size: 0.85rem;
-      min-height: 90px;
-    }
-    .impact {
-      flex-wrap: wrap;
-      gap: 16px;
-      justify-content: center;
-    }
+    main { padding: 110px 12px 36px; gap:8px; }
+    .title { font-size: 1.6rem; }
+    .subtitle { font-size: 0.98rem; margin-bottom: 10px; }
+    .counter { min-width: 110px; padding: 12px 12px; font-size: 0.85rem; min-height: 84px; }
+    .impact { flex-wrap: wrap; gap: 12px; justify-content:center; }
+    .trust-section { padding: 12px; }
+    .trust-num { font-size: 1.6rem; }
   }
 
-  /* Animations */
-  @keyframes fadeInUp {
-    0% {
-      opacity: 0;
-      transform: translateY(15px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  main > * {
-    animation: fadeInUp 0.6s ease forwards;
-  }
 </style>
 </head>
 <body>
@@ -302,106 +314,221 @@
   <div class="overlay" aria-hidden="true"></div>
 
   <!-- Top bar -->
-  <div class="top-bar" role="banner" aria-label="Barra superior">
-    <div class="top-right" aria-label="Contacto rápido">
-      <a class="icon-btn" href="https://wa.me/573235016747" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
-        <img src="https://i.ibb.co/SH3ShM6/whatsapp.png" alt="Icono WhatsApp" />
+  <div class="top-bar">
+    <div class="top-right">
+      <a class="icon-btn" href="https://wa.me/573235016747" target="_blank" rel="noopener">
+        <img src="https://i.ibb.co/SH3ShM6/whatsapp.png" alt="WhatsApp" />
         WhatsApp
       </a>
-
-      <a class="icon-btn" href="tel:+573235016747" aria-label="Llamar a Altorra">
-        <img src="https://i.ibb.co/rG6PQ1XR/684853.png" alt="Icono Teléfono" />
+      <a class="icon-btn" href="tel:+573235016747">
+        <img src="https://i.ibb.co/rG6PQ1XR/684853.png" alt="Teléfono" />
         +57 323 501 6747
       </a>
     </div>
   </div>
 
   <!-- HERO -->
-  <main role="main" aria-labelledby="hero-title">
+  <main>
     <img src="https://i.ibb.co/h1ZdnmKP/Chat-GPT-Image-9-ago-2025-10-31-20-p-m.png" alt="Altorra Logo" class="logo" />
-
-    <h1 id="hero-title" class="title">Gestión Integral en Soluciones Inmobiliarias</h1>
-
+    <h1 class="title">Gestión Integral en Soluciones Inmobiliarias</h1>
     <p class="subtitle">Seguridad · Legalidad · Confianza</p>
 
-    <div class="features" role="list" aria-label="Servicios principales">
-      <div class="pill" role="listitem">Administración de Inmuebles</div>
-      <div class="pill" role="listitem">Compra, Venta y Arrendamiento</div>
-      <div class="pill" role="listitem">Servicios Legales Especializados</div>
+    <div class="features">
+      <div class="pill">Administración de Inmuebles</div>
+      <div class="pill">Compra, Venta y Arrendamiento</div>
+      <div class="pill">Servicios Legales Especializados</div>
     </div>
 
     <div class="cta-wrap">
-      <a href="home.html" class="btn-primary" aria-label="Ir al sitio web">Ir al Sitio Web</a>
+      <a href="home.html" class="btn-primary">Ir al Sitio Web</a>
     </div>
 
-    <!-- Impact counters -->
+    <!-- Impact counters (3 principales) -->
     <section class="impact" aria-label="Impacto Altorra">
-      <div class="counter">
-        <div class="num" data-target="25">0</div>
-        <div class="label">Propiedades disponibles para venta</div>
+      <div class="counter" aria-hidden="false">
+        <div class="icon" aria-hidden="true">
+          <!-- house icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 11.5L12 4l9 7.5"></path>
+            <path d="M9 21V12h6v9"></path>
+          </svg>
+        </div>
+        <div class="num" data-target="25" aria-live="polite">0</div>
+        <div class="label">
+          <div class="label-title">Inmuebles en venta</div>
+          <div class="label-desc">Disponibles para compra inmediata</div>
+        </div>
       </div>
 
-      <div class="counter">
-        <div class="num" data-target="42">0</div>
-        <div class="label">Apartamentos disponibles para arriendo</div>
+      <div class="counter" aria-hidden="false">
+        <div class="icon" aria-hidden="true">
+          <!-- building icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 21h18"></path>
+            <path d="M7 21V10h10v11"></path>
+            <path d="M9 7h.01M15 7h.01M12 3v4"></path>
+          </svg>
+        </div>
+        <div class="num" data-target="42" aria-live="polite">0</div>
+        <div class="label">
+          <div class="label-title">Propiedades en arriendo</div>
+          <div class="label-desc">Inmuebles disponibles y listos para habitar</div>
+        </div>
       </div>
 
-      <div class="counter">
-        <div class="num" data-target="5">0</div>
-        <div class="label">Apartamentos amoblados para rentar por días</div>
-      </div>
-
-      <div class="counter">
-        <div class="num" data-target="78">0</div>
-        <div class="label">Clientes satisfechos</div>
+      <div class="counter" aria-hidden="false">
+        <div class="icon" aria-hidden="true">
+          <!-- bed icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2 12v6"></path>
+            <path d="M22 12v6"></path>
+            <path d="M2 18h20"></path>
+            <path d="M6 10v6"></path>
+            <path d="M18 10v6"></path>
+            <path d="M2 12h20v-2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"></path>
+          </svg>
+        </div>
+        <div class="num" data-target="5" aria-live="polite">0</div>
+        <div class="label">
+          <div class="label-title">Alojamientos por días</div>
+          <div class="label-desc">Estadías cortas para turismo o trabajo</div>
+        </div>
       </div>
     </section>
+
+    <!-- Bloque independiente +500 (rectángulo con trofeo estilizado, ahora oscuro/translúcido para mantener estética) -->
+    <section id="trust" class="trust-section" aria-label="Historias de confianza Altorra">
+      <div class="trophy-wrap" aria-hidden="true">
+        <!-- Trofeo SVG (estilizado para aspecto dorado y pseudo-3D) -->
+        <svg class="trophy-svg" width="72" height="72" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" focusable="false">
+          <defs>
+            <linearGradient id="goldGrad" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0" stop-color="#fff7d6"/>
+              <stop offset="0.25" stop-color="#ffefb3"/>
+              <stop offset="0.6" stop-color="#ffd54a"/>
+              <stop offset="1" stop-color="#d4af37"/>
+            </linearGradient>
+            <radialGradient id="goldShade" cx="30%" cy="20%" r="100%">
+              <stop offset="0" stop-color="rgba(255,255,255,0.9)"/>
+              <stop offset="0.6" stop-color="rgba(255,240,180,0.6)"/>
+              <stop offset="1" stop-color="rgba(210,160,55,1)"/>
+            </radialGradient>
+            <filter id="trophy-shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="0" dy="6" stdDeviation="10" flood-opacity="0.35"/>
+            </filter>
+          </defs>
+
+          <g filter="url(#trophy-shadow)">
+            <path d="M20 48h24v4a2 2 0 0 1-2 2H22a2 2 0 0 1-2-2v-4z" fill="#b07f1a"/>
+            <path d="M16 12c0 6 5 10 12 10s12-4 12-10v-2H16v2z" fill="url(#goldGrad)"/>
+            <path d="M44 12c2 0 6-1.5 6-4v-1h-6v5z" fill="url(#goldShade)"/>
+            <path d="M20 12c-2 0-6-1.5-6-4v-1h6v5z" fill="url(#goldShade)"/>
+            <path d="M14 12c-2 6 6 10 6 10" stroke="#b8860b" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <path d="M50 12c2 6-6 10-6 10" stroke="#b8860b" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <path d="M23 14c3 1 8 1 12-1" stroke="rgba(255,255,255,0.55)" stroke-width="0.9" stroke-linecap="round" fill="none" opacity="0.9"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="trust-content" role="article" aria-hidden="false">
+        <div class="trust-num"><span class="plus">+</span><span class="trust-number" data-target="500" aria-live="polite">0</span></div>
+        <div class="trust-title">Historias de confianza y resultados</div>
+        <div class="trust-desc">Familias y empresas que eligieron ALTORRA</div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Floating Instagram -->
-  <a class="insta-float" href="https://instagram.com/altorrainmobiliaria" target="_blank" rel="noopener" aria-label="Instagram Altorra">
+  <a class="insta-float" href="https://instagram.com/altorrainmobiliaria" target="_blank" rel="noopener">
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path fill="white" d="M7 2C4.2 2 2 4.2 2 7v10c0 2.8 2.2 5 5 5h10c2.8 0 5-2.2 5-5V7c0-2.8-2.2-5-5-5H7zm0 2h10c1.7 0 3 1.3 3 3v10c0 1.7-1.3 3-3 3H7c-1.7 0-3-1.3-3-3V7c0-1.7 1.3-3 3-3zm5 3.2a4.8 4.8 0 100 9.6 4.8 4.8 0 000-9.6zm0 2a2.8 2.8 0 110 5.6 2.8 2.8 0 010-5.6zM18.3 6a1.1 1.1 0 110 2.2 1.1 1.1 0 010-2.2z"/>
     </svg>
   </a>
 
 <script>
-  // Parallax background
+  // Parallax background (sin cambios)
   (function(){
     const bg = document.querySelector('.bg-layer');
     let last = 0, ticking = false;
     function onScroll(){ last = window.scrollY; if(!ticking){ requestAnimationFrame(update); ticking = true; } }
-    function update(){ const offset = last * 0.14; bg.style.transform = 'translateY(' + (-offset) + 'px)'; ticking = false; }
+    function update(){ const offset = last * 0.14; if(bg) bg.style.transform = 'translateY(' + (-offset) + 'px)'; ticking = false; }
     window.addEventListener('scroll', onScroll, {passive:true});
   })();
 
-  // Counters animation
+  // Contadores animados y entrada suave
   (function(){
-    const counters = document.querySelectorAll('.counter .num');
-    const el = document.querySelector('.impact');
-    if(!el) return;
-    const io = new IntersectionObserver((entries, obs) => {
-      entries.forEach(entry => {
-        if(entry.isIntersecting){
-          counters.forEach(n => {
-            const to = parseInt(n.getAttribute('data-target'),10) || 0;
-            let start = 0;
-            const duration = 1500 + Math.random()*800;
-            const startTime = performance.now();
-            function step(now){
-              const t = Math.min((now - startTime)/duration, 1);
-              n.textContent = Math.floor(t * (to - start) + start);
-              if(t < 1) requestAnimationFrame(step);
+    // counters inside .impact
+    const counters = document.querySelectorAll('.impact .counter .num');
+    const boxes = document.querySelectorAll('.impact .counter');
+    const icons = document.querySelectorAll('.impact .counter .icon');
+    const impactEl = document.querySelector('.impact');
+
+    if(impactEl){
+      const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting){
+            boxes.forEach(b => b.classList.add('visible'));
+            counters.forEach(n => {
+              const to = parseInt(n.getAttribute('data-target'),10) || 0;
+              const duration = 1200 + Math.floor(Math.random()*800);
+              const startTime = performance.now();
+              function step(now){
+                const t = Math.min((now - startTime)/duration, 1);
+                const eased = t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
+                n.textContent = Math.floor(eased * to);
+                if(t < 1) requestAnimationFrame(step);
+                else n.textContent = to;
+              }
+              requestAnimationFrame(step);
+            });
+
+            // ligeras "pops" en iconos
+            icons.forEach((ic, i) => {
+              setTimeout(() => {
+                ic.classList.add('pop');
+                setTimeout(() => ic.classList.remove('pop'), 700);
+              }, i * 90);
+            });
+
+            obs.unobserve(impactEl);
+          }
+        });
+      }, {threshold: 0.32});
+      io.observe(impactEl);
+    }
+
+    // trust block (+500) animation and reveal
+    const trustEl = document.querySelector('#trust');
+    if(trustEl){
+      const trustNumEl = trustEl.querySelector('.trust-number');
+      const trustObserver = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting){
+            trustEl.classList.add('visible');
+
+            // animate number
+            if(trustNumEl){
+              const to = parseInt(trustNumEl.getAttribute('data-target'),10) || 0;
+              const duration = 1400;
+              const startTime = performance.now();
+              function step(now){
+                const t = Math.min((now - startTime)/duration, 1);
+                const eased = t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
+                trustNumEl.textContent = Math.floor(eased * to);
+                if(t < 1) requestAnimationFrame(step);
+                else trustNumEl.textContent = to;
+              }
+              requestAnimationFrame(step);
             }
-            requestAnimationFrame(step);
-          });
-          obs.unobserve(el);
-        }
-      });
-    }, {threshold: 0.4});
-    io.observe(el);
+
+            obs.unobserve(trustEl);
+          }
+        });
+      }, {threshold: 0.28});
+      trustObserver.observe(trustEl);
+    }
   })();
 </script>
 </body>
 </html>
-
