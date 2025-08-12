@@ -468,10 +468,14 @@
       <div class="footer-number">
         <span class="plus">+</span><span class="number" data-target="500">0</span>
       </div>
-      <p class="footer-description">
-        Más de 500 historias de confianza y resultados,<br />
-        familias y empresas que eligieron la tranquilidad con Altorra.
-      </p>
+      <div class="footer-description">
+        <p class="footer-main-text">
+          Más de 500 historias de confianza y resultados
+        </p>
+        <p class="footer-subtitle-text">
+          familias y empresas que eligieron su tranquilidad con ALTORRA
+        </p>
+      </div>
     </div>
   </div>
 </footer>
@@ -480,7 +484,7 @@
   /* Pie de página confianza */
   #footer-trust {
     background: linear-gradient(180deg, rgba(12,12,12,0.5), rgba(6,6,6,0.45));
-    border: 1px solid rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.04);
     box-shadow: 0 12px 40px rgba(212, 175, 55, 0.1);
     border-radius: 12px;
     max-width: 1100px;
@@ -534,12 +538,25 @@
   }
 
   #footer-trust .footer-description {
-    font-size: 1.1rem;
-    font-weight: 600;
-    line-height: 1.3;
-    color: var(--white);
-    opacity: 0.9;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  #footer-trust .footer-main-text {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin: 0;
+    color: var(--white);
+  }
+
+  #footer-trust .footer-subtitle-text {
+    font-weight: 400;
+    font-size: 0.95rem;
+    font-style: italic;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
   }
 
   /* Animación contador */
@@ -569,8 +586,12 @@
       font-size: 2rem;
     }
 
-    #footer-trust .footer-description {
+    #footer-trust .footer-main-text {
       font-size: 1rem;
+    }
+
+    #footer-trust .footer-subtitle-text {
+      font-size: 0.9rem;
     }
   }
 </style>
@@ -606,10 +627,6 @@
     observer.observe(numberEl);
   })();
 </script>
-
-
-
-
 
 
 
@@ -726,3 +743,4 @@
 </script>
 </body>
 </html>
+
