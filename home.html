@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ALTORRA | Inmobiliaria - Soluciones integrales</title>
+  <meta name="description" content="ALTORRA Inmobiliaria. Vende, arrienda, administra y asesora propiedades con respaldo legal." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="header sticky">
+    <div class="container header-container">
+      <a href="home.html" class="logo">
+        <img src="img/logo.png" alt="ALTORRA Inmobiliaria Logo" />
+      </a>
+      <nav class="nav-menu">
+        <ul>
+          <li><a href="home.html">Inicio</a></li>
+          <li><a href="#">Propiedades</a></li>
+          <li><a href="#">Servicios</a></li>
+          <li><a href="#">Para propietarios</a></li>
+          <li><a href="#">Nosotros</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Contacto</a></li>
+        </ul>
+      </nav>
+      <div class="header-ctas">
+        <a href="#" class="btn btn-primary">Publicar propiedad</a>
+        <a href="#" class="btn btn-secondary">Solicita asesoría</a>
+      </div>
+      <div class="header-icons">
+        <a href="tel:+573235016747" aria-label="Llamar teléfono"><img src="img/phone-icon.svg" alt="Teléfono" /></a>
+        <a href="https://wa.me/573235016747" aria-label="WhatsApp"><img src="img/whatsapp-icon.svg" alt="WhatsApp" /></a>
+        <button aria-label="Cambiar idioma">ES/EN</button>
+        <a href="#" class="owner-access">Acceso propietario</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO + BUSCADOR -->
+  <section class="hero" style="background-image: url('img/hero-bg.jpg');">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+      <h1>Soluciones integrales para tu propiedad: vender, arrendar, administrar y asesorar.</h1>
+      <form class="search-form" aria-label="Buscador principal">
+        <input type="text" name="ubicacion" placeholder="Ubicación" autocomplete="off" />
+        <select name="transaccion" aria-label="Tipo de transacción">
+          <option value="">Transacción</option>
+          <option value="venta">Venta</option>
+          <option value="arriendo">Arriendo</option>
+          <option value="renta_corta">Renta por días</option>
+        </select>
+        <select name="tipo" aria-label="Tipo de propiedad">
+          <option value="">Tipo</option>
+          <option value="apartamento">Apartamento</option>
+          <option value="casa">Casa</option>
+          <option value="oficina">Oficina</option>
+        </select>
+        <input type="text" name="precio" placeholder="Rango de precio" />
+        <button type="submit" class=
