@@ -14,8 +14,6 @@
     --glass: rgba(255,255,255,0.05);
     --gold-strong: #d4af37;
     --gold-soft: #ffd95e;
-    --trust-bg-a: rgba(24,22,20,0.62);
-    --trust-bg-b: rgba(10,8,6,0.45);
   }
   *{box-sizing:border-box;}
   html, body {
@@ -25,8 +23,6 @@
     color: var(--white);
     background: #000;
     overflow-x: hidden;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
   }
 
   /* Background */
@@ -68,7 +64,11 @@
     padding: 10px 28px;
     gap: 12px;
   }
-  .top-right { display: flex; gap: 12px; align-items: center; }
+  .top-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
   .icon-btn {
     display: inline-flex;
     align-items: center;
@@ -81,10 +81,17 @@
     font-weight: 600;
     font-size: 0.95rem;
     box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-    transition: background-color 0.2s ease, transform 0.12s;
+    transition: background-color 0.3s ease;
   }
-  .icon-btn:hover { background-color: rgba(255 255 255 / 0.12); transform: translateY(-2px); }
-  .icon-btn img { width: 22px; height: 22px; flex-shrink: 0; object-fit: contain; }
+  .icon-btn:hover {
+    background-color: rgba(255 255 255 / 0.15);
+  }
+  .icon-btn img {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    object-fit: contain;
+  }
 
   /* Hero */
   main {
@@ -99,45 +106,58 @@
     text-align: center;
     gap: 12px;
   }
-  .logo { width: 400px; height: auto; margin-bottom: 6px; }
+  .logo {
+    width: 400px;
+    height: auto;
+    margin-bottom: 2px;
+  }
 
   /* LEMA */
   .title {
     font-size: clamp(1.6rem, 4vw, 2.8rem);
     font-weight: 800;
-    margin: 0 0 6px;
-    line-height: 1.1;
-    letter-spacing: 0.4px;
+    margin: 0 0 5px;
+    line-height: 1.2;
+    letter-spacing: 0.6px;
     color: var(--white);
-    text-shadow: 0 6px 18px rgba(0,0,0,0.6);
-    -webkit-text-stroke: 0.2px rgba(0,0,0,0.28);
-    animation: lemaIn 700ms ease both;
+    text-shadow: 0 6px 18px rgba(0,0,0,0.62);
+    -webkit-text-stroke: 0.3px rgba(0,0,0,0.36);
+    animation: lemaIn 800ms ease both;
   }
   @keyframes lemaIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
   .subtitle {
-    font-size: clamp(1rem, 2vw, 1.15rem);
+    font-size: clamp(1rem, 2vw, 1.25rem);
     margin: 0 0 14px;
     font-weight: 500;
-    opacity: 0.95;
+    opacity: 0.9;
   }
 
   /* Pills */
-  .features { display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .features {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
   .pill {
-    background: rgba(255,255,255,0.06);
-    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 12px 18px;
     border-radius: 999px;
     font-weight: 600;
     color: var(--white);
-    min-width: 170px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.22);
-    transition: background 0.22s, box-shadow 0.22s;
+    min-width: 190px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+    transition: box-shadow 0.28s ease, background 0.28s ease;
+    cursor: default;
   }
-  .pill:hover { background: rgba(255,255,255,0.10); box-shadow: 0 12px 28px rgba(0,0,0,0.30); }
+  .pill:hover {
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 10px 26px rgba(0,0,0,0.30);
+  }
 
   /* CTA */
-  .cta-wrap { margin-top: 16px; }
+  .cta-wrap { margin-top: 18px; }
   .btn-primary {
     position: relative;
     z-index: 1;
@@ -146,7 +166,7 @@
     background-size: 200% 100%;
     color: #000;
     border: none;
-    padding: 12px 26px;
+    padding: 14px 28px;
     border-radius: 999px;
     font-weight: 700;
     cursor: pointer;
@@ -155,117 +175,160 @@
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    font-size: 1rem;
-    transition: transform 0.22s ease, box-shadow 0.28s ease, background-position 0.6s ease;
+    font-size: 1.1rem;
+    transition: transform 0.28s ease, box-shadow 0.28s ease, background-position 0.6s ease;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
   }
-  .btn-primary:hover { transform: translateY(-4px); background-position: 100% 50%; box-shadow: 0 22px 60px rgba(255,180,0,0.12), 0 12px 28px rgba(0,0,0,0.36); }
-  .btn-primary::after{ content:""; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:120%; height:120%; border-radius:999px; background: radial-gradient(circle at center, rgba(255,180,0,0.16) 0%, rgba(255,180,0,0.06) 40%, transparent 60%); z-index:-1; transition:opacity .28s; opacity:0; pointer-events:none; }
-  .btn-primary:hover::after{ opacity:1; }
+  .btn-primary::after{
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%) scale(1);
+    width: 140%;
+    height: 140%;
+    border-radius: 999px;
+    background: radial-gradient(circle at center, rgba(255,180,0,0.22) 0%, rgba(255,180,0,0.08) 30%, transparent 60%);
+    filter: blur(12px);
+    opacity: 0;
+    transition: opacity 0.32s ease, transform 0.32s ease;
+    z-index: -1;
+    pointer-events: none;
+  }
+  .btn-primary:hover {
+    transform: translateY(-4px);
+    background-position: 100% 50%;
+    box-shadow: 0 22px 60px rgba(255,180,0,0.12), 0 12px 28px rgba(0,0,0,0.36);
+  }
+  .btn-primary:hover::after { opacity: 1; transform: translate(-50%,-50%) scale(1.06); }
+  .btn-primary:focus{ box-shadow: 0 0 0 6px rgba(255,180,0,0.12), 0 12px 28px rgba(0,0,0,0.36); }
 
   /* Contadores */
   .impact {
     z-index: 3;
-    margin-top: 28px;
+    margin-top: 30px;
     width: 100%;
     max-width: 1100px;
     display: flex;
     justify-content: center;
-    gap: 18px;
+    gap: 22px;
     flex-wrap: nowrap;
   }
   .counter {
     background: rgba(255, 255, 255, 0.06);
     border-radius: 12px;
-    padding: 16px 20px;
-    min-width: 170px;
+    padding: 18px 22px;
+    min-width: 160px;
     text-align: center;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.28);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
     transition: box-shadow 0.28s ease, opacity 0.28s ease, background 0.28s ease;
     color: var(--white);
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(20px);
     will-change: opacity, transform;
     cursor: default;
   }
   .counter.visible { opacity: 1; transform: translateY(0); }
-  .counter:hover { box-shadow: 0 14px 36px rgba(0,0,0,0.45); background: rgba(255,255,255,0.08); }
+  .counter:hover { box-shadow: 0 14px 36px rgba(0,0,0,0.45); background: rgba(255, 255, 255, 0.08); }
 
-  .counter .icon { width:44px; height:44px; margin:0 auto 8px; display:grid; place-items:center; border-radius:10px; background: rgba(255,255,255,0.03); transition: transform .36s, box-shadow .36s; }
+  .counter .icon { width: 44px; height: 44px; margin: 0 auto 8px; display: grid; place-items: center; border-radius: 10px; background: rgba(255,255,255,0.03); transition: transform 0.45s cubic-bezier(.2,.9,.2,1), box-shadow 0.45s ease; }
   .counter .icon.pop { transform: translateY(-6px) scale(1.02); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
-  .counter .icon svg { width:20px; height:20px; color: var(--accent); display:block; }
+  .counter .icon svg { width: 22px; height: 22px; color: var(--accent); display:block; }
 
-  .counter .num { font-size:1.7rem; font-weight:700; background: linear-gradient(45deg,#ffb400,#ffd95e); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:6px; display:inline-block; }
-  .counter.visible .num { animation: popNum 580ms cubic-bezier(.2,.9,.2,1); }
-  @keyframes popNum { 0%{transform:scale(.88);opacity:0} 60%{transform:scale(1.06);opacity:1} 100%{transform:scale(1);opacity:1} }
+  .counter .num { font-size: 1.8rem; font-weight: 700; background: linear-gradient(45deg, #ffb400, #ffd95e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; display: inline-block; }
+  .counter.visible .num { animation: popNum 650ms cubic-bezier(.2,.9,.2,1); }
+  @keyframes popNum { 0%{transform:scale(.86);opacity:0} 60%{transform:scale(1.08);opacity:1} 100%{transform:scale(1);opacity:1} }
 
-  /* etiqueta título + descripción (sin guion, descripción en cursiva) */
-  .counter .label { margin-top:8px; line-height:1.06; display:block; }
-  .counter .label-title { font-weight:700; font-size:0.98rem; margin-bottom:4px; color:var(--white); }
-  .counter .label-desc { font-size:0.86rem; font-style:italic; opacity:0.88; margin:0; color: rgba(255,255,255,0.9); }
+  /* nueva estructura de label (título + descripción en cursiva) */
+  .counter .label { margin-top: 8px; line-height: 1.06; }
+  .counter .label-title { font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+  .counter .label-desc { font-size: 0.92rem; font-style: italic; opacity: 0.85; margin: 0; }
 
-  /* TRUST block (diseño oscuro, compacto y con acento dorado) */
-  .trust-section {
+  /* ---- SECCIÓN DE CONFIANZA (franja oscura, watermark dorado) ---- */
+  .trust-band {
     z-index: 3;
-    margin-top: 22px;
+    margin-top: 28px;
     width: 100%;
     max-width: 1100px;
-    background: linear-gradient(180deg, var(--trust-bg-a), var(--trust-bg-b));
+    position: relative;
+    padding: 16px 20px;
     border-radius: 12px;
-    padding: 12px 16px;
+    overflow: visible;
     display: flex;
+    gap: 18px;
     align-items: center;
-    gap: 14px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.5), 0 2px 8px rgba(212,175,55,0.06) inset;
-    border: 1px solid rgba(212,175,55,0.14);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.46);
+    border: 1px solid rgba(212,175,55,0.06);
+    /* base oscuro con brillo dorado sutil (keeps elegant & not link-like) */
+    background: linear-gradient(180deg, rgba(12,12,12,0.72), rgba(6,6,6,0.74));
+    backdrop-filter: blur(4px);
     color: #fff;
-    transform: translateY(8px);
+    transform: translateY(10px);
     opacity: 0;
     transition: transform 420ms ease, opacity 420ms ease;
+    cursor: default; /* explicitly not a link */
   }
-  .trust-section.visible { transform: translateY(0); opacity: 1; }
+  .trust-band.visible { transform: translateY(0); opacity: 1; }
 
-  /* trophy */
-  .trophy-wrap {
-    width: 76px;
-    height: 76px;
-    min-width: 76px;
-    min-height: 76px;
-    display: grid;
-    place-items: center;
-    position: relative;
-    flex-shrink: 0;
-    border-radius: 10px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.08));
-    box-shadow: 0 10px 26px rgba(0,0,0,0.45);
-    overflow: visible;
-  }
-  .trophy-wrap::after{
-    content:"";
-    position:absolute;
-    inset: -20% -30%;
-    background: radial-gradient(circle at 30% 20%, rgba(255,210,120,0.06), transparent 30%);
-    pointer-events:none;
+  /* overlay dorado sutil detrás del contenedor (no tapa el texto) */
+  .trust-band::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    pointer-events: none;
+    background: radial-gradient(60% 40% at 20% 30%, rgba(212,175,55,0.04), transparent 18%),
+                linear-gradient(90deg, rgba(255,209,102,0.01), rgba(212,175,55,0.01));
     mix-blend-mode: screen;
-    filter: blur(8px);
+    z-index: 0;
   }
-  .trophy-svg { animation: floaty 4s ease-in-out infinite; transform-origin:50% 50%; }
 
-  /* trust content */
-  .trust-content { display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
-  .trust-num { font-size: 2rem; font-weight: 800; line-height:1; color: var(--gold-strong);
+  /* watermark grande (detrás del contenido) */
+  .trust-watermark {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: clamp(48px, 8vw, 120px);
+    font-weight: 900;
+    color: rgba(212,175,55,0.06);
+    letter-spacing: -6px;
+    z-index: 0;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* motivo abstracto / "tech" (sutil) */
+  .tech-orb { width: 64px; height: 64px; flex-shrink:0; z-index:1; opacity: 0.95; }
+  .tech-orb svg { width:64px; height:64px; display:block; }
+  .tech-orb .ring { stroke: rgba(212,175,55,0.20); stroke-width:1; fill:none; }
+  .tech-orb .dots { fill: rgba(212,175,55,0.95); opacity:0.12; }
+  .tech-orb { transform-origin:center; animation: tech-orb-rotate 18s linear infinite; }
+  @keyframes tech-orb-rotate { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+
+  /* contenido textual del trust (encima del watermark) */
+  .trust-content { z-index: 2; display:flex; flex-direction:column; gap:6px; align-items:flex-start; }
+  .trust-num { font-size: 1.5rem; font-weight: 800; line-height:1; color: var(--gold-strong);
     background: linear-gradient(45deg, var(--gold-strong), var(--gold-soft));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: 0.6px;
   }
-  .trust-title { font-weight:700; color: #fff; font-size: 1rem; margin: 0; }
-  .trust-desc { font-size: 0.92rem; font-style: italic; color: rgba(255,255,255,0.85); margin: 0; }
+  .trust-main { font-size: clamp(1rem, 2.2vw, 1.25rem); margin: 0; font-weight:700; color: #fff; }
+  .trust-sub { font-size: 0.95rem; font-style: italic; color: rgba(255,255,255,0.88); margin: 0; }
 
-  /* small screens: stack trust block */
+  /* Accessibility: motion reduction */
+  @media (prefers-reduced-motion: reduce) {
+    .tech-orb { animation: none; }
+    .trust-band, .counter { transition: none; animation: none; }
+  }
+
+  /* small screens: stack */
   @media (max-width: 720px) {
-    .trust-section { flex-direction: column; text-align:center; align-items:center; padding:12px; }
+    .trust-band { flex-direction: column; text-align:center; align-items:center; padding: 14px; }
     .trust-content { align-items:center; }
+    .trust-watermark { right: 50%; transform: translate(30%, -50%); font-size: clamp(36px, 15vw, 84px); }
     .impact { flex-wrap: wrap; gap: 14px; justify-content:center; }
-    .trust-num { font-size:1.6rem; }
-    .trophy-wrap { margin-bottom:6px; }
   }
 
   /* Floating Instagram */
@@ -284,27 +347,27 @@
     box-shadow: 0 14px 30px rgba(0,0,0,0.25);
     background: linear-gradient(45deg,#feda75,#fa7e1e,#d62976,#962fbf);
     color: white;
-    transition: transform 0.18s ease;
+    transition: transform 0.3s ease;
   }
-  .insta-float:hover { transform: scale(1.08); }
+  .insta-float:hover { transform: scale(1.1); }
   .insta-float svg { width: 24px; height: 24px; fill: white; }
 
-  /* Responsive tweaks */
+  /* Responsive general tweaks */
   @media (max-width: 900px) {
     .logo { width: 180px; }
     .pill { min-width: 140px; padding: 10px 14px; font-size: 0.9rem; }
-    .counter { min-width: 140px; padding: 14px 16px; }
+    .counter { min-width: 140px; padding: 16px 20px; }
   }
   @media (max-width: 520px) {
-    main { padding: 110px 12px 36px; gap:8px; }
-    .title { font-size: 1.6rem; }
-    .subtitle { font-size: 0.98rem; margin-bottom: 10px; }
-    .counter { min-width: 110px; padding: 12px 12px; font-size: 0.85rem; min-height: 84px; }
-    .impact { flex-wrap: wrap; gap: 12px; justify-content:center; }
-    .trust-section { padding: 12px; }
-    .trust-num { font-size: 1.6rem; }
+    main { padding: 120px 14px 40px; gap: 8px; }
+    .title { font-size: 1.8rem; }
+    .subtitle { font-size: 1rem; margin-bottom: 10px; }
+    .features { gap: 10px; }
+    .counter { min-width: 110px; padding: 14px 16px; font-size: 0.85rem; min-height: 90px; }
+    .impact { flex-wrap: wrap; gap: 16px; justify-content: center; }
+    .trust-band { padding: 12px 14px; }
+    .trust-num { font-size: 1.25rem; }
   }
-
 </style>
 </head>
 <body>
@@ -348,7 +411,7 @@
       <div class="counter" aria-hidden="false">
         <div class="icon" aria-hidden="true">
           <!-- house icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
             <path d="M3 11.5L12 4l9 7.5"></path>
             <path d="M9 21V12h6v9"></path>
           </svg>
@@ -363,7 +426,7 @@
       <div class="counter" aria-hidden="false">
         <div class="icon" aria-hidden="true">
           <!-- building icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
             <path d="M3 21h18"></path>
             <path d="M7 21V10h10v11"></path>
             <path d="M9 7h.01M15 7h.01M12 3v4"></path>
@@ -379,7 +442,7 @@
       <div class="counter" aria-hidden="false">
         <div class="icon" aria-hidden="true">
           <!-- bed icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
             <path d="M2 12v6"></path>
             <path d="M22 12v6"></path>
             <path d="M2 18h20"></path>
@@ -395,47 +458,159 @@
         </div>
       </div>
     </section>
-
-    <!-- Bloque independiente +500 (rectángulo con trofeo estilizado, ahora oscuro/translúcido para mantener estética) -->
-    <section id="trust" class="trust-section" aria-label="Historias de confianza Altorra">
-      <div class="trophy-wrap" aria-hidden="true">
-        <!-- Trofeo SVG (estilizado para aspecto dorado y pseudo-3D) -->
-        <svg class="trophy-svg" width="72" height="72" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" focusable="false">
-          <defs>
-            <linearGradient id="goldGrad" x1="0" x2="1" y1="0" y2="1">
-              <stop offset="0" stop-color="#fff7d6"/>
-              <stop offset="0.25" stop-color="#ffefb3"/>
-              <stop offset="0.6" stop-color="#ffd54a"/>
-              <stop offset="1" stop-color="#d4af37"/>
-            </linearGradient>
-            <radialGradient id="goldShade" cx="30%" cy="20%" r="100%">
-              <stop offset="0" stop-color="rgba(255,255,255,0.9)"/>
-              <stop offset="0.6" stop-color="rgba(255,240,180,0.6)"/>
-              <stop offset="1" stop-color="rgba(210,160,55,1)"/>
-            </radialGradient>
-            <filter id="trophy-shadow" x="-50%" y="-50%" width="200%" height="200%">
-              <feDropShadow dx="0" dy="6" stdDeviation="10" flood-opacity="0.35"/>
-            </filter>
-          </defs>
-
-          <g filter="url(#trophy-shadow)">
-            <path d="M20 48h24v4a2 2 0 0 1-2 2H22a2 2 0 0 1-2-2v-4z" fill="#b07f1a"/>
-            <path d="M16 12c0 6 5 10 12 10s12-4 12-10v-2H16v2z" fill="url(#goldGrad)"/>
-            <path d="M44 12c2 0 6-1.5 6-4v-1h-6v5z" fill="url(#goldShade)"/>
-            <path d="M20 12c-2 0-6-1.5-6-4v-1h6v5z" fill="url(#goldShade)"/>
-            <path d="M14 12c-2 6 6 10 6 10" stroke="#b8860b" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-            <path d="M50 12c2 6-6 10-6 10" stroke="#b8860b" stroke-width="1.6" fill="none" stroke-linecap="round"/>
-            <path d="M23 14c3 1 8 1 12-1" stroke="rgba(255,255,255,0.55)" stroke-width="0.9" stroke-linecap="round" fill="none" opacity="0.9"/>
-          </g>
-        </svg>
+<footer id="footer-trust" aria-label="Historias de confianza Altorra" role="contentinfo">
+  <div class="footer-container">
+    <div class="footer-icon" aria-hidden="true">
+      <img src="https://i.ibb.co/VYFgMHBD/Sin-t-tulo-removebg-preview.png" alt="Icono verificado Altorra" />
+    </div>
+    <div class="footer-text" role="article" aria-live="polite">
+      <div class="footer-number">
+        <span class="plus">+</span><span class="number" data-target="500">0</span>
       </div>
+      <p class="footer-description">
+        Más de 500 historias de confianza y resultados,<br />
+        familias y empresas que eligieron la tranquilidad con Altorra.
+      </p>
+    </div>
+  </div>
+</footer>
 
-      <div class="trust-content" role="article" aria-hidden="false">
-        <div class="trust-num"><span class="plus">+</span><span class="trust-number" data-target="500" aria-live="polite">0</span></div>
-        <div class="trust-title">Historias de confianza y resultados</div>
-        <div class="trust-desc">Familias y empresas que eligieron ALTORRA</div>
-      </div>
-    </section>
+<style>
+  /* Pie de página confianza */
+  #footer-trust {
+    background: linear-gradient(180deg, rgba(12,12,12,0.8), rgba(6,6,6,0.85));
+    border: 1px solid rgba(212, 175, 55, 0.08);
+    box-shadow: 0 12px 40px rgba(212, 175, 55, 0.1);
+    border-radius: 12px;
+    max-width: 1100px;
+    margin: 40px auto 20px;
+    padding: 20px 24px;
+    color: var(--white);
+    font-family: "Poppins", sans-serif;
+    user-select: none;
+  }
+
+  #footer-trust .footer-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  #footer-trust .footer-icon {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+  }
+
+  #footer-trust .footer-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 3px rgba(212, 175, 55, 0.7));
+  }
+
+  #footer-trust .footer-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  #footer-trust .footer-number {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: #d4af37;
+    background: linear-gradient(45deg, #d4af37, #ffd95e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.6px;
+  }
+
+  #footer-trust .plus {
+    font-weight: 700;
+    font-size: 2.6rem;
+    vertical-align: top;
+  }
+
+  #footer-trust .footer-description {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--white);
+    opacity: 0.9;
+    margin: 0;
+  }
+
+  /* Animación contador */
+  #footer-trust .number {
+    transition: all 0.3s ease;
+  }
+
+  /* Responsive */
+  @media (max-width: 720px) {
+    #footer-trust .footer-container {
+      flex-direction: column;
+      text-align: center;
+      gap: 14px;
+    }
+
+    #footer-trust .footer-icon {
+      width: 56px;
+      height: 56px;
+      filter: drop-shadow(0 0 2px rgba(212, 175, 55, 0.7));
+    }
+
+    #footer-trust .footer-number {
+      font-size: 2rem;
+    }
+
+    #footer-trust .plus {
+      font-size: 2rem;
+    }
+
+    #footer-trust .footer-description {
+      font-size: 1rem;
+    }
+  }
+</style>
+
+<script>
+  // Animar contador en el footer (igual que en el main)
+  (function(){
+    const numberEl = document.querySelector('#footer-trust .number');
+    if(!numberEl) return;
+    const to = parseInt(numberEl.getAttribute('data-target'), 10) || 0;
+
+    function animateNumber(duration = 1600){
+      const startTime = performance.now();
+      function step(now){
+        const t = Math.min((now - startTime)/duration, 1);
+        const eased = t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
+        numberEl.textContent = Math.floor(eased * to);
+        if(t < 1) requestAnimationFrame(step);
+        else numberEl.textContent = to;
+      }
+      requestAnimationFrame(step);
+    }
+
+    // Detectar si está visible para animar solo entonces
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          animateNumber();
+          obs.unobserve(entry.target);
+        }
+      });
+    }, {threshold: 0.3});
+    observer.observe(numberEl);
+  })();
+</script>
+
+
+
+
+
+
 
   </main>
 
@@ -447,86 +622,104 @@
   </a>
 
 <script>
-  // Parallax background (sin cambios)
+  // Parallax background
   (function(){
     const bg = document.querySelector('.bg-layer');
+    if(!bg) return;
     let last = 0, ticking = false;
     function onScroll(){ last = window.scrollY; if(!ticking){ requestAnimationFrame(update); ticking = true; } }
-    function update(){ const offset = last * 0.14; if(bg) bg.style.transform = 'translateY(' + (-offset) + 'px)'; ticking = false; }
+    function update(){ const offset = last * 0.14; bg.style.transform = 'translateY(' + (-offset) + 'px)'; ticking = false; }
     window.addEventListener('scroll', onScroll, {passive:true});
   })();
 
-  // Contadores animados y entrada suave
+  // Animaciones: contadores y reveal
   (function(){
-    // counters inside .impact
-    const counters = document.querySelectorAll('.impact .counter .num');
-    const boxes = document.querySelectorAll('.impact .counter');
-    const icons = document.querySelectorAll('.impact .counter .icon');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Counters inside .impact
     const impactEl = document.querySelector('.impact');
-
     if(impactEl){
-      const io = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-          if(entry.isIntersecting){
-            boxes.forEach(b => b.classList.add('visible'));
-            counters.forEach(n => {
-              const to = parseInt(n.getAttribute('data-target'),10) || 0;
-              const duration = 1200 + Math.floor(Math.random()*800);
-              const startTime = performance.now();
-              function step(now){
-                const t = Math.min((now - startTime)/duration, 1);
-                const eased = t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
-                n.textContent = Math.floor(eased * to);
-                if(t < 1) requestAnimationFrame(step);
-                else n.textContent = to;
-              }
-              requestAnimationFrame(step);
-            });
+      const boxes = impactEl.querySelectorAll('.counter');
+      const counters = impactEl.querySelectorAll('.counter .num');
+      const icons = impactEl.querySelectorAll('.counter .icon');
 
-            // ligeras "pops" en iconos
-            icons.forEach((ic, i) => {
-              setTimeout(() => {
-                ic.classList.add('pop');
-                setTimeout(() => ic.classList.remove('pop'), 700);
-              }, i * 90);
-            });
-
-            obs.unobserve(impactEl);
-          }
-        });
-      }, {threshold: 0.32});
-      io.observe(impactEl);
+      if(reduceMotion){
+        // accessible fallback: show final values immediately
+        boxes.forEach(b => b.classList.add('visible'));
+        counters.forEach(n => { const to = parseInt(n.getAttribute('data-target'),10) || 0; n.textContent = to; });
+      } else {
+        const io = new IntersectionObserver((entries, obs) => {
+          entries.forEach(entry => {
+            if(entry.isIntersecting){
+              boxes.forEach(b => b.classList.add('visible'));
+              counters.forEach(n => {
+                const to = parseInt(n.getAttribute('data-target'),10) || 0;
+                const duration = 1400 + Math.floor(Math.random()*700);
+                const startTime = performance.now();
+                function step(now){
+                  const t = Math.min((now - startTime)/duration, 1);
+                  const eased = t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
+                  n.textContent = Math.floor(eased * to);
+                  if(t < 1) requestAnimationFrame(step);
+                  else n.textContent = to;
+                }
+                requestAnimationFrame(step);
+              });
+              icons.forEach((ic, i) => {
+                setTimeout(() => { ic.classList.add('pop'); setTimeout(() => ic.classList.remove('pop'), 700); }, i * 90);
+              });
+              obs.unobserve(impactEl);
+            }
+          });
+        }, {threshold: 0.28});
+        io.observe(impactEl);
+      }
     }
 
-    // trust block (+500) animation and reveal
+    // Trust band animation & count (statement-style, not an action)
     const trustEl = document.querySelector('#trust');
     if(trustEl){
       const trustNumEl = trustEl.querySelector('.trust-number');
-      const trustObserver = new IntersectionObserver((entries, obs) => {
-        entries.forEach(entry => {
-          if(entry.isIntersecting){
-            trustEl.classList.add('visible');
+      const watermark = trustEl.querySelector('.trust-watermark');
 
-            // animate number
-            if(trustNumEl){
-              const to = parseInt(trustNumEl.getAttribute('data-target'),10) || 0;
-              const duration = 1400;
-              const startTime = performance.now();
-              function step(now){
-                const t = Math.min((now - startTime)/duration, 1);
-                const eased = t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
-                trustNumEl.textContent = Math.floor(eased * to);
-                if(t < 1) requestAnimationFrame(step);
-                else trustNumEl.textContent = to;
+      if(reduceMotion){
+        trustEl.classList.add('visible');
+        if(trustNumEl){ trustNumEl.textContent = trustNumEl.getAttribute('data-target'); }
+      } else {
+        const trustObserver = new IntersectionObserver((entries, obs) => {
+          entries.forEach(entry => {
+            if(entry.isIntersecting){
+              trustEl.classList.add('visible');
+
+              // animate number (polite, progressive)
+              if(trustNumEl){
+                const to = parseInt(trustNumEl.getAttribute('data-target'),10) || 0;
+                const duration = 1600;
+                const startTime = performance.now();
+                function step(now){
+                  const t = Math.min((now - startTime)/duration, 1);
+                  const eased = t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
+                  trustNumEl.textContent = Math.floor(eased * to);
+                  if(t < 1) requestAnimationFrame(step);
+                  else trustNumEl.textContent = to;
+                }
+                requestAnimationFrame(step);
               }
-              requestAnimationFrame(step);
-            }
 
-            obs.unobserve(trustEl);
-          }
-        });
-      }, {threshold: 0.28});
-      trustObserver.observe(trustEl);
+              // subtle watermark pulse (purely decorative)
+              if(watermark){
+                watermark.style.transition = 'transform 700ms ease, opacity 700ms ease';
+                watermark.style.opacity = '0.12';
+                watermark.style.transform = 'translateY(-50%) scale(1.02)';
+                setTimeout(()=> { watermark.style.transform = 'translateY(-50%) scale(1)'; }, 700);
+              }
+
+              obs.unobserve(trustEl);
+            }
+          });
+        }, {threshold: 0.28});
+        trustObserver.observe(trustEl);
+      }
     }
   })();
 </script>
