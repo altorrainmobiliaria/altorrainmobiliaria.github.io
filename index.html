@@ -236,7 +236,7 @@
   .counter .icon.pop { transform: translateY(-6px) scale(1.02); box-shadow: 0 10px 30px rgba(0,0,0,0.35); }
   .counter .icon svg { width: 22px; height: 22px; color: var(--accent); display:block; }
 
-  .counter .num { font-size: 1.8rem; font-weight: 700; background: linear-gradient(45deg, #ffb400, #ffd95e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; display: inline-block; }
+  .counter .num { font-size: 2rem; font-weight: 700; background: linear-gradient(45deg, #ffb400, #ffd95e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px; display: inline-block; }
   .counter.visible .num { animation: popNum 650ms cubic-bezier(.2,.9,.2,1); }
   @keyframes popNum { 0%{transform:scale(.86);opacity:0} 60%{transform:scale(1.08);opacity:1} 100%{transform:scale(1);opacity:1} }
 
@@ -408,56 +408,30 @@
 
     <!-- Impact counters (3 principales) -->
     <section class="impact" aria-label="Impacto Altorra">
-      <div class="counter" aria-hidden="false">
-        <div class="icon" aria-hidden="true">
-          <!-- house icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <path d="M3 11.5L12 4l9 7.5"></path>
-            <path d="M9 21V12h6v9"></path>
-          </svg>
-        </div>
-        <div class="num" data-target="25" aria-live="polite">0</div>
-        <div class="label">
-          <div class="label-title">Inmuebles en venta</div>
-          <div class="label-desc">Disponibles para compra inmediata</div>
-        </div>
-      </div>
+  <div class="counter" aria-hidden="false">
+    <div class="num" data-target="25" aria-live="polite">0</div>
+    <div class="label">
+      <div class="label-title">Inmuebles en venta</div>
+      <div class="label-desc">Disponibles para compra inmediata</div>
+    </div>
+  </div>
 
-      <div class="counter" aria-hidden="false">
-        <div class="icon" aria-hidden="true">
-          <!-- building icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <path d="M3 21h18"></path>
-            <path d="M7 21V10h10v11"></path>
-            <path d="M9 7h.01M15 7h.01M12 3v4"></path>
-          </svg>
-        </div>
-        <div class="num" data-target="42" aria-live="polite">0</div>
-        <div class="label">
-          <div class="label-title">Propiedades en arriendo</div>
-          <div class="label-desc">Inmuebles disponibles y listos para habitar</div>
-        </div>
-      </div>
+  <div class="counter" aria-hidden="false">
+    <div class="num" data-target="42" aria-live="polite">0</div>
+    <div class="label">
+      <div class="label-title">Propiedades en arriendo</div>
+      <div class="label-desc">Disponibles y con respaldo legal</div>
+    </div>
+  </div>
 
-      <div class="counter" aria-hidden="false">
-        <div class="icon" aria-hidden="true">
-          <!-- bed icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
-            <path d="M2 12v6"></path>
-            <path d="M22 12v6"></path>
-            <path d="M2 18h20"></path>
-            <path d="M6 10v6"></path>
-            <path d="M18 10v6"></path>
-            <path d="M2 12h20v-2a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z"></path>
-          </svg>
-        </div>
-        <div class="num" data-target="5" aria-live="polite">0</div>
-        <div class="label">
-          <div class="label-title">Alojamientos por días</div>
-          <div class="label-desc">Estadías cortas para turismo o trabajo</div>
-        </div>
-      </div>
-    </section>
+  <div class="counter" aria-hidden="false">
+    <div class="num" data-target="5" aria-live="polite">0</div>
+    <div class="label">
+      <div class="label-title">Alojamientos por días</div>
+      <div class="label-desc">Espacios amoblados disponibles</div>
+    </div>
+  </div>
+</section>
 
 <footer id="footer-trust" aria-label="Historias de confianza Altorra" role="contentinfo">
   <div class="footer-container">
@@ -743,5 +717,4 @@
 </script>
 </body>
 </html>
-
 
