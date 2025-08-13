@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Altorra | Inmobiliaria</title>
+<meta name="description" content="Altorra - Gestión integral en soluciones inmobiliarias" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --gold: #d4af37;
+    --accent: #ffb400;
+    --bg: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --header-h: 72px;
+    --gap: 14px;
+    --page-max: 1200px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- HEADER (SÓLIDO) ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;
+    background:var(--bg);z-index:140;border-bottom:1px solid rgba(0,0,0,0.04);
+    box-shadow:0 8px 26px rgba(0,0,0,0.06);
+  }
+  .container{max-width:var(--page-max);margin:0 auto;width:100%;padding:0 16px;display:flex;align-items:center;gap:12px}
+  /* BRAND to the absolute left corner of container */
+  .brand {display:flex;align-items:center;gap:10px;margin-right:6px}
+  .brand img{width:48px;height:48px;object-fit:contain;display:block}
+  .brand .name{font-weight:800;letter-spacing:-0.6px;text-transform:uppercase;font-size:1.02rem}
+
+  /* NAV */
+  nav{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .nav-list{display:flex;gap:6px;align-items:center}
+  .nav-item{position:relative}
+  .nav-btn{background:transparent;border:0;padding:8px 12px;font-weight:700;cursor:pointer;border-radius:8px;color:var(--text);font-size:0.95rem}
+  .nav-btn:focus{outline:3px solid rgba(212,175,55,0.12);outline-offset:3px}
+
+  /* PANEL (rendered fixed via JS) */
+  .menu-panel{
+    display:none; position:fixed; z-index:150; padding:14px; border-radius:12px;
+    background:linear-gradient(180deg,#fff,#fbfbfb); border:1px solid rgba(0,0,0,0.06);
+    box-shadow:0 22px 48px rgba(0,0,0,0.12); max-height:80vh; overflow:auto;
+  }
+  .menu-visible{display:block;opacity:1;transform:none}
+  .panel-compact{min-width:180px;max-width:44vw}
+  .panel-mega{min-width:360px;max-width:920px; width:min(88vw,920px)}
+
+  /* Mega content grid */
+  .mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .mega-col h4{margin:0 0 8px;color:var(--gold);font-weight:700}
+  .menu-link{display:block;padding:6px 6px;border-radius:8px;color:#0f1724}
+  .menu-link:hover{background:rgba(0,0,0,0.03)}
+
+  /* Mobile: panels become full width under header */
+  @media (max-width:860px){
+    .menu-panel{left:0 !important; right:0 !important; top:var(--header-h); width:100% !important; max-height:calc(100vh - var(--header-h)); border-radius:0; border-left:0;border-right:0}
+  }
+
+  /* ---------- HERO (with background) ---------- */
+  .hero{min-height:66vh;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding-top:calc(var(--header-h) + 28px);color:#fff;overflow:hidden}
+  .hero .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  .hero .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.18),rgba(0,0,0,0.52));z-index:1}
+  .hero .inner{position:relative;z-index:2;max-width:1100px;padding:0 16px}
+  .hero h1{font-size:clamp(2rem,5vw,3.6rem);margin:0;font-weight:800}
+  .hero p{margin-top:10px;color:rgba(255,255,255,0.92)}
+
+  /* ---------- SEARCH (filtro) - ahora con campo palabra clave ---------- */
+  .search-box{margin-top:20px;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;background:rgba(255,255,255,0.06);padding:12px;border-radius:12px;backdrop-filter:blur(6px);align-items:center}
+  .search-box select,.search-box input{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.22);color:#fff}
+  .search-box button{padding:11px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),#ffd95e);font-weight:800;cursor:pointer}
+
+  /* ---------- FIX: forzar placeholders blancos en los inputs del buscador (robusto, multi-navegador) ---------- */
+  .search-box input,
+  .search-box select {
+    -webkit-text-fill-color: #fff !important; /* Safari/Chrome autofill & rendering */
+    color: #fff !important;
+  }
+
+  .search-box input::placeholder,
+  .search-box input::-webkit-input-placeholder,
+  .search-box input:-ms-input-placeholder,
+  .search-box input::-ms-input-placeholder,
+  .search-box input::-moz-placeholder,
+  .search-box input:-moz-placeholder {
+    color: #ffffff !important;
+    opacity: 1 !important;
+  }
+
+  /* For forms autofill behavior (Chrome) */
+  .search-box input:-webkit-autofill,
+  .search-box input:-webkit-autofill::first-line {
+    -webkit-text-fill-color: #fff !important;
+    transition: background-color 5000s ease-in-out 0s;
+  }
+
+  @media (max-width:920px){ .search-box{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:520px){ .search-box{grid-template-columns:1fr} .search-box .full-mobile{grid-column:1/ -1} }
+
+  /* ---------- KPIs ---------- */
+  .kpi-row{max-width:var(--page-max);margin:24px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:0 16px}
+  .kpi{display:flex;gap:12px;align-items:center;padding:16px;border-radius:12px;background:linear-gradient(180deg,#fff,#fcfbf8);box-shadow:0 12px 30px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.04)}
+  .kpi .accent{width:8px;height:56px;border-radius:10px;background:linear-gradient(180deg,var(--gold),var(--accent));flex-shrink:0}
+  .kpi .num{font-weight:800;font-size:1.9rem;background:linear-gradient(90deg,var(--gold),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .kpi .desc{color:var(--muted)}
+
+  /* ---------- CAROUSELS ---------- */
+  .section{max-width:var(--page-max);margin:28px auto;padding:0 16px}
+  .section .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .carousel-wrap{position:relative}
+  .carousel-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;scroll-behavior:smooth}
+  .carousel-row::-webkit-scrollbar{display:none}
+  .card{min-width:260px;max-width:320px;border-radius:12px;background:#fff;overflow:hidden;border:1px solid rgba(0,0,0,0.04);box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+  .card img{width:100%;height:180px;object-fit:cover;display:block}
+  .card .body{padding:12px}
+  .arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(0,0,0,0.12);cursor:pointer;z-index:120}
+  .arrow.left{left:-52px} .arrow.right{right:-52px}
+  @media (max-width:1024px){ .arrow{display:none} }
+
+  /* ---------- FOOTER ---------- */
+  footer{background:#0b0b0b;color:#fff;padding:36px 16px}
+  .footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  @media (max-width:920px){ .footer-grid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+
+
+  <!-- ========== HEADER ========== -->
+  <header>
+    <div class="container">
+      <!-- Brand (pegado a la izquierda) -->
+      <a href="index.html" class="brand" aria-label="Altorra - portada">
+        <img src="https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-ago-2025-10-31-20.png" alt="Logo Altorra" />
+           </a>
+
+      <!-- Navigation -->
+      <nav aria-label="Menú principal">
+        <div class="nav-list" role="menubar">
+          <div class="nav-item" data-size="compact">
+            <button class="nav-btn" aria-expanded="false" data-panel="panel-propiedades">Propiedades</button>
+          </div>
+
+          <div class="nav-item" data-size="mega">
+            <button class="nav-btn" aria-expanded="false" data-panel="panel-servicios">Servicios</button>
+          </div>
+
+          <div class="nav-item" data-size="compact">
+            <button class="nav-btn" aria-expanded="false" data-panel="panel-nosotros">Nosotros</button>
+          </div>
+
+          <div class="nav-item">
+            <a class="nav-btn" href="contacto.html">Contacto</a>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ========== MENU PANELS (placed here, positioned via JS) ========== -->
+  <!-- Propiedades: compact -->
+  <div id="panel-propiedades" class="menu-panel panel-compact" role="menu" aria-hidden="true">
+    <a class="menu-link" href="propiedades-comprar.html">Comprar</a>
+    <a class="menu-link" href="propiedades-arrendar.html">Arrendar</a>
+    <a class="menu-link" href="propiedades-alojamientos.html">Rentar por días</a>
+  </div>
+
+  <!-- Servicios: mega (grid) -->
+  <div id="panel-servicios" class="menu-panel panel-mega" role="menu" aria-hidden="true">
+    <div class="mega-grid">
+      <div class="mega-col">
+        <h4>Gestión</h4>
+        <a class="menu-link" href="servicios-administracion.html">Administración de inmuebles</a>
+        <a class="menu-link" href="servicios-avaluos.html">Avalúos</a>
+        <a class="menu-link" href="servicios-mantenimiento.html">Mantenimiento y reparaciones</a>
+        <a class="menu-link" href="servicios-mudanzas.html">Mudanzas y logística</a>
+      </div>
+      <div class="mega-col">
+        <h4>Jurídico & Contable</h4>
+        <a class="menu-link" href="servicios-juridicos.html">Servicios jurídicos</a>
+        <a class="menu-link" href="servicios-contables.html">Servicios contables</a>
+        <a class="menu-link" href="#">Gestión de contratos</a>
+      </div>
+      <div class="mega-col">
+        <h4>Turismo (Cartagena)</h4>
+        <a class="menu-link" href="#">Renta de yates</a>
+        <a class="menu-link" href="#">Pasadías en islas</a>
+        <a class="menu-link" href="#">Paquetes turísticos</a>
+        <a class="menu-link" href="#">Tours históricos</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nosotros: compact -->
+  <div id="panel-nosotros" class="menu-panel panel-compact" role="menu" aria-hidden="true">
+    <a class="menu-link" href="quienes-somos.html">Quiénes somos</a>
+    <a class="menu-link" href="quienes-somos.html#mision">Misión</a>
+    <a class="menu-link" href="quienes-somos.html#vision">Visión</a>
+    <a class="menu-link" href="quienes-somos.html#valores">Valores</a>
+    <a class="menu-link" href="quienes-somos.html#equipo">Nuestro equipo</a>
+  </div>
+
+  <!-- ========== HERO (FONDO RESTAURADO) ========== -->
+  <main style="padding-top:calc(var(--header-h) + 12px);">
+    <section class="hero" aria-label="Hero">
+      <img class="bg" src="https://i.postimg.cc/FHy13q2M/pexels-rdne-8293700.jpg" alt="Hero background" />
+      <div class="overlay" aria-hidden="true"></div>
+
+      <div class="inner">
+        <h1>Gestión Integral en Soluciones Inmobiliarias</h1>
+        <p>Seguridad • Legalidad • Confianza</p>
+
+        <!-- ===== SEARCH: operacion + tipo + ciudad + palabra clave (REEMPLAZO de precio min/max) ===== -->
+        <form id="quickSearch" class="search-box" aria-label="Buscador rápido">
+          <select id="op" aria-label="Operación">
+            <option value="comprar">Comprar</option>
+            <option value="arrendar">Arrendar</option>
+            <option value="alojar">Por días</option>
+          </select>
+
+          <select id="type" aria-label="Tipo de propiedad">
+            <option value="apartamento">Apartamento</option>
+            <option value="casa">Casa</option>
+            <option value="lote">Lote</option>
+            <option value="oficina">Oficina</option>
+          </select>
+
+          <input id="city" aria-label="Ciudad" placeholder="Ciudad (ej. Cartagena)" />
+
+          <!-- NUEVO campo: palabra clave (sustituye min/max) -->
+          <input id="keyword" aria-label="Buscar por palabra clave" placeholder="Ej. 'vista al mar', 'amoblado', 'centro'" />
+
+          <button type="submit" aria-label="Buscar">Buscar</button>
+        </form>
+
+        <div style="margin-top:8px;color:rgba(255,255,255,0.9);font-size:0.9rem">Tu próximo hogar te está esperando.</div>
+      </div>
+    </section>
+
+    <!-- ========== KPIs (sin cambios relevantes) ========== -->
+    <section class="kpi-row" aria-label="Impacto">
+      <div class="kpi"><div class="accent" aria-hidden="true"></div><div><div class="num" data-target="500">0</div><div class="desc">Historias de confianza</div></div></div>
+      <div class="kpi"><div class="accent" aria-hidden="true"></div><div><div class="num" data-target="60">0</div><div class="desc">Ciudades y zonas atendidas</div></div></div>
+      <div class="kpi"><div class="accent" aria-hidden="true"></div><div><div class="num" data-target="24">0</div><div class="desc">Atención 24/7</div></div></div>
+    </section>
+
+    <!-- ========== DESTACADOS (con muchas miniaturas para probar flechas) ========== -->
+    <section class="section" aria-labelledby="venta-title">
+      <div class="head"><h2 id="venta-title">Propiedades en <span style="color:var(--gold)">Venta</span></h2><a href="propiedades-comprar.html">Ver todo →</a></div>
+      <div class="carousel-wrap">
+        <div id="carouselVenta" class="carousel-row" role="list">
+          <!-- Añadí 8+ ítems; REPLACE URLs -->
+          <article class="card" role="listitem"><img src="<!-- REPLACE: PROP_IMG_01 -->" alt=""><div class="body"><h3>Apartamento moderno</h3><div style="color:var(--muted)">2H · 2B · 78 m²</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$350,000</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: PROP_IMG_02 -->" alt=""><div class="body"><h3>Casa familiar</h3><div style="color:var(--muted)">4H · 3B</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$180,000</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: PROP_IMG_03 -->" alt=""><div class="body"><h3>Lote inversión</h3><div style="color:var(--muted)">420 m²</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$95,000</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: PROP_IMG_04 -->" alt=""><div class="body"><h3>Oficina premium</h3><div style="color:var(--muted)">58 m²</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$120,000</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: PROP_IMG_05 -->" alt=""><div class="body"><h3>Penthouse vista</h3><div style="color:var(--muted)">Terraza · 3H</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$620,000</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: PROP_IMG_06 -->" alt=""><div class="body"><h3>Casa moderna</h3><div style="color:var(--muted)">Jardín · 4H</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$420,000</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: PROP_IMG_07 -->" alt=""><div class="body"><h3>Apto cerca al mar</h3><div style="color:var(--muted)">3H · 2B</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$290,000</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: PROP_IMG_08 -->" alt=""><div class="body"><h3>Casa campestre</h3><div style="color:var(--muted)">5H · 4B</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$520,000</div></div></article>
+        </div>
+
+        <div class="arrow left" data-target="carouselVenta" aria-hidden="true">
+          <!-- left chevron -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="arrow right" data-target="carouselVenta" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Arriendo -->
+    <section class="section" aria-labelledby="arrend-title" style="background:#fff">
+      <div class="head"><h2 id="arrend-title">Propiedades en <span style="color:var(--gold)">Arriendo</span></h2><a href="propiedades-arrendar.html">Ver todo →</a></div>
+      <div class="carousel-wrap">
+        <div id="carouselArriendo" class="carousel-row" role="list">
+          <article class="card"><img src="<!-- REPLACE: RENT_IMG_01 -->" alt=""><div class="body"><h3>Apartamento central</h3><div style="color:var(--muted)">1H · 1B · Amoblado</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$2,200,000 / mes</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: RENT_IMG_02 -->" alt=""><div class="body"><h3>Casa esquinera</h3><div style="color:var(--muted)">3H · 2B</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$3,500,000 / mes</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: RENT_IMG_03 -->" alt=""><div class="body"><h3>Local comercial</h3><div style="color:var(--muted)">65 m²</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$4,800,000 / mes</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: RENT_IMG_04 -->" alt=""><div class="body"><h3>Studio céntrico</h3><div style="color:var(--muted)">Smart lock</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$1,800,000 / mes</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: RENT_IMG_05 -->" alt=""><div class="body"><h3>Casa para arriendo</h3><div style="color:var(--muted)">4H · 3B</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$4,200,000 / mes</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: RENT_IMG_06 -->" alt=""><div class="body"><h3>Apto 2H</h3><div style="color:var(--muted)">Amoblado</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$2,800,000 / mes</div></div></article>
+        </div>
+
+        <div class="arrow left" data-target="carouselArriendo" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="arrow right" data-target="carouselArriendo" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Alojamientos por dias -->
+    <section class="section" aria-labelledby="dias-title" style="background:#fbfbfb">
+      <div class="head"><h2 id="dias-title">Alojamientos por <span style="color:var(--gold)">días</span></h2><a href="propiedades-alojamientos.html">Ver todo →</a></div>
+      <div class="carousel-wrap">
+        <div id="carouselDias" class="carousel-row" role="list">
+          <article class="card"><img src="<!-- REPLACE: STAY_IMG_01 -->" alt=""><div class="body"><h3>Suite premium</h3><div style="color:var(--muted)">Vista al mar</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$320,000 / noche</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: STAY_IMG_02 -->" alt=""><div class="body"><h3>Loft ejecutivo</h3><div style="color:var(--muted)">Smart lock</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$260,000 / noche</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: STAY_IMG_03 -->" alt=""><div class="body"><h3>Yate 12 pax</h3><div style="color:var(--muted)">Tripulación incluida</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$3,900,000 / 4h</div></div></article>
+          <article class="card"><img src="<!-- REPLACE: STAY_IMG_04 -->" alt=""><div class="body"><h3>Apto amoblado</h3><div style="color:var(--muted)">Cerca al mar</div><div style="margin-top:8px;font-weight:800;color:var(--gold)">$200,000 / noche</div></div></article>
+        </div>
+
+        <div class="arrow left" data-target="carouselDias" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="arrow right" data-target="carouselDias" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <div class="footer-grid">
+      <div>
+        <h3 style="margin:0;color:var(--gold);font-weight:800">ALTORRA</h3>
+        <p style="color:#cbd5e1;margin-top:8px">Servicios integrales: administración, jurídicos, contables, turismo y más.</p>
+        <div style="margin-top:12px;font-weight:800;color:var(--gold)">+57 323 501 6747</div>
+      </div>
+
+      <div>
+        <h4 style="margin:0 0 8px;font-weight:700">Propiedades</h4>
+        <ul style="margin:0;padding:0;list-style:none;color:#cbd5e1">
+          <li><a href="propiedades-comprar.html">Comprar</a></li>
+          <li><a href="propiedades-arrendar.html">Arrendar</a></li>
+          <li><a href="propiedades-alojamientos.html">Por días</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 style="margin:0 0 8px;font-weight:700">Servicios</h4>
+        <ul style="margin:0;padding:0;list-style:none;color:#cbd5e1">
+          <li><a href="servicios-administracion.html">Administración</a></li>
+          <li><a href="servicios-juridicos.html">Servicios jurídicos</a></li>
+          <li><a href="servicios-contables.html">Servicios contables</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 style="margin:0 0 8px;font-weight:700">Empresa</h4>
+        <ul style="margin:0;padding:0;list-style:none;color:#cbd5e1">
+          <li><a href="quienes-somos.html">Quiénes somos</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+          <li><a href="index.html">Portada</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="max-width:var(--page-max);margin:18px auto 0;color:#9ca3af;text-align:center;font-size:0.9rem">© 2025 Altorra Inmobiliaria — Hecho con confianza.</div>
+  </footer>
+
+  <!-- ========== SCRIPTS (menu manager, carousels, quick search, kpi counters) ========== -->
+  <script>
+    /*****************************************************************
+     * MENU MANAGER
+     * - Un panel abierto a la vez
+     * - Posiciona panel para que no se salga del viewport
+     * - En móvil (<=860px) el panel ocupa ancho completo bajo header
+     *****************************************************************/
+    (function(){
+      const MARGIN = 12;
+      const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
+      let open = null;
+
+      function placeAndShow(btn, panel, size){
+        // hide any other open immediately
+        if(open && open.panel !== panel) hideImmediate(open);
+
+        // reset inline
+        panel.style.left = ''; panel.style.top=''; panel.style.width=''; panel.style.maxWidth='';
+
+        // show temporarily so we can measure
+        panel.style.display = 'block';
+        panel.style.visibility = 'hidden';
+        panel.style.position = 'fixed';
+        panel.style.maxHeight = '80vh';
+
+        // mobile full width
+        if(window.innerWidth <= 860){
+          panel.style.left = '0px';
+          panel.style.top = headerH + 'px';
+          panel.style.right = '0px';
+          panel.style.width = '100%';
+          panel.classList.add('menu-visible');
+          panel.setAttribute('aria-hidden','false');
+          open = {panel, btn};
+          panel.style.visibility = 'visible';
+          return;
+        }
+
+        // set width rules
+        if(size === 'mega'){
+          panel.style.width = Math.min(920, window.innerWidth - (MARGIN*2)) + 'px';
+        } else {
+          panel.style.width = 'auto';
+          panel.style.maxWidth = Math.min(520, window.innerWidth - (MARGIN*2)) + 'px';
+        }
+
+        // measure
+        const preRect = panel.getBoundingClientRect();
+        const bRect = btn.getBoundingClientRect();
+
+        // compute horizontal position:
+        let left;
+        if(size === 'mega'){
+          // center panel on the button mid-point, but clamp to viewport
+          left = Math.round(bRect.left + bRect.width/2 - preRect.width/2);
+          left = Math.max(MARGIN, Math.min(left, window.innerWidth - preRect.width - MARGIN));
+        } else {
+          // align left with button, but clamp
+          left = Math.round(Math.min(bRect.left, window.innerWidth - preRect.width - MARGIN));
+          left = Math.max(left, MARGIN);
+        }
+
+        // compute top (prefer below)
+        let top = Math.round(bRect.bottom + 8);
+        if(top + preRect.height > window.innerHeight - MARGIN){
+          top = Math.round(bRect.top - preRect.height - 8);
+          if(top < MARGIN) top = MARGIN;
+        }
+
+        panel.style.left = left + 'px';
+        panel.style.top = top + 'px';
+        panel.style.visibility = 'visible';
+        panel.classList.add('menu-visible');
+        panel.setAttribute('aria-hidden','false');
+        open = {panel, btn};
+      }
+
+      function hideDelayed(item){
+        if(!item) return;
+        if(item._closeTimer) clearTimeout(item._closeTimer);
+        item._closeTimer = setTimeout(()=> {
+          const panel = item.querySelector('.menu-panel') || document.getElementById(item.dataset.panel);
+          // we hide via panel reference from panel itself handlers below, but keep safe
+          document.querySelectorAll('.menu-panel').forEach(p => {
+            p.classList.remove('menu-visible'); p.style.display = 'none'; p.setAttribute('aria-hidden','true');
+            p.style.left='';p.style.top='';p.style.width='';p.style.maxWidth='';
+          });
+          open = null;
+        }, 140);
+      }
+
+      function hideImmediate(obj){
+        if(!obj) return;
+        obj.panel.classList.remove('menu-visible');
+        obj.panel.style.display = 'none';
+        obj.panel.setAttribute('aria-hidden','true');
+        obj.panel.style.left='';obj.panel.style.top='';obj.panel.style.width='';obj.panel.style.maxWidth='';
+        if(open && open.panel === obj.panel) open = null;
+      }
+
+      // attach handlers: each nav button has data-panel attribute with panel id
+      document.querySelectorAll('.nav-btn[data-panel]').forEach(btn=>{
+        const panelId = btn.getAttribute('data-panel');
+        const panel = document.getElementById(panelId);
+        const item = btn.closest('.nav-item');
+        const size = item ? (item.dataset.size || 'compact') : 'compact';
+
+        let openTimer=null, closeTimer=null;
+
+        // show/hide helpers
+        const show = ()=> {
+          if(openTimer) return;
+          clearTimeout(closeTimer);
+          openTimer = setTimeout(()=> {
+            placeAndShow(btn, panel, size);
+            btn.setAttribute('aria-expanded','true');
+            openTimer = null;
+          }, 60);
+        };
+        const hide = ()=> {
+          if(openTimer) { clearTimeout(openTimer); openTimer = null; }
+          clearTimeout(closeTimer);
+          closeTimer = setTimeout(()=> {
+            panel.classList.remove('menu-visible'); panel.style.display = 'none'; panel.setAttribute('aria-hidden','true');
+            panel.style.left='';panel.style.top='';panel.style.width='';panel.style.maxWidth='';
+            btn.setAttribute('aria-expanded','false');
+            if(open && open.panel === panel) open = null;
+          }, 120);
+        };
+
+        // pointer events on btn and panel
+        btn.addEventListener('pointerenter', show);
+        btn.addEventListener('pointerleave', hide);
+        panel.addEventListener('pointerenter', ()=> { clearTimeout(closeTimer); if(openTimer) clearTimeout(openTimer); });
+        panel.addEventListener('pointerleave', hide);
+
+        // click toggles (touch)
+        btn.addEventListener('click', (e)=> {
+          e.preventDefault();
+          if(panel.classList.contains('menu-visible')) hideImmediate({panel, btn});
+          else placeAndShow(btn, panel, size);
+        });
+
+        // keyboard
+        btn.addEventListener('focus', show);
+        btn.addEventListener('blur', ()=> {
+          setTimeout(()=> {
+            if(document.activeElement && panel.contains(document.activeElement)) return;
+            hide();
+          }, 60);
+        });
+      });
+
+      // global click outside closes
+      document.addEventListener('click', (e)=>{
+        if(e.target.closest('nav') || e.target.closest('.menu-panel')) return;
+        document.querySelectorAll('.menu-panel').forEach(p => { p.classList.remove('menu-visible'); p.style.display='none'; p.setAttribute('aria-hidden','true'); p.style.left='';p.style.top='';p.style.width='';p.style.maxWidth=''; });
+        document.querySelectorAll('.nav-btn[data-panel]').forEach(b => b.setAttribute('aria-expanded','false'));
+        open = null;
+      });
+
+      // ESC closes
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Escape'){
+          document.querySelectorAll('.menu-panel').forEach(p => { p.classList.remove('menu-visible'); p.style.display='none'; p.setAttribute('aria-hidden','true'); p.style.left='';p.style.top='';p.style.width='';p.style.maxWidth=''; });
+          document.querySelectorAll('.nav-btn[data-panel]').forEach(b => b.setAttribute('aria-expanded','false'));
+          open = null;
+        }
+      });
+
+      // on resize reposition or hide (clean)
+      window.addEventListener('resize', ()=> {
+        document.querySelectorAll('.menu-panel').forEach(p => { p.style.left='';p.style.top='';p.style.width='';p.style.maxWidth=''; });
+        open = null;
+      });
+    })();
+
+
+    /*****************************************************************
+     * CAROUSEL arrows: scroll by card width
+     *****************************************************************/
+    (function(){
+      document.querySelectorAll('.arrow').forEach(btn=>{
+        const targetId = btn.dataset.target;
+        if(!targetId) return;
+        const root = document.getElementById(targetId);
+        if(!root) return;
+        btn.addEventListener('click', ()=>{
+          const card = root.querySelector('.card');
+          if(!card) return;
+          const gap = parseFloat(getComputedStyle(root).gap) || 12;
+          const step = card.getBoundingClientRect().width + gap;
+          const dir = btn.classList.contains('left') ? -1 : 1;
+          root.scrollBy({ left: dir * step, behavior: 'smooth' });
+        });
+      });
+    })();
+
+
+    /*****************************************************************
+     * KPI counters (simple animate once)
+     *****************************************************************/
+    (function(){
+      const nodes = document.querySelectorAll('.num[data-target]');
+      const io = new IntersectionObserver((entries, obs) => {
+        entries.forEach(entry=>{
+          if(entry.isIntersecting){
+            const el = entry.target;
+            const to = parseInt(el.dataset.target || '0', 10);
+            const dur = 900;
+            const start = performance.now();
+            function frame(now){
+              const t = Math.min((now - start) / dur, 1);
+              const eased = t < 0.5 ? 2*t*t : -1 + (4 - 2*t)*t;
+              el.textContent = Math.floor(eased * to);
+              if(t < 1) requestAnimationFrame(frame);
+              else el.textContent = to;
+            }
+            requestAnimationFrame(frame);
+            obs.unobserve(el);
+          }
+        });
+      }, { threshold: 0.35 });
+      nodes.forEach(n => io.observe(n));
+    })();
+
+
+    /*****************************************************************
+     * QUICK SEARCH: redirects (simulado)
+     *****************************************************************/
+    (function(){
+      const form = document.getElementById('quickSearch');
+      if(!form) return;
+      form.addEventListener('submit', (e)=> {
+        e.preventDefault();
+        const op = document.getElementById('op')?.value || 'comprar';
+        // redirige a la página de acuerdo a la operación
+        const map = { comprar:'propiedades-comprar.html', arrendar:'propiedades-arrendar.html', alojar:'propiedades-alojamientos.html' };
+        // Los parámetros (ciudad, keyword) puedes usarlos luego en la página de resultados
+        const city = encodeURIComponent(document.getElementById('city')?.value || '');
+        const key = encodeURIComponent(document.getElementById('keyword')?.value || '');
+        // redirección simple (sin backend) — añadimos querystring para tu futura integración
+        window.location.href = map[op] + '?city=' + city + '&q=' + key;
+      });
+    })();
+  </script>
+</body>
+</html>
