@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Altorra | Propiedades en Venta</title>
+  <meta name="description" content="Encuentra propiedades en venta con respaldo legal y confianza." />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="estilos.css"> <!-- Tus estilos -->
+</head>
+<body>
+<a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+<!-- HEADER (se carga desde header.html) -->
+<div id="include-header"></div>
+<script>
+(function(){
+  try{
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET','header.html', false);
+    xhr.send(null);
+    if(xhr.status === 200 || xhr.status === 0){
+      document.getElementById('include-header').innerHTML = xhr.responseText;
+    }
+  }catch(e){
+    console.warn('Error cargando header.html', e);
+  }
+})();
+</script>
+
+<!-- ========== MAIN ========== -->
+<main id="main" style="padding-top:calc(var(--header-h) + 12px);">
+  <section class="page-hero">
+    <div class="container">
+      <h1 class="page-title">Propiedades en Venta</h1>
+      <p class="page-subtitle">Disponibles con respaldo legal</p>
+    </div>
+  </section>
+
+  <section class="propiedades-lista container">
+    <!-- Aquí va el contenido de tus propiedades -->
+    <div class="propiedad-card">
+      <img src="https://i.ibb.co/album/ejemplo1.jpg" alt="Propiedad en venta">
+      <div class="prop-info">
+        <h3>Apartamento en Cartagena</h3>
+        <p>3 habitaciones · 2 baños · Vista al mar</p>
+        <p class="precio">$450,000,000</p>
+      </div>
+    </div>
+
+    <div class="propiedad-card">
+      <img src="https://i.ibb.co/album/ejemplo2.jpg" alt="Propiedad en venta">
+      <div class="prop-info">
+        <h3>Casa en Medellín</h3>
+        <p>4 habitaciones · 3 baños · Garaje doble</p>
+        <p class="precio">$720,000,000</p>
+      </div>
+    </div>
+
+    <!-- Agrega más propiedades aquí -->
+  </section>
+</main>
+
+<!-- FOOTER (se carga desde footer.html) -->
+<div id="include-footer"></div>
+<script>
+(function(){
+  try{
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET','footer.html', false);
+    xhr.send(null);
+    if(xhr.status === 200 || xhr.status === 0){
+      document.getElementById('include-footer').innerHTML = xhr.responseText;
+    }
+  }catch(e){
+    console.warn('Error cargando footer.html', e);
+  }
+})();
+</script>
+
+</body>
+</html>
