@@ -21,67 +21,94 @@
       --muted:#6b7280;
       --header-h:72px;
       --page-max:1200px;
-      /* Reducimos la opacidad del overlay para una presentación más luminosa de la cabecera y modales */
       --overlay: rgba(0,0,0,0.30);
     }
+
     *{box-sizing:border-box;margin:0;padding:0;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--text);background:transparent;}
     html,body{background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
     a{text-decoration:none;color:inherit;}
-    .detail-container{max-width:1200px;margin:calc(var(--header-h)+20px) auto 40px;padding:0 16px;display:flex;flex-wrap:wrap;gap:24px;}
-    /* gallery styles for image slider */
-    /* La galería ya no oculta parte de la imagen grande para evitar recortes arriba/abajo */
-    .gallery{flex:1 1 480px;position:relative;overflow:visible;}
-    .gallery .main-img{
-      width:100%;
-      border-radius:12px;
-      margin-bottom:8px;
-      /* Ajustamos el comportamiento de la imagen principal:
-         - object-fit: contain para que la foto no se recorte y siempre se vea completa.
-         - max-height ampliado para dar más espacio vertical.
-         - transición para un suave zoom al pasar el ratón.
-         - cursor cambia a zoom-in para indicar interactividad.
-      */
-      object-fit:contain;
-      /* Ajustamos la altura máxima relativa a la ventana para que no se recorte la imagen en la parte superior */
-      /* Otorgamos más altura máxima relativa a la ventana para que la foto no se corte al principio.
-         Esto permite que la imagen se vea por completo en la mayoría de tamaños de pantalla */
-      /* Eliminamos la restricción de altura para evitar cualquier recorte y permitir que la imagen se muestre completamente */
-      max-height:none;
-      height:auto;
-      transition:transform 0.3s ease;
-      cursor:zoom-in;
+
+    /* ====== SAFE AREAS / LAYOUT ====== */
+    main.detail-container{
+      max-width:var(--page-max);
+      margin:calc(var(--header-h) + 20px) auto 40px;
+      padding:0 16px 40px;          /* padding-bottom asegura respiro antes del footer */
+      display:flex; flex-wrap:wrap; gap:24px;
+      overflow:clip;                /* evita desbordes horizontales por la galería */
     }
-    /* Aplicamos el efecto de zoom directamente sobre la imagen cuando se pasa el ratón por encima */
-    .main-img:hover{transform:scale(1.05);}
+    [id]{ scroll-margin-top: calc(var(--header-h) + 12px); } /* anclas seguras bajo header fijo */
 
-    /* Aseguramos que los enlaces del footer siempre tengan el mismo color que en las demás páginas */
+    /* ====== GALLERY ====== */
+    .gallery{flex:1 1 520px; position:relative; overflow:visible;}
+    .gallery-inner{ position:relative; }
+    .main-img{
+      width:100%;
+      border-radius:14px;
+      margin-bottom:10px;
+      aspect-ratio: 16/9;           /* relación agradable, evita saltos de layout */
+      object-fit:cover;             /* llena el cuadro sin deformar */
+      background:#f5f5f7;
+      display:block;
+      transition:transform .28s ease, box-shadow .28s ease;
+      cursor:zoom-in;
+      box-shadow:0 10px 26px rgba(0,0,0,.06);
+    }
+    .main-img:hover{ transform:scale(1.02); box-shadow:0 16px 36px rgba(0,0,0,.12); }
 
-    /* Añadimos espacio inferior para que la página no se corte y sea cómoda de leer */
-    .detail-container { padding-bottom: 40px; }
-    .gallery .arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);color:#fff;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem;}
-    .gallery .arrow.prev{left:8px;}
-    .gallery .arrow.next{right:8px;}
-    .gallery .thumbnails{display:flex;gap:8px;overflow-x:auto;margin-top:8px;}
-    .gallery .thumbnails img{width:80px;height:60px;object-fit:cover;border-radius:6px;cursor:pointer;opacity:0.6;border:2px solid transparent;flex-shrink:0;}
-    .gallery .thumbnails img.active{opacity:1;border-color:var(--gold);}  
-    .info{flex:1 1 480px;display:flex;flex-direction:column;gap:10px;}
-    .info h1{font-size:2rem;font-weight:700;}
-    .price{font-weight:800;font-size:1.6rem;color:var(--gold);}
-    .specs{color:var(--muted);font-size:0.95rem;}
-    .actions{display:flex;gap:12px;margin-top:12px;}
-    .btn{padding:10px 14px;border-radius:8px;cursor:pointer;display:inline-block;font-weight:600;}
-    .btn.btn-primary{background:linear-gradient(90deg,var(--accent),#ffd95e);color:#000;border:none;}
-    .btn.btn-ghost{background:#f5f5f5;color:#111;border:1px solid rgba(0,0,0,0.1);}
+    .gallery .arrow{
+      position:absolute; top:50%; transform:translateY(-50%);
+      width:40px; height:40px; border-radius:999px; border:none;
+      background:#fff; color:#111; cursor:pointer; z-index:3;
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 10px 26px rgba(0,0,0,.12);
+      transition:transform .15s ease, box-shadow .2s ease, opacity .2s ease;
+    }
+    .gallery .arrow:hover{ transform:translateY(-50%) scale(1.05); box-shadow:0 14px 30px rgba(0,0,0,.16); }
+    .gallery .arrow.prev{ left:10px; }
+    .gallery .arrow.next{ right:10px; }
 
-    /* Contact form styles */
-    .contact-form{margin-top:24px;display:flex;flex-direction:column;gap:12px;}
-    .contact-form h3{margin:0;font-size:1.3rem;font-weight:700;color:var(--gold);}
-    .contact-form input,
-    .contact-form textarea{padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.2);font-size:0.95rem;font-family:inherit;}
-    .contact-form textarea{resize:vertical;min-height:100px;}
-    .contact-form button{align-self:flex-start;}
+    .thumbnails{
+      display:flex; gap:10px; overflow-x:auto; padding-bottom:2px;
+      scroll-snap-type:x proximity;
+    }
+    .thumbnails::-webkit-scrollbar{ height:8px }
+    .thumbnails::-webkit-scrollbar-thumb{ background:rgba(0,0,0,.12); border-radius:999px }
 
-    /* ----- HEADER Y MENÚ (estilos copiados de las páginas de listados) ----- */
+    .thumbnails img{
+      width:96px; height:70px; object-fit:cover; border-radius:10px; flex-shrink:0;
+      cursor:pointer; opacity:.7; border:2px solid transparent; background:#f3f4f6;
+      scroll-snap-align:start; transition:opacity .15s ease, border-color .15s ease, transform .15s ease;
+    }
+    .thumbnails img:hover{ opacity:.95; transform:translateY(-1px); }
+    .thumbnails img.active{ opacity:1; border-color:var(--gold); }
+
+    /* ====== INFO PANEL ====== */
+    .info{flex:1 1 520px; display:flex; flex-direction:column; gap:12px;}
+    .info h1{font-size:2rem; font-weight:800; line-height:1.1;}
+    .price{font-weight:800; font-size:1.6rem; color:var(--gold);}
+    .specs{color:var(--muted); font-size:0.95rem;}
+    .desc{ color:#1f2937; line-height:1.55; }
+
+    .actions{display:flex; gap:12px; margin-top:6px;}
+    .btn{padding:10px 14px; border-radius:12px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; font-weight:700;}
+    .btn.btn-primary{background:linear-gradient(90deg,var(--accent),#ffd95e); color:#000; border:none; box-shadow:0 10px 22px rgba(0,0,0,.10);}
+    .btn.btn-ghost{background:#f5f5f5; color:#111; border:1px solid rgba(0,0,0,0.1);}
+    .btn svg{ width:18px; height:18px; }
+
+    /* ====== CONTACT FORM ====== */
+    .contact-form{margin-top:16px; display:flex; flex-direction:column; gap:12px; padding:16px; border:1px solid rgba(17,24,39,.08); border-radius:14px; box-shadow:0 8px 24px rgba(0,0,0,.05); background:#fff;}
+    .contact-form h3{margin:0 0 4px; font-size:1.25rem; font-weight:800; color:var(--gold);}
+    .contact-form input, .contact-form textarea{
+      padding:12px 14px; border-radius:12px; border:1px solid rgba(17,24,39,.16); font-size:0.95rem; font-family:inherit; background:#fff;
+      transition:border-color .15s ease, box-shadow .15s ease;
+    }
+    .contact-form textarea{ resize:vertical; min-height:110px; }
+    .contact-form input:focus-visible, .contact-form textarea:focus-visible{
+      outline:3px solid rgba(212,175,55,0.22); border-color:var(--gold);
+    }
+    .contact-form .btn{ align-self:flex-start; }
+
+    /* ----- HEADER Y MENÚ (idénticos al resto; NO tocar estilos visuales) ----- */
     header{
       position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;
       background:var(--bg);z-index:140;border-bottom:1px solid rgba(0,0,0,0.06);
@@ -144,18 +171,15 @@
     footer{background:#0b0b0b;color:#fff;padding:36px 16px}
     .footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
     @media (max-width:920px){ .footer-grid{grid-template-columns:1fr} }
-
-    /* Aseguramos que los enlaces del footer tengan un color consistente con las otras páginas */
   </style>
 </head>
 <body>
-  <!-- Insertamos directamente el mismo encabezado y menú que en el resto del sitio para una experiencia coherente -->
+  <!-- (HEADER: sin tocar) -->
   <header>
     <div class="container">
       <a class="brand" href="home.html">
         <img src="https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-ago-2025-10-31-20.png" alt="Logo de Altorra" width="48" height="48"/>
       </a>
-      <!-- Navegación de escritorio -->
       <nav aria-label="Menú principal">
         <div class="nav-list">
           <div class="nav-item" data-size="compact">
@@ -172,12 +196,11 @@
           </div>
         </div>
       </nav>
-      <!-- Botón móvil -->
       <button id="navToggle" class="nav-toggle" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menú">☰ Menú</button>
     </div>
   </header>
 
-  <!-- Paneles desplegables de escritorio -->
+  <!-- Paneles del header (sin tocar) -->
   <div id="panel-propiedades" class="menu-panel panel-compact" role="dialog" aria-modal="false" aria-hidden="true">
     <a class="menu-link" href="propiedades-comprar.html">Comprar</a>
     <a class="menu-link" href="propiedades-arrendar.html">Arrendar</a>
@@ -215,7 +238,7 @@
     <a class="menu-link" href="quienes-somos.html#equipo">Nuestro equipo</a>
   </div>
 
-  <!-- Menú móvil tipo drawer -->
+  <!-- Menú móvil (sin tocar) -->
   <div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
   <aside id="mobileMenu" class="drawer" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle" hidden>
     <div class="block">
@@ -249,10 +272,12 @@
       <a href="home.html">Inicio</a>
     </div>
   </aside>
+
   <main id="propertyDetail" class="detail-container">
-    <!-- El contenido se rellena dinámicamente -->
+    <!-- Rellenado dinámicamente -->
   </main>
-  <!-- Insertamos directamente el mismo pie de página que en el resto del sitio para coherencia -->
+
+  <!-- (FOOTER: sin tocar) -->
   <footer>
     <div class="footer-grid">
       <div>
@@ -291,399 +316,413 @@
     </div>
     <div style="max-width:var(--page-max);margin:18px auto 0;color:#9ca3af;text-align:center;font-size:0.9rem">© 2025 Altorra Inmobiliaria — Hecho con confianza.</div>
   </footer>
-  <!-- Eliminamos el script de inclusión síncrona porque el encabezado y el pie ya están embebidos -->
 
-  <!-- Registrar service worker para PWA -->
+  <!-- Service worker -->
   <script>
     if('serviceWorker' in navigator){
       navigator.serviceWorker.register('/service-worker.js').catch(function(err){ console.warn('SW registration failed', err); });
     }
   </script>
-  <!-- Lazy loading de todas las imágenes para mejorar el rendimiento -->
+
+  <!-- Lazy loading imágenes -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       document.querySelectorAll('img').forEach(function(img) {
-        if (!img.hasAttribute('loading')) {
-          img.setAttribute('loading', 'lazy');
-        }
+        if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
       });
     });
   </script>
+
+  <!-- Página: lógica detalle -->
   <script>
-  function getParam(name){
-    const params = new URLSearchParams(window.location.search);
-    return params.get(name) || '';
-  }
-  function formatCOP(n){
-    if(!n && n!==0) return '';
-    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
-  }
-  function escapeHtml(str){
-    return String(str||'').replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[m];});
-  }
-  function buildWhatsAppLink(p){
-    const phone = '573235016747';
-    const company = 'Altorra Inmobiliaria';
-    const price = p.price ? ('$'+formatCOP(p.price)+' COP') : '';
-    let opLabel = '';
-    if(p.operation === 'arrendar') opLabel = ' / mes';
-    else if(p.operation === 'dias') opLabel = ' / noche';
-    const text = `Hola ${company}, me interesa la propiedad "${p.title}" (ID: ${p.id}) en ${p.city} ${price}${opLabel}. ¿Podemos agendar una visita?`;
-    return 'https://wa.me/'+phone+'?text='+encodeURIComponent(text);
-  }
-  async function init(){
-    const id = getParam('id');
-    const container = document.getElementById('propertyDetail');
-    if(!id){ container.innerHTML = '<p>Propiedad no especificada.</p>'; return; }
-    try{
-      // Cargar archivo JSON sin añadir parámetro de tiempo para evitar problemas en GitHub Pages
-      const res = await fetch('properties/data.json', {cache:'no-store'});
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      const data = await res.json();
-      const prop = data.find(item => item.id === id);
-      if(!prop){ container.innerHTML = '<p>Propiedad no encontrada.</p>'; return; }
-      // Crear galería con slider y miniaturas
-      const galleryDiv = document.createElement('div');
-      galleryDiv.className = 'gallery';
-      const imgsRaw = Array.isArray(prop.images) && prop.images.length ? prop.images : ['https://i.postimg.cc/0yYb8Y6r/placeholder.png'];
-      // Build a list of image paths, ensuring each has a leading slash. When the JSON provides
-      // just a file name (e.g. "comprar1.png"), prefixing '/' will resolve to the root of the site.
-      const imgs = imgsRaw.map(function(src){
-        // If already absolute or external (starts with http), leave as-is
-        if(src.startsWith('http') || src.startsWith('//')) return src;
-        return src.startsWith('/') ? src : '/' + src;
-      });
-      let currentIndex = 0;
-      // imagen principal
-      const mainImg = document.createElement('img');
-      mainImg.className = 'main-img';
-      mainImg.loading = 'lazy';
-      mainImg.decoding = 'async';
-      mainImg.src = imgs[0];
-      mainImg.alt = escapeHtml(prop.title || 'Imagen');
-      galleryDiv.appendChild(mainImg);
-      // botón anterior
-      const prevBtn = document.createElement('button');
-      prevBtn.className = 'arrow prev';
-      prevBtn.innerHTML = '\u2039';
-      prevBtn.addEventListener('click', function(){
-        if(!imgs.length) return;
-        currentIndex = (currentIndex - 1 + imgs.length) % imgs.length;
-        mainImg.src = imgs[currentIndex];
-        updateActiveThumb();
-      });
-      galleryDiv.appendChild(prevBtn);
-      // botón siguiente
-      const nextBtn = document.createElement('button');
-      nextBtn.className = 'arrow next';
-      nextBtn.innerHTML = '\u203a';
-      nextBtn.addEventListener('click', function(){
-        if(!imgs.length) return;
-        currentIndex = (currentIndex + 1) % imgs.length;
-        mainImg.src = imgs[currentIndex];
-        updateActiveThumb();
-      });
-      galleryDiv.appendChild(nextBtn);
-      // miniaturas
-      const thumbs = document.createElement('div');
-      thumbs.className = 'thumbnails';
-      const thumbEls = [];
-      imgs.forEach((src, idx) => {
-        const t = document.createElement('img');
-        t.loading = 'lazy';
-        t.decoding = 'async';
-        t.src = src;
-        t.alt = escapeHtml(prop.title || 'Miniatura');
-        if(idx === 0) t.classList.add('active');
-        t.addEventListener('click', function(){
-          currentIndex = idx;
-          mainImg.src = imgs[currentIndex];
-          updateActiveThumb();
+    function getParam(name){
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name) || '';
+    }
+    function formatCOP(n){
+      if(!n && n!==0) return '';
+      return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+    }
+    function escapeHtml(str){
+      return String(str||'').replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});
+    }
+    function buildWhatsAppLink(p){
+      const phone = '573235016747';
+      const company = 'Altorra Inmobiliaria';
+      const price = p.price ? ('$'+formatCOP(p.price)+' COP') : '';
+      let opLabel = '';
+      if(p.operation === 'arrendar') opLabel = ' / mes';
+      else if(p.operation === 'dias') opLabel = ' / noche';
+      const text = `Hola ${company}, me interesa la propiedad "${p.title}" (ID: ${p.id}) en ${p.city} ${price}${opLabel}. ¿Podemos agendar una visita?`;
+      return 'https://wa.me/'+phone+'?text='+encodeURIComponent(text);
+    }
+
+    async function init(){
+      const id = getParam('id');
+      const container = document.getElementById('propertyDetail');
+      if(!id){ container.innerHTML = '<p>Propiedad no especificada.</p>'; return; }
+
+      try{
+        const res = await fetch('properties/data.json', {cache:'no-store'});
+        if(!res.ok) throw new Error('HTTP '+res.status);
+        const data = await res.json();
+        const prop = data.find(item => item.id === id);
+        if(!prop){ container.innerHTML = '<p>Propiedad no encontrada.</p>'; return; }
+
+        /* ========== GALLERY ========== */
+        const galleryDiv = document.createElement('div');
+        galleryDiv.className = 'gallery';
+        const G = document.createElement('div');
+        G.className = 'gallery-inner';
+
+        const imgsRaw = Array.isArray(prop.images) && prop.images.length ? prop.images : ['https://i.postimg.cc/0yYb8Y6r/placeholder.png'];
+        const imgs = imgsRaw.map(function(src){
+          if(src.startsWith('http') || src.startsWith('//')) return src;
+          return src.startsWith('/') ? src : '/' + src;
         });
-        thumbEls.push(t);
-        thumbs.appendChild(t);
-      });
-      function updateActiveThumb(){
-        thumbEls.forEach((el, idx) => {
-          if(idx === currentIndex) el.classList.add('active');
-          else el.classList.remove('active');
+
+        let currentIndex = 0;
+
+        const mainImg = document.createElement('img');
+        mainImg.className = 'main-img';
+        mainImg.decoding = 'async';
+        mainImg.src = imgs[0];
+        mainImg.alt = escapeHtml(prop.title || 'Imagen de la propiedad');
+        G.appendChild(mainImg);
+
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'arrow prev';
+        prevBtn.setAttribute('aria-label','Imagen anterior');
+        prevBtn.innerHTML = '&#8249;';
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'arrow next';
+        nextBtn.setAttribute('aria-label','Imagen siguiente');
+        nextBtn.innerHTML = '&#8250;';
+
+        prevBtn.addEventListener('click', ()=> { if(!imgs.length) return; currentIndex = (currentIndex - 1 + imgs.length) % imgs.length; mainImg.src = imgs[currentIndex]; updateActiveThumb(); });
+        nextBtn.addEventListener('click', ()=> { if(!imgs.length) return; currentIndex = (currentIndex + 1) % imgs.length; mainImg.src = imgs[currentIndex]; updateActiveThumb(); });
+
+        // Navegación con teclado
+        document.addEventListener('keydown', (e)=>{
+          if(e.key === 'ArrowLeft') prevBtn.click();
+          if(e.key === 'ArrowRight') nextBtn.click();
         });
-      }
 
-      // Implementar zoom en la imagen principal al hacer clic: mostramos la imagen en un overlay centrado y se cierra al hacer clic.
-      mainImg.addEventListener('click', function(){
-        const overlay = document.createElement('div');
-        overlay.style.position = 'fixed';
-        overlay.style.inset = '0';
-        overlay.style.background = 'rgba(0,0,0,0.8)';
-        overlay.style.display = 'flex';
-        overlay.style.alignItems = 'center';
-        overlay.style.justifyContent = 'center';
-        overlay.style.zIndex = '9999';
-        const zoomImg = document.createElement('img');
-        zoomImg.src = mainImg.src;
-        zoomImg.style.maxWidth = '90%';
-        zoomImg.style.maxHeight = '90%';
-        zoomImg.style.objectFit = 'contain';
-        overlay.appendChild(zoomImg);
-        overlay.addEventListener('click', function(){ overlay.remove(); });
-        document.body.appendChild(overlay);
-      });
-      galleryDiv.appendChild(thumbs);
-      // Crear panel de información
-      const infoDiv = document.createElement('div');
-      infoDiv.className = 'info';
-      const h1 = document.createElement('h1');
-      h1.textContent = prop.title || 'Propiedad';
-      const specs = document.createElement('div');
-      specs.className = 'specs';
-      const specParts = [];
-      if(prop.beds) specParts.push(prop.beds+'H');
-      if(prop.baths) specParts.push(prop.baths+'B');
-      if(prop.sqm) specParts.push(prop.sqm+' m²');
-      if(prop.city) specParts.push(prop.city);
-      if(prop.type) specParts.push(prop.type.charAt(0).toUpperCase()+prop.type.slice(1));
-      specs.textContent = specParts.join(' · ');
-      const priceRow = document.createElement('div');
-      priceRow.className = 'price';
-      let priceLabel = '';
-      if(prop.price){
-        if(prop.operation === 'arrendar') priceLabel = '$'+formatCOP(prop.price)+' COP / mes';
-        else if(prop.operation === 'dias') priceLabel = '$'+formatCOP(prop.price)+' COP / noche';
-        else priceLabel = '$'+formatCOP(prop.price)+' COP';
-      }
-      priceRow.textContent = priceLabel;
-      const desc = document.createElement('p');
-      desc.textContent = prop.description || '';
-      const actions = document.createElement('div');
-      actions.className = 'actions';
-      // botón de WhatsApp
-      const whatsapp = document.createElement('a');
-      whatsapp.className = 'btn btn-ghost';
-      whatsapp.href = buildWhatsAppLink(prop);
-      whatsapp.target = '_blank';
-      whatsapp.rel = 'noopener';
-      whatsapp.textContent = 'WhatsApp';
-      actions.appendChild(whatsapp);
-      infoDiv.appendChild(h1);
-      infoDiv.appendChild(specs);
-      infoDiv.appendChild(priceRow);
-      if(desc.textContent) infoDiv.appendChild(desc);
-      infoDiv.appendChild(actions);
-      
-      // Crear formulario de contacto usando formsubmit.co
-      const form = document.createElement('form');
-      form.className = 'contact-form';
-      form.action = 'https://formsubmit.co/altorrainmobiliaria@gmail.com';
-      form.method = 'POST';
-      form.innerHTML = `
-        <h3>Solicitar información</h3>
-        <input type="hidden" name="_subject" value="Consulta propiedad ${prop.id} - ${escapeHtml(prop.title)}" />
-        <input type="hidden" name="property_id" value="${prop.id}" />
-        <input type="hidden" name="property_title" value="${escapeHtml(prop.title)}" />
-        <input type="text" name="name" placeholder="Nombre completo" required />
-        <input type="email" name="email" placeholder="Correo electrónico" required />
-        <input type="tel" name="phone" placeholder="Número de teléfono" required />
-        <textarea name="message" placeholder="Mensaje" rows="4" required>Hola, estoy interesado(a) en la propiedad \"${escapeHtml(prop.title)}\". Por favor contácteme.</textarea>
-        <input type="hidden" name="_captcha" value="false" />
-        <input type="hidden" name="_next" value="https://altorrainmobiliaria.github.io/gracias.html" />
-        <button type="submit" class="btn btn-primary">Enviar mensaje</button>
-      `;
-      infoDiv.appendChild(form);
+        G.appendChild(prevBtn);
+        G.appendChild(nextBtn);
 
-      // Vaciar contenedor y agregar elementos
-      container.innerHTML = '';
-      container.appendChild(galleryDiv);
-      container.appendChild(infoDiv);
+        // Zoom overlay al click
+        mainImg.addEventListener('click', function(){
+          const overlay = document.createElement('div');
+          overlay.style.position = 'fixed';
+          overlay.style.inset = '0';
+          overlay.style.background = 'rgba(0,0,0,0.86)';
+          overlay.style.display = 'flex';
+          overlay.style.alignItems = 'center';
+          overlay.style.justifyContent = 'center';
+          overlay.style.zIndex = '9999';
+          overlay.style.cursor = 'zoom-out';
+          const zoomImg = document.createElement('img');
+          zoomImg.src = mainImg.src;
+          zoomImg.style.maxWidth = '92%';
+          zoomImg.style.maxHeight = '92%';
+          zoomImg.style.objectFit = 'contain';
+          overlay.appendChild(zoomImg);
+          overlay.addEventListener('click', ()=> overlay.remove());
+          document.body.appendChild(overlay);
+        });
 
-      // Inyectar datos estructurados Schema.org (Offer/Residence) para SEO
-      try {
-        const schema = {
-          "@context": "https://schema.org",
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Residence",
-            "name": prop.title,
-            "address": {
-              "@type": "PostalAddress",
-              "addressLocality": prop.city,
-              "addressRegion": "Bolívar",
-              "addressCountry": "CO"
+        const thumbs = document.createElement('div');
+        thumbs.className = 'thumbnails';
+        const thumbEls = [];
+        imgs.forEach((src, idx) => {
+          const t = document.createElement('img');
+          t.decoding = 'async';
+          t.src = src;
+          t.alt = escapeHtml(prop.title || 'Miniatura');
+          if(idx === 0) t.classList.add('active');
+          t.addEventListener('click', function(){
+            currentIndex = idx;
+            mainImg.src = imgs[currentIndex];
+            updateActiveThumb();
+          });
+          thumbEls.push(t);
+          thumbs.appendChild(t);
+        });
+        function updateActiveThumb(){
+          thumbEls.forEach((el, idx) => el.classList.toggle('active', idx === currentIndex));
+        }
+
+        // Swipe en móviles
+        let startX = null;
+        mainImg.addEventListener('touchstart', (e)=>{ startX = e.touches[0].clientX; }, {passive:true});
+        mainImg.addEventListener('touchend', (e)=>{
+          if(startX === null) return;
+          const dx = e.changedTouches[0].clientX - startX;
+          if(Math.abs(dx) > 40){
+            if(dx < 0) nextBtn.click();
+            else prevBtn.click();
+          }
+          startX = null;
+        }, {passive:true});
+
+        galleryDiv.appendChild(G);
+        galleryDiv.appendChild(thumbs);
+
+        /* ========== INFO PANEL ========== */
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'info';
+
+        const h1 = document.createElement('h1');
+        h1.textContent = prop.title || 'Propiedad';
+
+        const specs = document.createElement('div');
+        specs.className = 'specs';
+        const specParts = [];
+        if(prop.beds) specParts.push(prop.beds+'H');
+        if(prop.baths) specParts.push(prop.baths+'B');
+        if(prop.sqm) specParts.push(prop.sqm+' m²');
+        if(prop.city) specParts.push(prop.city);
+        if(prop.type) specParts.push(prop.type.charAt(0).toUpperCase()+prop.type.slice(1));
+        specs.textContent = specParts.join(' · ');
+
+        const priceRow = document.createElement('div');
+        priceRow.className = 'price';
+        let priceLabel = '';
+        if(prop.price){
+          if(prop.operation === 'arrendar') priceLabel = '$'+formatCOP(prop.price)+' COP / mes';
+          else if(prop.operation === 'dias') priceLabel = '$'+formatCOP(prop.price)+' COP / noche';
+          else priceLabel = '$'+formatCOP(prop.price)+' COP';
+        }
+        priceRow.textContent = priceLabel;
+
+        const desc = document.createElement('p');
+        desc.className = 'desc';
+        desc.textContent = prop.description || '';
+
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+        const whatsapp = document.createElement('a');
+        whatsapp.className = 'btn btn-ghost';
+        whatsapp.href = buildWhatsAppLink(prop);
+        whatsapp.target = '_blank';
+        whatsapp.rel = 'noopener';
+        whatsapp.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.52 3.48A11.89 11.89 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.17 1.6 5.98L0 24l6.21-1.62A11.96 11.96 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52ZM12 22a9.93 9.93 0 0 1-5.06-1.4l-.36-.21-3.69.96.99-3.59-.23-.37A9.98 9.98 0 1 1 22 12c0 5.52-4.48 10-10 10Zm5.48-7.55c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.76-1.66-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.46-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.5h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.69.25-1.28.17-1.41-.08-.13-.27-.2-.57-.35Z" fill="currentColor"/></svg> WhatsApp';
+        actions.appendChild(whatsapp);
+
+        infoDiv.appendChild(h1);
+        infoDiv.appendChild(specs);
+        infoDiv.appendChild(priceRow);
+        if(desc.textContent) infoDiv.appendChild(desc);
+        infoDiv.appendChild(actions);
+
+        /* ========== FORM CONTACTO (FormSubmit) ========== */
+        const form = document.createElement('form');
+        form.className = 'contact-form';
+        form.action = 'https://formsubmit.co/altorrainmobiliaria@gmail.com';
+        form.method = 'POST';
+        form.innerHTML = `
+          <h3>Solicitar información</h3>
+          <input type="hidden" name="_subject" value="Consulta propiedad ${prop.id} - ${escapeHtml(prop.title)}" />
+          <input type="hidden" name="property_id" value="${prop.id}" />
+          <input type="hidden" name="property_title" value="${escapeHtml(prop.title)}" />
+          <input type="text" name="name" placeholder="Nombre completo" required />
+          <input type="email" name="email" placeholder="Correo electrónico" required />
+          <input type="tel" name="phone" placeholder="Número de teléfono" required />
+          <textarea name="message" placeholder="Mensaje" rows="4" required>Hola, estoy interesado(a) en la propiedad &quot;${escapeHtml(prop.title)}&quot;. Por favor contácteme.</textarea>
+          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_template" value="table" />
+          <input type="hidden" name="_next" value="gracias.html" />
+          <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+        `;
+        infoDiv.appendChild(form);
+
+        /* ========== MONTAJE ========== */
+        container.innerHTML = '';
+        container.appendChild(galleryDiv);
+        container.appendChild(infoDiv);
+
+        /* ========== SEO: Schema.org ========== */
+        try {
+          const schema = {
+            "@context": "https://schema.org",
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Residence",
+              "name": prop.title,
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": prop.city,
+                "addressRegion": "Bolívar",
+                "addressCountry": "CO"
+              },
+              "numberOfRooms": prop.beds,
+              "numberOfBathroomsTotal": prop.baths,
+              "floorSize": {
+                "@type": "QuantitativeValue",
+                "value": prop.sqm,
+                "unitCode": "MTR"
+              }
             },
-            "numberOfRooms": prop.beds,
-            "numberOfBathroomsTotal": prop.baths,
-            "floorSize": {
-              "@type": "QuantitativeValue",
-              "value": prop.sqm,
-              "unitCode": "MTR"
-            }
-          },
-          "price": prop.price,
-          "priceCurrency": "COP",
-          "availability": "https://schema.org/InStock"
-        };
-        const ld = document.createElement('script');
-        ld.type = 'application/ld+json';
-        ld.textContent = JSON.stringify(schema);
-        document.head.appendChild(ld);
-      } catch(e) {
-        console.warn('Schema injection error', e);
+            "price": prop.price,
+            "priceCurrency": "COP",
+            "availability": "https://schema.org/InStock"
+          };
+          const ld = document.createElement('script');
+          ld.type = 'application/ld+json';
+          ld.textContent = JSON.stringify(schema);
+          document.head.appendChild(ld);
+        } catch(e) { console.warn('Schema injection error', e); }
+
+      }catch(err){
+        console.error(err);
+        container.innerHTML = '<p>Error al cargar la propiedad.</p>';
       }
-    }catch(err){
-      console.error(err);
-      container.innerHTML = '<p>Error al cargar la propiedad.</p>';
     }
-  }
-  document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', init);
   </script>
 
-  <!-- Menú de navegación y drawer móviles copiados de las páginas de listados -->
+  <!-- Scripts de menú (idénticos; NO tocar) -->
   <script>
-  /* ---------------- Desktop menu manager (copied del home/listados) ---------------- */
-  (function(){
-    const MARGIN = 12;
-    let open = null;
-    const supportsHover = window.matchMedia('(hover: hover)').matches;
+    (function(){
+      const MARGIN = 12;
+      let open = null;
+      const supportsHover = window.matchMedia('(hover: hover)').matches;
 
-    function resetPanelStyles(panel){
-      panel.style.left=''; panel.style.top=''; panel.style.width=''; panel.style.maxWidth=''; panel.style.right='';
-    }
-    function placeAndShow(btn, panel, size){
-      if(window.innerWidth <= 860) return;
-      if(open && open.panel !== panel) hideImmediate(open);
-      resetPanelStyles(panel);
-      panel.style.display = 'block';
-      panel.style.visibility = 'hidden';
-      panel.style.position = 'fixed';
-      panel.style.maxHeight = Math.max(260, window.innerHeight - (MARGIN*2)) + 'px';
-      if(size === 'mega'){
-        panel.style.width = Math.min(920, window.innerWidth - (MARGIN*2)) + 'px';
-      } else {
-        panel.style.width = 'auto';
-        panel.style.maxWidth = Math.min(520, window.innerWidth - (MARGIN*2)) + 'px';
+      function resetPanelStyles(panel){
+        panel.style.left=''; panel.style.top=''; panel.style.width=''; panel.style.maxWidth=''; panel.style.right='';
       }
-      const preRect = panel.getBoundingClientRect();
-      const bRect = btn.getBoundingClientRect();
-      let left;
-      if(size === 'mega'){
-        left = Math.round(bRect.left + bRect.width/2 - preRect.width/2);
-        left = Math.max(MARGIN, Math.min(left, window.innerWidth - preRect.width - MARGIN));
-      } else {
-        left = Math.round(Math.min(bRect.left, window.innerWidth - preRect.width - MARGIN));
-        left = Math.max(left, MARGIN);
+      function placeAndShow(btn, panel, size){
+        if(window.innerWidth <= 860) return;
+        if(open && open.panel !== panel) hideImmediate(open);
+        resetPanelStyles(panel);
+        panel.style.display = 'block';
+        panel.style.visibility = 'hidden';
+        panel.style.position = 'fixed';
+        panel.style.maxHeight = Math.max(260, window.innerHeight - (MARGIN*2)) + 'px';
+        if(size === 'mega'){
+          panel.style.width = Math.min(920, window.innerWidth - (MARGIN*2)) + 'px';
+        } else {
+          panel.style.width = 'auto';
+          panel.style.maxWidth = Math.min(520, window.innerWidth - (MARGIN*2)) + 'px';
+        }
+        const preRect = panel.getBoundingClientRect();
+        const bRect = btn.getBoundingClientRect();
+        let left;
+        if(size === 'mega'){
+          left = Math.round(bRect.left + bRect.width/2 - preRect.width/2);
+          left = Math.max(MARGIN, Math.min(left, window.innerWidth - preRect.width - MARGIN));
+        } else {
+          left = Math.round(Math.min(bRect.left, window.innerWidth - preRect.width - MARGIN));
+          left = Math.max(left, MARGIN);
+        }
+        let top = Math.round(bRect.bottom + 8);
+        if(top + preRect.height > window.innerHeight - MARGIN){
+          top = Math.round(bRect.top - preRect.height - 8);
+          if(top < MARGIN) top = MARGIN;
+        }
+        panel.style.left = left + 'px';
+        panel.style.top = top + 'px';
+        panel.style.visibility = 'visible';
+        panel.classList.add('menu-visible');
+        panel.setAttribute('aria-hidden','false');
+        btn.setAttribute('aria-expanded','true');
+        open = {panel, btn};
       }
-      let top = Math.round(bRect.bottom + 8);
-      if(top + preRect.height > window.innerHeight - MARGIN){
-        top = Math.round(bRect.top - preRect.height - 8);
-        if(top < MARGIN) top = MARGIN;
+      function hideImmediate(obj){
+        if(!obj) return;
+        obj.btn && obj.btn.setAttribute('aria-expanded','false');
+        obj.panel.classList.remove('menu-visible');
+        obj.panel.style.display='none';
+        obj.panel.setAttribute('aria-hidden','true');
+        resetPanelStyles(obj.panel);
+        if(open && open.panel === obj.panel) open = null;
       }
-      panel.style.left = left + 'px';
-      panel.style.top = top + 'px';
-      panel.style.visibility = 'visible';
-      panel.classList.add('menu-visible');
-      panel.setAttribute('aria-hidden','false');
-      btn.setAttribute('aria-expanded','true');
-      open = {panel, btn};
-    }
-    function hideImmediate(obj){
-      if(!obj) return;
-      obj.btn && obj.btn.setAttribute('aria-expanded','false');
-      obj.panel.classList.remove('menu-visible');
-      obj.panel.style.display='none';
-      obj.panel.setAttribute('aria-hidden','true');
-      resetPanelStyles(obj.panel);
-      if(open && open.panel === obj.panel) open = null;
-    }
-    document.querySelectorAll('.nav-btn[data-panel]').forEach(btn=>{
-      const panelId = btn.getAttribute('data-panel');
-      const panel = document.getElementById(panelId);
-      const item = btn.closest('.nav-item');
-      const size = item ? (item.dataset.size || 'compact') : 'compact';
-      let openTimer=null, closeTimer=null;
-      const show = ()=> { clearTimeout(closeTimer); openTimer = setTimeout(()=>{ placeAndShow(btn, panel, size); }, 60); };
-      const hide = ()=> { clearTimeout(openTimer); closeTimer = setTimeout(()=>{ hideImmediate({panel, btn}); }, 120); };
-      if(supportsHover){
-        btn.addEventListener('pointerenter', show);
-        btn.addEventListener('pointerleave', hide);
-        panel.addEventListener('pointerenter', ()=> { clearTimeout(closeTimer); clearTimeout(openTimer); });
-        panel.addEventListener('pointerleave', hide);
-      }
-      btn.addEventListener('click', (e)=> {
-        if(window.innerWidth > 860){
-          e.preventDefault();
-          if(panel.classList.contains('menu-visible')) hideImmediate({panel, btn});
-          else placeAndShow(btn, panel, size);
+      document.querySelectorAll('.nav-btn[data-panel]').forEach(btn=>{
+        const panelId = btn.getAttribute('data-panel');
+        const panel = document.getElementById(panelId);
+        const item = btn.closest('.nav-item');
+        const size = item ? (item.dataset.size || 'compact') : 'compact';
+        let openTimer=null, closeTimer=null;
+        const show = ()=> { clearTimeout(closeTimer); openTimer = setTimeout(()=>{ placeAndShow(btn, panel, size); }, 60); };
+        const hide = ()=> { clearTimeout(openTimer); closeTimer = setTimeout(()=>{ hideImmediate({panel, btn}); }, 120); };
+        if(supportsHover){
+          btn.addEventListener('pointerenter', show);
+          btn.addEventListener('pointerleave', hide);
+          panel.addEventListener('pointerenter', ()=> { clearTimeout(closeTimer); clearTimeout(openTimer); });
+          panel.addEventListener('pointerleave', hide);
+        }
+        btn.addEventListener('click', (e)=> {
+          if(window.innerWidth > 860){
+            e.preventDefault();
+            if(panel.classList.contains('menu-visible')) hideImmediate({panel, btn});
+            else placeAndShow(btn, panel, size);
+          }
+        });
+        btn.addEventListener('focus', show);
+        btn.addEventListener('blur', ()=> setTimeout(()=>{ if(!panel.contains(document.activeElement)) hide(); }, 60));
+      });
+      document.addEventListener('click', (e)=>{
+        if(e.target.closest('nav') || e.target.closest('.menu-panel')) return;
+        document.querySelectorAll('.menu-panel.menu-visible').forEach(p=> hideImmediate({panel:p, btn:null}));
+      });
+      document.addEventListener('keydown', (e)=> {
+        if(e.key === 'Escape'){
+          document.querySelectorAll('.menu-panel.menu-visible').forEach(p=> hideImmediate({panel:p, btn:null}));
         }
       });
-      btn.addEventListener('focus', show);
-      btn.addEventListener('blur', ()=> setTimeout(()=>{ if(!panel.contains(document.activeElement)) hide(); }, 60));
-    });
-    document.addEventListener('click', (e)=>{
-      if(e.target.closest('nav') || e.target.closest('.menu-panel')) return;
-      document.querySelectorAll('.menu-panel.menu-visible').forEach(p=> hideImmediate({panel:p, btn:null}));
-    });
-    document.addEventListener('keydown', (e)=> {
-      if(e.key === 'Escape'){
-        document.querySelectorAll('.menu-panel.menu-visible').forEach(p=> hideImmediate({panel:p, btn:null}));
-      }
-    });
-    window.addEventListener('resize', ()=> {
-      document.querySelectorAll('.menu-panel').forEach(p=> { p.classList.remove('menu-visible'); p.style.display='none'; p.setAttribute('aria-hidden','true'); resetPanelStyles(p); });
-      document.querySelectorAll('.nav-btn[data-panel]').forEach(b => b.setAttribute('aria-expanded','false'));
-      open = null;
-    });
-  })();
+      window.addEventListener('resize', ()=> {
+        document.querySelectorAll('.menu-panel').forEach(p=> { p.classList.remove('menu-visible'); p.style.display='none'; p.setAttribute('aria-hidden','true'); resetPanelStyles(p); });
+        document.querySelectorAll('.nav-btn[data-panel]').forEach(b => b.setAttribute('aria-expanded','false'));
+        open = null;
+      });
+    })();
 
-  /* ---------------- Drawer móvil ---------------- */
-  (function(){
-    const toggle = document.getElementById('navToggle');
-    const drawer = document.getElementById('mobileMenu');
-    const backdrop = document.getElementById('drawerBackdrop');
-    if(!toggle || !drawer || !backdrop) return;
-    let lastFocus = null;
-    function focusable(root){ return root.querySelectorAll('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'); }
-    function setDrawerHeight(){
-      const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
-      drawer.style.height = (window.innerHeight - headerH) + 'px';
-    }
-    function clearDrawerHeight(){ drawer.style.height = ''; }
-    function openDrawer(){
-      lastFocus = document.activeElement;
-      drawer.hidden = false;
-      setDrawerHeight();
-      window.addEventListener('resize', setDrawerHeight);
-      window.addEventListener('orientationchange', setDrawerHeight);
-      requestAnimationFrame(()=> {
-        drawer.classList.add('open');
-        backdrop.classList.add('open');
-        document.body.style.overflow='hidden';
-        toggle.setAttribute('aria-expanded','true');
-        const el = focusable(drawer)[0];
-        el && el.focus();
-      });
-    }
-    function closeDrawer(){
-      drawer.classList.remove('open');
-      backdrop.classList.remove('open');
-      document.body.style.overflow='';
-      toggle.setAttribute('aria-expanded','false');
-      clearDrawerHeight();
-      window.removeEventListener('resize', setDrawerHeight);
-      window.removeEventListener('orientationchange', setDrawerHeight);
-      requestAnimationFrame(()=> {
-        drawer.hidden = true;
-        if(lastFocus) lastFocus.focus();
-      });
-    }
-    toggle.addEventListener('click', ()=> {
-      if(drawer.classList.contains('open')) closeDrawer();
-      else openDrawer();
-    });
-    backdrop.addEventListener('click', closeDrawer);
-    document.addEventListener('keydown', (e)=> {
-      if(e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer();
-    });
-  })();
+    (function(){
+      const toggle = document.getElementById('navToggle');
+      const drawer = document.getElementById('mobileMenu');
+      const backdrop = document.getElementById('drawerBackdrop');
+      if(!toggle || !drawer || !backdrop) return;
+      let lastFocus = null;
+      function focusable(root){ return root.querySelectorAll('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'); }
+      function setDrawerHeight(){
+        const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
+        drawer.style.height = (window.innerHeight - headerH) + 'px';
+      }
+      function clearDrawerHeight(){ drawer.style.height = ''; }
+      function openDrawer(){
+        lastFocus = document.activeElement;
+        drawer.hidden = false;
+        setDrawerHeight();
+        window.addEventListener('resize', setDrawerHeight);
+        window.addEventListener('orientationchange', setDrawerHeight);
+        requestAnimationFrame(()=> {
+          drawer.classList.add('open');
+          backdrop.classList.add('open');
+          document.body.style.overflow='hidden';
+          toggle.setAttribute('aria-expanded','true');
+          const el = focusable(drawer)[0];
+          el && el.focus();
+        });
+      }
+      function closeDrawer(){
+        drawer.classList.remove('open');
+        backdrop.classList.remove('open');
+        document.body.style.overflow='';
+        toggle.setAttribute('aria-expanded','false');
+        clearDrawerHeight();
+        window.removeEventListener('resize', setDrawerHeight);
+        window.removeEventListener('orientationchange', setDrawerHeight);
+        requestAnimationFrame(()=> {
+          drawer.hidden = true;
+          if(lastFocus) lastFocus.focus();
+        });
+      }
+      toggle.addEventListener('click', ()=> drawer.classList.contains('open') ? closeDrawer() : openDrawer());
+      backdrop.addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', (e)=> { if(e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
+    })();
   </script>
 </body>
 </html>
