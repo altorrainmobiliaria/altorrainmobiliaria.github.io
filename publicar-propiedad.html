@@ -242,58 +242,66 @@ includeSync('include-header','header.html');
 <main class="publish-container">
   <p class="lead">Completa el siguiente formulario y un asesor de Altorra se pondrá en contacto contigo para ayudarte a publicar tu inmueble.</p>
 
-  <form class="publish-form" action="https://formsubmit.co/altorrainmobiliaria@gmail.com" method="POST">
-    <!-- Formsubmit config -->
-    <input type="hidden" name="_subject" value="Solicitud para publicar propiedad" />
-    <input type="hidden" name="_next" value="gracias.html" />
+  <form class="publish-form" id="publishForm" action="https://formsubmit.co/altorrainmobiliaria@gmail.com" method="POST" accept-charset="UTF-8">
+  <!-- Config FormSubmit -->
+  <input type="hidden" name="_subject" value="Solicitud para publicar propiedad">
+  <!-- URL ABSOLUTA recomendada; si usas GitHub Pages, pon tu dominio real -->
+  <input type="hidden" name="_next" value="https://tudominio.com/gracias.html">
+  <!-- Desactivar CAPTCHA de FormSubmit -->
+  <input type="hidden" name="_captcha" value="false">
+  <!-- Plantilla legible en el email -->
+  <input type="hidden" name="_template" value="table">
+  <!-- Honeypot anti-bots (invisible) -->
+  <input type="text" name="_honey" style="display:none">
 
-    <div class="grid two">
-      <label>Nombre completo
-        <input type="text" name="Nombre" autocomplete="name" required />
-      </label>
-      <label>Correo electrónico
-        <input type="email" name="Email" autocomplete="email" required />
-      </label>
-    </div>
-
-    <div class="grid two">
-      <label>Teléfono de contacto
-        <input type="tel" name="Teléfono" autocomplete="tel" required />
-      </label>
-      <label>Ciudad
-        <input type="text" name="Ciudad" required />
-      </label>
-    </div>
-
-    <div class="grid two">
-      <label>Operación
-        <select name="Operación" required>
-          <option value="Comprar">Venta</option>
-          <option value="Arrendar">Arriendo</option>
-          <option value="Por días">Por días</option>
-        </select>
-      </label>
-      <label>Tipo de propiedad
-        <select name="Tipo" required>
-          <option value="Apartamento">Apartamento</option>
-          <option value="Casa">Casa</option>
-          <option value="Oficina">Oficina</option>
-          <option value="Lote">Lote</option>
-          <option value="Otro">Otro</option>
-        </select>
-      </label>
-    </div>
-
-    <label>Precio estimado (COP)
-      <input type="number" name="Precio" min="0" inputmode="numeric" />
+  <div class="grid two">
+    <label>Nombre completo
+      <input type="text" name="Nombre" autocomplete="name" required />
     </label>
-
-    <label>Descripción de la propiedad
-      <textarea name="Descripción" placeholder="Cuéntanos: habitaciones, baños, m², parqueadero, amenidades, cercanías..." required></textarea>
+    <label>Correo electrónico
+      <input type="email" name="Email" autocomplete="email" required />
     </label>
+  </div>
 
-    <button type="submit">Enviar solicitud</button>
-  </form>
+  <div class="grid two">
+    <label>Teléfono de contacto
+      <input type="tel" name="Teléfono" autocomplete="tel" required />
+    </label>
+    <label>Ciudad
+      <input type="text" name="Ciudad" required />
+    </label>
+  </div>
+
+  <div class="grid two">
+    <label>Operación
+      <select name="Operación" required>
+        <option value="Venta">Venta</option>
+        <option value="Arriendo">Arriendo</option>
+        <option value="Por días">Por días</option>
+      </select>
+    </label>
+    <label>Tipo de propiedad
+      <select name="Tipo" required>
+        <option value="Apartamento">Apartamento</option>
+        <option value="Casa">Casa</option>
+        <option value="Oficina">Oficina</option>
+        <option value="Lote">Lote</option>
+        <option value="Otro">Otro</option>
+      </select>
+    </label>
+  </div>
+
+  <label>Precio estimado (COP)
+    <input type="number" name="Precio" min="0" inputmode="numeric" />
+  </label>
+
+  <label>Descripción de la propiedad
+    <textarea name="Descripción" placeholder="Cuéntanos: habitaciones, baños, m², parqueadero, amenidades, cercanías..." required></textarea>
+  </label>
+
+  <button type="submit">Enviar solicitud</button>
+</form>
+
 </main>
 
 <!-- ========== FOOTER (idéntico) ========== -->
