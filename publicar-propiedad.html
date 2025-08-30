@@ -454,7 +454,10 @@ if(typeof includeSync !== 'function'){
   }
 }
 includeSync('include-footer','footer.html');
-</script>/* ---------- FOOTER ---------- */
+
+</script>
+
+/* ---------- FOOTER ---------- */
   footer{background:#0b0b0b;color:#fff;padding:36px 16px}
   .footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
   @media (max-width:920px){ .footer-grid{grid-template-columns:1fr} }
@@ -464,35 +467,25 @@ includeSync('include-footer','footer.html');
 </head>
 <body>
 <a href="#main" class="sr-only">Saltar al contenido principal</a>
-
-<!-- INCLUIMOS EL HEADER DESDE header.html (usuario YA lo tiene) -->
-<div id="include-header"></div>
+<!-- INCLUIMOS EL FOOTER DESDE footer.html (usuario YA lo tiene) -->
+<div id="include-footer"></div>
 <script>
-/* includeSync: carga síncrona simple para garantizar que el header exista antes de los scripts
-   Nota: si vas a probar con file:// algunos navegadores bloquean XHR locales. Usa servidor local si es necesario. */
-function includeSync(id, url){
-  try{
-    var el = document.getElementById(id);
-    if(!el) return;
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, false); // síncrono a propósito para mantener el mismo orden de ejecución
-    xhr.send(null);
-    if(xhr.status === 200 || xhr.status === 0){
-      el.innerHTML = xhr.responseText;
-    } else {
-      console.warn('includeSync: error cargando', url, xhr.status);
-    }
-  }catch(e){
-    console.warn('includeSync error', e);
+/* Reutilizamos includeSync definido arriba (debió crearse al incluir header).
+   Si cargas esta página en contexto donde el primer script no corrió, definimos de nuevo por seguridad. */
+if(typeof includeSync !== 'function'){
+  function includeSync(id, url){
+    try{
+      var el = document.getElementById(id);
+      if(!el) return;
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', url, false);
+      xhr.send(null);
+      if(xhr.status === 200 || xhr.status === 0) el.innerHTML = xhr.responseText;
+    }catch(e){ console.warn('includeSync error', e); }
   }
 }
-includeSync('include-header','header.html');
+includeSync('include-footer','footer.html');
 </script>
 
-<!-- Registrar service worker para PWA -->
-<script>
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/service-worker.js').catch(function(err){ console.warn('SW registration failed', err); });
-  }
-</script>
+
 </html>
