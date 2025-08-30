@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Contacto | Altorra Inmobiliaria</title>
+  <meta name="description" content="Contáctanos para obtener información sobre nuestras propiedades y servicios."/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#d4af37"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --gold:#d4af37;--accent:#ffb400;--bg:#ffffff;--text:#111827;--muted:#6b7280;--header-h:72px;--page-max:1200px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--text);}
+    body{background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+    .container{max-width:var(--page-max);margin:calc(var(--header-h)+40px) auto 60px;padding:0 16px;}
+    h1{font-size:2rem;font-weight:800;color:var(--gold);margin-bottom:16px;text-align:center;}
+    p{font-size:1.1rem;margin-bottom:24px;color:var(--text);text-align:center;}
+    form.contact-form{max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:16px;padding:24px;background:#f9f9f9;border-radius:12px;border:1px solid rgba(0,0,0,0.08);box-shadow:0 8px 24px rgba(0,0,0,0.06);}
+    form.contact-form input,form.contact-form textarea{padding:12px;border-radius:8px;border:1px solid rgba(0,0,0,0.2);font-size:1rem;font-family:inherit;}
+    form.contact-form textarea{resize:vertical;min-height:120px;}
+    form.contact-form button{align-self:flex-start;padding:12px 18px;border-radius:8px;font-weight:600;background:linear-gradient(90deg,var(--accent),#ffd95e);color:#000;border:none;cursor:pointer;}
+  </style>
+</head>
+<body>
+  <div id="include-header"></div>
+  <div class="container">
+    <h1>Contáctanos</h1>
+    <p>¿Tienes alguna pregunta o deseas más información? Envíanos un mensaje y te responderemos pronto.</p>
+    <form class="contact-form" action="https://formsubmit.co/altorrainmobiliaria@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="Consulta general desde el sitio web" />
+      <input type="hidden" name="_captcha" value="false" />
+      <input type="hidden" name="_next" value="https://altorrainmobiliaria.github.io/gracias.html" />
+      <input type="text" name="name" placeholder="Nombre completo" required />
+      <input type="email" name="email" placeholder="Correo electrónico" required />
+      <input type="tel" name="phone" placeholder="Número de teléfono" required />
+      <textarea name="message" placeholder="Mensaje" rows="5" required></textarea>
+      <button type="submit">Enviar mensaje</button>
+    </form>
+  </div>
+  <div id="include-footer"></div>
+  <script>
+    (function(){
+      function includeSync(id,url){
+        var el=document.getElementById(id);
+        if(!el) return;
+        var xhr=new XMLHttpRequest();
+        xhr.open('GET',url,false);
+        xhr.send(null);
+        if(xhr.status===200 || xhr.status===0) el.innerHTML = xhr.responseText;
+      }
+      includeSync('include-header','header.html');
+      includeSync('include-footer','footer.html');
+    })();
+  </script>
+  <script>
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('/service-worker.js').catch(function(err){console.warn('SW registration failed', err);});
+    }
+  </script>
+</body>
+</html>
