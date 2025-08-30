@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Altorra | Inmobiliaria</title>
+<meta name="description" content="Altorra - Gestión integral en soluciones inmobiliarias"/>
+<!-- PWA and social metadata -->
+<meta name="theme-color" content="#d4af37"/>
+<link rel="manifest" href="manifest.json"/>
+<meta property="og:title" content="Altorra Inmobiliaria"/>
+<meta property="og:description" content="Encuentra las mejores propiedades para comprar, arrendar o rentar por días en Cartagena y ciudades vecinas."/>
+<!-- Updated OG image to match the new hero background -->
+<meta property="og:image" content="/hero-emotion.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --gold:#d4af37;
+    --accent:#ffb400;
+    --bg:#ffffff;
+    --text:#111827;
+    --muted:#6b7280;
+    --header-h:72px;
+    --gap:14px;
+    --page-max:1200px;
+    /* At home we want the banner overlay to be lighter to let the background image shine.
+       Lower opacity on both top and bottom overlay gradients for a brighter look */
+    /* Hacemos más luminosa la superposición para que la imagen de fondo resalte pero mantenga la legibilidad del texto */
+    --overlay:rgba(0,0,0,0.30);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;display:block}
+  @media (prefers-reduced-motion:reduce){
+    *{scroll-behavior:auto !important;animation:none !important;transition:none !important}
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;
+    background:var(--bg);z-index:140;border-bottom:1px solid rgba(0,0,0,0.06);
+    box-shadow:0 8px 26px rgba(0,0,0,0.06);
+  }
+  .container{max-width:var(--page-max);margin:0 auto;width:100%;padding:0 16px;display:flex;align-items:center;gap:12px}
+  .brand{display:flex;align-items:center;gap:10px;margin-right:6px}
+  .brand img{width:48px;height:48px;object-fit:contain}
+  .brand .name{font-weight:800;letter-spacing:-0.6px;text-transform:uppercase;font-size:1.02rem}
+
+  nav{margin-left:auto;display:flex;align-items:center;gap:8px}
+  .nav-list{display:flex;gap:6px;align-items:center}
+  .nav-item{position:relative}
+  .nav-btn{background:transparent;border:0;padding:8px 12px;font-weight:700;cursor:pointer;border-radius:8px;color:var(--text);font-size:0.95rem}
+  .nav-btn:focus{outline:3px solid rgba(212,175,55,0.18);outline-offset:3px}
+
+  .nav-toggle{display:none;margin-left:auto;background:transparent;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:8px 12px;font-weight:800}
+  .nav-toggle:focus{outline:3px solid rgba(212,175,55,0.18);outline-offset:3px}
+
+  /* ---------- MENÚ DESPLEGABLE (desktop) ---------- */
+  .menu-panel{
+    display:none; position:fixed; z-index:150; padding:14px; border-radius:12px;
+    background:linear-gradient(180deg,#fff,#fbfbfb); border:1px solid rgba(0,0,0,0.06);
+    box-shadow:0 22px 48px rgba(0,0,0,0.12); max-height:calc(100vh - var(--header-h) - 20px); overflow:auto;
+  }
+  .menu-visible{display:block;opacity:1;transform:none}
+  .panel-compact{min-width:220px;max-width:44vw}
+  .panel-mega{min-width:360px;max-width:920px;width:min(88vw,920px)}
+  .mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .mega-col h4{margin:0 0 8px;color:var(--gold);font-weight:700}
+  .menu-link{display:block;padding:6px;border-radius:8px;color:#0f1724}
+  .menu-link:hover{background:rgba(0,0,0,0.03)}
+
+  /* ---------- MENÚ MÓVIL (drawer) ---------- */
+  .drawer-backdrop{
+    position:fixed;inset:0;background:var(--overlay);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+    z-index:160;opacity:0;pointer-events:none;transition:opacity .2s ease;
+  }
+  .drawer{
+    position:fixed;left:0;right:0;top:var(--header-h);
+    height:calc(100vh - var(--header-h) - env(safe-area-inset-bottom));
+    height:calc(100dvh - var(--header-h));
+    padding-bottom:max(24px, env(safe-area-inset-bottom));
+    background:#fff;z-index:161;transform:translateY(-8px);opacity:0;pointer-events:none;
+    transition:transform .24s ease, opacity .2s ease; overflow:auto; border-top:1px solid rgba(0,0,0,.06);
+    overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+  }
+  .drawer.open{transform:none;opacity:1;pointer-events:auto}
+  .drawer-backdrop.open{opacity:1;pointer-events:auto}
+  .drawer .block{padding:16px;border-bottom:1px solid rgba(0,0,0,.06)}
+  .drawer .block:last-child{padding-bottom:max(32px, env(safe-area-inset-bottom))}
+  .drawer h4{margin:0 0 8px;color:var(--gold)}
+  .drawer a{display:block;padding:8px 2px}
+
+  @media (max-width:860px){
+    .nav-list{display:none}
+    .nav-toggle{display:inline-flex;align-items:center;gap:8px}
+    .menu-panel{display:none !important}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{min-height:80vh;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding-top:calc(var(--header-h) + 28px);color:#fff;overflow:hidden}
+  .hero .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+  /* Aclaramos el degradado del overlay para que el texto se mantenga legible sin oscurecer en exceso la imagen */
+  .hero .overlay{
+    position:absolute;
+    inset:0;
+    /* Hacemos la superposición más clara para resaltar la escena y que el texto siga legible */
+    background:linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.32));
+    z-index:1;
+  }
+  .hero .inner{position:relative;z-index:2;max-width:1100px;padding:0 16px}
+  .hero h1{font-size:clamp(2rem,5vw,3.6rem);margin:0;font-weight:800}
+  .hero p{margin-top:10px;color:rgba(255,255,255,0.92)}
+
+  /* ---------- SEARCH ---------- */
+  .search-box {
+  margin-top:20px;
+  display:grid;
+  grid-template-columns: 1fr 1fr 2fr 2fr auto; /* 👈 ahora 5 columnas */
+  gap:10px;
+  background:rgba(255,255,255,0.06);
+  padding:12px;
+  border-radius:12px;
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  align-items:center;
+}
+
+.price-group {
+  display: flex;
+  gap: 10px;
+}
+.price-group input {
+  flex: 1;
+}
+
+.search-box button {
+  padding:11px 14px;
+  border-radius:10px;
+  border:none;
+  background:linear-gradient(90deg,var(--accent),#ffd95e);
+  font-weight:800;
+  cursor:pointer;
+  width:auto;
+  min-width:120px;
+  justify-self:end; /* 👈 se alinea a la derecha */
+}
+  .search-box select,.search-box input{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.22);color:#fff}
+  .search-box button{padding:11px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),#ffd95e);font-weight:800;cursor:pointer}
+  .search-box input,
+  .search-box select { -webkit-text-fill-color:#fff !important;color:#fff !important; }
+  .search-box input::placeholder,
+  .search-box input::-webkit-input-placeholder,
+  .search-box input:-ms-input-placeholder,
+  .search-box input::-ms-input-placeholder,
+  .search-box input::-moz-placeholder,
+  .search-box input:-moz-placeholder { color:#ffffff !important;opacity:1 !important }
+  .search-box input:-webkit-autofill,
+  .search-box input:-webkit-autofill::first-line{
+    -webkit-text-fill-color:#fff !important;transition:background-color 5000s ease-in-out 0s;
+  }
+  @media (max-width:920px){ .search-box{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:520px){ .search-box{grid-template-columns:1fr} .search-box .full-mobile{grid-column:1/-1} }
+
+  /* ---------- KPIs ---------- */
+  .kpi-row{max-width:var(--page-max);margin:24px auto;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:0 16px}
+  .kpi{display:flex;gap:12px;align-items:center;padding:16px;border-radius:12px;background:linear-gradient(180deg,#fff,#fcfbf8);box-shadow:0 12px 30px rgba(0,0,0,0.06);border:1px solid rgba(0,0,0,0.04)}
+  .kpi .accent{width:8px;height:56px;border-radius:10px;background:linear-gradient(180deg,var(--gold),var(--accent));flex-shrink:0}
+  .kpi .num{font-weight:800;font-size:1.9rem;background:linear-gradient(90deg,var(--gold),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .kpi .desc{color:var(--muted)}
+  @media (max-width:720px){ .kpi-row{grid-template-columns:1fr} }
+
+  /* ---------- CAROUSELS ---------- */
+  .section{max-width:var(--page-max);margin:28px auto;padding:0 16px}
+  .section .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:10px}
+  .carousel-wrap{position:relative}
+  .carousel-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;scroll-behavior:smooth}
+  .carousel-row::-webkit-scrollbar{display:none}
+  .card{min-width:260px;max-width:320px;border-radius:12px;background:#fff;overflow:hidden;border:1px solid rgba(0,0,0,0.04);box-shadow:0 8px 24px rgba(0,0,0,0.06);cursor:pointer;transition:transform .18s ease, box-shadow .18s ease;}
+  .card:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(0,0,0,0.12);}
+  .card img{width:100%;height:180px;object-fit:cover}
+  .card .body{padding:12px}
+  .arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(0,0,0,0.12);cursor:pointer;z-index:120;border:0}
+  .arrow.left{left:-52px} .arrow.right{right:-52px}
+  @media (max-width:1024px){ .arrow{display:none} }
+
+  /* ---------- FOOTER ---------- */
+  footer{background:#0b0b0b;color:#fff;padding:36px 16px}
+  .footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+  @media (max-width:920px){ .footer-grid{grid-template-columns:1fr} }
+
+  /* ---------- utilidades ---------- */
+  .visually-hidden{position:absolute !important;clip:rect(1px,1px,1px,1px);padding:0;border:0;height:1px;width:1px;overflow:hidden;white-space:nowrap}
+  .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+  .skip-link:focus{left:16px;top:16px;width:auto;height:auto;background:#fff;padding:8px 12px;border-radius:8px;border:1px solid #ddd;z-index:1000}
+
+  /* ---------- RESEÑAS (premium) ---------- */
+  .reviews-wrap{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+  }
+
+  /* ---------- PUBLICA TU PROPIEDAD ---------- */
+  .publish-section{
+    max-width:var(--page-max);
+    margin:40px auto;
+    padding:48px 16px;
+    display:flex;
+    justify-content:center;
+    /* Sección diferenciada con un suave degradado en tonos crema y dorados.
+       Esto ayuda a separarla visualmente de otras secciones y añadir un toque elegante */
+    /* Suavizamos los tonos dorados por un degradado crema para mayor armonía */
+    /* Ajustamos el degradado a tonos mucho más claros para evitar el tono dorado saturado.  
+       Se utilizan blancos y cremas muy suaves que apenas se diferencian entre sí, de modo que la
+       sección siga destacando sin romper la armonía cromática del sitio. */
+    background:linear-gradient(180deg,#fffdf8,#fdf3eb 60%,#faf0e4);
+    border-radius:28px;
+    box-shadow:0 18px 44px rgba(0,0,0,0.05);
+  }
+  .publish-card{
+    /* Tarjeta con tonos dorados suaves y degradado para transmitir confianza y elegancia */
+    /* Reducimos el brillo dorado de la tarjeta por una paleta crema y borde suave */
+    /* Reducimos aún más el brillo dorado de la tarjeta utilizando blancos y cremas ligeros.
+       La transición de color es imperceptible y mantiene el diseño limpio. */
+    background:linear-gradient(180deg,#ffffff,#fef7ed 60%,#fcf3e8);
+    /* Borde más sutil para no llamar la atención y mantener la estética sofisticada */
+    border:1px solid rgba(182,158,100,0.10);
+    border-radius:24px;
+    padding:48px 40px;
+    text-align:center;
+    max-width:780px;
+    width:100%;
+    box-shadow:0 20px 46px rgba(0,0,0,0.06);
+  }
+  .publish-card h2{
+    margin:0 0 10px;
+    font-size:2rem;
+    font-weight:800;
+  }
+  .publish-card p{
+    margin:0 0 20px;
+    color:var(--muted);
+    font-size:1rem;
+  }
+  .publish-card .btn{
+    padding:12px 20px;
+    border-radius:10px;
+    background:linear-gradient(90deg,var(--accent),#ffd95e);
+    color:#000;
+    font-weight:700;
+    display:inline-block;
+    transition:transform 0.15s ease;
+  }
+  .publish-card .btn:hover{
+    transform:translateY(-2px);
+  }
+  @media (max-width:1024px){ .reviews-wrap{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:720px){ .reviews-wrap{grid-template-columns:1fr} }
+
+  .review-card{
+    border:1px solid rgba(0,0,0,.06);
+    border-radius:14px;
+    padding:16px;
+    background:linear-gradient(180deg,#ffffff,#fbfbfb);
+    box-shadow:0 8px 22px rgba(0,0,0,.08);
+  }
+  .review-head{display:flex;align-items:center;gap:10px;font-weight:700}
+  .review-stars{font-size:1rem;color:var(--accent);letter-spacing:.5px}
+  .review-text{color:var(--muted);margin:.4rem 0 0}
+
+  .reviews-cta{ text-align:center; margin-top:16px }
+  .btn{display:inline-block;padding:12px 24px;border-radius:12px;font-weight:800;text-decoration:none;border:0;transition:transform .15s ease, box-shadow .2s ease}
+  .btn-primary{background:linear-gradient(90deg,var(--accent),#ffd95e);color:#111;box-shadow:0 10px 26px rgba(0,0,0,.12)}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 14px 30px rgba(0,0,0,.16)}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Saltar al contenido principal</a>
+
+<!-- ========== HEADER ========== -->
+<header>
+  <div class="container">
+    <a class="brand" href="home.html">
+      <img src="https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-ago-2025-10-31-20.png" alt="Logo de Altorra" width="48" height="48"/>
+    </a>
+    <!-- Nav desktop -->
+    <nav aria-label="Menú principal">
+      <div class="nav-list">
+        <div class="nav-item" data-size="compact">
+          <button class="nav-btn" data-panel="panel-propiedades" aria-controls="panel-propiedades" aria-expanded="false">Propiedades</button>
+        </div>
+        <div class="nav-item" data-size="mega">
+          <button class="nav-btn" data-panel="panel-servicios" aria-controls="panel-servicios" aria-expanded="false">Servicios</button>
+        </div>
+        <div class="nav-item" data-size="compact">
+          <button class="nav-btn" data-panel="panel-nosotros" aria-controls="panel-nosotros" aria-expanded="false">Nosotros</button>
+        </div>
+        <div class="nav-item">
+          <a class="nav-btn" href="contacto.html">Contacto</a>
+        </div>
+      </div>
+    </nav>
+    <!-- Botón móvil -->
+    <button id="navToggle" class="nav-toggle" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menú">☰ Menú</button>
+  </div>
+</header>
+
+<!-- ========== PANELS DESKTOP ========== -->
+<div id="panel-propiedades" class="menu-panel panel-compact" role="dialog" aria-modal="false" aria-hidden="true">
+  <a class="menu-link" href="propiedades-comprar.html">Comprar</a>
+  <a class="menu-link" href="propiedades-arrendar.html">Arrendar</a>
+  <a class="menu-link" href="propiedades-alojamientos.html">Rentar por días</a>
+</div>
+<div id="panel-servicios" class="menu-panel panel-mega" role="dialog" aria-modal="false" aria-hidden="true">
+  <div class="mega-grid">
+    <div class="mega-col">
+      <h4>Gestión</h4>
+      <a class="menu-link" href="servicios-administracion.html">Administración de inmuebles</a>
+      <a class="menu-link" href="servicios-avaluos.html">Avalúos</a>
+      <a class="menu-link" href="servicios-mantenimiento.html">Mantenimiento y reparaciones</a>
+      <a class="menu-link" href="servicios-mudanzas.html">Mudanzas y logística</a>
+    </div>
+    <div class="mega-col">
+      <h4>Jurídico &amp; Contable</h4>
+      <a class="menu-link" href="servicios-juridicos.html">Servicios jurídicos</a>
+      <a class="menu-link" href="servicios-contables.html">Servicios contables</a>
+      <a class="menu-link" href="#">Gestión de contratos</a>
+    </div>
+    <div class="mega-col">
+      <h4>Turismo (Cartagena)</h4>
+      <a class="menu-link" href="#">Renta de yates</a>
+      <a class="menu-link" href="#">Pasadías en islas</a>
+      <a class="menu-link" href="#">Paquetes turísticos</a>
+      <a class="menu-link" href="#">Tours históricos</a>
+    </div>
+  </div>
+</div>
+<div id="panel-nosotros" class="menu-panel panel-compact" role="dialog" aria-modal="false" aria-hidden="true">
+  <a class="menu-link" href="quienes-somos.html">Quiénes somos</a>
+  <a class="menu-link" href="quienes-somos.html#mision">Misión</a>
+  <a class="menu-link" href="quienes-somos.html#vision">Visión</a>
+  <a class="menu-link" href="quienes-somos.html#valores">Valores</a>
+  <a class="menu-link" href="quienes-somos.html#equipo">Nuestro equipo</a>
+</div>
+
+<!-- ========== MENÚ MÓVIL (drawer) ========== -->
+<div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
+<aside id="mobileMenu" class="drawer" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle" hidden>
+  <div class="block">
+    <h3 id="mobileMenuTitle" style="margin:0;font-weight:800;color:var(--gold)">Menú</h3>
+  </div>
+  <div class="block">
+    <h4>Propiedades</h4>
+    <a href="propiedades-comprar.html">Comprar</a>
+    <a href="propiedades-arrendar.html">Arrendar</a>
+    <a href="propiedades-alojamientos.html">Rentar por días</a>
+  </div>
+  <div class="block">
+    <h4>Servicios</h4>
+    <a href="servicios-administracion.html">Administración de inmuebles</a>
+    <a href="servicios-avaluos.html">Avalúos</a>
+    <a href="servicios-mantenimiento.html">Mantenimiento y reparaciones</a>
+    <a href="servicios-mudanzas.html">Mudanzas y logística</a>
+    <a href="servicios-juridicos.html">Servicios jurídicos</a>
+    <a href="servicios-contables.html">Servicios contables</a>
+    <a href="#">Gestión de contratos</a>
+    <h4 style="margin-top:12px">Turismo (Cartagena)</h4>
+    <a href="#">Renta de yates</a>
+    <a href="#">Pasadías en islas</a>
+    <a href="#">Paquetes turísticos</a>
+    <a href="#">Tours históricos</a>
+  </div>
+  <div class="block">
+    <h4>Empresa</h4>
+    <a href="quienes-somos.html">Quiénes somos</a>
+    <a href="contacto.html">Contacto</a>
+  </div>
+</aside>
+
+<!-- ========== MAIN ========== -->
+<main id="main" style="padding-top:calc(var(--header-h) + 12px);">
+  <section class="hero" aria-label="Hero">
+    <!-- Imagen de fondo para el hero: usamos una fotografía local de alta calidad -->
+    <!-- Use our fresh, elegant hero background image instead of the golden property facade -->
+    <!-- Cambiamos la imagen de fondo del hero por una foto distinta a la portada. Esta imagen de un edificio moderno crea una atmósfera luminosa y elegante -->
+    <!-- Cambiamos la imagen del banner de búsqueda por otra fotografía que cuenta una historia positiva (familia feliz entrando a su nuevo hogar) -->
+    <!-- Cambiamos la imagen de fondo por una escena emocional de una familia celebrando su nueva casa -->
+    <!-- Nueva imagen de fondo: un momento realista y emotivo de una familia estrenando su hogar -->
+    <img class="bg" src="/hero-emotion.png" alt="Familia feliz sosteniendo las llaves de su nuevo hogar"/>
+    <div class="overlay" aria-hidden="true"></div>
+    <div class="inner">
+      <h1>Gestión Integral en Soluciones Inmobiliarias</h1>
+      <p>Seguridad • Legalidad • Confianza</p>
+
+      <form id="quickSearch" class="search-box" aria-label="Buscador rápido">
+  <label class="visually-hidden" for="op">Operación</label>
+  <select id="op" name="op" aria-label="Operación">
+    <option value="comprar">Comprar</option>
+    <option value="arrendar">Arrendar</option>
+    <option value="alojar">Por días</option>
+  </select>
+
+  <label class="visually-hidden" for="f-type">Tipo de propiedad</label>
+  <select id="f-type" name="type" aria-label="Tipo de propiedad">
+    <option value="">Cualquiera</option>
+    <option value="apartamento">Apartamento</option>
+    <option value="casa">Casa</option>
+    <option value="lote">Lote</option>
+    <option value="oficina">Oficina</option>
+  </select>
+
+  <label class="visually-hidden" for="f-city">Ciudad</label>
+  <input id="f-city" name="city" placeholder="Ciudad (ej. Cartagena)" aria-label="Ciudad" inputmode="text"/>
+
+  <!-- Agrupamos los precios -->
+  <div class="price-group">
+    <input id="f-min" name="min" type="number" inputmode="numeric" placeholder="$ Mínimo" aria-label="Precio mínimo"/>
+    <input id="f-max" name="max" type="number" inputmode="numeric" placeholder="$ Máximo" aria-label="Precio máximo"/>
+  </div>
+
+  <button type="submit" aria-label="Buscar">Buscar</button>
+</form>
+
+
+      <div style="margin-top:8px;color:rgba(255,255,255,0.9);font-size:0.9rem">Tu próximo hogar te está esperando.</div>
+    </div>
+  </section>
+
+  <!-- ========== PUBLICA TU PROPIEDAD ========== -->
+  <section id="publica-tu-propiedad" class="publish-section" aria-labelledby="publicar-title">
+    <div class="publish-card">
+      <h2 id="publicar-title">¿Quieres publicar tu propiedad?</h2>
+      <p>Si tienes un inmueble para vender, arrendar o rentar por días, Altorra te ayuda a promocionarlo de forma rápida y segura.</p>
+      <a href="publicar-propiedad.html" class="btn">Publicar mi propiedad</a>
+    </div>
+  </section>
+
+  <!-- Venta -->
+  <section class="section" aria-labelledby="venta-title">
+    <div class="head"><h2 id="venta-title">Propiedades en <span style="color:var(--gold)">Venta</span></h2><a href="propiedades-comprar.html">Ver todo →</a></div>
+    <div class="carousel-wrap">
+      <div id="carouselVenta" class="carousel-row" role="list">
+        <div class="loading" style="padding:12px;color:var(--muted)">Cargando propiedades...</div>
+      </div>
+      <button class="arrow left" type="button" data-target="carouselVenta" aria-controls="carouselVenta" aria-label="Desplazar carrusel de venta a la izquierda">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="arrow right" type="button" data-target="carouselVenta" aria-controls="carouselVenta" aria-label="Desplazar carrusel de venta a la derecha">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- Arriendo -->
+  <section class="section" aria-labelledby="arrend-title" style="background:#fff">
+    <div class="head"><h2 id="arrend-title">Propiedades en <span style="color:var(--gold)">Arriendo</span></h2><a href="propiedades-arrendar.html">Ver todo →</a></div>
+    <div class="carousel-wrap">
+      <div id="carouselArriendo" class="carousel-row" role="list">
+        <div class="loading" style="padding:12px;color:var(--muted)">Cargando propiedades...</div>
+      </div>
+      <button class="arrow left" type="button" data-target="carouselArriendo" aria-controls="carouselArriendo" aria-label="Desplazar carrusel de arriendo a la izquierda">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="arrow right" type="button" data-target="carouselArriendo" aria-controls="carouselArriendo" aria-label="Desplazar carrusel de arriendo a la derecha">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- Alojamientos por días -->
+  <section class="section" aria-labelledby="dias-title" style="background:#fbfbfb">
+    <div class="head"><h2 id="dias-title">Alojamientos por <span style="color:var(--gold)">días</span></h2><a href="propiedades-alojamientos.html">Ver todo →</a></div>
+    <div class="carousel-wrap">
+      <div id="carouselDias" class="carousel-row" role="list">
+        <div class="loading" style="padding:12px;color:var(--muted)">Cargando propiedades...</div>
+      </div>
+      <button class="arrow left" type="button" data-target="carouselDias" aria-controls="carouselDias" aria-label="Desplazar carrusel de alojamientos a la izquierda">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="arrow right" type="button" data-target="carouselDias" aria-controls="carouselDias" aria-label="Desplazar carrusel de alojamientos a la derecha">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- ========== RESEÑAS ========== -->
+  <section id="reseñas" class="section" aria-labelledby="reseñas-title">
+    <div class="head"><h2 id="reseñas-title">Opiniones de nuestros clientes</h2></div>
+
+    <!-- Contenedor dinámico (Google Places API) -->
+    <div id="google-reviews" class="reviews-wrap" aria-live="polite"></div>
+
+    <!-- Fallback elegante con tus reseñas manuales -->
+    <div id="reviews-fallback" class="reviews-wrap" hidden>
+      <article class="review-card">
+        <div class="review-head">
+          <div>Camilo Puello</div>
+          <div class="review-stars" aria-label="5 de 5">★★★★★</div>
+          <div style="margin-left:auto;color:#6b7280;font-size:.9rem">Hace 1 mes</div>
+        </div>
+        <p class="review-text">Súper recomendado me brindaron un acompañamiento íntegro, en asesoría técnica; me siento muy satisfecho con los servicios que me prestaron.</p>
+      </article>
+
+      <article class="review-card">
+        <div class="review-head">
+          <div>Andrea Cuadro</div>
+          <div class="review-stars" aria-label="5 de 5">★★★★★</div>
+          <div style="margin-left:auto;color:#6b7280;font-size:.9rem">Hace 2 semanas</div>
+        </div>
+        <p class="review-text">Mi experiencia con Altorra fue excelente desde el primer momento. Necesitaba arrendar un apartamento y su equipo me brindó un servicio rápido, transparente y muy profesional.</p>
+      </article>
+
+      <article class="review-card">
+        <div class="review-head">
+          <div>Eric Camargo</div>
+          <div class="review-stars" aria-label="4 de 5">★★★★★</div>
+          <div style="margin-left:auto;color:#6b7280;font-size:.9rem">Hace 4 días</div>
+        </div>
+        <p class="review-text">Cuando se trata de adquirir un inmueble y con una buena asesoría, ellos son los indicados para esto. Lo recomiendo mucho</p>
+      </article>
+    </div>
+
+    <!-- CTA para dejar reseña -->
+    <div class="reviews-cta">
+      <a class="btn btn-primary" href="https://search.google.com/local/writereview?placeid=ChIJoym3zbYl9o4Rxs-NeVE8-FY" target="_blank" rel="noopener">
+        Escribir mi reseña
+      </a>
+    </div>
+  </section>
+</main>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="footer-grid">
+    <div>
+       <h3 style="margin:0;color:var(--gold);font-weight:800">ALTORRA INMOBILIARIA</h3>
+      <!-- Corrigimos el texto del pie de página: el tag <style> era incorrecto y provocaba problemas de coloración -->
+      <p style="color:#cbd5e1;margin-top:8px;line-height:1.4">
+        Administración, Arriendo y Venta de Inmuebles<br/>
+        Avalúos<br/>
+        Servicios Legales Especializados
+      </p>
+      <div style="margin-top:12px;font-weight:800;color:var(--gold)">+57&nbsp;323&nbsp;501&nbsp;6747</div>
+    </div>
+    <div>
+      <h4 style="margin:0 0 8px;font-weight:700">Propiedades</h4>
+      <ul style="margin:0;padding:0;list-style:none;color:#cbd5e1">
+        <li><a href="propiedades-comprar.html" style="color:#cbd5e1">Comprar</a></li>
+        <li><a href="propiedades-arrendar.html" style="color:#cbd5e1">Arrendar</a></li>
+        <li><a href="propiedades-alojamientos.html" style="color:#cbd5e1">Por días</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 style="margin:0 0 8px;font-weight:700">Servicios</h4>
+      <ul style="margin:0;padding:0;list-style:none;color:#cbd5e1">
+        <li><a href="servicios-administracion.html" style="color:#cbd5e1">Administración</a></li>
+        <li><a href="servicios-juridicos.html" style="color:#cbd5e1">Servicios jurídicos</a></li>
+        <li><a href="servicios-contables.html" style="color:#cbd5e1">Servicios contables</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 style="margin:0 0 8px;font-weight:700">Empresa</h4>
+      <ul style="margin:0;padding:0;list-style:none;color:#cbd5e1">
+        <li><a href="quienes-somos.html" style="color:#cbd5e1">Quiénes somos</a></li>
+        <li><a href="contacto.html" style="color:#cbd5e1">Contacto</a></li>
+        <li><a href="home.html" style="color:#cbd5e1">Inicio</a></li>
+      </ul>
+    </div>
+  </div>
+  <div style="max-width:var(--page-max);margin:18px auto 0;color:#9ca3af;text-align:center;font-size:0.9rem">© 2025 Altorra Inmobiliaria — Hecho con confianza.</div>
+</footer>
+
+<!-- ========== SCRIPTS (mantengo los tuyos intactos) ========== -->
+<script>
+  /*******************************************************
+   * Helpers
+   *******************************************************/
+  const isTouch = () => window.matchMedia('(hover: none)').matches || 'ontouchstart' in window;
+
+  /*******************************************************
+   * Desktop menu manager (hover/focus/click robusto)
+   *******************************************************/
+  (function(){
+    const MARGIN = 12;
+    let open = null;
+    const supportsHover = window.matchMedia('(hover: hover)').matches;
+
+    function resetPanelStyles(panel){
+      panel.style.left=''; panel.style.top=''; panel.style.width=''; panel.style.maxWidth=''; panel.style.right='';
+    }
+
+    function placeAndShow(btn, panel, size){
+      if(window.innerWidth <= 860) return;
+      if(open && open.panel !== panel) hideImmediate(open);
+
+      resetPanelStyles(panel);
+      panel.style.display = 'block';
+      panel.style.visibility = 'hidden';
+      panel.style.position = 'fixed';
+      panel.style.maxHeight = Math.max(260, window.innerHeight - (MARGIN*2)) + 'px';
+
+      if(size === 'mega'){
+        panel.style.width = Math.min(920, window.innerWidth - (MARGIN*2)) + 'px';
+      } else {
+        panel.style.width = 'auto';
+        panel.style.maxWidth = Math.min(520, window.innerWidth - (MARGIN*2)) + 'px';
+      }
+
+      const preRect = panel.getBoundingClientRect();
+      const bRect = btn.getBoundingClientRect();
+
+      let left;
+      if(size === 'mega'){
+        left = Math.round(bRect.left + bRect.width/2 - preRect.width/2);
+        left = Math.max(MARGIN, Math.min(left, window.innerWidth - preRect.width - MARGIN));
+      } else {
+        left = Math.round(Math.min(bRect.left, window.innerWidth - preRect.width - MARGIN));
+        left = Math.max(left, MARGIN);
+      }
+
+      let top = Math.round(bRect.bottom + 8);
+      if(top + preRect.height > window.innerHeight - MARGIN){
+        top = Math.round(bRect.top - preRect.height - 8);
+        if(top < MARGIN) top = MARGIN;
+      }
+
+      panel.style.left = left + 'px';
+      panel.style.top = top + 'px';
+      panel.style.visibility = 'visible';
+      panel.classList.add('menu-visible');
+      panel.setAttribute('aria-hidden','false');
+      btn.setAttribute('aria-expanded','true');
+      open = {panel, btn};
+    }
+
+    function hideImmediate(obj){
+      if(!obj) return;
+      obj.btn && obj.btn.setAttribute('aria-expanded','false');
+      obj.panel.classList.remove('menu-visible');
+      obj.panel.style.display = 'none';
+      obj.panel.setAttribute('aria-hidden','true');
+      resetPanelStyles(obj.panel);
+      if(open && open.panel === obj.panel) open = null;
+    }
+
+    document.querySelectorAll('.nav-btn[data-panel]').forEach(btn=>{
+      const panelId = btn.getAttribute('data-panel');
+      const panel = document.getElementById(panelId);
+      const item = btn.closest('.nav-item');
+      const size = item ? (item.dataset.size || 'compact') : 'compact';
+      let openTimer=null, closeTimer=null;
+
+      const show = ()=> {
+        clearTimeout(closeTimer);
+        openTimer = setTimeout(()=>{ placeAndShow(btn, panel, size); }, 60);
+      };
+      const hide = ()=> {
+        clearTimeout(openTimer);
+        closeTimer = setTimeout(()=>{ hideImmediate({panel, btn}); }, 120);
+      };
+
+      if(supportsHover){
+        btn.addEventListener('pointerenter', show);
+        btn.addEventListener('pointerleave', hide);
+        panel.addEventListener('pointerenter', ()=> { clearTimeout(closeTimer); clearTimeout(openTimer); });
+        panel.addEventListener('pointerleave', hide);
+      }
+
+      btn.addEventListener('click', (e)=> {
+        if(window.innerWidth > 860){
+          e.preventDefault();
+          if(panel.classList.contains('menu-visible')) hideImmediate({panel, btn});
+          else placeAndShow(btn, panel, size);
+        }
+      });
+
+      btn.addEventListener('focus', show);
+      btn.addEventListener('blur', ()=> setTimeout(()=>{ if(!panel.contains(document.activeElement)) hide(); }, 60));
+    });
+
+    document.addEventListener('click', (e)=>{
+      if(e.target.closest('nav') || e.target.closest('.menu-panel')) return;
+      document.querySelectorAll('.menu-panel.menu-visible').forEach(p=> hideImmediate({panel:p, btn:null}));
+    });
+    document.addEventListener('keydown', (e)=> {
+      if(e.key === 'Escape'){
+        document.querySelectorAll('.menu-panel.menu-visible').forEach(p=> hideImmediate({panel:p, btn:null}));
+      }
+    });
+
+    window.addEventListener('resize', ()=> {
+      document.querySelectorAll('.menu-panel').forEach(p=> { p.classList.remove('menu-visible'); p.style.display='none'; p.setAttribute('aria-hidden','true'); resetPanelStyles(p); });
+      document.querySelectorAll('.nav-btn[data-panel]').forEach(b => b.setAttribute('aria-expanded','false'));
+      open = null;
+    });
+  })();
+
+  /*******************************************************
+   * Drawer móvil (hamburguesa)
+   *******************************************************/
+  (function(){
+    const toggle = document.getElementById('navToggle');
+    const drawer = document.getElementById('mobileMenu');
+    const backdrop = document.getElementById('drawerBackdrop');
+
+    if(!toggle || !drawer || !backdrop) return;
+
+    let lastFocus = null;
+
+    function focusable(root){
+      return root.querySelectorAll('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    }
+
+    function setDrawerHeight(){
+      const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
+      drawer.style.height = (window.innerHeight - headerH) + 'px';
+    }
+    function clearDrawerHeight(){ drawer.style.height = ''; }
+
+    function openDrawer(){
+      lastFocus = document.activeElement;
+      drawer.hidden = false;
+      setDrawerHeight();
+      window.addEventListener('resize', setDrawerHeight);
+      window.addEventListener('orientationchange', setDrawerHeight);
+      requestAnimationFrame(()=> {
+        drawer.classList.add('open');
+        backdrop.classList.add('open');
+        document.body.style.overflow='hidden';
+        toggle.setAttribute('aria-expanded','true');
+        const el = focusable(drawer)[0];
+        el && el.focus();
+      });
+    }
+
+    function closeDrawer(){
+      drawer.classList.remove('open');
+      backdrop.classList.remove('open');
+      document.body.style.overflow='';
+      toggle.setAttribute('aria-expanded','false');
+      window.removeEventListener('resize', setDrawerHeight);
+      window.removeEventListener('orientationchange', setDrawerHeight);
+      setTimeout(()=> { drawer.hidden = true; clearDrawerHeight(); }, 200);
+      lastFocus && lastFocus.focus();
+    }
+
+    toggle.addEventListener('click', ()=> {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      expanded ? closeDrawer() : openDrawer();
+    });
+    backdrop.addEventListener('click', closeDrawer);
+    document.addEventListener('keydown', (e)=> {
+      if(e.key === 'Escape' && !drawer.hidden) closeDrawer();
+      if(e.key === 'Tab' && !drawer.hidden){
+        const els = Array.from(focusable(drawer));
+        if(els.length === 0) return;
+        const first = els[0], last = els[els.length-1];
+        if(e.shiftKey && document.activeElement === first){ last.focus(); e.preventDefault(); }
+        else if(!e.shiftKey && document.activeElement === last){ first.focus(); e.preventDefault(); }
+      }
+    });
+    window.addEventListener('resize', ()=> { if(window.innerWidth > 860 && !drawer.hidden) closeDrawer(); });
+  })();
+
+  /*******************************************************
+   * Carousel arrows
+   *******************************************************/
+  (function(){
+    document.querySelectorAll('.arrow').forEach(btn=>{
+      const targetId = btn.dataset.target;
+      const root = document.getElementById(targetId);
+      if(!root) return;
+      btn.addEventListener('click', ()=>{
+        const card = root.querySelector('.card');
+        if(!card) return;
+        const gap = parseFloat(getComputedStyle(root).gap) || 12;
+        const step = card.getBoundingClientRect().width + gap;
+        const dir = btn.classList.contains('left') ? -1 : 1;
+        root.scrollBy({ left: dir * step, behavior: 'smooth' });
+      });
+    });
+  })();
+
+  /*******************************************************
+   * Quick search: redirección con QS
+   *******************************************************/
+  (function(){
+    const form = document.getElementById('quickSearch');
+    if(!form) return;
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      const op = document.getElementById('op')?.value || 'comprar';
+      const type = document.getElementById('f-type')?.value || '';
+      const city = encodeURIComponent(document.getElementById('f-city')?.value || '');
+      const min = document.getElementById('f-min')?.value || '';
+      const max = document.getElementById('f-max')?.value || '';
+      const map = { comprar:'propiedades-comprar.html', arrendar:'propiedades-arrendar.html', alojar:'propiedades-alojamientos.html' };
+      const dest = map[op] || 'propiedades-comprar.html';
+      const params = new URLSearchParams();
+      if(city) params.set('city', city);
+      if(type) params.set('type', type);
+      if(min) params.set('min', min);
+      if(max) params.set('max', max);
+      const query = params.toString();
+      window.location.href = dest + (query ? '?' + query : '');
+    });
+  })();
+</script>
+
+  <!-- Lazy loading de todas las imágenes para mejorar el rendimiento -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('img').forEach(function(img) {
+        if (!img.hasAttribute('loading')) {
+          img.setAttribute('loading', 'lazy');
+        }
+      });
+    });
+  </script>
+
+<!-- Script para cargar reseñas dinámicas desde reviews.json -->
+<script>
+  (function(){
+    const wrap = document.getElementById('google-reviews');
+    const fallback = document.getElementById('reviews-fallback');
+    if(!wrap) return;
+    fetch('reviews.json').then(function(res){
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      return res.json();
+    }).then(function(reviews){
+      if(Array.isArray(reviews) && reviews.length){
+        if(fallback) fallback.hidden = true;
+        // Seleccionamos aleatoriamente hasta 3 reseñas únicas para evitar duplicados.
+        let sample = reviews.slice();
+        // Mezclamos el arreglo para una selección aleatoria justa
+        sample.sort(() => Math.random() - 0.5);
+        sample = sample.slice(0,3);
+        // Vaciamos el contenedor por si se vuelve a ejecutar
+        wrap.innerHTML = '';
+        sample.forEach(function(r){
+          const card = document.createElement('article');
+          card.className = 'review-card';
+          // head: name, stars, time
+          const head = document.createElement('div');
+          head.className = 'review-head';
+          const name = document.createElement('div');
+          name.textContent = r.author;
+          const stars = document.createElement('div');
+          stars.className = 'review-stars';
+          // build star rating string
+          const rating = Math.round(parseFloat(r.rating) || 0);
+          stars.textContent = '★★★★★'.slice(0, rating);
+          stars.setAttribute('aria-label', rating+' de 5');
+          const time = document.createElement('div');
+          time.style.marginLeft = 'auto';
+          time.style.color = '#6b7280';
+          time.style.fontSize = '.9rem';
+          time.textContent = r.time || '';
+          head.appendChild(name);
+          head.appendChild(stars);
+          head.appendChild(time);
+          const body = document.createElement('p');
+          body.className = 'review-text';
+          body.textContent = r.content;
+          card.appendChild(head);
+          card.appendChild(body);
+          wrap.appendChild(card);
+        });
+      }
+    }).catch(function(err){
+      console.warn('No se pudieron cargar reseñas dinámicas', err);
+    });
+  })();
+</script>
+
+<!-- Registrar service worker para PWA en todas las páginas -->
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js').catch(function(err) {
+      console.warn('SW registration failed', err);
+    });
+  }
+</script>
+
+<!-- ========== SCRIPT ADICIONAL: sincronización Home <- páginas de propiedades ========== -->
+<script>
+/* Sync home thumbnails with properties pages.
+   - Fetches 'sampleProperties' JS array from the properties pages
+   - Evaluates JS safely when possible, falls back to a robust JSON transform
+   - Preserves your design and fills the three carousels on the home
+*/
+document.addEventListener('DOMContentLoaded', function(){
+  const pages = [
+    // Each entry defines the operation key used in data.json, the carousel container ID and the mode to display.
+    {operation:'comprar', targetId:'carouselVenta', mode:'venta'},
+    {operation:'arrendar', targetId:'carouselArriendo', mode:'arriendo'},
+    {operation:'dias', targetId:'carouselDias', mode:'dias'}
+  ];
+
+  function formatCOP(n){
+    if(!n && n!==0) return '';
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+  function escapeHtml(str){
+    return String(str||'').replace(/[&<>"]/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]); });
+  }
+
+  function extractArrayLiteralFromHtml(text){
+    const m = text.match(/sampleProperties\s*=\s*(\[[\s\S]*?\])\s*;/m);
+    return m ? m[1] : null;
+  }
+
+  function tryEvalArrayLiteral(lit){
+    try{
+      // Evaluate the array literal using Function — this accepts JS object literals (single quotes, trailing commas, etc.)
+      // It's used only on your own pages; if it fails we fall back to safe parsing.
+      return (new Function('return ' + lit + ';'))();
+    }catch(e){
+      return null;
+    }
+  }
+
+  function jsArrayLiteralToJsonParse(lit){
+    // fallback: transform a JS-style array/object literal into valid JSON and parse it
+    let s = String(lit);
+    // strip comments
+    s = s.replace(/\/\*[\s\S]*?\*\//g, '');
+    s = s.replace(/\/\/.*$/gm, '');
+    // quote unquoted object keys (foo: -> "foo":)
+    s = s.replace(/([\{,]\s*)([A-Za-z0-9_@$-]+)\s*:/g, '$1"$2":');
+    // convert single-quoted strings to JSON strings (handles escaped \' inside)
+    s = s.replace(/'((?:\\'|[^'])*)'/g, function(_, inner){
+      // unescape any escaped single quote, then JSON-stringify safely
+      inner = inner.replace(/\\'/g, "'");
+      return JSON.stringify(inner);
+    });
+    // remove trailing commas before ] or }
+    s = s.replace(/,\s*(\]|})/g, '$1');
+    return JSON.parse(s);
+  }
+
+  async function loadPropsFromPage(url){
+    try{
+      const res = await fetch(url, {cache:'no-store'});
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const txt = await res.text();
+      const lit = extractArrayLiteralFromHtml(txt);
+      if(!lit) throw new Error('No sampleProperties array found in ' + url);
+      let arr = tryEvalArrayLiteral(lit);
+      if(!arr) arr = jsArrayLiteralToJsonParse(lit);
+      if(!Array.isArray(arr)) throw new Error('Parsed value is not array');
+      return arr;
+    }catch(err){
+      console.warn('loadPropsFromPage:', url, err);
+      return null;
+    }
+  }
+
+  // Load property objects filtered by the specified operation from our JSON data file. This
+  // replaces the previous logic of scraping sampleProperties arrays from each property page.
+  async function loadPropsByOperation(operation){
+    try{
+      /*
+        GitHub Pages does not serve static files when a query string is present.
+        Requesting `properties/data.json?ts=...` will return the fallback index page
+        instead of the JSON. To ensure the JSON loads correctly, omit the
+        timestamp query. Use the `cache` option to bypass caching when needed.
+      */
+      const res = await fetch('properties/data.json', {cache:'no-store'});
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      if(!Array.isArray(data)) throw new Error('Invalid data format');
+      return data.filter(item => String(item.operation).toLowerCase() === String(operation).toLowerCase());
+    }catch(err){
+      console.warn('loadPropsByOperation:', operation, err);
+      return [];
+    }
+  }
+
+  function buildCardElement(p, mode){
+    const article = document.createElement('article');
+    article.className = 'card';
+    article.setAttribute('role','listitem');
+
+    const img = document.createElement('img');
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.alt = escapeHtml(p.title || 'Propiedad');
+    // try common image props; fallback to a neutral placeholder
+    {
+      const raw = p.image || p.img || p.img_url || p.imgUrl || p.photo;
+      if(raw){
+        img.src = raw.startsWith('/') ? raw : '/' + raw;
+      } else {
+        img.src = 'https://i.postimg.cc/0yYb8Y6r/placeholder.png';
+      }
+    }
+
+    const body = document.createElement('div');
+    body.className = 'body';
+
+    const title = document.createElement('h3');
+    title.innerHTML = escapeHtml(p.title || 'Sin título');
+
+    const specs = document.createElement('div');
+    specs.style.color = 'var(--muted)';
+    const parts = [];
+    if(p.beds) parts.push(p.beds + 'H');
+    if(p.baths) parts.push(p.baths + 'B');
+    if(p.sqm) parts.push(p.sqm + ' m²');
+    specs.textContent = parts.join(' · ');
+
+    const priceRow = document.createElement('div');
+    priceRow.style.marginTop = '8px';
+    priceRow.style.fontWeight = '800';
+    priceRow.style.color = 'var(--gold)';
+    let priceLabel = '';
+    if(p.price){
+      if(mode === 'arriendo') priceLabel = '$' + formatCOP(p.price) + ' COP / mes';
+      else if(mode === 'dias') priceLabel = '$' + formatCOP(p.price) + ' COP / noche';
+      else priceLabel = '$' + formatCOP(p.price) + ' COP';
+    }
+    priceRow.textContent = priceLabel;
+
+    body.appendChild(title);
+    body.appendChild(specs);
+    body.appendChild(priceRow);
+
+    article.appendChild(img);
+    article.appendChild(body);
+
+    // make card clickable to details
+    article.addEventListener('click', function(e){
+      const id = p.id || '';
+      window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(id);
+    });
+
+    return article;
+  }
+
+  (async function(){
+    // load all pages in parallel
+    // For each defined operation, load its properties from the JSON file in parallel.
+    const promises = pages.map(pg => loadPropsByOperation(pg.operation).then(arr => ({arr, pg})));
+    const results = await Promise.all(promises);
+
+    results.forEach(result => {
+      const pg = result.pg;
+      const target = document.getElementById(pg.targetId);
+      if(!target) return;
+      // clear loading placeholder
+      target.innerHTML = '';
+      const arr = result.arr || [];
+      if(arr.length === 0){
+        const note = document.createElement('div');
+        note.style.padding = '12px';
+        note.style.color = 'var(--muted)';
+        note.textContent = 'Sin propiedades para mostrar.';
+        target.appendChild(note);
+        return;
+      }
+      // append up to first 8 (or fewer) items
+     const max = 8;
+arr.slice(0, max).forEach(p => {
+  const card = buildCardElement(p, pg.mode);
+  target.appendChild(card);
+});
+    });
+
+  })();
+
+});
+</script>
+
+</body>
+</html>
