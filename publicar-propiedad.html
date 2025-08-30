@@ -4,11 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Publica tu propiedad | Altorra</title>
-  <meta name="description" content="Envía los datos de tu propiedad para que Altorra la publique en su portal." />
+  <meta name="description" content="Envíanos los datos de tu inmueble para que lo vendamos o lo arrendemos por ti." />
+  <!-- PWA & Social -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#d4af37" />
   <meta property="og:title" content="Publica tu propiedad | Altorra" />
-  <meta property="og:description" content="Envíanos los datos de tu inmueble para que lo vendamos o lo arrendemos por ti." />
+  <meta property="og:description" content="Envía los datos de tu propiedad para que Altorra la publique en su portal." />
   <meta property="og:image" content="/hero-family.png" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet" />
   <style>
@@ -20,48 +21,117 @@
       --muted:#6b7280;
       --header-h:72px;
       --page-max:1200px;
-      --overlay:rgba(0,0,0,0.15);
+      --overlay:rgba(0,0,0,.30);
+      --blue:#1d4ed8; /* azul del menú móvil en el resto del sitio */
     }
 
-    *{box-sizing:border-box;margin:0;padding:0;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--text);background:transparent;}
-    html,body{background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
-    a{text-decoration:none;color:inherit;}
+    /* Reset básico sin forzar color global (para no alterar el header/footer) */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{
+      background:var(--bg);
+      color:var(--text);
+      font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    }
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
 
-    /* ---------- HEADER (idéntico al home/ventas) ---------- */
+    /* ---------- HEADER (se incluye vía header.html) ---------- */
     header{
       position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;
       background:var(--bg);z-index:140;border-bottom:1px solid rgba(0,0,0,0.06);
       box-shadow:0 8px 26px rgba(0,0,0,0.06);
     }
     .container{max-width:var(--page-max);margin:0 auto;width:100%;padding:0 16px;display:flex;align-items:center;gap:12px}
-    .brand{display:flex;align-items:center;gap:10px;margin-right:6px}
-    .brand img{width:48px;height:48px;object-fit:contain}
-    .brand .name{font-weight:800;letter-spacing:-0.6px;text-transform:uppercase;font-size:1.02rem}
-
-    nav{margin-left:auto;display:flex;align-items:center;gap:8px}
-    .nav-list{display:flex;gap:6px;align-items:center}
-    .nav-item{position:relative}
-    .nav-btn{background:transparent;border:0;padding:8px 12px;font-weight:700;cursor:pointer;border-radius:8px;color:var(--text);font-size:0.95rem}
-    .nav-btn:focus{outline:3px solid rgba(212,175,55,0.18);outline-offset:3px}
-
-    .nav-toggle{display:none;margin-left:auto;background:transparent;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:8px 12px;font-weight:800}
-    .nav-toggle:focus{outline:3px solid rgba(212,175,55,0.18);outline-offset:3px}
-
-    /* ---------- MENÚ DESPLEGABLE (desktop) ---------- */
     .menu-panel{
       display:none; position:fixed; z-index:150; padding:14px; border-radius:12px;
       background:linear-gradient(180deg,#fff,#fbfbfb); border:1px solid rgba(0,0,0,0.06);
       box-shadow:0 22px 48px rgba(0,0,0,0.12); max-height:calc(100vh - var(--header-h) - 20px); overflow:auto;
     }
-    .menu-visible{display:block;opacity:1;transform:none}
+    .menu-visible{display:block}
     .panel-compact{min-width:220px;max-width:44vw}
     .panel-mega{min-width:360px;max-width:920px;width:min(88vw,920px)}
-    .mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .mega-col h4{margin:0 0 8px;color:var(--gold);font-weight:700}
-    .menu-link{display:block;padding:6px;border-radius:8px;color:#0f1724}
-    .menu-link:hover{background:rgba(0,0,0,0.03)}
 
-    /* ---------- MENÚ MÓVIL (drawer) ---------- */
+    /* Ajuste local de color del botón de menú móvil para que sea AZUL como en el resto.
+       No modifica el HTML del header ni su lógica, solo el color si hiciera falta. */
+    #navToggle, .nav-toggle{color:var(--blue);border-color:rgba(29,78,216,.35)}
+    #navToggle:hover, .nav-toggle:hover{background:rgba(29,78,216,.06)}
+
+    /* ---------- HERO ---------- */
+    .hero-publish{
+      position:relative; min-height:60vh; display:flex; align-items:center; justify-content:center;
+      text-align:center; padding-top:calc(var(--header-h) + 40px); color:#fff; overflow:hidden; margin-bottom:32px;
+    }
+    .hero-publish .bg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+    .hero-publish .overlay{ position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.20),rgba(0,0,0,.55)); z-index:1; }
+    .hero-publish .inner{ position:relative; z-index:2; padding:0 16px; max-width:960px; }
+    .hero-title{
+      color:#fff; font-size:clamp(2.2rem,5vw,3rem); font-weight:800; line-height:1.05;
+      text-shadow:0 1px 0 rgba(0,0,0,.35), 0 2px 2px rgba(0,0,0,.35), 0 6px 12px rgba(0,0,0,.28), 0 14px 28px rgba(0,0,0,.22);
+      -webkit-text-stroke:.4px rgba(0,0,0,.15);
+    }
+    .hero-subtitle{
+      margin-top:12px; color:#fff; opacity:.98; font-size:clamp(1rem,2.2vw,1.2rem); font-weight:600; letter-spacing:.2px; line-height:1.35;
+      text-shadow:0 1px 0 rgba(0,0,0,.35), 0 2px 6px rgba(0,0,0,.28), 0 8px 18px rgba(0,0,0,.20);
+      -webkit-text-stroke:.3px rgba(0,0,0,.12);
+    }
+
+    /* ---------- INFO ---------- */
+    .info-section{max-width:var(--page-max);margin:0 auto 40px;padding:0 16px;}
+    .info-card{
+      background:#ffffff; border:1px solid rgba(17,24,39,0.08); border-radius:18px; padding:32px;
+      box-shadow:0 10px 26px rgba(17,24,39,0.06); max-width:820px; margin:0 auto; text-align:center;
+    }
+    .info-card h2{ margin:0 0 12px; font-size:1.6rem; font-weight:800; color:var(--gold); }
+    .info-card ul{ list-style:none; padding:0; margin:0; color:var(--muted); font-size:1rem; }
+    .info-card li{ margin:8px 0; }
+    .info-card li::before{ content:'\2713'; color:var(--gold); font-weight:800; margin-right:6px; }
+
+    /* ---------- FORM ---------- */
+    main.publish-container{
+      max-width:var(--page-max);
+      margin:0 auto 60px;
+      padding:0 16px 40px; /* asegura respiro antes del footer */
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:24px;
+    }
+    .publish-container p.lead{
+      color:var(--muted);
+      margin-bottom:4px;
+      max-width:720px;
+      text-align:center;
+    }
+    .publish-form{
+      display:flex; flex-direction:column; gap:18px;
+      max-width:720px; width:100%; margin:0 auto;
+      padding:40px 32px; background:#ffffff; border-radius:18px;
+      border:1px solid rgba(17,24,39,0.08); box-shadow:0 12px 32px rgba(17,24,39,0.06);
+    }
+    .publish-form label{ display:flex; flex-direction:column; font-weight:700; gap:6px; }
+    .publish-form input, .publish-form select, .publish-form textarea{
+      padding:12px 14px; border-radius:12px; border:1px solid rgba(17,24,39,0.16);
+      font-size:0.95rem; font-family:inherit; background:#fff;
+      transition:border-color .15s ease, box-shadow .15s ease;
+    }
+    .publish-form textarea{ resize:vertical; min-height:140px; }
+    .publish-form input:focus-visible, .publish-form select:focus-visible, .publish-form textarea:focus-visible{
+      outline:3px solid rgba(212,175,55,0.25); border-color:var(--gold);
+    }
+    .grid{display:grid; gap:16px;}
+    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr));}
+    @media (max-width:700px){ .grid.two{grid-template-columns:1fr;} }
+
+    .publish-form button{
+      align-self:flex-start; padding:14px 28px; border-radius:14px; font-weight:800;
+      background:linear-gradient(90deg,#d4af37,#f4d889); color:#111; border:none; cursor:pointer;
+      transition:transform .15s ease, box-shadow .2s ease, filter .15s ease;
+      box-shadow:0 10px 26px rgba(0,0,0,.10);
+    }
+    .publish-form button:hover{ transform:translateY(-2px); box-shadow:0 16px 36px rgba(17,24,39,0.12); filter:saturate(1.05); }
+
+    /* ---------- DRAWER móvil (estilos mínimos para que funcione el header incluido) ---------- */
     .drawer-backdrop{
       position:fixed;inset:0;background:var(--overlay);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
       z-index:160;opacity:0;pointer-events:none;transition:opacity .2s ease;
@@ -83,406 +153,304 @@
     .drawer a{display:block;padding:8px 2px}
 
     @media (max-width:860px){
-      .nav-list{display:none}
-      .nav-toggle{display:inline-flex;align-items:center;gap:8px}
       .menu-panel{display:none !important}
     }
 
-    /* ======= Layout general ======= */
-    main.publish-container{
-      max-width:var(--page-max);
-      margin:0 auto 60px;
-      padding:0 16px;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      gap:24px;
-    }
-    .publish-container h1{
-      font-size:2.2rem;
-      font-weight:800;
-      margin-bottom:8px;
-      text-align:center;
-    }
-    .publish-container p.lead{
-      color:var(--muted);
-      margin-bottom:24px;
-      max-width:640px;
-      text-align:center;
-    }
-
-    /* ======= FORM corporativo ======= */
-    .publish-form{
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-      max-width:720px;
-      width:100%;
-      margin:0 auto;
-      padding:40px 32px;
-      background:#ffffff;
-      border-radius:18px;
-      border:1px solid rgba(17,24,39,0.08);
-      box-shadow:0 12px 32px rgba(17,24,39,0.06);
-    }
-    .publish-form label{ display:flex; flex-direction:column; font-weight:600; gap:6px; }
-    .publish-form input, .publish-form select, .publish-form textarea{
-      padding:12px 14px; border-radius:12px; border:1px solid rgba(17,24,39,0.16);
-      font-size:0.95rem; font-family:inherit; background:#fff;
-      transition:border-color .15s ease, box-shadow .15s ease;
-    }
-    .publish-form textarea{ resize:vertical; min-height:140px; }
-    .publish-form input:focus-visible, .publish-form select:focus-visible, .publish-form textarea:focus-visible{
-      outline:3px solid rgba(212,175,55,0.25); border-color:var(--gold);
-    }
-    .grid{display:grid; gap:16px;}
-    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr));}
-    @media (max-width:700px){ .grid.two{grid-template-columns:1fr;} }
-
-    .publish-form button{
-      align-self:flex-start; padding:14px 28px; border-radius:14px; font-weight:800;
-      background:linear-gradient(90deg,#d4af37,#f4d889); color:#111; border:none; cursor:pointer;
-      transition:transform .15s ease, box-shadow .2s ease, filter .15s ease;
-    }
-    .publish-form button:hover{ transform:translateY(-2px); box-shadow:0 16px 36px rgba(17,24,39,0.12); filter:saturate(1.05); }
-
-    /* ======== Hero ======== */
-    .hero-publish{
-      position:relative; min-height:60vh; display:flex; align-items:center; justify-content:center;
-      text-align:center; padding-top:calc(var(--header-h) + 40px); color:#fff; overflow:hidden; margin-bottom:32px;
-    }
-    .hero-publish .bg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
-    .hero-publish .overlay{ position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.45)); z-index:1; }
-    .hero-publish .inner{ position:relative; z-index:2; padding:0 16px; max-width:960px; }
-
-    .hero-title{
-      color:#fff; font-size:clamp(2.2rem,5vw,3rem); font-weight:800; line-height:1.05;
-      text-shadow:0 1px 0 rgba(0,0,0,.35), 0 2px 2px rgba(0,0,0,.35), 0 6px 12px rgba(0,0,0,.28), 0 14px 28px rgba(0,0,0,.22);
-      -webkit-text-stroke:.4px rgba(0,0,0,.15);
-    }
-    .hero-subtitle{
-      margin-top:12px; color:#fff; opacity:.98; font-size:clamp(1rem,2.2vw,1.2rem); font-weight:600; letter-spacing:.2px; line-height:1.35;
-      text-shadow:0 1px 0 rgba(0,0,0,.35), 0 2px 6px rgba(0,0,0,.28), 0 8px 18px rgba(0,0,0,.20);
-      -webkit-text-stroke:.3px rgba(0,0,0,.12);
-    }
-
-    /* ======== Info-card ======== */
-    .info-section{max-width:var(--page-max);margin:0 auto 40px;padding:0 16px;}
-    .info-card{
-      background:#ffffff; border:1px solid rgba(17,24,39,0.08); border-radius:18px; padding:32px;
-      box-shadow:0 10px 26px rgba(17,24,39,0.06); max-width:820px; margin:0 auto; text-align:center;
-    }
-    .info-card h2{ margin:0 0 12px; font-size:1.6rem; font-weight:800; color:var(--gold); }
-    .info-card ul{ list-style:none; padding:0; margin:0; color:var(--muted); font-size:1rem; }
-    .info-card ul li{ margin:8px 0; }
-    .info-card ul li::before{ content:'\2713'; color:var(--gold); font-weight:800; margin-right:6px; }
-
-    /* ---------- FOOTER ---------- */
+    /* ---------- FOOTER (se incluye vía footer.html) ---------- */
     footer{background:#0b0b0b;color:#fff;padding:36px 16px}
     .footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
     @media (max-width:920px){ .footer-grid{grid-template-columns:1fr} }
-
-    /* Refuerzo para que nada tape el panel del menú */
-    .menu-panel{ z-index: 9999; }
   </style>
 </head>
 <body>
+  <!-- Header inyectado (NO se modifica su HTML) -->
+  <div id="include-header"></div>
 
-<div id="include-header"></div>
-<script>
-/* includeSync: carga síncrona simple para garantizar que el header exista antes de los scripts */
-function includeSync(id, url){
-  try{
-    var el = document.getElementById(id);
-    if(!el) return;
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, false); // síncrono a propósito para mantener el mismo orden de ejecución
-    xhr.send(null);
-    if(xhr.status === 200 || xhr.status === 0){
-      el.innerHTML = xhr.responseText;
-    } else {
-      console.warn('includeSync: error cargando', url, xhr.status);
-    }
-  }catch(e){
-    console.warn('includeSync error', e);
-  }
-}
-includeSync('include-header','header.html');
-</script>
-
-<!-- Registrar service worker para PWA -->
-<script>
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/service-worker.js').catch(function(err){ console.warn('SW registration failed', err); });
-  }
-</script>
-
-<!-- ========== HERO + INFO ========== -->
-<section class="hero-publish">
-  <img class="bg" src="/hero-house.png" alt="Casa moderna y elegante"/>
-  <div class="overlay" aria-hidden="true"></div>
-  <div class="inner">
-    <h1 class="hero-title">Publica tu propiedad</h1>
-    <p class="hero-subtitle">Vende, arrienda o renta tu inmueble con el respaldo de Altorra Inmobiliaria.</p>
-  </div>
-</section>
-
-<section class="info-section">
-  <div class="info-card">
-    <h2>¿Por qué publicar con Altorra?</h2>
-    <ul>
-      <li>Difusión en múltiples canales de venta y arriendo.</li>
-      <li>Asesoría jurídica y acompañamiento integral.</li>
-      <li>Amplia red de clientes potenciales.</li>
-      <li>Nos encargamos de todo el proceso por ti.</li>
-    </ul>
-  </div>
-</section>
-
-<main class="publish-container">
-  <p class="lead">Completa el siguiente formulario y un asesor de Altorra se pondrá en contacto contigo para ayudarte a publicar tu inmueble.</p>
-
-  <form class="publish-form" id="publishForm" action="https://formsubmit.co/altorrainmobiliaria@gmail.com" method="POST" accept-charset="UTF-8">
-  <!-- Config FormSubmit -->
-  <input type="hidden" name="_subject" value="Solicitud para publicar propiedad">
-  <!-- URL ABSOLUTA recomendada; si usas GitHub Pages, pon tu dominio real -->
-  <input type="hidden" name="_next" value="https://altorrainmobiliaria.github.io/gracias.html">
-  <!-- Desactivar CAPTCHA de FormSubmit -->
-  <input type="hidden" name="_captcha" value="false">
-  <!-- Plantilla legible en el email -->
-  <input type="hidden" name="_template" value="table">
-  <!-- Honeypot anti-bots (invisible) -->
-  <input type="text" name="_honey" style="display:none">
-
-  <div class="grid two">
-    <label>Nombre completo
-      <input type="text" name="Nombre" autocomplete="name" required />
-    </label>
-    <label>Correo electrónico
-      <input type="email" name="Email" autocomplete="email" required />
-    </label>
-  </div>
-
-  <div class="grid two">
-    <label>Teléfono de contacto
-      <input type="tel" name="Teléfono" autocomplete="tel" required />
-    </label>
-    <label>Ciudad
-      <input type="text" name="Ciudad" required />
-    </label>
-  </div>
-
-  <div class="grid two">
-    <label>Operación
-      <select name="Operación" required>
-        <option value="Venta">Venta</option>
-        <option value="Arriendo">Arriendo</option>
-        <option value="Por días">Por días</option>
-      </select>
-    </label>
-    <label>Tipo de propiedad
-      <select name="Tipo" required>
-        <option value="Apartamento">Apartamento</option>
-        <option value="Casa">Casa</option>
-        <option value="Oficina">Oficina</option>
-        <option value="Lote">Lote</option>
-        <option value="Otro">Otro</option>
-      </select>
-    </label>
-  </div>
-
-  <label>Precio estimado (COP)
-    <input type="number" name="Precio" min="0" inputmode="numeric" />
-  </label>
-
-  <label>Descripción de la propiedad
-    <textarea name="Descripción" placeholder="Cuéntanos: habitaciones, baños, m², parqueadero, amenidades, cercanías..." required></textarea>
-  </label>
-
-  <button type="submit">Enviar solicitud</button>
-</form>
-
-</main>
-
-<!-- ========== FOOTER (idéntico) ========== -->
-<div id="include-footer"></div>
-<script>
-/* Reutilizamos includeSync si hiciera falta (por seguridad) */
-if(typeof includeSync !== 'function'){
-  function includeSync(id, url){
-    try{
-      var el = document.getElementById(id);
-      if(!el) return;
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', url, false);
-      xhr.send(null);
-      if(xhr.status === 200 || xhr.status === 0) el.innerHTML = xhr.responseText;
-    }catch(e){ console.warn('includeSync error', e); }
-  }
-}
-includeSync('include-footer','footer.html');
-</script>
-
-<!-- ========== SCRIPTS: MENÚ (copiados del archivo de ventas) ========== -->
-<script>
-/* ---------------- Desktop menu manager (idéntico) ---------------- */
-(function(){
-  const MARGIN = 12;
-  let open = null;
-  const supportsHover = window.matchMedia('(hover: hover)').matches;
-
-  function resetPanelStyles(panel){
-    panel.style.left=''; panel.style.top=''; panel.style.width=''; panel.style.maxWidth=''; panel.style.right='';
-  }
-  function placeAndShow(btn, panel, size){
-    if(window.innerWidth <= 860) return;
-    if(open && open.panel !== panel) hideImmediate(open);
-
-    resetPanelStyles(panel);
-    panel.style.display = 'block';
-    panel.style.visibility = 'hidden';
-    panel.style.position = 'fixed';
-    panel.style.maxHeight = Math.max(260, window.innerHeight - (MARGIN*2)) + 'px';
-
-    if(size === 'mega'){
-      panel.style.width = Math.min(920, window.innerWidth - (MARGIN*2)) + 'px';
-    } else {
-      panel.style.width = 'auto';
-      panel.style.maxWidth = Math.min(520, window.innerWidth - (MARGIN*2)) + 'px';
-    }
-
-    const preRect = panel.getBoundingClientRect();
-    const bRect = btn.getBoundingClientRect();
-
-    let left;
-    if(size === 'mega'){
-      left = Math.round(bRect.left + bRect.width/2 - preRect.width/2);
-      left = Math.max(MARGIN, Math.min(left, window.innerWidth - preRect.width - MARGIN));
-    } else {
-      left = Math.round(Math.min(bRect.left, window.innerWidth - preRect.width - MARGIN));
-      left = Math.max(left, MARGIN);
-    }
-
-    let top = Math.round(bRect.bottom + 8);
-    if(top + preRect.height > window.innerHeight - MARGIN){
-      top = Math.round(bRect.top - preRect.height - 8);
-      if(top < MARGIN) top = MARGIN;
-    }
-
-    panel.style.left = left + 'px';
-    panel.style.top = top + 'px';
-    panel.style.visibility = 'visible';
-    panel.classList.add('menu-visible');
-    panel.setAttribute('aria-hidden','false');
-    btn.setAttribute('aria-expanded','true');
-    open = {panel, btn};
-  }
-  function hideImmediate(obj){
-    if(!obj) return;
-    obj.btn && obj.btn.setAttribute('aria-expanded','false');
-    obj.panel.classList.remove('menu-visible');
-    obj.panel.style.display = 'none';
-    obj.panel.setAttribute('aria-hidden','true');
-    resetPanelStyles(obj.panel);
-    if(open && open.panel === obj.panel) open = null;
-  }
-
-  document.querySelectorAll('.nav-btn[data-panel]').forEach(btn=>{
-    const panelId = btn.getAttribute('data-panel');
-    const panel = document.getElementById(panelId);
-    const item = btn.closest('.nav-item');
-    const size = item ? (item.dataset.size || 'compact') : 'compact';
-    let openTimer=null, closeTimer=null;
-    const show = ()=> { clearTimeout(closeTimer); openTimer = setTimeout(()=>{ placeAndShow(btn, panel, size); }, 60); };
-    const hide = ()=> { clearTimeout(openTimer); closeTimer = setTimeout(()=>{ hideImmediate({panel, btn}); }, 120); };
-    if(supportsHover){
-      btn.addEventListener('pointerenter', show);
-      btn.addEventListener('pointerleave', hide);
-      panel.addEventListener('pointerenter', ()=> { clearTimeout(closeTimer); clearTimeout(openTimer); });
-      panel.addEventListener('pointerleave', hide);
-    }
-    btn.addEventListener('click', (e)=> {
-      if(window.innerWidth > 860){
-        e.preventDefault();
-        if(panel.classList.contains('menu-visible')) hideImmediate({panel, btn});
-        else placeAndShow(btn, panel, size);
+  <script>
+    /* includeSync: carga síncrona para garantizar que el header exista antes de los scripts */
+    function includeSync(id, url){
+      try{
+        var el = document.getElementById(id);
+        if(!el) return;
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, false); // síncrono para mantener orden
+        xhr.send(null);
+        if(xhr.status === 200 || xhr.status === 0){
+          el.innerHTML = xhr.responseText;
+        } else {
+          console.warn('includeSync: error cargando', url, xhr.status);
+        }
+      }catch(e){
+        console.warn('includeSync error', e);
       }
-    });
-    btn.addEventListener('focus', show);
-    btn.addEventListener('blur', ()=> setTimeout(()=>{ if(!panel.contains(document.activeElement)) hide(); }, 60));
-  });
-
-  document.addEventListener('click', (e)=>{
-    if(e.target.closest('nav') || e.target.closest('.menu-panel')) return;
-    document.querySelectorAll('.menu-panel.menu-visible').forEach(p=> hideImmediate({panel:p, btn:null}));
-  });
-  document.addEventListener('keydown', (e)=> {
-    if(e.key === 'Escape'){
-      document.querySelectorAll('.menu-panel.menu-visible').forEach(p=> hideImmediate({panel:p, btn:null}));
     }
-  });
-  window.addEventListener('resize', ()=> {
-    document.querySelectorAll('.menu-panel').forEach(p=> { p.classList.remove('menu-visible'); p.style.display='none'; p.setAttribute('aria-hidden','true'); resetPanelStyles(p); });
-    document.querySelectorAll('.nav-btn[data-panel]').forEach(b => b.setAttribute('aria-expanded','false'));
-    open = null;
-  });
-})();
-</script>
-<script>
-/* ---------------- Drawer móvil (idéntico) ---------------- */
-(function(){
-  const toggle = document.getElementById('navToggle');
-  const drawer = document.getElementById('mobileMenu');
-  const backdrop = document.getElementById('drawerBackdrop');
-  if(!toggle || !drawer || !backdrop) return;
+    includeSync('include-header','header.html');
+  </script>
 
-  let lastFocus = null;
-  function focusable(root){ return root.querySelectorAll('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'); }
-  function setDrawerHeight(){
-    const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
-    drawer.style.height = (window.innerHeight - headerH) + 'px';
-  }
-  function clearDrawerHeight(){ drawer.style.height = ''; }
-  function openDrawer(){
-    lastFocus = document.activeElement;
-    drawer.hidden = false;
-    setDrawerHeight();
-    window.addEventListener('resize', setDrawerHeight);
-    window.addEventListener('orientationchange', setDrawerHeight);
-    requestAnimationFrame(()=> {
-      drawer.classList.add('open');
-      backdrop.classList.add('open');
-      document.body.style.overflow='hidden';
-      toggle.setAttribute('aria-expanded','true');
-      const el = focusable(drawer)[0];
-      el && el.focus();
-    });
-  }
-  function closeDrawer(){
-    drawer.classList.remove('open');
-    backdrop.classList.remove('open');
-    document.body.style.overflow='';
-    toggle.setAttribute('aria-expanded','false');
-    window.removeEventListener('resize', setDrawerHeight);
-    window.removeEventListener('orientationchange', setDrawerHeight);
-    setTimeout(()=> { drawer.hidden = true; clearDrawerHeight(); }, 200);
-    lastFocus && lastFocus.focus();
-  }
-  toggle.addEventListener('click', ()=> drawer.classList.contains('open') ? closeDrawer() : openDrawer());
-  backdrop.addEventListener('click', closeDrawer);
-  document.addEventListener('keydown', (e)=> {
-    if(e.key === 'Escape' && !drawer.hidden) closeDrawer();
-    if(e.key === 'Tab' && !drawer.hidden){
-      const els = Array.from(focusable(drawer));
-      if(els.length === 0) return;
-      const first = els[0], last = els[els.length-1];
-      if(e.shiftKey && document.activeElement === first){ last.focus(); e.preventDefault(); }
-      else if(!e.shiftKey && document.activeElement === last){ first.focus(); e.preventDefault(); }
+  <!-- SW para PWA -->
+  <script>
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('/service-worker.js').catch(function(err){ console.warn('SW registration failed', err); });
     }
-  });
-  window.addEventListener('resize', ()=> { if(window.innerWidth > 860 && !drawer.hidden) closeDrawer(); });
-})();
-</script>
+  </script>
 
+  <!-- HERO -->
+  <section class="hero-publish" aria-label="Publica tu propiedad">
+    <img class="bg" src="/hero-house.png" alt="Casa moderna y elegante"/>
+    <div class="overlay" aria-hidden="true"></div>
+    <div class="inner">
+      <h1 class="hero-title">Publica tu propiedad</h1>
+      <p class="hero-subtitle">Vende, arrienda o renta tu inmueble con el respaldo de Altorra Inmobiliaria.</p>
+    </div>
+  </section>
+
+  <!-- INFO -->
+  <section class="info-section">
+    <div class="info-card">
+      <h2>¿Por qué publicar con Altorra?</h2>
+      <ul>
+        <li>Difusión en múltiples canales de venta y arriendo.</li>
+        <li>Asesoría jurídica y acompañamiento integral.</li>
+        <li>Amplia red de clientes potenciales.</li>
+        <li>Nos encargamos de todo el proceso por ti.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- FORMULARIO -->
+  <main class="publish-container" id="main">
+    <p class="lead">Completa el siguiente formulario y un asesor de Altorra se pondrá en contacto contigo para ayudarte a publicar tu inmueble.</p>
+
+    <form class="publish-form" action="https://formsubmit.co/altorrainmobiliaria@gmail.com" method="POST" accept-charset="UTF-8">
+      <!-- Config FormSubmit -->
+      <input type="hidden" name="_subject" value="Solicitud para publicar propiedad" />
+      <input type="hidden" name="_next" value="gracias.html" />
+      <input type="hidden" name="_captcha" value="false" />
+      <input type="hidden" name="_template" value="table" />
+      <!-- Honeypot anti-bots -->
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off"/>
+
+      <div class="grid two">
+        <label>Nombre completo
+          <input type="text" name="Nombre" autocomplete="name" required />
+        </label>
+        <label>Correo electrónico
+          <input type="email" name="Email" autocomplete="email" required />
+        </label>
+      </div>
+
+      <div class="grid two">
+        <label>Teléfono de contacto
+          <input type="tel" name="Teléfono" autocomplete="tel" required />
+        </label>
+        <label>Ciudad
+          <input type="text" name="Ciudad" required />
+        </label>
+      </div>
+
+      <div class="grid two">
+        <label>Operación
+          <select name="Operación" required>
+            <option value="Venta">Venta</option>
+            <option value="Arriendo">Arriendo</option>
+            <option value="Por días">Por días</option>
+          </select>
+        </label>
+        <label>Tipo de propiedad
+          <select name="Tipo" required>
+            <option value="Apartamento">Apartamento</option>
+            <option value="Casa">Casa</option>
+            <option value="Oficina">Oficina</option>
+            <option value="Lote">Lote</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </label>
+      </div>
+
+      <label>Precio estimado (COP)
+        <input type="number" name="Precio" min="0" inputmode="numeric" />
+      </label>
+
+      <label>Descripción de la propiedad
+        <textarea name="Descripción" placeholder="Cuéntanos: habitaciones, baños, m², parqueadero, amenidades, cercanías..." required></textarea>
+      </label>
+
+      <button type="submit">Enviar solicitud</button>
+    </form>
+  </main>
+
+  <!-- Footer inyectado (NO se modifica su HTML) -->
+  <div id="include-footer"></div>
+  <script>
+    /* Reutilizamos includeSync si no existiera (seguridad) */
+    if(typeof includeSync !== 'function'){
+      function includeSync(id, url){
+        try{
+          var el = document.getElementById(id);
+          if(!el) return;
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', url, false);
+          xhr.send(null);
+          if(xhr.status === 200 || xhr.status === 0) el.innerHTML = xhr.responseText;
+        }catch(e){ console.warn('includeSync error', e); }
+      }
+    }
+    includeSync('include-footer','footer.html');
+  </script>
+
+  <!-- SCRIPTS de menú (idénticos al resto del sitio, sin tocar HTML del header) -->
+  <script>
+    /* ---------------- Desktop menu manager ---------------- */
+    (function(){
+      const MARGIN = 12;
+      let open = null;
+      const supportsHover = window.matchMedia('(hover: hover)').matches;
+
+      function resetPanelStyles(panel){
+        panel.style.left=''; panel.style.top=''; panel.style.width=''; panel.style.maxWidth=''; panel.style.right='';
+      }
+      function placeAndShow(btn, panel, size){
+        if(window.innerWidth <= 860) return;
+        if(open && open.panel !== panel) hideImmediate(open);
+
+        resetPanelStyles(panel);
+        panel.style.display = 'block';
+        panel.style.visibility = 'hidden';
+        panel.style.position = 'fixed';
+        panel.style.maxHeight = Math.max(260, window.innerHeight - (MARGIN*2)) + 'px';
+
+        if(size === 'mega'){
+          panel.style.width = Math.min(920, window.innerWidth - (MARGIN*2)) + 'px';
+        } else {
+          panel.style.width = 'auto';
+          panel.style.maxWidth = Math.min(520, window.innerWidth - (MARGIN*2)) + 'px';
+        }
+
+        const preRect = panel.getBoundingClientRect();
+        const bRect = btn.getBoundingClientRect();
+
+        let left;
+        if(size === 'mega'){
+          left = Math.round(bRect.left + bRect.width/2 - preRect.width/2);
+          left = Math.max(MARGIN, Math.min(left, window.innerWidth - preRect.width - MARGIN));
+        } else {
+          left = Math.round(Math.min(bRect.left, window.innerWidth - preRect.width - MARGIN));
+          left = Math.max(left, MARGIN);
+        }
+
+        let top = Math.round(bRect.bottom + 8);
+        if(top + preRect.height > window.innerHeight - MARGIN){
+          top = Math.round(bRect.top - preRect.height - 8);
+          if(top < MARGIN) top = MARGIN;
+        }
+
+        panel.style.left = left + 'px';
+        panel.style.top = top + 'px';
+        panel.style.visibility = 'visible';
+        panel.classList.add('menu-visible');
+        panel.setAttribute('aria-hidden','false');
+        btn.setAttribute('aria-expanded','true');
+        open = {panel, btn};
+      }
+      function hideImmediate(obj){
+        if(!obj) return;
+        obj.btn && obj.btn.setAttribute('aria-expanded','false');
+        obj.panel.classList.remove('menu-visible');
+        obj.panel.style.display='none';
+        obj.panel.setAttribute('aria-hidden','true');
+        resetPanelStyles(obj.panel);
+        if(open && open.panel === obj.panel) open = null;
+      }
+
+      document.querySelectorAll('.nav-btn[data-panel]').forEach(btn=>{
+        const panelId = btn.getAttribute('data-panel');
+        const panel = document.getElementById(panelId);
+        const item = btn.closest('.nav-item');
+        const size = item ? (item.dataset.size || 'compact') : 'compact';
+        let openTimer=null, closeTimer=null;
+        const show = ()=> { clearTimeout(closeTimer); openTimer = setTimeout(()=>{ placeAndShow(btn, panel, size); }, 60); };
+        const hide = ()=> { clearTimeout(openTimer); closeTimer = setTimeout(()=>{ hideImmediate({panel, btn}); }, 120); };
+        if(supportsHover){
+          btn.addEventListener('pointerenter', show);
+          btn.addEventListener('pointerleave', hide);
+          panel.addEventListener('pointerenter', ()=> { clearTimeout(closeTimer); clearTimeout(openTimer); });
+          panel.addEventListener('pointerleave', hide);
+        }
+        btn.addEventListener('click', (e)=> {
+          if(window.innerWidth > 860){
+            e.preventDefault();
+            if(panel.classList.contains('menu-visible')) hideImmediate({panel, btn});
+            else placeAndShow(btn, panel, size);
+          }
+        });
+        btn.addEventListener('focus', show);
+        btn.addEventListener('blur', ()=> setTimeout(()=>{ if(!panel.contains(document.activeElement)) hide(); }, 60));
+      });
+
+      document.addEventListener('click', (e)=>{
+        if(e.target.closest('nav') || e.target.closest('.menu-panel')) return;
+        document.querySelectorAll('.menu-panel.menu-visible').forEach(p=> hideImmediate({panel:p, btn:null}));
+      });
+      document.addEventListener('keydown', (e)=> {
+        if(e.key === 'Escape'){
+          document.querySelectorAll('.menu-panel.menu-visible').forEach(p=> hideImmediate({panel:p, btn:null}));
+        }
+      });
+      window.addEventListener('resize', ()=> {
+        document.querySelectorAll('.menu-panel').forEach(p=> { p.classList.remove('menu-visible'); p.style.display='none'; p.setAttribute('aria-hidden','true'); resetPanelStyles(p); });
+        document.querySelectorAll('.nav-btn[data-panel]').forEach(b => b.setAttribute('aria-expanded','false'));
+        open = null;
+      });
+    })();
+  </script>
+
+  <script>
+    /* ---------------- Drawer móvil ---------------- */
+    (function(){
+      const toggle = document.getElementById('navToggle');
+      const drawer = document.getElementById('mobileMenu');
+      const backdrop = document.getElementById('drawerBackdrop');
+      if(!toggle || !drawer || !backdrop) return;
+
+      let lastFocus = null;
+      function focusable(root){ return root.querySelectorAll('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])'); }
+      function setDrawerHeight(){
+        const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
+        drawer.style.height = (window.innerHeight - headerH) + 'px';
+      }
+      function clearDrawerHeight(){ drawer.style.height = ''; }
+      function openDrawer(){
+        lastFocus = document.activeElement;
+        drawer.hidden = false;
+        setDrawerHeight();
+        window.addEventListener('resize', setDrawerHeight);
+        window.addEventListener('orientationchange', setDrawerHeight);
+        requestAnimationFrame(()=> {
+          drawer.classList.add('open');
+          backdrop.classList.add('open');
+          document.body.style.overflow='hidden';
+          toggle.setAttribute('aria-expanded','true');
+          const el = focusable(drawer)[0];
+          el && el.focus();
+        });
+      }
+      function closeDrawer(){
+        drawer.classList.remove('open');
+        backdrop.classList.remove('open');
+        document.body.style.overflow='';
+        toggle.setAttribute('aria-expanded','false');
+        clearDrawerHeight();
+        window.removeEventListener('resize', setDrawerHeight);
+        window.removeEventListener('orientationchange', setDrawerHeight);
+        requestAnimationFrame(()=> {
+          drawer.hidden = true;
+          if(lastFocus) lastFocus.focus();
+        });
+      }
+      toggle.addEventListener('click', ()=> drawer.classList.contains('open') ? closeDrawer() : openDrawer());
+      backdrop.addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', (e)=> { if(e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
+    })();
+  </script>
 </body>
 </html>
