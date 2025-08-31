@@ -28,12 +28,12 @@
     "sqm": 153,
     "operation": "comprar",
     "id": "c-p2",
-    "image": "multimedia/comprar1.jpg",
+    "image": "comprar1.png",
     "images": [
-      "multimedia/comprar1.jpg",
-      "multimedia/comprar2.jpg",
-      "multimedia/comprar3.jpg",
-      "multimedia/comprar4.jpg"
+      "multimedia/comprar1.png",
+      "multimedia/comprar2.png",
+      "multimedia/comprar3.png",
+      "multimedia/comprar4.png"
     ],
     "description": "Se vende casa de 3 habitaciones y 3 baños en Cartagena. Amplios 153 m² de construcción, sala auxiliar, sala principal (living - comedor), sala de entretenimiento, terraza amplia, balcón en segundo piso, patio con zona de labores, cocina amplia y moderna y ubicación privilegiada para la comodidad de tu familia."
   },
