@@ -22,6 +22,9 @@
       --header-h:72px;
       --page-max:1200px;
       --overlay: rgba(0,0,0,0.30);
+      --card-r:18px;
+      --card-pad:28px;
+      --card-gap:16px;
     }
 
     *{box-sizing:border-box;margin:0;padding:0;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--text);background:transparent;}
@@ -29,7 +32,7 @@
     a{text-decoration:none;color:inherit;}
     [id]{ scroll-margin-top: calc(var(--header-h) + 12px); }
 
-    /* ====== HEADER + MENÚ (idénticos: no tocar visual) ====== */
+    /* ====== HEADER ====== */
     header{
       position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;
       background:var(--bg);z-index:140;border-bottom:1px solid rgba(0,0,0,0.06);
@@ -112,17 +115,21 @@
       max-width:var(--page-max);
       margin:0 auto 60px; padding:0 16px; display:grid; gap:24px;
       grid-template-columns: 1.12fr .88fr;
-      /* Evita que el aside se estire a la altura del formulario (espacio vacío) */
-      align-items:start;
+      align-items:start; /* no estirar filas */
     }
     @media (max-width:960px){ main.contact-container{ grid-template-columns:1fr; } }
 
     .card{
-      background:#ffffff; border:1px solid rgba(17,24,39,0.08); border-radius:18px; padding:28px;
-      box-shadow:0 12px 32px rgba(17,24,39,0.06);
+      background:#ffffff; border:1px solid rgba(17,24,39,0.08); border-radius:var(--card-r); padding:var(--card-pad);
+      box-shadow:0 12px 32px rgba(17,24,39,0.06); width:100%;
     }
     .card h2{ margin:0 0 10px; font-size:1.6rem; font-weight:800; color:var(--gold); }
     .muted{ color:var(--muted); }
+
+    /* ====== Right column stack (alineado, sin huecos) ====== */
+    .right-stack{ grid-column:2; display:flex; flex-direction:column; gap:var(--card-gap); }
+    .right-stack > .card{ border-radius:var(--card-r); padding:var(--card-pad); }
+    @media (max-width:960px){ .right-stack{ grid-column:1; } }
 
     /* ====== Formulario ====== */
     form.contact-form{ display:flex; flex-direction:column; gap:16px; }
@@ -153,32 +160,26 @@
     .info-list{ list-style:none; padding:0; margin:0; display:grid; gap:12px; color:#1f2937; }
     .info-item{ display:flex; gap:12px; align-items:flex-start; }
     .info-item strong{ font-weight:800; color:#0f1724; }
-
     .quick-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
     .qa{ padding:10px 14px; border-radius:12px; font-weight:700; border:1px solid rgba(0,0,0,.12); background:#f8fafc; }
     .qa:hover{ background:#fff; box-shadow:0 10px 24px rgba(0,0,0,.06); }
 
-    /* ====== Botones flotantes WA/IG ====== */
-    .floating{
-      position:fixed; right:16px; bottom:18px; z-index:2000;
-      display:flex; flex-direction:column; gap:10px;
+    /* ====== Generador de mensaje ====== */
+    .gen-grid{ display:grid; gap:12px; grid-template-columns:1fr 1fr; }
+    .gen-grid .full{ grid-column:1 / -1; }
+    @media (max-width:700px){ .gen-grid{ grid-template-columns:1fr; } }
+    .out{
+      border:1px dashed rgba(17,24,39,0.22); border-radius:12px; padding:10px 12px; background:#f9fafb; min-height:48px;
+      color:#374151; line-height:1.4; word-break:break-word; overflow:auto; max-height:140px;
     }
-    .fab{
-      width:54px; height:54px; border-radius:999px; display:flex; align-items:center; justify-content:center;
-      background:#fff; border:1px solid rgba(0,0,0,.06); box-shadow:0 12px 28px rgba(0,0,0,.16);
-      transition:transform .15s ease, box-shadow .2s ease, filter .15s ease;
-    }
-    .fab:hover{ transform:translateY(-2px); box-shadow:0 18px 40px rgba(0,0,0,.22); filter:saturate(1.05); }
-    .fab svg{ width:26px; height:26px; color:#111; }
-    .fab.whatsapp{ background:linear-gradient(180deg,#ffffff,#fff7e1); border-color:rgba(212,175,55,.5); }
-    .fab.instagram{ background:linear-gradient(180deg,#ffffff,#fff7e1); border-color:rgba(212,175,55,.5); }
+    .gen-actions{ display:flex; gap:10px; flex-wrap:wrap; }
 
-    /* ====== FOOTER (idéntico) ====== */
+    /* ====== FOOTER ====== */
     footer{background:#0b0b0b;color:#fff;padding:36px 16px}
     .footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
     @media (max-width:920px){ .footer-grid{grid-template-columns:1fr} }
 
-    /* === Enfoque arriba y banner más alto en escritorio === */
+    /* === Banner más alto / enfoque arriba escritorio === */
     @media (min-width:960px){
       .hero-contact{ min-height:72vh; }
       .hero-contact .bg{ object-position: center top; }
@@ -186,7 +187,7 @@
   </style>
 </head>
 <body>
-  <!-- ===== HEADER (idéntico) ===== -->
+  <!-- ===== HEADER ===== -->
   <header>
     <div class="container">
       <a class="brand" href="index.html">
@@ -212,7 +213,7 @@
     </div>
   </header>
 
-  <!-- ===== Paneles del header (idénticos) ===== -->
+  <!-- ===== Paneles del header ===== -->
   <div id="panel-propiedades" class="menu-panel panel-compact" role="dialog" aria-modal="false" aria-hidden="true">
     <a class="menu-link" href="propiedades-comprar.html">Comprar</a>
     <a class="menu-link" href="propiedades-arrendar.html">Arrendar</a>
@@ -250,7 +251,7 @@
     <a class="menu-link" href="quienes-somos.html#equipo">Nuestro equipo</a>
   </div>
 
-  <!-- ===== Menú móvil (idéntico) ===== -->
+  <!-- ===== Menú móvil ===== -->
   <div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
   <aside id="mobileMenu" class="drawer" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle" hidden>
     <div class="block">
@@ -292,15 +293,13 @@
     <div class="inner">
       <h1 class="hero-title">Conéctate con Nosotros</h1>
       <p class="hero-subtitle">Estamos listos para ayudarte a encontrar tu próximo hogar o inversión.</p>
-      <div class="quick-actions" style="justify-content:center;margin-top:14px">
-        
-      </div>
+      <div class="quick-actions" style="justify-content:center;margin-top:14px"></div>
     </div>
   </section>
 
   <!-- ===== CONTENIDO ===== -->
   <main class="contact-container" id="contacto">
-    <!-- Formulario -->
+    <!-- Columna izquierda: Formulario -->
     <section class="card" aria-labelledby="t-contacto">
       <h2 id="t-contacto">Envíanos un mensaje</h2>
       <p class="muted">Te responderemos en el menor tiempo posible.</p>
@@ -352,38 +351,74 @@
       </form>
     </section>
 
-    <!-- Información corporativa -->
-    <aside class="card" aria-labelledby="t-info">
-      <h2 id="t-info">Información de contacto</h2>
-      <ul class="info-list" style="margin-top:6px">
-        <li class="info-item"><strong>Teléfono:</strong> +57 323 501 6747</li>
-        <li class="info-item"><strong>Email:</strong> altorrainmobiliaria@gmail.com</li>
-        <li class="info-item"><strong>Ciudad:</strong> Cartagena de Indias, Bolívar (CO)</li>
-        <li class="info-item"><strong>Horario:</strong> Lun–Sáb 8:00–18:00</li>
-        <li class="info-item"><strong>Instagram:</strong> <a href="https://instagram.com/altorrainmobiliaria" target="_blank" rel="noopener">@altorrainmobiliaria</a></li>
-             </ul>
+    <!-- Columna derecha: STACK sin huecos -->
+    <div class="right-stack">
+      <!-- Información corporativa -->
+      <aside class="card" aria-labelledby="t-info">
+        <h2 id="t-info">Información de contacto</h2>
+        <ul class="info-list" style="margin-top:6px">
+          <li class="info-item"><strong>Teléfono:</strong> +57 323 501 6747</li>
+          <li class="info-item"><strong>Email:</strong> altorrainmobiliaria@gmail.com</li>
+          <li class="info-item"><strong>Ciudad:</strong> Cartagena de Indias, Bolívar (CO)</li>
+          <li class="info-item"><strong>Horario:</strong> Lun–Sáb 8:00–18:00</li>
+          <li class="info-item"><strong>Instagram:</strong> <a href="https://instagram.com/altorrainmobiliaria" target="_blank" rel="noopener">@altorrainmobiliaria</a></li>
+        </ul>
 
-      <div class="quick-actions">
-        <a class="qa" href="https://wa.me/573235016747?text=Hola%20Altorra%2C%20vengo%20desde%20la%20p%C3%A1gina%20web." target="_blank" rel="noopener">Escribir por WhatsApp</a>
-        <a class="qa" href="publicar-propiedad.html">Publicar mi propiedad</a>
-        <a class="qa" href="propiedades-comprar.html">Ver propiedades</a>
-      </div>
-    </aside>
+        <div class="quick-actions">
+          <!-- se elimina 'Escribir por WhatsApp' para no duplicar -->
+          <a class="qa" href="publicar-propiedad.html">Publicar mi propiedad</a>
+          <a class="qa" href="propiedades-comprar.html">Ver propiedades</a>
+        </div>
+      </aside>
+
+      <!-- Generador de mensaje inteligente -->
+      <section class="card" aria-labelledby="t-gen">
+        <h2 id="t-gen">Generador de mensaje inteligente</h2>
+        <p class="muted">Arma un mensaje claro y abre WhatsApp con un toque.</p>
+        <div class="gen-grid" style="margin-top:8px">
+          <label>
+            Interés
+            <select id="gTipo">
+              <option>Comprar</option>
+              <option>Arriendo</option>
+              <option>Por días</option>
+              <option>Publicar propiedad</option>
+              <option>Avalúos</option>
+              <option>Servicios jurídicos</option>
+              <option>Servicios contables</option>
+            </select>
+          </label>
+          <label>
+            Barrio / zona (opcional)
+            <input id="gZona" type="text" placeholder="Toda Cartagena" />
+          </label>
+          <label>
+            Presupuesto aprox. (COP)
+            <input id="gPres" type="number" min="0" step="100000" placeholder="Ej. 1.200.000" />
+          </label>
+          <label>
+            Urgencia
+            <select id="gUrg">
+              <option value="normal">Quiero información</option>
+              <option value="alta">Necesito respuesta hoy</option>
+              <option value="media">Esta semana</option>
+            </select>
+          </label>
+          <label class="full">
+            Detalles (opcional)
+            <input id="gExtra" type="text" placeholder="Habitaciones, amoblado, área…" />
+          </label>
+          <div class="full out" id="gOut" aria-live="polite"></div>
+          <div class="gen-actions full">
+            <a id="gWA" class="qa" target="_blank" rel="noopener">Abrir WhatsApp</a>
+            <button id="gCopy" class="qa" type="button">Copiar mensaje</button>
+          </div>
+        </div>
+      </section>
+    </div> <!-- /right-stack -->
   </main>
 
-  <!-- ===== Botones flotantes WA/IG ====== -->
-  <div class="floating" aria-label="Acciones rápidas">
-    <a class="fab whatsapp" href="https://wa.me/573235016747?text=Hola%20Altorra%2C%20necesito%20informaci%C3%B3n." target="_blank" rel="noopener" aria-label="WhatsApp Altorra">
-      <!-- WhatsApp SVG -->
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.52 3.48A11.89 11.89 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.17 1.6 5.98L0 24l6.21-1.62A11.96 11.96 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52ZM12 22a9.93 9.93 0 0 1-5.06-1.4l-.36-.21-3.69.96.99-3.59-.23-.37A9.98 9.98 0 1 1 22 12c0 5.52-4.48 10-10 10Zm5.48-7.55c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.76-1.66-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.46-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.5h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.69.25-1.28.17-1.41-.08-.13-.27-.2-.57-.35Z" fill="currentColor"/></svg>
-    </a>
-    <a class="fab instagram" href="https://instagram.com/altorrainmobiliaria" target="_blank" rel="noopener" aria-label="Instagram Altorra">
-      <!-- Instagram SVG -->
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.9.1 1.2.1 1.9.3 2.3.5.6.2 1 .5 1.5 1 .5.5.8.9 1 1.5.2.4.4 1.1.5 2.3.1 1.3.1 1.7.1 4.9s0 3.6-.1 4.9c-.1 1.2-.3 1.9-.5 2.3-.2.6-.5 1-1 1.5-.5.5-.9.8-1.5 1-.4.2-1.1.4-2.3.5-1.3.1-1.7.1-4.9.1s-3.6 0-4.9-.1c-1.2-.1-1.9-.3-2.3-.5-.6-.2-1-.5-1.5-1-.5-.5-.8-.9-1-1.5-.2-.4-.4-1.1-.5-2.3C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.9c.1-1.2.3-1.9.5-2.3.2-.6.5-1 1-1.5.5-.5.9-.8 1.5-1 .4-.2 1.1-.4 2.3-.5C8.4 2.2 8.8 2.2 12 2.2Zm0 1.6c-3.2 0-3.5 0-4.8.1-1 .1-1.6.2-1.9.4-.5.2-.8.4-1.1.7-.3.3-.5.6-.7 1.1-.2.3-.4.9-.4 1.9-.1 1.2-.1 1.6-.1 4.8s0 3.5.1 4.8c.1 1 .2 1.6.4 1.9.2.5.4.8.7 1.1.3.3.6.5 1.1.7.3.2.9.4 1.9.4 1.2.1 1.6.1 4.8.1s3.5 0 4.8-.1c1-.1 1.6-.2 1.9-.4.5-.2.8-.4 1.1-.7.3-.3.5-.6.7-1.1.2-.3.4-.9.4-1.9.1-1.2.1-1.6.1-4.8s0-3.5-.1-4.8c-.1-1-.2-1.6-.4-1.9-.2-.5-.4-.8-.7-1.1-.3-.3-.6-.5-1.1-.7-.3-.2-.9-.4-1.9-.4-1.2-.1-1.6-.1-4.8-.1Zm0 3.5a6.7 6.7 0 1 1 0 13.4 6.7 6.7 0 0 1 0-13.4Zm0 1.6a5.1 5.1 0 1 0 0 10.2 5.1 5.1 0 0 0 0-10.2Zm5-2.1a1.6 1.6 0 1 1 0 3.2 1.6 1.6 0 0 1 0-3.2Z" fill="currentColor"/></svg>
-    </a>
-  </div>
-
-  <!-- ===== FOOTER (idéntico) ===== -->
+  <!-- ===== FOOTER ===== -->
   <footer>
     <div class="footer-grid">
       <div>
@@ -393,7 +428,6 @@
           Avalúos<br/>
           Servicios Legales Especializados
         </p>
-        <!-- Número clickeable, dorado y sin subrayado -->
         <div style="margin-top:12px;font-weight:800;color:var(--gold)">
           <a href="tel:+573235016747">+57&nbsp;323&nbsp;501&nbsp;6747</a>
         </div>
@@ -419,7 +453,7 @@
         <ul style="margin:0;padding:0;list-style:none;color:#cbd5e1">
           <li><a href="quienes-somos.html" style="color:#cbd5e1">Quiénes somos</a></li>
           <li><a href="contacto.html" style="color:#cbd5e1">Contacto</a></li>
-          
+         
         </ul>
       </div>
     </div>
@@ -442,7 +476,7 @@
     });
   </script>
 
-  <!-- ===== SEO: Schema.org (ContactPage + Organization) ===== -->
+  <!-- ===== SEO: Schema.org ===== -->
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -461,7 +495,7 @@
   }
   </script>
 
-  <!-- ===== Scripts de menú (idénticos) ===== -->
+  <!-- ===== Scripts de menú ===== -->
   <script>
     (function(){
       const MARGIN = 12;
@@ -601,6 +635,46 @@
       backdrop.addEventListener('click', closeDrawer);
       document.addEventListener('keydown', (e)=> { if(e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer(); });
     })();
+  </script>
+
+  <!-- ===== Lógica del generador ===== -->
+  <script>
+    // Formateo COP
+    const fmtCOP = n => isNaN(n) ? '—' : n.toLocaleString('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0});
+
+    // Generador de mensaje inteligente
+    const gTipo = document.getElementById('gTipo');
+    const gZona = document.getElementById('gZona');
+    const gPres = document.getElementById('gPres');
+    const gUrg  = document.getElementById('gUrg');
+    const gExtra= document.getElementById('gExtra');
+    const gOut  = document.getElementById('gOut');
+    const gWA   = document.getElementById('gWA');
+    const gCopy = document.getElementById('gCopy');
+
+    function buildMsg(){
+      const tipo = gTipo.value;
+      const zona = gZona.value.trim() || 'Cartagena';
+      const pres = gPres.value ? ` Presupuesto aprox: ${fmtCOP(+gPres.value)}.` : '';
+      const urg  = gUrg.value==='alta' ? ' Necesito respuesta hoy.' : (gUrg.value==='media' ? ' Me sirve esta semana.' : '');
+      const extra= gExtra.value.trim() ? ` Detalles: ${gExtra.value.trim()}.` : '';
+      const msg  = `Hola Altorra, me interesa ${tipo.toLowerCase()} en ${zona}.${pres}${extra}${urg}`;
+      gOut.textContent = msg;
+      gWA.href = 'https://wa.me/573235016747?text=' + encodeURIComponent(msg);
+    }
+    ['change','input'].forEach(ev=>{
+      [gTipo,gZona,gPres,gUrg,gExtra].forEach(el=> el.addEventListener(ev, buildMsg));
+    });
+    buildMsg();
+    gCopy?.addEventListener('click', async ()=>{
+      try{
+        await navigator.clipboard.writeText(gOut.textContent);
+        gCopy.textContent='¡Copiado!';
+        setTimeout(()=>gCopy.textContent='Copiar mensaje',1500);
+      }catch(e){
+        gCopy.textContent='Copiar (selecciona)';
+      }
+    });
   </script>
 </body>
 </html>
