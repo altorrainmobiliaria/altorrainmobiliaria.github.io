@@ -11,10 +11,10 @@
     "id": "c-p1",
     "image": "comprar1.png",
     "images": [
-      "comprar1.png",
-      "comprar2.png",
-      "comprar3.png",
-      "comprar4.png"
+      "comprar.png",
+      "comprar.png",
+      "comprar.png",
+      "comprar.png"
     ],
     "description": "Se vende apartamento moderno en Cartagena con 2 habitaciones, 2 baños y 78 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
   },
@@ -47,12 +47,12 @@
     "sqm": 420,
     "operation": "comprar",
     "id": "c-p3",
-    "image": "comprar3.png",
+    "image": "comprar.png",
     "images": [
-      "comprar1.png",
-      "comprar2.png",
-      "comprar3.png",
-      "comprar4.png"
+      "comprar.png",
+      "comprar.png",
+      "comprar.png",
+      "comprar.png"
     ],
     "description": "Se vende lote ideal para inversión en Barranquilla. Cuenta con 420 m² para desarrollar un proyecto a tu medida. Excelente ubicación y valorización garantizada."
   },
@@ -66,12 +66,12 @@
     "sqm": 58,
     "operation": "comprar",
     "id": "c-p4",
-    "image": "comprar4.png",
+    "image": "comprar.png",
     "images": [
-      "comprar1.png",
-      "comprar2.png",
-      "comprar3.png",
-      "comprar4.png"
+      "comprar.png",
+      "comprar.png",
+      "comprar.png",
+      "comprar.png"
     ],
     "description": "Se vende oficina premium en el corazón de Bogotá con 58 m², lista para estrenar. Espacios amplios y modernos que potencian la productividad."
   },
@@ -87,10 +87,10 @@
     "id": "c-p5",
     "image": "comprar1.png",
     "images": [
-      "comprar1.png",
-      "comprar2.png",
-      "comprar3.png",
-      "comprar4.png"
+      "comprar.png",
+      "comprar.png",
+      "comprar.png",
+      "comprar.png"
     ],
     "description": "Se vende apartamento moderno en Cartagena con 3 habitaciones, 3 baños y 150 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
   },
@@ -104,12 +104,12 @@
     "sqm": 310,
     "operation": "comprar",
     "id": "c-p6",
-    "image": "comprar2.png",
+    "image": "comprar.png",
     "images": [
-      "comprar1.png",
-      "comprar2.png",
-      "comprar3.png",
-      "comprar4.png"
+      "comprar.png",
+      "comprar.png",
+      "comprar.png",
+      "comprar.png"
     ],
     "description": "Se vende casa de 4 habitaciones y 3 baños en Medellín. Amplios 310 m² de construcción, jardín privado y ubicación privilegiada para la comodidad de tu familia."
   },
@@ -123,12 +123,12 @@
     "sqm": 98,
     "operation": "comprar",
     "id": "c-p7",
-    "image": "comprar3.png",
+    "image": "comprar.png",
     "images": [
-      "comprar1.png",
-      "comprar2.png",
-      "comprar3.png",
-      "comprar4.png"
+      "comprar.png",
+      "comprar.png",
+      "comprar.png",
+      "comprar.png"
     ],
     "description": "Se vende apartamento moderno en Cartagena con 3 habitaciones, 2 baños y 98 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
   },
@@ -142,12 +142,12 @@
     "sqm": 480,
     "operation": "comprar",
     "id": "c-p8",
-    "image": "comprar4.png",
+    "image": "comprar.png",
     "images": [
-      "comprar1.png",
-      "comprar2.png",
-      "comprar3.png",
-      "comprar4.png"
+      "comprar.png",
+      "comprar.png",
+      "comprar.png",
+      "comprar.png"
     ],
     "description": "Se vende casa de 5 habitaciones y 4 baños en Cali. Amplios 480 m² de construcción, jardín privado y ubicación privilegiada para la comodidad de tu familia."
   },
