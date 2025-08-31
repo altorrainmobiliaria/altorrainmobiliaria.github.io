@@ -112,6 +112,8 @@
       max-width:var(--page-max);
       margin:0 auto 60px; padding:0 16px; display:grid; gap:24px;
       grid-template-columns: 1.12fr .88fr;
+      /* Evita que el aside se estire a la altura del formulario (espacio vacío) */
+      align-items:start;
     }
     @media (max-width:960px){ main.contact-container{ grid-template-columns:1fr; } }
 
@@ -176,8 +178,9 @@
     .footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
     @media (max-width:920px){ .footer-grid{grid-template-columns:1fr} }
 
-    /* === AJUSTE 2: enfoque arriba del banner solo en escritorio === */
+    /* === Enfoque arriba y banner más alto en escritorio === */
     @media (min-width:960px){
+      .hero-contact{ min-height:72vh; }
       .hero-contact .bg{ object-position: center top; }
     }
   </style>
@@ -390,7 +393,7 @@
           Avalúos<br/>
           Servicios Legales Especializados
         </p>
-        <!-- AJUSTE 1: número clickeable, dorado y sin subrayado -->
+        <!-- Número clickeable, dorado y sin subrayado -->
         <div style="margin-top:12px;font-weight:800;color:var(--gold)">
           <a href="tel:+573235016747">+57&nbsp;323&nbsp;501&nbsp;6747</a>
         </div>
