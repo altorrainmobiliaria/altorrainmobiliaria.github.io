@@ -4,17 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Contacto | Altorra</title>
-  <meta name="description" content="Ponte en contacto con Altorra Inmobiliaria: arriendos, ventas, avalúos y servicios legales." />
-  <!-- Evita que iOS/Safari autolinkee números y los pinte azul/subrayado -->
-  <meta name="format-detection" content="telephone=no" />
-
-  <!-- PWA y social -->
+  <meta name="description" content="Ponte en contacto con Altorra Inmobiliaria: Administración y arriendo de inmuebles, ventas, avalúos y servicios legales inmobiliarios." />
+  <!-- PWA and social metadata -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#d4af37" />
   <meta property="og:title" content="Contacto | Altorra" />
-  <meta property="og:description" content="Cuéntanos qué necesitas y un asesor de Altorra te contactará pronto." />
-  <meta property="og:image" content="/multimedia/hero-contact.png" />
-
+  <meta property="og:description" content="Estamos Aquí para Ti: Cuéntanos lo que necesitas y un asesor de Altorra te contactará pronto." />
+  <meta property="og:image" content="/hero-contact.png" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet" />
   <style>
     :root{
@@ -23,21 +19,17 @@
       --bg:#ffffff;
       --text:#111827;
       --muted:#6b7280;
-      --page-max:1200px;
       --header-h:72px;
+      --page-max:1200px;
+      --overlay: rgba(0,0,0,0.30);
     }
 
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;background:var(--bg);color:var(--text);
-      font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,"Noto Sans",sans-serif;
-      line-height:1.4;
-    }
-    a{color:inherit;text-decoration:none}
-    img{max-width:100%;display:block}
+    *{box-sizing:border-box;margin:0;padding:0;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--text);background:transparent;}
+    html,body{background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
+    a{text-decoration:none;color:inherit;}
+    [id]{ scroll-margin-top: calc(var(--header-h) + 12px); }
 
-    /* ===== HEADER (idéntico en todo el sitio) ===== */
+    /* ====== HEADER + MENÚ (idénticos: no tocar visual) ====== */
     header{
       position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;
       background:var(--bg);z-index:140;border-bottom:1px solid rgba(0,0,0,0.06);
@@ -51,254 +43,150 @@
     nav{margin-left:auto;display:flex;align-items:center;gap:8px}
     .nav-list{display:flex;gap:6px;align-items:center;margin-left:auto}
     .nav-item{position:relative}
-    .nav-btn{
-      background:transparent;border:0;padding:8px 12px;cursor:pointer;border-radius:8px;color:var(--text);font-size:0.95rem
+    .nav-btn{background:transparent;border:0;padding:8px 12px;font-weight:700;cursor:pointer;border-radius:8px;color:var(--text);font-size:0.95rem}
+    .nav-btn:focus{outline:3px solid rgba(212,175,55,0.18);outline-offset:3px}
+
+    .nav-toggle{display:none;margin-left:auto;background:transparent;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:8px 12px;font-weight:800}
+    .nav-toggle:focus{outline:3px solid rgba(212,175,55,0.18);outline-offset:3px}
+
+    .menu-panel{
+      display:none;position:fixed;z-index:150;padding:14px;border-radius:12px;
+      background:linear-gradient(180deg,#fff,#fbfbfb);border:1px solid rgba(0,0,0,0.06);
+      box-shadow:0 22px 48px rgba(0,0,0,0.12);max-height:calc(100vh - var(--header-h) - 20px);overflow:auto;
     }
-    .nav-btn:focus{outline:3px solid rgba(212,175,55,0.18);outline-offset:2px;border-radius:10px}
-    .btn-cta{
-      background:linear-gradient(180deg,#ffd977,#d4af37);color:#111827;border:0;border-radius:12px;padding:10px 14px;font-weight:800;
-      box-shadow:0 10px 24px rgba(212,175,55,0.25);
+    .menu-visible{display:block;opacity:1;transform:none}
+    .panel-compact{min-width:220px;max-width:44vw}
+    .panel-mega{min-width:360px;max-width:920px;width:min(88vw,920px)}
+    .mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .mega-col h4{margin:0 0 8px;color:var(--gold);font-weight:700}
+    .menu-link{display:block;padding:6px;border-radius:8px;color:#0f1724}
+    .menu-link:hover{background:rgba(0,0,0,0.03)}
+
+    .drawer-backdrop{
+      position:fixed;inset:0;background:var(--overlay);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
+      z-index:160;opacity:0;pointer-events:none;transition:opacity .2s ease;
+    }
+    .drawer{
+      position:fixed;left:0;right:0;top:var(--header-h);
+      height:calc(100vh - var(--header-h) - env(safe-area-inset-bottom));
+      height:calc(100dvh - var(--header-h));
+      padding-bottom:max(24px, env(safe-area-inset-bottom));
+      background:#fff;z-index:161;transform:translateY(-8px);opacity:0;pointer-events:none;
+      transition:transform .24s ease, opacity .2s ease;overflow:auto;border-top:1px solid rgba(0,0,0,.06);
+      overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+    }
+    .drawer.open{transform:none;opacity:1;pointer-events:auto}
+    .drawer-backdrop.open{opacity:1;pointer-events:auto}
+    .drawer .block{padding:16px;border-bottom:1px solid rgba(0,0,0,.06)}
+    .drawer .block:last-child{padding-bottom:max(32px, env(safe-area-inset-bottom))}
+    .drawer h4{margin:0 0 8px;color:var(--gold)}
+    .drawer a{display:block;padding:8px 2px}
+
+    @media (max-width:860px){
+      .nav-list{display:none}
+      .nav-toggle{display:inline-flex;align-items:center;gap:8px}
+      .menu-panel{display:none !important}
     }
 
-    /* ===== HERO CONTACTO ===== */
+    /* ====== HERO CONTACTO ====== */
     .hero-contact{
       position:relative; min-height:62vh; display:flex; align-items:center; justify-content:center;
       text-align:center; padding-top:calc(var(--header-h) + 40px); color:#fff; overflow:hidden; margin-bottom:32px;
     }
-    .hero-contact .bg{
-      position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;
-      /* Enfoca la parte superior para que en desktop se vean las caras */
-      object-position:center 22%;
-    }
-    .hero-contact .overlay{
-      position:absolute; inset:0; z-index:1;
-      background:linear-gradient(180deg,rgba(0,0,0,.10) 0%, rgba(0,0,0,.38) 40%, rgba(0,0,0,.60) 100%);
-    }
+    .hero-contact .bg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+    .hero-contact .overlay{ position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.55)); z-index:1; }
     .hero-contact .inner{ position:relative; z-index:2; padding:0 16px; max-width:960px; }
-    .hero-title{ font-size:clamp(1.6rem, 1.2rem + 2vw, 2.6rem); font-weight:800; margin:0 0 8px; letter-spacing:-0.4px }
-    .hero-subtitle{ font-size:clamp(0.95rem, 0.8rem + 0.6vw, 1.2rem); opacity:.95; margin:0 }
-
-    @media (min-width:1024px){
-      .hero-contact{ min-height:58vh; }
-      .hero-contact .bg{ object-position:center 12%; } /* sube aún más el foco en desktop */
-      .hero-contact .overlay{
-        background:linear-gradient(180deg,rgba(0,0,0,.08) 0%, rgba(0,0,0,.36) 40%, rgba(0,0,0,.55) 100%);
-      }
+    .hero-title{
+      color:#fff; font-size:clamp(2.2rem,5vw,3rem); font-weight:800; line-height:1.05;
+      text-shadow:0 1px 0 rgba(0,0,0,.35), 0 2px 2px rgba(0,0,0,.35), 0 6px 12px rgba(0,0,0,.28), 0 14px 28px rgba(0,0,0,.22);
+      -webkit-text-stroke:.4px rgba(0,0,0,.15);
+    }
+    .hero-subtitle{
+      margin-top:12px; color:#fff; opacity:.98; font-size:clamp(1rem,2.2vw,1.2rem); font-weight:600; letter-spacing:.2px; line-height:1.35;
+      text-shadow:0 1px 0 rgba(0,0,0,.35), 0 2px 6px rgba(0,0,0,.28), 0 8px 18px rgba(0,0,0,.20);
+      -webkit-text-stroke:.3px rgba(0,0,0,.12);
     }
 
-    /* ===== CONTENIDO ===== */
-    main{max-width:var(--page-max);margin:0 auto;padding:0 16px 48px}
-    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:28px}
-    @media (max-width:920px){ .grid{grid-template-columns:1fr} }
+    /* ====== CUERPO CONTACTO ====== */
+    main.contact-container{
+      max-width:var(--page-max);
+      margin:0 auto 60px; padding:0 16px; display:grid; gap:24px;
+      grid-template-columns: 1.12fr .88fr;
+    }
+    @media (max-width:960px){ main.contact-container{ grid-template-columns:1fr; } }
 
     .card{
-      background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:20px;padding:22px 18px;
-      box-shadow:0 12px 32px rgba(0,0,0,0.05)
+      background:#ffffff; border:1px solid rgba(17,24,39,0.08); border-radius:18px; padding:28px;
+      box-shadow:0 12px 32px rgba(17,24,39,0.06);
     }
-    .card h2{margin:0 0 10px;font-size:1.3rem}
-    .field{display:flex;flex-direction:column;gap:6px;margin:12px 0}
-    label{font-weight:700;font-size:.92rem}
-    input,select,textarea{
-      padding:12px 12px;border:1px solid rgba(0,0,0,.12);border-radius:12px;font:inherit
+    .card h2{ margin:0 0 10px; font-size:1.6rem; font-weight:800; color:var(--gold); }
+    .muted{ color:var(--muted); }
+
+    /* ====== Formulario ====== */
+    form.contact-form{ display:flex; flex-direction:column; gap:16px; }
+    .grid{ display:grid; gap:14px; }
+    .grid.two{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+    @media (max-width:700px){ .grid.two{ grid-template-columns:1fr; } }
+    label{ font-weight:600; display:flex; flex-direction:column; gap:6px; }
+    input, select, textarea{
+      padding:12px 14px; border-radius:12px; border:1px solid rgba(17,24,39,0.16);
+      font-size:0.95rem; font-family:inherit; background:#fff;
+      transition:border-color .15s ease, box-shadow .15s ease;
     }
-    textarea{min-height:120px;resize:vertical}
-    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    textarea{ resize:vertical; min-height:160px; }
+    input:focus-visible, select:focus-visible, textarea:focus-visible{
+      outline:3px solid rgba(212,175,55,0.22); border-color:var(--gold);
+    }
+    .consent{ display:flex; align-items:flex-start; gap:10px; font-size:0.92rem; color:#374151; }
+    .consent input{ margin-top:3px; }
+
     .btn{
-      border:0;border-radius:12px;padding:12px 14px;font-weight:800;cursor:pointer
+      align-self:flex-start; padding:14px 26px; border-radius:14px; font-weight:800;
+      background:linear-gradient(90deg,var(--accent),#ffd95e); color:#111; border:none; cursor:pointer;
+      transition:transform .15s ease, box-shadow .2s ease, filter .15s ease;
     }
-    .btn-primary{
-      background:linear-gradient(180deg,#ffd977,#d4af37);color:#111827;box-shadow:0 10px 24px rgba(212,175,55,0.25)
+    .btn:hover{ transform:translateY(-2px); box-shadow:0 16px 36px rgba(17,24,39,0.12); filter:saturate(1.05); }
+
+    /* ====== Info lateral ====== */
+    .info-list{ list-style:none; padding:0; margin:0; display:grid; gap:12px; color:#1f2937; }
+    .info-item{ display:flex; gap:12px; align-items:flex-start; }
+    .info-item strong{ font-weight:800; color:#0f1724; }
+
+    .quick-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+    .qa{ padding:10px 14px; border-radius:12px; font-weight:700; border:1px solid rgba(0,0,0,.12); background:#f8fafc; }
+    .qa:hover{ background:#fff; box-shadow:0 10px 24px rgba(0,0,0,.06); }
+
+    /* ====== Botones flotantes WA/IG ====== */
+    .floating{
+      position:fixed; right:16px; bottom:18px; z-index:2000;
+      display:flex; flex-direction:column; gap:10px;
     }
-    .btn-ghost{background:#111827;color:#fff}
+    .fab{
+      width:54px; height:54px; border-radius:999px; display:flex; align-items:center; justify-content:center;
+      background:#fff; border:1px solid rgba(0,0,0,.06); box-shadow:0 12px 28px rgba(0,0,0,.16);
+      transition:transform .15s ease, box-shadow .2s ease, filter .15s ease;
+    }
+    .fab:hover{ transform:translateY(-2px); box-shadow:0 18px 40px rgba(0,0,0,.22); filter:saturate(1.05); }
+    .fab svg{ width:26px; height:26px; color:#111; }
+    .fab.whatsapp{ background:linear-gradient(180deg,#ffffff,#fff7e1); border-color:rgba(212,175,55,.5); }
+    .fab.instagram{ background:linear-gradient(180deg,#ffffff,#fff7e1); border-color:rgba(212,175,55,.5); }
 
-    .sidebox{display:grid;gap:14px}
-    .sideitem{display:flex;gap:12px;align-items:flex-start}
-    .sideitem .ico{min-width:40px;min-height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.2);display:grid;place-items:center;background:#111827;color:#fff}
-    .sideitem .txt b{display:block}
-
-    /* ===== FOOTER (idéntico) ===== */
-    footer{background:#0b0b0b;color:#fff;padding:36px 16px;margin-top:48px}
+    /* ====== FOOTER (idéntico) ====== */
+    footer{background:#0b0b0b;color:#fff;padding:36px 16px}
     .footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
     @media (max-width:920px){ .footer-grid{grid-template-columns:1fr} }
-    footer h4{margin:0 0 8px;font-size:1.02rem}
-    footer a{display:block;color:#fff;opacity:.9;margin:6px 0}
-    footer a:hover{opacity:1}
 
-    /* Forzamos que cualquier tel: sea dorado y sin subrayado */
-    a[href^="tel:"],
-    a[href^="tel:"]:visited{
-      color:var(--gold) !important;
-      text-decoration:none !important;
-      font-weight:800;
-    }
-    footer a[href^="tel:"]{
-      color:var(--gold) !important;
-      text-decoration:none !important;
+    /* === AJUSTE SOLICITADO: mostrar parte superior del banner en escritorio === */
+    @media (min-width:960px){
+      .hero-contact .bg{
+        object-position: center top;
+      }
     }
   </style>
 </head>
 <body>
-  <a href="#main" class="sr-only">Saltar al contenido principal</a>
-
-  <!-- ===== HEADER (conserva tu mismo menú) ===== -->
+  <!-- ===== HEADER (idéntico) ===== -->
   <header>
     <div class="container">
-      <a class="brand" href="index.html" aria-label="Altorra - Inicio">
-        <img src="https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9023bba6-2025-10-31-20.png" alt="Logo de Altorra" width="48" height="48"/>
-        <span class="name">ALTORRA</span>
-      </a>
-
-      <nav aria-label="Menú principal">
-        <div class="nav-list">
-                   <div class="nav-item"><a class="nav-btn" href="propiedades.html">Propiedades</a></div>
-          <div class="nav-item"><a class="nav-btn" href="servicios.html">Servicios</a></div>
-          <div class="nav-item"><a class="nav-btn" href="quienes-somos.html">Empresa</a></div>
-          <div class="nav-item"><a class="btn-cta" href="publica.html">Publica tu propiedad</a></div>
-        </div>
-      </nav>
-    </div>
-  </header>
-
-  <!-- ===== HERO ===== -->
-  <section class="hero-contact" role="banner" aria-label="Conéctate con nosotros">
-    <!-- OJO: ubicamos el archivo en /multimedia/ para que no se rompa la ruta -->
-    <img class="bg" src="/multimedia/hero-contact.png" alt="Contacto Altorra" />
-    <div class="overlay" aria-hidden="true"></div>
-    <div class="inner">
-      <h1 class="hero-title">Conéctate con Nosotros</h1>
-      <p class="hero-subtitle">Estamos listos para ayudarte a encontrar tu próximo hogar o inversión.</p>
-      <div class="actions" style="justify-content:center;margin-top:14px">
-        <a class="btn btn-primary" href="https://wa.me/573235016747?text=Hola%20ALTORRA%2C%20quiero%20informaci%C3%B3n" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>
-        <a class="btn btn-ghost" href="#form">Enviar mensaje</a>
-      </div>
-    </div>
-  </section>
-
-  <main id="main">
-    <div class="grid">
-      <!-- FORMULARIO -->
-      <section class="card" id="form" aria-labelledby="t-contacto">
-        <h2 id="t-contacto">Cuéntanos qué necesitas</h2>
-
-        <form action="https://formspree.io/f/xyzzz" method="POST">
-          <div class="field">
-            <label for="nombre">Nombre completo</label>
-            <input id="nombre" name="nombre" type="text" required placeholder="Tu nombre" autocomplete="name"/>
-          </div>
-
-          <div class="field">
-            <label for="correo">Correo electrónico</label>
-            <input id="correo" name="_replyto" type="email" required placeholder="tunombre@email.com" autocomplete="email"/>
-          </div>
-
-          <div class="field">
-            <label for="telefono">Teléfono</label>
-            <input id="telefono" name="telefono" type="tel" required placeholder="+57 3XX XXX XXXX" autocomplete="tel"/>
-          </div>
-
-          <div class="field">
-            <label for="interes">Estoy interesado en</label>
-            <select id="interes" name="interes" required>
-              <option value="" selected disabled>Selecciona una opción</option>
-              <option>Arriendo</option>
-              <option>Comprar</option>
-              <option>Ventas</option>
-              <option>Avalúos</option>
-              <option>Servicios legales</option>
-              <option>Contables</option>
-              <option>Otro</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label for="mensaje">Mensaje</label>
-            <textarea id="mensaje" name="mensaje" placeholder="Escríbenos los detalles de tu solicitud"></textarea>
-          </div>
-
-          <div class="actions">
-            <button class="btn btn-primary" type="submit">Enviar</button>
-            <a class="btn" href="index.html">Volver al inicio</a>
-          </div>
-        </form>
-      </section>
-
-      <!-- LATERAL -->
-      <aside class="sidebox">
-        <div class="card">
-          <div class="sideitem">
-            <div class="ico">📍</div>
-            <div class="txt">
-              <b>Oficina</b>
-              Cartagena de Indias, Colombia
-            </div>
-          </div>
-          <div class="sideitem">
-            <div class="ico">☎️</div>
-            <div class="txt">
-              <b>Teléfono</b>
-              <!-- Tel: controlado y en dorado -->
-              <a href="tel:+573235016747">+57 323 501 6747</a>
-            </div>
-          </div>
-          <div class="sideitem">
-            <div class="ico">✉️</div>
-            <div class="txt">
-              <b>Correo</b>
-              <a href="mailto:contacto@altorrainmobiliaria.com">contacto@altorrainmobiliaria.com</a>
-            </div>
-          </div>
-          <div class="sideitem">
-            <div class="ico">💬</div>
-            <div class="txt">
-              <b>WhatsApp</b>
-              <a href="https://wa.me/573235016747?text=Hola%20ALTORRA%2C%20quiero%20informaci%C3%B3n" target="_blank" rel="noopener">Chatear ahora</a>
-            </div>
-          </div>
-          <div class="sideitem">
-            <div class="ico">📸</div>
-            <div class="txt">
-              <b>Instagram</b>
-              <a href="https://instagram.com/altorrainmobiliaria" target="_blank" rel="noopener">@altorrainmobiliaria</a>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </main>
-
-  <!-- ===== FOOTER ===== -->
-  <footer role="contentinfo">
-    <div class="footer-grid">
-      <div>
-        <h4 style="color:var(--gold);font-weight:800">ALTORRA INMOBILIARIA</h4>
-                <a href="propiedades.html">Propiedades</a>
-        <a href="servicios.html">Servicios</a>
-        <a href="quienes-somos.html">Empresa</a>
-      </div>
-
-      <div>
-        <h4>Propiedades</h4>
-        <a href="propiedades.html?tipo=arriendo">Arriendo</a>
-        <a href="propiedades.html?tipo=venta">Venta</a>
-        <a href="propiedades.html?tipo=por-dias">Alojamientos por días</a>
-      </div>
-
-      <div>
-        <h4>Servicios</h4>
-        <a href="servicios.html#avaluos">Avalúos</a>
-        <a href="servicios.html#legales">Servicios legales</a>
-        <a href="servicios.html#contables">Contables</a>
-      </div>
-
-      <div>
-        <h4>Contáctanos</h4>
-        <!-- Teléfono en dorado y sin subrayado -->
-        <a href="tel:+573235016747" style="color:var(--gold);text-decoration:none;font-weight:800">+57 323 501 6747</a>
-        <a href="mailto:contacto@altorrainmobiliaria.com">contacto@altorrainmobiliaria.com</a>
-        <a href="https://wa.me/573235016747?text=Hola%20ALTORRA%2C%20quiero%20informaci%C3%B3n" target="_blank" rel="noopener">WhatsApp</a>
-        <a href="https://instagram.com/altorrainmobiliaria" target="_blank" rel="noopener">Instagram</a>
-      </div>
-    </div>
-  </footer>
-</body>
-</html>
+      <a class="brand" href="index.html">
+        <img src="https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-ago-2025-10-31-20.png" alt
