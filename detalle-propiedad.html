@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Detalle de propiedad | Altorra</title>
   <meta name="description" content="Detalles de propiedad de Altorra Inmobiliaria" />
+  <!-- PWA and social metadata -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#d4af37" />
   <meta property="og:title" content="Detalles de propiedad | Altorra" />
@@ -22,6 +23,7 @@
       --page-max:1200px;
       --overlay: rgba(0,0,0,0.30);
     }
+
     *{box-sizing:border-box;margin:0;padding:0;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--text);background:transparent;}
     html,body{background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
     a{text-decoration:none;color:inherit;}
@@ -32,7 +34,7 @@
       margin:calc(var(--header-h) + 20px) auto 40px;
       padding:0 16px 40px;
       display:flex; flex-wrap:wrap; gap:24px;
-      overflow:visible;              /* CAMBIO: antes era overflow: clip */
+      overflow:visible;              /* importante en móvil */
     }
     [id]{ scroll-margin-top: calc(var(--header-h) + 12px); }
 
@@ -41,15 +43,15 @@
       flex:1 1 520px;
       position:relative;
       overflow:visible;
-      max-width:760px;               /* evita estirar demasiado en desktop */
-      margin-inline:auto;            /* centra la galería */
-      min-width:0;                   /* NUEVO: permite encoger en móvil */
+      max-width:760px;
+      margin-inline:auto;
+      min-width:0;                   /* permite encoger en móvil */
     }
     .gallery-inner{ position:relative; }
     .main-img{
       width:100%;
-      height:auto;                   /* no forzar altura fija */
-      max-height:clamp(240px, 52vh, 520px); /* tope proporcional móvil/desktop */
+      height:auto;
+      max-height:clamp(240px, 52vh, 520px);
       object-fit:contain;            /* sin recortes ni deformación */
       border-radius:14px;
       margin-bottom:10px;
@@ -76,7 +78,7 @@
     .thumbnails{
       display:flex; gap:10px; overflow-x:auto; padding-bottom:2px;
       scroll-snap-type:x proximity;
-      max-width:100%;               /* asegura que no exceda el ancho */
+      max-width:100%;
     }
     .thumbnails::-webkit-scrollbar{ height:8px }
     .thumbnails::-webkit-scrollbar-thumb{ background:rgba(0,0,0,.12); border-radius:999px }
@@ -93,20 +95,57 @@
     .info{
       flex:1 1 520px;
       display:flex; flex-direction:column; gap:12px;
-      min-width:0;                   /* NUEVO: evita overflow por textos largos */
+      min-width:0;                   /* evita overflow por textos largos */
     }
     .info h1{font-size:2rem; font-weight:800; line-height:1.1;}
     .price{font-weight:800; font-size:1.6rem; color:var(--gold);}
     .specs{color:var(--muted); font-size:0.95rem;}
     .desc{ color:#1f2937; line-height:1.55; }
 
-    .actions{display:flex; gap:12px; margin-top:6px;}
+    .actions{display:flex; gap:12px; margin-top:6px; flex-wrap:wrap;}
     .btn{padding:10px 14px; border-radius:12px; cursor:pointer; display:inline-flex; align-items:center; gap:8px; font-weight:700;}
     .btn.btn-primary{background:linear-gradient(90deg,var(--accent),#ffd95e); color:#000; border:none; box-shadow:0 10px 22px rgba(0,0,0,.10);}
     .btn.btn-ghost{background:#f5f5f5; color:#111; border:1px solid rgba(0,0,0,0.1);}
     .btn svg{ width:18px; height:18px; }
 
-    /* ----- HEADER / FOOTER (sin cambios visuales) ----- */
+    /* ====== CONTACT FORM ====== */
+    .contact-form{
+      margin-top:16px;
+      display:grid;                  /* <-- asegura columnas limpias en todos los navegadores */
+      grid-template-columns:1fr;
+      gap:12px;
+      padding:16px;
+      border:1px solid rgba(17,24,39,.08);
+      border-radius:14px;
+      box-shadow:0 8px 24px rgba(0,0,0,.05);
+      background:#fff;
+    }
+    .contact-form h3{margin:0 0 4px; font-size:1.25rem; font-weight:800; color:var(--gold);}
+    .contact-form .row-3{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+    }
+    @media (min-width:720px){
+      .contact-form .row-3{ grid-template-columns:repeat(3,1fr); }
+    }
+    .contact-form input, .contact-form textarea{
+      width:100%;
+      display:block;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid rgba(17,24,39,.16);
+      font-size:0.95rem; font-family:inherit;
+      background:#fff;
+      transition:border-color .15s ease, box-shadow .15s ease;
+    }
+    .contact-form textarea{ resize:vertical; min-height:110px; }
+    .contact-form input:focus-visible, .contact-form textarea:focus-visible{
+      outline:3px solid rgba(212,175,55,0.22); border-color:var(--gold);
+    }
+    .contact-form .btn{ justify-self:start; } /* botón alineado a la izquierda */
+
+    /* ----- HEADER Y MENÚ (sin cambios visuales) ----- */
     header{
       position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;
       background:var(--bg);z-index:140;border-bottom:1px solid rgba(0,0,0,0.06);
@@ -172,7 +211,7 @@
   </style>
 </head>
 <body>
-  <!-- HEADER -->
+  <!-- (HEADER: sin tocar) -->
   <header>
     <div class="container">
       <a class="brand" href="index.html">
@@ -198,7 +237,7 @@
     </div>
   </header>
 
-  <!-- Paneles del header -->
+  <!-- Paneles del header (sin tocar) -->
   <div id="panel-propiedades" class="menu-panel panel-compact" role="dialog" aria-modal="false" aria-hidden="true">
     <a class="menu-link" href="propiedades-comprar.html">Comprar</a>
     <a class="menu-link" href="propiedades-arrendar.html">Arrendar</a>
@@ -236,7 +275,7 @@
     <a class="menu-link" href="quienes-somos.html#equipo">Nuestro equipo</a>
   </div>
 
-  <!-- Menú móvil -->
+  <!-- Menú móvil (sin tocar) -->
   <div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
   <aside id="mobileMenu" class="drawer" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle" hidden>
     <div class="block">
@@ -275,7 +314,7 @@
     <!-- Rellenado dinámicamente -->
   </main>
 
-  <!-- FOOTER -->
+  <!-- (FOOTER: sin tocar) -->
   <footer>
     <div class="footer-grid">
       <div>
@@ -331,15 +370,26 @@
     });
   </script>
 
-  <!-- Página: lógica detalle (sin cambios) -->
+  <!-- Página: lógica detalle -->
   <script>
-    function getParam(name){ const params = new URLSearchParams(window.location.search); return params.get(name) || ''; }
-    function formatCOP(n){ if(!n && n!==0) return ''; return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
-    function escapeHtml(str){ return String(str||'').replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];}); }
+    function getParam(name){
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name) || '';
+    }
+    function formatCOP(n){
+      if(!n && n!==0) return '';
+      return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+    }
+    function escapeHtml(str){
+      return String(str||'').replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];});
+    }
     function buildWhatsAppLink(p){
-      const phone = '573235016747'; const company = 'Altorra Inmobiliaria';
-      const price = p.price ? ('$'+formatCOP(p.price)+' COP') : ''; let opLabel = '';
-      if(p.operation === 'arrendar') opLabel = ' / mes'; else if(p.operation === 'dias') opLabel = ' / noche';
+      const phone = '573235016747';
+      const company = 'Altorra Inmobiliaria';
+      const price = p.price ? ('$'+formatCOP(p.price)+' COP') : '';
+      let opLabel = '';
+      if(p.operation === 'arrendar') opLabel = ' / mes';
+      else if(p.operation === 'dias') opLabel = ' / noche';
       const text = `Hola ${company}, me interesa la propiedad "${p.title}" (ID: ${p.id}) en ${p.city} ${price}${opLabel}. ¿Podemos agendar una visita?`;
       return 'https://wa.me/'+phone+'?text='+encodeURIComponent(text);
     }
@@ -389,19 +439,34 @@
         prevBtn.addEventListener('click', ()=> { if(!imgs.length) return; currentIndex = (currentIndex - 1 + imgs.length) % imgs.length; mainImg.src = imgs[currentIndex]; updateActiveThumb(); });
         nextBtn.addEventListener('click', ()=> { if(!imgs.length) return; currentIndex = (currentIndex + 1) % imgs.length; mainImg.src = imgs[currentIndex]; updateActiveThumb(); });
 
-        document.addEventListener('keydown', (e)=>{ if(e.key === 'ArrowLeft') prevBtn.click(); if(e.key === 'ArrowRight') nextBtn.click(); });
+        // Navegación con teclado
+        document.addEventListener('keydown', (e)=>{
+          if(e.key === 'ArrowLeft') prevBtn.click();
+          if(e.key === 'ArrowRight') nextBtn.click();
+        });
 
         G.appendChild(prevBtn);
         G.appendChild(nextBtn);
 
+        // Zoom overlay al click
         mainImg.addEventListener('click', function(){
           const overlay = document.createElement('div');
-          overlay.style.position = 'fixed'; overlay.style.inset = '0'; overlay.style.background = 'rgba(0,0,0,0.86)';
-          overlay.style.display = 'flex'; overlay.style.alignItems = 'center'; overlay.style.justifyContent = 'center';
-          overlay.style.zIndex = '9999'; overlay.style.cursor = 'zoom-out';
+          overlay.style.position = 'fixed';
+          overlay.style.inset = '0';
+          overlay.style.background = 'rgba(0,0,0,0.86)';
+          overlay.style.display = 'flex';
+          overlay.style.alignItems = 'center';
+          overlay.style.justifyContent = 'center';
+          overlay.style.zIndex = '9999';
+          overlay.style.cursor = 'zoom-out';
           const zoomImg = document.createElement('img');
-          zoomImg.src = mainImg.src; zoomImg.style.maxWidth = '92%'; zoomImg.style.maxHeight = '92%'; zoomImg.style.objectFit = 'contain';
-          overlay.appendChild(zoomImg); overlay.addEventListener('click', ()=> overlay.remove()); document.body.appendChild(overlay);
+          zoomImg.src = mainImg.src;
+          zoomImg.style.maxWidth = '92%';
+          zoomImg.style.maxHeight = '92%';
+          zoomImg.style.objectFit = 'contain';
+          overlay.appendChild(zoomImg);
+          overlay.addEventListener('click', ()=> overlay.remove());
+          document.body.appendChild(overlay);
         });
 
         const thumbs = document.createElement('div');
@@ -409,19 +474,32 @@
         const thumbEls = [];
         imgs.forEach((src, idx) => {
           const t = document.createElement('img');
-          t.decoding = 'async'; t.src = src; t.alt = escapeHtml(prop.title || 'Miniatura');
+          t.decoding = 'async';
+          t.src = src;
+          t.alt = escapeHtml(prop.title || 'Miniatura');
           if(idx === 0) t.classList.add('active');
-          t.addEventListener('click', function(){ currentIndex = idx; mainImg.src = imgs[currentIndex]; updateActiveThumb(); });
-          thumbEls.push(t); thumbs.appendChild(t);
+          t.addEventListener('click', function(){
+            currentIndex = idx;
+            mainImg.src = imgs[currentIndex];
+            updateActiveThumb();
+          });
+          thumbEls.push(t);
+          thumbs.appendChild(t);
         });
-        function updateActiveThumb(){ thumbEls.forEach((el, idx) => el.classList.toggle('active', idx === currentIndex)); }
+        function updateActiveThumb(){
+          thumbEls.forEach((el, idx) => el.classList.toggle('active', idx === currentIndex));
+        }
 
+        // Swipe en móviles
         let startX = null;
         mainImg.addEventListener('touchstart', (e)=>{ startX = e.touches[0].clientX; }, {passive:true});
         mainImg.addEventListener('touchend', (e)=>{
           if(startX === null) return;
           const dx = e.changedTouches[0].clientX - startX;
-          if(Math.abs(dx) > 40){ if(dx < 0) nextBtn.click(); else prevBtn.click(); }
+          if(Math.abs(dx) > 40){
+            if(dx < 0) nextBtn.click();
+            else prevBtn.click();
+          }
           startX = null;
         }, {passive:true});
 
@@ -432,7 +510,8 @@
         const infoDiv = document.createElement('div');
         infoDiv.className = 'info';
 
-        const h1 = document.createElement('h1'); h1.textContent = prop.title || 'Propiedad';
+        const h1 = document.createElement('h1');
+        h1.textContent = prop.title || 'Propiedad';
 
         const specs = document.createElement('div');
         specs.className = 'specs';
@@ -454,17 +533,25 @@
         }
         priceRow.textContent = priceLabel;
 
-        const desc = document.createElement('p'); desc.className = 'desc'; desc.textContent = prop.description || '';
+        const desc = document.createElement('p');
+        desc.className = 'desc';
+        desc.textContent = prop.description || '';
 
-        const actions = document.createElement('div'); actions.className = 'actions';
+        const actions = document.createElement('div');
+        actions.className = 'actions';
         const whatsapp = document.createElement('a');
-        whatsapp.className = 'btn btn-ghost'; whatsapp.href = buildWhatsAppLink(prop);
-        whatsapp.target = '_blank'; whatsapp.rel = 'noopener';
+        whatsapp.className = 'btn btn-ghost';
+        whatsapp.href = buildWhatsAppLink(prop);
+        whatsapp.target = '_blank';
+        whatsapp.rel = 'noopener';
         whatsapp.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.52 3.48A11.89 11.89 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.17 1.6 5.98L0 24l6.21-1.62A11.96 11.96 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52ZM12 22a9.93 9.93 0 0 1-5.06-1.4l-.36-.21-3.69.96.99-3.59-.23-.37A9.98 9.98 0 1 1 22 12c0 5.52-4.48 10-10 10Zm5.48-7.55c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.76-1.66-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.46-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.5h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.69.25-1.28.17-1.41-.08-.13-.27-.2-.57-.35Z" fill="currentColor"/></svg> WhatsApp';
         actions.appendChild(whatsapp);
 
-        infoDiv.appendChild(h1); infoDiv.appendChild(specs); infoDiv.appendChild(priceRow);
-        if(desc.textContent) infoDiv.appendChild(desc); infoDiv.appendChild(actions);
+        infoDiv.appendChild(h1);
+        infoDiv.appendChild(specs);
+        infoDiv.appendChild(priceRow);
+        if(desc.textContent) infoDiv.appendChild(desc);
+        infoDiv.appendChild(actions);
 
         /* ========== FORM CONTACTO (FormSubmit) ========== */
         const form = document.createElement('form');
@@ -473,17 +560,25 @@
         form.method = 'POST';
         form.innerHTML = `
           <h3>Solicitar información</h3>
+
+          <!-- Campos ocultos -->
           <input type="hidden" name="_subject" value="Consulta propiedad ${prop.id} - ${escapeHtml(prop.title)}" />
           <input type="hidden" name="property_id" value="${prop.id}" />
           <input type="hidden" name="property_title" value="${escapeHtml(prop.title)}" />
-          <input type="text" name="name" placeholder="Nombre completo" required />
-          <input type="email" name="email" placeholder="Correo electrónico" required />
-          <input type="tel" name="phone" placeholder="Número de teléfono" required />
-          <textarea name="message" placeholder="Mensaje" rows="4" required>Hola, estoy interesado(a) en la propiedad &quot;${escapeHtml(prop.title)}&quot;. Por favor contácteme.</textarea>
-          <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+          <input type="hidden" name="_honey" value="" />
           <input type="hidden" name="_captcha" value="false" />
           <input type="hidden" name="_template" value="table" />
           <input type="hidden" name="_next" value="https://altorrainmobiliaria.github.io/gracias.html" />
+
+          <!-- Fila de tres campos -->
+          <div class="row-3">
+            <input type="text" name="name" placeholder="Nombre completo" required />
+            <input type="email" name="email" placeholder="Correo electrónico" required />
+            <input type="tel" name="phone" placeholder="Número de teléfono" required />
+          </div>
+
+          <textarea name="message" placeholder="Mensaje" rows="4" required>Hola, estoy interesado(a) en la propiedad &quot;${escapeHtml(prop.title)}&quot;. Por favor contácteme.</textarea>
+
           <button type="submit" class="btn btn-primary">Enviar mensaje</button>
         `;
         infoDiv.appendChild(form);
@@ -533,34 +628,60 @@
     document.addEventListener('DOMContentLoaded', init);
   </script>
 
-  <!-- Scripts de menú (sin cambios) -->
+  <!-- Scripts de menú (idénticos; NO tocar) -->
   <script>
     (function(){
       const MARGIN = 12;
       let open = null;
       const supportsHover = window.matchMedia('(hover: hover)').matches;
-      function resetPanelStyles(panel){ panel.style.left=''; panel.style.top=''; panel.style.width=''; panel.style.maxWidth=''; panel.style.right=''; }
+
+      function resetPanelStyles(panel){
+        panel.style.left=''; panel.style.top=''; panel.style.width=''; panel.style.maxWidth=''; panel.style.right='';
+      }
       function placeAndShow(btn, panel, size){
         if(window.innerWidth <= 860) return;
         if(open && open.panel !== panel) hideImmediate(open);
         resetPanelStyles(panel);
-        panel.style.display = 'block'; panel.style.visibility = 'hidden'; panel.style.position = 'fixed';
+        panel.style.display = 'block';
+        panel.style.visibility = 'hidden';
+        panel.style.position = 'fixed';
         panel.style.maxHeight = Math.max(260, window.innerHeight - (MARGIN*2)) + 'px';
-        if(size === 'mega'){ panel.style.width = Math.min(920, window.innerWidth - (MARGIN*2)) + 'px'; }
-        else { panel.style.width = 'auto'; panel.style.maxWidth = Math.min(520, window.innerWidth - (MARGIN*2)) + 'px'; }
-        const preRect = panel.getBoundingClientRect(); const bRect = btn.getBoundingClientRect();
-        let left; if(size === 'mega'){ left = Math.round(bRect.left + bRect.width/2 - preRect.width/2); left = Math.max(MARGIN, Math.min(left, window.innerWidth - preRect.width - MARGIN)); }
-        else { left = Math.round(Math.min(bRect.left, window.innerWidth - preRect.width - MARGIN)); left = Math.max(left, MARGIN); }
+        if(size === 'mega'){
+          panel.style.width = Math.min(920, window.innerWidth - (MARGIN*2)) + 'px';
+        } else {
+          panel.style.width = 'auto';
+          panel.style.maxWidth = Math.min(520, window.innerWidth - (MARGIN*2)) + 'px';
+        }
+        const preRect = panel.getBoundingClientRect();
+        const bRect = btn.getBoundingClientRect();
+        let left;
+        if(size === 'mega'){
+          left = Math.round(bRect.left + bRect.width/2 - preRect.width/2);
+          left = Math.max(MARGIN, Math.min(left, window.innerWidth - preRect.width - MARGIN));
+        } else {
+          left = Math.round(Math.min(bRect.left, window.innerWidth - preRect.width - MARGIN));
+          left = Math.max(left, MARGIN);
+        }
         let top = Math.round(bRect.bottom + 8);
-        if(top + preRect.height > window.innerHeight - MARGIN){ top = Math.round(bRect.top - preRect.height - 8); if(top < MARGIN) top = MARGIN; }
-        panel.style.left = left + 'px'; panel.style.top = top + 'px'; panel.style.visibility = 'visible';
-        panel.classList.add('menu-visible'); panel.setAttribute('aria-hidden','false'); btn.setAttribute('aria-expanded','true'); open = {panel, btn};
+        if(top + preRect.height > window.innerHeight - MARGIN){
+          top = Math.round(bRect.top - preRect.height - 8);
+          if(top < MARGIN) top = MARGIN;
+        }
+        panel.style.left = left + 'px';
+        panel.style.top = top + 'px';
+        panel.style.visibility = 'visible';
+        panel.classList.add('menu-visible');
+        panel.setAttribute('aria-hidden','false');
+        btn.setAttribute('aria-expanded','true');
+        open = {panel, btn};
       }
       function hideImmediate(obj){
         if(!obj) return;
         obj.btn && obj.btn.setAttribute('aria-expanded','false');
-        obj.panel.classList.remove('menu-visible'); obj.panel.style.display='none';
-        obj.panel.setAttribute('aria-hidden','true'); resetPanelStyles(obj.panel);
+        obj.panel.classList.remove('menu-visible');
+        obj.panel.style.display='none';
+        obj.panel.setAttribute('aria-hidden','true');
+        resetPanelStyles(obj.panel);
         if(open && open.panel === obj.panel) open = null;
       }
       document.querySelectorAll('.nav-btn[data-panel]').forEach(btn=>{
@@ -591,10 +712,15 @@
         if(e.target.closest('nav') || e.target.closest('.menu-panel')) return;
         document.querySelectorAll('.menu-panel.menu-visible').forEach(p=> hideImmediate({panel:p, btn:null}));
       });
-      document.addEventListener('keydown', (e)=> { if(e.key === 'Escape'){ document.querySelectorAll('.menu-panel.menu-visible').forEach(p=> hideImmediate({panel:p, btn:null})); } });
+      document.addEventListener('keydown', (e)=> {
+        if(e.key === 'Escape'){
+          document.querySelectorAll('.menu-panel.menu-visible').forEach(p=> hideImmediate({panel:p, btn:null}));
+        }
+      });
       window.addEventListener('resize', ()=> {
         document.querySelectorAll('.menu-panel').forEach(p=> { p.classList.remove('menu-visible'); p.style.display='none'; p.setAttribute('aria-hidden','true'); resetPanelStyles(p); });
-        document.querySelectorAll('.nav-btn[data-panel]').forEach(b => b.setAttribute('aria-expanded','false')); open = null;
+        document.querySelectorAll('.nav-btn[data-panel]').forEach(b => b.setAttribute('aria-expanded','false'));
+        open = null;
       });
     })();
 
