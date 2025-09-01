@@ -503,40 +503,41 @@
           startX = null;
         }, {passive:true});
 
-        /* ====== AUTOPLAY (3 s) ====== */
+        /* ====== AUTOPLAY (3 s) — CAMBIO REAL ====== */
         (function autoplayGallery(){
           if (!imgs || imgs.length < 2) return;
-          const AUTO_MS = 3000;                 // ritmo de 3 segundos
+          const AUTO_MS = 3000;
           let autoTimer = null;
 
-          function startAuto(){
-            if (autoTimer) return;
-            autoTimer = setInterval(()=> { nextBtn.click(); }, AUTO_MS);
+          function advance(){
+            currentIndex = (currentIndex + 1) % imgs.length;
+            mainImg.src = imgs[currentIndex];
+            updateActiveThumb();
           }
-          function stopAuto(){
-            if (autoTimer){ clearInterval(autoTimer); autoTimer = null; }
-          }
-          function resetAuto(){ stopAuto(); startAuto(); }
+          function start(){ if(!autoTimer){ autoTimer = setInterval(advance, AUTO_MS); } }
+          function stop(){ if(autoTimer){ clearInterval(autoTimer); autoTimer = null; } }
+          function restart(){ stop(); start(); }
 
-          // Prioriza interacción del usuario
-          prevBtn.addEventListener('click', resetAuto);
-          nextBtn.addEventListener('click', resetAuto);
-          thumbEls.forEach(el => el.addEventListener('click', resetAuto));
+          // Reiniciar cuando el usuario interactúa manualmente
+          prevBtn.addEventListener('click', restart);
+          nextBtn.addEventListener('click', restart);
+          thumbEls.forEach(el => el.addEventListener('click', restart));
 
-          // Pausar al pasar el cursor / tocar
+          // Pausa al pasar el cursor / tocar
           [G, mainImg, thumbs].forEach(el => {
-            el.addEventListener('mouseenter', stopAuto);
-            el.addEventListener('mouseleave', startAuto);
-            el.addEventListener('touchstart', stopAuto, {passive:true});
-            el.addEventListener('touchend', () => setTimeout(startAuto, 800), {passive:true});
+            el.addEventListener('mouseenter', stop);
+            el.addEventListener('mouseleave', start);
+            el.addEventListener('touchstart', stop, {passive:true});
+            el.addEventListener('touchend', () => setTimeout(start, 800), {passive:true});
           });
 
           // Pausar cuando la pestaña no está visible
           document.addEventListener('visibilitychange', () => {
-            if (document.hidden) stopAuto(); else startAuto();
+            if (document.hidden) stop(); else start();
           });
 
-          startAuto();
+          // Iniciar un instante después de montar la galería
+          setTimeout(start, 100);
         })();
 
         galleryDiv.appendChild(G);
