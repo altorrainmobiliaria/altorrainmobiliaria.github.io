@@ -39,14 +39,21 @@
     [id]{ scroll-margin-top: calc(var(--header-h) + 12px); } /* anclas seguras bajo header fijo */
 
     /* ====== GALLERY ====== */
-    .gallery{flex:1 1 520px; position:relative; overflow:visible;}
+    .gallery{
+      flex:1 1 520px;
+      position:relative;
+      overflow:visible;
+      max-width:760px;          /* NUEVO: evita estirar demasiado en desktop */
+      margin-inline:auto;       /* NUEVO: centra la galería si queda más angosta */
+    }
     .gallery-inner{ position:relative; }
     .main-img{
       width:100%;
+      height:auto;              /* NUEVO: no forzar altura fija */
+      max-height:clamp(240px, 52vh, 520px); /* NUEVO: tope proporcional móvil/desktop */
+      object-fit:contain;       /* NUEVO: sin recortes ni deformación */
       border-radius:14px;
       margin-bottom:10px;
-      aspect-ratio: 16/9;           /* relación agradable, evita saltos de layout */
-      object-fit:cover;             /* llena el cuadro sin deformar */
       background:#f5f5f7;
       display:block;
       transition:transform .28s ease, box-shadow .28s ease;
