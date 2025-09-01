@@ -11,16 +11,25 @@
     "id": "c-p1",
     "image": "comprar.png",
     "images": [
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png"
+      "/allure/allure.jpeg",
+      "/allure/allure1.jpeg",
+       "/allure/allure2.jpeg",
+       "/allure/allure3.jpeg",
+       "/allure/allure4.jpeg",
+       "/allure/allure5.jpeg",
+       "/allure/allure6.jpeg",
+       "/allure/allure7.jpeg",
+       "/allure/allure8.jpeg",
+       "/allure/allure9.jpeg",
+       "/allure/allure10.jpeg",
+       "/allure/allure11.jpeg",
+       "/allure/allure12.jpeg",
+       "/allure/allure13.jpeg",
+       "/allure/allure14.jpeg",
+       "/allure/allure15.jpeg",
+       "/allure/allure16.jpeg",
+       "/allure/allure17.jpeg",
+      "/allure/allure18.jpeg"
     ],
     "description": "Exclusivo apartamento de 240 m² en Bocagrande, Cartagena, con diseño moderno y acabados de lujo. La propiedad cuenta con 4 habitaciones en total: 3 habitaciones familiares, cada una con baño privado, clóset y ventanales panorámicos con vistas espectaculares, más una alcoba de servicio con baño independiente. En total son 5 baños: 3 en habitaciones, 1 social de visitas y 1 en la alcoba de servicio. La sala principal es amplia y amoblada, con ventanales termoacústicos de piso a techo que aíslan temperatura y ruido, ofreciendo iluminación natural y acceso directo a un gran balcón con vista al mar. La cocina integral está equipada con electrodomésticos de alta gama, isla central y diseño funcional que combina elegancia y comodidad. Dispone además de zona de labores y lavandería independiente con ventilación natural y salida a balcón. En total son 3 balcones privados distribuidos en la zona social, una habitación y el área de labores, todos con panorámicas únicas hacia la ciudad y el mar. Los pisos en mármol aportan sofisticación y frescura a todos los espacios, mientras que los ventanales garantizan confort térmico, aislamiento acústico y una experiencia residencial de primer nivel."
   },
@@ -47,8 +56,8 @@
       "/fotoprop/comprar9.png",
       "/fotoprop/comprar10.png",
       "/fotoprop/comprar11.png",
-      "/fotoprop/comprar12.png",
-      "/fotoprop/comprar13.png"
+      "/fotoprop/comprar12.png"
+      
     ],
     "description": "Se vende casa de 3 habitaciones y 3 baños en Cartagena. Amplios 153 m² de construcción, sala auxiliar, sala principal (living - comedor), sala de entretenimiento, terraza amplia, balcón en segundo piso, patio con zona de labores, cocina amplia y moderna y ubicación privilegiada para la comodidad de tu familia."
   },
