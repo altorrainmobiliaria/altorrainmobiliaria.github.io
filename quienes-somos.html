@@ -27,7 +27,15 @@
     html,body{background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
     a{text-decoration:none;color:inherit;}
 
-    /* ====== ESTILOS DEL HEADER / MENÚ (idénticos al adjunto) ====== */
+    /* FIX ÚNICO: evitar que los teléfonos autolink aparezcan oscuros/subrayados */
+    a[href^="tel"], a[x-apple-data-detectors]{
+      color: inherit !important;
+      text-decoration: none !important;
+      font-weight: inherit !important;
+      border-bottom: 0 !important;
+    }
+
+    /* ====== ESTILOS DEL HEADER / MENÚ (idénticos) ====== */
     header{
       position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;
       background:var(--bg);z-index:140;border-bottom:1px solid rgba(0,0,0,0.06);
@@ -86,7 +94,7 @@
       .menu-panel{display:none !important}
     }
 
-    /* ====== ESTILOS DEL FOOTER (idénticos al adjunto) ====== */
+    /* ====== ESTILOS DEL FOOTER (idénticos) ====== */
     footer{background:#0b0b0b;color:#fff;padding:36px 16px}
     .footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
     @media (max-width:920px){ .footer-grid{grid-template-columns:1fr} }
@@ -132,7 +140,7 @@
 </head>
 <body>
 
-  <!-- (HEADER: extraído tal cual del adjunto) -->
+  <!-- HEADER -->
   <header>
     <div class="container">
       <a class="brand" href="index.html">
@@ -158,7 +166,7 @@
     </div>
   </header>
 
-  <!-- Paneles del header (idénticos) -->
+  <!-- Paneles del header -->
   <div id="panel-propiedades" class="menu-panel panel-compact" role="dialog" aria-modal="false" aria-hidden="true">
     <a class="menu-link" href="propiedades-comprar.html">Comprar</a>
     <a class="menu-link" href="propiedades-arrendar.html">Arrendar</a>
@@ -196,7 +204,7 @@
     <a class="menu-link" href="quienes-somos.html#equipo">Nuestro equipo</a>
   </div>
 
-  <!-- Menú móvil (idéntico) -->
+  <!-- Menú móvil -->
   <div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
   <aside id="mobileMenu" class="drawer" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle" hidden>
     <div class="block">
@@ -350,6 +358,25 @@
     </div>
   </section>
 
+  <!-- ===== NUEVO: NUESTRO EQUIPO ===== -->
+  <section class="section" id="equipo">
+    <h2>Nuestro equipo</h2>
+    <div class="grid three">
+      <div class="card" style="text-align:center">
+        <strong>Daniel Romero</strong>
+        <div style="color:var(--muted);font-weight:600;margin-top:4px">Gerente general</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <strong>Guido Rodriguez</strong>
+        <div style="color:var(--muted);font-weight:600;margin-top:4px">Gerente jurídico</div>
+      </div>
+      <div class="card" style="text-align:center">
+        <strong>Yesit Romero</strong>
+        <div style="color:var(--muted);font-weight:600;margin-top:4px">Gerente Financiero</div>
+      </div>
+    </div>
+  </section>
+
   <section class="section" aria-label="Imágenes de experiencia Altorra">
     <div class="strip">
       <img src="/img/about/experiencia-1.jpg" alt="Asesoría personalizada en sala, ambiente acogedor"/>
@@ -388,7 +415,7 @@
     </div>
   </section>
 
-  <!-- (FOOTER: extraído tal cual del adjunto) -->
+  <!-- FOOTER -->
   <footer>
     <div class="footer-grid">
       <div>
@@ -428,14 +455,14 @@
     <div style="max-width:var(--page-max);margin:18px auto 0;color:#9ca3af;text-align:center;font-size:0.9rem">© 2025 Altorra Inmobiliaria — Hecho con confianza.</div>
   </footer>
 
-  <!-- Service worker (opcional; igual que otras páginas) -->
+  <!-- Service worker -->
   <script>
     if('serviceWorker' in navigator){
       navigator.serviceWorker.register('/service-worker.js').catch(function(err){ console.warn('SW registration failed', err); });
     }
   </script>
 
-  <!-- Scripts de menú (idénticos al adjunto) -->
+  <!-- Scripts de menú (idénticos) -->
   <script>
     (function(){
       const MARGIN = 12;
