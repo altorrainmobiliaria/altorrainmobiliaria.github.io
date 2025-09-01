@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Quiénes somos | Altorra</title>
+  <meta name="description" content="ALTORRA S.A.S. — Inmobiliaria en Cartagena: compra y venta, avalúos, administración y arriendo, asesoría legal y turismo inmobiliario."/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#d4af37"/>
+  <meta property="og:title" content="Quiénes somos | Altorra"/>
+  <meta property="og:description" content="Tu inversión y tu hogar merecen seguridad, legalidad y confianza."/>
+  <meta property="og:image" content="/hero-about.png"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --gold:#d4af37;
+      --accent:#ffb400;
+      --bg:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --page-max:1200px;
+      --header-h:72px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;background:var(--bg);color:var(--text)}
+    a{text-decoration:none;color:inherit}
+    .menu-panel{z-index:9999}
+
+    /* ===== HERO ===== */
+    .hero-about{
+      position:relative; min-height:72vh; display:grid; place-items:center;
+      padding-top:calc(var(--header-h) + 24px); text-align:center; overflow:hidden;
+    }
+    .hero-about .bg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center top; filter:contrast(1.02) saturate(1.02)}
+    .hero-about .overlay{position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.35) 28%,rgba(0,0,0,.28) 60%,rgba(0,0,0,.22))}
+    .hero-about .inner{position:relative; z-index:1; color:#fff; padding:0 16px; max-width:980px}
+    .kicker{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);padding:8px 12px;border-radius:999px;font-weight:700}
+    .hero-title{margin:14px 0 6px;font-size:clamp(2.1rem,5.4vw,3.2rem);font-weight:800;line-height:1.05}
+    .hero-sub{max-width:860px;margin:8px auto 0;opacity:.96;font-weight:600;line-height:1.45}
+
+    /* ===== LAYOUT ===== */
+    .section{max-width:var(--page-max);margin:36px auto;padding:0 16px}
+    .section h2{font-size:1.8rem;font-weight:800;margin:0 0 10px;color:var(--gold)}
+    .lead{color:var(--muted);font-weight:600;max-width:880px}
+    .grid{display:grid;gap:16px}
+    .two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .three{grid-template-columns:repeat(3,minmax(0,1fr))}
+    @media (max-width:920px){ .two,.three{grid-template-columns:1fr} }
+
+    .card{background:#fff;border:1px solid rgba(17,24,39,.08);border-radius:18px;padding:22px;box-shadow:0 12px 32px rgba(17,24,39,.06)}
+    .badge{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#f8f8f8;border:1px solid rgba(17,24,39,.08);font-weight:800}
+
+    .list{list-style:none;padding:0;margin:10px 0 0;color:#1f2937}
+    .list li{display:flex;gap:8px;align-items:flex-start;margin:8px 0}
+    .list li::before{content:"✓";color:var(--gold);font-weight:800;margin-top:2px}
+
+    .logo-slot{height:84px;border:1px dashed rgba(17,24,39,.18);border-radius:16px;display:grid;place-items:center;background:#fff;color:#6b7280;font-weight:700}
+
+    .strip{display:grid;grid-template-columns:2fr 1fr 1fr;gap:14px}
+    .strip img{width:100%;height:100%;object-fit:cover;border-radius:16px;display:block;background:#f5f5f7}
+    @media (max-width:920px){ .strip{grid-template-columns:1fr} }
+
+    .cta{text-align:center;padding:28px;border-radius:20px;border:1px solid rgba(17,24,39,.08);background:linear-gradient(180deg,#fff,#fbfbfb)}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:14px;background:linear-gradient(90deg,var(--accent),#ffd95e);color:#111;border:none;font-weight:800;cursor:pointer;box-shadow:0 10px 22px rgba(17,24,39,.10)}
+    .quote{font-weight:600;color:#111827}
+    .quote small{display:block;color:#6b7280;font-weight:600;margin-top:4px}
+  </style>
+</head>
+<body>
+
+<!-- ===== Header (idéntico desde el repo) ===== -->
+<div id="include-header"></div>
+<script>
+(function includeSync(id, url){
+  try{var el=document.getElementById(id);if(!el)return;var xhr=new XMLHttpRequest();xhr.open('GET',url,false);xhr.send(null);if(xhr.status===200||xhr.status===0){el.innerHTML=xhr.responseText;}}catch(e){console.warn('includeSync error',e);}}
+)('include-header','header.html');
+</script>
+
+<!-- ===== HERO ===== -->
+<section class="hero-about" aria-label="Presentación Altorra">
+  <img class="bg" src="/hero-about.png" alt="Familia y asesor inmobiliario en un ambiente cálido, luz de tarde"/>
+  <div class="overlay" aria-hidden="true"></div>
+  <div class="inner">
+    <span class="kicker">Experiencias que inspiran confianza</span>
+    <h1 class="hero-title">Somos el aliado que protege y potencia tu inversión</h1>
+    <p class="hero-sub">Tu inversión y tu hogar merecen más que una simple transacción: merecen seguridad, legalidad y confianza.</p>
+  </div>
+</section>
+
+<!-- ===== QUIÉNES SOMOS ===== -->
+<section class="section">
+  <div class="grid two" style="align-items:start">
+    <div class="card">
+      <h2>Quiénes somos</h2>
+      <p class="lead">
+        ALTORRA S.A.S., es una empresa inmobiliaria con sede en el Distrito Turístico y Cultural de Cartagena de Indias, con cobertura local.
+        Nos especializamos en la compra y venta de inmuebles, avalúos comerciales, administración y arriendo de propiedades, asesoría legal y turismo inmobiliario.
+      </p>
+      <p style="margin-top:10px">
+        Nuestro compromiso es acompañar a cada cliente con un servicio integral que garantice seguridad, legalidad y confianza en cada proceso.
+        Nos destacamos por ofrecer soluciones completas y efectivas, consolidándonos como un socio estratégico que protege y potencia la inversión de nuestros clientes.
+      </p>
+      <div style="margin-top:12px" class="badge">Cartagena de Indias — Cobertura local</div>
+      <div style="margin-top:12px" class="logo-slot">Espacio para LOGO Altorra</div>
+    </div>
+
+    <div class="grid" style="gap:14px">
+      <div class="card">
+        <strong style="color:var(--gold)">Misión</strong>
+        <p style="margin-top:6px;color:#1f2937">
+          Transformamos las decisiones inmobiliarias en experiencias seguras y rentables, sirviendo con ética y excelencia.
+          Acompañamos de manera integral y cercana cada proceso de compra, venta, administración y arriendo, avalúos y asesoría legal,
+          para que nuestros clientes inviertan con confianza, crezcan con tranquilidad y disfruten de un servicio humano y transparente,
+          fundamentado siempre en seguridad, legalidad y confianza.
+        </p>
+      </div>
+      <div class="card">
+        <strong style="color:var(--gold)">Visión</strong>
+        <p style="margin-top:6px;color:#1f2937">
+          Nos proyectamos como una inmobiliaria líder en la región Caribe, con proyección a nivel nacional,
+          reconocida por la innovación, la calidad de su servicio y el cumplimiento riguroso de cada proceso.
+          Nuestra visión es consolidarnos como la opción preferida de personas que buscan soluciones inmobiliarias,
+          seguras y respaldadas legalmente, acompañándolas con calidez profesional, construyendo relaciones sólidas
+          y generando valor sostenible en el mercado inmobiliario.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== VALORES ===== -->
+<section class="section">
+  <h2>Valores corporativos</h2>
+  <div class="grid three">
+    <div class="card"><strong>Transparencia</strong><p style="margin-top:6px;color:#1f2937">Información clara, decisiones sustentadas y comunicación honesta.</p></div>
+    <div class="card"><strong>Compromiso</strong><p style="margin-top:6px;color:#1f2937">Acompañamiento integral con responsabilidad y cercanía.</p></div>
+    <div class="card"><strong>Confianza</strong><p style="margin-top:6px;color:#1f2937">Seguridad jurídica y procesos rigurosos en cada etapa.</p></div>
+    <div class="card"><strong>Innovación</strong><p style="margin-top:6px;color:#1f2937">Mejora continua y soluciones modernas para potenciar resultados.</p></div>
+    <div class="card"><strong>Excelencia</strong><p style="margin-top:6px;color:#1f2937">Calidad superior en servicio, gestión y cumplimiento.</p></div>
+  </div>
+</section>
+
+<!-- ===== SERVICIOS ===== -->
+<section class="section">
+  <h2>Nuestros servicios</h2>
+  <div class="grid two">
+    <div class="card">
+      <strong style="color:var(--gold)">Administración y Arriendo de Inmuebles</strong>
+      <ul class="list">
+        <li>Gestión de arrendamientos</li>
+        <li>Selección de arrendatarios</li>
+        <li>Elaboración y negociación de contratos</li>
+        <li>Cobro y recaudo de cánones</li>
+        <li>Inspecciones e inventarios</li>
+        <li>Seguimiento de pago de servicios públicos</li>
+        <li>Informes financieros y contables</li>
+        <li>Marketing y visibilidad para arriendo/venta</li>
+        <li>Asesoría legal y documental</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <strong style="color:var(--gold)">Venta de Propiedades</strong>
+      <ul class="list">
+        <li>Estrategia comercial personalizada</li>
+        <li>Promoción, publicidad y marketing</li>
+        <li>Gestión de clientes potenciales y coordinación de visitas</li>
+        <li>Negociación y acompañamiento hasta el cierre</li>
+        <li>Asesoría legal y apoyo en trámites notariales</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <strong style="color:var(--gold)">Avalúos Comerciales</strong>
+      <ul class="list">
+        <li>Inspección física del inmueble</li>
+        <li>Revisión de documentación legal y catastral</li>
+        <li>Análisis de mercado y comparativos de zona</li>
+        <li>Estudio de oferta y demanda inmobiliaria</li>
+        <li>Metodologías de valoración reconocidas</li>
+        <li>Informe técnico con valor comercial</li>
+        <li>Soporte legal y técnico para compra/venta/arriendo</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <strong style="color:var(--gold)">Turismo Inmobiliario</strong>
+      <ul class="list">
+        <li>Publicación y promoción de inmuebles</li>
+        <li>Estrategias de visibilidad y marketing turístico</li>
+        <li>Gestión de reservas y atención a huéspedes</li>
+        <li>Coordinación de check-in y check-out</li>
+        <li>Administración de pagos y control de estadías</li>
+        <li>Reportes de ocupación y rentabilidad</li>
+        <li>Asesoría legal y cumplimiento normativo</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TIRA VISUAL / EXPERIENCIA ===== -->
+<section class="section">
+  <div class="strip" aria-label="Imágenes de experiencia Altorra">
+    <img src="/img/about/experiencia-1.jpg" alt="Asesoría personalizada en sala, ambiente acogedor"/>
+    <img src="/img/about/experiencia-2.jpg" alt="Pareja revisando planos felices"/>
+    <img src="/img/about/experiencia-3.jpg" alt="Entrega de llaves con luz de atardecer"/>
+  </div>
+</section>
+
+<!-- ===== OPINIONES ===== -->
+<section class="section">
+  <h2>Opiniones de nuestros clientes</h2>
+  <div class="grid two">
+    <div class="card quote">
+      “Gracias por la atención prestada, por ser tan profesionales y atentos con mi familia, por llenar nuestras expectativas a la hora de adquirir nuestro inmueble.”
+      <small>— Alfredo Sarmiento</small>
+    </div>
+    <div class="card quote">
+      “Muy profesionales en el servicio, excelentes en el asesoramiento, recomendados totalmente.”
+      <small>— Manuel Jiménez</small>
+    </div>
+    <div class="card quote">
+      “Me ayudaron con la venta y me asesoraron en la parte legal. Son responsables, claros y uno se siente con confianza. Muy recomendados.”
+      <small>— Brumalis Colombia</small>
+    </div>
+    <div class="card quote">
+      “Mi experiencia fue excelente desde el primer momento. Su equipo me brindó un servicio rápido, transparente y muy profesional.”
+      <small>— Maria Cuadro</small>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="section">
+  <div class="cta">
+    <h2 style="margin-bottom:8px">¿Hablamos sobre tu propiedad?</h2>
+    <p class="lead" style="margin:0 auto 12px">Altorra responde con seguridad jurídica, calidez profesional y resultados.</p>
+    <a class="btn" href="contacto.html" aria-label="Ir a contacto">Contactar a Altorra</a>
+  </div>
+</section>
+
+<!-- ===== Footer (idéntico desde el repo) ===== -->
+<div id="include-footer"></div>
+<script>
+(function includeSync(id, url){
+  try{var el=document.getElementById(id);if(!el)return;var xhr=new XMLHttpRequest();xhr.open('GET',url,false);xhr.send(null);if(xhr.status===200||xhr.status===0){el.innerHTML=xhr.responseText;}}catch(e){console.warn('includeSync error',e);}}
+)('include-footer','footer.html');
+</script>
+
+<!-- ===== SW ===== -->
+<script>
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/service-worker.js').catch(function(err){ console.warn('SW registration failed', err); });
+  }
+</script>
+
+<!-- ===== Menú (idéntico al resto) ===== -->
+<script>
+(function(){
+  const MARGIN=12; let open=null; const supportsHover=window.matchMedia('(hover: hover)').matches;
+  function reset(p){p.style.left='';p.style.top='';p.style.width='';p.style.maxWidth='';p.style.right='';}
+  function place(btn,panel,size){
+    if(innerWidth<=860)return; if(open&&open.panel!==panel) hide(open);
+    reset(panel); panel.style.display='block'; panel.style.visibility='hidden'; panel.style.position='fixed';
+    panel.style.maxHeight=Math.max(260,innerHeight-(MARGIN*2))+'px';
+    if(size==='mega'){ panel.style.width=Math.min(920,innerWidth-(MARGIN*2))+'px'; } else { panel.style.width='auto'; panel.style.maxWidth=Math.min(520,innerWidth-(MARGIN*2))+'px'; }
+    const r=panel.getBoundingClientRect(), b=btn.getBoundingClientRect();
+    let left = size==='mega' ? Math.round(b.left+b.width/2-r.width/2) : Math.round(Math.min(b.left, innerWidth-r.width-MARGIN));
+    left=Math.max(MARGIN, Math.min(left, innerWidth-r.width-MARGIN));
+    let top = Math.round(b.bottom+8);
+    if(top+r.height>innerHeight-MARGIN){ top=Math.round(b.top-r.height-8); if(top<MARGIN) top=MARGIN; }
+    panel.style.left=left+'px'; panel.style.top=top+'px'; panel.style.visibility='visible'; panel.classList.add('menu-visible');
+    panel.setAttribute('aria-hidden','false'); btn.setAttribute('aria-expanded','true'); open={panel,btn};
+  }
+  function hide(o){ if(!o)return; o.btn&&o.btn.setAttribute('aria-expanded','false'); o.panel.classList.remove('menu-visible'); o.panel.style.display='none'; o.panel.setAttribute('aria-hidden','true'); reset(o.panel); if(open&&open.panel===o.panel) open=null; }
+  document.querySelectorAll('.nav-btn[data-panel]').forEach(btn=>{
+    const id=btn.getAttribute('data-panel'); const p=document.getElementById(id); const size=(btn.closest('.nav-item')?.dataset.size)||'compact';
+    let t1=null,t2=null; const show=()=>{clearTimeout(t2); t1=setTimeout(()=>place(btn,p,size),60)}; const unshow=()=>{clearTimeout(t1); t2=setTimeout(()=>hide({panel:p,btn}),120)};
+    if(supportsHover){ btn.addEventListener('pointerenter',show); btn.addEventListener('pointerleave',unshow); p.addEventListener('pointerenter',()=>{clearTimeout(t2);clearTimeout(t1)}); p.addEventListener('pointerleave',unshow); }
+    btn.addEventListener('click',e=>{ if(innerWidth>860){ e.preventDefault(); p.classList.contains('menu-visible')?hide({panel:p,btn}):place(btn,p,size);} });
+    btn.addEventListener('focus',show); btn.addEventListener('blur',()=>setTimeout(()=>{ if(!p.contains(document.activeElement)) unshow(); },60));
+  });
+  addEventListener('click',e=>{ if(e.target.closest('nav')||e.target.closest('.menu-panel')) return; document.querySelectorAll('.menu-panel.menu-visible').forEach(p=>hide({panel:p,btn:null})); });
+  addEventListener('keydown',e=>{ if(e.key==='Escape'){ document.querySelectorAll('.menu-panel.menu-visible').forEach(p=>hide({panel:p,btn:null})); } });
+  addEventListener('resize',()=>{ document.querySelectorAll('.menu-panel').forEach(p=>{p.classList.remove('menu-visible');p.style.display='none';p.setAttribute('aria-hidden','true');reset(p)}); document.querySelectorAll('.nav-btn[data-panel]').forEach(b=>b.setAttribute('aria-expanded','false')); open=null; });
+})();
+</script>
+</body>
+</html>
