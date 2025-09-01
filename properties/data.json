@@ -1,6 +1,6 @@
 [
   {
-    "title": "Casa familiar",
+    "title": "No disponible",
     "city": "Cartagena",
     "type": "casa",
     "price": 400000000,
@@ -9,12 +9,12 @@
     "sqm": 153,
     "operation": "comprar",
     "id": "c-p1",
-    "image": "comprar1.png",
+    "image": "comprar.png",
     "images": [
-      "comprar1.png",
-      "comprar2.png",
-      "comprar3.png",
-      "comprar4.png"
+      "comprar.png",
+      "comprar.png",
+      "comprar.png",
+      "comprar.png"
     ],
     "description": "Se vende casa de 3 habitaciones y 3 baños en Cartagena. Amplios 153 m² de construcción, sala auxiliar, sala principal (living - comedor), sala de entretenimiento, terraza amplia, balcón en segundo piso, patio con zona de labores, cocina amplia y moderna y ubicación privilegiada para la comodidad de tu familia."
   },
