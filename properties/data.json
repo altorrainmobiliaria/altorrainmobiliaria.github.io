@@ -35,7 +35,13 @@
       "comprar3.png",
       "comprar4.png",
       "comprar5.png",
-      "comprar6.png"
+      "comprar6.png",
+      "comprar7.png",
+      "comprar8.png",
+      "comprar9.png",
+      "comprar10.png",
+      "comprar11.png",
+      "comprar12.png",
     ],
     "description": "Se vende casa de 3 habitaciones y 3 baños en Cartagena. Amplios 153 m² de construcción, sala auxiliar, sala principal (living - comedor), sala de entretenimiento, terraza amplia, balcón en segundo piso, patio con zona de labores, cocina amplia y moderna y ubicación privilegiada para la comodidad de tu familia."
   },
@@ -76,114 +82,7 @@
     ],
     "description": "Se arrienda casa de 4 habitaciones y 3 baños en Cartagena. Amplios 220 m² de construcción, jardín privado y ubicación privilegiada para la comodidad de tu familia."
   },
-  {
-    "title": "Lote inversión",
-    "city": "Barranquilla",
-    "type": "lote",
-    "price": 380000000,
-    "beds": 0,
-    "baths": 0,
-    "sqm": 420,
-    "operation": "arrendar",
-    "id": "a-p3",
-    "image": "arrendar3.png",
-    "images": [
-      "arrendar1.png",
-      "arrendar2.png",
-      "arrendar3.png"
-    ],
-    "description": "Se arrienda lote ideal para inversión en Barranquilla. Cuenta con 420 m² para desarrollar un proyecto a tu medida. Excelente ubicación y valorización garantizada."
-  },
-  {
-    "title": "Oficina premium",
-    "city": "Bogotá",
-    "type": "oficina",
-    "price": 480000000,
-    "beds": 0,
-    "baths": 1,
-    "sqm": 58,
-    "operation": "arrendar",
-    "id": "a-p4",
-    "image": "arrendar1.png",
-    "images": [
-      "arrendar1.png",
-      "arrendar2.png",
-      "arrendar3.png"
-    ],
-    "description": "Se arrienda oficina premium en el corazón de Bogotá con 58 m², lista para estrenar. Espacios amplios y modernos que potencian la productividad."
-  },
-  {
-    "title": "Penthouse vista",
-    "city": "Cartagena",
-    "type": "apartamento",
-    "price": 2480000000,
-    "beds": 3,
-    "baths": 3,
-    "sqm": 150,
-    "operation": "arrendar",
-    "id": "a-p5",
-    "image": "arrendar2.png",
-    "images": [
-      "arrendar1.png",
-      "arrendar2.png",
-      "arrendar3.png"
-    ],
-    "description": "Se arrienda apartamento moderno en Cartagena con 3 habitaciones, 3 baños y 150 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
-  },
-  {
-    "title": "Casa con jardín",
-    "city": "Medellín",
-    "type": "casa",
-    "price": 1680000000,
-    "beds": 4,
-    "baths": 3,
-    "sqm": 310,
-    "operation": "arrendar",
-    "id": "a-p6",
-    "image": "arrendar3.png",
-    "images": [
-      "arrendar1.png",
-      "arrendar2.png",
-      "arrendar3.png"
-    ],
-    "description": "Se arrienda casa de 4 habitaciones y 3 baños en Medellín. Amplios 310 m² de construcción, jardín privado y ubicación privilegiada para la comodidad de tu familia."
-  },
-  {
-    "title": "Apto cerca al mar",
-    "city": "Cartagena",
-    "type": "apartamento",
-    "price": 1160000000,
-    "beds": 3,
-    "baths": 2,
-    "sqm": 98,
-    "operation": "arrendar",
-    "id": "a-p7",
-    "image": "arrendar1.png",
-    "images": [
-      "arrendar1.png",
-      "arrendar2.png",
-      "arrendar3.png"
-    ],
-    "description": "Se arrienda apartamento moderno en Cartagena con 3 habitaciones, 2 baños y 98 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
-  },
-  {
-    "title": "Casa campestre",
-    "city": "Cali",
-    "type": "casa",
-    "price": 2080000000,
-    "beds": 5,
-    "baths": 4,
-    "sqm": 480,
-    "operation": "arrendar",
-    "id": "a-p8",
-    "image": "arrendar2.png",
-    "images": [
-      "arrendar1.png",
-      "arrendar2.png",
-      "arrendar3.png"
-    ],
-    "description": "Se arrienda casa de 5 habitaciones y 4 baños en Cali. Amplios 480 m² de construcción, jardín privado y ubicación privilegiada para la comodidad de tu familia."
-  },
+  
   {
     "title": "Apartamento moderno",
     "city": "Cartagena",
@@ -202,130 +101,4 @@
     ],
     "description": "Se alquila por días apartamento moderno en Cartagena con 2 habitaciones, 2 baños y 78 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
   },
-  {
-    "title": "Casa familiar",
-    "city": "Cartagena",
-    "type": "casa",
-    "price": 720000000,
-    "beds": 4,
-    "baths": 3,
-    "sqm": 220,
-    "operation": "dias",
-    "id": "d-p2",
-    "image": "dias2.png",
-    "images": [
-      "dias1.png",
-      "dias2.png",
-      "dias3.png"
-    ],
-    "description": "Se alquila por días casa de 4 habitaciones y 3 baños en Cartagena. Amplios 220 m² de construcción, jardín privado y ubicación privilegiada para la comodidad de tu familia."
-  },
-  {
-    "title": "Lote inversión",
-    "city": "Barranquilla",
-    "type": "lote",
-    "price": 380000000,
-    "beds": 0,
-    "baths": 0,
-    "sqm": 420,
-    "operation": "dias",
-    "id": "d-p3",
-    "image": "dias3.png",
-    "images": [
-      "dias1.png",
-      "dias2.png",
-      "dias3.png"
-    ],
-    "description": "Se alquila por días lote ideal para inversión en Barranquilla. Cuenta con 420 m² para desarrollar un proyecto a tu medida. Excelente ubicación y valorización garantizada."
-  },
-  {
-    "title": "Oficina premium",
-    "city": "Bogotá",
-    "type": "oficina",
-    "price": 480000000,
-    "beds": 0,
-    "baths": 1,
-    "sqm": 58,
-    "operation": "dias",
-    "id": "d-p4",
-    "image": "dias1.png",
-    "images": [
-      "dias1.png",
-      "dias2.png",
-      "dias3.png"
-    ],
-    "description": "Se alquila por días oficina premium en el corazón de Bogotá con 58 m², lista para estrenar. Espacios amplios y modernos que potencian la productividad."
-  },
-  {
-    "title": "Penthouse vista",
-    "city": "Cartagena",
-    "type": "apartamento",
-    "price": 2480000000,
-    "beds": 3,
-    "baths": 3,
-    "sqm": 150,
-    "operation": "dias",
-    "id": "d-p5",
-    "image": "dias2.png",
-    "images": [
-      "dias1.png",
-      "dias2.png",
-      "dias3.png"
-    ],
-    "description": "Se alquila por días apartamento moderno en Cartagena con 3 habitaciones, 3 baños y 150 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
-  },
-  {
-    "title": "Casa con jardín",
-    "city": "Medellín",
-    "type": "casa",
-    "price": 1680000000,
-    "beds": 4,
-    "baths": 3,
-    "sqm": 310,
-    "operation": "dias",
-    "id": "d-p6",
-    "image": "dias3.png",
-    "images": [
-      "dias1.png",
-      "dias2.png",
-      "dias3.png"
-    ],
-    "description": "Se alquila por días casa de 4 habitaciones y 3 baños en Medellín. Amplios 310 m² de construcción, jardín privado y ubicación privilegiada para la comodidad de tu familia."
-  },
-  {
-    "title": "Apto cerca al mar",
-    "city": "Cartagena",
-    "type": "apartamento",
-    "price": 1160000000,
-    "beds": 3,
-    "baths": 2,
-    "sqm": 98,
-    "operation": "dias",
-    "id": "d-p7",
-    "image": "dias1.png",
-    "images": [
-      "dias1.png",
-      "dias2.png",
-      "dias3.png"
-    ],
-    "description": "Se alquila por días apartamento moderno en Cartagena con 3 habitaciones, 2 baños y 98 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
-  },
-  {
-    "title": "Casa campestre",
-    "city": "Cali",
-    "type": "casa",
-    "price": 2080000000,
-    "beds": 5,
-    "baths": 4,
-    "sqm": 480,
-    "operation": "dias",
-    "id": "d-p8",
-    "image": "dias2.png",
-    "images": [
-      "dias1.png",
-      "dias2.png",
-      "dias3.png"
-    ],
-    "description": "Se alquila por días casa de 5 habitaciones y 4 baños en Cali. Amplios 480 m² de construcción, jardín privado y ubicación privilegiada para la comodidad de tu familia."
-  }
-]
+ ]
