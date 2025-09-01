@@ -555,7 +555,7 @@
         const panelId = btn.getAttribute('data-panel');
         const panel = document.getElementById(panelId);
         const item = btn.closest('.nav-item');
-        const size = item ? (item.dataset	size || 'compact') : 'compact';
+        const size = item ? (item.dataset.size || 'compact') : 'compact';
         let openTimer=null, closeTimer=null;
         const show = ()=> { clearTimeout(closeTimer); openTimer = setTimeout(()=>{ placeAndShow(btn, panel, size); }, 60); };
         const hide = ()=> { clearTimeout(openTimer); closeTimer = setTimeout(()=>{ hideImmediate({panel, btn}); }, 120); };
