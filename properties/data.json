@@ -61,34 +61,17 @@
     ],
     "description": "Se vende casa de 3 habitaciones y 3 baños en Cartagena. Amplios 153 m² de construcción, sala auxiliar, sala principal (living - comedor), sala de entretenimiento, terraza amplia, balcón en segundo piso, patio con zona de labores, cocina amplia y moderna y ubicación privilegiada para la comodidad de tu familia."
   },
+ 
   {
-    "title": "Apartamento moderno",
-    "city": "Cartagena",
-    "type": "apartamento",
-    "price": 1400000000,
-    "beds": 2,
-    "baths": 2,
-    "sqm": 78,
-    "operation": "arrendar",
-    "id": "a-p1",
-    "image": "arrendar1.png",
-    "images": [
-      "arrendar1.png",
-      "arrendar2.png",
-      "arrendar3.png"
-    ],
-    "description": "Se arrienda apartamento moderno en Cartagena con 2 habitaciones, 2 baños y 78 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
-  },
-  {
-    "title": "Casa familiar",
+    "title": "No disponible",
     "city": "Cartagena",
     "type": "casa",
-    "price": 720000000,
-    "beds": 4,
-    "baths": 3,
-    "sqm": 220,
+    "price": 0,
+    "beds": 0,
+    "baths": 0,
+    "sqm": 0,
     "operation": "arrendar",
-    "id": "a-p2",
+    "id": "a-p1",
     "image": "arrendar2.png",
     "images": [
       "arrendar1.png",
@@ -98,13 +81,13 @@
     "description": "Se arrienda casa de 4 habitaciones y 3 baños en Cartagena. Amplios 220 m² de construcción, jardín privado y ubicación privilegiada para la comodidad de tu familia."
   },
   {
-    "title": "Apartamento moderno",
+    "title": "No disponible",
     "city": "Cartagena",
     "type": "apartamento",
-    "price": 1400000000,
-    "beds": 2,
-    "baths": 2,
-    "sqm": 78,
+    "price": 0,
+    "beds": 0,
+    "baths": 0,
+    "sqm": 0,
     "operation": "dias",
     "id": "d-p1",
     "image": "dias1.png",
