@@ -19,138 +19,27 @@
     "description": "Se vende casa de 3 habitaciones y 3 baños en Cartagena. Amplios 153 m² de construcción, sala auxiliar, sala principal (living - comedor), sala de entretenimiento, terraza amplia, balcón en segundo piso, patio con zona de labores, cocina amplia y moderna y ubicación privilegiada para la comodidad de tu familia."
   },
   {
-    "title": "Apartamento moderno",
+    "title": "Casa familiar - Country",
     "city": "Cartagena",
-    "type": "apartamento",
-    "price": 1400000000,
-    "beds": 2,
-    "baths": 2,
-    "sqm": 72,
+    "type": "casa",
+    "price": 380000000,
+    "beds": 3,
+    "baths": 3,
+    "sqm": 153,
     "operation": "comprar",
     "id": "c-p2",
-    "image": "comprar.png",
+    "image": "comprar1.png",
     "images": [
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png"
+      "comprar1.png",
+      "comprar2.png",
+      "comprar3.png",
+      "comprar4.png",
+      "comprar5.png",
+      "comprar6.png"
     ],
-    "description": "Se vende apartamento moderno en Cartagena con 2 habitaciones, 2 baños y 78 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
+    "description": "Se vende casa de 3 habitaciones y 3 baños en Cartagena. Amplios 153 m² de construcción, sala auxiliar, sala principal (living - comedor), sala de entretenimiento, terraza amplia, balcón en segundo piso, patio con zona de labores, cocina amplia y moderna y ubicación privilegiada para la comodidad de tu familia."
   },
-  {
-    "title": "Lote inversión",
-    "city": "Barranquilla",
-    "type": "lote",
-    "price": 380000000,
-    "beds": 0,
-    "baths": 0,
-    "sqm": 420,
-    "operation": "comprar",
-    "id": "c-p3",
-    "image": "comprar.png",
-    "images": [
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png"
-    ],
-    "description": "Se vende lote ideal para inversión en Barranquilla. Cuenta con 420 m² para desarrollar un proyecto a tu medida. Excelente ubicación y valorización garantizada."
-  },
-  {
-    "title": "Oficina premium",
-    "city": "Bogotá",
-    "type": "oficina",
-    "price": 480000000,
-    "beds": 0,
-    "baths": 1,
-    "sqm": 58,
-    "operation": "comprar",
-    "id": "c-p4",
-    "image": "comprar.png",
-    "images": [
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png"
-    ],
-    "description": "Se vende oficina premium en el corazón de Bogotá con 58 m², lista para estrenar. Espacios amplios y modernos que potencian la productividad."
-  },
-  {
-    "title": "Penthouse vista",
-    "city": "Cartagena",
-    "type": "apartamento",
-    "price": 2480000000,
-    "beds": 3,
-    "baths": 3,
-    "sqm": 150,
-    "operation": "comprar",
-    "id": "c-p5",
-    "image": "comprar.png",
-    "images": [
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png"
-    ],
-    "description": "Se vende apartamento moderno en Cartagena con 3 habitaciones, 3 baños y 150 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
-  },
-  {
-    "title": "Casa con jardín",
-    "city": "Medellín",
-    "type": "casa",
-    "price": 1680000000,
-    "beds": 4,
-    "baths": 3,
-    "sqm": 310,
-    "operation": "comprar",
-    "id": "c-p6",
-    "image": "comprar.png",
-    "images": [
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png"
-    ],
-    "description": "Se vende casa de 4 habitaciones y 3 baños en Medellín. Amplios 310 m² de construcción, jardín privado y ubicación privilegiada para la comodidad de tu familia."
-  },
-  {
-    "title": "Apto cerca al mar",
-    "city": "Cartagena",
-    "type": "apartamento",
-    "price": 1160000000,
-    "beds": 3,
-    "baths": 2,
-    "sqm": 98,
-    "operation": "comprar",
-    "id": "c-p7",
-    "image": "comprar.png",
-    "images": [
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png"
-    ],
-    "description": "Se vende apartamento moderno en Cartagena con 3 habitaciones, 2 baños y 98 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
-  },
-  {
-    "title": "Casa campestre",
-    "city": "Cali",
-    "type": "casa",
-    "price": 2080000000,
-    "beds": 5,
-    "baths": 4,
-    "sqm": 480,
-    "operation": "comprar",
-    "id": "c-p8",
-    "image": "comprar.png",
-    "images": [
-      "comprar.png",
-      "comprar.png",
-      "comprar.png",
-      "comprar.png"
-    ],
-    "description": "Se vende casa de 5 habitaciones y 4 baños en Cali. Amplios 480 m² de construcción, jardín privado y ubicación privilegiada para la comodidad de tu familia."
-  },
+ 
   {
     "title": "Apartamento moderno",
     "city": "Cartagena",
