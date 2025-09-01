@@ -9,7 +9,7 @@
     "sqm": 240,
     "operation": "comprar",
     "id": "c-p1",
-    "image": "comprar.png",
+    "image": "/allure/allure.jpeg",
     "images": [
       "/allure/allure.jpeg",
       "/allure/allure1.jpeg",
