@@ -41,11 +41,10 @@
       "comprar9.png",
       "comprar10.png",
       "comprar11.png",
-      "comprar12.png",
+      "comprar12.png"
     ],
     "description": "Se vende casa de 3 habitaciones y 3 baños en Cartagena. Amplios 153 m² de construcción, sala auxiliar, sala principal (living - comedor), sala de entretenimiento, terraza amplia, balcón en segundo piso, patio con zona de labores, cocina amplia y moderna y ubicación privilegiada para la comodidad de tu familia."
   },
- 
   {
     "title": "Apartamento moderno",
     "city": "Cartagena",
@@ -82,7 +81,6 @@
     ],
     "description": "Se arrienda casa de 4 habitaciones y 3 baños en Cartagena. Amplios 220 m² de construcción, jardín privado y ubicación privilegiada para la comodidad de tu familia."
   },
-  
   {
     "title": "Apartamento moderno",
     "city": "Cartagena",
@@ -101,4 +99,4 @@
     ],
     "description": "Se alquila por días apartamento moderno en Cartagena con 2 habitaciones, 2 baños y 78 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
   }
- ]
+]
