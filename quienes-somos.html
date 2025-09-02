@@ -115,7 +115,7 @@
     .list li{display:flex;gap:8px;align-items:flex-start;margin:8px 0}
     .list li::before{content:"✓";color:var(--gold);font-weight:800;margin-top:2px}
 
-    /* ---- (Antiguo) grid de imágenes: lo dejo por compatibilidad, no afecta nada ---- */
+    /* grid de imágenes (no usado, lo dejamos por compatibilidad) */
     .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
     .strip img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:16px;display:block;background:#f5f5f7;content-visibility:auto}
     @media (max-width:920px){ .strip{grid-template-columns:1fr} }
@@ -125,7 +125,6 @@
     .quote{font-weight:600;color:#111827}
     .quote small{display:block;color:#6b7280;font-weight:600;margin-top:4px}
 
-    /* Texto del banner */
     .kicker,.hero-title,.hero-sub{
       color:#fff!important;text-shadow:
         0 1px 0 rgba(0,0,0,.35),
@@ -138,11 +137,10 @@
         0 6px 12px rgba(0,0,0,.28),
         0 14px 28px rgba(0,0,0,.22) }
 
-    /* Sara centrada */
     #equipo .team-sara{grid-column:2}
     @media (max-width:920px){ #equipo .team-sara{grid-column:auto} }
 
-    /* ---- Justificar y evitar cortes con guion en #quienes ---- */
+    /* Justificar y evitar cortes con guion en #quienes */
     #quienes .card p{
       text-align:justify;
       hyphens:none;
@@ -150,21 +148,6 @@
       overflow-wrap:break-word;
       text-wrap:pretty;
     }
-
-    /* ---- Testimonios combinados (fotos + reseñas) ---- */
-    .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-    @media (max-width:920px){ .testi-grid{grid-template-columns:1fr} }
-    .testi-card{
-      background:#fff;border:1px solid rgba(17,24,39,.08);border-radius:18px;
-      box-shadow:0 12px 32px rgba(17,24,39,.06);
-      overflow:hidden;display:flex;flex-direction:column
-    }
-    .testi-media img{
-      width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;display:block;
-      content-visibility:auto;
-    }
-    .testi-quote{padding:16px 18px 0;font-weight:600;color:#111827;line-height:1.55}
-    .testi-author{padding:8px 18px 18px;color:#6b7280;font-weight:700;display:block}
   </style>
 </head>
 <body>
@@ -229,7 +212,7 @@
   <div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
   <aside id="mobileMenu" class="drawer" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle" hidden>
     <div class="block"><h3 id="mobileMenuTitle" style="margin:0;font-weight:800;color:var(--gold)">Menú</h3></div>
-    <div class="block">
+    <div class="block>
       <h4>Propiedades</h4>
       <a href="propiedades-comprar.html">Comprar</a>
       <a href="propiedades-arrendar.html">Arrendar</a>
@@ -315,63 +298,6 @@
     </div>
   </section>
 
-  <section class="section" id="servicios">
-    <h2>Nuestros servicios</h2>
-    <div class="grid two">
-      <div class="card">
-        <strong style="color:var(--gold)">Administración y Arriendo de Inmuebles</strong>
-        <ul class="list">
-          <li>Gestión de arrendamientos</li>
-          <li>Selección de arrendatarios</li>
-          <li>Elaboración y negociación de contratos</li>
-          <li>Cobro y recaudo de cánones</li>
-          <li>Inspecciones e inventarios</li>
-          <li>Seguimiento de pago de servicios públicos</li>
-          <li>Informes financieros y contables</li>
-          <li>Marketing y visibilidad para arriendo/venta</li>
-          <li>Asesoría legal y documental</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <strong style="color:var(--gold)">Venta de Propiedades</strong>
-        <ul class="list">
-          <li>Estrategia comercial personalizada</li>
-          <li>Promoción, publicidad y marketing</li>
-          <li>Gestión de clientes potenciales y coordinación de visitas</li>
-          <li>Negociación y acompañamiento hasta el cierre</li>
-          <li>Asesoría legal y apoyo en trámites notariales</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <strong style="color:var(--gold)">Avalúos Comerciales</strong>
-        <ul class="list">
-          <li>Inspección física del inmueble</li>
-          <li>Revisión de documentación legal y catastral</li>
-          <li>Análisis de mercado y comparativos de zona</li>
-          <li>Estudio de oferta y demanda inmobiliaria</li>
-          <li>Metodologías de valoración reconocidas</li>
-          <li>Informe técnico con valor comercial</li>
-          <li>Soporte legal y técnico para compra/venta/arriendo</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <strong style="color:var(--gold)">Turismo Inmobiliario</strong>
-        <ul class="list">
-          <li>Publicación y promoción de inmuebles</li>
-          <li>Estrategias de visibilidad y marketing turístico</li>
-          <li>Gestión de reservas y atención a huéspedes</li>
-          <li>Coordinación de check-in y check-out</li>
-          <li>Administración de pagos y control de estadías</li>
-          <li>Reportes de ocupación y rentabilidad</li>
-          <li>Asesoría legal y cumplimiento normativo</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
   <!-- NUESTRO EQUIPO -->
   <section class="section" id="equipo">
     <h2>Nuestro equipo</h2>
@@ -395,41 +321,7 @@
     </div>
   </section>
 
-  <!-- TESTIMONIOS (fotos + reseña) -->
-  <section class="section" id="testimonios">
-    <h2>Opiniones de nuestros clientes</h2>
-    <div class="testi-grid">
-      <article class="testi-card">
-        <figure class="testi-media">
-          <img src="/multimedia/experiencia-1.png" alt="Cliente satisfecho durante asesoría"
-               loading="lazy" decoding="async" fetchpriority="low"
-               sizes="(max-width:920px) 100vw, 33vw" />
-        </figure>
-        <blockquote class="testi-quote">“Gracias por la atención prestada, por ser tan profesionales y atentos con mi familia, por llenar nuestras expectativas a la hora de adquirir nuestro inmueble.”</blockquote>
-        <cite class="testi-author">— Alfredo Sarmiento</cite>
-      </article>
-
-      <article class="testi-card">
-        <figure class="testi-media">
-          <img src="/multimedia/experiencia-2.png" alt="Pareja revisando planos"
-               loading="lazy" decoding="async" fetchpriority="low"
-               sizes="(max-width:920px) 100vw, 33vw" />
-        </figure>
-        <blockquote class="testi-quote">“Muy profesionales en el servicio, excelentes en el asesoramiento, recomendados totalmente.”</blockquote>
-        <cite class="testi-author">— Manuel Jiménez</cite>
-      </article>
-
-      <article class="testi-card">
-        <figure class="testi-media">
-          <img src="/multimedia/experiencia-3.png" alt="Entrega de llaves"
-               loading="lazy" decoding="async" fetchpriority="low"
-               sizes="(max-width:920px) 100vw, 33vw" />
-        </figure>
-        <blockquote class="testi-quote">“Mi experiencia fue excelente desde el primer momento. Su equipo me brindó un servicio rápido, transparente y muy profesional.”</blockquote>
-        <cite class="testi-author">— Maria Cuadro</cite>
-      </article>
-    </div>
-  </section>
+  <!-- (Eliminada la sección de reseñas y fotografías) -->
 
   <section class="section">
     <div class="cta">
@@ -443,11 +335,10 @@
   <footer>
     <div class="footer-grid">
       <div>
-        <h3 style="margin:0;color:var(--gold);font-weight:800">ALTORRA INMOBILIARIA</h3>
+        <h3 style="margin:0;color:var(--gold);font-weight:800)">ALTORRA INMOBILIARIA</h3>
         <p style="color:#cbd5e1;margin-top:8px;line-height:1.4">
           Administración, Arriendo y Venta de Inmuebles<br/>Avalúos<br/>Servicios Legales Especializados
         </p>
-        <div style="margin-top:12px;font-weight:800;color:var(--gold)">+57&nbsp;323&nbsp;501&nbsp;6747</div>
       </div>
       <div>
         <h4 style="margin:0 0 8px;font-weight:700;color:var(--gold)">Propiedades</h4>
@@ -608,7 +499,6 @@
         document.body.style.overflow='';
         toggle.setAttribute('aria-expanded','false');
         clearDrawerHeight();
-        /* FIX: eliminé la coma accidental en 'resize' */
         window.removeEventListener('resize', setDrawerHeight);
         window.removeEventListener('orientationchange', setDrawerHeight);
         requestAnimationFrame(()=> {
