@@ -129,45 +129,19 @@
 
     .logo-slot{height:84px;border:1px dashed rgba(17,24,39,.18);border-radius:16px;display:grid;place-items:center;background:#fff;color:#6b7280;font-weight:700}
 
-    /* ===== Galería inferior (mejor presencia sin captions) ===== */
-    .strip{
-      display:grid;
-      grid-template-columns:2fr 1fr 1fr;
-      gap:14px;
-    }
+    /* ---- AJUSTE: mismas dimensiones para las 3 imágenes + mejor carga ---- */
+    .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px} /* ← AJUSTE (antes 2fr 1fr 1fr) */
     .strip img{
       width:100%;
       height:auto;
-      display:block;
+      aspect-ratio: 4 / 3;              /* ← AJUSTE: proporción uniforme */
       object-fit:cover;
       border-radius:16px;
+      display:block;
       background:#f5f5f7;
-
-      /* nuevas mejoras visuales (no invasivas) */
-      aspect-ratio: 16 / 10;              /* proporción base agradable */
-      box-shadow:0 10px 24px rgba(17,24,39,.10);
-      transition:transform .35s ease, box-shadow .35s ease, filter .35s ease;
-      will-change:transform;
+      content-visibility:auto;          /* ← AJUSTE: no se pintan hasta entrar al viewport */
     }
-    /* Primera imagen más panorámica para jerarquía visual */
-    .strip img:nth-child(1){
-      aspect-ratio: 16 / 9;
-    }
-    /* Las dos laterales más cuadradas para balance */
-    .strip img:nth-child(2),
-    .strip img:nth-child(3){
-      aspect-ratio: 1 / 1;
-      object-position:center;
-    }
-    .strip img:hover{
-      transform:scale(1.02);
-      box-shadow:0 16px 36px rgba(17,24,39,.16);
-      filter:saturate(1.04) contrast(1.02);
-    }
-    @media (max-width:920px){
-      .strip{ grid-template-columns:1fr; }
-      .strip img{ aspect-ratio: 16 / 10; }
-    }
+    @media (max-width:920px){ .strip{grid-template-columns:1fr} }
 
     .cta{text-align:center;padding:28px;border-radius:20px;border:1px solid rgba(17,24,39,.08);background:linear-gradient(180deg,#fff,#fbfbfb)}
     .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:14px;background:linear-gradient(90deg,var(--accent),#ffd95e);color:#111;border:none;font-weight:800;cursor:pointer;box-shadow:0 10px 22px rgba(17,24,39,.10)}
@@ -198,15 +172,13 @@
       #equipo .team-sara{grid-column:auto;}
     }
 
-    /* ===== Justificado de textos solicitados ===== */
-    #quienes .lead,
-    #quienes .card p,
-    #mision p,
-    #vision p{
-      text-align: justify;
-      text-justify: inter-word;
-      hyphens: auto;
-      -webkit-hyphens: auto;
+    /* ---- AJUSTE: tipografía para evitar guiones cortados en #quienes ---- */
+    #quienes .card p{                     /* ← AJUSTE: solo afecta ‘Quiénes somos / Misión / Visión’ */
+      text-align:justify;
+      hyphens:none;                       /* sin cortes con guion */
+      word-break:normal;
+      overflow-wrap:break-word;           /* evita desbordes sin partir palabras a la mitad */
+      text-wrap:pretty;                   /* mejor ritmo de líneas cuando hay espacio */
     }
   </style>
 </head>
@@ -307,7 +279,6 @@
       <h4>Empresa</h4>
       <a href="quienes-somos.html">Quiénes somos</a>
       <a href="contacto.html">Contacto</a>
-      
     </div>
   </aside>
 
@@ -322,9 +293,6 @@
     </div>
   </section>
 
-  <!-- *** ÚNICO CAMBIO: reordené esta sección para que
-         "Quiénes somos" quede arriba en ancho completo y
-         abajo Misión/Visión vayan lado a lado *** -->
   <section class="section" id="quienes">
     <!-- Quienes somos: ancho completo -->
     <div class="card">
@@ -337,7 +305,6 @@
         Nuestro compromiso es acompañar a cada cliente con un servicio integral que garantice seguridad, legalidad y confianza en cada proceso.
         Nos destacamos por ofrecer soluciones completas y efectivas, consolidándonos como un socio estratégico que protege y potencia la inversión de nuestros clientes.
       </p>
-      
     </div>
 
     <!-- Misión y Visión: lado a lado -->
@@ -459,9 +426,10 @@
 
   <section class="section" aria-label="Imágenes de experiencia Altorra">
     <div class="strip">
-      <img src="/multimedia/experiencia-1.png" alt="Asesoría personalizada en sala, ambiente acogedor"/>
-      <img src="/multimedia/experiencia-2.png" alt="Pareja revisando planos felices"/>
-      <img src="/multimedia/experiencia-3.png" alt="Entrega de llaves con luz de atardecer"/>
+      <!-- AJUSTE: lazy + async para carga más rápida y coherente -->
+      <img src="/multimedia/experiencia-1.png" alt="Asesoría personalizada en sala, ambiente acogedor" loading="lazy" decoding="async" fetchpriority="low"/>
+      <img src="/multimedia/experiencia-2.png" alt="Pareja revisando planos felices" loading="lazy" decoding="async" fetchpriority="low"/>
+      <img src="/multimedia/experiencia-3.png" alt="Entrega de llaves con luz de atardecer" loading="lazy" decoding="async" fetchpriority="low"/>
     </div>
   </section>
 
@@ -528,7 +496,6 @@
         <ul style="margin:0;padding:0;list-style:none;color:#cbd5e1">
           <li><a href="quienes-somos.html" style="color:#cbd5e1">Quiénes somos</a></li>
           <li><a href="contacto.html" style="color:#cbd5e1">Contacto</a></li>
-          
         </ul>
       </div>
     </div>
