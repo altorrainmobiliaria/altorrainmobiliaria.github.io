@@ -126,16 +126,7 @@
     .nav-item{position:relative}
     .nav-btn{background:transparent;border:0;padding:8px 12px;font-weight:700;cursor:pointer;border-radius:8px;color:var(--text);font-size:0.95rem}
     .nav-btn:focus{outline:3px solid rgba(212,175,55,0.18);outline-offset:3px}
-    .nav-toggle{
-  color: var(--text) !important;          /* negro corporativo */
-  -webkit-text-fill-color: var(--text);   /* fuerza color en iOS */
-  -webkit-appearance: none;
-  appearance: none;
-}
-.nav-toggle:focus,
-.nav-toggle:active{
-  color: var(--text);
-}
+    .nav-toggle{display:none;margin-left:auto;background:transparent;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:8px 12px;font-weight:800} .nav-toggle:focus{outline:3px solid rgba(212,175,55,0.18);outline-offset:3px}
 
     .menu-panel{display:none;position:fixed;z-index:150;padding:14px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfbfb);border:1px solid rgba(0,0,0,0.06);box-shadow:0 22px 48px rgba(0,0,0,0.12);max-height:calc(100vh - var(--header-h) - 20px);overflow:auto}
     .menu-visible{display:block;opacity:1;transform:none}
