@@ -22,7 +22,7 @@
     a{text-decoration:none;color:inherit;}
     a[href^="tel"], a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;font-weight:inherit !important;border-bottom:0 !important;}
 
-    /* ===== LAYOUT: 1 col en móvil, 2 col en desktop con ÁREAS ===== */
+    /* ===== LAYOUT: grid con áreas (móvil → 1 col, desktop → 2 col) ===== */
     main.detail-container{
       max-width:var(--page-max);
       margin:calc(var(--header-h) + 20px) auto 40px;
@@ -49,16 +49,17 @@
     [id]{scroll-margin-top:calc(var(--header-h) + 12px);}
 
     .col-gallery{grid-area:gallery; max-width:760px; margin-inline:auto; width:100%;}
-    .row-cta{grid-area:cta; max-width:760px; margin-inline:auto;}
+    .row-cta{grid-area:cta; max-width:760px; margin-inline:auto; width:100%; display:flex; align-items:center;}
+    .row-cta .actions{width:100%; display:flex; justify-content:flex-start;}
     .col-info{grid-area:info;}
-    .row-form{grid-area:form; max-width:760px; margin-inline:auto;}
+    .row-form{grid-area:form; max-width:760px; margin-inline:auto; width:100%;}
 
     /* ===== GALERÍA ===== */
     .gallery{position:relative;overflow:visible;min-width:0;}
     .gallery-inner{position:relative;}
     .main-img{
       width:100%;
-      /* altura estable para evitar “saltos” del texto al cambiar la imagen */
+      /* altura estable para que el texto no “salte” con el autoplay */
       height:clamp(280px, 52vh, 520px);
       object-fit:contain;
       border-radius:14px;
@@ -91,7 +92,7 @@
 
     /* ===== CTA WhatsApp ===== */
     .actions{display:flex;gap:12px;flex-wrap:wrap;}
-    .btn{padding:10px 14px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:700;}
+    .btn{padding:12px 16px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:700;}
     .btn.btn-ghost{background:#f5f5f5;color:#111;border:1px solid rgba(0,0,0,0.1);}
     .btn.btn-primary{background:linear-gradient(90deg,var(--accent),#ffd95e);color:#000;border:none;box-shadow:0 10px 22px rgba(0,0,0,.10);}
     .btn svg{width:18px;height:18px;}
@@ -100,7 +101,10 @@
     .col-info{display:flex;flex-direction:column;gap:12px;min-width:0;}
     .col-info h1{font-size:2rem;font-weight:800;line-height:1.1;}
     .price{font-weight:800;font-size:1.6rem;color:var(--gold);}
-    .desc{color:#1f2937;text-align:justify;line-height:1.75;}
+    .desc{
+      color:#1f2937;text-align:justify;line-height:1.75;
+      overflow-wrap:anywhere; word-break:break-word; hyphens:auto;
+    }
     .desc p + p{margin-top:10px;}
 
     /* Estado disponible / no disponible */
@@ -125,11 +129,11 @@
     .chip svg{width:16px;height:16px;display:block}
 
     /* ===== FORMULARIO ===== */
-    .contact-form{display:grid;grid-template-columns:1fr;gap:12px;padding:16px;border:1px solid rgba(17,24,39,.08);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.05);background:#fff;}
+    .contact-form{display:grid;grid-template-columns:1fr;gap:12px;padding:16px;border:1px solid rgba(17,24,39,.08);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.05);background:#fff;width:100%;}
     .contact-form h3{margin:0 0 4px;font-size:1.25rem;font-weight:800;color:var(--gold);}
     .contact-form .row-3{display:grid;grid-template-columns:1fr;gap:12px;}
     @media (min-width:720px){.contact-form .row-3{grid-template-columns:repeat(3,1fr);}}
-    .contact-form input,.contact-form textarea{width:100%;display:block;padding:12px 14px;border-radius:12px;border:1px solid rgba(17,24,39,.16);font-size:0.95rem;background:#fff;transition:border-color .15s ease, box-shadow .15s ease;}
+    .contact-form input,.contact-form textarea{width:100%;display:block;padding:12px 14px;border-radius:12px;border:1px solid rgba(17,24,39,.16);font-size:1rem;background:#fff;transition:border-color .15s ease, box-shadow .15s ease;}
     .contact-form textarea{resize:vertical;min-height:110px;}
     .contact-form input:focus-visible,.contact-form textarea:focus-visible{outline:3px solid rgba(212,175,55,0.22);border-color:var(--gold);}
     .contact-form .btn{justify-self:start;}
@@ -165,7 +169,10 @@
 
     /* ===== Footer ===== */
     footer{background:#0b0b0b;color:#fff;padding:36px 16px}
-    .footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .footer-grid{
+      max-width:var(--page-max);margin:0 auto;
+      display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;
+    }
     @media (max-width:920px){.footer-grid{grid-template-columns:1fr}}
   </style>
 </head>
@@ -188,7 +195,7 @@
     </div>
   </header>
 
-  <!-- Paneles header (idénticos) -->
+  <!-- Paneles header -->
   <div id="panel-propiedades" class="menu-panel panel-compact" role="dialog" aria-modal="false" aria-hidden="true">
     <a class="menu-link" href="propiedades-comprar.html">Comprar</a>
     <a class="menu-link" href="propiedades-arrendar.html">Arrendar</a>
@@ -421,7 +428,7 @@
         gallery.appendChild(thumbs);
         galleryDiv.appendChild(gallery);
 
-        /* ==== CTA WHATSAPP (siempre debajo de miniaturas en móvil y bajo galería en desktop) ==== */
+        /* ==== CTA WHATSAPP ==== */
         const ctaDiv=document.createElement('div'); ctaDiv.className='row-cta';
         const actions=document.createElement('div'); actions.className='actions';
         const waText = isAvailable ? null : `Hola, me interesa la propiedad "${prop.title}" (ID: ${prop.id}). ¿Podrían avisarme si vuelve a estar disponible?`;
@@ -441,7 +448,6 @@
         status.className='status-pill'+(isAvailable?'':' unavailable');
         status.innerHTML=`<span class="status-dot"></span>${isAvailable?'Disponible':'No disponible'}`;
 
-        // Chips legibles
         const chips=document.createElement('div'); chips.className='details-chips';
         if(prop.beds){
           const chip=document.createElement('span'); chip.className='chip';
@@ -501,14 +507,14 @@
         `;
         formWrap.appendChild(form);
 
-        /* ==== MONTAJE (respeta el orden móvil → galería, cta, info, form) ==== */
+        /* ==== MONTAJE ==== */
         container.innerHTML='';
         container.appendChild(galleryDiv);
         container.appendChild(ctaDiv);
         container.appendChild(infoDiv);
         container.appendChild(formWrap);
 
-        // SEO schema (con disponibilidad)
+        // SEO schema
         try{
           const schema={
             "@context":"https://schema.org",
