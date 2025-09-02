@@ -80,8 +80,8 @@
       "arrendar2.png",
       "arrendar3.png"
     ],
-   "available": 1,
-    "description": "Se arrienda casa de 4 habitaciones y 3 baños en Cartagena. Amplios 220 m² de construcción, jardín privado y ubicación privilegiada para la comodidad de tu familia."
+   "available": 0,
+    "description": "Sin información."
   },
   {
     "title": "No disponible",
@@ -99,7 +99,7 @@
       "dias2.png",
       "dias3.png"
     ],
-   "available": 1,
-    "description": "Se alquila por días apartamento moderno en Cartagena con 2 habitaciones, 2 baños y 78 m². Disfruta de acabados de alta calidad y cercanía a los mejores lugares de la ciudad."
+   "available": 0,
+    "description": "Sin información."
   }
 ]
