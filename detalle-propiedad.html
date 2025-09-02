@@ -33,20 +33,30 @@
     }
     .gallery,.info,.form-block,.wa-row{min-width:0}
 
-    /* Desktop: Galería → Formulario (con botones) → Info  */
+    /* Desktop: Galería → Formulario → Info */
     .gallery{order:1; flex:1 1 520px; max-width:760px; margin-inline:auto}
     .form-block{order:2; flex:1 1 520px; max-width:760px; margin-inline:auto}
     .info{order:3; flex:1 1 520px}
-    .wa-row{display:none} /* en desktop oculto; en móvil lo muestro */
+    .wa-row{display:none} /* solo móvil */
 
     /* ===== GALLERY ===== */
     .gallery-inner{position:relative}
+    /* Altura estable para que el texto no “salte” y las verticales entren completas */
     .main-frame{
-      width:100%; aspect-ratio:16/9; max-height:clamp(240px,52vh,520px);
-      background:#f5f5f7; border-radius:14px; overflow:hidden; display:grid; place-items:center;
+      width:100%;
+      height:clamp(240px, 52vh, 520px);
+      background:#f5f5f7; border-radius:14px; overflow:hidden;
+      display:flex; align-items:center; justify-content:center;
       margin-bottom:10px; box-shadow:0 10px 26px rgba(0,0,0,.06)
     }
-    .main-frame img{width:100%; height:100%; object-fit:contain; cursor:zoom-in; transition:transform .28s ease}
+    .main-frame img{
+      /* Mostrar SIEMPRE toda la imagen (horizontales y verticales) */
+      max-width:100%;
+      max-height:100%;
+      width:auto; height:auto;
+      object-fit:contain; object-position:center;
+      cursor:zoom-in; transition:transform .28s ease;
+    }
     .main-frame img:hover{transform:scale(1.01)}
 
     .gallery .arrow{
@@ -73,7 +83,6 @@
     .btn{padding:10px 14px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:700;border:0}
     .btn svg{width:18px;height:18px}
     .btn-primary{background:linear-gradient(90deg,var(--accent),#ffd95e); color:#000; box-shadow:0 10px 22px rgba(0,0,0,.10)}
-    /* WhatsApp blanco con borde gris claro */
     .btn-wa{background:#fff; color:#111; border:1px solid rgba(17,24,39,.14); box-shadow:0 4px 12px rgba(0,0,0,.04)}
     .btn-wa:hover{background:#f9fafb}
 
@@ -84,9 +93,7 @@
     .contact-form textarea{resize:vertical;min-height:110px}
     .contact-form input:focus-visible,.contact-form textarea:focus-visible{outline:3px solid rgba(212,175,55,0.22);border-color:var(--gold)}
     .form-actions{display:flex; gap:12px; flex-wrap:wrap}
-    /* El WA dentro del formulario solo en desktop */
     .wa-in-form{display:inline-flex}
-    /* Botones 100% en pantallas angostas */
     @media (max-width:860px){
       .form-actions .btn{width:100%; justify-content:center}
       .wa-in-form{display:none}
@@ -437,7 +444,7 @@
         if(priceRow.textContent) infoDiv.appendChild(priceRow);
         if(desc.childNodes.length) infoDiv.appendChild(desc);
 
-        /* ===== Formulario (desktop debajo de miniaturas) ===== */
+        /* ===== Formulario ===== */
         const formBlock=document.createElement('div'); formBlock.className='form-block';
         const form=document.createElement('form');
         form.className='contact-form'; form.action='https://formsubmit.co/altorrainmobiliaria@gmail.com'; form.method='POST';
