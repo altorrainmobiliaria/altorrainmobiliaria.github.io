@@ -23,26 +23,47 @@
     a[href^="tel"], a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;font-weight:inherit !important;border-bottom:0 !important;}
 
     /* ===== LAYOUT ===== */
-    main.detail-container{max-width:var(--page-max);margin:calc(var(--header-h) + 20px) auto 40px;padding:0 16px 40px;display:flex;flex-wrap:wrap;gap:24px;overflow:visible;}
+    main.detail-container{
+      max-width:var(--page-max);
+      margin:calc(var(--header-h) + 20px) auto 40px;
+      padding:0 16px 40px;
+      display:flex;flex-wrap:wrap;gap:24px;overflow:visible;
+    }
     [id]{scroll-margin-top:calc(var(--header-h) + 12px);}
 
     /* ===== GALLERY ===== */
     .gallery{flex:1 1 520px;position:relative;overflow:visible;max-width:760px;margin-inline:auto;min-width:0;}
     .gallery-inner{position:relative;}
-    .main-img{width:100%;height:auto;max-height:clamp(240px,52vh,520px);object-fit:contain;border-radius:14px;margin-bottom:10px;background:#f5f5f7;display:block;transition:transform .28s ease, box-shadow .28s ease;cursor:zoom-in;box-shadow:0 10px 26px rgba(0,0,0,.06);}
+    .main-img{
+      width:100%;height:auto;max-height:clamp(240px,52vh,520px);
+      object-fit:contain;border-radius:14px;margin-bottom:10px;background:#f5f5f7;display:block;
+      transition:transform .28s ease, box-shadow .28s ease;cursor:zoom-in;box-shadow:0 10px 26px rgba(0,0,0,.06);
+    }
     .main-img:hover{transform:scale(1.02);box-shadow:0 16px 36px rgba(0,0,0,.12);}
-    .gallery .arrow{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:999px;border:none;background:#fff;color:#111;cursor:pointer;z-index:3;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(0,0,0,.12);transition:transform .15s ease, box-shadow .2s ease, opacity .2s ease;}
+    .gallery .arrow{
+      position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:999px;border:none;
+      background:#fff;color:#111;cursor:pointer;z-index:3;display:flex;align-items:center;justify-content:center;
+      box-shadow:0 10px 26px rgba(0,0,0,.12);transition:transform .15s ease, box-shadow .2s ease, opacity .2s ease;
+    }
     .gallery .arrow:hover{transform:translateY(-50%) scale(1.05);box-shadow:0 14px 30px rgba(0,0,0,.16);}
     .gallery .arrow.prev{left:10px;} .gallery .arrow.next{right:10px;}
 
     .thumbnails{display:flex;gap:10px;overflow-x:auto;padding-bottom:2px;scroll-snap-type:x proximity;max-width:100%;}
-    .thumbnails::-webkit-scrollbar{height:8px} .thumbnails::-webkit-scrollbar-thumb{background:rgba(0,0,0,.12);border-radius:999px}
-    .thumbnails img{width:96px;height:70px;object-fit:cover;border-radius:10px;flex-shrink:0;cursor:pointer;opacity:.7;border:2px solid transparent;background:#f3f4f6;scroll-snap-align:start;transition:opacity .15s ease, border-color .15s ease, transform .15s ease;}
+    .thumbnails::-webkit-scrollbar{height:8px}
+    .thumbnails::-webkit-scrollbar-thumb{background:rgba(0,0,0,.12);border-radius:999px}
+    .thumbnails img{
+      width:96px;height:70px;object-fit:cover;border-radius:10px;flex-shrink:0;cursor:pointer;opacity:.7;border:2px solid transparent;background:#f3f4f6;
+      scroll-snap-align:start;transition:opacity .15s ease, border-color .15s ease, transform .15s ease;
+    }
     .thumbnails img:hover{opacity:.95;transform:translateY(-1px);}
     .thumbnails img.active{opacity:1;border-color:var(--gold);}
 
-    /* Extras bajo las miniaturas */
-    .gallery-extras{display:flex;flex-direction:column;gap:12px;margin-top:12px;}
+    /* ===== BLOQUE EXTRAS (WhatsApp + Formulario) ===== */
+    /* Es un hermano del gallery y del info para controlar el orden por dispositivo */
+    .gallery-extras{
+      flex:1 1 520px; max-width:760px; margin-inline:auto; min-width:0;
+      display:flex;flex-direction:column;gap:12px;margin-top:12px;
+    }
     .gallery-extras .actions{justify-content:flex-start;}
 
     /* ===== INFO PANEL ===== */
@@ -50,15 +71,19 @@
     .info h1{font-size:2rem;font-weight:800;line-height:1.1;}
     .price{font-weight:800;font-size:1.6rem;color:var(--gold);}
     .specs{color:var(--muted);font-size:0.95rem;}
-    .desc{color:#1f2937;line-height:1.55;}
 
+    /* Descripción mejorada */
+    .desc{color:#1f2937; text-align:justify; line-height:1.75;}
+    .desc p + p{ margin-top:10px; }
+
+    /* Botones */
     .actions{display:flex;gap:12px;margin-top:6px;flex-wrap:wrap;}
     .btn{padding:10px 14px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:700;}
     .btn.btn-primary{background:linear-gradient(90deg,var(--accent),#ffd95e);color:#000;border:none;box-shadow:0 10px 22px rgba(0,0,0,.10);}
     .btn.btn-ghost{background:#f5f5f5;color:#111;border:1px solid rgba(0,0,0,0.1);}
     .btn svg{width:18px;height:18px;}
 
-    /* ===== CONTACTO ===== */
+    /* Contacto */
     .contact-form{margin-top:0;display:grid;grid-template-columns:1fr;gap:12px;padding:16px;border:1px solid rgba(17,24,39,.08);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.05);background:#fff;}
     .contact-form h3{margin:0 0 4px;font-size:1.25rem;font-weight:800;color:var(--gold);}
     .contact-form .row-3{display:grid;grid-template-columns:1fr;gap:12px;}
@@ -67,6 +92,17 @@
     .contact-form textarea{resize:vertical;min-height:110px;}
     .contact-form input:focus-visible,.contact-form textarea:focus-visible{outline:3px solid rgba(212,175,55,0.22);border-color:var(--gold);}
     .contact-form .btn{justify-self:start;}
+
+    /* Estado disponible / no disponible */
+    .status-pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;font-weight:700;font-size:.85rem;
+      background:#f7f7f8;border:1px solid rgba(17,24,39,.08);
+      width:max-content;
+    }
+    .status-dot{width:10px;height:10px;border-radius:999px;background:#16a34a;}
+    .status-pill.unavailable{background:#fcfcfc;opacity:.95;}
+    .status-pill.unavailable .status-dot{background:#dc2626;}
 
     /* ===== HEADER / NAV ===== */
     header{position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;background:var(--bg);z-index:140;border-bottom:1px solid rgba(0,0,0,0.06);box-shadow:0 8px 26px rgba(0,0,0,0.06);}
@@ -244,17 +280,38 @@
     });
   </script>
 
-  <!-- Lógica de detalle + autoplay 3s y extras bajo miniaturas -->
+  <!-- Lógica de detalle -->
   <script>
     function getParam(name){const p=new URLSearchParams(window.location.search);return p.get(name)||'';}
     function formatCOP(n){if(!n&&n!==0)return'';return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
     function escapeHtml(s){return String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
-    function buildWhatsAppLink(p){
+
+    function buildWhatsAppLink(p, opts={}){
       const phone='573235016747', company='Altorra Inmobiliaria';
-      const price=p.price?('$'+formatCOP(p.price)+' COP'):''; let op='';
-      if(p.operation==='arrendar') op=' / mes'; else if(p.operation==='dias') op=' / noche';
-      const text=`Hola ${company}, me interesa la propiedad "${p.title}" (ID: ${p.id}) en ${p.city} ${price}${op}. ¿Podemos agendar una visita?`;
+      const price=p.price?('$'+formatCOP(p.price)+' COP'):'';
+      let op=''; if(p.operation==='arrendar') op=' / mes'; else if(p.operation==='dias') op=' / noche';
+      const text = opts.customText ?? `Hola ${company}, me interesa la propiedad "${p.title}" (ID: ${p.id}) en ${p.city} ${price}${op}. ¿Podemos agendar una visita?`;
       return 'https://wa.me/'+phone+'?text='+encodeURIComponent(text);
+    }
+
+    /* Descripción → párrafos auto */
+    function splitIntoParagraphs(text){
+      if(!text) return [];
+      if(/\n{2,}/.test(text)) return text.split(/\n{2,}/).map(t=>t.trim()).filter(Boolean);
+      const sentences = text.trim().split(/(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÑ0-9])/);
+      const paras = []; let bucket = [];
+      sentences.forEach(s=>{
+        bucket.push(s);
+        const tooLong = bucket.join(' ').length > 320;
+        if(bucket.length >= 3 || tooLong){ paras.push(bucket.join(' ')); bucket = []; }
+      });
+      if(bucket.length) paras.push(bucket.join(' '));
+      return paras;
+    }
+    function buildDescription(el, text){
+      splitIntoParagraphs(text).forEach(t=>{
+        const p=document.createElement('p'); p.textContent=t; el.appendChild(p);
+      });
     }
 
     async function init(){
@@ -266,6 +323,8 @@
         const data=await res.json();
         const prop=data.find(it=>it.id===id);
         if(!prop){container.innerHTML='<p>Propiedad no encontrada.</p>';return;}
+
+        const isAvailable = Number(prop.available) === 1;
 
         /* ==== GALERÍA ==== */
         const galleryDiv=document.createElement('div'); galleryDiv.className='gallery';
@@ -327,16 +386,54 @@
           setTimeout(start,100);
         })();
 
-        // Extras bajo miniaturas: botón WhatsApp + formulario
+        /* ==== INFO DERECHA (solo texto) ==== */
+        const infoDiv=document.createElement('div'); infoDiv.className='info';
+
+        const h1=document.createElement('h1'); h1.textContent=prop.title||'Propiedad';
+
+        // Estado disponible
+        const status=document.createElement('div');
+        status.className='status-pill'+(isAvailable?'':' unavailable');
+        status.innerHTML=`<span class="status-dot"></span>${isAvailable?'Disponible':'No disponible'}`;
+
+        const specs=document.createElement('div'); specs.className='specs';
+        const parts=[]; if(prop.beds) parts.push(prop.beds+'H'); if(prop.baths) parts.push(prop.baths+'B'); if(prop.sqm) parts.push(prop.sqm+' m²'); if(prop.city) parts.push(prop.city); if(prop.type) parts.push(prop.type.charAt(0).toUpperCase()+prop.type.slice(1));
+        specs.textContent=parts.join(' · ');
+
+        const priceRow=document.createElement('div'); priceRow.className='price';
+        if(prop.price){ if(prop.operation==='arrendar') priceRow.textContent='$'+formatCOP(prop.price)+' COP / mes'; else if(prop.operation==='dias') priceRow.textContent='$'+formatCOP(prop.price)+' COP / noche'; else priceRow.textContent='$'+formatCOP(prop.price)+' COP'; }
+
+        const desc=document.createElement('div'); desc.className='desc';
+        buildDescription(desc, prop.description || '');
+
+        infoDiv.appendChild(h1);
+        infoDiv.appendChild(status);
+        infoDiv.appendChild(specs);
+        infoDiv.appendChild(priceRow);
+        if(desc.childNodes.length) infoDiv.appendChild(desc);
+
+        /* ==== EXTRAS (WhatsApp + Formulario) como HERMANO para controlar orden móvil/desktop ==== */
         const extras=document.createElement('div'); extras.className='gallery-extras';
 
         const actions=document.createElement('div'); actions.className='actions';
-        const whatsapp=document.createElement('a'); whatsapp.className='btn btn-ghost'; whatsapp.href=buildWhatsAppLink(prop); whatsapp.target='_blank'; whatsapp.rel='noopener';
-        whatsapp.innerHTML='<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.52 3.48A11.89 11.89 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.17 1.6 5.98L0 24l6.21-1.62A11.96 11.96 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52ZM12 22a9.93 9.93 0 0 1-5.06-1.4l-.36-.21-3.69.96.99-3.59-.23-.37A9.98 9.98 0 1 1 22 12c0 5.52-4.48 10-10 10Zm5.48-7.55c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.76-1.66-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.46-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.5h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.69.25-1.28.17-1.41-.08-.13-.27-.2-.57-.35Z" fill="currentColor"/></svg> WhatsApp';
+        // Mensaje de WA según disponibilidad
+        const waText = isAvailable
+          ? null
+          : `Hola, me interesa la propiedad "${prop.title}" (ID: ${prop.id}). ¿Podrían avisarme si vuelve a estar disponible?`;
+        const whatsapp=document.createElement('a');
+        whatsapp.className='btn btn-ghost';
+        whatsapp.href = buildWhatsAppLink(prop, { customText: waText });
+        whatsapp.target='_blank'; whatsapp.rel='noopener';
+        whatsapp.innerHTML='<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.52 3.48A11.89 11.89 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.17 1.6 5.98L0 24l6.21-1.62A11.96 11.96 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52ZM12 22a9.93 9.93 0 0 1-5.06-1.4l-.36-.21-3.69.96.99-3.59-.23-.37A9.98 9.98 0 1 1 22 12c0 5.52-4.48 10-10 10Zm5.48-7.55c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.76-1.66-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.46-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.5h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.69.25-1.28.17-1.41-.08-.13-.27-.2-.57-.35Z" fill="currentColor"/></svg> ' + (isAvailable?'WhatsApp':'Preguntar disponibilidad');
         actions.appendChild(whatsapp);
 
         const form=document.createElement('form');
         form.className='contact-form'; form.action='https://formsubmit.co/altorrainmobiliaria@gmail.com'; form.method='POST';
+
+        const msgDefault = isAvailable
+          ? `Hola, estoy interesado(a) en la propiedad "${escapeHtml(prop.title)}". Por favor contácteme.`
+          : `Hola, me interesa la propiedad "${escapeHtml(prop.title)}". ¿Podrían avisarme si vuelve a estar disponible?`;
+
         form.innerHTML=`
           <h3>Solicitar información</h3>
           <input type="hidden" name="_subject" value="Consulta propiedad ${prop.id} - ${escapeHtml(prop.title)}" />
@@ -351,36 +448,40 @@
             <input type="email" name="email" placeholder="Correo electrónico" required />
             <input type="tel" name="phone" placeholder="Número de teléfono" required />
           </div>
-          <textarea name="message" placeholder="Mensaje" rows="4" required>Hola, estoy interesado(a) en la propiedad &quot;${escapeHtml(prop.title)}&quot;. Por favor contácteme.</textarea>
-          <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+          <textarea name="message" placeholder="Mensaje" rows="4" required>${msgDefault}</textarea>
+          <button type="submit" class="btn btn-primary">${isAvailable ? 'Enviar mensaje' : 'Avisarme'}</button>
         `;
 
         extras.appendChild(actions);
         extras.appendChild(form);
 
-        // Montaje de la izquierda (galería completa)
+        /* ==== MONTAJE → ordena para que en móvil sea: Galería → Info → Extras ==== */
+        container.innerHTML='';
+        container.appendChild(galleryDiv);   // Izquierda arriba
+        container.appendChild(infoDiv);      // Derecha (desktop) / debajo (móvil)
+        container.appendChild(extras);       // Debajo de la galería en desktop; después de la descripción en móvil
+
+        // Añadir piezas de galería
         galleryDiv.appendChild(G);
         galleryDiv.appendChild(thumbs);
-        galleryDiv.appendChild(extras);
 
-        /* ==== INFO DERECHA SOLO TEXTO ==== */
-        const infoDiv=document.createElement('div'); infoDiv.className='info';
-        const h1=document.createElement('h1'); h1.textContent=prop.title||'Propiedad';
-        const specs=document.createElement('div'); specs.className='specs';
-        const parts=[]; if(prop.beds) parts.push(prop.beds+'H'); if(prop.baths) parts.push(prop.baths+'B'); if(prop.sqm) parts.push(prop.sqm+' m²'); if(prop.city) parts.push(prop.city); if(prop.type) parts.push(prop.type.charAt(0).toUpperCase()+prop.type.slice(1));
-        specs.textContent=parts.join(' · ');
-        const priceRow=document.createElement('div'); priceRow.className='price';
-        if(prop.price){ if(prop.operation==='arrendar') priceRow.textContent='$'+formatCOP(prop.price)+' COP / mes'; else if(prop.operation==='dias') priceRow.textContent='$'+formatCOP(prop.price)+' COP / noche'; else priceRow.textContent='$'+formatCOP(prop.price)+' COP'; }
-        const desc=document.createElement('p'); desc.className='desc'; desc.textContent=prop.description||'';
-
-        infoDiv.appendChild(h1); infoDiv.appendChild(specs); infoDiv.appendChild(priceRow); if(desc.textContent) infoDiv.appendChild(desc);
-
-        // Montaje general
-        container.innerHTML=''; container.appendChild(galleryDiv); container.appendChild(infoDiv);
-
-        // SEO schema
+        // SEO schema (con disponibilidad)
         try{
-          const schema={"@context":"https://schema.org","@type":"Offer","itemOffered":{"@type":"Residence","name":prop.title,"address":{"@type":"PostalAddress","addressLocality":prop.city,"addressRegion":"Bolívar","addressCountry":"CO"},"numberOfRooms":prop.beds,"numberOfBathroomsTotal":prop.baths,"floorSize":{"@type":"QuantitativeValue","value":prop.sqm,"unitCode":"MTR"}},"price":prop.price,"priceCurrency":"COP","availability":"https://schema.org/InStock"};
+          const schema={
+            "@context":"https://schema.org",
+            "@type":"Offer",
+            "itemOffered":{
+              "@type":"Residence",
+              "name":prop.title,
+              "address":{"@type":"PostalAddress","addressLocality":prop.city,"addressRegion":"Bolívar","addressCountry":"CO"},
+              "numberOfRooms":prop.beds,
+              "numberOfBathroomsTotal":prop.baths,
+              "floorSize":{"@type":"QuantitativeValue","value":prop.sqm,"unitCode":"MTR"}
+            },
+            "price":prop.price,
+            "priceCurrency":"COP",
+            "availability": isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
+          };
           const ld=document.createElement('script'); ld.type='application/ld+json'; ld.textContent=JSON.stringify(schema); document.head.appendChild(ld);
         }catch(e){console.warn('Schema injection error',e);}
       }catch(err){console.error(err); container.innerHTML='<p>Error al cargar la propiedad.</p>'; }
