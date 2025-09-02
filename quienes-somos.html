@@ -27,15 +27,9 @@
     html,body{background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;}
     a{text-decoration:none;color:inherit;}
 
-    /* Evitar que los teléfonos autolink aparezcan oscuros/subrayados */
-    a[href^="tel"], a[x-apple-data-detectors]{
-      color: inherit !important;
-      text-decoration: none !important;
-      font-weight: inherit !important;
-      border-bottom: 0 !important;
-    }
+    a[href^="tel"], a[x-apple-data-detectors]{color:inherit!important;text-decoration:none!important;font-weight:inherit!important;border-bottom:0!important}
 
-    /* ====== ESTILOS DEL HEADER / MENÚ ====== */
+    /* ====== HEADER ====== */
     header{
       position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;
       background:var(--bg);z-index:140;border-bottom:1px solid rgba(0,0,0,0.06);
@@ -68,10 +62,7 @@
     .menu-link{display:block;padding:6px;border-radius:8px;color:#0f1724}
     .menu-link:hover{background:rgba(0,0,0,0.03)}
 
-    .drawer-backdrop{
-      position:fixed;inset:0;background:var(--overlay);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
-      z-index:160;opacity:0;pointer-events:none;transition:opacity .2s ease;
-    }
+    .drawer-backdrop{position:fixed;inset:0;background:var(--overlay);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:160;opacity:0;pointer-events:none;transition:opacity .2s ease}
     .drawer{
       position:fixed;left:0;right:0;top:var(--header-h);
       height:calc(100vh - var(--header-h) - env(safe-area-inset-bottom));
@@ -94,19 +85,16 @@
       .menu-panel{display:none !important}
     }
 
-    /* ====== ESTILOS DEL FOOTER ====== */
+    /* ====== FOOTER ====== */
     footer{background:#0b0b0b;color:#fff;padding:36px 16px}
     .footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
     @media (max-width:920px){ .footer-grid{grid-template-columns:1fr} }
 
-    /* ====== ESTILOS DE ESTA PÁGINA ====== */
-    .hero-about{
-      position:relative; min-height:72vh; display:grid; place-items:center;
-      padding-top:calc(var(--header-h) + 24px); text-align:center; overflow:hidden;
-    }
-    .hero-about .bg{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center top; filter:contrast(1.02) saturate(1.02)}
-    .hero-about .overlay{position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.35) 28%,rgba(0,0,0,.28) 60%,rgba(0,0,0,.22))}
-    .hero-about .inner{position:relative; z-index:1; color:#fff; padding:0 16px; max-width:980px}
+    /* ====== PÁGINA ====== */
+    .hero-about{position:relative;min-height:72vh;display:grid;place-items:center;padding-top:calc(var(--header-h) + 24px);text-align:center;overflow:hidden}
+    .hero-about .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;filter:contrast(1.02) saturate(1.02)}
+    .hero-about .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.35) 28%,rgba(0,0,0,.28) 60%,rgba(0,0,0,.22))}
+    .hero-about .inner{position:relative;z-index:1;color:#fff;padding:0 16px;max-width:980px}
 
     .kicker{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);padding:8px 12px;border-radius:999px;font-weight:700}
     .hero-title{margin:14px 0 6px;font-size:clamp(2.1rem,5.4vw,3.2rem);font-weight:800;line-height:1.05}
@@ -127,20 +115,9 @@
     .list li{display:flex;gap:8px;align-items:flex-start;margin:8px 0}
     .list li::before{content:"✓";color:var(--gold);font-weight:800;margin-top:2px}
 
-    .logo-slot{height:84px;border:1px dashed rgba(17,24,39,.18);border-radius:16px;display:grid;place-items:center;background:#fff;color:#6b7280;font-weight:700}
-
-    /* ---- AJUSTE: mismas dimensiones para las 3 imágenes + mejor carga ---- */
-    .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px} /* ← AJUSTE (antes 2fr 1fr 1fr) */
-    .strip img{
-      width:100%;
-      height:auto;
-      aspect-ratio: 4 / 3;              /* ← AJUSTE: proporción uniforme */
-      object-fit:cover;
-      border-radius:16px;
-      display:block;
-      background:#f5f5f7;
-      content-visibility:auto;          /* ← AJUSTE: no se pintan hasta entrar al viewport */
-    }
+    /* ---- (Antiguo) grid de imágenes: lo dejo por compatibilidad, no afecta nada ---- */
+    .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .strip img{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;border-radius:16px;display:block;background:#f5f5f7;content-visibility:auto}
     @media (max-width:920px){ .strip{grid-template-columns:1fr} }
 
     .cta{text-align:center;padding:28px;border-radius:20px;border:1px solid rgba(17,24,39,.08);background:linear-gradient(180deg,#fff,#fbfbfb)}
@@ -148,38 +125,46 @@
     .quote{font-weight:600;color:#111827}
     .quote small{display:block;color:#6b7280;font-weight:600;margin-top:4px}
 
-    /* Texto del banner en blanco + sombra */
-    .kicker,
-    .hero-title,
-    .hero-sub{
-      color:#fff !important;
-      text-shadow:
+    /* Texto del banner */
+    .kicker,.hero-title,.hero-sub{
+      color:#fff!important;text-shadow:
         0 1px 0 rgba(0,0,0,.35),
         0 2px 6px rgba(0,0,0,.28),
         0 8px 18px rgba(0,0,0,.20);
     }
-    .hero-title{
-      text-shadow:
+    .hero-title{ text-shadow:
         0 1px 0 rgba(0,0,0,.35),
         0 2px 2px rgba(0,0,0,.35),
         0 6px 12px rgba(0,0,0,.28),
-        0 14px 28px rgba(0,0,0,.22);
-    }
+        0 14px 28px rgba(0,0,0,.22) }
 
-    /* Colocar a Sara centrada en la segunda fila del grid de 3 columnas */
-    #equipo .team-sara{grid-column:2;}
-    @media (max-width:920px){
-      #equipo .team-sara{grid-column:auto;}
-    }
+    /* Sara centrada */
+    #equipo .team-sara{grid-column:2}
+    @media (max-width:920px){ #equipo .team-sara{grid-column:auto} }
 
-    /* ---- AJUSTE: tipografía para evitar guiones cortados en #quienes ---- */
-    #quienes .card p{                     /* ← AJUSTE: solo afecta ‘Quiénes somos / Misión / Visión’ */
+    /* ---- Justificar y evitar cortes con guion en #quienes ---- */
+    #quienes .card p{
       text-align:justify;
-      hyphens:none;                       /* sin cortes con guion */
+      hyphens:none;
       word-break:normal;
-      overflow-wrap:break-word;           /* evita desbordes sin partir palabras a la mitad */
-      text-wrap:pretty;                   /* mejor ritmo de líneas cuando hay espacio */
+      overflow-wrap:break-word;
+      text-wrap:pretty;
     }
+
+    /* ---- Testimonios combinados (fotos + reseñas) ---- */
+    .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    @media (max-width:920px){ .testi-grid{grid-template-columns:1fr} }
+    .testi-card{
+      background:#fff;border:1px solid rgba(17,24,39,.08);border-radius:18px;
+      box-shadow:0 12px 32px rgba(17,24,39,.06);
+      overflow:hidden;display:flex;flex-direction:column
+    }
+    .testi-media img{
+      width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;display:block;
+      content-visibility:auto;
+    }
+    .testi-quote{padding:16px 18px 0;font-weight:600;color:#111827;line-height:1.55}
+    .testi-author{padding:8px 18px 18px;color:#6b7280;font-weight:700;display:block}
   </style>
 </head>
 <body>
@@ -192,18 +177,10 @@
       </a>
       <nav aria-label="Menú principal">
         <div class="nav-list">
-          <div class="nav-item" data-size="compact">
-            <button class="nav-btn" data-panel="panel-propiedades" aria-controls="panel-propiedades" aria-expanded="false">Propiedades</button>
-          </div>
-          <div class="nav-item" data-size="mega">
-            <button class="nav-btn" data-panel="panel-servicios" aria-controls="panel-servicios" aria-expanded="false">Servicios</button>
-          </div>
-          <div class="nav-item" data-size="compact">
-            <button class="nav-btn" data-panel="panel-nosotros" aria-controls="panel-nosotros" aria-expanded="false">Nosotros</button>
-          </div>
-          <div class="nav-item">
-            <a class="nav-btn" href="contacto.html">Contacto</a>
-          </div>
+          <div class="nav-item" data-size="compact"><button class="nav-btn" data-panel="panel-propiedades" aria-controls="panel-propiedades" aria-expanded="false">Propiedades</button></div>
+          <div class="nav-item" data-size="mega"><button class="nav-btn" data-panel="panel-servicios" aria-controls="panel-servicios" aria-expanded="false">Servicios</button></div>
+          <div class="nav-item" data-size="compact"><button class="nav-btn" data-panel="panel-nosotros" aria-controls="panel-nosotros" aria-expanded="false">Nosotros</button></div>
+          <div class="nav-item"><a class="nav-btn" href="contacto.html">Contacto</a></div>
         </div>
       </nav>
       <button id="navToggle" class="nav-toggle" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menú">☰ Menú</button>
@@ -251,9 +228,7 @@
   <!-- Menú móvil -->
   <div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
   <aside id="mobileMenu" class="drawer" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle" hidden>
-    <div class="block">
-      <h3 id="mobileMenuTitle" style="margin:0;font-weight:800;color:var(--gold)">Menú</h3>
-    </div>
+    <div class="block"><h3 id="mobileMenuTitle" style="margin:0;font-weight:800;color:var(--gold)">Menú</h3></div>
     <div class="block">
       <h4>Propiedades</h4>
       <a href="propiedades-comprar.html">Comprar</a>
@@ -282,7 +257,7 @@
     </div>
   </aside>
 
-  <!-- ===== CONTENIDO DE QUIÉNES SOMOS ===== -->
+  <!-- ===== CONTENIDO ===== -->
   <section class="hero-about" aria-label="Presentación Altorra">
     <img class="bg" src="/hero-about.png" alt="Familia y asesor inmobiliario en un ambiente cálido, luz de tarde"/>
     <div class="overlay" aria-hidden="true"></div>
@@ -294,7 +269,6 @@
   </section>
 
   <section class="section" id="quienes">
-    <!-- Quienes somos: ancho completo -->
     <div class="card">
       <h2>Quiénes somos</h2>
       <p class="lead">
@@ -307,8 +281,7 @@
       </p>
     </div>
 
-    <!-- Misión y Visión: lado a lado -->
-    <div class="grid two" style="align-items:start; margin-top:16px">
+    <div class="grid two" style="align-items:start;margin-top:16px">
       <div class="card" id="mision">
         <strong style="color:var(--gold)">Misión</strong>
         <p style="margin-top:6px;color:#1f2937">
@@ -415,8 +388,6 @@
         <strong>Yesit Romero</strong>
         <div style="color:var(--muted);font-weight:600;margin-top:4px">Gerente Financiero</div>
       </div>
-
-      <!-- Sara centrada debajo de Guido -->
       <div class="card team-sara" style="text-align:center">
         <strong>Sara Lora</strong>
         <div style="color:var(--muted);font-weight:600;margin-top:4px">Gerente Comercial</div>
@@ -424,34 +395,39 @@
     </div>
   </section>
 
-  <section class="section" aria-label="Imágenes de experiencia Altorra">
-    <div class="strip">
-      <!-- AJUSTE: lazy + async para carga más rápida y coherente -->
-      <img src="/multimedia/experiencia-1.png" alt="Asesoría personalizada en sala, ambiente acogedor" loading="lazy" decoding="async" fetchpriority="low"/>
-      <img src="/multimedia/experiencia-2.png" alt="Pareja revisando planos felices" loading="lazy" decoding="async" fetchpriority="low"/>
-      <img src="/multimedia/experiencia-3.png" alt="Entrega de llaves con luz de atardecer" loading="lazy" decoding="async" fetchpriority="low"/>
-    </div>
-  </section>
-
-  <section class="section">
+  <!-- TESTIMONIOS (fotos + reseña) -->
+  <section class="section" id="testimonios">
     <h2>Opiniones de nuestros clientes</h2>
-    <div class="grid two">
-      <div class="card quote">
-        “Gracias por la atención prestada, por ser tan profesionales y atentos con mi familia, por llenar nuestras expectativas a la hora de adquirir nuestro inmueble.”
-        <small>— Alfredo Sarmiento</small>
-      </div>
-      <div class="card quote">
-        “Muy profesionales en el servicio, excelentes en el asesoramiento, recomendados totalmente.”
-        <small>— Manuel Jiménez</small>
-      </div>
-      <div class="card quote">
-        “Me ayudaron con la venta y me asesoraron en la parte legal. Son responsables, claros y uno se siente con confianza. Muy recomendados.”
-        <small>— Brumalis Colombia</small>
-      </div>
-      <div class="card quote">
-        “Mi experiencia fue excelente desde el primer momento. Su equipo me brindó un servicio rápido, transparente y muy profesional.”
-        <small>— Maria Cuadro</small>
-      </div>
+    <div class="testi-grid">
+      <article class="testi-card">
+        <figure class="testi-media">
+          <img src="/multimedia/experiencia-1.png" alt="Cliente satisfecho durante asesoría"
+               loading="lazy" decoding="async" fetchpriority="low"
+               sizes="(max-width:920px) 100vw, 33vw" />
+        </figure>
+        <blockquote class="testi-quote">“Gracias por la atención prestada, por ser tan profesionales y atentos con mi familia, por llenar nuestras expectativas a la hora de adquirir nuestro inmueble.”</blockquote>
+        <cite class="testi-author">— Alfredo Sarmiento</cite>
+      </article>
+
+      <article class="testi-card">
+        <figure class="testi-media">
+          <img src="/multimedia/experiencia-2.png" alt="Pareja revisando planos"
+               loading="lazy" decoding="async" fetchpriority="low"
+               sizes="(max-width:920px) 100vw, 33vw" />
+        </figure>
+        <blockquote class="testi-quote">“Muy profesionales en el servicio, excelentes en el asesoramiento, recomendados totalmente.”</blockquote>
+        <cite class="testi-author">— Manuel Jiménez</cite>
+      </article>
+
+      <article class="testi-card">
+        <figure class="testi-media">
+          <img src="/multimedia/experiencia-3.png" alt="Entrega de llaves"
+               loading="lazy" decoding="async" fetchpriority="low"
+               sizes="(max-width:920px) 100vw, 33vw" />
+        </figure>
+        <blockquote class="testi-quote">“Mi experiencia fue excelente desde el primer momento. Su equipo me brindó un servicio rápido, transparente y muy profesional.”</blockquote>
+        <cite class="testi-author">— Maria Cuadro</cite>
+      </article>
     </div>
   </section>
 
@@ -469,9 +445,7 @@
       <div>
         <h3 style="margin:0;color:var(--gold);font-weight:800">ALTORRA INMOBILIARIA</h3>
         <p style="color:#cbd5e1;margin-top:8px;line-height:1.4">
-          Administración, Arriendo y Venta de Inmuebles<br/>
-          Avalúos<br/>
-          Servicios Legales Especializados
+          Administración, Arriendo y Venta de Inmuebles<br/>Avalúos<br/>Servicios Legales Especializados
         </p>
         <div style="margin-top:12px;font-weight:800;color:var(--gold)">+57&nbsp;323&nbsp;501&nbsp;6747</div>
       </div>
@@ -527,12 +501,8 @@
         panel.style.visibility = 'hidden';
         panel.style.position = 'fixed';
         panel.style.maxHeight = Math.max(260, window.innerHeight - (MARGIN*2)) + 'px';
-        if(size === 'mega'){
-          panel.style.width = Math.min(920, window.innerWidth - (MARGIN*2)) + 'px';
-        } else {
-          panel.style.width = 'auto';
-          panel.style.maxWidth = Math.min(520, window.innerWidth - (MARGIN*2)) + 'px';
-        }
+        if(size === 'mega'){ panel.style.width = Math.min(920, window.innerWidth - (MARGIN*2)) + 'px'; }
+        else { panel.style.width = 'auto'; panel.style.maxWidth = Math.min(520, window.innerWidth - (MARGIN*2)) + 'px'; }
         const preRect = panel.getBoundingClientRect();
         const bRect = btn.getBoundingClientRect();
         let left;
@@ -638,7 +608,8 @@
         document.body.style.overflow='';
         toggle.setAttribute('aria-expanded','false');
         clearDrawerHeight();
-        window.removeEventListener('resize,', setDrawerHeight);
+        /* FIX: eliminé la coma accidental en 'resize' */
+        window.removeEventListener('resize', setDrawerHeight);
         window.removeEventListener('orientationchange', setDrawerHeight);
         requestAnimationFrame(()=> {
           drawer.hidden = true;
