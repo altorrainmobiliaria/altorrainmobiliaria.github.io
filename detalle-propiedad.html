@@ -6,15 +6,11 @@
   <meta name="format-detection" content="telephone=no" />
   <title>Detalle de propiedad | Altorra</title>
   <meta name="description" content="Detalles de propiedad de Altorra Inmobiliaria" />
-
-  <!-- PWA / Open Graph -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#d4af37" />
   <meta property="og:title" content="Detalles de propiedad | Altorra" />
   <meta property="og:description" content="Descubre los detalles de esta propiedad disponible para comprar, arrendar o rentar por días." />
   <meta property="og:image" content="/img/uploads/comprar1.png" />
-
-  <!-- Fonts (rendimiento) -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet" />
 
@@ -28,23 +24,23 @@
     a{text-decoration:none;color:inherit}
     a[href^="tel"],a[x-apple-data-detectors]{color:inherit!important;text-decoration:none!important;font-weight:inherit!important;border-bottom:0!important}
 
-    /* ===== LAYOUT (dos columnas responsive) ===== */
+    /* ===== LAYOUT ===== */
     main.detail-container{
       max-width:var(--page-max);
       margin:calc(var(--header-h) + 20px) auto 40px;
       padding:0 16px 40px;
       display:flex; flex-wrap:wrap; gap:24px;
     }
-    .gallery, .wa-row, .info, .form-block{min-width:0}
-    /* Orden por defecto (desktop): Galería → WhatsApp → Info → Formulario */
+    .gallery,.info,.form-block,.wa-row{min-width:0}
+
+    /* Desktop: Galería → Formulario (con botones) → Info  */
     .gallery{order:1; flex:1 1 520px; max-width:760px; margin-inline:auto}
-    .wa-row{order:2; flex:1 1 520px; max-width:760px; margin-inline:auto}
+    .form-block{order:2; flex:1 1 520px; max-width:760px; margin-inline:auto}
     .info{order:3; flex:1 1 520px}
-    .form-block{order:4; flex:1 1 520px; max-width:760px; margin-inline:auto}
+    .wa-row{display:none} /* en desktop oculto; en móvil lo muestro */
 
     /* ===== GALLERY ===== */
     .gallery-inner{position:relative}
-    /* Marco con altura constante para que el texto NO salte al cambiar de foto */
     .main-frame{
       width:100%; aspect-ratio:16/9; max-height:clamp(240px,52vh,520px);
       background:#f5f5f7; border-radius:14px; overflow:hidden; display:grid; place-items:center;
@@ -72,12 +68,27 @@
     .thumbnails img:hover{opacity:.95;transform:translateY(-1px)}
     .thumbnails img.active{opacity:1;border-color:var(--gold)}
 
-    /* ===== WhatsApp row ===== */
-    .wa-row{margin-top:8px}
+    /* ===== BOTONES / FORM ===== */
     .actions{display:flex; gap:12px; flex-wrap:wrap}
-    .btn{padding:10px 14px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:700}
-    .btn.btn-ghost{background:#f5f5f5;color:#111;border:1px solid rgba(0,0,0,0.1)}
+    .btn{padding:10px 14px;border-radius:12px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:700;border:0}
     .btn svg{width:18px;height:18px}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),#ffd95e); color:#000; box-shadow:0 10px 22px rgba(0,0,0,.10)}
+    .btn-ghost{background:#f5f5f5;color:#111;border:1px solid rgba(0,0,0,0.1)}
+
+    .contact-form{display:grid;grid-template-columns:1fr;gap:12px;padding:16px;border:1px solid rgba(17,24,39,.08);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.05);background:#fff}
+    .contact-form h3{margin:0 0 4px;font-size:1.25rem;font-weight:800;color:var(--gold)}
+    .contact-form .row-3{display:grid;grid-template-columns:1fr;gap:12px}
+    .contact-form input,.contact-form textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(17,24,39,.16);font-size:1rem;background:#fff;transition:border-color .15s ease, box-shadow .15s ease}
+    .contact-form textarea{resize:vertical;min-height:110px}
+    .contact-form input:focus-visible,.contact-form textarea:focus-visible{outline:3px solid rgba(212,175,55,0.22);border-color:var(--gold)}
+    .form-actions{display:flex; gap:12px; flex-wrap:wrap}
+    /* El WA dentro del formulario solo en desktop */
+    .wa-in-form{display:inline-flex}
+    /* Botones 100% en pantallas angostas */
+    @media (max-width:860px){
+      .form-actions .btn{width:100%; justify-content:center}
+      .wa-in-form{display:none}
+    }
 
     /* ===== INFO ===== */
     .info{display:flex; flex-direction:column; gap:12px}
@@ -85,30 +96,18 @@
     .price{font-weight:800; font-size:clamp(1.2rem, 1.2rem + .6vw, 1.6rem); color:var(--gold)}
     .specs{color:var(--muted); font-size:.95rem}
 
-    /* Pill de estado */
     .status-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;font-weight:700;font-size:.85rem;background:#f7f7f8;border:1px solid rgba(17,24,39,.08);width:max-content}
     .status-dot{width:10px;height:10px;border-radius:999px;background:#16a34a}
     .status-pill.unavailable{background:#fcfcfc;opacity:.95}
     .status-pill.unavailable .status-dot{background:#dc2626}
 
-    /* Badges legibles */
     .spec-badges{display:flex; gap:8px; flex-wrap:wrap}
     .spec-badge{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:12px; background:#f7f7f8; border:1px solid rgba(17,24,39,.08); font-weight:700; font-size:.9rem}
 
-    /* Descripción agradable */
-    .desc{color:#1f2937; text-align:justify; line-height:1.75;
-          hyphens:none; word-break:normal; overflow-wrap:break-word}
+    .desc{color:#1f2937; text-align:justify; line-height:1.75; hyphens:none; word-break:normal; overflow-wrap:break-word}
     .desc p + p{margin-top:10px}
 
-    /* ===== FORM ===== */
-    .contact-form{display:grid;grid-template-columns:1fr;gap:12px;padding:16px;border:1px solid rgba(17,24,39,.08);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.05);background:#fff}
-    .contact-form h3{margin:0 0 4px;font-size:1.25rem;font-weight:800;color:var(--gold)}
-    .contact-form .row-3{display:grid;grid-template-columns:1fr;gap:12px}
-    .contact-form input,.contact-form textarea{width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(17,24,39,.16);font-size:1rem;background:#fff;transition:border-color .15s ease, box-shadow .15s ease}
-    .contact-form textarea{resize:vertical;min-height:110px}
-    .contact-form input:focus-visible,.contact-form textarea:focus-visible{outline:3px solid rgba(212,175,55,0.22);border-color:var(--gold)}
-
-    /* ===== HEADER ===== */
+    /* ===== HEADER / NAV ===== */
     header{position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;background:var(--bg);z-index:140;border-bottom:1px solid rgba(0,0,0,0.06);box-shadow:0 8px 26px rgba(0,0,0,0.06)}
     .container{max-width:var(--page-max);margin:0 auto;width:100%;padding:0 16px;display:flex;align-items:center;gap:12px}
     .brand{display:flex;align-items:center;gap:10px;margin-right:6px}
@@ -138,6 +137,7 @@
     .drawer h4{margin:0 0 8px;color:var(--gold)}
     .drawer a{display:block;padding:8px 2px}
 
+    /* ===== MÓVIL ===== */
     @media (max-width:860px){
       .nav-list{display:none}
       .nav-toggle{display:inline-flex;align-items:center;gap:8px}
@@ -145,7 +145,7 @@
 
       /* Orden móvil: Galería → WhatsApp → Info → Formulario */
       .gallery{order:1; max-width:100%}
-      .wa-row{order:2; max-width:100%}
+      .wa-row{order:2; display:block; max-width:100%}
       .info{order:3}
       .form-block{order:4; max-width:100%}
 
@@ -158,7 +158,7 @@
 
     /* ===== Footer ===== */
     footer{background:#0b0b0b;color:#fff;padding:36px 16px}
-    .footer-grid{max-width:var(--page-max);margin:0 auto;width:100%;padding:0 0;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .footer-grid{max-width:var(--page-max);margin:0 auto;width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
     @media (max-width:920px){.footer-grid{grid-template-columns:1fr}}
   </style>
 </head>
@@ -290,14 +290,12 @@
     <div style="max-width:var(--page-max);margin:18px auto 0;color:#9ca3af;text-align:center;font-size:0.9rem">© 2025 Altorra Inmobiliaria — Hecho con confianza.</div>
   </footer>
 
-  <!-- SW -->
   <script>
     if('serviceWorker' in navigator){
       navigator.serviceWorker.register('/service-worker.js').catch(err=>console.warn('SW registration failed', err));
     }
   </script>
 
-  <!-- Lazy loading por si alguna imagen no lo trae -->
   <script>
     document.addEventListener('DOMContentLoaded', ()=> {
       document.querySelectorAll('img').forEach(img => { if(!img.hasAttribute('loading')) img.setAttribute('loading','lazy'); });
@@ -317,17 +315,16 @@
       return 'https://wa.me/'+phone+'?text='+encodeURIComponent(text);
     }
 
-    /* Parrafado automático amable */
     function splitIntoParagraphs(text){
       if(!text) return [];
       if(/\n{2,}/.test(text)) return text.split(/\n{2,}/).map(t=>t.trim()).filter(Boolean);
-      const sentences = text.trim().split(/(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÑ0-9])/);
+      const sentences=text.trim().split(/(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÑ0-9])/);
       const paras=[]; let bucket=[];
-      sentences.forEach(s=>{ bucket.push(s); const tooLong=bucket.join(' ').length>320; if(bucket.length>=3 || tooLong){ paras.push(bucket.join(' ')); bucket=[]; }});
+      sentences.forEach(s=>{bucket.push(s);const tooLong=bucket.join(' ').length>320;if(bucket.length>=3||tooLong){paras.push(bucket.join(' '));bucket=[];}});
       if(bucket.length) paras.push(bucket.join(' '));
       return paras;
     }
-    function buildDescription(el, text){ splitIntoParagraphs(text).forEach(t=>{ const p=document.createElement('p'); p.textContent=t; el.appendChild(p); }); }
+    function buildDescription(el,text){ splitIntoParagraphs(text).forEach(t=>{const p=document.createElement('p'); p.textContent=t; el.appendChild(p);}); }
 
     async function init(){
       const id=getParam('id'), container=document.getElementById('propertyDetail');
@@ -341,8 +338,7 @@
 
         const isAvailable = Number(prop.available) === 1;
 
-        /* ====== Construcción de nodos ====== */
-        // Galería
+        /* ===== Galería ===== */
         const galleryDiv=document.createElement('div'); galleryDiv.className='gallery';
         const G=document.createElement('div'); G.className='gallery-inner';
 
@@ -350,7 +346,6 @@
         const imgs=imgsRaw.map(src=> (src.startsWith('http')||src.startsWith('//'))?src:(src.startsWith('/')?src:'/'+src));
 
         let currentIndex=0;
-
         const frame=document.createElement('div'); frame.className='main-frame';
         const mainImg=document.createElement('img');
         mainImg.className='main-img'; mainImg.decoding='async'; mainImg.fetchPriority='high';
@@ -360,15 +355,13 @@
 
         const prevBtn=document.createElement('button'); prevBtn.className='arrow prev'; prevBtn.setAttribute('aria-label','Imagen anterior'); prevBtn.innerHTML='&#8249;';
         const nextBtn=document.createElement('button'); nextBtn.className='arrow next'; nextBtn.setAttribute('aria-label','Imagen siguiente'); nextBtn.innerHTML='&#8250;';
-
         const goPrev=()=>{if(!imgs.length)return; currentIndex=(currentIndex-1+imgs.length)%imgs.length; mainImg.src=imgs[currentIndex]; updateActiveThumb();};
         const goNext=()=>{if(!imgs.length)return; currentIndex=(currentIndex+1)%imgs.length; mainImg.src=imgs[currentIndex]; updateActiveThumb();};
-        prevBtn.addEventListener('click', goPrev); nextBtn.addEventListener('click', goNext);
-        document.addEventListener('keydown', e=>{ if(e.key==='ArrowLeft') goPrev(); if(e.key==='ArrowRight') goNext(); });
+        prevBtn.addEventListener('click',goPrev); nextBtn.addEventListener('click',goNext);
+        document.addEventListener('keydown',e=>{ if(e.key==='ArrowLeft') goPrev(); if(e.key==='ArrowRight') goNext(); });
         G.appendChild(prevBtn); G.appendChild(nextBtn);
 
-        // Zoom
-        mainImg.addEventListener('click', ()=>{
+        mainImg.addEventListener('click',()=>{
           const overlay=document.createElement('div');
           Object.assign(overlay.style,{position:'fixed',inset:'0',background:'rgba(0,0,0,0.86)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:'9999',cursor:'zoom-out'});
           const zoomImg=document.createElement('img'); Object.assign(zoomImg.style,{maxWidth:'92%',maxHeight:'92%',objectFit:'contain'}); zoomImg.src=mainImg.src;
@@ -376,19 +369,17 @@
         });
 
         const thumbs=document.createElement('div'); thumbs.className='thumbnails'; const thumbEls=[];
-        imgs.forEach((src,idx)=>{ const t=document.createElement('img'); t.decoding='async'; t.loading='lazy'; t.src=src; t.alt=escapeHtml(prop.title||'Miniatura');
+        imgs.forEach((src,idx)=>{const t=document.createElement('img'); t.decoding='async'; t.loading='lazy'; t.src=src; t.alt=escapeHtml(prop.title||'Miniatura');
           if(idx===0) t.classList.add('active');
           t.addEventListener('click',()=>{currentIndex=idx; mainImg.src=imgs[currentIndex]; updateActiveThumb();});
           thumbEls.push(t); thumbs.appendChild(t);
         });
         function updateActiveThumb(){thumbEls.forEach((el,idx)=>el.classList.toggle('active', idx===currentIndex));}
 
-        // Swipe móvil
         let startX=null;
         mainImg.addEventListener('touchstart',e=>{startX=e.touches[0].clientX;},{passive:true});
         mainImg.addEventListener('touchend',e=>{if(startX===null)return; const dx=e.changedTouches[0].clientX-startX; if(Math.abs(dx)>40){dx<0?goNext():goPrev();} startX=null;},{passive:true});
 
-        // Autoplay 3s (sin mover el texto gracias al frame de altura fija)
         (function autoplay(){
           if(!imgs||imgs.length<2) return;
           const AUTO_MS=3000; let timer=null;
@@ -401,18 +392,18 @@
           setTimeout(start,100);
         })();
 
-        // Bloque WhatsApp (separado para controlar el orden)
+        /* ===== WhatsApp móvil (fila sola) ===== */
         const waRow=document.createElement('div'); waRow.className='wa-row';
-        const actions=document.createElement('div'); actions.className='actions';
+        const actionsMobile=document.createElement('div'); actionsMobile.className='actions';
         const waTextOverride = isAvailable ? null : `Hola, me interesa la propiedad "${prop.title}" (ID: ${prop.id}). ¿Podrían avisarme si vuelve a estar disponible?`;
-        const whatsapp=document.createElement('a');
-        whatsapp.className='btn btn-ghost';
-        whatsapp.href=buildWhatsAppLink(prop, {customText: waTextOverride});
-        whatsapp.target='_blank'; whatsapp.rel='noopener';
-        whatsapp.innerHTML='<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.52 3.48A11.89 11.89 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.17 1.6 5.98L0 24l6.21-1.62A11.96 11.96 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52ZM12 22a9.93 9.93 0 0 1-5.06-1.4l-.36-.21-3.69.96.99-3.59-.23-.37A9.98 9.98 0 1 1 22 12c0 5.52-4.48 10-10 10Zm5.48-7.55c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.76-1.66-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.46-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.5h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.69.25-1.28.17-1.41-.08-.13-.27-.2-.57-.35Z" fill="currentColor"/></svg> ' + (isAvailable?'WhatsApp':'Preguntar disponibilidad');
-        actions.appendChild(whatsapp); waRow.appendChild(actions);
+        const waMobile=document.createElement('a');
+        waMobile.className='btn btn-primary';
+        waMobile.href=buildWhatsAppLink(prop,{customText:waTextOverride});
+        waMobile.target='_blank'; waMobile.rel='noopener';
+        waMobile.innerHTML='<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.52 3.48A11.89 11.89 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.17 1.6 5.98L0 24l6.21-1.62A11.96 11.96 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52ZM12 22a9.93 9.93 0 0 1-5.06-1.4l-.36-.21-3.69.96.99-3.59-.23-.37A9.98 9.98 0 1 1 22 12c0 5.52-4.48 10-10 10Zm5.48-7.55c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.76-1.66-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.46-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.5h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.69.25-1.28.17-1.41-.08-.13-.27-.2-.57-.35Z" fill="currentColor"/></svg> WhatsApp';
+        actionsMobile.appendChild(waMobile); waRow.appendChild(actionsMobile);
 
-        // Info (solo texto)
+        /* ===== INFO ===== */
         const infoDiv=document.createElement('div'); infoDiv.className='info';
         const h1=document.createElement('h1'); h1.textContent=prop.title||'Propiedad';
 
@@ -421,38 +412,37 @@
         status.innerHTML=`<span class="status-dot"></span>${isAvailable?'Disponible':'No disponible'}`;
 
         const badges=document.createElement('div'); badges.className='spec-badges';
-        const bed = (prop.beds||0), bath = (prop.baths||0), sqm = (prop.sqm||0);
-        const badge = (svg,label)=>`<span class="spec-badge">${svg}${label}</span>`;
-        const bedSvg = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 11V7a2 2 0 0 1 2-2h6a4 4 0 0 1 4 4v2h4a2 2 0 0 1 2 2v5h-2v-2H5v2H3v-9h2zm2 4h14v-2a1 1 0 0 0-1-1h-5V9a2 2 0 0 0-2-2H5a1 1 0 0 0-1 1v7z"/></svg>';
-        const bathSvg = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 3a3 3 0 0 1 3 3v5h8a1 1 0 1 1 0 2H5v2h14v2H5a3 3 0 0 1-3-3v-3h6V6a1 1 0 0 0-2 0v1H4V6a3 3 0 0 1 3-3z"/></svg>';
-        const areaSvg = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h16v16H4zM6 6v12h12V6z"/></svg>';
-        badges.innerHTML =
-          (bed? badge(bedSvg, `${bed} ${bed===1?'habitación':'habitaciones'}`):'') +
-          (bath? badge(bathSvg, `${bath} ${bath===1?'baño':'baños'}`):'') +
+        const bed=(prop.beds||0), bath=(prop.baths||0), sqm=(prop.sqm||0);
+        const badge=(svg,label)=>`<span class="spec-badge">${svg}${label}</span>`;
+        const bedSvg='<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 11V7a2 2 0 0 1 2-2h6a4 4 0 0 1 4 4v2h4a2 2 0 0 1 2 2v5h-2v-2H5v2H3v-9h2zm2 4h14v-2a1 1 0 0 0-1-1h-5V9a2 2 0 0 0-2-2H5a1 1 0 0 0-1 1v7z"/></svg>';
+        const bathSvg='<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 3a3 3 0 0 1 3 3v5h8a1 1 0 1 1 0 2H5v2h14v2H5a3 3 0 0 1-3-3v-3h6V6a1 1 0 0 0-2 0v1H4V6a3 3 0 0 1 3-3z"/></svg>';
+        const areaSvg='<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h16v16H4zM6 6v12h12V6z"/></svg>';
+        badges.innerHTML=
+          (bed? badge(bedSvg, `${bed} ${bed===1?'habitación':'habitaciones'}`):'')+
+          (bath? badge(bathSvg, `${bath} ${bath===1?'baño':'baños'}`):'')+
           (sqm? badge(areaSvg, `${sqm} m²`):'');
 
         const specs=document.createElement('div'); specs.className='specs';
-        specs.textContent=[prop.city, prop.type? (prop.type.charAt(0).toUpperCase()+prop.type.slice(1)) : ''].filter(Boolean).join(' · ');
+        specs.textContent=[prop.city, prop.type?(prop.type.charAt(0).toUpperCase()+prop.type.slice(1)):''].filter(Boolean).join(' · ');
 
         const priceRow=document.createElement('div'); priceRow.className='price';
         if(prop.price){ if(prop.operation==='arrendar') priceRow.textContent='$'+formatCOP(prop.price)+' COP / mes'; else if(prop.operation==='dias') priceRow.textContent='$'+formatCOP(prop.price)+' COP / noche'; else priceRow.textContent='$'+formatCOP(prop.price)+' COP'; }
 
         const desc=document.createElement('div'); desc.className='desc'; buildDescription(desc, prop.description||'');
 
-        infoDiv.appendChild(h1);
-        infoDiv.appendChild(status);
-        infoDiv.appendChild(badges);
+        infoDiv.appendChild(h1); infoDiv.appendChild(status); infoDiv.appendChild(badges);
         if(specs.textContent) infoDiv.appendChild(specs);
         if(priceRow.textContent) infoDiv.appendChild(priceRow);
         if(desc.childNodes.length) infoDiv.appendChild(desc);
 
-        // Formulario (separado para ordenar)
+        /* ===== Formulario (desktop debajo de miniaturas) ===== */
         const formBlock=document.createElement('div'); formBlock.className='form-block';
         const form=document.createElement('form');
         form.className='contact-form'; form.action='https://formsubmit.co/altorrainmobiliaria@gmail.com'; form.method='POST';
-        const msgDefault = isAvailable
+        const msgDefault=isAvailable
           ? `Hola, estoy interesado(a) en la propiedad "${escapeHtml(prop.title)}". Por favor contácteme.`
           : `Hola, me interesa la propiedad "${escapeHtml(prop.title)}". ¿Podrían avisarme si vuelve a estar disponible?`;
+        const waInFormHref=buildWhatsAppLink(prop,{customText:waTextOverride});
         form.innerHTML=`
           <h3>Solicitar información</h3>
           <input type="hidden" name="_subject" value="Consulta propiedad ${prop.id} - ${escapeHtml(prop.title)}" />
@@ -468,37 +458,34 @@
             <input type="tel" name="phone" placeholder="Número de teléfono" required />
           </div>
           <textarea name="message" placeholder="Mensaje" rows="4" required>${msgDefault}</textarea>
-          <button type="submit" class="btn btn-ghost">${isAvailable ? 'Enviar mensaje' : 'Avisarme'}</button>
+          <div class="form-actions">
+            <a class="btn btn-primary wa-in-form" href="${waInFormHref}" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.52 3.48A11.89 11.89 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.11.55 4.17 1.6 5.98L0 24l6.21-1.62A11.96 11.96 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52ZM12 22a9.93 9.93 0 0 1-5.06-1.4l-.36-.21-3.69.96.99-3.59-.23-.37A9.98 9.98 0 1 1 22 12c0 5.52-4.48 10-10 10Zm5.48-7.55c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.79-1.49-1.76-1.66-2.06-.17-.3-.02-.46.13-.61.13-.13.3-.35.46-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.5h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2.01-1.41.25-.69.25-1.28.17-1.41-.08-.13-.27-.2-.57-.35Z" fill="currentColor"/></svg>
+              WhatsApp
+            </a>
+            <button type="submit" class="btn btn-primary">${isAvailable ? 'Enviar mensaje' : 'Avisarme'}</button>
+          </div>
         `;
         formBlock.appendChild(form);
 
         /* ===== Montaje ===== */
-        const containerEl = container;
-        containerEl.innerHTML='';
-        // Galería + miniaturas
+        container.innerHTML='';
         galleryDiv.appendChild(G);
         galleryDiv.appendChild(thumbs);
-
-        containerEl.appendChild(galleryDiv);
-        containerEl.appendChild(waRow);
-        containerEl.appendChild(infoDiv);
-        containerEl.appendChild(formBlock);
+        container.appendChild(galleryDiv);
+        container.appendChild(formBlock);
+        container.appendChild(infoDiv);
+        container.appendChild(waRow); /* visible solo en móvil */
 
         /* ===== SEO Schema ===== */
         try{
-          const schema={
-            "@context":"https://schema.org",
-            "@type":"Offer",
-            "itemOffered":{
-              "@type":"Residence",
-              "name":prop.title,
+          const schema={"@context":"https://schema.org","@type":"Offer",
+            "itemOffered":{"@type":"Residence","name":prop.title,
               "address":{"@type":"PostalAddress","addressLocality":prop.city,"addressRegion":"Bolívar","addressCountry":"CO"},
               "numberOfRooms":prop.beds,"numberOfBathroomsTotal":prop.baths,
-              "floorSize":{"@type":"QuantitativeValue","value":prop.sqm,"unitCode":"MTR"}
-            },
-            "price":prop.price, "priceCurrency":"COP",
-            "availability": isAvailable ? "https://schema.org/InStock" : "https://schema.org/OutOfStock"
-          };
+              "floorSize":{"@type":"QuantitativeValue","value":prop.sqm,"unitCode":"MTR"}},
+            "price":prop.price,"priceCurrency":"COP",
+            "availability":isAvailable?"https://schema.org/InStock":"https://schema.org/OutOfStock"};
           const ld=document.createElement('script'); ld.type='application/ld+json'; ld.textContent=JSON.stringify(schema); document.head.appendChild(ld);
         }catch(e){console.warn('Schema injection error',e);}
       }catch(err){ console.error(err); container.innerHTML='<p>Error al cargar la propiedad.</p>'; }
@@ -506,7 +493,7 @@
     document.addEventListener('DOMContentLoaded', init);
   </script>
 
-  <!-- Scripts de menú (sin cambios funcionales) -->
+  <!-- Scripts menú -->
   <script>
     (function(){
       const MARGIN=12; let open=null; const supportsHover=window.matchMedia('(hover: hover)').matches;
