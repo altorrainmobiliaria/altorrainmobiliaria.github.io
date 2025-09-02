@@ -129,9 +129,45 @@
 
     .logo-slot{height:84px;border:1px dashed rgba(17,24,39,.18);border-radius:16px;display:grid;place-items:center;background:#fff;color:#6b7280;font-weight:700}
 
-    .strip{display:grid;grid-template-columns:2fr 1fr 1fr;gap:14px}
-    .strip img{width:100%;height:100%;object-fit:cover;border-radius:16px;display:block;background:#f5f5f7}
-    @media (max-width:920px){ .strip{grid-template-columns:1fr} }
+    /* ===== Galería inferior (mejor presencia sin captions) ===== */
+    .strip{
+      display:grid;
+      grid-template-columns:2fr 1fr 1fr;
+      gap:14px;
+    }
+    .strip img{
+      width:100%;
+      height:auto;
+      display:block;
+      object-fit:cover;
+      border-radius:16px;
+      background:#f5f5f7;
+
+      /* nuevas mejoras visuales (no invasivas) */
+      aspect-ratio: 16 / 10;              /* proporción base agradable */
+      box-shadow:0 10px 24px rgba(17,24,39,.10);
+      transition:transform .35s ease, box-shadow .35s ease, filter .35s ease;
+      will-change:transform;
+    }
+    /* Primera imagen más panorámica para jerarquía visual */
+    .strip img:nth-child(1){
+      aspect-ratio: 16 / 9;
+    }
+    /* Las dos laterales más cuadradas para balance */
+    .strip img:nth-child(2),
+    .strip img:nth-child(3){
+      aspect-ratio: 1 / 1;
+      object-position:center;
+    }
+    .strip img:hover{
+      transform:scale(1.02);
+      box-shadow:0 16px 36px rgba(17,24,39,.16);
+      filter:saturate(1.04) contrast(1.02);
+    }
+    @media (max-width:920px){
+      .strip{ grid-template-columns:1fr; }
+      .strip img{ aspect-ratio: 16 / 10; }
+    }
 
     .cta{text-align:center;padding:28px;border-radius:20px;border:1px solid rgba(17,24,39,.08);background:linear-gradient(180deg,#fff,#fbfbfb)}
     .btn{display:inline-flex;align-items:center;gap:10px;padding:12px 18px;border-radius:14px;background:linear-gradient(90deg,var(--accent),#ffd95e);color:#111;border:none;font-weight:800;cursor:pointer;box-shadow:0 10px 22px rgba(17,24,39,.10)}
@@ -160,6 +196,17 @@
     #equipo .team-sara{grid-column:2;}
     @media (max-width:920px){
       #equipo .team-sara{grid-column:auto;}
+    }
+
+    /* ===== Justificado de textos solicitados ===== */
+    #quienes .lead,
+    #quienes .card p,
+    #mision p,
+    #vision p{
+      text-align: justify;
+      text-justify: inter-word;
+      hyphens: auto;
+      -webkit-hyphens: auto;
     }
   </style>
 </head>
@@ -624,7 +671,7 @@
         document.body.style.overflow='';
         toggle.setAttribute('aria-expanded','false');
         clearDrawerHeight();
-        window.removeEventListener('resize', setDrawerHeight);
+        window.removeEventListener('resize,', setDrawerHeight);
         window.removeEventListener('orientationchange', setDrawerHeight);
         requestAnimationFrame(()=> {
           drawer.hidden = true;
