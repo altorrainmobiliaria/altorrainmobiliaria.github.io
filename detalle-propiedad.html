@@ -22,24 +22,45 @@
     a{text-decoration:none;color:inherit;}
     a[href^="tel"], a[x-apple-data-detectors]{color:inherit !important;text-decoration:none !important;font-weight:inherit !important;border-bottom:0 !important;}
 
-    /* ===== LAYOUT ===== */
+    /* ===== LAYOUT (Grid con 2 columnas) ===== */
     main.detail-container{
       max-width:var(--page-max);
       margin:calc(var(--header-h) + 20px) auto 40px;
       padding:0 16px 40px;
-      display:flex;flex-wrap:wrap;gap:24px;overflow:visible;
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:24px;
+      overflow:visible;
+    }
+    @media (min-width:980px){
+      main.detail-container{
+        grid-template-columns: 1fr 1fr; /* izquierda: galería+extras / derecha: info */
+        align-items:start;
+      }
     }
     [id]{scroll-margin-top:calc(var(--header-h) + 12px);}
 
+    /* ===== Columna izquierda ===== */
+    .left-col{display:flex;flex-direction:column;gap:12px;min-width:0;max-width:760px;margin-inline:auto;width:100%;}
+
     /* ===== GALLERY ===== */
-    .gallery{flex:1 1 520px;position:relative;overflow:visible;max-width:760px;margin-inline:auto;min-width:0;}
+    .gallery{position:relative;overflow:visible;min-width:0;}
     .gallery-inner{position:relative;}
     .main-img{
-      width:100%;height:auto;max-height:clamp(240px,52vh,520px);
-      object-fit:contain;border-radius:14px;margin-bottom:10px;background:#f5f5f7;display:block;
-      transition:transform .28s ease, box-shadow .28s ease;cursor:zoom-in;box-shadow:0 10px 26px rgba(0,0,0,.06);
+      width:100%;
+      /* altura estable para evitar “saltos” cuando cambia la imagen */
+      height:clamp(280px, 52vh, 520px);
+      object-fit:contain;
+      border-radius:14px;
+      margin-bottom:10px;
+      background:#f5f5f7;
+      display:block;
+      transition:transform .28s ease, box-shadow .28s ease;
+      cursor:zoom-in;
+      box-shadow:0 10px 26px rgba(0,0,0,.06);
     }
     .main-img:hover{transform:scale(1.02);box-shadow:0 16px 36px rgba(0,0,0,.12);}
+
     .gallery .arrow{
       position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:999px;border:none;
       background:#fff;color:#111;cursor:pointer;z-index:3;display:flex;align-items:center;justify-content:center;
@@ -59,15 +80,11 @@
     .thumbnails img.active{opacity:1;border-color:var(--gold);}
 
     /* ===== BLOQUE EXTRAS (WhatsApp + Formulario) ===== */
-    /* Es un hermano del gallery y del info para controlar el orden por dispositivo */
-    .gallery-extras{
-      flex:1 1 520px; max-width:760px; margin-inline:auto; min-width:0;
-      display:flex;flex-direction:column;gap:12px;margin-top:12px;
-    }
+    .gallery-extras{display:flex;flex-direction:column;gap:12px;}
     .gallery-extras .actions{justify-content:flex-start;}
 
-    /* ===== INFO PANEL ===== */
-    .info{flex:1 1 520px;display:flex;flex-direction:column;gap:12px;min-width:0;}
+    /* ===== INFO PANEL (columna derecha) ===== */
+    .info{display:flex;flex-direction:column;gap:12px;min-width:0;}
     .info h1{font-size:2rem;font-weight:800;line-height:1.1;}
     .price{font-weight:800;font-size:1.6rem;color:var(--gold);}
     .specs{color:var(--muted);font-size:0.95rem;}
@@ -84,7 +101,7 @@
     .btn svg{width:18px;height:18px;}
 
     /* Contacto */
-    .contact-form{margin-top:0;display:grid;grid-template-columns:1fr;gap:12px;padding:16px;border:1px solid rgba(17,24,39,.08);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.05);background:#fff;}
+    .contact-form{display:grid;grid-template-columns:1fr;gap:12px;padding:16px;border:1px solid rgba(17,24,39,.08);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.05);background:#fff;}
     .contact-form h3{margin:0 0 4px;font-size:1.25rem;font-weight:800;color:var(--gold);}
     .contact-form .row-3{display:grid;grid-template-columns:1fr;gap:12px;}
     @media (min-width:720px){.contact-form .row-3{grid-template-columns:repeat(3,1fr);}}
@@ -326,6 +343,10 @@
 
         const isAvailable = Number(prop.available) === 1;
 
+        /* ====== COLUMNA IZQUIERDA (galería + extras) ====== */
+        const leftCol = document.createElement('div');
+        leftCol.className = 'left-col';
+
         /* ==== GALERÍA ==== */
         const galleryDiv=document.createElement('div'); galleryDiv.className='gallery';
         const G=document.createElement('div'); G.className='gallery-inner';
@@ -386,40 +407,16 @@
           setTimeout(start,100);
         })();
 
-        /* ==== INFO DERECHA (solo texto) ==== */
-        const infoDiv=document.createElement('div'); infoDiv.className='info';
+        // Añadir piezas de galería a la izquierda
+        galleryDiv.appendChild(G);
+        galleryDiv.appendChild(thumbs);
+        leftCol.appendChild(galleryDiv);
 
-        const h1=document.createElement('h1'); h1.textContent=prop.title||'Propiedad';
-
-        // Estado disponible
-        const status=document.createElement('div');
-        status.className='status-pill'+(isAvailable?'':' unavailable');
-        status.innerHTML=`<span class="status-dot"></span>${isAvailable?'Disponible':'No disponible'}`;
-
-        const specs=document.createElement('div'); specs.className='specs';
-        const parts=[]; if(prop.beds) parts.push(prop.beds+'H'); if(prop.baths) parts.push(prop.baths+'B'); if(prop.sqm) parts.push(prop.sqm+' m²'); if(prop.city) parts.push(prop.city); if(prop.type) parts.push(prop.type.charAt(0).toUpperCase()+prop.type.slice(1));
-        specs.textContent=parts.join(' · ');
-
-        const priceRow=document.createElement('div'); priceRow.className='price';
-        if(prop.price){ if(prop.operation==='arrendar') priceRow.textContent='$'+formatCOP(prop.price)+' COP / mes'; else if(prop.operation==='dias') priceRow.textContent='$'+formatCOP(prop.price)+' COP / noche'; else priceRow.textContent='$'+formatCOP(prop.price)+' COP'; }
-
-        const desc=document.createElement('div'); desc.className='desc';
-        buildDescription(desc, prop.description || '');
-
-        infoDiv.appendChild(h1);
-        infoDiv.appendChild(status);
-        infoDiv.appendChild(specs);
-        infoDiv.appendChild(priceRow);
-        if(desc.childNodes.length) infoDiv.appendChild(desc);
-
-        /* ==== EXTRAS (WhatsApp + Formulario) como HERMANO para controlar orden móvil/desktop ==== */
+        /* ==== EXTRAS (WhatsApp arriba + Formulario debajo) ==== */
         const extras=document.createElement('div'); extras.className='gallery-extras';
 
         const actions=document.createElement('div'); actions.className='actions';
-        // Mensaje de WA según disponibilidad
-        const waText = isAvailable
-          ? null
-          : `Hola, me interesa la propiedad "${prop.title}" (ID: ${prop.id}). ¿Podrían avisarme si vuelve a estar disponible?`;
+        const waText = isAvailable ? null : `Hola, me interesa la propiedad "${prop.title}" (ID: ${prop.id}). ¿Podrían avisarme si vuelve a estar disponible?`;
         const whatsapp=document.createElement('a');
         whatsapp.className='btn btn-ghost';
         whatsapp.href = buildWhatsAppLink(prop, { customText: waText });
@@ -429,11 +426,9 @@
 
         const form=document.createElement('form');
         form.className='contact-form'; form.action='https://formsubmit.co/altorrainmobiliaria@gmail.com'; form.method='POST';
-
         const msgDefault = isAvailable
           ? `Hola, estoy interesado(a) en la propiedad "${escapeHtml(prop.title)}". Por favor contácteme.`
           : `Hola, me interesa la propiedad "${escapeHtml(prop.title)}". ¿Podrían avisarme si vuelve a estar disponible?`;
-
         form.innerHTML=`
           <h3>Solicitar información</h3>
           <input type="hidden" name="_subject" value="Consulta propiedad ${prop.id} - ${escapeHtml(prop.title)}" />
@@ -454,16 +449,37 @@
 
         extras.appendChild(actions);
         extras.appendChild(form);
+        leftCol.appendChild(extras);
 
-        /* ==== MONTAJE → ordena para que en móvil sea: Galería → Info → Extras ==== */
+        /* ==== INFO DERECHA (solo texto) ==== */
+        const infoDiv=document.createElement('div'); infoDiv.className='info';
+
+        const h1=document.createElement('h1'); h1.textContent=prop.title||'Propiedad';
+
+        const status=document.createElement('div');
+        status.className='status-pill'+(isAvailable?'':' unavailable');
+        status.innerHTML=`<span class="status-dot"></span>${isAvailable?'Disponible':'No disponible'}`;
+
+        const specs=document.createElement('div'); specs.className='specs';
+        const parts=[]; if(prop.beds) parts.push(prop.beds+'H'); if(prop.baths) parts.push(prop.baths+'B'); if(prop.sqm) parts.push(prop.sqm+' m²'); if(prop.city) parts.push(prop.city); if(prop.type) parts.push(prop.type.charAt(0).toUpperCase()+prop.type.slice(1));
+        specs.textContent=parts.join(' · ');
+
+        const priceRow=document.createElement('div'); priceRow.className='price';
+        if(prop.price){ if(prop.operation==='arrendar') priceRow.textContent='$'+formatCOP(prop.price)+' COP / mes'; else if(prop.operation==='dias') priceRow.textContent='$'+formatCOP(prop.price)+' COP / noche'; else priceRow.textContent='$'+formatCOP(prop.price)+' COP'; }
+
+        const desc=document.createElement('div'); desc.className='desc';
+        buildDescription(desc, prop.description || '');
+
+        infoDiv.appendChild(h1);
+        infoDiv.appendChild(status);
+        infoDiv.appendChild(specs);
+        infoDiv.appendChild(priceRow);
+        if(desc.childNodes.length) infoDiv.appendChild(desc);
+
+        /* ==== MONTAJE (Grid 2 columnas) ==== */
         container.innerHTML='';
-        container.appendChild(galleryDiv);   // Izquierda arriba
-        container.appendChild(infoDiv);      // Derecha (desktop) / debajo (móvil)
-        container.appendChild(extras);       // Debajo de la galería en desktop; después de la descripción en móvil
-
-        // Añadir piezas de galería
-        galleryDiv.appendChild(G);
-        galleryDiv.appendChild(thumbs);
+        container.appendChild(leftCol);  // Columna izquierda
+        container.appendChild(infoDiv);  // Columna derecha
 
         // SEO schema (con disponibilidad)
         try{
