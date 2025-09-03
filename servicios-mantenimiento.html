@@ -5,155 +5,99 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Servicio próximamente | Altorra Inmobiliaria</title>
   <meta name="description" content="Este servicio aún no está disponible. Muy pronto estará disponible con Altorra Inmobiliaria." />
-  <meta name="theme-color" content="#0b0b0b" />
+  <meta name="theme-color" content="#ffffff" />
   <meta name="robots" content="noindex, nofollow" />
   <meta property="og:title" content="Muy pronto con Altorra Inmobiliaria" />
   <meta property="og:description" content="Estamos preparando este servicio para ti." />
   <meta property="og:image" content="https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-ago-2025-10-31-20.png" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet" />
   <link rel="prefetch" href="index.html" as="document" />
   <style>
     :root{
       --gold:#d4af37;
       --accent:#ffb400;
-      --ink:#0b0b0b;
-      --text:#f8fafc;
-      --muted:#a8b0bb;
-      --glass:rgba(255,255,255,.06);
-      --ring:rgba(212,175,55,.35);
-      --shadow:0 20px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
+      --bg:#ffffff;            /* ← fondo totalmente blanco */
+      --ink:#111827;           /* texto principal */
+      --muted:#6b7280;         /* texto secundario */
+      --line:#e5e7eb;          /* bordes sutiles */
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
+      background:var(--bg);    /* ← blanco puro */
+      color:var(--ink);
       font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;
-      color:var(--text);
-      background: radial-gradient(1200px 800px at 15% 10%, rgba(255,255,255,.06), transparent 55%),
-                  radial-gradient(1200px 800px at 85% 90%, rgba(212,175,55,.10), transparent 55%),
-                  linear-gradient(180deg,#0b0b0b,#121212 38%, #0d0d0d);
-      display:grid;
-      place-items:center;
+      display:grid; place-items:center;
       padding:clamp(16px,3vw,36px);
     }
-    .wrap{
-      width:min(960px, 100%);
-      display:grid;
-      gap:18px;
-      align-items:center;
-      justify-items:center;
-      text-align:center;
-    }
+    main.wrap{width:min(960px,100%); display:grid; gap:18px; text-align:center}
     .card{
-      width:100%;
+      background:#fff;
+      border:1px solid var(--line);
       border-radius:24px;
-      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.10);
-      box-shadow:var(--shadow);
       padding:clamp(20px,4vw,36px);
-      position:relative;
-      overflow:hidden;
-      isolation:isolate;
-    }
-    /* sutil brillo diagonal */
-    .card::after{
-      content:"";
-      position:absolute; inset:-60%;
-      background:
-        conic-gradient(from 210deg at 50% 50%, rgba(212,175,55,.18), transparent 35%, transparent 65%, rgba(255,255,255,.08));
-      transform:rotate(8deg);
-      filter:blur(28px);
-      z-index:-1;
-      opacity:.55;
-      pointer-events:none;
+      box-shadow:0 10px 30px rgba(17,24,39,.06);
     }
 
     .logo{
       width:68px;height:68px;border-radius:16px;display:grid;place-items:center;
-      background:linear-gradient(180deg,#1a1a1a,#101010);
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow:0 10px 24px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.06);
+      background:#fff;border:1px solid var(--line);
+      box-shadow:0 8px 20px rgba(17,24,39,.06), inset 0 1px 0 rgba(255,255,255,.6);
       margin:0 auto 4px;
     }
-    .logo img{width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35))}
+    .logo img{width:44px;height:44px;object-fit:contain}
 
     .kicker{
       display:inline-flex;align-items:center;gap:8px;
       padding:8px 12px;border-radius:999px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.14);
-      font-weight:700;color:#e5e7eb;
+      background:#fff;border:1px solid var(--line);
+      font-weight:700;color:var(--ink);
     }
     .title{
       margin:10px 0 6px;
       font-size:clamp(1.6rem, 1.2rem + 2.2vw, 2.6rem);
       font-weight:800; line-height:1.07; letter-spacing:-.02em;
-      color:#fff;
+      color:var(--ink);
       text-wrap:balance;
-      text-shadow:0 10px 28px rgba(0,0,0,.35);
     }
     .lead{
-      margin:0 auto;
-      color:var(--muted);
-      font-weight:600;
-      max-width:62ch;
-      text-wrap:pretty;
+      margin:0 auto; color:var(--muted); font-weight:600; max-width:62ch; text-wrap:pretty;
     }
 
-    /* Contador + anillo */
-    .counter{
-      display:grid; place-items:center; gap:10px; margin:18px 0 6px;
-    }
-    .ring{
-      width:126px;height:126px; display:grid; place-items:center; position:relative;
-      filter:drop-shadow(0 10px 26px rgba(212,175,55,.25));
-    }
+    /* Contador circular */
+    .counter{display:grid; place-items:center; gap:10px; margin:18px 0 6px}
+    .ring{width:126px;height:126px; display:grid; place-items:center; position:relative}
     .ring svg{transform:rotate(-90deg)}
-    .ring .bg{stroke:rgba(255,255,255,.14)}
+    .ring .bg{stroke:var(--line)}
     .ring .fg{stroke:var(--gold); transition:stroke-dashoffset .4s ease}
-    .ring .glow{stroke:var(--accent); opacity:.55; filter:blur(1px)}
+    .ring .glow{stroke:var(--accent); opacity:.8; filter:blur(.6px)}
     .n{
       position:absolute; inset:0; display:grid; place-items:center;
       font-size:clamp(1.6rem, 1.2rem + 2vw, 2.2rem);
-      font-weight:800; color:#fff;
-      text-shadow:0 6px 18px rgba(0,0,0,.35);
+      font-weight:800; color:var(--ink);
     }
-    .hint{
-      color:#cbd5e1; font-weight:600;
-    }
+    .hint{color:var(--muted); font-weight:600}
 
     .actions{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:10px}
     .btn{
-      --pad:12px 18px;
-      padding:var(--pad);
-      border-radius:14px;
-      border:1px solid rgba(255,255,255,.14);
-      background:
-        linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02)),
-        linear-gradient(90deg,var(--accent),#ffd95e);
-      color:#111; font-weight:800; cursor:pointer;
-      box-shadow:0 14px 32px rgba(255, 204, 0, .28), inset 0 1px 0 rgba(255,255,255,.35);
-      transition:transform .12s ease, box-shadow .2s ease, filter .2s ease;
+      padding:12px 18px; border-radius:14px; border:1px solid var(--line);
+      background:linear-gradient(90deg,var(--accent),#ffd95e); color:#111; font-weight:800; cursor:pointer;
+      box-shadow:0 10px 22px rgba(255,204,0,.22), inset 0 1px 0 rgba(255,255,255,.65);
+      transition:transform .12s ease;
     }
     .btn:hover{transform:translateY(-1px)}
-    .btn:focus-visible{outline:4px solid var(--ring); outline-offset:2px}
+    .btn:focus-visible{outline:4px solid rgba(212,175,55,.35); outline-offset:2px}
     .btn.secondary{
-      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
-      color:#fff;
-      box-shadow:var(--shadow);
+      background:#fff; color:var(--ink); border-color:var(--line); box-shadow:0 8px 20px rgba(17,24,39,.06);
     }
 
-    .fine{
-      margin-top:6px;
-      color:#9aa5b1; font-size:.95rem; text-wrap:pretty;
-    }
+    .fine{margin-top:6px; color:#94a3b8; font-size:.95rem; text-wrap:pretty}
 
-    /* accesibilidad: menos movimiento */
     @media (prefers-reduced-motion:reduce){
       .ring .fg{transition:none}
       .btn{transition:none}
-      .card::after{display:none}
     }
   </style>
 </head>
@@ -170,7 +114,6 @@
 
       <div class="counter" aria-live="polite" aria-atomic="true">
         <div class="ring" aria-hidden="true">
-          <!-- SVG progress ring -->
           <svg width="126" height="126" viewBox="0 0 126 126" fill="none">
             <defs>
               <linearGradient id="g1" x1="0" y1="0" x2="126" y2="126" gradientUnits="userSpaceOnUse">
@@ -224,13 +167,11 @@
         glow.style.strokeDasharray = CIRC.toFixed(3);
         glow.style.strokeDashoffset = offset.toFixed(3);
       }
-
       function render(){
         countEl.textContent = String(t);
         countTextEl.textContent = String(t);
         setDash(t);
       }
-
       function tick(){
         if(paused) return;
         t = Math.max(0, t - 1);
@@ -240,16 +181,8 @@
           safeGo(home);
         }
       }
-
-      function start(){
-        render();
-        timer = setInterval(tick, 1000);
-      }
-
-      function safeGo(url){
-        try{ window.location.assign(url); }
-        catch(e){ window.location.href = url; }
-      }
+      function start(){ render(); timer = setInterval(tick, 1000); }
+      function safeGo(url){ try{ window.location.assign(url); } catch(e){ window.location.href = url; } }
 
       goBtn.addEventListener('click', ()=> safeGo(home));
       pauseBtn.addEventListener('click', ()=>{
@@ -257,19 +190,12 @@
         pauseBtn.setAttribute('aria-pressed', String(paused));
         pauseBtn.textContent = paused ? 'Reanudar contador' : 'Pausar contador';
       });
-
-      // Accesibilidad: pausar si el usuario cambia de pestaña
       document.addEventListener('visibilitychange', ()=>{
         if(document.hidden){ paused = true; pauseBtn.setAttribute('aria-pressed','true'); pauseBtn.textContent = 'Reanudar contador'; }
       });
-
-      // Respetar preferencias de movimiento
       if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-        // sin animación, pero con cuenta regresiva y redirección
-        fg.style.transition = 'none';
-        glow.style.transition = 'none';
+        fg.style.transition = 'none'; glow.style.transition = 'none';
       }
-
       start();
     })();
   </script>
