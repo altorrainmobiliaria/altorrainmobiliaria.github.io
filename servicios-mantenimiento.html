@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Servicio próximamente | Altorra Inmobiliaria</title>
+  <meta name="description" content="Este servicio aún no está disponible. Muy pronto estará disponible con Altorra Inmobiliaria." />
+  <meta name="theme-color" content="#0b0b0b" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta property="og:title" content="Muy pronto con Altorra Inmobiliaria" />
+  <meta property="og:description" content="Estamos preparando este servicio para ti." />
+  <meta property="og:image" content="https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-ago-2025-10-31-20.png" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet" />
+  <link rel="prefetch" href="index.html" as="document" />
+  <style>
+    :root{
+      --gold:#d4af37;
+      --accent:#ffb400;
+      --ink:#0b0b0b;
+      --text:#f8fafc;
+      --muted:#a8b0bb;
+      --glass:rgba(255,255,255,.06);
+      --ring:rgba(212,175,55,.35);
+      --shadow:0 20px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+      color:var(--text);
+      background: radial-gradient(1200px 800px at 15% 10%, rgba(255,255,255,.06), transparent 55%),
+                  radial-gradient(1200px 800px at 85% 90%, rgba(212,175,55,.10), transparent 55%),
+                  linear-gradient(180deg,#0b0b0b,#121212 38%, #0d0d0d);
+      display:grid;
+      place-items:center;
+      padding:clamp(16px,3vw,36px);
+    }
+    .wrap{
+      width:min(960px, 100%);
+      display:grid;
+      gap:18px;
+      align-items:center;
+      justify-items:center;
+      text-align:center;
+    }
+    .card{
+      width:100%;
+      border-radius:24px;
+      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.10);
+      box-shadow:var(--shadow);
+      padding:clamp(20px,4vw,36px);
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+    }
+    /* sutil brillo diagonal */
+    .card::after{
+      content:"";
+      position:absolute; inset:-60%;
+      background:
+        conic-gradient(from 210deg at 50% 50%, rgba(212,175,55,.18), transparent 35%, transparent 65%, rgba(255,255,255,.08));
+      transform:rotate(8deg);
+      filter:blur(28px);
+      z-index:-1;
+      opacity:.55;
+      pointer-events:none;
+    }
+
+    .logo{
+      width:68px;height:68px;border-radius:16px;display:grid;place-items:center;
+      background:linear-gradient(180deg,#1a1a1a,#101010);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 10px 24px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.06);
+      margin:0 auto 4px;
+    }
+    .logo img{width:44px;height:44px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35))}
+
+    .kicker{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      font-weight:700;color:#e5e7eb;
+    }
+    .title{
+      margin:10px 0 6px;
+      font-size:clamp(1.6rem, 1.2rem + 2.2vw, 2.6rem);
+      font-weight:800; line-height:1.07; letter-spacing:-.02em;
+      color:#fff;
+      text-wrap:balance;
+      text-shadow:0 10px 28px rgba(0,0,0,.35);
+    }
+    .lead{
+      margin:0 auto;
+      color:var(--muted);
+      font-weight:600;
+      max-width:62ch;
+      text-wrap:pretty;
+    }
+
+    /* Contador + anillo */
+    .counter{
+      display:grid; place-items:center; gap:10px; margin:18px 0 6px;
+    }
+    .ring{
+      width:126px;height:126px; display:grid; place-items:center; position:relative;
+      filter:drop-shadow(0 10px 26px rgba(212,175,55,.25));
+    }
+    .ring svg{transform:rotate(-90deg)}
+    .ring .bg{stroke:rgba(255,255,255,.14)}
+    .ring .fg{stroke:var(--gold); transition:stroke-dashoffset .4s ease}
+    .ring .glow{stroke:var(--accent); opacity:.55; filter:blur(1px)}
+    .n{
+      position:absolute; inset:0; display:grid; place-items:center;
+      font-size:clamp(1.6rem, 1.2rem + 2vw, 2.2rem);
+      font-weight:800; color:#fff;
+      text-shadow:0 6px 18px rgba(0,0,0,.35);
+    }
+    .hint{
+      color:#cbd5e1; font-weight:600;
+    }
+
+    .actions{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:10px}
+    .btn{
+      --pad:12px 18px;
+      padding:var(--pad);
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:
+        linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02)),
+        linear-gradient(90deg,var(--accent),#ffd95e);
+      color:#111; font-weight:800; cursor:pointer;
+      box-shadow:0 14px 32px rgba(255, 204, 0, .28), inset 0 1px 0 rgba(255,255,255,.35);
+      transition:transform .12s ease, box-shadow .2s ease, filter .2s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn:focus-visible{outline:4px solid var(--ring); outline-offset:2px}
+    .btn.secondary{
+      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));
+      color:#fff;
+      box-shadow:var(--shadow);
+    }
+
+    .fine{
+      margin-top:6px;
+      color:#9aa5b1; font-size:.95rem; text-wrap:pretty;
+    }
+
+    /* accesibilidad: menos movimiento */
+    @media (prefers-reduced-motion:reduce){
+      .ring .fg{transition:none}
+      .btn{transition:none}
+      .card::after{display:none}
+    }
+  </style>
+</head>
+<body data-home="index.html">
+  <main class="wrap" role="main">
+    <section class="card" aria-labelledby="t1">
+      <div class="logo" aria-hidden="true">
+        <img src="https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-ago-2025-10-31-20.png" alt="" width="44" height="44">
+      </div>
+
+      <span class="kicker">Servicio no disponible en este momento</span>
+      <h1 id="t1" class="title">Muy pronto estará disponible con Altorra Inmobiliaria</h1>
+      <p class="lead">Estamos afinando los últimos detalles para ofrecerte una experiencia de primer nivel. En breve podrás acceder a este servicio con la seguridad, legalidad y confianza de Altorra.</p>
+
+      <div class="counter" aria-live="polite" aria-atomic="true">
+        <div class="ring" aria-hidden="true">
+          <!-- SVG progress ring -->
+          <svg width="126" height="126" viewBox="0 0 126 126" fill="none">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="126" y2="126" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ffb400"/><stop offset="1" stop-color="#ffd95e"/>
+              </linearGradient>
+            </defs>
+            <circle class="bg" cx="63" cy="63" r="54" stroke-width="10" />
+            <circle class="glow" cx="63" cy="63" r="54" stroke="url(#g1)" stroke-width="10" stroke-linecap="round" stroke-dasharray="339.292" stroke-dashoffset="0" />
+            <circle class="fg" cx="63" cy="63" r="54" stroke="url(#g1)" stroke-width="10" stroke-linecap="round" stroke-dasharray="339.292" stroke-dashoffset="0" />
+          </svg>
+          <div class="n" id="count">10</div>
+        </div>
+        <div class="hint">Te redirigimos al inicio en <strong><span id="countText">10</span>s</strong>.</div>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="goHome" type="button" aria-label="Volver al inicio ahora">Volver al inicio ahora</button>
+        <button class="btn secondary" id="pause" type="button" aria-pressed="false" aria-label="Pausar o reanudar contador">Pausar contador</button>
+      </div>
+
+      <p class="fine">Si prefieres, guarda esta página y vuelve más tarde. Estamos trabajando para ti.</p>
+    </section>
+  </main>
+
+  <!-- Fallback sin JavaScript: redirección en 10s -->
+  <noscript>
+    <meta http-equiv="refresh" content="10; url=index.html">
+  </noscript>
+
+  <script>
+    (function(){
+      const home = document.body.dataset.home || 'index.html';
+      const countEl = document.getElementById('count');
+      const countTextEl = document.getElementById('countText');
+      const fg = document.querySelector('.ring .fg');
+      const glow = document.querySelector('.ring .glow');
+      const goBtn = document.getElementById('goHome');
+      const pauseBtn = document.getElementById('pause');
+
+      const TOTAL = 10;                // segundos
+      const CIRC = 2 * Math.PI * 54;   // 339.292...
+      let t = TOTAL;
+      let paused = false;
+      let timer = null;
+
+      function setDash(sec){
+        const progress = (TOTAL - sec) / TOTAL; // 0..1
+        const offset = CIRC * progress;
+        fg.style.strokeDasharray = CIRC.toFixed(3);
+        fg.style.strokeDashoffset = offset.toFixed(3);
+        glow.style.strokeDasharray = CIRC.toFixed(3);
+        glow.style.strokeDashoffset = offset.toFixed(3);
+      }
+
+      function render(){
+        countEl.textContent = String(t);
+        countTextEl.textContent = String(t);
+        setDash(t);
+      }
+
+      function tick(){
+        if(paused) return;
+        t = Math.max(0, t - 1);
+        render();
+        if(t === 0){
+          clearInterval(timer);
+          safeGo(home);
+        }
+      }
+
+      function start(){
+        render();
+        timer = setInterval(tick, 1000);
+      }
+
+      function safeGo(url){
+        try{ window.location.assign(url); }
+        catch(e){ window.location.href = url; }
+      }
+
+      goBtn.addEventListener('click', ()=> safeGo(home));
+      pauseBtn.addEventListener('click', ()=>{
+        paused = !paused;
+        pauseBtn.setAttribute('aria-pressed', String(paused));
+        pauseBtn.textContent = paused ? 'Reanudar contador' : 'Pausar contador';
+      });
+
+      // Accesibilidad: pausar si el usuario cambia de pestaña
+      document.addEventListener('visibilitychange', ()=>{
+        if(document.hidden){ paused = true; pauseBtn.setAttribute('aria-pressed','true'); pauseBtn.textContent = 'Reanudar contador'; }
+      });
+
+      // Respetar preferencias de movimiento
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+        // sin animación, pero con cuenta regresiva y redirección
+        fg.style.transition = 'none';
+        glow.style.transition = 'none';
+      }
+
+      start();
+    })();
+  </script>
+</body>
+</html>
