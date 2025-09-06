@@ -3,12 +3,11 @@
   <div class="container">
     <a class="brand" href="index.html" aria-label="Ir al inicio">
       <img src="https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-ago-2025-10-31-20.png" alt="Logo de Altorra" width="48" height="48"/>
+      <span class="name" style="display:none">Altorra Inmobiliaria</span>
     </a>
 
     <nav aria-label="Menú principal">
       <div class="nav-list">
-             
-
         <div class="nav-item" data-size="compact">
           <button class="nav-btn" data-panel="panel-propiedades" aria-controls="panel-propiedades" aria-expanded="false">Propiedades</button>
         </div>
@@ -24,11 +23,13 @@
       </div>
     </nav>
 
-    <button id="navToggle" class="nav-toggle" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menú">☰ Menú</button>
+    <button id="navToggle" class="nav-toggle" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menú">
+      <span aria-hidden="true">☰</span> <span class="menu-label">Menú</span>
+    </button>
   </div>
 </header>
 
-<!-- PANELS DESKTOP (idénticos a los tuyos) -->
+<!-- PANELS DESKTOP -->
 <div id="panel-propiedades" class="menu-panel panel-compact" role="dialog" aria-modal="false" aria-hidden="true">
   <a class="menu-link" href="propiedades-comprar.html">Comprar</a>
   <a class="menu-link" href="propiedades-arrendar.html">Arrendar</a>
@@ -68,21 +69,18 @@
   <a class="menu-link" href="quienes-somos.html#equipo">Nuestro equipo</a>
 </div>
 
-<!-- DRAWER MÓVIL (idéntico) -->
+<!-- DRAWER MÓVIL -->
 <div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
 <aside id="mobileMenu" class="drawer" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle" hidden>
   <div class="block">
     <h3 id="mobileMenuTitle" style="margin:0;font-weight:800;color:var(--gold)">Menú</h3>
   </div>
-
-
   <div class="block">
     <h4>Propiedades</h4>
     <a href="propiedades-comprar.html">Comprar</a>
     <a href="propiedades-arrendar.html">Arrendar</a>
     <a href="propiedades-alojamientos.html">Rentar por días</a>
   </div>
-
   <div class="block">
     <h4>Servicios</h4>
     <a href="servicios-administracion.html">Administración de inmuebles</a>
@@ -91,13 +89,16 @@
     <a href="servicios-mudanzas.html">Mudanzas y logística</a>
     <a href="servicios-juridicos.html">Servicios jurídicos</a>
     <a href="servicios-contables.html">Servicios contables</a>
+    <a href="#">Gestión de contratos</a>
+    <h4 style="margin-top:12px">Turismo (Cartagena)</h4>
+    <a href="#">Renta de yates</a>
+    <a href="#">Pasadías en islas</a>
+    <a href="#">Paquetes turísticos</a>
+    <a href="#">Tours históricos</a>
   </div>
-
   <div class="block">
     <h4>Empresa</h4>
     <a href="quienes-somos.html">Quiénes somos</a>
     <a href="contacto.html">Contacto</a>
-    </div>
+  </div>
 </aside>
-
-
