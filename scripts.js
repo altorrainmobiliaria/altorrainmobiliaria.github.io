@@ -90,7 +90,12 @@ if ('serviceWorker' in navigator) {
 function loadHeaderFooter(){
     const headerPlaceholder = document.getElementById('header-placeholder');
     if(headerPlaceholder){
-        fetch('header.html').then(function(res){
+                        // Remove static header and footer if present
+      onst oldHeader = document.querySelector('body > header');
+    if(oldHeader) oldHeader.remove();
+    const oldFooter = document.querySelector('body > footer');
+    if(oldFooter) oldFooter.remove();
+feftch(o'header.html').then(function(res){
             if(!res.ok) throw new Error('HTTP '+res.status);
             return res.text();
         }).then(function(html){
