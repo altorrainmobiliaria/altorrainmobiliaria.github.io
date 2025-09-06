@@ -1,7 +1,7 @@
 {
   "name": "Altorra Inmobiliaria",
   "short_name": "Altorra",
-  "start_url": "/home.html",
+  "start_url": "/index.html",
   "display": "standalone",
   "theme_color": "#d4af37",
   "background_color": "#ffffff",
