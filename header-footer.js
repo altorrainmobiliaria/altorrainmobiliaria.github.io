@@ -2,12 +2,23 @@
 function loadHeaderFooterAndNav() {
   const headerPlaceholder = document.getElementById('header-placeholder');
   if (headerPlaceholder) {
-    // Remove existing header and footer to avoid duplicates
     const oldHeader = document.querySelector('body > header');
-    if (oldHeader) oldHeader.remove();
+    if (oldHeader) {
+      if (oldHeader.contains(headerPlaceholder)) {
+        oldHeader.replaceWith(headerPlaceholder);
+      } else {
+        oldHeader.remove();
+      }
+    }
     const oldFooter = document.querySelector('body > footer');
-    if (oldFooter) oldFooter.remove();
-    fetch('header.html').then(function(res) {
+    if (oldFooter) {
+      const footPlaceholder = document.getElementById('footer-placeholder');
+      if (footPlaceholder && oldFooter.contains(footPlaceholder)) {
+        oldFooter.replaceWith(footPlaceholder);
+      } else {
+
+    const oldFooter = document.querySelector('body > footer');
+fetch('header.html').then(function(res) {
       if (!res.ok) throw new Error('HTTP ' + res.status);
       return res.text();
     }).then(function(html) {
