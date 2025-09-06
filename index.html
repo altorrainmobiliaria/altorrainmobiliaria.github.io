@@ -17,129 +17,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
 
-  <style>
-    :root{
-      --gold:#d4af37;
-      --accent:#ffb400;
-      --bg:#ffffff;
-      --text:#111827;
-      --muted:#6b7280;
-      --header-h:72px;
-      --gap:14px;
-      --page-max:1200px;
-      --overlay:rgba(0,0,0,0.30);
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-    a{color:inherit;text-decoration:none}
-    img{max-width:100%;display:block}
-    @media (prefers-reduced-motion:reduce){ *{scroll-behavior:auto !important;animation:none !important;transition:none !important} }
-
-    /* ---------- HEADER (base para el header externo) ---------- */
-    header{position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;background:var(--bg);z-index:140;border-bottom:1px solid rgba(0,0,0,0.06);box-shadow:0 8px 26px rgba(0,0,0,0.06)}
-    .container{max-width:var(--page-max);margin:0 auto;width:100%;padding:0 16px;display:flex;align-items:center;gap:12px}
-    .brand{display:flex;align-items:center;gap:10px;margin-right:6px}
-    .brand img{width:48px;height:48px;object-fit:contain}
-    .brand .name{font-weight:800;letter-spacing:-0.6px;text-transform:uppercase;font-size:1.02rem}
-    nav{margin-left:auto;display:flex;align-items:center;gap:8px}
-    .nav-list{display:flex;gap:6px;align-items:center}
-    .nav-item{position:relative}
-    .nav-btn{background:transparent;border:0;padding:8px 12px;font-weight:700;cursor:pointer;border-radius:8px;color:var(--text);font-size:0.95rem}
-    .nav-btn:focus{outline:3px solid rgba(212,175,55,0.18);outline-offset:3px}
-    .nav-toggle{display:none;margin-left:auto;background:transparent;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:8px 12px;font-weight:800}
-    .nav-toggle:focus{outline:3px solid rgba(212,175,55,0.18);outline-offset:3px}
-    #navToggle{color:#000 !important}
-    #navToggle .menu-label{font-weight:800}
-    .menu-panel{display:none;position:fixed;z-index:150;padding:14px;border-radius:12px;background:linear-gradient(180deg,#fff,#fbfbfb);border:1px solid rgba(0,0,0,0.06);box-shadow:0 22px 48px rgba(0,0,0,0.12);max-height:calc(100vh - var(--header-h) - 20px);overflow:auto}
-    .menu-visible{display:block}
-    .panel-compact{min-width:220px;max-width:44vw}
-    .panel-mega{min-width:360px;max-width:920px;width:min(88vw,920px)}
-    .mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    .mega-col h4{margin:0 0 8px;color:var(--gold);font-weight:700}
-    .menu-link{display:block;padding:6px;border-radius:8px;color:#0f1724}
-    .menu-link:hover{background:rgba(0,0,0,0.03)}
-    .drawer-backdrop{position:fixed;inset:0;background:var(--overlay);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:160;opacity:0;pointer-events:none;transition:opacity .2s ease}
-    .drawer{position:fixed;left:0;right:0;top:var(--header-h);height:calc(100dvh - var(--header-h));padding-bottom:max(24px, env(safe-area-inset-bottom));background:#fff;z-index:161;transform:translateY(-8px);opacity:0;pointer-events:none;transition:transform .24s ease, opacity .2s ease;overflow:auto;border-top:1px solid rgba(0,0,0,.06);overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-    .drawer.open{transform:none;opacity:1;pointer-events:auto}
-    .drawer-backdrop.open{opacity:1;pointer-events:auto}
-    .drawer .block{padding:16px;border-bottom:1px solid rgba(0,0,0,.06)}
-    .drawer .block:last-child{padding-bottom:max(32px, env(safe-area-inset-bottom))}
-    .drawer h4{margin:0 0 8px;color:var(--gold)}
-    .drawer a{display:block;padding:8px 2px}
-    @media (max-width:860px){ .nav-list{display:none} .nav-toggle{display:inline-flex;align-items:center;gap:8px} .menu-panel{display:none !important} }
-
-    /* ---------- HERO ---------- */
-    .hero{min-height:80vh;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;padding-top:calc(var(--header-h) + 28px);color:#fff;overflow:hidden}
-    .hero .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
-    .hero .overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.32));z-index:1}
-    .hero .inner{position:relative;z-index:2;max-width:1100px;padding:0 16px}
-    .hero h1{font-size:clamp(2rem,5vw,3.6rem);margin:0;font-weight:800}
-    .hero p{margin-top:10px;color:rgba(255,255,255,0.92)}
-
-    /* ---------- SEARCH ---------- */
-    .search-box{margin-top:20px;display:grid;grid-template-columns:1fr 1fr 2fr 2fr auto;gap:10px;background:rgba(255,255,255,0.06);padding:12px;border-radius:12px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center}
-    .price-group{display:flex;gap:10px}
-    .price-group input{flex:1}
-    .search-box button{padding:11px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent),#ffd95e);font-weight:800;cursor:pointer;width:auto;min-width:120px;justify-self:end}
-    .search-box select,.search-box input{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.22);color:#fff}
-    .search-box input,.search-box select{-webkit-text-fill-color:#fff !important;color:#fff !important}
-    .search-box input::placeholder{color:#ffffff !important;opacity:1 !important}
-    @media (max-width:920px){ .search-box{grid-template-columns:repeat(2,1fr)} }
-    @media (max-width:520px){ .search-box{grid-template-columns:1fr} .search-box .full-mobile{grid-column:1/-1} }
-
-    /* ---------- CAROUSELS/SECCIONES ---------- */
-    .section{max-width:var(--page-max);margin:28px auto;padding:0 16px}
-    .section .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;gap:10px}
-    .carousel-wrap{position:relative}
-    .carousel-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:10px;scroll-behavior:smooth}
-    .carousel-row::-webkit-scrollbar{display:none}
-    .card{min-width:260px;max-width:320px;border-radius:12px;background:#fff;overflow:hidden;border:1px solid rgba(0,0,0,0.04);box-shadow:0 8px 24px rgba(0,0,0,0.06);cursor:pointer;transition:transform .18s ease, box-shadow .18s ease}
-    .card:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(0,0,0,0.12)}
-    .card img{width:100%;height:180px;object-fit:cover}
-    .card .body{padding:12px}
-    .arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(0,0,0,0.12);cursor:pointer;z-index:120;border:0}
-    .arrow.left{left:-52px} .arrow.right{right:-52px}
-    @media (max-width:1024px){ .arrow{display:none} }
-
-    /* ---------- FOOTER ---------- */
-    footer{background:#0b0b0b;color:#fff;padding:36px 16px}
-    .footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-    @media (max-width:920px){ .footer-grid{grid-template-columns:1fr} }
-
-    /* ---------- utilidades ---------- */
-    .visually-hidden{position:absolute !important;clip:rect(1px,1px,1px,1px);padding:0;border:0;height:1px;width:1px;overflow:hidden;white-space:nowrap}
-    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-    .skip-link:focus{left:16px;top:16px;width:auto;height:auto;background:#fff;padding:8px 12px;border-radius:8px;border:1px solid #ddd;z-index:1000}
-
-    /* ---------- Reseñas ---------- */
-    .reviews-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-    @media (max-width:1024px){ .reviews-wrap{grid-template-columns:repeat(2,1fr)} }
-    @media (max-width:720px){ .reviews-wrap{grid-template-columns:1fr} }
-    .review-card{border:1px solid rgba(0,0,0,.06);border-radius:14px;padding:16px;background:linear-gradient(180deg,#ffffff,#fbfbfb);box-shadow:0 8px 22px rgba(0,0,0,.08)}
-    .review-head{display:flex;align-items:center;gap:10px;font-weight:700}
-    .review-stars{font-size:1rem;color:var(--accent);letter-spacing:.5px}
-    .review-text{color:var(--muted);margin:.4rem 0 0}
-    .reviews-cta{text-align:center;margin-top:16px}
-
-    /* ---------- Publica tu propiedad ---------- */
-    .publish-section{margin:28px 0;padding:0;background:#fff}
-    .publish-card{background:#fff;border:1px solid rgba(0,0,0,0.06);border-radius:24px;padding:40px 32px;text-align:center;width:100%;box-shadow:0 18px 40px rgba(0,0,0,0.06)}
-    .publish-card h2{margin:0 0 10px;font-size:2rem;font-weight:800}
-    .publish-card p{margin:0 0 20px;color:var(--muted);font-size:1rem}
-    .publish-card .btn{padding:12px 20px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#ffd95e);color:#000;font-weight:700;display:inline-block;transition:transform .15s ease}
-    .publish-card .btn:hover{transform:translateY(-2px)}
-  </style>
-
-  <!-- JS (defer) -->
+  <!-- Scripts (defer) -->
   <script src="header-footer.js" defer></script>
   <script src="scripts.js" defer></script>
 </head>
 <body>
   <!-- Header externo -->
   <div id="header-placeholder"></div>
+
   <a href="#main" class="skip-link">Saltar al contenido principal</a>
 
   <main id="main" style="padding-top:calc(var(--header-h) + 12px);">
+    <!-- HERO -->
     <section class="hero" aria-label="Hero">
       <img class="bg" src="https://i.postimg.cc/FHy13q2M/pexels-rdne-8293700.jpg" alt="Banner"/>
       <div class="overlay" aria-hidden="true"></div>
@@ -175,11 +64,13 @@
           <button type="submit" aria-label="Buscar">Buscar</button>
         </form>
 
-        <div style="margin-top:8px;color:rgba(255,255,255,0.9);font-size:0.9rem">Tu próximo hogar te está esperando.</div>
+        <div style="margin-top:8px;color:rgba(255,255,255,0.9);font-size:0.9rem">
+          Tu próximo hogar te está esperando.
+        </div>
       </div>
     </section>
 
-    <!-- Publica tu propiedad (conservado) -->
+    <!-- PUBLICA TU PROPIEDAD -->
     <section id="publica-tu-propiedad" class="publish-section" aria-labelledby="publicar-title">
       <div class="publish-card">
         <h2 id="publicar-title">¿Quieres publicar tu propiedad?</h2>
@@ -188,7 +79,7 @@
       </div>
     </section>
 
-    <!-- Venta -->
+    <!-- VENTA -->
     <section class="section" aria-labelledby="venta-title">
       <div class="head"><h2 id="venta-title">Propiedades en <span style="color:var(--gold)">Venta</span></h2><a href="propiedades-comprar.html">Ver todo →</a></div>
       <div class="carousel-wrap">
@@ -204,7 +95,7 @@
       </div>
     </section>
 
-    <!-- Arriendo -->
+    <!-- ARRIENDO -->
     <section class="section" aria-labelledby="arrend-title" style="background:#fff">
       <div class="head"><h2 id="arrend-title">Propiedades en <span style="color:var(--gold)">Arriendo</span></h2><a href="propiedades-arrendar.html">Ver todo →</a></div>
       <div class="carousel-wrap">
@@ -220,7 +111,7 @@
       </div>
     </section>
 
-    <!-- Alojamientos por días -->
+    <!-- ALOJAMIENTOS POR DÍAS -->
     <section class="section" aria-labelledby="dias-title" style="background:#fbfbfb">
       <div class="head"><h2 id="dias-title">Alojamientos por <span style="color:var(--gold)">días</span></h2><a href="propiedades-alojamientos.html">Ver todo →</a></div>
       <div class="carousel-wrap">
@@ -236,7 +127,7 @@
       </div>
     </section>
 
-    <!-- Reseñas -->
+    <!-- RESEÑAS -->
     <section id="reseñas" class="section" aria-labelledby="reseñas-title">
       <div class="head"><h2 id="reseñas-title">Opiniones de nuestros clientes</h2></div>
       <div id="google-reviews" class="reviews-wrap" aria-live="polite"></div>
@@ -250,5 +141,101 @@
 
   <!-- Footer externo -->
   <div id="footer-placeholder"></div>
+
+  <!-- Script de carruseles (carga data.json con rutas robustas) -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      const pages = [
+        {operation:'comprar', targetId:'carouselVenta', mode:'venta'},
+        {operation:'arrendar', targetId:'carouselArriendo', mode:'arriendo'},
+        {operation:'dias',     targetId:'carouselDias',     mode:'dias'}
+      ];
+
+      function formatCOP(n){ return (n||n===0) ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : ''; }
+      function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+
+      function buildCardElement(p, mode){
+        const article = document.createElement('article');
+        article.className = 'card';
+        article.setAttribute('role','listitem');
+        const img = document.createElement('img');
+        img.loading = 'lazy'; img.decoding = 'async';
+        img.alt = escapeHtml(p.title || 'Propiedad');
+        const raw = p.image || p.img || p.img_url || p.imgUrl || p.photo;
+        if (raw) {
+          img.src = (/^(https?:)?\//.test(raw)) ? raw : '/' + raw;  // respeta http/https y rutas absolutas
+        } else {
+          img.src = 'https://i.postimg.cc/0yYb8Y6r/placeholder.png';
+        }
+        const body = document.createElement('div');
+        body.className = 'body';
+        const title = document.createElement('h3');
+        title.innerHTML = escapeHtml(p.title || 'Sin título');
+        const specs = document.createElement('div');
+        specs.style.color = 'var(--muted)';
+        const parts = [];
+        if(p.beds) parts.push(p.beds + 'H');
+        if(p.baths) parts.push(p.baths + 'B');
+        if(p.sqm) parts.push(p.sqm + ' m²');
+        specs.textContent = parts.join(' · ');
+        const priceRow = document.createElement('div');
+        priceRow.style.marginTop = '8px';
+        priceRow.style.fontWeight = '800';
+        priceRow.style.color = 'var(--gold)';
+        if (p.price) {
+          priceRow.textContent =
+            (mode === 'arriendo') ? ('$' + formatCOP(p.price) + ' COP / mes') :
+            (mode === 'dias')     ? ('$' + formatCOP(p.price) + ' COP / noche') :
+                                    ('$' + formatCOP(p.price) + ' COP');
+        }
+        body.appendChild(title); body.appendChild(specs); body.appendChild(priceRow);
+        article.appendChild(img); article.appendChild(body);
+        article.addEventListener('click', function(){
+          const id = p.id || '';
+          window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(id);
+        });
+        return article;
+      }
+
+      async function loadPropsByOperation(operation){
+        // Cubrimos /serena/ y raíz del sitio
+        const candidates = ['properties/data.json','/properties/data.json','../properties/data.json'];
+        for (const url of candidates) {
+          try {
+            const res = await fetch(url, { cache:'no-store' });
+            if (!res.ok) continue;
+            const txt = await res.text();
+            // Evita parsear HTML cuando GitHub Pages devuelve index
+            if (!txt.trim().startsWith('[')) continue;
+            const data = JSON.parse(txt);
+            if (!Array.isArray(data)) continue;
+            return data.filter(item => String(item.operation).toLowerCase() === String(operation).toLowerCase());
+          } catch(e) { /* intenta siguiente ruta */ }
+        }
+        console.warn('No se pudo cargar properties/data.json para', operation);
+        return [];
+      }
+
+      (async function(){
+        const jobs = pages.map(pg => loadPropsByOperation(pg.operation).then(arr => ({arr, pg})));
+        const results = await Promise.all(jobs);
+        results.forEach(({arr, pg})=>{
+          const target = document.getElementById(pg.targetId);
+          if(!target) return;
+          target.innerHTML = '';
+          const list = arr || [];
+          if(list.length === 0){
+            const note = document.createElement('div');
+            note.style.padding = '12px';
+            note.style.color = 'var(--muted)';
+            note.textContent = 'Sin propiedades para mostrar.';
+            target.appendChild(note);
+            return;
+          }
+          list.slice(0, 8).forEach(p => target.appendChild(buildCardElement(p, pg.mode)));
+        });
+      })();
+    });
+  </script>
 </body>
 </html>
