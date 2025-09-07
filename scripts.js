@@ -1,159 +1,501 @@
-/* ========== Altorra - scripts base (sin lógica del header para evitar duplicados) ========== */
+/* =========================
+   scripts.js  (site-wide)
+   ========================= */
 
-/* 1) Lazy load de imágenes */
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('img').forEach(function(img) {
-    if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
-  });
-});
+/* ---------- Util ---------- */
+const isTouchLike = () =>
+  window.matchMedia('(hover: none)').matches ||
+  'ontouchstart' in window;
 
-/* 2) Reseñas: carga desde reviews.json y pinta 3 al azar */
-(function(){
-  const wrap = document.getElementById('google-reviews');
-  const fallback = document.getElementById('reviews-fallback');
-  if(!wrap) return;
-  fetch('reviews.json').then(function(res){
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    return res.json();
-  }).then(function(reviews){
-    if(Array.isArray(reviews) && reviews.length){
-      if(fallback) fallback.hidden = true;
-      let sample = reviews.slice().sort(()=>Math.random()-0.5).slice(0,3);
-      wrap.innerHTML = '';
-      sample.forEach(function(r){
-        const card = document.createElement('article');
-        card.className = 'review-card';
-        const head = document.createElement('div');
-        head.className = 'review-head';
-        const name = document.createElement('div'); name.textContent = r.author;
-        const stars = document.createElement('div'); stars.className = 'review-stars';
-        const rating = Math.round(parseFloat(r.rating) || 0);
-        stars.textContent = '★★★★★'.slice(0, rating);
-        stars.setAttribute('aria-label', rating+' de 5');
-        const time = document.createElement('div');
-        time.style.marginLeft='auto'; time.style.color='#6b7280'; time.style.fontSize='.9rem';
-        time.textContent = r.time || '';
-        head.appendChild(name); head.appendChild(stars); head.appendChild(time);
-        const body = document.createElement('p');
-        body.className = 'review-text'; body.textContent = r.content;
-        card.appendChild(head); card.appendChild(body); wrap.appendChild(card);
+/* ---------- Init after header is present ---------- */
+function onHeaderReady(cb) {
+  let done = false;
+  const tryRun = () => {
+    if (done) return true;
+    const hasHeader =
+      document.querySelector('header') &&
+      (document.getElementById('navToggle') ||
+       document.querySelector('.nav-btn[data-panel]'));
+    if (hasHeader) {
+      done = true;
+      cb();
+      return true;
+    }
+    return false;
+  };
+  if (!tryRun()) {
+    const mo = new MutationObserver(() => {
+      if (tryRun()) mo.disconnect();
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+  }
+}
+
+/* ==================================================
+   1) Navegación: desktop menus + drawer móvil
+   ================================================== */
+function initNavigation() {
+  /* --- Desktop dropdowns --- */
+  (function () {
+    const MARGIN = 12;
+    let open = null;
+    const supportsHover = window.matchMedia('(hover: hover)').matches;
+
+    const resetPanelStyles = (panel) => {
+      panel.style.left = '';
+      panel.style.top = '';
+      panel.style.width = '';
+      panel.style.maxWidth = '';
+      panel.style.right = '';
+    };
+
+    const hideImmediate = (obj) => {
+      if (!obj) return;
+      obj.btn && obj.btn.setAttribute('aria-expanded', 'false');
+      obj.panel.classList.remove('menu-visible');
+      obj.panel.style.display = 'none';
+      obj.panel.setAttribute('aria-hidden', 'true');
+      resetPanelStyles(obj.panel);
+      if (open && open.panel === obj.panel) open = null;
+    };
+
+    const placeAndShow = (btn, panel, size) => {
+      if (window.innerWidth <= 860) return;
+      if (open && open.panel !== panel) hideImmediate(open);
+
+      resetPanelStyles(panel);
+      panel.style.display = 'block';
+      panel.style.visibility = 'hidden';
+      panel.style.position = 'fixed';
+      panel.style.maxHeight = Math.max(260, window.innerHeight - (MARGIN * 2)) + 'px';
+
+      if (size === 'mega') {
+        panel.style.width = Math.min(920, window.innerWidth - (MARGIN * 2)) + 'px';
+      } else {
+        panel.style.width = 'auto';
+        panel.style.maxWidth = Math.min(520, window.innerWidth - (MARGIN * 2)) + 'px';
+      }
+
+      const preRect = panel.getBoundingClientRect();
+      const bRect = btn.getBoundingClientRect();
+
+      let left;
+      if (size === 'mega') {
+        left = Math.round(bRect.left + bRect.width / 2 - preRect.width / 2);
+        left = Math.max(MARGIN, Math.min(left, window.innerWidth - preRect.width - MARGIN));
+      } else {
+        left = Math.round(Math.min(bRect.left, window.innerWidth - preRect.width - MARGIN));
+        left = Math.max(left, MARGIN);
+      }
+
+      let top = Math.round(bRect.bottom + 8);
+      if (top + preRect.height > window.innerHeight - MARGIN) {
+        top = Math.round(bRect.top - preRect.height - 8);
+        if (top < MARGIN) top = MARGIN;
+      }
+
+      panel.style.left = left + 'px';
+      panel.style.top = top + 'px';
+      panel.style.visibility = 'visible';
+      panel.classList.add('menu-visible');
+      panel.setAttribute('aria-hidden', 'false');
+      btn.setAttribute('aria-expanded', 'true');
+      open = { panel, btn };
+    };
+
+    document.querySelectorAll('.nav-btn[data-panel]').forEach((btn) => {
+      const panelId = btn.getAttribute('data-panel');
+      const panel = document.getElementById(panelId);
+      if (!panel) return;
+      const item = btn.closest('.nav-item');
+      const size = item ? (item.dataset.size || 'compact') : 'compact';
+      let openTimer = null, closeTimer = null;
+
+      const show = () => {
+        clearTimeout(closeTimer);
+        openTimer = setTimeout(() => placeAndShow(btn, panel, size), 60);
+      };
+      const hide = () => {
+        clearTimeout(openTimer);
+        closeTimer = setTimeout(() => hideImmediate({ panel, btn }), 120);
+      };
+
+      if (supportsHover) {
+        btn.addEventListener('pointerenter', show);
+        btn.addEventListener('pointerleave', hide);
+        panel.addEventListener('pointerenter', () => {
+          clearTimeout(closeTimer);
+          clearTimeout(openTimer);
+        });
+        panel.addEventListener('pointerleave', hide);
+      }
+
+      btn.addEventListener('click', (e) => {
+        if (window.innerWidth > 860) {
+          e.preventDefault();
+          if (panel.classList.contains('menu-visible')) hideImmediate({ panel, btn });
+          else placeAndShow(btn, panel, size);
+        }
+      });
+
+      btn.addEventListener('focus', show);
+      btn.addEventListener('blur', () => setTimeout(() => {
+        if (!panel.contains(document.activeElement)) hide();
+      }, 60));
+    });
+
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('nav') || e.target.closest('.menu-panel')) return;
+      document.querySelectorAll('.menu-panel.menu-visible')
+        .forEach((p) => hideImmediate({ panel: p, btn: null }));
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.menu-panel.menu-visible')
+          .forEach((p) => hideImmediate({ panel: p, btn: null }));
+      }
+    });
+
+    window.addEventListener('resize', () => {
+      document.querySelectorAll('.menu-panel').forEach((p) => {
+        p.classList.remove('menu-visible');
+        p.style.display = 'none';
+        p.setAttribute('aria-hidden', 'true');
+        resetPanelStyles(p);
+      });
+      document.querySelectorAll('.nav-btn[data-panel]')
+        .forEach((b) => b.setAttribute('aria-expanded', 'false'));
+      open = null;
+    });
+  })();
+
+  /* --- Drawer móvil --- */
+  (function () {
+    const toggle = document.getElementById('navToggle');
+    const drawer = document.getElementById('mobileMenu');
+    const backdrop = document.getElementById('drawerBackdrop');
+    if (!toggle || !drawer || !backdrop) return;
+
+    let lastFocus = null;
+
+    const focusable = (root) =>
+      root.querySelectorAll('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+
+    const setDrawerHeight = () => {
+      const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 72;
+      drawer.style.height = (window.innerHeight - headerH) + 'px';
+    };
+    const clearDrawerHeight = () => { drawer.style.height = ''; };
+
+    function openDrawer() {
+      lastFocus = document.activeElement;
+      drawer.hidden = false;
+      setDrawerHeight();
+      window.addEventListener('resize', setDrawerHeight);
+      window.addEventListener('orientationchange', setDrawerHeight);
+      requestAnimationFrame(() => {
+        drawer.classList.add('open');
+        backdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        toggle.setAttribute('aria-expanded', 'true');
+        const el = focusable(drawer)[0];
+        el && el.focus();
       });
     }
-  }).catch(function(err){ console.warn('No se pudieron cargar reseñas', err); });
-})();
 
-/* 3) Buscador rápido → redirección con querystring */
-(function(){
-  const form = document.getElementById('quickSearch');
-  if(!form) return;
-  form.addEventListener('submit', function(e){
-    e.preventDefault();
-    const op = document.getElementById('op')?.value || 'comprar';
-    const type = document.getElementById('f-type')?.value || '';
-    const city = encodeURIComponent(document.getElementById('f-city')?.value || '');
-    const min = document.getElementById('f-min')?.value || '';
-    const max = document.getElementById('f-max')?.value || '';
-    const map = { comprar:'propiedades-comprar.html', arrendar:'propiedades-arrendar.html', alojar:'propiedades-alojamientos.html' };
-    const dest = map[op] || 'propiedades-comprar.html';
-    const params = new URLSearchParams();
-    if(city) params.set('city', city);
-    if(type) params.set('type', type);
-    if(min) params.set('min', min);
-    if(max) params.set('max', max);
-    const query = params.toString();
-    window.location.href = dest + (query ? '?' + query : '');
-  });
-})();
+    function closeDrawer() {
+      drawer.classList.remove('open');
+      backdrop.classList.remove('open');
+      document.body.style.overflow = '';
+      toggle.setAttribute('aria-expanded', 'false');
+      clearDrawerHeight();
+      window.removeEventListener('resize', setDrawerHeight);
+      window.removeEventListener('orientationchange', setDrawerHeight);
+      setTimeout(() => {
+        drawer.hidden = true;
+        lastFocus && lastFocus.focus();
+      }, 200);
+    }
 
-/* 4) Flechas de carruseles (home) */
-(function(){
-  document.querySelectorAll('.arrow').forEach(function(btn){
-    const targetId = btn.dataset.target;
-    const root = document.getElementById(targetId);
-    if(!root) return;
-    btn.addEventListener('click', function(){
-      const card = root.querySelector('.card');
-      if(!card) return;
-      const gap = parseFloat(getComputedStyle(root).gap) || 12;
-      const step = card.getBoundingClientRect().width + gap;
-      const dir = btn.classList.contains('left') ? -1 : 1;
-      root.scrollBy({ left: dir * step, behavior: 'smooth' });
+    toggle.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      expanded ? closeDrawer() : openDrawer();
+    });
+    backdrop.addEventListener('click', closeDrawer);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !drawer.hidden) closeDrawer();
+      if (e.key === 'Tab' && !drawer.hidden) {
+        const els = Array.from(focusable(drawer));
+        if (!els.length) return;
+        const first = els[0], last = els[els.length - 1];
+        if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+        else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+      }
+    });
+
+    // Cerrar drawer al tocar un enlace y quitar recuadro azul (iOS/Android)
+    drawer.addEventListener('click', (e) => {
+      const link = e.target.closest('a');
+      if (!link) return;
+      if (isTouchLike()) setTimeout(() => link.blur(), 40);
+      closeDrawer();
+    });
+
+    // Inyectar fix CSS (móviles) por si la página no cargó style.css aún
+    (function injectFocusRingFix() {
+      if (!isTouchLike()) return;
+      if (document.getElementById('drawer-focus-fix')) return;
+      const style = document.createElement('style');
+      style.id = 'drawer-focus-fix';
+      style.textContent = `
+@media (hover: none) {
+  .drawer a:focus,
+  .drawer a:focus-visible,
+  .drawer a:active,
+  .drawer button:focus,
+  .drawer button:focus-visible,
+  .drawer button:active { outline: none !important; box-shadow: none !important; }
+  .drawer a, .drawer button { -webkit-tap-highlight-color: transparent; }
+}`;
+      document.head.appendChild(style);
+
+      drawer.addEventListener('pointerup', (ev) => {
+        const el = ev.target && ev.target.closest && ev.target.closest('a,button');
+        if (!el) return;
+        setTimeout(() => el.blur && el.blur(), 0);
+      }, { passive: true });
+    })();
+  })();
+}
+
+/* Arrancar navegación cuando el header ya esté inyectado */
+onHeaderReady(initNavigation);
+
+/* ==================================================
+   2) Carruseles (flechas)
+   ================================================== */
+(function () {
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.arrow').forEach((btn) => {
+      const targetId = btn.dataset.target;
+      const root = document.getElementById(targetId);
+      if (!root) return;
+      btn.addEventListener('click', () => {
+        const card = root.querySelector('.card');
+        if (!card) return;
+        const gap = parseFloat(getComputedStyle(root).gap) || 12;
+        const step = card.getBoundingClientRect().width + gap;
+        const dir = btn.classList.contains('left') ? -1 : 1;
+        root.scrollBy({ left: dir * step, behavior: 'smooth' });
+      });
     });
   });
 })();
 
-/* 5) Miniaturas home ← properties/data.json */
-(function(){
-  const cfg = [
-    {operation:'comprar', targetId:'carouselVenta', mode:'venta'},
-    {operation:'arrendar', targetId:'carouselArriendo', mode:'arriendo'},
-    {operation:'dias',     targetId:'carouselDias',     mode:'dias'}
-  ];
-  function formatCOP(n){ if(n==null) return ''; return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
-  function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+/* ==================================================
+   3) Buscador rápido del hero
+   ================================================== */
+(function () {
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('quickSearch');
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const op = document.getElementById('op')?.value || 'comprar';
+      const type = document.getElementById('f-type')?.value || '';
+      const city = encodeURIComponent(document.getElementById('f-city')?.value || '');
+      const min = document.getElementById('f-min')?.value || '';
+      const max = document.getElementById('f-max')?.value || '';
+      const map = { comprar:'propiedades-comprar.html', arrendar:'propiedades-arrendar.html', alojar:'propiedades-alojamientos.html' };
+      const dest = map[op] || 'propiedades-comprar.html';
+      const params = new URLSearchParams();
+      if (city) params.set('city', city);
+      if (type) params.set('type', type);
+      if (min) params.set('min', min);
+      if (max) params.set('max', max);
+      const query = params.toString();
+      window.location.href = dest + (query ? '?' + query : '');
+    });
+  });
+})();
 
-  function buildCard(p, mode){
-    const el = document.createElement('article');
-    el.className = 'card'; el.setAttribute('role','listitem');
+/* ==================================================
+   4) Lazy loading img
+   ================================================== */
+(function () {
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('img').forEach((img) => {
+      if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+    });
+  });
+})();
+
+/* ==================================================
+   5) Reseñas (si existe reviews.json)
+   ================================================== */
+(function () {
+  document.addEventListener('DOMContentLoaded', function () {
+    const wrap = document.getElementById('google-reviews');
+    if (!wrap) return;
+    fetch('reviews.json')
+      .then((res) => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+      .then((reviews) => {
+        if (!Array.isArray(reviews) || !reviews.length) return;
+        let sample = reviews.slice();
+        sample.sort(() => Math.random() - 0.5);
+        sample = sample.slice(0, 3);
+        wrap.innerHTML = '';
+        sample.forEach((r) => {
+          const card = document.createElement('article');
+          card.className = 'review-card';
+          const head = document.createElement('div');
+          head.className = 'review-head';
+          const name = document.createElement('div');
+          name.textContent = r.author;
+          const stars = document.createElement('div');
+          stars.className = 'review-stars';
+          const rating = Math.round(parseFloat(r.rating) || 0);
+          stars.textContent = '★★★★★'.slice(0, rating);
+          stars.setAttribute('aria-label', rating + ' de 5');
+          const time = document.createElement('div');
+          time.style.marginLeft = 'auto';
+          time.style.color = '#6b7280';
+          time.style.fontSize = '.9rem';
+          time.textContent = r.time || '';
+          head.appendChild(name);
+          head.appendChild(stars);
+          head.appendChild(time);
+          const body = document.createElement('p');
+          body.className = 'review-text';
+          body.textContent = r.content;
+          card.appendChild(head);
+          card.appendChild(body);
+          wrap.appendChild(card);
+        });
+      })
+      .catch(() => {});
+  });
+})();
+
+/* ==================================================
+   6) Propiedades del home desde properties/data.json
+   ================================================== */
+(function () {
+  function formatCOP(n) {
+    if (!n && n !== 0) return '';
+    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+  function escapeHtml(str) {
+    return String(str || '').replace(/[&<>"]/g, (m) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m])
+    );
+  }
+  function buildCardElement(p, mode) {
+    const article = document.createElement('article');
+    article.className = 'card';
+    article.setAttribute('role', 'listitem');
+
     const img = document.createElement('img');
-    img.loading='lazy'; img.decoding='async'; img.alt = escapeHtml(p.title || 'Propiedad');
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.alt = escapeHtml(p.title || 'Propiedad');
     const raw = p.image || p.img || p.img_url || p.imgUrl || p.photo;
-    img.src = raw ? (raw.startsWith('/') ? raw : '/'+raw) : 'https://i.postimg.cc/0yYb8Y6r/placeholder.png';
-    const body = document.createElement('div'); body.className='body';
-    const h3 = document.createElement('h3'); h3.innerHTML = escapeHtml(p.title || 'Sin título');
-    const specs = document.createElement('div'); specs.style.color='var(--muted)';
-    const parts = []; if(p.beds) parts.push(p.beds+'H'); if(p.baths) parts.push(p.baths+'B'); if(p.sqm) parts.push(p.sqm+' m²');
+    if (raw) img.src = raw.startsWith('/') ? raw : '/' + raw;
+    else img.src = 'https://i.postimg.cc/0yYb8Y6r/placeholder.png';
+
+    const body = document.createElement('div');
+    body.className = 'body';
+    const title = document.createElement('h3');
+    title.innerHTML = escapeHtml(p.title || 'Sin título');
+
+    const specs = document.createElement('div');
+    specs.style.color = 'var(--muted)';
+    const parts = [];
+    if (p.beds) parts.push(p.beds + 'H');
+    if (p.baths) parts.push(p.baths + 'B');
+    if (p.sqm) parts.push(p.sqm + ' m²');
     specs.textContent = parts.join(' · ');
-    const price = document.createElement('div'); price.style.marginTop='8px'; price.style.fontWeight='800'; price.style.color='var(--gold)';
-    if(p.price){
-      price.textContent = (mode==='arriendo' ? '$'+formatCOP(p.price)+' COP / mes' :
-                           mode==='dias'     ? '$'+formatCOP(p.price)+' COP / noche' :
-                                               '$'+formatCOP(p.price)+' COP');
+
+    const priceRow = document.createElement('div');
+    priceRow.style.marginTop = '8px';
+    priceRow.style.fontWeight = '800';
+    priceRow.style.color = 'var(--gold)';
+    let priceLabel = '';
+    if (p.price) {
+      if (mode === 'arriendo') priceLabel = '$' + formatCOP(p.price) + ' COP / mes';
+      else if (mode === 'dias') priceLabel = '$' + formatCOP(p.price) + ' COP / noche';
+      else priceLabel = '$' + formatCOP(p.price) + ' COP';
     }
-    body.appendChild(h3); body.appendChild(specs); body.appendChild(price);
-    el.appendChild(img); el.appendChild(body);
-    el.addEventListener('click', function(){
+    priceRow.textContent = priceLabel;
+
+    body.appendChild(title);
+    body.appendChild(specs);
+    body.appendChild(priceRow);
+
+    article.appendChild(img);
+    article.appendChild(body);
+    article.addEventListener('click', function () {
       const id = p.id || '';
       window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(id);
     });
-    return el;
+    return article;
   }
 
-  async function fetchByOperation(op){
-    try{
-      const res = await fetch('properties/data.json', {cache:'no-store'});
-      if(!res.ok) throw new Error('HTTP '+res.status);
+  async function loadPropsByOperation(operation) {
+    try {
+      const res = await fetch('properties/data.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
-      if(!Array.isArray(data)) throw new Error('Formato inválido');
-      return data.filter(it => String(it.operation).toLowerCase() === String(op).toLowerCase());
-    }catch(e){
-      console.warn('No se pudieron cargar propiedades', op, e);
+      if (!Array.isArray(data)) throw new Error('Invalid data format');
+      return data.filter((item) => String(item.operation).toLowerCase() === String(operation).toLowerCase());
+    } catch {
       return [];
     }
   }
 
-  document.addEventListener('DOMContentLoaded', async function(){
-    const tasks = cfg.map(c => fetchByOperation(c.operation).then(arr => ({c, arr})));
-    const results = await Promise.all(tasks);
-    results.forEach(({c, arr})=>{
-      const root = document.getElementById(c.targetId);
-      if(!root) return;
-      root.innerHTML = '';
-      if(!arr.length){
+  document.addEventListener('DOMContentLoaded', async () => {
+    const pages = [
+      { operation: 'comprar', targetId: 'carouselVenta', mode: 'venta' },
+      { operation: 'arrendar', targetId: 'carouselArriendo', mode: 'arriendo' },
+      { operation: 'dias', targetId: 'carouselDias', mode: 'dias' }
+    ];
+    if (!pages.some((p) => document.getElementById(p.targetId))) return;
+
+    const results = await Promise.all(
+      pages.map((pg) => loadPropsByOperation(pg.operation).then((arr) => ({ arr, pg })))
+    );
+
+    results.forEach((result) => {
+      const pg = result.pg;
+      const target = document.getElementById(pg.targetId);
+      if (!target) return;
+
+      target.innerHTML = '';
+      const arr = result.arr || [];
+      if (!arr.length) {
         const note = document.createElement('div');
-        note.style.padding='12px'; note.style.color='var(--muted)';
+        note.style.padding = '12px';
+        note.style.color = 'var(--muted)';
         note.textContent = 'Sin propiedades para mostrar.';
-        root.appendChild(note);
+        target.appendChild(note);
         return;
       }
-      arr.slice(0,8).forEach(p => root.appendChild(buildCard(p, c.mode)));
+      const max = 8;
+      arr.slice(0, max).forEach((p) => {
+        const card = buildCardElement(p, pg.mode);
+        target.appendChild(card);
+      });
     });
   });
 })();
 
-/* 6) Registrar service worker para PWA (si existe) */
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/service-worker.js').catch(function(err){
-    console.warn('SW registration failed', err);
-  });
-}
+/* ==================================================
+   7) Service Worker
+   ================================================== */
+(function () {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js').catch(() => {});
+  }
+})();
