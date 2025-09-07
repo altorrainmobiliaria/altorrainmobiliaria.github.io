@@ -191,6 +191,15 @@
   <div id="footer-placeholder"></div>
   <!-- Lógica de propiedades y filtros -->
   <script>
+    /* ---------------- Helpers ---------------- */
+    // Estas funciones se utilizan en la creación de tarjetas y deben declararse
+    // antes de ejecutar la lógica de carga de propiedades. Se tomaron de las
+    // páginas de arriendo y alojamientos para asegurar su disponibilidad.
+    const isTouch = () => window.matchMedia('(hover: none)').matches || 'ontouchstart' in window;
+    function formatCOP(n){ return (n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); }
+    function capitalize(s){ s = String(s||''); return s.charAt(0).toUpperCase() + s.slice(1); }
+    function escapeHtml(s){ return String(s||'').replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
     document.addEventListener('DOMContentLoaded', function(){
       // Definir modo de página y etiquetas de precios
       const PAGE_MODE = 'comprar';
