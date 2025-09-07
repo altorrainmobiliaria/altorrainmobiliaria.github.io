@@ -96,10 +96,10 @@
     "title": "#",
     "city": "#",
     "type": "#",
-    "price": #,
-    "beds": #,
-    "baths": #,
-    "sqm": #,
+    "price": 0,
+    "beds": 0,
+    "baths": 0,
+    "sqm": 0,
     "operation": "#",
     "id": "#",
     "image": "#",
@@ -109,6 +109,6 @@
       "#"
     ],
    "available": 0,
-    "description": "Sin información."
+    "description": "#"
   }
 ]
