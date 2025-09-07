@@ -1,169 +1,228 @@
-/* Carga header/footer externos e inicializa navegación (una sola vez) */
-(function(){
+/* Altorra — Carga y cacheo de header/footer + inicialización de navegación accesible */
+(function () {
   if (window.__altorraHeaderInit__) return;
   window.__altorraHeaderInit__ = true;
 
-  function inject(id, url, after){
-    const host = document.getElementById(id);
-    if(!host) return;
-    fetch(url, {cache:'no-store'}).then(r=>{
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      return r.text();
-    }).then(html=>{
-      host.innerHTML = html;
-      if(after) after();
-    }).catch(e=>console.warn('No se pudo cargar', url, e));
+  /* ===== Config de caché (ajusta cuando cambie header/footer) ===== */
+  const CACHE_VERSION = '2025-09-07.1';          // 🔁 Súbela si editas header.html o footer.html
+  const TTL_MS = 1000 * 60 * 60 * 24 * 7;        // 7 días (puedes cambiarlo)
+  const LS_PREFIX = 'altorra:fragment:';
+
+  function cacheKey(url) { return `${LS_PREFIX}${url}::${CACHE_VERSION}`; }
+
+  function readCache(url) {
+    try {
+      const raw = localStorage.getItem(cacheKey(url));
+      if (!raw) return null;
+      const obj = JSON.parse(raw);
+      if (!obj || !obj.html || !obj.t) return null;
+      if (Date.now() - obj.t > TTL_MS) return null;
+      return obj.html;
+    } catch {
+      return null;
+    }
   }
 
-  function initHeader(){
+  function writeCache(url, html) {
+    try {
+      const payload = JSON.stringify({ html, t: Date.now() });
+      localStorage.setItem(cacheKey(url), payload);
+    } catch {
+      // Si localStorage falla (cuota/privado), no bloquea la UI
+    }
+  }
+
+  function setHTML(host, html, after) {
+    host.innerHTML = html;
+    if (typeof after === 'function') {
+      // Vuelve a enlazar eventos porque el DOM es nuevo
+      try { after(); } catch (e) { console.warn('init después de inyección falló:', e); }
+    }
+  }
+
+  /* Inyecta con caché + revalidación background */
+  function inject(id, url, after) {
+    const host = document.getElementById(id);
+    if (!host) return;
+
+    const cached = readCache(url);
+    if (cached) {
+      setHTML(host, cached, after);
+      // Revalida en segundo plano para no bloquear el LCP
+      fetch(url, { cache: 'no-cache' })
+        .then(r => r.ok ? r.text() : Promise.reject(r.status))
+        .then(html => {
+          if (html && html !== cached) {
+            writeCache(url, html);
+            setHTML(host, html, after); // Reinyecta y re-enlaza eventos
+          }
+        })
+        .catch(() => { /* silencio */ });
+    } else {
+      // Primera carga: fetch normal y luego cachea
+      fetch(url, { cache: 'no-cache' })
+        .then(r => {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.text();
+        })
+        .then(html => {
+          writeCache(url, html);
+          setHTML(host, html, after);
+        })
+        .catch(e => console.warn('No se pudo cargar', url, e));
+    }
+  }
+
+  /* ===== Navegación (misma UI, sin cambios de diseño) ===== */
+  function initHeader() {
     const header = document.querySelector('header');
-    if(!header) return;
+    if (!header) return;
 
-    // ===== Desktop dropdowns =====
-    let open=null, hideTimer=null;
-    const isDesktop = ()=> window.innerWidth > 860;
+    /* --- Desktop: menús con paneles --- */
+    const isDesktop = () => window.innerWidth > 860;
     const panels = document.querySelectorAll('.menu-panel');
+    let open = null, hideTimer = null;
 
-    function reset(p){ if(!p) return; p.style.left='';p.style.top='';p.style.width='';p.style.maxWidth='';p.style.visibility='';}
-    function place(btn,panel){
-      if(!panel || !btn) return;
-      if(open && open.panel!==panel) hideNow(open.panel,open.btn);
-      clearTimeout(hideTimer);
-
-      const item = btn.closest('.nav-item');
-      const isMega = (item?.dataset.size||'compact')==='mega';
-
-      panel.style.display='block';
-      panel.style.visibility='hidden';
-      panel.style.position='fixed';
-      panel.style.maxHeight = Math.max(260, window.innerHeight - 24) + 'px';
-
-      if(isMega){ panel.style.width = Math.min(920, window.innerWidth - 24) + 'px'; }
-      else { panel.style.width='auto'; panel.style.maxWidth = Math.min(520, window.innerWidth - 24) + 'px'; }
-
-      const pre = panel.getBoundingClientRect();
-      const b = btn.getBoundingClientRect();
-
-      let left;
-      if(isMega){
-        left = Math.round(b.left + b.width/2 - pre.width/2);
-        left = Math.max(12, Math.min(left, window.innerWidth - pre.width - 12));
-      }else{
-        left = Math.round(Math.min(b.left, window.innerWidth - pre.width - 12));
-        left = Math.max(left, 12);
-      }
-      let top = Math.round(b.bottom + 8);
-      if(top + pre.height > window.innerHeight - 12){
-        top = Math.round(b.top - pre.height - 8);
-        if(top < 12) top = 12;
-      }
-      panel.style.left=left+'px';
-      panel.style.top=top+'px';
-      panel.style.visibility='visible';
-      panel.classList.add('menu-visible');
-      panel.setAttribute('aria-hidden','false');
-      btn.setAttribute('aria-expanded','true');
-      open = {panel,btn};
+    function getPanel(btn) {
+      const id = btn.getAttribute('data-panel');
+      return id ? document.getElementById(id) : null;
     }
-    function hideNow(panel,btn){
-      if(!panel) return;
-      btn && btn.setAttribute('aria-expanded','false');
+
+    function hideNow(panel, btn) {
+      if (!panel) return;
       panel.classList.remove('menu-visible');
-      panel.style.display='none';
-      panel.setAttribute('aria-hidden','true');
-      reset(panel);
-      if(open && open.panel===panel) open=null;
+      panel.setAttribute('aria-hidden', 'true');
+      panel.style.visibility = 'hidden';
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+      if (open && open.panel === panel) open = null;
     }
-    function scheduleClose(){
+
+    function place(btn, panel) {
+      if (!btn || !panel) return;
+      if (open && open.panel !== panel) hideNow(open.panel, open.btn);
       clearTimeout(hideTimer);
-      hideTimer = setTimeout(()=>{ if(open) hideNow(open.panel, open.btn); }, 120);
+
+      const b = btn.getBoundingClientRect();
+      const pre = panel;
+      pre.style.visibility = 'hidden';
+      pre.classList.add('menu-visible');
+      pre.setAttribute('aria-hidden', 'false');
+
+      // Medimos para colocar al lado del botón
+      const w = pre.offsetWidth || 320;
+      let left = Math.round(b.left + (b.width / 2) - (w / 2));
+      left = Math.max(12, Math.min(left, window.innerWidth - w - 12));
+
+      // Por debajo si cabe, si no, por encima
+      const h = pre.offsetHeight || 200;
+      let top = Math.round(b.bottom + 8);
+      if (top + h > window.innerHeight - 12) {
+        top = Math.round(b.top - h - 8);
+        if (top < 12) top = 12;
+      }
+
+      pre.style.left = left + 'px';
+      pre.style.top = top + 'px';
+      pre.style.visibility = 'visible';
+      btn.setAttribute('aria-expanded', 'true');
+      open = { panel: pre, btn };
     }
 
-    header.addEventListener('pointerenter', (e)=>{
-      if(!isDesktop()) return;
-      const btn = e.target.closest('.nav-btn[data-panel]');
-      if(btn){ const p = document.getElementById(btn.getAttribute('data-panel')); place(btn,p); }
-    }, true);
-    header.addEventListener('click', (e)=>{
-      const btn = e.target.closest('.nav-btn[data-panel]');
-      if(btn && isDesktop()){
-        e.preventDefault();
-        const p = document.getElementById(btn.getAttribute('data-panel'));
-        if(open && open.panel===p) hideNow(p,btn); else place(btn,p);
-      }
-    });
-    header.addEventListener('pointerleave', ()=>{ if(isDesktop()) scheduleClose(); });
-    panels.forEach(p=>{
-      p.addEventListener('pointerenter', ()=> clearTimeout(hideTimer));
-      p.addEventListener('pointerleave', scheduleClose);
-    });
-    document.addEventListener('pointerdown', (e)=>{
-      if(!open) return;
-      if(e.target.closest('header') || e.target.closest('.menu-panel')) return;
-      hideNow(open.panel, open.btn);
-    });
-    document.addEventListener('keydown', e=>{ if(e.key==='Escape' && open) hideNow(open.panel,open.btn); });
-    window.addEventListener('resize', ()=>{ if(open) hideNow(open.panel,open.btn); });
+    function scheduleHide(panel, btn) {
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => hideNow(panel, btn), 120);
+    }
 
-    // ===== Drawer móvil =====
+    function setupDesktopMenus() {
+      const items = header.querySelectorAll('.nav-item');
+      items.forEach(item => {
+        const btn = item.querySelector('.nav-btn[data-panel]');
+        if (!btn) return;
+        const panel = getPanel(btn);
+        // Hover/Focus
+        ['mouseenter', 'focusin'].forEach(ev => {
+          btn.addEventListener(ev, () => { if (isDesktop()) place(btn, panel); });
+          if (panel) panel.addEventListener(ev, () => { if (isDesktop()) place(btn, panel); });
+        });
+        // Salida
+        ['mouseleave', 'focusout'].forEach(ev => {
+          btn.addEventListener(ev, () => { if (isDesktop()) scheduleHide(panel, btn); });
+          if (panel) panel.addEventListener(ev, () => { if (isDesktop()) scheduleHide(panel, btn); });
+        });
+      });
+
+      // Escape y click fuera
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && open) {
+          hideNow(open.panel, open.btn);
+        }
+      });
+      document.addEventListener('click', (e) => {
+        if (!open) return;
+        const insidePanel = open.panel.contains(e.target);
+        const insideBtn = open.btn.contains(e.target);
+        if (!insidePanel && !insideBtn) hideNow(open.panel, open.btn);
+      });
+
+      window.addEventListener('resize', () => {
+        if (open && isDesktop()) place(open.btn, open.panel);
+        if (open && !isDesktop()) hideNow(open.panel, open.btn);
+      });
+    }
+
+    /* --- Móvil: drawer con backdrop y focus trap --- */
     const toggle = document.getElementById('navToggle');
     const drawer = document.getElementById('mobileMenu');
     const backdrop = document.getElementById('drawerBackdrop');
-    if(toggle && drawer && backdrop){
-      let lastFocus=null;
-      const focusable = root=> root.querySelectorAll('a,button,input,select,textarea,[tabindex]:not([tabindex="-1"])');
 
-      function setH(){
-        const h = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))||72;
-        drawer.style.height = (window.innerHeight - h) + 'px';
-      }
-      function openDrawer(){
-        lastFocus=document.activeElement;
-        drawer.hidden=false; setH();
-        requestAnimationFrame(()=>{
-          drawer.classList.add('open'); backdrop.classList.add('open');
-          document.body.style.overflow='hidden'; toggle.setAttribute('aria-expanded','true');
-
-          // 👉 Enfoca el título del menú (no el primer enlace) para evitar el borde azul
-          const title = drawer.querySelector('#mobileMenuTitle');
-          if (title){
-            title.setAttribute('tabindex','-1');
-            // preventScroll evita “saltar” la página en iOS
-            title.focus({preventScroll:true});
-          } else {
-            // fallback: si falta el título, enfoca el propio drawer
-            drawer.setAttribute('tabindex','-1');
-            drawer.focus({preventScroll:true});
-          }
-        });
-        window.addEventListener('resize', setH);
-        window.addEventListener('orientationchange', setH);
-      }
-      function closeDrawer(){
-        drawer.classList.remove('open'); backdrop.classList.remove('open');
-        document.body.style.overflow=''; toggle.setAttribute('aria-expanded','false');
-        window.removeEventListener('resize', setH);
-        window.removeEventListener('orientationchange', setH);
-        setTimeout(()=>{ drawer.hidden=true; drawer.style.height=''; }, 200);
-        lastFocus && lastFocus.focus();
-      }
-      toggle.addEventListener('click', ()=> (toggle.getAttribute('aria-expanded')==='true'? closeDrawer():openDrawer()));
-      backdrop.addEventListener('click', closeDrawer);
-      document.addEventListener('keydown', e=>{
-        if(e.key==='Escape' && !drawer.hidden) closeDrawer();
-        if(e.key==='Tab' && !drawer.hidden){
-          const els = Array.from(focusable(drawer)); if(!els.length) return;
-          const first=els[0], last=els[els.length-1];
-          if(e.shiftKey && document.activeElement===first){ last.focus(); e.preventDefault(); }
-          else if(!e.shiftKey && document.activeElement===last){ first.focus(); e.preventDefault(); }
-        }
-      });
-      window.addEventListener('resize', ()=>{ if(isDesktop() && !drawer.hidden) closeDrawer(); });
+    function isOpen() { return drawer && !drawer.hasAttribute('hidden'); }
+    function openDrawer() {
+      if (!drawer) return;
+      drawer.removeAttribute('hidden');
+      drawer.setAttribute('aria-modal', 'true');
+      toggle && toggle.setAttribute('aria-expanded', 'true');
+      backdrop && backdrop.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      // focus primer link
+      const firstLink = drawer.querySelector('a,button,[tabindex]:not([tabindex="-1"])');
+      if (firstLink) firstLink.focus({ preventScroll: true });
     }
+    function closeDrawer() {
+      if (!drawer) return;
+      drawer.setAttribute('hidden', '');
+      drawer.setAttribute('aria-modal', 'true');
+      toggle && toggle.setAttribute('aria-expanded', 'false');
+      backdrop && backdrop.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      toggle && toggle.focus({ preventScroll: true });
+    }
+
+    if (toggle && drawer) {
+      toggle.addEventListener('click', () => { isOpen() ? closeDrawer() : openDrawer(); });
+      backdrop && backdrop.addEventListener('click', closeDrawer);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isOpen()) closeDrawer(); });
+
+      // Trap de foco simple
+      drawer.addEventListener('keydown', (e) => {
+        if (e.key !== 'Tab') return;
+        const focusables = drawer.querySelectorAll('a,button,input,select,textarea,[tabindex]:not([tabindex="-1"])');
+        if (focusables.length === 0) return;
+        const first = focusables[0], last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) { last.focus(); e.preventDefault(); }
+        else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+      });
+
+      // Si el viewport pasa a desktop con el drawer abierto, ciérralo
+      window.addEventListener('resize', () => { if (isDesktop() && isOpen()) closeDrawer(); });
+    }
+
+    // Inicialización de menús desktop
+    setupDesktopMenus();
   }
 
-  document.addEventListener('DOMContentLoaded', function(){
-    inject('header-placeholder','header.html', initHeader);
-    inject('footer-placeholder','footer.html');
+  /* ===== Inicio ===== */
+  document.addEventListener('DOMContentLoaded', function () {
+    inject('header-placeholder', 'header.html', initHeader);
+    inject('footer-placeholder', 'footer.html', null);
   });
 })();
