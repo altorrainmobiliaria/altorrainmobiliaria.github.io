@@ -9,11 +9,17 @@
   <meta name="theme-color" content="#d4af37"/>
   <link rel="manifest" href="manifest.json"/>
 
+  <!-- Preload hero image for faster LCP -->
+  <link rel="preload" as="image" href="/multimedia/hero-house.webp">
+
   <!-- OG -->
   <meta property="og:title" content="Altorra Inmobiliaria"/>
-  <meta property="og:description" content="Encuentra las mejores propiedades para comprar, arrendar o rentar por días en Cartagena y ciudades vecinas."/>
+  <meta property="og:description" content="Encuentra las mejores..., arrendar o rentar por días en Cartagena y ciudades vecinas."/>
   <meta property="og:image" content="/hero-emotion.png"/>
 
+  <!-- Hints + Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
 
@@ -25,12 +31,20 @@
   <!-- Header externo -->
   <div id="header-placeholder"></div>
 
-  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+  <!-- Enlace de salto de accesibilidad -->
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
-  <main id="main" style="padding-top:calc(var(--header-h) + 12px);">
+  <main id="contenido">
     <!-- HERO -->
-    <section class="hero" aria-label="Hero">
-      <img class="bg" src="https://i.postimg.cc/FHy13q2M/pexels-rdne-8293700.jpg" alt="Banner"/>
+    <section class="hero" aria-label="Hero principal">
+      <img class="bg"
+           src="/multimedia/hero-house.webp"
+           alt="Banner"
+           loading="eager"
+           fetchpriority="high"
+           decoding="async"
+           width="1600"
+           height="1000"/>
       <div class="overlay" aria-hidden="true"></div>
       <div class="inner">
         <h1>Gestión Integral en Soluciones Inmobiliarias</h1>
@@ -61,12 +75,8 @@
             <input id="f-max" name="max" type="number" inputmode="numeric" placeholder="$ Máximo" aria-label="Precio máximo"/>
           </div>
 
-          <button type="submit" aria-label="Buscar">Buscar</button>
+          <button class="btn btn-primary" type="submit" aria-label="Buscar propiedades">Buscar</button>
         </form>
-
-        <div style="margin-top:8px;color:rgba(255,255,255,0.9);font-size:0.9rem">
-          Tu próximo hogar te está esperando.
-        </div>
       </div>
     </section>
 
@@ -74,55 +84,64 @@
     <section id="publica-tu-propiedad" class="publish-section" aria-labelledby="publicar-title">
       <div class="publish-card">
         <h2 id="publicar-title">¿Quieres publicar tu propiedad?</h2>
-        <p>Si tienes un inmueble para vender, arrendar o rentar por días, Altorra te ayuda a promocionarlo de forma rápida y segura.</p>
+        <p>Si tienes un inmueble para vender, arrendar o rentar ..., Altorra te ayuda a promocionarlo de forma rápida y segura.</p>
         <a href="publicar-propiedad.html" class="btn">Publicar mi propiedad</a>
       </div>
     </section>
 
     <!-- VENTA -->
     <section class="section" aria-labelledby="venta-title">
-      <div class="head"><h2 id="venta-title">Propiedades en <span style="color:var(--gold)">Venta</span></h2><a href="propiedades-comprar.html">Ver todo →</a></div>
+      <div class="head">
+        <h2 id="venta-title">Propiedades en <span style="color:var(--gold)">Venta</span></h2>
+        <a href="propiedades-comprar.html">Ver todo →</a>
+      </div>
       <div class="carousel-wrap">
         <div id="carouselVenta" class="carousel-row" role="list">
           <div class="loading" style="padding:12px;color:var(--muted)">Cargando propiedades...</div>
         </div>
-        <button class="arrow left" type="button" data-target="carouselVenta" aria-controls="carouselVenta" aria-label="Desplazar carrusel de venta a la izquierda">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button class="arrow left" type="button" data-target="carouselVenta" aria-label="Desplazar carrusel de venta a la izquierda">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <button class="arrow right" type="button" data-target="carouselVenta" aria-controls="carouselVenta" aria-label="Desplazar carrusel de venta a la derecha">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button class="arrow right" type="button" data-target="carouselVenta" aria-label="Desplazar carrusel de venta a la derecha">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
     </section>
 
     <!-- ARRIENDO -->
     <section class="section" aria-labelledby="arrend-title" style="background:#fff">
-      <div class="head"><h2 id="arrend-title">Propiedades en <span style="color:var(--gold)">Arriendo</span></h2><a href="propiedades-arrendar.html">Ver todo →</a></div>
+      <div class="head">
+        <h2 id="arrend-title">Propiedades en <span style="color:var(--gold)">Arriendo</span></h2>
+        <a href="propiedades-arrendar.html">Ver todo →</a>
+      </div>
       <div class="carousel-wrap">
         <div id="carouselArriendo" class="carousel-row" role="list">
           <div class="loading" style="padding:12px;color:var(--muted)">Cargando propiedades...</div>
         </div>
-        <button class="arrow left" type="button" data-target="carouselArriendo" aria-controls="carouselArriendo" aria-label="Desplazar carrusel de arriendo a la izquierda">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button class="arrow left" type="button" data-target="carouselArriendo" aria-label="Desplazar carrusel de arriendo a la izquierda">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <button class="arrow right" type="button" data-target="carouselArriendo" aria-controls="carouselArriendo" aria-label="Desplazar carrusel de arriendo a la derecha">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button class="arrow right" type="button" data-target="carouselArriendo" aria-label="Desplazar carrusel de arriendo a la derecha">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
     </section>
 
-    <!-- ALOJAMIENTOS POR DÍAS -->
-    <section class="section" aria-labelledby="dias-title" style="background:#fbfbfb">
-      <div class="head"><h2 id="dias-title">Alojamientos por <span style="color:var(--gold)">días</span></h2><a href="propiedades-alojamientos.html">Ver todo →</a></div>
+    <!-- ALOJAMIENTOS -->
+    <section class="section" aria-labelledby="dias-title">
+      <div class="head">
+        <h2 id="dias-title">Alojamientos por <span style="color:var(--gold)">Días</span></h2>
+        <a href="propiedades-alojamientos.html">Ver todo →</a>
+      </div>
       <div class="carousel-wrap">
         <div id="carouselDias" class="carousel-row" role="list">
           <div class="loading" style="padding:12px;color:var(--muted)">Cargando propiedades...</div>
         </div>
-        <button class="arrow left" type="button" data-target="carouselDias" aria-controls="carouselDias" aria-label="Desplazar carrusel de alojamientos a la izquierda">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button class="arrow left" type="button" data-target="carouselDias" aria-label="Desplazar carrusel de alojamientos a la izquierda">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <button class="arrow right" type="button" data-target="carouselDias" aria-controls="carouselDias" aria-label="Desplazar carrusel de alojamientos a la derecha">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6l6 6-6 6" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button class="arrow right" type="button" data-target="carouselDias" aria-label="Desplazar carrusel de alojamientos a la derecha">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
     </section>
@@ -141,101 +160,5 @@
 
   <!-- Footer externo -->
   <div id="footer-placeholder"></div>
-
-  <!-- Script de carruseles (carga data.json con rutas robustas) -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function(){
-      const pages = [
-        {operation:'comprar', targetId:'carouselVenta', mode:'venta'},
-        {operation:'arrendar', targetId:'carouselArriendo', mode:'arriendo'},
-        {operation:'dias',     targetId:'carouselDias',     mode:'dias'}
-      ];
-
-      function formatCOP(n){ return (n||n===0) ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.') : ''; }
-      function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
-
-      function buildCardElement(p, mode){
-        const article = document.createElement('article');
-        article.className = 'card';
-        article.setAttribute('role','listitem');
-        const img = document.createElement('img');
-        img.loading = 'lazy'; img.decoding = 'async';
-        img.alt = escapeHtml(p.title || 'Propiedad');
-        const raw = p.image || p.img || p.img_url || p.imgUrl || p.photo;
-        if (raw) {
-          img.src = (/^(https?:)?\//.test(raw)) ? raw : '/' + raw;  // respeta http/https y rutas absolutas
-        } else {
-          img.src = 'https://i.postimg.cc/0yYb8Y6r/placeholder.png';
-        }
-        const body = document.createElement('div');
-        body.className = 'body';
-        const title = document.createElement('h3');
-        title.innerHTML = escapeHtml(p.title || 'Sin título');
-        const specs = document.createElement('div');
-        specs.style.color = 'var(--muted)';
-        const parts = [];
-        if(p.beds) parts.push(p.beds + 'H');
-        if(p.baths) parts.push(p.baths + 'B');
-        if(p.sqm) parts.push(p.sqm + ' m²');
-        specs.textContent = parts.join(' · ');
-        const priceRow = document.createElement('div');
-        priceRow.style.marginTop = '8px';
-        priceRow.style.fontWeight = '800';
-        priceRow.style.color = 'var(--gold)';
-        if (p.price) {
-          priceRow.textContent =
-            (mode === 'arriendo') ? ('$' + formatCOP(p.price) + ' COP / mes') :
-            (mode === 'dias')     ? ('$' + formatCOP(p.price) + ' COP / noche') :
-                                    ('$' + formatCOP(p.price) + ' COP');
-        }
-        body.appendChild(title); body.appendChild(specs); body.appendChild(priceRow);
-        article.appendChild(img); article.appendChild(body);
-        article.addEventListener('click', function(){
-          const id = p.id || '';
-          window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(id);
-        });
-        return article;
-      }
-
-      async function loadPropsByOperation(operation){
-        // Cubrimos /serena/ y raíz del sitio
-        const candidates = ['properties/data.json','/properties/data.json','../properties/data.json'];
-        for (const url of candidates) {
-          try {
-            const res = await fetch(url, { cache:'no-store' });
-            if (!res.ok) continue;
-            const txt = await res.text();
-            // Evita parsear HTML cuando GitHub Pages devuelve index
-            if (!txt.trim().startsWith('[')) continue;
-            const data = JSON.parse(txt);
-            if (!Array.isArray(data)) continue;
-            return data.filter(item => String(item.operation).toLowerCase() === String(operation).toLowerCase());
-          } catch(e) { /* intenta siguiente ruta */ }
-        }
-        console.warn('No se pudo cargar properties/data.json para', operation);
-        return [];
-      }
-
-      (async function(){
-        const jobs = pages.map(pg => loadPropsByOperation(pg.operation).then(arr => ({arr, pg})));
-        const results = await Promise.all(jobs);
-        results.forEach(({arr, pg})=>{
-          const target = document.getElementById(pg.targetId);
-          if(!target) return;
-          target.innerHTML = '';
-          const list = arr || [];
-          if(list.length === 0){
-            const note = document.createElement('div');
-            note.style.padding = '12px';
-            note.style.color = 'var(--muted)';
-            note.textContent = 'Sin propiedades para mostrar.';
-            target.appendChild(note);
-            return;
-          }
-          list.slice(0, 8).forEach(p => target.appendChild(buildCardElement(p, pg.mode)));
-        });
-      })();
-    });
-  </script>
 </body>
 </html>
