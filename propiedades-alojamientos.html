@@ -2,18 +2,17 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Altorra — Alojamientos por Días</title>
-<meta name="description" content="Alojamientos por días con Altorra: alojamientos amoblados y gestión confiable."/>
+<meta content="Alojamientos por días con Altorra: alojamientos amoblados y gestión confiable." name="description"/>
 <!-- PWA y metadatos de redes sociales -->
-<link rel="manifest" href="manifest.json"/>
-<meta name="theme-color" content="#d4af37"/>
-<meta property="og:title" content="Alojamientos por días | Altorra"/>
-<meta property="og:description" content="Reserva alojamientos amoblados por días en Cartagena y alrededores. Usa nuestros filtros para encontrar el lugar perfecto."/>
-<meta property="og:image" content="/img/uploads/dias1.png"/>
-<link rel="stylesheet" href="style.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
-
+<link href="manifest.json" rel="manifest"/>
+<meta content="#d4af37" name="theme-color"/>
+<meta content="Alojamientos por días | Altorra" property="og:title"/>
+<meta content="Reserva alojamientos amoblados por días en Cartagena y alrededores. Usa nuestros filtros para encontrar el lugar perfecto." property="og:description"/>
+<meta content="/img/uploads/dias1.png" property="og:image"/>
+<link href="style.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&amp;display=swap" rel="stylesheet"/>
 <style>
 :root{--card-radius:14px;--badge-h:28px;}
 main{padding-top:calc(var(--header-h) + 12px);max-width:var(--page-max);margin:0 auto}
@@ -126,117 +125,151 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
 </style>
 </head>
 <body>
-  <a href="#main" class="skip-link">Saltar al contenido principal</a>
-  <div id="header-placeholder"></div>
-  <!-- Registrar service worker para PWA -->
-  <script>
+<a class="skip-link" href="#main">Saltar al contenido principal</a>
+<div id="header-placeholder"></div>
+<!-- Registrar service worker para PWA -->
+<script>
     if("serviceWorker" in navigator){
       navigator.serviceWorker.register("/service-worker.js").catch(function(err){ console.warn("SW registration failed", err); });
     }
   </script>
-  <main id="main" style="padding-bottom:32px">
+<main id="main" style="padding-bottom:32px">
 <!-- FILTROS -->
-  <section class="filters" aria-label="Filtros de búsqueda">
-    <div class="control">
-      <label for="f-city">Ciudad</label>
-      <input id="f-city" type="text" placeholder="Ej. Cartagena"/>
-    </div>
-    <div class="control">
-      <label for="f-type">Tipo</label>
-      <select id="f-type">
-        <option value="">Cualquiera</option>
-        <option value="apartamento">Apartamento</option>
-        <option value="casa">Casa</option>
-        <option value="lote">Lote</option>
-        <option value="oficina">Oficina</option>
-      </select>
-    </div>
-    <div class="control">
-      <label for="f-min">Precio min (COP)</label>
-      <input id="f-min" type="number" min="0" placeholder="0"/>
-    </div>
-    <div class="control">
-      <label for="f-max">Precio max (COP)</label>
-      <input id="f-max" type="number" min="0" placeholder="—"/>
-    </div>
-    <div class="control">
-      <label for="f-sort">Ordenar</label>
-      <select id="f-sort">
-        <option value="relevance">Relevancia</option>
-        <option value="price-asc">Precio ↑</option>
-        <option value="price-desc">Precio ↓</option>
-      </select>
-    </div>
-    <div class="actions">
-      <button id="btnClear" class="btn btn-ghost" type="button">Limpiar</button>
-      <button id="btnApply" class="btn btn-primary" type="button">Aplicar filtros</button>
-    </div>
-  </section>
-
-  <!-- GRID -->
-  <section aria-label="Resultados">
-    <div id="list" class="grid" role="list" aria-live="polite"></div>
-    <div style="display:flex;justify-content:center;margin:22px">
-      <button id="btnLoadMore" class="btn btn-ghost" style="padding:12px 20px">Cargar más</button>
-    </div>
-  </section>
-  </main>
-<div id="leadBackdrop" class="modal-backdrop" aria-hidden="true"></div>
-<section id="leadModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="leadTitle" hidden>
-  <header>
-    <h3 id="leadTitle">Contacto</h3>
-    <button class="close" type="button" aria-label="Cerrar">✕</button>
-  </header>
-  <div class="content">
-    <form id="leadForm" method="POST" target="leadTarget">
-      <div class="lead-grid">
-        <div class="field">
-          <label for="lead-name">Nombre completo</label>
-          <input id="lead-name" name="entry.name" type="text" placeholder="Tu nombre" required/>
-        </div>
-        <div class="field">
-          <label for="lead-phone">Teléfono</label>
-          <input id="lead-phone" name="entry.phone" type="tel" placeholder="+57 ..." required/>
-        </div>
-        <div class="field">
-          <label for="lead-email">Correo</label>
-          <input id="lead-email" name="entry.email" type="email" placeholder="tucorreo@email.com" required/>
-        </div>
-        <div class="field">
-          <label for="lead-date">Fecha</label>
-          <input id="lead-date" name="entry.date" type="datetime-local" required/>
-        </div>
-        <div class="field" style="grid-column:1/-1">
-          <label for="lead-property">Propiedad de interés</label>
-          <input id="lead-property" name="entry.property" type="text" readonly/>
-          <input id="lead-url" name="entry.url" type="hidden"/>
-        </div>
-        <div class="field" style="grid-column:1/-1">
-          <label for="lead-message">Mensaje</label>
-          <textarea id="lead-message" name="entry.message" placeholder="Cuéntanos qué necesitas..."></textarea>
-        </div>
-      </div>
-      <p class="note" style="margin-top:8px">Protegemos tus datos. Un asesor te contactará muy pronto.</p>
-
-      <!-- Campos ocultos para Google Forms -->
-      <input type="hidden" id="g-name"     />
-      <input type="hidden" id="g-phone"    />
-      <input type="hidden" id="g-email"    />
-      <input type="hidden" id="g-date"     />
-      <input type="hidden" id="g-property" />
-      <input type="hidden" id="g-url"      />
-      <input type="hidden" id="g-message"  />
-    </form>
-  </div>
-  <footer>
-    <button class="btn btn-ghost" type="button" id="leadCancel">Cancelar</button>
-    <button class="btn btn-primary" type="button" id="leadSubmit">Enviar</button>
-  </footer>
+<section aria-label="Filtros de búsqueda" class="filters">
+<div class="control">
+<label for="f-city">Ciudad</label>
+<input id="f-city" placeholder="Ej. Cartagena" type="text"/>
+</div>
+<div class="control">
+<label for="f-type">Tipo</label>
+<select id="f-type">
+<option value="">Cualquiera</option>
+<option value="apartamento">Apartamento</option>
+<option value="casa">Casa</option>
+<option value="lote">Lote</option>
+<option value="oficina">Oficina</option>
+</select>
+</div>
+<div class="control">
+<label for="f-min">Precio min (COP)</label>
+<input id="f-min" min="0" placeholder="0" type="number"/>
+</div>
+<div class="control">
+<label for="f-max">Precio max (COP)</label>
+<input id="f-max" min="0" placeholder="—" type="number"/>
+</div>
+<div class="control">
+<label for="f-sort">Ordenar</label>
+<select id="f-sort">
+<option value="relevance">Relevancia</option>
+<option value="price-asc">Precio ↑</option>
+<option value="price-desc">Precio ↓</option>
+</select>
+</div>
+<div class="actions">
+<button class="btn btn-ghost" id="btnClear" type="button">Limpiar</button>
+<button class="btn btn-primary" id="btnApply" type="button">Aplicar filtros</button>
+</div>
 </section>
-<iframe name="leadTarget" id="leadTarget" style="display:none"></iframe>
-  <div id="footer-placeholder"></div>
-  <script src="header-footer.js" defer></script>
-  <script>
+<!-- GRID -->
+<section aria-label="Resultados">
+<div aria-live="polite" class="grid" id="list" role="list"></div>
+<div style="display:flex;justify-content:center;margin:22px">
+<button class="btn btn-ghost" id="btnLoadMore" style="padding:12px 20px">Cargar más</button>
+</div>
+</section>
+</main>
+<div aria-hidden="true" class="modal-backdrop" id="leadBackdrop"></div>
+<section aria-labelledby="leadTitle" aria-modal="true" class="modal" hidden="" id="leadModal" role="dialog">
+<header>
+<h3 id="leadTitle">Contacto</h3>
+<button aria-label="Cerrar" class="close" type="button">✕</button>
+</header>
+<div class="content">
+<form id="leadForm" method="POST" target="leadTarget">
+<div class="lead-grid">
+<div class="field">
+<label for="lead-name">Nombre completo</label>
+<input id="lead-name" name="entry.name" placeholder="Tu nombre" required="" type="text"/>
+</div>
+<div class="field">
+<label for="lead-phone">Teléfono</label>
+<input id="lead-phone" name="entry.phone" placeholder="+57 ..." required="" type="tel"/>
+</div>
+<div class="field">
+<label for="lead-email">Correo</label>
+<input id="lead-email" name="entry.email" placeholder="tucorreo@email.com" required="" type="email"/>
+</div>
+<div class="field">
+<label for="lead-date">Fecha</label>
+<input id="lead-date" name="entry.date" required="" type="datetime-local"/>
+</div>
+<div class="field" style="grid-column:1/-1">
+<label for="lead-property">Propiedad de interés</label>
+<input id="lead-property" name="entry.property" readonly="" type="text"/>
+<input id="lead-url" name="entry.url" type="hidden"/>
+</div>
+<div class="field" style="grid-column:1/-1">
+<label for="lead-message">Mensaje</label>
+<textarea id="lead-message" name="entry.message" placeholder="Cuéntanos qué necesitas..."></textarea>
+</div>
+</div>
+<p class="note" style="margin-top:8px">Protegemos tus datos. Un asesor te contactará muy pronto.</p>
+<!-- Campos ocultos para Google Forms -->
+<input id="g-name" type="hidden"/>
+<input id="g-phone" type="hidden"/>
+<input id="g-email" type="hidden"/>
+<input id="g-date" type="hidden"/>
+<input id="g-property" type="hidden"/>
+<input id="g-url" type="hidden"/>
+<input id="g-message" type="hidden"/>
+</form>
+</div>
+<footer>
+<button class="btn btn-ghost" id="leadCancel" type="button">Cancelar</button>
+<button class="btn btn-primary" id="leadSubmit" type="button">Enviar</button>
+</footer>
+</section>
+<iframe id="leadTarget" name="leadTarget" style="display:none"></iframe>
+<div id="footer-placeholder"></div>
+<script defer="" src="header-footer.js"></script>
+<script>
+    /* ===== Cache JSON local (TTL + revalidación background) ===== */
+    const __ALT_NS = 'altorra:json:';
+    const __ALT_VER = '2025-09-07.1';
+    function __jsonKey(url){ return __ALT_NS + url + '::' + __ALT_VER; }
+    function __now(){ return Date.now(); }
+    async function getJSONCached(url, { ttlMs = 1000*60*60*6, revalidate = true } = {}){
+      let cached = null;
+      try {
+        const raw = localStorage.getItem(__jsonKey(url));
+        if (raw) {
+          const obj = JSON.parse(raw);
+          if (obj && obj.t && (__now() - obj.t) < ttlMs && obj.data) {
+            cached = obj.data;
+          }
+        }
+      } catch(_) {}
+      if (cached) {
+        if (revalidate) {
+          fetch(url, { cache:'no-store' })
+            .then(r => r.ok ? r.json() : Promise.reject(r.status))
+            .then(data => {
+              try { localStorage.setItem(__jsonKey(url), JSON.stringify({ t: __now(), data })); } catch(_){}
+              document.dispatchEvent(new CustomEvent('altorra:json-updated', { detail: { url } }));
+            })
+            .catch(()=>{});
+        }
+        return cached;
+      }
+      const res = await fetch(url, { cache:'no-store' });
+      if (!res.ok) throw new Error('HTTP '+res.status);
+      const data = await res.json();
+      try { localStorage.setItem(__jsonKey(url), JSON.stringify({ t: __now(), data })); } catch(_){}
+      return data;
+    }
+    
+
 /* ---------------- Helpers ---------------- */
 const isTouch = () => window.matchMedia('(hover: none)').matches || 'ontouchstart' in window;
 function formatCOP(n){ return (n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
@@ -541,8 +574,7 @@ document.addEventListener('DOMContentLoaded', function(){
   // render inicial
   (async function init(){
     try {
-      const response = await fetch('properties/data.json');
-      const allProps = await response.json();
+      const allProps = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true });
       sampleProperties = Array.isArray(allProps) ? allProps.filter(p => p.operation === operation) : [];
     } catch(err){
       console.error('Error loading properties:', err);
@@ -675,6 +707,34 @@ document.addEventListener('DOMContentLoaded', function(){
   // Exponer para tarjetas
   window.openLeadModal = openLeadModal;
 });
-  </script>
+  
+
+      // Re-render si el JSON se actualiza en background
+      document.addEventListener('altorra:json-updated', (ev) => {
+        if (ev.detail?.url !== 'properties/data.json') return;
+        try{
+          // recomputa sampleProperties por operación
+          const all = JSON.parse(localStorage.getItem(__jsonKey('properties/data.json')))?.data || [];
+          if(Array.isArray(all)){
+            sampleProperties = all.filter(p => p.operation === operation);
+            // re-aplica filtros actuales
+            const city = document.getElementById('f-city')?.value||'';
+            const type = document.getElementById('f-type')?.value||'';
+            const min  = document.getElementById('f-min')?.value||'';
+            const max  = document.getElementById('f-max')?.value||'';
+            const sort = document.getElementById('f-sort')?.value||'relevance';
+            const filtered = applyFilters({city,type,min,max,sort});
+            renderedCount = Math.min(PAGE_SIZE, filtered.length);
+            const list = document.getElementById('list');
+            if(list){
+              list.dataset.filtered = JSON.stringify(filtered);
+              renderList(filtered.slice(0, renderedCount), true);
+              updateLoadMoreVisibility(filtered);
+            }
+          }
+        } catch(e){ /* silencio */ }
+      });
+    
+</script>
 </body>
 </html>
