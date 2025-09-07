@@ -20,9 +20,37 @@
   <!-- Estilos SOLO para esta página -->
   <style>
     /* ========= Page scope (no afecta al index) ========= */
+    /* Links: sin azul/púrpura en iOS */
     .page-contact a,
-    .page-contact a:visited { color: inherit; }              /* sin azul/púrpura */
+    .page-contact a:link,
+    .page-contact a:visited,
+    .page-contact a:active { color: inherit; text-decoration: none; -webkit-tap-highlight-color: transparent; }
     .page-contact .c-info a:hover { color: var(--gold); }
+
+    /* iOS: forzar color de texto en selects/inputs/botones para evitar azul */
+    .page-contact select,
+    .page-contact input,
+    .page-contact button,
+    .page-contact .qa,
+    .page-contact .btn { color: var(--text); -webkit-text-fill-color: var(--text); }
+    /* iOS: color de <option> en el estado cerrado del select (el desplegable nativo puede ignorarlo) */
+    .page-contact select option { color: var(--text); background:#fff; }
+
+    /* Foco dorado también en móvil (iOS usa :focus) */
+    .page-contact input:focus,
+    .page-contact select:focus,
+    .page-contact textarea:focus,
+    .page-contact .qa:focus,
+    .page-contact .btn:focus,
+    .page-contact input:focus-visible,
+    .page-contact select:focus-visible,
+    .page-contact textarea:focus-visible,
+    .page-contact .qa:focus-visible,
+    .page-contact .btn:focus-visible{
+      outline:3px solid rgba(212,175,55,0.22);
+      border-color:var(--gold);
+      box-shadow:0 0 0 2px rgba(212,175,55,0.08);
+    }
 
     /* Hero */
     .page-contact .hero-contact{
@@ -52,7 +80,7 @@
     }
     @media (max-width:960px){ .page-contact .contact-container{ grid-template-columns:1fr; } }
 
-    /* Tarjetas (no es la .card de propiedades) */
+    /* Tarjetas */
     .page-contact .c-card{
       background:#ffffff; border:1px solid rgba(17,24,39,0.08); border-radius:18px; padding:28px;
       box-shadow:0 12px 32px rgba(17,24,39,0.06); width:100%;
@@ -60,7 +88,7 @@
     .page-contact .c-card h2{ margin:0 0 10px; font-size:1.6rem; font-weight:800; color:var(--gold); }
     .page-contact .muted{ color:var(--muted); }
 
-    /* Columna derecha apilada (evita el hueco) */
+    /* Columna derecha apilada (evita hueco) */
     .page-contact .c-right-stack{ grid-column:2; display:flex; flex-direction:column; gap:16px; }
     @media (max-width:960px){ .page-contact .c-right-stack{ grid-column:1; } }
 
@@ -70,28 +98,14 @@
     .page-contact .grid.two{ grid-template-columns:repeat(2,minmax(0,1fr)); }
     @media (max-width:700px){ .page-contact .grid.two{ grid-template-columns:1fr; } }
     .page-contact label{ font-weight:600; display:flex; flex-direction:column; gap:6px; }
-    .page-contact input,
-    .page-contact select,
-    .page-contact textarea{
-      padding:12px 14px; border-radius:12px; border:1px solid rgba(17,24,39,0.16);
-      font-size:0.95rem; font-family:inherit; background:#fff;
-      transition:border-color .15s ease, box-shadow .15s ease;
-    }
     .page-contact textarea{ resize:vertical; min-height:160px; }
-    .page-contact input:focus-visible,
-    .page-contact select:focus-visible,
-    .page-contact textarea:focus-visible{
-      outline:3px solid rgba(212,175,55,0.22); border-color:var(--gold);
-    }
-    .page-contact .consent{ display:flex; align-items:flex-start; gap:10px; font-size:0.92rem; color:#374151; }
-    .page-contact .consent input{ margin-top:3px; }
 
     /* Info lateral */
     .page-contact .info-list{ list-style:none; padding:0; margin:0; display:grid; gap:12px; color:#1f2937; }
     .page-contact .info-item{ display:flex; gap:12px; align-items:flex-start; }
     .page-contact .info-item strong{ font-weight:800; color:#0f1724; }
     .page-contact .quick-actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
-    .page-contact .qa{ padding:10px 14px; border-radius:12px; font-weight:700; border:1px solid rgba(0,0,0,.12); background:#f8fafc; }
+    .page-contact .qa{ padding:10px 14px; border-radius:12px; font-weight:700; border:1px solid rgba(0,0,0,.12); background:#f8fafc; color:var(--text); }
     .page-contact .qa:hover{ background:#fff; box-shadow:0 10px 24px rgba(0,0,0,.06); }
 
     /* Generador */
