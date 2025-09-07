@@ -1,20 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Contacto | Altorra</title>
-  <meta name="description" content="Ponte en contacto con Altorra Inmobiliaria: Administración y arriendo de inmuebles, ventas, avalúos y servicios legales inmobiliarios." />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#d4af37" />
-  <meta property="og:title" content="Contacto | Altorra" />
-  <meta property="og:description" content="Estamos Aquí para Ti: Cuéntanos lo que necesitas y un asesor de Altorra te contactará pronto." />
-  <meta property="og:image" content="/hero-contact.png" />
+  <meta name="description" content="Ponte en contacto con Altorra Inmobiliaria: Administración y arriendo de inmuebles, ventas, avalúos y servicios legales inmobiliarios."/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#d4af37"/>
 
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <!-- OG -->
+  <meta property="og:title" content="Contacto | Altorra"/>
+  <meta property="og:description" content="Estamos Aquí para Ti: Cuéntanos lo que necesitas y un asesor de Altorra te contactará pronto."/>
+  <meta property="og:image" content="/hero-contact.png"/>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+
+  <style>
+    /* Específico de la página de Contacto (hero + layout) */
+    .hero-contact{
+      position:relative; min-height:62vh; display:flex; align-items:center; justify-content:center;
+      text-align:center; padding-top:calc(var(--header-h) + 40px); color:#fff; overflow:hidden; margin-bottom:32px;
+    }
+    .hero-contact .bg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0 }
+    .hero-contact .overlay{ position:absolute; inset:0; background:linear-gradient(180deg,rgba(0,0,0,.2),rgba(0,0,0,.55)); z-index:1 }
+    .hero-contact .inner{ position:relative; z-index:2; padding:0 16px; max-width:960px }
+    .hero-title{ color:#fff; font-size:clamp(2.2rem,5vw,3rem); font-weight:800; line-height:1.05;
+      text-shadow:0 1px 0 rgba(0,0,0,.35), 0 2px 2px rgba(0,0,0,.35), 0 6px 12px rgba(0,0,0,.28), 0 14px 28px rgba(0,0,0,.22) }
+    .hero-subtitle{ margin-top:12px; color:#fff; opacity:.98; font-size:clamp(1rem,2.2vw,1.2rem); font-weight:600; letter-spacing:.2px; line-height:1.35 }
+
+    main.contact-container{ max-width:var(--page-max); margin:0 auto 60px; padding:0 16px;
+      display:grid; gap:24px; grid-template-columns:1.12fr .88fr; align-items:start }
+    @media (max-width:960px){ main.contact-container{ grid-template-columns:1fr } }
+
+    .card-pad{ padding:28px }
+    .muted{ color:var(--muted) }
+    form.contact-form{ display:flex; flex-direction:column; gap:16px }
+    .grid{ display:grid; gap:14px }
+    .grid.two{ grid-template-columns:repeat(2,minmax(0,1fr)) }
+    @media (max-width:700px){ .grid.two{ grid-template-columns:1fr } }
+
+    .right-stack{ grid-column:2; display:flex; flex-direction:column; gap:var(--card-gap) }
+    @media (max-width:960px){ .right-stack{ grid-column:1 } }
+
+    .out{
+      border:1px dashed rgba(17,24,39,.22); border-radius:12px; padding:10px 12px; background:#f9fafb;
+      min-height:48px; color:#374151; line-height:1.4; word-break:break-word; overflow:auto; max-height:140px;
+    }
+    .gen-actions{ display:flex; gap:10px; flex-wrap:wrap }
+  </style>
+
+  <!-- JS (defer) -->
   <script src="header-footer.js" defer></script>
-  <script src="scripts.js" defer></script>
 </head>
 <body>
   <!-- Header externo -->
@@ -22,42 +59,41 @@
 
   <!-- HERO -->
   <section class="hero-contact">
-    <!-- ajusta la ruta si tu imagen está en otra carpeta -->
-    <img class="bg" src="/multimedia/hero-contact.png" alt="Contacto Altorra" />
+    <img class="bg" src="/multimedia/hero-contact.png" alt="Contacto Altorra"/>
     <div class="overlay" aria-hidden="true"></div>
     <div class="inner">
       <h1 class="hero-title">Conéctate con Nosotros</h1>
       <p class="hero-subtitle">Estamos listos para ayudarte a encontrar tu próximo hogar o inversión.</p>
-      <div class="quick-actions" style="justify-content:center;margin-top:14px"></div>
+      <div class="quick-actions" style="justify-content:center; margin-top:14px"></div>
     </div>
   </section>
 
   <!-- CONTENIDO -->
   <main class="contact-container" id="contacto">
-    <!-- Columna izquierda -->
-    <section class="card" aria-labelledby="t-contacto">
-      <h2 id="t-contacto">Envíanos un mensaje</h2>
+    <!-- Izquierda -->
+    <section class="card card-pad" aria-labelledby="t-contacto">
+      <h2 id="t-contacto" style="margin:0 0 10px; font-size:1.6rem; font-weight:800; color:var(--gold)">Envíanos un mensaje</h2>
       <p class="muted">Te responderemos en el menor tiempo posible.</p>
 
-      <form class="contact-form" id="contactForm" action="https://formsubmit.co/altorrainmobiliaria@gmail.com" method="POST" accept-charset="UTF-8">
-        <input type="hidden" name="_subject" value="Nuevo contacto desde la web" />
-        <input type="hidden" name="_next" value="https://altorrainmobiliaria.github.io/gracias.html" />
-        <input type="hidden" name="_captcha" value="false" />
-        <input type="hidden" name="_template" value="table" />
-        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+      <form class="contact-form" action="https://formsubmit.co/altorrainmobiliaria@gmail.com" method="POST" accept-charset="UTF-8">
+        <input type="hidden" name="_subject" value="Nuevo contacto desde la web"/>
+        <input type="hidden" name="_next" value="https://altorrainmobiliaria.github.io/gracias.html"/>
+        <input type="hidden" name="_captcha" value="false"/>
+        <input type="hidden" name="_template" value="table"/>
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off"/>
 
         <div class="grid two">
           <label>Nombre completo
-            <input type="text" name="Nombre" autocomplete="name" required />
+            <input type="text" name="Nombre" autocomplete="name" required/>
           </label>
           <label>Correo electrónico
-            <input type="email" name="Email" autocomplete="email" required />
+            <input type="email" name="Email" autocomplete="email" required/>
           </label>
         </div>
 
         <div class="grid two">
           <label>Teléfono
-            <input type="tel" name="Teléfono" inputmode="tel" autocomplete="tel" placeholder="+57 323 501 6747" required />
+            <input type="tel" name="Teléfono" inputmode="tel" autocomplete="tel" placeholder="+57 323 501 6747" required/>
           </label>
           <label>Motivo
             <select name="Motivo" required>
@@ -77,8 +113,8 @@
           <textarea name="Mensaje" placeholder="Cuéntanos brevemente cómo podemos ayudarte…" required></textarea>
         </label>
 
-        <label class="consent">
-          <input type="checkbox" required />
+        <label style="display:flex; gap:10px; align-items:flex-start; font-size:.92rem; color:#374151">
+          <input type="checkbox" required style="margin-top:3px"/>
           <span>Autorizo el tratamiento de mis datos para recibir información relacionada con los servicios de Altorra.</span>
         </label>
 
@@ -86,40 +122,44 @@
       </form>
     </section>
 
-    <!-- Columna derecha -->
+    <!-- Derecha -->
     <div class="right-stack">
-      <aside class="card" aria-labelledby="t-info">
-        <h2 id="t-info">Información de contacto</h2>
-        <ul class="info-list" style="margin-top:6px">
-          <li class="info-item"><strong>Teléfono:</strong> +57 323 501 6747</li>
-          <li class="info-item"><strong>Email:</strong> altorrainmobiliaria@gmail.com</li>
-          <li class="info-item"><strong>Ciudad:</strong> Cartagena de Indias, Bolívar (CO)</li>
-          <li class="info-item"><strong>Horario:</strong> Lun–Sáb 8:00–18:00</li>
-          <li class="info-item"><strong>Instagram:</strong> <a href="https://instagram.com/altorrainmobiliaria" target="_blank" rel="noopener">@altorrainmobiliaria</a></li>
+      <aside class="card card-pad" aria-labelledby="t-info">
+        <h2 id="t-info" style="margin:0 0 10px; font-size:1.6rem; font-weight:800; color:var(--gold)">Información de contacto</h2>
+        <ul style="list-style:none; padding:0; margin:6px 0 0; display:grid; gap:12px; color:#1f2937">
+          <li><strong>Teléfono:</strong> +57 323 501 6747</li>
+          <li><strong>Email:</strong> altorrainmobiliaria@gmail.com</li>
+          <li><strong>Ciudad:</strong> Cartagena de Indias, Bolívar (CO)</li>
+          <li><strong>Horario:</strong> Lun–Sáb 8:00–18:00</li>
+          <li><strong>Instagram:</strong> <a href="https://instagram.com/altorrainmobiliaria" target="_blank" rel="noopener">@altorrainmobiliaria</a></li>
         </ul>
-        <div class="quick-actions">
+        <div class="quick-actions" style="margin-top:8px">
           <a class="qa" href="publicar-propiedad.html">Publicar mi propiedad</a>
           <a class="qa" href="propiedades-comprar.html">Ver propiedades</a>
         </div>
       </aside>
 
-      <section class="card" aria-labelledby="t-gen">
-        <h2 id="t-gen">Generador de mensaje inteligente</h2>
+      <section class="card card-pad" aria-labelledby="t-gen">
+        <h2 id="t-gen" style="margin:0 0 10px; font-size:1.6rem; font-weight:800; color:var(--gold)">Generador de mensaje inteligente</h2>
         <p class="muted">Arma un mensaje claro y abre WhatsApp con un toque.</p>
 
-        <div class="gen-grid" style="margin-top:8px">
+        <div class="grid two" style="margin-top:8px">
           <label>Interés
             <select id="gTipo">
-              <option>Comprar</option><option>Arriendo</option><option>Por días</option>
-              <option>Publicar propiedad</option><option>Avalúos</option>
-              <option>Servicios jurídicos</option><option>Servicios contables</option>
+              <option>Comprar</option>
+              <option>Arriendo</option>
+              <option>Por días</option>
+              <option>Publicar propiedad</option>
+              <option>Avalúos</option>
+              <option>Servicios jurídicos</option>
+              <option>Servicios contables</option>
             </select>
           </label>
           <label>Barrio / zona (opcional)
-            <input id="gZona" type="text" placeholder="Toda Cartagena" />
+            <input id="gZona" type="text" placeholder="Toda Cartagena"/>
           </label>
           <label>Presupuesto aprox. (COP)
-            <input id="gPres" type="number" min="0" step="100000" placeholder="Ej. 1.200.000" />
+            <input id="gPres" type="number" min="0" step="100000" placeholder="Ej. 1.200.000"/>
           </label>
           <label>Urgencia
             <select id="gUrg">
@@ -129,10 +169,9 @@
             </select>
           </label>
           <label class="full">Detalles (opcional)
-            <input id="gExtra" type="text" placeholder="Habitaciones, amoblado, área…" />
+            <input id="gExtra" type="text" placeholder="Habitaciones, amoblado, área…"/>
           </label>
-
-          <div class="full out" id="gOut" aria-live="polite"></div>
+          <div class="out full" id="gOut" aria-live="polite"></div>
           <div class="gen-actions full">
             <a id="gWA" class="qa" target="_blank" rel="noopener">Abrir WhatsApp</a>
             <button id="gCopy" class="qa" type="button">Copiar mensaje</button>
@@ -144,5 +183,41 @@
 
   <!-- Footer externo -->
   <div id="footer-placeholder"></div>
+
+  <script>
+    // Lazy loading de imágenes
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('img:not([loading])').forEach(i => i.setAttribute('loading','lazy'));
+    });
+
+    // Lógica del generador
+    const fmtCOP = n => isNaN(n) ? '—' : (+n).toLocaleString('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0});
+    const gTipo = document.getElementById('gTipo');
+    const gZona = document.getElementById('gZona');
+    const gPres = document.getElementById('gPres');
+    const gUrg  = document.getElementById('gUrg');
+    const gExtra= document.getElementById('gExtra');
+    const gOut  = document.getElementById('gOut');
+    const gWA   = document.getElementById('gWA');
+    const gCopy = document.getElementById('gCopy');
+
+    function buildMsg(){
+      const tipo = gTipo.value;
+      const zona = (gZona.value || 'Cartagena').trim();
+      const pres = gPres.value ? ` Presupuesto aprox: ${fmtCOP(gPres.value)}.` : '';
+      const urg  = gUrg.value==='alta' ? ' Necesito respuesta hoy.' : (gUrg.value==='media' ? ' Me sirve esta semana.' : '');
+      const extra= gExtra.value.trim() ? ` Detalles: ${gExtra.value.trim()}.` : '';
+      const msg  = `Hola Altorra, me interesa ${tipo.toLowerCase()} en ${zona}.${pres}${extra}${urg}`;
+      gOut.textContent = msg;
+      gWA.href = 'https://wa.me/573235016747?text=' + encodeURIComponent(msg);
+    }
+    ['change','input'].forEach(ev => [gTipo,gZona,gPres,gUrg,gExtra].forEach(el => el.addEventListener(ev, buildMsg)));
+    buildMsg();
+
+    gCopy?.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(gOut.textContent); gCopy.textContent='¡Copiado!'; setTimeout(()=>gCopy.textContent='Copiar mensaje',1500); }
+      catch { gCopy.textContent='Copiar (selecciona)'; }
+    });
+  </script>
 </body>
 </html>
