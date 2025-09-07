@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Altorra — Propiedades en Arriendo</title>
-<meta content="Arriendo de propiedades con Altorra: atención personalizada y asesoría jurídica." name="description"/>
+<title>Altorra — Alojamientos por Días</title>
+<meta content="Alojamientos por días con Altorra: alojamientos amoblados y gestión confiable." name="description"/>
 <!-- PWA y metadatos de redes sociales -->
 <link href="manifest.json" rel="manifest"/>
 <meta content="#d4af37" name="theme-color"/>
-<meta content="Propiedades en arriendo | Altorra" property="og:title"/>
-<meta content="Encuentra apartamentos, casas y otros inmuebles en arriendo en Cartagena y otras ciudades. Filtra por ciudad, tipo y precio con Altorra." property="og:description"/>
-<meta content="/img/uploads/arrendar1.png" property="og:image"/>
+<meta content="Alojamientos por días | Altorra" property="og:title"/>
+<meta content="Reserva alojamientos amoblados por días en Cartagena y alrededores. Usa nuestros filtros para encontrar el lugar perfecto." property="og:description"/>
+<meta content="/img/uploads/dias1.png" property="og:image"/>
 <link href="style.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&amp;display=swap" rel="stylesheet"/>
 <style>
@@ -435,7 +435,7 @@ function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g, c=>({'&':'&amp;'
 
 /* ---------------- PROPIEDADES: datos y render ---------------- */
 document.addEventListener('DOMContentLoaded', function(){
-  const PAGE_MODE = 'arrendar';
+  const PAGE_MODE = 'alojamientos';
   function getPriceLabel(p){
     if(PAGE_MODE === 'arrendar') return '$' + formatCOP(p.price) + ' COP / mes';
     if(PAGE_MODE === 'alojamientos') return '$' + formatCOP(p.price) + ' / noche';
@@ -445,14 +445,14 @@ document.addEventListener('DOMContentLoaded', function(){
   const WHATSAPP = { phone:'573235016747', company:'Altorra Inmobiliaria' };
 
   /*
-   * Load properties from an external JSON file instead of a hard-coded list.
-   * This allows adding or editing properties without modifying the page.
-   * Only properties where `operation` matches this page's operation will be displayed.
+   * Use an external JSON file to populate the list of properties. The constant
+   * `operation` defines the type of listing shown on this page. Only properties
+   * with a matching operation value will be rendered.
    */
   let sampleProperties = [];
-  const operation = 'arrendar';
+  const operation = 'dias';
 
-  // Data will be fetched from properties/data.json later in the async init() function.
+  // The properties/data.json file will be loaded asynchronously in init().
 
   let renderedCount = 0;
   const PAGE_SIZE = 6;
