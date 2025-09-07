@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Contacto | Altorra</title>
-  <meta name="description" content="Ponte en contacto con Altorra Inmobiliaria: Administración y arriendo de inmuebles, ventas, avalúos y servicios legales inmobiliarios."/>
+  <meta name="description" content="Ponte en contacto con Altorra Inmobiliaria: Administración y arriendo de inmuebles, ventas, avalúos y servicios legales inmobiliarios." />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#d4af37" />
+  <meta property="og:title" content="Contacto | Altorra" />
+  <meta property="og:description" content="Estamos Aquí para Ti: Cuéntanos lo que necesitas y un asesor de Altorra te contactará pronto." />
+  <meta property="og:image" content="/hero-contact.png" />
 
-  <!-- PWA / OG -->
-  <link rel="manifest" href="manifest.json"/>
-  <meta name="theme-color" content="#d4af37"/>
-  <meta property="og:title" content="Contacto | Altorra"/>
-  <meta property="og:description" content="Estamos Aquí para Ti: Cuéntanos lo que necesitas y un asesor de Altorra te contactará pronto."/>
-  <meta property="og:image" content="/hero-contact.png"/>
-
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="style.css"/>
-
-  <!-- Scripts globales -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
   <script src="header-footer.js" defer></script>
   <script src="scripts.js" defer></script>
 </head>
@@ -24,9 +20,10 @@
   <!-- Header externo -->
   <div id="header-placeholder"></div>
 
-  <!-- ===== HERO CONTACTO ===== -->
+  <!-- HERO -->
   <section class="hero-contact">
-    <img class="bg" src="/multimedia/hero-contact.png" alt="Contacto Altorra"/>
+    <!-- ajusta la ruta si tu imagen está en otra carpeta -->
+    <img class="bg" src="/multimedia/hero-contact.png" alt="Contacto Altorra" />
     <div class="overlay" aria-hidden="true"></div>
     <div class="inner">
       <h1 class="hero-title">Conéctate con Nosotros</h1>
@@ -35,35 +32,32 @@
     </div>
   </section>
 
-  <!-- ===== CONTENIDO ===== -->
+  <!-- CONTENIDO -->
   <main class="contact-container" id="contacto">
-    <!-- Columna izquierda: Formulario -->
+    <!-- Columna izquierda -->
     <section class="card" aria-labelledby="t-contacto">
       <h2 id="t-contacto">Envíanos un mensaje</h2>
       <p class="muted">Te responderemos en el menor tiempo posible.</p>
 
-      <form class="contact-form" id="contactForm"
-            action="https://formsubmit.co/altorrainmobiliaria@gmail.com"
-            method="POST" accept-charset="UTF-8">
-        <!-- FormSubmit -->
-        <input type="hidden" name="_subject" value="Nuevo contacto desde la web"/>
-        <input type="hidden" name="_next" value="https://altorrainmobiliaria.github.io/gracias.html"/>
-        <input type="hidden" name="_captcha" value="false"/>
-        <input type="hidden" name="_template" value="table"/>
-        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off"/>
+      <form class="contact-form" id="contactForm" action="https://formsubmit.co/altorrainmobiliaria@gmail.com" method="POST" accept-charset="UTF-8">
+        <input type="hidden" name="_subject" value="Nuevo contacto desde la web" />
+        <input type="hidden" name="_next" value="https://altorrainmobiliaria.github.io/gracias.html" />
+        <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_template" value="table" />
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
 
         <div class="grid two">
           <label>Nombre completo
-            <input type="text" name="Nombre" autocomplete="name" required/>
+            <input type="text" name="Nombre" autocomplete="name" required />
           </label>
           <label>Correo electrónico
-            <input type="email" name="Email" autocomplete="email" required/>
+            <input type="email" name="Email" autocomplete="email" required />
           </label>
         </div>
 
         <div class="grid two">
           <label>Teléfono
-            <input type="tel" name="Teléfono" inputmode="tel" autocomplete="tel" placeholder="+57 323 501 6747" required/>
+            <input type="tel" name="Teléfono" inputmode="tel" autocomplete="tel" placeholder="+57 323 501 6747" required />
           </label>
           <label>Motivo
             <select name="Motivo" required>
@@ -84,7 +78,7 @@
         </label>
 
         <label class="consent">
-          <input type="checkbox" required/>
+          <input type="checkbox" required />
           <span>Autorizo el tratamiento de mis datos para recibir información relacionada con los servicios de Altorra.</span>
         </label>
 
@@ -92,7 +86,7 @@
       </form>
     </section>
 
-    <!-- Columna derecha (stack) -->
+    <!-- Columna derecha -->
     <div class="right-stack">
       <aside class="card" aria-labelledby="t-info">
         <h2 id="t-info">Información de contacto</h2>
@@ -116,20 +110,16 @@
         <div class="gen-grid" style="margin-top:8px">
           <label>Interés
             <select id="gTipo">
-              <option>Comprar</option>
-              <option>Arriendo</option>
-              <option>Por días</option>
-              <option>Publicar propiedad</option>
-              <option>Avalúos</option>
-              <option>Servicios jurídicos</option>
-              <option>Servicios contables</option>
+              <option>Comprar</option><option>Arriendo</option><option>Por días</option>
+              <option>Publicar propiedad</option><option>Avalúos</option>
+              <option>Servicios jurídicos</option><option>Servicios contables</option>
             </select>
           </label>
           <label>Barrio / zona (opcional)
-            <input id="gZona" type="text" placeholder="Toda Cartagena"/>
+            <input id="gZona" type="text" placeholder="Toda Cartagena" />
           </label>
           <label>Presupuesto aprox. (COP)
-            <input id="gPres" type="number" min="0" step="100000" placeholder="Ej. 1.200.000"/>
+            <input id="gPres" type="number" min="0" step="100000" placeholder="Ej. 1.200.000" />
           </label>
           <label>Urgencia
             <select id="gUrg">
@@ -139,7 +129,7 @@
             </select>
           </label>
           <label class="full">Detalles (opcional)
-            <input id="gExtra" type="text" placeholder="Habitaciones, amoblado, área…"/>
+            <input id="gExtra" type="text" placeholder="Habitaciones, amoblado, área…" />
           </label>
 
           <div class="full out" id="gOut" aria-live="polite"></div>
@@ -154,36 +144,5 @@
 
   <!-- Footer externo -->
   <div id="footer-placeholder"></div>
-
-  <!-- Page hook: generador de mensaje (sólo si existen los IDs) -->
-  <script>
-    (function(){
-      const $ = id => document.getElementById(id);
-      const tipo=$('gTipo'), zona=$('gZona'), pres=$('gPres'), urg=$('gUrg'), extra=$('gExtra'), out=$('gOut'), wa=$('gWA'), copy=$('gCopy');
-      if(!tipo || !out) return;
-
-      function miles(n){ try{ return Number(n).toLocaleString('es-CO'); }catch{ return n; } }
-      function build(){
-        const t = tipo.value || 'Comprar';
-        const z = (zona.value||'').trim();
-        const p = (pres.value||'').trim();
-        const u = urg ? urg.options[urg.selectedIndex].text : '';
-        const e = (extra?.value||'').trim();
-        let msg = `Hola, me interesa ${t.toLowerCase()}`;
-        if(z) msg += ` en ${z}`;
-        if(p) msg += ` con un presupuesto aproximado de $${miles(p)} COP`;
-        if(u && urg.value!=='normal') msg += ` (${u})`;
-        if(e) msg += `. Detalles: ${e}`;
-        msg += `. Gracias.`;
-        out.textContent = msg;
-        if(wa) wa.href = 'https://wa.me/573235016747?text=' + encodeURIComponent(msg);
-      }
-      ['input','change'].forEach(ev=>{
-        [tipo,zona,pres,urg,extra].forEach(el=> el && el.addEventListener(ev, build));
-      });
-      copy && copy.addEventListener('click', ()=> { navigator.clipboard.writeText(out.textContent||''); copy.textContent='¡Copiado!'; setTimeout(()=> copy.textContent='Copiar mensaje',1200); });
-      build();
-    })();
-  </script>
 </body>
 </html>
