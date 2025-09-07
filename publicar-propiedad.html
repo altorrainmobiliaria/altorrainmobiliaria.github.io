@@ -159,6 +159,33 @@
       outline:3px solid rgba(212,175,55,0.25);
       border-color:var(--gold);
     }
+
+    /* --------- Ajustes de estilo para selects ---------
+       Por defecto los menús desplegables muestran el texto en azul cuando
+       se selecciona una opción. Para mantener la coherencia visual con
+       el tema de la marca, se personalizan los colores de los select y
+       sus opciones. */
+    .publish-form select{
+      color:var(--text);
+      background-color:#fff;
+      border-color:rgba(17,24,39,0.16);
+      appearance:none;
+      /* Añadir una flecha personalizada usando degradado para remplazar la flecha azul */
+      background-image:linear-gradient(45deg, transparent 50%, var(--gold) 50%),
+                        linear-gradient(-45deg, transparent 50%, var(--gold) 50%);
+      background-position:calc(100% - 20px) calc(50% - 3px), calc(100% - 15px) calc(50% - 3px);
+      background-size:5px 5px;
+      background-repeat:no-repeat;
+      padding-right:32px;
+    }
+    .publish-form select option{
+      color:var(--text);
+      background-color:#fff;
+    }
+    .publish-form select option:checked{
+      background-color:rgba(212,175,55,0.15);
+      color:#111;
+    }
     .grid{
       display:grid;
       gap:16px;
