@@ -178,3 +178,11 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
 .publish-card p{margin:0 0 20px;color:var(--muted);font-size:1rem}
 .publish-card .btn{padding:12px 20px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#ffd95e);color:#000;font-weight:700;display:inline-block;transition:transform .15s ease}
 .publish-card .btn:hover{transform:translateY(-2px)}
+
+/* Ajuste de accesibilidad: evita el borde azul en enlaces y usa outline dorado */
+a:focus-visible,
+.menu-link:focus-visible,
+.drawer a:focus-visible {
+  outline: 3px solid rgba(212,175,55,.18);
+  outline-offset: 3px;
+}
