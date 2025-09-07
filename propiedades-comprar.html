@@ -534,12 +534,19 @@ document.addEventListener('DOMContentLoaded', function(){
     updateLoadMoreVisibility(filtered);
   });
 
-  // render inicial
-  (async function init(){
+  /*
+    Carga inicial de propiedades. Se usa una ruta absoluta a ``/properties/data.json`` para
+    garantizar que el JSON se resuelva correctamente sin importar la ubicación de la página.
+    La función initProperties se ejecuta cuando la página y el DOM están listos. Si el archivo no
+    existe o se produce un error, simplemente se mantiene la lista vacía y se oculta el
+    botón "Cargar más". Los errores se imprimen en la consola para facilitar el diagnóstico.
+  */
+  async function initProperties(){
     try {
-      const response = await fetch('properties/data.json');
+      const response = await fetch('/properties/data.json');
+      if(!response.ok) throw new Error('No se pudo obtener el JSON');
       const allProps = await response.json();
-      // Filter properties by the operation specific to this page
+      // Filtrar por operación ("comprar")
       sampleProperties = Array.isArray(allProps) ? allProps.filter(p => p.operation === operation) : [];
     } catch(err){
       console.error('Error loading properties:', err);
@@ -549,7 +556,9 @@ document.addEventListener('DOMContentLoaded', function(){
     list.dataset.filtered = JSON.stringify(sampleProperties);
     renderList(sampleProperties.slice(0, renderedCount), true);
     updateLoadMoreVisibility(sampleProperties);
-  })();
+  }
+  // Ejecutar al cargar completamente la página para asegurar que los elementos existan
+  window.addEventListener('load', initProperties);
 
   /* ---------------- MODAL CONTACTO + Google Forms mapping ---------------- */
   const leadBackdrop = document.getElementById('leadBackdrop');
