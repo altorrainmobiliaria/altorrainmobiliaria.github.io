@@ -112,7 +112,11 @@
       grid-template-columns:repeat(3,minmax(0,1fr));
     }
     @media (max-width:920px){
-      .qs-grid-two,.qs-grid-three{grid-template-columns:1fr;}
+      /* En móviles las grillas se colapsan a una sola columna y se centran las tarjetas */
+      .qs-grid-two, .qs-grid-three{
+        grid-template-columns:1fr;
+        justify-items:center;
+      }
     }
     /* Parrafos justificados dentro de tarjetas */
     .qs-card p{
@@ -230,10 +234,6 @@
         <div class="qs-card" style="text-align:center">
           <strong>Yesit Romero</strong>
           <div style="color:var(--muted);font-weight:600;margin-top:4px">Gerente Financiero</div>
-        </div>
-        <div class="qs-card" style="text-align:center">
-          <strong>Sara Lora</strong>
-          <div style="color:var(--muted);font-weight:600;margin-top:4px">Gerente Comercial</div>
         </div>
       </div>
     </section>
