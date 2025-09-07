@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="format-detection" content="telephone=no" />
-  <title>Detalle de propiedad | Altorra</title>
-  <meta name="description" content="Detalles de propiedad de Altorra Inmobiliaria" />
-  <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#d4af37" />
-  <meta property="og:title" content="Detalles de propiedad | Altorra" />
-  <meta property="og:description" content="Descubre los detalles de esta propiedad disponible para comprar, arrendar o rentar por días." />
-  <meta property="og:image" content="/img/uploads/comprar1.png" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet" />
-  <<link rel="stylesheet" href="style.css" />
-  
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="format-detection" content="telephone=no" />
+<title>Detalle de propiedad | Altorra</title>
+<meta name="description" content="Detalles de propiedad de Altorra Inmobiliaria" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#d4af37" />
+<meta property="og:title" content="Detalles de propiedad | Altorra" />
+<meta property="og:description" content="Descubre los detalles de esta propiedad disponible para comprar, arrendar o rentar por días." />
+<meta property="og:image" content="/img/uploads/comprar1.png" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
 
-  <style>
-    :root{
+<style>
+:root{
       --gold:#d4af37; --accent:#ffb400; --bg:#ffffff; --text:#111827; --muted:#6b7280;
       --header-h:72px; --page-max:1200px; --overlay:rgba(0,0,0,0.30);
     }
@@ -192,151 +192,31 @@
     footer{background:#0b0b0b;color:#fff;padding:36px 16px}
     .footer-grid{max-width:var(--page-max);margin:0 auto;width:100%;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
     @media (max-width:920px){.footer-grid{grid-template-columns:1fr}}
-  </style>
+footer{background:#0b0b0b;color:#fff;padding:36px 16px}
+.footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media (max-width:920px){.footer-grid{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-  <!-- HEADER -->
-  <header>
-    <div class="container">
-      <a class="brand" href="index.html">
-        <img src="https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-ago-2025-10-31-20.png" alt="Logo de Altorra" width="48" height="48" />
-      </a>
-      <nav aria-label="Menú principal">
-        <div class="nav-list">
-          <div class="nav-item" data-size="compact"><button class="nav-btn" data-panel="panel-propiedades" aria-controls="panel-propiedades" aria-expanded="false">Propiedades</button></div>
-          <div class="nav-item" data-size="mega"><button class="nav-btn" data-panel="panel-servicios" aria-controls="panel-servicios" aria-expanded="false">Servicios</button></div>
-          <div class="nav-item" data-size="compact"><button class="nav-btn" data-panel="panel-nosotros" aria-controls="panel-nosotros" aria-expanded="false">Nosotros</button></div>
-          <div class="nav-item"><a class="nav-btn" href="contacto.html">Contacto</a></div>
-        </div>
-      </nav>
-      <button id="navToggle" class="nav-toggle" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menú">☰ Menú</button>
-    </div>
-  </header>
-
-  <!-- Paneles header -->
-  <div id="panel-propiedades" class="menu-panel panel-compact" role="dialog" aria-modal="false" aria-hidden="true">
-    <a class="menu-link" href="propiedades-comprar.html">Comprar</a>
-    <a class="menu-link" href="propiedades-arrendar.html">Arrendar</a>
-    <a class="menu-link" href="propiedades-alojamientos.html">Rentar por días</a>
-  </div>
-  <div id="panel-servicios" class="menu-panel panel-mega" role="dialog" aria-modal="false" aria-hidden="true">
-    <div class="mega-grid">
-      <div class="mega-col">
-        <h4>Gestión</h4>
-        <a class="menu-link" href="servicios-administracion.html">Administración de inmuebles</a>
-        <a class="menu-link" href="servicios-avaluos.html">Avalúos</a>
-        <a class="menu-link" href="servicios-mantenimiento.html">Mantenimiento y reparaciones</a>
-        <a class="menu-link" href="servicios-mudanzas.html">Mudanzas y logística</a>
-      </div>
-      <div class="mega-col">
-        <h4>Jurídico &amp; Contable</h4>
-        <a class="menu-link" href="servicios-juridicos.html">Servicios jurídicos</a>
-        <a class="menu-link" href="servicios-contables.html">Servicios contables</a>
-        <a class="menu-link" href="#">Gestión de contratos</a>
-      </div>
-      <div class="mega-col">
-        <h4>Turismo (Cartagena)</h4>
-        <a class="menu-link" href="#">Renta de yates</a>
-        <a class="menu-link" href="#">Pasadías en islas</a>
-        <a class="menu-link" href="#">Paquetes turísticos</a>
-        <a class="menu-link" href="#">Tours históricos</a>
-      </div>
-    </div>
-  </div>
-  <div id="panel-nosotros" class="menu-panel panel-compact" role="dialog" aria-modal="false" aria-hidden="true">
-    <a class="menu-link" href="quienes-somos.html">Quiénes somos</a>
-    <a class="menu-link" href="quienes-somos.html#mision">Misión</a>
-    <a class="menu-link" href="quienes-somos.html#vision">Visión</a>
-    <a class="menu-link" href="quienes-somos.html#valores">Valores</a>
-    <a class="menu-link" href="quienes-somos.html#equipo">Nuestro equipo</a>
-  </div>
-
-  <!-- Menú móvil -->
-  <div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
-  <aside id="mobileMenu" class="drawer" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle" hidden>
-    <div class="block"><h3 id="mobileMenuTitle" style="margin:0;font-weight:800;color:var(--gold)">Menú</h3></div>
-    <div class="block">
-      <h4>Propiedades</h4>
-      <a href="propiedades-comprar.html">Comprar</a>
-      <a href="propiedades-arrendar.html">Arrendar</a>
-      <a href="propiedades-alojamientos.html">Rentar por días</a>
-    </div>
-    <div class="block">
-      <h4>Servicios</h4>
-      <a href="servicios-administracion.html">Administración de inmuebles</a>
-      <a href="servicios-avaluos.html">Avalúos</a>
-      <a href="servicios-mantenimiento.html">Mantenimiento y reparaciones</a>
-      <a href="servicios-mudanzas.html">Mudanzas y logística</a>
-      <a href="servicios-juridicos.html">Servicios jurídicos</a>
-      <a href="servicios-contables.html">Servicios contables</a>
-      <a href="#">Gestión de contratos</a>
-      <h4 style="margin-top:12px">Turismo (Cartagena)</h4>
-      <a href="#">Renta de yates</a>
-      <a href="#">Pasadías en islas</a>
-      <a href="#">Paquetes turísticos</a>
-      <a href="#">Tours históricos</a>
-    </div>
-    <div class="block">
-      <h4>Empresa</h4>
-      <a href="quienes-somos.html">Quiénes somos</a>
-      <a href="contacto.html">Contacto</a>
-    </div>
-  </aside>
-
-  <main id="propertyDetail" class="detail-container"></main>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-grid">
-      <div>
-        <h3 style="margin:0;color:var(--gold);font-weight:800">ALTORRA INMOBILIARIA</h3>
-        <p style="color:#cbd5e1;margin-top:8px;line-height:1.4">
-          Administración, Arriendo y Venta de Inmuebles<br/>Avalúos<br/>Servicios Legales Especializados
-        </p>
-        <div style="margin-top:12px;font-weight:800;color:var(--gold)">+57&nbsp;323&nbsp;501&nbsp;6747</div>
-      </div>
-      <div>
-        <h4 style="margin:0 0 8px;font-weight:700;color:var(--gold)">Propiedades</h4>
-        <ul style="margin:0;padding:0;list-style:none;color:#cbd5e1">
-          <li><a href="propiedades-comprar.html" style="color:#cbd5e1">Comprar</a></li>
-          <li><a href="propiedades-arrendar.html" style="color:#cbd5e1">Arrendar</a></li>
-          <li><a href="propiedades-alojamientos.html" style="color:#cbd5e1">Por días</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 style="margin:0 0 8px;font-weight:700;color:var(--gold)">Servicios</h4>
-        <ul style="margin:0;padding:0;list-style:none;color:#cbd5e1">
-          <li><a href="servicios-administracion.html" style="color:#cbd5e1">Administración</a></li>
-          <li><a href="servicios-juridicos.html" style="color:#cbd5e1">Servicios jurídicos</a></li>
-          <li><a href="servicios-contables.html" style="color:#cbd5e1">Servicios contables</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 style="margin:0 0 8px;font-weight:700;color:var(--gold)">Empresa</h4>
-        <ul style="margin:0;padding:0;list-style:none;color:#cbd5e1">
-          <li><a href="quienes-somos.html" style="color:#cbd5e1">Quiénes somos</a></li>
-          <li><a href="contacto.html" style="color:#cbd5e1">Contacto</a></li>
-        </ul>
-      </div>
-    </div>
-    <div style="max-width:var(--page-max);margin:18px auto 0;color:#9ca3af;text-align:center;font-size:0.9rem">© 2025 Altorra Inmobiliaria — Hecho con confianza.</div>
-  </footer>
-
+  <a href="#propertyDetail" class="skip-link">Saltar al contenido principal</a>
+  <div id="header-placeholder"></div>
+  <!-- Registrar service worker para PWA -->
   <script>
-    if('serviceWorker' in navigator){
-      navigator.serviceWorker.register('/service-worker.js').catch(err=>console.warn('SW registration failed', err));
+    if("serviceWorker" in navigator){
+      navigator.serviceWorker.register("/service-worker.js").catch(err=>console.warn("SW registration failed", err));
     }
   </script>
-
+  <!-- Lazy load images -->
   <script>
-    document.addEventListener('DOMContentLoaded', ()=> {
-      document.querySelectorAll('img').forEach(img => { if(!img.hasAttribute('loading')) img.setAttribute('loading','lazy'); });
+    document.addEventListener("DOMContentLoaded", ()=> {
+      document.querySelectorAll("img").forEach(img => { if(!img.hasAttribute("loading")) img.setAttribute("loading","lazy"); });
     });
   </script>
-
-  <!-- Lógica de detalle -->
+<main id="propertyDetail" class="detail-container"></main>
+  <div id="footer-placeholder"></div>
+  <script src="header-footer.js" defer></script>
   <script>
-    function getParam(name){const p=new URLSearchParams(window.location.search);return p.get(name)||'';}
+function getParam(name){const p=new URLSearchParams(window.location.search);return p.get(name)||'';}
     function formatCOP(n){if(!n&&n!==0)return'';return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
     function escapeHtml(s){return String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
     function buildWhatsAppLink(p, opts={}){
@@ -523,51 +403,6 @@
       }catch(err){ console.error(err); container.innerHTML='<p>Error al cargar la propiedad.</p>'; }
     }
     document.addEventListener('DOMContentLoaded', init);
-  </script>
-
-  <!-- Scripts menú -->
-  <script>
-    (function(){
-      const MARGIN=12; let open=null; const supportsHover=window.matchMedia('(hover: hover)').matches;
-      function reset(p){p.style.left='';p.style.top='';p.style.width='';p.style.maxWidth='';p.style.right='';}
-      function show(btn,panel,size){
-        if(window.innerWidth<=860) return;
-        if(open&&open.panel!==panel) hide(open);
-        reset(panel); panel.style.display='block'; panel.style.visibility='hidden'; panel.style.position='fixed';
-        panel.style.maxHeight=Math.max(260, window.innerHeight-(MARGIN*2))+'px';
-        if(size==='mega'){panel.style.width=Math.min(920, window.innerWidth-(MARGIN*2))+'px';}
-        else{panel.style.width='auto'; panel.style.maxWidth=Math.min(520, window.innerWidth-(MARGIN*2))+'px';}
-        const pre=panel.getBoundingClientRect(); const b=btn.getBoundingClientRect();
-        let left; if(size==='mega'){left=Math.round(b.left+b.width/2-pre.width/2); left=Math.max(MARGIN, Math.min(left, window.innerWidth-pre.width-MARGIN));}
-        else{left=Math.round(Math.min(b.left, window.innerWidth-pre.width-MARGIN)); left=Math.max(left,MARGIN);}
-        let top=Math.round(b.bottom+8); if(top+pre.height>window.innerHeight-MARGIN){top=Math.round(b.top-pre.height-8); if(top<MARGIN) top=MARGIN;}
-        panel.style.left=left+'px'; panel.style.top=top+'px'; panel.style.visibility='visible'; panel.classList.add('menu-visible'); panel.setAttribute('aria-hidden','false'); btn.setAttribute('aria-expanded','true'); open={panel,btn};
-      }
-      function hide(obj){ if(!obj) return; obj.btn&&obj.btn.setAttribute('aria-expanded','false'); obj.panel.classList.remove('menu-visible'); obj.panel.style.display='none'; obj.panel.setAttribute('aria-hidden','true'); reset(obj.panel); if(open&&open.panel===obj.panel) open=null; }
-      document.querySelectorAll('.nav-btn[data-panel]').forEach(btn=>{
-        const id=btn.getAttribute('data-panel'); const panel=document.getElementById(id); const item=btn.closest('.nav-item'); const size=item?(item.dataset.size||'compact'):'compact';
-        let t1=null,t2=null; const place=()=>{clearTimeout(t2); t1=setTimeout(()=>show(btn,panel,size),60);}; const remove=()=>{clearTimeout(t1); t2=setTimeout(()=>hide({panel,btn}),120);};
-        if(supportsHover){btn.addEventListener('pointerenter',place); btn.addEventListener('pointerleave',remove); panel.addEventListener('pointerenter',()=>{clearTimeout(t2); clearTimeout(t1);}); panel.addEventListener('pointerleave',remove);}
-        btn.addEventListener('click',e=>{ if(window.innerWidth>860){e.preventDefault(); if(panel.classList.contains('menu-visible')) hide({panel,btn}); else show(btn,panel,size);} });
-        btn.addEventListener('focus',place); btn.addEventListener('blur',()=>setTimeout(()=>{ if(!panel.contains(document.activeElement)) remove(); },60));
-      });
-      document.addEventListener('click',e=>{ if(e.target.closest('nav')||e.target.closest('.menu-panel')) return; document.querySelectorAll('.menu-panel.menu-visible').forEach(p=>hide({panel:p,btn:null})); });
-      document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ document.querySelectorAll('.menu-panel.menu-visible').forEach(p=>hide({panel:p,btn:null})); }});
-      window.addEventListener('resize',()=>{ document.querySelectorAll('.menu-panel').forEach(p=>{p.classList.remove('menu-visible'); p.style.display='none'; p.setAttribute('aria-hidden','true'); reset(p);}); document.querySelectorAll('.nav-btn[data-panel]').forEach(b=>b.setAttribute('aria-expanded','false')); open=null;});
-    })();
-
-    (function(){
-      const toggle=document.getElementById('navToggle'), drawer=document.getElementById('mobileMenu'), backdrop=document.getElementById('drawerBackdrop');
-      if(!toggle||!drawer||!backdrop) return; let lastFocus=null;
-      const focusable=root=>root.querySelectorAll('a,button,input,select,textarea,[tabindex]:not([tabindex="-1"])');
-      function setH(){const h=parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h'))||72; drawer.style.height=(window.innerHeight-h)+'px';}
-      function clearH(){drawer.style.height='';}
-      function open(){lastFocus=document.activeElement; drawer.hidden=false; setH(); window.addEventListener('resize',setH); window.addEventListener('orientationchange',setH); requestAnimationFrame(()=>{drawer.classList.add('open'); backdrop.classList.add('open'); document.body.style.overflow='hidden'; toggle.setAttribute('aria-expanded','true'); const el=focusable(drawer)[0]; el&&el.focus();});}
-      function close(){drawer.classList.remove('open'); backdrop.classList.remove('open'); document.body.style.overflow=''; toggle.setAttribute('aria-expanded','false'); clearH(); window.removeEventListener('resize',setH); window.removeEventListener('orientationchange',setH); requestAnimationFrame(()=>{drawer.hidden=true; if(lastFocus) lastFocus.focus();});}
-      toggle.addEventListener('click',()=>drawer.classList.contains('open')?close():open());
-      backdrop.addEventListener('click',close);
-      document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&drawer.classList.contains('open')) close(); });
-    })();
   </script>
 </body>
 </html>
