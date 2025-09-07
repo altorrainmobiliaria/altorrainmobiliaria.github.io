@@ -157,3 +157,44 @@ if('serviceWorker' in navigator){
     console.warn('SW registration failed', err);
   });
 }
+
+// ===== CONTACTO: generador de WhatsApp =====
+(function(){
+  const gOut = document.getElementById('gOut');
+  if(!gOut) return; // no estamos en contacto
+
+  const gTipo = document.getElementById('gTipo');
+  const gZona = document.getElementById('gZona');
+  const gPres = document.getElementById('gPres');
+  const gUrg  = document.getElementById('gUrg');
+  const gExtra= document.getElementById('gExtra');
+  const gWA   = document.getElementById('gWA');
+  const gCopy = document.getElementById('gCopy');
+
+  const fmtCOP = n => isNaN(n) ? '—' : (+n).toLocaleString('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0});
+
+  function buildMsg(){
+    const tipo = gTipo?.value || '';
+    const zona = (gZona?.value || '').trim() || 'Cartagena';
+    const pres = gPres?.value ? ` Presupuesto aprox: ${fmtCOP(gPres.value)}.` : '';
+    const urg  = gUrg?.value==='alta' ? ' Necesito respuesta hoy.' : (gUrg?.value==='media' ? ' Me sirve esta semana.' : '');
+    const extra= (gExtra?.value || '').trim() ? ` Detalles: ${gExtra.value.trim()}.` : '';
+    const msg  = `Hola Altorra, me interesa ${tipo.toLowerCase()} en ${zona}.${pres}${extra}${urg}`;
+    gOut.textContent = msg;
+    if(gWA) gWA.href = 'https://wa.me/573235016747?text=' + encodeURIComponent(msg);
+  }
+  ['change','input'].forEach(ev=>{
+    [gTipo,gZona,gPres,gUrg,gExtra].forEach(el=> el && el.addEventListener(ev, buildMsg));
+  });
+  buildMsg();
+
+  gCopy?.addEventListener('click', async ()=>{
+    try{
+      await navigator.clipboard.writeText(gOut.textContent);
+      gCopy.textContent='¡Copiado!';
+      setTimeout(()=>gCopy.textContent='Copiar mensaje',1500);
+    }catch(e){
+      gCopy.textContent='Copiar (selecciona)';
+    }
+  });
+})();
