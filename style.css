@@ -178,3 +178,25 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
 .publish-card p{margin:0 0 20px;color:var(--muted);font-size:1rem}
 .publish-card .btn{padding:12px 20px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#ffd95e);color:#000;font-weight:700;display:inline-block;transition:transform .15s ease}
 .publish-card .btn:hover{transform:translateY(-2px)}
+
+/* ==== Quitar el borde azul en el menú móvil ==== */
+.nav-toggle, .nav-btn, .menu-link, .drawer a { -webkit-tap-highlight-color: transparent; }
+
+@media (hover: none), (pointer: coarse) {
+  /* En dispositivos táctiles anulamos el outline en botón Menú y links del drawer */
+  #navToggle:focus,
+  .nav-toggle:focus,
+  .menu-link:focus,
+  .menu-link:focus-visible,
+  .drawer a:focus,
+  .drawer a:focus-visible,
+  .nav-btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Mantener el contorno dorado solo en escritorio */
+@media (hover: hover) and (pointer: fine) {
+  .nav-btn:focus { outline: 3px solid rgba(212,175,55,.18); outline-offset: 3px; } /* regla original */  /* :contentReference[oaicite:3]{index=3} */
+}
