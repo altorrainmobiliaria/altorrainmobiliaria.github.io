@@ -2,104 +2,21 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Altorra — Alojamientos por Días</title>
 <meta name="description" content="Alojamientos por días con Altorra: alojamientos amoblados y gestión confiable."/>
-  <!-- PWA y metadatos de redes sociales -->
-  <link rel="manifest" href="manifest.json"/>
-  <meta name="theme-color" content="#d4af37"/>
-  <meta property="og:title" content="Alojamientos por días | Altorra"/>
-  <meta property="og:description" content="Reserva alojamientos amoblados por días en Cartagena y alrededores. Usa nuestros filtros para encontrar el lugar perfecto."/>
-  <meta property="og:image" content="/img/uploads/dias1.png"/>
+<!-- PWA y metadatos de redes sociales -->
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#d4af37"/>
+<meta property="og:title" content="Alojamientos por días | Altorra"/>
+<meta property="og:description" content="Reserva alojamientos amoblados por días en Cartagena y alrededores. Usa nuestros filtros para encontrar el lugar perfecto."/>
+<meta property="og:image" content="/img/uploads/dias1.png"/>
+<link rel="stylesheet" href="style.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+
 <style>
-  :root{
-    --gold:#d4af37; --accent:#ffb400; --bg:#ffffff; --text:#111827; --muted:#6b7280;
-    --header-h:72px; --gap:14px; --page-max:1200px; --overlay:rgba(0,0,0,.45);
-    --card-radius:14px; --badge-h:28px;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0;font-family:"Poppins",system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-  a{color:inherit;text-decoration:none}
-  img{max-width:100%;display:block}
-  @media (prefers-reduced-motion:reduce){
-    *{scroll-behavior:auto !important;animation:none !important;transition:none !important}
-  }
-  .sr-only{position:absolute!important;clip:rect(1px,1px,1px,1px);padding:0;border:0;height:1px;width:1px;overflow:hidden;white-space:nowrap}
-
-   /* ---------- HEADER (idéntico al home) ---------- */
-  header{
-    position:fixed;top:0;left:0;right:0;height:var(--header-h);display:flex;align-items:center;
-    background:var(--bg);z-index:140;border-bottom:1px solid rgba(0,0,0,0.06);
-    box-shadow:0 8px 26px rgba(0,0,0,0.06);
-  }
-  .container{max-width:var(--page-max);margin:0 auto;width:100%;padding:0 16px;display:flex;align-items:center;gap:12px}
-  .brand{display:flex;align-items:center;gap:10px;margin-right:6px}
-  .brand img{width:48px;height:48px;object-fit:contain}
-  .brand .name{font-weight:800;letter-spacing:-0.6px;text-transform:uppercase;font-size:1.02rem}
-
-  nav{margin-left:auto;display:flex;align-items:center;gap:8px}
-  .nav-list{display:flex;gap:6px;align-items:center}
-  .nav-item{position:relative}
-  .nav-btn{background:transparent;border:0;padding:8px 12px;font-weight:700;cursor:pointer;border-radius:8px;color:var(--text);font-size:0.95rem}
-  .nav-btn:focus{outline:3px solid rgba(212,175,55,0.18);outline-offset:3px}
-
-  .nav-toggle{display:none;margin-left:auto;background:transparent;border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:8px 12px;font-weight:800}
-  .nav-toggle:focus{outline:3px solid rgba(212,175,55,0.18);outline-offset:3px}
-
-  /* Color negro para el botón (icono y texto) */
-#navToggle { 
-  color:#000 !important; 
-}
-
-/* Solo la palabra “Menú” en negrita */
-#navToggle .menu-label { 
-  font-weight:800; 
-}
-
-  /* ---------- MENÚ DESPLEGABLE (desktop) ---------- */
-  .menu-panel{
-    display:none; position:fixed; z-index:150; padding:14px; border-radius:12px;
-    background:linear-gradient(180deg,#fff,#fbfbfb); border:1px solid rgba(0,0,0,0.06);
-    box-shadow:0 22px 48px rgba(0,0,0,0.12); max-height:calc(100vh - var(--header-h) - 20px); overflow:auto;
-  }
-  .menu-visible{display:block;opacity:1;transform:none}
-  .panel-compact{min-width:220px;max-width:44vw}
-  .panel-mega{min-width:360px;max-width:920px;width:min(88vw,920px)}
-  .mega-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .mega-col h4{margin:0 0 8px;color:var(--gold);font-weight:700}
-  .menu-link{display:block;padding:6px;border-radius:8px;color:#0f1724}
-  .menu-link:hover{background:rgba(0,0,0,0.03)}
-
-  /* ---------- MENÚ MÓVIL (drawer) ---------- */
-  .drawer-backdrop{
-    position:fixed;inset:0;background:var(--overlay);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
-    z-index:160;opacity:0;pointer-events:none;transition:opacity .2s ease;
-  }
-  .drawer{
-    position:fixed;left:0;right:0;top:var(--header-h);
-    height:calc(100vh - var(--header-h) - env(safe-area-inset-bottom));
-    height:calc(100dvh - var(--header-h));
-    padding-bottom:max(24px, env(safe-area-inset-bottom));
-    background:#fff;z-index:161;transform:translateY(-8px);opacity:0;pointer-events:none;
-    transition:transform .24s ease, opacity .2s ease; overflow:auto; border-top:1px solid rgba(0,0,0,.06);
-    overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
-  }
-  .drawer.open{transform:none;opacity:1;pointer-events:auto}
-  .drawer-backdrop.open{opacity:1;pointer-events:auto}
-  .drawer .block{padding:16px;border-bottom:1px solid rgba(0,0,0,.06)}
-  .drawer .block:last-child{padding-bottom:max(32px, env(safe-area-inset-bottom))}
-  .drawer h4{margin:0 0 8px;color:var(--gold)}
-  .drawer a{display:block;padding:8px 2px}
-
-  @media (max-width:860px){
-    .nav-list{display:none}
-    .nav-toggle{display:inline-flex;align-items:center;gap:8px}
-    .menu-panel{display:none !important}
-  }
-
-  /* ---------- PÁGINA: FILTROS + GRID ---------- */
-  main{padding-top:calc(var(--header-h) + 12px);max-width:var(--page-max);margin:0 auto}
+:root{--card-radius:14px;--badge-h:28px;}
+main{padding-top:calc(var(--header-h) + 12px);max-width:var(--page-max);margin:0 auto}
   .filters{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;padding:12px 16px;background:#fff;border-radius:12px;margin:16px;border:1px solid rgba(0,0,0,.06)}
   .filters .control{display:flex;flex-direction:column;gap:6px}
   .filters label{font-weight:700;font-size:.85rem;color:var(--muted)}
@@ -203,112 +120,22 @@
   @media (max-width:920px){ .footer-grid{grid-template-columns:1fr} }
 
   @media (max-width:920px){ .footer-grid{grid-template-columns:1fr} }
+footer{background:#0b0b0b;color:#fff;padding:36px 16px}
+.footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media (max-width:920px){.footer-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<a href="#main" class="sr-only">Saltar al contenido principal</a>
-
-<!-- INCLUIMOS EL HEADER DESDE header.html (usuario YA lo tiene) -->
-<div id="include-header"></div>
-<script>
-/* includeSync: carga síncrona simple para garantizar que el header exista antes de los scripts
-   Nota: si vas a probar con file:// algunos navegadores bloquean XHR locales. Usa servidor local si es necesario. */
-function includeSync(id, url){
-  try{
-    var el = document.getElementById(id);
-    if(!el) return;
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', url, false); // síncrono a propósito para mantener el mismo orden de ejecución
-    xhr.send(null);
-    if(xhr.status === 200 || xhr.status === 0){
-      el.innerHTML = xhr.responseText;
-    } else {
-      console.warn('includeSync: error cargando', url, xhr.status);
+  <a href="#main" class="skip-link">Saltar al contenido principal</a>
+  <div id="header-placeholder"></div>
+  <!-- Registrar service worker para PWA -->
+  <script>
+    if("serviceWorker" in navigator){
+      navigator.serviceWorker.register("/service-worker.js").catch(function(err){ console.warn("SW registration failed", err); });
     }
-  }catch(e){
-    console.warn('includeSync error', e);
-  }
-}
-includeSync('include-header','header.html');
-</script>
-
-<!-- Registrar service worker para PWA -->
-<script>
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/service-worker.js').catch(function(err){ console.warn('SW registration failed', err); });
-  }
-</script>
-
-<!-- ========== PANELS DESKTOP ========== -->
-<div id="panel-propiedades" class="menu-panel panel-compact" role="dialog" aria-modal="false" aria-hidden="true">
-  <a class="menu-link" href="propiedades-comprar.html">Comprar</a>
-  <a class="menu-link" href="propiedades-arrendar.html">Arrendar</a>
-  <a class="menu-link" href="propiedades-alojamientos.html">Rentar por días</a>
-</div>
-<div id="panel-servicios" class="menu-panel panel-mega" role="dialog" aria-modal="false" aria-hidden="true">
-  <div class="mega-grid">
-    <div class="mega-col">
-      <h4>Gestión</h4>
-      <a class="menu-link" href="servicios-administracion.html">Administración de inmuebles</a>
-      <a class="menu-link" href="servicios-avaluos.html">Avalúos</a>
-      <a class="menu-link" href="servicios-mantenimiento.html">Mantenimiento y reparaciones</a>
-      <a class="menu-link" href="servicios-mudanzas.html">Mudanzas y logística</a>
-    </div>
-    <div class="mega-col">
-      <h4>Jurídico &amp; Contable</h4>
-      <a class="menu-link" href="servicios-juridicos.html">Servicios jurídicos</a>
-      <a class="menu-link" href="servicios-contables.html">Servicios contables</a>
-      <a class="menu-link" href="#">Gestión de contratos</a>
-    </div>
-    <div class="mega-col">
-      <h4>Turismo (Cartagena)</h4>
-      <a class="menu-link" href="#">Renta de yates</a>
-      <a class="menu-link" href="#">Pasadías en islas</a>
-      <a class="menu-link" href="#">Paquetes turísticos</a>
-      <a class="menu-link" href="#">Tours históricos</a>
-    </div>
-  </div>
-</div>
-<div id="panel-nosotros" class="menu-panel panel-compact" role="dialog" aria-modal="false" aria-hidden="true">
-  <a class="menu-link" href="quienes-somos.html">Quiénes somos</a>
-  <a class="menu-link" href="quienes-somos.html#mision">Misión</a>
-  <a class="menu-link" href="quienes-somos.html#vision">Visión</a>
-  <a class="menu-link" href="quienes-somos.html#valores">Valores</a>
-  <a class="menu-link" href="quienes-somos.html#equipo">Nuestro equipo</a>
-</div>
-
-<!-- ========== MENÚ MÓVIL (drawer) ========== -->
-<div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
-<aside id="mobileMenu" class="drawer" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle" hidden>
-  <div class="block">
-    <h3 id="mobileMenuTitle" style="margin:0;font-weight:800;color:var(--gold)">Menú</h3>
-  </div>
-  <div class="block">
-    <h4>Propiedades</h4>
-    <a href="propiedades-comprar.html">Comprar</a>
-    <a href="propiedades-arrendar.html">Arrendar</a>
-    <a href="propiedades-alojamientos.html">Rentar por días</a>
-  </div>
-  <div class="block">
-    <h4>Servicios</h4>
-    <a href="servicios-administracion.html">Administración de inmuebles</a>
-    <a href="servicios-avaluos.html">Avalúos</a>
-    <a href="servicios-mantenimiento.html">Mantenimiento y reparaciones</a>
-    <a href="servicios-mudanzas.html">Mudanzas y logística</a>
-    <a href="servicios-juridicos.html">Servicios jurídicos</a>
-    <a href="servicios-contables.html">Servicios contables</a>
-  </div>
-  <div class="block">
-    <h4>Empresa</h4>
-    <a href="quienes-somos.html">Quiénes somos</a>
-    <a href="contacto.html">Contacto</a>
-    <a href="index.html">Portada</a>
-  </div>
-</aside>
-
-<!-- ========== MAIN ========== -->
-<main id="main" style="padding-bottom:32px">
-  <!-- FILTROS -->
+  </script>
+  <main id="main" style="padding-bottom:32px">
+<!-- FILTROS -->
   <section class="filters" aria-label="Filtros de búsqueda">
     <div class="control">
       <label for="f-city">Ciudad</label>
@@ -353,9 +180,7 @@ includeSync('include-header','header.html');
       <button id="btnLoadMore" class="btn btn-ghost" style="padding:12px 20px">Cargar más</button>
     </div>
   </section>
-</main>
-
-<!-- ========== MODAL CONTACTO (Google Forms opcional) ========== -->
+  </main>
 <div id="leadBackdrop" class="modal-backdrop" aria-hidden="true"></div>
 <section id="leadModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="leadTitle" hidden>
   <header>
@@ -409,29 +234,9 @@ includeSync('include-header','header.html');
   </footer>
 </section>
 <iframe name="leadTarget" id="leadTarget" style="display:none"></iframe>
-
-<!-- INCLUIMOS EL FOOTER DESDE footer.html (usuario YA lo tiene) -->
-<div id="include-footer"></div>
-<script>
-/* Reutilizamos includeSync definido arriba (debió crearse al incluir header).
-   Si cargas esta página en contexto donde el primer script no corrió, definimos de nuevo por seguridad. */
-if(typeof includeSync !== 'function'){
-  function includeSync(id, url){
-    try{
-      var el = document.getElementById(id);
-      if(!el) return;
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', url, false);
-      xhr.send(null);
-      if(xhr.status === 200 || xhr.status === 0) el.innerHTML = xhr.responseText;
-    }catch(e){ console.warn('includeSync error', e); }
-  }
-}
-includeSync('include-footer','footer.html');
-</script>
-
-<!-- ========== SCRIPTS (menu + propiedades + modal) ========== -->
-<script>
+  <div id="footer-placeholder"></div>
+  <script src="header-footer.js" defer></script>
+  <script>
 /* ---------------- Helpers ---------------- */
 const isTouch = () => window.matchMedia('(hover: none)').matches || 'ontouchstart' in window;
 function formatCOP(n){ return (n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
@@ -870,6 +675,6 @@ document.addEventListener('DOMContentLoaded', function(){
   // Exponer para tarjetas
   window.openLeadModal = openLeadModal;
 });
-</script>
+  </script>
 </body>
 </html>
