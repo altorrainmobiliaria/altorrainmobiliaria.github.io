@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
 <meta charset="utf-8"/>
@@ -191,41 +192,39 @@
 <div id="footer-placeholder"></div>
 <!-- Lógica de propiedades y filtros -->
 <script>
-    /* ===== Cache JSON local (TTL + revalidación background) ===== */
-    const __ALT_NS = 'altorra:json:';
-    const __ALT_VER = '2025-09-07.1';
-    function __jsonKey(url){ return __ALT_NS + url + '::' + __ALT_VER; }
-    function __now(){ return Date.now(); }
-    async function getJSONCached(url, { ttlMs = 1000*60*60*6, revalidate = true } = {}){
-      let cached = null;
-      try {
-        const raw = localStorage.getItem(__jsonKey(url));
-        if (raw) {
-          const obj = JSON.parse(raw);
-          if (obj && obj.t && (__now() - obj.t) < ttlMs && obj.data) {
-            cached = obj.data;
-          }
-        }
-      } catch(_) {}
-      if (cached) {
-        if (revalidate) {
-          fetch(url, { cache:'no-store' })
-            .then(r => r.ok ? r.json() : Promise.reject(r.status))
-            .then(data => {
-              try { localStorage.setItem(__jsonKey(url), JSON.stringify({ t: __now(), data })); } catch(_){}
-              document.dispatchEvent(new CustomEvent('altorra:json-updated', { detail: { url } }));
-            })
-            .catch(()=>{});
-        }
-        return cached;
-      }
-      const res = await fetch(url, { cache:'no-store' });
-      if (!res.ok) throw new Error('HTTP '+res.status);
-      const data = await res.json();
-      try { localStorage.setItem(__jsonKey(url), JSON.stringify({ t: __now(), data })); } catch(_){}
-      return data;
+/* ===== Cache JSON local (TTL + revalidación background) ===== */
+const __ALT_NS = 'altorra:json:';
+const __ALT_VER = '2025-09-07.1';
+function __jsonKey(url){ return __ALT_NS + url + '::' + __ALT_VER; }
+function __now(){ return Date.now(); }
+async function getJSONCached(url, { ttlMs = 1000*60*60*6, revalidate = true } = {}){
+  let cached = null;
+  try {
+    const raw = localStorage.getItem(__jsonKey(url));
+    if (raw) {
+      const obj = JSON.parse(raw);
+      if (obj && obj.t && (__now() - obj.t) < ttlMs && obj.data) cached = obj.data;
     }
-    
+  } catch(_) {}
+  if (cached) {
+    if (revalidate) {
+      fetch(url, { cache:'no-store' })
+        .then(r => r.ok ? r.json() : Promise.reject(r.status))
+        .then(data => {
+          try { localStorage.setItem(__jsonKey(url), JSON.stringify({ t: __now(), data })); } catch(_){}
+          document.dispatchEvent(new CustomEvent('altorra:json-updated', { detail: { url } }));
+        })
+        .catch(()=>{});
+    }
+    return cached;
+  }
+  const res = await fetch(url, { cache:'no-store' });
+  if (!res.ok) throw new Error('HTTP '+res.status);
+  const data = await res.json();
+  try { localStorage.setItem(__jsonKey(url), JSON.stringify({ t: __now(), data })); } catch(_){}
+  return data;
+}
+
 
     /* ---------------- Helpers ---------------- */
     // Estas funciones se utilizan en la creación de tarjetas y deben declararse
@@ -304,8 +303,8 @@
         let arr = sampleProperties.slice();
         if(city) arr = arr.filter(p=> p.city.toLowerCase().includes(city.toLowerCase()));
         if(type) arr = arr.filter(p=> p.type===type);
-        if(min) arr = arr.filter(p=> p.price >= Number(min||0));
-        if(max) arr = arr.filter(p=> p.price <= Number(max||Infinity));
+        if(min){ const v = Number(min); arr = arr.filter(p=> p.price >= (isNaN(v)?0:v)); }
+        if(max){ const v = Number(max); arr = arr.filter(p=> p.price <= (isNaN(v)?Infinity:v)); }
         if(sort==='price-asc') arr.sort((a,b)=>a.price-b.price);
         if(sort==='price-desc') arr.sort((a,b)=>b.price-a.price);
         return arr;
@@ -350,44 +349,34 @@
         updateLoadMoreVisibility(filtered);
       });
       // Render inicial: cargar propiedades
-      
-  // render inicial + lectura de parámetros de URL
-  (async function init(){
-    // 1) Leer query params y prellenar controles
-    const params = new URLSearchParams(location.search);
-    const qp_city = params.get('city') || '';
-    const qp_type = params.get('type') || '';
-    const qp_min  = params.get('min')  || '';
-    const qp_max  = params.get('max')  || '';
-    const $city = document.getElementById('f-city');
-    const $type = document.getElementById('f-type');
-    const $min  = document.getElementById('f-min');
-    const $max  = document.getElementById('f-max');
-    if($city && qp_city) $city.value = qp_city;
-    if($type && qp_type) $type.value = qp_type;
-    if($min  && qp_min ) $min.value  = qp_min;
-    if($max  && qp_max ) $max.value  = qp_max;
-
-    // 2) Cargar propiedades (con caché si está disponible)
+      (async function init(){
     try {
       const allProps = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true });
-      sampleProperties = Array.isArray(allProps) ? allProps.filter(p => p.operation === operation) : [];
+      const __syn = ["comprar", "venta", "ventas", "sell", "sale"];
+      sampleProperties = Array.isArray(allProps) ? allProps.filter(p => __syn.includes(String(p.operation||'').toLowerCase().trim())) : [];
     } catch(err){
       console.error('Error loading properties:', err);
       sampleProperties = [];
     }
+    // Prefill desde URL y primer render filtrado
+    const qs = new URLSearchParams(location.search);
+    const city = qs.get('city') || '';
+    const type = qs.get('type') || '';
+    const min  = qs.get('min')  || '';
+    const max  = qs.get('max')  || '';
+    const sort = qs.get('sort') || 'relevance';
+    if (document.getElementById('f-city')) document.getElementById('f-city').value = city;
+    if (document.getElementById('f-type') && type) document.getElementById('f-type').value = type;
+    if (document.getElementById('f-min') && min) document.getElementById('f-min').value = min;
+    if (document.getElementById('f-max') && max) document.getElementById('f-max').value = max;
+    if (document.getElementById('f-sort') && sort) document.getElementById('f-sort').value = sort;
 
-    // 3) Aplicar filtros iniciales si llegaron por URL
-    const hasFilter = (qp_city || qp_type || qp_min || qp_max);
-    const sort = document.getElementById('f-sort')?.value || 'relevance';
-    const initial = hasFilter ? applyFilters({city:qp_city, type:qp_type, min:qp_min, max:qp_max, sort}) : sampleProperties;
-
+    let initial = applyFilters({city,type,min,max,sort});
     renderedCount = Math.min(PAGE_SIZE, initial.length);
     list.dataset.filtered = JSON.stringify(initial);
     renderList(initial.slice(0, renderedCount), true);
     updateLoadMoreVisibility(initial);
-  })();
-
+  })();;
       // --- Modal contacto (se reutiliza del detalle) ---
       const leadBackdrop = document.getElementById('leadBackdrop');
       const leadModal    = document.getElementById('leadModal');
@@ -489,35 +478,7 @@
       // Exponer para tarjetas
       window.openLeadModal = openLeadModal;
     });
-  
-
-      // Re-render si el JSON se actualiza en background
-      document.addEventListener('altorra:json-updated', (ev) => {
-        if (ev.detail?.url !== 'properties/data.json') return;
-        try{
-          // recomputa sampleProperties por operación
-          const all = JSON.parse(localStorage.getItem(__jsonKey('properties/data.json')))?.data || [];
-          if(Array.isArray(all)){
-            sampleProperties = all.filter(p => p.operation === operation);
-            // re-aplica filtros actuales
-            const city = document.getElementById('f-city')?.value||'';
-            const type = document.getElementById('f-type')?.value||'';
-            const min  = document.getElementById('f-min')?.value||'';
-            const max  = document.getElementById('f-max')?.value||'';
-            const sort = document.getElementById('f-sort')?.value||'relevance';
-            const filtered = applyFilters({city,type,min,max,sort});
-            renderedCount = Math.min(PAGE_SIZE, filtered.length);
-            const list = document.getElementById('list');
-            if(list){
-              list.dataset.filtered = JSON.stringify(filtered);
-              renderList(filtered.slice(0, renderedCount), true);
-              updateLoadMoreVisibility(filtered);
-            }
-          }
-        } catch(e){ /* silencio */ }
-      });
-    
-</script>
+  </script>
 <!-- Inserción dinámica del header y footer -->
 <script defer="" src="header-footer.js"></script>
 </body>
