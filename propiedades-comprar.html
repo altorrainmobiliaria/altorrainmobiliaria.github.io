@@ -350,20 +350,44 @@
         updateLoadMoreVisibility(filtered);
       });
       // Render inicial: cargar propiedades
-      (async function init(){
-        try {
-          const response = await fetch('properties/data.json');
-          const allProps = await response.json();
-          sampleProperties = Array.isArray(allProps) ? allProps.filter(p => p.operation === operation) : [];
-        } catch(err){
-          console.error('Error loading properties:', err);
-          sampleProperties = [];
-        }
-        renderedCount = Math.min(PAGE_SIZE, sampleProperties.length);
-        list.dataset.filtered = JSON.stringify(sampleProperties);
-        renderList(sampleProperties.slice(0, renderedCount), true);
-        updateLoadMoreVisibility(sampleProperties);
-      })();
+      
+  // render inicial + lectura de parámetros de URL
+  (async function init(){
+    // 1) Leer query params y prellenar controles
+    const params = new URLSearchParams(location.search);
+    const qp_city = params.get('city') || '';
+    const qp_type = params.get('type') || '';
+    const qp_min  = params.get('min')  || '';
+    const qp_max  = params.get('max')  || '';
+    const $city = document.getElementById('f-city');
+    const $type = document.getElementById('f-type');
+    const $min  = document.getElementById('f-min');
+    const $max  = document.getElementById('f-max');
+    if($city && qp_city) $city.value = qp_city;
+    if($type && qp_type) $type.value = qp_type;
+    if($min  && qp_min ) $min.value  = qp_min;
+    if($max  && qp_max ) $max.value  = qp_max;
+
+    // 2) Cargar propiedades (con caché si está disponible)
+    try {
+      const allProps = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true });
+      sampleProperties = Array.isArray(allProps) ? allProps.filter(p => p.operation === operation) : [];
+    } catch(err){
+      console.error('Error loading properties:', err);
+      sampleProperties = [];
+    }
+
+    // 3) Aplicar filtros iniciales si llegaron por URL
+    const hasFilter = (qp_city || qp_type || qp_min || qp_max);
+    const sort = document.getElementById('f-sort')?.value || 'relevance';
+    const initial = hasFilter ? applyFilters({city:qp_city, type:qp_type, min:qp_min, max:qp_max, sort}) : sampleProperties;
+
+    renderedCount = Math.min(PAGE_SIZE, initial.length);
+    list.dataset.filtered = JSON.stringify(initial);
+    renderList(initial.slice(0, renderedCount), true);
+    updateLoadMoreVisibility(initial);
+  })();
+
       // --- Modal contacto (se reutiliza del detalle) ---
       const leadBackdrop = document.getElementById('leadBackdrop');
       const leadModal    = document.getElementById('leadModal');
