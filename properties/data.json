@@ -104,8 +104,8 @@
     "beds": 2,
     "baths": 2,
     "sqm": 58,
-    "operation": "arrendar",
-    "id": "a-p1",
+    "operation": "comprar",
+    "id": "c-p4",
     "image": "/serena/S1.webp",
     "images": [
       "/serena/S1.webp",
