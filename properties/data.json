@@ -133,7 +133,7 @@
     "beds": 0,
     "baths": 0,
     "sqm": 0,
-    "operation": "arrendar",
+    "operation": "0",
     "id": "0000",
     "image": "#",
     "images": ["#", "#", "#"],
