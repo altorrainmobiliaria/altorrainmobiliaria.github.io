@@ -8,7 +8,7 @@
     "baths": 5,
     "sqm": 240,
     "operation": "comprar",
-    "id": "c-p1",
+    "id": "C10001",
     "image": "/allure/allure.webp",
     "images": [
       "/allure/allure.webp",
@@ -38,12 +38,12 @@
     "title": "Apartamento moderno amoblado - Milán",
     "city": "Cartagena",
     "type": "apartamento",
-    "price": 380000000,
+    "price": 386000000,
     "beds": 2,
     "baths": 2,
     "sqm": 57,
     "operation": "comprar",
-    "id": "c-p2",
+    "id": "C10002",
     "image": "/fmia/1m.webp",
     "images": [
       "/fmia/1m.webp",
@@ -77,7 +77,7 @@
     "baths": 2,
     "sqm": 58,
     "operation": "comprar",
-    "id": "c-p3",
+    "id": "C10003",
     "image": "/serena/S1.webp",
     "images": [
       "/serena/S1.webp",
@@ -105,7 +105,7 @@
     "baths": 3,
     "sqm": 153,
     "operation": "comprar",
-    "id": "c-p4",
+    "id": "C10004",
     "image": "/fotoprop/comprar1.webp",
     "images": [
       "/fotoprop/comprar1.webp",
@@ -126,18 +126,18 @@
   },
   
   {
-    "title": "#",
-    "city": "#",
-    "type": "#",
-    "price": 0,
-    "beds": 0,
-    "baths": 0,
-    "sqm": 0,
-    "operation": "#",
-    "id": "#",
-    "image": "#",
+    "title": "Apartamento moderno - Milán",
+    "city": "Cartagena",
+    "type": "apartamento",
+    "price": 1900000,
+    "beds": 2,
+    "baths": 2,
+    "sqm": 57,
+    "operation": "arrendar",
+    "id": "A20001",
+    "image": "No disponible",
     "images": ["#", "#", "#"],
-    "available": 0,
-    "description": "#"
+    "available": 1,
+    "description": "No disponible"
   }
 ]

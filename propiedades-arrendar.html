@@ -237,7 +237,7 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
 <script>
 /* ===== Cache JSON local (TTL + revalidación background) ===== */
 const __ALT_NS = 'altorra:json:';
-const __ALT_VER = '2025-09-07.1';
+const __ALT_VER = '2025-09-15.3';
 function __jsonKey(url){ return __ALT_NS + url + '::' + __ALT_VER; }
 function __now(){ return Date.now(); }
 async function getJSONCached(url, { ttlMs = 1000*60*60*6, revalidate = true } = {}){

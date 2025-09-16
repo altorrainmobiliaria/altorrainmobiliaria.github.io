@@ -1,3 +1,4 @@
+window.__ALT_BUILD='2025-09-15d';
 /* ========== Altorra - scripts base (optimizado rendimiento) ========== */
 /* v2025-09-07.1 — Fixes: city sin doble encode + URLs absolutas en imágenes */
 
@@ -6,6 +7,8 @@ const ALT_CACHE_VER = '2025-09-07.1';        // ↺ Sube si cambias estructura d
 const ALT_NS = 'altorra:json:';
 function jsonKey(url){ return `${ALT_NS}${url}::${ALT_CACHE_VER}`; }
 function now(){ return Date.now(); }
+// Normaliza rutas (soporta subcarpetas)
+function resolveAsset(u){ if(!u) return ''; try{ return new URL(u, document.baseURI).href; }catch(_){ return u; }}
 
 /**
  * Cache JSON en localStorage con TTL y revalidación en segundo plano.
@@ -107,24 +110,48 @@ document.addEventListener('DOMContentLoaded', function() {
 (function(){
   const form = document.getElementById('quickSearch');
   if(!form) return;
-  form.addEventListener('submit', function(e){
+
+  form.addEventListener('submit', async function(e){
     e.preventDefault();
-    const op = document.getElementById('op')?.value || 'comprar';
+    e.stopImmediatePropagation();
+
+    // 1) Si el usuario digitó un código, validamos primero
+    const codeEl = document.getElementById('f-code');
+    const code = (codeEl && codeEl.value || '').trim();
+    if (code) {
+      try {
+        const data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true });
+        const match = Array.isArray(data) ? data.find(p => String(p.id||'').toLowerCase().trim() === code.toLowerCase()) : null;
+        if (match) {
+          window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(match.id);
+        } else {
+          alert('El código ingresado no existe. Por favor ingresa un código válido.');
+        }
+      } catch {
+        alert('No fue posible validar el código en este momento.');
+      }
+      return; // ✅ Nunca seguimos a listados si hubo intento de código
+    }
+
+    // 2) Si no hay código, armamos redirección a listados
+    const op   = document.getElementById('op')?.value || 'comprar';
     const type = document.getElementById('f-type')?.value || '';
-    const city = document.getElementById('f-city')?.value || ''; // ✅ sin encode manual
-    const min = document.getElementById('f-min')?.value || '';
-    const max = document.getElementById('f-max')?.value || '';
+    const city = document.getElementById('f-city')?.value || '';
+    // En la home solo tienes un campo de presupuesto:
+    const budget = document.getElementById('f-budget')?.value || ''; // ← este es tu "Presupuesto"
+
     const map = {
       comprar: 'propiedades-comprar.html',
       arrendar: 'propiedades-arrendar.html',
       alojar: 'propiedades-alojamientos.html'
     };
     const dest = map[op] || 'propiedades-comprar.html';
+
     const params = new URLSearchParams();
-    if(city) params.set('city', city); // URLSearchParams maneja el encode
-    if(type) params.set('type', type);
-    if(min) params.set('min', min);
-    if(max) params.set('max', max);
+    if (city)  params.set('city', city);
+    if (type)  params.set('type', type);
+    if (budget) params.set('max', budget); // ✅ presupuesto → max
+
     const query = params.toString();
     window.location.href = dest + (query ? '?' + query : '');
   });
@@ -147,6 +174,41 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 })();
 
+
+/* ============== 4) Buscador rápido (home) -> redirección a listados o al detalle por Código ============== */
+document.addEventListener('DOMContentLoaded', function(){
+  const form = document.getElementById('quickSearch');
+  if(!form) return;
+  form.addEventListener('submit', async function(ev){
+    ev.preventDefault();
+    const op = (document.getElementById('op')?.value || 'comprar').toLowerCase();
+    const city = document.getElementById('f-city')?.value || '';
+    const type = document.getElementById('f-type')?.value || '';
+    const code = (document.getElementById('f-code')?.value || '').trim();
+    const budget = document.getElementById('f-budget')?.value || '';
+
+    // Si hay código, intentamos resolverlo aquí (para mejor UX)
+    if(code){
+      try{
+        let data; try{ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate:false }); }
+        catch(_){ try{ data = await getJSONCached('/PRUEBA-PILOTO/properties/data.json', { ttlMs: 1000*60*60*6, revalidate:false }); }
+        catch(__){ data = await getJSONCached('/properties/data.json', { ttlMs: 1000*60*60*6, revalidate:false }); }}
+        const hit = (Array.isArray(data)?data:[]).find(p => String(p.id||'').toLowerCase() === code.toLowerCase());
+        if(hit){ window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(code); return; }
+        // si no existe, seguimos a la página de la operación con el code para que muestre mensaje
+      }catch(_){ /* seguimos usando redirección a listados */ }
+    }
+
+    const page = op==='arrendar' ? 'propiedades-arrendar.html' : (op==='alojar' ? 'propiedades-alojamientos.html' : 'propiedades-comprar.html');
+    const params = new URLSearchParams();
+    if(city) params.set('city', city.trim());
+    if(type) params.set('type', type.trim());
+    if(code) params.set('code', code);
+    if(budget) params.set('budget', budget.trim());
+    const url = page + (params.toString() ? ('?' + params.toString()) : '');
+    window.location.href = url;
+  });
+});
 /* ============== 5) Miniaturas home ← properties/data.json (con caché) ============== */
 (function(){
   const cfg = [
@@ -208,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   async function fetchByOperation(op){
     try{
-      const data = await getJSONCached('properties/data.json', { ttlMs: 1000 * 60 * 60 * 6, revalidate: true });
+      let data; try{ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }catch(_){ try{ data = await getJSONCached('/PRUEBA-PILOTO/properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }catch(__){ data = await getJSONCached('/properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }}
       if(!Array.isArray(data)) throw new Error('Formato inválido');
       return data.filter(it => String(it.operation).toLowerCase() === String(op).toLowerCase());
     }catch(e){
@@ -224,6 +286,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const root = document.getElementById(c.targetId);
       if(!root) return;
       root.innerHTML = '';
+      let empty = root.parentElement && root.parentElement.querySelector('.empty-home-msg');
+      if(!empty){ root.insertAdjacentHTML('afterend','<p class="empty-home-msg" style="display:none;margin-top:12px;">Sin propiedades para mostrar.</p>'); empty = root.parentElement && root.parentElement.querySelector('.empty-home-msg'); }
+      if(arr.length===0){ if(empty) empty.style.display = 'block'; return; } else { if(empty) empty.style.display='none'; }
       if(!arr.length){
         const note = document.createElement('div');
         note.style.padding='12px'; note.style.color='var(--muted)';
@@ -236,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Si la revalidación en background actualiza el JSON, podemos refrescar cards (opcional)
     document.addEventListener('altorra:json-updated', (ev) => {
-      if (ev.detail?.url !== 'properties/data.json') return;
+      if (!/properties\/data\.json$/.test(ev.detail?.url || '')) return;
       // Render simple otra vez (sin flicker porque ya hay contenido)
       cfg.forEach(async (c) => {
         const root = document.getElementById(c.targetId);
