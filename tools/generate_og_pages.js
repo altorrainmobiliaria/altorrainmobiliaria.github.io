@@ -12,7 +12,7 @@ const sharp = require("sharp");
 
 /** ================== BASE URL ================== **/
 function detectBase() {
-  // 1) og.config.json (para ejecutar localmente)
+  // 1) og.config.json (para ejecutar localmente o en CI)
   const cfgPath = path.join(process.cwd(), "tools", "og.config.json");
   if (fs.existsSync(cfgPath)) {
     try {
@@ -21,7 +21,12 @@ function detectBase() {
     } catch {}
   }
 
-  // 2) Automático en GitHub Actions
+  // 2) Variable de entorno (útil en GitHub Actions)
+  if (process.env.OG_BASE_URL) {
+    return String(process.env.OG_BASE_URL).replace(/\/+$/,"");
+  }
+
+  // 3) Automático en GitHub Actions
   const repo = process.env.GITHUB_REPOSITORY || ""; // "owner/repo"
   const [owner, name] = repo.split("/");
   if (owner && name) {
@@ -29,9 +34,10 @@ function detectBase() {
     return `https://${owner}.github.io` + (isUserSite ? "" : `/${name}`);
   }
 
-  // 3) Fallback
-  return "https://altorrainmobiliaria.github.io/PRUEBA-PILOTO";
+  // 4) Fallback: SIEMPRE al dominio principal (no al piloto)
+  return "https://altorrainmobiliaria.github.io";
 }
+
 const BASE = detectBase();
 
 /** ================== RUTAS ================== **/
