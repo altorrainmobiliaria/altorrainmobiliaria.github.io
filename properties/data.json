@@ -126,18 +126,18 @@
   },
   
   {
-    "title": "Apartamento moderno - Milán",
-    "city": "Cartagena",
-    "type": "apartamento",
+    "title": "#",
+    "city": "#",
+    "type": "#",
     "price": 1900000,
-    "beds": 2,
-    "baths": 2,
-    "sqm": 57,
+    "beds": 0,
+    "baths": 0,
+    "sqm": 0,
     "operation": "arrendar",
-    "id": "A20001",
-    "image": "No disponible",
+    "id": "0000",
+    "image": "#",
     "images": ["#", "#", "#"],
-    "available": 1,
-    "description": "No disponible"
+    "available": 0,
+    "description": "#"
   }
 ]
