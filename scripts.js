@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function(){
     if(code){
       try{
         let data; try{ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate:false }); }
-        catch(_){ try{ data = await getJSONCached('/PRUEBA-PILOTO/properties/data.json', { ttlMs: 1000*60*60*6, revalidate:false }); }
+        catch(_){ try{ data = await getJSONCached('/ALTORRA-PILOTO/properties/data.json', { ttlMs: 1000*60*60*6, revalidate:false }); }
         catch(__){ data = await getJSONCached('/properties/data.json', { ttlMs: 1000*60*60*6, revalidate:false }); }}
         const hit = (Array.isArray(data)?data:[]).find(p => String(p.id||'').toLowerCase() === code.toLowerCase());
         if(hit){ window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(code); return; }
@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
   async function fetchByOperation(op){
     try{
-      let data; try{ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }catch(_){ try{ data = await getJSONCached('/PRUEBA-PILOTO/properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }catch(__){ data = await getJSONCached('/properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }}
+      let data; try{ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }catch(_){ try{ data = await getJSONCached('/ALTORRA-PILOTO/properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }catch(__){ data = await getJSONCached('/properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }}
       if(!Array.isArray(data)) throw new Error('Formato inválido');
       return data.filter(it => String(it.operation).toLowerCase() === String(op).toLowerCase());
     }catch(e){
@@ -377,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 /* ============== 6) Registrar service worker para PWA (si existe) ============== */
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/service-worker.js').catch(function(err){
+  navigator.serviceWorker.register('./service-worker.js').catch(function(err){
     console.warn('SW registration failed', err);
   });
 }
