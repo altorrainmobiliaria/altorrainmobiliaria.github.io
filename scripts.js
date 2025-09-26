@@ -375,9 +375,53 @@ document.addEventListener('DOMContentLoaded', function(){
   });
 })();
 
+
+/* === Altorra Fase2: Helpers === */
+(function(){
+  function injectOrgJSONLD(){
+    try{
+      if(document.querySelector('script[type="application/ld+json"].org-jsonld')) return;
+      var org = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "ALTORRA Inmobiliaria",
+        "url": (location.origin + location.pathname.replace(/\/[^\/]*$/, '/')),
+        "logo": "https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-altorra-logo-2025-10-31-20.png"
+      };
+      var s = document.createElement('script');
+      s.type = "application/ld+json";
+      s.className = "org-jsonld";
+      s.textContent = JSON.stringify(org);
+      document.head.appendChild(s);
+    }catch(e){ console.warn("Org JSON-LD inject failed", e); }
+  }
+  function enforceLazyImages(){
+    try{
+      var imgs = document.querySelectorAll('img');
+      imgs.forEach(function(img){
+        var isExcluded = img.closest('.brand') || img.getAttribute('fetchpriority') === 'high' || img.hasAttribute('data-no-lazy') || img.id === 'heroImg' || img.classList.contains('logo');
+        if(!isExcluded && !img.hasAttribute('loading')){
+          img.setAttribute('loading','lazy');
+          img.setAttribute('decoding','async');
+        }
+      });
+    }catch(e){ console.warn("Lazy enforce failed", e); }
+  }
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', function(){
+      injectOrgJSONLD();
+      enforceLazyImages();
+    });
+  }else{
+    injectOrgJSONLD();
+    enforceLazyImages();
+  }
+})();
+
+
 /* ============== 6) Registrar service worker para PWA (si existe) ============== */
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('./service-worker.js').catch(function(err){
+  navigator.serviceWorker.register('/service-worker.js').catch(function(err){
     console.warn('SW registration failed', err);
   });
 }
