@@ -74,11 +74,19 @@
       .toc a{ display:block; padding:8px 10px; border-radius:10px; color:#374151; font-size:14px }
       .toc a:hover{ background:#f3f4f6 }
 
-      .card{ border:1px solid var(--border); border-radius:var(--radius); background:var(--card); padding:22px; margin-bottom:16px }
+      /* 👇 añadido scroll-margin-top para que los anclajes no queden ocultos bajo el header */
+      .card{
+        border:1px solid var(--border);
+        border-radius:var(--radius);
+        background:var(--card);
+        padding:22px;
+        margin-bottom:16px;
+        scroll-margin-top: var(--offset, 120px);
+      }
       .card h2{ margin:0 0 6px 0; font-size:22px }
       .card p{ color:#374151 }
       .list{ margin:10px 0 0 0; padding-left:18px }
-      .muted{ color:var(--muted); font-size:14px }
+      .muted{ color:#6b7280; font-size:14px }
       .grid{ display:grid; gap:14px }
       .two{ grid-template-columns:1fr 1fr }
       @media (max-width:720px){ .two{ grid-template-columns:1fr } }
@@ -289,6 +297,38 @@
       const tpl = document.getElementById('pp-tpl');
       const shadow = host.attachShadow({mode:'open'});
       shadow.appendChild(tpl.content.cloneNode(true));
+    })();
+  </script>
+
+  <!-- 👇 NUEVO: empuja el componente debajo del header y fija el offset de anclas -->
+  <script>
+    (function headerOffset(){
+      const host = document.getElementById('pp-root');
+
+      function getHeaderEl(){
+        // intenta encontrar el header inyectado por tu sitio
+        return document.querySelector('header') ||
+               document.querySelector('[role="banner"]') ||
+               document.querySelector('#header-placeholder')?.nextElementSibling;
+      }
+
+      function apply(){
+        const h = getHeaderEl();
+        const hh = h ? Math.ceil(h.getBoundingClientRect().height) : 96; // valor de respaldo
+        host.style.marginTop = (hh + 16) + 'px'; // empuja contenido debajo del header
+
+        // pasa el offset a las secciones dentro del Shadow DOM
+        const shadow = host.shadowRoot;
+        if (shadow) shadow.host.style.setProperty('--offset', (hh + 24) + 'px');
+      }
+
+      window.addEventListener('load', apply);
+      window.addEventListener('resize', apply);
+
+      const hdr = getHeaderEl();
+      if (hdr && 'ResizeObserver' in window) {
+        new ResizeObserver(apply).observe(hdr);
+      }
     })();
   </script>
 </body>
