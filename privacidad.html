@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- CSS global del sitio para que header/footer y navegación se vean como en index -->
+  <!-- CSS global del sitio -->
   <link rel="stylesheet" href="style.css" />
 
   <!-- JSON-LD -->
@@ -33,11 +33,10 @@
   }
   </script>
 
-  <!-- Inyección del header/footer (tal cual tu sitio) -->
+  <!-- Header/Footer -->
   <script src="header-footer.js" defer></script>
 
   <style>
-    /* Fondo blanco del documento completo */
     body{ background:#fff; }
   </style>
 </head>
@@ -45,13 +44,13 @@
   <!-- Header del sitio -->
   <div id="header-placeholder"></div>
 
-  <!-- Raíz del componente encapsulado -->
+  <!-- Raíz del componente -->
   <div id="pp-root"></div>
 
   <!-- Footer del sitio -->
   <div id="footer-placeholder"></div>
 
-  <!-- Template + estilos de la Política dentro de Shadow DOM -->
+  <!-- TEMPLATE (sin scripts ejecutables dentro) -->
   <template id="pp-tpl">
     <style>
       :host{ --gold:#d4af37; --text:#111827; --muted:#6b7280; --border:#e5e7eb; --bg:#ffffff; --card:#ffffff;
@@ -60,8 +59,8 @@
 
       .wrap{ max-width:var(--maxw); margin:auto; display:grid; grid-template-columns:290px 1fr; gap:24px; padding:28px 20px }
       @media (max-width:992px){
-        .wrap{ grid-template-columns:1fr } 
-        .toc{ position:static; display:none !important; } /* 👈 ocultar TOC en móvil */
+        .wrap{ grid-template-columns:1fr }
+        .toc{ position:static; display:none !important; } /* ocultar TOC en móvil */
       }
 
       .hero{ grid-column:1/-1; border:1px solid var(--border); border-radius:var(--radius); padding:28px;
@@ -77,14 +76,13 @@
       .toc a{ display:block; padding:8px 10px; border-radius:10px; color:#374151; font-size:14px }
       .toc a:hover{ background:#f3f4f6 }
 
-      /* Offset para que los anclajes no queden ocultos bajo el header */
       .card{
         border:1px solid var(--border);
         border-radius:var(--radius);
         background:var(--card);
         padding:22px;
         margin-bottom:16px;
-        scroll-margin-top: var(--offset, 120px);
+        scroll-margin-top: var(--offset, 120px); /* offset anclas */
       }
       .card h2{ margin:0 0 6px 0; font-size:22px }
       .card p{ color:#374151 }
@@ -98,7 +96,6 @@
       .btn-top{ position:fixed; right:16px; bottom:16px; border-radius:12px; border:1px solid var(--border);
                 background:#ffffff; color:#111; padding:10px 12px; cursor:pointer; z-index:5 }
 
-      /* Aviso de cookies (solo aquí) */
       .cookie{ position:fixed; left:16px; right:16px; bottom:16px; background:#fff; color:#111;
                border:1px solid var(--border); border-radius:14px; padding:14px 16px; display:none; z-index:50;
                box-shadow:0 10px 30px rgba(0,0,0,.08) }
@@ -242,7 +239,7 @@
 
         <button class="btn-top" id="pp-top" aria-label="Volver arriba">↑</button>
 
-        <!-- Aviso de cookies encapsulado -->
+        <!-- Cookies -->
         <div class="cookie" id="pp-cookie">
           <div><strong>Cookies:</strong> utilizamos cookies necesarias y de medición para mejorar su experiencia.</div>
           <div class="actions">
@@ -253,43 +250,60 @@
         </div>
       </section>
     </div>
+  </template>
 
-    <script>
-      // Interacciones dentro del Shadow DOM
-      (function(){
-        const root = document.currentScript.closest('template').getRootNode().host || document.currentScript.getRootNode();
-        const doc = root.shadowRoot || root;
+  <script>
+    // Montar el Shadow DOM
+    (function mount(){
+      const host = document.getElementById('pp-root');
+      const tpl = document.getElementById('pp-tpl');
+      const shadow = host.attachShadow({mode:'open'});
+      shadow.appendChild(tpl.content.cloneNode(true));
+    })();
+  </script>
+
+  <!-- Inicialización de interacciones (fuera del template) -->
+  <script>
+    (function initShadowInteractions(){
+      const host = document.getElementById('pp-root');
+
+      function setup(){
+        const doc = host.shadowRoot;
+        if(!doc) return;
 
         // Fecha "Última actualización"
         const last = new Date('2025-10-02');
         const el = doc.getElementById('lastUpdated');
         if (el) el.textContent = last.toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'2-digit'});
 
-        // Volver arriba
-        const topBtn = doc.getElementById('pp-top');
-        if (topBtn) topBtn.addEventListener('click', () => doc.host.scrollIntoView({behavior:'smooth'}));
-
-        // TOC: scroll suave con compensación del header (funciona dentro del Shadow DOM)
+        // Obtener offset del header fijo
         const getOffset = () => {
-          const off = getComputedStyle(doc.host).getPropertyValue('--offset');
+          const off = getComputedStyle(host).getPropertyValue('--offset');
           const n = parseInt(off, 10);
           return isNaN(n) ? 120 : n;
         };
+
+        // Scroll suave del TOC con compensación y actualización del hash
         doc.querySelectorAll('.toc a[href^="#"]').forEach(a=>{
           a.addEventListener('click', e=>{
             e.preventDefault();
             const id = a.getAttribute('href').slice(1);
             const target = doc.getElementById(id);
             if(!target) return;
-            const rect = target.getBoundingClientRect();
-            const y = window.scrollY + rect.top - getOffset();
+
+            const rect = target.getBoundingClientRect();          // posición dentro del viewport
+            const y = window.scrollY + rect.top - getOffset();     // posición en el documento, menos el header
             window.scrollTo({ top: y, behavior: 'smooth' });
-            // Actualiza el hash sin saltos bruscos
+
             if (history.replaceState) history.replaceState(null, '', '#' + id);
           });
         });
 
-        // Cookies (clave local para esta página)
+        // Botón "volver arriba"
+        const topBtn = doc.getElementById('pp-top');
+        if (topBtn) topBtn.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+
+        // Cookies (clave local solo para esta página)
         const key='altorra:pp:cookies';
         const saved = localStorage.getItem(key);
         const c = doc.getElementById('pp-cookie');
@@ -299,17 +313,10 @@
         const rej = doc.getElementById('pp-reject');
         if(acc) acc.addEventListener('click',()=>set('all'));
         if(rej) rej.addEventListener('click',()=>set('necessary'));
-      })();
-    </script>
-  </template>
+      }
 
-  <script>
-    // Monta el componente en Shadow DOM (aíslalo de style.css global).
-    (function mount(){
-      const host = document.getElementById('pp-root');
-      const tpl = document.getElementById('pp-tpl');
-      const shadow = host.attachShadow({mode:'open'});
-      shadow.appendChild(tpl.content.cloneNode(true));
+      // Ejecuta al cargar y cuando el shadow esté listo
+      if (host.shadowRoot) setup(); else window.addEventListener('DOMContentLoaded', setup);
     })();
   </script>
 
