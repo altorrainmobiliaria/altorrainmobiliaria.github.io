@@ -15,51 +15,63 @@
   <meta property="og:url" content="https://altorrainmobiliaria.github.io/privacidad.html">
   <meta property="og:site_name" content="Altorra Inmobiliaria">
 
-  <!-- Fuentes -->
+  <!-- Tipografía de marca -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-  <!-- 👇 Estilos globales del sitio (necesarios para header/footer y layout) -->
+  <!-- CSS GLOBAL DEL SITIO para que header/footer luzcan idénticos al index -->
   <link rel="stylesheet" href="style.css">
 
-  <!-- Estilos locales mínimos (fondo blanco y tarjetas) -->
+  <!-- Estilos ENCAPSULADOS para que no choquen con style.css -->
   <style>
     :root{
-      --gold:#d4af37;
-      --text:#111827;
-      --muted:#6b7280;
-      --border:#e5e7eb;
-      --bg:#ffffff;
-      --card:#ffffff;
-      --radius:18px;
-      --maxw:1080px;
+      --pp-gold:#d4af37;
+      --pp-text:#111827;
+      --pp-muted:#6b7280;
+      --pp-border:#e5e7eb;
+      --pp-bg:#ffffff;
+      --pp-card:#ffffff;
+      --pp-radius:18px;
+      --pp-maxw:1080px;
     }
-    body{background:#fff;color:var(--text)}
-    main{max-width:var(--maxw);margin:auto;display:grid;grid-template-columns:290px 1fr;gap:24px;padding:28px 20px}
-    @media (max-width:992px){main{grid-template-columns:1fr}}
-    .hero{grid-column:1/-1;border:1px solid var(--border);border-radius:var(--radius);padding:28px;background:linear-gradient(180deg,#fff,#fff 60%,#f9fafb 100%)}
-    .kicker{font-size:13px;color:var(--muted);letter-spacing:.4px;text-transform:uppercase}
-    .hero h1{margin:6px 0 8px 0;font-size:28px}
-    .hero p{margin:0;color:#374151}
-    .pill{display:inline-block;padding:4px 10px;border:1px solid rgba(212,175,55,.5);border-radius:999px;color:#7a5a00;font-size:12px;background:#fff}
-    .toc{position:sticky;top:84px;align-self:start;border:1px solid var(--border);border-radius:var(--radius);padding:18px;background:var(--card)}
-    .toc h3{margin:0 0 10px 0;font-size:14px;color:var(--muted);font-weight:600}
-    .toc a{display:block;padding:8px 10px;border-radius:10px;color:#374151;font-size:14px}
-    .toc a:hover{background:#f3f4f6}
-    .card{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);padding:22px;margin-bottom:16px}
-    .card h2{margin:0 0 6px 0;font-size:22px}
-    .card p{color:#374151}
-    .list{margin:10px 0 0 0;padding-left:18px}
-    .muted{color:var(--muted);font-size:14px}
-    .grid{display:grid;gap:14px}
-    .grid.two{grid-template-columns:1fr 1fr}
-    @media (max-width:720px){.grid.two{grid-template-columns:1fr}}
-    .callout{display:flex;gap:12px;align-items:flex-start;border-left:4px solid var(--gold);padding:8px 0 8px 12px;background:#fff}
-    .cookie{position:fixed;left:16px;right:16px;bottom:16px;background:#fff;color:#111;border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:none;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-    .cookie .actions{display:flex;gap:10px;margin-top:10px}
-    .cookie button{padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#fff;color:#111;cursor:pointer}
-    .cookie .primary{background:linear-gradient(135deg,var(--gold),#f0da86);color:#0b0b0b;border:none;font-weight:600}
+    /* Wrapper para encapsular todo */
+    .pp{font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;color:var(--pp-text)}
+    .pp a{color:#946c00;text-decoration:none}
+    .pp a:hover{text-decoration:underline}
+
+    /* Layout */
+    .pp main{max-width:var(--pp-maxw);margin:auto;display:grid;grid-template-columns:290px 1fr;gap:24px;padding:28px 20px}
+    @media (max-width:992px){.pp main{grid-template-columns:1fr}.pp .toc{position:static}}
+    .pp .hero{grid-column:1/-1;border:1px solid var(--pp-border);border-radius:var(--pp-radius);padding:28px;background:linear-gradient(180deg,#fff,#fff 60%,#f9fafb 100%)}
+    .pp .kicker{font-size:13px;color:var(--pp-muted);letter-spacing:.4px;text-transform:uppercase}
+    .pp .hero h1{margin:6px 0 8px 0;font-size:28px}
+    .pp .hero p{margin:0;color:#374151}
+    .pp .pill{display:inline-block;padding:4px 10px;border:1px solid rgba(212,175,55,.5);border-radius:999px;color:#7a5a00;font-size:12px;background:#fff}
+
+    .pp .toc{position:sticky;top:84px;align-self:start;border:1px solid var(--pp-border);border-radius:var(--pp-radius);padding:18px;background:var(--pp-card)}
+    .pp .toc h3{margin:0 0 10px 0;font-size:14px;color:var(--pp-muted);font-weight:600}
+    .pp .toc a{display:block;padding:8px 10px;border-radius:10px;color:#374151;font-size:14px}
+    .pp .toc a:hover{background:#f3f4f6}
+
+    .pp .card{border:1px solid var(--pp-border);border-radius:var(--pp-radius);background:var(--pp-card);padding:22px;margin-bottom:16px}
+    .pp .card h2{margin:0 0 6px 0;font-size:22px}
+    .pp .card p{color:#374151}
+    .pp .list{margin:10px 0 0 0;padding-left:18px}
+    .pp .muted{color:var(--pp-muted);font-size:14px}
+    .pp .grid{display:grid;gap:14px}
+    .pp .grid.two{grid-template-columns:1fr 1fr}
+    @media (max-width:720px){.pp .grid.two{grid-template-columns:1fr}}
+    .pp .callout{display:flex;gap:12px;align-items:flex-start;border-left:4px solid var(--pp-gold);padding:8px 0 8px 12px;background:#fff}
+
+    /* Botón subir (no interfiere con el tuyo si lo tienes) */
+    .pp .btn-top{position:fixed;right:16px;bottom:16px;border-radius:12px;border:1px solid var(--pp-border);background:#ffffff;color:#111;padding:10px 12px;cursor:pointer;z-index:5}
+
+    /* Aviso de cookies (encapsulado) */
+    .pp .cookie{position:fixed;left:16px;right:16px;bottom:16px;background:#fff;color:#111;border:1px solid var(--pp-border);border-radius:14px;padding:14px 16px;display:none;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+    .pp .cookie .actions{display:flex;gap:10px;margin-top:10px}
+    .pp .cookie button{padding:10px 12px;border-radius:12px;border:1px solid var(--pp-border);background:#fff;color:#111;cursor:pointer}
+    .pp .cookie .primary{background:linear-gradient(135deg,var(--pp-gold),#f0da86);color:#0b0b0b;border:none;font-weight:600}
   </style>
 
   <!-- JSON-LD -->
@@ -75,190 +87,194 @@
   }
   </script>
 
-  <!-- Carga del header/footer y otros scripts del sitio (igual que en el home) -->
+  <!-- Inyección de header/footer como en el index -->
   <script src="header-footer.js" defer></script>
 </head>
-<body>
-  <!-- Header externo (se inyecta desde header-footer.js igual que en el index) -->
+<body style="background:#fff">
+  <!-- Header del sitio -->
   <div id="header-placeholder"></div>
 
-  <main id="contenido">
-    <!-- HERO -->
-    <section class="hero" aria-label="Hero principal">
-      <div class="grid two">
-        <div>
-          <div class="kicker">Documento</div>
-          <h1>Política de Privacidad</h1>
-          <p>Cómo recopilamos, usamos y protegemos su información personal.</p>
-          <p class="muted">Última actualización: <span id="lastUpdated"></span></p>
+  <!-- CONTENIDO ENCAPSULADO -->
+  <div class="pp">
+    <main id="contenido">
+      <!-- HERO -->
+      <section class="hero" aria-label="Hero principal">
+        <div class="grid two">
+          <div>
+            <div class="kicker">Documento</div>
+            <h1>Política de Privacidad</h1>
+            <p>Cómo recopilamos, usamos y protegemos su información personal.</p>
+            <p class="muted">Última actualización: <span id="lastUpdated"></span></p>
+          </div>
+          <div>
+            <span class="pill">Cumplimiento Colombia – Ley 1581 de 2012</span>
+            <span class="pill">Decreto 1377 de 2013</span>
+            <span class="pill">Derechos ARCO</span>
+          </div>
         </div>
-        <div>
-          <span class="pill">Cumplimiento Colombia – Ley 1581 de 2012</span>
-          <span class="pill">Decreto 1377 de 2013</span>
-          <span class="pill">Derechos ARCO</span>
-        </div>
+      </section>
+
+      <!-- ÍNDICE -->
+      <aside class="toc" aria-label="Índice de secciones">
+        <h3>Contenido</h3>
+        <a href="#responsable">1. Responsable del Tratamiento</a>
+        <a href="#alcance">2. Alcance y Base Legal</a>
+        <a href="#datos">3. Datos que recopilamos</a>
+        <a href="#finalidades">4. Finalidades del tratamiento</a>
+        <a href="#legitimacion">5. Legitimación</a>
+        <a href="#conservacion">6. Conservación</a>
+        <a href="#comparticion">7. Compartición y transferencias</a>
+        <a href="#derechos">8. Derechos del titular (ARCO)</a>
+        <a href="#seguridad">9. Seguridad de la información</a>
+        <a href="#menores">10. Menores de edad</a>
+        <a href="#cookies">11. Cookies y analítica</a>
+        <a href="#canales">12. Canales de contacto</a>
+      </aside>
+
+      <!-- CONTENIDO -->
+      <section>
+        <article class="card" id="responsable">
+          <h2>1. Responsable del Tratamiento</h2>
+          <p><strong>Altorra Inmobiliaria</strong> (en adelante, “Altorra”) es responsable del tratamiento de los datos personales recolectados a través de sus canales digitales y presenciales.</p>
+          <div class="grid two">
+            <div>
+              <p><strong>Dirección de contacto:</strong> Cartagena de Indias, Bolívar – Colombia</p>
+              <p><strong>Correo:</strong> <a href="mailto:altorrainmobiliaria@gmail.com">altorrainmobiliaria@gmail.com</a></p>
+              <p><strong>Teléfono/WhatsApp:</strong> <a href="tel:+573235016747">+57 323 501 6747</a></p>
+            </div>
+            <div class="callout">
+              <span>ℹ️</span>
+              <p class="muted">Documento expedido conforme a la <strong>Ley 1581 de 2012</strong>, el <strong>Decreto 1377 de 2013</strong> y normas concordantes sobre protección de datos personales en Colombia.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="card" id="alcance">
+          <h2>2. Alcance y Base Legal</h2>
+          <p>Aplica a clientes, potenciales clientes, propietarios, arrendatarios, proveedores, aliados y visitantes de nuestros sitios o redes sociales. El tratamiento se fundamenta en la <strong>Ley 1581 de 2012</strong> y principios de legalidad, finalidad, libertad, veracidad, transparencia, acceso y circulación restringida, seguridad y confidencialidad.</p>
+        </article>
+
+        <article class="card" id="datos">
+          <h2>3. Datos que recopilamos</h2>
+          <ul class="list">
+            <li>Identificación y contacto: nombre, cédula/NIT, correo, teléfono, ciudad.</li>
+            <li>Información del inmueble: dirección aproximada, características, fotos provistas por el titular.</li>
+            <li>Preferencias y registros derivados del servicio y la relación comercial.</li>
+            <li>Datos técnicos mínimos: IP, dispositivo, navegador, páginas visitadas (analítica).</li>
+          </ul>
+          <p class="muted">No tratamos categorías especiales (sensibles) salvo que sean necesarias y con consentimiento explícito.</p>
+        </article>
+
+        <article class="card" id="finalidades">
+          <h2>4. Finalidades del tratamiento</h2>
+          <ul class="list">
+            <li>Responder solicitudes, cotizaciones y agendar visitas.</li>
+            <li>Prestar servicios de compra, venta, arriendo, administración, avalúos y asesoría jurídica.</li>
+            <li>Verificación de identidad y prevención de fraude.</li>
+            <li>Gestión comercial y de la relación con clientes y proveedores.</li>
+            <li>Envío de comunicaciones informativas y/o comerciales del sector inmobiliario (con opción de cancelación).</li>
+            <li>Mejora de experiencia digital, seguridad, métricas y cumplimiento de obligaciones legales.</li>
+          </ul>
+        </article>
+
+        <article class="card" id="legitimacion">
+          <h2>5. Legitimación</h2>
+          <p>El tratamiento se sustenta en: (i) <strong>consentimiento</strong> del titular; (ii) <strong>ejecución de contratos</strong> o diligencias precontractuales; (iii) <strong>cumplimiento de obligaciones legales</strong>; y (iv) <strong>interés legítimo</strong> para seguridad y mejora del servicio.</p>
+        </article>
+
+        <article class="card" id="conservacion">
+          <h2>6. Conservación</h2>
+          <p>Conservamos los datos por el tiempo necesario para la finalidad, la relación contractual y los plazos exigidos por normas comerciales, contables y de prevención de fraudes. Cumplidos, se suprimirán o anonimizarán de forma segura.</p>
+        </article>
+
+        <article class="card" id="comparticion">
+          <h2>7. Compartición y transferencias</h2>
+          <p>Podemos compartir datos con encargados (hosting, mensajería, analítica, CRM) bajo acuerdos de confidencialidad. Podrán realizarse <strong>transferencias internacionales</strong> con salvaguardas adecuadas o cuando lo exija la ley.</p>
+          <p class="muted">No vendemos datos personales. Solo revelamos información por mandato legal o autoridad competente.</p>
+        </article>
+
+        <article class="card" id="derechos">
+          <h2>8. Derechos del titular (ARCO)</h2>
+          <p>Puede ejercer <strong>Acceso</strong>, <strong>Rectificación</strong>, <strong>Cancelación/Supresión</strong> y <strong>Oposición</strong>, así como revocar su consentimiento o presentar quejas ante la SIC.</p>
+          <ul class="list">
+            <li>Escríbanos a <a href="mailto:altorrainmobiliaria@gmail.com">altorrainmobiliaria@gmail.com</a> con asunto “Derechos de datos personales”.</li>
+            <li>Incluya nombre completo, documento, solicitud concreta y medio de respuesta.</li>
+            <li>Plazos: consultas hasta 10 días hábiles y reclamos hasta 15, conforme a la ley.</li>
+          </ul>
+        </article>
+
+        <article class="card" id="seguridad">
+          <h2>9. Seguridad de la información</h2>
+          <p>Aplicamos medidas técnicas, administrativas y organizativas proporcionales al riesgo: control de acceso, cifrado en tránsito (HTTPS), backups y principio de mínimo privilegio para encargados.</p>
+        </article>
+
+        <article class="card" id="menores">
+          <h2>10. Menores de edad</h2>
+          <p>No dirigimos nuestros servicios a menores de 18 años. Si tratamos datos por relación con sus acudientes, se hará bajo el interés superior del menor y consentimiento del representante legal.</p>
+        </article>
+
+        <article class="card" id="cookies">
+          <h2>11. Cookies y analítica</h2>
+          <p>Usamos cookies técnicas necesarias y, eventualmente, de medición para entender el uso del sitio. Puede administrar su preferencia desde este aviso.</p>
+        </article>
+
+        <article class="card" id="canales">
+          <h2>12. Canales de contacto</h2>
+          <div class="grid two">
+            <div>
+              <p><strong>Correo:</strong> <a href="mailto:altorrainmobiliaria@gmail.com">altorrainmobiliaria@gmail.com</a></p>
+              <p><strong>Teléfono/WhatsApp:</strong> <a href="tel:+573235016747">+57 323 501 6747</a></p>
+            </div>
+            <div class="muted">Para preguntas o reclamos sobre sus datos personales contáctenos por estos medios. También puede acudir a la Superintendencia de Industria y Comercio – SIC.</div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <!-- Aviso de cookies (solo en esta página) -->
+    <div class="cookie" id="pp-cookie">
+      <div><strong>Cookies:</strong> utilizamos cookies necesarias y de medición para mejorar su experiencia. Puede aceptar o rechazar las de medición.</div>
+      <div class="actions">
+        <button id="pp-reject">Rechazar medición</button>
+        <button class="primary" id="pp-accept">Aceptar todas</button>
       </div>
-    </section>
+      <div class="muted" style="margin-top:6px">Puede cambiar su decisión borrando las cookies del navegador.</div>
+    </div>
 
-    <!-- ÍNDICE -->
-    <aside class="toc" aria-label="Índice de secciones">
-      <h3>Contenido</h3>
-      <a href="#responsable">1. Responsable del Tratamiento</a>
-      <a href="#alcance">2. Alcance y Base Legal</a>
-      <a href="#datos">3. Datos que recopilamos</a>
-      <a href="#finalidades">4. Finalidades del tratamiento</a>
-      <a href="#legitimacion">5. Legitimación</a>
-      <a href="#conservacion">6. Conservación</a>
-      <a href="#comparticion">7. Compartición y transferencias</a>
-      <a href="#derechos">8. Derechos del titular (ARCO)</a>
-      <a href="#seguridad">9. Seguridad de la información</a>
-      <a href="#menores">10. Menores de edad</a>
-      <a href="#cookies">11. Cookies y analítica</a>
-      <a href="#canales">12. Canales de contacto</a>
-    </aside>
+    <button class="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
+    <div class="footer" style="max-width:var(--pp-maxw);margin:40px auto 60px;padding:0 20px;color:#4b5563;border-top:1px solid var(--pp-border)">
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:20px">
+        <div>© <span id="pp-year"></span> Altorra Inmobiliaria — Cartagena, Colombia</div>
+        <div>Seguridad • Legalidad • Confianza</div>
+      </div>
+    </div>
+  </div>
 
-    <!-- CONTENIDO -->
-    <section>
-      <article class="card" id="responsable">
-        <h2>1. Responsable del Tratamiento</h2>
-        <p><strong>Altorra Inmobiliaria</strong> (en adelante, “Altorra”) es responsable del tratamiento de los datos personales recolectados a través de sus canales digitales y presenciales.</p>
-        <div class="grid two">
-          <div>
-            <p><strong>Dirección de contacto:</strong> Cartagena de Indias, Bolívar – Colombia</p>
-            <p><strong>Correo:</strong> <a href="mailto:altorrainmobiliaria@gmail.com">altorrainmobiliaria@gmail.com</a></p>
-            <p><strong>Teléfono/WhatsApp:</strong> <a href="tel:+573235016747">+57 323 501 6747</a></p>
-          </div>
-          <div class="callout">
-            <span>ℹ️</span>
-            <p class="muted">Documento expedido conforme a la <strong>Ley 1581 de 2012</strong>, el <strong>Decreto 1377 de 2013</strong> y normas concordantes sobre protección de datos personales en Colombia.</p>
-          </div>
-        </div>
-      </article>
-
-      <article class="card" id="alcance">
-        <h2>2. Alcance y Base Legal</h2>
-        <p>Aplica a clientes, potenciales clientes, propietarios, arrendatarios, proveedores, aliados y visitantes de nuestros sitios o redes sociales. El tratamiento se fundamenta en la <strong>Ley 1581 de 2012</strong> y principios de legalidad, finalidad, libertad, veracidad, transparencia, acceso y circulación restringida, seguridad y confidencialidad.</p>
-      </article>
-
-      <article class="card" id="datos">
-        <h2>3. Datos que recopilamos</h2>
-        <ul class="list">
-          <li>Identificación y contacto: nombre, cédula/NIT, correo, teléfono, ciudad.</li>
-          <li>Información del inmueble: dirección aproximada, características, fotos provistas por el titular.</li>
-          <li>Preferencias y registros derivados del servicio y la relación comercial.</li>
-          <li>Datos técnicos mínimos: IP, dispositivo, navegador, páginas visitadas (analítica).</li>
-        </ul>
-        <p class="muted">No tratamos categorías especiales (sensibles) salvo que sean necesarias y con consentimiento explícito.</p>
-      </article>
-
-      <article class="card" id="finalidades">
-        <h2>4. Finalidades del tratamiento</h2>
-        <ul class="list">
-          <li>Responder solicitudes, cotizaciones y agendar visitas.</li>
-          <li>Prestar servicios de compra, venta, arriendo, administración, avalúos y asesoría jurídica.</li>
-          <li>Verificación de identidad y prevención de fraude.</li>
-          <li>Gestión comercial y de la relación con clientes y proveedores.</li>
-          <li>Envío de comunicaciones informativas y/o comerciales del sector inmobiliario (con opción de cancelación).</li>
-          <li>Mejora de experiencia digital, seguridad, métricas y cumplimiento de obligaciones legales.</li>
-        </ul>
-      </article>
-
-      <article class="card" id="legitimacion">
-        <h2>5. Legitimación</h2>
-        <p>El tratamiento se sustenta en: (i) <strong>consentimiento</strong> del titular; (ii) <strong>ejecución de contratos</strong> o diligencias precontractuales; (iii) <strong>cumplimiento de obligaciones legales</strong>; y (iv) <strong>interés legítimo</strong> para seguridad y mejora del servicio.</p>
-      </article>
-
-      <article class="card" id="conservacion">
-        <h2>6. Conservación</h2>
-        <p>Conservamos los datos por el tiempo necesario para la finalidad, la relación contractual y los plazos exigidos por normas comerciales, contables y de prevención de fraudes. Cumplidos, se suprimirán o anonimizarán de forma segura.</p>
-      </article>
-
-      <article class="card" id="comparticion">
-        <h2>7. Compartición y transferencias</h2>
-        <p>Podemos compartir datos con encargados (hosting, mensajería, analítica, CRM) bajo acuerdos de confidencialidad. Podrán realizarse <strong>transferencias internacionales</strong> con salvaguardas adecuadas o cuando lo exija la ley.</p>
-        <p class="muted">No vendemos datos personales. Solo revelamos información por mandato legal o autoridad competente.</p>
-      </article>
-
-      <article class="card" id="derechos">
-        <h2>8. Derechos del titular (ARCO)</h2>
-        <p>Puede ejercer <strong>Acceso</strong>, <strong>Rectificación</strong>, <strong>Cancelación/Supresión</strong> y <strong>Oposición</strong>, así como revocar su consentimiento o presentar quejas ante la SIC.</p>
-        <ul class="list">
-          <li>Escríbanos a <a href="mailto:altorrainmobiliaria@gmail.com">altorrainmobiliaria@gmail.com</a> con asunto “Derechos de datos personales”.</li>
-          <li>Incluya nombre completo, documento, solicitud concreta y medio de respuesta.</li>
-          <li>Plazos: consultas hasta 10 días hábiles y reclamos hasta 15, conforme a la ley.</li>
-        </ul>
-      </article>
-
-      <article class="card" id="seguridad">
-        <h2>9. Seguridad de la información</h2>
-        <p>Aplicamos medidas técnicas, administrativas y organizativas proporcionales al riesgo: control de acceso, cifrado en tránsito (HTTPS), backups y principio de mínimo privilegio para encargados.</p>
-      </article>
-
-      <article class="card" id="menores">
-        <h2>10. Menores de edad</h2>
-        <p>No dirigimos nuestros servicios a menores de 18 años. Si tratamos datos por relación con sus acudientes, se hará bajo el interés superior del menor y consentimiento del representante legal.</p>
-      </article>
-
-      <article class="card" id="cookies">
-        <h2>11. Cookies y analítica</h2>
-        <p>Usamos cookies técnicas necesarias y, eventualmente, de medición para entender el uso del sitio. Puede administrar su preferencia desde este aviso.</p>
-      </article>
-
-      <article class="card" id="canales">
-        <h2>12. Canales de contacto</h2>
-        <div class="grid two">
-          <div>
-            <p><strong>Correo:</strong> <a href="mailto:altorrainmobiliaria@gmail.com">altorrainmobiliaria@gmail.com</a></p>
-            <p><strong>Teléfono/WhatsApp:</strong> <a href="tel:+573235016747">+57 323 501 6747</a></p>
-          </div>
-          <div class="muted">Para preguntas o reclamos sobre sus datos personales contáctenos por estos medios. También puede acudir a la Superintendencia de Industria y Comercio – SIC.</div>
-        </div>
-      </article>
-    </section>
-  </main>
-
-  <!-- Footer externo (igual que en el index) -->
+  <!-- Footer del sitio -->
   <div id="footer-placeholder"></div>
 
-  <!-- Botón flotante de WhatsApp (consistencia con el home) -->
-  <link rel="stylesheet" href="css/whatsapp-float.css">
-  <a href="https://wa.me/573235016747?text=Hola%20Altorra%2C%20necesito%20informaci%C3%B3n%20sobre%20propiedades"
-     class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
-    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825.738 5.479 2.031 7.781l-2.031 7.219 7.375-1.938c2.238 1.213 4.8 1.938 7.531 1.938 8.838 0 16.094-7.163 16.094-16s-7.256-16-16-16zm9.563 22.188c-.394 1.113-1.95 2.038-3.194 2.313-.85.175-1.956.319-5.688-.919-4.769-1.581-7.844-6.356-8.081-6.65-.231-.294-1.95-2.594-1.95-4.95s1.238-3.513 1.675-3.994c.438-.481.956-.6 1.275-.6.319 0 .638.006.919.013.294.012.688-.113 1.075.819.394 1.025 1.35 3.294 1.469 3.531.119.238.2.519.038.819-.163.3-.244.488-.481.75-.238.263-.5.588-.713.788-.238.225-.488.469-.206.925.281.456 1.256 2.069 2.694 3.35 1.85 1.65 3.419 2.163 3.9 2.406.481.244.763.206 1.044-.125.281-.331 1.206-1.406 1.531-1.888.325-.481.644-.4 1.088-.238.444.163 2.819 1.331 3.3 1.569.481.238.8.356.919.556.119.2.119 1.144-.275 2.256z"/></svg>
-  </a>
-
-  <!-- Scripts del sitio (si no son necesarios aquí, puedes omitirlos) -->
+  <!-- Scripts encapsulados de esta página -->
   <script>
-    const d=new Date(); const lastUpdated = new Date('2025-10-02');
-    document.addEventListener('DOMContentLoaded',()=>{
-      const el=document.getElementById('lastUpdated');
-      if(el){ el.textContent = lastUpdated.toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'2-digit'}); }
-    });
-
-    // Banner de cookies simple
+    // Fecha dinámica
     (function(){
-      const key='altorra:cookies';
+      const d=new Date();
+      const y=document.getElementById('pp-year');
+      if(y) y.textContent=d.getFullYear();
+      const lastUpdated = new Date('2025-10-02');
+      const lu=document.getElementById('lastUpdated');
+      if(lu) lu.textContent = lastUpdated.toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'2-digit'});
+    })();
+
+    // Banner de cookies solo para esta página (clave distinta)
+    (function(){
+      const key='altorra:pp:cookies';
       const saved=localStorage.getItem(key);
-      const el=document.createElement('div');
-      el.className='cookie';
-      el.id='cookie';
-      el.innerHTML = `
-        <div><strong>Cookies:</strong> utilizamos cookies necesarias y de medición para mejorar su experiencia. Puede aceptar o rechazar las de medición.</div>
-        <div class="actions">
-          <button id="reject">Rechazar medición</button>
-          <button class="primary" id="accept">Aceptar todas</button>
-        </div>
-        <div class="muted" style="margin-top:6px">Puede cambiar su decisión borrando las cookies del navegador.</div>`;
-      if(!saved){ document.body.appendChild(el); el.style.display='block'; }
-      const set=(v)=>{ localStorage.setItem(key,v); if(el) el.remove(); };
-      document.addEventListener('click',(e)=>{
-        if(e.target && e.target.id==='accept') set('all');
-        if(e.target && e.target.id==='reject') set('necessary');
-      });
+      const el=document.getElementById('pp-cookie');
+      if(!saved){ el.style.display='block'; }
+      const set=(v)=>{ localStorage.setItem(key,v); el.style.display='none'; };
+      document.getElementById('pp-accept').onclick=()=>set('all');
+      document.getElementById('pp-reject').onclick=()=>set('necessary');
     })();
   </script>
-
-  <!-- Favoritos (igual que el home) -->
-  <script defer src="js/favoritos.js"></script>
 </body>
 </html>
