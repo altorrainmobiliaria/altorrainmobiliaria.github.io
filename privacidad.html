@@ -7,6 +7,7 @@
   <meta name="description" content="Política de privacidad de Altorra Inmobiliaria. Tratamiento de datos personales conforme a la Ley 1581 de 2012 y Decreto 1377 de 2013 en Colombia.">
   <link rel="canonical" href="https://altorrainmobiliaria.github.io/privacidad.html">
   <meta name="robots" content="index,follow">
+
   <!-- Open Graph -->
   <meta property="og:title" content="Política de Privacidad | Altorra Inmobiliaria">
   <meta property="og:description" content="Conozca cómo recopilamos, usamos y protegemos sus datos personales. Seguridad • Legalidad • Confianza.">
@@ -19,96 +20,46 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-  <!-- Estilos (fondo blanco + acento dorado) -->
+  <!-- 👇 Estilos globales del sitio (necesarios para header/footer y layout) -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Estilos locales mínimos (fondo blanco y tarjetas) -->
   <style>
     :root{
       --gold:#d4af37;
-      --text:#111827;        /* gris muy oscuro */
-      --muted:#6b7280;       /* gris medio */
-      --border:#e5e7eb;      /* gris claro */
-      --bg:#ffffff;          /* fondo blanco */
+      --text:#111827;
+      --muted:#6b7280;
+      --border:#e5e7eb;
+      --bg:#ffffff;
       --card:#ffffff;
-      --link:#946c00;        /* dorado oscuro para links */
       --radius:18px;
       --maxw:1080px;
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
-      color:var(--text);
-      background:var(--bg);
-      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-    }
-    a{color:var(--link); text-decoration:none}
-    a:hover{text-decoration:underline}
-    /* Header/ Footer vienen de tu sistema actual (placeholders) */
-
-    /* Layout */
-    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-    .skip-link:focus{left:12px;top:12px;width:auto;height:auto;background:#000;color:#fff;padding:10px 12px;border-radius:10px;z-index:50}
-    main{max-width:var(--maxw); margin:auto; display:grid; grid-template-columns:290px 1fr; gap:24px; padding:28px 20px}
-    @media (max-width:992px){ main{grid-template-columns:1fr} .toc{position:static} }
-
-    /* Hero */
-    .hero{
-      grid-column:1/-1;
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      padding:28px;
-      background:linear-gradient(180deg,#fff, #fff 60%, #f9fafb 100%);
-    }
+    body{background:#fff;color:var(--text)}
+    main{max-width:var(--maxw);margin:auto;display:grid;grid-template-columns:290px 1fr;gap:24px;padding:28px 20px}
+    @media (max-width:992px){main{grid-template-columns:1fr}}
+    .hero{grid-column:1/-1;border:1px solid var(--border);border-radius:var(--radius);padding:28px;background:linear-gradient(180deg,#fff,#fff 60%,#f9fafb 100%)}
     .kicker{font-size:13px;color:var(--muted);letter-spacing:.4px;text-transform:uppercase}
     .hero h1{margin:6px 0 8px 0;font-size:28px}
     .hero p{margin:0;color:#374151}
     .pill{display:inline-block;padding:4px 10px;border:1px solid rgba(212,175,55,.5);border-radius:999px;color:#7a5a00;font-size:12px;background:#fff}
-
-    /* Índice */
-    .toc{
-      position:sticky; top:84px; align-self:start;
-      border:1px solid var(--border); border-radius:var(--radius); padding:18px;
-      background:var(--card)
-    }
-    .toc h3{margin:0 0 10px 0; font-size:14px; color:var(--muted); font-weight:600}
-    .toc a{display:block; padding:8px 10px; border-radius:10px; color:#374151; font-size:14px}
+    .toc{position:sticky;top:84px;align-self:start;border:1px solid var(--border);border-radius:var(--radius);padding:18px;background:var(--card)}
+    .toc h3{margin:0 0 10px 0;font-size:14px;color:var(--muted);font-weight:600}
+    .toc a{display:block;padding:8px 10px;border-radius:10px;color:#374151;font-size:14px}
     .toc a:hover{background:#f3f4f6}
-
-    /* Cards */
-    .card{
-      border:1px solid var(--border); border-radius:var(--radius); background:var(--card); padding:22px; margin-bottom:16px
-    }
-    .card h2{margin:0 0 6px 0; font-size:22px}
+    .card{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);padding:22px;margin-bottom:16px}
+    .card h2{margin:0 0 6px 0;font-size:22px}
     .card p{color:#374151}
-    .list{margin:10px 0 0 0; padding-left:18px}
-    .muted{color:var(--muted); font-size:14px}
-    .grid{display:grid; gap:14px}
+    .list{margin:10px 0 0 0;padding-left:18px}
+    .muted{color:var(--muted);font-size:14px}
+    .grid{display:grid;gap:14px}
     .grid.two{grid-template-columns:1fr 1fr}
-    @media (max-width:720px){ .grid.two{grid-template-columns:1fr} }
-
+    @media (max-width:720px){.grid.two{grid-template-columns:1fr}}
     .callout{display:flex;gap:12px;align-items:flex-start;border-left:4px solid var(--gold);padding:8px 0 8px 12px;background:#fff}
-
-    .footer{
-      max-width:var(--maxw); margin:40px auto 60px; padding:20px; color:#4b5563;
-      border-top:1px solid var(--border)
-    }
-    .btn-top{
-      position:fixed; right:16px; bottom:16px; border-radius:12px; border:1px solid var(--border);
-      background:#ffffff; color:#111; padding:10px 12px; cursor:pointer
-    }
-
-    /* Cookie banner (claro) */
-    .cookie{
-      position:fixed; left:16px; right:16px; bottom:16px; background:#ffffff; color:#111;
-      border:1px solid var(--border); border-radius:14px; padding:14px 16px; display:none; z-index:50;
-      box-shadow:0 10px 30px rgba(0,0,0,.08)
-    }
-    .cookie .actions{display:flex; gap:10px; margin-top:10px}
-    .cookie button{
-      padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:#ffffff; color:#111; cursor:pointer
-    }
-    .cookie .primary{background:linear-gradient(135deg,var(--gold),#f0da86); color:#0b0b0b; border:none; font-weight:600}
-    code{background:#f3f4f6;border:1px solid var(--border);padding:2px 6px;border-radius:8px}
+    .cookie{position:fixed;left:16px;right:16px;bottom:16px;background:#fff;color:#111;border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:none;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.08)}
+    .cookie .actions{display:flex;gap:10px;margin-top:10px}
+    .cookie button{padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#fff;color:#111;cursor:pointer}
+    .cookie .primary{background:linear-gradient(135deg,var(--gold),#f0da86);color:#0b0b0b;border:none;font-weight:600}
   </style>
 
   <!-- JSON-LD -->
@@ -118,25 +69,18 @@
     "@type":"PrivacyPolicy",
     "name":"Política de Privacidad - Altorra Inmobiliaria",
     "url":"https://altorrainmobiliaria.github.io/privacidad.html",
-    "publisher":{
-      "@type":"Organization",
-      "name":"Altorra Inmobiliaria",
-      "url":"https://altorrainmobiliaria.github.io"
-    },
+    "publisher":{"@type":"Organization","name":"Altorra Inmobiliaria","url":"https://altorrainmobiliaria.github.io"},
     "inLanguage":"es-CO",
     "about":"Tratamiento de datos personales conforme a la Ley 1581 de 2012 y Decreto 1377 de 2013 en Colombia."
   }
   </script>
 
-  <!-- Tu sistema de header/footer -->
+  <!-- Carga del header/footer y otros scripts del sitio (igual que en el home) -->
   <script src="header-footer.js" defer></script>
 </head>
 <body>
-  <!-- Header externo (hereda logo/menú del sitio) -->
+  <!-- Header externo (se inyecta desde header-footer.js igual que en el index) -->
   <div id="header-placeholder"></div>
-
-  <!-- Enlace de salto -->
-  <a class="skip-link" href="#contenido">Saltar al contenido</a>
 
   <main id="contenido">
     <!-- HERO -->
@@ -156,7 +100,7 @@
       </div>
     </section>
 
-    <!-- Índice -->
+    <!-- ÍNDICE -->
     <aside class="toc" aria-label="Índice de secciones">
       <h3>Contenido</h3>
       <a href="#responsable">1. Responsable del Tratamiento</a>
@@ -173,7 +117,7 @@
       <a href="#canales">12. Canales de contacto</a>
     </aside>
 
-    <!-- Contenido -->
+    <!-- CONTENIDO -->
     <section>
       <article class="card" id="responsable">
         <h2>1. Responsable del Tratamiento</h2>
@@ -273,47 +217,48 @@
     </section>
   </main>
 
-  <!-- Footer externo -->
+  <!-- Footer externo (igual que en el index) -->
   <div id="footer-placeholder"></div>
 
-  <button class="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
+  <!-- Botón flotante de WhatsApp (consistencia con el home) -->
+  <link rel="stylesheet" href="css/whatsapp-float.css">
+  <a href="https://wa.me/573235016747?text=Hola%20Altorra%2C%20necesito%20informaci%C3%B3n%20sobre%20propiedades"
+     class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825.738 5.479 2.031 7.781l-2.031 7.219 7.375-1.938c2.238 1.213 4.8 1.938 7.531 1.938 8.838 0 16.094-7.163 16.094-16s-7.256-16-16-16zm9.563 22.188c-.394 1.113-1.95 2.038-3.194 2.313-.85.175-1.956.319-5.688-.919-4.769-1.581-7.844-6.356-8.081-6.65-.231-.294-1.95-2.594-1.95-4.95s1.238-3.513 1.675-3.994c.438-.481.956-.6 1.275-.6.319 0 .638.006.919.013.294.012.688-.113 1.075.819.394 1.025 1.35 3.294 1.469 3.531.119.238.2.519.038.819-.163.3-.244.488-.481.75-.238.263-.5.588-.713.788-.238.225-.488.469-.206.925.281.456 1.256 2.069 2.694 3.35 1.85 1.65 3.419 2.163 3.9 2.406.481.244.763.206 1.044-.125.281-.331 1.206-1.406 1.531-1.888.325-.481.644-.4 1.088-.238.444.163 2.819 1.331 3.3 1.569.481.238.8.356.919.556.119.2.119 1.144-.275 2.256z"/></svg>
+  </a>
 
-  <!-- Aviso de Cookies -->
-  <div class="cookie" id="cookie">
-    <div><strong>Cookies:</strong> utilizamos cookies necesarias y de medición para mejorar su experiencia. Puede aceptar o rechazar las de medición.</div>
-    <div class="actions">
-      <button id="reject">Rechazar medición</button>
-      <button class="primary" id="accept">Aceptar todas</button>
-    </div>
-    <div class="muted" style="margin-top:6px">Puede cambiar su decisión borrando las cookies del navegador.</div>
-  </div>
-
-  <div class="footer">
-    <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
-      <div>© <span id="year"></span> Altorra Inmobiliaria — Cartagena, Colombia</div>
-      <div>Seguridad • Legalidad • Confianza</div>
-    </div>
-  </div>
-
+  <!-- Scripts del sitio (si no son necesarios aquí, puedes omitirlos) -->
   <script>
-    // Fecha dinámica
-    const d=new Date();
-    document.getElementById('year').textContent=d.getFullYear();
-    // Ajusta si quieres fijar una fecha exacta
-    const lastUpdated = new Date('2025-10-02');
-    document.getElementById('lastUpdated').textContent =
-      lastUpdated.toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'2-digit'});
+    const d=new Date(); const lastUpdated = new Date('2025-10-02');
+    document.addEventListener('DOMContentLoaded',()=>{
+      const el=document.getElementById('lastUpdated');
+      if(el){ el.textContent = lastUpdated.toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'2-digit'}); }
+    });
 
-    // Banner de cookies (localStorage)
+    // Banner de cookies simple
     (function(){
       const key='altorra:cookies';
       const saved=localStorage.getItem(key);
-      const el=document.getElementById('cookie');
-      if(!saved){ el.style.display='block'; }
-      const set=(v)=>{ localStorage.setItem(key,v); el.style.display='none'; };
-      document.getElementById('accept').onclick=()=>set('all');
-      document.getElementById('reject').onclick=()=>set('necessary');
+      const el=document.createElement('div');
+      el.className='cookie';
+      el.id='cookie';
+      el.innerHTML = `
+        <div><strong>Cookies:</strong> utilizamos cookies necesarias y de medición para mejorar su experiencia. Puede aceptar o rechazar las de medición.</div>
+        <div class="actions">
+          <button id="reject">Rechazar medición</button>
+          <button class="primary" id="accept">Aceptar todas</button>
+        </div>
+        <div class="muted" style="margin-top:6px">Puede cambiar su decisión borrando las cookies del navegador.</div>`;
+      if(!saved){ document.body.appendChild(el); el.style.display='block'; }
+      const set=(v)=>{ localStorage.setItem(key,v); if(el) el.remove(); };
+      document.addEventListener('click',(e)=>{
+        if(e.target && e.target.id==='accept') set('all');
+        if(e.target && e.target.id==='reject') set('necessary');
+      });
     })();
   </script>
+
+  <!-- Favoritos (igual que el home) -->
+  <script defer src="js/favoritos.js"></script>
 </body>
 </html>
