@@ -59,7 +59,10 @@
       a{ color:#946c00; text-decoration:none } a:hover{text-decoration:underline}
 
       .wrap{ max-width:var(--maxw); margin:auto; display:grid; grid-template-columns:290px 1fr; gap:24px; padding:28px 20px }
-      @media (max-width:992px){ .wrap{ grid-template-columns:1fr } .toc{ position:static } }
+      @media (max-width:992px){
+        .wrap{ grid-template-columns:1fr } 
+        .toc{ position:static; display:none !important; } /* 👈 ocultar TOC en móvil */
+      }
 
       .hero{ grid-column:1/-1; border:1px solid var(--border); border-radius:var(--radius); padding:28px;
              background:linear-gradient(180deg,#fff,#fff 60%,#f9fafb 100%) }
@@ -74,7 +77,7 @@
       .toc a{ display:block; padding:8px 10px; border-radius:10px; color:#374151; font-size:14px }
       .toc a:hover{ background:#f3f4f6 }
 
-      /* 👇 añadido scroll-margin-top para que los anclajes no queden ocultos bajo el header */
+      /* Offset para que los anclajes no queden ocultos bajo el header */
       .card{
         border:1px solid var(--border);
         border-radius:var(--radius);
@@ -122,7 +125,7 @@
         </div>
       </section>
 
-      <!-- ÍNDICE -->
+      <!-- ÍNDICE (oculto en móvil) -->
       <aside class="toc" aria-label="Índice de secciones">
         <h3>Contenido</h3>
         <a href="#responsable">1. Responsable del Tratamiento</a>
@@ -266,13 +269,23 @@
         const topBtn = doc.getElementById('pp-top');
         if (topBtn) topBtn.addEventListener('click', () => doc.host.scrollIntoView({behavior:'smooth'}));
 
-        // TOC: scroll suave dentro del shadow
+        // TOC: scroll suave con compensación del header (funciona dentro del Shadow DOM)
+        const getOffset = () => {
+          const off = getComputedStyle(doc.host).getPropertyValue('--offset');
+          const n = parseInt(off, 10);
+          return isNaN(n) ? 120 : n;
+        };
         doc.querySelectorAll('.toc a[href^="#"]').forEach(a=>{
           a.addEventListener('click', e=>{
             e.preventDefault();
             const id = a.getAttribute('href').slice(1);
             const target = doc.getElementById(id);
-            if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+            if(!target) return;
+            const rect = target.getBoundingClientRect();
+            const y = window.scrollY + rect.top - getOffset();
+            window.scrollTo({ top: y, behavior: 'smooth' });
+            // Actualiza el hash sin saltos bruscos
+            if (history.replaceState) history.replaceState(null, '', '#' + id);
           });
         });
 
@@ -300,13 +313,12 @@
     })();
   </script>
 
-  <!-- 👇 NUEVO: empuja el componente debajo del header y fija el offset de anclas -->
+  <!-- Empuja el componente debajo del header y fija el offset de anclas -->
   <script>
     (function headerOffset(){
       const host = document.getElementById('pp-root');
 
       function getHeaderEl(){
-        // intenta encontrar el header inyectado por tu sitio
         return document.querySelector('header') ||
                document.querySelector('[role="banner"]') ||
                document.querySelector('#header-placeholder')?.nextElementSibling;
@@ -314,21 +326,17 @@
 
       function apply(){
         const h = getHeaderEl();
-        const hh = h ? Math.ceil(h.getBoundingClientRect().height) : 96; // valor de respaldo
-        host.style.marginTop = (hh + 16) + 'px'; // empuja contenido debajo del header
-
-        // pasa el offset a las secciones dentro del Shadow DOM
+        const hh = h ? Math.ceil(h.getBoundingClientRect().height) : 96;
+        host.style.marginTop = (hh + 16) + 'px'; // debajo del header
         const shadow = host.shadowRoot;
-        if (shadow) shadow.host.style.setProperty('--offset', (hh + 24) + 'px');
+        if (shadow) shadow.host.style.setProperty('--offset', (hh + 24) + 'px'); // compensación de anclas
       }
 
       window.addEventListener('load', apply);
       window.addEventListener('resize', apply);
 
       const hdr = getHeaderEl();
-      if (hdr && 'ResizeObserver' in window) {
-        new ResizeObserver(apply).observe(hdr);
-      }
+      if (hdr && 'ResizeObserver' in window) new ResizeObserver(apply).observe(hdr);
     })();
   </script>
 </body>
