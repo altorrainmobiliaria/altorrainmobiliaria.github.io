@@ -1,78 +1,25 @@
 <!DOCTYPE html>
 <html lang="es" itemscope itemtype="https://schema.org/PrivacyPolicy">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Política de Privacidad | Altorra Inmobiliaria</title>
-  <meta name="description" content="Política de privacidad de Altorra Inmobiliaria. Tratamiento de datos personales conforme a la Ley 1581 de 2012 y Decreto 1377 de 2013 en Colombia.">
-  <link rel="canonical" href="https://altorrainmobiliaria.github.io/privacidad.html">
-  <meta name="robots" content="index,follow">
+  <meta name="description" content="Tratamiento de datos personales conforme a la Ley 1581 de 2012 y Decreto 1377 de 2013 en Colombia." />
+  <link rel="canonical" href="https://altorrainmobiliaria.github.io/privacidad.html" />
+  <meta name="robots" content="index,follow" />
+  <meta property="og:title" content="Política de Privacidad | Altorra Inmobiliaria" />
+  <meta property="og:description" content="Conozca cómo recopilamos, usamos y protegemos sus datos personales. Seguridad • Legalidad • Confianza." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://altorrainmobiliaria.github.io/privacidad.html" />
+  <meta property="og:site_name" content="Altorra Inmobiliaria" />
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="Política de Privacidad | Altorra Inmobiliaria">
-  <meta property="og:description" content="Conozca cómo recopilamos, usamos y protegemos sus datos personales. Seguridad • Legalidad • Confianza.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://altorrainmobiliaria.github.io/privacidad.html">
-  <meta property="og:site_name" content="Altorra Inmobiliaria">
+  <!-- Tipografía -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
-  <!-- Tipografía de marca -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-  <!-- CSS GLOBAL DEL SITIO para que header/footer luzcan idénticos al index -->
-  <link rel="stylesheet" href="style.css">
-
-  <!-- Estilos ENCAPSULADOS para que no choquen con style.css -->
-  <style>
-    :root{
-      --pp-gold:#d4af37;
-      --pp-text:#111827;
-      --pp-muted:#6b7280;
-      --pp-border:#e5e7eb;
-      --pp-bg:#ffffff;
-      --pp-card:#ffffff;
-      --pp-radius:18px;
-      --pp-maxw:1080px;
-    }
-    /* Wrapper para encapsular todo */
-    .pp{font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;color:var(--pp-text)}
-    .pp a{color:#946c00;text-decoration:none}
-    .pp a:hover{text-decoration:underline}
-
-    /* Layout */
-    .pp main{max-width:var(--pp-maxw);margin:auto;display:grid;grid-template-columns:290px 1fr;gap:24px;padding:28px 20px}
-    @media (max-width:992px){.pp main{grid-template-columns:1fr}.pp .toc{position:static}}
-    .pp .hero{grid-column:1/-1;border:1px solid var(--pp-border);border-radius:var(--pp-radius);padding:28px;background:linear-gradient(180deg,#fff,#fff 60%,#f9fafb 100%)}
-    .pp .kicker{font-size:13px;color:var(--pp-muted);letter-spacing:.4px;text-transform:uppercase}
-    .pp .hero h1{margin:6px 0 8px 0;font-size:28px}
-    .pp .hero p{margin:0;color:#374151}
-    .pp .pill{display:inline-block;padding:4px 10px;border:1px solid rgba(212,175,55,.5);border-radius:999px;color:#7a5a00;font-size:12px;background:#fff}
-
-    .pp .toc{position:sticky;top:84px;align-self:start;border:1px solid var(--pp-border);border-radius:var(--pp-radius);padding:18px;background:var(--pp-card)}
-    .pp .toc h3{margin:0 0 10px 0;font-size:14px;color:var(--pp-muted);font-weight:600}
-    .pp .toc a{display:block;padding:8px 10px;border-radius:10px;color:#374151;font-size:14px}
-    .pp .toc a:hover{background:#f3f4f6}
-
-    .pp .card{border:1px solid var(--pp-border);border-radius:var(--pp-radius);background:var(--pp-card);padding:22px;margin-bottom:16px}
-    .pp .card h2{margin:0 0 6px 0;font-size:22px}
-    .pp .card p{color:#374151}
-    .pp .list{margin:10px 0 0 0;padding-left:18px}
-    .pp .muted{color:var(--pp-muted);font-size:14px}
-    .pp .grid{display:grid;gap:14px}
-    .pp .grid.two{grid-template-columns:1fr 1fr}
-    @media (max-width:720px){.pp .grid.two{grid-template-columns:1fr}}
-    .pp .callout{display:flex;gap:12px;align-items:flex-start;border-left:4px solid var(--pp-gold);padding:8px 0 8px 12px;background:#fff}
-
-    /* Botón subir (no interfiere con el tuyo si lo tienes) */
-    .pp .btn-top{position:fixed;right:16px;bottom:16px;border-radius:12px;border:1px solid var(--pp-border);background:#ffffff;color:#111;padding:10px 12px;cursor:pointer;z-index:5}
-
-    /* Aviso de cookies (encapsulado) */
-    .pp .cookie{position:fixed;left:16px;right:16px;bottom:16px;background:#fff;color:#111;border:1px solid var(--pp-border);border-radius:14px;padding:14px 16px;display:none;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.08)}
-    .pp .cookie .actions{display:flex;gap:10px;margin-top:10px}
-    .pp .cookie button{padding:10px 12px;border-radius:12px;border:1px solid var(--pp-border);background:#fff;color:#111;cursor:pointer}
-    .pp .cookie .primary{background:linear-gradient(135deg,var(--pp-gold),#f0da86);color:#0b0b0b;border:none;font-weight:600}
-  </style>
+  <!-- CSS global del sitio para que header/footer y navegación se vean como en index -->
+  <link rel="stylesheet" href="style.css" />
 
   <!-- JSON-LD -->
   <script type="application/ld+json">
@@ -82,21 +29,74 @@
     "name":"Política de Privacidad - Altorra Inmobiliaria",
     "url":"https://altorrainmobiliaria.github.io/privacidad.html",
     "publisher":{"@type":"Organization","name":"Altorra Inmobiliaria","url":"https://altorrainmobiliaria.github.io"},
-    "inLanguage":"es-CO",
-    "about":"Tratamiento de datos personales conforme a la Ley 1581 de 2012 y Decreto 1377 de 2013 en Colombia."
+    "inLanguage":"es-CO"
   }
   </script>
 
-  <!-- Inyección de header/footer como en el index -->
+  <!-- Inyección del header/footer (tal cual tu sitio) -->
   <script src="header-footer.js" defer></script>
+
+  <style>
+    /* Fondo blanco del documento completo */
+    body{ background:#fff; }
+  </style>
 </head>
-<body style="background:#fff">
+<body>
   <!-- Header del sitio -->
   <div id="header-placeholder"></div>
 
-  <!-- CONTENIDO ENCAPSULADO -->
-  <div class="pp">
-    <main id="contenido">
+  <!-- Raíz del componente encapsulado -->
+  <div id="pp-root"></div>
+
+  <!-- Footer del sitio -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Template + estilos de la Política dentro de Shadow DOM -->
+  <template id="pp-tpl">
+    <style>
+      :host{ --gold:#d4af37; --text:#111827; --muted:#6b7280; --border:#e5e7eb; --bg:#ffffff; --card:#ffffff;
+             --radius:18px; --maxw:1080px; font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial; color:var(--text); display:block; }
+      a{ color:#946c00; text-decoration:none } a:hover{text-decoration:underline}
+
+      .wrap{ max-width:var(--maxw); margin:auto; display:grid; grid-template-columns:290px 1fr; gap:24px; padding:28px 20px }
+      @media (max-width:992px){ .wrap{ grid-template-columns:1fr } .toc{ position:static } }
+
+      .hero{ grid-column:1/-1; border:1px solid var(--border); border-radius:var(--radius); padding:28px;
+             background:linear-gradient(180deg,#fff,#fff 60%,#f9fafb 100%) }
+      .kicker{ font-size:13px; color:var(--muted); letter-spacing:.4px; text-transform:uppercase }
+      h1{ margin:6px 0 8px 0; font-size:28px }
+      .pill{ display:inline-block; padding:4px 10px; border:1px solid rgba(212,175,55,.5); border-radius:999px;
+             color:#7a5a00; font-size:12px; background:#fff; margin-right:6px }
+
+      .toc{ position:sticky; top:84px; align-self:start; border:1px solid var(--border); border-radius:var(--radius);
+            padding:18px; background:var(--card) }
+      .toc h3{ margin:0 0 10px 0; font-size:14px; color:var(--muted); font-weight:600 }
+      .toc a{ display:block; padding:8px 10px; border-radius:10px; color:#374151; font-size:14px }
+      .toc a:hover{ background:#f3f4f6 }
+
+      .card{ border:1px solid var(--border); border-radius:var(--radius); background:var(--card); padding:22px; margin-bottom:16px }
+      .card h2{ margin:0 0 6px 0; font-size:22px }
+      .card p{ color:#374151 }
+      .list{ margin:10px 0 0 0; padding-left:18px }
+      .muted{ color:var(--muted); font-size:14px }
+      .grid{ display:grid; gap:14px }
+      .two{ grid-template-columns:1fr 1fr }
+      @media (max-width:720px){ .two{ grid-template-columns:1fr } }
+      .callout{ display:flex; gap:12px; align-items:flex-start; border-left:4px solid var(--gold); padding:8px 0 8px 12px; background:#fff }
+
+      .btn-top{ position:fixed; right:16px; bottom:16px; border-radius:12px; border:1px solid var(--border);
+                background:#ffffff; color:#111; padding:10px 12px; cursor:pointer; z-index:5 }
+
+      /* Aviso de cookies (solo aquí) */
+      .cookie{ position:fixed; left:16px; right:16px; bottom:16px; background:#fff; color:#111;
+               border:1px solid var(--border); border-radius:14px; padding:14px 16px; display:none; z-index:50;
+               box-shadow:0 10px 30px rgba(0,0,0,.08) }
+      .actions{ display:flex; gap:10px; margin-top:10px }
+      .cookie button{ padding:10px 12px; border-radius:12px; border:1px solid var(--border); background:#fff; color:#111; cursor:pointer }
+      .cookie .primary{ background:linear-gradient(135deg,var(--gold),#f0da86); color:#0b0b0b; border:none; font-weight:600 }
+    </style>
+
+    <div class="wrap" id="contenido">
       <!-- HERO -->
       <section class="hero" aria-label="Hero principal">
         <div class="grid two">
@@ -107,7 +107,7 @@
             <p class="muted">Última actualización: <span id="lastUpdated"></span></p>
           </div>
           <div>
-            <span class="pill">Cumplimiento Colombia – Ley 1581 de 2012</span>
+            <span class="pill">Ley 1581 de 2012</span>
             <span class="pill">Decreto 1377 de 2013</span>
             <span class="pill">Derechos ARCO</span>
           </div>
@@ -144,14 +144,14 @@
             </div>
             <div class="callout">
               <span>ℹ️</span>
-              <p class="muted">Documento expedido conforme a la <strong>Ley 1581 de 2012</strong>, el <strong>Decreto 1377 de 2013</strong> y normas concordantes sobre protección de datos personales en Colombia.</p>
+              <p class="muted">Documento conforme a la <strong>Ley 1581 de 2012</strong> y el <strong>Decreto 1377 de 2013</strong> (Colombia).</p>
             </div>
           </div>
         </article>
 
         <article class="card" id="alcance">
           <h2>2. Alcance y Base Legal</h2>
-          <p>Aplica a clientes, potenciales clientes, propietarios, arrendatarios, proveedores, aliados y visitantes de nuestros sitios o redes sociales. El tratamiento se fundamenta en la <strong>Ley 1581 de 2012</strong> y principios de legalidad, finalidad, libertad, veracidad, transparencia, acceso y circulación restringida, seguridad y confidencialidad.</p>
+          <p>Aplica a clientes, potenciales clientes, propietarios, arrendatarios, proveedores, aliados y visitantes de nuestros sitios o redes sociales. Basado en legalidad, finalidad, libertad, veracidad, transparencia, acceso y circulación restringida, seguridad y confidencialidad.</p>
         </article>
 
         <article class="card" id="datos">
@@ -171,51 +171,51 @@
             <li>Responder solicitudes, cotizaciones y agendar visitas.</li>
             <li>Prestar servicios de compra, venta, arriendo, administración, avalúos y asesoría jurídica.</li>
             <li>Verificación de identidad y prevención de fraude.</li>
-            <li>Gestión comercial y de la relación con clientes y proveedores.</li>
-            <li>Envío de comunicaciones informativas y/o comerciales del sector inmobiliario (con opción de cancelación).</li>
+            <li>Gestión comercial y relación con clientes y proveedores.</li>
+            <li>Envío de comunicaciones informativas y/o comerciales (con opción de cancelación).</li>
             <li>Mejora de experiencia digital, seguridad, métricas y cumplimiento de obligaciones legales.</li>
           </ul>
         </article>
 
         <article class="card" id="legitimacion">
           <h2>5. Legitimación</h2>
-          <p>El tratamiento se sustenta en: (i) <strong>consentimiento</strong> del titular; (ii) <strong>ejecución de contratos</strong> o diligencias precontractuales; (iii) <strong>cumplimiento de obligaciones legales</strong>; y (iv) <strong>interés legítimo</strong> para seguridad y mejora del servicio.</p>
+          <p>Consentimiento del titular, ejecución de contratos o diligencias precontractuales, cumplimiento de obligaciones legales e interés legítimo para seguridad y mejora del servicio.</p>
         </article>
 
         <article class="card" id="conservacion">
           <h2>6. Conservación</h2>
-          <p>Conservamos los datos por el tiempo necesario para la finalidad, la relación contractual y los plazos exigidos por normas comerciales, contables y de prevención de fraudes. Cumplidos, se suprimirán o anonimizarán de forma segura.</p>
+          <p>Conservamos los datos por el tiempo necesario para la finalidad, relación contractual y plazos legales. Luego se suprimirán o anonimizarán.</p>
         </article>
 
         <article class="card" id="comparticion">
           <h2>7. Compartición y transferencias</h2>
-          <p>Podemos compartir datos con encargados (hosting, mensajería, analítica, CRM) bajo acuerdos de confidencialidad. Podrán realizarse <strong>transferencias internacionales</strong> con salvaguardas adecuadas o cuando lo exija la ley.</p>
-          <p class="muted">No vendemos datos personales. Solo revelamos información por mandato legal o autoridad competente.</p>
+          <p>Podemos compartir datos con encargados (hosting, mensajería, analítica, CRM) bajo acuerdos de confidencialidad. Posibles transferencias internacionales con salvaguardas adecuadas.</p>
+          <p class="muted">No vendemos datos personales. Revelamos información solo por mandato legal o autoridad competente.</p>
         </article>
 
         <article class="card" id="derechos">
           <h2>8. Derechos del titular (ARCO)</h2>
-          <p>Puede ejercer <strong>Acceso</strong>, <strong>Rectificación</strong>, <strong>Cancelación/Supresión</strong> y <strong>Oposición</strong>, así como revocar su consentimiento o presentar quejas ante la SIC.</p>
+          <p>Acceso, Rectificación, Cancelación/Supresión y Oposición; revocar consentimiento o presentar quejas ante la SIC.</p>
           <ul class="list">
-            <li>Escríbanos a <a href="mailto:altorrainmobiliaria@gmail.com">altorrainmobiliaria@gmail.com</a> con asunto “Derechos de datos personales”.</li>
-            <li>Incluya nombre completo, documento, solicitud concreta y medio de respuesta.</li>
-            <li>Plazos: consultas hasta 10 días hábiles y reclamos hasta 15, conforme a la ley.</li>
+            <li>Correo: <a href="mailto:altorrainmobiliaria@gmail.com">altorrainmobiliaria@gmail.com</a> (asunto: “Derechos de datos personales”).</li>
+            <li>Incluya nombre completo, documento, solicitud y medio de respuesta.</li>
+            <li>Plazos: consultas hasta 10 días hábiles y reclamos hasta 15.</li>
           </ul>
         </article>
 
         <article class="card" id="seguridad">
           <h2>9. Seguridad de la información</h2>
-          <p>Aplicamos medidas técnicas, administrativas y organizativas proporcionales al riesgo: control de acceso, cifrado en tránsito (HTTPS), backups y principio de mínimo privilegio para encargados.</p>
+          <p>Control de acceso, cifrado en tránsito (HTTPS), copias de seguridad y principio de mínimo privilegio para encargados.</p>
         </article>
 
         <article class="card" id="menores">
           <h2>10. Menores de edad</h2>
-          <p>No dirigimos nuestros servicios a menores de 18 años. Si tratamos datos por relación con sus acudientes, se hará bajo el interés superior del menor y consentimiento del representante legal.</p>
+          <p>No dirigimos servicios a menores de 18 años. Si tratamos datos por relación con sus acudientes, será bajo interés superior del menor y consentimiento del representante.</p>
         </article>
 
         <article class="card" id="cookies">
           <h2>11. Cookies y analítica</h2>
-          <p>Usamos cookies técnicas necesarias y, eventualmente, de medición para entender el uso del sitio. Puede administrar su preferencia desde este aviso.</p>
+          <p>Cookies técnicas necesarias y, eventualmente, de medición. Puede aceptar o rechazar las de medición en este aviso.</p>
         </article>
 
         <article class="card" id="canales">
@@ -225,55 +225,70 @@
               <p><strong>Correo:</strong> <a href="mailto:altorrainmobiliaria@gmail.com">altorrainmobiliaria@gmail.com</a></p>
               <p><strong>Teléfono/WhatsApp:</strong> <a href="tel:+573235016747">+57 323 501 6747</a></p>
             </div>
-            <div class="muted">Para preguntas o reclamos sobre sus datos personales contáctenos por estos medios. También puede acudir a la Superintendencia de Industria y Comercio – SIC.</div>
+            <div class="muted">Para preguntas o reclamos sobre datos personales contáctenos por estos medios. También puede acudir a la Superintendencia de Industria y Comercio (SIC).</div>
           </div>
         </article>
+
+        <button class="btn-top" id="pp-top" aria-label="Volver arriba">↑</button>
+
+        <!-- Aviso de cookies encapsulado -->
+        <div class="cookie" id="pp-cookie">
+          <div><strong>Cookies:</strong> utilizamos cookies necesarias y de medición para mejorar su experiencia.</div>
+          <div class="actions">
+            <button id="pp-reject">Rechazar medición</button>
+            <button class="primary" id="pp-accept">Aceptar todas</button>
+          </div>
+          <div class="muted" style="margin-top:6px">Puede cambiar su decisión borrando las cookies del navegador.</div>
+        </div>
       </section>
-    </main>
-
-    <!-- Aviso de cookies (solo en esta página) -->
-    <div class="cookie" id="pp-cookie">
-      <div><strong>Cookies:</strong> utilizamos cookies necesarias y de medición para mejorar su experiencia. Puede aceptar o rechazar las de medición.</div>
-      <div class="actions">
-        <button id="pp-reject">Rechazar medición</button>
-        <button class="primary" id="pp-accept">Aceptar todas</button>
-      </div>
-      <div class="muted" style="margin-top:6px">Puede cambiar su decisión borrando las cookies del navegador.</div>
     </div>
 
-    <button class="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
-    <div class="footer" style="max-width:var(--pp-maxw);margin:40px auto 60px;padding:0 20px;color:#4b5563;border-top:1px solid var(--pp-border)">
-      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:20px">
-        <div>© <span id="pp-year"></span> Altorra Inmobiliaria — Cartagena, Colombia</div>
-        <div>Seguridad • Legalidad • Confianza</div>
-      </div>
-    </div>
-  </div>
+    <script>
+      // Interacciones dentro del Shadow DOM
+      (function(){
+        const root = document.currentScript.closest('template').getRootNode().host || document.currentScript.getRootNode();
+        const doc = root.shadowRoot || root;
 
-  <!-- Footer del sitio -->
-  <div id="footer-placeholder"></div>
+        // Fecha "Última actualización"
+        const last = new Date('2025-10-02');
+        const el = doc.getElementById('lastUpdated');
+        if (el) el.textContent = last.toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'2-digit'});
 
-  <!-- Scripts encapsulados de esta página -->
+        // Volver arriba
+        const topBtn = doc.getElementById('pp-top');
+        if (topBtn) topBtn.addEventListener('click', () => doc.host.scrollIntoView({behavior:'smooth'}));
+
+        // TOC: scroll suave dentro del shadow
+        doc.querySelectorAll('.toc a[href^="#"]').forEach(a=>{
+          a.addEventListener('click', e=>{
+            e.preventDefault();
+            const id = a.getAttribute('href').slice(1);
+            const target = doc.getElementById(id);
+            if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+          });
+        });
+
+        // Cookies (clave local para esta página)
+        const key='altorra:pp:cookies';
+        const saved = localStorage.getItem(key);
+        const c = doc.getElementById('pp-cookie');
+        if(!saved && c){ c.style.display='block'; }
+        const set=v=>{ localStorage.setItem(key,v); if(c) c.style.display='none'; };
+        const acc = doc.getElementById('pp-accept');
+        const rej = doc.getElementById('pp-reject');
+        if(acc) acc.addEventListener('click',()=>set('all'));
+        if(rej) rej.addEventListener('click',()=>set('necessary'));
+      })();
+    </script>
+  </template>
+
   <script>
-    // Fecha dinámica
-    (function(){
-      const d=new Date();
-      const y=document.getElementById('pp-year');
-      if(y) y.textContent=d.getFullYear();
-      const lastUpdated = new Date('2025-10-02');
-      const lu=document.getElementById('lastUpdated');
-      if(lu) lu.textContent = lastUpdated.toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'2-digit'});
-    })();
-
-    // Banner de cookies solo para esta página (clave distinta)
-    (function(){
-      const key='altorra:pp:cookies';
-      const saved=localStorage.getItem(key);
-      const el=document.getElementById('pp-cookie');
-      if(!saved){ el.style.display='block'; }
-      const set=(v)=>{ localStorage.setItem(key,v); el.style.display='none'; };
-      document.getElementById('pp-accept').onclick=()=>set('all');
-      document.getElementById('pp-reject').onclick=()=>set('necessary');
+    // Monta el componente en Shadow DOM (aíslalo de style.css global).
+    (function mount(){
+      const host = document.getElementById('pp-root');
+      const tpl = document.getElementById('pp-tpl');
+      const shadow = host.attachShadow({mode:'open'});
+      shadow.appendChild(tpl.content.cloneNode(true));
     })();
   </script>
 </body>
