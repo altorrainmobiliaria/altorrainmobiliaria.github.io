@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function(){
         let data; try{ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate:false }); }
         catch(_){ try{ data = await getJSONCached('/PRUEBA-PILOTO/properties/data.json', { ttlMs: 1000*60*60*6, revalidate:false }); }
         catch(__){ data = await getJSONCached('/properties/data.json', { ttlMs: 1000*60*60*6, revalidate:false }); }}
-        const hit = (Array.isArray(data)?data:[]).find(p => String(p.id||'').toLowerCase() === code.toLowerCase());
+        const hit = (Array.isArray(data)?data:[]).find(function(p){ return String(p.id||'').toLowerCase() === code.toLowerCase(); });
         if(hit){ window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(code); return; }
         // si no existe, seguimos a la página de la operación con el code para que muestre mensaje
       }catch(_){ /* seguimos usando redirección a listados */ }
@@ -264,6 +264,7 @@ document.addEventListener('DOMContentLoaded', function(){
     window.location.href = url;
   });
 });
+
 /* ============== 5) Miniaturas home ← properties/data.json (con caché) ============== */
 (function(){
   const cfg = [
@@ -275,27 +276,109 @@ document.addEventListener('DOMContentLoaded', function(){
   function formatCOP(n){ if(n==null) return ''; return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
   function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
 
+  /* ===== Toast reutilizable para favoritos (estilo detalle) ===== */
+  function showFavToast(added){
+    try{
+      const toast = document.createElement('div');
+      toast.textContent = added ? '♥ Agregado a favoritos' : 'Removido de favoritos';
+      toast.style.cssText = `
+        position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+        background:#111;color:#fff;padding:12px 24px;border-radius:8px;
+        font-weight:700;z-index:9999;opacity:0;transition:opacity .2s ease;
+        box-shadow:0 10px 26px rgba(0,0,0,.18);
+      `;
+      document.body.appendChild(toast);
+      requestAnimationFrame(()=>{ toast.style.opacity='1'; });
+      setTimeout(()=>{ toast.style.opacity='0'; setTimeout(()=>toast.remove(), 250); }, 2000);
+    }catch(_){}
+  }
+
+  /* ===== buildCard con botón de favorito (en la misma línea, centrado) ===== */
   function buildCard(p, mode){
     const el = document.createElement('article');
     el.className = 'card'; el.setAttribute('role','listitem');
 
+    // Imagen
     const img = document.createElement('img');
-    // Respetamos lazy por defecto, pero permitimos excluir si se desea con .no-lazy / data-eager
     img.loading='lazy'; img.decoding='async'; img.alt = escapeHtml(p.title || 'Propiedad');
     const raw = p.image || p.img || p.img_url || p.imgUrl || p.photo;
 
     if (raw) {
-      const isAbsolute = /^https?:\/\//i.test(raw);
-      if (isAbsolute || raw.startsWith('/')) {
-        img.src = raw;
+      const str = String(raw);
+      const isAbsolute = /^https?:\/\//i.test(str);
+      if (isAbsolute || str.startsWith('/')) {
+        img.src = str;
       } else {
-        img.src = '/' + raw.replace(/^\.?\//,''); // normaliza a ruta absoluta local
+        img.src = '/' + str.replace(/^\.?\//,''); // normaliza a ruta absoluta local
       }
     } else {
       img.src = 'https://i.postimg.cc/0yYb8Y6r/placeholder.png';
     }
 
+    // Contenedor media (solo imagen)
+    const mediaDiv = document.createElement('div');
+    mediaDiv.className = 'media';
+    mediaDiv.style.position = 'relative';
+    mediaDiv.appendChild(img);
+
+    // Cuerpo
     const body = document.createElement('div'); body.className='body';
+
+    // --- FAVORITOS: centrado en su propia línea dentro del body (no sobre la foto) ---
+    const favRow = document.createElement('div');
+    favRow.style.cssText = 'display:flex;justify-content:center;margin:8px 0 6px;';
+    const favBtn = document.createElement('button');
+    favBtn.className = 'fav-btn';
+    favBtn.type = 'button';
+    favBtn.setAttribute('aria-label', 'Guardar favorito');
+    favBtn.setAttribute('aria-pressed', 'false');
+    favBtn.setAttribute('data-prop-id', p.id || '');
+    favBtn.innerHTML = `
+      <span class="heart" style="font-size:1.1rem;line-height:1">♡</span>
+      <span class="label" style="font-weight:700;font-size:.92rem">Guardar en favoritos</span>
+    `;
+    Object.assign(favBtn.style, {
+      display:'inline-flex', alignItems:'center', gap:'8px',
+      padding:'6px 12px', borderRadius:'999px',
+      background:'#fff', border:'1px solid rgba(17,24,39,.12)',
+      boxShadow:'0 4px 10px rgba(0,0,0,.06)', cursor:'pointer'
+    });
+    favRow.appendChild(favBtn);
+
+    // Estado inicial (♥ y texto)
+    try{
+      if (window.AltorraFavoritos && p && p.id){
+        var isFav = !!window.AltorraFavoritos.isFavorite(p.id);
+        favBtn.setAttribute('aria-pressed', isFav ? 'true' : 'false');
+        var heartEl = favBtn.querySelector('.heart');
+        var labelEl = favBtn.querySelector('.label');
+        if(heartEl){ heartEl.textContent = isFav ? '♥' : '♡'; }
+        if(labelEl){ labelEl.textContent = isFav ? 'Guardado en favoritos' : 'Guardar en favoritos'; }
+      }
+    }catch(_){}
+
+    // Toggle favorito + toast
+    favBtn.addEventListener('click', function(ev){
+      ev.preventDefault();
+      ev.stopPropagation();
+      if (!window.AltorraFavoritos || !(p && p.id)) return;
+      try{
+        var nowFav = window.AltorraFavoritos.toggle({
+          id: p.id, title: p.title, city: p.city, price: p.price,
+          image: p.image || (Array.isArray(p.images) && p.images[0]) || '',
+          operation: p.operation, beds: p.beds, baths: p.baths, sqm: p.sqm, type: p.type
+        });
+        favBtn.setAttribute('aria-pressed', nowFav ? 'true' : 'false');
+        var h2 = favBtn.querySelector('.heart');
+        var lbl = favBtn.querySelector('.label');
+        if(h2){ h2.textContent = nowFav ? '♥' : '♡'; }
+        if(lbl){ lbl.textContent = nowFav ? 'Guardado en favoritos' : 'Guardar en favoritos'; }
+        favBtn.style.transform='scale(1.04)';
+        setTimeout(()=>{ favBtn.style.transform='scale(1)'; }, 160);
+        showFavToast(nowFav);
+      }catch(_){}
+    });
+
     const h3 = document.createElement('h3'); h3.innerHTML = escapeHtml(p.title || 'Sin título');
 
     const specs = document.createElement('div'); specs.style.color='var(--muted)';
@@ -313,13 +396,25 @@ document.addEventListener('DOMContentLoaded', function(){
                                                '$'+formatCOP(p.price)+' COP');
     }
 
-    el.appendChild(img); el.appendChild(body);
-    body.appendChild(h3); body.appendChild(specs); body.appendChild(price);
+    // Ensamble
+    el.appendChild(mediaDiv);
+    el.appendChild(body);
+    body.appendChild(favRow);      // <— aquí va la línea centrada
+    body.appendChild(h3);
+    body.appendChild(specs);
+    body.appendChild(price);
 
-    el.addEventListener('click', function(){
+    // Click en tarjeta (evitar navegación si se hizo click en fav)
+    el.addEventListener('click', function(e){
+      var n = e.target;
+      while(n && n !== el){
+        if(n.classList && n.classList.contains('fav-btn')) return;
+        n = n.parentNode;
+      }
       const id = p.id || '';
       window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(id);
     });
+
     return el;
   }
 
@@ -327,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function(){
     try{
       let data; try{ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }catch(_){ try{ data = await getJSONCached('/PRUEBA-PILOTO/properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }catch(__){ data = await getJSONCached('/properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }}
       if(!Array.isArray(data)) throw new Error('Formato inválido');
-      return data.filter(it => String(it.operation).toLowerCase() === String(op).toLowerCase());
+      return data.filter(function(it){ return String(it.operation).toLowerCase() === String(op).toLowerCase(); });
     }catch(e){
       console.warn('No se pudieron cargar propiedades', op, e);
       return [];
@@ -335,9 +430,10 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   document.addEventListener('DOMContentLoaded', async function(){
-    const tasks = cfg.map(c => fetchByOperation(c.operation).then(arr => ({c, arr})));
+    const tasks = cfg.map(function(c){ return fetchByOperation(c.operation).then(function(arr){ return {c, arr}; }); });
     const results = await Promise.all(tasks);
-    results.forEach(({c, arr})=>{
+    results.forEach(function(pair){
+      const c = pair.c, arr = pair.arr;
       const root = document.getElementById(c.targetId);
       if(!root) return;
       root.innerHTML = '';
@@ -352,24 +448,33 @@ document.addEventListener('DOMContentLoaded', function(){
         return;
       }
 
-      /* === REEMPLAZO 1: usar orden inteligente === */
+      /* === ORDEN INTELIGENTE === */
       const ordered = smartOrder(arr);
-      ordered.slice(0,8).forEach(p => root.appendChild(buildCard(p, c.mode)));
+      ordered.slice(0,8).forEach(function(p){ root.appendChild(buildCard(p, c.mode)); });
+      // >>> Favoritos: re-init seguro para home
+      if (window.AltorraFavoritos && typeof window.AltorraFavoritos.init === 'function') {
+        try { window.AltorraFavoritos.init(); } catch(_){}
+      }
+      try { document.dispatchEvent(new CustomEvent('altorra:properties-loaded')); } catch(_){}
+
     });
 
-    // Si la revalidación en background actualiza el JSON, podemos refrescar cards (opcional)
-    document.addEventListener('altorra:json-updated', (ev) => {
-      if (!/properties\/data\.json$/.test(ev.detail?.url || '')) return;
-      // Render simple otra vez (sin flicker porque ya hay contenido)
-      cfg.forEach(async (c) => {
+    // Refresco si hay revalidación del JSON
+    document.addEventListener('altorra:json-updated', function(ev){
+      if (!/properties\/data\.json$/.test((ev.detail && ev.detail.url) || '')) return;
+      cfg.forEach(async function(c){
         const root = document.getElementById(c.targetId);
         if(!root) return;
         const arr = await fetchByOperation(c.operation);
         root.innerHTML = '';
-
-        /* === REEMPLAZO 2: usar orden inteligente en refresco === */
         const ordered = smartOrder(arr);
-        ordered.slice(0,8).forEach(p => root.appendChild(buildCard(p, c.mode)));
+        ordered.slice(0,8).forEach(function(p){ root.appendChild(buildCard(p, c.mode)); });
+      // >>> Favoritos: re-init seguro para home
+      if (window.AltorraFavoritos && typeof window.AltorraFavoritos.init === 'function') {
+        try { window.AltorraFavoritos.init(); } catch(_){}
+      }
+      try { document.dispatchEvent(new CustomEvent('altorra:properties-loaded')); } catch(_){}
+
       });
     }, { once: true });
   });
