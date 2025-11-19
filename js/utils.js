@@ -29,7 +29,7 @@
 
   // ========== WHATSAPP ==========
   function buildWhatsAppLink(property, options = {}) {
-    const phone = '573235016747';
+    const phone = '573002439810';
     const company = 'Altorra Inmobiliaria';
     
     let priceText = '';
