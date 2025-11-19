@@ -28,8 +28,6 @@
   async function loadData(){
     const paths = [
       new URL('properties/data.json', location.href).href,
-      location.origin + '/ALTORRA-PILOTO/properties/data.json',
-      location.origin + '/PRUEBA-PILOTO/properties/data.json',
       location.origin + '/properties/data.json'
     ];
     const key='altorra:ssrc:data', now=Date.now();
