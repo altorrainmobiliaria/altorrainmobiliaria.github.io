@@ -7,7 +7,7 @@
   'use strict';
 
   const PAGE_SIZE = 9;
-  const WHATSAPP = { phone: '573235016747', company: 'Altorra Inmobiliaria' };
+  const WHATSAPP = { phone: '573002439810', company: 'Altorra Inmobiliaria' };
   
   const path = window.location.pathname.toLowerCase();
   const PAGE_MODE = path.includes('arrendar') ? 'arrendar' :
