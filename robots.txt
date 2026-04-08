@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://altorrainmobiliaria.github.io/sitemap.xml
+Sitemap: https://altorrainmobiliaria.co/sitemap.xml

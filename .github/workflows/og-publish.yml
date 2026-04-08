@@ -6,7 +6,7 @@ on:
       base_url:
         description: "BASE para las URLs absolutas"
         required: false
-        default: "https://altorrainmobiliaria.github.io"
+        default: "https://altorrainmobiliaria.co"
   push:
     branches: [ main ]
     paths:
@@ -38,7 +38,7 @@ jobs:
 
       - name: Generar /p y /og
         env:
-          OG_BASE_URL: ${{ inputs.base_url || 'https://altorrainmobiliaria.github.io' }}
+          OG_BASE_URL: ${{ inputs.base_url || 'https://altorrainmobiliaria.co' }}
         run: node tools/generate_og_pages.js
 
       - name: Commit & push si hubo cambios
