@@ -496,7 +496,7 @@ if('serviceWorker' in navigator){
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": "ALTORRA Inmobiliaria",
-      "url": "https://altorrainmobiliaria.github.io/",
+      "url": "https://altorrainmobiliaria.co/",
       "logo": "https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-altorra-logo-2025-10-31-20.png",
       "sameAs": ["https://www.instagram.com/altorrainmobiliaria", "https://www.facebook.com/share/16MEXCeAB4/?mibextid=wwXIfr", "https://www.tiktok.com/@altorrainmobiliaria"]
     };

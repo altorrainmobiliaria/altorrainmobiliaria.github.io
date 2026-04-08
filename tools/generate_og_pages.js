@@ -35,7 +35,7 @@ function detectBase() {
   }
 
   // 4) Fallback: SIEMPRE al dominio principal (no al piloto)
-  return "https://altorrainmobiliaria.github.io";
+  return "https://altorrainmobiliaria.co";
 }
 
 const BASE = detectBase();
