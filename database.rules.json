@@ -1,0 +1,12 @@
+{
+  "rules": {
+    "presence": {
+      ".read": "auth != null",
+      ".indexOn": ["online"],
+      "$sessionId": {
+        ".write": "(!data.exists() && newData.child('uid').val() === auth.uid) || data.child('uid').val() === auth.uid",
+        ".validate": "newData.hasChild('uid') && newData.child('uid').val() === auth.uid"
+      }
+    }
+  }
+}

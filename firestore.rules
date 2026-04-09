@@ -1,0 +1,116 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── HELPERS ──────────────────────────────────────────────────
+    function hasProfile() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid));
+    }
+    function getUserRole() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol;
+    }
+    function isSuperAdmin()    { return hasProfile() && getUserRole() == 'super_admin'; }
+    function isEditorOrAbove() { return hasProfile() && getUserRole() in ['super_admin', 'editor']; }
+    function isAuthenticated() { return hasProfile(); }
+
+    // Optimistic locking: _version debe incrementar en cada update
+    function validVersion() {
+      return request.resource.data._version == resource.data._version + 1
+          || (resource.data._version == null && request.resource.data._version == 1);
+    }
+    function validCreateVersion() {
+      return request.resource.data._version == 1;
+    }
+
+    // ── PROPIEDADES ──────────────────────────────────────────────
+    // Catálogo público — cualquiera puede leer
+    match /propiedades/{propId} {
+      allow read: if true;
+      allow create: if isSuperAdmin()
+        || (isEditorOrAbove() && validCreateVersion());
+      allow update: if isSuperAdmin()
+        || (isEditorOrAbove() && validVersion());
+      allow delete: if isSuperAdmin();
+
+      // Historial de cambios — inmutable, solo admin puede leer
+      match /auditLog/{logId} {
+        allow read:   if isAuthenticated();
+        allow create: if isEditorOrAbove();
+        allow update: if false; // INMUTABLE
+        allow delete: if isSuperAdmin();
+      }
+    }
+
+    // ── SOLICITUDES (leads / formularios de contacto) ─────────────
+    // Creación pública (formularios), lectura solo admin
+    match /solicitudes/{solicitudId} {
+      allow read:   if isAuthenticated();
+      allow create: if true;  // formularios públicos pueden crear
+      allow update: if isEditorOrAbove();
+      allow delete: if isSuperAdmin();
+    }
+
+    // ── RESEÑAS ──────────────────────────────────────────────────
+    match /resenas/{resenaId} {
+      allow read:   if true;
+      allow create, update: if isEditorOrAbove();
+      allow delete: if isSuperAdmin();
+    }
+
+    // ── USUARIOS ─────────────────────────────────────────────────
+    // Cada usuario puede leer su propio perfil; super_admin lee todos
+    match /usuarios/{userId} {
+      allow read: if request.auth != null
+        && (request.auth.uid == userId || isSuperAdmin());
+      allow create, update, delete: if isSuperAdmin();
+
+      // Borradores de propiedades en edición
+      match /drafts/{draftId} {
+        allow read, write: if request.auth != null
+          && request.auth.uid == userId;
+      }
+    }
+
+    // ── CONFIG ────────────────────────────────────────────────────
+    // Lectura pública (el frontend lee teléfono, email, redes sociales)
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if isSuperAdmin()
+        || (isEditorOrAbove() && docId == 'counters');
+    }
+
+    // ── SYSTEM (invalidación de caché) ────────────────────────────
+    match /system/{docId} {
+      allow read: if true;
+      allow write: if isEditorOrAbove()
+        || !exists(/databases/$(database)/documents/system/$(docId));
+    }
+
+    // ── LOGIN ATTEMPTS (rate limiting cross-device) ───────────────
+    match /loginAttempts/{emailHash} {
+      allow read, create, update: if true;
+      allow delete: if isSuperAdmin();
+    }
+
+    // ── AUDIT LOG GLOBAL ──────────────────────────────────────────
+    match /auditLog/{logId} {
+      allow read:   if isAuthenticated();
+      allow create: if isEditorOrAbove();
+      allow update: if false; // INMUTABLE
+      allow delete: if isSuperAdmin();
+    }
+
+    // ── BORRADORES ACTIVOS (colaboración entre editores) ──────────
+    match /drafts_activos/{userId} {
+      allow read:  if isEditorOrAbove();
+      allow write: if isEditorOrAbove() && request.auth.uid == userId;
+      allow delete: if isEditorOrAbove();
+    }
+
+    // ── DEFAULT: DENEGAR TODO LO DEMÁS ───────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
