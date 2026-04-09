@@ -1202,3 +1202,349 @@ PRONTO (admin + imágenes): Etapa 3 → 4
 DESPUÉS (SEO + sync):      Etapa 5 → 6
 FUTURO (marketing):        Etapa 7 → 8
 ```
+
+---
+
+## 6. CONVENCIONES DE CÓDIGO Y REGLAS DEL PROYECTO
+
+### 6.1 Reglas absolutas — NUNCA romper
+
+```
+❌ NO cambiar variables CSS (--gold, --accent, --bg, --text, --muted, --card-r, etc.)
+❌ NO cambiar la tipografía Poppins
+❌ NO cambiar colores de botones, badges o cards
+❌ NO cambiar el layout general de ninguna página existente
+❌ NO usar frameworks JS (React, Vue, Angular, Svelte) — Vanilla JS únicamente
+❌ NO usar frameworks CSS (Tailwind, Bootstrap) — el style.css propio es suficiente
+❌ NO commitear credenciales Firebase (apiKey, secrets) al repositorio
+❌ NO hardcodear URLs — usar la colección config de Firestore o las variables CSS
+❌ NO romper el service worker sin actualizar CACHE_NAME
+❌ NO eliminar el archivo CNAME
+```
+
+### 6.2 Convenciones de nombres
+
+**Archivos JavaScript:**
+```
+js/firebase-config.js     — inicialización Firebase
+js/database.js            — clase PropertyDatabase
+js/cache-manager.js       — caché 3 capas
+js/render.js              — función renderPropertyCard()
+js/components.js          — inyección header/footer/modals
+js/admin-auth.js          — autenticación admin
+js/admin-properties.js    — CRUD propiedades (admin)
+js/admin-leads.js         — gestión de solicitudes (admin)
+js/admin-users.js         — gestión de usuarios (admin)
+js/contact-forms.js       — formularios → Firestore
+js/favorites-manager.js   — favoritos con sync Firebase
+js/toast.js               — notificaciones toast
+```
+
+**Colecciones Firestore (siempre en español, plural):**
+```
+propiedades      — catálogo de propiedades
+solicitudes      — leads y formularios de contacto
+resenas          — reseñas de clientes
+usuarios         — perfiles y roles de admin
+config           — configuración global
+system           — metadatos internos (lastModified, etc.)
+loginAttempts    — intentos fallidos de login
+auditLog         — log de cambios (subcol. de propiedades)
+```
+
+**Variables globales (`window.*`):**
+```javascript
+window.db               // Firestore instance
+window.auth             // Firebase Auth instance
+window.storage          // Cloud Storage instance
+window.functions        // Cloud Functions instance
+window.firebaseAnalytics // Analytics instance
+window.rtdb             // Realtime Database instance
+window.propertyDB       // instancia de PropertyDatabase
+window.AltorraCache     // cache manager API
+window.AltorraUtils     // utilidades (ya existe)
+window.AltorraFavoritos // favoritos (ya existe)
+```
+
+### 6.3 Convenciones de HTML
+
+Todas las páginas deben tener esta estructura base:
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title><!-- título de página --> | Altorra Inmobiliaria</title>
+  <meta name="description" content="..."/>
+  <link rel="canonical" href="https://altorrainmobiliaria.co/PAGINA.html"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#d4af37"/>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="..."/>
+  <meta property="og:description" content="..."/>
+  <meta property="og:url" content="https://altorrainmobiliaria.co/PAGINA.html"/>
+  <meta property="og:image" content="..."/>
+  <meta property="og:type" content="website"/>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- Firebase (cargar primero en páginas que lo necesiten) -->
+  <script type="module" src="js/firebase-config.js"></script>
+</head>
+<body>
+  <!-- Skip link de accesibilidad -->
+  <a href="#main" class="skip-link">Ir al contenido principal</a>
+
+  <!-- Componentes dinámicos -->
+  <div id="header-placeholder"></div>
+  <div id="modals-container"></div>
+
+  <main id="main">
+    <!-- Contenido de la página -->
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <!-- WhatsApp flotante -->
+  <a class="whatsapp-float" href="https://wa.me/573002439810" target="_blank" rel="noopener">
+    <!-- SVG WhatsApp -->
+  </a>
+
+  <!-- Scripts -->
+  <script src="js/components.js" defer></script>
+  <!-- Scripts específicos de la página -->
+</body>
+</html>
+```
+
+### 6.4 Patrón de carga de Firebase en páginas públicas
+
+```javascript
+// Al inicio de cada script que necesite Firestore:
+async function waitForDB() {
+  return new Promise((resolve) => {
+    if (window.propertyDB) return resolve(window.propertyDB);
+    window.addEventListener('altorra:db-ready', () => resolve(window.propertyDB), { once: true });
+  });
+}
+
+// Uso:
+const db = await waitForDB();
+const props = await db.filter({ operacion: 'comprar' });
+```
+
+**`database.js` dispara el evento** cuando está listo:
+```javascript
+window.dispatchEvent(new CustomEvent('altorra:db-ready'));
+```
+
+### 6.5 Patrón de formularios → Firestore
+
+```javascript
+// Patrón estándar para todos los formularios de contacto
+async function submitContactForm(formData) {
+  try {
+    const { collection, addDoc, serverTimestamp } =
+      await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
+
+    await addDoc(collection(window.db, 'solicitudes'), {
+      nombre:    formData.nombre,
+      telefono:  formData.telefono,
+      email:     formData.email,
+      tipo:      formData.tipo,        // ver valores en sección 4.2
+      origen:    window.location.pathname.replace('/', ''),
+      estado:    'pendiente',
+      createdAt: serverTimestamp(),
+      datosExtra: formData.datosExtra || {},
+      emailSent:    false,
+      requiereCita: false,
+    });
+
+    // Redirigir a gracias.html (mantener comportamiento actual)
+    window.location.href = '/gracias.html';
+  } catch (err) {
+    console.error('Error enviando formulario:', err);
+    AltorraUtils.showToast('Error al enviar. Intenta de nuevo.', 'error');
+  }
+}
+```
+
+### 6.6 Patrón de control de versiones optimista
+
+Siempre que un admin edite una propiedad:
+
+```javascript
+// Al crear:
+{ ...datos, _version: 1, createdAt: serverTimestamp(), updatedAt: serverTimestamp() }
+
+// Al actualizar (con transacción para evitar conflictos):
+await runTransaction(db, async (tx) => {
+  const ref = doc(db, 'propiedades', id);
+  const snap = await tx.get(ref);
+  const current = snap.data();
+
+  tx.update(ref, {
+    ...cambios,
+    _version:  current._version + 1,
+    updatedAt: serverTimestamp(),
+  });
+});
+```
+
+### 6.7 Convenciones de imágenes
+
+```
+Cloud Storage path:  propiedades/{id}/{nombre}.webp
+Formato preferido:   WebP (mejor compresión)
+Thumbnail (imagen):  800×600 px aprox, < 150 KB
+Imagen OG:           1200×630 px, JPEG calidad 85
+Placeholder:         multimedia/placeholder-propiedad.jpg
+```
+
+**Al subir desde admin:**
+1. Comprimir con Canvas API en el navegador antes de subir
+2. Nombre: `{timestamp}-{random}.webp`
+3. Guardar URL pública en el array `imagenes` del documento Firestore
+4. La primera imagen del array es el `thumbnail` / `imagen`
+
+### 6.8 Service Worker — actualización de versión
+
+Cuando se despliega una nueva versión (GitHub Actions lo hace automáticamente):
+
+```javascript
+// service-worker.js — actualizar este valor en cada deploy:
+const CACHE_NAME = 'altorra-pwa-v2';  // incrementar número
+```
+
+GitHub Actions actualiza `CACHE_NAME` automáticamente al detectar cambios (patrón Cars).
+
+### 6.9 SEO — reglas de URLs
+
+```
+Home:                https://altorrainmobiliaria.co/
+Listado comprar:     https://altorrainmobiliaria.co/propiedades-comprar.html
+Listado arrendar:    https://altorrainmobiliaria.co/propiedades-arrendar.html
+Listado días:        https://altorrainmobiliaria.co/propiedades-alojamientos.html
+Detalle propiedad:   https://altorrainmobiliaria.co/detalle-propiedad.html?id={id}
+Página OG/SEO:       https://altorrainmobiliaria.co/p/{id}.html
+Admin:               https://altorrainmobiliaria.co/admin.html
+```
+
+**Nunca usar** query strings en URLs compartibles. La URL `/p/{id}.html` es la URL que se comparte en redes sociales — tiene todos los OG tags.
+
+### 6.10 Seguridad — checklist de cada PR
+
+Antes de hacer merge de cualquier cambio:
+
+```
+✅ No hay credenciales hardcodeadas (Firebase config OK si es pública, pero no secrets)
+✅ Las reglas Firestore permiten solo lo necesario
+✅ Los formularios tienen honeypot anti-spam
+✅ Las rutas admin verifican rol antes de mostrar datos
+✅ Las imágenes tienen alt text
+✅ Los links externos tienen rel="noopener noreferrer"
+✅ No se usa eval() ni innerHTML con datos de usuario sin escapar
+✅ Los datos de Firestore se escapan antes de insertar en DOM
+```
+
+### 6.11 Performance — reglas base
+
+```javascript
+// Imágenes: siempre lazy loading excepto LCP (primera imagen visible)
+<img loading="lazy" decoding="async" src="..." alt="...">
+
+// Primera imagen de la página: preload
+<link rel="preload" as="image" href="imagen-hero.webp">
+
+// Scripts no críticos: defer o module
+<script src="js/analytics.js" defer></script>
+<script type="module" src="js/firebase-config.js"></script>
+
+// No bloquear el hilo principal con queries Firestore grandes
+// Usar paginación: limit(9) por defecto en listados
+```
+
+### 6.12 Teléfonos y contacto oficial
+
+```
+WhatsApp:  +57 300 243 9810  (wa.me/573002439810)
+Teléfono:  +57 323 501 6747
+Email:     info@altorrainmobiliaria.co
+Dominio:   altorrainmobiliaria.co
+```
+
+### 6.13 Redes sociales oficiales
+
+```
+Instagram: https://www.instagram.com/altorrainmobiliaria
+Facebook:  https://www.facebook.com/share/16MEXCeAB4/
+TikTok:    https://www.tiktok.com/@altorrainmobiliaria
+```
+
+### 6.14 Rama de desarrollo
+
+```
+Producción:   main
+Desarrollo:   claude/verify-domain-setup-LipU9 (rama actual)
+Convención:   feature/nombre-feature, fix/nombre-bug, docs/nombre-doc
+```
+
+---
+
+## APÉNDICE — Archivos a crear en la migración
+
+Lista completa de archivos nuevos que se deben crear (no existen aún):
+
+```
+# Firebase Config
+js/firebase-config.js
+js/database.js          (PropertyDatabase)
+js/cache-manager.js
+js/render.js
+js/components.js
+js/contact-forms.js
+js/toast.js
+js/favorites-manager.js
+
+# Admin
+admin.html
+css/admin.css
+js/admin-auth.js
+js/admin-properties.js
+js/admin-leads.js
+js/admin-users.js
+
+# Snippets (reemplaza header.html/footer.html actuales)
+snippets/header.html
+snippets/footer.html
+snippets/modals.html
+
+# Cloud Functions
+functions/index.js
+functions/package.json
+
+# Scripts Node.js
+scripts/generate-properties.mjs
+scripts/upload-to-firestore.mjs
+scripts/backup-firestore.mjs
+
+# Config Firebase
+firebase.json
+firestore.rules
+storage.rules
+data/deploy-info.json
+package.json   (nuevo — hoy no existe)
+```
+
+---
+
+*Fin del CLAUDE.md — Altorra Inmobiliaria v1.0*
