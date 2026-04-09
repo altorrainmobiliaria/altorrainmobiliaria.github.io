@@ -1004,3 +1004,201 @@ GITHUB_PAT    = Personal Access Token con permiso repo + workflow
 EMAIL_USER    = info@altorrainmobiliaria.co (o cuenta Gmail de relay)
 EMAIL_PASS    = App password de Gmail
 ```
+
+---
+
+## 5. PLAN DE MIGRACIÓN POR ETAPAS
+
+> Cada etapa debe estar completamente funcional antes de avanzar a la siguiente.
+> La web nunca debe quedar rota para el usuario final.
+
+### ETAPA 0 — Preparación Firebase (sin cambios al frontend)
+
+**Objetivo:** Crear el proyecto Firebase y subir los datos actuales.
+
+**Tareas:**
+- [ ] Crear proyecto Firebase `altorra-inmobiliaria`
+- [ ] Activar Firestore, Authentication, Storage, Functions, Analytics, RTDB
+- [ ] Crear archivo `firebase.json`, `firestore.rules`, `storage.rules`
+- [ ] Crear `scripts/upload-to-firestore.mjs` — migrar las 5 propiedades de `data.json` a Firestore
+- [ ] Crear `data/deploy-info.json`
+- [ ] Crear colección `system/meta` con `lastModified: now`
+- [ ] Crear primer usuario super_admin en Firebase Auth + `usuarios/{uid}`
+- [ ] Verificar reglas Firestore con Firebase Emulator
+
+**Archivos nuevos:**
+```
+firebase.json
+firestore.rules
+storage.rules
+package.json
+data/deploy-info.json
+scripts/upload-to-firestore.mjs
+scripts/backup-firestore.mjs
+```
+
+---
+
+### ETAPA 1 — Firebase Config + PropertyDatabase (lectura dinámica)
+
+**Objetivo:** El frontend lee propiedades de Firestore en lugar de `data.json`. El usuario no nota ningún cambio visual.
+
+**Tareas:**
+- [ ] Crear `js/firebase-config.js` (patrón Cars sección 3.3)
+- [ ] Crear `js/database.js` — clase `PropertyDatabase` (patrón Cars sección 3.4)
+- [ ] Crear `js/cache-manager.js` — caché 3 capas (patrón Cars sección 3.5)
+- [ ] Modificar `js/listado-propiedades.js` — reemplazar `fetch('properties/data.json')` por `window.propertyDB.load()` + `propertyDB.filter()`
+- [ ] Modificar `scripts.js` — reemplazar carga de JSON por `propertyDB`
+- [ ] Añadir `<script type="module" src="js/firebase-config.js">` a todas las páginas HTML
+- [ ] Verificar que los 3 listados (comprar/arrendar/días) y el home siguen funcionando
+- [ ] Mantener `properties/data.json` como backup mientras se valida
+
+**Páginas afectadas:** `index.html`, `propiedades-comprar.html`, `propiedades-arrendar.html`, `propiedades-alojamientos.html`, `detalle-propiedad.html`
+
+**Criterio de éxito:** El sitio carga propiedades desde Firestore sin cambios visuales.
+
+---
+
+### ETAPA 2 — Formularios → Firestore + Cloud Functions email
+
+**Objetivo:** Los formularios de contacto dejan de usar FormSubmit y guardan leads en Firestore. El admin recibe email automáticamente.
+
+**Tareas:**
+- [ ] Crear `functions/index.js` con `onNewSolicitud` (email al admin via Nodemailer/Gmail)
+- [ ] Configurar secrets: `EMAIL_USER`, `EMAIL_PASS` en Firebase
+- [ ] Crear `js/contact-forms.js` (patrón Cars) — envía a colección `solicitudes`
+- [ ] Modificar `contacto.html` — reemplazar `<form action="formsubmit...">` por JS submit
+- [ ] Modificar `detalle-propiedad.html` — idem
+- [ ] Modificar `publicar-propiedad.html` — idem, tipo `publicar_propiedad`
+- [ ] Mantener redirección a `gracias.html` post-envío (no cambia para el usuario)
+- [ ] Añadir `onSolicitudStatusChanged` (email al cliente cuando admin actualiza estado)
+
+**Criterio de éxito:** Al enviar cualquier formulario, el lead aparece en Firestore Console y llega email al admin.
+
+---
+
+### ETAPA 3 — Panel de Administración
+
+**Objetivo:** Crear `admin.html` — panel donde el admin puede gestionar propiedades sin tocar código.
+
+**Tareas:**
+- [ ] Crear `admin.html` + `css/admin.css`
+- [ ] Crear `js/admin-auth.js` — login con Firebase Auth, RBAC (patrón Cars sección 3.12)
+- [ ] Crear `js/admin-properties.js` — CRUD de propiedades en Firestore
+  - Listar todas las propiedades con estado
+  - Crear nueva propiedad (formulario completo)
+  - Editar propiedad existente (con control de versiones `_version`)
+  - Marcar como disponible/reservado/vendido
+  - Eliminar (solo super_admin)
+- [ ] Crear `js/admin-leads.js` — ver y gestionar solicitudes/leads
+- [ ] Crear `js/admin-users.js` — gestionar usuarios admin (via Cloud Functions)
+- [ ] Implementar Cloud Functions: `createManagedUserV2`, `deleteManagedUserV2`
+- [ ] Panel de reseñas — crear/editar/eliminar reseñas en Firestore
+- [ ] Subida de imágenes a Cloud Storage desde el admin
+- [ ] Rutas protegidas — si no autenticado, redirige a login
+
+**Criterio de éxito:** El admin puede publicar una propiedad nueva desde el navegador y aparece en el sitio en menos de 5 minutos.
+
+---
+
+### ETAPA 4 — Imágenes en Cloud Storage
+
+**Objetivo:** Las imágenes de propiedades se alojan en Cloud Storage en vez del repositorio Git.
+
+**Tareas:**
+- [ ] Crear estructura en Storage: `propiedades/{id}/{filename}.webp`
+- [ ] Migrar imágenes existentes del repo a Cloud Storage
+  - `allure/` → `propiedades/101-27/`
+  - `fmia/` → `propiedades/102-11402/`
+  - `serena/` → `propiedades/103-B305/`
+  - `fotoprop/` → `propiedades/104-01/`
+  - `Milan/` → `propiedades/105-4422/`
+- [ ] Actualizar URLs en documentos Firestore
+- [ ] Actualizar `admin-properties.js` — subida de imágenes a Storage con compresión (sharp o browser Canvas API)
+- [ ] Eliminar carpetas de imágenes del repo Git después de verificar
+
+**Criterio de éxito:** Las imágenes cargan desde Storage, el repo Git pesa mucho menos.
+
+---
+
+### ETAPA 5 — SEO Dinámico + GitHub Actions avanzado
+
+**Objetivo:** Las páginas SEO `/p/*.html` se regeneran automáticamente cuando cambia una propiedad en Firestore.
+
+**Tareas:**
+- [ ] Crear `scripts/generate-properties.mjs` (patrón Cars `generate-vehicles.mjs`)
+  - Conecta a Firestore con `GOOGLE_APPLICATION_CREDENTIALS`
+  - Descarga todas las propiedades con `disponible: true`
+  - Genera `/p/{id}.html` con OG tags + JSON-LD `RealEstateListing` + redirect
+  - Genera imágenes OG 1200×630 con Sharp (ya existe en `tools/generate_og_pages.js`)
+  - Regenera `sitemap.xml` con todas las URLs
+- [ ] Actualizar `.github/workflows/og-publish.yml`:
+  - Añadir trigger `repository_dispatch: [property-changed]`
+  - Añadir trigger `schedule: '0 */4 * * *'` (cada 4 horas)
+  - Bump de `data/deploy-info.json` y version del Service Worker
+- [ ] Crear Cloud Function `onPropertyChange` (patrón Cars) — debounce 5 min, dispara `repository_dispatch`
+  - Secret: `GITHUB_PAT`
+- [ ] Crear Cloud Function `triggerSeoRegeneration` (callable, solo super_admin)
+
+**Criterio de éxito:** Al guardar una propiedad desde el admin, en ~5 minutos la página `/p/{id}.html` está actualizada con los nuevos datos.
+
+---
+
+### ETAPA 6 — Favoritos Sincronizados
+
+**Objetivo:** Los favoritos se sincronizan entre dispositivos para usuarios autenticados (opcional: auth anónima de Firebase).
+
+**Tareas:**
+- [ ] Crear colección `favoritos` en Firestore (o subcolección `usuarios/{uid}/favoritos`)
+- [ ] Modificar `js/favoritos.js` — si hay auth, sync con Firestore; si no, mantiene localStorage
+- [ ] Usar Firebase Anonymous Auth para usuarios sin cuenta
+- [ ] Pantalla `favoritos.html` — muestra favoritos desde Firestore en tiempo real
+
+**Criterio de éxito:** Agregar una propiedad a favoritos en el móvil aparece en el desktop.
+
+---
+
+### ETAPA 7 — Analytics y Marketing
+
+**Objetivo:** Métricas reales de comportamiento de usuarios.
+
+**Tareas:**
+- [ ] Integrar Google Analytics 4 (ya hay `measurementId` en firebase-config)
+- [ ] Reemplazar `js/analytics.js` (localStorage) por `logEvent` de Firebase Analytics
+- [ ] Crear dashboard en admin con métricas básicas:
+  - Propiedades más vistas
+  - Términos de búsqueda más populares
+  - Leads por tipo de solicitud
+  - Conversiones (views → contacto)
+- [ ] Añadir `historial-visitas.js` (patrón Cars) — últimas propiedades vistas por el usuario
+- [ ] Crear `js/featured-week-banner.js` (patrón Cars) — banner de propiedad destacada de la semana
+
+---
+
+### ETAPA 8 — Mejoras Comerciales Adicionales
+
+**Objetivo:** Funcionalidades que aumentan la captación y conversión.
+
+**Tareas:**
+- [ ] **Simulador de crédito hipotecario** — adaptado de `js/simulador/` de Cars
+  - Parámetros: precio, cuota inicial (%), plazo (años), tasa de interés
+  - Muestra cuota mensual estimada
+- [ ] **Comparador de propiedades** — seleccionar 2-3 propiedades y comparar specs
+- [ ] **Notificaciones push** — Firebase Cloud Messaging para avisar nuevas propiedades
+- [ ] **Newsletter / alertas de propiedades** — guardar búsqueda y recibir email cuando llegue propiedad que coincida
+- [ ] **Mapa de propiedades** — Google Maps con markers de todas las propiedades disponibles (usando `coords` de Firestore)
+- [ ] **Calculadora de avalúo básica** — formulario que genera lead de avalúo
+- [ ] **Sistema de reseñas mejorado** — carga desde Firestore (colección `resenas`) en vez de `reviews.json`
+- [ ] **Página de agentes/equipo** — con perfil de cada asesor y sus propiedades activas
+- [ ] **WhatsApp Business API** (futuro) — notificaciones automáticas de leads al asesor
+
+---
+
+### Orden de prioridad recomendado
+
+```
+AHORA (fundamento):       Etapa 0 → 1 → 2
+PRONTO (admin + imágenes): Etapa 3 → 4
+DESPUÉS (SEO + sync):      Etapa 5 → 6
+FUTURO (marketing):        Etapa 7 → 8
+```
