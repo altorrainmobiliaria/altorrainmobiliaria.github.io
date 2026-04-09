@@ -589,3 +589,418 @@ Cars usa `data/deploy-info.json` para comunicar al frontend cuándo hay una nuev
 ```
 
 GitHub Actions actualiza este archivo en cada deploy. El `cache-manager.js` lo lee cada 10 minutos y fuerza recarga si la versión cambió.
+
+---
+
+## 4. SCHEMA FIRESTORE + CONFIG FIREBASE PARA INMOBILIARIA
+
+### 4.1 Proyecto Firebase
+
+```
+Nombre del proyecto:  altorra-inmobiliaria
+Project ID:           altorra-inmobiliaria
+Region:               us-central1 (para Cloud Functions)
+```
+
+### 4.2 Colecciones Firestore
+
+#### Colección: `propiedades`
+
+Documento ID: el campo `id` de la propiedad (ej. `"101-27"`)
+
+```javascript
+{
+  // ── Identificación ──────────────────────────────────────
+  id:             "101-27",            // string — clave única
+  titulo:         "Apartamento exclusivo - Edificio Allure",
+  slug:           "apartamento-allure-bocagrande-101-27",  // para URL SEO
+
+  // ── Clasificación ────────────────────────────────────────
+  tipo:           "apartamento",       // apartamento | casa | lote | oficina | bodega | local
+  operacion:      "comprar",           // comprar | arrendar | dias
+  estado:         "disponible",        // disponible | reservado | vendido | arrendado
+
+  // ── Ubicación ────────────────────────────────────────────
+  ciudad:         "Cartagena",
+  barrio:         "Bocagrande",
+  direccion:      "Av. San Martín #...",  // opcional, puede omitirse por privacidad
+  coords:         { lat: 10.402567, lng: -75.552746 },
+  estrato:        4,
+
+  // ── Características ──────────────────────────────────────
+  precio:         5350000000,          // COP, entero
+  admin_fee:      230000,              // Cuota administración mensual COP
+  habitaciones:   4,                   // == beds anterior
+  banos:          5,                   // == baths anterior
+  sqm:            240,                 // m² construidos
+  sqm_terreno:    null,                // m² de terreno (para casas/lotes)
+  garajes:        2,
+  piso:           17,
+  estaciones:     1,                   // parqueaderos
+  ano_construccion: 2018,
+  amoblado:       true,                // bool
+
+  // ── Multimedia ───────────────────────────────────────────
+  imagen:         "https://storage.googleapis.com/.../101-27/main.webp",  // thumbnail
+  imagenes:       [                    // array de URLs (Cloud Storage)
+    "https://storage.googleapis.com/.../101-27/1.webp",
+    "https://storage.googleapis.com/.../101-27/2.webp",
+  ],
+  imagen_og:      "https://storage.googleapis.com/.../101-27/og.jpg",  // 1200×630
+
+  // ── Features (amenidades) ────────────────────────────────
+  features: [
+    "Aire Acondicionado", "Balcón", "Ascensor",
+    "Piscina", "Portería/Vigilancia", "Vista al mar"
+  ],
+
+  // ── Texto ────────────────────────────────────────────────
+  descripcion:    "Exclusivo apartamento en el corazón de Bocagrande...",
+
+  // ── SEO / Ranking ────────────────────────────────────────
+  featured:       true,                // bool — propiedad destacada
+  prioridad:      95,                  // 0-100 — score de relevancia manual
+  disponible:     true,                // bool — visible en el catálogo
+
+  // ── Metadata Firestore ───────────────────────────────────
+  createdAt:      Timestamp,           // serverTimestamp()
+  updatedAt:      Timestamp,           // serverTimestamp() en cada edición
+  _version:       1,                   // control optimista de versiones
+  creadoPor:      "uid-del-admin",     // UID del editor que lo creó
+}
+```
+
+**Migración de campos existentes:**
+| Campo en data.json | Campo en Firestore | Notas |
+|---|---|---|
+| `title` | `titulo` | Renombrado |
+| `operation` | `operacion` | Renombrado |
+| `beds` | `habitaciones` | Renombrado |
+| `baths` | `banos` | Renombrado |
+| `available` | `disponible` | `1/0` → `true/false` |
+| `featured` | `featured` | Mismo |
+| `highlightScore` | `prioridad` | Mismo |
+| `year_built` | `ano_construccion` | Renombrado |
+| `admin_fee` | `admin_fee` | Mismo |
+| `strata` | `estrato` | Renombrado |
+| `garages` | `garajes` | Renombrado |
+| `floor` | `piso` | Renombrado |
+| `shareImage` | `imagen_og` | Renombrado |
+| `added` | `createdAt` | String → Timestamp |
+
+#### Subcolección: `propiedades/{id}/auditLog`
+
+```javascript
+{
+  accion:    "update",          // create | update | delete
+  campo:     "precio",
+  antes:     386000000,
+  despues:   400000000,
+  usuario:   "uid-admin",
+  timestamp: Timestamp
+}
+```
+
+#### Colección: `solicitudes`
+
+Leads y contactos de formularios. **Creación pública, lectura solo admin.**
+
+```javascript
+{
+  // ── Contacto ─────────────────────────────────────────────
+  nombre:    "Juan Pérez",
+  telefono:  "+573001234567",
+  email:     "juan@example.com",
+
+  // ── Clasificación ────────────────────────────────────────
+  tipo:      "contacto_propiedad",
+  // Valores: contacto_propiedad | publicar_propiedad | solicitud_avaluo |
+  //          solicitud_juridica | solicitud_contable | otro
+
+  origen:    "detalle-propiedad",   // página donde se originó
+  estado:    "pendiente",           // pendiente | en_gestion | cerrado
+
+  // ── Datos específicos ────────────────────────────────────
+  datosExtra: {
+    propiedadId:      "101-27",
+    propiedadTitulo:  "Apartamento Allure",
+    mensaje:          "Me interesa agendar una visita...",
+    // Para publicar propiedad:
+    tipoInmueble:     "apartamento",
+    ciudad:           "Cartagena",
+    precioAproximado: 500000000,
+  },
+
+  // ── Metadata ─────────────────────────────────────────────
+  createdAt:    Timestamp,
+  updatedAt:    Timestamp,
+  emailSent:    false,        // flag de idempotencia para Cloud Function
+  requiereCita: false,
+}
+```
+
+#### Colección: `resenas`
+
+```javascript
+{
+  autor:      "María García",
+  rating:     5,              // 1-5
+  texto:      "Excelente servicio, muy profesionales...",
+  fecha:      "2025-03-15",
+  fuente:     "google",       // google | directo
+  activa:     true,
+  orden:      1,              // para ordenar en pantalla
+}
+```
+
+#### Colección: `usuarios`
+
+Solo accesible por super_admin. Perfil extendido de Firebase Auth.
+
+```javascript
+{
+  // Document ID = Firebase Auth UID
+  nombre:    "Admin Altorra",
+  email:     "admin@altorrainmobiliaria.co",
+  rol:       "super_admin",   // super_admin | editor | viewer
+  activo:    true,
+  bloqueado: false,
+  creadoEn:  Timestamp,
+  creadoPor: "uid-super-admin",
+}
+```
+
+#### Colección: `config`
+
+Configuración global editable desde admin.
+
+```javascript
+// Document ID: "general"
+{
+  telefono_whatsapp: "573002439810",
+  telefono_display:  "+57 300 243 9810",
+  email_contacto:    "info@altorrainmobiliaria.co",
+  instagram:         "https://www.instagram.com/altorrainmobiliaria",
+  facebook:          "https://www.facebook.com/...",
+  tiktok:            "https://www.tiktok.com/@altorrainmobiliaria",
+  slogan:            "Gestión integral en soluciones inmobiliarias",
+}
+
+// Document ID: "counters"  (actualizado por editors)
+{
+  totalPropiedades: 5,
+  totalCiudades: 1,
+}
+```
+
+#### Colección: `system`
+
+```javascript
+// Document ID: "meta"
+{
+  lastModified: Timestamp   // Actualizado por admin al cambiar propiedades
+                            // cache-manager.js lo escucha con onSnapshot
+}
+```
+
+#### Colección: `loginAttempts`
+
+```javascript
+// Document ID: hash del email
+{
+  intentos:  3,
+  bloqueado: false,
+  ultimoIntento: Timestamp,
+}
+```
+
+### 4.3 Reglas de seguridad Firestore
+
+Copiar exactamente de Cars, adaptando nombres de colecciones:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function hasProfile() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid));
+    }
+    function getUserRole() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol;
+    }
+    function isSuperAdmin()    { return hasProfile() && getUserRole() == 'super_admin'; }
+    function isEditorOrAbove() { return hasProfile() && getUserRole() in ['super_admin', 'editor']; }
+    function isAuthenticated() { return hasProfile(); }
+
+    // Control optimista de versiones
+    function validVersion() {
+      return request.resource.data._version == resource.data._version + 1
+          || (resource.data._version == null && request.resource.data._version == 1);
+    }
+    function validCreateVersion() {
+      return request.resource.data._version == 1;
+    }
+
+    // ── PROPIEDADES ──────────────────────────────────────────────
+    match /propiedades/{propId} {
+      allow read: if true;   // catálogo público
+      allow create: if isSuperAdmin() || (isEditorOrAbove() && validCreateVersion());
+      allow update: if isSuperAdmin() || (isEditorOrAbove() && validVersion());
+      allow delete: if isSuperAdmin();
+
+      match /auditLog/{logId} {
+        allow read:   if isAuthenticated();
+        allow create: if isEditorOrAbove();
+        allow delete: if isSuperAdmin();
+      }
+    }
+
+    // ── SOLICITUDES ──────────────────────────────────────────────
+    match /solicitudes/{solicitudId} {
+      allow read:          if isAuthenticated();
+      allow create:        if true;   // formularios públicos pueden crear
+      allow update, delete: if isSuperAdmin();
+    }
+
+    // ── RESEÑAS ──────────────────────────────────────────────────
+    match /resenas/{resenaId} {
+      allow read:   if true;
+      allow create, update: if isEditorOrAbove();
+      allow delete: if isSuperAdmin();
+    }
+
+    // ── USUARIOS ─────────────────────────────────────────────────
+    match /usuarios/{userId} {
+      allow read:               if request.auth != null && (request.auth.uid == userId || isSuperAdmin());
+      allow create, update, delete: if isSuperAdmin();
+    }
+
+    // ── CONFIG ───────────────────────────────────────────────────
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if isSuperAdmin()
+        || (isEditorOrAbove() && docId == 'counters');
+    }
+
+    // ── SYSTEM ───────────────────────────────────────────────────
+    match /system/{docId} {
+      allow read: if true;
+      allow write: if isEditorOrAbove()
+        || !exists(/databases/$(database)/documents/system/$(docId));
+    }
+
+    // ── LOGIN ATTEMPTS ────────────────────────────────────────────
+    match /loginAttempts/{emailHash} {
+      allow read, create, update: if true;
+      allow delete:               if isSuperAdmin();
+    }
+
+    // ── AUDIT LOG GLOBAL ─────────────────────────────────────────
+    match /auditLog/{logId} {
+      allow read:   if isAuthenticated();
+      allow create: if isEditorOrAbove();
+      allow delete: if isSuperAdmin();
+    }
+
+    // ── DEFAULT: DENEGAR TODO ────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+```
+
+### 4.4 `firebase.json`
+
+```json
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": ["node_modules", ".git"]
+    }
+  ]
+}
+```
+
+### 4.5 Storage Rules (`storage.rules`)
+
+```javascript
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Imágenes de propiedades: lectura pública, escritura solo admin autenticado
+    match /propiedades/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+    // Multimedia general
+    match /multimedia/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}
+```
+
+### 4.6 `package.json`
+
+```json
+{
+  "name": "altorra-inmobiliaria",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node scripts/generate-properties.mjs",
+    "upload":   "node scripts/upload-to-firestore.mjs",
+    "backup":   "node scripts/backup-firestore.mjs"
+  },
+  "dependencies": {
+    "firebase": "^12.9.0"
+  },
+  "devDependencies": {
+    "firebase-admin": "^13.0.0",
+    "sharp": "^0.33.0"
+  }
+}
+```
+
+### 4.7 `data/deploy-info.json`
+
+```json
+{
+  "version": "2026-04-09T00:00:00.000Z",
+  "commit":  "initial"
+}
+```
+
+Actualizado automáticamente por GitHub Actions en cada deploy.
+
+### 4.8 Cloud Functions requeridas (`functions/index.js`)
+
+| Función | Trigger | Prioridad |
+|---|---|---|
+| `onNewSolicitud` | Firestore create `solicitudes/{id}` | **Alta** — email al admin |
+| `onSolicitudStatusChanged` | Firestore update | Media — email al cliente |
+| `onPropertyChange` | Firestore write `propiedades/{id}` | **Alta** — regenera SEO |
+| `triggerSeoRegeneration` | HTTPS callable | Alta — manual desde admin |
+| `createManagedUserV2` | HTTPS callable | Alta — crear admins |
+| `deleteManagedUserV2` | HTTPS callable | Media |
+| `updateUserRoleV2` | HTTPS callable | Media |
+
+**Secrets en Firebase:**
+```
+GITHUB_PAT    = Personal Access Token con permiso repo + workflow
+EMAIL_USER    = info@altorrainmobiliaria.co (o cuenta Gmail de relay)
+EMAIL_PASS    = App password de Gmail
+```
