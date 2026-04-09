@@ -74,27 +74,37 @@ Etapa 8 — Mejoras comerciales:         ⏳ Pendiente
 
 ---
 
-### 🔄 ETAPA 0-A — Archivos de configuración Firebase (2026-04-09)
+### ✅ ETAPA 0-A — Archivos de configuración Firebase (2026-04-09)
 
 **Objetivo:** Crear la estructura base de Firebase en el repo sin tocar el frontend.
 
-**Qué se está haciendo:**
-- [ ] `ALTORRACARSCLAUDE.md` — traído al repo ✅
-- [ ] `AVANCES.md` — creado (este archivo) ✅
-- [ ] `firebase.json` — config de reglas y functions
-- [ ] `firestore.rules` — reglas de seguridad RBAC
-- [ ] `storage.rules` — reglas Cloud Storage
-- [ ] `package.json` — deps: firebase v12.9.0, firebase-admin, sharp
-- [ ] `data/deploy-info.json` — señal de versión para cache-manager
-- [ ] `scripts/upload-to-firestore.mjs` — migra las 5 propiedades de data.json a Firestore
+**Qué se hizo:**
+- [x] `ALTORRACARSCLAUDE.md` — traído al repo desde rama main de Cars
+- [x] `AVANCES.md` — creado (este archivo)
+- [x] `firebase.json` — config de reglas y functions
+- [x] `firestore.rules` — reglas de seguridad RBAC completas
+- [x] `storage.rules` — reglas Cloud Storage (lectura pública, escritura autenticada)
+- [x] `database.rules.json` — reglas RTDB para presencia de admin
+- [x] `package.json` — deps: firebase v12.9.0, firebase-admin v13, sharp
+- [x] `data/deploy-info.json` — señal de versión para cache-manager
+- [x] `scripts/upload-to-firestore.mjs` — migra las 5 propiedades de data.json a Firestore
+- [x] `js/firebase-config.js` — inicialización Firebase con placeholders (TODO) para credenciales
+- [x] `.github/workflows/og-publish.yml` — añadidos triggers: `schedule` (cada 4h) + `repository_dispatch: property-changed`; bump automático de `data/deploy-info.json` en cada deploy
+
+**Commits:**
+- `b46b1d7` — feat(firebase): agregar archivos de configuración y scripts para Etapa 0 (firebase.json, rules, package.json)
+- `4e4e7b1` — feat(scripts): agregar upload-to-firestore.mjs para migración inicial de propiedades
+- `047092c` — feat(firebase): agregar firebase-config.js con placeholders para credenciales
+- (próximo) — feat(workflow): añadir triggers schedule y repository_dispatch al workflow OG
 
 **Pendiente del dueño del proyecto:**
 - [ ] Crear proyecto Firebase `altorra-inmobiliaria` en Firebase Console
 - [ ] Activar: Firestore, Authentication, Storage, Functions, RTDB, Analytics
 - [ ] Crear primer usuario super_admin en Firebase Auth
-- [ ] Compartir credenciales (apiKey, authDomain, projectId, etc.)
+- [ ] Compartir credenciales (apiKey, messagingSenderId, appId, measurementId)
+- [ ] Ejecutar `node scripts/upload-to-firestore.mjs` con `GOOGLE_APPLICATION_CREDENTIALS` configurado
 
-**Estado:** 🔄 En progreso
+**Estado:** ✅ Completado (pendiente de credenciales del propietario)
 
 ---
 
@@ -134,6 +144,25 @@ Etapa 8 — Mejoras comerciales:         ⏳ Pendiente
 - [ ] Compartir `firebaseConfig` object con las credenciales del proyecto
 - [ ] Configurar secrets en GitHub Actions: `GOOGLE_APPLICATION_CREDENTIALS`, `GITHUB_PAT`
 - [ ] Configurar secrets en Firebase Functions: `EMAIL_USER`, `EMAIL_PASS`, `GITHUB_PAT`
+
+---
+
+---
+
+## PRÓXIMO PASO — Etapa 1: Lectura dinámica desde Firestore
+
+Una vez el propietario configure Firebase y comparta las credenciales, el siguiente trabajo es:
+
+1. Reemplazar `TODO_API_KEY` y demás TODOs en `js/firebase-config.js`
+2. Crear `js/database.js` — clase `PropertyDatabase` (equivale a `VehicleDatabase` de Cars)
+3. Crear `js/cache-manager.js` — caché 3 capas (Memory + IndexedDB + localStorage)
+4. Crear `js/render.js` — función `renderPropertyCard()`
+5. Crear `js/components.js` — inyección dinámica de header/footer/modals
+6. Modificar `js/listado-propiedades.js` — reemplazar `fetch('properties/data.json')` por `window.propertyDB`
+7. Modificar `scripts.js` — reemplazar carga de JSON por `propertyDB`
+8. Añadir `<script type="module" src="js/firebase-config.js">` a todas las páginas HTML
+
+**Criterio de éxito:** El sitio carga propiedades desde Firestore sin cambios visuales para el usuario.
 
 ---
 
