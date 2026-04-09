@@ -41,7 +41,35 @@ Transformar Altorra Inmobiliaria en una **plataforma dinámica** usando el mismo
 - **Mejorando la tecnología sin romper la experiencia** del usuario actual.
 - **Añadiendo capacidades comerciales y de marketing** que hoy no existen.
 
-### 1.4 Stack objetivo
+### 1.4 Restricción de costos — Plan Blaze (CRÍTICO)
+
+El proyecto usa el **plan Blaze (pay-as-you-go)** de Firebase, pero **NO debe generar costos**. Toda implementación debe mantenerse dentro de los límites gratuitos:
+
+```
+Firestore:          50K lecturas/día, 20K escrituras/día, 20K eliminaciones/día, 1 GiB almacenamiento
+Authentication:     Sin costo para email/password (hasta 50K MAU)
+Cloud Storage:      5 GB almacenamiento, 1 GB/día descarga, 20K operaciones subida, 50K descarga
+Cloud Functions:    2M invocaciones/mes, 400K GB-seg, 200K GHz-seg, 5 GB salida de red
+Realtime Database:  1 GB almacenamiento, 10 GB/mes descarga, 100K conexiones simultáneas
+Analytics:          Sin costo (GA4 es gratuito)
+```
+
+**Reglas para no exceder el tier gratuito:**
+
+```
+⚠️ NUNCA usar onSnapshot() en colecciones grandes desde el frontend público — solo en admin
+⚠️ NUNCA hacer queries sin limit() — siempre paginar (9-20 resultados máximo)
+⚠️ SIEMPRE usar caché local (localStorage/IndexedDB) antes de consultar Firestore
+⚠️ SIEMPRE comprimir imágenes antes de subir a Storage (< 200 KB por thumbnail)
+⚠️ Cloud Functions deben usar debounce para evitar invocaciones repetidas
+⚠️ El cache-manager.js con TTL de 5 min es CRÍTICO para reducir lecturas
+⚠️ Preferir getDoc() (1 lectura) sobre getDocs() (N lecturas) cuando sea posible
+⚠️ GitHub Actions schedule: máximo cada 4 horas (no cada hora)
+```
+
+**Si en algún momento se necesita escalar más allá del tier gratuito, primero consultar al dueño del proyecto.**
+
+### 1.5 Stack objetivo
 
 ```
 Frontend          → HTML + Vanilla JS (sin frameworks, igual que hoy)
@@ -1220,6 +1248,9 @@ FUTURO (marketing):        Etapa 7 → 8
 ❌ NO hardcodear URLs — usar la colección config de Firestore o las variables CSS
 ❌ NO romper el service worker sin actualizar CACHE_NAME
 ❌ NO eliminar el archivo CNAME
+❌ NO exceder el tier gratuito de Firebase Blaze — ver sección 1.4
+❌ NO usar onSnapshot en colecciones completas desde páginas públicas
+❌ NO hacer queries Firestore sin limit() — siempre paginar
 ```
 
 ### 6.2 Convenciones de nombres
