@@ -1,165 +1,277 @@
-/* ========================================
-   ALTORRA - CACHE MANAGER AUTOMÁTICO
-   Sistema inteligente que detecta cambios
-   sin necesidad de modificar código
-   ======================================== */
+/**
+ * cache-manager.js — Altorra Inmobiliaria
+ * Sistema de caché de 3 capas con invalidación inteligente.
+ *
+ * Capas:
+ *   L1  Memory (Map JS)    — más rápido, se pierde al recargar la pestaña
+ *   L2  localStorage       — persiste entre sesiones, ~5 MB límite
+ *   L3  IndexedDB          — persiste entre sesiones, sin límite práctico
+ *
+ * Señales de invalidación:
+ *   1. Firestore system/meta.lastModified  — onSnapshot → invalida en tiempo real
+ *      (se activa cuando el admin guarda una propiedad)
+ *   2. data/deploy-info.json polling cada 10 min → invalida si versión cambió
+ *      (GitHub Actions actualiza este archivo en cada deploy)
+ *
+ * API pública (window.AltorraCache):
+ *   AltorraCache.get(key)
+ *   AltorraCache.set(key, value, ttlMs?)
+ *   AltorraCache.invalidate()        — limpia todas las capas
+ *   AltorraCache.clearAndReload()    — nuclear: limpia todo + recarga la página
+ *   AltorraCache.markFresh(ts)       — actualiza sello de versión meta
+ *   AltorraCache.info()              — info de debug del estado actual
+ */
 
-(function() {
+(function () {
   'use strict';
 
-  const CACHE_PREFIX = 'altorra:';
-  const DATA_URL = 'properties/data.json';
-  const VERSION_KEY = CACHE_PREFIX + 'data:version';
-  const CACHE_KEY = CACHE_PREFIX + 'data:cached';
-  const LAST_CHECK_KEY = CACHE_PREFIX + 'data:lastcheck';
-  
-  // ⏱️ Verificar cambios cada 5 minutos en vez de usar TTL fijo
-  const CHECK_INTERVAL = 1000 * 60 * 5; // 5 minutos
+  const NS              = 'altorra:cache:';
+  const META_KEY        = NS + 'meta-version';
+  const DEPLOY_KEY      = NS + 'deploy-version';
+  const DEPLOY_URL      = 'data/deploy-info.json';
+  const DEPLOY_POLL_MS  = 10 * 60 * 1000;   // 10 minutos
+  const DEFAULT_TTL     = 5 * 60 * 1000;    // 5 minutos
+  const IDB_NAME        = 'altorra-cache';
+  const IDB_STORE       = 'entries';
+  const IDB_VERSION     = 1;
 
-  /**
-   * Calcula un hash simple pero efectivo del contenido
-   * Esto nos permite detectar si el JSON cambió
-   */
-  function hashContent(data) {
-    const str = JSON.stringify(data);
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash; // Convertir a 32bit integer
-    }
-    return Math.abs(hash).toString(36);
+  // ── L1: Memory ────────────────────────────────────────────────────────────
+  const memStore = new Map();
+
+  function memGet(key) {
+    const entry = memStore.get(key);
+    if (!entry) return null;
+    if (Date.now() > entry.expires) { memStore.delete(key); return null; }
+    return entry.value;
   }
 
-  /**
-   * Obtiene datos con caché inteligente y detección automática de cambios
-   */
-  async function getSmartCache(url) {
-    const now = Date.now();
-    
+  function memSet(key, value, ttlMs = DEFAULT_TTL) {
+    memStore.set(key, { value, expires: Date.now() + ttlMs });
+  }
+
+  function memClear() { memStore.clear(); }
+
+  // ── L2: localStorage ──────────────────────────────────────────────────────
+  function lsGet(key) {
     try {
-      // 1. Intentar leer caché existente
-      const cachedData = localStorage.getItem(CACHE_KEY);
-      const cachedVersion = localStorage.getItem(VERSION_KEY);
-      const lastCheck = parseInt(localStorage.getItem(LAST_CHECK_KEY) || '0', 10);
-      
-      // 2. Si tenemos caché y no ha pasado el intervalo, usarla
-      if (cachedData && cachedVersion && (now - lastCheck) < CHECK_INTERVAL) {
-        console.log('[Cache] ✅ Usando caché válida (próxima verificación en', 
-                    Math.round((CHECK_INTERVAL - (now - lastCheck)) / 1000), 'segundos)');
-        return JSON.parse(cachedData);
+      const raw = localStorage.getItem(NS + key);
+      if (!raw) return null;
+      const entry = JSON.parse(raw);
+      if (!entry || Date.now() > entry.expires) {
+        localStorage.removeItem(NS + key);
+        return null;
       }
+      return entry.value;
+    } catch (_) { return null; }
+  }
 
-      // 3. Hacer fetch para verificar si hay cambios
-      console.log('[Cache] 🔄 Verificando actualizaciones del servidor...');
-      const response = await fetch(url + '?_t=' + Date.now(), { 
-        cache: 'no-store',
-        headers: { 'Cache-Control': 'no-cache' }
+  function lsSet(key, value, ttlMs = DEFAULT_TTL) {
+    try {
+      localStorage.setItem(NS + key, JSON.stringify({ value, expires: Date.now() + ttlMs }));
+    } catch (_) {}
+  }
+
+  function lsClear() {
+    try {
+      const toRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith(NS)) toRemove.push(k);
+      }
+      toRemove.forEach(k => localStorage.removeItem(k));
+    } catch (_) {}
+  }
+
+  // ── L3: IndexedDB ─────────────────────────────────────────────────────────
+  let _idb = null;
+
+  function openIDB() {
+    if (_idb) return Promise.resolve(_idb);
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+      req.onupgradeneeded = e => {
+        e.target.result.createObjectStore(IDB_STORE, { keyPath: 'key' });
+      };
+      req.onsuccess = e => { _idb = e.target.result; resolve(_idb); };
+      req.onerror   = () => reject(req.error);
+    });
+  }
+
+  async function idbGet(key) {
+    try {
+      const db = await openIDB();
+      return new Promise((resolve) => {
+        const tx  = db.transaction(IDB_STORE, 'readonly');
+        const req = tx.objectStore(IDB_STORE).get(NS + key);
+        req.onsuccess = () => {
+          const entry = req.result;
+          if (!entry || Date.now() > entry.expires) { resolve(null); return; }
+          resolve(entry.value);
+        };
+        req.onerror = () => resolve(null);
       });
-      
-      if (!response.ok) {
-        // Si falla el fetch pero tenemos caché, usar caché
-        if (cachedData) {
-          console.warn('[Cache] ⚠️ Error en servidor, usando caché existente');
-          return JSON.parse(cachedData);
+    } catch (_) { return null; }
+  }
+
+  async function idbSet(key, value, ttlMs = DEFAULT_TTL) {
+    try {
+      const db = await openIDB();
+      return new Promise((resolve) => {
+        const tx  = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put({ key: NS + key, value, expires: Date.now() + ttlMs });
+        tx.oncomplete = () => resolve();
+        tx.onerror    = () => resolve();
+      });
+    } catch (_) {}
+  }
+
+  async function idbClear() {
+    try {
+      const db = await openIDB();
+      return new Promise((resolve) => {
+        const tx  = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).clear();
+        tx.oncomplete = () => resolve();
+        tx.onerror    = () => resolve();
+      });
+    } catch (_) {}
+  }
+
+  // ── API principal ─────────────────────────────────────────────────────────
+
+  /** Leer: L1 → L2 → L3 → null */
+  async function get(key) {
+    const m = memGet(key);
+    if (m !== null) return m;
+
+    const l = lsGet(key);
+    if (l !== null) { memSet(key, l); return l; }
+
+    const i = await idbGet(key);
+    if (i !== null) { memSet(key, i); lsSet(key, i); return i; }
+
+    return null;
+  }
+
+  /** Escribir en las 3 capas */
+  async function set(key, value, ttlMs = DEFAULT_TTL) {
+    memSet(key, value, ttlMs);
+    lsSet(key, value, ttlMs);
+    await idbSet(key, value, ttlMs);
+  }
+
+  /** Invalidar todas las capas y refrescar datos */
+  async function invalidate() {
+    memClear();
+    lsClear();
+    await idbClear();
+    if (window.propertyDB && typeof window.propertyDB.refresh === 'function') {
+      window.propertyDB.refresh().catch(() => {});
+    }
+    window.dispatchEvent(new CustomEvent('altorra:cache-invalidated'));
+    console.log('[AltorraCache] Caché invalidada ✅');
+  }
+
+  /** Nuclear: limpia todo + recarga la página */
+  async function clearAndReload() {
+    await invalidate();
+    try {
+      const { terminate } =
+        await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
+      if (window.db) await terminate(window.db);
+      const dbs = await indexedDB.databases();
+      for (const d of dbs) {
+        if (d.name && (d.name.includes('firestore') || d.name.includes('firebase'))) {
+          indexedDB.deleteDatabase(d.name);
         }
-        throw new Error('HTTP ' + response.status);
       }
-
-      const freshData = await response.json();
-      const freshHash = hashContent(freshData);
-
-      // 4. Actualizar timestamp de última verificación
-      localStorage.setItem(LAST_CHECK_KEY, now.toString());
-
-      // 5. Comparar versiones
-      if (cachedVersion && freshHash === cachedVersion) {
-        console.log('[Cache] ✨ Contenido sin cambios, caché actualizada');
-        // Actualizar solo el timestamp, no los datos
-        return JSON.parse(cachedData);
-      }
-
-      // 6. Hay cambios o es la primera carga
-      console.log('[Cache] 🆕 Contenido nuevo detectado, actualizando caché');
-      localStorage.setItem(CACHE_KEY, JSON.stringify(freshData));
-      localStorage.setItem(VERSION_KEY, freshHash);
-
-      // 7. Disparar evento para que otras partes de la app se actualicen
-      document.dispatchEvent(new CustomEvent('altorra:data-updated', {
-        detail: { 
-          url, 
-          isFirstLoad: !cachedVersion,
-          hash: freshHash 
-        }
-      }));
-
-      return freshData;
-
-    } catch (error) {
-      console.error('[Cache] ❌ Error:', error);
-      
-      // Fallback: intentar usar caché aunque esté vencida
-      const cachedData = localStorage.getItem(CACHE_KEY);
-      if (cachedData) {
-        console.warn('[Cache] 🔄 Usando caché de emergencia');
-        return JSON.parse(cachedData);
-      }
-      
-      throw error;
-    }
+    } catch (_) {}
+    console.log('[AltorraCache] Limpieza total. Recargando...');
+    location.reload();
   }
 
-  /**
-   * Fuerza una recarga completa
-   */
-  function forceRefresh() {
-    console.log('[Cache] 🔥 Limpieza forzada');
-    localStorage.removeItem(CACHE_KEY);
-    localStorage.removeItem(VERSION_KEY);
-    localStorage.removeItem(LAST_CHECK_KEY);
-    window.location.reload();
+  /** Guardar timestamp de versión Firestore */
+  function markFresh(timestamp) {
+    try { localStorage.setItem(META_KEY, String(timestamp)); } catch (_) {}
   }
 
-  /**
-   * Obtiene información del caché actual
-   */
-  function getCacheInfo() {
-    const cachedVersion = localStorage.getItem(VERSION_KEY);
-    const lastCheck = parseInt(localStorage.getItem(LAST_CHECK_KEY) || '0', 10);
-    const cachedData = localStorage.getItem(CACHE_KEY);
-    
-    if (!cachedData || !cachedVersion) {
-      return null;
-    }
-
-    const data = JSON.parse(cachedData);
-    const size = new Blob([cachedData]).size;
-    const age = Date.now() - lastCheck;
-    const nextCheck = Math.max(0, CHECK_INTERVAL - age);
-
-    return {
-      version: cachedVersion,
-      itemCount: Array.isArray(data) ? data.length : 0,
-      size: size,
-      lastCheck: new Date(lastCheck).toLocaleString('es-CO'),
-      nextCheck: Math.round(nextCheck / 1000),
-      age: Math.round(age / 1000)
-    };
+  /** Info de debug */
+  function info() {
+    const deploy  = localStorage.getItem(DEPLOY_KEY) || 'desconocida';
+    const meta    = localStorage.getItem(META_KEY) || 'sin escuchar';
+    const memSize = memStore.size;
+    return { deploy, meta, memEntries: memSize };
   }
 
-  // Exponer API global
-  window.AltorraCache = {
-    get: getSmartCache,
-    forceRefresh: forceRefresh,
-    info: getCacheInfo,
-    clear: function() {
-      const keys = Object.keys(localStorage).filter(k => k.startsWith(CACHE_PREFIX));
-      keys.forEach(k => localStorage.removeItem(k));
-      console.log('[Cache] 🧹 Limpieza completa:', keys.length, 'elementos eliminados');
+  // ── Señal 1: Firestore system/meta.lastModified (onSnapshot) ─────────────
+  function startMetaListener() {
+    if (!window.db) {
+      window.addEventListener('altorra:firebase-ready', startMetaListener, { once: true });
+      return;
     }
-  };
+    (async () => {
+      try {
+        const { doc, onSnapshot } =
+          await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
 
-  console.log('[Cache Manager] ✅ Sistema inicializado');
-  console.log('[Cache Manager] 📊 Info:', getCacheInfo());
+        onSnapshot(doc(window.db, 'system', 'meta'), (snap) => {
+          if (!snap.exists()) return;
+          const ts = snap.data().lastModified;
+          if (!ts) return;
 
+          const incoming  = typeof ts.toMillis === 'function' ? String(ts.toMillis()) : String(ts);
+          const lastKnown = localStorage.getItem(META_KEY);
+
+          if (lastKnown && lastKnown !== incoming) {
+            console.log('[AltorraCache] Cambio en Firestore detectado → invalidando caché');
+            markFresh(incoming);
+            invalidate();
+          } else {
+            markFresh(incoming);
+          }
+        }, (err) => {
+          // Falla silenciosa si no hay credenciales aún
+          console.debug('[AltorraCache] onSnapshot system/meta:', err.code);
+        });
+      } catch (_) {}
+    })();
+  }
+
+  // ── Señal 2: Polling deploy-info.json (GitHub Actions) ───────────────────
+  async function checkDeploy() {
+    try {
+      const res     = await fetch(DEPLOY_URL, { cache: 'no-store' });
+      if (!res.ok) return;
+      const info    = await res.json();
+      const version = info.version || info.commit || '';
+      if (!version) return;
+
+      const stored = localStorage.getItem(DEPLOY_KEY);
+      if (stored && stored !== version) {
+        console.log('[AltorraCache] Nuevo deploy detectado →', version);
+        localStorage.setItem(DEPLOY_KEY, version);
+        invalidate();
+      } else if (!stored) {
+        localStorage.setItem(DEPLOY_KEY, version);
+      }
+    } catch (_) {}
+  }
+
+  // ── Arranque ──────────────────────────────────────────────────────────────
+  function init() {
+    startMetaListener();
+    checkDeploy();
+    setInterval(checkDeploy, DEPLOY_POLL_MS);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // ── API global ────────────────────────────────────────────────────────────
+  window.AltorraCache = { get, set, invalidate, clearAndReload, markFresh, info };
+
+  console.log('[AltorraCache] Módulo cargado ✅');
 })();

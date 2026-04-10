@@ -175,8 +175,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const code = (codeEl && codeEl.value || '').trim();
     if (code) {
       try {
-        const data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true });
-        const match = Array.isArray(data) ? data.find(p => String(p.id||'').toLowerCase().trim() === code.toLowerCase()) : null;
+        // Usar PropertyDatabase si está disponible; si no, fetch directo
+        let match = null;
+        if (window.propertyDB && window.propertyDB.isLoaded) {
+          match = window.propertyDB.getById(code);
+        } else {
+          const data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true });
+          match = Array.isArray(data) ? data.find(p => String(p.id||'').toLowerCase().trim() === code.toLowerCase()) : null;
+        }
         if (match) {
           window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(match.id);
         } else {
@@ -421,7 +427,12 @@ document.addEventListener('DOMContentLoaded', function(){
 
   async function fetchByOperation(op){
     try{
-      let data; try{ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }catch(_){ try{ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }catch(__){ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }}
+      // Usar PropertyDatabase si está disponible
+      if (window.propertyDB && window.propertyDB.isLoaded) {
+        return window.propertyDB.filter({ operacion: op });
+      }
+      // Fallback: fetch directo a data.json
+      let data; try{ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }catch(_){ data = []; }
       if(!Array.isArray(data)) throw new Error('Formato inválido');
       return data.filter(function(it){ return String(it.operation).toLowerCase() === String(op).toLowerCase(); });
     }catch(e){
@@ -460,9 +471,8 @@ document.addEventListener('DOMContentLoaded', function(){
 
     });
 
-    // Refresco si hay revalidación del JSON
-    document.addEventListener('altorra:json-updated', function(ev){
-      if (!/properties\/data\.json$/.test((ev.detail && ev.detail.url) || '')) return;
+    // Refresco si Firestore trae datos nuevos o si se revalida el JSON
+    function refreshCarousels() {
       cfg.forEach(async function(c){
         const root = document.getElementById(c.targetId);
         if(!root) return;
@@ -470,13 +480,16 @@ document.addEventListener('DOMContentLoaded', function(){
         root.innerHTML = '';
         const ordered = smartOrder(arr);
         ordered.slice(0,8).forEach(function(p){ root.appendChild(buildCard(p, c.mode)); });
-      // >>> Favoritos: re-init seguro para home
-      if (window.AltorraFavoritos && typeof window.AltorraFavoritos.init === 'function') {
-        try { window.AltorraFavoritos.init(); } catch(_){}
-      }
-      try { document.dispatchEvent(new CustomEvent('altorra:properties-loaded')); } catch(_){}
-
+        if (window.AltorraFavoritos && typeof window.AltorraFavoritos.init === 'function') {
+          try { window.AltorraFavoritos.init(); } catch(_){}
+        }
+        try { document.dispatchEvent(new CustomEvent('altorra:properties-loaded')); } catch(_){}
       });
+    }
+    window.addEventListener('altorra:db-refreshed', refreshCarousels, { once: true });
+    document.addEventListener('altorra:json-updated', function(ev){
+      if (!/properties\/data\.json$/.test((ev.detail && ev.detail.url) || '')) return;
+      refreshCarousels();
     }, { once: true });
   });
 })();
