@@ -1,7 +1,7 @@
 # CLAUDE.md — Altorra Cars Knowledge Base
 
 > Referencia unica para Claude. Evita reprocesos en parches, errores y mejoras.
-> Ultima actualizacion: 2026-04-09
+> Ultima actualizacion: 2026-04-10
 
 ---
 
@@ -25,6 +25,7 @@
 | SDK | Firebase Compat SDK v11.3.0 (cargado desde CDN, NO modular) |
 | Generacion | `scripts/generate-vehicles.mjs` (Node.js, Firebase modular SDK v12) |
 | PWA | Service Worker + manifest.json + cache-manager.js (4 capas) |
+| Iconos | Lucide Icons v0.468.0 via CDN (admin panel) |
 | Linting | Biome 1.9.4 (`npm run lint`, `npm run format`) |
 | Package | `npm run generate` ejecuta el generador de paginas |
 
@@ -104,7 +105,7 @@
 
 | Archivo | Proposito |
 |---------|-----------|
-| `admin-state.js` | Estado global `window.AP`, RBAC helpers, escapeHtml, closestAction, formatPrice |
+| `admin-state.js` | Estado global `window.AP`, RBAC helpers, escapeHtml, closestAction, formatPrice, refreshIcons |
 | `admin-auth.js` | Login, logout, 2FA, rate limiting, presencia RTDB, session timeout |
 | `admin-sync.js` | Listeners realtime Firestore, migracion de schema, stats, cache invalidation |
 | `admin-vehicles.js` | CRUD vehiculos, imagenes, drafts, wizard, drag-reorder destacados |
@@ -325,13 +326,24 @@ drafts_activos/{uid} — read/write: editor+ (own uid only)
 ```json
 {
   "presence": {
-    "$uid": {
-      ".read": true,
-      ".write": "$uid === auth.uid"
+    ".read": "auth != null",
+    ".indexOn": ["online"],
+    "$sessionId": {
+      ".write": "(!data.exists() && newData.child('uid').val() === auth.uid) || data.child('uid').val() === auth.uid",
+      ".validate": "newData.hasChild('uid') && newData.child('uid').val() === auth.uid"
     }
   }
 }
 ```
+
+- Estructura: `/presence/{sessionId}` — un nodo por dispositivo/tab (no por usuario)
+- Cada sesion se crea con `push()` y contiene campo `uid` para identificar al dueno
+- `.read: auth != null` a nivel `/presence` permite que `loadActiveSessions()` lea todos los nodos
+- `.indexOn: ["online"]` requerido por la query `orderByChild('online').equalTo(true)`
+- `.write`: solo el dueno (`uid === auth.uid`) puede crear, actualizar o eliminar su sesion
+- `.validate`: asegura que siempre exista campo `uid` y que coincida con auth
+- `onDisconnect().remove()` elimina el nodo al desconectarse (desaparicion instantanea)
+- **Deploy manual obligatorio**: `firebase deploy --only database` despues de cambiar reglas
 
 ### Checklist de no-regresion RBAC
 
@@ -519,7 +531,7 @@ Ejecutar despues de CUALQUIER cambio que toque auth, usuarios o Cloud Functions:
 - Arrays de datos: `vehicles`, `brands`, `users`, `dealers`, `appointments`, `reviews`, `banners`
 - Perfil: `currentUserProfile`, `currentUserRole`
 - Funciones unsubscribe de listeners Firestore
-- Helpers: `$()`, `toast()`, `escapeHtml()`, `formatPrice()`, `closestAction()`
+- Helpers: `$()`, `toast()`, `escapeHtml()`, `formatPrice()`, `closestAction()`, `refreshIcons()`
 
 **Navegacion**: Secciones por `data-section` attributes. Sidebar links muestran/ocultan secciones.
 
@@ -529,13 +541,64 @@ Ejecutar despues de CUALQUIER cambio que toque auth, usuarios o Cloud Functions:
 - Tracking: mousemove, click, scroll, keydown
 - Persistence: `Auth.Persistence.LOCAL` (sesion sobrevive cierre de tab)
 
-**2FA** (parcialmente implementado):
+**2FA** (implementado con seguridad reforzada):
 - Opcional por usuario (`habilitado2FA`)
-- Verificacion por SMS via Firebase Auth
-- Dispositivos de confianza por 30 dias
+- Verificacion por SMS via Firebase Auth Phone Provider + reCAPTCHA invisible
+- Rate limiting en verificacion de codigo: max 5 intentos por codigo, luego requiere reenvio
+- Cooldown de reenvio: 30 segundos entre reenvios con countdown visual
+- Max 5 reenvios por sesion (previene abuso de SMS)
+- Mensajes de error diagnosticos para problemas de SMS (billing, config, red)
 - Super admin puede auto-desbloquear cuenta con codigo temporal
+- Auto-desbloqueo de cuentas bloqueadas despues de 15 minutos
+- Super admin sync: si `loginAttempts` fue auto-desbloqueado, sincroniza `usuarios.bloqueado`
 
-### 6.5 Sistema de Drafts (Borradores)
+**Dispositivos de confianza** (`admin-auth.js`):
+- Duracion: 30 dias (`TRUST_DURATION_MS`)
+- Token aleatorio guardado en localStorage + array `trustedDevices` en Firestore `usuarios/{uid}`
+- Cada entrada almacena: token, browser, os, city, region, country, ip (anonimizada), timezone, createdAt, expiresAt, lastUsed
+- `fetchLocationInfo()` obtiene geolocalizacion por IP via `get.geojs.io/v1/ip/geo.json` (HTTPS, CORS `*`, sin API key, sin permisos)
+- IP anonimizada: ultimo octeto reemplazado con `***` (ej: `190.28.123.***`)
+- Resultado cacheado por page load (`_locationCache`) para evitar llamadas redundantes
+- IP anonimizada: ultimo octeto reemplazado con `***` (ej: `190.28.123.***`)
+- Ubicacion se refresca en cada login (`updateDeviceLastUsed`)
+- UI muestra: navegador, OS, ubicacion con pin, IP anonimizada, ultimo uso, dias restantes
+- Acciones: revocar individual o revocar todos
+
+### 6.5 Sistema de Presencia y Sesiones Activas (RTDB)
+
+**Ubicacion**: `admin-auth.js` → `startPresence()`, `stopPresence()`, `loadActiveSessions()`
+
+**Arquitectura**: `/presence/{sessionId}` — un nodo por dispositivo/tab, no por usuario. Permite que el mismo usuario aparezca en multiples dispositivos simultaneamente, y que multiples usuarios se vean entre si.
+
+**Escritura** (`startPresence`):
+- Crea nodo con `push()` en `/presence/` con datos: uid, email, nombre, rol, browser, os, city, region, country, ip, lastSeen, online
+- Usa `.info/connected` para detectar conexion/desconexion de RTDB
+- `onDisconnect().remove()` elimina el nodo al perder conexion (desaparicion instantanea)
+- Heartbeat cada 2 min actualiza `lastSeen` (mantiene sesion fresca para deteccion de stale)
+- Guards de autenticacion: verifica `auth.currentUser` + `_presenceActive` flag antes de cada write
+- Orphan cleanup: busca sesiones huerfanas con mismo `uid + deviceId`, las elimina (excluye el push key nuevo)
+- Geolocalizacion por IP via `fetchLocationInfo()` al iniciar sesion
+
+**Lectura** (`loadActiveSessions`):
+- Query realtime: `presence.orderByChild('online').equalTo(true)`
+- Filtra sesiones stale: descarta sesiones con `lastSeen` > 5 min (tab cerrada sin onDisconnect limpio)
+- Auto-limpia entradas propias stale (via `remove()`)
+- Muestra: nombre, rol, ubicacion (ciudad/pais), navegador/OS, indicador "(tu)"
+- Retry automatico si RTDB no esta cargado (SDK diferido)
+- Error callback muestra "No se pudieron cargar" en vez de "Cargando..." infinito
+
+**Limpieza** (`stopPresence`):
+- Pone `_presenceActive = false` PRIMERO (previene set() de callbacks pendientes)
+- Detiene heartbeat interval
+- Desuscribe listener de `.info/connected`
+- Desuscribe listener de sesiones activas (`_activeSessionsRef`)
+- Cancela `onDisconnect()` para evitar removes duplicados
+- Elimina nodo de sesion con `remove()` (desaparece instantaneamente en todos los clientes)
+- Se llama ANTES de `auth.signOut()` en TODOS los paths de logout
+
+**Propiedades en `AP`**: `_presenceRef`, `_presenceConnectedRef`, `_presenceHeartbeat`, `_activeSessionsRef`, `_presenceLocation`, `_presenceDevice`
+
+### 6.6 Sistema de Drafts (Borradores)
 
 - Auto-guardado cada 10s mientras se edita un vehiculo
 - Almacenados en `usuarios/{uid}/drafts/vehicleDraft`
@@ -544,7 +607,7 @@ Ejecutar despues de CUALQUIER cambio que toque auth, usuarios o Cloud Functions:
 - Al cerrar modal: pregunta si guardar cambios no guardados
 - Dirty check evita writes redundantes
 
-### 6.6 Migracion Automatica de Schema
+### 6.7 Migracion Automatica de Schema
 
 **Ubicacion**: `admin-sync.js` → `migrateVehicleSchema()`
 **Ejecucion**: Una vez por sesion, en el primer snapshot de vehiculos
@@ -554,7 +617,7 @@ Para agregar un campo nuevo: agregar entrada en `DEFAULTS` dentro de `migrateVeh
 
 Campos que migra: codigoUnico, _version, estado, tipo, direccion, ubicacion, puertas, pasajeros, placa, destacado, prioridad.
 
-### 6.7 Formularios Publicos
+### 6.8 Formularios Publicos
 
 **"Vende tu Auto"** (wizard 3 pasos):
 1. Datos de contacto (nombre, telefono, email)
@@ -568,7 +631,7 @@ Campos que migra: codigoUnico, _version, estado, tipo, direccion, ubicacion, pue
 
 **WhatsApp**: Todos los formularios abren chat con mensaje pre-formateado al +573235016747
 
-### 6.8 CodigoUnico (Auto-generado)
+### 6.9 CodigoUnico (Auto-generado)
 
 - Formato: `ALT-YYYYMM-XXXX` (ej: `ALT-202604-0042`)
 - Secuencia atomica en `config/counters.vehicleCodeSeq` (transaction)
@@ -636,6 +699,60 @@ AP.UPLOAD_CONFIG = {
 
 Las imagenes se comprimen client-side antes de subir a Firebase Storage.
 
+### Lucide Icons (Admin Panel)
+
+Libreria de iconos profesional integrada en `admin.html`. Reemplaza los 59+ SVGs inline y emojis que habia antes.
+
+**CDN**: `https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js` (cargado con `defer`)
+
+**Uso en HTML estatico**:
+```html
+<i data-lucide="icon-name"></i>
+```
+
+**Inicializacion**: `lucide.createIcons()` se llama en `DOMContentLoaded`. Si el script carga despues, se escucha su evento `load`.
+
+**Despues de renders dinamicos**: Llamar `AP.refreshIcons()` para que Lucide procese los nuevos `<i data-lucide>` inyectados en el DOM.
+
+```javascript
+// Despues de innerHTML con iconos Lucide
+container.innerHTML = htmlConIcones;
+AP.refreshIcons(); // Convierte <i data-lucide="x"> en SVGs
+```
+
+**Sizing en CSS** (`admin.css`):
+```css
+.nav-item [data-lucide]    { width: 18px; height: 18px; }
+.stat-icon [data-lucide]   { width: 22px; height: 22px; }
+.btn [data-lucide]         { width: 16px; height: 16px; }
+.quick-action-btn [data-lucide] { width: 20px; height: 20px; }
+.v-act [data-lucide]       { width: 16px; height: 16px; }
+```
+
+**Excepcion**: El logo de WhatsApp sigue siendo SVG inline (icono de marca, no esta en Lucide).
+
+### Botones de Accion de Vehiculos
+
+Los botones de accion en la tabla de vehiculos usan un sistema icon-only con tooltips CSS.
+
+**Clases CSS**:
+- `.v-actions` — contenedor flex con gap y wrap
+- `.v-act` — boton icono base (32px, transparente, hover con color)
+- `.v-act-sep` — separador vertical entre grupos
+- `.v-act--info/--gold/--success/--warning/--danger` — variantes de color en hover
+- `.v-act--active` — estado activo persistente (ej: vehiculo ya destacado)
+- `.v-act--operation` — boton con texto + icono (caso especial: "Operacion")
+- `.v-act-protected` — badge para vehiculos vendidos protegidos
+
+**Grupos visuales** (separados por `.v-act-sep`):
+1. **Ver**: eye (vista previa), clock-3 (historial) — siempre visible
+2. **Editar**: star (destacar), pencil (editar), copy (duplicar), handshake (operacion) — editor+
+3. **Peligro**: trash-2 (eliminar) — solo super_admin
+
+**Responsive**: 3 breakpoints (32px desktop, 30px tablet, 28px mobile). Los separadores se ocultan en <480px.
+
+**Tooltips CSS**: `::after` con `content: attr(title)`. Se desactivan en `@media (hover: none)` para touch.
+
 ### Cache invalidation desde admin
 
 Despues de cualquier write a Firestore desde el admin, llamar:
@@ -651,12 +768,14 @@ Esto dispara la invalidacion en el sitio publico via cache-manager.js.
 
 ### "Access denied for UID" al hacer login
 
-**Causa**: Error de red impide cargar perfil de Firestore → el codigo trataba
-cualquier error como "acceso denegado" y hacia signOut.
+**Causa**: Dos problemas combinados:
+1. Error de red impide cargar perfil de Firestore → el codigo trataba cualquier error como "acceso denegado" y hacia signOut
+2. `showAccessDenied()` llamaba a `signOut()`, que disparaba `onAuthStateChanged(null)` → `showLogin()` → **ocultaba el mensaje de error** antes de que el usuario pudiera leerlo
 
-**Fix aplicado** (2026-04-08): `loadUserProfile` ahora reintenta hasta 3 veces
-con backoff (2s, 4s, 6s) para errores de red antes de rendirse. Solo hace
-signOut para errores reales de permisos.
+**Fix aplicado** (2026-04-08 / 2026-04-10):
+- `loadUserProfile` reintenta hasta 3 veces con backoff (2s, 4s, 6s) para errores de red
+- `_accessDeniedShown` flag: `showLogin()` no oculta el error si `showAccessDenied` lo puso visible
+- `console.warn('[Auth] Reason:', reason)` para diagnostico en consola
 
 **Si persiste**: Verificar que las reglas de Firestore esten desplegadas:
 ```bash
@@ -665,17 +784,38 @@ firebase deploy --only firestore:rules
 
 ### Errores de presencia "permission_denied" en RTDB
 
-**Causa**: Listeners de presencia escribian a `/presence/{uid}` despues de que
-el usuario fue deslogueado, causando permission_denied.
+**Causa**: Multiples problemas combinados:
+1. Listeners de presencia escribian a `/presence/` despues de que el usuario fue deslogueado
+2. No todos los paths de `signOut()` llamaban a `stopPresence()` primero (inactividad, sesion expirada, password change, mobile logout)
+3. Race condition: `.info/connected` podia disparar `set()` despues de que `off()` fue llamado
+4. Orphan cleanup podia eliminar la sesion recien creada por race condition con el cache local
 
-**Fix aplicado** (2026-04-08): Guards en `startPresence()` verifican que el
-usuario sigue autenticado antes de cada escritura. `stopPresence()` limpia
-listeners. `showAccessDenied()` llama a `stopPresence()`.
+**Fix aplicado** (2026-04-09):
+- `_presenceActive` flag: el connected callback verifica este flag antes de llamar `set()`. Se pone `false` en `stopPresence()` ANTES de limpiar listeners
+- `stopPresence()` ahora cancela `onDisconnect()` antes de hacer `remove()`
+- `stopPresence()` se llama ANTES de `signOut()` en TODOS los paths: logout button, mobile logout, inactivity timeout, session expired, access denied, 2FA cancel, unlock cancel, password change invalid, `onAuthStateChanged(null)` safety net
+- Orphan cleanup ahora excluye `presenceRef.key` para evitar borrar la sesion recien creada
+- Push ref se crea ANTES del orphan cleanup para que el key exista en el callback
 
 **Si persiste**: Verificar que las reglas de RTDB esten desplegadas:
 ```bash
 firebase deploy --only database
 ```
+
+### Widget "Sesiones Activas" siempre mostraba "Cargando..."
+
+**Causa**: Tres problemas combinados:
+1. `loadActiveSessions()` hacia `return` silencioso si `window.rtdb` no estaba cargado (SDK diferido), sin reintento
+2. Reglas RTDB solo permitian `.read` a nivel `/presence/$uid`, no a nivel `/presence` (la query necesita leer toda la coleccion)
+3. No habia `.indexOn: ["online"]` — RTDB rechaza queries `orderByChild` sin indice
+
+**Fix aplicado** (2026-04-09):
+- `database.rules.json`: `.read: "auth != null"` a nivel `/presence` + `.indexOn: ["online"]`
+- `loadActiveSessions()`: retry cuando RTDB no esta listo + error callback + filtro de sesiones stale (>5 min)
+- `startPresence()`: heartbeat cada 2 min para mantener `lastSeen` fresco
+- `stopPresence()`: limpia heartbeat + listener de sesiones activas
+
+**Requiere deploy manual**: `firebase deploy --only database`
 
 ### "Failed to obtain primary lease" en Firestore
 
@@ -700,6 +840,17 @@ Ver `SITEMAP-FIX.md` para pasos detallados.
 **Fix aplicado**: `loadModalsIfNeeded()` en `components.js` inyecta modals
 dinamicamente en todas las paginas desde `snippets/modals.html`.
 
+### Storage Estimator eliminado (2026-04-10)
+
+**Seccion eliminada**: "Consumo Storage (Free Tier)" en el dashboard admin.
+
+**Razon**: Usaba calculos hardcodeados/aproximados (`FREE_TIER.storageMB`, `FREE_TIER.firestoreDocsFree`) que no median datos reales de Firebase. No existe API client-side para medir consumo real de Storage/Firestore en el tier gratuito.
+
+**Archivos modificados**:
+- `admin.html`: Eliminada seccion HTML (lineas 366-378)
+- `admin-state.js`: Eliminadas constantes `FREE_TIER`
+- `admin-sync.js`: Eliminada funcion `updateEstimator()` (~53 lineas), su event listener y llamada init
+
 ### Bloqueo de puntero al usar "Ver todas" en menu de marcas
 
 **Fix aplicado**: `pointer-events: none` en `.modal-overlay` inactivo +
@@ -722,6 +873,19 @@ cierre de dropdowns/menu al hacer smooth scroll.
 | 10 | Productividad: atajos teclado, duplicar vehiculo, batch ops, export CSV | Completada |
 | 11 | Accesibilidad: ARIA roles, labels, focus styles, live regions | Completada |
 
+### Mejoras aplicadas 2026-04-08 — 2026-04-10
+
+| Cambio | Archivos | Descripcion |
+|--------|----------|-------------|
+| Fix presencia RTDB | admin-auth.js, database.rules.json | `_presenceActive` flag, stopPresence antes de signOut en 8 paths, orphan cleanup safe |
+| Fix Access Denied invisible | admin-auth.js | `_accessDeniedShown` flag, retry con backoff en loadUserProfile |
+| Eliminar Storage Estimator | admin.html, admin-state.js, admin-sync.js | Seccion "Consumo Storage" usaba datos falsos, eliminada |
+| Integrar Lucide Icons | admin.html, admin-state.js, css/admin.css | 59+ SVGs inline → `<i data-lucide>`, CDN v0.468.0, `AP.refreshIcons()` |
+| Rediseño botones vehiculos | admin-vehicles.js, css/admin.css | Emojis → Lucide icons, grupos visuales, tooltips CSS, responsive 3 breakpoints |
+| Lucide en todo el admin | 13 archivos | Emojis en actividad, brands, users, reviews, banners, dealers, sort indicators, theme toggle, devices, sesiones → todo Lucide |
+| Seguridad 2FA reforzada | admin-auth.js | Rate limiting 5 intentos/codigo, cooldown 30s reenvio, max 5 reenvios/sesion, auto-unblock 15 min, error diagnostico SMS, proteccion super_admin |
+| Fix reCAPTCHA SMS delivery | admin-auth.js, firebase-config.js | `.render()` explicito para fallback Enterprise→v2, limpieza contenedor DOM, `useDeviceLanguage()` para SMS en espanol, `expired-callback` |
+
 ---
 
 ## 10. Fase 12 — Pendiente (Futuro)
@@ -730,11 +894,11 @@ cierre de dropdowns/menu al hacer smooth scroll.
 |----|-------|-------------|
 | F12.1 | Notificacion por email al recibir cita (Cloud Function trigger) | Alta |
 | F12.2 | Preview en tiempo real del vehiculo como se vera en el sitio | Media |
-| F12.3 | 2FA opcional via Firebase Auth (parcialmente implementado) | Media |
+| F12.3 | 2FA opcional via Firebase Auth (implementado, seguridad reforzada) | Completado |
 | F12.4 | Historial de cambios con rollback visual (timeline + revert) | Alta |
 | F12.5 | Buscador/filtro en lista de aliados + filtro por rango de fechas | Media |
 | F12.6 | Virtual scrolling para tablas grandes (+100 filas) | Media |
-| F12.7 | Indicadores de sesiones activas por usuario | Completado (RTDB presence) |
+| F12.7 | Indicadores de sesiones activas por usuario | Completado (RTDB presence + heartbeat + stale detection) |
 
 ---
 
