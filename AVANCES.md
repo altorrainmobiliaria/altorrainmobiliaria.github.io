@@ -50,9 +50,9 @@ Etapa 0-B   — Credenciales + primer deploy: ⏸️  Bloqueado (tarea del propi
 Etapa 1     — Lectura dinámica Firestore:  ✅ Completado (frontend listo, activa con credenciales)
 Etapa 2     — Formularios → Firestore:     ✅ Completado (activa con credenciales + deploy Functions)
 Etapa 3     — Panel de administración:     ✅ Completado (activa con credenciales)
-Etapa 4     — Imágenes en Cloud Storage:   ⏳ Pendiente
-Etapa 5     — SEO dinámico + CI/CD:        ⏳ Pendiente
-Etapa 6     — Favoritos sincronizados:     ⏳ Pendiente
+Etapa 4     — Imágenes en Cloud Storage:   ✅ Script listo (ejecutar cuando Firebase esté activo)
+Etapa 5     — SEO dinámico + CI/CD:        ✅ Script + workflow listos (ejecutar con credenciales)
+Etapa 6     — Favoritos sincronizados:     ✅ Completado (funciona local + sync Firebase automático)
 Etapa 7     — Analytics y Marketing:       ⏳ Pendiente
 Etapa 8     — Mejoras comerciales:         ⏳ Pendiente
 ```
@@ -89,6 +89,25 @@ Etapa 8     — Mejoras comerciales:         ⏳ Pendiente
 - Añadida restricción crítica de costos (plan Blaze, tier gratuito)
 
 **Commits:** `a9d43b3`, `a96986f`, `73c6866`, `722be53`, `f2e8aa9`, `850facb`
+
+---
+
+### ✅ ETAPAS 4, 5 y 6 — Storage + SEO dinámico + Favoritos Firebase (2026-04-10)
+
+**Qué se hizo (Etapa 4 — Imágenes en Cloud Storage):**
+- `scripts/migrate-images-to-storage.mjs` — Sube las 5 carpetas locales (`allure/`, `fmia/`, `serena/`, `fotoprop/`, `Milan/`) a `propiedades/{id}/*.webp` en Cloud Storage, actualiza URLs en Firestore. `DRY_RUN=1` para simular.
+- `scripts/backup-firestore.mjs` — Exporta todas las colecciones a JSON local con Timestamps convertidos a ISO. Directorio configurable vía `OUTPUT_DIR`.
+- `.gitignore` — Creado: `node_modules/`, `backups/`, credenciales (`sa.json`, `serviceAccount.json`, `.env*`), `.DS_Store`.
+
+**Qué se hizo (Etapa 5 — SEO dinámico + GitHub Actions):**
+- `scripts/generate-properties.mjs` — Lee propiedades disponibles de Firestore, genera `/p/{id}.html` con OG tags, Twitter Card, JSON-LD `RealEstateListing`, noscript fallback para crawlers. Regenera `sitemap.xml` (páginas estáticas + propiedades). Actualiza `data/deploy-info.json`.
+- `.github/workflows/og-publish.yml` — Actualizado con lógica condicional: si hay `GOOGLE_APPLICATION_CREDENTIALS_JSON` secret → usa `generate-properties.mjs` desde Firestore; si no → usa `generate_og_pages.js` desde `data.json` (fallback). Compatibilidad total antes y después de Firebase.
+
+**Qué se hizo (Etapa 6 — Favoritos sincronizados):**
+- `js/favorites-manager.js` — Drop-in replacement del sistema de favoritos. Offline-first (siempre localStorage). Si Firebase Auth disponible, autentica anónimamente y sincroniza con `favoritos/{uid}` en Firestore. Merge bidireccional local↔remoto al iniciar. API `window.AltorraFavoritos` idéntica a la anterior.
+- `favoritos.html` — Integrado con `favorites-manager.js`: usa `AltorraFavoritos.get/remove/clear`, escucha `altorra:fav-update` para re-renderizar tras sync Firebase. Fallback a localStorage si favorites-manager no cargó.
+
+**Commits:** `9cf87bc`, `7235ed0`, `a101ac1`, `6b69cbe`
 
 ---
 
