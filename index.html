@@ -172,6 +172,21 @@
       </div>
     </section>
 
+    <!-- BANNER DESTACADA DE LA SEMANA -->
+    <section class="section" style="background:#fffdf4;padding:32px 16px" aria-label="Propiedad destacada">
+      <div style="max-width:var(--page-max);margin:0 auto">
+        <div class="head" style="margin-bottom:16px">
+          <h2>Propiedad destacada <span style="color:var(--gold)">de la semana</span></h2>
+        </div>
+        <div id="featured-banner-container"></div>
+      </div>
+    </section>
+
+    <!-- HISTORIAL DE VISITAS -->
+    <section class="section" style="background:#fff" aria-label="Vistas recientemente">
+      <div id="historial-container" style="max-width:var(--page-max);margin:0 auto;padding:0 16px"></div>
+    </section>
+
     <!-- RESEÑAS -->
     <section id="reseñas" class="section" aria-labelledby="reseñas-title">
       <div class="head"><h2 id="reseñas-title">Opiniones de nuestros clientes</h2></div>
@@ -200,8 +215,21 @@
   </svg>
 </a>
   <script defer src="js/favoritos.js"></script>
-  <!-- 🆕 NUEVO: Script de búsqueda inteligente -->
   <script defer src="js/smart-search.js"></script>
+  <script defer src="js/historial-visitas.js"></script>
+  <script defer src="js/featured-week-banner.js"></script>
+  <script>
+    // Inicializar banner e historial cuando la DB esté lista
+    window.addEventListener('altorra:db-ready', function() {
+      FeaturedBanner?.init?.('#featured-banner-container');
+      AltorraHistorial?.renderSection?.('#historial-container', 4, 'Vistas recientemente');
+    }, { once: true });
+    // Si ya estaba lista
+    if (window.propertyDB?.isLoaded) {
+      FeaturedBanner?.init?.('#featured-banner-container');
+      AltorraHistorial?.renderSection?.('#historial-container', 4, 'Vistas recientemente');
+    }
+  </script>
 
 </body>
 </html>

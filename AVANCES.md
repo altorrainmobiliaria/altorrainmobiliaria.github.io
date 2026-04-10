@@ -53,7 +53,7 @@ Etapa 3     — Panel de administración:     ✅ Completado (activa con credenc
 Etapa 4     — Imágenes en Cloud Storage:   ✅ Script listo (ejecutar cuando Firebase esté activo)
 Etapa 5     — SEO dinámico + CI/CD:        ✅ Script + workflow listos (ejecutar con credenciales)
 Etapa 6     — Favoritos sincronizados:     ✅ Completado (funciona local + sync Firebase automático)
-Etapa 7     — Analytics y Marketing:       ⏳ Pendiente
+Etapa 7     — Analytics y Marketing:       ✅ Completado (GA4 activa con measurementId)
 Etapa 8     — Mejoras comerciales:         ⏳ Pendiente
 ```
 
@@ -89,6 +89,23 @@ Etapa 8     — Mejoras comerciales:         ⏳ Pendiente
 - Añadida restricción crítica de costos (plan Blaze, tier gratuito)
 
 **Commits:** `a9d43b3`, `a96986f`, `73c6866`, `722be53`, `f2e8aa9`, `850facb`
+
+---
+
+### ✅ ETAPA 7 — Analytics y Marketing (2026-04-10)
+
+**Qué se hizo:**
+- `js/analytics.js` — Reescrito con Firebase Analytics (`logEvent()` GA4) + buffer localStorage permanente (max 500 eventos). Auto-tracking: `page_view`, `whatsapp_click`, `external_click`, `time_on_page`. Helpers públicos: `trackPropertyView()`, `trackSearch()`, `trackFilterApplied()`, `trackFormSubmit()`, `trackFavorite()`. Compatible con API anterior.
+- `js/admin-dashboard.js` — Dashboard de stats en el admin: 4 stat-cards (propiedades, leads, pendientes, reseñas), tabla de 5 leads recientes, barras de leads por tipo, top 5 búsquedas, top 5 propiedades más vistas. Usa `Promise.all` para 3 queries en paralelo.
+- `js/historial-visitas.js` — Historial de las últimas 10 propiedades visitadas. `localStorage` principal + sync asíncrono con Firestore `favoritos/{uid}/historial`. Renderiza tarjetas con estilos inyectados. API: `AltorraHistorial.{add, get, render, renderSection, clear}`.
+- `js/featured-week-banner.js` — Banner de propiedad destacada: selecciona la de mayor `prioridad` + `featured`, cache 1h, rotación semanal por semana ISO. Tarjeta horizontal responsive con CTA. API: `FeaturedBanner.{init, renderBanner, clearCache}`.
+- `detalle-propiedad.html` — Llama `AltorraHistorial.add(prop)` al ver cada propiedad.
+- `index.html` — Añadidas secciones "Destacada de la semana" (`FeaturedBanner.init`) y "Vistas recientemente" (`AltorraHistorial.renderSection`), activadas por `altorra:db-ready`.
+
+**Pendiente (requiere credenciales):**
+- 7-E: Agregar `measurementId: "G-XXXXXXXXXX"` en `js/firebase-config.js` con el ID real de GA4.
+
+**Commits:** `981e2e6`, `5217b5e`, `82c25ec`
 
 ---
 

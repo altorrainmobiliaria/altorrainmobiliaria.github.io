@@ -605,16 +605,27 @@ document.addEventListener('DOMContentLoaded', init);
   <div style="display:none"><?php /* placeholder for GH Pages */ ?></div>
   <!--#include file="snippets/inject-jsonld.html" -->
   <script src="js/utils.js"></script>
-<script src="js/analytics.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/historial-visitas.js" defer></script>
 <script>
-  // Track cuando alguien ve una propiedad
-  const urlParams = new URLSearchParams(window.location.search);
-  const propId = urlParams.get('id');
-  if (propId) {
-    AltorraAnalytics.track('property_view', {
-      id: propId,
-      title: document.querySelector('h1')?.textContent || 'Sin título'
-    });
+  // Track + agregar al historial cuando alguien ve una propiedad
+  window.addEventListener('altorra:db-ready', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const propId = urlParams.get('id');
+    if (!propId) return;
+    const prop = window.propertyDB?.getById?.(propId);
+    if (prop) {
+      AltorraHistorial?.add?.(prop);
+    } else {
+      // Fallback: registrar solo el ID para analytics
+      AltorraAnalytics?.trackPropertyView?.(propId, document.querySelector('h1')?.textContent, '');
+    }
+  }, { once: true });
+
+  // Si la DB ya estaba cargada
+  if (window.propertyDB?.isLoaded) {
+    const id = new URLSearchParams(window.location.search).get('id');
+    if (id) { const p = window.propertyDB.getById(id); if (p) AltorraHistorial?.add?.(p); }
   }
 </script>
 </body>
