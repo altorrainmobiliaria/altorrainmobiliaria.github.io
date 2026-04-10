@@ -45,10 +45,11 @@ Tener ambos documentos en el repo garantiza que Claude siempre trabaje con el co
 ```
 FASE PREVIA — Dominio y correo:            ✅ Completado
 FASE DOC    — CLAUDE.md + ALTORRACARSCLAUDE.md: ✅ Completado
-Etapa 0-A   — Archivos base Firebase:      ✅ Completado (esperando credenciales)
-Etapa 0-B   — Credenciales + primer deploy: ⏸️  Bloqueado (tarea del propietario)
-Etapa 1     — Lectura dinámica Firestore:  ✅ Completado (frontend listo, activa con credenciales)
-Etapa 2     — Formularios → Firestore:     ✅ Completado (activa con credenciales + deploy Functions)
+Etapa 0-A   — Archivos base Firebase:      ✅ Completado
+Etapa 0-B   — Proyecto Firebase + servicios: ✅ Completado (2026-04-10)
+Etapa 0-C   — Cloud Functions deploy:      ⚠️  Parcial (createManagedUserV2 OK, resto falla por permisos Eventarc)
+Etapa 1     — Lectura dinámica Firestore:  ✅ Completado (credenciales reales en firebase-config.js)
+Etapa 2     — Formularios → Firestore:     ⚠️  Parcial (código listo, Functions pendientes de fix)
 Etapa 3     — Panel de administración:     ✅ Completado (activa con credenciales)
 Etapa 4     — Imágenes en Cloud Storage:   ✅ Script listo (ejecutar cuando Firebase esté activo)
 Etapa 5     — SEO dinámico + CI/CD:        ✅ Script + workflow listos (ejecutar con credenciales)
@@ -60,6 +61,107 @@ Etapa 8     — Mejoras comerciales:         ✅ Completado (código listo, Goog
 ---
 
 ## REGISTRO DE FASES COMPLETADAS
+
+---
+
+### ⚠️ ETAPA 0-C — Deploy de Cloud Functions (2026-04-10) — PENDIENTE FIX
+
+**Contexto:**
+Primera vez que se despliegan Cloud Functions 2nd gen en el proyecto `altorra-inmobiliaria-345c6`.
+
+**Lo que funcionó:**
+- ✅ `createManagedUserV2` — desplegada correctamente
+- ✅ Cleanup policy configurada: imágenes de contenedor se borran a los 30 días
+- ✅ Secret Manager API habilitada
+- ✅ Secrets creados: `EMAIL_USER`, `EMAIL_PASS`, `GITHUB_PAT`
+- ✅ Permisos de Secret Manager otorgados automáticamente a la cuenta de servicio
+
+**Lo que falló:**
+- ❌ `onNewSolicitud` — Error 400 Eventarc, invalid resource state
+- ❌ `onSolicitudStatusChanged` — mismo error
+- ❌ `onPropertyChange` — mismo error
+- ❌ `deleteManagedUserV2` — mismo error
+- ❌ `triggerSeoRegeneration` — mismo error
+
+**Causa del error:**
+```
+HTTP Error: 400, Validation failed for trigger. Invalid resource state for
+'permission denied while using the Eventarc Service Agent. If you recently
+started to use Eventarc, it may take a few minutes before all necessary
+permissions are propagated to the Service Agent.'
+```
+
+También apareció error de Cloud Build:
+```
+Build failed: Could not build the function due to a missing permission on
+the build service account.
+```
+
+**Cómo resolver (próxima sesión):**
+
+**Opción A — Esperar y reintentar** (más probable que funcione):
+El error de Eventarc es común en el primer deploy. Esperar 5-10 minutos y ejecutar:
+```powershell
+cd C:\Users\romad\Documents\GitHub\altorrainmobiliaria.github.io
+firebase deploy --only functions --account altorrainmobiliaria@gmail.com
+```
+
+**Opción B — Dar permisos manualmente si Opción A falla:**
+
+1. Ir a Google Cloud Console → IAM:
+   `console.cloud.google.com/iam-admin/iam?project=altorra-inmobiliaria-345c6`
+
+2. Buscar la cuenta de servicio:
+   `service-794130975989@gcp-sa-eventarc.iam.gserviceaccount.com`
+
+3. Darle el rol: **"Eventarc Service Agent"** (`roles/eventarc.serviceAgent`)
+
+4. Buscar también:
+   `794130975989@cloudbuild.gserviceaccount.com`
+
+5. Darle el rol: **"Cloud Build Service Account"** (`roles/cloudbuild.builds.builder`)
+
+6. Esperar 2-3 minutos y reintentar el deploy.
+
+**Opción C — Habilitar APIs faltantes:**
+```powershell
+# En PowerShell con gcloud instalado, o desde Cloud Console:
+# Habilitar: cloudbuild.googleapis.com, eventarc.googleapis.com, run.googleapis.com
+```
+Desde la consola: `console.cloud.google.com/apis/library` → buscar y habilitar cada una.
+
+**Datos del proyecto:**
+- Project ID: `altorra-inmobiliaria-345c6`
+- Project Number: `794130975989`
+- Region de Functions: `us-central1`
+- Cuenta Firebase CLI: `altorrainmobiliaria@gmail.com`
+- Ruta local: `C:\Users\romad\Documents\GitHub\altorrainmobiliaria.github.io`
+
+---
+
+### ✅ ETAPA 0-B — Proyecto Firebase configurado (2026-04-10)
+
+**Qué se hizo:**
+- ✅ Proyecto Firebase `altorra-inmobiliaria-345c6` creado
+- ✅ App web registrada, credenciales reales en `js/firebase-config.js`
+- ✅ Firestore activado (Standard, nam5, modo producción, reglas desplegadas)
+- ✅ Authentication activado: Email/contraseña + Anónimo
+- ✅ Storage activado (us-central1, modo producción, reglas desplegadas)
+- ✅ Realtime Database activado (us-central1, modo bloqueado, reglas desplegadas)
+- ✅ Primer usuario admin creado en Firebase Auth:
+  - Email: `info@altorrainmobiliaria.co`
+  - UID: `J1sXuV78OhPA5KyCoWNYFVQehF23`
+- ✅ Documento `usuarios/J1sXuV78OhPA5KyCoWNYFVQehF23` creado en Firestore con `rol: super_admin`
+- ✅ Secret Manager API habilitada
+- ✅ Secrets configurados: `EMAIL_USER`, `EMAIL_PASS` (app password Gmail), `GITHUB_PAT`
+- ✅ Firebase CLI vinculado: `firebase use altorra-inmobiliaria-345c6 --account altorrainmobiliaria@gmail.com`
+
+**Pendiente:**
+- ⚠️ Completar deploy de Cloud Functions (ver Etapa 0-C arriba)
+- ⚠️ Subir propiedades a Firestore: `node scripts/upload-to-firestore.mjs`
+- ⚠️ Configurar GOOGLE_APPLICATION_CREDENTIALS_JSON en GitHub Actions secrets
+
+**Commit credenciales:** `72103b1`
 
 ---
 
@@ -395,15 +497,17 @@ Cuando el propietario tenga Firebase configurado, solo habrá que:
 
 Estas tareas no las puede hacer Claude — requieren acceso a la consola de Firebase y cuentas del negocio:
 
-- [ ] Crear proyecto Firebase `altorra-inmobiliaria` en [console.firebase.google.com](https://console.firebase.google.com)
-- [ ] Activar: Firestore, Authentication (email/pass), Storage, Functions, Realtime Database, Analytics
-- [ ] Copiar `firebaseConfig` (apiKey, messagingSenderId, appId, measurementId) y compartirlo
-- [ ] Descargar service account JSON para scripts Node.js
-- [ ] Ejecutar `GOOGLE_APPLICATION_CREDENTIALS=./sa.json node scripts/upload-to-firestore.mjs`
-- [ ] Crear primer usuario super_admin en Firebase Auth Console
-- [ ] Crear documento `usuarios/{uid}` con `{ rol: "super_admin", activo: true }` en Firestore
-- [ ] Configurar secrets en GitHub Actions: `GOOGLE_APPLICATION_CREDENTIALS`
-- [ ] Configurar secrets en Firebase Functions: `EMAIL_USER`, `EMAIL_PASS`, `GITHUB_PAT`
+- [x] Crear proyecto Firebase `altorra-inmobiliaria-345c6` ✅
+- [x] Activar: Firestore, Authentication, Storage, Realtime Database ✅
+- [x] Copiar credenciales Firebase en `js/firebase-config.js` ✅
+- [x] Crear primer usuario super_admin en Firebase Auth ✅
+- [x] Crear documento `usuarios/{uid}` con `{ rol: "super_admin" }` ✅
+- [x] Configurar secrets: `EMAIL_USER`, `EMAIL_PASS`, `GITHUB_PAT` ✅
+- [ ] ⚠️ Completar deploy de Cloud Functions (ver Etapa 0-C — fix permisos Eventarc)
+- [ ] Ejecutar `node scripts/upload-to-firestore.mjs` para subir las 5 propiedades
+- [ ] Configurar secret `GOOGLE_APPLICATION_CREDENTIALS_JSON` en GitHub Actions
+- [ ] Reemplazar `GMAPS_API_KEY` en `js/mapa-propiedades.js` con key real de Google Maps
+- [ ] Reemplazar `VAPID_KEY` en `js/push-notifications.js` con key de Firebase Console
 
 ---
 
