@@ -54,12 +54,37 @@ Etapa 4     — Imágenes en Cloud Storage:   ✅ Script listo (ejecutar cuando 
 Etapa 5     — SEO dinámico + CI/CD:        ✅ Script + workflow listos (ejecutar con credenciales)
 Etapa 6     — Favoritos sincronizados:     ✅ Completado (funciona local + sync Firebase automático)
 Etapa 7     — Analytics y Marketing:       ✅ Completado (GA4 activa con measurementId)
-Etapa 8     — Mejoras comerciales:         ⏳ Pendiente
+Etapa 8     — Mejoras comerciales:         ✅ Completado (código listo, Google Maps key y VAPID pendientes)
 ```
 
 ---
 
 ## REGISTRO DE FASES COMPLETADAS
+
+---
+
+### ✅ ETAPA 8 — Mejoras comerciales (2026-04-10)
+
+**Qué se hizo:**
+
+- **8-A** `js/simulador-hipotecario.js` + `simulador.html` — Calculadora hipotecaria con amortización francesa. Sliders de cuota inicial (10–50%), plazo (5–30 años), tasa (8–24% E.A.). Presets VIS/no-VIS. Tabla de amortización por año (elemento `<details>`). CTA a WhatsApp + lead `solicitud_credito` en Firestore. Acepta `?precio=` desde detalle-propiedad.
+
+- **8-B** `js/comparador.js` — Comparador de hasta 3 propiedades. Tray flotante con thumbnails. Modal con tabla side-by-side (specs completos). Highlight del mejor valor por columna (`cmp-best`). Inyección de botones en tarjetas via MutationObserver. Persistencia en localStorage. API: `window.AltorraComparador`.
+
+- **8-C** `js/mapa-propiedades.js` + `mapa.html` — Mapa interactivo con Google Maps. Markers por operación (🟡 venta, 🔵 arriendo, 🟢 días). InfoWindow con imagen, specs y CTA. Filtros (operación, tipo, ciudad) encima del mapa. Carga SDK de Maps de forma lazy. Fallback a `data.json` si Firebase no disponible. API: `window.MapaPropiedades`.
+
+- **8-D** `avaluo.html` — Formulario de solicitud de avalúo comercial. Estimación orientativa en tiempo real por ciudad y tipo (precio/m² de mercado). Lead `solicitud_avaluo` → Firestore con fallback FormSubmit. Sidebar con info del proceso y CTA WhatsApp. Validación en tiempo real + honeypot.
+
+- **8-E** `scripts.js` — Reseñas cargadas desde Firestore `resenas` (activa == true, ordenadas por `orden`) con timeout 5s y fallback a `reviews.json`. Espera `altorra:firebase-ready` antes de consultar Firestore.
+
+- **8-F/G/H** `js/push-notifications.js` + `js/newsletter.js` — Push: FCM con VAPID key configurable, `requestPermission()` → `getToken` → guarda en `push_tokens/{token}`, `renderButton()` con toggle de estado. Newsletter: suscripción a alertas por email con criterios (operación, tipo, ciudad, presupuesto máx.), guarda en Firestore `newsletter`, detecta duplicados y reactiva, `renderForm()` widget completo con estado suscrito/no suscrito, fallback FormSubmit AJAX.
+
+**Pendiente (requiere credenciales del propietario):**
+- Reemplazar `GMAPS_API_KEY` en `js/mapa-propiedades.js` con key real de Google Maps
+- Reemplazar `VAPID_KEY` en `js/push-notifications.js` con key de Firebase Console
+- Agregar `measurementId` en `js/firebase-config.js` para GA4
+
+**Commits:** `51a7dc8` (comparador), `4a1cd67` (mapa), `f0ce296` (avalúo), `a76ed11` (reseñas Firestore), `3e0026a` (push + newsletter)
 
 ---
 
@@ -382,4 +407,4 @@ Estas tareas no las puede hacer Claude — requieren acceso a la consola de Fire
 
 ---
 
-*Última actualización: 2026-04-09*
+*Última actualización: 2026-04-10*

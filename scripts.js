@@ -126,39 +126,82 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-/* ============== 2) Reseñas: carga desde reviews.json y pinta 3 al azar ============== */
+/* ============== 2) Reseñas: Firestore primero, fallback reviews.json ============== */
 (function(){
   const wrap = document.getElementById('google-reviews');
-  const fallback = document.getElementById('reviews-fallback');
   if(!wrap) return;
-  fetch('reviews.json').then(function(res){
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    return res.json();
-  }).then(function(reviews){
-    if(Array.isArray(reviews) && reviews.length){
-      if(fallback) fallback.hidden = true;
-      let sample = reviews.slice().sort(()=>Math.random()-0.5).slice(0,3);
-      wrap.innerHTML = '';
-      sample.forEach(function(r){
-        const card = document.createElement('article');
-        card.className = 'review-card';
-        const head = document.createElement('div');
-        head.className = 'review-head';
-        const name = document.createElement('div'); name.textContent = r.author;
-        const stars = document.createElement('div'); stars.className = 'review-stars';
-        const rating = Math.round(parseFloat(r.rating) || 0);
-        stars.textContent = '★★★★★'.slice(0, rating);
-        stars.setAttribute('aria-label', rating+' de 5');
-        const time = document.createElement('div');
-        time.style.marginLeft='auto'; time.style.color='#6b7280'; time.style.fontSize='.9rem';
-        time.textContent = r.time || '';
-        head.appendChild(name); head.appendChild(stars); head.appendChild(time);
-        const body = document.createElement('p');
-        body.className = 'review-text'; body.textContent = r.content;
-        card.appendChild(head); card.appendChild(body); wrap.appendChild(card);
-      });
-    }
-  }).catch(function(err){ console.warn('No se pudieron cargar reseñas', err); });
+
+  function renderReviews(reviews) {
+    if(!Array.isArray(reviews) || !reviews.length) return;
+    const activas = reviews.filter(r => r.activa !== false && r.active !== false);
+    const sample  = activas.slice().sort(() => Math.random() - 0.5).slice(0, 3);
+    wrap.innerHTML = '';
+    sample.forEach(function(r){
+      const card = document.createElement('article');
+      card.className = 'review-card';
+      const head = document.createElement('div');
+      head.className = 'review-head';
+      const name = document.createElement('div');
+      name.textContent = r.autor || r.author || 'Anónimo';
+      const stars = document.createElement('div');
+      stars.className = 'review-stars';
+      const rating = Math.round(parseFloat(r.rating) || 5);
+      stars.textContent = '★★★★★'.slice(0, rating);
+      stars.setAttribute('aria-label', rating + ' de 5');
+      const time = document.createElement('div');
+      time.style.marginLeft = 'auto';
+      time.style.color = '#6b7280';
+      time.style.fontSize = '.9rem';
+      time.textContent = r.fecha || r.time || '';
+      head.appendChild(name); head.appendChild(stars); head.appendChild(time);
+      const body = document.createElement('p');
+      body.className = 'review-text';
+      body.textContent = r.texto || r.content || '';
+      card.appendChild(head); card.appendChild(body); wrap.appendChild(card);
+    });
+  }
+
+  async function loadFromFirestore() {
+    if(!window.db) return false;
+    try {
+      const { collection, getDocs, query, where, orderBy, limit } =
+        await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
+      const q = query(
+        collection(window.db, 'resenas'),
+        where('activa', '==', true),
+        orderBy('orden', 'asc'),
+        limit(20)
+      );
+      const snap = await Promise.race([
+        getDocs(q),
+        new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 5000)),
+      ]);
+      const docs = snap.docs.map(d => d.data());
+      if(docs.length) { renderReviews(docs); return true; }
+    } catch(_) {}
+    return false;
+  }
+
+  async function loadReviews() {
+    // Intentar Firestore primero
+    const fromFS = await loadFromFirestore();
+    if(fromFS) return;
+
+    // Fallback a reviews.json
+    try {
+      const res = await fetch('reviews.json');
+      if(!res.ok) throw new Error('HTTP ' + res.status);
+      renderReviews(await res.json());
+    } catch(err) { console.warn('No se pudieron cargar reseñas', err); }
+  }
+
+  // Esperar a Firebase o cargar directamente
+  if(window.db) {
+    loadReviews();
+  } else {
+    window.addEventListener('altorra:firebase-ready', loadReviews, { once: true });
+    setTimeout(loadReviews, 3000); // fallback si Firebase tarda
+  }
 })();
 
 /* ============== 3) Buscador rápido → redirección con querystring ============== */

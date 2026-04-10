@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Mapa de propiedades | Altorra Inmobiliaria</title>
+  <meta name="description" content="Explora todas las propiedades disponibles de Altorra Inmobiliaria en el mapa. Filtra por tipo, operación y ciudad."/>
+  <link rel="canonical" href="https://altorrainmobiliaria.co/mapa.html"/>
+  <meta name="theme-color" content="#d4af37"/>
+  <meta property="og:title" content="Mapa de propiedades | Altorra"/>
+  <meta property="og:description" content="Explora propiedades en venta, arriendo y alojamiento en el mapa interactivo."/>
+  <meta property="og:url" content="https://altorrainmobiliaria.co/mapa.html"/>
+  <meta property="og:type" content="website"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script type="module" src="js/firebase-config.js"></script>
+  <style>
+    .mapa-hero {
+      padding: calc(var(--header-h) + 40px) 16px 32px;
+      text-align: center;
+      background: linear-gradient(180deg, #fffdf4, #fff);
+    }
+    .mapa-hero h1 {
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      font-weight: 800;
+      margin: 0 0 8px;
+    }
+    .mapa-hero p {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .mapa-legend {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    .mapa-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .82rem;
+      color: var(--muted);
+    }
+    .mapa-legend-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    #mapa-propiedades {
+      width: 100%;
+      height: 520px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(17,24,39,.08);
+      box-shadow: 0 8px 32px rgba(17,24,39,.06);
+    }
+    @media (max-width: 700px) {
+      #mapa-propiedades { height: 400px; border-radius: 0; }
+    }
+    .mapa-wrap {
+      max-width: var(--page-max);
+      margin: 0 auto 80px;
+      padding: 0 20px;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+  <div id="header-placeholder"></div>
+
+  <div class="mapa-hero">
+    <h1>Mapa de <span style="color:var(--gold)">propiedades</span></h1>
+    <p>Explora todas las propiedades disponibles en el mapa. Filtra por operación, tipo o ciudad.</p>
+    <div class="mapa-legend">
+      <div class="mapa-legend-item">
+        <div class="mapa-legend-dot" style="background:#d4af37"></div>
+        <span>En venta</span>
+      </div>
+      <div class="mapa-legend-item">
+        <div class="mapa-legend-dot" style="background:#3b82f6"></div>
+        <span>En arriendo</span>
+      </div>
+      <div class="mapa-legend-item">
+        <div class="mapa-legend-dot" style="background:#10b981"></div>
+        <span>Por días</span>
+      </div>
+    </div>
+  </div>
+
+  <main id="main" class="mapa-wrap">
+    <div id="mapa-propiedades"></div>
+
+    <section style="margin-top:48px">
+      <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:16px">¿Por qué usar el mapa?</h2>
+      <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+        <div style="background:#f9fafb;border-radius:14px;padding:20px">
+          <div style="font-size:1.5rem;margin-bottom:8px">📍</div>
+          <h3 style="font-size:.95rem;font-weight:700;margin:0 0 6px">Ubica exactamente</h3>
+          <p style="font-size:.83rem;color:var(--muted);margin:0">Visualiza dónde está cada propiedad antes de agendaruna visita.</p>
+        </div>
+        <div style="background:#f9fafb;border-radius:14px;padding:20px">
+          <div style="font-size:1.5rem;margin-bottom:8px">🔍</div>
+          <h3 style="font-size:.95rem;font-weight:700;margin:0 0 6px">Filtra por zona</h3>
+          <p style="font-size:.83rem;color:var(--muted);margin:0">Limita la búsqueda por barrio o zona de la ciudad que más te interesa.</p>
+        </div>
+        <div style="background:#f9fafb;border-radius:14px;padding:20px">
+          <div style="font-size:1.5rem;margin-bottom:8px">💰</div>
+          <h3 style="font-size:.95rem;font-weight:700;margin:0 0 6px">Compara precios</h3>
+          <p style="font-size:.83rem;color:var(--muted);margin:0">Haz clic en cada marker para ver precio, specs y acceder al detalle.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <link rel="stylesheet" href="css/whatsapp-float.css"/>
+  <a href="https://wa.me/573002439810" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825.738 5.479 2.031 7.781l-2.031 7.219 7.375-1.938c2.238 1.213 4.8 1.938 7.531 1.938 8.838 0 16.094-7.163 16.094-16s-7.256-16-16-16zm9.563 22.188c-.394 1.113-1.95 2.038-3.194 2.313-.85.175-1.956.319-5.688-.919-4.769-1.581-7.844-6.356-8.081-6.65-.231-.294-1.95-2.594-1.95-4.95s1.238-3.513 1.675-3.994c.438-.481.956-.6 1.275-.6.319 0 .638.006.919.013.294.012.688-.113 1.075.819.394 1.025 1.35 3.294 1.469 3.531.119.238.2.519.038.819-.163.3-.244.488-.481.75-.238.263-.5.588-.713.788-.238.225-.488.469-.206.925.281.456 1.256 2.069 2.694 3.35 1.85 1.65 3.419 2.163 3.9 2.406.481.244.763.206 1.044-.125.281-.331 1.206-1.406 1.531-1.888.325-.481.644-.4 1.088-.238.444.163 2.819 1.331 3.3 1.569.481.238.8.356.919.556.119.2.119 1.144-.275 2.256z"/></svg>
+  </a>
+
+  <script src="js/database.js" defer></script>
+  <script src="js/cache-manager.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/analytics.js" defer></script>
+  <script src="js/mapa-propiedades.js" defer></script>
+</body>
+</html>
