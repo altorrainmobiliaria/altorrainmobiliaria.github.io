@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Simulador de crédito hipotecario | Altorra Inmobiliaria</title>
+  <meta name="description" content="Calcula tu cuota mensual estimada para un crédito hipotecario en Colombia. Simula plazo, tasa y cuota inicial al instante."/>
+  <link rel="canonical" href="https://altorrainmobiliaria.co/simulador.html"/>
+  <meta name="theme-color" content="#d4af37"/>
+  <meta property="og:title" content="Simulador hipotecario | Altorra"/>
+  <meta property="og:description" content="Calcula tu cuota mensual estimada para comprar propiedad en Colombia."/>
+  <meta property="og:url" content="https://altorrainmobiliaria.co/simulador.html"/>
+  <meta property="og:type" content="website"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script type="module" src="js/firebase-config.js"></script>
+  <style>
+    .sim-hero {
+      padding: calc(var(--header-h) + 48px) 16px 48px;
+      text-align: center;
+      background: linear-gradient(180deg, #fffdf4, #fff);
+    }
+    .sim-hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      margin: 0 0 10px;
+    }
+    .sim-hero p {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 540px;
+      margin: 0 auto;
+    }
+    .sim-main {
+      max-width: 800px;
+      margin: 0 auto 80px;
+      padding: 40px 20px;
+      background: #fff;
+      border-radius: 24px;
+      border: 1px solid rgba(17,24,39,.07);
+      box-shadow: 0 12px 40px rgba(17,24,39,.06);
+    }
+    @media (max-width: 860px) {
+      .sim-main { border-radius: 0; border-left: 0; border-right: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+  <div id="header-placeholder"></div>
+
+  <div class="sim-hero">
+    <h1>Simulador de crédito <span style="color:var(--gold)">hipotecario</span></h1>
+    <p>Estima tu cuota mensual en segundos. Solo ingresa el precio, la cuota inicial y el plazo.</p>
+  </div>
+
+  <main id="main" style="max-width:var(--page-max);margin:0 auto 60px;padding:0 16px">
+    <div class="sim-main">
+      <div id="simulador-container"></div>
+    </div>
+
+    <!-- Info adicional -->
+    <section style="max-width:800px;margin:48px auto 0;padding:0 4px">
+      <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:16px">¿Cómo funciona el simulador?</h2>
+      <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+        <div style="background:#f9fafb;border-radius:14px;padding:20px">
+          <div style="font-size:1.6rem;margin-bottom:8px">🏠</div>
+          <h3 style="font-size:1rem;font-weight:700;margin:0 0 6px">Ingresa el precio</h3>
+          <p style="font-size:.88rem;color:var(--muted);margin:0">El valor total de la propiedad que quieres financiar.</p>
+        </div>
+        <div style="background:#f9fafb;border-radius:14px;padding:20px">
+          <div style="font-size:1.6rem;margin-bottom:8px">💰</div>
+          <h3 style="font-size:1rem;font-weight:700;margin:0 0 6px">Define la cuota inicial</h3>
+          <p style="font-size:.88rem;color:var(--muted);margin:0">Mínimo 30% para créditos no-VIS. 20% para VIS con subsidio.</p>
+        </div>
+        <div style="background:#f9fafb;border-radius:14px;padding:20px">
+          <div style="font-size:1.6rem;margin-bottom:8px">📅</div>
+          <h3 style="font-size:1rem;font-weight:700;margin:0 0 6px">Elige el plazo</h3>
+          <p style="font-size:.88rem;color:var(--muted);margin:0">Hasta 30 años. A mayor plazo, menor cuota pero más intereses totales.</p>
+        </div>
+      </div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:20px;text-align:center">
+        Las tasas de referencia son orientativas. Consulta con tu banco para condiciones reales.
+      </p>
+    </section>
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <link rel="stylesheet" href="css/whatsapp-float.css"/>
+  <a href="https://wa.me/573002439810" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825.738 5.479 2.031 7.781l-2.031 7.219 7.375-1.938c2.238 1.213 4.8 1.938 7.531 1.938 8.838 0 16.094-7.163 16.094-16s-7.256-16-16-16zm9.563 22.188c-.394 1.113-1.95 2.038-3.194 2.313-.85.175-1.956.319-5.688-.919-4.769-1.581-7.844-6.356-8.081-6.65-.231-.294-1.95-2.594-1.95-4.95s1.238-3.513 1.675-3.994c.438-.481.956-.6 1.275-.6.319 0 .638.006.919.013.294.012.688-.113 1.075.819.394 1.025 1.35 3.294 1.469 3.531.119.238.2.519.038.819-.163.3-.244.488-.481.75-.238.263-.5.588-.713.788-.238.225-.488.469-.206.925.281.456 1.256 2.069 2.694 3.35 1.85 1.65 3.419 2.163 3.9 2.406.481.244.763.206 1.044-.125.281-.331 1.206-1.406 1.531-1.888.325-.481.644-.4 1.088-.238.444.163 2.819 1.331 3.3 1.569.481.238.8.356.919.556.119.2.119 1.144-.275 2.256z"/></svg>
+  </a>
+
+  <script src="js/database.js" defer></script>
+  <script src="js/cache-manager.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/analytics.js" defer></script>
+  <script src="js/simulador-hipotecario.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Inicializar inmediatamente (no requiere Firebase)
+      SimuladorHipotecario.init('#simulador-container');
+
+      // Si viene de detalle-propiedad con precio en URL
+      const params = new URLSearchParams(window.location.search);
+      const precio = params.get('precio');
+      if (precio) {
+        const input = document.getElementById('simPrecio');
+        if (input) { input.value = precio; input.dispatchEvent(new Event('input')); }
+      }
+    });
+  </script>
+</body>
+</html>
