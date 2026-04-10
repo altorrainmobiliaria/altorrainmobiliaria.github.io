@@ -2,7 +2,7 @@
 ## Bitácora de implementación hacia plataforma dinámica con Firebase
 
 > Documento vivo. Se actualiza con cada microfase completada.
-> Última actualización: 2026-04-09
+> Última actualización: 2026-04-10
 
 ---
 
@@ -47,9 +47,9 @@ FASE PREVIA — Dominio y correo:            ✅ Completado
 FASE DOC    — CLAUDE.md + ALTORRACARSCLAUDE.md: ✅ Completado
 Etapa 0-A   — Archivos base Firebase:      ✅ Completado (esperando credenciales)
 Etapa 0-B   — Credenciales + primer deploy: ⏸️  Bloqueado (tarea del propietario)
-Etapa 1     — Lectura dinámica Firestore:  ⏳ Pendiente (no requiere credenciales aún)
-Etapa 2     — Formularios → Firestore:     ⏳ Pendiente
-Etapa 3     — Panel de administración:     ⏳ Pendiente
+Etapa 1     — Lectura dinámica Firestore:  ✅ Completado (frontend listo, activa con credenciales)
+Etapa 2     — Formularios → Firestore:     ✅ Completado (activa con credenciales + deploy Functions)
+Etapa 3     — Panel de administración:     ✅ Completado (activa con credenciales)
 Etapa 4     — Imágenes en Cloud Storage:   ⏳ Pendiente
 Etapa 5     — SEO dinámico + CI/CD:        ⏳ Pendiente
 Etapa 6     — Favoritos sincronizados:     ⏳ Pendiente
@@ -89,6 +89,36 @@ Etapa 8     — Mejoras comerciales:         ⏳ Pendiente
 - Añadida restricción crítica de costos (plan Blaze, tier gratuito)
 
 **Commits:** `a9d43b3`, `a96986f`, `73c6866`, `722be53`, `f2e8aa9`, `850facb`
+
+---
+
+### ✅ ETAPAS 1, 2 y 3 — Frontend dinámico + Formularios + Panel Admin (2026-04-10)
+
+**Qué se hizo (Etapa 1 — Lectura dinámica):**
+- `js/firebase-config.js` — Inicialización Firebase SDK v12.9.0 ESM, carga crítica (Auth+Firestore) en paralelo, carga diferida (Storage/Functions/Analytics/RTDB). Placeholders TODO para credenciales.
+- `js/database.js` — Clase `PropertyDatabase` con 3 niveles de carga: Memory → localStorage (TTL 5 min) → Firestore → fallback `data.json`. Normalización Firestore→JS (`titulo→title`, `habitaciones→beds`, etc.). Paginación con `limit(100)`. Eventos: `altorra:db-ready`, `altorra:db-refreshed`.
+- `js/cache-manager.js` — Caché 3 capas (Memory/Map, localStorage, IndexedDB). TTL 5 min. Dos señales de invalidación: `onSnapshot system/meta` + polling `data/deploy-info.json` cada 10 min. API: `window.AltorraCache.{get, set, invalidate, clearAndReload}`.
+- `js/render.js` — `window.AltorraRender.propertyCard(p)` genera `<article class="card">` con lazy image, badges, fav button, specs, precio. `renderList()`, `showEmpty()`, `showError()`.
+- `js/components.js` — Reemplaza `header-footer.js`. `fetch()` simple (sin localStorage). Inyecta `header.html` + `footer.html` + `snippets/modals.html`. Maneja nav desktop y drawer móvil.
+- `js/listado-propiedades.js` — Reemplaza `getJSONCached()` por `waitForDB()`. Escucha `altorra:db-refreshed` para re-renderizar sin recargar.
+- `scripts.js` — `fetchByOperation()` usa `propertyDB.filter()`. `quicksearch` usa `propertyDB.getById()`.
+- **10 páginas HTML** — Añadido `<script type="module" src="js/firebase-config.js">` en `<head>`, reemplazado `header-footer.js` por `database.js + cache-manager.js + components.js`.
+
+**Qué se hizo (Etapa 2 — Formularios → Firestore):**
+- `functions/package.json` — Node 20, `firebase-functions ^6`, `firebase-admin ^13`, `nodemailer ^6.9`.
+- `functions/index.js` — 6 Cloud Functions: `onNewSolicitud` (email admin), `onSolicitudStatusChanged` (email cliente), `onPropertyChange` (debounce 5 min → GitHub Actions), `triggerSeoRegeneration` (callable), `createManagedUserV2`, `deleteManagedUserV2`. Secrets via `defineSecret()`.
+- `js/contact-forms.js` — 3 formularios → Firestore `solicitudes`. `waitForFirebase()` con timeout 8s → fallback FormSubmit. Rate limiting 30s, honeypot, `addDoc`.
+- `contacto.html`, `detalle-propiedad.html`, `publicar-propiedad.html` — Limpiados campos FormSubmit, mantenida acción como fallback, añadido `contact-forms.js`.
+
+**Qué se hizo (Etapa 3 — Panel de administración):**
+- `admin.html` — SPA con login (`#loginForm`), sidebar (Dashboard/Propiedades/Leads/Reseñas/Usuarios), 5 secciones de contenido (`section-dashboard`, `section-propiedades`, etc.), 4 modales (`propModal`, `leadModal`, `resenaModal`, `userModal`). Todos los IDs coordinados con los módulos JS.
+- `css/admin.css` — Layout sidebar fijo 240px, header 60px, tablas, badges de estado, modales, botones, formularios, responsive ≤860px.
+- `js/admin-auth.js` — Login Firebase Auth + verificación intentos (bloqueo 5 fallos / 15 min), carga de perfil con retry 3x+backoff (fix bug Cars "Access denied"), RBAC `applyRolePermissions()`, timeout 8h + inactividad 30 min. API: `window.AdminAuth`.
+- `js/admin-properties.js` — CRUD Firestore completo: listar (filtros+paginación), crear (slug automático), editar (optimistic locking `_version`), cambiar estado, eliminar (solo super_admin), subida imágenes a Cloud Storage con compresión Canvas API. Invalida `system/meta` tras cambios. API: `window.AdminProperties`.
+- `js/admin-leads.js` — Lista leads con filtros, ver detalle, actualizar estado (tabla y modal), badge sidebar de pendientes, `onSnapshot` en tiempo real solo cuando la sección está activa. API: `window.AdminLeads`.
+- `js/admin-users.js` — Gestión de usuarios admin (listar, crear via callable, cambiar rol, eliminar). CRUD completo de reseñas (colección `resenas`). Solo accesible para `super_admin`. API: `window.AdminUsers`.
+
+**Commits:** `047092c`, `2a12467`, `74eb0fd`, `0b7c880`, `2b89a16`, `26422fe`, `a03dab0`, `c9668c8`, `f4de6da`, `644bce7`, `8d352ec`, `0ec0d76`, `7e7c400`, `87fd1d6`, `6619d50`, `5968031`, `7bd0c20`, `a819fa3`, `52dcc37`, `6e2c94f`
 
 ---
 
