@@ -196,6 +196,7 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
 .map-wrap{height:340px;border-radius:14px;overflow:hidden;border:1px solid rgba(17,24,39,.08)}
 .leaflet-container{font:inherit}
 </style>
+  <script type="module" src="js/firebase-config.js"></script>
 </head>
 <body>
   <a href="#propertyDetail" class="skip-link">Saltar al contenido principal</a>
@@ -215,7 +216,9 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
 
   <main id="propertyDetail" class="detail-container"></main>
   <div id="footer-placeholder"></div>
-  <script src="header-footer.js" defer></script>
+  <script src="js/database.js" defer></script>
+  <script src="js/cache-manager.js" defer></script>
+  <script src="js/components.js" defer></script>
 
   <script>
 const __ALT_NS='altorra:json:';const __ALT_VER='2025-09-07.1';

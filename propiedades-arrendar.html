@@ -58,6 +58,7 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
 .footer-grid{max-width:var(--page-max);margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 @media (max-width:920px){.footer-grid{grid-template-columns:1fr}}
 </style>
+  <script type="module" src="js/firebase-config.js"></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Saltar al contenido principal</a>
@@ -159,7 +160,9 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
 <div id="footer-placeholder"></div>
 
 <!-- ✅ ORDEN CORRECTO DE SCRIPTS -->
-<script defer src="header-footer.js"></script>
+<script src="js/database.js" defer></script>
+<script src="js/cache-manager.js" defer></script>
+<script src="js/components.js" defer></script>
 <script defer src="js/listado-propiedades.js"></script>
 <script defer src="js/favoritos.js"></script>
   

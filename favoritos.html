@@ -198,6 +198,7 @@
       border-color: rgba(239, 68, 68, 0.3);
     }
   </style>
+  <script type="module" src="js/firebase-config.js"></script>
 </head>
 
 <body>
@@ -265,7 +266,9 @@
 
   <div id="footer-placeholder"></div>
 
-  <script src="header-footer.js" defer></script>
+  <script src="js/database.js" defer></script>
+  <script src="js/cache-manager.js" defer></script>
+  <script src="js/components.js" defer></script>
   
   <script>
     function formatCOP(n) {
