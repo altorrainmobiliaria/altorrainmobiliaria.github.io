@@ -268,8 +268,9 @@
 
   <script src="js/database.js" defer></script>
   <script src="js/cache-manager.js" defer></script>
+  <script src="js/favorites-manager.js" defer></script>
   <script src="js/components.js" defer></script>
-  
+
   <script>
     function formatCOP(n) {
       if (!n && n !== 0) return '';
@@ -282,17 +283,15 @@
     }
 
     function renderFavorites() {
-      // Obtener favoritos del localStorage directamente
+      // Usar AltorraFavoritos si está disponible (sync con Firebase), si no, leer localStorage
       let favs = [];
-      try {
-        const raw = localStorage.getItem('altorra:favoritos');
-        if (raw) {
-          favs = JSON.parse(raw);
-          if (!Array.isArray(favs)) favs = [];
-        }
-      } catch (e) {
-        console.error('Error al cargar favoritos:', e);
-        favs = [];
+      if (window.AltorraFavoritos) {
+        favs = window.AltorraFavoritos.get();
+      } else {
+        try {
+          const raw = localStorage.getItem('altorra:favoritos');
+          if (raw) { favs = JSON.parse(raw); if (!Array.isArray(favs)) favs = []; }
+        } catch { favs = []; }
       }
 
       const grid = document.getElementById('favorites-grid');
@@ -360,20 +359,16 @@
         removeBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           if (confirm('¿Eliminar de favoritos?')) {
-            // Remover del localStorage
-            try {
-              let currentFavs = JSON.parse(localStorage.getItem('altorra:favoritos') || '[]');
-              currentFavs = currentFavs.filter(f => f.id !== prop.id);
-              localStorage.setItem('altorra:favoritos', JSON.stringify(currentFavs));
-              
-              // Disparar evento para actualizar badge
-              document.dispatchEvent(new CustomEvent('altorra:fav-update', { 
-                detail: { count: currentFavs.length } 
-              }));
-              
-              renderFavorites();
-            } catch (err) {
-              console.error('Error al eliminar favorito:', err);
+            if (window.AltorraFavoritos) {
+              window.AltorraFavoritos.remove(prop.id).then(() => renderFavorites());
+            } else {
+              try {
+                let f = JSON.parse(localStorage.getItem('altorra:favoritos') || '[]');
+                f = f.filter(x => x.id !== prop.id);
+                localStorage.setItem('altorra:favoritos', JSON.stringify(f));
+                document.dispatchEvent(new CustomEvent('altorra:fav-update', { detail: { count: f.length } }));
+                renderFavorites();
+              } catch { /* ignore */ }
             }
           }
         });
@@ -385,14 +380,15 @@
     // Limpiar todos los favoritos
     document.getElementById('btn-clear-all').addEventListener('click', () => {
       if (confirm('¿Estás seguro de eliminar todos los favoritos?')) {
-        try {
-          localStorage.removeItem('altorra:favoritos');
-          document.dispatchEvent(new CustomEvent('altorra:fav-update', { 
-            detail: { count: 0 } 
-          }));
+        if (window.AltorraFavoritos) {
+          window.AltorraFavoritos.clear();
           renderFavorites();
-        } catch (err) {
-          console.error('Error al limpiar favoritos:', err);
+        } else {
+          try {
+            localStorage.removeItem('altorra:favoritos');
+            document.dispatchEvent(new CustomEvent('altorra:fav-update', { detail: { count: 0 } }));
+            renderFavorites();
+          } catch { /* ignore */ }
         }
       }
     });
@@ -404,12 +400,12 @@
       renderFavorites();
     }
 
-    // Re-renderizar si se actualiza desde otra pestaña
+    // Re-renderizar si se actualiza desde otra pestaña o desde Firebase
     window.addEventListener('storage', (e) => {
-      if (e.key === 'altorra:favoritos') {
-        renderFavorites();
-      }
+      if (e.key === 'altorra:favoritos') renderFavorites();
     });
+    // Re-renderizar al sincronizar con Firebase (favorites-manager dispara este evento)
+    document.addEventListener('altorra:fav-update', renderFavorites);
   </script>
  <!-- WhatsApp Floating Button -->
 <link rel="stylesheet" href="css/whatsapp-float.css">

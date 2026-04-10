@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Admin — Altorra Inmobiliaria</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/admin.css"/>
+  <script type="module" src="js/firebase-config.js"></script>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     PANTALLA DE LOGIN
+══════════════════════════════════════════════════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <img src="https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-ago-2025-10-31-20.png" alt="Logo Altorra" width="56" height="56"/>
+      <h1>Altorra Inmobiliaria</h1>
+      <p>Panel de administración</p>
+    </div>
+    <form class="login-form" id="loginForm" novalidate>
+      <div id="loginError" class="login-error" role="alert" hidden></div>
+      <label for="loginEmail">Correo electrónico</label>
+      <input type="email" id="loginEmail" autocomplete="email" placeholder="admin@altorrainmobiliaria.co" required/>
+      <label for="loginPassword">Contraseña</label>
+      <input type="password" id="loginPassword" autocomplete="current-password" placeholder="••••••••" required/>
+      <button type="submit" class="btn-login" id="loginBtn">Iniciar sesión</button>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     APLICACIÓN ADMIN (oculta hasta autenticar)
+══════════════════════════════════════════════════════ -->
+<div id="adminApp" style="display:none">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-brand">
+      <img src="https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-ago-2025-10-31-20.png" alt="Logo"/>
+      <div>
+        <span>Altorra</span>
+        <small>Inmobiliaria</small>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Menú admin">
+      <div class="nav-section-title">Principal</div>
+      <a href="#dashboard" class="nav-link active" data-section="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="#propiedades" class="nav-link" data-section="propiedades">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Propiedades
+      </a>
+      <a href="#leads" class="nav-link" data-section="leads">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Leads
+        <span class="nav-badge" id="leadsCountBadge" hidden style="margin-left:auto;background:var(--danger);color:#fff;border-radius:999px;font-size:.7rem;font-weight:800;padding:1px 7px"></span>
+      </a>
+      <a href="#resenas" class="nav-link" data-section="resenas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Reseñas
+      </a>
+      <div class="nav-section-title">Configuración</div>
+      <a href="#usuarios" class="nav-link" data-section="usuarios" data-role="super_admin">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Usuarios
+      </a>
+      <a href="index.html" class="nav-link" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Ver sitio
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="sidebar-user-info">
+          <div class="sidebar-user-name" id="sidebarName">Cargando...</div>
+          <div class="sidebar-user-role" id="sidebarRole">—</div>
+        </div>
+        <button class="btn-logout" id="logoutBtn" title="Cerrar sesión" aria-label="Cerrar sesión">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Contenido principal -->
+  <div class="admin-content">
+    <header class="admin-topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Abrir menú">☰</button>
+        <span class="topbar-title" id="topbarTitle">Dashboard</span>
+      </div>
+      <div class="topbar-actions">
+        <span id="topbarDate" style="font-size:.82rem;color:var(--muted)"></span>
+      </div>
+    </header>
+
+    <main class="admin-main">
+
+      <!-- ── DASHBOARD ── -->
+      <section class="admin-section active" id="section-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-label">Propiedades</div><div class="stat-value" id="statProps">—</div><div class="stat-sub">en catálogo</div></div>
+          <div class="stat-card"><div class="stat-label">Leads totales</div><div class="stat-value" id="statLeads">—</div><div class="stat-sub">recibidos</div></div>
+          <div class="stat-card"><div class="stat-label">Leads pendientes</div><div class="stat-value" id="statPending">—</div><div class="stat-sub">sin atender</div></div>
+          <div class="stat-card"><div class="stat-label">Reseñas</div><div class="stat-value" id="statResenas">—</div><div class="stat-sub">publicadas</div></div>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-header"><h2>Leads recientes</h2></div>
+          <div class="admin-card-body" id="recentLeads"><div class="admin-loader"><div class="spinner"></div> Cargando...</div></div>
+        </div>
+      </section>
+
+      <!-- ── PROPIEDADES ── -->
+      <section class="admin-section" id="section-propiedades">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2>Propiedades</h2>
+            <button class="btn-admin primary" id="btnNewProp">+ Nueva propiedad</button>
+          </div>
+          <div class="admin-card-body">
+            <div class="filter-bar">
+              <input type="search" id="propSearch" placeholder="Buscar por título, ID, barrio…" aria-label="Buscar propiedad"/>
+              <select id="propFilterOp" aria-label="Filtrar por operación">
+                <option value="">Todas las operaciones</option>
+                <option value="comprar">Comprar</option>
+                <option value="arrendar">Arrendar</option>
+                <option value="dias">Por días</option>
+              </select>
+              <select id="propFilterEstado" aria-label="Filtrar por estado">
+                <option value="">Todos los estados</option>
+                <option value="disponible">Disponible</option>
+                <option value="reservado">Reservado</option>
+                <option value="vendido">Vendido</option>
+                <option value="arrendado">Arrendado</option>
+              </select>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr><th>ID</th><th>Título / Ubicación</th><th>Operación</th><th>Tipo</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr>
+                </thead>
+                <tbody id="propTableBody">
+                  <tr><td colspan="7" class="empty-state"><div class="admin-loader"><div class="spinner"></div> Cargando propiedades...</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="propPagination" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── LEADS ── -->
+      <section class="admin-section" id="section-leads">
+        <div class="admin-card">
+          <div class="admin-card-header"><h2>Leads y solicitudes</h2></div>
+          <div class="admin-card-body">
+            <div class="filter-bar">
+              <input type="search" id="leadSearch" placeholder="Buscar por nombre, email…" aria-label="Buscar lead"/>
+              <select id="leadFilterTipo" aria-label="Filtrar por tipo">
+                <option value="">Todos los tipos</option>
+                <option value="contacto_propiedad">Contacto propiedad</option>
+                <option value="publicar_propiedad">Publicar propiedad</option>
+                <option value="solicitud_avaluo">Avalúo</option>
+                <option value="solicitud_juridica">Jurídico</option>
+                <option value="solicitud_contable">Contable</option>
+                <option value="otro">Otro</option>
+              </select>
+              <select id="leadFilterEstado" aria-label="Filtrar por estado">
+                <option value="">Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="en_gestion">En gestión</option>
+                <option value="cerrado">Cerrado</option>
+              </select>
+            </div>
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr><th>Fecha</th><th>Nombre</th><th>Teléfono</th><th>Tipo</th><th>Propiedad</th><th>Estado</th><th>Acciones</th></tr>
+                </thead>
+                <tbody id="leadsTableBody">
+                  <tr><td colspan="7" class="empty-state"><div class="admin-loader"><div class="spinner"></div> Cargando leads...</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="leadsPagination" style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── RESEÑAS ── -->
+      <section class="admin-section" id="section-resenas">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2>Reseñas</h2>
+            <button class="btn-admin primary" id="btnNewResena">+ Nueva reseña</button>
+          </div>
+          <div class="admin-card-body">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr><th>Autor</th><th>Rating</th><th>Texto</th><th>Estado</th><th>Acciones</th></tr>
+                </thead>
+                <tbody id="resenasTableBody">
+                  <tr><td colspan="5" class="empty-state"><div class="admin-loader"><div class="spinner"></div> Cargando reseñas...</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── USUARIOS ── -->
+      <section class="admin-section" id="section-usuarios">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <h2>Usuarios admin</h2>
+            <button class="btn-admin primary" id="btnNewUser">+ Nuevo usuario</button>
+          </div>
+          <div class="admin-card-body">
+            <div class="admin-table-wrap">
+              <table class="admin-table">
+                <thead>
+                  <tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th>Creado</th><th>Acciones</th></tr>
+                </thead>
+                <tbody id="usersTableBody">
+                  <tr><td colspan="6" class="empty-state"><div class="admin-loader"><div class="spinner"></div> Cargando usuarios...</div></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div><!-- /admin-content -->
+</div><!-- /adminApp -->
+
+<!-- ══════════════════════════════════════════════════════
+     MODALS
+══════════════════════════════════════════════════════ -->
+
+<!-- Modal: propiedad (crear / editar) -->
+<div class="modal-overlay" id="propModal" role="dialog" aria-modal="true" aria-labelledby="propModalTitle">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="propModalTitle">Nueva propiedad</h3>
+      <button class="modal-close" data-close-modal="propModal" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="propForm" novalidate>
+        <div class="form-grid">
+
+          <!-- ID (edición: readonly; creación: editable) -->
+          <div class="form-group">
+            <label for="propId">ID único * <small style="font-weight:400;color:var(--muted)">(ej. 101-27)</small></label>
+            <input type="text" id="propId" required placeholder="101-27"/>
+          </div>
+          <div class="form-group">
+            <label for="propEstado">Estado</label>
+            <select id="propEstado">
+              <option value="disponible">Disponible</option>
+              <option value="reservado">Reservado</option>
+              <option value="vendido">Vendido</option>
+              <option value="arrendado">Arrendado</option>
+            </select>
+          </div>
+
+          <div class="form-group span-2">
+            <label for="propTitulo">Título *</label>
+            <input type="text" id="propTitulo" required placeholder="Apartamento exclusivo en Bocagrande"/>
+          </div>
+
+          <div class="form-group">
+            <label for="propTipo">Tipo *</label>
+            <select id="propTipo" required>
+              <option value="apartamento">Apartamento</option>
+              <option value="casa">Casa</option>
+              <option value="lote">Lote</option>
+              <option value="oficina">Oficina</option>
+              <option value="bodega">Bodega</option>
+              <option value="local">Local</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="propOperacion">Operación *</label>
+            <select id="propOperacion" required>
+              <option value="comprar">Comprar</option>
+              <option value="arrendar">Arrendar</option>
+              <option value="dias">Por días</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="propCiudad">Ciudad *</label>
+            <input type="text" id="propCiudad" required value="Cartagena"/>
+          </div>
+          <div class="form-group">
+            <label for="propBarrio">Barrio / Sector</label>
+            <input type="text" id="propBarrio" placeholder="Bocagrande"/>
+          </div>
+          <div class="form-group span-2">
+            <label for="propDireccion">Dirección <small style="font-weight:400;color:var(--muted)">(opcional)</small></label>
+            <input type="text" id="propDireccion" placeholder="Av. San Martín # ..."/>
+          </div>
+
+          <div class="form-group">
+            <label for="propPrecio">Precio COP *</label>
+            <input type="number" id="propPrecio" required min="0" placeholder="5350000000"/>
+          </div>
+          <div class="form-group">
+            <label for="propAdminFee">Administración COP</label>
+            <input type="number" id="propAdminFee" min="0" placeholder="230000"/>
+          </div>
+
+          <div class="form-group">
+            <label for="propHabitaciones">Habitaciones</label>
+            <input type="number" id="propHabitaciones" min="0" max="20"/>
+          </div>
+          <div class="form-group">
+            <label for="propBanos">Baños</label>
+            <input type="number" id="propBanos" min="0" max="20"/>
+          </div>
+          <div class="form-group">
+            <label for="propSqm">m² construidos</label>
+            <input type="number" id="propSqm" min="0"/>
+          </div>
+          <div class="form-group">
+            <label for="propSqmTerreno">m² terreno</label>
+            <input type="number" id="propSqmTerreno" min="0"/>
+          </div>
+          <div class="form-group">
+            <label for="propGarajes">Garajes</label>
+            <input type="number" id="propGarajes" min="0" max="10"/>
+          </div>
+          <div class="form-group">
+            <label for="propPiso">Piso</label>
+            <input type="number" id="propPiso" min="0"/>
+          </div>
+          <div class="form-group">
+            <label for="propEstrato">Estrato</label>
+            <select id="propEstrato">
+              <option value="">—</option>
+              <option>1</option><option>2</option><option>3</option>
+              <option>4</option><option>5</option><option>6</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="propAno">Año construcción</label>
+            <input type="number" id="propAno" min="1900" max="2030"/>
+          </div>
+
+          <div class="form-group">
+            <label for="propLat">Latitud</label>
+            <input type="number" id="propLat" step="any" placeholder="10.402567"/>
+          </div>
+          <div class="form-group">
+            <label for="propLng">Longitud</label>
+            <input type="number" id="propLng" step="any" placeholder="-75.552746"/>
+          </div>
+
+          <div class="form-group span-2" style="flex-direction:row;align-items:center;gap:10px">
+            <input type="checkbox" id="propFeatured" style="width:auto"/>
+            <label for="propFeatured" style="margin:0;color:var(--text);font-weight:500">Propiedad destacada</label>
+            <input type="checkbox" id="propAmoblado" style="width:auto;margin-left:16px"/>
+            <label for="propAmoblado" style="margin:0;color:var(--text);font-weight:500">Amoblada</label>
+          </div>
+
+          <div class="form-group span-2">
+            <label for="propFeatures">Amenidades <small style="font-weight:400;color:var(--muted)">(separadas por coma)</small></label>
+            <input type="text" id="propFeatures" placeholder="Aire Acondicionado, Piscina, Balcón"/>
+          </div>
+
+          <div class="form-group span-2">
+            <label for="propDescripcion">Descripción</label>
+            <textarea id="propDescripcion" rows="5" placeholder="Descripción detallada de la propiedad…"></textarea>
+          </div>
+
+          <div class="form-group span-2">
+            <label for="propImages">Imágenes <small style="font-weight:400;color:var(--muted)">(se subirán a Cloud Storage)</small></label>
+            <input type="file" id="propImages" accept="image/*" multiple/>
+            <div id="imagesPreview" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px"></div>
+          </div>
+
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-admin ghost" data-close-modal="propModal">Cancelar</button>
+      <button class="btn-admin primary" id="propSaveBtn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: detalle de lead -->
+<div class="modal-overlay" id="leadModal" role="dialog" aria-modal="true" aria-labelledby="leadModalTitle">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-header">
+      <h3 id="leadModalTitle">Detalle del lead</h3>
+      <button class="modal-close" data-close-modal="leadModal" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal-body" id="leadDetailBody"></div>
+    <div class="modal-footer">
+      <button class="btn-admin ghost" data-close-modal="leadModal">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: reseña (crear / editar) -->
+<div class="modal-overlay" id="resenaModal" role="dialog" aria-modal="true" aria-labelledby="resenaModalTitle">
+  <div class="modal-box" style="max-width:480px">
+    <div class="modal-header">
+      <h3 id="resenaModalTitle">Nueva reseña</h3>
+      <button class="modal-close" data-close-modal="resenaModal" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="resenaForm" novalidate>
+        <div class="form-grid full">
+          <input type="hidden" id="resenaDocId"/>
+          <div class="form-group">
+            <label for="resenaAutor">Autor *</label>
+            <input type="text" id="resenaAutor" required/>
+          </div>
+          <div class="form-group">
+            <label for="resenaRating">Rating (1-5) *</label>
+            <select id="resenaRating" required>
+              <option value="5">5 — Excelente</option>
+              <option value="4">4 — Muy bueno</option>
+              <option value="3">3 — Bueno</option>
+              <option value="2">2 — Regular</option>
+              <option value="1">1 — Malo</option>
+            </select>
+          </div>
+          <div class="form-group span-2">
+            <label for="resenaTexto">Texto *</label>
+            <textarea id="resenaTexto" required rows="4"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="resenaFecha">Fecha</label>
+            <input type="date" id="resenaFecha"/>
+          </div>
+          <div class="form-group">
+            <label for="resenaOrden">Orden</label>
+            <input type="number" id="resenaOrden" min="1" value="1"/>
+          </div>
+          <div class="form-group" style="flex-direction:row;align-items:center;gap:10px">
+            <input type="checkbox" id="resenaActiva" checked style="width:auto"/>
+            <label for="resenaActiva" style="margin:0;color:var(--text);font-weight:500">Visible en el sitio</label>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-admin ghost" data-close-modal="resenaModal">Cancelar</button>
+      <button class="btn-admin primary" id="resenaSaveBtn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: nuevo usuario -->
+<div class="modal-overlay" id="userModal" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
+  <div class="modal-box" style="max-width:440px">
+    <div class="modal-header">
+      <h3 id="userModalTitle">Nuevo usuario admin</h3>
+      <button class="modal-close" data-close-modal="userModal" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="userForm" novalidate>
+        <div class="form-grid full">
+          <div class="form-group">
+            <label for="newUserNombre">Nombre completo *</label>
+            <input type="text" id="newUserNombre" required/>
+          </div>
+          <div class="form-group">
+            <label for="newUserEmail">Correo electrónico *</label>
+            <input type="email" id="newUserEmail" required/>
+          </div>
+          <div class="form-group">
+            <label for="newUserPassword">Contraseña temporal *</label>
+            <input type="password" id="newUserPassword" required minlength="8" placeholder="Mínimo 8 caracteres"/>
+          </div>
+          <div class="form-group">
+            <label for="newUserRol">Rol *</label>
+            <select id="newUserRol" required>
+              <option value="editor">Editor</option>
+              <option value="viewer">Viewer (solo lectura)</option>
+              <option value="super_admin">Super Admin</option>
+            </select>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-admin ghost" data-close-modal="userModal">Cancelar</button>
+      <button class="btn-admin primary" id="newUserSaveBtn">Crear usuario</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast global -->
+<div id="adminToast" role="status" aria-live="polite"></div>
+
+<!-- Global modal close handler -->
+<script>
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('[data-close-modal]');
+  if (btn) {
+    var id = btn.getAttribute('data-close-modal');
+    var el = document.getElementById(id);
+    if (el) el.classList.remove('open');
+  }
+  // También cerrar al clicar el overlay directamente
+  if (e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('open');
+  }
+});
+
+// Fecha en topbar
+(function() {
+  var el = document.getElementById('topbarDate');
+  if (el) el.textContent = new Date().toLocaleDateString('es-CO', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+})();
+</script>
+
+<!-- Scripts admin (defer: se cargan después del DOM) -->
+<script src="js/admin-auth.js" defer></script>
+<script src="js/admin-properties.js" defer></script>
+<script src="js/admin-leads.js" defer></script>
+<script src="js/admin-users.js" defer></script>
+
+</body>
+</html>
