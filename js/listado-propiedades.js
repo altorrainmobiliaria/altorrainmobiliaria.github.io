@@ -236,63 +236,53 @@
     }
   }
 
-  async function getJSONCached(url) {
-    const CACHE_KEY = 'altorra:properties:v6';
-    const CACHE_TTL = 1000 * 60 * 30;
-    
-    let cached = null;
-    try {
-      const raw = localStorage.getItem(CACHE_KEY);
-      if (raw) {
-        const obj = JSON.parse(raw);
-        if (obj && obj.t && (Date.now() - obj.t) < CACHE_TTL && obj.data) {
-          cached = obj.data;
-        }
-      }
-    } catch (_) {}
-
-    if (cached) {
-      fetch(url, { cache: 'no-store' })
-        .then(r => r.ok ? r.json() : Promise.reject())
-        .then(fresh => {
-          try {
-            localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), data: fresh }));
-          } catch (_) {}
-        })
-        .catch(() => {});
-      return cached;
-    }
-
-    const res = await fetch(url, { cache: 'no-store' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    try {
-      localStorage.setItem(CACHE_KEY, JSON.stringify({ t: Date.now(), data }));
-    } catch (_) {}
-    return data;
+  // Esperar a que PropertyDatabase esté lista (Firestore o fallback data.json)
+  function waitForDB() {
+    return new Promise((resolve) => {
+      if (window.propertyDB && window.propertyDB.isLoaded) return resolve(window.propertyDB);
+      window.addEventListener('altorra:db-ready', () => resolve(window.propertyDB), { once: true });
+    });
   }
 
   async function init() {
     const counter = document.getElementById('resultsCount');
     const list = document.getElementById('list');
-    
+
     if (counter) {
       counter.innerHTML = '<span style="color:var(--muted)">⏳ Cargando propiedades...</span>';
     }
     if (list) {
       list.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)"><p>⏳ Cargando propiedades...</p></div>';
     }
-    
+
     try {
-      const data = await getJSONCached('properties/data.json');
-      
-      const validOperations = OPERATION_MAP[PAGE_MODE] || [];
-      allProperties = Array.isArray(data) ? 
-        data.filter(p => {
-          const op = String(p.operation || '').toLowerCase().trim();
-          return validOperations.includes(op);
-        }) : 
-        [];
+      // Usar PropertyDatabase si está disponible; si no, caer a fetch directo
+      let data;
+      if (window.propertyDB) {
+        const db = await waitForDB();
+        data = db.filter({ operacion: PAGE_MODE });
+      } else {
+        const res = await fetch('properties/data.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const raw = await res.json();
+        const validOps = OPERATION_MAP[PAGE_MODE] || [];
+        data = (Array.isArray(raw) ? raw : []).filter(p =>
+          validOps.includes(String(p.operation || '').toLowerCase().trim())
+        );
+      }
+
+      allProperties = Array.isArray(data) ? data : [];
+
+      // Si propertyDB refresca datos desde Firestore, re-renderizar
+      if (window.propertyDB) {
+        window.addEventListener('altorra:db-refreshed', () => {
+          allProperties = window.propertyDB.filter({ operacion: PAGE_MODE });
+          filteredProperties = applyFilters();
+          updateResultsCount(allProperties.length, filteredProperties.length);
+          renderList(filteredProperties.slice(0, PAGE_SIZE), true);
+          updateLoadMoreButton(filteredProperties.length);
+        }, { once: true });
+      }
 
       const qs = new URLSearchParams(location.search);
       if (qs.has('city')) {
