@@ -14,14 +14,14 @@
   // TODO: reemplazar con los valores reales de Firebase Console
   // Proyecto → Configuración del proyecto → Tus apps → Config
   const FIREBASE_CONFIG = {
-    apiKey:            'TODO_API_KEY',
-    authDomain:        'altorra-inmobiliaria.firebaseapp.com',
-    databaseURL:       'https://altorra-inmobiliaria-default-rtdb.firebaseio.com',
-    projectId:         'altorra-inmobiliaria',
-    storageBucket:     'altorra-inmobiliaria.appspot.com',
-    messagingSenderId: 'TODO_SENDER_ID',
-    appId:             'TODO_APP_ID',
-    measurementId:     'TODO_MEASUREMENT_ID',
+    apiKey:            'AIzaSyCLxOwj3837m6p9QFDBWzVTuNUFhBkCg_I',
+    authDomain:        'altorra-inmobiliaria-345c6.firebaseapp.com',
+    databaseURL:       'https://altorra-inmobiliaria-345c6-default-rtdb.firebaseio.com',
+    projectId:         'altorra-inmobiliaria-345c6',
+    storageBucket:     'altorra-inmobiliaria-345c6.firebasestorage.app',
+    messagingSenderId: '794130975989',
+    appId:             '1:794130975989:web:0874276ae92ad65dcb89bc',
+    measurementId:     'G-K028T9SV9Z',
   };
 
   // Guardia: no inicializar si ya está listo (evita doble init en PWA)
