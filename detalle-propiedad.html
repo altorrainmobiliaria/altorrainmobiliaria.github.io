@@ -450,6 +450,8 @@ async function init(){
     /* ===== Formulario ===== */
     const formBlock=document.createElement('div'); formBlock.className='form-block';
     const form=document.createElement('form');
+    // action mantiene FormSubmit como fallback si Firebase no está disponible
+    form.id='contactPropForm';
     form.className='contact-form'; form.action='https://formsubmit.co/info@altorrainmobiliaria.co'; form.method='POST';
     const msgDefault=isAvailable
       ? `Hola, estoy interesado(a) en la propiedad "${escapeHtml(prop.title)}". Por favor contácteme.`
@@ -457,19 +459,17 @@ async function init(){
     const waInFormHref=buildWhatsAppLink(prop,{customText:waTextOverride});
     form.innerHTML=`
       <h3>Solicitar información</h3>
-      <input type="hidden" name="_subject" value="Consulta propiedad ${prop.id} - ${escapeHtml(prop.title)}" />
-      <input type="hidden" name="property_id" value="${prop.id}" />
-      <input type="hidden" name="property_title" value="${escapeHtml(prop.title)}" />
-      <input type="hidden" name="_honey" value="" />
-      <input type="hidden" name="_captcha" value="false" />
-      <input type="hidden" name="_template" value="table" />
       <input type="hidden" name="_next" value="https://altorrainmobiliaria.co/gracias.html" />
+      <input type="hidden" name="_captcha" value="false" />
+      <input type="hidden" name="propiedadId" value="${prop.id}" />
+      <input type="hidden" name="propiedadTitulo" value="${escapeHtml(prop.title)}" />
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
       <div class="row-3">
-        <input type="text" name="name" placeholder="Nombre completo" required />
-        <input type="email" name="email" placeholder="Correo electrónico" required />
-        <input type="tel" name="phone" placeholder="Número de teléfono" required />
+        <input type="text" name="Nombre" placeholder="Nombre completo" required />
+        <input type="email" name="Email" placeholder="Correo electrónico" required />
+        <input type="tel" name="Teléfono" placeholder="Número de teléfono" required />
       </div>
-      <textarea name="message" placeholder="Mensaje" rows="4" required>${msgDefault}</textarea>
+      <textarea name="Mensaje" placeholder="Mensaje" rows="4" required>${msgDefault}</textarea>
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">${isAvailable ? 'Enviar mensaje' : 'Avisarme'}</button>
         <a class="btn btn-wa wa-in-form" href="${waInFormHref}" target="_blank" rel="noopener">
@@ -656,4 +656,5 @@ document.addEventListener('DOMContentLoaded', init);
 })();
 </script>
   <script defer src="js/favoritos.js"></script>
+  <script defer src="js/contact-forms.js"></script>
 </html>

@@ -244,13 +244,12 @@
   <!-- Contenido principal con el formulario -->
   <main class="publish-container" id="mainContent">
     <p class="lead">Completa el siguiente formulario y un asesor de Altorra se pondrá en contacto contigo para ayudarte a publicar tu inmueble.</p>
+    <!-- action mantiene FormSubmit como fallback si Firebase no está disponible -->
     <form class="publish-form" id="publishForm" action="https://formsubmit.co/info@altorrainmobiliaria.co" method="POST" accept-charset="UTF-8">
-      <!-- Configuración para FormSubmit -->
-      <input type="hidden" name="_subject" value="Solicitud para publicar propiedad"/>
       <input type="hidden" name="_next" value="https://altorrainmobiliaria.co/gracias.html"/>
       <input type="hidden" name="_captcha" value="false"/>
-      <input type="hidden" name="_template" value="table"/>
-      <input type="text" name="_honey" style="display:none"/>
+      <!-- Honeypot anti-spam -->
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off"/>
       <div class="grid two">
         <label>Nombre completo
           <input type="text" name="Nombre" autocomplete="name" required />
@@ -302,10 +301,10 @@
       navigator.serviceWorker.register('/service-worker.js').catch(function(err){ console.warn('SW registration failed', err); });
     }
   </script>
-  <!-- Inyección del header y footer -->
   <script src="js/database.js" defer></script>
   <script src="js/cache-manager.js" defer></script>
   <script src="js/components.js" defer></script>
+  <script src="js/contact-forms.js" defer></script>
 
 </body>
 </html>
