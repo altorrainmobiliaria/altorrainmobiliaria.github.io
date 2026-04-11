@@ -2,17 +2,33 @@
  * firebase-config.js — Altorra Inmobiliaria
  * Inicialización de Firebase con carga prioritaria.
  *
- * CREDENCIALES: Reemplazar los valores TODO con los del proyecto Firebase.
  * Las API keys de Firebase son públicas por diseño (la seguridad real
- * está en firestore.rules y storage.rules).
+ * está en firestore.rules, storage.rules y database.rules.json).
+ *
+ * El propietario solo necesita mantener actualizados:
+ *   - FIREBASE_CONFIG      (ya con valores reales del proyecto)
+ *   - window.AltorraKeys   (Google Maps + VAPID / FCM — ver arriba)
  *
  * Patrón: carga crítica primero (Auth + Firestore), resto diferido.
  */
 
+// ══════════════════════════════════════════════════════════════════════════
+// Claves adicionales del proyecto (Google Maps, FCM, etc.)
+// El propietario SOLO debe editar este bloque — los módulos consumidores
+// (mapa-propiedades.js, push-notifications.js) leen desde window.AltorraKeys.
+// ══════════════════════════════════════════════════════════════════════════
+window.AltorraKeys = Object.assign({
+  // Google Maps JavaScript API — https://console.cloud.google.com/google/maps-apis
+  // Restringir por HTTP referrer a altorrainmobiliaria.co y *.altorrainmobiliaria.co
+  gmapsApiKey: '',
+  // FCM Web Push — Firebase Console → Project settings → Cloud Messaging → Web Push certificates
+  vapidKey:    '',
+}, window.AltorraKeys || {});
+
 (async function initFirebase() {
   // ── Configuración del proyecto ─────────────────────────────────
-  // TODO: reemplazar con los valores reales de Firebase Console
-  // Proyecto → Configuración del proyecto → Tus apps → Config
+  // Las API keys de Firebase son públicas por diseño — la seguridad
+  // real vive en firestore.rules / storage.rules / database.rules.json.
   const FIREBASE_CONFIG = {
     apiKey:            'AIzaSyCLxOwj3837m6p9QFDBWzVTuNUFhBkCg_I',
     authDomain:        'altorra-inmobiliaria-345c6.firebaseapp.com',

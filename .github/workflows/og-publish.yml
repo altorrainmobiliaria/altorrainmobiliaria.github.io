@@ -29,6 +29,10 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Flag a nivel de job: 'true' si el secret existe, 'false' si no.
+      # Se evalúa aquí (no dentro de cada step) para que el if: pueda leerlo.
+      HAS_FIREBASE_CREDS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON != '' }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -43,7 +47,7 @@ jobs:
 
       # ── Paso 1: Generar /p/*.html desde Firestore (si hay credenciales) ────
       - name: Generar páginas SEO desde Firestore
-        if: ${{ env.GOOGLE_APPLICATION_CREDENTIALS_JSON != '' }}
+        if: ${{ env.HAS_FIREBASE_CREDS == 'true' }}
         env:
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
           BASE_URL: ${{ inputs.base_url || 'https://altorrainmobiliaria.co' }}
@@ -56,10 +60,9 @@ jobs:
 
       # ── Paso 2 (fallback): Generar /p/*.html desde data.json (sin credenciales) ──
       - name: Generar páginas OG desde data.json (fallback)
-        if: ${{ env.GOOGLE_APPLICATION_CREDENTIALS_JSON == '' }}
+        if: ${{ env.HAS_FIREBASE_CREDS != 'true' }}
         env:
           OG_BASE_URL: ${{ inputs.base_url || 'https://altorrainmobiliaria.co' }}
-          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
         run: node tools/generate_og_pages.js
 
       # ── Paso 3: Bump deploy-info.json ──────────────────────────────────────
