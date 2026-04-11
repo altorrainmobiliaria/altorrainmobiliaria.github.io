@@ -6,7 +6,11 @@
      API pública: window.MapaPropiedades.{init, setFilter, destroy}
   ────────────────────────────────────────────────────────────────*/
 
-  const GMAPS_API_KEY = 'AIzaSyBnWoMzVZCqJNUdFzHx4e0Yfn7Pv2R3tXs'; // reemplazar con key real
+  // La API key se lee desde window.AltorraKeys.gmapsApiKey (definida en firebase-config.js).
+  // Si está vacía, el mapa muestra un estado "no configurado" en lugar de romperse.
+  function getGmapsKey() {
+    return (window.AltorraKeys && window.AltorraKeys.gmapsApiKey) || '';
+  }
   const DEFAULT_CENTER = { lat: 10.391049, lng: -75.479426 }; // Cartagena
   const DEFAULT_ZOOM   = 12;
 
@@ -21,12 +25,15 @@
   /* ── Carga dinámica de Google Maps SDK ── */
   function loadGoogleMaps() {
     if (_gmLoaded || window.google?.maps) { _gmLoaded = true; return Promise.resolve(); }
-    if (_gmLoaded) return Promise.resolve();
+    const key = getGmapsKey();
+    if (!key) {
+      return Promise.reject(new Error('GMAPS_API_KEY_MISSING'));
+    }
     return new Promise((resolve, reject) => {
       const callbackName = '__altorra_maps_cb';
       window[callbackName] = () => { _gmLoaded = true; resolve(); };
       const s = document.createElement('script');
-      s.src = `https://maps.googleapis.com/maps/api/js?key=${GMAPS_API_KEY}&callback=${callbackName}&loading=async`;
+      s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&callback=${callbackName}&loading=async`;
       s.async = true;
       s.onerror = reject;
       document.head.appendChild(s);
@@ -312,10 +319,13 @@
 
     } catch (err) {
       console.error('[MapaPropiedades] Error:', err);
+      const msg = err && err.message === 'GMAPS_API_KEY_MISSING'
+        ? 'Mapa no disponible: falta configurar la clave de Google Maps.'
+        : 'No se pudo cargar el mapa. Verifica tu conexión o la clave de Google Maps.';
       wrapper.innerHTML = `
         <div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#6b7280;font-size:.9rem;padding:24px;text-align:center">
           <span style="font-size:2rem">🗺️</span>
-          <span>No se pudo cargar el mapa. Configura tu clave de Google Maps API.</span>
+          <span>${msg}</span>
         </div>`;
     }
   }

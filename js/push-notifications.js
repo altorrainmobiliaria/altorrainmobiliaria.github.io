@@ -3,19 +3,22 @@
 
   /* ──────────────────────────────────────────────────────────────
      push-notifications.js  — Firebase Cloud Messaging (FCM)
-     Requiere: VAPID key en firebase-config.js + service worker registrado
+     Requiere: VAPID key en window.AltorraKeys.vapidKey (firebase-config.js)
+              + service worker registrado
 
      Para activar:
      1. Obtener VAPID public key desde Firebase Console
         (Project settings → Cloud Messaging → Web Push certificates)
-     2. Reemplazar VAPID_KEY abajo
-     3. Descomentar el registro del SW en service-worker.js
+     2. Pegarla en window.AltorraKeys.vapidKey (firebase-config.js)
+     3. Asegurar que el service worker esté registrado
      4. El usuario debe dar permiso al hacer clic en un CTA
 
      API pública: window.AltorraPush.{requestPermission, subscribe, unsubscribe, isSupported}
   ────────────────────────────────────────────────────────────────*/
 
-  const VAPID_KEY = 'REEMPLAZAR_CON_VAPID_KEY_DE_FIREBASE_CONSOLE';
+  function getVapidKey() {
+    return (window.AltorraKeys && window.AltorraKeys.vapidKey) || '';
+  }
   const LS_TOKEN  = 'altorra:fcm-token';
   const LS_SUBS   = 'altorra:push-subscribed';
 
@@ -39,6 +42,10 @@
       console.warn('[Push] No soportado en este navegador');
       return null;
     }
+    if (!getVapidKey()) {
+      console.warn('[Push] VAPID key no configurada en window.AltorraKeys.vapidKey');
+      return null;
+    }
 
     const perm = await Notification.requestPermission();
     if (perm !== 'granted') {
@@ -52,6 +59,8 @@
   async function subscribe() {
     const messaging = await getMessaging();
     if (!messaging) return null;
+    const vapidKey = getVapidKey();
+    if (!vapidKey) return null;
 
     try {
       const { getToken } =
@@ -59,7 +68,7 @@
 
       const sw = await navigator.serviceWorker.ready;
       const token = await getToken(messaging, {
-        vapidKey: VAPID_KEY,
+        vapidKey,
         serviceWorkerRegistration: sw,
       });
 
@@ -79,13 +88,15 @@
   async function unsubscribe() {
     const messaging = await getMessaging();
     if (!messaging) return;
+    const vapidKey = getVapidKey();
+    if (!vapidKey) return;
 
     try {
       const { getToken, deleteToken } =
         await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-messaging.js');
 
       const sw    = await navigator.serviceWorker.ready;
-      const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: sw });
+      const token = await getToken(messaging, { vapidKey, serviceWorkerRegistration: sw });
       if (token) await deleteToken(messaging, token);
 
       localStorage.removeItem(LS_TOKEN);
@@ -140,7 +151,7 @@
     const el = document.getElementById(containerId);
     if (!el) return;
 
-    if (!isSupported()) { el.style.display = 'none'; return; }
+    if (!isSupported() || !getVapidKey()) { el.style.display = 'none'; return; }
 
     const subscribed = localStorage.getItem(LS_SUBS) === '1';
     const label      = subscribed ? (opts.labelOff || 'Desactivar alertas') : (opts.labelOn || 'Activar alertas de propiedades');

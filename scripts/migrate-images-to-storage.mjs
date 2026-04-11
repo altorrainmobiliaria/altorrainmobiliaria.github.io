@@ -30,7 +30,8 @@ import { dirname } from 'path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT      = join(__dirname, '..');
 const DRY_RUN   = process.env.DRY_RUN === '1';
-const BUCKET    = 'altorra-inmobiliaria.appspot.com';
+// Bucket real del proyecto (ver firebase-config.js). Override con STORAGE_BUCKET env.
+const BUCKET    = process.env.STORAGE_BUCKET || 'altorra-inmobiliaria-345c6.firebasestorage.app';
 
 // ── Mapa: carpeta local → propiedadId ──────────────────────────────────────
 const FOLDER_MAP = {
