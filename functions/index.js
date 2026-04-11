@@ -15,6 +15,8 @@
  *                              Crea usuario Firebase Auth + documento en /usuarios
  *   deleteManagedUserV2      → HTTPS callable (solo super_admin)
  *                              Elimina usuario Firebase Auth + documento en /usuarios
+ *   updateUserRoleV2         → HTTPS callable (solo super_admin)
+ *                              Actualiza el rol de un usuario en /usuarios/{uid}
  *
  * SECRETS (configurar con: firebase functions:secrets:set SECRET_NAME):
  *   EMAIL_USER   → cuenta Gmail remitente (ej. notificaciones@altorrainmobiliaria.co)
@@ -342,6 +344,41 @@ exports.deleteManagedUserV2 = onCall(
     }
 
     await db.collection('usuarios').doc(uid).delete();
+    return { success: true };
+  }
+);
+
+// ══════════════════════════════════════════════════════════════════════════
+// 7. updateUserRoleV2 — Cambiar el rol de un usuario admin
+// ══════════════════════════════════════════════════════════════════════════
+exports.updateUserRoleV2 = onCall(
+  { region: REGION },
+  async (request) => {
+    await requireSuperAdmin(request.auth?.uid);
+
+    const { uid, rol } = request.data || {};
+    if (!uid || !rol) {
+      throw new HttpsError('invalid-argument', 'Se requieren uid y rol.');
+    }
+    if (!['super_admin', 'editor', 'viewer'].includes(rol)) {
+      throw new HttpsError('invalid-argument', 'Rol inválido.');
+    }
+    if (uid === request.auth.uid && rol !== 'super_admin') {
+      throw new HttpsError('failed-precondition', 'No puedes quitarte tu propio rol de super_admin.');
+    }
+
+    const ref = db.collection('usuarios').doc(uid);
+    const snap = await ref.get();
+    if (!snap.exists) {
+      throw new HttpsError('not-found', 'Usuario no existe en /usuarios.');
+    }
+
+    await ref.update({
+      rol,
+      actualizadoEn:  FieldValue.serverTimestamp(),
+      actualizadoPor: request.auth.uid,
+    });
+
     return { success: true };
   }
 );
