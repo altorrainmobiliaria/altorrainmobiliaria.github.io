@@ -40,8 +40,11 @@
   function showLogin(msg = '') {
     const loginScreen = $('#loginScreen');
     const adminApp    = $('#adminApp');
-    if (loginScreen) loginScreen.style.display = '';
-    if (adminApp)    adminApp.style.display = 'none';
+    if (loginScreen) loginScreen.style.display = 'flex';
+    if (adminApp) {
+      adminApp.classList.remove('visible');
+      adminApp.style.display = 'none';
+    }
     if (msg) {
       const errEl = $('#loginError');
       if (errEl) { errEl.textContent = msg; errEl.hidden = false; }
@@ -52,7 +55,12 @@
     const loginScreen = $('#loginScreen');
     const adminApp    = $('#adminApp');
     if (loginScreen) loginScreen.style.display = 'none';
-    if (adminApp)    adminApp.style.display = '';
+    if (adminApp) {
+      // Nota: CSS tiene `#adminApp { display:none }` + HTML inline `style="display:none"`.
+      // Necesitamos ambos: clase .visible (`display:flex`) Y sobrescribir el inline.
+      adminApp.classList.add('visible');
+      adminApp.style.display = 'flex';
+    }
   }
 
   function showToast(msg, type = 'info') {
