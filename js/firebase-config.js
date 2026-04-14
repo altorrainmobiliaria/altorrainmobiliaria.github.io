@@ -101,7 +101,7 @@ window.AltorraKeys = Object.assign({
 
   } catch (err) {
     console.error('[Firebase] Error de inicialización:', err);
-    // El sitio sigue funcionando con data.json de fallback (mientras se migra)
+    // Sin fallback estático: el catálogo es 100% dinámico desde Firestore.
   }
 
   // ── Helper de debug para limpiar caché (usar en consola del navegador) ──

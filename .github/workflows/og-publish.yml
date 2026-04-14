@@ -10,10 +10,8 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'properties/data.json'
-      - 'tools/generate_og_pages.js'
-      - 'tools/og.config.json'
       - 'scripts/generate-properties.mjs'
+      - 'tools/og.config.json'
   schedule:
     - cron: '0 */4 * * *'    # Cada 4 horas — sincroniza con cambios en Firestore
   repository_dispatch:
@@ -29,10 +27,6 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      # Flag a nivel de job: 'true' si el secret existe, 'false' si no.
-      # Se evalúa aquí (no dentro de cada step) para que el if: pueda leerlo.
-      HAS_FIREBASE_CREDS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON != '' }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -45,33 +39,31 @@ jobs:
       - name: Instalar dependencias
         run: npm ci --ignore-scripts 2>/dev/null || npm install sharp firebase-admin
 
-      # ── Paso 1: Generar /p/*.html desde Firestore (si hay credenciales) ────
+      # ── Generar /p/*.html desde Firestore (única fuente de verdad) ────
       - name: Generar páginas SEO desde Firestore
-        if: ${{ env.HAS_FIREBASE_CREDS == 'true' }}
         env:
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
           BASE_URL: ${{ inputs.base_url || 'https://altorrainmobiliaria.co' }}
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_REF: ${{ github.ref_name }}
         run: |
+          if [[ -z "$GOOGLE_APPLICATION_CREDENTIALS_JSON" ]]; then
+            echo "❌ Falta el secret GOOGLE_APPLICATION_CREDENTIALS_JSON."
+            echo "   Configúralo en Settings → Secrets → Actions para que el workflow"
+            echo "   pueda leer las propiedades desde Firestore."
+            exit 1
+          fi
           echo "$GOOGLE_APPLICATION_CREDENTIALS_JSON" > /tmp/sa.json
           GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa.json node scripts/generate-properties.mjs
           rm /tmp/sa.json
 
-      # ── Paso 2 (fallback): Generar /p/*.html desde data.json (sin credenciales) ──
-      - name: Generar páginas OG desde data.json (fallback)
-        if: ${{ env.HAS_FIREBASE_CREDS != 'true' }}
-        env:
-          OG_BASE_URL: ${{ inputs.base_url || 'https://altorrainmobiliaria.co' }}
-        run: node tools/generate_og_pages.js
-
-      # ── Paso 3: Bump deploy-info.json ──────────────────────────────────────
+      # ── Bump deploy-info.json ──────────────────────────────────────
       - name: Bump deploy-info.json
         run: |
           mkdir -p data
           echo "{\"version\":\"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)\",\"commit\":\"${{ github.sha }}\",\"ref\":\"${{ github.ref_name }}\"}" > data/deploy-info.json
 
-      # ── Paso 4: Commit y push si hubo cambios ─────────────────────────────
+      # ── Commit y push si hubo cambios ─────────────────────────────
       - name: Commit & push si hubo cambios
         run: |
           git config user.name "github-actions[bot]"

@@ -22,19 +22,18 @@
   const clamp = (v, a, b)=>Math.max(a, Math.min(b, v));
   const uniq  = arr => Array.from(new Set(arr));
   const fuzzyScore = (n, h)=>{ n=n.toLowerCase(); let s=0,i=0,j=0; while(i<n.length&&j<h.length){ if(n[i]===h[j]){s++;i++;} j++; } return i===n.length? s/n.length : 0; };
-  const cacheBuster = ()=> (location.search ? '&' : '?') + 'v=' + Math.floor(Date.now()/(1000*60*30));
-  async function fetchJSON(u){ const r=await fetch(u+cacheBuster(),{cache:'no-store'}); if(!r.ok) throw new Error(`HTTP ${r.status}@${u}`); return r.json(); }
-  async function fetchWithFallback(paths){ let last; for(const p of paths){ try { return await fetchJSON(p); } catch(e){ last=e; } } throw last||new Error('No data.json'); }
+
+  // Carga desde PropertyDatabase (fuente única: Firestore). Sin fetch a data.json.
   async function loadData(){
-    const paths = [
-      new URL('properties/data.json', location.href).href,
-      location.origin + '/properties/data.json'
-    ];
-    const key='altorra:ssrc:data', now=Date.now();
-    try{ const raw=localStorage.getItem(key); if(raw){ const o=JSON.parse(raw); if(o && o.exp>now) return o.data; } }catch(_){}
-    const data=await fetchWithFallback(paths);
-    try{ localStorage.setItem(key, JSON.stringify({data, exp: now+1000*60*20})); }catch(_){}
-    return data;
+    // Esperar a que la DB esté lista
+    if (!(window.propertyDB && window.propertyDB.isLoaded)) {
+      await new Promise(resolve => {
+        if (window.propertyDB?.isLoaded) return resolve();
+        window.addEventListener('altorra:db-ready', resolve, { once: true });
+        setTimeout(resolve, 8000); // timeout de seguridad
+      });
+    }
+    return window.propertyDB ? window.propertyDB.properties.slice() : [];
   }
   const toArrayData = d => Array.isArray(d) ? d : (d && Array.isArray(d.properties) ? d.properties : Object.values(d||{}).find(Array.isArray) || []);
 
@@ -476,9 +475,18 @@
     const inputs = document.querySelectorAll('#f-search, #f-city');
     inputs.forEach(enforceMobileInputStyles);
 
-    const rawData = await loadData();
-    const props   = toArrayData(rawData);
-    const vocab   = buildVocab(props); // para typos y sinónimos emergentes
+    let rawData = await loadData();
+    let props   = toArrayData(rawData);
+    let vocab   = buildVocab(props); // para typos y sinónimos emergentes
+
+    // Refrescar dataset cuando Firestore trae cambios
+    const reloadDataset = async () => {
+      rawData = await loadData();
+      props   = toArrayData(rawData);
+      vocab   = buildVocab(props);
+    };
+    window.addEventListener('altorra:db-refreshed', reloadDataset);
+    window.addEventListener('altorra:cache-invalidated', reloadDataset);
 
     inputs.forEach(input=>{
       const run = debounce(async ()=>{

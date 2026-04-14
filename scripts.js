@@ -213,19 +213,20 @@ document.addEventListener('DOMContentLoaded', function() {
     e.preventDefault();
     e.stopImmediatePropagation();
 
-    // 1) Si el usuario digitó un código, validamos primero
+    // 1) Si el usuario digitó un código, validamos primero contra Firestore
     const codeEl = document.getElementById('f-code');
     const code = (codeEl && codeEl.value || '').trim();
     if (code) {
       try {
-        // Usar PropertyDatabase si está disponible; si no, fetch directo
-        let match = null;
-        if (window.propertyDB && window.propertyDB.isLoaded) {
-          match = window.propertyDB.getById(code);
-        } else {
-          const data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true });
-          match = Array.isArray(data) ? data.find(p => String(p.id||'').toLowerCase().trim() === code.toLowerCase()) : null;
+        // Esperar a PropertyDatabase (fuente única: Firestore)
+        if (!(window.propertyDB && window.propertyDB.isLoaded)) {
+          await new Promise(resolve => {
+            if (window.propertyDB?.isLoaded) return resolve();
+            window.addEventListener('altorra:db-ready', resolve, { once: true });
+            setTimeout(resolve, 6000); // timeout de seguridad
+          });
         }
+        const match = window.propertyDB?.getById(code);
         if (match) {
           window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(match.id);
         } else {
@@ -279,43 +280,8 @@ document.addEventListener('DOMContentLoaded', function() {
 })();
 
 
-/* ============== 4) Buscador rápido (home) -> redirección a listados o al detalle por Código ============== */
-document.addEventListener('DOMContentLoaded', function(){
-  const form = document.getElementById('quickSearch');
-  if(!form) return;
-  form.addEventListener('submit', async function(ev){
-    ev.preventDefault();
-        return; // duplicate handler disabled
-    
-    const op = (document.getElementById('op')?.value || 'comprar').toLowerCase();
-    const city = document.getElementById('f-city')?.value || '';
-    const type = document.getElementById('f-type')?.value || '';
-    const code = (document.getElementById('f-code')?.value || '').trim();
-    const budget = document.getElementById('f-budget')?.value || '';
-
-    // Si hay código, intentamos resolverlo aquí (para mejor UX)
-    if(code){
-      try{
-        let data; try{ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate:false }); }
-        catch(_){ try{ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate:false }); }
-        catch(__){ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate:false }); }}
-        const hit = (Array.isArray(data)?data:[]).find(function(p){ return String(p.id||'').toLowerCase() === code.toLowerCase(); });
-        if(hit){ window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(code); return; }
-        // si no existe, seguimos a la página de la operación con el code para que muestre mensaje
-      }catch(_){ /* seguimos usando redirección a listados */ }
-    }
-
-    const page = op==='arrendar' ? 'propiedades-arrendar.html' : (op==='alojar' ? 'propiedades-alojamientos.html' : 'propiedades-comprar.html');
-    const params = new URLSearchParams();
-    if(city) params.set('city', city.trim());
-    if(type) params.set('type', type.trim());
-    if(code) params.set('code', code);
-    if(budget) params.set('budget', budget.trim());
-    const url = page + (params.toString() ? ('?' + params.toString()) : '');
-    window.location.href = url;
-  });
-});
- /* ============== 5) Miniaturas home → properties/data.json (con caché) ============== */
+/* ============== 4.bis) (Handler duplicado deshabilitado — toda la lógica vive en el bloque #3) ============== */
+ /* ============== 5) Miniaturas home → Firestore (via PropertyDatabase) ============== */
 (function(){
   const cfg = [
     {operation:'comprar', targetId:'carouselVenta',    mode:'venta'},
@@ -470,14 +436,16 @@ document.addEventListener('DOMContentLoaded', function(){
 
   async function fetchByOperation(op){
     try{
-      // Usar PropertyDatabase si está disponible
-      if (window.propertyDB && window.propertyDB.isLoaded) {
-        return window.propertyDB.filter({ operacion: op });
+      // Esperar a que PropertyDatabase esté lista (fuente única: Firestore)
+      if (!(window.propertyDB && window.propertyDB.isLoaded)) {
+        await new Promise(resolve => {
+          if (window.propertyDB?.isLoaded) return resolve();
+          window.addEventListener('altorra:db-ready', resolve, { once: true });
+          setTimeout(resolve, 8000); // timeout de seguridad
+        });
       }
-      // Fallback: fetch directo a data.json
-      let data; try{ data = await getJSONCached('properties/data.json', { ttlMs: 1000*60*60*6, revalidate: true }); }catch(_){ data = []; }
-      if(!Array.isArray(data)) throw new Error('Formato inválido');
-      return data.filter(function(it){ return String(it.operation).toLowerCase() === String(op).toLowerCase(); });
+      if (!window.propertyDB) return [];
+      return window.propertyDB.filter({ operacion: op });
     }catch(e){
       console.warn('No se pudieron cargar propiedades', op, e);
       return [];
@@ -514,13 +482,16 @@ document.addEventListener('DOMContentLoaded', function(){
 
     });
 
-    // Refresco si Firestore trae datos nuevos o si se revalida el JSON
+    // Refresco cada vez que Firestore trae datos nuevos (sin { once: true }
+    // para que admin → públic sea en tiempo real)
     function refreshCarousels() {
       cfg.forEach(async function(c){
         const root = document.getElementById(c.targetId);
         if(!root) return;
         const arr = await fetchByOperation(c.operation);
         root.innerHTML = '';
+        const empty = root.parentElement && root.parentElement.querySelector('.empty-home-msg');
+        if(arr.length === 0){ if(empty) empty.style.display = 'block'; return; } else { if(empty) empty.style.display='none'; }
         const ordered = smartOrder(arr);
         ordered.slice(0,8).forEach(function(p){ root.appendChild(buildCard(p, c.mode)); });
         if (window.AltorraFavoritos && typeof window.AltorraFavoritos.init === 'function') {
@@ -529,11 +500,8 @@ document.addEventListener('DOMContentLoaded', function(){
         try { document.dispatchEvent(new CustomEvent('altorra:properties-loaded')); } catch(_){}
       });
     }
-    window.addEventListener('altorra:db-refreshed', refreshCarousels, { once: true });
-    document.addEventListener('altorra:json-updated', function(ev){
-      if (!/properties\/data\.json$/.test((ev.detail && ev.detail.url) || '')) return;
-      refreshCarousels();
-    }, { once: true });
+    window.addEventListener('altorra:db-refreshed', refreshCarousels);
+    window.addEventListener('altorra:cache-invalidated', refreshCarousels);
   });
 })();
 
