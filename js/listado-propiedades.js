@@ -258,6 +258,17 @@
       renderedCount = 0;
       renderList(filteredProperties.slice(0, PAGE_SIZE), true);
       updateLoadMoreButton(filteredProperties.length);
+
+      // Empty state coherente con la carga inicial
+      if (filteredProperties.length === 0) {
+        const list = document.getElementById('list');
+        if (list) {
+          const msg = allProperties.length === 0
+            ? '<h3>Por el momento no hay propiedades disponibles en esta categoría</h3><p>Vuelve pronto — el catálogo se actualiza automáticamente.</p>'
+            : '<h3>No se encontraron propiedades</h3><p>Intenta ajustar los filtros de búsqueda.</p>';
+          list.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">' + msg + '</div>';
+        }
+      }
     };
     window.addEventListener('altorra:db-refreshed', reload);
     window.addEventListener('altorra:cache-invalidated', reload);
@@ -314,7 +325,10 @@
       if (filteredProperties.length === 0) {
         const list = document.getElementById('list');
         if (list) {
-          list.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)"><h3>No se encontraron propiedades</h3><p>Intenta ajustar los filtros de búsqueda.</p></div>';
+          const msg = allProperties.length === 0
+            ? '<h3>Por el momento no hay propiedades disponibles en esta categoría</h3><p>Vuelve pronto — el catálogo se actualiza automáticamente.</p>'
+            : '<h3>No se encontraron propiedades</h3><p>Intenta ajustar los filtros de búsqueda.</p>';
+          list.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">' + msg + '</div>';
         }
       }
 

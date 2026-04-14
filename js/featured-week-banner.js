@@ -196,12 +196,14 @@
 
   /* ─── Render o ocultar según DB viva ─────────────────────── */
   function renderFromDB(container, db) {
+    const section = container.closest('section');
     const prop = computeFeatured(db);
     if (!prop || !prop.id) {
-      // No hay destacada viva → limpiar cache y ocultar banner
+      // No hay destacada viva → limpiar cache y ocultar la sección entera
       try { localStorage.removeItem(CACHE_KEY); } catch {}
       container.innerHTML = '';
       container.style.display = 'none';
+      if (section) section.style.display = 'none';
       return;
     }
 
@@ -214,6 +216,7 @@
       }));
     } catch { /* ignore */ }
 
+    if (section) section.style.display = '';
     container.style.display = '';
     renderBanner(container, prop);
   }

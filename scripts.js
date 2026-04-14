@@ -452,53 +452,36 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  document.addEventListener('DOMContentLoaded', async function(){
-    const tasks = cfg.map(function(c){ return fetchByOperation(c.operation).then(function(arr){ return {c, arr}; }); });
-    const results = await Promise.all(tasks);
-    results.forEach(function(pair){
-      const c = pair.c, arr = pair.arr;
-      const root = document.getElementById(c.targetId);
-      if(!root) return;
-      root.innerHTML = '';
-      let empty = root.parentElement && root.parentElement.querySelector('.empty-home-msg');
-      if(!empty){ root.insertAdjacentHTML('afterend','<p class="empty-home-msg" style="display:none;margin-top:12px;">Sin propiedades para mostrar.</p>'); empty = root.parentElement && root.parentElement.querySelector('.empty-home-msg'); }
-      if(arr.length===0){ if(empty) empty.style.display = 'block'; return; } else { if(empty) empty.style.display='none'; }
-      if(!arr.length){
-        const note = document.createElement('div');
-        note.style.padding='12px'; note.style.color='var(--muted)';
-        note.textContent = 'Sin propiedades para mostrar.';
-        root.appendChild(note);
+  // Renderizar un carrusel del home y ocultar la sección entera si no hay
+  // inventario (política: nunca mostrar un carrusel vacío con título).
+  function renderCarousel(c) {
+    const root = document.getElementById(c.targetId);
+    if (!root) return Promise.resolve();
+    const section = root.closest('section');
+    return fetchByOperation(c.operation).then(function(arr){
+      if (!arr || arr.length === 0) {
+        if (section) section.style.display = 'none';
+        root.innerHTML = '';
         return;
       }
-
-      /* === ORDEN INTELIGENTE === */
+      if (section) section.style.display = '';
+      root.innerHTML = '';
       const ordered = smartOrder(arr);
       ordered.slice(0,8).forEach(function(p){ root.appendChild(buildCard(p, c.mode)); });
-      // >>> Favoritos: re-init seguro para home
       if (window.AltorraFavoritos && typeof window.AltorraFavoritos.init === 'function') {
         try { window.AltorraFavoritos.init(); } catch(_){}
       }
       try { document.dispatchEvent(new CustomEvent('altorra:properties-loaded')); } catch(_){}
-
     });
+  }
 
-    // Refresco cada vez que Firestore trae datos nuevos (sin { once: true }
-    // para que admin → públic sea en tiempo real)
+  document.addEventListener('DOMContentLoaded', async function(){
+    await Promise.all(cfg.map(renderCarousel));
+
+    // Refresco cada vez que Firestore trae datos nuevos (sin { once: true })
+    // para que admin → público sea en tiempo real en todos los carruseles.
     function refreshCarousels() {
-      cfg.forEach(async function(c){
-        const root = document.getElementById(c.targetId);
-        if(!root) return;
-        const arr = await fetchByOperation(c.operation);
-        root.innerHTML = '';
-        const empty = root.parentElement && root.parentElement.querySelector('.empty-home-msg');
-        if(arr.length === 0){ if(empty) empty.style.display = 'block'; return; } else { if(empty) empty.style.display='none'; }
-        const ordered = smartOrder(arr);
-        ordered.slice(0,8).forEach(function(p){ root.appendChild(buildCard(p, c.mode)); });
-        if (window.AltorraFavoritos && typeof window.AltorraFavoritos.init === 'function') {
-          try { window.AltorraFavoritos.init(); } catch(_){}
-        }
-        try { document.dispatchEvent(new CustomEvent('altorra:properties-loaded')); } catch(_){}
-      });
+      cfg.forEach(function(c){ renderCarousel(c); });
     }
     window.addEventListener('altorra:db-refreshed', refreshCarousels);
     window.addEventListener('altorra:cache-invalidated', refreshCarousels);

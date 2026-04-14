@@ -160,13 +160,16 @@
     await idbSet(key, value, ttlMs);
   }
 
-  /** Invalidar todas las capas y refrescar datos */
+  /** Invalidar todas las capas y refrescar datos.
+   *  Importante: espera a que PropertyDatabase termine de recargar ANTES de
+   *  disparar 'altorra:cache-invalidated', para que los listeners vean datos
+   *  frescos cuando consulten window.propertyDB.filter() / getById(). */
   async function invalidate() {
     memClear();
     lsClear();
     await idbClear();
     if (window.propertyDB && typeof window.propertyDB.refresh === 'function') {
-      window.propertyDB.refresh().catch(() => {});
+      try { await window.propertyDB.refresh(); } catch (_) { /* no crítico */ }
     }
     window.dispatchEvent(new CustomEvent('altorra:cache-invalidated'));
     console.log('[AltorraCache] Caché invalidada ✅');
