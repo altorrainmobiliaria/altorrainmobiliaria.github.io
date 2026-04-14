@@ -172,12 +172,62 @@
     return score;
   }
 
+  // ── Toast sutil de actualización en vivo (UX — patrón Altorra Cars) ──────
+  let _lastToastTs = 0;
+  function showUpdateToast() {
+    // Throttle: máximo un toast cada 3s
+    const now = Date.now();
+    if (now - _lastToastTs < 3000) return;
+    _lastToastTs = now;
+    try {
+      // No mostrar en admin ni si el documento no está visible
+      if (/\/admin\.html/i.test(location.pathname)) return;
+      if (document.hidden) return;
+
+      let toast = document.getElementById('altorra-rt-toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'altorra-rt-toast';
+        toast.style.cssText =
+          'position:fixed;bottom:24px;right:24px;background:#111;color:#fff;' +
+          'padding:10px 18px;border-radius:999px;font-weight:700;font-size:.88rem;' +
+          'box-shadow:0 10px 28px rgba(17,24,39,.18);opacity:0;' +
+          'transform:translateY(8px);transition:opacity .2s ease,transform .2s ease;' +
+          'z-index:9999;pointer-events:none;';
+        toast.textContent = '✓ Catálogo actualizado';
+        document.body.appendChild(toast);
+      }
+      requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+      });
+      clearTimeout(toast._hideTimer);
+      toast._hideTimer = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(8px)';
+      }, 2400);
+    } catch (_) {}
+  }
+
+  // ── Hash de contenido para detectar cambios reales ────────────────────────
+  // Incluye los campos que afectan la UI pública para evitar re-renders
+  // innecesarios cuando Firestore re-envía datos idénticos.
+  function contentHash(arr) {
+    return arr
+      .map(p => `${p.id}:${p._version || 0}:${p.available}:${p.featured || 0}:${p.price || 0}:${p.operation}:${p.estado}:${p.image}`)
+      .sort()
+      .join('|');
+  }
+
   // ── Clase principal ───────────────────────────────────────────────────────
   class PropertyDatabase {
     constructor() {
-      this._data       = [];     // todos los datos normalizados
-      this._loaded     = false;
-      this._listeners  = [];     // callbacks onChange
+      this._data            = [];     // todos los datos normalizados
+      this._loaded          = false;
+      this._listeners       = [];     // callbacks onChange
+      this._realtimeActive  = false;
+      this._unsubRealtime   = null;
+      this._rtDebounce      = null;
     }
 
     // Exponer los datos para consumidores que iteran sobre toda la lista
@@ -193,6 +243,8 @@
           this._loaded = true;
           this._ready();
           this._refreshInBackground();
+          // Arranca la suscripción en vivo en paralelo (no bloquea)
+          this.startRealtime();
           return this;
         }
       }
@@ -211,6 +263,8 @@
 
       this._loaded = true;
       this._ready();
+      // Arranca suscripción realtime tras la primera carga completa
+      this.startRealtime();
       return this;
     }
 
@@ -391,10 +445,85 @@
       return arr;
     }
 
-    /** Forzar recarga limpia (invalida cache) */
+    /** Forzar recarga limpia (invalida cache) y notificar a los consumidores
+     *  con 'altorra:db-refreshed' cuando los nuevos datos ya estén montados. */
     async refresh() {
       cacheClear();
-      return this.load(true);
+      await this.load(true);
+      this._notify();
+      window.dispatchEvent(new CustomEvent('altorra:db-refreshed'));
+      return this;
+    }
+
+    /** Suscripción en tiempo real a la colección propiedades (patrón Altorra Cars).
+     *
+     *  Emite 'altorra:db-refreshed' con 500ms de debounce cuando Firestore
+     *  notifica un cambio real (no al snapshot inicial, ni a datos idénticos).
+     *  De esta manera, cualquier create/edit/delete desde el admin aparece
+     *  en la web pública sin recargar la página.
+     *
+     *  Uso de lecturas: onSnapshot solo consume lecturas cuando hay cambios
+     *  reales; para un inventario de ≤100 propiedades esto es prácticamente
+     *  gratuito dentro del tier Blaze.
+     */
+    async startRealtime() {
+      if (this._realtimeActive) return;
+      this._realtimeActive = true;
+      try {
+        await waitForFirestore();
+        const { collection, onSnapshot, query, where, limit } =
+          await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
+
+        let firstSnapshot = true;
+        const self = this;
+
+        this._unsubRealtime = onSnapshot(
+          query(
+            collection(window.db, COLLECTION),
+            where('disponible', '==', true),
+            limit(100)
+          ),
+          (snapshot) => {
+            // El primer snapshot es la carga inicial — ya la cubrió load().
+            if (firstSnapshot) { firstSnapshot = false; return; }
+
+            const next = snapshot.docs
+              .map(d => normalizeFromFirestore({ id: d.id, ...d.data() }))
+              .sort((a, b) => (b.highlightScore || 0) - (a.highlightScore || 0));
+
+            // Short-circuit: si el contenido no cambió, no re-renderizamos.
+            if (contentHash(next) === contentHash(self._data)) return;
+
+            self._data = next;
+            cacheWrite(next);
+
+            // Debounce 500ms para agrupar ráfagas de cambios del admin.
+            clearTimeout(self._rtDebounce);
+            self._rtDebounce = setTimeout(() => {
+              console.log('[PropertyDB] Realtime update:', next.length, 'propiedades');
+              self._notify();
+              window.dispatchEvent(new CustomEvent('altorra:db-refreshed'));
+              showUpdateToast();
+            }, 500);
+          },
+          (err) => {
+            console.debug('[PropertyDB] realtime listener error:', err.code || err.message);
+            self._realtimeActive = false;
+          }
+        );
+      } catch (err) {
+        this._realtimeActive = false;
+        console.debug('[PropertyDB] No se pudo iniciar realtime:', err.message);
+      }
+    }
+
+    /** Detener la suscripción en tiempo real (opcional — útil al navegar SPA). */
+    stopRealtime() {
+      if (this._unsubRealtime) {
+        try { this._unsubRealtime(); } catch (_) {}
+        this._unsubRealtime = null;
+      }
+      this._realtimeActive = false;
     }
 
     /** Total de propiedades cargadas */

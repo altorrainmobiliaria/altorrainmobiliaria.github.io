@@ -233,13 +233,24 @@
       ? document.querySelector(containerSel)
       : containerSel;
     if (!wrap) return;
+    const parentSection = wrap.closest('section');
+
+    const hide = () => {
+      wrap.innerHTML = '';
+      wrap.style.display = 'none';
+      if (parentSection) parentSection.style.display = 'none';
+    };
+    const show = () => {
+      wrap.style.display = '';
+      if (parentSection) parentSection.style.display = '';
+    };
 
     // Esperar DB y podar ítems obsoletos
     await waitForDB();
     const items = pruneAgainstDB().slice(0, limit);
-    if (!items.length) { wrap.style.display = 'none'; return; }
+    if (!items.length) { hide(); return; }
 
-    wrap.style.display = '';
+    show();
     wrap.innerHTML = `
       <section class="historial-section" aria-label="${title}">
         <h2>${title}</h2>
@@ -250,13 +261,19 @@
     // Re-render cuando Firestore traiga cambios (admin → público en vivo)
     if (!wrap._historialRefreshBound) {
       wrap._historialRefreshBound = true;
-      const onRefresh = () => {
-        const row = wrap.querySelector('.historial-row');
-        if (!row) return;
+      const onRefresh = async () => {
         const alive = pruneAgainstDB();
-        if (!alive.length) { wrap.style.display = 'none'; return; }
-        wrap.style.display = '';
-        render(row, limit);
+        if (!alive.length) { hide(); return; }
+        // Reconstruir la estructura si la sección estaba oculta
+        if (!wrap.querySelector('.historial-row')) {
+          wrap.innerHTML = `
+            <section class="historial-section" aria-label="${title}">
+              <h2>${title}</h2>
+              <div class="historial-row"></div>
+            </section>`;
+        }
+        show();
+        await render(wrap.querySelector('.historial-row'), limit);
       };
       window.addEventListener('altorra:db-refreshed', onRefresh);
       window.addEventListener('altorra:cache-invalidated', onRefresh);
