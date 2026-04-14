@@ -290,7 +290,7 @@
     renderControls(wrapper);
 
     try {
-      // Cargar propiedades
+      // Cargar propiedades (fuente única: Firestore vía PropertyDatabase)
       const dbReady = new Promise(resolve => {
         if (window.propertyDB?.isLoaded) return resolve();
         window.addEventListener('altorra:db-ready', resolve, { once: true });
@@ -298,13 +298,7 @@
       });
       await dbReady;
 
-      if (window.propertyDB?.properties?.length) {
-        _props = window.propertyDB.properties;
-      } else {
-        // fallback data.json
-        const r = await fetch('properties/data.json');
-        _props = r.ok ? await r.json() : [];
-      }
+      _props = window.propertyDB?.properties || [];
 
       // Cargar Google Maps
       await loadGoogleMaps();
@@ -316,6 +310,15 @@
       initMap(containerId);
       renderMarkers(_props);
       updateCount();
+
+      // Re-render cuando Firestore trae datos nuevos
+      const onRefresh = () => {
+        _props = window.propertyDB?.properties || [];
+        renderMarkers(_props);
+        updateCount();
+      };
+      window.addEventListener('altorra:db-refreshed', onRefresh);
+      window.addEventListener('altorra:cache-invalidated', onRefresh);
 
     } catch (err) {
       console.error('[MapaPropiedades] Error:', err);

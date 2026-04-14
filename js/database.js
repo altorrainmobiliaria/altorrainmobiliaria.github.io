@@ -1,16 +1,16 @@
 /**
  * database.js — Altorra Inmobiliaria
- * Clase PropertyDatabase: fuente de datos unificada con doble origen.
+ * Clase PropertyDatabase: fuente de datos 100% Firestore, sin fallback estático.
  *
  * Jerarquía de carga:
  *   1. Cache localStorage (TTL 5 min) → respuesta inmediata al usuario
- *   2. Firestore (cuando window.db esté listo, timeout 6 s)
- *   3. properties/data.json (fallback estático — siempre funciona)
+ *      y revalidación en background desde Firestore
+ *   2. Firestore (cuando window.db esté listo)
  *
  * Normalización:
- *   Tanto el schema de Firestore (titulo, habitaciones, operacion…)
- *   como el de data.json (title, beds, operation…) se convierten al
- *   formato unificado que el resto del frontend ya usa.
+ *   Los documentos Firestore usan nombres en español (titulo, habitaciones,
+ *   operacion…). Esta función los convierte al formato unificado (title, beds,
+ *   operation…) que el resto del frontend ya usa.
  *
  * Uso:
  *   const db = await window.propertyDB.load();
@@ -26,8 +26,7 @@
 
   const CACHE_KEY   = 'altorra:properties:v1';
   const CACHE_TTL   = 1000 * 60 * 5;   // 5 minutos
-  const FB_TIMEOUT  = 6000;             // ms antes de caer a data.json
-  const FALLBACK    = 'properties/data.json';
+  const FB_TIMEOUT  = 8000;             // ms máximo esperando Firestore
   const COLLECTION  = 'propiedades';
 
   // ── Mapeo operación: valores aceptados por página ─────────────────────────
@@ -38,9 +37,9 @@
   };
 
   // ── Normalización Firestore → formato unificado ───────────────────────────
-  // El resto del JS usa los campos de data.json (title, beds, operation…).
-  // Los documentos Firestore usan nombres en español (titulo, habitaciones, operacion…).
-  // Esta función convierte Firestore → formato existente para no romper nada.
+  // El resto del JS usa los campos que antes venían de data.json (title, beds,
+  // operation…). Los documentos Firestore usan nombres en español (titulo,
+  // habitaciones, operacion…). Esta función los traduce.
   function normalizeFromFirestore(doc) {
     const p = { ...doc };
     return {
@@ -83,14 +82,8 @@
         if (p.added) return p.added;
         return null;
       })(),
-      // Marcar origen para debug
       _source: 'firestore',
     };
-  }
-
-  // ── Normalización data.json → formato unificado ───────────────────────────
-  function normalizeFromJSON(p) {
-    return { ...p, _source: 'json' };
   }
 
   // ── Caché localStorage ────────────────────────────────────────────────────
@@ -120,25 +113,50 @@
     const { collection, getDocs, query, where, limit, orderBy } =
       await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
 
-    const q = query(
-      collection(window.db, COLLECTION),
-      where('disponible', '==', true),
-      orderBy('prioridad', 'desc'),
-      limit(100)                        // máx 100 documentos — tier gratuito
-    );
-
-    const snap = await getDocs(q);
-    return snap.docs.map(d => normalizeFromFirestore({ id: d.id, ...d.data() }));
+    // Query preferida: solo disponibles ordenadas por prioridad
+    try {
+      const q = query(
+        collection(window.db, COLLECTION),
+        where('disponible', '==', true),
+        orderBy('prioridad', 'desc'),
+        limit(100)                        // máx 100 documentos — tier gratuito
+      );
+      const snap = await getDocs(q);
+      return snap.docs.map(d => normalizeFromFirestore({ id: d.id, ...d.data() }));
+    } catch (err) {
+      // Si no hay índice compuesto aún, caer a query simple (sin orderBy)
+      console.warn('[PropertyDB] Query con índice falló, usando query simple:', err.message);
+      const q2 = query(
+        collection(window.db, COLLECTION),
+        where('disponible', '==', true),
+        limit(100)
+      );
+      const snap = await getDocs(q2);
+      return snap.docs
+        .map(d => normalizeFromFirestore({ id: d.id, ...d.data() }))
+        .sort((a, b) => (b.highlightScore || 0) - (a.highlightScore || 0));
+    }
   }
 
-  // ── Carga desde data.json (fallback) ─────────────────────────────────────
-  async function loadFromJSON() {
-    const res = await fetch(FALLBACK, { cache: 'no-store' });
-    if (!res.ok) throw new Error('data.json HTTP ' + res.status);
-    const data = await res.json();
-    return (Array.isArray(data) ? data : [])
-      .filter(p => p.available !== 0)
-      .map(normalizeFromJSON);
+  // ── Espera a que window.db esté listo ─────────────────────────────────────
+  function waitForFirestore(timeoutMs = FB_TIMEOUT) {
+    return new Promise((resolve, reject) => {
+      if (window.db) return resolve();
+      let done = false;
+      const onReady = () => {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        resolve();
+      };
+      const timer = setTimeout(() => {
+        if (done) return;
+        done = true;
+        window.removeEventListener('altorra:firebase-ready', onReady);
+        reject(new Error('Firebase no inicializado tras ' + timeoutMs + ' ms'));
+      }, timeoutMs);
+      window.addEventListener('altorra:firebase-ready', onReady, { once: true });
+    });
   }
 
   // ── Score de ranking ──────────────────────────────────────────────────────
@@ -162,92 +180,51 @@
       this._listeners  = [];     // callbacks onChange
     }
 
-    // ── Carga con fallback en 3 niveles ──────────────────────────────────────
+    // Exponer los datos para consumidores que iteran sobre toda la lista
+    get properties() { return this._data; }
+
+    // ── Carga desde Firestore con cache warm-start ──────────────────────────
     async load(forceRefresh = false) {
-      // 1. Cache fresca
+      // 1. Warm-start desde cache si está fresca → revalida en background
       if (!forceRefresh) {
         const cached = cacheRead();
         if (cached && cached.length) {
           this._data   = cached;
           this._loaded = true;
           this._ready();
-          // Revalidar en background desde Firestore (sin bloquear)
           this._refreshInBackground();
           return this;
         }
       }
 
-      // 2. Intentar Firestore (si window.db ya existe)
-      if (window.db) {
-        try {
-          const props = await Promise.race([
-            loadFromFirestore(),
-            new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), FB_TIMEOUT)),
-          ]);
-          this._data = props;
-          cacheWrite(props);
-          this._loaded = true;
-          this._ready();
-          return this;
-        } catch (err) {
-          console.warn('[PropertyDB] Firestore no disponible, usando data.json:', err.message);
-        }
-      } else {
-        // Firestore todavía no está listo — esperar el evento y cargar en background
-        this._waitForFirebaseAndRefresh();
-      }
-
-      // 3. Fallback: data.json
+      // 2. Firestore (única fuente de verdad)
       try {
-        const props    = await loadFromJSON();
-        this._data     = props;
-        this._loaded   = true;
-        // No cachear JSON para que Firestore pueda sobreescribir limpiamente
-        this._ready();
+        await waitForFirestore();
+        const props = await loadFromFirestore();
+        this._data = props;
+        cacheWrite(props);
       } catch (err) {
-        console.error('[PropertyDB] Error crítico cargando datos:', err);
-        this._data   = [];
-        this._loaded = true;
-        this._ready();
+        console.error('[PropertyDB] Error cargando desde Firestore:', err);
+        // Sin fallback: si Firestore falla, partimos vacío (catálogo dinámico)
+        this._data = [];
       }
 
+      this._loaded = true;
+      this._ready();
       return this;
     }
 
-    // ── Refrescar en background cuando Firebase esté listo ───────────────────
-    _waitForFirebaseAndRefresh() {
-      const handler = async () => {
-        if (!window.db) return;
-        try {
-          const props = await Promise.race([
-            loadFromFirestore(),
-            new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), FB_TIMEOUT)),
-          ]);
-          if (props.length) {
-            this._data = props;
-            cacheWrite(props);
-            this._notify();
-            window.dispatchEvent(new CustomEvent('altorra:db-refreshed'));
-          }
-        } catch (_) {}
-      };
-      window.addEventListener('altorra:firebase-ready', handler, { once: true });
-    }
-
     _refreshInBackground() {
-      if (!window.db) {
-        this._waitForFirebaseAndRefresh();
-        return;
-      }
-      loadFromFirestore()
-        .then(props => {
-          if (!props.length) return;
+      (async () => {
+        try {
+          await waitForFirestore();
+          const props = await loadFromFirestore();
           cacheWrite(props);
           this._data = props;
           this._notify();
           window.dispatchEvent(new CustomEvent('altorra:db-refreshed'));
-        })
-        .catch(() => {});
+        } catch (_) { /* silencio: la cache ya cubrió la UI */ }
+      })();
     }
 
     _ready() {
@@ -437,5 +414,5 @@
     window.propertyDB.load();
   }
 
-  console.log('[PropertyDB] Módulo cargado ✅');
+  console.log('[PropertyDB] Módulo cargado ✅ (fuente única: Firestore)');
 })();

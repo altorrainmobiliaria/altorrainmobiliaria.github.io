@@ -253,14 +253,59 @@ function splitIntoParagraphs(text){
 }
 function buildDescription(el,text){ splitIntoParagraphs(text).forEach(t=>{const p=document.createElement('p'); p.textContent=t; el.appendChild(p);}); }
 
+async function waitForPropertyDB(){
+  if (window.propertyDB?.isLoaded) return window.propertyDB;
+  return new Promise(resolve => {
+    const done = () => resolve(window.propertyDB || null);
+    window.addEventListener('altorra:db-ready', done, { once: true });
+    setTimeout(done, 10000); // safety timeout
+  });
+}
+
 async function init(){
   const id=getParam('id'), container=document.getElementById('propertyDetail');
   if(!id){container.innerHTML='<p>Propiedad no especificada.</p>';return;}
   try{
-    const res=await fetch('properties/data.json',{cache:'no-store'});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const data=await res.json();
-    const prop=data.find(it=>it.id===id);
+    // Fuente única: PropertyDatabase (Firestore)
+    const db = await waitForPropertyDB();
+    let prop = db ? db.getById(id) : null;
+
+    // Si no está en memoria (por ejemplo disponible:false excluida del filtro),
+    // consultar Firestore directo por ID
+    if(!prop && window.db){
+      try{
+        const { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
+        const snap = await getDoc(doc(window.db, 'propiedades', id));
+        if(snap.exists()){
+          const d = snap.data();
+          prop = {
+            id,
+            title:        d.titulo || d.title || '',
+            city:         d.ciudad || d.city || 'Cartagena',
+            type:         d.tipo || d.type || 'apartamento',
+            operation:    d.operacion || d.operation || 'comprar',
+            price:        d.precio || d.price || 0,
+            beds:         d.habitaciones ?? d.beds ?? null,
+            baths:        d.banos ?? d.baths ?? null,
+            sqm:          d.sqm ?? null,
+            image:        d.imagen || d.image || '',
+            images:       d.imagenes || d.images || [],
+            admin_fee:    d.admin_fee ?? null,
+            neighborhood: d.barrio || d.neighborhood || '',
+            strata:       d.estrato ?? d.strata ?? null,
+            garages:      d.garajes ?? d.garages ?? null,
+            floor:        d.piso ?? d.floor ?? null,
+            year_built:   d.ano_construccion ?? d.year_built ?? null,
+            features:     d.features || [],
+            description:  d.descripcion || d.description || '',
+            coords:       d.coords || null,
+            featured:     d.featured ? 1 : 0,
+            available:    d.disponible === false ? 0 : 1,
+          };
+        }
+      }catch(err){ console.warn('[Detalle] getDoc falló', err); }
+    }
+
     window.__PROP_JSON__ = prop;
     if(!prop){container.innerHTML='<p>Propiedad no encontrada.</p>';return;}
 

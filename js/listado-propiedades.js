@@ -236,12 +236,31 @@
     }
   }
 
-  // Esperar a que PropertyDatabase esté lista (Firestore o fallback data.json)
+  // Esperar a que PropertyDatabase esté lista (fuente única: Firestore)
   function waitForDB() {
     return new Promise((resolve) => {
       if (window.propertyDB && window.propertyDB.isLoaded) return resolve(window.propertyDB);
       window.addEventListener('altorra:db-ready', () => resolve(window.propertyDB), { once: true });
+      setTimeout(() => resolve(window.propertyDB || null), 10000); // safety
     });
+  }
+
+  // Re-render cada vez que Firestore trae datos nuevos (admin → página pública en vivo)
+  let _refreshBound = false;
+  function bindRefreshListener() {
+    if (_refreshBound) return;
+    _refreshBound = true;
+    const reload = () => {
+      if (!window.propertyDB?.isLoaded) return;
+      allProperties = window.propertyDB.filter({ operacion: PAGE_MODE });
+      filteredProperties = applyFilters();
+      updateResultsCount(allProperties.length, filteredProperties.length);
+      renderedCount = 0;
+      renderList(filteredProperties.slice(0, PAGE_SIZE), true);
+      updateLoadMoreButton(filteredProperties.length);
+    };
+    window.addEventListener('altorra:db-refreshed', reload);
+    window.addEventListener('altorra:cache-invalidated', reload);
   }
 
   async function init() {
@@ -256,33 +275,12 @@
     }
 
     try {
-      // Usar PropertyDatabase si está disponible; si no, caer a fetch directo
-      let data;
-      if (window.propertyDB) {
-        const db = await waitForDB();
-        data = db.filter({ operacion: PAGE_MODE });
-      } else {
-        const res = await fetch('properties/data.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const raw = await res.json();
-        const validOps = OPERATION_MAP[PAGE_MODE] || [];
-        data = (Array.isArray(raw) ? raw : []).filter(p =>
-          validOps.includes(String(p.operation || '').toLowerCase().trim())
-        );
-      }
+      // Fuente única: PropertyDatabase (Firestore)
+      const db = await waitForDB();
+      const data = db ? db.filter({ operacion: PAGE_MODE }) : [];
 
       allProperties = Array.isArray(data) ? data : [];
-
-      // Si propertyDB refresca datos desde Firestore, re-renderizar
-      if (window.propertyDB) {
-        window.addEventListener('altorra:db-refreshed', () => {
-          allProperties = window.propertyDB.filter({ operacion: PAGE_MODE });
-          filteredProperties = applyFilters();
-          updateResultsCount(allProperties.length, filteredProperties.length);
-          renderList(filteredProperties.slice(0, PAGE_SIZE), true);
-          updateLoadMoreButton(filteredProperties.length);
-        }, { once: true });
-      }
+      bindRefreshListener();
 
       const qs = new URLSearchParams(location.search);
       if (qs.has('city')) {

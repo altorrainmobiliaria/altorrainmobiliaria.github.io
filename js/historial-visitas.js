@@ -86,16 +86,47 @@
     } catch { /* no crítico */ }
   }
 
+  /* ─── Filtrar historial contra DB viva ──────────────────── */
+  // Elimina ítems cuyas propiedades ya no existen en Firestore (o que están
+  // marcadas como no disponibles), y los persiste así en localStorage.
+  function pruneAgainstDB() {
+    const db = window.propertyDB;
+    if (!db || !db.isLoaded) return lsGet();
+    const items = lsGet();
+    const alive = items.filter(p => {
+      const live = db.getById(p.id);
+      return !!live; // si no existe en DB o está filtrado por disponible:false → quitar
+    });
+    if (alive.length !== items.length) lsSet(alive);
+    return alive;
+  }
+
+  /* ─── Espera a PropertyDatabase lista (no bloqueante si no hay) ── */
+  function waitForDB(timeoutMs = 10000) {
+    return new Promise(resolve => {
+      if (window.propertyDB?.isLoaded) return resolve(window.propertyDB);
+      const done = () => resolve(window.propertyDB || null);
+      window.addEventListener('altorra:db-ready', done, { once: true });
+      setTimeout(done, timeoutMs);
+    });
+  }
+
   /* ─── Renderizar en un contenedor HTML ──────────────────── */
-  function render(selector, limit = 4) {
+  async function render(selector, limit = 4) {
     const container = typeof selector === 'string'
       ? document.querySelector(selector)
       : selector;
     if (!container) return;
 
-    const items = lsGet().slice(0, limit);
+    // Esperar a la DB y filtrar ítems obsoletos
+    await waitForDB();
+    const items = pruneAgainstDB().slice(0, limit);
+
     if (!items.length) {
       container.style.display = 'none';
+      // Si el contenedor está dentro de una sección con título, ocultarla también
+      const section = container.closest('.historial-section');
+      if (section) section.style.display = 'none';
       return;
     }
 
@@ -107,23 +138,33 @@
     };
 
     container.innerHTML = items.map(p => {
+      // Usar siempre los datos más recientes de la DB (por si el precio cambió)
+      const live = window.propertyDB?.getById(p.id) || p;
+      const title = live.title || p.title || 'Propiedad';
+      const city  = live.city  || p.city  || '';
+      const price = live.price || p.price || 0;
+      const image = live.image || p.image || '';
+      const beds  = live.beds  || p.beds  || 0;
+      const baths = live.baths || p.baths || 0;
+      const sqm   = live.sqm   || p.sqm   || 0;
+
       const specs = [];
-      if (p.beds || p.baths) specs.push(`${p.beds || 0}H · ${p.baths || 0}B`);
-      if (p.sqm) specs.push(`${p.sqm} m²`);
+      if (beds || baths) specs.push(`${beds || 0}H · ${baths || 0}B`);
+      if (sqm) specs.push(`${sqm} m²`);
 
       return `
       <a class="historial-card" href="detalle-propiedad.html?id=${encodeURIComponent(p.id)}"
-         aria-label="${p.title || 'Propiedad'}">
+         aria-label="${title}">
         <div class="historial-img">
-          ${p.image
-            ? `<img src="${p.image}" alt="${p.title || ''}" loading="lazy" decoding="async"/>`
+          ${image
+            ? `<img src="${image}" alt="${title}" loading="lazy" decoding="async"/>`
             : `<div class="historial-img-placeholder"></div>`}
         </div>
         <div class="historial-info">
-          <p class="historial-title">${p.title || 'Propiedad'}</p>
-          ${p.city ? `<p class="historial-city">${p.city}</p>` : ''}
+          <p class="historial-title">${title}</p>
+          ${city ? `<p class="historial-city">${city}</p>` : ''}
           ${specs.length ? `<p class="historial-specs">${specs.join(' · ')}</p>` : ''}
-          ${p.price ? `<p class="historial-price">${formatCOP(p.price)}</p>` : ''}
+          ${price ? `<p class="historial-price">${formatCOP(price)}</p>` : ''}
         </div>
       </a>`;
     }).join('');
@@ -186,14 +227,16 @@
   }
 
   /* ─── Renderizar sección completa (incluye título) ──────── */
-  function renderSection(containerSel, limit = 4, title = 'Vistas recientemente') {
+  async function renderSection(containerSel, limit = 4, title = 'Vistas recientemente') {
     injectStyles();
     const wrap = typeof containerSel === 'string'
       ? document.querySelector(containerSel)
       : containerSel;
     if (!wrap) return;
 
-    const items = lsGet().slice(0, limit);
+    // Esperar DB y podar ítems obsoletos
+    await waitForDB();
+    const items = pruneAgainstDB().slice(0, limit);
     if (!items.length) { wrap.style.display = 'none'; return; }
 
     wrap.style.display = '';
@@ -202,7 +245,22 @@
         <h2>${title}</h2>
         <div class="historial-row"></div>
       </section>`;
-    render(wrap.querySelector('.historial-row'), limit);
+    await render(wrap.querySelector('.historial-row'), limit);
+
+    // Re-render cuando Firestore traiga cambios (admin → público en vivo)
+    if (!wrap._historialRefreshBound) {
+      wrap._historialRefreshBound = true;
+      const onRefresh = () => {
+        const row = wrap.querySelector('.historial-row');
+        if (!row) return;
+        const alive = pruneAgainstDB();
+        if (!alive.length) { wrap.style.display = 'none'; return; }
+        wrap.style.display = '';
+        render(row, limit);
+      };
+      window.addEventListener('altorra:db-refreshed', onRefresh);
+      window.addEventListener('altorra:cache-invalidated', onRefresh);
+    }
   }
 
   /* ─── API pública ───────────────────────────────────────── */
@@ -211,6 +269,7 @@
     get:           lsGet,
     render,
     renderSection,
+    prune:         pruneAgainstDB,
     clear:         () => { lsSet([]); },
   };
 

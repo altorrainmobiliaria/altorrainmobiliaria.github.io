@@ -178,6 +178,46 @@
     document.head.appendChild(s);
   }
 
+  /* ─── Espera a PropertyDatabase ─────────────────────────── */
+  function getDB() {
+    return new Promise(resolve => {
+      if (window.propertyDB?.isLoaded) return resolve(window.propertyDB);
+      window.addEventListener('altorra:db-ready', () => resolve(window.propertyDB), { once: true });
+      setTimeout(() => resolve(window.propertyDB || null), 10000);
+    });
+  }
+
+  /* ─── Obtener propiedad destacada (siempre valida contra DB) ─ */
+  function computeFeatured(db) {
+    if (!db) return null;
+    const all = db.getRanked ? db.getRanked() : (db.properties || []);
+    return selectFeatured(all);
+  }
+
+  /* ─── Render o ocultar según DB viva ─────────────────────── */
+  function renderFromDB(container, db) {
+    const prop = computeFeatured(db);
+    if (!prop || !prop.id) {
+      // No hay destacada viva → limpiar cache y ocultar banner
+      try { localStorage.removeItem(CACHE_KEY); } catch {}
+      container.innerHTML = '';
+      container.style.display = 'none';
+      return;
+    }
+
+    // Guardar en cache por ID (no el snapshot) para revalidar al próximo render
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({
+        week: isoWeek(),
+        id:   String(prop.id),
+        ts:   Date.now(),
+      }));
+    } catch { /* ignore */ }
+
+    container.style.display = '';
+    renderBanner(container, prop);
+  }
+
   /* ─── Inicializar en un contenedor ──────────────────────── */
   async function init(selector) {
     const container = typeof selector === 'string'
@@ -185,36 +225,14 @@
       : selector;
     if (!container) return;
 
-    // Cache por 1 hora (evitar re-renderizar en cada scroll/refresh)
-    const cached = (() => {
-      try {
-        const c = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
-        if (c.week === isoWeek() && c.prop && Date.now() - c.ts < CACHE_TTL) return c.prop;
-      } catch { /* ignore */ }
-      return null;
-    })();
-
-    if (cached) { renderBanner(container, cached); return; }
-
-    // Obtener propiedad desde propertyDB o esperar
-    const getDB = () => new Promise(resolve => {
-      if (window.propertyDB?.isLoaded) return resolve(window.propertyDB);
-      window.addEventListener('altorra:db-ready', () => resolve(window.propertyDB), { once: true });
-    });
-
     try {
-      const db   = await getDB();
-      const all  = db.getRanked ? db.getRanked() : (db._data || []);
-      const prop = selectFeatured(all);
+      const db = await getDB();
+      renderFromDB(container, db);
 
-      if (!prop) { container.style.display = 'none'; return; }
-
-      // Guardar en cache
-      try {
-        localStorage.setItem(CACHE_KEY, JSON.stringify({ week: isoWeek(), prop, ts: Date.now() }));
-      } catch { /* ignore */ }
-
-      renderBanner(container, prop);
+      // Revalidar siempre que Firestore traiga cambios (admin → public en vivo)
+      const onRefresh = () => renderFromDB(container, window.propertyDB);
+      window.addEventListener('altorra:db-refreshed', onRefresh);
+      window.addEventListener('altorra:cache-invalidated', onRefresh);
     } catch (err) {
       console.warn('[FeaturedBanner] Error:', err);
       container.style.display = 'none';
@@ -222,6 +240,11 @@
   }
 
   /* ─── API pública ───────────────────────────────────────── */
-  window.FeaturedBanner = { init, renderBanner, selectFeatured, clearCache: () => localStorage.removeItem(CACHE_KEY) };
+  window.FeaturedBanner = {
+    init,
+    renderBanner,
+    selectFeatured,
+    clearCache: () => { try { localStorage.removeItem(CACHE_KEY); } catch {} },
+  };
 
 })();
