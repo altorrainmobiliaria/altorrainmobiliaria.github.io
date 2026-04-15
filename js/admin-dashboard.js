@@ -56,6 +56,12 @@
         getDocs(query(collection(window.db, 'solicitudes'), orderBy('createdAt', 'desc'), limit(100))),
         getDocs(query(collection(window.db, 'resenas'),    where('activa', '==', true))),
       ]);
+      try {
+        window.AltorraMeter?.add(
+          propsSnap.size + leadsSnap.size + resenasSnap.size,
+          'admin.dashboard'
+        );
+      } catch (_) {}
 
       const props    = propsSnap.docs.map(d => d.data());
       const leads    = leadsSnap.docs.map(d => ({ _id: d.id, ...d.data() }));
@@ -73,6 +79,9 @@
 
       // ── Analytics locales ────────────────────────────────
       renderAnalyticsSection(leads);
+
+      // ── Medidor de lecturas Firestore (tier 50K/día) ─────
+      try { window.AltorraMeter?.renderWidget('readsMeterContainer'); } catch (_) {}
 
     } catch (err) {
       console.error('[Dashboard] Error cargando datos:', err);

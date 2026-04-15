@@ -93,6 +93,7 @@
         limit(200)
       );
       const snap = await getDocs(q);
+      try { window.AltorraMeter?.add(snap.size, 'admin.properties'); } catch (_) {}
       _properties = snap.docs.map(d => ({ ...d.data(), _docId: d.id }));
       applyFilters();
     } catch (err) {

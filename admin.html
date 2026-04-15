@@ -10,6 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/admin.css"/>
   <script type="module" src="js/firebase-config.js"></script>
+  <script src="js/firestore-meter.js" defer></script>
 </head>
 <body>
 
@@ -118,6 +119,9 @@
           <div class="admin-card-header"><h2>Leads recientes</h2></div>
           <div class="admin-card-body" id="recentLeads"><div class="admin-loader"><div class="spinner"></div> Cargando...</div></div>
         </div>
+
+        <!-- Medidor de lecturas Firestore (Fase 3) -->
+        <div id="readsMeterContainer"></div>
       </section>
 
       <!-- ── PROPIEDADES ── -->
