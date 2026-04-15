@@ -1,63 +1,79 @@
-/* Altorra — Carga y cacheo de header/footer + inicialización de navegación accesible */
+/* Altorra — Carga de header/footer + navegación accesible + mejoras UX
+ *
+ * Fase C (2026-04-15):
+ *   - Cache localStorage eliminado → fetch con cache HTTP del navegador
+ *     (el header ya no queda desactualizado tras un deploy)
+ *   - Scroll-aware: header gana shadow/intensidad al hacer scroll
+ *   - Active-link: resalta el ítem del nav según la URL actual
+ *   - Purga one-shot de claves legacy `altorra:fragment:*` en localStorage
+ */
 (function () {
   if (window.__altorraHeaderInit__) return;
   window.__altorraHeaderInit__ = true;
 
-  /* ===== Config de caché (ajusta cuando cambie header/footer) ===== */
-  const CACHE_VERSION = '2026-04-15.B';          // 🔁 Sube si editas header.html o footer.html
-  const TTL_MS = 1000 * 60 * 60 * 24 * 7;        // 7 días
-  const LS_PREFIX = 'altorra:fragment:';
+  /* ===== Purga one-shot de caché legacy (Fase C) ===== */
+  try {
+    const LEGACY_PREFIX = 'altorra:fragment:';
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(LEGACY_PREFIX)) localStorage.removeItem(k);
+    }
+  } catch { /* storage no disponible, no crítico */ }
 
-  function cacheKey(url) { return `${LS_PREFIX}${url}::${CACHE_VERSION}`; }
-
-  function readCache(url) {
-    try {
-      const raw = localStorage.getItem(cacheKey(url));
-      if (!raw) return null;
-      const obj = JSON.parse(raw);
-      if (!obj || !obj.html || !obj.t) return null;
-      if (Date.now() - obj.t > TTL_MS) return null;
-      return obj.html;
-    } catch { return null; }
-  }
-
-  function writeCache(url, html) {
-    try { localStorage.setItem(cacheKey(url), JSON.stringify({ html, t: Date.now() })); } catch {}
-  }
-
+  /* ===== Inyección simple con cache HTTP del navegador ===== */
   function setHTML(host, html, after) {
     host.innerHTML = html;
     if (typeof after === 'function') {
-      try { after(); } catch (e) { console.warn('init después de inyección falló:', e); }
+      try { after(); } catch (e) { console.warn('[Altorra] init post-inyección falló:', e); }
     }
   }
 
-  /* Inyecta con caché + revalidación background */
   function inject(id, url, after) {
     const host = document.getElementById(id);
     if (!host) return;
-    const cached = readCache(url);
-
-    if (cached) {
-      setHTML(host, cached, after);
-      fetch(url, { cache: 'no-cache' })
-        .then(r => r.ok ? r.text() : Promise.reject(r.status))
-        .then(html => {
-          if (html && html !== cached) {
-            writeCache(url, html);
-            setHTML(host, html, after);
-          }
-        })
-        .catch(() => {});
-    } else {
-      fetch(url, { cache: 'no-cache' })
-        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
-        .then(html => { writeCache(url, html); setHTML(host, html, after); })
-        .catch(e => console.warn('No se pudo cargar', url, e));
-    }
+    fetch(url, { cache: 'default' })  // usa HTTP cache del navegador
+      .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+      .then(html => setHTML(host, html, after))
+      .catch(e => console.warn('[Altorra] No se pudo cargar', url, e));
   }
 
-  /* ===== Navegación (misma UI, sin cambios de diseño) ===== */
+  /* ===== Scroll-aware header ===== */
+  function initScrollAware() {
+    const header = document.querySelector('header');
+    if (!header) return;
+    let ticking = false;
+    const update = () => {
+      header.classList.toggle('scrolled', window.scrollY > 8);
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (!ticking) { requestAnimationFrame(update); ticking = true; }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    update();
+  }
+
+  /* ===== Active-link: resalta el ítem del nav según URL ===== */
+  function initActiveLink() {
+    const path = (location.pathname.split('/').pop() || 'index.html').toLowerCase();
+
+    // Mapa URL → panel-id / href del botón activo
+    const propiedades = ['propiedades-comprar.html', 'propiedades-arrendar.html',
+                         'propiedades-alojamientos.html', 'detalle-propiedad.html'];
+    const servicios   = ['servicios-mantenimiento.html', 'servicios-mudanzas.html'];
+
+    let activeSelector = null;
+    if (propiedades.includes(path))          activeSelector = '[data-panel="panel-propiedades"]';
+    else if (servicios.includes(path))       activeSelector = '[data-panel="panel-servicios"]';
+    else if (path === 'quienes-somos.html')  activeSelector = '.nav-btn[href="quienes-somos.html"]';
+    else if (path === 'contacto.html')       activeSelector = '.nav-btn[href="contacto.html"]';
+
+    if (!activeSelector) return;
+    const el = document.querySelector(activeSelector);
+    if (el) el.classList.add('is-active');
+  }
+
+  /* ===== Navegación (paneles desktop + drawer móvil) ===== */
   function initHeader() {
     const header = document.querySelector('header');
     if (!header) return;
@@ -154,12 +170,12 @@
 
     function openDrawer() {
       if (!drawer) return;
-      drawer.removeAttribute('hidden');        // visible para AT y CSS
-      drawer.classList.add('open');            // ✅ necesario según CSS (.drawer.open)
+      drawer.removeAttribute('hidden');
+      drawer.classList.add('open');
       toggle && toggle.setAttribute('aria-expanded', 'true');
 
       if (backdrop) {
-        backdrop.classList.add('open');        // ✅ muestra backdrop (.drawer-backdrop.open)
+        backdrop.classList.add('open');
         backdrop.setAttribute('aria-hidden', 'false');
       }
       document.body.style.overflow = 'hidden';
@@ -170,8 +186,8 @@
 
     function closeDrawer() {
       if (!drawer) return;
-      drawer.classList.remove('open');         // cierra animación
-      drawer.setAttribute('hidden', '');       // oculta semánticamente
+      drawer.classList.remove('open');
+      drawer.setAttribute('hidden', '');
       toggle && toggle.setAttribute('aria-expanded', 'false');
 
       if (backdrop) {
@@ -187,7 +203,6 @@
       backdrop && backdrop.addEventListener('click', closeDrawer);
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isOpen()) closeDrawer(); });
 
-      // Trap de foco simple
       drawer.addEventListener('keydown', (e) => {
         if (e.key !== 'Tab') return;
         const focusables = drawer.querySelectorAll('a,button,input,select,textarea,[tabindex]:not([tabindex="-1"])');
@@ -197,12 +212,12 @@
         else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
       });
 
-      // Si el viewport pasa a desktop con el drawer abierto, ciérralo
       window.addEventListener('resize', () => { if (window.innerWidth > 860 && isOpen()) closeDrawer(); });
     }
 
-    // Inicializa menús desktop
     setupDesktopMenus();
+    initScrollAware();
+    initActiveLink();
   }
 
   /* ===== Inicio ===== */
