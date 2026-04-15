@@ -292,6 +292,28 @@ document.addEventListener('DOMContentLoaded', function() {
   function formatCOP(n){ if(n==null) return ''; return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
   function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
 
+  // Skeleton cards mientras Firestore responde (reduce la sensación de pantalla vacía)
+  function buildSkeletonCard(){
+    const el = document.createElement('article');
+    el.className = 'card card--skeleton';
+    el.setAttribute('aria-hidden', 'true');
+    el.innerHTML = ''
+      + '<div class="sk-media"></div>'
+      + '<div class="sk-body">'
+      +   '<div class="sk-line w-80"></div>'
+      +   '<div class="sk-line w-50"></div>'
+      +   '<div class="sk-line w-60"></div>'
+      + '</div>';
+    return el;
+  }
+  function renderCarouselSkeletons(root, count){
+    if (!root) return;
+    root.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < count; i++) frag.appendChild(buildSkeletonCard());
+    root.appendChild(frag);
+  }
+
   /* ===== Toast reutilizable para favoritos (estilo detalle) ===== */
   function showFavToast(added){
     try{
@@ -458,6 +480,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const root = document.getElementById(c.targetId);
     if (!root) return Promise.resolve();
     const section = root.closest('section');
+    // Placeholders solo si aún no hay datos locales — evita flash en recargas con caché
+    if (!root.children.length && !(window.propertyDB && window.propertyDB.isLoaded)) {
+      renderCarouselSkeletons(root, 4);
+    }
     return fetchByOperation(c.operation).then(function(arr){
       if (!arr || arr.length === 0) {
         if (section) section.style.display = 'none';

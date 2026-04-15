@@ -54,6 +54,36 @@
     return `https://wa.me/${WHATSAPP.phone}?text=${encodeURIComponent(text)}`;
   }
 
+  // Tarjeta skeleton de carga — shimmer mientras Firestore responde
+  function createSkeletonCard() {
+    const card = document.createElement('article');
+    card.className = 'card card--skeleton';
+    card.setAttribute('aria-hidden', 'true');
+    card.innerHTML = `
+      <div class="sk-media"></div>
+      <div class="sk-body">
+        <div class="sk-line w-80"></div>
+        <div class="sk-line w-50"></div>
+        <div class="sk-line w-60"></div>
+        <div class="sk-line w-40"></div>
+        <div class="sk-ctas">
+          <div class="sk-btn"></div>
+          <div class="sk-btn"></div>
+        </div>
+      </div>
+    `;
+    return card;
+  }
+
+  function renderSkeletons(count = 6) {
+    const root = document.getElementById('list');
+    if (!root) return;
+    root.innerHTML = '';
+    const fragment = document.createDocumentFragment();
+    for (let i = 0; i < count; i++) fragment.appendChild(createSkeletonCard());
+    root.appendChild(fragment);
+  }
+
   function createCard(p) {
     const card = document.createElement('article');
     card.className = 'card';
@@ -279,10 +309,10 @@
     const list = document.getElementById('list');
 
     if (counter) {
-      counter.innerHTML = '<span style="color:var(--muted)">⏳ Cargando propiedades...</span>';
+      counter.innerHTML = '<span style="color:var(--muted)">Cargando propiedades...</span>';
     }
     if (list) {
-      list.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)"><p>⏳ Cargando propiedades...</p></div>';
+      renderSkeletons(PAGE_SIZE);
     }
 
     try {
