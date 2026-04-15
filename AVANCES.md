@@ -2,7 +2,7 @@
 ## Bitácora de implementación hacia plataforma dinámica con Firebase
 
 > Documento vivo. Se actualiza con cada microfase completada.
-> Última actualización: 2026-04-10 (sesión de auditoría y fixes)
+> Última actualización: 2026-04-15 (sync en vivo + limpieza UX home)
 
 ---
 
@@ -573,6 +573,102 @@ Cuando el propietario tenga Firebase configurado, solo habrá que:
 
 ---
 
+## SESIÓN 2026-04-14/15 — Catálogo 100% dinámico + UX home
+
+Rama: `claude/review-repo-docs-A5pvR`
+Commits clave: `d28437e`, `f5fc70a`, `e9d1dd6`, `1abc74e`
+
+### Contexto
+
+Después del deploy inicial, se detectaron tres síntomas:
+
+1. Una propiedad creada desde el admin **no aparecía** en el sitio público aunque se refrescara la página.
+2. La sección "Propiedad destacada de la semana" y el carrusel "Vistas recientemente" mostraban propiedades que ya habían sido **eliminadas** del admin.
+3. Al cargar el home sin inventario, los carruseles mostraban "Cargando propiedades…" que **parpadeaba** antes de desaparecer.
+
+El usuario había borrado manualmente `properties/data.json` porque quería que Firestore fuera la **única fuente de verdad**, igual que en Altorra Cars.
+
+### Cambios aplicados
+
+#### A) Catálogo 100% dinámico desde Firestore (`d28437e`)
+
+- Eliminado cualquier `fetch('properties/data.json')` del runtime. Las únicas referencias residuales son comentarios históricos en `js/database.js:40` y `js/smart-search.js:26`.
+- `PropertyDatabase` (en `js/database.js`) carga únicamente desde Firestore; sin fallback a JSON estático.
+- `js/smart-search.js` ahora consulta `window.propertyDB` en vez de un JSON local.
+- `scripts/upload-to-firestore.mjs` sigue existiendo pero solo como herramienta puntual de seed inicial; no se llama en runtime.
+
+#### B) Sync admin → público en vivo (`d28437e`, `f5fc70a`)
+
+Se cableó una red de eventos globales para que cualquier cambio en Firestore se propague al frontend público sin recargar:
+
+| Evento | Emisor | Propósito |
+|---|---|---|
+| `altorra:firebase-ready` | `js/firebase-config.js` | Firebase SDK inicializado |
+| `altorra:db-ready` | `js/database.js` | Primera carga de propiedades completa |
+| `altorra:db-refreshed` | `js/database.js` (onSnapshot sobre `system/meta.lastModified`) | Hubo cambios en el catálogo |
+| `altorra:cache-invalidated` | `js/cache-manager.js` | Invalidación manual o por versión de deploy |
+
+**Consumidores** (ya no usan `{ once: true }` para mantenerse escuchando):
+
+- `js/listado-propiedades.js` — repinta la grilla completa
+- `scripts.js` — refresca los 3 carruseles del home
+- `js/featured-week-banner.js` — recalcula y muestra/oculta destacada
+- `js/historial-visitas.js` — **prune** contra DB viva: si una propiedad del historial ya no existe en Firestore, la elimina de `localStorage`
+- `js/smart-search.js` — invalida índice
+- `js/mapa-propiedades.js`, `js/comparador.js`, `detalle-propiedad.html`, `index.html`
+
+#### C) Ocultar secciones vacías (no dejar huecos) (`f5fc70a`)
+
+Los módulos de home esconden la sección entera cuando no hay datos en vez de mostrar un contenedor con título vacío:
+
+- Destacada semana: `featured-week-banner.js:199-206` → si no hay propiedad viable, `container.style.display='none'` + `section.style.display='none'`.
+- Historial: `historial-visitas.js` → misma lógica en `renderSection()`.
+
+#### D) Reseñas movidas al Quiénes somos (`e9d1dd6`)
+
+Reorganización de IA de página:
+
+- **Eliminada** sección "Nuestro equipo" (Daniel Romero / Guido Rodriguez / Yesit Romero) de `quienes-somos.html`.
+- **Movida** la sección "Opiniones de nuestros clientes" desde `index.html` hacia `quienes-somos.html`, en el slot que ocupaba el equipo.
+- Añadido `scripts.js` como dependencia de `quienes-somos.html` para que la lógica de carga de reseñas (Firestore → fallback `reviews.json`) funcione también allí.
+- `header.html`: el link "Nuestro equipo" (apuntaba a `#equipo`, ancla ya inexistente) se cambió a "Reseñas" apuntando a `quienes-somos.html#reseñas`.
+
+#### E) Fix parpadeo "Cargando propiedades…" en home (`1abc74e`)
+
+Problema: el HTML renderizaba los 5 bloques del home (Venta/Arriendo/Días/Destacada/Historial) visibles con placeholder "Cargando…", luego el JS consultaba Firestore y si no había resultado ocultaba la sección. Esto producía un flash de ~500ms con UI que desaparecía.
+
+Fix: las cinco secciones ahora arrancan con `style="display:none"` inline. El JS las revela con `section.style.display = ''` únicamente cuando Firestore devuelve datos reales. Se eliminaron los `<div class="loading">Cargando propiedades...</div>` porque ya no se ven nunca.
+
+Resultado: cuando hay inventario las secciones aparecen limpias al llegar los datos; cuando no hay, nunca se pintan.
+
+### Estado final de los módulos
+
+```
+Catálogo:              Firestore (única fuente)
+data.json:             Eliminado del filesystem
+Sync admin→público:    Eventos globales, sin recarga
+Historial local:       Pruning automático contra DB viva
+Destacada semana:      Validada contra DB, se oculta si no hay
+Home vacío:            Sin flash, sin placeholders huérfanos
+Reseñas:               En quienes-somos.html#reseñas
+Menú "Nuestro equipo": Reemplazado por "Reseñas"
+```
+
+### Lo que NO se tocó (intencional)
+
+- Los comentarios en `js/database.js:40` y `js/smart-search.js:26` que mencionan `data.json` — son historia del refactor, no referencias vivas.
+- El schema Firestore (colecciones `propiedades`, `solicitudes`, etc.) — sin cambios.
+- Las reglas de seguridad (`firestore.rules`, `storage.rules`) — sin cambios.
+- Cloud Functions — siguen con el estado parcial descrito en `DEPLOY-RUNBOOK.md`.
+
+### Pendientes derivados de esta sesión
+
+- [ ] Si el usuario percibe el rato en blanco como largo cuando SÍ hay inventario, considerar skeleton cards animadas en lugar de espacio vacío.
+- [ ] Verificar que al crear una propiedad desde admin, `system/meta.lastModified` se actualiza correctamente (es lo que dispara el `onSnapshot`). Si no, la sincro en vivo no funciona.
+- [ ] Monitorear el límite de lecturas Firestore — cada refresh en vivo dispara una recarga del catálogo. Con tráfico alto podría acercarse a las 50K lecturas/día del tier gratuito.
+
+---
+
 ## PENDIENTE DEL PROPIETARIO (tarea humana)
 
 Estas tareas no las puede hacer Claude — requieren acceso a la consola de Firebase y cuentas del negocio:
@@ -591,4 +687,4 @@ Estas tareas no las puede hacer Claude — requieren acceso a la consola de Fire
 
 ---
 
-*Última actualización: 2026-04-10*
+*Última actualización: 2026-04-15*
