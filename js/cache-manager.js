@@ -218,6 +218,8 @@
           await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
 
         onSnapshot(doc(window.db, 'system', 'meta'), (snap) => {
+          // 1 lectura Firestore por cada disparo del listener (inicial + cambios)
+          try { window.AltorraMeter?.add(1, 'cache.system-meta'); } catch (_) {}
           if (!snap.exists()) return;
           const ts = snap.data().lastModified;
           if (!ts) return;

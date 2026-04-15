@@ -367,3 +367,82 @@ input, select, textarea { font-family: inherit; }
   .admin-main { padding: 16px; }
   .modal-body { padding: 16px; }
 }
+
+/* ──────────────────────────────────────────────────────
+   Widget medidor de lecturas Firestore (Fase 3)
+   ────────────────────────────────────────────────────── */
+.meter-card .meter-number {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.meter-card .meter-number strong {
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.meter-card .meter-of {
+  color: var(--muted, #6b7280);
+  font-size: .9rem;
+}
+.meter-card .meter-bar {
+  height: 10px;
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.meter-card .meter-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width .4s ease, background .2s ease;
+}
+.meter-card.meter--green  .meter-bar-fill { background: linear-gradient(90deg, #16a34a, #22c55e); }
+.meter-card.meter--amber  .meter-bar-fill { background: linear-gradient(90deg, #d97706, #f59e0b); }
+.meter-card.meter--red    .meter-bar-fill { background: linear-gradient(90deg, #dc2626, #ef4444); }
+.meter-card.meter--amber  .meter-number strong { color: #b45309; }
+.meter-card.meter--red    .meter-number strong { color: #b91c1c; }
+.meter-card .meter-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+  margin-bottom: 12px;
+}
+.meter-card .meter-table th,
+.meter-card .meter-table td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+.meter-card .meter-table th {
+  color: var(--muted, #6b7280);
+  font-weight: 600;
+  font-size: .75rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.meter-card .meter-table tr.today td {
+  font-weight: 700;
+}
+.meter-card .meter-table tr.today em {
+  font-style: normal;
+  color: var(--gold, #b8960f);
+  font-size: .8rem;
+  margin-left: 4px;
+}
+.meter-card .meter-table td:last-child {
+  width: 35%;
+}
+.meter-card .meter-spark {
+  height: 6px;
+  background: linear-gradient(90deg, #d4af37, #ffb400);
+  border-radius: 3px;
+  min-width: 2px;
+}
+.meter-card .meter-disclaimer {
+  margin: 4px 0 0;
+  color: var(--muted, #6b7280);
+  font-size: .78rem;
+  line-height: 1.4;
+}

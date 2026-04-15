@@ -122,6 +122,7 @@
         limit(100)                        // máx 100 documentos — tier gratuito
       );
       const snap = await getDocs(q);
+      try { window.AltorraMeter?.add(snap.size, 'db.loadFromFirestore'); } catch (_) {}
       return snap.docs.map(d => normalizeFromFirestore({ id: d.id, ...d.data() }));
     } catch (err) {
       // Si no hay índice compuesto aún, caer a query simple (sin orderBy)
@@ -132,6 +133,7 @@
         limit(100)
       );
       const snap = await getDocs(q2);
+      try { window.AltorraMeter?.add(snap.size, 'db.loadFromFirestore:fallback'); } catch (_) {}
       return snap.docs
         .map(d => normalizeFromFirestore({ id: d.id, ...d.data() }))
         .sort((a, b) => (b.highlightScore || 0) - (a.highlightScore || 0));
@@ -485,7 +487,16 @@
           ),
           (snapshot) => {
             // El primer snapshot es la carga inicial — ya la cubrió load().
-            if (firstSnapshot) { firstSnapshot = false; return; }
+            // Aun así Firestore cobra esos docs como lecturas reales.
+            if (firstSnapshot) {
+              try { window.AltorraMeter?.add(snapshot.size, 'db.realtime:initial'); } catch (_) {}
+              firstSnapshot = false;
+              return;
+            }
+            try {
+              const changed = snapshot.docChanges().length || snapshot.size;
+              window.AltorraMeter?.add(changed, 'db.realtime:change');
+            } catch (_) {}
 
             const next = snapshot.docs
               .map(d => normalizeFromFirestore({ id: d.id, ...d.data() }))
