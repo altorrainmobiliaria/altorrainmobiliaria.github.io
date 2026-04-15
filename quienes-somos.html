@@ -220,22 +220,14 @@
       </div>
     </section>
 
-    <!-- Nuestro equipo -->
-    <section id="equipo" class="qs-section">
-      <h2>Nuestro equipo</h2>
-      <div class="qs-grid-three">
-        <div class="qs-card" style="text-align:center">
-          <strong>Daniel Romero</strong>
-          <div style="color:var(--muted);font-weight:600;margin-top:4px">Gerente General</div>
-        </div>
-        <div class="qs-card" style="text-align:center">
-          <strong>Guido Rodriguez</strong>
-          <div style="color:var(--muted);font-weight:600;margin-top:4px">Gerente Jurídico</div>
-        </div>
-        <div class="qs-card" style="text-align:center">
-          <strong>Yesit Romero</strong>
-          <div style="color:var(--muted);font-weight:600;margin-top:4px">Gerente Financiero</div>
-        </div>
+    <!-- Opiniones de nuestros clientes -->
+    <section id="reseñas" class="qs-section" aria-labelledby="reseñas-title">
+      <h2 id="reseñas-title">Opiniones de nuestros clientes</h2>
+      <div id="google-reviews" class="reviews-wrap" aria-live="polite"></div>
+      <div class="reviews-cta">
+        <a class="btn btn-primary" href="https://search.google.com/local/writereview?placeid=ChIJoym3zbYl9o4Rxs-NeVE8-FY" target="_blank" rel="noopener">
+          Escribir mi reseña
+        </a>
       </div>
     </section>
 
@@ -261,6 +253,7 @@
   <script src="js/cache-manager.js" defer></script>
   <script src="js/components.js" defer></script>
   <script defer src="js/favoritos.js"></script>
+  <script src="scripts.js" defer></script>
  <!-- WhatsApp Floating Button -->
 <link rel="stylesheet" href="css/whatsapp-float.css">
 <a 
