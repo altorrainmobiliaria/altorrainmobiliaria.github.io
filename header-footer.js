@@ -4,7 +4,7 @@
   window.__altorraHeaderInit__ = true;
 
   /* ===== Config de caché (ajusta cuando cambie header/footer) ===== */
-  const CACHE_VERSION = '2026-04-15.A';          // 🔁 Sube si editas header.html o footer.html
+  const CACHE_VERSION = '2026-04-15.B';          // 🔁 Sube si editas header.html o footer.html
   const TTL_MS = 1000 * 60 * 60 * 24 * 7;        // 7 días
   const LS_PREFIX = 'altorra:fragment:';
 
