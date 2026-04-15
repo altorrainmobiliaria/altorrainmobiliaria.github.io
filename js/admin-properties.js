@@ -63,6 +63,8 @@
   }
 
   /* ─── Invalidar caché en system/meta ─────────────────── */
+  // Escribe lastModified para que el onSnapshot de cache-manager.js dispare
+  // invalidación inmediata en todas las pestañas abiertas (admin + públicas).
   async function touchSystemMeta() {
     const { doc, setDoc, serverTimestamp } =
       await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
@@ -70,7 +72,12 @@
       await setDoc(doc(window.db, 'system', 'meta'), {
         lastModified: serverTimestamp()
       }, { merge: true });
-    } catch { /* no crítico */ }
+      console.info('[AdminProps] system/meta.lastModified actualizado → cache invalidado');
+    } catch (err) {
+      // No bloquea el guardado de la propiedad, pero sí rompe la invalidación
+      // cross-tab. Log visible para que sea detectable.
+      console.warn('[AdminProps] Falló touchSystemMeta (los tabs públicos no se refrescarán automáticamente):', err?.code || err?.message || err);
+    }
   }
 
   /* ─── Carga desde Firestore ─────────────────────────────── */
