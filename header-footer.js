@@ -41,9 +41,18 @@
   function initScrollAware() {
     const header = document.querySelector('header');
     if (!header) return;
+
+    const heroEl = document.querySelector('.hero');
+    const threshold = heroEl ? 80 : 8;
+
+    // Si hay hero, arranca con efecto glass (translúcido + blur)
+    if (heroEl) header.classList.add('header-glass');
+
     let ticking = false;
     const update = () => {
-      header.classList.toggle('scrolled', window.scrollY > 8);
+      const past = window.scrollY > threshold;
+      header.classList.toggle('scrolled', past);
+      if (heroEl) header.classList.toggle('header-glass', !past);
       ticking = false;
     };
     const onScroll = () => {
@@ -60,7 +69,7 @@
     // Mapa URL → panel-id / href del botón activo
     const propiedades = ['propiedades-comprar.html', 'propiedades-arrendar.html',
                          'propiedades-alojamientos.html', 'detalle-propiedad.html'];
-    const servicios   = ['servicios-mantenimiento.html', 'servicios-mudanzas.html'];
+    const servicios   = ['servicios-mantenimiento.html', 'servicios-mudanzas.html', 'turismo-inmobiliario.html'];
 
     let activeSelector = null;
     if (propiedades.includes(path))          activeSelector = '[data-panel="panel-propiedades"]';
