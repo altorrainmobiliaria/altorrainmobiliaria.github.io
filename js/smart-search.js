@@ -423,6 +423,86 @@
     return { setActive, position, show, hide, isOpen, el };
   })();
 
+  /* ---------- Agrupación de sugerencias por barrio/tipo/ciudad ---------- */
+  const TYPE_LABEL = {
+    apartamento: 'Apartamentos',
+    casa: 'Casas',
+    lote: 'Lotes',
+    oficina: 'Oficinas',
+    bodega: 'Bodegas',
+    local: 'Locales'
+  };
+
+  function opToPage(op){
+    switch (op) {
+      case 'arrendar': return 'propiedades-arrendar.html';
+      case 'alojar':   return 'propiedades-alojamientos.html';
+      default:         return 'propiedades-comprar.html';
+    }
+  }
+
+  function buildGroupHref(group){
+    const op = document.getElementById('op')?.value || 'comprar';
+    const page = opToPage(op);
+    const params = new URLSearchParams();
+    if (group.kind === 'barrio') params.set('search', group.key);
+    else if (group.kind === 'tipo') {
+      params.set('type', group.key);
+      if (group.city) params.set('city', group.city);
+    }
+    else if (group.kind === 'ciudad') params.set('city', group.key);
+    const qs = params.toString();
+    return page + (qs ? '?' + qs : '');
+  }
+
+  function buildGroupSuggestions(query, allProps){
+    const q = norm(query);
+    if (q.length < MIN_CHARS) return [];
+
+    const byHood = new Map();
+    const byType = new Map();
+    const byCity = new Map();
+
+    for (const p of allProps) {
+      if (p.available === 0 || p.disponible === false) continue;
+
+      const hood = String(p.neighborhood || '').trim();
+      const city = String(p.city || '').trim();
+      const type = String(p.type || '').trim().toLowerCase();
+
+      if (hood && norm(hood).includes(q)) {
+        const k = hood;
+        const cur = byHood.get(k) || { kind: 'barrio', key: k, label: hood + (city ? ' · ' + city : ''), count: 0 };
+        cur.count++; byHood.set(k, cur);
+      }
+
+      if (type && (norm(type).includes(q) || (TYPE_LABEL[type] && norm(TYPE_LABEL[type]).includes(q)))) {
+        const k = type + '|' + city;
+        const cur = byType.get(k) || {
+          kind: 'tipo', key: type, city: city,
+          label: (TYPE_LABEL[type] || type) + (city ? ' en ' + city : ''),
+          count: 0
+        };
+        cur.count++; byType.set(k, cur);
+      }
+
+      if (city && norm(city).includes(q) && !hood) {
+        const k = city;
+        const cur = byCity.get(k) || { kind: 'ciudad', key: k, label: city, count: 0 };
+        cur.count++; byCity.set(k, cur);
+      }
+    }
+
+    const groups = [
+      ...byHood.values(),
+      ...byType.values(),
+      ...byCity.values()
+    ].filter(g => g.count >= 1);
+
+    groups.sort((a, b) => b.count - a.count);
+    return groups.slice(0, 3);
+  }
+
   /* ---------- Highlight seguro ---------- */
   function highlight(text, terms){
     let out = esc(text);
@@ -435,13 +515,52 @@
   }
 
   /* ---------- Render ---------- */
-  function renderList(results, queryTerms){
+  function renderGroups(groups){
+    if (!groups.length) return '';
+    const iconFor = k => k === 'barrio'
+      ? '<svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 2a6 6 0 016 6c0 4.5-6 10-6 10S4 12.5 4 8a6 6 0 016-6zm0 8a2 2 0 100-4 2 2 0 000 4z"/></svg>'
+      : k === 'tipo'
+      ? '<svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M3 9l7-6 7 6v8a1 1 0 01-1 1h-4v-5H8v5H4a1 1 0 01-1-1V9z"/></svg>'
+      : '<svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 18s-6-5.5-6-10a6 6 0 1112 0c0 4.5-6 10-6 10z"/></svg>';
+
+    const rows = groups.map((g, i) => {
+      const safeLabel = esc(g.label);
+      const plural = g.count === 1 ? 'propiedad' : 'propiedades';
+      return '<div class="ss-group-item" role="option" data-idx="' + i + '"' +
+             ' style="display:flex;gap:10px;padding:10px 14px;cursor:pointer;align-items:center;border-bottom:1px dashed rgba(0,0,0,.06)">' +
+               '<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;background:#fff7e0;color:#b8860b;flex-shrink:0">' + iconFor(g.kind) + '</span>' +
+               '<span style="flex:1;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><strong>' + safeLabel + '</strong></span>' +
+               '<span style="background:#f3f4f6;color:#374151;font-size:.78rem;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap">' + g.count + ' ' + plural + '</span>' +
+             '</div>';
+    }).join('');
+    return '<div style="padding:8px 14px 4px;font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.06em">Sugerencias</div>' + rows;
+  }
+
+  function renderList(results, queryTerms, query, allProps){
     const dd = DD.el();
-    if(!results.length){
+    const groups = query ? buildGroupSuggestions(query, allProps || []) : [];
+    if(!results.length && !groups.length){
       dd.innerHTML = `<div style="padding:16px;text-align:center;color:#6b7280;font-size:.95rem">Sin resultados. Prueba con otra palabra.</div>`;
       DD.show(); return;
     }
-    dd.innerHTML='';
+    dd.innerHTML = renderGroups(groups);
+    if (groups.length && results.length) {
+      dd.innerHTML += '<div style="padding:8px 14px 4px;font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.06em">Propiedades</div>';
+    }
+
+    dd.querySelectorAll('.ss-group-item').forEach(row => {
+      const i = parseInt(row.dataset.idx, 10);
+      const g = groups[i];
+      if (!g) return;
+      row.addEventListener('mouseenter', () => { row.style.background = '#f9fafb'; });
+      row.addEventListener('mouseleave', () => { row.style.background = 'transparent'; });
+      row.addEventListener('click', () => {
+        const ae = document.activeElement;
+        if (ae && ae.id === 'f-search' && ae.value.trim()) saveRecent(ae.value.trim());
+        location.href = buildGroupHref(g);
+      });
+    });
+
     results.forEach(p=>{
       const row=document.createElement('div');
       row.className='ss-item';
@@ -571,7 +690,7 @@
         try{
           const results = await searchProps(q, props, vocab);
           const termsForHL = uniq(norm(q).split(' ').filter(Boolean));
-          renderList(results, termsForHL);
+          renderList(results, termsForHL, q, props);
           DD.position();
         }catch(err){
           console.error('[smart-search]',err);
@@ -594,7 +713,7 @@
       // Teclado (desktop)
       let current=-1;
       const dd = DD.el();
-      const items=()=>dd.querySelectorAll('.ss-item');
+      const items=()=>dd.querySelectorAll('.ss-group-item, .ss-item, .ss-recent-item');
       const highlightRow=i=>{
         items().forEach(el=>el.style.background='transparent');
         if(i>=0 && i<items().length){ items()[i].style.background='#eef2ff'; items()[i].scrollIntoView({block:'nearest'}); }
