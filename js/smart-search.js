@@ -229,6 +229,8 @@
 
     // mapear tokens a features/types (mono-palabra) o corregir typos contra vocab
     const mapped=[];
+    const originals=[];
+    let hadTypo=false;
     tokens.forEach(tok=>{
       const t = tok;
       // features mono-palabra
@@ -240,12 +242,18 @@
       // corrección de typo simple (si token largo y no numérico)
       if (t.length>=4 && !/^\d+$/.test(t)) {
         const candidate = vocab.find(v => dlDist1(t, v));
-        if (candidate) { mapped.push(candidate); return; }
+        if (candidate && candidate !== t) {
+          mapped.push(candidate);
+          originals.push(t);
+          hadTypo = true;
+          return;
+        }
       }
       mapped.push(t);
+      originals.push(t);
     });
 
-    return { phrases, tokens: mapped, constraints };
+    return { phrases, tokens: mapped, originals, hadTypo, constraints };
   }
 
   /* ---------- Campos + índice de features por propiedad ---------- */
@@ -341,7 +349,7 @@
 
   async function searchProps(query, allProps, vocab){
     if(!query || query.length<MIN_CHARS) return [];
-    const { tokens, constraints } = parseQuery(query, vocab);
+    const { tokens, originals, hadTypo, constraints } = parseQuery(query, vocab);
     const qStr = norm(query);
     const res = [];
 
@@ -349,7 +357,12 @@
       const f = fieldText(p);
       if(qStr.length>=3 && !tokensHitStrong(tokens, f)) continue;
       const sc = scoreProperty(tokens, qStr, f, constraints, p);
-      if(sc>0) res.push({p, sc, f});
+      if(sc>0) {
+        const matchedByOriginal = originals && originals.length
+          ? tokensHitStrong(originals, f)
+          : true;
+        res.push({ p, sc, f, isFuzzy: hadTypo && !matchedByOriginal });
+      }
     }
 
     if (res.length===0 && qStr.length>=3){
@@ -361,11 +374,11 @@
         );
         if(!hasOne) continue;
         const sc = scoreProperty(tokens, qStr, f, constraints, p);
-        if(sc>0) res.push({p, sc, f});
+        if(sc>0) res.push({ p, sc, f, isFuzzy: hadTypo });
       }
     }
 
-    return res.sort((a,b)=>b.sc-a.sc).slice(0,MAX_SUGGESTIONS).map(r=>r.p);
+    return res.sort((a,b)=>b.sc-a.sc).slice(0,MAX_SUGGESTIONS).map(r => ({ ...r.p, __isFuzzy: r.isFuzzy }));
   }
 
   /* ---------- Dropdown singleton (estable PC/móvil) ---------- */
@@ -416,8 +429,17 @@
       dd.style.left  = (r.left + window.scrollX) + 'px';
       dd.style.width = lockedWidth + 'px';
     }
-    const show = ()=> dd.style.display='block';
-    const hide = ()=> { dd.style.display='none'; lockedWidth=null; };
+    const show = ()=> {
+      dd.style.display='block';
+      if (activeInput) activeInput.setAttribute('aria-expanded', 'true');
+    };
+    const hide = ()=> {
+      dd.style.display='none'; lockedWidth=null;
+      if (activeInput) {
+        activeInput.setAttribute('aria-expanded', 'false');
+        activeInput.removeAttribute('aria-activedescendant');
+      }
+    };
     const isOpen = ()=> dd && dd.style.display!=='none';
     const el = ()=> dd || ensure();
     return { setActive, position, show, hide, isOpen, el };
@@ -548,10 +570,14 @@
       dd.innerHTML += '<div style="padding:8px 14px 4px;font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.06em">Propiedades</div>';
     }
 
+    let optIndex = 0;
+
     dd.querySelectorAll('.ss-group-item').forEach(row => {
       const i = parseInt(row.dataset.idx, 10);
       const g = groups[i];
       if (!g) return;
+      row.id = 'ss-opt-' + (optIndex++);
+      row.setAttribute('aria-selected', 'false');
       row.addEventListener('mouseenter', () => { row.style.background = '#f9fafb'; });
       row.addEventListener('mouseleave', () => { row.style.background = 'transparent'; });
       row.addEventListener('click', () => {
@@ -565,6 +591,8 @@
       const row=document.createElement('div');
       row.className='ss-item';
       row.setAttribute('role','option');
+      row.setAttribute('aria-selected', 'false');
+      row.id = 'ss-opt-' + (optIndex++);
       row.style.cssText='display:flex;gap:12px;padding:12px 14px;cursor:pointer;align-items:center';
       row.onmouseenter=()=>row.style.background='#f9fafb';
       row.onmouseleave=()=>row.style.background='transparent';
@@ -572,12 +600,15 @@
       const titleHTML = highlight(p.title||'Propiedad', queryTerms);
       const subline = [p.city, p.neighborhood].filter(Boolean).join(' · ');
       const subHTML = highlight(subline, queryTerms);
+      const fuzzyBadge = p.__isFuzzy
+        ? '<span title="Resultado aproximado (typo corregido)" aria-label="Resultado aproximado" style="display:inline-block;margin-left:6px;background:#fff7e0;color:#b8860b;font-size:.7rem;font-weight:700;padding:1px 6px;border-radius:4px;vertical-align:middle">~</span>'
+        : '';
 
       row.innerHTML=`
         <img src="${p.image || '/assets/placeholder.webp'}" alt="${esc(p.title||'Propiedad')}"
              style="width:60px;height:60px;object-fit:cover;border-radius:8px;flex-shrink:0">
         <div style="flex:1;min-width:0">
-          <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${titleHTML}</div>
+          <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${titleHTML}${fuzzyBadge}</div>
           <div style="color:#6b7280;font-size:.86rem">${subHTML}</div>
         </div>
         <div style="font-weight:900;color:#d4af37;white-space:nowrap">
@@ -613,6 +644,12 @@
     input.setAttribute('inputmode','search');
     input.setAttribute('enterkeyhint','search');
     input.setAttribute('autocomplete','off');
+    // ARIA combobox
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-controls', 'smart-search-dropdown');
+    input.setAttribute('aria-expanded', 'false');
+    input.setAttribute('aria-haspopup', 'listbox');
   }
 
   /* ---------- Render de búsquedas recientes ---------- */
@@ -626,9 +663,9 @@
 
     dd.innerHTML =
       '<div style="padding:10px 14px 6px;font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.06em">Búsquedas recientes</div>' +
-      recent.map(term => {
+      recent.map((term, i) => {
         const safe = esc(term);
-        return '<div class="ss-recent-item" data-term="' + safe + '" role="option"' +
+        return '<div class="ss-recent-item" data-term="' + safe + '" role="option" aria-selected="false" id="ss-opt-' + i + '"' +
                ' style="display:flex;gap:10px;padding:10px 14px;cursor:pointer;align-items:center">' +
                  clockSvg +
                  '<span style="flex:1;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + safe + '</span>' +
@@ -715,8 +752,17 @@
       const dd = DD.el();
       const items=()=>dd.querySelectorAll('.ss-group-item, .ss-item, .ss-recent-item');
       const highlightRow=i=>{
-        items().forEach(el=>el.style.background='transparent');
-        if(i>=0 && i<items().length){ items()[i].style.background='#eef2ff'; items()[i].scrollIntoView({block:'nearest'}); }
+        const list = items();
+        list.forEach(el => { el.style.background='transparent'; el.setAttribute('aria-selected','false'); });
+        if(i>=0 && i<list.length){
+          const el = list[i];
+          el.style.background='#eef2ff';
+          el.setAttribute('aria-selected','true');
+          el.scrollIntoView({block:'nearest'});
+          if (el.id) input.setAttribute('aria-activedescendant', el.id);
+        } else {
+          input.removeAttribute('aria-activedescendant');
+        }
         current=i;
       };
       input.addEventListener('keydown',e=>{
