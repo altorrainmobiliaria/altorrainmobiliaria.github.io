@@ -182,7 +182,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| A11 | Comprar / Arrendar / Invertir con CTAs | 🔲 TODO |
+| A11 | Comprar / Arrendar / Invertir con CTAs | ✅ DONE (`322513c`) |
 
 ### A12 — CTA "Publica tu propiedad" que abre wizard
 
@@ -304,11 +304,12 @@ FASE 4             → Bloque D (máquina de leads completo)
 | 2026-04-16 | A1c | `67fac1f` | ARIA combobox + indicador fuzzy "~" en typo-match |
 | 2026-04-16 | A2  | `bc11aa9` | Trust bar con stats en vivo (propiedades/ciudades) |
 | 2026-04-16 | A3  | `072ed3a` | Featured Week Banner como carrusel top-3 con auto-rotación |
+| 2026-04-16 | A11 | `322513c` | Sección "Todo en un lugar" 3 columnas CTA |
 
 ### 9.3 Siguiente
 
-**A11 — Historial de vistas recientes (pattern Cars).**
-Micro-fase que ya tiene scaffolding (`AltorraHistorial.renderSection('#historial-container')` en `index.html`). Revisar estado actual, asegurar que se lista lo último visto por el usuario y pulir estilos. Archivos probables: `js/historial-visitas.js` (si existe) + sección en `index.html`.
+**A4 — Carrusel "Recién publicadas" unificado.**
+Reemplazar/consolidar los carruseles separados de Venta/Arriendo/Por días por uno solo con las últimas N propiedades (ordenadas por `createdAt` desc), con chips para filtrar por operación. Archivos: `index.html`, `scripts.js`.
 
 ---
 

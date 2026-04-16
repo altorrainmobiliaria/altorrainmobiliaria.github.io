@@ -68,6 +68,40 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ A11 — Sección "Todo en un lugar" (3 columnas CTA) (2026-04-16)
+
+**Contexto:** Cars tiene una sección de "hub" que agrupa los caminos
+principales del usuario. Inmobiliaria replica la idea con 3 tarjetas
+grandes para dirigir el flujo hacia Comprar / Arrendar / Invertir desde la
+home, justo arriba del bloque "Publica tu propiedad".
+
+**Qué se añadió:**
+
+1. **HTML en `index.html`:** nuevo `<section class="hub-section">` con 3
+   `.hub-card`:
+   - **Comprar** → `propiedades-comprar.html` (icono casa).
+   - **Arrendar** → `propiedades-arrendar.html` (icono llave/casa).
+   - **Invertir** → `turismo-inmobiliario.html` (icono gráfica).
+   Cada tarjeta tiene icono SVG, título, descripción corta y CTA "→".
+2. **CSS en `style.css`:** bloque Hub con gradient sutil, hover
+   `translateY(-4px)` + sombra dorada y `border-color` resaltado. Responsive
+   a 1 columna en ≤860px.
+3. **Accesibilidad:** `aria-labelledby` + `aria-label` por tarjeta;
+   `aria-hidden` en los iconos SVG.
+
+**Archivos tocados:**
+- `index.html` — +34 líneas de markup.
+- `style.css` — +82 líneas del bloque Hub.
+- Sin JS (enlaces estáticos a páginas existentes).
+
+**Criterio de éxito:**
+- [x] Las 3 tarjetas se ven igual en desktop (grid 3 cols) y se apilan en
+      móvil (1 col) con `:hover` suave.
+- [x] Respeta `--gold` / `--accent` — no se inventaron colores nuevos.
+- [x] Los enlaces apuntan a páginas que ya existen en el repo.
+
+---
+
 ### ✅ A3 — Featured Week Banner como carrusel dinámico (2026-04-16)
 
 **Contexto:** Existía una versión simple de `featured-week-banner.js` que
