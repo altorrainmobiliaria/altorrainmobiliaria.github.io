@@ -104,7 +104,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 |---|-----------|--------|--------|
 | A1a | Búsquedas recientes + atajo "/" | ✅ DONE | `2ca4d44` |
 | A1b | Agrupación por barrio/tipo con contador | ✅ DONE | `606be98` |
-| A1c | ARIA completa + indicador fuzzy "~" | ⏭️ NEXT | — |
+| A1c | ARIA completa + indicador fuzzy "~" | ✅ DONE | `67fac1f` |
 
 **Archivos:** `js/smart-search.js`, `index.html`, `style.css`.
 
@@ -301,11 +301,12 @@ FASE 4             → Bloque D (máquina de leads completo)
 |-------|------|--------|-------|
 | 2026-04-16 | A1a | `2ca4d44` | Recientes en localStorage + atajo "/" |
 | 2026-04-16 | A1b | `606be98` | Sugerencias agrupadas barrio/tipo/ciudad con contador |
+| 2026-04-16 | A1c | `67fac1f` | ARIA combobox + indicador fuzzy "~" en typo-match |
 
 ### 9.3 Siguiente
 
-**A1c — ARIA completa + indicador fuzzy "~".**
-Añadir `aria-activedescendant`, `aria-selected` en items y un pequeño indicador "~" cuando el match es por typo (Damerau-Levenshtein) en vez de coincidencia exacta, para que el usuario entienda por qué aparece ese resultado.
+**A2 — Trust bar con stats en vivo.**
+Una franja bajo el hero con 2 stats dinámicos (`N propiedades activas`, `M ciudades`) leyendo de `window.propertyDB`, más 1 ítem fijo con icono (p. ej. "+15 años de experiencia"). IDs `#trustStatPropiedades`, `#trustStatCiudades`. Se actualiza con `altorra:db-ready`/`altorra:db-refreshed`.
 
 ---
 

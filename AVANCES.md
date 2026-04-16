@@ -68,6 +68,41 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ A1c — ARIA combobox completa + indicador fuzzy "~" (2026-04-16)
+
+**Contexto:** El smart-search ya corrige typos con Damerau-Levenshtein, pero el
+usuario no tenía pista visual de que el resultado vino por corrección ortográfica.
+Además, el patrón ARIA de combobox no estaba completo (aria-expanded/controls/
+activedescendant ausentes), bloqueando parte del acceso con lectores de pantalla.
+
+**Qué se añadió:**
+
+1. **ARIA combobox completa en `#f-search` y `#f-city`:**
+   - `role="combobox"`, `aria-autocomplete="list"`, `aria-haspopup="listbox"`
+   - `aria-controls="smart-search-dropdown"`
+   - `aria-expanded` se actualiza al `show()`/`hide()` del dropdown
+   - `aria-activedescendant` apunta al `id` del item con foco del teclado
+2. **ID único por opción** — `ss-opt-0`, `ss-opt-1`, ... para grupos,
+   propiedades y recientes.
+3. **`aria-selected`** alterna `true`/`false` con las flechas.
+4. **Indicador fuzzy "~":** badge dorado pequeño junto al título cuando
+   `p.__isFuzzy === true`. Se marca fuzzy cuando `parseQuery` aplicó corrección
+   de typo Y el match del property no se cumple con los tokens originales
+   (`tokensHitStrong(originals, f) === false`).
+5. **`parseQuery`** ahora también expone `originals[]` y `hadTypo:boolean`
+   sin romper callers existentes.
+
+**Archivos tocados:**
+- `js/smart-search.js` — +59 líneas netas.
+
+**Criterio de éxito:**
+- [x] `node --check js/smart-search.js` → sintaxis válida.
+- [x] Badge "~" aparece SOLO en resultados corregidos, no en matches exactos.
+- [x] `aria-expanded` cambia con show/hide, `aria-activedescendant` apunta al
+      item con foco de teclado y se limpia al cerrar el dropdown.
+
+---
+
 ### ✅ A1b — Sugerencias agrupadas por barrio/tipo/ciudad con contador (2026-04-16)
 
 **Contexto:** Extensión natural del smart-search. Cars agrupa resultados por
