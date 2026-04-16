@@ -2,7 +2,21 @@
 ## Guía maestra para la transformación a plataforma dinámica con Firebase
 
 > **Documento vivo.** Actualizar cuando cambien decisiones de arquitectura, schema o convenciones.
-> Última actualización: 2026-04-09
+> Última actualización: 2026-04-16
+
+---
+
+## 📍 DOCUMENTOS DEL PROYECTO — LÉELOS EN ESTE ORDEN
+
+Si acabas de entrar a una sesión nueva, navega los MDs así:
+
+1. **`CLAUDE.md`** (este archivo) — constitución: reglas, schema Firestore, paleta, restricciones.
+2. **`PLAN-MEJORAS.md`** — **plan activo de mejoras** con estado en vivo de cada micro-fase. Sección § 9.3 te dice qué sigue.
+3. **`AVANCES.md`** — bitácora append-only de lo completado (una entrada por micro-fase).
+4. **`ALTORRACARSCLAUDE.md`** — referencia arquitectónica del repo hermano (Altorra Cars) para copiar patrones.
+5. **`DEPLOY-RUNBOOK.md`** — pasos que ejecuta el dueño para desplegar Firebase (PowerShell).
+
+**Regla de oro:** las reglas del proyecto están en CLAUDE.md; el plan de qué hacer ahora está en PLAN-MEJORAS.md; el log de qué ya se hizo está en AVANCES.md.
 
 ---
 

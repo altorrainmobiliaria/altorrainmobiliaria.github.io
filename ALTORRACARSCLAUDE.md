@@ -921,3 +921,206 @@ Ver `SITEMAP-FIX.md` para estado detallado del sitemap y Google Search Console.
 ### Pendiente
 - Dominio personalizado (mejoraria crawl priority de Google)
 - Re-enviar sitemap en Search Console (ver SITEMAP-FIX.md)
+
+---
+
+## 12. Hallazgos investigación live — 2026-04-16
+
+> Verificados contra `https://altorracars.github.io/` y `raw.githubusercontent.com/altorracars/altorracars.github.io/main/...`. Estos detalles se usan para replicar 1:1 en Altorra Inmobiliaria durante el Bloque A del `PLAN-MEJORAS.md`.
+
+### 12.1 Hero del home — estructura HTML exacta
+
+```
+<section class="hero">
+  <div class="hero-overlay"></div>
+  <div class="hero-ambient"></div>
+  <div class="hero-particles">
+    <div class="hero-particle"></div> × 8
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Concesionario Líder en Cartagena
+    </div>
+    <h1 class="hero-title">
+      Encuentra el Auto
+      <span class="hero-title-accent">de tus Sueños</span>
+    </h1>
+    <div class="hero-cta">
+      <a href="busqueda.html" class="hero-btn-main">Explorar Catálogo</a>
+    </div>
+    <div class="hero-search-wrap" role="search">
+      <div class="hero-search-inner">
+        <svg class="hero-search-icon">...</svg>
+        <input id="heroSearchInput"
+               class="hero-search-input"
+               placeholder="Busca por marca, modelo, año o código…"
+               aria-controls="heroSearchDropdown"
+               aria-autocomplete="list" />
+      </div>
+      <ul id="heroSearchDropdown"
+          class="hero-search-dropdown"
+          role="listbox"
+          hidden></ul>
+    </div>
+  </div>
+</section>
+```
+
+**Adaptación para Inmobiliaria (C1):** cambiar copy a "Invierte donde otros solo miran · Cartagena", mantener overlay + ambient + 8 partículas, badge pulsante "Inmobiliaria con sello Lonja".
+
+### 12.2 Trust bar
+
+```
+<div class="trust-bar">
+  <div class="trust-bar-stats">
+    <div class="trust-bar-item">
+      <span id="trustStatVehicles" class="trust-bar-num" aria-live="polite">–</span>
+      <span class="trust-bar-label">Vehículos Disponibles</span>
+    </div>
+    <div class="trust-bar-sep"></div>
+    <div class="trust-bar-item">
+      <span id="trustStatBrands" class="trust-bar-num" aria-live="polite">–</span>
+      <span class="trust-bar-label">Marcas Premium</span>
+    </div>
+    <div class="trust-bar-sep"></div>
+    <div class="trust-bar-item">
+      <span class="trust-bar-icon">⚡</span>
+      <span class="trust-bar-label">Financiación Inmediata</span>
+    </div>
+  </div>
+</div>
+```
+
+**Observación clave:** solo 2 stats son dinámicos, el tercero es un badge fijo con icono. **Adaptación para Inmobiliaria (A2):** `#trustStatPropiedades`, `#trustStatCiudades`, y tercer slot con "🛡️ Vigilados Lonja" o "⭐ +10 reseñas Google".
+
+### 12.3 Featured Week Banner
+
+```
+<section id="fw-banner" class="fw-section" style="display:none;">
+  <div class="container">
+    <div class="fw-inner">
+      <span id="fw-live" class="fw-sr-only" aria-live="polite"></span>
+      <button id="fw-prev" class="fw-nav fw-nav--prev"><svg>‹</svg></button>
+      <button id="fw-next" class="fw-nav fw-nav--next"><svg>›</svg></button>
+      <div id="fw-track" class="fw-track" role="region"></div>
+      <div id="fw-dots" class="fw-dots" role="tablist"></div>
+    </div>
+  </div>
+</section>
+```
+
+**Comportamiento:** arranca `display:none`, solo se muestra cuando la función de JS encuentra propiedades marcadas como "destacada de la semana". Auto-rotación configurable. `#fw-live` es sr-only para lectores de pantalla.
+
+### 12.4 Modal wizard 3 pasos — spec exacta
+
+**Progreso:**
+```
+<div class="wizard-progress">
+  <div class="wizard-track">
+    <div id="vendeWizardFill" class="wizard-fill" style="width:33%"></div>
+  </div>
+  <div class="wizard-steps-row">
+    <div class="wizard-step-item active" data-step="1">
+      <div class="wizard-dot">1</div><span>Contacto</span>
+    </div>
+    <div class="wizard-step-item" data-step="2">
+      <div class="wizard-dot">2</div><span>Vehículo</span>
+    </div>
+    <div class="wizard-step-item" data-step="3">
+      <div class="wizard-dot">3</div><span>Oferta</span>
+    </div>
+  </div>
+</div>
+```
+
+**Fill width:** `33% / 66% / 100%` según paso.
+**Subtítulo:** `<p id="vendeWizardSubtitle">Paso 1 de 3 — Datos de contacto</p>`.
+**Paneles:** `<div class="wizard-panel active" data-panel="1">` — solo uno con `active`.
+**Navegación:** botones `.wizard-btn-back` y `.wizard-btn-next` con `data-panel`.
+
+**Adaptación para Inmobiliaria (B4):** tres pasos `Contacto / Propiedad / Preferencias` para "Agenda visita"; o `Contacto / Inmueble / Precio esperado` para "Publica tu propiedad" (A12).
+
+### 12.5 Country selector — lista exacta (10 países)
+
+Orden exacto a replicar en Inmobiliaria para consistencia con Cars:
+
+```
+<option value="+57">🇨🇴 +57</option>   Colombia (default)
+<option value="+58">🇻🇪 +58</option>   Venezuela
+<option value="+593">🇪🇨 +593</option> Ecuador
+<option value="+507">🇵🇦 +507</option> Panamá
+<option value="+52">🇲🇽 +52</option>   México
+<option value="+1">🇺🇸 +1</option>     EE.UU.
+<option value="+51">🇵🇪 +51</option>   Perú
+<option value="+56">🇨🇱 +56</option>   Chile
+<option value="+54">🇦🇷 +54</option>   Argentina
+<option value="+34">🇪🇸 +34</option>   España
+```
+
+Estos son los mercados emisores para Cartagena — apto también para inversionistas extranjeros.
+
+### 12.6 initHeroSearch() de Cars — lo que hace
+
+Referencia: `js/main.js` de Cars.
+
+- Input `#heroSearchInput` + dropdown `#heroSearchDropdown`.
+- **Fuzzy matching:** Levenshtein simple con `maxDist = qWord.length <= 5 ? 1 : 2`. Skip fuzzy para palabras < 4 chars.
+- **Word-boundary aware:** para palabras numéricas cortas (1-2 dígitos) exige límite de palabra. Evita que "6" matchee dentro de "2016".
+- **Recientes:** `localStorage` con clave `altorra-recent-searches`, máx 5.
+- **Atajo `/`:** enfoca el input desde cualquier parte (respeta INPUT/TEXTAREA/SELECT activos).
+- **Conteo por sugerencia:** agrupa por marca y modelo; muestra "Marca (12)" y "Marca Modelo (3)".
+- **Fuzzy indicator "~":** cuando el match no es exacto, añade un "~" junto al contador.
+- **ARIA:** `role="listbox"` en dropdown, `aria-controls="heroSearchDropdown"` y `aria-autocomplete="list"` en input.
+- **Navegación teclado:** ArrowDown/Up, Enter, Escape.
+- **Touch:** distingue tap (< 8px) de scroll (> 8px) para no seleccionar al scrollear.
+
+**Comparación con `js/smart-search.js` de Inmobiliaria (al 2026-04-16):**
+
+| Feature | Cars | Inmobiliaria |
+|---------|------|--------------|
+| Typos fuzzy | Levenshtein | Damerau-Levenshtein ✨ (superior) |
+| Presupuesto | ❌ | ✅ (350m, 0.35b, 250-400m) |
+| Sinónimos features | ❌ | ✅ (ES/EN con auto-aprendizaje) |
+| Re-ranking clicks | ❌ | ✅ (popularidad) |
+| Recientes localStorage | ✅ | ✅ (añadido en A1a) |
+| Atajo `/` | ✅ | ✅ (añadido en A1a) |
+| Conteo por sugerencia | ✅ | 🔲 (A1b) |
+| Indicador `~` fuzzy | ✅ | 🔲 (A1c) |
+| ARIA completa | ✅ | 🔲 (A1c) |
+
+### 12.7 Flujo home (orden de secciones)
+
+```
+1. Header
+2. Hero (con search + overlay + partículas)
+3. Trust bar
+4. Featured Week Banner (si hay destacadas)
+5. Categorías (4-6 imágenes grid)
+6. Brands carousel (marquee infinito)
+7. Sección 3 columnas "Todo en un Solo Lugar"
+   └─ Comprar | Vender | Financiar
+8. Financing Request Form (modal callable)
+9. Testimonials (Firestore)
+10. Footer
+```
+
+**Adaptación Inmobiliaria (Sprint 1):**
+
+```
+1. Header
+2. Hero (con search + overlay + partículas)
+3. Trust bar
+4. Featured Week Banner
+5. Categorías: Apartamento / Casa / Lote / Oficina / Local / Bodega
+6. Barrios premium carousel: Bocagrande / Manga / Castillogrande / Centro / Crespo / Manzanillo
+7. Sección 3 columnas "Todo en un lugar"
+   └─ Comprar | Arrendar | Invertir
+8. Publicar propiedad CTA (abre wizard)
+9. Testimonials (Firestore)
+10. Footer
+```
+
+---
+
+*Apéndice 12 cerrado — 2026-04-16 (investigación live Cars).*

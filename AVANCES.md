@@ -68,6 +68,111 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ A2 — Trust bar con stats en vivo (2026-04-16)
+
+**Contexto:** Cars muestra bajo el hero una franja con 2 stats dinámicos +
+1 fijo con icono. Inmobiliaria replica el patrón para reforzar percepción de
+actividad y cobertura sin necesidad de reseñas manuales.
+
+**Qué se añadió:**
+
+1. **HTML:** `<aside class="trust-bar">` insertado entre el hero y la sección
+   "Publica tu propiedad" en `index.html`. Contiene 3 `.trust-item`:
+   - `#trustStatPropiedades` con `<strong class="trust-num">` (dinámico).
+   - `#trustStatCiudades` con `<strong class="trust-num">` (dinámico).
+   - Item fijo "Respaldo legal y financiero" con icono de estrella.
+2. **CSS en `style.css`:** gradiente dorado sutil top/bottom, separadores "•",
+   colapso de separadores en pantallas <640px. Mantiene `--gold`/`--accent`.
+3. **JS en `scripts.js`:** IIFE `paint()` que lee `window.propertyDB.properties`,
+   filtra activas (`available !== 0 && disponible !== false`) y calcula
+   `new Set(p.city)`. Se engancha a:
+   - `DOMContentLoaded`
+   - `altorra:db-ready`
+   - `altorra:db-refreshed`
+   - `altorra:cache-invalidated`
+4. **ARIA:** `aria-live="polite"` en cada span dinámico; `aria-label` en el aside.
+
+**Archivos tocados:**
+- `index.html` — +24 líneas de markup.
+- `style.css` — +49 líneas (bloque Trust Bar).
+- `scripts.js` — +28 líneas (IIFE paint + listeners).
+
+**Criterio de éxito:**
+- [x] `node --check` OK en los archivos JS.
+- [x] Los números reaccionan cuando Firestore refresca el dataset.
+- [x] No rompe mobile (≤640px): se colapsan separadores, la franja queda
+      compacta centrada.
+
+---
+
+### ✅ A1c — ARIA combobox completa + indicador fuzzy "~" (2026-04-16)
+
+**Contexto:** El smart-search ya corrige typos con Damerau-Levenshtein, pero el
+usuario no tenía pista visual de que el resultado vino por corrección ortográfica.
+Además, el patrón ARIA de combobox no estaba completo (aria-expanded/controls/
+activedescendant ausentes), bloqueando parte del acceso con lectores de pantalla.
+
+**Qué se añadió:**
+
+1. **ARIA combobox completa en `#f-search` y `#f-city`:**
+   - `role="combobox"`, `aria-autocomplete="list"`, `aria-haspopup="listbox"`
+   - `aria-controls="smart-search-dropdown"`
+   - `aria-expanded` se actualiza al `show()`/`hide()` del dropdown
+   - `aria-activedescendant` apunta al `id` del item con foco del teclado
+2. **ID único por opción** — `ss-opt-0`, `ss-opt-1`, ... para grupos,
+   propiedades y recientes.
+3. **`aria-selected`** alterna `true`/`false` con las flechas.
+4. **Indicador fuzzy "~":** badge dorado pequeño junto al título cuando
+   `p.__isFuzzy === true`. Se marca fuzzy cuando `parseQuery` aplicó corrección
+   de typo Y el match del property no se cumple con los tokens originales
+   (`tokensHitStrong(originals, f) === false`).
+5. **`parseQuery`** ahora también expone `originals[]` y `hadTypo:boolean`
+   sin romper callers existentes.
+
+**Archivos tocados:**
+- `js/smart-search.js` — +59 líneas netas.
+
+**Criterio de éxito:**
+- [x] `node --check js/smart-search.js` → sintaxis válida.
+- [x] Badge "~" aparece SOLO en resultados corregidos, no en matches exactos.
+- [x] `aria-expanded` cambia con show/hide, `aria-activedescendant` apunta al
+      item con foco de teclado y se limpia al cerrar el dropdown.
+
+---
+
+### ✅ A1b — Sugerencias agrupadas por barrio/tipo/ciudad con contador (2026-04-16)
+
+**Contexto:** Extensión natural del smart-search. Cars agrupa resultados por
+"Marca · N vehículos" en su dropdown. Inmobiliaria adopta el patrón adaptado al
+dominio: barrio, tipo de propiedad y ciudad, con contador por categoría.
+
+**Qué se añadió:**
+
+1. **`buildGroupSuggestions(query, allProps)`** — detecta coincidencias de la
+   query contra `p.neighborhood`, `p.type` (+ `TYPE_LABEL` en ES) y `p.city`.
+   Retorna hasta 3 grupos ordenados por `count` desc. Respeta `available` /
+   `disponible`.
+2. **`renderGroups(groups)`** — renderiza sección "Sugerencias" arriba de las
+   propiedades individuales, con icono específico por `kind` (pin, casa, ciudad),
+   label en negrita y badge redondeado `N propiedades`.
+3. **`buildGroupHref(group)`** — resuelve destino según `#op` seleccionado
+   (comprar/arrendar/alojar) y arma los query params:
+   - `barrio` → `?search={barrio}` (listado filtra en descripción + hood)
+   - `tipo`   → `?type={type}&city={city?}`
+   - `ciudad` → `?city={city}`
+4. **Teclado** — `ArrowUp/ArrowDown/Enter` ahora incluye grupos, propiedades y
+   recientes (selector `.ss-group-item, .ss-item, .ss-recent-item`).
+
+**Archivos tocados:**
+- `js/smart-search.js` — +119 líneas netas, sin tocar `searchProps()` ni vocab.
+
+**Criterio de éxito:**
+- [x] `node --check js/smart-search.js` → sintaxis válida.
+- [x] Grupos aparecen solo cuando hay matches reales (count ≥ 1).
+- [x] Click en grupo navega al listado correcto según operación elegida.
+
+---
+
 ### ✅ A1a — Hero search: búsquedas recientes + atajo "/" (2026-04-16)
 
 **Contexto:** Primera micro-fase del plan unificado tras revisar el repo vivo de

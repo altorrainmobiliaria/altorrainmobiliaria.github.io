@@ -540,3 +540,30 @@ if('serviceWorker' in navigator){
     document.head.appendChild(s);
   }catch(e){ console.warn("Org JSON-LD inject failed", e); }
 })();
+
+/* ============== Trust bar stats (A2) ============== */
+(function(){
+  function paint(){
+    const elProps = document.querySelector('#trustStatPropiedades .trust-num');
+    const elCities = document.querySelector('#trustStatCiudades .trust-num');
+    if (!elProps && !elCities) return;
+    const db = window.propertyDB;
+    if (!db || !db.isLoaded) return;
+
+    const all = Array.isArray(db.properties) ? db.properties : [];
+    const active = all.filter(p => p.available !== 0 && p.disponible !== false);
+    const cities = new Set(active.map(p => (p.city || '').trim()).filter(Boolean));
+
+    if (elProps) elProps.textContent = active.length;
+    if (elCities) elCities.textContent = cities.size;
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', paint);
+  } else {
+    paint();
+  }
+  window.addEventListener('altorra:db-ready',       paint);
+  window.addEventListener('altorra:db-refreshed',   paint);
+  window.addEventListener('altorra:cache-invalidated', paint);
+})();
