@@ -14,6 +14,8 @@
   const MAX_SUGGESTIONS = 12;
   const DEBOUNCE_MS = 200;
   const MIN_W = 360, MAX_W = 920, VW_LIMIT = 0.96;
+  const RECENT_KEY = 'altorra:hero-recent-searches';
+  const RECENT_MAX = 5;
 
   /* ---------- Utils ---------- */
   const debounce = (fn, wait) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; };
@@ -22,6 +24,28 @@
   const clamp = (v, a, b)=>Math.max(a, Math.min(b, v));
   const uniq  = arr => Array.from(new Set(arr));
   const fuzzyScore = (n, h)=>{ n=n.toLowerCase(); let s=0,i=0,j=0; while(i<n.length&&j<h.length){ if(n[i]===h[j]){s++;i++;} j++; } return i===n.length? s/n.length : 0; };
+
+  /* ---------- Búsquedas recientes (localStorage) ---------- */
+  function getRecent(){
+    try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]').slice(0, RECENT_MAX); }
+    catch { return []; }
+  }
+  function saveRecent(term){
+    if (!term) return;
+    const t = String(term).trim();
+    if (t.length < MIN_CHARS) return;
+    try {
+      const arr = getRecent().filter(x => x.toLowerCase() !== t.toLowerCase());
+      arr.unshift(t);
+      localStorage.setItem(RECENT_KEY, JSON.stringify(arr.slice(0, RECENT_MAX)));
+    } catch {}
+  }
+  function removeRecent(term){
+    try {
+      const arr = getRecent().filter(x => x.toLowerCase() !== String(term).toLowerCase());
+      localStorage.setItem(RECENT_KEY, JSON.stringify(arr));
+    } catch {}
+  }
 
   // Carga desde PropertyDatabase (fuente única: Firestore). Sin fetch a data.json.
   async function loadData(){
@@ -442,6 +466,8 @@
         </div>`;
       row.addEventListener('click',()=>{
         registerClick(p.id);
+        const ae = document.activeElement;
+        if (ae && ae.id === 'f-search' && ae.value.trim()) saveRecent(ae.value.trim());
         location.href=`detalle-propiedad.html?id=${encodeURIComponent(p.id)}`;
       });
       dd.appendChild(row);
@@ -468,6 +494,53 @@
     input.setAttribute('inputmode','search');
     input.setAttribute('enterkeyhint','search');
     input.setAttribute('autocomplete','off');
+  }
+
+  /* ---------- Render de búsquedas recientes ---------- */
+  function renderRecent(input){
+    const recent = getRecent();
+    if (!recent.length) { DD.hide(); return; }
+    const dd = DD.el();
+    DD.setActive(input, { lockWidth: true });
+
+    const clockSvg = '<svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true" style="flex-shrink:0;color:#9ca3af"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd"/></svg>';
+
+    dd.innerHTML =
+      '<div style="padding:10px 14px 6px;font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.06em">Búsquedas recientes</div>' +
+      recent.map(term => {
+        const safe = esc(term);
+        return '<div class="ss-recent-item" data-term="' + safe + '" role="option"' +
+               ' style="display:flex;gap:10px;padding:10px 14px;cursor:pointer;align-items:center">' +
+                 clockSvg +
+                 '<span style="flex:1;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + safe + '</span>' +
+                 '<button type="button" class="ss-recent-del" data-term="' + safe + '"' +
+                 ' aria-label="Eliminar búsqueda reciente"' +
+                 ' style="background:transparent;border:0;color:#9ca3af;font-size:1.2rem;line-height:1;cursor:pointer;padding:2px 8px;border-radius:6px">&times;</button>' +
+               '</div>';
+      }).join('');
+
+    dd.querySelectorAll('.ss-recent-item').forEach(row => {
+      row.addEventListener('mouseenter', () => { row.style.background = '#f9fafb'; });
+      row.addEventListener('mouseleave', () => { row.style.background = 'transparent'; });
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('.ss-recent-del')) return;
+        const t = row.dataset.term;
+        input.value = t;
+        input.dispatchEvent(new Event('input'));
+        input.focus();
+      });
+    });
+    dd.querySelectorAll('.ss-recent-del').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        removeRecent(btn.dataset.term);
+        renderRecent(input);
+      });
+    });
+
+    DD.show();
+    DD.position();
   }
 
   /* ---------- Init ---------- */
@@ -508,7 +581,14 @@
       }, DEBOUNCE_MS);
 
       input.addEventListener('input', run);
-      input.addEventListener('focus', run);
+      input.addEventListener('focus', () => {
+        // En el hero: si está vacío, mostrar búsquedas recientes en vez del dropdown vacío
+        if (input.id === 'f-search' && !input.value.trim()) {
+          renderRecent(input);
+        } else {
+          run();
+        }
+      });
       installTapToClose(input);
 
       // Teclado (desktop)
@@ -527,6 +607,29 @@
         else if(e.key==='Enter'){ if(current>=0){ e.preventDefault(); list[current].click(); } }
         else if(e.key==='Escape'){ DD.hide(); }
       });
+    });
+
+    // Guardar búsqueda reciente al enviar el formulario del hero
+    const heroForm = document.getElementById('quickSearch');
+    if (heroForm) {
+      heroForm.addEventListener('submit', () => {
+        const q = document.getElementById('f-search')?.value.trim();
+        if (q) saveRecent(q);
+      });
+    }
+
+    // Atajo "/" para enfocar el hero search desde cualquier parte de la página
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+      const ae = document.activeElement;
+      if (ae && ['INPUT','TEXTAREA','SELECT'].includes(ae.tagName)) return;
+      if (ae && ae.isContentEditable) return;
+      const hero = document.getElementById('f-search');
+      if (!hero) return;
+      e.preventDefault();
+      hero.focus();
+      hero.select?.();
+      if (!hero.value.trim()) renderRecent(hero);
     });
   });
 })();
