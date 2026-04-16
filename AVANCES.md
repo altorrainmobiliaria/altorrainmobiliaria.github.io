@@ -68,6 +68,50 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ A3 — Featured Week Banner como carrusel dinámico (2026-04-16)
+
+**Contexto:** Existía una versión simple de `featured-week-banner.js` que
+renderiza UNA sola propiedad. Cars usa el patrón de carrusel con `#fw-*`
+(track, dots, prev/next, live region). A3 lleva Inmobiliaria al mismo patrón
+manteniendo la API pública `FeaturedBanner.init(selector)`.
+
+**Qué cambió:**
+
+1. **`selectFeatured()`** ahora devuelve las TOP 3 propiedades válidas
+   (prioridad > 0 o featured), ordenadas por `prioridad` → `featured` →
+   `added/createdAt` desc.
+2. **Shell del carrusel** inyectado en el mismo container existente
+   (`#featured-banner-container`):
+   - `<div id="fw-banner">` con `role="region"`
+   - `#fw-viewport + #fw-track` (translateX por slide)
+   - Botones `#fw-prev` / `#fw-next`
+   - `#fw-dots` con `role="tablist"` y `aria-selected`
+   - `#fw-live` `aria-live="polite"` para anunciar slide actual
+3. **Rotación automática** cada 6s con `state.paused` activado por
+   `mouseenter/focusin` y liberado en `mouseleave/focusout`. Click en dots o
+   flechas reinicia el timer vía `restart()`.
+4. **Edge cases:**
+   - 0 slides válidos → oculta `<section>` completo (preserva comportamiento
+     anterior) y limpia `localStorage`.
+   - 1 slide → oculta prev/next/dots.
+   - DB refresca (`altorra:db-refreshed`) → recalcula y repinta.
+5. **Estilos inline** inyectados una sola vez bajo `#fw-styles`. Paleta
+   dorada (`--gold` / `--accent`) conservada. Responsive a 640px (slide
+   vertical).
+
+**Archivos tocados:**
+- `js/featured-week-banner.js` — reescritura completa (+209, -171 líneas
+  netas). Sin tocar `index.html` ni `style.css` (API preservada).
+
+**Criterio de éxito:**
+- [x] `node --check js/featured-week-banner.js` → sintaxis válida.
+- [x] Solo se inyectan los estilos una vez (`#fw-styles` guard).
+- [x] `FeaturedBanner.init('#featured-banner-container')` sigue funcionando
+      sin cambios en `index.html`.
+- [x] Accesibilidad: `aria-live`, `aria-selected`, `aria-label` en controles.
+
+---
+
 ### ✅ A2 — Trust bar con stats en vivo (2026-04-16)
 
 **Contexto:** Cars muestra bajo el hero una franja con 2 stats dinámicos +

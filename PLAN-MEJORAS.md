@@ -121,7 +121,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| A3 | Arrows + dots + auto-rotación (patrón `#fw-*` de Cars) | 🔲 TODO |
+| A3 | Arrows + dots + auto-rotación (patrón `#fw-*` de Cars) | ✅ DONE (`072ed3a`) |
 
 **IDs:** `#fw-banner`, `#fw-track`, `#fw-dots`, `#fw-prev`, `#fw-next`, `#fw-live`.
 **Archivos:** `index.html`, `js/featured-week-banner.js`, `style.css`.
@@ -303,11 +303,12 @@ FASE 4             → Bloque D (máquina de leads completo)
 | 2026-04-16 | A1b | `606be98` | Sugerencias agrupadas barrio/tipo/ciudad con contador |
 | 2026-04-16 | A1c | `67fac1f` | ARIA combobox + indicador fuzzy "~" en typo-match |
 | 2026-04-16 | A2  | `bc11aa9` | Trust bar con stats en vivo (propiedades/ciudades) |
+| 2026-04-16 | A3  | `072ed3a` | Featured Week Banner como carrusel top-3 con auto-rotación |
 
 ### 9.3 Siguiente
 
-**A3 — Featured Week Banner.**
-Banner dinámico de 1 propiedad destacada de la semana con flechas, dots y hook a `altorra:db-ready`. IDs del patrón Cars: `#fw-banner`, `#fw-track`, `#fw-dots`, `#fw-prev`, `#fw-next`, `#fw-live`. Selección por mayor `featured`/`prioridad` desempatado por último `createdAt`.
+**A11 — Historial de vistas recientes (pattern Cars).**
+Micro-fase que ya tiene scaffolding (`AltorraHistorial.renderSection('#historial-container')` en `index.html`). Revisar estado actual, asegurar que se lista lo último visto por el usuario y pulir estilos. Archivos probables: `js/historial-visitas.js` (si existe) + sección en `index.html`.
 
 ---
 
