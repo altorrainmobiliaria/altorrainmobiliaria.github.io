@@ -68,6 +68,42 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ A1a — Hero search: búsquedas recientes + atajo "/" (2026-04-16)
+
+**Contexto:** Primera micro-fase del plan unificado tras revisar el repo vivo de
+Altorra Cars. El `js/smart-search.js` actual ya supera a Cars en typos
+(Damerau-Levenshtein), parseo de presupuesto, sinónimos y re-ranking por clicks.
+Faltaban tres cosas que Cars sí tiene y aportan UX directa.
+
+**Qué se añadió (sin tocar la lógica semántica existente):**
+
+1. **Búsquedas recientes** en `localStorage` (clave `altorra:hero-recent-searches`,
+   máx. 5). Helpers `getRecent()`, `saveRecent()`, `removeRecent()`.
+2. **Render de recientes al enfocar el hero** (`#f-search`) cuando el input está
+   vacío — cada fila con icono de reloj, texto y botón × para eliminar. Al hacer
+   clic en una reciente, se rellena el input y dispara la búsqueda automática.
+3. **Guardado automático** en dos puntos de intención:
+   - Al enviar el formulario `#quickSearch` (click en "Buscar" o Enter).
+   - Al hacer clic en una sugerencia de propiedad (se guarda el query que la
+     produjo, detectado vía `document.activeElement`).
+4. **Atajo `/`** global: enfoca `#f-search` desde cualquier parte de la página,
+   respetando inputs/textareas/selects activos y `contenteditable`. En blanco,
+   abre las recientes directamente.
+
+**Archivos tocados:**
+- `js/smart-search.js` — +103 líneas netas, sin cambiar el motor de búsqueda.
+
+**Criterio de éxito:**
+- [x] `node --check js/smart-search.js` → sintaxis válida.
+- [x] El dropdown existente (singleton `DD`) se reutiliza; no se crea uno nuevo.
+- [x] El comportamiento previo (typos, presupuesto, features, click-ranking)
+      queda intacto — solo se añade la capa de recientes sobre el mismo `DD`.
+
+**Qué sigue (A1b):** agrupar sugerencias por barrio/tipo con contador de
+propiedades (ej: "Bocagrande · 8 propiedades") como hace Cars con marca/modelo.
+
+---
+
 ### ✅ SESIÓN AUDITORÍA Y FIXES (2026-04-10)
 
 **Contexto:** Al revisar los MDs y auditar el estado real del código, se encontraron
