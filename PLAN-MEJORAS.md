@@ -112,7 +112,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| A2 | 2 stats dinámicos (propiedades, ciudades) + 1 fijo con icono | 🔲 TODO |
+| A2 | 2 stats dinámicos (propiedades, ciudades) + 1 fijo con icono | ✅ DONE (`bc11aa9`) |
 
 **IDs:** `#trustStatPropiedades`, `#trustStatCiudades`.
 **Archivos:** `index.html`, `js/database.js` (getter de stats).
@@ -302,11 +302,12 @@ FASE 4             → Bloque D (máquina de leads completo)
 | 2026-04-16 | A1a | `2ca4d44` | Recientes en localStorage + atajo "/" |
 | 2026-04-16 | A1b | `606be98` | Sugerencias agrupadas barrio/tipo/ciudad con contador |
 | 2026-04-16 | A1c | `67fac1f` | ARIA combobox + indicador fuzzy "~" en typo-match |
+| 2026-04-16 | A2  | `bc11aa9` | Trust bar con stats en vivo (propiedades/ciudades) |
 
 ### 9.3 Siguiente
 
-**A2 — Trust bar con stats en vivo.**
-Una franja bajo el hero con 2 stats dinámicos (`N propiedades activas`, `M ciudades`) leyendo de `window.propertyDB`, más 1 ítem fijo con icono (p. ej. "+15 años de experiencia"). IDs `#trustStatPropiedades`, `#trustStatCiudades`. Se actualiza con `altorra:db-ready`/`altorra:db-refreshed`.
+**A3 — Featured Week Banner.**
+Banner dinámico de 1 propiedad destacada de la semana con flechas, dots y hook a `altorra:db-ready`. IDs del patrón Cars: `#fw-banner`, `#fw-track`, `#fw-dots`, `#fw-prev`, `#fw-next`, `#fw-live`. Selección por mayor `featured`/`prioridad` desempatado por último `createdAt`.
 
 ---
 

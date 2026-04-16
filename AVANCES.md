@@ -68,6 +68,43 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ A2 — Trust bar con stats en vivo (2026-04-16)
+
+**Contexto:** Cars muestra bajo el hero una franja con 2 stats dinámicos +
+1 fijo con icono. Inmobiliaria replica el patrón para reforzar percepción de
+actividad y cobertura sin necesidad de reseñas manuales.
+
+**Qué se añadió:**
+
+1. **HTML:** `<aside class="trust-bar">` insertado entre el hero y la sección
+   "Publica tu propiedad" en `index.html`. Contiene 3 `.trust-item`:
+   - `#trustStatPropiedades` con `<strong class="trust-num">` (dinámico).
+   - `#trustStatCiudades` con `<strong class="trust-num">` (dinámico).
+   - Item fijo "Respaldo legal y financiero" con icono de estrella.
+2. **CSS en `style.css`:** gradiente dorado sutil top/bottom, separadores "•",
+   colapso de separadores en pantallas <640px. Mantiene `--gold`/`--accent`.
+3. **JS en `scripts.js`:** IIFE `paint()` que lee `window.propertyDB.properties`,
+   filtra activas (`available !== 0 && disponible !== false`) y calcula
+   `new Set(p.city)`. Se engancha a:
+   - `DOMContentLoaded`
+   - `altorra:db-ready`
+   - `altorra:db-refreshed`
+   - `altorra:cache-invalidated`
+4. **ARIA:** `aria-live="polite"` en cada span dinámico; `aria-label` en el aside.
+
+**Archivos tocados:**
+- `index.html` — +24 líneas de markup.
+- `style.css` — +49 líneas (bloque Trust Bar).
+- `scripts.js` — +28 líneas (IIFE paint + listeners).
+
+**Criterio de éxito:**
+- [x] `node --check` OK en los archivos JS.
+- [x] Los números reaccionan cuando Firestore refresca el dataset.
+- [x] No rompe mobile (≤640px): se colapsan separadores, la franja queda
+      compacta centrada.
+
+---
+
 ### ✅ A1c — ARIA combobox completa + indicador fuzzy "~" (2026-04-16)
 
 **Contexto:** El smart-search ya corrige typos con Damerau-Levenshtein, pero el
