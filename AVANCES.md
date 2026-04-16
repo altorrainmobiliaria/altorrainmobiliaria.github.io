@@ -68,6 +68,39 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ A1b — Sugerencias agrupadas por barrio/tipo/ciudad con contador (2026-04-16)
+
+**Contexto:** Extensión natural del smart-search. Cars agrupa resultados por
+"Marca · N vehículos" en su dropdown. Inmobiliaria adopta el patrón adaptado al
+dominio: barrio, tipo de propiedad y ciudad, con contador por categoría.
+
+**Qué se añadió:**
+
+1. **`buildGroupSuggestions(query, allProps)`** — detecta coincidencias de la
+   query contra `p.neighborhood`, `p.type` (+ `TYPE_LABEL` en ES) y `p.city`.
+   Retorna hasta 3 grupos ordenados por `count` desc. Respeta `available` /
+   `disponible`.
+2. **`renderGroups(groups)`** — renderiza sección "Sugerencias" arriba de las
+   propiedades individuales, con icono específico por `kind` (pin, casa, ciudad),
+   label en negrita y badge redondeado `N propiedades`.
+3. **`buildGroupHref(group)`** — resuelve destino según `#op` seleccionado
+   (comprar/arrendar/alojar) y arma los query params:
+   - `barrio` → `?search={barrio}` (listado filtra en descripción + hood)
+   - `tipo`   → `?type={type}&city={city?}`
+   - `ciudad` → `?city={city}`
+4. **Teclado** — `ArrowUp/ArrowDown/Enter` ahora incluye grupos, propiedades y
+   recientes (selector `.ss-group-item, .ss-item, .ss-recent-item`).
+
+**Archivos tocados:**
+- `js/smart-search.js` — +119 líneas netas, sin tocar `searchProps()` ni vocab.
+
+**Criterio de éxito:**
+- [x] `node --check js/smart-search.js` → sintaxis válida.
+- [x] Grupos aparecen solo cuando hay matches reales (count ≥ 1).
+- [x] Click en grupo navega al listado correcto según operación elegida.
+
+---
+
 ### ✅ A1a — Hero search: búsquedas recientes + atajo "/" (2026-04-16)
 
 **Contexto:** Primera micro-fase del plan unificado tras revisar el repo vivo de

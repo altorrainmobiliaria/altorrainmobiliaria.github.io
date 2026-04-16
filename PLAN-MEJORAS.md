@@ -103,8 +103,8 @@ FASE 4             → Bloque D (máquina de leads completo)
 | # | Micro-fase | Estado | Commit |
 |---|-----------|--------|--------|
 | A1a | Búsquedas recientes + atajo "/" | ✅ DONE | `2ca4d44` |
-| A1b | Agrupación por barrio/tipo con contador | ⏭️ NEXT | — |
-| A1c | ARIA completa + indicador fuzzy "~" | 🔲 TODO | — |
+| A1b | Agrupación por barrio/tipo con contador | ✅ DONE | `606be98` |
+| A1c | ARIA completa + indicador fuzzy "~" | ⏭️ NEXT | — |
 
 **Archivos:** `js/smart-search.js`, `index.html`, `style.css`.
 
@@ -300,11 +300,12 @@ FASE 4             → Bloque D (máquina de leads completo)
 | Fecha | Fase | Commit | Notas |
 |-------|------|--------|-------|
 | 2026-04-16 | A1a | `2ca4d44` | Recientes en localStorage + atajo "/" |
+| 2026-04-16 | A1b | `606be98` | Sugerencias agrupadas barrio/tipo/ciudad con contador |
 
 ### 9.3 Siguiente
 
-**A1b — Agrupación por barrio/tipo con contador en sugerencias.**
-Cuando el usuario escribe "Bocagrande", además de propiedades individuales ofrecer la opción "Bocagrande (8 propiedades)" que navega a `busqueda.html?barrio=Bocagrande`.
+**A1c — ARIA completa + indicador fuzzy "~".**
+Añadir `aria-activedescendant`, `aria-selected` en items y un pequeño indicador "~" cuando el match es por typo (Damerau-Levenshtein) en vez de coincidencia exacta, para que el usuario entienda por qué aparece ese resultado.
 
 ---
 
