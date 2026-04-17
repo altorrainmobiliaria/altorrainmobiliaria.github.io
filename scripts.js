@@ -522,24 +522,73 @@ if('serviceWorker' in navigator){
   });
 }
 
-/* === Altorra Fase2.5: Org JSON-LD (auto) === */
+/* === JSON-LD: RealEstateAgent + LocalBusiness + BreadcrumbList (E1.3) === */
 (function(){
   try{
     if(document.querySelector('script[type="application/ld+json"].org-jsonld')) return;
-    var org = {
+
+    var BASE = 'https://altorrainmobiliaria.co';
+    var LOGO = 'https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-altorra-logo-2025-10-31-20.png';
+
+    var agent = {
       "@context": "https://schema.org",
-      "@type": "Organization",
+      "@type": ["RealEstateAgent", "LocalBusiness"],
+      "@id": BASE + "/#organization",
       "name": "ALTORRA Inmobiliaria",
-      "url": "https://altorrainmobiliaria.co/",
-      "logo": "https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-altorra-logo-2025-10-31-20.png",
-      "sameAs": ["https://www.instagram.com/altorrainmobiliaria", "https://www.facebook.com/share/16MEXCeAB4/?mibextid=wwXIfr", "https://www.tiktok.com/@altorrainmobiliaria"]
+      "alternateName": "Altorra S.A.S.",
+      "url": BASE + "/",
+      "logo": LOGO,
+      "image": LOGO,
+      "description": "Gestión integral en soluciones inmobiliarias en Cartagena: compra, venta, arriendo, avalúos y asesoría legal.",
+      "telephone": ["+573002439810", "+573235016747"],
+      "email": "info@altorrainmobiliaria.co",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Cartagena",
+        "addressRegion": "Bolívar",
+        "addressCountry": "CO"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 10.3910,
+        "longitude": -75.5144
+      },
+      "areaServed": {
+        "@type": "City",
+        "name": "Cartagena de Indias"
+      },
+      "priceRange": "$$",
+      "openingHours": "Mo-Fr 08:00-18:00, Sa 09:00-13:00",
+      "sameAs": [
+        "https://www.instagram.com/altorrainmobiliaria",
+        "https://www.facebook.com/share/16MEXCeAB4/",
+        "https://www.tiktok.com/@altorrainmobiliaria"
+      ]
     };
-    var s = document.createElement('script');
-    s.type = "application/ld+json";
-    s.className = "org-jsonld";
-    s.textContent = JSON.stringify(org);
-    document.head.appendChild(s);
-  }catch(e){ console.warn("Org JSON-LD inject failed", e); }
+
+    var s1 = document.createElement('script');
+    s1.type = 'application/ld+json';
+    s1.className = 'org-jsonld';
+    s1.textContent = JSON.stringify(agent);
+    document.head.appendChild(s1);
+
+    var path = location.pathname.replace(/\/$/,'') || '/';
+    var pageName = document.title.split('|')[0].trim();
+    var crumbs = [{"@type":"ListItem","position":1,"name":"Inicio","item": BASE + "/"}];
+    if(path !== '/' && path !== '/index.html'){
+      crumbs.push({"@type":"ListItem","position":2,"name": pageName,"item": BASE + path});
+    }
+    var breadcrumb = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": crumbs
+    };
+    var s2 = document.createElement('script');
+    s2.type = 'application/ld+json';
+    s2.textContent = JSON.stringify(breadcrumb);
+    document.head.appendChild(s2);
+
+  }catch(e){ console.warn("JSON-LD inject failed", e); }
 })();
 
 /* ============== Trust bar stats (A2) ============== */
