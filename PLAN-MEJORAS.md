@@ -154,9 +154,9 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| A7 | Migrar `reviews.json` → colección `resenas` en Firestore | 🔲 TODO |
+| A7 | Sección testimonios visible + contenedor #google-reviews | ✅ DONE `14c3450` |
 
-**Archivos:** `js/reviews.js` (nuevo), `scripts/upload-reviews.mjs`.
+**Archivos:** `index.html`, `style.css` (JS ya existía en `scripts.js` sección #2).
 
 ### A8 — Página `busqueda.html` avanzada
 
@@ -308,11 +308,12 @@ FASE 4             → Bloque D (máquina de leads completo)
 | 2026-04-17 | A4  | `e8fda09` | Carrusel "Recién publicadas" unificado con chips |
 | 2026-04-17 | A5  | `ca139db` | Grid "Explora por tipo" con 6 categorías SVG |
 | 2026-04-17 | A6  | `61dbd8a` | Barrios premium: 6 zonas de Cartagena |
+| 2026-04-17 | A7  | `14c3450` | Testimonios con rating bar + contenedor reviews |
 
 ### 9.3 Siguiente
 
-**A7 — Testimonials desde Firestore.**
-Ya existe código en `scripts.js` que carga reseñas de Firestore (colección `resenas`) con fallback a `reviews.json`. Falta la sección visual en `index.html` con el contenedor `#google-reviews`. Archivos: `index.html`.
+**E1.1 — Meta tags y canonical/OG en todas las páginas.**
+Revisar y completar las meta tags (title, description, canonical, OG) en todas las páginas HTML del sitio. Sprint 1 cambia de foco a SEO técnico base.
 
 ---
 
