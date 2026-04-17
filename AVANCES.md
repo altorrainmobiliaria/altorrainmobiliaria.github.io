@@ -68,6 +68,33 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ A7 — Testimonios desde Firestore/reviews.json (2026-04-17)
+
+**Contexto:** El JS para cargar reseñas ya existía en `scripts.js`
+(sección #2) — intenta Firestore colección `resenas` primero, con
+fallback a `reviews.json`. Pero no había sección visible en la home que
+contuviera el elemento `#google-reviews` donde se renderizan.
+
+**Qué se añadió:**
+
+1. **HTML en `index.html`:** nueva `<section class="testimonios-section">`
+   con:
+   - Título "Lo que dicen nuestros clientes".
+   - Enlace "Ver en Google →" al perfil de Maps.
+   - Rating bar: ★★★★★ 5.0 en Google Maps.
+   - Contenedor `<div id="google-reviews" class="reviews-wrap">` donde
+     el JS ya existente inyecta las tarjetas de reseña.
+2. **CSS en `style.css`:** bloque Testimonios con `.testimonios-rating-bar`
+   flex, estrellas doradas con `var(--accent)`.
+3. **Sin JS nuevo:** la sección #2 de `scripts.js` ya maneja todo
+   (Firestore → fallback → render 3 aleatorias).
+
+**Archivos tocados:**
+- `index.html` — +14 líneas de markup.
+- `style.css` — +18 líneas del bloque Testimonios.
+
+---
+
 ### ✅ A6 — Sección "Barrios premium" (2026-04-17)
 
 **Contexto:** Cartagena se divide en barrios con identidad propia y
