@@ -111,11 +111,13 @@
       const btn = form.querySelector('[type="submit"]');
       setLoading(btn, true);
 
-      const nombre   = (form.querySelector('[name="Nombre"]')?.value   || '').trim();
-      const email    = (form.querySelector('[name="Email"]')?.value    || '').trim();
-      const telefono = (form.querySelector('[name="Teléfono"]')?.value || '').trim();
-      const motivo   = (form.querySelector('[name="Motivo"]')?.value   || '').trim();
-      const mensaje  = (form.querySelector('[name="Mensaje"]')?.value  || '').trim();
+      const nombre      = (form.querySelector('[name="Nombre"]')?.value   || '').trim();
+      const email       = (form.querySelector('[name="Email"]')?.value    || '').trim();
+      const countryCode = (form.querySelector('[name="_countryCode"]')?.value || '').trim();
+      const rawPhone    = (form.querySelector('[name="Teléfono"]')?.value || '').trim();
+      const telefono    = countryCode ? (countryCode + ' ' + rawPhone) : rawPhone;
+      const motivo      = (form.querySelector('[name="Motivo"]')?.value   || '').trim();
+      const mensaje     = (form.querySelector('[name="Mensaje"]')?.value  || '').trim();
 
       // Mapear motivo → tipo Firestore
       const tipoMap = {
@@ -173,7 +175,9 @@
 
       const nombre      = (form.querySelector('[name="Nombre"]')?.value       || '').trim();
       const email       = (form.querySelector('[name="Email"]')?.value        || '').trim();
-      const telefono    = (form.querySelector('[name="Teléfono"]')?.value     || '').trim();
+      const countryCode = (form.querySelector('[name="_countryCode"]')?.value  || '').trim();
+      const rawPhone    = (form.querySelector('[name="Teléfono"]')?.value     || '').trim();
+      const telefono    = countryCode ? (countryCode + ' ' + rawPhone) : rawPhone;
       const mensaje     = (form.querySelector('[name="Mensaje"]')?.value      || '').trim();
       const propId      = (form.querySelector('[name="propiedadId"]')?.value  || '').trim();
       const propTitulo  = (form.querySelector('[name="propiedadTitulo"]')?.value || '').trim();
@@ -218,7 +222,9 @@
 
       const nombre      = (form.querySelector('[name="Nombre"]')?.value       || '').trim();
       const email       = (form.querySelector('[name="Email"]')?.value        || '').trim();
-      const telefono    = (form.querySelector('[name="Teléfono"]')?.value     || '').trim();
+      const countryCode = (form.querySelector('[name="_countryCode"]')?.value  || '').trim();
+      const rawPhone    = (form.querySelector('[name="Teléfono"]')?.value     || '').trim();
+      const telefono    = countryCode ? (countryCode + ' ' + rawPhone) : rawPhone;
       const ciudad      = (form.querySelector('[name="Ciudad"]')?.value       || '').trim();
       const operacion   = (form.querySelector('[name="Operación"]')?.value    || '').trim();
       const tipoInmueble = (form.querySelector('[name="Tipo"]')?.value        || '').trim();

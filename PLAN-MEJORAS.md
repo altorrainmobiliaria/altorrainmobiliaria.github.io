@@ -200,7 +200,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 | B2 | Historial de visitas en home y detalle | ✅ DONE (ya integrado) |
 | B3 | "Propiedades similares" en detalle (barrio+tipo+precio±20%) | ✅ DONE |
 | B4 | Modal wizard 3 pasos "Agenda visita" (patrón Cars) | ✅ DONE |
-| B5 | Selector multi-país en formularios (10 países Cars) | 🔲 TODO |
+| B5 | Selector multi-país en formularios (10 países Cars) | ✅ DONE |
 | B6 | Simulador hipotecario: gráfica amortización + export PDF | 🔲 TODO |
 | B7 | Lead scoring automático en Cloud Function onNewSolicitud | 🔲 TODO |
 

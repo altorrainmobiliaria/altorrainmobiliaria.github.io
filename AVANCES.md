@@ -1188,6 +1188,29 @@ Menú "Nuestro equipo": Reemplazado por "Reseñas"
 
 ---
 
+## B5 — Selector multi-país en formularios
+**Fecha:** 2026-04-17
+
+### Qué se hizo
+
+- Creado `js/country-phone.js` — auto-enhances any `<input type="tel">` with a country code dropdown.
+- 10 países: Colombia (+57), EE.UU. (+1), España (+34), México (+52), Panamá (+507), Perú (+51), Ecuador (+593), Venezuela (+58), Chile (+56), Argentina (+54).
+- MutationObserver detects dynamically added phone inputs (e.g., detalle-propiedad.html form).
+- Updated `js/contact-forms.js` — all 3 form handlers (contacto, detalle, publicar) now prepend country code to phone number before saving to Firestore.
+- Script included in: `contacto.html`, `publicar-propiedad.html`, `detalle-propiedad.html`.
+
+### Archivos creados/modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/country-phone.js` | NUEVO — auto-enhance phone inputs |
+| `js/contact-forms.js` | Concatenar country code al teléfono en los 3 handlers |
+| `contacto.html` | Incluido script |
+| `publicar-propiedad.html` | Incluido script |
+| `detalle-propiedad.html` | Incluido script |
+
+---
+
 ## PENDIENTE DEL PROPIETARIO (tarea humana)
 
 Estas tareas no las puede hacer Claude — requieren acceso a la consola de Firebase y cuentas del negocio:
