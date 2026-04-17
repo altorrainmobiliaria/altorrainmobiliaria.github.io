@@ -1111,6 +1111,106 @@ Menú "Nuestro equipo": Reemplazado por "Reseñas"
 
 ---
 
+## B1 — Activar comparador de propiedades
+**Fecha:** 2026-04-17
+**Commit:** *(pendiente)*
+
+### Qué se hizo
+
+- Activado `js/comparador.js` (416 líneas, ya existía completo) en todas las páginas de listado y detalle.
+- Agregado `data-id` a las tarjetas renderizadas por `listado-propiedades.js` (`createCard()`) y `scripts.js` (`buildCard()`), requisito del `MutationObserver` del comparador que busca `.card[data-id]`.
+- Script incluido en: `propiedades-comprar.html`, `propiedades-arrendar.html`, `propiedades-alojamientos.html`, `busqueda.html`, `detalle-propiedad.html`.
+
+### Funcionalidad activada
+
+- **Botón "Comparar"** inyectado automáticamente en cada tarjeta de propiedad.
+- **Bandeja flotante** (tray) con thumbnails de propiedades seleccionadas (máx. 3).
+- **Modal de comparación** con tabla de specs lado a lado: precio, m², habitaciones, baños, garajes, estrato, piso, barrio, tipo, operación.
+- **Highlight de mejor valor** automático (precio más bajo, más m², etc.).
+- **Comparación de amenidades** con check/cross por propiedad.
+- Persistencia en `localStorage` (clave `altorra:comparador`).
+- Soporte para query param `?compare=id` para pre-cargar comparación.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/listado-propiedades.js` | Agregado `data-id` al `<article>` de cada tarjeta |
+| `scripts.js` | Agregado `data-id` al `<article>` del carrusel home |
+| `propiedades-comprar.html` | Incluido `<script defer src="js/comparador.js">` |
+| `propiedades-arrendar.html` | Incluido `<script defer src="js/comparador.js">` |
+| `propiedades-alojamientos.html` | Incluido `<script defer src="js/comparador.js">` |
+| `busqueda.html` | Incluido `<script defer src="js/comparador.js">` |
+| `detalle-propiedad.html` | Incluido `<script defer src="js/comparador.js">` |
+
+---
+
+## B3 — Propiedades similares en detalle
+**Fecha:** 2026-04-17
+
+### Qué se hizo
+
+- Sección "Propiedades similares" al final de `detalle-propiedad.html`, después del `</main>`.
+- Algoritmo de scoring multi-criterio: barrio coincidente (+3), mismo tipo (+2), misma operación (+2), misma ciudad (+1), precio ±30% (+2). Umbral mínimo: score ≥ 3.
+- Muestra hasta 4 propiedades similares ordenadas por relevancia.
+- Si no hay similares suficientes, la sección se oculta automáticamente.
+- CSS embebido en la misma página: grid responsivo con tarjetas compactas.
+- Espera a `altorra:db-ready` para acceder a `propertyDB.filter({})` y `window.__PROP_JSON__`.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `detalle-propiedad.html` | Sección HTML `#similares-section`, CSS `.similares-*`, JS inline con scoring |
+
+---
+
+## B4 — Modal wizard 3 pasos "Agenda visita"
+**Fecha:** 2026-04-17
+
+### Qué se hizo
+
+- Creado `js/wizard-visita.js` (~280 líneas) — modal wizard de 3 pasos con CSS inyectado.
+- **Paso 1:** Datos personales — nombre, email, teléfono con selector de país (10 países latinoamericanos).
+- **Paso 2:** Fecha y hora — date picker (próximos 30 días) + 8 slots horarios seleccionables.
+- **Paso 3:** Confirmación — resumen de todos los datos con botón de envío.
+- Envía a Firestore `solicitudes` con `tipo: 'agenda_visita'` y `requiereCita: true`.
+- Botón "📅 Agendar visita" integrado en `detalle-propiedad.html` debajo del formulario de contacto (solo visible si la propiedad está disponible).
+- API: `window.AltorraWizard.open({ propiedadId, propiedadTitulo })`.
+- Progress bar con dots (3 pasos), validación por paso, cierre con ESC o click fuera.
+
+### Archivos creados/modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/wizard-visita.js` | NUEVO — wizard modal completo |
+| `detalle-propiedad.html` | Botón "Agendar visita" + script include |
+
+---
+
+## B5 — Selector multi-país en formularios
+**Fecha:** 2026-04-17
+
+### Qué se hizo
+
+- Creado `js/country-phone.js` — auto-enhances any `<input type="tel">` with a country code dropdown.
+- 10 países: Colombia (+57), EE.UU. (+1), España (+34), México (+52), Panamá (+507), Perú (+51), Ecuador (+593), Venezuela (+58), Chile (+56), Argentina (+54).
+- MutationObserver detects dynamically added phone inputs (e.g., detalle-propiedad.html form).
+- Updated `js/contact-forms.js` — all 3 form handlers (contacto, detalle, publicar) now prepend country code to phone number before saving to Firestore.
+- Script included in: `contacto.html`, `publicar-propiedad.html`, `detalle-propiedad.html`.
+
+### Archivos creados/modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/country-phone.js` | NUEVO — auto-enhance phone inputs |
+| `js/contact-forms.js` | Concatenar country code al teléfono en los 3 handlers |
+| `contacto.html` | Incluido script |
+| `publicar-propiedad.html` | Incluido script |
+| `detalle-propiedad.html` | Incluido script |
+
+---
+
 ## PENDIENTE DEL PROPIETARIO (tarea humana)
 
 Estas tareas no las puede hacer Claude — requieren acceso a la consola de Firebase y cuentas del negocio:
