@@ -68,6 +68,35 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ A8+A9 — busqueda.html unificada + chips activos + banner (2026-04-17)
+
+**Contexto:** Las páginas de listado solo mostraban propiedades de una
+operación. No había forma de buscar en todo el catálogo, ni feedback
+visual de los filtros activos.
+
+**Qué se añadió:**
+
+1. **`busqueda.html` (nuevo):** página de búsqueda unificada cross-operación
+   con selector Todas/Venta/Arriendo/Por días, filtros avanzados
+   colapsables, sort, paginación y cards con favoritos + WhatsApp.
+2. **`listado-propiedades.js`:** modo `IS_BUSQUEDA` que carga todas las
+   propiedades sin filtrar por operación. `getPriceLabel()` detecta la
+   operación de cada propiedad para mostrar el sufijo correcto (COP/mes/noche).
+   Funciones nuevas: `renderSearchBanner()` (banner "Resultados para: X"
+   con botón ✕), `renderActiveChips()` (chips removibles por filtro activo),
+   `reapply()` (re-render unificado usado por Apply/Clear/chips).
+3. **3 listados existentes** (`propiedades-comprar/arrendar/alojamientos.html`):
+   añadidos contenedores `#searchBanner` y `#activeChips` + CSS inline.
+
+**Archivos tocados:**
+- `busqueda.html` — nuevo (~200 líneas).
+- `js/listado-propiedades.js` — +70 líneas (IS_BUSQUEDA, chips, banner, reapply).
+- `propiedades-comprar.html` — +6 líneas (containers + CSS).
+- `propiedades-arrendar.html` — +6 líneas.
+- `propiedades-alojamientos.html` — +6 líneas.
+
+---
+
 ### ✅ E1.3 — JSON-LD RealEstateAgent + LocalBusiness + BreadcrumbList (2026-04-17)
 
 **Contexto:** Google Rich Results requiere schemas estructurados para
