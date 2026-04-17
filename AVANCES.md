@@ -68,6 +68,30 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ A10 — Promo banner editable desde Firestore (2026-04-17)
+
+**Contexto:** El admin necesita poder publicar promociones o avisos
+temporales en la home sin tocar código. Firestore permite editar el
+documento `config/promo` desde la consola o el futuro admin panel.
+
+**Qué se añadió:**
+
+1. **HTML en `index.html`:** `<div id="promo-banner">` entre trust bar y
+   hub section, `display:none` por defecto (se muestra solo si hay promo).
+2. **JS en `scripts.js`:** IIFE que lee `config/promo` con `getDoc()` (1
+   lectura, timeout 4s). Campos: `activo` (bool), `texto`, `enlace`,
+   `enlaceTexto`, `id`. Botón cerrar guarda dismissal en localStorage
+   por ID (no vuelve a mostrarse tras cerrar). Sin `onSnapshot`.
+3. **CSS en `style.css`:** `.promo-banner` con gradient suave dorado,
+   `.promo-close` posicionado absolute. Responsive en ≤860px.
+
+**Archivos tocados:**
+- `index.html` — +3 líneas.
+- `scripts.js` — +44 líneas.
+- `style.css` — +36 líneas.
+
+---
+
 ### ✅ A8+A9 — busqueda.html unificada + chips activos + banner (2026-04-17)
 
 **Contexto:** Las páginas de listado solo mostraban propiedades de una

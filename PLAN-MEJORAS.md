@@ -176,7 +176,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| A10 | `config/promo` editable + render en home | 🔲 TODO |
+| A10 | `config/promo` editable + render en home | ✅ DONE `7e45b05` |
 
 ### A11 — Sección "Todo en un lugar" (3 columnas)
 
@@ -312,11 +312,14 @@ FASE 4             → Bloque D (máquina de leads completo)
 | 2026-04-17 | E1.1+E1.2 | `ee38585` | Meta tags, canonical y OG en 9 páginas |
 | 2026-04-17 | E1.3 | `786a3af` | JSON-LD RealEstateAgent + LocalBusiness + BreadcrumbList |
 | 2026-04-17 | A8+A9 | `f88102e` | busqueda.html unificada + chips activos + banner |
+| 2026-04-17 | A10 | `7e45b05` | Promo banner Firestore config/promo + dismiss |
 
 ### 9.3 Siguiente
 
-**A10 — Promo banner editable desde admin.**
-Banner promocional en home leído desde `config/promo` en Firestore. Archivos: `index.html`, `scripts.js`.
+**Bloque B — Inteligencia y conversión.**
+B1: Comparador de propiedades (seleccionar 2-3 y comparar specs).
+B2: Historial de visitas en home y detalle (ya parcialmente implementado).
+B3: "Propiedades similares" en detalle (barrio+tipo+precio±20%).
 
 ---
 
