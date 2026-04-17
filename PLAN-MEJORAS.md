@@ -138,9 +138,9 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| A5 | Grid de tarjetas: Apartamento, Casa, Lote, Oficina, Local, Bodega | 🔲 TODO |
+| A5 | Grid de tarjetas: Apartamento, Casa, Lote, Oficina, Local, Bodega | ✅ DONE `ca139db` |
 
-**Archivos:** `index.html`, `style.css`, imágenes en `multimedia/categorias/`.
+**Archivos:** `index.html`, `style.css` (SVG inline, sin imágenes externas).
 
 ### A6 — Sección "Barrios premium"
 
@@ -306,11 +306,12 @@ FASE 4             → Bloque D (máquina de leads completo)
 | 2026-04-16 | A3  | `072ed3a` | Featured Week Banner como carrusel top-3 con auto-rotación |
 | 2026-04-16 | A11 | `322513c` | Sección "Todo en un lugar" 3 columnas CTA |
 | 2026-04-17 | A4  | `e8fda09` | Carrusel "Recién publicadas" unificado con chips |
+| 2026-04-17 | A5  | `ca139db` | Grid "Explora por tipo" con 6 categorías SVG |
 
 ### 9.3 Siguiente
 
-**A5 — Sección "Categorías" visuales.**
-Grid de tarjetas visuales con los tipos de inmueble (Apartamento, Casa, Lote, Oficina, Local, Bodega). Cada tarjeta enlaza al listado filtrado por tipo. Archivos: `index.html`, `style.css`.
+**A6 — Sección "Barrios premium".**
+Tarjetas visuales de barrios destacados de Cartagena (Bocagrande, Manga, Castillogrande, Centro Histórico, Crespo, Manzanillo). Cada tarjeta enlaza al listado filtrado por barrio. Archivos: `index.html`, `style.css`.
 
 ---
 
