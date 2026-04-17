@@ -10,7 +10,9 @@
   const WHATSAPP = { phone: '573002439810', company: 'Altorra Inmobiliaria' };
   
   const path = window.location.pathname.toLowerCase();
-  const PAGE_MODE = path.includes('arrendar') ? 'arrendar' :
+  const IS_BUSQUEDA = path.includes('busqueda');
+  const PAGE_MODE = IS_BUSQUEDA ? null :
+                    path.includes('arrendar') ? 'arrendar' :
                     path.includes('alojamientos') ? 'alojamientos' : 'comprar';
 
   const OPERATION_MAP = {
@@ -42,8 +44,9 @@
   function getPriceLabel(p) {
     if (!p.price) return '';
     const formatted = '$' + formatCOP(p.price) + ' COP';
-    if (PAGE_MODE === 'arrendar') return formatted + ' / mes';
-    if (PAGE_MODE === 'alojamientos') return formatted + ' / noche';
+    const op = IS_BUSQUEDA ? String(p.operation || '').toLowerCase() : PAGE_MODE;
+    if (op === 'arrendar' || op === 'arriendo') return formatted + ' / mes';
+    if (['alojamientos','dias','por_dias','alojar','noche'].includes(op)) return formatted + ' / noche';
     return formatted;
   }
 
@@ -163,6 +166,14 @@
 
     let arr = allProperties.slice();
 
+    if (IS_BUSQUEDA) {
+      const opFilter = document.getElementById('f-op')?.value || '';
+      if (opFilter) {
+        const valid = OPERATION_MAP[opFilter] || [opFilter];
+        arr = arr.filter(p => valid.includes(String(p.operation || '').toLowerCase()));
+      }
+    }
+
     if (search) {
       const terms = search.toLowerCase().split(/\s+/);
       arr = arr.filter(p => {
@@ -266,6 +277,62 @@
     }
   }
 
+  function renderSearchBanner() {
+    const el = document.getElementById('searchBanner');
+    if (!el) return;
+    const search = (document.getElementById('f-search')?.value || '').trim();
+    if (!search) { el.style.display = 'none'; return; }
+    el.style.display = '';
+    el.innerHTML = `Resultados para: <strong>${escapeHtml(search)}</strong> <button type="button" class="chip-x" aria-label="Quitar búsqueda" style="margin-left:8px;background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--muted)">✕</button>`;
+    el.querySelector('.chip-x')?.addEventListener('click', () => {
+      const input = document.getElementById('f-search');
+      if (input) input.value = '';
+      reapply();
+    });
+  }
+
+  function renderActiveChips() {
+    const container = document.getElementById('activeChips');
+    if (!container) return;
+    container.innerHTML = '';
+    const chips = [];
+    const vals = {
+      search: document.getElementById('f-search')?.value || '',
+      city: document.getElementById('f-city')?.value || '',
+      type: document.getElementById('f-type')?.value || '',
+      min: document.getElementById('f-min')?.value || '',
+      max: document.getElementById('f-max')?.value || '',
+      op: IS_BUSQUEDA ? (document.getElementById('f-op')?.value || '') : '',
+    };
+    const labels = { search:'Búsqueda', city:'Ciudad', type:'Tipo', min:'Precio mín.', max:'Precio máx.', op:'Operación' };
+    for (const [k,v] of Object.entries(vals)) {
+      if (!v) continue;
+      chips.push({ key: k, label: labels[k], value: k === 'op' ? capitalize(v) : (k === 'type' ? capitalize(v) : v) });
+    }
+    if (!chips.length) return;
+    chips.forEach(c => {
+      const chip = document.createElement('span');
+      chip.className = 'active-chip';
+      chip.innerHTML = `${escapeHtml(c.label)}: <strong>${escapeHtml(c.value)}</strong> <button type="button" class="chip-x" aria-label="Quitar filtro ${escapeHtml(c.label)}" style="margin-left:4px;background:none;border:none;cursor:pointer;font-size:.9rem;color:var(--muted)">✕</button>`;
+      chip.querySelector('.chip-x').addEventListener('click', () => {
+        const el = document.getElementById(c.key === 'op' ? 'f-op' : c.key === 'search' ? 'f-search' : c.key === 'city' ? 'f-city' : c.key === 'type' ? 'f-type' : c.key === 'min' ? 'f-min' : 'f-max');
+        if (el) { el.tagName === 'SELECT' ? el.selectedIndex = 0 : el.value = ''; }
+        reapply();
+      });
+      container.appendChild(chip);
+    });
+  }
+
+  function reapply() {
+    filteredProperties = applyFilters();
+    updateResultsCount(allProperties.length, filteredProperties.length);
+    renderedCount = 0;
+    renderList(filteredProperties.slice(0, PAGE_SIZE), true);
+    updateLoadMoreButton(filteredProperties.length);
+    renderSearchBanner();
+    renderActiveChips();
+  }
+
   // Esperar a que PropertyDatabase esté lista (fuente única: Firestore)
   function waitForDB() {
     return new Promise((resolve) => {
@@ -282,7 +349,7 @@
     _refreshBound = true;
     const reload = () => {
       if (!window.propertyDB?.isLoaded) return;
-      allProperties = window.propertyDB.filter({ operacion: PAGE_MODE });
+      allProperties = window.propertyDB.filter(PAGE_MODE ? { operacion: PAGE_MODE } : {});
       filteredProperties = applyFilters();
       updateResultsCount(allProperties.length, filteredProperties.length);
       renderedCount = 0;
@@ -318,7 +385,7 @@
     try {
       // Fuente única: PropertyDatabase (Firestore)
       const db = await waitForDB();
-      const data = db ? db.filter({ operacion: PAGE_MODE }) : [];
+      const data = db ? db.filter(PAGE_MODE ? { operacion: PAGE_MODE } : {}) : [];
 
       allProperties = Array.isArray(data) ? data : [];
       bindRefreshListener();
@@ -344,8 +411,14 @@
         const searchInput = document.getElementById('f-search');
         if (searchInput) searchInput.value = qs.get('search');
       }
+      if (IS_BUSQUEDA && qs.has('op')) {
+        const opSelect = document.getElementById('f-op');
+        if (opSelect) opSelect.value = qs.get('op');
+      }
 
       filteredProperties = applyFilters();
+      renderSearchBanner();
+      renderActiveChips();
       
       updateResultsCount(allProperties.length, filteredProperties.length);
       
@@ -378,11 +451,7 @@
     if (btnApply && !btnApply.dataset.attached) {
       btnApply.dataset.attached = 'true';
       btnApply.addEventListener('click', () => {
-        filteredProperties = applyFilters();
-        updateResultsCount(allProperties.length, filteredProperties.length);
-        renderList(filteredProperties.slice(0, PAGE_SIZE), true);
-        updateLoadMoreButton(filteredProperties.length);
-
+        reapply();
         if (filteredProperties.length === 0) {
           const list = document.getElementById('list');
           if (list) {
@@ -396,17 +465,12 @@
     if (btnClear && !btnClear.dataset.attached) {
       btnClear.dataset.attached = 'true';
       btnClear.addEventListener('click', () => {
-        ['f-city', 'f-type', 'f-min', 'f-max', 'f-sort', 'f-search', 'f-beds-min', 'f-baths-min', 'f-sqm-min', 'f-sqm-max'].forEach(id => {
+        ['f-city', 'f-type', 'f-min', 'f-max', 'f-sort', 'f-search', 'f-beds-min', 'f-baths-min', 'f-sqm-min', 'f-sqm-max', 'f-op'].forEach(id => {
           const el = document.getElementById(id);
-          if (el) el.value = '';
+          if (el) el.tagName === 'SELECT' ? el.selectedIndex = 0 : el.value = '';
         });
-        
         if (document.getElementById('f-sort')) document.getElementById('f-sort').value = 'relevance';
-        
-        filteredProperties = allProperties.slice();
-        updateResultsCount(allProperties.length, allProperties.length);
-        renderList(allProperties.slice(0, PAGE_SIZE), true);
-        updateLoadMoreButton(allProperties.length);
+        reapply();
       });
     }
 

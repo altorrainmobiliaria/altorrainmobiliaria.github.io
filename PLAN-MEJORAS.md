@@ -162,7 +162,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| A8 | Filtros colapsables + sort + chips activos + contador | 🔲 TODO |
+| A8 | Filtros colapsables + sort + chips activos + contador | ✅ DONE `f88102e` |
 
 **Archivos:** `busqueda.html` (nuevo), `js/listado-propiedades.js`.
 
@@ -170,7 +170,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| A9 | Sort dropdown + paginación + banner "Resultados para: × " | 🔲 TODO |
+| A9 | Sort dropdown + paginación + banner "Resultados para: × " | ✅ DONE `f88102e` |
 
 ### A10 — Promo banner editable desde admin
 
@@ -311,15 +311,12 @@ FASE 4             → Bloque D (máquina de leads completo)
 | 2026-04-17 | A7  | `14c3450` | Testimonios con rating bar + contenedor reviews |
 | 2026-04-17 | E1.1+E1.2 | `ee38585` | Meta tags, canonical y OG en 9 páginas |
 | 2026-04-17 | E1.3 | `786a3af` | JSON-LD RealEstateAgent + LocalBusiness + BreadcrumbList |
+| 2026-04-17 | A8+A9 | `f88102e` | busqueda.html unificada + chips activos + banner |
 
 ### 9.3 Siguiente
 
-**Bloque A restante (A8–A10, A12) o Bloque B (B1–B7).**
-Sprint 1 A + E1 SEO base completado. Opciones:
-- A8: Página busqueda.html avanzada con filtros colapsables.
-- B1: Comparador de propiedades (seleccionar 2-3 y comparar specs).
-- B2: Historial de visitas recientes (ya parcialmente implementado).
-Consultar al dueño qué priorizar.
+**A10 — Promo banner editable desde admin.**
+Banner promocional en home leído desde `config/promo` en Firestore. Archivos: `index.html`, `scripts.js`.
 
 ---
 
