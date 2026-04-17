@@ -196,7 +196,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| B1 | Activar comparador de propiedades (JS ya existe) | 🔲 TODO |
+| B1 | Activar comparador de propiedades (JS ya existe) | ✅ DONE |
 | B2 | Historial de visitas en home y detalle | 🔲 TODO |
 | B3 | "Propiedades similares" en detalle (barrio+tipo+precio±20%) | 🔲 TODO |
 | B4 | Modal wizard 3 pasos "Agenda visita" (patrón Cars) | 🔲 TODO |

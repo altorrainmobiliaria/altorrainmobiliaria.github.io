@@ -1111,6 +1111,40 @@ Menú "Nuestro equipo": Reemplazado por "Reseñas"
 
 ---
 
+## B1 — Activar comparador de propiedades
+**Fecha:** 2026-04-17
+**Commit:** *(pendiente)*
+
+### Qué se hizo
+
+- Activado `js/comparador.js` (416 líneas, ya existía completo) en todas las páginas de listado y detalle.
+- Agregado `data-id` a las tarjetas renderizadas por `listado-propiedades.js` (`createCard()`) y `scripts.js` (`buildCard()`), requisito del `MutationObserver` del comparador que busca `.card[data-id]`.
+- Script incluido en: `propiedades-comprar.html`, `propiedades-arrendar.html`, `propiedades-alojamientos.html`, `busqueda.html`, `detalle-propiedad.html`.
+
+### Funcionalidad activada
+
+- **Botón "Comparar"** inyectado automáticamente en cada tarjeta de propiedad.
+- **Bandeja flotante** (tray) con thumbnails de propiedades seleccionadas (máx. 3).
+- **Modal de comparación** con tabla de specs lado a lado: precio, m², habitaciones, baños, garajes, estrato, piso, barrio, tipo, operación.
+- **Highlight de mejor valor** automático (precio más bajo, más m², etc.).
+- **Comparación de amenidades** con check/cross por propiedad.
+- Persistencia en `localStorage` (clave `altorra:comparador`).
+- Soporte para query param `?compare=id` para pre-cargar comparación.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/listado-propiedades.js` | Agregado `data-id` al `<article>` de cada tarjeta |
+| `scripts.js` | Agregado `data-id` al `<article>` del carrusel home |
+| `propiedades-comprar.html` | Incluido `<script defer src="js/comparador.js">` |
+| `propiedades-arrendar.html` | Incluido `<script defer src="js/comparador.js">` |
+| `propiedades-alojamientos.html` | Incluido `<script defer src="js/comparador.js">` |
+| `busqueda.html` | Incluido `<script defer src="js/comparador.js">` |
+| `detalle-propiedad.html` | Incluido `<script defer src="js/comparador.js">` |
+
+---
+
 ## PENDIENTE DEL PROPIETARIO (tarea humana)
 
 Estas tareas no las puede hacer Claude — requieren acceso a la consola de Firebase y cuentas del negocio:

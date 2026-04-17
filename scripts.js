@@ -337,6 +337,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const mode = modeForOp(p.operation);
     const el = document.createElement('article');
     el.className = 'card'; el.setAttribute('role','listitem');
+    if (p.id) el.setAttribute('data-id', p.id);
 
     const img = document.createElement('img');
     img.loading='lazy'; img.decoding='async'; img.alt = escapeHtml(p.title || 'Propiedad');

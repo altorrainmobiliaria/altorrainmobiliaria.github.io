@@ -91,6 +91,7 @@
     const card = document.createElement('article');
     card.className = 'card';
     card.setAttribute('role', 'listitem');
+    card.setAttribute('data-id', p.id);
     
     const imgSrc = p.image ? 
       (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/' + p.image) :
