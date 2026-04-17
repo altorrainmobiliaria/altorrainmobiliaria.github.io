@@ -1165,6 +1165,29 @@ Menú "Nuestro equipo": Reemplazado por "Reseñas"
 
 ---
 
+## B4 — Modal wizard 3 pasos "Agenda visita"
+**Fecha:** 2026-04-17
+
+### Qué se hizo
+
+- Creado `js/wizard-visita.js` (~280 líneas) — modal wizard de 3 pasos con CSS inyectado.
+- **Paso 1:** Datos personales — nombre, email, teléfono con selector de país (10 países latinoamericanos).
+- **Paso 2:** Fecha y hora — date picker (próximos 30 días) + 8 slots horarios seleccionables.
+- **Paso 3:** Confirmación — resumen de todos los datos con botón de envío.
+- Envía a Firestore `solicitudes` con `tipo: 'agenda_visita'` y `requiereCita: true`.
+- Botón "📅 Agendar visita" integrado en `detalle-propiedad.html` debajo del formulario de contacto (solo visible si la propiedad está disponible).
+- API: `window.AltorraWizard.open({ propiedadId, propiedadTitulo })`.
+- Progress bar con dots (3 pasos), validación por paso, cierre con ESC o click fuera.
+
+### Archivos creados/modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/wizard-visita.js` | NUEVO — wizard modal completo |
+| `detalle-propiedad.html` | Botón "Agendar visita" + script include |
+
+---
+
 ## PENDIENTE DEL PROPIETARIO (tarea humana)
 
 Estas tareas no las puede hacer Claude — requieren acceso a la consola de Firebase y cuentas del negocio:

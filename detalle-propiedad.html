@@ -553,6 +553,22 @@ async function init(){
     `;
     formBlock.appendChild(form);
 
+    if (isAvailable) {
+      const visitaBtn = document.createElement('button');
+      visitaBtn.type = 'button';
+      visitaBtn.className = 'btn btn-ghost';
+      visitaBtn.style.cssText = 'width:100%;margin-top:12px;padding:12px 0;font-weight:700;border:2px solid var(--gold);border-radius:12px;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s';
+      visitaBtn.innerHTML = '📅 Agendar visita';
+      visitaBtn.addEventListener('click', () => {
+        if (window.AltorraWizard) {
+          window.AltorraWizard.open({ propiedadId: prop.id, propiedadTitulo: prop.title });
+        }
+      });
+      visitaBtn.addEventListener('mouseenter', () => { visitaBtn.style.background = 'rgba(212,175,55,.08)'; });
+      visitaBtn.addEventListener('mouseleave', () => { visitaBtn.style.background = 'transparent'; });
+      formBlock.appendChild(visitaBtn);
+    }
+
     /* ===== Montaje ===== */
     container.innerHTML='';
     galleryDiv.appendChild(G);
@@ -809,5 +825,6 @@ document.addEventListener('DOMContentLoaded', init);
 </script>
   <script defer src="js/favoritos.js"></script>
   <script defer src="js/comparador.js"></script>
+  <script defer src="js/wizard-visita.js"></script>
   <script defer src="js/contact-forms.js"></script>
 </html>
