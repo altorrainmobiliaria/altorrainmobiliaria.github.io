@@ -544,3 +544,22 @@ img[data-src].loaded {
   .barrios-grid { grid-template-columns: 1fr; gap: 10px; }
   .barrio-card { padding: 14px 16px; }
 }
+
+/* ── A7: Testimonios rating bar ── */
+.testimonios-section { margin-top: 36px; }
+.testimonios-rating-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.testimonios-stars {
+  font-size: 1.2rem;
+  color: var(--accent);
+  letter-spacing: 1px;
+}
+.testimonios-score {
+  font-size: .92rem;
+  color: var(--muted);
+  font-weight: 600;
+}
