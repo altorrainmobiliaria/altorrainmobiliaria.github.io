@@ -146,9 +146,9 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| A6 | Bocagrande, Manga, Castillogrande, Centro Histórico, Crespo, Manzanillo | 🔲 TODO |
+| A6 | Bocagrande, Manga, Castillogrande, Centro Histórico, Crespo, Manzanillo | ✅ DONE `61dbd8a` |
 
-**Archivos:** `index.html`, `js/barrios.js` (nuevo).
+**Archivos:** `index.html`, `style.css` (sin JS, enlaces con `?search=`).
 
 ### A7 — Testimonials desde Firestore
 
@@ -307,11 +307,12 @@ FASE 4             → Bloque D (máquina de leads completo)
 | 2026-04-16 | A11 | `322513c` | Sección "Todo en un lugar" 3 columnas CTA |
 | 2026-04-17 | A4  | `e8fda09` | Carrusel "Recién publicadas" unificado con chips |
 | 2026-04-17 | A5  | `ca139db` | Grid "Explora por tipo" con 6 categorías SVG |
+| 2026-04-17 | A6  | `61dbd8a` | Barrios premium: 6 zonas de Cartagena |
 
 ### 9.3 Siguiente
 
-**A6 — Sección "Barrios premium".**
-Tarjetas visuales de barrios destacados de Cartagena (Bocagrande, Manga, Castillogrande, Centro Histórico, Crespo, Manzanillo). Cada tarjeta enlaza al listado filtrado por barrio. Archivos: `index.html`, `style.css`.
+**A7 — Testimonials desde Firestore.**
+Ya existe código en `scripts.js` que carga reseñas de Firestore (colección `resenas`) con fallback a `reviews.json`. Falta la sección visual en `index.html` con el contenedor `#google-reviews`. Archivos: `index.html`.
 
 ---
 

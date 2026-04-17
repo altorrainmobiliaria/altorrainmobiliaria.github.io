@@ -68,6 +68,37 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ A6 — Sección "Barrios premium" (2026-04-17)
+
+**Contexto:** Cartagena se divide en barrios con identidad propia y
+niveles de valorización distintos. Una sección visual que destaque las
+zonas premium ayuda a posicionar a Altorra como especialista en la ciudad
+y dirige tráfico segmentado al listado.
+
+**Qué se añadió:**
+
+1. **HTML en `index.html`:** nueva `<section class="barrios-section">` con
+   `.barrios-grid` de 6 `.barrio-card`:
+   - Bocagrande ("Frente al mar · Alta valorización").
+   - Manga ("Tradición · Vista a la bahía").
+   - Castillogrande ("Exclusividad · Tranquilidad").
+   - Centro Histórico ("Patrimonio UNESCO · Renta turística").
+   - Crespo ("Cerca al aeropuerto · Residencial").
+   - Manzanillo ("Playa privada · Proyectos nuevos").
+   Cada tarjeta tiene pin SVG dorado + nombre + tagline, y enlaza a
+   `propiedades-comprar.html?search=BARRIO`.
+2. **CSS en `style.css`:** bloque Barrios con fondo gradient sutil
+   `#fffdf6→#fff`, borde dorado suave, hover `translateY(-3px)` + sombra.
+   Responsive: 3 cols → 2 cols (≤860px) → 1 col (≤480px).
+3. **Sin JS:** enlaces estáticos que pasan `?search=` al listado, donde
+   la búsqueda de texto libre ya matchea contra `neighborhood`.
+
+**Archivos tocados:**
+- `index.html` — +56 líneas de markup.
+- `style.css` — +62 líneas del bloque Barrios.
+
+---
+
 ### ✅ A5 — Sección "Explora por tipo" (categorías visuales) (2026-04-17)
 
 **Contexto:** Los usuarios necesitan una forma rápida de navegar el
