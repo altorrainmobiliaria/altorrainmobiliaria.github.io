@@ -478,3 +478,69 @@ img[data-src].loaded {
   .cat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .cat-card { padding: 16px 8px 14px; }
 }
+
+/* ── A6: Barrios premium ── */
+.barrios-section {
+  max-width: var(--page-max);
+  margin: 28px auto 32px;
+  padding: 0 16px;
+}
+.barrios-inner { text-align: center; }
+.barrios-heading {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 4px;
+}
+.barrios-sub {
+  color: var(--muted);
+  margin: 0 0 20px;
+  font-size: .98rem;
+}
+.barrios-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+.barrio-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(212,175,55,.15);
+  background: linear-gradient(135deg, #fffdf6 0%, #fff 100%);
+  box-shadow: 0 4px 14px rgba(0,0,0,.04);
+  text-decoration: none;
+  color: var(--text);
+  text-align: left;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.barrio-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(212,175,55,.14);
+  border-color: var(--gold);
+}
+.barrio-pin {
+  width: 22px;
+  height: 22px;
+  color: var(--gold);
+  margin-bottom: 2px;
+}
+.barrio-pin svg { width: 100%; height: 100%; }
+.barrio-name {
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+.barrio-tag {
+  font-size: .82rem;
+  color: var(--muted);
+  line-height: 1.3;
+}
+@media (max-width: 860px) {
+  .barrios-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .barrios-grid { grid-template-columns: 1fr; gap: 10px; }
+  .barrio-card { padding: 14px 16px; }
+}
