@@ -563,3 +563,37 @@ img[data-src].loaded {
   color: var(--muted);
   font-weight: 600;
 }
+
+/* ── A10: Promo banner ── */
+.promo-banner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 14px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #fffdf4 0%, #fff8e1 100%);
+  border: 1px solid rgba(212,175,55,.18);
+  text-align: center;
+  font-size: .95rem;
+  color: var(--text);
+  position: relative;
+}
+.promo-banner strong { color: var(--gold); }
+.promo-banner a {
+  color: var(--gold);
+  font-weight: 700;
+  text-decoration: underline;
+}
+.promo-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--muted);
+  line-height: 1;
+}
+@media (max-width: 860px) {
+  .promo-banner { margin: 0 16px; border-radius: 10px; }
+}

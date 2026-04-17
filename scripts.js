@@ -591,6 +591,52 @@ if('serviceWorker' in navigator){
   }catch(e){ console.warn("JSON-LD inject failed", e); }
 })();
 
+/* ============== Promo banner desde Firestore config/promo (A10) ============== */
+(function(){
+  var DISMISSED_KEY = 'altorra:promo-dismissed';
+  var el = document.getElementById('promo-banner');
+  if (!el) return;
+
+  function escHtml(s){ return String(s||'').replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m];}); }
+
+  function render(promo){
+    if (!promo || !promo.activo) return;
+    try {
+      var dismissed = JSON.parse(localStorage.getItem(DISMISSED_KEY) || '{}');
+      if (dismissed.id === promo.id) return;
+    } catch(_){}
+
+    var html = '';
+    if (promo.texto) html += escHtml(promo.texto);
+    if (promo.enlace && promo.enlaceTexto) {
+      html += ' <a href="' + escHtml(promo.enlace) + '">' + escHtml(promo.enlaceTexto) + '</a>';
+    }
+    html += '<button type="button" class="promo-close" aria-label="Cerrar promoción">✕</button>';
+    el.innerHTML = html;
+    el.style.display = '';
+
+    el.querySelector('.promo-close').addEventListener('click', function(){
+      el.style.display = 'none';
+      try { localStorage.setItem(DISMISSED_KEY, JSON.stringify({ id: promo.id || 'default' })); } catch(_){}
+    });
+  }
+
+  async function loadPromo(){
+    if (!window.db) return;
+    try {
+      var { doc, getDoc } = await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
+      var snap = await Promise.race([
+        getDoc(doc(window.db, 'config', 'promo')),
+        new Promise(function(_,rej){ setTimeout(function(){ rej(new Error('timeout')); }, 4000); })
+      ]);
+      if (snap.exists()) render(snap.data());
+    } catch(_){}
+  }
+
+  if (window.db) { loadPromo(); }
+  else { window.addEventListener('altorra:firebase-ready', loadPromo, { once: true }); }
+})();
+
 /* ============== Trust bar stats (A2) ============== */
 (function(){
   function paint(){
