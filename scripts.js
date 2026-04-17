@@ -281,18 +281,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 /* ============== 4.bis) (Handler duplicado deshabilitado — toda la lógica vive en el bloque #3) ============== */
- /* ============== 5) Miniaturas home → Firestore (via PropertyDatabase) ============== */
+ /* ============== 5) Carrusel unificado "Recién publicadas" ============== */
 (function(){
-  const cfg = [
-    {operation:'comprar', targetId:'carouselVenta',    mode:'venta'},
-    {operation:'arrendar',targetId:'carouselArriendo', mode:'arriendo'},
-    {operation:'dias',    targetId:'carouselDias',     mode:'dias'}
-  ];
+  const CAROUSEL_ID = 'carouselRecientes';
+  const MAX_CARDS   = 12;
+  let activeOp      = 'all';
+  let allProps       = [];
+
+  const OP_PAGE = {
+    comprar:       'propiedades-comprar.html',
+    arrendar:      'propiedades-arrendar.html',
+    alojamientos:  'propiedades-alojamientos.html',
+  };
 
   function formatCOP(n){ if(n==null) return ''; return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
   function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
 
-  // Skeleton cards mientras Firestore responde (reduce la sensación de pantalla vacía)
   function buildSkeletonCard(){
     const el = document.createElement('article');
     el.className = 'card card--skeleton';
@@ -306,15 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
       + '</div>';
     return el;
   }
-  function renderCarouselSkeletons(root, count){
-    if (!root) return;
-    root.innerHTML = '';
-    const frag = document.createDocumentFragment();
-    for (let i = 0; i < count; i++) frag.appendChild(buildSkeletonCard());
-    root.appendChild(frag);
-  }
 
-  /* ===== Toast reutilizable para favoritos (estilo detalle) ===== */
   function showFavToast(added){
     try{
       const toast = document.createElement('div');
@@ -331,43 +327,40 @@ document.addEventListener('DOMContentLoaded', function() {
     }catch(_){}
   }
 
-  /* ===== buildCard con botón de favorito (en la misma línea, centrado) ===== */
-  function buildCard(p, mode){
+  function modeForOp(op){
+    if(op === 'arrendar') return 'arriendo';
+    if(op === 'dias' || op === 'alojamientos' || op === 'alojar') return 'dias';
+    return 'venta';
+  }
+
+  function buildCard(p){
+    const mode = modeForOp(p.operation);
     const el = document.createElement('article');
     el.className = 'card'; el.setAttribute('role','listitem');
 
-    // Imagen
     const img = document.createElement('img');
     img.loading='lazy'; img.decoding='async'; img.alt = escapeHtml(p.title || 'Propiedad');
     const raw = p.image || p.img || p.img_url || p.imgUrl || p.photo;
-
     if (raw) {
       const str = String(raw);
       const isAbsolute = /^https?:\/\//i.test(str);
-      if (isAbsolute || str.startsWith('/')) {
-        img.src = str;
-      } else {
-        img.src = '/' + str.replace(/^\.?\//,''); // normaliza a ruta absoluta local
-      }
+      if (isAbsolute || str.startsWith('/')) { img.src = str; }
+      else { img.src = '/' + str.replace(/^\.?\//,''); }
     } else {
       img.src = 'https://i.postimg.cc/0yYb8Y6r/placeholder.png';
     }
 
-    // Contenedor media (solo imagen)
     const mediaDiv = document.createElement('div');
     mediaDiv.className = 'media';
     mediaDiv.style.position = 'relative';
     mediaDiv.appendChild(img);
 
-    // Cuerpo
     const body = document.createElement('div'); body.className='body';
 
-    // --- FAVORITOS: centrado en su propia línea dentro del body (no sobre la foto) ---
     const favRow = document.createElement('div');
     favRow.style.cssText = 'display:flex;justify-content:center;margin:8px 0 6px;';
     const favBtn = document.createElement('button');
-    favBtn.className = 'fav-btn';
-    favBtn.type = 'button';
+    favBtn.className = 'fav-btn'; favBtn.type = 'button';
     favBtn.setAttribute('aria-label', 'Guardar favorito');
     favBtn.setAttribute('aria-pressed', 'false');
     favBtn.setAttribute('data-prop-id', p.id || '');
@@ -383,7 +376,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     favRow.appendChild(favBtn);
 
-    // Estado inicial (♥ y texto)
     try{
       if (window.AltorraFavoritos && p && p.id){
         var isFav = !!window.AltorraFavoritos.isFavorite(p.id);
@@ -395,10 +387,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }catch(_){}
 
-    // Toggle favorito + toast
     favBtn.addEventListener('click', function(ev){
-      ev.preventDefault();
-      ev.stopPropagation();
+      ev.preventDefault(); ev.stopPropagation();
       if (!window.AltorraFavoritos || !(p && p.id)) return;
       try{
         var nowFav = window.AltorraFavoritos.toggle({
@@ -418,7 +408,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     const h3 = document.createElement('h3'); h3.innerHTML = escapeHtml(p.title || 'Sin título');
-
     const specs = document.createElement('div'); specs.style.color='var(--muted)';
     const parts = [];
     if(p.beds)  parts.push(p.beds+'H');
@@ -434,83 +423,95 @@ document.addEventListener('DOMContentLoaded', function() {
                                                '$'+formatCOP(p.price)+' COP');
     }
 
-    // Ensamble
     el.appendChild(mediaDiv);
     el.appendChild(body);
-    body.appendChild(favRow);      // <— aquí va la línea centrada
+    body.appendChild(favRow);
     body.appendChild(h3);
     body.appendChild(specs);
     body.appendChild(price);
 
-    // Click en tarjeta (evitar navegación si se hizo click en fav)
     el.addEventListener('click', function(e){
       var n = e.target;
-      while(n && n !== el){
-        if(n.classList && n.classList.contains('fav-btn')) return;
-        n = n.parentNode;
-      }
-      const id = p.id || '';
-      window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(id);
+      while(n && n !== el){ if(n.classList && n.classList.contains('fav-btn')) return; n = n.parentNode; }
+      window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(p.id || '');
     });
 
     return el;
   }
 
-  async function fetchByOperation(op){
-    try{
-      // Esperar a que PropertyDatabase esté lista (fuente única: Firestore)
-      if (!(window.propertyDB && window.propertyDB.isLoaded)) {
-        await new Promise(resolve => {
-          if (window.propertyDB?.isLoaded) return resolve();
-          window.addEventListener('altorra:db-ready', resolve, { once: true });
-          setTimeout(resolve, 8000); // timeout de seguridad
-        });
-      }
-      if (!window.propertyDB) return [];
-      return window.propertyDB.filter({ operacion: op });
-    }catch(e){
-      console.warn('No se pudieron cargar propiedades', op, e);
-      return [];
-    }
-  }
-
-  // Renderizar un carrusel del home y ocultar la sección entera si no hay
-  // inventario (política: nunca mostrar un carrusel vacío con título).
-  function renderCarousel(c) {
-    const root = document.getElementById(c.targetId);
-    if (!root) return Promise.resolve();
-    const section = root.closest('section');
-    // Placeholders solo si aún no hay datos locales — evita flash en recargas con caché
-    if (!root.children.length && !(window.propertyDB && window.propertyDB.isLoaded)) {
-      renderCarouselSkeletons(root, 4);
-    }
-    return fetchByOperation(c.operation).then(function(arr){
-      if (!arr || arr.length === 0) {
-        if (section) section.style.display = 'none';
-        root.innerHTML = '';
-        return;
-      }
-      if (section) section.style.display = '';
-      root.innerHTML = '';
-      const ordered = smartOrder(arr);
-      ordered.slice(0,8).forEach(function(p){ root.appendChild(buildCard(p, c.mode)); });
-      if (window.AltorraFavoritos && typeof window.AltorraFavoritos.init === 'function') {
-        try { window.AltorraFavoritos.init(); } catch(_){}
-      }
-      try { document.dispatchEvent(new CustomEvent('altorra:properties-loaded')); } catch(_){}
+  function getFiltered(){
+    if(activeOp === 'all') return allProps.slice();
+    return allProps.filter(function(p){
+      var op = String(p.operation || '').toLowerCase();
+      if(activeOp === 'comprar') return op === 'comprar';
+      if(activeOp === 'arrendar') return op === 'arrendar';
+      return ['dias','por_dias','alojar','alojamientos','temporada','vacacional','noche'].indexOf(op) !== -1;
     });
   }
 
-  document.addEventListener('DOMContentLoaded', async function(){
-    await Promise.all(cfg.map(renderCarousel));
-
-    // Refresco cada vez que Firestore trae datos nuevos (sin { once: true })
-    // para que admin → público sea en tiempo real en todos los carruseles.
-    function refreshCarousels() {
-      cfg.forEach(function(c){ renderCarousel(c); });
+  function renderCards(){
+    var root = document.getElementById(CAROUSEL_ID);
+    if(!root) return;
+    var list = getFiltered();
+    root.innerHTML = '';
+    list.slice(0, MAX_CARDS).forEach(function(p){ root.appendChild(buildCard(p)); });
+    root.scrollLeft = 0;
+    if(window.AltorraFavoritos && typeof window.AltorraFavoritos.init === 'function'){
+      try{ window.AltorraFavoritos.init(); }catch(_){}
     }
-    window.addEventListener('altorra:db-refreshed', refreshCarousels);
-    window.addEventListener('altorra:cache-invalidated', refreshCarousels);
+    try{ document.dispatchEvent(new CustomEvent('altorra:properties-loaded')); }catch(_){}
+
+    var link = document.getElementById('recientesVerTodo');
+    if(link){
+      if(activeOp === 'all') link.href = 'propiedades-comprar.html';
+      else link.href = OP_PAGE[activeOp] || 'propiedades-comprar.html';
+    }
+  }
+
+  function wireChips(){
+    var chips = document.querySelectorAll('.recientes-chip');
+    chips.forEach(function(chip){
+      chip.addEventListener('click', function(){
+        chips.forEach(function(c){ c.classList.remove('active'); c.setAttribute('aria-selected','false'); });
+        chip.classList.add('active');
+        chip.setAttribute('aria-selected','true');
+        activeOp = chip.dataset.op || 'all';
+        renderCards();
+      });
+    });
+  }
+
+  async function loadAll(){
+    if(!(window.propertyDB && window.propertyDB.isLoaded)){
+      await new Promise(function(resolve){
+        if(window.propertyDB?.isLoaded) return resolve();
+        window.addEventListener('altorra:db-ready', resolve, { once: true });
+        setTimeout(resolve, 8000);
+      });
+    }
+    if(!window.propertyDB) return;
+    allProps = window.propertyDB.filter({ sort: 'newest' });
+    renderCards();
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var root = document.getElementById(CAROUSEL_ID);
+    if(root && !(window.propertyDB && window.propertyDB.isLoaded)){
+      root.innerHTML = '';
+      var frag = document.createDocumentFragment();
+      for(var i = 0; i < 4; i++) frag.appendChild(buildSkeletonCard());
+      root.appendChild(frag);
+    }
+    wireChips();
+    loadAll();
+
+    function refresh(){
+      if(!window.propertyDB) return;
+      allProps = window.propertyDB.filter({ sort: 'newest' });
+      renderCards();
+    }
+    window.addEventListener('altorra:db-refreshed', refresh);
+    window.addEventListener('altorra:cache-invalidated', refresh);
   });
 })();
 

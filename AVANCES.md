@@ -68,6 +68,42 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ A4 — Carrusel "Recién publicadas" unificado (2026-04-17)
+
+**Contexto:** La home tenía 3 carruseles independientes (Venta, Arriendo,
+Por días) que se mostraban/ocultaban según el inventario de cada operación.
+Esto fragmentaba la vista, generaba secciones vacías con propiedades
+limitadas y no comunicaba la idea de "novedades".
+
+**Qué se añadió:**
+
+1. **HTML en `index.html`:** reemplazo de las 3 secciones por una sola
+   `<section class="recientes-section">` con:
+   - Título "Recién publicadas".
+   - Barra de chips (`role="tablist"`): Todas | Venta | Arriendo | Por días.
+   - Un único `#carouselRecientes` con flechas izquierda/derecha.
+   - Enlace "Ver todo →" que actualiza su `href` según el chip activo.
+2. **JS en `scripts.js`:** sección #5 reescrita:
+   - Carga todas las propiedades ordenadas por fecha (`sort: 'newest'`).
+   - Filtro en memoria por chip activo (sin queries adicionales a Firestore).
+   - Máximo 12 tarjetas. Skeleton cards mientras carga.
+   - `buildCard()` infiere el mode (venta/arriendo/dias) del `.operation` de
+     cada propiedad para mostrar sufijo de precio correcto.
+   - Escucha `altorra:db-refreshed` y `altorra:cache-invalidated` para
+     refresco en tiempo real.
+3. **CSS en `style.css`:** `.recientes-chips` flex con `.recientes-chip`
+   pill (border-radius 999px), estado `.active` con gradient gold→accent.
+
+**Archivos tocados:**
+- `index.html` — −48 líneas (3 secciones), +22 líneas (1 sección unificada).
+- `scripts.js` — reescritura IIFE #5 (~180 → ~170 líneas).
+- `style.css` — +30 líneas (bloque chip).
+
+**Criterio de éxito:** La home muestra un solo carrusel con todas las
+propiedades más recientes. Los chips filtran instantáneamente sin recarga.
+
+---
+
 ### ✅ A11 — Sección "Todo en un lugar" (3 columnas CTA) (2026-04-16)
 
 **Contexto:** Cars tiene una sección de "hub" que agrupa los caminos

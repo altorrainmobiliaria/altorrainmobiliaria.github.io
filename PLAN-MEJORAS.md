@@ -130,9 +130,9 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| A4 | Un solo carrusel con las últimas N propiedades | 🔲 TODO |
+| A4 | Un solo carrusel con las últimas N propiedades | ✅ DONE `e8fda09` |
 
-**Archivos:** `index.html`, `scripts.js`.
+**Archivos:** `index.html`, `scripts.js`, `style.css`.
 
 ### A5 — Sección "Categorías" visuales
 
@@ -305,11 +305,12 @@ FASE 4             → Bloque D (máquina de leads completo)
 | 2026-04-16 | A2  | `bc11aa9` | Trust bar con stats en vivo (propiedades/ciudades) |
 | 2026-04-16 | A3  | `072ed3a` | Featured Week Banner como carrusel top-3 con auto-rotación |
 | 2026-04-16 | A11 | `322513c` | Sección "Todo en un lugar" 3 columnas CTA |
+| 2026-04-17 | A4  | `e8fda09` | Carrusel "Recién publicadas" unificado con chips |
 
 ### 9.3 Siguiente
 
-**A4 — Carrusel "Recién publicadas" unificado.**
-Reemplazar/consolidar los carruseles separados de Venta/Arriendo/Por días por uno solo con las últimas N propiedades (ordenadas por `createdAt` desc), con chips para filtrar por operación. Archivos: `index.html`, `scripts.js`.
+**A5 — Sección "Categorías" visuales.**
+Grid de tarjetas visuales con los tipos de inmueble (Apartamento, Casa, Lote, Oficina, Local, Bodega). Cada tarjeta enlaza al listado filtrado por tipo. Archivos: `index.html`, `style.css`.
 
 ---
 
