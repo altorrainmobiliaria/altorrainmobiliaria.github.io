@@ -242,7 +242,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 |---|-----------|--------|
 | E1.1 | Meta titles + descriptions optimizados (todas las *.html) | ✅ DONE `ee38585` |
 | E1.2 | Canonical + og/twitter tags consistentes | ✅ DONE `ee38585` |
-| E1.3 | JSON-LD: RealEstateAgent + LocalBusiness + BreadcrumbList | 🔲 TODO |
+| E1.3 | JSON-LD: RealEstateAgent + LocalBusiness + BreadcrumbList | ✅ DONE `786a3af` |
 | E1.4 | Sitemap.xml dinámico (desde Firestore) | 🔲 TODO |
 | E1.5 | Performance: preload LCP + lazy loading + compresión | 🔲 TODO |
 
@@ -310,11 +310,16 @@ FASE 4             → Bloque D (máquina de leads completo)
 | 2026-04-17 | A6  | `61dbd8a` | Barrios premium: 6 zonas de Cartagena |
 | 2026-04-17 | A7  | `14c3450` | Testimonios con rating bar + contenedor reviews |
 | 2026-04-17 | E1.1+E1.2 | `ee38585` | Meta tags, canonical y OG en 9 páginas |
+| 2026-04-17 | E1.3 | `786a3af` | JSON-LD RealEstateAgent + LocalBusiness + BreadcrumbList |
 
 ### 9.3 Siguiente
 
-**E1.3 — JSON-LD schemas: RealEstateAgent + LocalBusiness + BreadcrumbList.**
-Inyectar schemas estructurados en index.html y páginas principales para Google Rich Results. Archivos: `index.html`, `scripts.js`.
+**Bloque A restante (A8–A10, A12) o Bloque B (B1–B7).**
+Sprint 1 A + E1 SEO base completado. Opciones:
+- A8: Página busqueda.html avanzada con filtros colapsables.
+- B1: Comparador de propiedades (seleccionar 2-3 y comparar specs).
+- B2: Historial de visitas recientes (ya parcialmente implementado).
+Consultar al dueño qué priorizar.
 
 ---
 

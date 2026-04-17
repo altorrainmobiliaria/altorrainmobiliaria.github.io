@@ -68,6 +68,30 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ E1.3 — JSON-LD RealEstateAgent + LocalBusiness + BreadcrumbList (2026-04-17)
+
+**Contexto:** Google Rich Results requiere schemas estructurados para
+mostrar información enriquecida en búsquedas. El sitio solo tenía un
+Organization genérico sin dirección, teléfono ni tipo de negocio.
+
+**Qué se cambió:**
+
+1. **RealEstateAgent + LocalBusiness** (schema dual en `scripts.js`):
+   - `@type: ["RealEstateAgent", "LocalBusiness"]` — posiciona ante Google
+     como agente inmobiliario Y negocio local.
+   - Incluye: nombre, logo, teléfonos, email, dirección (Cartagena, Bolívar,
+     CO), coordenadas geo, areaServed, horarios, redes sociales.
+2. **BreadcrumbList dinámico:** se genera automáticamente en cada página
+   basándose en `location.pathname` y `document.title`. Home = 1 nivel,
+   subpáginas = 2 niveles (Inicio → Página actual).
+3. **Reemplaza** el Organization genérico anterior (que solo tenía name,
+   url, logo, sameAs).
+
+**Archivos tocados:**
+- `scripts.js` — sección JSON-LD reescrita (+61/−12 líneas).
+
+---
+
 ### ✅ E1.1 + E1.2 — Meta tags, canonical y OG (2026-04-17)
 
 **Contexto:** El sitio tenía meta tags inconsistentes: títulos genéricos
