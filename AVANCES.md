@@ -68,6 +68,33 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ E1.1 + E1.2 — Meta tags, canonical y OG (2026-04-17)
+
+**Contexto:** El sitio tenía meta tags inconsistentes: títulos genéricos
+sin "Cartagena", descripciones cortas sin keywords, canonical faltante en
+13 páginas y OG tags incompletos en 6 páginas. Esto penaliza tanto el
+ranking como la apariencia al compartir en redes.
+
+**Qué se cambió:**
+
+1. **Títulos SEO mejorados** en 9 páginas: se agregó "Cartagena" en
+   listados y home, se estandarizó formato "Página | Altorra Inmobiliaria".
+2. **Descriptions** más descriptivas con keywords relevantes (compra, venta,
+   arriendo, Cartagena, asesoría jurídica).
+3. **Canonical URLs** añadidos en 9 páginas que no lo tenían:
+   propiedades-comprar, propiedades-arrendar, propiedades-alojamientos,
+   contacto, quienes-somos, publicar-propiedad, favoritos.
+4. **OG tags** (title, description, url, type, image) consistentes y
+   completos en todas las páginas indexables.
+5. **Páginas noindex** (gracias, servicios-*, turismo) se omitieron.
+
+**Archivos tocados:** index.html, propiedades-comprar.html,
+propiedades-arrendar.html, propiedades-alojamientos.html, contacto.html,
+quienes-somos.html, publicar-propiedad.html, favoritos.html,
+detalle-propiedad.html.
+
+---
+
 ### ✅ A7 — Testimonios desde Firestore/reviews.json (2026-04-17)
 
 **Contexto:** El JS para cargar reseñas ya existía en `scripts.js`

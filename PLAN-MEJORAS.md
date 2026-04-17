@@ -240,8 +240,8 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| E1.1 | Meta titles + descriptions optimizados (todas las *.html) | 🔲 TODO |
-| E1.2 | Canonical + og/twitter tags consistentes | 🔲 TODO |
+| E1.1 | Meta titles + descriptions optimizados (todas las *.html) | ✅ DONE `ee38585` |
+| E1.2 | Canonical + og/twitter tags consistentes | ✅ DONE `ee38585` |
 | E1.3 | JSON-LD: RealEstateAgent + LocalBusiness + BreadcrumbList | 🔲 TODO |
 | E1.4 | Sitemap.xml dinámico (desde Firestore) | 🔲 TODO |
 | E1.5 | Performance: preload LCP + lazy loading + compresión | 🔲 TODO |
@@ -309,11 +309,12 @@ FASE 4             → Bloque D (máquina de leads completo)
 | 2026-04-17 | A5  | `ca139db` | Grid "Explora por tipo" con 6 categorías SVG |
 | 2026-04-17 | A6  | `61dbd8a` | Barrios premium: 6 zonas de Cartagena |
 | 2026-04-17 | A7  | `14c3450` | Testimonios con rating bar + contenedor reviews |
+| 2026-04-17 | E1.1+E1.2 | `ee38585` | Meta tags, canonical y OG en 9 páginas |
 
 ### 9.3 Siguiente
 
-**E1.1 — Meta tags y canonical/OG en todas las páginas.**
-Revisar y completar las meta tags (title, description, canonical, OG) en todas las páginas HTML del sitio. Sprint 1 cambia de foco a SEO técnico base.
+**E1.3 — JSON-LD schemas: RealEstateAgent + LocalBusiness + BreadcrumbList.**
+Inyectar schemas estructurados en index.html y páginas principales para Google Rich Results. Archivos: `index.html`, `scripts.js`.
 
 ---
 
