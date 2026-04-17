@@ -68,6 +68,31 @@ la migración estará 100% completa.
 
 ---
 
+### ✅ A5 — Sección "Explora por tipo" (categorías visuales) (2026-04-17)
+
+**Contexto:** Los usuarios necesitan una forma rápida de navegar el
+catálogo por tipo de inmueble sin pasar por el buscador. Un grid visual
+con iconos reconocibles acelera la decisión.
+
+**Qué se añadió:**
+
+1. **HTML en `index.html`:** nueva `<section class="cat-section">` con
+   `.cat-grid` de 6 `.cat-card`:
+   - Apartamento, Casa, Lote, Oficina, Local, Bodega.
+   - Cada tarjeta tiene icono SVG inline (sin imágenes externas) y enlaza
+     a `propiedades-comprar.html?type=X`.
+2. **CSS en `style.css`:** bloque Cat con grid 6 cols, hover
+   `translateY(-4px)` + sombra dorada + borde resaltado. Responsive a
+   3 cols (≤860px) y 2 cols (≤480px).
+3. **Sin JS:** enlaces estáticos que pasan `?type=` al listado, donde
+   `listado-propiedades.js` ya lo captura como filtro.
+
+**Archivos tocados:**
+- `index.html` — +52 líneas de markup.
+- `style.css` — +56 líneas del bloque Cat.
+
+---
+
 ### ✅ A4 — Carrusel "Recién publicadas" unificado (2026-04-17)
 
 **Contexto:** La home tenía 3 carruseles independientes (Venta, Arriendo,
