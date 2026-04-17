@@ -1145,6 +1145,26 @@ Menú "Nuestro equipo": Reemplazado por "Reseñas"
 
 ---
 
+## B3 — Propiedades similares en detalle
+**Fecha:** 2026-04-17
+
+### Qué se hizo
+
+- Sección "Propiedades similares" al final de `detalle-propiedad.html`, después del `</main>`.
+- Algoritmo de scoring multi-criterio: barrio coincidente (+3), mismo tipo (+2), misma operación (+2), misma ciudad (+1), precio ±30% (+2). Umbral mínimo: score ≥ 3.
+- Muestra hasta 4 propiedades similares ordenadas por relevancia.
+- Si no hay similares suficientes, la sección se oculta automáticamente.
+- CSS embebido en la misma página: grid responsivo con tarjetas compactas.
+- Espera a `altorra:db-ready` para acceder a `propertyDB.filter({})` y `window.__PROP_JSON__`.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `detalle-propiedad.html` | Sección HTML `#similares-section`, CSS `.similares-*`, JS inline con scoring |
+
+---
+
 ## PENDIENTE DEL PROPIETARIO (tarea humana)
 
 Estas tareas no las puede hacer Claude — requieren acceso a la consola de Firebase y cuentas del negocio:
