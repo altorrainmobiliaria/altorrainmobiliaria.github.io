@@ -1211,6 +1211,25 @@ Menú "Nuestro equipo": Reemplazado por "Reseñas"
 
 ---
 
+## B6 — Simulador hipotecario: gráfica amortización + export PDF
+**Fecha:** 2026-04-18
+
+### Qué se hizo
+
+- Agregado gráfica Canvas al simulador hipotecario — barras apiladas (capital dorado + intereses rojo) por año + línea de saldo restante (gris).
+- Botón "📄 Exportar PDF" que abre ventana de impresión con resumen financiero completo + tabla de amortización formateada.
+- Leyenda visual debajo del gráfico (Capital, Intereses, Saldo).
+- CSS para `.sim-chart-wrap`, `.sim-chart-legend`, `.sim-export-btn`.
+- El simulador ya existía (`simulador.html` + `js/simulador-hipotecario.js`), solo se añadieron las 2 funcionalidades faltantes.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/simulador-hipotecario.js` | +`renderChart()`, +`exportPDF()`, +`fmtShort()`, canvas container, export button, CSS |
+
+---
+
 ## PENDIENTE DEL PROPIETARIO (tarea humana)
 
 Estas tareas no las puede hacer Claude — requieren acceso a la consola de Firebase y cuentas del negocio:
