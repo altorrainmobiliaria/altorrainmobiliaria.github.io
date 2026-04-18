@@ -1594,4 +1594,25 @@ Vista Kanban alternativa para leads en el admin, con 4 columnas y drag & drop en
 
 ---
 
+## FIX — i18n: script tag + diccionario expandido (2026-04-18)
+
+**Problema:** El sistema i18n (C6) estaba reescrito pero nunca se cargaba. Tras remover `loadAsset('js/i18n.js')` de components.js, ninguna página HTML tenía un `<script>` para i18n.js. Solo se traducía el badge del hero porque era el único elemento que la versión anterior con `data-i18n` cubría.
+
+**Solución:**
+- Agregado `<script defer src="js/i18n.js"></script>` a las 21 páginas públicas
+- Removida la carga dinámica desde components.js (ya estaba hecho en disco)
+- Expandido el diccionario ES→EN con ~20 entradas adicionales (barrios, 404, etc.)
+- MutationObserver traduce contenido inyectado dinámicamente (header/footer)
+- Evento `altorra:components-ready` re-traduce tras carga de componentes
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/i18n.js` | Reescrito: text-walker + 200+ entradas + MutationObserver |
+| `js/components.js` | Removida línea `loadAsset('js/i18n.js')` |
+| 21 HTML pages | Agregado `<script defer src="js/i18n.js">` |
+
+---
+
 *Última actualización: 2026-04-18*
