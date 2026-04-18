@@ -1316,4 +1316,41 @@ Estas tareas no las puede hacer Claude — requieren acceso a la consola de Fire
 
 ---
 
-*Última actualización: 2026-04-15*
+## C2 — Página `invertir.html` con ROI por zona + casos de éxito
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Página completa de inversión inmobiliaria en Cartagena con:
+
+1. **Hero premium dark** — gradiente oscuro, badge "Oportunidad 2025", CTA doble
+2. **Sección "Por qué invertir"** — 4 razones con iconos (valorización, renta turística, calidad vida, marco legal)
+3. **ROI por zona** — Grid de 6 zonas (Bocagrande, Castillogrande, Manga, Centro Histórico, La Boquilla, Barú) con:
+   - Rango de precio por m²
+   - ROI anual estimado
+   - Ocupación Airbnb estimada
+   - Perfil de inversor ideal
+4. **Casos de éxito** — 3 cases detallados con desglose financiero:
+   - Apto Bocagrande (ROI 9.6%)
+   - Studio Centro Histórico (ROI 14.4%)
+   - Casa Barú (ROI 12%)
+5. **CTA final** — 3 botones (propiedades, simulador, WhatsApp)
+
+### Decisiones técnicas
+
+- Diseño self-contained: todo el CSS inline para no inflar `style.css`
+- Respeta paleta `--gold`/`--accent`, tipografía Poppins
+- Datos de ROI basados en promedios del mercado cartagenero 2024-2025
+- Incluye header/footer dinámico vía `header-footer.js`
+
+### Archivos nuevos
+
+| Archivo | Descripción |
+|---------|-------------|
+| `invertir.html` | Página completa de inversión (~300 líneas) |
+
+---
+
+*Última actualización: 2026-04-18*
