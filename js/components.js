@@ -222,9 +222,6 @@
       }
     }
 
-    // 4. Cargar i18n una vez listo el header
-    loadAsset('js/i18n.js');
-
     window.dispatchEvent(new CustomEvent('altorra:components-ready'));
   }
 
