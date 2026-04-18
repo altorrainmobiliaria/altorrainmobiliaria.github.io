@@ -215,9 +215,9 @@ FASE 4             → Bloque D (máquina de leads completo)
 | C3 | Calculadora rentabilidad Airbnb (ocupación × tarifa × gastos) | ✅ DONE |
 | C4 | Landing `renta-turistica.html` dedicada | ✅ DONE |
 | C5 | Badges premium en cards ("ROI %", "Ocupación %") | ✅ DONE |
-| C6 | i18n inglés con toggle ES/EN | 🔲 TODO |
-| C7 | Página `foreign-investors.html` (US/CA/ES) + FAQ fiscal | 🔲 TODO |
-| C8 | Sección "Propiedades exclusivas" (prioridad ≥ 90) | 🔲 TODO |
+| C6 | i18n inglés con toggle ES/EN | ✅ DONE |
+| C7 | Página `foreign-investors.html` (US/CA/ES) + FAQ fiscal | ✅ DONE |
+| C8 | Sección "Propiedades exclusivas" (prioridad ≥ 90) | ✅ DONE |
 
 ---
 
@@ -225,7 +225,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| D1 | CRM Kanban en admin (nuevo → contactado → visita → cierre) | 🔲 TODO |
+| D1 | CRM Kanban en admin (nuevo → contactado → visita → cierre) | ✅ DONE |
 | D2 | Nurturing email: secuencia 5 correos por tipo de solicitud | 🔲 TODO |
 | D3 | WhatsApp tracking con UTM + logging en Firestore analytics | 🔲 TODO |
 | D4 | Blog inversionista (seed 3 posts) | 🔲 TODO |

@@ -1454,4 +1454,144 @@ Módulo autónomo que enriquece las tarjetas de propiedad con badges visuales de
 
 ---
 
+## C6 — i18n inglés con toggle ES/EN
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Sistema de internacionalización completo para atraer inversionistas internacionales:
+
+1. **Diccionario EN** — 60+ claves organizadas por sección (nav, hero, cards, filters, forms, invest, vacation, footer)
+2. **Toggle flotante** — botón ES/EN pill fijo debajo del header (derecha), estilo premium con gradiente dorado para idioma activo
+3. **Auto-detección** — lee `localStorage` → `navigator.language` → fallback ES
+4. **Atributos `data-i18n`** — traduce `textContent` de cualquier elemento marcado
+5. **Atributos `data-i18n-attr`** — traduce atributos (placeholder, aria-label, title) con sintaxis `atributo:clave`
+6. **Preservación de original** — guarda texto ES original en `data-i18n-original` para restaurar al volver
+7. **Integración automática** — cargado vía `components.js` tras el header → disponible en todas las páginas
+8. **Evento personalizado** — dispara `altorra:lang-changed` para que otros módulos reaccionen
+
+### Decisiones técnicas
+
+- El idioma ES no necesita diccionario (usa textContent original como fallback)
+- API pública: `window.AltorraI18n.t(key)`, `.setLang('en'|'es')`, `.toggle()`, `.getLang()`
+- Toggle se inyecta vía DOM + CSS embebido
+- Responsive: en móvil se mueve a bottom-right para no tapar el header
+- Índice HTML: `data-i18n` añadido a badge hero y botón "Buscar" como prueba de concepto
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/i18n.js` | **Nuevo** — motor + diccionario + toggle (~200 líneas) |
+| `js/components.js` | Carga diferida de `i18n.js` tras header |
+| `index.html` | `data-i18n` en hero badge + botón buscar |
+
+---
+
+## C7 — Página `foreign-investors.html` (US/CA/ES) + FAQ fiscal
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Landing 100% en inglés dirigida a inversionistas internacionales (EE.UU., Canadá, España). Objetivo: capturar el segmento de compradores extranjeros que hoy busca en Cartagena.
+
+Secciones:
+1. **Hero multi-banderas** — 🇺🇸 🇨🇦 🇪🇸 + badge "International Investors"
+2. **Por qué Cartagena** — 4 ventajas (currency advantage, tourism demand, no restrictions, investor visa)
+3. **6 pasos de compra remota** — from selection to registration
+4. **Tax tabs interactivos** — 3 pestañas con obligaciones fiscales específicas:
+   - 🇺🇸 FBAR, FATCA, Form 8938, foreign tax credit
+   - 🇨🇦 T1135, double taxation, snowbird structure
+   - 🇪🇸 Modelo 720, IRPF, Impuesto sobre el Patrimonio
+5. **FAQ 8 preguntas** — proceso remoto, mortgages, repatriation, visa, closing costs
+6. **CTA triple** — properties, ROI analysis, WhatsApp (mensaje pre-llenado en inglés)
+
+### Decisiones técnicas
+
+- `lang="en"` + `og:locale=en_US` para SEO multilingüe
+- Tabs interactivos vanilla JS (sin librería)
+- Disclaimer de "consult licensed advisor" en cada sección fiscal
+- Datos fiscales basados en regulación 2025 (DIAN, IRS, CRA, AEAT)
+
+### Archivos nuevos
+
+| Archivo | Descripción |
+|---------|-------------|
+| `foreign-investors.html` | Landing EN para US/CA/ES (~240 líneas) |
+
+---
+
+## C8 — Sección "Propiedades exclusivas" (prioridad ≥ 90)
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Nueva sección premium en el home que filtra y destaca las propiedades con `highlightScore` / `prioridad` ≥ 90, presentándolas como una "colección privada" con diseño diferenciado.
+
+Características:
+1. **Fondo oscuro** — gradiente `#0b0b0b → #1a1a2e` con ambient dorado radial
+2. **Header curado** — badge dorado "✨ COLECCIÓN PRIVADA", título con acento oro
+3. **Cards premium** — cada tarjeta con ribbon diagonal "EXCLUSIVA" dorado, borde fino oro, shadow profunda
+4. **Hover premium** — lift + shadow dorada al pasar el mouse
+5. **Carrusel con flechas** — navegación horizontal con snap, flechas blancas circulares
+6. **Auto-oculta** — si hay menos de 3 propiedades que cumplen el criterio, no se renderiza
+7. **Reactivo** — escucha `altorra:db-ready` y `altorra:db-refreshed`
+
+### Decisiones técnicas
+
+- Módulo autónomo `js/exclusivas.js` con CSS inyectado
+- Criterio: `highlightScore >= 90` OR `prioridad >= 90` OR `featured >= 1`
+- Máximo 10 tarjetas
+- Tarjetas con estilos inline para no depender de otro CSS
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/exclusivas.js` | **Nuevo** — motor + CSS + renderer (~180 líneas) |
+| `index.html` | Sección + script defer |
+
+---
+
+## D1 — CRM Kanban en admin (nuevo → contactado → visita → cierre)
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Vista Kanban alternativa para leads en el admin, con 4 columnas y drag & drop entre estados.
+
+1. **Toggle de vista** — botones "📋 Lista" / "📊 Kanban" en sección leads
+2. **4 columnas** — Nuevo (azul), Contactado (ámbar), Visita (púrpura), Cierre (verde)
+3. **Cards con info clave** — nombre, tipo, propiedad, teléfono, fecha relativa ("Hace 2h") y lead score badge
+4. **Drag & drop** — arrastrar entre columnas actualiza el estado en Firestore directamente
+5. **Color-coded tier** — borde izquierdo rojo/ámbar/azul según leadScore (hot/warm/cold)
+6. **Nuevo estado `visita`** — añadido al flujo después de "contactado"
+7. **Retrocompatibilidad** — mapeo legacy: `pendiente` → Nuevo, `en_gestion` → Contactado, `cerrado` → Cierre
+
+### Decisiones técnicas
+
+- Módulo autónomo `js/admin-kanban.js`
+- CSS inyectado via JS
+- Evento `altorra:leads-updated` emitido por admin-leads.js al filtrar
+- Click en card abre el modal de detalle existente
+- Uso de HTML5 drag & drop nativo (sin librería)
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/admin-kanban.js` | **Nuevo** — tablero + drag & drop (~200 líneas) |
+| `js/admin-leads.js` | Estado `visita` añadido, label actualizado, `_allLeads` expuesto, evento emit |
+| `admin.html` | Filtro de estado extendido + script defer |
+
+---
+
 *Última actualización: 2026-04-18*

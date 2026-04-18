@@ -58,7 +58,7 @@
   }
 
   function estadoLabel(e) {
-    return { pendiente: 'Pendiente', en_gestion: 'En gestión', cerrado: 'Cerrado' }[e] || e;
+    return { pendiente: 'Nuevo', en_gestion: 'Contactado', visita: 'Visita', cerrado: 'Cierre' }[e] || e;
   }
 
   /* ─── Actualizar badge del sidebar ───────────────────── */
@@ -122,6 +122,8 @@
 
   /* ─── Filtros ─────────────────────────────────────────── */
   function applyFilters() {
+    window.dispatchEvent(new CustomEvent('altorra:leads-updated', { detail: { leads: _leads } }));
+
     const search = ($('#leadSearch')?.value || '').toLowerCase().trim();
     const tipo   = $('#leadFilterTipo')?.value   || '';
     const estado = $('#leadFilterEstado')?.value || '';
@@ -175,9 +177,10 @@
         <td>${escHtml(l.datosExtra?.propiedadTitulo || l.ciudad || '—')}</td>
         <td>
           <select class="lead-status-select" data-id="${escHtml(l._docId)}" onchange="AdminLeads.updateStatus('${escHtml(l._docId)}', this.value)">
-            <option value="pendiente"   ${estado === 'pendiente'   ? 'selected' : ''}>Pendiente</option>
-            <option value="en_gestion"  ${estado === 'en_gestion'  ? 'selected' : ''}>En gestión</option>
-            <option value="cerrado"     ${estado === 'cerrado'     ? 'selected' : ''}>Cerrado</option>
+            <option value="pendiente"   ${estado === 'pendiente'   ? 'selected' : ''}>🆕 Nuevo</option>
+            <option value="en_gestion"  ${estado === 'en_gestion'  ? 'selected' : ''}>📞 Contactado</option>
+            <option value="visita"      ${estado === 'visita'      ? 'selected' : ''}>📅 Visita</option>
+            <option value="cerrado"     ${estado === 'cerrado'     ? 'selected' : ''}>✅ Cierre</option>
           </select>
         </td>
         <td>
@@ -239,9 +242,10 @@
         </table>
         <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">
           <select id="leadStatusSelect" class="lead-status-select">
-            <option value="pendiente"  ${lead.estado==='pendiente'  ?'selected':''}>Pendiente</option>
-            <option value="en_gestion" ${lead.estado==='en_gestion' ?'selected':''}>En gestión</option>
-            <option value="cerrado"    ${lead.estado==='cerrado'    ?'selected':''}>Cerrado</option>
+            <option value="pendiente"  ${lead.estado==='pendiente'  ?'selected':''}>🆕 Nuevo</option>
+            <option value="en_gestion" ${lead.estado==='en_gestion' ?'selected':''}>📞 Contactado</option>
+            <option value="visita"     ${lead.estado==='visita'     ?'selected':''}>📅 Visita</option>
+            <option value="cerrado"    ${lead.estado==='cerrado'    ?'selected':''}>✅ Cierre</option>
           </select>
           <button class="btn-admin btn-primary" onclick="AdminLeads.updateStatusFromModal('${escHtml(docId)}')">Actualizar estado</button>
           <a class="btn-admin btn-secondary" href="https://wa.me/${escHtml(lead.telefono?.replace(/\D/g,'') || '')}" target="_blank" rel="noopener">WhatsApp</a>
@@ -314,6 +318,7 @@
     updateStatus,
     updateStatusFromModal,
     goPage(n) { _currentPage = n; renderTable(); },
+    get _allLeads() { return _leads; },
   };
 
   document.addEventListener('DOMContentLoaded', () => {
