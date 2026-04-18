@@ -1525,4 +1525,38 @@ Secciones:
 
 ---
 
+## C8 — Sección "Propiedades exclusivas" (prioridad ≥ 90)
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Nueva sección premium en el home que filtra y destaca las propiedades con `highlightScore` / `prioridad` ≥ 90, presentándolas como una "colección privada" con diseño diferenciado.
+
+Características:
+1. **Fondo oscuro** — gradiente `#0b0b0b → #1a1a2e` con ambient dorado radial
+2. **Header curado** — badge dorado "✨ COLECCIÓN PRIVADA", título con acento oro
+3. **Cards premium** — cada tarjeta con ribbon diagonal "EXCLUSIVA" dorado, borde fino oro, shadow profunda
+4. **Hover premium** — lift + shadow dorada al pasar el mouse
+5. **Carrusel con flechas** — navegación horizontal con snap, flechas blancas circulares
+6. **Auto-oculta** — si hay menos de 3 propiedades que cumplen el criterio, no se renderiza
+7. **Reactivo** — escucha `altorra:db-ready` y `altorra:db-refreshed`
+
+### Decisiones técnicas
+
+- Módulo autónomo `js/exclusivas.js` con CSS inyectado
+- Criterio: `highlightScore >= 90` OR `prioridad >= 90` OR `featured >= 1`
+- Máximo 10 tarjetas
+- Tarjetas con estilos inline para no depender de otro CSS
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/exclusivas.js` | **Nuevo** — motor + CSS + renderer (~180 líneas) |
+| `index.html` | Sección + script defer |
+
+---
+
 *Última actualización: 2026-04-18*

@@ -217,7 +217,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 | C5 | Badges premium en cards ("ROI %", "Ocupación %") | ✅ DONE |
 | C6 | i18n inglés con toggle ES/EN | ✅ DONE |
 | C7 | Página `foreign-investors.html` (US/CA/ES) + FAQ fiscal | ✅ DONE |
-| C8 | Sección "Propiedades exclusivas" (prioridad ≥ 90) | 🔲 TODO |
+| C8 | Sección "Propiedades exclusivas" (prioridad ≥ 90) | ✅ DONE |
 
 ---
 

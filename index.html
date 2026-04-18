@@ -211,6 +211,25 @@
       </div>
     </section>
 
+    <!-- PROPIEDADES EXCLUSIVAS -->
+    <section class="section exclusivas-section" id="exclusivas-section" aria-labelledby="exclusivas-title" style="display:none">
+      <div class="exclusivas-bg"></div>
+      <div class="exclusivas-header">
+        <div class="exclusivas-badge">✨ Colección privada</div>
+        <h2 id="exclusivas-title">Propiedades <span style="color:var(--gold)">Exclusivas</span></h2>
+        <p class="exclusivas-sub">Selección curada de las propiedades más codiciadas de Cartagena.</p>
+      </div>
+      <div class="carousel-wrap exclusivas-wrap">
+        <div id="carouselExclusivas" class="carousel-row" role="list" aria-live="polite"></div>
+        <button class="arrow left" type="button" data-target="carouselExclusivas" aria-label="Desplazar carrusel a la izquierda">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
+        </button>
+        <button class="arrow right" type="button" data-target="carouselExclusivas" aria-label="Desplazar carrusel a la derecha">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+        </button>
+      </div>
+    </section>
+
     <!-- CATEGORÍAS DE INMUEBLES -->
     <section class="cat-section" aria-labelledby="cat-title">
       <div class="cat-inner">
@@ -359,6 +378,7 @@
   <script defer src="js/historial-visitas.js"></script>
   <script defer src="js/featured-week-banner.js"></script>
   <script defer src="js/investment-badges.js"></script>
+  <script defer src="js/exclusivas.js"></script>
   <script>
     // Inicializar banner e historial cuando la DB esté lista
     window.addEventListener('altorra:db-ready', function() {
