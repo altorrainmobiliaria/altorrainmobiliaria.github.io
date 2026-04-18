@@ -1490,4 +1490,39 @@ Sistema de internacionalización completo para atraer inversionistas internacion
 
 ---
 
+## C7 — Página `foreign-investors.html` (US/CA/ES) + FAQ fiscal
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Landing 100% en inglés dirigida a inversionistas internacionales (EE.UU., Canadá, España). Objetivo: capturar el segmento de compradores extranjeros que hoy busca en Cartagena.
+
+Secciones:
+1. **Hero multi-banderas** — 🇺🇸 🇨🇦 🇪🇸 + badge "International Investors"
+2. **Por qué Cartagena** — 4 ventajas (currency advantage, tourism demand, no restrictions, investor visa)
+3. **6 pasos de compra remota** — from selection to registration
+4. **Tax tabs interactivos** — 3 pestañas con obligaciones fiscales específicas:
+   - 🇺🇸 FBAR, FATCA, Form 8938, foreign tax credit
+   - 🇨🇦 T1135, double taxation, snowbird structure
+   - 🇪🇸 Modelo 720, IRPF, Impuesto sobre el Patrimonio
+5. **FAQ 8 preguntas** — proceso remoto, mortgages, repatriation, visa, closing costs
+6. **CTA triple** — properties, ROI analysis, WhatsApp (mensaje pre-llenado en inglés)
+
+### Decisiones técnicas
+
+- `lang="en"` + `og:locale=en_US` para SEO multilingüe
+- Tabs interactivos vanilla JS (sin librería)
+- Disclaimer de "consult licensed advisor" en cada sección fiscal
+- Datos fiscales basados en regulación 2025 (DIAN, IRS, CRA, AEAT)
+
+### Archivos nuevos
+
+| Archivo | Descripción |
+|---------|-------------|
+| `foreign-investors.html` | Landing EN para US/CA/ES (~240 líneas) |
+
+---
+
 *Última actualización: 2026-04-18*
