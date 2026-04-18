@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Renta Turística en Cartagena | Gestión Airbnb | Altorra Inmobiliaria</title>
+  <meta name="description" content="Gestión integral de renta turística en Cartagena. Maximiza ingresos de tu propiedad con Airbnb, Booking y nuestros canales directos."/>
+  <link rel="canonical" href="https://altorrainmobiliaria.co/renta-turistica.html"/>
+  <meta name="theme-color" content="#d4af37"/>
+  <meta property="og:title" content="Renta Turística en Cartagena | Altorra"/>
+  <meta property="og:description" content="Convertimos tu propiedad en una inversión rentable con gestión profesional de renta turística."/>
+  <meta property="og:url" content="https://altorrainmobiliaria.co/renta-turistica.html"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="https://altorrainmobiliaria.co/hero-emotion.webp"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script type="module" src="js/firebase-config.js"></script>
+  <style>
+    .rt-hero{padding:calc(var(--header-h) + 56px) 16px 56px;text-align:center;background:linear-gradient(180deg,#0b0b0b 0%,#1a1a2e 100%);color:#fff;position:relative;overflow:hidden}
+    .rt-hero::before{content:'';position:absolute;inset:-50% -50% auto auto;width:200%;height:200%;background:radial-gradient(ellipse at 30% 60%,rgba(212,175,55,.08),transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(255,180,0,.06),transparent 40%);pointer-events:none}
+    .rt-hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:800;margin:0 0 12px;position:relative}
+    .rt-hero p{color:rgba(255,255,255,.75);font-size:1.1rem;max-width:620px;margin:0 auto 24px;position:relative}
+    .rt-hero .hero-badge{margin-bottom:20px;position:relative}
+    .rt-hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;position:relative}
+    .rt-section{max-width:var(--page-max);margin:0 auto;padding:56px 16px}
+    .rt-section h2{font-size:1.6rem;font-weight:800;margin:0 0 8px}
+    .rt-section .sub{color:var(--muted);margin:0 0 32px;font-size:1rem}
+
+    .rt-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin:28px 0 0;position:relative}
+    .rt-stat{background:rgba(255,255,255,.04);border:1px solid rgba(212,175,55,.18);border-radius:14px;padding:16px;text-align:center}
+    .rt-stat-val{font-size:1.8rem;font-weight:800;color:var(--gold)}
+    .rt-stat-lbl{font-size:.82rem;color:rgba(255,255,255,.65);margin-top:4px}
+
+    .rt-services{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+    .rt-svc{background:#fff;border:1px solid rgba(17,24,39,.07);border-radius:16px;padding:22px;box-shadow:0 6px 22px rgba(17,24,39,.05);transition:transform .18s,box-shadow .18s}
+    .rt-svc:hover{transform:translateY(-3px);box-shadow:0 14px 32px rgba(17,24,39,.09)}
+    .rt-svc-icon{font-size:1.8rem;margin-bottom:10px}
+    .rt-svc h3{font-size:1rem;font-weight:800;margin:0 0 6px}
+    .rt-svc p{font-size:.88rem;color:var(--muted);margin:0;line-height:1.5}
+
+    .rt-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;position:relative}
+    .rt-step{position:relative;padding:24px 20px;background:#f9fafb;border-radius:14px}
+    .rt-step-num{position:absolute;top:-14px;left:20px;width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--accent));color:#000;font-weight:800;display:flex;align-items:center;justify-content:center}
+    .rt-step h3{font-size:1rem;font-weight:800;margin:8px 0 6px}
+    .rt-step p{font-size:.88rem;color:var(--muted);margin:0;line-height:1.5}
+
+    .rt-compare{margin-top:20px;background:#fff;border:1px solid rgba(17,24,39,.07);border-radius:16px;overflow:hidden}
+    .rt-compare table{width:100%;border-collapse:collapse}
+    .rt-compare th,.rt-compare td{padding:14px 16px;text-align:left;font-size:.92rem;border-bottom:1px solid #f3f4f6}
+    .rt-compare th{background:#fafafa;font-weight:700}
+    .rt-compare td.yes{color:#22c55e;font-weight:700}
+    .rt-compare td.no{color:#ef4444;font-weight:700}
+
+    .rt-faq{max-width:780px;margin:0 auto}
+    .rt-faq details{background:#f9fafb;border-radius:12px;padding:14px 18px;margin-bottom:10px;cursor:pointer}
+    .rt-faq summary{font-weight:700;font-size:.95rem;list-style:none;display:flex;justify-content:space-between;align-items:center}
+    .rt-faq summary::after{content:'+';font-size:1.3rem;color:var(--gold);font-weight:300}
+    .rt-faq details[open] summary::after{content:'−'}
+    .rt-faq p{margin:10px 0 0;color:var(--muted);font-size:.9rem;line-height:1.5}
+
+    .rt-cta{text-align:center;padding:56px 16px;background:linear-gradient(180deg,#fffdf4,#fff)}
+    .rt-cta h2{font-size:1.8rem;font-weight:800;margin:0 0 12px}
+    .rt-cta p{color:var(--muted);margin:0 0 24px;font-size:1rem}
+
+    .rt-form-section{background:#fafafa;padding:48px 16px}
+    .rt-form{max-width:580px;margin:0 auto;background:#fff;padding:28px;border-radius:16px;box-shadow:0 8px 28px rgba(17,24,39,.06)}
+    .rt-form h3{font-size:1.2rem;font-weight:800;margin:0 0 16px}
+    .rt-form .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:520px){.rt-form .grid{grid-template-columns:1fr}}
+    .rt-form label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:4px;font-weight:500}
+    .rt-form input,.rt-form select,.rt-form textarea{width:100%;padding:11px 13px;border:1px solid #e5e7eb;border-radius:10px;font-size:.95rem;font-family:inherit;outline:none}
+    .rt-form input:focus,.rt-form select:focus,.rt-form textarea:focus{border-color:var(--gold)}
+    .rt-form textarea{resize:vertical;min-height:90px}
+    .rt-form .full{grid-column:1/-1}
+    .rt-form button{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),var(--accent));color:#000;font-weight:700;border:none;border-radius:12px;cursor:pointer;font-size:1rem;margin-top:14px;font-family:inherit}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+  <div id="header-placeholder"></div>
+
+  <div class="rt-hero">
+    <div class="hero-badge">🏖️ Gestión profesional de renta turística</div>
+    <h1>Convierte tu propiedad en <span style="color:var(--gold)">ingresos turísticos</span></h1>
+    <p>Gestionamos tu propiedad en Airbnb, Booking y canales directos. Tú recibes los ingresos, nosotros nos encargamos de todo.</p>
+    <div class="rt-hero-cta">
+      <a class="btn btn-primary" href="#formulario">Quiero más información</a>
+      <button class="btn" onclick="CalculadoraAirbnb.open()" style="background:rgba(255,255,255,.1);color:#fff;border:2px solid rgba(255,255,255,.3)">Calcular rentabilidad</button>
+    </div>
+    <div class="rt-stats">
+      <div class="rt-stat"><div class="rt-stat-val">65-80%</div><div class="rt-stat-lbl">Ocupación promedio</div></div>
+      <div class="rt-stat"><div class="rt-stat-val">+40%</div><div class="rt-stat-lbl">Ingreso vs arriendo tradicional</div></div>
+      <div class="rt-stat"><div class="rt-stat-val">24/7</div><div class="rt-stat-lbl">Atención a huéspedes</div></div>
+      <div class="rt-stat"><div class="rt-stat-val">4.8★</div><div class="rt-stat-lbl">Rating promedio</div></div>
+    </div>
+  </div>
+
+  <main id="main">
+
+    <section class="rt-section">
+      <h2>¿Qué hacemos por ti?</h2>
+      <p class="sub">Gestión integral 360° para maximizar la rentabilidad de tu propiedad.</p>
+      <div class="rt-services">
+        <div class="rt-svc"><div class="rt-svc-icon">📸</div><h3>Fotografía profesional</h3><p>Sesión fotográfica con fotógrafo especializado en interiores y tour virtual 360°.</p></div>
+        <div class="rt-svc"><div class="rt-svc-icon">📱</div><h3>Publicación multicanal</h3><p>Airbnb, Booking, Vrbo, Expedia y canales directos con pricing dinámico.</p></div>
+        <div class="rt-svc"><div class="rt-svc-icon">🔑</div><h3>Check-in / Check-out</h3><p>Recibimos al huésped, verificamos ID, entregamos llaves y cerramos la estadía.</p></div>
+        <div class="rt-svc"><div class="rt-svc-icon">🧹</div><h3>Limpieza profesional</h3><p>Equipo de limpieza tras cada check-out con kit de bienvenida y reposición.</p></div>
+        <div class="rt-svc"><div class="rt-svc-icon">🛠️</div><h3>Mantenimiento</h3><p>Reparaciones menores, gestión de fallas y red de aliados (plomería, electricidad).</p></div>
+        <div class="rt-svc"><div class="rt-svc-icon">💬</div><h3>Atención 24/7</h3><p>Respuesta inmediata a consultas en español, inglés y francés.</p></div>
+        <div class="rt-svc"><div class="rt-svc-icon">📊</div><h3>Reportes mensuales</h3><p>Dashboard con ingresos, ocupación, reseñas y optimización de tarifas.</p></div>
+        <div class="rt-svc"><div class="rt-svc-icon">💰</div><h3>Pagos directos</h3><p>Transferencia mensual con desglose detallado. Tú solo te ocupas de cobrar.</p></div>
+      </div>
+    </section>
+
+    <section class="rt-section" style="background:#fafafa;max-width:100%;padding-left:0;padding-right:0">
+      <div style="max-width:var(--page-max);margin:0 auto;padding:0 16px">
+        <h2>Cómo funciona</h2>
+        <p class="sub">En 4 pasos convertimos tu propiedad en un activo rentable.</p>
+        <div class="rt-steps">
+          <div class="rt-step"><div class="rt-step-num">1</div><h3>Evaluación</h3><p>Visitamos tu propiedad y analizamos potencial, tarifa óptima y ocupación proyectada.</p></div>
+          <div class="rt-step"><div class="rt-step-num">2</div><h3>Preparación</h3><p>Sesión de fotos, inventario, dotación si se requiere y publicación en todas las plataformas.</p></div>
+          <div class="rt-step"><div class="rt-step-num">3</div><h3>Operación</h3><p>Recibimos reservas, atendemos huéspedes, gestionamos limpieza y mantenimiento.</p></div>
+          <div class="rt-step"><div class="rt-step-num">4</div><h3>Liquidación</h3><p>Transferencia mensual con reporte completo. Optimizamos tarifas mes a mes.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rt-section">
+      <h2>Renta turística vs arriendo tradicional</h2>
+      <p class="sub">Compara qué opción maximiza tus ingresos.</p>
+      <div class="rt-compare">
+        <table>
+          <thead>
+            <tr><th>Característica</th><th>Renta turística</th><th>Arriendo tradicional</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Ingreso mensual promedio</td><td class="yes">+40-60%</td><td>Base</td></tr>
+            <tr><td>Flexibilidad de uso personal</td><td class="yes">Sí, cuando quieras</td><td class="no">Bloqueado 1-3 años</td></tr>
+            <tr><td>Riesgo de morosidad</td><td class="yes">Pago anticipado</td><td class="no">Alto</td></tr>
+            <tr><td>Desgaste de la propiedad</td><td class="no">Mayor rotación</td><td class="yes">Menor</td></tr>
+            <tr><td>Gastos operativos</td><td>Limpieza + servicios</td><td class="yes">Inquilino paga</td></tr>
+            <tr><td>Gestión requerida</td><td>Alta (la hacemos nosotros)</td><td class="yes">Baja</td></tr>
+            <tr><td>ROI anual típico</td><td class="yes">8-16%</td><td>5-7%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="rt-section">
+      <h2>Preguntas frecuentes</h2>
+      <div class="rt-faq">
+        <details><summary>¿Cuánto cobra Altorra por gestionar mi propiedad?</summary><p>Nuestra comisión es del 20-25% sobre ingresos netos, dependiendo del nivel de servicio. Incluye todo: publicación, atención, limpieza y reportes.</p></details>
+        <details><summary>¿Puedo usar mi propiedad cuando quiera?</summary><p>Sí. Tú bloqueas las fechas que necesites desde el dashboard y nosotros no aceptamos reservas en esos días.</p></details>
+        <details><summary>¿Qué pasa si un huésped daña algo?</summary><p>Las plataformas (Airbnb, Booking) ofrecen seguros de daños. Nosotros gestionamos la reclamación y reposición.</p></details>
+        <details><summary>¿Cuánto tiempo toma empezar a generar ingresos?</summary><p>Típicamente 7-14 días desde la firma: fotografía, listing, primeras reservas. La ocupación se estabiliza en el mes 2-3.</p></details>
+        <details><summary>¿Manejan propiedades fuera de Bocagrande y Centro?</summary><p>Sí. Gestionamos propiedades en toda Cartagena, Barú, Islas del Rosario y La Boquilla.</p></details>
+        <details><summary>¿Qué requisitos debe tener mi propiedad?</summary><p>Amoblada, con servicios básicos, aire acondicionado, Wi-Fi y en buen estado. Si falta algo, te asesoramos en la dotación.</p></details>
+        <details><summary>¿Cómo me pagan?</summary><p>Transferencia bancaria mensual con desglose detallado: ingresos brutos, gastos, comisión y neto a tu favor.</p></details>
+      </div>
+    </section>
+
+    <section class="rt-form-section" id="formulario">
+      <div class="rt-form">
+        <h3>Quiero información sobre gestión de renta turística</h3>
+        <form id="formRentaTuristica">
+          <div class="grid">
+            <div><label>Nombre completo *</label><input type="text" name="Nombre" required></div>
+            <div><label>Teléfono / WhatsApp *</label><input type="tel" name="Teléfono" required></div>
+            <div class="full"><label>Email *</label><input type="email" name="Email" required></div>
+            <div><label>Tipo de propiedad</label>
+              <select name="TipoPropiedad">
+                <option value="apartamento">Apartamento</option>
+                <option value="casa">Casa</option>
+                <option value="penthouse">Penthouse</option>
+                <option value="villa">Villa</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+            <div><label>Ubicación</label><input type="text" name="Ubicacion" placeholder="Ej: Bocagrande"></div>
+            <div class="full"><label>Mensaje (opcional)</label><textarea name="Mensaje" placeholder="Cuéntanos sobre tu propiedad..."></textarea></div>
+          </div>
+          <button type="submit">Quiero una asesoría</button>
+          <p style="text-align:center;font-size:.8rem;color:var(--muted);margin-top:10px">Te contactamos en menos de 24 horas.</p>
+        </form>
+      </div>
+    </section>
+
+    <div class="rt-cta">
+      <h2>¿Tienes propiedad pero no tiempo?</h2>
+      <p>Déjanos la gestión. Tú solo recibes los ingresos.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="#formulario">Solicitar asesoría</a>
+        <button class="btn" onclick="CalculadoraAirbnb.open()" style="border:2px solid var(--gold);color:var(--gold);background:#fff;cursor:pointer">Calcular mi ROI</button>
+        <a class="btn" href="https://wa.me/573002439810?text=Hola%20Altorra%2C%20me%20interesa%20la%20gestión%20de%20renta%20turística%20para%20mi%20propiedad" target="_blank" rel="noopener" style="background:#25d366;color:#fff">WhatsApp</a>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <link rel="stylesheet" href="css/whatsapp-float.css"/>
+  <a href="https://wa.me/573002439810" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825.738 5.479 2.031 7.781l-2.031 7.219 7.375-1.938c2.238 1.213 4.8 1.938 7.531 1.938 8.838 0 16.094-7.163 16.094-16s-7.256-16-16-16zm9.563 22.188c-.394 1.113-1.95 2.038-3.194 2.313-.85.175-1.956.319-5.688-.919-4.769-1.581-7.844-6.356-8.081-6.65-.231-.294-1.95-2.594-1.95-4.95s1.238-3.513 1.675-3.994c.438-.481.956-.6 1.275-.6.319 0 .638.006.919.013.294.012.688-.113 1.075.819.394 1.025 1.35 3.294 1.469 3.531.119.238.2.519.038.819-.163.3-.244.488-.481.75-.238.263-.5.588-.713.788-.238.225-.488.469-.206.925.281.456 1.256 2.069 2.694 3.35 1.85 1.65 3.419 2.163 3.9 2.406.481.244.763.206 1.044-.125.281-.331 1.206-1.406 1.531-1.888.325-.481.644-.4 1.088-.238.444.163 2.819 1.331 3.3 1.569.481.238.8.356.919.556.119.2.119 1.144-.275 2.256z"/></svg>
+  </a>
+
+  <script src="js/firestore-meter.js" defer></script>
+  <script src="js/database.js" defer></script>
+  <script src="js/cache-manager.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/analytics.js" defer></script>
+  <script src="js/country-phone.js" defer></script>
+  <script src="js/calculadora-airbnb.js" defer></script>
+  <script src="js/contact-forms.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('formRentaTuristica');
+      if (!form) return;
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const fd = new FormData(form);
+        const countryCode = (form.querySelector('[name="_countryCode"]')?.value || '').trim();
+        const rawPhone    = (fd.get('Teléfono') || '').trim();
+        const telefono    = countryCode ? (countryCode + ' ' + rawPhone) : rawPhone;
+        try {
+          const { collection, addDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
+          await addDoc(collection(window.db, 'solicitudes'), {
+            nombre:    fd.get('Nombre'),
+            telefono:  telefono,
+            email:     fd.get('Email'),
+            tipo:      'gestion_renta_turistica',
+            origen:    'renta-turistica',
+            estado:    'pendiente',
+            createdAt: serverTimestamp(),
+            datosExtra: {
+              tipoPropiedad: fd.get('TipoPropiedad'),
+              ubicacion:     fd.get('Ubicacion'),
+              mensaje:       fd.get('Mensaje'),
+            },
+            emailSent: false,
+            requiereCita: false,
+          });
+          window.location.href = '/gracias.html';
+        } catch (err) {
+          console.error(err);
+          alert('Error al enviar. Intenta de nuevo o usa WhatsApp.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

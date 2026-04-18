@@ -213,7 +213,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 | C1 | Rediseño hero premium (overlay + ambient + partículas + badge) | ✅ DONE |
 | C2 | Página `invertir.html` con ROI por zona + cases | ✅ DONE |
 | C3 | Calculadora rentabilidad Airbnb (ocupación × tarifa × gastos) | ✅ DONE |
-| C4 | Landing `renta-turistica.html` dedicada | 🔲 TODO |
+| C4 | Landing `renta-turistica.html` dedicada | ✅ DONE |
 | C5 | Badges premium en cards ("ROI %", "Ocupación %") | 🔲 TODO |
 | C6 | i18n inglés con toggle ES/EN | 🔲 TODO |
 | C7 | Página `foreign-investors.html` (US/CA/ES) + FAQ fiscal | 🔲 TODO |

@@ -1387,4 +1387,37 @@ Calculadora interactiva de rentabilidad para renta turística (Airbnb/Booking):
 
 ---
 
+## C4 — Landing `renta-turistica.html` dedicada
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Landing page dedicada a captar propietarios que quieren monetizar sus propiedades vía Airbnb/Booking con servicios de gestión integral Altorra.
+
+Secciones:
+1. **Hero premium dark** — badge, stats (65-80% ocupación, +40% ingreso, 24/7, 4.8★), 2 CTAs
+2. **8 servicios de gestión** — fotografía, publicación multicanal, check-in/out, limpieza, mantenimiento, atención 24/7, reportes, pagos
+3. **Cómo funciona** — 4 pasos numerados (evaluación → preparación → operación → liquidación)
+4. **Tabla comparativa** — renta turística vs arriendo tradicional (7 filas con indicadores yes/no)
+5. **FAQ** — 7 preguntas comunes en `<details>` nativos
+6. **Formulario de captación** — 6 campos → Firestore (`tipo: 'gestion_renta_turistica'`)
+7. **CTA final** — 3 botones (formulario, calculadora, WhatsApp)
+
+### Decisiones técnicas
+
+- Self-contained CSS prefijado `.rt-*`
+- Integra `calculadora-airbnb.js` (C3) con botón en hero + CTA
+- Formulario escribe directo a `solicitudes` con tipo dedicado
+- Respeta header/footer dinámico + country-phone
+
+### Archivos nuevos
+
+| Archivo | Descripción |
+|---------|-------------|
+| `renta-turistica.html` | Landing completa (~210 líneas) |
+
+---
+
 *Última actualización: 2026-04-18*
