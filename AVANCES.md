@@ -1454,4 +1454,40 @@ Módulo autónomo que enriquece las tarjetas de propiedad con badges visuales de
 
 ---
 
+## C6 — i18n inglés con toggle ES/EN
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Sistema de internacionalización completo para atraer inversionistas internacionales:
+
+1. **Diccionario EN** — 60+ claves organizadas por sección (nav, hero, cards, filters, forms, invest, vacation, footer)
+2. **Toggle flotante** — botón ES/EN pill fijo debajo del header (derecha), estilo premium con gradiente dorado para idioma activo
+3. **Auto-detección** — lee `localStorage` → `navigator.language` → fallback ES
+4. **Atributos `data-i18n`** — traduce `textContent` de cualquier elemento marcado
+5. **Atributos `data-i18n-attr`** — traduce atributos (placeholder, aria-label, title) con sintaxis `atributo:clave`
+6. **Preservación de original** — guarda texto ES original en `data-i18n-original` para restaurar al volver
+7. **Integración automática** — cargado vía `components.js` tras el header → disponible en todas las páginas
+8. **Evento personalizado** — dispara `altorra:lang-changed` para que otros módulos reaccionen
+
+### Decisiones técnicas
+
+- El idioma ES no necesita diccionario (usa textContent original como fallback)
+- API pública: `window.AltorraI18n.t(key)`, `.setLang('en'|'es')`, `.toggle()`, `.getLang()`
+- Toggle se inyecta vía DOM + CSS embebido
+- Responsive: en móvil se mueve a bottom-right para no tapar el header
+- Índice HTML: `data-i18n` añadido a badge hero y botón "Buscar" como prueba de concepto
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/i18n.js` | **Nuevo** — motor + diccionario + toggle (~200 líneas) |
+| `js/components.js` | Carga diferida de `i18n.js` tras header |
+| `index.html` | `data-i18n` en hero badge + botón buscar |
+
+---
+
 *Última actualización: 2026-04-18*
