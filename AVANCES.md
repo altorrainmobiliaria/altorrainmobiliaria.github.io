@@ -1230,6 +1230,33 @@ Menú "Nuestro equipo": Reemplazado por "Reseñas"
 
 ---
 
+## B7 — Lead scoring automático en Cloud Function onNewSolicitud
+**Fecha:** 2026-04-18
+
+### Qué se hizo
+
+- Función `calculateLeadScore(data)` añadida a `functions/index.js`.
+- Scoring criteria:
+  - **Tipo de solicitud** (0-30): agenda_visita=30, contacto_propiedad=25, solicitud_credito=20, etc.
+  - **Datos de contacto** (0-25): nombre +5, email +10, teléfono +10.
+  - **Propiedad específica** (+10): si incluye `propiedadId`.
+  - **Valor alto** (0-10): >1B COP +10, >500M +5.
+  - **Mensaje detallado** (0-5): >100 chars +5, >30 chars +2.
+  - **Cita agendada** (+10): requiereCita + fecha.
+  - **Horario laboral Colombia** (+5): L-V 8am-6pm.
+- Clasificación: hot (≥70), warm (40-69), cold (<40).
+- `leadScore` y `leadTier` se guardan en el documento de Firestore.
+- Email al admin incluye badge visual con color según tier (🔥 HOT rojo, 🟡 WARM amarillo, 🔵 COLD gris).
+- Subject del email incluye [HOT]/[WARM]/[COLD] prefix para facilitar triage.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `functions/index.js` | +`calculateLeadScore()`, scoring en `onNewSolicitud`, badge en email |
+
+---
+
 ## PENDIENTE DEL PROPIETARIO (tarea humana)
 
 Estas tareas no las puede hacer Claude — requieren acceso a la consola de Firebase y cuentas del negocio:
