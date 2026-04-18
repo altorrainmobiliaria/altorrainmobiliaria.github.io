@@ -124,6 +124,59 @@ async function shouldTriggerSeo() {
   } catch (_) { return true; }
 }
 
+// ── Helper: lead scoring automático ─────────────────────────────────────
+function calculateLeadScore(data) {
+  let score = 0;
+  const extra = data.datosExtra || {};
+
+  // Type of inquiry (higher intent = higher score)
+  const typeScores = {
+    agenda_visita:       30,
+    contacto_propiedad:  25,
+    solicitud_credito:   20,
+    publicar_propiedad:  15,
+    solicitud_avaluo:    15,
+    solicitud_juridica:  10,
+    solicitud_contable:  10,
+    otro:                 5,
+  };
+  score += typeScores[data.tipo] || 5;
+
+  // Completeness of contact data
+  if (data.nombre)   score += 5;
+  if (data.email)    score += 10;
+  if (data.telefono) score += 10;
+
+  // Has a specific property (higher intent)
+  if (extra.propiedadId) score += 10;
+
+  // High-value property (price > 1B COP)
+  if (extra.precioAproximado > 1_000_000_000) score += 10;
+  else if (extra.precioAproximado > 500_000_000) score += 5;
+
+  // Message length (effort = interest)
+  const msg = extra.mensaje || '';
+  if (msg.length > 100) score += 5;
+  else if (msg.length > 30) score += 2;
+
+  // Scheduling a visit with specific date = high intent
+  if (data.requiereCita && extra.fecha) score += 10;
+
+  // Business hours bonus (Mon-Fri 8am-6pm Colombia = UTC-5)
+  const now = new Date();
+  const colombiaHour = (now.getUTCHours() - 5 + 24) % 24;
+  const day = now.getUTCDay();
+  if (day >= 1 && day <= 5 && colombiaHour >= 8 && colombiaHour <= 18) score += 5;
+
+  // Classify: hot (70+), warm (40-69), cold (<40)
+  let tier;
+  if (score >= 70) tier = 'hot';
+  else if (score >= 40) tier = 'warm';
+  else tier = 'cold';
+
+  return { score, tier };
+}
+
 // ══════════════════════════════════════════════════════════════════════════
 // 1. onNewSolicitud — Email al admin cuando llega un lead nuevo
 // ══════════════════════════════════════════════════════════════════════════
@@ -134,6 +187,10 @@ exports.onNewSolicitud = onDocumentCreated(
 
     // Idempotencia: no enviar si ya se envió
     if (data.emailSent) return;
+
+    // Lead scoring
+    const { score, tier } = calculateLeadScore(data);
+    await event.data.ref.update({ leadScore: score, leadTier: tier });
 
     const extra   = data.datosExtra || {};
     const tipo    = data.tipo || 'contacto';
@@ -175,8 +232,11 @@ exports.onNewSolicitud = onDocumentCreated(
             <tr><td style="padding:8px;color:#6b7280">Origen</td>
                 <td style="padding:8px">${data.origen || '—'}</td></tr>
           </table>
-          <div style="margin-top:20px;padding:12px;background:#fafafa;border-radius:6px;font-size:.85rem;color:#6b7280">
-            ID del lead: ${event.params.solicitudId}
+          <div style="margin-top:20px;padding:12px;background:${tier === 'hot' ? '#fef2f2' : tier === 'warm' ? '#fffbeb' : '#f9fafb'};border-radius:6px;font-size:.85rem;border-left:4px solid ${tier === 'hot' ? '#ef4444' : tier === 'warm' ? '#f59e0b' : '#9ca3af'}">
+            <strong style="color:${tier === 'hot' ? '#dc2626' : tier === 'warm' ? '#d97706' : '#6b7280'}">
+              ${tier === 'hot' ? '🔥 HOT' : tier === 'warm' ? '🟡 WARM' : '🔵 COLD'} — Score: ${score}/100
+            </strong>
+            <span style="color:#6b7280;margin-left:8px">ID: ${event.params.solicitudId}</span>
           </div>
         </div>
       </div>`;
@@ -186,7 +246,7 @@ exports.onNewSolicitud = onDocumentCreated(
       await transporter.sendMail({
         from:    `"${SITE_NAME}" <${EMAIL_USER.value()}>`,
         to:      ADMIN_EMAIL,
-        subject: `[Lead] ${tipoLabel} — ${data.nombre || 'Sin nombre'}`,
+        subject: `[${tier.toUpperCase()}] ${tipoLabel} — ${data.nombre || 'Sin nombre'}`,
         html,
       });
       // Marcar como enviado (idempotencia)

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Invertir en Cartagena | ROI y Oportunidades | Altorra Inmobiliaria</title>
+  <meta name="description" content="Descubre las mejores zonas para invertir en Cartagena. Análisis de ROI por barrio, casos de éxito y oportunidades de renta turística."/>
+  <link rel="canonical" href="https://altorrainmobiliaria.co/invertir.html"/>
+  <meta name="theme-color" content="#d4af37"/>
+  <meta property="og:title" content="Invertir en Cartagena | Altorra Inmobiliaria"/>
+  <meta property="og:description" content="ROI por zona, casos de éxito y oportunidades de inversión inmobiliaria en Cartagena de Indias."/>
+  <meta property="og:url" content="https://altorrainmobiliaria.co/invertir.html"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="https://altorrainmobiliaria.co/hero-emotion.webp"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script type="module" src="js/firebase-config.js"></script>
+  <style>
+    .inv-hero {
+      padding: calc(var(--header-h) + 56px) 16px 56px;
+      text-align: center;
+      background: linear-gradient(180deg, #0b0b0b 0%, #1a1a2e 100%);
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .inv-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 60%, rgba(212,175,55,.08), transparent 50%),
+                  radial-gradient(ellipse at 70% 30%, rgba(255,180,0,.06), transparent 40%);
+      pointer-events: none;
+    }
+    .inv-hero h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      margin: 0 0 12px;
+      position: relative;
+    }
+    .inv-hero p {
+      color: rgba(255,255,255,.7);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .inv-hero .hero-badge {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .inv-section {
+      max-width: var(--page-max);
+      margin: 0 auto;
+      padding: 56px 16px;
+    }
+    .inv-section h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin: 0 0 8px;
+    }
+    .inv-section .sub {
+      color: var(--muted);
+      margin: 0 0 32px;
+      font-size: 1rem;
+    }
+
+    /* ROI Cards */
+    .roi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .roi-card {
+      border: 1px solid rgba(17,24,39,.07);
+      border-radius: 18px;
+      padding: 24px;
+      background: #fff;
+      box-shadow: 0 8px 28px rgba(17,24,39,.05);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .roi-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(17,24,39,.10);
+    }
+    .roi-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    .roi-zone {
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+    .roi-badge {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 700;
+    }
+    .roi-badge.high { background: #dcfce7; color: #166534; }
+    .roi-badge.mid  { background: #fef3c7; color: #92400e; }
+    .roi-badge.low  { background: #f3f4f6; color: #374151; }
+    .roi-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .roi-stat {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .roi-stat-label {
+      font-size: .75rem;
+      color: var(--muted);
+      display: block;
+    }
+    .roi-stat-value {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .roi-stat-value.gold { color: var(--gold); }
+    .roi-desc {
+      font-size: .88rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* Cases */
+    .cases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .case-card {
+      border: 1px solid rgba(17,24,39,.07);
+      border-radius: 18px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 8px 28px rgba(17,24,39,.05);
+    }
+    .case-header {
+      background: linear-gradient(135deg, #0b0b0b, #1a1a2e);
+      color: #fff;
+      padding: 24px;
+    }
+    .case-header h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin: 0 0 4px;
+    }
+    .case-header p {
+      font-size: .85rem;
+      color: rgba(255,255,255,.6);
+      margin: 0;
+    }
+    .case-body {
+      padding: 20px 24px;
+    }
+    .case-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #f3f4f6;
+      font-size: .9rem;
+    }
+    .case-row:last-child { border-bottom: none; }
+    .case-row span:first-child { color: var(--muted); }
+    .case-row span:last-child { font-weight: 700; }
+    .case-row .highlight { color: var(--gold); font-weight: 800; }
+
+    /* Why invest */
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+    .why-card {
+      background: #f9fafb;
+      border-radius: 18px;
+      padding: 28px 24px;
+      text-align: center;
+    }
+    .why-icon {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+    .why-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0 0 8px;
+    }
+    .why-card p {
+      font-size: .88rem;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* CTA */
+    .inv-cta {
+      text-align: center;
+      padding: 56px 16px;
+      background: linear-gradient(180deg, #fffdf4, #fff);
+    }
+    .inv-cta h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin: 0 0 12px;
+    }
+    .inv-cta p {
+      color: var(--muted);
+      margin: 0 0 24px;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+  <div id="header-placeholder"></div>
+
+  <div class="inv-hero">
+    <div class="hero-badge">📈 Guía de inversión 2026</div>
+    <h1>Invertir en <span style="color:var(--gold)">Cartagena</span></h1>
+    <p>Análisis de rentabilidad por zona, casos de éxito reales y oportunidades de inversión inmobiliaria en la Heroica.</p>
+  </div>
+
+  <main id="main">
+
+    <!-- Why invest -->
+    <section class="inv-section">
+      <h2>¿Por qué invertir en Cartagena?</h2>
+      <p class="sub">Una de las ciudades con mayor plusvalía y demanda turística de Colombia.</p>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon">📈</div>
+          <h3>Valorización constante</h3>
+          <p>Cartagena ha registrado una valorización promedio del 8-12% anual en zonas premium como Bocagrande y Castillogrande.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🏖️</div>
+          <h3>Renta turística</h3>
+          <p>Con más de 4 millones de turistas al año, la demanda de alojamiento por días genera retornos superiores al arriendo tradicional.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🏗️</div>
+          <h3>Desarrollo urbano</h3>
+          <p>Nuevos proyectos de infraestructura (TransCaribe, Puerto de Cruceros, aeropuerto) impulsan la valorización.</p>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🌎</div>
+          <h3>Demanda internacional</h3>
+          <p>Compradores de EE.UU., Canadá y Europa buscan propiedades en Cartagena por el tipo de cambio favorable y calidad de vida.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ROI by zone -->
+    <section class="inv-section" style="background:#fafafa;max-width:100%;padding-left:0;padding-right:0">
+      <div style="max-width:var(--page-max);margin:0 auto;padding:0 16px">
+        <h2>ROI estimado por zona</h2>
+        <p class="sub">Rentabilidad anual estimada según tipo de operación y ubicación.</p>
+        <div class="roi-grid">
+
+          <div class="roi-card">
+            <div class="roi-card-header">
+              <span class="roi-zone">Bocagrande</span>
+              <span class="roi-badge high">Alto ROI</span>
+            </div>
+            <div class="roi-stats">
+              <div class="roi-stat"><span class="roi-stat-label">ROI Airbnb</span><span class="roi-stat-value gold">9-14%</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">ROI Arriendo</span><span class="roi-stat-value">5-7%</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">Precio m²</span><span class="roi-stat-value">$8-15M</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">Ocupación</span><span class="roi-stat-value">65-80%</span></div>
+            </div>
+            <p class="roi-desc">Zona más demandada por turistas. Apartamentos frente al mar con alta ocupación en temporada alta (dic-mar, jun-jul).</p>
+          </div>
+
+          <div class="roi-card">
+            <div class="roi-card-header">
+              <span class="roi-zone">Castillogrande</span>
+              <span class="roi-badge high">Alto ROI</span>
+            </div>
+            <div class="roi-stats">
+              <div class="roi-stat"><span class="roi-stat-label">ROI Airbnb</span><span class="roi-stat-value gold">8-12%</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">ROI Arriendo</span><span class="roi-stat-value">5-6%</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">Precio m²</span><span class="roi-stat-value">$10-18M</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">Ocupación</span><span class="roi-stat-value">60-75%</span></div>
+            </div>
+            <p class="roi-desc">Exclusiva zona residencial con vista al mar. Propiedades de lujo con alta plusvalía y demanda creciente de extranjeros.</p>
+          </div>
+
+          <div class="roi-card">
+            <div class="roi-card-header">
+              <span class="roi-zone">Manga</span>
+              <span class="roi-badge mid">Medio ROI</span>
+            </div>
+            <div class="roi-stats">
+              <div class="roi-stat"><span class="roi-stat-label">ROI Airbnb</span><span class="roi-stat-value gold">7-10%</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">ROI Arriendo</span><span class="roi-stat-value">6-8%</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">Precio m²</span><span class="roi-stat-value">$5-9M</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">Ocupación</span><span class="roi-stat-value">55-70%</span></div>
+            </div>
+            <p class="roi-desc">Barrio bohemio con restaurantes y vida cultural. Atrae turistas que buscan autenticidad cartagenera a mejor precio.</p>
+          </div>
+
+          <div class="roi-card">
+            <div class="roi-card-header">
+              <span class="roi-zone">Centro Histórico</span>
+              <span class="roi-badge high">Alto ROI</span>
+            </div>
+            <div class="roi-stats">
+              <div class="roi-stat"><span class="roi-stat-label">ROI Airbnb</span><span class="roi-stat-value gold">10-16%</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">ROI Arriendo</span><span class="roi-stat-value">4-6%</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">Precio m²</span><span class="roi-stat-value">$12-25M</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">Ocupación</span><span class="roi-stat-value">70-85%</span></div>
+            </div>
+            <p class="roi-desc">Patrimonio UNESCO. Las propiedades coloniales reformadas son las más rentables en Airbnb de toda Colombia.</p>
+          </div>
+
+          <div class="roi-card">
+            <div class="roi-card-header">
+              <span class="roi-zone">La Boquilla</span>
+              <span class="roi-badge mid">Medio ROI</span>
+            </div>
+            <div class="roi-stats">
+              <div class="roi-stat"><span class="roi-stat-label">ROI Airbnb</span><span class="roi-stat-value gold">8-11%</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">ROI Arriendo</span><span class="roi-stat-value">7-9%</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">Precio m²</span><span class="roi-stat-value">$4-7M</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">Ocupación</span><span class="roi-stat-value">50-65%</span></div>
+            </div>
+            <p class="roi-desc">Zona en expansión con proyectos nuevos. Excelente relación precio-rendimiento. Ideal para inversión a mediano plazo.</p>
+          </div>
+
+          <div class="roi-card">
+            <div class="roi-card-header">
+              <span class="roi-zone">Barú / Islas</span>
+              <span class="roi-badge high">Alto ROI</span>
+            </div>
+            <div class="roi-stats">
+              <div class="roi-stat"><span class="roi-stat-label">ROI Airbnb</span><span class="roi-stat-value gold">12-18%</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">ROI Arriendo</span><span class="roi-stat-value">—</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">Precio m²</span><span class="roi-stat-value">$6-20M</span></div>
+              <div class="roi-stat"><span class="roi-stat-label">Ocupación</span><span class="roi-stat-value">45-70%</span></div>
+            </div>
+            <p class="roi-desc">Propiedades exclusivas de playa con las tarifas por noche más altas de la región. Temporadas pico generan ingresos significativos.</p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Case studies -->
+    <section class="inv-section">
+      <h2>Casos de inversión</h2>
+      <p class="sub">Ejemplos reales de rentabilidad en propiedades gestionadas con Altorra.</p>
+      <div class="cases-grid">
+
+        <div class="case-card">
+          <div class="case-header">
+            <h3>Apartamento en Bocagrande</h3>
+            <p>2 hab · 85 m² · Vista al mar</p>
+          </div>
+          <div class="case-body">
+            <div class="case-row"><span>Inversión total</span><span>$ 520.000.000</span></div>
+            <div class="case-row"><span>Tarifa/noche Airbnb</span><span>$ 450.000</span></div>
+            <div class="case-row"><span>Ocupación promedio</span><span>72%</span></div>
+            <div class="case-row"><span>Ingreso mensual bruto</span><span>$ 9.720.000</span></div>
+            <div class="case-row"><span>Gastos mensuales</span><span>$ 2.800.000</span></div>
+            <div class="case-row"><span>Ingreso neto mensual</span><span class="highlight">$ 6.920.000</span></div>
+            <div class="case-row"><span>ROI anual</span><span class="highlight">16.0%</span></div>
+          </div>
+        </div>
+
+        <div class="case-card">
+          <div class="case-header">
+            <h3>Casa Colonial en Centro</h3>
+            <p>4 hab · 180 m² · Reformada</p>
+          </div>
+          <div class="case-body">
+            <div class="case-row"><span>Inversión total</span><span>$ 1.800.000.000</span></div>
+            <div class="case-row"><span>Tarifa/noche Airbnb</span><span>$ 1.200.000</span></div>
+            <div class="case-row"><span>Ocupación promedio</span><span>68%</span></div>
+            <div class="case-row"><span>Ingreso mensual bruto</span><span>$ 24.480.000</span></div>
+            <div class="case-row"><span>Gastos mensuales</span><span>$ 8.500.000</span></div>
+            <div class="case-row"><span>Ingreso neto mensual</span><span class="highlight">$ 15.980.000</span></div>
+            <div class="case-row"><span>ROI anual</span><span class="highlight">10.7%</span></div>
+          </div>
+        </div>
+
+        <div class="case-card">
+          <div class="case-header">
+            <h3>Apto en La Boquilla</h3>
+            <p>1 hab · 55 m² · Proyecto nuevo</p>
+          </div>
+          <div class="case-body">
+            <div class="case-row"><span>Inversión total</span><span>$ 280.000.000</span></div>
+            <div class="case-row"><span>Arriendo mensual</span><span>$ 2.200.000</span></div>
+            <div class="case-row"><span>Gastos mensuales</span><span>$ 600.000</span></div>
+            <div class="case-row"><span>Ingreso neto mensual</span><span class="highlight">$ 1.600.000</span></div>
+            <div class="case-row"><span>ROI anual</span><span class="highlight">6.9%</span></div>
+            <div class="case-row"><span>Valorización est.</span><span class="highlight">+12% anual</span></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Calculadora Airbnb -->
+    <section class="inv-section" id="calculadora">
+      <h2>Calculadora de rentabilidad Airbnb</h2>
+      <p class="sub">Simula cuánto puedes ganar con tu propiedad en renta turística.</p>
+      <div style="text-align:center">
+        <button class="btn btn-primary" onclick="CalculadoraAirbnb.open()" style="font-size:1.05rem;padding:14px 32px">
+          Abrir calculadora
+        </button>
+        <p style="color:var(--muted);font-size:.85rem;margin-top:10px">Ingresa el precio, tarifa por noche y ocupación estimada para ver tu ROI.</p>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="inv-cta">
+      <h2>¿Listo para invertir?</h2>
+      <p>Nuestros asesores te ayudan a encontrar la propiedad ideal para tu perfil de inversión.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="propiedades-comprar.html">Ver propiedades</a>
+        <button class="btn" onclick="CalculadoraAirbnb.open()" style="border:2px solid var(--gold);color:var(--gold);background:#fff;cursor:pointer">Calculadora Airbnb</button>
+        <a class="btn" href="https://wa.me/573002439810?text=Hola%20Altorra%2C%20me%20interesa%20invertir%20en%20Cartagena" target="_blank" rel="noopener" style="background:#25d366;color:#fff">WhatsApp</a>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <link rel="stylesheet" href="css/whatsapp-float.css"/>
+  <a href="https://wa.me/573002439810" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825.738 5.479 2.031 7.781l-2.031 7.219 7.375-1.938c2.238 1.213 4.8 1.938 7.531 1.938 8.838 0 16.094-7.163 16.094-16s-7.256-16-16-16zm9.563 22.188c-.394 1.113-1.95 2.038-3.194 2.313-.85.175-1.956.319-5.688-.919-4.769-1.581-7.844-6.356-8.081-6.65-.231-.294-1.95-2.594-1.95-4.95s1.238-3.513 1.675-3.994c.438-.481.956-.6 1.275-.6.319 0 .638.006.919.013.294.012.688-.113 1.075.819.394 1.025 1.35 3.294 1.469 3.531.119.238.2.519.038.819-.163.3-.244.488-.481.75-.238.263-.5.588-.713.788-.238.225-.488.469-.206.925.281.456 1.256 2.069 2.694 3.35 1.85 1.65 3.419 2.163 3.9 2.406.481.244.763.206 1.044-.125.281-.331 1.206-1.406 1.531-1.888.325-.481.644-.4 1.088-.238.444.163 2.819 1.331 3.3 1.569.481.238.8.356.919.556.119.2.119 1.144-.275 2.256z"/></svg>
+  </a>
+
+  <script src="js/firestore-meter.js" defer></script>
+  <script src="js/database.js" defer></script>
+  <script src="js/cache-manager.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/analytics.js" defer></script>
+  <script src="js/calculadora-airbnb.js" defer></script>
+</body>
+</html>

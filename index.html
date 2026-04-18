@@ -62,7 +62,10 @@
            width="1600"
            height="1000"/>
       <div class="overlay" aria-hidden="true"></div>
+      <div class="hero-ambient" aria-hidden="true"></div>
+      <div class="hero-particles" id="heroParticles" aria-hidden="true"></div>
       <div class="inner">
+        <div class="hero-badge">⭐ Inmobiliaria #1 en Cartagena</div>
         <h1>Gestión Integral en Soluciones Inmobiliarias</h1>
         <p>Seguridad • Legalidad • Confianza</p>
 
@@ -107,6 +110,9 @@
         </form>
       </div>
     </section>
+    <script>
+    (function(){var c=document.getElementById('heroParticles');if(!c||window.matchMedia('(prefers-reduced-motion:reduce)').matches)return;for(var i=0;i<12;i++){var p=document.createElement('div');p.className='hero-particle';p.style.left=Math.random()*100+'%';p.style.bottom='-10px';p.style.animationDuration=(8+Math.random()*12)+'s';p.style.animationDelay=(Math.random()*8)+'s';p.style.width=p.style.height=(2+Math.random()*4)+'px';c.appendChild(p);}})();
+    </script>
 
     <!-- TRUST BAR -->
     <aside class="trust-bar" aria-label="Confianza y cobertura">
@@ -178,7 +184,7 @@
       <div class="publish-card">
         <h2 id="publicar-title">¿Quieres publicar tu propiedad?</h2>
         <p>Si tienes un inmueble para vender, arrendar o rentar por días, Altorra te ayuda a promocionarlo de forma rápida y segura.</p>
-        <a href="publicar-propiedad.html" class="btn">Publicar mi propiedad</a>
+        <button type="button" class="btn" id="btnPublicarWizard" onclick="if(window.AltorraPublishWizard)AltorraPublishWizard.open();else location.href='publicar-propiedad.html'">Publicar mi propiedad</button>
       </div>
     </section>
 
@@ -348,6 +354,7 @@
   </svg>
 </a>
   <script defer src="js/favoritos.js"></script>
+  <script defer src="js/wizard-publicar.js"></script>
   <script defer src="js/smart-search.js"></script>
   <script defer src="js/historial-visitas.js"></script>
   <script defer src="js/featured-week-banner.js"></script>

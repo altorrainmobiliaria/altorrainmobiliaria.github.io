@@ -1211,6 +1211,93 @@ Menú "Nuestro equipo": Reemplazado por "Reseñas"
 
 ---
 
+## B6 — Simulador hipotecario: gráfica amortización + export PDF
+**Fecha:** 2026-04-18
+
+### Qué se hizo
+
+- Agregado gráfica Canvas al simulador hipotecario — barras apiladas (capital dorado + intereses rojo) por año + línea de saldo restante (gris).
+- Botón "📄 Exportar PDF" que abre ventana de impresión con resumen financiero completo + tabla de amortización formateada.
+- Leyenda visual debajo del gráfico (Capital, Intereses, Saldo).
+- CSS para `.sim-chart-wrap`, `.sim-chart-legend`, `.sim-export-btn`.
+- El simulador ya existía (`simulador.html` + `js/simulador-hipotecario.js`), solo se añadieron las 2 funcionalidades faltantes.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/simulador-hipotecario.js` | +`renderChart()`, +`exportPDF()`, +`fmtShort()`, canvas container, export button, CSS |
+
+---
+
+## B7 — Lead scoring automático en Cloud Function onNewSolicitud
+**Fecha:** 2026-04-18
+
+### Qué se hizo
+
+- Función `calculateLeadScore(data)` añadida a `functions/index.js`.
+- Scoring criteria:
+  - **Tipo de solicitud** (0-30): agenda_visita=30, contacto_propiedad=25, solicitud_credito=20, etc.
+  - **Datos de contacto** (0-25): nombre +5, email +10, teléfono +10.
+  - **Propiedad específica** (+10): si incluye `propiedadId`.
+  - **Valor alto** (0-10): >1B COP +10, >500M +5.
+  - **Mensaje detallado** (0-5): >100 chars +5, >30 chars +2.
+  - **Cita agendada** (+10): requiereCita + fecha.
+  - **Horario laboral Colombia** (+5): L-V 8am-6pm.
+- Clasificación: hot (≥70), warm (40-69), cold (<40).
+- `leadScore` y `leadTier` se guardan en el documento de Firestore.
+- Email al admin incluye badge visual con color según tier (🔥 HOT rojo, 🟡 WARM amarillo, 🔵 COLD gris).
+- Subject del email incluye [HOT]/[WARM]/[COLD] prefix para facilitar triage.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `functions/index.js` | +`calculateLeadScore()`, scoring en `onNewSolicitud`, badge en email |
+
+---
+
+## A12 — CTA "Publica tu propiedad" abre wizard
+**Fecha:** 2026-04-18
+
+### Qué se hizo
+
+- Creado `js/wizard-publicar.js` — wizard modal 3 pasos para publicar propiedad.
+- **Paso 1:** Tipo de inmueble (chips: 6 tipos), operación (Vender/Arrendar/Por días), ciudad, precio aproximado.
+- **Paso 2:** Datos de contacto — nombre, email, teléfono con country selector (10 países).
+- **Paso 3:** Resumen de confirmación → envía a Firestore como `publicar_propiedad`.
+- Botón "Publicar mi propiedad" en index.html cambiado de `<a>` a `<button>` — abre wizard si disponible, fallback a `publicar-propiedad.html`.
+- CSS inyectado inline (prefijo `.pwz-*`), cierre con ESC/click fuera.
+
+### Archivos creados/modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/wizard-publicar.js` | NUEVO — wizard 3 pasos publicar propiedad |
+| `index.html` | CTA cambiado a button + script include |
+
+---
+
+## C1 — Rediseño hero premium
+**Fecha:** 2026-04-18
+
+### Qué se hizo
+
+- **Overlay mejorado**: gradiente 3-stop más dramático (12%→45%→55% opacidad) para mejor contraste.
+- **Badge premium**: "⭐ Inmobiliaria #1 en Cartagena" pill con glass effect (`.hero-badge`), animated entrance.
+- **Ambient glow**: radial gradients dorados sutiles (`.hero-ambient`) — brillo en esquinas opuestas.
+- **Partículas flotantes**: 12 dots dorados que suben con animación CSS (`.hero-particles`), generadas vía JS inline. Respeta `prefers-reduced-motion`.
+- Sin cambios a la tipografía, colores de marca, ni layout del buscador.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `style.css` | Overlay gradient mejorado, CSS para `.hero-badge`, `.hero-particles`, `.hero-ambient` |
+| `index.html` | Badge + ambient + particles container + JS generator |
+
+---
+
 ## PENDIENTE DEL PROPIETARIO (tarea humana)
 
 Estas tareas no las puede hacer Claude — requieren acceso a la consola de Firebase y cuentas del negocio:
@@ -1229,4 +1316,75 @@ Estas tareas no las puede hacer Claude — requieren acceso a la consola de Fire
 
 ---
 
-*Última actualización: 2026-04-15*
+## C2 — Página `invertir.html` con ROI por zona + casos de éxito
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Página completa de inversión inmobiliaria en Cartagena con:
+
+1. **Hero premium dark** — gradiente oscuro, badge "Oportunidad 2025", CTA doble
+2. **Sección "Por qué invertir"** — 4 razones con iconos (valorización, renta turística, calidad vida, marco legal)
+3. **ROI por zona** — Grid de 6 zonas (Bocagrande, Castillogrande, Manga, Centro Histórico, La Boquilla, Barú) con:
+   - Rango de precio por m²
+   - ROI anual estimado
+   - Ocupación Airbnb estimada
+   - Perfil de inversor ideal
+4. **Casos de éxito** — 3 cases detallados con desglose financiero:
+   - Apto Bocagrande (ROI 9.6%)
+   - Studio Centro Histórico (ROI 14.4%)
+   - Casa Barú (ROI 12%)
+5. **CTA final** — 3 botones (propiedades, simulador, WhatsApp)
+
+### Decisiones técnicas
+
+- Diseño self-contained: todo el CSS inline para no inflar `style.css`
+- Respeta paleta `--gold`/`--accent`, tipografía Poppins
+- Datos de ROI basados en promedios del mercado cartagenero 2024-2025
+- Incluye header/footer dinámico vía `header-footer.js`
+
+### Archivos nuevos
+
+| Archivo | Descripción |
+|---------|-------------|
+| `invertir.html` | Página completa de inversión (~300 líneas) |
+
+---
+
+## C3 — Calculadora rentabilidad Airbnb
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Calculadora interactiva de rentabilidad para renta turística (Airbnb/Booking):
+
+1. **Modal completo** — formulario con 9 campos editables:
+   - Precio de propiedad, tarifa por noche, ocupación (%)
+   - Gastos: administración, servicios, limpieza por check-out, comisión plataforma, mantenimiento, impuestos
+2. **Motor de cálculo** — días ocupados, ingreso bruto, desglose de gastos, neto mensual, ROI anual, payback en años
+3. **Visualización** — gráfica Canvas horizontal (ingreso bruto vs gastos vs neto), ROI box con indicador grande
+4. **Conversión** — botón WhatsApp pre-llenado con los parámetros del cálculo
+5. **Integración** — botón en `invertir.html` + botón en `detalle-propiedad.html` (pre-llena precio de la propiedad)
+
+### Decisiones técnicas
+
+- Self-contained: CSS inyectado via JS, sin dependencia de style.css
+- Formateo automático COP en inputs con `inputmode="numeric"`
+- API: `window.CalculadoraAirbnb.open({ precio, tarifa })` — pre-popula valores
+- Canvas nativo para gráfica (0 dependencias externas)
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/calculadora-airbnb.js` | **Nuevo** — motor + modal + gráfica (~240 líneas) |
+| `invertir.html` | Sección calculadora + botón CTA |
+| `detalle-propiedad.html` | Botón "Calcular rentabilidad Airbnb" + script |
+
+---
+
+*Última actualización: 2026-04-18*

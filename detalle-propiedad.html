@@ -569,6 +569,20 @@ async function init(){
       formBlock.appendChild(visitaBtn);
     }
 
+    const airbnbBtn = document.createElement('button');
+    airbnbBtn.type = 'button';
+    airbnbBtn.className = 'btn btn-ghost';
+    airbnbBtn.style.cssText = 'width:100%;margin-top:8px;padding:12px 0;font-weight:700;border:2px solid #22c55e;border-radius:12px;cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;color:#22c55e';
+    airbnbBtn.innerHTML = '📊 Calcular rentabilidad Airbnb';
+    airbnbBtn.addEventListener('click', () => {
+      if (window.CalculadoraAirbnb) {
+        window.CalculadoraAirbnb.open({ precio: prop.price });
+      }
+    });
+    airbnbBtn.addEventListener('mouseenter', () => { airbnbBtn.style.background = 'rgba(34,197,94,.08)'; });
+    airbnbBtn.addEventListener('mouseleave', () => { airbnbBtn.style.background = 'transparent'; });
+    formBlock.appendChild(airbnbBtn);
+
     /* ===== Montaje ===== */
     container.innerHTML='';
     galleryDiv.appendChild(G);
@@ -828,4 +842,5 @@ document.addEventListener('DOMContentLoaded', init);
   <script defer src="js/country-phone.js"></script>
   <script defer src="js/wizard-visita.js"></script>
   <script defer src="js/contact-forms.js"></script>
+  <script defer src="js/calculadora-airbnb.js"></script>
 </html>

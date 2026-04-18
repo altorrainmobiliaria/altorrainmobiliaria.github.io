@@ -188,7 +188,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| A12 | Wrapper del wizard de B4 con flujo "publicar" | 🔲 TODO |
+| A12 | Wrapper del wizard de B4 con flujo "publicar" | ✅ DONE |
 
 ---
 
@@ -201,8 +201,8 @@ FASE 4             → Bloque D (máquina de leads completo)
 | B3 | "Propiedades similares" en detalle (barrio+tipo+precio±20%) | ✅ DONE |
 | B4 | Modal wizard 3 pasos "Agenda visita" (patrón Cars) | ✅ DONE |
 | B5 | Selector multi-país en formularios (10 países Cars) | ✅ DONE |
-| B6 | Simulador hipotecario: gráfica amortización + export PDF | 🔲 TODO |
-| B7 | Lead scoring automático en Cloud Function onNewSolicitud | 🔲 TODO |
+| B6 | Simulador hipotecario: gráfica amortización + export PDF | ✅ DONE |
+| B7 | Lead scoring automático en Cloud Function onNewSolicitud | ✅ DONE |
 
 ---
 
@@ -210,9 +210,9 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| C1 | Rediseño hero premium (overlay + ambient + partículas + badge) | 🔲 TODO |
-| C2 | Página `invertir.html` con ROI por zona + cases | 🔲 TODO |
-| C3 | Calculadora rentabilidad Airbnb (ocupación × tarifa × gastos) | 🔲 TODO |
+| C1 | Rediseño hero premium (overlay + ambient + partículas + badge) | ✅ DONE |
+| C2 | Página `invertir.html` con ROI por zona + cases | ✅ DONE |
+| C3 | Calculadora rentabilidad Airbnb (ocupación × tarifa × gastos) | ✅ DONE |
 | C4 | Landing `renta-turistica.html` dedicada | 🔲 TODO |
 | C5 | Badges premium en cards ("ROI %", "Ocupación %") | 🔲 TODO |
 | C6 | i18n inglés con toggle ES/EN | 🔲 TODO |
