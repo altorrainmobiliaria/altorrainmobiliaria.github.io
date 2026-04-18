@@ -1559,4 +1559,39 @@ Características:
 
 ---
 
+## D1 — CRM Kanban en admin (nuevo → contactado → visita → cierre)
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Vista Kanban alternativa para leads en el admin, con 4 columnas y drag & drop entre estados.
+
+1. **Toggle de vista** — botones "📋 Lista" / "📊 Kanban" en sección leads
+2. **4 columnas** — Nuevo (azul), Contactado (ámbar), Visita (púrpura), Cierre (verde)
+3. **Cards con info clave** — nombre, tipo, propiedad, teléfono, fecha relativa ("Hace 2h") y lead score badge
+4. **Drag & drop** — arrastrar entre columnas actualiza el estado en Firestore directamente
+5. **Color-coded tier** — borde izquierdo rojo/ámbar/azul según leadScore (hot/warm/cold)
+6. **Nuevo estado `visita`** — añadido al flujo después de "contactado"
+7. **Retrocompatibilidad** — mapeo legacy: `pendiente` → Nuevo, `en_gestion` → Contactado, `cerrado` → Cierre
+
+### Decisiones técnicas
+
+- Módulo autónomo `js/admin-kanban.js`
+- CSS inyectado via JS
+- Evento `altorra:leads-updated` emitido por admin-leads.js al filtrar
+- Click en card abre el modal de detalle existente
+- Uso de HTML5 drag & drop nativo (sin librería)
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/admin-kanban.js` | **Nuevo** — tablero + drag & drop (~200 líneas) |
+| `js/admin-leads.js` | Estado `visita` añadido, label actualizado, `_allLeads` expuesto, evento emit |
+| `admin.html` | Filtro de estado extendido + script defer |
+
+---
+
 *Última actualización: 2026-04-18*

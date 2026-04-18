@@ -181,9 +181,10 @@
               </select>
               <select id="leadFilterEstado" aria-label="Filtrar por estado">
                 <option value="">Todos</option>
-                <option value="pendiente">Pendiente</option>
-                <option value="en_gestion">En gestión</option>
-                <option value="cerrado">Cerrado</option>
+                <option value="pendiente">🆕 Nuevo</option>
+                <option value="en_gestion">📞 Contactado</option>
+                <option value="visita">📅 Visita</option>
+                <option value="cerrado">✅ Cierre</option>
               </select>
             </div>
             <div class="admin-table-wrap">
@@ -540,6 +541,7 @@ document.addEventListener('click', function(e) {
 <script src="js/admin-dashboard.js" defer></script>
 <script src="js/admin-properties.js" defer></script>
 <script src="js/admin-leads.js" defer></script>
+<script src="js/admin-kanban.js" defer></script>
 <script src="js/admin-users.js" defer></script>
 
 </body>
