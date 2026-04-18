@@ -1257,6 +1257,27 @@ Menú "Nuestro equipo": Reemplazado por "Reseñas"
 
 ---
 
+## A12 — CTA "Publica tu propiedad" abre wizard
+**Fecha:** 2026-04-18
+
+### Qué se hizo
+
+- Creado `js/wizard-publicar.js` — wizard modal 3 pasos para publicar propiedad.
+- **Paso 1:** Tipo de inmueble (chips: 6 tipos), operación (Vender/Arrendar/Por días), ciudad, precio aproximado.
+- **Paso 2:** Datos de contacto — nombre, email, teléfono con country selector (10 países).
+- **Paso 3:** Resumen de confirmación → envía a Firestore como `publicar_propiedad`.
+- Botón "Publicar mi propiedad" en index.html cambiado de `<a>` a `<button>` — abre wizard si disponible, fallback a `publicar-propiedad.html`.
+- CSS inyectado inline (prefijo `.pwz-*`), cierre con ESC/click fuera.
+
+### Archivos creados/modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/wizard-publicar.js` | NUEVO — wizard 3 pasos publicar propiedad |
+| `index.html` | CTA cambiado a button + script include |
+
+---
+
 ## PENDIENTE DEL PROPIETARIO (tarea humana)
 
 Estas tareas no las puede hacer Claude — requieren acceso a la consola de Firebase y cuentas del negocio:

@@ -188,7 +188,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| A12 | Wrapper del wizard de B4 con flujo "publicar" | 🔲 TODO |
+| A12 | Wrapper del wizard de B4 con flujo "publicar" | ✅ DONE |
 
 ---
 
