@@ -1420,4 +1420,38 @@ Secciones:
 
 ---
 
+## C5 — Badges premium en cards ("ROI %", "Ocupación %")
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Módulo autónomo que enriquece las tarjetas de propiedad con badges visuales de rentabilidad estimada, automáticamente calculados por zona.
+
+1. **Mapa de zonas** — 12 barrios de Cartagena con rangos de ROI Airbnb y ocupación (Bocagrande, Castillogrande, Manga, Centro Histórico, Getsemaní, La Boquilla, Barú, Crespo, Marbella...)
+2. **Badge dorado "📈 ROI ~X%"** — gradiente oro/ámbar sobre fondo oscuro de la tarjeta
+3. **Badge blanco "🏖️ X% ocup."** — white translúcido con borde dorado
+4. **Inyección automática** — MutationObserver detecta nuevas cards y les añade badges
+5. **Solo propiedades de compra** — filtra `operation: 'comprar'` y excluye lotes/bodegas
+6. **Normalización de zona** — maneja tildes (Barú/Baru), sin distinción de mayúsculas
+
+### Decisiones técnicas
+
+- Self-contained: CSS inyectado via JS
+- No modifica el renderer de cards — se engancha por observer al DOM existente
+- `window.AltorraInvestmentBadges.getBadgesHTML(p)` expuesto para uso programático
+- Se re-ejecuta en eventos `altorra:db-ready` y `altorra:db-refreshed`
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/investment-badges.js` | **Nuevo** — motor + CSS + observer (~120 líneas) |
+| `index.html` | `<script>` defer |
+| `propiedades-comprar.html` | `<script>` defer |
+| `busqueda.html` | `<script>` defer |
+
+---
+
 *Última actualización: 2026-04-18*
