@@ -1278,6 +1278,26 @@ Menú "Nuestro equipo": Reemplazado por "Reseñas"
 
 ---
 
+## C1 — Rediseño hero premium
+**Fecha:** 2026-04-18
+
+### Qué se hizo
+
+- **Overlay mejorado**: gradiente 3-stop más dramático (12%→45%→55% opacidad) para mejor contraste.
+- **Badge premium**: "⭐ Inmobiliaria #1 en Cartagena" pill con glass effect (`.hero-badge`), animated entrance.
+- **Ambient glow**: radial gradients dorados sutiles (`.hero-ambient`) — brillo en esquinas opuestas.
+- **Partículas flotantes**: 12 dots dorados que suben con animación CSS (`.hero-particles`), generadas vía JS inline. Respeta `prefers-reduced-motion`.
+- Sin cambios a la tipografía, colores de marca, ni layout del buscador.
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `style.css` | Overlay gradient mejorado, CSS para `.hero-badge`, `.hero-particles`, `.hero-ambient` |
+| `index.html` | Badge + ambient + particles container + JS generator |
+
+---
+
 ## PENDIENTE DEL PROPIETARIO (tarea humana)
 
 Estas tareas no las puede hacer Claude — requieren acceso a la consola de Firebase y cuentas del negocio:
