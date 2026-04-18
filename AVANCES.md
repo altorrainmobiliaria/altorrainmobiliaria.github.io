@@ -1353,4 +1353,38 @@ Página completa de inversión inmobiliaria en Cartagena con:
 
 ---
 
+## C3 — Calculadora rentabilidad Airbnb
+
+**Fecha:** 2026-04-18
+**Rama:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Calculadora interactiva de rentabilidad para renta turística (Airbnb/Booking):
+
+1. **Modal completo** — formulario con 9 campos editables:
+   - Precio de propiedad, tarifa por noche, ocupación (%)
+   - Gastos: administración, servicios, limpieza por check-out, comisión plataforma, mantenimiento, impuestos
+2. **Motor de cálculo** — días ocupados, ingreso bruto, desglose de gastos, neto mensual, ROI anual, payback en años
+3. **Visualización** — gráfica Canvas horizontal (ingreso bruto vs gastos vs neto), ROI box con indicador grande
+4. **Conversión** — botón WhatsApp pre-llenado con los parámetros del cálculo
+5. **Integración** — botón en `invertir.html` + botón en `detalle-propiedad.html` (pre-llena precio de la propiedad)
+
+### Decisiones técnicas
+
+- Self-contained: CSS inyectado via JS, sin dependencia de style.css
+- Formateo automático COP en inputs con `inputmode="numeric"`
+- API: `window.CalculadoraAirbnb.open({ precio, tarifa })` — pre-popula valores
+- Canvas nativo para gráfica (0 dependencias externas)
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/calculadora-airbnb.js` | **Nuevo** — motor + modal + gráfica (~240 líneas) |
+| `invertir.html` | Sección calculadora + botón CTA |
+| `detalle-propiedad.html` | Botón "Calcular rentabilidad Airbnb" + script |
+
+---
+
 *Última actualización: 2026-04-18*

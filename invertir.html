@@ -416,13 +416,25 @@
       </div>
     </section>
 
+    <!-- Calculadora Airbnb -->
+    <section class="inv-section" id="calculadora">
+      <h2>Calculadora de rentabilidad Airbnb</h2>
+      <p class="sub">Simula cuánto puedes ganar con tu propiedad en renta turística.</p>
+      <div style="text-align:center">
+        <button class="btn btn-primary" onclick="CalculadoraAirbnb.open()" style="font-size:1.05rem;padding:14px 32px">
+          Abrir calculadora
+        </button>
+        <p style="color:var(--muted);font-size:.85rem;margin-top:10px">Ingresa el precio, tarifa por noche y ocupación estimada para ver tu ROI.</p>
+      </div>
+    </section>
+
     <!-- CTA -->
     <div class="inv-cta">
       <h2>¿Listo para invertir?</h2>
       <p>Nuestros asesores te ayudan a encontrar la propiedad ideal para tu perfil de inversión.</p>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
         <a class="btn btn-primary" href="propiedades-comprar.html">Ver propiedades</a>
-        <a class="btn" href="simulador.html" style="border:2px solid var(--gold);color:var(--gold);background:#fff">Simular crédito</a>
+        <button class="btn" onclick="CalculadoraAirbnb.open()" style="border:2px solid var(--gold);color:var(--gold);background:#fff;cursor:pointer">Calculadora Airbnb</button>
         <a class="btn" href="https://wa.me/573002439810?text=Hola%20Altorra%2C%20me%20interesa%20invertir%20en%20Cartagena" target="_blank" rel="noopener" style="background:#25d366;color:#fff">WhatsApp</a>
       </div>
     </div>
@@ -441,5 +453,6 @@
   <script src="js/cache-manager.js" defer></script>
   <script src="js/components.js" defer></script>
   <script src="js/analytics.js" defer></script>
+  <script src="js/calculadora-airbnb.js" defer></script>
 </body>
 </html>
