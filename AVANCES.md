@@ -1835,4 +1835,33 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
+## E2.4 + E2.5 — Landing pages: Barú/La Boquilla + Lotes campestres
+
+**Fecha:** 2026-04-19
+**Estado:** ✅ Completado
+
+### Qué se hizo
+
+**E2.4 — propiedades-baru.html**
+- Barú e La Boquilla como destinos de inversión emergente
+- Stats: valorización, precio m², distancia, acceso
+- Features checklist por zona
+- 4 razones para invertir ahora (infraestructura, precios, turismo, estilo de vida)
+- CTAs a propiedades y WhatsApp directo
+
+**E2.5 — lotes-campestres-cartagena.html** (competir contra Altis)
+- 4 zonas: Barú, Turbaco, Arjona, La Boquilla (precio m², extensiones, valorización, uso)
+- 4 usos: casa campestre, glamping, agrícola, desarrollo inmobiliario
+- 6 verificaciones legales/técnicas antes de comprar lote
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `propiedades-baru.html` | NUEVO — landing Barú + La Boquilla |
+| `lotes-campestres-cartagena.html` | NUEVO — landing lotes campestres |
+| `sitemap.xml` | +2 URLs |
+
+---
+
 *Última actualización: 2026-04-19*
