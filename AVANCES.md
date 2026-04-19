@@ -1703,4 +1703,27 @@ Vista Kanban alternativa para leads en el admin, con 4 columnas y drag & drop en
 
 ---
 
+## D5 — Newsletter funcional con plantillas (2026-04-19)
+
+**Qué:** Sistema de newsletter con barra flotante de suscripción, almacenamiento en Firestore, y Cloud Function para enviar newsletters con plantillas.
+
+**Funcionalidad:**
+- Barra flotante aparece tras 5s en páginas clave (home, listados, inversión, blog)
+- Suscriptores guardados en Firestore `newsletter` con criterios de búsqueda
+- Detección de duplicados (reactivación si ya existe)
+- 3 plantillas de email: `nuevas_propiedades`, `mercado`, `personalizado`
+- Cloud Function `sendNewsletter` (callable, super_admin) con logging en `newsletter_sends`
+- FormSubmit fallback si Firestore no está disponible
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/newsletter.js` | Floating bar auto-show + CSS inyectado |
+| `functions/index.js` | `sendNewsletter` callable con 3 plantillas |
+| `firestore.rules` | Regla para `newsletter` (create+update: público, read: auth) |
+| 9 HTML pages | `<script defer src="js/newsletter.js">` |
+
+---
+
 *Última actualización: 2026-04-19*

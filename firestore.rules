@@ -108,6 +108,14 @@ service cloud.firestore {
       allow delete: if isEditorOrAbove();
     }
 
+    // ── NEWSLETTER ────────────────────────────────────────────────
+    match /newsletter/{subId} {
+      allow create: if true;
+      allow read:   if isAuthenticated();
+      allow update: if true;
+      allow delete: if isSuperAdmin();
+    }
+
     // ── ANALYTICS EVENTS ───────────────────────────────────────────
     match /analytics_events/{eventId} {
       allow create: if true;

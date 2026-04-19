@@ -755,3 +755,83 @@ exports.processNurturingEmails = onSchedule(
     console.log(`[Nurturing] Procesados: ${sent} enviados, ${errors} errores.`);
   }
 );
+
+// ══════════════════════════════════════════════════════════════════════════
+// 9. sendNewsletter — Send newsletter to all active subscribers
+//    Callable by super_admin from admin panel
+// ══════════════════════════════════════════════════════════════════════════
+exports.sendNewsletter = onCall(
+  { region: REGION, secrets: [EMAIL_USER, EMAIL_PASS] },
+  async (request) => {
+    await requireSuperAdmin(request.auth?.uid);
+
+    const { subject, body, template } = request.data || {};
+    if (!subject) throw new HttpsError('invalid-argument', 'Se requiere subject.');
+
+    // Get all active subscribers
+    const snap = await db.collection('newsletter')
+      .where('activo', '==', true)
+      .limit(200)
+      .get();
+
+    if (snap.empty) return { success: true, sent: 0, message: 'No hay suscriptores activos.' };
+
+    // Build email HTML from template or custom body
+    const templates = {
+      nuevas_propiedades: (name) => wrapEmail(`
+        <p>Hola${name ? ' <strong>' + name + '</strong>' : ''},</p>
+        <p>Tenemos <strong>nuevas propiedades</strong> disponibles que podrían interesarte.</p>
+        ${body || '<p>Visita nuestro catálogo para ver las últimas adiciones.</p>'}
+        ${cta('Ver propiedades nuevas', SITE_URL + '/propiedades-comprar.html')}
+        <p style="color:#9ca3af;font-size:.75rem;text-align:center">
+          <a href="${SITE_URL}" style="color:#9ca3af">Cancelar suscripción</a>
+        </p>`),
+      mercado: (name) => wrapEmail(`
+        <p>Hola${name ? ' <strong>' + name + '</strong>' : ''},</p>
+        <h2 style="color:#111;font-size:1.1rem;margin:16px 0 8px">Análisis de mercado</h2>
+        ${body || '<p>Te compartimos las últimas tendencias del mercado inmobiliario en Cartagena.</p>'}
+        ${cta('Leer más en el blog', SITE_URL + '/blog.html')}
+        <p style="color:#9ca3af;font-size:.75rem;text-align:center">
+          <a href="${SITE_URL}" style="color:#9ca3af">Cancelar suscripción</a>
+        </p>`),
+      personalizado: () => wrapEmail(`
+        ${body || '<p>Contenido del newsletter.</p>'}
+        <p style="color:#9ca3af;font-size:.75rem;text-align:center">
+          <a href="${SITE_URL}" style="color:#9ca3af">Cancelar suscripción</a>
+        </p>`),
+    };
+
+    const tmpl = templates[template] || templates.personalizado;
+    const transporter = createTransporter(EMAIL_USER.value(), EMAIL_PASS.value());
+    let sent = 0, errors = 0;
+
+    for (const doc of snap.docs) {
+      const sub = doc.data();
+      try {
+        await transporter.sendMail({
+          from:    `"${SITE_NAME}" <${EMAIL_USER.value()}>`,
+          to:      sub.email,
+          subject: subject,
+          html:    tmpl(sub.nombre || ''),
+        });
+        sent++;
+      } catch (err) {
+        console.error(`[Newsletter] Error enviando a ${sub.email}:`, err.message);
+        errors++;
+      }
+    }
+
+    // Log the send
+    await db.collection('newsletter_sends').add({
+      subject,
+      template: template || 'personalizado',
+      totalSubscribers: snap.size,
+      sent,
+      errors,
+      sentBy: request.auth.uid,
+      sentAt: FieldValue.serverTimestamp(),
+    });
+
+    return { success: true, sent, errors, total: snap.size };
+  }
+);
