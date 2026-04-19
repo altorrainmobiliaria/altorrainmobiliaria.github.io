@@ -1726,4 +1726,40 @@ Vista Kanban alternativa para leads en el admin, con 4 columnas y drag & drop en
 
 ---
 
+## D6 — Dashboard analytics en admin (views, leads, conversión)
+
+**Fecha:** 2026-04-19
+**Commit:** (pendiente)
+**Estado:** ✅ Completado
+
+### Qué se hizo
+
+Dashboard de analytics completo en el panel admin con datos de Firestore + localStorage.
+
+**Widgets añadidos:**
+- 6 stat cards: Propiedades, Leads totales, Leads pendientes, Reseñas, WhatsApp clicks, Newsletter suscriptores
+- **Leads por tipo** — barras horizontales con todos los tipos de solicitud
+- **WhatsApp por fuente** — desglose de clicks por origen (botón flotante, hero, formulario, etc.) desde `analytics_events`
+- **Leads últimos 30 días** — gráfico de barras verticales con timeline diario
+- **Embudo de conversión** — visualización de etapas (Nuevo → Contactado → Visita → Cierre) con porcentajes
+- **Propiedades más vistas** — top 5 desde localStorage analytics
+- **Búsquedas frecuentes** — top 5 desde localStorage analytics
+
+**Datos Firestore consultados:**
+- `propiedades` (disponibles)
+- `solicitudes` (últimos 200, ordenados por fecha)
+- `resenas` (activas)
+- `analytics_events` (tipo whatsapp_click, últimos 500)
+- `newsletter` (suscriptores activos)
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/admin-dashboard.js` | Reescrito completo con 6 widgets analíticos |
+| `admin.html` | +2 stat cards (WhatsApp, Newsletter) + contenedor `analyticsGrid` |
+| `css/admin.css` | Estilos: `.analytics-grid`, `.tl-chart`, `.funnel-row`, responsive |
+
+---
+
 *Última actualización: 2026-04-19*

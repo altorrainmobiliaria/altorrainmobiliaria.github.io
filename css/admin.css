@@ -446,3 +446,63 @@ input, select, textarea { font-family: inherit; }
   font-size: .78rem;
   line-height: 1.4;
 }
+
+/* ──────────────────────────────────────────────────────
+   Dashboard analytics grid (D6)
+   ────────────────────────────────────────────────────── */
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 4px;
+  margin-bottom: 20px;
+}
+.dash-analytics-card {
+  margin-bottom: 0 !important;
+}
+
+/* Timeline bar chart */
+.tl-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 80px;
+}
+.tl-bar-col {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+}
+.tl-bar {
+  width: 100%;
+  border-radius: 2px 2px 0 0;
+  min-height: 3px;
+  transition: height .3s;
+}
+
+/* Funnel rows */
+.funnel-row {
+  margin-bottom: 12px;
+}
+.funnel-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: .85rem;
+  margin-bottom: 4px;
+}
+.funnel-bar-bg {
+  height: 8px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.funnel-bar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width .4s;
+}
+
+@media (max-width: 640px) {
+  .analytics-grid { grid-template-columns: 1fr; }
+}
