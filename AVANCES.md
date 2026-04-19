@@ -1671,4 +1671,36 @@ Vista Kanban alternativa para leads en el admin, con 4 columnas y drag & drop en
 
 ---
 
+## D4 — Blog inversionista con 3 posts seed (2026-04-19)
+
+**Qué:** Sección de blog enfocada en inversión inmobiliaria en Cartagena, con 3 artículos iniciales de contenido educativo para atraer inversionistas.
+
+**Posts creados:**
+
+| Archivo | Título | Tema | Longitud |
+|---------|--------|------|----------|
+| `blog/por-que-invertir-cartagena-2026.html` | ¿Por qué invertir en Cartagena en 2026? | Inversión general, stats, zonas | ~1200 palabras |
+| `blog/renta-turistica-vs-arriendo-tradicional.html` | Renta turística vs arriendo tradicional | Comparación ROI con caso real | ~1000 palabras |
+| `blog/guia-legal-inversionistas-extranjeros.html` | Guía legal para inversionistas extranjeros | Impuestos, visas, proceso legal | ~1400 palabras |
+
+**Mejoras técnicas:**
+- `components.js` ahora auto-detecta base path para subdirectorios (blog/, etc.)
+- Blog link agregado al footer
+- Cada post tiene JSON-LD Article schema, WhatsApp float, CTA box
+- Entradas i18n para blog
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `blog.html` | **Nuevo** — listing page con 3 cards |
+| `blog/por-que-invertir-cartagena-2026.html` | **Nuevo** |
+| `blog/renta-turistica-vs-arriendo-tradicional.html` | **Nuevo** |
+| `blog/guia-legal-inversionistas-extranjeros.html` | **Nuevo** |
+| `js/components.js` | Auto-detect base path via script src attribute |
+| `footer.html` | Link a blog.html |
+| `js/i18n.js` | Entradas blog |
+
+---
+
 *Última actualización: 2026-04-19*
