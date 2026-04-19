@@ -1615,4 +1615,38 @@ Vista Kanban alternativa para leads en el admin, con 4 columnas y drag & drop en
 
 ---
 
-*Última actualización: 2026-04-18*
+## D2 — Nurturing email: secuencias automatizadas (2026-04-19)
+
+**Qué:** Sistema de follow-up automático por email tras recibir un lead. Cada tipo de solicitud tiene su propia secuencia de 3-4 correos espaciados en días (día 1, 3, 7, 14).
+
+**Secuencias implementadas (5):**
+
+| Tipo | Emails | Temas |
+|------|--------|-------|
+| `contacto_propiedad` | 4 | Info propiedad → similares → visita → asesor |
+| `publicar_propiedad` | 4 | Cómo publicamos → ventajas → avalúo gratis → CTA |
+| `solicitud_avaluo` | 3 | Qué esperar → mercado Cartagena → servicios |
+| `gestion_renta_turistica` | 4 | Cómo funciona → ROI zonas → vs arriendo → CTA |
+| `_default` | 2 | Servicios generales → disponibilidad |
+
+**Implementación técnica:**
+- Cloud Function `processNurturingEmails` (scheduled, cada 6h)
+- Consulta solicitudes con `nurturing.nextEmailAt <= now`
+- Templates HTML con branding Altorra (oro, Poppins)
+- Cada email tiene CTA con botón dorado hacia la página relevante
+- `onNewSolicitud` inicializa metadatos de nurturing en el documento
+- Índice compuesto en `firestore.indexes.json` para la query
+- Lead score + tier (hot/warm/cold) visible en admin leads
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `functions/index.js` | Secuencias nurturing, `processNurturingEmails` scheduled, nurturing init en `onNewSolicitud` |
+| `firestore.indexes.json` | **Nuevo** — índice compuesto para query nurturing |
+| `js/admin-leads.js` | Lead tier badge en tabla, nurturing status + score en detail modal |
+| `PLAN-MEJORAS.md` | D2 → DONE |
+
+---
+
+*Última actualización: 2026-04-19*

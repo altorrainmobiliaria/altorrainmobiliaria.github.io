@@ -1,0 +1,14 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "solicitudes",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "nurturing.completed", "order": "ASCENDING" },
+        { "fieldPath": "nurturing.unsubscribed", "order": "ASCENDING" },
+        { "fieldPath": "nurturing.nextEmailAt", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
