@@ -1649,4 +1649,26 @@ Vista Kanban alternativa para leads en el admin, con 4 columnas y drag & drop en
 
 ---
 
+## D3 — WhatsApp tracking con UTM + Firestore analytics (2026-04-19)
+
+**Qué:** Intercepta todos los clicks en enlaces `wa.me` para agregar sufijo UTM al mensaje y loguear el evento en Firestore (`analytics_events`).
+
+**Funcionalidad:**
+- Detecta automáticamente la fuente del click (float_button, hero, contact_form, property_card, cta_section, footer, inline)
+- Appends UTM reference suffix al texto del mensaje WhatsApp: `Ref: web/source/campaign`
+- Logs to Firestore `analytics_events` con: type, source, page, propertyId, propertyTitle, referrer, userAgent, screenWidth, lang
+- API pública `window.AltorraWhatsApp.buildLink(text, source)` y `.track(source, propId)`
+- Regla Firestore: `analytics_events` permite create público, read autenticado
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/whatsapp-tracker.js` | **Nuevo** — interceptor + UTM + Firestore logger (~120 líneas) |
+| `firestore.rules` | Regla para `analytics_events` (create: public, read: auth) |
+| 15 HTML pages | Agregado `<script defer src="js/whatsapp-tracker.js">` |
+| `PLAN-MEJORAS.md` | D3 → DONE |
+
+---
+
 *Última actualización: 2026-04-19*
