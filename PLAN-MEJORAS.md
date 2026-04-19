@@ -243,8 +243,8 @@ FASE 4             → Bloque D (máquina de leads completo)
 | E1.1 | Meta titles + descriptions optimizados (todas las *.html) | ✅ DONE `ee38585` |
 | E1.2 | Canonical + og/twitter tags consistentes | ✅ DONE `ee38585` |
 | E1.3 | JSON-LD: RealEstateAgent + LocalBusiness + BreadcrumbList | ✅ DONE `786a3af` |
-| E1.4 | Sitemap.xml dinámico (desde Firestore) | 🔲 TODO |
-| E1.5 | Performance: preload LCP + lazy loading + compresión | 🔲 TODO |
+| E1.4 | Sitemap.xml dinámico (desde Firestore) | ✅ DONE |
+| E1.5 | Performance: preload LCP + lazy loading + compresión | ✅ DONE |
 
 ### E2 — Landing pages por intención
 
