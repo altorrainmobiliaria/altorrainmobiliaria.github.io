@@ -1762,4 +1762,36 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
+## E1.4 + E1.5 — Sitemap.xml + Performance optimizations
+
+**Fecha:** 2026-04-19
+**Estado:** ✅ Completado
+
+### Qué se hizo
+
+**E1.4 — Sitemap.xml reescrito:**
+- Eliminadas entradas que no son páginas (header.html, footer.html, snippets/, google verification)
+- Añadidas páginas faltantes: blog.html, 3 blog posts, invertir.html, renta-turistica.html, simulador.html, avaluo.html, mapa.html, foreign-investors.html, turismo-inmobiliario.html, busqueda.html, favoritos.html
+- Prioridades diferenciadas: home (1.0), listados (0.9), detalle/inversión (0.8), blog (0.7-0.8), servicios (0.5), privacidad (0.3)
+- Fechas actualizadas a 2026-04-19
+- changefreq ajustado por tipo de página
+
+**E1.5 — Performance:**
+- Eliminadas preconnect duplicadas en index.html (fonts.googleapis.com, fonts.gstatic.com, i.postimg.cc aparecían 2 veces)
+- Añadidas preconnect + dns-prefetch a listing pages (comprar, arrendar, alojamientos)
+- Eliminada referencia a performance.js legacy (IntersectionObserver manual reemplazado por native `loading="lazy"`)
+- Script utils.js ahora con defer para no bloquear parsing
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `sitemap.xml` | Reescrito: 30 URLs curadas, prioridades, fechas |
+| `index.html` | Preconnects dedup + script order cleanup |
+| `propiedades-comprar.html` | +4 preconnect/dns-prefetch hints |
+| `propiedades-arrendar.html` | +4 preconnect/dns-prefetch hints |
+| `propiedades-alojamientos.html` | +4 preconnect/dns-prefetch hints |
+
+---
+
 *Última actualización: 2026-04-19*
