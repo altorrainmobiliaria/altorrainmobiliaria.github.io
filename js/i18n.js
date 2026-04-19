@@ -227,6 +227,12 @@
     'Gracias':                        'Thank you',
     'Hemos recibido tu solicitud.':   'We have received your request.',
 
+    // Blog
+    'Blog':                           'Blog',
+    'Inversionista':                  'Investor',
+    'Leer artículo →':               'Read article →',
+    '← Volver al blog':              '← Back to blog',
+
     // Misc
     'Mis favoritos':                  'My favorites',
     'Cargando...':                    'Loading...',

@@ -1615,4 +1615,151 @@ Vista Kanban alternativa para leads en el admin, con 4 columnas y drag & drop en
 
 ---
 
-*Última actualización: 2026-04-18*
+## D2 — Nurturing email: secuencias automatizadas (2026-04-19)
+
+**Qué:** Sistema de follow-up automático por email tras recibir un lead. Cada tipo de solicitud tiene su propia secuencia de 3-4 correos espaciados en días (día 1, 3, 7, 14).
+
+**Secuencias implementadas (5):**
+
+| Tipo | Emails | Temas |
+|------|--------|-------|
+| `contacto_propiedad` | 4 | Info propiedad → similares → visita → asesor |
+| `publicar_propiedad` | 4 | Cómo publicamos → ventajas → avalúo gratis → CTA |
+| `solicitud_avaluo` | 3 | Qué esperar → mercado Cartagena → servicios |
+| `gestion_renta_turistica` | 4 | Cómo funciona → ROI zonas → vs arriendo → CTA |
+| `_default` | 2 | Servicios generales → disponibilidad |
+
+**Implementación técnica:**
+- Cloud Function `processNurturingEmails` (scheduled, cada 6h)
+- Consulta solicitudes con `nurturing.nextEmailAt <= now`
+- Templates HTML con branding Altorra (oro, Poppins)
+- Cada email tiene CTA con botón dorado hacia la página relevante
+- `onNewSolicitud` inicializa metadatos de nurturing en el documento
+- Índice compuesto en `firestore.indexes.json` para la query
+- Lead score + tier (hot/warm/cold) visible en admin leads
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `functions/index.js` | Secuencias nurturing, `processNurturingEmails` scheduled, nurturing init en `onNewSolicitud` |
+| `firestore.indexes.json` | **Nuevo** — índice compuesto para query nurturing |
+| `js/admin-leads.js` | Lead tier badge en tabla, nurturing status + score en detail modal |
+| `PLAN-MEJORAS.md` | D2 → DONE |
+
+---
+
+## D3 — WhatsApp tracking con UTM + Firestore analytics (2026-04-19)
+
+**Qué:** Intercepta todos los clicks en enlaces `wa.me` para agregar sufijo UTM al mensaje y loguear el evento en Firestore (`analytics_events`).
+
+**Funcionalidad:**
+- Detecta automáticamente la fuente del click (float_button, hero, contact_form, property_card, cta_section, footer, inline)
+- Appends UTM reference suffix al texto del mensaje WhatsApp: `Ref: web/source/campaign`
+- Logs to Firestore `analytics_events` con: type, source, page, propertyId, propertyTitle, referrer, userAgent, screenWidth, lang
+- API pública `window.AltorraWhatsApp.buildLink(text, source)` y `.track(source, propId)`
+- Regla Firestore: `analytics_events` permite create público, read autenticado
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/whatsapp-tracker.js` | **Nuevo** — interceptor + UTM + Firestore logger (~120 líneas) |
+| `firestore.rules` | Regla para `analytics_events` (create: public, read: auth) |
+| 15 HTML pages | Agregado `<script defer src="js/whatsapp-tracker.js">` |
+| `PLAN-MEJORAS.md` | D3 → DONE |
+
+---
+
+## D4 — Blog inversionista con 3 posts seed (2026-04-19)
+
+**Qué:** Sección de blog enfocada en inversión inmobiliaria en Cartagena, con 3 artículos iniciales de contenido educativo para atraer inversionistas.
+
+**Posts creados:**
+
+| Archivo | Título | Tema | Longitud |
+|---------|--------|------|----------|
+| `blog/por-que-invertir-cartagena-2026.html` | ¿Por qué invertir en Cartagena en 2026? | Inversión general, stats, zonas | ~1200 palabras |
+| `blog/renta-turistica-vs-arriendo-tradicional.html` | Renta turística vs arriendo tradicional | Comparación ROI con caso real | ~1000 palabras |
+| `blog/guia-legal-inversionistas-extranjeros.html` | Guía legal para inversionistas extranjeros | Impuestos, visas, proceso legal | ~1400 palabras |
+
+**Mejoras técnicas:**
+- `components.js` ahora auto-detecta base path para subdirectorios (blog/, etc.)
+- Blog link agregado al footer
+- Cada post tiene JSON-LD Article schema, WhatsApp float, CTA box
+- Entradas i18n para blog
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `blog.html` | **Nuevo** — listing page con 3 cards |
+| `blog/por-que-invertir-cartagena-2026.html` | **Nuevo** |
+| `blog/renta-turistica-vs-arriendo-tradicional.html` | **Nuevo** |
+| `blog/guia-legal-inversionistas-extranjeros.html` | **Nuevo** |
+| `js/components.js` | Auto-detect base path via script src attribute |
+| `footer.html` | Link a blog.html |
+| `js/i18n.js` | Entradas blog |
+
+---
+
+## D5 — Newsletter funcional con plantillas (2026-04-19)
+
+**Qué:** Sistema de newsletter con barra flotante de suscripción, almacenamiento en Firestore, y Cloud Function para enviar newsletters con plantillas.
+
+**Funcionalidad:**
+- Barra flotante aparece tras 5s en páginas clave (home, listados, inversión, blog)
+- Suscriptores guardados en Firestore `newsletter` con criterios de búsqueda
+- Detección de duplicados (reactivación si ya existe)
+- 3 plantillas de email: `nuevas_propiedades`, `mercado`, `personalizado`
+- Cloud Function `sendNewsletter` (callable, super_admin) con logging en `newsletter_sends`
+- FormSubmit fallback si Firestore no está disponible
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/newsletter.js` | Floating bar auto-show + CSS inyectado |
+| `functions/index.js` | `sendNewsletter` callable con 3 plantillas |
+| `firestore.rules` | Regla para `newsletter` (create+update: público, read: auth) |
+| 9 HTML pages | `<script defer src="js/newsletter.js">` |
+
+---
+
+## D6 — Dashboard analytics en admin (views, leads, conversión)
+
+**Fecha:** 2026-04-19
+**Commit:** (pendiente)
+**Estado:** ✅ Completado
+
+### Qué se hizo
+
+Dashboard de analytics completo en el panel admin con datos de Firestore + localStorage.
+
+**Widgets añadidos:**
+- 6 stat cards: Propiedades, Leads totales, Leads pendientes, Reseñas, WhatsApp clicks, Newsletter suscriptores
+- **Leads por tipo** — barras horizontales con todos los tipos de solicitud
+- **WhatsApp por fuente** — desglose de clicks por origen (botón flotante, hero, formulario, etc.) desde `analytics_events`
+- **Leads últimos 30 días** — gráfico de barras verticales con timeline diario
+- **Embudo de conversión** — visualización de etapas (Nuevo → Contactado → Visita → Cierre) con porcentajes
+- **Propiedades más vistas** — top 5 desde localStorage analytics
+- **Búsquedas frecuentes** — top 5 desde localStorage analytics
+
+**Datos Firestore consultados:**
+- `propiedades` (disponibles)
+- `solicitudes` (últimos 200, ordenados por fecha)
+- `resenas` (activas)
+- `analytics_events` (tipo whatsapp_click, últimos 500)
+- `newsletter` (suscriptores activos)
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/admin-dashboard.js` | Reescrito completo con 6 widgets analíticos |
+| `admin.html` | +2 stat cards (WhatsApp, Newsletter) + contenedor `analyticsGrid` |
+| `css/admin.css` | Estilos: `.analytics-grid`, `.tl-chart`, `.funnel-row`, responsive |
+
+---
+
+*Última actualización: 2026-04-19*

@@ -194,12 +194,24 @@
     });
   }
 
+  // ── Detect base path for subdirectory pages (e.g. blog/) ───────────────
+  function getBasePath() {
+    const s = document.querySelector('script[src*="components.js"]');
+    if (s) {
+      const src = s.getAttribute('src') || '';
+      const idx = src.lastIndexOf('js/components.js');
+      if (idx > 0) return src.slice(0, idx);
+    }
+    return '';
+  }
+
   // ── Función principal de carga ─────────────────────────────────────────────
   async function loadAllComponents() {
+    const base = getBasePath();
     // 1. Header + footer en paralelo
     const [headerOk] = await Promise.all([
-      loadComponent('header-placeholder', 'header.html'),
-      loadComponent('footer-placeholder', 'footer.html'),
+      loadComponent('header-placeholder', base + 'header.html'),
+      loadComponent('footer-placeholder', base + 'footer.html'),
     ]);
 
     // 2. Inicializar navegación tras inyectar el header
@@ -211,12 +223,11 @@
       const modalsContainer = document.getElementById('modals-container');
       if (modalsContainer) {
         // Intentar cargar — si no existe el archivo aún, falla silenciosamente
-        fetch('snippets/modals.html')
+        fetch(base + 'snippets/modals.html')
           .then(r => r.ok ? r.text() : Promise.reject())
           .then(html => {
             modalsContainer.innerHTML = html;
-            // Cargar JS/CSS de formularios si existen
-            loadAsset('js/contact-forms.js');
+            loadAsset(base + 'js/contact-forms.js');
           })
           .catch(() => { /* modals aún no creados — OK */ });
       }

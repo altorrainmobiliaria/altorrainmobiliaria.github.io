@@ -36,9 +36,10 @@
 const { onDocumentCreated, onDocumentUpdated, onDocumentWritten }
   = require('firebase-functions/v2/firestore');
 const { onCall, HttpsError } = require('firebase-functions/v2/https');
+const { onSchedule }         = require('firebase-functions/v2/scheduler');
 const { defineSecret }       = require('firebase-functions/params');
 const { initializeApp }      = require('firebase-admin/app');
-const { getFirestore, FieldValue } = require('firebase-admin/firestore');
+const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
 const { getAuth }            = require('firebase-admin/auth');
 const nodemailer             = require('nodemailer');
 const https                  = require('https');
@@ -177,6 +178,224 @@ function calculateLeadScore(data) {
   return { score, tier };
 }
 
+// ── Nurturing email sequences ──────────────────────────────────────────
+// Each sequence: array of { dayOffset, subject, bodyFn(data, extra) }
+// Step 0 = day of creation (handled by onNewSolicitud), steps 1+ = follow-ups
+
+const SITE_URL = 'https://altorrainmobiliaria.co';
+
+function wrapEmail(content) {
+  return `<div style="font-family:'Segoe UI',sans-serif;max-width:600px;margin:0 auto">
+    <div style="background:#d4af37;padding:20px;border-radius:8px 8px 0 0;text-align:center">
+      <h1 style="color:#000;margin:0;font-size:1.3rem">${SITE_NAME}</h1>
+      <p style="color:#000;margin:4px 0 0;font-size:.85rem">Gestión Integral en Soluciones Inmobiliarias</p>
+    </div>
+    <div style="background:#fff;border:1px solid #e5e7eb;border-top:0;padding:24px;border-radius:0 0 8px 8px">
+      ${content}
+      <hr style="border:none;border-top:1px solid #f3f4f6;margin:24px 0 12px"/>
+      <p style="font-size:.75rem;color:#9ca3af;text-align:center">
+        ${SITE_NAME} · Cartagena, Colombia<br/>
+        <a href="mailto:${ADMIN_EMAIL}" style="color:#d4af37">${ADMIN_EMAIL}</a> ·
+        <a href="https://wa.me/573002439810" style="color:#d4af37">+57 300 243 9810</a><br/>
+        <a href="${SITE_URL}" style="color:#d4af37">altorrainmobiliaria.co</a>
+      </p>
+    </div></div>`;
+}
+
+function cta(text, url) {
+  return `<p style="text-align:center;margin:20px 0"><a href="${url}" style="display:inline-block;padding:12px 28px;background:linear-gradient(90deg,#d4af37,#ffb400);color:#000;font-weight:700;text-decoration:none;border-radius:8px">${text}</a></p>`;
+}
+
+const NURTURING_SEQUENCES = {
+  contacto_propiedad: [
+    { dayOffset: 1, subject: 'Más sobre la propiedad que te interesó',
+      bodyFn: (d, ex) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Gracias por tu interés en ${ex.propiedadTitulo ? `<strong>${ex.propiedadTitulo}</strong>` : 'nuestras propiedades'}. Queremos asegurarnos de que tengas toda la información que necesitas.</p>
+        <p>Nuestro equipo de asesores está disponible para responder cualquier pregunta sobre la propiedad, el barrio, la documentación legal y las opciones de financiamiento.</p>
+        ${cta('Ver la propiedad', ex.propiedadId ? `${SITE_URL}/detalle-propiedad.html?id=${ex.propiedadId}` : `${SITE_URL}/propiedades-comprar.html`)}
+        <p style="color:#6b7280;font-size:.9rem">¿Prefieres hablar directamente? <a href="https://wa.me/573002439810" style="color:#d4af37">Escríbenos por WhatsApp</a>.</p>`) },
+    { dayOffset: 3, subject: 'Propiedades similares que podrían interesarte',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>En Altorra Inmobiliaria renovamos nuestro catálogo constantemente. Te invitamos a explorar propiedades similares que podrían ajustarse a lo que buscas.</p>
+        <ul style="color:#374151;line-height:1.8">
+          <li>Apartamentos con vista al mar en Bocagrande</li>
+          <li>Casas amplias en Castillogrande y Manga</li>
+          <li>Oportunidades de inversión en Cartagena</li>
+        </ul>
+        ${cta('Explorar propiedades', `${SITE_URL}/propiedades-comprar.html`)}`) },
+    { dayOffset: 7, subject: '¿Te gustaría agendar una visita personalizada?',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Sabemos que comprar o arrendar una propiedad es una decisión importante. Por eso ofrecemos <strong>visitas personalizadas</strong> sin compromiso para que conozcas el inmueble en detalle.</p>
+        <p>Durante la visita podrás:</p>
+        <ul style="color:#374151;line-height:1.8">
+          <li>Recorrer la propiedad con un asesor experto</li>
+          <li>Conocer el barrio y sus servicios</li>
+          <li>Recibir asesoría legal y financiera gratuita</li>
+        </ul>
+        ${cta('Agendar visita', `${SITE_URL}/contacto.html`)}`) },
+    { dayOffset: 14, subject: 'Tu asesor inmobiliario está disponible',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Queremos recordarte que nuestro equipo sigue a tu disposición. Ya sea que estés listo para avanzar o necesites más tiempo para decidir, estamos aquí para ayudarte.</p>
+        <p>En Altorra Inmobiliaria ofrecemos:</p>
+        <ul style="color:#374151;line-height:1.8">
+          <li>Respaldo jurídico en cada operación</li>
+          <li>Avalúos profesionales certificados</li>
+          <li>Administración integral de propiedades</li>
+        </ul>
+        ${cta('Contactar un asesor', `${SITE_URL}/contacto.html`)}
+        <p style="color:#9ca3af;font-size:.8rem;text-align:center">Este es nuestro último correo de seguimiento. No recibirás más mensajes automáticos.</p>`) },
+  ],
+
+  publicar_propiedad: [
+    { dayOffset: 1, subject: 'Así promocionamos tu propiedad en Altorra',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Recibimos tu solicitud para publicar tu propiedad. En Altorra Inmobiliaria nos encargamos de todo el proceso de comercialización:</p>
+        <ul style="color:#374151;line-height:1.8">
+          <li><strong>Fotografía profesional</strong> y tour virtual</li>
+          <li><strong>Publicación multicanal</strong> en portales y redes sociales</li>
+          <li><strong>Asesoría legal</strong> para contratos seguros</li>
+          <li><strong>Atención a compradores</strong> calificados</li>
+        </ul>
+        ${cta('Conocer nuestros servicios', `${SITE_URL}/quienes-somos.html`)}`) },
+    { dayOffset: 3, subject: '¿Por qué vender con Altorra Inmobiliaria?',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Elegir la inmobiliaria correcta marca la diferencia. Estos son algunos beneficios de publicar con nosotros:</p>
+        <ul style="color:#374151;line-height:1.8">
+          <li>🏆 Inmobiliaria #1 en Cartagena en Google Maps</li>
+          <li>📊 Estrategia de precio basada en avalúos reales</li>
+          <li>🔒 Verificación legal de escrituras y tradición</li>
+          <li>🌐 Exposición internacional a compradores</li>
+        </ul>
+        ${cta('Publicar mi propiedad', `${SITE_URL}/publicar-propiedad.html`)}`) },
+    { dayOffset: 7, subject: 'Avalúo gratuito para tu propiedad',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Para ayudarte a definir el mejor precio de venta, te ofrecemos un <strong>avalúo preliminar sin costo</strong>.</p>
+        <p>Nuestros avalúos consideran:</p>
+        <ul style="color:#374151;line-height:1.8">
+          <li>Ubicación y estrato</li>
+          <li>Estado del inmueble</li>
+          <li>Precios del mercado actual</li>
+          <li>Potencial de valorización</li>
+        </ul>
+        ${cta('Solicitar avalúo gratuito', `${SITE_URL}/avaluo.html`)}`) },
+    { dayOffset: 14, subject: '¿Listo para vender? Tu asesor te espera',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Sabemos que vender una propiedad requiere confianza. En Altorra Inmobiliaria hemos ayudado a cientos de propietarios en Cartagena a cerrar operaciones exitosas.</p>
+        <p>Agenda una cita con uno de nuestros asesores — sin compromiso.</p>
+        ${cta('Agendar cita', `${SITE_URL}/contacto.html`)}
+        <p style="color:#9ca3af;font-size:.8rem;text-align:center">Este es nuestro último correo de seguimiento.</p>`) },
+  ],
+
+  solicitud_avaluo: [
+    { dayOffset: 1, subject: 'Tu solicitud de avalúo: qué esperar',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Recibimos tu solicitud de avalúo. Un asesor se pondrá en contacto contigo en las próximas 24 horas para coordinar la visita técnica.</p>
+        <p><strong>¿Qué incluye nuestro avalúo?</strong></p>
+        <ul style="color:#374151;line-height:1.8">
+          <li>Inspección técnica del inmueble</li>
+          <li>Análisis comparativo del mercado</li>
+          <li>Informe escrito con valoración certificada</li>
+          <li>Recomendaciones para maximizar el valor</li>
+        </ul>
+        ${cta('Más sobre avalúos', `${SITE_URL}/avaluo.html`)}`) },
+    { dayOffset: 5, subject: 'Tendencias del mercado inmobiliario en Cartagena',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Mientras preparamos tu avalúo, te compartimos datos clave del mercado inmobiliario en Cartagena para 2026:</p>
+        <ul style="color:#374151;line-height:1.8">
+          <li>Valorización promedio anual: 8-12% en zonas premium</li>
+          <li>Demanda creciente de renta turística</li>
+          <li>Nuevos proyectos en Bocagrande y Crespo</li>
+        </ul>
+        <p>¿Necesitas ayuda adicional? Ofrecemos servicios completos de gestión inmobiliaria.</p>
+        ${cta('Ver nuestros servicios', `${SITE_URL}/invertir.html`)}`) },
+    { dayOffset: 10, subject: 'Servicios adicionales para tu propiedad',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Además de avalúos, en Altorra Inmobiliaria ofrecemos un portafolio completo de servicios:</p>
+        <ul style="color:#374151;line-height:1.8">
+          <li>Administración de inmuebles</li>
+          <li>Servicios jurídicos especializados</li>
+          <li>Gestión de renta turística</li>
+          <li>Mantenimiento y reparaciones</li>
+        </ul>
+        ${cta('Explorar servicios', `${SITE_URL}/quienes-somos.html`)}
+        <p style="color:#9ca3af;font-size:.8rem;text-align:center">Este es nuestro último correo de seguimiento.</p>`) },
+  ],
+
+  gestion_renta_turistica: [
+    { dayOffset: 1, subject: 'Así gestionamos tu renta turística',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Recibimos tu interés en nuestro servicio de gestión de renta turística. Te explicamos cómo funciona:</p>
+        <ol style="color:#374151;line-height:1.8">
+          <li><strong>Evaluación:</strong> Visitamos tu propiedad y evaluamos su potencial</li>
+          <li><strong>Preparación:</strong> Fotografía profesional y publicación en plataformas</li>
+          <li><strong>Operación:</strong> Gestión de reservas, limpieza y atención al huésped</li>
+          <li><strong>Liquidación:</strong> Reportes mensuales y pago directo a tu cuenta</li>
+        </ol>
+        ${cta('Más detalles', `${SITE_URL}/renta-turistica.html`)}`) },
+    { dayOffset: 3, subject: '¿Cuánto puede rentar tu propiedad en Cartagena?',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Las propiedades en Cartagena generan <strong>rendimientos atractivos</strong> en renta turística:</p>
+        <table style="width:100%;border-collapse:collapse;font-size:.9rem;margin:16px 0">
+          <tr style="background:#f9fafb"><td style="padding:8px;border:1px solid #e5e7eb"><strong>Bocagrande</strong></td><td style="padding:8px;border:1px solid #e5e7eb">8-12% ROI anual</td></tr>
+          <tr><td style="padding:8px;border:1px solid #e5e7eb"><strong>Centro Histórico</strong></td><td style="padding:8px;border:1px solid #e5e7eb">10-14% ROI anual</td></tr>
+          <tr style="background:#f9fafb"><td style="padding:8px;border:1px solid #e5e7eb"><strong>Castillogrande</strong></td><td style="padding:8px;border:1px solid #e5e7eb">7-10% ROI anual</td></tr>
+        </table>
+        <p>Usa nuestra calculadora para estimar tu rentabilidad específica.</p>
+        ${cta('Calcular mi ROI', `${SITE_URL}/invertir.html`)}`) },
+    { dayOffset: 7, subject: 'Renta turística vs arriendo tradicional',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>¿Sabías que la renta turística puede generar <strong>hasta 3x más ingresos</strong> que el arriendo tradicional en Cartagena?</p>
+        <p>Con Altorra no tienes que preocuparte por nada. Nos encargamos de la operación completa: reservas, limpieza, mantenimiento, atención al huésped y reportes.</p>
+        ${cta('Solicitar asesoría', `${SITE_URL}/renta-turistica.html`)}`) },
+    { dayOffset: 14, subject: 'Tu propiedad puede empezar a rentar hoy',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>No dejes tu propiedad vacía. En Altorra Inmobiliaria activamos tu inmueble para renta turística en menos de 2 semanas.</p>
+        <p>Contacta a tu asesor hoy y comienza a generar ingresos pasivos.</p>
+        ${cta('Empezar ahora', `${SITE_URL}/contacto.html`)}
+        <p style="color:#9ca3af;font-size:.8rem;text-align:center">Este es nuestro último correo de seguimiento.</p>`) },
+  ],
+
+  _default: [
+    { dayOffset: 3, subject: 'Conoce todos los servicios de Altorra Inmobiliaria',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Gracias por contactarnos. En Altorra Inmobiliaria ofrecemos una gama completa de servicios inmobiliarios:</p>
+        <ul style="color:#374151;line-height:1.8">
+          <li>Compra y venta de inmuebles</li>
+          <li>Arriendo y administración</li>
+          <li>Renta turística</li>
+          <li>Avalúos y servicios legales</li>
+        </ul>
+        ${cta('Explorar servicios', `${SITE_URL}/quienes-somos.html`)}`) },
+    { dayOffset: 7, subject: 'Estamos aquí para ayudarte',
+      bodyFn: (d) => wrapEmail(`
+        <p>Hola <strong>${d.nombre || 'estimado cliente'}</strong>,</p>
+        <p>Solo queríamos recordarte que nuestro equipo está disponible para cualquier consulta inmobiliaria.</p>
+        <p>Puedes contactarnos por WhatsApp, email o visitarnos en nuestra oficina en Cartagena.</p>
+        ${cta('Contactar ahora', `${SITE_URL}/contacto.html`)}
+        <p style="color:#9ca3af;font-size:.8rem;text-align:center">Este es nuestro último correo de seguimiento.</p>`) },
+  ],
+};
+
+function getNurturingSequence(tipo) {
+  return NURTURING_SEQUENCES[tipo] || NURTURING_SEQUENCES._default;
+}
+
 // ══════════════════════════════════════════════════════════════════════════
 // 1. onNewSolicitud — Email al admin cuando llega un lead nuevo
 // ══════════════════════════════════════════════════════════════════════════
@@ -190,7 +409,23 @@ exports.onNewSolicitud = onDocumentCreated(
 
     // Lead scoring
     const { score, tier } = calculateLeadScore(data);
-    await event.data.ref.update({ leadScore: score, leadTier: tier });
+
+    // Initialize nurturing sequence (follow-up emails over days)
+    const sequence = getNurturingSequence(data.tipo);
+    const firstStep = sequence[0];
+    const nextAt = new Date(Date.now() + firstStep.dayOffset * 86400000);
+    await event.data.ref.update({
+      leadScore: score,
+      leadTier: tier,
+      nurturing: {
+        step:         0,
+        completed:    false,
+        unsubscribed: false,
+        nextEmailAt:  Timestamp.fromDate(nextAt),
+        sequenceType: data.tipo || '_default',
+        totalSteps:   sequence.length,
+      },
+    });
 
     const extra   = data.datosExtra || {};
     const tipo    = data.tipo || 'contacto';
@@ -440,5 +675,163 @@ exports.updateUserRoleV2 = onCall(
     });
 
     return { success: true };
+  }
+);
+
+// ══════════════════════════════════════════════════════════════════════════
+// 8. processNurturingEmails — Scheduled: send follow-up emails
+//    Runs every 6 hours, queries solicitudes due for next nurturing email
+// ══════════════════════════════════════════════════════════════════════════
+exports.processNurturingEmails = onSchedule(
+  { schedule: 'every 6 hours', region: REGION, secrets: [EMAIL_USER, EMAIL_PASS] },
+  async () => {
+    const now = Timestamp.now();
+
+    const snap = await db.collection('solicitudes')
+      .where('nurturing.completed', '==', false)
+      .where('nurturing.unsubscribed', '==', false)
+      .where('nurturing.nextEmailAt', '<=', now)
+      .limit(50)
+      .get();
+
+    if (snap.empty) {
+      console.log('[Nurturing] No hay emails pendientes.');
+      return;
+    }
+
+    const transporter = createTransporter(EMAIL_USER.value(), EMAIL_PASS.value());
+    let sent = 0, errors = 0;
+
+    for (const doc of snap.docs) {
+      const data = doc.data();
+      const nurt = data.nurturing;
+      if (!data.email) continue;
+
+      const seqType = nurt.sequenceType || '_default';
+      const sequence = getNurturingSequence(seqType);
+      const step = nurt.step;
+
+      if (step >= sequence.length) {
+        await doc.ref.update({ 'nurturing.completed': true });
+        continue;
+      }
+
+      const entry = sequence[step];
+      const extra = data.datosExtra || {};
+
+      try {
+        const html = entry.bodyFn(data, extra);
+        await transporter.sendMail({
+          from:    `"${SITE_NAME}" <${EMAIL_USER.value()}>`,
+          to:      data.email,
+          subject: entry.subject,
+          html,
+        });
+
+        const nextStep = step + 1;
+        const isLast = nextStep >= sequence.length;
+
+        const update = {
+          'nurturing.step': nextStep,
+          'nurturing.completed': isLast,
+          'nurturing.lastSentAt': FieldValue.serverTimestamp(),
+        };
+
+        if (!isLast) {
+          const nextEntry = sequence[nextStep];
+          const createdAt = data.createdAt?.toDate() || new Date();
+          const nextDate = new Date(createdAt.getTime() + nextEntry.dayOffset * 86400000);
+          update['nurturing.nextEmailAt'] = Timestamp.fromDate(nextDate);
+        }
+
+        await doc.ref.update(update);
+        sent++;
+      } catch (err) {
+        console.error(`[Nurturing] Error enviando a ${data.email}:`, err.message);
+        errors++;
+      }
+    }
+
+    console.log(`[Nurturing] Procesados: ${sent} enviados, ${errors} errores.`);
+  }
+);
+
+// ══════════════════════════════════════════════════════════════════════════
+// 9. sendNewsletter — Send newsletter to all active subscribers
+//    Callable by super_admin from admin panel
+// ══════════════════════════════════════════════════════════════════════════
+exports.sendNewsletter = onCall(
+  { region: REGION, secrets: [EMAIL_USER, EMAIL_PASS] },
+  async (request) => {
+    await requireSuperAdmin(request.auth?.uid);
+
+    const { subject, body, template } = request.data || {};
+    if (!subject) throw new HttpsError('invalid-argument', 'Se requiere subject.');
+
+    // Get all active subscribers
+    const snap = await db.collection('newsletter')
+      .where('activo', '==', true)
+      .limit(200)
+      .get();
+
+    if (snap.empty) return { success: true, sent: 0, message: 'No hay suscriptores activos.' };
+
+    // Build email HTML from template or custom body
+    const templates = {
+      nuevas_propiedades: (name) => wrapEmail(`
+        <p>Hola${name ? ' <strong>' + name + '</strong>' : ''},</p>
+        <p>Tenemos <strong>nuevas propiedades</strong> disponibles que podrían interesarte.</p>
+        ${body || '<p>Visita nuestro catálogo para ver las últimas adiciones.</p>'}
+        ${cta('Ver propiedades nuevas', SITE_URL + '/propiedades-comprar.html')}
+        <p style="color:#9ca3af;font-size:.75rem;text-align:center">
+          <a href="${SITE_URL}" style="color:#9ca3af">Cancelar suscripción</a>
+        </p>`),
+      mercado: (name) => wrapEmail(`
+        <p>Hola${name ? ' <strong>' + name + '</strong>' : ''},</p>
+        <h2 style="color:#111;font-size:1.1rem;margin:16px 0 8px">Análisis de mercado</h2>
+        ${body || '<p>Te compartimos las últimas tendencias del mercado inmobiliario en Cartagena.</p>'}
+        ${cta('Leer más en el blog', SITE_URL + '/blog.html')}
+        <p style="color:#9ca3af;font-size:.75rem;text-align:center">
+          <a href="${SITE_URL}" style="color:#9ca3af">Cancelar suscripción</a>
+        </p>`),
+      personalizado: () => wrapEmail(`
+        ${body || '<p>Contenido del newsletter.</p>'}
+        <p style="color:#9ca3af;font-size:.75rem;text-align:center">
+          <a href="${SITE_URL}" style="color:#9ca3af">Cancelar suscripción</a>
+        </p>`),
+    };
+
+    const tmpl = templates[template] || templates.personalizado;
+    const transporter = createTransporter(EMAIL_USER.value(), EMAIL_PASS.value());
+    let sent = 0, errors = 0;
+
+    for (const doc of snap.docs) {
+      const sub = doc.data();
+      try {
+        await transporter.sendMail({
+          from:    `"${SITE_NAME}" <${EMAIL_USER.value()}>`,
+          to:      sub.email,
+          subject: subject,
+          html:    tmpl(sub.nombre || ''),
+        });
+        sent++;
+      } catch (err) {
+        console.error(`[Newsletter] Error enviando a ${sub.email}:`, err.message);
+        errors++;
+      }
+    }
+
+    // Log the send
+    await db.collection('newsletter_sends').add({
+      subject,
+      template: template || 'personalizado',
+      totalSubscribers: snap.size,
+      sent,
+      errors,
+      sentBy: request.auth.uid,
+      sentAt: FieldValue.serverTimestamp(),
+    });
+
+    return { success: true, sent, errors, total: snap.size };
   }
 );

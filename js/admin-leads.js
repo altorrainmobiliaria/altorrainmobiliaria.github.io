@@ -168,9 +168,13 @@
 
     tbody.innerHTML = page.map(l => {
       const estado = l.estado || 'pendiente';
+      const tier = l.leadTier || '';
+      const tierBadge = tier === 'hot' ? '<span style="color:#dc2626;font-weight:700">🔥</span>'
+                      : tier === 'warm' ? '<span style="color:#d97706;font-weight:700">🟡</span>'
+                      : tier === 'cold' ? '<span style="color:#6b7280">🔵</span>' : '';
       return `
       <tr>
-        <td>${escHtml(fmtDate(l.createdAt))}</td>
+        <td>${escHtml(fmtDate(l.createdAt))} ${tierBadge}</td>
         <td><strong>${escHtml(l.nombre || '—')}</strong><br><small>${escHtml(l.email || '')}</small></td>
         <td>${escHtml(l.telefono || '—')}</td>
         <td>${escHtml(tipoLabel(l.tipo))}</td>
@@ -198,8 +202,9 @@
       publicar_propiedad: 'Publicar propiedad',
       solicitud_avaluo:   'Avalúo',
       solicitud_juridica: 'Jurídica',
-      solicitud_contable: 'Contable',
-      otro:               'Otro',
+      solicitud_contable:      'Contable',
+      gestion_renta_turistica: 'Renta turística',
+      otro:                    'Otro',
     };
     return map[tipo] || tipo || '—';
   }
@@ -239,6 +244,8 @@
           ${extra.ciudad ? `<tr><th>Ciudad</th><td>${escHtml(extra.ciudad)}</td></tr>` : ''}
           ${extra.tipoInmueble ? `<tr><th>Tipo inmueble</th><td>${escHtml(extra.tipoInmueble)}</td></tr>` : ''}
           ${extra.precioAproximado ? `<tr><th>Precio aprox.</th><td>${new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',maximumFractionDigits:0}).format(extra.precioAproximado)}</td></tr>` : ''}
+          ${lead.leadScore != null ? `<tr><th>Lead Score</th><td><strong>${lead.leadScore}</strong>/100 — <span style="color:${lead.leadTier==='hot'?'#dc2626':lead.leadTier==='warm'?'#d97706':'#6b7280'};font-weight:700">${(lead.leadTier||'').toUpperCase()}</span></td></tr>` : ''}
+          ${lead.nurturing ? `<tr><th>Nurturing</th><td>${lead.nurturing.completed ? '✅ Completado' : lead.nurturing.unsubscribed ? '🚫 Desuscrito' : `📧 Paso ${lead.nurturing.step||0}/${lead.nurturing.totalSteps||'?'}`}</td></tr>` : ''}
         </table>
         <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">
           <select id="leadStatusSelect" class="lead-status-select">

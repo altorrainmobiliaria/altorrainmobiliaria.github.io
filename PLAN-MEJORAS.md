@@ -226,11 +226,11 @@ FASE 4             → Bloque D (máquina de leads completo)
 | # | Micro-fase | Estado |
 |---|-----------|--------|
 | D1 | CRM Kanban en admin (nuevo → contactado → visita → cierre) | ✅ DONE |
-| D2 | Nurturing email: secuencia 5 correos por tipo de solicitud | 🔲 TODO |
-| D3 | WhatsApp tracking con UTM + logging en Firestore analytics | 🔲 TODO |
-| D4 | Blog inversionista (seed 3 posts) | 🔲 TODO |
-| D5 | Newsletter funcional con plantillas | 🔲 TODO |
-| D6 | Dashboard analytics en admin (views, leads, conversión) | 🔲 TODO |
+| D2 | Nurturing email: secuencia 5 correos por tipo de solicitud | ✅ DONE |
+| D3 | WhatsApp tracking con UTM + logging en Firestore analytics | ✅ DONE |
+| D4 | Blog inversionista (seed 3 posts) | ✅ DONE |
+| D5 | Newsletter funcional con plantillas | ✅ DONE |
+| D6 | Dashboard analytics en admin (views, leads, conversión) | ✅ DONE |
 
 ---
 
