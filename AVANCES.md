@@ -1794,4 +1794,45 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
+## E2.1 + E2.2 + E2.3 — Landing pages SEO por intención de búsqueda
+
+**Fecha:** 2026-04-19
+**Estado:** ✅ Completado
+
+### Qué se hizo
+
+3 landing pages SEO optimizadas para capturar tráfico orgánico de alta intención:
+
+**E2.1 — comprar-apartamento-cartagena.html**
+- 6 zonas con precios/m², estrato, valorización y renta turística
+- 6 pasos para comprar (con contador CSS automático)
+- 6 consejos clave antes de comprar
+- 5 preguntas frecuentes con JSON-LD FAQPage schema
+- CTAs a listado de compra y contacto
+
+**E2.2 — arrendar-apartamento-cartagena.html**
+- 6 zonas con rango de canon mensual y características
+- Checklist de documentos y requisitos
+- Tabla comparativa arriendo tradicional vs por días
+- JSON-LD FAQPage schema
+- CTAs a listado de arriendo y contacto
+
+**E2.3 — invertir-airbnb-cartagena.html**
+- 4 zonas con ROI, ocupación, tarifa/noche e ingreso mensual
+- 8 costos operativos detallados con montos
+- 5 requisitos legales (RNT, impuestos, seguros, DANE)
+- JSON-LD FAQPage schema
+- CTAs a propiedades y servicio de renta turística
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `comprar-apartamento-cartagena.html` | NUEVO — landing compra por zona |
+| `arrendar-apartamento-cartagena.html` | NUEVO — landing arriendo por zona |
+| `invertir-airbnb-cartagena.html` | NUEVO — landing inversión Airbnb |
+| `sitemap.xml` | +3 URLs con prioridad 0.9 |
+
+---
+
 *Última actualización: 2026-04-19*
