@@ -1009,6 +1009,168 @@
     'Selecciona fecha':               'Select date',
     'Selecciona hora':                'Select time',
     'Confirmar cita':                 'Confirm appointment',
+
+    // ═══ Blog post 1: Por qué invertir en Cartagena 2026 ═══
+    '¿Por qué invertir en Cartagena en 2026? | Altorra Inmobiliaria':
+      'Why invest in Cartagena in 2026? | Altorra Real Estate',
+    'El mercado inmobiliario de Cartagena ha mantenido una valorización promedio anual del':
+      'Cartagena\'s real estate market has maintained an average annual appreciation of',
+    'en las zonas premium durante la última década. Barrios como Bocagrande, Castillogrande y el Centro Histórico lideran esta tendencia gracias a su ubicación estratégica y demanda internacional.':
+      'in premium areas during the last decade. Neighborhoods like Bocagrande, Castillogrande and the Historic Center lead this trend thanks to their strategic location and international demand.',
+    'Valorización anual promedio':    'Average annual appreciation',
+    'Ocupación Airbnb promedio':      'Average Airbnb occupancy',
+    'Precio m² promedio COP':         'Average price/m² COP',
+    'Este flujo turístico se traduce directamente en demanda de alojamiento de corta estancia, beneficiando a propietarios que operan bajo el modelo de renta turística.':
+      'This tourist flow translates directly into demand for short-term accommodation, benefiting owners who operate under the vacation rental model.',
+    'Los proyectos de infraestructura en curso transforman la ciudad:':
+      'Ongoing infrastructure projects are transforming the city:',
+    'Centro de Convenciones ampliado': 'Expanded Convention Center',
+    '— aumenta el turismo MICE':       '— increases MICE tourism',
+    'Nuevo corredor vial de Crespo':  'New Crespo road corridor',
+    '— conectividad al aeropuerto':   '— airport connectivity',
+    'Desarrollo de Serena del Mar':   'Serena del Mar development',
+    '— nueva zona premium al norte':  '— new premium zone to the north',
+    'Modernización del Puerto de Cruceros': 'Cruise Port modernization',
+    '— más capacidad':                '— more capacity',
+    'Colombia ofrece condiciones favorables para inversionistas extranjeros:':
+      'Colombia offers favorable conditions for foreign investors:',
+    'Sin restricciones para la compra de inmuebles por extranjeros':
+      'No restrictions on property purchases by foreigners',
+    'Visa de inversionista con inversión mínima de ~$85.000 USD':
+      'Investor visa with minimum investment of ~$85,000 USD',
+    'Tratados de doble tributación con múltiples países':
+      'Double taxation treaties with multiple countries',
+    'Repatriación libre de capitales y ganancias':
+      'Free repatriation of capital and profits',
+    'Comparado con otros mercados del Caribe, Cartagena ofrece mejor relación precio/rentabilidad:':
+      'Compared to other Caribbean markets, Cartagena offers better price/profitability ratio:',
+    'Cartagena:':                     'Cartagena:',
+    'Cancún:':                        'Cancún:',
+    'Precio m² desde $2.5M COP (~$600 USD), ROI 8-14%':
+      'Price/m² from $2.5M COP (~$600 USD), ROI 8-14%',
+
+    // ═══ Blog post 2: Renta turística vs tradicional ═══
+    '5 de 5 estrellas':               '5 out of 5 stars',
+    'Caso real: Apartamento en Bocagrande': 'Real case: Apartment in Bocagrena',
+    'Arriendo tradicional es ideal si:': 'Traditional rental is ideal if:',
+    'Renta turística es ideal si:':    'Vacation rental is ideal if:',
+    'Buscas un flujo de caja garantizado con mínimo esfuerzo':
+      'You seek guaranteed cash flow with minimal effort',
+    'Buscas maximizar ingresos y aceptas variabilidad estacional':
+      'You seek to maximize income and accept seasonal variability',
+    'Comparación directa':            'Direct comparison',
+    'Comparación detallada de ingresos, ocupación, gastos y ROI entre renta turística y arriendo tradicional en Cartagena.':
+      'Detailed comparison of income, occupancy, expenses and ROI between vacation rental and traditional rental in Cartagena.',
+
+    // ═══ Blog post 3: Guía legal extranjeros ═══
+    '1. ¿Pueden los extranjeros comprar propiedad en Colombia?':
+      '1. Can foreigners buy property in Colombia?',
+    '2. Proceso de compra paso a paso': '2. Step-by-step buying process',
+    '3. Impuestos al comprar':         '3. Taxes when buying',
+    '4. Impuestos recurrentes':        '4. Recurring taxes',
+    '5. Visa de inversionista (Tipo M)': '5. Investor visa (M type)',
+    '6. Financiamiento para extranjeros': '6. Financing for foreigners',
+    '7. Repatriación de capitales':    '7. Capital repatriation',
+    'Certificado de inversión registrada, pasaporte vigente, antecedentes limpios':
+      'Registered investment certificate, valid passport, clean background',
+    'Colombia garantiza el derecho a repatriar:': 'Colombia guarantees the right to repatriate:',
+    'Algunos bancos financian hasta el 70% del valor del inmueble':
+      'Some banks finance up to 70% of the property value',
+    '350 salarios mínimos (~$120M COP / ~$28.000 USD en 2026)':
+      '350 minimum wages (~$120M COP / ~$28,000 USD in 2026)',
+    'Aplica si el patrimonio líquido en Colombia supera ~$1.5M USD (2026)':
+      'Applies if liquid equity in Colombia exceeds ~$1.5M USD (2026)',
+    'Comprar sin abogado:':           'Buying without a lawyer:',
+    '15% sobre la utilidad (precio venta - precio compra ajustado por inflación)':
+      '15% on profit (sale price - purchase price adjusted for inflation)',
+    '15% en Colombia + escala IRPF ahorro en España (19-28%). Convenio evita doble imposición.':
+      '15% in Colombia + IRPF savings scale in Spain (19-28%). Treaty avoids double taxation.',
+    '35% sobre alquileres brutos a no residentes. Crédito fiscal en España.':
+      '35% on gross rents to non-residents. Tax credit in Spain.',
+    '0.3% - 1.2% del avalúo catastral anual (varía por municipio y estrato)':
+      '0.3% - 1.2% of annual cadastral appraisal (varies by municipality and stratum)',
+    '1.67% del valor':                '1.67% of value',
+    '1% del valor':                   '1% of value',
+
+    // ═══ Más útiles ═══
+    'Tu inversión y tu hogar merecen seguridad, legalidad y confianza.':
+      'Your investment and home deserve security, legality and trust.',
+    'ALTORRA':                        'ALTORRA',
+    'ALTORRA S.A.S. — Inmobiliaria en Cartagena especializada en compra, venta, avalúos, administración, arriendo y asesoría legal inmobiliaria.':
+      'ALTORRA S.A.S. — Cartagena real estate specialized in buying, selling, appraisals, management, rental and legal advice.',
+    'ALTORRA S.A.S. — Tu inversión y tu hogar merecen seguridad, legalidad y confianza.':
+      'ALTORRA S.A.S. — Your investment and home deserve security, legality and trust.',
+    'Presentación Altorra':           'Altorra presentation',
+    'Hero de Contacto':               'Contact Hero',
+    'Contacto Altorra':               'Contact Altorra',
+    'Contacta a Altorra Inmobiliaria en Cartagena. Asesoría en compra, venta, arriendo, avalúos y servicios legales inmobiliarios.':
+      'Contact Altorra Real Estate in Cartagena. Advice on buying, selling, rental, appraisals and legal real estate services.',
+    'Contacta a Altorra Inmobiliaria. Asesoría en compra, venta, arriendo y avalúos en Cartagena.':
+      'Contact Altorra Real Estate. Advice on buying, selling, rental and appraisals in Cartagena.',
+
+    // ═══ Busqueda avanzada ═══
+    'Buscar Propiedades en Cartagena | Altorra Inmobiliaria':
+      'Search Properties in Cartagena | Altorra Real Estate',
+    'Buscar Propiedades | Altorra Inmobiliaria': 'Search Properties | Altorra Real Estate',
+    'Busca entre todas las propiedades de Altorra Inmobiliaria en Cartagena.':
+      'Search all Altorra Real Estate properties in Cartagena.',
+    'Busca entre todas las propiedades de Altorra Inmobiliaria: venta, arriendo y alojamientos por días en Cartagena. Filtros avanzados por tipo, precio, área y más.':
+      'Search all Altorra Real Estate properties: sale, rental and vacation rentals in Cartagena. Advanced filters by type, price, area and more.',
+    'Ciudad, barrio, código o característica...':
+      'City, neighborhood, code or feature...',
+
+    // ═══ Mapa ═══
+    'Mapa de Propiedades | Altorra Inmobiliaria': 'Property Map | Altorra Real Estate',
+    'Explora todas las propiedades disponibles en un mapa interactivo de Cartagena.':
+      'Explore all available properties on an interactive map of Cartagena.',
+    'Ver en lista':                   'View as list',
+    'Ver en mapa':                    'View on map',
+
+    // ═══ Detalle propiedad extras ═══
+    'Consulta características, precio y fotos de esta propiedad en Cartagena.':
+      'Check features, price and photos of this property in Cartagena.',
+    'Consulta características, precio, ubicación y fotos de esta propiedad en Altorra Inmobiliaria, Cartagena.':
+      'Check features, price, location and photos of this property at Altorra Real Estate, Cartagena.',
+
+    // ═══ Meta tags comunes ═══
+    'Alojamientos por Días en Cartagena | Altorra Inmobiliaria':
+      'Vacation Rentals in Cartagena | Altorra Real Estate',
+    'Alquila apartamentos y casas por días en Cartagena. Alojamientos amoblados para turismo y vacaciones con Altorra Inmobiliaria.':
+      'Rent apartments and houses by the day in Cartagena. Furnished vacation accommodations with Altorra Real Estate.',
+    'Alquila apartamentos y casas por días en Cartagena. Alojamientos amoblados para turismo y vacaciones.':
+      'Rent apartments and houses by the day in Cartagena. Furnished vacation accommodations.',
+    'Apartamentos, casas y lotes en venta en Cartagena y ciudades vecinas. Asesoría jurídica, financiera y acompañamiento integral con Altorra Inmobiliaria.':
+      'Apartments, houses and lots for sale in Cartagena and neighboring cities. Legal, financial and comprehensive support with Altorra Real Estate.',
+    'Apartamentos, casas y lotes en venta en Cartagena. Asesoría jurídica y financiera integral.':
+      'Apartments, houses and lots for sale in Cartagena. Comprehensive legal and financial advice.',
+    'Arrienda apartamentos y casas en Cartagena con contratos seguros y respaldo jurídico.':
+      'Rent apartments and houses in Cartagena with secure contracts and legal backing.',
+    'Arrienda apartamentos y casas en Cartagena con contratos seguros y respaldo jurídico. Administración integral de inmuebles con Altorra Inmobiliaria.':
+      'Rent apartments and houses in Cartagena with secure contracts and legal backing. Comprehensive property management with Altorra Real Estate.',
+    'Arrienda apartamento en Cartagena por zona: Bocagrande, Manga, Crespo, Pie de la Popa. Precios actualizados, contratos seguros y asesoría legal.':
+      'Rent an apartment in Cartagena by zone: Bocagrande, Manga, Crespo, Pie de la Popa. Updated prices, secure contracts and legal advice.',
+    'Precios de arriendo por zona, contratos seguros y asesoría legal para arrendar en Cartagena.':
+      'Rental prices by zone, secure contracts and legal advice to rent in Cartagena.',
+    'Altorra Inmobiliaria en Cartagena: compra, venta, arriendo y avalúos de propiedades con asesoría jurídica, financiera y acompañamiento integral.':
+      'Altorra Real Estate in Cartagena: buying, selling, rental and property appraisals with legal, financial and comprehensive support.',
+    'Altorra Inmobiliaria | Propiedades en Cartagena':
+      'Altorra Real Estate | Properties in Cartagena',
+    'Altorra Inmobiliaria | Propiedades en Cartagena — Compra, Arriendo y Avalúos':
+      'Altorra Real Estate | Properties in Cartagena — Buying, Rental and Appraisals',
+    'Compra, arrienda o invierte en propiedades en Cartagena con asesoría jurídica y financiera integral.':
+      'Buy, rent or invest in properties in Cartagena with comprehensive legal and financial advice.',
+    'Altorra Inmobiliaria':           'Altorra Real Estate',
+
+    // ═══ Alert, toast y mensajes del sistema ═══
+    'Datos actualizados':             'Data updated',
+    'Guardado correctamente':         'Saved successfully',
+    'Eliminado correctamente':        'Deleted successfully',
+    'Operación exitosa':              'Operation successful',
+    'Error inesperado':               'Unexpected error',
+    'Por favor intenta de nuevo':     'Please try again',
+    'Por favor completa los campos':  'Please complete the fields',
+    'Revisa tu conexión':             'Check your connection',
+    'Sin resultados':                 'No results',
   };
 
   // Build EN→ES reverse
@@ -1081,6 +1243,19 @@
     }
   }
 
+  // Traducción de sub-strings (frases dentro de párrafos)
+  // Solo aplica claves >= 20 chars para evitar reemplazos falsos en palabras cortas.
+  function translateSubstrings(text, map) {
+    for (var k in map) {
+      if (!map.hasOwnProperty(k)) continue;
+      if (k.length < 20) continue;
+      if (text.indexOf(k) !== -1) {
+        text = text.split(k).join(map[k]);
+      }
+    }
+    return text;
+  }
+
   function translatePage() {
     var toEN = (state.lang === 'en');
     var map = toEN ? ES_TO_EN : EN_TO_ES;
@@ -1089,25 +1264,26 @@
     translateDOM(document.body, map, phMap);
     document.documentElement.setAttribute('lang', state.lang);
 
-    // Page title
-    if (toEN) {
-      document.title = document.title
-        .replace('Altorra Inmobiliaria', 'Altorra Real Estate')
-        .replace('Propiedades en Venta', 'Properties for Sale')
-        .replace('Propiedades en Arriendo', 'Properties for Rent')
-        .replace('Alojamientos por Días', 'Vacation Rentals')
-        .replace('Detalle de Propiedad', 'Property Detail')
-        .replace('Invertir en Cartagena', 'Invest in Cartagena')
-        .replace('Renta Turística en Cartagena', 'Vacation Rental in Cartagena');
+    // Page title — exact match o substring
+    var t = document.title;
+    if (map[t]) {
+      document.title = map[t];
     } else {
-      document.title = document.title
-        .replace('Altorra Real Estate', 'Altorra Inmobiliaria')
-        .replace('Properties for Sale', 'Propiedades en Venta')
-        .replace('Properties for Rent', 'Propiedades en Arriendo')
-        .replace('Vacation Rentals', 'Alojamientos por Días')
-        .replace('Property Detail', 'Detalle de Propiedad')
-        .replace('Invest in Cartagena', 'Invertir en Cartagena')
-        .replace('Vacation Rental in Cartagena', 'Renta Turística en Cartagena');
+      document.title = translateSubstrings(t, map);
+    }
+
+    // Meta description + og:description + og:title
+    var metas = document.querySelectorAll('meta[name="description"],meta[property="og:description"],meta[property="og:title"],meta[property="twitter:description"],meta[property="twitter:title"]');
+    for (var mi = 0; mi < metas.length; mi++) {
+      var m = metas[mi];
+      var c = m.getAttribute('content');
+      if (!c) continue;
+      if (map[c]) {
+        m.setAttribute('content', map[c]);
+      } else {
+        var translated = translateSubstrings(c, map);
+        if (translated !== c) m.setAttribute('content', translated);
+      }
     }
   }
 
