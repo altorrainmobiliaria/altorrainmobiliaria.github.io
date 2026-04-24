@@ -7,7 +7,7 @@
    - Mantener CSS/IMG rápidos con caché
    =========================================== */
 
-const CACHE_NAME = 'altorra-pwa-v2'; // Sube el nombre si alguna vez cambias la estrategia
+const CACHE_NAME = 'altorra-pwa-v3'; // Sube el nombre si alguna vez cambias la estrategia
 const ORIGIN = self.location.origin;
 
 // Toma control inmediatamente al instalar
