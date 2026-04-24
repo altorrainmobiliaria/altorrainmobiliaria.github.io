@@ -262,7 +262,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| E3.1 | Estructura `blog.html` + `blog-post.html` + colección `blog` | 🔲 TODO |
+| E3.1 | Estructura `blog.html` + `blog-post.html` + colección `blog` | ✅ DONE |
 | E3.2 | Seed: "¿Vale la pena invertir en Cartagena 2026?" | 🔲 TODO |
 | E3.3 | Seed: "Mejores zonas para Airbnb en Cartagena" | 🔲 TODO |
 | E3.4 | Seed: "Impuestos inmobiliarios Colombia: guía 2026" | 🔲 TODO |

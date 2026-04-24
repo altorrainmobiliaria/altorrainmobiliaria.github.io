@@ -123,6 +123,17 @@ service cloud.firestore {
       allow delete: if isSuperAdmin();
     }
 
+    // ── BLOG ──────────────────────────────────────────────────────
+    // Lectura pública (artículos), escritura solo editores
+    match /blog/{postId} {
+      allow read:   if true;
+      allow create: if isSuperAdmin()
+        || (isEditorOrAbove() && validCreateVersion());
+      allow update: if isSuperAdmin()
+        || (isEditorOrAbove() && validVersion());
+      allow delete: if isSuperAdmin();
+    }
+
     // ── DEFAULT: DENEGAR TODO LO DEMÁS ───────────────────────────
     match /{document=**} {
       allow read, write: if false;
