@@ -1171,6 +1171,440 @@
     'Por favor completa los campos':  'Please complete the fields',
     'Revisa tu conexión':             'Check your connection',
     'Sin resultados':                 'No results',
+
+    // Page titles & metas (batch 1)
+    'Comprar Apartamento en Cartagena | Altorra Inmobiliaria': 'Buy Apartment in Cartagena | Altorra Real Estate',
+    'Comprar Apartamento en Cartagena | Guía por Zonas | Altorra Inmobiliaria': 'Buy Apartment in Cartagena | Neighborhood Guide | Altorra Real Estate',
+    'Arrendar Apartamento en Cartagena | Altorra Inmobiliaria': 'Rent Apartment in Cartagena | Altorra Real Estate',
+    'Arrendar Apartamento en Cartagena | Por Zona | Altorra Inmobiliaria': 'Rent Apartment in Cartagena | By Zone | Altorra Real Estate',
+    'Invertir en Cartagena | Altorra Inmobiliaria': 'Invest in Cartagena | Altorra Real Estate',
+    'Invertir en Cartagena | ROI y Oportunidades | Altorra Inmobiliaria': 'Invest in Cartagena | ROI & Opportunities | Altorra Real Estate',
+    'Invertir en Airbnb en Cartagena | Altorra Inmobiliaria': 'Invest in Airbnb in Cartagena | Altorra Real Estate',
+    'Invertir en Airbnb en Cartagena | ROI y Zonas Rentables | Altorra Inmobiliaria': 'Invest in Airbnb in Cartagena | ROI & Best Zones | Altorra Real Estate',
+    'Lotes Campestres en Cartagena | Altorra Inmobiliaria': 'Country Lots in Cartagena | Altorra Real Estate',
+    'Lotes Campestres en Cartagena | Fincas y Terrenos | Altorra Inmobiliaria': 'Country Lots in Cartagena | Farms & Land | Altorra Real Estate',
+    'Propiedades en Barú y La Boquilla | Altorra Inmobiliaria': 'Properties in Barú & La Boquilla | Altorra Real Estate',
+    'Propiedades en Venta en Cartagena | Altorra Inmobiliaria': 'Properties for Sale in Cartagena | Altorra Real Estate',
+    'Propiedades en Arriendo en Cartagena | Altorra Inmobiliaria': 'Properties for Rent in Cartagena | Altorra Real Estate',
+    'Renta Turística en Cartagena | Altorra': 'Vacation Rental in Cartagena | Altorra',
+    'Renta Turística en Cartagena | Gestión Airbnb | Altorra Inmobiliaria': 'Vacation Rental in Cartagena | Airbnb Management | Altorra Real Estate',
+    'Renta turística vs arriendo tradicional | Altorra Inmobiliaria': 'Vacation rental vs long-term rental | Altorra Real Estate',
+    'Turismo Inmobiliario | Altorra': 'Real Estate Tourism | Altorra',
+    'Turismo Inmobiliario | Altorra Inmobiliaria': 'Real Estate Tourism | Altorra Real Estate',
+    'Servicio próximamente | Altorra Inmobiliaria': 'Service coming soon | Altorra Real Estate',
+    'Contacto | Altorra Inmobiliaria': 'Contact | Altorra Real Estate',
+    'Quiénes Somos | Altorra Inmobiliaria': 'About Us | Altorra Real Estate',
+    'Mis Favoritos | Altorra Inmobiliaria': 'My Favorites | Altorra Real Estate',
+    'Mapa de propiedades | Altorra': 'Property Map | Altorra',
+    'Mapa de propiedades | Altorra Inmobiliaria': 'Property Map | Altorra Real Estate',
+    'Simulador hipotecario | Altorra': 'Mortgage Calculator | Altorra',
+    'Simulador de crédito hipotecario | Altorra Inmobiliaria': 'Mortgage Calculator | Altorra Real Estate',
+    'Avalúo comercial gratuito | Altorra': 'Free commercial appraisal | Altorra',
+    'Solicitar avalúo comercial | Altorra Inmobiliaria': 'Request commercial appraisal | Altorra Real Estate',
+    'Política de Privacidad | Altorra Inmobiliaria': 'Privacy Policy | Altorra Real Estate',
+    'Publica tu Propiedad | Altorra Inmobiliaria': 'List your Property | Altorra Real Estate',
+    'Detalle de Propiedad | Altorra Inmobiliaria': 'Property Details | Altorra Real Estate',
+    'Propiedad en Altorra Inmobiliaria': 'Property at Altorra Real Estate',
+    'Blog Inversionista | Altorra Inmobiliaria': 'Investor Blog | Altorra Real Estate',
+    'Blog Inversionista — Altorra Inmobiliaria': 'Investor Blog — Altorra Real Estate',
+    'Foreign Investors Guide | Altorra Inmobiliaria': 'Foreign Investors Guide | Altorra Real Estate',
+    'Foreign Investors Guide | Buy Property in Cartagena | Altorra': 'Foreign Investors Guide | Buy Property in Cartagena | Altorra',
+    'Guía legal para inversionistas extranjeros en Colombia | Altorra Inmobiliaria': 'Legal guide for foreign investors in Colombia | Altorra Real Estate',
+    '¡Gracias! | Altorra Inmobiliaria': 'Thank you! | Altorra Real Estate',
+
+    // Meta descriptions (batch 1)
+    'Guía completa para comprar apartamento en Cartagena: precios por zona (Bocagrande, Manga, Castillogrande, Crespo), consejos legales y las mejores oportunidades.':
+      'Complete guide to buying an apartment in Cartagena: prices by zone (Bocagrande, Manga, Castillogrande, Crespo), legal tips and the best opportunities.',
+    'Precios por zona, consejos legales y oportunidades para comprar apartamento en Cartagena de Indias.':
+      'Prices by zone, legal advice and opportunities to buy an apartment in Cartagena de Indias.',
+    'Guía para invertir en Airbnb en Cartagena: zonas con mayor ocupación, ROI esperado, costos operativos y requisitos legales (RNT). Análisis de mercado 2026.':
+      'Guide to investing in Airbnb in Cartagena: zones with highest occupancy, expected ROI, operating costs and legal requirements (RNT). 2026 market analysis.',
+    'ROI, ocupación por zona y guía legal para invertir en renta turística en Cartagena.':
+      'ROI, occupancy by zone and legal guide to invest in vacation rental in Cartagena.',
+    'Descubre las mejores zonas para invertir en Cartagena. Análisis de ROI por barrio, casos de éxito y oportunidades de renta turística.':
+      'Discover the best zones to invest in Cartagena. ROI analysis by neighborhood, success cases and vacation rental opportunities.',
+    'ROI por zona, casos de éxito y oportunidades de inversión inmobiliaria en Cartagena de Indias.':
+      'ROI by zone, success cases and real estate investment opportunities in Cartagena de Indias.',
+    'Lotes campestres y fincas en venta cerca de Cartagena: Barú, Turbaco, Arjona y zona norte. Precios, extensiones y oportunidades de inversión rural.':
+      'Country lots and farms for sale near Cartagena: Barú, Turbaco, Arjona and northern zone. Prices, sizes and rural investment opportunities.',
+    'Lotes campestres, fincas y terrenos en venta cerca de Cartagena. Precios y oportunidades.':
+      'Country lots, farms and land for sale near Cartagena. Prices and opportunities.',
+    'Propiedades en venta en Barú y La Boquilla, Cartagena: lotes, casas y apartamentos frente al mar. Precios, valorización y oportunidades de inversión 2026.':
+      'Properties for sale in Barú and La Boquilla, Cartagena: lots, houses and beachfront apartments. Prices, appreciation and 2026 investment opportunities.',
+    'Lotes, casas y apartamentos frente al mar en Barú y La Boquilla. Inversión con alta valorización.':
+      'Lots, houses and beachfront apartments in Barú and La Boquilla. High-appreciation investment.',
+    'Gestión integral de renta turística en Cartagena. Maximiza ingresos de tu propiedad con Airbnb, Booking y nuestros canales directos.':
+      'Full-service vacation rental management in Cartagena. Maximize your property income with Airbnb, Booking and our direct channels.',
+    'Experiencias turísticas en Cartagena: renta de yates, pasadías en islas, paquetes turísticos y tours históricos. Muy pronto con Altorra Inmobiliaria.':
+      'Tourist experiences in Cartagena: yacht rentals, island day trips, travel packages and historical tours. Coming soon with Altorra Real Estate.',
+    'Artículos sobre inversión inmobiliaria en Cartagena: guías, análisis de mercado, renta turística y consejos legales para inversionistas.':
+      'Articles on real estate investment in Cartagena: guides, market analysis, vacation rental and legal advice for investors.',
+    'Calcula tu cuota mensual estimada para un crédito hipotecario en Colombia. Simula plazo, tasa y cuota inicial al instante.':
+      'Calculate your estimated monthly payment for a mortgage loan in Colombia. Instantly simulate term, rate and down payment.',
+    'Calcula tu cuota mensual estimada para comprar propiedad en Colombia.': 'Calculate your estimated monthly payment to buy property in Colombia.',
+    'Solicita un avalúo comercial de tu propiedad con Altorra Inmobiliaria. Recibirás una estimación del valor de mercado sin costo.':
+      'Request a commercial appraisal of your property with Altorra Real Estate. You will receive a market value estimate at no cost.',
+    'Explora propiedades en venta, arriendo y alojamiento en el mapa interactivo.': 'Explore properties for sale, rent and accommodation on the interactive map.',
+    'Explora todas las propiedades disponibles de Altorra Inmobiliaria en el mapa. Filtra por tipo, operación y ciudad.':
+      'Explore all available Altorra Real Estate properties on the map. Filter by type, operation and city.',
+    'Explora todas las propiedades disponibles en el mapa. Filtra por operación, tipo o ciudad.': 'Explore all available properties on the map. Filter by operation, type or city.',
+    'Todo lo que necesitas saber sobre impuestos, visas, escrituración y trámites para comprar propiedad en Colombia como extranjero.':
+      'Everything you need to know about taxes, visas, deeds and procedures to buy property in Colombia as a foreigner.',
+    'Tratamiento de datos personales conforme a la Ley 1581 de 2012 y Decreto 1377 de 2013 en Colombia.':
+      'Personal data processing under Colombian Law 1581 of 2012 and Decree 1377 of 2013.',
+    'Publica tu inmueble en Altorra Inmobiliaria. Vende o arrienda tu propiedad en Cartagena con acompañamiento profesional.':
+      'List your property with Altorra Real Estate. Sell or rent your property in Cartagena with professional support.',
+    'Vende o arrienda tu propiedad en Cartagena con acompañamiento profesional de Altorra.': 'Sell or rent your property in Cartagena with Altorra\'s professional support.',
+    'Propiedades guardadas como favoritos en Altorra Inmobiliaria.': 'Properties saved as favorites at Altorra Real Estate.',
+    'Cartagena se consolida como uno de los mercados inmobiliarios más atractivos de Latinoamérica. Descubre las razones clave para invertir en 2026.':
+      'Cartagena has become one of the most attractive real estate markets in Latin America. Discover the key reasons to invest in 2026.',
+
+    // Listings / Search / Filters
+    'Filtros de búsqueda':            'Search filters',
+    'Filtra por zona':                'Filter by zone',
+    'Habitaciones, amoblado, área…':  'Bedrooms, furnished, area…',
+    'Precio mínimo (COP)':            'Minimum price (COP)',
+    'Precio máximo (COP)':            'Maximum price (COP)',
+    'Área mín. (m²)':                 'Min. area (m²)',
+    'Área máx. (m²)':                 'Max. area (m²)',
+    'Precio: Menor a Mayor':          'Price: Low to High',
+    'Precio: Mayor a Menor':          'Price: High to Low',
+    'Más Recientes':                  'Most recent',
+    'Baños':                          'Bathrooms',
+    'Ej. Cartagena':                  'E.g. Cartagena',
+    'Toda Cartagena':                 'All Cartagena',
+    'En venta':                       'For sale',
+    'En arriendo':                    'For rent',
+    'propiedades':                    'properties',
+    'Mapa de':                        'Map of',
+    'Haz clic en cada marker para ver precio, specs y acceder al detalle.': 'Click each marker to see price, specs and access the details.',
+    'Visualiza dónde está cada propiedad antes de agendaruna visita.': 'See where each property is before scheduling a visit.',
+    '¿Por qué usar el mapa?':         'Why use the map?',
+    'Limita la búsqueda por barrio o zona de la ciudad que más te interesa.': 'Narrow your search by the neighborhood or zone of the city you\'re most interested in.',
+
+    // Contact / Publicar / Thank you
+    'Conéctate con Nosotros':         'Connect with us',
+    'Envíanos un mensaje':            'Send us a message',
+    'Estamos listos para ayudarte a encontrar tu próximo hogar o inversión.': 'We\'re ready to help you find your next home or investment.',
+    'Te responderemos en el menor tiempo posible.': 'We will reply as soon as possible.',
+    'Correo:':                        'Email:',
+    'Teléfono':                       'Phone',
+    'Teléfono/WhatsApp:':             'Phone/WhatsApp:',
+    'Dirección de contacto:':         'Contact address:',
+    'Cartagena de Indias, Bolívar – Colombia': 'Cartagena de Indias, Bolívar – Colombia',
+    'Llámanos o escríbenos por WhatsApp:': 'Call us or message us on WhatsApp:',
+    'WhatsApp Altorra':               'WhatsApp Altorra',
+    '📞 ¿Prefieres hablar?':          '📞 Prefer to talk?',
+    '🔒 Tus datos están seguros':     '🔒 Your data is safe',
+    '¡Gracias! Recibimos tu mensaje': 'Thank you! We received your message',
+    'Tu caso quedó':                  'Your case has been',
+    'ID de seguimiento:':             'Tracking ID:',
+    'Un profesional de':              'A professional from',
+    'se comunicará contigo muy pronto. Si necesitas una atención inmediata, escríbenos por WhatsApp.': 'will contact you very soon. If you need immediate assistance, message us on WhatsApp.',
+    'Serás redirigido al':            'You will be redirected to',
+    '¿Qué sigue?':                    'What\'s next?',
+    'Publica tu propiedad con Altorra': 'List your property with Altorra',
+    '¿En cuánto lo tienes valuado?':  'What is your asking price?',
+    'Cuéntanos más sobre la propiedad (remodelaciones, estado, etc.)': 'Tell us more about the property (renovations, condition, etc.)',
+    'Validaremos tu solicitud y uno de nuestros asesores te contactará pronto.': 'We\'ll validate your request and one of our advisors will contact you soon.',
+
+    // Avalúo
+    'Avalúo comercial':               'Commercial appraisal',
+    'Solicita el avalúo de tu propiedad. Nuestros expertos te contactarán con una estimación del valor de mercado.':
+      'Request your property appraisal. Our experts will contact you with a market value estimate.',
+    'Más de 10 años de experiencia en el mercado inmobiliario de Cartagena y la región Caribe. Avalúos basados en datos reales del mercado.':
+      'Over 10 years of experience in the Cartagena and Caribbean real estate market. Appraisals based on real market data.',
+    'Respuesta en menos de 24 horas hábiles. El avalúo preliminar es gratuito. Si necesitas avalúo oficial con certificado, nuestro equipo te cotiza el servicio.':
+      'Response in less than 24 business hours. The preliminary appraisal is free. If you need an official certified appraisal, our team will provide a quote.',
+    'Toda la información que compartes es confidencial y se usa únicamente para preparar tu avalúo. No compartimos datos con terceros.':
+      'All information you share is confidential and used only to prepare your appraisal. We do not share data with third parties.',
+    'menos de 24h':                   'less than 24h',
+    'Solicitar asesoría legal':       'Request legal advice',
+    '¿Necesitas asesoría legal personalizada?': 'Need personalized legal advice?',
+    'Nuestro equipo jurídico te guía en todo el proceso de compra como inversionista extranjero.':
+      'Our legal team guides you through the entire purchase process as a foreign investor.',
+    'Solicitar avalúo comercial | Altorra Inmobiliaria': 'Request commercial appraisal | Altorra Real Estate',
+
+    // Simulador
+    'Simula cuánto puedes ganar con tu propiedad en renta turística.': 'Simulate how much you can earn with your property in vacation rental.',
+    'Ingresa el precio, tarifa por noche y ocupación estimada para ver tu ROI.': 'Enter the price, nightly rate and estimated occupancy to see your ROI.',
+    'Usa nuestra calculadora para estimar el ROI de tu propiedad según zona y modalidad.':
+      'Use our calculator to estimate your property\'s ROI by zone and operation type.',
+    '¿Quieres calcular tu rentabilidad?': 'Want to calculate your profitability?',
+
+    // Privacidad
+    'Política de Privacidad':         'Privacy Policy',
+    'Cómo recopilamos, usamos y protegemos su información personal.': 'How we collect, use and protect your personal information.',
+    'Última actualización:':          'Last updated:',
+    'Índice de secciones':            'Table of contents',
+    'Documento conforme a la':        'Document compliant with',
+    'Ley 1581 de 2012':               'Law 1581 of 2012',
+    'Decreto 1377 de 2013':           'Decree 1377 of 2013',
+    '(en adelante, “Altorra”) es responsable del tratamiento de los datos personales recolectados a través de sus canales digitales y presenciales.':
+      '(hereinafter, "Altorra") is responsible for processing personal data collected through its digital and in-person channels.',
+    'Identificación y contacto: nombre, cédula/NIT, correo, teléfono, ciudad.': 'Identification and contact: name, ID/tax ID, email, phone, city.',
+    'Información del inmueble: dirección aproximada, características, fotos provistas por el titular.': 'Property information: approximate address, characteristics, photos provided by the owner.',
+    'Preferencias y registros derivados del servicio y la relación comercial.': 'Preferences and records derived from the service and commercial relationship.',
+    'Datos técnicos mínimos: IP, dispositivo, navegador, páginas visitadas (analítica).': 'Minimal technical data: IP, device, browser, pages visited (analytics).',
+    'No tratamos categorías especiales (sensibles) salvo que sean necesarias y con consentimiento explícito.':
+      'We do not process special (sensitive) categories unless necessary and with explicit consent.',
+    'Prestar servicios de compra, venta, arriendo, administración, avalúos y asesoría jurídica.': 'Provide services for purchase, sale, rental, administration, appraisals and legal advice.',
+    'Responder solicitudes, cotizaciones y agendar visitas.': 'Respond to requests, quotes and schedule visits.',
+    'Envío de comunicaciones informativas y/o comerciales (con opción de cancelación).': 'Sending informational and/or commercial communications (with opt-out option).',
+    'Verificación de identidad y prevención de fraude.': 'Identity verification and fraud prevention.',
+    'Mejora de experiencia digital, seguridad, métricas y cumplimiento de obligaciones legales.':
+      'Improvement of digital experience, security, metrics and compliance with legal obligations.',
+    'Podemos compartir datos con encargados (hosting, mensajería, analítica, CRM) bajo acuerdos de confidencialidad. Posibles transferencias internacionales con salvaguardas adecuadas.':
+      'We may share data with processors (hosting, messaging, analytics, CRM) under confidentiality agreements. Possible international transfers with adequate safeguards.',
+    'No vendemos datos personales. Revelamos información solo por mandato legal o autoridad competente.': 'We do not sell personal data. We disclose information only by legal mandate or competent authority.',
+    'Control de acceso, cifrado en tránsito (HTTPS), copias de seguridad y principio de mínimo privilegio para encargados.':
+      'Access control, encryption in transit (HTTPS), backups and principle of least privilege for processors.',
+    'Incluya nombre completo, documento, solicitud y medio de respuesta.': 'Include full name, ID, request and response method.',
+    '(asunto: “Derechos de datos personales”).': '(subject: "Personal data rights").',
+    'Plazos: consultas hasta 10 días hábiles y reclamos hasta 15.': 'Timeframes: inquiries up to 10 business days and claims up to 15.',
+    'Cookies técnicas necesarias y, eventualmente, de medición. Puede aceptar o rechazar las de medición en este aviso.':
+      'Necessary technical cookies and, eventually, measurement cookies. You can accept or reject measurement cookies in this notice.',
+    'Puede cambiar su decisión borrando las cookies del navegador.': 'You can change your decision by deleting browser cookies.',
+    'Rechazar medición':              'Reject measurement',
+    'utilizamos cookies necesarias y de medición para mejorar su experiencia.': 'we use necessary and measurement cookies to improve your experience.',
+    'No dirigimos servicios a menores de 18 años. Si tratamos datos por relación con sus acudientes, será bajo interés superior del menor y consentimiento del representante.':
+      'We do not direct services to minors under 18. If we process data due to relations with their guardians, it will be under the best interests of the minor and the representative\'s consent.',
+    'Para preguntas o reclamos sobre datos personales contáctenos por estos medios. También puede acudir a la Superintendencia de Industria y Comercio (SIC).':
+      'For questions or complaints about personal data, contact us through these channels. You may also contact the Superintendence of Industry and Commerce (SIC).',
+
+    // Foreign investors (EN stays EN, ES side is native English already; these are reverse for EN→ES context)
+    'Everything US, Canadian and Spanish investors need to know about buying real estate in Cartagena.':
+      'Everything US, Canadian and Spanish investors need to know about buying real estate in Cartagena.',
+    'Why Cartagena for foreign investors?': 'Why Cartagena for foreign investors?',
+    'Does buying property give me residency?': 'Does buying property give me residency?',
+    'Foreigners have the same property rights as Colombians. No special visa or permit required to buy.':
+      'Foreigners have the same property rights as Colombians. No special visa or permit required to buy.',
+    'Ready to own a piece of Cartagena?': 'Ready to own a piece of Cartagena?',
+    'Spending winters in Cartagena is tax-efficient if structured correctly.': 'Spending winters in Cartagena is tax-efficient if structured correctly.',
+    'No restrictions':                'No restrictions',
+    'No estate tax treaty:':          'No estate tax treaty:',
+    'No. The entire process can be done remotely through a power of attorney signed at a Colombian consulate or apostilled locally. We coordinate everything.':
+      'No. The entire process can be done remotely through a power of attorney signed at a Colombian consulate or apostilled locally. We coordinate everything.',
+    'Sign a "Promesa de Compraventa" with 10-30% deposit. Can be executed remotely via power of attorney.':
+      'Sign a "Promesa de Compraventa" with 10-30% deposit. Can be executed remotely via power of attorney.',
+    'Wire USD/EUR/CAD to Colombia via authorized banks. Funds are registered with Banco de la República (Form 4) — mandatory for future repatriation.':
+      'Wire USD/EUR/CAD to Colombia via authorized banks. Funds are registered with Banco de la República (Form 4) — mandatory for future repatriation.',
+    'Yes. Our team includes bilingual agents (EN/ES) and we partner with English-speaking attorneys and accountants specialized in foreign investors.':
+      'Yes. Our team includes bilingual agents (EN/ES) and we partner with English-speaking attorneys and accountants specialized in foreign investors.',
+
+    // Legal / tax / visa content (ES→EN)
+    'Impuestos, visas y trámites para comprar propiedad en Colombia': 'Taxes, visas and procedures to buy property in Colombia',
+    'Colombia ofrece una visa de inversionista para extranjeros que inviertan en bienes raíces:': 'Colombia offers an investor visa for foreigners who invest in real estate:',
+    'Inversión mínima:':              'Minimum investment:',
+    'Duración:':                      'Duration:',
+    'Hasta 3 años, renovable':        'Up to 3 years, renewable',
+    'Residencia en Colombia, acceso al sistema de salud, posibilidad de trabajar': 'Residence in Colombia, access to healthcare, possibility to work',
+    'La visa de inversionista es una de las rutas más populares para extranjeros que buscan residencia en Colombia. La inversión inmobiliaria cumple como requisito y además genera retorno financiero.':
+      'The investor visa is one of the most popular paths for foreigners seeking residence in Colombia. Real estate investment qualifies as a requirement and also generates financial return.',
+    'El proceso legal requiere asesoría profesional': 'The legal process requires professional advice',
+    'Siempre obtener un Certificado de Tradición y Libertad actualizado': 'Always obtain an updated Certificate of Tradition and Freedom',
+    'Verificar el Certificado de Tradición y Libertad del inmueble, que confirma la propiedad y ausencia de gravámenes. Un abogado inmobiliario es esencial.':
+      'Verify the property\'s Certificate of Tradition and Freedom, which confirms ownership and absence of liens. A real estate attorney is essential.',
+    'Promesa de compraventa:':        'Promise of sale:',
+    'Contrato privado que establece precio, condiciones y plazo. Generalmente incluye un depósito del 10-20%.':
+      'Private contract setting price, conditions and term. Generally includes a 10-20% deposit.',
+    'Escritura pública:':             'Public deed:',
+    'Se firma ante notario público. El comprador y vendedor (o sus apoderados) deben estar presentes.': 'Signed before a notary public. Buyer and seller (or their attorneys-in-fact) must be present.',
+    'La escritura se registra en la Oficina de Instrumentos Públicos. Esto formaliza la transferencia de propiedad.': 'The deed is registered at the Public Instruments Office. This formalizes the property transfer.',
+    'Impuesto de registro':           'Registration tax',
+    'Debes registrar el ingreso de divisas ante el Banco de la República mediante el formulario de declaración de cambio. Esto protege tu derecho a repatriar ganancias.':
+      'You must register the foreign currency inflow with the Banco de la República through the exchange declaration form. This protects your right to repatriate earnings.',
+    'Obtener Cédula de Extranjería o NIT:': 'Obtain Foreigner ID or NIT:',
+    'Necesitas un número de identificación tributaria (NIT) para realizar transacciones. Se obtiene en la DIAN con tu pasaporte.':
+      'You need a tax identification number (NIT) to carry out transactions. It is obtained from DIAN with your passport.',
+    'Registrar la inversión extranjera:': 'Register the foreign investment:',
+    'La condición es que la inversión haya sido registrada ante el Banco de la República al momento del ingreso de las divisas.':
+      'The condition is that the investment has been registered with the Banco de la República at the time of currency inflow.',
+    'Obtener crédito hipotecario como extranjero en Colombia es posible pero tiene condiciones especiales:': 'Getting a mortgage as a foreigner in Colombia is possible but has special conditions:',
+    'Tasas de interés: 10-14% anual en COP (más altas que para colombianos)': 'Interest rates: 10-14% annually in COP (higher than for Colombians)',
+    'Plazo máximo: 15-20 años':       'Maximum term: 15-20 years',
+    'Muchos inversionistas extranjeros optan por pagar de contado o financiar a través de su país de origen, donde las tasas son generalmente menores.':
+      'Many foreign investors choose to pay in cash or finance through their home country, where rates are generally lower.',
+    'Retención colombiana:':          'Colombian withholding:',
+    'Extranjeros no residentes: retención del 35% sobre renta bruta; residentes fiscales: tarifa progresiva (0-39%)':
+      'Non-resident foreigners: 35% withholding on gross income; tax residents: progressive rate (0-39%)',
+    'IRPF sobre alquileres:':         'IRPF on rentals:',
+    'Rentas inmobiliarias en Colombia tributan en España como rendimiento de capital inmobiliario. Deducción por doble imposición.':
+      'Real estate income in Colombia is taxed in Spain as real estate capital income. Deduction for double taxation.',
+    'Impuesto de patrimonio:':        'Wealth tax:',
+    'Declaración obligatoria de bienes en el extranjero si superan los €50.000.': 'Mandatory declaration of assets abroad if they exceed €50,000.',
+    'Impuesto sobre el Patrimonio:':  'Wealth Tax:',
+    'Si tu patrimonio mundial supera el mínimo exento (€700K + €300K vivienda habitual).': 'If your worldwide wealth exceeds the exempt minimum (€700K + €300K primary residence).',
+    'Renta sobre ingresos de arriendo:': 'Income tax on rental income:',
+    'Ganancia ocasional por venta:':  'Occasional gain on sale:',
+    'Retención en la fuente':         'Withholding at source',
+    'Impuesto en Colombia + en la comunidad autónoma española del heredero. Planificación fiscal clave.':
+      'Tax in Colombia + in the heir\'s Spanish autonomous community. Key fiscal planning.',
+    'Los porcentajes y umbrales fiscales pueden cambiar cada año. Consulta siempre con un contador público colombiano antes de tomar decisiones de inversión.':
+      'Tax percentages and thresholds may change each year. Always consult a Colombian public accountant before making investment decisions.',
+    'El capital invertido original':  'The original invested capital',
+    'Las ganancias y dividendos':     'Profits and dividends',
+    'El producto de la venta del inmueble': 'Proceeds from the sale of the property',
+    'Sin registro ante el Banco de la República, repatriar dinero se complica': 'Without Banco de la República registration, repatriating money becomes complicated',
+    'No registrar la inversión:':     'Not registering the investment:',
+    'No declarar ingresos por arriendo puede generar sanciones': 'Not declaring rental income can lead to penalties',
+    'No verificar títulos:':          'Not verifying titles:',
+    'No hacer avalúo independiente:': 'Not getting an independent appraisal:',
+    'Verificar que el precio pedido corresponda al mercado real': 'Verifying that the asking price matches the real market',
+    '🇪🇸 Ciudadanos & Residentes Españoles': '🇪🇸 Spanish Citizens & Residents',
+    '🇪🇸 España':                     '🇪🇸 Spain',
+    'España':                         'Spain',
+    'Razones clave y datos que respaldan la inversión inmobiliaria en Cartagena': 'Key reasons and data backing real estate investment in Cartagena',
+
+    // Invest / ROI zones
+    'Precio apto m²':                 'Apt price per m²',
+    'Precio lote m²':                 'Lot price per m²',
+    'Valorización anual':             'Annual appreciation',
+    'ROI anual típico':               'Typical annual ROI',
+    'Precio m² desde $1.800 USD, ROI 6-9%': 'Price per m² from $1,800 USD, ROI 6-9%',
+    'Precio m² desde $2.500 USD, ROI 5-8%': 'Price per m² from $2,500 USD, ROI 5-8%',
+    'Precio m² desde $5.000 USD, ROI 4-6%': 'Price per m² from $5,000 USD, ROI 4-6%',
+    '+6-10%/año':                     '+6-10%/year',
+    '+8-12%/año':                     '+8-12%/year',
+    '+12-15%/año':                    '+12-15%/year',
+    '+15-20%/año':                    '+15-20%/year',
+    'Ver propiedades en Manzanillo del Mar': 'View properties in Manzanillo del Mar',
+    'Ver oportunidades de inversión': 'View investment opportunities',
+    '$1M — $3M / mes':                '$1M — $3M / month',
+    '$1.2M — $3.5M / mes':            '$1.2M — $3.5M / month',
+    '$1.5M — $4.5M / mes':            '$1.5M — $4.5M / month',
+    '$1.8M — $5M / mes':              '$1.8M — $5M / month',
+    '$2M — $6M / mes':                '$2M — $6M / month',
+    '$2.5M — $8M / mes':              '$2.5M — $8M / month',
+    '$80K - $150K/mes':               '$80K - $150K/month',
+    '$100K - $200K/mes':              '$100K - $200K/month',
+    '$150K - $300K/mes':              '$150K - $300K/month',
+    '$200K - $800K/mes':              '$200K - $800K/month',
+    '$300K - $600K/mes':              '$300K - $600K/month',
+
+    // Neighborhoods
+    'Bocagrande':                     'Bocagrande',
+    'Getsemaní':                      'Getsemaní',
+    'Centro Histórico':               'Historic Center',
+    'La Boquilla':                    'La Boquilla',
+    'Barú':                           'Barú',
+    'Pie de la Popa':                 'Pie de la Popa',
+    'La zona más exclusiva. Frente al mar, hoteles 5 estrellas, centros comerciales y vida nocturna. Ideal para inversión en renta por días.':
+      'The most exclusive area. Beachfront, 5-star hotels, shopping centers and nightlife. Ideal for short-term rental investment.',
+    'Patrimonio UNESCO con el mayor potencial de renta turística. Propiedades coloniales con encanto único que atrae turistas internacionales dispuestos a pagar tarifas premium.':
+      'UNESCO heritage with the highest vacation rental potential. Colonial properties with unique charm that attract international tourists willing to pay premium rates.',
+    'Patrimonio UNESCO. Casas coloniales restauradas y aptos boutique. La mayor demanda de Airbnb en toda Colombia.':
+      'UNESCO heritage. Restored colonial houses and boutique apartments. The highest Airbnb demand in all of Colombia.',
+    'Mayor demanda turística de Colombia. Casas coloniales y aptos boutique con encanto único. Tarifa premium por la experiencia.':
+      'Highest tourist demand in Colombia. Colonial houses and boutique apartments with unique charm. Premium rates for the experience.',
+    'El barrio de moda. Viajeros jóvenes, nómadas digitales y turismo cultural. Inversión inicial más baja que Centro Histórico.':
+      'The trendy neighborhood. Young travelers, digital nomads and cultural tourism. Lower initial investment than the Historic Center.',
+    'Estrato 5-6. La zona con mayor oferta de arriendo. Cerca a la playa, restaurantes, centros comerciales y vida nocturna.':
+      'Socioeconomic level 5-6. The zone with the highest rental supply. Close to the beach, restaurants, shopping centers and nightlife.',
+    'Estrato 5. Residencial con vistas a la bahía. Zona tranquila con colegios y acceso a las principales vías.':
+      'Socioeconomic level 5. Residential with bay views. Quiet area with schools and access to main roads.',
+    'Estrato 4-6. Casas coloniales y apartamentos boutique. Patrimonio UNESCO con la mayor vida cultural de la ciudad.':
+      'Socioeconomic level 4-6. Colonial houses and boutique apartments. UNESCO heritage with the city\'s greatest cultural life.',
+    'Estrato 4-5. Barrio residencial con carácter. Buena conectividad, restaurantes y ambiente tranquilo.':
+      'Socioeconomic level 4-5. Residential neighborhood with character. Good connectivity, restaurants and quiet atmosphere.',
+    'Estrato 4. Cerca al aeropuerto. Proyectos nuevos con excelente relación precio-calidad. Ideal para profesionales.':
+      'Socioeconomic level 4. Close to airport. New projects with excellent price-quality ratio. Ideal for professionals.',
+    'Estrato 3-4. Zona en expansión con proyectos modernos. Cerca a la playa y centros comerciales nuevos.':
+      'Socioeconomic level 3-4. Expanding zone with modern projects. Close to the beach and new shopping centers.',
+    'La zona más consolidada, ideal para inversionistas conservadores. Alta liquidez y demanda constante tanto para venta como renta.':
+      'The most established zone, ideal for conservative investors. High liquidity and constant demand for both sale and rental.',
+    'Exclusividad residencial con acceso a playa. Edificios de lujo con amenidades completas. Menor densidad que Bocagrande.':
+      'Residential exclusivity with beach access. Luxury buildings with full amenities. Lower density than Bocagrande.',
+    'Segmento premium y familias. Menor competencia que Bocagrande. Propiedades de lujo con amenidades exclusivas.':
+      'Premium segment and families. Less competition than Bocagrande. Luxury properties with exclusive amenities.',
+    'Barrio tradicional con encanto. Restaurantes, vida cultural y buena conectividad. Excelente relación precio-calidad para vivienda.':
+      'Traditional neighborhood with charm. Restaurants, cultural life and good connectivity. Excellent price-quality ratio for housing.',
+    'Cerca al aeropuerto y al mar. Proyectos nuevos con precios competitivos. Ideal para primera vivienda o arriendo a largo plazo.':
+      'Close to airport and sea. New projects with competitive prices. Ideal for first home or long-term rental.',
+    'Zona en desarrollo cerca al aeropuerto. Precios más accesibles con alta proyección de valorización por los nuevos proyectos viales.':
+      'Developing area near the airport. More accessible prices with high appreciation projection due to new road projects.',
+    'Zona en plena expansión. Proyectos sobre planos con precios de oportunidad. Mayor potencial de valorización a mediano plazo.':
+      'Rapidly expanding area. Pre-construction projects with opportunity prices. Greatest medium-term appreciation potential.',
+    'Mejor balance entre inversión inicial y retorno. Alta oferta pero demanda constante por playa y servicios.':
+      'Best balance between initial investment and return. High supply but constant demand for beach and services.',
+
+    // Renta turística — comparativa y FAQ
+    'Convertimos tu propiedad en una inversión rentable con gestión profesional de renta turística.':
+      'We turn your property into a profitable investment with professional vacation rental management.',
+    '¿Qué es más rentable? Comparamos ambas modalidades con datos reales.': 'Which is more profitable? We compare both options with real data.',
+    'Tomemos como ejemplo un apartamento de 2 habitaciones en Bocagrande valorado en $500.000.000 COP:': 'Let\'s take as an example a 2-bedroom apartment in Bocagrande valued at $500,000,000 COP:',
+    'Escenario A: Renta turística':   'Scenario A: Vacation rental',
+    'Escenario B: Arriendo tradicional': 'Scenario B: Traditional rental',
+    'Ocupación promedio: 65% (19.5 noches/mes)': 'Average occupancy: 65% (19.5 nights/month)',
+    'Ocupación: 100% (contrato anual)': 'Occupancy: 100% (annual contract)',
+    'ROI anual: 11.5%':               'Annual ROI: 11.5%',
+    'ROI anual: 6.2%':                'Annual ROI: 6.2%',
+    'En este caso, la renta turística genera casi el doble de ingresos netos. Sin embargo, requiere una gestión operativa significativamente mayor o la contratación de un operador profesional.':
+      'In this case, vacation rental generates almost double the net income. However, it requires significantly greater operational management or hiring a professional operator.',
+    '¿Cuándo conviene cada opción?':  'When does each option fit best?',
+    'Tu propiedad está en zona turística premium (Bocagrande, Centro Histórico, Castillogrande)': 'Your property is in a premium tourist area (Bocagrande, Historic Center, Castillogrande)',
+    'Tu propiedad está en zona residencial (no turística)': 'Your property is in a residential (non-tourist) area',
+    'Cuentas con un operador profesional de gestión': 'You have a professional management operator',
+    'Prefieres ingresos estables y predecibles': 'You prefer stable and predictable income',
+    'Quieres usar la propiedad ocasionalmente para uso personal': 'You want to use the property occasionally for personal use',
+    'No quieres involucrarte en la gestión operativa': 'You do not want to be involved in operational management',
+    'La opción híbrida':              'The hybrid option',
+    'Gestión requerida':              'Management required',
+    'Alta (la hacemos nosotros)':     'High (we handle it)',
+    'Mayor rotación':                 'Higher turnover',
+    'Desgaste del inmueble':          'Property wear',
+    'Quién paga':                     'Who pays',
+    'Fija y predecible':              'Fixed and predictable',
+    'Variable por temporada':         'Variable by season',
+    'Diaria (o con operador)':        'Daily (or with operator)',
+    '20 - 30% del ingreso':           '20 - 30% of income',
+    '20-35% del ingreso':             '20-35% of income',
+    '5-10% del ingreso':              '5-10% of income',
+    '~15% del ingreso':               '~15% of income',
+    'El factor gestión':              'The management factor',
+    'Gestión comercial y relación con clientes y proveedores.': 'Commercial management and relationship with clients and suppliers.',
+    '¿Qué requisitos debe tener mi propiedad?': 'What requirements must my property have?',
+    'Amoblada, con servicios básicos, aire acondicionado, Wi-Fi y en buen estado. Si falta algo, te asesoramos en la dotación.':
+      'Furnished, with basic services, air conditioning, Wi-Fi and in good condition. If anything is missing, we advise you on furnishing.',
+    '¿Cuánto cobra Altorra por gestionar mi propiedad?': 'How much does Altorra charge to manage my property?',
+    'Nuestra comisión es del 20-25% sobre ingresos netos, dependiendo del nivel de servicio. Incluye todo: publicación, atención, limpieza y reportes.':
+      'Our commission is 20-25% on net income, depending on service level. Includes everything: listing, customer service, cleaning and reports.',
+    '¿Puedo usar mi propiedad cuando quiera?': 'Can I use my property whenever I want?',
+    'Sí. Tú bloqueas las fechas que necesites desde el dashboard y nosotros no aceptamos reservas en esos días.':
+      'Yes. You block the dates you need from the dashboard and we do not accept reservations on those days.',
+    '¿Cómo me pagan?':                'How do I get paid?',
+    'Transferencia bancaria mensual con desglose detallado: ingresos brutos, gastos, comisión y neto a tu favor.':
+      'Monthly bank transfer with detailed breakdown: gross income, expenses, commission and net to your favor.',
+    '¿Qué pasa si un huésped daña algo?': 'What happens if a guest damages something?',
+    'Las plataformas (Airbnb, Booking) ofrecen seguros de daños. Nosotros gestionamos la reclamación y reposición.':
+      'Platforms (Airbnb, Booking) offer damage insurance. We manage the claim and replacement.',
+    '¿Manejan propiedades fuera de Bocagrande y Centro?': 'Do you manage properties outside Bocagrande and the Historic Center?',
+    'Sí. Gestionamos propiedades en toda Cartagena, Barú, Islas del Rosario y La Boquilla.': 'Yes. We manage properties throughout Cartagena, Barú, Rosario Islands and La Boquilla.',
+    '¿Cuánto tiempo toma empezar a generar ingresos?': 'How long does it take to start generating income?',
+    'Típicamente 7-14 días desde la firma: fotografía, listing, primeras reservas. La ocupación se estabiliza en el mes 2-3.':
+      'Typically 7-14 days from signing: photography, listing, first reservations. Occupancy stabilizes by month 2-3.',
+    'Sí, sin restricciones.':         'Yes, no restrictions.',
+    '⏱️ ¿En cuánto tiempo?':          '⏱️ How long?',
+
+    // RNT / IVA compliance
+    '— debes declarar los ingresos por renta turística como renta ordinaria. Si facturas más de 3.500 UVT/año, debes registrarte como responsable de IVA (19%).':
+      '— you must declare vacation rental income as ordinary income. If you bill more than 3,500 UVT/year, you must register as VAT-responsible (19%).',
+    '— los operadores de alojamiento deben reportar estadísticas de ocupación al DANE a través del sistema PST.':
+      '— accommodation operators must report occupancy statistics to DANE through the PST system.',
+    '— muchas copropiedades requieren aprobación de la asamblea para permitir renta por días. Verifica el reglamento de propiedad horizontal antes de comprar.':
+      '— many condominiums require assembly approval to allow short-term rental. Check the condominium bylaws before buying.',
+    '— obligatorio desde 2019 para todo alojamiento turístico. Se tramita en la Cámara de Comercio de Cartagena. Vigencia: 1 año renovable.':
+      '— mandatory since 2019 for all tourist accommodation. Processed at the Cartagena Chamber of Commerce. Validity: 1 year renewable.',
+    '— recomendado para protegerte contra daños a huéspedes o terceros. Airbnb incluye AirCover pero un seguro propio es más completo.':
+      '— recommended to protect yourself against damages to guests or third parties. Airbnb includes AirCover but your own insurance is more comprehensive.',
+
+    // Turismo / 404 / misc
+    'Estamos preparando una oferta turistica de primer nivel para complementar tu experiencia inmobiliaria. Muy pronto podras disfrutar de:':
+      'We are preparing a top-tier tourist offering to complement your real estate experience. Soon you\'ll be able to enjoy:',
+    'Si prefieres, guarda esta pagina y vuelve mas tarde. Estamos trabajando para ti.': 'If you prefer, save this page and come back later. We\'re working for you.',
+    'Yates, pasadías en islas y experiencias exclusivas en Cartagena. Muy pronto.': 'Yachts, island day trips and exclusive experiences in Cartagena. Coming soon.',
+    'telephone=no':                   'telephone=no',
+    'tu@correo.com':                  'your@email.com',
   };
 
   // Build EN→ES reverse
