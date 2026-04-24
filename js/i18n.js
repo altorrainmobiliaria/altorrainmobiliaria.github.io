@@ -1171,6 +1171,116 @@
     'Por favor completa los campos':  'Please complete the fields',
     'Revisa tu conexión':             'Check your connection',
     'Sin resultados':                 'No results',
+
+    // Page titles & metas (batch 1)
+    'Comprar Apartamento en Cartagena | Altorra Inmobiliaria': 'Buy Apartment in Cartagena | Altorra Real Estate',
+    'Comprar Apartamento en Cartagena | Guía por Zonas | Altorra Inmobiliaria': 'Buy Apartment in Cartagena | Neighborhood Guide | Altorra Real Estate',
+    'Arrendar Apartamento en Cartagena | Altorra Inmobiliaria': 'Rent Apartment in Cartagena | Altorra Real Estate',
+    'Arrendar Apartamento en Cartagena | Por Zona | Altorra Inmobiliaria': 'Rent Apartment in Cartagena | By Zone | Altorra Real Estate',
+    'Invertir en Cartagena | Altorra Inmobiliaria': 'Invest in Cartagena | Altorra Real Estate',
+    'Invertir en Cartagena | ROI y Oportunidades | Altorra Inmobiliaria': 'Invest in Cartagena | ROI & Opportunities | Altorra Real Estate',
+    'Invertir en Airbnb en Cartagena | Altorra Inmobiliaria': 'Invest in Airbnb in Cartagena | Altorra Real Estate',
+    'Invertir en Airbnb en Cartagena | ROI y Zonas Rentables | Altorra Inmobiliaria': 'Invest in Airbnb in Cartagena | ROI & Best Zones | Altorra Real Estate',
+    'Lotes Campestres en Cartagena | Altorra Inmobiliaria': 'Country Lots in Cartagena | Altorra Real Estate',
+    'Lotes Campestres en Cartagena | Fincas y Terrenos | Altorra Inmobiliaria': 'Country Lots in Cartagena | Farms & Land | Altorra Real Estate',
+    'Propiedades en Barú y La Boquilla | Altorra Inmobiliaria': 'Properties in Barú & La Boquilla | Altorra Real Estate',
+    'Propiedades en Venta en Cartagena | Altorra Inmobiliaria': 'Properties for Sale in Cartagena | Altorra Real Estate',
+    'Propiedades en Arriendo en Cartagena | Altorra Inmobiliaria': 'Properties for Rent in Cartagena | Altorra Real Estate',
+    'Renta Turística en Cartagena | Altorra': 'Vacation Rental in Cartagena | Altorra',
+    'Renta Turística en Cartagena | Gestión Airbnb | Altorra Inmobiliaria': 'Vacation Rental in Cartagena | Airbnb Management | Altorra Real Estate',
+    'Renta turística vs arriendo tradicional | Altorra Inmobiliaria': 'Vacation rental vs long-term rental | Altorra Real Estate',
+    'Turismo Inmobiliario | Altorra': 'Real Estate Tourism | Altorra',
+    'Turismo Inmobiliario | Altorra Inmobiliaria': 'Real Estate Tourism | Altorra Real Estate',
+    'Servicio próximamente | Altorra Inmobiliaria': 'Service coming soon | Altorra Real Estate',
+    'Contacto | Altorra Inmobiliaria': 'Contact | Altorra Real Estate',
+    'Quiénes Somos | Altorra Inmobiliaria': 'About Us | Altorra Real Estate',
+    'Mis Favoritos | Altorra Inmobiliaria': 'My Favorites | Altorra Real Estate',
+    'Mapa de propiedades | Altorra': 'Property Map | Altorra',
+    'Mapa de propiedades | Altorra Inmobiliaria': 'Property Map | Altorra Real Estate',
+    'Simulador hipotecario | Altorra': 'Mortgage Calculator | Altorra',
+    'Simulador de crédito hipotecario | Altorra Inmobiliaria': 'Mortgage Calculator | Altorra Real Estate',
+    'Avalúo comercial gratuito | Altorra': 'Free commercial appraisal | Altorra',
+    'Solicitar avalúo comercial | Altorra Inmobiliaria': 'Request commercial appraisal | Altorra Real Estate',
+    'Política de Privacidad | Altorra Inmobiliaria': 'Privacy Policy | Altorra Real Estate',
+    'Publica tu Propiedad | Altorra Inmobiliaria': 'List your Property | Altorra Real Estate',
+    'Detalle de Propiedad | Altorra Inmobiliaria': 'Property Details | Altorra Real Estate',
+    'Propiedad en Altorra Inmobiliaria': 'Property at Altorra Real Estate',
+    'Blog Inversionista | Altorra Inmobiliaria': 'Investor Blog | Altorra Real Estate',
+    'Blog Inversionista — Altorra Inmobiliaria': 'Investor Blog — Altorra Real Estate',
+    'Foreign Investors Guide | Altorra Inmobiliaria': 'Foreign Investors Guide | Altorra Real Estate',
+    'Foreign Investors Guide | Buy Property in Cartagena | Altorra': 'Foreign Investors Guide | Buy Property in Cartagena | Altorra',
+    'Guía legal para inversionistas extranjeros en Colombia | Altorra Inmobiliaria': 'Legal guide for foreign investors in Colombia | Altorra Real Estate',
+    '¡Gracias! | Altorra Inmobiliaria': 'Thank you! | Altorra Real Estate',
+
+    // Meta descriptions (batch 1)
+    'Guía completa para comprar apartamento en Cartagena: precios por zona (Bocagrande, Manga, Castillogrande, Crespo), consejos legales y las mejores oportunidades.':
+      'Complete guide to buying an apartment in Cartagena: prices by zone (Bocagrande, Manga, Castillogrande, Crespo), legal tips and the best opportunities.',
+    'Precios por zona, consejos legales y oportunidades para comprar apartamento en Cartagena de Indias.':
+      'Prices by zone, legal advice and opportunities to buy an apartment in Cartagena de Indias.',
+    'Guía para invertir en Airbnb en Cartagena: zonas con mayor ocupación, ROI esperado, costos operativos y requisitos legales (RNT). Análisis de mercado 2026.':
+      'Guide to investing in Airbnb in Cartagena: zones with highest occupancy, expected ROI, operating costs and legal requirements (RNT). 2026 market analysis.',
+    'ROI, ocupación por zona y guía legal para invertir en renta turística en Cartagena.':
+      'ROI, occupancy by zone and legal guide to invest in vacation rental in Cartagena.',
+    'Descubre las mejores zonas para invertir en Cartagena. Análisis de ROI por barrio, casos de éxito y oportunidades de renta turística.':
+      'Discover the best zones to invest in Cartagena. ROI analysis by neighborhood, success cases and vacation rental opportunities.',
+    'ROI por zona, casos de éxito y oportunidades de inversión inmobiliaria en Cartagena de Indias.':
+      'ROI by zone, success cases and real estate investment opportunities in Cartagena de Indias.',
+    'Lotes campestres y fincas en venta cerca de Cartagena: Barú, Turbaco, Arjona y zona norte. Precios, extensiones y oportunidades de inversión rural.':
+      'Country lots and farms for sale near Cartagena: Barú, Turbaco, Arjona and northern zone. Prices, sizes and rural investment opportunities.',
+    'Lotes campestres, fincas y terrenos en venta cerca de Cartagena. Precios y oportunidades.':
+      'Country lots, farms and land for sale near Cartagena. Prices and opportunities.',
+    'Propiedades en venta en Barú y La Boquilla, Cartagena: lotes, casas y apartamentos frente al mar. Precios, valorización y oportunidades de inversión 2026.':
+      'Properties for sale in Barú and La Boquilla, Cartagena: lots, houses and beachfront apartments. Prices, appreciation and 2026 investment opportunities.',
+    'Lotes, casas y apartamentos frente al mar en Barú y La Boquilla. Inversión con alta valorización.':
+      'Lots, houses and beachfront apartments in Barú and La Boquilla. High-appreciation investment.',
+    'Gestión integral de renta turística en Cartagena. Maximiza ingresos de tu propiedad con Airbnb, Booking y nuestros canales directos.':
+      'Full-service vacation rental management in Cartagena. Maximize your property income with Airbnb, Booking and our direct channels.',
+    'Experiencias turísticas en Cartagena: renta de yates, pasadías en islas, paquetes turísticos y tours históricos. Muy pronto con Altorra Inmobiliaria.':
+      'Tourist experiences in Cartagena: yacht rentals, island day trips, travel packages and historical tours. Coming soon with Altorra Real Estate.',
+    'Artículos sobre inversión inmobiliaria en Cartagena: guías, análisis de mercado, renta turística y consejos legales para inversionistas.':
+      'Articles on real estate investment in Cartagena: guides, market analysis, vacation rental and legal advice for investors.',
+    'Calcula tu cuota mensual estimada para un crédito hipotecario en Colombia. Simula plazo, tasa y cuota inicial al instante.':
+      'Calculate your estimated monthly payment for a mortgage loan in Colombia. Instantly simulate term, rate and down payment.',
+    'Calcula tu cuota mensual estimada para comprar propiedad en Colombia.': 'Calculate your estimated monthly payment to buy property in Colombia.',
+    'Solicita un avalúo comercial de tu propiedad con Altorra Inmobiliaria. Recibirás una estimación del valor de mercado sin costo.':
+      'Request a commercial appraisal of your property with Altorra Real Estate. You will receive a market value estimate at no cost.',
+    'Explora propiedades en venta, arriendo y alojamiento en el mapa interactivo.': 'Explore properties for sale, rent and accommodation on the interactive map.',
+    'Explora todas las propiedades disponibles de Altorra Inmobiliaria en el mapa. Filtra por tipo, operación y ciudad.':
+      'Explore all available Altorra Real Estate properties on the map. Filter by type, operation and city.',
+    'Explora todas las propiedades disponibles en el mapa. Filtra por operación, tipo o ciudad.': 'Explore all available properties on the map. Filter by operation, type or city.',
+    'Todo lo que necesitas saber sobre impuestos, visas, escrituración y trámites para comprar propiedad en Colombia como extranjero.':
+      'Everything you need to know about taxes, visas, deeds and procedures to buy property in Colombia as a foreigner.',
+    'Tratamiento de datos personales conforme a la Ley 1581 de 2012 y Decreto 1377 de 2013 en Colombia.':
+      'Personal data processing under Colombian Law 1581 of 2012 and Decree 1377 of 2013.',
+    'Publica tu inmueble en Altorra Inmobiliaria. Vende o arrienda tu propiedad en Cartagena con acompañamiento profesional.':
+      'List your property with Altorra Real Estate. Sell or rent your property in Cartagena with professional support.',
+    'Vende o arrienda tu propiedad en Cartagena con acompañamiento profesional de Altorra.': 'Sell or rent your property in Cartagena with Altorra\'s professional support.',
+    'Propiedades guardadas como favoritos en Altorra Inmobiliaria.': 'Properties saved as favorites at Altorra Real Estate.',
+    'Cartagena se consolida como uno de los mercados inmobiliarios más atractivos de Latinoamérica. Descubre las razones clave para invertir en 2026.':
+      'Cartagena has become one of the most attractive real estate markets in Latin America. Discover the key reasons to invest in 2026.',
+
+    // Listings / Search / Filters
+    'Filtros de búsqueda':            'Search filters',
+    'Filtra por zona':                'Filter by zone',
+    'Habitaciones, amoblado, área…':  'Bedrooms, furnished, area…',
+    'Precio mínimo (COP)':            'Minimum price (COP)',
+    'Precio máximo (COP)':            'Maximum price (COP)',
+    'Área mín. (m²)':                 'Min. area (m²)',
+    'Área máx. (m²)':                 'Max. area (m²)',
+    'Precio: Menor a Mayor':          'Price: Low to High',
+    'Precio: Mayor a Menor':          'Price: High to Low',
+    'Más Recientes':                  'Most recent',
+    'Baños':                          'Bathrooms',
+    'Ej. Cartagena':                  'E.g. Cartagena',
+    'Toda Cartagena':                 'All Cartagena',
+    'En venta':                       'For sale',
+    'En arriendo':                    'For rent',
+    'propiedades':                    'properties',
+    'Mapa de':                        'Map of',
+    'Haz clic en cada marker para ver precio, specs y acceder al detalle.': 'Click each marker to see price, specs and access the details.',
+    'Visualiza dónde está cada propiedad antes de agendaruna visita.': 'See where each property is before scheduling a visit.',
+    '¿Por qué usar el mapa?':         'Why use the map?',
+    'Limita la búsqueda por barrio o zona de la ciudad que más te interesa.': 'Narrow your search by the neighborhood or zone of the city you\'re most interested in.',
   };
 
   // Build EN→ES reverse
