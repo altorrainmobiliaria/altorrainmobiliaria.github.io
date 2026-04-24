@@ -266,7 +266,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 | E3.2 | Seed: "¿Vale la pena invertir en Cartagena 2026?" | ✅ DONE |
 | E3.3 | Seed: "Mejores zonas para Airbnb en Cartagena" | ✅ DONE |
 | E3.4 | Seed: "Impuestos inmobiliarios Colombia: guía 2026" | ✅ DONE |
-| E3.5 | Plantilla editorial + calendario de publicación (2-3/semana) | 🔲 TODO |
+| E3.5 | Plantilla editorial + calendario de publicación (2-3/semana) | ✅ DONE |
 
 **Meta: 50+ artículos en 6 meses.**
 
