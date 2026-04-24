@@ -78,6 +78,38 @@ const POSTS = [
     `.trim()
   },
   {
+    slug: 'impuestos-inmobiliarios-colombia-2026',
+    titulo: 'Impuestos inmobiliarios en Colombia: guía 2026',
+    resumen: 'Guía completa 2026 de impuestos inmobiliarios en Colombia: predial, retención, renta, ganancia ocasional, IVA en renta corta y tratados de doble imposición.',
+    categoria: 'Legal & Fiscal',
+    imagen: 'https://i.postimg.cc/FHy13q2M/pexels-rdne-8293700.jpg',
+    fecha: new Date('2026-04-18T00:00:00Z'),
+    tiempoLectura: 14,
+    publicado: true,
+    url: 'blog/impuestos-inmobiliarios-colombia-2026.html',
+    contenido: `
+      <p>Toda propiedad en Colombia genera obligaciones tributarias al comprarla, mantenerla y venderla o generar ingresos con ella.</p>
+      <h2>1. Al comprar</h2>
+      <ul>
+        <li>Impuesto de registro: 1,67% sobre el valor</li>
+        <li>Derechos notariales: ~0,3%</li>
+        <li>Beneficencia: ~0,5%</li>
+        <li><strong>Total: 2,5-3% del valor de compraventa</strong></li>
+      </ul>
+      <h2>2. Manteniendo la propiedad</h2>
+      <p>Predial unificado anual: 5-16 por mil del avalúo catastral según estrato y uso. Administración mensual: $400K-$1,5M en zonas premium.</p>
+      <h2>3. Ingresos de arriendo</h2>
+      <ul>
+        <li>Arriendo largo plazo: retención 3,5% si inquilino es jurídico; renta anual progresiva 0-39%.</li>
+        <li>Renta turística: IVA 19% si facturas más de 3.500 UVT/año, INC 8%, RNT obligatorio.</li>
+      </ul>
+      <h2>4. Ganancia ocasional al vender</h2>
+      <p>Tarifa 15% sobre la utilidad (bienes poseídos más de 2 años). Menor tiempo tributa como renta ordinaria.</p>
+      <h2>5. Extranjeros — doble imposición</h2>
+      <p>Retención 35% sobre arriendo bruto para no residentes. Convenios CDI con España, Canadá y otros. <strong>Estados Unidos NO tiene tratado</strong>.</p>
+    `.trim()
+  },
+  {
     slug: 'mejores-zonas-airbnb-cartagena',
     titulo: 'Mejores zonas para Airbnb en Cartagena 2026 — ROI por barrio',
     resumen: 'Ranking de zonas premium de Cartagena para inversión Airbnb: ocupación, ADR, ROI y ticket de entrada en Getsemaní, Centro Histórico, Bocagrande, La Boquilla y Castillogrande.',
