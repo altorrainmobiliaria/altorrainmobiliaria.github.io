@@ -1527,6 +1527,84 @@
       'Rapidly expanding area. Pre-construction projects with opportunity prices. Greatest medium-term appreciation potential.',
     'Mejor balance entre inversión inicial y retorno. Alta oferta pero demanda constante por playa y servicios.':
       'Best balance between initial investment and return. High supply but constant demand for beach and services.',
+
+    // Renta turística — comparativa y FAQ
+    'Convertimos tu propiedad en una inversión rentable con gestión profesional de renta turística.':
+      'We turn your property into a profitable investment with professional vacation rental management.',
+    '¿Qué es más rentable? Comparamos ambas modalidades con datos reales.': 'Which is more profitable? We compare both options with real data.',
+    'Tomemos como ejemplo un apartamento de 2 habitaciones en Bocagrande valorado en $500.000.000 COP:': 'Let\'s take as an example a 2-bedroom apartment in Bocagrande valued at $500,000,000 COP:',
+    'Escenario A: Renta turística':   'Scenario A: Vacation rental',
+    'Escenario B: Arriendo tradicional': 'Scenario B: Traditional rental',
+    'Ocupación promedio: 65% (19.5 noches/mes)': 'Average occupancy: 65% (19.5 nights/month)',
+    'Ocupación: 100% (contrato anual)': 'Occupancy: 100% (annual contract)',
+    'ROI anual: 11.5%':               'Annual ROI: 11.5%',
+    'ROI anual: 6.2%':                'Annual ROI: 6.2%',
+    'En este caso, la renta turística genera casi el doble de ingresos netos. Sin embargo, requiere una gestión operativa significativamente mayor o la contratación de un operador profesional.':
+      'In this case, vacation rental generates almost double the net income. However, it requires significantly greater operational management or hiring a professional operator.',
+    '¿Cuándo conviene cada opción?':  'When does each option fit best?',
+    'Tu propiedad está en zona turística premium (Bocagrande, Centro Histórico, Castillogrande)': 'Your property is in a premium tourist area (Bocagrande, Historic Center, Castillogrande)',
+    'Tu propiedad está en zona residencial (no turística)': 'Your property is in a residential (non-tourist) area',
+    'Cuentas con un operador profesional de gestión': 'You have a professional management operator',
+    'Prefieres ingresos estables y predecibles': 'You prefer stable and predictable income',
+    'Quieres usar la propiedad ocasionalmente para uso personal': 'You want to use the property occasionally for personal use',
+    'No quieres involucrarte en la gestión operativa': 'You do not want to be involved in operational management',
+    'La opción híbrida':              'The hybrid option',
+    'Gestión requerida':              'Management required',
+    'Alta (la hacemos nosotros)':     'High (we handle it)',
+    'Mayor rotación':                 'Higher turnover',
+    'Desgaste del inmueble':          'Property wear',
+    'Quién paga':                     'Who pays',
+    'Fija y predecible':              'Fixed and predictable',
+    'Variable por temporada':         'Variable by season',
+    'Diaria (o con operador)':        'Daily (or with operator)',
+    '20 - 30% del ingreso':           '20 - 30% of income',
+    '20-35% del ingreso':             '20-35% of income',
+    '5-10% del ingreso':              '5-10% of income',
+    '~15% del ingreso':               '~15% of income',
+    'El factor gestión':              'The management factor',
+    'Gestión comercial y relación con clientes y proveedores.': 'Commercial management and relationship with clients and suppliers.',
+    '¿Qué requisitos debe tener mi propiedad?': 'What requirements must my property have?',
+    'Amoblada, con servicios básicos, aire acondicionado, Wi-Fi y en buen estado. Si falta algo, te asesoramos en la dotación.':
+      'Furnished, with basic services, air conditioning, Wi-Fi and in good condition. If anything is missing, we advise you on furnishing.',
+    '¿Cuánto cobra Altorra por gestionar mi propiedad?': 'How much does Altorra charge to manage my property?',
+    'Nuestra comisión es del 20-25% sobre ingresos netos, dependiendo del nivel de servicio. Incluye todo: publicación, atención, limpieza y reportes.':
+      'Our commission is 20-25% on net income, depending on service level. Includes everything: listing, customer service, cleaning and reports.',
+    '¿Puedo usar mi propiedad cuando quiera?': 'Can I use my property whenever I want?',
+    'Sí. Tú bloqueas las fechas que necesites desde el dashboard y nosotros no aceptamos reservas en esos días.':
+      'Yes. You block the dates you need from the dashboard and we do not accept reservations on those days.',
+    '¿Cómo me pagan?':                'How do I get paid?',
+    'Transferencia bancaria mensual con desglose detallado: ingresos brutos, gastos, comisión y neto a tu favor.':
+      'Monthly bank transfer with detailed breakdown: gross income, expenses, commission and net to your favor.',
+    '¿Qué pasa si un huésped daña algo?': 'What happens if a guest damages something?',
+    'Las plataformas (Airbnb, Booking) ofrecen seguros de daños. Nosotros gestionamos la reclamación y reposición.':
+      'Platforms (Airbnb, Booking) offer damage insurance. We manage the claim and replacement.',
+    '¿Manejan propiedades fuera de Bocagrande y Centro?': 'Do you manage properties outside Bocagrande and the Historic Center?',
+    'Sí. Gestionamos propiedades en toda Cartagena, Barú, Islas del Rosario y La Boquilla.': 'Yes. We manage properties throughout Cartagena, Barú, Rosario Islands and La Boquilla.',
+    '¿Cuánto tiempo toma empezar a generar ingresos?': 'How long does it take to start generating income?',
+    'Típicamente 7-14 días desde la firma: fotografía, listing, primeras reservas. La ocupación se estabiliza en el mes 2-3.':
+      'Typically 7-14 days from signing: photography, listing, first reservations. Occupancy stabilizes by month 2-3.',
+    'Sí, sin restricciones.':         'Yes, no restrictions.',
+    '⏱️ ¿En cuánto tiempo?':          '⏱️ How long?',
+
+    // RNT / IVA compliance
+    '— debes declarar los ingresos por renta turística como renta ordinaria. Si facturas más de 3.500 UVT/año, debes registrarte como responsable de IVA (19%).':
+      '— you must declare vacation rental income as ordinary income. If you bill more than 3,500 UVT/year, you must register as VAT-responsible (19%).',
+    '— los operadores de alojamiento deben reportar estadísticas de ocupación al DANE a través del sistema PST.':
+      '— accommodation operators must report occupancy statistics to DANE through the PST system.',
+    '— muchas copropiedades requieren aprobación de la asamblea para permitir renta por días. Verifica el reglamento de propiedad horizontal antes de comprar.':
+      '— many condominiums require assembly approval to allow short-term rental. Check the condominium bylaws before buying.',
+    '— obligatorio desde 2019 para todo alojamiento turístico. Se tramita en la Cámara de Comercio de Cartagena. Vigencia: 1 año renovable.':
+      '— mandatory since 2019 for all tourist accommodation. Processed at the Cartagena Chamber of Commerce. Validity: 1 year renewable.',
+    '— recomendado para protegerte contra daños a huéspedes o terceros. Airbnb incluye AirCover pero un seguro propio es más completo.':
+      '— recommended to protect yourself against damages to guests or third parties. Airbnb includes AirCover but your own insurance is more comprehensive.',
+
+    // Turismo / 404 / misc
+    'Estamos preparando una oferta turistica de primer nivel para complementar tu experiencia inmobiliaria. Muy pronto podras disfrutar de:':
+      'We are preparing a top-tier tourist offering to complement your real estate experience. Soon you\'ll be able to enjoy:',
+    'Si prefieres, guarda esta pagina y vuelve mas tarde. Estamos trabajando para ti.': 'If you prefer, save this page and come back later. We\'re working for you.',
+    'Yates, pasadías en islas y experiencias exclusivas en Cartagena. Muy pronto.': 'Yachts, island day trips and exclusive experiences in Cartagena. Coming soon.',
+    'telephone=no':                   'telephone=no',
+    'tu@correo.com':                  'your@email.com',
   };
 
   // Build EN→ES reverse
