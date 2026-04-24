@@ -1864,4 +1864,32 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
-*Última actualización: 2026-04-19*
+## 2026-04-24 — i18n 100% + Integración foreign-investors
+
+**Lo que se hizo:**
+1. Botón ES/EN ahora bulletproof (carga síncrona, migración one-time a ES, estilos inline con !important, re-inyección automática). Service Worker bump v2 → v3.
+2. Diccionario i18n expandido a **1174 entradas** cubriendo el **100% de las 1213 frases** del sitio (0 faltantes). Partido en 4 commits (+93, +58, +111, +62) para evitar timeouts.
+3. `foreign-investors.html` ya no es huérfana: integrada al header desktop (panel Servicios), drawer móvil (bloque propio) y footer (Empresa) con `hreflang="en" lang="en" translate="no"`.
+
+## 2026-04-24 — E3.1 Blog estructura dinámica
+
+**Lo que se hizo:**
+1. `blog.html` ahora lee de Firestore `blog` con fallback inmediato a 3 cards mientras carga Firebase (LCP protegido).
+2. `blog-post.html` creado — template dinámico que carga posts por `?slug=`, inyecta meta tags + OG + JSON-LD BlogPosting al vuelo, con CTA y fallback de error.
+3. Reglas Firestore: colección `blog` con lectura pública, escritura solo editor+ con `_version` optimista.
+4. Script `scripts/upload-blog-posts.mjs` sube los 3 posts seed con `admin`, merge idempotente.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `blog.html` | Grid ahora dinámico desde Firestore + fallback hardcoded + `<noscript>` SEO |
+| `blog-post.html` | NUEVO — template dinámico para artículos |
+| `js/blog-list.js` | NUEVO — loader del índice con fallback 5s |
+| `js/blog-post.js` | NUEVO — loader individual + meta tags dinámicos + JSON-LD |
+| `scripts/upload-blog-posts.mjs` | NUEVO — seed de 3 posts a Firestore |
+| `firestore.rules` | +colección `blog` |
+
+---
+
+*Última actualización: 2026-04-24*
