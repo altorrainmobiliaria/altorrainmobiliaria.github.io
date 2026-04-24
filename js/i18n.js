@@ -738,6 +738,277 @@
     'Zona de lavado':                 'Laundry area',
     'Jardín':                         'Garden',
     'Parqueadero visitantes':         'Visitor parking',
+
+    // ═══ Index / Home específicos ═══
+    'Saltar al contenido':            'Skip to content',
+    'Saltar al contenido principal':  'Skip to main content',
+    'Buscador rápido':                'Quick search',
+    'Código de propiedad':            'Property code',
+    'Confianza y cobertura':          'Trust and coverage',
+    'Ver propiedades en arriendo':    'View rental properties',
+    'Explorar inversión en renta turística': 'Explore vacation rental investment',
+    'Filtrar por operación':          'Filter by operation',
+    'Desplazar carrusel a la izquierda': 'Scroll carousel left',
+    'Desplazar carrusel a la derecha': 'Scroll carousel right',
+    'Ver apartamentos':               'View apartments',
+    'Ver casas':                      'View houses',
+    'Ver lotes':                      'View lots',
+    'Ver oficinas':                   'View offices',
+    'Ver locales comerciales':        'View retail spaces',
+    'Ver bodegas':                    'View warehouses',
+    'Ver propiedades en Bocagrande':  'View properties in Bocagrande',
+    'Ver propiedades en Manga':       'View properties in Manga',
+    'Ver propiedades en Castillogrande': 'View properties in Castillogrande',
+    'Ver propiedades en Centro Histórico': 'View properties in Historic Center',
+    'Ver propiedades en Crespo':      'View properties in Crespo',
+    'Ver propiedades en Manzanillo':  'View properties in Manzanillo',
+
+    // ═══ Renta turística específicos ═══
+    'Convierte tu propiedad en':      'Turn your property into',
+    'ingresos turísticos':            'tourism income',
+    'Gestionamos tu propiedad en Airbnb, Booking y canales directos. Tú recibes los ingresos, nosotros nos encargamos de todo.':
+      'We manage your property on Airbnb, Booking and direct channels. You receive the income, we handle everything.',
+    'Ingreso vs arriendo tradicional': 'Income vs traditional rental',
+    'Atención a huéspedes':           'Guest support',
+    'Sesión fotográfica con fotógrafo especializado en interiores y tour virtual 360°.':
+      'Photo shoot with photographer specialized in interiors and 360° virtual tour.',
+    'Airbnb, Booking, Vrbo, Expedia y canales directos con pricing dinámico.':
+      'Airbnb, Booking, Vrbo, Expedia and direct channels with dynamic pricing.',
+    'Recibimos al huésped, verificamos ID, entregamos llaves y cerramos la estadía.':
+      'We welcome the guest, verify ID, hand over keys and close the stay.',
+    'Equipo de limpieza tras cada check-out con kit de bienvenida y reposición.':
+      'Cleaning team after each check-out with welcome kit and restocking.',
+    'Reparaciones menores, gestión de fallas y red de aliados (plomería, electricidad).':
+      'Minor repairs, fault management and network of partners (plumbing, electrical).',
+    'Respuesta inmediata a consultas en español, inglés y francés.':
+      'Immediate response to inquiries in Spanish, English and French.',
+    'Dashboard con ingresos, ocupación, reseñas y optimización de tarifas.':
+      'Dashboard with income, occupancy, reviews and rate optimization.',
+    'Transferencia mensual con desglose detallado. Tú solo te ocupas de cobrar.':
+      'Monthly transfer with detailed breakdown. You just collect.',
+    'Visitamos tu propiedad y analizamos potencial, tarifa óptima y ocupación proyectada.':
+      'We visit your property and analyze potential, optimal rate and projected occupancy.',
+    'Sesión de fotos, inventario, dotación si se requiere y publicación en todas las plataformas.':
+      'Photo session, inventory, furnishing if needed and publishing on all platforms.',
+    'Recibimos reservas, atendemos huéspedes, gestionamos limpieza y mantenimiento.':
+      'We receive bookings, attend to guests, manage cleaning and maintenance.',
+    'Transferencia mensual con reporte completo. Optimizamos tarifas mes a mes.':
+      'Monthly transfer with complete report. We optimize rates month by month.',
+    'Característica':                 'Feature',
+    'Flexibilidad de uso personal':   'Personal use flexibility',
+    'Sí, cuando quieras':              'Yes, whenever you want',
+    'Bloqueado 1-3 años':             'Locked 1-3 years',
+    'Riesgo de morosidad':            'Default risk',
+    'Desgaste de la propiedad':       'Property wear',
+
+    // ═══ Invertir específicos ═══
+    'Invertir en':                    'Invest in',
+    'Cartagena':                      'Cartagena',
+    'Análisis de rentabilidad por zona, casos de éxito reales y oportunidades de inversión inmobiliaria en la Heroica.':
+      'Profitability analysis by zone, real success cases and real estate investment opportunities in Cartagena.',
+    'Cartagena ha registrado una valorización promedio del 8-12% anual en zonas premium como Bocagrande y Castillogrande.':
+      'Cartagena has recorded an average appreciation of 8-12% annually in premium areas like Bocagrande and Castillogrande.',
+    'Con más de 4 millones de turistas al año, la demanda de alojamiento por días genera retornos superiores al arriendo tradicional.':
+      'With more than 4 million tourists per year, short-term accommodation demand generates higher returns than traditional rental.',
+    'Nuevos proyectos de infraestructura (TransCaribe, Puerto de Cruceros, aeropuerto) impulsan la valorización.':
+      'New infrastructure projects (TransCaribe, Cruise Port, airport) drive appreciation.',
+    'Compradores de EE.UU., Canadá y Europa buscan propiedades en Cartagena por el tipo de cambio favorable y calidad de vida.':
+      'Buyers from the US, Canada and Europe seek properties in Cartagena for the favorable exchange rate and quality of life.',
+    'Zona más demandada por turistas. Apartamentos frente al mar con alta ocupación en temporada alta (dic-mar, jun-jul).':
+      'Most demanded zone by tourists. Oceanfront apartments with high occupancy in high season (Dec-Mar, Jun-Jul).',
+    'Exclusiva zona residencial con vista al mar. Propiedades de lujo con alta plusvalía y demanda creciente de extranjeros.':
+      'Exclusive residential zone with ocean view. Luxury properties with high appreciation and growing foreign demand.',
+    'Barrio bohemio con restaurantes y vida cultural. Atrae turistas que buscan autenticidad cartagenera a mejor precio.':
+      'Bohemian neighborhood with restaurants and cultural life. Attracts tourists seeking Cartagena authenticity at better prices.',
+    'Patrimonio UNESCO. Las propiedades coloniales reformadas son las más rentables en Airbnb de toda Colombia.':
+      'UNESCO Heritage. Restored colonial properties are the most profitable on Airbnb in all of Colombia.',
+    'Zona en expansión con proyectos nuevos. Excelente relación precio-rendimiento. Ideal para inversión a mediano plazo.':
+      'Expansion zone with new projects. Excellent price-performance ratio. Ideal for medium-term investment.',
+    'Propiedades exclusivas de playa con las tarifas por noche más altas de la región. Temporadas pico generan ingresos significativos.':
+      'Exclusive beach properties with the highest nightly rates in the region. Peak seasons generate significant income.',
+    'Barú / Islas':                   'Barú / Islands',
+    'Apartamento en Bocagrande':      'Apartment in Bocagrande',
+    '2 hab · 85 m² · Vista al mar':   '2 bed · 85 m² · Ocean view',
+    'Casa Colonial en Centro':        'Colonial House in Historic Center',
+    'Apto en La Boquilla':            'Apt in La Boquilla',
+    'Valorización est.':              'Est. appreciation',
+    '+12% anual':                     '+12% annual',
+    '+10% anual':                     '+10% annual',
+    '+9% anual':                      '+9% annual',
+    '+8% anual':                      '+8% annual',
+    '+7% anual':                      '+7% annual',
+    'Calculadora de rentabilidad Airbnb': 'Airbnb profitability calculator',
+
+    // ═══ Quiénes somos ═══
+    'Experiencias que inspiran confianza': 'Experiences that inspire trust',
+    'Somos el aliado que protege y potencia tu inversión':
+      'We are the partner that protects and empowers your investment',
+    'Tu inversión y tu hogar merecen más que una simple transacción: merecen seguridad, legalidad y confianza.':
+      'Your investment and home deserve more than a simple transaction: they deserve security, legality and trust.',
+    'Misión':                         'Mission',
+    'Visión':                         'Vision',
+    'Información clara, decisiones sustentadas y comunicación honesta.':
+      'Clear information, informed decisions and honest communication.',
+    'Acompañamiento integral con responsabilidad y cercanía.':
+      'Comprehensive accompaniment with responsibility and closeness.',
+    'Seguridad jurídica y procesos rigurosos en cada etapa.':
+      'Legal security and rigorous processes at every stage.',
+    'Innovación':                     'Innovation',
+    'Mejora continua y soluciones modernas para potenciar resultados.':
+      'Continuous improvement and modern solutions to boost results.',
+    'Calidad superior en servicio, gestión y cumplimiento.':
+      'Superior quality in service, management and compliance.',
+    'Opiniones de nuestros clientes': 'Our clients\' opinions',
+    'Escribir mi reseña':             'Write my review',
+    '¿Hablamos sobre tu propiedad?':  'Let\'s talk about your property?',
+    'Altorra responde con seguridad jurídica, calidez profesional y resultados.':
+      'Altorra responds with legal security, professional warmth and results.',
+    'Contactar a Altorra':            'Contact Altorra',
+    'Ir a contacto':                  'Go to contact',
+    'Familia y asesor inmobiliario en un ambiente cálido, luz de tarde':
+      'Family and real estate advisor in a warm atmosphere, afternoon light',
+
+    // ═══ Avalúo ═══
+    'Ingresa los datos de tu propiedad y nuestros expertos te contactarán con una estimación del valor de mercado.':
+      'Enter your property details and our experts will contact you with a market value estimate.',
+    'Datos de la propiedad':          'Property details',
+    'Ingresa tu nombre':              'Enter your name',
+    'Número válido (10 dígitos)':     'Valid number (10 digits)',
+    'Correo electrónico *':           'Email *',
+    'Ingresa un correo válido':       'Enter a valid email',
+    'Tipo de propiedad *':            'Property type *',
+    'Selecciona el tipo':             'Select type',
+    '¿Para qué necesita el avalúo?':  'What do you need the appraisal for?',
+    'Vender la propiedad':            'Sell the property',
+    'Solicitar crédito':              'Request a loan',
+    'Herencia / sucesión':            'Inheritance / succession',
+    'Ciudad *':                       'City *',
+    'Ingresa la ciudad':              'Enter the city',
+    'Barrio / Sector':                'Neighborhood / Area',
+    '5 o más':                        '5 or more',
+    'Precio de referencia (COP) — opcional': 'Reference price (COP) — optional',
+    'Información adicional':          'Additional information',
+    'Basado en precio/m² promedio de mercado en tu zona. El avalúo oficial de nuestros expertos puede diferir.':
+      'Based on average market price/m² in your area. The official appraisal by our experts may differ.',
+    'Solicitar avalúo gratuito':      'Request free appraisal',
+    '¡Solicitud recibida!':           'Request received!',
+    'Un asesor de Altorra se comunicará contigo en menos de 24 horas hábiles con la estimación de tu propiedad.':
+      'An Altorra advisor will contact you within 24 business hours with your property estimate.',
+    '🏆 ¿Por qué elegir Altorra?':    '🏆 Why choose Altorra?',
+
+    // ═══ Publicar propiedad ═══
+    'Vende, arrienda o renta tu inmueble con el respaldo de Altorra Inmobiliaria.':
+      'Sell, rent or lease your property with the backing of Altorra Inmobiliaria.',
+    '¿Por qué publicar con Altorra?': 'Why publish with Altorra?',
+    'Difusión en múltiples canales de venta y arriendo.':
+      'Exposure across multiple sales and rental channels.',
+    'Amplia red de clientes potenciales.': 'Wide network of potential clients.',
+    'Nos encargamos de todo el proceso por ti.':
+      'We handle the entire process for you.',
+    'Completa el siguiente formulario y un asesor de Altorra se pondrá en contacto contigo para ayudarte a publicar tu inmueble.':
+      'Fill out the following form and an Altorra advisor will contact you to help list your property.',
+    'Teléfono de contacto':           'Contact phone',
+    'Precio estimado (COP)':          'Estimated price (COP)',
+    'Descripción de la propiedad':    'Property description',
+    'Casa moderna y elegante':        'Modern and elegant house',
+    'Cuéntanos: habitaciones, baños, m², parqueadero, amenidades, cercanías...':
+      'Tell us: bedrooms, bathrooms, m², parking, amenities, nearby...',
+
+    // ═══ Favoritos ═══
+    'Propiedades que has guardado':   'Properties you saved',
+    'Limpiar todo':                   'Clear all',
+    'No tienes favoritos aún':        'No favorites yet',
+    'Explora propiedades y agrega tus favoritos': 'Browse properties and add your favorites',
+    'Revisa las propiedades que guardaste como favoritos en Altorra Inmobiliaria.':
+      'Review the properties you saved as favorites at Altorra Inmobiliaria.',
+
+    // ═══ Servicios (mantenimiento, mudanzas, turismo) ═══
+    'Servicio próximamente':          'Service coming soon',
+    'Servicio no disponible en este momento': 'Service not available at this time',
+    'Muy pronto estará disponible con Altorra Inmobiliaria':
+      'Very soon available with Altorra Inmobiliaria',
+    'Estamos afinando los últimos detalles para ofrecerte una experiencia de primer nivel. En breve podrás acceder a este servicio con la seguridad, legalidad y confianza de Altorra.':
+      'We\'re fine-tuning the last details to offer you a first-class experience. Soon you\'ll be able to access this service with Altorra\'s security, legality and trust.',
+    'Te redirigimos al inicio en':    'Redirecting to home in',
+    'Volver al inicio ahora':         'Go back to home now',
+    'Si prefieres, guarda esta página y vuelve más tarde. Estamos trabajando para ti.':
+      'If you prefer, save this page and come back later. We\'re working for you.',
+    'Este servicio aún no está disponible. Muy pronto estará disponible con Altorra Inmobiliaria.':
+      'This service is not yet available. Very soon available with Altorra Inmobiliaria.',
+    'Muy pronto con Altorra Inmobiliaria': 'Very soon with Altorra Inmobiliaria',
+    'Estamos preparando este servicio para ti.': 'We\'re preparing this service for you.',
+    'Pausar o reanudar contador':     'Pause or resume timer',
+    'Experiencias exclusivas en Cartagena': 'Exclusive experiences in Cartagena',
+    'Renta de yates':                 'Yacht rental',
+    'Navega la bahia y las Islas del Rosario con estilo':
+      'Sail the bay and Rosario Islands in style',
+    'Pasadias en islas':              'Island day trips',
+    'Playa, sol y mar en las mejores islas de Cartagena':
+      'Beach, sun and sea at Cartagena\'s best islands',
+    'Planes completos para grupos, familias y parejas':
+      'Complete plans for groups, families and couples',
+    'Recorre la ciudad amurallada con guias expertos':
+      'Tour the walled city with expert guides',
+
+    // ═══ Blog posts - titles ═══
+    '¿Por qué invertir en Cartagena en 2026? Guía Completa | Altorra':
+      'Why invest in Cartagena in 2026? Complete Guide | Altorra',
+    'Análisis completo de las razones por las que Cartagena es uno de los mejores destinos para inversión inmobiliaria en Latinoamérica en 2026.':
+      'Complete analysis of why Cartagena is one of the best real estate investment destinations in Latin America in 2026.',
+    '15 de abril, 2026 · 8 min lectura': 'April 15, 2026 · 8 min read',
+    '10 de abril, 2026 · 10 min lectura': 'April 10, 2026 · 10 min read',
+    '5 de abril, 2026 · 12 min lectura': 'April 5, 2026 · 12 min read',
+    '1. Valorización constante':      '1. Steady appreciation',
+    '2. Boom del turismo':            '2. Tourism boom',
+    '3. Infraestructura en expansión': '3. Expanding infrastructure',
+    '4. Demanda internacional':       '4. International demand',
+    '5. Diversificación de zonas':    '5. Zone diversification',
+    '6. Zonas con mayor potencial':   '6. Zones with highest potential',
+    '¿Vale la pena invertir?':        'Is it worth investing?',
+
+    // ═══ Privacidad ═══
+    'Conozca cómo recopilamos, usamos y protegemos sus datos personales. Seguridad • Legalidad • Confianza.':
+      'Learn how we collect, use and protect your personal data. Security • Legality • Trust.',
+    '(en adelante, "Altorra") es responsable del tratamiento de los datos personales recolectados a través de sus canales digitales y presenciales.':
+      '(hereinafter "Altorra") is responsible for the processing of personal data collected through its digital and in-person channels.',
+    'Consentimiento del titular, ejecución de contratos o diligencias precontractuales, cumplimiento de obligaciones legales e interés legítimo para seguridad y mejora del servicio.':
+      'Data subject consent, contract execution or pre-contractual steps, legal obligation compliance and legitimate interest for security and service improvement.',
+    'Conservamos los datos por el tiempo necesario para la finalidad, relación contractual y plazos legales. Luego se suprimirán o anonimizarán.':
+      'We retain data for as long as necessary for the purpose, contractual relationship and legal terms. Then it will be deleted or anonymized.',
+    'Acceso, Rectificación, Cancelación/Supresión y Oposición; revocar consentimiento o presentar quejas ante la SIC.':
+      'Access, Rectification, Cancellation/Deletion and Opposition; revoke consent or file complaints with SIC.',
+    'Aceptar todas':                  'Accept all',
+    'Mapa':                           'Map',
+
+    // ═══ Foreign investors (inverso: EN → ES también en ES_TO_EN para coherencia bidireccional) ═══
+    'Complete guide for US, Canadian and Spanish investors buying property in Cartagena, Colombia. Legal, tax and financing information.':
+      'Guía completa para inversionistas de EE.UU., Canadá y España que compran propiedad en Cartagena, Colombia.',
+
+    // ═══ Varios faltantes útiles ═══
+    'Cargando propiedades...':        'Loading properties...',
+    'Error al cargar':                'Loading error',
+    'Inténtalo de nuevo':             'Try again',
+    'Página':                         'Page',
+    'de':                             'of',
+    'Siguiente':                      'Next',
+    'Anterior':                       'Previous',
+    'Compartir en WhatsApp':          'Share on WhatsApp',
+    'Compartir en Facebook':          'Share on Facebook',
+    'Compartir en Twitter':           'Share on Twitter',
+    'Copiar enlace':                  'Copy link',
+    'Enlace copiado':                 'Link copied',
+    'Suscríbete':                     'Subscribe',
+    'Newsletter':                     'Newsletter',
+    'Recibe las mejores oportunidades directamente en tu correo.':
+      'Receive the best opportunities directly in your email.',
+    'Suscribirme':                    'Subscribe me',
+    'Suscripción exitosa':            'Subscription successful',
+    'Ya estás suscrito':              'You are already subscribed',
+    'Gracias por suscribirte':        'Thank you for subscribing',
+    'Agendar visita':                 'Schedule visit',
+    'Selecciona fecha':               'Select date',
+    'Selecciona hora':                'Select time',
+    'Confirmar cita':                 'Confirm appointment',
   };
 
   // Build EN→ES reverse
