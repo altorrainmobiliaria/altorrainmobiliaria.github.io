@@ -1371,6 +1371,162 @@
       'We do not direct services to minors under 18. If we process data due to relations with their guardians, it will be under the best interests of the minor and the representative\'s consent.',
     'Para preguntas o reclamos sobre datos personales contáctenos por estos medios. También puede acudir a la Superintendencia de Industria y Comercio (SIC).':
       'For questions or complaints about personal data, contact us through these channels. You may also contact the Superintendence of Industry and Commerce (SIC).',
+
+    // Foreign investors (EN stays EN, ES side is native English already; these are reverse for EN→ES context)
+    'Everything US, Canadian and Spanish investors need to know about buying real estate in Cartagena.':
+      'Everything US, Canadian and Spanish investors need to know about buying real estate in Cartagena.',
+    'Why Cartagena for foreign investors?': 'Why Cartagena for foreign investors?',
+    'Does buying property give me residency?': 'Does buying property give me residency?',
+    'Foreigners have the same property rights as Colombians. No special visa or permit required to buy.':
+      'Foreigners have the same property rights as Colombians. No special visa or permit required to buy.',
+    'Ready to own a piece of Cartagena?': 'Ready to own a piece of Cartagena?',
+    'Spending winters in Cartagena is tax-efficient if structured correctly.': 'Spending winters in Cartagena is tax-efficient if structured correctly.',
+    'No restrictions':                'No restrictions',
+    'No estate tax treaty:':          'No estate tax treaty:',
+    'No. The entire process can be done remotely through a power of attorney signed at a Colombian consulate or apostilled locally. We coordinate everything.':
+      'No. The entire process can be done remotely through a power of attorney signed at a Colombian consulate or apostilled locally. We coordinate everything.',
+    'Sign a "Promesa de Compraventa" with 10-30% deposit. Can be executed remotely via power of attorney.':
+      'Sign a "Promesa de Compraventa" with 10-30% deposit. Can be executed remotely via power of attorney.',
+    'Wire USD/EUR/CAD to Colombia via authorized banks. Funds are registered with Banco de la República (Form 4) — mandatory for future repatriation.':
+      'Wire USD/EUR/CAD to Colombia via authorized banks. Funds are registered with Banco de la República (Form 4) — mandatory for future repatriation.',
+    'Yes. Our team includes bilingual agents (EN/ES) and we partner with English-speaking attorneys and accountants specialized in foreign investors.':
+      'Yes. Our team includes bilingual agents (EN/ES) and we partner with English-speaking attorneys and accountants specialized in foreign investors.',
+
+    // Legal / tax / visa content (ES→EN)
+    'Impuestos, visas y trámites para comprar propiedad en Colombia': 'Taxes, visas and procedures to buy property in Colombia',
+    'Colombia ofrece una visa de inversionista para extranjeros que inviertan en bienes raíces:': 'Colombia offers an investor visa for foreigners who invest in real estate:',
+    'Inversión mínima:':              'Minimum investment:',
+    'Duración:':                      'Duration:',
+    'Hasta 3 años, renovable':        'Up to 3 years, renewable',
+    'Residencia en Colombia, acceso al sistema de salud, posibilidad de trabajar': 'Residence in Colombia, access to healthcare, possibility to work',
+    'La visa de inversionista es una de las rutas más populares para extranjeros que buscan residencia en Colombia. La inversión inmobiliaria cumple como requisito y además genera retorno financiero.':
+      'The investor visa is one of the most popular paths for foreigners seeking residence in Colombia. Real estate investment qualifies as a requirement and also generates financial return.',
+    'El proceso legal requiere asesoría profesional': 'The legal process requires professional advice',
+    'Siempre obtener un Certificado de Tradición y Libertad actualizado': 'Always obtain an updated Certificate of Tradition and Freedom',
+    'Verificar el Certificado de Tradición y Libertad del inmueble, que confirma la propiedad y ausencia de gravámenes. Un abogado inmobiliario es esencial.':
+      'Verify the property\'s Certificate of Tradition and Freedom, which confirms ownership and absence of liens. A real estate attorney is essential.',
+    'Promesa de compraventa:':        'Promise of sale:',
+    'Contrato privado que establece precio, condiciones y plazo. Generalmente incluye un depósito del 10-20%.':
+      'Private contract setting price, conditions and term. Generally includes a 10-20% deposit.',
+    'Escritura pública:':             'Public deed:',
+    'Se firma ante notario público. El comprador y vendedor (o sus apoderados) deben estar presentes.': 'Signed before a notary public. Buyer and seller (or their attorneys-in-fact) must be present.',
+    'La escritura se registra en la Oficina de Instrumentos Públicos. Esto formaliza la transferencia de propiedad.': 'The deed is registered at the Public Instruments Office. This formalizes the property transfer.',
+    'Impuesto de registro':           'Registration tax',
+    'Debes registrar el ingreso de divisas ante el Banco de la República mediante el formulario de declaración de cambio. Esto protege tu derecho a repatriar ganancias.':
+      'You must register the foreign currency inflow with the Banco de la República through the exchange declaration form. This protects your right to repatriate earnings.',
+    'Obtener Cédula de Extranjería o NIT:': 'Obtain Foreigner ID or NIT:',
+    'Necesitas un número de identificación tributaria (NIT) para realizar transacciones. Se obtiene en la DIAN con tu pasaporte.':
+      'You need a tax identification number (NIT) to carry out transactions. It is obtained from DIAN with your passport.',
+    'Registrar la inversión extranjera:': 'Register the foreign investment:',
+    'La condición es que la inversión haya sido registrada ante el Banco de la República al momento del ingreso de las divisas.':
+      'The condition is that the investment has been registered with the Banco de la República at the time of currency inflow.',
+    'Obtener crédito hipotecario como extranjero en Colombia es posible pero tiene condiciones especiales:': 'Getting a mortgage as a foreigner in Colombia is possible but has special conditions:',
+    'Tasas de interés: 10-14% anual en COP (más altas que para colombianos)': 'Interest rates: 10-14% annually in COP (higher than for Colombians)',
+    'Plazo máximo: 15-20 años':       'Maximum term: 15-20 years',
+    'Muchos inversionistas extranjeros optan por pagar de contado o financiar a través de su país de origen, donde las tasas son generalmente menores.':
+      'Many foreign investors choose to pay in cash or finance through their home country, where rates are generally lower.',
+    'Retención colombiana:':          'Colombian withholding:',
+    'Extranjeros no residentes: retención del 35% sobre renta bruta; residentes fiscales: tarifa progresiva (0-39%)':
+      'Non-resident foreigners: 35% withholding on gross income; tax residents: progressive rate (0-39%)',
+    'IRPF sobre alquileres:':         'IRPF on rentals:',
+    'Rentas inmobiliarias en Colombia tributan en España como rendimiento de capital inmobiliario. Deducción por doble imposición.':
+      'Real estate income in Colombia is taxed in Spain as real estate capital income. Deduction for double taxation.',
+    'Impuesto de patrimonio:':        'Wealth tax:',
+    'Declaración obligatoria de bienes en el extranjero si superan los €50.000.': 'Mandatory declaration of assets abroad if they exceed €50,000.',
+    'Impuesto sobre el Patrimonio:':  'Wealth Tax:',
+    'Si tu patrimonio mundial supera el mínimo exento (€700K + €300K vivienda habitual).': 'If your worldwide wealth exceeds the exempt minimum (€700K + €300K primary residence).',
+    'Renta sobre ingresos de arriendo:': 'Income tax on rental income:',
+    'Ganancia ocasional por venta:':  'Occasional gain on sale:',
+    'Retención en la fuente':         'Withholding at source',
+    'Impuesto en Colombia + en la comunidad autónoma española del heredero. Planificación fiscal clave.':
+      'Tax in Colombia + in the heir\'s Spanish autonomous community. Key fiscal planning.',
+    'Los porcentajes y umbrales fiscales pueden cambiar cada año. Consulta siempre con un contador público colombiano antes de tomar decisiones de inversión.':
+      'Tax percentages and thresholds may change each year. Always consult a Colombian public accountant before making investment decisions.',
+    'El capital invertido original':  'The original invested capital',
+    'Las ganancias y dividendos':     'Profits and dividends',
+    'El producto de la venta del inmueble': 'Proceeds from the sale of the property',
+    'Sin registro ante el Banco de la República, repatriar dinero se complica': 'Without Banco de la República registration, repatriating money becomes complicated',
+    'No registrar la inversión:':     'Not registering the investment:',
+    'No declarar ingresos por arriendo puede generar sanciones': 'Not declaring rental income can lead to penalties',
+    'No verificar títulos:':          'Not verifying titles:',
+    'No hacer avalúo independiente:': 'Not getting an independent appraisal:',
+    'Verificar que el precio pedido corresponda al mercado real': 'Verifying that the asking price matches the real market',
+    '🇪🇸 Ciudadanos & Residentes Españoles': '🇪🇸 Spanish Citizens & Residents',
+    '🇪🇸 España':                     '🇪🇸 Spain',
+    'España':                         'Spain',
+    'Razones clave y datos que respaldan la inversión inmobiliaria en Cartagena': 'Key reasons and data backing real estate investment in Cartagena',
+
+    // Invest / ROI zones
+    'Precio apto m²':                 'Apt price per m²',
+    'Precio lote m²':                 'Lot price per m²',
+    'Valorización anual':             'Annual appreciation',
+    'ROI anual típico':               'Typical annual ROI',
+    'Precio m² desde $1.800 USD, ROI 6-9%': 'Price per m² from $1,800 USD, ROI 6-9%',
+    'Precio m² desde $2.500 USD, ROI 5-8%': 'Price per m² from $2,500 USD, ROI 5-8%',
+    'Precio m² desde $5.000 USD, ROI 4-6%': 'Price per m² from $5,000 USD, ROI 4-6%',
+    '+6-10%/año':                     '+6-10%/year',
+    '+8-12%/año':                     '+8-12%/year',
+    '+12-15%/año':                    '+12-15%/year',
+    '+15-20%/año':                    '+15-20%/year',
+    'Ver propiedades en Manzanillo del Mar': 'View properties in Manzanillo del Mar',
+    'Ver oportunidades de inversión': 'View investment opportunities',
+    '$1M — $3M / mes':                '$1M — $3M / month',
+    '$1.2M — $3.5M / mes':            '$1.2M — $3.5M / month',
+    '$1.5M — $4.5M / mes':            '$1.5M — $4.5M / month',
+    '$1.8M — $5M / mes':              '$1.8M — $5M / month',
+    '$2M — $6M / mes':                '$2M — $6M / month',
+    '$2.5M — $8M / mes':              '$2.5M — $8M / month',
+    '$80K - $150K/mes':               '$80K - $150K/month',
+    '$100K - $200K/mes':              '$100K - $200K/month',
+    '$150K - $300K/mes':              '$150K - $300K/month',
+    '$200K - $800K/mes':              '$200K - $800K/month',
+    '$300K - $600K/mes':              '$300K - $600K/month',
+
+    // Neighborhoods
+    'Bocagrande':                     'Bocagrande',
+    'Getsemaní':                      'Getsemaní',
+    'Centro Histórico':               'Historic Center',
+    'La Boquilla':                    'La Boquilla',
+    'Barú':                           'Barú',
+    'Pie de la Popa':                 'Pie de la Popa',
+    'La zona más exclusiva. Frente al mar, hoteles 5 estrellas, centros comerciales y vida nocturna. Ideal para inversión en renta por días.':
+      'The most exclusive area. Beachfront, 5-star hotels, shopping centers and nightlife. Ideal for short-term rental investment.',
+    'Patrimonio UNESCO con el mayor potencial de renta turística. Propiedades coloniales con encanto único que atrae turistas internacionales dispuestos a pagar tarifas premium.':
+      'UNESCO heritage with the highest vacation rental potential. Colonial properties with unique charm that attract international tourists willing to pay premium rates.',
+    'Patrimonio UNESCO. Casas coloniales restauradas y aptos boutique. La mayor demanda de Airbnb en toda Colombia.':
+      'UNESCO heritage. Restored colonial houses and boutique apartments. The highest Airbnb demand in all of Colombia.',
+    'Mayor demanda turística de Colombia. Casas coloniales y aptos boutique con encanto único. Tarifa premium por la experiencia.':
+      'Highest tourist demand in Colombia. Colonial houses and boutique apartments with unique charm. Premium rates for the experience.',
+    'El barrio de moda. Viajeros jóvenes, nómadas digitales y turismo cultural. Inversión inicial más baja que Centro Histórico.':
+      'The trendy neighborhood. Young travelers, digital nomads and cultural tourism. Lower initial investment than the Historic Center.',
+    'Estrato 5-6. La zona con mayor oferta de arriendo. Cerca a la playa, restaurantes, centros comerciales y vida nocturna.':
+      'Socioeconomic level 5-6. The zone with the highest rental supply. Close to the beach, restaurants, shopping centers and nightlife.',
+    'Estrato 5. Residencial con vistas a la bahía. Zona tranquila con colegios y acceso a las principales vías.':
+      'Socioeconomic level 5. Residential with bay views. Quiet area with schools and access to main roads.',
+    'Estrato 4-6. Casas coloniales y apartamentos boutique. Patrimonio UNESCO con la mayor vida cultural de la ciudad.':
+      'Socioeconomic level 4-6. Colonial houses and boutique apartments. UNESCO heritage with the city\'s greatest cultural life.',
+    'Estrato 4-5. Barrio residencial con carácter. Buena conectividad, restaurantes y ambiente tranquilo.':
+      'Socioeconomic level 4-5. Residential neighborhood with character. Good connectivity, restaurants and quiet atmosphere.',
+    'Estrato 4. Cerca al aeropuerto. Proyectos nuevos con excelente relación precio-calidad. Ideal para profesionales.':
+      'Socioeconomic level 4. Close to airport. New projects with excellent price-quality ratio. Ideal for professionals.',
+    'Estrato 3-4. Zona en expansión con proyectos modernos. Cerca a la playa y centros comerciales nuevos.':
+      'Socioeconomic level 3-4. Expanding zone with modern projects. Close to the beach and new shopping centers.',
+    'La zona más consolidada, ideal para inversionistas conservadores. Alta liquidez y demanda constante tanto para venta como renta.':
+      'The most established zone, ideal for conservative investors. High liquidity and constant demand for both sale and rental.',
+    'Exclusividad residencial con acceso a playa. Edificios de lujo con amenidades completas. Menor densidad que Bocagrande.':
+      'Residential exclusivity with beach access. Luxury buildings with full amenities. Lower density than Bocagrande.',
+    'Segmento premium y familias. Menor competencia que Bocagrande. Propiedades de lujo con amenidades exclusivas.':
+      'Premium segment and families. Less competition than Bocagrande. Luxury properties with exclusive amenities.',
+    'Barrio tradicional con encanto. Restaurantes, vida cultural y buena conectividad. Excelente relación precio-calidad para vivienda.':
+      'Traditional neighborhood with charm. Restaurants, cultural life and good connectivity. Excellent price-quality ratio for housing.',
+    'Cerca al aeropuerto y al mar. Proyectos nuevos con precios competitivos. Ideal para primera vivienda o arriendo a largo plazo.':
+      'Close to airport and sea. New projects with competitive prices. Ideal for first home or long-term rental.',
+    'Zona en desarrollo cerca al aeropuerto. Precios más accesibles con alta proyección de valorización por los nuevos proyectos viales.':
+      'Developing area near the airport. More accessible prices with high appreciation projection due to new road projects.',
+    'Zona en plena expansión. Proyectos sobre planos con precios de oportunidad. Mayor potencial de valorización a mediano plazo.':
+      'Rapidly expanding area. Pre-construction projects with opportunity prices. Greatest medium-term appreciation potential.',
+    'Mejor balance entre inversión inicial y retorno. Alta oferta pero demanda constante por playa y servicios.':
+      'Best balance between initial investment and return. High supply but constant demand for beach and services.',
   };
 
   // Build EN→ES reverse
