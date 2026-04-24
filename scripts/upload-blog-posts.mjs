@@ -78,6 +78,37 @@ const POSTS = [
     `.trim()
   },
   {
+    slug: 'mejores-zonas-airbnb-cartagena',
+    titulo: 'Mejores zonas para Airbnb en Cartagena 2026 — ROI por barrio',
+    resumen: 'Ranking de zonas premium de Cartagena para inversión Airbnb: ocupación, ADR, ROI y ticket de entrada en Getsemaní, Centro Histórico, Bocagrande, La Boquilla y Castillogrande.',
+    categoria: 'Rentabilidad',
+    imagen: 'https://i.postimg.cc/FHy13q2M/pexels-rdne-8293700.jpg',
+    fecha: new Date('2026-04-20T00:00:00Z'),
+    tiempoLectura: 11,
+    publicado: true,
+    url: 'blog/mejores-zonas-airbnb-cartagena.html',
+    contenido: `
+      <p>No todas las zonas de Cartagena son iguales para Airbnb. Este ranking analiza ocupación, ADR, ROI y ticket de entrada.</p>
+      <h2>Ranking por ROI</h2>
+      <ol>
+        <li><strong>Getsemaní</strong> — 72% ocupación, ADR $380K, ROI 12-14%</li>
+        <li><strong>Centro Histórico</strong> — 68% ocupación, ADR $520K, ROI 10-12%</li>
+        <li><strong>Bocagrande</strong> — 65% ocupación, ADR $420K, ROI 9-11%</li>
+        <li><strong>La Boquilla</strong> — 58% ocupación, ADR $280K, ROI 8-10%</li>
+        <li><strong>Castillogrande</strong> — 55% ocupación, ADR $480K, ROI 7-9%</li>
+      </ol>
+      <h2>Factores que no aparecen en la tabla</h2>
+      <ul>
+        <li>Reglamento de copropiedad (varias torres en Bocagrande prohíben renta corta)</li>
+        <li>RNT obligatorio desde 2019</li>
+        <li>IVA 19% si facturas más de 3.500 UVT/año</li>
+        <li>Saturación de oferta en Centro Histórico y Getsemaní</li>
+      </ul>
+      <h2>Recomendación final</h2>
+      <p>Si buscas ROI puro: Getsemaní. Si buscas valorización más ingreso: La Boquilla. Si buscas premium de marca: Centro Histórico. Si priorizas liquidez: Bocagrande.</p>
+    `.trim()
+  },
+  {
     slug: 'vale-la-pena-invertir-cartagena-2026',
     titulo: '¿Vale la pena invertir en Cartagena en 2026? Análisis honesto',
     resumen: 'Análisis balanceado: ventajas, riesgos y datos reales para decidir si invertir en bienes raíces en Cartagena es correcto para tu perfil.',
