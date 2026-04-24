@@ -78,6 +78,45 @@ const POSTS = [
     `.trim()
   },
   {
+    slug: 'vale-la-pena-invertir-cartagena-2026',
+    titulo: '¿Vale la pena invertir en Cartagena en 2026? Análisis honesto',
+    resumen: 'Análisis balanceado: ventajas, riesgos y datos reales para decidir si invertir en bienes raíces en Cartagena es correcto para tu perfil.',
+    categoria: 'Análisis',
+    imagen: 'https://i.postimg.cc/FHy13q2M/pexels-rdne-8293700.jpg',
+    fecha: new Date('2026-04-22T00:00:00Z'),
+    tiempoLectura: 9,
+    publicado: true,
+    url: 'blog/vale-la-pena-invertir-cartagena-2026.html',
+    contenido: `
+      <p>La pregunta directa merece una respuesta directa: <strong>sí, pero con condiciones</strong>. Cartagena no es una apuesta ciega — es un mercado maduro con mecánicas específicas.</p>
+      <h2>Los datos que importan (2026)</h2>
+      <ul>
+        <li>Precio promedio m² Bocagrande: $8.500.000 COP (+18% en 3 años)</li>
+        <li>Ocupación Airbnb zona premium: 62% (+9 pp)</li>
+        <li>ADR (tarifa noche promedio): $420.000 COP (+22%)</li>
+        <li>Llegadas aéreas internacionales: 1,1M/año (+34%)</li>
+      </ul>
+      <h2>Ventajas y riesgos — mirada balanceada</h2>
+      <h3>A favor</h3>
+      <ul>
+        <li>Moneda débil (COP) favorece entrada USD/EUR</li>
+        <li>Demanda turística al alza sostenida</li>
+        <li>Valorización 8-12% anual en zonas premium</li>
+        <li>Marco legal estable para extranjeros</li>
+      </ul>
+      <h3>En contra</h3>
+      <ul>
+        <li>Oferta Airbnb saturada en Centro Histórico</li>
+        <li>Retención 35% para no residentes</li>
+        <li>Gestión operativa exigente o costosa (~25%)</li>
+        <li>Volatilidad cambiaria al repatriar</li>
+      </ul>
+      <h2>¿A qué perfil le calza?</h2>
+      <p>Te conviene si buscas diversificación geográfica, tienes horizonte de 5-7 años y aceptas gestión delegada. No te conviene si necesitas liquidez inmediata o quieres retornos garantizados.</p>
+      <blockquote>La diferencia entre una buena y una mala inversión en Cartagena no está en el precio — está en la <em>zona</em>, el <em>uso</em> y la <em>capacidad de gestión</em>.</blockquote>
+    `.trim()
+  },
+  {
     slug: 'guia-legal-inversionistas-extranjeros',
     titulo: 'Guía legal para inversionistas extranjeros en Colombia',
     resumen: 'Todo lo que necesitas saber sobre impuestos, visas de inversionista, escrituración y trámites para comprar propiedad en Colombia.',
