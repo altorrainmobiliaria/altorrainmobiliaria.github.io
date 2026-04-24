@@ -1281,6 +1281,96 @@
     'Visualiza dónde está cada propiedad antes de agendaruna visita.': 'See where each property is before scheduling a visit.',
     '¿Por qué usar el mapa?':         'Why use the map?',
     'Limita la búsqueda por barrio o zona de la ciudad que más te interesa.': 'Narrow your search by the neighborhood or zone of the city you\'re most interested in.',
+
+    // Contact / Publicar / Thank you
+    'Conéctate con Nosotros':         'Connect with us',
+    'Envíanos un mensaje':            'Send us a message',
+    'Estamos listos para ayudarte a encontrar tu próximo hogar o inversión.': 'We\'re ready to help you find your next home or investment.',
+    'Te responderemos en el menor tiempo posible.': 'We will reply as soon as possible.',
+    'Correo:':                        'Email:',
+    'Teléfono':                       'Phone',
+    'Teléfono/WhatsApp:':             'Phone/WhatsApp:',
+    'Dirección de contacto:':         'Contact address:',
+    'Cartagena de Indias, Bolívar – Colombia': 'Cartagena de Indias, Bolívar – Colombia',
+    'Llámanos o escríbenos por WhatsApp:': 'Call us or message us on WhatsApp:',
+    'WhatsApp Altorra':               'WhatsApp Altorra',
+    '📞 ¿Prefieres hablar?':          '📞 Prefer to talk?',
+    '🔒 Tus datos están seguros':     '🔒 Your data is safe',
+    '¡Gracias! Recibimos tu mensaje': 'Thank you! We received your message',
+    'Tu caso quedó':                  'Your case has been',
+    'ID de seguimiento:':             'Tracking ID:',
+    'Un profesional de':              'A professional from',
+    'se comunicará contigo muy pronto. Si necesitas una atención inmediata, escríbenos por WhatsApp.': 'will contact you very soon. If you need immediate assistance, message us on WhatsApp.',
+    'Serás redirigido al':            'You will be redirected to',
+    '¿Qué sigue?':                    'What\'s next?',
+    'Publica tu propiedad con Altorra': 'List your property with Altorra',
+    '¿En cuánto lo tienes valuado?':  'What is your asking price?',
+    'Cuéntanos más sobre la propiedad (remodelaciones, estado, etc.)': 'Tell us more about the property (renovations, condition, etc.)',
+    'Validaremos tu solicitud y uno de nuestros asesores te contactará pronto.': 'We\'ll validate your request and one of our advisors will contact you soon.',
+
+    // Avalúo
+    'Avalúo comercial':               'Commercial appraisal',
+    'Solicita el avalúo de tu propiedad. Nuestros expertos te contactarán con una estimación del valor de mercado.':
+      'Request your property appraisal. Our experts will contact you with a market value estimate.',
+    'Más de 10 años de experiencia en el mercado inmobiliario de Cartagena y la región Caribe. Avalúos basados en datos reales del mercado.':
+      'Over 10 years of experience in the Cartagena and Caribbean real estate market. Appraisals based on real market data.',
+    'Respuesta en menos de 24 horas hábiles. El avalúo preliminar es gratuito. Si necesitas avalúo oficial con certificado, nuestro equipo te cotiza el servicio.':
+      'Response in less than 24 business hours. The preliminary appraisal is free. If you need an official certified appraisal, our team will provide a quote.',
+    'Toda la información que compartes es confidencial y se usa únicamente para preparar tu avalúo. No compartimos datos con terceros.':
+      'All information you share is confidential and used only to prepare your appraisal. We do not share data with third parties.',
+    'menos de 24h':                   'less than 24h',
+    'Solicitar asesoría legal':       'Request legal advice',
+    '¿Necesitas asesoría legal personalizada?': 'Need personalized legal advice?',
+    'Nuestro equipo jurídico te guía en todo el proceso de compra como inversionista extranjero.':
+      'Our legal team guides you through the entire purchase process as a foreign investor.',
+    'Solicitar avalúo comercial | Altorra Inmobiliaria': 'Request commercial appraisal | Altorra Real Estate',
+
+    // Simulador
+    'Simula cuánto puedes ganar con tu propiedad en renta turística.': 'Simulate how much you can earn with your property in vacation rental.',
+    'Ingresa el precio, tarifa por noche y ocupación estimada para ver tu ROI.': 'Enter the price, nightly rate and estimated occupancy to see your ROI.',
+    'Usa nuestra calculadora para estimar el ROI de tu propiedad según zona y modalidad.':
+      'Use our calculator to estimate your property\'s ROI by zone and operation type.',
+    '¿Quieres calcular tu rentabilidad?': 'Want to calculate your profitability?',
+
+    // Privacidad
+    'Política de Privacidad':         'Privacy Policy',
+    'Cómo recopilamos, usamos y protegemos su información personal.': 'How we collect, use and protect your personal information.',
+    'Última actualización:':          'Last updated:',
+    'Índice de secciones':            'Table of contents',
+    'Documento conforme a la':        'Document compliant with',
+    'Ley 1581 de 2012':               'Law 1581 of 2012',
+    'Decreto 1377 de 2013':           'Decree 1377 of 2013',
+    '(en adelante, “Altorra”) es responsable del tratamiento de los datos personales recolectados a través de sus canales digitales y presenciales.':
+      '(hereinafter, "Altorra") is responsible for processing personal data collected through its digital and in-person channels.',
+    'Identificación y contacto: nombre, cédula/NIT, correo, teléfono, ciudad.': 'Identification and contact: name, ID/tax ID, email, phone, city.',
+    'Información del inmueble: dirección aproximada, características, fotos provistas por el titular.': 'Property information: approximate address, characteristics, photos provided by the owner.',
+    'Preferencias y registros derivados del servicio y la relación comercial.': 'Preferences and records derived from the service and commercial relationship.',
+    'Datos técnicos mínimos: IP, dispositivo, navegador, páginas visitadas (analítica).': 'Minimal technical data: IP, device, browser, pages visited (analytics).',
+    'No tratamos categorías especiales (sensibles) salvo que sean necesarias y con consentimiento explícito.':
+      'We do not process special (sensitive) categories unless necessary and with explicit consent.',
+    'Prestar servicios de compra, venta, arriendo, administración, avalúos y asesoría jurídica.': 'Provide services for purchase, sale, rental, administration, appraisals and legal advice.',
+    'Responder solicitudes, cotizaciones y agendar visitas.': 'Respond to requests, quotes and schedule visits.',
+    'Envío de comunicaciones informativas y/o comerciales (con opción de cancelación).': 'Sending informational and/or commercial communications (with opt-out option).',
+    'Verificación de identidad y prevención de fraude.': 'Identity verification and fraud prevention.',
+    'Mejora de experiencia digital, seguridad, métricas y cumplimiento de obligaciones legales.':
+      'Improvement of digital experience, security, metrics and compliance with legal obligations.',
+    'Podemos compartir datos con encargados (hosting, mensajería, analítica, CRM) bajo acuerdos de confidencialidad. Posibles transferencias internacionales con salvaguardas adecuadas.':
+      'We may share data with processors (hosting, messaging, analytics, CRM) under confidentiality agreements. Possible international transfers with adequate safeguards.',
+    'No vendemos datos personales. Revelamos información solo por mandato legal o autoridad competente.': 'We do not sell personal data. We disclose information only by legal mandate or competent authority.',
+    'Control de acceso, cifrado en tránsito (HTTPS), copias de seguridad y principio de mínimo privilegio para encargados.':
+      'Access control, encryption in transit (HTTPS), backups and principle of least privilege for processors.',
+    'Incluya nombre completo, documento, solicitud y medio de respuesta.': 'Include full name, ID, request and response method.',
+    '(asunto: “Derechos de datos personales”).': '(subject: "Personal data rights").',
+    'Plazos: consultas hasta 10 días hábiles y reclamos hasta 15.': 'Timeframes: inquiries up to 10 business days and claims up to 15.',
+    'Cookies técnicas necesarias y, eventualmente, de medición. Puede aceptar o rechazar las de medición en este aviso.':
+      'Necessary technical cookies and, eventually, measurement cookies. You can accept or reject measurement cookies in this notice.',
+    'Puede cambiar su decisión borrando las cookies del navegador.': 'You can change your decision by deleting browser cookies.',
+    'Rechazar medición':              'Reject measurement',
+    'utilizamos cookies necesarias y de medición para mejorar su experiencia.': 'we use necessary and measurement cookies to improve your experience.',
+    'No dirigimos servicios a menores de 18 años. Si tratamos datos por relación con sus acudientes, será bajo interés superior del menor y consentimiento del representante.':
+      'We do not direct services to minors under 18. If we process data due to relations with their guardians, it will be under the best interests of the minor and the representative\'s consent.',
+    'Para preguntas o reclamos sobre datos personales contáctenos por estos medios. También puede acudir a la Superintendencia de Industria y Comercio (SIC).':
+      'For questions or complaints about personal data, contact us through these channels. You may also contact the Superintendence of Industry and Commerce (SIC).',
   };
 
   // Build EN→ES reverse
