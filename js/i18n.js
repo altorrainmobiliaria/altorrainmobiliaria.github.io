@@ -1322,21 +1322,36 @@
 
   function mountToggle() {
     if (document.getElementById('altorra-lang-toggle')) return;
+    if (!document.body) {
+      // body aún no está listo — reintentar
+      requestAnimationFrame(mountToggle);
+      return;
+    }
     injectCSS();
     var wrap = document.createElement('div');
     wrap.className = 'lang-toggle';
     wrap.id = 'altorra-lang-toggle';
     wrap.setAttribute('role', 'group');
-    wrap.setAttribute('aria-label', 'Language');
+    wrap.setAttribute('aria-label', 'Language / Idioma');
+    // translate="no" para que Google Translate del navegador NO afecte el botón
+    wrap.setAttribute('translate', 'no');
+    wrap.classList.add('notranslate');
     wrap.innerHTML =
-      '<button type="button" data-lang="es" aria-label="Español">ES</button>' +
-      '<button type="button" data-lang="en" aria-label="English">EN</button>';
+      '<button type="button" data-lang="es" aria-label="Español" translate="no">ES</button>' +
+      '<button type="button" data-lang="en" aria-label="English" translate="no">EN</button>';
     wrap.addEventListener('click', function (e) {
       var btn = e.target.closest('button[data-lang]');
       if (btn) setLang(btn.getAttribute('data-lang'));
     });
     document.body.appendChild(wrap);
     updateToggle();
+
+    // Safety: si otro script borra el botón, re-inyectarlo
+    setTimeout(function () {
+      if (!document.getElementById('altorra-lang-toggle') && document.body) {
+        document.body.appendChild(wrap);
+      }
+    }, 2000);
   }
 
   function updateToggle() {
