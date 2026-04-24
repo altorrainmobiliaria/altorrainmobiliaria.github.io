@@ -1194,9 +1194,19 @@
   }
 
   var state = { lang: 'es' };
+  var MIGRATION_KEY = 'altorra:i18n-migration-v3';
 
   function getStored() { try { return localStorage.getItem(STORAGE_KEY); } catch (e) { return null; } }
   function setStored(v) { try { localStorage.setItem(STORAGE_KEY, v); } catch (e) {} }
+
+  // One-time migration: reset any stale 'en' cache from a previous broken version.
+  // After this runs once per browser, users get Spanish by default.
+  try {
+    if (localStorage.getItem(MIGRATION_KEY) !== '1') {
+      localStorage.setItem(STORAGE_KEY, 'es');
+      localStorage.setItem(MIGRATION_KEY, '1');
+    }
+  } catch (e) {}
 
   // ── Core translation ──
 
@@ -1329,29 +1339,54 @@
     }
     injectCSS();
     var wrap = document.createElement('div');
-    wrap.className = 'lang-toggle';
+    wrap.className = 'lang-toggle notranslate';
     wrap.id = 'altorra-lang-toggle';
     wrap.setAttribute('role', 'group');
     wrap.setAttribute('aria-label', 'Language / Idioma');
     // translate="no" para que Google Translate del navegador NO afecte el botón
     wrap.setAttribute('translate', 'no');
-    wrap.classList.add('notranslate');
+    // Estilos inline como fallback por si el CSS no carga o es sobreescrito
+    wrap.style.cssText =
+      'position:fixed !important;' +
+      'top:calc(var(--header-h,72px) + 14px);right:14px;' +
+      'z-index:2147483000 !important;' +
+      'display:inline-flex !important;align-items:center;gap:3px;' +
+      'background:#fff !important;border:2px solid #d4af37 !important;' +
+      'border-radius:999px;padding:3px;' +
+      'box-shadow:0 6px 20px rgba(17,24,39,.18);' +
+      'font-family:Poppins,system-ui,sans-serif;' +
+      'visibility:visible !important;opacity:1 !important;pointer-events:auto !important;';
     wrap.innerHTML =
-      '<button type="button" data-lang="es" aria-label="Español" translate="no">ES</button>' +
-      '<button type="button" data-lang="en" aria-label="English" translate="no">EN</button>';
+      '<button type="button" data-lang="es" aria-label="Español" translate="no" ' +
+        'style="background:transparent;border:none;padding:6px 13px;font-size:.82rem;' +
+        'font-weight:800;color:#6b7280;cursor:pointer;border-radius:999px;' +
+        'letter-spacing:.8px;min-width:36px;font-family:inherit">ES</button>' +
+      '<button type="button" data-lang="en" aria-label="English" translate="no" ' +
+        'style="background:transparent;border:none;padding:6px 13px;font-size:.82rem;' +
+        'font-weight:800;color:#6b7280;cursor:pointer;border-radius:999px;' +
+        'letter-spacing:.8px;min-width:36px;font-family:inherit">EN</button>';
     wrap.addEventListener('click', function (e) {
       var btn = e.target.closest('button[data-lang]');
       if (btn) setLang(btn.getAttribute('data-lang'));
     });
+    // En móvil: mover abajo sobre el WhatsApp flotante
+    if (window.matchMedia && window.matchMedia('(max-width:540px)').matches) {
+      wrap.style.top = 'auto';
+      wrap.style.bottom = '100px';
+    }
     document.body.appendChild(wrap);
     updateToggle();
 
-    // Safety: si otro script borra el botón, re-inyectarlo
-    setTimeout(function () {
+    // Safety net: re-inyectar si algo lo borra
+    var reinjectCount = 0;
+    var reinjectInterval = setInterval(function () {
+      reinjectCount++;
+      if (reinjectCount > 6) { clearInterval(reinjectInterval); return; }
       if (!document.getElementById('altorra-lang-toggle') && document.body) {
         document.body.appendChild(wrap);
+        updateToggle();
       }
-    }, 2000);
+    }, 1000);
   }
 
   function updateToggle() {
@@ -1361,6 +1396,15 @@
     for (var i = 0; i < btns.length; i++) {
       var isActive = btns[i].getAttribute('data-lang') === state.lang;
       btns[i].classList.toggle('active', isActive);
+      if (isActive) {
+        btns[i].style.background = 'linear-gradient(135deg,#d4af37,#ffb400)';
+        btns[i].style.color = '#000';
+        btns[i].style.boxShadow = 'inset 0 1px 2px rgba(0,0,0,.08)';
+      } else {
+        btns[i].style.background = 'transparent';
+        btns[i].style.color = '#6b7280';
+        btns[i].style.boxShadow = 'none';
+      }
     }
   }
 
@@ -1416,11 +1460,24 @@
     });
   }
 
+  // Bootstrap: monta el toggle lo antes posible y corre init al cargar el DOM
+  // Esto garantiza que el botón aparezca incluso si hay errores en otros scripts.
+  function earlyMount() {
+    if (document.body && !document.getElementById('altorra-lang-toggle')) {
+      try { mountToggle(); } catch (e) {}
+    }
+  }
+  earlyMount();
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', function () {
+      earlyMount();
+      init();
+    });
   } else {
     init();
   }
+  // Último recurso: si aún no apareció en 1.5s, forzarlo
+  setTimeout(earlyMount, 1500);
 
   window.AltorraI18n = {
     t: function (txt) { return state.lang === 'en' ? (ES_TO_EN[txt] || txt) : txt; },
