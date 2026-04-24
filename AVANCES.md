@@ -1794,4 +1794,74 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
+## E2.1 + E2.2 + E2.3 — Landing pages SEO por intención de búsqueda
+
+**Fecha:** 2026-04-19
+**Estado:** ✅ Completado
+
+### Qué se hizo
+
+3 landing pages SEO optimizadas para capturar tráfico orgánico de alta intención:
+
+**E2.1 — comprar-apartamento-cartagena.html**
+- 6 zonas con precios/m², estrato, valorización y renta turística
+- 6 pasos para comprar (con contador CSS automático)
+- 6 consejos clave antes de comprar
+- 5 preguntas frecuentes con JSON-LD FAQPage schema
+- CTAs a listado de compra y contacto
+
+**E2.2 — arrendar-apartamento-cartagena.html**
+- 6 zonas con rango de canon mensual y características
+- Checklist de documentos y requisitos
+- Tabla comparativa arriendo tradicional vs por días
+- JSON-LD FAQPage schema
+- CTAs a listado de arriendo y contacto
+
+**E2.3 — invertir-airbnb-cartagena.html**
+- 4 zonas con ROI, ocupación, tarifa/noche e ingreso mensual
+- 8 costos operativos detallados con montos
+- 5 requisitos legales (RNT, impuestos, seguros, DANE)
+- JSON-LD FAQPage schema
+- CTAs a propiedades y servicio de renta turística
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `comprar-apartamento-cartagena.html` | NUEVO — landing compra por zona |
+| `arrendar-apartamento-cartagena.html` | NUEVO — landing arriendo por zona |
+| `invertir-airbnb-cartagena.html` | NUEVO — landing inversión Airbnb |
+| `sitemap.xml` | +3 URLs con prioridad 0.9 |
+
+---
+
+## E2.4 + E2.5 — Landing pages: Barú/La Boquilla + Lotes campestres
+
+**Fecha:** 2026-04-19
+**Estado:** ✅ Completado
+
+### Qué se hizo
+
+**E2.4 — propiedades-baru.html**
+- Barú e La Boquilla como destinos de inversión emergente
+- Stats: valorización, precio m², distancia, acceso
+- Features checklist por zona
+- 4 razones para invertir ahora (infraestructura, precios, turismo, estilo de vida)
+- CTAs a propiedades y WhatsApp directo
+
+**E2.5 — lotes-campestres-cartagena.html** (competir contra Altis)
+- 4 zonas: Barú, Turbaco, Arjona, La Boquilla (precio m², extensiones, valorización, uso)
+- 4 usos: casa campestre, glamping, agrícola, desarrollo inmobiliario
+- 6 verificaciones legales/técnicas antes de comprar lote
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `propiedades-baru.html` | NUEVO — landing Barú + La Boquilla |
+| `lotes-campestres-cartagena.html` | NUEVO — landing lotes campestres |
+| `sitemap.xml` | +2 URLs |
+
+---
+
 *Última actualización: 2026-04-19*

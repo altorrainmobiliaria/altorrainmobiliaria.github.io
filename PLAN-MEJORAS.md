@@ -250,11 +250,11 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| E2.1 | "Comprar apartamento en Cartagena" (Bocagrande/Manga/Castillogrande) | 🔲 TODO |
-| E2.2 | "Arrendar apartamento en Cartagena" por barrio | 🔲 TODO |
-| E2.3 | "Invertir en Cartagena" (Airbnb + renta turística) | 🔲 TODO |
-| E2.4 | "Propiedades en Barú" / "Propiedades en La Boquilla" | 🔲 TODO |
-| E2.5 | "Lotes campestres Cartagena" (competir contra Altis) | 🔲 TODO |
+| E2.1 | "Comprar apartamento en Cartagena" (Bocagrande/Manga/Castillogrande) | ✅ DONE |
+| E2.2 | "Arrendar apartamento en Cartagena" por barrio | ✅ DONE |
+| E2.3 | "Invertir en Cartagena" (Airbnb + renta turística) | ✅ DONE |
+| E2.4 | "Propiedades en Barú" / "Propiedades en La Boquilla" | ✅ DONE |
+| E2.5 | "Lotes campestres Cartagena" (competir contra Altis) | ✅ DONE |
 
 **Meta: 20-30 landings SEO en 3 meses.**
 

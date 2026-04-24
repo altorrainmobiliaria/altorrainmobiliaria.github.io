@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Comprar Apartamento en Cartagena | Guía por Zonas | Altorra Inmobiliaria</title>
+  <meta name="description" content="Guía completa para comprar apartamento en Cartagena: precios por zona (Bocagrande, Manga, Castillogrande, Crespo), consejos legales y las mejores oportunidades."/>
+  <link rel="canonical" href="https://altorrainmobiliaria.co/comprar-apartamento-cartagena.html"/>
+  <meta name="theme-color" content="#d4af37"/>
+  <meta property="og:title" content="Comprar Apartamento en Cartagena | Altorra Inmobiliaria"/>
+  <meta property="og:description" content="Precios por zona, consejos legales y oportunidades para comprar apartamento en Cartagena de Indias."/>
+  <meta property="og:url" content="https://altorrainmobiliaria.co/comprar-apartamento-cartagena.html"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="https://altorrainmobiliaria.co/hero-emotion.webp"/>
+  <link rel="manifest" href="manifest.json"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script type="module" src="js/firebase-config.js"></script>
+  <style>
+    .lp-hero{padding:calc(var(--header-h) + 56px) 16px 56px;text-align:center;background:linear-gradient(180deg,#0b0b0b,#1a1a2e);color:#fff;position:relative;overflow:hidden}
+    .lp-hero::before{content:'';position:absolute;inset:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 60%,rgba(212,175,55,.08),transparent 50%),radial-gradient(ellipse at 70% 30%,rgba(255,180,0,.06),transparent 40%);pointer-events:none}
+    .lp-hero h1{font-size:clamp(1.8rem,5vw,2.8rem);font-weight:800;margin:0 0 12px;position:relative}
+    .lp-hero p{color:rgba(255,255,255,.7);font-size:1.05rem;max-width:620px;margin:0 auto;position:relative}
+    .lp-hero .hero-badge{margin-bottom:20px;position:relative}
+    .lp-s{max-width:var(--page-max);margin:0 auto;padding:56px 16px}
+    .lp-s h2{font-size:1.5rem;font-weight:800;margin:0 0 8px}
+    .lp-s .sub{color:var(--muted);margin:0 0 32px;font-size:1rem}
+    .zone-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+    .zone-card{border:1px solid rgba(17,24,39,.07);border-radius:18px;padding:24px;background:#fff;box-shadow:0 8px 28px rgba(17,24,39,.05);transition:transform .18s,box-shadow .18s}
+    .zone-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(17,24,39,.10)}
+    .zone-name{font-size:1.15rem;font-weight:800;margin:0 0 4px}
+    .zone-tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;font-weight:700;margin-bottom:14px}
+    .zone-tag.premium{background:#dcfce7;color:#166534}
+    .zone-tag.mid{background:#fef3c7;color:#92400e}
+    .zone-tag.emerging{background:#dbeafe;color:#1e40af}
+    .zone-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+    .zone-stat{background:#f9fafb;border-radius:10px;padding:10px}
+    .zone-stat small{font-size:.73rem;color:var(--muted);display:block}
+    .zone-stat strong{font-size:1rem;font-weight:800}
+    .zone-stat strong.gold{color:var(--gold)}
+    .zone-desc{font-size:.88rem;color:var(--muted);line-height:1.5;margin:0}
+    .steps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;counter-reset:step}
+    .step-card{background:#f9fafb;border-radius:18px;padding:28px 24px;position:relative;counter-increment:step}
+    .step-card::before{content:counter(step);position:absolute;top:16px;right:16px;width:32px;height:32px;background:var(--gold);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem}
+    .step-card h3{font-size:1rem;font-weight:700;margin:0 0 8px}
+    .step-card p{font-size:.88rem;color:var(--muted);margin:0;line-height:1.5}
+    .tips-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+    .tips-list li{background:#fff;border:1px solid rgba(17,24,39,.07);border-radius:14px;padding:20px;font-size:.92rem;line-height:1.6;display:flex;gap:12px;align-items:flex-start}
+    .tips-list li strong{display:block;margin-bottom:2px;color:var(--text)}
+    .tips-list li span.ico{font-size:1.4rem;flex-shrink:0;margin-top:2px}
+    .lp-cta{text-align:center;padding:56px 16px;background:linear-gradient(180deg,#fffdf4,#fff)}
+    .lp-cta h2{font-size:1.6rem;font-weight:800;margin:0 0 12px}
+    .lp-cta p{color:var(--muted);margin:0 0 24px;font-size:1rem}
+    .faq-list{max-width:760px}
+    .faq-item{border-bottom:1px solid #f3f4f6;padding:16px 0}
+    .faq-item h3{font-size:1rem;font-weight:700;margin:0 0 8px;cursor:pointer}
+    .faq-item p{font-size:.9rem;color:var(--muted);margin:0;line-height:1.6}
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"¿Cuánto cuesta un apartamento en Cartagena?","acceptedAnswer":{"@type":"Answer","text":"Los precios varían según la zona: en Bocagrande desde $350M hasta $5.000M+, en Manga desde $280M, en Crespo desde $250M y en zonas emergentes como Barú desde $200M COP."}},
+      {"@type":"Question","name":"¿Qué documentos necesito para comprar apartamento en Cartagena?","acceptedAnswer":{"@type":"Answer","text":"Necesitas cédula o pasaporte, certificado de libertad y tradición, paz y salvo de administración, estudio de títulos y escritura pública ante notaría."}},
+      {"@type":"Question","name":"¿Un extranjero puede comprar apartamento en Cartagena?","acceptedAnswer":{"@type":"Answer","text":"Sí, los extranjeros pueden comprar propiedad en Colombia sin restricciones. Necesitan NIT, pasaporte y pueden obtener visa de inversionista."}}
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+  <div id="header-placeholder"></div>
+
+  <div class="lp-hero">
+    <div class="hero-badge">Guia de compra 2026</div>
+    <h1>Comprar Apartamento en <span style="color:var(--gold)">Cartagena</span></h1>
+    <p>Precios por zona, pasos legales y las mejores oportunidades del mercado inmobiliario en la Heroica.</p>
+  </div>
+
+  <main id="main">
+
+    <section class="lp-s">
+      <h2>Zonas para comprar apartamento</h2>
+      <p class="sub">Cartagena ofrece opciones para todos los presupuestos y estilos de vida.</p>
+      <div class="zone-grid">
+
+        <div class="zone-card">
+          <div class="zone-name">Bocagrande</div>
+          <span class="zone-tag premium">Premium</span>
+          <div class="zone-stats">
+            <div class="zone-stat"><small>Precio m²</small><strong class="gold">$6.5 - 12M</strong></div>
+            <div class="zone-stat"><small>Estrato</small><strong>5 - 6</strong></div>
+            <div class="zone-stat"><small>Valorización</small><strong class="gold">+10% anual</strong></div>
+            <div class="zone-stat"><small>Renta turística</small><strong>Alta</strong></div>
+          </div>
+          <p class="zone-desc">La zona más exclusiva. Frente al mar, hoteles 5 estrellas, centros comerciales y vida nocturna. Ideal para inversión en renta por días.</p>
+        </div>
+
+        <div class="zone-card">
+          <div class="zone-name">Castillogrande</div>
+          <span class="zone-tag premium">Premium</span>
+          <div class="zone-stats">
+            <div class="zone-stat"><small>Precio m²</small><strong class="gold">$5.5 - 10M</strong></div>
+            <div class="zone-stat"><small>Estrato</small><strong>6</strong></div>
+            <div class="zone-stat"><small>Valorización</small><strong class="gold">+9% anual</strong></div>
+            <div class="zone-stat"><small>Renta turística</small><strong>Alta</strong></div>
+          </div>
+          <p class="zone-desc">Exclusividad residencial con acceso a playa. Edificios de lujo con amenidades completas. Menor densidad que Bocagrande.</p>
+        </div>
+
+        <div class="zone-card">
+          <div class="zone-name">Manga</div>
+          <span class="zone-tag mid">Consolidada</span>
+          <div class="zone-stats">
+            <div class="zone-stat"><small>Precio m²</small><strong class="gold">$3.5 - 7M</strong></div>
+            <div class="zone-stat"><small>Estrato</small><strong>4 - 5</strong></div>
+            <div class="zone-stat"><small>Valorización</small><strong class="gold">+8% anual</strong></div>
+            <div class="zone-stat"><small>Renta turística</small><strong>Media</strong></div>
+          </div>
+          <p class="zone-desc">Barrio tradicional con encanto. Restaurantes, vida cultural y buena conectividad. Excelente relación precio-calidad para vivienda.</p>
+        </div>
+
+        <div class="zone-card">
+          <div class="zone-name">Crespo</div>
+          <span class="zone-tag mid">Consolidada</span>
+          <div class="zone-stats">
+            <div class="zone-stat"><small>Precio m²</small><strong class="gold">$3 - 5.5M</strong></div>
+            <div class="zone-stat"><small>Estrato</small><strong>4</strong></div>
+            <div class="zone-stat"><small>Valorización</small><strong class="gold">+7% anual</strong></div>
+            <div class="zone-stat"><small>Renta turística</small><strong>Media</strong></div>
+          </div>
+          <p class="zone-desc">Cerca al aeropuerto y al mar. Proyectos nuevos con precios competitivos. Ideal para primera vivienda o arriendo a largo plazo.</p>
+        </div>
+
+        <div class="zone-card">
+          <div class="zone-name">La Boquilla</div>
+          <span class="zone-tag emerging">Emergente</span>
+          <div class="zone-stats">
+            <div class="zone-stat"><small>Precio m²</small><strong class="gold">$2.5 - 5M</strong></div>
+            <div class="zone-stat"><small>Estrato</small><strong>3 - 4</strong></div>
+            <div class="zone-stat"><small>Valorización</small><strong class="gold">+12% anual</strong></div>
+            <div class="zone-stat"><small>Renta turística</small><strong>Creciente</strong></div>
+          </div>
+          <p class="zone-desc">Zona en plena expansión. Proyectos sobre planos con precios de oportunidad. Mayor potencial de valorización a mediano plazo.</p>
+        </div>
+
+        <div class="zone-card">
+          <div class="zone-name">Centro Histórico</div>
+          <span class="zone-tag premium">Premium</span>
+          <div class="zone-stats">
+            <div class="zone-stat"><small>Precio m²</small><strong class="gold">$5 - 15M</strong></div>
+            <div class="zone-stat"><small>Estrato</small><strong>4 - 6</strong></div>
+            <div class="zone-stat"><small>Valorización</small><strong class="gold">+8% anual</strong></div>
+            <div class="zone-stat"><small>Renta turística</small><strong>Muy alta</strong></div>
+          </div>
+          <p class="zone-desc">Patrimonio UNESCO. Casas coloniales restauradas y aptos boutique. La mayor demanda de Airbnb en toda Colombia.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="lp-s" style="background:#f9fafb">
+      <h2>Pasos para comprar tu apartamento</h2>
+      <p class="sub">El proceso completo, desde la búsqueda hasta la escrituración.</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <h3>Define tu presupuesto</h3>
+          <p>Incluye cuota inicial (30%), gastos notariales (1-2%), impuestos de registro y cuota de administración mensual.</p>
+        </div>
+        <div class="step-card">
+          <h3>Elige la zona</h3>
+          <p>Considera tu objetivo: vivienda, inversión o renta turística. Cada zona tiene un perfil diferente de rentabilidad.</p>
+        </div>
+        <div class="step-card">
+          <h3>Visita propiedades</h3>
+          <p>Agenda visitas presenciales o virtuales. Verifica el estado real del inmueble, zonas comunes y administración.</p>
+        </div>
+        <div class="step-card">
+          <h3>Estudio de títulos</h3>
+          <p>Un abogado revisa el certificado de libertad y tradición, verifica que no haya embargos, hipotecas o litigios.</p>
+        </div>
+        <div class="step-card">
+          <h3>Oferta y negociación</h3>
+          <p>Presenta una oferta formal. Negocia precio, forma de pago y plazos. Se firma promesa de compraventa.</p>
+        </div>
+        <div class="step-card">
+          <h3>Escrituración</h3>
+          <p>Firma ante notaría, pago de impuestos de registro y escrituración. Registro en Oficina de Instrumentos Públicos.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="lp-s">
+      <h2>Consejos clave antes de comprar</h2>
+      <p class="sub">Lo que los expertos recomiendan verificar antes de firmar.</p>
+      <ul class="tips-list">
+        <li><span class="ico">📋</span><div><strong>Revisa el certificado de libertad y tradición</strong>Asegúrate de que no existan gravámenes, embargos o anotaciones pendientes sobre el inmueble.</div></li>
+        <li><span class="ico">🏢</span><div><strong>Consulta la administración</strong>Verifica el monto de la cuota, el estado financiero del edificio y si hay derramas o cuotas extras pendientes.</div></li>
+        <li><span class="ico">📐</span><div><strong>Confirma los metros reales</strong>El área privada escriturada puede diferir del área construida. Pide el plano actualizado.</div></li>
+        <li><span class="ico">🌊</span><div><strong>Evalúa riesgos ambientales</strong>En zonas costeras, verifica la resistencia a salinidad, nivel de inundación y estado de la estructura.</div></li>
+        <li><span class="ico">💰</span><div><strong>Calcula el retorno real</strong>Si es inversión, proyecta el ROI considerando administración, impuestos, vacancia y costos de operación Airbnb.</div></li>
+        <li><span class="ico">👨‍⚖️</span><div><strong>Contrata un abogado inmobiliario</strong>El costo es mínimo comparado con el riesgo. Un profesional verifica títulos, redacta contratos y protege tu inversión.</div></li>
+      </ul>
+    </section>
+
+    <section class="lp-s" style="background:#f9fafb">
+      <h2>Preguntas frecuentes</h2>
+      <p class="sub">Resolvemos las dudas más comunes sobre comprar en Cartagena.</p>
+      <div class="faq-list">
+        <div class="faq-item">
+          <h3>¿Cuánto cuesta un apartamento en Cartagena?</h3>
+          <p>Los precios varían según la zona: en Bocagrande desde $350M hasta $5.000M+, en Manga desde $280M, en Crespo desde $250M y en zonas emergentes como La Boquilla desde $200M COP. El precio por metro cuadrado oscila entre $2.5M y $15M dependiendo del sector y las características.</p>
+        </div>
+        <div class="faq-item">
+          <h3>¿Qué documentos necesito para comprar?</h3>
+          <p>Necesitas cédula de ciudadanía o pasaporte (extranjeros), certificado de libertad y tradición actualizado, paz y salvo de administración, estudio de títulos por abogado, y la escritura pública se firma ante notaría. Si financias con banco, necesitas pre-aprobación de crédito hipotecario.</p>
+        </div>
+        <div class="faq-item">
+          <h3>¿Un extranjero puede comprar apartamento en Colombia?</h3>
+          <p>Sí, los extranjeros pueden comprar propiedad en Colombia sin ninguna restricción. Necesitan obtener un NIT (número de identificación tributaria), presentar pasaporte vigente y pueden aplicar a visa de inversionista (tipo M) si la inversión supera los 350 SMLMV.</p>
+        </div>
+        <div class="faq-item">
+          <h3>¿Cuáles son los costos adicionales de la compra?</h3>
+          <p>Además del precio del inmueble: gastos notariales (~0.3%), impuesto de registro (~1.67% del valor de escritura), retención en la fuente (1%), y honorarios del abogado. En total, calcula entre 2.5% y 4% del valor de la propiedad en costos adicionales.</p>
+        </div>
+        <div class="faq-item">
+          <h3>¿Qué zona es mejor para inversión?</h3>
+          <p>Depende del objetivo. Para renta turística: Bocagrande, Centro Histórico y Castillogrande tienen la mayor demanda Airbnb. Para valorización a largo plazo: La Boquilla y Barú tienen el mayor potencial de crecimiento. Para vivienda: Manga ofrece la mejor relación calidad-precio.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="lp-cta">
+      <h2>¿Listo para encontrar tu apartamento?</h2>
+      <p>Nuestros asesores te acompañan en todo el proceso: búsqueda, negociación, estudio legal y escrituración.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="propiedades-comprar.html" class="btn-cta" style="background:linear-gradient(135deg,var(--gold),var(--accent));color:#000;padding:14px 28px;border-radius:12px;font-weight:800;text-decoration:none;font-size:1rem">Ver propiedades en venta</a>
+        <a href="contacto.html" class="btn-cta" style="border:2px solid var(--gold);color:var(--gold);padding:14px 28px;border-radius:12px;font-weight:800;text-decoration:none;font-size:1rem">Hablar con un asesor</a>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <link rel="stylesheet" href="css/whatsapp-float.css"/>
+  <a href="https://wa.me/573002439810" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 32 32" fill="#fff"><path d="M16.004 0h-.008C7.174 0 0 7.176 0 16.004c0 3.5 1.129 6.742 3.047 9.379L1.054 31.26l6.15-1.965A15.9 15.9 0 0016.004 32C24.826 32 32 24.826 32 16.004 32 7.176 24.826 0 16.004 0zm9.33 22.617c-.393 1.107-1.941 2.027-3.195 2.295-.858.182-1.977.326-5.748-1.236-4.826-1.998-7.934-6.893-8.175-7.213-.23-.32-1.94-2.586-1.94-4.932 0-2.346 1.23-3.502 1.664-3.98.394-.434 1.045-.614 1.67-.614.199 0 .379.01.54.018.478.02.717.048 1.032.8.393.936 1.35 3.283 1.467 3.523.12.24.24.56.069.88-.16.33-.3.48-.54.75-.24.27-.47.48-.71.77-.22.26-.47.53-.2 1.05.27.51 1.2 1.98 2.58 3.21 1.77 1.58 3.27 2.07 3.73 2.3.46.23.73.19 1-.12.28-.32 1.18-1.37 1.5-1.85.31-.47.63-.39 1.06-.23.43.16 2.77 1.31 3.25 1.55.48.24.8.36.91.56.12.21.12 1.18-.27 2.29z"/></svg>
+  </a>
+  <script src="js/components.js" defer></script>
+  <script defer src="js/i18n.js"></script>
+  <script defer src="js/whatsapp-tracker.js"></script>
+  <script defer src="js/newsletter.js"></script>
+</body>
+</html>
