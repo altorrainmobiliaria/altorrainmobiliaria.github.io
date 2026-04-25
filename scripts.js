@@ -537,15 +537,17 @@ if('serviceWorker' in navigator){
       "@id": BASE + "/#organization",
       "name": "ALTORRA Inmobiliaria",
       "alternateName": "Altorra S.A.S.",
+      "slogan": "Gestión integral en soluciones inmobiliarias",
       "url": BASE + "/",
       "logo": LOGO,
       "image": LOGO,
-      "description": "Gestión integral en soluciones inmobiliarias en Cartagena: compra, venta, arriendo, avalúos y asesoría legal.",
+      "description": "Inmobiliaria en Cartagena de Indias especializada en venta, arriendo, renta turística y administración de propiedades premium, con asesoría legal, contable y fiscal integrada para inversionistas locales y extranjeros.",
       "telephone": ["+573002439810", "+573235016747"],
       "email": "info@altorrainmobiliaria.co",
+      "foundingDate": "2018",
       "address": {
         "@type": "PostalAddress",
-        "addressLocality": "Cartagena",
+        "addressLocality": "Cartagena de Indias",
         "addressRegion": "Bolívar",
         "addressCountry": "CO"
       },
@@ -554,16 +556,41 @@ if('serviceWorker' in navigator){
         "latitude": 10.3910,
         "longitude": -75.5144
       },
-      "areaServed": {
-        "@type": "City",
-        "name": "Cartagena de Indias"
-      },
+      "areaServed": [
+        { "@type": "City", "name": "Cartagena de Indias" },
+        { "@type": "Place", "name": "Bocagrande, Cartagena" },
+        { "@type": "Place", "name": "Castillogrande, Cartagena" },
+        { "@type": "Place", "name": "Manga, Cartagena" },
+        { "@type": "Place", "name": "Centro Histórico, Cartagena" },
+        { "@type": "Place", "name": "La Boquilla, Cartagena" },
+        { "@type": "Place", "name": "Barú, Bolívar" }
+      ],
+      "knowsLanguage": ["es", "en"],
       "priceRange": "$$",
-      "openingHours": "Mo-Fr 08:00-18:00, Sa 09:00-13:00",
+      "currenciesAccepted": "COP, USD",
+      "paymentAccepted": "Cash, Bank transfer, Wire transfer",
+      "openingHoursSpecification": [
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "08:00", "closes": "18:00" },
+        { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "09:00", "closes": "13:00" }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Servicios Altorra Inmobiliaria",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Venta de propiedades en Cartagena" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Arriendo tradicional" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Renta turística (Airbnb)" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Administración de propiedades" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Avalúos comerciales" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Asesoría legal inmobiliaria" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Acompañamiento a inversionistas extranjeros" } }
+        ]
+      },
       "sameAs": [
         "https://www.instagram.com/altorrainmobiliaria",
         "https://www.facebook.com/share/16MEXCeAB4/",
-        "https://www.tiktok.com/@altorrainmobiliaria"
+        "https://www.tiktok.com/@altorrainmobiliaria",
+        "https://www.youtube.com/@altorrainmobiliaria"
       ]
     };
 
