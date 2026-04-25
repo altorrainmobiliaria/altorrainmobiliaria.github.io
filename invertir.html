@@ -20,6 +20,70 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
   <script type="module" src="js/firebase-config.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "¿Cuál es el ROI promedio de invertir en Cartagena en 2026?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "El ROI varía según zona y operación. En arriendo tradicional típicamente 5-7% anual, en renta turística (Airbnb) 8-16% anual. Las zonas con mayor retorno son Centro Histórico (10-16%), Bocagrande (9-14%) y Barú (12-18%) en alojamientos premium."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Cuánto dinero necesito para invertir en una propiedad en Cartagena?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Apartamentos en La Boquilla o Manga desde 280 millones COP (~USD 70K). En Bocagrande y Castillogrande desde 500 millones COP (~USD 125K). Propiedades premium en Centro Histórico desde 1.000 millones COP. Si financias, necesitas 30% de cuota inicial mínimo."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Es mejor invertir en Airbnb o en arriendo tradicional?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Airbnb genera 40-60% más ingresos pero requiere gestión activa o un operador profesional. Arriendo tradicional ofrece estabilidad y menor desgaste. La decisión depende de tu disponibilidad de tiempo, ubicación de la propiedad y perfil de riesgo."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Qué zonas de Cartagena tienen mayor valorización proyectada?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bocagrande y Castillogrande mantienen valorización del 8-12% anual histórico. La Boquilla y Manga muestran proyecciones de 10-14% por desarrollo urbano. El Centro Histórico tiene oferta limitada (patrimonio UNESCO) lo que sostiene precios al alza."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Puedo invertir en Cartagena siendo extranjero?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sí. Colombia no impone restricciones a extranjeros para comprar inmuebles. Puedes hacerlo de forma remota con poder notarial. Una compra superior a 350 SMMLV (~USD 110.000) califica para visa de inversionista tipo M con vía a residencia permanente."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Cuáles son los costos asociados a comprar una propiedad en Cartagena?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Los costos de cierre son aproximadamente 2.5-3.5% del precio: notaría (0.5%), registro (1.5%), beneficencia (1%), honorarios legales (~1%). Adicionalmente impuesto predial anual (0.4-1.6% según estrato) y cuota de administración mensual si aplica."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Cuánto tiempo toma cerrar una compra inmobiliaria en Cartagena?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "El proceso completo toma 30-45 días desde la oferta aceptada hasta la entrega: estudio de títulos (5-10 días), promesa de compraventa (firma), trámite hipotecario si aplica (15-25 días), escrituración en notaría y registro público (5-10 días)."
+        }
+      }
+    ]
+  }
+  </script>
   <style>
     .inv-hero {
       padding: calc(var(--header-h) + 56px) 16px 56px;
@@ -208,6 +272,14 @@
       margin: 0;
       line-height: 1.5;
     }
+
+    /* FAQ */
+    .inv-faq{max-width:780px;margin:0 auto}
+    .inv-faq details{background:#f9fafb;border-radius:12px;padding:14px 18px;margin-bottom:10px;cursor:pointer;border:1px solid rgba(17,24,39,.05)}
+    .inv-faq summary{font-weight:700;font-size:.95rem;list-style:none;display:flex;justify-content:space-between;align-items:center;color:var(--text)}
+    .inv-faq summary::after{content:'+';font-size:1.4rem;color:var(--gold);font-weight:300;transition:transform .2s}
+    .inv-faq details[open] summary::after{content:'−'}
+    .inv-faq p{margin:10px 0 0;color:var(--muted);font-size:.9rem;line-height:1.6}
 
     /* CTA */
     .inv-cta {
@@ -427,6 +499,23 @@
           Abrir calculadora
         </button>
         <p style="color:var(--muted);font-size:.85rem;margin-top:10px">Ingresa el precio, tarifa por noche y ocupación estimada para ver tu ROI.</p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="inv-section" id="faq" style="background:#fafafa;max-width:100%;padding-left:0;padding-right:0">
+      <div style="max-width:var(--page-max);margin:0 auto;padding:0 16px">
+        <h2>Preguntas frecuentes sobre invertir en Cartagena</h2>
+        <p class="sub">Resolvemos las dudas más comunes de inversionistas locales y extranjeros.</p>
+        <div class="inv-faq">
+          <details><summary>¿Cuál es el ROI promedio de invertir en Cartagena en 2026?</summary><p>El ROI varía según zona y operación. En arriendo tradicional típicamente 5-7% anual, en renta turística (Airbnb) 8-16% anual. Las zonas con mayor retorno son Centro Histórico (10-16%), Bocagrande (9-14%) y Barú (12-18%) en alojamientos premium.</p></details>
+          <details><summary>¿Cuánto dinero necesito para invertir en una propiedad en Cartagena?</summary><p>Apartamentos en La Boquilla o Manga desde 280 millones COP (~USD 70K). En Bocagrande y Castillogrande desde 500 millones COP (~USD 125K). Propiedades premium en Centro Histórico desde 1.000 millones COP. Si financias, necesitas 30% de cuota inicial mínimo.</p></details>
+          <details><summary>¿Es mejor invertir en Airbnb o en arriendo tradicional?</summary><p>Airbnb genera 40-60% más ingresos pero requiere gestión activa o un operador profesional. Arriendo tradicional ofrece estabilidad y menor desgaste. La decisión depende de tu disponibilidad de tiempo, ubicación de la propiedad y perfil de riesgo.</p></details>
+          <details><summary>¿Qué zonas de Cartagena tienen mayor valorización proyectada?</summary><p>Bocagrande y Castillogrande mantienen valorización del 8-12% anual histórico. La Boquilla y Manga muestran proyecciones de 10-14% por desarrollo urbano. El Centro Histórico tiene oferta limitada (patrimonio UNESCO) lo que sostiene precios al alza.</p></details>
+          <details><summary>¿Puedo invertir en Cartagena siendo extranjero?</summary><p>Sí. Colombia no impone restricciones a extranjeros para comprar inmuebles. Puedes hacerlo de forma remota con poder notarial. Una compra superior a 350 SMMLV (~USD 110.000) califica para visa de inversionista tipo M con vía a residencia permanente.</p></details>
+          <details><summary>¿Cuáles son los costos asociados a comprar una propiedad en Cartagena?</summary><p>Los costos de cierre son aproximadamente 2.5-3.5% del precio: notaría (0.5%), registro (1.5%), beneficencia (1%), honorarios legales (~1%). Adicionalmente impuesto predial anual (0.4-1.6% según estrato) y cuota de administración mensual si aplica.</p></details>
+          <details><summary>¿Cuánto tiempo toma cerrar una compra inmobiliaria en Cartagena?</summary><p>El proceso completo toma 30-45 días desde la oferta aceptada hasta la entrega: estudio de títulos (5-10 días), promesa de compraventa (firma), trámite hipotecario si aplica (15-25 días), escrituración en notaría y registro público (5-10 días).</p></details>
+        </div>
       </div>
     </section>
 

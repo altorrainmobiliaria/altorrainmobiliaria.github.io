@@ -1892,4 +1892,36 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
-*Última actualización: 2026-04-24*
+## 2026-04-25 — E4.1 FAQ estructurado con JSON-LD FAQPage
+
+**Lo que se hizo:**
+1. **JSON-LD FAQPage** añadido a 5 páginas clave para habilitar rich snippets en Google y mejorar visibilidad en respuestas de IA (ChatGPT, Perplexity).
+2. **renta-turistica.html** y **foreign-investors.html** ya tenían FAQ visible — solo se añadió el schema JSON-LD (7 y 8 preguntas respectivamente).
+3. **invertir.html**, **simulador.html** y **contacto.html** recibieron FAQ visible (`<details>`/`<summary>` con animación + estilo coherente) **+** JSON-LD FAQPage.
+4. Todas las preguntas están alineadas con keywords de intención de búsqueda real: ROI Cartagena, cuota inicial crédito, tasa hipotecaria 2026, costos de cierre, plazos, atención bilingüe, etc.
+
+### Páginas con FAQ + JSON-LD
+
+| Página | Preguntas | Idioma |
+|--------|-----------|--------|
+| `renta-turistica.html` | 7 (gestión Airbnb, comisión, pagos, requisitos) | ES |
+| `foreign-investors.html` | 8 (mortgage, repatriation, residency, closing costs) | EN |
+| `invertir.html` | 7 (ROI, montos, Airbnb vs arriendo, valorización, costos) | ES |
+| `simulador.html` | 7 (cuota inicial, plazo, tasas, UVR vs fija, prepago) | ES |
+| `contacto.html` | 6 (tiempos respuesta, servicios, horarios, asesoría) | ES |
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `renta-turistica.html` | +JSON-LD FAQPage (7 Q) |
+| `foreign-investors.html` | +JSON-LD FAQPage (8 Q en inglés) |
+| `invertir.html` | +sección FAQ visible + JSON-LD (7 Q) |
+| `simulador.html` | +sección FAQ visible + JSON-LD (7 Q) |
+| `contacto.html` | +sección FAQ visible + JSON-LD (6 Q) |
+| `sitemap.xml` | lastmod actualizado en 6 URLs |
+| `PLAN-MEJORAS.md` | E4.1 marcado ✅ DONE |
+
+---
+
+*Última actualización: 2026-04-25*

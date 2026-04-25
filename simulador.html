@@ -19,6 +19,70 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
   <script type="module" src="js/firebase-config.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "¿Qué cuota inicial mínima necesito para un crédito hipotecario en Colombia?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Para créditos no-VIS la cuota inicial mínima es 30% del valor de la propiedad. Para vivienda VIS (interés social) con subsidio puede ser 20%. Algunos bancos ofrecen leasing habitacional con 10-20% de inicial pero con tasas más altas."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Cuál es el plazo máximo de un crédito hipotecario en Colombia?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "El plazo máximo es 30 años (360 meses) para crédito hipotecario tradicional. La edad del solicitante al final del crédito normalmente no debe superar los 70-75 años, dependiendo del banco. Plazos mayores reducen la cuota mensual pero aumentan significativamente los intereses totales."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Qué tasas de interés aplican para créditos hipotecarios en 2026?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Las tasas oscilan entre 9% y 14% efectivo anual según el banco, perfil del cliente, monto y plazo. La modalidad UVR (Unidad de Valor Real) suele tener tasa nominal menor pero ajustada por inflación. La tasa fija en pesos da más previsibilidad."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Pueden los extranjeros acceder a crédito hipotecario en Colombia?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sí, pero con limitaciones. Los bancos colombianos exigen al extranjero residencia o ingresos demostrables en Colombia. La mayoría de inversionistas extranjeros pagan de contado o usan financiación de su país de origen, ya que el acceso a crédito local es más restrictivo."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Qué documentos necesito para solicitar un crédito hipotecario?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Cédula, certificado laboral con salario, últimos 3 desprendibles de pago, declaración de renta o extractos bancarios (independientes), referencias comerciales, avalúo de la propiedad y estudio de títulos. Para empleados es más rápido (5-10 días); independientes 15-25 días."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Es mejor tasa fija en pesos o UVR?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Tasa fija en pesos da certeza absoluta de la cuota mensual. UVR tiene tasa nominal menor pero el saldo se ajusta por inflación. Si esperas inflación baja y estable, UVR puede salir más económico; si quieres previsibilidad total, elige tasa fija. La mayoría de compradores prefieren tasa fija."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Puedo pagar el crédito hipotecario antes del plazo sin penalización?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sí. La Ley 546 de 1999 prohíbe penalizaciones por prepago en créditos hipotecarios para vivienda en Colombia. Puedes hacer abonos extraordinarios al capital o cancelar totalmente sin costo adicional, lo que reduce significativamente los intereses pagados."
+        }
+      }
+    ]
+  }
+  </script>
   <style>
     .sim-hero {
       padding: calc(var(--header-h) + 48px) 16px 48px;
@@ -48,6 +112,12 @@
     @media (max-width: 860px) {
       .sim-main { border-radius: 0; border-left: 0; border-right: 0; box-shadow: none; }
     }
+    .sim-faq{max-width:780px;margin:0 auto}
+    .sim-faq details{background:#f9fafb;border-radius:12px;padding:14px 18px;margin-bottom:10px;cursor:pointer;border:1px solid rgba(17,24,39,.05)}
+    .sim-faq summary{font-weight:700;font-size:.95rem;list-style:none;display:flex;justify-content:space-between;align-items:center;color:var(--text)}
+    .sim-faq summary::after{content:'+';font-size:1.4rem;color:var(--gold);font-weight:300}
+    .sim-faq details[open] summary::after{content:'−'}
+    .sim-faq p{margin:10px 0 0;color:var(--muted);font-size:.9rem;line-height:1.6}
   </style>
 </head>
 <body>
@@ -87,6 +157,21 @@
       <p style="font-size:.82rem;color:var(--muted);margin-top:20px;text-align:center">
         Las tasas de referencia son orientativas. Consulta con tu banco para condiciones reales.
       </p>
+    </section>
+
+    <!-- FAQ -->
+    <section style="max-width:800px;margin:48px auto 0;padding:0 4px" id="faq">
+      <h2 style="font-size:1.4rem;font-weight:800;margin-bottom:8px">Preguntas frecuentes sobre crédito hipotecario</h2>
+      <p style="color:var(--muted);margin:0 0 20px;font-size:.95rem">Resuelve tus dudas antes de solicitar tu crédito.</p>
+      <div class="sim-faq">
+        <details><summary>¿Qué cuota inicial mínima necesito para un crédito hipotecario en Colombia?</summary><p>Para créditos no-VIS la cuota inicial mínima es 30% del valor de la propiedad. Para vivienda VIS (interés social) con subsidio puede ser 20%. Algunos bancos ofrecen leasing habitacional con 10-20% de inicial pero con tasas más altas.</p></details>
+        <details><summary>¿Cuál es el plazo máximo de un crédito hipotecario?</summary><p>El plazo máximo es 30 años (360 meses) para crédito hipotecario tradicional. La edad del solicitante al final del crédito normalmente no debe superar los 70-75 años, dependiendo del banco. Plazos mayores reducen la cuota mensual pero aumentan significativamente los intereses totales.</p></details>
+        <details><summary>¿Qué tasas de interés aplican en 2026?</summary><p>Las tasas oscilan entre 9% y 14% efectivo anual según el banco, perfil del cliente, monto y plazo. La modalidad UVR (Unidad de Valor Real) suele tener tasa nominal menor pero ajustada por inflación. La tasa fija en pesos da más previsibilidad.</p></details>
+        <details><summary>¿Pueden los extranjeros acceder a crédito hipotecario en Colombia?</summary><p>Sí, pero con limitaciones. Los bancos colombianos exigen al extranjero residencia o ingresos demostrables en Colombia. La mayoría de inversionistas extranjeros pagan de contado o usan financiación de su país de origen, ya que el acceso a crédito local es más restrictivo.</p></details>
+        <details><summary>¿Qué documentos necesito para solicitar un crédito hipotecario?</summary><p>Cédula, certificado laboral con salario, últimos 3 desprendibles de pago, declaración de renta o extractos bancarios (independientes), referencias comerciales, avalúo de la propiedad y estudio de títulos. Para empleados es más rápido (5-10 días); independientes 15-25 días.</p></details>
+        <details><summary>¿Es mejor tasa fija en pesos o UVR?</summary><p>Tasa fija en pesos da certeza absoluta de la cuota mensual. UVR tiene tasa nominal menor pero el saldo se ajusta por inflación. Si esperas inflación baja y estable, UVR puede salir más económico; si quieres previsibilidad total, elige tasa fija. La mayoría de compradores prefieren tasa fija.</p></details>
+        <details><summary>¿Puedo pagar el crédito antes del plazo sin penalización?</summary><p>Sí. La Ley 546 de 1999 prohíbe penalizaciones por prepago en créditos hipotecarios para vivienda en Colombia. Puedes hacer abonos extraordinarios al capital o cancelar totalmente sin costo adicional, lo que reduce significativamente los intereses pagados.</p></details>
+      </div>
     </section>
   </main>
 
