@@ -1968,4 +1968,26 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
+## 2026-04-25 — E4.4 Glosario inmobiliario (long-tail SEO + Q&A IA)
+
+**Lo que se hizo:**
+1. Nueva página `glosario-inmobiliario.html` con **44 términos** inmobiliarios organizados alfabéticamente (A–V), orientados a long-tail SEO y a respuestas directas para IA Search.
+2. **Navegación sticky alfabética** con scroll suave a cada sección de letra.
+3. **Buscador en vivo** con normalización sin acentos (`NFD` + regex strip) — filtra términos y oculta secciones vacías en tiempo real.
+4. **Referencias cruzadas** entre términos relacionados (ej. Avalúo catastral → Predial, Hipoteca → Leasing habitacional).
+5. **JSON-LD `DefinedTermSet`** con los 44 términos para Google Knowledge Graph y AI indexing.
+6. **CTAs** hacia contacto, guía del inversionista y WhatsApp intercalados en el contenido.
+7. Diseño responsive con tarjetas `.gl-term` que siguen la paleta dorada del sitio.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `glosario-inmobiliario.html` | NUEVO — glosario 44 términos (~485 líneas) |
+| `footer.html` | +link "📖 Glosario inmobiliario" en sección Empresa |
+| `sitemap.xml` | +URL del glosario con priority 0.7 |
+| `PLAN-MEJORAS.md` | E4.4 marcado ✅ DONE |
+
+---
+
 *Última actualización: 2026-04-25*
