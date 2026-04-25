@@ -20,6 +20,62 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "¿Cuánto tiempo tarda Altorra en responder a una solicitud de contacto?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Respondemos a todas las solicitudes en menos de 24 horas hábiles. Para consultas urgentes recomendamos contactar directamente por WhatsApp al +57 300 243 9810, donde la respuesta suele ser inmediata en horario laboral."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Qué servicios ofrece Altorra Inmobiliaria?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Ofrecemos compra y venta de propiedades, arriendo tradicional, alojamiento por días (Airbnb), publicación de propiedades, avalúos comerciales, asesoría jurídica inmobiliaria, asesoría contable y servicios de mantenimiento y mudanzas asociados."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Atienden a inversionistas extranjeros que no están en Colombia?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sí. Tenemos asesores bilingües (español/inglés) y trabajamos con clientes de Estados Unidos, Canadá, España y otros países. Coordinamos todo el proceso a distancia: poder notarial, transferencias internacionales, escrituración y administración posterior."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Cuál es el horario de atención de Altorra Inmobiliaria?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nuestro horario de atención es de lunes a sábado de 8:00 a 18:00 (hora de Colombia, GMT-5). Por WhatsApp atendemos consultas básicas también fuera de horario y los domingos para urgencias."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Tiene Altorra oficina física para visitas?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Sí, atendemos en Cartagena de Indias, Bolívar (Colombia). Las visitas se coordinan previamente vía WhatsApp o email para asegurar que un asesor esté disponible. También realizamos visitas a propiedades en toda Cartagena, Barú, Islas y zonas aledañas."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Cuánto cuesta una asesoría inmobiliaria con Altorra?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "La primera consulta y asesoría general es gratuita. Honorarios profesionales aplican para servicios específicos: comisión estándar en compra/venta, % sobre canon en arriendos, tarifa fija en avalúos y consultas jurídicas. Recibirás cotización clara antes de iniciar cualquier servicio."
+        }
+      }
+    ]
+  }
+  </script>
   <script src="js/firestore-meter.js" defer></script>
   <script src="js/database.js" defer></script>
   <script src="js/cache-manager.js" defer></script>
@@ -132,6 +188,16 @@
       .page-contact .hero-contact{ min-height:72vh; }
       .page-contact .hero-contact .bg{ object-position: center top; }
     }
+
+    /* FAQ */
+    .page-contact .c-faq-section{max-width:800px;margin:0 auto 60px;padding:0 16px}
+    .page-contact .c-faq-section h2{font-size:1.5rem;font-weight:800;margin:0 0 8px;color:var(--text)}
+    .page-contact .c-faq-section .sub{color:var(--muted);margin:0 0 24px;font-size:.95rem}
+    .page-contact .c-faq details{background:#f9fafb;border-radius:12px;padding:14px 18px;margin-bottom:10px;cursor:pointer;border:1px solid rgba(17,24,39,.05)}
+    .page-contact .c-faq summary{font-weight:700;font-size:.95rem;list-style:none;display:flex;justify-content:space-between;align-items:center;color:var(--text)}
+    .page-contact .c-faq summary::after{content:'+';font-size:1.4rem;color:var(--gold);font-weight:300}
+    .page-contact .c-faq details[open] summary::after{content:'−'}
+    .page-contact .c-faq p{margin:10px 0 0;color:var(--muted);font-size:.9rem;line-height:1.6}
   </style>
   <script type="module" src="js/firebase-config.js"></script>
 </head>
@@ -276,6 +342,20 @@
       </section>
     </div>
   </main>
+
+  <!-- FAQ -->
+  <section class="c-faq-section" id="faq" aria-labelledby="t-faq">
+    <h2 id="t-faq">Preguntas frecuentes</h2>
+    <p class="sub">Antes de escribirnos, revisa estas dudas comunes.</p>
+    <div class="c-faq">
+      <details><summary>¿Cuánto tiempo tarda Altorra en responder a una solicitud de contacto?</summary><p>Respondemos a todas las solicitudes en menos de 24 horas hábiles. Para consultas urgentes recomendamos contactar directamente por WhatsApp al +57 300 243 9810, donde la respuesta suele ser inmediata en horario laboral.</p></details>
+      <details><summary>¿Qué servicios ofrece Altorra Inmobiliaria?</summary><p>Ofrecemos compra y venta de propiedades, arriendo tradicional, alojamiento por días (Airbnb), publicación de propiedades, avalúos comerciales, asesoría jurídica inmobiliaria, asesoría contable y servicios de mantenimiento y mudanzas asociados.</p></details>
+      <details><summary>¿Atienden a inversionistas extranjeros que no están en Colombia?</summary><p>Sí. Tenemos asesores bilingües (español/inglés) y trabajamos con clientes de Estados Unidos, Canadá, España y otros países. Coordinamos todo el proceso a distancia: poder notarial, transferencias internacionales, escrituración y administración posterior.</p></details>
+      <details><summary>¿Cuál es el horario de atención de Altorra Inmobiliaria?</summary><p>Nuestro horario de atención es de lunes a sábado de 8:00 a 18:00 (hora de Colombia, GMT-5). Por WhatsApp atendemos consultas básicas también fuera de horario y los domingos para urgencias.</p></details>
+      <details><summary>¿Tiene Altorra oficina física para visitas?</summary><p>Sí, atendemos en Cartagena de Indias, Bolívar (Colombia). Las visitas se coordinan previamente vía WhatsApp o email para asegurar que un asesor esté disponible. También realizamos visitas a propiedades en toda Cartagena, Barú, Islas y zonas aledañas.</p></details>
+      <details><summary>¿Cuánto cuesta una asesoría inmobiliaria con Altorra?</summary><p>La primera consulta y asesoría general es gratuita. Honorarios profesionales aplican para servicios específicos: comisión estándar en compra/venta, % sobre canon en arriendos, tarifa fija en avalúos y consultas jurídicas. Recibirás cotización clara antes de iniciar cualquier servicio.</p></details>
+    </div>
+  </section>
 
   <!-- Footer externo -->
   <div id="footer-placeholder"></div>
