@@ -1924,4 +1924,27 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
+## 2026-04-25 — E4.2 Lead magnet "Guía del Inversionista 2026"
+
+**Lo que se hizo:**
+1. Nueva landing `guia-inversionista-2026.html` con estructura de lead magnet completo: hero + 8 beneficios + índice de contenidos + formulario de captura + contenido bloqueado tras submit + CTA final.
+2. **Contenido sustantivo** (~5.500 palabras, 9 capítulos): mercado Cartagena 2026, ROI por 6 zonas, Airbnb vs arriendo, impuestos completos (predial por estrato, IVA, INC, ganancia ocasional), financiación (4 vías + opciones extranjeros), due diligence (20 puntos), 10 errores que cuestan millones, inversión desde el exterior (poder, Form 4, visa M), calendario tributario.
+3. **Captura de leads:** form envía a Firestore `solicitudes` con `tipo: descarga_guia_inversionista_2026`. Una vez enviado, se desbloquea la lectura inmediata + se persiste en `localStorage['altorra:guia-2026:unlocked']` para futuras visitas.
+4. **Print-to-PDF:** estilos `@media print` ocultan header/form/footer y dejan solo el contenido limpio. El usuario puede generar su PDF desde el navegador.
+5. **JSON-LD Article** para SEO + tracking.
+6. **Distribución:** banner CTA en `invertir.html` (hero), `foreign-investors.html` (en inglés) y enlace en footer global.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `guia-inversionista-2026.html` | NUEVO — landing + guía completa (524 líneas) |
+| `footer.html` | +link a la guía en sección Empresa |
+| `invertir.html` | +CTA banner en hero hacia la guía |
+| `foreign-investors.html` | +CTA banner (EN) en hero hacia la guía |
+| `sitemap.xml` | +URL de la guía con priority 0.8 |
+| `PLAN-MEJORAS.md` | E4.2 marcado ✅ DONE |
+
+---
+
 *Última actualización: 2026-04-25*
