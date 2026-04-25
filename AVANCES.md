@@ -1947,4 +1947,25 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
+## 2026-04-25 — E4.3 Estudio de mercado por zona
+
+**Lo que se hizo:**
+1. Nueva página `estudios-mercado-cartagena.html` posicionada como reporte trimestral de autoridad: hero con fecha de publicación, resumen ejecutivo con 6 KPIs principales, tabla comparativa de 6 zonas, análisis detallado por zona con KPIs cuantitativos, 3 tendencias macro 2026-2027, metodología y fuentes transparentes, CTA hacia contacto y guía.
+2. **Datos cuantitativos** por zona (Centro Histórico, Bocagrande, Castillogrande, Manga, La Boquilla, Barú/Islas): precio m², tarifa Airbnb, ocupación, valorización YoY, ROI Airbnb, ticket promedio.
+3. **Sección de metodología transparente** con explicación de cada métrica + fuentes citadas (Lonja Bolívar, Cotelco, AirDNA, DANE, Banco República). Esto eleva la credibilidad ante Google y AI Search.
+4. JSON-LD `Article` con `mainEntityOfPage`, `datePublished` y `publisher`.
+5. **Distribución:** banner CTA en `invertir.html` (entre ROI por zona y casos de inversión), enlace en footer global, URL en sitemap.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `estudios-mercado-cartagena.html` | NUEVO — estudio mercado 6 zonas (~417 líneas) |
+| `invertir.html` | +banner CTA hacia el estudio |
+| `footer.html` | +link "📊 Estudio de mercado 2026" en sección Empresa |
+| `sitemap.xml` | +URL del estudio con priority 0.8 |
+| `PLAN-MEJORAS.md` | E4.3 marcado ✅ DONE |
+
+---
+
 *Última actualización: 2026-04-25*
