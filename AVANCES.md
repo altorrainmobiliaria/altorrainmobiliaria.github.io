@@ -1990,4 +1990,76 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
+## 2026-04-25 — E5.1 LocalBusiness JSON-LD enriquecido (sync Google Business)
+
+**Lo que se hizo:**
+1. Reescritura del bloque `RealEstateAgent + LocalBusiness` en `scripts.js` con campos que Google Business Profile y AI Search consumen para mejorar el panel del negocio:
+   - `slogan`, `foundingDate`, `knowsLanguage` (es, en).
+   - `currenciesAccepted` (COP, USD), `paymentAccepted`.
+   - `openingHoursSpecification` estructurado (reemplaza el string `openingHours` por la versión `@type` que Google prefiere).
+   - `areaServed` ampliado a 7 lugares: Cartagena + Bocagrande + Castillogrande + Manga + Centro Histórico + La Boquilla + Barú.
+   - `hasOfferCatalog` con 7 servicios (venta, arriendo, renta turística, administración, avalúos, asesoría legal, acompañamiento a extranjeros).
+   - `sameAs` ampliado para incluir el canal de YouTube.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `scripts.js` | JSON-LD `RealEstateAgent + LocalBusiness` enriquecido (~30 líneas más) |
+| `PLAN-MEJORAS.md` | E5.1 marcado ✅ DONE |
+
+---
+
+## 2026-04-25 — E5.2 Sala de prensa (kit descargable + backlinks)
+
+**Lo que se hizo:**
+1. Nueva página `prensa.html` (~281 líneas) con:
+   - Hero "Sala de prensa · Recursos abiertos".
+   - **6 KPIs** citables (año fundación, cobertura, % extranjeros, valorización).
+   - **3 boilerplates** (50 / 120 / 240 palabras) con botón "copiar al portapapeles" — listos para que un periodista pegue en su nota.
+   - **3 voceros** disponibles para entrevistas con temas y idiomas.
+   - **4 recursos descargables** (logo, guía, estudio, glosario).
+   - **Tabla de datos legales** (razón social, sede, contacto).
+   - **Embed badge HTML** copiable: `<a>` con borde dorado que portales aliados pueden pegar para citar a Altorra como fuente — genera backlink dofollow.
+   - **Cita corta lista para artículos** con fuente enlazada.
+   - **Lineamientos editoriales** (cómo citar, atribución, uso del logo).
+   - CTA email a prensa con asunto pre-llenado.
+2. JSON-LD `WebPage` con `publisher` Organization + sameAs.
+3. Print-friendly via `@media print`.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `prensa.html` | NUEVA — sala de prensa (~281 líneas) |
+| `footer.html` | +link "📰 Sala de prensa" en sección Empresa |
+| `sitemap.xml` | +URL prensa.html con priority 0.6 |
+| `PLAN-MEJORAS.md` | E5.2 marcado ✅ DONE |
+
+---
+
+## 2026-04-25 — E5.3 Hub de videos (recorridos por zona + análisis)
+
+**Lo que se hizo:**
+1. Nueva página `videos.html` (~267 líneas) — hub de YouTube con:
+   - Hero con CTA rojo "Suscríbete al canal" con SVG oficial de YouTube.
+   - **Filtros por categoría** (Todos / Zona / Propiedades / Mercado / Guías) con tabs interactivos.
+   - **12 tarjetas de video** organizadas en 4 categorías: 4 recorridos por zona, 2 tours de propiedad, 2 análisis de mercado, 4 guías para inversionistas.
+   - Cada tarjeta tiene placeholder elegante con icono play + meta (zona, duración, idioma) — listas para reemplazar `<div class="placeholder">` por `<iframe src="https://www.youtube-nocookie.com/embed/...">` cuando el dueño suba el video.
+   - **Banner "Estamos produciendo"** que comunica que el contenido se publica mensualmente.
+   - **CTA dual** al final: WhatsApp (recorrido virtual personalizado) + formulario contacto.
+2. JSON-LD `CollectionPage` con `publisher` Organization — ayuda a Google a entender que el sitio mantiene un canal de video propio.
+3. Filtro JS vanilla (sin frameworks) que muestra/oculta tarjetas por categoría.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `videos.html` | NUEVA — hub de videos (~267 líneas) |
+| `footer.html` | +link "🎬 Recorridos en video" en sección Empresa |
+| `sitemap.xml` | +URL videos.html con priority 0.7 |
+| `PLAN-MEJORAS.md` | E5.3 marcado ✅ DONE |
+
+---
+
 *Última actualización: 2026-04-25*

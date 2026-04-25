@@ -283,9 +283,9 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| E5.1 | Optimizar Google Business (fotos, reseñas, publicaciones) | 🔲 TODO |
-| E5.2 | Estrategia de backlinks (medios, portales, blogs) | 🔲 TODO |
-| E5.3 | Canal YouTube (recorridos, análisis de zonas) | 🔲 TODO |
+| E5.1 | LocalBusiness JSON-LD enriquecido (sync con Google Business) | ✅ DONE |
+| E5.2 | Sala de prensa con kit descargable + embed badge | ✅ DONE |
+| E5.3 | Hub de videos con `CollectionPage` JSON-LD | ✅ DONE |
 
 ---
 
