@@ -276,7 +276,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 |---|-----------|--------|
 | E4.1 | FAQ estructurado por sección (JSON-LD FAQPage) | ✅ DONE |
 | E4.2 | Guías descargables ("Guía del inversionista 2026") — lead magnet | ✅ DONE |
-| E4.3 | Página "Estudios de mercado" (valorización por zona) | 🔲 TODO |
+| E4.3 | Página "Estudios de mercado" (valorización por zona) | ✅ DONE |
 | E4.4 | Glosario inmobiliario (long-tail SEO + Q&A IA) | 🔲 TODO |
 
 ### E5 — Off-page

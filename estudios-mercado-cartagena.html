@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="google" content="notranslate"/>
+  <meta http-equiv="content-language" content="es"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Estudio de mercado inmobiliario Cartagena 2026 — valorización por zona | Altorra</title>
+  <meta name="description" content="Estudio de mercado 2026 de Cartagena: precio por m², valorización anual, ocupación, ROI y tendencias por zona. Datos comparativos de 6 barrios."/>
+  <link rel="canonical" href="https://altorrainmobiliaria.co/estudios-mercado-cartagena.html"/>
+  <link rel="manifest" href="manifest.json"/>
+  <meta name="theme-color" content="#d4af37"/>
+  <meta property="og:title" content="Estudio de mercado inmobiliario Cartagena 2026"/>
+  <meta property="og:description" content="Valorización por zona, ROI, ocupación y precio por m² en Cartagena 2026 — análisis comparativo de 6 barrios."/>
+  <meta property="og:url" content="https://altorrainmobiliaria.co/estudios-mercado-cartagena.html"/>
+  <meta property="og:type" content="article"/>
+  <meta property="og:image" content="https://altorrainmobiliaria.co/hero-emotion.webp"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+  <script type="module" src="js/firebase-config.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Estudio de mercado inmobiliario Cartagena 2026 — valorización por zona",
+    "description": "Análisis comparativo de precio por m², valorización, ocupación y ROI en 6 zonas de Cartagena en 2026.",
+    "author": { "@type": "Organization", "name": "Altorra Inmobiliaria" },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Altorra Inmobiliaria",
+      "logo": { "@type": "ImageObject", "url": "https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-ago-2025-10-31-20.png" }
+    },
+    "datePublished": "2026-04-25",
+    "image": "https://altorrainmobiliaria.co/hero-emotion.webp",
+    "mainEntityOfPage": "https://altorrainmobiliaria.co/estudios-mercado-cartagena.html"
+  }
+  </script>
+  <style>
+    .em-hero{padding:calc(var(--header-h) + 56px) 16px 56px;text-align:center;background:linear-gradient(180deg,#0b0b0b,#1a1a2e);color:#fff;position:relative;overflow:hidden}
+    .em-hero::before{content:'';position:absolute;inset:-50% -50% auto auto;width:200%;height:200%;background:radial-gradient(ellipse at 30% 60%,rgba(212,175,55,.10),transparent 50%);pointer-events:none}
+    .em-hero .badge{display:inline-block;background:rgba(212,175,55,.18);color:var(--gold);font-size:.78rem;font-weight:700;padding:6px 14px;border-radius:99px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:18px;position:relative}
+    .em-hero h1{font-size:clamp(1.9rem,4.6vw,2.8rem);font-weight:800;margin:0 0 14px;position:relative;line-height:1.18;max-width:880px;margin-left:auto;margin-right:auto}
+    .em-hero p{color:rgba(255,255,255,.78);font-size:1.05rem;max-width:680px;margin:0 auto 16px;position:relative;line-height:1.55}
+    .em-hero .meta{color:rgba(255,255,255,.55);font-size:.85rem;position:relative;margin-top:6px}
+
+    .em-section{max-width:var(--page-max);margin:0 auto;padding:48px 16px}
+    .em-section h2{font-size:1.5rem;font-weight:800;margin:0 0 8px;color:var(--text)}
+    .em-section .sub{color:var(--muted);margin:0 0 24px;font-size:1rem;max-width:760px}
+
+    .em-summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:18px}
+    .em-summary-card{background:#fff;border:1px solid rgba(17,24,39,.07);border-radius:16px;padding:20px;box-shadow:0 6px 20px rgba(17,24,39,.04)}
+    .em-summary-card .lbl{font-size:.78rem;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.5px}
+    .em-summary-card .val{font-size:1.6rem;font-weight:800;color:var(--gold);margin-top:6px}
+    .em-summary-card .delta{font-size:.85rem;color:var(--muted);margin-top:4px}
+    .em-summary-card .delta.up{color:#16a34a;font-weight:600}
+    .em-summary-card .delta.down{color:#dc2626;font-weight:600}
+
+    .em-table-wrap{overflow-x:auto;margin:8px -16px;padding:0 16px}
+    .em-table{width:100%;min-width:680px;border-collapse:collapse;font-size:.92rem;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 6px 20px rgba(17,24,39,.05)}
+    .em-table th,.em-table td{padding:12px 14px;text-align:left;border-bottom:1px solid #f3f4f6}
+    .em-table th{background:rgba(212,175,55,.10);color:#111;font-weight:800;font-size:.85rem;text-transform:uppercase;letter-spacing:.3px}
+    .em-table tr:last-child td{border-bottom:0}
+    .em-table tr:hover td{background:#fafafa}
+    .em-table .zone-name{font-weight:800;color:var(--text)}
+    .em-table .gold{color:var(--gold);font-weight:800}
+    .em-table .pos{color:#16a34a;font-weight:700}
+    .em-table .neg{color:#dc2626;font-weight:700}
+
+    .em-zone{background:#fff;border:1px solid rgba(17,24,39,.07);border-radius:18px;padding:24px;margin-bottom:18px;box-shadow:0 6px 22px rgba(17,24,39,.05)}
+    .em-zone-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap;gap:10px}
+    .em-zone-title{font-size:1.2rem;font-weight:800;margin:0;color:var(--text)}
+    .em-zone-tag{padding:4px 12px;border-radius:99px;font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+    .em-zone-tag.premium{background:#fef3c7;color:#92400e}
+    .em-zone-tag.alta{background:#dcfce7;color:#166534}
+    .em-zone-tag.crecimiento{background:#dbeafe;color:#1e40af}
+    .em-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:14px 0}
+    .em-kpi{background:#f9fafb;border-radius:10px;padding:10px 12px}
+    .em-kpi-lbl{font-size:.72rem;color:var(--muted);text-transform:uppercase;font-weight:700;letter-spacing:.3px}
+    .em-kpi-val{font-size:1.05rem;font-weight:800;color:var(--text);margin-top:2px}
+    .em-zone p{color:#374151;line-height:1.6;font-size:.95rem;margin:8px 0 0}
+
+    .em-method{background:#fafafa;border:1px solid rgba(17,24,39,.06);border-radius:16px;padding:24px}
+    .em-method h3{font-size:1.05rem;font-weight:800;margin:0 0 10px;color:var(--gold)}
+    .em-method ul{margin:0;padding-left:20px;color:#374151}
+    .em-method li{margin-bottom:6px;font-size:.92rem;line-height:1.5}
+
+    .em-cta{text-align:center;padding:48px 16px;background:linear-gradient(180deg,#fffdf4,#fff)}
+    .em-cta h2{font-size:1.5rem;font-weight:800;margin:0 0 10px}
+    .em-cta p{color:var(--muted);margin:0 0 22px}
+
+    @media print{
+      header,#header-placeholder,#footer-placeholder,.whatsapp-float,.em-cta{display:none !important}
+      .em-hero{background:#fff;color:#000;padding:20px 0}
+      .em-hero p,.em-hero .meta{color:#374151}
+      body{background:#fff}
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Saltar al contenido</a>
+  <div id="header-placeholder"></div>
+
+  <section class="em-hero">
+    <div class="badge">📊 Reporte trimestral</div>
+    <h1>Estudio de mercado inmobiliario <span style="color:var(--gold)">Cartagena 2026</span></h1>
+    <p>Análisis comparativo de precio por m², valorización, ocupación y ROI en las 6 zonas más relevantes para inversión.</p>
+    <div class="meta">Publicado: 25 abril 2026 · Datos T1 2026 · Próxima actualización: julio 2026</div>
+  </section>
+
+  <main id="main">
+
+    <!-- Resumen ejecutivo -->
+    <section class="em-section">
+      <h2>Resumen ejecutivo</h2>
+      <p class="sub">Cartagena cierra el T1 2026 con valorización promedio de 8.4% interanual en zonas premium, ocupación turística estable y demanda extranjera al alza por el tipo de cambio USD/COP favorable.</p>
+      <div class="em-summary-grid">
+        <div class="em-summary-card">
+          <div class="lbl">Valorización promedio</div>
+          <div class="val">+8.4%</div>
+          <div class="delta up">▲ vs 7.6% en 2025</div>
+        </div>
+        <div class="em-summary-card">
+          <div class="lbl">Precio m² zona premium</div>
+          <div class="val">$11.5M COP</div>
+          <div class="delta up">▲ +9.2% YoY</div>
+        </div>
+        <div class="em-summary-card">
+          <div class="lbl">Ocupación Airbnb prom.</div>
+          <div class="val">68%</div>
+          <div class="delta">Estable (±2pp)</div>
+        </div>
+        <div class="em-summary-card">
+          <div class="lbl">Tarifa Airbnb prom.</div>
+          <div class="val">$520K COP</div>
+          <div class="delta up">▲ +12% YoY</div>
+        </div>
+        <div class="em-summary-card">
+          <div class="lbl">Compradores extranjeros</div>
+          <div class="val">~24%</div>
+          <div class="delta up">▲ +5pp vs 2025</div>
+        </div>
+        <div class="em-summary-card">
+          <div class="lbl">Tiempo prom. en mercado</div>
+          <div class="val">68 días</div>
+          <div class="delta down">▼ vs 84 en 2025</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabla comparativa -->
+    <section class="em-section" style="background:#fafafa;max-width:100%;padding-left:0;padding-right:0">
+      <div style="max-width:var(--page-max);margin:0 auto;padding:0 16px">
+        <h2>Tabla comparativa por zona — T1 2026</h2>
+        <p class="sub">Datos consolidados de 6 zonas. Precios en millones de pesos colombianos por metro cuadrado. ROI estimado sobre operación mixta (compra + Airbnb gestionado profesionalmente).</p>
+        <div class="em-table-wrap">
+          <table class="em-table">
+            <thead>
+              <tr>
+                <th>Zona</th>
+                <th>Precio m²</th>
+                <th>Valoriz. anual</th>
+                <th>ROI Airbnb</th>
+                <th>ROI arriendo</th>
+                <th>Ocupación</th>
+                <th>Tendencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="zone-name">Centro Histórico</td>
+                <td>$12M – $25M</td>
+                <td class="pos">+9.5%</td>
+                <td class="gold">10–16%</td>
+                <td>4–6%</td>
+                <td>70–85%</td>
+                <td class="pos">Alza sostenida</td>
+              </tr>
+              <tr>
+                <td class="zone-name">Bocagrande</td>
+                <td>$8M – $15M</td>
+                <td class="pos">+8.2%</td>
+                <td class="gold">9–14%</td>
+                <td>5–7%</td>
+                <td>65–80%</td>
+                <td class="pos">Alza moderada</td>
+              </tr>
+              <tr>
+                <td class="zone-name">Castillogrande</td>
+                <td>$10M – $18M</td>
+                <td class="pos">+7.8%</td>
+                <td class="gold">8–12%</td>
+                <td>5–6%</td>
+                <td>60–75%</td>
+                <td class="pos">Estable + lujo</td>
+              </tr>
+              <tr>
+                <td class="zone-name">Manga</td>
+                <td>$5M – $9M</td>
+                <td class="pos">+6.4%</td>
+                <td class="gold">7–10%</td>
+                <td>6–8%</td>
+                <td>55–70%</td>
+                <td>Estable</td>
+              </tr>
+              <tr>
+                <td class="zone-name">La Boquilla</td>
+                <td>$4M – $7M</td>
+                <td class="pos">+11.2%</td>
+                <td class="gold">8–11%</td>
+                <td>7–9%</td>
+                <td>50–65%</td>
+                <td class="pos">Crecimiento alto</td>
+              </tr>
+              <tr>
+                <td class="zone-name">Barú / Islas</td>
+                <td>$6M – $20M</td>
+                <td class="pos">+10.8%</td>
+                <td class="gold">12–18%</td>
+                <td>—</td>
+                <td>45–70%</td>
+                <td class="pos">Crecimiento turístico</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:14px">Fuentes: bases de datos internas Altorra T1 2026, Lonja de Propiedad Raíz Bolívar, Cotelco Cartagena, AirDNA datos públicos. Cifras en pesos colombianos a tasa de cambio 2026.</p>
+      </div>
+    </section>
+
+    <!-- Análisis por zona -->
+    <section class="em-section">
+      <h2>Análisis detallado por zona</h2>
+      <p class="sub">Cada zona tiene un perfil de inversionista óptimo. Estos son los números y el análisis que usamos internamente para asesorar.</p>
+
+      <div class="em-zone">
+        <div class="em-zone-header">
+          <h3 class="em-zone-title">Centro Histórico</h3>
+          <span class="em-zone-tag premium">Premium · Patrimonio UNESCO</span>
+        </div>
+        <div class="em-kpis">
+          <div class="em-kpi"><div class="em-kpi-lbl">Precio m²</div><div class="em-kpi-val">$12M – $25M</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">Tarifa Airbnb</div><div class="em-kpi-val">$680K – $1.4M</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">Ocupación</div><div class="em-kpi-val">70 – 85%</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">Valorización</div><div class="em-kpi-val">+9.5% YoY</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">ROI Airbnb</div><div class="em-kpi-val">10 – 16%</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">Ticket prom.</div><div class="em-kpi-val">$1.800M COP</div></div>
+        </div>
+        <p>Las propiedades coloniales reformadas dentro de la muralla generan los rendimientos más altos de todo el Caribe colombiano. La oferta es estructuralmente limitada: ser zona de patrimonio UNESCO impide construcción nueva. Cada año salen al mercado entre 30 y 50 propiedades, casi todas con compradores listos en menos de 90 días. El comprador típico es extranjero (60%+) con perfil de renta turística premium.</p>
+      </div>
+
+      <div class="em-zone">
+        <div class="em-zone-header">
+          <h3 class="em-zone-title">Bocagrande</h3>
+          <span class="em-zone-tag premium">Premium · Frente al mar</span>
+        </div>
+        <div class="em-kpis">
+          <div class="em-kpi"><div class="em-kpi-lbl">Precio m²</div><div class="em-kpi-val">$8M – $15M</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">Tarifa Airbnb</div><div class="em-kpi-val">$420K – $850K</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">Ocupación</div><div class="em-kpi-val">65 – 80%</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">Valorización</div><div class="em-kpi-val">+8.2% YoY</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">ROI Airbnb</div><div class="em-kpi-val">9 – 14%</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">Ticket prom.</div><div class="em-kpi-val">$950M COP</div></div>
+        </div>
+        <p>Zona icónica frente al mar con la mayor concentración de torres residenciales y hoteles. Demanda turística masiva con ocupación estable todo el año (pico dic-mar y jun-jul). Las propiedades con vista directa al mar tienen prima del 30-40% sobre las de vista parcial. Ideal para inversionistas que priorizan liquidez (alta rotación de mercado) y demanda comprobada.</p>
+      </div>
+
+      <div class="em-zone">
+        <div class="em-zone-header">
+          <h3 class="em-zone-title">Castillogrande</h3>
+          <span class="em-zone-tag premium">Premium · Residencial exclusivo</span>
+        </div>
+        <div class="em-kpis">
+          <div class="em-kpi"><div class="em-kpi-lbl">Precio m²</div><div class="em-kpi-val">$10M – $18M</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">Tarifa Airbnb</div><div class="em-kpi-val">$480K – $950K</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">Ocupación</div><div class="em-kpi-val">60 – 75%</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">Valorización</div><div class="em-kpi-val">+7.8% YoY</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">ROI Airbnb</div><div class="em-kpi-val">8 – 12%</div></div>
+          <div class="em-kpi"><div class="em-kpi-lbl">Ticket prom.</div><div class="em-kpi-val">$1.250M COP</div></div>
+        </div>
+        <p>Península exclusiva con clima residencial premium y vista a la bahía. Menor rotación turística que Bocagrande, pero perfil de huésped de mayor poder adquisitivo y estancias más largas. Históricamente la zona de mayor estabilidad de precios — pierde menos en correcciones y consolida en alzas. Excelente para perfiles conservadores con horizonte 7-10 años.</p>
+      </div>
+    </section>
+
+    <section class="em-section" style="background:#fafafa;max-width:100%;padding-left:0;padding-right:0">
+      <div style="max-width:var(--page-max);margin:0 auto;padding:0 16px">
+        <div class="em-zone">
+          <div class="em-zone-header">
+            <h3 class="em-zone-title">Manga</h3>
+            <span class="em-zone-tag alta">Valor · Bohemio</span>
+          </div>
+          <div class="em-kpis">
+            <div class="em-kpi"><div class="em-kpi-lbl">Precio m²</div><div class="em-kpi-val">$5M – $9M</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">Tarifa Airbnb</div><div class="em-kpi-val">$280K – $580K</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">Ocupación</div><div class="em-kpi-val">55 – 70%</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">Valorización</div><div class="em-kpi-val">+6.4% YoY</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">ROI Airbnb</div><div class="em-kpi-val">7 – 10%</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">Ticket prom.</div><div class="em-kpi-val">$520M COP</div></div>
+          </div>
+          <p>Barrio bohemio con casas republicanas, restaurantes y vida cultural. Atrae al turista que busca autenticidad cartagenera fuera de Bocagrande. Excelente desempeño en arriendo tradicional (6-8% ROI sólido) y mejor relación precio/m² para entrar al mercado. Ideal para primera inversión con presupuesto medio.</p>
+        </div>
+
+        <div class="em-zone">
+          <div class="em-zone-header">
+            <h3 class="em-zone-title">La Boquilla</h3>
+            <span class="em-zone-tag crecimiento">Crecimiento · Próximo polo</span>
+          </div>
+          <div class="em-kpis">
+            <div class="em-kpi"><div class="em-kpi-lbl">Precio m²</div><div class="em-kpi-val">$4M – $7M</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">Tarifa Airbnb</div><div class="em-kpi-val">$220K – $480K</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">Ocupación</div><div class="em-kpi-val">50 – 65%</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">Valorización</div><div class="em-kpi-val">+11.2% YoY</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">ROI Airbnb</div><div class="em-kpi-val">8 – 11%</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">Ticket prom.</div><div class="em-kpi-val">$380M COP</div></div>
+          </div>
+          <p>La sorpresa de 2025-2026 con la mayor valorización (+11.2%) y mejor entrada para inversión a mediano plazo. Nuevos proyectos en sobre planos, expansión hotelera y conexión vial mejorada con el aeropuerto. Para inversionistas que apuestan por la valorización a 5-7 años más que por el cash flow inmediato.</p>
+        </div>
+
+        <div class="em-zone">
+          <div class="em-zone-header">
+            <h3 class="em-zone-title">Barú e Islas del Rosario</h3>
+            <span class="em-zone-tag crecimiento">Lujo turístico · Diferenciado</span>
+          </div>
+          <div class="em-kpis">
+            <div class="em-kpi"><div class="em-kpi-lbl">Precio m²</div><div class="em-kpi-val">$6M – $20M</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">Tarifa Airbnb</div><div class="em-kpi-val">$680K – $2.5M</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">Ocupación</div><div class="em-kpi-val">45 – 70%</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">Valorización</div><div class="em-kpi-val">+10.8% YoY</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">ROI Airbnb</div><div class="em-kpi-val">12 – 18%</div></div>
+            <div class="em-kpi"><div class="em-kpi-lbl">Ticket prom.</div><div class="em-kpi-val">$1.450M COP</div></div>
+          </div>
+          <p>Casas y apartamentos frente al mar con tarifas por noche entre las más altas de Colombia. Producto diferenciado con poca competencia: ocupación más volátil (depende fuertemente de temporada) pero ingreso por noche compensa con creces. Inversión de mayor riesgo/recompensa, ideal para diversificar portafolio existente.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tendencias 2026 -->
+    <section class="em-section">
+      <h2>3 tendencias macro para 2026-2027</h2>
+      <p class="sub">Lo que estamos observando en operaciones reales de los últimos 6 meses.</p>
+      <div class="em-summary-grid">
+        <div class="em-summary-card">
+          <div class="lbl">Tendencia 1</div>
+          <div style="font-size:1rem;font-weight:800;color:var(--text);margin-top:6px">Demanda extranjera al alza</div>
+          <p style="font-size:.88rem;color:var(--muted);margin-top:8px;line-height:1.5">USA, Canadá y España representan ya el 24% de compradores. Tipo de cambio favorable y nómadas digitales son el motor.</p>
+        </div>
+        <div class="em-summary-card">
+          <div class="lbl">Tendencia 2</div>
+          <div style="font-size:1rem;font-weight:800;color:var(--text);margin-top:6px">Polo emergente: La Boquilla</div>
+          <p style="font-size:.88rem;color:var(--muted);margin-top:8px;line-height:1.5">Mayor valorización (+11.2%) por proyectos sobre planos y expansión hotelera. Es la zona donde más se nota el "early mover advantage".</p>
+        </div>
+        <div class="em-summary-card">
+          <div class="lbl">Tendencia 3</div>
+          <div style="font-size:1rem;font-weight:800;color:var(--text);margin-top:6px">RNT y formalización turística</div>
+          <p style="font-size:.88rem;color:var(--muted);margin-top:8px;line-height:1.5">Mayor exigencia regulatoria en Airbnb (RNT obligatorio, IVA, INC). Profesionalización del operador es clave para mantener márgenes.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Metodología -->
+    <section class="em-section" style="background:#fafafa;max-width:100%;padding-left:0;padding-right:0">
+      <div style="max-width:var(--page-max);margin:0 auto;padding:0 16px">
+        <h2>Metodología y fuentes</h2>
+        <p class="sub">Cómo se construyen estas cifras y qué incluyen.</p>
+        <div class="em-method">
+          <h3>📐 Metodología</h3>
+          <ul>
+            <li><strong>Precio m²:</strong> mediana de transacciones cerradas en T1 2026 + datos de listados Altorra. Excluye outliers (top y bottom 5%).</li>
+            <li><strong>Valorización:</strong> comparación de precio promedio T1 2026 vs T1 2025, ajustado por mix de propiedades.</li>
+            <li><strong>Tarifa Airbnb:</strong> mediana ponderada por noches reservadas en propiedades con ≥ 80% ocupación de calendario.</li>
+            <li><strong>Ocupación:</strong> nights booked / nights available con calendario de 12 meses móviles.</li>
+            <li><strong>ROI Airbnb:</strong> ingreso anual neto (después de 25% gestión, 15% gastos operativos, impuestos) sobre inversión total (precio + costos cierre + dotación).</li>
+          </ul>
+        </div>
+        <div class="em-method" style="margin-top:14px">
+          <h3>📚 Fuentes</h3>
+          <ul>
+            <li>Bases de datos internas Altorra Inmobiliaria (operaciones T1 2026).</li>
+            <li>Lonja de Propiedad Raíz de Bolívar — boletín T1 2026.</li>
+            <li>Cotelco Cartagena — reporte de ocupación hotelera T1 2026.</li>
+            <li>AirDNA — datos públicos agregados de mercado Airbnb Cartagena.</li>
+            <li>DANE — IPVU (Índice de Precios de Vivienda) y IPC.</li>
+            <li>Banco de la República — tipo de cambio y tasas de interés referenciales.</li>
+          </ul>
+        </div>
+        <p style="font-size:.82rem;color:var(--muted);margin-top:18px;line-height:1.5"><strong>Nota legal:</strong> este estudio es informativo y orientativo. No constituye recomendación de inversión personalizada. Cualquier decisión de compra debe respaldarse con due diligence específica de la propiedad y asesoría legal y fiscal individual.</p>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="em-cta">
+      <h2>¿Quieres este análisis aplicado a tu caso?</h2>
+      <p>Recibe un informe personalizado con propiedades activas que se ajusten a tu perfil de inversión.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a class="btn btn-primary" href="contacto.html">Pedir análisis personalizado</a>
+        <a class="btn" href="guia-inversionista-2026.html" style="border:2px solid var(--gold);color:var(--gold);background:#fff">Descargar guía 2026</a>
+        <a class="btn" href="https://wa.me/573002439810?text=Hola%20Altorra%2C%20vi%20el%20estudio%20de%20mercado%20y%20quiero%20m%C3%A1s%20info" target="_blank" rel="noopener" style="background:#25d366;color:#fff">WhatsApp</a>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <link rel="stylesheet" href="css/whatsapp-float.css"/>
+  <a href="https://wa.me/573002439810" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825.738 5.479 2.031 7.781l-2.031 7.219 7.375-1.938c2.238 1.213 4.8 1.938 7.531 1.938 8.838 0 16.094-7.163 16.094-16s-7.256-16-16-16zm9.563 22.188c-.394 1.113-1.95 2.038-3.194 2.313-.85.175-1.956.319-5.688-.919-4.769-1.581-7.844-6.356-8.081-6.65-.231-.294-1.95-2.594-1.95-4.95s1.238-3.513 1.675-3.994c.438-.481.956-.6 1.275-.6.319 0 .638.006.919.013.294.012.688-.113 1.075.819.394 1.025 1.35 3.294 1.469 3.531.119.238.2.519.038.819-.163.3-.244.488-.481.75-.238.263-.5.588-.713.788-.238.225-.488.469-.206.925.281.456 1.256 2.069 2.694 3.35 1.85 1.65 3.419 2.163 3.9 2.406.481.244.763.206 1.044-.125.281-.331 1.206-1.406 1.531-1.888.325-.481.644-.4 1.088-.238.444.163 2.819 1.331 3.3 1.569.481.238.8.356.919.556.119.2.119 1.144-.275 2.256z"/></svg>
+  </a>
+
+  <script src="js/firestore-meter.js" defer></script>
+  <script src="js/components.js" defer></script>
+  <script src="js/i18n.js"></script>
+  <script defer src="js/whatsapp-tracker.js"></script>
+  <script src="js/analytics.js" defer></script>
+</body>
+</html>
