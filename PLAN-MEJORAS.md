@@ -287,6 +287,70 @@ FASE 4             → Bloque D (máquina de leads completo)
 | E5.2 | Sala de prensa con kit descargable + embed badge | ✅ DONE |
 | E5.3 | Hub de videos con `CollectionPage` JSON-LD | ✅ DONE |
 
+### F1 — Reorganización home y fundamento
+
+| # | Micro-fase | Estado |
+|---|-----------|--------|
+| F1.1 | Reorganizar secciones del index + fix meta/OG/hreflang | ✅ DONE |
+| F1.2 | Bloque "Recursos del inversionista" (4 cards en home) | ✅ DONE |
+| F1.3 | FAQ home + JSON-LD FAQPage | ✅ DONE |
+| F1.4 | Bloque foreign investors EN | ✅ DONE |
+| F1.5 | JSON-LD WebSite + SearchAction global | ✅ DONE |
+
+### F2 — Performance / Core Web Vitals
+
+| # | Micro-fase | Estado |
+|---|-----------|--------|
+| F2.1 | Auditoría Lighthouse + fix LCP/CLS/INP | 🔲 TODO |
+| F2.2 | Lazy-load + code-splitting de scripts no críticos | 🔲 TODO |
+| F2.3 | Compresión imágenes (WebP/AVIF, srcset, sizes) | 🔲 TODO |
+| F2.4 | Service Worker mejorado (precache estratégico) | 🔲 TODO |
+
+### F3 — UX / Accesibilidad
+
+| # | Micro-fase | Estado |
+|---|-----------|--------|
+| F3.1 | Auditoría accesibilidad (contraste, ARIA, focus) | 🔲 TODO |
+| F3.2 | Navegación móvil — menú hamburguesa accesible | 🔲 TODO |
+
+### F4 — Datos y precisión
+
+| # | Micro-fase | Estado |
+|---|-----------|--------|
+| F4.1 | Verificar precios, ROI, fechas de propiedades reales vs documentación | 🔲 TODO |
+| F4.2 | Fact-check de números en guía 2026 / estudio mercado / glosario | 🔲 TODO |
+| F4.3 | Actualizar redes sociales y datos de contacto consistentes en todo el sitio | 🔲 TODO |
+
+### F5 — Funcionalidad nueva
+
+| # | Micro-fase | Estado |
+|---|-----------|--------|
+| F5.1 | Comparador de propiedades (2-3 lado a lado) | 🔲 TODO |
+| F5.2 | Mapa interactivo de propiedades (Leaflet/MapLibre) | 🔲 TODO |
+| F5.3 | Simulador hipotecario mejorado (UVR, fija, plazo) | 🔲 TODO |
+| F5.4 | "Propiedades similares" en detalle | 🔲 TODO |
+
+### F6 — Móvil / Touch
+
+| # | Micro-fase | Estado |
+|---|-----------|--------|
+| F6.1 | Revisión móvil-first de cada página clave | 🔲 TODO |
+| F6.2 | Touch gestures en carruseles (swipe nativo + indicadores) | 🔲 TODO |
+
+### F7 — Conversión
+
+| # | Micro-fase | Estado |
+|---|-----------|--------|
+| F7.1 | Optimizar formularios (validación inline, autosave) | 🔲 TODO |
+| F7.2 | Exit-intent popup con lead magnet (guía 2026) | 🔲 TODO |
+
+### F8 — Mantenimiento técnico
+
+| # | Micro-fase | Estado |
+|---|-----------|--------|
+| F8.1 | Eliminar código muerto (scripts no usados, CSS no aplicado) | 🔲 TODO |
+| F8.2 | Consolidar utilidades (AltorraUtils) | 🔲 TODO |
+
 ---
 
 ## 9. PROGRESO

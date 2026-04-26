@@ -616,6 +616,25 @@ if('serviceWorker' in navigator){
     s2.textContent = JSON.stringify(breadcrumb);
     document.head.appendChild(s2);
 
+    // WebSite + SearchAction (sitelinks searchbox in Google SERPs)
+    if(path === '/' || path === '/index.html'){
+      var website = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Altorra Inmobiliaria",
+        "url": BASE + "/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": BASE + "/busqueda.html?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      };
+      var s3 = document.createElement('script');
+      s3.type = 'application/ld+json';
+      s3.textContent = JSON.stringify(website);
+      document.head.appendChild(s3);
+    }
+
   }catch(e){ console.warn("JSON-LD inject failed", e); }
 })();
 
