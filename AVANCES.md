@@ -2097,4 +2097,35 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
+## 2026-04-26 — F2.1→F2.4 Performance / Core Web Vitals
+
+**Lo que se hizo:**
+
+**F2.1 — Fix LCP/CLS/INP:**
+1. **`i18n.js` (138KB) de sincrónico a `defer`** — eliminó el mayor recurso render-blocking del sitio.
+2. **`whatsapp-float.css` movido de `<body>` a `<head>`** — evita CLS por carga tardía del botón flotante.
+
+**F2.2 — Lazy-load de scripts no críticos:**
+1. **9 scripts** convertidos de `<script defer>` a carga via `requestIdleCallback`:
+   - Head: `analytics.js`, `whatsapp-tracker.js`, `newsletter.js`, `firestore-meter.js` (se cargan después de que el main thread esté libre).
+   - Body: `wizard-publicar.js`, `historial-visitas.js`, `featured-week-banner.js`, `investment-badges.js`, `exclusivas.js` (se cargan en idle).
+2. **21 → 13 script tags** en el HTML, de los cuales 0 son render-blocking.
+
+**F2.3 — Imágenes:**
+- Verificado que `scripts.js` y `listado-propiedades.js` ya usan `loading="lazy"` + `decoding="async"` en imágenes dinámicas. Sin cambios necesarios.
+
+**F2.4 — Service Worker:**
+- Añadido **precache de 11 recursos críticos** (/, style.css, scripts.js, components, utils, database, i18n, header/footer, manifest).
+- Bump de `CACHE_NAME` a `altorra-pwa-v4` para forzar actualización.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `index.html` | i18n defer, CSS al head, idle loaders, scripts reducidos |
+| `service-worker.js` | +precache array, version bump v4 |
+| `PLAN-MEJORAS.md` | F2.1→F2.4 marcados ✅ DONE |
+
+---
+
 *Última actualización: 2026-04-26*

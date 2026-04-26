@@ -7,13 +7,28 @@
    - Mantener CSS/IMG rápidos con caché
    =========================================== */
 
-const CACHE_NAME = 'altorra-pwa-v3'; // Sube el nombre si alguna vez cambias la estrategia
+const CACHE_NAME = 'altorra-pwa-v4'; // Sube el nombre si alguna vez cambias la estrategia
 const ORIGIN = self.location.origin;
 
-// Toma control inmediatamente al instalar
+const PRECACHE_URLS = [
+  '/',
+  '/style.css',
+  '/css/whatsapp-float.css',
+  '/scripts.js',
+  '/js/components.js',
+  '/js/utils.js',
+  '/js/database.js',
+  '/js/i18n.js',
+  '/header.html',
+  '/footer.html',
+  '/manifest.json',
+];
+
 self.addEventListener('install', (event) => {
   self.skipWaiting();
-  event.waitUntil(Promise.resolve());
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE_URLS))
+  );
 });
 
 // Activa, limpia cachés viejos y toma control de todas las pestañas

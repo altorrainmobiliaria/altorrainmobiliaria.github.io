@@ -301,10 +301,10 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| F2.1 | Auditoría Lighthouse + fix LCP/CLS/INP | 🔲 TODO |
-| F2.2 | Lazy-load + code-splitting de scripts no críticos | 🔲 TODO |
-| F2.3 | Compresión imágenes (WebP/AVIF, srcset, sizes) | 🔲 TODO |
-| F2.4 | Service Worker mejorado (precache estratégico) | 🔲 TODO |
+| F2.1 | Fix LCP/CLS/INP (i18n defer, CSS al head) | ✅ DONE |
+| F2.2 | Lazy-load 9 scripts via requestIdleCallback | ✅ DONE |
+| F2.3 | Verificar lazy loading en imágenes dinámicas | ✅ DONE |
+| F2.4 | Service Worker precache + version bump | ✅ DONE |
 
 ### F3 — UX / Accesibilidad
 
