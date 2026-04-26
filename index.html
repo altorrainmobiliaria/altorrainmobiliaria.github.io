@@ -46,19 +46,22 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="css/whatsapp-float.css"/>
 
-  <!-- Scripts -->
+  <!-- Scripts críticos (defer = ejecutan en orden tras parse HTML) -->
   <script type="module" src="js/firebase-config.js"></script>
-  <script src="js/firestore-meter.js" defer></script>
   <script src="js/database.js" defer></script>
   <script src="js/cache-manager.js" defer></script>
   <script src="js/components.js" defer></script>
   <script src="js/utils.js" defer></script>
-  <script src="js/analytics.js" defer></script>
   <script src="scripts.js" defer></script>
-  <script src="js/i18n.js"></script>
-  <script defer src="js/whatsapp-tracker.js"></script>
-  <script defer src="js/newsletter.js"></script>
+  <script src="js/i18n.js" defer></script>
+  <!-- Scripts no críticos: analytics, tracking, newsletter (idle load) -->
+  <script>
+    (function(){ var r=window.requestIdleCallback||function(c){setTimeout(c,300)};
+      r(function(){['js/analytics.js','js/whatsapp-tracker.js','js/newsletter.js','js/firestore-meter.js'].forEach(function(s){var e=document.createElement('script');e.src=s;e.defer=true;document.head.appendChild(e);});});
+    })();
+  </script>
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
@@ -449,9 +452,8 @@
   <!-- Footer externo -->
   <div id="footer-placeholder"></div>
   <!-- WhatsApp Floating Button -->
-<link rel="stylesheet" href="css/whatsapp-float.css">
-<a 
-  href="https://wa.me/573002439810?text=Hola%20Altorra%2C%20necesito%20información%20sobre%20propiedades" 
+  <a
+    href="https://wa.me/573002439810?text=Hola%20Altorra%2C%20necesito%20información%20sobre%20propiedades" 
   class="whatsapp-float" 
   target="_blank" 
   rel="noopener noreferrer"
@@ -462,23 +464,23 @@
   </svg>
 </a>
   <script defer src="js/favoritos.js"></script>
-  <script defer src="js/wizard-publicar.js"></script>
   <script defer src="js/smart-search.js"></script>
-  <script defer src="js/historial-visitas.js"></script>
-  <script defer src="js/featured-week-banner.js"></script>
-  <script defer src="js/investment-badges.js"></script>
-  <script defer src="js/exclusivas.js"></script>
   <script>
-    // Inicializar banner e historial cuando la DB esté lista
-    window.addEventListener('altorra:db-ready', function() {
-      FeaturedBanner?.init?.('#featured-banner-container');
-      AltorraHistorial?.renderSection?.('#historial-container', 4, 'Vistas recientemente');
-    }, { once: true });
-    // Si ya estaba lista
-    if (window.propertyDB?.isLoaded) {
-      FeaturedBanner?.init?.('#featured-banner-container');
-      AltorraHistorial?.renderSection?.('#historial-container', 4, 'Vistas recientemente');
-    }
+    // Carga diferida de scripts no críticos via requestIdleCallback
+    (function(){
+      var idle = window.requestIdleCallback || function(cb){ setTimeout(cb, 200); };
+      function loadScript(src){ var s=document.createElement('script'); s.src=src; s.defer=true; document.body.appendChild(s); }
+      idle(function(){
+        ['js/wizard-publicar.js','js/historial-visitas.js','js/featured-week-banner.js','js/investment-badges.js','js/exclusivas.js'].forEach(loadScript);
+      });
+      // Inicializar banner e historial cuando DB + scripts estén listos
+      function initDynamic(){
+        if(typeof FeaturedBanner!=='undefined') FeaturedBanner.init?.('#featured-banner-container');
+        if(typeof AltorraHistorial!=='undefined') AltorraHistorial.renderSection?.('#historial-container', 4, 'Vistas recientemente');
+      }
+      window.addEventListener('altorra:db-ready', function(){ setTimeout(initDynamic, 300); }, { once: true });
+      if(window.propertyDB?.isLoaded) setTimeout(initDynamic, 300);
+    })();
   </script>
 
 </body>
