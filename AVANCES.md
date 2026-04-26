@@ -2062,4 +2062,39 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
-*Última actualización: 2026-04-25*
+## 2026-04-26 — F1.1→F1.5 Reorganización home + fundamento
+
+**Lo que se hizo:**
+
+**F1.1 — Reorganización de secciones + fix meta:**
+1. **Nuevo orden del index**: Hub → Categorías (subió) → Barrios (subió) → Recientes → Exclusivas → Featured → Recursos inversionista → Testimonios → Historial → FAQ → Foreign investors → Publica (bajó al final).
+2. **Title SEO mejorado**: `Apartamentos y casas en Cartagena | Comprar, Arrendar, Invertir | Altorra Inmobiliaria`.
+3. **Description SEO mejorada** con keywords específicas (Cartagena, renta turística, asesoría jurídica).
+4. **`og:image` con URL absoluta**, **`og:url` añadido**, **`hreflang` ES/EN** apuntando a `foreign-investors.html`.
+5. **Skip-link** movido antes del header (accesibilidad correcta).
+6. **Hero `alt` descriptivo** (antes "Banner").
+
+**F1.2 — Bloque "Recursos del inversionista":**
+- 4 cards con links a: guía 2026, estudio mercado, videos, glosario — entre Featured banner y Testimonios.
+
+**F1.3 — FAQ home:**
+- 5 preguntas frecuentes con `<details>/<summary>` + JSON-LD `FAQPage` en `<head>`.
+- Cross-links a foreign-investors, estudios, guía, contacto.
+
+**F1.4 — Bloque foreign investors EN:**
+- Banner oscuro EN con CTA dorado hacia `/foreign-investors.html`.
+
+**F1.5 — JSON-LD WebSite + SearchAction:**
+- Schema `WebSite` con `SearchAction` apuntando a `busqueda.html?q=` — habilita sitelinks searchbox en Google SERPs.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `index.html` | Secciones reordenadas + head mejorado + 3 secciones nuevas (~485 líneas) |
+| `scripts.js` | +WebSite SearchAction JSON-LD en home |
+| `PLAN-MEJORAS.md` | Bloque F (F1→F8) registrado con micro-fases |
+
+---
+
+*Última actualización: 2026-04-26*
