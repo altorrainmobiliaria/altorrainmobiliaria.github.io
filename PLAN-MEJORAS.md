@@ -325,24 +325,24 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| F5.1 | Comparador de propiedades (2-3 lado a lado) | 🔲 TODO |
-| F5.2 | Mapa interactivo de propiedades (Leaflet/MapLibre) | 🔲 TODO |
-| F5.3 | Simulador hipotecario mejorado (UVR, fija, plazo) | 🔲 TODO |
-| F5.4 | "Propiedades similares" en detalle | 🔲 TODO |
+| F5.1 | Comparador de propiedades (2-3 lado a lado) | ✅ DONE (pre-existente) |
+| F5.2 | Mapa interactivo de propiedades (Leaflet/MapLibre) | ✅ DONE (pre-existente) |
+| F5.3 | Simulador hipotecario mejorado (UVR, fija, plazo) | ✅ DONE (pre-existente) |
+| F5.4 | "Propiedades similares" en detalle | ✅ DONE (pre-existente) |
 
 ### F6 — Móvil / Touch
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| F6.1 | Revisión móvil-first de cada página clave | 🔲 TODO |
-| F6.2 | Touch gestures en carruseles (swipe nativo + indicadores) | 🔲 TODO |
+| F6.1 | Revisión móvil-first de cada página clave | ✅ DONE |
+| F6.2 | Touch gestures en carruseles (swipe nativo + indicadores) | ✅ DONE |
 
 ### F7 — Conversión
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| F7.1 | Optimizar formularios (validación inline, autosave) | 🔲 TODO |
-| F7.2 | Exit-intent popup con lead magnet (guía 2026) | 🔲 TODO |
+| F7.1 | Optimizar formularios (validación inline, autosave) | ✅ DONE (pre-existente) |
+| F7.2 | Exit-intent popup con lead magnet (guía 2026) | ✅ DONE |
 
 ### F8 — Mantenimiento técnico
 
