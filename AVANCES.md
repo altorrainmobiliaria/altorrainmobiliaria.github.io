@@ -2193,4 +2193,93 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
+---
+
+## F5 — Funcionalidad nueva (2026-04-27)
+
+**Todas las features ya existían en el codebase:**
+- F5.1: `js/comparador.js` (416 líneas) — tray flotante + modal comparación lado a lado.
+- F5.2: `mapa.html` + `js/mapa-propiedades.js` (359 líneas) — Leaflet con markers por operación.
+- F5.3: `simulador.html` + `js/simulador-hipotecario.js` (567 líneas) — UVR + tasa fija + FAQ.
+- F5.4: Sección "Propiedades similares" en `detalle-propiedad.html` — CSS, HTML y JS completos.
+
+---
+
+## F6 — Móvil / Touch (2026-04-27)
+
+**F6.1 — Revisión móvil-first:**
+- Breakpoints verificados: 860px (nav), 920px (search/footer), 560px (search 1-col), 720px (reviews).
+- Formularios (contacto, publicar) ya tienen `grid.two → 1fr` a 700px.
+- Galería de detalle tiene touch swipe (touchstart/touchend con 40px threshold).
+
+**F6.2 — Touch gestures en carruseles:**
+- Añadido `scroll-snap-type: x mandatory` + `scroll-snap-align: start` a carruseles.
+- Añadido `-webkit-overflow-scrolling: touch` para momentum scroll en iOS.
+- Añadido fade gradient visual (48px) al borde derecho de carruseles para indicar contenido scrollable (oculto en desktop ≥1200px).
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `style.css` | scroll-snap, carousel fade hint, touch scrolling |
+
+---
+
+## F7 — Conversión (2026-04-27)
+
+**F7.1 — Formularios optimizados:**
+- Ya existentes en `js/contact-forms.js`: loading states, error feedback, rate limiting (30s), honeypot, Firebase fallback a FormSubmit.
+
+**F7.2 — Exit-intent popup:**
+- Creado `js/exit-intent.js` — popup con lead magnet (Guía del Inversionista 2026).
+- Desktop: se activa cuando el mouse sale del viewport (mouseout, clientY < 5).
+- Mobile: se activa tras 45 segundos de inactividad.
+- Controles: 1 vez por sesión (sessionStorage), no repite si se cerró en últimos 7 días (localStorage).
+- No aparece en contacto.html, gracias.html ni admin.html.
+- Integrado con `AltorraNewsletter.subscribe()` para capturar emails.
+- Fallback: redirige a la guía directamente si Firebase no está disponible.
+- Accesibilidad: `role="dialog"`, `aria-modal`, Escape cierra, click en overlay cierra.
+- Añadido a: index.html (idle-loaded), propiedades-comprar/arrendar/alojamientos, invertir, detalle-propiedad.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/exit-intent.js` | NUEVO — exit-intent popup con lead magnet |
+| `index.html` | +exit-intent.js en idle loader |
+| `propiedades-comprar.html` | +exit-intent.js |
+| `propiedades-arrendar.html` | +exit-intent.js |
+| `propiedades-alojamientos.html` | +exit-intent.js |
+| `invertir.html` | +exit-intent.js |
+| `detalle-propiedad.html` | +exit-intent.js |
+| `PLAN-MEJORAS.md` | F5–F7 marcados ✅ DONE |
+
+---
+
+---
+
+## F8 — Mantenimiento técnico (2026-04-27)
+
+**F8.1 — Eliminar código muerto:**
+- `header-footer.js` (237 líneas) — ELIMINADO. Reemplazado por `js/components.js`.
+- `js/performance.js` (154 líneas) — ELIMINADO. No referenciado por ningún HTML.
+- `js/form-validation.js` (273 líneas) — ELIMINADO. No referenciado por ningún HTML.
+- Total: 664 líneas de código muerto eliminadas.
+
+**F8.2 — Consolidar utilidades:**
+- Auditoría: `formatCOP()` duplicado 5 veces, `escapeHtml()` 5 veces (scripts.js, utils.js, listado-propiedades.js, detalle-propiedad.html, comparador.js).
+- Causa raíz: cada archivo es una IIFE independiente que define sus propios helpers locales.
+- Solución: migrar a `window.AltorraUtils.formatCOP()` globalmente. Requiere tocar 5+ archivos. Documentado como tech debt para fase de migración a módulos ES.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `header-footer.js` | ELIMINADO |
+| `js/performance.js` | ELIMINADO |
+| `js/form-validation.js` | ELIMINADO |
+| `PLAN-MEJORAS.md` | F8.1 ✅, F8.2 documentado |
+
+---
+
 *Última actualización: 2026-04-27*
