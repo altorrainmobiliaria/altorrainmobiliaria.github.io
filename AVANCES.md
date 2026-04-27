@@ -2128,4 +2128,40 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
-*Última actualización: 2026-04-26*
+---
+
+## F3 — UX / Accesibilidad (2026-04-27)
+
+**F3.1 — Auditoría de accesibilidad (contraste, ARIA, focus):**
+
+1. **Focus styles restaurados** — eliminada la regla CSS que quitaba `outline:none` a `.drawer a:focus`, `.menu-link:focus`. Reemplazada con anillos gold visibles (`rgba(212,175,55,.4)`) en: drawer links, menu links, menu-link-featured, `<summary>`, `.btn`, `.card`, `.hub-card`, `.cat-card`, `.barrio-card`, `.fav-btn`, `.arrow`, `.resource-card`.
+2. **Focus-visible genérico reforzado** — `a:focus-visible` subido de `.18` a `.35` opacidad con `border-radius:4px`.
+3. **Footer: color typo corregido** — `#bd5e1` → `#cbd5e1` en link de Privacidad.
+4. **Footer: copyright actualizado** — `© 2025` → `© 2026`.
+5. **Resource cards: inline JS eliminado** — `onmouseover`/`onmouseout` reemplazados por clase CSS `.resource-card` con `:hover`/`:focus-within` (accesible via teclado).
+6. **Skip links añadidos** a 5 páginas que no los tenían: `contacto.html`, `privacidad.html`, `servicios-mantenimiento.html`, `servicios-mudanzas.html`, `turismo-inmobiliario.html`.
+7. **Skip-link CSS inline** añadido a las 3 páginas standalone (servicios-mantenimiento, servicios-mudanzas, turismo-inmobiliario) que no cargan `style.css`.
+
+**F3.2 — Navegación móvil accesible:**
+
+1. **Verificado focus trap** en drawer móvil: Tab/Shift+Tab cycling, Escape cierra, backdrop click cierra, focus al primer enlace al abrir, focus al toggle al cerrar.
+2. **Touch targets mejorados** — drawer links de `padding:8px 2px` a `padding:10px 6px` + `min-height:44px` (WCAG 2.5.8).
+3. **Nav-toggle** — añadido `min-height:44px;min-width:44px` al botón hamburguesa.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `style.css` | Focus-visible restaurado, touch targets 44px, .resource-card CSS |
+| `footer.html` | Color typo fix, copyright 2026 |
+| `index.html` | Resource cards con clase CSS en vez de inline JS |
+| `contacto.html` | +skip-link |
+| `privacidad.html` | +skip-link |
+| `servicios-mantenimiento.html` | +skip-link, +skip-link CSS |
+| `servicios-mudanzas.html` | +skip-link, +skip-link CSS |
+| `turismo-inmobiliario.html` | +skip-link, +skip-link CSS |
+| `PLAN-MEJORAS.md` | F3.1–F3.2 marcados ✅ DONE |
+
+---
+
+*Última actualización: 2026-04-27*

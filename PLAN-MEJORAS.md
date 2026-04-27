@@ -310,8 +310,8 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| F3.1 | Auditoría accesibilidad (contraste, ARIA, focus) | 🔲 TODO |
-| F3.2 | Navegación móvil — menú hamburguesa accesible | 🔲 TODO |
+| F3.1 | Auditoría accesibilidad (contraste, ARIA, focus) | ✅ DONE |
+| F3.2 | Navegación móvil — menú hamburguesa accesible | ✅ DONE |
 
 ### F4 — Datos y precisión
 
