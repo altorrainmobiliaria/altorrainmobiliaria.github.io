@@ -2164,4 +2164,33 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
+---
+
+## F4 — Datos y precisión (2026-04-27)
+
+**F4.1 — Verificar precios y ROI:**
+- Propiedades dinámicas de Firestore — no hay precios hardcoded en HTML.
+- ROI por zona consistente entre guía (bruto) y airbnb landing (neto).
+- Ocupación, tarifas y valorización coinciden entre guía, estudio y landing pages.
+
+**F4.2 — Fact-check datos:**
+- Añadida aclaración en `invertir-airbnb-cartagena.html`: el subtítulo explica que el ROI mostrado es **neto** (descontados costos operativos), diferenciándolo del ROI bruto de la guía del inversionista.
+- Todas las referencias de año verificadas como 2026.
+
+**F4.3 — Consistencia contacto y redes sociales:**
+- Instagram URL corregido en `contacto.html` (`instagram.com` → `www.instagram.com`).
+- **Footer: redes sociales añadidas** — iconos SVG de Instagram, Facebook, TikTok, YouTube con links oficiales y `aria-label`.
+- **Footer: 3 links rotos corregidos** — `servicios-administracion.html`, `servicios-juridicos.html`, `servicios-contables.html` no existían; redirigidos a `servicios-mantenimiento.html`.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `contacto.html` | Instagram URL www fix |
+| `footer.html` | +4 iconos sociales, 3 links rotos corregidos |
+| `invertir-airbnb-cartagena.html` | Clarificación ROI neto en subtítulo |
+| `PLAN-MEJORAS.md` | F4.1–F4.3 marcados ✅ DONE |
+
+---
+
 *Última actualización: 2026-04-27*
