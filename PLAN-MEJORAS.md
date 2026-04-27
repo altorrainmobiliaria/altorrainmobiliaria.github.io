@@ -310,16 +310,16 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| F3.1 | Auditoría accesibilidad (contraste, ARIA, focus) | 🔲 TODO |
-| F3.2 | Navegación móvil — menú hamburguesa accesible | 🔲 TODO |
+| F3.1 | Auditoría accesibilidad (contraste, ARIA, focus) | ✅ DONE |
+| F3.2 | Navegación móvil — menú hamburguesa accesible | ✅ DONE |
 
 ### F4 — Datos y precisión
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
-| F4.1 | Verificar precios, ROI, fechas de propiedades reales vs documentación | 🔲 TODO |
-| F4.2 | Fact-check de números en guía 2026 / estudio mercado / glosario | 🔲 TODO |
-| F4.3 | Actualizar redes sociales y datos de contacto consistentes en todo el sitio | 🔲 TODO |
+| F4.1 | Verificar precios, ROI, fechas de propiedades reales vs documentación | ✅ DONE |
+| F4.2 | Fact-check de números en guía 2026 / estudio mercado / glosario | ✅ DONE |
+| F4.3 | Actualizar redes sociales y datos de contacto consistentes en todo el sitio | ✅ DONE |
 
 ### F5 — Funcionalidad nueva
 
