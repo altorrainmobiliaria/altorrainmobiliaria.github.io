@@ -2256,4 +2256,30 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
+---
+
+## F8 — Mantenimiento técnico (2026-04-27)
+
+**F8.1 — Eliminar código muerto:**
+- `header-footer.js` (237 líneas) — ELIMINADO. Reemplazado por `js/components.js`.
+- `js/performance.js` (154 líneas) — ELIMINADO. No referenciado por ningún HTML.
+- `js/form-validation.js` (273 líneas) — ELIMINADO. No referenciado por ningún HTML.
+- Total: 664 líneas de código muerto eliminadas.
+
+**F8.2 — Consolidar utilidades:**
+- Auditoría: `formatCOP()` duplicado 5 veces, `escapeHtml()` 5 veces (scripts.js, utils.js, listado-propiedades.js, detalle-propiedad.html, comparador.js).
+- Causa raíz: cada archivo es una IIFE independiente que define sus propios helpers locales.
+- Solución: migrar a `window.AltorraUtils.formatCOP()` globalmente. Requiere tocar 5+ archivos. Documentado como tech debt para fase de migración a módulos ES.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `header-footer.js` | ELIMINADO |
+| `js/performance.js` | ELIMINADO |
+| `js/form-validation.js` | ELIMINADO |
+| `PLAN-MEJORAS.md` | F8.1 ✅, F8.2 documentado |
+
+---
+
 *Última actualización: 2026-04-27*
