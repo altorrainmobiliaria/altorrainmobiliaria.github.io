@@ -352,13 +352,21 @@ FASE 4             → Bloque D (máquina de leads completo)
 | F8.2 | Consolidar utilidades (AltorraUtils) | ⏳ Documentado — requiere refactor IIFE→módulos |
 | F8.3 | Limpieza adicional: render.js + push-notifications.js | ✅ DONE |
 
+### G — Navegación, descubribilidad y cross-linking
+
+| # | Micro-fase | Estado |
+|---|-----------|--------|
+| G1 | Menú Inversión en header + herramientas en footer + tools section en index | ✅ DONE |
+| G2 | Cross-link bars en 5 páginas clave + og:image en 3 blog posts | ✅ DONE |
+| G3 | Cross-link bars en contacto + invertir | ✅ DONE |
+
 ---
 
 ## 9. PROGRESO
 
 ### 9.1 Sprint actual
 
-**Sprint 1 (activo):** `A1a → A1b → A1c → A2 → A3 → A11 → A4 → A5 → A6 → A7` + `E1.1 → E1.2 → E1.3`
+**Sprint 2 (activo):** Bloque G — navegación y cross-linking.
 
 ### 9.2 Completadas
 
@@ -381,10 +389,10 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 ### 9.3 Siguiente
 
-**Bloque B — Inteligencia y conversión.**
-B1: Comparador de propiedades (seleccionar 2-3 y comparar specs).
-B2: Historial de visitas en home y detalle (ya parcialmente implementado).
-B3: "Propiedades similares" en detalle (barrio+tipo+precio±20%).
+**Bloque G completado.** Todo el plan A-G está implementado. Posibles siguientes pasos:
+- Consolidar utilidades (F8.2 — tech debt, requiere IIFE→módulos).
+- Nuevas landing pages SEO (más barrios, más ciudades).
+- Optimización de Core Web Vitals con Lighthouse audit.
 
 ---
 
