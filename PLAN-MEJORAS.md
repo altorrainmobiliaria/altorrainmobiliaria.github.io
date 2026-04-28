@@ -349,7 +349,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 | # | Micro-fase | Estado |
 |---|-----------|--------|
 | F8.1 | Eliminar código muerto (scripts no usados, CSS no aplicado) | ✅ DONE |
-| F8.2 | Consolidar utilidades (AltorraUtils) | ⏳ Documentado — requiere refactor IIFE→módulos |
+| F8.2 | Consolidar utilidades (AltorraUtils) | ✅ DONE |
 | F8.3 | Limpieza adicional: render.js + push-notifications.js | ✅ DONE |
 
 ### G — Navegación, descubribilidad y cross-linking
@@ -389,10 +389,10 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 ### 9.3 Siguiente
 
-**Bloque G completado.** Todo el plan A-G está implementado. Posibles siguientes pasos:
-- Consolidar utilidades (F8.2 — tech debt, requiere IIFE→módulos).
+**Bloques A-G + F8 completados.** Todo el plan está implementado. Posibles siguientes pasos:
 - Nuevas landing pages SEO (más barrios, más ciudades).
 - Optimización de Core Web Vitals con Lighthouse audit.
+- Migración Firebase (Etapa 0-1 del CLAUDE.md).
 
 ---
 
