@@ -387,7 +387,7 @@
     // Inyectar botones en tarjetas ya existentes
     injectButtonsInCards();
 
-    // Observar nuevas tarjetas (renderizadas por render.js)
+    // Observar nuevas tarjetas renderizadas dinámicamente
     _observer.observe(document.body, { childList: true, subtree: true });
 
     // Si viene de detalle con ?compare=id

@@ -2271,6 +2271,12 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 - Causa raíz: cada archivo es una IIFE independiente que define sus propios helpers locales.
 - Solución: migrar a `window.AltorraUtils.formatCOP()` globalmente. Requiere tocar 5+ archivos. Documentado como tech debt para fase de migración a módulos ES.
 
+**F8.3 — Limpieza adicional de código muerto:**
+- `js/render.js` (211 líneas) — ELIMINADO. Sin referencia en ningún HTML; solo mencionado en comentarios.
+- `js/push-notifications.js` (182 líneas) — ELIMINADO. Sin referencia en ningún HTML; solo mencionado en comentarios.
+- Comentarios actualizados en `firebase-config.js`, `favorites-manager.js`, `comparador.js`.
+- Total adicional: 393 líneas eliminadas.
+
 ### Archivos
 
 | Archivo | Cambio |
@@ -2278,8 +2284,13 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 | `header-footer.js` | ELIMINADO |
 | `js/performance.js` | ELIMINADO |
 | `js/form-validation.js` | ELIMINADO |
-| `PLAN-MEJORAS.md` | F8.1 ✅, F8.2 documentado |
+| `js/render.js` | ELIMINADO |
+| `js/push-notifications.js` | ELIMINADO |
+| `js/firebase-config.js` | Comentario actualizado |
+| `js/favorites-manager.js` | Comentario actualizado |
+| `js/comparador.js` | Comentario actualizado |
+| `PLAN-MEJORAS.md` | F8.1 ✅, F8.2 documentado, F8.3 ✅ |
 
 ---
 
-*Última actualización: 2026-04-27*
+*Última actualización: 2026-04-28*
