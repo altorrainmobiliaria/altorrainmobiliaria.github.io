@@ -2293,4 +2293,52 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 
 ---
 
+---
+
+## Bloque G — Navegación, descubribilidad y cross-linking (2026-04-28)
+
+**G1 — Menú Inversión + herramientas:**
+- Header: nuevo dropdown "Inversión" con 5 links (invertir, simulador, calculadora Airbnb, estudio de mercado, blog).
+- Drawer móvil: nuevo bloque "Inversión" con 6 links incluyendo mapa.
+- Footer: sub-sección "Herramientas" (simulador, calculadora, avalúo), links a mapa y publicar.
+- Index: nueva sección "Herramientas gratuitas" con 4 tarjetas interactivas.
+
+**G2 — Cross-link bars en páginas clave + og:image:**
+- `propiedades-comprar.html`: barra de herramientas (simulador, invertir, guía, mapa).
+- `propiedades-arrendar.html`: barra (renta turística, invertir, guía, mapa).
+- `propiedades-alojamientos.html`: barra (calculadora Airbnb, renta, guía, mapa).
+- `detalle-propiedad.html`: barra (simulador, calculadora, más props, contacto).
+- `simulador.html`: barra "siguiente paso" (propiedades, invertir, asesoría, guía).
+- 3 blog posts: agregado og:image faltante.
+
+**G3 — Cross-link bars adicionales:**
+- `contacto.html`: links a propiedades, invertir, simulador, blog.
+- `invertir.html`: links a simulador, calculadora Airbnb, propiedades, blog.
+
+### Impacto
+- 10+ páginas ahora accesibles desde la navegación principal (antes solo por deep links).
+- 7 páginas de alto tráfico con barras de cross-linking contextual.
+- Mejor distribución de autoridad SEO entre páginas.
+
+### Archivos
+
+| Archivo | Cambio |
+|---------|--------|
+| `header.html` | Menú Inversión (desktop + mobile drawer) |
+| `footer.html` | Sub-sección Herramientas, links expandidos |
+| `index.html` | Sección "Herramientas gratuitas" |
+| `propiedades-comprar.html` | Cross-link bar |
+| `propiedades-arrendar.html` | Cross-link bar |
+| `propiedades-alojamientos.html` | Cross-link bar |
+| `detalle-propiedad.html` | Cross-link bar |
+| `simulador.html` | Cross-link bar |
+| `contacto.html` | Cross-link bar |
+| `invertir.html` | Cross-link bar |
+| `blog/guia-legal-*.html` | og:image |
+| `blog/por-que-invertir-*.html` | og:image |
+| `blog/renta-turistica-*.html` | og:image |
+| `PLAN-MEJORAS.md` | Bloque G registrado |
+
+---
+
 *Última actualización: 2026-04-28*
