@@ -260,6 +260,7 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
   <script src="js/database.js" defer></script>
   <script src="js/cache-manager.js" defer></script>
   <script src="js/components.js" defer></script>
+  <script src="js/utils.js" defer></script>
   <script src="js/i18n.js"></script>
   <script defer src="js/whatsapp-tracker.js"></script>
   <script defer src="js/newsletter.js"></script>
@@ -277,8 +278,9 @@ async function getJSONCached(u,{ttlMs=1000*60*60*6,revalidate=true}={}){
 }
 
 function getParam(name){const p=new URLSearchParams(window.location.search);return p.get(name)||'';}
-function formatCOP(n){if(!n&&n!==0)return'';return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');}
-function escapeHtml(s){return String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
+var _u=window.AltorraUtils||{};
+function formatCOP(n){return _u.formatCOP?_u.formatCOP(n):(!n&&n!==0?'':n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'));}
+function escapeHtml(s){return _u.escapeHtml?_u.escapeHtml(s):String(s||'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));}
 function buildWhatsAppLink(p, opts={}){
   const phone='573002439810', company='Altorra Inmobiliaria';
   const price=p.price?('$'+formatCOP(p.price)+' COP'):''; let op='';
@@ -724,7 +726,6 @@ document.addEventListener('DOMContentLoaded', init);
   <!-- SEO JSON-LD -->
   <div style="display:none"><?php /* placeholder for GH Pages */ ?></div>
   <!--#include file="snippets/inject-jsonld.html" -->
-  <script src="js/utils.js"></script>
   <script src="js/analytics.js"></script>
   <script src="js/historial-visitas.js" defer></script>
 <script>
@@ -754,9 +755,9 @@ document.addEventListener('DOMContentLoaded', init);
   var MAX = 4;
   var PRICE_RANGE = 0.3;
 
-  function formatCOP(n){ return n ? '$ '+new Intl.NumberFormat('es-CO').format(n) : ''; }
-
-  function escHtml(s){ var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+  var _us = window.AltorraUtils || {};
+  function formatCOP(n){ return n ? '$ ' + (_us.formatCOP ? _us.formatCOP(n) : new Intl.NumberFormat('es-CO').format(n)) : ''; }
+  function escHtml(s){ return _us.escapeHtml ? _us.escapeHtml(s) : (function(){ var d=document.createElement('div'); d.textContent=s; return d.innerHTML; })(); }
 
   function findSimilar(prop, all){
     var id = String(prop.id);

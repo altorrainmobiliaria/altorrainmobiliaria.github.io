@@ -77,16 +77,9 @@
     document.head.appendChild(s);
   }
 
-  function escapeHtml(s) {
-    return String(s || '').replace(/[&<>"]/g, function (m) {
-      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[m];
-    });
-  }
-
-  function formatCOP(n) {
-    if (n == null) return '';
-    return 'COP $ ' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  }
+  var _u = window.AltorraUtils || {};
+  function escapeHtml(s) { return _u.escapeHtml ? _u.escapeHtml(s) : String(s||'').replace(/[&<>"]/g, function(m){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[m];}); }
+  function formatCOP(n) { if (n == null) return ''; return 'COP $ ' + (_u.formatCOP ? _u.formatCOP(n) : String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.')); }
 
   function getExclusivas(props) {
     const filtered = (props || []).filter(function (p) {

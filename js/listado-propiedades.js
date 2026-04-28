@@ -25,21 +25,10 @@
   let filteredProperties = [];
   let renderedCount = 0;
 
-  function formatCOP(n) {
-    if (!n && n !== 0) return '';
-    return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  }
-
-  function capitalize(s) {
-    s = String(s || '');
-    return s.charAt(0).toUpperCase() + s.slice(1);
-  }
-
-  function escapeHtml(s) {
-    return String(s || '').replace(/[&<>"]/g, c => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'
-    }[c]));
-  }
+  var _u = window.AltorraUtils || {};
+  function formatCOP(n) { return _u.formatCOP ? _u.formatCOP(n) : (!n && n !== 0 ? '' : n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')); }
+  function capitalize(s) { return _u.capitalize ? _u.capitalize(s) : (s ? s.charAt(0).toUpperCase() + s.slice(1) : ''); }
+  function escapeHtml(s) { return _u.escapeHtml ? _u.escapeHtml(s) : String(s||'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
   function getPriceLabel(p) {
     if (!p.price) return '';

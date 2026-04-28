@@ -41,16 +41,9 @@
     setTimeout(() => t.remove(), 3500);
   }
 
-  function formatCOP(n) {
-    if (!n) return '—';
-    return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(n);
-  }
-
-  function escHtml(str) {
-    const d = document.createElement('div');
-    d.appendChild(document.createTextNode(str ?? ''));
-    return d.innerHTML;
-  }
+  var _u = window.AltorraUtils || {};
+  function formatCOP(n) { if (!n) return '—'; return new Intl.NumberFormat('es-CO', { style:'currency', currency:'COP', maximumFractionDigits:0 }).format(n); }
+  function escHtml(str) { return _u.escapeHtml ? _u.escapeHtml(str) : (function(){ var d=document.createElement('div'); d.appendChild(document.createTextNode(str??'')); return d.innerHTML; })(); }
 
   function openModal(id) {
     const m = document.getElementById(id);
