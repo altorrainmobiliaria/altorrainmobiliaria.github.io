@@ -11,7 +11,7 @@
  *   3. Si no hay Firebase, funciona 100% con localStorage (igual que antes).
  *
  * Compatibilidad: API idéntica a window.AltorraFavoritos para no romper
- * el código existente (favoritos.js + favoritos.html + render.js).
+ * el código existente (favoritos.js + favoritos.html).
  *
  * Campos almacenados (mismos que favoritos.js actual):
  *   { id, title, city, price, image, operation, beds, baths, sqm, type, addedAt }

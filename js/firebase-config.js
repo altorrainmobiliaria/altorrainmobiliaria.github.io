@@ -15,7 +15,7 @@
 // ══════════════════════════════════════════════════════════════════════════
 // Claves adicionales del proyecto (Google Maps, FCM, etc.)
 // El propietario SOLO debe editar este bloque — los módulos consumidores
-// (mapa-propiedades.js, push-notifications.js) leen desde window.AltorraKeys.
+// (mapa-propiedades.js) lee desde window.AltorraKeys.
 // ══════════════════════════════════════════════════════════════════════════
 window.AltorraKeys = Object.assign({
   // Google Maps JavaScript API — https://console.cloud.google.com/google/maps-apis

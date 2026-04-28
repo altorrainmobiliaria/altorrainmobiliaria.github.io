@@ -350,6 +350,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 |---|-----------|--------|
 | F8.1 | Eliminar código muerto (scripts no usados, CSS no aplicado) | ✅ DONE |
 | F8.2 | Consolidar utilidades (AltorraUtils) | ⏳ Documentado — requiere refactor IIFE→módulos |
+| F8.3 | Limpieza adicional: render.js + push-notifications.js | ✅ DONE |
 
 ---
 
