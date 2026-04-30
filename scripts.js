@@ -294,8 +294,9 @@ document.addEventListener('DOMContentLoaded', function() {
     alojamientos:  'propiedades-alojamientos.html',
   };
 
-  function formatCOP(n){ if(n==null) return ''; return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
-  function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
+  var _u = window.AltorraUtils || {};
+  function formatCOP(n){ return _u.formatCOP ? _u.formatCOP(n) : (n==null ? '' : n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.')); }
+  function escapeHtml(s){ return _u.escapeHtml ? _u.escapeHtml(s) : String(s||'').replace(/[&<>"]/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
 
   function buildSkeletonCard(){
     const el = document.createElement('article');

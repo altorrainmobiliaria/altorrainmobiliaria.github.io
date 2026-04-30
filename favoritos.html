@@ -277,18 +277,16 @@
   <script src="js/cache-manager.js" defer></script>
   <script src="js/favorites-manager.js" defer></script>
   <script src="js/components.js" defer></script>
+  <script src="js/utils.js" defer></script>
   <script src="js/i18n.js"></script>
   <script defer src="js/whatsapp-tracker.js"></script>
 
   <script>
-    function formatCOP(n) {
-      if (!n && n !== 0) return '';
-      return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    }
+    var _u = window.AltorraUtils || {};
+    function formatCOP(n) { return _u.formatCOP ? _u.formatCOP(n) : (!n && n !== 0 ? '' : n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')); }
 
     function capitalize(str) {
-      if (!str) return '';
-      return str.charAt(0).toUpperCase() + str.slice(1);
+      return _u.capitalize ? _u.capitalize(str) : (!str ? '' : str.charAt(0).toUpperCase() + str.slice(1));
     }
 
     function renderFavorites() {

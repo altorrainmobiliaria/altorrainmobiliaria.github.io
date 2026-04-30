@@ -2342,3 +2342,46 @@ Dashboard de analytics completo en el panel admin con datos de Firestore + local
 ---
 
 *Última actualización: 2026-04-28*
+
+---
+
+## F8.2 — Consolidar utilidades (AltorraUtils)
+
+**Fecha:** 2026-04-28
+**Commit:** `c9091bd`
+
+### Qué se hizo
+Refactorización de funciones utilitarias duplicadas en todo el codebase. Se implementó un patrón de delegación: cada archivo que define `formatCOP` o `escapeHtml` ahora intenta usar `window.AltorraUtils` primero y solo cae al fallback inline si no está disponible.
+
+### Cambios clave
+- 13 copias de `formatCOP` y 6 de `escapeHtml` consolidadas con delegación.
+- `js/utils.js` ahora se carga en todas las páginas que usan estas utilidades.
+- Patrón: `var _u = window.AltorraUtils || {}; function formatCOP(n) { return _u.formatCOP ? _u.formatCOP(n) : <fallback>; }`
+- Variantes especializadas (con prefijo "COP $", formato abreviado, Intl.NumberFormat) mantienen su lógica propia delegando solo la parte numérica.
+
+### Archivos (14)
+
+| Archivo | Cambio |
+|---------|--------|
+| `scripts.js` | Delegación formatCOP + escapeHtml |
+| `js/listado-propiedades.js` | Delegación formatCOP + escapeHtml + capitalize |
+| `js/exclusivas.js` | Delegación escapeHtml + formatCOP |
+| `js/admin-properties.js` | Delegación escHtml |
+| `detalle-propiedad.html` | Delegación en 2 bloques inline, eliminado script duplicado |
+| `favoritos.html` | Delegación formatCOP + capitalize |
+| `admin.html` | Añadido `<script src="js/utils.js" defer>` |
+| `avaluo.html` | Añadido `<script src="js/utils.js" defer>` |
+| `busqueda.html` | Añadido `<script src="js/utils.js" defer>` |
+| `mapa.html` | Añadido `<script src="js/utils.js" defer>` |
+| `quienes-somos.html` | Añadido `<script src="js/utils.js" defer>` |
+| `propiedades-comprar.html` | Añadido `<script src="js/utils.js" defer>` |
+| `propiedades-arrendar.html` | Añadido `<script src="js/utils.js" defer>` |
+| `propiedades-alojamientos.html` | Añadido `<script src="js/utils.js" defer>` |
+
+### Resultado
+- 14 archivos modificados, +36 −53 líneas (reducción neta de 17 líneas).
+- Código más mantenible: cambios futuros a formatCOP solo requieren editar `js/utils.js`.
+
+---
+
+*Última actualización: 2026-04-28*
