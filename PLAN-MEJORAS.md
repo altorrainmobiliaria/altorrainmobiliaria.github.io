@@ -360,14 +360,17 @@ FASE 4             → Bloque D (máquina de leads completo)
 | G2 | Cross-link bars en 5 páginas clave + og:image en 3 blog posts | ✅ DONE |
 | G3 | Cross-link bars en contacto + invertir | ✅ DONE |
 
-### H — Expansión SEO Zona Norte (landing pages premium)
+### H — Expansión SEO por sectores de Cartagena
 
 | # | Micro-fase | Estado |
 |---|-----------|--------|
 | H1 | Estudio de mercado Zona Norte (Serena, Karibana, Manzanillo, Boquilla, Cielo Mar) | ✅ DONE |
-| H2 | Reorganizar barrios premium en index.html (grupos Centro/Norte) | ✅ DONE |
+| H2 | Reorganizar barrios en index.html (grupos Centro/Norte) | ✅ DONE |
 | H3 | Crear 5 landing pages SEO de barrios Zona Norte con datos de mercado | ✅ DONE |
 | H4 | Integrar nuevas páginas en header, footer y sitemap.xml | ✅ DONE |
+| H5 | Crear 6 landing pages adicionales (El Laguito, San Diego, Marbella, El Cabrero, Pie de la Popa, Alto Bosque) | ✅ DONE |
+| H6 | Renombrar "Barrios premium" → "Sectores de Cartagena" + 4 grupos geográficos neutrales | ✅ DONE |
+| H7 | Eliminar CSS clasista (barrio-card-norte) + actualizar header/footer/sitemap | ✅ DONE |
 
 ---
 
@@ -398,7 +401,7 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 ### 9.3 Siguiente
 
-**Bloques A-H completados.** Todo el plan está implementado. Posibles siguientes pasos:
+**Bloques A-H completados** (incluyendo expansión H5-H7 de sectores). 11 landing pages de sectores en producción. Posibles siguientes pasos:
 - Más landing pages SEO (Tierrabomba, Anillo Vial, Punta Canoa, Santa Marta).
 - Optimización de Core Web Vitals con Lighthouse audit.
 - Migración Firebase (Etapa 0-1 del CLAUDE.md).

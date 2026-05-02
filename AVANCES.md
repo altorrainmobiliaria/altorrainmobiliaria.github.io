@@ -2465,4 +2465,64 @@ Cada landing page incluye:
 
 ---
 
+---
+
+## H2 — Expansión completa de sectores + eliminación de naming clasista
+
+**Fecha:** 2026-05-02
+**Branch:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Expansión de la cobertura de sectores de Cartagena de 11 barrios a 17 sectores con landing pages dedicadas. Eliminación total del naming "premium" y "clasista" (términos como "Barrios premium", "Zonas premium", "barrio-card-norte") reemplazándolo por nomenclatura geográfica neutral: "Sectores de Cartagena".
+
+### Nuevas landing pages (6)
+
+| Archivo | Sector | Precio/m² | Valorización | Perfil |
+|---|---|---|---|---|
+| `el-laguito.html` | El Laguito | $10-15M | +7-9% | Punta de península, Hilton/Estelar, aparta-suites turísticas |
+| `marbella.html` | Marbella | $7-11M | +6-8% | Costero entre Centro y Crespo, ciclovía, edificios consolidados |
+| `san-diego.html` | San Diego | $15-30M | +8-11% | Centro amurallado boutique, casas coloniales, UNESCO, Airbnb 9-13% |
+| `pie-de-la-popa.html` | Pie de la Popa | $4-6M | +5-7% | Residencial tradicional, casas familiares accesibles |
+| `alto-bosque.html` | Alto Bosque | $5-8M | +6-8% | Elevado con vista panorámica, conjuntos cerrados, familias |
+| `el-cabrero.html` | El Cabrero | $8-12M | +7-9% | Costero junto al Centro, doble frente de agua (mar + lago) |
+
+### Reorganización del index.html
+
+Sección renombrada de **"Barrios premium"** a **"Sectores de Cartagena"** con subtítulo neutral: "Explora la ciudad por corredor — encuentra dónde quieres vivir o invertir."
+
+4 grupos geográficos (no por estrato social):
+1. **Zona Norte** (badge: Mayor crecimiento) — Serena del Mar, Karibana, Manzanillo del Mar, La Boquilla, Cielo Mar, Barcelona de Indias
+2. **Centro Histórico y Patrimonio** (badge: UNESCO) — Centro Histórico, Getsemaní, San Diego
+3. **Península Turística** (badge: Frente al mar) — Bocagrande, Castillogrande, El Laguito
+4. **Sectores Residenciales** (badge: Consolidados) — Manga, Crespo, Marbella, El Cabrero, Pie de la Popa, Alto Bosque
+
+### Cambios de naming (de-clasificación)
+
+| Antes | Después |
+|---|---|
+| "Barrios premium" (h2) | "Sectores de Cartagena" |
+| "Zonas premium" (header/footer) | "Sectores" |
+| `.barrio-card-norte` (CSS exclusivo) | Eliminado — todas las tarjetas iguales |
+| "Gated community" | "Urbanización cerrada" |
+| "Residencial premium" | "Residencial familiar" |
+
+### Archivos (11)
+
+| Archivo | Cambio |
+|---------|--------|
+| `el-laguito.html` | Nueva landing |
+| `marbella.html` | Nueva landing |
+| `san-diego.html` | Nueva landing |
+| `pie-de-la-popa.html` | Nueva landing |
+| `alto-bosque.html` | Nueva landing |
+| `el-cabrero.html` | Nueva landing |
+| `index.html` | Sección reorganizada en 4 grupos geográficos |
+| `header.html` | "Zonas premium" → "Sectores" + 6 links nuevos |
+| `footer.html` | "Zonas premium" → "Sectores" + 6 links nuevos |
+| `sitemap.xml` | 6 URLs nuevas |
+| `style.css` | Eliminado `.barrio-card-norte` + comentario actualizado |
+
+---
+
 *Última actualización: 2026-05-02*
