@@ -2385,3 +2385,84 @@ Refactorización de funciones utilitarias duplicadas en todo el codebase. Se imp
 ---
 
 *Última actualización: 2026-04-28*
+
+---
+
+## H — Expansión SEO Zona Norte (landing pages premium)
+
+**Fecha:** 2026-05-02
+**Branch:** `claude/analyze-competitor-features-ilXY4`
+
+### Qué se hizo
+
+Estudio de mercado Zona Norte de Cartagena + creación de 5 landing pages SEO completas para los barrios premium del corredor norte. Reorganización de la sección "Barrios premium" del index en dos grupos visuales: Centro/Tradicional y Zona Norte.
+
+### Estudio de mercado (datos 2025-2026)
+
+| Barrio | Precio/m² (COP) | Valorización anual | Perfil |
+|---|---|---|---|
+| Serena del Mar | $9-15M | +12-15% | Macroproyecto Karisma — hospital, universidad, playa privada |
+| Karibana | $11-18M | +10-12% | Golf PGA, gated community, frente al mar |
+| Manzanillo del Mar | $7-11M | +9-12% | Playa, proyectos nuevos, exclusividad |
+| La Boquilla | $6-9M | +10-14% | Renta turística, Airbnb top |
+| Cielo Mar | $5-8M | +8-10% | Residencial premium familiar, frente al mar |
+| Barcelona de Indias | $5-7M | +7-9% | Familiar, gated community Amarilo |
+
+Fuentes consultadas: Camacol, La Galería Inmobiliaria, Lonja de Cartagena, MetroCuadrado.
+
+### Landing pages creadas (5)
+
+Cada landing page incluye:
+- Hero con badge contextual y descripción
+- Stats band (4 métricas clave: valorización, precio/m², distancia, atributo distintivo)
+- Sección de features con grid de 6 cards (amenidades/ventajas)
+- Sección de tipos de propiedad disponibles
+- Bloque oscuro de inversión con 3 indicadores ROI/plusvalía
+- Sección de perfil del comprador
+- CTA con botones de WhatsApp + ver disponibilidad
+- Cross-links a las otras 4 landing pages + simulador + invertir
+- Schema.org Place con coordenadas GPS reales
+- Open Graph + canonical + meta description optimizadas
+
+| Archivo | Foco principal |
+|---|---|
+| `serena-del-mar.html` | Macroproyecto Karisma con hospital y universidad |
+| `karibana.html` | Golf PGA + beach club + Sonesta |
+| `manzanillo-del-mar.html` | Corredor general con múltiples proyectos |
+| `la-boquilla.html` | Líder en ROI Airbnb |
+| `cielo-mar.html` | Residencial familiar consolidado |
+
+### Cambios en navegación e índice
+
+- **`index.html`**: sección "Barrios premium" reorganizada en 2 grupos (Centro/Tradicional con 6 barrios + Zona Norte con 6 barrios). Añadido badge "+12% anual" al grupo Zona Norte. Tarjetas de Zona Norte con estilo dorado distintivo.
+- **`header.html`**: panel-propiedades expandido a mega-panel 2 columnas (Por operación + Zonas premium). Drawer móvil añadió bloque "Zonas premium — Zona Norte" con 6 links.
+- **`footer.html`**: nueva columna "Zonas premium" con 7 links (las 5 nuevas + Barú + lotes campestres). Grid del footer ajustado a `1.4fr 1fr 1fr 1fr` para mejor balance.
+- **`sitemap.xml`**: 5 nuevas URLs con priority 0.8-0.9 y changefreq weekly.
+- **`style.css`**: estilos `.barrios-group-title`, `.barrios-badge-hot`, `.barrio-card-norte`.
+
+### Impacto
+
+- 5 nuevas landing pages SEO con keywords long-tail de alto valor ("propiedades en serena del mar", "karibana cartagena", etc.).
+- 6 zonas Zona Norte ahora tienen presencia en menú principal, footer y home.
+- Cobertura completa del corredor norte de Cartagena (antes solo Manzanillo aparecía como tarjeta).
+- Cada landing tiene 6+ cross-links internos para distribución de autoridad SEO.
+
+### Archivos (10)
+
+| Archivo | Cambio |
+|---------|--------|
+| `serena-del-mar.html` | Nueva landing |
+| `karibana.html` | Nueva landing |
+| `manzanillo-del-mar.html` | Nueva landing |
+| `la-boquilla.html` | Nueva landing |
+| `cielo-mar.html` | Nueva landing |
+| `index.html` | Sección Barrios premium reorganizada |
+| `header.html` | Panel Propiedades expandido + bloque drawer |
+| `footer.html` | Nueva columna Zonas premium |
+| `sitemap.xml` | 5 URLs nuevas |
+| `style.css` | Estilos para grupos y barrio-card-norte |
+| `PLAN-MEJORAS.md` | Bloque H registrado |
+
+---
+
+*Última actualización: 2026-05-02*
