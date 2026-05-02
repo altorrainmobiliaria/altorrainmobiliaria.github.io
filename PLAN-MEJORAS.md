@@ -360,6 +360,15 @@ FASE 4             → Bloque D (máquina de leads completo)
 | G2 | Cross-link bars en 5 páginas clave + og:image en 3 blog posts | ✅ DONE |
 | G3 | Cross-link bars en contacto + invertir | ✅ DONE |
 
+### H — Expansión SEO Zona Norte (landing pages premium)
+
+| # | Micro-fase | Estado |
+|---|-----------|--------|
+| H1 | Estudio de mercado Zona Norte (Serena, Karibana, Manzanillo, Boquilla, Cielo Mar) | ✅ DONE |
+| H2 | Reorganizar barrios premium en index.html (grupos Centro/Norte) | ✅ DONE |
+| H3 | Crear 5 landing pages SEO de barrios Zona Norte con datos de mercado | ✅ DONE |
+| H4 | Integrar nuevas páginas en header, footer y sitemap.xml | ✅ DONE |
+
 ---
 
 ## 9. PROGRESO
@@ -389,8 +398,8 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 ### 9.3 Siguiente
 
-**Bloques A-G + F8 completados.** Todo el plan está implementado. Posibles siguientes pasos:
-- Nuevas landing pages SEO (más barrios, más ciudades).
+**Bloques A-H completados.** Todo el plan está implementado. Posibles siguientes pasos:
+- Más landing pages SEO (Tierrabomba, Anillo Vial, Punta Canoa, Santa Marta).
 - Optimización de Core Web Vitals con Lighthouse audit.
 - Migración Firebase (Etapa 0-1 del CLAUDE.md).
 
