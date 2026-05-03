@@ -2590,4 +2590,24 @@ Verificado que no requiere cambios:
 
 ---
 
+## I4 — Landing Tierrabomba (isla vacacional)
+
+**Fecha:** 2026-05-03
+**Commit:** `cc4fbd8`
+
+Nueva landing `tierrabomba.html` siguiendo el patrón establecido. Sector distintivo por ser isla:
+
+- Hero con tagline "A 15 minutos en lancha de Bocagrande"
+- Stats: precio m² $1M-$3M (60% menor que continental), valorización +10-15% anual
+- Features de inversión vacacional (Airbnb, ocupación 60-75%, ROI por noche)
+- Sección única "Antes de comprar en Tierrabomba" con tres advertencias específicas:
+  títulos, servicios públicos (cisternas vs planta), logística de lancha
+- Schema.org Place con coords reales (10.3633, -75.5786)
+- Integrado en index.html ("Península Turística"), header.html (desktop + mobile drawer),
+  footer.html y sitemap.xml
+
+Total ahora: **12 landing pages dinámicas** de sector.
+
+---
+
 *Última actualización: 2026-05-03*
