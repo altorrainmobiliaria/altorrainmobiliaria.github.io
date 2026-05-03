@@ -401,11 +401,12 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 | 2026-05-02 | H5-H7 | `5a4c69d` | 6 landing pages nuevas + sectores reorganizados |
 | 2026-05-03 | I1-I3 | `881a936` | Propiedades dinámicas en 11 landings + bump-version workflow |
+| 2026-05-03 | I4    | `cc4fbd8` | Landing Tierrabomba — isla vacacional |
 
 ### 9.3 Siguiente
 
-**Bloques A-I completados.** 11 landing pages con propiedades dinámicas de Firestore. Posibles siguientes pasos:
-- Más landing pages SEO (Tierrabomba, Anillo Vial, Punta Canoa, Santa Marta).
+**Bloques A-I completados + 12 landings dinámicas.** Posibles siguientes pasos:
+- Más landing pages SEO (Anillo Vial, Punta Canoa, Santa Marta).
 - Optimización de Core Web Vitals con Lighthouse audit.
 - Configurar secret `GOOGLE_APPLICATION_CREDENTIALS_JSON` en GitHub para que og-publish.yml genere páginas SEO.
 - Panel admin (Etapa 3 del CLAUDE.md).
