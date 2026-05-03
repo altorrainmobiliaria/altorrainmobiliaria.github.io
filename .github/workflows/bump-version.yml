@@ -1,0 +1,58 @@
+name: Bump deploy-info.json on push
+
+# Workflow ligero: actualiza data/deploy-info.json en cada push relevante
+# para que cache-manager.js detecte la nueva versión y refresque caché.
+# Independiente de og-publish.yml (que requiere credenciales Firestore).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.html'
+      - '**/*.css'
+      - 'js/**'
+      - 'snippets/**'
+      - 'css/**'
+      - 'service-worker.js'
+      - 'manifest.json'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: bump-version-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    # Skip si el commit ya viene de un bot para evitar loops infinitos
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump deploy-info.json
+        run: |
+          mkdir -p data
+          cat > data/deploy-info.json <<EOF
+          {
+            "version": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)",
+            "commit": "${{ github.sha }}",
+            "ref": "${{ github.ref_name }}"
+          }
+          EOF
+
+      - name: Commit & push si hubo cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/deploy-info.json
+          if git diff --cached --quiet; then
+            echo "No hay cambios en deploy-info.json"
+          else
+            git commit -m "chore: bump deploy-info.json [skip ci]"
+            git push
+          fi
