@@ -20,6 +20,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
   <script type="module" src="js/firebase-config.js"></script>
+  <script src="js/database.js" defer></script>
+  <script src="js/cache-manager.js" defer></script>
   <script src="js/utils.js" defer></script>
   <style>
     .lp-hero{padding:calc(var(--header-h) + 56px) 16px 56px;text-align:center;background:linear-gradient(180deg,#0b0b0b,#1a1a2e);color:#fff;position:relative;overflow:hidden}
@@ -164,6 +166,14 @@
       </div>
     </section>
 
+    <section class="lp-s">
+      <h2>Propiedades disponibles en Manzanillo del Mar</h2>
+      <p class="sub">Inventario activo en este sector. Las opciones se actualizan en tiempo real.</p>
+      <div id="sector-properties"
+           data-sector="Manzanillo del Mar"
+           data-fallback-search="Manzanillo+del+Mar"></div>
+    </section>
+
     <section class="lp-cta">
       <h2>¿Te interesa Manzanillo del Mar?</h2>
       <p>Trabajamos directamente con los principales constructores. Acceso a precios pre-lanzamiento y unidades exclusivas.</p>
@@ -204,5 +214,6 @@
   <script src="js/components.js" defer></script>
   <script defer src="js/whatsapp-tracker.js"></script>
   <script defer src="js/newsletter.js"></script>
+  <script defer src="js/sector-properties.js"></script>
 </body>
 </html>

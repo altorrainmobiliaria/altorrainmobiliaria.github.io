@@ -399,12 +399,16 @@ FASE 4             → Bloque D (máquina de leads completo)
 | 2026-04-17 | A8+A9 | `f88102e` | busqueda.html unificada + chips activos + banner |
 | 2026-04-17 | A10 | `7e45b05` | Promo banner Firestore config/promo + dismiss |
 
+| 2026-05-02 | H5-H7 | `5a4c69d` | 6 landing pages nuevas + sectores reorganizados |
+| 2026-05-03 | I1-I3 | `881a936` | Propiedades dinámicas en 11 landings + bump-version workflow |
+
 ### 9.3 Siguiente
 
-**Bloques A-H completados** (incluyendo expansión H5-H7 de sectores). 11 landing pages de sectores en producción. Posibles siguientes pasos:
+**Bloques A-I completados.** 11 landing pages con propiedades dinámicas de Firestore. Posibles siguientes pasos:
 - Más landing pages SEO (Tierrabomba, Anillo Vial, Punta Canoa, Santa Marta).
 - Optimización de Core Web Vitals con Lighthouse audit.
-- Migración Firebase (Etapa 0-1 del CLAUDE.md).
+- Configurar secret `GOOGLE_APPLICATION_CREDENTIALS_JSON` en GitHub para que og-publish.yml genere páginas SEO.
+- Panel admin (Etapa 3 del CLAUDE.md).
 
 ---
 

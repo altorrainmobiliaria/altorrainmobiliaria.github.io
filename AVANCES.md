@@ -2525,4 +2525,69 @@ Sección renombrada de **"Barrios premium"** a **"Sectores de Cartagena"** con s
 
 ---
 
-*Última actualización: 2026-05-02*
+## Bloque I — Propiedades dinámicas en landings + deploy-info workflow
+
+**Fecha:** 2026-05-03
+**Commit:** `881a936`
+
+### Contexto
+
+Las 11 landing pages de sector eran 100% estáticas — no mostraban propiedades de Firestore a pesar de tener Firebase conectado. El deploy-info.json estaba congelado desde 2026-04-09 porque og-publish.yml requiere credenciales de Firestore para ejecutarse.
+
+### I1 — Propiedades dinámicas en landings de sector
+
+Nuevo módulo `js/sector-properties.js` (IIFE, 182 líneas):
+- Espera `propertyDB` vía evento `altorra:db-ready` (timeout 8s)
+- Filtra por `barrio` con fallback a búsqueda textual en title/neighborhood/city/features
+- Renderiza hasta 6 cards en grid responsive con skeleton loading
+- Estado vacío con CTA de WhatsApp + link al buscador general
+- Cards con badge de operación (venta/arriendo/días), specs, precio formateado
+
+CSS añadido a `style.css` (~130 líneas):
+- `.sector-grid` — `repeat(auto-fit, minmax(260px, 1fr))`
+- `.sector-card` — hover con translateY + gold border
+- `.sector-card-skeleton` — animación de carga
+- `.sector-empty` — estado vacío con botones primary/ghost
+
+Inyección en 11 landing pages:
+- Scripts: `database.js`, `cache-manager.js`, `sector-properties.js`
+- Sección dinámica con `<div id="sector-properties" data-sector="..." data-fallback-search="...">`
+
+### I2 — Workflow bump-version.yml
+
+Nuevo `.github/workflows/bump-version.yml`:
+- Trigger: push a main con paths HTML/CSS/JS/snippets/service-worker/manifest
+- Independiente de credenciales Firestore (og-publish.yml las requiere)
+- Bumps `data/deploy-info.json` con timestamp ISO, SHA, ref
+- Commit con `[skip ci]` para evitar loops
+
+### I3 — Auditoría og-publish.yml
+
+Verificado que no requiere cambios:
+- bump-version.yml cubre deploy-info para pushes regulares
+- og-publish.yml cubre SEO + deploy-info para `repository_dispatch` y `schedule`
+- Sin overlap de paths entre ambos workflows
+- Prerequisito pendiente: configurar secret `GOOGLE_APPLICATION_CREDENTIALS_JSON` en GitHub
+
+### Archivos (14)
+
+| Archivo | Cambio |
+|---------|--------|
+| `js/sector-properties.js` | **Nuevo** — renderizado dinámico de propiedades por sector |
+| `.github/workflows/bump-version.yml` | **Nuevo** — bump deploy-info.json en cada push |
+| `style.css` | +136 líneas de estilos para sector cards/grid/skeleton/empty |
+| `serena-del-mar.html` | Inyección de sección dinámica + scripts |
+| `karibana.html` | Inyección de sección dinámica + scripts |
+| `manzanillo-del-mar.html` | Inyección de sección dinámica + scripts |
+| `la-boquilla.html` | Inyección de sección dinámica + scripts |
+| `cielo-mar.html` | Inyección de sección dinámica + scripts |
+| `el-laguito.html` | Inyección de sección dinámica + scripts |
+| `marbella.html` | Inyección de sección dinámica + scripts |
+| `san-diego.html` | Inyección de sección dinámica + scripts |
+| `pie-de-la-popa.html` | Inyección de sección dinámica + scripts |
+| `alto-bosque.html` | Inyección de sección dinámica + scripts |
+| `el-cabrero.html` | Inyección de sección dinámica + scripts |
+
+---
+
+*Última actualización: 2026-05-03*

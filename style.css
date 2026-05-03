@@ -684,3 +684,139 @@ img[data-src].loaded {
   .hero-particle { animation: none; display: none; }
   .hero-badge { animation: none; }
 }
+
+/* ===== Sector landing — propiedades disponibles dinámicas ===== */
+.sector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  margin: 8px 0 0;
+}
+.sector-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--text);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.sector-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(212, 175, 55, 0.18);
+  border-color: rgba(212, 175, 55, 0.4);
+}
+.sector-card-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: #f3f4f6;
+  overflow: hidden;
+}
+.sector-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.sector-card-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: linear-gradient(135deg, var(--gold), var(--accent));
+  color: #000;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+.sector-card-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.sector-card-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.35;
+  color: var(--text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.sector-card-specs {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+.sector-card-price {
+  margin-top: auto;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--gold);
+}
+.sector-see-all {
+  margin-top: 18px;
+  text-align: center;
+}
+.sector-see-all a {
+  font-weight: 700;
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+.sector-see-all a:hover { text-decoration: underline; }
+.sector-empty {
+  background: linear-gradient(135deg, #fffdf6 0%, #fff 100%);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+  color: var(--text);
+}
+.sector-empty p { margin: 0 0 10px; line-height: 1.5; }
+.sector-empty p:last-of-type { color: var(--muted); }
+.sector-empty-ctas {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.sector-empty-btn {
+  padding: 12px 22px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.92rem;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+.sector-empty-btn.primary {
+  background: linear-gradient(135deg, var(--gold), var(--accent));
+  color: #000;
+}
+.sector-empty-btn.ghost {
+  border: 2px solid var(--gold);
+  color: var(--gold);
+}
+.sector-empty-btn:hover { transform: translateY(-1px); }
+.sector-card-skeleton .sk,
+.sector-card-skeleton .sk-line {
+  background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+  background-size: 200% 100%;
+  animation: loading 1.4s linear infinite;
+  border-radius: 6px;
+}
+.sector-card-skeleton .sk { aspect-ratio: 4 / 3; border-radius: 0; }
+.sector-card-skeleton .sk-line { height: 12px; margin: 4px 0; }
+.sector-card-skeleton .sk-line.w-80 { width: 80%; }
+.sector-card-skeleton .sk-line.w-60 { width: 60%; }
+.sector-card-skeleton .sk-line.w-40 { width: 40%; }
