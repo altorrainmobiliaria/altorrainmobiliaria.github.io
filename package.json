@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test":                  "node tests/validate-site.mjs",
     "generate":              "node scripts/generate-properties.mjs",
     "upload":                "node scripts/upload-to-firestore.mjs",
     "migrate-images":        "node scripts/migrate-images-to-storage.mjs",
