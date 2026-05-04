@@ -406,11 +406,71 @@ FASE 4             → Bloque D (máquina de leads completo)
 
 ### 9.3 Siguiente
 
-**Bloques A-I completados. 13 landings dinámicas. 43 páginas con BreadcrumbList.** Posibles siguientes pasos:
-- Más landing pages SEO (Anillo Vial, Punta Canoa, Santa Marta).
-- Configurar secret `GOOGLE_APPLICATION_CREDENTIALS_JSON` en GitHub para og-publish.yml.
-- Panel admin (Etapa 3 del CLAUDE.md).
-- Core Web Vitals / Lighthouse audit.
+**Bloques A-I completados. Auditoría profunda (2026-05-04) confirma:**
+
+#### Inventario completo de features implementadas
+
+**Panel Admin** (Etapa 3 del CLAUDE.md — COMPLETA):
+- `admin.html` (555 ln) + `css/admin.css` (508 ln)
+- `js/admin-auth.js` (430 ln) — Login, RBAC 3 roles, lockout 5 intentos, sesión 8h, inactividad 30min
+- `js/admin-properties.js` (535 ln) — CRUD completo, compresión imágenes Canvas, Cloud Storage
+- `js/admin-leads.js` (337 ln) — Real-time onSnapshot, scoring/tiering hot/warm/cold
+- `js/admin-kanban.js` (244 ln) — Drag-drop leads 4 columnas
+- `js/admin-dashboard.js` (336 ln) — 6 stats, funnel conversión, timeline, top búsquedas
+- `js/admin-users.js` (342 ln) — CRUD usuarios Cloud Functions + gestión reseñas
+
+**Features JS** (20 archivos):
+- `calculadora-airbnb.js` (320 ln) — ROI calculator con canvas charts
+- `comparador.js` (417 ln) — Hasta 3 propiedades lado a lado
+- `simulador-hipotecario.js` (568 ln) — Amortización francesa + PDF export
+- `contact-forms.js` (272 ln) — Firestore + honeypot + FormSubmit fallback
+- `favorites-manager.js` (201 ln) — Dual localStorage/Firestore + anon auth
+- `mapa-propiedades.js` (360 ln) — Google Maps con markers por operación
+- `i18n.js` (~800 strings) — ES/EN completo
+- `blog-list.js` (134 ln) + `blog-post.js` (136 ln) — Blog dinámico Firestore
+- `newsletter.js` (337 ln) — Suscripción + floating bar + filtros
+- `exit-intent.js` (133 ln) — Lead magnet con dismiss 7 días
+- `featured-week-banner.js` (292 ln) — Carousel top 3, auto-rotación 6s
+- `historial-visitas.js` (294 ln) — Últimas 10 propiedades vistas
+- `investment-badges.js` (132 ln) — ROI/ocupación por zona
+- `wizard-publicar.js` (277 ln) — 3 pasos para publicar propiedad
+- `wizard-visita.js` (200+ ln) — 3 pasos para agendar visita
+- `whatsapp-tracker.js` (140 ln) — UTM + Firestore analytics
+- `exclusivas.js` (187 ln) — Carousel propiedades premium (score ≥90)
+- `country-phone.js` (98 ln) — 10 países, mutation observer
+- `firestore-meter.js` (198 ln) — Monitor de lecturas free tier
+
+**Infraestructura core:**
+- `firebase-config.js` (124 ln) — Firebase v12.9.0, carga prioritizada
+- `database.js` (558 ln) — PropertyDatabase, cache 5min, normalización campos, eventos
+- `cache-manager.js` (282 ln) — 3 capas (Memory/localStorage/IndexedDB), dual invalidación
+- `components.js` (250 ln) — Header/footer/modals dinámicos, keyboard nav
+- `listado-propiedades.js` (493 ln) — Filtros, paginación, skeleton loaders
+- `smart-search.js` (800 ln) — Fuzzy Damerau-Levenshtein, presupuesto semántico
+- `service-worker.js` (116 ln) — PWA v4, network-first HTML/JS, cache-first img
+
+**Cloud Functions** (8 funciones, Node 20, us-central1):
+- `onNewSolicitud` — Email admin en nuevo lead
+- `onSolicitudStatusChanged` — Email cliente cuando cambia estado
+- `onPropertyChange` — GitHub Actions trigger SEO (debounce 5min)
+- `triggerSeoRegeneration` — HTTPS callable (super_admin)
+- `createManagedUserV2`, `deleteManagedUserV2`, `updateUserRoleV2` — Gestión usuarios
+
+**Contenido:**
+- 13 landing pages de sector con propiedades dinámicas
+- 43 páginas con BreadcrumbList JSON-LD
+- 7 blog posts en `/blog/`
+- 59 Claude Code skills en `/skills/`
+
+#### Gaps pendientes (auditoría 2026-05-04)
+
+| # | Gap | Archivos | Prioridad |
+|---|-----|----------|-----------|
+| J1 | 6 blog posts sin BreadcrumbList | `blog/*.html` | Media |
+| J2 | 4 páginas aún con FormSubmit HTML action | contacto, detalle, publicar, avaluo | Alta |
+| J3 | 3 páginas sin firebase-config.js ni components.js | servicios-mant, servicios-mud, turismo-inm | Alta |
+| J4 | deploy-info.json congelado en 2026-04-09 | `data/deploy-info.json` | Media |
+| J5 | Sin tests automatizados | Solo QA manual | Baja |
 
 ---
 
