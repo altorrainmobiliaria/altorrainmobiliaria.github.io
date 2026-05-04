@@ -2610,4 +2610,31 @@ Total ahora: **12 landing pages dinámicas** de sector.
 
 ---
 
-*Última actualización: 2026-05-03*
+## I5 — BreadcrumbList sitewide + upgrade Barú
+
+**Fecha:** 2026-05-04
+**Commits:** `19e6bd2`, `91b3bd1`, `b5bad11`, `c24540a`
+
+### BreadcrumbList JSON-LD — cobertura total
+
+Inyectado Schema.org BreadcrumbList en **43 páginas** del sitio:
+- 12 sector landings (Inicio → Sectores → [Sector])
+- 9 páginas principales (listados, detalle, contacto, blog, simulador, etc.)
+- 22 páginas de contenido/inversión/servicios (glosario, prensa, avalúo, etc.)
+
+Agregado `id="sectores"` al section de sectores en index.html para que el ancla del breadcrumb funcione.
+
+### Upgrade propiedades-baru.html
+
+Página de comparación Barú/La Boquilla actualizada al estándar de landing:
+- Eliminado inline `<style>` → estilos únicos (.area-*, .why-*) movidos a style.css
+- Agregados database.js, cache-manager.js, sector-properties.js
+- Sección dinámica de propiedades de Barú (Firestore-driven)
+- Place JSON-LD con coords (10.1833, -75.5833)
+- BreadcrumbList + related-links con cross-links a 4 sectores
+
+Total: **13 landing pages con propiedades dinámicas**, **43 páginas con BreadcrumbList**.
+
+---
+
+*Última actualización: 2026-05-04*

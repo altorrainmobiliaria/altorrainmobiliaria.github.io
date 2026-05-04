@@ -402,14 +402,15 @@ FASE 4             → Bloque D (máquina de leads completo)
 | 2026-05-02 | H5-H7 | `5a4c69d` | 6 landing pages nuevas + sectores reorganizados |
 | 2026-05-03 | I1-I3 | `881a936` | Propiedades dinámicas en 11 landings + bump-version workflow |
 | 2026-05-03 | I4    | `cc4fbd8` | Landing Tierrabomba — isla vacacional |
+| 2026-05-04 | I5    | `c24540a` | BreadcrumbList en 43 páginas + upgrade Barú |
 
 ### 9.3 Siguiente
 
-**Bloques A-I completados + 12 landings dinámicas.** Posibles siguientes pasos:
+**Bloques A-I completados. 13 landings dinámicas. 43 páginas con BreadcrumbList.** Posibles siguientes pasos:
 - Más landing pages SEO (Anillo Vial, Punta Canoa, Santa Marta).
-- Optimización de Core Web Vitals con Lighthouse audit.
-- Configurar secret `GOOGLE_APPLICATION_CREDENTIALS_JSON` en GitHub para que og-publish.yml genere páginas SEO.
+- Configurar secret `GOOGLE_APPLICATION_CREDENTIALS_JSON` en GitHub para og-publish.yml.
 - Panel admin (Etapa 3 del CLAUDE.md).
+- Core Web Vitals / Lighthouse audit.
 
 ---
 
