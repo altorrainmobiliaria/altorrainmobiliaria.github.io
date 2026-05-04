@@ -854,3 +854,25 @@ img[data-src].loaded {
 .related-links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:28px}
 .related-links a{padding:8px 16px;border:1px solid rgba(212,175,55,.3);border-radius:999px;color:var(--text);text-decoration:none;font-size:.88rem;font-weight:600;background:#fff;transition:all .2s}
 .related-links a:hover{background:var(--gold);color:#000;border-color:var(--gold)}
+
+/* ── Barú comparison page (area cards + why grid) ── */
+.area-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:24px}
+.area-card{border:1px solid rgba(17,24,39,.07);border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 8px 28px rgba(17,24,39,.05)}
+.area-header{background:linear-gradient(135deg,#0b0b0b,#1a1a2e);color:#fff;padding:28px 24px}
+.area-header h3{font-size:1.3rem;font-weight:800;margin:0 0 6px}
+.area-header p{font-size:.9rem;color:rgba(255,255,255,.6);margin:0}
+.area-body{padding:24px}
+.area-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.area-stat{background:#f9fafb;border-radius:10px;padding:10px}
+.area-stat small{font-size:.73rem;color:var(--muted);display:block}
+.area-stat strong{font-size:1rem;font-weight:800}
+.area-stat strong.gold{color:var(--gold)}
+.area-features{list-style:none;padding:0;margin:0}
+.area-features li{padding:8px 0;border-bottom:1px solid #f3f4f6;font-size:.88rem;color:var(--muted);display:flex;gap:8px;align-items:center}
+.area-features li::before{content:'✓';color:var(--gold);font-weight:800}
+.area-features li:last-child{border-bottom:none}
+.why-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+.why-card{background:#f9fafb;border-radius:18px;padding:28px 24px;text-align:center}
+.why-icon{font-size:2rem;margin-bottom:12px}
+.why-card h3{font-size:1rem;font-weight:700;margin:0 0 8px}
+.why-card p{font-size:.88rem;color:var(--muted);margin:0;line-height:1.5}
