@@ -2637,4 +2637,85 @@ Total: **13 landing pages con propiedades dinámicas**, **43 páginas con Breadc
 
 ---
 
+## Auditoría profunda del repositorio
+
+**Fecha:** 2026-05-04
+
+### Inventario completo verificado
+
+Se realizó auditoría exhaustiva de todo el repositorio para mapear el estado real del proyecto:
+
+#### Panel Admin (7 archivos, ~2,700 líneas)
+| Archivo | Líneas | Función |
+|---|---|---|
+| admin.html | 555 | Layout completo con sidebar, tabs, modals |
+| css/admin.css | 508 | Estilos dedicados admin |
+| js/admin-auth.js | 430 | RBAC, lockout 5 intentos, sesiones 8h, inactividad 30min |
+| js/admin-properties.js | 535 | CRUD completo con compresión de imágenes |
+| js/admin-leads.js | 337 | onSnapshot tiempo real, scoring de leads |
+| js/admin-kanban.js | 244 | Drag-drop 4 columnas de estados |
+| js/admin-dashboard.js | 336 | 6 stats, funnel de conversión, timeline |
+| js/admin-users.js | 342 | Gestión usuarios + reseñas |
+
+#### Features JS (20 archivos)
+| Archivo | Líneas | Función |
+|---|---|---|
+| js/smart-search.js | 800 | Damerau-Levenshtein, sinónimos, presupuesto semántico |
+| js/listado-propiedades.js | 600 | Filtrado avanzado, paginación, renderizado |
+| js/database.js | 558 | PropertyDatabase, caché 5min, normalización campos |
+| js/cache-manager.js | 450 | 3 capas (Memory/localStorage/IndexedDB), dual invalidation |
+| js/favoritos.js | 320 | localStorage + badge, cross-page sync |
+| js/form-validation.js | 280 | Validación real-time (email, tel CO, nombre) |
+| js/newsletter.js | 250 | Popup, localStorage deduplication |
+| js/whatsapp-tracker.js | 200 | Tracking de clics WhatsApp |
+| js/components.js | 180 | Header/footer injection, event dispatch |
+| js/sector-properties.js | 182 | Propiedades dinámicas en landings |
+| js/utils.js | 170 | formatCOP, buildWhatsAppLink, toast, getJSONCached |
+| js/analytics.js | 150 | Eventos localStorage (page_view, time_on_page) |
+| js/simulador-credito.js | 140 | Simulador hipotecario con tabla amortización |
+| js/comparador.js | 130 | Comparador lado a lado de propiedades |
+| js/mapa.js | 120 | Google Maps con markers Firestore |
+| js/videos.js | 110 | Galería de videos YouTube embebidos |
+| js/blog.js | 100 | Carga artículos desde /blog/*.html |
+| js/busqueda.js | 95 | Página de búsqueda dedicada |
+| js/performance.js | 80 | Web Vitals + lazy load |
+| js/firebase-config.js | 75 | Init Firebase con carga priorizada |
+
+#### Infraestructura core (7 archivos)
+- `service-worker.js` — PWA network-first, SWR CSS, cache-first IMG
+- `manifest.json` — PWA manifest
+- `data/deploy-info.json` — Versioning para cache-manager
+- `.github/workflows/bump-version.yml` — Auto-bump en push a main
+- `.github/workflows/og-publish.yml` — Genera /p/ y /og/ desde Firestore
+- `sitemap.xml` — 40+ URLs
+- `robots.txt` — Configuración estándar
+
+#### Cloud Functions (8 funciones, Node 20, us-central1)
+1. `onNewSolicitud` — Email admin al crear lead
+2. `onSolicitudStatusChanged` — Email cliente al cambiar estado
+3. `onPropertyChange` — Trigger GitHub Actions SEO
+4. `triggerSeoRegeneration` — Manual (callable, super_admin)
+5. `createManagedUserV2` — Crear usuario admin
+6. `deleteManagedUserV2` — Eliminar usuario admin
+7. `updateUserRoleV2` — Cambiar rol
+8. `cleanupOldLoginAttempts` — Scheduled cleanup
+
+#### Contenido
+- 13 sector landings con propiedades dinámicas
+- 43 páginas con BreadcrumbList JSON-LD
+- 7 artículos de blog
+- 5 propiedades en Firestore
+
+### 5 Gaps identificados (J1–J5)
+
+| ID | Gap | Impacto | Estado |
+|---|---|---|---|
+| J1 | Blog posts sin BreadcrumbList JSON-LD (6 archivos en /blog/) | SEO medio | Pendiente |
+| J2 | 4 formularios con action FormSubmit HTML residual (posible doble envío) | UX alto | Pendiente |
+| J3 | 3 páginas huérfanas sin firebase-config.js ni components.js | Funcionalidad medio | Pendiente |
+| J4 | deploy-info.json congelado en 2026-04-09 (workflow bump-version no ha corrido) | Cache bajo | Pendiente |
+| J5 | Sin tests automatizados (solo tests/MANUAL-meta-snapshot.md) | Calidad bajo | Pendiente |
+
+---
+
 *Última actualización: 2026-05-04*
