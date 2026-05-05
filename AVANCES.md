@@ -2854,4 +2854,78 @@ CSS: `.view-list` modifica la grid a 1 columna con flex-direction row. Responsiv
 
 ---
 
+## FASE 3 — DETALLE PREMIUM (Mega-plan semanas 6-8)
+
+> Fecha: 2026-05-05
+> Objetivo: La ficha de propiedad más completa y persuasiva
+
+### 3.1 — Mini calculadora hipotecaria en detalle (C5)
+
+Widget inline después del precio en `detalle-propiedad.html`:
+- Muestra cuota mensual estimada con selectors de cuota inicial (20-50%) y plazo (10-20 años)
+- Tasa por defecto: 1.1% mensual
+- Link "Simulador completo →" al simulador.html
+- Solo visible para propiedades de venta (operacion === 'comprar')
+
+### 3.2 — Share mejorado (C6)
+
+Barra de compartir debajo del precio/favoritos:
+- Botón "Compartir" → abre WhatsApp con URL /p/{id}.html
+- Botón "Copiar link" → clipboard con confirmación "✓ Copiado"
+- Botón "Email" → mailto con subject y body pre-armados
+
+### 3.3 — Indicador de demanda (C9)
+
+Pill roja con animación blink: "X personas viendo esta propiedad"
+- Número pseudo-aleatorio (3-10) para generar urgencia
+- Solo visible para propiedades disponibles
+- Animación CSS `blink` en el punto rojo
+
+---
+
+## FASE 4 — HERRAMIENTAS FINANCIERAS (Mega-plan semanas 9-11)
+
+> Fecha: 2026-05-05
+> Objetivo: El usuario resuelve dudas financieras sin salir de Altorra
+
+### 4.1 — Simulador gastos notariales (D2)
+
+Nueva página `simulador-notarial.html`:
+- Desglose por rol (comprador vs vendedor)
+- Comprador: notaría, IVA, registro, boleta fiscal, avalúo, estudio títulos
+- Vendedor: retención fuente, GMF, certificado tradición, paz y salvo
+- Ciudades: Cartagena, Bogotá, Medellín, Otra
+- Formateo COP en tiempo real
+- Porcentaje sobre valor de propiedad
+
+### 4.2 — Calculadora arriendo vs compra (D3)
+
+Nueva página `arrendar-vs-comprar.html`:
+- Inputs: valor propiedad, arriendo actual, cuota inicial, plazo, tasa, valorización, incremento arriendo
+- Output: veredicto visual (comprar vs arrendar), comparativa lado a lado
+- Proyección patrimonial a 5, 10 y 15 años
+- Simulación de equity acumulado vs arriendo gastado
+
+---
+
+## FASE 5 — CONTENIDO AUTORIDAD (parcial)
+
+> Fecha: 2026-05-05
+
+### 5.1 — FAQ completa (E7)
+
+Nueva página `faq.html` con 30 preguntas en 7 categorías:
+- Compra (5 preguntas)
+- Venta (4 preguntas)
+- Arriendo (5 preguntas)
+- Crédito hipotecario (4 preguntas)
+- Legal y tributario (4 preguntas)
+- Inversión (5 preguntas)
+- Sobre Altorra (4 preguntas)
+
+SEO: Schema.org FAQPage con 6 preguntas principales, BreadcrumbList.
+Navegación: anchor links por categoría, details/summary expandibles.
+
+---
+
 *Última actualización: 2026-05-05*
