@@ -971,3 +971,43 @@ img[data-src].loaded {
 .sello-badge .sello-icon{width:18px;height:18px;color:var(--gold)}
 .sello-badge .sello-icon svg{width:100%;height:100%;display:block}
 @media(max-width:640px){.sello-badge{font-size:.74rem;padding:8px 12px}.sellos-grid{gap:8px 12px}}
+
+/* ===== FASE 2: B1 — Categorías visuales (chips scrollables) ===== */
+.category-bar{padding:0 16px;margin:12px 0 6px;position:relative}
+.category-bar::after{content:'';position:absolute;top:0;right:0;bottom:0;width:48px;background:linear-gradient(to right,transparent,#fff);pointer-events:none;z-index:2;border-radius:0 12px 12px 0}
+.category-bar::before{content:'';position:absolute;top:0;left:0;bottom:0;width:24px;background:linear-gradient(to left,transparent,#fff);pointer-events:none;z-index:2;border-radius:12px 0 0 12px;opacity:0;transition:opacity .2s}
+.category-bar.scrolled-start::before{opacity:1}
+.category-chips{display:flex;gap:10px;overflow-x:auto;padding:8px 4px;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.category-chips::-webkit-scrollbar{display:none}
+.category-chip{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:99px;font-size:.88rem;font-weight:600;color:var(--text);background:#fff;border:1.5px solid rgba(0,0,0,.08);white-space:nowrap;cursor:pointer;transition:all .18s ease;flex-shrink:0;user-select:none}
+.category-chip:hover{border-color:var(--gold);color:var(--gold);background:rgba(212,175,55,.04)}
+.category-chip.active{background:linear-gradient(135deg,var(--gold),var(--accent));color:#000;border-color:transparent;font-weight:800;box-shadow:0 4px 14px rgba(212,175,55,.25)}
+.category-chip .chip-icon{font-size:1.1rem;line-height:1}
+@media(max-width:640px){.category-chip{padding:8px 14px;font-size:.82rem;gap:5px}}
+
+/* ===== FASE 2: B2 — Badges mejoradas en cards ===== */
+.badge--new{background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-color:transparent}
+.badge--featured{background:linear-gradient(135deg,var(--gold),var(--accent));color:#000;border-color:transparent;animation:badgePulse 2s ease-in-out infinite}
+.badge--demand{background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border-color:transparent}
+.badge--exclusive{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;border-color:transparent}
+@keyframes badgePulse{0%,100%{box-shadow:0 0 0 0 rgba(212,175,55,.3)}50%{box-shadow:0 0 0 6px rgba(212,175,55,0)}}
+
+/* ===== FASE 2: B7/B8 — View toggle + sort bar ===== */
+.results-toolbar{display:flex;justify-content:space-between;align-items:center;padding:0 16px 8px;flex-wrap:wrap;gap:10px}
+.view-toggle{display:inline-flex;border-radius:10px;border:1px solid rgba(0,0,0,.08);overflow:hidden}
+.view-toggle-btn{padding:8px 12px;background:#fff;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;color:var(--muted)}
+.view-toggle-btn:hover{color:var(--text);background:#f9fafb}
+.view-toggle-btn.active{background:var(--gold);color:#000}
+.view-toggle-btn svg{width:18px;height:18px}
+.sort-inline{display:inline-flex;align-items:center;gap:6px;font-size:.85rem;color:var(--muted)}
+.sort-inline select{padding:6px 10px;border-radius:8px;border:1px solid rgba(0,0,0,.08);font-size:.85rem;font-weight:600;background:#fff;cursor:pointer}
+
+/* ===== FASE 2: B8 — Vista de lista ===== */
+.grid.view-list{grid-template-columns:1fr !important;gap:12px}
+.grid.view-list .card{flex-direction:row;max-width:100%;min-width:0}
+.grid.view-list .card .media{width:240px;min-width:240px;aspect-ratio:4/3}
+.grid.view-list .card .meta{flex:1;padding:16px 20px;justify-content:center}
+.grid.view-list .card .meta h3{-webkit-line-clamp:1;font-size:1.1rem}
+.grid.view-list .card .price{font-size:1.15rem}
+.grid.view-list .card .cta{margin-top:12px}
+@media(max-width:720px){.grid.view-list .card{flex-direction:column}.grid.view-list .card .media{width:100%;min-width:0}}

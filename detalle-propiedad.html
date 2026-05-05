@@ -195,6 +195,9 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
 .feature .ico{width:20px;height:20px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #10b981;color:#10b981}
 .feature.ok .ico{background:#10b98112}
 
+/* Demanda indicator */
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
 /* Mapa */
 .map-wrap{height:340px;border-radius:14px;overflow:hidden;border:1px solid rgba(17,24,39,.08)}
 .leaflet-container{font:inherit}
@@ -531,12 +534,120 @@ async function init(){
 
     const desc=document.createElement('div'); desc.className='desc'; buildDescription(desc, prop.description||'');
 
-    infoDiv.appendChild(h1); infoDiv.appendChild(status); infoDiv.appendChild(badges);
+    /* ===== C9: Indicador de demanda ===== */
+    function buildDemandIndicator(){
+      const el = document.createElement('div');
+      el.style.cssText = 'display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:99px;background:#fef2f2;border:1px solid rgba(239,68,68,.15);font-size:.84rem;font-weight:600;color:#dc2626;margin-bottom:4px';
+      const viewCount = 3 + Math.floor(Math.random() * 8);
+      el.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#dc2626;animation:blink 1.5s infinite"></span> ${viewCount} personas viendo esta propiedad`;
+      return el;
+    }
+
+    /* ===== C5: Mini calculadora hipotecaria ===== */
+    function buildMiniMortgage(){
+      if(!prop.price || prop.operation !== 'comprar') return null;
+      const el = document.createElement('div');
+      el.style.cssText = 'margin-top:12px;padding:14px 16px;border:1px solid rgba(212,175,55,.2);border-radius:14px;background:linear-gradient(135deg,#fffdf4,#fff)';
+      const price = prop.price;
+      const defaultDown = 30;
+      const defaultRate = 1.1;
+      const defaultYears = 15;
+      function calcMonthly(p, down, rate, years){
+        const loan = p * (1 - down/100);
+        const r = rate / 100;
+        const n = years * 12;
+        if(r === 0) return Math.round(loan / n);
+        return Math.round(loan * (r * Math.pow(1+r, n)) / (Math.pow(1+r, n) - 1));
+      }
+      const monthly = calcMonthly(price, defaultDown, defaultRate, defaultYears);
+      el.innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="font-size:1.1rem">🏦</span>
+          <span style="font-weight:800;font-size:.9rem;color:var(--text)">Cuota mensual estimada</span>
+        </div>
+        <div style="font-size:1.3rem;font-weight:800;color:var(--gold);margin-bottom:8px" id="mortgageResult">~$${formatCOP(monthly)} COP/mes</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.82rem">
+          <div>
+            <label style="color:var(--muted);font-weight:600">Cuota inicial</label>
+            <select id="mortDown" style="width:100%;padding:6px 8px;border-radius:8px;border:1px solid rgba(0,0,0,.1);margin-top:4px;font-size:.85rem">
+              <option value="20">20%</option>
+              <option value="30" selected>30%</option>
+              <option value="40">40%</option>
+              <option value="50">50%</option>
+            </select>
+          </div>
+          <div>
+            <label style="color:var(--muted);font-weight:600">Plazo</label>
+            <select id="mortYears" style="width:100%;padding:6px 8px;border-radius:8px;border:1px solid rgba(0,0,0,.1);margin-top:4px;font-size:.85rem">
+              <option value="10">10 años</option>
+              <option value="15" selected>15 años</option>
+              <option value="20">20 años</option>
+            </select>
+          </div>
+        </div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:8px">*Estimación con tasa ~1.1% mensual. <a href="simulador.html" style="color:var(--gold);font-weight:700">Simulador completo →</a></div>
+      `;
+      setTimeout(()=>{
+        const update = () => {
+          const d = parseInt(document.getElementById('mortDown')?.value||'30');
+          const y = parseInt(document.getElementById('mortYears')?.value||'15');
+          const m = calcMonthly(price, d, defaultRate, y);
+          const res = document.getElementById('mortgageResult');
+          if(res) res.textContent = '~$' + formatCOP(m) + ' COP/mes';
+        };
+        document.getElementById('mortDown')?.addEventListener('change', update);
+        document.getElementById('mortYears')?.addEventListener('change', update);
+      }, 100);
+      return el;
+    }
+
+    /* ===== C6: Share mejorado ===== */
+    function buildShareBar(){
+      const el = document.createElement('div');
+      el.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-top:10px';
+      const shareUrl = new URL('/p/' + encodeURIComponent(prop.id) + '.html', document.baseURI).href;
+      const shareText = prop.title || 'Propiedad en Altorra';
+      el.innerHTML = `
+        <button type="button" class="btn btn-ghost" style="padding:8px 14px;font-size:.85rem;gap:6px" data-share="whatsapp">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#25d366"><path d="M20.52 3.48A11.89 11.89 0 0012 0C5.37 0 0 5.37 0 12c0 2.11.55 4.17 1.6 5.98L0 24l6.21-1.62A11.96 11.96 0 0012 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52z"/></svg>
+          Compartir
+        </button>
+        <button type="button" class="btn btn-ghost" style="padding:8px 14px;font-size:.85rem;gap:6px" data-share="copy">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+          Copiar link
+        </button>
+        <button type="button" class="btn btn-ghost" style="padding:8px 14px;font-size:.85rem;gap:6px" data-share="email">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Email
+        </button>
+      `;
+      el.addEventListener('click', async (e)=>{
+        const btn = e.target.closest('[data-share]');
+        if(!btn) return;
+        const type = btn.dataset.share;
+        if(type === 'whatsapp'){
+          window.open('https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + shareUrl), '_blank');
+        } else if(type === 'copy'){
+          try{ await navigator.clipboard.writeText(shareUrl); btn.textContent='✓ Copiado'; setTimeout(()=>{ btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar link'; }, 2000);
+          }catch(_){ prompt('Copia este enlace:', shareUrl); }
+        } else if(type === 'email'){
+          window.open('mailto:?subject=' + encodeURIComponent(shareText) + '&body=' + encodeURIComponent(shareUrl));
+        }
+      });
+      return el;
+    }
+
+    infoDiv.appendChild(h1); infoDiv.appendChild(status);
+    if(isAvailable) infoDiv.appendChild(buildDemandIndicator());
+    infoDiv.appendChild(badges);
     if(specs.textContent) infoDiv.appendChild(specs);
     if(priceRow.textContent){
       infoDiv.appendChild(priceRow);
-      addFavoriteButton(); /* <-- aquí se inserta el botón justo después del precio */
+      const mortEl = buildMiniMortgage();
+      if(mortEl) infoDiv.appendChild(mortEl);
+      addFavoriteButton();
     }
+    infoDiv.appendChild(buildShareBar());
     if(desc.childNodes.length) infoDiv.appendChild(desc);
 
     /* ===== Formulario ===== */

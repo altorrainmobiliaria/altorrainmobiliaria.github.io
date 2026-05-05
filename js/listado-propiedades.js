@@ -1,6 +1,6 @@
 /* ========================================
    ALTORRA - LISTADO DE PROPIEDADES
-   Versión: 6.0 - CON BOTONES DE FAVORITO
+   Versión: 7.0 - FASE 2: Categorías, badges, vista, sort
    ======================================== */
 
 (function() {
@@ -8,7 +8,7 @@
 
   const PAGE_SIZE = 9;
   const WHATSAPP = { phone: '573002439810', company: 'Altorra Inmobiliaria' };
-  
+
   const path = window.location.pathname.toLowerCase();
   const IS_BUSQUEDA = path.includes('busqueda');
   const PAGE_MODE = IS_BUSQUEDA ? null :
@@ -21,9 +21,60 @@
     'alojamientos': ['dias', 'por_dias', 'alojar', 'alojamientos', 'por día', 'por_dias', 'temporada', 'vacacional', 'noche']
   };
 
+  // B1: Category filter definitions
+  const CATEGORY_FILTERS = {
+    'all': () => true,
+    'frente-al-mar': p => {
+      const s = [p.title, p.neighborhood, (p.features||[]).join(' '), p.description||''].join(' ').toLowerCase();
+      return s.includes('frente al mar') || s.includes('pie de playa') || s.includes('beachfront') || s.includes('primera línea');
+    },
+    'centro-historico': p => {
+      const barrio = (p.neighborhood || p.city || '').toLowerCase();
+      return barrio.includes('san diego') || barrio.includes('getsemaní') || barrio.includes('centro') || barrio.includes('santo domingo');
+    },
+    'con-piscina': p => {
+      const feats = (p.features||[]).join(' ').toLowerCase();
+      return feats.includes('piscina') || feats.includes('pool');
+    },
+    'vista-al-mar': p => {
+      const s = [p.title, (p.features||[]).join(' '), p.description||''].join(' ').toLowerCase();
+      return s.includes('vista al mar') || s.includes('vista mar') || s.includes('ocean view') || s.includes('sea view');
+    },
+    'nuevo': p => {
+      const year = p.year_built || p.ano_construccion || 0;
+      return year >= 2024 || (p.added && new Date(p.added) > new Date(Date.now() - 90*24*60*60*1000));
+    },
+    'inversion': p => {
+      const s = [p.title, p.description||'', (p.features||[]).join(' ')].join(' ').toLowerCase();
+      return s.includes('inversión') || s.includes('inversion') || s.includes('rentabilidad') || s.includes('roi') || p.featured;
+    },
+    'lujo': p => {
+      const price = p.price || 0;
+      const feats = (p.features||[]).join(' ').toLowerCase();
+      return price >= 2000000000 || feats.includes('lujo') || feats.includes('premium') || feats.includes('jacuzzi') || (p.sqm && p.sqm >= 200);
+    },
+    'amoblado': p => {
+      const s = [p.title, (p.features||[]).join(' '), p.description||''].join(' ').toLowerCase();
+      return s.includes('amoblad') || s.includes('furnished') || p.amoblado === true;
+    },
+    'lotes': p => (p.type || '').toLowerCase() === 'lote',
+    'estrato-alto': p => (p.strata || p.estrato || 0) >= 5,
+    'familiar': p => (p.beds || p.habitaciones || 0) >= 3,
+    'economico': p => {
+      const price = p.price || 0;
+      return PAGE_MODE === 'arrendar' ? price > 0 && price <= 3000000 : price > 0 && price <= 300000000;
+    },
+    'parejas': p => {
+      const beds = p.beds || p.habitaciones || 0;
+      return beds <= 2 && beds >= 1;
+    }
+  };
+
   let allProperties = [];
   let filteredProperties = [];
   let renderedCount = 0;
+  let activeCategory = 'all';
+  let currentView = 'grid';
 
   var _u = window.AltorraUtils || {};
   function formatCOP(n) { return _u.formatCOP ? _u.formatCOP(n) : (!n && n !== 0 ? '' : n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')); }
@@ -76,13 +127,30 @@
     root.appendChild(fragment);
   }
 
+  // B2: Generate smart badges based on property data
+  function getSmartBadges(p) {
+    const badges = [];
+    const added = p.added ? new Date(p.added) : null;
+    const isNew = added && (Date.now() - added.getTime()) < 30*24*60*60*1000;
+    const isFeatured = p.featured || p.highlightScore >= 90;
+
+    if (isFeatured) badges.push('<span class="badge badge--featured">★ Destacada</span>');
+    if (isNew) badges.push('<span class="badge badge--new">Nueva</span>');
+
+    badges.push(`<span class="badge badge--dark">${capitalize(p.type)}</span>`);
+    if (p.neighborhood) badges.push(`<span class="badge">${escapeHtml(p.neighborhood)}</span>`);
+    else badges.push(`<span class="badge">${escapeHtml(p.city)}</span>`);
+
+    return badges.join('');
+  }
+
   function createCard(p) {
     const card = document.createElement('article');
     card.className = 'card';
     card.setAttribute('role', 'listitem');
     card.setAttribute('data-id', p.id);
-    
-    const imgSrc = p.image ? 
+
+    const imgSrc = p.image ?
       (p.image.startsWith('http') || p.image.startsWith('/') ? p.image : '/' + p.image) :
       'https://i.postimg.cc/0yYb8Y6r/placeholder.png';
 
@@ -90,10 +158,7 @@
       <div class="media">
         <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(p.title || 'Propiedad')}" loading="lazy" decoding="async"/>
         <div class="badges">
-          <span class="badge"><small>Ciudad</small>&nbsp;${escapeHtml(p.city)}</span>
-          <span class="badge badge--dark">${capitalize(p.type)}</span>
-          ${p.sqm ? `<span class="badge">${p.sqm} m²</span>` : ''}
-          ${(p.beds || 0) > 0 ? `<span class="badge">${p.beds}H · ${p.baths || 0}B</span>` : ''}
+          ${getSmartBadges(p)}
         </div>
         <button class="fav-btn" type="button" aria-label="Guardar favorito" aria-pressed="false" data-prop-id="${escapeHtml(p.id)}">
           <span class="heart">♡</span>
@@ -146,15 +211,22 @@
     const type = document.getElementById('f-type')?.value || '';
     const min = document.getElementById('f-min')?.value || '';
     const max = document.getElementById('f-max')?.value || '';
-    const sort = document.getElementById('f-sort')?.value || 'relevance';
+    // B7: Support both advanced filter sort and inline sort
+    const sortInline = document.getElementById('f-sort-inline')?.value || '';
+    const sort = sortInline || document.getElementById('f-sort')?.value || 'relevance';
     const search = (document.getElementById('f-search')?.value || '').trim();
-    
+
     const bedsMin = document.getElementById('f-beds-min')?.value || '';
     const bathsMin = document.getElementById('f-baths-min')?.value || '';
     const sqmMin = document.getElementById('f-sqm-min')?.value || '';
     const sqmMax = document.getElementById('f-sqm-max')?.value || '';
 
     let arr = allProperties.slice();
+
+    // B1: Apply category filter
+    if (activeCategory && activeCategory !== 'all' && CATEGORY_FILTERS[activeCategory]) {
+      arr = arr.filter(CATEGORY_FILTERS[activeCategory]);
+    }
 
     if (IS_BUSQUEDA) {
       const opFilter = document.getElementById('f-op')?.value || '';
@@ -321,6 +393,9 @@
     updateLoadMoreButton(filteredProperties.length);
     renderSearchBanner();
     renderActiveChips();
+    // B8: Preserve view mode after re-render
+    const grid = document.getElementById('list');
+    if (grid && currentView === 'list') grid.classList.add('view-list');
   }
 
   // Esperar a que PropertyDatabase esté lista (fuente única: Firestore)
@@ -405,6 +480,16 @@
         const opSelect = document.getElementById('f-op');
         if (opSelect) opSelect.value = qs.get('op');
       }
+      // B1: Category from URL
+      if (qs.has('category')) {
+        const cat = qs.get('category');
+        if (CATEGORY_FILTERS[cat]) {
+          activeCategory = cat;
+          document.querySelectorAll('.category-chip').forEach(c =>
+            c.classList.toggle('active', c.dataset.category === cat)
+          );
+        }
+      }
 
       filteredProperties = applyFilters();
       renderSearchBanner();
@@ -460,6 +545,10 @@
           if (el) el.tagName === 'SELECT' ? el.selectedIndex = 0 : el.value = '';
         });
         if (document.getElementById('f-sort')) document.getElementById('f-sort').value = 'relevance';
+        if (document.getElementById('f-sort-inline')) document.getElementById('f-sort-inline').value = 'relevance';
+        // Reset category
+        activeCategory = 'all';
+        document.querySelectorAll('.category-chip').forEach(c => c.classList.toggle('active', c.dataset.category === 'all'));
         reapply();
       });
     }
@@ -473,6 +562,53 @@
         updateLoadMoreButton(filteredProperties.length);
       });
     }
+
+    // B1: Category chip clicks
+    const chipsContainer = document.getElementById('categoryChips');
+    if (chipsContainer && !chipsContainer.dataset.attached) {
+      chipsContainer.dataset.attached = 'true';
+      chipsContainer.addEventListener('click', (e) => {
+        const chip = e.target.closest('.category-chip');
+        if (!chip) return;
+        activeCategory = chip.dataset.category || 'all';
+        chipsContainer.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        reapply();
+      });
+      // Scroll indicator for category bar
+      chipsContainer.addEventListener('scroll', () => {
+        const bar = chipsContainer.closest('.category-bar');
+        if (bar) bar.classList.toggle('scrolled-start', chipsContainer.scrollLeft > 20);
+      });
+    }
+
+    // B7: Inline sort
+    const sortInline = document.getElementById('f-sort-inline');
+    if (sortInline && !sortInline.dataset.attached) {
+      sortInline.dataset.attached = 'true';
+      sortInline.addEventListener('change', () => {
+        const advSort = document.getElementById('f-sort');
+        if (advSort) advSort.value = sortInline.value;
+        reapply();
+      });
+    }
+
+    // B8: View toggle (grid/list)
+    const viewBtns = document.querySelectorAll('.view-toggle-btn');
+    viewBtns.forEach(btn => {
+      if (btn.dataset.attached) return;
+      btn.dataset.attached = 'true';
+      btn.addEventListener('click', () => {
+        const view = btn.dataset.view;
+        if (view === currentView) return;
+        currentView = view;
+        viewBtns.forEach(b => b.classList.toggle('active', b.dataset.view === view));
+        const grid = document.getElementById('list');
+        if (grid) {
+          grid.classList.toggle('view-list', view === 'list');
+        }
+      });
+    });
   }
 
   function startApp() {

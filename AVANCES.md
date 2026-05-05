@@ -2802,4 +2802,130 @@ Nueva sección `.sellos-section` antes del footer (fondo negro #0b0b0b con borde
 
 ---
 
+## FASE 2 — BÚSQUEDA MEJORADA (Mega-plan semanas 3-5)
+
+> Fecha: 2026-05-05
+> Objetivo: Elevar la experiencia de búsqueda al nivel Airbnb/Compass
+
+### 2.1 — Categorías visuales con iconos (B1)
+
+Barra de chips scrollables tipo Airbnb sobre los resultados en las 3 páginas de listado:
+- **propiedades-comprar.html**: Todas, Frente al mar, Centro histórico, Con piscina, Vista al mar, Nuevos, Inversión, Lujo, Amoblados, Lotes
+- **propiedades-arrendar.html**: Todas, Frente al mar, Centro histórico, Con piscina, Amoblados, Vista al mar, Estrato alto, Familiar, Económicos
+- **propiedades-alojamientos.html**: Todas, Frente al mar, Con piscina, Lujo, Centro histórico, Familiar, Parejas, Vista al mar, Amoblados
+
+Cada categoría filtra propiedades basándose en features, barrio, precio, área y tipo. Soporta preselección via URL: `?category=con-piscina`.
+
+CSS: `.category-bar`, `.category-chips`, `.category-chip`, `.category-chip.active` con scroll horizontal, gradientes fade en bordes, y efecto gold al seleccionar.
+
+### 2.2 — Cards con badges mejoradas (B2)
+
+Nuevo sistema inteligente de badges que reemplaza los badges estáticos:
+- `badge--featured` (★ Destacada): para propiedades con `featured=true` o `highlightScore >= 90`, con animación pulse dorada
+- `badge--new` (Nueva): si fue publicada hace menos de 30 días, badge verde
+- `badge--dark`: tipo de propiedad (Apartamento, Casa, etc.)
+- Badge de barrio (si tiene `neighborhood`) o ciudad como fallback
+
+### 2.3 — Sort inline en toolbar (B7)
+
+Selector de ordenamiento visible directamente en la toolbar de resultados (sin necesidad de abrir filtros avanzados):
+- Relevancia, Precio ↑, Precio ↓, Recientes, Área ↓
+- Sincronizado con el sort de filtros avanzados
+
+### 2.4 — Toggle grid/lista (B8)
+
+Botones de vista en la toolbar para cambiar entre:
+- **Grid**: layout actual de 3 columnas (2 en tablet, 1 en móvil)
+- **Lista**: cards horizontales con imagen a la izquierda y detalles a la derecha
+
+CSS: `.view-list` modifica la grid a 1 columna con flex-direction row. Responsive: en móvil la vista lista colapsa a vertical.
+
+### Resumen Fase 2 (microfases 2.1-2.5)
+
+| Métrica | Valor |
+|---------|-------|
+| Archivos nuevos | 0 |
+| Archivos modificados | 5 (propiedades-comprar/arrendar/alojamientos.html, style.css, js/listado-propiedades.js) |
+| Features implementadas | 4 (B1, B2, B7, B8) |
+| CSS nuevo | ~60 líneas |
+| HTML nuevo por página | ~35 líneas (chips + toolbar) |
+| JS nuevo | ~80 líneas (categorías, badges, view toggle) |
+| Tests pasando | 0 errores, 0 warnings |
+
+---
+
+## FASE 3 — DETALLE PREMIUM (Mega-plan semanas 6-8)
+
+> Fecha: 2026-05-05
+> Objetivo: La ficha de propiedad más completa y persuasiva
+
+### 3.1 — Mini calculadora hipotecaria en detalle (C5)
+
+Widget inline después del precio en `detalle-propiedad.html`:
+- Muestra cuota mensual estimada con selectors de cuota inicial (20-50%) y plazo (10-20 años)
+- Tasa por defecto: 1.1% mensual
+- Link "Simulador completo →" al simulador.html
+- Solo visible para propiedades de venta (operacion === 'comprar')
+
+### 3.2 — Share mejorado (C6)
+
+Barra de compartir debajo del precio/favoritos:
+- Botón "Compartir" → abre WhatsApp con URL /p/{id}.html
+- Botón "Copiar link" → clipboard con confirmación "✓ Copiado"
+- Botón "Email" → mailto con subject y body pre-armados
+
+### 3.3 — Indicador de demanda (C9)
+
+Pill roja con animación blink: "X personas viendo esta propiedad"
+- Número pseudo-aleatorio (3-10) para generar urgencia
+- Solo visible para propiedades disponibles
+- Animación CSS `blink` en el punto rojo
+
+---
+
+## FASE 4 — HERRAMIENTAS FINANCIERAS (Mega-plan semanas 9-11)
+
+> Fecha: 2026-05-05
+> Objetivo: El usuario resuelve dudas financieras sin salir de Altorra
+
+### 4.1 — Simulador gastos notariales (D2)
+
+Nueva página `simulador-notarial.html`:
+- Desglose por rol (comprador vs vendedor)
+- Comprador: notaría, IVA, registro, boleta fiscal, avalúo, estudio títulos
+- Vendedor: retención fuente, GMF, certificado tradición, paz y salvo
+- Ciudades: Cartagena, Bogotá, Medellín, Otra
+- Formateo COP en tiempo real
+- Porcentaje sobre valor de propiedad
+
+### 4.2 — Calculadora arriendo vs compra (D3)
+
+Nueva página `arrendar-vs-comprar.html`:
+- Inputs: valor propiedad, arriendo actual, cuota inicial, plazo, tasa, valorización, incremento arriendo
+- Output: veredicto visual (comprar vs arrendar), comparativa lado a lado
+- Proyección patrimonial a 5, 10 y 15 años
+- Simulación de equity acumulado vs arriendo gastado
+
+---
+
+## FASE 5 — CONTENIDO AUTORIDAD (parcial)
+
+> Fecha: 2026-05-05
+
+### 5.1 — FAQ completa (E7)
+
+Nueva página `faq.html` con 30 preguntas en 7 categorías:
+- Compra (5 preguntas)
+- Venta (4 preguntas)
+- Arriendo (5 preguntas)
+- Crédito hipotecario (4 preguntas)
+- Legal y tributario (4 preguntas)
+- Inversión (5 preguntas)
+- Sobre Altorra (4 preguntas)
+
+SEO: Schema.org FAQPage con 6 preguntas principales, BreadcrumbList.
+Navegación: anchor links por categoría, details/summary expandibles.
+
+---
+
 *Última actualización: 2026-05-05*

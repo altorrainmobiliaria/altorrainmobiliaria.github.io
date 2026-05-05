@@ -160,11 +160,47 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
   </div>
 </section>
 
+<!-- B1: Categorías visuales tipo Airbnb -->
+<nav class="category-bar" aria-label="Categorías rápidas">
+  <div class="category-chips" id="categoryChips">
+    <button class="category-chip active" data-category="all" type="button"><span class="chip-icon">🏠</span> Todas</button>
+    <button class="category-chip" data-category="frente-al-mar" type="button"><span class="chip-icon">🏖️</span> Frente al mar</button>
+    <button class="category-chip" data-category="centro-historico" type="button"><span class="chip-icon">🏛️</span> Centro histórico</button>
+    <button class="category-chip" data-category="con-piscina" type="button"><span class="chip-icon">🏊</span> Con piscina</button>
+    <button class="category-chip" data-category="amoblado" type="button"><span class="chip-icon">🛋️</span> Amoblados</button>
+    <button class="category-chip" data-category="vista-al-mar" type="button"><span class="chip-icon">🌅</span> Vista al mar</button>
+    <button class="category-chip" data-category="estrato-alto" type="button"><span class="chip-icon">🏢</span> Estrato alto</button>
+    <button class="category-chip" data-category="familiar" type="button"><span class="chip-icon">👨‍👩‍👧</span> Familiar</button>
+    <button class="category-chip" data-category="economico" type="button"><span class="chip-icon">💲</span> Económicos</button>
+  </div>
+</nav>
+
 <div id="searchBanner" class="search-banner" style="display:none"></div>
 <div id="activeChips" class="active-chips"></div>
 
-<div class="results-header">
+<!-- B7/B8: Toolbar con contador, sort inline y toggle grid/lista -->
+<div class="results-toolbar">
   <div class="results-count" id="resultsCount"></div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div class="sort-inline">
+      <label for="f-sort-inline">Ordenar:</label>
+      <select id="f-sort-inline">
+        <option value="relevance">Relevancia</option>
+        <option value="price-asc">Precio ↑</option>
+        <option value="price-desc">Precio ↓</option>
+        <option value="newest">Recientes</option>
+        <option value="sqm-desc">Área ↓</option>
+      </select>
+    </div>
+    <div class="view-toggle" role="group" aria-label="Vista">
+      <button class="view-toggle-btn active" data-view="grid" type="button" aria-label="Vista cuadrícula" title="Cuadrícula">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+      <button class="view-toggle-btn" data-view="list" type="button" aria-label="Vista lista" title="Lista">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
 </div>
 
 <section aria-label="Resultados">
