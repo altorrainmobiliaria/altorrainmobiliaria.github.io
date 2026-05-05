@@ -595,6 +595,24 @@ img[data-src].loaded {
   color: var(--muted);
   font-weight: 600;
 }
+.testimonios-score strong { color: var(--text); font-size: 1.05rem; font-weight: 800; }
+.testimonios-google-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 99px;
+  padding: 6px 12px;
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  margin-left: 8px;
+  transition: all .2s;
+}
+.testimonios-google-badge:hover { border-color: var(--gold); transform: translateY(-1px); }
+@media (max-width:640px){ .testimonios-google-badge { margin-left: 0; margin-top: 6px; } .testimonios-rating-bar { flex-wrap: wrap; } }
 
 /* ── A10: Promo banner ── */
 .promo-banner {
@@ -876,3 +894,80 @@ img[data-src].loaded {
 .why-icon{font-size:2rem;margin-bottom:12px}
 .why-card h3{font-size:1rem;font-weight:700;margin:0 0 8px}
 .why-card p{font-size:.88rem;color:var(--muted);margin:0;line-height:1.5}
+
+/* ============================================================ */
+/* FASE 1 — CONFIANZA INMEDIATA                                  */
+/* ============================================================ */
+
+/* ===== A1: Stats de impacto ===== */
+.impacto-section{padding:48px 16px;background:linear-gradient(180deg,#fafaf9 0%,#fff 100%)}
+.impacto-inner{max-width:var(--page-max);margin:0 auto}
+.impacto-title{text-align:center;font-size:clamp(1.4rem,3.2vw,2rem);font-weight:800;margin:0 0 8px;color:var(--text)}
+.impacto-sub{text-align:center;color:var(--muted);font-size:.95rem;margin:0 0 32px}
+.impacto-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.impacto-card{background:#fff;border:1px solid #f3f4f6;border-radius:18px;padding:28px 18px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.04);transition:transform .25s,box-shadow .25s}
+.impacto-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(212,175,55,.12)}
+.impacto-num{font-size:clamp(2rem,5vw,2.8rem);font-weight:800;color:var(--gold);line-height:1;margin:0;font-variant-numeric:tabular-nums}
+.impacto-num-suffix{font-size:.7em;font-weight:700;color:var(--accent);margin-left:2px}
+.impacto-label{font-size:.85rem;color:var(--muted);font-weight:600;margin:8px 0 0;letter-spacing:.3px}
+@media(max-width:768px){.impacto-grid{grid-template-columns:repeat(2,1fr);gap:12px}.impacto-card{padding:22px 14px}}
+
+/* ===== A3: Alianzas ===== */
+.alianzas-section{padding:32px 16px;background:#fff;border-top:1px solid #f3f4f6;border-bottom:1px solid #f3f4f6}
+.alianzas-inner{max-width:var(--page-max);margin:0 auto;text-align:center}
+.alianzas-title{font-size:.78rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:700;margin:0 0 18px}
+.alianzas-grid{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:32px 48px;opacity:.85}
+.alianza-item{display:inline-flex;align-items:center;gap:8px;font-weight:700;color:#6b7280;font-size:.95rem;transition:color .2s,transform .2s;letter-spacing:.3px;white-space:nowrap}
+.alianza-item:hover{color:var(--gold);transform:scale(1.05)}
+.alianza-item .alianza-icon{width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;color:var(--gold)}
+.alianza-item .alianza-icon svg{width:100%;height:100%}
+@media(max-width:640px){.alianzas-grid{gap:16px 24px}.alianza-item{font-size:.82rem}}
+
+/* ===== A4: Proceso visual ===== */
+.proceso-section{padding:56px 16px;background:#fff}
+.proceso-inner{max-width:var(--page-max);margin:0 auto}
+.proceso-title{text-align:center;font-size:clamp(1.4rem,3.2vw,2rem);font-weight:800;margin:0 0 8px}
+.proceso-sub{text-align:center;color:var(--muted);font-size:.95rem;margin:0 0 36px}
+.proceso-tabs{display:flex;justify-content:center;gap:6px;margin-bottom:28px;flex-wrap:wrap}
+.proceso-tab{padding:10px 20px;border:1.5px solid #e5e7eb;background:#fff;border-radius:99px;font-weight:700;font-size:.88rem;cursor:pointer;color:var(--muted);transition:all .2s;font-family:inherit}
+.proceso-tab[aria-selected="true"]{background:linear-gradient(135deg,var(--gold),var(--accent));color:#000;border-color:transparent}
+.proceso-tab:hover:not([aria-selected="true"]){border-color:var(--gold);color:var(--text)}
+.proceso-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;position:relative}
+.proceso-step{background:#fafaf9;border-radius:16px;padding:24px 20px;text-align:center;position:relative}
+.proceso-step-num{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--accent));color:#000;font-weight:800;font-size:1.05rem;margin:0 auto 12px}
+.proceso-step h4{font-size:1rem;font-weight:700;margin:0 0 8px;color:var(--text)}
+.proceso-step p{font-size:.85rem;color:var(--muted);margin:0;line-height:1.5}
+.proceso-step:not(:last-child)::after{content:'→';position:absolute;right:-14px;top:38px;color:var(--gold);font-size:1.4rem;font-weight:800}
+.proceso-pane{display:none}
+.proceso-pane[data-active="true"]{display:block}
+@media(max-width:980px){.proceso-grid{grid-template-columns:repeat(2,1fr)}.proceso-step:nth-child(2)::after{display:none}}
+@media(max-width:560px){.proceso-grid{grid-template-columns:1fr}.proceso-step::after{display:none}}
+
+/* ===== A5: Comparativa ===== */
+.comparativa-section{padding:56px 16px;background:linear-gradient(180deg,#fafaf9,#fff)}
+.comparativa-inner{max-width:980px;margin:0 auto}
+.comparativa-title{text-align:center;font-size:clamp(1.4rem,3.2vw,2rem);font-weight:800;margin:0 0 8px}
+.comparativa-sub{text-align:center;color:var(--muted);font-size:.95rem;margin:0 0 32px}
+.comparativa-table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.comparativa-table thead th{padding:18px 14px;font-size:.88rem;font-weight:700;text-align:center;background:#fafaf9;color:var(--text);border-bottom:1px solid #f3f4f6}
+.comparativa-table thead th.col-altorra{background:linear-gradient(135deg,var(--gold),var(--accent));color:#000;font-size:1rem;position:relative}
+.comparativa-table thead th.col-altorra::before{content:'★ Recomendado';position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#0b0b0b;color:var(--gold);font-size:.7rem;padding:3px 10px;border-radius:99px;letter-spacing:.5px}
+.comparativa-table tbody td{padding:14px;font-size:.88rem;border-bottom:1px solid #f3f4f6;text-align:center;color:var(--muted)}
+.comparativa-table tbody td.feature{text-align:left;font-weight:600;color:var(--text)}
+.comparativa-table tbody td.col-altorra{background:rgba(212,175,55,.05);font-weight:700;color:var(--text)}
+.comparativa-table tbody tr:last-child td{border-bottom:none}
+.comp-yes{color:#16a34a;font-size:1.1rem;font-weight:800}
+.comp-no{color:#dc2626;font-size:1.1rem;font-weight:800}
+.comp-partial{color:#ea580c;font-size:1.1rem;font-weight:800}
+@media(max-width:680px){.comparativa-table{font-size:.78rem}.comparativa-table thead th{padding:12px 6px;font-size:.78rem}.comparativa-table tbody td{padding:10px 6px;font-size:.78rem}.comparativa-table thead th.col-altorra::before{font-size:.6rem;padding:2px 6px}}
+
+/* ===== A8: Sellos de confianza ===== */
+.sellos-section{padding:32px 16px 16px;background:#0b0b0b;color:#cbd5e1;border-top:2px solid var(--gold)}
+.sellos-inner{max-width:var(--page-max);margin:0 auto;text-align:center}
+.sellos-title{font-size:.78rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--gold);font-weight:700;margin:0 0 16px}
+.sellos-grid{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px 20px}
+.sello-badge{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.25);border-radius:99px;font-size:.82rem;font-weight:600;color:#fff;transition:all .2s}
+.sello-badge:hover{background:rgba(212,175,55,.15);border-color:var(--gold)}
+.sello-badge .sello-icon{width:18px;height:18px;color:var(--gold)}
+.sello-badge .sello-icon svg{width:100%;height:100%;display:block}
+@media(max-width:640px){.sello-badge{font-size:.74rem;padding:8px 12px}.sellos-grid{gap:8px 12px}}
