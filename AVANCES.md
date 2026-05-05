@@ -2802,4 +2802,56 @@ Nueva sección `.sellos-section` antes del footer (fondo negro #0b0b0b con borde
 
 ---
 
+## FASE 2 — BÚSQUEDA MEJORADA (Mega-plan semanas 3-5)
+
+> Fecha: 2026-05-05
+> Objetivo: Elevar la experiencia de búsqueda al nivel Airbnb/Compass
+
+### 2.1 — Categorías visuales con iconos (B1)
+
+Barra de chips scrollables tipo Airbnb sobre los resultados en las 3 páginas de listado:
+- **propiedades-comprar.html**: Todas, Frente al mar, Centro histórico, Con piscina, Vista al mar, Nuevos, Inversión, Lujo, Amoblados, Lotes
+- **propiedades-arrendar.html**: Todas, Frente al mar, Centro histórico, Con piscina, Amoblados, Vista al mar, Estrato alto, Familiar, Económicos
+- **propiedades-alojamientos.html**: Todas, Frente al mar, Con piscina, Lujo, Centro histórico, Familiar, Parejas, Vista al mar, Amoblados
+
+Cada categoría filtra propiedades basándose en features, barrio, precio, área y tipo. Soporta preselección via URL: `?category=con-piscina`.
+
+CSS: `.category-bar`, `.category-chips`, `.category-chip`, `.category-chip.active` con scroll horizontal, gradientes fade en bordes, y efecto gold al seleccionar.
+
+### 2.2 — Cards con badges mejoradas (B2)
+
+Nuevo sistema inteligente de badges que reemplaza los badges estáticos:
+- `badge--featured` (★ Destacada): para propiedades con `featured=true` o `highlightScore >= 90`, con animación pulse dorada
+- `badge--new` (Nueva): si fue publicada hace menos de 30 días, badge verde
+- `badge--dark`: tipo de propiedad (Apartamento, Casa, etc.)
+- Badge de barrio (si tiene `neighborhood`) o ciudad como fallback
+
+### 2.3 — Sort inline en toolbar (B7)
+
+Selector de ordenamiento visible directamente en la toolbar de resultados (sin necesidad de abrir filtros avanzados):
+- Relevancia, Precio ↑, Precio ↓, Recientes, Área ↓
+- Sincronizado con el sort de filtros avanzados
+
+### 2.4 — Toggle grid/lista (B8)
+
+Botones de vista en la toolbar para cambiar entre:
+- **Grid**: layout actual de 3 columnas (2 en tablet, 1 en móvil)
+- **Lista**: cards horizontales con imagen a la izquierda y detalles a la derecha
+
+CSS: `.view-list` modifica la grid a 1 columna con flex-direction row. Responsive: en móvil la vista lista colapsa a vertical.
+
+### Resumen Fase 2 (microfases 2.1-2.5)
+
+| Métrica | Valor |
+|---------|-------|
+| Archivos nuevos | 0 |
+| Archivos modificados | 5 (propiedades-comprar/arrendar/alojamientos.html, style.css, js/listado-propiedades.js) |
+| Features implementadas | 4 (B1, B2, B7, B8) |
+| CSS nuevo | ~60 líneas |
+| HTML nuevo por página | ~35 líneas (chips + toolbar) |
+| JS nuevo | ~80 líneas (categorías, badges, view toggle) |
+| Tests pasando | 0 errores, 0 warnings |
+
+---
+
 *Última actualización: 2026-05-05*
