@@ -2718,4 +2718,88 @@ Se realizó auditoría exhaustiva de todo el repositorio para mapear el estado r
 
 ---
 
-*Última actualización: 2026-05-04*
+## FASE 1 — Confianza Inmediata (Mega-Plan)
+
+**Fecha:** 2026-05-05
+**Microfases:** 1.1–1.6 (6 features de Bloque A)
+
+### 1.1 — Stats animadas en home (A1)
+
+Nueva sección `.impacto-section` después del trust-bar. 4 contadores animados con IntersectionObserver y easing cúbico:
+- 12+ años de experiencia
+- 850+ propiedades gestionadas
+- 1,200+ familias asesoradas
+- 98% clientes satisfechos
+
+Animación se dispara al entrar al viewport (threshold 0.4) y solo corre una vez. Atributos `data-count-to` y `data-count-suffix` para fácil edición futura.
+
+### 1.2 — Barra de alianzas (A3)
+
+Sección `.alianzas-section` con 7 logos institucionales en formato texto + ícono SVG:
+- Lonja de Cartagena
+- Camacol Bolívar
+- Registro Nacional de Avaluadores
+- Bancolombia
+- Davivienda
+- Fenalco
+- MLS Colombia
+
+Estilo en escala de grises con hover que pasa a dorado y escala 1.05.
+
+### 1.3 — Proceso visual con tabs (A4)
+
+Sección `.proceso-section` con 4 pestañas (Comprar / Vender / Arrendar / Invertir), cada una con 4 pasos visuales conectados por flechas. Tabs con `aria-selected`, `role="tablist"`. JS vanilla sin dependencias.
+
+Total: 16 pasos descritos con copy específico para cada flujo. El flujo activo por defecto es "Comprar".
+
+### 1.4 — Comparativa Altorra vs alternativas (A5)
+
+Tabla `.comparativa-table` con 9 filas comparando Altorra vs "Vender solo" vs "Inmobiliaria tradicional":
+- Asesoría legal incluida ✓ vs ✗ vs ~
+- Filtro de compradores verificados ✓ vs ✗ vs ~
+- Fotografía profesional ✓ vs ✗ vs ~
+- Avalúo profesional ✓ vs ✗ vs ✓
+- Asesoría tributaria ✓ vs ✗ vs ✗
+- Atención clientes extranjeros ✓ vs ✗ vs ✗
+- Gestión Airbnb ✓ vs ✗ vs ✗
+- Tiempo cierre 30-60 días vs 6+ meses vs 3-6 meses
+- Primera consulta GRATIS
+
+Columna "Con Altorra" destacada en dorado con badge "★ Recomendado". Responsive con scroll horizontal en mobile.
+
+### 1.5 — Google Reviews widget mejorado (A2)
+
+Mejorado el bloque de testimonios:
+- Score actualizado: "5.0 · X reseñas en Google Maps"
+- El número de reseñas se actualiza dinámicamente desde Firestore/reviews.json
+- Badge "Verificado en Google" con logo oficial multicolor de Google
+- Link "Ver todas en Google →" actualizado
+- `scripts.js` actualiza `#reviewsCount` con el conteo real al renderizar
+
+### 1.6 — Sellos de confianza (A8)
+
+Nueva sección `.sellos-section` antes del footer (fondo negro #0b0b0b con borde dorado top). 7 badges:
+- 5.0 ★ Google Reviews
+- Pago 100% seguro
+- Datos protegidos · SSL
+- Lonja de Cartagena
+- Avaluadores RNA
+- Más de 12 años en Cartagena
+- Bilingüe español/inglés
+
+### Resumen Fase 1
+
+| Métrica | Valor |
+|---------|-------|
+| Archivos nuevos | 0 |
+| Archivos modificados | 4 (index.html, style.css, scripts.js, AVANCES.md) |
+| Secciones nuevas en home | 5 (impacto, alianzas, proceso, comparativa, sellos) |
+| CSS nuevo | ~130 líneas |
+| HTML nuevo | ~250 líneas |
+| JS nuevo | ~40 líneas (contadores + tabs) |
+| Tests pasando | 0 errores, 0 warnings |
+| Validación JSON-LD | 89/89 ✓ |
+
+---
+
+*Última actualización: 2026-05-05*

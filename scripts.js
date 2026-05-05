@@ -134,6 +134,9 @@ document.addEventListener('DOMContentLoaded', function() {
   function renderReviews(reviews) {
     if(!Array.isArray(reviews) || !reviews.length) return;
     const activas = reviews.filter(r => r.activa !== false && r.active !== false);
+    // Actualizar contador real de reseñas
+    const countEl = document.getElementById('reviewsCount');
+    if (countEl && activas.length) countEl.textContent = activas.length + (activas.length >= 10 ? '+' : '');
     const sample  = activas.slice().sort(() => Math.random() - 0.5).slice(0, 3);
     wrap.innerHTML = '';
     sample.forEach(function(r){
