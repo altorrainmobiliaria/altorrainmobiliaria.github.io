@@ -675,6 +675,49 @@ async function init(){
       return el;
     }
 
+    /* ===== H2: ROI estimator for investment properties ===== */
+    function buildROIEstimator(){
+      if(!prop.price || prop.operation !== 'comprar') return null;
+      const price = prop.price;
+      const barrio = (prop.neighborhood || '').toLowerCase();
+      let nightlyRate = 350000;
+      if(barrio.includes('bocagrande') || barrio.includes('laguito')) nightlyRate = 500000;
+      else if(barrio.includes('serena') || barrio.includes('karibana')) nightlyRate = 600000;
+      else if(barrio.includes('san diego') || barrio.includes('getsemaní')) nightlyRate = 450000;
+      else if(barrio.includes('boquilla') || barrio.includes('manzanillo') || barrio.includes('cielo')) nightlyRate = 400000;
+      const occupancy = 0.65;
+      const annualGross = Math.round(nightlyRate * 365 * occupancy);
+      const expenses = Math.round(annualGross * 0.35);
+      const annualNet = annualGross - expenses;
+      const roi = ((annualNet / price) * 100).toFixed(1);
+      const valorization = 8;
+      const totalReturn = (parseFloat(roi) + valorization).toFixed(1);
+
+      const el = document.createElement('div');
+      el.style.cssText = 'margin-top:12px;padding:16px;border:1px solid rgba(16,185,129,.2);border-radius:14px;background:linear-gradient(135deg,#f0fdf4,#fff)';
+      el.innerHTML = `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="font-size:1.1rem">📈</span>
+          <span style="font-weight:800;font-size:.9rem;color:var(--text)">Potencial de inversión</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
+          <div style="text-align:center;padding:10px;background:#fff;border-radius:10px;border:1px solid rgba(0,0,0,.05)">
+            <div style="font-size:1.15rem;font-weight:800;color:#10b981">${roi}%</div>
+            <div style="font-size:.75rem;color:var(--muted)">ROI renta anual</div>
+          </div>
+          <div style="text-align:center;padding:10px;background:#fff;border-radius:10px;border:1px solid rgba(0,0,0,.05)">
+            <div style="font-size:1.15rem;font-weight:800;color:var(--gold)">${totalReturn}%</div>
+            <div style="font-size:.75rem;color:var(--muted)">Retorno total est.</div>
+          </div>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted);line-height:1.5">
+          Renta turística est.: <strong style="color:var(--text)">~$${formatCOP(nightlyRate)}/noche</strong> · Ocupación ${Math.round(occupancy*100)}% · Valorización ~${valorization}%/año
+        </div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:6px">*Estimación basada en promedios del sector. <a href="invertir-airbnb-cartagena.html" style="color:var(--gold);font-weight:700">Calculadora detallada →</a></div>
+      `;
+      return el;
+    }
+
     /* ===== C6: Share mejorado ===== */
     function buildShareBar(){
       const el = document.createElement('div');
@@ -719,6 +762,8 @@ async function init(){
       infoDiv.appendChild(priceRow);
       const mortEl = buildMiniMortgage();
       if(mortEl) infoDiv.appendChild(mortEl);
+      const roiEl = buildROIEstimator();
+      if(roiEl) infoDiv.appendChild(roiEl);
       addFavoriteButton();
     }
     infoDiv.appendChild(buildShareBar());
