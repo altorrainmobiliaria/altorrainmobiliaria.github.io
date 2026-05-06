@@ -70,6 +70,33 @@
     }
   };
 
+  function buildEmptyState(hasFilters) {
+    const otherPages = {
+      'comprar': [{href:'propiedades-arrendar.html',label:'Arrendar'},{href:'propiedades-alojamientos.html',label:'Por días'}],
+      'arrendar': [{href:'propiedades-comprar.html',label:'Comprar'},{href:'propiedades-alojamientos.html',label:'Por días'}],
+      'alojamientos': [{href:'propiedades-comprar.html',label:'Comprar'},{href:'propiedades-arrendar.html',label:'Arrendar'}]
+    };
+    const links = (otherPages[PAGE_MODE] || []).map(l =>
+      '<a href="' + l.href + '" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:99px;background:#fff;border:1px solid rgba(212,175,55,.3);font-weight:700;font-size:.88rem;color:var(--text);text-decoration:none;transition:all .15s">' + l.label + '</a>'
+    ).join('');
+    const clearBtn = hasFilters
+      ? '<button type="button" onclick="document.getElementById(\'btnClear\')?.click()" style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--accent));color:#000;font-weight:800;font-size:.88rem;border:0;cursor:pointer">Limpiar filtros</button>'
+      : '';
+    return '<div style="grid-column:1/-1;text-align:center;padding:48px 20px;color:var(--muted)">'
+      + '<div style="font-size:3rem;margin-bottom:12px;opacity:.5">🔍</div>'
+      + '<h3 style="font-size:1.15rem;font-weight:800;color:var(--text);margin-bottom:8px">'
+      + (hasFilters ? 'No se encontraron propiedades con estos filtros' : 'Por el momento no hay propiedades en esta categoría')
+      + '</h3>'
+      + '<p style="max-width:420px;margin:0 auto 20px;line-height:1.5;font-size:.92rem">'
+      + (hasFilters ? 'Prueba ampliando tu búsqueda, eliminando filtros o explorando otras categorías.' : 'El catálogo se actualiza constantemente. Vuelve pronto o cuéntanos qué buscas.')
+      + '</p>'
+      + '<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:16px">'
+      + clearBtn + links
+      + '</div>'
+      + '<a href="contacto.html" style="display:inline-flex;align-items:center;gap:6px;font-size:.85rem;color:var(--gold);font-weight:700;text-decoration:none">💬 Cuéntanos qué buscas — te ayudamos gratis</a>'
+      + '</div>';
+  }
+
   let allProperties = [];
   let filteredProperties = [];
   let renderedCount = 0;
@@ -421,15 +448,9 @@
       renderList(filteredProperties.slice(0, PAGE_SIZE), true);
       updateLoadMoreButton(filteredProperties.length);
 
-      // Empty state coherente con la carga inicial
       if (filteredProperties.length === 0) {
         const list = document.getElementById('list');
-        if (list) {
-          const msg = allProperties.length === 0
-            ? '<h3>Por el momento no hay propiedades disponibles en esta categoría</h3><p>Vuelve pronto — el catálogo se actualiza automáticamente.</p>'
-            : '<h3>No se encontraron propiedades</h3><p>Intenta ajustar los filtros de búsqueda.</p>';
-          list.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">' + msg + '</div>';
-        }
+        if (list) list.innerHTML = buildEmptyState(allProperties.length > 0);
       }
     };
     window.addEventListener('altorra:db-refreshed', reload);
@@ -502,12 +523,7 @@
 
       if (filteredProperties.length === 0) {
         const list = document.getElementById('list');
-        if (list) {
-          const msg = allProperties.length === 0
-            ? '<h3>Por el momento no hay propiedades disponibles en esta categoría</h3><p>Vuelve pronto — el catálogo se actualiza automáticamente.</p>'
-            : '<h3>No se encontraron propiedades</h3><p>Intenta ajustar los filtros de búsqueda.</p>';
-          list.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)">' + msg + '</div>';
-        }
+        if (list) list.innerHTML = buildEmptyState(allProperties.length > 0);
       }
 
     } catch (err) {
@@ -529,9 +545,7 @@
         reapply();
         if (filteredProperties.length === 0) {
           const list = document.getElementById('list');
-          if (list) {
-            list.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)"><h3>No se encontraron propiedades</h3><p>Intenta ajustar los filtros de búsqueda.</p></div>';
-          }
+          if (list) list.innerHTML = buildEmptyState(true);
         }
       });
     }

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Calculadora de Costos de Cierre | Altorra Inmobiliaria</title>
+<meta name="description" content="Calcula todos los costos de cierre al comprar o vender una propiedad en Colombia: notaría, registro, impuestos, avalúo, estudio de títulos y más."/>
+<link rel="canonical" href="https://altorrainmobiliaria.co/costos-cierre.html"/>
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#d4af37"/>
+<meta property="og:title" content="Calculadora de Costos de Cierre — Altorra Inmobiliaria"/>
+<meta property="og:description" content="Calcula todos los costos de cierre para compra o venta de inmuebles en Colombia."/>
+<meta property="og:url" content="https://altorrainmobiliaria.co/costos-cierre.html"/>
+<meta property="og:type" content="website"/>
+<meta property="og:image" content="https://altorrainmobiliaria.co/hero-emotion.webp"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.cc-hero{text-align:center;padding:48px 16px 24px;max-width:680px;margin:0 auto}
+.cc-hero h1{font-size:clamp(1.5rem,1.5rem + 1.2vw,2.4rem);font-weight:800;line-height:1.15;margin-bottom:10px}
+.cc-hero p{color:var(--muted);font-size:1rem;line-height:1.6}
+.cc-container{max-width:800px;margin:0 auto 48px;padding:0 16px}
+.cc-form{display:grid;gap:16px;padding:24px;border:1px solid rgba(17,24,39,.08);border-radius:16px;background:#fff;box-shadow:0 8px 24px rgba(0,0,0,.04)}
+.cc-form label{font-weight:700;font-size:.9rem;display:flex;flex-direction:column;gap:6px}
+.cc-form input,.cc-form select{padding:12px 14px;border-radius:10px;border:1px solid rgba(17,24,39,.14);font-size:1rem;font-family:inherit;transition:border-color .15s}
+.cc-form input:focus,.cc-form select:focus{outline:3px solid rgba(212,175,55,.2);border-color:var(--gold)}
+.cc-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:560px){.cc-row{grid-template-columns:1fr}}
+.cc-btn{padding:14px 28px;border-radius:12px;background:linear-gradient(90deg,var(--gold),var(--accent));color:#000;font-weight:800;font-size:1rem;border:0;cursor:pointer;margin-top:8px;transition:transform .15s}
+.cc-btn:hover{transform:scale(1.02)}
+.cc-results{margin-top:24px;display:none}
+.cc-results.show{display:block}
+.cc-tabs{display:flex;gap:0;border-radius:12px;overflow:hidden;border:1px solid rgba(17,24,39,.08);margin-bottom:20px}
+.cc-tab{flex:1;padding:12px;text-align:center;font-weight:700;font-size:.95rem;cursor:pointer;background:#f7f7f8;border:0;transition:all .15s;color:var(--muted)}
+.cc-tab.active{background:linear-gradient(135deg,var(--gold),var(--accent));color:#000}
+.cc-panel{display:none}
+.cc-panel.active{display:block}
+.cc-line{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(17,24,39,.05);font-size:.92rem}
+.cc-line:last-child{border-bottom:0}
+.cc-line .cc-label{color:var(--text);font-weight:500}
+.cc-line .cc-val{font-weight:700;color:var(--text);text-align:right}
+.cc-line .cc-pct{font-size:.78rem;color:var(--muted);margin-left:8px}
+.cc-line.cc-total{background:linear-gradient(135deg,#fffdf4,#fff8e1);border-radius:12px;border:1px solid rgba(212,175,55,.15);margin-top:12px;padding:16px}
+.cc-line.cc-total .cc-label{font-weight:800;font-size:1rem}
+.cc-line.cc-total .cc-val{font-weight:800;font-size:1.15rem;color:var(--gold)}
+.cc-card{border:1px solid rgba(17,24,39,.08);border-radius:14px;padding:20px;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.04);margin-bottom:16px}
+.cc-card h3{font-size:1rem;font-weight:800;margin:0 0 14px;display:flex;align-items:center;gap:8px}
+.cc-note{font-size:.82rem;color:var(--muted);line-height:1.5;padding:16px;background:#f9fafb;border-radius:10px;margin-top:16px}
+.cc-summary{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+@media(max-width:560px){.cc-summary{grid-template-columns:1fr}}
+.cc-summary-card{text-align:center;padding:20px;border-radius:14px;border:1px solid rgba(17,24,39,.08)}
+.cc-summary-card .cc-sum-label{font-size:.85rem;color:var(--muted);font-weight:600;margin-bottom:4px}
+.cc-summary-card .cc-sum-val{font-size:1.3rem;font-weight:800;color:var(--gold)}
+.cc-summary-card .cc-sum-pct{font-size:.8rem;color:var(--muted)}
+.cc-cross{text-align:center;padding:32px 16px;background:linear-gradient(135deg,#fffdf4,#fff8e1);border-radius:14px;margin-top:24px;border:1px solid rgba(212,175,55,.1)}
+.cc-cross h3{font-size:1.05rem;font-weight:800;margin-bottom:14px}
+.cc-cross-links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.cc-cross-links a{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:99px;background:#fff;border:1px solid rgba(0,0,0,.08);font-size:.85rem;font-weight:600;color:var(--text);text-decoration:none;transition:border-color .2s}
+.cc-cross-links a:hover{border-color:var(--gold)}
+</style>
+</head>
+<body>
+<div id="header-placeholder"></div>
+
+<main>
+<div class="cc-hero" style="margin-top:var(--header-h)">
+  <h1>Costos de <span style="color:var(--gold)">Cierre</span></h1>
+  <p>Calcula todos los gastos al comprar o vender una propiedad en Colombia: notaría, registro, impuestos, avalúo y más.</p>
+</div>
+
+<div class="cc-container">
+  <div class="cc-form">
+    <div class="cc-row">
+      <label>Valor de la propiedad (COP)
+        <input type="text" id="ccPrecio" placeholder="500.000.000" inputmode="numeric"/>
+      </label>
+      <label>Avalúo catastral (COP)
+        <input type="text" id="ccAvaluo" placeholder="350.000.000 (opcional)" inputmode="numeric"/>
+      </label>
+    </div>
+    <div class="cc-row">
+      <label>Tipo de propiedad
+        <select id="ccTipo">
+          <option value="nueva">Vivienda nueva</option>
+          <option value="usada" selected>Vivienda usada</option>
+          <option value="vis">VIS (interés social)</option>
+          <option value="lote">Lote</option>
+          <option value="comercial">Comercial</option>
+        </select>
+      </label>
+      <label>Ciudad
+        <select id="ccCiudad">
+          <option value="cartagena" selected>Cartagena</option>
+          <option value="bogota">Bogotá</option>
+          <option value="medellin">Medellín</option>
+          <option value="otra">Otra</option>
+        </select>
+      </label>
+    </div>
+    <div class="cc-row">
+      <label>¿Financiación hipotecaria?
+        <select id="ccCredito">
+          <option value="no">No — compra de contado</option>
+          <option value="si">Sí — crédito hipotecario</option>
+        </select>
+      </label>
+      <label>¿Vendedor persona natural o jurídica?
+        <select id="ccVendedor">
+          <option value="natural" selected>Persona natural</option>
+          <option value="juridica">Persona jurídica</option>
+        </select>
+      </label>
+    </div>
+    <button type="button" class="cc-btn" onclick="calcCierre()">Calcular costos de cierre</button>
+  </div>
+
+  <div id="ccResults" class="cc-results">
+    <div class="cc-tabs">
+      <button class="cc-tab active" data-tab="comprador" onclick="switchTab(this)">🏠 Comprador</button>
+      <button class="cc-tab" data-tab="vendedor" onclick="switchTab(this)">💰 Vendedor</button>
+      <button class="cc-tab" data-tab="resumen" onclick="switchTab(this)">📊 Resumen</button>
+    </div>
+
+    <div id="panelComprador" class="cc-panel active"></div>
+    <div id="panelVendedor" class="cc-panel"></div>
+    <div id="panelResumen" class="cc-panel"></div>
+  </div>
+
+  <div class="cc-cross">
+    <h3>Herramientas relacionadas</h3>
+    <div class="cc-cross-links">
+      <a href="simulador.html">🏦 Simulador hipotecario</a>
+      <a href="simulador-notarial.html">📋 Gastos notariales</a>
+      <a href="arrendar-vs-comprar.html">⚖️ ¿Arrendar o comprar?</a>
+      <a href="recursos.html">📚 Centro de recursos</a>
+    </div>
+  </div>
+</div>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/components.js" defer></script>
+<script src="js/analytics.js" defer></script>
+<link rel="stylesheet" href="css/whatsapp-float.css"/>
+<a href="https://wa.me/573002439810?text=Hola%20Altorra%2C%20necesito%20asesoría%20sobre%20costos%20de%20cierre" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825.738 5.479 2.031 7.781l-2.031 7.219 7.375-1.938c2.238 1.213 4.8 1.938 7.531 1.938 8.838 0 16.094-7.163 16.094-16s-7.256-16-16-16zm9.563 22.188c-.394 1.113-1.95 2.038-3.194 2.313-.85.175-1.956.319-5.688-.919-4.769-1.581-7.844-6.356-8.081-6.65-.231-.294-1.95-2.594-1.95-4.95s1.238-3.513 1.675-3.994c.438-.481.956-.6 1.275-.6.319 0 .638.006.919.013.294.012.688-.113 1.075.819.394 1.025 1.35 3.294 1.469 3.531.119.238.2.519.038.819-.163.3-.244.488-.481.75-.238.263-.5.588-.713.788-.238.225-.488.469-.206.925.281.456 1.256 2.069 2.694 3.35 1.85 1.65 3.419 2.163 3.9 2.406.481.244.763.206 1.044-.125.281-.331 1.206-1.406 1.531-1.888.325-.481.644-.4 1.088-.238.444.163 2.819 1.331 3.3 1.569.481.238.8.356.919.556.119.2.119 1.144-.275 2.256z"/></svg>
+</a>
+
+<script>
+(function(){
+  'use strict';
+  function fmtCOP(n){ return n ? '$ ' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.') : '$ 0'; }
+  function parseCOP(s){ return parseInt(String(s||'').replace(/[^0-9]/g,'')) || 0; }
+  function pct(n,total){ return total ? (n/total*100).toFixed(2) + '%' : '0%'; }
+
+  function formatInput(el){
+    el.addEventListener('input', function(){
+      const v = this.value.replace(/[^0-9]/g,'');
+      this.value = v ? parseInt(v).toLocaleString('es-CO') : '';
+    });
+  }
+  formatInput(document.getElementById('ccPrecio'));
+  formatInput(document.getElementById('ccAvaluo'));
+
+  window.switchTab = function(btn){
+    document.querySelectorAll('.cc-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.cc-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel' + btn.dataset.tab.charAt(0).toUpperCase() + btn.dataset.tab.slice(1)).classList.add('active');
+  };
+
+  window.calcCierre = function(){
+    const precio = parseCOP(document.getElementById('ccPrecio').value);
+    if(!precio){ alert('Ingresa el valor de la propiedad'); return; }
+    const avaluo = parseCOP(document.getElementById('ccAvaluo').value) || Math.round(precio * 0.7);
+    const tipo = document.getElementById('ccTipo').value;
+    const ciudad = document.getElementById('ccCiudad').value;
+    const credito = document.getElementById('ccCredito').value === 'si';
+    const vendedorJuridica = document.getElementById('ccVendedor').value === 'juridica';
+
+    // Tarifas 2026 Colombia
+    const NOTARIA_RATE = precio <= 117965050 ? 0.003 : 0.004;
+    const IVA_RATE = 0.19;
+    const REGISTRO_RATE = ciudad === 'bogota' ? 0.0167 : 0.01;
+    const RETENCION_RATE = precio >= 893610000 ? 0.025 : (precio >= 50000000 ? 0.01 : 0);
+    const GMF_RATE = 0.004;
+    const BOLETA_RATE = 0.0015;
+
+    // === COMPRADOR ===
+    const notariaComp = Math.round(precio * NOTARIA_RATE * 0.5);
+    const ivaNotariaComp = Math.round(notariaComp * IVA_RATE);
+    const registro = Math.round(precio * REGISTRO_RATE);
+    const boletaFiscal = Math.round(precio * BOLETA_RATE);
+    const avaluoComercial = tipo === 'vis' ? 350000 : (precio > 1000000000 ? 1500000 : 800000);
+    const estudioTitulos = credito ? 450000 : 0;
+    const gastosBancarios = credito ? 650000 : 0;
+    const seguroIncendio = credito ? Math.round(precio * 0.0003) : 0;
+    const seguroVida = credito ? Math.round(precio * 0.0005) : 0;
+
+    const costosComprador = [
+      { label: 'Gastos de notaría (50%)', value: notariaComp },
+      { label: 'IVA sobre notaría', value: ivaNotariaComp },
+      { label: 'Registro (oficina de instrumentos)', value: registro },
+      { label: 'Boleta fiscal', value: boletaFiscal },
+      { label: 'Avalúo comercial', value: avaluoComercial },
+    ];
+    if(credito){
+      costosComprador.push({ label: 'Estudio de títulos (banco)', value: estudioTitulos });
+      costosComprador.push({ label: 'Gastos bancarios (desembolso)', value: gastosBancarios });
+      costosComprador.push({ label: 'Seguro contra incendio (anual)', value: seguroIncendio });
+      costosComprador.push({ label: 'Seguro de vida deudores (anual)', value: seguroVida });
+    }
+    const totalComprador = costosComprador.reduce((s,c)=>s+c.value, 0);
+
+    // === VENDEDOR ===
+    const notariaVend = Math.round(precio * NOTARIA_RATE * 0.5);
+    const ivaNotariaVend = Math.round(notariaVend * IVA_RATE);
+    const retencion = Math.round(precio * RETENCION_RATE);
+    const gmf = Math.round(precio * GMF_RATE);
+    const certTradicion = 52200;
+    const pazYSalvo = 0;
+    const comisionInmobiliaria = Math.round(precio * 0.03);
+
+    const costosVendedor = [
+      { label: 'Gastos de notaría (50%)', value: notariaVend },
+      { label: 'IVA sobre notaría', value: ivaNotariaVend },
+      { label: 'Retención en la fuente', value: retencion },
+      { label: 'GMF (4×1000)', value: gmf },
+      { label: 'Certificado tradición y libertad', value: certTradicion },
+      { label: 'Comisión inmobiliaria (3%)', value: comisionInmobiliaria },
+    ];
+    const totalVendedor = costosVendedor.reduce((s,c)=>s+c.value, 0);
+
+    // Render
+    function renderLines(items, total, who){
+      let html = '<div class="cc-card"><h3>' + (who === 'comprador' ? '🏠 Costos del comprador' : '💰 Costos del vendedor') + '</h3>';
+      items.forEach(function(item){
+        if(item.value === 0) return;
+        html += '<div class="cc-line"><span class="cc-label">' + item.label + '</span><span class="cc-val">' + fmtCOP(item.value) + '<span class="cc-pct">' + pct(item.value, precio) + '</span></span></div>';
+      });
+      html += '<div class="cc-line cc-total"><span class="cc-label">Total ' + who + '</span><span class="cc-val">' + fmtCOP(total) + '<span class="cc-pct">' + pct(total, precio) + '</span></span></div>';
+      html += '</div>';
+      return html;
+    }
+
+    document.getElementById('panelComprador').innerHTML = renderLines(costosComprador, totalComprador, 'comprador')
+      + (credito ? '<div class="cc-note">💡 Los costos bancarios pueden variar según la entidad financiera. Consulta con tu banco las condiciones exactas de tu crédito.</div>' : '')
+      + '<div class="cc-note">📋 Esta estimación incluye los gastos más comunes. Pueden aplicar costos adicionales según el caso particular.</div>';
+
+    document.getElementById('panelVendedor').innerHTML = renderLines(costosVendedor, totalVendedor, 'vendedor')
+      + (vendedorJuridica ? '<div class="cc-note">⚠️ Para personas jurídicas pueden aplicar tarifas diferentes de retención en la fuente. Consulta con un contador.</div>' : '')
+      + '<div class="cc-note">📋 La comisión inmobiliaria del 3% es un referente del mercado. Las condiciones exactas se pactan en el contrato de corretaje.</div>';
+
+    document.getElementById('panelResumen').innerHTML =
+      '<div class="cc-summary">'
+      + '<div class="cc-summary-card"><div class="cc-sum-label">Total comprador</div><div class="cc-sum-val">' + fmtCOP(totalComprador) + '</div><div class="cc-sum-pct">' + pct(totalComprador, precio) + ' del valor</div></div>'
+      + '<div class="cc-summary-card"><div class="cc-sum-label">Total vendedor</div><div class="cc-sum-val">' + fmtCOP(totalVendedor) + '</div><div class="cc-sum-pct">' + pct(totalVendedor, precio) + ' del valor</div></div>'
+      + '</div>'
+      + '<div class="cc-summary" style="margin-top:16px">'
+      + '<div class="cc-summary-card" style="grid-column:1/-1"><div class="cc-sum-label">Costo total de la transacción</div><div class="cc-sum-val" style="font-size:1.5rem">' + fmtCOP(totalComprador + totalVendedor) + '</div><div class="cc-sum-pct">' + pct(totalComprador + totalVendedor, precio) + ' del valor de la propiedad</div></div>'
+      + '</div>'
+      + '<div class="cc-card" style="margin-top:20px"><h3>📊 Desglose del costo total</h3>'
+      + '<div class="cc-line"><span class="cc-label">Valor propiedad</span><span class="cc-val">' + fmtCOP(precio) + '</span></div>'
+      + '<div class="cc-line"><span class="cc-label">Avalúo catastral usado</span><span class="cc-val">' + fmtCOP(avaluo) + '</span></div>'
+      + '<div class="cc-line"><span class="cc-label">Financiación</span><span class="cc-val">' + (credito ? 'Sí (crédito)' : 'No (contado)') + '</span></div>'
+      + '<div class="cc-line"><span class="cc-label">Tipo de inmueble</span><span class="cc-val">' + document.getElementById('ccTipo').selectedOptions[0].text + '</span></div>'
+      + '</div>'
+      + '<div class="cc-note">🏦 ¿Necesitas asesoría personalizada? <a href="contacto.html" style="color:var(--gold);font-weight:700">Contacta a nuestros asesores</a> sin costo.</div>';
+
+    document.getElementById('ccResults').classList.add('show');
+    document.getElementById('ccResults').scrollIntoView({behavior:'smooth',block:'start'});
+  };
+})();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://altorrainmobiliaria.co/"},
+    {"@type": "ListItem", "position": 2, "name": "Recursos", "item": "https://altorrainmobiliaria.co/recursos.html"},
+    {"@type": "ListItem", "position": 3, "name": "Costos de Cierre", "item": "https://altorrainmobiliaria.co/costos-cierre.html"}
+  ]
+}
+</script>
+</body>
+</html>
