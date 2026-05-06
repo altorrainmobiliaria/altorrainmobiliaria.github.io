@@ -2928,4 +2928,90 @@ Navegación: anchor links por categoría, details/summary expandibles.
 
 ---
 
-*Última actualización: 2026-05-05*
+## FASE 5 continuación — CONTENIDO AUTORIDAD
+
+> Fecha: 2026-05-06
+
+### 5.2 — Centro de recursos (E4)
+
+Nueva página `recursos.html` — hub que conecta todas las herramientas:
+- 6 calculadoras/simuladores enlazados (hipotecario, notarial, arriendo vs compra, Airbnb, costos de cierre, avalúo)
+- 5 guías educativas (inversionista, foreign investors, glosario, FAQ, blog)
+- 3 datos de mercado (estudio, videos, prensa)
+- 6 guías por sector (Serena, Karibana, Manzanillo, Boquilla, San Diego, mapa)
+- CTA final: "Hablar con un asesor"
+- BreadcrumbList JSON-LD
+
+---
+
+## FASE 4 continuación — HERRAMIENTAS FINANCIERAS
+
+> Fecha: 2026-05-06
+
+### 4.3 — Calculadora de costos de cierre (D6)
+
+Nueva página `costos-cierre.html`:
+- Desglose completo comprador: notaría, IVA, registro, boleta fiscal, avalúo, estudio títulos, gastos bancarios, seguros
+- Desglose completo vendedor: notaría, IVA, retención fuente, GMF, certificado tradición, comisión inmobiliaria
+- Tabs: Comprador / Vendedor / Resumen
+- Inputs: precio, avalúo catastral, tipo (nueva/usada/VIS/lote/comercial), ciudad, financiación, persona natural/jurídica
+- Porcentaje sobre valor y montos formateados COP
+- BreadcrumbList JSON-LD
+
+---
+
+## FASE 7 — CONVERSIÓN AVANZADA (parcial)
+
+> Fecha: 2026-05-06
+
+### 7.1 — CTA flotante mobile en detalle (F6)
+
+Barra sticky fija en el bottom del viewport para pantallas ≤860px:
+- Botón WhatsApp verde con link directo a la propiedad
+- Botón "Solicitar info" que scrollea al formulario de contacto
+- CSS: `position:fixed;bottom:0;z-index:130` con safe-area padding
+- Solo visible para propiedades disponibles
+
+### 7.2 — Pop-up contextual en listados vacíos (F5)
+
+Mejora del empty-state en `js/listado-propiedades.js`:
+- Estado visual mejorado con icono 🔍 y mensajes contextuales
+- Botón "Limpiar filtros" cuando hay filtros activos
+- Links a otras páginas de listado (comprar/arrendar/por días)
+- CTA: "Cuéntanos qué buscas — te ayudamos gratis"
+- Diferencia entre "no hay propiedades en esta categoría" vs "filtros sin resultados"
+
+---
+
+## FASE 3 continuación — DETALLE PREMIUM
+
+> Fecha: 2026-05-06
+
+### 3.4 — Galería full-screen inmersiva (B4)
+
+Reemplazo del overlay simple por galería completa:
+- Thumbnails strip en el footer del overlay
+- Contador "X / Y" en esquina superior izquierda
+- Flechas prev/next con backdrop-filter blur
+- Navegación por teclado (←/→/Escape)
+- Swipe touch en móvil
+- Botón cerrar con ✕
+- Body overflow hidden mientras está abierta
+
+---
+
+## FASE 6 — HUMANIZACIÓN Y EQUIPO (parcial)
+
+> Fecha: 2026-05-06
+
+### 6.1 — Quiénes somos mejorado (G4)
+
+Mejoras a `quienes-somos.html`:
+- **Stats strip animado**: 4 métricas (8 años, 200+ propiedades, 95% satisfacción, 150+ familias) con animación counter al scroll (IntersectionObserver + easing)
+- **Valores con iconos**: cada valor corporativo tiene ícono visual en gradient container
+- **Servicios integrales**: grid de 6 servicios (compra/venta, arriendo, avalúos, legal, renta turística, inversión) con iconos y descripciones
+- Fondo oscuro (#0b0b0b → #1a1a2e) en stats strip para contraste premium
+
+---
+
+*Última actualización: 2026-05-06*

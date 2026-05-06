@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Centro de Recursos | Herramientas Inmobiliarias | Altorra Inmobiliaria</title>
+<meta name="description" content="Simuladores, calculadoras, guías y herramientas gratuitas para comprar, arrendar o invertir en propiedades en Cartagena. Todo lo que necesitas en un solo lugar."/>
+<link rel="canonical" href="https://altorrainmobiliaria.co/recursos.html"/>
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#d4af37"/>
+<meta property="og:title" content="Centro de Recursos — Altorra Inmobiliaria"/>
+<meta property="og:description" content="Simuladores, calculadoras, guías y herramientas gratuitas para comprar, arrendar o invertir en Cartagena."/>
+<meta property="og:url" content="https://altorrainmobiliaria.co/recursos.html"/>
+<meta property="og:type" content="website"/>
+<meta property="og:image" content="https://altorrainmobiliaria.co/hero-emotion.webp"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="style.css"/>
+<style>
+.recursos-hero{text-align:center;padding:48px 16px 32px;max-width:720px;margin:0 auto}
+.recursos-hero h1{font-size:clamp(1.6rem,1.6rem + 1.2vw,2.6rem);font-weight:800;line-height:1.15;margin-bottom:12px}
+.recursos-hero p{color:var(--muted);font-size:1.05rem;line-height:1.6;max-width:560px;margin:0 auto}
+.recursos-grid{max-width:var(--page-max);margin:0 auto 48px;padding:0 16px;display:grid;gap:24px}
+.recursos-section{margin-bottom:8px}
+.recursos-section h2{font-size:1.15rem;font-weight:800;color:var(--text);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid rgba(212,175,55,.2);display:flex;align-items:center;gap:10px}
+.recursos-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.recurso-card{display:flex;flex-direction:column;border:1px solid rgba(17,24,39,.08);border-radius:16px;padding:20px;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.04);transition:transform .18s ease,box-shadow .18s ease;text-decoration:none;color:inherit}
+.recurso-card:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,0,0,.08)}
+.recurso-card .rc-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:12px;flex-shrink:0}
+.recurso-card h3{font-size:1rem;font-weight:800;margin:0 0 6px;color:var(--text)}
+.recurso-card p{font-size:.88rem;color:var(--muted);line-height:1.5;margin:0 0 12px;flex:1}
+.recurso-card .rc-tag{display:inline-flex;padding:4px 10px;border-radius:99px;font-size:.75rem;font-weight:700;background:#f7f7f8;color:var(--muted);width:max-content}
+.rc-icon.calc{background:linear-gradient(135deg,#eff6ff,#dbeafe);color:#2563eb}
+.rc-icon.guide{background:linear-gradient(135deg,#f0fdf4,#dcfce7);color:#16a34a}
+.rc-icon.invest{background:linear-gradient(135deg,#fffbeb,#fef3c7);color:#d97706}
+.rc-icon.legal{background:linear-gradient(135deg,#faf5ff,#ede9fe);color:#7c3aed}
+.rc-icon.market{background:linear-gradient(135deg,#fef2f2,#fee2e2);color:#dc2626}
+.rc-icon.sector{background:linear-gradient(135deg,#f0fdfa,#ccfbf1);color:#0d9488}
+.recursos-cta{text-align:center;padding:48px 16px;background:linear-gradient(135deg,#fffdf4,#fff8e1);border-top:1px solid rgba(212,175,55,.1)}
+.recursos-cta h2{font-size:1.3rem;font-weight:800;margin-bottom:10px}
+.recursos-cta p{color:var(--muted);margin-bottom:20px;max-width:480px;margin-inline:auto}
+.recursos-cta .cta-btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:12px;background:linear-gradient(90deg,var(--gold),var(--accent));color:#000;font-weight:800;font-size:1rem;text-decoration:none;box-shadow:0 8px 20px rgba(212,175,55,.2)}
+</style>
+</head>
+<body>
+<div id="header-placeholder"></div>
+
+<main>
+  <div class="recursos-hero" style="margin-top:var(--header-h)">
+    <h1>Centro de <span style="color:var(--gold)">Recursos</span></h1>
+    <p>Herramientas gratuitas, calculadoras, guías y contenido experto para tomar las mejores decisiones inmobiliarias en Cartagena.</p>
+  </div>
+
+  <div class="recursos-grid">
+
+    <section class="recursos-section">
+      <h2><span style="font-size:1.3rem">🧮</span> Calculadoras y simuladores</h2>
+      <div class="recursos-cards">
+        <a href="simulador.html" class="recurso-card">
+          <div class="rc-icon calc">🏦</div>
+          <h3>Simulador hipotecario</h3>
+          <p>Calcula tu cuota mensual según precio, cuota inicial, plazo y tasa de interés. Compara escenarios de financiación.</p>
+          <span class="rc-tag">Calculadora</span>
+        </a>
+        <a href="simulador-notarial.html" class="recurso-card">
+          <div class="rc-icon calc">📋</div>
+          <h3>Gastos notariales</h3>
+          <p>Estima los gastos de escrituración, registro, retención en la fuente e IVA notarial para comprador y vendedor.</p>
+          <span class="rc-tag">Calculadora</span>
+        </a>
+        <a href="arrendar-vs-comprar.html" class="recurso-card">
+          <div class="rc-icon calc">⚖️</div>
+          <h3>¿Arrendar o comprar?</h3>
+          <p>Simula a 5, 10 y 15 años cuánto patrimonio construyes comprando vs cuánto gastas arrendando.</p>
+          <span class="rc-tag">Comparador</span>
+        </a>
+        <a href="invertir-airbnb-cartagena.html" class="recurso-card">
+          <div class="rc-icon invest">📊</div>
+          <h3>Calculadora Airbnb</h3>
+          <p>Proyecta ingresos por renta turística en Cartagena según temporada, ubicación y tipo de propiedad.</p>
+          <span class="rc-tag">Inversión</span>
+        </a>
+        <a href="costos-cierre.html" class="recurso-card">
+          <div class="rc-icon calc">💸</div>
+          <h3>Costos de cierre</h3>
+          <p>Calcula todos los gastos al comprar o vender: notaría, registro, impuestos, gastos bancarios y comisiones.</p>
+          <span class="rc-tag">Calculadora</span>
+        </a>
+        <a href="avaluo.html" class="recurso-card">
+          <div class="rc-icon calc">🏠</div>
+          <h3>Solicitar avalúo</h3>
+          <p>Obtén un avalúo profesional de tu propiedad con nuestro equipo de peritos certificados.</p>
+          <span class="rc-tag">Servicio</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="recursos-section">
+      <h2><span style="font-size:1.3rem">📚</span> Guías y educación</h2>
+      <div class="recursos-cards">
+        <a href="guia-inversionista-2026.html" class="recurso-card">
+          <div class="rc-icon guide">📘</div>
+          <h3>Guía del inversionista 2026</h3>
+          <p>Todo lo que necesitas saber para invertir en bienes raíces en Cartagena este año: zonas, retornos y estrategias.</p>
+          <span class="rc-tag">Guía</span>
+        </a>
+        <a href="foreign-investors.html" class="recurso-card">
+          <div class="rc-icon guide">🇺🇸</div>
+          <h3>Foreign Investors Guide</h3>
+          <p>Complete guide for international buyers interested in Cartagena real estate. Legal framework, taxes and financing.</p>
+          <span class="rc-tag">Guide (EN)</span>
+        </a>
+        <a href="glosario-inmobiliario.html" class="recurso-card">
+          <div class="rc-icon guide">📖</div>
+          <h3>Glosario inmobiliario</h3>
+          <p>Más de 120 términos inmobiliarios explicados de forma clara. Ideal para compradores primerizos.</p>
+          <span class="rc-tag">Referencia</span>
+        </a>
+        <a href="faq.html" class="recurso-card">
+          <div class="rc-icon guide">❓</div>
+          <h3>Preguntas frecuentes</h3>
+          <p>30+ respuestas a las dudas más comunes sobre compra, venta, arriendo, crédito e inversión en Colombia.</p>
+          <span class="rc-tag">FAQ</span>
+        </a>
+        <a href="blog.html" class="recurso-card">
+          <div class="rc-icon guide">✍️</div>
+          <h3>Blog inmobiliario</h3>
+          <p>Artículos, análisis y consejos del equipo de Altorra sobre el mercado inmobiliario de Cartagena.</p>
+          <span class="rc-tag">Blog</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="recursos-section">
+      <h2><span style="font-size:1.3rem">📈</span> Datos de mercado</h2>
+      <div class="recursos-cards">
+        <a href="estudios-mercado-cartagena.html" class="recurso-card">
+          <div class="rc-icon market">📊</div>
+          <h3>Estudio de mercado 2026</h3>
+          <p>Análisis del mercado inmobiliario de Cartagena con datos reales: precios por zona, tendencias y proyecciones.</p>
+          <span class="rc-tag">Reporte</span>
+        </a>
+        <a href="videos.html" class="recurso-card">
+          <div class="rc-icon market">🎬</div>
+          <h3>Recorridos en video</h3>
+          <p>Tours virtuales y recorridos en video de propiedades seleccionadas en Cartagena y alrededores.</p>
+          <span class="rc-tag">Video</span>
+        </a>
+        <a href="prensa.html" class="recurso-card">
+          <div class="rc-icon market">📰</div>
+          <h3>Sala de prensa</h3>
+          <p>Noticias, comunicados y apariciones de Altorra Inmobiliaria en medios de comunicación.</p>
+          <span class="rc-tag">Prensa</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="recursos-section">
+      <h2><span style="font-size:1.3rem">📍</span> Guías por sector</h2>
+      <div class="recursos-cards">
+        <a href="serena-del-mar.html" class="recurso-card">
+          <div class="rc-icon sector">🌊</div>
+          <h3>Serena del Mar</h3>
+          <p>Proyecto urbanístico de lujo con playa, marina, hospital y centro comercial. El sector de mayor valorización.</p>
+          <span class="rc-tag">Sector</span>
+        </a>
+        <a href="karibana.html" class="recurso-card">
+          <div class="rc-icon sector">⛳</div>
+          <h3>Karibana</h3>
+          <p>Resort con campo de golf, playa privada y propiedades de alta gama. Ideal para inversión turística.</p>
+          <span class="rc-tag">Sector</span>
+        </a>
+        <a href="manzanillo-del-mar.html" class="recurso-card">
+          <div class="rc-icon sector">🏖️</div>
+          <h3>Manzanillo del Mar</h3>
+          <p>Zona de playa en crecimiento con proyectos nuevos y excelente relación precio-calidad.</p>
+          <span class="rc-tag">Sector</span>
+        </a>
+        <a href="la-boquilla.html" class="recurso-card">
+          <div class="rc-icon sector">🌅</div>
+          <h3>La Boquilla</h3>
+          <p>Corredor turístico frente al mar con oferta hotelera y residencial de alta demanda.</p>
+          <span class="rc-tag">Sector</span>
+        </a>
+        <a href="san-diego.html" class="recurso-card">
+          <div class="rc-icon sector">🏛️</div>
+          <h3>San Diego</h3>
+          <p>Corazón del Centro Histórico. Propiedades coloniales con encanto y alta rentabilidad turística.</p>
+          <span class="rc-tag">Sector</span>
+        </a>
+        <a href="mapa.html" class="recurso-card">
+          <div class="rc-icon sector">🗺️</div>
+          <h3>Mapa de propiedades</h3>
+          <p>Explora todas las propiedades disponibles en un mapa interactivo de Cartagena y alrededores.</p>
+          <span class="rc-tag">Mapa</span>
+        </a>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="recursos-cta">
+    <h2>¿No encuentras lo que buscas?</h2>
+    <p>Nuestro equipo de asesores puede ayudarte con cualquier consulta inmobiliaria de forma gratuita.</p>
+    <a href="contacto.html" class="cta-btn">Hablar con un asesor</a>
+  </div>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script src="js/components.js" defer></script>
+<script src="js/analytics.js" defer></script>
+<link rel="stylesheet" href="css/whatsapp-float.css"/>
+<a href="https://wa.me/573002439810?text=Hola%20Altorra%2C%20necesito%20información%20sobre%20propiedades" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+  <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M16 0c-8.837 0-16 7.163-16 16 0 2.825.738 5.479 2.031 7.781l-2.031 7.219 7.375-1.938c2.238 1.213 4.8 1.938 7.531 1.938 8.838 0 16.094-7.163 16.094-16s-7.256-16-16-16zm9.563 22.188c-.394 1.113-1.95 2.038-3.194 2.313-.85.175-1.956.319-5.688-.919-4.769-1.581-7.844-6.356-8.081-6.65-.231-.294-1.95-2.594-1.95-4.95s1.238-3.513 1.675-3.994c.438-.481.956-.6 1.275-.6.319 0 .638.006.919.013.294.012.688-.113 1.075.819.394 1.025 1.35 3.294 1.469 3.531.119.238.2.519.038.819-.163.3-.244.488-.481.75-.238.263-.5.588-.713.788-.238.225-.488.469-.206.925.281.456 1.256 2.069 2.694 3.35 1.85 1.65 3.419 2.163 3.9 2.406.481.244.763.206 1.044-.125.281-.331 1.206-1.406 1.531-1.888.325-.481.644-.4 1.088-.238.444.163 2.819 1.331 3.3 1.569.481.238.8.356.919.556.119.2.119 1.144-.275 2.256z"/></svg>
+</a>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://altorrainmobiliaria.co/"},
+    {"@type": "ListItem", "position": 2, "name": "Recursos", "item": "https://altorrainmobiliaria.co/recursos.html"}
+  ]
+}
+</script>
+</body>
+</html>
