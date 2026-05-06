@@ -3212,4 +3212,42 @@ Schema.org `RealEstateAgent` agregado a `index.html`:
 
 ---
 
+## AUDITORÍA — CIERRE DE GAPS
+
+> Fecha: 2026-05-06
+
+### Gap J1 — BreadcrumbList en blog template
+
+- `blog/_plantilla-post.html`: agregado BreadcrumbList JSON-LD con placeholders `{{TITULO}}` y `{{SLUG}}`
+- Los 6 posts existentes ya tenían BreadcrumbList (no se modificaron)
+
+### Gap J3 — Firebase y components.js en páginas faltantes
+
+3 páginas actualizadas:
+- `servicios-mantenimiento.html`: +firebase-config.js, +components.js, +header/footer placeholders
+- `servicios-mudanzas.html`: idem
+- `turismo-inmobiliario.html`: idem
+
+### Gap J4 — deploy-info.json actualizado
+
+- Versión actualizada a 2026-05-06 con commit actual
+
+---
+
+## FASE 7 cont. — CONVERSIÓN
+
+> Fecha: 2026-05-06
+
+### 7.5 — Calendario de disponibilidad (F8)
+
+Calendario visual en `detalle-propiedad.html` (solo operación dias/alojamientos):
+- Mini-calendario mensual con grid 7 columnas (Lu-Do)
+- Navegación prev/next por mes
+- Estados: disponible (verde), reservado (rojo tachado), pasado (gris), hoy (borde dorado)
+- Leyenda de colores
+- Datos simulados con seed determinístico por propiedad
+- CSS responsive integrado en la página
+
+---
+
 *Última actualización: 2026-05-06*

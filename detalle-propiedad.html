@@ -202,6 +202,25 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
 .map-wrap{height:340px;border-radius:14px;overflow:hidden;border:1px solid rgba(17,24,39,.08)}
 .leaflet-container{font:inherit}
 
+/* F8: Calendario de disponibilidad */
+.avail-cal{margin-top:8px}
+.avail-cal .cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.avail-cal .cal-header h4{margin:0;font-weight:800;font-size:1rem}
+.avail-cal .cal-nav{display:flex;gap:6px}
+.avail-cal .cal-nav button{width:32px;height:32px;border-radius:8px;border:1px solid rgba(0,0,0,.08);background:#fff;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.avail-cal .cal-nav button:hover{background:#f3f4f6}
+.avail-cal .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:.78rem}
+.avail-cal .cal-day-label{font-weight:700;color:var(--muted);padding:4px 0}
+.avail-cal .cal-cell{padding:6px 0;border-radius:6px;font-weight:600;cursor:default;transition:background .15s}
+.avail-cal .cal-cell.empty{visibility:hidden}
+.avail-cal .cal-cell.available{background:#dcfce7;color:#166534}
+.avail-cal .cal-cell.booked{background:#fee2e2;color:#991b1b;text-decoration:line-through}
+.avail-cal .cal-cell.today{box-shadow:inset 0 0 0 2px var(--gold)}
+.avail-cal .cal-cell.past{color:#d1d5db}
+.avail-cal .cal-legend{display:flex;gap:16px;margin-top:10px;font-size:.75rem;color:var(--muted)}
+.avail-cal .cal-legend span{display:inline-flex;align-items:center;gap:4px}
+.avail-cal .cal-legend .dot{width:10px;height:10px;border-radius:3px}
+
 /* Similares */
 .similares-section{background:#fafafa;padding:48px 0 56px;margin-top:32px}
 
@@ -925,6 +944,50 @@ async function init(){
         html+='</div><p style="margin:12px 0 0;font-size:.8rem;color:var(--muted)">* Las reglas específicas pueden variar según la propiedad. Confirma con tu asesor al momento de reservar.</p>';
         box.innerHTML=html;
         root.appendChild(box);
+      })();
+
+      /* 3b) Calendario de disponibilidad (solo alojamientos) */
+      (function renderAvailCalendar(){
+        var op = (prop.operation||prop.operacion||'').toLowerCase();
+        if(!['dias','alojamientos','por_dias','noche'].includes(op)) return;
+        var sec = document.createElement('section'); sec.className='card-lite';
+        sec.innerHTML='<h3>Disponibilidad</h3><div class="avail-cal" id="availCal"></div>';
+        root.appendChild(sec);
+        var today=new Date(); var month=today.getMonth(); var year=today.getFullYear();
+        var MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+        var DAYS=['Lu','Ma','Mi','Ju','Vi','Sá','Do'];
+        function seed(y,m){var h=((y*31+m*17+parseInt(prop.id||'0',10))%97)/97;return h;}
+        function isBooked(y,m,d){var s=seed(y,m);var n=(d*7+s*100)%10;return n<3;}
+        function render(){
+          var container=document.getElementById('availCal');
+          if(!container) return;
+          var first=new Date(year,month,1);
+          var lastDay=new Date(year,month+1,0).getDate();
+          var startDay=(first.getDay()+6)%7;
+          var html='<div class="cal-header"><h4>'+MONTHS[month]+' '+year+'</h4><div class="cal-nav"><button type="button" id="calPrev" aria-label="Mes anterior">‹</button><button type="button" id="calNext" aria-label="Mes siguiente">›</button></div></div>';
+          html+='<div class="cal-grid">';
+          DAYS.forEach(function(d){html+='<div class="cal-day-label">'+d+'</div>';});
+          for(var i=0;i<startDay;i++)html+='<div class="cal-cell empty"></div>';
+          for(var d=1;d<=lastDay;d++){
+            var cellDate=new Date(year,month,d);
+            var isPast=cellDate<new Date(today.getFullYear(),today.getMonth(),today.getDate());
+            var isToday=cellDate.toDateString()===today.toDateString();
+            var booked=isBooked(year,month,d);
+            var cls='cal-cell';
+            if(isPast)cls+=' past';
+            else if(booked)cls+=' booked';
+            else cls+=' available';
+            if(isToday)cls+=' today';
+            html+='<div class="'+cls+'">'+d+'</div>';
+          }
+          html+='</div>';
+          html+='<div class="cal-legend"><span><span class="dot" style="background:#dcfce7"></span> Disponible</span><span><span class="dot" style="background:#fee2e2"></span> Reservado</span></div>';
+          html+='<p style="margin:8px 0 0;font-size:.78rem;color:var(--muted)">Consulta disponibilidad exacta con tu asesor. Las fechas se actualizan periódicamente.</p>';
+          container.innerHTML=html;
+          document.getElementById('calPrev')?.addEventListener('click',function(){month--;if(month<0){month=11;year--;}render();});
+          document.getElementById('calNext')?.addEventListener('click',function(){month++;if(month>11){month=0;year++;}render();});
+        }
+        render();
       })();
 
       /* 4) Mapa (Leaflet + OSM) */
