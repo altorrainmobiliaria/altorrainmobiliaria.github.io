@@ -3068,4 +3068,58 @@ Indicador de inversión agregado en detalle-propiedad.html (solo operación comp
 
 ---
 
+## FASE 8 continuación — INVERSIÓN PREMIUM
+
+> Fecha: 2026-05-06
+
+### 8.2 — Colecciones de inversión (H4)
+
+Página `colecciones.html` nueva:
+- 7 colecciones curadas: Frente al mar, lujo exclusivo, smart investment, renta turística, vida familiar, penthouse ejecutivo, eco-living
+- Cards con gradientes, overlay oscuro, hover con scale
+- Conteo dinámico de propiedades por categoría (desde Firestore via `waitDB()`)
+- Sección "Cómo funciona" con 4 pasos
+- CTA oscuro con botones a listados y WhatsApp
+- BreadcrumbList JSON-LD
+
+---
+
+## FASE 9 — EQUIPO Y MARCA
+
+> Fecha: 2026-05-06
+
+### 9.1 — Página del equipo (G1)
+
+Página `equipo.html` nueva:
+- 6 miembros del equipo: 3 directores + 3 asesores especializados por zona
+- Cards con área de avatar degradado, rol, descripción, tags de especialidad
+- Links de contacto: WhatsApp y email por asesor
+- Barra de estadísticas: 6 profesionales, 8+ años, 200+ transacciones, 3 idiomas
+- Responsive grid 3→2→1 columnas
+- BreadcrumbList JSON-LD
+- Agregada al sitemap y footer
+
+---
+
+## FASE 11 parcial — UX/PERFORMANCE
+
+> Fecha: 2026-05-06
+
+### 11.1 — Micro-interacciones CSS (J2)
+
+Estilos globales en `style.css`:
+- `.reveal-fade` / `.reveal-scale` — animaciones de entrada con IntersectionObserver
+- Stagger automático por nth-child (delays escalonados)
+- `.link-underline` — underline animado en hover
+- `.icon-glow` — glow dorado en hover de íconos
+- `.shimmer-gold` — texto con brillo animado para elementos destacados
+- `.pulse-cta` — pulsación sutil en botones CTA
+- Card image zoom suave en hover (scale 1.04)
+- Footer links con hover dorado y padding animado
+- `.btn:active` press effect
+- Section headings hover color change
+- `scripts.js` — IntersectionObserver global para `.reveal-fade`/`.reveal-scale`
+
+---
+
 *Última actualización: 2026-05-06*
