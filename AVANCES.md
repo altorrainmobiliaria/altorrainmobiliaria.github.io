@@ -3122,4 +3122,62 @@ Estilos globales en `style.css`:
 
 ---
 
+## FASE 8 cont. — INVERSIÓN PREMIUM
+
+> Fecha: 2026-05-06
+
+### 8.3 — Calculadora Airbnb interactiva (H3)
+
+Simulador completo agregado en `invertir-airbnb-cartagena.html`:
+- Inputs: zona, precio compra, habitaciones, ocupación (slider), gastos (slider), co-host
+- Tarifas por zona y habitación (8 zonas × 4 rangos)
+- Cálculo dinámico: tarifa/noche, noches/mes, bruto, neto, ROI anual, recuperación
+- Valorización +8%/año incluida en retorno total
+- Botón WhatsApp con datos pre-llenados de la simulación
+- Responsive: 2 columnas → 1 columna en mobile
+
+### 8.4 — Comparativo de zonas (H6)
+
+Tabla comparativa agregada en `invertir-airbnb-cartagena.html`:
+- 7 zonas: Centro, Bocagrande, Getsemaní, Castillogrande, Serena, Manzanillo, Barú
+- Columnas: precio m², tarifa/noche, ocupación, ROI neto, valorización, perfil
+- Badges por perfil: Premium, Equilibrado, Alto crecimiento, Emergente
+- Scroll horizontal con border-radius en mobile
+
+---
+
+## FASE 9 cont. — ALOJAMIENTOS
+
+> Fecha: 2026-05-06
+
+### 9.2 — Reglas de la casa (I6)
+
+Sección en `detalle-propiedad.html` (solo operación dias/alojamientos):
+- 8 reglas estándar con iconos: check-in/out, no fumar, silencio, mascotas, fiestas, huéspedes, acceso, limpieza
+- Grid de items con fondo gris claro
+- Nota aclaratoria de variación por propiedad
+
+---
+
+## FASE 11 cont. — UX/PERFORMANCE
+
+> Fecha: 2026-05-06
+
+### 11.2 — Lazy blur images (J4)
+
+Sistema de carga progresiva:
+- CSS `.blur-wrap` con placeholder blur (12px) y scale(1.1) para evitar bordes
+- Transición de opacidad .4s al cargar imagen real
+- `scripts.js` IntersectionObserver con rootMargin 200px para pre-carga
+- Clase `.loaded` remueve blur y muestra imagen final
+
+### 11.3 — Amenidades en tarjetas (I5)
+
+Tags de amenidades en cards del listado (`listado-propiedades.js`):
+- Máximo 3 amenidades visibles con iconos emoji (Piscina, Vista al mar, AC, etc.)
+- Badge "+N" si hay más amenidades
+- Estilos píldora con fondo gris claro (`.amenity-tags`, `.amenity-tag`)
+
+---
+
 *Última actualización: 2026-05-06*

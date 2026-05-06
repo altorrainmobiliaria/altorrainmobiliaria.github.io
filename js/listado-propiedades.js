@@ -171,6 +171,18 @@
     return badges.join('');
   }
 
+  function getAmenityTags(p) {
+    var feats = p.features || p.amenidades || [];
+    if (!feats.length) return '';
+    var icons = {'Piscina':'🏊','Vista al mar':'🌊','Aire Acondicionado':'❄️','Balcón':'🌅','Ascensor':'🛗','Portería/Vigilancia':'🔒','Gimnasio':'🏋️','Amoblado':'🛋️','Jacuzzi':'🛁','BBQ':'🔥','Terraza':'☀️'};
+    var shown = feats.slice(0, 3);
+    var html = '<div class="amenity-tags">';
+    shown.forEach(function(f){ html += '<span class="amenity-tag">' + (icons[f] || '✓') + ' ' + escapeHtml(f) + '</span>'; });
+    if (feats.length > 3) html += '<span class="amenity-tag amenity-more">+' + (feats.length - 3) + '</span>';
+    html += '</div>';
+    return html;
+  }
+
   function createCard(p) {
     const card = document.createElement('article');
     card.className = 'card';
@@ -195,6 +207,7 @@
         <h3>${escapeHtml(p.title)}</h3>
         <div class="price">${getPriceLabel(p)}</div>
         <div class="specs">${p.beds ? p.beds + 'H · ' : ''}${p.baths ? p.baths + 'B · ' : ''}${p.sqm ? p.sqm + ' m² · ' : ''}${escapeHtml(p.city)} · ${capitalize(p.type)}</div>
+        ${getAmenityTags(p)}
         <div class="cta">
           <a class="btn btn-primary" href="detalle-propiedad.html?id=${encodeURIComponent(p.id)}">Ver detalles</a>
           <a class="btn btn-ghost" href="${buildWhatsAppLink(p)}" target="_blank" rel="noopener">WhatsApp</a>

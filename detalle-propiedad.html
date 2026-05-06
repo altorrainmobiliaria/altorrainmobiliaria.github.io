@@ -905,7 +905,27 @@ async function init(){
         root.appendChild(box);
       })();
 
-      /* 3) (Contacto del asesor) — ELIMINADO a solicitud */
+      /* 3) Reglas de la casa (solo alojamientos) */
+      (function renderHouseRules(){
+        var op = (prop.operation||prop.operacion||'').toLowerCase();
+        if(!['dias','alojamientos','por_dias','noche'].includes(op)) return;
+        var rules = [
+          {ico:'🕐',txt:'Check-in: 3:00 PM — Check-out: 12:00 PM'},
+          {ico:'🚭',txt:'No fumar dentro del inmueble'},
+          {ico:'🔇',txt:'Silencio después de las 10:00 PM'},
+          {ico:'🐾',txt:'Consultar disponibilidad para mascotas'},
+          {ico:'🎉',txt:'No se permiten fiestas ni eventos sin autorización'},
+          {ico:'👥',txt:'Máximo de huéspedes según capacidad del inmueble'},
+          {ico:'🔑',txt:'Acceso con código digital o entrega presencial'},
+          {ico:'🧹',txt:'Limpieza incluida al check-out'}
+        ];
+        var box = document.createElement('section'); box.className='card-lite';
+        var html='<h3>Reglas de la casa</h3><div style="display:grid;gap:8px">';
+        rules.forEach(function(r){html+='<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f9fafb;border-radius:10px;font-size:.9rem"><span style="font-size:1.1rem">'+r.ico+'</span><span>'+r.txt+'</span></div>';});
+        html+='</div><p style="margin:12px 0 0;font-size:.8rem;color:var(--muted)">* Las reglas específicas pueden variar según la propiedad. Confirma con tu asesor al momento de reservar.</p>';
+        box.innerHTML=html;
+        root.appendChild(box);
+      })();
 
       /* 4) Mapa (Leaflet + OSM) */
       (function renderMap(){

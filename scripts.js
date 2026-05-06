@@ -727,3 +727,24 @@ if('serviceWorker' in navigator){
   },{threshold:0.15,rootMargin:'0px 0px -40px 0px'});
   items.forEach(function(el){obs.observe(el);});
 })();
+
+/* ===== J4: Lazy blur-up images ===== */
+(function initLazyBlur(){
+  if (!('IntersectionObserver' in window)) return;
+  var imgs = document.querySelectorAll('img.lazy[data-src]');
+  if (!imgs.length) return;
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      var img = e.target;
+      img.src = img.dataset.src;
+      img.onload = function(){
+        img.classList.add('loaded');
+        var ph = img.parentElement && img.parentElement.querySelector('.blur-placeholder');
+        if(ph) ph.classList.add('loaded');
+      };
+      obs.unobserve(img);
+    });
+  },{rootMargin:'200px'});
+  imgs.forEach(function(img){obs.observe(img);});
+})();
