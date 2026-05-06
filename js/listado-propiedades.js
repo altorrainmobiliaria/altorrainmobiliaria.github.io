@@ -425,6 +425,65 @@
     });
   }
 
+  function renderAlertButton() {
+    var container = document.getElementById('alertBtnWrap');
+    if (!container) return;
+    var hasFilters = !!(
+      (document.getElementById('f-search')?.value||'').trim() ||
+      (document.getElementById('f-city')?.value||'') ||
+      (document.getElementById('f-type')?.value||'') ||
+      (document.getElementById('f-min')?.value||'') ||
+      (document.getElementById('f-max')?.value||'')
+    );
+    if (!hasFilters) { container.innerHTML=''; return; }
+    container.innerHTML = '<button type="button" class="btn-save-alert" id="btnSaveAlert">🔔 Guardar alerta</button>';
+    document.getElementById('btnSaveAlert').addEventListener('click', showAlertModal);
+  }
+
+  function showAlertModal() {
+    if (document.getElementById('alertModal')) return;
+    var filters = {
+      operacion: PAGE_MODE || '',
+      ciudad: document.getElementById('f-city')?.value||'',
+      tipo: document.getElementById('f-type')?.value||'',
+      precioMin: document.getElementById('f-min')?.value||'',
+      precioMax: document.getElementById('f-max')?.value||'',
+      busqueda: (document.getElementById('f-search')?.value||'').trim()
+    };
+    var desc = Object.entries(filters).filter(function(e){return e[1];}).map(function(e){return e[0]+': '+e[1];}).join(', ');
+    var modal = document.createElement('div');
+    modal.id='alertModal';
+    modal.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);backdrop-filter:blur(4px)';
+    modal.innerHTML='<div style="background:#fff;border-radius:18px;padding:32px;max-width:420px;width:90%;box-shadow:0 20px 50px rgba(0,0,0,.15)">'
+      +'<h3 style="margin:0 0 8px;font-weight:800;font-size:1.2rem">🔔 Crear alerta de propiedades</h3>'
+      +'<p style="margin:0 0 16px;font-size:.88rem;color:var(--muted)">Te avisaremos por WhatsApp cuando llegue una propiedad que coincida con tu búsqueda.</p>'
+      +'<div style="background:#f9fafb;border-radius:10px;padding:12px;margin-bottom:16px;font-size:.82rem;color:var(--muted)"><strong>Filtros:</strong> '+escapeHtml(desc||'Todos')+'</div>'
+      +'<label style="display:block;margin-bottom:12px"><span style="font-weight:700;font-size:.85rem;display:block;margin-bottom:4px">Tu nombre</span><input id="alert-name" type="text" placeholder="Nombre" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid rgba(0,0,0,.12);font-family:inherit;font-size:.92rem"/></label>'
+      +'<label style="display:block;margin-bottom:16px"><span style="font-weight:700;font-size:.85rem;display:block;margin-bottom:4px">WhatsApp</span><input id="alert-phone" type="tel" placeholder="+57 300 123 4567" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid rgba(0,0,0,.12);font-family:inherit;font-size:.92rem"/></label>'
+      +'<div style="display:flex;gap:10px"><button id="alertSubmit" type="button" style="flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(90deg,var(--accent),#ffd95e);font-weight:800;cursor:pointer;font-size:.95rem">Activar alerta</button>'
+      +'<button id="alertClose" type="button" style="padding:12px 18px;border-radius:12px;border:1px solid rgba(0,0,0,.08);background:#fff;cursor:pointer;font-weight:700;font-size:.95rem">Cancelar</button></div></div>';
+    document.body.appendChild(modal);
+    modal.addEventListener('click',function(e){if(e.target===modal)closeAlertModal();});
+    document.getElementById('alertClose').addEventListener('click',closeAlertModal);
+    document.getElementById('alertSubmit').addEventListener('click',function(){
+      var name=(document.getElementById('alert-name')?.value||'').trim();
+      var phone=(document.getElementById('alert-phone')?.value||'').trim();
+      if(!name||!phone){window.AltorraUtils&&window.AltorraUtils.showToast?window.AltorraUtils.showToast('Completa nombre y teléfono','warning'):alert('Completa nombre y teléfono');return;}
+      var saved=JSON.parse(localStorage.getItem('altorra:alerts')||'[]');
+      saved.push({name:name,phone:phone,filters:filters,created:new Date().toISOString()});
+      localStorage.setItem('altorra:alerts',JSON.stringify(saved));
+      var msg='Hola! Soy '+name+'. Quiero recibir alertas de propiedades con estos criterios: '+desc+'. Mi WhatsApp: '+phone;
+      window.open('https://wa.me/573002439810?text='+encodeURIComponent(msg),'_blank');
+      closeAlertModal();
+      if(window.AltorraUtils&&window.AltorraUtils.showToast)window.AltorraUtils.showToast('Alerta guardada ✓','success');
+    });
+  }
+
+  function closeAlertModal(){
+    var m=document.getElementById('alertModal');
+    if(m)m.remove();
+  }
+
   function reapply() {
     filteredProperties = applyFilters();
     updateResultsCount(allProperties.length, filteredProperties.length);
@@ -433,6 +492,7 @@
     updateLoadMoreButton(filteredProperties.length);
     renderSearchBanner();
     renderActiveChips();
+    renderAlertButton();
     // B8: Preserve view mode after re-render
     const grid = document.getElementById('list');
     if (grid && currentView === 'list') grid.classList.add('view-list');

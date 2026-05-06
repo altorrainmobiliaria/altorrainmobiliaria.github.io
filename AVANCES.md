@@ -3180,4 +3180,36 @@ Tags de amenidades en cards del listado (`listado-propiedades.js`):
 
 ---
 
+## FASE 7 cont. — CONVERSIÓN
+
+> Fecha: 2026-05-06
+
+### 7.4 — Alertas de propiedades (F4)
+
+Sistema de alertas en listados (`listado-propiedades.js`):
+- Botón "🔔 Guardar alerta" aparece cuando hay filtros activos
+- Modal con nombre y WhatsApp del interesado
+- Guarda en localStorage (`altorra:alerts`)
+- Envía mensaje pre-armado a WhatsApp con criterios de búsqueda
+- Agregado `#alertBtnWrap` en 4 páginas: comprar, arrendar, alojamientos, búsqueda
+- Estilo `.btn-save-alert` con borde dorado y hover animado
+
+---
+
+## FASE 12 — SEO AVANZADO
+
+> Fecha: 2026-05-06
+
+### 12.1 — Structured data RealEstateAgent (K2)
+
+Schema.org `RealEstateAgent` agregado a `index.html`:
+- Nombre, URL, logo, imagen, descripción, teléfono, email
+- Dirección (Cartagena, Bolívar, CO) con GeoCoordinates
+- areaServed: Cartagena de Indias
+- sameAs: Instagram, Facebook, TikTok, YouTube
+- priceRange para rich snippets
+- BreadcrumbList también agregado al Home (faltaba)
+
+---
+
 *Última actualización: 2026-05-06*
