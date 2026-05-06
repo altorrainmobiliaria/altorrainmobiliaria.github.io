@@ -344,6 +344,53 @@
     </div>
   </main>
 
+  <!-- F3: Déjame buscar por ti -->
+  <section aria-label="Déjame buscar por ti" style="max-width:var(--page-max);margin:0 auto 32px;padding:0 16px">
+    <div style="background:linear-gradient(135deg,#0b0b0b,#1a1a2e);border-radius:18px;padding:32px 28px;color:#fff;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center">
+      <div>
+        <div style="display:inline-flex;padding:5px 12px;border-radius:99px;font-size:.78rem;font-weight:700;background:rgba(212,175,55,.15);color:var(--gold);margin-bottom:12px">Servicio personalizado</div>
+        <h2 style="font-size:1.4rem;font-weight:800;margin:0 0 10px;color:#fff">¿No encuentras lo que buscas?<br/><span style="color:var(--gold)">Déjanos buscarlo por ti</span></h2>
+        <p style="color:#94a3b8;font-size:.92rem;line-height:1.6;margin:0">Cuéntanos qué necesitas y nuestro equipo buscará las mejores opciones del mercado para ti — incluso propiedades que aún no están publicadas.</p>
+        <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+          <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:rgba(255,255,255,.08);font-size:.78rem;font-weight:600;color:#e2e8f0">✓ Gratis</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:rgba(255,255,255,.08);font-size:.78rem;font-weight:600;color:#e2e8f0">✓ Respuesta en 24h</span>
+          <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:rgba(255,255,255,.08);font-size:.78rem;font-weight:600;color:#e2e8f0">✓ Opciones exclusivas</span>
+        </div>
+      </div>
+      <form id="searchAssistForm" style="display:flex;flex-direction:column;gap:12px" onsubmit="return handleSearchAssist(event)">
+        <input type="text" name="nombre" placeholder="Tu nombre" required style="padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:.92rem;font-family:inherit"/>
+        <input type="tel" name="telefono" placeholder="WhatsApp o teléfono" required style="padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:.92rem;font-family:inherit"/>
+        <select name="busco" required style="padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#cbd5e1;font-size:.92rem;font-family:inherit">
+          <option value="">¿Qué buscas?</option>
+          <option value="comprar">Quiero comprar</option>
+          <option value="arrendar">Quiero arrendar</option>
+          <option value="invertir">Quiero invertir</option>
+          <option value="alojamiento">Alojamiento por días</option>
+          <option value="otro">Otro</option>
+        </select>
+        <textarea name="detalle" placeholder="Cuéntanos: presupuesto, zona preferida, número de habitaciones, requisitos especiales..." rows="3" style="padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.06);color:#fff;font-size:.92rem;font-family:inherit;resize:vertical"></textarea>
+        <button type="submit" style="padding:14px;border-radius:10px;background:linear-gradient(90deg,var(--gold),var(--accent));color:#000;font-weight:800;font-size:.95rem;border:0;cursor:pointer;transition:transform .15s">Enviar solicitud</button>
+      </form>
+    </div>
+  </section>
+  <script>
+  function handleSearchAssist(e){
+    e.preventDefault();
+    var f = e.target;
+    var data = {nombre:f.nombre.value,telefono:f.telefono.value,busco:f.busco.value,detalle:f.detalle.value};
+    var waText = 'Hola Altorra, busco ayuda personalizada.\n\nNombre: '+data.nombre+'\nBusco: '+data.busco+'\nDetalle: '+(data.detalle||'(sin detalle)');
+    window.open('https://wa.me/573002439810?text='+encodeURIComponent(waText),'_blank');
+    f.reset();
+    return false;
+  }
+  </script>
+  <style>
+  @media(max-width:760px){
+    section[aria-label="Déjame buscar por ti"] > div{grid-template-columns:1fr !important}
+  }
+  #searchAssistForm input::placeholder,#searchAssistForm textarea::placeholder{color:rgba(203,213,225,.6)}
+  </style>
+
   <!-- FAQ -->
   <section class="c-faq-section" id="faq" aria-labelledby="t-faq">
     <h2 id="t-faq">Preguntas frecuentes</h2>

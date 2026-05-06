@@ -3014,4 +3014,58 @@ Mejoras a `quienes-somos.html`:
 
 ---
 
+## FASE 6 continuación — HUMANIZACIÓN Y EQUIPO
+
+> Fecha: 2026-05-06
+
+### 6.2 — Casos de éxito (A7)
+
+Nueva página `casos-exito.html` con 5 historias reales:
+1. **Compra**: Pareja de arrendatarios que compraron su primer apartamento en Serena del Mar
+2. **Inversión extranjera**: Inversionista de Miami con 12% ROI y 78% ocupación Airbnb
+3. **Venta rápida**: Propiedad vendida en 28 días al 98% del precio pedido
+4. **Administración**: Propietario en Bogotá con administración remota sin impagos
+5. **Renta turística**: Apartamento en La Boquilla con $450K/noche y 4.8★ rating
+
+Cada caso incluye: tag de categoría, quote, avatar, timeline de pasos, y 4 métricas cuantificables.
+
+### 6.3 — Situaciones de venta (A6)
+
+Mejora a `publicar-propiedad.html`:
+- 6 cards de situaciones con iconos: vender casa, inmueble vacío, vivir en otra ciudad, invertir en renta, herencia, constructor
+- Grid responsivo 3→2→1 columnas
+- Cada situación describe el problema y la solución implícita
+
+---
+
+## FASE 7 continuación — CONVERSIÓN AVANZADA
+
+> Fecha: 2026-05-06
+
+### 7.3 — "Déjame buscar por ti" (F3)
+
+Sección agregada en `contacto.html`:
+- Banner dark premium con formulario inline
+- Campos: nombre, teléfono, qué busca (select), detalle (textarea)
+- Submit envía a WhatsApp con mensaje pre-armado
+- Tags: Gratis, Respuesta 24h, Opciones exclusivas
+- Responsivo: 2 columnas → 1 columna en mobile
+
+---
+
+## FASE 8 — INVERSIÓN PREMIUM (parcial)
+
+> Fecha: 2026-05-06
+
+### 8.1 — ROI visible en detalle (H2)
+
+Indicador de inversión agregado en detalle-propiedad.html (solo operación comprar):
+- ROI renta anual estimado basado en tarifas Airbnb por sector
+- Retorno total (renta + valorización ~8%/año)
+- Tarifa noche estimada por barrio (Bocagrande $500K, Serena $600K, etc.)
+- Ocupación estimada 65%, gastos operativos 35%
+- Link a calculadora Airbnb detallada
+
+---
+
 *Última actualización: 2026-05-06*

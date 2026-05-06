@@ -217,6 +217,18 @@
       box-shadow:0 16px 36px rgba(17,24,39,0.12);
       filter:saturate(1.05);
     }
+    /* A6: Situaciones de venta */
+    .sit-section{max-width:var(--page-max);margin:0 auto 32px;padding:0 16px}
+    .sit-section h2{font-size:1.3rem;font-weight:800;text-align:center;margin-bottom:6px}
+    .sit-section .sit-sub{text-align:center;color:var(--muted);font-size:.92rem;margin-bottom:18px}
+    .sit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:900px;margin:0 auto}
+    @media(max-width:700px){.sit-grid{grid-template-columns:1fr 1fr}}
+    @media(max-width:460px){.sit-grid{grid-template-columns:1fr}}
+    .sit-card{display:flex;align-items:flex-start;gap:12px;padding:16px;border:1px solid rgba(17,24,39,.06);border-radius:14px;background:#fff;transition:transform .15s,box-shadow .15s}
+    .sit-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.05)}
+    .sit-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;background:linear-gradient(135deg,#fffdf4,#fff8e1)}
+    .sit-card h4{font-size:.88rem;font-weight:700;margin:0 0 4px}
+    .sit-card p{font-size:.8rem;color:var(--muted);margin:0;line-height:1.4}
   </style>
   <script type="module" src="js/firebase-config.js"></script>
 </head>
@@ -245,6 +257,38 @@
       </ul>
     </div>
   </section>
+  <!-- A6: Situaciones de venta -->
+  <section class="sit-section" aria-label="Situaciones comunes">
+    <h2>¿Te identificas con alguna de estas <span style="color:var(--gold)">situaciones</span>?</h2>
+    <p class="sit-sub">Miles de personas como tú ya encontraron la solución con Altorra.</p>
+    <div class="sit-grid">
+      <div class="sit-card">
+        <div class="sit-icon">🏡</div>
+        <div><h4>Quiero vender mi casa</h4><p>Necesito vender rápido y al mejor precio, con seguridad jurídica.</p></div>
+      </div>
+      <div class="sit-card">
+        <div class="sit-icon">🔑</div>
+        <div><h4>Tengo un inmueble vacío</h4><p>Mi propiedad está desocupada y quiero generar ingresos por arriendo.</p></div>
+      </div>
+      <div class="sit-card">
+        <div class="sit-icon">✈️</div>
+        <div><h4>Vivo en otra ciudad</h4><p>Tengo propiedades en Cartagena pero no puedo administrarlas de lejos.</p></div>
+      </div>
+      <div class="sit-card">
+        <div class="sit-icon">📈</div>
+        <div><h4>Quiero invertir en renta</h4><p>Busco maximizar la rentabilidad de mi propiedad con renta turística.</p></div>
+      </div>
+      <div class="sit-card">
+        <div class="sit-icon">👨‍👩‍👧</div>
+        <div><h4>Heredé una propiedad</h4><p>Recibí un inmueble y no sé qué hacer: vender, arrendar o administrar.</p></div>
+      </div>
+      <div class="sit-card">
+        <div class="sit-icon">🏗️</div>
+        <div><h4>Soy constructor</h4><p>Tengo un proyecto nuevo y necesito apoyo comercial para vender unidades.</p></div>
+      </div>
+    </div>
+  </section>
+
   <!-- Contenido principal con el formulario -->
   <main class="publish-container" id="mainContent">
     <p class="lead">Completa el siguiente formulario y un asesor de Altorra se pondrá en contacto contigo para ayudarte a publicar tu inmueble.</p>
