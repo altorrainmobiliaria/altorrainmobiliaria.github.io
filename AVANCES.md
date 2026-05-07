@@ -3358,4 +3358,63 @@ Secciones FAQ con 3 preguntas cada una + structured data:
 
 ---
 
+## MEJORAS — UX, CONVERSIÓN Y SEO (cont.)
+
+> Fecha: 2026-05-07
+
+### FAQs en 8 páginas adicionales
+
+FAQs HTML + FAQPage JSON-LD agregadas a:
+- costos-cierre.html — gastos de cierre, escrituración, financiación
+- glosario-inmobiliario.html — estrato, escritura vs tradición, administración
+- guia-inversionista-2026.html — retornos, extranjeros, valorización
+- estudios-mercado-cartagena.html — mercado 2026, planos vs usada, sectores
+- simulador-notarial.html — gastos notariales, registro, simulación
+- arrendar-vs-comprar.html — rentabilidad, arriendos, cuota inicial
+- propiedades-baru.html — acceso, inversión, tipos de propiedad
+- lotes-campestres-cartagena.html — precios, verificaciones, financiación
+
+### Buscador en FAQ principal (faq.html)
+
+- Input de búsqueda con filtro en tiempo real
+- Oculta secciones sin resultados
+- Contador de resultados encontrados
+
+### Breadcrumbs visuales en listados
+
+- propiedades-comprar.html: Inicio / Propiedades en venta
+- propiedades-arrendar.html: Inicio / Propiedades en arriendo
+- propiedades-alojamientos.html: Inicio / Alojamientos por días
+
+### Count-up animado (trust bar)
+
+- scripts.js: animación con easing cúbico de 800ms
+- Los números suben de 0 al valor real en vez de aparecer de golpe
+
+### Botón "Volver arriba" global
+
+- footer.html: botón dorado fijo en bottom-right
+- Aparece al hacer scroll >600px con opacity+transform
+- smooth scroll al tope
+
+### Estimador de renta mensual (detalle-propiedad.html)
+
+- Solo para propiedades de venta con precio >$50M
+- Rango 0.5-0.7% mensual sobre valor
+- Rendimiento anual estimado 6-8.4% EA
+- Card sutil con gradiente dorado en sidebar
+
+### Indicador "tiempo en mercado" (tarjetas de listado)
+
+- getTimeAgo(): "Hoy", "Ayer", "Hace X días", "Hace X sem", "Hace X meses"
+- Propiedades con <=7 días marcadas en verde como nuevas
+- CSS .time-ago y .time-ago.new
+
+### Totales SEO actualizados
+
+- **130+ bloques JSON-LD** en 66+ archivos HTML
+- deploy-info.json actualizado a 2026-05-07
+
+---
+
 *Última actualización: 2026-05-07*
