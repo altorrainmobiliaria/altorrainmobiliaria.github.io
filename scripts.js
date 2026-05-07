@@ -701,8 +701,22 @@ if('serviceWorker' in navigator){
     const active = all.filter(p => p.available !== 0 && p.disponible !== false);
     const cities = new Set(active.map(p => (p.city || '').trim()).filter(Boolean));
 
-    if (elProps) elProps.textContent = active.length;
-    if (elCities) elCities.textContent = cities.size;
+    function animateNum(el, target) {
+      if (!el || target <= 0) { if (el) el.textContent = target; return; }
+      var start = 0;
+      var duration = 800;
+      var t0 = null;
+      function step(ts) {
+        if (!t0) t0 = ts;
+        var p = Math.min((ts - t0) / duration, 1);
+        var ease = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(start + (target - start) * ease);
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+    if (elProps) animateNum(elProps, active.length);
+    if (elCities) animateNum(elCities, cities.size);
   }
 
   if (document.readyState === 'loading') {
