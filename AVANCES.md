@@ -3250,4 +3250,61 @@ Calendario visual en `detalle-propiedad.html` (solo operación dias/alojamientos
 
 ---
 
-*Última actualización: 2026-05-06*
+## MEJORAS MULTI-PÁGINA — UX, SEO, CONVERSIÓN
+
+> Fecha: 2026-05-07
+
+### Comparador visible en tarjetas
+
+- Botón ⚖ "Comparar" en cada tarjeta del listado (aparece en hover)
+- Integración con `window.AltorraComparador.add(prop)`
+- Estilo: botón semitransparente top-left, dorado cuando activo
+
+### Precio por m² en tarjetas
+
+- Indicador `$X/m²` junto al precio en tarjetas de venta
+- Solo aparece cuando hay precio y m² disponibles
+- Fuente pequeña gris para no competir con el precio principal
+
+### Sección "Por qué Altorra" en home
+
+- 4 cards con iconos: servicio integral, datos de mercado, bilingüe, respuesta 24h
+- Animación reveal-fade con IntersectionObserver
+- Ubicada antes de "Publicar tu propiedad"
+
+### Info de contacto en contacto.html
+
+- 3 cards: teléfono (con link tel:), email, horarios de atención
+- Grid responsive 3→1 columnas
+
+### Tabla de bancos en simulador.html
+
+- Comparativo 6 bancos colombianos con tasas EA, plazo máximo, % financiación
+- Tabla responsive con scroll horizontal en mobile
+
+### Resumen comprar vs arrendar
+
+- 2 cards lado a lado en arrendar-vs-comprar.html
+- "Comprar es mejor si..." y "Arrendar es mejor si..."
+- 5 criterios por columna con items destacados en bold
+
+### Barra de progreso de scroll en detalle
+
+- Barra dorada fija bajo el header que avanza con el scroll
+- requestAnimationFrame para performance
+- Gradient gold → accent
+
+### FAQs en 6 landing pages de sector (SEO)
+
+6 páginas con FAQ HTML + JSON-LD FAQPage:
+- serena-del-mar.html (3 preguntas)
+- karibana.html (3 preguntas)
+- la-boquilla.html (3 preguntas)
+- manzanillo-del-mar.html (3 preguntas)
+- san-diego.html (3 preguntas)
+- el-laguito.html (3 preguntas)
+Total JSON-LD en el sitio: 106 bloques válidos
+
+---
+
+*Última actualización: 2026-05-07*

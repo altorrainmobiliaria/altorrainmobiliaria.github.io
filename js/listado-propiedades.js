@@ -117,6 +117,15 @@
     return formatted;
   }
 
+  function getPricePerSqm(p) {
+    var op = IS_BUSQUEDA ? String(p.operation || '').toLowerCase() : PAGE_MODE;
+    if (op !== 'comprar' && op !== '' && op !== undefined) return '';
+    if (!p.price || !p.sqm || p.sqm <= 0) return '';
+    var perSqm = Math.round(p.price / p.sqm);
+    if (perSqm < 100000) return '';
+    return ' <span class="price-sqm">$' + formatCOP(perSqm) + '/m²</span>';
+  }
+
   function buildWhatsAppLink(p) {
     const detailsUrl = new URL('detalle-propiedad.html?id=' + encodeURIComponent(p.id), location.href).href;
     const price = getPriceLabel(p);
@@ -202,10 +211,11 @@
         <button class="fav-btn" type="button" aria-label="Guardar favorito" aria-pressed="false" data-prop-id="${escapeHtml(p.id)}">
           <span class="heart">♡</span>
         </button>
+        <button class="compare-btn" type="button" aria-label="Agregar al comparador" data-prop-id="${escapeHtml(p.id)}" title="Comparar">⚖</button>
       </div>
       <div class="meta">
         <h3>${escapeHtml(p.title)}</h3>
-        <div class="price">${getPriceLabel(p)}</div>
+        <div class="price">${getPriceLabel(p)}${getPricePerSqm(p)}</div>
         <div class="specs">${p.beds ? p.beds + 'H · ' : ''}${p.baths ? p.baths + 'B · ' : ''}${p.sqm ? p.sqm + ' m² · ' : ''}${escapeHtml(p.city)} · ${capitalize(p.type)}</div>
         ${getAmenityTags(p)}
         <div class="cta">
@@ -216,8 +226,17 @@
     `;
 
     card.addEventListener('click', (e) => {
-      if (e.target.closest('.cta') || e.target.closest('.fav-btn')) return;
+      if (e.target.closest('.cta') || e.target.closest('.fav-btn') || e.target.closest('.compare-btn')) return;
       window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(p.id);
+    });
+
+    var cmpBtn = card.querySelector('.compare-btn');
+    if (cmpBtn) cmpBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (window.AltorraComparador) {
+        window.AltorraComparador.add(p);
+        this.classList.toggle('active', window.AltorraComparador.has(p.id));
+      }
     });
 
     return card;
