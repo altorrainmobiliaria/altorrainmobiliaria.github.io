@@ -3122,4 +3122,299 @@ Estilos globales en `style.css`:
 
 ---
 
-*Última actualización: 2026-05-06*
+## FASE 8 cont. — INVERSIÓN PREMIUM
+
+> Fecha: 2026-05-06
+
+### 8.3 — Calculadora Airbnb interactiva (H3)
+
+Simulador completo agregado en `invertir-airbnb-cartagena.html`:
+- Inputs: zona, precio compra, habitaciones, ocupación (slider), gastos (slider), co-host
+- Tarifas por zona y habitación (8 zonas × 4 rangos)
+- Cálculo dinámico: tarifa/noche, noches/mes, bruto, neto, ROI anual, recuperación
+- Valorización +8%/año incluida en retorno total
+- Botón WhatsApp con datos pre-llenados de la simulación
+- Responsive: 2 columnas → 1 columna en mobile
+
+### 8.4 — Comparativo de zonas (H6)
+
+Tabla comparativa agregada en `invertir-airbnb-cartagena.html`:
+- 7 zonas: Centro, Bocagrande, Getsemaní, Castillogrande, Serena, Manzanillo, Barú
+- Columnas: precio m², tarifa/noche, ocupación, ROI neto, valorización, perfil
+- Badges por perfil: Premium, Equilibrado, Alto crecimiento, Emergente
+- Scroll horizontal con border-radius en mobile
+
+---
+
+## FASE 9 cont. — ALOJAMIENTOS
+
+> Fecha: 2026-05-06
+
+### 9.2 — Reglas de la casa (I6)
+
+Sección en `detalle-propiedad.html` (solo operación dias/alojamientos):
+- 8 reglas estándar con iconos: check-in/out, no fumar, silencio, mascotas, fiestas, huéspedes, acceso, limpieza
+- Grid de items con fondo gris claro
+- Nota aclaratoria de variación por propiedad
+
+---
+
+## FASE 11 cont. — UX/PERFORMANCE
+
+> Fecha: 2026-05-06
+
+### 11.2 — Lazy blur images (J4)
+
+Sistema de carga progresiva:
+- CSS `.blur-wrap` con placeholder blur (12px) y scale(1.1) para evitar bordes
+- Transición de opacidad .4s al cargar imagen real
+- `scripts.js` IntersectionObserver con rootMargin 200px para pre-carga
+- Clase `.loaded` remueve blur y muestra imagen final
+
+### 11.3 — Amenidades en tarjetas (I5)
+
+Tags de amenidades en cards del listado (`listado-propiedades.js`):
+- Máximo 3 amenidades visibles con iconos emoji (Piscina, Vista al mar, AC, etc.)
+- Badge "+N" si hay más amenidades
+- Estilos píldora con fondo gris claro (`.amenity-tags`, `.amenity-tag`)
+
+---
+
+## FASE 7 cont. — CONVERSIÓN
+
+> Fecha: 2026-05-06
+
+### 7.4 — Alertas de propiedades (F4)
+
+Sistema de alertas en listados (`listado-propiedades.js`):
+- Botón "🔔 Guardar alerta" aparece cuando hay filtros activos
+- Modal con nombre y WhatsApp del interesado
+- Guarda en localStorage (`altorra:alerts`)
+- Envía mensaje pre-armado a WhatsApp con criterios de búsqueda
+- Agregado `#alertBtnWrap` en 4 páginas: comprar, arrendar, alojamientos, búsqueda
+- Estilo `.btn-save-alert` con borde dorado y hover animado
+
+---
+
+## FASE 12 — SEO AVANZADO
+
+> Fecha: 2026-05-06
+
+### 12.1 — Structured data RealEstateAgent (K2)
+
+Schema.org `RealEstateAgent` agregado a `index.html`:
+- Nombre, URL, logo, imagen, descripción, teléfono, email
+- Dirección (Cartagena, Bolívar, CO) con GeoCoordinates
+- areaServed: Cartagena de Indias
+- sameAs: Instagram, Facebook, TikTok, YouTube
+- priceRange para rich snippets
+- BreadcrumbList también agregado al Home (faltaba)
+
+---
+
+## AUDITORÍA — CIERRE DE GAPS
+
+> Fecha: 2026-05-06
+
+### Gap J1 — BreadcrumbList en blog template
+
+- `blog/_plantilla-post.html`: agregado BreadcrumbList JSON-LD con placeholders `{{TITULO}}` y `{{SLUG}}`
+- Los 6 posts existentes ya tenían BreadcrumbList (no se modificaron)
+
+### Gap J3 — Firebase y components.js en páginas faltantes
+
+3 páginas actualizadas:
+- `servicios-mantenimiento.html`: +firebase-config.js, +components.js, +header/footer placeholders
+- `servicios-mudanzas.html`: idem
+- `turismo-inmobiliario.html`: idem
+
+### Gap J4 — deploy-info.json actualizado
+
+- Versión actualizada a 2026-05-06 con commit actual
+
+---
+
+## FASE 7 cont. — CONVERSIÓN
+
+> Fecha: 2026-05-06
+
+### 7.5 — Calendario de disponibilidad (F8)
+
+Calendario visual en `detalle-propiedad.html` (solo operación dias/alojamientos):
+- Mini-calendario mensual con grid 7 columnas (Lu-Do)
+- Navegación prev/next por mes
+- Estados: disponible (verde), reservado (rojo tachado), pasado (gris), hoy (borde dorado)
+- Leyenda de colores
+- Datos simulados con seed determinístico por propiedad
+- CSS responsive integrado en la página
+
+---
+
+## MEJORAS MULTI-PÁGINA — UX, SEO, CONVERSIÓN
+
+> Fecha: 2026-05-07
+
+### Comparador visible en tarjetas
+
+- Botón ⚖ "Comparar" en cada tarjeta del listado (aparece en hover)
+- Integración con `window.AltorraComparador.add(prop)`
+- Estilo: botón semitransparente top-left, dorado cuando activo
+
+### Precio por m² en tarjetas
+
+- Indicador `$X/m²` junto al precio en tarjetas de venta
+- Solo aparece cuando hay precio y m² disponibles
+- Fuente pequeña gris para no competir con el precio principal
+
+### Sección "Por qué Altorra" en home
+
+- 4 cards con iconos: servicio integral, datos de mercado, bilingüe, respuesta 24h
+- Animación reveal-fade con IntersectionObserver
+- Ubicada antes de "Publicar tu propiedad"
+
+### Info de contacto en contacto.html
+
+- 3 cards: teléfono (con link tel:), email, horarios de atención
+- Grid responsive 3→1 columnas
+
+### Tabla de bancos en simulador.html
+
+- Comparativo 6 bancos colombianos con tasas EA, plazo máximo, % financiación
+- Tabla responsive con scroll horizontal en mobile
+
+### Resumen comprar vs arrendar
+
+- 2 cards lado a lado en arrendar-vs-comprar.html
+- "Comprar es mejor si..." y "Arrendar es mejor si..."
+- 5 criterios por columna con items destacados en bold
+
+### Barra de progreso de scroll en detalle
+
+- Barra dorada fija bajo el header que avanza con el scroll
+- requestAnimationFrame para performance
+- Gradient gold → accent
+
+### FAQs en 6 landing pages de sector (SEO)
+
+6 páginas con FAQ HTML + JSON-LD FAQPage:
+- serena-del-mar.html (3 preguntas)
+- karibana.html (3 preguntas)
+- la-boquilla.html (3 preguntas)
+- manzanillo-del-mar.html (3 preguntas)
+- san-diego.html (3 preguntas)
+- el-laguito.html (3 preguntas)
+Total JSON-LD en el sitio: 106 bloques válidos
+
+---
+
+## MEJORAS — FAVORITOS + FAQs MASIVAS
+
+> Fecha: 2026-05-07
+
+### Favoritos mejorados (favoritos.html)
+
+Tarjetas de favoritos rediseñadas con:
+- Badge de operación (Venta verde, Arriendo azul, Por días naranja)
+- Ubicación con icono pin dorado (barrio, ciudad)
+- Botones de acción: WhatsApp directo + Ver detalle
+- Ordenar por: recientes, precio asc/desc, nombre A-Z
+- Compartir lista completa (Web Share API / clipboard)
+- Garajes en specs
+
+### FAQs + FAQPage JSON-LD (15 páginas nuevas)
+
+Secciones FAQ con 3 preguntas cada una + structured data:
+
+**6 landing pages de sector:**
+- cielo-mar.html — tipos de propiedad, inversión renta corta, conectividad
+- marbella.html — ventajas residenciales, arriendo, seguridad
+- el-cabrero.html — inversión, tipos de propiedad, vida cotidiana
+- pie-de-la-popa.html — qué lo hace especial, propiedades, transporte
+- alto-bosque.html — por qué vivir allí, precios, arriendo
+- tierrabomba.html — cómo llegar, inversión, servicios
+
+**6 páginas de contenido:**
+- publicar-propiedad.html — comisión, documentos, tiempo de venta
+- avaluo.html — costo, tiempo, obligatoriedad
+- quienes-somos.html — constitución legal, servicios, zonas
+- costos-cierre.html — gastos de cierre, escrituración, financiación
+- glosario-inmobiliario.html — estrato, escritura vs tradición, administración
+- guia-inversionista-2026.html — retornos, extranjeros, valorización
+
+**3 páginas de herramientas:**
+- simulador-notarial.html — gastos notariales, registro, simulación
+- arrendar-vs-comprar.html — rentabilidad, arriendos, cuota inicial
+- propiedades-baru.html — acceso, inversión, tipos de propiedad
+
+### RealEstateAgent JSON-LD en contacto.html
+
+- Schema.org RealEstateAgent con horarios de atención (L-V 8-18, S 9-13)
+- sameAs con redes sociales oficiales
+
+### Totales SEO actualizados
+
+- **128 bloques JSON-LD** en 66 archivos HTML
+- Schemas: BreadcrumbList, FAQPage, RealEstateAgent, RealEstateListing, Organization, Place, LocalBusiness
+
+---
+
+## MEJORAS — UX, CONVERSIÓN Y SEO (cont.)
+
+> Fecha: 2026-05-07
+
+### FAQs en 8 páginas adicionales
+
+FAQs HTML + FAQPage JSON-LD agregadas a:
+- costos-cierre.html — gastos de cierre, escrituración, financiación
+- glosario-inmobiliario.html — estrato, escritura vs tradición, administración
+- guia-inversionista-2026.html — retornos, extranjeros, valorización
+- estudios-mercado-cartagena.html — mercado 2026, planos vs usada, sectores
+- simulador-notarial.html — gastos notariales, registro, simulación
+- arrendar-vs-comprar.html — rentabilidad, arriendos, cuota inicial
+- propiedades-baru.html — acceso, inversión, tipos de propiedad
+- lotes-campestres-cartagena.html — precios, verificaciones, financiación
+
+### Buscador en FAQ principal (faq.html)
+
+- Input de búsqueda con filtro en tiempo real
+- Oculta secciones sin resultados
+- Contador de resultados encontrados
+
+### Breadcrumbs visuales en listados
+
+- propiedades-comprar.html: Inicio / Propiedades en venta
+- propiedades-arrendar.html: Inicio / Propiedades en arriendo
+- propiedades-alojamientos.html: Inicio / Alojamientos por días
+
+### Count-up animado (trust bar)
+
+- scripts.js: animación con easing cúbico de 800ms
+- Los números suben de 0 al valor real en vez de aparecer de golpe
+
+### Botón "Volver arriba" global
+
+- footer.html: botón dorado fijo en bottom-right
+- Aparece al hacer scroll >600px con opacity+transform
+- smooth scroll al tope
+
+### Estimador de renta mensual (detalle-propiedad.html)
+
+- Solo para propiedades de venta con precio >$50M
+- Rango 0.5-0.7% mensual sobre valor
+- Rendimiento anual estimado 6-8.4% EA
+- Card sutil con gradiente dorado en sidebar
+
+### Indicador "tiempo en mercado" (tarjetas de listado)
+
+- getTimeAgo(): "Hoy", "Ayer", "Hace X días", "Hace X sem", "Hace X meses"
+- Propiedades con <=7 días marcadas en verde como nuevas
+- CSS .time-ago y .time-ago.new
+
+### Totales SEO actualizados
+
+- **130+ bloques JSON-LD** en 66+ archivos HTML
+- deploy-info.json actualizado a 2026-05-07
+
+---
+
+*Última actualización: 2026-05-07*

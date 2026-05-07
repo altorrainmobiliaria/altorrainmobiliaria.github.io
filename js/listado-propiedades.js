@@ -117,6 +117,15 @@
     return formatted;
   }
 
+  function getPricePerSqm(p) {
+    var op = IS_BUSQUEDA ? String(p.operation || '').toLowerCase() : PAGE_MODE;
+    if (op !== 'comprar' && op !== '' && op !== undefined) return '';
+    if (!p.price || !p.sqm || p.sqm <= 0) return '';
+    var perSqm = Math.round(p.price / p.sqm);
+    if (perSqm < 100000) return '';
+    return ' <span class="price-sqm">$' + formatCOP(perSqm) + '/m²</span>';
+  }
+
   function buildWhatsAppLink(p) {
     const detailsUrl = new URL('detalle-propiedad.html?id=' + encodeURIComponent(p.id), location.href).href;
     const price = getPriceLabel(p);
@@ -171,6 +180,40 @@
     return badges.join('');
   }
 
+  function getTimeAgo(p) {
+    var d = p.added || p.createdAt;
+    if (!d) return '';
+    var ts;
+    if (typeof d === 'string') ts = new Date(d).getTime();
+    else if (d && d.seconds) ts = d.seconds * 1000;
+    else if (d instanceof Date) ts = d.getTime();
+    else return '';
+    if (isNaN(ts)) return '';
+    var days = Math.floor((Date.now() - ts) / 86400000);
+    if (days < 0) return '';
+    var label;
+    if (days === 0) label = 'Hoy';
+    else if (days === 1) label = 'Ayer';
+    else if (days < 7) label = 'Hace ' + days + ' días';
+    else if (days < 30) label = 'Hace ' + Math.floor(days / 7) + ' sem';
+    else if (days < 365) label = 'Hace ' + Math.floor(days / 30) + ' mes' + (Math.floor(days / 30) > 1 ? 'es' : '');
+    else return '';
+    var isNew = days <= 7;
+    return '<span class="time-ago' + (isNew ? ' new' : '') + '">' + label + '</span>';
+  }
+
+  function getAmenityTags(p) {
+    var feats = p.features || p.amenidades || [];
+    if (!feats.length) return '';
+    var icons = {'Piscina':'🏊','Vista al mar':'🌊','Aire Acondicionado':'❄️','Balcón':'🌅','Ascensor':'🛗','Portería/Vigilancia':'🔒','Gimnasio':'🏋️','Amoblado':'🛋️','Jacuzzi':'🛁','BBQ':'🔥','Terraza':'☀️'};
+    var shown = feats.slice(0, 3);
+    var html = '<div class="amenity-tags">';
+    shown.forEach(function(f){ html += '<span class="amenity-tag">' + (icons[f] || '✓') + ' ' + escapeHtml(f) + '</span>'; });
+    if (feats.length > 3) html += '<span class="amenity-tag amenity-more">+' + (feats.length - 3) + '</span>';
+    html += '</div>';
+    return html;
+  }
+
   function createCard(p) {
     const card = document.createElement('article');
     card.className = 'card';
@@ -190,11 +233,13 @@
         <button class="fav-btn" type="button" aria-label="Guardar favorito" aria-pressed="false" data-prop-id="${escapeHtml(p.id)}">
           <span class="heart">♡</span>
         </button>
+        <button class="compare-btn" type="button" aria-label="Agregar al comparador" data-prop-id="${escapeHtml(p.id)}" title="Comparar">⚖</button>
       </div>
       <div class="meta">
         <h3>${escapeHtml(p.title)}</h3>
-        <div class="price">${getPriceLabel(p)}</div>
-        <div class="specs">${p.beds ? p.beds + 'H · ' : ''}${p.baths ? p.baths + 'B · ' : ''}${p.sqm ? p.sqm + ' m² · ' : ''}${escapeHtml(p.city)} · ${capitalize(p.type)}</div>
+        <div class="price">${getPriceLabel(p)}${getPricePerSqm(p)}</div>
+        <div class="specs">${p.beds ? p.beds + 'H · ' : ''}${p.baths ? p.baths + 'B · ' : ''}${p.sqm ? p.sqm + ' m² · ' : ''}${escapeHtml(p.city)} · ${capitalize(p.type)} ${getTimeAgo(p)}</div>
+        ${getAmenityTags(p)}
         <div class="cta">
           <a class="btn btn-primary" href="detalle-propiedad.html?id=${encodeURIComponent(p.id)}">Ver detalles</a>
           <a class="btn btn-ghost" href="${buildWhatsAppLink(p)}" target="_blank" rel="noopener">WhatsApp</a>
@@ -203,8 +248,17 @@
     `;
 
     card.addEventListener('click', (e) => {
-      if (e.target.closest('.cta') || e.target.closest('.fav-btn')) return;
+      if (e.target.closest('.cta') || e.target.closest('.fav-btn') || e.target.closest('.compare-btn')) return;
       window.location.href = 'detalle-propiedad.html?id=' + encodeURIComponent(p.id);
+    });
+
+    var cmpBtn = card.querySelector('.compare-btn');
+    if (cmpBtn) cmpBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (window.AltorraComparador) {
+        window.AltorraComparador.add(p);
+        this.classList.toggle('active', window.AltorraComparador.has(p.id));
+      }
     });
 
     return card;
@@ -412,6 +466,65 @@
     });
   }
 
+  function renderAlertButton() {
+    var container = document.getElementById('alertBtnWrap');
+    if (!container) return;
+    var hasFilters = !!(
+      (document.getElementById('f-search')?.value||'').trim() ||
+      (document.getElementById('f-city')?.value||'') ||
+      (document.getElementById('f-type')?.value||'') ||
+      (document.getElementById('f-min')?.value||'') ||
+      (document.getElementById('f-max')?.value||'')
+    );
+    if (!hasFilters) { container.innerHTML=''; return; }
+    container.innerHTML = '<button type="button" class="btn-save-alert" id="btnSaveAlert">🔔 Guardar alerta</button>';
+    document.getElementById('btnSaveAlert').addEventListener('click', showAlertModal);
+  }
+
+  function showAlertModal() {
+    if (document.getElementById('alertModal')) return;
+    var filters = {
+      operacion: PAGE_MODE || '',
+      ciudad: document.getElementById('f-city')?.value||'',
+      tipo: document.getElementById('f-type')?.value||'',
+      precioMin: document.getElementById('f-min')?.value||'',
+      precioMax: document.getElementById('f-max')?.value||'',
+      busqueda: (document.getElementById('f-search')?.value||'').trim()
+    };
+    var desc = Object.entries(filters).filter(function(e){return e[1];}).map(function(e){return e[0]+': '+e[1];}).join(', ');
+    var modal = document.createElement('div');
+    modal.id='alertModal';
+    modal.style.cssText='position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);backdrop-filter:blur(4px)';
+    modal.innerHTML='<div style="background:#fff;border-radius:18px;padding:32px;max-width:420px;width:90%;box-shadow:0 20px 50px rgba(0,0,0,.15)">'
+      +'<h3 style="margin:0 0 8px;font-weight:800;font-size:1.2rem">🔔 Crear alerta de propiedades</h3>'
+      +'<p style="margin:0 0 16px;font-size:.88rem;color:var(--muted)">Te avisaremos por WhatsApp cuando llegue una propiedad que coincida con tu búsqueda.</p>'
+      +'<div style="background:#f9fafb;border-radius:10px;padding:12px;margin-bottom:16px;font-size:.82rem;color:var(--muted)"><strong>Filtros:</strong> '+escapeHtml(desc||'Todos')+'</div>'
+      +'<label style="display:block;margin-bottom:12px"><span style="font-weight:700;font-size:.85rem;display:block;margin-bottom:4px">Tu nombre</span><input id="alert-name" type="text" placeholder="Nombre" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid rgba(0,0,0,.12);font-family:inherit;font-size:.92rem"/></label>'
+      +'<label style="display:block;margin-bottom:16px"><span style="font-weight:700;font-size:.85rem;display:block;margin-bottom:4px">WhatsApp</span><input id="alert-phone" type="tel" placeholder="+57 300 123 4567" style="width:100%;padding:10px 14px;border-radius:10px;border:1px solid rgba(0,0,0,.12);font-family:inherit;font-size:.92rem"/></label>'
+      +'<div style="display:flex;gap:10px"><button id="alertSubmit" type="button" style="flex:1;padding:12px;border-radius:12px;border:none;background:linear-gradient(90deg,var(--accent),#ffd95e);font-weight:800;cursor:pointer;font-size:.95rem">Activar alerta</button>'
+      +'<button id="alertClose" type="button" style="padding:12px 18px;border-radius:12px;border:1px solid rgba(0,0,0,.08);background:#fff;cursor:pointer;font-weight:700;font-size:.95rem">Cancelar</button></div></div>';
+    document.body.appendChild(modal);
+    modal.addEventListener('click',function(e){if(e.target===modal)closeAlertModal();});
+    document.getElementById('alertClose').addEventListener('click',closeAlertModal);
+    document.getElementById('alertSubmit').addEventListener('click',function(){
+      var name=(document.getElementById('alert-name')?.value||'').trim();
+      var phone=(document.getElementById('alert-phone')?.value||'').trim();
+      if(!name||!phone){window.AltorraUtils&&window.AltorraUtils.showToast?window.AltorraUtils.showToast('Completa nombre y teléfono','warning'):alert('Completa nombre y teléfono');return;}
+      var saved=JSON.parse(localStorage.getItem('altorra:alerts')||'[]');
+      saved.push({name:name,phone:phone,filters:filters,created:new Date().toISOString()});
+      localStorage.setItem('altorra:alerts',JSON.stringify(saved));
+      var msg='Hola! Soy '+name+'. Quiero recibir alertas de propiedades con estos criterios: '+desc+'. Mi WhatsApp: '+phone;
+      window.open('https://wa.me/573002439810?text='+encodeURIComponent(msg),'_blank');
+      closeAlertModal();
+      if(window.AltorraUtils&&window.AltorraUtils.showToast)window.AltorraUtils.showToast('Alerta guardada ✓','success');
+    });
+  }
+
+  function closeAlertModal(){
+    var m=document.getElementById('alertModal');
+    if(m)m.remove();
+  }
+
   function reapply() {
     filteredProperties = applyFilters();
     updateResultsCount(allProperties.length, filteredProperties.length);
@@ -420,6 +533,7 @@
     updateLoadMoreButton(filteredProperties.length);
     renderSearchBanner();
     renderActiveChips();
+    renderAlertButton();
     // B8: Preserve view mode after re-render
     const grid = document.getElementById('list');
     if (grid && currentView === 'list') grid.classList.add('view-list');

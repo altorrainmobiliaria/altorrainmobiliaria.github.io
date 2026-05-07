@@ -79,7 +79,13 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
 <a class="skip-link" href="#main">Saltar al contenido principal</a>
 <div id="header-placeholder"></div>
 
-<main id="main" style="padding-bottom:32px">
+<nav aria-label="Ubicación" style="max-width:var(--page-max);margin:0 auto;padding:calc(var(--header-h) + 12px) 16px 0;font-size:.82rem;color:var(--muted)">
+  <a href="index.html" style="color:var(--muted);text-decoration:none">Inicio</a>
+  <span style="margin:0 6px">/</span>
+  <span style="color:var(--text);font-weight:600">Alojamientos por días</span>
+</nav>
+
+<main id="main" style="padding-bottom:32px;padding-top:8px">
 <section aria-label="Filtros de búsqueda" class="filters">
   <div class="filters-main">
     <div class="control" style="flex:2;min-width:280px">
@@ -177,6 +183,7 @@ footer{background:#0b0b0b;color:#fff;padding:36px 16px}
 
 <div id="searchBanner" class="search-banner" style="display:none"></div>
 <div id="activeChips" class="active-chips"></div>
+<div id="alertBtnWrap" style="padding:0 16px"></div>
 
 <!-- B7/B8: Toolbar con contador, sort inline y toggle grid/lista -->
 <div class="results-toolbar">
