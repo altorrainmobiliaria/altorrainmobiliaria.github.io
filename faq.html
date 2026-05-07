@@ -54,6 +54,10 @@
   </div>
 
   <main id="main" class="faq-wrap">
+    <div style="margin-bottom:24px">
+      <input type="text" id="faq-search" placeholder="Buscar pregunta..." aria-label="Buscar en preguntas frecuentes" style="width:100%;padding:14px 18px;border:1.5px solid rgba(0,0,0,.1);border-radius:12px;font-family:Poppins,sans-serif;font-size:1rem;transition:border-color .2s;background:#fff" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(0,0,0,.1)'"/>
+      <div id="faq-search-count" style="font-size:.82rem;color:var(--muted);margin-top:6px;display:none"></div>
+    </div>
     <nav class="faq-nav" aria-label="Categorías de preguntas">
       <a href="#compra">Compra</a>
       <a href="#venta">Venta</a>
@@ -159,6 +163,37 @@
   ]
 }
 </script>
+  <script>
+  (function(){
+    var input=document.getElementById('faq-search');
+    var countEl=document.getElementById('faq-search-count');
+    if(!input)return;
+    input.addEventListener('input',function(){
+      var q=this.value.toLowerCase().trim();
+      var items=document.querySelectorAll('.faq-item');
+      var sections=document.querySelectorAll('.faq-section');
+      if(!q){
+        items.forEach(function(it){it.style.display='';});
+        sections.forEach(function(s){s.style.display='';});
+        countEl.style.display='none';
+        return;
+      }
+      var shown=0;
+      items.forEach(function(it){
+        var text=(it.textContent||'').toLowerCase();
+        var match=text.indexOf(q)!==-1;
+        it.style.display=match?'':'none';
+        if(match) shown++;
+      });
+      sections.forEach(function(s){
+        var vis=s.querySelectorAll('.faq-item:not([style*="display: none"])');
+        s.style.display=vis.length?'':'none';
+      });
+      countEl.style.display='block';
+      countEl.textContent=shown===0?'No se encontraron resultados':shown+' '+(shown===1?'resultado':'resultados');
+    });
+  })();
+  </script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",

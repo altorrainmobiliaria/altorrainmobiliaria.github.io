@@ -3307,4 +3307,55 @@ Total JSON-LD en el sitio: 106 bloques válidos
 
 ---
 
+## MEJORAS — FAVORITOS + FAQs MASIVAS
+
+> Fecha: 2026-05-07
+
+### Favoritos mejorados (favoritos.html)
+
+Tarjetas de favoritos rediseñadas con:
+- Badge de operación (Venta verde, Arriendo azul, Por días naranja)
+- Ubicación con icono pin dorado (barrio, ciudad)
+- Botones de acción: WhatsApp directo + Ver detalle
+- Ordenar por: recientes, precio asc/desc, nombre A-Z
+- Compartir lista completa (Web Share API / clipboard)
+- Garajes en specs
+
+### FAQs + FAQPage JSON-LD (15 páginas nuevas)
+
+Secciones FAQ con 3 preguntas cada una + structured data:
+
+**6 landing pages de sector:**
+- cielo-mar.html — tipos de propiedad, inversión renta corta, conectividad
+- marbella.html — ventajas residenciales, arriendo, seguridad
+- el-cabrero.html — inversión, tipos de propiedad, vida cotidiana
+- pie-de-la-popa.html — qué lo hace especial, propiedades, transporte
+- alto-bosque.html — por qué vivir allí, precios, arriendo
+- tierrabomba.html — cómo llegar, inversión, servicios
+
+**6 páginas de contenido:**
+- publicar-propiedad.html — comisión, documentos, tiempo de venta
+- avaluo.html — costo, tiempo, obligatoriedad
+- quienes-somos.html — constitución legal, servicios, zonas
+- costos-cierre.html — gastos de cierre, escrituración, financiación
+- glosario-inmobiliario.html — estrato, escritura vs tradición, administración
+- guia-inversionista-2026.html — retornos, extranjeros, valorización
+
+**3 páginas de herramientas:**
+- simulador-notarial.html — gastos notariales, registro, simulación
+- arrendar-vs-comprar.html — rentabilidad, arriendos, cuota inicial
+- propiedades-baru.html — acceso, inversión, tipos de propiedad
+
+### RealEstateAgent JSON-LD en contacto.html
+
+- Schema.org RealEstateAgent con horarios de atención (L-V 8-18, S 9-13)
+- sameAs con redes sociales oficiales
+
+### Totales SEO actualizados
+
+- **128 bloques JSON-LD** en 66 archivos HTML
+- Schemas: BreadcrumbList, FAQPage, RealEstateAgent, RealEstateListing, Organization, Place, LocalBusiness
+
+---
+
 *Última actualización: 2026-05-07*
