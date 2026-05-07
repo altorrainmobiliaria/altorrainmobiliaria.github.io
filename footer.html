@@ -86,3 +86,19 @@
     © 2026 Altorra Inmobiliaria — Hecho con confianza.
   </div>
 </footer>
+<button id="btn-top" aria-label="Volver arriba" style="position:fixed;bottom:90px;right:20px;width:44px;height:44px;border-radius:50%;background:var(--gold);color:#000;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(10px);transition:opacity .25s,transform .25s;z-index:120;pointer-events:none">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+<script>
+(function(){
+  var btn=document.getElementById('btn-top');
+  if(!btn)return;
+  var shown=false;
+  window.addEventListener('scroll',function(){
+    var y=window.scrollY||document.documentElement.scrollTop;
+    if(y>600&&!shown){shown=true;btn.style.opacity='1';btn.style.transform='translateY(0)';btn.style.pointerEvents='auto';}
+    else if(y<=600&&shown){shown=false;btn.style.opacity='0';btn.style.transform='translateY(10px)';btn.style.pointerEvents='none';}
+  },{passive:true});
+  btn.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+})();
+</script>

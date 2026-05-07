@@ -854,6 +854,18 @@ async function init(){
     airbnbBtn.addEventListener('mouseleave', () => { airbnbBtn.style.background = 'transparent'; });
     formBlock.appendChild(airbnbBtn);
 
+    if (op === 'comprar' && prop.price && prop.price > 50000000) {
+      var rentMin = Math.round(prop.price * 0.005);
+      var rentMax = Math.round(prop.price * 0.007);
+      var yieldPct = '6-8.4';
+      var rentEst = document.createElement('div');
+      rentEst.style.cssText = 'margin-top:12px;padding:14px 16px;border-radius:12px;background:linear-gradient(135deg,rgba(212,175,55,.05),rgba(255,180,0,.03));border:1px solid rgba(212,175,55,.15)';
+      rentEst.innerHTML = '<p style="margin:0 0 4px;font-weight:700;font-size:.88rem;color:var(--text)">Renta estimada mensual</p>'
+        + '<p style="margin:0;font-size:1.15rem;font-weight:800;color:var(--gold)">$ ' + formatCOP(rentMin) + ' — $ ' + formatCOP(rentMax) + '</p>'
+        + '<p style="margin:4px 0 0;font-size:.75rem;color:var(--muted)">Rentabilidad anual aprox. ' + yieldPct + '% EA</p>';
+      formBlock.appendChild(rentEst);
+    }
+
     /* ===== Montaje ===== */
     container.innerHTML='';
     galleryDiv.appendChild(G);
