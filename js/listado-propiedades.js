@@ -180,6 +180,28 @@
     return badges.join('');
   }
 
+  function getTimeAgo(p) {
+    var d = p.added || p.createdAt;
+    if (!d) return '';
+    var ts;
+    if (typeof d === 'string') ts = new Date(d).getTime();
+    else if (d && d.seconds) ts = d.seconds * 1000;
+    else if (d instanceof Date) ts = d.getTime();
+    else return '';
+    if (isNaN(ts)) return '';
+    var days = Math.floor((Date.now() - ts) / 86400000);
+    if (days < 0) return '';
+    var label;
+    if (days === 0) label = 'Hoy';
+    else if (days === 1) label = 'Ayer';
+    else if (days < 7) label = 'Hace ' + days + ' días';
+    else if (days < 30) label = 'Hace ' + Math.floor(days / 7) + ' sem';
+    else if (days < 365) label = 'Hace ' + Math.floor(days / 30) + ' mes' + (Math.floor(days / 30) > 1 ? 'es' : '');
+    else return '';
+    var isNew = days <= 7;
+    return '<span class="time-ago' + (isNew ? ' new' : '') + '">' + label + '</span>';
+  }
+
   function getAmenityTags(p) {
     var feats = p.features || p.amenidades || [];
     if (!feats.length) return '';
@@ -216,7 +238,7 @@
       <div class="meta">
         <h3>${escapeHtml(p.title)}</h3>
         <div class="price">${getPriceLabel(p)}${getPricePerSqm(p)}</div>
-        <div class="specs">${p.beds ? p.beds + 'H · ' : ''}${p.baths ? p.baths + 'B · ' : ''}${p.sqm ? p.sqm + ' m² · ' : ''}${escapeHtml(p.city)} · ${capitalize(p.type)}</div>
+        <div class="specs">${p.beds ? p.beds + 'H · ' : ''}${p.baths ? p.baths + 'B · ' : ''}${p.sqm ? p.sqm + ' m² · ' : ''}${escapeHtml(p.city)} · ${capitalize(p.type)} ${getTimeAgo(p)}</div>
         ${getAmenityTags(p)}
         <div class="cta">
           <a class="btn btn-primary" href="detalle-propiedad.html?id=${encodeURIComponent(p.id)}">Ver detalles</a>
