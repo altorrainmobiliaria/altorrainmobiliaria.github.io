@@ -9,7 +9,8 @@
     "upload":                "node scripts/upload-to-firestore.mjs",
     "migrate-images":        "node scripts/migrate-images-to-storage.mjs",
     "delete-all-properties": "node scripts/delete-all-properties.mjs",
-    "backup":                "node scripts/backup-firestore.mjs"
+    "backup":                "node scripts/backup-firestore.mjs",
+    "brain:check":           "node scripts/brain-check.mjs"
   },
   "dependencies": {
     "firebase": "^12.9.0"
