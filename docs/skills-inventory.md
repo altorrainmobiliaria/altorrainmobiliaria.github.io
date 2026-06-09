@@ -72,3 +72,4 @@
 | `verification-before-completion` | Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming |
 | `writing-plans` | Use when you have a spec or requirements for a multi-step task, before touching code |
 | `writing-skills` | Use when creating new skills, editing existing skills, or verifying skills work before deployment |
+| `auditoria-cerebro` (2026-06-09) | 🔬 Auditoría Nivel-2 del cerebro (sondas falsables: fidelidad/frescura/retrieval-drill/MEMORY.md; cierra con GC pareado + deepAudit). Nace del comité v6 (ADR §173 cars). Byte-idéntica ×3. |
