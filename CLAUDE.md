@@ -1,4 +1,4 @@
-<!-- brain-template-version: 1.0.0 -->
+<!-- brain-template-version: 1.1.0 -->
 # CLAUDE.md — Altorra Inmobiliaria · 🧠 Tronco Encefálico (Router Neuronal)
 
 > **Este archivo se auto-carga en CADA sesión.** Es el enrutador central del
@@ -162,9 +162,11 @@ Al iniciar una conversación nueva estás **estrictamente obligado** a leer SOLO
 ### G.3 — Protocolo de Consolidación (sinapsis)
 La memoria fluye en una dirección: Corto Plazo → Largo Plazo. **Por cada tarea finalizada**: actualiza `10`. **Cuando se cierra por completo**: MUEVE el recuerdo a `99` (ADR, formato §2) + fila en `00`, marca su `TODO-NN` ✅, y retíralo de `10`. **Regla de Oro**: NUNCA documentes historial ni tareas en este `CLAUDE.md`.
 
+**Regla de PROPIEDAD (SSoT)**: un hecho = UN nodo dueño; el resto APUNTA (estado→05 · dominio→lóbulo · WIP→10 · decisión→99). **Regla de ADMISIÓN (anti-teatro)**: toda regla nueva declara su gate del linter o lleva [HONOR] explícito.
+
 ### G.4 — Sistema Autónomo de Auto-construcción (neuroplasticidad, bajo TU guía)
 Reflejos VINCULANTES que disparas con juicio durante el trabajo normal, **sin que el usuario los pida**:
-- **Captura**: TODO conocimiento reutilizable → su neurona ANTES de cerrar (bug/lección → `30`; arquitectura → `20`; WIP → `10`; decisión cerrada → `99` + `00`). **Deliberación** (comité / consejo externo / workflow, cara de reproducir) → CRUDO a `docs/research-archive/` (`archiveDir` del manifest) + SÍNTESIS con *callejones probados* ANTES de cerrar (el sacrificio de investigación ES conocimiento; perderlo = re-investigar).
+- **Captura**: TODO conocimiento reutilizable → su neurona ANTES de cerrar (bug/lección → `30`; arquitectura → `20`; WIP → `10`; decisión cerrada → `99` + `00`). **Deliberación** (comité / consejo externo / workflow, cara de reproducir) → CRUDO al `archiveDir` del manifest (bóveda privada `../brain-private/`) + SÍNTESIS con *callejones probados* ANTES de cerrar (el sacrificio de investigación ES conocimiento; perderlo = re-investigar).
 - **Neurogénesis**: conocimiento reutilizable que no encaja y crecerá → crea `docs/NN-NOMBRE.md` + (1) fila en §0, (2) registro en `00`, (3) bitácora. Anti-fragmentación: si dudas, apéndalo. Lóbulos hijos (`41`…) solo con contenido real (Trigger 🔵).
 - **Frescura**: si mueves/creas/renombras/eliminas un componente/ruta/flujo → actualiza `20` en el MISMO cambio.
 - **Higiene = GC**: `10` es pizarra (cap ~110). Al cerrar tarea, si supera el cap → poda: consolida a `99`/`30`, recorta `10` al foco vivo. ⛔ Nunca volcar a `99` sin convertir en ADR.

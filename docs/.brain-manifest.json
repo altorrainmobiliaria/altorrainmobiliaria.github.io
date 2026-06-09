@@ -1,5 +1,5 @@
 {
-  "brainTemplateVersion": "1.0.0",
+  "brainTemplateVersion": "1.1.0",
   "repo": "altorrainmobiliaria",
   "_comment": "Config INSTANCE del cerebro (topes/budgets). El linter scripts/brain-check.mjs es KERNEL (idéntico en los 3 repos); estos budgets son por-repo. chars = unidad real de contexto (plan v5 §6). NO auto-cargado: solo lo lee el linter.",
   "bootCharsTarget": 31500,
@@ -38,5 +38,24 @@
       "chars": 16000
     }
   },
-  "archiveDir": "docs/research-archive"
+  "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",
+  "staleDays": 10,
+  "kernelFiles": [
+    "scripts/brain-check.mjs",
+    "scripts/brain-diff.mjs"
+  ],
+  "ignoreDirs": [
+    "bersaglio-design"
+  ],
+  "orphanAllowlist": [],
+  "peers": [
+    "../altorracars.github.io",
+    "../bersagliojewelry.github.io"
+  ],
+  "deepAudit": {
+    "last": "2026-06-09",
+    "coveredHeaderCount": null,
+    "maxAdrGap": 12,
+    "maxDays": 30
+  }
 }
