@@ -164,13 +164,13 @@ La memoria fluye en una dirección: Corto Plazo → Largo Plazo. **Por cada tare
 
 ### G.4 — Sistema Autónomo de Auto-construcción (neuroplasticidad, bajo TU guía)
 Reflejos VINCULANTES que disparas con juicio durante el trabajo normal, **sin que el usuario los pida**:
-- **Captura**: TODO conocimiento reutilizable → su neurona ANTES de cerrar (bug/lección → `30`; arquitectura → `20`; WIP → `10`; decisión cerrada → `99` + `00`).
+- **Captura**: TODO conocimiento reutilizable → su neurona ANTES de cerrar (bug/lección → `30`; arquitectura → `20`; WIP → `10`; decisión cerrada → `99` + `00`). **Deliberación** (comité / consejo externo / workflow, cara de reproducir) → CRUDO a `research-archive/` + SÍNTESIS con *callejones probados* ANTES de cerrar (el sacrificio de investigación ES conocimiento; perderlo = re-investigar).
 - **Neurogénesis**: conocimiento reutilizable que no encaja y crecerá → crea `docs/NN-NOMBRE.md` + (1) fila en §0, (2) registro en `00`, (3) bitácora. Anti-fragmentación: si dudas, apéndalo. Lóbulos hijos (`41`…) solo con contenido real (Trigger 🔵).
 - **Frescura**: si mueves/creas/renombras/eliminas un componente/ruta/flujo → actualiza `20` en el MISMO cambio.
 - **Higiene = GC**: `10` es pizarra (cap ~110). Al cerrar tarea, si supera el cap → poda: consolida a `99`/`30`, recorta `10` al foco vivo. ⛔ Nunca volcar a `99` sin convertir en ADR.
 - **Auto-auditoría (arranque Y pre-cierre)**: corre **`npm run brain:check`**. Al arrancar: si reporta problemas o `05`/`10` viejos → arréglalos ANTES. Antes de cerrar/idle — PROACTIVO: barrido holístico (brain:check + frescura vs git real) → cerebro impecable para el próximo "tú".
 - **Auto-mejora / Autocrítica / Desafío Crítico**: llena vacíos; si el cerebro contribuyó a un error nombra el DEFECTO y corrígelo (`30 §Meta`); cuestiona reglas con EVIDENCIA verificable.
-- **Cierre (anti "lo documento después")**: una tarea NO está cerrada hasta verificar: ¿`10` refleja el progreso? ¿`05` si cambió la salud? ¿decisión → ADR en `99` + `00`? ¿lección → `30`? ¿cache bump §4? ¿`brain:check` SANO? Si falta algo, vuelve y hazlo.
+- **Cierre (anti "lo documento después")**: una tarea NO está cerrada hasta verificar: ¿`10` refleja el progreso? ¿`05` si cambió la salud? ¿decisión → ADR en `99` + `00`? ¿lección → `30`? ¿cache bump §4? ¿`brain:check` SANO? **¿hubo deliberación (comité/Gemini/workflow)? → CRUDO + SÍNTESIS enlazados, o la tarea está INCOMPLETA** (✅ con deliberación no capturada = NO cerrada). Si falta algo, vuelve y hazlo.
 - **Catalogación de Skills**: skill nueva en `skills/` o `~/.claude/skills/` → documéntala en el inventario de skills del repo (`skills-inventory`, créalo si hace falta) en el mismo cambio. Backstop: `brain:check` check #6.
 
 **🛡️ Límite de guardián**: los reflejos ENRIQUECEN, nunca borran a la ligera. Eliminar/reescribir conocimiento histórico exige certeza verificada (§3.3). Ante la duda: **apendar, no sobrescribir; cuarentenar en `_legacy/`, no borrar.**
