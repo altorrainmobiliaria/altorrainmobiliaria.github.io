@@ -44,13 +44,20 @@
     "scripts/brain-check.mjs",
     "scripts/brain-diff.mjs"
   ],
-  "ignoreDirs": [
-    "bersaglio-design"
-  ],
   "orphanAllowlist": [],
   "peers": [
     "../altorracars.github.io",
     "../bersagliojewelry.github.io"
+  ],
+  "ssotFacts": [
+    {
+      "regex": "altorra-pwa-v\\d+",
+      "owner": "docs/05-ESTADO-GLOBAL.md",
+      "scan": [
+        "docs/10-MEMORIA-CORTO-PLAZO.md"
+      ],
+      "_que": "version de cache PWA: vive SOLO en 05 (activa el gate SSoT, antes inerte - harmonizacion cross-repo, cf. bersaglio H-06 / cars §207)"
+    }
   ],
   "deepAudit": {
     "last": "2026-06-09",
