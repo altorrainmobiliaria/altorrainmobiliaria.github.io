@@ -60,9 +60,10 @@
     }
   ],
   "deepAudit": {
-    "last": "2026-06-09",
-    "coveredHeaderCount": null,
+    "last": "2026-06-15",
+    "coveredHeaderCount": 12,
     "maxAdrGap": 12,
-    "maxDays": 30
+    "maxDays": 30,
+    "_que": "Nivel-2 #1 REAL con artefacto (ADR §12, inline) — antes 2026-06-09 era fachada (fecha de instalacion del cerebro, sin auditoria ni artefacto)"
   }
 }

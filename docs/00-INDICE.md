@@ -12,6 +12,7 @@
 |---|---|
 | Identidad, stack, reglas absolutas, gobernanza | `CLAUDE.md` |
 | Estado actual (build/cache/branch/flags) | `05-ESTADO-GLOBAL` |
+| ¿Está desplegado? / antes de afirmar qué hay en PRODUCCIÓN / "ya pusheé" | `git fetch` + `git log origin/main` SIEMPRE; el `05` se auto-marca "no re-verificado" → NO autoritativo sin git real (§3.3) |
 | En qué se está trabajando / pendientes (TODO-NN) | `10-MEMORIA-CORTO-PLAZO` |
 | Dónde vive un componente, flujo, **schema Firestore**, blog | `20-MEMORIA-ESPACIAL` |
 | Un bug/síntoma que "te suena", receta, gotcha | `30-LECCIONES` |
@@ -43,6 +44,7 @@
 | §09 | Mega-Plan Fases 1-12 + FAQs masivas | 52 |
 | §10 | §12 rescatado: smart-search + referencia Cars 1:1 | 58 |
 | §11 | Instalación del cerebro neuronal (2026-06-09) | 80 |
+| §12 | Auditoría Nivel-2 #1 REAL (mata la fachada del deepAudit) | 92 |
 
 ---
 
