@@ -1,13 +1,13 @@
 # 🩺 05 — ESTADO GLOBAL (Altorra Inmobiliaria · Heartbeat)
 
 > Nodo de signos vitales. Se **AUTO-CARGA** (con `CLAUDE.md` + `10`). "¿En qué estado está el sistema AHORA?". Tope ~25 líneas (§G.5) — tablero, no bitácora.
-> ⚠️ Estado **inferido de la bitácora** (`_legacy/AVANCES.md`, hasta 2026-05-07); ~1 mes sin registrar → **NO re-verificado** contra git/Firebase de hoy. Verificar antes de afirmar (§3.3).
+> ⚠️ **git/cache RE-VERIFICADOS 2026-06-15** (auditoría Nivel-2 §12). El **PRODUCTO/Firebase** (pendientes J, deploy, CF) sigue inferido de la bitácora (`_legacy/AVANCES.md`, hasta 2026-05-07) y **NO re-verificado** — verificar antes de afirmar (§3.3).
 
-| Señal | Valor (al 2026-05-07, no re-verificado) |
+| Señal | Valor (git/cache al **2026-06-15** ✅ · producto al 2026-05-07 no re-verificado) |
 |---|---|
 | **Build** | 🟢 Sitio LIVE y dinámico en `altorrainmobiliaria.co`: catálogo 100% Firestore (5 propiedades), admin SPA (`window.IP`), 8 Cloud Functions (Node 20), 13 landings de sector, 43 páginas con BreadcrumbList, 130+ JSON-LD, blog (7 posts). 🧠 **Cerebro neuronal instalado 2026-06-09** (neurogénesis desde monolitos). |
 | **Cache version vigente** | `altorra-pwa-v4` (`service-worker.js`). Ctrl+Shift+R la 1ª vez. |
-| **Branch** | prod `main` (HEAD `165bfaa` = bump cron deploy-info). Cerebro instalándose en `cerebro/instalacion`. |
+| **Branch** | `cerebro/instalacion` (`d4e1870`, pushed; su contenido YA está en `main` — HEAD ancestro, main +7 commits CI). Verificado vs git 2026-06-15. |
 | **deploy-info** | version `2026-05-07T09:04:11Z`, commit `ddce614` (merge PR #79 — análisis competidores). |
 | **Deploy** | Lo ejecuta el **DUEÑO** (Firebase + push/merge) vía `docs/50-CONFIG-INFRA.md`. Claude solo commitea. |
 
