@@ -155,7 +155,7 @@ Al iniciar una conversación nueva estás **estrictamente obligado** a leer SOLO
 - **🧪 Experiencia**: ANTES de op riesgosa/repetitiva (deploy CF, mover archivos, tocar SW/caché/reglas) → **Memoria Procedimental** (`30`). Si un síntoma "te suena", ahí está la receta.
 - **🟢 Historia**: "por qué" de una decisión o detalle de un § → Índice → Largo Plazo.
 - **🔵 Auditoría/Dominio**: análisis especializado (seguridad/legal/UX/SEO/perf) → (1) skill relevante; (2) `40-LOBULOS`; (3) neurogénesis del hijo con contenido REAL (§G.4); (4) capturar findings + qué skill usé.
-- **🛰️ Decisión Fuerte**: ANTES de algo caro de revertir (arquitectura/datos/seguridad/legal) considera crítica adversarial del provider externo (`15-CONSEJO-EXTERNO`). Sin provider → sigo solo + marco la decisión como NO revisada.
+- **🛰️ Decisión Fuerte**: ANTES de algo caro de revertir (arquitectura/datos/seguridad/legal) considera crítica adversarial del provider externo (**asesora, NUNCA edita; el comité + el provider DEBATEN, YO delibero/decido/implemento**) (`15-CONSEJO-EXTERNO`). Sin provider → sigo solo + marco la decisión como NO revisada.
 
 **Enrutamiento semántico**: ante una duda, NO escanees el cerebro. Ve al `docs/00-INDICE.md` (capa "síntoma → neurona").
 

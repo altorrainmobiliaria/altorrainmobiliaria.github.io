@@ -21,5 +21,6 @@
 4. **Integra** como un peer-review más: adopta lo correcto, refuta con razón lo que no, sintetiza. Insumo, no oráculo.
 
 ## §3 — Límites
+- 🚫 **El consejero externo (Gemini vía Antigravity) NUNCA edita el repo.** Es un IDE agéntico (PUEDE editar), pero aquí es de **SOLO-LECTURA**: recibe únicamente prompts de **CRÍTICA** (preguntas/hallazgos), JAMÁS tareas de implementación. **El comité interno ×3 + el consejero DEBATEN/aportan hallazgos; quien DELIBERA, DECIDE e IMPLEMENTA (edita/commitea/pushea) es Claude** — ellos asesoran, yo resuelvo. (Aprendido en Altorra Cars 2026-06-19: un mensaje de implementación suelto que se pega en Antigravity le abre la puerta a editar en paralelo → colisión; cerrar el ciclo end-to-end uno mismo lo evita.)
 - El modelo externo puede equivocarse (verifica sus afirmaciones contra el código, §3.3). No tiene memoria del proyecto.
 - Registra en el ADR qué aportó/cambió la 2ª opinión y qué refutaste.
