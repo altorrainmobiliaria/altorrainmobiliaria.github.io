@@ -14,8 +14,8 @@
 - **NO**: lo rutinario/reversible (el comité interno ×3 `comite-expertos` basta). No todo necesita 2ª opinión externa.
 
 ## §2 — Cómo (protocolo)
-1. **Prompt autocontenido**: el provider externo NO ve el repo ni el cerebro — TODO el contexto va en el prompt
-   (o dale las rutas si tiene acceso al repo). Estado factual, restricciones del entorno, la decisión, las preguntas.
+1. **Prompt autocontenido**: el provider externo (Gemini vía Antigravity) **SÍ ve el repo y el cerebro locales (solo-lectura)** →
+   el prompt **apunta a rutas/archivos reales** (no se pega el código a mano) + estado factual, restricciones, la decisión, las preguntas.
 2. **Anti-anclaje** (decisiones TOP): NO incluyas tu postura/respuesta para no sesgarlo; pídele su criterio independiente.
 3. **Pausa y entrégaselo al dueño** (humano en el medio). Trae la respuesta.
 4. **Integra** como un peer-review más: adopta lo correcto, refuta con razón lo que no, sintetiza. Insumo, no oráculo.

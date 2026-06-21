@@ -45,6 +45,7 @@
 | §10 | §12 rescatado: smart-search + referencia Cars 1:1 | 58 |
 | §11 | Instalación del cerebro neuronal (2026-06-09) | 80 |
 | §12 | Auditoría Nivel-2 #1 REAL (mata la fachada del deepAudit) | 92 |
+| §13 | Consejo Externo: corrección factual "el provider (Antigravity) SÍ ve el repo, solo-lectura" + skill comité ×4. Propagación de cars §224. ⟦OPUS-4.8⟧ | 100 |
 
 ---
 
