@@ -3,6 +3,7 @@
 > Dos capas: (1) **enrutamiento semántico** (síntoma/tema → neurona) para no escanear el cerebro;
 > (2) **mapa § → línea** del `99-HISTORIAL` para leerlo por offset (regla de oro anti-saturación, §0).
 > ⚠️ Las líneas son **pistas** (pueden desincronizarse). `npm run brain:check` valida el desync.
+> 🛡️ **`npm run brain:index` AUTO-RECONCILIA la columna Línea** desde los headers de `99` (cura el drift; guardián de cars TODO-32/§14). 🪦 **Tombstone**: `> ⛔ REEMPLAZADO POR §M` bajo un ADR superado = NO lo apliques, ve a §M (el guardián valida que §M exista).
 
 ---
 
@@ -46,6 +47,7 @@
 | §11 | Instalación del cerebro neuronal (2026-06-09) | 80 |
 | §12 | Auditoría Nivel-2 #1 REAL (mata la fachada del deepAudit) | 92 |
 | §13 | Consejo Externo: corrección factual "el provider (Antigravity) SÍ ve el repo, solo-lectura" + skill comité ×4. Propagación de cars §224. ⟦OPUS-4.8⟧ | 100 |
+| §14 | Guardián del índice `brain-index.mjs`: auto-reconcilia §→línea + valida tombstones (de cars TODO-32/§229). ⟦OPUS-4.8⟧ | 104 |
 
 ---
 

@@ -42,7 +42,8 @@
   "staleDays": 10,
   "kernelFiles": [
     "scripts/brain-check.mjs",
-    "scripts/brain-diff.mjs"
+    "scripts/brain-diff.mjs",
+    "scripts/brain-index.mjs"
   ],
   "orphanAllowlist": [],
   "peers": [
