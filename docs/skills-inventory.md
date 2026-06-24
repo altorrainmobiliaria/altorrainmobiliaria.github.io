@@ -162,6 +162,10 @@ de mis capacidades. Implicaciones:
 | `comite-expertos` | Comité de expertos ×3 que mejora una respuesta (expertos por tema + peer-review anónimo + presidente; 2ª voz Gemini en Decisión Fuerte). Portable. **Versionada en `skills/`** (§171). | ✅ repo+user |
 | `arquitecto-software` | Piensa como arquitecto ANTES de codear (6 lentes + IAP). Domain-neutral. **Versionada en `skills/`** (§171). | ✅ repo+user |
 | `Asesor_Critico_Honesto` (`asesor-critico-honesto`) | Feedback crítico honesto sobre ideas/planes | ✅ |
+| `proceso-decision-fuerte` | Pipeline Decisión Fuerte (verificar→comité→Gemini→verificar cada claim→veredicto→impl por fase) para lo caro de revertir. Portable. | ✅ |
+| `validacion-live-chrome` | Validación LIVE post-merge vía extensión Claude-in-Chrome (Claude la maneja DIRECTO; 7 dimensiones adversariales). Portable. | ✅ |
+| `anti-codigo-muerto` | Caza/cuarentena de código muerto/viejo (anti-Knight-Capital); gate `deadcode:check`. Portable. | ✅ |
+| `meta-ads-diagnostico` | Diagnóstico de campañas Meta Ads (FB/IG). Portable. | ✅ |
 
 ---
 
