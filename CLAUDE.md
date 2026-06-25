@@ -42,6 +42,7 @@ El cerebro se divide en **nodos**. Auto-cargas SOLO `CLAUDE.md` + `05` + `10` (�
 | 🛰️ **Consejo Externo** | `docs/15-CONSEJO-EXTERNO.md` | ❌ on-demand | Trigger de Decisión Fuerte: crítica adversarial del provider externo (de otra familia, no-Claude). Cuándo + anti-anclaje ahí. |
 | 🗺️ **Espacial** | `docs/20-MEMORIA-ESPACIAL.md` | ❌ on-demand | Trigger de Desorientación: dónde vive un componente, flujos, schema Firestore, blog. |
 | 🧪 **Procedimental (experiencia)** | `docs/30-LECCIONES.md` | ❌ on-demand | Trigger de Experiencia: ANTES de una op riesgosa/repetitiva (deploy CF, tocar caché/SW, reglas) o si un síntoma "te suena". Gotchas + recetas. |
+| 🔁 **Workflows reutilizables** | `docs/60-WORKFLOWS.md` | ❌ on-demand | Trigger de Experiencia/Auditoría: catálogo W-01..W-11. **W-11 = SSoT del flujo fuerte** (Decisión Fuerte/Diseño-UI → COMPLETO o nada + 3 artefactos: mockup·prompt-Gemini·prompt-Chrome). |
 | 🗂️ **Índice sináptico** | `docs/00-INDICE.md` | ❌ on-demand | ANTES de leer el historial (offset exacto) Y para el enrutamiento semántico (síntoma → neurona). |
 | 📚 **Largo Plazo** | `docs/99-HISTORIAL-ADR.md` | ❌ on-demand | Trigger de Error / detalle histórico de un §. NUNCA completo — usa offset/limit. |
 | 🎯 **Lóbulos de Dominio** | `docs/40-LOBULOS-DOMINIO.md` | ❌ on-demand | Trigger 🔵 §G.2: registry de dominios; lóbulos hijos (`41-MERCADO`, etc.) nacen on-demand con contenido real. |
