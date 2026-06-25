@@ -11,6 +11,7 @@
 
 | Si necesitas… | Ve a |
 |---|---|
+| Decisión Fuerte / auditoría / revisión / diseño-UI no trivial (¿aplico el flujo del dueño?) | 🔁 `60-WORKFLOWS` **W-11** (COMPLETO o nada + 3 artefactos: mockup·prompt-Gemini·prompt-Chrome) + skill `proceso-decision-fuerte` |
 | Identidad, stack, reglas absolutas, gobernanza | `CLAUDE.md` |
 | Estado actual (build/cache/branch/flags) | `05-ESTADO-GLOBAL` |
 | ¿Está desplegado? / antes de afirmar qué hay en PRODUCCIÓN / "ya pusheé" | `git fetch` + `git log origin/main` SIEMPRE; el `05` se auto-marca "no re-verificado" → NO autoritativo sin git real (§3.3) |
