@@ -50,11 +50,11 @@
 6. **CONSEJO EXTERNO** (`docs/15`, Gemini/Antigravity, **read-only**) — prompt autocontenido CRUDO (anti-anclaje). Humano en el medio; verifico cada afirmación (no oráculo).
 7. **VEREDICTO** — yo delibero y decido; criterio de éxito ANTES de codear (`verification-before-completion`).
 8. **IMPLEMENTAR.**
-9. **EXTENSIÓN / CHROME — validación LIVE en navegador REAL** (`validacion-live-chrome` + Claude-in-Chrome; NO preview headless). ⭐ **ENTREGABLE OBLIGATORIO: el "PROMPT DE CHROME"** = lista CERRADA de caminos estado-cero + borde que `caza-bugs` recorre uno a uno, reportando QUÉ recorrió (no "pasó").
+9. **EXTENSIÓN / CHROME — validación LIVE en navegador REAL** (`validacion-live-chrome` + Claude-in-Chrome; NO preview headless). ⭐ **Modo DIRECTO (default): YO conduzco la extensión** (`mcp__Claude_in_Chrome__*`; el dueño solo logueado) y entrego el **REPORTE** de la validación = la lista CERRADA de caminos estado-cero + borde que YO recorrí (QUÉ recorrí, no "pasó"). **NO entrego un prompt de Chrome** salvo FALLBACK (extensión no conectada).
 10. **CIERRE** (ADR `99` + fila `00` + lecciones `30` + cache `§4` si aplica + `brain:check`).
 
 **🔒 Los 3 artefactos visibles al dueño (si falta uno, el flujo está INCOMPLETO):**
-(a) **Mockup** del diseño (cuando es UI) · (b) **prompt de consejo externo** (Gemini, para que el dueño lo corra) · (c) **prompt de Chrome** (validación live). Entregarlos SIEMPRE, sin que el dueño los pida.
+(a) **Mockup** del diseño (cuando es UI) · (b) **prompt de consejo externo** (Gemini, para que el dueño lo corra) · (c) **validación LIVE que YO conduzco** vía la extensión Claude-in-Chrome (entrego el REPORTE, NO un prompt; el prompt es fallback si no está conectada). Entregarlos SIEMPRE, sin que el dueño los pida.
 
 ---
 
