@@ -227,3 +227,17 @@ de mis capacidades. Implicaciones:
 - **Anomalías**: 4/7 resueltas el 2026-06-03 (2 borradas + 2 renombradas); 3 quedan (2 = contenido real no-skill, 1 = bundles cosméticos).
 - El cerebro ahora **mapea el 100%** del contenido de `skills/` (antes solo nombraba ~12 en ejemplos + 2 creadas).
 | `auditoria-cerebro` (2026-06-09) | 🔬 Auditoría Nivel-2 del cerebro (sondas falsables: fidelidad/frescura/retrieval-drill/MEMORY.md; cierra con GC pareado + deepAudit). Nace del comité v6 (ADR §173 cars). Byte-idéntica ×3. |
+
+---
+
+## 💳 Wompi Colombia API v1 — paquete externo (instalado 2026-06-26)
+
+Paquete desarrollado por el dueño (Antigravity) para integraciones de pago Wompi Colombia API v1. Auditado por workflow de 63 agentes (KB de 30 módulos). Instalado global (`~/.claude/skills/` + `~/.claude/agents/`) y versionado en `skills/wompi-colombia-api-v1/` (paquete completo: `plugin/` + agentes + `WAKB/` 30 módulos + `references/`). Uso futuro: **suscripciones en Altorra Cars**; en uso en Bersaglio.
+
+| Skill / Agente | Tipo | Qué hace |
+|---|---|---|
+| `wompi-colombia-api-v1` | skill maestro | Integración completa API v1 (tarjetas, PSE, Nequi, efectivo) |
+| `wompi-api-core` | skill | Núcleo transaccional (transacciones, fuentes de pago, tokens) |
+| `wompi-webhooks-validator` | skill | Validación criptográfica (SHA-256) + idempotencia de webhooks |
+| `wompi_support_agent` | agente | Diagnóstico errores HTTP/transaccionales (401/404/422, DECLINED, webhooks) |
+| `wompi_qa_agent` | agente | Planes de prueba + edge cases (idempotencia, doble-gasto, firma falsa) |
