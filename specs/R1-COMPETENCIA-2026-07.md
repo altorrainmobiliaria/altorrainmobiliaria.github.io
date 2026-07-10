@@ -932,3 +932,14 @@
 ### P6 — Performance real (no verificable por curl)
 15. Lighthouse/CrUX móvil sobre SERP y ficha de **Ciencuadras (HTML 716KB), Fincaraíz (~690KB), La Haus (1.9MB), Metrocuadrado**: números concretos de LCP/CLS para el claim comparativo "el portal más rápido de Cartagena" (usar skill `optimizacion-rendimiento-web` como marco de medición).
 16. **Registro/login comparado**: fricción de crear cuenta en cada portal (Google One-Tap de Ciencuadras/Properati vs email+OTP) — decide el auth del marketplace de Altorra.
+
+---
+
+## 7. Lente (c) — hallazgos LIVE (navegación real, en curso 2026-07-10)
+
+### ✅ P1-Ciencuadras: precios de particulares CAPTURADOS (DOM renderizado, /publicacion-inmuebles/personas)
+- **"¡Vende o arrienda con inmobiliaria!" — GRATIS**: canaliza al particular hacia sus +1.000 aliados (venta 3% comisión, arriendo con administración) → el "plan gratis" REAL es lead-gen para inmobiliarias aliadas; el plan gratuito 3-inmuebles/90-días del blog NI aparece en esta página (probablemente solo dentro del flujo logueado).
+- **Plan Destacado — 99.900 COP**: 90 días · 20 fotos · 3 Destacados + 3 Ascendidos + cálculo de precio. ⚠️ CORRIGE la lente (a): el "~70.000" del blog 2025 está desactualizado.
+- **Turbo 360 — 249.900 COP**: 90 días · 20 fotos · 3 Destacados + 10 Ascendidos + Google Ads + Clasificados EL TIEMPO fin de semana.
+- Extra: soporte #923 · operador legal = Servicios Bolívar S.A. NIT 900.311.092-7 (footer).
+- Lectura estratégica para Altorra: el escalón de precios del mercado para particulares es 99.900-249.900 COP/90 días → nuestra "publicación gratuita generosa" (oportunidad 6) + suscripción transparente barata tiene MUCHO espacio por debajo.
