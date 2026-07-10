@@ -54,6 +54,7 @@
 | §16 | **STACK sellado** (W-11 COMPLETO): Workers+Astro híbrido+Firebase+R2+Wompi+MapLibre+Typesense-tripwire+Resend. Fallos Q1-Q7 + adenda Gemini (integrada: 4 adopciones, veto-Firestore refutado) → `specs/R5-STACK-2026-07.md`. ⟦FABLE-5⟧ | 128 |
 | §17 | **MEGA-PLAN por olas** (`specs/MEGA-PLAN-INMOBILIARIA.md` = SSoT del roadmap) + relevo a Opus 4.8 (protocolo §4 del plan; Fable audita por ola). ⟦FABLE-5⟧ | 138 |
 | §18 | **Programa R0-R5 COMPLETO en un día** (~74 agentes · 6 workflows · live) + cierre de la sesión de planificación Fable; colas menores absorbidas por el plan. ⟦FABLE-5⟧ | 145 |
+| §19 | **Ola 0.1 scaffold** del portal (Astro 7 + @astrojs/cloudflare v14 + Workers Static Assets): híbrido `output:server` (index estático + `/api/health` SSR), capa de datos FINA, CI gated. Verificado build/dry-run/dev-live + revisión ×4 lentes. Gotcha: `main` = entrypoint unificado (→ L-14). ⟦OPUS-4.8⟧ | 152 |
 
 ---
 

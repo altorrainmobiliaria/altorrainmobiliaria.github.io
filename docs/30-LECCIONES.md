@@ -71,6 +71,12 @@ a `<projNum>@cloudbuild.gserviceaccount.com`, habilitar APIs cloudbuild/eventarc
 ### L-12 — Dinero (arriendos/comisiones/pagos): método ANTES de construir *(sinapsis 2026-07-10)*
 Cuando el portal maneje plata: (1) skill global `auditoria-financiera` (7 invariantes del dinero + 4 fases; nació del incidente bersaglio §181 — traslado duplicado de $5.6M por carrera de listeners); (2) checklist del dinero de `caza-bugs §2b` al tocar cualquier flujo; (3) regla madre: JAMÁS una decisión automática (modal/bloqueo/cálculo) sobre una foto incompleta de listeners — gate de fuentes-listas o agregado server-side en UNA transacción; deshacer netea TODAS las vistas del mismo peso; los formateadores jamás recortan un negativo a "$0".
 
+### L-14 — Stack que evoluciona rápido (Astro/adapter CF): verificar versión y config contra DOCS, no de memoria *(Ola 0.1, ADR §19)*
+**Disparador**: scaffold nuevo de un stack sellado (Astro + `@astrojs/cloudflare`). **Trampa**: pinear versiones o escribir la config de memoria. Realidad 2026-07-10: `@latest` trajo Astro **7** / adapter **v14** / wrangler 4.110 / TS 7 — mayores más nuevos que el cutoff. **Gotcha load-bearing**: en Astro **6+** el `main` del `wrangler.jsonc` apunta al **entrypoint unificado** `@astrojs/cloudflare/entrypoints/server` (resuelve en `node_modules` en build-time), NO a `dist/server/entry.mjs` (no existe aún → `@cloudflare/vite-plugin` lanza "main doesn't point to an existing file"). El adapter LEE el `wrangler.jsonc` raíz y FUSIONA los bindings en el `dist/server/wrangler.json` generado. **Receta**: instalar `@latest` → build real → inspeccionar el `dist/server/wrangler.json` generado (ground truth) → `wrangler deploy --dry-run` (valida offline, sin cuenta CF) → `wrangler dev` para verificar SSR+estática en vivo. Docs: context7 `/withastro/docs` + cloudflare-docs MCP.
+
+### L-15 — Windows: `wrangler dev` deja un `workerd.exe` huérfano que bloquea `dist/` (`EPERM` en el siguiente build) *(Ola 0.1)*
+**Disparador**: tras un `wrangler dev`, el siguiente `astro build` falla en `emptyDir`/`rmdirSync` con `EPERM: \\?\...\dist\client`. **Causa**: matar el proceso *listener* de wrangler NO mata su hijo `workerd.exe`, que sigue reteniendo un handle sobre `dist/`. **Fix**: `taskkill //F //IM workerd.exe` antes de reconstruir. **Prevención**: no dejar `wrangler dev` corriendo entre builds; al terminar la verificación en vivo, matar el árbol completo (listener + workerd).
+
 ---
 
 ## Guardarraíles de diseño (vinculantes)

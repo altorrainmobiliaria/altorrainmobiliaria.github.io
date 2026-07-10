@@ -28,7 +28,7 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-17** | **⚡ ARRANQUE OPUS — Ola 0 ítem 1** (scaffold `portal/`): protocolo MEGA-PLAN §4. El dueño dirá **"Arranca la Ola 0 del MEGA-PLAN"**. En la MISMA sesión: **guiar al dueño paso a paso para crear su cuenta Cloudflare** (Ola 0.2 — protocolo Fincaraíz: él teclea credenciales en SU navegador, Claude jamás crea cuentas ni maneja contraseñas; email del negocio, no el personal). Insumos Ola 0.7: 2ª pasada .xlsx FTI-01 + piloto `ALTORRA-PILOTO-main` (crítico R4) | 🔮 OPUS | abogado = gate Ola 2 |
+| **TODO-17** | **Ola 0 — arranque Opus**: ✅ **ítem 1 scaffold `portal/` HECHO** (Astro 7 + CF Workers, híbrido; verificado build/dry-run/dev-live + revisión ×4 lentes; commit `e0751a5`, ADR §19, L-14/L-15). ▶ **AHORA Ola 0.2**: guiar al dueño a crear su cuenta Cloudflare (protocolo Fincaraíz — él teclea credenciales en SU navegador; Claude jamás crea cuentas/contraseñas; email del negocio) + bucket R2 `altorra-portal-media` + API token (scopes de CREACIÓN) + cargar secrets/`CF_DEPLOY_ENABLED`. Siguen 0.3-0.7 + carril D. Insumos 0.7: 2ª pasada .xlsx FTI-01 + piloto `ALTORRA-PILOTO-main` | 🔄 OPUS | abogado = gate Ola 2 |
 | **TODO-18** | **Carril D — Diseño D0-D4**: direcciones de marca comparativas (dueño elige) → design system → DesignSync a claude.ai → mockup por pantalla → gate fidelidad. Insumo: bóveda `ui-referentes/` | 🔮 OPUS (D0 en Ola 0.3) | paleta SIN negro |
 | **TODO-19** | **Potenciar cerebro** (kickoff §7.3): auditoría Nivel-2 (vence ~2026-07-15, staleDays) + destilar `_legacy/AVANCES.md` Fase B + evaluar lecciones candidatas C-01..C-39 (R0) contra `30` | 🔄 | |
 | **TODO-20** | **Constancias liderazgo ×3**: payloads listos en la skill; los aplican los operadores cars/bersaglio/insema en su próxima sesión | ⏸️ externo | |
@@ -38,6 +38,14 @@
 ---
 
 ## 📝 Bitácora (efímera)
+
+> **2026-07-10 (OPUS 4.8 — arranque Ola 0)**: ítem 1 scaffold `portal/` construido y verificado
+> end-to-end (build · `wrangler deploy --dry-run` · **`wrangler dev` live** · `verify:build` 5/5) →
+> commit `e0751a5` pusheado (portal-ci corre en el runner de GitHub). Config Astro 7 / adapter v14
+> verificada contra docs autoritativas, NO de memoria (§3.3): `main` = entrypoint unificado (L-14).
+> Revisión adversarial ×4 lentes (crudo → bóveda) → fixes aplicados (aislamiento inbound de
+> bump-version.yml, prereqs de deploy documentados, wranglerVersion pin, verify #5). ADR §19 + L-14/L-15.
+> **Siguiente en esta sesión**: guiar al dueño en la creación de la cuenta Cloudflare (Ola 0.2).
 
 > **2026-07-10 (SESIÓN DE PLANIFICACIÓN FABLE — cerrada, ADR §15-§18)**: en un día: obra live verificada
 > (+ caza del bug Jekyll L-13) → R0-R4 completas (~74 agentes, 6 workflows, 3 lentes live con protocolo

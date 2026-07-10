@@ -17,4 +17,4 @@
 - 🔗 **Constancias de liderazgo pendientes ×3**: payloads en `sinapsis-cerebros/references/import-{cars,bersaglio,insema}-2026-07-10-liderazgo.md` — los aplica el operador local de cada repo.
 
 ## 🧩 Sub-sistemas
-mantenimiento LIVE ✅ verificado 2026-07-10 · `admin.html` (consulta legacy) ✅ · 7 CF legacy censadas ✅ (apagado se decide en MEGA-PLAN) · sitio público viejo ⛔ RETIRADO (greenfield)
+mantenimiento LIVE ✅ verificado 2026-07-10 · `admin.html` (consulta legacy) ✅ · 7 CF legacy censadas ✅ (apagado se decide en MEGA-PLAN) · sitio público viejo ⛔ RETIRADO (greenfield) · **`portal/` scaffold ✅** (Astro 7 + CF Workers, híbrido; staging-ready GATED en `CF_DEPLOY_ENABLED` — ADR §19)
