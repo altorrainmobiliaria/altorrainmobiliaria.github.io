@@ -943,3 +943,6 @@
 - **Turbo 360 — 249.900 COP**: 90 días · 20 fotos · 3 Destacados + 10 Ascendidos + Google Ads + Clasificados EL TIEMPO fin de semana.
 - Extra: soporte #923 · operador legal = Servicios Bolívar S.A. NIT 900.311.092-7 (footer).
 - Lectura estratégica para Altorra: el escalón de precios del mercado para particulares es 99.900-249.900 COP/90 días → nuestra "publicación gratuita generosa" (oportunidad 6) + suscripción transparente barata tiene MUCHO espacio por debajo.
+
+### ⚠️ P1-Metrocuadrado (parcial): soft-404 masivo detectado
+Cualquier ruta desconocida (`/publicar-inmueble/`, `/publica-tu-inmueble`) renderiza una SERP vacía "No tenemos inmuebles que coincidan" con el path parseado como término de búsqueda (título "Inmuebles en Publica Tu Inmueble en Venta…") — soft-404 indexable = liability SEO de ellos y anti-patrón a evitar en Altorra (nuestro 404 debe ser 404 o redirect deliberado). Su flujo real de publicación vive fuera de esas rutas (probable subdominio) → sigue en la misión P2 de la próxima sesión live.
