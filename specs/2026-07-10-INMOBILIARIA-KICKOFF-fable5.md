@@ -141,6 +141,13 @@ Estado actual: operador-cars = escritor único del kernel/§G (L-31 ×cerebros).
 
 ## §9 · PÁGINA DE MANTENIMIENTO (copy listo — implementa el chat nuevo en el repo actual, 1 commit)
 
+> ⚠️ **CORRECCIÓN DEL DUEÑO (2026-07-10, post-implementación)**: el contacto público de la
+> INMOBILIARIA es **WhatsApp +57 300 243 9810** y **info@altorrainmobiliaria.co** — el
+> +57 323 501 6747 / altorracompanysas@gmail.com de abajo es el contacto REGISTRAL/personal
+> de Daniel y **NO se difunde en la web**. Además: la marca inmobiliaria **NO lleva negro**
+> (colores: dorado · plata · blanco · azul turquí); "fondo oscuro elegante" quedó SUPERADO —
+> la página live usa fondo blanco con navy+oro (CLAUDE.md §1).
+
 **Copy aprobable (es-CO, tono de marca):**
 
 > **ALTORRA Inmobiliaria**

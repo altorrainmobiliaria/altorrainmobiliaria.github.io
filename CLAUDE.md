@@ -72,7 +72,7 @@ NUNCA leas `docs/99-HISTORIAL-ADR.md` completo (puede llegar a 40k+ líneas = mu
 - **Project ID Firebase**: `altorra-inmobiliaria-345c6` (Project Number `794130975989`). Región Functions `us-central1`. CLI account `altorrainmobiliaria@gmail.com`. **Detalle infra/IAM/secrets → `docs/50-CONFIG-INFRA.md`.**
 - **Áreas**: público (`index`, `propiedades-comprar/arrendar/alojamientos`, `detalle-propiedad.html?id=`, `contacto`, `publicar-propiedad`, `favoritos`, `invertir`, blog, 13 landings de sector…) + **panel admin SPA** (`admin.html`, objeto global `window.IP`).
 - **Secrets esperados** (sin valores, en `docs/50-CONFIG-INFRA.md`): SA JSON (`sa-altorra-inmobiliaria.json`, gitignored), GitHub Actions `GOOGLE_APPLICATION_CREDENTIALS_JSON`, GMAPS/VAPID keys. La `apiKey` de Firebase es PÚBLICA (va en el frontend).
-- **Identidad visual** (NO tocar): Tipografía **Poppins** (300/500/700/800). Vars CSS `--gold #d4af37`, `--accent #ffb400`, `--bg #fff`, `--text #111827`, `--muted #6b7280`, `--card-r 18px`, footer `#0b0b0b`, `theme-color #d4af37`.
+- **Identidad de MARCA** (mandato del dueño 2026-07-10): **dorado `#d4af37` · plata · blanco · azul turquí (navy corporativo)** — la inmobiliaria **NO lleva negro** (el negro es de cars). Tipografía Poppins (heredada; revalidar en D0). Las vars CSS del sitio viejo se RETIRARON con él; el design system definitivo nace en D0/D1 (kickoff §6b).
 - **Contacto**: WhatsApp `+57 300 243 9810` (`wa.me/573002439810`), Email `info@altorrainmobiliaria.co`, IG/FB/TikTok `@altorrainmobiliaria`.
 - **Costo**: plan **Blaze** diseñado para **NO costar** (free-tier estricto — ver `20-ESPACIAL §Blaze`).
 - **Entorno**: Windows + PowerShell, repo `altorrainmobiliaria/altorrainmobiliaria.github.io`. Rama prod `main`.
@@ -93,7 +93,7 @@ Encabezado `## NN. ADR-NNN — <título>` + cita del cliente si reportó, y 7 pu
 **NN.1** Causa raíz (RCA §3.3, verificada leyendo código) · **NN.2** Solución estructural · **NN.3** No-regresión (IDs/funciones/callsites intactos, build OK) · **NN.4** Tests/verificación · **NN.5** Anti-patterns evitados (§3) · **NN.6** Archivos modificados/INTACTOS · **NN.7** Doctrina aplicada + cache bump (si aplica §4).
 
 ### Reglas git
-- **Claude commitea; el dueño hace push/merge y DESPLIEGA** (deploy Firebase = dueño vía `docs/50-CONFIG-INFRA.md`; convención del proyecto: nunca abrir PR sin permiso del dueño). `git add` ESPECÍFICO (NUNCA `-A`/`.`), HEREDOC + footer `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>`, branch activa, separados por tipo (código vs cerebro). Commits estilo `feat(area): X.Y — desc`.
+- **Claude ejecuta commit + push + merge + deploy web** (delegación EXPLÍCITA del dueño 2026-07-10, ADR §15.7; deploy de FIREBASE = dueño vía `docs/50-CONFIG-INFRA.md`; nunca abrir PR sin permiso del dueño). ⚠️ Si el clasificador auto-mode del harness bloquea push/merge, NO burlarlo: dejar `main` listo local y pedirle al dueño el push o la regla de permiso en `.claude/settings.json`. `git add` ESPECÍFICO (NUNCA `-A`/`.`), footer `Co-Authored-By: Claude <MODELO> <noreply@anthropic.com>` (el modelo que ejecuta + tag `MODELO` en el título — Fable 5 planifica/audita, Opus 4.8 implementa), branch activa, separados por tipo (código vs cerebro). Commits estilo `feat(area): X.Y — desc`.
 - NUNCA `--amend`/`--no-verify`/`--no-gpg-sign` sin pedido. NUNCA commitear secrets (SA JSON, `.env`, credenciales) ni `.claude/settings.local.json`.
 - Al cerrar un pendiente, marcar su `TODO-NN` como ✅ + link al §X. Mantén este CLAUDE.md liviano.
 

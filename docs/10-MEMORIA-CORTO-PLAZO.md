@@ -55,3 +55,8 @@
 > construido y commiteado (`72879f0`: mantenimiento + 65 redirects + SW v5 kill-switch + og-publish
 > neutralizado) · 05/10 re-escritos a la realidad greenfield. Siguiente: merge a main + push (deploy)
 > → validación live → R0.
+>
+> **2026-07-10 (corrección del dueño — ADR §15 actualización)**: contacto público = +57 300 243 9810 +
+> info@altorrainmobiliaria.co (el 323… era su personal, RETIRADO de la web) · marca SIN negro →
+> página re-diseñada blanco/navy/oro (verificada en preview: href/JSON-LD/colores) · delegación git
+> total re-confirmada (CLAUDE.md §2). Workflow destilado _legacy `wf_a8b895c6` corriendo en fondo.
