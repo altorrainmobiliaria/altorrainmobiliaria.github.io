@@ -7,8 +7,8 @@
 
 - [x] Censo de URLs indexadas (63, del `sitemap.xml` viejo vía git `6149652`) — base del mapa 301 (2026-07-10)
 - [x] Destilado `_legacy` (requisitos + datos + lecciones) — workflow `wf_a8b895c6` 9/9 agentes → `specs/R0-DESTILADO-LEGACY.md` (52 features · 21 activos · 39 lecciones candidatas · crudo en la bóveda `research-archive/2026-07-10`) (2026-07-10)
-- [ ] Censo Firestore REAL (colecciones, 5 propiedades, solicitudes, usuarios) — requiere acceso Firebase
-- [ ] Estado real Firebase (plan Spark/Blaze, 8 CFs vivas: ¿apagar?, Storage, quotas)
+- [x] Censo Firestore REAL (2026-07-10, REST pública + rules): **`propiedades` VACÍA** (las 5 propiedades ya NO están en la BD; `system/meta` sin tocar desde 2026-04-17) · `config/general` vivo y correcto (+57 300 243 9810 / info@) · `solicitudes` protegida por rules (conteo PENDIENTE — requiere MCP re-arrancado o consola) · **fichas de las 5 propiedades RESCATADAS del git (`6149652:p/*.html`, JSON-LD completo) → bóveda `research-archive/2026-07-10-cosecha-propiedades/`**
+- [x] Estado real Firebase (2026-07-10): **7 CFs gen2 vivas** (`functions:list` — `cleanupOldLoginAttempts` NO desplegada, la doc decía 8) · plan **Blaze** (confirmado por el dueño; ⚠️ el MCP reportó "Billing Enabled: No" — verificar en consola) · cuenta CLI `altorrainmobiliaria@gmail.com` activada como default del directorio · Storage sin censar
 - [ ] Auditoría docs maestros del dueño (`ALTORRA Company (Legal)` + `all_docx_content.txt` 690KB)
 - [ ] Estado matrícula de arrendador (EXT-AMC-26-0060455) — responde el DUEÑO
 - [ ] Plan de migración de datos → modelo nuevo (se sella en R5)
@@ -30,10 +30,20 @@ definitivo (Cloudflare) según el mapa de secciones del MEGA-PLAN.
 portal nuevo (las zonas de Cartagena YA tienen historial); las 5 fichas `p/` mapean a las 5
 propiedades reales de Firestore (IDs 101-105).
 
-## 2. Datos a migrar (censo real PENDIENTE)
+## 2. Datos a migrar (censo REAL 2026-07-10 — REST pública contra Firestore vivo)
 
-- Firestore: colección de propiedades (5 docs, IDs visibles 101/102/103/104/105) + `solicitudes` + config + posible `usuarios`/favoritos. Schema exacto → destilado _legacy + censo live.
-- Storage: imágenes de propiedades (el sitio viejo también usaba postimg.cc — verificar qué hay en Storage realmente).
+- **`propiedades`: VACÍA en la BD** (rules `allow read: if true` + lista `{}` = vacío auténtico; doc directo `101-27` → 404). Las 5 propiedades que la doc de abril registraba se rescataron del historial git con TODO su detalle (JSON-LD: nombre, precio, specs, imágenes) → bóveda privada `2026-07-10-cosecha-propiedades/`:
+  | ID | Inmueble | Precio COP |
+  |---|---|---|
+  | 101-27 | Apartamento exclusivo — Edificio Allure | 5.350.000.000 |
+  | 102-11402 | Apartamento moderno amoblado — Conj. Milán | 386.000.000 |
+  | 103-B305 | Apartamento amoblado — Conj. Trevi | 565.000.000 |
+  | 104-01 | Casa familiar — Barrio Country | 380.000.000 |
+  | 105-4422 | Apartamento moderno — Conj. Milán | 350.000.000 |
+  ❓ PREGUNTA AL DUEÑO: ¿siguen siendo inventario vigente para el portal nuevo? ¿quién vació la colección?
+- `config/general`: contacto/redes correctos (censado ✓ — mismo dato que la página de mantenimiento).
+- `solicitudes` (leads históricos, PII): protegida por rules ✓; CONTEO pendiente (MCP con credencial stale — reiniciar sesión o consola).
+- Storage (imágenes): sin censar; las fichas rescatadas apuntan también a postimg.cc (host externo).
 - SEO: censo §1 + meta GSC preservada (doble: meta tag + archivo HTML).
 
 ## 3. Documentos del dueño (fuente R2/R3/R4)

@@ -34,7 +34,7 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-11** | **R0 · Inventario de COSECHA**: ✅ censo 63 URLs · ✅ destilado `_legacy` (`R0-DESTILADO-LEGACY.md`) · 🔴 censo Firestore/CFs BLOQUEADO (CLI logueado en cuenta que solo ve altorra-cars → dueño loguea `altorrainmobiliaria@gmail.com`) · ⏳ auditoría docs maestros · ⏳ matrícula (dueño) | 🔄 EN CURSO | artefacto: `specs/R0-INVENTARIO-COSECHA.md` |
+| **TODO-11** | **R0 · Inventario de COSECHA**: ✅ censo 63 URLs · ✅ destilado `_legacy` · ✅ censo Firestore/CFs (propiedades VACÍA — 5 fichas rescatadas del git; 7 CFs; config OK) · ⏳ conteo `solicitudes` (MCP stale) · ⏳ Storage · ⏳ auditoría docs maestros · ⏳ matrícula (dueño) · ❓ dueño: ¿las 5 propiedades siguen vigentes? ¿quién vació la colección? | 🔄 EN CURSO | artefacto: `specs/R0-INVENTARIO-COSECHA.md` |
 | **TODO-12** | **R1 · Competencia CO** (ciencuadras · metrocuadrado · fincaraiz · coninsa · araujoysegovia · arenasinmobiliaria + Habi/La Haus/Properati) — TRES lentes c/u; partir de `41-MERCADO` (PR #79), actualizar no repetir | 🔮 | artefacto → `41-MERCADO` v2 |
 | **TODO-13** | **R2 · Referentes mundo** (Zillow/Redfin/Idealista/Rightmove/QuintoAndar/Airbnb) — 3 lentes; catálogo features adopt/adapt/discard | 🔮 | |
 | **TODO-14** | **R3 · Legal CO** (Ley 820+matrícula, corretaje, avalúos RAA/1673, Habeas Data 1581, corta estancia RNT/2068/PH, SIC, firma electrónica 527, SARLAFT/UIAF) | 🔮 | skill `legal-colombia`; artefacto: lóbulo `42-LEGAL` |

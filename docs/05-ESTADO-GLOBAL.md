@@ -13,7 +13,7 @@
 
 ## ⚠️ Flags de riesgo activos
 - ⚖️ **Gate legal**: matrícula de arrendador EN TRÁMITE con observaciones (EXT-AMC-26-0060455 / oficio AMC-OFI-0074376-2026) — estado real A VERIFICAR con el dueño; bloquea formalizar arriendos (kickoff §1).
-- 🔥 **Firebase legacy vivo sin censar**: 8 CFs gen2 + Firestore (5 propiedades a cosechar) siguen corriendo sin sitio que las use — R0 censa y decide apagado. ⛔ BLOQUEO: el CLI/MCP local está logueado en una cuenta que solo ve `altorra-cars` — hace falta sesión `altorrainmobiliaria@gmail.com` (dueño). |
+- 🔥 **Firebase CENSADO 2026-07-10** (detalle → `50-CONFIG` + R0): **7** CFs gen2 vivas (no 8) · **`propiedades` VACÍA** — las 5 fichas se rescataron del git a la bóveda (¿inventario vigente? → dueño) · `solicitudes` sin contar (MCP con credencial stale; CLI ya en `altorrainmobiliaria@gmail.com`) · Blaze (dueño) vs "Billing:No" (MCP) — verificar en consola.
 - 🔗 **Constancias de liderazgo pendientes ×3**: payloads en `sinapsis-cerebros/references/import-{cars,bersaglio,insema}-2026-07-10-liderazgo.md` — los aplica el operador local de cada repo.
 
 ## 🧩 Sub-sistemas

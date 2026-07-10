@@ -1,6 +1,7 @@
 # 🔐 50 — CONFIG / INFRA (Altorra Inmobiliaria)
 
-> Identificadores de infraestructura y deploy. **El DEPLOY lo ejecuta el DUEÑO** (no Claude en este repo).
+> Identificadores de infraestructura y deploy. **Deploy WEB (GH Pages) = Claude** (delegación 2026-07-10,
+> ADR §15.7); **deploy FIREBASE (functions/rules) = DUEÑO**.
 > 🔒 **Regla de oro (plan v5 Q7)**: los identificadores PÚBLICOS (Project ID, cuentas, roles IAM, comandos) van
 > aquí committeados — son identidades/config, NO secretos. Los valores SECRETOS (claves, SA JSON) **NUNCA** se
 > escriben aquí: solo se nombra su ubicación (gitignored / fuera del repo). Destilado de `_legacy/DEPLOY-RUNBOOK.md`.
@@ -16,12 +17,16 @@
 | Storage bucket | `gs://altorra-inmobiliaria-345c6.firebasestorage.app` |
 | Firestore region | `nam5` · Functions region `us-central1` (Node 20) |
 | GitHub repo | `altorrainmobiliaria/altorrainmobiliaria.github.io` · dominio `https://altorrainmobiliaria.co/` |
+| Registrador del dominio | **Hostinger** (dueño, 2026-07-10) — relevante para la delegación de NS a Cloudflare (stack §6 kickoff) |
+| Plan Firebase | **Blaze** (dueño, 2026-07-10). ⚠️ El MCP reportó "Billing Enabled: No" — discrepancia a verificar en consola |
+| Cuenta CLI activa (este dir) | `altorrainmobiliaria@gmail.com` fijada con `firebase login:use` (2026-07-10; las 3 cuentas del dueño están en `login:list`) |
 | Email admin/login | `info@altorrainmobiliaria.co` · UID super_admin `J1sXuV78OhPA5KyCoWNYFVQehF23` |
 
-## Cloud Functions (8, Node 20, us-central1)
+## Cloud Functions (7 DESPLEGADAS — verificado `functions:list` 2026-07-10)
 `onNewSolicitud` (email admin + lead scoring) · `onSolicitudStatusChanged` (email cliente) · `onPropertyChange`
-(regen SEO debounce 5min) · `triggerSeoRegeneration` (HTTPS callable super_admin) · `createManagedUserV2` (✅ desplegada)
-· `deleteManagedUserV2` · `updateUserRoleV2` · `cleanupOldLoginAttempts`.
+(regen SEO debounce 5min) · `triggerSeoRegeneration` (HTTPS callable super_admin) · `createManagedUserV2`
+· `deleteManagedUserV2` · `updateUserRoleV2`. ⚠️ `cleanupOldLoginAttempts` NO está desplegada (la doc vieja decía 8).
+Siguen vivas sin sitio que las use (modo obra) — su apagado/mantenimiento se decide con el MEGA-PLAN.
 
 ## Bloqueante Eventarc / CF 2nd gen (IAM — PÚBLICO; son identidades, no secretos)
 1er deploy 2nd gen falla con "Eventarc Service Agent permission denied" (ver `30 L-07`). Otorgar en IAM
@@ -55,6 +60,7 @@ $env:GOOGLE_APPLICATION_CREDENTIALS = "<ruta-SA-JSON>"; $env:DRY_RUN="1"; npm ru
 - **Google Maps API key** y **VAPID key (FCM)** — opcionales, en `js/firebase-config.js` (`window.AltorraKeys.gmapsApiKey`/`vapidKey`).
   Restringir GMAPS por HTTP referrer (`https://altorrainmobiliaria.co/*`). La `apiKey` de Firebase SÍ es pública (frontend).
 
-## Datos de seed / verificación
-Firestore `propiedades/`: 5 docs (`101-27`, `102-11402`, `103-B305`, `104-01`, `105-4422`) + `system/meta`, `config/general`, `config/counters`.
-Storage: 5 carpetas locales → `propiedades/{id}/*`. ⚠️ Doc fechado 2026-04-10 — verificar contra Firebase real antes de afirmar (§3.3).
+## Datos vivos (censo REAL 2026-07-10 vía REST pública + rules — reemplaza al seed de abril)
+**`propiedades/` = VACÍA** (las 5 de abril ya no existen; `system/meta.lastModified` = 2026-04-17). Fichas de las 5
+rescatadas del git (`6149652:p/*.html`) → bóveda `research-archive/2026-07-10-cosecha-propiedades/`. `config/general`
+vivo (contacto correcto) · `solicitudes` protegida (conteo pendiente) · Storage sin censar. Detalle → `specs/R0-INVENTARIO-COSECHA.md`.
