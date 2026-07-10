@@ -23,6 +23,17 @@
 | Cuenta CLI activa (este dir) | `altorrainmobiliaria@gmail.com` fijada con `firebase login:use` (2026-07-10; las 3 cuentas del dueño están en `login:list`) |
 | Email admin/login | `info@altorrainmobiliaria.co` · UID super_admin `J1sXuV78OhPA5KyCoWNYFVQehF23` |
 
+## Cloudflare (portal greenfield — cuenta CREADA por el dueño 2026-07-10, protocolo Fincaraíz)
+| Clave | Valor |
+|---|---|
+| Cuenta | `altorrainmobiliaria@gmail.com` (email del negocio) — plan Free |
+| **Account ID** (público, no secreto) | `df76de75877f4a0750967f6231a8f4cd` |
+| Worker | `altorra-portal` (config en `portal/wrangler.jsonc`; deploy vía CI gated) |
+| R2 bucket (a crear) | `altorra-portal-media` — nombre EXPLÍCITO en wrangler.jsonc → NO se auto-crea |
+| KV Sessions | binding `SESSION` — auto-aprovisionado por wrangler ≥4.45 en el 1er deploy |
+| API token (secreto, lo crea/carga el DUEÑO) | scopes: `Workers Scripts:Edit` + `Workers KV Storage:Edit` + `Workers R2 Storage:Edit` + `Account Settings:Read` |
+| GitHub Actions | secrets `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` · variable `CF_DEPLOY_ENABLED=true` (enciende deploy-staging) |
+
 ## Cloud Functions (7 DESPLEGADAS — verificado `functions:list` 2026-07-10)
 `onNewSolicitud` (email admin + lead scoring) · `onSolicitudStatusChanged` (email cliente) · `onPropertyChange`
 (regen SEO debounce 5min) · `triggerSeoRegeneration` (HTTPS callable super_admin) · `createManagedUserV2`

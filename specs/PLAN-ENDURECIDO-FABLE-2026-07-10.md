@@ -169,3 +169,65 @@ Portales propietario/inquilino (leen por expediente — schema 0.7 lo prevé) ·
 ---
 
 *Fable 5, pasada estratégica final · 2026-07-10. El plan está listo; la propuesta de Opus era ya ~90% correcta y este documento sella el 10% restante. Opus: ejecuta con confianza, marca lo Fuerte para la auditoría por ola, alimenta el cerebro como si tu sucesor naciera mañana — porque nace.*
+
+---
+---
+
+# 🏛️ APÉNDICE — RATIFICACIÓN FINAL (Fable 5 · 2026-07-10, segunda y última pasada)
+
+> Pedida por el dueño: "que Opus pueda ejecutar sin dudar ni preguntar cosas técnicas".
+> **Donde este apéndice corrija al cuerpo del plan, gana el apéndice** (única corrección material: T8).
+> Sellos T1–T9 verificados donde eran load-bearing contra docs vivas de Cloudflare HOY (L-14), no de memoria.
+
+## A · Confirmación final del plan endurecido
+
+Releído en frío: **el dictamen se sostiene íntegro** — ratificaciones R1–R13, pre-ratificaciones §1.2, omisiones O1–O12, secuencia §3, lotes §4 y guardarraíles §6 quedan vigentes sin retoque. Deltas por hechos nuevos:
+
+1. **G0.b avanza**: cuenta Cloudflare CREADA (email del negocio; Account ID `df76de75877f4a0750967f6231a8f4cd` → registrarlo en `50-CONFIG-INFRA`, no es secreto pero vive ahí). Restan del mismo sub-lote: bucket R2 · API token · secrets GitHub · `CF_DEPLOY_ENABLED`. **Simplificación derivada de T8 corregido: el scope Cache Purge NO se necesitará NUNCA en el token** (ni ahora ni al cutover) — quitar esa línea del checklist del dueño.
+2. **G0.a sigue ROJO**: hoy es 07-10; la consulta del decreto RNT cierra MAÑANA. Nada del avance CF cambia esa urgencia.
+3. **Nueva omisión O13 (detectada en esta pasada, hija de T8): trampa del cache-key sin host.** En Workers Caching el hostname NO forma parte de la clave — una respuesta cacheada en staging con `X-Robots-Tag: noindex` podría servirse en el dominio prod post-cutover (desindexación de producción = catástrofe SEO). Mitigación VINCULANTE en el runbook O2: el cutover incluye SIEMPRE (a) deploy fresco (el cache por defecto se particiona por versión del Worker → arranca frío), (b) deshabilitar la ruta `workers.dev` del Worker prod, (c) `purge({purgeEverything:true})` como cinturón.
+4. **O10 reconfirmada con evidencia de hoy**: el working tree AÚN contiene la basura de scraping (`home.html`, `fees.html`, `getsemani.html`, `room.html`, `search.html`, `master-index`, `sitemap-*`). JAMÁS commitear; limpiar en Ola 0. (`.claude/launch.json` NO es basura — tooling local legítimo, Opus decide gitignore/commit.)
+
+## B · Sellos técnicos finales (Opus aplica sin consultar)
+
+- **T1 — Staging noindex: RATIFICADA con 1 corrección SEO.** Middleware Astro emite `X-Robots-Tag: noindex, nofollow` en toda respuesta cuyo hostname termine en `.workers.dev` (cubre también preview URLs de versiones); detección por host, sin env var; canonicals/`site` a dominio prod. **Corrección: NO poner `Disallow` en el robots.txt de staging** — un URL bloqueado por robots nunca se rastrea y el noindex jamás se ve (regla documentada de Google); el header hace TODO el trabajo. robots.txt de staging: permisivo o ausente, sin referencia a sitemap.
+- **T2 — Auth en el edge: RATIFICADA.** `jose` + `createRemoteJWKSet` contra el endpoint público de claves de securetoken (cache per-isolate respetando `max-age`); validar firma + `iss == https://securetoken.google.com/altorra-inmobiliaria-345c6` + `aud == altorra-inmobiliaria-345c6` + `exp`. Solo en rutas que lo requieran; admin SPA gatea client-side + double-check server-side en endpoints sensibles. Toda ruta autenticada emite `Cache-Control: no-store` (no entra al cache de T8).
+- **T3 — og:image: RATIFICADA + fallback.** Pre-generada al ESCRIBIR (Function asíncrona → R2), jamás al request; plantilla con tokens D1. Añadido: og:image estática de marca como fallback mientras la específica no exista (carrera write→Function) — la ficha nunca espera a la imagen.
+- **T4 — Sitemaps: RATIFICADA.** Solo post-cutover en prod, regenerados por CI; staging sin sitemap (coherente con T1 corregida: el noindex, no el robots, protege staging).
+- **T5 — Cron GESTIÓN: RATIFICADA.** `onSchedule` (functions v2, lado Firebase, deploy = dueño); los datos viven en Firestore, el cron vive junto a ellos; idempotente por diseño; Cloud Scheduler entra en free tier (≤3 jobs).
+- **T6 — Tests de rules: RATIFICADA.** `@firebase/rules-unit-testing` contra el emulador local en 0.7 (Opus los corre sin el dueño); deploy de rules sigue siendo del dueño; E2E contra staging.
+- **T7 — Dominio staging: RATIFICADA.** Subdominio `workers.dev` por defecto de la cuenta; el nombre lo elige Opus solo; ningún custom domain hasta el cutover; post-cutover la ruta workers.dev del Worker prod se DESHABILITA (O13).
+- **T8 — Cache de ficha SSR: CORREGIDA (evidencia: docs vivas CF, hoy).** Dos hechos: (1) el Cache API clásico (`caches.default`) **NO es funcional en `workers.dev`** — solo en custom domains — el diseño original dejaba staging sin cache y al gate T9 sin camino de hit; (2) Cloudflare ofrece hoy **Workers Caching** como primitiva primaria recomendada: `cache: { enabled: true }` en wrangler (**requiere Wrangler ≥ 4.69.0** — verificar el pin del scaffold), read-through real (un hit NO ejecuta el Worker; request collapsing; tiered cache), cacheabilidad decidida por `Cache-Control` de la respuesta, tags vía header `Cache-Tag`, purga programática `ctx.cache.purge({tags})` (o `import { cache } from "cloudflare:workers"`) **sin token de zona ni zona CF**. **SELLO: Workers Caching en staging Y prod** (mismo mecanismo, cero cambio al cutover — el cache pertenece al Worker, no al dominio). Purga selectiva: Function `onWrite` → endpoint interno del Worker autenticado por secret HMAC → `purge({tags:["prop:<id>"]})`. `cross_version_cache` OFF en Ola 1 (cada deploy arranca frío = corrección sobre hit-rate). Cachear SOLO superficies públicas anónimas; auth/API → `no-store` (T2). El scope Cache Purge del token y toda dependencia de zona SE ELIMINAN del plan. Fallback documentado si la verificación E2E en staging falla (primitiva nueva): Cache API clásico + custom domain post-cutover — decisión Opus-solo con ADR.
+- **T9 — Gate TTFB CI: RATIFICADA y ahora VIABLE tal como se definió** (con T8 corregido hay hits reales en staging). curl-based contra staging, N≥20 requests, p75, midiendo miss (primera request tras purge/deploy) y hit POR SEPARADO; presupuesto ratificado miss ≤ 800ms p75; el umbral de hit lo fija Opus con los datos del primer run (ADR); el step ROMPE el build y se construye en Ola 1 como parte del ítem (guardarraíl 10).
+
+## C · Carta de derechos de decisión ("Opus no pregunta") — VINCULANTE
+
+**1 · Opus decide SOLO** (sin preguntar a nadie):
+- Todo lo **técnico dentro del stack sellado** (ADR §16): arquitectura de código, estructura, naming, dependencias y versiones (verificadas contra docs vivas, L-14), CI/CD, estrategia de tests, refactors, detalles de schema dentro de OD2–OD9 (campos nuevos no-PII incluidos), tuning cache/perf, nombre del subdominio workers.dev, umbrales técnicos no ratificados (con ADR).
+- Todo **borrador**: textos legales DRAFT marcados (jamás live), copy no-legal, las 3 direcciones D0 y su recomendación (la ELECCIÓN es de Daniel), los briefs del abogado.
+- Toda **higiene**: cerebro, limpieza del working tree, gates grep, y SOLO las 2 ediciones de kernel pre-aprobadas.
+- Micro-UX **dentro** de un mockup D2 ya aprobado.
+- **Protocolo para duda técnica NUEVA no cubierta por ningún documento** (ratifico la propuesta con un matiz): si es **Fuerte** (§3.7: cara de revertir / incertidumbre genuina / consecuencias sistémicas) → comité ×3 + consejo externo si hay provider → decidir → ADR marcado **`[REVISAR-FABLE]`** → SEGUIR. Si NO es Fuerte → auto-crítica + bitácora → seguir. **NUNCA se detiene la obra por una pregunta técnica**; detenerse solo si la duda cae en la categoría 2.
+
+**2 · Opus pregunta a DANIEL** (lista CERRADA — nada fuera de ella):
+1. **Dinero**: tarifas/precios públicos, cualquier gasto real, activación de cobros.
+2. **Legal**: contratar/instruir al abogado, publicar CUALQUIER texto legal (quitar el DRAFT), decisiones RNT/DIAN.
+3. **Identidad**: elección D0, slogan final, aprobación de mockups D2 (por tandas).
+4. **Go/no-go** de gates (cutover, apertura de ola).
+5. **Sus manos/cuentas**: secrets, tokens, deploy Firebase, registros DNS, GBP, apertura de cuentas (Wompi, Resend…).
+6. **Datos que solo él tiene**: cifras, cartera administrada, seed CRM, certificados.
+Forma: por **LOTES** (§4), jamás gotear; interrumpir mid-ola solo por dinero/legal/bloqueo duro.
+
+**3 · Opus encola para FABLE** (auditoría al cierre de cada ola, TODO-22 — no interrumpe la obra):
+(a) todo ADR `[REVISAR-FABLE]`; (b) cualquier desviación del PLAN-ENDURECIDO con su justificación; (c) toda edición de kernel más allá de las 2 pre-aprobadas (que además exige deliberación previa, guardarraíl 11); (d) reglas nuevas [HONOR]; (e) el **delta plan→realidad** de la ola (prometido vs existente, con evidencia); (f) candidatos a lección/neurona. Mecanismo: lista viva en `10` bajo "Cola auditoría Fable".
+
+**4 · Precedencia documental** (cuando dos fuentes choquen):
+- **Nivel 0 — la realidad verificada** (código leído, `git fetch`, consola, staging live) mata TODA prosa, incluida la mía (§3.3).
+- **Nivel 1 — decisión posterior EXPLÍCITA del dueño** en sus categorías (dinero/legal/identidad/go-no-go), registrada como ADR.
+- **Nivel 2 — PLAN-ENDURECIDO + este apéndice** (el apéndice gana al cuerpo donde corrija: T8/O13).
+- **Nivel 3 — MEGA-PLAN (ADR §17) + stack sellado (§16)** · **Nivel 4 — specs R0–R5 + ADRs históricos** · **Nivel 5 — dossier crudo** · **Nivel 6 — prosa de kickoff/mandato y docs internos del dueño** (verdad de DOMINIO, nunca estándar profesional — visión PRO obligatoria).
+- Matiz sobre `05`/`10`: no son fuentes del plan, son el **ESTADO** — dicen dónde estás, no qué hacer. Para preguntas de estado ganan sobre todos los specs (tras verificar Nivel 0); para preguntas de intención rige la jerarquía de arriba.
+
+---
+
+*Fable 5 — ratificación final y cierre de mi turno. El plan endurecido queda sellado con una sola corrección material (T8→Workers Caching, con su hija O13) y tres precisiones (T1 robots, T3 fallback, T9 hit/miss). Opus: tienes carta de derechos, jerarquía documental y cero preguntas técnicas pendientes. Construye. Nos vemos en la auditoría de la Ola 0.*

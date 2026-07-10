@@ -44,6 +44,13 @@
 
 ## 📝 Bitácora (efímera)
 
+> **2026-07-10 (FABLE 5 — RATIFICACIÓN FINAL, 2ª pasada)**: dictamen íntegro; apéndice vinculante en el
+> PLAN-ENDURECIDO (gana al cuerpo). T1 corregida (staging noindex = solo header, sin Disallow) · T8 corregida
+> (Workers Caching con purga por tags, NO Cache API en workers.dev; wrangler 4.110 ✅) · O13 (cache-key sin
+> host → mitigar al cutover) · Carta de derechos sellada (Opus no pregunta lo técnico; Daniel = 6 categorías).
+> Cuenta Cloudflare CREADA por el dueño (ID → `50`) · O10 ejecutada (scrapes → bóveda). ADR §20.8.
+> **Siguiente**: bucket R2 + token + secrets con el dueño → CF_DEPLOY_ENABLED → 1er deploy staging + noindex.
+
 > **2026-07-10 (FABLE 5 — repaso estratégico final del plan, pedido por el dueño al 6% de cuota)**: Opus
 > armó el dossier de auditoría de todo el corpus (7 lectores en paralelo, +2ª pasada FTI-01 ya hecha) →
 > Fable ratificó (~40 decisiones, 4 correcciones de timing, 12 omisiones) → **ADR §20** +
