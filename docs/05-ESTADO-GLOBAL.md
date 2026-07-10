@@ -6,7 +6,7 @@
 | Señal | Valor (git/cache al **2026-06-15** ✅ · producto al 2026-05-07 no re-verificado) |
 |---|---|
 | **Build** | 🟢 Sitio LIVE y dinámico en `altorrainmobiliaria.co`: catálogo 100% Firestore (5 propiedades), admin SPA (`window.IP`), 8 Cloud Functions (Node 20), 13 landings de sector, 43 páginas con BreadcrumbList, 130+ JSON-LD, blog (7 posts). 🧠 **Cerebro neuronal instalado 2026-06-09** (neurogénesis desde monolitos). |
-| **Cache version vigente** | `altorra-pwa-v4` (`service-worker.js`). Ctrl+Shift+R la 1ª vez. |
+| **Cache version vigente** | `altorra-pwa-v5` (`service-worker.js` = **kill-switch**: borra cachés, se des-registra y recarga — modo obra 2026-07-10). |
 | **Branch** | `cerebro/instalacion` (`d4e1870`, pushed; su contenido YA está en `main` — HEAD ancestro, main +7 commits CI). Verificado vs git 2026-06-15. |
 | **deploy-info** | version `2026-05-07T09:04:11Z`, commit `ddce614` (merge PR #79 — análisis competidores). |
 | **Deploy** | Lo ejecuta el **DUEÑO** (Firebase + push/merge) vía `docs/50-CONFIG-INFRA.md`. Claude solo commitea. |
