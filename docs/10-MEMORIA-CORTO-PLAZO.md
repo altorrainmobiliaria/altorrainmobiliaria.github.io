@@ -9,24 +9,18 @@
 
 ## 🎯 Foco actual
 
-> 🏗️ **MISIÓN GREENFIELD (2026-07-10, ADR §15)** — construir el MEJOR portal inmobiliario
-> (`altorrainmobiliaria.co`) DESDE CERO ABSOLUTO. SSoT = `specs/2026-07-10-INMOBILIARIA-KICKOFF-fable5.md`
-> (+ mandato verbatim al lado). Reglas permanentes: **Fable 5 planifica/investiga/audita · Opus 4.8
-> implementa (tag por commit) · dueño solo decide dinero/legal/go-no-go · español SIEMPRE · autonomía total**.
-> Cars EN PAUSA; este operador = escritor único del kernel ×4.
+> ⚡ **RELEVO A OPUS 4.8 — construir la OLA 0 del MEGA-PLAN** (`specs/MEGA-PLAN-INMOBILIARIA.md` = SSoT
+> del roadmap; protocolo de arranque en su §4). La planificación COMPLETA (R0-R5, ADR §15-§18) terminó
+> 2026-07-10: stack sellado (§16, W-11 completo con Gemini integrado), plan por olas (§17) con módulo
+> GESTIÓN (§3b) y regla visión-PRO. Reglas permanentes: Fable planifica/audita · Opus implementa (tag
+> por commit) · dueño decide dinero/legal/go-no-go · español · autonomía total. Fable audita al cierre
+> de cada ola (cuota vuelve ~jueves).
 >
-> **Programa** (kickoff §5-§7): R0 cosecha → R1 competencia CO (3 lentes: fuentes+código+Chrome live)
-> → R2 referentes mundo → R3 legal CO → R4 operación/marketing → R5 MEGA-PLAN + sellar stack (W-11
-> COMPLETO sobre candidato §6: CF Pages+Astro+Firebase+R2+Wompi+MapLibre) · carril DISEÑO D0-D4
-> (Claude Design vía DesignSync, mockup ANTES de código, gate de fidelidad visual).
-
 > **🚫 Callejones / cuidados (NO reintentar)**:
-> (a) ⛔ **NADA del sitio/código/diseño viejo como base** — regla innegociable del dueño; solo lectura
-> de referencia. Los TODO/gaps del sitio viejo (J1-J5, Eventarc, smart-search…) están OBSOLETOS (ADR §15.7).
-> (b) **Writes cross-repo = BLOQUEADOS por el harness** (sinapsis regla 5) → propagar por payload en
-> `references/` de la skill, nunca intentar Edit directo en repo hermano.
-> (c) **No mezclar stacks legacy**: el viejo usaba Firebase modular v12.9.0; el schema nuevo se diseña
-> en R5 — no arrastrar colecciones viejas sin decisión de migración (R0 las censa).
+> (a) ⛔ **NADA del sitio/código/diseño viejo como base** — regla innegociable del dueño (solo lectura de referencia; sus TODO/gaps están obsoletos, ADR §15.7).
+> (b) **Writes cross-repo BLOQUEADOS** (sinapsis regla 5) → payloads en `references/` de la skill.
+> (c) **Los docs internos del dueño tienen ERRORES** (él lo advierte): verdad del dominio, NO estándar — visión PRO obligatoria (MEGA-PLAN §3b; ej.: listan depósitos prohibidos por Ley 820 art. 16).
+> (d) **NUNCA UI sin mockup aprobado** (carril D) · **NUNCA dinero sin gate B2/B9** · **NUNCA pedir reindexación** antes del contenido sustantivo (regla AEO) · **JAMÁS el nº personal del dueño** (323…) en la web.
 
 ---
 
@@ -34,41 +28,21 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-11** | **R0 · Inventario de COSECHA**: ✅ censo 63 URLs · ✅ destilado `_legacy` · ✅ censo Firestore/CFs · ✅ propiedades DESCARTADAS (dueño) · ✅ matrícula OBTENIDA (dueño) · ⏳ conteo `solicitudes` (MCP stale) · ⏳ Storage · ⏳ auditoría docs maestros (→ R2/R3/R4) | 🔄 casi cerrado | artefacto: `specs/R0-INVENTARIO-COSECHA.md` |
-| **TODO-12** | ✅ **R1 · Competencia COMPLETA (3 lentes)**: (a)+(b) ×11 (`specs/R1-COMPETENCIA-2026-07.md`) · (c) live: precios Ciencuadras+Proppit 💎 · Airbnb Cartagena 💎 · **Fincaraíz POST-LOGIN** (form monolítico, prohibiciones a particulares, precios ocultos aún logueado, OV 8 secciones) · **UI-tour** Airbnb/Zillow/QuintoAndar/idealista/Fincaraíz-OV → bóveda `ui-referentes/` (insumo D0). Protocolo login del dueño: él se registra en SU Chrome, Claude navega; NUNCA credenciales/pagos | ✅ → consolidar a 99 | siguiente: R4 |
-| **TODO-13** | ✅ **R2 · Referentes mundo** (2026-07-10): 8 referentes × 17 agentes verificados → `specs/R2-REFERENTES-MUNDO-2026-07.md` (59 features · top-10 MVP · QuintoAndar 3 fases CO · 13 SEO · 15 gates→R3) + esencia en `41-MERCADO` | ✅ → consolidar a 99 en la próxima poda | |
-| **TODO-14** | ✅ **R3 · Legal CO** (2026-07-10, 17 agentes, 62 normas, 57 claims verificados) → lóbulo `docs/42-LEGAL.md` (NEUROGÉNESIS) + `specs/R3-LEGAL-COLOMBIA-2026-07.md` (17 gates B1-B17 + agenda abogado). **DECISIÓN (Claude, delegada por el dueño 2026-07-10): NO presentar comentarios a la consulta RNT** (verificada real, cierra 2026-07-11 — mincit.gov.co): sin abogado no se firman documentos formales ante ministerios; el borrador nos FAVORECE (exhibir RNT por anuncio + reportes a DIAN = exactamente los gates B2/B3 que ya diseñamos — sube el listón contra informales); incidencia marginal ≈ 0. EN SU LUGAR: monitorear el decreto FINAL (el que obliga) → agenda abogado | ✅ → consolidar a 99 en próxima poda | gate abogado SIEMPRE |
-| **TODO-15** | ✅ **R4 · Operación+marketing** (2026-07-10, 11 agentes): docs maestros destilados (sanitizado) + plan SEO local + regla de oro AEO (contenido ANTES de reindexar) + 15 preguntas al dueño (🔴 razón social/NIT · tarifas 2026 · dirección GBP) → `specs/R4-OPERACION-MARKETING-2026-07.md` | ✅ → consolidar a 99 | crudo sensible SOLO en bóveda |
-| **TODO-17** | **⚡ ARRANQUE OPUS 4.8 — Ola 0 ítem 1** (scaffold `portal/`): protocolo = MEGA-PLAN §4. ✅ Resueltas 2026-07-10: razón social (ALTORRA COMPANY SAS — la vieja va a liquidación, ver `50`) · tarifas v1 (plan Ola 1.7) · GBP (ficha EXISTE → reclamar) · **Gemini INTEGRADO** (stack intacto + 4 adopciones — adenda en spec R5). Pendientes dueño: cuenta Cloudflare · abogado (Ola 2) | 🔮 OPUS | Fable audita al cierre de la ola |
-| **TODO-17** | **Diseño D0-D4**: direcciones de marca comparativas (dueño elige) → design system → DesignSync a claude.ai → mockup por pantalla → gate fidelidad | 🔮 | tras R1/R2 (D0 se nutre de sus hallazgos UX) |
-| **TODO-18** | **Potenciar cerebro** (kickoff §7.3): auditoría Nivel-2 (vence ~2026-07-15, staleDays) + destilar `_legacy/AVANCES.md` Fase B + adoptar de cars gobernanza faltante (W-11 ya citado en 00 — verificar catálogo 60 completo) | 🔄 | |
-| **TODO-19** | **Constancias liderazgo ×3**: payloads listos en la skill; los aplican los operadores cars/bersaglio/insema en su próxima sesión | ⏸️ externo | |
-| **TODO-20** | **Checklist del DUEÑO** (kickoff §8): Cloudflare cuenta+NS, acceso registrador .co, plan Firebase (Spark/Blaze), acceso GSC, GBP, estado matrícula, permiso Claude Design (1er DesignSync) | ⏸️ dueño | pedirle solo lo que falte |
+| **TODO-17** | **⚡ ARRANQUE OPUS — Ola 0 ítem 1** (scaffold `portal/`): protocolo MEGA-PLAN §4. Insumos de la Ola 0.7: 2ª pasada a los .xlsx FTI-01 + piloto `ALTORRA-PILOTO-main` del corpus del dueño (crítico R4) | 🔮 OPUS | pendientes del dueño: cuenta Cloudflare (Ola 0.2) · abogado (gate Ola 2) |
+| **TODO-18** | **Carril D — Diseño D0-D4**: direcciones de marca comparativas (dueño elige) → design system → DesignSync a claude.ai → mockup por pantalla → gate fidelidad. Insumo: bóveda `ui-referentes/` | 🔮 OPUS (D0 en Ola 0.3) | paleta SIN negro |
+| **TODO-19** | **Potenciar cerebro** (kickoff §7.3): auditoría Nivel-2 (vence ~2026-07-15, staleDays) + destilar `_legacy/AVANCES.md` Fase B + evaluar lecciones candidatas C-01..C-39 (R0) contra `30` | 🔄 | |
+| **TODO-20** | **Constancias liderazgo ×3**: payloads listos en la skill; los aplican los operadores cars/bersaglio/insema en su próxima sesión | ⏸️ externo | |
+| **TODO-21** | **Checklist del DUEÑO** (kickoff §8): cuenta Cloudflare + NS Hostinger→CF (al cutover) · acceso GSC · permiso Claude Design (1er DesignSync) · abogado (Ola 2) · certificado de matrícula (al final) | ⏸️ dueño | pedirle solo lo que toque por ola |
+| **TODO-22** | **Auditoría Fable de la Ola 0** (protocolo cars §300) al volver su cuota | 🔮 FABLE | |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-10 (ARRANQUE FABLE 5 — ADR §15)**: specs madre copiados · payload sinapsis L-08..L-12
-> aplicado · liderazgo kernel ×4 asumido (skill actualizada + payloads constancia ×3) · MODO OBRA
-> construido y commiteado (`72879f0`: mantenimiento + 65 redirects + SW v5 kill-switch + og-publish
-> neutralizado) · 05/10 re-escritos a la realidad greenfield. Siguiente: merge a main + push (deploy)
-> → validación live → R0.
->
-> **2026-07-10 (corrección del dueño — ADR §15 actualización)**: contacto público = +57 300 243 9810 +
-> info@altorrainmobiliaria.co (el 323… era su personal, RETIRADO de la web) · marca SIN negro →
-> página re-diseñada blanco/navy/oro (verificada en preview: href/JSON-LD/colores) · delegación git
-> total re-confirmada (CLAUDE.md §2).
->
-> **2026-07-10 (DEPLOY LIVE + caza del bug de producción)**: push a main OK · Pages FALLABA con Jekyll
-> desde ~mayo (producción congelada en silencio; evidencia API Actions) → fix `.nojekyll` (L-13) →
-> **mantenimiento LIVE VERIFICADO** (SW v5 + booleanos curl) · destilado `_legacy` integrado
-> (`R0-DESTILADO-LEGACY.md`: 52 features · 21 activos · 39 lecciones candidatas; crudo en bóveda) ·
-> hallazgo: CLI Firebase en cuenta equivocada (solo ve cars) → censo R0 espera al dueño.
-> **Siguiente**: R1 competencia (3 lentes) + auditoría docs maestros + evaluar C-01..C-39 → `30`.
->
-> **2026-07-10 (R1 lentes a+b COMPLETAS)**: workflow `wf_b2026a2b` 23/23 agentes, 0 errores →
-> `specs/R1-COMPETENCIA-2026-07.md` (14 oportunidades por ola · 8 patrones SEO · 11 fichas con 59 claims
-> verificados · 16 misiones lente c) + `41-MERCADO` v2 + crudo en bóveda. Hallazgo #1: la corta estancia
-> con booking real NO existe en ningún portal CO (y Properati tiene fraude documentado) → diferencial
-> fundacional Altorra. Siguiente: lente (c) live P1-P6 → luego R2/R3.
+> **2026-07-10 (SESIÓN DE PLANIFICACIÓN FABLE — cerrada, ADR §15-§18)**: en un día: obra live verificada
+> (+ caza del bug Jekyll L-13) → R0-R4 completas (~74 agentes, 6 workflows, 3 lentes live con protocolo
+> de login del dueño) → stack sellado con W-11 completo (comité ×3 + juez + fallos Q1-Q7 + Gemini
+> integrado: 4 adopciones, veto-Firestore refutado) → MEGA-PLAN por olas + módulo GESTIÓN + visión-PRO.
+> Decisiones del dueño incorporadas: razón social ALTORRA COMPANY SAS (vieja a liquidación, ver `50`) ·
+> tarifas v1 delegadas · GBP existe→reclamar · propiedades viejas descartadas · matrícula obtenida.
+> Detalle → ADRs §15-§18 + specs R0-R5 + MEGA-PLAN. **Siguiente sesión = OPUS 4.8: "arranca la Ola 0"**.

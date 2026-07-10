@@ -53,6 +53,7 @@
 | §15 | **Arranque Fable 5**: misión GREENFIELD (specs madre en `specs/`) + liderazgo kernel ×4 asumido + MODO OBRA live (mantenimiento + 65 redirects + SW v5 kill-switch). Obsoleta TODO-01..06/08 del sitio viejo. ⟦FABLE-5⟧ | 114 |
 | §16 | **STACK sellado** (W-11 COMPLETO): Workers+Astro híbrido+Firebase+R2+Wompi+MapLibre+Typesense-tripwire+Resend. Fallos Q1-Q7 + adenda Gemini (integrada: 4 adopciones, veto-Firestore refutado) → `specs/R5-STACK-2026-07.md`. ⟦FABLE-5⟧ | 128 |
 | §17 | **MEGA-PLAN por olas** (`specs/MEGA-PLAN-INMOBILIARIA.md` = SSoT del roadmap) + relevo a Opus 4.8 (protocolo §4 del plan; Fable audita por ola). ⟦FABLE-5⟧ | 138 |
+| §18 | **Programa R0-R5 COMPLETO en un día** (~74 agentes · 6 workflows · live) + cierre de la sesión de planificación Fable; colas menores absorbidas por el plan. ⟦FABLE-5⟧ | 145 |
 
 ---
 
