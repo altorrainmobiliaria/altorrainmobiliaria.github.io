@@ -35,7 +35,7 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-11** | **R0 · Inventario de COSECHA**: ✅ censo 63 URLs · ✅ destilado `_legacy` · ✅ censo Firestore/CFs · ✅ propiedades DESCARTADAS (dueño) · ✅ matrícula OBTENIDA (dueño) · ⏳ conteo `solicitudes` (MCP stale) · ⏳ Storage · ⏳ auditoría docs maestros (→ R2/R3/R4) | 🔄 casi cerrado | artefacto: `specs/R0-INVENTARIO-COSECHA.md` |
-| **TODO-12** | **R1 · Competencia**: ✅ lentes (a)+(b) VERIFICADAS ×11 portales (workflow 23 agentes → `specs/R1-COMPETENCIA-2026-07.md` + esencia en `41-MERCADO` v2) · ⏳ **lente (c) live**: 16 misiones P1-P6 (spec §6) con la extensión Chrome (conectada ✓) | 🔄 lente c | hallazgo #1: corta estancia = hueco TOTAL del mercado CO |
+| **TODO-12** | **R1 · Competencia**: ✅ lentes (a)+(b) ×11 portales (`specs/R1-COMPETENCIA-2026-07.md` + `41-MERCADO` v2) · ✅ lente (c) tanda 1-2: 6/16 misiones (precios Ciencuadras+Proppit 💎, Airbnb Cartagena 💎) · ⏳ misiones tras LOGIN — **protocolo del dueño 2026-07-10: él se registra/loguea EN SU Chrome (1 min de aviso) y Claude navega la sesión; Claude JAMÁS maneja credenciales ni ejecuta pagos** (frenar antes de todo checkout) | 🔄 lente c | siguiente cuenta: Fincaraíz |
 | **TODO-13** | **R2 · Referentes mundo** (Zillow/Redfin/Idealista/Rightmove/QuintoAndar/Airbnb) — 3 lentes; catálogo features adopt/adapt/discard | 🔮 | |
 | **TODO-14** | **R3 · Legal CO** (Ley 820+matrícula, corretaje, avalúos RAA/1673, Habeas Data 1581, corta estancia RNT/2068/PH, SIC, firma electrónica 527, SARLAFT/UIAF) | 🔮 | skill `legal-colombia`; artefacto: lóbulo `42-LEGAL` |
 | **TODO-15** | **R4 · Operación+marketing**: destilar docs maestros (protocolo leads, scripts WA) + SEO local Cartagena + GBP | 🔮 | |
