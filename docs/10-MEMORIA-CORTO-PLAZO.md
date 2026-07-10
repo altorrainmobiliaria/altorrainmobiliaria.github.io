@@ -34,8 +34,7 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-10** | Validación LIVE del mantenimiento en `altorrainmobiliaria.co` (post-push: redirects muestreados, WhatsApp CTA, SW v5 mata caché vieja) | 🔄 | skill `validacion-live-chrome` |
-| **TODO-11** | **R0 · Inventario de COSECHA**: censo Firestore real (5 propiedades, solicitudes/usuarios) + censo URLs indexadas → mapa 301 definitivo + auditoría docs maestros del dueño (`all_docx_content.txt`) + estado Firebase (plan/CFs/billing) + estado matrícula arrendador | 🔄 EN CURSO | artefacto: `specs/R0-INVENTARIO-COSECHA.md` |
+| **TODO-11** | **R0 · Inventario de COSECHA**: ✅ censo 63 URLs · ✅ destilado `_legacy` (`R0-DESTILADO-LEGACY.md`) · 🔴 censo Firestore/CFs BLOQUEADO (CLI logueado en cuenta que solo ve altorra-cars → dueño loguea `altorrainmobiliaria@gmail.com`) · ⏳ auditoría docs maestros · ⏳ matrícula (dueño) | 🔄 EN CURSO | artefacto: `specs/R0-INVENTARIO-COSECHA.md` |
 | **TODO-12** | **R1 · Competencia CO** (ciencuadras · metrocuadrado · fincaraiz · coninsa · araujoysegovia · arenasinmobiliaria + Habi/La Haus/Properati) — TRES lentes c/u; partir de `41-MERCADO` (PR #79), actualizar no repetir | 🔮 | artefacto → `41-MERCADO` v2 |
 | **TODO-13** | **R2 · Referentes mundo** (Zillow/Redfin/Idealista/Rightmove/QuintoAndar/Airbnb) — 3 lentes; catálogo features adopt/adapt/discard | 🔮 | |
 | **TODO-14** | **R3 · Legal CO** (Ley 820+matrícula, corretaje, avalúos RAA/1673, Habeas Data 1581, corta estancia RNT/2068/PH, SIC, firma electrónica 527, SARLAFT/UIAF) | 🔮 | skill `legal-colombia`; artefacto: lóbulo `42-LEGAL` |
@@ -59,4 +58,11 @@
 > **2026-07-10 (corrección del dueño — ADR §15 actualización)**: contacto público = +57 300 243 9810 +
 > info@altorrainmobiliaria.co (el 323… era su personal, RETIRADO de la web) · marca SIN negro →
 > página re-diseñada blanco/navy/oro (verificada en preview: href/JSON-LD/colores) · delegación git
-> total re-confirmada (CLAUDE.md §2). Workflow destilado _legacy `wf_a8b895c6` corriendo en fondo.
+> total re-confirmada (CLAUDE.md §2).
+>
+> **2026-07-10 (DEPLOY LIVE + caza del bug de producción)**: push a main OK · Pages FALLABA con Jekyll
+> desde ~mayo (producción congelada en silencio; evidencia API Actions) → fix `.nojekyll` (L-13) →
+> **mantenimiento LIVE VERIFICADO** (SW v5 + booleanos curl) · destilado `_legacy` integrado
+> (`R0-DESTILADO-LEGACY.md`: 52 features · 21 activos · 39 lecciones candidatas; crudo en bóveda) ·
+> hallazgo: CLI Firebase en cuenta equivocada (solo ve cars) → censo R0 espera al dueño.
+> **Siguiente**: R1 competencia (3 lentes) + auditoría docs maestros + evaluar C-01..C-39 → `30`.

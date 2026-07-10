@@ -222,7 +222,7 @@ está en el §8 del kickoff — pídeme lo que te falte de ahí.
 - [x] Chat inmobiliaria arrancado con el prompt §10 (2026-07-10, ADR §15 de inmobiliaria)
 - [x] Payload sinapsis aplicado en inmobiliaria (L-08..L-12 en `docs/30-LECCIONES.md`, 2026-07-10)
 - [x] Liderazgo del kernel ASUMIDO (§7): skill `sinapsis-cerebros` actualizada + constancia propia; constancias en cars/bersaglio/insema = payloads listos en `references/` (TODO-19, las aplica cada operador local)
-- [ ] Página de mantenimiento live (§9) — construida y commiteada `72879f0`; falta merge+push+validación live
+- [x] Página de mantenimiento LIVE (§9): `72879f0` + corrección contacto/colores `8f77ab9` + fix deploy `.nojekyll` `1b5bba1` (Pages fallaba con Jekyll desde ~mayo, L-13); VERIFICADA live 2026-07-10 con sentinela SW v5 + booleanos curl (copy ✓ · +57 300 243 9810 ✓ · sin nº personal ✓ · redirects ✓ · sitemap solo-home ✓)
 - [ ] R0-R5 ejecutadas (artefactos en el cerebro de inmobiliaria)
 - [ ] Stack sellado vía W-11 (§6)
 - [ ] MEGA-PLAN emitido (SSoT de ejecución para Opus)
