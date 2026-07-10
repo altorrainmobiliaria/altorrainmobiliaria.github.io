@@ -41,10 +41,13 @@ og:image dinámica + WhatsApp sin gating + publicación gratuita generosa + prec
 Ola 2 = landings de barrio con contenido REAL + frescura verificada + portal aliados self-service + AVM/
 calculadora renta turística + sello Verificado · Ola 3 = loop inversión→renta turística. Detalle → spec §2.
 
-**Lente (c) live — 6/16 misiones** (spec §7): precios Ciencuadras 💎 (99.900/249.900) · Proppit B2B
-público self-service 💎 (200-300K/mes 10-25 fichas) · Airbnb Cartagena 1000+ activos ADR 130-565K 💎 ·
-Fincaraíz gated · Metrocuadrado inalcanzable+soft-404 · funnel Ciencuadras semi-roto. Restantes = tras
-login (protocolo: el dueño se registra, Claude navega).
+**Lente (c) live** (spec §7): precios Ciencuadras 💎 (99.900/249.900) · Proppit B2B público self-service
+💎 (200-300K/mes) · Airbnb Cartagena 1000+ activos ADR 130-565K 💎 · **Fincaraíz POST-LOGIN**: OV de 8
+secciones, form de publicar MONOLÍTICO (sin wizard → el wizard 3-pasos de Altorra gana), particulares con
+prohibiciones (nuevo/planos/remates), precios ocultos AÚN logueado (costo hundido primero) · Metrocuadrado
+soft-404. **UI-tour** (Airbnb/Zillow-Miami/QuintoAndar/idealista) → patrones de diseño para D0 en la bóveda
+`ui-referentes/2026-07-10-ui-tour-observaciones.md` (search-pill, split-view mapa+pins-precio, card
+canónica con doble-precio QuintoAndar, galería-mosaico, guardar-búsqueda CTA, breadcrumb con conteos).
 
 ## 🌍 R2 2026-07-10 — referentes mundiales (→ `specs/R2-REFERENTES-MUNDO-2026-07.md`)
 8 referentes × 17 agentes verificados: catálogo de 59 features adopt/adapt/discard · **top-10 MVP**
