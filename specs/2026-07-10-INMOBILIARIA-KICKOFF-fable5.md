@@ -209,13 +209,13 @@ está en el §8 del kickoff — pídeme lo que te falte de ahí.
 ## Checklist
 
 - [x] Identidad legal validada contra PDFs reales (Cámara: ALTORRA COMPANY S.A.S, NIT 902063965-4, matrícula 10011978, objeto social inmobiliario — pdftotext 2026-07-10)
-- [x] Gate legal detectado: matrícula de arrendador EN TRÁMITE con observaciones (oficio AMC-OFI-0074376-2026, Ley 820 art. 28)
+- [x] Gate legal detectado: matrícula de arrendador EN TRÁMITE con observaciones (oficio AMC-OFI-0074376-2026 del 2026-05-25, Ley 820 art. 28 — ver §1)
 - [x] Activos inventariados: cosecha de datos/SEO/docs + cerebro instalado 2026-06-09 + all_docx_content.txt (§4; greenfield total confirmado por el dueño 2026-07-10)
 - [x] Mandato del dueño preservado VERBATIM (`2026-07-10-INMOBILIARIA-MANDATO-DUENO-verbatim.md`)
-- [ ] Chat inmobiliaria arrancado con el prompt §10
-- [ ] Payload sinapsis aplicado en inmobiliaria
-- [ ] Liderazgo del kernel transferido (§7) y constancias ×4 actualizadas
-- [ ] Página de mantenimiento live (§9)
+- [x] Chat inmobiliaria arrancado con el prompt §10 (2026-07-10, ADR §15 de inmobiliaria)
+- [x] Payload sinapsis aplicado en inmobiliaria (L-08..L-12 en `docs/30-LECCIONES.md`, 2026-07-10)
+- [x] Liderazgo del kernel ASUMIDO (§7): skill `sinapsis-cerebros` actualizada + constancia propia; constancias en cars/bersaglio/insema = payloads listos en `references/` (TODO-19, las aplica cada operador local)
+- [ ] Página de mantenimiento live (§9) — construida y commiteada `72879f0`; falta merge+push+validación live
 - [ ] R0-R5 ejecutadas (artefactos en el cerebro de inmobiliaria)
 - [ ] Stack sellado vía W-11 (§6)
 - [ ] MEGA-PLAN emitido (SSoT de ejecución para Opus)

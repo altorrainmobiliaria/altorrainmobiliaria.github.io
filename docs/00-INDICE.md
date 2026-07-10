@@ -49,6 +49,7 @@
 | §12 | Auditoría Nivel-2 #1 REAL (mata la fachada del deepAudit) | 92 |
 | §13 | Consejo Externo: corrección factual "el provider (Antigravity) SÍ ve el repo, solo-lectura" + skill comité ×4. Propagación de cars §224. ⟦OPUS-4.8⟧ | 100 |
 | §14 | Guardián del índice `brain-index.mjs`: auto-reconcilia §→línea + valida tombstones (de cars TODO-32/§229). ⟦OPUS-4.8⟧ | 104 |
+| §15 | **Arranque Fable 5**: misión GREENFIELD (specs madre en `specs/`) + liderazgo kernel ×4 asumido + MODO OBRA live (mantenimiento + 65 redirects + SW v5 kill-switch). Obsoleta TODO-01..06/08 del sitio viejo. ⟦FABLE-5⟧ | 114 |
 
 ---
 

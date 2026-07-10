@@ -9,60 +9,49 @@
 
 ## 🎯 Foco actual
 
-> 🧠 **CEREBRO RECIÉN INSTALADO (2026-06-09)** — neurogénesis de Altorra Inmobiliaria como parte del
-> macro-proyecto **Cerebro Multi-Proyecto** (ADR §170 del repo `altorracars`). Inmobiliaria era el
-> **banco de pruebas** (sin cerebro neuronal; 376KB de monolitos en la raíz). Lo hecho:
-> linter canónico `brain-check.mjs` (idéntico a cars/bersaglio) + `docs/.brain-manifest.json` + githooks +
-> `.claude/settings.json` (boot `--boot`) + estructura neuronal `docs/00..99` + lóbulo `41-MERCADO`.
-> Los 7 monolitos originales (CLAUDE viejo, AVANCES 3420 L, ALTORRACARSCLAUDE, MEGA-PLAN, PLAN-MEJORAS,
-> DEPLOY-RUNBOOK, CONTENIDO-EDITORIAL) se preservaron **íntegros en `_legacy/`** (Fase A `git mv`,
-> history intacta — **cero pérdida**). El §12 único de ALTORRACARSCLAUDE (smart-search) se rescató al `99`.
+> 🏗️ **MISIÓN GREENFIELD (2026-07-10, ADR §15)** — construir el MEJOR portal inmobiliario
+> (`altorrainmobiliaria.co`) DESDE CERO ABSOLUTO. SSoT = `specs/2026-07-10-INMOBILIARIA-KICKOFF-fable5.md`
+> (+ mandato verbatim al lado). Reglas permanentes: **Fable 5 planifica/investiga/audita · Opus 4.8
+> implementa (tag por commit) · dueño solo decide dinero/legal/go-no-go · español SIEMPRE · autonomía total**.
+> Cars EN PAUSA; este operador = escritor único del kernel ×4.
 >
-> **Pendiente de la instalación (Fase B, destilado on-demand)**: el `99`/`30`/`20` tienen las SEMILLAS
-> esenciales; el detalle por-fase fino sigue en `_legacy/AVANCES.md` (leer por offset cuando se necesite,
-> NUNCA entero). Si una sesión necesita un detalle histórico que no está en el nodo, está en `_legacy`.
+> **Programa** (kickoff §5-§7): R0 cosecha → R1 competencia CO (3 lentes: fuentes+código+Chrome live)
+> → R2 referentes mundo → R3 legal CO → R4 operación/marketing → R5 MEGA-PLAN + sellar stack (W-11
+> COMPLETO sobre candidato §6: CF Pages+Astro+Firebase+R2+Wompi+MapLibre) · carril DISEÑO D0-D4
+> (Claude Design vía DesignSync, mockup ANTES de código, gate de fidelidad visual).
 
-> 🏗️ **Estado del PRODUCTO inmobiliaria** (al cierre de bitácora 2026-05-07, **no re-verificado**):
-> Bloques A–I + Mega-Plan Fases 1–12 COMPLETADOS (auditoría 2026-05-04). Sitio live, dinámico,
-> SEO fuerte. El backlog vivo = gaps **J1–J5** (ver pendientes). Detalle arquitectónico → `20-ESPACIAL`.
-
-> **🚫 Callejones sin salida / cuidados (NO reintentar)**:
-> (a) **NO confiar en `_legacy/PLAN-MEJORAS.md` para el "qué sigue"** — está fechado 2026-04-16 (anterior a
-> AVANCES 2026-05-07) y tiene contradicción interna (§9.1 dice "Sprint 2 = Bloque G" pero §9.3 ya marca G/H
-> como DONE). **AVANCES.md es la fuente de verdad del estado**, no PLAN-MEJORAS. El benchmark de competidores
-> de MEGA-PLAN (→ `41-MERCADO`) SÍ es válido (inteligencia atemporal).
-> (b) **NO asumir que los pendientes J/Eventarc siguen abiertos** — ~1 mes sin registrar; verificar contra
-> git + Firebase reales (§3.3) antes de tratarlos como vivos.
-> (c) **NO mezclar stacks**: inmobiliaria usa Firebase **modular v12.9.0**; cars usa **Compat v11.3.0**.
-> Las colecciones/schema de los dos proyectos son distintas — no cruzar (línea roja INSTANCE).
+> **🚫 Callejones / cuidados (NO reintentar)**:
+> (a) ⛔ **NADA del sitio/código/diseño viejo como base** — regla innegociable del dueño; solo lectura
+> de referencia. Los TODO/gaps del sitio viejo (J1-J5, Eventarc, smart-search…) están OBSOLETOS (ADR §15.7).
+> (b) **Writes cross-repo = BLOQUEADOS por el harness** (sinapsis regla 5) → propagar por payload en
+> `references/` de la skill, nunca intentar Edit directo en repo hermano.
+> (c) **No mezclar stacks legacy**: el viejo usaba Firebase modular v12.9.0; el schema nuevo se diseña
+> en R5 — no arrastrar colecciones viejas sin decisión de migración (R0 las censa).
 
 ---
 
 ## 📋 Pendientes abiertos (TODO-NN)
 
-> Al cerrar uno: ✅ + link al ADR, y retirarlo en la próxima poda. **Verificar primero** que sigan abiertos
-> (la bitácora tiene ~1 mes; pueden estar resueltos).
-
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-01** | **J2** — 4 páginas con `action` FormSubmit HTML residual (contacto/detalle/publicar/avaluo) → migrar a Firestore `solicitudes` (riesgo doble envío) | 🔮 verificar | Prioridad ALTA |
-| **TODO-02** | **J3** — 3 páginas sin `firebase-config.js`/`components.js` (servicios-mant/servicios-mud/turismo-inm) | 🔮 verificar | Prioridad ALTA |
-| **TODO-03** | **J5** — sin tests automatizados (solo `tests/MANUAL-meta-snapshot.md`) | 🔮 | Prioridad BAJA |
-| **TODO-04** | **Re-deploy Cloud Functions** con triggers Eventarc (fallaron en deploy 0-C; receta IAM en `docs/50-CONFIG-INFRA.md` + `30 L-07`) | 🔮 verificar | Lo hace el dueño |
-| **TODO-05** | **Secret CI** `GOOGLE_APPLICATION_CREDENTIALS_JSON` en GitHub Actions (habilita `og-publish.yml` SEO dinámico) | 🔮 verificar | |
-| **TODO-06** | **Keys reales**: GMAPS_API_KEY (mapa) + VAPID_KEY (push FCM) en `js/firebase-config.js` | 🔮 | OPCIONAL |
-| **TODO-07** | **Fase B destilado** — expandir semillas de `99`/`30` desde `_legacy/AVANCES.md` cuando se necesite (NO de un golpe) | 🔄 continuo | Cerebro |
-| **TODO-08** | **smart-search A1b/A1c** — portar de cars: conteo por sugerencia + indicador `~` + ARIA completa (ver `99 §12`) | 🔮 verificar | Puede estar hecho |
+| **TODO-10** | Validación LIVE del mantenimiento en `altorrainmobiliaria.co` (post-push: redirects muestreados, WhatsApp CTA, SW v5 mata caché vieja) | 🔄 | skill `validacion-live-chrome` |
+| **TODO-11** | **R0 · Inventario de COSECHA**: censo Firestore real (5 propiedades, solicitudes/usuarios) + censo URLs indexadas → mapa 301 definitivo + auditoría docs maestros del dueño (`all_docx_content.txt`) + estado Firebase (plan/CFs/billing) + estado matrícula arrendador | 🔄 EN CURSO | artefacto: `specs/R0-INVENTARIO-COSECHA.md` |
+| **TODO-12** | **R1 · Competencia CO** (ciencuadras · metrocuadrado · fincaraiz · coninsa · araujoysegovia · arenasinmobiliaria + Habi/La Haus/Properati) — TRES lentes c/u; partir de `41-MERCADO` (PR #79), actualizar no repetir | 🔮 | artefacto → `41-MERCADO` v2 |
+| **TODO-13** | **R2 · Referentes mundo** (Zillow/Redfin/Idealista/Rightmove/QuintoAndar/Airbnb) — 3 lentes; catálogo features adopt/adapt/discard | 🔮 | |
+| **TODO-14** | **R3 · Legal CO** (Ley 820+matrícula, corretaje, avalúos RAA/1673, Habeas Data 1581, corta estancia RNT/2068/PH, SIC, firma electrónica 527, SARLAFT/UIAF) | 🔮 | skill `legal-colombia`; artefacto: lóbulo `42-LEGAL` |
+| **TODO-15** | **R4 · Operación+marketing**: destilar docs maestros (protocolo leads, scripts WA) + SEO local Cartagena + GBP | 🔮 | |
+| **TODO-16** | **R5 · MEGA-PLAN por olas** + **sellar stack vía W-11 COMPLETO** (comité + Gemini + verificación de claims) | 🔮 | artefacto: `specs/MEGA-PLAN-INMOBILIARIA.md` |
+| **TODO-17** | **Diseño D0-D4**: direcciones de marca comparativas (dueño elige) → design system → DesignSync a claude.ai → mockup por pantalla → gate fidelidad | 🔮 | tras R1/R2 (D0 se nutre de sus hallazgos UX) |
+| **TODO-18** | **Potenciar cerebro** (kickoff §7.3): auditoría Nivel-2 (vence ~2026-07-15, staleDays) + destilar `_legacy/AVANCES.md` Fase B + adoptar de cars gobernanza faltante (W-11 ya citado en 00 — verificar catálogo 60 completo) | 🔄 | |
+| **TODO-19** | **Constancias liderazgo ×3**: payloads listos en la skill; los aplican los operadores cars/bersaglio/insema en su próxima sesión | ⏸️ externo | |
+| **TODO-20** | **Checklist del DUEÑO** (kickoff §8): Cloudflare cuenta+NS, acceso registrador .co, plan Firebase (Spark/Blaze), acceso GSC, GBP, estado matrícula, permiso Claude Design (1er DesignSync) | ⏸️ dueño | pedirle solo lo que falte |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **2026-06-09 (instalación del cerebro)**: neurogénesis de inmobiliaria (PASO 2 del cerebro multi-proyecto).
-> Tooling canónico + estructura neuronal + Fase A (`git mv` 7 monolitos → `_legacy`, history intacta).
-> Extracción de esenciales vía workflow (6 agentes sobre los 376KB). Estado del producto destilado de
-> AVANCES (no re-verificado). Próximo: completar destilado on-demand + verificar pendientes J contra git real.
->
-> **Hitos del producto (de `_legacy/AVANCES.md`, hasta 2026-05-07)** — detalle por offset en `99`:
-> Etapas 0–8 (migración Firebase) · catálogo 100% Firestore (commit `d28437e`) · Bloques A–I (features) ·
-> SEO E1–E5 (JSON-LD/landings) · auditoría 2026-05-04 (gaps J1–J5) · Mega-Plan Fases 1–12 · FAQs masivas 2026-05-07.
+> **2026-07-10 (ARRANQUE FABLE 5 — ADR §15)**: specs madre copiados · payload sinapsis L-08..L-12
+> aplicado · liderazgo kernel ×4 asumido (skill actualizada + payloads constancia ×3) · MODO OBRA
+> construido y commiteado (`72879f0`: mantenimiento + 65 redirects + SW v5 kill-switch + og-publish
+> neutralizado) · 05/10 re-escritos a la realidad greenfield. Siguiente: merge a main + push (deploy)
+> → validación live → R0.
