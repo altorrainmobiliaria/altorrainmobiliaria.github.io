@@ -28,7 +28,7 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-17** | **⚡ ARRANQUE OPUS — Ola 0 ítem 1** (scaffold `portal/`): protocolo MEGA-PLAN §4. Insumos de la Ola 0.7: 2ª pasada a los .xlsx FTI-01 + piloto `ALTORRA-PILOTO-main` del corpus del dueño (crítico R4) | 🔮 OPUS | pendientes del dueño: cuenta Cloudflare (Ola 0.2) · abogado (gate Ola 2) |
+| **TODO-17** | **⚡ ARRANQUE OPUS — Ola 0 ítem 1** (scaffold `portal/`): protocolo MEGA-PLAN §4. El dueño dirá **"Arranca la Ola 0 del MEGA-PLAN"**. En la MISMA sesión: **guiar al dueño paso a paso para crear su cuenta Cloudflare** (Ola 0.2 — protocolo Fincaraíz: él teclea credenciales en SU navegador, Claude jamás crea cuentas ni maneja contraseñas; email del negocio, no el personal). Insumos Ola 0.7: 2ª pasada .xlsx FTI-01 + piloto `ALTORRA-PILOTO-main` (crítico R4) | 🔮 OPUS | abogado = gate Ola 2 |
 | **TODO-18** | **Carril D — Diseño D0-D4**: direcciones de marca comparativas (dueño elige) → design system → DesignSync a claude.ai → mockup por pantalla → gate fidelidad. Insumo: bóveda `ui-referentes/` | 🔮 OPUS (D0 en Ola 0.3) | paleta SIN negro |
 | **TODO-19** | **Potenciar cerebro** (kickoff §7.3): auditoría Nivel-2 (vence ~2026-07-15, staleDays) + destilar `_legacy/AVANCES.md` Fase B + evaluar lecciones candidatas C-01..C-39 (R0) contra `30` | 🔄 | |
 | **TODO-20** | **Constancias liderazgo ×3**: payloads listos en la skill; los aplican los operadores cars/bersaglio/insema en su próxima sesión | ⏸️ externo | |
