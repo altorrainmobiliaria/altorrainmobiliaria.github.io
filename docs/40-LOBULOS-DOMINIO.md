@@ -9,6 +9,7 @@
 | Lóbulo | Archivo | Dominio | Origen |
 |---|---|---|---|
 | 📊 **Mercado / Competencia** | `docs/41-MERCADO.md` | Inteligencia inmobiliaria Cartagena/Colombia: benchmark de competidores, matriz impacto×esfuerzo, estrategia anti-rival | Destilado de `_legacy/MEGA-PLAN.md` (2026-06-09) |
+| ⚖️ **Legal** | `docs/42-LEGAL.md` | Marco legal Colombia del portal: reglas duras que moldean el producto, gates bloqueantes por feature, checklist de textos obligatorios, agenda del abogado (Ley 820, RNT, Habeas Data, pagos/D.1981, firma electrónica, SIC, tributario) | Workflow R3 `wf_5cf498d4` (17 agentes, 2026-07-10) — detalle en `specs/R3-LEGAL-COLOMBIA-2026-07.md` |
 
 ## Rangos de namespace (SCHEMA)
 - **41-49** = lóbulos de dominio (mercado/seguridad/legal/UX/SEO/perf/a11y…). Registrar aquí.

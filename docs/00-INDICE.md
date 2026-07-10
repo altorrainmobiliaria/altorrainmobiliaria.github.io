@@ -20,6 +20,7 @@
 | Un bug/síntoma que "te suena", receta, gotcha | `30-LECCIONES` |
 | Project ID, cuentas IAM, deploy, secrets | `50-CONFIG-INFRA` |
 | Competencia/mercado inmobiliario, benchmark | `40-LOBULOS` → `41-MERCADO` |
+| Legal Colombia: Ley 820/RNT/Habeas Data/pagos/firma/SIC — gates de features y agenda abogado | `40-LOBULOS` → `42-LEGAL` (detalle: `specs/R3-LEGAL-COLOMBIA-2026-07.md`) |
 | El "por qué" de una decisión / detalle histórico | este índice → `99-HISTORIAL` (offset) |
 | Decisión cara de revertir (2ª opinión externa) | `15-CONSEJO-EXTERNO` |
 | "No se actualiza el sitio tras editar admin" | `30 L-06` (cache `system/meta` → onSnapshot) |
@@ -57,5 +58,5 @@
 
 `CLAUDE.md` (router) · `05-ESTADO-GLOBAL` · `10-MEMORIA-CORTO-PLAZO` · `15-CONSEJO-EXTERNO` ·
 `20-MEMORIA-ESPACIAL` · `30-LECCIONES` · `00-INDICE` (este) · `99-HISTORIAL-ADR` ·
-`40-LOBULOS-DOMINIO` (+ hijo `41-MERCADO`) · `50-CONFIG-INFRA`. Tooling: `scripts/brain-check.mjs` (KERNEL) +
+`40-LOBULOS-DOMINIO` (+ hijos `41-MERCADO` · `42-LEGAL`) · `50-CONFIG-INFRA`. Tooling: `scripts/brain-check.mjs` (KERNEL) +
 `docs/.brain-manifest.json` (budgets) + `githooks/pre-commit` + `.claude/settings.json`. Cuarentena: `_legacy/`.
