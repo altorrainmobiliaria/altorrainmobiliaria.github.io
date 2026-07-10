@@ -9,7 +9,40 @@
 
 ---
 
-## Benchmark de competidores ("lo mejor" de cada uno)
+## 🥊 R1 2026-07-10 — competencia VERIFICADA (lentes a+b · 23 agentes · claims con veredicto adversarial)
+
+> **SSoT del detalle → `specs/R1-COMPETENCIA-2026-07.md`** (11 fichas, 63 planes/precios con veredicto,
+> 8 patrones SEO copiables, adopt/adapt/discard de Airbnb/Booking, 16 misiones de lente c). Crudo → bóveda.
+> Esta sección = solo la esencia estratégica. El benchmark 2026-05 de abajo queda como histórico.
+
+**El hallazgo #1 (hueco de mercado verificado)**: la **corta estancia con booking real NO existe en ningún
+portal CO** — Fincaraíz tiene su vertical MUERTA (301 a páginas de venta), Metrocuadrado la PROHÍBE ("no se
+permite renta por días"), el resto (Ciencuadras/Coninsa/A&S/Arenas/Habi/LaHaus) = cero producto; y el único
+que la roza (Properati) tiene FRAUDE documentado en reservas (anticipos robados, 0% resolución). → Vertical
+turística con calendario+precio por noche+pago protegido Wompi = el diferencial fundacional de Altorra en
+Cartagena (oportunidades 1-2 del roadmap).
+
+**Rivales locales (Cartagena) — debilidades explotables verificadas**:
+- **Ninguno cubre los lados 2-3**: ni A&S ni Arenas permiten "véndelo tú mismo" ni tienen portal de aliados
+  self-service (corretaje cerrado tradicional).
+- **Higiene técnica rota**: A&S con subdominio de captación con SSL vencido sirviendo una app ajena;
+  Arenas con 0 JSON-LD, fichas sin meta description, ~465 landings de barrio VACÍAS y un rebuild Next.js
+  indexado con title "Create Next App".
+- **Opacidad de tarifas**: nadie publica comisiones (A&S 8%+IVA admin / 3%+IVA venta solo visibles vía
+  Compensar; Arenas ~10% canon + 20% "mercadeo" 1er mes). → transparencia total = diferenciador gratis.
+
+**Patrón transversal del mercado**: JSON-LD de fichas roto o ausente en TODOS (rich results/AEO sin dueño) ·
+og:image genérica al compartir por WhatsApp · leads gated tras formularios · avisos zombis (queja pública #1
+vs Metrocuadrado/Fincaraíz) · B2B 100% opaco ("pide asesoría/demo") · publicación gratuita restrictiva
+(Ciencuadras 3/90días/10 fotos · Metrocuadrado la VETA en 27 ciudades · Properati ni acepta particulares).
+
+**Roadmap de oportunidades (14, con evidencia)**: MVP = corta estancia + pago protegido + JSON-LD completo +
+og:image dinámica + WhatsApp sin gating + publicación gratuita generosa + precios públicos + humanización ·
+Ola 2 = landings de barrio con contenido REAL + frescura verificada + portal aliados self-service + AVM/
+calculadora renta turística + sello Verificado · Ola 3 = loop inversión→renta turística. Detalle → spec §2.
+
+**Lente (c) live — PENDIENTE**: 16 misiones P1-P6 (precios tras login, flujos de publicación end-to-end,
+paneles B2B, respuesta a leads, corta estancia, performance) → spec §6. Browser extensión conectado ✓.
 
 **Premium / UX global**
 - **Compass** — UX premium referente: Exclusives (pre-publicación), Concierge (mejoras con pago diferido), Market Outlook por zona, Neighborhood Guides, integración Rocket Mortgage. Diseño minimalista.

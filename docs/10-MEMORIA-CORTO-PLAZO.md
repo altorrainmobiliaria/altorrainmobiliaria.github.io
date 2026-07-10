@@ -35,7 +35,7 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-11** | **R0 · Inventario de COSECHA**: ✅ censo 63 URLs · ✅ destilado `_legacy` · ✅ censo Firestore/CFs · ✅ propiedades DESCARTADAS (dueño) · ✅ matrícula OBTENIDA (dueño) · ⏳ conteo `solicitudes` (MCP stale) · ⏳ Storage · ⏳ auditoría docs maestros (→ R2/R3/R4) | 🔄 casi cerrado | artefacto: `specs/R0-INVENTARIO-COSECHA.md` |
-| **TODO-12** | **R1 · Competencia CO** (ciencuadras · metrocuadrado · fincaraiz · coninsa · araujoysegovia · arenasinmobiliaria + Habi/La Haus/Properati) **+ Airbnb y Booking** (mandato del dueño 2026-07-10, lente corta-estancia) — TRES lentes c/u; partir de `41-MERCADO` (PR #79), actualizar no repetir | 🔄 EN CURSO | artefacto → `41-MERCADO` v2 |
+| **TODO-12** | **R1 · Competencia**: ✅ lentes (a)+(b) VERIFICADAS ×11 portales (workflow 23 agentes → `specs/R1-COMPETENCIA-2026-07.md` + esencia en `41-MERCADO` v2) · ⏳ **lente (c) live**: 16 misiones P1-P6 (spec §6) con la extensión Chrome (conectada ✓) | 🔄 lente c | hallazgo #1: corta estancia = hueco TOTAL del mercado CO |
 | **TODO-13** | **R2 · Referentes mundo** (Zillow/Redfin/Idealista/Rightmove/QuintoAndar/Airbnb) — 3 lentes; catálogo features adopt/adapt/discard | 🔮 | |
 | **TODO-14** | **R3 · Legal CO** (Ley 820+matrícula, corretaje, avalúos RAA/1673, Habeas Data 1581, corta estancia RNT/2068/PH, SIC, firma electrónica 527, SARLAFT/UIAF) | 🔮 | skill `legal-colombia`; artefacto: lóbulo `42-LEGAL` |
 | **TODO-15** | **R4 · Operación+marketing**: destilar docs maestros (protocolo leads, scripts WA) + SEO local Cartagena + GBP | 🔮 | |
@@ -66,3 +66,9 @@
 > (`R0-DESTILADO-LEGACY.md`: 52 features · 21 activos · 39 lecciones candidatas; crudo en bóveda) ·
 > hallazgo: CLI Firebase en cuenta equivocada (solo ve cars) → censo R0 espera al dueño.
 > **Siguiente**: R1 competencia (3 lentes) + auditoría docs maestros + evaluar C-01..C-39 → `30`.
+>
+> **2026-07-10 (R1 lentes a+b COMPLETAS)**: workflow `wf_b2026a2b` 23/23 agentes, 0 errores →
+> `specs/R1-COMPETENCIA-2026-07.md` (14 oportunidades por ola · 8 patrones SEO · 11 fichas con 59 claims
+> verificados · 16 misiones lente c) + `41-MERCADO` v2 + crudo en bóveda. Hallazgo #1: la corta estancia
+> con booking real NO existe en ningún portal CO (y Properati tiene fraude documentado) → diferencial
+> fundacional Altorra. Siguiente: lente (c) live P1-P6 → luego R2/R3.
