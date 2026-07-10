@@ -6,7 +6,7 @@
 ## Checklist
 
 - [x] Censo de URLs indexadas (63, del `sitemap.xml` viejo vía git `6149652`) — base del mapa 301 (2026-07-10)
-- [ ] Destilado `_legacy` (requisitos + datos + lecciones) — workflow `wf_a8b895c6` en curso
+- [x] Destilado `_legacy` (requisitos + datos + lecciones) — workflow `wf_a8b895c6` 9/9 agentes → `specs/R0-DESTILADO-LEGACY.md` (52 features · 21 activos · 39 lecciones candidatas · crudo en la bóveda `research-archive/2026-07-10`) (2026-07-10)
 - [ ] Censo Firestore REAL (colecciones, 5 propiedades, solicitudes, usuarios) — requiere acceso Firebase
 - [ ] Estado real Firebase (plan Spark/Blaze, 8 CFs vivas: ¿apagar?, Storage, quotas)
 - [ ] Auditoría docs maestros del dueño (`ALTORRA Company (Legal)` + `all_docx_content.txt` 690KB)
