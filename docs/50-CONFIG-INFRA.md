@@ -17,7 +17,8 @@
 | Storage bucket | `gs://altorra-inmobiliaria-345c6.firebasestorage.app` |
 | Firestore region | `nam5` · Functions region `us-central1` (Node 20) |
 | GitHub repo | `altorrainmobiliaria/altorrainmobiliaria.github.io` · dominio `https://altorrainmobiliaria.co/` |
-| Registrador del dominio | **Hostinger** (dueño, 2026-07-10) — relevante para la delegación de NS a Cloudflare (stack §6 kickoff) |
+| Registrador del dominio | **Hostinger** (dueño, 2026-07-10) — relevante para la delegación de NS a Cloudflare (stack ADR §16) |
+| Razón social DEFINITIVA | **ALTORRA COMPANY S.A.S · NIT 902063965-4** (dueño 2026-07-10). ⛔ La vieja "ALTORRA S.A.S. NIT 901.976.611-7" entra en LIQUIDACIÓN — jamás en contratos/facturas/footer nuevos (las plantillas del corpus que la citan se actualizan al adaptarlas) |
 | Plan Firebase | **Blaze** (dueño, 2026-07-10). ⚠️ El MCP reportó "Billing Enabled: No" — discrepancia a verificar en consola |
 | Cuenta CLI activa (este dir) | `altorrainmobiliaria@gmail.com` fijada con `firebase login:use` (2026-07-10; las 3 cuentas del dueño están en `login:list`) |
 | Email admin/login | `info@altorrainmobiliaria.co` · UID super_admin `J1sXuV78OhPA5KyCoWNYFVQehF23` |

@@ -38,7 +38,7 @@
 2. **Cuenta Cloudflare** (dueño crea, gratis) + R2 bucket + Worker. Firebase: reglas/Functions nuevas en `portal/firebase/` (el proyecto `altorra-inmobiliaria-345c6` se REUSA; las 7 CFs legacy se apagan al cutover).
 3. **D0 + D1** (carril D arriba). Tokens desde la elección del dueño.
 4. **Página de obra ENRIQUECIDA** (AEO — quick win en GH Pages actual): servicios, zonas, FAQPage JSON-LD, sello matrícula — protege el ranking ChatGPT ANTES de cualquier reindexación.
-5. **GBP + citaciones locales** (necesita dirección física → pregunta 🔴 R4 al dueño).
+5. **GBP: RECLAMAR/verificar la ficha EXISTENTE** (el dueño confirma 2026-07-10 que la oficina back-office "aparece en nuestro Google Maps") + optimizarla como negocio de área de servicio (atención presencial a domicilio + virtual completa) + citaciones locales.
 6. **Textos legales v1** (gate B1): política de datos + aviso de privacidad + T&C (plantillas de R3 §5; validación abogado ANTES de captar el primer lead del portal nuevo).
 7. Modelo de datos v1 (Firestore): `propiedades` (schema desde destilado R0 + los .xlsx FTI-01 del dueño — 2ª pasada pendiente del crítico R4), `solicitudes` (taxonomía R0), `disponibilidad` (corta estancia), `config`. Índices compuestos DECLARADOS de antemano (tope 200).
 
@@ -50,7 +50,7 @@ Superficies (todas con mockup D2 aprobado):
 4. **Landings SSG**: 13+ sectores (contenido editorial REAL por barrio — R1 op.9) + landings de intención; breadcrumb con conteos.
 5. **Corta estancia SIN dinero** (gate B2 pendiente de abogado): búsqueda por fechas/huéspedes, calendario por propiedad, **solicitud de reserva → confirmación del anfitrión → coordinación por WhatsApp**. Campo RNT BLOQUEANTE en el alta de alojamiento + declaración PH (B3). El rail de pago entra en Ola 2 tras el gate.
 6. **Publica tu propiedad**: wizard 3 pasos generoso (gratis, 15+ fotos, sin caducidad 90 días — R1 op.6), verificación humana → sello "Verificado por ALTORRA" (op.13 adelantada como proceso).
-7. **Página de PRECIOS pública** (op.7 — diferenciador gratis; tarifas 2026 → pregunta 🔴 al dueño).
+7. **Página de PRECIOS pública** (op.7 — diferenciador gratis). Tarifas v1 DECIDIDAS (delegación del dueño 2026-07-10): las cliente-facing de sus propios docs — venta 2-3% · captación arriendo 50-100% primer canon · administración ~10%+IVA mensual · corta estancia % de servicio por definir con el rail de pago; el dueño puede vetar/ajustar en el go/no-go de Ola 1.
 8. **Alertas** guardadas solo-email + digest diario (Resend 100/día — tope verificado).
 9. **Rango ALTORRA + Rentímetro turístico** (landing multi-step contacto-primero; rangos manuales de 10 barrios v1; NUNCA llamarlo "avalúo" — B13).
 10. **Admin v1** (SPA tras Auth): CRUD propiedades, cola de verificación, leads con SLA 5-min (proceso del dueño, R4), export.
@@ -73,7 +73,7 @@ Garantía de arriendo con aseguradora local (B11, QuintoAndar-criollo Fase 1-2) 
 2. **Empiezas por OLA 0 ítem 1** (scaffold `portal/`). Cada ítem: IAP §3.4 → mockup si es UI (carril D — NADA de UI sin mockup aprobado) → implementar → `verify` end-to-end en staging → commit específico + push (delegado) → 10 al día.
 3. **Nunca**: tocar el flujo de dinero antes del gate B2/B9 · pedir reindexación a Google · publicar el nº personal del dueño · usar negro en la marca · `onSnapshot` público · comprometer un gasto sin el dueño.
 4. **Tag `OPUS-4.8`** en cada commit. Al cerrar cada ola: consolidación §G.3 + aviso al dueño para el go/no-go + queda pendiente auditoría Fable (cuando su cuota vuelva).
-5. Preguntas abiertas al dueño (no bloquean Ola 0 salvo lo marcado): 🔴 razón social/NIT definitiva · 🔴 tarifas 2026 · 🔴 dirección física (GBP) · adenda Gemini del stack (se integra como ADR §16-adenda cuando llegue).
+5. ✅ Preguntas del dueño RESUELTAS (2026-07-10): **razón social = ALTORRA COMPANY S.A.S, NIT 902063965-4** (la vieja "ALTORRA S.A.S. 901.976.611-7" entra en liquidación — JAMÁS usarla en contratos/facturas/footer nuevos; las plantillas de contratos del corpus que la citan se ACTUALIZAN al adaptarlas) · tarifas v1 decididas (Ola 1.7) · GBP = reclamar ficha existente (Ola 0.5) · **adenda Gemini INTEGRADA** (stack intacto + 4 adopciones: presupuesto TTFB p75<800ms en CI de Ola 1, test de carrera anti-overbooking como gate de Ola 2, WhatsApp Cloud API, nunca-originales). Pendientes del dueño: cuenta Cloudflare (Ola 0.2) · abogado (gate Ola 2).
 
 ## 5 · Gates del dueño (resumen de decisiones que solo Daniel toma)
 Go/no-go de cada ola · elección D0 · cutover DNS (Hostinger→Cloudflare) · todo gasto (>$0) · contratación del abogado para la mesa B2/B9 + validación de textos legales · tarifas comerciales · mostrar la matrícula (certificado al final).
