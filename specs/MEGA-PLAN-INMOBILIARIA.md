@@ -31,6 +31,33 @@
 | **D3** | Implementación réplica-exacta | skills `frontend-design`/`impeccable` |
 | **D4** | Gate de fidelidad VISUAL (captura vs mockup) | Fable audita en cierre de ola |
 
+## 3b · Módulo GESTIÓN — el back-office operativo (mandato del dueño 2026-07-10)
+
+> "Actualmente llevamos todo en la mente y por WhatsApp… se pierden los contratos, se olvidan fechas."
+> Este módulo ES el negocio real de administración (8-12% mensual): digitaliza el **Sistema Operativo
+> Integral del dueño** (destilado R4 — sus propios procesos A1-A5, mora, renovaciones). Ejemplo canónico
+> del dueño: *contrato de administración con la propietaria Catalina Vega desde 2025-11-01, 1 año con
+> renovación automática salvo novedades* → el sistema debe saber sus fechas, sus pagos y sus alertas.
+
+**Alcance (por entregas):**
+- **GESTIÓN v1 (dentro de Ola 1 — ítem 13)**: (a) **expediente por inmueble administrado**: contrato de
+  administración + contrato de arriendo con partes, canon, día de pago, vigencia, cláusula de renovación
+  automática y % de honorarios; documentos adjuntos en bóveda PRIVADA (Firebase Storage + Rules, gate B5);
+  (b) **calendario operativo con recordatorios** (email/WhatsApp al admin): fecha de pago del canon,
+  pago al propietario antes del día 10 (proceso A1-A5), seguimiento mensual de servicios públicos,
+  **renovación de contratos con alerta a 4 meses** (el preaviso legal de terminación es de 3 — Ley 820),
+  incremento anual IPC; (c) **novedades/tickets**: reporte de inquilino → seguimiento → resolución
+  (posventa propietario e inquilino); (d) registro manual de pagos recibidos (el dinero aún se mueve
+  fuera de la plataforma) con estado de mora según SU protocolo (día 5/10/15/30/45).
+- **GESTIÓN v2 (Ola 2)**: cobro del canon EN plataforma (Wompi recurrente + payout al propietario con
+  honorarios descontados — gate B9) · liquidaciones de corta estancia al anfitrión (check-in/out,
+  limpieza) · pipeline de VENTA de las 7 etapas (oferta→promesa→escritura→registro ORIP) con documentos.
+- **GESTIÓN v3 (Ola 3)**: portal del propietario (ve su inmueble, pagos, reportes) + portal del inquilino
+  (paga, reporta novedades, descarga paz y salvos) — el "app de propietarios" de la Fase 3 de sus docs.
+
+**Regla de diseño**: cada proceso de este módulo se implementa COMO LO DEFINEN SUS DOCS destilados en R4
+(SLAs, días, porcentajes) — no se inventa un workflow genérico; se digitaliza el suyo.
+
 ## 3 · Las olas
 
 ### 🌊 OLA 0 — Fundaciones (sin gates externos; arranca YA)
@@ -40,7 +67,7 @@
 4. **Página de obra ENRIQUECIDA** (AEO — quick win en GH Pages actual): servicios, zonas, FAQPage JSON-LD, sello matrícula — protege el ranking ChatGPT ANTES de cualquier reindexación.
 5. **GBP: RECLAMAR/verificar la ficha EXISTENTE** (el dueño confirma 2026-07-10 que la oficina back-office "aparece en nuestro Google Maps") + optimizarla como negocio de área de servicio (atención presencial a domicilio + virtual completa) + citaciones locales.
 6. **Textos legales v1** (gate B1): política de datos + aviso de privacidad + T&C (plantillas de R3 §5; validación abogado ANTES de captar el primer lead del portal nuevo).
-7. Modelo de datos v1 (Firestore): `propiedades` (schema desde destilado R0 + los .xlsx FTI-01 del dueño — 2ª pasada pendiente del crítico R4), `solicitudes` (taxonomía R0), `disponibilidad` (corta estancia), `config`. Índices compuestos DECLARADOS de antemano (tope 200).
+7. Modelo de datos v1 (Firestore): `propiedades` (schema desde destilado R0 + los .xlsx FTI-01 del dueño — 2ª pasada pendiente del crítico R4), `solicitudes` (taxonomía R0), `disponibilidad` (corta estancia), `config` — **Y las entidades del módulo GESTIÓN (§3b) desde el día 1**: `contratos` (administración y arriendo: partes, vigencia, renovación automática, % honorarios, docs adjuntos), `pagos` (calendario canon/honorarios/servicios), `novedades` (tickets inquilino/propietario), `expedientes`. Modelarlas tarde = remodelar caro. Índices compuestos DECLARADOS de antemano (tope 200).
 
 ### 🌊 OLA 1 — MVP público (el portal que reemplaza la obra) · gate de salida: cutover DNS
 Superficies (todas con mockup D2 aprobado):
@@ -56,8 +83,10 @@ Superficies (todas con mockup D2 aprobado):
 10. **Admin v1** (SPA tras Auth): CRUD propiedades, cola de verificación, leads con SLA 5-min (proceso del dueño, R4), export.
 11. SEO técnico: sitemaps segmentados regenerados por CI, 301 map listo para cutover, GSC.
 12. **Leads**: colección `solicitudes` + scoring server-side (destilado R0) + notificación email/WhatsApp al admin.
+13. **GESTIÓN v1** (módulo §3b): expedientes + contratos con fechas/renovaciones + calendario de recordatorios + novedades/tickets + registro de pagos con mora. Es la herramienta DIARIA del dueño — su feedback en vivo es el mejor QA del portal entero.
 
 ### 🌊 OLA 2 — Dinero + arriendo digital (post-gate abogado B2/B9 + tarifas selladas)
+0. **GESTIÓN v2** (§3b): cobro de canon en plataforma + payout con honorarios + liquidaciones corta estancia + pipeline de venta con documentos.
 1. **Booking con pago protegido Wompi** (diseño (a) del ADR §16: mandato + estados retenido/liberado/reversado + webhook idempotente + reversión art. 51). Skills `wompi-*` + `auditoria-financiera` (L-12: método ANTES de construir).
 2. **Portal de aliados self-service** (op.11): precios públicos (ancla Proppit $200-300K/mes — nosotros por valor), panel de leads con trazabilidad (el listón de Fincaraíz OV es bajísimo), suscripción Wompi.
 3. **Perfil de inquilino reutilizable 1→N** (QuintoAndar-criollo Fase 0: checklist documental + revisión humana SLA 24h; docs privados en Firebase Storage con B5).
