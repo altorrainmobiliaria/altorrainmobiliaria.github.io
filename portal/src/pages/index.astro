@@ -1,0 +1,19 @@
+---
+// PÁGINA ESTÁTICA (prerenderizada) — declaración EXPLÍCITA (output:'server' => on-demand por defecto).
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { SITE } from '../lib/config/site';
+---
+
+<BaseLayout title={`${SITE.name} — Portal (en construcción)`}>
+  <main>
+    <h1>{SITE.name}</h1>
+    <p>{SITE.slogan} · {SITE.city}</p>
+    <p>Portal en construcción. El diseño definitivo llega en el <strong>carril D</strong> (mockups aprobados por el dueño).</p>
+    <!--
+      SCAFFOLD — centinela de build, NO es diseño.
+      Se reemplaza por el mockup D2 aprobado en Ola 1. Sin tokens de marca hasta D1.
+    -->
+  </main>
+</BaseLayout>

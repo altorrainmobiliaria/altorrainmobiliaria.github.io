@@ -15,6 +15,9 @@ on:
       - 'css/**'
       - 'service-worker.js'
       - 'manifest.json'
+      # El portal nuevo tiene su propio CI (portal-ci.yml). Excluirlo para que sus .html/.css
+      # NO disparen el bump de versión del sitio VIEJO (aislamiento inbound; hallazgo de revisión).
+      - '!portal/**'
 
 permissions:
   contents: write

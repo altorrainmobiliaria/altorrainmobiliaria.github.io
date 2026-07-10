@@ -1,0 +1,11 @@
+/*
+ * Tokens de marca y design system — PLACEHOLDER.
+ *
+ * Los valores reales nacen en D1 (carril D), tras la elección de dirección de marca del dueño en D0.
+ * NO definir colores/tipografía aquí hasta D1: evita "diseño genérico sin mockup aprobado" (MEGA-PLAN §0.6).
+ *
+ * Restricción de marca SELLADA: dorado · plata · blanco · azul turquí (navy). SIN NEGRO.
+ */
+:root {
+  /* intencionalmente vacío — ver carril D (D0/D1) */
+}

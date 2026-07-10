@@ -1,0 +1,26 @@
+{
+  "name": "altorra-portal",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Portal ALTORRA Inmobiliaria — Astro + Cloudflare Workers (greenfield, MEGA-PLAN Ola 0)",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "verify:build": "node ./scripts/verify-build.mjs",
+    "cf-types": "wrangler types"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^14.1.2",
+    "astro": "^7.0.7"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "wrangler": "^4.110.0"
+  }
+}

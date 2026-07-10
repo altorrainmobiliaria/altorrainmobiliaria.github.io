@@ -1,0 +1,72 @@
+name: portal-ci
+
+# CI del PORTAL nuevo (portal/). Aislado del sitio viejo por filtros de path:
+# no interfiere con og-publish.yml ni bump-version.yml (este ultimo excluye portal/**).
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'portal/**'
+      - '.github/workflows/portal-ci.yml'
+  pull_request:
+    paths:
+      - 'portal/**'
+      - '.github/workflows/portal-ci.yml'
+
+permissions:
+  contents: read
+
+# Serializa corridas por rama para evitar deploys solapados (carrera a Workers).
+concurrency:
+  group: portal-ci-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build + verificar cableado híbrido
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: portal
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: portal/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - name: Verificar render híbrido (mitigación R2/R3)
+        run: npm run verify:build
+
+  deploy-staging:
+    name: Deploy a Cloudflare Workers (staging)
+    needs: build
+    # GATED: solo despliega cuando el dueño active la variable de repo `CF_DEPLOY_ENABLED`
+    # (tras crear su cuenta Cloudflare, crear el bucket R2 y cargar los secrets
+    # CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID). Antes de eso, este job se SALTA —
+    # no falla en rojo. Prerrequisitos completos: ver portal/README.md y docs/50-CONFIG-INFRA.
+    if: github.ref == 'refs/heads/main' && vars.CF_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: portal
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: portal/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - name: Deploy (wrangler)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: portal
+          # Fijar wrangler >=4.45 (auto-provisioning del KV SESSION) e igualar el devDep verificado local.
+          wranglerVersion: "4.110.0"
+          command: deploy

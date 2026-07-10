@@ -1,0 +1,29 @@
+{
+  // Config de Cloudflare Workers para el portal (Astro 7 + @astrojs/cloudflare v14).
+  // `main` apunta al ENTRYPOINT UNIFICADO del adapter (Astro 6+): sirve `astro dev` y producción.
+  // NO apuntar a dist/server/entry.mjs (no existe en build-time -> rompe el @cloudflare/vite-plugin).
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "altorra-portal",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-04-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist/client"
+  },
+  "observability": { "enabled": true },
+
+  // --- Bindings (los RECURSOS reales los crea el dueño en su cuenta CF; ver docs/50-CONFIG-INFRA) ---
+  // PRERREQUISITOS de deploy (documentados en README y en la guía Cloudflare de Ola 0.2):
+  //  · El token CF debe tener scope de CREACIÓN de recursos: Workers Scripts:Edit +
+  //    Workers KV Storage:Edit + Workers R2 Storage:Edit + Account Settings:Read.
+  //  · El bucket R2 abajo tiene nombre EXPLÍCITO -> NO se auto-crea: hay que crearlo antes
+  //    del primer deploy (`wrangler r2 bucket create altorra-portal-media`).
+  "r2_buckets": [
+    { "binding": "R2_MEDIA", "bucket_name": "altorra-portal-media" }
+  ]
+
+  // Sessions KV (binding "SESSION"): el adapter lo auto-cablea SIN id (binding draft). Wrangler
+  // lo auto-aprovisiona en el primer deploy vía auto-provisioning (OPEN BETA; requiere wrangler
+  // >=4.45 — el CI fija 4.110). Si el flujo beta cambiara, crear el namespace y fijar su id aquí.
+}
