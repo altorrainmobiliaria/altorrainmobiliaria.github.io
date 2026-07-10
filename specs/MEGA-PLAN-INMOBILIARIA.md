@@ -55,8 +55,16 @@
 - **GESTIÓN v3 (Ola 3)**: portal del propietario (ve su inmueble, pagos, reportes) + portal del inquilino
   (paga, reporta novedades, descarga paz y salvos) — el "app de propietarios" de la Fase 3 de sus docs.
 
-**Regla de diseño**: cada proceso de este módulo se implementa COMO LO DEFINEN SUS DOCS destilados en R4
-(SLAs, días, porcentajes) — no se inventa un workflow genérico; se digitaliza el suyo.
+**Regla de diseño (corregida por el dueño 2026-07-10)**: los docs del dueño (destilado R4) son el PUNTO
+DE PARTIDA — la verdad del DOMINIO (su operación real, sus casos, su contexto cartagenero) — pero él
+mismo advierte que **los hizo con inexperiencia y tienen errores: "tú le darás la visión PRO"**. Por
+tanto cada proceso pasa por un filtro profesional antes de digitalizarse: (1) contrastar contra los
+referentes verificados (R2: QuintoAndar/Zillow ops) y los gates legales (R3/42-LEGAL — p.ej. su lista de
+"garantías" incluye depósitos, PROHIBIDOS en vivienda por el art. 16); (2) las contradicciones internas
+que R4 ya detectó (ingresos 2x vs 2.5x canon · arras 10-20 vs 10-30% · mora día 1 vs día 5 · tolerancia
+ACM ±15 vs ±20%) se resuelven proponiendo LA versión PRO, no eligiendo a ciegas; (3) todo delta
+docs-del-dueño → versión-implementada queda documentado y el dueño lo ve en el go/no-go de la ola. Ni
+workflow genérico inventado, ni digitalizar errores: su operación, elevada a estándar profesional.
 
 ## 3 · Las olas
 
