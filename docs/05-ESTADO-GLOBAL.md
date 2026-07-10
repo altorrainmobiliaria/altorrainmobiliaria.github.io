@@ -5,10 +5,10 @@
 
 | Señal | Valor (al **2026-07-10**) |
 |---|---|
-| **Misión** | 🏗️ **GREENFIELD TOTAL** (mandato del dueño, `specs/2026-07-10-INMOBILIARIA-KICKOFF-fable5.md` = SSoT): portal nuevo desde cero; del viejo SOLO se cosechan datos/SEO(301)/docs/aprendizaje. Fable 5 planifica/investiga/audita · Opus 4.8 implementa. 🏛️ Este operador = **escritor único del kernel ×4** (ADR §15). |
+| **Misión** | 🏗️ **GREENFIELD TOTAL** (kickoff = SSoT en `specs/`): portal nuevo desde cero. **R0-R4 ✅ + STACK SELLADO** (ADR §16: Workers+Astro híbrido+Firebase+R2+Wompi+MapLibre; Gemini pendiente como adenda) → siguen MEGA-PLAN + D0 diseño + arranque Opus 4.8. Fable planifica/audita · Opus implementa. 🏛️ Este operador = **escritor único del kernel ×4** (ADR §15). |
 | **Build** | ✅ **MODO OBRA LIVE y VERIFICADO** (2026-07-10, curl+sentinela): mantenimiento (blanco/navy/oro, WhatsApp +57 300 243 9810, info@) + 65 stubs redirect→home + 404→home + sitemap solo-home + `og-publish.yml` solo manual + **`.nojekyll`** (Pages fallaba con Jekyll desde ~mayo = producción congelada, L-13). Sitio viejo RETIRADO (git history). GSC preservado (meta + archivo). |
 | **Cache version vigente** | `altorra-pwa-v5` (`service-worker.js` = **kill-switch**: borra cachés, se des-registra y recarga — modo obra 2026-07-10). |
-| **Branch** | `greenfield/mantenimiento-live` (desde `origin/main` = merge PR #107 `6149652`). Estado de deploy: verificar con `git fetch` + live check, no con este tablero. |
+| **Branch** | `main` (trabajo directo con push delegado, ADR §15.7). Estado de deploy: verificar con `git fetch` + live check, no con este tablero. |
 | **Deploy** | GH Pages auto al push a `main`; **Claude pushea/mergea** (autonomía total, mandato 2026-07-10, ADR §15.7). Deploy de **Firebase** (functions/rules) = DUEÑO (`50-CONFIG-INFRA`). |
 
 ## ⚠️ Flags de riesgo activos
@@ -17,4 +17,4 @@
 - 🔗 **Constancias de liderazgo pendientes ×3**: payloads en `sinapsis-cerebros/references/import-{cars,bersaglio,insema}-2026-07-10-liderazgo.md` — los aplica el operador local de cada repo.
 
 ## 🧩 Sub-sistemas
-mantenimiento LIVE ✅ verificado 2026-07-10 · `admin.html` (consulta de datos legacy) ✅ · 8 CF legacy ⚠️ sin censar (cuenta CLI equivocada) · sitio público viejo ⛔ RETIRADO (greenfield)
+mantenimiento LIVE ✅ verificado 2026-07-10 · `admin.html` (consulta legacy) ✅ · 7 CF legacy censadas ✅ (apagado se decide en MEGA-PLAN) · sitio público viejo ⛔ RETIRADO (greenfield)
