@@ -134,3 +134,10 @@ Propagación cross-repo desde **cars TODO-32 / §229**. Instalado `scripts/brain
 **16.5 Anti-patterns evitados**: SSG puro de fichas (tope 20K archivos + rebuild por cambio) · SSR en Cloud Functions (cold start) · Firebase Storage para públicas (egress) · self-host de búsqueda (viola sin-devops) · custodia de fondos sin gate legal.
 **16.6 Reversibilidad**: capa de acceso a datos fina + pagos enchufables + read-model tripwire documentado = las decisiones caras tienen salida escrita.
 **16.7 Doctrina**: §3.6 arquitecto · §3.7 comité por iniciativa propia · 15-CONSEJO (humano en el medio) · §3.3 claims verificados (Resend verificado por Fable; resto por comité con fuente).
+
+## 17. ADR — MEGA-PLAN por olas sellado + protocolo de relevo a Opus 4.8 ⟦FABLE-5⟧ (2026-07-10)
+
+**17.1 Decisión**: roadmap en 4 olas (`specs/MEGA-PLAN-INMOBILIARIA.md` = SSoT): Ola 0 fundaciones (scaffold `portal/` en ESTE repo con CI→Workers staging + D0/D1 diseño + página de obra enriquecida AEO + GBP + textos legales B1 + modelo de datos v1) → Ola 1 MVP público (gate de salida = cutover DNS) → Ola 2 dinero+arriendo digital (post-gate abogado B2/B9) → Ola 3 expansión. Carril D (D0-D4) paralelo: NADA de UI sin mockup aprobado; el dueño elige la dirección en D0.
+**17.2 Arquitectura operativa**: mismo repo (cerebro+delegación git ya funcionan), portal en `portal/`, staging continuo en workers.dev, GH Pages sirve la obra hasta el cutover; limpieza del sitio viejo AL cutover (L-13: no fiarse de deploys invisibles).
+**17.3 Relevo**: Fable al 91% semanal → **Opus 4.8 implementa desde Ola 0 ítem 1** con el protocolo del §4 del plan (boot G.1 + specs R1-R5 + 42-LEGAL; IAP; mockup-first; verify en staging; tag OPUS-4.8; gates del dueño §5). Fable audita al cierre de cada ola cuando su cuota regrese (protocolo cars §300).
+**17.4 No-regresión**: la obra live queda intacta; el plan es documental. **17.5 Anti-patterns**: re-investigar lo verificado · UI sin mockup · dinero sin gate · reindexar sin contenido. **17.6 Basado en**: R0-R4 + ADR §16 + gates B1-B17 + top-10 R2 + 14 oportunidades R1. **17.7 Doctrina**: §3.6 · §G.3 · kickoff §5-§7.

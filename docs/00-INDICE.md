@@ -52,6 +52,7 @@
 | §14 | Guardián del índice `brain-index.mjs`: auto-reconcilia §→línea + valida tombstones (de cars TODO-32/§229). ⟦OPUS-4.8⟧ | 104 |
 | §15 | **Arranque Fable 5**: misión GREENFIELD (specs madre en `specs/`) + liderazgo kernel ×4 asumido + MODO OBRA live (mantenimiento + 65 redirects + SW v5 kill-switch). Obsoleta TODO-01..06/08 del sitio viejo. ⟦FABLE-5⟧ | 114 |
 | §16 | **STACK sellado** (W-11): Workers+Astro híbrido+Firebase+R2+Wompi+MapLibre+Typesense-tripwire+Resend. Fallos Q1-Q7 → `specs/R5-STACK-2026-07.md`. Gemini PENDIENTE (adenda). ⟦FABLE-5⟧ | 128 |
+| §17 | **MEGA-PLAN por olas** (`specs/MEGA-PLAN-INMOBILIARIA.md` = SSoT del roadmap) + relevo a Opus 4.8 (protocolo §4 del plan; Fable audita por ola). ⟦FABLE-5⟧ | 138 |
 
 ---
 
