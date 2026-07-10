@@ -959,3 +959,14 @@ El CTA "publica inmueble" del header no navega (click sin efecto, sin pestaña n
 - Zonas dominantes de la oferta = LAS MISMAS de las landings SEO de Altorra: La Boquilla, El Laguito, Serena del Mar, Morros, Centro — e incluso el MISMO Conjunto Trevi de las fichas viejas de Altorra aparece rentando por noches.
 - Patrones de confianza en vivo: "Favorito entre huéspedes" · Superanfitrión · "Los precios incluyen todas las tarifas" (transparencia total del precio) · rating decimal + nº reseñas · descuento por estadía larga → checklist adopt para el vertical de Altorra.
 - Caso de negocio: mercado activo y profundo SIN ningún portal inmobiliario local compitiendo (el hueco #1 de la matriz queda CONFIRMADO con datos vivos).
+
+### ✅💎 P3-Proppit (red Fincaraíz): precios B2B PÚBLICOS y self-service — CORRIGE la lente (a)
+La afirmación "B2B 100% opaco" queda MATIZADA: proppit.com publica tabla completa de packs para agencias con checkout self-service (links /self-service/create/). Precios capturados live (jul-2026, +IVA, renovación automática):
+| Pack agencias | Mensual | Trimestral |
+|---|---|---|
+| 1 propiedad (1 destacado) | $110.000 | — |
+| 10 propiedades (5 destacados) | ~~$404.525~~ → **$200.000** (51% dto) | ~~$2.227.890~~ → **$510.000** (77% dto, "el más contratado") |
+| 15 propiedades (8 destacados) | ~~$488.899~~ → **$250.000** (49% dto) | ~~$1.466.700~~ → **$660.000** (55% dto) |
+| 25 propiedades (13 destacados) | ~~$600.129~~ → **$300.000** (50% dto) | ~~$1.800.390~~ → **$810.000** (55% dto) |
+Planes mayores = formulario; packs NO válidos para proyectos. Value props: publicar 1 vez → red de 6 webs · panel único de contactos + app · integración WhatsApp directa · claims "x20 visibilidad" y "80% ahorro de tiempo" · grupo Lifull Connect.
+**Ancla estratégica para Altorra**: una agencia paga hoy $200-300K/mes por 10-25 fichas en la red más grande → el portal de aliados de Altorra (Cartagena-focus, leads sin gating, CRM incluido, vertical corta estancia) tiene referencia de pricing clara para posicionarse por valor, no solo por precio. Los B2B de los PORTALES directos (Oficina Virtual Fincaraíz, Ciencuadras "asesoría", Metrocuadrado teléfono) siguen opacos — el matiz es que la red delega el self-service en Proppit.
