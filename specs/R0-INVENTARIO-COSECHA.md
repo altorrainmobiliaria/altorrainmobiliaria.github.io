@@ -10,7 +10,7 @@
 - [x] Censo Firestore REAL (2026-07-10, REST pública + rules): **`propiedades` VACÍA** (las 5 propiedades ya NO están en la BD; `system/meta` sin tocar desde 2026-04-17) · `config/general` vivo y correcto (+57 300 243 9810 / info@) · `solicitudes` protegida por rules (conteo PENDIENTE — requiere MCP re-arrancado o consola) · **fichas de las 5 propiedades RESCATADAS del git (`6149652:p/*.html`, JSON-LD completo) → bóveda `research-archive/2026-07-10-cosecha-propiedades/`**
 - [x] Estado real Firebase (2026-07-10): **7 CFs gen2 vivas** (`functions:list` — `cleanupOldLoginAttempts` NO desplegada, la doc decía 8) · plan **Blaze** (confirmado por el dueño; ⚠️ el MCP reportó "Billing Enabled: No" — verificar en consola) · cuenta CLI `altorrainmobiliaria@gmail.com` activada como default del directorio · Storage sin censar
 - [ ] Auditoría docs maestros del dueño (`ALTORRA Company (Legal)` + `all_docx_content.txt` 690KB)
-- [ ] Estado matrícula de arrendador (EXT-AMC-26-0060455) — responde el DUEÑO
+- [x] Estado matrícula de arrendador: **OBTENIDA** ✅ (dueño, 2026-07-10) — certificado/Nº se ve al final de la construcción; va al footer del portal como sello de confianza
 - [ ] Plan de migración de datos → modelo nuevo (se sella en R5)
 
 ## 1. Censo de URLs indexadas (mapa 301 — destino se asigna en R5)
@@ -40,7 +40,10 @@ propiedades reales de Firestore (IDs 101-105).
   | 103-B305 | Apartamento amoblado — Conj. Trevi | 565.000.000 |
   | 104-01 | Casa familiar — Barrio Country | 380.000.000 |
   | 105-4422 | Apartamento moderno — Conj. Milán | 350.000.000 |
-  ❓ PREGUNTA AL DUEÑO: ¿siguen siendo inventario vigente para el portal nuevo? ¿quién vació la colección?
+  ✅ RESPUESTA DEL DUEÑO (2026-07-10): **ya NO son inventario — descartadas** (copia de bóveda borrada;
+  el git history del repo las retiene). → **La migración de datos queda reducida a**: conteo/rescate de
+  `solicitudes` (leads) + los valores de `config/general` (ya censados). El portal nuevo arranca con
+  catálogo desde cero.
 - `config/general`: contacto/redes correctos (censado ✓ — mismo dato que la página de mantenimiento).
 - `solicitudes` (leads históricos, PII): protegida por rules ✓; CONTEO pendiente (MCP con credencial stale — reiniciar sesión o consola).
 - Storage (imágenes): sin censar; las fichas rescatadas apuntan también a postimg.cc (host externo).

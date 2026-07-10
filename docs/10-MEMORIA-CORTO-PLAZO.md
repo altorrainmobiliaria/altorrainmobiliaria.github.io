@@ -34,8 +34,8 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-11** | **R0 · Inventario de COSECHA**: ✅ censo 63 URLs · ✅ destilado `_legacy` · ✅ censo Firestore/CFs (propiedades VACÍA — 5 fichas rescatadas del git; 7 CFs; config OK) · ⏳ conteo `solicitudes` (MCP stale) · ⏳ Storage · ⏳ auditoría docs maestros · ⏳ matrícula (dueño) · ❓ dueño: ¿las 5 propiedades siguen vigentes? ¿quién vació la colección? | 🔄 EN CURSO | artefacto: `specs/R0-INVENTARIO-COSECHA.md` |
-| **TODO-12** | **R1 · Competencia CO** (ciencuadras · metrocuadrado · fincaraiz · coninsa · araujoysegovia · arenasinmobiliaria + Habi/La Haus/Properati) — TRES lentes c/u; partir de `41-MERCADO` (PR #79), actualizar no repetir | 🔮 | artefacto → `41-MERCADO` v2 |
+| **TODO-11** | **R0 · Inventario de COSECHA**: ✅ censo 63 URLs · ✅ destilado `_legacy` · ✅ censo Firestore/CFs · ✅ propiedades DESCARTADAS (dueño) · ✅ matrícula OBTENIDA (dueño) · ⏳ conteo `solicitudes` (MCP stale) · ⏳ Storage · ⏳ auditoría docs maestros (→ R2/R3/R4) | 🔄 casi cerrado | artefacto: `specs/R0-INVENTARIO-COSECHA.md` |
+| **TODO-12** | **R1 · Competencia CO** (ciencuadras · metrocuadrado · fincaraiz · coninsa · araujoysegovia · arenasinmobiliaria + Habi/La Haus/Properati) **+ Airbnb y Booking** (mandato del dueño 2026-07-10, lente corta-estancia) — TRES lentes c/u; partir de `41-MERCADO` (PR #79), actualizar no repetir | 🔄 EN CURSO | artefacto → `41-MERCADO` v2 |
 | **TODO-13** | **R2 · Referentes mundo** (Zillow/Redfin/Idealista/Rightmove/QuintoAndar/Airbnb) — 3 lentes; catálogo features adopt/adapt/discard | 🔮 | |
 | **TODO-14** | **R3 · Legal CO** (Ley 820+matrícula, corretaje, avalúos RAA/1673, Habeas Data 1581, corta estancia RNT/2068/PH, SIC, firma electrónica 527, SARLAFT/UIAF) | 🔮 | skill `legal-colombia`; artefacto: lóbulo `42-LEGAL` |
 | **TODO-15** | **R4 · Operación+marketing**: destilar docs maestros (protocolo leads, scripts WA) + SEO local Cartagena + GBP | 🔮 | |
