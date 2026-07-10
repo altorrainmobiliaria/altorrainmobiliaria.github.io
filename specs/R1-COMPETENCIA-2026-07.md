@@ -946,3 +946,16 @@
 
 ### ⚠️ P1-Metrocuadrado (parcial): soft-404 masivo detectado
 Cualquier ruta desconocida (`/publicar-inmueble/`, `/publica-tu-inmueble`) renderiza una SERP vacía "No tenemos inmuebles que coincidan" con el path parseado como término de búsqueda (título "Inmuebles en Publica Tu Inmueble en Venta…") — soft-404 indexable = liability SEO de ellos y anti-patrón a evitar en Altorra (nuestro 404 debe ser 404 o redirect deliberado). Su flujo real de publicación vive fuera de esas rutas (probable subdominio) → sigue en la misión P2 de la próxima sesión live.
+
+### ✅ P2-Fincaraíz: publicación 100% GATED tras registro (live)
+Click en "Publica tu propiedad" (home) → modal de login (email/Facebook/Google) SIN ninguna información previa de precios/planes. Opacidad total para el particular ANTES de entregar sus datos — contraste directo con Ciencuadras (precios visibles pre-login). Refuerza oportunidad 7 (precios públicos transparentes).
+
+### ✅ P2-Metrocuadrado: publicación INALCANZABLE sin cuenta (live)
+El CTA "publica inmueble" del header no navega (click sin efecto, sin pestaña nueva); `publicar.metrocuadrado.com` = error page; toda ruta desconocida cae al soft-404 (ya documentado). Conclusión live: el flujo del particular vive exclusivamente tras login → la fricción de entrada más alta del mercado (además del precio 54.400 y el veto del plan gratis en 27 ciudades de la lente a).
+
+### ✅ P5-Airbnb Cartagena: mercado de corta estancia VIVO y con densidad (live, jul-2026)
+- **"Más de 1.000 alojamientos"** activos en Cartagena (15 páginas de resultados).
+- Precios por 5 noches observados: 662K (habitación) a 2.83M COP (suite premium) → **ADR ~130K-565K COP/noche**, apartamentos típicos 200K-420K/noche.
+- Zonas dominantes de la oferta = LAS MISMAS de las landings SEO de Altorra: La Boquilla, El Laguito, Serena del Mar, Morros, Centro — e incluso el MISMO Conjunto Trevi de las fichas viejas de Altorra aparece rentando por noches.
+- Patrones de confianza en vivo: "Favorito entre huéspedes" · Superanfitrión · "Los precios incluyen todas las tarifas" (transparencia total del precio) · rating decimal + nº reseñas · descuento por estadía larga → checklist adopt para el vertical de Altorra.
+- Caso de negocio: mercado activo y profundo SIN ningún portal inmobiliario local compitiendo (el hueco #1 de la matriz queda CONFIRMADO con datos vivos).
