@@ -41,8 +41,19 @@ og:image dinámica + WhatsApp sin gating + publicación gratuita generosa + prec
 Ola 2 = landings de barrio con contenido REAL + frescura verificada + portal aliados self-service + AVM/
 calculadora renta turística + sello Verificado · Ola 3 = loop inversión→renta turística. Detalle → spec §2.
 
-**Lente (c) live — PENDIENTE**: 16 misiones P1-P6 (precios tras login, flujos de publicación end-to-end,
-paneles B2B, respuesta a leads, corta estancia, performance) → spec §6. Browser extensión conectado ✓.
+**Lente (c) live — 6/16 misiones** (spec §7): precios Ciencuadras 💎 (99.900/249.900) · Proppit B2B
+público self-service 💎 (200-300K/mes 10-25 fichas) · Airbnb Cartagena 1000+ activos ADR 130-565K 💎 ·
+Fincaraíz gated · Metrocuadrado inalcanzable+soft-404 · funnel Ciencuadras semi-roto. Restantes = tras
+login (protocolo: el dueño se registra, Claude navega).
+
+## 🌍 R2 2026-07-10 — referentes mundiales (→ `specs/R2-REFERENTES-MUNDO-2026-07.md`)
+8 referentes × 17 agentes verificados: catálogo de 59 features adopt/adapt/discard · **top-10 MVP**
+(booking corta estancia+Wompi · frescura/historial precios · transparencia costos · JSON-LD compuesto ·
+alertas guardadas · sello Verificado · agendar visita · fichas permanentes · perfil inquilino 1→N ·
+Rango Altorra/Rentímetro turístico) · **QuintoAndar deep**: arriendo sin codeudor re-ensamblado en 3
+fases CO (Fase 0 sin gate legal → garantía revendida → cobro recurrente Wompi) — la garantía ES el
+producto, y Altorra NO puede absorber riesgo en balance (reservado Superfinanciera) · 13 patrones SEO
+mundiales · 15 gates legales → R3.
 
 **Premium / UX global**
 - **Compass** — UX premium referente: Exclusives (pre-publicación), Concierge (mejoras con pago diferido), Market Outlook por zona, Neighborhood Guides, integración Rocket Mortgage. Diseño minimalista.
