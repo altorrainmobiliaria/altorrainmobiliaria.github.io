@@ -1,5 +1,11 @@
 # 🌊 MEGA-PLAN — Portal ALTORRA Inmobiliaria (greenfield, por olas)
 
+> 🏛️ **CAPA DE EJECUCIÓN RATIFICADA (2026-07-10)** → `specs/PLAN-ENDURECIDO-FABLE-2026-07-10.md` (ADR §20).
+> Repaso estratégico completo Opus+Fable. **Donde el plan endurecido corrija a este MEGA-PLAN, gana el
+> endurecido.** Correcciones clave: abogado partido en 2 (toque (i) pre-cutover Ola 1 gatea el cutover —
+> DEROGA "abogado=Ola 2") · DIAN+Wompi = gates-dueño de Ola 1, no Ola 2 · plumbing Wompi tras el concepto ·
+> candado 1B (GESTIÓN)→Ola 2 · +12 omisiones (la ROJA: continuidad DNS/email en el cutover).
+
 > **SSoT del roadmap** (ADR §17). Escrito por Fable 5 (2026-07-10) sobre la investigación completa
 > R0-R5 verificada. **Opus 4.8 implementa; Fable audita al cierre de cada ola** (protocolo cars §300 +
 > skill `opus-interino-protocolo`). El dueño decide: dinero, legal, go/no-go de cada ola, y la dirección

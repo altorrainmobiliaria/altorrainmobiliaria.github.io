@@ -106,7 +106,7 @@ Encabezado `## NN. ADR-NNN — <título>` + cita del cliente si reportó, y 7 pu
 - Imágenes: `loading="lazy"` + `decoding="async"` below-fold; `fetchpriority="high"`/preload solo LCP; servir WebP, thumbnail <150KB.
 
 ### 3.2 HTML/CSS / Reglas absolutas inmobiliaria (NUNCA romper)
-- **Vanilla JS únicamente** — prohibido React/Vue/Angular/Svelte; sin Tailwind/Bootstrap (`style.css` propio).
+- **Vanilla JS únicamente** — prohibido React/Vue/Angular/Svelte; sin Tailwind/Bootstrap (`style.css` propio). ⚠️ **Alcance = sitio LEGACY** (hasta el cutover). El **`portal/` greenfield se rige por el stack sellado (ADR §16): Astro + islas**; conserva el ESPÍRITU (JS mínimo/islas — no SPA pesada —, sin Tailwind, free-tier sagrado, `limit(9)`, cero `onSnapshot` público) pero SÍ usa Astro como build. Igual el SW PWA/`CACHE_NAME` (§4) rige el LEGACY; el portal no tiene SW aún. (Carve-out ratificado por Fable, ADR §20.)
 - NO cambiar vars CSS (`--gold`/`--accent`/etc.), la tipografía **Poppins**, colores de botones/badges/cards ni el layout existente. NO borrar `CNAME`.
 - NO hardcodear URLs (usar colección `config` de Firestore o vars CSS). NUNCA renombrar IDs/clases/funciones exportadas sin migración (cambios aditivos).
 - **NUNCA `onSnapshot()` en colecciones completas desde páginas públicas** (solo admin). **NUNCA queries Firestore sin `limit()`** — paginar (default `limit(9)`, 9-20 máx). Free-tier Blaze es sagrado (`20-ESPACIAL §Blaze`).

@@ -55,6 +55,7 @@
 | §17 | **MEGA-PLAN por olas** (`specs/MEGA-PLAN-INMOBILIARIA.md` = SSoT del roadmap) + relevo a Opus 4.8 (protocolo §4 del plan; Fable audita por ola). ⟦FABLE-5⟧ | 138 |
 | §18 | **Programa R0-R5 COMPLETO en un día** (~74 agentes · 6 workflows · live) + cierre de la sesión de planificación Fable; colas menores absorbidas por el plan. ⟦FABLE-5⟧ | 145 |
 | §19 | **Ola 0.1 scaffold** del portal (Astro 7 + @astrojs/cloudflare v14 + Workers Static Assets): híbrido `output:server` (index estático + `/api/health` SSR), capa de datos FINA, CI gated. Verificado build/dry-run/dev-live + revisión ×4 lentes. Gotcha: `main` = entrypoint unificado (→ L-14). ⟦OPUS-4.8⟧ | 152 |
+| §20 | **Repaso estratégico del plan con Fable 5** (auditoría final pre-ejecución, dueño al 6% de cuota): Opus armó el dossier de todo el corpus (7 lectores + 2ª pasada FTI-01), Fable ratificó/corrigió + 12 omisiones. Correcciones: abogado partido en 2 (toque i gatea cutover) · DIAN/Wompi a Ola 1 · plumbing Wompi tras concepto · candado 1B→Ola 2 · continuidad DNS/email (O1). SSoT ejecución → `specs/PLAN-ENDURECIDO-FABLE-2026-07-10.md`. 2 ediciones de kernel pre-aprobadas. ⟦OPUS-4.8+FABLE-5⟧ | 162 |
 
 ---
 

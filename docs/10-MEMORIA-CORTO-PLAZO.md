@@ -9,6 +9,11 @@
 
 ## 🎯 Foco actual
 
+> 🏛️ **AUDITORÍA FABLE HECHA (2026-07-10, ADR §20)** — la ejecución se rige por
+> `specs/PLAN-ENDURECIDO-FABLE-2026-07-10.md` (GANA sobre el MEGA-PLAN donde corrija). Opus LISTO para
+> Olas 0→3 sin Fable. ⏰ **LOTE-DUEÑO #0 PENDIENTE HOY** (RNT decreto cierra 2026-07-11 · cuenta Cloudflare ·
+> permiso DesignSync · allowlist git · abogado toque (i) · elección D0) → TODO-21.
+>
 > ⚡ **RELEVO A OPUS 4.8 — construir la OLA 0 del MEGA-PLAN** (`specs/MEGA-PLAN-INMOBILIARIA.md` = SSoT
 > del roadmap; protocolo de arranque en su §4). La planificación COMPLETA (R0-R5, ADR §15-§18) terminó
 > 2026-07-10: stack sellado (§16, W-11 completo con Gemini integrado), plan por olas (§17) con módulo
@@ -28,16 +33,25 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-17** | **Ola 0 — arranque Opus**: ✅ **ítem 1 scaffold `portal/` HECHO** (Astro 7 + CF Workers, híbrido; verificado build/dry-run/dev-live + revisión ×4 lentes; commit `e0751a5`, ADR §19, L-14/L-15). ▶ **AHORA Ola 0.2**: guiar al dueño a crear su cuenta Cloudflare (protocolo Fincaraíz — él teclea credenciales en SU navegador; Claude jamás crea cuentas/contraseñas; email del negocio) + bucket R2 `altorra-portal-media` + API token (scopes de CREACIÓN) + cargar secrets/`CF_DEPLOY_ENABLED`. Siguen 0.3-0.7 + carril D. Insumos 0.7: 2ª pasada .xlsx FTI-01 + piloto `ALTORRA-PILOTO-main` | 🔄 OPUS | abogado = gate Ola 2 |
+| **TODO-17** | **Ola 0 — ejecución Opus** (guía = `specs/PLAN-ENDURECIDO-FABLE-2026-07-10.md`): ✅ ítem 1 scaffold (ADR §19). ▶ **BLOQUEO = lote-dueño #0** (cuenta Cloudflare 0.2 + R2 bucket + token scopes-CREACIÓN + secrets/`CF_DEPLOY_ENABLED`; Fincaraíz). Dev-local avanza sin él; staging/verify no. Luego 0.3-0.7 per plan endurecido (D0 · obra AEO sin form · legal DRAFT + brief abogado (i)/(ii) · modelo de datos con GESTIÓN día-1 + `client.ts` REST edge). **FTI-01 2ª pasada ✅** (en dossier). | 🔄 OPUS | abogado toque (i) = gate CUTOVER (no Ola 2) |
 | **TODO-18** | **Carril D — Diseño D0-D4**: direcciones de marca comparativas (dueño elige) → design system → DesignSync a claude.ai → mockup por pantalla → gate fidelidad. Insumo: bóveda `ui-referentes/` | 🔮 OPUS (D0 en Ola 0.3) | paleta SIN negro |
 | **TODO-19** | **Potenciar cerebro** (kickoff §7.3): auditoría Nivel-2 (vence ~2026-07-15, staleDays) + destilar `_legacy/AVANCES.md` Fase B + evaluar lecciones candidatas C-01..C-39 (R0) contra `30` | 🔄 | |
 | **TODO-20** | **Constancias liderazgo ×3**: payloads listos en la skill; los aplican los operadores cars/bersaglio/insema en su próxima sesión | ⏸️ externo | |
-| **TODO-21** | **Checklist del DUEÑO** (kickoff §8): cuenta Cloudflare + NS Hostinger→CF (al cutover) · acceso GSC · permiso Claude Design (1er DesignSync) · abogado (Ola 2) · certificado de matrícula (al final) | ⏸️ dueño | pedirle solo lo que toque por ola |
+| **TODO-21** | **Lote-dueño #0 (HOY, un solo pedido)** — ⏰ **RNT decreto cierra 2026-07-11** · cuenta Cloudflare + R2 bucket + API token (scopes creación) + secrets/`CF_DEPLOY_ENABLED` (+2FA) · permiso DesignSync (1 clic) · allowlist git push/merge en `.claude/settings.json` · contratar abogado con brief (i) que Opus redacta · elegir D0 (cuando Opus entregue las 3 direcciones). Lotes 1/2/3 → PLAN-ENDURECIDO §4 (DIAN+Wompi ya en Ola 1). | ⏸️ dueño | pedir por LOTES, no gotear |
 | **TODO-22** | **Auditoría Fable de la Ola 0** (protocolo cars §300) al volver su cuota | 🔮 FABLE | |
 
 ---
 
 ## 📝 Bitácora (efímera)
+
+> **2026-07-10 (FABLE 5 — repaso estratégico final del plan, pedido por el dueño al 6% de cuota)**: Opus
+> armó el dossier de auditoría de todo el corpus (7 lectores en paralelo, +2ª pasada FTI-01 ya hecha) →
+> Fable ratificó (~40 decisiones, 4 correcciones de timing, 12 omisiones) → **ADR §20** +
+> `specs/PLAN-ENDURECIDO-FABLE-2026-07-10.md` (SSoT de EJECUCIÓN). Correcciones: abogado partido en 2
+> (toque (i) gatea el cutover), DIAN/Wompi a Ola 1, plumbing Wompi tras concepto, candado 1B→Ola 2,
+> continuidad DNS/email en cutover (O1, ROJA). 2 ediciones de kernel pre-aprobadas por Fable (carve-out
+> §3.2/§4 ✅ · derogación "abogado=Ola 2"). Veredicto: **Opus LISTO para Olas 0→3 sin Fable**.
+> **Siguiente**: presentar el lote-dueño #0 a Daniel (URGENTE — RNT vence mañana).
 
 > **2026-07-10 (OPUS 4.8 — arranque Ola 0)**: ítem 1 scaffold `portal/` construido y verificado
 > end-to-end (build · `wrangler deploy --dry-run` · **`wrangler dev` live** · `verify:build` 5/5) →
