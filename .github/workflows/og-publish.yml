@@ -1,5 +1,8 @@
 name: Generar páginas SEO (/p), imágenes OG (/og) y sitemap
 
+# ⛔ MODO OBRA (greenfield 2026-07-10): el sitio viejo quedó en mantenimiento con stubs de
+# redirect — este workflow regeneraría /p/*.html y sitemap.xml encima de los stubs.
+# Triggers automáticos (push/schedule/repository_dispatch) DESACTIVADOS; solo manual.
 on:
   workflow_dispatch:
     inputs:
@@ -7,15 +10,6 @@ on:
         description: "BASE para las URLs absolutas"
         required: false
         default: "https://altorrainmobiliaria.co"
-  push:
-    branches: [ main ]
-    paths:
-      - 'scripts/generate-properties.mjs'
-      - 'tools/og.config.json'
-  schedule:
-    - cron: '0 */4 * * *'    # Cada 4 horas — sincroniza con cambios en Firestore
-  repository_dispatch:
-    types: [property-changed] # Disparado por Cloud Function onPropertyChange
 
 permissions:
   contents: write   # para poder commitear a este repo

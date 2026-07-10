@@ -39,6 +39,7 @@
     }
   },
   "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",
+  "specsDir": "specs",
   "staleDays": 10,
   "kernelFiles": [
     "scripts/brain-check.mjs",

@@ -1,20 +1,20 @@
 # 🩺 05 — ESTADO GLOBAL (Altorra Inmobiliaria · Heartbeat)
 
 > Nodo de signos vitales. Se **AUTO-CARGA** (con `CLAUDE.md` + `10`). "¿En qué estado está el sistema AHORA?". Tope ~25 líneas (§G.5) — tablero, no bitácora.
-> ⚠️ **git/cache RE-VERIFICADOS 2026-06-15** (auditoría Nivel-2 §12). El **PRODUCTO/Firebase** (pendientes J, deploy, CF) sigue inferido de la bitácora (`_legacy/AVANCES.md`, hasta 2026-05-07) y **NO re-verificado** — verificar antes de afirmar (§3.3).
+> ✅ **git/obra RE-VERIFICADOS 2026-07-10** (arranque Fable 5, ADR §15). El estado de FIREBASE (CFs vivas, datos) sigue sin re-verificar → R0 lo censa (§3.3 antes de afirmar).
 
-| Señal | Valor (git/cache al **2026-06-15** ✅ · producto al 2026-05-07 no re-verificado) |
+| Señal | Valor (al **2026-07-10**) |
 |---|---|
-| **Build** | 🟢 Sitio LIVE y dinámico en `altorrainmobiliaria.co`: catálogo 100% Firestore (5 propiedades), admin SPA (`window.IP`), 8 Cloud Functions (Node 20), 13 landings de sector, 43 páginas con BreadcrumbList, 130+ JSON-LD, blog (7 posts). 🧠 **Cerebro neuronal instalado 2026-06-09** (neurogénesis desde monolitos). |
-| **Cache version vigente** | `altorra-pwa-v4` (`service-worker.js`). Ctrl+Shift+R la 1ª vez. |
-| **Branch** | `cerebro/instalacion` (`d4e1870`, pushed; su contenido YA está en `main` — HEAD ancestro, main +7 commits CI). Verificado vs git 2026-06-15. |
-| **deploy-info** | version `2026-05-07T09:04:11Z`, commit `ddce614` (merge PR #79 — análisis competidores). |
-| **Deploy** | Lo ejecuta el **DUEÑO** (Firebase + push/merge) vía `docs/50-CONFIG-INFRA.md`. Claude solo commitea. |
+| **Misión** | 🏗️ **GREENFIELD TOTAL** (mandato del dueño, `specs/2026-07-10-INMOBILIARIA-KICKOFF-fable5.md` = SSoT): portal nuevo desde cero; del viejo SOLO se cosechan datos/SEO(301)/docs/aprendizaje. Fable 5 planifica/investiga/audita · Opus 4.8 implementa. 🏛️ Este operador = **escritor único del kernel ×4** (ADR §15). |
+| **Build** | 🚧 **MODO OBRA**: `index.html` = página de mantenimiento (copy aprobado, CTA WhatsApp) + 65 stubs redirect→home + 404→home + sitemap solo-home + `og-publish.yml` solo manual. Sitio viejo RETIRADO (recuperable por git history). GSC preservado (meta + archivo). |
+| **Cache version vigente** | `altorra-pwa-v5` (`service-worker.js` = **kill-switch**: borra cachés, se des-registra y recarga — modo obra 2026-07-10). |
+| **Branch** | `greenfield/mantenimiento-live` (desde `origin/main` = merge PR #107 `6149652`). Estado de deploy: verificar con `git fetch` + live check, no con este tablero. |
+| **Deploy** | GH Pages auto al push a `main`; **Claude pushea/mergea** (autonomía total, mandato 2026-07-10, ADR §15.7). Deploy de **Firebase** (functions/rules) = DUEÑO (`50-CONFIG-INFRA`). |
 
 ## ⚠️ Flags de riesgo activos
-- ⚠️ **Estado no re-verificado**: la bitácora cierra 2026-05-07; ~1 mes sin registrar. Antes de afirmar qué está live/pendiente, cruzar con git + Firebase reales.
-- ⏳ **Pendientes (al cierre de bitácora — PUEDEN estar resueltos)**: J2 (FormSubmit residual en 4 páginas) · J3 (3 páginas sin firebase-config) · J5 (sin tests) · re-deploy CF con triggers Eventarc · secret CI `GOOGLE_APPLICATION_CREDENTIALS_JSON` · keys GMAPS/VAPID. Detalle → `10` + `docs/50-CONFIG-INFRA.md`.
-- 🧠 **Cerebro recién instalado**: validar en la 1ª sesión que boot + `brain:check` funcionen; destilar más de `_legacy/AVANCES.md` (3420 L) a `99`/`30` on-demand (Fase B).
+- ⚖️ **Gate legal**: matrícula de arrendador EN TRÁMITE con observaciones (EXT-AMC-26-0060455 / oficio AMC-OFI-0074376-2026) — estado real A VERIFICAR con el dueño; bloquea formalizar arriendos (kickoff §1).
+- 🔥 **Firebase legacy vivo sin censar**: 8 CFs gen2 + Firestore (5 propiedades a cosechar) siguen corriendo sin sitio que las use — R0 censa y decide apagado (free-tier, riesgo bajo).
+- 🔗 **Constancias de liderazgo pendientes ×3**: payloads en `sinapsis-cerebros/references/import-{cars,bersaglio,insema}-2026-07-10-liderazgo.md` — los aplica el operador local de cada repo.
 
 ## 🧩 Sub-sistemas
-público (vanilla + Firebase modular v12.9.0) ✅ · admin SPA ✅ · 8 Cloud Functions ✅ · SEO (JSON-LD/sitemap/landings) ✅ · cache 3 capas + SW ✅
+mantenimiento LIVE (pendiente validación live post-deploy) 🚧 · `admin.html` (consulta de datos legacy) ✅ · 8 CF legacy ⚠️ sin censar · sitio público viejo ⛔ RETIRADO (greenfield)
