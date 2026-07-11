@@ -66,7 +66,7 @@ NUNCA leas `docs/99-HISTORIAL-ADR.md` completo (puede llegar a 40k+ líneas = mu
 
 ## §1 — Identidad y arquitectura
 
-- **Negocio**: **Altorra Inmobiliaria** — inmobiliaria colombiana, sede **Cartagena**. Compra/venta/arriendo + alojamientos por días. Marca dorada (`--gold #d4af37`). Slogan: "Gestión integral en soluciones inmobiliarias". Hermana de Altorra Cars (mismo dueño, patrones análogos).
+- **Negocio**: **Altorra Inmobiliaria** — inmobiliaria colombiana, sede **Cartagena**. Compra/venta/arriendo + alojamientos por días. Marca dorada (`--gold #d4af37`). **Eslogan oficial: "Seguridad, Legalidad y Confianza"** (Daniel 2026-07-11). Posicionamiento "premium que no excluye"; misión/visión/voz → memoria `identidad-marca-inmobiliaria` + `sello-marca-altorra`. Hermana de Altorra Cars (mismo dueño, patrones análogos; **Bersaglio Jewelry NO es hermana — solo la creó el mismo dueño**).
 - **Stack**: HTML/CSS/JS **vanilla** (sin frameworks, sin bundler) + **Firebase SDK v12.9.0 MODULAR (ESM)** vía CDN gstatic (⚠️ distinto de cars, que usa Compat v11.3.0). Firestore, Auth (email+password), Storage, Cloud Functions (Node 20, `us-central1`), RTDB (presencia), Analytics GA4. Node SDK = `firebase-admin v13`.
 - **Hosting / Deploy**: **GitHub Pages** con dominio propio **`altorrainmobiliaria.co`** (archivo `CNAME` — NO borrar). Push a `main` → auto-deploy. CI: GitHub Actions regenera SEO (`/p/{id}.html`) + sitemap (`og-publish.yml`); `bump-version.yml` bumpea `data/deploy-info.json` en cada push. Schedule máx cada 4h.
 - **Project ID Firebase**: `altorra-inmobiliaria-345c6` (Project Number `794130975989`). Región Functions `us-central1`. CLI account `altorrainmobiliaria@gmail.com`. **Detalle infra/IAM/secrets → `docs/50-CONFIG-INFRA.md`.**

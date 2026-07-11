@@ -9,6 +9,21 @@
 
 ## 🎯 Foco actual
 
+> ⚡ **HILO ACTIVO — Carril D · D0 (marca), en curso; SIGUIENTE = deliberar la VOZ.** Retomar en el chat
+> NUEVO cuando Daniel pegue la respuesta de **Gemini/Antigravity** al prompt de voz: invocar
+> **`comite-expertos` + `asesor-critico-honesto`** → deliberar la voz de Altorra sobre lo que dijo
+> Antigravity (verificar cada pieza contra la marca, NO acatar a ciegas) → destilar en la skill
+> **`catalogo-voz-altorra`** (hermana de la de Bersaglio). Luego: rehacer el mockup con el look **Liquid
+> Glass** real + sign-off D0 → **D1** (sistema de diseño).
+> **Decidido en D0 (todo en memoria `identidad-marca-inmobiliaria` + `sello-marca-altorra`):** posicionamiento
+> **"premium que no excluye"** (lujo+transparencia+calidez; cobertura total; Caribe→nacional) · misión/visión ·
+> **eslogan "Seguridad, Legalidad y Confianza"** · paleta **oro/plata DOMINAN (logo), navy discreto, blanco,
+> + ocre muralla APROBADO** · sello tipográfico **ALTORRA=Cardo / INMOBILIARIA=Helvetica Now** · lenguaje visual
+> **Liquid Glass premium (ref Bersaglio, pero SELLO PROPIO, NO copia; Bersaglio NO es marca hermana)** · editorial
+> SOLO en sección "Journal Inmobiliario" · anti-patrones de voz DUROS (sin guiones "—", sin texto literal/funcional,
+> sin genérico). Board mockup v3 = Artifact `d056097f-ea5d-46ee-9b5a-8959ea3791b3`. Comité D0 crudo → bóveda
+> `2026-07-11-comite-d0-marca-crudo.json` (volteó la recomendación: la calidez es lo ownable, no la transparencia).
+>
 > 🏛️ **AUDITORÍA FABLE HECHA (2026-07-10, ADR §20)** — la ejecución se rige por
 > `specs/PLAN-ENDURECIDO-FABLE-2026-07-10.md` (GANA sobre el MEGA-PLAN donde corrija). Opus LISTO para
 > Olas 0→3 sin Fable. ✅ **Portal LIVE en staging** (`altorra-portal.altorrainmobiliaria.workers.dev`, ADR §21).
@@ -35,7 +50,7 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-17** | **Ola 0 — ejecución Opus** (guía = `PLAN-ENDURECIDO-FABLE-2026-07-10.md`): ✅ 0.1 scaffold (§19) · ✅ 0.2 staging LIVE (§21) · ✅ brief abogado (O9) · ✅ FTI-01. **0.7 modelo de datos**: ✅ parte 1 tipos (`62916e1`) · ✅ parte 2 rules+indexes+storage ×3 (`1750f10`) · ✅ **parte 3/3 = capa de datos `client.ts`+REST+cache+tests+gate (OD1, §22 `[REVISAR-FABLE]`, comité ×3)** · ✅ **E2E de la capa de datos con SEED (21/21 emulador: 6 E2E + 15 rules, §22.8)**. **Falta 0.7**: SOLO el E2E "tras cache" (Workers Caching en staging desplegado, gate T9) + deploy de rules (coordinado con retiro legacy — NO ahora). Siguen 0.3 D0 · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
-| **TODO-18** | **Carril D — Diseño D0-D4**: direcciones de marca comparativas (dueño elige) → design system → DesignSync a claude.ai → mockup por pantalla → gate fidelidad. Insumo: bóveda `ui-referentes/` | 🔮 OPUS (D0 en Ola 0.3) | paleta SIN negro |
+| **TODO-18** | **Carril D — Diseño D0-D4**. **D0 EN CURSO**: ✅ posicionamiento + paleta/jerarquía + eslogan/misión/visión + sello tipográfico + lenguaje visual (Liquid Glass) + acento ocre — todo en memoria de marca. ✅ comité D0 ×3 (crudo en bóveda). ✅ prompt de voz entregado a Daniel (Gemini). ▶ **SIGUIENTE (chat nuevo)**: respuesta Gemini → `comite-expertos`+`asesor-critico-honesto` → deliberar voz → skill `catalogo-voz-altorra` → rehacer mockup Liquid Glass → sign-off D0. Luego D1 (design system) → D2 (mockup por pantalla). | 🔄 OPUS | oro/plata mandan; navy discreto; SIN negro |
 | **TODO-19** | **Potenciar cerebro** (kickoff §7.3): auditoría Nivel-2 (vence ~2026-07-15, staleDays) + destilar `_legacy/AVANCES.md` Fase B + evaluar lecciones candidatas C-01..C-39 (R0) contra `30` | 🔄 | |
 | **TODO-20** | **Constancias liderazgo ×3**: payloads listos en la skill; los aplican los operadores cars/bersaglio/insema en su próxima sesión | ⏸️ externo | |
 | **TODO-21** | **Lote-dueño #0** — ✅ **Cloudflare (cuenta+R2+token+secrets+CF_DEPLOY_ENABLED)** hecho (portal LIVE §21). Restante: ⏰ **RNT decreto cierra 2026-07-11** · permiso DesignSync (1 clic, al 1er sync) · allowlist git push/merge en `.claude/settings.json` (opcional — el push ya funciona) · contratar abogado con brief (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`, listo) · elegir D0 (cuando Opus entregue 3 direcciones). Lotes 1/2/3 → PLAN-ENDURECIDO §4. | ⏸️ dueño | pedir por LOTES |
@@ -45,31 +60,17 @@
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-11 (OPUS 4.8 — E2E de la capa de datos con SEED + fusión skill navegador, pedido de Daniel)**:
-> Daniel pidió generar propiedades para desbloquear (no hay inventario). Hecho: generador SEMILLA realista
-> (`firebase/seed/generar-propiedades.mjs`, Cartagena; imágenes Picsum por URL — NO Google/derechos) + seam
-> `baseUrl` + **E2E `e2e-datalayer.test.ts`** (siembra emulador → lee con cliente REAL → decode). **21/21
-> emulador** (§22.8). Bug de test cazado (aislamiento por projectId → L-21). ⚠️ Para VER propiedades
-> renderizadas falta la **Ola 1** (grillas+ficha, gated en D0 — no hago UI sin mockup). Fusioné la skill
-> global `validacion-live-chrome` §0.5: navegador integrado (default) vs extensión Chrome (solo con login
-> del dueño) + copyright. Commit: código + cerebro.
+> **2026-07-11 (OPUS 4.8 — Carril D · D0 marca, sesión larga con Daniel; CIERRE por saturación)**:
+> definido el posicionamiento **"premium que no excluye"** + misión/visión + eslogan **"Seguridad, Legalidad
+> y Confianza"**; corregida la jerarquía de paleta (**oro/plata mandan = logo; navy discreto**); acento **ocre
+> muralla APROBADO**; sello tipográfico **Cardo (ALTORRA) + Helvetica Now (INMOBILIARIA)** con tracking/leading
+> exactos; lenguaje visual **Liquid Glass** (ref Bersaglio pero **sello propio**, editorial solo en "Journal
+> Inmobiliario"). Todo → memoria `identidad-marca-inmobiliaria` + `sello-marca-altorra`. Corrí **comité D0 ×3**
+> (crudo → bóveda `2026-07-11-comite-d0-marca-crudo.json`): volteó mi recomendación (calidez = ownable, no la
+> transparencia; A=cliché de lujo genérico; oro-texto reprueba contraste). Board mockup v3 publicado (Artifact
+> `d056097f…`). Entregué a Daniel el **prompt final de voz** para Antigravity/Gemini. Aprendí anti-patrones de
+> voz de Daniel (sin guiones "—", sin texto literal/funcional). **PRÓXIMO (chat nuevo)**: pega respuesta Gemini
+> → `comite-expertos`+`asesor-critico-honesto` deliberan la voz → skill `catalogo-voz-altorra`.
 
-> **2026-07-11 (OPUS 4.8 — fix `platformProxy` del adapter v14, tarea derivada)**: la opción `platformProxy`
-> se removió en `@astrojs/cloudflare` v14 (ahora sobre el Cloudflare Vite plugin → bindings de `wrangler.jsonc`
-> auto-emulados en workerd real). Fix = quitar la línea de `astro.config.mjs`. Verificado: `tsc` limpio +
-> `astro dev` sirve SSR+estático + build/gates verdes. Cierra cola Fable (c). Detalle → L-19.
-
-> **2026-07-11 (OPUS 4.8 — Ola 0.7 parte 3/3 CERRADA: capa de datos `client.ts`, Decisión Fuerte OD1)**:
-> pipeline `proceso-decision-fuerte` (núcleo seco) → evidencia docs vivas (Cloudflare Workers Caching en
-> workers.dev ✅ + Firestore REST anónimo pasa por rules ✅) → **comité ×3** (workflow; crudo → bóveda
-> `2026-07-11-comite-od1-client-ts-crudo.json`) → veredicto (verifiqué cada claim). Implementado edge-safe:
-> `firestore-rest.ts` (decoder + `getDoc` never-throws) · `client.ts` (`getDataClient`, repos, guardas
-> anti-traversal + colapso denied/404→unavailable + memo por-request) · `cache.ts` (tags + Cache-Control TTL
-> largo+purga) · `middleware.ts` → `locals.altorra` · gate `verify:data`. **Hallazgo**: apiKey pública YA
-> estaba en el repo (`js/firebase-config.js`) — NO hubo que pedirla. **Gate empírico REAL**: tsc estricto
-> limpio · vitest 26/26 · astro build · verify:data · **T6 rules 15/15 emulador** (confirma inexistente→403).
-> ADR §22 `[REVISAR-FABLE]` + L-17..L-20. **Pre-existente cazado**: `platformProxy` inválido en adapter v14
-> (→ cola Fable). Commit pendiente (código + cerebro). Daniel: nada que hacer.
-
-> *(Bitácora del 2026-07-10 + Ola 0.2 podada — consolidada en ADRs §15-§21 + `PLAN-ENDURECIDO`: staging
-> VIVO §21 (L-16), ratificaciones Fable + carta de derechos + T8/O13 en §20/§20.8, specs R0-R5. §G.4 GC.)*
+> *(Bitácora del 07-10/07-11-código podada — consolidada en ADRs §15-§22.8 + lecciones L-16..L-21 +
+> `PLAN-ENDURECIDO`: staging §21, capa de datos+E2E §22/§22.8, platformProxy L-19. §G.4 GC.)*
