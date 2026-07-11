@@ -12,6 +12,8 @@
     "verify:build": "node ./scripts/verify-build.mjs",
     "verify:data": "node ./scripts/verify-data-invariants.mjs",
     "test": "vitest run",
+    "test:rules": "firebase emulators:exec --only firestore --config firebase/firebase.json --project demo-altorra \"vitest run --config vitest.rules.config.ts\"",
+    "seed:preview": "node ./firebase/seed/generar-propiedades.mjs --print",
     "cf-types": "wrangler types"
   },
   "engines": {

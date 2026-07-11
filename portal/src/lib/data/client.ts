@@ -81,9 +81,10 @@ export interface DataClient {
  * @param env  env de runtime de Cloudflare (`Astro.locals.runtime?.env`); opcional.
  * @param opts `fetchImpl` inyectable para tests.
  */
-export function getDataClient(env?: RuntimeEnv, opts?: { fetchImpl?: typeof fetch }): DataClient {
+export function getDataClient(env?: RuntimeEnv, opts?: { fetchImpl?: typeof fetch; baseUrl?: string }): DataClient {
   const { apiKey, projectId } = resolveConfig(env);
   const fetchImpl = opts?.fetchImpl;
+  const baseUrl = opts?.baseUrl;
   // Memo POR-REQUEST: dos lecturas del mismo doc en un render = 1 fetch. Vive con la instancia
   // (que es request-scoped por construcción — ver la advertencia anti-hoist de arriba).
   const memo = new Map<string, Promise<LowLevelResult>>();
@@ -92,7 +93,7 @@ export function getDataClient(env?: RuntimeEnv, opts?: { fetchImpl?: typeof fetc
     const key = segments.join('/');
     let p = memo.get(key);
     if (!p) {
-      p = getDoc(segments, { apiKey, projectId, fetchImpl });
+      p = getDoc(segments, { apiKey, projectId, fetchImpl, baseUrl });
       memo.set(key, p);
     }
     return p;

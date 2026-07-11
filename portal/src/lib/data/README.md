@@ -46,10 +46,18 @@ OD1, ADR §22 `[REVISAR-FABLE]`). Read-only PÚBLICO. Verificada: `tsc` estricto
    denormalizado `indices/catalogo-{operacion}` (1 GET) mantenido por Cloud Function `onWrite`.
 4. **`config` casi-estático** (footer/matrícula): preferir inline a build-time; si runtime, TTL largo + tag.
 
+## Verificación (`npm test` + emulador)
+
+- **Pure** (`npm test`, vitest, sin infra): decoder + `getDoc` (status/never-throws) + guardas del cliente.
+- **Emulador** (`npm run test:rules`, requiere Java): **T6 Rules** (`firebase/tests/rules.test.ts`) + **E2E de la
+  capa de datos** (`firebase/tests/e2e-datalayer.test.ts`) — siembra el emulador con propiedades SEMILLA
+  realistas (`firebase/seed/generar-propiedades.mjs`; imágenes Picsum por URL, NO producción) y lee con el
+  CLIENTE REAL (`baseUrl`→emulador): camino completo cliente→REST→rules→decode→dominio. **21/21 verdes.**
+  ⚠️ cada archivo usa su propio `projectId` (aislamiento — L-21). `npm run seed:preview` imprime muestras.
+
 ## Pendiente de Ola 0.7 / seguimiento
 
-- **T6 — tests de Rules contra el emulador** (`firebase/` + `@firebase/rules-unit-testing`): verifican que
-  `propiedades` inexistente/borrador → denegado, `config` niega `gestion/counters`, `disponibilidad` get
-  público, `list`/`write` denegados. Deploy de Rules = del dueño, COORDINADO con el retiro legacy.
+- **E2E "tras cache"**: falta medir el hit/miss de Workers Caching en staging DESPLEGADO (gate T9) — necesita deploy.
+- **Deploy de Rules** = del dueño/Claude, COORDINADO con el retiro legacy (NO ahora).
 - **Hardening futuro:** validación runtime del shape decodificado (zod) antes del cast a los tipos del dominio.
 - **Lecturas privilegiadas (SA-JWT en edge)** = post-MVP; el param `env?` de `getDataClient` es el hook forward.

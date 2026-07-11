@@ -46,6 +46,8 @@ export interface GetDocOptions {
   signal?: AbortSignal;
   /** Inyectable para tests (por defecto el `fetch` global del runtime). */
   fetchImpl?: typeof fetch;
+  /** Override de la base REST (por defecto Firestore real). Solo para el emulador local en tests E2E. */
+  baseUrl?: string;
 }
 
 /**
@@ -101,10 +103,10 @@ export function decodeDocument(doc: FsDocument): Record<string, unknown> {
  * No lanza NUNCA: mapea status (200/404/403/otro) y captura fallos de red/abort/JSON.
  */
 export async function getDoc(segments: readonly string[], opts: GetDocOptions): Promise<LowLevelResult> {
-  const { apiKey, projectId, signal, fetchImpl = globalThis.fetch } = opts;
+  const { apiKey, projectId, signal, fetchImpl = globalThis.fetch, baseUrl = FS_BASE } = opts;
   const path = segments.map((s) => encodeURIComponent(s)).join('/');
   const url =
-    `${FS_BASE}/projects/${encodeURIComponent(projectId)}/databases/${DEFAULT_DATABASE}/documents/${path}` +
+    `${baseUrl}/projects/${encodeURIComponent(projectId)}/databases/${DEFAULT_DATABASE}/documents/${path}` +
     `?key=${encodeURIComponent(apiKey)}`;
   try {
     const res = await fetchImpl(url, { method: 'GET', headers: { accept: 'application/json' }, signal });
