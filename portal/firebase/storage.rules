@@ -1,0 +1,18 @@
+rules_version = '2';
+
+// Reglas de Firebase Storage del PORTAL — documentos PRIVADOS (gate B5).
+// Aquí viven cédulas, contratos escaneados, extractos, docs de expediente (PII sensible).
+// ⛔ Deny público TOTAL: solo staff/Functions. Las imágenes PÚBLICAS del catálogo NO viven aquí
+//    (van a Cloudflare R2 — stack sellado ADR §16).
+//
+// ⚠️ Deploy = DUEÑO, COORDINADO: el bucket lo comparte el legacy (reemplaza su ruleset de Storage). Ver README.
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isStaff() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+    match /{allPaths=**} {
+      allow read, write: if isStaff();
+    }
+  }
+}

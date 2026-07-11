@@ -1,0 +1,62 @@
+{
+  "indexes": [
+    { "collectionGroup": "propiedades", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "operacion", "order": "ASCENDING" },
+      { "fieldPath": "estado", "order": "ASCENDING" },
+      { "fieldPath": "prioridad", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "propiedades", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "operacion", "order": "ASCENDING" },
+      { "fieldPath": "tipo", "order": "ASCENDING" },
+      { "fieldPath": "estado", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "propiedades", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "geo.barrio", "order": "ASCENDING" },
+      { "fieldPath": "operacion", "order": "ASCENDING" },
+      { "fieldPath": "estado", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "solicitudes", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "estado", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "solicitudes", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "leadTier", "order": "ASCENDING" },
+      { "fieldPath": "estado", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "pagos", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "estado", "order": "ASCENDING" },
+      { "fieldPath": "fechaVencimiento", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "pagos", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "expedienteId", "order": "ASCENDING" },
+      { "fieldPath": "periodo", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "contratos", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "estado", "order": "ASCENDING" },
+      { "fieldPath": "vigenciaFin", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "novedades", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "expedienteId", "order": "ASCENDING" },
+      { "fieldPath": "estado", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "actividades", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "responsable", "order": "ASCENDING" },
+      { "fieldPath": "estado", "order": "ASCENDING" },
+      { "fieldPath": "proximoPaso", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "disponibilidad", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "propiedadId", "order": "ASCENDING" },
+      { "fieldPath": "fecha", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "actividades", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "estado", "order": "ASCENDING" },
+      { "fieldPath": "proximoPaso", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "novedades", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "estado", "order": "ASCENDING" },
+      { "fieldPath": "slaVencimiento", "order": "ASCENDING" }
+    ] }
+  ],
+  "fieldOverrides": []
+}

@@ -1,0 +1,58 @@
+rules_version = '2';
+
+// Reglas Firestore del PORTAL (modelo de datos v1, Ola 0.7). Frontera PÚBLICO vs INTERNO/PII (OD3),
+// endurecidas tras revisión adversarial ×3 lentes (fail-closed + free-tier).
+//
+// POSTURA DE ESCRITURA (OD1, marcada para ratificación Fable): TODA escritura pasa por Cloud Functions
+// (Admin SDK, que BYPASSA estas reglas) → los invariantes viven server-side: contador INM atómico (OD8),
+// `_version` (L-04), transacción anti-overbooking, `leadScore`, validación de garantía (OD9). Por eso el
+// cliente NUNCA escribe directo (`allow write: if false`). El client SDK del admin es solo para LECTURA
+// acotada (realtime de admin). Seeding = scripts Admin SDK (bypassan reglas).
+//
+// ⚠️ `firebase deploy --only firestore:rules,firestore:indexes` = lo hace el DUEÑO, COORDINADO: el proyecto
+//    `altorra-inmobiliaria-345c6` lo comparte el legacy → el `default deny-all` reemplaza su ruleset (ver README).
+// TODO(0.7): tests contra el emulador (T6) antes de desplegar.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Staff = autenticado CON custom claim `admin==true` (lo setea un proceso de confianza vía Admin SDK).
+    function isStaff() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+
+    // ---------- PÚBLICO (lectura acotada, FAIL-CLOSED) ----------
+    // Catálogo: GET solo de estados realmente públicos (whitelist; 'cerrado' = ficha permanente por SEO).
+    // LIST público denegado (la SERP se sirve de JSON cacheado, no de queries de cliente — free-tier).
+    match /propiedades/{id} {
+      allow get: if resource.data.estado in ['disponible', 'reservado', 'cerrado'];
+      allow list: if isStaff();
+      allow write: if false;
+    }
+    // Disponibilidad: GET puntual público; LIST denegado (el calendario se sirve por edge/JSON cacheado — OD1).
+    match /disponibilidad/{id} {
+      allow get: if true;
+      allow list: if false;
+      allow write: if false;
+    }
+    // Config: GET público SOLO de docs no sensibles (general/promo/system-meta); gestion/counters = staff.
+    match /config/{doc} {
+      allow get: if !(doc in ['gestion', 'counters']) || isStaff();
+      allow list: if isStaff();
+      allow write: if false;
+    }
+
+    // ---------- INTERNO / PII (lectura solo staff; escritura solo Functions) ----------
+    match /captaciones/{id} { allow read: if isStaff(); allow write: if false; } // PII propietario/dirección/matrícula/comisión
+    match /solicitudes/{id} { allow read: if isStaff(); allow write: if false; } // alta de leads por Cloud Function
+    match /actividades/{id} { allow read: if isStaff(); allow write: if false; }
+    match /expedientes/{id} { allow read: if isStaff(); allow write: if false; }
+    match /contratos/{id}   { allow read: if isStaff(); allow write: if false; }
+    match /pagos/{id}       { allow read: if isStaff(); allow write: if false; }
+    match /novedades/{id}   { allow read: if isStaff(); allow write: if false; }
+
+    // ---------- DEFAULT: todo lo no declarado, DENEGADO (incluye loginAttempts C-25 y legacy) ----------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

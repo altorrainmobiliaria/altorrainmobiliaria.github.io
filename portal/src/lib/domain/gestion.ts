@@ -1,7 +1,7 @@
 // Módulo GESTIÓN (back-office de administración de arriendos). Las 4 entidades nacen en el día 1
 // (mandato del dueño: modelar tarde = remodelar caro). Sus features aterrizan en Ola 1.13 (v1),
 // Ola 2.0 (v2: cobro Wompi) y Ola 3 (v3: portales propietario/inquilino) — el schema prevé los 3 niveles.
-import type { ISODate, COP, Versioned, Auditable } from './shared';
+import type { ISODate, COP, Vertical, Versioned, Auditable } from './shared';
 import type { TipoGarantia } from './propiedades';
 
 /** Acta de entrega por espacios (FORMATO INVENTARIO): estado Bueno/Regular/Malo, entrega vs recibo. */
@@ -48,6 +48,7 @@ export interface Contrato extends Versioned, Auditable {
   id: string;
   expedienteId: string;
   tipo: TipoContrato;
+  vertical: Vertical; // legal-by-design: hace ejecutable el gate OD9 server-side (garantía vs vivienda)
   estado: EstadoContrato;
   partes: { propietario?: ParteContrato; arrendatario?: ParteContrato; codeudor?: ParteContrato };
   canon?: COP;
@@ -58,12 +59,13 @@ export interface Contrato extends Versioned, Auditable {
   vigenciaFin: ISODate; // alerta de renovación a 4 meses (preaviso legal 3 — Ley 820), derivada de aquí
   renovacionAutomatica: boolean;
   incrementoIPC?: boolean;
-  /** Garantía — en VIVIENDA NUNCA depósito en dinero (OD9 / art. 16 Ley 820). */
+  /** Garantía — en VIVIENDA NUNCA depósito en dinero (OD9 / art. 16 Ley 820). La CF de creación de
+   *  contrato valida `garantia` contra `vertical` (rechaza cualquier depósito si vertical === 'vivienda'). */
   garantia?: { tipo: TipoGarantia; detalle?: string };
   docs?: string[]; // adjuntos en Storage privado (B5)
 }
 
-/** `pagos` — un doc por PERÍODO (YYYY-MM) por contrato (OD6). Umbrales de mora en `config/gestion`. */
+/** `pagos` — un doc por período × contrato × tipo (OD6). docId determinista incluye `tipo`. Mora en `config/gestion`. */
 export const TIPOS_PAGO = ['canon_inquilino', 'payout_propietario', 'honorarios', 'servicios_publicos'] as const;
 export type TipoPago = (typeof TIPOS_PAGO)[number];
 

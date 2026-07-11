@@ -58,6 +58,7 @@ export interface Propiedad extends Versioned, Auditable {
   amenidades: Amenidades;
   otrasAmenidades?: string[];
   precio: Precio;
+  /** Capado a los últimos N cambios en la proyección pública (la Function que escribe lo poda) — doc lean. */
   priceHistory?: PriceHistoryEntry[];
   /** RNT — OBLIGATORIO y bloqueante cuando `operacion==='alojamiento'` (gate B3). */
   rnt?: string;
