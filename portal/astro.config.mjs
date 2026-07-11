@@ -15,8 +15,10 @@ export default defineConfig({
   site: 'https://altorrainmobiliaria.co',
   output: 'server',
   adapter: cloudflare({
-    // Emula bindings (R2/KV/secrets de wrangler.jsonc) en `astro dev`.
-    platformProxy: { enabled: true },
+    // Bindings (R2/KV de wrangler.jsonc) se emulan AUTOMÁTICAMENTE en `astro dev`: el adapter v14 se
+    // construye sobre el Cloudflare Vite plugin, que corre el dev server dentro de workerd REAL (ya no
+    // un proxy → por eso `platformProxy` se removió del tipo `Options`, L-19). Bindings remotos = opt-in
+    // por-binding con `"remote": true` en wrangler.jsonc (no lo usamos: locales en dev).
     // Imágenes: derivados fijos, NUNCA transform al vuelo en el edge
     // (fallo Q5 + refutación Gemini #3). 'compile' procesa en build, no en runtime.
     imageService: 'compile',
