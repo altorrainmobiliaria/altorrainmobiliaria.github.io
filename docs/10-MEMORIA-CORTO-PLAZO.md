@@ -39,11 +39,16 @@
 | **TODO-19** | **Potenciar cerebro** (kickoff §7.3): auditoría Nivel-2 (vence ~2026-07-15, staleDays) + destilar `_legacy/AVANCES.md` Fase B + evaluar lecciones candidatas C-01..C-39 (R0) contra `30` | 🔄 | |
 | **TODO-20** | **Constancias liderazgo ×3**: payloads listos en la skill; los aplican los operadores cars/bersaglio/insema en su próxima sesión | ⏸️ externo | |
 | **TODO-21** | **Lote-dueño #0** — ✅ **Cloudflare (cuenta+R2+token+secrets+CF_DEPLOY_ENABLED)** hecho (portal LIVE §21). Restante: ⏰ **RNT decreto cierra 2026-07-11** · permiso DesignSync (1 clic, al 1er sync) · allowlist git push/merge en `.claude/settings.json` (opcional — el push ya funciona) · contratar abogado con brief (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`, listo) · elegir D0 (cuando Opus entregue 3 direcciones). Lotes 1/2/3 → PLAN-ENDURECIDO §4. | ⏸️ dueño | pedir por LOTES |
-| **TODO-22** | **Auditoría Fable de la Ola 0** (protocolo cars §300) al volver su cuota. **Cola viva** (carta de derechos §3): (a) ADR §22 `[REVISAR-FABLE]` (capa de datos OD1); (b) decisión DIFERIDA del catálogo público (SSG build-time vs doc-índice denormalizado, Ola 1); (c) hallazgo pre-existente `platformProxy` inválido en adapter v14 (`astro dev` bindings). | 🔮 FABLE | |
+| **TODO-22** | **Auditoría Fable de la Ola 0** (protocolo cars §300) al volver su cuota. **Cola viva** (carta de derechos §3): (a) ADR §22 `[REVISAR-FABLE]` (capa de datos OD1); (b) decisión DIFERIDA del catálogo público (SSG build-time vs doc-índice denormalizado, Ola 1). ~~(c) `platformProxy` inválido~~ ✅ RESUELTO (quitada la opción; adapter v14 sobre Cloudflare Vite plugin auto-emula bindings — L-19). | 🔮 FABLE | |
 
 ---
 
 ## 📝 Bitácora (efímera)
+
+> **2026-07-11 (OPUS 4.8 — fix `platformProxy` del adapter v14, tarea derivada)**: la opción `platformProxy`
+> se removió en `@astrojs/cloudflare` v14 (ahora sobre el Cloudflare Vite plugin → bindings de `wrangler.jsonc`
+> auto-emulados en workerd real). Fix = quitar la línea de `astro.config.mjs`. Verificado: `tsc` limpio +
+> `astro dev` sirve SSR+estático + build/gates verdes. Cierra cola Fable (c). Detalle → L-19.
 
 > **2026-07-11 (OPUS 4.8 — Ola 0.7 parte 3/3 CERRADA: capa de datos `client.ts`, Decisión Fuerte OD1)**:
 > pipeline `proceso-decision-fuerte` (núcleo seco) → evidencia docs vivas (Cloudflare Workers Caching en
