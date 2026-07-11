@@ -34,28 +34,28 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-17** | **Ola 0 — ejecución Opus** (guía = `PLAN-ENDURECIDO-FABLE-2026-07-10.md`): ✅ 0.1 scaffold (§19) · ✅ 0.2 staging LIVE (§21) · ✅ brief abogado (O9) · ✅ FTI-01. **0.7 modelo de datos**: ✅ parte 1 tipos dominio (`62916e1`) · ✅ parte 2 rules+indexes+storage ENDURECIDOS por revisión ×3 (`1750f10`) · ▶ **FALTA parte 3/3 = `client.ts` (OD1, DECISIÓN FUERTE)** → arrancar en NUEVA conversación (ver bitácora HANDOFF). Siguen 0.3 D0 · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
+| **TODO-17** | **Ola 0 — ejecución Opus** (guía = `PLAN-ENDURECIDO-FABLE-2026-07-10.md`): ✅ 0.1 scaffold (§19) · ✅ 0.2 staging LIVE (§21) · ✅ brief abogado (O9) · ✅ FTI-01. **0.7 modelo de datos**: ✅ parte 1 tipos (`62916e1`) · ✅ parte 2 rules+indexes+storage ×3 (`1750f10`) · ✅ **parte 3/3 = capa de datos `client.ts`+REST+cache+tests+gate (OD1, §22 `[REVISAR-FABLE]`, comité ×3, T6 15/15)**. **Falta 0.7**: E2E con datos+deploy (deploy rules = Claude, coordinado con retiro legacy — NO ahora). Siguen 0.3 D0 · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
 | **TODO-18** | **Carril D — Diseño D0-D4**: direcciones de marca comparativas (dueño elige) → design system → DesignSync a claude.ai → mockup por pantalla → gate fidelidad. Insumo: bóveda `ui-referentes/` | 🔮 OPUS (D0 en Ola 0.3) | paleta SIN negro |
 | **TODO-19** | **Potenciar cerebro** (kickoff §7.3): auditoría Nivel-2 (vence ~2026-07-15, staleDays) + destilar `_legacy/AVANCES.md` Fase B + evaluar lecciones candidatas C-01..C-39 (R0) contra `30` | 🔄 | |
 | **TODO-20** | **Constancias liderazgo ×3**: payloads listos en la skill; los aplican los operadores cars/bersaglio/insema en su próxima sesión | ⏸️ externo | |
 | **TODO-21** | **Lote-dueño #0** — ✅ **Cloudflare (cuenta+R2+token+secrets+CF_DEPLOY_ENABLED)** hecho (portal LIVE §21). Restante: ⏰ **RNT decreto cierra 2026-07-11** · permiso DesignSync (1 clic, al 1er sync) · allowlist git push/merge en `.claude/settings.json` (opcional — el push ya funciona) · contratar abogado con brief (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`, listo) · elegir D0 (cuando Opus entregue 3 direcciones). Lotes 1/2/3 → PLAN-ENDURECIDO §4. | ⏸️ dueño | pedir por LOTES |
-| **TODO-22** | **Auditoría Fable de la Ola 0** (protocolo cars §300) al volver su cuota | 🔮 FABLE | |
+| **TODO-22** | **Auditoría Fable de la Ola 0** (protocolo cars §300) al volver su cuota. **Cola viva** (carta de derechos §3): (a) ADR §22 `[REVISAR-FABLE]` (capa de datos OD1); (b) decisión DIFERIDA del catálogo público (SSG build-time vs doc-índice denormalizado, Ola 1); (c) hallazgo pre-existente `platformProxy` inválido en adapter v14 (`astro dev` bindings). | 🔮 FABLE | |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-11 (OPUS — CIERRE @738k ctx · HANDOFF parte 3 de Ola 0.7 para conversación NUEVA)**:
-> 0.7 partes 1-2 hechas (tipos dominio `62916e1` + rules/indexes/storage endurecidos por revisión ×3
-> `1750f10`; crudo → bóveda `2026-07-11-datamodel-review-crudo.json`). **PARTE 3 = `portal/src/lib/data/client.ts`
-> (hoy lanza Error) — DECISIÓN FUERTE OD1, marcar `[REVISAR-FABLE]`**: lecturas PÚBLICAS (ficha, config,
-> disponibilidad get) vía **REST de Firestore + apiKey PÚBLICA** (rules ya gatean get-published) detrás de
-> **Workers Cache API** (cache-miss = única lectura, SWR); JAMÁS en camino síncrono vía Function. Privilegiadas/admin
-> (bypass rules) = SA-JWT firmado en edge (WebCrypto)→OAuth→REST, o Cloud Function; NO en MVP público. projectId=
-> `altorra-inmobiliaria-345c6` (público); apiKey pública → env `PUBLIC_FIREBASE_API_KEY` en wrangler vars (PEDIR a
-> Daniel el valor de la config Firebase). NO live-verificable hasta cargar propiedades. Escritura=solo Functions
-> (`write:if false` ya en rules). Al cerrar 0.7: ADR en 99/00. **Deploy Firebase rules = Claude (delegado hoy),
-> COORDINADO con retiro legacy — NO ahora.** Daniel: NO hace nada técnico, solo responde dudas puntuales.
+> **2026-07-11 (OPUS 4.8 — Ola 0.7 parte 3/3 CERRADA: capa de datos `client.ts`, Decisión Fuerte OD1)**:
+> pipeline `proceso-decision-fuerte` (núcleo seco) → evidencia docs vivas (Cloudflare Workers Caching en
+> workers.dev ✅ + Firestore REST anónimo pasa por rules ✅) → **comité ×3** (workflow; crudo → bóveda
+> `2026-07-11-comite-od1-client-ts-crudo.json`) → veredicto (verifiqué cada claim). Implementado edge-safe:
+> `firestore-rest.ts` (decoder + `getDoc` never-throws) · `client.ts` (`getDataClient`, repos, guardas
+> anti-traversal + colapso denied/404→unavailable + memo por-request) · `cache.ts` (tags + Cache-Control TTL
+> largo+purga) · `middleware.ts` → `locals.altorra` · gate `verify:data`. **Hallazgo**: apiKey pública YA
+> estaba en el repo (`js/firebase-config.js`) — NO hubo que pedirla. **Gate empírico REAL**: tsc estricto
+> limpio · vitest 26/26 · astro build · verify:data · **T6 rules 15/15 emulador** (confirma inexistente→403).
+> ADR §22 `[REVISAR-FABLE]` + L-17..L-20. **Pre-existente cazado**: `platformProxy` inválido en adapter v14
+> (→ cola Fable). Commit pendiente (código + cerebro). Daniel: nada que hacer.
 
 > **2026-07-11 (OPUS 4.8 — Ola 0.2: portal VIVO en staging)**: guié al dueño paso a paso (Fincaraíz, sin
 > tocar credenciales) → cuenta Cloudflare + R2 (bucket `altorra-portal-media`) + API token + secrets +
