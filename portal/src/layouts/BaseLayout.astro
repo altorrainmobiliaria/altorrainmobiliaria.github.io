@@ -8,6 +8,9 @@ const {
   title,
   description = 'Altorra Inmobiliaria — gestión integral en soluciones inmobiliarias. Cartagena de Indias.',
 } = Astro.props;
+
+// Indexable SOLO en build de producción; por defecto (staging *.workers.dev) => noindex (O3/T1).
+const indexable = import.meta.env.PUBLIC_SITE_ENV === 'production';
 ---
 
 <!doctype html>
@@ -17,6 +20,7 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {!indexable && <meta name="robots" content="noindex, nofollow" />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <!-- Tokens de marca + design system: llegan en D1 (carril D). Restricción sellada: oro/plata/blanco/navy, SIN negro. -->
   </head>
