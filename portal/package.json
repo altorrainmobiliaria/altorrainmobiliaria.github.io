@@ -10,6 +10,8 @@
     "preview": "wrangler dev",
     "deploy": "wrangler deploy",
     "verify:build": "node ./scripts/verify-build.mjs",
+    "verify:data": "node ./scripts/verify-data-invariants.mjs",
+    "test": "vitest run",
     "cf-types": "wrangler types"
   },
   "engines": {
@@ -20,7 +22,10 @@
     "astro": "^7.0.7"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.1",
+    "firebase": "^12.16.0",
     "typescript": "^7.0.2",
+    "vitest": "^3.2.7",
     "wrangler": "^4.110.0"
   }
 }

@@ -1,4 +1,5 @@
 import { defineMiddleware } from 'astro:middleware';
+import { getDataClient } from './lib/data/client';
 
 // STAGING NO INDEXABLE (mitigación O3/T1 + O13 del plan endurecido).
 // Regla: nada se indexa salvo que el build sea explícitamente de PRODUCCIÓN
@@ -12,7 +13,12 @@ import { defineMiddleware } from 'astro:middleware';
 // porque el asset estático se sirve sin invocar el Worker.
 const IS_PRODUCTION = import.meta.env.PUBLIC_SITE_ENV === 'production';
 
-export const onRequest = defineMiddleware(async (_context, next) => {
+export const onRequest = defineMiddleware(async (context, next) => {
+  // Capa de datos: 1 instancia POR-REQUEST (memo request-scoped; evita el footgun del estado de módulo
+  // que PERSISTE entre requests del mismo isolate en Workers — comité OD1). Lazy: no toca la red hasta
+  // un `.get()`, así el overhead en rutas que no leen datos es nulo. La config pública (apiKey/projectId)
+  // sale de import.meta.env/constante; el override por env de runtime (wrangler [vars]) es hook post-MVP.
+  context.locals.altorra = getDataClient();
   const response = await next();
   if (!IS_PRODUCTION) {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow');
