@@ -34,7 +34,7 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-17** | **Ola 0 — ejecución Opus** (guía = `specs/PLAN-ENDURECIDO-FABLE-2026-07-10.md`): ✅ 0.1 scaffold (§19) · ✅ **0.2 staging LIVE** (§21, verificado) · ✅ brief abogado (O9) · ✅ FTI-01 2ª pasada. ▶ **AHORA 0.7 modelo de datos** (DESBLOQUEADO: schema TS 8 colecciones + `firestore.rules` + `indexes` + `client.ts` REST edge; PUBLIC/`captaciones`-PII; GESTIÓN día-1; verificar E2E en staging vivo). Siguen 0.3 D0 (needs dueño) · 0.4 obra AEO · 0.6 textos legales DRAFT. | 🔄 OPUS | abogado toque (i) = gate CUTOVER |
+| **TODO-17** | **Ola 0 — ejecución Opus** (guía = `PLAN-ENDURECIDO-FABLE-2026-07-10.md`): ✅ 0.1 scaffold (§19) · ✅ 0.2 staging LIVE (§21) · ✅ brief abogado (O9) · ✅ FTI-01. **0.7 modelo de datos**: ✅ parte 1 tipos dominio (`62916e1`) · ✅ parte 2 rules+indexes+storage ENDURECIDOS por revisión ×3 (`1750f10`) · ▶ **FALTA parte 3/3 = `client.ts` (OD1, DECISIÓN FUERTE)** → arrancar en NUEVA conversación (ver bitácora HANDOFF). Siguen 0.3 D0 · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
 | **TODO-18** | **Carril D — Diseño D0-D4**: direcciones de marca comparativas (dueño elige) → design system → DesignSync a claude.ai → mockup por pantalla → gate fidelidad. Insumo: bóveda `ui-referentes/` | 🔮 OPUS (D0 en Ola 0.3) | paleta SIN negro |
 | **TODO-19** | **Potenciar cerebro** (kickoff §7.3): auditoría Nivel-2 (vence ~2026-07-15, staleDays) + destilar `_legacy/AVANCES.md` Fase B + evaluar lecciones candidatas C-01..C-39 (R0) contra `30` | 🔄 | |
 | **TODO-20** | **Constancias liderazgo ×3**: payloads listos en la skill; los aplican los operadores cars/bersaglio/insema en su próxima sesión | ⏸️ externo | |
@@ -44,6 +44,18 @@
 ---
 
 ## 📝 Bitácora (efímera)
+
+> **2026-07-11 (OPUS — CIERRE @738k ctx · HANDOFF parte 3 de Ola 0.7 para conversación NUEVA)**:
+> 0.7 partes 1-2 hechas (tipos dominio `62916e1` + rules/indexes/storage endurecidos por revisión ×3
+> `1750f10`; crudo → bóveda `2026-07-11-datamodel-review-crudo.json`). **PARTE 3 = `portal/src/lib/data/client.ts`
+> (hoy lanza Error) — DECISIÓN FUERTE OD1, marcar `[REVISAR-FABLE]`**: lecturas PÚBLICAS (ficha, config,
+> disponibilidad get) vía **REST de Firestore + apiKey PÚBLICA** (rules ya gatean get-published) detrás de
+> **Workers Cache API** (cache-miss = única lectura, SWR); JAMÁS en camino síncrono vía Function. Privilegiadas/admin
+> (bypass rules) = SA-JWT firmado en edge (WebCrypto)→OAuth→REST, o Cloud Function; NO en MVP público. projectId=
+> `altorra-inmobiliaria-345c6` (público); apiKey pública → env `PUBLIC_FIREBASE_API_KEY` en wrangler vars (PEDIR a
+> Daniel el valor de la config Firebase). NO live-verificable hasta cargar propiedades. Escritura=solo Functions
+> (`write:if false` ya en rules). Al cerrar 0.7: ADR en 99/00. **Deploy Firebase rules = Claude (delegado hoy),
+> COORDINADO con retiro legacy — NO ahora.** Daniel: NO hace nada técnico, solo responde dudas puntuales.
 
 > **2026-07-11 (OPUS 4.8 — Ola 0.2: portal VIVO en staging)**: guié al dueño paso a paso (Fincaraíz, sin
 > tocar credenciales) → cuenta Cloudflare + R2 (bucket `altorra-portal-media`) + API token + secrets +
@@ -69,18 +81,4 @@
 > §3.2/§4 ✅ · derogación "abogado=Ola 2"). Veredicto: **Opus LISTO para Olas 0→3 sin Fable**.
 > **Siguiente**: presentar el lote-dueño #0 a Daniel (URGENTE — RNT vence mañana).
 
-> **2026-07-10 (OPUS 4.8 — arranque Ola 0)**: ítem 1 scaffold `portal/` construido y verificado
-> end-to-end (build · `wrangler deploy --dry-run` · **`wrangler dev` live** · `verify:build` 5/5) →
-> commit `e0751a5` pusheado (portal-ci corre en el runner de GitHub). Config Astro 7 / adapter v14
-> verificada contra docs autoritativas, NO de memoria (§3.3): `main` = entrypoint unificado (L-14).
-> Revisión adversarial ×4 lentes (crudo → bóveda) → fixes aplicados (aislamiento inbound de
-> bump-version.yml, prereqs de deploy documentados, wranglerVersion pin, verify #5). ADR §19 + L-14/L-15.
-> **Siguiente en esta sesión**: guiar al dueño en la creación de la cuenta Cloudflare (Ola 0.2).
-
-> **2026-07-10 (SESIÓN DE PLANIFICACIÓN FABLE — cerrada, ADR §15-§18)**: en un día: obra live verificada
-> (+ caza del bug Jekyll L-13) → R0-R4 completas (~74 agentes, 6 workflows, 3 lentes live con protocolo
-> de login del dueño) → stack sellado con W-11 completo (comité ×3 + juez + fallos Q1-Q7 + Gemini
-> integrado: 4 adopciones, veto-Firestore refutado) → MEGA-PLAN por olas + módulo GESTIÓN + visión-PRO.
-> Decisiones del dueño incorporadas: razón social ALTORRA COMPANY SAS (vieja a liquidación, ver `50`) ·
-> tarifas v1 delegadas · GBP existe→reclamar · propiedades viejas descartadas · matrícula obtenida.
-> Detalle → ADRs §15-§18 + specs R0-R5 + MEGA-PLAN. **Siguiente sesión = OPUS 4.8: "arranca la Ola 0"**.
+> *(Bitácora del 2026-07-10 podada — consolidada en ADRs §15-§20 + specs R0-R5 + PLAN-ENDURECIDO. §G.4 GC.)*

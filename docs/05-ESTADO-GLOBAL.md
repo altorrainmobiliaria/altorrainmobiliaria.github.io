@@ -9,7 +9,7 @@
 | **Build** | ✅ **MODO OBRA LIVE y VERIFICADO** (2026-07-10, curl+sentinela): mantenimiento (blanco/navy/oro, WhatsApp +57 300 243 9810, info@) + 65 stubs redirect→home + 404→home + sitemap solo-home + `og-publish.yml` solo manual + **`.nojekyll`** (Pages fallaba con Jekyll desde ~mayo = producción congelada, L-13). Sitio viejo RETIRADO (git history). GSC preservado (meta + archivo). |
 | **Cache version vigente** | `altorra-pwa-v5` (`service-worker.js` = **kill-switch**: borra cachés, se des-registra y recarga — modo obra 2026-07-10). |
 | **Branch** | `main` (trabajo directo con push delegado, ADR §15.7). Estado de deploy: verificar con `git fetch` + live check, no con este tablero. |
-| **Deploy** | GH Pages auto al push a `main`; **Claude pushea/mergea** (autonomía total, mandato 2026-07-10, ADR §15.7). Deploy de **Firebase** (functions/rules) = DUEÑO (`50-CONFIG-INFRA`). |
+| **Deploy** | GH Pages auto al push a `main`; **Claude pushea/mergea** (autonomía total, mandato 2026-07-10, ADR §15.7). Deploy de **Firebase** (functions/rules) = **Claude ejecuta** (delegado por el dueño 2026-07-11), COORDINADO con retiro legacy; CLI auth por confirmar (`50-CONFIG-INFRA`). |
 
 ## ⚠️ Flags de riesgo activos
 - ⚖️ **Gate legal RESUELTO** (dueño, 2026-07-10): **matrícula de arrendador OBTENIDA** ✅ — el dueño muestra el certificado al final de la construcción; el Nº va al footer del portal como sello de confianza (kickoff §1).

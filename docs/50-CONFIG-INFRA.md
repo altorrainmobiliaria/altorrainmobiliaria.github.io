@@ -35,6 +35,14 @@
 | API token (secreto, lo crea/carga el DUEÑO) | scopes: `Workers Scripts:Edit` + `Workers KV Storage:Edit` + `Workers R2 Storage:Edit` + `Account Settings:Read` |
 | GitHub Actions | secrets `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` · variable `CF_DEPLOY_ENABLED=true` (enciende deploy-staging) |
 
+## ⚙️ Deploy de Firebase = CLAUDE (delegado por el dueño 2026-07-11)
+> Daniel delegó a Claude el deploy de Firebase (rules/functions), además del git/web ya delegado. **El dueño NO
+> hace nada técnico** — solo responde dudas puntuales. Claude ejecuta `firebase deploy` (requiere CLI `firebase`
+> autenticado como `altorrainmobiliaria@gmail.com` — **CONFIRMAR al primer deploy**; si no hay auth, es lo único que
+> el dueño tocaría, una vez).
+> ⚠️ El deploy de las **rules/indexes/storage del portal** es **COORDINADO**: reemplaza el ruleset del proyecto
+> compartido con el legacy → NO desplegar hasta el retiro del legacy / cutover (ver `portal/firebase/README.md`).
+
 ## Cloud Functions (7 DESPLEGADAS — verificado `functions:list` 2026-07-10)
 `onNewSolicitud` (email admin + lead scoring) · `onSolicitudStatusChanged` (email cliente) · `onPropertyChange`
 (regen SEO debounce 5min) · `triggerSeoRegeneration` (HTTPS callable super_admin) · `createManagedUserV2`
