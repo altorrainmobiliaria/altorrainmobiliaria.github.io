@@ -71,28 +71,5 @@
 > ADR §22 `[REVISAR-FABLE]` + L-17..L-20. **Pre-existente cazado**: `platformProxy` inválido en adapter v14
 > (→ cola Fable). Commit pendiente (código + cerebro). Daniel: nada que hacer.
 
-> **2026-07-11 (OPUS 4.8 — Ola 0.2: portal VIVO en staging)**: guié al dueño paso a paso (Fincaraíz, sin
-> tocar credenciales) → cuenta Cloudflare + R2 (bucket `altorra-portal-media`) + API token + secrets +
-> `CF_DEPLOY_ENABLED` → CI desplegó a Workers. **Verificado en vivo**: `altorra-portal.altorrainmobiliaria.workers.dev`
-> (home 200 + noindex · `/api/health` SSR 200 + `X-Robots-Tag` · favicon 200). KV `SESSION` auto-provisionado
-> (F1 no se materializó), R2 conectado. Gotcha: registrar subdominio workers.dev antes del 1er deploy (L-16 · ADR §21).
-> También: brief abogado listo (§O9, `specs/BRIEF-ABOGADO-2026-07-10.md`) · noindex safeguard (T1/O3) · O10 hecho.
-> **Siguiente**: Ola 0.7 modelo de datos (desbloqueado, verificable E2E en staging vivo).
-
-> **2026-07-10 (FABLE 5 — RATIFICACIÓN FINAL, 2ª pasada)**: dictamen íntegro; apéndice vinculante en el
-> PLAN-ENDURECIDO (gana al cuerpo). T1 corregida (staging noindex = solo header, sin Disallow) · T8 corregida
-> (Workers Caching con purga por tags, NO Cache API en workers.dev; wrangler 4.110 ✅) · O13 (cache-key sin
-> host → mitigar al cutover) · Carta de derechos sellada (Opus no pregunta lo técnico; Daniel = 6 categorías).
-> Cuenta Cloudflare CREADA por el dueño (ID → `50`) · O10 ejecutada (scrapes → bóveda). ADR §20.8.
-> **Siguiente**: bucket R2 + token + secrets con el dueño → CF_DEPLOY_ENABLED → 1er deploy staging + noindex.
-
-> **2026-07-10 (FABLE 5 — repaso estratégico final del plan, pedido por el dueño al 6% de cuota)**: Opus
-> armó el dossier de auditoría de todo el corpus (7 lectores en paralelo, +2ª pasada FTI-01 ya hecha) →
-> Fable ratificó (~40 decisiones, 4 correcciones de timing, 12 omisiones) → **ADR §20** +
-> `specs/PLAN-ENDURECIDO-FABLE-2026-07-10.md` (SSoT de EJECUCIÓN). Correcciones: abogado partido en 2
-> (toque (i) gatea el cutover), DIAN/Wompi a Ola 1, plumbing Wompi tras concepto, candado 1B→Ola 2,
-> continuidad DNS/email en cutover (O1, ROJA). 2 ediciones de kernel pre-aprobadas por Fable (carve-out
-> §3.2/§4 ✅ · derogación "abogado=Ola 2"). Veredicto: **Opus LISTO para Olas 0→3 sin Fable**.
-> **Siguiente**: presentar el lote-dueño #0 a Daniel (URGENTE — RNT vence mañana).
-
-> *(Bitácora del 2026-07-10 podada — consolidada en ADRs §15-§20 + specs R0-R5 + PLAN-ENDURECIDO. §G.4 GC.)*
+> *(Bitácora del 2026-07-10 + Ola 0.2 podada — consolidada en ADRs §15-§21 + `PLAN-ENDURECIDO`: staging
+> VIVO §21 (L-16), ratificaciones Fable + carta de derechos + T8/O13 en §20/§20.8, specs R0-R5. §G.4 GC.)*
