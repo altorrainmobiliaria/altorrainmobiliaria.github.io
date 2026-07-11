@@ -11,8 +11,9 @@
 
 > 🏛️ **AUDITORÍA FABLE HECHA (2026-07-10, ADR §20)** — la ejecución se rige por
 > `specs/PLAN-ENDURECIDO-FABLE-2026-07-10.md` (GANA sobre el MEGA-PLAN donde corrija). Opus LISTO para
-> Olas 0→3 sin Fable. ⏰ **LOTE-DUEÑO #0 PENDIENTE HOY** (RNT decreto cierra 2026-07-11 · cuenta Cloudflare ·
-> permiso DesignSync · allowlist git · abogado toque (i) · elección D0) → TODO-21.
+> Olas 0→3 sin Fable. ✅ **Portal LIVE en staging** (`altorra-portal.altorrainmobiliaria.workers.dev`, ADR §21).
+> ⏰ **LOTE-DUEÑO restante** (RNT decreto cierra 2026-07-11 · permiso DesignSync · allowlist git · abogado
+> toque (i) · elección D0) → TODO-21. Cuenta Cloudflare ✅ hecha.
 >
 > ⚡ **RELEVO A OPUS 4.8 — construir la OLA 0 del MEGA-PLAN** (`specs/MEGA-PLAN-INMOBILIARIA.md` = SSoT
 > del roadmap; protocolo de arranque en su §4). La planificación COMPLETA (R0-R5, ADR §15-§18) terminó
@@ -33,16 +34,24 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-17** | **Ola 0 — ejecución Opus** (guía = `specs/PLAN-ENDURECIDO-FABLE-2026-07-10.md`): ✅ ítem 1 scaffold (ADR §19). ▶ **BLOQUEO = lote-dueño #0** (cuenta Cloudflare 0.2 + R2 bucket + token scopes-CREACIÓN + secrets/`CF_DEPLOY_ENABLED`; Fincaraíz). Dev-local avanza sin él; staging/verify no. Luego 0.3-0.7 per plan endurecido (D0 · obra AEO sin form · legal DRAFT + brief abogado (i)/(ii) · modelo de datos con GESTIÓN día-1 + `client.ts` REST edge). **FTI-01 2ª pasada ✅** (en dossier). | 🔄 OPUS | abogado toque (i) = gate CUTOVER (no Ola 2) |
+| **TODO-17** | **Ola 0 — ejecución Opus** (guía = `specs/PLAN-ENDURECIDO-FABLE-2026-07-10.md`): ✅ 0.1 scaffold (§19) · ✅ **0.2 staging LIVE** (§21, verificado) · ✅ brief abogado (O9) · ✅ FTI-01 2ª pasada. ▶ **AHORA 0.7 modelo de datos** (DESBLOQUEADO: schema TS 8 colecciones + `firestore.rules` + `indexes` + `client.ts` REST edge; PUBLIC/`captaciones`-PII; GESTIÓN día-1; verificar E2E en staging vivo). Siguen 0.3 D0 (needs dueño) · 0.4 obra AEO · 0.6 textos legales DRAFT. | 🔄 OPUS | abogado toque (i) = gate CUTOVER |
 | **TODO-18** | **Carril D — Diseño D0-D4**: direcciones de marca comparativas (dueño elige) → design system → DesignSync a claude.ai → mockup por pantalla → gate fidelidad. Insumo: bóveda `ui-referentes/` | 🔮 OPUS (D0 en Ola 0.3) | paleta SIN negro |
 | **TODO-19** | **Potenciar cerebro** (kickoff §7.3): auditoría Nivel-2 (vence ~2026-07-15, staleDays) + destilar `_legacy/AVANCES.md` Fase B + evaluar lecciones candidatas C-01..C-39 (R0) contra `30` | 🔄 | |
 | **TODO-20** | **Constancias liderazgo ×3**: payloads listos en la skill; los aplican los operadores cars/bersaglio/insema en su próxima sesión | ⏸️ externo | |
-| **TODO-21** | **Lote-dueño #0 (HOY, un solo pedido)** — ⏰ **RNT decreto cierra 2026-07-11** · cuenta Cloudflare + R2 bucket + API token (scopes creación) + secrets/`CF_DEPLOY_ENABLED` (+2FA) · permiso DesignSync (1 clic) · allowlist git push/merge en `.claude/settings.json` · contratar abogado con brief (i) que Opus redacta · elegir D0 (cuando Opus entregue las 3 direcciones). Lotes 1/2/3 → PLAN-ENDURECIDO §4 (DIAN+Wompi ya en Ola 1). | ⏸️ dueño | pedir por LOTES, no gotear |
+| **TODO-21** | **Lote-dueño #0** — ✅ **Cloudflare (cuenta+R2+token+secrets+CF_DEPLOY_ENABLED)** hecho (portal LIVE §21). Restante: ⏰ **RNT decreto cierra 2026-07-11** · permiso DesignSync (1 clic, al 1er sync) · allowlist git push/merge en `.claude/settings.json` (opcional — el push ya funciona) · contratar abogado con brief (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`, listo) · elegir D0 (cuando Opus entregue 3 direcciones). Lotes 1/2/3 → PLAN-ENDURECIDO §4. | ⏸️ dueño | pedir por LOTES |
 | **TODO-22** | **Auditoría Fable de la Ola 0** (protocolo cars §300) al volver su cuota | 🔮 FABLE | |
 
 ---
 
 ## 📝 Bitácora (efímera)
+
+> **2026-07-11 (OPUS 4.8 — Ola 0.2: portal VIVO en staging)**: guié al dueño paso a paso (Fincaraíz, sin
+> tocar credenciales) → cuenta Cloudflare + R2 (bucket `altorra-portal-media`) + API token + secrets +
+> `CF_DEPLOY_ENABLED` → CI desplegó a Workers. **Verificado en vivo**: `altorra-portal.altorrainmobiliaria.workers.dev`
+> (home 200 + noindex · `/api/health` SSR 200 + `X-Robots-Tag` · favicon 200). KV `SESSION` auto-provisionado
+> (F1 no se materializó), R2 conectado. Gotcha: registrar subdominio workers.dev antes del 1er deploy (L-16 · ADR §21).
+> También: brief abogado listo (§O9, `specs/BRIEF-ABOGADO-2026-07-10.md`) · noindex safeguard (T1/O3) · O10 hecho.
+> **Siguiente**: Ola 0.7 modelo de datos (desbloqueado, verificable E2E en staging vivo).
 
 > **2026-07-10 (FABLE 5 — RATIFICACIÓN FINAL, 2ª pasada)**: dictamen íntegro; apéndice vinculante en el
 > PLAN-ENDURECIDO (gana al cuerpo). T1 corregida (staging noindex = solo header, sin Disallow) · T8 corregida

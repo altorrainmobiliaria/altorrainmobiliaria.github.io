@@ -77,6 +77,9 @@ Cuando el portal maneje plata: (1) skill global `auditoria-financiera` (7 invari
 ### L-15 — Windows: `wrangler dev` deja un `workerd.exe` huérfano que bloquea `dist/` (`EPERM` en el siguiente build) *(Ola 0.1)*
 **Disparador**: tras un `wrangler dev`, el siguiente `astro build` falla en `emptyDir`/`rmdirSync` con `EPERM: \\?\...\dist\client`. **Causa**: matar el proceso *listener* de wrangler NO mata su hijo `workerd.exe`, que sigue reteniendo un handle sobre `dist/`. **Fix**: `taskkill //F //IM workerd.exe` antes de reconstruir. **Prevención**: no dejar `wrangler dev` corriendo entre builds; al terminar la verificación en vivo, matar el árbol completo (listener + workerd).
 
+### L-16 — Primer deploy a Cloudflare Workers: registrar el subdominio `workers.dev` ANTES (falla en CI no-interactivo) *(Ola 0.2, ADR §21)*
+**Disparador**: `wrangler deploy` en CI falla, pero SÓLO al final: sube el Worker y provisiona todo, y luego `✘ [ERROR] You can either deploy... or register a workers.dev subdomain` + `npx failed exit 1`. **Causa**: cuenta nueva sin subdominio `workers.dev` registrado; wrangler no puede registrarlo en modo no-interactivo (log: *"Using fallback value in non-interactive context: no"*). **Fix**: el dueño lo registra en el dashboard (**Compute → Workers & Pages** → se auto-asigna al entrar, o elige nombre) → **Re-run failed jobs**. **Del mismo deploy (gotchas confirmados)**: (a) el **auto-provisioning del KV `SESSION` SÍ funcionó** en CI (creó `altorra-portal-session`) — la preocupación F1 de la revisión no se materializó; (b) el **bucket R2 con nombre explícito debe pre-existir** (se creó antes); (c) tras registrar el subdominio, tarda **1-5 min en propagar** (SSL) — `curl` da `HTTP 000`/exit 35 hasta entonces, NO es error. Diagnóstico del log de Actions: requiere login (API pública da 403 al log; el `status`/`jobs` sí son públicos, L-13). Portable a cars/bersaglio si despliegan a CF.
+
 ---
 
 ## Guardarraíles de diseño (vinculantes)

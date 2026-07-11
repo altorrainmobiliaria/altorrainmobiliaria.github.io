@@ -28,9 +28,10 @@
 |---|---|
 | Cuenta | `altorrainmobiliaria@gmail.com` (email del negocio) — plan Free |
 | **Account ID** (público, no secreto) | `df76de75877f4a0750967f6231a8f4cd` |
-| Worker | `altorra-portal` (config en `portal/wrangler.jsonc`; deploy vía CI gated) |
-| R2 bucket (a crear) | `altorra-portal-media` — nombre EXPLÍCITO en wrangler.jsonc → NO se auto-crea |
-| KV Sessions | binding `SESSION` — auto-aprovisionado por wrangler ≥4.45 en el 1er deploy |
+| Worker | `altorra-portal` — **LIVE**: `https://altorra-portal.altorrainmobiliaria.workers.dev` (staging, noindex; deploy vía CI en cada push a `portal/**`) |
+| Subdominio workers.dev | `altorrainmobiliaria.workers.dev` (registrado por el dueño 2026-07-11; requisito del 1er deploy → L-16) |
+| R2 bucket | `altorra-portal-media` ✅ creado (nombre EXPLÍCITO; NO se auto-crea) |
+| KV Sessions | binding `SESSION` = namespace `altorra-portal-session` (id `35ff8d8d9c09414eb8e0abf63c401fa6`) — auto-aprovisionado OK en el 1er deploy |
 | API token (secreto, lo crea/carga el DUEÑO) | scopes: `Workers Scripts:Edit` + `Workers KV Storage:Edit` + `Workers R2 Storage:Edit` + `Account Settings:Read` |
 | GitHub Actions | secrets `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` · variable `CF_DEPLOY_ENABLED=true` (enciende deploy-staging) |
 
