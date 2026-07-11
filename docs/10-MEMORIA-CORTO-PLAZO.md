@@ -34,7 +34,7 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-17** | **Ola 0 — ejecución Opus** (guía = `PLAN-ENDURECIDO-FABLE-2026-07-10.md`): ✅ 0.1 scaffold (§19) · ✅ 0.2 staging LIVE (§21) · ✅ brief abogado (O9) · ✅ FTI-01. **0.7 modelo de datos**: ✅ parte 1 tipos (`62916e1`) · ✅ parte 2 rules+indexes+storage ×3 (`1750f10`) · ✅ **parte 3/3 = capa de datos `client.ts`+REST+cache+tests+gate (OD1, §22 `[REVISAR-FABLE]`, comité ×3, T6 15/15)**. **Falta 0.7**: E2E con datos+deploy (deploy rules = Claude, coordinado con retiro legacy — NO ahora). Siguen 0.3 D0 · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
+| **TODO-17** | **Ola 0 — ejecución Opus** (guía = `PLAN-ENDURECIDO-FABLE-2026-07-10.md`): ✅ 0.1 scaffold (§19) · ✅ 0.2 staging LIVE (§21) · ✅ brief abogado (O9) · ✅ FTI-01. **0.7 modelo de datos**: ✅ parte 1 tipos (`62916e1`) · ✅ parte 2 rules+indexes+storage ×3 (`1750f10`) · ✅ **parte 3/3 = capa de datos `client.ts`+REST+cache+tests+gate (OD1, §22 `[REVISAR-FABLE]`, comité ×3)** · ✅ **E2E de la capa de datos con SEED (21/21 emulador: 6 E2E + 15 rules, §22.8)**. **Falta 0.7**: SOLO el E2E "tras cache" (Workers Caching en staging desplegado, gate T9) + deploy de rules (coordinado con retiro legacy — NO ahora). Siguen 0.3 D0 · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
 | **TODO-18** | **Carril D — Diseño D0-D4**: direcciones de marca comparativas (dueño elige) → design system → DesignSync a claude.ai → mockup por pantalla → gate fidelidad. Insumo: bóveda `ui-referentes/` | 🔮 OPUS (D0 en Ola 0.3) | paleta SIN negro |
 | **TODO-19** | **Potenciar cerebro** (kickoff §7.3): auditoría Nivel-2 (vence ~2026-07-15, staleDays) + destilar `_legacy/AVANCES.md` Fase B + evaluar lecciones candidatas C-01..C-39 (R0) contra `30` | 🔄 | |
 | **TODO-20** | **Constancias liderazgo ×3**: payloads listos en la skill; los aplican los operadores cars/bersaglio/insema en su próxima sesión | ⏸️ externo | |
@@ -44,6 +44,15 @@
 ---
 
 ## 📝 Bitácora (efímera)
+
+> **2026-07-11 (OPUS 4.8 — E2E de la capa de datos con SEED + fusión skill navegador, pedido de Daniel)**:
+> Daniel pidió generar propiedades para desbloquear (no hay inventario). Hecho: generador SEMILLA realista
+> (`firebase/seed/generar-propiedades.mjs`, Cartagena; imágenes Picsum por URL — NO Google/derechos) + seam
+> `baseUrl` + **E2E `e2e-datalayer.test.ts`** (siembra emulador → lee con cliente REAL → decode). **21/21
+> emulador** (§22.8). Bug de test cazado (aislamiento por projectId → L-21). ⚠️ Para VER propiedades
+> renderizadas falta la **Ola 1** (grillas+ficha, gated en D0 — no hago UI sin mockup). Fusioné la skill
+> global `validacion-live-chrome` §0.5: navegador integrado (default) vs extensión Chrome (solo con login
+> del dueño) + copyright. Commit: código + cerebro.
 
 > **2026-07-11 (OPUS 4.8 — fix `platformProxy` del adapter v14, tarea derivada)**: la opción `platformProxy`
 > se removió en `@astrojs/cloudflare` v14 (ahora sobre el Cloudflare Vite plugin → bindings de `wrangler.jsonc`
