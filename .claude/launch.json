@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "static-site",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "http-server", "-p", "8123", "-c-1", "."],
+      "port": 8123
+    },
+    {
+      "name": "portal",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "portal", "run", "dev", "--", "--port", "4321"],
+      "port": 4321
+    }
+  ]
+}

@@ -1,0 +1,485 @@
+/*
+ * ============================================================================
+ * ALTORRA · D1 — PRIMITIVAS DE COMPONENTE (.alt-*)
+ * ============================================================================
+ * Depende de tokens.css + base.css. Réplica fiel de los mockups aprobados.
+ * Consumen la capa SEMÁNTICA de tokens (rol), no hex sueltos.
+ *
+ * Regla dual-mode:
+ *   · Variantes neumórficas (.nm-up / --neu) → SOLO sobre --alt-surface-neu (home/nav).
+ *   · Variantes planas (default) → sobre --alt-surface (#fff, páginas de contenido).
+ */
+
+/* ==========================================================================
+ * Superficies neumórficas — utilidades (solo sobre #eaf0f7)
+ * ======================================================================== */
+.nm-up    { box-shadow: var(--alt-nm-up); }
+.nm-up-sm { box-shadow: var(--alt-nm-up-sm); }
+.nm-in    { box-shadow: var(--alt-nm-in); }
+.nm-in-sm { box-shadow: var(--alt-nm-in-sm); }
+
+/* ==========================================================================
+ * Eyebrow — micro-título uppercase de marca
+ * ======================================================================== */
+.alt-eyebrow {
+  display: inline-block;
+  font-family: var(--alt-font-body);
+  font-size: var(--alt-fs-2xs);
+  font-weight: var(--alt-fw-bold);
+  letter-spacing: var(--alt-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--alt-link); /* variante accesible (mockup usaba #a6801e) */
+}
+
+.alt-on-ink .alt-eyebrow,
+.alt-section--ink .alt-eyebrow {
+  color: var(--alt-on-ink-eyebrow);
+}
+
+/* ==========================================================================
+ * Wordmark — "ALTORRA / INMOBILIARIA" (respeta el sello de marca)
+ * ======================================================================== */
+.alt-wordmark {
+  font-family: var(--alt-font-display);
+  font-weight: var(--alt-fw-semibold);
+  font-size: 1.375rem;
+  letter-spacing: var(--alt-tracking-wordmark);
+  text-transform: uppercase;
+  color: var(--alt-text-strong);
+  line-height: 1;
+}
+
+.alt-wordmark small {
+  display: block;
+  font-family: var(--alt-font-body);
+  font-size: 0.5rem;
+  font-weight: var(--alt-fw-semibold);
+  letter-spacing: 0.42em;
+  color: var(--alt-text-muted);
+  margin-top: 0.25em;
+}
+
+/* ==========================================================================
+ * Botones — base + variantes
+ * ======================================================================== */
+.alt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--alt-space-3);
+  min-height: var(--alt-tap-min);
+  padding: 14px 28px;
+  border-radius: var(--alt-r-pill);
+  font-family: var(--alt-font-body);
+  font-size: 0.9375rem; /* 15 */
+  font-weight: var(--alt-fw-semibold);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform var(--alt-dur) var(--alt-ease),
+    box-shadow var(--alt-dur) var(--alt-ease),
+    background-color var(--alt-dur) var(--alt-ease),
+    color var(--alt-dur) var(--alt-ease),
+    border-color var(--alt-dur) var(--alt-ease);
+}
+
+.alt-btn:hover { text-decoration: none; }
+
+/* Orbe de flecha (gesto de marca: rota -45° en hover) */
+.alt-btn__arw {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform var(--alt-dur) var(--alt-ease),
+    background-color var(--alt-dur) var(--alt-ease);
+}
+
+.alt-btn__arw svg {
+  width: 15px;
+  height: 15px;
+  transition: transform var(--alt-dur) var(--alt-ease), stroke var(--alt-dur) var(--alt-ease);
+}
+
+.alt-btn:hover .alt-btn__arw svg { transform: rotate(-45deg); }
+
+/* --- Primario oro (CTA de marca) --- */
+.alt-btn--gold {
+  background: var(--alt-grad-gold);
+  color: var(--alt-ink);
+  font-weight: var(--alt-fw-bold);
+  padding-left: 28px;
+  padding-right: 16px;
+}
+.alt-btn--gold .alt-btn__arw {
+  background: rgba(27, 39, 51, 0.16);
+}
+.alt-btn--gold .alt-btn__arw svg { stroke: var(--alt-ink); }
+.alt-btn--gold:hover {
+  transform: translateY(-2px);
+}
+.alt-btn--gold:hover .alt-btn__arw { background: var(--alt-ink); }
+.alt-btn--gold:hover .alt-btn__arw svg { stroke: var(--alt-gold-bright); }
+
+/* Sobre lienzo neumórfico, el CTA gana el brillo extruido */
+.alt-surface-neu .alt-btn--gold,
+[data-surface='neu'] .alt-btn--gold {
+  box-shadow: var(--alt-nm-up-glow);
+}
+
+/* --- Navy sólido (CTA de conversión real: agendar / reservar) --- */
+.alt-btn--navy {
+  background: var(--alt-ink);
+  color: #fff;
+  border-radius: var(--alt-r-sm);
+  padding: 15px 24px;
+}
+.alt-btn--navy .alt-btn__arw {
+  width: 26px;
+  height: 26px;
+  background: rgba(235, 210, 126, 0.18);
+}
+.alt-btn--navy .alt-btn__arw svg { stroke: var(--alt-gold-bright); }
+.alt-btn--navy:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px -14px rgba(6, 39, 67, 0.55);
+}
+.alt-btn--navy:hover .alt-btn__arw { background: var(--alt-gold-bright); }
+.alt-btn--navy:hover .alt-btn__arw svg { stroke: var(--alt-ink); }
+
+/* --- Outline navy (secundario sobre claro) --- */
+.alt-btn--outline {
+  background: transparent;
+  border: 1.5px solid var(--alt-hairline-strong);
+  color: var(--alt-text-strong);
+}
+.alt-btn--outline:hover {
+  border-color: var(--alt-gold);
+}
+
+/* --- Outline oro sobre navy --- */
+.alt-btn--on-ink {
+  background: transparent;
+  border: 1px solid rgba(235, 210, 126, 0.6);
+  color: var(--alt-gold-bright);
+  padding: 12px 24px;
+}
+.alt-btn--on-ink:hover {
+  background: var(--alt-gold-bright);
+  color: var(--alt-ink);
+  border-color: var(--alt-gold-bright);
+}
+
+/* --- Frost (glass esmerilado sobre imagen/banda oscura) --- */
+.alt-btn--frost {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: #fff;
+}
+.alt-btn--frost:hover {
+  background: #fff;
+  color: var(--alt-ink);
+}
+
+.alt-btn[disabled],
+.alt-btn[aria-disabled='true'] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+ * Enlace con subrayado animado
+ * ======================================================================== */
+.alt-link-ul {
+  position: relative;
+  display: inline-block;
+  color: var(--alt-link);
+  font-weight: var(--alt-fw-semibold);
+  text-decoration: none;
+  padding-bottom: 2px;
+}
+.alt-link-ul::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--alt-gold);
+  transform: scaleX(1);
+  transform-origin: left;
+  transition: transform var(--alt-dur) var(--alt-ease);
+}
+.alt-link-ul:hover {
+  text-decoration: none;
+}
+.alt-link-ul:hover::after { transform: scaleX(0.4); }
+
+/* ==========================================================================
+ * Pill de filtro / toggle
+ * ======================================================================== */
+.alt-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--alt-space-2);
+  min-height: 40px;
+  padding: 9px 19px;
+  border-radius: var(--alt-r-pill);
+  border: 1px solid var(--alt-hairline-2);
+  background: var(--alt-surface);
+  color: var(--alt-text);
+  font-size: var(--alt-fs-sm);
+  font-weight: var(--alt-fw-medium);
+  transition: color var(--alt-dur) var(--alt-ease),
+    border-color var(--alt-dur) var(--alt-ease),
+    background-color var(--alt-dur) var(--alt-ease),
+    box-shadow var(--alt-dur) var(--alt-ease);
+}
+.alt-pill:hover { border-color: var(--alt-gold); color: var(--alt-text-strong); }
+.alt-pill.is-on,
+.alt-pill[aria-pressed='true'] {
+  border-color: var(--alt-gold);
+  background: var(--alt-mist);
+  color: var(--alt-link);
+  font-weight: var(--alt-fw-bold);
+}
+
+/* Variante neumórfica (home): sin borde, relieve up→in */
+.alt-pill--neu {
+  border: 0;
+  background: var(--alt-surface-neu);
+  box-shadow: var(--alt-nm-up-sm);
+}
+.alt-pill--neu:hover { box-shadow: var(--alt-nm-up-sm); }
+.alt-pill--neu.is-on,
+.alt-pill--neu[aria-pressed='true'] {
+  background: var(--alt-surface-neu);
+  box-shadow: var(--alt-nm-in-sm);
+}
+
+/* ==========================================================================
+ * Card base — plana (default) y neumórfica (--neu)
+ * ======================================================================== */
+.alt-card {
+  background: var(--alt-surface);
+  border-radius: var(--alt-r-lg);
+  box-shadow: var(--alt-elev-card);
+  overflow: hidden;
+  transition: transform var(--alt-dur-slow) var(--alt-ease-card),
+    box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+}
+.alt-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--alt-elev-card-hover);
+}
+.alt-card__media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+}
+.alt-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--alt-dur-slow) var(--alt-ease-card);
+}
+.alt-card:hover .alt-card__media img { transform: scale(1.05); }
+.alt-card__body {
+  padding: var(--alt-space-5);
+}
+
+/* Neumórfica (home) */
+.alt-card--neu {
+  background: var(--alt-surface-neu);
+  border-radius: var(--alt-r-xl);
+  box-shadow: var(--alt-nm-up);
+}
+.alt-card--neu:hover {
+  box-shadow: var(--alt-nm-up), 0 30px 60px -34px rgba(6, 39, 67, 0.3);
+}
+
+/* Card oscura (secciones navy) */
+.alt-card--ink {
+  background: var(--alt-surface-ink);
+  color: var(--alt-on-ink);
+  border-radius: var(--alt-r-lg);
+  box-shadow: var(--alt-elev-panel);
+}
+
+/* ==========================================================================
+ * Orbe circular de flecha (Ver ficha)
+ * ======================================================================== */
+.alt-orb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--alt-surface);
+  border: 1.5px solid var(--alt-gold);
+  transition: transform var(--alt-dur) var(--alt-ease),
+    background var(--alt-dur) var(--alt-ease),
+    border-color var(--alt-dur) var(--alt-ease);
+}
+.alt-orb svg { width: 16px; height: 16px; stroke: var(--alt-link); transition: transform var(--alt-dur) var(--alt-ease), stroke var(--alt-dur) var(--alt-ease); }
+.alt-card:hover .alt-orb,
+.alt-orb:hover {
+  background: var(--alt-grad-gold);
+  border-color: transparent;
+  transform: scale(1.08);
+}
+.alt-card:hover .alt-orb svg,
+.alt-orb:hover svg { stroke: var(--alt-ink); transform: rotate(-45deg); }
+
+/* ==========================================================================
+ * Chip de icono (icon-tile)
+ * ======================================================================== */
+.alt-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--alt-r-sm);
+  background: var(--alt-mist);
+  flex-shrink: 0;
+}
+.alt-chip svg { width: 20px; height: 20px; stroke: var(--alt-link); }
+.alt-on-ink .alt-chip,
+.alt-section--ink .alt-chip {
+  background: rgba(235, 210, 126, 0.14);
+}
+.alt-on-ink .alt-chip svg,
+.alt-section--ink .alt-chip svg { stroke: var(--alt-gold-bright); }
+
+/* ==========================================================================
+ * Badge de estado comercial (sobre imagen)
+ * ======================================================================== */
+.alt-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--alt-space-2);
+  padding: 6px 12px;
+  border-radius: var(--alt-r-pill);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--alt-ink);
+  font-size: var(--alt-fs-2xs);
+  font-weight: var(--alt-fw-semibold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.alt-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--alt-gold);
+}
+.alt-badge--gold {
+  background: var(--alt-grad-gold);
+  color: var(--alt-ink);
+}
+.alt-badge--gold::before { display: none; }
+
+/* ==========================================================================
+ * Sello legal / confianza (RNT, matrícula, "Verificado por ALTORRA")
+ * NUEVO — no existía en los mockups (gap del diseño). Alinea con doctrina
+ * legal: best-effort, no certifica. Copy/valores → decisión Daniel + legal.
+ * ======================================================================== */
+.alt-seal {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--alt-space-2);
+  padding: 8px 14px;
+  border-radius: var(--alt-r-pill);
+  border: 1px solid var(--alt-gold);
+  background: var(--alt-surface);
+  color: var(--alt-link);
+  font-size: var(--alt-fs-xs);
+  font-weight: var(--alt-fw-semibold);
+}
+.alt-seal svg { width: 16px; height: 16px; stroke: currentColor; flex-shrink: 0; }
+.alt-on-ink .alt-seal,
+.alt-section--ink .alt-seal {
+  border-color: rgba(235, 210, 126, 0.5);
+  background: transparent;
+  color: var(--alt-gold-bright);
+}
+
+/* ==========================================================================
+ * Campos de formulario
+ * ======================================================================== */
+.alt-field {
+  display: flex;
+  align-items: center;
+  gap: var(--alt-space-3);
+  padding: 11px 16px;
+  border-radius: var(--alt-r-sm);
+  border: 1px solid var(--alt-hairline-2);
+  background: var(--alt-surface);
+}
+.alt-field svg { width: 18px; height: 18px; stroke: var(--alt-link); flex-shrink: 0; }
+.alt-field:focus-within { border-color: var(--alt-gold); outline: none; }
+.alt-field input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--alt-fs-body);
+  font-weight: var(--alt-fw-medium);
+  color: var(--alt-text-strong);
+}
+
+.alt-label {
+  display: block;
+  margin-bottom: var(--alt-space-2);
+  font-size: var(--alt-fs-xs);
+  font-weight: var(--alt-fw-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--alt-text);
+}
+
+.alt-input,
+.alt-select {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: var(--alt-r-sm);
+  border: 1px solid var(--alt-hairline-strong);
+  background: var(--alt-surface);
+  font-size: var(--alt-fs-sm);
+  color: var(--alt-text-strong);
+  transition: border-color var(--alt-dur) var(--alt-ease);
+}
+.alt-input:focus,
+.alt-select:focus {
+  border-color: var(--alt-gold);
+  outline: none;
+}
+.alt-input[aria-invalid='true'] { border-color: var(--alt-error); }
+
+/* ==========================================================================
+ * Alertas / mensajes de estado (color + icono, distinguibles — SC 1.4.1)
+ * ======================================================================== */
+.alt-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--alt-space-3);
+  padding: var(--alt-space-4);
+  border-radius: var(--alt-r-sm);
+  border-left: 3px solid;
+  font-size: var(--alt-fs-sm);
+  line-height: 1.55;
+}
+.alt-alert svg { width: 20px; height: 20px; flex-shrink: 0; }
+.alt-alert--error   { background: var(--alt-error-bg);   border-color: var(--alt-error);   color: var(--alt-error); }
+.alt-alert--success { background: var(--alt-success-bg); border-color: var(--alt-success); color: var(--alt-success); }
+.alt-alert--warning { background: var(--alt-warning-bg); border-color: var(--alt-warning); color: var(--alt-warning); }
+.alt-alert--info    { background: var(--alt-info-bg);    border-color: var(--alt-info);    color: var(--alt-info); }

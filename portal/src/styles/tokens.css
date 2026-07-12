@@ -1,11 +1,237 @@
 /*
- * Tokens de marca y design system — PLACEHOLDER.
+ * ============================================================================
+ * ALTORRA · D1 — TOKENS DE MARCA Y DESIGN SYSTEM (SSoT)
+ * ============================================================================
+ * Extraído de los 8 mockups aprobados por el dueño (portal/design/mockups/*.dc.html),
+ * reconciliado y endurecido a11y (workflow altorra-d1-token-extract, 2026-07-11).
  *
- * Los valores reales nacen en D1 (carril D), tras la elección de dirección de marca del dueño en D0.
- * NO definir colores/tipografía aquí hasta D1: evita "diseño genérico sin mockup aprobado" (MEGA-PLAN §0.6).
+ * MODELO REAL DEL DISEÑO (corrige la descripción vieja "Liquid Glass"):
+ *   El sistema es DUAL-MODE, no neumórfico universal:
+ *     · --alt-surface = #FFFFFF  → DEFAULT (6/8 páginas de contenido, elevación PLANA)
+ *     · --alt-surface-neu = #eaf0f7 → OPT-IN (home + barra de navegación, NEUMORFISMO)
+ *     · --alt-surface-ink = #062743 → secciones oscuras localizadas (footer, CTAs, mapas)
+ *   El neumorfismo es la FIRMA de home/nav, no la base del sistema.
  *
- * Restricción de marca SELLADA: dorado · plata · blanco · azul turquí (navy). SIN NEGRO.
+ * CONTRASTE (WCAG AA verificado contra el peor fondo claro #eaf0f7):
+ *   Los tokens de TEXTO usan valores accesibles; el hex ORIGINAL del mockup se anota
+ *   cuando difiere (fallaba AA). "Premium que NO excluye" (posicionamiento de marca)
+ *   ⇒ la accesibilidad cumple el diseño, no lo traiciona.
+ *
+ * ⚠️ DIVERGENCIAS QUE NECESITAN RATIFICACIÓN DE DANIEL (ver docs/10 / ADR):
+ *   1) Sello tipográfico: la memoria fijaba Cardo + Helvetica Now; el diseño ENTREGADO
+ *      usa Cormorant Garamond + Hanken Grotesk. Se construye sobre lo entregado (SSoT).
+ *   2) Paleta: la visión de marca fija tinta #0F2E2C, turquí, ocre #B0813F, papeles cálidos;
+ *      el diseño usa navy #062743, grises fríos, ocre #A6801E. Vision → vars RESERVADAS.
+ *   3) Ajuste a11y visible de la firma cromática (oro-texto y cuerpo se oscurecen para AA).
+ *
+ * Convención: prefijo --alt-*. Capa PRIMITIVA (valor) + capa SEMÁNTICA (rol) encima.
+ * Los componentes consumen el ROL (--alt-text, --alt-link…), no el hex.
  */
+
 :root {
-  /* intencionalmente vacío — ver carril D (D0/D1) */
+  /* ==========================================================================
+   * 1. COLOR — PRIMITIVAS (paleta ENTREGADA = canónica)
+   * ======================================================================== */
+
+  /* --- Navies: DOS conviven, NO colapsar (matices distintos de sombra) --- */
+  --alt-ink: #062743;              /* navy corporativo: relleno, tinta, superficies oscuras */
+  --alt-ink-2: #0a3556;            /* navy 2º stop del gradiente de card CTA */
+  --alt-shadow-navy-rgb: 6, 39, 67;    /* base RGB de sombras neumórficas / navy (#062743) */
+  --alt-hairline-rgb: 27, 39, 51;      /* base RGB de TODOS los bordes hairline y sombras planas (#1B2733) */
+
+  /* --- Oro (firma de marca) --- */
+  --alt-gold: #d4af37;             /* oro marca: bordes, dots, stops medios de gradiente, estrellas */
+  --alt-gold-bright: #ebd27e;      /* oro champán: acentos SOBRE navy, tagline itálica, inicio de gradiente */
+  --alt-gold-raw: #a6801e;         /* ocre original del mockup — SOLO texto grande (≥24px), iconos, decoración */
+
+  /* --- Grises fríos de trabajo --- */
+  --alt-mist: #f2f6f9;             /* niebla: banda de sección alterna, hover, icon-tiles */
+  --alt-track: #e6edf2;            /* track de barras de progreso, divisores claros */
+  --alt-cloud: #c7d3dd;            /* plata media: separadores "·", tinte de placeholders de imagen */
+  --alt-white: #ffffff;
+
+  /* --- Navies de paneles de mapa oscuros --- */
+  --alt-navy-map-1: #0b3a5e;
+  --alt-navy-map-2: #041f36;
+
+  /* --- RESERVADAS de la VISIÓN de marca (NO instanciadas; ratificar antes de usar) --- */
+  --alt-vision-ink: #0f2e2c;       /* verde-navy de la visión (el diseño usa #062743) */
+  --alt-vision-turquesa: #1e7f86;  /* acento mínimo — ausente en mockups */
+  --alt-vision-ocre: #b0813f;      /* el diseño usa #a6801e en su lugar */
+  --alt-vision-silver: #c2c7cc;
+  --alt-vision-silver-2: #d9dde1;
+  --alt-vision-gold-lum: #e2c15c;
+  --alt-vision-graphite: #5a6169;
+  --alt-vision-paper: #faf8f4;     /* hueso CÁLIDO (el diseño usa grises fríos) */
+  --alt-vision-paper-2: #f4f1ea;
+
+  /* ==========================================================================
+   * 2. TEXTO ACCESIBLE — capa SEMÁNTICA (AA verificado sobre #eaf0f7)
+   * ======================================================================== */
+  --alt-text-strong: var(--alt-ink);   /* títulos serif, énfasis fuerte */
+  --alt-text: #5a6b82;                  /* cuerpo AA 4.74:1 en #eaf0f7 · mockup era #6b7c93 (3.71 ✗) */
+  --alt-text-soft: #6b7c93;             /* SOLO texto grande ≥24px (regla 3:1) */
+  --alt-text-muted: #98a9ba;            /* DECORATIVO: placeholders, separadores. NUNCA la única etiqueta */
+  --alt-link: #7d6119;                  /* enlaces/eyebrows pequeños AA 5.09:1 en #eaf0f7 · mockup era #a6801e (3.20 ✗) */
+  --alt-link-lg: var(--alt-gold-raw);   /* enlace/eyebrow GRANDE (≥24px) o icono */
+
+  /* --- Texto sobre superficie oscura (--alt-surface-ink) --- */
+  --alt-on-ink: #e9eef3;                /* cuerpo sobre navy (13:1) */
+  --alt-on-ink-muted: #b9c4d0;          /* meta sobre navy (8.6:1) */
+  --alt-on-ink-eyebrow: var(--alt-gold-bright);  /* eyebrow sobre navy (10:1) */
+
+  /* --- Bordes (hairlines) --- */
+  --alt-hairline: rgba(27, 39, 51, 0.1);
+  --alt-hairline-2: rgba(27, 39, 51, 0.16);
+  --alt-hairline-strong: rgba(27, 39, 51, 0.22);
+  --alt-hairline-ink: rgba(255, 255, 255, 0.16);  /* borde sobre navy */
+
+  /* ==========================================================================
+   * 3. ESTADO SEMÁNTICO (sin negro; distinguible por color+icono; AA verificado)
+   * ======================================================================== */
+  --alt-error: #b42318;    /* 5.73:1 en #eaf0f7 */
+  --alt-success: #1f6b44;  /* 5.64:1 */
+  --alt-warning: #8a5a16;  /* 5.15:1 — ámbar-bronce, coherente con la familia oro */
+  --alt-info: #0e5aa7;     /* 6.02:1 */
+  --alt-error-bg: #fbeceb;
+  --alt-success-bg: #eaf4ef;
+  --alt-warning-bg: #f7f0e4;
+  --alt-info-bg: #e9f0f8;
+
+  /* ==========================================================================
+   * 4. SUPERFICIES (dual-mode)
+   * ======================================================================== */
+  --alt-surface: var(--alt-white);   /* DEFAULT del sistema (páginas de contenido) */
+  --alt-surface-alt: var(--alt-mist); /* banda de sección alterna (ritmo) */
+  --alt-surface-neu: #eaf0f7;         /* OPT-IN: lienzo neumórfico de home + nav */
+  --alt-surface-ink: var(--alt-ink);  /* secciones oscuras localizadas */
+
+  /* ==========================================================================
+   * 5. SOMBRAS
+   * ======================================================================== */
+  /* 5a. NEUMÓRFICAS — usar SOLO sobre --alt-surface-neu (#eaf0f7). Luz sup-izquierda. */
+  --alt-nm-d: rgba(6, 39, 67, 0.15);   /* componente oscuro (navy) */
+  --alt-nm-l: #ffffff;                 /* componente luz */
+  --alt-nm-up: 6px 6px 14px var(--alt-nm-d), -6px -6px 13px var(--alt-nm-l);       /* extruido grande (reposo) */
+  --alt-nm-up-sm: 4px 4px 9px var(--alt-nm-d), -4px -4px 8px var(--alt-nm-l);      /* extruido pequeño */
+  --alt-nm-in: inset 5px 5px 11px var(--alt-nm-d), inset -5px -5px 10px var(--alt-nm-l);  /* hundido grande */
+  --alt-nm-in-sm: inset 3px 3px 7px var(--alt-nm-d), inset -3px -3px 6px var(--alt-nm-l); /* hundido pequeño (presionado) */
+  --alt-nm-up-glow: 6px 6px 14px var(--alt-nm-d), -6px -6px 13px var(--alt-nm-l), inset 0 1px 0 rgba(255, 255, 255, 0.55); /* CTA */
+
+  /* 5b. ELEVACIÓN PLANA — páginas blancas (drop-shadow, doble capa) */
+  --alt-elev-card: 0 2px 5px rgba(27, 39, 51, 0.04), 0 22px 48px -32px rgba(27, 39, 51, 0.26);
+  --alt-elev-card-hover: 0 4px 8px rgba(27, 39, 51, 0.06), 0 36px 70px -34px rgba(27, 39, 51, 0.34);
+  --alt-elev-aside: 0 2px 6px rgba(27, 39, 51, 0.04), 0 30px 60px -40px rgba(27, 39, 51, 0.4);  /* aside sticky (ficha/mapa) */
+  --alt-elev-panel: 0 2px 5px rgba(27, 39, 51, 0.03), 0 22px 46px -36px rgba(27, 39, 51, 0.4);  /* paneles/tabla/cards navy */
+  --alt-elev-nav-scroll: 0 10px 30px -18px rgba(27, 39, 51, 0.32); /* header/barra-filtros al scrollear */
+
+  /* ==========================================================================
+   * 6. RADIOS (escala colapsada y coherente)
+   * ======================================================================== */
+  --alt-r-xs: 8px;
+  --alt-r-sm: 12px;
+  --alt-r-md: 16px;
+  --alt-r-lg: 20px;
+  --alt-r-xl: 24px;    /* buscador/glass hero */
+  --alt-r-pill: 999px;
+  --alt-r-circle: 50%;
+
+  /* ==========================================================================
+   * 7. ESPACIADO (grilla 4/8) + LAYOUT fluido
+   * ======================================================================== */
+  --alt-space-1: 4px;
+  --alt-space-2: 8px;
+  --alt-space-3: 12px;
+  --alt-space-4: 16px;
+  --alt-space-5: 20px;
+  --alt-space-6: 24px;
+  --alt-space-7: 32px;
+  --alt-space-8: 40px;
+  --alt-space-9: 56px;
+  --alt-space-10: 72px;
+
+  --alt-container: 1300px;
+  --alt-gutter: clamp(16px, 4.5vw, 56px);        /* padding lateral del container */
+  --alt-section-y: clamp(56px, 8vw, 112px);      /* padding vertical de sección */
+  --alt-gap-grid: clamp(16px, 2vw, 28px);        /* gap entre cards */
+  --alt-header-h: 116px;                          /* util bar 50 + main bar 66 (home/nav) */
+
+  /* ==========================================================================
+   * 8. TIPOGRAFÍA
+   * ======================================================================== */
+  --alt-font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --alt-font-body: 'Hanken Grotesk', system-ui, -apple-system, Helvetica, Arial, sans-serif;
+  /* NOTA: 'Playfair Display' (hero de Portal, 1 pantalla) queda FUERA del sistema base;
+   *       se evalúa al construir la home (recomendación: renderizar el hero en Cormorant). */
+
+  /* Escala fluida — UN valor por peldaño (clamp min→max) */
+  --alt-fs-hero: clamp(2.25rem, 1.35rem + 4.3vw, 4.25rem);  /* 36 → 68 */
+  --alt-fs-h1:   clamp(2rem, 1.35rem + 3.1vw, 3.5rem);      /* 32 → 56 */
+  --alt-fs-h2:   clamp(1.75rem, 1.25rem + 2.4vw, 3rem);     /* 28 → 48 */
+  --alt-fs-h3:   clamp(1.375rem, 1.15rem + 1.05vw, 1.75rem);/* 22 → 28 */
+  --alt-fs-h4:   1.25rem;   /* 20 */
+  --alt-fs-lg:   1.125rem;  /* 18 */
+  --alt-fs-body: 1rem;      /* 16 */
+  --alt-fs-sm:   0.875rem;  /* 14 */
+  --alt-fs-xs:   0.75rem;   /* 12 */
+  --alt-fs-2xs:  0.6875rem; /* 11 — eyebrow / badge */
+
+  --alt-lh-tight: 1.05;
+  --alt-lh-snug: 1.2;
+  --alt-lh-body: 1.65;
+
+  --alt-tracking-tight: -0.014em;   /* titulares serif grandes */
+  --alt-tracking-eyebrow: 0.18em;   /* micro-títulos uppercase */
+  --alt-tracking-wordmark: 0.16em;  /* "ALTORRA" */
+
+  --alt-fw-regular: 400;
+  --alt-fw-medium: 500;
+  --alt-fw-semibold: 600;
+  --alt-fw-bold: 700;
+
+  /* ==========================================================================
+   * 9. GRADIENTES
+   * ======================================================================== */
+  --alt-grad-gold: linear-gradient(135deg, #ebd27e 0%, #d4af37 52%, #a6801e 100%);
+  --alt-grad-gold-underline: linear-gradient(90deg, #ebd27e, #d4af37);
+  --alt-grad-navy-card: linear-gradient(155deg, #062743, #0a3556);
+  --alt-grad-navy-map: linear-gradient(155deg, #0b3a5e, #041f36);
+  --alt-scrim-img: linear-gradient(180deg, rgba(27, 39, 51, 0) 32%, rgba(27, 39, 51, 0.32) 60%, rgba(27, 39, 51, 0.87) 100%);
+  --alt-overlay-navy: linear-gradient(180deg, rgba(6, 39, 67, 0) 34%, rgba(6, 39, 67, 0.84));
+
+  /* ==========================================================================
+   * 10. MOVIMIENTO (easings + duraciones)
+   * ======================================================================== */
+  --alt-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --alt-ease-card: cubic-bezier(0.2, 0.75, 0.25, 1);
+  --alt-ease-slide: cubic-bezier(0.5, 0, 0.2, 1);
+  --alt-dur-fast: 0.2s;
+  --alt-dur: 0.3s;
+  --alt-dur-slow: 0.5s;
+
+  /* ==========================================================================
+   * 11. FOCO / A11Y
+   * ======================================================================== */
+  --alt-focus-color: var(--alt-ink);         /* anillo navy sobre claro: 13.3:1 en #eaf0f7 (SC 1.4.11 ✓) */
+  --alt-focus-color-ink: var(--alt-gold);    /* anillo oro SOLO sobre navy: 7.2:1 (oro sobre claro daría 1.8 ✗) */
+  --alt-focus-width: 2px;
+  --alt-focus-offset: 2px;
+  --alt-tap-min: 44px;                        /* área táctil mínima (HIG 2.5.5) */
+
+  /* ==========================================================================
+   * 12. Z-INDEX (capa de apilamiento única)
+   * ======================================================================== */
+  --alt-z-base: 0;
+  --alt-z-raised: 10;
+  --alt-z-sticky: 100;
+  --alt-z-header: 1000;
+  --alt-z-drawer: 1100;
+  --alt-z-dropdown: 1200;
+  --alt-z-modal: 1300;
+  --alt-z-toast: 1400;
+
+  /* ==========================================================================
+   * 13. BREAKPOINT (referencia; el sistema es fluido por defecto — clamp + auto-fit)
+   * ======================================================================== */
+  --alt-bp-nav: 1300px;  /* ÚNICO breakpoint duro: desktop↔móvil de la nav (CSS y JS unificados a 1300) */
 }

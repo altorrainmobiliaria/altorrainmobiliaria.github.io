@@ -1,0 +1,250 @@
+---
+/*
+ * PÁGINA DE DESARROLLO — Styleguide / referencia viva del design system D1.
+ * NO es UI de producción: verifica tokens + primitivas y sirve de referencia al
+ * construir home → SERP → ficha. noindex en staging (BaseLayout). Gate de prod:
+ * excluir esta ruta del build de producción antes del cutover (TODO Ola 1).
+ */
+export const prerender = true;
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const arrow = '<path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+
+const colors = [
+  ['--alt-ink', '#062743', 'Navy corporativo'],
+  ['--alt-gold', '#d4af37', 'Oro marca'],
+  ['--alt-gold-bright', '#ebd27e', 'Oro champán (sobre navy)'],
+  ['--alt-gold-raw', '#a6801e', 'Ocre (solo texto grande)'],
+  ['--alt-text', '#5a6b82', 'Cuerpo AA'],
+  ['--alt-link', '#7d6119', 'Enlace AA'],
+  ['--alt-mist', '#f2f6f9', 'Niebla / banda alterna'],
+  ['--alt-surface-neu', '#eaf0f7', 'Lienzo neumórfico'],
+  ['--alt-error', '#b42318', 'Error'],
+  ['--alt-success', '#1f6b44', 'Éxito'],
+  ['--alt-warning', '#8a5a16', 'Aviso'],
+  ['--alt-info', '#0e5aa7', 'Info'],
+];
+
+const type = [
+  ['--alt-fs-hero', 'Cartagena, a tu altura', 'display'],
+  ['--alt-fs-h1', 'Seguridad, Legalidad y Confianza', 'display'],
+  ['--alt-fs-h2', 'Encuentra tu próximo hogar', 'display'],
+  ['--alt-fs-h3', 'Apartamento en Bocagrande', 'display'],
+  ['--alt-fs-lg', 'Texto destacado de introducción a una sección.', 'body'],
+  ['--alt-fs-body', 'Texto de cuerpo por defecto, legible y accesible (AA).', 'body'],
+  ['--alt-fs-sm', 'Texto pequeño para metadatos y notas.', 'body'],
+];
+---
+
+<BaseLayout title="Design System D1 — ALTORRA (dev)">
+  <a href="#main" class="alt-skip-link">Saltar al contenido</a>
+
+  <header class="ds-head">
+    <div class="alt-container">
+      <p class="alt-eyebrow">Carril D · D1</p>
+      <h1>Sistema de Diseño ALTORRA</h1>
+      <p class="ds-lead">Referencia viva de tokens y primitivas — réplica de los mockups aprobados. Neumorfismo (home/nav) + superficie plana (contenido) + secciones navy.</p>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- COLOR -->
+    <section class="alt-section alt-container">
+      <p class="alt-eyebrow">Color</p>
+      <h2>Paleta accesible</h2>
+      <div class="ds-swatches">
+        {colors.map(([name, hex, role]) => (
+          <div class="ds-swatch">
+            <span class="ds-chip" style={`background:${hex}`}></span>
+            <div>
+              <strong>{role}</strong>
+              <code>{name}</code>
+              <code class="ds-hex">{hex}</code>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- TIPOGRAFÍA -->
+    <section class="alt-section alt-container">
+      <p class="alt-eyebrow">Tipografía</p>
+      <h2>Escala fluida</h2>
+      <p class="ds-note">Display: Cormorant Garamond · Cuerpo: Hanken Grotesk</p>
+      <div class="ds-type">
+        {type.map(([varname, sample, fam]) => (
+          <div class="ds-type-row">
+            <code>{varname}</code>
+            <span style={`font-size:var(${varname});font-family:${fam === 'display' ? 'var(--alt-font-display)' : 'var(--alt-font-body)'};color:var(--alt-text-strong);line-height:1.1`}>{sample}</span>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- BOTONES -->
+    <section class="alt-section alt-container">
+      <p class="alt-eyebrow">Acciones</p>
+      <h2>Botones</h2>
+      <div class="ds-row">
+        <a href="#" class="alt-btn alt-btn--gold">Publica tu inmueble <span class="alt-btn__arw"><svg viewBox="0 0 24 24" set:html={arrow}></svg></span></a>
+        <a href="#" class="alt-btn alt-btn--navy">Agendar visita <span class="alt-btn__arw"><svg viewBox="0 0 24 24" set:html={arrow}></svg></span></a>
+        <a href="#" class="alt-btn alt-btn--outline">Ver más propiedades</a>
+        <button class="alt-btn alt-btn--gold" disabled>Deshabilitado</button>
+      </div>
+      <div class="ds-row" style="margin-top:var(--alt-space-4)">
+        <a href="#" class="alt-link-ul">Enlace con subrayado animado</a>
+      </div>
+    </section>
+
+    <!-- PILLS -->
+    <section class="alt-section alt-container">
+      <p class="alt-eyebrow">Filtros</p>
+      <h2>Pills / toggles</h2>
+      <div class="ds-row">
+        <button class="alt-pill is-on">Comprar</button>
+        <button class="alt-pill">Arrendar</button>
+        <button class="alt-pill">Corta estancia</button>
+        <button class="alt-pill">Invertir</button>
+      </div>
+    </section>
+
+    <!-- CARDS (planas) -->
+    <section class="alt-section alt-container">
+      <p class="alt-eyebrow">Contenido</p>
+      <h2>Cards (superficie plana)</h2>
+      <div class="ds-cards">
+        {[1, 2, 3].map((n) => (
+          <article class="alt-card">
+            <div class="alt-card__media" style={`background:var(--alt-mist);display:grid;place-items:center`}>
+              <span class="alt-badge" style="position:absolute;top:12px;left:12px">En venta</span>
+              <span style="color:var(--alt-text-muted);font-size:var(--alt-fs-sm)">imagen {n}</span>
+            </div>
+            <div class="alt-card__body">
+              <p class="alt-eyebrow">Bocagrande</p>
+              <h3>Apartamento con vista al mar</h3>
+              <p style="margin-top:8px">3 hab · 2 baños · 120 m²</p>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+                <strong style="font-family:var(--alt-font-display);font-size:var(--alt-fs-h4);color:var(--alt-text-strong)">$ 850.000.000</strong>
+                <span class="alt-orb"><svg viewBox="0 0 24 24" set:html={arrow}></svg></span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- NEUMORFISMO (superficie neu) -->
+    <section class="ds-neu" data-surface="neu">
+      <div class="alt-container">
+        <p class="alt-eyebrow">Firma de home / nav</p>
+        <h2>Superficie neumórfica</h2>
+        <p class="ds-note">Relieve extruido → hundido en hover. Solo sobre <code>--alt-surface-neu</code>.</p>
+        <div class="ds-row" style="margin-top:var(--alt-space-5)">
+          <button class="alt-pill alt-pill--neu is-on">Comprar</button>
+          <button class="alt-pill alt-pill--neu">Arrendar</button>
+          <a href="#" class="alt-btn alt-btn--gold">CTA sobre neu <span class="alt-btn__arw"><svg viewBox="0 0 24 24" set:html={arrow}></svg></span></a>
+        </div>
+        <div class="ds-cards" style="margin-top:var(--alt-space-6)">
+          <article class="alt-card--neu" style="padding:var(--alt-space-5)">
+            <p class="alt-eyebrow">Neumórfica</p>
+            <h3>Card extruida</h3>
+            <p style="margin-top:8px">Sombra <code>--alt-nm-up</code> sobre lienzo #eaf0f7.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SELLOS + CHIPS + BADGES -->
+    <section class="alt-section alt-container">
+      <p class="alt-eyebrow">Confianza</p>
+      <h2>Sellos, chips y badges</h2>
+      <div class="ds-row">
+        <span class="alt-seal"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/><path d="M9 12l2 2 4-4"/></svg> Verificado por ALTORRA</span>
+        <span class="alt-seal">Matrícula de Arrendador 000000</span>
+        <span class="alt-badge">Corta estancia</span>
+        <span class="alt-badge alt-badge--gold">Nuevo</span>
+        <span class="alt-chip"><svg viewBox="0 0 24 24" set:html={arrow}></svg></span>
+      </div>
+    </section>
+
+    <!-- FORMULARIOS -->
+    <section class="alt-section alt-container">
+      <p class="alt-eyebrow">Formularios</p>
+      <h2>Campos</h2>
+      <div class="ds-form">
+        <div class="alt-field">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input type="text" placeholder="¿En qué zona quieres comprar?" />
+        </div>
+        <div>
+          <label class="alt-label" for="ds-tipo">Tipo de inmueble</label>
+          <select class="alt-select" id="ds-tipo">
+            <option>Apartamento</option>
+            <option>Casa</option>
+            <option>Local</option>
+          </select>
+        </div>
+        <div>
+          <label class="alt-label" for="ds-nom">Nombre</label>
+          <input class="alt-input" id="ds-nom" type="text" placeholder="Tu nombre" />
+        </div>
+      </div>
+    </section>
+
+    <!-- ALERTAS -->
+    <section class="alt-section alt-container">
+      <p class="alt-eyebrow">Estado</p>
+      <h2>Alertas semánticas</h2>
+      <div class="ds-alerts">
+        <div class="alt-alert alt-alert--success"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> Tu solicitud se envió correctamente.</div>
+        <div class="alt-alert alt-alert--error"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg> Falta completar el RNT para publicar el alojamiento.</div>
+        <div class="alt-alert alt-alert--warning"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg> El aviso caduca en 4 meses.</div>
+        <div class="alt-alert alt-alert--info"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg> El canon y la administración se muestran por separado.</div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN NAVY -->
+    <section class="alt-section alt-section--ink alt-on-ink">
+      <div class="alt-container">
+        <p class="alt-eyebrow">Sobre navy</p>
+        <h2 style="color:#fff">Sección oscura</h2>
+        <p style="color:var(--alt-on-ink);max-width:52ch;margin-top:8px">Texto sobre superficie navy con acentos oro champán y foco dorado. El eyebrow y los sellos invierten su color automáticamente.</p>
+        <div class="ds-row" style="margin-top:var(--alt-space-5)">
+          <a href="#" class="alt-btn alt-btn--on-ink">Conoce el plan Premium</a>
+          <span class="alt-seal"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/></svg> Anfitrión verificado</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .ds-head {
+    padding-block: var(--alt-space-9) var(--alt-space-7);
+    border-bottom: 1px solid var(--alt-hairline);
+  }
+  .ds-lead { max-width: 60ch; margin-top: var(--alt-space-3); font-size: var(--alt-fs-lg); }
+  .ds-note { margin-top: var(--alt-space-2); color: var(--alt-text-muted); font-size: var(--alt-fs-sm); }
+  .alt-section { border-bottom: 1px solid var(--alt-hairline); }
+  .alt-section h2 { margin-top: var(--alt-space-2); }
+  .alt-eyebrow + h2, .alt-eyebrow + h1 { margin-top: var(--alt-space-2); }
+
+  .ds-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--alt-space-4); margin-top: var(--alt-space-5); }
+  .ds-swatch { display: flex; gap: var(--alt-space-3); align-items: center; }
+  .ds-chip { width: 44px; height: 44px; border-radius: var(--alt-r-sm); border: 1px solid var(--alt-hairline); flex-shrink: 0; }
+  .ds-swatch strong { display: block; font-family: var(--alt-font-body); font-size: var(--alt-fs-sm); color: var(--alt-text-strong); }
+  .ds-swatch code { display: block; font-size: var(--alt-fs-xs); color: var(--alt-text-muted); }
+  .ds-hex { text-transform: uppercase; }
+
+  .ds-type { display: flex; flex-direction: column; gap: var(--alt-space-5); margin-top: var(--alt-space-5); }
+  .ds-type-row { display: grid; grid-template-columns: 160px 1fr; gap: var(--alt-space-4); align-items: baseline; }
+  .ds-type-row code { font-size: var(--alt-fs-xs); color: var(--alt-text-muted); }
+
+  .ds-row { display: flex; flex-wrap: wrap; gap: var(--alt-space-4); align-items: center; margin-top: var(--alt-space-5); }
+  .ds-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: var(--alt-gap-grid); margin-top: var(--alt-space-5); }
+  .ds-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--alt-space-4); margin-top: var(--alt-space-5); }
+  .ds-alerts { display: grid; gap: var(--alt-space-3); margin-top: var(--alt-space-5); max-width: 640px; }
+
+  .ds-neu { background: var(--alt-surface-neu); padding-block: var(--alt-section-y); border-bottom: 1px solid var(--alt-hairline); }
+  .ds-neu code { background: rgba(255,255,255,.5); padding: 1px 5px; border-radius: 4px; }
+</style>
