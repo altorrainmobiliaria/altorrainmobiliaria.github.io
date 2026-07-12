@@ -1,0 +1,204 @@
+---
+/*
+ * PUBLICAR — "Publica tu inmueble" (Ola 1). Réplica de ALTORRA Publica.dc.html.
+ * Hero con formulario de avalúo (lead) + "cuatro pasos" + 3 planes. Reutiliza Header/Footer.
+ * El form es client-side (validación + éxito). POST real a `solicitudes` (Cloud Function) = follow-up.
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const stats = [
+  { n: '+1.200', l: 'inmuebles cerrados' },
+  { n: '38 días', l: 'promedio de venta' },
+  { n: '98%', l: 'clientes satisfechos' },
+];
+const pasos = [
+  { n: '01', t: 'Cuéntanos', d: 'Compártenos los datos de tu inmueble en dos minutos con el formulario.' },
+  { n: '02', t: 'Avalúo experto', d: 'Un asesor visita, fotografía y define el precio justo con datos de mercado.' },
+  { n: '03', t: 'Publicamos', d: 'Tu propiedad en el portal, redes y nuestra red privada de compradores.' },
+  { n: '04', t: 'Cerramos', d: 'Acompañamiento legal y financiero hasta la firma de la escritura.' },
+];
+const planes = [
+  { tier: 'Publicación', price: 'Gratis', sub: 'Publica y recibe contactos por tu cuenta.', perks: ['Ficha en el portal ALTORRA', 'Hasta 10 fotos', 'Contactos directos'], cta: 'Empezar gratis', featured: false },
+  { tier: 'Gestión Premium', price: '3%', unit: 'al vender', sub: 'Nosotros gestionamos todo el proceso.', perks: ['Todo lo de Publicación', 'Avalúo y fotografía profesional', 'Visitas y negociación gestionadas', 'Acompañamiento legal'], cta: 'Solicitar avalúo', featured: true },
+  { tier: 'Concierge Élite', price: 'A medida', sub: 'Para propiedades de alto valor y exclusividad.', perks: ['Todo lo de Premium', 'Video y tour 3D', 'Marketing internacional', 'Abogado dedicado'], cta: 'Hablar con un asesor', featured: false },
+];
+const check = '<path d="M20 6L9 17l-5-5"/>';
+---
+
+<BaseLayout title="Publica tu inmueble — ALTORRA Inmobiliaria">
+  <Header active="vender" />
+
+  <main id="main">
+    <!-- Hero + formulario -->
+    <section class="pub-hero">
+      <span class="pub-hero__bg" style="background-image:url('/assets/villa-pool.webp')"></span>
+      <span class="pub-hero__wash"></span>
+      <div class="alt-container pub-hero__in">
+        <div class="pub-hero__copy">
+          <p class="alt-eyebrow">Propietarios</p>
+          <h1 class="pub-hero__h">Vende o arrienda con quien conoce Cartagena.</h1>
+          <p class="pub-hero__p">Avalúo experto, fotografía profesional y una red de compradores calificados. Tú decides el precio; nosotros ponemos el respaldo.</p>
+          <div class="pub-stats">
+            {stats.map((s) => <div><span class="pub-stat__n">{s.n}</span><span class="pub-stat__l">{s.l}</span></div>)}
+          </div>
+        </div>
+
+        <div class="pub-form-wrap" id="empezar">
+          <form class="pub-form" id="pub-form" novalidate>
+            <div class="pub-form__fields">
+              <h2 class="pub-form__h">Solicita tu avalúo gratis</h2>
+              <p class="pub-form__sub">Respuesta de un asesor en menos de 24 horas.</p>
+              <div><label class="alt-label" for="pub-name">Nombre</label><input class="alt-input" id="pub-name" name="nombre" type="text" placeholder="Tu nombre" required /></div>
+              <div><label class="alt-label" for="pub-phone">Teléfono</label><input class="alt-input" id="pub-phone" name="telefono" type="tel" placeholder="+57 300 000 0000" required /></div>
+              <div class="pub-form__grid">
+                <div><label class="alt-label" for="pub-zona">Zona</label>
+                  <select class="alt-select" id="pub-zona" name="zona"><option>Castillogrande</option><option>Bocagrande</option><option>Manga</option><option>Crespo</option><option>Centro Histórico</option><option>La Boquilla</option></select>
+                </div>
+                <div><label class="alt-label" for="pub-tipo">Tipo</label>
+                  <select class="alt-select" id="pub-tipo" name="tipo"><option>Apartamento</option><option>Casa</option><option>Lote</option><option>Oficina</option><option>Local</option></select>
+                </div>
+              </div>
+              <p class="pub-form__err" id="pub-err" hidden>Ingresa tu nombre y teléfono para continuar.</p>
+              <button class="alt-btn alt-btn--navy pub-form__submit" type="submit">Solicitar avalúo<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+            </div>
+            <div class="pub-form__ok" id="pub-ok" hidden>
+              <span class="pub-form__ok-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" set:html={check}></svg></span>
+              <h3>¡Solicitud recibida!</h3>
+              <p>Un asesor ALTORRA te contactará en las próximas 24 horas para coordinar tu avalúo.</p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cuatro pasos -->
+    <section class="alt-container alt-section pub-steps">
+      <div class="pub-center">
+        <p class="alt-eyebrow">Cómo funciona</p>
+        <h2>Cuatro pasos, cero complicaciones</h2>
+      </div>
+      <div class="pub-steps__grid">
+        {pasos.map((p) => (
+          <div class="pub-step">
+            <span class="pub-step__n">{p.n}</span>
+            <h3>{p.t}</h3>
+            <p>{p.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Planes -->
+    <section class="pub-plans-band">
+      <div class="alt-container">
+        <div class="pub-center">
+          <p class="alt-eyebrow">Planes</p>
+          <h2>Elige cómo quieres vender</h2>
+          <p class="pub-plans__sub">Sin costos ocultos. Solo pagas cuando tu propiedad se vende.</p>
+        </div>
+        <div class="pub-plans">
+          {planes.map((pl) => (
+            <div class={`pub-plan${pl.featured ? ' pub-plan--featured' : ''}`}>
+              {pl.featured && <span class="pub-plan__badge">Recomendado</span>}
+              <p class="pub-plan__tier">{pl.tier}</p>
+              <p class="pub-plan__price">{pl.price}{pl.unit && <span>{pl.unit}</span>}</p>
+              <p class="pub-plan__psub">{pl.sub}</p>
+              <div class="pub-plan__perks">
+                {pl.perks.map((perk) => (
+                  <div class="pub-plan__perk"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" set:html={check}></svg>{perk}</div>
+                ))}
+              </div>
+              <a class={pl.featured ? 'pub-plan__cta pub-plan__cta--gold' : 'pub-plan__cta'} href="#empezar">{pl.cta}</a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .pub-hero { position: relative; overflow: hidden; background: var(--alt-white); }
+  .pub-hero__bg { position: absolute; inset: 0; background-size: cover; background-position: center right; opacity: 0.07; }
+  .pub-hero__wash { position: absolute; inset: 0; background: linear-gradient(100deg, #ffffff 46%, rgba(255, 255, 255, 0.8) 66%, rgba(242, 247, 251, 0.5)); }
+  .pub-hero__in { position: relative; display: flex; gap: clamp(32px, 5vw, 72px); align-items: center; flex-wrap: wrap; padding-block: clamp(52px, 7vw, 92px); }
+  .pub-hero__copy { flex: 1 1 440px; min-width: 300px; }
+  .pub-hero__h { font-size: clamp(38px, 5.6vw, 64px); line-height: 1.02; margin: var(--alt-space-3) 0 20px; }
+  .pub-hero__p { font-size: clamp(16px, 1.5vw, 18.5px); line-height: 1.62; color: var(--alt-text); max-width: 520px; margin-bottom: 34px; }
+  .pub-stats { display: flex; gap: clamp(24px, 4vw, 52px); flex-wrap: wrap; }
+  .pub-stat__n { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 34px; color: var(--alt-gold-raw); line-height: 1; }
+  .pub-stat__l { display: block; font-size: 12.5px; color: var(--alt-text); margin-top: 4px; }
+
+  /* Formulario */
+  .pub-form-wrap { flex: 1 1 360px; min-width: 300px; max-width: 440px; }
+  .pub-form { background: var(--alt-white); border-radius: var(--alt-r-2xl, 22px); padding: clamp(24px, 3vw, 34px); box-shadow: var(--alt-elev-form, 0 40px 90px -40px rgba(6, 39, 67, 0.55)); }
+  .pub-form__fields { display: flex; flex-direction: column; gap: 13px; }
+  .pub-form__h { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 26px; color: var(--alt-ink); letter-spacing: normal; }
+  .pub-form__sub { font-size: 13.5px; color: var(--alt-text); margin-bottom: 9px; }
+  .pub-form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+  .pub-form__err { font-size: 12.5px; color: var(--alt-link); }
+  .pub-form__submit { margin-top: 4px; width: 100%; }
+  .pub-form__ok { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 18px 6px; }
+  .pub-form__ok-ico { width: 56px; height: 56px; border-radius: 50%; background: var(--alt-mist); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+  .pub-form__ok-ico svg { width: 26px; height: 26px; stroke: var(--alt-link); }
+  .pub-form__ok h3 { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 24px; color: var(--alt-ink); margin-bottom: 6px; letter-spacing: normal; }
+  .pub-form__ok p { font-size: 14px; color: var(--alt-text); line-height: 1.55; }
+
+  /* Pasos */
+  .pub-center { text-align: center; margin-bottom: clamp(38px, 4vw, 58px); }
+  .pub-center h2 { margin-top: var(--alt-space-3); }
+  .pub-steps__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 26px; }
+  .pub-step__n { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 22px; color: var(--alt-gold); display: block; margin-bottom: 14px; }
+  .pub-step h3 { font-family: var(--alt-font-body); font-size: 18px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); margin-bottom: 9px; }
+  .pub-step p { font-size: 14.5px; line-height: 1.6; color: var(--alt-text); }
+
+  /* Planes */
+  .pub-plans-band { background: var(--alt-white); border-block: 1px solid var(--alt-hairline); padding-block: clamp(56px, 7vw, 92px); }
+  .pub-plans__sub { font-size: 16px; color: var(--alt-text); max-width: 520px; margin: 8px auto 0; }
+  .pub-plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 22px; align-items: stretch; }
+  .pub-plan { position: relative; background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-lg); padding: 32px 28px; display: flex; flex-direction: column; box-shadow: 0 2px 6px rgba(27, 39, 51, 0.04); }
+  .pub-plan--featured { background: var(--alt-surface-ink); border-color: transparent; box-shadow: var(--alt-elev-panel); transform: translateY(-6px); }
+  .pub-plan__badge { position: absolute; top: 20px; right: 22px; display: inline-flex; padding: 6px 12px; border-radius: var(--alt-r-pill); background: rgba(235, 210, 126, 0.16); font-size: 10.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-gold-bright); }
+  .pub-plan__tier { font-size: 12px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.16em; text-transform: uppercase; color: var(--alt-text); margin-bottom: 14px; }
+  .pub-plan--featured .pub-plan__tier { color: rgba(235, 210, 126, 0.85); }
+  .pub-plan__price { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 40px; color: var(--alt-ink); line-height: 1; margin-bottom: 6px; }
+  .pub-plan__price span { font-family: var(--alt-font-body); font-size: 14px; font-weight: var(--alt-fw-regular); color: var(--alt-text); margin-left: 6px; }
+  .pub-plan--featured .pub-plan__price { color: #fff; }
+  .pub-plan--featured .pub-plan__price span { color: rgba(255, 255, 255, 0.65); }
+  .pub-plan__psub { font-size: 13.5px; color: var(--alt-text); margin-bottom: 24px; }
+  .pub-plan--featured .pub-plan__psub { color: rgba(255, 255, 255, 0.68); }
+  .pub-plan__perks { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+  .pub-plan__perk { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--alt-text); }
+  .pub-plan__perk svg { width: 17px; height: 17px; stroke: var(--alt-gold-raw); flex: none; margin-top: 2px; }
+  .pub-plan--featured .pub-plan__perk { color: rgba(255, 255, 255, 0.9); }
+  .pub-plan--featured .pub-plan__perk svg { stroke: var(--alt-gold-bright); }
+  .pub-plan__cta { display: flex; align-items: center; justify-content: center; padding: 13px; border-radius: var(--alt-r-input); border: 1px solid var(--alt-gold); color: var(--alt-link); font-weight: var(--alt-fw-semibold); font-size: 14.5px; margin-top: 28px; text-decoration: none; transition: background var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease); }
+  .pub-plan__cta:hover { background: var(--alt-mist); }
+  .pub-plan__cta--gold { background: var(--alt-gold-bright); border-color: transparent; color: var(--alt-ink); font-weight: var(--alt-fw-bold); }
+  .pub-plan__cta--gold:hover { background: var(--alt-gold-bright); transform: translateY(-1px); }
+</style>
+
+<script>
+  // Formulario de avalúo — validación client-side + estado de éxito.
+  // TODO: POST real a `solicitudes` vía Cloud Function (hoy demo client-side).
+  const form = document.getElementById('pub-form') as HTMLFormElement | null;
+  const err = document.getElementById('pub-err');
+  const fields = document.querySelector('.pub-form__fields') as HTMLElement | null;
+  const ok = document.getElementById('pub-ok');
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = (document.getElementById('pub-name') as HTMLInputElement)?.value.trim();
+    const phone = (document.getElementById('pub-phone') as HTMLInputElement)?.value.trim();
+    if (!name || !phone) { err?.removeAttribute('hidden'); return; }
+    err?.setAttribute('hidden', '');
+    fields?.setAttribute('hidden', '');
+    ok?.removeAttribute('hidden');
+  });
+</script>
