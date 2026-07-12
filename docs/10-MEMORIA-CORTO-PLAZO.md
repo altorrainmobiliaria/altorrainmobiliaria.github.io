@@ -9,13 +9,13 @@
 
 ## 🎯 Foco actual — RELEVO CURADO (cierre 2026-07-12 por saturación de contexto)
 
-> ⚡ **ESTADO — Ola 1: el PORTAL PÚBLICO está COMPLETO y LIVE** (dev + staging). TODAS las páginas con
-> mockup aprobado hechas y verificadas EN VIVO (0 colores off-palette, 0 errores). Todo pusheado a `main`.
-> **30 ADRs; cerebro SANO + auditado Nivel-2 (§30 · 2026-07-12, retrieval FUNCIONAL).**
+> ⚡ **ESTADO — Ola 1: el PORTAL está COMPLETO y LIVE** (dev + staging) — **los 8 mockups aprobados construidos**
+> (7 públicos + `gestion` admin §31). Verificado EN VIVO (0 off-palette, 0 errores). Todo pusheado a `main`.
+> **31 ADRs; cerebro SANO + auditado Nivel-2 (§30 · 2026-07-12, retrieval FUNCIONAL).**
 >
 > **Páginas LIVE** (`portal/src/pages/`): `index`(home, 8 secciones) · `[operacion]`(=`/comprar`+`/arrendar`
 > SERP con filtros+mapa esquemático) · `ficha` (detalle+WhatsApp+sello Verificado) · `publicar` (lead form
-> funcional) · `estancias` (reserva funcional por fechas) · `turismo` (landing) · `404` (en construcción) ·
+> funcional) · `estancias` (reserva funcional por fechas) · `turismo` (landing) · `404` (en construcción) · `gestion` (admin, 3 roles, noindex, §31) ·
 > `design-system` (styleguide dev). **Componentes compartidos** (`portal/src/components/`): `Header` ·
 > `Footer` · `PropertyCard`. Detalle de dónde vive cada cosa → `20 §Portal`.
 >
@@ -32,10 +32,9 @@
 > sobre `main *,header *,footer *` contra el allowlist de la paleta.
 >
 > **▶ SIGUIENTE (elegir con Daniel)**:
-> 1. ✅ ~~Auditoría Nivel-2~~ HECHA (§30, 2026-07-12): SANA + retrieval funcional; 7 hallazgos in-repo curados + 10 kernel→TODO-23/24/25.
-> 2. **Gestion** (`/gestion`, panel admin) — ÚNICO mockup restante; es back-office (capítulo distinto).
-> 3. **Transversales**: MapLibre real (hoy mapa esquemático) · cablear formularios (publicar/estancias) → `solicitudes` vía Cloud Function (hoy client-side) · datos Firestore REALES (hoy DEMO estáticos — decisión catálogo SSG-vs-índice DIFERIDA a Fable, TODO-22) · pago Wompi (Ola 2, custodia).
-> 4. Páginas SIN mockup (invertir/aliados/journal/Nosotros/Contacto/favoritos/ingreso) → **requieren aprobación de diseño de Daniel (§3.2), NO inventar UI**.
+> 1. ✅ HECHO: Auditoría Nivel-2 (§30) · Gestion admin (§31). **Los 8 mockups aprobados están construidos.**
+> 2. **Transversales**: MapLibre real (hoy mapa esquemático) · cablear formularios (publicar/estancias) → `solicitudes` vía Cloud Function (hoy client-side) · datos Firestore REALES (hoy DEMO estáticos — decisión catálogo SSG-vs-índice DIFERIDA a Fable, TODO-22) · pago Wompi (Ola 2, custodia).
+> 3. Páginas SIN mockup (invertir/aliados/journal/Nosotros/Contacto/favoritos/ingreso) → **requieren aprobación de diseño de Daniel (§3.2), NO inventar UI**.
 >
 > **🚦 BLOQUEADORES DE PRODUCCIÓN (solo Daniel los da)**: Nº **matrícula de arrendador** real (footer trae
 > `000000`) · **dirección física** exacta (hoy solo ciudad) · **RNT** real (blocker alojamientos). Contacto
@@ -54,7 +53,7 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-17** | **Ola 0 — ejecución Opus**: ✅ 0.1 scaffold (§19) · ✅ 0.2 staging LIVE (§21) · ✅ 0.7 modelo de datos (tipos+rules+`client.ts`+E2E 21/21, §22/§22.8) · ✅ 0.3 D0/D1 (§23). **Falta**: E2E "tras cache" (Workers Caching en staging, gate T9) + deploy de rules (coordinado con retiro legacy — NO ahora) · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
-| **TODO-18** | **Carril D + Ola 1 páginas** ✅ **COMPLETO (público)**: D0 cerrado · diseño entregado · D1 sellado (§23) · **todas las páginas públicas mockup-backed LIVE** (§24-§29: home/SERP/ficha/publicar/estancias/turismo/404 + Header/Footer/PropertyCard + WebP). ▶ Resta: **Gestion** (panel admin, §29.3) + transversales (ver Foco). | 🔄 OPUS | 0 off-palette verificado |
+| **TODO-18** | **Carril D + Ola 1 páginas** ✅ **COMPLETO**: D1 sellado (§23) · **los 8 mockups aprobados LIVE** (§24-§31: home/SERP/ficha/publicar/estancias/turismo/404 + `gestion` admin §31 + Header/Footer/PropertyCard + WebP). ▶ Resta solo **transversales** (Foco §2). | 🔄 OPUS | 0 off-palette verificado |
 | **TODO-20** | **Constancias liderazgo ×3**: payloads en la skill; los aplican los operadores cars/bersaglio/insema. | ⏸️ externo | |
 | **TODO-21** | **Lote-dueño**: ✅ Cloudflare hecho. Restante: matrícula real · dirección física · RNT · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`) · allowlist git (opcional). | ⏸️ dueño | pedir por LOTES |
 | **TODO-22** | **Auditoría Fable** (al volver su cuota): (a) ADR §22 `[REVISAR-FABLE]` (capa de datos OD1); (b) **decisión catálogo público SSG build-time vs doc-índice denormalizado** (gatea datos reales del portal). | 🔮 FABLE | |
@@ -66,11 +65,14 @@
 
 ## 📝 Bitácora (efímera)
 
+> **2026-07-12 (OPUS 4.8 — Gestion `/gestion`, §31)**: construí el 8º y último mockup — panel admin (sidebar
+> navy + KPIs + tabla pipeline + actividad + demanda) con segmentado de 3 roles funcional (JS vanilla SIN
+> innerHTML: vistas alternadas por `hidden`). Prop `noindex` aditivo en BaseLayout. Verificado por computed
+> styles: **0 off-palette**, 3 roles OK, noindex, home intacta. **Portal Ola 1 COMPLETO (8/8 mockups).**
+
 > **2026-07-12 (OPUS 4.8 — Auditoría Nivel-2 #2, §30)**: híbrida (sondas directas + workflow 8-ag para 3/4/7).
 > **SANO + retrieval FUNCIONAL**; 7 hallazgos in-repo curados (F-01 `05` rezagada→**M-01**) + 10 kernel → TODO-23/24/25.
-> Artefacto+tabla → bóveda `2026-07-12-auditoria-*`. **PRÓXIMO:** Gestion / transversales (elige Daniel).
-
-> *(Bitácora Ola-1 07-12 podada — construcción del portal público completa en ADRs §24-§29. §G.4 GC.)*
+> Artefacto+tabla → bóveda `2026-07-12-auditoria-*`.
 
 > *(Bitácora D0-marca/voz/D1 del 07-11 podada — consolidada en ADRs §23-§29 + memorias `identidad-marca` +
 > `sello-marca-altorra` + bóveda `2026-07-11-*`. §G.4 GC.)*
