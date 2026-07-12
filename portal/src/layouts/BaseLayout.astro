@@ -30,8 +30,9 @@ const indexable = import.meta.env.PUBLIC_SITE_ENV === 'production';
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     {/*
-      Tipografía de marca (D1): Cormorant Garamond (display) + Hanken Grotesk (cuerpo/UI).
-      Playfair Display (hero de Portal, 1 pantalla) queda FUERA del base — se evalúa al construir la home.
+      Tipografía de marca (D1, DECIDIDA por Claude — Daniel delegó la fuente 2026-07-12):
+      Cormorant Garamond (display) + Hanken Grotesk (cuerpo/UI). Coherente con los mockups,
+      premium/editorial, distinta de Bersaglio (Fraunces+Manrope). Playfair NO se carga.
       TODO perf (SEO-first): migrar a self-host woff2 subset latin + preload de las 2 caras críticas
       (Cormorant 600, Hanken 400) para eliminar el handshake a fonts.gstatic.com y mejorar LCP.
     */}

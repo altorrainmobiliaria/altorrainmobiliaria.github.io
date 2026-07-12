@@ -20,11 +20,8 @@ const colors = [
   ['--alt-gold-bright', '#ebd27e', 'Oro champán (sobre navy)'],
   ['--alt-text', '#5a6b82', 'Cuerpo AA'],
   ['--alt-link', '#7d6119', 'Enlace AA'],
-  ['--alt-surface-neu', '#eaf0f7', 'Lienzo neumórfico'],
-  ['--alt-error', '#b42318', 'Error'],
-  ['--alt-success', '#1f6b44', 'Éxito'],
-  ['--alt-warning', '#8a5a16', 'Aviso'],
-  ['--alt-info', '#0e5aa7', 'Info'],
+  ['--alt-surface-neu', '#e6edf2', 'Lienzo neumórfico'],
+  ['--alt-gold-raw', '#a6801e', 'Oro oscuro (texto grande)'],
 ];
 
 const type = [
@@ -53,7 +50,9 @@ const type = [
     <!-- COLOR -->
     <section class="alt-section alt-container">
       <p class="alt-eyebrow">Color</p>
-      <h2>Paleta accesible</h2>
+      <h2>Paleta oficial ALTORRA</h2>
+      <p class="ds-note">Disciplina estricta: fondo SIEMPRE blanco · <strong>el dorado predomina</strong> · plata presente · navy solo en textos/títulos/menús/algunos botones y cards. Cero colores fuera de la paleta (ni verdes ni rojos). Los estados usan navy + dorado + ícono.</p>
+      <hr class="alt-divider" style="margin:var(--alt-space-5) 0" />
       <div class="ds-swatches">
         {colors.map(([name, hex, role]) => (
           <div class="ds-swatch">
@@ -72,7 +71,7 @@ const type = [
     <section class="alt-section alt-container">
       <p class="alt-eyebrow">Tipografía</p>
       <h2>Escala fluida</h2>
-      <p class="ds-note">Display: Cormorant Garamond · Cuerpo: Hanken Grotesk</p>
+      <p class="ds-note">✅ Decidida: <strong>Cormorant Garamond</strong> (display) · <strong>Hanken Grotesk</strong> (cuerpo/datos) — premium editorial, propia (no Bersaglio).</p>
       <div class="ds-type">
         {type.map(([varname, sample, fam]) => (
           <div class="ds-type-row">
@@ -116,7 +115,7 @@ const type = [
       <h2>Cards (superficie plana)</h2>
       <div class="ds-cards">
         {[1, 2, 3].map((n) => (
-          <article class="alt-card">
+          <article class={n === 1 ? 'alt-card alt-card--gold' : 'alt-card'}>
             <div class="alt-card__media" style={`background:var(--alt-mist);display:grid;place-items:center`}>
               <span class="alt-badge" style="position:absolute;top:12px;left:12px">En venta</span>
               <span style="color:var(--alt-text-muted);font-size:var(--alt-fs-sm)">imagen {n}</span>
@@ -150,7 +149,7 @@ const type = [
           <article class="alt-card--neu" style="padding:var(--alt-space-5)">
             <p class="alt-eyebrow">Neumórfica</p>
             <h3>Card extruida</h3>
-            <p style="margin-top:8px">Sombra <code>--alt-nm-up</code> sobre lienzo #eaf0f7.</p>
+            <p style="margin-top:8px">Sombra <code>--alt-nm-up</code> sobre lienzo #E6EDF2.</p>
           </article>
         </div>
       </div>

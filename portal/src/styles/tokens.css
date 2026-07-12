@@ -11,18 +11,21 @@
  *     · LIQUID GLASS = acento SUTIL (§14) → barra sticky, flotantes sobre imagen, card "vitrina".
  *       Usar con moderación (backdrop-filter es caro en GPU; siempre con fallback @supports).
  *   Sistema DUAL-MODE de superficie (no neumórfico universal):
- *     · --alt-surface = #FFFFFF  → DEFAULT (páginas de contenido, elevación PLANA)
- *     · --alt-surface-neu = #eaf0f7 → OPT-IN (home + barra de navegación, NEUMORFISMO)
+ *     · --alt-surface = #FFFFFF  → DEFAULT (el FONDO SIEMPRE es blanco — mandato Daniel)
+ *     · --alt-surface-neu = #E6EDF2 (gris claro OFICIAL "soporte") → OPT-IN home+nav, NEUMORFISMO
  *     · --alt-surface-ink = #062743 → secciones oscuras localizadas (footer, CTAs, mapas)
+ *   DISCIPLINA DE COLOR (mandato Daniel 2026-07-12): SOLO colores de la paleta oficial.
+ *   Fondo blanco · navy SOLO en algunos textos/títulos/menús/botones/cards · DORADO PREDOMINA ·
+ *   plata presente. PROHIBIDO cualquier color ajeno (verde/rojo/etc.). Estados = navy+oro+icono.
  *
  * CONTRASTE (WCAG AA verificado contra el peor fondo claro #eaf0f7):
  *   Los tokens de TEXTO usan valores accesibles; el hex ORIGINAL del mockup se anota
  *   cuando difiere (fallaba AA). "Premium que NO excluye" (posicionamiento de marca)
  *   ⇒ la accesibilidad cumple el diseño, no lo traiciona.
  *
- * ⚠️ DIVERGENCIAS QUE NECESITAN RATIFICACIÓN DE DANIEL (ver docs/10 / ADR):
- *   1) Sello tipográfico: la memoria fijaba Cardo + Helvetica Now; el diseño ENTREGADO
- *      usa Cormorant Garamond + Hanken Grotesk. Se construye sobre lo entregado (SSoT).
+ * ⚠️ RATIFICACIONES (ver docs/10 / ADR):
+ *   1) Sello tipográfico: ✅ DECIDIDO (Daniel delegó la fuente 2026-07-12) → Cormorant Garamond
+ *      (display) + Hanken Grotesk (cuerpo). Coherente con los mockups; distinto de Bersaglio.
  *   2) Paleta: ✅ RESUELTA por Daniel (lámina oficial "PALETA COLORES ALTORRA", 2026-07-12):
  *      azul marino #062743 · blanco · dorado #D4AF37 · plateado #BFC3C9 · gris claro #E6EDF2 ·
  *      gris azulado #C9D6E2 + escala. Confirma el diseño entregado; jubila la "visión" (sin
@@ -93,24 +96,23 @@
   --alt-hairline-ink: rgba(255, 255, 255, 0.16);  /* borde sobre navy */
 
   /* ==========================================================================
-   * 3. ESTADO SEMÁNTICO (sin negro; distinguible por color+icono; AA verificado)
+   * 3. ESTADO SEMÁNTICO — SOLO PALETA (mandato Daniel: nada de verde/rojo/off-brand)
+   *    El SIGNIFICADO lo lleva el ÍCONO + texto (SC 1.4.1 no-solo-color), no el hue.
+   *    Texto de alerta = navy (legible AA); acento (borde+ícono) = navy o dorado (≥3:1 no-texto).
    * ======================================================================== */
-  --alt-error: #b42318;    /* 5.73:1 en #eaf0f7 */
-  --alt-success: #1f6b44;  /* 5.64:1 */
-  --alt-warning: #8a5a16;  /* 5.15:1 — ámbar-bronce, coherente con la familia oro */
-  --alt-info: #0e5aa7;     /* 6.02:1 */
-  --alt-error-bg: #fbeceb;
-  --alt-success-bg: #eaf4ef;
-  --alt-warning-bg: #f7f0e4;
-  --alt-info-bg: #e9f0f8;
+  --alt-error: var(--alt-navy);         /* acento navy + ícono de alerta (⚠/✕) */
+  --alt-info: var(--alt-navy);          /* acento navy + ícono info (i) */
+  --alt-success: var(--alt-gold-raw);   /* acento dorado #a6801e + ícono check (✓) — 3.37:1 no-texto sobre mist ✓ */
+  --alt-warning: var(--alt-gold-raw);   /* acento dorado + ícono triángulo */
+  --alt-status-bg: var(--alt-mist);     /* fondo de toda alerta (gris claro de paleta) */
 
   /* ==========================================================================
    * 4. SUPERFICIES (dual-mode)
    * ======================================================================== */
-  --alt-surface: var(--alt-white);   /* DEFAULT del sistema (páginas de contenido) */
-  --alt-surface-alt: var(--alt-mist); /* banda de sección alterna (ritmo) */
-  --alt-surface-neu: #eaf0f7;         /* OPT-IN: lienzo neumórfico de home + nav */
-  --alt-surface-ink: var(--alt-ink);  /* secciones oscuras localizadas */
+  --alt-surface: var(--alt-white);       /* DEFAULT — el FONDO SIEMPRE es blanco (mandato Daniel) */
+  --alt-surface-alt: var(--alt-mist);    /* banda de sección alterna (ritmo) — gris de paleta */
+  --alt-surface-neu: var(--alt-gris-claro); /* #E6EDF2 OFICIAL "soporte" — lienzo neumórfico home+nav */
+  --alt-surface-ink: var(--alt-ink);     /* secciones oscuras localizadas */
 
   /* ==========================================================================
    * 5. SOMBRAS

@@ -11,7 +11,7 @@
  */
 
 /* ==========================================================================
- * Superficies neumórficas — utilidades (solo sobre #eaf0f7)
+ * Superficies neumórficas — utilidades (solo sobre --alt-surface-neu / #E6EDF2)
  * ======================================================================== */
 .nm-up    { box-shadow: var(--alt-nm-up); }
 .nm-up-sm { box-shadow: var(--alt-nm-up-sm); }
@@ -275,7 +275,7 @@
 }
 .alt-card:hover {
   transform: translateY(-6px);
-  box-shadow: var(--alt-elev-card-hover);
+  box-shadow: var(--alt-elev-card-hover), 0 0 0 1px rgba(212, 175, 55, 0.5); /* filo de oro sutil en hover */
 }
 .alt-card__media {
   position: relative;
@@ -474,15 +474,22 @@
   gap: var(--alt-space-3);
   padding: var(--alt-space-4);
   border-radius: var(--alt-r-sm);
-  border-left: 3px solid;
+  border-left: 3px solid var(--alt-navy);
+  background: var(--alt-status-bg);   /* gris claro de paleta para TODAS */
+  color: var(--alt-text-strong);      /* texto navy legible (AA) — significado por ícono, no color */
   font-size: var(--alt-fs-sm);
   line-height: 1.55;
 }
-.alt-alert svg { width: 20px; height: 20px; flex-shrink: 0; }
-.alt-alert--error   { background: var(--alt-error-bg);   border-color: var(--alt-error);   color: var(--alt-error); }
-.alt-alert--success { background: var(--alt-success-bg); border-color: var(--alt-success); color: var(--alt-success); }
-.alt-alert--warning { background: var(--alt-warning-bg); border-color: var(--alt-warning); color: var(--alt-warning); }
-.alt-alert--info    { background: var(--alt-info-bg);    border-color: var(--alt-info);    color: var(--alt-info); }
+.alt-alert svg { width: 20px; height: 20px; flex-shrink: 0; stroke: currentColor; color: var(--alt-navy); }
+/* Solo el BORDE y el ÍCONO cambian de color (navy/oro); el texto queda navy. */
+.alt-alert--error   { border-color: var(--alt-error); }
+.alt-alert--error svg   { color: var(--alt-error); }
+.alt-alert--info    { border-color: var(--alt-info); }
+.alt-alert--info svg    { color: var(--alt-info); }
+.alt-alert--success { border-color: var(--alt-success); }
+.alt-alert--success svg { color: var(--alt-success); }
+.alt-alert--warning { border-color: var(--alt-warning); }
+.alt-alert--warning svg { color: var(--alt-warning); }
 
 /* ==========================================================================
  * LIQUID GLASS — panel esmerilado (acento SUTIL). Fallback sólido sin backdrop-filter.
@@ -567,4 +574,38 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* Acento metálico dorado (texto) */
+.alt-metal-gold {
+  background: var(--alt-grad-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ==========================================================================
+ * DORADO PROTAGONISTA (mandato Daniel: el oro predomina)
+ * ======================================================================== */
+/* Filete/divisor de oro */
+.alt-divider {
+  height: 1px;
+  border: 0;
+  background: var(--alt-grad-gold-underline);
+}
+.alt-divider--center {
+  width: 72px;
+  margin-inline: auto;
+}
+/* Cinta de oro superior para cards destacadas */
+.alt-card--gold {
+  position: relative;
+}
+.alt-card--gold::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--alt-grad-gold);
+  border-radius: var(--alt-r-lg) var(--alt-r-lg) 0 0;
 }
