@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  html{scroll-behavior:smooth}
+  body{background:#FFFFFF;font-family:'Hanken Grotesk',Helvetica,Arial,sans-serif;color:#062743;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  img{display:block;max-width:100%}
+  a{color:#A6801E;text-decoration:none}
+  a:hover{color:#A6801E}
+  input[type=date]{font-family:'Hanken Grotesk',sans-serif}
+  @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+
+
+  /* ===== SISTEMA DE BOTONES — una personalidad por sección ===== */
+  .btn-sig{display:inline-flex;align-items:center;gap:13px;padding:14px 16px 14px 28px;border-radius:999px;background:linear-gradient(135deg,#EBD27E 0%,#D4AF37 52%,#A6801E 100%);color:#062743;font-family:'Hanken Grotesk';font-weight:700;font-size:15px;letter-spacing:.01em;transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s;cursor:pointer}
+  .btn-sig:hover{transform:translateY(-2px);color:#062743}
+  .btn-sig .arw{display:inline-flex;width:30px;height:30px;border-radius:50%;background:rgba(27,39,51,.16);align-items:center;justify-content:center;flex:none;transition:background .35s}
+  .btn-sig .arw svg{transition:transform .5s cubic-bezier(.2,.7,.2,1),stroke .35s;stroke:#062743}
+  .btn-sig:hover .arw{background:#062743}
+  .btn-sig:hover .arw svg,.btn-sig:active .arw svg{transform:rotate(-45deg);stroke:#EBD27E}
+  .btn-quiet{display:inline-flex;align-items:center;gap:8px;color:#fff;font-family:'Hanken Grotesk';font-weight:600;font-size:13.5px;letter-spacing:.02em;padding-bottom:6px;position:relative;cursor:pointer}
+  .btn-quiet::after{content:"";position:absolute;left:0;bottom:0;height:1.5px;width:100%;background:linear-gradient(90deg,#EBD27E,#D4AF37);transform:scaleX(.24);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+  .btn-quiet:hover{color:#fff}
+  .btn-quiet:hover::after{transform:scaleX(1)}
+  .btn-quiet svg{transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+  .btn-quiet:hover svg{transform:translateX(5px)}
+  .btn-sweep{position:relative;display:inline-flex;align-items:center;gap:10px;padding:15px 30px;border-radius:999px;border:1.5px solid #062743;color:#062743;font-family:'Hanken Grotesk';font-weight:700;font-size:14px;letter-spacing:.01em;overflow:hidden;isolation:isolate;transition:color .4s,border-color .4s;cursor:pointer}
+  .btn-sweep::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(135deg,#EBD27E,#D4AF37 55%,#A6801E);transform:translateX(-101%);transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+  .btn-sweep:hover{color:#062743;border-color:#D4AF37}
+  .btn-sweep:hover::before{transform:translateX(0)}
+  .btn-sweep svg{transition:transform .4s}
+  .btn-sweep:hover svg{transform:translateX(4px)}
+  .btn-count{display:inline-flex;align-items:center;gap:11px;padding:10px 12px 10px 22px;border-radius:999px;border:1px solid rgba(27,39,51,.18);color:#062743;font-family:'Hanken Grotesk';font-weight:600;font-size:13.5px;transition:border-color .35s,background .35s;cursor:pointer}
+  .btn-count:hover{border-color:#D4AF37;background:#f2f6f9;color:#062743}
+  .btn-count b{font-weight:700;color:#A6801E}
+  .btn-count .trk{position:relative;width:30px;height:30px;border-radius:50%;background:#062743;overflow:hidden;flex:none;display:inline-flex;align-items:center;justify-content:center}
+  .btn-count .trk svg{stroke:#EBD27E}
+  .btn-count:hover .trk svg{animation:slidethru .62s cubic-bezier(.5,0,.2,1)}
+  @keyframes slidethru{0%{transform:translateX(0)}45%{transform:translateX(30px);opacity:0}46%{transform:translateX(-30px);opacity:0}55%{opacity:1}100%{transform:translateX(0)}}
+  .p-card .orb{display:inline-flex;width:44px;height:44px;border-radius:50%;background:#fff;border:1.5px solid #D4AF37;align-items:center;justify-content:center;flex:none;transition:background .4s,border-color .4s,transform .35s,box-shadow .4s}
+  .p-card .orb svg{stroke:#A6801E;transition:transform .5s cubic-bezier(.2,.7,.2,1),stroke .4s}
+  .p-card:hover .orb{background:linear-gradient(135deg,#EBD27E,#D4AF37 55%,#A6801E);border-color:transparent;}
+  .p-card:hover .orb svg{transform:rotate(-45deg);stroke:#062743}
+  .orb{display:inline-flex;width:44px;height:44px;border-radius:50%;background:#fff;border:1.5px solid #D4AF37;align-items:center;justify-content:center;flex:none;transition:background .4s,border-color .4s,transform .35s,box-shadow .4s}
+  .orb svg{stroke:#A6801E;transition:transform .5s cubic-bezier(.2,.7,.2,1),stroke .4s}
+  .orb:hover{transform:scale(1.08);background:linear-gradient(135deg,#EBD27E,#D4AF37 55%,#A6801E);border-color:transparent;}
+  .orb:hover svg{transform:rotate(-45deg);stroke:#062743}
+  .btn-frost{display:inline-flex;align-items:center;gap:11px;padding:14px 16px 14px 26px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);color:#fff;font-family:'Hanken Grotesk';font-weight:700;font-size:14px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background .4s,color .4s,border-color .4s;cursor:pointer}
+  .btn-frost .arw{display:inline-flex;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.2);align-items:center;justify-content:center;flex:none;transition:background .4s}
+  .btn-frost svg{stroke:#fff;transition:stroke .4s,transform .4s}
+  .btn-frost:hover{background:#fff;color:#062743;border-color:#fff}
+  .btn-frost:hover .arw{background:#D4AF37}
+  .btn-frost:hover svg{stroke:#062743;transform:translateX(3px)}
+  .btn-gn{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;border-radius:999px;border:1.5px solid rgba(27,39,51,.22);color:#062743;background:transparent;font-family:'Hanken Grotesk';font-weight:600;font-size:14px;transition:border-color .35s,background .35s,box-shadow .35s,color .35s;cursor:pointer}
+  .btn-gn:hover{border-color:#062743;background:#f2f6f9;color:#062743;box-shadow:0 10px 26px -14px rgba(6,39,67,.4)}
+  .btn-gn svg{transition:transform .4s}
+  .btn-gn:hover svg{transform:scale(1.12)}
+  .btn-onnavy{display:inline-flex;align-items:center;gap:9px;padding:12px 24px;border-radius:999px;border:1px solid rgba(235,210,126,.6);color:#EBD27E;font-family:'Hanken Grotesk';font-weight:600;font-size:13.5px;transition:background .35s,color .35s,border-color .35s;cursor:pointer}
+  .btn-onnavy:hover{background:#EBD27E;color:#062743;border-color:#EBD27E}
+  .btn-onnavy svg{transition:transform .4s}
+  .btn-onnavy:hover svg{transform:translateX(4px)}
+  .link-ul{display:inline-flex;align-items:center;gap:9px;font-family:'Hanken Grotesk';font-weight:600;font-size:14px;color:#A6801E;position:relative;padding-bottom:4px;cursor:pointer}
+  .link-ul::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;background:#D4AF37;transform:scaleX(1);transform-origin:left;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+  .link-ul:hover{color:#A6801E}
+  .link-ul:hover::after{transform:scaleX(.4)}
+  .link-ul svg{transition:transform .4s}
+  .link-ul:hover svg{transform:translateY(-2px)}
+  .btn-more{display:inline-flex;align-items:center;gap:9px;padding:14px 28px;border-radius:999px;border:1px solid rgba(27,39,51,.16);color:#062743;font-family:'Hanken Grotesk';font-weight:600;font-size:14px;transition:border-color .35s,color .35s,background .35s;cursor:pointer}
+  .btn-more:hover{border-color:#D4AF37;color:#A6801E;background:#f2f6f9}
+  .btn-more svg{transition:transform .4s}
+  .btn-more:hover svg{animation:bobdown .7s ease infinite}
+  @keyframes bobdown{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+
+  .btn-book{display:flex;align-items:center;justify-content:center;gap:11px;width:100%;padding:15px;border-radius:12px;background:#062743;color:#fff;font-family:'Hanken Grotesk';font-weight:600;font-size:15px;border:none;transition:background .3s,transform .3s,box-shadow .3s;cursor:pointer}
+  .btn-book:hover{background:#062743;transform:translateY(-1px);box-shadow:0 14px 30px -14px rgba(6,39,67,.55)}
+  .btn-book .arw{display:inline-flex;width:26px;height:26px;border-radius:50%;background:rgba(235,210,126,.18);align-items:center;justify-content:center;flex:none;transition:background .35s}
+  .btn-book .arw svg{stroke:#EBD27E;transition:transform .5s cubic-bezier(.2,.7,.2,1),stroke .35s}
+  .btn-book:hover .arw{background:#EBD27E}
+  .btn-book:hover .arw svg{transform:rotate(-45deg);stroke:#062743}
+
+</style>
+</helmet>
+
+<div id="est-root" style="width:100%;overflow:hidden">
+
+  <dc-import name="ALTORRA Header" active="estancia" hint-size="100%,116px" style="position:sticky;top:0;z-index:70;display:block"></dc-import>
+
+  <div style="max-width:1240px;margin:0 auto;padding:26px clamp(16px,4vw,48px) 0">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:16px;animation:rise .8s cubic-bezier(.2,.7,.2,1) both">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+          
+          <span style="font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#A6801E">Centro Histórico · Cartagena</span>
+        </div>
+        <h1 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(30px,4.4vw,48px);line-height:1.02;letter-spacing:-.01em;color:#062743;margin:0">Casa con piscina y terraza colonial</h1>
+      </div>
+      <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:7px"><svg width="17" height="17" viewBox="0 0 24 24" fill="#D4AF37" stroke="#D4AF37" stroke-width="1"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"></path></svg><span style="font-size:15px;font-weight:700;color:#062743">4.97</span><span style="font-size:13.5px;color:#6b7c93">· 128 reseñas</span></div>
+        <div style="display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;background:#f2f6f9;font-size:12px;font-weight:600;color:#A6801E"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"></path><path d="M9 12l2 2 4-4"></path></svg>Anfitrión verificado</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1240px;margin:0 auto;padding:10px clamp(16px,4vw,48px) 0">
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;grid-auto-rows:1fr;gap:10px;height:clamp(300px,42vw,440px)">
+      <div style="position:relative;grid-row:span 2;border-radius:20px;overflow:hidden">
+        <img id="est-main" src="assets/villa-pool.jpg" alt="Vista principal" style="width:100%;height:100%;object-fit:cover">
+      </div>
+      <div style="border-radius:20px;overflow:hidden"><img src="assets/villa-modern.jpg" alt="Interior" style="width:100%;height:100%;object-fit:cover"></div>
+      <div style="position:relative;border-radius:20px;overflow:hidden">
+        <img src="assets/estate-golden.jpg" alt="Terraza" style="width:100%;height:100%;object-fit:cover">
+        <button style="position:absolute;right:16px;bottom:16px;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.95);padding:11px 18px;border-radius:12px;font-size:13px;font-weight:600;color:#062743;border:none;cursor:pointer;box-shadow:0 8px 22px -10px rgba(27,39,51,.45)" style-hover="color:#A6801E"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>Ver 18 fotos</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1240px;margin:0 auto;padding:34px clamp(16px,4vw,48px) 60px;display:flex;gap:clamp(28px,3.6vw,60px);flex-wrap:wrap;align-items:flex-start">
+
+    <div style="flex:1 1 520px;min-width:300px">
+
+      <div style="display:flex;align-items:center;gap:26px;flex-wrap:wrap;padding-bottom:26px;border-bottom:1px solid rgba(27,39,51,.1)">
+        <div style="display:flex;align-items:center;gap:9px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.4"></circle><path d="M2 20c0-3.3 3-5.5 7-5.5s7 2.2 7 5.5"></path><path d="M17 5.2A3.4 3.4 0 0 1 17 12M22 20c0-2.6-1.6-4.5-4-5.2"></path></svg><span style="font-size:15px;color:#062743"><b style="font-weight:700">8</b> huéspedes</span></div>
+        <div style="display:flex;align-items:center;gap:9px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 10h18M9 4v6"></path></svg><span style="font-size:15px;color:#062743"><b style="font-weight:700">4</b> habitaciones</span></div>
+        <div style="display:flex;align-items:center;gap:9px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4v16"></path><path d="M2 9h16a3 3 0 0 1 3 3v8"></path><path d="M2 15h20"></path></svg><span style="font-size:15px;color:#062743"><b style="font-weight:700">5</b> camas</span></div>
+        <div style="display:flex;align-items:center;gap:9px"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12V6a2 2 0 0 1 4 0"></path><path d="M4 12h16a1 1 0 0 1 1 1v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-2a1 1 0 0 1 1-1z"></path><path d="M7 19l-1 2M18 19l1 2"></path></svg><span style="font-size:15px;color:#062743"><b style="font-weight:700">3</b> baños</span></div>
+      </div>
+
+      <div style="padding:28px 0;border-bottom:1px solid rgba(27,39,51,.1)">
+        <p style="font-size:15.5px;line-height:1.72;color:#6b7c93;margin:0 0 14px">Casa colonial restaurada en el corazón de la Ciudad Amurallada, a dos cuadras de la Plaza Santo Domingo. Patio central con piscina, terraza en la azotea con vista a las cúpulas y noches frescas de brisa marina.</p>
+        <p style="font-size:15.5px;line-height:1.72;color:#6b7c93;margin:0">Cuatro alcobas climatizadas, cocina totalmente equipada y servicio de conserjería. Ideal para familias y grupos que buscan vivir Cartagena desde adentro, con todo el confort de una estancia de lujo.</p>
+      </div>
+
+      <div style="padding:28px 0;border-bottom:1px solid rgba(27,39,51,.1)">
+        <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:26px;color:#062743;margin:0 0 20px">Lo que ofrece este lugar</h2>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:16px 22px">
+          <div style="display:flex;align-items:center;gap:12px"><span style="width:40px;height:40px;border-radius:10px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5a10 10 0 0 1 14 0M8 15.5a6 6 0 0 1 8 0"></path><circle cx="12" cy="19" r="1"></circle><path d="M2 9a15 15 0 0 1 20 0"></path></svg></span><span style="font-size:14.5px;color:#062743">WiFi de alta velocidad</span></div>
+          <div style="display:flex;align-items:center;gap:12px"><span style="width:40px;height:40px;border-radius:10px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 15c2 0 2 1.6 4 1.6s2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6"></path><path d="M2 19c2 0 2 1.6 4 1.6s2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6"></path><path d="M9 11V5a2 2 0 0 1 4 0"></path></svg></span><span style="font-size:14.5px;color:#062743">Piscina privada</span></div>
+          <div style="display:flex;align-items:center;gap:12px"><span style="width:40px;height:40px;border-radius:10px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h9a2.5 2.5 0 1 0-2.5-2.5M4 12h13a2.5 2.5 0 1 1-2.5 2.5M4 16h8a2.5 2.5 0 1 1-2.5 2.5"></path></svg></span><span style="font-size:14.5px;color:#062743">Aire acondicionado</span></div>
+          <div style="display:flex;align-items:center;gap:12px"><span style="width:40px;height:40px;border-radius:10px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M8 3v6h8V3M8 13h.01M8 17h.01"></path></svg></span><span style="font-size:14.5px;color:#062743">Cocina equipada</span></div>
+          <div style="display:flex;align-items:center;gap:12px"><span style="width:40px;height:40px;border-radius:10px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l1.6-4.8A2 2 0 0 1 8.5 7h7a2 2 0 0 1 1.9 1.2L19 13"></path><path d="M4 13h16a1 1 0 0 1 1 1v4H3v-4a1 1 0 0 1 1-1z"></path><circle cx="7.5" cy="18" r="1.4"></circle><circle cx="16.5" cy="18" r="1.4"></circle></svg></span><span style="font-size:14.5px;color:#062743">Parqueadero incluido</span></div>
+          <div style="display:flex;align-items:center;gap:12px"><span style="width:40px;height:40px;border-radius:10px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="3"></circle><path d="M3 17h18M5 17v-2M19 17v-2M12 10v7"></path></svg></span><span style="font-size:14.5px;color:#062743">Terraza con vista</span></div>
+          <div style="display:flex;align-items:center;gap:12px"><span style="width:40px;height:40px;border-radius:10px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg></span><span style="font-size:14.5px;color:#062743">Check-in 24 horas</span></div>
+          <div style="display:flex;align-items:center;gap:12px"><span style="width:40px;height:40px;border-radius:10px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;flex:none"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"></path><path d="M9 12l2 2 4-4"></path></svg></span><span style="font-size:14.5px;color:#062743">Conserjería 24/7</span></div>
+        </div>
+      </div>
+
+      <div style="padding:28px 0;border-bottom:1px solid rgba(27,39,51,.1)">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:6px">
+          <span style="width:60px;height:60px;border-radius:50%;background:linear-gradient(150deg,#062743,#062743);display:flex;align-items:center;justify-content:center;flex:none;font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;color:#EBD27E">AC</span>
+          <div>
+            <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;color:#062743">Anfitrión: Alejandro C.</div>
+            <div style="font-size:13px;color:#6b7c93">Superanfitrión · 6 años en ALTORRA · responde en ~1 h</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:28px 0">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:22px"><svg width="20" height="20" viewBox="0 0 24 24" fill="#D4AF37" stroke="#D4AF37" stroke-width="1"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"></path></svg><span style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:26px;color:#062743">4.97 · 128 reseñas</span></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(220px,100%),1fr));gap:14px 40px;margin-bottom:28px">
+          <div style="display:flex;align-items:center;gap:14px"><span style="font-size:13.5px;color:#6b7c93;width:100px">Limpieza</span><span style="flex:1;height:4px;border-radius:4px;background:#e6edf2;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:99%;background:#062743;border-radius:4px"></span></span><span style="font-size:13px;font-weight:600;color:#062743">5.0</span></div>
+          <div style="display:flex;align-items:center;gap:14px"><span style="font-size:13.5px;color:#6b7c93;width:100px">Ubicación</span><span style="flex:1;height:4px;border-radius:4px;background:#e6edf2;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:99%;background:#062743;border-radius:4px"></span></span><span style="font-size:13px;font-weight:600;color:#062743">5.0</span></div>
+          <div style="display:flex;align-items:center;gap:14px"><span style="font-size:13.5px;color:#6b7c93;width:100px">Comunicación</span><span style="flex:1;height:4px;border-radius:4px;background:#e6edf2;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:98%;background:#062743;border-radius:4px"></span></span><span style="font-size:13px;font-weight:600;color:#062743">4.9</span></div>
+          <div style="display:flex;align-items:center;gap:14px"><span style="font-size:13.5px;color:#6b7c93;width:100px">Precio</span><span style="flex:1;height:4px;border-radius:4px;background:#e6edf2;position:relative"><span style="position:absolute;left:0;top:0;bottom:0;width:94%;background:#062743;border-radius:4px"></span></span><span style="font-size:13px;font-weight:600;color:#062743">4.7</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:24px">
+          <div>
+            <div style="display:flex;align-items:center;gap:11px;margin-bottom:10px"><span style="width:42px;height:42px;border-radius:50%;background:#f2f6f9;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15px;color:#062743">VL</span><div><div style="font-size:14px;font-weight:600;color:#062743">Valentina L.</div><div style="font-size:12px;color:#6b7c93">Marzo 2025</div></div></div>
+            <p style="font-size:14px;line-height:1.65;color:#6b7c93;margin:0">Una joya en el Centro. La terraza al atardecer no tiene precio y Alejandro estuvo pendiente de todo. Volveremos sin dudarlo.</p>
+          </div>
+          <div>
+            <div style="display:flex;align-items:center;gap:11px;margin-bottom:10px"><span style="width:42px;height:42px;border-radius:50%;background:#f2f6f9;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15px;color:#062743">TS</span><div><div style="font-size:14px;font-weight:600;color:#062743">Thomas S.</div><div style="font-size:12px;color:#6b7c93">Febrero 2025</div></div></div>
+            <p style="font-size:14px;line-height:1.65;color:#6b7c93;margin:0">Impecable, exactamente como en las fotos. Ubicación perfecta para caminar a todos lados. La piscina fue el plan de los niños cada tarde.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <aside id="reservar" style="flex:1 1 340px;min-width:300px;position:sticky;top:92px;align-self:flex-start">
+      <div style="background:#fff;border:1px solid rgba(27,39,51,.12);border-radius:20px;padding:24px;box-shadow:0 2px 6px rgba(27,39,51,.04),0 34px 64px -40px rgba(27,39,51,.45)">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:20px">
+          <div><span style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:32px;color:#062743">$850.000</span><span style="font-size:14px;color:#6b7c93"> / noche</span></div>
+          <div style="display:flex;align-items:center;gap:5px"><svg width="14" height="14" viewBox="0 0 24 24" fill="#D4AF37" stroke="#D4AF37" stroke-width="1"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"></path></svg><span style="font-size:13px;font-weight:700;color:#062743">4.97</span></div>
+        </div>
+
+        <div style="border:1px solid rgba(27,39,51,.16);border-radius:14px;overflow:hidden;margin-bottom:16px">
+          <div style="display:grid;grid-template-columns:1fr 1fr">
+            <label style="padding:12px 14px;border-right:1px solid rgba(27,39,51,.12);border-bottom:1px solid rgba(27,39,51,.12);cursor:pointer"><span style="display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6b7c93;margin-bottom:3px">Llegada</span><input type="date" id="est-ci" onChange="{{ recalc }}" style="border:none;outline:none;font-size:14px;font-weight:600;color:#062743;width:100%;background:transparent;padding:0"></label>
+            <label style="padding:12px 14px;border-bottom:1px solid rgba(27,39,51,.12);cursor:pointer"><span style="display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6b7c93;margin-bottom:3px">Salida</span><input type="date" id="est-co" onChange="{{ recalc }}" style="border:none;outline:none;font-size:14px;font-weight:600;color:#062743;width:100%;background:transparent;padding:0"></label>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px">
+            <div><span style="display:block;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#6b7c93;margin-bottom:3px">Huéspedes</span><span id="est-guests-label" style="font-size:14px;font-weight:600;color:#062743">2 huéspedes</span></div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <button onClick="{{ decGuests }}" aria-label="menos" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(27,39,51,.25);background:#fff;color:#062743;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="border-color:#A6801E;color:#A6801E">&#8722;</button>
+              <span id="est-guests" style="font-size:15px;font-weight:600;color:#062743;min-width:16px;text-align:center">2</span>
+              <button onClick="{{ incGuests }}" aria-label="más" style="width:32px;height:32px;border-radius:50%;border:1px solid rgba(27,39,51,.25);background:#fff;color:#062743;font-size:18px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center" style-hover="border-color:#A6801E;color:#A6801E">+</button>
+            </div>
+          </div>
+        </div>
+
+        <button onClick="{{ reservar }}" class="btn-book" style="margin-bottom:0;font-size:15.5px">Reservar<span class="arw"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></button>
+        <p style="text-align:center;font-size:12px;color:#6b7c93;margin:12px 0 0">No se hará ningún cargo por ahora</p>
+
+        <div style="margin-top:20px;padding-top:20px;border-top:1px solid rgba(27,39,51,.1);display:flex;flex-direction:column;gap:11px">
+          <div style="display:flex;justify-content:space-between;font-size:14px;color:#6b7c93"><span id="est-line" style="text-decoration:underline;text-decoration-color:rgba(27,39,51,.2)">$850.000 × 3 noches</span><span id="est-subtotal">$2.550.000</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;color:#6b7c93"><span style="text-decoration:underline;text-decoration-color:rgba(27,39,51,.2)">Tarifa de limpieza</span><span>$180.000</span></div>
+          <div style="display:flex;justify-content:space-between;font-size:14px;color:#6b7c93"><span style="text-decoration:underline;text-decoration-color:rgba(27,39,51,.2)">Servicio ALTORRA</span><span id="est-service">$255.000</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding-top:13px;border-top:1px solid rgba(27,39,51,.1);margin-top:2px"><span style="font-size:15.5px;font-weight:700;color:#062743">Total</span><span id="est-total" style="font-size:17px;font-weight:700;color:#062743">$2.985.000</span></div>
+        </div>
+
+        <div id="est-confirm" style="display:none;margin-top:16px;padding:13px 15px;border-radius:12px;background:#f2f6f9;border:1px solid #f2f6f9;font-size:13.5px;color:#A6801E;align-items:center;gap:9px">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg>Solicitud enviada · Alejandro te confirmará en breve.
+        </div>
+      </div>
+      <p style="text-align:center;font-size:12px;color:#6b7c93;margin:14px 0 0">Cancelación gratuita hasta 5 días antes</p>
+    </aside>
+
+  </div>
+
+  <footer style="background:#062743;color:rgba(255,255,255,.7)">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(40px,4.4vw,58px) clamp(20px,5vw,64px) 26px">
+      <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1.25fr;gap:clamp(26px,3vw,46px);padding-bottom:32px;border-bottom:1px solid rgba(255,255,255,.12)">
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <img src="assets/altorra-mark.png" alt="ALTORRA" style="height:44px;width:auto">
+            <span style="display:flex;flex-direction:column;gap:3px;line-height:1">
+              <span style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;letter-spacing:.16em;color:#fff">ALTORRA</span>
+              <span style="font-size:8px;font-weight:600;letter-spacing:.42em;color:rgba(255,255,255,.55)">INMOBILIARIA</span>
+            </span>
+          </div>
+          <p style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:19px;line-height:1.3;color:#EBD27E;margin:0 0 10px">Cartagena, a tu altura.</p>
+          <p style="font-size:13px;line-height:1.6;color:rgba(255,255,255,.55);margin:0 0 18px;max-width:270px">Inmobiliaria boutique en Cartagena de Indias: compra, arriendo, estancias e inversión con acompañamiento experto.</p>
+          <div style="display:flex;gap:10px">
+            <a href="#" aria-label="Instagram" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"></circle></svg></a>
+            <a href="#" aria-label="Facebook" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7h2.3l.35-2.7H13.5V9.55c0-.78.22-1.31 1.33-1.31h1.42V5.82c-.25-.03-1.09-.1-2.07-.1-2.05 0-3.46 1.25-3.46 3.55v1.98H8.4V14h2.32v7h2.78z"></path></svg></a>
+            <a href="#" aria-label="WhatsApp" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.5A8.5 8.5 0 0 0 4.6 16.3L3.6 20.4l4.2-1.1A8.5 8.5 0 1 0 12 3.5zm0 1.6a6.9 6.9 0 1 1-3.6 12.8l-.3-.2-2.5.66.67-2.43-.2-.3A6.9 6.9 0 0 1 12 5.1zm-2.3 3c-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02s.87 2.34.99 2.5c.12.16 1.7 2.7 4.2 3.7 2.06.82 2.48.66 2.93.62.45-.04 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.45-.72-1.67-.8-.22-.08-.39-.12-.55.12-.16.24-.63.8-.77.96-.14.16-.28.18-.52.06-.24-.12-1.03-.38-1.96-1.21-.72-.64-1.21-1.44-1.35-1.68-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.55-.41h-.47z"></path></svg></a>
+            <a href="#" aria-label="LinkedIn" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 8.5H4.3V19h2.64V8.5zM5.62 4.3a1.53 1.53 0 1 0 0 3.06 1.53 1.53 0 0 0 0-3.06zM19.7 19h-2.63v-5.6c0-1.34-.48-2.25-1.68-2.25-.92 0-1.46.62-1.7 1.22-.09.21-.11.5-.11.8V19H10.9s.03-9.5 0-10.5h2.64v1.49c.35-.54.98-1.31 2.38-1.31 1.74 0 3.04 1.14 3.04 3.58V19z"></path></svg></a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Explorar</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="ALTORRA Resultados.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Comprar</a>
+            <a href="ALTORRA Resultados.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Arrendar</a>
+            <a href="ALTORRA Estancias.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Estancias</a>
+            <a href="ALTORRA Portal.dc.html#invertir" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Invertir</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Servicios</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="ALTORRA Publica.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Publica tu propiedad</a>
+            <a href="ALTORRA Publica.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Avalúo gratis</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Programa de aliados</a>
+            <a href="ALTORRA Gestion.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Panel de gestión</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Compañía</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Nosotros</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Journal</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Trabaja con nosotros</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Contacto</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Contacto</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="#" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></span><span>Cra 1 #5-100, Bocagrande<br>Cartagena de Indias</span></a>
+            <a href="tel:+573002439810" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.5.56 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.3a1 1 0 0 1 1 1c0 1.2.2 2.4.56 3.5a1 1 0 0 1-.24 1z"></path></svg></span><span>+57 300 243 9810</span></a>
+            <a href="mailto:info@altorrainmobiliaria.co" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg></span><span>info@altorrainmobiliaria.co</span></a>
+            <a href="#" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5V12l3 2"></path></svg></span><span>Lun–Sáb · 8:00am–6:00pm</span></a>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-top:20px">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:12px;color:rgba(255,255,255,.45)">
+          <span>© 2025 ALTORRA Company S.A.S.</span>
+          <span style="width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.28)"></span>
+          <span>Matrícula de Arrendador 000000</span>
+          <span style="width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.28)"></span>
+          <span>NIT 902.063.965-4</span>
+        </div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap">
+          <a href="#" style="font-size:12px;color:rgba(255,255,255,.55);transition:color .2s" style-hover="color:#EBD27E">Términos</a>
+          <a href="#" style="font-size:12px;color:rgba(255,255,255,.55);transition:color .2s" style-hover="color:#EBD27E">Privacidad</a>
+          <a href="#" style="font-size:12px;color:rgba(255,255,255,.55);transition:color .2s" style-hover="color:#EBD27E">Habeas Data</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  fmt(n) {
+    return '$' + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+  iso(d) {
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  componentDidMount() {
+    this._guests = 2;
+    this.PRICE = 850000;
+    this.CLEAN = 180000;
+    this.SERVICE_RATE = 0.10;
+    const now = new Date();
+    const ci = new Date(now.getTime() + 7 * 864e5);
+    const co = new Date(now.getTime() + 10 * 864e5);
+    const ciEl = document.getElementById('est-ci');
+    const coEl = document.getElementById('est-co');
+    if (ciEl) { ciEl.value = this.iso(ci); ciEl.min = this.iso(now); }
+    if (coEl) { coEl.value = this.iso(co); coEl.min = this.iso(new Date(now.getTime() + 864e5)); }
+    this.doRecalc();
+    // nav shadow
+    const nav = document.getElementById('est-nav');
+    const onScroll = () => { if (nav) nav.style.boxShadow = window.scrollY > 8 ? '0 10px 30px -18px rgba(27,39,51,.32)' : 'none'; };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    this._onScroll = onScroll;
+  }
+  componentWillUnmount() {
+    if (this._onScroll) window.removeEventListener('scroll', this._onScroll);
+  }
+  doRecalc() {
+    const ciEl = document.getElementById('est-ci');
+    const coEl = document.getElementById('est-co');
+    if (!ciEl || !coEl) return;
+    let nights = 0;
+    if (ciEl.value && coEl.value) {
+      nights = Math.round((new Date(coEl.value) - new Date(ciEl.value)) / 864e5);
+      if (nights < 0) nights = 0;
+    }
+    const subtotal = nights * this.PRICE;
+    const service = Math.round(subtotal * this.SERVICE_RATE);
+    const total = subtotal + (nights > 0 ? this.CLEAN : 0) + service;
+    const set = (id, txt) => { const e = document.getElementById(id); if (e) e.textContent = txt; };
+    set('est-line', this.fmt(this.PRICE) + ' × ' + nights + (nights === 1 ? ' noche' : ' noches'));
+    set('est-subtotal', this.fmt(subtotal));
+    set('est-service', this.fmt(service));
+    set('est-total', this.fmt(total));
+    set('est-guests', String(this._guests));
+    set('est-guests-label', this._guests + (this._guests === 1 ? ' huésped' : ' huéspedes'));
+  }
+  renderVals() {
+    return {
+      recalc: () => this.doRecalc(),
+      incGuests: () => { this._guests = Math.min(8, (this._guests || 2) + 1); this.doRecalc(); },
+      decGuests: () => { this._guests = Math.max(1, (this._guests || 2) - 1); this.doRecalc(); },
+      reservar: () => {
+        const c = document.getElementById('est-confirm');
+        if (c) { c.style.display = 'flex'; }
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

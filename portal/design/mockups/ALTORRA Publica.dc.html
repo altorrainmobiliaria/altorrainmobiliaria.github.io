@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  html{scroll-behavior:smooth}
+  body{background:#FFFFFF;font-family:'Hanken Grotesk',Helvetica,Arial,sans-serif;color:#062743;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  img{display:block;max-width:100%}
+  a{color:#A6801E;text-decoration:none}
+  a:hover{color:#A6801E}
+  select,input{font-family:'Hanken Grotesk',sans-serif}
+  @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+
+
+  /* ===== SISTEMA DE BOTONES — una personalidad por sección ===== */
+  .btn-sig{display:inline-flex;align-items:center;gap:13px;padding:14px 16px 14px 28px;border-radius:999px;background:linear-gradient(135deg,#EBD27E 0%,#D4AF37 52%,#A6801E 100%);color:#062743;font-family:'Hanken Grotesk';font-weight:700;font-size:15px;letter-spacing:.01em;transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s;cursor:pointer}
+  .btn-sig:hover{transform:translateY(-2px);color:#062743}
+  .btn-sig .arw{display:inline-flex;width:30px;height:30px;border-radius:50%;background:rgba(27,39,51,.16);align-items:center;justify-content:center;flex:none;transition:background .35s}
+  .btn-sig .arw svg{transition:transform .5s cubic-bezier(.2,.7,.2,1),stroke .35s;stroke:#062743}
+  .btn-sig:hover .arw{background:#062743}
+  .btn-sig:hover .arw svg,.btn-sig:active .arw svg{transform:rotate(-45deg);stroke:#EBD27E}
+  .btn-quiet{display:inline-flex;align-items:center;gap:8px;color:#fff;font-family:'Hanken Grotesk';font-weight:600;font-size:13.5px;letter-spacing:.02em;padding-bottom:6px;position:relative;cursor:pointer}
+  .btn-quiet::after{content:"";position:absolute;left:0;bottom:0;height:1.5px;width:100%;background:linear-gradient(90deg,#EBD27E,#D4AF37);transform:scaleX(.24);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+  .btn-quiet:hover{color:#fff}
+  .btn-quiet:hover::after{transform:scaleX(1)}
+  .btn-quiet svg{transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+  .btn-quiet:hover svg{transform:translateX(5px)}
+  .btn-sweep{position:relative;display:inline-flex;align-items:center;gap:10px;padding:15px 30px;border-radius:999px;border:1.5px solid #062743;color:#062743;font-family:'Hanken Grotesk';font-weight:700;font-size:14px;letter-spacing:.01em;overflow:hidden;isolation:isolate;transition:color .4s,border-color .4s;cursor:pointer}
+  .btn-sweep::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(135deg,#EBD27E,#D4AF37 55%,#A6801E);transform:translateX(-101%);transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+  .btn-sweep:hover{color:#062743;border-color:#D4AF37}
+  .btn-sweep:hover::before{transform:translateX(0)}
+  .btn-sweep svg{transition:transform .4s}
+  .btn-sweep:hover svg{transform:translateX(4px)}
+  .btn-count{display:inline-flex;align-items:center;gap:11px;padding:10px 12px 10px 22px;border-radius:999px;border:1px solid rgba(27,39,51,.18);color:#062743;font-family:'Hanken Grotesk';font-weight:600;font-size:13.5px;transition:border-color .35s,background .35s;cursor:pointer}
+  .btn-count:hover{border-color:#D4AF37;background:#f2f6f9;color:#062743}
+  .btn-count b{font-weight:700;color:#A6801E}
+  .btn-count .trk{position:relative;width:30px;height:30px;border-radius:50%;background:#062743;overflow:hidden;flex:none;display:inline-flex;align-items:center;justify-content:center}
+  .btn-count .trk svg{stroke:#EBD27E}
+  .btn-count:hover .trk svg{animation:slidethru .62s cubic-bezier(.5,0,.2,1)}
+  @keyframes slidethru{0%{transform:translateX(0)}45%{transform:translateX(30px);opacity:0}46%{transform:translateX(-30px);opacity:0}55%{opacity:1}100%{transform:translateX(0)}}
+  .p-card .orb{display:inline-flex;width:44px;height:44px;border-radius:50%;background:#fff;border:1.5px solid #D4AF37;align-items:center;justify-content:center;flex:none;transition:background .4s,border-color .4s,transform .35s,box-shadow .4s}
+  .p-card .orb svg{stroke:#A6801E;transition:transform .5s cubic-bezier(.2,.7,.2,1),stroke .4s}
+  .p-card:hover .orb{background:linear-gradient(135deg,#EBD27E,#D4AF37 55%,#A6801E);border-color:transparent;}
+  .p-card:hover .orb svg{transform:rotate(-45deg);stroke:#062743}
+  .orb{display:inline-flex;width:44px;height:44px;border-radius:50%;background:#fff;border:1.5px solid #D4AF37;align-items:center;justify-content:center;flex:none;transition:background .4s,border-color .4s,transform .35s,box-shadow .4s}
+  .orb svg{stroke:#A6801E;transition:transform .5s cubic-bezier(.2,.7,.2,1),stroke .4s}
+  .orb:hover{transform:scale(1.08);background:linear-gradient(135deg,#EBD27E,#D4AF37 55%,#A6801E);border-color:transparent;}
+  .orb:hover svg{transform:rotate(-45deg);stroke:#062743}
+  .btn-frost{display:inline-flex;align-items:center;gap:11px;padding:14px 16px 14px 26px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);color:#fff;font-family:'Hanken Grotesk';font-weight:700;font-size:14px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background .4s,color .4s,border-color .4s;cursor:pointer}
+  .btn-frost .arw{display:inline-flex;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.2);align-items:center;justify-content:center;flex:none;transition:background .4s}
+  .btn-frost svg{stroke:#fff;transition:stroke .4s,transform .4s}
+  .btn-frost:hover{background:#fff;color:#062743;border-color:#fff}
+  .btn-frost:hover .arw{background:#D4AF37}
+  .btn-frost:hover svg{stroke:#062743;transform:translateX(3px)}
+  .btn-gn{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;border-radius:999px;border:1.5px solid rgba(27,39,51,.22);color:#062743;background:transparent;font-family:'Hanken Grotesk';font-weight:600;font-size:14px;transition:border-color .35s,background .35s,box-shadow .35s,color .35s;cursor:pointer}
+  .btn-gn:hover{border-color:#062743;background:#f2f6f9;color:#062743;box-shadow:0 10px 26px -14px rgba(6,39,67,.4)}
+  .btn-gn svg{transition:transform .4s}
+  .btn-gn:hover svg{transform:scale(1.12)}
+  .btn-onnavy{display:inline-flex;align-items:center;gap:9px;padding:12px 24px;border-radius:999px;border:1px solid rgba(235,210,126,.6);color:#EBD27E;font-family:'Hanken Grotesk';font-weight:600;font-size:13.5px;transition:background .35s,color .35s,border-color .35s;cursor:pointer}
+  .btn-onnavy:hover{background:#EBD27E;color:#062743;border-color:#EBD27E}
+  .btn-onnavy svg{transition:transform .4s}
+  .btn-onnavy:hover svg{transform:translateX(4px)}
+  .link-ul{display:inline-flex;align-items:center;gap:9px;font-family:'Hanken Grotesk';font-weight:600;font-size:14px;color:#A6801E;position:relative;padding-bottom:4px;cursor:pointer}
+  .link-ul::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;background:#D4AF37;transform:scaleX(1);transform-origin:left;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+  .link-ul:hover{color:#A6801E}
+  .link-ul:hover::after{transform:scaleX(.4)}
+  .link-ul svg{transition:transform .4s}
+  .link-ul:hover svg{transform:translateY(-2px)}
+  .btn-more{display:inline-flex;align-items:center;gap:9px;padding:14px 28px;border-radius:999px;border:1px solid rgba(27,39,51,.16);color:#062743;font-family:'Hanken Grotesk';font-weight:600;font-size:14px;transition:border-color .35s,color .35s,background .35s;cursor:pointer}
+  .btn-more:hover{border-color:#D4AF37;color:#A6801E;background:#f2f6f9}
+  .btn-more svg{transition:transform .4s}
+  .btn-more:hover svg{animation:bobdown .7s ease infinite}
+  @keyframes bobdown{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+
+
+  .btn-book{display:flex;align-items:center;justify-content:center;gap:11px;width:100%;padding:15px;border-radius:12px;background:#062743;color:#fff;font-family:'Hanken Grotesk';font-weight:600;font-size:15px;border:none;transition:background .3s,transform .3s,box-shadow .3s;cursor:pointer}
+  .btn-book:hover{background:#062743;transform:translateY(-1px);box-shadow:0 14px 30px -14px rgba(6,39,67,.55)}
+  .btn-book .arw{display:inline-flex;width:26px;height:26px;border-radius:50%;background:rgba(235,210,126,.18);align-items:center;justify-content:center;flex:none;transition:background .35s}
+  .btn-book .arw svg{stroke:#EBD27E;transition:transform .5s cubic-bezier(.2,.7,.2,1),stroke .35s}
+  .btn-book:hover .arw{background:#EBD27E}
+  .btn-book:hover .arw svg{transform:rotate(-45deg);stroke:#062743}
+
+</style>
+</helmet>
+
+<div id="pub-root" style="width:100%;overflow:hidden">
+
+  <dc-import name="ALTORRA Header" active="vender" hint-size="100%,116px" style="position:sticky;top:0;z-index:70;display:block"></dc-import>
+
+  <section style="position:relative;background:#FFFFFF;overflow:hidden">
+    <div style="position:absolute;inset:0;background-image:url('assets/villa-pool.jpg');background-size:cover;background-position:center right;opacity:.07"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(100deg,#FFFFFF 46%,rgba(255,255,255,.8) 66%,rgba(242,247,251,.5))"></div>
+    <div style="position:relative;max-width:1240px;margin:0 auto;padding:clamp(52px,7vw,92px) clamp(20px,5vw,64px);display:flex;gap:clamp(32px,5vw,72px);align-items:center;flex-wrap:wrap">
+      <div style="flex:1 1 440px;min-width:300px;animation:rise .9s cubic-bezier(.2,.7,.2,1) both">
+        <div style="display:flex;align-items:center;gap:11px;margin-bottom:20px">
+          
+          <span style="font-size:11.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#A6801E">Propietarios</span>
+        </div>
+        <h1 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(38px,5.6vw,64px);line-height:1.02;letter-spacing:-.015em;color:#062743;margin:0 0 20px">Vende o arrienda con quien conoce Cartagena.</h1>
+        <p style="font-size:clamp(16px,1.5vw,18.5px);line-height:1.62;color:#6b7c93;max-width:520px;margin:0 0 34px">Avalúo experto, fotografía profesional y una red de compradores calificados. Tú decides el precio; nosotros ponemos el respaldo.</p>
+        <div style="display:flex;gap:clamp(24px,4vw,52px);flex-wrap:wrap">
+          <div><div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:34px;color:#A6801E;line-height:1">+1.200</div><div style="font-size:12.5px;color:#6b7c93;margin-top:4px">inmuebles cerrados</div></div>
+          <div><div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:34px;color:#A6801E;line-height:1">38 días</div><div style="font-size:12.5px;color:#6b7c93;margin-top:4px">promedio de venta</div></div>
+          <div><div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:34px;color:#A6801E;line-height:1">98%</div><div style="font-size:12.5px;color:#6b7c93;margin-top:4px">clientes satisfechos</div></div>
+        </div>
+      </div>
+
+      <div id="empezar" style="flex:1 1 360px;min-width:300px;max-width:440px;animation:rise 1s cubic-bezier(.2,.7,.2,1) .12s both">
+        <form onSubmit="{{ submit }}" style="background:#fff;border-radius:22px;padding:clamp(24px,3vw,34px);box-shadow:0 40px 90px -40px rgba(6,39,67,.55)">
+          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:26px;color:#062743;margin:0 0 4px">Solicita tu avalúo gratis</h2>
+          <p style="font-size:13.5px;color:#6b7c93;margin:0 0 22px">Respuesta de un asesor en menos de 24 horas.</p>
+          <div id="pub-fields" style="display:flex;flex-direction:column;gap:13px">
+            <div>
+              <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Nombre</label>
+              <input id="pub-name" type="text" placeholder="Tu nombre" style="width:100%;padding:13px 14px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14.5px;color:#062743;outline:none" style-focus="border-color:#D4AF37">
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Teléfono</label>
+              <input id="pub-phone" type="tel" placeholder="+57 300 000 0000" style="width:100%;padding:13px 14px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14.5px;color:#062743;outline:none" style-focus="border-color:#D4AF37">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px">
+              <div>
+                <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Zona</label>
+                <select style="width:100%;padding:13px 12px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14px;color:#062743;outline:none;background:#fff;cursor:pointer" style-focus="border-color:#D4AF37"><option>Castillogrande</option><option>Bocagrande</option><option>Manga</option><option>Crespo</option><option>Centro Histórico</option><option>La Boquilla</option></select>
+              </div>
+              <div>
+                <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Tipo</label>
+                <select style="width:100%;padding:13px 12px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14px;color:#062743;outline:none;background:#fff;cursor:pointer" style-focus="border-color:#D4AF37"><option>Apartamento</option><option>Casa</option><option>Lote</option><option>Oficina</option><option>Local</option></select>
+              </div>
+            </div>
+            <div id="pub-err" style="display:none;font-size:12.5px;color:#A6801E">Ingresa tu nombre y teléfono para continuar.</div>
+            <button type="submit" class="btn-book" style="margin:4px 0 0;font-size:15px">Solicitar avalúo<span class="arw"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></button>
+          </div>
+          <div id="pub-success" style="display:none;flex-direction:column;align-items:center;text-align:center;padding:18px 6px">
+            <span style="width:56px;height:56px;border-radius:50%;background:#f2f6f9;display:flex;align-items:center;justify-content:center;margin-bottom:14px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span>
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:24px;color:#062743;margin:0 0 6px">¡Solicitud recibida!</h3>
+            <p style="font-size:14px;color:#6b7c93;margin:0;line-height:1.55">Un asesor ALTORRA te contactará en las próximas 24 horas para coordinar tu avalúo.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1240px;margin:0 auto;padding:clamp(56px,7vw,96px) clamp(20px,5vw,64px)">
+    <div style="text-align:center;margin-bottom:clamp(38px,4vw,58px)">
+      <div style="display:inline-flex;align-items:center;gap:10px;margin-bottom:14px"><span style="font-size:11.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#A6801E">Cómo funciona</span></div>
+      <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(30px,4vw,46px);line-height:1.05;color:#062743;margin:0">Cuatro pasos, cero complicaciones</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(230px,100%),1fr));gap:26px">
+      <div style="position:relative;padding-top:14px"><div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;color:#D4AF37;margin-bottom:14px">01</div><h3 style="font-size:18px;font-weight:700;color:#062743;margin:0 0 9px">Cuéntanos</h3><p style="font-size:14.5px;line-height:1.6;color:#6b7c93;margin:0">Compártenos los datos de tu inmueble en dos minutos con el formulario.</p></div>
+      <div style="position:relative;padding-top:14px"><div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;color:#D4AF37;margin-bottom:14px">02</div><h3 style="font-size:18px;font-weight:700;color:#062743;margin:0 0 9px">Avalúo experto</h3><p style="font-size:14.5px;line-height:1.6;color:#6b7c93;margin:0">Un asesor visita, fotografía y define el precio justo con datos de mercado.</p></div>
+      <div style="position:relative;padding-top:14px"><div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;color:#D4AF37;margin-bottom:14px">03</div><h3 style="font-size:18px;font-weight:700;color:#062743;margin:0 0 9px">Publicamos</h3><p style="font-size:14.5px;line-height:1.6;color:#6b7c93;margin:0">Tu propiedad en el portal, redes y nuestra red privada de compradores.</p></div>
+      <div style="position:relative;padding-top:14px"><div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;color:#D4AF37;margin-bottom:14px">04</div><h3 style="font-size:18px;font-weight:700;color:#062743;margin:0 0 9px">Cerramos</h3><p style="font-size:14.5px;line-height:1.6;color:#6b7c93;margin:0">Acompañamiento legal y financiero hasta la firma de la escritura.</p></div>
+    </div>
+  </section>
+
+  <section style="background:#FFFFFF;border-top:1px solid rgba(27,39,51,.06);border-bottom:1px solid rgba(27,39,51,.06)">
+    <div style="max-width:1240px;margin:0 auto;padding:clamp(56px,7vw,92px) clamp(20px,5vw,64px)">
+      <div style="text-align:center;margin-bottom:clamp(38px,4vw,58px)">
+        <div style="display:inline-flex;align-items:center;gap:10px;margin-bottom:14px"><span style="font-size:11.5px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:#A6801E">Planes</span></div>
+        <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(30px,4vw,46px);line-height:1.05;color:#062743;margin:0 0 12px">Elige cómo quieres vender</h2>
+        <p style="font-size:16px;color:#6b7c93;max-width:520px;margin:0 auto">Sin costos ocultos. Solo pagas cuando tu propiedad se vende.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:22px;align-items:stretch">
+
+        <div style="background:#fff;border:1px solid rgba(27,39,51,.1);border-radius:20px;padding:32px 28px;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(27,39,51,.04)">
+          <div style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#6b7c93;margin-bottom:14px">Publicación</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px"><span style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:40px;color:#062743;line-height:1">Gratis</span></div>
+          <p style="font-size:13.5px;color:#6b7c93;margin:0 0 24px">Publica y recibe contactos por tu cuenta.</p>
+          <div style="display:flex;flex-direction:column;gap:12px;flex:1">
+            <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#6b7c93"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Ficha en el portal ALTORRA</div>
+            <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#6b7c93"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Hasta 10 fotos</div>
+            <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#6b7c93"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Contactos directos</div>
+          </div>
+          <a href="#empezar" style="display:flex;align-items:center;justify-content:center;padding:13px;border-radius:11px;border:1px solid #D4AF37;color:#A6801E;font-weight:600;font-size:14.5px;margin-top:28px;transition:background .3s" style-hover="background:#f2f6f9">Empezar gratis</a>
+        </div>
+
+        <div style="background:#062743;border-radius:20px;padding:32px 28px;display:flex;flex-direction:column;position:relative;box-shadow:0 30px 60px -34px rgba(27,39,51,.6);transform:translateY(-6px)">
+          <div style="position:absolute;top:20px;right:22px;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:rgba(235,210,126,.16);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#EBD27E">Recomendado</div>
+          <div style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:rgba(235,210,126,.85);margin-bottom:14px">Gestión Premium</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px"><span style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:40px;color:#fff;line-height:1">3%</span><span style="font-size:14px;color:rgba(255,255,255,.65)">al vender</span></div>
+          <p style="font-size:13.5px;color:rgba(255,255,255,.68);margin:0 0 24px">Nosotros gestionamos todo el proceso.</p>
+          <div style="display:flex;flex-direction:column;gap:12px;flex:1">
+            <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.9)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#EBD27E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Todo lo de Publicación</div>
+            <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.9)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#EBD27E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Avalúo y fotografía profesional</div>
+            <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.9)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#EBD27E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Visitas y negociación gestionadas</div>
+            <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.9)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#EBD27E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Acompañamiento legal</div>
+          </div>
+          <a href="#empezar" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:11px;background:#EBD27E;color:#062743;font-weight:700;font-size:14.5px;margin-top:28px;transition:transform .3s" style-hover="transform:translateY(-1px)">Solicitar avalúo</a>
+        </div>
+
+        <div style="background:#fff;border:1px solid rgba(27,39,51,.1);border-radius:20px;padding:32px 28px;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(27,39,51,.04)">
+          <div style="font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#6b7c93;margin-bottom:14px">Concierge Élite</div>
+          <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px"><span style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:40px;color:#062743;line-height:1">A medida</span></div>
+          <p style="font-size:13.5px;color:#6b7c93;margin:0 0 24px">Para propiedades de alto valor y exclusividad.</p>
+          <div style="display:flex;flex-direction:column;gap:12px;flex:1">
+            <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#6b7c93"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Todo lo de Premium</div>
+            <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#6b7c93"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Video y tour 3D</div>
+            <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#6b7c93"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Marketing internacional</div>
+            <div style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:#6b7c93"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none;margin-top:2px"><path d="M20 6L9 17l-5-5"></path></svg>Abogado dedicado</div>
+          </div>
+          <a href="#empezar" style="display:flex;align-items:center;justify-content:center;padding:13px;border-radius:11px;border:1px solid #D4AF37;color:#A6801E;font-weight:600;font-size:14.5px;margin-top:28px;transition:background .3s" style-hover="background:#f2f6f9">Hablar con un asesor</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1240px;margin:0 auto;padding:clamp(56px,7vw,92px) clamp(20px,5vw,64px)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:26px">
+      <div><span style="width:46px;height:46px;border-radius:12px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;margin-bottom:16px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M2 12h20M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path></svg></span><h3 style="font-size:17px;font-weight:700;color:#062743;margin:0 0 8px">Máxima exposición</h3><p style="font-size:14px;line-height:1.6;color:#6b7c93;margin:0">Portal, redes y una red privada de compradores nacionales e internacionales.</p></div>
+      <div><span style="width:46px;height:46px;border-radius:12px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;margin-bottom:16px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"></path><path d="M7 14l4-4 3 3 5-6"></path></svg></span><h3 style="font-size:17px;font-weight:700;color:#062743;margin:0 0 8px">Avalúo justo</h3><p style="font-size:14px;line-height:1.6;color:#6b7c93;margin:0">Precio basado en datos reales del mercado de Cartagena, no en corazonadas.</p></div>
+      <div><span style="width:46px;height:46px;border-radius:12px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;margin-bottom:16px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V6z"></path><path d="M9 12l2 2 4-4"></path></svg></span><h3 style="font-size:17px;font-weight:700;color:#062743;margin:0 0 8px">Respaldo legal</h3><p style="font-size:14px;line-height:1.6;color:#6b7c93;margin:0">Revisión de documentos, escritura y todo el proceso jurídico acompañado.</p></div>
+      <div><span style="width:46px;height:46px;border-radius:12px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;margin-bottom:16px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg></span><h3 style="font-size:17px;font-weight:700;color:#062743;margin:0 0 8px">Seguridad total</h3><p style="font-size:14px;line-height:1.6;color:#6b7c93;margin:0">Compradores verificados y pagos protegidos en cada etapa de la operación.</p></div>
+    </div>
+  </section>
+
+  <footer style="background:#062743;color:rgba(255,255,255,.7)">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(40px,4.4vw,58px) clamp(20px,5vw,64px) 26px">
+      <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1.25fr;gap:clamp(26px,3vw,46px);padding-bottom:32px;border-bottom:1px solid rgba(255,255,255,.12)">
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <img src="assets/altorra-mark.png" alt="ALTORRA" style="height:44px;width:auto">
+            <span style="display:flex;flex-direction:column;gap:3px;line-height:1">
+              <span style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;letter-spacing:.16em;color:#fff">ALTORRA</span>
+              <span style="font-size:8px;font-weight:600;letter-spacing:.42em;color:rgba(255,255,255,.55)">INMOBILIARIA</span>
+            </span>
+          </div>
+          <p style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:19px;line-height:1.3;color:#EBD27E;margin:0 0 10px">Cartagena, a tu altura.</p>
+          <p style="font-size:13px;line-height:1.6;color:rgba(255,255,255,.55);margin:0 0 18px;max-width:270px">Inmobiliaria boutique en Cartagena de Indias: compra, arriendo, estancias e inversión con acompañamiento experto.</p>
+          <div style="display:flex;gap:10px">
+            <a href="#" aria-label="Instagram" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"></circle></svg></a>
+            <a href="#" aria-label="Facebook" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7h2.3l.35-2.7H13.5V9.55c0-.78.22-1.31 1.33-1.31h1.42V5.82c-.25-.03-1.09-.1-2.07-.1-2.05 0-3.46 1.25-3.46 3.55v1.98H8.4V14h2.32v7h2.78z"></path></svg></a>
+            <a href="#" aria-label="WhatsApp" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.5A8.5 8.5 0 0 0 4.6 16.3L3.6 20.4l4.2-1.1A8.5 8.5 0 1 0 12 3.5zm0 1.6a6.9 6.9 0 1 1-3.6 12.8l-.3-.2-2.5.66.67-2.43-.2-.3A6.9 6.9 0 0 1 12 5.1zm-2.3 3c-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02s.87 2.34.99 2.5c.12.16 1.7 2.7 4.2 3.7 2.06.82 2.48.66 2.93.62.45-.04 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.45-.72-1.67-.8-.22-.08-.39-.12-.55.12-.16.24-.63.8-.77.96-.14.16-.28.18-.52.06-.24-.12-1.03-.38-1.96-1.21-.72-.64-1.21-1.44-1.35-1.68-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.55-.41h-.47z"></path></svg></a>
+            <a href="#" aria-label="LinkedIn" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 8.5H4.3V19h2.64V8.5zM5.62 4.3a1.53 1.53 0 1 0 0 3.06 1.53 1.53 0 0 0 0-3.06zM19.7 19h-2.63v-5.6c0-1.34-.48-2.25-1.68-2.25-.92 0-1.46.62-1.7 1.22-.09.21-.11.5-.11.8V19H10.9s.03-9.5 0-10.5h2.64v1.49c.35-.54.98-1.31 2.38-1.31 1.74 0 3.04 1.14 3.04 3.58V19z"></path></svg></a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Explorar</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="ALTORRA Resultados.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Comprar</a>
+            <a href="ALTORRA Resultados.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Arrendar</a>
+            <a href="ALTORRA Estancias.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Estancias</a>
+            <a href="ALTORRA Portal.dc.html#invertir" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Invertir</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Servicios</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="ALTORRA Publica.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Publica tu propiedad</a>
+            <a href="ALTORRA Publica.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Avalúo gratis</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Programa de aliados</a>
+            <a href="ALTORRA Gestion.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Panel de gestión</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Compañía</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Nosotros</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Journal</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Trabaja con nosotros</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Contacto</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Contacto</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="#" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></span><span>Cra 1 #5-100, Bocagrande<br>Cartagena de Indias</span></a>
+            <a href="tel:+573002439810" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.5.56 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.3a1 1 0 0 1 1 1c0 1.2.2 2.4.56 3.5a1 1 0 0 1-.24 1z"></path></svg></span><span>+57 300 243 9810</span></a>
+            <a href="mailto:info@altorrainmobiliaria.co" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg></span><span>info@altorrainmobiliaria.co</span></a>
+            <a href="#" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5V12l3 2"></path></svg></span><span>Lun–Sáb · 8:00am–6:00pm</span></a>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-top:20px">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:12px;color:rgba(255,255,255,.45)">
+          <span>© 2025 ALTORRA Company S.A.S.</span>
+          <span style="width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.28)"></span>
+          <span>Matrícula de Arrendador 000000</span>
+          <span style="width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.28)"></span>
+          <span>NIT 902.063.965-4</span>
+        </div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap">
+          <a href="#" style="font-size:12px;color:rgba(255,255,255,.55);transition:color .2s" style-hover="color:#EBD27E">Términos</a>
+          <a href="#" style="font-size:12px;color:rgba(255,255,255,.55);transition:color .2s" style-hover="color:#EBD27E">Privacidad</a>
+          <a href="#" style="font-size:12px;color:rgba(255,255,255,.55);transition:color .2s" style-hover="color:#EBD27E">Habeas Data</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    const nav = document.getElementById('pub-nav');
+    const onScroll = () => { if (nav) nav.style.boxShadow = window.scrollY > 8 ? '0 10px 30px -18px rgba(27,39,51,.32)' : 'none'; };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    this._onScroll = onScroll;
+  }
+  componentWillUnmount() {
+    if (this._onScroll) window.removeEventListener('scroll', this._onScroll);
+  }
+  renderVals() {
+    return {
+      submit: (e) => {
+        e.preventDefault();
+        const name = (document.getElementById('pub-name') || {}).value || '';
+        const phone = (document.getElementById('pub-phone') || {}).value || '';
+        const err = document.getElementById('pub-err');
+        if (!name.trim() || !phone.trim()) {
+          if (err) err.style.display = 'block';
+          return;
+        }
+        if (err) err.style.display = 'none';
+        const fields = document.getElementById('pub-fields');
+        const success = document.getElementById('pub-success');
+        if (fields) fields.style.display = 'none';
+        if (success) success.style.display = 'flex';
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
