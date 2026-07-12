@@ -189,6 +189,7 @@ de mis capacidades. Implicaciones:
 | `validacion-live-chrome` | Validación LIVE post-merge vía extensión Claude-in-Chrome (Claude la maneja DIRECTO; 7 dimensiones adversariales). Portable. | ✅ |
 | `anti-codigo-muerto` | Caza/cuarentena de código muerto/viejo (anti-Knight-Capital); gate `deadcode:check`. Portable. | ✅ |
 | `meta-ads-diagnostico` | Diagnóstico de campañas Meta Ads (FB/IG). Portable. | ✅ |
+| `catalogo-voz-altorra` | **SSoT de la voz escrita de Altorra** (web/pauta/redes/WhatsApp/Journal): esencia (calidez ownable + cobertura "donde otros no llegan" + prueba legal matrícula/RNT), reglas duras + checklist anti-IA + Test de Alma, aforismos, copy por superficie, plantillas por canal. Nace del comité ×capas (15 agentes) que reprobó el borrador de Gemini y reescribió en voz propia (2026-07-11). Versionada en `skills/` + user. **Voz ÚNICA, NO derivada de ninguna marca.** | ✅ repo+user |
 
 ---
 

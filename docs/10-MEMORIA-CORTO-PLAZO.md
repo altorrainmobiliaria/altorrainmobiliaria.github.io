@@ -9,12 +9,24 @@
 
 ## 🎯 Foco actual
 
-> ⚡ **HILO ACTIVO — Carril D · D0 (marca), en curso; SIGUIENTE = deliberar la VOZ.** Retomar en el chat
-> NUEVO cuando Daniel pegue la respuesta de **Gemini/Antigravity** al prompt de voz: invocar
-> **`comite-expertos` + `asesor-critico-honesto`** → deliberar la voz de Altorra sobre lo que dijo
-> Antigravity (verificar cada pieza contra la marca, NO acatar a ciegas) → destilar en la skill
-> **`catalogo-voz-altorra`** (hermana de la de Bersaglio). Luego: rehacer el mockup con el look **Liquid
-> Glass** real + sign-off D0 → **D1** (sistema de diseño).
+> ⚡ **HILO ACTIVO — Carril D · D0 (marca); VOZ ✅ LISTA. DISEÑO ✅ ENTREGADO por Daniel (Claude Design). D0 CERRADO. AHORA = CONSTRUIR Ola 1.**
+> Daniel entregó el diseño (8 mockups `.dc.html`: Portal/Resultados/Ficha/Estancias/Publica/Gestion/Header/Turismo
+> + assets de marca + su `VISION.md` con la paleta ALTORRA + **neumorfismo** sobre el sistema premium) →
+> **ingerido en `portal/design/`** (mockups + assets + screenshots, versionado). Faltan de propagar el neumorfismo:
+> Precios, landings de barrio, panel de usuario (favoritos/alertas/perfil inquilino), Rango+Rentímetro, Journal,
+> portal Aliados/Brokers, panel Admin — se construyen cuando toque su superficie. **AHORA (Opus toma las riendas,
+> Carta de Derechos del PLAN-ENDURECIDO):** construir Ola 1 réplica-exacta de los mockups sobre el scaffold
+> `portal/` (Astro 7 + CF Workers + capa de datos ya lista). Orden: **D1 tokens/design-system desde `portal/design/`
+> → home → SERP+mapa → ficha → estancias → publica → precios/landings/panel-usuario/rango/journal/aliados/admin.**
+> 🚦 **BLOQUEO #1 = LOTE-DUEÑO** (PLAN-ENDURECIDO §4): sin secrets Cloudflare (R2/token/CF_DEPLOY) Opus queda en
+> dev-local; + abogado toque (i) gatea cutover; + RNT/cifras/matrícula. Pedirlo como UN lote.** La voz de
+> Altorra ya se deliberó (comité ×capas de 15 agentes REPROBÓ el borrador de Gemini/Antigravity y la
+> reescribió en voz propia) y vive en la skill **`catalogo-voz-altorra`** (repo `skills/` + `~/.claude/skills/`;
+> crudo+síntesis en bóveda `2026-07-11-comite-voz-altorra-*`). ⚠️ **NO es hermana de Bersaglio: voz ÚNICA y
+> auténtica.** **AHORA:** rehacer el **mockup con el look Liquid Glass real** aprovechando la voz (heroes /
+> aforismos / sellos ya escritos) → sign-off D0 → **D1** (sistema de diseño). **Pendiente ratificación del
+> dueño** (§9 de la skill): tú/usted (dual recomendado) · matrícula real · RNT real (blocker alojamientos) ·
+> ubicación eslogan (lockup/footer) · horario WhatsApp.
 > **Decidido en D0 (todo en memoria `identidad-marca-inmobiliaria` + `sello-marca-altorra`):** posicionamiento
 > **"premium que no excluye"** (lujo+transparencia+calidez; cobertura total; Caribe→nacional) · misión/visión ·
 > **eslogan "Seguridad, Legalidad y Confianza"** · paleta **oro/plata DOMINAN (logo), navy discreto, blanco,
@@ -50,7 +62,7 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-17** | **Ola 0 — ejecución Opus** (guía = `PLAN-ENDURECIDO-FABLE-2026-07-10.md`): ✅ 0.1 scaffold (§19) · ✅ 0.2 staging LIVE (§21) · ✅ brief abogado (O9) · ✅ FTI-01. **0.7 modelo de datos**: ✅ parte 1 tipos (`62916e1`) · ✅ parte 2 rules+indexes+storage ×3 (`1750f10`) · ✅ **parte 3/3 = capa de datos `client.ts`+REST+cache+tests+gate (OD1, §22 `[REVISAR-FABLE]`, comité ×3)** · ✅ **E2E de la capa de datos con SEED (21/21 emulador: 6 E2E + 15 rules, §22.8)**. **Falta 0.7**: SOLO el E2E "tras cache" (Workers Caching en staging desplegado, gate T9) + deploy de rules (coordinado con retiro legacy — NO ahora). Siguen 0.3 D0 · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
-| **TODO-18** | **Carril D — Diseño D0-D4**. **D0 EN CURSO**: ✅ posicionamiento + paleta/jerarquía + eslogan/misión/visión + sello tipográfico + lenguaje visual (Liquid Glass) + acento ocre — todo en memoria de marca. ✅ comité D0 ×3 (crudo en bóveda). ✅ prompt de voz entregado a Daniel (Gemini). ▶ **SIGUIENTE (chat nuevo)**: respuesta Gemini → `comite-expertos`+`asesor-critico-honesto` → deliberar voz → skill `catalogo-voz-altorra` → rehacer mockup Liquid Glass → sign-off D0. Luego D1 (design system) → D2 (mockup por pantalla). | 🔄 OPUS | oro/plata mandan; navy discreto; SIN negro |
+| **TODO-18** | **Carril D — Diseño D0-D4**. **D0 EN CURSO**: ✅ posicionamiento + paleta/jerarquía + eslogan/misión/visión + sello tipográfico + lenguaje visual (Liquid Glass) + acento ocre. ✅ comité D0 ×3. ✅ **VOZ DELIBERADA Y DESTILADA** (comité ×capas de 15 agentes reprobó el borrador de Gemini y reescribió en voz propia → skill `catalogo-voz-altorra` creada repo+user, verificada §3.3; crudo+síntesis en bóveda). ▶ **SIGUIENTE**: rehacer **mockup Liquid Glass** con la voz ya lista → sign-off D0. Luego D1 (design system) → D2 (mockup por pantalla). **Pendiente ratificación dueño** (§9 skill): tú/usted, matrícula real, RNT real, ubicación eslogan, horario WhatsApp. | 🔄 OPUS | oro/plata mandan; navy discreto; SIN negro |
 | **TODO-19** | **Potenciar cerebro** (kickoff §7.3): auditoría Nivel-2 (vence ~2026-07-15, staleDays) + destilar `_legacy/AVANCES.md` Fase B + evaluar lecciones candidatas C-01..C-39 (R0) contra `30` | 🔄 | |
 | **TODO-20** | **Constancias liderazgo ×3**: payloads listos en la skill; los aplican los operadores cars/bersaglio/insema en su próxima sesión | ⏸️ externo | |
 | **TODO-21** | **Lote-dueño #0** — ✅ **Cloudflare (cuenta+R2+token+secrets+CF_DEPLOY_ENABLED)** hecho (portal LIVE §21). Restante: ⏰ **RNT decreto cierra 2026-07-11** · permiso DesignSync (1 clic, al 1er sync) · allowlist git push/merge en `.claude/settings.json` (opcional — el push ya funciona) · contratar abogado con brief (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`, listo) · elegir D0 (cuando Opus entregue 3 direcciones). Lotes 1/2/3 → PLAN-ENDURECIDO §4. | ⏸️ dueño | pedir por LOTES |
@@ -59,6 +71,27 @@
 ---
 
 ## 📝 Bitácora (efímera)
+
+> **2026-07-11 (OPUS 4.8 — Carril D · D0, DISEÑO + visión)**: probé el mockup del index en varias vueltas
+> (v3 Liquid Glass → v4 editorial → v5 "Vitrina de orfebre" del panel de 6 agentes, ganadora 9/9). Daniel
+> **rechazó todas mi mano** (muy "a IA", circo de color, gráficas que no pidió, decoraciones inventadas: sol/
+> murallas). **DECISIÓN: Opus NO hace el mockup a mano.** Flujo nuevo: **Opus entrega un PROMPT de la visión →
+> Daniel lo genera en su "Claude Design" → descarga → Opus REFINA.** Le entregué (a) el **prompt del index** y
+> (b) **`specs/VISION-FUNCIONAL-PRODUCTO.md`** (visión funcional completa del producto, destilada del MEGA-PLAN —
+> para que Design entienda el ecosistema). Reglas grabadas en `identidad-marca-inmobiliaria`: **blanco/oro/plata
+> mandan, turquí/ocre mínimos** (mucho azul = "circo"), **NO gráficas/charts, NO decoraciones inventadas**,
+> ALTORRA siempre MAYÚSCULA, premium NO folksy. **PRÓXIMO:** Daniel genera en Claude Design → me pasa el output → refino.
+
+> **2026-07-11 (OPUS 4.8 — Carril D · D0, VOZ)**: Daniel pegó la guía de voz de **Gemini/Antigravity**.
+> Corrí `proceso-decision-fuerte` + `comite-expertos` como **workflow acotado de 15 agentes** (diagnóstico
+> → peer-review anónimo → reescritura → síntesis). **Veredicto: guía de Gemini REPROBADA** (eje en
+> transparencia = paridad, no en la calidez ownable; claims de liderazgo ilegales para greenfield;
+> garantías de resultado; sellos huecos; faltaba multicanal). Reescrita en **voz propia** → skill
+> **`catalogo-voz-altorra`** (repo `skills/` + `~/.claude/skills/`). **Verifiqué §3.3 sobre el comité (no
+> acaté a ciegas):** cacé 2 fallos del propio comité, **L-VOZ-1** (su barrido "cero raya larga" mintió: 11
+> em-dash estructurales, los limpié) y **L-VOZ-2** (alucinó una matrícula `AMC-OFI-...`, dejé placeholder).
+> Citas legales en cuarentena (legal-colombia + abogado). Crudo+síntesis en bóveda (`2026-07-11-comite-voz-altorra-*`).
+> **PRÓXIMO:** mockup Liquid Glass con la voz. ADR formal + L-VOZ-1/2 a `30` al cierre de D0.
 
 > **2026-07-11 (OPUS 4.8 — Carril D · D0 marca, sesión larga con Daniel; CIERRE por saturación)**:
 > definido el posicionamiento **"premium que no excluye"** + misión/visión + eslogan **"Seguridad, Legalidad
