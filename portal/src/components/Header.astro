@@ -87,7 +87,7 @@ const nav = [
   <div class="alt-hdr__bar">
     <div class="alt-hdr__bar-in">
       <a class="alt-hdr__logo" href="/" aria-label={`${SITE.name} — inicio`}>
-        <img class="alt-hdr__mark" src="/assets/altorra-mark-t.webp" alt="" width="34" height="40" />
+        <img class="alt-hdr__mark" src="/assets/altorra-emblema.webp" alt="" width="29" height="40" />
         <span class="alt-hdr__word">
           <span class="alt-hdr__word-name">ALTORRA</span>
           <span class="alt-hdr__word-sub">Inmobiliaria</span>
@@ -194,22 +194,22 @@ const nav = [
     box-shadow: 0 12px 34px -18px rgba(6, 39, 67, 0.3);
   }
   .alt-hdr__bar-in {
-    max-width: var(--alt-container); margin-inline: auto; padding-inline: var(--alt-gutter);
-    height: 72px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: clamp(10px, 1.4vw, 22px);
+    padding-inline: clamp(18px, 3vw, 52px);
+    height: 72px; display: flex; align-items: center;
   }
 
-  /* Logo — emblema metálico + wordmark en bloque */
-  .alt-hdr__logo { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+  /* Logo — emblema metálico + wordmark en bloque. flex:none = va primero, el nav no se le monta. */
+  .alt-hdr__logo { flex: none; display: flex; align-items: center; gap: 11px; text-decoration: none; }
   .alt-hdr__mark { display: block; height: 40px; width: auto; filter: drop-shadow(0 3px 7px rgba(166, 128, 30, 0.28)); transition: transform var(--alt-dur) var(--alt-ease); }
   .alt-hdr__logo:hover .alt-hdr__mark { transform: translateY(-1px) scale(1.02); }
   .alt-hdr__word { display: inline-flex; flex-direction: column; align-items: flex-start; line-height: 1; }
   .alt-hdr__word-name { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 19px; letter-spacing: 0.14em; color: var(--alt-ink); white-space: nowrap; }
   .alt-hdr__word-sub { font-size: 8px; font-weight: var(--alt-fw-bold); letter-spacing: 0.34em; text-transform: uppercase; color: var(--alt-link); margin-top: 4px; white-space: nowrap; }
 
-  /* Nav */
-  .alt-hdr__nav { justify-self: center; display: flex; align-items: center; gap: clamp(1px, 0.3vw, 6px); }
+  /* Nav — ocupa el centro entre logo y acciones (con márgenes de aire); no puede montarse sobre el logo */
+  .alt-hdr__nav { flex: 1 1 0; min-width: 0; margin-inline: clamp(18px, 2.4vw, 52px) clamp(14px, 2vw, 40px); display: flex; justify-content: flex-start; align-items: center; gap: clamp(2px, 0.4vw, 8px); }
   .alt-hdr__item { position: relative; }
-  .alt-hdr__top { display: inline-flex; flex-direction: column; align-items: center; gap: 5px; padding: 9px 12px; font-size: 13.5px; font-weight: var(--alt-fw-medium); color: var(--alt-ink); text-decoration: none; white-space: nowrap; }
+  .alt-hdr__top { display: inline-flex; flex-direction: column; align-items: center; gap: 5px; padding: 9px 10px; font-size: 13.5px; font-weight: var(--alt-fw-medium); color: var(--alt-ink); text-decoration: none; white-space: nowrap; }
   .alt-hdr__top > span:first-child { display: inline-flex; align-items: center; gap: 5px; }
   .alt-hdr__cap { width: 13px; height: 13px; color: var(--alt-text-muted); transition: transform var(--alt-dur) var(--alt-ease); }
   .alt-hdr__uline { height: 2px; width: 20px; border-radius: 2px; background: var(--alt-grad-gold-underline); opacity: 0; transform: scaleX(0.25); transition: opacity var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease); }
@@ -251,7 +251,7 @@ const nav = [
   .alt-hdr__feat-t { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 19px; line-height: 1.08; color: #fff; }
 
   /* Acciones — controles fantasma + UN acento dorado */
-  .alt-hdr__actions { justify-self: end; display: flex; align-items: center; gap: 8px; flex: none; }
+  .alt-hdr__actions { flex: none; display: flex; align-items: center; gap: 8px; }
   .alt-hdr__icon {
     display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;
     border: 1px solid rgba(27, 39, 51, 0.12); background: rgba(255, 255, 255, 0.4); color: var(--alt-ink);
@@ -316,8 +316,8 @@ const nav = [
   @media (max-width: 1299px) {
     .alt-hdr__nav, .alt-hdr__login, .alt-hdr__pub { display: none; }
     .alt-hdr__burger { display: inline-flex; }
-    .alt-hdr__bar-in { grid-template-columns: auto 1fr; height: 66px; }
-    .alt-hdr__actions { grid-column: 2; }
+    .alt-hdr__bar-in { height: 66px; }
+    .alt-hdr__actions { margin-left: auto; }
   }
   @media (min-width: 1300px) { .alt-hdr__burger { display: none; } }
   @media (prefers-reduced-motion: reduce) { .alt-hdr, .alt-hdr__bar, .alt-hdr__mark, .alt-hdr__pub { transition: none; } }
