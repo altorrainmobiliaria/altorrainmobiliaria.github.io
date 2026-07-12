@@ -13,7 +13,7 @@
 
 ## ⚠️ Flags de riesgo activos
 - ⚖️ **Matrícula de arrendador OBTENIDA** ✅ (dueño, 2026-07-10); el Nº real va al footer al cierre de obra (hoy `000000`) → blocker de producción (kickoff §1).
-- 🔥 **Firebase → plan SPARK (gratis) 2026-07-12** ⚠️ — aviso de Google (trial vencido o tarjeta desvinculada; **NO lo hicimos nosotros**). **NO crítico**: el portal live NO usa Firebase aún (datos DEMO en Cloudflare); Spark solo bloquea **Cloud Functions**. Re-vincular tarjeta → Blaze cuando toque cablear forms→`solicitudes` (CF) o Wompi (**TODO-26**). Blaze diseñado para NO costar (free-tier). Detalle Firebase → `50-CONFIG` + R0: 7 CFs gen2 · `propiedades` VACÍA (fichas viejas descartadas) · CLI `altorrainmobiliaria@gmail.com`.
+- 🔥 **Firebase: BLAZE restaurado 2026-07-12** ✅ (bajó a Spark ese día por aviso de Google —trial/tarjeta, NO lo hicimos nosotros—; **Daniel re-vinculó la tarjeta → Blaze** el mismo día, listo para cuando cablear CFs/Wompi). Sin costo ni impacto: el portal live no usa Firebase aún (datos DEMO en Cloudflare); Blaze diseñado para NO costar (free-tier). Detalle → `50-CONFIG` + R0: 7 CFs gen2 · `propiedades` VACÍA (el counter `config/counters` trae 5 stale del inventario viejo) · CLI `altorrainmobiliaria@gmail.com`.
 - 🔗 **Constancias de liderazgo pendientes ×3**: payloads en `sinapsis-cerebros/references/import-{cars,bersaglio,insema}-2026-07-10-liderazgo.md` — los aplica el operador local de cada repo.
 
 ## 🧩 Sub-sistemas
