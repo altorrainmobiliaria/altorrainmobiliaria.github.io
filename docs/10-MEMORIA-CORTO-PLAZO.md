@@ -16,8 +16,8 @@
 > Precios, landings de barrio, panel de usuario (favoritos/alertas/perfil inquilino), Rango+Rentímetro, Journal,
 > portal Aliados/Brokers, panel Admin — se construyen cuando toque su superficie. **AHORA (Opus toma las riendas,
 > Carta de Derechos del PLAN-ENDURECIDO):** construir Ola 1 réplica-exacta de los mockups sobre el scaffold
-> `portal/` (Astro 7 + CF Workers + capa de datos ya lista). Orden: **D1 ✅ (§23) → HOME parte 1 ✅ (`Header.astro` + hero+buscador+"Cuatro maneras", §24)
-> → HOME parte 2 (secciones restantes + `Footer.astro`) → SERP+mapa → ficha → estancias → publica → precios/landings/panel/rango/journal/aliados/admin.**
+> `portal/` (Astro 7 + CF Workers + capa de datos ya lista). Orden: **D1 ✅ (§23) → HOME: `Header`+`Footer`+`PropertyCard` compartidos ✅ + hero+buscador+"Cuatro maneras"+destacadas+arriendo ✅ (§24/§24.8)
+> → HOME parte 2b (cerca/valoradas/proyectos/journal/brokers + WebP) → SERP+mapa → ficha → estancias → publica → precios/landings/panel/rango/aliados/admin.**
 > ⚠️ **El diseño real es DUAL-MODE, NO "Liquid Glass"**: blanco plano `#FFFFFF` (default, contenido) + neumorfismo `#eaf0f7` (SOLO home+nav) + navy `#062743` (secciones). Tipografía = **Cormorant Garamond + Hanken Grotesk** (no Cardo/Helvetica-Now → `[RATIFICAR-DUEÑO]`).
 > 🚦 **BLOQUEO #1 = LOTE-DUEÑO** (PLAN-ENDURECIDO §4): sin secrets Cloudflare (R2/token/CF_DEPLOY) Opus queda en
 > dev-local; + abogado toque (i) gatea cutover; + RNT/cifras/matrícula. Pedirlo como UN lote.** La voz de
