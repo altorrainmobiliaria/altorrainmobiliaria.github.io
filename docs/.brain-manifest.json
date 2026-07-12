@@ -62,10 +62,10 @@
     }
   ],
   "deepAudit": {
-    "last": "2026-06-15",
-    "coveredHeaderCount": 12,
+    "last": "2026-07-12",
+    "coveredHeaderCount": 30,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "_que": "Nivel-2 #1 REAL con artefacto (ADR §12, inline) — antes 2026-06-09 era fachada (fecha de instalacion del cerebro, sin auditoria ni artefacto)"
+    "_que": "Nivel-2 #2 (ADR §30, post-Ola 1): SANO + retrieval funcional; 7 hallazgos in-repo curados + 10 kernel (owner=cars, TODO-23/24). Artefacto en boveda 2026-07-12-auditoria-*. Previa #1 = §12 (2026-06-15, cubrio 12)"
   }
 }

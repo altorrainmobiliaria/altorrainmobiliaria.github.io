@@ -109,7 +109,10 @@ Cuando el portal maneje plata: (1) skill global `auditoria-financiera` (7 invari
 ---
 
 ## §Meta — meta-aprendizajes del propio cerebro
-> (Vacío al instalar. Se llena cuando el cerebro contribuya a un error — Reflejo de Autocrítica §G.4.)
+> Se llena cuando el cerebro contribuye a un error — Reflejo de Autocrítica §G.4.
+
+### M-01 — El tablero `05` se rezaga cuando la realidad avanza si el CIERRE no lo re-fresca en el mismo commit *(auditoría §30, reincidencia de F3/§12)*
+**Patrón (reincidente)**: al cerrar una ola/hito, el commit de CIERRE consolida en `10` (WIP) y en ADRs, pero `05` (heartbeat) se queda con el estado de la ola ANTERIOR — su §Sub-sistemas y su sello de fecha **caducan solos** y CONTRADICEN a `10`. La auditoría §12 ya lo cazó (F3: `05` branch stale); reapareció en §30 (F-01: `05` decía "§23-§27" con estancias/turismo "pendientes" cuando ya estaban LIVE). **Por qué el cerebro contribuyó**: `05` es SSoT de estado, pero ningún gate cruza `05`↔`10`↔git en `--boot` y la frescura (#12) valida una fecha tecleada, jugable (K-04). **Regla**: todo commit que cierra ola/hito toca `05` en el MISMO cambio que `10` (frescura pareada, §G.4) — re-sella la fecha, reconcilia §Sub-sistemas, y pon `verificado-vivo: <fecha>` en los claims LIVE (activa el gate #16). **Corolario**: `10`/`05` NUNCA citen su "último commit `<SHA>`" (el commit de cierre nace DESPUÉS de escribir el nodo) → usa "pusheado a `main`" sin SHA. Backstop de linter pendiente → TODO-23 (K-01..K-04).
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > De la sesión cars (PLAN UNIFICADO, cars §237). Mismo dueño/operación en los 4 repos.
