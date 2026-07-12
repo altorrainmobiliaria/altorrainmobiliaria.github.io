@@ -1,0 +1,248 @@
+---
+/*
+ * ESTANCIAS — detalle de alojamiento / corta estancia (Ola 1). Réplica de ALTORRA Estancias.dc.html.
+ * Widget de reserva FUNCIONAL (fechas → recalcula noches/subtotal/servicio/total). Reutiliza Header/Footer.
+ * "No se hará ningún cargo por ahora" — el pago real (Wompi custodia) es Ola 2. Hoy = solicitud de reserva.
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const gallery = ['/assets/villa-pool.webp', '/assets/estate-golden.webp', '/assets/chalet-dusk.webp', '/assets/villa-modern.webp'];
+const meta = [
+  { i: '<circle cx="9" cy="8" r="3.4"/><path d="M2 20c0-3.3 3-5.5 7-5.5s7 2.2 7 5.5"/><path d="M17 5.2A3.4 3.4 0 0 1 17 12M22 20c0-2.6-1.6-4.5-4-5.2"/>', v: '8', l: 'huéspedes' },
+  { i: '<path d="M2 4v16"/><path d="M2 9h16a3 3 0 0 1 3 3v8"/><path d="M2 15h20"/><path d="M6 9V7a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v2"/>', v: '4', l: 'alcobas' },
+  { i: '<path d="M5 12V6a2 2 0 0 1 2-2 2 2 0 0 1 2 2"/><path d="M4 12h16a1 1 0 0 1 1 1v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-2a1 1 0 0 1 1-1z"/><path d="M7 19l-1 2M18 19l1 2"/>', v: '3', l: 'baños' },
+];
+const ofrece = [
+  { i: '<path d="M2 15c2 0 2 1.6 4 1.6s2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6"/><path d="M2 19c2 0 2 1.6 4 1.6s2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6"/><path d="M9 11V5a2 2 0 0 1 4 0"/>', t: 'Piscina privada' },
+  { i: '<path d="M3 21V5a2 2 0 0 1 2-2h5v18M14 21V9h5a1 1 0 0 1 1 1v11M3 21h18"/>', t: 'Terraza con vista' },
+  { i: '<path d="M5 12.5a10 10 0 0 1 14 0M8.5 15.5a5.5 5.5 0 0 1 7 0M12 18.5h.01"/>', t: 'Wifi de alta velocidad' },
+  { i: '<path d="M4 8h9a2.5 2.5 0 1 0-2.5-2.5M4 12h13a2.5 2.5 0 1 1-2.5 2.5M4 16h8a2.5 2.5 0 1 1-2.5 2.5"/>', t: 'Aire acondicionado' },
+  { i: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 3v6h8V3M9 13h.01M9 17h.01"/>', t: 'Cocina equipada' },
+  { i: '<path d="M5 13l1.6-4.8A2 2 0 0 1 8.5 7h7a2 2 0 0 1 1.9 1.2L19 13"/><path d="M4 13h16a1 1 0 0 1 1 1v4H3v-4a1 1 0 0 1 1-1z"/><circle cx="7.5" cy="18" r="1.4"/><circle cx="16.5" cy="18" r="1.4"/>', t: 'Parqueadero' },
+  { i: '<path d="M12 3l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V6z"/><path d="M9 12l2 2 4-4"/>', t: 'Seguridad 24 h' },
+  { i: '<path d="M3 21h18M5 21V10M19 21V10M4 10 12 4l8 6z"/><path d="M9 21v-6h6v6"/>', t: 'Zona colonial' },
+];
+---
+
+<BaseLayout title="Casa con piscina y terraza colonial — Estancias ALTORRA">
+  <Header active="estancia" />
+
+  <main id="main">
+    <nav class="est-bc" aria-label="Ruta de navegación">
+      <a href="/">Inicio</a><span>/</span>
+      <a href="/estancias">Corta estancia</a><span>/</span>
+      <span class="est-bc__cur">Casa con piscina y terraza colonial</span>
+    </nav>
+
+    <!-- Cabecera + galería -->
+    <div class="est-top">
+      <div class="est-head">
+        <div>
+          <p class="alt-eyebrow">Ciudad Amurallada · Cartagena</p>
+          <h1 class="est-h1">Casa con piscina y terraza colonial</h1>
+        </div>
+        <div class="est-head__tags">
+          <span class="alt-seal est-verif"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/><path d="M9 12l2 2 4-4"/></svg> Anfitrión verificado</span>
+          <span class="est-rating"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"/></svg> 4.97 · 128 reseñas</span>
+        </div>
+      </div>
+      <div class="est-gal">
+        <div class="est-gal__main"><img id="est-main" src={gallery[0]} alt="Vista principal del alojamiento" /></div>
+        <div class="est-gal__cell"><img src={gallery[1]} alt="Terraza" loading="lazy" /></div>
+        <div class="est-gal__cell"><img src={gallery[2]} alt="Interior" loading="lazy" /></div>
+      </div>
+      <div class="est-thumbs">
+        {gallery.map((g, i) => <button class={`est-thumb${i === 0 ? ' is-on' : ''}`} type="button" data-src={g}><img src={g} alt={`Foto ${i + 1}`} loading="lazy" /></button>)}
+      </div>
+    </div>
+
+    <!-- Info + reserva -->
+    <div class="est-body">
+      <div class="est-main-col">
+        <div class="est-meta">
+          {meta.map((m) => (
+            <span class="est-metaitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={m.i}></svg><b>{m.v}</b> {m.l}</span>
+          ))}
+        </div>
+
+        <div class="est-sec est-sec--desc">
+          <p>Casa colonial restaurada en el corazón de la Ciudad Amurallada, a dos cuadras de la Plaza Santo Domingo. Patio central con piscina, terraza en la azotea con vista a las cúpulas y noches frescas de brisa marina.</p>
+          <p>Cuatro alcobas amplias, cocina equipada y espacios pensados para descansar en familia o con amigos. Anfitrión local con acompañamiento durante toda tu estadía.</p>
+        </div>
+
+        <div class="est-sec">
+          <h2>Lo que ofrece este lugar</h2>
+          <div class="est-ofrece">
+            {ofrece.map((o) => (
+              <div class="est-amenity"><span class="alt-chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={o.i}></svg></span>{o.t}</div>
+            ))}
+          </div>
+        </div>
+
+        <div class="est-sec est-host">
+          <span class="est-host__ini">AC</span>
+          <div>
+            <p class="est-host__name">Anfitrión: Alejandro C.</p>
+            <p class="est-host__role">Superanfitrión · 6 años en ALTORRA · responde en ~1 h</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widget de reserva -->
+      <aside class="est-aside" id="reservar">
+        <div class="est-book">
+          <div class="est-book__top">
+            <p class="est-book__price"><b>$850.000</b> / noche</p>
+            <span class="est-book__rate"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"/></svg> 4.97</span>
+          </div>
+          <div class="est-book__box">
+            <div class="est-book__dates">
+              <label><span>Llegada</span><input type="date" id="est-ci" /></label>
+              <label><span>Salida</span><input type="date" id="est-co" /></label>
+            </div>
+            <div class="est-book__guests">
+              <div><span class="est-book__glbl">Huéspedes</span><span id="est-guests-label">2 huéspedes</span></div>
+              <div class="est-book__stepper">
+                <button type="button" id="est-dec" aria-label="Menos huéspedes">−</button>
+                <span id="est-guests">2</span>
+                <button type="button" id="est-inc" aria-label="Más huéspedes">+</button>
+              </div>
+            </div>
+          </div>
+          <button class="alt-btn alt-btn--navy est-book__cta" id="est-reservar" type="button">Reservar<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+          <p class="est-book__note">No se hará ningún cargo por ahora</p>
+          <div class="est-book__lines">
+            <div class="est-line"><span id="est-line">$850.000 × 3 noches</span><span id="est-subtotal">$2.550.000</span></div>
+            <div class="est-line"><span>Tarifa de limpieza</span><span>$180.000</span></div>
+            <div class="est-line"><span>Servicio ALTORRA</span><span id="est-service">$255.000</span></div>
+            <div class="est-line est-line--total"><span>Total</span><span id="est-total">$2.985.000</span></div>
+          </div>
+          <div class="alt-alert alt-alert--success est-confirm" id="est-confirm" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            Solicitud enviada · Alejandro te confirmará en breve.
+          </div>
+        </div>
+        <p class="est-cancel">Cancelación gratuita hasta 5 días antes</p>
+      </aside>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .est-bc { max-width: 1300px; margin-inline: auto; padding: 20px clamp(16px, 4vw, 48px) 0; display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--alt-text); flex-wrap: wrap; }
+  .est-bc a { color: var(--alt-text); text-decoration: none; }
+  .est-bc a:hover { color: var(--alt-link); }
+  .est-bc span { color: var(--alt-track); }
+  .est-bc__cur { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
+
+  .est-top { max-width: 1300px; margin-inline: auto; padding: 18px clamp(16px, 4vw, 48px) 0; }
+  .est-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 18px; }
+  .est-h1 { margin-top: var(--alt-space-2); font-size: clamp(30px, 4.4vw, 48px); line-height: 1.02; }
+  .est-head__tags { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .est-rating { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
+  .est-rating svg { width: 14px; height: 14px; color: var(--alt-gold); }
+
+  .est-gal { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; height: clamp(300px, 42vw, 460px); }
+  .est-gal__main, .est-gal__cell { border-radius: var(--alt-r-lg); overflow: hidden; }
+  .est-gal__main img, .est-gal__cell img { width: 100%; height: 100%; object-fit: cover; }
+  .est-thumbs { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .est-thumb { width: 92px; height: 64px; border-radius: var(--alt-r-chip, 10px); overflow: hidden; cursor: pointer; padding: 0; border: 0; background: none; outline: 2px solid transparent; outline-offset: 1px; transition: outline-color var(--alt-dur) var(--alt-ease); }
+  .est-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .est-thumb.is-on { outline-color: var(--alt-gold); }
+
+  .est-body { max-width: 1300px; margin-inline: auto; padding: 34px clamp(16px, 4vw, 48px) 64px; display: flex; gap: clamp(28px, 3.4vw, 56px); flex-wrap: wrap; align-items: flex-start; }
+  .est-main-col { flex: 1 1 540px; min-width: 300px; }
+  .est-meta { display: flex; gap: clamp(16px, 3vw, 34px); flex-wrap: wrap; padding-bottom: 26px; border-bottom: 1px solid var(--alt-hairline); }
+  .est-metaitem { display: inline-flex; align-items: center; gap: 9px; font-size: 15px; color: var(--alt-ink); }
+  .est-metaitem svg { width: 19px; height: 19px; stroke: var(--alt-gold-raw); }
+  .est-metaitem b { font-weight: var(--alt-fw-bold); }
+
+  .est-sec { padding: 30px 0; border-bottom: 1px solid var(--alt-hairline); }
+  .est-sec--desc p { font-size: 15.5px; line-height: 1.72; color: var(--alt-text); margin-bottom: 14px; }
+  .est-sec--desc p:last-child { margin-bottom: 0; }
+  .est-sec h2 { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 26px; color: var(--alt-ink); letter-spacing: normal; margin-bottom: 20px; }
+  .est-ofrece { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: 16px 26px; }
+  .est-amenity { display: flex; align-items: center; gap: 12px; font-size: 14.5px; color: var(--alt-ink); }
+  .est-amenity .alt-chip { width: 40px; height: 40px; }
+  .est-amenity .alt-chip svg { width: 19px; height: 19px; }
+  .est-host { display: flex; align-items: center; gap: 15px; border-bottom: 0; }
+  .est-host__ini { width: 56px; height: 56px; border-radius: 50%; background: var(--alt-ink); display: flex; align-items: center; justify-content: center; flex: none; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 20px; color: var(--alt-gold-bright); }
+  .est-host__name { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 22px; color: var(--alt-ink); }
+  .est-host__role { font-size: 13px; color: var(--alt-text); margin-top: 2px; }
+
+  /* Widget de reserva */
+  .est-aside { flex: 1 1 340px; min-width: 300px; position: sticky; top: 92px; align-self: flex-start; }
+  .est-book { background: var(--alt-white); border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-lg); padding: 24px; box-shadow: var(--alt-elev-booking, 0 34px 64px -40px rgba(27, 39, 51, 0.45)); }
+  .est-book__top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 20px; }
+  .est-book__price { font-size: 14px; color: var(--alt-text); }
+  .est-book__price b { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 32px; color: var(--alt-ink); }
+  .est-book__rate { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); }
+  .est-book__rate svg { width: 14px; height: 14px; color: var(--alt-gold); }
+  .est-book__box { border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-frame, 14px); overflow: hidden; margin-bottom: 16px; }
+  .est-book__dates { display: grid; grid-template-columns: 1fr 1fr; }
+  .est-book__dates label { padding: 12px 14px; border-bottom: 1px solid var(--alt-hairline); cursor: pointer; }
+  .est-book__dates label:first-child { border-right: 1px solid var(--alt-hairline); }
+  .est-book__dates span, .est-book__glbl { display: block; font-size: 10px; font-weight: var(--alt-fw-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text); margin-bottom: 3px; }
+  .est-book__dates input { border: none; outline: none; font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); width: 100%; background: transparent; padding: 0; font-family: var(--alt-font-body); }
+  .est-book__guests { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; }
+  .est-book__guests > div:first-child span:last-child { font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
+  .est-book__stepper { display: flex; align-items: center; gap: 12px; }
+  .est-book__stepper button { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--alt-hairline-strong); background: var(--alt-white); color: var(--alt-ink); font-size: 18px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease); }
+  .est-book__stepper button:hover { border-color: var(--alt-gold); color: var(--alt-link); }
+  .est-book__stepper > span { font-size: 15px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); min-width: 16px; text-align: center; }
+  .est-book__cta { width: 100%; }
+  .est-book__note { text-align: center; font-size: 12px; color: var(--alt-text); margin-top: 12px; }
+  .est-book__lines { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--alt-hairline); display: flex; flex-direction: column; gap: 11px; }
+  .est-line { display: flex; justify-content: space-between; font-size: 14px; color: var(--alt-text); }
+  .est-line--total { padding-top: 13px; border-top: 1px solid var(--alt-hairline); margin-top: 2px; }
+  .est-line--total span { font-size: 16px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); }
+  .est-confirm { margin-top: 16px; }
+  .est-cancel { text-align: center; font-size: 12px; color: var(--alt-text); margin-top: 14px; }
+
+  @media (max-width: 620px) {
+    .est-gal { grid-template-columns: 1fr; height: auto; }
+    .est-gal__main, .est-gal__cell { aspect-ratio: 16 / 10; }
+  }
+</style>
+
+<script>
+  // Reserva: recalcula noches/subtotal/servicio/total según fechas; stepper de huéspedes; confirmar.
+  const PRICE = 850000, CLEANING = 180000, SERVICE_RATE = 0.1;
+  const fmt = (n: number) => '$' + n.toLocaleString('es-CO');
+  const $ = (id: string) => document.getElementById(id);
+  let guests = 2;
+
+  function recalc() {
+    const ci = ($('est-ci') as HTMLInputElement)?.value;
+    const co = ($('est-co') as HTMLInputElement)?.value;
+    let nights = 3;
+    if (ci && co) {
+      const d = (new Date(co).getTime() - new Date(ci).getTime()) / 86400000;
+      nights = d > 0 ? Math.round(d) : 0;
+    }
+    const subtotal = PRICE * nights;
+    const service = Math.round(subtotal * SERVICE_RATE);
+    const total = nights > 0 ? subtotal + CLEANING + service : 0;
+    const nLbl = nights === 1 ? ' noche' : ' noches';
+    if ($('est-line')) $('est-line')!.textContent = `${fmt(PRICE)} × ${nights}${nLbl}`;
+    if ($('est-subtotal')) $('est-subtotal')!.textContent = fmt(subtotal);
+    if ($('est-service')) $('est-service')!.textContent = fmt(service);
+    if ($('est-total')) $('est-total')!.textContent = fmt(total);
+  }
+  function setGuests(g: number) {
+    guests = Math.max(1, Math.min(8, g));
+    if ($('est-guests')) $('est-guests')!.textContent = String(guests);
+    if ($('est-guests-label')) $('est-guests-label')!.textContent = guests === 1 ? '1 huésped' : `${guests} huéspedes`;
+  }
+  $('est-ci')?.addEventListener('change', recalc);
+  $('est-co')?.addEventListener('change', recalc);
+  $('est-dec')?.addEventListener('click', () => setGuests(guests - 1));
+  $('est-inc')?.addEventListener('click', () => setGuests(guests + 1));
+  $('est-reservar')?.addEventListener('click', () => $('est-confirm')?.removeAttribute('hidden'));
+</script>
