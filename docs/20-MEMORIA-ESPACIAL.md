@@ -12,6 +12,13 @@
 - **8 Cloud Functions** (Node 20, `us-central1`): `onNewSolicitud` (email admin + lead scoring), `onSolicitudStatusChanged` (email cliente), `onPropertyChange` (regen SEO debounce 5min), `triggerSeoRegeneration` (callable super_admin), `createManagedUserV2`/`deleteManagedUserV2`/`updateUserRoleV2`, `cleanupOldLoginAttempts`.
 - **Admin SPA** = `admin.html`, objeto global `window.IP`. RBAC 3 roles, lockout 5 intentos, sesión 8h, inactividad 30min.
 
+## §Portal (greenfield · Astro 7 + CF Workers) — dónde vive cada cosa
+> ⚠️ El portal (`portal/`) es SEPARADO del sitio legacy de §Stack. Stack sellado ADR §16.
+- **Diseño fuente (SSoT visual)**: `portal/design/` — `mockups/*.dc.html` (8 pantallas aprobadas por Daniel), `assets/` (logo+fotos), `VISION-DUENO.md` (paleta+visión funcional), `screenshots/`.
+- **Design system D1** (ADR §23): `portal/src/styles/tokens.css` (SSoT de tokens `--alt-*`) → `base.css` (reset+tipografía+a11y) → `components.css` (primitivas `.alt-btn/.alt-pill/.alt-card/.alt-eyebrow/.alt-chip/.alt-badge/.alt-seal/.alt-field/.alt-alert`). Importados EN ORDEN en `src/layouts/BaseLayout.astro` (+ fuentes Google `<link>` Cormorant Garamond + Hanken Grotesk). **Styleguide viva** = ruta `/design-system` (`src/pages/design-system.astro`, dev/noindex — excluir de prod en cutover). **Modelo DUAL-MODE**: `--alt-surface #fff` default (contenido, elevación plana) · `--alt-surface-neu #eaf0f7` opt-in (home+nav, neumorfismo `--alt-nm-*`) · `--alt-surface-ink #062743` (secciones oscuras). A11y AA verificado (contraste WCAG contra el peor claro #eaf0f7).
+- **Capa de datos** (ADR §22): `src/lib/data/` (`client.ts`+`firestore-rest.ts`+`cache.ts`, edge-safe REST) · `src/lib/domain/` (tipos) · `src/middleware.ts` (cablea `locals.altorra`). Firebase emulador+seed en `portal/firebase/`.
+- **Dev**: `npm --prefix portal run dev` (`astro dev`, `.claude/launch.json` config `portal`, puerto 4321). Staging LIVE = `altorra-portal.altorrainmobiliaria.workers.dev` (noindex).
+
 ## §Blaze — free-tier estricto (NUNCA exceder)
 Plan Blaze pero diseñado para **NO costar**. Límites: Firestore 50K lecturas / 20K escrituras / 20K borrados día, 1 GiB ·
 Auth 50K MAU · Storage 5GB · Functions 2M inv/mes · RTDB 1GB. **Reglas**: NUNCA `onSnapshot` en colecciones completas
