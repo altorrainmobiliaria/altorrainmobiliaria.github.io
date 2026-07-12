@@ -9,15 +9,20 @@
 
 ## 🎯 Foco actual — RELEVO CURADO (cierre 2026-07-12 por saturación de contexto)
 
-> ⚡ **ESTADO — Ola 1: el PORTAL está COMPLETO y LIVE** (dev + staging) — **los 8 mockups aprobados construidos**
-> (7 públicos + `gestion` admin §31). Verificado EN VIVO (0 off-palette, 0 errores). Todo pusheado a `main`.
-> **31 ADRs; cerebro SANO + auditado Nivel-2 (§30 · 2026-07-12, retrieval FUNCIONAL).**
+> ⚡ **ESTADO — RECONSTRUCCIÓN POR FIDELIDAD + ELEVACIÓN DE DISEÑO** (Ola 1, §32). El portal está en staging PERO
+> **DIFIERE de los mockups aprobados** (Daniel lo cazó; la verificación vieja §24-§29 revisó COLOR, no estructura → L-24).
+> **32 ADRs; cerebro SANO.** Mapa de fidelidad de las 7 páginas → **§32.2**.
 >
-> **Páginas LIVE** (`portal/src/pages/`): `index`(home, 8 secciones) · `[operacion]`(=`/comprar`+`/arrendar`
-> SERP con filtros+mapa esquemático) · `ficha` (detalle+WhatsApp+sello Verificado) · `publicar` (lead form
-> funcional) · `estancias` (reserva funcional por fechas) · `turismo` (landing) · `404` (en construcción) · `gestion` (admin, 3 roles, noindex, §31) ·
-> `design-system` (styleguide dev). **Componentes compartidos** (`portal/src/components/`): `Header` ·
-> `Footer` · `PropertyCard`. Detalle de dónde vive cada cosa → `20 §Portal`.
+> **✅ YA rebuild/elevado**: **Header** (v3 premium glass full-bleed: emblema oficial + wordmark Cormorant + íconos
+> Lucide/Simple + auto-hide al scroll) · **Hero** de la home (carrusel de 4 banners + buscador superpuesto).
+> **⏳ FALTA rebuild fiel + elevado**: Home (10 secciones + arriendo→lista) · Turismo · Estancias (reseñas) · Publicar
+> (franja 4 beneficios) · SERP (interactividad JS). Es el WIP activo (TODO-27, §32.7).
+>
+> **🎨 DISEÑO ELEVADO (mandato Daniel, §32.3)**: fusión **Neumorfismo + Skeuomorfismo + Glassmorfismo + Liquid Glass**,
+> sensación de **app** (la app futura = idéntica), moderno/premium. **Que NO peleen**: cada componente lidera con UNA
+> técnica — **header=glass+metal · cards=neumorfismo · overlays=glass**. Íconos: NO `astro-icon` (rompe Workers, L-23) →
+> paths **Lucide (UI) + Simple Icons (redes)** embebidos inline. Emblema = **`altorra-emblema.webp`** (Canva `DAGxI7p5OBk`,
+> solo el "A" metálico; el viejo `altorra-mark-t.webp` pixelado/con-texto está RETIRADO). Componentes → `20 §Portal`.
 >
 > **🎨 DISEÑO SELLADO — NO re-litigar** (SSoT `portal/src/styles/tokens.css` + ADR §23-§23.9 + memorias
 > `identidad-marca-inmobiliaria`/`sello-marca-altorra`; ratificaciones TODAS cerradas): paleta OFICIAL
@@ -31,10 +36,13 @@
 > desincroniza el viewport de la captura del scroll real del DOM — quirk del renderer); el barrido anti-off-palette = `javascript_tool` con `getComputedStyle`
 > sobre `main *,header *,footer *` contra el allowlist de la paleta.
 >
-> **▶ SIGUIENTE (elegir con Daniel)**:
-> 1. ✅ HECHO: Auditoría Nivel-2 (§30) · Gestion admin (§31). **Los 8 mockups aprobados están construidos.**
-> 2. **Transversales**: MapLibre real (hoy mapa esquemático) · cablear formularios (publicar/estancias) → `solicitudes` vía Cloud Function (hoy client-side) · datos Firestore REALES (hoy DEMO estáticos — decisión catálogo SSG-vs-índice DIFERIDA a Fable, TODO-22) · pago Wompi (Ola 2, custodia).
-> 3. Páginas SIN mockup (invertir/aliados/journal/Nosotros/Contacto/favoritos/ingreso) → **requieren aprobación de diseño de Daniel (§3.2), NO inventar UI**.
+> **▶ SIGUIENTE — REBUILD DE FIDELIDAD (TODO-27, de arriba abajo, mostrando cada bloque a Daniel en staging)**:
+> 1. **Home**: agregar las 10 secciones faltantes (propiedad-del-día · carrusel En-venta · **arriendo→LISTA** · estancias ·
+>    explora-zona · recientes · valoradas · CTA corta-estancia · proyectos · invertir · redes), fieles al `.dc.html` + elevadas.
+> 2. **Turismo** (Pasadías + inversión 3-cards glass + zonas ×6) · **Estancias** (sección Reseñas + galería) · **Publicar**
+>    (franja 4 beneficios) · **SERP** (interactividad JS: filtros/fav/hover-pin). Detalle de qué falta por página → §32.2.
+> 3. Después: transversales (MapLibre · forms→`solicitudes` vía CF [needs Blaze, TODO-26] · datos Firestore reales [TODO-22] · Wompi Ola 2) ·
+>    páginas SIN mockup (invertir/aliados/journal/Nosotros/Contacto/favoritos/ingreso → requieren diseño de Daniel, NO inventar).
 >
 > **🚦 BLOQUEADORES DE PRODUCCIÓN (solo Daniel los da)**: Nº **matrícula de arrendador** real (footer trae
 > `000000`) · **dirección física** exacta (hoy solo ciudad) · **RNT** real (blocker alojamientos). Contacto
@@ -53,26 +61,29 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-17** | **Ola 0 — ejecución Opus**: ✅ 0.1 scaffold (§19) · ✅ 0.2 staging LIVE (§21) · ✅ 0.7 modelo de datos (tipos+rules+`client.ts`+E2E 21/21, §22/§22.8) · ✅ 0.3 D0/D1 (§23). **Falta**: E2E "tras cache" (Workers Caching en staging, gate T9) + deploy de rules (coordinado con retiro legacy — NO ahora) · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
-| **TODO-18** | **Carril D + Ola 1 páginas** ✅ **COMPLETO**: D1 sellado (§23) · **los 8 mockups aprobados LIVE** (§24-§31: home/SERP/ficha/publicar/estancias/turismo/404 + `gestion` admin §31 + Header/Footer/PropertyCard + WebP). ▶ Resta solo **transversales** (Foco §2). | 🔄 OPUS | 0 off-palette verificado |
+| **TODO-18** | **Ola 1 páginas** ⚠️ **"completo" era FALSO** (§32): las páginas se construyeron pero **DIFIEREN de los mockups** → superado por **TODO-27** (rebuild de fidelidad). D1 sellado (§23) sigue válido. | ➡️ TODO-27 | corregido por §32 |
 | **TODO-20** | **Constancias liderazgo ×3**: payloads en la skill; los aplican los operadores cars/bersaglio/insema. | ⏸️ externo | |
 | **TODO-21** | **Lote-dueño**: ✅ Cloudflare hecho. Restante: matrícula real · dirección física · RNT · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`) · allowlist git (opcional). | ⏸️ dueño | pedir por LOTES |
 | **TODO-22** | **Auditoría Fable** (al volver su cuota): (a) ADR §22 `[REVISAR-FABLE]` (capa de datos OD1); (b) **decisión catálogo público SSG build-time vs doc-índice denormalizado** (gatea datos reales del portal). | 🔮 FABLE | |
 | **TODO-23** | 🔧 **Kernel hardening** (cross-repo, owner=cars; `brain-check.mjs` byte-idéntico ×3 → NO editar aquí): K-01 `verificado-vivo` obligatorio · K-02 gate boot vs target real · K-03 nudge deepAudit en `--boot` · K-04 regex frescura +"cierre" · K-05 #7 exige crudo local · K-09 anclas `§`. Detalle → §30. | 🔴 kernel | sinapsis cars |
 | **TODO-24** | 🧷 **SSoT/memoria frágil** (K-06/07/10, §30): diseño sellado depende de memoria del harness NO versionada → reforzar boot→`tokens.css`/§23 + evaluar espejo; ssotFact paleta con cuidado; re-apuntar ssotFact cache→portal al cutover. | 🟡 abierto | |
 | **TODO-25** | 📟 **deploy-info.json congelado** (F-03, §30): 76 commits atrás pese a `bump-version.yml on:push`. Verificar runs GH Actions + reconciliar claim CLAUDE.md §1/§4. Legacy → baja urgencia. | 🟡 abierto | sin `gh` |
+| **TODO-26** | 🔥 **Firebase → Spark** (2026-07-12, aviso de Google — NO lo hicimos nosotros; trial vencido o tarjeta desvinculada). NO crítico hoy: el portal live NO usa Firebase (datos DEMO en Cloudflare); solo bloquea Cloud Functions. **Re-vincular tarjeta → Blaze** cuando toque cablear forms→`solicitudes` (CF) o Wompi. Blaze diseñado para NO costar (free-tier). | 🟡 dueño | sin urgencia |
+| **TODO-27** | 🎨 **REBUILD DE FIDELIDAD + elevación** (WIP ACTIVO, §32): reconstruir páginas fieles a mockups + estética elevada (§32.3, fusión sin choque). ✅ Header + Hero. ⏳ Home(10 secc + arriendo→lista)/Turismo/Estancias(reseñas)/Publicar(franja)/SERP(interactividad). Mapa por página → §32.2. | 🔄 OPUS | mostrar a Daniel por bloque |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-12 (OPUS 4.8 — Gestion `/gestion`, §31)**: construí el 8º y último mockup — panel admin (sidebar
-> navy + KPIs + tabla pipeline + actividad + demanda) con segmentado de 3 roles funcional (JS vanilla SIN
-> innerHTML: vistas alternadas por `hidden`). Prop `noindex` aditivo en BaseLayout. Verificado por computed
-> styles: **0 off-palette**, 3 roles OK, noindex, home intacta. **Portal Ola 1 COMPLETO (8/8 mockups).**
+> **2026-07-12 (OPUS 4.8 — Fidelidad + diseño elevado, §32; CIERRE por 800k contexto)**: Daniel cazó que el portal
+> DIFIERE de los mockups (→ auditoría de fidelidad 7 páginas, §32.2 + L-24). Mandato: elevar diseño (fusión neu+skeu+
+> glass+liquid, app-like, premium **sin que los estilos peleen** §32.3). Rebuild hecho: **Header v3** (glass full-bleed +
+> emblema oficial de Canva + íconos Lucide/Simple embebidos [astro-icon rompe Workers → L-23] + wordmark Cormorant +
+> auto-hide + logo a la esquina, sin solapar nav) + **Hero** (carrusel 4 banners + buscador superpuesto) + imágenes HD.
+> 3 iteraciones de header con feedback de Daniel en staging. Firebase→Spark (TODO-26, no crítico). **PRÓXIMO: TODO-27** —
+> seguir el rebuild (Home 10 secciones → Turismo/Estancias/Publicar/SERP), fiel + elevado, mostrando cada bloque.
 
-> **2026-07-12 (OPUS 4.8 — Auditoría Nivel-2 #2, §30)**: híbrida (sondas directas + workflow 8-ag para 3/4/7).
-> **SANO + retrieval FUNCIONAL**; 7 hallazgos in-repo curados (F-01 `05` rezagada→**M-01**) + 10 kernel → TODO-23/24/25.
-> Artefacto+tabla → bóveda `2026-07-12-auditoria-*`.
+> *(Bitácora §30 auditoría + §31 gestion podadas — consolidadas en sus ADRs. §G.4 GC.)*
 
 > *(Bitácora D0-marca/voz/D1 del 07-11 podada — consolidada en ADRs §23-§29 + memorias `identidad-marca` +
 > `sello-marca-altorra` + bóveda `2026-07-11-*`. §G.4 GC.)*
