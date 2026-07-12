@@ -239,3 +239,11 @@ Propagación cross-repo desde **cars TODO-32 / §229**. Instalado `scripts/brain
 **26.5 Anti-patterns evitados**: gráficas (omitidas) · color ajeno (0) · reusar PropertyCard en similares · clase scoped cruzada (corregí `serp-map__grid`→`ficha-locmap__grid` local).
 **26.6 Archivos**: NUEVO `portal/src/pages/ficha.astro`. INTACTOS: componentes, tokens, otras páginas.
 **26.7 Doctrina + PENDIENTE**: §3.3 · §3.6 · §3.2 (WhatsApp-first sin gating). **Pendiente**: MapLibre real · galería lightbox real (hoy swap simple) · datos Firestore (ficha por `id`, TODO-22) · páginas restantes de la nav (estancias/invertir/publicar/turismo/aliados/gestion/journal) · un **404 con Header/Footer** para las rutas aún no construidas.
+
+## 27. ADR — Ola 1: 404 + PUBLICAR (`/publicar` con lead form) ⟦OPUS-4.8⟧ (2026-07-12)
+
+**27.1**: **`404.astro`** (Header/Footer + "en construcción" + CTAs) → las rutas de nav aún sin construir muestran marca, no error crudo. Verificado (`/estancias`→404 marca).
+**27.2**: **`publicar.astro`** (réplica `ALTORRA Publica.dc.html`, el CTA dorado "Publica tu inmueble") — hero (eyebrow+Cormorant H1+3 stats oro) con **formulario de avalúo** (nombre/teléfono/zona/tipo, **validación + estado de éxito client-side**; ⚠️ POST real a `solicitudes` vía Cloud Function = follow-up) + "Cuatro pasos" + **3 planes** (Gratis / Gestión Premium navy "Recomendado" 3% / Concierge Élite). Header `active="vender"`.
+**27.3 Verificación (EN VIVO)**: publicar → 3 stats, 4 pasos, 3 planes (featured navy), nav "Vender" activo, **form: submit vacío→error, submit válido→éxito+campos ocultos**, **0 off-palette**, 0 errores.
+**27.4 Archivos**: NUEVOS `404.astro`, `publicar.astro`. INTACTOS: resto.
+**27.5 Estado Ola 1**: viaje del COMPRADOR (home→SERP→ficha→WhatsApp) y del VENDEDOR (publicar→lead) LIVE. **Pendiente**: estancias (booking) · invertir · turismo · aliados · gestion · journal · Nosotros/Contacto · wiring de forms a `solicitudes` · MapLibre · datos Firestore reales.

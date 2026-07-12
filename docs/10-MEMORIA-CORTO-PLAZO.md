@@ -17,7 +17,7 @@
 > portal Aliados/Brokers, panel Admin — se construyen cuando toque su superficie. **AHORA (Opus toma las riendas,
 > Carta de Derechos del PLAN-ENDURECIDO):** construir Ola 1 réplica-exacta de los mockups sobre el scaffold
 > `portal/` (Astro 7 + CF Workers + capa de datos ya lista). Orden: **D1 ✅ (§23) → HOME ✅ FUNCIONALMENTE COMPLETA (`Header`+`Footer`+`PropertyCard` compartidos + hero+buscador+cuatro-maneras+destacadas+arriendo+cerca+brokers+journal+footer, §24/§24.8/§24.9)
-> → imágenes WebP ✅ (§24.10) → SERP `/comprar`+`/arrendar` ✅ (§25) → ficha `/ficha` ✅ (§26, WhatsApp+sello) → **404 con Header/Footer + estancias/publica/invertir (siguiente)** → precios/landings/panel/rango/aliados/admin. (MapLibre real + datos Firestore + filtros funcionales = pendientes transversales.)**
+> → imágenes WebP ✅ (§24.10) → SERP `/comprar`+`/arrendar` ✅ (§25) → ficha `/ficha` ✅ (§26) → 404 ✅ + publicar `/publicar` ✅ (§27, lead form) → **estancias/invertir/turismo/aliados/gestion/journal (siguiente)** → precios/landings/panel/rango/admin. (MapLibre + datos Firestore + wiring de forms a `solicitudes` = pendientes transversales.)**
 > ⚠️ **El diseño real es DUAL-MODE, NO "Liquid Glass"**: blanco plano `#FFFFFF` (default, contenido) + neumorfismo `#eaf0f7` (SOLO home+nav) + navy `#062743` (secciones). Tipografía = **Cormorant Garamond + Hanken Grotesk** (no Cardo/Helvetica-Now → `[RATIFICAR-DUEÑO]`).
 > 🚦 **BLOQUEO #1 = LOTE-DUEÑO** (PLAN-ENDURECIDO §4): sin secrets Cloudflare (R2/token/CF_DEPLOY) Opus queda en
 > dev-local; + abogado toque (i) gatea cutover; + RNT/cifras/matrícula. Pedirlo como UN lote.** La voz de
