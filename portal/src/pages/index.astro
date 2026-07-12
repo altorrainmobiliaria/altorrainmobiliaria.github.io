@@ -64,57 +64,138 @@ const maneras = [
   <Header active="inicio" />
 
   <main id="main">
-    <!-- HERO (superficie neumórfica) -->
+    <!-- HERO — carrusel de 4 banners + buscador superpuesto (réplica ALTORRA Portal.dc.html) -->
     <section class="home-hero">
-      <div class="home-hero__in">
-        <div class="home-hero__copy">
-          <p class="alt-eyebrow">Seguridad · Legalidad · Confianza</p>
-          <h1 class="home-hero__h">
-            Tu próximo hogar en Cartagena,
-            <span class="home-hero__accent">en las mejores manos.</span>
-          </h1>
-          <p class="home-hero__p">
-            Compra, arrienda, alójate o invierte con el acompañamiento de una inmobiliaria que cuida cada detalle, en toda la ciudad.
-          </p>
+      <div class="home-hero__car" data-carousel>
+
+        <!-- B0 · Vivienda -->
+        <div class="hbn hbn--full" data-b="0" data-active="1" data-nav="light">
+          <img class="hbn__img" src="/assets/hero-keys.webp" alt="Pareja recibiendo las llaves de su hogar en Cartagena" style="object-position:80% 24%" fetchpriority="high" />
+          <span class="hbn__wash hbn__wash--x" aria-hidden="true"></span>
+          <span class="hbn__wash hbn__wash--b" aria-hidden="true"></span>
+          <div class="hbn__wrap">
+            <div class="hbn__rise" style="max-width:640px">
+              <h1 class="hbn__h">Cartagena <span class="hbn__gold">entera</span>, a la altura de tu decisión.</h1>
+              <p class="hbn__p">Comprar, arrendar, invertir o alojarte por unos días — en cada zona de la ciudad, con el nivel que tu decisión merece.</p>
+              <a href="/comprar" class="hbtn-sig">Explorar propiedades<span class="hbtn-sig__arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+              <div class="hbn__trust">
+                <span>Seguridad</span><span class="hbn__tdot"></span>
+                <span>Legalidad</span><span class="hbn__tdot"></span>
+                <span>Confianza</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Buscador segmentado neumórfico -->
-        <div class="home-search">
-          <div class="home-search__card" data-surface="neu">
-            <div class="home-search__tabs" role="tablist" aria-label="Buscar por operación">
-              {tabs.map((t, i) => (
-                <button class="home-search__tab" role="tab" type="button" aria-selected={i === 0 ? 'true' : 'false'} data-ph={t.ph} data-tab={t.key}>{t.label}</button>
-              ))}
+        <!-- B1 · Inversión -->
+        <div class="hbn hbn--full" data-b="1" data-active="0" data-nav="light">
+          <img class="hbn__img" src="/assets/hero-invierte.webp" alt="Desarrollo residencial frente al mar en Cartagena" style="object-position:center 54%" loading="lazy" />
+          <div class="hbn__wrap">
+            <div class="hbn__rise" style="max-width:520px">
+              <div class="hbn__panel">
+                <h1 class="hbn__h">Invierte donde la ciudad <span class="hbn__gold">crece</span>.</h1>
+                <div class="hbn__stats">
+                  <div><b>+12%</b><span>valorización anual</span></div>
+                  <span class="hbn__statdiv" aria-hidden="true"></span>
+                  <div><b>8–11%</b><span>ROI en USD</span></div>
+                  <span class="hbn__statdiv" aria-hidden="true"></span>
+                  <div><b>3</b><span>zonas premium</span></div>
+                </div>
+                <a href="/invertir" class="hbtn-goldflat">Ver oportunidades</a>
+              </div>
             </div>
-            <form class="home-search__row" action="/comprar" method="get" role="search">
-              <div class="home-search__field">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
-                <label>
-                  <span class="home-search__lbl">Zona</span>
-                  <input id="home-hero-field" name="zona" placeholder={tabs[0].ph} autocomplete="off" />
-                </label>
-              </div>
-              <span class="home-search__vdiv" aria-hidden="true"></span>
-              <div class="home-search__field home-search__field--type">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg>
-                <label>
-                  <span class="home-search__lbl">Tipo</span>
-                  <select name="tipo">
-                    <option value="">Todos</option>
-                    <option>Apartamento</option>
-                    <option>Casa</option>
-                    <option>Penthouse</option>
-                    <option>Local</option>
-                    <option>Lote</option>
-                    <option>Finca</option>
-                  </select>
-                </label>
-              </div>
-              <button class="home-search__go" type="submit" aria-label="Buscar">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
-              </button>
-            </form>
           </div>
+        </div>
+
+        <!-- B2 · Corta estancia -->
+        <div class="hbn hbn--full" data-b="2" data-active="0" data-nav="light">
+          <img class="hbn__img" src="/assets/hero-estancia.webp" alt="Terraza con piscina al atardecer sobre el mar Caribe, Cartagena" style="object-position:center 46%" loading="lazy" />
+          <div class="hbn__wrap">
+            <div class="hbn__rise" style="max-width:560px">
+              <div class="hbn__glass alt-glass">
+                <h1 class="hbn__h">Vive Cartagena por <span class="hbn__gold">unos días</span>.</h1>
+                <div class="hbn__rate">
+                  <span class="hbn__star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 18.6 6.1 20.8l1.3-6.6L2.5 9l6.6-.8z"/></svg><b>4.97</b><small>· 128 reseñas</small></span>
+                  <span class="hbn__tdot" aria-hidden="true"></span>
+                  <span class="hbn__from">Desde <b>$420k</b> / noche</span>
+                </div>
+                <p class="hbn__p">Propiedades verificadas dentro de la ciudad amurallada, listas para habitar, con anfitrión que responde.</p>
+                <a href="/estancias" class="hbtn-outline">Descubrir estancias</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- B3 · Propietarios (split) -->
+        <div class="hbn hbn--split" data-b="3" data-active="0" data-nav="light">
+          <div class="hbn__wrap">
+            <div class="hbn__split hbn__rise">
+              <div class="hbn__splitmedia"><div class="hbn__frame"><img src="/assets/villa-modern.webp" alt="Inmueble administrado por ALTORRA" loading="lazy" /></div></div>
+              <div class="hbn__splittext">
+                <h1 class="hbn__h">Tu inmueble en las <span class="hbn__gold">mejores manos</span>.</h1>
+                <p class="hbn__p">Lo publicamos, lo mostramos y lo administramos con el estándar ALTORRA, de principio a fin.</p>
+                <div class="hbn__steps">
+                  <span class="hbn__step"><b>01</b>Publicamos</span>
+                  <svg class="hbn__stepsep" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                  <span class="hbn__step"><b>02</b>Mostramos</span>
+                  <svg class="hbn__stepsep" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                  <span class="hbn__step"><b>03</b>Administramos</span>
+                </div>
+                <a href="/publicar" class="hbtn-outline">Publicar mi inmueble</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control: barra de progreso segmentada (auto, sin flechas) -->
+        <div class="home-hero__nav">
+          <div class="home-hero__navin">
+            <div class="hseg-row">
+              <span class="hseg" data-seg-i="0" data-on="1" role="button" tabindex="0" aria-label="Banner 1"><span class="hsegfill"></span></span>
+              <span class="hseg" data-seg-i="1" role="button" tabindex="0" aria-label="Banner 2"><span class="hsegfill"></span></span>
+              <span class="hseg" data-seg-i="2" role="button" tabindex="0" aria-label="Banner 3"><span class="hsegfill"></span></span>
+              <span class="hseg" data-seg-i="3" role="button" tabindex="0" aria-label="Banner 4"><span class="hsegfill"></span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buscador segmentado neumórfico, superpuesto sobre el hero -->
+      <div class="home-search">
+        <div class="home-search__card" data-surface="neu">
+          <div class="home-search__tabs" role="tablist" aria-label="Buscar por operación">
+            {tabs.map((t, i) => (
+              <button class="home-search__tab" role="tab" type="button" aria-selected={i === 0 ? 'true' : 'false'} data-ph={t.ph} data-tab={t.key}>{t.label}</button>
+            ))}
+          </div>
+          <form class="home-search__row" action="/comprar" method="get" role="search">
+            <div class="home-search__field">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+              <label>
+                <span class="home-search__lbl">Zona</span>
+                <input id="home-hero-field" name="zona" placeholder={tabs[0].ph} autocomplete="off" />
+              </label>
+            </div>
+            <span class="home-search__vdiv" aria-hidden="true"></span>
+            <div class="home-search__field home-search__field--type">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg>
+              <label>
+                <span class="home-search__lbl">Tipo</span>
+                <select name="tipo">
+                  <option value="">Todos</option>
+                  <option>Apartamento</option>
+                  <option>Casa</option>
+                  <option>Penthouse</option>
+                  <option>Local</option>
+                  <option>Lote</option>
+                  <option>Finca</option>
+                </select>
+              </label>
+            </div>
+            <button class="home-search__go" type="submit" aria-label="Buscar">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+            </button>
+          </form>
         </div>
       </div>
     </section>
@@ -279,31 +360,99 @@ const maneras = [
 </BaseLayout>
 
 <style>
-  /* HERO sobre superficie neumórfica (gris claro oficial "soporte") */
-  .home-hero {
-    background: var(--alt-surface-neu);
-    padding-block: clamp(48px, 7vw, 92px) clamp(40px, 6vw, 72px);
+  /* ===== HERO — carrusel de 4 banners + buscador superpuesto ===== */
+  .home-hero { position: relative; background: var(--alt-surface-neu); padding-bottom: clamp(40px, 6vw, 72px); }
+  .home-hero__car { position: relative; overflow: hidden; height: clamp(548px, 60vh, 580px); }
+
+  .hbn { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 0.9s ease; background: #fff; }
+  .hbn[data-active='1'] { opacity: 1; pointer-events: auto; }
+  .hbn--split { background: var(--alt-surface-neu); }
+  .hbn__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .hbn[data-active='1'] .hbn__img { animation: hkenburns 9s ease-out both; }
+  @keyframes hkenburns { from { transform: scale(1); } to { transform: scale(1.12); } }
+
+  .hbn__wash { position: absolute; inset: 0; pointer-events: none; }
+  .hbn__wash--x { background: linear-gradient(92deg, rgba(255, 255, 255, 0.97) 0%, rgba(255, 255, 255, 0.9) 33%, rgba(255, 255, 255, 0.52) 56%, rgba(255, 255, 255, 0) 80%); }
+  .hbn__wash--b { background: linear-gradient(0deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 24%); }
+
+  .hbn__wrap { position: relative; max-width: var(--alt-container); margin: 0 auto; height: 100%; padding: clamp(88px, 10vh, 104px) var(--alt-gutter) clamp(118px, 12vh, 136px); display: flex; align-items: center; }
+  .hbn__rise > * { animation: hbnrise 0.85s var(--alt-ease) both; }
+  .hbn[data-active='1'] .hbn__rise > *:nth-child(2) { animation-delay: 0.08s; }
+  .hbn[data-active='1'] .hbn__rise > *:nth-child(3) { animation-delay: 0.16s; }
+  .hbn[data-active='1'] .hbn__rise > *:nth-child(4) { animation-delay: 0.24s; }
+  @keyframes hbnrise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .hbn[data-active='1'] .hbn__img { animation: none; } .hbn__rise > * { animation: none !important; } }
+
+  .hbn__h { font-family: var(--alt-font-display); font-weight: var(--alt-fw-bold); line-height: 1.03; letter-spacing: var(--alt-tracking-tight); color: var(--alt-ink); margin: 0 0 16px; font-size: clamp(32px, 4.4vw, 54px); text-wrap: balance; }
+  .hbn__gold { color: var(--alt-link-lg); white-space: nowrap; }
+  .hbn__p { font-size: clamp(15px, 1.4vw, 18px); line-height: 1.6; color: var(--alt-text); margin: 0 0 22px; max-width: 500px; }
+  .hbn__trust { display: flex; align-items: center; gap: 11px; margin-top: 24px; flex-wrap: wrap; }
+  .hbn__trust span:not(.hbn__tdot) { font-size: 10.5px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.2em; text-transform: uppercase; color: var(--alt-text); }
+  .hbn__tdot { width: 4px; height: 4px; border-radius: 50%; background: var(--alt-gold); }
+
+  /* Botones del hero */
+  .hbtn-sig { display: inline-flex; align-items: center; gap: 13px; padding: 14px 16px 14px 28px; border-radius: var(--alt-r-pill); background: var(--alt-grad-gold); color: var(--alt-ink); font-weight: var(--alt-fw-bold); font-size: 15px; text-decoration: none; box-shadow: var(--alt-nm-up), inset 0 1px 0 rgba(255, 255, 255, 0.55); transition: transform var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease); }
+  .hbtn-sig:hover { transform: translateY(-2px); }
+  .hbtn-sig__arw { display: inline-flex; width: 30px; height: 30px; border-radius: 50%; background: rgba(6, 39, 67, 0.14); align-items: center; justify-content: center; flex: none; transition: background var(--alt-dur) var(--alt-ease); }
+  .hbtn-sig__arw svg { width: 14px; height: 14px; stroke: var(--alt-ink); transition: transform var(--alt-dur) var(--alt-ease); }
+  .hbtn-sig:hover .hbtn-sig__arw { background: var(--alt-ink); }
+  .hbtn-sig:hover .hbtn-sig__arw svg { stroke: var(--alt-gold-bright); transform: translateX(3px); }
+  .hbtn-goldflat { display: inline-flex; align-items: center; padding: 14px 30px; border-radius: var(--alt-r-pill); background: var(--alt-grad-gold); color: var(--alt-ink); font-weight: var(--alt-fw-bold); font-size: 14.5px; text-decoration: none; transition: transform var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease); }
+  .hbtn-goldflat:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(166, 128, 30, 0.6); }
+  .hbtn-outline { display: inline-flex; align-items: center; gap: 10px; padding: 13px 26px; border-radius: var(--alt-r-pill); background: transparent; border: 1.5px solid var(--alt-gold); color: var(--alt-link); font-weight: var(--alt-fw-semibold); font-size: 14px; text-decoration: none; transition: background var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease), border-color var(--alt-dur) var(--alt-ease); }
+  .hbtn-outline:hover { background: var(--alt-grad-gold); color: var(--alt-ink); border-color: transparent; }
+
+  /* B1 panel blanco */
+  .hbn__panel { background: var(--alt-white); border-top: 3px solid var(--alt-gold); border-radius: 3px 3px 14px 14px; padding: clamp(22px, 2.4vw, 30px); box-shadow: 0 46px 100px -38px rgba(27, 39, 51, 0.5); }
+  .hbn__panel .hbn__h { font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 12px; }
+  .hbn__stats { display: flex; align-items: stretch; border-top: 1px solid var(--alt-hairline); padding-top: 16px; margin-bottom: 18px; }
+  .hbn__stats > div { flex: 1; min-width: 0; }
+  .hbn__stats b { display: block; font-family: var(--alt-font-display); font-size: clamp(22px, 2.5vw, 27px); font-weight: var(--alt-fw-bold); color: var(--alt-ink); line-height: 1; }
+  .hbn__stats span:not(.hbn__statdiv) { display: block; font-size: 11px; color: var(--alt-text-muted); font-weight: var(--alt-fw-semibold); margin-top: 5px; }
+  .hbn__statdiv { width: 1px; background: var(--alt-hairline); margin: 2px clamp(10px, 1.4vw, 18px); }
+
+  /* B2 glass */
+  .hbn__glass { border-radius: var(--alt-r-xl); padding: clamp(20px, 2.4vw, 28px); }
+  .hbn__glass .hbn__h { font-size: clamp(28px, 3.6vw, 44px); margin-bottom: 10px; }
+  .hbn__rate { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
+  .hbn__star { display: inline-flex; align-items: center; gap: 6px; color: var(--alt-ink); font-weight: var(--alt-fw-bold); font-size: 14px; }
+  .hbn__star svg { width: 16px; height: 16px; color: var(--alt-gold); }
+  .hbn__star small { color: var(--alt-text); font-weight: var(--alt-fw-regular); font-size: 13px; }
+  .hbn__from { color: var(--alt-text); font-size: 13px; }
+  .hbn__from b { color: var(--alt-link); }
+
+  /* B3 split */
+  .hbn__split { display: grid; grid-template-columns: 1.02fr 0.98fr; gap: clamp(26px, 3.6vw, 58px); align-items: center; width: 100%; }
+  .hbn__frame { position: relative; border-radius: var(--alt-r-lg); overflow: hidden; aspect-ratio: 16 / 9; box-shadow: 0 44px 84px -34px rgba(9, 17, 25, 0.45); }
+  .hbn__frame img { width: 100%; height: 100%; object-fit: cover; }
+  .hbn__splittext { max-width: 520px; }
+  .hbn__splittext .hbn__h { margin-bottom: 18px; }
+  .hbn__steps { display: flex; align-items: center; gap: 13px; margin-bottom: 20px; flex-wrap: wrap; }
+  .hbn__step { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
+  .hbn__step b { font-family: var(--alt-font-display); font-size: 15px; color: var(--alt-link); font-weight: var(--alt-fw-semibold); }
+  .hbn__stepsep { width: 14px; height: 14px; stroke: rgba(166, 128, 30, 0.55); flex: none; }
+
+  /* Barra de progreso segmentada (dots) */
+  .home-hero__nav { position: absolute; left: 0; right: 0; bottom: clamp(90px, 10vw, 102px); z-index: 5; display: flex; justify-content: center; pointer-events: none; }
+  .home-hero__navin { max-width: var(--alt-container); width: 100%; padding: 0 var(--alt-gutter); display: flex; }
+  .hseg-row { display: flex; align-items: center; gap: 9px; pointer-events: auto; }
+  .hseg { position: relative; height: 5px; width: 22px; border-radius: var(--alt-r-pill); background: rgba(27, 39, 51, 0.2); overflow: hidden; cursor: pointer; transition: width 0.5s var(--alt-ease), background 0.4s; padding: 0; border: 0; }
+  .hseg[data-on='1'] { width: 72px; background: rgba(27, 39, 51, 0.12); }
+  .hsegfill { position: absolute; inset: 0; width: 0; background: var(--alt-grad-gold-underline); border-radius: var(--alt-r-pill); }
+
+  @media (max-width: 920px) {
+    .hbn__split { grid-template-columns: 1fr; gap: 22px; }
+    .hbn__splitmedia { order: -1; }
   }
-  .home-hero__in {
-    max-width: var(--alt-container);
-    margin-inline: auto;
-    padding-inline: var(--alt-gutter);
-  }
-  .home-hero__copy { max-width: 760px; margin-inline: auto; text-align: center; }
-  .home-hero__h {
-    font-size: var(--alt-fs-hero);
-    margin-top: var(--alt-space-3);
-  }
-  .home-hero__accent { color: var(--alt-gold-raw); display: block; }
-  .home-hero__p {
-    max-width: 52ch;
-    margin: var(--alt-space-4) auto 0;
-    font-size: var(--alt-fs-lg);
-    color: var(--alt-text);
+  @media (max-width: 640px) {
+    .home-hero__car { height: clamp(600px, 92vh, 760px); }
+    .hbn__wrap { padding-top: clamp(90px, 14vh, 110px); padding-bottom: 128px; }
+    .hbn__wash--x { background: linear-gradient(0deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.4) 60%, rgba(255, 255, 255, 0) 100%); }
+    .hbn__frame { aspect-ratio: 3 / 2; }
   }
 
-  /* Buscador neumórfico */
-  .home-search { max-width: 1080px; margin: clamp(28px, 4vw, 44px) auto 0; }
+  /* Buscador neumórfico — superpuesto sobre el hero (sube dentro con margin negativo) */
+  .home-search { position: relative; z-index: 6; max-width: 1080px; margin: clamp(-76px, -4.6vw, -60px) auto 0; padding-inline: clamp(20px, 5vw, 40px); }
   .home-search__card {
     background: var(--alt-surface-neu);
     border-radius: var(--alt-r-xl);
@@ -507,4 +656,50 @@ const maneras = [
     if (input && btn.dataset.ph) input.placeholder = btn.dataset.ph;
     if (form && btn.dataset.tab) form.setAttribute('action', '/' + btn.dataset.tab);
   });
+
+  // Hero carrusel — auto-advance inteligente (dwell por longitud de texto), sin flechas.
+  const track = document.querySelector('[data-carousel]');
+  if (track) {
+    const banners = Array.from(track.querySelectorAll<HTMLElement>('.hbn'));
+    const segs = Array.from(track.querySelectorAll<HTMLElement>('.hseg'));
+    let idx = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const dwellFor = (b: HTMLElement) => {
+      const h = b.querySelector('.hbn__h');
+      const p = b.querySelector('.hbn__p');
+      const txt = ((h?.textContent || '') + ' ' + (p?.textContent || '')).trim();
+      const words = txt ? txt.split(/\s+/).length : 8;
+      const extras = b.querySelectorAll('.hbn__step, .hbn__stats > div').length;
+      return Math.max(4200, Math.min(2600 + words * 235 + extras * 480, 11500));
+    };
+    const paint = (dwell: number) => {
+      segs.forEach((s, k) => {
+        s.setAttribute('data-on', k === idx ? '1' : '0');
+        const fl = s.querySelector<HTMLElement>('.hsegfill');
+        if (fl) { fl.style.transition = 'none'; fl.style.width = k < idx ? '100%' : '0%'; }
+      });
+      const af = segs[idx]?.querySelector<HTMLElement>('.hsegfill');
+      if (af) { void af.offsetWidth; af.style.transition = 'width ' + dwell + 'ms linear'; af.style.width = '100%'; }
+    };
+    const show = (n: number) => {
+      idx = (n + banners.length) % banners.length;
+      banners.forEach((b, k) => b.setAttribute('data-active', k === idx ? '1' : '0'));
+      const dwell = dwellFor(banners[idx]);
+      paint(dwell);
+      clearTimeout(timer);
+      timer = setTimeout(() => show(idx + 1), dwell);
+    };
+    segs.forEach((s, k) => {
+      s.addEventListener('click', () => show(k));
+      s.addEventListener('keydown', (e) => {
+        const key = (e as KeyboardEvent).key;
+        if (key === 'Enter' || key === ' ') { e.preventDefault(); show(k); }
+      });
+    });
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      banners.forEach((b, k) => b.setAttribute('data-active', k === 0 ? '1' : '0'));
+    } else {
+      show(0);
+    }
+  }
 </script>

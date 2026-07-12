@@ -21,6 +21,7 @@ const icon = {
   mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/>',
   ig: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/>',
+  fb: '<path d="M13.5 21v-7.5h2.5l.4-2.9h-2.9V8.7c0-.85.24-1.43 1.45-1.43h1.55V4.68c-.27-.04-1.2-.12-2.28-.12-2.26 0-3.8 1.38-3.8 3.9v2.18H8v2.9h2.42V21z"/>',
   wa: '<path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.6-4A8 8 0 1 1 20 11.5z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5.6 0 1.2-.6 1.2-1.2l-1.7-1-.9.9c-1-.4-1.8-1.2-2.2-2.2l.9-.9-1-1.7C10.1 8.3 9.5 8.9 9 9.5z"/>',
   tk: '<path d="M16 4c.3 2.3 1.7 3.9 4 4.2v3c-1.5 0-2.9-.4-4-1.2v5.5A5.5 5.5 0 1 1 10.5 10v3a2.5 2.5 0 1 0 2.5 2.5V4z"/>',
 };
@@ -39,7 +40,7 @@ const icon = {
         <p class="alt-ft__desc">Inmobiliaria en Cartagena de Indias: compra, arriendo, estancias e inversión con acompañamiento experto. Seguridad, legalidad y confianza en cada paso.</p>
         <div class="alt-ft__soc">
           <a href={SITE.social.instagram} aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" set:html={icon.ig}></svg></a>
-          <a href={SITE.social.facebook} aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" set:html={icon.ig}></svg></a>
+          <a href={SITE.social.facebook} aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" set:html={icon.fb}></svg></a>
           <a href={SITE.social.tiktok} aria-label="TikTok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" set:html={icon.tk}></svg></a>
           <a href={SITE.contact.whatsappLink} aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={icon.wa}></svg></a>
         </div>
