@@ -1,14 +1,12 @@
 ---
 /*
- * Header / navegación COMPARTIDA — REDISEÑO "barra de comando líquida flotante" (2026-07-12).
- * Fusión disciplinada de técnicas (cada una con su rol):
- *   · LIQUID GLASS  → la barra principal flota (backdrop-filter real + sheen + borde luminoso).
- *   · GLASSMORFISMO → los paneles desplegables (mega/rich) son vidrio esmerilado.
- *   · NEUMORFISMO   → controles blandos (favoritos, hamburguesa) extruidos que se hunden al presionar.
- *   · SKEUOMORFISMO → emblema metálico + CTA dorado "físico" (gradiente vertical + luz superior).
- * App-like: la barra se condensa al scrollear (la barra utilitaria se colapsa). Wordmark en TEXTO
- * vectorial (fin del pixelado del raster). Disciplina de color: solo paleta. Contacto/rutas REALES.
- * Props: active = clave del ítem de nav actual.
+ * Header / navegación COMPARTIDA — REDISEÑO v2 "premium glass" (2026-07-12, feedback Daniel).
+ * Correcciones sobre v1: SIN barra utilitaria gris · UN solo material (vidrio) + UN acento dorado
+ * (CTA) + emblema metálico oficial + controles fantasma (no compiten) · SIN temblor (cero animación
+ * de layout al scroll: la barra tiene altura fija; al bajar solo aparece una sombra) · emblema
+ * oficial de Canva (alta resolución) + wordmark "ALTORRA" en TEXTO vectorial (nítido).
+ * Fusión disciplinada: el HEADER lidera con GLASS + METAL; el neumorfismo vive en las cards, no aquí.
+ * Disciplina de color: solo paleta. Contacto/rutas REALES. Props: active = clave del ítem actual.
  */
 import { SITE } from '../lib/config/site';
 
@@ -18,9 +16,6 @@ interface Props {
 const { active = '' } = Astro.props;
 
 const icon = {
-  pin: '<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="2.6"/>',
-  phone: '<path d="M4 5c0 8.8 6.2 15 15 15l1.5-3.3-4.4-1.8-1.9 2a12 12 0 0 1-5.6-5.6l2-1.9L6.3 3.5 3 5z"/>',
-  mail: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/>',
   caret: '<path d="M6 9l6 6 6-6"/>',
   heart: '<path d="M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"/>',
   user: '<circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/>',
@@ -31,8 +26,6 @@ const icon = {
   edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   home: '<path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-6h6v6"/>',
   chart: '<path d="M4 19V5"/><path d="m4 15 5-5 4 4 7-8"/>',
-  ig: '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/>',
-  fb: '<path d="M13.5 21v-7.5h2.5l.4-2.9h-2.9V8.7c0-.85.24-1.43 1.45-1.43h1.55V4.68c-.27-.04-1.2-.12-2.28-.12-2.26 0-3.8 1.38-3.8 3.9v2.18H8v2.9h2.42V21z" stroke="none" fill="currentColor"/>',
   wa: '<path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.6-4A8 8 0 1 1 20 11.5z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5.6 0 1.2-.6 1.2-1.2l-1.7-1-.9.9c-1-.4-1.8-1.2-2.2-2.2l.9-.9-1-1.7C10.1 8.3 9.5 8.9 9 9.5z"/>',
 };
 
@@ -87,96 +80,76 @@ const nav = [
 ---
 
 <header class="alt-hdr" data-hdr>
-  <!-- Capa 1: barra utilitaria (vidrio fino, se colapsa al scrollear) -->
-  <div class="alt-hdr__util">
-    <div class="alt-hdr__util-in">
-      <div class="alt-hdr__util-info">
-        <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={icon.pin}></svg>{SITE.city}</span>
-        <a href={SITE.contact.whatsappLink}><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={icon.phone}></svg>{SITE.contact.whatsapp}</a>
-        <a href={`mailto:${SITE.contact.email}`}><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={icon.mail}></svg>{SITE.contact.email}</a>
-        <span class="alt-hdr__hours">Lun–Sáb · 8:00–18:00</span>
-      </div>
-      <div class="alt-hdr__soc">
-        <a href={SITE.social.instagram} aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" set:html={icon.ig}></svg></a>
-        <a href={SITE.social.facebook} aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none" set:html={icon.fb}></svg></a>
-        <a href={SITE.contact.whatsappLink} aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={icon.wa}></svg></a>
-      </div>
-    </div>
-  </div>
+  <div class="alt-hdr__bar">
+    <div class="alt-hdr__bar-in">
+      <a class="alt-hdr__logo" href="/" aria-label={`${SITE.name} — inicio`}>
+        <span class="alt-hdr__mark"><img src="/assets/altorra-mark-t.webp" alt="" width="40" height="48" /></span>
+        <span class="alt-hdr__word">
+          <span class="alt-hdr__word-name">ALTORRA</span>
+          <span class="alt-hdr__word-sub">Inmobiliaria</span>
+        </span>
+      </a>
 
-  <!-- Capa 2: barra de comando líquida flotante -->
-  <div class="alt-hdr__dock">
-    <div class="alt-hdr__bar">
-      <span class="alt-hdr__sheen" aria-hidden="true"></span>
-      <div class="alt-hdr__bar-in">
-        <a class="alt-hdr__logo" href="/" aria-label={`${SITE.name} — inicio`}>
-          <span class="alt-hdr__mark"><img src="/assets/altorra-mark-t.webp" alt="" width="30" height="41" /></span>
-          <span class="alt-hdr__word">
-            <span class="alt-hdr__word-name">ALTORRA</span>
-            <span class="alt-hdr__word-sub">Inmobiliaria</span>
-          </span>
-        </a>
+      <nav class="alt-hdr__nav" aria-label="Principal">
+        {nav.map((item) => (
+          <div class={`alt-hdr__item${item.type !== 'link' ? ' has-mega' : ''}`}>
+            <a class="alt-hdr__top" href={item.href} aria-current={active === item.key ? 'page' : undefined} data-active={active === item.key}>
+              <span>
+                {item.label}
+                {item.type !== 'link' && <svg class="alt-hdr__cap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" set:html={icon.caret} />}
+              </span>
+              <span class="alt-hdr__uline"></span>
+            </a>
 
-        <nav class="alt-hdr__nav" aria-label="Principal">
-          {nav.map((item) => (
-            <div class={`alt-hdr__item${item.type !== 'link' ? ' has-mega' : ''}`}>
-              <a class="alt-hdr__top" href={item.href} aria-current={active === item.key ? 'page' : undefined} data-active={active === item.key}>
-                <span>
-                  {item.label}
-                  {item.type !== 'link' && <svg class="alt-hdr__cap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" set:html={icon.caret} />}
-                </span>
-                <span class="alt-hdr__uline"></span>
-              </a>
-
-              {item.type !== 'link' && (
-                <div class={`alt-hdr__pan align-${item.align || 'left'}`}>
-                  <div class="alt-hdr__pan-card">
-                    {item.type === 'mega' && item.cols?.map((col) => (
-                      <div class="alt-hdr__col">
-                        <p class="alt-eyebrow alt-hdr__col-h">{col.title}</p>
-                        {col.links.map(([t, h]) => <a class="alt-hdr__lnk" href={h}>{t}</a>)}
-                      </div>
-                    ))}
-                    {item.type === 'rich' && (
-                      <div class="alt-hdr__rich">
-                        {item.rich?.map((r) => (
-                          <a class="alt-hdr__richlnk" href={r.href}>
-                            <span class="alt-hdr__richicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={icon[r.icon]}></svg></span>
-                            <span><span class="alt-hdr__richt">{r.title}</span><span class="alt-hdr__richs">{r.sub}</span></span>
-                          </a>
-                        ))}
-                      </div>
-                    )}
-                    {item.featured && (
-                      <a class="alt-hdr__feat" href={item.featured.href}>
-                        <img src={item.featured.img} alt="" loading="lazy" decoding="async" />
-                        <span class="alt-hdr__feat-body">
-                          <span class="alt-hdr__feat-eb">{item.featured.eyebrow}</span>
-                          <span class="alt-hdr__feat-t">{item.featured.title}</span>
-                        </span>
-                      </a>
-                    )}
-                  </div>
+            {item.type !== 'link' && (
+              <div class={`alt-hdr__pan align-${item.align || 'left'}`}>
+                <div class="alt-hdr__pan-card">
+                  {item.type === 'mega' && item.cols?.map((col) => (
+                    <div class="alt-hdr__col">
+                      <p class="alt-eyebrow alt-hdr__col-h">{col.title}</p>
+                      {col.links.map(([t, h]) => <a class="alt-hdr__lnk" href={h}>{t}</a>)}
+                    </div>
+                  ))}
+                  {item.type === 'rich' && (
+                    <div class="alt-hdr__rich">
+                      {item.rich?.map((r) => (
+                        <a class="alt-hdr__richlnk" href={r.href}>
+                          <span class="alt-hdr__richicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={icon[r.icon]}></svg></span>
+                          <span><span class="alt-hdr__richt">{r.title}</span><span class="alt-hdr__richs">{r.sub}</span></span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                  {item.featured && (
+                    <a class="alt-hdr__feat" href={item.featured.href}>
+                      <img src={item.featured.img} alt="" loading="lazy" decoding="async" />
+                      <span class="alt-hdr__feat-body">
+                        <span class="alt-hdr__feat-eb">{item.featured.eyebrow}</span>
+                        <span class="alt-hdr__feat-t">{item.featured.title}</span>
+                      </span>
+                    </a>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
-        </nav>
+              </div>
+            )}
+          </div>
+        ))}
+      </nav>
 
-        <div class="alt-hdr__actions">
-          <a class="alt-hdr__fav" href="/favoritos" aria-label="Favoritos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={icon.heart}></svg></a>
-          <a class="alt-hdr__login" href="/ingresar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" set:html={icon.user}></svg><span>Ingresar</span></a>
-          <a class="alt-hdr__pub" href="/publicar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" set:html={icon.upload}></svg><span>Publica tu inmueble</span></a>
-          <button class="alt-hdr__burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="alt-drawer" data-drawer-toggle>
-            <svg class="alt-hdr__burger-o" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" set:html={icon.burger}></svg>
-            <svg class="alt-hdr__burger-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" set:html={icon.close}></svg>
-          </button>
-        </div>
+      <div class="alt-hdr__actions">
+        <a class="alt-hdr__icon" href={SITE.contact.whatsappLink} aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={icon.wa}></svg></a>
+        <a class="alt-hdr__icon" href="/favoritos" aria-label="Favoritos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={icon.heart}></svg></a>
+        <a class="alt-hdr__login" href="/ingresar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" set:html={icon.user}></svg><span>Ingresar</span></a>
+        <a class="alt-hdr__pub" href="/publicar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" set:html={icon.upload}></svg><span>Publica tu inmueble</span></a>
+        <button class="alt-hdr__burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="alt-drawer" data-drawer-toggle>
+          <svg class="alt-hdr__burger-o" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" set:html={icon.burger}></svg>
+          <svg class="alt-hdr__burger-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" set:html={icon.close}></svg>
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Capa 3: drawer móvil (vidrio) -->
+  <!-- Drawer móvil (vidrio) -->
   <div class="alt-hdr__drawer" id="alt-drawer" data-open="false">
     {nav.filter((n) => n.type !== 'link').map((item) => (
       <details class="alt-hdr__det">
@@ -191,114 +164,68 @@ const nav = [
     <a class="alt-hdr__det-flat" href="#contacto">Contacto</a>
     <div class="alt-hdr__drawer-cta">
       <a class="alt-hdr__pub" href="/publicar"><span>Publica tu inmueble</span></a>
-      <a class="alt-hdr__login" href="/ingresar" style="justify-content:center"><span>Ingreso / Registro</span></a>
+      <a class="alt-hdr__login" href="/ingresar"><span>Ingreso / Registro</span></a>
     </div>
   </div>
 </header>
 
 <style>
-  /* ===== HEADER — barra de comando líquida flotante ===== */
-  .alt-hdr { position: sticky; top: 0; z-index: var(--alt-z-header); background: transparent; }
+  /* ===== HEADER v2 — premium glass, un solo material, cero temblor ===== */
+  .alt-hdr { position: sticky; top: 0; z-index: var(--alt-z-header); }
   .alt-hdr svg { width: 100%; height: 100%; }
 
-  /* Capa 1 · barra utilitaria (vidrio fino, colapsa al scrollear) */
-  .alt-hdr__util {
-    background: rgba(230, 237, 242, 0.7);
-    -webkit-backdrop-filter: saturate(150%) blur(10px);
-    backdrop-filter: saturate(150%) blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-    overflow: hidden;
-    max-height: 36px;
-    transition: max-height 0.4s var(--alt-ease), opacity 0.3s var(--alt-ease), border-color 0.3s;
-  }
-  .alt-hdr.is-scrolled .alt-hdr__util { max-height: 0; opacity: 0; border-color: transparent; }
-  .alt-hdr__util-in {
-    max-width: var(--alt-container); margin-inline: auto; padding-inline: var(--alt-gutter);
-    min-height: 36px; display: flex; align-items: center; justify-content: space-between; gap: var(--alt-space-5);
-  }
-  .alt-hdr__util-info { display: flex; align-items: center; gap: var(--alt-space-5); font-size: var(--alt-fs-xs); color: var(--alt-text); min-width: 0; }
-  .alt-hdr__util-info span, .alt-hdr__util-info a { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; color: inherit; text-decoration: none; }
-  .alt-hdr__util-info svg { width: 12px; height: 12px; stroke: var(--alt-gold-raw); flex: none; }
-  .alt-hdr__util-info a:hover { color: var(--alt-link); }
-  .alt-hdr__hours { color: var(--alt-text-muted); }
-  .alt-hdr__soc { display: flex; align-items: center; gap: 14px; flex: none; }
-  .alt-hdr__soc a { display: inline-flex; width: 15px; height: 15px; color: var(--alt-text); transition: color var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease); }
-  .alt-hdr__soc a:hover { color: var(--alt-link); transform: translateY(-1px); }
-
-  /* Capa 2 · dock que centra la barra flotante */
-  .alt-hdr__dock { max-width: var(--alt-container); margin: 10px auto 0; padding-inline: clamp(12px, 3vw, 24px); transition: margin-top 0.35s var(--alt-ease); }
-  .alt-hdr.is-scrolled .alt-hdr__dock { margin-top: 8px; }
-
-  /* La barra: LIQUID GLASS (vidrio real + sheen + borde luminoso + sombra flotante) */
+  /* La barra: vidrio de ancho completo. Altura FIJA (sin animar layout = sin temblor). */
   .alt-hdr__bar {
-    position: relative;
-    border-radius: var(--alt-r-xl);
-    background: rgba(255, 255, 255, 0.6);
-    -webkit-backdrop-filter: saturate(180%) blur(22px);
-    backdrop-filter: saturate(180%) blur(22px);
-    border: 1px solid rgba(255, 255, 255, 0.65);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.9),
-      inset 0 -10px 22px rgba(255, 255, 255, 0.28),
-      0 22px 48px -26px rgba(6, 39, 67, 0.4),
-      0 4px 14px -8px rgba(6, 39, 67, 0.14);
-    transition: background 0.35s var(--alt-ease), box-shadow 0.35s var(--alt-ease);
+    background: rgba(255, 255, 255, 0.55);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(27, 39, 51, 0.06);
+    box-shadow: 0 0 0 rgba(6, 39, 67, 0);
+    transition: box-shadow 0.4s var(--alt-ease), background 0.4s var(--alt-ease), border-color 0.4s;
   }
   @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
-    .alt-hdr__bar { background: var(--alt-surface-neu); }
+    .alt-hdr__bar { background: rgba(246, 249, 251, 0.98); }
   }
+  /* Al scrollear: SOLO sombra + más opacidad (no cambia el layout → no tiembla). */
   .alt-hdr.is-scrolled .alt-hdr__bar {
-    background: rgba(255, 255, 255, 0.78);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.95),
-      inset 0 -10px 22px rgba(255, 255, 255, 0.3),
-      0 26px 56px -24px rgba(6, 39, 67, 0.46),
-      0 6px 16px -8px rgba(6, 39, 67, 0.18);
+    background: rgba(255, 255, 255, 0.72);
+    border-color: transparent;
+    box-shadow: 0 12px 34px -18px rgba(6, 39, 67, 0.3);
   }
-  /* Sheen superior: filo de luz dorada muy sutil (detalle premium) */
-  .alt-hdr__sheen { position: absolute; left: 16%; right: 16%; top: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(235, 210, 126, 0.7), transparent); pointer-events: none; }
-
   .alt-hdr__bar-in {
-    position: relative;
-    padding-inline: clamp(14px, 1.8vw, 24px);
-    height: 66px;
-    display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: clamp(10px, 1.4vw, 22px);
-    transition: height 0.3s var(--alt-ease);
+    max-width: var(--alt-container); margin-inline: auto; padding-inline: var(--alt-gutter);
+    height: 76px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: clamp(10px, 1.4vw, 22px);
   }
-  .alt-hdr.is-scrolled .alt-hdr__bar-in { height: 58px; }
 
-  /* Logo — emblema metálico (skeuomorfismo) + wordmark en TEXTO nítido */
-  .alt-hdr__logo { display: flex; align-items: center; gap: 11px; text-decoration: none; }
-  .alt-hdr__mark { display: inline-flex; filter: drop-shadow(0 2px 5px rgba(166, 128, 30, 0.28)) drop-shadow(0 1px 0 rgba(255, 255, 255, 0.6)); transition: transform var(--alt-dur) var(--alt-ease); }
-  .alt-hdr__mark img { display: block; height: 41px; width: auto; transition: height 0.3s var(--alt-ease); }
-  .alt-hdr.is-scrolled .alt-hdr__mark img { height: 37px; }
-  .alt-hdr__logo:hover .alt-hdr__mark { transform: translateY(-1px); }
+  /* Logo — emblema metálico oficial + wordmark en TEXTO nítido */
+  .alt-hdr__logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .alt-hdr__mark { display: inline-flex; filter: drop-shadow(0 3px 7px rgba(166, 128, 30, 0.28)); transition: transform var(--alt-dur) var(--alt-ease); }
+  .alt-hdr__mark img { display: block; height: 48px; width: auto; }
+  .alt-hdr__logo:hover .alt-hdr__mark { transform: translateY(-1px) scale(1.02); }
   .alt-hdr__word { display: flex; flex-direction: column; line-height: 1; }
-  .alt-hdr__word-name { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 23px; letter-spacing: 0.17em; color: var(--alt-ink); }
-  .alt-hdr__word-sub { font-size: 8.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.36em; text-transform: uppercase; color: var(--alt-link); margin-top: 4px; }
+  .alt-hdr__word-name { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 25px; letter-spacing: 0.2em; color: var(--alt-ink); }
+  .alt-hdr__word-sub { font-size: 8.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.42em; text-transform: uppercase; color: var(--alt-link); margin-top: 5px; }
 
-  /* Nav desktop — tab-bar con subrayado dorado que se desliza */
+  /* Nav — refinado, subrayado dorado que crece (un solo tratamiento) */
   .alt-hdr__nav { justify-self: center; display: flex; align-items: center; gap: clamp(1px, 0.3vw, 6px); }
   .alt-hdr__item { position: relative; }
-  .alt-hdr__top { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 11px; font-size: 13px; font-weight: var(--alt-fw-medium); color: var(--alt-ink); text-decoration: none; white-space: nowrap; }
+  .alt-hdr__top { display: inline-flex; flex-direction: column; align-items: center; gap: 5px; padding: 9px 12px; font-size: 13.5px; font-weight: var(--alt-fw-medium); color: var(--alt-ink); text-decoration: none; white-space: nowrap; }
   .alt-hdr__top > span:first-child { display: inline-flex; align-items: center; gap: 5px; }
-  .alt-hdr__cap { width: 10px; height: 10px; transition: transform var(--alt-dur) var(--alt-ease); }
-  .alt-hdr__uline { height: 2.5px; width: 18px; border-radius: 2px; background: var(--alt-grad-gold-underline); opacity: 0; transform: scaleX(0.3); transition: opacity var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease); }
+  .alt-hdr__cap { width: 10px; height: 10px; color: var(--alt-text-muted); transition: transform var(--alt-dur) var(--alt-ease); }
+  .alt-hdr__uline { height: 2px; width: 20px; border-radius: 2px; background: var(--alt-grad-gold-underline); opacity: 0; transform: scaleX(0.25); transition: opacity var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease); }
   .alt-hdr__top:hover { color: var(--alt-link); }
   .alt-hdr__item:hover .alt-hdr__uline, .alt-hdr__top[data-active='true'] .alt-hdr__uline { opacity: 1; transform: scaleX(1); }
-  .alt-hdr__item:hover .alt-hdr__cap { transform: rotate(180deg); }
+  .alt-hdr__item:hover .alt-hdr__cap { transform: rotate(180deg); color: var(--alt-gold-raw); }
 
-  /* Paneles desplegables — GLASSMORFISMO (vidrio esmerilado) */
-  .alt-hdr__pan { position: absolute; top: 100%; padding-top: 15px; z-index: var(--alt-z-dropdown); opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease), visibility var(--alt-dur); }
+  /* Paneles desplegables — vidrio esmerilado (mismo material que la barra) */
+  .alt-hdr__pan { position: absolute; top: 100%; padding-top: 14px; z-index: var(--alt-z-dropdown); opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease), visibility var(--alt-dur); }
   .alt-hdr__pan.align-left { left: 0; }
   .alt-hdr__pan.align-right { right: 0; }
   .alt-hdr__item:hover .alt-hdr__pan, .alt-hdr__item:focus-within .alt-hdr__pan { opacity: 1; visibility: visible; transform: translateY(0); }
   .alt-hdr__pan-card {
-    background: rgba(255, 255, 255, 0.78);
-    -webkit-backdrop-filter: saturate(180%) blur(20px);
-    backdrop-filter: saturate(180%) blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-    border-radius: var(--alt-r-lg);
+    background: rgba(255, 255, 255, 0.8);
+    -webkit-backdrop-filter: saturate(180%) blur(22px); backdrop-filter: saturate(180%) blur(22px);
+    border: 1px solid rgba(255, 255, 255, 0.7); border-radius: var(--alt-r-lg);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 34px 76px -34px rgba(6, 39, 67, 0.4), 0 4px 14px -10px rgba(27, 39, 51, 0.14);
     padding: 22px; display: flex; gap: 26px;
   }
@@ -306,12 +233,11 @@ const nav = [
   .alt-hdr__col { min-width: 150px; }
   .alt-hdr__col-h { margin: 0 10px 8px; }
   .alt-hdr__lnk { display: block; padding: 8px 10px; border-radius: var(--alt-r-sm); font-size: 13.5px; font-weight: var(--alt-fw-medium); color: var(--alt-text); text-decoration: none; white-space: nowrap; transition: background var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease); }
-  .alt-hdr__lnk:hover { background: rgba(255, 255, 255, 0.7); color: var(--alt-link); }
+  .alt-hdr__lnk:hover { background: rgba(255, 255, 255, 0.75); color: var(--alt-link); }
   .alt-hdr__rich { display: flex; flex-direction: column; gap: 6px; width: 288px; }
   .alt-hdr__richlnk { display: flex; gap: 13px; align-items: flex-start; padding: 12px; border-radius: var(--alt-r-sm); text-decoration: none; transition: background var(--alt-dur) var(--alt-ease); }
-  .alt-hdr__richlnk:hover { background: rgba(255, 255, 255, 0.7); }
-  /* icono rich — chip neumórfico suave */
-  .alt-hdr__richicon { flex: none; width: 40px; height: 40px; border-radius: 12px; background: var(--alt-surface-neu); box-shadow: var(--alt-nm-up-sm); display: inline-flex; align-items: center; justify-content: center; color: var(--alt-gold-raw); }
+  .alt-hdr__richlnk:hover { background: rgba(255, 255, 255, 0.75); }
+  .alt-hdr__richicon { flex: none; width: 40px; height: 40px; border-radius: 12px; background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(27, 39, 51, 0.08); display: inline-flex; align-items: center; justify-content: center; color: var(--alt-gold-raw); }
   .alt-hdr__richicon svg { width: 19px; height: 19px; }
   .alt-hdr__richt { display: block; font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
   .alt-hdr__richs { display: block; font-size: 12px; color: var(--alt-text); margin-top: 2px; }
@@ -324,63 +250,54 @@ const nav = [
   .alt-hdr__feat-eb { display: block; font-size: 9.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.16em; text-transform: uppercase; color: var(--alt-gold-bright); margin-bottom: 6px; }
   .alt-hdr__feat-t { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 19px; line-height: 1.08; color: #fff; }
 
-  /* Acciones */
-  .alt-hdr__actions { justify-self: end; display: flex; align-items: center; gap: 11px; flex: none; }
-  /* Favoritos — botón NEUMÓRFICO (frosted): extruido en reposo, hundido al hover */
-  .alt-hdr__fav {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 42px; height: 42px; border-radius: 50%; border: 0;
-    background: rgba(255, 255, 255, 0.5);
-    box-shadow: 3px 3px 8px rgba(6, 39, 67, 0.14), -3px -3px 7px rgba(255, 255, 255, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    color: var(--alt-link);
-    transition: box-shadow var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease);
+  /* Acciones — controles FANTASMA (filo hairline) + UN acento dorado (Publica). Nada compite. */
+  .alt-hdr__actions { justify-self: end; display: flex; align-items: center; gap: 8px; flex: none; }
+  .alt-hdr__icon {
+    display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;
+    border: 1px solid rgba(27, 39, 51, 0.12); background: rgba(255, 255, 255, 0.4); color: var(--alt-ink);
+    transition: border-color var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease), background var(--alt-dur) var(--alt-ease);
   }
-  .alt-hdr__fav svg { width: 18px; height: 18px; }
-  .alt-hdr__fav:hover { box-shadow: inset 3px 3px 7px rgba(6, 39, 67, 0.16), inset -3px -3px 6px rgba(255, 255, 255, 0.8); color: var(--alt-gold-raw); }
-  /* Ingresar — pill navy sobria */
+  .alt-hdr__icon svg { width: 18px; height: 18px; }
+  .alt-hdr__icon:hover { border-color: var(--alt-gold); color: var(--alt-link); background: rgba(255, 255, 255, 0.7); }
   .alt-hdr__login {
-    display: inline-flex; align-items: center; gap: 7px; padding: 10px 16px; border-radius: var(--alt-r-pill);
-    background: linear-gradient(180deg, #0a3556, #062743); color: #fff;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 8px 18px -10px rgba(6, 39, 67, 0.6);
+    display: inline-flex; align-items: center; gap: 7px; padding: 10px 17px; border-radius: var(--alt-r-pill); margin-left: 3px;
+    border: 1px solid rgba(27, 39, 51, 0.16); background: rgba(255, 255, 255, 0.4); color: var(--alt-ink);
     font-weight: var(--alt-fw-semibold); font-size: 13px; white-space: nowrap; text-decoration: none;
-    transition: transform var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease);
+    transition: border-color var(--alt-dur) var(--alt-ease), background var(--alt-dur) var(--alt-ease);
   }
   .alt-hdr__login svg { width: 15px; height: 15px; }
-  .alt-hdr__login:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 12px 24px -10px rgba(6, 39, 67, 0.7); }
-  /* Publica — CTA dorado SKEUOMÓRFICO (metal físico: gradiente vertical + luz superior + sombra inferior) */
+  .alt-hdr__login:hover { border-color: var(--alt-ink); background: rgba(255, 255, 255, 0.7); }
+  /* El ÚNICO acento fuerte: CTA dorado metálico (skeuomorfismo sutil). */
   .alt-hdr__pub {
-    display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: var(--alt-r-pill);
-    background: linear-gradient(180deg, var(--alt-gold-bright) 0%, var(--alt-gold) 46%, var(--alt-gold-raw) 100%);
+    display: inline-flex; align-items: center; gap: 8px; padding: 11px 19px; border-radius: var(--alt-r-pill);
+    background: linear-gradient(180deg, var(--alt-gold-bright) 0%, var(--alt-gold) 48%, var(--alt-gold-raw) 100%);
     color: var(--alt-ink);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -2px 4px rgba(120, 90, 20, 0.35), 0 10px 22px -8px rgba(166, 128, 30, 0.6);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -2px 5px rgba(120, 90, 20, 0.32), 0 10px 22px -10px rgba(166, 128, 30, 0.55);
     font-weight: var(--alt-fw-bold); font-size: 13px; white-space: nowrap; text-decoration: none;
     transition: transform var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease);
   }
   .alt-hdr__pub svg { width: 16px; height: 16px; }
-  .alt-hdr__pub:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), inset 0 -2px 4px rgba(120, 90, 20, 0.35), 0 14px 28px -8px rgba(166, 128, 30, 0.7); }
-  .alt-hdr__pub:active { transform: translateY(1px); box-shadow: inset 0 2px 5px rgba(120, 90, 20, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4); }
-  /* Hamburguesa — botón neumórfico con morph a X */
+  .alt-hdr__pub:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -2px 5px rgba(120, 90, 20, 0.32), 0 14px 28px -10px rgba(166, 128, 30, 0.66); }
+  .alt-hdr__pub:active { transform: translateY(1px); box-shadow: inset 0 2px 6px rgba(120, 90, 20, 0.4); }
   .alt-hdr__burger {
-    display: none; position: relative; width: 44px; height: 44px; border-radius: 13px; border: 0;
-    background: rgba(255, 255, 255, 0.5);
-    box-shadow: 3px 3px 8px rgba(6, 39, 67, 0.14), -3px -3px 7px rgba(255, 255, 255, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-    color: var(--alt-ink); align-items: center; justify-content: center; cursor: pointer;
-    transition: box-shadow var(--alt-dur) var(--alt-ease);
+    display: none; position: relative; width: 44px; height: 44px; border-radius: 13px;
+    border: 1px solid rgba(27, 39, 51, 0.12); background: rgba(255, 255, 255, 0.4); color: var(--alt-ink);
+    align-items: center; justify-content: center; cursor: pointer; transition: border-color var(--alt-dur) var(--alt-ease);
   }
+  .alt-hdr__burger:hover { border-color: var(--alt-gold); }
   .alt-hdr__burger svg { position: absolute; width: 22px; height: 22px; transition: opacity var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease); }
   .alt-hdr__burger-x { opacity: 0; transform: rotate(-90deg) scale(0.7); }
-  .alt-hdr[data-drawer-open] .alt-hdr__burger { box-shadow: inset 3px 3px 7px rgba(6, 39, 67, 0.16), inset -3px -3px 6px rgba(255, 255, 255, 0.8); }
   .alt-hdr[data-drawer-open] .alt-hdr__burger-o { opacity: 0; transform: rotate(90deg) scale(0.7); }
   .alt-hdr[data-drawer-open] .alt-hdr__burger-x { opacity: 1; transform: none; }
 
   /* Drawer móvil — vidrio */
   .alt-hdr__drawer {
-    position: absolute; top: calc(100% + 6px); left: clamp(12px, 3vw, 24px); right: clamp(12px, 3vw, 24px);
-    background: rgba(255, 255, 255, 0.82);
-    -webkit-backdrop-filter: saturate(180%) blur(22px); backdrop-filter: saturate(180%) blur(22px);
+    position: absolute; top: calc(100% + 8px); left: clamp(12px, 3vw, 24px); right: clamp(12px, 3vw, 24px);
+    background: rgba(255, 255, 255, 0.85);
+    -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.7); border-radius: var(--alt-r-lg);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 34px 60px -28px rgba(6, 39, 67, 0.45);
-    max-height: calc(100vh - 130px); overflow: auto; padding: 10px clamp(14px, 4vw, 22px) 20px;
+    max-height: calc(100vh - 120px); overflow: auto; padding: 10px clamp(14px, 4vw, 22px) 20px;
     z-index: var(--alt-z-drawer); opacity: 0; visibility: hidden; transform: translateY(-8px);
     transition: opacity var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease), visibility var(--alt-dur);
   }
@@ -397,23 +314,20 @@ const nav = [
   .alt-hdr__drawer-cta { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
   .alt-hdr__drawer-cta .alt-hdr__pub, .alt-hdr__drawer-cta .alt-hdr__login { padding: 14px; border-radius: var(--alt-r-sm); font-size: 14px; justify-content: center; }
 
-  /* Responsive: colapso a 1300px. Favoritos se MANTIENE en móvil (junto a la hamburguesa). */
+  /* Responsive: colapso a 1300px. WhatsApp + Favoritos se mantienen en móvil. */
   @media (max-width: 1299px) {
-    .alt-hdr__nav, .alt-hdr__login, .alt-hdr__pub, .alt-hdr__util { display: none; }
+    .alt-hdr__nav, .alt-hdr__login, .alt-hdr__pub { display: none; }
     .alt-hdr__burger { display: inline-flex; }
-    .alt-hdr__bar-in { grid-template-columns: auto 1fr; }
+    .alt-hdr__bar-in { grid-template-columns: auto 1fr; height: 68px; }
     .alt-hdr__actions { grid-column: 2; }
-    .alt-hdr__dock { margin-top: 10px; }
+    .alt-hdr__word-name { font-size: 22px; }
   }
   @media (min-width: 1300px) { .alt-hdr__burger { display: none; } }
-
-  @media (prefers-reduced-motion: reduce) {
-    .alt-hdr__util, .alt-hdr__dock, .alt-hdr__bar, .alt-hdr__bar-in, .alt-hdr__mark img { transition: none; }
-  }
+  @media (prefers-reduced-motion: reduce) { .alt-hdr__bar, .alt-hdr__mark, .alt-hdr__pub { transition: none; } }
 </style>
 
 <script>
-  // Drawer (morph hamburguesa↔X) + condensado al scroll (colapsa util + achica barra).
+  // Drawer (morph hamburguesa↔X) + sombra al scroll (SOLO sombra, sin reflow → sin temblor).
   const hdr = document.querySelector('.alt-hdr');
   const drawer = document.getElementById('alt-drawer');
   const toggle = hdr?.querySelector('[data-drawer-toggle]');
@@ -434,7 +348,6 @@ const nav = [
     }
   });
 
-  // Condensado al scrollear (>8px): colapsa la barra utilitaria y achica la barra flotante.
   const onScroll = () => hdr?.classList.toggle('is-scrolled', window.scrollY > 8);
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
