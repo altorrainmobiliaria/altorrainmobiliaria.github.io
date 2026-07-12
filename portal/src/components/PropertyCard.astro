@@ -1,0 +1,117 @@
+---
+/*
+ * PropertyCard — card de inmueble REUTILIZABLE (destacadas, arriendo, cerca, valoradas, SERP).
+ * Card plana blanca (superficie de contenido) + imagen + fav + badge + specs + título Cormorant + precio + orbe.
+ * Tokenizada al design system D1. Disciplina de color: solo paleta.
+ */
+interface Props {
+  img: string;
+  alt: string;
+  badge?: string;         // "En venta" | "Arriendo" | "Corta estancia"…
+  zona: string;
+  beds?: number;
+  baths?: number;
+  area?: string;          // "142 m²"
+  title: string;
+  price: string;          // "$1.450.000.000"
+  priceLabel?: string;    // "Desde" | "Canon" | "Noche"
+  priceSuffix?: string;   // "/mes" | "/noche"
+  href: string;
+}
+const { img, alt, badge, zona, beds, baths, area, title, price, priceLabel, priceSuffix, href } = Astro.props;
+
+const specIcon = {
+  bed: '<path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7"/><path d="M3 15h18"/><path d="M7 11V9h4v2"/><path d="M13 11V9h4v2"/>',
+  bath: '<path d="M4 12V6.5a2 2 0 0 1 3.7-1"/><path d="M3 12h18v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><path d="M7.5 18l-1 2.5M16.5 18l1 2.5"/>',
+  area: '<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M9 4v3M4 9h3M15 20v-3M20 15h-3"/>',
+};
+---
+
+<article class="alt-pcard">
+  <div class="alt-pcard__media">
+    <img src={img} alt={alt} loading="lazy" decoding="async" />
+    <button class="alt-pcard__fav" type="button" aria-label="Guardar en favoritos" aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"/></svg>
+    </button>
+    {badge && <span class="alt-pcard__badge">{badge}</span>}
+  </div>
+  <div class="alt-pcard__body">
+    <div class="alt-pcard__meta">
+      <span class="alt-pcard__zona">{zona}</span>
+      <div class="alt-pcard__specs">
+        {beds != null && <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={specIcon.bed}></svg>{beds}</span>}
+        {baths != null && <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={specIcon.bath}></svg>{baths}</span>}
+        {area && <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={specIcon.area}></svg>{area}</span>}
+      </div>
+    </div>
+    <h3 class="alt-pcard__title"><a href={href}>{title}</a></h3>
+    <div class="alt-pcard__foot">
+      <span class="alt-pcard__price">
+        {priceLabel && <span class="alt-pcard__price-lbl">{priceLabel}</span>}{price}{priceSuffix && <span class="alt-pcard__price-sfx">{priceSuffix}</span>}
+      </span>
+      <a class="alt-pcard__orb" href={href} aria-label={`Ver ${title}`}>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .alt-pcard {
+    background: var(--alt-white);
+    border-radius: var(--alt-r-lg);
+    overflow: hidden;
+    box-shadow: var(--alt-elev-card);
+    transition: transform var(--alt-dur-slow) var(--alt-ease-card), box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+  }
+  .alt-pcard:hover { transform: translateY(-7px); box-shadow: var(--alt-elev-card-hover), 0 0 0 1px rgba(212, 175, 55, 0.5); }
+
+  .alt-pcard__media { position: relative; overflow: hidden; }
+  .alt-pcard__media img { width: 100%; height: 250px; object-fit: cover; transition: transform var(--alt-dur-img, 1s) var(--alt-ease); }
+  .alt-pcard:hover .alt-pcard__media img { transform: scale(1.05); }
+
+  .alt-pcard__fav {
+    position: absolute; top: 14px; right: 14px;
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9); border: 1px solid var(--alt-gold); color: var(--alt-link);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: background var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease);
+  }
+  .alt-pcard__fav svg { width: 17px; height: 17px; }
+  .alt-pcard__fav[aria-pressed='true'] { background: var(--alt-ink); color: var(--alt-gold-bright); }
+  .alt-pcard__fav[aria-pressed='true'] svg { fill: currentColor; }
+
+  .alt-pcard__badge {
+    position: absolute; left: 14px; bottom: 14px;
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255, 255, 255, 0.94); padding: 7px 13px; border-radius: var(--alt-r-pill);
+    font-size: 10px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.14em; text-transform: uppercase; color: var(--alt-ink);
+  }
+  .alt-pcard__badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--alt-gold); }
+
+  .alt-pcard__body { padding: 24px 24px 26px; }
+  .alt-pcard__meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .alt-pcard__zona { font-size: 11px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.18em; text-transform: uppercase; color: var(--alt-link); }
+  .alt-pcard__specs { display: flex; align-items: center; gap: 12px; font-size: 12.5px; font-weight: var(--alt-fw-medium); color: var(--alt-text); }
+  .alt-pcard__specs span { display: inline-flex; align-items: center; gap: 5px; }
+  .alt-pcard__specs svg { width: 15px; height: 15px; stroke: var(--alt-gold-raw); }
+
+  .alt-pcard__title { font-family: var(--alt-font-display); font-weight: var(--alt-fw-medium); font-size: 24px; line-height: 1.12; color: var(--alt-ink); margin-bottom: 16px; letter-spacing: normal; }
+  .alt-pcard__title a { color: inherit; text-decoration: none; }
+  .alt-pcard__title a:hover { color: var(--alt-link); }
+
+  .alt-pcard__foot { display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--alt-hairline); padding-top: 15px; }
+  .alt-pcard__price { font-weight: var(--alt-fw-semibold); font-size: 18px; color: var(--alt-text); }
+  .alt-pcard__price-lbl { font-size: 10.5px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text-muted); margin-right: 5px; }
+  .alt-pcard__price-sfx { font-size: 13px; font-weight: var(--alt-fw-medium); color: var(--alt-text-muted); margin-left: 3px; }
+
+  .alt-pcard__orb {
+    flex: none; display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--alt-white); border: 1.5px solid var(--alt-gold);
+    transition: transform var(--alt-dur) var(--alt-ease), background var(--alt-dur) var(--alt-ease), border-color var(--alt-dur) var(--alt-ease);
+  }
+  .alt-pcard__orb svg { width: 17px; height: 17px; stroke: var(--alt-link); transition: transform var(--alt-dur) var(--alt-ease), stroke var(--alt-dur) var(--alt-ease); }
+  .alt-pcard__orb:hover, .alt-pcard:hover .alt-pcard__orb { background: var(--alt-grad-gold); border-color: transparent; transform: scale(1.08); }
+  .alt-pcard__orb:hover svg, .alt-pcard:hover .alt-pcard__orb svg { stroke: var(--alt-ink); transform: rotate(-45deg); }
+</style>

@@ -1,0 +1,134 @@
+---
+/*
+ * Footer COMPARTIDO (Ola 1). Réplica del footer de ALTORRA Portal.dc.html, tokenizado.
+ * Sección navy (--alt-surface-ink) con 5 columnas + barra legal. Contacto/razón social REALES (SITE).
+ * ⚠️ Matrícula de Arrendador: placeholder "000000" hasta que Daniel entregue el Nº real (sello de confianza).
+ * ⚠️ Dirección física: se usa solo ciudad (no calle) hasta tener la dirección oficial verificada.
+ */
+import { SITE } from '../lib/config/site';
+
+const year = new Date().getFullYear();
+
+const cols = [
+  { title: 'Explorar', links: [['Comprar', '/comprar'], ['Arrendar', '/arrendar'], ['Estancias', '/estancias'], ['Invertir', '/invertir']] },
+  { title: 'Servicios', links: [['Publica tu propiedad', '/publicar'], ['Avalúo gratis', '/publicar'], ['Programa de aliados', '/aliados'], ['Panel de gestión', '/gestion']] },
+  { title: 'Compañía', links: [['Nosotros', '#nosotros'], ['Journal', '/journal'], ['Trabaja con nosotros', '#contacto'], ['Contacto', '#contacto']] },
+];
+
+const icon = {
+  pin: '<path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+  phone: '<path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.5.56 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.3a1 1 0 0 1 1 1c0 1.2.2 2.4.56 3.5a1 1 0 0 1-.24 1z"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/>',
+  ig: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"/>',
+  wa: '<path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.6-4A8 8 0 1 1 20 11.5z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5.6 0 1.2-.6 1.2-1.2l-1.7-1-.9.9c-1-.4-1.8-1.2-2.2-2.2l.9-.9-1-1.7C10.1 8.3 9.5 8.9 9 9.5z"/>',
+  tk: '<path d="M16 4c.3 2.3 1.7 3.9 4 4.2v3c-1.5 0-2.9-.4-4-1.2v5.5A5.5 5.5 0 1 1 10.5 10v3a2.5 2.5 0 1 0 2.5 2.5V4z"/>',
+};
+---
+
+<footer class="alt-ft" id="contacto">
+  <div class="alt-ft__in">
+    <div class="alt-ft__grid">
+      <!-- Marca -->
+      <div class="alt-ft__brand">
+        <div class="alt-ft__logo">
+          <img src="/assets/altorra-mark-t.png" alt="" width="44" height="44" />
+          <span class="alt-wordmark">ALTORRA<small>INMOBILIARIA</small></span>
+        </div>
+        <p class="alt-ft__tagline">Cartagena, a tu altura.</p>
+        <p class="alt-ft__desc">Inmobiliaria en Cartagena de Indias: compra, arriendo, estancias e inversión con acompañamiento experto. Seguridad, legalidad y confianza en cada paso.</p>
+        <div class="alt-ft__soc">
+          <a href={SITE.social.instagram} aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" set:html={icon.ig}></svg></a>
+          <a href={SITE.social.facebook} aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" set:html={icon.ig}></svg></a>
+          <a href={SITE.social.tiktok} aria-label="TikTok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" set:html={icon.tk}></svg></a>
+          <a href={SITE.contact.whatsappLink} aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={icon.wa}></svg></a>
+        </div>
+      </div>
+
+      <!-- Columnas de enlaces -->
+      {cols.map((col) => (
+        <nav class="alt-ft__col" aria-label={col.title}>
+          <p class="alt-ft__col-h">{col.title}</p>
+          {col.links.map(([t, h]) => <a href={h}>{t}</a>)}
+        </nav>
+      ))}
+
+      <!-- Contacto -->
+      <div class="alt-ft__col">
+        <p class="alt-ft__col-h">Contacto</p>
+        <a class="alt-ft__ci" href="#contacto"><span set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icon.pin}</svg>`}></span><span>{SITE.city}</span></a>
+        <a class="alt-ft__ci" href={`tel:${SITE.contact.whatsapp.replace(/\s/g, '')}`}><span set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icon.phone}</svg>`}></span><span>{SITE.contact.whatsapp}</span></a>
+        <a class="alt-ft__ci" href={`mailto:${SITE.contact.email}`}><span set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icon.mail}</svg>`}></span><span>{SITE.contact.email}</span></a>
+        <span class="alt-ft__ci"><span set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icon.clock}</svg>`}></span><span>Lun–Sáb · 8:00am–6:00pm</span></span>
+      </div>
+    </div>
+
+    <div class="alt-ft__legal">
+      <div class="alt-ft__legal-l">
+        <span>© {year} {SITE.legalName}</span>
+        <span class="alt-ft__dot"></span>
+        <span>Matrícula de Arrendador 000000</span>
+        <span class="alt-ft__dot"></span>
+        <span>NIT {SITE.nit}</span>
+      </div>
+      <div class="alt-ft__legal-r">
+        <a href="/terminos">Términos</a>
+        <a href="/privacidad">Privacidad</a>
+        <a href="/habeas-data">Habeas Data</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .alt-ft { background: var(--alt-surface-ink); color: var(--alt-on-ink-muted); }
+  .alt-ft__in { max-width: var(--alt-container); margin-inline: auto; padding: clamp(40px, 4.4vw, 58px) var(--alt-gutter) 26px; }
+  .alt-ft__grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr 1.25fr;
+    gap: clamp(26px, 3vw, 46px);
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--alt-hairline-ink);
+  }
+  .alt-ft__brand { min-width: 0; }
+  .alt-ft__logo { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .alt-ft__logo img { height: 44px; width: auto; display: block; }
+  .alt-ft .alt-wordmark { color: #fff; }
+  .alt-ft .alt-wordmark small { color: rgba(255, 255, 255, 0.55); }
+  .alt-ft__tagline { font-family: var(--alt-font-display); font-style: italic; font-size: 19px; line-height: 1.3; color: var(--alt-gold-bright); margin-bottom: 10px; }
+  .alt-ft__desc { font-size: 13px; line-height: 1.6; color: rgba(255, 255, 255, 0.55); max-width: 270px; margin-bottom: 18px; }
+  .alt-ft__soc { display: flex; gap: 10px; }
+  .alt-ft__soc a {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid var(--alt-hairline-ink);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255, 255, 255, 0.75);
+    transition: background var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease), border-color var(--alt-dur) var(--alt-ease);
+  }
+  .alt-ft__soc svg { width: 16px; height: 16px; }
+  .alt-ft__soc a:hover { background: var(--alt-gold-bright); color: var(--alt-ink); border-color: var(--alt-gold-bright); }
+
+  .alt-ft__col { display: flex; flex-direction: column; gap: 11px; }
+  .alt-ft__col-h { font-size: 11px; font-weight: var(--alt-fw-bold); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); margin-bottom: 4px; }
+  .alt-ft__col a { font-size: 14px; color: rgba(255, 255, 255, 0.72); text-decoration: none; transition: color var(--alt-dur) var(--alt-ease); }
+  .alt-ft__col a:hover { color: var(--alt-gold-bright); }
+  .alt-ft__ci { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: rgba(255, 255, 255, 0.72); text-decoration: none; }
+  .alt-ft__ci span:first-child { flex: none; color: var(--alt-gold); margin-top: 1px; }
+  .alt-ft__ci svg { width: 15px; height: 15px; }
+  .alt-ft__ci:hover { color: var(--alt-gold-bright); }
+
+  .alt-ft__legal { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding-top: 20px; }
+  .alt-ft__legal-l { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; font-size: 12px; color: rgba(255, 255, 255, 0.45); }
+  .alt-ft__dot { width: 4px; height: 4px; border-radius: 50%; background: rgba(255, 255, 255, 0.28); }
+  .alt-ft__legal-r { display: flex; gap: 20px; flex-wrap: wrap; }
+  .alt-ft__legal-r a { font-size: 12px; color: rgba(255, 255, 255, 0.55); text-decoration: none; transition: color var(--alt-dur) var(--alt-ease); }
+  .alt-ft__legal-r a:hover { color: var(--alt-gold-bright); }
+
+  @media (max-width: 900px) {
+    .alt-ft__grid { grid-template-columns: 1fr 1fr; }
+    .alt-ft__brand { grid-column: 1 / -1; }
+  }
+  @media (max-width: 520px) {
+    .alt-ft__grid { grid-template-columns: 1fr; }
+  }
+</style>

@@ -5,7 +5,23 @@ export const prerender = true;
 
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PropertyCard from '../components/PropertyCard.astro';
 import { SITE } from '../lib/config/site';
+
+// Datos DEMO (estáticos) — la conexión a Firestore real llega cuando haya inventario
+// (decisión SSG vs doc-índice DIFERIDA a Fable, TODO-22). Imágenes = placeholders del diseño.
+const destacadas = [
+  { img: '/assets/villa-pool.jpg', alt: 'Apartamento con vista a la bahía', badge: 'En venta', zona: 'Castillogrande', beds: 3, baths: 3, area: '142 m²', title: 'Apartamento con vista a la bahía', price: '$1.450.000.000', priceLabel: 'Desde', href: '/comprar' },
+  { img: '/assets/villa-modern.jpg', alt: 'Casa republicana restaurada', badge: 'En venta', zona: 'Manga', beds: 4, baths: 3, area: '210 m²', title: 'Casa republicana restaurada', price: '$980.000.000', priceLabel: 'Desde', href: '/comprar' },
+  { img: '/assets/estate-golden.jpg', alt: 'Penthouse frente al mar', badge: 'En venta', zona: 'Bocagrande', beds: 3, baths: 4, area: '188 m²', title: 'Penthouse frente al mar', price: '$2.100.000.000', priceLabel: 'Desde', href: '/comprar' },
+];
+
+const arriendo = [
+  { img: '/assets/chalet-dusk.jpg', alt: 'Apartamento amoblado en el Centro', badge: 'Arriendo', zona: 'Centro Histórico', beds: 2, baths: 2, area: '95 m²', title: 'Apartamento amoblado en el Centro', price: '$4.800.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/arrendar' },
+  { img: '/assets/hero-keys.jpg', alt: 'Casa familiar en Crespo', badge: 'Arriendo', zona: 'Crespo', beds: 3, baths: 2, area: '160 m²', title: 'Casa familiar en Crespo', price: '$3.200.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/arrendar' },
+  { img: '/assets/villa-pool.jpg', alt: 'Apartaestudio con piscina', badge: 'Arriendo', zona: 'Manga', beds: 1, baths: 1, area: '48 m²', title: 'Apartaestudio con piscina', price: '$2.100.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/arrendar' },
+];
 
 // Pestañas del buscador del hero (buscar por operación).
 const tabs = [
@@ -106,7 +122,52 @@ const maneras = [
         ))}
       </div>
     </section>
+
+    <!-- DESTACADAS -->
+    <section id="destacadas" class="home-band">
+      <div class="alt-container">
+        <div class="home-sechead">
+          <div>
+            <p class="alt-eyebrow">Selección ALTORRA</p>
+            <h2>Destacadas esta semana</h2>
+          </div>
+          <a class="home-seelink" href="/comprar">Ver todas <b>128</b>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="home-pgrid">
+          {destacadas.map((p) => <PropertyCard {...p} />)}
+          <div class="home-ctacard alt-card--ink">
+            <p class="home-ctacard__n">128 propiedades</p>
+            <p class="home-ctacard__d">en venta, arriendo y corta estancia en toda Cartagena.</p>
+            <a class="alt-btn alt-btn--on-ink" href="/comprar">Ver todas
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARRIENDO -->
+    <section id="arriendo" class="home-band home-band--alt">
+      <div class="alt-container">
+        <div class="home-sechead">
+          <div>
+            <p class="alt-eyebrow">En arriendo</p>
+            <h2>Arriendos, con o sin administración.</h2>
+          </div>
+          <a class="home-seelink" href="/arrendar">Ver arriendos <b>83</b>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="home-pgrid">
+          {arriendo.map((p) => <PropertyCard {...p} />)}
+        </div>
+      </div>
+    </section>
   </main>
+
+  <Footer />
 </BaseLayout>
 
 <style>
@@ -258,6 +319,30 @@ const maneras = [
   .home-manera__cta { display: inline-flex; align-items: center; gap: 7px; font-weight: var(--alt-fw-semibold); font-size: 14px; color: #fff; }
   .home-manera__cta svg { width: 15px; height: 15px; transition: transform var(--alt-dur) var(--alt-ease); }
   .home-manera:hover .home-manera__cta svg { transform: translateX(4px); }
+
+  /* Bandas de secciones de propiedades */
+  .home-band { padding-block: clamp(60px, 8vw, 110px); border-top: 1px solid var(--alt-hairline); }
+  .home-band--alt { background: var(--alt-surface-alt); }
+  .home-sechead { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: clamp(28px, 4vw, 48px); }
+  .home-sechead h2 { margin-top: var(--alt-space-3); }
+  .home-seelink {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 11px 20px; border-radius: var(--alt-r-pill);
+    border: 1px solid var(--alt-hairline-2); background: var(--alt-white);
+    color: var(--alt-ink); font-weight: var(--alt-fw-semibold); font-size: 14px; text-decoration: none;
+    transition: border-color var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease);
+  }
+  .home-seelink b { color: var(--alt-link); }
+  .home-seelink svg { width: 14px; height: 14px; transition: transform var(--alt-dur) var(--alt-ease); }
+  .home-seelink:hover { border-color: var(--alt-gold); }
+  .home-seelink:hover svg { transform: translateX(4px); }
+
+  .home-pgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: clamp(20px, 2.4vw, 32px); }
+
+  /* Card CTA navy (rellena un slot del grid) */
+  .home-ctacard { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 38px 34px; min-height: 250px; }
+  .home-ctacard__n { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(30px, 3.4vw, 42px); line-height: 1; color: #fff; margin-bottom: 10px; }
+  .home-ctacard__d { font-size: 14.5px; line-height: 1.55; color: var(--alt-on-ink-muted); max-width: 230px; margin-bottom: 26px; }
 </style>
 
 <script>
