@@ -11,13 +11,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const arrow = '<path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
 
 const colors = [
-  ['--alt-ink', '#062743', 'Navy corporativo'],
-  ['--alt-gold', '#d4af37', 'Oro marca'],
+  ['--alt-navy', '#062743', 'Azul marino'],
+  ['--alt-white', '#ffffff', 'Blanco'],
+  ['--alt-gold', '#d4af37', 'Dorado'],
+  ['--alt-silver', '#bfc3c9', 'Plateado'],
+  ['--alt-gris-claro', '#e6edf2', 'Gris claro'],
+  ['--alt-gris-azulado', '#c9d6e2', 'Gris azulado'],
   ['--alt-gold-bright', '#ebd27e', 'Oro champán (sobre navy)'],
-  ['--alt-gold-raw', '#a6801e', 'Ocre (solo texto grande)'],
   ['--alt-text', '#5a6b82', 'Cuerpo AA'],
   ['--alt-link', '#7d6119', 'Enlace AA'],
-  ['--alt-mist', '#f2f6f9', 'Niebla / banda alterna'],
   ['--alt-surface-neu', '#eaf0f7', 'Lienzo neumórfico'],
   ['--alt-error', '#b42318', 'Error'],
   ['--alt-success', '#1f6b44', 'Éxito'],
@@ -154,6 +156,55 @@ const type = [
       </div>
     </section>
 
+    <!-- LIQUID GLASS (sobre fondo rico para ver el esmerilado) -->
+    <section class="ds-glassdemo">
+      <div class="alt-container">
+        <p class="alt-eyebrow" style="color:var(--alt-gold-bright)">Firma premium</p>
+        <h2 style="color:#fff">Liquid Glass sutil sobre neumorfismo</h2>
+        <p style="color:var(--alt-on-ink);max-width:56ch;margin-top:8px">El neumorfismo manda; el vidrio esmerilado es el acento (barra sticky, flotantes sobre imagen). Aquí, paneles de vidrio sobre un fondo navy+oro.</p>
+        <div class="ds-row" style="margin-top:var(--alt-space-6);align-items:stretch">
+          <div class="alt-glass" style="padding:var(--alt-space-6);flex:1;min-width:260px;max-width:360px">
+            <p class="alt-eyebrow">Vidrio claro</p>
+            <h3 style="margin-top:6px">Buscador flotante</h3>
+            <p style="margin-top:8px;color:var(--alt-text)">Esmerilado con blur + saturación. Fallback sólido sin backdrop-filter.</p>
+          </div>
+          <div class="alt-glass--dark" style="padding:var(--alt-space-6);border-radius:var(--alt-r-lg);flex:1;min-width:260px;max-width:360px">
+            <p class="alt-eyebrow">Vidrio oscuro</p>
+            <h3 style="margin-top:6px;color:#fff">Sobre navy</h3>
+            <p style="margin-top:8px;color:var(--alt-on-ink)">Hairline oro tenue + sheen superior (pinlight).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARD VITRINA (firma única) sobre superficie neu -->
+    <section class="ds-neu" data-surface="neu">
+      <div class="alt-container">
+        <p class="alt-eyebrow">Card "vitrina" — firma única</p>
+        <h2>Neumorfismo + sheen de vidrio + filo metálico</h2>
+        <p class="ds-note">Pasa el cursor: el filo de oro se enciende (hairline). Plata cepillada como acento de texto.</p>
+        <div class="ds-cards" style="margin-top:var(--alt-space-6)">
+          <article class="alt-card--vitrina" style="padding:var(--alt-space-6)">
+            <p class="alt-eyebrow">Destacada</p>
+            <h3 class="alt-metal-silver" style="font-size:var(--alt-fs-h3);margin-top:4px">ALTORRA</h3>
+            <p style="margin-top:8px;color:var(--alt-text)">Extrusión neumórfica con doble brillo de vidrio y filo de oro en hover.</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+              <strong style="font-family:var(--alt-font-display);font-size:var(--alt-fs-h4);color:var(--alt-text-strong)">$ 1.200.000.000</strong>
+              <span class="alt-orb"><svg viewBox="0 0 24 24" set:html={arrow}></svg></span>
+            </div>
+          </article>
+          <article class="alt-card--vitrina" style="padding:var(--alt-space-6)">
+            <p class="alt-eyebrow">Premium</p>
+            <h3 style="margin-top:4px">Casa Republicana</h3>
+            <p style="margin-top:8px;color:var(--alt-text)">Centro Histórico · vista al mar · restaurada.</p>
+            <div class="ds-row" style="margin-top:16px">
+              <span class="alt-seal"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/><path d="M9 12l2 2 4-4"/></svg> Verificado</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
     <!-- SELLOS + CHIPS + BADGES -->
     <section class="alt-section alt-container">
       <p class="alt-eyebrow">Confianza</p>
@@ -247,4 +298,14 @@ const type = [
 
   .ds-neu { background: var(--alt-surface-neu); padding-block: var(--alt-section-y); border-bottom: 1px solid var(--alt-hairline); }
   .ds-neu code { background: rgba(255,255,255,.5); padding: 1px 5px; border-radius: 4px; }
+
+  .ds-glassdemo {
+    position: relative;
+    padding-block: var(--alt-section-y);
+    background:
+      radial-gradient(circle at 18% 28%, rgba(212,175,55,.4), transparent 42%),
+      radial-gradient(circle at 82% 75%, rgba(191,195,201,.28), transparent 40%),
+      linear-gradient(135deg, #062743, #0a3556 55%, #041f36);
+    overflow: hidden;
+  }
 </style>

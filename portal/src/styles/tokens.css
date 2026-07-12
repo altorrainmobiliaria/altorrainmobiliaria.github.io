@@ -5,12 +5,15 @@
  * Extraído de los 8 mockups aprobados por el dueño (portal/design/mockups/*.dc.html),
  * reconciliado y endurecido a11y (workflow altorra-d1-token-extract, 2026-07-11).
  *
- * MODELO REAL DEL DISEÑO (corrige la descripción vieja "Liquid Glass"):
- *   El sistema es DUAL-MODE, no neumórfico universal:
- *     · --alt-surface = #FFFFFF  → DEFAULT (6/8 páginas de contenido, elevación PLANA)
+ * LENGUAJE VISUAL (dirección Daniel 2026-07-12): NEUMORFISMO protagonista + LIQUID GLASS
+ *   sutil + DUAL-MODE = algo único y premium. Reparto:
+ *     · NEUMORFISMO = héroe → superficies/cards/controles sobre --alt-surface-neu.
+ *     · LIQUID GLASS = acento SUTIL (§14) → barra sticky, flotantes sobre imagen, card "vitrina".
+ *       Usar con moderación (backdrop-filter es caro en GPU; siempre con fallback @supports).
+ *   Sistema DUAL-MODE de superficie (no neumórfico universal):
+ *     · --alt-surface = #FFFFFF  → DEFAULT (páginas de contenido, elevación PLANA)
  *     · --alt-surface-neu = #eaf0f7 → OPT-IN (home + barra de navegación, NEUMORFISMO)
  *     · --alt-surface-ink = #062743 → secciones oscuras localizadas (footer, CTAs, mapas)
- *   El neumorfismo es la FIRMA de home/nav, no la base del sistema.
  *
  * CONTRASTE (WCAG AA verificado contra el peor fondo claro #eaf0f7):
  *   Los tokens de TEXTO usan valores accesibles; el hex ORIGINAL del mockup se anota
@@ -20,8 +23,10 @@
  * ⚠️ DIVERGENCIAS QUE NECESITAN RATIFICACIÓN DE DANIEL (ver docs/10 / ADR):
  *   1) Sello tipográfico: la memoria fijaba Cardo + Helvetica Now; el diseño ENTREGADO
  *      usa Cormorant Garamond + Hanken Grotesk. Se construye sobre lo entregado (SSoT).
- *   2) Paleta: la visión de marca fija tinta #0F2E2C, turquí, ocre #B0813F, papeles cálidos;
- *      el diseño usa navy #062743, grises fríos, ocre #A6801E. Vision → vars RESERVADAS.
+ *   2) Paleta: ✅ RESUELTA por Daniel (lámina oficial "PALETA COLORES ALTORRA", 2026-07-12):
+ *      azul marino #062743 · blanco · dorado #D4AF37 · plateado #BFC3C9 · gris claro #E6EDF2 ·
+ *      gris azulado #C9D6E2 + escala. Confirma el diseño entregado; jubila la "visión" (sin
+ *      papeles cálidos ni turquí/ocre). Los tokens de abajo son ESA paleta.
  *   3) Ajuste a11y visible de la firma cromática (oro-texto y cuerpo se oscurecen para AA).
  *
  * Convención: prefijo --alt-*. Capa PRIMITIVA (valor) + capa SEMÁNTICA (rol) encima.
@@ -30,48 +35,49 @@
 
 :root {
   /* ==========================================================================
-   * 1. COLOR — PRIMITIVAS (paleta ENTREGADA = canónica)
+   * 1. COLOR — PALETA OFICIAL ALTORRA (lámina de marca, Daniel 2026-07-12)
+   *    "De la confianza y profesionalismo del azul, a la excelencia del dorado."
    * ======================================================================== */
 
-  /* --- Navies: DOS conviven, NO colapsar (matices distintos de sombra) --- */
-  --alt-ink: #062743;              /* navy corporativo: relleno, tinta, superficies oscuras */
+  /* --- 6 principales (nombres de la lámina) --- */
+  --alt-navy: #062743;         /* AZUL MARINO — confianza, profesionalismo, solidez */
+  --alt-white: #ffffff;        /* BLANCO — limpieza, claridad, espacio */
+  --alt-gold: #d4af37;         /* DORADO — lujo, excelencia, valor */
+  --alt-silver: #bfc3c9;       /* PLATEADO — modernidad, sofisticación (par metálico del logo) */
+  --alt-gris-claro: #e6edf2;   /* GRIS CLARO — suavidad, equilibrio, soporte */
+  --alt-gris-azulado: #c9d6e2; /* GRIS AZULADO — modernidad, neutralidad, respaldo */
+
+  /* --- Escala de grises oficial (lámina) --- */
+  --alt-gray-50: #f2f6f9;
+  --alt-gray-100: #e6edf2;     /* == gris claro */
+  --alt-gray-200: #c9d6e2;     /* == gris azulado */
+  --alt-gray-400: #98a9ba;
+  --alt-gray-600: #6b7c93;
+
+  /* --- Oro (familia derivada, para gradiente y estados) --- */
+  --alt-gold-bright: #ebd27e;  /* champán: acentos SOBRE navy, tagline itálica, inicio de gradiente */
+  --alt-gold-raw: #a6801e;     /* oro oscuro: SOLO texto grande (≥24px), iconos, decoración */
+
+  /* --- Alias semánticos sobre la paleta (los componentes consumen estos) --- */
+  --alt-ink: var(--alt-navy);      /* tinta = azul marino (JAMÁS negro) */
   --alt-ink-2: #0a3556;            /* navy 2º stop del gradiente de card CTA */
-  --alt-shadow-navy-rgb: 6, 39, 67;    /* base RGB de sombras neumórficas / navy (#062743) */
-  --alt-hairline-rgb: 27, 39, 51;      /* base RGB de TODOS los bordes hairline y sombras planas (#1B2733) */
-
-  /* --- Oro (firma de marca) --- */
-  --alt-gold: #d4af37;             /* oro marca: bordes, dots, stops medios de gradiente, estrellas */
-  --alt-gold-bright: #ebd27e;      /* oro champán: acentos SOBRE navy, tagline itálica, inicio de gradiente */
-  --alt-gold-raw: #a6801e;         /* ocre original del mockup — SOLO texto grande (≥24px), iconos, decoración */
-
-  /* --- Grises fríos de trabajo --- */
-  --alt-mist: #f2f6f9;             /* niebla: banda de sección alterna, hover, icon-tiles */
-  --alt-track: #e6edf2;            /* track de barras de progreso, divisores claros */
-  --alt-cloud: #c7d3dd;            /* plata media: separadores "·", tinte de placeholders de imagen */
-  --alt-white: #ffffff;
+  --alt-mist: var(--alt-gray-50);  /* niebla: banda alterna, hover, icon-tiles */
+  --alt-track: var(--alt-gris-claro);   /* track de barras, divisores claros */
+  --alt-cloud: var(--alt-gris-azulado); /* separadores "·", tinte de placeholders */
+  --alt-shadow-navy-rgb: 6, 39, 67;     /* base RGB de sombras neumórficas / navy */
+  --alt-hairline-rgb: 27, 39, 51;       /* base RGB de bordes hairline y sombras planas (#1B2733) */
 
   /* --- Navies de paneles de mapa oscuros --- */
   --alt-navy-map-1: #0b3a5e;
   --alt-navy-map-2: #041f36;
 
-  /* --- RESERVADAS de la VISIÓN de marca (NO instanciadas; ratificar antes de usar) --- */
-  --alt-vision-ink: #0f2e2c;       /* verde-navy de la visión (el diseño usa #062743) */
-  --alt-vision-turquesa: #1e7f86;  /* acento mínimo — ausente en mockups */
-  --alt-vision-ocre: #b0813f;      /* el diseño usa #a6801e en su lugar */
-  --alt-vision-silver: #c2c7cc;
-  --alt-vision-silver-2: #d9dde1;
-  --alt-vision-gold-lum: #e2c15c;
-  --alt-vision-graphite: #5a6169;
-  --alt-vision-paper: #faf8f4;     /* hueso CÁLIDO (el diseño usa grises fríos) */
-  --alt-vision-paper-2: #f4f1ea;
-
   /* ==========================================================================
    * 2. TEXTO ACCESIBLE — capa SEMÁNTICA (AA verificado sobre #eaf0f7)
    * ======================================================================== */
   --alt-text-strong: var(--alt-ink);   /* títulos serif, énfasis fuerte */
-  --alt-text: #5a6b82;                  /* cuerpo AA 4.74:1 en #eaf0f7 · mockup era #6b7c93 (3.71 ✗) */
-  --alt-text-soft: #6b7c93;             /* SOLO texto grande ≥24px (regla 3:1) */
-  --alt-text-muted: #98a9ba;            /* DECORATIVO: placeholders, separadores. NUNCA la única etiqueta */
+  --alt-text: #5a6b82;                   /* cuerpo AA 4.74:1 en #eaf0f7 · derivado de gray-600 #6b7c93, oscurecido para AA */
+  --alt-text-soft: var(--alt-gray-600);  /* #6b7c93 oficial — SOLO texto grande ≥24px (regla 3:1) */
+  --alt-text-muted: var(--alt-gray-400); /* #98a9ba oficial — DECORATIVO: placeholders, separadores. NUNCA única etiqueta */
   --alt-link: #7d6119;                  /* enlaces/eyebrows pequeños AA 5.09:1 en #eaf0f7 · mockup era #a6801e (3.20 ✗) */
   --alt-link-lg: var(--alt-gold-raw);   /* enlace/eyebrow GRANDE (≥24px) o icono */
 
@@ -117,6 +123,9 @@
   --alt-nm-in: inset 5px 5px 11px var(--alt-nm-d), inset -5px -5px 10px var(--alt-nm-l);  /* hundido grande */
   --alt-nm-in-sm: inset 3px 3px 7px var(--alt-nm-d), inset -3px -3px 6px var(--alt-nm-l); /* hundido pequeño (presionado) */
   --alt-nm-up-glow: 6px 6px 14px var(--alt-nm-d), -6px -6px 13px var(--alt-nm-l), inset 0 1px 0 rgba(255, 255, 255, 0.55); /* CTA */
+  /* FUSIÓN NEU + GLASS (firma premium única): extrusión neumórfica + doble sheen de vidrio (pinlight superior + halo interno) */
+  --alt-nm-glass: 6px 6px 16px var(--alt-nm-d), -6px -6px 14px var(--alt-nm-l), inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -7px 15px rgba(255, 255, 255, 0.35);
+  --alt-nm-glass-hover: 9px 9px 24px var(--alt-nm-d), -7px -7px 16px var(--alt-nm-l), inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -7px 16px rgba(255, 255, 255, 0.42);
 
   /* 5b. ELEVACIÓN PLANA — páginas blancas (drop-shadow, doble capa) */
   --alt-elev-card: 0 2px 5px rgba(27, 39, 51, 0.04), 0 22px 48px -32px rgba(27, 39, 51, 0.26);
@@ -194,6 +203,7 @@
    * ======================================================================== */
   --alt-grad-gold: linear-gradient(135deg, #ebd27e 0%, #d4af37 52%, #a6801e 100%);
   --alt-grad-gold-underline: linear-gradient(90deg, #ebd27e, #d4af37);
+  --alt-grad-silver: linear-gradient(135deg, #ffffff 0%, #d9dde1 26%, #bfc3c9 52%, #9aa0a8 76%, #dfe3e7 100%); /* plata cepillada — par metálico del oro (logo) */
   --alt-grad-navy-card: linear-gradient(155deg, #062743, #0a3556);
   --alt-grad-navy-map: linear-gradient(155deg, #0b3a5e, #041f36);
   --alt-scrim-img: linear-gradient(180deg, rgba(27, 39, 51, 0) 32%, rgba(27, 39, 51, 0.32) 60%, rgba(27, 39, 51, 0.87) 100%);
@@ -234,4 +244,28 @@
    * 13. BREAKPOINT (referencia; el sistema es fluido por defecto — clamp + auto-fit)
    * ======================================================================== */
   --alt-bp-nav: 1300px;  /* ÚNICO breakpoint duro: desktop↔móvil de la nav (CSS y JS unificados a 1300) */
+
+  /* ==========================================================================
+   * 14. LIQUID GLASS (acento SUTIL — neumorfismo manda; usar con moderación)
+   *    backdrop-filter es caro en GPU → limitar a chrome/flotantes/1 card destacada.
+   *    Siempre con fallback sólido (@supports) en components.css.
+   * ======================================================================== */
+  /* Vidrio CLARO (barra sticky, flotantes sobre imagen/contenido claro) */
+  --alt-glass-bg: rgba(255, 255, 255, 0.55);
+  --alt-glass-bg-strong: rgba(255, 255, 255, 0.72);
+  --alt-glass-tint: rgba(230, 237, 242, 0.5);        /* tinte gris-claro oficial #E6EDF2 */
+  --alt-glass-blur: saturate(180%) blur(20px);
+  --alt-glass-blur-sm: saturate(160%) blur(12px);
+  --alt-glass-border: 1px solid rgba(255, 255, 255, 0.6);
+  --alt-glass-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.85);  /* brillo superior (pinlight) */
+  --alt-glass-shadow: 0 20px 50px -24px rgba(6, 39, 67, 0.35);
+
+  /* Vidrio OSCURO (sobre navy / secciones --alt-surface-ink) */
+  --alt-glass-dark-bg: rgba(6, 39, 67, 0.42);
+  --alt-glass-dark-border: 1px solid rgba(235, 210, 126, 0.16);  /* hairline oro tenue */
+  --alt-glass-dark-sheen: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+
+  /* Acento: hairline metálico oro / plata sobre vidrio */
+  --alt-glass-gold-border: 1px solid rgba(212, 175, 55, 0.4);
+  --alt-glass-silver-border: 1px solid rgba(191, 195, 201, 0.55);
 }

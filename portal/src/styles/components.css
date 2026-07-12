@@ -293,14 +293,14 @@
   padding: var(--alt-space-5);
 }
 
-/* Neumórfica (home) */
+/* Neumórfica (home) — con sheen de vidrio sutil (fusión premium) */
 .alt-card--neu {
   background: var(--alt-surface-neu);
   border-radius: var(--alt-r-xl);
-  box-shadow: var(--alt-nm-up);
+  box-shadow: var(--alt-nm-glass);
 }
 .alt-card--neu:hover {
-  box-shadow: var(--alt-nm-up), 0 30px 60px -34px rgba(6, 39, 67, 0.3);
+  box-shadow: var(--alt-nm-glass-hover), 0 30px 60px -34px rgba(6, 39, 67, 0.3);
 }
 
 /* Card oscura (secciones navy) */
@@ -483,3 +483,88 @@
 .alt-alert--success { background: var(--alt-success-bg); border-color: var(--alt-success); color: var(--alt-success); }
 .alt-alert--warning { background: var(--alt-warning-bg); border-color: var(--alt-warning); color: var(--alt-warning); }
 .alt-alert--info    { background: var(--alt-info-bg);    border-color: var(--alt-info);    color: var(--alt-info); }
+
+/* ==========================================================================
+ * LIQUID GLASS — panel esmerilado (acento SUTIL). Fallback sólido sin backdrop-filter.
+ * ======================================================================== */
+.alt-glass {
+  background: var(--alt-glass-bg-strong); /* fallback opaco */
+  border: var(--alt-glass-border);
+  border-radius: var(--alt-r-lg);
+  box-shadow: var(--alt-glass-shadow), var(--alt-glass-sheen);
+}
+.alt-glass--dark {
+  background: var(--alt-ink); /* fallback */
+  border: var(--alt-glass-dark-border);
+  color: var(--alt-on-ink);
+  box-shadow: var(--alt-glass-shadow), var(--alt-glass-dark-sheen);
+}
+
+/* Barra de navegación sticky en vidrio (para el header de la home) */
+.alt-nav-glass {
+  background: var(--alt-glass-bg-strong); /* fallback */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: var(--alt-glass-sheen);
+}
+
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .alt-glass {
+    background: var(--alt-glass-bg);
+    -webkit-backdrop-filter: var(--alt-glass-blur);
+    backdrop-filter: var(--alt-glass-blur);
+  }
+  .alt-glass--dark {
+    background: var(--alt-glass-dark-bg);
+    -webkit-backdrop-filter: var(--alt-glass-blur);
+    backdrop-filter: var(--alt-glass-blur);
+  }
+  .alt-nav-glass {
+    background: var(--alt-glass-bg);
+    -webkit-backdrop-filter: var(--alt-glass-blur);
+    backdrop-filter: var(--alt-glass-blur);
+  }
+}
+
+/* ==========================================================================
+ * FIRMA PREMIUM ÚNICA — card "vitrina": neumorfismo (héroe) + sheen de vidrio
+ *   + filo metálico oro que se enciende en hover. Sobre --alt-surface-neu.
+ * ======================================================================== */
+.alt-card--vitrina {
+  position: relative;
+  background: var(--alt-surface-neu);
+  border-radius: var(--alt-r-xl);
+  box-shadow: var(--alt-nm-glass);
+  transition: transform var(--alt-dur-slow) var(--alt-ease-card),
+    box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+}
+/* Filo hairline oro (border de 1px con gradiente vía mask) — invisible en reposo */
+.alt-card--vitrina::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--alt-grad-gold);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--alt-dur) var(--alt-ease);
+  pointer-events: none;
+}
+.alt-card--vitrina:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--alt-nm-glass-hover), 0 34px 66px -36px rgba(6, 39, 67, 0.3);
+}
+.alt-card--vitrina:hover::after {
+  opacity: 1;
+}
+
+/* Acento metálico: texto/filete en plata cepillada (par del oro) */
+.alt-metal-silver {
+  background: var(--alt-grad-silver);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
