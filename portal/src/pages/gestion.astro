@@ -1,0 +1,392 @@
+---
+/*
+ * GESTIÓN — panel de administración (Ola 1). Réplica de ALTORRA Gestion.dc.html (mockup aprobado).
+ * Dashboard con 3 VISTAS por rol (Admin / Aliado / Propietario) que intercambian TODA la data
+ * vía segmentado. Datos DEMO estáticos — la capa real (auth + Firestore) es posterior.
+ * noindex SIEMPRE (interno). Sin Header/Footer públicos: layout propio con sidebar.
+ * Interactividad SIN innerHTML: las 3 vistas se renderizan server-side y se alternan con `hidden`
+ * (progressive enhancement, sin FOUC). Nota: "Demanda por zona" = medidores CSS del mockup aprobado.
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const nav = [
+  { id: 'resumen', label: 'Resumen', active: true, icon: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>' },
+  { id: 'inmuebles', label: 'Inmuebles', icon: '<path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/>' },
+  { id: 'leads', label: 'Leads', icon: '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.2 2.9-5.3 6.5-5.3s6.5 2.1 6.5 5.3"/><path d="M17 5.4A3.2 3.2 0 0 1 17 11.6M22 20c0-2.4-1.5-4.2-3.7-4.9"/>' },
+  { id: 'visitas', label: 'Visitas', icon: '<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>' },
+  { id: 'documentos', label: 'Documentos', icon: '<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M18 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8l5 5v11a2 2 0 0 1-2 2z"/><path d="M8 13h8M8 17h5"/>' },
+];
+
+// Iconos por KPI (línea navy en tile mist) — mismo lenguaje visual del mockup, uno por métrica.
+const KPI_ICONS = [
+  '<path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/>',
+  '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.2 2.9-5.3 6.5-5.3s6.5 2.1 6.5 5.3"/><path d="M17 5.4A3.2 3.2 0 0 1 17 11.6"/>',
+  '<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>',
+  '<path d="M3 3v18h18"/><path d="M7 15l3.5-4 3 2.5L21 8"/>',
+];
+const TREND = '<path d="M6 15l6-6 6 6"/>';
+
+// --- Datos DEMO por rol (del mockup). `tone` = gold|navy (→ color de paleta AA en CSS). ---
+const DATA = {
+  admin: {
+    user: 'Alejandro C.', userRole: 'Administrador', avatar: 'A',
+    greeting: 'Buenos días, Alejandro',
+    subtitle: 'Panel general · toda la operación ALTORRA',
+    tableTitle: 'Pipeline de leads',
+    kpis: [
+      { label: 'Inmuebles activos', value: '48', trend: '+6' },
+      { label: 'Leads nuevos', value: '127', trend: '+18%' },
+      { label: 'Visitas esta semana', value: '32', trend: '+4' },
+      { label: 'Ventas del mes', value: '$4.850M', trend: '+12%' },
+    ],
+    rows: [
+      { initials: 'VR', client: 'Valentina Ríos', inm: 'Apto Castillogrande', zona: 'Castillogrande', etapa: 'Negociación', tone: 'gold', valor: '$1.450M' },
+      { initials: 'TS', client: 'Thomas Shelby', inm: 'Casa Manga', zona: 'Manga', etapa: 'Nuevo', tone: 'navy', valor: '$980M' },
+      { initials: 'LG', client: 'Laura Gómez', inm: 'Penthouse Bocagrande', zona: 'Bocagrande', etapa: 'En visita', tone: 'gold', valor: '$2.100M' },
+      { initials: 'DF', client: 'Diego Fernández', inm: 'Casa Crespo', zona: 'Crespo', etapa: 'Cierre', tone: 'gold', valor: '$760M' },
+      { initials: 'SM', client: 'Sofía Márquez', inm: 'Lote La Boquilla', zona: 'La Boquilla', etapa: 'Nuevo', tone: 'navy', valor: '$520M' },
+      { initials: 'AM', client: 'Andrés Mejía', inm: 'Local Centro', zona: 'Centro', etapa: 'En visita', tone: 'gold', valor: '$1.100M' },
+    ],
+    activities: [
+      { tone: 'gold', text: 'Nuevo lead · Sofía Márquez interesada en Lote La Boquilla', time: 'hace 12 min' },
+      { tone: 'gold', text: 'Visita agendada · Penthouse Bocagrande', time: 'hace 40 min' },
+      { tone: 'gold', text: 'Cierre confirmado · Casa Crespo por $760M', time: 'hace 2 h' },
+      { tone: 'navy', text: 'Documento cargado · Escritura Apto Castillogrande', time: 'hace 3 h' },
+    ],
+  },
+  aliado: {
+    user: 'Julián Peña', userRole: 'Aliado ALTORRA', avatar: 'J',
+    greeting: 'Hola, Julián',
+    subtitle: 'Tu cartera como aliado · comisiones y leads',
+    tableTitle: 'Mis leads asignados',
+    kpis: [
+      { label: 'Mis inmuebles', value: '12', trend: '+2' },
+      { label: 'Mis leads', value: '34', trend: '+9' },
+      { label: 'Visitas agendadas', value: '8', trend: '+3' },
+      { label: 'Comisión acumulada', value: '$186M', trend: '+15%' },
+    ],
+    rows: [
+      { initials: 'LG', client: 'Laura Gómez', inm: 'Penthouse Bocagrande', zona: 'Bocagrande', etapa: 'En visita', tone: 'gold', valor: '$2.100M' },
+      { initials: 'AM', client: 'Andrés Mejía', inm: 'Local Centro', zona: 'Centro', etapa: 'Negociación', tone: 'gold', valor: '$1.100M' },
+      { initials: 'CR', client: 'Carla Ruiz', inm: 'Apto Bocagrande', zona: 'Bocagrande', etapa: 'Nuevo', tone: 'navy', valor: '$890M' },
+      { initials: 'PN', client: 'Pedro Nel', inm: 'Oficina Manga', zona: 'Manga', etapa: 'Cierre', tone: 'gold', valor: '$640M' },
+    ],
+    activities: [
+      { tone: 'gold', text: 'Nuevo lead asignado · Carla Ruiz · Apto Bocagrande', time: 'hace 25 min' },
+      { tone: 'gold', text: 'Comisión liquidada · Oficina Manga · $19.2M', time: 'hace 1 h' },
+      { tone: 'gold', text: 'Andrés Mejía pasó a Negociación', time: 'hace 4 h' },
+      { tone: 'navy', text: 'Recordatorio · visita Penthouse mañana 10:00', time: 'ayer' },
+    ],
+  },
+  prop: {
+    user: 'María Elena V.', userRole: 'Propietaria', avatar: 'M',
+    greeting: 'Hola, María Elena',
+    subtitle: 'Tu apartamento en Castillogrande · en venta',
+    tableTitle: 'Interesados en tu propiedad',
+    kpis: [
+      { label: 'Días publicado', value: '12', trend: '+12' },
+      { label: 'Visitas realizadas', value: '14', trend: '+5' },
+      { label: 'Interesados', value: '3', trend: '+2' },
+      { label: 'Mejor oferta', value: '$1.400M', trend: '+3%' },
+    ],
+    rows: [
+      { initials: 'VR', client: 'Valentina Ríos', inm: 'Tu apartamento', zona: 'Castillogrande', etapa: 'Negociación', tone: 'gold', valor: '$1.400M' },
+      { initials: 'FO', client: 'Familia Osorio', inm: 'Tu apartamento', zona: 'Castillogrande', etapa: 'En visita', tone: 'gold', valor: '—' },
+      { initials: 'IB', client: 'Inv. Bahía SAS', inm: 'Tu apartamento', zona: 'Castillogrande', etapa: 'Nuevo', tone: 'navy', valor: '—' },
+    ],
+    activities: [
+      { tone: 'gold', text: 'Valentina Ríos hizo una oferta de $1.400M', time: 'hace 30 min' },
+      { tone: 'gold', text: 'Nueva visita solicitada · Familia Osorio', time: 'hace 2 h' },
+      { tone: 'navy', text: 'Tu avalúo fue actualizado por M. Restrepo', time: 'hace 1 día' },
+      { tone: 'gold', text: 'Tu publicación alcanzó 1.240 vistas', time: 'hace 2 días' },
+    ],
+  },
+};
+
+const roles = Object.keys(DATA);
+// Solo los campos de texto por rol → se aplican con textContent (seguro, sin innerHTML).
+const strings = Object.fromEntries(
+  Object.entries(DATA).map(([r, d]) => [r, { user: d.user, userRole: d.userRole, avatar: d.avatar, greeting: d.greeting, subtitle: d.subtitle, tableTitle: d.tableTitle }])
+);
+
+const demand = [
+  { zona: 'Bocagrande', pct: 92 },
+  { zona: 'Castillogrande', pct: 85 },
+  { zona: 'Centro Histórico', pct: 78 },
+  { zona: 'Manga', pct: 64 },
+];
+
+const init = DATA.admin;
+---
+
+<BaseLayout title="Gestión — Panel ALTORRA" noindex>
+  <div class="gx-root">
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="gx-side">
+      <a class="gx-brand" href="/" aria-label="ALTORRA — volver al portal">
+        <img src="/assets/altorra-mark-t.webp" alt="" width="42" height="42" />
+        <span class="gx-brand__txt">
+          <span class="gx-brand__name">ALTORRA</span>
+          <span class="gx-brand__sub">GESTIÓN</span>
+        </span>
+      </a>
+
+      <nav class="gx-nav" aria-label="Secciones de gestión">
+        {nav.map((n) => (
+          <a href="#" class={`gx-nav__item${n.active ? ' is-on' : ''}`} aria-current={n.active ? 'page' : undefined}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={n.icon}></svg>
+            {n.label}
+          </a>
+        ))}
+      </nav>
+
+      <div class="gx-me">
+        <span class="gx-me__av" id="gx-avatar">{init.avatar}</span>
+        <div class="gx-me__id">
+          <div class="gx-me__name" id="gx-user">{init.user}</div>
+          <div class="gx-me__role" id="gx-user-role">{init.userRole}</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===================== MAIN ===================== -->
+    <main class="gx-main" id="main">
+      <header class="gx-head">
+        <div>
+          <h1 class="gx-greet" id="gx-greeting">{init.greeting}</h1>
+          <p class="gx-sub" id="gx-subtitle">{init.subtitle}</p>
+        </div>
+        <div class="gx-head__actions">
+          <div class="gx-seg" role="tablist" aria-label="Vista por rol">
+            <button class="gx-seg__btn is-on" type="button" role="tab" aria-selected="true" data-role="admin">Admin</button>
+            <button class="gx-seg__btn" type="button" role="tab" aria-selected="false" data-role="aliado">Aliado</button>
+            <button class="gx-seg__btn" type="button" role="tab" aria-selected="false" data-role="prop">Propietario</button>
+          </div>
+          <button class="gx-new" type="button"><span aria-hidden="true">+</span>Nuevo inmueble</button>
+        </div>
+      </header>
+
+      <!-- KPIs (una grilla por rol; solo la activa visible) -->
+      <section class="gx-kpis">
+        {roles.map((role) => (
+          <div class="gx-kpi-set" data-set={role} hidden={role !== 'admin'}>
+            {DATA[role as keyof typeof DATA].kpis.map((k, i) => (
+              <div class="gx-kpi">
+                <div class="gx-kpi__top">
+                  <span class="gx-kpi__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={KPI_ICONS[i]}></svg></span>
+                  <span class="gx-kpi__trend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" set:html={TREND}></svg>{k.trend}</span>
+                </div>
+                <div class="gx-kpi__val">{k.value}</div>
+                <div class="gx-kpi__lbl">{k.label}</div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </section>
+
+      <!-- Tabla + aside -->
+      <section class="gx-grid">
+        <div class="gx-panel gx-table">
+          <div class="gx-panel__head">
+            <h2 id="gx-table-title">{init.tableTitle}</h2>
+            <a href="#" class="gx-link">Ver todo &#8594;</a>
+          </div>
+          <div class="gx-scrollx">
+            <div class="gx-table__inner">
+              <div class="gx-tr gx-tr--head">
+                <span>Cliente</span><span>Inmueble</span><span>Zona</span><span>Etapa</span><span class="gx-r">Valor</span>
+              </div>
+              {roles.map((role) => (
+                <div class="gx-row-set" data-set={role} hidden={role !== 'admin'}>
+                  {DATA[role as keyof typeof DATA].rows.map((r) => (
+                    <div class="gx-tr">
+                      <div class="gx-cli"><span class="gx-cli__ini">{r.initials}</span><span class="gx-cli__name">{r.client}</span></div>
+                      <span class="gx-muted gx-ell">{r.inm}</span>
+                      <span class="gx-muted">{r.zona}</span>
+                      <span><span class={`gx-pill gx-pill--${r.tone}`}>{r.etapa}</span></span>
+                      <span class="gx-val gx-r">{r.valor}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div class="gx-col">
+          <div class="gx-panel gx-pad">
+            <h2>Actividad reciente</h2>
+            {roles.map((role) => (
+              <div class="gx-act-set" data-set={role} hidden={role !== 'admin'}>
+                {DATA[role as keyof typeof DATA].activities.map((a) => (
+                  <div class="gx-act">
+                    <span class={`gx-dot gx-dot--${a.tone}`}></span>
+                    <div><div class="gx-act__txt">{a.text}</div><div class="gx-act__time">{a.time}</div></div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <div class="gx-panel gx-pad">
+            <h2>Demanda por zona</h2>
+            <div class="gx-dem">
+              {demand.map((d) => (
+                <div class="gx-dem__row">
+                  <div class="gx-dem__lbl"><span>{d.zona}</span><span>{d.pct}%</span></div>
+                  <div class="gx-dem__track"><span class="gx-dem__fill" style={`width:${d.pct}%`}></span></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="application/json" id="gx-strings" set:html={JSON.stringify(strings)}></script>
+</BaseLayout>
+
+<style>
+  .gx-root { display: flex; flex-wrap: wrap; min-height: 100vh; width: 100%; background: var(--alt-surface); }
+
+  /* ---- Sidebar ---- */
+  .gx-side { flex: 0 0 246px; background: var(--alt-surface-ink); color: var(--alt-on-ink-muted); display: flex; flex-direction: column; padding: 22px 16px; position: sticky; top: 0; align-self: flex-start; height: 100vh; min-width: 0; }
+  .gx-brand { display: flex; align-items: center; gap: 11px; padding: 6px 8px 22px; text-decoration: none; }
+  .gx-brand img { height: 42px; width: auto; }
+  .gx-brand__txt { display: flex; flex-direction: column; gap: 3px; line-height: 1; }
+  .gx-brand__name { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 20px; letter-spacing: var(--alt-tracking-wordmark); color: #fff; }
+  .gx-brand__sub { font-size: 7px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.4em; color: var(--alt-on-ink-muted); }
+  .gx-nav { display: flex; flex-direction: column; gap: 3px; margin-top: 8px; }
+  .gx-nav__item { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: var(--alt-r-sm); color: var(--alt-on-ink-muted); font-size: 14px; font-weight: var(--alt-fw-medium); text-decoration: none; transition: background var(--alt-dur-fast) var(--alt-ease), color var(--alt-dur-fast) var(--alt-ease); }
+  .gx-nav__item svg { width: 18px; height: 18px; flex: none; }
+  .gx-nav__item:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+  .gx-nav__item.is-on { background: rgba(235, 210, 126, 0.14); color: var(--alt-gold-bright); font-weight: var(--alt-fw-semibold); }
+  .gx-me { margin-top: auto; display: flex; align-items: center; gap: 11px; padding: 12px 10px; border-top: 1px solid var(--alt-hairline-ink); }
+  .gx-me__av { width: 38px; height: 38px; border-radius: 50%; background: var(--alt-navy); border: 1px solid rgba(235, 210, 126, 0.4); display: flex; align-items: center; justify-content: center; flex: none; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 15px; color: var(--alt-gold-bright); }
+  .gx-me__id { min-width: 0; }
+  .gx-me__name { font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gx-me__role { font-size: 11px; color: var(--alt-on-ink-muted); }
+
+  /* ---- Main ---- */
+  .gx-main { flex: 1 1 620px; min-width: 0; padding: clamp(20px, 3vw, 38px) clamp(18px, 3.4vw, 44px); display: flex; flex-direction: column; gap: clamp(20px, 2.4vw, 30px); }
+  .gx-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+  .gx-greet { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(26px, 3.4vw, 38px); line-height: 1.05; color: var(--alt-ink); margin: 0 0 5px; letter-spacing: normal; }
+  .gx-sub { font-size: 14px; color: var(--alt-text); margin: 0; }
+  .gx-head__actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+  .gx-seg { display: flex; background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-sm); padding: 4px; gap: 2px; }
+  .gx-seg__btn { flex: 1; padding: 9px 15px; border: none; border-radius: 9px; cursor: pointer; font-size: 13px; font-weight: var(--alt-fw-semibold); font-family: var(--alt-font-body); white-space: nowrap; background: transparent; color: var(--alt-text); transition: background var(--alt-dur-fast) var(--alt-ease), color var(--alt-dur-fast) var(--alt-ease); }
+  .gx-seg__btn:hover { color: var(--alt-ink); }
+  .gx-seg__btn.is-on { background: var(--alt-navy); color: #fff; }
+
+  .gx-new { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: var(--alt-r-sm); background: var(--alt-navy); color: #fff; font-weight: var(--alt-fw-semibold); font-size: 13.5px; font-family: var(--alt-font-body); border: none; cursor: pointer; white-space: nowrap; transition: box-shadow var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease); }
+  .gx-new span { font-size: 17px; line-height: 1; color: var(--alt-gold-bright); }
+  .gx-new:hover { box-shadow: var(--alt-elev-nav-scroll); transform: translateY(-1px); }
+
+  /* ---- KPIs ---- */
+  .gx-kpi-set { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 16px; }
+  .gx-kpi-set[hidden] { display: none; }
+  .gx-kpi { background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-md); padding: 20px 22px; box-shadow: var(--alt-elev-panel); animation: gx-rise 0.5s var(--alt-ease) both; }
+  .gx-kpi__top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .gx-kpi__ic { width: 38px; height: 38px; border-radius: var(--alt-r-sm); background: var(--alt-mist); display: flex; align-items: center; justify-content: center; color: var(--alt-ink); }
+  .gx-kpi__ic svg { width: 18px; height: 18px; }
+  .gx-kpi__trend { display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px; border-radius: var(--alt-r-pill); background: var(--alt-mist); font-size: 11px; font-weight: var(--alt-fw-bold); color: var(--alt-link); }
+  .gx-kpi__trend svg { width: 11px; height: 11px; }
+  .gx-kpi__val { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 34px; line-height: 1; color: var(--alt-ink); margin-bottom: 5px; }
+  .gx-kpi__lbl { font-size: 12.5px; color: var(--alt-text); font-weight: var(--alt-fw-medium); }
+
+  /* ---- Grid tabla + aside ---- */
+  .gx-grid { display: flex; gap: clamp(18px, 2vw, 26px); flex-wrap: wrap; align-items: flex-start; }
+  .gx-panel { background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-lg); box-shadow: var(--alt-elev-panel); }
+  .gx-pad { padding: 22px 24px; }
+  .gx-table { flex: 2 1 460px; min-width: 0; overflow: hidden; }
+  .gx-col { flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+  .gx-panel__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 22px 24px 16px; }
+  .gx-panel h2 { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 22px; color: var(--alt-ink); margin: 0; letter-spacing: normal; }
+  .gx-col .gx-panel h2 { font-size: 20px; margin-bottom: 18px; }
+  .gx-link { font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-link); white-space: nowrap; text-decoration: none; }
+  .gx-link:hover { text-decoration: underline; }
+
+  .gx-scrollx { overflow-x: auto; }
+  .gx-scrollx::-webkit-scrollbar { height: 8px; }
+  .gx-scrollx::-webkit-scrollbar-thumb { background: var(--alt-hairline-2); border-radius: 8px; }
+  .gx-table__inner { min-width: 660px; }
+  .gx-row-set[hidden] { display: none; }
+  .gx-tr { display: grid; grid-template-columns: 1.7fr 1.5fr 1fr 1.1fr 1fr; gap: 12px; padding: 14px 24px; border-bottom: 1px solid var(--alt-hairline); align-items: center; }
+  .gx-tr--head { padding: 10px 24px; border-top: 1px solid var(--alt-hairline); font-size: 10.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text-muted); }
+  .gx-r { text-align: right; }
+  .gx-cli { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .gx-cli__ini { width: 34px; height: 34px; border-radius: 50%; background: var(--alt-mist); display: flex; align-items: center; justify-content: center; flex: none; font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
+  .gx-cli__name { font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gx-muted { font-size: 13px; color: var(--alt-text); }
+  .gx-ell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gx-val { font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); white-space: nowrap; }
+  .gx-pill { display: inline-flex; align-items: center; padding: 5px 11px; border-radius: var(--alt-r-pill); font-size: 11.5px; font-weight: var(--alt-fw-semibold); background: var(--alt-mist); }
+  .gx-pill--gold { color: var(--alt-link); }
+  .gx-pill--navy { color: var(--alt-ink); }
+
+  /* ---- Actividad ---- */
+  .gx-act-set { display: flex; flex-direction: column; gap: 16px; }
+  .gx-act-set[hidden] { display: none; }
+  .gx-act { display: flex; gap: 13px; }
+  .gx-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; margin-top: 5px; }
+  .gx-dot--gold { background: var(--alt-gold-raw); }
+  .gx-dot--navy { background: var(--alt-ink); }
+  .gx-act__txt { font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); line-height: 1.35; }
+  .gx-act__time { font-size: 12px; color: var(--alt-text-muted); margin-top: 2px; }
+
+  /* ---- Demanda ---- */
+  .gx-dem { display: flex; flex-direction: column; gap: 14px; }
+  .gx-dem__lbl { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--alt-text); margin-bottom: 6px; }
+  .gx-dem__lbl span:first-child { font-weight: var(--alt-fw-medium); }
+  .gx-dem__track { height: 6px; border-radius: 6px; background: var(--alt-gris-claro); position: relative; }
+  .gx-dem__fill { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, var(--alt-gold), var(--alt-navy)); border-radius: 6px; }
+
+  @keyframes gx-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .gx-kpi { animation: none; } }
+
+  @media (max-width: 860px) {
+    .gx-side { flex-basis: 100%; height: auto; position: static; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 10px; padding: 14px 18px; }
+    .gx-brand { padding: 0; }
+    .gx-nav { flex-direction: row; flex-wrap: wrap; margin-top: 0; margin-inline: auto; }
+    .gx-nav__item { padding: 9px 11px; }
+    .gx-me { margin-top: 0; border-top: 0; padding: 0; }
+  }
+</style>
+
+<script>
+  // Segmentado de 3 roles: alterna las vistas [data-set] (ya renderizadas) + textos (textContent).
+  // Sin innerHTML: los strings van por textContent y los bloques se muestran/ocultan con `hidden`.
+  type Str = { user: string; userRole: string; avatar: string; greeting: string; subtitle: string; tableTitle: string };
+  const STR: Record<string, Str> = JSON.parse(document.getElementById('gx-strings')!.textContent || '{}');
+  const set = (id: string, txt: string) => { const e = document.getElementById(id); if (e) e.textContent = txt; };
+
+  function show(role: string) {
+    const s = STR[role];
+    if (!s) return;
+    set('gx-greeting', s.greeting);
+    set('gx-subtitle', s.subtitle);
+    set('gx-table-title', s.tableTitle);
+    set('gx-user', s.user);
+    set('gx-user-role', s.userRole);
+    set('gx-avatar', s.avatar);
+    document.querySelectorAll<HTMLElement>('[data-set]').forEach((el) => {
+      el.hidden = el.dataset.set !== role;
+    });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.gx-seg__btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.gx-seg__btn').forEach((b) => {
+        b.classList.remove('is-on');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('is-on');
+      btn.setAttribute('aria-selected', 'true');
+      show(btn.dataset.role || 'admin');
+    });
+  });
+</script>

@@ -8,15 +8,18 @@ import '../styles/components.css';
 interface Props {
   title: string;
   description?: string;
+  noindex?: boolean;
 }
 
 const {
   title,
   description = 'Altorra Inmobiliaria — gestión integral en soluciones inmobiliarias. Cartagena de Indias.',
+  noindex = false,
 } = Astro.props;
 
 // Indexable SOLO en build de producción; por defecto (staging *.workers.dev) => noindex (O3/T1).
-const indexable = import.meta.env.PUBLIC_SITE_ENV === 'production';
+// `noindex` fuerza noindex SIEMPRE (páginas internas/admin: /gestion, /design-system).
+const indexable = import.meta.env.PUBLIC_SITE_ENV === 'production' && !noindex;
 ---
 
 <!doctype html>
