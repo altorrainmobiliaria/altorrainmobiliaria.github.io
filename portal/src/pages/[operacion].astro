@@ -1,0 +1,180 @@
+---
+/*
+ * SERP — página de resultados de búsqueda (Ola 1). Réplica de ALTORRA Resultados.dc.html.
+ * Ruta dinámica: /comprar y /arrendar (prerenderizadas). Reutiliza Header/Footer/PropertyCard.
+ * El mapa es un ESQUEMÁTICO estilizado (placeholder) — MapLibre real = follow-up (stack ADR §16).
+ * Datos DEMO estáticos (Firestore real → cuando haya inventario, decisión SSG diferida TODO-22).
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PropertyCard from '../components/PropertyCard.astro';
+
+export function getStaticPaths() {
+  const venta = [
+    { img: '/assets/villa-pool.webp', alt: 'Apartamento en Castillogrande', badge: 'En venta', zona: 'Castillogrande', beds: 3, baths: 3, area: '142 m²', title: 'Apartamento con vista a la bahía', price: '$1.450.000.000', priceLabel: 'Desde', href: '/ficha' },
+    { img: '/assets/villa-modern.webp', alt: 'Casa en Manga', badge: 'En venta', zona: 'Manga', beds: 4, baths: 3, area: '210 m²', title: 'Casa republicana restaurada', price: '$980.000.000', priceLabel: 'Desde', href: '/ficha' },
+    { img: '/assets/estate-golden.webp', alt: 'Residencia en Bocagrande', badge: 'En venta', zona: 'Bocagrande', beds: 4, baths: 4, area: '260 m²', title: 'Penthouse frente al mar', price: '$2.100.000.000', priceLabel: 'Desde', href: '/ficha' },
+    { img: '/assets/chalet-dusk.webp', alt: 'Casa en Crespo', badge: 'En venta', zona: 'Crespo', beds: 3, baths: 2, area: '120 m²', title: 'Casa familiar cerca del mar', price: '$760.000.000', priceLabel: 'Desde', href: '/ficha' },
+    { img: '/assets/hero-keys.webp', alt: 'Apartamento en Getsemaní', badge: 'En venta', zona: 'Getsemaní', beds: 2, baths: 2, area: '88 m²', title: 'Loft de autor junto a la muralla', price: '$690.000.000', priceLabel: 'Desde', href: '/ficha' },
+    { img: '/assets/villa-modern.webp', alt: 'Apartamento en San Fernando', badge: 'En venta', zona: 'San Fernando', beds: 3, baths: 2, area: '105 m²', title: 'Apartamento nuevo con acabados premium', price: '$540.000.000', priceLabel: 'Desde', href: '/ficha' },
+  ];
+  const arriendo = [
+    { img: '/assets/chalet-dusk.webp', alt: 'Casona colonial amoblada', badge: 'Arriendo', zona: 'Centro Histórico', beds: 2, baths: 2, area: '95 m²', title: 'Casona colonial amoblada', price: '$8.500.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
+    { img: '/assets/hero-keys.webp', alt: 'Casa en Crespo', badge: 'Arriendo', zona: 'Crespo', beds: 3, baths: 2, area: '160 m²', title: 'Casa familiar en Crespo', price: '$3.200.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
+    { img: '/assets/villa-pool.webp', alt: 'Apartaestudio con piscina', badge: 'Arriendo', zona: 'Manga', beds: 1, baths: 1, area: '48 m²', title: 'Apartaestudio con piscina', price: '$2.100.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
+    { img: '/assets/villa-modern.webp', alt: 'Apartamento en Bocagrande', badge: 'Arriendo', zona: 'Bocagrande', beds: 2, baths: 2, area: '92 m²', title: 'Apartamento frente al mar', price: '$4.500.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
+    { img: '/assets/estate-golden.webp', alt: 'Penthouse en Castillogrande', badge: 'Arriendo', zona: 'Castillogrande', beds: 3, baths: 3, area: '180 m²', title: 'Penthouse con terraza', price: '$7.800.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
+    { img: '/assets/chalet-dusk.webp', alt: 'Casa en Alameda La Victoria', badge: 'Arriendo', zona: 'Alameda La Victoria', beds: 3, baths: 2, area: '110 m²', title: 'Casa amplia con patio', price: '$2.800.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
+  ];
+  const pins = [
+    { left: '26%', top: '56%', label: '$1.450M' },
+    { left: '56%', top: '36%', label: '$980M', on: true },
+    { left: '22%', top: '72%', label: '$2.100M' },
+    { left: '47%', top: '24%', label: '$8,5M/mes' },
+  ];
+  const zones = [
+    { left: '52%', top: '20%', t: 'Manga' }, { left: '44%', top: '12%', t: 'Centro Hist.' },
+    { left: '20%', top: '54%', t: 'Castillogrande' }, { left: '16%', top: '70%', t: 'Bocagrande' },
+    { left: '66%', top: '60%', t: 'Tierrabomba' },
+  ];
+  return [
+    { params: { operacion: 'comprar' }, props: { op: 'comprar', titulo: 'Comprar', count: 128, props: venta, pins, zones } },
+    { params: { operacion: 'arrendar' }, props: { op: 'arrendar', titulo: 'Arrendar', count: 83, props: arriendo, pins, zones } },
+  ];
+}
+
+const { op, count, props: results, pins, zones } = Astro.props;
+const filterBtns = ['Tipo', 'Precio', 'Habitaciones'];
+---
+
+<BaseLayout title={`${op === 'comprar' ? 'Comprar' : 'Arrendar'} en Cartagena — ALTORRA`}>
+  <Header active={op} />
+
+  <main id="main">
+    <!-- Barra de filtros (glass sticky) -->
+    <div class="serp-filter alt-nav-glass">
+      <div class="serp-filter__in">
+        <div class="serp-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+          <input value="Cartagena de Indias" aria-label="Ubicación" />
+        </div>
+        {filterBtns.map((f) => (
+          <button class="serp-fbtn" type="button">{f}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+        ))}
+        <button class="serp-fbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>Más filtros</button>
+        <a class="serp-save" href="/favoritos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Guardar búsqueda</a>
+      </div>
+    </div>
+
+    <!-- Cabecera de resultados -->
+    <div class="serp-head">
+      <div>
+        <p class="alt-eyebrow">Resultados</p>
+        <h1 class="serp-h1">{count} propiedades <span>en Cartagena de Indias</span></h1>
+      </div>
+      <div class="serp-sort">
+        <label for="serp-order">Ordenar por</label>
+        <select id="serp-order">
+          <option>Relevancia</option>
+          <option>Precio: menor a mayor</option>
+          <option>Precio: mayor a menor</option>
+          <option>Más recientes</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Layout: resultados + mapa -->
+    <div class="serp-body">
+      <div class="serp-list">
+        <div class="serp-grid">
+          {results.map((p) => <PropertyCard {...p} />)}
+        </div>
+        <div class="serp-more">
+          <a class="alt-btn alt-btn--outline" href="#">Cargar más propiedades
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <aside class="serp-aside">
+        <div class="serp-map" role="img" aria-label="Mapa esquemático de Cartagena con las propiedades">
+          <span class="serp-map__grid"></span>
+          <span class="serp-map__land serp-map__land--1"></span>
+          <span class="serp-map__land serp-map__land--2"></span>
+          <span class="serp-map__road serp-map__road--1"></span>
+          <span class="serp-map__road serp-map__road--2"></span>
+          <span class="serp-map__bay">Bahía de Cartagena</span>
+          {zones.map((z) => <span class="serp-map__zone" style={`left:${z.left};top:${z.top}`}>{z.t}</span>)}
+          {pins.map((pin) => (
+            <span class={`serp-pin${pin.on ? ' is-on' : ''}`} style={`left:${pin.left};top:${pin.top}`}>{pin.label}</span>
+          ))}
+          <span class="serp-map__draw"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Dibujar zona</span>
+          <span class="serp-map__zoom"><button type="button" aria-label="Acercar">+</button><button type="button" aria-label="Alejar">−</button></span>
+          <span class="serp-map__note">ALTORRA · mapa esquemático</span>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* Barra de filtros */
+  .serp-filter { position: sticky; top: 0; z-index: var(--alt-z-sticky); border-bottom: 1px solid var(--alt-hairline); }
+  .serp-filter__in { max-width: 1440px; margin-inline: auto; padding: 14px clamp(16px, 4vw, 48px); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .serp-search { display: flex; align-items: center; gap: 11px; flex: 1; min-width: 220px; background: var(--alt-white); border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-sm); padding: 11px 16px; }
+  .serp-search svg { width: 18px; height: 18px; stroke: var(--alt-gold-raw); flex: none; }
+  .serp-search input { flex: 1; min-width: 80px; border: 0; outline: none; background: none; font-size: 15px; font-weight: var(--alt-fw-medium); color: var(--alt-ink); }
+  .serp-fbtn { display: inline-flex; align-items: center; gap: 9px; background: var(--alt-white); border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-sm); padding: 12px 16px; font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); cursor: pointer; white-space: nowrap; transition: border-color var(--alt-dur) var(--alt-ease); }
+  .serp-fbtn svg { width: 13px; height: 13px; }
+  .serp-fbtn:hover { border-color: var(--alt-gold); }
+  .serp-save { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border: 1px solid var(--alt-gold); border-radius: var(--alt-r-sm); color: var(--alt-link); font-weight: var(--alt-fw-semibold); font-size: 13.5px; white-space: nowrap; text-decoration: none; transition: background var(--alt-dur) var(--alt-ease); }
+  .serp-save svg { width: 15px; height: 15px; }
+  .serp-save:hover { background: var(--alt-mist); }
+
+  /* Cabecera de resultados */
+  .serp-head { max-width: 1440px; margin-inline: auto; padding: 26px clamp(16px, 4vw, 48px) 8px; display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+  .serp-h1 { margin-top: 8px; font-size: clamp(28px, 3.6vw, 40px); line-height: 1; }
+  .serp-h1 span { color: var(--alt-text); font-size: 0.62em; font-family: var(--alt-font-body); font-weight: var(--alt-fw-medium); letter-spacing: 0; }
+  .serp-sort { display: flex; align-items: center; gap: 10px; }
+  .serp-sort label { font-size: 13px; color: var(--alt-text); font-weight: var(--alt-fw-medium); }
+  .serp-sort select { border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-chip, 10px); padding: 10px 14px; font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); background: var(--alt-white); cursor: pointer; outline: none; }
+
+  /* Layout resultados + mapa */
+  .serp-body { max-width: 1440px; margin-inline: auto; padding: 12px clamp(16px, 4vw, 48px) 40px; display: flex; gap: clamp(20px, 2.6vw, 34px); flex-wrap: wrap; align-items: flex-start; }
+  .serp-list { flex: 1 1 520px; min-width: 300px; }
+  .serp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: clamp(18px, 2vw, 26px); }
+  .serp-more { display: flex; justify-content: center; margin-top: 38px; }
+
+  /* Mapa esquemático (placeholder — MapLibre real = follow-up) */
+  .serp-aside { flex: 1 1 340px; min-width: 300px; position: sticky; top: 86px; align-self: flex-start; }
+  .serp-map { position: relative; height: min(78vh, 720px); min-height: 440px; border-radius: var(--alt-r-2xl, 22px); overflow: hidden; border: 1px solid var(--alt-hairline); box-shadow: var(--alt-elev-aside); background: linear-gradient(160deg, #ffffff, var(--alt-mist)); }
+  .serp-map__grid { position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, transparent 0 46px, rgba(27, 39, 51, 0.045) 46px 47px), repeating-linear-gradient(90deg, transparent 0 46px, rgba(27, 39, 51, 0.045) 46px 47px); }
+  .serp-map__land { position: absolute; background: linear-gradient(160deg, var(--alt-mist), var(--alt-gris-claro)); }
+  .serp-map__land--1 { left: -12%; bottom: -14%; width: 82%; height: 62%; border-radius: 58% 42% 0 0 / 74% 48% 0 0; }
+  .serp-map__land--2 { right: -16%; top: -16%; width: 48%; height: 44%; border-radius: 0 0 0 78%; }
+  .serp-map__road { position: absolute; height: 2px; background: rgba(27, 39, 51, 0.09); }
+  .serp-map__road--1 { left: 4%; top: 22%; width: 74%; transform: rotate(16deg); }
+  .serp-map__road--2 { left: -2%; top: 50%; width: 84%; transform: rotate(-7deg); }
+  .serp-map__bay { position: absolute; left: 13%; bottom: 11%; font-family: var(--alt-font-display); font-style: italic; font-size: 16px; color: var(--alt-text-muted); letter-spacing: 0.04em; }
+  .serp-map__zone { position: absolute; font-size: 9px; font-weight: var(--alt-fw-bold); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(27, 39, 51, 0.5); }
+  .serp-pin { position: absolute; transform: translate(-50%, -100%); background: var(--alt-white); border: 1px solid var(--alt-hairline-2); color: var(--alt-ink); font-weight: var(--alt-fw-bold); font-size: 11.5px; padding: 6px 11px; border-radius: var(--alt-r-pill); box-shadow: var(--alt-elev-pin, 0 8px 18px -8px rgba(27, 39, 51, 0.45)); white-space: nowrap; cursor: pointer; transition: transform var(--alt-dur) var(--alt-ease); }
+  .serp-pin::after { content: ''; position: absolute; left: 50%; bottom: -4px; width: 9px; height: 9px; background: var(--alt-white); border-right: inherit; border-bottom: inherit; transform: translateX(-50%) rotate(45deg); }
+  .serp-pin:hover { transform: translate(-50%, -100%) scale(1.06); }
+  .serp-pin.is-on { border: 1.5px solid var(--alt-gold); color: var(--alt-link); z-index: 15; }
+  .serp-map__draw { position: absolute; top: 16px; left: 16px; display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.92); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-chip, 10px); padding: 9px 14px; font-size: 12.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); cursor: pointer; box-shadow: 0 6px 16px -8px rgba(27, 39, 51, 0.3); }
+  .serp-map__draw svg { width: 14px; height: 14px; stroke: var(--alt-gold-raw); }
+  .serp-map__zoom { position: absolute; top: 16px; right: 16px; display: flex; flex-direction: column; background: rgba(255, 255, 255, 0.95); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-chip, 10px); overflow: hidden; box-shadow: 0 6px 16px -8px rgba(27, 39, 51, 0.3); }
+  .serp-map__zoom button { width: 38px; height: 38px; border: 0; background: none; font-size: 19px; color: var(--alt-ink); cursor: pointer; }
+  .serp-map__zoom button:first-child { border-bottom: 1px solid var(--alt-hairline); }
+  .serp-map__note { position: absolute; bottom: 12px; right: 14px; font-size: 9.5px; color: rgba(27, 39, 51, 0.4); letter-spacing: 0.04em; }
+
+  @media (max-width: 900px) {
+    .serp-aside { position: static; width: 100%; order: -1; }
+    .serp-map { height: 320px; min-height: 0; }
+  }
+</style>
