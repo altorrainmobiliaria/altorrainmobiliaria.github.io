@@ -12,29 +12,29 @@ import { SITE } from '../lib/config/site';
 // Datos DEMO (estáticos) — la conexión a Firestore real llega cuando haya inventario
 // (decisión SSG vs doc-índice DIFERIDA a Fable, TODO-22). Imágenes = placeholders del diseño.
 const destacadas = [
-  { img: '/assets/villa-pool.jpg', alt: 'Apartamento con vista a la bahía', badge: 'En venta', zona: 'Castillogrande', beds: 3, baths: 3, area: '142 m²', title: 'Apartamento con vista a la bahía', price: '$1.450.000.000', priceLabel: 'Desde', href: '/comprar' },
-  { img: '/assets/villa-modern.jpg', alt: 'Casa republicana restaurada', badge: 'En venta', zona: 'Manga', beds: 4, baths: 3, area: '210 m²', title: 'Casa republicana restaurada', price: '$980.000.000', priceLabel: 'Desde', href: '/comprar' },
-  { img: '/assets/estate-golden.jpg', alt: 'Penthouse frente al mar', badge: 'En venta', zona: 'Bocagrande', beds: 3, baths: 4, area: '188 m²', title: 'Penthouse frente al mar', price: '$2.100.000.000', priceLabel: 'Desde', href: '/comprar' },
+  { img: '/assets/villa-pool.webp', alt: 'Apartamento con vista a la bahía', badge: 'En venta', zona: 'Castillogrande', beds: 3, baths: 3, area: '142 m²', title: 'Apartamento con vista a la bahía', price: '$1.450.000.000', priceLabel: 'Desde', href: '/comprar' },
+  { img: '/assets/villa-modern.webp', alt: 'Casa republicana restaurada', badge: 'En venta', zona: 'Manga', beds: 4, baths: 3, area: '210 m²', title: 'Casa republicana restaurada', price: '$980.000.000', priceLabel: 'Desde', href: '/comprar' },
+  { img: '/assets/estate-golden.webp', alt: 'Penthouse frente al mar', badge: 'En venta', zona: 'Bocagrande', beds: 3, baths: 4, area: '188 m²', title: 'Penthouse frente al mar', price: '$2.100.000.000', priceLabel: 'Desde', href: '/comprar' },
 ];
 
 const arriendo = [
-  { img: '/assets/chalet-dusk.jpg', alt: 'Apartamento amoblado en el Centro', badge: 'Arriendo', zona: 'Centro Histórico', beds: 2, baths: 2, area: '95 m²', title: 'Apartamento amoblado en el Centro', price: '$4.800.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/arrendar' },
-  { img: '/assets/hero-keys.jpg', alt: 'Casa familiar en Crespo', badge: 'Arriendo', zona: 'Crespo', beds: 3, baths: 2, area: '160 m²', title: 'Casa familiar en Crespo', price: '$3.200.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/arrendar' },
-  { img: '/assets/villa-pool.jpg', alt: 'Apartaestudio con piscina', badge: 'Arriendo', zona: 'Manga', beds: 1, baths: 1, area: '48 m²', title: 'Apartaestudio con piscina', price: '$2.100.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/arrendar' },
+  { img: '/assets/chalet-dusk.webp', alt: 'Apartamento amoblado en el Centro', badge: 'Arriendo', zona: 'Centro Histórico', beds: 2, baths: 2, area: '95 m²', title: 'Apartamento amoblado en el Centro', price: '$4.800.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/arrendar' },
+  { img: '/assets/hero-keys.webp', alt: 'Casa familiar en Crespo', badge: 'Arriendo', zona: 'Crespo', beds: 3, baths: 2, area: '160 m²', title: 'Casa familiar en Crespo', price: '$3.200.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/arrendar' },
+  { img: '/assets/villa-pool.webp', alt: 'Apartaestudio con piscina', badge: 'Arriendo', zona: 'Manga', beds: 1, baths: 1, area: '48 m²', title: 'Apartaestudio con piscina', price: '$2.100.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/arrendar' },
 ];
 
 const cerca = [
-  { img: '/assets/estate-golden.jpg', alt: 'Penthouse en Bocagrande', badge: 'En venta', zona: 'Bocagrande', beds: 3, baths: 3, area: '175 m²', title: 'Penthouse con terraza privada', price: '$1.780.000.000', priceLabel: 'Desde', href: '/comprar' },
-  { img: '/assets/chalet-dusk.jpg', alt: 'Casa en Castillogrande', badge: 'En venta', zona: 'Castillogrande', beds: 4, baths: 4, area: '260 m²', title: 'Casa con jardín en Castillogrande', price: '$3.400.000.000', priceLabel: 'Desde', href: '/comprar' },
-  { img: '/assets/villa-modern.jpg', alt: 'Apartamento en Manga', badge: 'En venta', zona: 'Manga', beds: 2, baths: 2, area: '98 m²', title: 'Apartamento moderno en Manga', price: '$620.000.000', priceLabel: 'Desde', href: '/comprar' },
+  { img: '/assets/estate-golden.webp', alt: 'Penthouse en Bocagrande', badge: 'En venta', zona: 'Bocagrande', beds: 3, baths: 3, area: '175 m²', title: 'Penthouse con terraza privada', price: '$1.780.000.000', priceLabel: 'Desde', href: '/comprar' },
+  { img: '/assets/chalet-dusk.webp', alt: 'Casa en Castillogrande', badge: 'En venta', zona: 'Castillogrande', beds: 4, baths: 4, area: '260 m²', title: 'Casa con jardín en Castillogrande', price: '$3.400.000.000', priceLabel: 'Desde', href: '/comprar' },
+  { img: '/assets/villa-modern.webp', alt: 'Apartamento en Manga', badge: 'En venta', zona: 'Manga', beds: 2, baths: 2, area: '98 m²', title: 'Apartamento moderno en Manga', price: '$620.000.000', priceLabel: 'Desde', href: '/comprar' },
 ];
 
 // Journal — 1 destacado + 3 horizontales.
-const journalMain = { img: '/assets/estate-golden.jpg', cat: 'Mercado', date: '12 feb 2026', read: '8 min de lectura', title: 'Guía 2026: dónde comprar en Cartagena antes de la próxima ola de valorización', excerpt: 'Analizamos precio por m², proyección de obra nueva y liquidez zona por zona, para que tu compra sea patrimonio y no una apuesta.', href: '/journal' };
+const journalMain = { img: '/assets/estate-golden.webp', cat: 'Mercado', date: '12 feb 2026', read: '8 min de lectura', title: 'Guía 2026: dónde comprar en Cartagena antes de la próxima ola de valorización', excerpt: 'Analizamos precio por m², proyección de obra nueva y liquidez zona por zona, para que tu compra sea patrimonio y no una apuesta.', href: '/journal' };
 const journalSide = [
-  { img: '/assets/villa-pool.jpg', cat: 'Rentas', read: '5 min de lectura', title: 'Corta estancia: renta tu propiedad sin dolores de cabeza', href: '/journal' },
-  { img: '/assets/villa-modern.jpg', cat: 'Inversión', read: '6 min de lectura', title: 'Manga o Bocagrande: en cuál invertir según tu objetivo', href: '/journal' },
-  { img: '/assets/chalet-dusk.jpg', cat: 'Legal', read: '4 min de lectura', title: 'Checklist legal antes de firmar la promesa de compraventa', href: '/journal' },
+  { img: '/assets/villa-pool.webp', cat: 'Rentas', read: '5 min de lectura', title: 'Corta estancia: renta tu propiedad sin dolores de cabeza', href: '/journal' },
+  { img: '/assets/villa-modern.webp', cat: 'Inversión', read: '6 min de lectura', title: 'Manga o Bocagrande: en cuál invertir según tu objetivo', href: '/journal' },
+  { img: '/assets/chalet-dusk.webp', cat: 'Legal', read: '4 min de lectura', title: 'Checklist legal antes de firmar la promesa de compraventa', href: '/journal' },
 ];
 
 const brokerPerks = [
@@ -53,10 +53,10 @@ const tabs = [
 
 // "Cuatro maneras de vivir Cartagena".
 const maneras = [
-  { n: '01', t: 'Comprar', img: '/assets/villa-modern.jpg', d: 'Tu hogar o tu próxima inversión, con acompañamiento legal de principio a fin.', href: '/comprar' },
-  { n: '02', t: 'Arrendar', img: '/assets/chalet-dusk.jpg', d: 'Contratos claros y estudios serios. Vive tranquilo, entrega tranquilo.', href: '/arrendar' },
-  { n: '03', t: 'Invertir', img: '/assets/estate-golden.jpg', d: 'Rentabilidad y valorización en la ciudad amurallada, con cifras sobre la mesa.', href: '/invertir' },
-  { n: '04', t: 'Estancias', img: '/assets/villa-pool.jpg', d: 'Alójate frente al mar o entre murallas, con la confianza de un anfitrión verificado.', href: '/estancias' },
+  { n: '01', t: 'Comprar', img: '/assets/villa-modern.webp', d: 'Tu hogar o tu próxima inversión, con acompañamiento legal de principio a fin.', href: '/comprar' },
+  { n: '02', t: 'Arrendar', img: '/assets/chalet-dusk.webp', d: 'Contratos claros y estudios serios. Vive tranquilo, entrega tranquilo.', href: '/arrendar' },
+  { n: '03', t: 'Invertir', img: '/assets/estate-golden.webp', d: 'Rentabilidad y valorización en la ciudad amurallada, con cifras sobre la mesa.', href: '/invertir' },
+  { n: '04', t: 'Estancias', img: '/assets/villa-pool.webp', d: 'Alójate frente al mar o entre murallas, con la confianza de un anfitrión verificado.', href: '/estancias' },
 ];
 ---
 
@@ -228,7 +228,7 @@ const maneras = [
           </div>
         </div>
         <div class="home-brokers__media">
-          <img src="/assets/villa-modern.jpg" alt="Equipo de brokers ALTORRA" loading="lazy" decoding="async" />
+          <img src="/assets/villa-modern.webp" alt="Equipo de brokers ALTORRA" loading="lazy" decoding="async" />
           <span class="home-brokers__media-scrim"></span>
           <div class="home-brokers__stats">
             <div class="alt-glass home-brokers__stat"><span class="home-brokers__stat-n">180+</span><span class="home-brokers__stat-l">brokers ya venden con ALTORRA</span></div>
