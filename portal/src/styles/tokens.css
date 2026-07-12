@@ -128,6 +128,8 @@
   /* FUSIÓN NEU + GLASS (firma premium única): extrusión neumórfica + doble sheen de vidrio (pinlight superior + halo interno) */
   --alt-nm-glass: 6px 6px 16px var(--alt-nm-d), -6px -6px 14px var(--alt-nm-l), inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -7px 15px rgba(255, 255, 255, 0.35);
   --alt-nm-glass-hover: 9px 9px 24px var(--alt-nm-d), -7px -7px 16px var(--alt-nm-l), inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -7px 16px rgba(255, 255, 255, 0.42);
+  /* Orbe de búsqueda oro (relieve + doble inset: brillo blanco + profundidad dorada) — inset dorado = gold-raw, no bronce ajeno */
+  --alt-nm-orb: 6px 6px 14px rgba(6, 39, 67, 0.22), -5px -5px 12px rgba(255, 255, 255, 0.7), inset 0 2px 3px rgba(255, 255, 255, 0.55), inset 0 -4px 7px rgba(166, 128, 30, 0.45);
 
   /* 5b. ELEVACIÓN PLANA — páginas blancas (drop-shadow, doble capa) */
   --alt-elev-card: 0 2px 5px rgba(27, 39, 51, 0.04), 0 22px 48px -32px rgba(27, 39, 51, 0.26);
@@ -206,6 +208,7 @@
   --alt-grad-gold: linear-gradient(135deg, #ebd27e 0%, #d4af37 52%, #a6801e 100%);
   --alt-grad-gold-underline: linear-gradient(90deg, #ebd27e, #d4af37);
   --alt-grad-silver: linear-gradient(135deg, #ffffff 0%, #d9dde1 26%, #bfc3c9 52%, #9aa0a8 76%, #dfe3e7 100%); /* plata cepillada — par metálico del oro (logo) */
+  --alt-grad-gold-145: linear-gradient(145deg, #ebd27e 0%, #d4af37 52%, #a6801e 100%); /* oro para el orbe del buscador */
   --alt-grad-navy-card: linear-gradient(155deg, #062743, #0a3556);
   --alt-grad-navy-map: linear-gradient(155deg, #0b3a5e, #041f36);
   --alt-scrim-img: linear-gradient(180deg, rgba(27, 39, 51, 0) 32%, rgba(27, 39, 51, 0.32) 60%, rgba(27, 39, 51, 0.87) 100%);

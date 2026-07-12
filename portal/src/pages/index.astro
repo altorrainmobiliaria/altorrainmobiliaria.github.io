@@ -1,19 +1,276 @@
 ---
+// HOME (Ola 1) — réplica del mockup ALTORRA Portal.dc.html sobre el design system D1.
 // PÁGINA ESTÁTICA (prerenderizada) — declaración EXPLÍCITA (output:'server' => on-demand por defecto).
 export const prerender = true;
 
 import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
 import { SITE } from '../lib/config/site';
+
+// Pestañas del buscador del hero (buscar por operación).
+const tabs = [
+  { key: 'comprar', label: 'Comprar', ph: '¿En qué zona quieres comprar?' },
+  { key: 'arrendar', label: 'Arrendar', ph: '¿En qué zona quieres arrendar?' },
+  { key: 'estancias', label: 'Estancias', ph: '¿En qué zona te quieres alojar?' },
+  { key: 'invertir', label: 'Invertir', ph: '¿En qué zona quieres invertir?' },
+];
+
+// "Cuatro maneras de vivir Cartagena".
+const maneras = [
+  { n: '01', t: 'Comprar', img: '/assets/villa-modern.jpg', d: 'Tu hogar o tu próxima inversión, con acompañamiento legal de principio a fin.', href: '/comprar' },
+  { n: '02', t: 'Arrendar', img: '/assets/chalet-dusk.jpg', d: 'Contratos claros y estudios serios. Vive tranquilo, entrega tranquilo.', href: '/arrendar' },
+  { n: '03', t: 'Invertir', img: '/assets/estate-golden.jpg', d: 'Rentabilidad y valorización en la ciudad amurallada, con cifras sobre la mesa.', href: '/invertir' },
+  { n: '04', t: 'Estancias', img: '/assets/villa-pool.jpg', d: 'Alójate frente al mar o entre murallas, con la confianza de un anfitrión verificado.', href: '/estancias' },
+];
 ---
 
-<BaseLayout title={`${SITE.name} — Portal (en construcción)`}>
-  <main>
-    <h1>{SITE.name}</h1>
-    <p>{SITE.slogan} · {SITE.city}</p>
-    <p>Portal en construcción. El diseño definitivo llega en el <strong>carril D</strong> (mockups aprobados por el dueño).</p>
-    <!--
-      SCAFFOLD — centinela de build, NO es diseño.
-      Se reemplaza por el mockup D2 aprobado en Ola 1. Sin tokens de marca hasta D1.
-    -->
+<BaseLayout title={`${SITE.name} — ${SITE.slogan}`}>
+  <Header active="inicio" />
+
+  <main id="main">
+    <!-- HERO (superficie neumórfica) -->
+    <section class="home-hero">
+      <div class="home-hero__in">
+        <div class="home-hero__copy">
+          <p class="alt-eyebrow">Seguridad · Legalidad · Confianza</p>
+          <h1 class="home-hero__h">
+            Tu próximo hogar en Cartagena,
+            <span class="home-hero__accent">en las mejores manos.</span>
+          </h1>
+          <p class="home-hero__p">
+            Compra, arrienda, alójate o invierte con el acompañamiento de una inmobiliaria que cuida cada detalle, en toda la ciudad.
+          </p>
+        </div>
+
+        <!-- Buscador segmentado neumórfico -->
+        <div class="home-search">
+          <div class="home-search__card" data-surface="neu">
+            <div class="home-search__tabs" role="tablist" aria-label="Buscar por operación">
+              {tabs.map((t, i) => (
+                <button class="home-search__tab" role="tab" type="button" aria-selected={i === 0 ? 'true' : 'false'} data-ph={t.ph} data-tab={t.key}>{t.label}</button>
+              ))}
+            </div>
+            <form class="home-search__row" action="/comprar" method="get" role="search">
+              <div class="home-search__field">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+                <label>
+                  <span class="home-search__lbl">Zona</span>
+                  <input id="home-hero-field" name="zona" placeholder={tabs[0].ph} autocomplete="off" />
+                </label>
+              </div>
+              <span class="home-search__vdiv" aria-hidden="true"></span>
+              <div class="home-search__field home-search__field--type">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg>
+                <label>
+                  <span class="home-search__lbl">Tipo</span>
+                  <select name="tipo">
+                    <option value="">Todos</option>
+                    <option>Apartamento</option>
+                    <option>Casa</option>
+                    <option>Penthouse</option>
+                    <option>Local</option>
+                    <option>Lote</option>
+                    <option>Finca</option>
+                  </select>
+                </label>
+              </div>
+              <button class="home-search__go" type="submit" aria-label="Buscar">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CUATRO MANERAS -->
+    <section class="alt-section alt-container">
+      <div class="home-maneras__head">
+        <p class="alt-eyebrow">Cuatro maneras de vivir Cartagena</p>
+        <h2>Una sola casa para cada decisión de vivienda.</h2>
+      </div>
+      <div class="home-maneras__grid">
+        {maneras.map((m) => (
+          <a class="home-manera" href={m.href}>
+            <img src={m.img} alt={m.t} loading="lazy" decoding="async" />
+            <span class="home-manera__scrim"></span>
+            <span class="home-manera__body">
+              <span class="home-manera__n">{m.n}</span>
+              <span class="home-manera__t">{m.t}</span>
+              <span class="home-manera__d">{m.d}</span>
+              <span class="home-manera__cta">Explorar
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
   </main>
 </BaseLayout>
+
+<style>
+  /* HERO sobre superficie neumórfica (gris claro oficial "soporte") */
+  .home-hero {
+    background: var(--alt-surface-neu);
+    padding-block: clamp(48px, 7vw, 92px) clamp(40px, 6vw, 72px);
+  }
+  .home-hero__in {
+    max-width: var(--alt-container);
+    margin-inline: auto;
+    padding-inline: var(--alt-gutter);
+  }
+  .home-hero__copy { max-width: 760px; margin-inline: auto; text-align: center; }
+  .home-hero__h {
+    font-size: var(--alt-fs-hero);
+    margin-top: var(--alt-space-3);
+  }
+  .home-hero__accent { color: var(--alt-gold-raw); display: block; }
+  .home-hero__p {
+    max-width: 52ch;
+    margin: var(--alt-space-4) auto 0;
+    font-size: var(--alt-fs-lg);
+    color: var(--alt-text);
+  }
+
+  /* Buscador neumórfico */
+  .home-search { max-width: 1080px; margin: clamp(28px, 4vw, 44px) auto 0; }
+  .home-search__card {
+    background: var(--alt-surface-neu);
+    border-radius: var(--alt-r-xl);
+    box-shadow: var(--alt-nm-glass), 0 34px 80px -42px rgba(6, 39, 67, 0.42);
+    padding: clamp(16px, 1.6vw, 20px);
+  }
+  .home-search__tabs {
+    display: inline-flex;
+    background: var(--alt-surface-neu);
+    box-shadow: var(--alt-nm-in-sm);
+    border-radius: var(--alt-r-pill);
+    padding: 5px;
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+  .home-search__tab {
+    padding: 9px 20px;
+    border: 0;
+    border-radius: var(--alt-r-pill);
+    background: transparent;
+    color: var(--alt-text);
+    font-family: var(--alt-font-body);
+    font-weight: var(--alt-fw-semibold);
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: color var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease);
+  }
+  .home-search__tab[aria-selected='true'] {
+    background: var(--alt-surface-neu);
+    box-shadow: var(--alt-nm-up-sm);
+    color: var(--alt-ink);
+  }
+  .home-search__row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .home-search__field {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 12px 18px;
+    background: var(--alt-surface-neu);
+    box-shadow: var(--alt-nm-in-sm);
+    border-radius: var(--alt-r-md);
+  }
+  .home-search__field--type { flex: 0 1 190px; min-width: 160px; }
+  .home-search__field svg { width: 20px; height: 20px; stroke: var(--alt-gold-raw); flex: none; }
+  .home-search__field label { flex: 1; min-width: 0; display: block; }
+  .home-search__lbl {
+    display: block;
+    font-size: 10.5px;
+    font-weight: var(--alt-fw-bold);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--alt-text-muted);
+    margin-bottom: 2px;
+  }
+  .home-search__field input,
+  .home-search__field select {
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: none;
+    font-family: var(--alt-font-body);
+    font-size: 15.5px;
+    color: var(--alt-ink);
+    padding: 0;
+    cursor: pointer;
+  }
+  .home-search__field input { cursor: text; }
+  .home-search__vdiv { width: 1px; align-self: stretch; background: var(--alt-hairline); margin: 6px 4px; }
+  .home-search__go {
+    flex: none;
+    width: 64px;
+    height: 64px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--alt-grad-gold-145, linear-gradient(145deg, #ebd27e 0%, #d4af37 52%, #a6801e 100%));
+    box-shadow: var(--alt-nm-orb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    cursor: pointer;
+    transition: transform var(--alt-dur) var(--alt-ease);
+  }
+  .home-search__go svg { width: 23px; height: 23px; stroke: var(--alt-ink); }
+  .home-search__go:hover { transform: scale(1.06); }
+
+  /* CUATRO MANERAS */
+  .home-maneras__head { max-width: 640px; margin-bottom: clamp(32px, 5vw, 56px); }
+  .home-maneras__head h2 { margin-top: var(--alt-space-3); }
+  .home-maneras__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(430px, 100%), 1fr));
+    gap: var(--alt-gap-grid);
+  }
+  .home-manera {
+    position: relative;
+    display: block;
+    border-radius: var(--alt-r-xl);
+    overflow: hidden;
+    min-height: clamp(280px, 27vw, 360px);
+    box-shadow: var(--alt-elev-card);
+    text-decoration: none;
+    transition: transform var(--alt-dur-slow) var(--alt-ease-card), box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+  }
+  .home-manera img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-slow) var(--alt-ease-card); }
+  .home-manera__scrim { position: absolute; inset: 0; background: var(--alt-scrim-img); }
+  .home-manera:hover { transform: translateY(-6px); box-shadow: var(--alt-elev-card-hover); }
+  .home-manera:hover img { transform: scale(1.05); }
+  .home-manera__body { position: absolute; left: 0; right: 0; bottom: 0; padding: clamp(24px, 2.6vw, 34px); }
+  .home-manera__n { display: block; font-family: var(--alt-font-display); font-style: italic; font-size: 17px; color: var(--alt-gold-bright); margin-bottom: 8px; }
+  .home-manera__t { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(28px, 2.9vw, 36px); line-height: 1; color: #fff; margin-bottom: 9px; }
+  .home-manera__d { display: block; font-size: 14px; line-height: 1.55; color: rgba(255, 255, 255, 0.82); max-width: 330px; margin-bottom: 16px; }
+  .home-manera__cta { display: inline-flex; align-items: center; gap: 7px; font-weight: var(--alt-fw-semibold); font-size: 14px; color: #fff; }
+  .home-manera__cta svg { width: 15px; height: 15px; transition: transform var(--alt-dur) var(--alt-ease); }
+  .home-manera:hover .home-manera__cta svg { transform: translateX(4px); }
+</style>
+
+<script>
+  // Cambio de pestaña del buscador → actualiza pill activo, placeholder y destino.
+  const tabsEl = document.querySelector('.home-search__tabs');
+  const input = document.getElementById('home-hero-field') as HTMLInputElement | null;
+  const form = document.querySelector('.home-search__row') as HTMLFormElement | null;
+  tabsEl?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('.home-search__tab') as HTMLElement | null;
+    if (!btn) return;
+    tabsEl.querySelectorAll('.home-search__tab').forEach((b) => b.setAttribute('aria-selected', 'false'));
+    btn.setAttribute('aria-selected', 'true');
+    if (input && btn.dataset.ph) input.placeholder = btn.dataset.ph;
+    if (form && btn.dataset.tab) form.setAttribute('action', '/' + btn.dataset.tab);
+  });
+</script>
