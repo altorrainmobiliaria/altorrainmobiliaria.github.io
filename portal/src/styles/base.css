@@ -19,6 +19,15 @@
   margin: 0;
 }
 
+/* El `[hidden]` del UA es `display:none` con especificidad MÍNIMA: cualquier `display`
+ * de autor lo anula y el elemento "oculto" se ve. Nos mordió en 2 páginas a la vez
+ * (`#est-confirm` con `.alt-alert{display:flex}` mostraba "Solicitud enviada" al cargar;
+ * `.pub-form__ok{display:flex}` mostraba el éxito del formulario ANTES de enviarlo).
+ * Este reset hace que `hidden` signifique lo que promete, en todo el portal. (ADR §32.20) */
+[hidden] {
+  display: none !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;

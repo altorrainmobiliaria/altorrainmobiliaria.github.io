@@ -12,9 +12,12 @@ import Footer from '../components/Footer.astro';
 
 const gallery = ['/assets/villa-pool.webp', '/assets/estate-golden.webp', '/assets/chalet-dusk.webp', '/assets/villa-modern.webp'];
 const meta = [
+  // Los 4 del mockup (L136-139) con sus íconos exactos. Antes eran 3: faltaba "5 camas"
+  // y "habitaciones" estaba renombrado a "alcobas" (§32.2).
   { i: '<circle cx="9" cy="8" r="3.4"/><path d="M2 20c0-3.3 3-5.5 7-5.5s7 2.2 7 5.5"/><path d="M17 5.2A3.4 3.4 0 0 1 17 12M22 20c0-2.6-1.6-4.5-4-5.2"/>', v: '8', l: 'huéspedes' },
-  { i: '<path d="M2 4v16"/><path d="M2 9h16a3 3 0 0 1 3 3v8"/><path d="M2 15h20"/><path d="M6 9V7a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v2"/>', v: '4', l: 'alcobas' },
-  { i: '<path d="M5 12V6a2 2 0 0 1 2-2 2 2 0 0 1 2 2"/><path d="M4 12h16a1 1 0 0 1 1 1v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-2a1 1 0 0 1 1-1z"/><path d="M7 19l-1 2M18 19l1 2"/>', v: '3', l: 'baños' },
+  { i: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v6"/>', v: '4', l: 'habitaciones' },
+  { i: '<path d="M2 4v16"/><path d="M2 9h16a3 3 0 0 1 3 3v8"/><path d="M2 15h20"/>', v: '5', l: 'camas' },
+  { i: '<path d="M5 12V6a2 2 0 0 1 4 0"/><path d="M4 12h16a1 1 0 0 1 1 1v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-2a1 1 0 0 1 1-1z"/><path d="M7 19l-1 2M18 19l1 2"/>', v: '3', l: 'baños' },
 ];
 const ofrece = [
   { i: '<path d="M2 15c2 0 2 1.6 4 1.6s2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6"/><path d="M2 19c2 0 2 1.6 4 1.6s2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6"/><path d="M9 11V5a2 2 0 0 1 4 0"/>', t: 'Piscina privada' },
@@ -25,6 +28,18 @@ const ofrece = [
   { i: '<path d="M5 13l1.6-4.8A2 2 0 0 1 8.5 7h7a2 2 0 0 1 1.9 1.2L19 13"/><path d="M4 13h16a1 1 0 0 1 1 1v4H3v-4a1 1 0 0 1 1-1z"/><circle cx="7.5" cy="18" r="1.4"/><circle cx="16.5" cy="18" r="1.4"/>', t: 'Parqueadero' },
   { i: '<path d="M12 3l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V6z"/><path d="M9 12l2 2 4-4"/>', t: 'Seguridad 24 h' },
   { i: '<path d="M3 21h18M5 21V10M19 21V10M4 10 12 4l8 6z"/><path d="M9 21v-6h6v6"/>', t: 'Zona colonial' },
+];
+
+// RESEÑAS — la sección que faltaba (mockup L171-189). 4 barras + 2 reseñas, textos exactos.
+const notas = [
+  { l: 'Limpieza', v: '5.0', pct: 99 },
+  { l: 'Ubicación', v: '5.0', pct: 99 },
+  { l: 'Comunicación', v: '4.9', pct: 98 },
+  { l: 'Precio', v: '4.7', pct: 94 },
+];
+const resenas = [
+  { ini: 'VL', quien: 'Valentina L.', cuando: 'Marzo 2025', txt: 'Una joya en el Centro. La terraza al atardecer no tiene precio y Alejandro estuvo pendiente de todo. Volveremos sin dudarlo.' },
+  { ini: 'TS', quien: 'Thomas S.', cuando: 'Febrero 2025', txt: 'Impecable, exactamente como en las fotos. Ubicación perfecta para caminar a todos lados. La piscina fue el plan de los niños cada tarde.' },
 ];
 ---
 
@@ -88,6 +103,39 @@ const ofrece = [
           <div>
             <p class="est-host__name">Anfitrión: Alejandro C.</p>
             <p class="est-host__role">Superanfitrión · 6 años en ALTORRA · responde en ~1 h</p>
+          </div>
+        </div>
+
+        <!-- RESEÑAS — era la sección AUSENTE de Estancias (§32.2). Réplica fiel del mockup (L171-189). -->
+        <div class="est-sec est-rev">
+          <h2 class="est-rev__h">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"/></svg>
+            4.97 · 128 reseñas
+          </h2>
+
+          <div class="est-rev__notas">
+            {notas.map((n) => (
+              <div class="est-rev__nota">
+                <span class="est-rev__nl">{n.l}</span>
+                <span class="est-rev__track"><span class="est-rev__fill" style={`width:${n.pct}%`}></span></span>
+                <span class="est-rev__nv">{n.v}</span>
+              </div>
+            ))}
+          </div>
+
+          <div class="est-rev__list">
+            {resenas.map((r) => (
+              <article class="est-rev__item">
+                <div class="est-rev__who">
+                  <span class="est-rev__ini" aria-hidden="true">{r.ini}</span>
+                  <div>
+                    <p class="est-rev__name">{r.quien}</p>
+                    <p class="est-rev__when">{r.cuando}</p>
+                  </div>
+                </div>
+                <p class="est-rev__txt">{r.txt}</p>
+              </article>
+            ))}
           </div>
         </div>
       </div>
@@ -209,6 +257,32 @@ const ofrece = [
     .est-gal { grid-template-columns: 1fr; height: auto; }
     .est-gal__main, .est-gal__cell { aspect-ratio: 16 / 10; }
   }
+
+  /* ===== RESEÑAS ===== */
+  .est-rev__h {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: 26px; color: var(--alt-ink); margin: 0 0 22px; letter-spacing: normal;
+  }
+  .est-rev__h svg { width: 20px; height: 20px; color: var(--alt-gold); flex: none; }
+
+  .est-rev__notas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 14px 40px; margin-bottom: 28px; }
+  .est-rev__nota { display: flex; align-items: center; gap: 14px; }
+  .est-rev__nl { font-size: 13.5px; color: var(--alt-text); width: 100px; flex: none; }
+  .est-rev__track { flex: 1; height: 4px; border-radius: 4px; background: var(--alt-gris-claro); position: relative; }
+  .est-rev__fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--alt-ink); border-radius: 4px; }
+  .est-rev__nv { font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); flex: none; }
+
+  .est-rev__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 24px; }
+  .est-rev__who { display: flex; align-items: center; gap: 11px; margin-bottom: 10px; }
+  .est-rev__ini {
+    width: 42px; height: 42px; border-radius: 50%; flex: none;
+    background: var(--alt-mist); display: flex; align-items: center; justify-content: center;
+    font-weight: var(--alt-fw-semibold); font-size: 15px; color: var(--alt-ink);
+  }
+  .est-rev__name { font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); margin: 0; }
+  .est-rev__when { font-size: 12px; color: var(--alt-text); margin: 0; }
+  .est-rev__txt { font-size: 14px; line-height: 1.65; color: var(--alt-text); margin: 0; }
 </style>
 
 <script>
