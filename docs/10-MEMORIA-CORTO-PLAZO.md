@@ -97,13 +97,7 @@
 > **LECCIÓN (refuerza L-24)**: la auditoría de fidelidad vieja (§24-29) revisó COLOR y pasó; el fallo es de ESTRUCTURA.
 > Antes de cada sección: leer su bloque en el `.dc.html` y preguntar "¿tiene diseño propio o es el componente genérico?"
 
-> **2026-07-12 (OPUS 4.8 — Fidelidad + diseño elevado, §32; CIERRE por 800k contexto)**: Daniel cazó que el portal
-> DIFIERE de los mockups (→ auditoría de fidelidad 7 páginas, §32.2 + L-24). Mandato: elevar diseño (fusión neu+skeu+
-> glass+liquid, app-like, premium **sin que los estilos peleen** §32.3). Rebuild hecho: **Header v3** (glass full-bleed +
-> emblema oficial de Canva + íconos Lucide/Simple embebidos [astro-icon rompe Workers → L-23] + wordmark Cormorant +
-> auto-hide + logo a la esquina, sin solapar nav) + **Hero** (carrusel 4 banners + buscador superpuesto) + imágenes HD.
-> 3 iteraciones de header con feedback de Daniel en staging. Firebase→Spark (TODO-26, no crítico). **PRÓXIMO: TODO-27** —
-> seguir el rebuild (Home 10 secciones → Turismo/Estancias/Publicar/SERP), fiel + elevado, mostrando cada bloque.
+> *(Bitácora 07-12 Header v3 + Hero podada — consolidada en ADR §32.4/§32.5/§32.6 + L-23/L-24. §G.4 GC.)*
 
 > *(Bitácora §30 auditoría + §31 gestion podadas — consolidadas en sus ADRs. §G.4 GC.)*
 
