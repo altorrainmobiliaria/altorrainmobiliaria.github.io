@@ -17,8 +17,9 @@ interface Props {
   priceLabel?: string;    // "Desde" | "Canon" | "Noche"
   priceSuffix?: string;   // "/mes" | "/noche"
   href: string;
+  pin?: string;           // id del pin del mapa al que ilumina esta card (SERP, §32.22)
 }
-const { img, alt, badge, zona, beds, baths, area, title, price, priceLabel, priceSuffix, href } = Astro.props;
+const { img, alt, badge, zona, beds, baths, area, title, price, priceLabel, priceSuffix, href, pin } = Astro.props;
 
 const specIcon = {
   bed: '<path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7"/><path d="M3 15h18"/><path d="M7 11V9h4v2"/><path d="M13 11V9h4v2"/>',
@@ -27,7 +28,7 @@ const specIcon = {
 };
 ---
 
-<article class="alt-pcard">
+<article class="alt-pcard" data-pin={pin}>
   <div class="alt-pcard__media">
     <img src={img} alt={alt} loading="lazy" decoding="async" />
     <button class="alt-pcard__fav" type="button" aria-label="Guardar en favoritos" aria-pressed="false">
