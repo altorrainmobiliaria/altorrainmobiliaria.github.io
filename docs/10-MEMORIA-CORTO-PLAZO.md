@@ -14,8 +14,9 @@
 > **32 ADRs; cerebro SANO.** Mapa de fidelidad de las 7 páginas → **§32.2**.
 >
 > **✅ YA rebuild/elevado**: **Header** (v3 premium glass full-bleed: emblema oficial + wordmark Cormorant + íconos
-> Lucide/Simple + auto-hide al scroll) · **Hero** de la home (carrusel de 4 banners + buscador superpuesto).
-> **⏳ FALTA rebuild fiel + elevado**: Home (10 secciones + arriendo→lista) · Turismo · Estancias (reseñas) · Publicar
+> Lucide/Simple + auto-hide al scroll) · **Hero** de la home (carrusel de 4 banners + buscador superpuesto) ·
+> **Arriendo→LISTA** de la home (2026-07-16: lista horizontal + filtro con/sin administración, §32.8).
+> **⏳ FALTA rebuild fiel + elevado**: Home (9 secciones restantes) · Turismo · Estancias (reseñas) · Publicar
 > (franja 4 beneficios) · SERP (interactividad JS). Es el WIP activo (TODO-27, §32.7).
 >
 > **🎨 DISEÑO ELEVADO (mandato Daniel, §32.3)**: fusión **Neumorfismo + Skeuomorfismo + Glassmorfismo + Liquid Glass**,
@@ -37,8 +38,11 @@
 > sobre `main *,header *,footer *` contra el allowlist de la paleta.
 >
 > **▶ SIGUIENTE — REBUILD DE FIDELIDAD (TODO-27, de arriba abajo, mostrando cada bloque a Daniel en staging)**:
-> 1. **Home**: agregar las 10 secciones faltantes (propiedad-del-día · carrusel En-venta · **arriendo→LISTA** · estancias ·
->    explora-zona · recientes · valoradas · CTA corta-estancia · proyectos · invertir · redes), fieles al `.dc.html` + elevadas.
+> 1. **Home**: agregar las secciones faltantes (propiedad-del-día · carrusel En-venta · ~~arriendo→LISTA~~ ✅ (§32.8) ·
+>    estancias · explora-zona · recientes · valoradas · CTA corta-estancia · proyectos · invertir · redes),
+>    fieles al `.dc.html` + elevadas. ⚠️ **Patrón cazado (§32.8)**: la infidelidad NO es de color sino de ESTRUCTURA —
+>    se reusó el componente genérico (`PropertyCard`+`home-pgrid`) donde el mockup pedía un layout PROPIO. Antes de
+>    construir CADA sección: leer su bloque en el `.dc.html` y preguntar "¿esta sección tiene diseño propio?" (L-24).
 > 2. **Turismo** (Pasadías + inversión 3-cards glass + zonas ×6) · **Estancias** (sección Reseñas + galería) · **Publicar**
 >    (franja 4 beneficios) · **SERP** (interactividad JS: filtros/fav/hover-pin). Detalle de qué falta por página → §32.2.
 > 3. Después: transversales (MapLibre · forms→`solicitudes` vía CF [needs Blaze, TODO-26] · datos Firestore reales [TODO-22] · Wompi Ola 2) ·
@@ -69,11 +73,22 @@
 | **TODO-24** | 🧷 **SSoT/memoria frágil** (K-06/07/10, §30): diseño sellado depende de memoria del harness NO versionada → reforzar boot→`tokens.css`/§23 + evaluar espejo; ssotFact paleta con cuidado; re-apuntar ssotFact cache→portal al cutover. | 🟡 abierto | |
 | **TODO-25** | 📟 **deploy-info.json congelado** (F-03, §30): 76 commits atrás pese a `bump-version.yml on:push`. Verificar runs GH Actions + reconciliar claim CLAUDE.md §1/§4. Legacy → baja urgencia. | 🟡 abierto | sin `gh` |
 | **TODO-26** | 🔥 **Firebase Blaze** ✅ **RESTAURADO** (2026-07-12): bajó a Spark por aviso de Google; **Daniel re-vinculó tarjeta → Blaze** el mismo día (listo para cablear CFs/Wompi). Sin costo/impacto. | ✅ dueño | resuelto |
-| **TODO-27** | 🎨 **REBUILD DE FIDELIDAD + elevación** (WIP ACTIVO, §32): reconstruir páginas fieles a mockups + estética elevada (§32.3, fusión sin choque). ✅ Header + Hero. ⏳ Home(10 secc + arriendo→lista)/Turismo/Estancias(reseñas)/Publicar(franja)/SERP(interactividad). Mapa por página → §32.2. | 🔄 OPUS | mostrar a Daniel por bloque |
+| **TODO-27** | 🎨 **REBUILD DE FIDELIDAD + elevación** (WIP ACTIVO, §32): reconstruir páginas fieles a mockups + estética elevada (§32.3, fusión sin choque). ✅ Header + Hero + **Arriendo→lista** (§32.8). ⏳ Home(9 secc restantes)/Turismo/Estancias(reseñas)/Publicar(franja)/SERP(interactividad). Mapa por página → §32.2. | 🔄 OPUS | mostrar a Daniel por bloque |
 
 ---
 
 ## 📝 Bitácora (efímera)
+
+> **2026-07-16 (OPUS 4.8 — §32.8 Arriendo→LISTA de la home)**: Daniel cazó (2ª vez) una infidelidad estructural: la
+> sección "En arriendo" se había construido como grilla genérica de 3 `PropertyCard` (idéntica a Destacadas/Cerca)
+> cuando el mockup `#arriendo` pide un **layout PROPIO**: lista horizontal + filtro "Todos/Con/Sin administración".
+> Rebuild fiel + elevado en `portal/src/pages/index.astro`: 4 filas del mockup (foto+`N fotos` · kicker/zona/título/
+> chips · etiqueta-de-administración+precio+Contactar/Ver), lienzo neu `#E6EDF2` con filas blancas elevadas, pills
+> neumórficos (ON=`--alt-nm-in-sm` hundido + texto oro), filtro JS por `data-admin`. **Verificado por computed styles
+> + clicks reales** (4 filas · Con→2 · Sin→2 · Todos→4 · `aria-pressed` ok · 0 off-palette). ⚠️ **La captura del panel
+> ahora hace TIMEOUT** (no solo desincroniza — L-22 agravada): verificar SIEMPRE por `javascript_tool`+computed styles.
+> **LECCIÓN (refuerza L-24)**: la auditoría de fidelidad vieja (§24-29) revisó COLOR y pasó; el fallo es de ESTRUCTURA.
+> Antes de cada sección: leer su bloque en el `.dc.html` y preguntar "¿tiene diseño propio o es el componente genérico?"
 
 > **2026-07-12 (OPUS 4.8 — Fidelidad + diseño elevado, §32; CIERRE por 800k contexto)**: Daniel cazó que el portal
 > DIFIERE de los mockups (→ auditoría de fidelidad 7 páginas, §32.2 + L-24). Mandato: elevar diseño (fusión neu+skeu+
