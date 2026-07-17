@@ -13,19 +13,20 @@
 > **DIFIERE de los mockups aprobados** (Daniel lo cazó; la verificación vieja §24-§29 revisó COLOR, no estructura → L-24).
 > **32 ADRs; cerebro SANO.** Mapa de fidelidad de las 7 páginas → **§32.2**.
 >
-> **✅ HOME COMPLETA — las 17 secciones del mockup, en su orden (§32.8-§32.18)**: Header v3 · Hero · propiedad-dia ·
-> venta · destacadas · arriendo(LISTA+filtro) · estancias-list · explora-zona · **cerca(buscador+MAPA, divergencia
-> GRAVE cerrada)** · recientes(bento) · valoradas · cta-estancias · proyectos · invertir · brokers · journal · redes.
-> Lienzo de la home = **neu** (§32.15). **0 off-palette.** Pusheado + deploy a staging verificado (76KB→115KB).
-> ✅ **TURISMO fiel** (§32.19: +Pasadías · zonas 4→6 · servicios; sus fondos son BLANCOS → el neu es solo home).
-> **⏳ FALTA**: Estancias (sección Reseñas + galería) · Publicar (franja 4 beneficios) · SERP (interactividad JS:
-> filtros/fav/hover-pin) · deltas MENORES de `#destacadas`/`#journal` (§32.9). WIP activo (TODO-27, §32.7).
+> **✅ LAS 5 PÁGINAS RECONSTRUIDAS + interactividad** (§32.8-§32.22): Home (17 secc, lienzo neu, `#cerca`=buscador+MAPA) ·
+> Turismo (+Pasadías, zonas 6) · Estancias (+Reseñas, meta 4) · Publicar (+franja 4 beneficios) · SERP (filtros/fav/
+> hover-pin vivos). Fix sistémico `[hidden]{display:none!important}` (§32.20). Todo pusheado a `main` + staging.
 >
-> **🎨 DISEÑO ELEVADO (mandato Daniel, §32.3)**: fusión **Neumorfismo + Skeuomorfismo + Glassmorfismo + Liquid Glass**,
-> sensación de **app** (la app futura = idéntica), moderno/premium. **Que NO peleen**: cada componente lidera con UNA
-> técnica — **header=glass+metal · cards=neumorfismo · overlays=glass**. Íconos: NO `astro-icon` (rompe Workers, L-23) →
-> paths **Lucide (UI) + Simple Icons (redes)** embebidos inline. Emblema = **`altorra-emblema.webp`** (Canva `DAGxI7p5OBk`,
-> solo el "A" metálico; el viejo `altorra-mark-t.webp` pixelado/con-texto está RETIRADO). Componentes → `20 §Portal`.
+> ⚠️ **PERO — la RE-AUDITORÍA adversarial (§32.24) desmintió "fidelidad lograda"**: **5 DIVERGENTES · 48 hallazgos**.
+> **13 ALTA → ✅ corregidos** (§32.23/§32.24, commit `3a66a69`): cifra "+18%" INVENTADA retirada · favorito muerto 8/13
+> · pins SERP desemparejados · galería estancias muerta · amenities/tarjetas/props inventadas restauradas.
+> **⏳ 35 MEDIA/BAJA PENDIENTES** (síntesis+crudo en bóveda `2026-07-17-reauditoria-fidelidad-*`): ver SIGUIENTE.
+> **LECCIÓN L-29**: el contenido INVENTADO se ve BIEN → solo lo caza CONTAR contra la fuente con auditor adversarial;
+> **3 de los 6 ALTA los introduje YO "corrigiendo"**. Declarar fidelidad sin re-auditar = repetir §24-29.
+>
+> **🎨 DISEÑO ELEVADO (mandato Daniel, §32.3 = detalle)**: fusión neu+skeu+glass+liquid, app-like; que NO peleen
+> (header=glass+metal · cards=neu · overlays=glass). Íconos NO `astro-icon` (L-23) → paths Lucide/Simple inline.
+> Emblema `altorra-emblema.webp` (Canva `DAGxI7p5OBk`; el viejo `altorra-mark-t.webp` RETIRADO). Componentes → `20 §Portal`.
 >
 > **🎨 DISEÑO SELLADO — NO re-litigar** (SSoT `portal/src/styles/tokens.css` + ADR §23-§23.9 + memorias
 > `identidad-marca-inmobiliaria`/`sello-marca-altorra`; ratificaciones TODAS cerradas): paleta OFICIAL
@@ -34,30 +35,28 @@
 > **Cormorant Garamond** (display) + **Hanken Grotesk** (cuerpo) · neumorfismo protagonista + glass sutil,
 > DUAL-MODE (`#fff` contenido / `#E6EDF2` home+nav / `#062743` secciones).
 >
-> **▶ CÓMO RETOMAR (sesión fresca)**: boot normal (§G.1). Dev: `npm --prefix portal run dev` (config `portal`, puerto 4321).
-> 👁️ **VERIFICA MIRANDO, con la extensión de CHROME** (`mcp__claude-in-chrome__*`): renderiza/anima/captura PERFECTO.
-> El congelado es solo el **panel integrado** (`mcp__Claude_Browser__*`, `rAF`=0) → sirve para computed styles/espía,
-> NO para ver. **L-26** (corregida por Daniel 07-17: creer que "no puedo ver" era falso). Mirar cazó un bug que NI el
-> build NI la paleta NI los computed styles vieron (`.alt-sr-only` inexistente → la clase real es `.alt-visually-hidden`).
-> Barrido off-palette = `getComputedStyle` del subárbol vs allowlist (⚠️ incluir la base hairline `rgb(27,39,51)` de
-> `tokens.css:71` o da falsos positivos).
+> **▶ CÓMO RETOMAR**: boot normal (§G.1). Dev: `npm --prefix portal run dev` (`portal`, 4321). 👁️ **VERIFICA MIRANDO
+> con la extensión de CHROME** (`mcp__claude-in-chrome__*`: renderiza/captura; el panel integrado tiene rAF=0, solo
+> computed styles/espía) — **pero mirar NO basta**: para "¿esto lo dijo el diseño o lo inventé?" hace falta DIFF contra
+> el `.dc.html` + auditor adversarial (L-29). Verificación por capas: build → estructura → computed (⚠️ MIENTE en
+> propiedades con `transition`, L-28) → screenshot → **diff vs fuente**. Off-palette = `getComputedStyle` vs allowlist
+> (incluir base hairline `rgb(27,39,51)` o da falsos positivos).
 >
-> **▶ SIGUIENTE — REBUILD DE FIDELIDAD (TODO-27, de arriba abajo, mostrando cada bloque a Daniel en staging)**:
-> 1. ~~**Home**~~ ✅ **COMPLETA** (§32.8-§32.18; auditoría §32.9 + crudo/síntesis en bóveda
->    `2026-07-16-auditoria-fidelidad-home-*`). **Piezas reutilizables ya construidas** — reusar, NO reinventar:
->    `.alt-rail`+`.alt-rnav`+chasis `.home-railsec` (el `[data-railwrap]` DEBE envolver encabezado Y riel: en el
->    mockup son hermanos y sus flechas están ROTAS) · `.alt-btn-sweep` · `.alt-btn-frost` · `.home-oppill` ·
->    **6 cards, NINGUNA intercambiable**: `PropertyCard`(grillas) · `LuCard`(centrada+swatches) · `StayCard`(SIN
->    caja) · `RankCard`(neu+numeral calado) · `ProjectCard`(póster 3/4) + los tiles de zona/bento inline.
-> 2. **SIGUIENTE — mismo método** (leer el `.dc.html` de CADA sección ANTES de construir): **Turismo** (Pasadías +
->    inversión 3-cards + zonas ×6) → **Estancias** (Reseñas + galería) → **Publicar** (franja 4 beneficios) →
->    **SERP** (interactividad JS: filtros/fav/hover-pin) → deltas menores `#destacadas`/`#journal`. `#brokers`=FIEL.
->    ⚠️ **Regla de oro (L-24)**: la infidelidad es ESTRUCTURAL, no de color. Preguntar siempre **"¿tiene diseño
->    propio o es el genérico?"** — pagó ×5 en la home. Matiz: `#destacadas` salió `disenoPropio:false` ⇒
->    **`PropertyCard` NO es el villano**; el fallo fue reutilizar sin preguntar. Y **el mockup tiene bugs**
->    (flechas rotas, `@altorra.co` falso, `href="#"`, scrims casi negros): ser fiel NO es replicarlos.
-> 2. **Turismo** (Pasadías + inversión 3-cards glass + zonas ×6) · **Estancias** (sección Reseñas + galería) · **Publicar**
->    (franja 4 beneficios) · **SERP** (interactividad JS: filtros/fav/hover-pin). Detalle de qué falta por página → §32.2.
+> **▶ SIGUIENTE (cierre 2026-07-17 por contexto reventado; retomar así)**:
+> 0. **⭐ PRIMERO: Daniel dejó un TRABAJO para el arranque de la próxima conversación** — pedir/leer ese encargo ANTES
+>    de seguir con lo de abajo. ("continua pero... al iniciar la próxima conversación te tengo un trabajo").
+> 1. **Cerrar los 35 hallazgos MEDIA/BAJA de la re-auditoría** (§32.24; lista COMPLETA en la síntesis de bóveda
+>    `2026-07-17-reauditoria-fidelidad-sintesis.md`). Por página: **ficha 8 — LA MÁS URGENTE, SIN TOCAR AÚN**
+>    (favorito del header MUERTO · sello "Verificado" INVENTADO en card de precio · specs de "similares" cambiadas ·
+>    íconos de POI perdidos) · **turismo 8** (cards de Zonas cambiaron de patrón + perdieron kicker/enlace · copy de
+>    #inversion reescrito · eyebrows/CTA renombrados) · **estancias 8** (thumbnails INVENTADOS + layout de galería 2×2
+>    + widget no prellena fechas hoy+7/hoy+10) · **serp 7** (6ª card INVENTADA en /comprar · card Getsemaní mutada ·
+>    "Más filtros" y sombra-al-scroll muertos · falta 3ª línea del mapa) · **home 2** · **publicar 2**.
+> 2. **MÉTODO OBLIGATORIO (L-29 + L-24)**: leer el bloque del `.dc.html`, corregir TEXTUAL, y **re-auditar
+>    adversarialmente** (reejecutar el workflow de bóveda) ANTES de decir "fiel". NUNCA inventar contenido para
+>    rellenar un hueco del diseño — inventar es PEOR que omitir (una cifra falsa = riesgo legal). Piezas ya hechas
+>    (reusar, NO reinventar): `.alt-rail`/`.alt-rnav`/`.home-railsec` · `.alt-btn-sweep`/`-frost` · `.home-oppill` ·
+>    6 cards NO intercambiables (`PropertyCard`/`LuCard`/`StayCard`/`RankCard`/`ProjectCard` + tiles inline).
 > 3. Después: transversales (MapLibre · forms→`solicitudes` vía CF [needs Blaze, TODO-26] · datos Firestore reales [TODO-22] · Wompi Ola 2) ·
 >    páginas SIN mockup (invertir/aliados/journal/Nosotros/Contacto/favoritos/ingreso → requieren diseño de Daniel, NO inventar).
 >
@@ -68,7 +67,7 @@
 > **🚫 Callejones / cuidados (NO reintentar)**:
 > (a) ⛔ **NADA del sitio/código/diseño viejo como base** (regla innegociable; sus TODO/gaps obsoletos, ADR §15.7).
 > (b) **NUNCA UI sin mockup aprobado** (§3.2/carril D) — ver punto 4 de SIGUIENTE.
-> (c) **Verificar por computed styles, no captura** (L-22). **Los datos del portal son DEMO estáticos** — la capa `client.ts` está lista para cablear cuando haya inventario.
+> (c) **Verificar POR CAPAS** (L-29): build → estructura → computed (miente en `transition`, L-28) → screenshot en Chrome → **diff vs `.dc.html`**. Ni el ojo caza el contenido INVENTADO; solo el diff + auditor adversarial. **Datos del portal = DEMO estáticos** (`client.ts` listo para cablear).
 > (d) **NUNCA dinero sin gate** · **NUNCA pedir reindexación** antes del contenido sustantivo · **JAMÁS el nº personal del dueño** (323…) en la web · sin gráficas/charts (regla Daniel) · ALTORRA siempre MAYÚSCULA.
 
 ---
@@ -86,18 +85,18 @@
 | **TODO-24** | 🧷 **SSoT/memoria frágil** (K-06/07/10, §30): diseño sellado depende de memoria del harness NO versionada → reforzar boot→`tokens.css`/§23 + evaluar espejo; ssotFact paleta con cuidado; re-apuntar ssotFact cache→portal al cutover. | 🟡 abierto | |
 | **TODO-25** | 📟 **deploy-info.json congelado** (F-03, §30): 76 commits atrás pese a `bump-version.yml on:push`. Verificar runs GH Actions + reconciliar claim CLAUDE.md §1/§4. Legacy → baja urgencia. | 🟡 abierto | sin `gh` |
 | **TODO-26** | 🔥 **Firebase Blaze** ✅ **RESTAURADO** (2026-07-12): bajó a Spark por aviso de Google; **Daniel re-vinculó tarjeta → Blaze** el mismo día (listo para cablear CFs/Wompi). Sin costo/impacto. | ✅ dueño | resuelto |
-| **TODO-27** | 🎨 **REBUILD DE FIDELIDAD + elevación** (WIP ACTIVO, §32): reconstruir páginas fieles a mockups + estética elevada (§32.3, fusión sin choque). ✅ Header + Hero + **Arriendo→lista** (§32.8). ⏳ Home(9 secc restantes)/Turismo/Estancias(reseñas)/Publicar(franja)/SERP(interactividad). Mapa por página → §32.2. | 🔄 OPUS | mostrar a Daniel por bloque |
+| **TODO-27** | 🎨 **REBUILD DE FIDELIDAD** (WIP, §32): ✅ **5 páginas reconstruidas** (§32.8-§32.22) PERO la re-auditoría adversarial (§32.24) las desmintió → **13 ALTA ✅ corregidos, 35 MEDIA/BAJA PENDIENTES** (ficha 8 = sin tocar; síntesis en bóveda). Método: diff vs `.dc.html` + re-auditar adversarialmente, NUNCA inventar (L-29). | 🔄 OPUS | 35 pendientes |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-16 (OPUS 4.8 — §32.8-§32.13)**: Daniel cazó (2ª vez) una infidelidad ESTRUCTURAL (`#arriendo` era grilla
-> genérica; el mockup pide lista + filtro) → corregido (§32.8) y, para no repetirlo 9 veces, **auditoría de la home
-> ENTERA** (§32.9: 17 secciones · 10 AUSENTES · `#cerca` GRAVE con contenido inventado · 0 veredictos refutados).
-> Daniel aprobó los 2 bloques molde ("todo va bien, sigamos") → **los 4 CARRUSELES hechos** (§32.10-§32.13). El gate
-> "¿diseño propio o genérico?" pagó ×3: **5 cards, ninguna intercambiable**; lo único compartido es `.alt-rail`.
-> **PRÓXIMO**: los 2 splits → 2 mosaicos → CTA/redes → corregir `#cerca`. Ver el orden en el Foco (arriba).
+> **2026-07-17 (OPUS 4.8 — §32.14-§32.24; CIERRE por contexto reventado)**: reconstruidas las 5 páginas fieles
+> (home 17 secc · turismo · estancias · publicar · SERP), fix sistémico `[hidden]`. Daniel corrigió que SÍ puedo ver
+> con la extensión de Chrome → 4 bugs cazados MIRANDO (L-26/L-28). Luego, en vez de seguir, **re-auditoría adversarial
+> (§32.24)** que desmintió "fidelidad": **48 hallazgos, 3 de los ALTA los introduje YO "corrigiendo"** — incl. una
+> cifra "+18%" INVENTADA (retirada). 13 ALTA ✅, **35 MEDIA/BAJA pendientes**. **PRÓXIMO**: (0) Daniel dejó un TRABAJO
+> para el arranque de la próxima conversación → pedirlo PRIMERO. (1) cerrar los 35 pendientes (ficha=8, la más urgente).
 
 > *(Bitácora 07-12 Header v3 + Hero podada — consolidada en ADR §32.4/§32.5/§32.6 + L-23/L-24. §G.4 GC.)*
 
