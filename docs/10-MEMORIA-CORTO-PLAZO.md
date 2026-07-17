@@ -41,9 +41,11 @@
 >
 > **▶ SIGUIENTE — REBUILD DE FIDELIDAD (TODO-27, de arriba abajo, mostrando cada bloque a Daniel en staging)**:
 > 1. **Home — MAPA AUDITADO ✅ (§32.9, 17 secciones; crudo+síntesis en bóveda `2026-07-16-auditoria-fidelidad-home-*`)**.
->    **Orden de construcción**: (a) ✅ **base `.alt-rail` + `.alt-rnav` + `LuCard.astro`** (§32.10, HECHA — reusar tal
->    cual; el `[data-railwrap]` DEBE envolver encabezado Y riel: en el mockup son hermanos y sus flechas están ROTAS);
->    (b) los 4 carruseles sobre esa base: ~~**venta**~~ ✅ (§32.10) → **estancias-list → valoradas → proyectos**;
+>    **Orden de construcción**: (a) ✅ **base `.alt-rail`+`.alt-rnav`+chasis `.home-railsec`** (§32.10; el
+>    `[data-railwrap]` DEBE envolver encabezado Y riel: en el mockup son hermanos y sus flechas están ROTAS);
+>    (b) ✅ **LOS 4 CARRUSELES HECHOS** (§32.10-§32.13: venta·estancias-list·valoradas·proyectos). ⚠️ **5 cards y
+>    NINGUNA intercambiable** — `PropertyCard`(grillas) · `LuCard`(centrada+swatches) · `StayCard`(SIN caja) ·
+>    `RankCard`(neu+numeral calado) · `ProjectCard`(póster 3/4). Lo ÚNICO compartido es `.alt-rail`;
 >    (c) los 2 splits: **propiedad-del-día** (1 sola propiedad + 4 contadores) → **invertir**; (d) los 2 mosaicos:
 >    **explora-zona** (10 tiles de ZONA) → **recientes** (bento); (e) los 2 sueltos: **CTA corta-estancia**
 >    (full-bleed) → **redes** (muro IG); (f) **corregir `#cerca`** (DIVERGENTE GRAVE: debe ser split
