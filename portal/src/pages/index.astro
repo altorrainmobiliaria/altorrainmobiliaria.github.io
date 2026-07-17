@@ -107,10 +107,12 @@ const venta = [
 
 // Datos DEMO (estáticos) — la conexión a Firestore real llega cuando haya inventario
 // (decisión SSG vs doc-índice DIFERIDA a Fable, TODO-22). Imágenes = placeholders del diseño.
+// DESTACADAS — las 2 del mockup (L580-625) + la card-CTA del "128". Esta es la ÚNICA sección
+// de la home donde el mockup SÍ usa la grilla genérica (`disenoPropio:false`, §32.9).
+// La 3ª card ("Penthouse frente al mar", $2.100.000.000) estaba INVENTADA: retirada (§32.23).
 const destacadas = [
   { img: '/assets/villa-pool.webp', alt: 'Apartamento con vista a la bahía', badge: 'En venta', zona: 'Castillogrande', beds: 3, baths: 3, area: '142 m²', title: 'Apartamento con vista a la bahía', price: '$1.450.000.000', priceLabel: 'Desde', href: '/comprar' },
   { img: '/assets/villa-modern.webp', alt: 'Casa republicana restaurada', badge: 'En venta', zona: 'Manga', beds: 4, baths: 3, area: '210 m²', title: 'Casa republicana restaurada', price: '$980.000.000', priceLabel: 'Desde', href: '/comprar' },
-  { img: '/assets/estate-golden.webp', alt: 'Penthouse frente al mar', badge: 'En venta', zona: 'Bocagrande', beds: 3, baths: 4, area: '188 m²', title: 'Penthouse frente al mar', price: '$2.100.000.000', priceLabel: 'Desde', href: '/comprar' },
 ];
 
 // ARRIENDO — lista horizontal con filtro con/sin administración (réplica fiel del mockup #arriendo).
