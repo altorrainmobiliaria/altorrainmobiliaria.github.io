@@ -611,6 +611,50 @@
 }
 
 /* ==========================================================================
+ * BOTÓN "FROST" — vidrio esmerilado sobre imagen oscura. Réplica del `.btn-frost`
+ * del mockup (CSS L73-78). Liquid glass como ACENTO (§14 de tokens: con moderación).
+ * ======================================================================== */
+.alt-btn-frost {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px 16px 14px 26px;
+  border-radius: var(--alt-r-pill);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  font-family: var(--alt-font-body);
+  font-weight: var(--alt-fw-bold);
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: background var(--alt-dur-slow) var(--alt-ease), color var(--alt-dur-slow) var(--alt-ease),
+    border-color var(--alt-dur-slow) var(--alt-ease);
+}
+/* Fallback: sin backdrop-filter el 14% de blanco no basta para separar del fondo */
+@supports not ((-webkit-backdrop-filter: blur(6px)) or (backdrop-filter: blur(6px))) {
+  .alt-btn-frost { background: rgba(6, 39, 67, 0.55); }
+}
+.alt-btn-frost__arw {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  transition: background var(--alt-dur-slow) var(--alt-ease);
+}
+.alt-btn-frost svg { width: 14px; height: 14px; stroke: #fff; fill: none; transition: stroke var(--alt-dur-slow) var(--alt-ease), transform var(--alt-dur-slow) var(--alt-ease); }
+.alt-btn-frost:hover { background: #fff; color: var(--alt-ink); border-color: #fff; }
+.alt-btn-frost:hover .alt-btn-frost__arw { background: var(--alt-gold); }
+.alt-btn-frost:hover svg { stroke: var(--alt-ink); transform: translateX(3px); }
+@media (prefers-reduced-motion: reduce) { .alt-btn-frost svg, .alt-btn-frost__arw { transition: none; } }
+
+/* ==========================================================================
  * BOTÓN "SWEEP" — contorno navy que se rellena con un barrido de oro al hover.
  * Réplica del `.btn-sweep` del mockup (CSS L55-60). CTA de las secciones editoriales.
  * ======================================================================== */

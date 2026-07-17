@@ -85,6 +85,16 @@ const recientes = [
   { img: '/assets/hero-estancia.webp', alt: 'Terraza en Bocagrande', col: '4', row: '3', size: 'sm', tag: 'Estancia · Bocagrande', price: '$680k / noche' },
 ];
 
+// REDES — muro de 6 posts (mockup L1363-1394). `reel` = indicador de video (play) en 1, 3 y 6.
+const posts = [
+  { img: '/assets/estate-golden.webp', likes: '1.2k', comments: '48', reel: true },
+  { img: '/assets/hero-estancia.webp', likes: '2.4k', comments: '91' },
+  { img: '/assets/villa-pool.webp', likes: '876', comments: '33', reel: true },
+  { img: '/assets/chalet-dusk.webp', likes: '1.7k', comments: '62' },
+  { img: '/assets/hero-keys.webp', likes: '945', comments: '27', imgPos: 'center 40%' },
+  { img: '/assets/villa-modern.webp', likes: '3.1k', comments: '78', reel: true },
+];
+
 // EN VENTA — riel horizontal de `LuCard` (réplica fiel del mockup #venta, L451-564).
 // Swatches en tokens de paleta (el mockup traía #8a6d1f/#c7d3dd ajenos → §3.2 disciplina estricta).
 const venta = [
@@ -610,6 +620,22 @@ const maneras = [
       </div>
     </section>
 
+    <!-- CTA CORTA ESTANCIA — banda full-bleed con scrim direccional (réplica fiel del mockup, L1157-1170) -->
+    <section id="cta-estancias" class="home-ctaband">
+      <img class="home-ctaband__img" src="/assets/chalet-dusk.webp" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+      <span class="home-ctaband__scrim" aria-hidden="true"></span>
+      <div class="alt-container home-ctaband__in">
+        <div class="home-ctaband__text">
+          <p class="alt-eyebrow home-ctaband__eyebrow">Corta estancia</p>
+          <h2 class="home-ctaband__h">Vive Cartagena por unos días, como si fuera tuya.</h2>
+          <p class="home-ctaband__p">Propiedades verificadas, listas para habitar, en el corazón de la ciudad amurallada.</p>
+          <a class="alt-btn-frost home-ctaband__cta" href="/estancias">Descubrir estancias
+            <span class="alt-btn-frost__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
     <!-- PROYECTOS — riel de pósters 3/4, encabezado CENTRADO (réplica fiel del mockup #proyectos) -->
     <section id="proyectos" class="home-band home-band--neu home-railsec home-proy">
       <div class="alt-container" data-railwrap>
@@ -726,6 +752,44 @@ const maneras = [
               </a>
             ))}
           </div>
+        </div>
+      </div>
+    </section>
+    <!-- REDES — muro tipo Instagram (réplica fiel del mockup #redes, L1353-1398) -->
+    <!-- El mockup pone el handle "@altorra.co" con href="#": NO es el real. Aquí va
+         @altorrainmobiliaria + el enlace de SITE (§32.2: rutas reales ≠ placeholders). -->
+    <section id="redes" class="home-band home-band--alt home-redes">
+      <div class="alt-container">
+        <div class="home-redes__head">
+          <p class="alt-eyebrow">Síguenos en redes</p>
+          <h2 class="home-redes__h">Cartagena, todos los días.</h2>
+          <a class="home-redes__handle" href={SITE.social.instagram} target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
+            @altorrainmobiliaria
+          </a>
+        </div>
+
+        <div class="home-redes__grid">
+          {posts.map((p) => (
+            <a class="home-redes__post" href={SITE.social.instagram} target="_blank" rel="noopener" aria-label={`Ver publicación en Instagram · ${p.likes} me gusta`}>
+              <img src={p.img} alt="" loading="lazy" decoding="async" style={p.imgPos ? `object-position:${p.imgPos}` : undefined} />
+              {p.reel && (
+                <span class="home-redes__reel" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </span>
+              )}
+              <span class="home-redes__ov">
+                <span class="home-redes__stat">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"/></svg>
+                  {p.likes}
+                </span>
+                <span class="home-redes__stat">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>
+                  {p.comments}
+                </span>
+              </span>
+            </a>
+          ))}
         </div>
       </div>
     </section>
@@ -1056,6 +1120,65 @@ const maneras = [
     .home-zona, .home-zona img { transition: none; }
     .home-zona:hover { transform: none; }
     .home-zona:hover img { transform: none; }
+  }
+
+  /* ===== CTA CORTA ESTANCIA — banda full-bleed con scrim direccional ===== */
+  .home-ctaband { position: relative; overflow: hidden; min-height: clamp(420px, 48vw, 560px); display: flex; align-items: center; }
+  .home-ctaband__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  /* El scrim del mockup es rgba(18,22,26,…) = casi NEGRO (prohibido) → navy de paleta */
+  .home-ctaband__scrim {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(90deg, rgba(6, 39, 67, 0.9) 0%, rgba(6, 39, 67, 0.56) 42%, rgba(6, 39, 67, 0.08) 72%, rgba(6, 39, 67, 0) 100%);
+  }
+  /* El wrapper no intercepta clics (deja pasar al fondo); solo el CTA es clicable — como el mockup */
+  .home-ctaband__in { position: relative; width: 100%; padding-block: clamp(48px, 6vw, 90px); pointer-events: none; }
+  .home-ctaband__text { max-width: 520px; }
+  .home-ctaband__eyebrow { color: var(--alt-gold-bright); margin-bottom: 16px; }
+  .home-ctaband__h {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(32px, 4.4vw, 52px); line-height: 1.04; letter-spacing: var(--alt-tracking-tight);
+    color: #fff; margin: 0 0 18px; text-wrap: balance;
+  }
+  .home-ctaband__p { font-size: clamp(15px, 1.5vw, 18px); line-height: 1.62; color: rgba(255, 255, 255, 0.78); margin: 0 0 30px; max-width: 430px; }
+  .home-ctaband__cta { pointer-events: auto; }
+
+  /* ===== REDES — muro tipo Instagram ===== */
+  .home-redes { overflow: hidden; padding-block: clamp(56px, 7vw, 100px); }
+  .home-redes__head { text-align: center; margin-bottom: clamp(30px, 4vw, 46px); }
+  .home-redes__h {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(30px, 4vw, 48px); line-height: 1.04; letter-spacing: var(--alt-tracking-tight);
+    color: var(--alt-ink); margin: var(--alt-space-3) 0 20px;
+  }
+  .home-redes__handle {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: var(--alt-grad-gold); color: var(--alt-ink);
+    padding: 11px 22px; border-radius: var(--alt-r-pill);
+    font-weight: var(--alt-fw-bold); font-size: 14px; text-decoration: none;
+    transition: transform var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease);
+  }
+  .home-redes__handle svg { width: 18px; height: 18px; }
+  .home-redes__handle:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(166, 128, 30, 0.6); }
+
+  .home-redes__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 45%), 1fr)); gap: clamp(10px, 1.3vw, 16px); }
+  .home-redes__post { position: relative; display: block; overflow: hidden; border-radius: 14px; aspect-ratio: 1 / 1; }
+  .home-redes__post img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--alt-ease); }
+  .home-redes__post:hover img { transform: scale(1.08); }
+  .home-redes__reel { position: absolute; top: 10px; right: 10px; color: #fff; display: inline-flex; }
+  .home-redes__reel svg { width: 18px; height: 18px; }
+  .home-redes__ov {
+    position: absolute; inset: 0; background: rgba(6, 39, 67, 0.44);
+    display: flex; align-items: center; justify-content: center; gap: 18px;
+    opacity: 0; transition: opacity var(--alt-dur-slow) var(--alt-ease);
+  }
+  .home-redes__post:hover .home-redes__ov, .home-redes__post:focus-visible .home-redes__ov { opacity: 1; }
+  .home-redes__stat { display: inline-flex; align-items: center; gap: 6px; color: #fff; font-weight: var(--alt-fw-bold); font-size: 14px; }
+  .home-redes__stat svg { width: 18px; height: 18px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-redes__post img, .home-redes__ov, .home-redes__handle { transition: none; }
+    .home-redes__post:hover img { transform: none; }
+    .home-redes__handle:hover { transform: none; }
   }
 
   /* ===== RECIENTES — mosaico BENTO (4 col, posicionamiento explícito por tile) ===== */
