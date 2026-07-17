@@ -38,11 +38,18 @@
 > sobre `main *,header *,footer *` contra el allowlist de la paleta.
 >
 > **▶ SIGUIENTE — REBUILD DE FIDELIDAD (TODO-27, de arriba abajo, mostrando cada bloque a Daniel en staging)**:
-> 1. **Home**: agregar las secciones faltantes (propiedad-del-día · carrusel En-venta · ~~arriendo→LISTA~~ ✅ (§32.8) ·
->    estancias · explora-zona · recientes · valoradas · CTA corta-estancia · proyectos · invertir · redes),
->    fieles al `.dc.html` + elevadas. ⚠️ **Patrón cazado (§32.8)**: la infidelidad NO es de color sino de ESTRUCTURA —
->    se reusó el componente genérico (`PropertyCard`+`home-pgrid`) donde el mockup pedía un layout PROPIO. Antes de
->    construir CADA sección: leer su bloque en el `.dc.html` y preguntar "¿esta sección tiene diseño propio?" (L-24).
+> 1. **Home — MAPA AUDITADO ✅ (§32.9, 17 secciones; crudo+síntesis en bóveda `2026-07-16-auditoria-fidelidad-home-*`)**.
+>    **Orden de construcción**: (a) **base reutilizable `Rail` + `LuCard`** — `.arail` es riel COMPARTIDO por 4
+>    secciones (scroll-snap x + `.rnav` 46px ocultos ≤640px + `scrollBy(±min(clientWidth*.82,560))` sobre
+>    `[data-railwrap]`); (b) los 4 carruseles sobre esa base: **venta → estancias-list → valoradas → proyectos**;
+>    (c) los 2 splits: **propiedad-del-día** (1 sola propiedad + 4 contadores) → **invertir**; (d) los 2 mosaicos:
+>    **explora-zona** (10 tiles de ZONA) → **recientes** (bento); (e) los 2 sueltos: **CTA corta-estancia**
+>    (full-bleed) → **redes** (muro IG); (f) **corregir `#cerca`** (DIVERGENTE GRAVE: debe ser split
+>    **buscador + MAPA** navy con 5 pins y 2 mini-cards, NO grilla; hoy además tiene titular reescrito y 3
+>    propiedades INVENTADAS) + deltas menores de `#destacadas`/`#journal`. `#brokers` = FIEL, no tocar.
+>    ⚠️ **Regla de oro (§32.8/§32.9, L-24)**: la infidelidad es ESTRUCTURAL, no de color. Antes de CADA sección leer
+>    su bloque del `.dc.html` y preguntar **"¿tiene diseño propio o es el genérico?"**. Ojo al matiz: `#destacadas`
+>    salió `disenoPropio:false` ⇒ **`PropertyCard` NO es el villano**; el fallo fue reutilizar sin preguntar.
 > 2. **Turismo** (Pasadías + inversión 3-cards glass + zonas ×6) · **Estancias** (sección Reseñas + galería) · **Publicar**
 >    (franja 4 beneficios) · **SERP** (interactividad JS: filtros/fav/hover-pin). Detalle de qué falta por página → §32.2.
 > 3. Después: transversales (MapLibre · forms→`solicitudes` vía CF [needs Blaze, TODO-26] · datos Firestore reales [TODO-22] · Wompi Ola 2) ·
