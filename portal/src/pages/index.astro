@@ -9,7 +9,17 @@ import Footer from '../components/Footer.astro';
 import PropertyCard from '../components/PropertyCard.astro';
 import LuCard from '../components/LuCard.astro';
 import StayCard from '../components/StayCard.astro';
+import RankCard from '../components/RankCard.astro';
 import { SITE } from '../lib/config/site';
+
+// MEJOR VALORADAS — riel de `RankCard` (réplica fiel del mockup #valoradas, L1081-1155).
+// Card NEUMÓRFICA con numeral calado; el mockup la pone sobre `var(--surface)` = lienzo neu.
+const valoradas = [
+  { img: '/assets/estate-golden.webp', alt: 'Villa frente al mar en Bocagrande', rank: '01', rating: '4.99', reviews: '214 reseñas', zona: 'Bocagrande', title: 'Villa frente al mar', price: '$3.200MM', href: '/ficha' },
+  { img: '/assets/villa-pool.webp', alt: 'Apartamento con vista a la bahía en Castillogrande', rank: '02', rating: '4.98', reviews: '187 reseñas', zona: 'Castillogrande', title: 'Apto vista a la bahía', price: '$1.450MM', href: '/ficha' },
+  { img: '/assets/chalet-dusk.webp', alt: 'Casa colonial restaurada en el Centro Histórico', rank: '03', rating: '4.96', reviews: '156 reseñas', zona: 'Centro Histórico', title: 'Casa colonial restaurada', price: '$2.800MM', href: '/ficha' },
+  { img: '/assets/villa-modern.webp', alt: 'Casa con jardín y estudio en Manga', rank: '04', rating: '4.94', reviews: '132 reseñas', zona: 'Manga', title: 'Casa con jardín y estudio', price: '$6.5M/mes', href: '/ficha' },
+];
 
 // CORTA ESTANCIA — riel de `StayCard` (réplica fiel del mockup #estancias-list, L760-835).
 // Card `.bnb` del mockup: SIN caja, foto desnuda + texto suelto. NO es LuCard (§32.11).
@@ -423,6 +433,35 @@ const maneras = [
       </div>
     </section>
 
+    <!-- MEJOR VALORADAS — riel de RankCard (réplica fiel del mockup #valoradas) -->
+    <section id="valoradas" class="home-band home-band--neu home-railsec">
+      <div class="alt-container" data-railwrap>
+        <div class="home-sechead">
+          <div class="home-valoradas__head">
+            <p class="alt-eyebrow">Mejor valoradas</p>
+            <h2>Las más queridas por nuestros clientes.</h2>
+          </div>
+          <div class="home-railsec__tools">
+            <a class="home-seelink" href="/comprar">Ver ranking
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <div class="home-railsec__navbtns">
+              <button class="alt-rnav" type="button" data-rail="prev" aria-label="Ver valoradas anteriores">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <button class="alt-rnav" type="button" data-rail="next" aria-label="Ver más valoradas">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alt-rail">
+          {valoradas.map((v) => <RankCard {...v} />)}
+        </div>
+      </div>
+    </section>
+
     <!-- BROKERS (navy) -->
     <section id="brokers" class="home-brokers alt-on-ink" data-surface="ink">
       <span class="home-brokers__glow" aria-hidden="true"></span>
@@ -717,7 +756,10 @@ const maneras = [
 
   /* Bandas de secciones de propiedades */
   .home-band { padding-block: clamp(60px, 8vw, 110px); border-top: 1px solid var(--alt-hairline); }
+  /* Ritmo de fondos del mockup: alterna banda mist (#f2f6f9) con lienzo neu (#E6EDF2).
+     El neu es el que permite el neumorfismo (cards con --alt-nm-up). */
   .home-band--alt { background: var(--alt-surface-alt); }
+  .home-band--neu { background: var(--alt-surface-neu); }
   .home-sechead { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: clamp(28px, 4vw, 48px); }
   .home-sechead h2 { margin-top: var(--alt-space-3); }
   .home-seelink {
@@ -784,6 +826,7 @@ const maneras = [
   .home-railsec { overflow: hidden; border-top: 0; }
   .home-railsec__tools { display: flex; align-items: center; gap: 16px; }
   .home-railsec__navbtns { display: flex; gap: 9px; }
+  .home-valoradas__head { max-width: 560px; }
 
   /* Card-CTA navy DENTRO del riel (6ª tarjeta) */
   .home-railcta {

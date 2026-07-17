@@ -1,0 +1,114 @@
+---
+/*
+ * RankCard — card de RANKING para el riel de "Mejor valoradas".
+ * Réplica del mockup (ALTORRA Portal.dc.html L1100-1150).
+ *
+ * ⚠️ 4ª card del portal. Ninguna es intercambiable (ADR §32.9/§32.12):
+ *   · PropertyCard → FLUIDA, grillas (#destacadas). Caja blanca + sombra plana.
+ *   · LuCard       → FIJA 276-330px, cuerpo CENTRADO, swatches + 2ª línea de precio.
+ *   · StayCard     → FIJA 230-262px, SIN caja, foto desnuda + texto suelto.
+ *   · RankCard     → FIJA 288-326px, NEUMÓRFICA (--alt-nm-up: vive sobre lienzo neu),
+ *                    numeral gigante CALADO en oro + píldora de rating con reseñas.
+ * El riel `.alt-rail` se comparte; la card NO (L-24).
+ */
+interface Props {
+  img: string;
+  alt: string;
+  rank: string;        // "01"
+  rating: string;      // "4.99"
+  reviews: string;     // "214 reseñas"
+  zona: string;
+  title: string;
+  price: string;       // "$3.200MM" | "$6.5M/mes"
+  href: string;
+}
+const { img, alt, rank, rating, reviews, zona, title, price, href } = Astro.props;
+---
+
+<a class="alt-rankcard" href={href}>
+  <div class="alt-rankcard__media">
+    <img src={img} alt={alt} loading="lazy" decoding="async" />
+    <span class="alt-rankcard__rank" aria-hidden="true">{rank}</span>
+    <span class="alt-rankcard__rate">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 18.6 6.1 20.8l1.3-6.6L2.5 9l6.6-.8z"/></svg>
+      {rating} · {reviews}
+    </span>
+  </div>
+  <div class="alt-rankcard__body">
+    <p class="alt-rankcard__zona">{zona}</p>
+    <h3 class="alt-rankcard__t">{title}</h3>
+    <div class="alt-rankcard__foot">
+      <span class="alt-rankcard__price">{price}</span>
+      <span class="alt-rankcard__ver">Ver
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+      </span>
+    </div>
+  </div>
+</a>
+
+<style>
+  .alt-rankcard {
+    width: clamp(288px, 26vw, 326px);
+    display: block;
+    text-decoration: none;
+    background: var(--alt-white);
+    border: 1px solid var(--alt-hairline);
+    border-radius: var(--alt-r-lg);
+    overflow: hidden;
+    /* Neumórfica: esta card vive sobre el lienzo neu (#E6EDF2), como en el mockup */
+    box-shadow: var(--alt-nm-up);
+    transition: transform var(--alt-dur-slow) var(--alt-ease-card), box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+  }
+  .alt-rankcard:hover { transform: translateY(-5px); box-shadow: var(--alt-nm-up), 0 30px 60px -36px rgba(6, 39, 67, 0.28); }
+
+  .alt-rankcard__media { position: relative; height: 186px; overflow: hidden; }
+  .alt-rankcard__media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-img, 1s) var(--alt-ease); }
+  .alt-rankcard:hover .alt-rankcard__media img { transform: scale(1.06); }
+
+  /* Numeral gigante CALADO en oro (relleno transparente + contorno) */
+  .alt-rankcard__rank {
+    position: absolute; top: 8px; left: 16px;
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-bold);
+    font-size: 64px; line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.4px rgba(235, 210, 126, 0.92);
+    text-stroke: 1.4px rgba(235, 210, 126, 0.92);
+  }
+  /* Sin text-stroke el número sería INVISIBLE (color:transparent) → relleno sólido de respaldo */
+  @supports not ((-webkit-text-stroke: 1px currentColor) or (text-stroke: 1px currentColor)) {
+    .alt-rankcard__rank { color: var(--alt-gold-bright); }
+  }
+
+  .alt-rankcard__rate {
+    position: absolute; left: 14px; bottom: 14px;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(6, 39, 67, 0.86); padding: 5px 11px; border-radius: var(--alt-r-pill);
+    font-size: 11.5px; font-weight: var(--alt-fw-semibold); color: #fff;
+  }
+  .alt-rankcard__rate svg { width: 12px; height: 12px; color: var(--alt-gold-bright); }
+
+  .alt-rankcard__body { padding: 18px 20px 22px; }
+  .alt-rankcard__zona {
+    font-size: 10.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--alt-link); margin: 0 0 5px;
+  }
+  .alt-rankcard__t {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: 22px; line-height: 1.04; color: var(--alt-ink); margin: 0 0 12px; letter-spacing: normal;
+  }
+  .alt-rankcard:hover .alt-rankcard__t { color: var(--alt-link); }
+  .alt-rankcard__foot {
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid var(--alt-hairline); padding-top: 13px;
+  }
+  .alt-rankcard__price { font-weight: var(--alt-fw-semibold); font-size: 15px; color: var(--alt-ink); }
+  .alt-rankcard__ver { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-link); }
+  .alt-rankcard__ver svg { width: 13px; height: 13px; transition: transform var(--alt-dur) var(--alt-ease); }
+  .alt-rankcard:hover .alt-rankcard__ver svg { transform: translateX(3px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .alt-rankcard, .alt-rankcard__media img, .alt-rankcard__ver svg { transition: none; }
+    .alt-rankcard:hover { transform: none; }
+    .alt-rankcard:hover .alt-rankcard__media img { transform: none; }
+  }
+</style>
