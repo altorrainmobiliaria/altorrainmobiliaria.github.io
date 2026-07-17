@@ -13,11 +13,10 @@
 > **DIFIERE de los mockups aprobados** (Daniel lo cazó; la verificación vieja §24-§29 revisó COLOR, no estructura → L-24).
 > **32 ADRs; cerebro SANO.** Mapa de fidelidad de las 7 páginas → **§32.2**.
 >
-> **✅ YA rebuild/elevado**: **Header** (v3 premium glass full-bleed: emblema oficial + wordmark Cormorant + íconos
-> Lucide/Simple + auto-hide al scroll) · **Hero** de la home (carrusel de 4 banners + buscador superpuesto) ·
-> **Arriendo→LISTA** de la home (2026-07-16: lista horizontal + filtro con/sin administración, §32.8).
-> **⏳ FALTA rebuild fiel + elevado**: Home (9 secciones restantes) · Turismo · Estancias (reseñas) · Publicar
-> (franja 4 beneficios) · SERP (interactividad JS). Es el WIP activo (TODO-27, §32.7).
+> **✅ YA rebuild/elevado**: **Header** v3 · **Hero** (carrusel 4 banners + buscador) · **Arriendo→LISTA** (§32.8) ·
+> **los 4 CARRUSELES** venta/estancias-list/valoradas/proyectos (§32.10-§32.13).
+> **⏳ FALTA rebuild fiel + elevado**: Home (5 secciones + corregir `#cerca`) · Turismo · Estancias (reseñas) ·
+> Publicar (franja 4 beneficios) · SERP (interactividad JS). Es el WIP activo (TODO-27, §32.7).
 >
 > **🎨 DISEÑO ELEVADO (mandato Daniel, §32.3)**: fusión **Neumorfismo + Skeuomorfismo + Glassmorfismo + Liquid Glass**,
 > sensación de **app** (la app futura = idéntica), moderno/premium. **Que NO peleen**: cada componente lidera con UNA
