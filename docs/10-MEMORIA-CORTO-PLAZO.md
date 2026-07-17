@@ -89,16 +89,12 @@
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-16 (OPUS 4.8 — §32.8 Arriendo→LISTA de la home)**: Daniel cazó (2ª vez) una infidelidad estructural: la
-> sección "En arriendo" se había construido como grilla genérica de 3 `PropertyCard` (idéntica a Destacadas/Cerca)
-> cuando el mockup `#arriendo` pide un **layout PROPIO**: lista horizontal + filtro "Todos/Con/Sin administración".
-> Rebuild fiel + elevado en `portal/src/pages/index.astro`: 4 filas del mockup (foto+`N fotos` · kicker/zona/título/
-> chips · etiqueta-de-administración+precio+Contactar/Ver), lienzo neu `#E6EDF2` con filas blancas elevadas, pills
-> neumórficos (ON=`--alt-nm-in-sm` hundido + texto oro), filtro JS por `data-admin`. **Verificado por computed styles
-> + clicks reales** (4 filas · Con→2 · Sin→2 · Todos→4 · `aria-pressed` ok · 0 off-palette). ⚠️ **La captura del panel
-> ahora hace TIMEOUT** (no solo desincroniza — L-22 agravada): verificar SIEMPRE por `javascript_tool`+computed styles.
-> **LECCIÓN (refuerza L-24)**: la auditoría de fidelidad vieja (§24-29) revisó COLOR y pasó; el fallo es de ESTRUCTURA.
-> Antes de cada sección: leer su bloque en el `.dc.html` y preguntar "¿tiene diseño propio o es el componente genérico?"
+> **2026-07-16 (OPUS 4.8 — §32.8-§32.13)**: Daniel cazó (2ª vez) una infidelidad ESTRUCTURAL (`#arriendo` era grilla
+> genérica; el mockup pide lista + filtro) → corregido (§32.8) y, para no repetirlo 9 veces, **auditoría de la home
+> ENTERA** (§32.9: 17 secciones · 10 AUSENTES · `#cerca` GRAVE con contenido inventado · 0 veredictos refutados).
+> Daniel aprobó los 2 bloques molde ("todo va bien, sigamos") → **los 4 CARRUSELES hechos** (§32.10-§32.13). El gate
+> "¿diseño propio o genérico?" pagó ×3: **5 cards, ninguna intercambiable**; lo único compartido es `.alt-rail`.
+> **PRÓXIMO**: los 2 splits → 2 mosaicos → CTA/redes → corregir `#cerca`. Ver el orden en el Foco (arriba).
 
 > *(Bitácora 07-12 Header v3 + Hero podada — consolidada en ADR §32.4/§32.5/§32.6 + L-23/L-24. §G.4 GC.)*
 
