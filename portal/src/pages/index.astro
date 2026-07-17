@@ -58,6 +58,20 @@ const invertirStats = [
   { n: '5 min', d: 'tiempo de respuesta promedio' },
 ];
 
+// EXPLORA POR ZONA — mosaico de 10 tiles de ZONA (no de propiedades) (mockup L837-940).
+const zonas = [
+  { t: 'Bocagrande', n: '42 propiedades', img: '/assets/villa-pool.webp' },
+  { t: 'Castillogrande', n: '18 propiedades', img: '/assets/estate-golden.webp' },
+  { t: 'Centro Histórico', n: '27 propiedades', img: '/assets/chalet-dusk.webp' },
+  { t: 'Manga', n: '21 propiedades', img: '/assets/villa-modern.webp' },
+  { t: 'Getsemaní', n: '14 propiedades', img: '/assets/villa-pool.webp' },
+  { t: 'Crespo', n: '16 propiedades', img: '/assets/estate-golden.webp' },
+  { t: 'Marbella', n: '12 propiedades', img: '/assets/hero-invierte.webp' },
+  { t: 'La Boquilla', n: '33 propiedades', img: '/assets/hero-estancia.webp' },
+  { t: 'Pie de la Popa', n: '9 propiedades', img: '/assets/villa-modern.webp' },
+  { t: 'Cabrero', n: '11 propiedades', img: '/assets/chalet-dusk.webp' },
+];
+
 // EN VENTA — riel horizontal de `LuCard` (réplica fiel del mockup #venta, L451-564).
 // Swatches en tokens de paleta (el mockup traía #8a6d1f/#c7d3dd ajenos → §3.2 disciplina estricta).
 const venta = [
@@ -474,6 +488,33 @@ const maneras = [
         <div class="alt-rail">
           {estancias.map((s) => <StayCard {...s} />)}
         </div>
+      </div>
+    </section>
+
+    <!-- EXPLORA POR ZONA — mosaico de 10 tiles de ZONA (réplica fiel del mockup, L837-940).
+         ⚠️ NO son cards de propiedad: cada tile es un BARRIO con su contador. -->
+    <section id="explora-zona" class="alt-container home-zonas">
+      <div class="home-sechead">
+        <div class="home-zonas__head">
+          <p class="alt-eyebrow">Explora por zona</p>
+          <h2 class="home-zonas__h">Cada rincón de Cartagena tiene su propia manera de vivirse.</h2>
+        </div>
+        <a class="alt-link-ul" href="/comprar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          Ver el mapa
+        </a>
+      </div>
+      <div class="home-zonas__grid">
+        {zonas.map((z) => (
+          <a class="home-zona" href="/comprar">
+            <img src={z.img} alt={`Propiedades en ${z.t}`} loading="lazy" decoding="async" />
+            <span class="home-zona__scrim" aria-hidden="true"></span>
+            <span class="home-zona__body">
+              <span class="home-zona__t">{z.t}</span>
+              <span class="home-zona__n">{z.n}</span>
+            </span>
+          </a>
+        ))}
       </div>
     </section>
 
@@ -933,6 +974,44 @@ const maneras = [
   .home-jrow__t { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 20px; line-height: 1.1; color: var(--alt-ink); margin-bottom: 8px; }
   .home-jrow:hover .home-jrow__t { color: var(--alt-link); }
   .home-jrow__read { display: block; font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-text-muted); }
+
+  /* ===== LIENZO DE LA HOME =====
+     El mockup declara `body{background:var(--surface)}` con `--surface:#eaf0f7` → la home
+     entera vive sobre el LIENZO NEUMÓRFICO, no sobre blanco (ADR §32.15). El D1 ya lo previó:
+     `--alt-surface-neu` es OPT-IN para "home+nav". Scoped a esta página: el resto del portal
+     conserva el blanco por defecto (mandato de Daniel). Es lo que hace que el neumorfismo lea:
+     una card `--alt-nm-up` sobre blanco no tiene relieve, sobre #E6EDF2 sí. */
+  main { background: var(--alt-surface-neu); }
+
+  /* ===== EXPLORA POR ZONA — mosaico de 10 tiles de BARRIO ===== */
+  .home-zonas { padding-block: clamp(64px, 9vw, 124px); }
+  .home-zonas__head { max-width: 640px; }
+  .home-zonas__h {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(32px, 4.4vw, 52px); line-height: 1.05; letter-spacing: var(--alt-tracking-tight);
+    color: var(--alt-ink); margin: var(--alt-space-3) 0 0; text-wrap: balance;
+  }
+  .home-zonas__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: clamp(12px, 1.4vw, 18px); }
+  .home-zona {
+    position: relative; display: block; overflow: hidden;
+    border-radius: 18px; min-height: clamp(240px, 25vw, 300px);
+    text-decoration: none;
+    box-shadow: var(--alt-nm-up);
+    transition: transform var(--alt-dur-slow) var(--alt-ease-card), box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+  }
+  .home-zona:hover { transform: translateY(-5px); box-shadow: var(--alt-nm-up), 0 34px 66px -36px rgba(6, 39, 67, 0.3); }
+  .home-zona img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-slow) var(--alt-ease-card); }
+  .home-zona:hover img { transform: scale(1.05); }
+  .home-zona__scrim { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(27, 39, 51, 0) 42%, rgba(27, 39, 51, 0.84) 100%); }
+  .home-zona__body { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px; }
+  .home-zona__t { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 23px; line-height: 1; color: #fff; margin-bottom: 6px; }
+  .home-zona__n { display: block; font-size: 12px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.04em; color: var(--alt-gold-bright); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-zona, .home-zona img { transition: none; }
+    .home-zona:hover { transform: none; }
+    .home-zona:hover img { transform: none; }
+  }
 
   /* ===== PROPIEDAD DEL DÍA — split editorial de UNA propiedad ===== */
   .home-pdia { background: var(--alt-surface-alt); color: var(--alt-ink); overflow: hidden; }
