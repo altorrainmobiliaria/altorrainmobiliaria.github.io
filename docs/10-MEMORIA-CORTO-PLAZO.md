@@ -34,11 +34,12 @@
 > DUAL-MODE (`#fff` contenido / `#E6EDF2` home+nav / `#062743` secciones).
 >
 > **▶ CÓMO RETOMAR (sesión fresca)**: boot normal (§G.1). Dev: `npm --prefix portal run dev` (config `portal`, puerto 4321).
-> ⚠️ **Renderer del panel CONGELADO** (`rAF`=0 → no anima, NO despacha `scroll`, captura hace TIMEOUT) → **L-26** (engloba
-> L-22): **nada guiado por frames se prueba aquí**. Verificar por computed styles + **espía sobre el método** (stub de
-> `scrollBy` → comprobar argumentos) + lógica a mano por estado; `behavior:'instant'` para mover. El juicio visual, al
-> navegador real de Daniel. Barrido off-palette = `getComputedStyle` del subárbol vs allowlist (⚠️ incluir la base
-> hairline `rgb(27,39,51)` de `tokens.css:71` o da falsos positivos).
+> 👁️ **VERIFICA MIRANDO, con la extensión de CHROME** (`mcp__claude-in-chrome__*`): renderiza/anima/captura PERFECTO.
+> El congelado es solo el **panel integrado** (`mcp__Claude_Browser__*`, `rAF`=0) → sirve para computed styles/espía,
+> NO para ver. **L-26** (corregida por Daniel 07-17: creer que "no puedo ver" era falso). Mirar cazó un bug que NI el
+> build NI la paleta NI los computed styles vieron (`.alt-sr-only` inexistente → la clase real es `.alt-visually-hidden`).
+> Barrido off-palette = `getComputedStyle` del subárbol vs allowlist (⚠️ incluir la base hairline `rgb(27,39,51)` de
+> `tokens.css:71` o da falsos positivos).
 >
 > **▶ SIGUIENTE — REBUILD DE FIDELIDAD (TODO-27, de arriba abajo, mostrando cada bloque a Daniel en staging)**:
 > 1. ~~**Home**~~ ✅ **COMPLETA** (§32.8-§32.18; auditoría §32.9 + crudo/síntesis en bóveda
