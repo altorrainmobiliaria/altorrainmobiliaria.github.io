@@ -7,7 +7,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PropertyCard from '../components/PropertyCard.astro';
+import LuCard from '../components/LuCard.astro';
 import { SITE } from '../lib/config/site';
+
+// EN VENTA — riel horizontal de `LuCard` (réplica fiel del mockup #venta, L451-564).
+// Swatches en tokens de paleta (el mockup traía #8a6d1f/#c7d3dd ajenos → §3.2 disciplina estricta).
+const venta = [
+  { img: '/assets/villa-pool.webp', alt: 'Apartamento en Castillogrande', imgPos: 'center 60%', badge: 'En venta', zona: 'Castillogrande', title: 'Torre Marea', tagline: 'Vista abierta a la bahía.', swatches: ['navy', 'gold', 'silver'], tipologias: '3 tipologías', specs: ['3 hab.', '3 baños', '142 m²'], price: 'Desde $1.450M', note: 'o crédito desde $6.2M/mes', href: '/ficha' },
+  { img: '/assets/villa-modern.webp', alt: 'Casa republicana en Manga', badge: 'En venta', zona: 'Manga', title: 'Casa Republicana', tagline: 'Patrimonio restaurado con alma.', swatches: ['gold', 'navy'], tipologias: '2 tipologías', specs: ['4 hab.', '3 baños', '210 m²'], price: 'Desde $980M', note: 'o crédito desde $4.1M/mes', href: '/ficha' },
+  { img: '/assets/estate-golden.webp', alt: 'Penthouse en Bocagrande', badge: 'En venta', zona: 'Bocagrande', title: 'Penthouse Dorado', tagline: 'Terraza privada con piscina.', swatches: ['gold-bright', 'gold', 'navy', 'silver'], tipologias: 'única', specs: ['4 hab.', '4 baños', '320 m²'], price: 'Desde $3.200M', note: 'o crédito desde $13.6M/mes', href: '/ficha' },
+  { img: '/assets/hero-invierte.webp', alt: 'Proyecto sobre planos en el Centro Histórico', badge: 'Sobre planos', zona: 'Centro Histórico', title: 'Claustro 1620', tagline: 'Lofts dentro de la muralla.', swatches: ['navy', 'gold', 'silver'], tipologias: '4 tipologías', specs: ['1–2 hab.', '2 baños', '68 m²'], price: 'Desde $720M', note: 'entrega dic. 2026', href: '/ficha' },
+  { img: '/assets/hero-keys.webp', alt: 'Casa colonial en Getsemaní', imgPos: 'center 40%', badge: 'En venta', zona: 'Getsemaní', title: 'Casa Trinidad', tagline: 'Colonial con patio interior.', swatches: ['gold', 'navy'], tipologias: '2 tipologías', specs: ['3 hab.', '2 baños', '128 m²'], price: 'Desde $1.180M', note: 'o crédito desde $5M/mes', href: '/ficha' },
+];
 
 // Datos DEMO (estáticos) — la conexión a Firestore real llega cuando haya inventario
 // (decisión SSG vs doc-índice DIFERIDA a Fable, TODO-22). Imágenes = placeholders del diseño.
@@ -224,6 +235,45 @@ const maneras = [
             </span>
           </a>
         ))}
+      </div>
+    </section>
+
+    <!-- EN VENTA — riel horizontal (réplica fiel del mockup #venta) -->
+    <!-- `data-railwrap` envuelve encabezado Y riel: en el mockup los botones viven en un
+         [data-railwrap] hermano del riel → su querySelector('.arail') no encuentra nada y
+         las flechas NO funcionan. Misma arquitectura, corregida (ADR §32.10). -->
+    <section id="venta" class="home-band home-band--alt home-venta">
+      <div class="alt-container" data-railwrap>
+        <div class="home-sechead">
+          <div>
+            <p class="alt-eyebrow">En venta</p>
+            <h2>Explora el portafolio en venta.</h2>
+          </div>
+          <div class="home-venta__tools">
+            <a class="alt-link-ul" href="/comprar">Comparar todas
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <div class="home-venta__navbtns">
+              <button class="alt-rnav" type="button" data-rail="prev" aria-label="Ver propiedades anteriores">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <button class="alt-rnav" type="button" data-rail="next" aria-label="Ver más propiedades">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alt-rail">
+          {venta.map((p) => <LuCard {...p} />)}
+          <a class="home-railcta" href="/comprar">
+            <span class="home-railcta__n">128</span>
+            <span class="home-railcta__d">propiedades en venta en toda la ciudad</span>
+            <span class="alt-btn alt-btn--on-ink">Ver todas
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </a>
+        </div>
       </div>
     </section>
 
@@ -690,6 +740,23 @@ const maneras = [
   .home-jrow:hover .home-jrow__t { color: var(--alt-link); }
   .home-jrow__read { display: block; font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-text-muted); }
 
+  /* ===== EN VENTA — riel horizontal ===== */
+  .home-venta { overflow: hidden; border-top: 0; }
+  .home-venta__tools { display: flex; align-items: center; gap: 16px; }
+  .home-venta__navbtns { display: flex; gap: 9px; }
+
+  /* Card-CTA navy DENTRO del riel (6ª tarjeta) */
+  .home-railcta {
+    width: clamp(220px, 18vw, 244px);
+    border-radius: 22px;
+    background: var(--alt-grad-navy-card);
+    box-shadow: var(--alt-elev-panel);
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 34px 26px; text-decoration: none;
+  }
+  .home-railcta__n { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 44px; line-height: 1; color: var(--alt-gold-bright); margin-bottom: 8px; }
+  .home-railcta__d { font-size: 14px; line-height: 1.5; color: var(--alt-on-ink-muted); margin-bottom: 22px; }
+
   /* ===== ARRIENDO — lista horizontal con filtro (diseño propio de la sección) ===== */
   /* Lienzo neumórfico (#E6EDF2 oficial) con filas blancas elevadas — fiel al mockup #arriendo. */
   .home-arr { background: var(--alt-surface-neu); }
@@ -821,6 +888,38 @@ const maneras = [
       show(0);
     }
   }
+
+  // RIELES (`.alt-rail`) — genérico: sirve a los 4 carruseles de la home (venta/estancias/
+  // valoradas/proyectos, ADR §32.9). Sin JS el riel ya funciona (swipe + scroll-snap nativo);
+  // los botones son mejora progresiva y se apagan en los extremos.
+  document.querySelectorAll<HTMLElement>('[data-railwrap]').forEach((wrap) => {
+    const rail = wrap.querySelector<HTMLElement>('.alt-rail');
+    if (!rail) return;
+    const btns = Array.from(wrap.querySelectorAll<HTMLButtonElement>('.alt-rnav'));
+    if (!btns.length) return;
+    const step = () => Math.min(rail.clientWidth * 0.82, 560);
+    const sync = () => {
+      const max = rail.scrollWidth - rail.clientWidth - 1;
+      btns.forEach((b) => {
+        const atEdge = b.dataset.rail === 'prev' ? rail.scrollLeft <= 1 : rail.scrollLeft >= max;
+        b.toggleAttribute('disabled', atEdge);
+      });
+    };
+    const suave = () => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth') as ScrollBehavior;
+    btns.forEach((b) => b.addEventListener('click', () => {
+      rail.scrollBy({ left: (b.dataset.rail === 'prev' ? -1 : 1) * step(), behavior: suave() });
+    }));
+    rail.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync, { passive: true });
+    sync();
+  });
+
+  // Favoritos de las LuCard — delegado (aún sin persistencia: la capa de datos llega con Firestore).
+  document.addEventListener('click', (e) => {
+    const fav = (e.target as HTMLElement).closest('.alt-lucard__fav') as HTMLElement | null;
+    if (!fav) return;
+    fav.setAttribute('aria-pressed', fav.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+  });
 
   // ARRIENDO — filtro con/sin administración: muestra/oculta filas por data-admin.
   const arrFilter = document.querySelector('.home-arr__filter');

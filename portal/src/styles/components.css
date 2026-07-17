@@ -609,3 +609,86 @@
   background: var(--alt-grad-gold);
   border-radius: var(--alt-r-lg) var(--alt-r-lg) 0 0;
 }
+
+/* ==========================================================================
+ * RIEL HORIZONTAL (carrusel scroll-snap) — abstracción REAL del diseño:
+ * el mockup lo comparte en 4 secciones de la home (venta · estancias-list ·
+ * valoradas · proyectos) bajo la clase `.arail` (ADR §32.9). Aquí es `.alt-rail`.
+ *
+ * Uso:
+ *   <div data-railwrap>                  ← ancla de los botones (mismo wrap)
+ *     <div class="alt-rail"> …hijos de ancho FIJO… </div>
+ *   </div>
+ *   <button class="alt-rnav" data-rail="prev|next">  ← puede ir en otro [data-railwrap]
+ *
+ * Sin JS el riel YA funciona (swipe + scroll-snap nativo); los botones son
+ * progressive enhancement y se ocultan en móvil (ahí manda el dedo).
+ * ======================================================================== */
+.alt-rail {
+  display: flex;
+  gap: clamp(15px, 1.6vw, 22px);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 2px;
+  padding: 6px 2px 10px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.alt-rail::-webkit-scrollbar {
+  display: none;
+}
+.alt-rail > * {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
+
+/* Botones circulares prev/next del riel */
+.alt-rnav {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--alt-r-circle);
+  border: 1px solid var(--alt-hairline-strong);
+  background: var(--alt-white);
+  color: var(--alt-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--alt-dur) var(--alt-ease), border-color var(--alt-dur) var(--alt-ease),
+    color var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease);
+}
+.alt-rnav svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+}
+.alt-rnav:hover {
+  border-color: var(--alt-gold);
+  background: var(--alt-ink);
+  color: var(--alt-gold-bright);
+  transform: translateY(-1px);
+}
+/* Variante sobre superficie navy */
+.alt-rnav--ink {
+  border-color: rgba(235, 210, 126, 0.42);
+  background: transparent;
+  color: var(--alt-gold-bright);
+}
+.alt-rnav--ink:hover {
+  background: var(--alt-gold-bright);
+  color: var(--alt-ink);
+  border-color: var(--alt-gold-bright);
+}
+/* En los extremos del riel el botón se apaga (lo marca el JS) */
+.alt-rnav[disabled] {
+  opacity: 0.35;
+  pointer-events: none;
+}
+/* Móvil: manda el swipe — fuera los botones (fiel al mockup, CSS L143) */
+@media (max-width: 640px) {
+  .alt-rnav {
+    display: none;
+  }
+}
