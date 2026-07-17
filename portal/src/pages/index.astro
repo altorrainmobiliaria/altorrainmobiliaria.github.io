@@ -72,6 +72,19 @@ const zonas = [
   { t: 'Cabrero', n: '11 propiedades', img: '/assets/chalet-dusk.webp' },
 ];
 
+// RECIENTES — mosaico BENTO de 7 tiles con posicionamiento explícito (mockup L991-1079, CSS L183-190).
+// `title` presente ⇒ el precio va en `.mbody` (aparece al hover). Sin `title` ⇒ el precio ES la línea
+// principal y va siempre visible. Es la lógica del mockup, no una invención.
+const recientes = [
+  { img: '/assets/estate-golden.webp', alt: 'Villa frente al mar en Bocagrande', col: 'span 2', row: 'span 2', size: 'xl', tag: 'Venta · Bocagrande', title: 'Villa frente al mar', price: '$3.200.000.000', time: 'hace 2 h' },
+  { img: '/assets/chalet-dusk.webp', alt: 'Casa colonial en el Centro', col: '4', row: 'span 2', size: 'md', tag: 'Estancia · Centro', title: 'Casa colonial', price: '$1.150.000 / noche', time: 'hace 5 h' },
+  { img: '/assets/villa-modern.webp', alt: 'Apartaestudio en Manga', col: '3', row: '1', size: 'sm', tag: 'Arriendo · Manga', price: '$1.9M / mes' },
+  { img: '/assets/hero-invierte.webp', alt: 'Loft de autor en Getsemaní', col: '3', row: '2', size: 'sm', tag: 'Venta · Getsemaní', price: '$720M', time: 'ayer' },
+  { img: '/assets/hero-keys.webp', alt: 'Apartamento amoblado en El Laguito', col: 'span 2', row: '3', size: 'md', tag: 'Arriendo · El Laguito', title: 'Apto amoblado frente a la playa', price: '$4.200.000 / mes' },
+  { img: '/assets/villa-pool.webp', alt: 'Penthouse en Castillogrande', col: '3', row: '3', size: 'sm', tag: 'Venta · Castillogrande', price: '$2.4MM' },
+  { img: '/assets/hero-estancia.webp', alt: 'Terraza en Bocagrande', col: '4', row: '3', size: 'sm', tag: 'Estancia · Bocagrande', price: '$680k / noche' },
+];
+
 // EN VENTA — riel horizontal de `LuCard` (réplica fiel del mockup #venta, L451-564).
 // Swatches en tokens de paleta (el mockup traía #8a6d1f/#c7d3dd ajenos → §3.2 disciplina estricta).
 const venta = [
@@ -532,6 +545,38 @@ const maneras = [
         </div>
         <div class="home-pgrid">
           {cerca.map((p) => <PropertyCard {...p} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- RECIENTES — mosaico bento (réplica fiel del mockup #recientes) -->
+    <section id="recientes" class="home-band home-band--alt home-rec">
+      <div class="alt-container">
+        <div class="home-sechead">
+          <div>
+            <p class="alt-eyebrow">Publicadas recientemente</p>
+            <h2>Lo último que entró al portafolio.</h2>
+          </div>
+          <a class="alt-link-ul" href="/comprar">Ver todas
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+
+        <div class="home-rec__grid">
+          {recientes.map((r) => (
+            <a class={`home-rec__tile home-rec__tile--${r.size}`} href="/ficha" style={`grid-column:${r.col};grid-row:${r.row}`}>
+              <img src={r.img} alt={r.alt} loading="lazy" decoding="async" />
+              <span class="home-rec__new">Nuevo</span>
+              {r.time && <span class="home-rec__time">{r.time}</span>}
+              <span class="home-rec__scrim" aria-hidden="true"></span>
+              <span class="home-rec__body">
+                <span class="home-rec__tag">{r.tag}</span>
+                {r.title
+                  ? <><span class="home-rec__t">{r.title}</span><span class="home-rec__price home-rec__price--hover">{r.price}</span></>
+                  : <span class="home-rec__t">{r.price}</span>}
+              </span>
+            </a>
+          ))}
         </div>
       </div>
     </section>
@@ -1011,6 +1056,59 @@ const maneras = [
     .home-zona, .home-zona img { transition: none; }
     .home-zona:hover { transform: none; }
     .home-zona:hover img { transform: none; }
+  }
+
+  /* ===== RECIENTES — mosaico BENTO (4 col, posicionamiento explícito por tile) ===== */
+  .home-rec { overflow: hidden; }
+  .home-rec__grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: clamp(148px, 14.5vw, 180px); gap: 14px; }
+  .home-rec__tile {
+    position: relative; overflow: hidden; border-radius: 18px; text-decoration: none; color: #fff;
+    box-shadow: 0 2px 5px rgba(27, 39, 51, 0.05), 0 22px 46px -34px rgba(27, 39, 51, 0.3);
+  }
+  .home-rec__tile img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.05s var(--alt-ease); }
+  .home-rec__tile:hover img { transform: scale(1.06); }
+
+  .home-rec__new {
+    position: absolute; top: 12px; left: 12px; z-index: 2;
+    background: var(--alt-grad-gold); color: var(--alt-ink);
+    padding: 4px 10px; border-radius: var(--alt-r-pill);
+    font-size: 9.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .home-rec__time {
+    position: absolute; top: 13px; right: 12px; z-index: 2;
+    background: rgba(6, 39, 67, 0.66); color: #fff;
+    padding: 3px 9px; border-radius: var(--alt-r-pill); font-size: 10.5px; font-weight: var(--alt-fw-semibold);
+  }
+  .home-rec__scrim { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 42%, rgba(6, 39, 67, 0.88)); }
+  .home-rec__body { position: absolute; left: 0; right: 0; bottom: 0; padding: 15px; }
+  .home-rec__tag { display: block; font-size: 9.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.12em; text-transform: uppercase; color: var(--alt-gold-bright); margin-bottom: 3px; }
+  .home-rec__t { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 17px; line-height: 1; }
+  .home-rec__price { display: block; font-size: 13.5px; font-weight: var(--alt-fw-bold); margin-top: 3px; }
+  /* El precio de los tiles CON título se revela al hover (mockup CSS L187-188) */
+  .home-rec__price--hover { opacity: 0; transform: translateY(8px); transition: opacity var(--alt-dur-slow) var(--alt-ease), transform var(--alt-dur-slow) var(--alt-ease); }
+  .home-rec__tile:hover .home-rec__price--hover, .home-rec__tile:focus-visible .home-rec__price--hover { opacity: 1; transform: none; }
+
+  /* Tamaños por jerarquía del bento */
+  .home-rec__tile--xl .home-rec__body { padding: 22px; }
+  .home-rec__tile--xl .home-rec__tag { font-size: 10.5px; letter-spacing: 0.14em; margin-bottom: 5px; }
+  .home-rec__tile--xl .home-rec__t { font-size: clamp(24px, 2.6vw, 32px); line-height: 1.02; }
+  .home-rec__tile--xl .home-rec__price { font-size: 15px; margin-top: 5px; }
+  .home-rec__tile--xl .home-rec__scrim { background: linear-gradient(180deg, transparent 46%, rgba(6, 39, 67, 0.9)); }
+  .home-rec__tile--md .home-rec__body { padding: 18px; }
+  .home-rec__tile--md .home-rec__tag { font-size: 10px; margin-bottom: 4px; }
+  .home-rec__tile--md .home-rec__t { font-size: 21px; line-height: 1.04; }
+  .home-rec__tile--md .home-rec__price { font-size: 13.5px; }
+
+  /* Móvil: el bento se aplana y el precio NO puede depender de hover (no hay dedo que "hoveree") */
+  @media (max-width: 860px) {
+    .home-rec__grid { grid-template-columns: repeat(2, 1fr); }
+    .home-rec__tile { grid-column: auto !important; grid-row: auto !important; }
+    .home-rec__price--hover { opacity: 1; transform: none; }
+  }
+  @media (max-width: 520px) { .home-rec__grid { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) {
+    .home-rec__tile img, .home-rec__price--hover { transition: none; }
+    .home-rec__tile:hover img { transform: none; }
   }
 
   /* ===== PROPIEDAD DEL DÍA — split editorial de UNA propiedad ===== */
