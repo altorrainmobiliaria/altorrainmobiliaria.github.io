@@ -32,16 +32,18 @@
 > **Cormorant Garamond** (display) + **Hanken Grotesk** (cuerpo) · neumorfismo protagonista + glass sutil,
 > DUAL-MODE (`#fff` contenido / `#E6EDF2` home+nav / `#062743` secciones).
 >
-> **▶ CÓMO RETOMAR (sesión fresca)**: boot normal (§G.1). Dev: `npm --prefix portal run dev` (`.claude/launch.json`
-> config `portal`, puerto 4321). ⚠️ **Verificar UI por COMPUTED STYLES, no por captura** (L-22: el panel
-> desincroniza el viewport de la captura del scroll real del DOM — quirk del renderer); el barrido anti-off-palette = `javascript_tool` con `getComputedStyle`
-> sobre `main *,header *,footer *` contra el allowlist de la paleta.
+> **▶ CÓMO RETOMAR (sesión fresca)**: boot normal (§G.1). Dev: `npm --prefix portal run dev` (config `portal`, puerto 4321).
+> ⚠️ **Renderer del panel CONGELADO** (`rAF`=0 → no anima, NO despacha `scroll`, captura hace TIMEOUT) → **L-26** (engloba
+> L-22): **nada guiado por frames se prueba aquí**. Verificar por computed styles + **espía sobre el método** (stub de
+> `scrollBy` → comprobar argumentos) + lógica a mano por estado; `behavior:'instant'` para mover. El juicio visual, al
+> navegador real de Daniel. Barrido off-palette = `getComputedStyle` del subárbol vs allowlist (⚠️ incluir la base
+> hairline `rgb(27,39,51)` de `tokens.css:71` o da falsos positivos).
 >
 > **▶ SIGUIENTE — REBUILD DE FIDELIDAD (TODO-27, de arriba abajo, mostrando cada bloque a Daniel en staging)**:
 > 1. **Home — MAPA AUDITADO ✅ (§32.9, 17 secciones; crudo+síntesis en bóveda `2026-07-16-auditoria-fidelidad-home-*`)**.
->    **Orden de construcción**: (a) **base reutilizable `Rail` + `LuCard`** — `.arail` es riel COMPARTIDO por 4
->    secciones (scroll-snap x + `.rnav` 46px ocultos ≤640px + `scrollBy(±min(clientWidth*.82,560))` sobre
->    `[data-railwrap]`); (b) los 4 carruseles sobre esa base: **venta → estancias-list → valoradas → proyectos**;
+>    **Orden de construcción**: (a) ✅ **base `.alt-rail` + `.alt-rnav` + `LuCard.astro`** (§32.10, HECHA — reusar tal
+>    cual; el `[data-railwrap]` DEBE envolver encabezado Y riel: en el mockup son hermanos y sus flechas están ROTAS);
+>    (b) los 4 carruseles sobre esa base: ~~**venta**~~ ✅ (§32.10) → **estancias-list → valoradas → proyectos**;
 >    (c) los 2 splits: **propiedad-del-día** (1 sola propiedad + 4 contadores) → **invertir**; (d) los 2 mosaicos:
 >    **explora-zona** (10 tiles de ZONA) → **recientes** (bento); (e) los 2 sueltos: **CTA corta-estancia**
 >    (full-bleed) → **redes** (muro IG); (f) **corregir `#cerca`** (DIVERGENTE GRAVE: debe ser split
