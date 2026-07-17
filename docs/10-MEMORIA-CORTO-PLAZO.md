@@ -17,8 +17,9 @@
 > venta · destacadas · arriendo(LISTA+filtro) · estancias-list · explora-zona · **cerca(buscador+MAPA, divergencia
 > GRAVE cerrada)** · recientes(bento) · valoradas · cta-estancias · proyectos · invertir · brokers · journal · redes.
 > Lienzo de la home = **neu** (§32.15). **0 off-palette.** Pusheado + deploy a staging verificado (76KB→115KB).
-> **⏳ FALTA**: Turismo (Pasadías) · Estancias (reseñas) · Publicar (franja 4 beneficios) · SERP (interactividad JS)
-> · deltas MENORES de `#destacadas`/`#journal` (§32.9). Es el WIP activo (TODO-27, §32.7).
+> ✅ **TURISMO fiel** (§32.19: +Pasadías · zonas 4→6 · servicios; sus fondos son BLANCOS → el neu es solo home).
+> **⏳ FALTA**: Estancias (sección Reseñas + galería) · Publicar (franja 4 beneficios) · SERP (interactividad JS:
+> filtros/fav/hover-pin) · deltas MENORES de `#destacadas`/`#journal` (§32.9). WIP activo (TODO-27, §32.7).
 >
 > **🎨 DISEÑO ELEVADO (mandato Daniel, §32.3)**: fusión **Neumorfismo + Skeuomorfismo + Glassmorfismo + Liquid Glass**,
 > sensación de **app** (la app futura = idéntica), moderno/premium. **Que NO peleen**: cada componente lidera con UNA
