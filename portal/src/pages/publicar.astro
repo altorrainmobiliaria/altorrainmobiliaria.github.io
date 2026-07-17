@@ -27,6 +27,15 @@ const planes = [
   { tier: 'Concierge Élite', price: 'A medida', sub: 'Para propiedades de alto valor y exclusividad.', perks: ['Todo lo de Premium', 'Video y tour 3D', 'Marketing internacional', 'Abogado dedicado'], cta: 'Hablar con un asesor', featured: false },
 ];
 const check = '<path d="M20 6L9 17l-5-5"/>';
+
+// FRANJA DE BENEFICIOS — la sección que faltaba (mockup L221-228). Sin titular: 4 bloques
+// icono + h3 + texto. Íconos y textos EXACTOS del mockup.
+const beneficios = [
+  { i: '<circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>', t: 'Máxima exposición', d: 'Portal, redes y una red privada de compradores nacionales e internacionales.' },
+  { i: '<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>', t: 'Avalúo justo', d: 'Precio basado en datos reales del mercado de Cartagena, no en corazonadas.' },
+  { i: '<path d="M12 3l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V6z"/><path d="M9 12l2 2 4-4"/>', t: 'Respaldo legal', d: 'Revisión de documentos, escritura y todo el proceso jurídico acompañado.' },
+  { i: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>', t: 'Seguridad total', d: 'Compradores verificados y pagos protegidos en cada etapa de la operación.' },
+];
 ---
 
 <BaseLayout title="Publica tu inmueble — ALTORRA Inmobiliaria">
@@ -118,6 +127,22 @@ const check = '<path d="M20 6L9 17l-5-5"/>';
         </div>
       </div>
     </section>
+
+    <!-- FRANJA DE BENEFICIOS — era la sección AUSENTE de Publicar (§32.2).
+         Réplica fiel del mockup (L221-228): sin titular, 4 bloques icono + h3 + texto. -->
+    <section class="alt-container pub-benef">
+      <div class="pub-benef__grid">
+        {beneficios.map((b) => (
+          <div class="pub-benef__item">
+            <span class="pub-benef__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={b.i}></svg>
+            </span>
+            <h3 class="pub-benef__t">{b.t}</h3>
+            <p class="pub-benef__d">{b.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
   </main>
 
   <Footer />
@@ -183,6 +208,18 @@ const check = '<path d="M20 6L9 17l-5-5"/>';
   .pub-plan__cta:hover { background: var(--alt-mist); }
   .pub-plan__cta--gold { background: var(--alt-gold-bright); border-color: transparent; color: var(--alt-ink); font-weight: var(--alt-fw-bold); }
   .pub-plan__cta--gold:hover { background: var(--alt-gold-bright); transform: translateY(-1px); }
+
+  /* ===== FRANJA DE BENEFICIOS (sin titular: 4 bloques icono + h3 + texto) ===== */
+  .pub-benef { padding-block: clamp(56px, 7vw, 92px); }
+  .pub-benef__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 26px; }
+  .pub-benef__ico {
+    width: 46px; height: 46px; border-radius: 12px; background: var(--alt-mist);
+    display: flex; align-items: center; justify-content: center; color: var(--alt-gold-raw); margin-bottom: 16px;
+  }
+  .pub-benef__ico svg { width: 22px; height: 22px; }
+  .pub-benef__t { font-size: 17px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); margin: 0 0 8px; }
+  /* a11y: el mockup usa #6b7c93 a 14px → reprueba AA. Token AA. */
+  .pub-benef__d { font-size: 14px; line-height: 1.6; color: var(--alt-text); margin: 0; }
 </style>
 
 <script>
