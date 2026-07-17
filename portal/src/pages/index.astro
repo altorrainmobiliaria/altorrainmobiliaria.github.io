@@ -1639,10 +1639,19 @@ const maneras = [
     sync();
   });
 
-  // Favoritos de las LuCard — delegado (aún sin persistencia: la capa de datos llega con Firestore).
+  // FAVORITOS — delegado para las TRES cards con corazón (§32.24).
+  // Antes solo capturaba `.alt-lucard__fav` ⇒ el corazón estaba MUERTO en 8 de 13 cards
+  // (PropertyCard de #destacadas y StayCard de #estancias-list).
+  // preventDefault/stopPropagation NO es opcional: en StayCard el <button> vive DENTRO del <a>
+  // de la card, así que sin esto el clic burbujea y NAVEGA en vez de guardar. El mockup ya lo
+  // resolvía así (su toggleFav abre con ambos).
   document.addEventListener('click', (e) => {
-    const fav = (e.target as HTMLElement).closest('.alt-lucard__fav') as HTMLElement | null;
+    const fav = (e.target as HTMLElement).closest(
+      '.alt-lucard__fav, .alt-staycard__fav, .alt-pcard__fav'
+    ) as HTMLElement | null;
     if (!fav) return;
+    e.preventDefault();
+    e.stopPropagation();
     fav.setAttribute('aria-pressed', fav.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
   });
 

@@ -31,10 +31,13 @@ const servicios = [
 
 // PASADÍAS — chips de la sección que faltaba (mockup L156-163).
 const pasadias = ['Islas del Rosario', 'Playa Barú', 'City tour histórico', 'Rumba en chiva', 'Gastronomía local', 'Atardeceres en velero'];
+// INVERSIÓN — las 3 del mockup (L180-194), textos e íconos EXACTOS. Antes: "Compra con propósito"
+// y "Operación llave en mano" habían DESAPARECIDO, sustituidas por "Gestión de la propiedad" y
+// "Marketing internacional" (inventada); la superviviente tenía la descripción reescrita (§32.24).
 const inversionPerks = [
-  { t: 'Análisis de rentabilidad', d: 'Proyección de ocupación, tarifa y retorno con datos reales del mercado.' },
-  { t: 'Gestión de la propiedad', d: 'Administramos reservas, huéspedes y mantenimiento por ti.' },
-  { t: 'Marketing internacional', d: 'Tu inmueble frente a viajeros de todo el mundo, todo el año.' },
+  { i: '<path d="M4 19V5"/><path d="m4 15 5-5 4 4 7-8"/>', t: 'Análisis de rentabilidad', d: 'Proyectamos ocupación, tarifa e ingresos antes de que inviertas. Decisiones con números, no con corazonadas.' },
+  { i: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M11 8v6M8 11h6"/>', t: 'Compra con propósito', d: 'Seleccionamos inmuebles con vocación turística real: ubicación, demanda y potencial de valorización.' },
+  { i: '<path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-6h6v6"/>', t: 'Operación llave en mano', d: 'Administramos tu alojamiento y sus ingresos: reservas, huéspedes, mantenimiento y reportes mensuales.' },
 ];
 const check = '<path d="M20 6L9 17l-5-5"/>';
 ---
@@ -131,20 +134,20 @@ const check = '<path d="M20 6L9 17l-5-5"/>';
           <div class="tur-inv__perks">
             {inversionPerks.map((p) => (
               <div class="tur-inv__perk">
-                <span class="tur-inv__check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" set:html={check}></svg></span>
+                <span class="tur-inv__check"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={p.i}></svg></span>
                 <div><span class="tur-inv__pt">{p.t}</span><span class="tur-inv__pd">{p.d}</span></div>
               </div>
             ))}
           </div>
           <a class="alt-btn alt-btn--gold" href="#contacto">Hablar con un asesor<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
         </div>
+        <!-- ⛔ RETIRADA la tarjeta "+18% · retorno anual promedio en corta estancia" (§32.24):
+             NO existe en el mockup — era una cifra de rentabilidad INVENTADA. Publicar un retorno
+             fabricado en la web de una inmobiliaria real es riesgo legal/comercial, no un detalle
+             de fidelidad. Si algún día va una cifra, la aporta Daniel con su fuente. -->
         <div class="tur-inv__media">
           <img src="/assets/estate-golden.webp" alt="Propiedad de inversión en Cartagena" loading="lazy" decoding="async" />
           <span class="tur-inv__scrim"></span>
-          <div class="alt-glass tur-inv__stat">
-            <span class="tur-inv__stat-n">+18%</span>
-            <span class="tur-inv__stat-l">retorno anual promedio en corta estancia</span>
-          </div>
         </div>
       </div>
     </section>

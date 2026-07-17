@@ -19,15 +19,19 @@ const meta = [
   { i: '<path d="M2 4v16"/><path d="M2 9h16a3 3 0 0 1 3 3v8"/><path d="M2 15h20"/>', v: '5', l: 'camas' },
   { i: '<path d="M5 12V6a2 2 0 0 1 4 0"/><path d="M4 12h16a1 1 0 0 1 1 1v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-2a1 1 0 0 1 1-1z"/><path d="M7 19l-1 2M18 19l1 2"/>', v: '3', l: 'baños' },
 ];
+// LO QUE OFRECE — los 8 del mockup (L148-157), textos y ORDEN exactos (§32.24).
+// Antes: "Seguridad 24 h" y "Zona colonial" estaban INVENTADOS y ocupaban el sitio de
+// "Check-in 24 horas" y "Conserjería 24/7", que faltaban. Además el ícono escudo+check
+// (que era el de Conserjería) se había reciclado para "Seguridad", disimulando la sustitución.
 const ofrece = [
+  { i: '<path d="M5 12.5a10 10 0 0 1 14 0M8.5 15.5a5.5 5.5 0 0 1 7 0M12 18.5h.01"/>', t: 'WiFi de alta velocidad' },
   { i: '<path d="M2 15c2 0 2 1.6 4 1.6s2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6"/><path d="M2 19c2 0 2 1.6 4 1.6s2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6"/><path d="M9 11V5a2 2 0 0 1 4 0"/>', t: 'Piscina privada' },
-  { i: '<path d="M3 21V5a2 2 0 0 1 2-2h5v18M14 21V9h5a1 1 0 0 1 1 1v11M3 21h18"/>', t: 'Terraza con vista' },
-  { i: '<path d="M5 12.5a10 10 0 0 1 14 0M8.5 15.5a5.5 5.5 0 0 1 7 0M12 18.5h.01"/>', t: 'Wifi de alta velocidad' },
   { i: '<path d="M4 8h9a2.5 2.5 0 1 0-2.5-2.5M4 12h13a2.5 2.5 0 1 1-2.5 2.5M4 16h8a2.5 2.5 0 1 1-2.5 2.5"/>', t: 'Aire acondicionado' },
   { i: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 3v6h8V3M9 13h.01M9 17h.01"/>', t: 'Cocina equipada' },
-  { i: '<path d="M5 13l1.6-4.8A2 2 0 0 1 8.5 7h7a2 2 0 0 1 1.9 1.2L19 13"/><path d="M4 13h16a1 1 0 0 1 1 1v4H3v-4a1 1 0 0 1 1-1z"/><circle cx="7.5" cy="18" r="1.4"/><circle cx="16.5" cy="18" r="1.4"/>', t: 'Parqueadero' },
-  { i: '<path d="M12 3l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V6z"/><path d="M9 12l2 2 4-4"/>', t: 'Seguridad 24 h' },
-  { i: '<path d="M3 21h18M5 21V10M19 21V10M4 10 12 4l8 6z"/><path d="M9 21v-6h6v6"/>', t: 'Zona colonial' },
+  { i: '<path d="M5 13l1.6-4.8A2 2 0 0 1 8.5 7h7a2 2 0 0 1 1.9 1.2L19 13"/><path d="M4 13h16a1 1 0 0 1 1 1v4H3v-4a1 1 0 0 1 1-1z"/><circle cx="7.5" cy="18" r="1.4"/><circle cx="16.5" cy="18" r="1.4"/>', t: 'Parqueadero incluido' },
+  { i: '<path d="M3 21V5a2 2 0 0 1 2-2h5v18M14 21V9h5a1 1 0 0 1 1 1v11M3 21h18"/>', t: 'Terraza con vista' },
+  { i: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', t: 'Check-in 24 horas' },
+  { i: '<path d="M12 3l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V6z"/><path d="M9 12l2 2 4-4"/>', t: 'Conserjería 24/7' },
 ];
 
 // RESEÑAS — la sección que faltaba (mockup L171-189). 4 barras + 2 reseñas, textos exactos.
@@ -57,7 +61,7 @@ const resenas = [
     <div class="est-top">
       <div class="est-head">
         <div>
-          <p class="alt-eyebrow">Ciudad Amurallada · Cartagena</p>
+          <p class="alt-eyebrow">Centro Histórico · Cartagena</p>
           <h1 class="est-h1">Casa con piscina y terraza colonial</h1>
         </div>
         <div class="est-head__tags">
@@ -86,7 +90,7 @@ const resenas = [
 
         <div class="est-sec est-sec--desc">
           <p>Casa colonial restaurada en el corazón de la Ciudad Amurallada, a dos cuadras de la Plaza Santo Domingo. Patio central con piscina, terraza en la azotea con vista a las cúpulas y noches frescas de brisa marina.</p>
-          <p>Cuatro alcobas amplias, cocina equipada y espacios pensados para descansar en familia o con amigos. Anfitrión local con acompañamiento durante toda tu estadía.</p>
+          <p>Cuatro alcobas climatizadas, cocina totalmente equipada y servicio de conserjería. Ideal para familias y grupos que buscan vivir Cartagena desde adentro, con todo el confort de una estancia de lujo.</p>
         </div>
 
         <div class="est-sec">
@@ -319,4 +323,19 @@ const resenas = [
   $('est-dec')?.addEventListener('click', () => setGuests(guests - 1));
   $('est-inc')?.addEventListener('click', () => setGuests(guests + 1));
   $('est-reservar')?.addEventListener('click', () => $('est-confirm')?.removeAttribute('hidden'));
+
+  // GALERÍA — clic en miniatura cambia la imagen principal (§32.24).
+  // Estaba MUERTA: los botones tenían data-src y la clase .is-on, pero ningún listener.
+  // La página hermana ficha.astro sí lo tenía cableado; aquí se había omitido.
+  const estMain = document.getElementById('est-main') as HTMLImageElement | null;
+  const thumbs = document.querySelectorAll<HTMLElement>('.est-thumb[data-src]');
+  thumbs.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const src = btn.dataset.src;
+      if (!estMain || !src) return;
+      estMain.src = src;
+      thumbs.forEach((b) => b.classList.remove('is-on'));
+      btn.classList.add('is-on');
+    });
+  });
 </script>

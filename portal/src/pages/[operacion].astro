@@ -29,11 +29,21 @@ export function getStaticPaths() {
     { img: '/assets/estate-golden.webp', alt: 'Penthouse en Castillogrande', badge: 'Arriendo', zona: 'Castillogrande', beds: 3, baths: 3, area: '180 m²', title: 'Penthouse con terraza', price: '$7.800.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
     { img: '/assets/chalet-dusk.webp', alt: 'Casa en Alameda La Victoria', badge: 'Arriendo', zona: 'Alameda La Victoria', beds: 3, baths: 2, area: '110 m²', title: 'Casa amplia con patio', price: '$2.800.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
   ];
-  const pins = [
-    { left: '26%', top: '56%', label: '$1.450M' },
-    { left: '56%', top: '36%', label: '$980M', on: true },
-    { left: '22%', top: '72%', label: '$2.100M' },
-    { left: '47%', top: '24%', label: '$8,5M/mes' },
+  // PINS — uno por cada una de las 4 primeras cards de SU ruta, con el precio de ESA card.
+  // Antes se reusaba un único array (precios de VENTA) en las dos rutas y se emparejaba por
+  // índice ⇒ /arrendar mostraba precios de venta en el mapa, y la card 4 de /comprar (Crespo,
+  // $760M) encendía el pin "$8,5M/mes". El mockup empareja card↔pin de forma coherente (§32.24).
+  const pinsVenta = [
+    { left: '26%', top: '56%', label: '$1.450M' },        // Castillogrande · card 1
+    { left: '56%', top: '36%', label: '$980M', on: true }, // Manga · card 2
+    { left: '22%', top: '72%', label: '$2.100M' },         // Bocagrande · card 3
+    { left: '47%', top: '24%', label: '$760M' },           // Crespo · card 4
+  ];
+  const pinsArriendo = [
+    { left: '47%', top: '24%', label: '$8,5M/mes' },        // Centro Histórico · card 1
+    { left: '26%', top: '56%', label: '$3,2M/mes', on: true }, // Crespo · card 2
+    { left: '56%', top: '36%', label: '$2,1M/mes' },         // Manga · card 3
+    { left: '22%', top: '72%', label: '$4,5M/mes' },         // Bocagrande · card 4
   ];
   const zones = [
     { left: '52%', top: '20%', t: 'Manga' }, { left: '44%', top: '12%', t: 'Centro Hist.' },
@@ -41,8 +51,8 @@ export function getStaticPaths() {
     { left: '66%', top: '60%', t: 'Tierrabomba' },
   ];
   return [
-    { params: { operacion: 'comprar' }, props: { op: 'comprar', titulo: 'Comprar', count: 128, props: venta, pins, zones } },
-    { params: { operacion: 'arrendar' }, props: { op: 'arrendar', titulo: 'Arrendar', count: 83, props: arriendo, pins, zones } },
+    { params: { operacion: 'comprar' }, props: { op: 'comprar', titulo: 'Comprar', count: 128, props: venta, pins: pinsVenta, zones } },
+    { params: { operacion: 'arrendar' }, props: { op: 'arrendar', titulo: 'Arrendar', count: 83, props: arriendo, pins: pinsArriendo, zones } },
   ];
 }
 
