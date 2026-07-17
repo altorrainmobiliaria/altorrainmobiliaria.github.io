@@ -43,6 +43,21 @@ const estancias = [
   { img: '/assets/estate-golden.webp', alt: 'Villa con jardín privado en Manga', title: 'Villa con piscina en Manga', rating: '4.94', meta: 'Jardín privado · 10 huéspedes', price: '$1.480.000', href: '/estancias' },
 ];
 
+// PROPIEDAD DEL DÍA — split editorial: UNA sola propiedad + 4 contadores (mockup L409-449).
+const pdiaStats = [
+  { n: '4', label: 'Alcobas' },
+  { n: '4', label: 'Baños' },
+  { n: '320', unit: 'm²', label: 'Área' },
+  { n: '3', label: 'Parqueaderos' },
+];
+
+// INVERTIR — 3 tarjetas de cifra del split (mockup L1259-1272).
+const invertirStats = [
+  { n: '+7%', d: 'valorización anual promedio · zona norte' },
+  { n: '128', d: 'propiedades verificadas hoy' },
+  { n: '5 min', d: 'tiempo de respuesta promedio' },
+];
+
 // EN VENTA — riel horizontal de `LuCard` (réplica fiel del mockup #venta, L451-564).
 // Swatches en tokens de paleta (el mockup traía #8a6d1f/#c7d3dd ajenos → §3.2 disciplina estricta).
 const venta = [
@@ -271,6 +286,41 @@ const maneras = [
       </div>
     </section>
 
+    <!-- PROPIEDAD DEL DÍA — split editorial de UNA sola propiedad (réplica fiel del mockup, L409-449).
+         NO sale de PropertyCard: es una propiedad única con 4 contadores; su forma de dato ni siquiera cabe. -->
+    <section id="propiedad-dia" class="home-pdia">
+      <div class="alt-container home-pdia__in">
+        <div class="home-pdia__text">
+          <p class="alt-eyebrow">Propiedad del día</p>
+          <h2 class="home-pdia__h">Penthouse frente al mar, en Bocagrande.</h2>
+          <p class="home-pdia__p">Dos pisos, terraza privada con piscina y vista abierta a la bahía. La última unidad de un edificio icónico.</p>
+
+          <div class="home-pdia__stats">
+            {pdiaStats.map((s) => (
+              <div class="home-pdia__stat">
+                <span class="home-pdia__n">{s.n}{s.unit && <span class="home-pdia__unit"> {s.unit}</span>}</span>
+                <span class="home-pdia__l">{s.label}</span>
+              </div>
+            ))}
+          </div>
+
+          <div class="home-pdia__buy">
+            <div>
+              <span class="home-pdia__pricelbl">Precio</span>
+              <span class="home-pdia__price">$3.200.000.000</span>
+            </div>
+            <a class="alt-btn-sweep" href="/ficha">Ver ficha completa
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="home-pdia__media">
+          <img src="/assets/estate-golden.webp" alt="Penthouse frente al mar en Bocagrande" loading="lazy" decoding="async" />
+        </div>
+      </div>
+    </section>
+
     <!-- EN VENTA — riel horizontal (réplica fiel del mockup #venta) -->
     <!-- `data-railwrap` envuelve encabezado Y riel: en el mockup los botones viven en un
          [data-railwrap] hermano del riel → su querySelector('.arail') no encuentra nada y
@@ -495,6 +545,31 @@ const maneras = [
 
         <div class="alt-rail">
           {proyectos.map((p) => <ProjectCard {...p} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- INVERTIR — split editorial: texto + 3 tarjetas de cifra (réplica fiel del mockup #invertir, L1249-1274) -->
+    <!-- ⚠️ NO es el banner B1 del hero ("Invierte donde la ciudad crece"): son cosas distintas (§32.9). -->
+    <section id="invertir" class="alt-container home-inv">
+      <div class="home-inv__in">
+        <div>
+          <p class="alt-eyebrow">Invertir en Cartagena</p>
+          <h2 class="home-inv__h">Una ciudad que se valoriza mientras la disfrutas.</h2>
+          <p class="home-inv__p">Analizamos zona, rentabilidad y liquidez para que tu decisión sea patrimonio, no una apuesta. Cifras claras, sin letra menuda.</p>
+          <!-- El mockup deja href="#"; aquí va el WhatsApp REAL (§32.2: contacto real ≠ placeholder) -->
+          <a class="home-inv__cta" href={SITE.contact.whatsappLink} target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>
+            Hablar con un asesor
+          </a>
+        </div>
+        <div class="home-inv__stats">
+          {invertirStats.map((s) => (
+            <div class="home-inv__card">
+              <span class="home-inv__n">{s.n}</span>
+              <span class="home-inv__d">{s.d}</span>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -858,6 +933,73 @@ const maneras = [
   .home-jrow__t { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 20px; line-height: 1.1; color: var(--alt-ink); margin-bottom: 8px; }
   .home-jrow:hover .home-jrow__t { color: var(--alt-link); }
   .home-jrow__read { display: block; font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-text-muted); }
+
+  /* ===== PROPIEDAD DEL DÍA — split editorial de UNA propiedad ===== */
+  .home-pdia { background: var(--alt-surface-alt); color: var(--alt-ink); overflow: hidden; }
+  /* Sin padding vertical en la sección: lo pone el texto, para que la foto pueda ESTIRARSE a su alto */
+  .home-pdia__in { padding-block: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr)); gap: clamp(24px, 4vw, 64px); align-items: center; }
+  .home-pdia__text { padding-block: clamp(56px, 7vw, 104px); }
+  .home-pdia__h {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(34px, 4.4vw, 54px); line-height: 1.02; letter-spacing: var(--alt-tracking-tight);
+    color: var(--alt-ink); margin: var(--alt-space-4) 0 18px; text-wrap: balance;
+  }
+  .home-pdia__p { font-size: clamp(15px, 1.5vw, 18px); line-height: 1.62; color: var(--alt-text); margin: 0 0 32px; max-width: 440px; }
+
+  /* Fila de 4 contadores — cifra display + etiqueta dorada */
+  .home-pdia__stats { display: flex; gap: clamp(24px, 3.6vw, 48px); flex-wrap: wrap; margin-bottom: 34px; }
+  .home-pdia__n {
+    display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(26px, 3vw, 34px); line-height: 1; color: var(--alt-ink); margin-bottom: 5px;
+  }
+  .home-pdia__unit { font-size: 15px; }
+  .home-pdia__l { display: block; font-size: 10.5px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.16em; text-transform: uppercase; color: var(--alt-link); }
+
+  .home-pdia__buy { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .home-pdia__pricelbl { display: block; font-size: 10.5px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.14em; text-transform: uppercase; color: var(--alt-text); margin-bottom: 4px; }
+  .home-pdia__price { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(26px, 3vw, 34px); line-height: 1; color: var(--alt-ink); }
+
+  /* La foto ESTIRA al alto del bloque de texto (align-self:stretch), no al revés */
+  .home-pdia__media {
+    position: relative; align-self: stretch; min-height: clamp(340px, 42vw, 560px);
+    margin-block: clamp(0px, 3vw, 40px); border-radius: 22px; overflow: hidden;
+    box-shadow: 0 40px 90px -40px rgba(6, 39, 67, 0.55);
+  }
+  .home-pdia__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  /* ===== INVERTIR — split editorial: texto + 3 tarjetas de cifra ===== */
+  .home-inv { padding-block: clamp(64px, 9vw, 124px); }
+  .home-inv__in { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: clamp(40px, 6vw, 80px); align-items: center; }
+  .home-inv__h {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(32px, 4.4vw, 52px); line-height: 1.04; letter-spacing: var(--alt-tracking-tight);
+    color: var(--alt-ink); margin: var(--alt-space-3) 0 20px; text-wrap: balance;
+  }
+  .home-inv__p { font-size: clamp(15px, 1.5vw, 18px); line-height: 1.64; color: var(--alt-text); margin: 0 0 32px; max-width: 480px; }
+  .home-inv__cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 26px; border-radius: var(--alt-r-pill);
+    border: 1.5px solid var(--alt-hairline-strong); background: transparent; color: var(--alt-ink);
+    font-weight: var(--alt-fw-semibold); font-size: 14px; text-decoration: none;
+    transition: border-color var(--alt-dur) var(--alt-ease), background var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease);
+  }
+  .home-inv__cta svg { width: 16px; height: 16px; transition: transform var(--alt-dur-slow) var(--alt-ease); }
+  .home-inv__cta:hover { border-color: var(--alt-ink); background: var(--alt-mist); box-shadow: 0 10px 26px -14px rgba(6, 39, 67, 0.4); }
+  .home-inv__cta:hover svg { transform: scale(1.12); }
+
+  .home-inv__stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: clamp(14px, 2vw, 20px); }
+  .home-inv__card {
+    background: var(--alt-white); border: 1px solid rgba(27, 39, 51, 0.08);
+    border-radius: 18px; padding: 26px 24px; box-shadow: 0 2px 5px rgba(27, 39, 51, 0.04);
+  }
+  /* La cifra va en ORO grande (≥24px ⇒ --alt-link-lg cumple la regla 3:1) */
+  .home-inv__n {
+    display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(34px, 4vw, 46px); line-height: 1; color: var(--alt-link-lg); margin-bottom: 8px;
+  }
+  .home-inv__d { display: block; font-size: 13px; font-weight: var(--alt-fw-medium); line-height: 1.4; color: var(--alt-text); }
+
+  @media (prefers-reduced-motion: reduce) { .home-inv__cta svg { transition: none; } }
 
   /* ===== SECCIONES-RIEL (venta · estancias · valoradas · proyectos) — chasis compartido ===== */
   .home-railsec { overflow: hidden; border-top: 0; }

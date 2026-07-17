@@ -611,6 +611,46 @@
 }
 
 /* ==========================================================================
+ * BOTÓN "SWEEP" — contorno navy que se rellena con un barrido de oro al hover.
+ * Réplica del `.btn-sweep` del mockup (CSS L55-60). CTA de las secciones editoriales.
+ * ======================================================================== */
+.alt-btn-sweep {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 30px;
+  border-radius: var(--alt-r-pill);
+  border: 1.5px solid var(--alt-ink);
+  color: var(--alt-ink);
+  font-family: var(--alt-font-body);
+  font-weight: var(--alt-fw-bold);
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  overflow: hidden;
+  isolation: isolate;
+  cursor: pointer;
+  transition: color var(--alt-dur-slow) var(--alt-ease), border-color var(--alt-dur-slow) var(--alt-ease);
+}
+.alt-btn-sweep::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--alt-grad-gold);
+  transform: translateX(-101%);
+  transition: transform var(--alt-dur-slow) var(--alt-ease);
+}
+.alt-btn-sweep:hover { border-color: var(--alt-gold); }
+.alt-btn-sweep:hover::before { transform: translateX(0); }
+.alt-btn-sweep svg { width: 16px; height: 16px; transition: transform var(--alt-dur-slow) var(--alt-ease); }
+.alt-btn-sweep:hover svg { transform: translateX(4px); }
+@media (prefers-reduced-motion: reduce) {
+  .alt-btn-sweep::before, .alt-btn-sweep svg { transition: none; }
+}
+
+/* ==========================================================================
  * RIEL HORIZONTAL (carrusel scroll-snap) — abstracción REAL del diseño:
  * el mockup lo comparte en 4 secciones de la home (venta · estancias-list ·
  * valoradas · proyectos) bajo la clase `.arail` (ADR §32.9). Aquí es `.alt-rail`.
