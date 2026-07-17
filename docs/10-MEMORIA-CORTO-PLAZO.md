@@ -13,10 +13,12 @@
 > **DIFIERE de los mockups aprobados** (Daniel lo cazó; la verificación vieja §24-§29 revisó COLOR, no estructura → L-24).
 > **32 ADRs; cerebro SANO.** Mapa de fidelidad de las 7 páginas → **§32.2**.
 >
-> **✅ YA rebuild/elevado**: **Header** v3 · **Hero** (carrusel 4 banners + buscador) · **Arriendo→LISTA** (§32.8) ·
-> **los 4 CARRUSELES** venta/estancias-list/valoradas/proyectos (§32.10-§32.13).
-> **⏳ FALTA rebuild fiel + elevado**: Home (5 secciones + corregir `#cerca`) · Turismo · Estancias (reseñas) ·
-> Publicar (franja 4 beneficios) · SERP (interactividad JS). Es el WIP activo (TODO-27, §32.7).
+> **✅ HOME COMPLETA — las 17 secciones del mockup, en su orden (§32.8-§32.18)**: Header v3 · Hero · propiedad-dia ·
+> venta · destacadas · arriendo(LISTA+filtro) · estancias-list · explora-zona · **cerca(buscador+MAPA, divergencia
+> GRAVE cerrada)** · recientes(bento) · valoradas · cta-estancias · proyectos · invertir · brokers · journal · redes.
+> Lienzo de la home = **neu** (§32.15). **0 off-palette.** Pusheado + deploy a staging verificado (76KB→115KB).
+> **⏳ FALTA**: Turismo (Pasadías) · Estancias (reseñas) · Publicar (franja 4 beneficios) · SERP (interactividad JS)
+> · deltas MENORES de `#destacadas`/`#journal` (§32.9). Es el WIP activo (TODO-27, §32.7).
 >
 > **🎨 DISEÑO ELEVADO (mandato Daniel, §32.3)**: fusión **Neumorfismo + Skeuomorfismo + Glassmorfismo + Liquid Glass**,
 > sensación de **app** (la app futura = idéntica), moderno/premium. **Que NO peleen**: cada componente lidera con UNA
@@ -39,20 +41,19 @@
 > hairline `rgb(27,39,51)` de `tokens.css:71` o da falsos positivos).
 >
 > **▶ SIGUIENTE — REBUILD DE FIDELIDAD (TODO-27, de arriba abajo, mostrando cada bloque a Daniel en staging)**:
-> 1. **Home — MAPA AUDITADO ✅ (§32.9, 17 secciones; crudo+síntesis en bóveda `2026-07-16-auditoria-fidelidad-home-*`)**.
->    **Orden de construcción**: (a) ✅ **base `.alt-rail`+`.alt-rnav`+chasis `.home-railsec`** (§32.10; el
->    `[data-railwrap]` DEBE envolver encabezado Y riel: en el mockup son hermanos y sus flechas están ROTAS);
->    (b) ✅ **LOS 4 CARRUSELES HECHOS** (§32.10-§32.13: venta·estancias-list·valoradas·proyectos). ⚠️ **5 cards y
->    NINGUNA intercambiable** — `PropertyCard`(grillas) · `LuCard`(centrada+swatches) · `StayCard`(SIN caja) ·
->    `RankCard`(neu+numeral calado) · `ProjectCard`(póster 3/4). Lo ÚNICO compartido es `.alt-rail`;
->    (c) los 2 splits: **propiedad-del-día** (1 sola propiedad + 4 contadores) → **invertir**; (d) los 2 mosaicos:
->    **explora-zona** (10 tiles de ZONA) → **recientes** (bento); (e) los 2 sueltos: **CTA corta-estancia**
->    (full-bleed) → **redes** (muro IG); (f) **corregir `#cerca`** (DIVERGENTE GRAVE: debe ser split
->    **buscador + MAPA** navy con 5 pins y 2 mini-cards, NO grilla; hoy además tiene titular reescrito y 3
->    propiedades INVENTADAS) + deltas menores de `#destacadas`/`#journal`. `#brokers` = FIEL, no tocar.
->    ⚠️ **Regla de oro (§32.8/§32.9, L-24)**: la infidelidad es ESTRUCTURAL, no de color. Antes de CADA sección leer
->    su bloque del `.dc.html` y preguntar **"¿tiene diseño propio o es el genérico?"**. Ojo al matiz: `#destacadas`
->    salió `disenoPropio:false` ⇒ **`PropertyCard` NO es el villano**; el fallo fue reutilizar sin preguntar.
+> 1. ~~**Home**~~ ✅ **COMPLETA** (§32.8-§32.18; auditoría §32.9 + crudo/síntesis en bóveda
+>    `2026-07-16-auditoria-fidelidad-home-*`). **Piezas reutilizables ya construidas** — reusar, NO reinventar:
+>    `.alt-rail`+`.alt-rnav`+chasis `.home-railsec` (el `[data-railwrap]` DEBE envolver encabezado Y riel: en el
+>    mockup son hermanos y sus flechas están ROTAS) · `.alt-btn-sweep` · `.alt-btn-frost` · `.home-oppill` ·
+>    **6 cards, NINGUNA intercambiable**: `PropertyCard`(grillas) · `LuCard`(centrada+swatches) · `StayCard`(SIN
+>    caja) · `RankCard`(neu+numeral calado) · `ProjectCard`(póster 3/4) + los tiles de zona/bento inline.
+> 2. **SIGUIENTE — mismo método** (leer el `.dc.html` de CADA sección ANTES de construir): **Turismo** (Pasadías +
+>    inversión 3-cards + zonas ×6) → **Estancias** (Reseñas + galería) → **Publicar** (franja 4 beneficios) →
+>    **SERP** (interactividad JS: filtros/fav/hover-pin) → deltas menores `#destacadas`/`#journal`. `#brokers`=FIEL.
+>    ⚠️ **Regla de oro (L-24)**: la infidelidad es ESTRUCTURAL, no de color. Preguntar siempre **"¿tiene diseño
+>    propio o es el genérico?"** — pagó ×5 en la home. Matiz: `#destacadas` salió `disenoPropio:false` ⇒
+>    **`PropertyCard` NO es el villano**; el fallo fue reutilizar sin preguntar. Y **el mockup tiene bugs**
+>    (flechas rotas, `@altorra.co` falso, `href="#"`, scrims casi negros): ser fiel NO es replicarlos.
 > 2. **Turismo** (Pasadías + inversión 3-cards glass + zonas ×6) · **Estancias** (sección Reseñas + galería) · **Publicar**
 >    (franja 4 beneficios) · **SERP** (interactividad JS: filtros/fav/hover-pin). Detalle de qué falta por página → §32.2.
 > 3. Después: transversales (MapLibre · forms→`solicitudes` vía CF [needs Blaze, TODO-26] · datos Firestore reales [TODO-22] · Wompi Ola 2) ·
