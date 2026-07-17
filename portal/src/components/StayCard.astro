@@ -1,0 +1,87 @@
+---
+/*
+ * StayCard — card de CORTA ESTANCIA para rieles (`.alt-rail`).
+ * Réplica del `.bnb` del mockup (ALTORRA Portal.dc.html L779-830, CSS L154-156).
+ *
+ * ⚠️ La 3ª card del portal, y NO es intercambiable con las otras dos (ADR §32.9/§32.11):
+ *   · PropertyCard  → card FLUIDA de las grillas (#destacadas). Caja blanca + sombra.
+ *   · LuCard        → ancho FIJO 276-330px, cuerpo CENTRADO, caja blanca + sombra, swatches.
+ *   · StayCard      → ancho FIJO 230-262px, alineada a la IZQUIERDA, **SIN caja**: foto
+ *                     desnuda (radio 16px) + texto suelto debajo. Lenguaje tipo alojamiento.
+ * El riel se comparte; la card NO. Ese es justo el error que estamos cazando (L-24).
+ */
+interface Props {
+  img: string;
+  alt: string;
+  imgPos?: string;
+  badge?: string;      // "Favorito entre huéspedes" — solo en algunas
+  title: string;
+  rating: string;      // "4.98"
+  meta: string;        // "Vista al mar · 6 huéspedes"
+  price: string;       // "$680.000"
+  priceUnit?: string;  // "COP noche"
+  href: string;
+}
+const { img, alt, imgPos, badge, title, rating, meta, price, priceUnit = 'COP noche', href } = Astro.props;
+---
+
+<a class="alt-staycard" href={href}>
+  <div class="alt-staycard__media">
+    <img class="alt-staycard__img" src={img} alt={alt} loading="lazy" decoding="async" style={imgPos ? `object-position:${imgPos}` : undefined} />
+    {badge && <span class="alt-staycard__badge">{badge}</span>}
+    <button class="alt-staycard__fav" type="button" aria-label={`Guardar ${title} en favoritos`} aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"/></svg>
+    </button>
+  </div>
+
+  <div class="alt-staycard__head">
+    <span class="alt-staycard__t">{title}</span>
+    <span class="alt-staycard__rate">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 18.6 6.1 20.8l1.3-6.6L2.5 9l6.6-.8z"/></svg>
+      {rating}
+    </span>
+  </div>
+  <p class="alt-staycard__meta">{meta}</p>
+  <p class="alt-staycard__price"><b>{price}</b> {priceUnit}</p>
+</a>
+
+<style>
+  /* SIN caja: la foto y el texto van sueltos sobre la banda (mockup CSS L154) */
+  .alt-staycard { width: clamp(230px, 20vw, 262px); display: block; text-decoration: none; }
+
+  .alt-staycard__media { position: relative; height: 200px; border-radius: var(--alt-r-md); overflow: hidden; margin-bottom: 12px; }
+  .alt-staycard__img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-img, 0.9s) var(--alt-ease); }
+  .alt-staycard:hover .alt-staycard__img { transform: scale(1.07); }
+
+  .alt-staycard__badge {
+    position: absolute; top: 11px; left: 11px;
+    background: rgba(255, 255, 255, 0.94); padding: 5px 11px; border-radius: var(--alt-r-pill);
+    font-size: 10.5px; font-weight: var(--alt-fw-bold); color: var(--alt-ink);
+  }
+  .alt-staycard__fav {
+    position: absolute; top: 9px; right: 9px;
+    width: 31px; height: 31px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9); border: 1px solid var(--alt-gold); color: var(--alt-link);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: background var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease);
+  }
+  .alt-staycard__fav svg { width: 15px; height: 15px; }
+  .alt-staycard__fav[aria-pressed='true'] { background: var(--alt-ink); color: var(--alt-gold-bright); }
+  .alt-staycard__fav[aria-pressed='true'] svg { fill: currentColor; }
+
+  .alt-staycard__head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .alt-staycard__t { font-size: 14px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); }
+  .alt-staycard:hover .alt-staycard__t { color: var(--alt-link); }
+  .alt-staycard__rate { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); white-space: nowrap; }
+  /* ★ como SVG, no glifo de texto (doctrina L-23; el glifo ya causó un bug en el footer) */
+  .alt-staycard__rate svg { width: 12px; height: 12px; color: var(--alt-gold); }
+  /* a11y: el mockup usa #6b7c93 a 12.5px → reprueba AA. Token AA. */
+  .alt-staycard__meta { font-size: 12.5px; color: var(--alt-text); margin: 3px 0 6px; }
+  .alt-staycard__price { font-size: 13.5px; color: var(--alt-ink); margin: 0; }
+  .alt-staycard__price b { font-weight: var(--alt-fw-bold); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .alt-staycard__img { transition: none; }
+    .alt-staycard:hover .alt-staycard__img { transform: none; }
+  }
+</style>

@@ -8,7 +8,18 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PropertyCard from '../components/PropertyCard.astro';
 import LuCard from '../components/LuCard.astro';
+import StayCard from '../components/StayCard.astro';
 import { SITE } from '../lib/config/site';
+
+// CORTA ESTANCIA — riel de `StayCard` (réplica fiel del mockup #estancias-list, L760-835).
+// Card `.bnb` del mockup: SIN caja, foto desnuda + texto suelto. NO es LuCard (§32.11).
+const estancias = [
+  { img: '/assets/hero-estancia.webp', alt: 'Terraza con piscina frente al mar', badge: 'Favorito entre huéspedes', title: 'Penthouse en Bocagrande', rating: '4.98', meta: 'Vista al mar · 6 huéspedes', price: '$680.000', href: '/estancias' },
+  { img: '/assets/chalet-dusk.webp', alt: 'Casa colonial con patio', badge: 'Favorito entre huéspedes', title: 'Casa colonial en el Centro', rating: '4.91', meta: 'Patio y piscina · 8 huéspedes', price: '$1.150.000', href: '/estancias' },
+  { img: '/assets/villa-pool.webp', alt: 'Apartamento frente a la playa en El Laguito', title: 'Apartamento en El Laguito', rating: '4.86', meta: 'Frente a la playa · 4 huéspedes', price: '$420.000', href: '/estancias' },
+  { img: '/assets/villa-modern.webp', alt: 'Loft de autor en Getsemaní', badge: 'Favorito entre huéspedes', title: 'Loft de autor en Getsemaní', rating: '5.0', meta: 'Diseño · 2 huéspedes', price: '$390.000', href: '/estancias' },
+  { img: '/assets/estate-golden.webp', alt: 'Villa con jardín privado en Manga', title: 'Villa con piscina en Manga', rating: '4.94', meta: 'Jardín privado · 10 huéspedes', price: '$1.480.000', href: '/estancias' },
+];
 
 // EN VENTA — riel horizontal de `LuCard` (réplica fiel del mockup #venta, L451-564).
 // Swatches en tokens de paleta (el mockup traía #8a6d1f/#c7d3dd ajenos → §3.2 disciplina estricta).
@@ -242,18 +253,18 @@ const maneras = [
     <!-- `data-railwrap` envuelve encabezado Y riel: en el mockup los botones viven en un
          [data-railwrap] hermano del riel → su querySelector('.arail') no encuentra nada y
          las flechas NO funcionan. Misma arquitectura, corregida (ADR §32.10). -->
-    <section id="venta" class="home-band home-band--alt home-venta">
+    <section id="venta" class="home-band home-band--alt home-railsec">
       <div class="alt-container" data-railwrap>
         <div class="home-sechead">
           <div>
             <p class="alt-eyebrow">En venta</p>
             <h2>Explora el portafolio en venta.</h2>
           </div>
-          <div class="home-venta__tools">
+          <div class="home-railsec__tools">
             <a class="alt-link-ul" href="/comprar">Comparar todas
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </a>
-            <div class="home-venta__navbtns">
+            <div class="home-railsec__navbtns">
               <button class="alt-rnav" type="button" data-rail="prev" aria-label="Ver propiedades anteriores">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
               </button>
@@ -362,6 +373,35 @@ const maneras = [
         </div>
 
         <p class="home-arr__empty" id="arriendo-empty" hidden>No hay arriendos en esta categoría por ahora.</p>
+      </div>
+    </section>
+
+    <!-- CORTA ESTANCIA — riel de StayCard (réplica fiel del mockup #estancias-list) -->
+    <section id="estancias-list" class="home-band home-band--alt home-railsec">
+      <div class="alt-container" data-railwrap>
+        <div class="home-sechead">
+          <div>
+            <p class="alt-eyebrow">Corta estancia</p>
+            <h2>Quédate unos días.</h2>
+          </div>
+          <div class="home-railsec__tools">
+            <a class="alt-link-ul" href="/estancias">Ver todas
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <div class="home-railsec__navbtns">
+              <button class="alt-rnav" type="button" data-rail="prev" aria-label="Ver estancias anteriores">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <button class="alt-rnav" type="button" data-rail="next" aria-label="Ver más estancias">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alt-rail">
+          {estancias.map((s) => <StayCard {...s} />)}
+        </div>
       </div>
     </section>
 
@@ -740,10 +780,10 @@ const maneras = [
   .home-jrow:hover .home-jrow__t { color: var(--alt-link); }
   .home-jrow__read { display: block; font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-text-muted); }
 
-  /* ===== EN VENTA — riel horizontal ===== */
-  .home-venta { overflow: hidden; border-top: 0; }
-  .home-venta__tools { display: flex; align-items: center; gap: 16px; }
-  .home-venta__navbtns { display: flex; gap: 9px; }
+  /* ===== SECCIONES-RIEL (venta · estancias · valoradas · proyectos) — chasis compartido ===== */
+  .home-railsec { overflow: hidden; border-top: 0; }
+  .home-railsec__tools { display: flex; align-items: center; gap: 16px; }
+  .home-railsec__navbtns { display: flex; gap: 9px; }
 
   /* Card-CTA navy DENTRO del riel (6ª tarjeta) */
   .home-railcta {
