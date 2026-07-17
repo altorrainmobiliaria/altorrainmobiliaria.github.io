@@ -17,10 +17,13 @@ const destacadas = [
   { img: '/assets/estate-golden.webp', alt: 'Penthouse frente al mar', badge: 'En venta', zona: 'Bocagrande', beds: 3, baths: 4, area: '188 m²', title: 'Penthouse frente al mar', price: '$2.100.000.000', priceLabel: 'Desde', href: '/comprar' },
 ];
 
+// ARRIENDO — lista horizontal con filtro con/sin administración (réplica fiel del mockup #arriendo).
+// Estructura RICA (specs, amenity, adminLabel, admin) — diseño PROPIO de la sección, NO PropertyCard.
 const arriendo = [
-  { img: '/assets/chalet-dusk.webp', alt: 'Apartamento amoblado en el Centro', badge: 'Arriendo', zona: 'Centro Histórico', beds: 2, baths: 2, area: '95 m²', title: 'Apartamento amoblado en el Centro', price: '$4.800.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/arrendar' },
-  { img: '/assets/hero-keys.webp', alt: 'Casa familiar en Crespo', badge: 'Arriendo', zona: 'Crespo', beds: 3, baths: 2, area: '160 m²', title: 'Casa familiar en Crespo', price: '$3.200.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/arrendar' },
-  { img: '/assets/villa-pool.webp', alt: 'Apartaestudio con piscina', badge: 'Arriendo', zona: 'Manga', beds: 1, baths: 1, area: '48 m²', title: 'Apartaestudio con piscina', price: '$2.100.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/arrendar' },
+  { img: '/assets/villa-modern.webp', alt: 'Apartamento amoblado en El Laguito', admin: 'con', photos: 14, zona: 'El Laguito, Bocagrande', title: 'Apartamento amoblado frente a la playa', specs: ['88 m²', '2 hab.', '2 baños', '1 garaje'], amenity: 'Amoblado', adminLabel: 'Administración incluida', price: '$4.200.000', href: '/arrendar' },
+  { img: '/assets/hero-keys.webp', alt: 'Apartaestudio en Getsemaní', admin: 'sin', photos: 9, zona: 'Getsemaní', title: 'Apartaestudio de diseño en barrio histórico', specs: ['42 m²', '1 hab.', '1 baño'], amenity: 'Estrenar', adminLabel: 'No incluye administración', price: '$1.900.000', href: '/arrendar', imgPos: 'center 42%' },
+  { img: '/assets/chalet-dusk.webp', alt: 'Casa familiar en Manga', admin: 'sin', photos: 21, zona: 'Manga', title: 'Casa familiar con jardín y estudio', specs: ['185 m²', '4 hab.', '3 baños', '2 garajes'], amenity: null, adminLabel: '+ administración $650.000', price: '$6.500.000', href: '/arrendar' },
+  { img: '/assets/villa-pool.webp', alt: 'Apartamento en Castillogrande', admin: 'con', photos: 17, zona: 'Castillogrande', title: 'Apartamento con balcón y vista a la bahía', specs: ['120 m²', '3 hab.', '2 baños'], amenity: 'Vista mar', adminLabel: 'Administración incluida', price: '$5.100.000', href: '/arrendar' },
 ];
 
 const cerca = [
@@ -249,8 +252,8 @@ const maneras = [
       </div>
     </section>
 
-    <!-- ARRIENDO -->
-    <section id="arriendo" class="home-band home-band--alt">
+    <!-- ARRIENDO — lista horizontal con filtro con/sin administración (réplica fiel del mockup #arriendo) -->
+    <section id="arriendo" class="home-band home-arr">
       <div class="alt-container">
         <div class="home-sechead">
           <div>
@@ -261,9 +264,54 @@ const maneras = [
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
-        <div class="home-pgrid">
-          {arriendo.map((p) => <PropertyCard {...p} />)}
+
+        <div class="home-arr__filter" role="group" aria-label="Filtrar arriendos por administración">
+          <span class="home-arr__filterlbl">Mostrar:</span>
+          <button class="home-arr__pill is-on" type="button" data-val="todos" aria-pressed="true">Todos</button>
+          <button class="home-arr__pill" type="button" data-val="con" aria-pressed="false">Con administración</button>
+          <button class="home-arr__pill" type="button" data-val="sin" aria-pressed="false">Sin administración</button>
         </div>
+
+        <div class="home-arr__stack" id="arriendo-stack">
+          {arriendo.map((p) => (
+            <article class="home-arr__row" data-admin={p.admin}>
+              <a class="home-arr__media" href={p.href} aria-label={`Ver ${p.title}`}>
+                <img src={p.img} alt={p.alt} loading="lazy" decoding="async" style={p.imgPos ? `object-position:${p.imgPos}` : undefined} />
+                <span class="home-arr__photos">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                  {p.photos} fotos
+                </span>
+              </a>
+              <div class="home-arr__info">
+                <div class="home-arr__topline">
+                  <span class="home-arr__kicker">Arriendo</span>
+                  <span class="home-arr__dot" aria-hidden="true"></span>
+                  <span class="home-arr__zona">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                    {p.zona}
+                  </span>
+                </div>
+                <h3 class="home-arr__title"><a href={p.href}>{p.title}</a></h3>
+                <div class="home-arr__chips">
+                  {p.specs.map((s) => <span class="home-arr__chip">{s}</span>)}
+                  {p.amenity && <span class="home-arr__chip home-arr__chip--gold">{p.amenity}</span>}
+                </div>
+              </div>
+              <div class="home-arr__aside">
+                <div>
+                  <span class="home-arr__adminlbl">{p.adminLabel}</span>
+                  <span class="home-arr__price">{p.price}<small> /mes</small></span>
+                </div>
+                <div class="home-arr__actions">
+                  <a class="home-arr__contact" href={p.href}>Contactar</a>
+                  <a class="alt-link-ul" href={p.href}>Ver</a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <p class="home-arr__empty" id="arriendo-empty" hidden>No hay arriendos en esta categoría por ahora.</p>
       </div>
     </section>
 
@@ -641,6 +689,77 @@ const maneras = [
   .home-jrow__t { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 20px; line-height: 1.1; color: var(--alt-ink); margin-bottom: 8px; }
   .home-jrow:hover .home-jrow__t { color: var(--alt-link); }
   .home-jrow__read { display: block; font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-text-muted); }
+
+  /* ===== ARRIENDO — lista horizontal con filtro (diseño propio de la sección) ===== */
+  /* Lienzo neumórfico (#E6EDF2 oficial) con filas blancas elevadas — fiel al mockup #arriendo. */
+  .home-arr { background: var(--alt-surface-neu); }
+
+  .home-arr__filter { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: clamp(20px, 2.4vw, 28px); }
+  .home-arr__filterlbl { font-size: 12.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-text); margin-right: 4px; }
+  .home-arr__pill {
+    padding: 9px 19px; border: 0; border-radius: var(--alt-r-pill);
+    background: var(--alt-surface-neu); box-shadow: var(--alt-nm-up-sm);
+    color: var(--alt-text); font-family: var(--alt-font-body); font-weight: var(--alt-fw-semibold);
+    font-size: 13px; cursor: pointer; white-space: nowrap;
+    transition: box-shadow var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease);
+  }
+  .home-arr__pill:hover { color: var(--alt-ink); }
+  .home-arr__pill.is-on { box-shadow: var(--alt-nm-in-sm); color: var(--alt-link); font-weight: var(--alt-fw-bold); }
+
+  .home-arr__stack { display: flex; flex-direction: column; gap: clamp(14px, 1.6vw, 18px); }
+
+  .home-arr__row {
+    display: flex; flex-wrap: wrap; overflow: hidden;
+    background: var(--alt-white); border-radius: var(--alt-r-lg);
+    box-shadow: var(--alt-elev-card);
+    transition: transform var(--alt-dur-slow) var(--alt-ease-card), box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+  }
+  .home-arr__row:hover { transform: translateX(4px); box-shadow: var(--alt-elev-card-hover), 0 0 0 1px rgba(212, 175, 55, 0.5); }
+  .home-arr__row[hidden] { display: none; }
+
+  .home-arr__media { position: relative; flex: 1 1 200px; width: clamp(200px, 24vw, 264px); min-height: 184px; overflow: hidden; text-decoration: none; }
+  .home-arr__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-img, 1s) var(--alt-ease); }
+  .home-arr__row:hover .home-arr__media img { transform: scale(1.06); }
+  .home-arr__photos {
+    position: absolute; left: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(6, 39, 67, 0.82); color: #fff; padding: 5px 11px; border-radius: var(--alt-r-pill);
+    font-size: 11px; font-weight: var(--alt-fw-semibold);
+  }
+  .home-arr__photos svg { width: 13px; height: 13px; }
+
+  .home-arr__info { flex: 3 1 320px; min-width: 260px; padding: 22px 26px; display: flex; flex-direction: column; justify-content: center; gap: 9px; }
+  .home-arr__topline { display: flex; align-items: center; gap: 10px; }
+  .home-arr__kicker { font-size: 10px; font-weight: var(--alt-fw-bold); letter-spacing: 0.14em; text-transform: uppercase; color: var(--alt-link); }
+  .home-arr__dot { width: 5px; height: 5px; border-radius: 50%; background: var(--alt-gold); flex: none; }
+  .home-arr__zona { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--alt-text); }
+  .home-arr__zona svg { width: 13px; height: 13px; stroke: var(--alt-gold-raw); flex: none; }
+  .home-arr__title { font-family: var(--alt-font-display); font-weight: var(--alt-fw-medium); font-size: 24px; line-height: 1.08; color: var(--alt-ink); margin: 0; letter-spacing: normal; }
+  .home-arr__title a { color: inherit; text-decoration: none; }
+  .home-arr__title a:hover { color: var(--alt-link); }
+  .home-arr__chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+  .home-arr__chip { font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); background: var(--alt-gray-50); padding: 5px 11px; border-radius: var(--alt-r-xs); }
+  .home-arr__chip--gold { color: var(--alt-link); background: rgba(212, 175, 55, 0.12); }
+
+  .home-arr__aside { flex: 1 1 220px; min-width: 210px; border-left: 1px solid var(--alt-hairline); padding: 22px 26px; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+  .home-arr__adminlbl { display: block; font-size: 10.5px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.06em; color: var(--alt-text-muted); margin-bottom: 2px; }
+  .home-arr__price { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 27px; line-height: 1; color: var(--alt-ink); }
+  .home-arr__price small { font-family: var(--alt-font-body); font-size: 13px; font-weight: var(--alt-fw-medium); color: var(--alt-text-muted); }
+  .home-arr__actions { display: flex; align-items: center; gap: 14px; }
+  .home-arr__contact {
+    display: inline-flex; align-items: center; padding: 10px 20px; border-radius: var(--alt-r-pill);
+    border: 1px solid var(--alt-hairline-2); background: var(--alt-white);
+    color: var(--alt-ink); font-weight: var(--alt-fw-semibold); font-size: 13.5px; text-decoration: none;
+    transition: border-color var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease), background var(--alt-dur) var(--alt-ease);
+  }
+  .home-arr__contact:hover { border-color: var(--alt-gold); color: var(--alt-link); background: var(--alt-gray-50); }
+
+  .home-arr__empty { margin-top: 20px; font-size: 14.5px; color: var(--alt-text); }
+
+  @media (max-width: 720px) {
+    .home-arr__media { flex-basis: 100%; width: 100%; min-height: 200px; }
+    .home-arr__aside { border-left: 0; border-top: 1px solid var(--alt-hairline); flex-basis: 100%; }
+    .home-arr__row:hover { transform: none; }
+  }
 </style>
 
 <script>
@@ -701,5 +820,30 @@ const maneras = [
     } else {
       show(0);
     }
+  }
+
+  // ARRIENDO — filtro con/sin administración: muestra/oculta filas por data-admin.
+  const arrFilter = document.querySelector('.home-arr__filter');
+  if (arrFilter) {
+    const arrPills = Array.from(arrFilter.querySelectorAll<HTMLElement>('.home-arr__pill'));
+    const arrRows = Array.from(document.querySelectorAll<HTMLElement>('#arriendo-stack .home-arr__row'));
+    const arrEmpty = document.getElementById('arriendo-empty');
+    arrFilter.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest('.home-arr__pill') as HTMLElement | null;
+      if (!btn) return;
+      const val = btn.dataset.val || 'todos';
+      arrPills.forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle('is-on', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      let visible = 0;
+      arrRows.forEach((row) => {
+        const show = val === 'todos' || row.dataset.admin === val;
+        row.hidden = !show;
+        if (show) visible++;
+      });
+      if (arrEmpty) arrEmpty.hidden = visible !== 0;
+    });
   }
 </script>
