@@ -728,3 +728,37 @@ Cerebro: este ADR + `00` + `10` + `05`. INTACTOS: Header/Footer/PropertyCard/tok
 **45.7 Doctrina + cache**: L-29 (contar contra la fuente + re-audit adversarial), §3.3, §3.7. Nota: el tooling falla ~1
 agente/workflow (retry cap) — hit T1 aquí, ALTA-card3 en ficha; el crítico+DOM cubren el hueco. Sin cache bump (portal
 sin SW). Sigue TODO-27: estancias 8 · serp 7 · home 2 · publicar 2 (19).
+
+## 46. ADR-046 — TODO-27: ESTANCIAS del portal FIEL (8 hallazgos + 2 íconos) ⟦OPUS-4.8⟧ (2026-07-18)
+
+**46.1 Contexto/causa raíz**: 3ª página de TODO-27 (fidelidad) tras ficha (§43) y turismo (§45). Estancias tenía 8
+hallazgos MEDIA/BAJA del re-audit §32.24. Causa raíz: el rebuild divergió en la galería (layout + tira de miniaturas
+inventada) y el widget de reserva (fechas sin prellenar → desglose mentiroso), + 4 detalles. Método L-29: mockup real
+`ALTORRA Estancias.dc.html` → diff → corregir → re-audit adversarial. **Tensión conocida ejecutada**: el ALTA "galería
+muerta" (§32.24 cableó la tira de miniaturas) se REEMPLAZÓ a propósito — la tira era invento; el mockup pide botón
+"Ver 18 fotos" (la síntesis madre lo anticipaba).
+**46.2 Solución (8 correcciones + 2 del crítico, todas en `estancias.astro`)**: **MEDIA** — E-M1+E-M2 tira de miniaturas
+inventada RETIRADA (+ handler JS muerto) + botón "Ver 18 fotos" sobre la foto (mockup L126) · E-M3 galería → mosaico
+`1.6fr 1fr`+`grid-auto-rows:1fr`, principal `grid-row:span 2` (era 3col×1fila) · E-M4 reserva PRELLENA fechas (llegada
+hoy+7, salida hoy+10) + `min` en ambos + `recalc()` al cargar (antes: inputs vacíos + "$850.000 × 3 noches" estático
+mentiroso + fechas pasadas posibles). **BAJA** — E-B1 breadcrumb inventado RETIRADO · E-B2 amenities "Parqueadero
+incluido"/"WiFi" ya OK (ALTA §32.24), verificado · E-B3 foto Interior chalet-dusk → villa-modern (chalet-dusk=0 en la
+página) · E-B4 cabecera derecha: rating ANTES del sello (estaba invertido). **+2 del crítico de completitud** (íconos de
+amenities, fuera de la lista, omitidos por 2 auditorías previas): "Terraza con vista" glifo de edificios → parasol/mesa
+(mockup L155) · "WiFi" +banda exterior (2 arcos → 3, mockup L150).
+**46.3 No-regresión**: solo `estancias.astro`. Header/Footer/tokens INTACTOS. Sección Reseñas + meta ×4 (adiciones
+§32.20) verificadas fieles por el crítico. Build OK (10 rutas prerender).
+**46.4 Verificación (capas L-29)**: build ✅ · HTML construido (est-bc=0, est-thumb=0, "Ver 18 fotos", chalet-dusk=0,
+íconos WiFi/Terraza corregidos ✓) · DOM/computed vivo (galería 2-col + main span 2, rating antes del sello, **fechas
+prellenadas 25/28-jul + min + 3 noches honestas**) · **re-audit adversarial** (workflow 8 refutadores effort:high + 1
+crítico, ~930k tok): **8/8 FIEL** (6 por refutador dedicado high; E-M4+E-B2 = verificadores fallaron por `StructuredOutput
+retry cap` tooling, confirmados por DOM en vivo + HTML) + crítico halló **2 divergencias nuevas** (íconos) → corregidas.
+**46.5 Anti-patterns evitados**: NO inventar · NO declarar "fiel" sin re-audit (§3.7/L-29) · NO tocar exenciones
+(Reseñas/meta deliberadas, botón "Ver 18 fotos" sin handler = igual que el mockup, .alt-seal reuso de componente,
+contacto/color/pixel) · anti-código-muerto (retiré tira + handler de miniaturas) · scope: solo estancias.
+**46.6 Archivos**: `portal/src/pages/estancias.astro`. Bóveda: `2026-07-18-estancias-reaudit-{crudo.json,sintesis.md}`.
+Cerebro: este ADR + `00` + `10` + `05`. INTACTOS: Header/Footer/tokens/base/components.css.
+**46.7 Doctrina + cache**: L-29 (contar contra la fuente + re-audit), §3.3, §3.7. **El crítico de completitud gana su
+costo en las 3 páginas** (íconos SVG mal portados = patrón recurrente que las auditorías por-sección omiten). El tooling
+falla ~1-2 agentes/workflow (retry cap) — cubierto por DOM+crítico; pendiente: reintentar el agente caído. Sin cache bump
+(portal sin SW). Sigue TODO-27: serp 7 · home 2 · publicar 2 (11).

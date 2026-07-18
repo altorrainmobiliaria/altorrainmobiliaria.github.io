@@ -11,11 +11,11 @@
 
 > **Dos frentes abiertos, en este orden:**
 >
-> **FRENTE 1 — TODO-27: cerrar los MEDIA/BAJA de fidelidad del portal** (§32.24). **FICHA ✅ (§43) · TURISMO ✅ (§45).**
+> **FRENTE 1 — TODO-27: cerrar los MEDIA/BAJA de fidelidad del portal** (§32.24). **FICHA ✅ (§43) · TURISMO ✅ (§45) · ESTANCIAS ✅ (§46).**
 > La síntesis de bóveda `2026-07-17-reauditoria-fidelidad-sintesis.md` es AUTOCONTENIDA (§33 la parcheó): lista 1:1
-> + tabla página→mockup→impl + bloque **"Qué NO corregir (intencional)"** — leerla ANTES de tocar. Pendientes (19):
-> **estancias 8 · serp 7 · home 2 · publicar 2.** ⚠️ Los "ALTA ✅" de la síntesis madre NO son de fiar
-> 1:1: la 3ª card ALTA de la FICHA nunca se corrigió (§43, el commit `3a66a69` era HOME) — verificar cada ALTA vs mockup.
+> + tabla página→mockup→impl + bloque **"Qué NO corregir (intencional)"** — leerla ANTES de tocar. Pendientes (11):
+> **serp 7 · home 2 · publicar 2.** ⚠️ Los "ALTA ✅" de la síntesis madre NO son de fiar 1:1 (la 3ª card ALTA de la
+> FICHA nunca se corrigió, §43); y el crítico de completitud caza íconos SVG mal portados fuera de la lista (ficha/estancias).
 > **MÉTODO (L-29/L-24)**: bloque del `.dc.html` → corregir TEXTUAL → re-auditar adversarial ANTES de decir "fiel".
 > NUNCA inventar. Capas: build → estructura → computed (miente con `transition`, L-28) → screenshot Chrome → diff
 > vs fuente. Reusar piezas hechas (`.alt-rail`, `.alt-btn-sweep`, 6 cards NO intercambiables — ver síntesis).
@@ -48,7 +48,7 @@
 | **TODO-22** | **Auditoría Fable**: (a) ADR §22 `[REVISAR-FABLE]` (capa de datos); (b) decisión catálogo público SSG vs doc-índice (gatea datos reales). | 🔮 FABLE | |
 | **TODO-23** | 🔧 **Kernel hardening** (owner=**INMOBILIARIA**, escritor único ×4 — el wording "cars" era stale, §41): K-01/02/04/05/09 + §33: priorizar warns en truncado `--boot` · gate #7 debe ver GIT de la bóveda · circularidad boot-budget. 1er fix aplicado 07-18 (✅-falso, §41); resto de K abiertos. | 🔴 kernel | §33 G-09 |
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). K-06 ✅ CERRADO §33 (espejo en bóveda). | 🟡 abierto | |
-| **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **FICHA ✅ (§43) · TURISMO ✅ (§45)** · **19 MEDIA/BAJA pendientes**: estancias 8 · serp 7 · home 2 · publicar 2. Método L-29: diff vs `.dc.html` + re-audit adversarial. ⚠️ verificar los "ALTA ✅" de cada página 1:1 (uno se había perdido en la ficha). | 🔄 OPUS | Frente 1 |
+| **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **FICHA ✅ (§43) · TURISMO ✅ (§45) · ESTANCIAS ✅ (§46)** · **11 MEDIA/BAJA pendientes**: serp 7 · home 2 · publicar 2. Método L-29: diff vs `.dc.html` + re-audit adversarial (el crítico de completitud caza íconos SVG fuera de lista). | 🔄 OPUS | Frente 1 |
 | **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda): #1 ✅ (caja negra, §40) · **#2 ✅ 07-18 (§41)**: `boot-gate.mjs` bloqueante + poda −982c + one-in-one-out §G.5 + fix kernel ×3 · #3 ✅ · **sigue #4** `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento (>90d). | 🔄 sigue #4 | $0 |
 | **TODO-29** | 📣 **PAUTA**: skill ✅ · Meta ordenado ✅ · humo montada ✅ · **HUMO ENCENDIDA 07-18 ✅ (§42.8)** — anuncio "Activo" (revisión aprobó), $4.000/día vs prepago ~$5k → muere sola ~1 día. **VIGILAR (no tocar)**: entrega/CPM real · chats entrantes (responder; saludo auto ya sale) · planilla CPQL desde el 1er lead · al agotarse el saldo verificar FACTURACIÓN → cierra fontanería §4b y calibra la CAMPAÑA REAL (gate = cierre de obra: matrícula/RNT + privacidad + píxel+GA4 + landing). | 🔥 VOLANDO | no tocar 7d |
 
@@ -56,19 +56,9 @@
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-18 (OPUS-4.8 — §45)**: **TODO-27 turismo ✅** — 8 hallazgos (T1 #inversión a copy+grid-3-cards+CTA sin
-> foto · T2-T3 copy/CTA · T4-T5 zonas card-blanca+kicker+"Ver estadías" · T6-T8 eyebrow/hero/email). Verificado build+
-> HTML+DOM vivo + re-audit adversarial (8+1 agentes → 8/8 FIEL, crítico 0 nuevas). Bóveda `2026-07-18-turismo-reaudit-*`.
-> Sigue TODO-27: estancias 8 · serp 7 · home 2 · publicar 2.
+> **2026-07-18 (OPUS-4.8 — §46)**: **TODO-27 estancias ✅** — 8 hallazgos (galería mosaico + "Ver 18 fotos" reemplazan
+> la tira inventada · reserva prellena fechas+min · breadcrumb retirado · Interior=villa-modern · orden cabecera) + 2
+> íconos del crítico (Terraza/WiFi). Verificado build+HTML+DOM vivo + re-audit (8+1 → 8/8 FIEL, crítico 2 nuevas).
+> Bóveda `2026-07-18-estancias-reaudit-*`. Sigue TODO-27: serp 7 · home 2 · publicar 2.
 
-> **2026-07-18 (FABLE-5 — §44)**: **brain-kit v1.0 ✅ ENTREGADO** — kit de neurogénesis para el amigo de Daniel
-> (ZIP en `Desktop\brain-kit-v1.0.zip`; Daniel lo pasa por WhatsApp; instala el Fable del amigo con
-> `INSTALACION-FABLE.md`). Verificación adversarial 4 rompedores → 25 hallazgos (1 bloqueante) TODOS aplicados;
-> 0 fugas. Fuente del kit: `GitHub/brain-kit/` (futuras versiones = editar → re-verificar → re-zipear).
-> Detalle → §44 + bóveda `2026-07-18-brain-kit-verificacion-*`.
-
-> **2026-07-18 (OPUS-4.8 — §43)**: **TODO-27 ficha ✅** — 8 hallazgos + la 3ª card ALTA que §32.24 nunca tocó
-> (`3a66a69` era HOME, no la ficha) + 1 del crítico de completitud. Verificado: build + DOM vivo + toggle real +
-> **re-audit adversarial** (9+1 agentes → 8/9 FIEL). L-28 recurrió (computed miente con `transition`). Bóveda `2026-07-18-ficha-reaudit-*`.
-
-> *(Bitácora 07-17/07-18 §32-§42 + relevo a Opus podados — consolidados en ADR §32.14-.24 / §41 / §42 / §43 + L-29/L-32 + bóveda. Constraints vivos → TODO-23/27/28/29 + 05. §G.4 GC.)*
+> *(Bitácora 07-17/07-18 §32-§45 + brain-kit §44 + relevo a Opus podados — consolidados en ADR §32.14-.24 / §41-§45 + L-28/L-29/L-32 + bóveda. Serie fidelidad: ficha §43 · turismo §45 · estancias §46; el crítico de completitud caza íconos SVG fuera de lista. Constraints vivos → TODO-23/27/28/29 + 05. §G.4 GC.)*
