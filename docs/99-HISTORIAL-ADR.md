@@ -438,3 +438,23 @@ etc.) · hipótesis marcadas ❓ · APIs muertas NO vendorizadas. **35.6 Modific
 references reparadas + marketing-psicologico-conversion + meta-ads-diagnostico + inventario + docs. INTACTOS: portal, kernel,
 paquete visibilidad. **35.7 Doctrina**: L-30 aplicada (verificar antes de portar); TODO-29 pasa a fase de CONSTRUCCIÓN
 (investigación seria + skills de pauta propias sobre la base paid-ads v2.2).
+
+## 36. ADR — Lote 2 TikTok + guías Nova evaluadas + BACKLOG acumulador ×proyectos ⟦FABLE-5⟧ (2026-07-18)
+
+**36.1**: Daniel formalizó su flujo (cura TikTok periódicamente para TODOS los proyectos) → se creó el
+**acumulador único** `brain-private/compartido-marketing/BACKLOG-material-tiktok.md` (cada ítem con estado:
+adoptado→dónde / hipótesis / descartado+razón; lotes 1 y 2 ya registrados) + memoria actualizada. **36.2 Lote 2
+procesado**: (a) 4 formatos de "ads ganadoras" → 3 YA existían en `ad-creative` v2.8 (Review Card/Testimonial/
+Before-After); **2 añadidos** como §Aportes ALTORRA (Search-Bar Ad con query real de GSC + Offer-Deadline con
+regla de urgencia VERDADERA — urgencia falsa = práctica engañosa SIC; testimonio "Nathan" del TikTok citado como
+ejemplo de lo que NO se fabrica, L-29); (b) "Meta hace pruebas con tu dinero" → `meta-ads-diagnostico §Higiene`
+CON MATIZ (apagar lo que rompe marca; dejar entrega/Andromeda; ❓ nombres de UI por verificar); (c) 5 sistemas de
+negocio → transcritos ÍNTEGROS al backlog (candidato a skill futura; mapeados a ALTORRA). **36.3 Guías descargadas
+(Downloads/guia, "Ads Mastery by Nova") evaluadas**: guía 1 = instalar el conector OFICIAL `mcp.facebook.com/ads`
+→ **YA CUMPLIDA** (tools `ads_*` vivas en esta sesión; validación en vivo de cuentas BLOQUEADA por el clasificador
+en modo autónomo → hacerla con Daniel); guía 2 + SKILL.md incluida = la v1.0.0 de `meta-ads-diagnostico` → **YA
+SUPERADA** (la nuestra es superconjunto). Nada nuevo que portar. **36.4 Verificación**: pypdf extrajo ambas guías
+(5+6 págs, leídas completas); parches ×2 copias verificados. **36.5 Anti-patterns**: no duplicar formatos ya
+existentes; urgencia falsa vetada; UI de Meta marcada ❓ (cambia seguido). **36.6 Modificados**: ad-creative/
+references/static-ad-templates.md ×2 · meta-ads-diagnostico ×2 · backlog+memoria (bóveda) · .gitignore (tmp).
+INTACTOS: portal, kernel. **36.7**: flujo de lotes institucionalizado (backlog = SSoT cross-proyecto).

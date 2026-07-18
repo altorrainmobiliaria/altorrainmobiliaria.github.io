@@ -68,6 +68,9 @@
 > (ganchos §9b · cronograma §9c · feed/reels+horarios❓ §9d · pre-pauta+Ads-Library → meta-ads) + humo tumbado
 > (claim "Karpathy" refutado) + **minería marketingskills: 9 adopciones curadas** (paid-ads v2.2 = base de
 > pauta · ad-creative v2.8 · video/offers/marketing-loops/image · 3 de referencia · tools descartado, APIs
-> muertas). Detalle → ADR §35 + bóveda. **PRÓXIMO**: TODO-29 construcción. Frente 1 (ficha) sigue para Opus.
+> muertas). **§36 lote 2**: BACKLOG acumulador creado (`brain-private/compartido-marketing/`) · 2 plantillas
+> nuevas (Search-Bar/Offer-Deadline) · matiz pruebas-de-Meta · guías Nova = conector Meta YA instalado (validar
+> cuentas CON Daniel; clasificador bloquea autónomo). Detalle → ADR §35-§36 + bóveda. **PRÓXIMO**: TODO-29
+> construcción. Frente 1 (ficha) sigue para Opus.
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*

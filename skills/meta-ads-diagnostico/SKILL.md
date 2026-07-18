@@ -242,6 +242,18 @@ Si el anuncio funciona pero nadie compra/consulta/deja datos, el problema puede 
   `form-cro`: ¿se entiende el botón principal? ¿el visitante sabe qué hacer? ¿hay distracciones que no venden?
 - Regla: **pauta nueva solo sobre landing verificada** (velocidad + CTA claro + tracking del lead funcionando).
 
+## Higiene de cuenta: las "pruebas" automáticas de Meta (aporte Daniel 2026-07-18 — ⚠️ con matiz)
+Meta activa por defecto pruebas/optimizaciones automáticas de contenido que gastan presupuesto sin aviso
+(mejoras de creativos, variaciones generadas, "probar funciones de contenido nuevas"). Recomendación del
+material: Configuración de publicidad → funciones de contenido → desactivar "probar funciones de contenido
+nuevas" + revisar "editar pruebas" y apagar las activas. **Matiz nuestro (no apagar a ciegas)**:
+- ✅ SÍ revisar y APAGAR deliberadamente lo que rompe la disciplina de marca (texto auto-generado, música
+  añadida, recortes automáticos, mejoras visuales que alteran la pieza aprobada) — en ALTORRA la pieza es
+  sagrada (paleta/voz/legal §10 de marketing-psicologico-conversion).
+- ⚠️ PERO la era Andromeda premia dar señal creativa al algoritmo (`paid-ads §Meta`): algunas automatizaciones
+  (placements, variantes de texto PROPIAS) conviene dejarlas. Criterio: control de MARCA off · volumen de
+  ENTREGA on. ❓ Los nombres exactos de la UI cambian seguido — verificar en el Ads Manager vigente al montarla.
+
 ## Espionaje de creativos: Ads Library + navegador de Claude (aporte Daniel 2026-07-18)
 La Ads Library de Meta (biblioteca pública de anuncios) muestra TODOS los anuncios activos de un competidor,
 pero revisarla a mano es lento. Técnica: Claude conduce el navegador (extensión Chrome / navegador integrado)

@@ -198,3 +198,30 @@ For a batch, add an `INDEX.md` listing every concept with its template type and 
 ## Batch Distribution
 
 For a standard 50-concept batch: 3-4 variations per template across all 15. If performance data shows certain templates consistently winning for this brand, shift to 60% proven templates / 40% full-cycle coverage — but never drop coverage to zero. Fatigue is why you're generating daily; the template that's tired next month is the one you're scaling today.
+
+## Aportes ALTORRA (2026-07-18 — lote TikTok de Daniel; mismas reglas de grounding de arriba)
+
+### A1. Search-Bar Ad (el buscador)
+La pieza simula una barra de búsqueda con LA PREGUNTA que el cliente ya se hace, y debajo el producto/servicio
+con 3-4 beneficios en viñetas + CTA. Funciona porque el usuario se reconoce en la búsqueda (identificación) y
+la pieza "responde" al instante.
+- **Structure**: barra de búsqueda UI arriba (query textual) → visual del producto/servicio → 3-4 bullets de
+  beneficio → botón CTA.
+- **Copy slot**: la query = una búsqueda REAL del nicho (sacarla de GSC/comentarios/FAQs, no inventarla).
+- **Ejemplo inmobiliario**: 🔍 "¿cómo arrendar mi apartamento sin riesgo en Cartagena?" → foto del inmueble →
+  "Filtro legal estricto · Contratos blindados · Pagos puntuales" → "Descubre cómo".
+- **Source it from**: queries reales de Search Console + preguntas repetidas de WhatsApp/comentarios.
+
+### A2. Offer-Deadline Ad (oferta con urgencia)
+Descuento u oferta con fecha límite visible ("X% termina hoy/el viernes").
+- **Structure**: oferta grande y concreta → deadline explícito → CTA.
+- ⚠️ **Regla dura (Colombia + voz ALTORRA)**: la urgencia debe ser VERDADERA (si dice "termina hoy", termina
+  hoy — urgencia falsa = práctica engañosa ante la SIC y mata la confianza, el activo #1 de la marca). En
+  inmobiliaria aplica mejor a servicios (avalúo/estudio gratis "este mes") que a descuentos de inventario.
+  Ver `offers/references/scarcity-urgency.md` (ética de la escasez).
+
+### Mapa del lote de Daniel → plantillas existentes
+buscador = A1 (nueva) · testimonio 5★ = #4 Review Card / #5 Testimonial Stack (⚠️ SOLO reseñas REALES textuales
+y con permiso — el ejemplo del TikTok, "Nathan" del autobronceador, es exactamente lo que NO se fabrica: L-29) ·
+oferta-deadline = A2 (nueva) · antes/después = #6 Before/After (en inmobiliaria: staging, remodelación, foto
+profesional vs foto de celular — sin claims regulados).
