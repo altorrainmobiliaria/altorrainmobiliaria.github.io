@@ -22,8 +22,7 @@
 > **FRENTE 2 — PAUTA: ✅ CONSTRUIDA, lista-para-encender** (§33-§37). SSoT = skill **`pauta-captacion`**
 > (orquestadora: playbook 1ª campaña + setup en orden + gates + vigencia oficial fechada). Encendido converge
 > con el CIERRE DE OBRA (números matrícula/RNT + privacidad publicada + píxel/GA4 + landing verificada →
-> campaña EN PAUSA → "sí" de Daniel). Lotes TikTok de Daniel → verificar → backlog
-> `brain-private/compartido-marketing/` → skills.
+> campaña EN PAUSA → "sí" de Daniel). Lotes TikTok → verificar → backlog `compartido-marketing/` → skills.
 >
 > **🎨 DISEÑO SELLADO — NO re-litigar** (SSoT `tokens.css` + ADR §23-§23.9 + memorias): navy `#062743` · blanco ·
 > oro `#D4AF37` · plata `#BFC3C9` · grises fríos; fondo blanco, ORO predomina, sin verde/rojo/negro; Cormorant +
