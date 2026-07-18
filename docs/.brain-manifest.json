@@ -62,10 +62,10 @@
     }
   ],
   "deepAudit": {
-    "last": "2026-07-12",
-    "coveredHeaderCount": 30,
+    "last": "2026-07-18",
+    "coveredHeaderCount": 33,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "_que": "Nivel-2 #2 (ADR §30, post-Ola 1): SANO + retrieval funcional; 7 hallazgos in-repo curados + 10 kernel (owner=cars, TODO-23/24). Artefacto en boveda 2026-07-12-auditoria-*. Previa #1 = §12 (2026-06-15, cubrio 12)"
+    "_que": "Nivel-2 #3 (ADR §33, encargo Daniel skills+cerebro): retrieval 5/5; REINCIDENCIA M-01 -> M-02; boveda entera respaldada (estaba SIN commitear); memoria harness espejada; comite futuro-del-cerebro 7 mejoras -> TODO-28. Artefactos boveda 2026-07-18-*. Previa #2 = §30 (2026-07-12, cubrio 30)"
   }
 }

@@ -5,18 +5,18 @@
 > consultar al disparar **Trigger 🔵 §G.2** ("¿qué skill tengo para X?"). On-demand:
 > NO se auto-carga. Mantener al añadir/quitar/renombrar una skill (Reflejo de Frescura §G.4).
 >
-> **Sincronizado al SET CANÓNICO** (cars/bersaglio = 79 carpetas, incl. `caza-bugs`) el 2026-06-21 por el operador cars (62→79, emparejado ×4). Auditoría base del set: 2026-06-03.
+> **Sincronizado al SET CANÓNICO** (cars/bersaglio) el 2026-06-21 por el operador cars. Auditoría base: 2026-06-03.
+> **Re-auditado 2026-07-18** (ADR §33, workflow 4 agentes): conteos reales HOY = **94 carpetas en `skills/` del repo · 35 en `~/.claude/skills/`**; 7 user-level sin catalogar AÑADIDAS abajo; wiring re-verificado.
 
 ---
 
-## ⚠️ Verdad del wiring (leer primero — corrige un supuesto común)
+## ⚠️ Verdad del wiring (leer primero — corrige un supuesto común) — re-verificado 2026-07-18
 
-`skills/` del repo **NO es la fuente** de las skills que Claude tiene cargadas en sesión.
-Verificado el 2026-06-03 leyendo la config real:
+`skills/` del repo **NO es la fuente** de las skills que Claude tiene cargadas en sesión (eso sigue siendo cierto).
 
-- `~/.claude/settings.json` → **solo** habilita el plugin `superpowers@claude-plugins-official` (14 skills de proceso).
-- `~/.claude/skills/` (user-level) → 7 skills de gobernanza. **Desde 2026-06-09 (ADR §171), las 4 portables (`crm-architect`, `legal-colombia`, `comite-expertos`, `arquitecto-software`) están VERSIONADAS en `skills/` del repo** (descontaminadas/domain-neutral, byte-idénticas en los 3 repos) → el repo es la fuente git-trackeada; se copian a `~/.claude/skills/` manualmente (no aparecen en el panel de personalización).
-- **NO** existe `.claude/settings.json` de proyecto, ni `plugin.json`/`marketplace.json` en el repo, ni un plugin `anthropic-skills` instalado.
+- `~/.claude/settings.json` (user-level) → habilita **~190 plugins** de `claude-plugins-official` (ya NO "solo superpowers": firebase, code-review, session-report, code-modernization, code-simplifier, frontend-design y decenas más).
+- `~/.claude/skills/` (user-level) → **35 skills** (gobernanza + portables + dominio + paquete Wompi + voces de marca). Las portables están VERSIONADAS en `skills/` del repo (fuente git-trackeada) y se copian a mano a `~/.claude/skills/` — **mantener la pareja en SYNC** (la auditoría 2026-07-18 cazó 5 gemelas derivadas: proceso-decision-fuerte con 109 líneas de atraso, validacion-live-chrome, meta-ads-diagnostico, optimizacion-rendimiento-web y el `onboarding-…-hub.md` AUSENTE en user-level — todas re-sincronizadas).
+- `.claude/settings.json` **de proyecto SÍ existe** (318 chars, sin secretos): cablea el hook SessionStart → `brain-check.mjs --boot`. Versionado en el repo desde 2026-07-18 (G-04).
 - El namespace `anthropic-skills:*` (~100 skills) que Claude ve es **bundle del entorno/build** (set oficial de Anthropic), independiente del repo.
 
 **Conclusión**: el solape de nombres entre `skills/` (repo) y las skills cargadas es en gran
@@ -33,6 +33,13 @@ de mis capacidades. Implicaciones:
 ---
 
 ## 🌐 Paquete de Visibilidad (propagado por el HUB Altorra Cars · ADR §244 cars · 2026-06-25)
+> ✅ **ACTUALIZADO 2026-07-18 (ADR §33)** con los aprendizajes VERIFICADOS en producción de bersaglio
+> (doc fuente: `bersaglio/docs/superpowers/specs/2026-07-17-aprendizajes-SEO-AEO-GEO-para-skills.md`):
+> `Offer` sin `price` = INVÁLIDO (omitir offers, nunca PreOrder-sin-price) · `FAQPage` SIN rich result desde
+> may-2026 (la FAQ es tarea de CONTENIDO visible) · `aggregateRating` SOLO reseñas propias on-site (las del GBP
+> = self-serving prohibido) · "Solicitar indexación" = solo descubrimiento · CONTAR ≠ MUESTREAR · truco geo del
+> GBP · patrón cáscara-noindex+horneada. Copias repo + user-level + `~/.claude/agents/seo-auditor.md` en SYNC.
+> ⚠️ Las copias repo de **cars/bersaglio** quedaron atrás → las porta cada operador (doc fuente en bersaglio).
 > 7 skills PORTABLES (vertical JewelryStore/AutoDealer/RealEstateAgent vía `tenant_config.json`) + agente
 > `seo-auditor` (read-only), propagadas **byte-idénticas** desde el HUB (Altorra Cars). Arquitectura HUB
 > **IoC + core-funciones-puras + D′ vendored**. La IMPLEMENTACIÓN en este sitio (tenant_config + templates +
@@ -193,13 +200,33 @@ de mis capacidades. Implicaciones:
 
 ---
 
-## 🧰 Meta Claude Code (repo-only — NO instaladas)
+## 🧰 Meta Claude Code
 
 | Skill (name) | Para qué | Disp. |
 |---|---|---|
-| `claude-automation-recommender` | Analiza el repo y recomienda automatizaciones de Claude Code (hooks/subagentes/skills/plugins/MCP). Read-only. | ⚠️ repo-only |
-| `claude-md-improver` | Audita y mejora archivos CLAUDE.md contra plantillas. | ⚠️ repo-only |
-| `session-report` | Genera reporte HTML de uso de sesiones Claude Code (tokens/cache/subagentes). | ⚠️ repo-only |
+| `claude-automation-recommender` | Analiza el repo y recomienda automatizaciones de Claude Code (hooks/subagentes/skills/plugins/MCP). Read-only. | ✅ repo+user (instalada — corregido 2026-07-18) |
+| `claude-md-improver` | Audita y mejora archivos CLAUDE.md contra plantillas. | ✅ repo+user (instalada — corregido 2026-07-18) |
+| `session-report` | Genera reporte HTML de uso de sesiones Claude Code (tokens/cache/subagentes). | ✅ repo+user (instalada — corregido 2026-07-18) |
+
+## 🏛️ Gobernanza / dominio user-level (catalogadas 2026-07-18 — antes AUSENTES del inventario, violación §G.4)
+
+| Skill (name) | Para qué | Disp. |
+|---|---|---|
+| `sinapsis-cerebros` | Enruta consultas a las lecciones de los cerebros HERMANOS (cars/bersaglio/insema) + payloads de import/constancias entre repos. ⚠️ Sus 4 payloads 2026-07-10 (liderazgo ×3 + import bersaglio) siguen SIN aplicar por los operadores destino. | ✅ user |
+| `auditoria-financiera` | Auditoría forense de flujos de dinero anti-fugas (portable). | ✅ user |
+| `cms-dinamico` | Patrones de CMS dinámico sobre Firestore (contenido editable sin deploy). | ✅ user |
+| `pos-facturacion-retail` | Semántica POS real (anulación vs devolución, arqueo, DIAN). | ✅ user |
+| `publicar-web-produccion` | Guía genérica de publicación a producción (dominio/DNS/SSL/checklist). | ✅ user |
+| `opus-interino-protocolo` | Protocolo cuando el modelo activo NO es el titular (Opus interino). | ✅ user |
+| `catalogo-voz-bersaglio` | ⚠️ **Voz de OTRA marca (Bersaglio Jewelry) — JAMÁS aplicar a Altorra** (la voz Altorra = `catalogo-voz-altorra`). Instalada user-level por ser compartida entre proyectos. | ✅ user |
+
+### 🕳️ Huérfana detectada (2026-07-18 — decisión del dueño pendiente, TODO-30)
+`.agents/skills/marketing-psicologico-conversion/SKILL.md` (untracked, creada 2026-07-12 21:16, 11 min antes del
+`Brief_Diseño_Piezas_Captacion.docx` — misma tarea de piezas de captación; convención `.agents/` de una herramienta
+ajena al cerebro). Masterclass de psicología de conversión para piezas de captación inmobiliaria con la paleta
+Altorra hardcodeada. NO duplica `marketing-psychology` (genérica, inglés). ⚠️ Su tono agresivo de dolor choca con
+`catalogo-voz-altorra`. Hoy es INERTE (ni el tool Skill ni el cerebro la ven). Opciones: adoptarla (mover a
+`skills/` + filtro de voz) o cuarentenar en `_legacy/`. NO borrar (límite de guardián).
 
 ---
 
@@ -222,13 +249,16 @@ de mis capacidades. Implicaciones:
 
 ---
 
-## ✅ Resumen de reconciliación
+## ✅ Resumen de reconciliación (actualizado 2026-07-18, ADR §33)
 
-- **~82 skills usables** (✅) tienen contraparte instalada vía `Skill` (bundle `anthropic-skills:*` + plugin `superpowers:*` + `~/.claude/skills/crm-architect`).
-- **6 repo-only** (⚠️, sin contraparte instalada): `claude-automation-recommender`, `claude-md-improver`, `session-report`, `code-simplifier`, `code-modernization`, `design-taste-frontend-v1`.
-- **Anomalías**: 4/7 resueltas el 2026-06-03 (2 borradas + 2 renombradas); 3 quedan (2 = contenido real no-skill, 1 = bundles cosméticos).
-- El cerebro ahora **mapea el 100%** del contenido de `skills/` (antes solo nombraba ~12 en ejemplos + 2 creadas).
-| `auditoria-cerebro` (2026-06-09) | 🔬 Auditoría Nivel-2 del cerebro (sondas falsables: fidelidad/frescura/retrieval-drill/MEMORY.md; cierra con GC pareado + deepAudit). Nace del comité v6 (ADR §173 cars). Byte-idéntica ×3. |
+- **94 carpetas** en `skills/` del repo · **35 skills** en `~/.claude/skills/` — TODAS mapeadas en este inventario
+  (las 94 repo-side ya lo estaban; las 7 user-level faltantes se catalogaron arriba).
+- **Repo-only real**: solo `design-taste-frontend-v1`. `code-simplifier`/`code-modernization` quedaron cubiertas
+  por sus **plugins oficiales** habilitados (la carpeta del repo sigue siendo anomalía estructural 🔧).
+- **Anomalías**: 4/7 resueltas el 2026-06-03; 3 quedan (2 = contenido real no-skill, 1 = bundles cosméticos).
+- **Regla de mantenimiento aprendida (2026-07-18)**: al editar una skill portable, editar **AMBAS copias**
+  (repo + user-level) o sincronizar por copia — la deriva de gemelas fue el hallazgo más repetido de la auditoría.
+| `auditoria-cerebro` (2026-06-09) | 🔬 Auditoría Nivel-2 del cerebro (sondas falsables: fidelidad/frescura/retrieval-drill/MEMORY.md; cierra con GC pareado + deepAudit). Nace del comité v6 (ADR §173 cars). Byte-idéntica ×3. | ✅ repo+user |
 
 ---
 

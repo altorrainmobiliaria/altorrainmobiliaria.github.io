@@ -348,3 +348,47 @@ Propagación cross-repo desde **cars TODO-32 / §229**. Instalado `scripts/brain
 **Los 13 ALTA → ✅ corregidos** (commits `566d8ec` §32.23 + `3a66a69` §32.24): 🚨 **cifra de rentabilidad "+18% retorno anual" INVENTADA** en turismo → RETIRADA (riesgo legal/comercial, no fidelidad; contradice "Seguridad·Legalidad·Confianza" y el mandato de no dar cifras sin respaldo) · 🐞 **favorito muerto en 8/13 cards** de la home (bug MÍO: el handler solo capturaba `.alt-lucard__fav`; y en StayCard el corazón NAVEGABA por burbujeo) → un handler para las 3 cards + `preventDefault`/`stopPropagation` · 🐞 **pins del SERP desemparejados** (bug MÍO: `pin={i}` + mismo array en ambas rutas ⇒ `/arrendar` mostraba precios de VENTA) → `pinsVenta`/`pinsArriendo` · 🐞 **galería de estancias MUERTA** (thumbs sin listener; `ficha.astro` sí lo tenía) → cableada · **estancias**: 2 amenities INVENTADOS ("Seguridad 24h"/"Zona colonial") sustituían a "Check-in 24 horas"/"Conserjería 24/7", barrio RENOMBRADO, descripción REESCRITA → restaurados textuales · **turismo #inversion**: 2 tarjetas desaparecidas + 1 inventada → las 3 restauradas · **#destacadas**: 3ª propiedad INVENTADA ("Penthouse frente al mar" $2.100M) → retirada (§32.23).
 **PATRÓN (→ L-29)**: **5 secciones con contenido INVENTADO** y ninguna se veía rota — se veía BIEN (relleno plausible donde el diseño callaba). Ningún chequeo técnico (build/paleta/computed/screenshot) lo caza; solo **contar contra la fuente**, y **3 de los 6 ALTA los introduje YO mientras "corregía"**. Declarar fidelidad sin re-auditar adversarialmente = repetir §24-29.
 **⏳ PENDIENTE (35 hallazgos MEDIA/BAJA, TODO-27)**: turismo 8 (patrón de cards de Zonas + kickers + copy #inversion reescrito) · estancias 8 (thumbnails INVENTADOS + layout de galería + widget no prellena fechas) · **ficha 8 — SIN TOCAR AÚN** (favorito del header MUERTO, sello inventado en card de precio, specs de similares cambiadas, íconos de POI perdidos) · serp 7 (6ª card INVENTADA en /comprar + card Getsemaní mutada + "Más filtros"/sombra-scroll muertos) · home 2 · publicar 2. Detalle → síntesis en bóveda.
+
+## 33. ADR — Aprendizajes SEO/AEO/GEO a las skills + Auditoría Nivel-2 #3 + Comité "futuro del cerebro" ⟦FABLE-5⟧ (2026-07-18)
+
+> Encargo directo de Daniel (el "TRABAJO" anunciado al cierre de §32): portar los aprendizajes REALES de producción
+> bersaglio a las skills de visibilidad, auditar TODAS las skills, y auditar el cerebro holísticamente + responder
+> "¿hay algo mejor que esta idea del cerebro?". `Deliberación:` crudos en bóveda `2026-07-18-auditoria-skills-crudo.json`
+> + `2026-07-18-comite-futuro-cerebro-crudo.json` + `2026-07-18-sondas-3-4-7-crudo.json` + síntesis
+> `2026-07-18-auditoria-cerebro-nivel2-3-inmobiliaria.md` (workflow 11 agentes, 1.4M tok, 0 errores).
+
+**33.1 Causa raíz / disparador**: el doc fuente (`bersaglio/docs/superpowers/specs/2026-07-17-aprendizajes-SEO-AEO-GEO-para-skills.md`)
+trae 3 CORRECCIONES al borrador del 07-10 que nuestras skills repetían: (a) `Offer` sin `price` es **INVÁLIDO** (GSC 17/17;
+el pseudo-código de `semantic-schema-aeo` emitía exactamente ese patrón PreOrder-sin-price); (b) keyword+ciudad en el
+NOMBRE del GBP = riesgo de SUSPENSIÓN; (c) "Solicitar indexación" solo sirve para DESCUBRIMIENTO. + `FAQPage` sin rich
+result desde 2026-05-07 (doc oficial) y `aggregateRating` del GBP = self-serving prohibido (ambas vendidas por las skills).
+
+**33.2 Solución estructural**: (1) **4 skills actualizadas** (`search-console-…`, `ssg-static-prerender`, `semantic-schema-aeo`,
+`maps-gbp-local`) — correcciones EDITADAS sobre el texto viejo (no apendizadas), ❓ portados como HIPÓTESIS, + tabla de 4
+estados GSC, CONTAR≠MUESTREAR, cáscara-noindex+horneada, truco geo del GBP, orden de palancas; también `seo-auditor.md`
+(agente ×3 copias), `tenant-config.md` (priceDisplay:consulta → OMITIR offers) y anotación fechada en `schema-markup`.
+(2) **Auditoría de ~30 skills** (32 hallazgos): ALTA Wompi (contratos OPUESTOS ante firma inválida de webhook → unificado
+a HTTP-200-sin-procesar + idempotencia event.id/transaction.id+status) · voz-altorra (ejemplo del Test de Alma usaba el
+literal PROHIBIDO "somos de aquí" → corregido; Meta Housing marcado [A VERIFICAR] consistente) · proceso-decision-fuerte
+(Entrega (c) contradecía su REGLA DURA → reporte-live; citas L-NN prefijadas cars-) · validacion-live-chrome (description
+vendía el fallback como default → DIRECTO primero) · ga4 (variable `utm` MUERTA → hash en texto+evento) · +bajas
+(deadcode:check cars-only, 2.3.3=AAA, 5 días HÁBILES, rutas). **5 gemelas repo↔user DERIVADAS re-sincronizadas**
+(proceso 109 líneas atrás; onboarding AUSENTE en user-level). (3) **Auditoría Nivel-2 #3 del cerebro** (tabla G-01..G-12
+en bóveda): retrieval 5/5 ✅ · REINCIDENCIA M-01 (05 59 commits atrás → curado + **M-02**) · **TODA la bóveda estaba sin
+commitear** (un mes de deliberaciones solo en disco → commit+push `8398213`) · memoria del harness espejada a bóveda
+privada (`memory-mirror/`, cierra K-06/G-03) · `.claude/settings.json` versionado (G-04) · síntesis re-auditoría 07-17
+parcheada (exenciones intencionales + rutas mockups + aritmética 13→6, G-06) · GC pareado (05: 3860→3072c; 10 podado).
+(4) **Comité ×3 + presidente** (unánime): la idea del cerebro es CORRECTA; a $0 no hay nada mejor; Obsidian/Notion =
+downgrade; RAG vectorial/Letta RECHAZADOS (corpus 248KB: grep+índice curado es superior). El defecto real: consolidación
+al FINAL de sesión (saturación) → 7 mejoras priorizadas → TODO-28. Criterio de salida: boot revienta de nuevo / M-01
+reincide tras fix / mantenimiento >30% sostenido ⇒ recortar doctrina.
+
+**33.3 No-regresión**: skills = solo texto/documentación (0 código de producción tocado); portal INTACTO; kernel NO tocado
+(single-writer cars); `settings.json` versionado sin cambios de contenido. **33.4 Verificación**: greps post-parche (0
+patrones obsoletos residuales), hashes repo==user en las 12 parejas tocadas, `brain:check` SANO al cierre, bóveda pusheada
+`4edc40f..8398213`. **33.5 Anti-patterns evitados**: correcciones editadas EN el texto viejo (no apéndice que convive con
+la regla obsoleta) · hipótesis ❓ NO convertidas en reglas · no borrar la huérfana (límite de guardián) · no burlar el
+clasificador de push (pasos git separados, naturales). **33.6 Modificados**: 19 archivos `skills/` + 6 docs (05/10/30/
+skills-inventory/99/00) + manifest deepAudit + `.claude/settings.json` (nuevo en git) + bóveda (52 archivos). INTACTOS:
+`portal/`, kernel `scripts/brain-*.mjs`, CNAME, service-worker. **33.7 Doctrina**: §3.3 (verificado en prod > entrenamiento),
+§G.4 ampliado (bóveda commit+push en el cierre), L-30 + M-02 nuevas. Sin cache bump (shell intacto).
