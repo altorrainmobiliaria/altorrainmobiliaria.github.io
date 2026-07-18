@@ -50,7 +50,6 @@
 | **TODO-22** | **Auditoría Fable**: (a) ADR §22 `[REVISAR-FABLE]` (capa de datos); (b) decisión catálogo público SSG vs doc-índice (gatea datos reales). | 🔮 FABLE | |
 | **TODO-23** | 🔧 **Kernel hardening** (owner=cars, single-writer): K-01/02/04/05/09 + nuevos §33: priorizar warns en el truncado de `--boot` · gate #7 debe ver GIT de la bóveda · romper circularidad del boot-budget. **9/10 K sin resolver; kernel intacto desde 06-27 → SLA vencido, escalar por sinapsis.** | 🔴 kernel | §33 G-09 |
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). K-06 ✅ CERRADO §33 (espejo en bóveda). | 🟡 abierto | |
-| **TODO-25** | 📟 **deploy-info.json congelado** (F-03 §30): verificar runs GH Actions + reconciliar claim CLAUDE.md §1. Legacy → baja urgencia. | 🟡 abierto | sin `gh` |
 | **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **35 MEDIA/BAJA pendientes** (ficha 8 = primero). Síntesis de bóveda ya AUTOCONTENIDA (§33). Método L-29: diff vs `.dc.html` + re-auditar adversarial. | 🔄 OPUS | Frente 1 |
 | **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda; unánime "idea correcta, automatizar"): #1 hooks PreCompact/SessionEnd (mata M-01/M-02) · #2 candado del boot en pre-commit + one-in-one-out · #4 `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento en hechos (>90d = re-verificar). #3 (respaldo memoria) ✅ HECHO. Los kernel-side van vía sinapsis a cars. | 🟢 listo p/ejecutar | ~2-3 días, $0 |
 | **TODO-29** | 📣 **PAUTA Meta + Google Ads — fase CONSTRUCCIÓN**: base COMPLETA (§34-§35: Housing ✅ · masterclass+ganchos+cronograma ✅ · `paid-ads` v2.2 con meta-decision-system TCPL + google-search-playbook · `ad-creative` v2.8 · video/offers/marketing-loops/image adoptadas · Brief ✅). Siguiente: investigación seria (docs oficiales Meta/Google + grandes del marketing) → skill de pauta ALTORRA-específica sobre esa base + más material TikTok de Daniel según llegue. RNT = gate de alojamientos. | 🔄 activo | Frente 2 |
@@ -70,7 +69,9 @@
 > pauta · ad-creative v2.8 · video/offers/marketing-loops/image · 3 de referencia · tools descartado, APIs
 > muertas). **§36 lote 2**: BACKLOG acumulador creado (`brain-private/compartido-marketing/`) · 2 plantillas
 > nuevas (Search-Bar/Offer-Deadline) · matiz pruebas-de-Meta · guías Nova = conector Meta YA instalado (validar
-> cuentas CON Daniel; clasificador bloquea autónomo). Detalle → ADR §35-§36 + bóveda. **PRÓXIMO**: TODO-29
-> construcción. Frente 1 (ficha) sigue para Opus.
+> cuentas CON Daniel; clasificador bloquea autónomo). **TODO-25 CERRADO con evidencia**: el bot volvió a
+> bumpear solo (`cb20bc2 github-actions[bot]` tras nuestro push) — F-03 §30 se auto-curó; el claim de
+> CLAUDE.md §1 vuelve a ser cierto. Detalle → ADR §35-§36 + bóveda. **PRÓXIMO**: TODO-29 construcción.
+> Frente 1 (ficha) sigue para Opus.
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*
