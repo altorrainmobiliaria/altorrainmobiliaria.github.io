@@ -62,14 +62,9 @@
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-18 (FABLE-5 — §33)**: encargo Daniel ejecutado COMPLETO. (1) Aprendizajes SEO/AEO/GEO de bersaglio
-> portados a las 4 skills de visibilidad (correcciones EDITADAS, ❓=hipótesis) + `seo-auditor` + `tenant-config` +
-> nota en `schema-markup` → L-30. (2) Auditoría de ~30 skills: 32 hallazgos, ALTA/MEDIA curados (Wompi unificado,
-> voz-altorra, proceso, validacion, ga4…), 5 gemelas re-sincronizadas, inventario reescrito. (3) Auditoría Nivel-2
-> #3: retrieval 5/5 · reincidencia M-01 → M-02 · bóveda ENTERA respaldada (estaba sin commit, `8398213`) · memoria
-> harness espejada · settings.json versionado · síntesis 07-17 parcheada · GC pareado (05+10). (4) Comité ×3
-> unánime: el cerebro de Daniel es la arquitectura correcta a $0; 7 mejoras → TODO-28. Crudos en bóveda
-> `2026-07-18-*`.
+> **2026-07-18 (FABLE-5 — §33)**: skills SEO/AEO/GEO corregidas (→L-30) · 32 hallazgos de auditoría de skills
+> curados · auditoría Nivel-2 #3 (retrieval 5/5; M-01 reincidió →M-02; bóveda respaldada; memoria espejada;
+> GC pareado) · comité unánime pro-cerebro → TODO-28. Detalle COMPLETO → ADR §33 + bóveda `2026-07-18-*`.
 
 > **2026-07-18 tarde (FABLE-5 — §34)**: Daniel aclaró origen de la huérfana (SUYA, TikTok→Antigravity) y sentó 2
 > principios → memorias actualizadas (`reglas-operacion-daniel`: libre albedrío con skills/cerebros; `identidad-

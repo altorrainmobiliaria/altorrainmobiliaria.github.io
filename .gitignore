@@ -40,3 +40,6 @@ dist/
 
 # Material estrategico interno del dueno (respaldado en brain-private/pauta) - NO al repo publico
 Brief_Dise*.docx
+
+# Workspace de Antigravity (copia canonica de sus skills adoptadas vive en skills/)
+.agents/
