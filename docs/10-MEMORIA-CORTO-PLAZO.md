@@ -55,22 +55,16 @@
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-18 (FABLE-5 — §33)**: skills SEO/AEO/GEO corregidas (→L-30) · 32 hallazgos de auditoría de skills
-> curados · auditoría Nivel-2 #3 (retrieval 5/5; M-01 reincidió →M-02; bóveda respaldada; memoria espejada;
-> GC pareado) · comité unánime pro-cerebro → TODO-28. Detalle COMPLETO → ADR §33 + bóveda `2026-07-18-*`.
-
 > **2026-07-18 (FABLE-5 — §33-§39, CIERRE — RELEVO CURADO)**: skills SEO (§33) · masterclass+Housing (§34) ·
 > minería (§35) · backlog (§36) · `pauta-captacion`+investigación (§37) · **Meta ORDENADO en vivo** (§38:
 > cuenta reclamada · píxel `1032884172712946` · activos → `pauta-captacion/references/activos-meta.md`) ·
-> **constancias ×3 COMPLETAS** (§39, TODO-20 cerrado) · pauta de HUMO ~COP 5k (playbook §4b).
-> **Pendientes-dueño Meta**: abrir app WhatsApp Business en el teléfono · login IG · saldo. **▶ RETOMAR**:
+> **constancias ×3 COMPLETAS** (§39, TODO-20 cerrado) · pauta de HUMO ~COP 5k (playbook §4b). **▶ RETOMAR**:
 > boot normal → frente: (1) ficha del portal (Opus; síntesis de bóveda autocontenida) · (2) TODO-28 ·
 > (3) lotes TikTok / pauta de humo al estar los pendientes. Todo commiteado y pusheado ×4 repos + bóveda.
 
-> **2026-07-18 (FABLE-5 — post-§38, WhatsApp sync)**: Daniel abrió la app en el teléfono → verificado EN VIVO:
-> número +57 300 2439810 **Conectado** en el WABA · vínculo **página FB↔WhatsApp ✅** (número principal + CTA +
-> mostrar número ON) → gate CTWA de TODO-29 cumplido. Renombrar WABA: NO expuesto en la UI (verificado, no reintentar).
-> Alerta "falta método de pago" de WA Manager = solo plantillas, NO gate CTWA. `activos-meta.md` actualizado ×2 copias.
-> **Falta-dueño Meta**: login IG (pantalla dejada abierta en Chrome) · saldo.
+> **2026-07-18 (FABLE-5 — post-§38)**: WhatsApp sync EN VIVO: +57 300 2439810 **Conectado** + vínculo
+> página FB↔WhatsApp ✅ (principal+CTA ON) → gate CTWA cumplido. Renombrar WABA: no expuesto en UI (no
+> reintentar). Alerta pago WA Manager = solo plantillas. `activos-meta` ×2 al día. **Falta-dueño**:
+> login IG (pantalla abierta) · saldo. 🐛 kernel: boot-budget imprime ✅ estando >objetivo → sinapsis.
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*
