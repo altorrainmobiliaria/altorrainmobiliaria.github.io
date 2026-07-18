@@ -15,12 +15,31 @@ description: "ORQUESTADORA de la pauta de captación de propietarios de ALTORRA 
 |---|---|
 | Hooks, plantillas estáticas (Search-Bar/Offer-Deadline/Review/Before-After) | `ad-creative` v2.8 |
 | Dolor del propietario, ganchos, cronograma orgánico, guardarraíles legales CO | `marketing-psicologico-conversion` §1/§9b-d/§10 |
-| Voz, tuteo, barrios prohibidos, reglas de pauta | `catalogo-voz-altorra` §6.3 |
+| Voz, registro tú/usted (⚠️ **PROPIETARIOS = USTED**, §3.1), barrios prohibidos, reglas de pauta | `catalogo-voz-altorra` §3.1/§6.3 |
 | GA4 + Consent Mode v2 + `whatsapp_click` | `ga4-lead-tracking` |
 | Diagnóstico de campaña VIVA (3 preguntas) + higiene de cuenta + pre-audit landing | `meta-ads-diagnostico` |
 | Oferta al propietario (Value Equation) | `offers` |
 | Método kill/keep/scale + Andromeda + estructura Google Search | `paid-ads` v2.2 (⚠️ con los parches de vigencia 2026-07-18 en sus references) |
 | Las 3 piezas creativas | `Brief_Diseño_Piezas_Captacion` (bóveda `pauta/`) |
+
+## §0b EMBUDO CREATIVO obligatorio (mandato Daniel 2026-07-18: "el proceso debe ser pro, no una sola skill")
+Ninguna pieza ni copy que vaya a DINERO sale de una sola fuente ni de una sola pasada. Pipeline vinculante:
+1. **Grounding sweep** (SIEMPRE, antes de crear): Brief de bóveda (`pauta/`) + backlog TikTok
+   (`compartido-marketing/BACKLOG-material-tiktok.md`) + banco de ganchos (`marketing-psicologico-conversion §9b`)
+   + **espionaje Ads Library** (tool `ads_library_search`, país CO, términos del nicho → anotar patrones ACTIVOS
+   de la competencia) + preguntas reales de WhatsApp/comentarios/GSC cuando existan + métricas propias
+   (planilla CPQL / Ads Manager) cuando la cuenta ya tenga historia.
+2. **Generación multi-ángulo**: ≥3 candidatos por pieza (categorías del banco §9b + plantillas `ad-creative`).
+   Registro correcto: **propietarios = USTED** (ancla: "Usted descansa, nosotros nos encargamos").
+3. **Filtro de voz**: esencia + Test de Alma + §6.3 del catálogo. El telegráfico-robot reprueba igual que el folksy.
+4. **Crítica adversarial**: comité ×3 lentes (conversión / voz / cliente objetivo) para toda pieza que va a
+   dinero; consejo externo si además es Decisión Fuerte.
+5. **Aprobación de Daniel** (gate; siempre EN PAUSA antes del "sí").
+6. **Post-campaña**: métricas → iteración (Mode 2 de `ad-creative`); lo aprendido vuelve al banco y al backlog.
+🎨 **Receta visual adoptada (2026-07-18)**: fondo generado por IA (Google Flow / Nano Banana; prompt SIN texto,
+con paleta navy/oro y espacio negativo) + composición HTML/CSS con tokens reales de marca + render Playwright a
+píxel exacto (feed 1080² y stories 1080×1920 con márgenes 250px). El texto/logo NUNCA se le piden a la IA de
+imagen. Fuente editable en bóveda `pauta/outputs/`.
 
 ## §1 GATES legales go/no-go (bloqueantes ABSOLUTOS — estado 2026-07-18)
 1. **Matrícula de arrendador**: EXISTE ✅ — el NÚMERO lo entrega Daniel al CIERRE DE OBRA. Sin número visible

@@ -58,13 +58,13 @@
 > **2026-07-18 (FABLE-5 — §33-§39, CIERRE — RELEVO CURADO)**: §33-§39 consolidados (detalle → ADRs + bóveda) ·
 > **Meta ORDENADO en vivo** (§38: píxel `1032884172712946` · activos → `activos-meta.md`) · constancias ×3 (§39).
 > **▶ ORDEN DANIEL (07-18, tras la pieza)**: (1) TODO-28 · (2) lotes TikTok. (Ficha del portal sigue en Opus.)
-> **Pieza de HUMO VENTA ✅ HECHA** (artes+copy → bóveda `pauta/outputs/2026-07-18-humo/`, QC ×2 rondas):
-> falta OK de Daniel → montar la campaña EN PAUSA (naming/config → `copy-anuncio.md` de la bóveda).
+> **Pieza HUMO v4 FINAL** (embudo §0b completo: Ads Library+banco+comité ×3; USTED; bóveda `2026-07-18-humo/`):
+> falta OK de Daniel → montar EN PAUSA (config → `copy-anuncio.md`). Embudo cableado: skill §0b + L-31.
 
 > **2026-07-18 (FABLE-5 — post-§38)**: WhatsApp sync EN VIVO: +57 300 2439810 **Conectado** + vínculo
 > página FB↔WhatsApp ✅ (principal+CTA ON) → gate CTWA cumplido. Renombrar WABA: no expuesto en UI (no
 > reintentar). Alerta pago WA Manager = solo plantillas. `activos-meta` ×2 al día. **Falta-dueño**:
 > saldo. IG↔página CONECTADO ✅ y login BM-asset ✅ (OAuth web bugueado; salió VÍA CELULAR → `activos-meta`).
-> Centro de seguridad OK ✅ (dominio+protección → `activos-meta`). 🐛 kernel: boot-budget ✅ falso → sinapsis.
+> Centro seguridad ✅ (→`activos-meta`). 🐛 kernel: boot-budget ✅ falso → sinapsis.
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*
