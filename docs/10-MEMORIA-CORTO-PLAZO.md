@@ -64,7 +64,7 @@
 > **2026-07-18 (FABLE-5 — post-§38)**: WhatsApp sync EN VIVO: +57 300 2439810 **Conectado** + vínculo
 > página FB↔WhatsApp ✅ (principal+CTA ON) → gate CTWA cumplido. Renombrar WABA: no expuesto en UI (no
 > reintentar). Alerta pago WA Manager = solo plantillas. `activos-meta` ×2 al día. **Falta-dueño**:
-> saldo. IG↔página YA CONECTADO ✅ = pauta OK (login BM-asset OPCIONAL; OAuth con bug Meta → `activos-meta`).
+> saldo. IG↔página CONECTADO ✅ y login BM-asset ✅ (OAuth web bugueado; salió VÍA CELULAR → `activos-meta`).
 > Centro de seguridad OK ✅ (dominio+protección → `activos-meta`). 🐛 kernel: boot-budget ✅ falso → sinapsis.
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*
