@@ -45,22 +45,23 @@
 | **TODO-17** | **Ola 0 restos**: E2E "tras cache" en staging (gate T9) · deploy de rules (coordinado con retiro legacy, NO ahora) · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
 | **TODO-21** | **Lote-dueño**: entrega de Nº matrícula + Nº RNT (ya existen ✅; Daniel los da al CIERRE DE OBRA) · dirección física · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
 | **TODO-22** | **Auditoría Fable**: (a) ADR §22 `[REVISAR-FABLE]` (capa de datos); (b) decisión catálogo público SSG vs doc-índice (gatea datos reales). | 🔮 FABLE | |
-| **TODO-23** | 🔧 **Kernel hardening** (owner=cars, single-writer): K-01/02/04/05/09 + nuevos §33: priorizar warns en el truncado de `--boot` · gate #7 debe ver GIT de la bóveda · romper circularidad del boot-budget. **9/10 K sin resolver; kernel intacto desde 06-27 → SLA vencido, escalar por sinapsis.** | 🔴 kernel | §33 G-09 |
+| **TODO-23** | 🔧 **Kernel hardening** (owner=**INMOBILIARIA**, escritor único ×4 — el wording "cars" era stale, §41): K-01/02/04/05/09 + §33: priorizar warns en truncado `--boot` · gate #7 debe ver GIT de la bóveda · circularidad boot-budget. 1er fix aplicado 07-18 (✅-falso, §41); resto de K abiertos. | 🔴 kernel | §33 G-09 |
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). K-06 ✅ CERRADO §33 (espejo en bóveda). | 🟡 abierto | |
 | **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **35 MEDIA/BAJA pendientes** (ficha 8 = primero). Síntesis de bóveda ya AUTOCONTENIDA (§33). Método L-29: diff vs `.dc.html` + re-auditar adversarial. | 🔄 OPUS | Frente 1 |
-| **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda): **#1 ✅ 07-18** (`session-handoff.mjs` + hooks PreCompact/Stop/SessionEnd/boot-echo — mata M-01) · #2 candado del boot en pre-commit + one-in-one-out · #4 `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento (>90d). #3 ✅. Kernel-side vía sinapsis a cars. | 🔄 #1 ✅ · sigue #2 | $0 |
+| **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda): #1 ✅ (caja negra, §40) · **#2 ✅ 07-18 (§41)**: `boot-gate.mjs` bloqueante + poda −982c + one-in-one-out §G.5 + fix kernel ×3 · #3 ✅ · **sigue #4** `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento (>90d). | 🔄 sigue #4 | $0 |
 | **TODO-29** | 📣 **PAUTA — skill `pauta-captacion` CONSTRUIDA** ✅ (§37: playbook 1ª campaña Leads+CTWA+Higher-Intent · setup en orden · CAPI-Worker $0 · 8 parches de vigencia · CPQL propia = benchmark). **Qué falta para ENCENDER** (converge con cierre de obra): números matrícula/RNT (Daniel) · política de privacidad publicada · píxel+GA4 en el portal · landing verificada → campaña EN PAUSA → "sí" de Daniel. WhatsApp↔página FB ✅ (07-18, Conectado + CTWA listo). Mientras: lotes TikTok al backlog + creativos con `ad-creative`+Brief. | 🟢 lista p/encender | gate=obra |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-18 (FABLE-5 — §40, CIERRE — RELEVO CURADO)**: Meta 100% operativo · pieza de humo v4 **APROBADA
-> por Daniel** (embudo §0b completo) · TODO-28 #1 ✅ (caja negra) — detalle COMPLETO → **ADR §40** + bóveda
-> `2026-07-18-humo/`. 🐛 kernel p/sinapsis a cars: boot-budget imprime ✅ estando >objetivo (lo arregla #2).
-> **▶ RETOMAR (sesión fresca, OKs de Daniel dados)**: (1) **montar campaña HUMO EN PAUSA** (pieza aprobada;
-> config exacta → bóveda `copy-anuncio.md`; el mínimo lo alerta Ads Manager; dinero = "sí" aparte de Daniel;
-> pendiente-dueño: saldo) · (2) **TODO-28 #2** (poda CLAUDE.md + gate boot → kernel vía sinapsis) → #4-#7 ·
-> (3) **lotes TikTok / creativos backlog**. (Ficha del portal sigue en Opus — Frente 1.)
+> **2026-07-18 (FABLE-5 — §41, 2ª sesión del día)**: HUMO: Ads-MCP **re-verificado → la cuenta SIGUE sin
+> habilitar** (rollout Meta) → montaje reducido a runbook de 10 min (bóveda `2026-07-18-humo/
+> montaje-ads-manager-runbook.md`; por MCP si habilita, o EN VIVO con Daniel — NUNCA UI de dinero desatendida).
+> **TODO-28 #2 ✅** (gate + poda + fix kernel propagado ×3) → **ADR §41**. 📌 `multimedia/Piezas/*.jpeg` suelto
+> = duplicado EXACTO (md5) del fondo Flow ya respaldado en bóveda → no commitear; Daniel decide si lo borra.
+> **▶ RETOMAR**: (1) reintentar Ads-MCP al abrir sesión (`ads_get_ad_accounts`) → montar HUMO **EN PAUSA**
+> (runbook listo; saldo = pendiente-dueño; dinero = "sí" aparte) · (2) **TODO-28 #4** (`brain:kernel-pull`)
+> → #5-#7 · (3) **lotes TikTok / creativos backlog** (embudo §0b). (Ficha del portal sigue en Opus — Frente 1.)
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*

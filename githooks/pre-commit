@@ -25,4 +25,12 @@ if ! node scripts/brain-check.mjs; then
   echo "   Corrígelos, o usa 'git commit --no-verify' si es intencional."
   exit 1
 fi
+
+# 🔒 Candado del boot (TODO-28 #2, comité 2026-07-18): always-on > objetivo → NO pasa.
+# Provisional instance-side; cuando el gate suba al kernel (condición §173 ×3) este bloque se BORRA.
+if ! node scripts/boot-gate.mjs; then
+  echo ""
+  echo "❌ COMMIT BLOQUEADO: presupuesto de boot excedido — poda antes de commitear."
+  exit 1
+fi
 exit 0

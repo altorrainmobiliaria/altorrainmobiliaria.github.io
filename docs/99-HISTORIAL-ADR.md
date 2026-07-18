@@ -561,3 +561,32 @@ sin cambios (no se tocó el shell → sin cache bump).
 pendiente y es aparte (contrato de seguridad §2 del playbook).
 **40.7 Doctrina**: §3.3 (todo verificado en vivo con captura) · §G.4 captura completa (crudos del comité en bóveda,
 commiteada y pusheada) · L-31 nace y se aplica en la misma sesión · embudo §0b vinculante para toda pieza a dinero.
+
+## 41. ADR-041 — TODO-28 #2: candado del boot + dieta del router + fix kernel · HUMO bloqueado por rollout MCP (runbook listo)
+
+**41.1 Causa raíz** (verificada leyendo código/API): (a) el presupuesto de boot solo ADVERTÍA y se ignoró 3 veces
+(3 podas forzadas en 6 semanas — comité §33/bóveda futuro-cerebro); (b) bug del kernel: `brain-check.mjs:142-144`
+imprimía "✅ ≤ objetivo" con el boot ENTRE objetivo y 1.1× (rama else sin caso intermedio); (c) HUMO: la cuenta
+`1784008112275023` sigue `is_ads_mcp_enabled:false` ("gradually being rolled out") — 2ª verificación con
+`ads_get_ad_accounts` el mismo 07-18; el fallback navegador es EN VIVO con Daniel, no desatendido (superficie de dinero).
+**41.2 Solución estructural**: (i) `scripts/boot-gate.mjs` — replica la medición EXACTA del kernel
+(`readFileSync utf-8 → .length`; validado: mismo 31111c) y BLOQUEA el commit si always-on > `bootCharsTarget`;
+cableado en `githooks/pre-commit`; (ii) poda quirúrgica del router **−982c netos (31111→30129, margen 1371c)**:
+duplicación (§7↔G.1/G.2 · §4↔§1), violaciones SSoT (secrets/áreas → `50`/`20`) y 2 hechos STALE corregidos
+(marca decía "design system nace en D0/D1" → SELLADO §23; §7 decía "deploy lo hace el dueño" → delegado §2);
+(iii) regla **one-in-one-out** en §G.5 con gate declarado (Regla de ADMISIÓN, no [HONOR]); (iv) fix del kernel
+(rama leve-exceso) + propagación byte-idéntica ×3 (md5 `d060c3da` en inmobiliaria/cars/bersaglio — los peers
+la commitean en su próxima sesión); (v) HUMO reducido a runbook ejecutable:
+bóveda `pauta/outputs/2026-07-18-humo/montaje-ads-manager-runbook.md` (push `b459ab1`) — por MCP si Meta habilita, o 10 min en vivo.
+**41.3 No-regresión**: kernel sigue READ-ONLY (reporta, no modifica); gate inerte si el manifest no declara target;
+cero código de producto tocado; SW `v5` intacto (sin cache bump).
+**41.4 Verificación**: `boot-gate` OK (30129≤31500) · `brain:check` SANO 16 checks · md5 kernel idéntico ×3 ·
+`activos-meta.md` sincronizada repo↔user.
+**41.5 Anti-patterns evitados**: montar pauta por UI desatendida (NO — dinero exige a Daniel presente) · responder
+la auditoría con MÁS doctrina (comité: va a hooks/gates; la única línea nueva pagó con poda 4×) · wording stale
+"kernel owner=cars" corregido: el escritor único ×4 es INMOBILIARIA (ADR §15 + skill sinapsis).
+**41.6 Archivos**: mod `CLAUDE.md` · `scripts/brain-check.mjs` (+copias cars/bersaglio) · `githooks/pre-commit` ·
+`skills/pauta-captacion/references/activos-meta.md` (+user) · docs `00/05/10/99`; nuevo `scripts/boot-gate.mjs`;
+INTACTOS `portal/`, `service-worker.js`, todo el sitio.
+**41.7 Doctrina**: §3.3 (cada afirmación con evidencia de ESTE turno) · §G.4 (bóveda commiteada y pusheada en el
+cierre) · §G.5 one-in-one-out vigente desde hoy. Dato útil: mínimo diario API para COP ≈ 3.319/día.
