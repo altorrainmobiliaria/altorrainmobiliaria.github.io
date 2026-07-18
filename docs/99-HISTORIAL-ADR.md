@@ -663,3 +663,35 @@ Cerebro: este ADR + `00` + `10` + `05`. INTACTOS: PropertyCard/Header/Footer/tok
 **43.7 Doctrina + cache**: L-29 (contar contra la fuente + re-audit adversarial), L-28 (getComputedStyle miente con `transition`),
 §3.3 (evidencia archivo:línea), §3.7 (comité adversarial por iniciativa propia). **Sin cache bump** (portal greenfield no tiene
 SW; el `altorra-pwa-v5` rige solo el legacy — L-24/K-10). Sigue TODO-27: turismo 8 · estancias 8 · serp 7 · home 2 · publicar 2.
+
+## 44. ADR-044 — brain-kit v1.0: kit de neurogénesis portable para terceros (encargo Daniel) ⟦FABLE-5⟧ (2026-07-18)
+
+**44.1 Contexto**: Daniel pidió migrar el cerebro (versión vigente) + skills + agents al proyecto de un amigo
+(MacBook, Node+Firebase+GitHub, cerebro viejo monolítico con mucha documentación). Decisión de canal (suya): ZIP
+por WhatsApp; el amigo descomprime en su repo y SU Fable 5 ejecuta la instalación. Este operador = escritor único
+del kernel ×4 → empaquetar la versión vigente es su carril.
+**44.2 Solución**: **kit de neurogénesis** en `C:\Users\romad\Documents\GitHub\brain-kit\` (carpeta NO-repo, fuente
+de futuras versiones) → `Desktop\brain-kit-v1.0.zip` (0,6 MB, 205 entradas). Contenido: kernel 5 scripts + pre-commit
+(**fork deliberado**: procedencia limpiada, mensajes portables, PATH homebrew/nvm — funcionalidad idéntica; el amigo
+NO es peer: su manifest lleva `peers:[]`, el check #11 nuestro no lo ve) · plantillas (CLAUDE genérico §0/§G completo
+parametrizado + 6 neuronas + manifest + settings con `$CLAUDE_PROJECT_DIR`) · **38 skills** (todas las user-level
+MENOS catalogo-voz ×2 / pauta-captacion / sinapsis-cerebros — datos/estrategia nuestros — y ssg-static-prerender —
+infra HUB no portable) · 5 agents · `INSTALACION-HUMANO.md` (5 pasos) + `INSTALACION-FABLE.md` (10 fases con gates:
+preflight → cuarentena `_legacy/` → kernel → neurogénesis+entrevista al dueño (nombre/trato/rol/git/reglas) → bóveda
+→ skills/agents → hooks → **F7 minería exhaustiva del cerebro viejo con `_legacy/TRIAJE.md` al 100%** → verificación+
+commit → **F9 escaneo total + comité ×3 + consejo externo → propuestas al dueño**; F7/F9 ampliadas por orden de Daniel).
+**44.3 No-regresión**: cero archivos del repo tocados por el kit (vive fuera); nuestras skills user-level INTACTAS
+(el kit lleva copias); kernel nuestro intacto (peer-hash ×3 sigue verde).
+**44.4 Verificación**: workflow adversarial 4 rompedores (654k tok) — dry-run EJECUTANDO el kernel en repo simulado
+(2 escenarios: con/sin cerebro previo) + fugas + macOS + coherencia → **25 hallazgos (1 bloqueante), TODOS aplicados**
+y re-verificados: QA final = 0 fugas (altorra/bersaglio/Daniel = 0 archivos) · 0 RELLENAR · 0 rutas de máquina ·
+sintaxis 5 scripts + sh OK · LF puro · JSONs válidos · ZIP abre con `brain-kit/` raíz.
+**44.5 Anti-patterns evitados**: copiar contenido de memoria nuestro al tercero (neurogénesis contra SU repo —
+lección de cars: un copy que no aplica = no-op silencioso = falsa cobertura) · pisar lo del amigo (merge de
+package.json/settings/hooks husky documentado) · borrar historia (cuarentena
+`_legacy/` + TRIAJE) · confiar en el "a ojo" (el dry-run halló 1 bloqueante garantizado que el autor no vio).
+**44.6 Archivos**: kit completo (fuera del repo) + ZIP. Bóveda: `2026-07-18-brain-kit-verificacion-{crudo.json,sintesis.md}`.
+Cerebro: este ADR + fila `00` + bitácora `10`.
+**44.7 Doctrina**: §3.7 (verificación adversarial por iniciativa propia) · L-29 extendida a **documentación ejecutable**
+(un runbook que otros ejecutan sin ti exige dry-run mecánico contra el código real) · §G.4 captura (crudo+síntesis).
+Sin cache bump (nada del sitio). Futuras versiones: editar `brain-kit/` → re-verificar → re-zipear vX.Y.

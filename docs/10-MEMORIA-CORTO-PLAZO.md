@@ -56,6 +56,12 @@
 
 ## 📝 Bitácora (efímera)
 
+> **2026-07-18 (FABLE-5 — §44)**: **brain-kit v1.0 ✅ ENTREGADO** — kit de neurogénesis para el amigo de Daniel
+> (ZIP en `Desktop\brain-kit-v1.0.zip`; Daniel lo pasa por WhatsApp; instala el Fable del amigo con
+> `INSTALACION-FABLE.md`). Verificación adversarial 4 rompedores → 25 hallazgos (1 bloqueante) TODOS aplicados;
+> 0 fugas. Fuente del kit: `GitHub/brain-kit/` (futuras versiones = editar → re-verificar → re-zipear).
+> Detalle → §44 + bóveda `2026-07-18-brain-kit-verificacion-*`.
+
 > **2026-07-18 (OPUS-4.8 — §43)**: **TODO-27 ficha ✅** — 8 hallazgos + la 3ª card ALTA que §32.24 nunca tocó
 > (`3a66a69` era HOME, no la ficha) + 1 del crítico de completitud. Verificado: build + DOM vivo + toggle real +
 > **re-audit adversarial** (9+1 agentes → 8/9 FIEL). L-28 recurrió (computed miente con `transition`). Bóveda `2026-07-18-ficha-reaudit-*`.
