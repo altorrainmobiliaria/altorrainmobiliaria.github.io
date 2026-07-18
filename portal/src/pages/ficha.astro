@@ -1,8 +1,8 @@
 ---
 /*
  * FICHA de inmueble (Ola 1) — réplica de ALTORRA Ficha.dc.html. Demo estática (1 propiedad).
- * Reutiliza Header/Footer/PropertyCard. Sin gráficas (regla Daniel). Sello "Verificado por ALTORRA"
- * (.alt-seal de D1). Mapa/POIs = esquemático (MapLibre real = follow-up). Contacto vía SITE.
+ * Reutiliza Header/Footer/PropertyCard. Sin gráficas (regla Daniel).
+ * Mapa/POIs = esquemático (MapLibre real = follow-up). Contacto vía SITE.
  */
 export const prerender = true;
 
@@ -12,7 +12,7 @@ import Footer from '../components/Footer.astro';
 import PropertyCard from '../components/PropertyCard.astro';
 import { SITE } from '../lib/config/site';
 
-const gallery = ['/assets/villa-pool.webp', '/assets/villa-modern.webp', '/assets/estate-golden.webp', '/assets/chalet-dusk.webp'];
+const gallery = ['/assets/villa-pool.webp', '/assets/villa-modern.webp', '/assets/estate-golden.webp', '/assets/villa-modern.webp'];
 
 const specs = [
   { i: '<path d="M2 4v16"/><path d="M2 9h16a3 3 0 0 1 3 3v8"/><path d="M2 15h20"/><path d="M6 9V7a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v2"/>', v: '3', l: 'Habitaciones' },
@@ -31,20 +31,24 @@ const amenities = [
   { i: '<rect x="6" y="3" width="12" height="18" rx="1.5"/><path d="M12 7l-2 2h4zM12 17l-2-2h4z"/>', t: 'Ascensor privado' },
   { i: '<path d="M4 8h9a2.5 2.5 0 1 0-2.5-2.5M4 12h13a2.5 2.5 0 1 1-2.5 2.5M4 16h8a2.5 2.5 0 1 1-2.5 2.5"/>', t: 'Aire acondicionado' },
   { i: '<path d="M4 10h16M6 10v8M10 10v8M14 10v8M18 10v8M3 18h18M6 10l6-4 6 4"/>', t: 'Balcón corrido' },
-  { i: '<path d="M3 21V5a2 2 0 0 1 2-2h5v18M14 21V9h5a1 1 0 0 1 1 1v11M3 21h18"/>', t: 'Muelle privado' },
+  { i: '<path d="M3 21V5a2 2 0 0 1 2-2h5v18M14 21V9h5a1 1 0 0 1 1 1v11M3 21h18"/><path d="M6 7h1M6 11h1M6 15h1"/>', t: 'Muelle privado' },
 ];
 
 const tecnica = [['Tipo', 'Apartamento'], ['Piso', '8 de 12'], ['Área privada', '142 m²'], ['Administración', '$1.200.000 / mes'], ['Estrato', '6'], ['Estado', 'Entrega inmediata']];
 
 const pois = [
-  { t: 'Malecón & Bahía', min: '2 min' }, { t: 'Club Naval', min: '4 min' }, { t: 'C.C. Bocagrande', min: '6 min' },
-  { t: 'Colegio Británico', min: '8 min' }, { t: 'Ciudad Amurallada', min: '9 min' }, { t: 'Aeropuerto Rafael Núñez', min: '15 min' },
+  { i: '<path d="M2 15c2 0 2 1.4 4 1.4s2-1.4 4-1.4 2 1.4 4 1.4 2-1.4 4-1.4 2 1.4 4 1.4"/><path d="M2 19c2 0 2 1.4 4 1.4s2-1.4 4-1.4 2 1.4 4 1.4 2-1.4 4-1.4 2 1.4 4 1.4"/>', t: 'Malecón & Bahía', min: '2 min' },
+  { i: '<circle cx="12" cy="5" r="2"/><path d="M12 7v13M5 13a7 7 0 0 0 14 0M3 13h2M19 13h2"/>', t: 'Club Naval', min: '4 min' },
+  { i: '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>', t: 'C.C. Bocagrande', min: '6 min' },
+  { i: '<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 3 6 3s6-2 6-3v-5"/>', t: 'Colegio Británico', min: '8 min' },
+  { i: '<path d="M3 21h18M5 21V10M19 21V10M4 10 12 4l8 6z"/><path d="M9 21v-6h6v6"/>', t: 'Ciudad Amurallada', min: '9 min' },
+  { i: '<path d="M17.8 19.2 16 11l3.5-3.5a2.1 2.1 0 0 0-3-3L13 8 4.8 6.2a.5.5 0 0 0-.5.8l3.4 3.4-2.3 2.3-1.9-.5-.9.9 2.6 1.9L9 20.6l.9-.9-.5-1.9 2.3-2.3 3.4 3.4a.5.5 0 0 0 .8-.5z"/>', t: 'Aeropuerto Rafael Núñez', min: '15 min' },
 ];
 
 const similares = [
-  { img: '/assets/villa-modern.webp', alt: 'Casa republicana restaurada', badge: 'En venta', zona: 'Manga', beds: 4, baths: 3, area: '210 m²', title: 'Casa republicana restaurada', price: '$980.000.000', priceLabel: 'Desde', href: '/ficha' },
-  { img: '/assets/estate-golden.webp', alt: 'Penthouse frente al mar', badge: 'En venta', zona: 'Bocagrande', beds: 3, baths: 4, area: '188 m²', title: 'Penthouse frente al mar', price: '$2.100.000.000', priceLabel: 'Desde', href: '/ficha' },
-  { img: '/assets/chalet-dusk.webp', alt: 'Casa con jardín', badge: 'En venta', zona: 'Castillogrande', beds: 4, baths: 4, area: '260 m²', title: 'Casa con jardín en Castillogrande', price: '$3.400.000.000', priceLabel: 'Desde', href: '/ficha' },
+  { img: '/assets/villa-modern.webp', alt: 'Casa republicana restaurada', zona: 'Manga', beds: 4, baths: 3, area: '210 m²', title: 'Casa republicana restaurada', price: '$980.000.000', href: '/ficha' },
+  { img: '/assets/estate-golden.webp', alt: 'Penthouse frente al mar', zona: 'Bocagrande', beds: 4, baths: 4, area: '260 m²', title: 'Penthouse frente al mar', price: '$2.100.000.000', href: '/ficha' },
+  { img: '/assets/villa-pool.webp', alt: 'Casa familiar cerca del mar', zona: 'Crespo', beds: 3, baths: 2, area: '120 m²', title: 'Casa familiar cerca del mar', price: '$760.000.000', href: '/ficha' },
 ];
 
 const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con vista a la bahía en Castillogrande.');
@@ -91,7 +95,7 @@ const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con v
             <p class="ficha-addr">Carrera 5 · Castillogrande, Cartagena de Indias</p>
           </div>
           <div class="ficha-actions">
-            <button class="ficha-iconbtn" type="button" aria-label="Guardar en favoritos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
+            <button class="ficha-iconbtn ficha-fav" type="button" aria-label="Guardar en favoritos" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></button>
             <button class="ficha-iconbtn" type="button" aria-label="Compartir"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg></button>
           </div>
         </div>
@@ -120,7 +124,6 @@ const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con v
           <p class="ficha-price__sub">$10.211.000 / m² · Administración $1.2M</p>
           <a class="alt-btn alt-btn--navy ficha-price__cta" href={`${SITE.contact.whatsappLink}?text=${waMsg}`}>Agendar visita<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
           <a class="ficha-price__alt" href={`mailto:${SITE.contact.email}`}>Solicitar información</a>
-          <span class="alt-seal ficha-seal"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/><path d="M9 12l2 2 4-4"/></svg> Verificado por ALTORRA</span>
           <div class="ficha-advisor">
             <span class="ficha-advisor__ini">MR</span>
             <div class="ficha-advisor__info">
@@ -135,7 +138,7 @@ const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con v
           <p class="alt-eyebrow">Financiación</p>
           <p class="ficha-fin__val">Desde $7.9M / mes</p>
           <p class="ficha-fin__sub">Crédito hipotecario a 20 años · cuota inicial 30%</p>
-          <a class="alt-link-ul" href="/comprar">Simular mi crédito</a>
+          <a class="alt-link-ul ficha-fin__link" href="/comprar">Simular mi crédito<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
       </aside>
     </div>
@@ -174,18 +177,27 @@ const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con v
           </div>
           <div class="ficha-poi">
             <p class="alt-eyebrow">Puntos de interés</p>
-            {pois.map((p) => <div class="ficha-poi__row"><span>{p.t}</span><span class="ficha-poi__min">{p.min}</span></div>)}
+            {pois.map((p) => (
+              <div class="ficha-poi__row">
+                <span class="ficha-poi__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={p.i}></svg></span>
+                <span class="ficha-poi__t">{p.t}</span>
+                <span class="ficha-poi__min">{p.min}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
+    </div>
 
-      <section class="ficha-sec">
+    <!-- Banda de cierre: Propiedades similares (fuera de .ficha-secs) -->
+    <section class="ficha-closer">
+      <div class="ficha-closer__in">
         <h2>Propiedades similares</h2>
         <div class="ficha-similar">
           {similares.map((p) => <PropertyCard {...p} />)}
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   </main>
 
   <Footer />
@@ -225,6 +237,7 @@ const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con v
   .ficha-iconbtn { width: 44px; height: 44px; border-radius: var(--alt-r-sm); border: 1px solid var(--alt-hairline-2); background: var(--alt-white); color: var(--alt-link); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease); }
   .ficha-iconbtn svg { width: 19px; height: 19px; }
   .ficha-iconbtn:hover { border-color: var(--alt-gold); color: var(--alt-link); }
+  .ficha-fav[aria-pressed='true'] { background: var(--alt-ink); border-color: var(--alt-ink); color: var(--alt-gold-bright); }
 
   .ficha-specs { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 14px; padding: 26px 0; border-bottom: 1px solid var(--alt-hairline); }
   .ficha-spec { display: flex; flex-direction: column; gap: 8px; }
@@ -246,7 +259,6 @@ const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con v
   .ficha-price__cta { width: 100%; }
   .ficha-price__alt { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; margin-top: 10px; padding: 14px; border-radius: var(--alt-r-sm); background: var(--alt-white); border: 1px solid var(--alt-gold); color: var(--alt-link); font-weight: var(--alt-fw-semibold); font-size: 14.5px; text-decoration: none; transition: background var(--alt-dur) var(--alt-ease); }
   .ficha-price__alt:hover { background: var(--alt-mist); }
-  .ficha-seal { margin-top: 16px; }
   .ficha-advisor { display: flex; align-items: center; gap: 13px; margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--alt-hairline); }
   .ficha-advisor__ini { width: 52px; height: 52px; border-radius: 50%; background: var(--alt-ink); display: flex; align-items: center; justify-content: center; flex: none; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 19px; color: var(--alt-gold-bright); }
   .ficha-advisor__info { flex: 1; }
@@ -258,6 +270,8 @@ const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con v
   .ficha-fin { background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-lg); padding: 24px; }
   .ficha-fin__val { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 24px; color: var(--alt-ink); margin: 6px 0 2px; }
   .ficha-fin__sub { font-size: 12.5px; color: var(--alt-text); margin-bottom: 16px; }
+  .ficha-fin__link svg { width: 15px; height: 15px; margin-left: 7px; vertical-align: -2px; transition: transform var(--alt-dur) var(--alt-ease); }
+  .ficha-fin__link:hover svg { transform: translateY(-2px); }
 
   /* Secciones inferiores */
   .ficha-secs { max-width: 1300px; margin-inline: auto; padding: 2px clamp(16px, 4vw, 48px) 64px; }
@@ -281,10 +295,17 @@ const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con v
   .ficha-locmap__pin::after { content: ''; position: absolute; left: 50%; bottom: -4px; width: 9px; height: 9px; background: var(--alt-ink); transform: translateX(-50%) rotate(45deg); }
   .ficha-locmap__note { position: absolute; bottom: 12px; right: 14px; font-size: 9.5px; color: rgba(27, 39, 51, 0.4); }
   .ficha-poi { background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-lg); padding: 22px 26px; }
-  .ficha-poi__row { display: flex; align-items: center; justify-content: space-between; gap: 13px; padding: 13px 0; border-bottom: 1px solid var(--alt-hairline); font-size: 14px; color: var(--alt-ink); }
+  .ficha-poi__row { display: flex; align-items: center; gap: 13px; padding: 13px 0; border-bottom: 1px solid var(--alt-hairline); font-size: 14px; color: var(--alt-ink); }
   .ficha-poi__row:last-child { border-bottom: 0; }
+  .ficha-poi__ic { flex: none; display: inline-flex; color: var(--alt-ink); }
+  .ficha-poi__ic svg { width: 18px; height: 18px; }
+  .ficha-poi__t { flex: 1; }
   .ficha-poi__min { font-size: 12.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-text); }
 
+  /* Banda de cierre: Propiedades similares (fuera de .ficha-secs, ancho/padding propios, h2 mayor) */
+  .ficha-closer { background: var(--alt-white); border-top: 1px solid var(--alt-hairline); }
+  .ficha-closer__in { max-width: 1300px; margin-inline: auto; padding: clamp(44px, 5vw, 68px) clamp(16px, 4vw, 48px); }
+  .ficha-closer h2 { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(26px, 3vw, 36px); color: var(--alt-ink); letter-spacing: normal; margin-bottom: 26px; }
   .ficha-similar { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: clamp(18px, 2vw, 26px); }
 
   @media (max-width: 620px) {
@@ -305,5 +326,12 @@ const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con v
       document.querySelectorAll('.ficha-thumb').forEach((b) => b.classList.remove('is-on'));
       btn.classList.add('is-on');
     });
+  });
+
+  // Favorito del encabezado: alterna estado on/off (navy + oro), como el toggleFav del mockup.
+  const fav = document.querySelector('.ficha-fav');
+  fav?.addEventListener('click', () => {
+    const on = fav.getAttribute('aria-pressed') === 'true';
+    fav.setAttribute('aria-pressed', on ? 'false' : 'true');
   });
 </script>
