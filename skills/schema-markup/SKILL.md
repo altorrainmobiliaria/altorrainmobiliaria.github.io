@@ -84,6 +84,11 @@ Recommended: sku, brand, aggregateRating, review
 ### FAQPage
 Required: mainEntity (array of Question/Answer pairs)
 
+> ⚠️ **Corrección local (2026-07-17, doc oficial de Google)**: `FAQPage` **ya NO produce rich result** en
+> Google Search (deprecación TOTAL desde 2026-05-07; GSC eliminó el informe FAQ). El schema sigue siendo
+> válido para que Google *entienda* la página, pero NO prometas acordeón/espacio en el SERP. Lo que vale es
+> la FAQ **VISIBLE** (AEO: los LLM citan Q&A extraíble). Ver `semantic-schema-aeo` (fuente de verdad del HUB).
+
 ### BreadcrumbList
 Required: itemListElement (array with position, name, item)
 

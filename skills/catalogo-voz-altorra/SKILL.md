@@ -161,7 +161,7 @@ Quítale a la frase el adjetivo bonito o el superlativo. Si lo que queda no dice
 - "transparencia radical" → "transparencia", que dice cualquiera. Arreglo: bajarla a prueba (la matrícula en el footer) y dejar que la calidez lidere.
 - "certeza absoluta" → "certeza", promesa que ninguna inmobiliaria sostiene. Arreglo: "los papeles al día y cada firma revisada".
 
-Frase que **pasa** (nada que quitar): "Somos de aquí y respondemos por cada documento que firmas."
+Frase que **pasa** (nada que quitar): "Revisamos cada documento antes de mostrártela y respondemos por cada firma." *(corregido 2026-07-18: el ejemplo anterior usaba "somos de aquí", literal PROHIBIDO en §3.2)*
 
 ### 3.5 Gate rápido (3 preguntas, uso ágil)
 
@@ -315,7 +315,7 @@ Aquí la voz se toma más aire: analiza el mercado, explica el porqué de los pr
 
 ### 6.3 Guía de pauta (Meta)
 
-- **Vivienda es categoría especial en Meta (Housing / Special Ad Category).** Hay que declararla al crear la campaña: restringe la segmentación (sin edad, género, radio fino ni públicos similares estándar) y endurece la revisión de textos. Si no se declara, Meta puede tumbar o limitar el anuncio.
+- **Vivienda es categoría especial en Meta (Housing / Special Ad Category)** — ⚠️ **[A VERIFICAR antes de pautar** (mismo pendiente que §0/§9): históricamente aplica a anuncios dirigidos a EE.UU./Canadá; confirmar en la doc oficial de Meta si rige para pauta dirigida a Colombia**]**. Si aplica: declararla al crear la campaña (restringe segmentación y endurece revisión de textos; no declararla puede tumbar el anuncio). Resolver esta duda = tarea previa #1 de las futuras skills de pauta.
 - **Prohibido en pauta:** superlativos de liderazgo, garantías de resultado, "precios desde", el número personal del dueño.
 - **Obligatorio:** RNT visible en alojamiento (sin RNT, no se pauta); matrícula en arriendo; aviso de tratamiento de datos en la landing si el anuncio capta datos (Ley 1581/2012).
 - **Tono en pauta:** cálido pero comprimido. Una escena concreta, el hecho que da confianza, el paso siguiente. Nada de adjetivos apilados.
