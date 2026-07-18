@@ -49,19 +49,19 @@
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). K-06 ✅ CERRADO §33 (espejo en bóveda). | 🟡 abierto | |
 | **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **35 MEDIA/BAJA pendientes** (ficha 8 = primero). Síntesis de bóveda ya AUTOCONTENIDA (§33). Método L-29: diff vs `.dc.html` + re-auditar adversarial. | 🔄 OPUS | Frente 1 |
 | **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda): #1 ✅ (caja negra, §40) · **#2 ✅ 07-18 (§41)**: `boot-gate.mjs` bloqueante + poda −982c + one-in-one-out §G.5 + fix kernel ×3 · #3 ✅ · **sigue #4** `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento (>90d). | 🔄 sigue #4 | $0 |
-| **TODO-29** | 📣 **PAUTA — skill `pauta-captacion` CONSTRUIDA** ✅ (§37: playbook 1ª campaña Leads+CTWA+Higher-Intent · setup en orden · CAPI-Worker $0 · 8 parches de vigencia · CPQL propia = benchmark). **Qué falta para ENCENDER** (converge con cierre de obra): números matrícula/RNT (Daniel) · política de privacidad publicada · píxel+GA4 en el portal · landing verificada → campaña EN PAUSA → "sí" de Daniel. WhatsApp↔página FB ✅ (07-18, Conectado + CTWA listo). Mientras: lotes TikTok al backlog + creativos con `ad-creative`+Brief. | 🟢 lista p/encender | gate=obra |
+| **TODO-29** | 📣 **PAUTA**: skill ✅ (§37) · Meta ordenado ✅ (§38-§40) · **HUMO MONTADA Y PUBLICADA EN PAUSA ✅ (§42)**: campaña `120250036063330588`, $4.000/día, Desactivada, anuncio en revisión. **Encender humo = "sí" de Daniel + saldo** (~$5k). Al encender: verificar entrega/CPM/clic→chat correcto/facturación (fontanería §4b) → planilla CPQL. CAMPAÑA REAL converge con cierre de obra (números matrícula/RNT + privacidad + píxel+GA4 + landing). | 🟢 humo en pausa | enciende Daniel |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-18 (FABLE-5 — §41, 2ª sesión del día)**: HUMO: Ads-MCP **re-verificado → la cuenta SIGUE sin
-> habilitar** (rollout Meta) → montaje reducido a runbook de 10 min (bóveda `2026-07-18-humo/
-> montaje-ads-manager-runbook.md`; por MCP si habilita, o EN VIVO con Daniel — NUNCA UI de dinero desatendida).
-> **TODO-28 #2 ✅** (gate + poda + fix kernel propagado ×3) → **ADR §41**. 📌 `multimedia/Piezas/*.jpeg` suelto
-> = duplicado EXACTO (md5) del fondo Flow ya respaldado en bóveda → no commitear; Daniel decide si lo borra.
-> **▶ RETOMAR**: (1) reintentar Ads-MCP al abrir sesión (`ads_get_ad_accounts`) → montar HUMO **EN PAUSA**
-> (runbook listo; saldo = pendiente-dueño; dinero = "sí" aparte) · (2) **TODO-28 #4** (`brain:kernel-pull`)
-> → #5-#7 · (3) **lotes TikTok / creativos backlog** (embudo §0b). (Ficha del portal sigue en Opus — Frente 1.)
+> **2026-07-18 (FABLE-5 — §41+§42, sesión continua)**: **TODO-28 #2 ✅** (gate boot + poda + fix kernel ×3, §41)
+> · duplicado `multimedia/Piezas/` borrado (orden de Daniel; bóveda conserva el original) · **HUMO MONTADA Y
+> PUBLICADA EN PAUSA (§42)** por extensión Chrome con Daniel EN VIVO (él subió los JPG — el file-picker solo
+> acepta adjuntos del chat; CSP de Facebook mata fetch/localhost). Desactivada, $0, anuncio en revisión.
+> Gotchas nuevos → **L-32** (página default de CARS · radio-clicks fantasma · listbox virtualizado).
+> **▶ RETOMAR**: (1) **HUMO: esperar "sí" de Daniel + saldo → encender** (1 clic al toggle de campaña); al
+> encender, fontanería §4b (entrega/CPM/clic→chat/factura) · (2) **TODO-28 #4** (`brain:kernel-pull`) → #5-#7 ·
+> (3) creativos campaña real (embudo §0b) cuando Daniel entregue números. (Ficha del portal sigue en Opus.)
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*

@@ -39,7 +39,8 @@ período gratuito → **NO es gate para encender la pauta**. Se revisará si alg
 ## Nota MCP
 El conector oficial (`mcp.facebook.com/ads`) está instalado y responde; la cuenta activa aún dice
 *"Ads MCP is gradually being rolled out"* → hasta que Meta la habilite, la operación fina va por el
-navegador (como hoy). **Re-verificada 2ª vez el mismo 2026-07-18 (sesión posterior): sigue `false`** —
-re-verificar con `ads_get_ad_accounts` al inicio de cada sesión de pauta. Dato útil del API:
-`min_daily_budget` COP ≈ 3.319/día. El montaje del HUMO quedó reducido a runbook:
-bóveda `pauta/outputs/2026-07-18-humo/montaje-ads-manager-runbook.md` (10 min en vivo, o por MCP si ya habilitó).
+navegador (como hoy). **Re-verificada 3× el 2026-07-18: sigue `false`** — re-verificar con
+`ads_get_ad_accounts` al inicio de cada sesión de pauta. Dato útil del API: `min_daily_budget` COP ≈ 3.319/día.
+**El HUMO ya quedó MONTADO Y PUBLICADO EN PAUSA por extensión Chrome (ADR §42 · campaña `120250036063330588`);
+as-built + gotchas → bóveda `2026-07-18-humo/montaje-ads-manager-runbook.md` + L-32** (⚠️ Ads Manager defaultea
+a la página de CARS en este usuario multi-marca — verificar página/número SIEMPRE).

@@ -590,3 +590,31 @@ la auditoría con MÁS doctrina (comité: va a hooks/gates; la única línea nue
 INTACTOS `portal/`, `service-worker.js`, todo el sitio.
 **41.7 Doctrina**: §3.3 (cada afirmación con evidencia de ESTE turno) · §G.4 (bóveda commiteada y pusheada en el
 cierre) · §G.5 one-in-one-out vigente desde hoy. Dato útil: mínimo diario API para COP ≈ 3.319/día.
+
+## 42. ADR-042 — Campaña de HUMO MONTADA Y PUBLICADA EN PAUSA (vía extensión Chrome, con Daniel en vivo)
+
+**42.1 Contexto/causa**: Ads-MCP siguió bloqueado (3ª verificación 07-18) → Daniel ordenó "intentamos con la
+extensión". Montaje completo por claude-in-chrome sobre SU Ads Manager, con él presente (subió los 2 JPG:
+el file-picker de la extensión solo acepta adjuntos del chat, y el CSP de Facebook bloquea todo fetch/localhost).
+**42.2 Lo montado** (IDs: campaña `120250036063330588` · conjunto `...340588` · anuncio `...320588`):
+campaña `META_HUMO_Leads_CTWA_Propietarios-CTG_2026Q3` Leads/Subasta/CBO **$4.000 COP/día** · conjunto
+`HUMO_CTWA_CTG_amplio`: WhatsApp +57 300 2439810 ("Maximizar conversaciones"), **página Altorra Inmobiliaria**
+(⚠️ defaulteó a la de CARS — corregida; ver L-32), SOLO **Cartagena de Indias +40km**, Advantage+ amplio, 0
+intereses · anuncio `HUMO_venta_v4`: pieza FINAL 1080² + 1080x1920, copy v4 exacto (texto/título/desc), CTA
+"Enviar mensaje de WhatsApp", plantilla **"Iniciar conversaciones 18/07/2026"** (bienvenida USTED + prellenado
+"Hola, ALTORRA. Quiero vender mi propiedad en Cartagena." — SIN formulario) · **5 auto-mejoras Meta-AI APAGADAS**
+(música/retoques/animación/superposición/mejoras-texto; §36 verificado en vivo: TODAS venían ON por default) ·
+0 imágenes IA aceptadas · sin categoría especial (UI no la exigió — reconfirma §34).
+**42.3 Desviaciones documentadas del runbook**: edad mínima **25** (Advantage+ CAPA el control en 25 — no existe
+28; sugerencia igual) · idiomas "Todos" (la UI oficial dice limitar solo si el idioma NO es común en el lugar) ·
+"Optimizar texto por persona" quedó ON (Meta no expone apagarlo; solo re-ubica NUESTROS textos entre campos).
+**42.4 Verificación**: publicación confirmada por Meta ("1 campaña, 1 conjunto y 1 anuncio") · lista de campañas:
+**Entrega=Desactivado, toggle OFF, $0 gastado** · anuncio "Procesando" (revisión de Meta corre sin entregar —
+parte de la prueba de fontanería) · vista previa renderiza pieza+copy+botón WhatsApp correcto en feed y stories.
+**42.5 Contrato de seguridad INTACTO**: todo en pausa; ENCENDER = "sí" explícito de Daniel + saldo (~$5k cubre
+~1 día al mínimo). Gotchas de proceso: radio-clicks de Meta a veces NO registran (verificar con zoom ANTES de
+Siguiente — el 1er intento de plantilla editó la equivocada) · listbox de edad virtualizado ignora scroll/teclado
+sintético (escalera: seleccionar visible → reabrir).
+**42.6 Archivos**: cero código tocado; bóveda humo actualizada AS-BUILT; `activos-meta.md` (repo+user) con nota.
+**42.7 Doctrina**: dinero con Daniel presente ✅ · §0b intacto (pieza aprobada sin alteración IA) · §3.3 (cada
+paso verificado por screenshot/DOM; el resumen stale de plantilla se re-verificó por DOM antes de publicar).
