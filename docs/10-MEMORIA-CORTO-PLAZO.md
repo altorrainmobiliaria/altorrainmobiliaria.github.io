@@ -19,11 +19,14 @@
 > NUNCA inventar. Capas: build → estructura → computed (miente con `transition`, L-28) → screenshot Chrome → diff
 > vs fuente. Reusar piezas hechas (`.alt-rail`, `.alt-btn-sweep`, 6 cards NO intercambiables — ver síntesis).
 >
-> **FRENTE 2 — TODO-29: skills de PAUTA (Meta + Google Ads)** — mandato Daniel 2026-07-18. Base =
-> `meta-ads-diagnostico` + gap-analysis hecho (§33): faltan targeting/audiencias (**crítico: resolver Special Ad
-> Category Housing** — hoy [A VERIFICAR] en `catalogo-voz-altorra §6.3`) · estructura CBO/ABO/Advantage+ · píxel/
-> CAPI paso a paso · presupuestos · creativos · Google Ads casi entero. Insumos del dueño: `Brief_Diseño_Piezas_
-> Captacion.docx` + huérfana `.agents/` (TODO-30). ⚠️ RNT real = prerequisito de pauta de alojamientos.
+> **FRENTE 2 — TODO-29: skills de PAUTA (Meta + Google Ads)** — mandato Daniel 2026-07-18. ✅ Ya listo (§34):
+> Housing/Special Ad Category VERIFICADO en doc oficial (NO aplica a pauta→Colombia; SÍ si pautamos a EE.UU./
+> Canadá — ver `catalogo-voz-altorra §6.3`) · masterclass del dueño ADOPTADA (`marketing-psicologico-conversion`
+> +§10 guardarraíles) · Brief de captación leído y respaldado (bóveda `pauta/`). **Esperando: material TikTok que
+> Daniel enviará (revisarlo CRÍTICAMENTE — puede ser básico/vacío) + skills que descargue.** Luego: investigación
+> seria (docs oficiales Meta/Google + los grandes del marketing) → proceso de pauta 100% funcional. Gap-analysis
+> en §33 (falta: audiencias/CBO/Advantage+/píxel-CAPI/presupuestos/Google Ads). ⚠️ RNT = prerequisito de pauta de
+> alojamientos.
 >
 > **🎨 DISEÑO SELLADO — NO re-litigar** (SSoT `portal/src/styles/tokens.css` + ADR §23-§23.9 + memorias de marca):
 > paleta navy `#062743` · blanco · dorado `#D4AF37` · plata `#BFC3C9` · grises `#E6EDF2`/`#F2F6F9` · disciplina
@@ -53,8 +56,7 @@
 | **TODO-25** | 📟 **deploy-info.json congelado** (F-03 §30): verificar runs GH Actions + reconciliar claim CLAUDE.md §1. Legacy → baja urgencia. | 🟡 abierto | sin `gh` |
 | **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **35 MEDIA/BAJA pendientes** (ficha 8 = primero). Síntesis de bóveda ya AUTOCONTENIDA (§33). Método L-29: diff vs `.dc.html` + re-auditar adversarial. | 🔄 OPUS | Frente 1 |
 | **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda; unánime "idea correcta, automatizar"): #1 hooks PreCompact/SessionEnd (mata M-01/M-02) · #2 candado del boot en pre-commit + one-in-one-out · #4 `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento en hechos (>90d = re-verificar). #3 (respaldo memoria) ✅ HECHO. Los kernel-side van vía sinapsis a cars. | 🟢 listo p/ejecutar | ~2-3 días, $0 |
-| **TODO-29** | 📣 **Skills de PAUTA Meta + Google Ads** (mandato Daniel 2026-07-18): construir hermanas de CONSTRUCCIÓN de `meta-ads-diagnostico` — gap-analysis listo en §33. Tarea previa #1: resolver Meta **Housing/Special Ad Category** para Colombia (doc oficial). RNT = prerequisito de pauta de alojamientos. | 🔜 próximo | Frente 2 |
-| **TODO-30** | 🕳️ **Decisión del dueño**: (a) skill huérfana `.agents/skills/marketing-psicologico-conversion/` (¿adoptar a `skills/` con filtro de voz ALTORRA, o cuarentenar en `_legacy/`?) · (b) `Brief_Diseño_Piezas_Captacion.docx` en la raíz (¿lo leemos juntos para TODO-29? ¿se trackea?). NO borrar (límite de guardián). | ⏸️ dueño | insumos de pauta |
+| **TODO-29** | 📣 **Skills de PAUTA Meta + Google Ads**: prerequisitos LISTOS (§34: Housing verificado — no aplica a pauta→CO · masterclass adoptada · Brief leído/respaldado). **Esperando material TikTok de Daniel** → luego investigación seria (docs oficiales + grandes del marketing) → construir las skills. Gap-analysis en §33. RNT = gate de pauta de alojamientos. | 🔜 esperando insumo | Frente 2 |
 
 ---
 
@@ -67,6 +69,15 @@
 > #3: retrieval 5/5 · reincidencia M-01 → M-02 · bóveda ENTERA respaldada (estaba sin commit, `8398213`) · memoria
 > harness espejada · settings.json versionado · síntesis 07-17 parcheada · GC pareado (05+10). (4) Comité ×3
 > unánime: el cerebro de Daniel es la arquitectura correcta a $0; 7 mejoras → TODO-28. Crudos en bóveda
-> `2026-07-18-*`. **PRÓXIMO**: Frente 1 (ficha 8) con Opus, o TODO-28/29 según priorice Daniel.
+> `2026-07-18-*`.
+
+> **2026-07-18 tarde (FABLE-5 — §34)**: Daniel aclaró origen de la huérfana (SUYA, TikTok→Antigravity) y sentó 2
+> principios → memorias actualizadas (`reglas-operacion-daniel`: libre albedrío con skills/cerebros; `identidad-
+> marca`: la VOZ está EN FORJA, no sellada — norte: confianza→#1→ROI→leads→orgánico). Ejecutado: masterclass
+> ADOPTADA (`marketing-psicologico-conversion` repo+user, +paso 8 +§10 guardarraíles) · Brief leído + respaldado
+> (bóveda `pauta/`) + gitignored · **Housing/Special Ad Category RESUELTO con fuente primaria** (no aplica a
+> pauta→CO; sí a pauta→EE.UU./Canadá) · voz-altorra §0/§6.3 actualizada ×2 copias. **PRÓXIMO**: Daniel envía
+> material TikTok (revisar crítico) → investigación pauta → construir skills (TODO-29). Frente 1 (ficha) sigue
+> disponible para Opus.
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*

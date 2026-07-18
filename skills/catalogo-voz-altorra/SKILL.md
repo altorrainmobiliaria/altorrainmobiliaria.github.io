@@ -27,8 +27,11 @@ description: >-
 >   son direccionalmente correctas, pero los **numeros de articulo** (Ley 820, Ley 300/1996,
 >   Ley 2068/2020, D.1836/2021, Ley 1480, Ley 1581) **NO estan verificados**. Confirmalos con
 >   la skill `legal-colombia` + el abogado antes de citarlos en material publico.
-> - ⚠️ **Meta "Special Ad Category (Housing)":** verificar si aplica a pauta dirigida a
->   Colombia antes de asumirlo (historicamente aplica a EE.UU./Canada).
+> - ✅ **Meta "Special Ad Category (Housing)" — VERIFICADO 2026-07-18 (fuente primaria: Meta Transparency
+>   Center, política Discriminatory Practices):** la auto-declaración aplica a anunciantes de/dirigidos a
+>   **EE.UU., Canadá o ciertas partes de Europa** — **Colombia NO está cubierta** ⇒ la pauta ALTORRA dirigida
+>   a Colombia NO exige declarar la categoría. Hecho CADUCABLE (L-30): re-verificar la doc oficial antes de
+>   cada campaña nueva. La prohibición GLOBAL de segmentación discriminatoria aplica igual. Detalle → §6.3.
 > - **Origen:** comite adversarial multicapa (15 agentes) sobre el borrador de
 >   Gemini/Antigravity (REPROBADO), verificado contra el ground-truth de marca D0. Voz UNICA
 >   y autentica; nada prestado de ninguna otra marca.
@@ -315,7 +318,7 @@ Aquí la voz se toma más aire: analiza el mercado, explica el porqué de los pr
 
 ### 6.3 Guía de pauta (Meta)
 
-- **Vivienda es categoría especial en Meta (Housing / Special Ad Category)** — ⚠️ **[A VERIFICAR antes de pautar** (mismo pendiente que §0/§9): históricamente aplica a anuncios dirigidos a EE.UU./Canadá; confirmar en la doc oficial de Meta si rige para pauta dirigida a Colombia**]**. Si aplica: declararla al crear la campaña (restringe segmentación y endurece revisión de textos; no declararla puede tumbar el anuncio). Resolver esta duda = tarea previa #1 de las futuras skills de pauta.
+- **Vivienda / Special Ad Category en Meta — ✅ RESUELTO 2026-07-18 (doc oficial: Meta Transparency Center, "Discriminatory Practices")**: la auto-declaración aplica a anunciantes de/dirigidos a **EE.UU., Canadá o ciertas partes de Europa** — **pauta dirigida a COLOMBIA: NO se exige declarar la categoría** (hoy). Lo que SÍ sigue vigente: (a) la prohibición de prácticas DISCRIMINATORIAS en segmentación es GLOBAL (aplica en Colombia); (b) hecho CADUCABLE (L-30) — re-verificar la política oficial antes de montar cada campaña nueva; (c) si algún día pautamos a público de EE.UU./Canadá (compradores extranjeros/diáspora — caso REAL en Cartagena), AHÍ SÍ se declara Housing y se aceptan sus restricciones de segmentación (sin edad/género/ZIP, radio mínimo ~15 millas, sin lookalikes estándar).
 - **Prohibido en pauta:** superlativos de liderazgo, garantías de resultado, "precios desde", el número personal del dueño.
 - **Obligatorio:** RNT visible en alojamiento (sin RNT, no se pauta); matrícula en arriendo; aviso de tratamiento de datos en la landing si el anuncio capta datos (Ley 1581/2012).
 - **Tono en pauta:** cálido pero comprimido. Una escena concreta, el hecho que da confianza, el paso siguiente. Nada de adjetivos apilados.

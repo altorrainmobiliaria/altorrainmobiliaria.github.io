@@ -392,3 +392,25 @@ clasificador de push (pasos git separados, naturales). **33.6 Modificados**: 19 
 skills-inventory/99/00) + manifest deepAudit + `.claude/settings.json` (nuevo en git) + bóveda (52 archivos). INTACTOS:
 `portal/`, kernel `scripts/brain-*.mjs`, CNAME, service-worker. **33.7 Doctrina**: §3.3 (verificado en prod > entrenamiento),
 §G.4 ampliado (bóveda commit+push en el cierre), L-30 + M-02 nuevas. Sin cache bump (shell intacto).
+
+## 34. ADR — Adopción de la masterclass de captación + Housing verificado + principios "libre albedrío" ⟦FABLE-5⟧ (2026-07-18)
+
+**34.1 Disparador**: Daniel aclaró el origen de la huérfana (SUYA: destilado de TikTok vía Antigravity para las
+piezas de captación) y sentó 2 principios operativos: skills/cerebro = herramientas que POTENCIAN (no límites;
+libre albedrío para modificarlas/mejorarlas) y la VOZ de ALTORRA está EN FORJA (norte: confianza→#1→ROI de
+pauta→leads→orgánico). **34.2 Hecho**: (1) `marketing-psicologico-conversion` ADOPTADA a `skills/` + user-level
+(cierra TODO-30): frontmatter con triggers, paso 8 que faltaba, **§10 puente ALTORRA** (guardarraíles de pauta CO:
+RNT/matrícula/sin cifras inventadas/dolor-con-salida/paleta; fondos oscuros OK en PAUTA — la regla "sin negro" es
+de la WEB); original de Antigravity intacto en `.agents/`. (2) `Brief_Diseño_Piezas_Captacion.docx` LEÍDO (3 piezas:
+arriendo/venta/renta corta con ganchos de dolor), respaldado en bóveda `pauta/` y gitignored del repo público.
+(3) **Meta Special Ad Category (Housing) VERIFICADO en fuente primaria** (transparency.meta.com, Discriminatory
+Practices): aplica a anunciantes de/dirigidos a **EE.UU./Canadá/partes de Europa** → **pauta→Colombia NO la exige**
+(hoy; hecho caducable L-30 — re-verificar por campaña; si se pauta a EE.UU./Canadá —compradores extranjeros— SÍ se
+declara). `catalogo-voz-altorra §0/§6.3` actualizada ×2 copias. (4) Memorias del harness actualizadas
+(`reglas-operacion-daniel` + `identidad-marca-inmobiliaria`) + re-espejadas a bóveda. **34.3 No-regresión**: solo
+documentación/skills; portal y kernel INTACTOS. **34.4 Verificación**: doc oficial de Meta citada; hashes repo==user;
+brain:check SANO. **34.5 Anti-patterns**: material del dueño adoptado ÍNTEGRO con mejoras marcadas y fechadas (no
+reescrito); el hecho Housing con fecha+fuente (L-30), no como verdad eterna. **34.6 Modificados**: skills/marketing-
+psicologico-conversion (nueva) + catalogo-voz-altorra ×2 + docs (05/10/inventory/99/00) + .gitignore + memorias +
+bóveda `pauta/`. **34.7 Doctrina**: L-30 aplicada; principios nuevos capturados en memoria del harness (no en el
+router — anti-engorde M-02).

@@ -16,7 +16,7 @@
 - ⚖️ **Matrícula de arrendador OBTENIDA** ✅; el Nº real va al footer al cierre de obra (hoy `000000`) → blocker de producción. Ídem dirección física + RNT (solo Daniel los da).
 - 🔥 **Firebase BLAZE activo** ✅ (restaurado 2026-07-12 tras aviso de Google; sin costo — portal usa datos DEMO en Cloudflare aún).
 - 🔗 **Constancias de liderazgo ×3 pendientes** (payloads en `sinapsis-cerebros/references/`) + **skills visibilidad de cars/bersaglio (copias repo) desactualizadas** → las porta cada operador (el user-level ya quedó ✅ ×4).
-- 📄 `Brief_Diseño_Piezas_Captacion.docx` (raíz, sin trackear): material del dueño para la futura PAUTA (Meta/Google Ads) — no tocar sin leerlo con él.
+- 📣 **Pauta en preparación** (TODO-29, §34): Housing/Special Ad Category ✅ verificado (NO aplica a pauta→CO) · Brief de captación respaldado en bóveda `pauta/` (+gitignore) · masterclass del dueño ADOPTADA (`marketing-psicologico-conversion`). Esperando material TikTok de Daniel.
 
 ## 🧩 Sub-sistemas
 mantenimiento LIVE ✅ · `admin.html` (consulta legacy) ✅ · 7 CF legacy censadas ✅ · sitio público viejo ⛔ RETIRADO · **modelo de datos v1** (§22 `[REVISAR-FABLE]`; E2E 21/21 emulador) · D1 sellado (§23, tokens.css = SSoT) · `gestion` (admin 3 roles, §31) · Pendiente: 35 fidelidad → MapLibre real → datos Firestore reales → wiring forms→`solicitudes`.

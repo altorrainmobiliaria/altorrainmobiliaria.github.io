@@ -220,13 +220,7 @@ de mis capacidades. Implicaciones:
 | `opus-interino-protocolo` | Protocolo cuando el modelo activo NO es el titular (Opus interino). | ✅ user |
 | `catalogo-voz-bersaglio` | ⚠️ **Voz de OTRA marca (Bersaglio Jewelry) — JAMÁS aplicar a Altorra** (la voz Altorra = `catalogo-voz-altorra`). Instalada user-level por ser compartida entre proyectos. | ✅ user |
 
-### 🕳️ Huérfana detectada (2026-07-18 — decisión del dueño pendiente, TODO-30)
-`.agents/skills/marketing-psicologico-conversion/SKILL.md` (untracked, creada 2026-07-12 21:16, 11 min antes del
-`Brief_Diseño_Piezas_Captacion.docx` — misma tarea de piezas de captación; convención `.agents/` de una herramienta
-ajena al cerebro). Masterclass de psicología de conversión para piezas de captación inmobiliaria con la paleta
-Altorra hardcodeada. NO duplica `marketing-psychology` (genérica, inglés). ⚠️ Su tono agresivo de dolor choca con
-`catalogo-voz-altorra`. Hoy es INERTE (ni el tool Skill ni el cerebro la ven). Opciones: adoptarla (mover a
-`skills/` + filtro de voz) o cuarentenar en `_legacy/`. NO borrar (límite de guardián).
+| `marketing-psicologico-conversion` | ✅ **ADOPTADA 2026-07-18 (§34)** — masterclass de Daniel (TikTok→Antigravity, 2026-07-12, pareja del Brief de piezas de captación): psicología dolor>placer, guiones 4 fases, ganchos "aburre vs vende", sistema de contenido (8 pasos — el 8º añadido al adoptar), piezas gráficas con la paleta oficial, metáforas stop-scroll. Mejorada al adoptar: +§10 guardarraíles de pauta inmobiliaria CO (RNT/matrícula/sin-cifras-inventadas/Housing) + calibración con la voz EN FORJA. Original de Antigravity sigue en `.agents/skills/` (copia canónica = repo+user). | ✅ repo+user |
 
 ---
 

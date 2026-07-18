@@ -37,3 +37,6 @@ npm-debug.log*
 # Build output temporal
 .cache/
 dist/
+
+# Material estrategico interno del dueno (respaldado en brain-private/pauta) - NO al repo publico
+Brief_Dise*.docx
