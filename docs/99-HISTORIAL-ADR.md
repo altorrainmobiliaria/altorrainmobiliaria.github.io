@@ -525,3 +525,39 @@ la pieza de VENTA, que no exige matrícula). **39.3 Respuestas operativas dadas*
 conexión" (es espejo del teléfono; abrir la app en el celular sí) · guía de login IG entregada (credenciales =
 solo el dueño). **39.4 Cierre**: sesión saturada → relevo curado en `10` (3 frentes para retomar), TODO commiteado
 y pusheado en los 4 repos + bóveda, brain:check SANO. Racha del día: ADR §33→§39 en una sola sesión Fable.
+
+## 40. ADR-040 — Meta operativo al 100% + pieza de humo por EMBUDO completo + TODO-28 #1 (caja negra anti-saturación)
+
+**40.1 Meta cerrado EN VIVO** (Chrome del dueño + tools oficiales): WhatsApp del WABA pasó a **Conectado** (Daniel
+abrió la app en el cel) + vínculo página↔WhatsApp VERIFICADO (número principal + CTA + mostrar número = CTWA listo) ·
+IG↔página ya estaba conectado (cubre anuncios) y el login del asset en BM se cerró **VÍA CELULAR** (el OAuth web
+daba "Sorry, something went wrong" — bug de Meta; lección portátil: OAuth de Meta fallando en web → probar vía
+móvil) · Centro de seguridad ORDENADO: dominio `altorrainmobiliaria.co` en aprobación de pares ✅ + protección
+predeterminada con Daniel como aprobador (2× "Cambios aplicados"; la alerta residual "0 aprobadores" = recomputo
+perezoso o no cuenta al único admin — NO bloquea pautar, no reintentar en loop) · 2FA "Nadie" y verificación del
+negocio quedan como decisiones OPCIONALES del dueño. **Único pendiente-dueño: saldo.** SSoT → `activos-meta.md`.
+**40.2 Pieza de humo v1→v4 (APROBADA por Daniel 2026-07-18)**: v1 tipográfica (Brief P2) → feedback del dueño
+(menos texto · CERO "valoración experta" — no somos expertos valorando · usar TikTok+Ads Library) → v3 híbrida
+(fondo Google Flow del dueño + composición HTML + render Playwright 1080²/1080×1920) → **comité ×3 lentes**
+(copywriter DR / guardián de voz / propietario-avatar; crudo `comite-copy-crudo.jsonl`) → v4 FINAL **en USTED**
+(violación §3.1 del catálogo detectada y corregida: propietarios que consignan = usted): gancho "¿Su casa lleva
+meses en venta y solo llegan curiosos?" + "Véndala con ALTORRA. Usted descansa, nosotros nos encargamos." Hallazgos
+finos del comité: "con calma" = promesa equivocada para quien espera hace meses · el texto no repite gancho/ancla
+del arte · "papeles" como respaldo (no auditoría al dueño) · CTA con micro-expectativa. Artes+copy+crudos →
+bóveda `pauta/outputs/2026-07-18-humo/`.
+**40.3 Proceso cableado** (mandato Daniel: "el marketing debe ser pro, no 1 skill"): **EMBUDO CREATIVO obligatorio**
+en `pauta-captacion §0b` (grounding sweep completo → ≥3 candidatos → filtro de voz → comité ×3 → Daniel →
+métricas→iteración) + **L-31** + receta visual sellada (la IA genera SOLO el fondo; texto/logo por HTML+Playwright).
+Espionaje Ads Library ejecutado con tool oficial (390 ads activas "vende tu propiedad" CO; patrón ganador =
+pregunta-dolor corta).
+**40.4 TODO-28 #1 ✅** (caja negra anti-saturación, comité §33): `scripts/session-handoff.mjs` + hooks
+PreCompact (foto de git + ORDEN de consolidar `10`) / Stop·SessionEnd (foto cada turno, async) / SessionStart
+`--boot-echo` (el próximo operador la lee). El linter atajó el archivo nuevo como huérfano → `orphanAllowlist`
+del manifest (gate #10 validado en vivo). Pendientes #2-#7 (#2 arreglaría el bug cazado hoy: boot-budget imprime
+"✅ ≤ objetivo" estando por encima → kernel, sinapsis a cars).
+**40.5 No-regresión**: cero código de producto tocado (solo skills/docs/hooks/bóveda); modo obra intacto; SW v5
+sin cambios (no se tocó el shell → sin cache bump).
+**40.6 OKs del dueño al cierre**: pieza ✅ · continuar TODO-28 ✅ · lotes TikTok ✅. El "sí" de DINERO sigue
+pendiente y es aparte (contrato de seguridad §2 del playbook).
+**40.7 Doctrina**: §3.3 (todo verificado en vivo con captura) · §G.4 captura completa (crudos del comité en bóveda,
+commiteada y pusheada) · L-31 nace y se aplica en la misma sesión · embudo §0b vinculante para toda pieza a dinero.
