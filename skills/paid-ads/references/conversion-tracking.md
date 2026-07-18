@@ -1,3 +1,10 @@
+> ⚠️ **PARCHE DE VIGENCIA (2026-07-18, verificado en doc oficial — ADR §37 inmobiliaria):** la sección de
+> Aggregated Event Measurement (AEM) de este documento está **MUERTA**: Meta ELIMINÓ el AEM manual — ya no hay
+> "8 eventos priorizados" ni "conversion domain", y la verificación de dominio YA NO es requisito para eventos
+> ni pauta (facebook.com/business/help/721422165168355; verificarla sigue siendo recomendable por brand
+> safety). Además, el "Conversions API Gateway (AWS)" queda **DESCARTADO para ALTORRA** (infra AWS/GCP con
+> costo — anti zero-budget): usar CAPI vía Cloudflare Worker directo (ver pauta-captacion/references/setup-previo.md).
+
 # Conversion Tracking Setup
 
 How to set up conversion tracking pixels across ad platforms. This guide covers installation, event configuration, and validation — everything a marketer needs to ensure ad spend is properly attributed.

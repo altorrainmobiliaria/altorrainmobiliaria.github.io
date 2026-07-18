@@ -222,6 +222,7 @@ de mis capacidades. Implicaciones:
 | `validacion-live-chrome` | Validación LIVE post-merge vía extensión Claude-in-Chrome (Claude la maneja DIRECTO; 7 dimensiones adversariales). Portable. | ✅ |
 | `anti-codigo-muerto` | Caza/cuarentena de código muerto/viejo (anti-Knight-Capital); gate `deadcode:check`. Portable. | ✅ |
 | `meta-ads-diagnostico` | Diagnóstico de campañas Meta Ads (FB/IG). Portable. | ✅ |
+| `pauta-captacion` | 🆕 **PROPIA (ADR §37, 2026-07-18) — ORQUESTADORA de la pauta de captación**: playbook 1ª campaña Meta (Leads+CTWA+Higher-Intent, escala COP, learning-limited a propósito), setup previo en orden (píxel/CAPI-Worker/GA4/landing), gates legales go/no-go (números matrícula/RNT al cierre de obra) y capa de VIGENCIA verificada contra doc oficial (objetivo Mensajes RETIRADO · AEM MUERTO · bidding Google actualizado). Delega en paid-ads/ad-creative/marketing-psicologico/voz/ga4/meta-ads-diagnostico/offers. Nace de investigación 4-frentes (bóveda `2026-07-18-investigacion-pauta-*`). | ✅ repo+user |
 | `catalogo-voz-altorra` | **SSoT de la voz escrita de Altorra** (web/pauta/redes/WhatsApp/Journal): esencia (calidez ownable + cobertura "donde otros no llegan" + prueba legal matrícula/RNT), reglas duras + checklist anti-IA + Test de Alma, aforismos, copy por superficie, plantillas por canal. Nace del comité ×capas (15 agentes) que reprobó el borrador de Gemini y reescribió en voz propia (2026-07-11). Versionada en `skills/` + user. **Voz ÚNICA, NO derivada de ninguna marca.** | ✅ repo+user |
 
 ---

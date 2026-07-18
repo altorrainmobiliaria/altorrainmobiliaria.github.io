@@ -1,3 +1,11 @@
+> ⚠️ **PARCHE DE VIGENCIA (2026-07-18, support.google.com — ADR §37):** la tabla de bidding de este playbook
+> difiere de la doc oficial vigente: (1) para campañas NUEVAS Google recomienda **Maximize Clicks primero**
+> (textual: "For new campaigns, consider using Maximize Clicks... first"); (2) el baseline recomendado para
+> Maximize Conversions es **15 conversiones/30 días** (no 30); (3) "Target CPA" fue renombrado (jun-2026) y
+> desde el **17-ago-2026** las campañas limitadas por presupuesto ejecutan MÁS CERCA del target — NO poner un
+> tCPA holgado (support.google.com/google-ads/answer/6268626 · answer/17061251). Escalera vigente: clics →
+> maximizar conversiones (15/30d) → tCPA.
+
 # Google Search Playbook (B2B)
 
 Intent-first operating rules for Google Ads: where to spend first, how to structure the account, when to loosen match types, and how to keep smart bidding pointed at revenue instead of junk form-fills. For RSA generation mechanics, see [rsa-output-spec.md](rsa-output-spec.md).

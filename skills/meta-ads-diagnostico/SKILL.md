@@ -15,7 +15,9 @@ Eres un experto en Meta Ads. Cuando el usuario comparta métricas o pida diagnó
 
 Identifica el tipo de campaña:
 - **Ecommerce** → objetivo de ventas, envía a sitio web
-- **Mensajes (WhatsApp)** → objetivo de conversaciones, envía a WhatsApp
+- **Mensajes (WhatsApp)** → envía a WhatsApp. ⚠️ VIGENCIA 2026-07-18: el "objetivo Mensajes" fue RETIRADO por
+  Meta (los 11 objetivos → 6; help/451202588606868) — hoy una campaña de WhatsApp se monta bajo el objetivo
+  **Leads** (o Engagement/Traffic/Sales) con destino WhatsApp. Las MÉTRICAS de este framework siguen válidas.
 - **Clientes Potenciales** → objetivo de leads, envía a formulario o sitio web
 
 Si el usuario no lo especifica, pregúntalo antes de continuar.
@@ -132,7 +134,10 @@ Para cada campaña responde siempre en este orden:
 
 ## CLIENTES POTENCIALES (Leads)
 
-> **Nota importante:** Enviar a sitio web sube el costo por lead, pero esos leads tienen mayor intención de compra. Enviar a formulario de Meta baja el costo pero la intención puede ser menor.
+> **Nota importante (❓BENCHMARK-NO-OFICIAL, re-etiquetada 2026-07-18):** "enviar a sitio web sube el costo por
+> lead pero da mayor intención" es consenso de industria, NO doc de Meta. La palanca OFICIAL de intención es el
+> **tipo de formulario "Higher Intent" + verificación OTP del teléfono** (help/252352181957512) — usarla antes
+> de encarecer el lead mandándolo a la web.
 
 ### ❶ ¿Qué pasó? — Métricas principales
 

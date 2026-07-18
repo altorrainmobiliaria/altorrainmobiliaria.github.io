@@ -1,3 +1,9 @@
+> ⚠️ **PARCHE DE VIGENCIA (2026-07-18, doc oficial — ADR §37):** los ítems de checklist "Domain verified /
+> AEM configured / Top 8 events prioritized (iOS 14+)" están **MUERTOS** (Meta eliminó AEM manual; la
+> verificación de dominio es opcional-recomendada, no requisito). Y "Special Ad Categories declared (housing…)"
+> aplica SOLO a anuncios sirviendo en **EE.UU./Canadá** (Meta y Google en espejo) — pauta dirigida a Colombia
+> NO la exige; pauta a diáspora en EE.UU. SÍ caería bajo ambas políticas.
+
 # Platform Setup Checklists
 
 Complete setup checklists for major ad platforms.

@@ -1,3 +1,9 @@
+> ⚠️ **NOTA DE ESCALA ALTORRA (2026-07-18 — ADR §37):** los umbrales de este sistema están en USD para B2B
+> gringo (CPL $20-50, $5k/mes por anuncio, "require work email") y son **INOPERABLES tal cual** a escala COP
+> de captación B2C. Se importa el MÉTODO (ancla TCPL, gates de evidencia, cadencia), NO los números.
+> Equivalencias: work email → OTP de teléfono (palanca oficial de calidad) · TCPL → **CPQL-propietario**
+> (planilla: ¿es dueño? ¿inmueble en Cartagena?) · umbrales COP → pauta-captacion/references/playbook-primera-campana.md §7.
+
 # Meta Decision System (B2B)
 
 A quantified kill/keep/scale engine for Meta ads. Every threshold derives from one anchor number, so decisions become arithmetic instead of vibes. Pairs with the strategy-level Meta playbook in SKILL.md (creative-as-targeting, creative volume) — this file is the *operating* layer.

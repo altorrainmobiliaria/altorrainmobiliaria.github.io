@@ -458,3 +458,29 @@ SUPERADA** (la nuestra es superconjunto). Nada nuevo que portar. **36.4 Verifica
 existentes; urgencia falsa vetada; UI de Meta marcada ❓ (cambia seguido). **36.6 Modificados**: ad-creative/
 references/static-ad-templates.md ×2 · meta-ads-diagnostico ×2 · backlog+memoria (bóveda) · .gitignore (tmp).
 INTACTOS: portal, kernel. **36.7**: flujo de lotes institucionalizado (backlog = SSoT cross-proyecto).
+
+## 37. ADR — Skill `pauta-captacion` construida sobre investigación OFICIAL + 8 parches de vigencia ⟦FABLE-5⟧ (2026-07-18)
+
+**37.1**: TODO-29 fase construcción ejecutada. Workflow `investigacion-pauta-oficial` (5 agentes, 681k tok, 0 errores;
+crudo+blueprint+workflow reejecutable en bóveda `2026-07-18-investigacion-pauta-*`): 4 frentes contra fuente PRIMARIA
+fechada 2026-07-18 (Meta Business Help/developers + support.google.com + docs Cloudflare). **37.2 Hallazgos mayores**:
+(a) el objetivo "Mensajes" fue RETIRADO (11→6 objetivos; CTWA hoy va bajo LEADS con "Maximizar conversaciones");
+(b) Meta recomienda OFICIALMENTE audiencia amplia (Advantage+) y CBO default — el filtro "propietario" lo hace
+copy/form/conversación, no el targeting; (c) regla ~50 eventos/semana VIGENTE → con presupuesto COP chico se acepta
+"learning limited" A PROPÓSITO (el diseño 1-campaña/1-conjunto/amplio/evento-frecuente ES la mitigación oficial);
+(d) **AEM/verify-domain/top-8-events iOS14 = MUERTO** (verificación de dominio ya no es requisito); (e) CAPI a $0
+vía Cloudflare Worker (event_id dedup, SHA-256, token secret; Gateway de Meta descartado — AWS/GCP); (f) Google:
+Maximize Clicks PRIMERO en campañas nuevas (textual), baseline 15 conv/30d, cambio 17-ago-2026 (tCPA ejecuta más
+cerca del target); housing Google = solo US/CA (espejo Meta); (g) benchmarks: CPM CO ~USD 2-4 ❓, CPL LatAm 5-15 ❓,
+**captación de PROPIETARIOS sin benchmark público → la planilla CPQL propia es el benchmark**. **37.3 Construido**:
+skill **`pauta-captacion`** (repo+user; SKILL.md orquestador + references/playbook-primera-campana + setup-previo)
+— dueña SOLO de: playbook COP, setup en orden, gates go/no-go (números matrícula/RNT al cierre de obra §36-bis),
+doctrina de escala (TCPL→CPQL-propietario, work-email→OTP) y capa de vigencia; TODO lo demás delega (tabla §0).
+**37.4 Los 8 parches de vigencia aplicados** a skills existentes ×2 copias: conversion-tracking (AEM muerto + Gateway
+descartado) · platform-setup-checklists (AEM + alcance geográfico Special Ad) · meta-decision-system (números USD
+B2B inoperables — método sí, números no) · google-search-playbook (bidding oficial 2026) · meta-ads-diagnostico
+(taxonomía Mensajes + claim website>form re-etiquetado ❓ con palanca oficial Higher-Intent+OTP). **37.5
+Anti-patterns**: cero benchmarks convertidos en reglas (❓ explícitos con vía de cierre por dato propio) · URLs+fecha
+en todo claim de plataforma (L-30) · campañas EN PAUSA + "sí" de Daniel para dinero. **37.6 Modificados**:
+skills/pauta-captacion (nueva ×2) · 6 references parcheadas ×2 · inventario · docs. INTACTOS: portal, kernel.
+**37.7**: el ENCENDIDO de la pauta converge con el cierre de obra (entrega de números). Todo listo-para-encender.

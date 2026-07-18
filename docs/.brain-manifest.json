@@ -63,7 +63,7 @@
   ],
   "deepAudit": {
     "last": "2026-07-18",
-    "coveredHeaderCount": 36,
+    "coveredHeaderCount": 37,
     "maxAdrGap": 12,
     "maxDays": 30,
     "_que": "Nivel-2 #3 (ADR §33, encargo Daniel skills+cerebro): retrieval 5/5; REINCIDENCIA M-01 -> M-02; boveda entera respaldada (estaba SIN commitear); memoria harness espejada; comite futuro-del-cerebro 7 mejoras -> TODO-28. Artefactos boveda 2026-07-18-*. Previa #2 = §30 (2026-07-12, cubrio 30)"

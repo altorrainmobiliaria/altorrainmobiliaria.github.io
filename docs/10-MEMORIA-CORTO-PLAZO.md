@@ -19,14 +19,11 @@
 > NUNCA inventar. Capas: build → estructura → computed (miente con `transition`, L-28) → screenshot Chrome → diff
 > vs fuente. Reusar piezas hechas (`.alt-rail`, `.alt-btn-sweep`, 6 cards NO intercambiables — ver síntesis).
 >
-> **FRENTE 2 — TODO-29: skills de PAUTA (Meta + Google Ads)** — mandato Daniel 2026-07-18. ✅ Ya listo (§34):
-> Housing/Special Ad Category VERIFICADO en doc oficial (NO aplica a pauta→Colombia; SÍ si pautamos a EE.UU./
-> Canadá — ver `catalogo-voz-altorra §6.3`) · masterclass del dueño ADOPTADA (`marketing-psicologico-conversion`
-> +§10 guardarraíles) · Brief leído/respaldado (bóveda `pauta/`). **Esperando: material TikTok que
-> Daniel enviará (revisarlo CRÍTICAMENTE — puede ser básico/vacío) + skills que descargue.** Luego: investigación
-> seria (docs oficiales Meta/Google + los grandes del marketing) → proceso de pauta 100% funcional. Gap-analysis
-> en §33 (falta: audiencias/CBO/Advantage+/píxel-CAPI/presupuestos/Google Ads). ⚠️ RNT = prerequisito de pauta de
-> alojamientos.
+> **FRENTE 2 — PAUTA: ✅ CONSTRUIDA, lista-para-encender** (§33-§37). SSoT = skill **`pauta-captacion`**
+> (orquestadora: playbook 1ª campaña + setup en orden + gates + vigencia oficial fechada). Encendido converge
+> con el CIERRE DE OBRA (números matrícula/RNT + privacidad publicada + píxel/GA4 + landing verificada →
+> campaña EN PAUSA → "sí" de Daniel). Lotes TikTok de Daniel → verificar → backlog
+> `brain-private/compartido-marketing/` → skills.
 >
 > **🎨 DISEÑO SELLADO — NO re-litigar** (SSoT `tokens.css` + ADR §23-§23.9 + memorias): navy `#062743` · blanco ·
 > oro `#D4AF37` · plata `#BFC3C9` · grises fríos; fondo blanco, ORO predomina, sin verde/rojo/negro; Cormorant +
@@ -54,7 +51,7 @@
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). K-06 ✅ CERRADO §33 (espejo en bóveda). | 🟡 abierto | |
 | **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **35 MEDIA/BAJA pendientes** (ficha 8 = primero). Síntesis de bóveda ya AUTOCONTENIDA (§33). Método L-29: diff vs `.dc.html` + re-auditar adversarial. | 🔄 OPUS | Frente 1 |
 | **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda; unánime "idea correcta, automatizar"): #1 hooks PreCompact/SessionEnd (mata M-01/M-02) · #2 candado del boot en pre-commit + one-in-one-out · #4 `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento en hechos (>90d = re-verificar). #3 (respaldo memoria) ✅ HECHO. Los kernel-side van vía sinapsis a cars. | 🟢 listo p/ejecutar | ~2-3 días, $0 |
-| **TODO-29** | 📣 **PAUTA Meta + Google Ads — fase CONSTRUCCIÓN**: base COMPLETA (§34-§36) + **workflow de investigación oficial EN VUELO** (`wf_1c796d45`: campañas Meta vigentes · píxel/CAPI en Workers · Google Ads local · benchmarks LatAm → blueprint) → construir skill `pauta-captacion`. **Matrícula y RNT ya existen**: números al cierre de obra ⇒ el LANZAMIENTO de pauta se alinea con web terminada (mientras tanto: construir todo listo-para-encender). | 🔄 activo | Frente 2 |
+| **TODO-29** | 📣 **PAUTA — skill `pauta-captacion` CONSTRUIDA** ✅ (§37: playbook 1ª campaña Leads+CTWA+Higher-Intent · setup en orden · CAPI-Worker $0 · 8 parches de vigencia · CPQL propia = benchmark). **Qué falta para ENCENDER** (converge con cierre de obra): números matrícula/RNT (Daniel) · política de privacidad publicada · WhatsApp Business↔página FB · píxel+GA4 en el portal · landing verificada → campaña EN PAUSA → "sí" de Daniel. Mientras: lotes TikTok al backlog + creativos con `ad-creative`+Brief. | 🟢 lista p/encender | gate=obra |
 
 ---
 

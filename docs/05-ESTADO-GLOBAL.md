@@ -16,7 +16,7 @@
 - ⚖️ **Matrícula de arrendador Y RNT: AMBOS OBTENIDOS** ✅ (Daniel confirma 2026-07-18); **los NÚMEROS los entrega al CIERRE DE OBRA** (decisión suya: la web debe estar lista y generar confianza antes de exhibirlos). Footer hoy `000000`. La pauta de arriendo exige el nº visible (Ley 820 art. 31) → **toda la pauta se enciende con la entrega, junto con la web**. Falta del dueño: dirección física.
 - 🔥 **Firebase BLAZE activo** ✅ (restaurado 2026-07-12 tras aviso de Google; sin costo — portal usa datos DEMO en Cloudflare aún).
 - 🔗 **Constancias de liderazgo ×3 pendientes** (payloads en `sinapsis-cerebros/references/`) + **skills visibilidad de cars/bersaglio (copias repo) desactualizadas** → las porta cada operador (el user-level ya quedó ✅ ×4).
-- 📣 **Pauta en preparación** (TODO-29, §34): Housing/Special Ad Category ✅ verificado (NO aplica a pauta→CO) · Brief de captación respaldado en bóveda `pauta/` (+gitignore) · masterclass del dueño ADOPTADA (`marketing-psicologico-conversion`). Esperando material TikTok de Daniel.
+- 📣 **Pauta LISTA-PARA-ENCENDER** (§33-§37): skill `pauta-captacion` construida sobre investigación oficial fechada (Leads+CTWA · CAPI-Worker $0 · 8 parches de vigencia a skills). Encendido converge con cierre de obra (números matrícula/RNT + privacidad publicada + píxel/GA4 + landing verificada). Lotes TikTok → backlog `compartido-marketing/`.
 
 ## 🧩 Sub-sistemas
 mantenimiento LIVE ✅ · `admin.html` (consulta legacy) ✅ · 7 CF legacy censadas ✅ · sitio público viejo ⛔ RETIRADO · **modelo de datos v1** (§22 `[REVISAR-FABLE]`; E2E 21/21 emulador) · D1 sellado (§23, tokens.css = SSoT) · `gestion` (admin 3 roles, §31) · Pendiente: 35 fidelidad → MapLibre real → datos Firestore reales → wiring forms→`solicitudes`.
