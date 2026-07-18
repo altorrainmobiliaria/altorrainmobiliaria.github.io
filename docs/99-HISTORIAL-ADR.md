@@ -414,3 +414,27 @@ reescrito); el hecho Housing con fecha+fuente (L-30), no como verdad eterna. **3
 psicologico-conversion (nueva) + catalogo-voz-altorra ×2 + docs (05/10/inventory/99/00) + .gitignore + memorias +
 bóveda `pauta/`. **34.7 Doctrina**: L-30 aplicada; principios nuevos capturados en memoria del harness (no en el
 router — anti-engorde M-02).
+
+## 35. ADR — Material TikTok procesado + minería marketingskills v2.8.12: 9 adopciones curadas ⟦FABLE-5⟧ (2026-07-18)
+
+**35.1 Disparador**: Daniel entregó el lote de material TikTok anunciado (§34) + repo descargado `marketingskills-main`.
+**35.2 Hecho — material TikTok** (criterio: verificar→adoptar; no medido→hipótesis): 40 ganchos → `marketing-psicologico-conversion §9b`
+(adaptación voseo→tuteo + ejemplos ALTORRA) · cronograma semanal mini-embudo → `§9c` (mapeado a captación) · feed=vitrina/
+reels=contenido + horarios ❓HIPÓTESIS-inicial → `§9d` (regla real: métricas propias mandan; cuentas ALTORRA nuevas) ·
+pre-pauta auditar landing + espionaje Ads Library con navegador → `meta-ads-diagnostico`. **Verificaciones que tumbaron humo**:
+repo "Karpathy" REAL pero el claim 65%→94% NO existe en él (invento del video) y sus 4 principios YA son nuestras doctrinas
+§3.2-3.6 — nada que adoptar; herramientas Talos/Attention-Insights marcadas ❓ sin verificar. **35.3 Minería del repo (workflow
+6 agentes, 1M tok; crudo en bóveda `2026-07-18-mineria-marketingskills-crudo.json`)**: LINAJE confirmado — nuestras ~34 skills
+de marketing son copias v1.x de ESTE repo (MIT, Corey Haines; él va en 2.8.12). **Adoptado (9, cada una con nota de capa
+ALTORRA + LICENSE)**: REFRESH `paid-ads`←ads v2.2.0 (Meta era-Andromeda + meta-decision-system TCPL + google-search-playbook —
+**la base de la pauta**) · REFRESH `ad-creative` v2.8.0 (grounded anti-invención≈L-29 + hook-system + motion-video) · 🆕
+user+repo: `video`, `offers`, `marketing-loops`, `image` · 🆕 repo-referencia: `competitor-profiling`, `prospecting`,
+`marketing-council`. **Reparado**: references rotas de `ab-test-setup`/`copywriting` (nuestras v1.x citaban archivos
+inexistentes). **Saltado con razón**: aso/co-marketing/directory-submissions/PR/sms/marketing-plan (US/SaaS-céntricas) ·
+`tools/` DESCARTADO (CLIs con APIs Meta v18/Google v14 MUERTAS — el MCP oficial de Meta Ads del entorno es superior; solo se
+rescató la chuleta GAQL como materia prima marcada). **35.4 Verificación**: licencia MIT leída · repo==user hash-verificado ×6 ·
+notas presentes ×9. **35.5 Anti-patterns**: no pisar las 7 skills PROPIAS (falsos amigos identificados: image≠image-pipeline,
+etc.) · hipótesis marcadas ❓ · APIs muertas NO vendorizadas. **35.6 Modificados**: 9 dirs de skills nuevos/refrescados + 2
+references reparadas + marketing-psicologico-conversion + meta-ads-diagnostico + inventario + docs. INTACTOS: portal, kernel,
+paquete visibilidad. **35.7 Doctrina**: L-30 aplicada (verificar antes de portar); TODO-29 pasa a fase de CONSTRUCCIÓN
+(investigación seria + skills de pauta propias sobre la base paid-ads v2.2).

@@ -133,6 +133,32 @@ de mis capacidades. Implicaciones:
 
 ## 📣 Marketing / Growth / Conversión (CRO)
 
+> 🧬 **LINAJE confirmado (minería 2026-07-18, ADR §35)**: estas ~34 skills son copias **v1.x del repo
+> `marketingskills` de Corey Haines (MIT)**; él va en 2.8.12. La tabla de renombres 2.0 mapea nuestros nombres
+> a los suyos (ads=paid-ads · cro=page-cro/form-cro · emails=email-sequence…). NO pisar con refresh las 7
+> PROPIAS: image-pipeline, competitor-alternatives, comite-expertos, ga4-lead-tracking, meta-ads-diagnostico,
+> marketing-psicologico-conversion, semantic-schema-aeo.
+
+### 🆕 Vendorizadas 2026-07-18 del repo v2.8.12 (ADR §35 — cada una lleva nota de capa ALTORRA + LICENSE MIT)
+| Skill | Qué aporta | Disp. |
+|---|---|---|
+| `paid-ads` **REFRESH v2.2.0** (era `ads`) | Playbook Meta era-Andromeda (creative-as-targeting) + `references/meta-decision-system.md` (kill/keep/scale TCPL cuantificado) + google-search-playbook + conversion-tracking. **La base de la pauta.** Complementa a `meta-ads-diagnostico`. | ✅ repo+user |
+| `ad-creative` **REFRESH v2.8.0** | Generación GROUNDED anti-invención (alinea con L-29) + hook-system (sirve a TikTok/IG orgánico) + 15 plantillas estáticas + motion-video faceless barato + página HTML de aprobación. | ✅ repo+user |
+| `video` 🆕 | Producción de video TikTok/IG/FB + creative de video para pauta; matriz programmatic (Hyperframes/Remotion $0) vs AI-gen (⚠️ precios caducan, L-30). | ✅ repo+user |
+| `offers` 🆕 | Construcción de la OFERTA (Value Equation, garantías ⚠️ gate `legal-colombia`, stack de valor) — crítica para pauta. | ✅ repo+user |
+| `marketing-loops` 🆕 | Loops recurrentes con rigor de ingeniería (cadencia/self-check/idempotencia); ignorar los SaaS; usar para loops de pauta+contenido. | ✅ repo+user |
+| `image` 🆕 | Generación IA de imágenes de marketing (piezas del Brief; default Canva MCP). ≠ `image-pipeline` (optimización build — no duplicar). | ✅ repo+user |
+| `competitor-profiling` 🆕 | Dossiers de competidores con snapshots fechados y facts-over-opinions (⚠️ sustituir Firecrawl/DataForSEO por WebFetch/navegador). | ✅ repo (referencia) |
+| `prospecting` 🆕 | Listas de prospectos con evidencia; rama Local-SMB para captación de propietarios (⚠️ compliance = Ley 1581, no CAN-SPAM). | ✅ repo (referencia) |
+| `marketing-council` 🆕 | 12 dossiers de marketers legendarios con fuentes — banco de LENTES para `comite-expertos` (no mecanismo paralelo). | ✅ repo (referencia) |
+
+> Además: `ab-test-setup/references/` y `copywriting/references/` REPARADAS (nuestras v1.x citaban archivos
+> inexistentes — vendorizados del origen) · `paid-ads/references/_google-ads-materia-prima.md` (chuleta GAQL;
+> ⚠️ su CLI usaba API v14 MUERTA — re-verificar versiones) · **SALTADAS con razón**: aso (sin app), co-marketing/
+> directory-submissions/public-relations/sms/marketing-plan (US/SaaS-céntricas — costo de adaptación > valor) ·
+> **tools/ del origen DESCARTADO** (CLIs Meta v18/Google v14 con APIs caducadas; el MCP oficial de Meta Ads del
+> entorno es superior).
+
 | Skill (name) | Carpeta (si difiere) | Para qué | Disp. |
 |---|---|---|---|
 | `copywriting` | | Copy de páginas (hero, pricing, CTAs) | ✅ |

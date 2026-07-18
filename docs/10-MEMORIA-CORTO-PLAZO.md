@@ -53,7 +53,7 @@
 | **TODO-25** | 📟 **deploy-info.json congelado** (F-03 §30): verificar runs GH Actions + reconciliar claim CLAUDE.md §1. Legacy → baja urgencia. | 🟡 abierto | sin `gh` |
 | **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **35 MEDIA/BAJA pendientes** (ficha 8 = primero). Síntesis de bóveda ya AUTOCONTENIDA (§33). Método L-29: diff vs `.dc.html` + re-auditar adversarial. | 🔄 OPUS | Frente 1 |
 | **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda; unánime "idea correcta, automatizar"): #1 hooks PreCompact/SessionEnd (mata M-01/M-02) · #2 candado del boot en pre-commit + one-in-one-out · #4 `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento en hechos (>90d = re-verificar). #3 (respaldo memoria) ✅ HECHO. Los kernel-side van vía sinapsis a cars. | 🟢 listo p/ejecutar | ~2-3 días, $0 |
-| **TODO-29** | 📣 **Skills de PAUTA Meta + Google Ads**: prerequisitos LISTOS (§34: Housing verificado — no aplica a pauta→CO · masterclass adoptada · Brief leído/respaldado). **Esperando material TikTok de Daniel** → luego investigación seria (docs oficiales + grandes del marketing) → construir las skills. Gap-analysis en §33. RNT = gate de pauta de alojamientos. | 🔜 esperando insumo | Frente 2 |
+| **TODO-29** | 📣 **PAUTA Meta + Google Ads — fase CONSTRUCCIÓN**: base COMPLETA (§34-§35: Housing ✅ · masterclass+ganchos+cronograma ✅ · `paid-ads` v2.2 con meta-decision-system TCPL + google-search-playbook · `ad-creative` v2.8 · video/offers/marketing-loops/image adoptadas · Brief ✅). Siguiente: investigación seria (docs oficiales Meta/Google + grandes del marketing) → skill de pauta ALTORRA-específica sobre esa base + más material TikTok de Daniel según llegue. RNT = gate de alojamientos. | 🔄 activo | Frente 2 |
 
 ---
 
@@ -63,13 +63,11 @@
 > curados · auditoría Nivel-2 #3 (retrieval 5/5; M-01 reincidió →M-02; bóveda respaldada; memoria espejada;
 > GC pareado) · comité unánime pro-cerebro → TODO-28. Detalle COMPLETO → ADR §33 + bóveda `2026-07-18-*`.
 
-> **2026-07-18 tarde (FABLE-5 — §34)**: Daniel aclaró origen de la huérfana (SUYA, TikTok→Antigravity) y sentó 2
-> principios → memorias actualizadas (`reglas-operacion-daniel`: libre albedrío con skills/cerebros; `identidad-
-> marca`: la VOZ está EN FORJA, no sellada — norte: confianza→#1→ROI→leads→orgánico). Ejecutado: masterclass
-> ADOPTADA (`marketing-psicologico-conversion` repo+user, +paso 8 +§10 guardarraíles) · Brief leído + respaldado
-> (bóveda `pauta/`) + gitignored · **Housing/Special Ad Category RESUELTO con fuente primaria** (no aplica a
-> pauta→CO; sí a pauta→EE.UU./Canadá) · voz-altorra §0/§6.3 actualizada ×2 copias. **PRÓXIMO**: Daniel envía
-> material TikTok (revisar crítico) → investigación pauta → construir skills (TODO-29). Frente 1 (ficha) sigue
-> disponible para Opus.
+> **2026-07-18 tarde (FABLE-5 — §34+§35)**: §34 = masterclass adoptada · Housing resuelto (fuente primaria) ·
+> memorias con los 2 principios de Daniel (libre albedrío / voz EN FORJA). §35 = material TikTok procesado
+> (ganchos §9b · cronograma §9c · feed/reels+horarios❓ §9d · pre-pauta+Ads-Library → meta-ads) + humo tumbado
+> (claim "Karpathy" refutado) + **minería marketingskills: 9 adopciones curadas** (paid-ads v2.2 = base de
+> pauta · ad-creative v2.8 · video/offers/marketing-loops/image · 3 de referencia · tools descartado, APIs
+> muertas). Detalle → ADR §35 + bóveda. **PRÓXIMO**: TODO-29 construcción. Frente 1 (ficha) sigue para Opus.
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*
