@@ -762,3 +762,39 @@ Cerebro: este ADR + `00` + `10` + `05`. INTACTOS: Header/Footer/tokens/base/comp
 costo en las 3 páginas** (íconos SVG mal portados = patrón recurrente que las auditorías por-sección omiten). El tooling
 falla ~1-2 agentes/workflow (retry cap) — cubierto por DOM+crítico; pendiente: reintentar el agente caído. Sin cache bump
 (portal sin SW). Sigue TODO-27: serp 7 · home 2 · publicar 2 (11).
+
+## 47. ADR-047 — TODO-27: SERP (/comprar + /arrendar) FIEL (7 hallazgos + ALTA de arriendo) ⟦OPUS-4.8⟧ (2026-07-18)
+
+**47.1 Contexto/causa raíz**: 4ª página de TODO-27 (fidelidad) — `[operacion].astro`, ruta dinámica que sirve /comprar y
+/arrendar contra `ALTORRA Resultados.dc.html`. El mockup es un SERP MIXTO (4 venta + 1 arriendo + 1 corta-estancia en UNA
+lista); el rebuild lo partió a propósito en 2 rutas (§32.22) pero **rellenó ambas con listings INVENTADOS**. Verificando
+el ⚠️ de la ficha (los "ALTA ✅" no son de fiar), confirmé que el ALTA de /arrendar (5 listings inventados, §32.24) NUNCA
+se corrigió — mismo patrón que la 3ª card de la ficha (§43).
+**47.2 Solución (7 hallazgos + ALTA, en `[operacion].astro`)**: **MEDIA** — S-M1 card /comprar inventada 'San Fernando
+$540M' RETIRADA · S-M2 corta-estancia de Getsemaní reetiquetada como venta $690M/88m² RETIRADA (no va en SERP de compra
+→ dominio de estancias). /comprar = 4 venta reales (Castillogrande/Manga/Bocagrande/Crespo). **ALTA /arrendar** — 5
+listings inventados + zona fabricada 'Alameda La Victoria' + count 83 → /arrendar = **1 arriendo REAL** (Casona colonial,
+Centro Histórico, $8.500.000/mes); count → 24 (titular DEMO). pinsArriendo → 1 pin coherente. **BAJA** — S-B1 'Más filtros'
+→ `data-filter`+`aria-pressed` (responde) · S-B2 barra sin sombra al scroll → `transition:box-shadow` + listener `scrollY>4`
+(string byte-idéntico al mockup) · S-B3 3ª vía VERTICAL del mapa añadida (2px×60%, rot 9°) · S-B4 'Desde'/'Canon' inventados
+RETIRADOS (precio pelado; priceSuffix `/mes` conservado). **2 decisiones documentadas**: (a) /arrendar 1 card = honesto,
+trasladado a Daniel (¿demo-padding o esperar Firestore?); (b) favorito = CORAZÓN (no el '+' del mockup serp) — unificación
+de design system: PropertyCard usa corazón en home/ficha/serp y el mockup de la ficha también; mockups inconsistentes entre
+sí. El re-audit aceptó ambas.
+**47.3 No-regresión**: solo `[operacion].astro`. PropertyCard/Header/Footer/tokens INTACTOS. Pins per-ruta (§32.24) y la
+interactividad (filtros/fav/hover-pin) conservadas. Build OK (10 rutas prerender, /comprar + /arrendar incluidas).
+**47.4 Verificación (capas L-29)**: build ✅ · HTML construido (San Fernando/Alameda=0, /comprar 4 cards, /arrendar 1 card,
+priceLabel=0, road--3 ✓) · DOM/computed vivo (/comprar 4 cards + pines $1.450M/$980M/$2.100M/$760M, 'Más filtros' toggle
+false→true, 3ª vía 2px×336px rotada, /arrendar 1 card + pin $8,5M/mes) · S-B2 por código+valor-forzado (el preview NO
+scrollea — limitación del entorno, familia L-26; el string de sombra computa exacto al mockup) · **re-audit adversarial**
+(workflow 7 refutadores effort:high + 1 crítico, ~838k tok): **8/8 FIEL, 0 fallos de tooling, crítico 0 divergencias nuevas**
+(verificó las 5 cards 1:1 + card↔pin coherente + mapa + barra).
+**47.5 Anti-patterns evitados**: NO inventar listings (cero fakes en web inmobiliaria — reduje a cards reales del mockup,
+por eso /arrendar=1) · NO declarar "fiel" sin re-audit · NO fragmentar el componente sellado (corazón unificado) · NO tocar
+exenciones (split, contacto/color, counts demo) · scope: solo serp.
+**47.6 Archivos**: `portal/src/pages/[operacion].astro`. Bóveda: `2026-07-18-serp-reaudit-{crudo.json,sintesis.md}`.
+Cerebro: este ADR + `00` + `10` + `05`. INTACTOS: PropertyCard/Header/Footer/tokens/base/components.css.
+**47.7 Doctrina + cache**: L-29 (contar contra la fuente; el ALTA de /arrendar era el mismo defecto que la ficha), §3.3,
+§3.7. **Aprendizaje: las páginas con PropertyCard NO sufren deriva de íconos SVG (crítico 0 nuevas) vs ficha/estancias con
+SVG inline bespoke (1-2 nuevas)** — escrutar más las páginas con íconos propios. Sin cache bump. Sigue TODO-27: home 2 ·
+publicar 2 (4, los más livianos).
