@@ -231,6 +231,26 @@ Cuando el usuario comparta sus métricas, estructurar la respuesta así:
 
 ---
 
+## Pre-pauta: audita la LANDING antes de pagar tráfico (aporte Daniel 2026-07-18, material TikTok)
+Si el anuncio funciona pero nadie compra/consulta/deja datos, el problema puede estar en la WEB, no en la pauta
+— gastar más en ads con una landing rota es quemar plata. Chequeo mínimo antes de encender una campaña:
+- ✅ **PageSpeed Insights** (Google, gratis, verificada): velocidad real móvil/desktop. Lento = compradores que
+  se van antes de ver la oferta. (Nuestra skill `optimizacion-rendimiento-web` es el playbook completo.)
+- ❓ **"Talos website UI/UX analyzer"** y **"Attention Insights"** (del material TikTok, NO verificadas aún):
+  orden visual / claridad del CTA / mapa de atención predicho. Verificar que existan y sean gratis ANTES de
+  recomendarlas a un cliente; mientras tanto, el mismo chequeo se hace con criterio propio + skills `page-cro`/
+  `form-cro`: ¿se entiende el botón principal? ¿el visitante sabe qué hacer? ¿hay distracciones que no venden?
+- Regla: **pauta nueva solo sobre landing verificada** (velocidad + CTA claro + tracking del lead funcionando).
+
+## Espionaje de creativos: Ads Library + navegador de Claude (aporte Daniel 2026-07-18)
+La Ads Library de Meta (biblioteca pública de anuncios) muestra TODOS los anuncios activos de un competidor,
+pero revisarla a mano es lento. Técnica: Claude conduce el navegador (extensión Chrome / navegador integrado)
+sobre la Ads Library con un encargo concreto — *"nicho X, producto Y: selecciona el top 5 de creativos por
+[tiempo activo / variaciones / formato] y explica el ángulo de dolor de cada uno"*. Señal clave con presupuesto
+ajeno: un anuncio que lleva MESES activo y con muchas variaciones es un anuncio que FUNCIONA (nadie paga meses
+por un creativo perdedor). Vía navegador se ve lo que la API limita. Aplicado a ALTORRA: espiar inmobiliarias
+de Cartagena/Colombia + gringos vendiendo propiedad en Cartagena, antes de producir nuestras piezas (Brief).
+
 ## Skills relacionadas
 
 - **paid-ads** (bundle anthropic): estrategia general de paid ads

@@ -102,6 +102,53 @@ Aquí tienes 8 ejemplos base del nivel de creatividad que se exige:
 
 > **INSTRUCCIÓN DIRECTA PARA EL AGENTE:** SIEMPRE usa esta masterclass completa para auditar, crear piezas, copy o guiones. Asegúrate de inyectar los PUNTOS DE DOLOR MÁS URGENTES literalmente como se enseñó aquí. Cuando generes ideas visuales, utiliza la Sección 9 como inspiración base, pero estás **OBLIGADO A INVENTAR IDEAS NUEVAS, superadoras y radicalmente creativas** que apliquen todo el peso de esta masterclass. ¡NO TE LIMITES A REPETIR! Tu objetivo máximo es destruir el scroll con originalidad absoluta y enviar al usuario directo al llamado a la acción.
 
+## 9b. Banco de 40 ganchos por categoría (aporte Daniel 2026-07-18, material TikTok)
+> ⚠️ Vienen en voseo rioplatense ("si sos", "para vos") → **SIEMPRE adaptar al tuteo cartagenero de ALTORRA**
+> ("si eres", "para ti") y pasar por el Test de Alma. Son PLANTILLAS de apertura, no copy final.
+
+**Curiosidad**: "Hay un detalle que casi nadie nota…" · "Antes de elegir (producto), mira esto…" · "Esto puede
+cambiar la forma en que eliges (producto)" · "La mayoría de las personas no sabe esto" · "¿Sabías que hay una
+mejor forma de hacer esto?" · "Lo que nadie te cuenta sobre (tema)" · "Este pequeño detalle hace toda la
+diferencia" · "Te voy a mostrar algo que probablemente nunca viste".
+**Identificación**: "Si eres de los que…" · "Este video es para ti si…" · "¿Te pasa que…?" · "Si alguna vez te
+encontraste con este problema…" · "Si estás buscando…" · "Esto es para las personas que…" · "Solo los que
+(situación) van a entender esto" · "Si quieres (resultado), escucha esto".
+**Giro inesperado**: "Pensabas que el problema era X… pero en realidad era Y" · "Todos hacen esto… pero casi
+nadie lo hace bien" · "Lo que parece una buena idea… puede estar jugando en tu contra" · "No necesitas más X…
+necesitas esto" · "La mayoría cree esto… pero es un error" · "Lo que estás haciendo no está mal… pero hay una
+forma mucho mejor" · "Parece un detalle sin importancia… hasta que ves la diferencia" · "Creías que todos los
+(productos) eran iguales… hasta que conoces esto".
+**Promesa de valor**: "En este video te mostramos cómo…" · "Te enseñamos una forma más fácil de…" · "Guarda
+este video porque te va a servir para…" · "Después de este video vas a saber cómo…" · "Te compartimos el
+secreto para…" · "Mira cómo puedes lograr (resultado) con…".
+> Ejemplos ya traducidos a ALTORRA: *"Lo que nadie te cuenta sobre arrendar tu apartamento en Cartagena"* ·
+> *"¿Te pasa que publicaste tu casa hace meses y solo llegan curiosos?"* · *"Pensabas que el problema era el
+> precio… pero era el contrato"* · *"Guarda este video: te va a servir cuando entregues tu apartamento"*.
+
+## 9c. Cronograma semanal = mini-embudo de conversión (aporte Daniel 2026-07-18; fuente TikTok @alrinconoficial — patrón coherente con el embudo clásico, ❓ resultados no verificados)
+Cada semana lleva a la audiencia por un embudo completo:
+| Día | Rol | Aplicado a ALTORRA (captación de propietarios) |
+|---|---|---|
+| **Lunes — DOLOR** | Nombrar el dolor urgente (§1) | "¿Tu apartamento lleva 3 meses cerrado? Cada mes cerrado es plata que no vuelve." |
+| **Martes — VALOR** | 3 tips accionables sobre ese dolor | "3 cosas que debes revisar antes de entregar tu inmueble a una inmobiliaria" |
+| **Miércoles — AUTORIDAD** | Caso de éxito/transformación REAL (jamás inventado — L-29) | "Así pasó este apartamento de 4 meses vacío a arrendado con contrato blindado" |
+| **Jueves — OBJECIONES** | Minar comentarios/preguntas reales del nicho (cajita de preguntas, comentarios de videos virales del sector) y responderlas | "¿Y si el inquilino no paga? Esto es lo que pasa…" |
+| **Viernes — MÉTODO** | Qué pasa exactamente cuando trabajan contigo (el proceso, paso a paso) | "Esto pasa el día 1 cuando ALTORRA recibe tu propiedad" |
+| **Fin de semana — HUMANIZAR** | Contenido sin intención de venta: equipo, día a día, ciudad, valores | Cartagena, el equipo, la vida real — abre el embudo de nuevo |
+
+## 9d. Distribución y horarios (aportes Daniel 2026-07-18 — estatus por ítem)
+- ✅ **Feed ≠ Reels en Instagram** (caso @vestaurbann, pendiente validación live con la extensión): el FEED es la
+  VITRINA (lo que vendes: propiedades, piezas de catálogo — cuando alguien decide comprarte, ahí busca) y los
+  REELS son el CONTENIDO (embudo §9c). No mezclar: un feed tapado de reels esconde el inventario. Su otro
+  aprendizaje: pivotar de formato hasta que los COMENTARIOS pidan precio ("¿cuánto por las Jordan?") — la señal
+  de que el contenido vende, no solo entretiene.
+- ❓ **Horarios de posteo (HIPÓTESIS INICIAL, no regla)**: L 9:00/11:30/21:00 · M 9:00/13:00/19:00 (carruseles) ·
+  X 8:00/12:00/21:00 (reels) · J 10:00/14:00/20:00 (educativo) · V 8:00/11:30/17:00 (temprano; la noche cae) ·
+  S 10:00/14:30/18:00 (liviano) · D 9:30/11:30/19:00 (personal/reflexivo). **La regla real (del propio comentario
+  del video, y es la correcta): cada cuenta lee SUS métricas y ajusta.** Las cuentas de ALTORRA son NUEVAS (IG
+  con seguidores de la cuenta personal de Daniel; TikTok/FB desde cero) → usar estos horarios SOLO como arranque
+  sin datos, medir 4-6 semanas, y que las estadísticas propias manden.
+
 ## 10. Puente ALTORRA — guardarraíles de pauta inmobiliaria Colombia (añadido 2026-07-18, no negociables)
 El dolor VENDE, pero en ALTORRA el dolor siempre tiene SALIDA — el alivio lo entrega "Seguridad, Legalidad y
 Confianza", nunca el pánico por el pánico. Antes de publicar CUALQUIER pieza/guion nacido de esta masterclass:
