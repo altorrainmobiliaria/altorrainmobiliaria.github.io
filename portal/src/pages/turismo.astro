@@ -13,12 +13,12 @@ import { SITE } from '../lib/config/site';
 // ZONAS — las 6 del mockup, con sus textos EXACTOS (antes eran 4, con "Centro Histórico"
 // renombrada y "Manga" INVENTADA; faltaban Castillogrande, Rooftop & Piscina y Zona Campestre).
 const zonas = [
-  { img: '/assets/villa-pool.webp', t: 'Bocagrande', d: 'Torres, playa y atardeceres. La Cartagena moderna con el Caribe a los pies.' },
-  { img: '/assets/estate-golden.webp', t: 'Ciudad Amurallada', d: 'Balcones coloniales, plazas y cinco siglos de historia a la vuelta de cada esquina.' },
-  { img: '/assets/chalet-dusk.webp', t: 'Getsemaní', d: 'Arte urbano, música y la vida local más auténtica de la ciudad.' },
-  { img: '/assets/villa-modern.webp', t: 'Castillogrande', d: 'Residencial y sereno, entre la bahía y el mar. Ideal para estancias largas.' },
-  { img: '/assets/hero-estancia.webp', t: 'Rooftop & Piscina', d: 'Terrazas en las alturas para ver caer el sol sobre las murallas.' },
-  { img: '/assets/hero-invierte.webp', t: 'Zona Campestre', d: 'Fincas y casas de descanso a minutos de la ciudad, entre verde y brisa.' },
+  { img: '/assets/villa-pool.webp', k: 'Frente al mar', t: 'Bocagrande', d: 'Torres, playa y atardeceres. La Cartagena moderna con el Caribe a los pies.' },
+  { img: '/assets/estate-golden.webp', k: 'Historia viva', t: 'Ciudad Amurallada', d: 'Balcones coloniales, plazas y cinco siglos de historia a la vuelta de cada esquina.' },
+  { img: '/assets/chalet-dusk.webp', k: 'Bohemio & vibrante', t: 'Getsemaní', d: 'Arte urbano, música y la vida local más auténtica de la ciudad.' },
+  { img: '/assets/villa-modern.webp', k: 'Tranquilo & exclusivo', t: 'Castillogrande', d: 'Residencial y sereno, entre la bahía y el mar. Ideal para estancias largas.' },
+  { img: '/assets/hero-estancia.webp', k: 'Vistas & piscina', t: 'Rooftop & Piscina', d: 'Terrazas en las alturas para ver caer el sol sobre las murallas.' },
+  { img: '/assets/hero-invierte.webp', k: 'Naturaleza & calma', t: 'Zona Campestre', d: 'Fincas y casas de descanso a minutos de la ciudad, entre verde y brisa.' },
 ];
 // SERVICIOS — los 4 del mockup, textos e íconos EXACTOS y en su orden (antes: "Guías locales"
 // renombrado y "Transporte privado" INVENTADO en lugar de "Concierge 24/7").
@@ -39,7 +39,6 @@ const inversionPerks = [
   { i: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M11 8v6M8 11h6"/>', t: 'Compra con propósito', d: 'Seleccionamos inmuebles con vocación turística real: ubicación, demanda y potencial de valorización.' },
   { i: '<path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-6h6v6"/>', t: 'Operación llave en mano', d: 'Administramos tu alojamiento y sus ingresos: reservas, huéspedes, mantenimiento y reportes mensuales.' },
 ];
-const check = '<path d="M20 6L9 17l-5-5"/>';
 ---
 
 <BaseLayout title="Turismo & Inversión en Cartagena — ALTORRA">
@@ -55,7 +54,7 @@ const check = '<path d="M20 6L9 17l-5-5"/>';
         <h1 class="tur-hero__h">Vive Cartagena como quien la habita.</h1>
         <p class="tur-hero__p">Estadías con alma, experiencias curadas y una ciudad que se descubre mejor de la mano de quien la conoce. Unimos hospitalidad y bienes raíces para que tu visita —o tu inversión— sea inolvidable.</p>
         <div class="tur-hero__cta">
-          <a class="alt-btn alt-btn--gold" href="/estancias">Ver estancias<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+          <a class="alt-btn alt-btn--gold" href="/estancias">Explorar estadías<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
           <a class="alt-btn alt-btn--outline" href="#inversion">Asesoría de inversión</a>
         </div>
       </div>
@@ -72,11 +71,12 @@ const check = '<path d="M20 6L9 17l-5-5"/>';
         <div class="tur-zonas">
           {zonas.map((z) => (
             <a class="tur-zona" href="/estancias">
-              <img src={z.img} alt={z.t} loading="lazy" decoding="async" />
-              <span class="tur-zona__scrim"></span>
+              <span class="tur-zona__ph"><img src={z.img} alt={z.t} loading="lazy" decoding="async" /></span>
               <span class="tur-zona__body">
+                <span class="tur-zona__k">{z.k}</span>
                 <span class="tur-zona__t">{z.t}</span>
                 <span class="tur-zona__d">{z.d}</span>
+                <span class="tur-zona__more">Ver estadías →</span>
               </span>
             </a>
           ))}
@@ -123,43 +123,38 @@ const check = '<path d="M20 6L9 17l-5-5"/>';
       </div>
     </section>
 
-    <!-- Inversión (navy) -->
+    <!-- Inversión (navy) — copy + GRID de 3 cards de vidrio + CTA (mockup L170-198).
+         ⛔ SIN foto ni tarjeta "+18%" inventada (retiradas §32.24 + §44-turismo): el mockup
+         no trae media ni cifra de retorno; publicar un retorno fabricado = riesgo legal. -->
     <section id="inversion" class="tur-inv alt-on-ink" data-surface="ink">
       <span class="tur-inv__glow" aria-hidden="true"></span>
       <div class="alt-container tur-inv__in">
         <div class="tur-inv__copy">
           <p class="alt-eyebrow">Asesoría de Inversión Turística</p>
           <h2 class="tur-inv__h">Invierte donde el mundo quiere quedarse.</h2>
-          <p class="tur-inv__p">Cartagena es uno de los destinos con mayor demanda del Caribe. Convertimos tu propiedad en una inversión que trabaja para ti todo el año, con transparencia y respaldo jurídico.</p>
-          <div class="tur-inv__perks">
-            {inversionPerks.map((p) => (
-              <div class="tur-inv__perk">
-                <span class="tur-inv__check"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={p.i}></svg></span>
-                <div><span class="tur-inv__pt">{p.t}</span><span class="tur-inv__pd">{p.d}</span></div>
-              </div>
-            ))}
-          </div>
-          <a class="alt-btn alt-btn--gold" href="#contacto">Hablar con un asesor<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+          <p class="tur-inv__p">Cartagena es uno de los destinos más deseados del Caribe. Te ayudamos a comprar el inmueble correcto y lo convertimos en un alojamiento rentable —sin que muevas un dedo.</p>
         </div>
-        <!-- ⛔ RETIRADA la tarjeta "+18% · retorno anual promedio en corta estancia" (§32.24):
-             NO existe en el mockup — era una cifra de rentabilidad INVENTADA. Publicar un retorno
-             fabricado en la web de una inmobiliaria real es riesgo legal/comercial, no un detalle
-             de fidelidad. Si algún día va una cifra, la aporta Daniel con su fuente. -->
-        <div class="tur-inv__media">
-          <img src="/assets/estate-golden.webp" alt="Propiedad de inversión en Cartagena" loading="lazy" decoding="async" />
-          <span class="tur-inv__scrim"></span>
+        <div class="tur-inv__grid">
+          {inversionPerks.map((p) => (
+            <div class="tur-inv__card">
+              <span class="tur-inv__ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={p.i}></svg></span>
+              <h3 class="tur-inv__ct">{p.t}</h3>
+              <p class="tur-inv__cd">{p.d}</p>
+            </div>
+          ))}
         </div>
+        <a class="alt-btn alt-btn--gold tur-inv__cta" href="#contacto">Agenda tu asesoría<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
       </div>
     </section>
 
     <!-- Contacto CTA -->
     <section id="contacto" class="alt-container alt-section tur-contact">
-      <p class="alt-eyebrow">Contacto</p>
+      <p class="alt-eyebrow">Tu Cartagena empieza aquí</p>
       <h2 class="tur-contact__h">¿Listo para vivir la ciudad amurallada?</h2>
       <p class="tur-contact__p">Cuéntanos qué buscas —una estadía, una experiencia o una inversión— y un asesor de turismo ALTORRA te acompañará en cada paso.</p>
       <div class="tur-contact__cta">
         <a class="alt-btn alt-btn--navy" href={SITE.contact.whatsappLink}>Escríbenos por WhatsApp<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
-        <a class="alt-btn alt-btn--outline" href="/estancias">Explorar alojamientos</a>
+        <a class="alt-btn alt-btn--outline" href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a>
       </div>
     </section>
   </main>
@@ -181,16 +176,18 @@ const check = '<path d="M20 6L9 17l-5-5"/>';
   .tur-head h2 { margin-top: var(--alt-space-3); }
   .tur-head__p { margin-top: var(--alt-space-3); font-size: 16.5px; line-height: 1.6; color: var(--alt-text); }
 
-  /* Zonas */
-  .tur-zonas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: var(--alt-gap-grid); }
-  .tur-zona { position: relative; display: block; border-radius: var(--alt-r-lg); overflow: hidden; min-height: clamp(280px, 26vw, 340px); box-shadow: var(--alt-elev-card); text-decoration: none; transition: transform var(--alt-dur-slow) var(--alt-ease-card), box-shadow var(--alt-dur-slow) var(--alt-ease-card); }
-  .tur-zona img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-slow) var(--alt-ease-card); }
-  .tur-zona__scrim { position: absolute; inset: 0; background: var(--alt-scrim-img); }
+  /* Zonas — card blanca, foto arriba (196px), cuerpo debajo sobre blanco (mockup L55-109) */
+  .tur-zonas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: clamp(20px, 2.2vw, 28px); }
+  .tur-zona { display: block; border-radius: var(--alt-r-lg); overflow: hidden; border: 1px solid var(--alt-hairline); background: var(--alt-white); box-shadow: var(--alt-elev-card); text-decoration: none; transition: transform var(--alt-dur-slow) var(--alt-ease-card), box-shadow var(--alt-dur-slow) var(--alt-ease-card); }
   .tur-zona:hover { transform: translateY(-6px); box-shadow: var(--alt-elev-card-hover); }
-  .tur-zona:hover img { transform: scale(1.05); }
-  .tur-zona__body { position: absolute; left: 0; right: 0; bottom: 0; padding: clamp(22px, 2.4vw, 30px); }
-  .tur-zona__t { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(24px, 2.6vw, 30px); color: #fff; margin-bottom: 7px; }
-  .tur-zona__d { display: block; font-size: 13.5px; line-height: 1.5; color: rgba(255, 255, 255, 0.82); max-width: 260px; }
+  .tur-zona__ph { display: block; height: 196px; overflow: hidden; }
+  .tur-zona__ph img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-slow) var(--alt-ease-card); }
+  .tur-zona:hover .tur-zona__ph img { transform: scale(1.05); }
+  .tur-zona__body { display: block; padding: 20px 20px 22px; }
+  .tur-zona__k { display: block; font-size: 10px; font-weight: var(--alt-fw-bold); letter-spacing: 0.16em; text-transform: uppercase; color: var(--alt-link); margin-bottom: 8px; }
+  .tur-zona__t { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 24px; color: var(--alt-ink); margin-bottom: 6px; }
+  .tur-zona__d { display: block; font-size: 14px; line-height: 1.55; color: var(--alt-text); margin-bottom: 14px; }
+  .tur-zona__more { display: block; font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-link); }
 
   /* Servicios */
   .tur-servicios { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 26px; }
@@ -199,24 +196,19 @@ const check = '<path d="M20 6L9 17l-5-5"/>';
   .tur-serv h3 { font-family: var(--alt-font-body); font-size: 18px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); margin-bottom: 9px; }
   .tur-serv p { font-size: 14.5px; line-height: 1.6; color: var(--alt-text); }
 
-  /* Inversión (navy) */
+  /* Inversión (navy) — copy arriba + grid de 3 cards de vidrio + CTA (mockup L170-198) */
   .tur-inv { position: relative; overflow: hidden; background: var(--alt-surface-ink); padding-block: clamp(56px, 7vw, 104px); }
   .tur-inv__glow { position: absolute; top: -20%; left: -10%; width: 48%; height: 130%; background: radial-gradient(circle, rgba(212, 175, 55, 0.18), transparent 66%); pointer-events: none; }
-  .tur-inv__in { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: clamp(34px, 4.5vw, 64px); align-items: center; }
+  .tur-inv__in { position: relative; }
+  .tur-inv__copy { max-width: 660px; margin-bottom: clamp(36px, 4vw, 48px); }
   .tur-inv__h { color: #fff; margin: var(--alt-space-3) 0 16px; }
-  .tur-inv__p { font-size: clamp(15px, 1.5vw, 18px); line-height: 1.62; color: var(--alt-on-ink-muted); max-width: 480px; margin-bottom: 28px; }
-  .tur-inv__perks { display: flex; flex-direction: column; gap: 18px; margin-bottom: 32px; }
-  .tur-inv__perk { display: flex; gap: 14px; align-items: flex-start; }
-  .tur-inv__check { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--alt-grad-gold); display: inline-flex; align-items: center; justify-content: center; margin-top: 2px; }
-  .tur-inv__check svg { width: 14px; height: 14px; stroke: var(--alt-ink); }
-  .tur-inv__pt { display: block; font-size: 15.5px; font-weight: var(--alt-fw-semibold); color: #fff; }
-  .tur-inv__pd { display: block; font-size: 13.5px; line-height: 1.55; color: var(--alt-on-ink-muted); margin-top: 3px; }
-  .tur-inv__media { position: relative; align-self: stretch; min-height: clamp(320px, 38vw, 440px); border-radius: var(--alt-r-2xl, 22px); overflow: hidden; box-shadow: 0 44px 92px -42px rgba(0, 0, 0, 0.6); }
-  .tur-inv__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .tur-inv__scrim { position: absolute; inset: 0; background: linear-gradient(150deg, rgba(6, 39, 67, 0.5), rgba(6, 39, 67, 0) 55%); }
-  .tur-inv__stat { position: absolute; left: 18px; bottom: 18px; right: 18px; padding: 16px 20px; border-radius: var(--alt-r-frame, 14px); }
-  .tur-inv__stat-n { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-bold); font-size: 34px; line-height: 1; color: var(--alt-gold-raw); }
-  .tur-inv__stat-l { display: block; font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); margin-top: 4px; max-width: 220px; }
+  .tur-inv__p { font-size: clamp(15px, 1.5vw, 18px); line-height: 1.62; color: var(--alt-on-ink-muted); max-width: 560px; }
+  .tur-inv__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: clamp(18px, 2vw, 26px); margin-bottom: clamp(36px, 4vw, 48px); }
+  .tur-inv__card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px; padding: 28px 26px; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .tur-inv__ico { width: 48px; height: 48px; border-radius: 12px; background: rgba(235, 210, 126, 0.14); display: inline-flex; align-items: center; justify-content: center; color: var(--alt-gold-bright); margin-bottom: 17px; }
+  .tur-inv__ico svg { width: 23px; height: 23px; stroke: currentColor; }
+  .tur-inv__ct { font-size: 18px; font-weight: var(--alt-fw-semibold); color: #fff; margin-bottom: 9px; }
+  .tur-inv__cd { font-size: 14px; line-height: 1.6; color: var(--alt-on-ink-muted); }
 
   /* Contacto */
   .tur-contact { text-align: center; max-width: 640px; }
