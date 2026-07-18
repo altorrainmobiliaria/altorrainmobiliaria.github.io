@@ -11,10 +11,10 @@
 
 > **Dos frentes abiertos, en este orden:**
 >
-> **FRENTE 1 — TODO-27: cerrar los MEDIA/BAJA de fidelidad del portal** (§32.24). **FICHA ✅ (§43).**
+> **FRENTE 1 — TODO-27: cerrar los MEDIA/BAJA de fidelidad del portal** (§32.24). **FICHA ✅ (§43) · TURISMO ✅ (§45).**
 > La síntesis de bóveda `2026-07-17-reauditoria-fidelidad-sintesis.md` es AUTOCONTENIDA (§33 la parcheó): lista 1:1
-> + tabla página→mockup→impl + bloque **"Qué NO corregir (intencional)"** — leerla ANTES de tocar. Pendientes (27):
-> **turismo 8 · estancias 8 · serp 7 · home 2 · publicar 2.** ⚠️ Los "ALTA ✅" de la síntesis madre NO son de fiar
+> + tabla página→mockup→impl + bloque **"Qué NO corregir (intencional)"** — leerla ANTES de tocar. Pendientes (19):
+> **estancias 8 · serp 7 · home 2 · publicar 2.** ⚠️ Los "ALTA ✅" de la síntesis madre NO son de fiar
 > 1:1: la 3ª card ALTA de la FICHA nunca se corrigió (§43, el commit `3a66a69` era HOME) — verificar cada ALTA vs mockup.
 > **MÉTODO (L-29/L-24)**: bloque del `.dc.html` → corregir TEXTUAL → re-auditar adversarial ANTES de decir "fiel".
 > NUNCA inventar. Capas: build → estructura → computed (miente con `transition`, L-28) → screenshot Chrome → diff
@@ -48,13 +48,18 @@
 | **TODO-22** | **Auditoría Fable**: (a) ADR §22 `[REVISAR-FABLE]` (capa de datos); (b) decisión catálogo público SSG vs doc-índice (gatea datos reales). | 🔮 FABLE | |
 | **TODO-23** | 🔧 **Kernel hardening** (owner=**INMOBILIARIA**, escritor único ×4 — el wording "cars" era stale, §41): K-01/02/04/05/09 + §33: priorizar warns en truncado `--boot` · gate #7 debe ver GIT de la bóveda · circularidad boot-budget. 1er fix aplicado 07-18 (✅-falso, §41); resto de K abiertos. | 🔴 kernel | §33 G-09 |
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). K-06 ✅ CERRADO §33 (espejo en bóveda). | 🟡 abierto | |
-| **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **FICHA ✅ (§43: 8 hallazgos + 1 del crítico + la 3ª card ALTA que §32.24 nunca tocó)** · **27 MEDIA/BAJA pendientes**: turismo 8 · estancias 8 · serp 7 · home 2 · publicar 2. Método L-29: diff vs `.dc.html` + re-audit adversarial. ⚠️ verificar los "ALTA ✅" de cada página 1:1 (uno se había perdido). | 🔄 OPUS | Frente 1 |
+| **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **FICHA ✅ (§43) · TURISMO ✅ (§45)** · **19 MEDIA/BAJA pendientes**: estancias 8 · serp 7 · home 2 · publicar 2. Método L-29: diff vs `.dc.html` + re-audit adversarial. ⚠️ verificar los "ALTA ✅" de cada página 1:1 (uno se había perdido en la ficha). | 🔄 OPUS | Frente 1 |
 | **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda): #1 ✅ (caja negra, §40) · **#2 ✅ 07-18 (§41)**: `boot-gate.mjs` bloqueante + poda −982c + one-in-one-out §G.5 + fix kernel ×3 · #3 ✅ · **sigue #4** `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento (>90d). | 🔄 sigue #4 | $0 |
 | **TODO-29** | 📣 **PAUTA**: skill ✅ · Meta ordenado ✅ · humo montada ✅ · **HUMO ENCENDIDA 07-18 ✅ (§42.8)** — anuncio "Activo" (revisión aprobó), $4.000/día vs prepago ~$5k → muere sola ~1 día. **VIGILAR (no tocar)**: entrega/CPM real · chats entrantes (responder; saludo auto ya sale) · planilla CPQL desde el 1er lead · al agotarse el saldo verificar FACTURACIÓN → cierra fontanería §4b y calibra la CAMPAÑA REAL (gate = cierre de obra: matrícula/RNT + privacidad + píxel+GA4 + landing). | 🔥 VOLANDO | no tocar 7d |
 
 ---
 
 ## 📝 Bitácora (efímera)
+
+> **2026-07-18 (OPUS-4.8 — §45)**: **TODO-27 turismo ✅** — 8 hallazgos (T1 #inversión a copy+grid-3-cards+CTA sin
+> foto · T2-T3 copy/CTA · T4-T5 zonas card-blanca+kicker+"Ver estadías" · T6-T8 eyebrow/hero/email). Verificado build+
+> HTML+DOM vivo + re-audit adversarial (8+1 agentes → 8/8 FIEL, crítico 0 nuevas). Bóveda `2026-07-18-turismo-reaudit-*`.
+> Sigue TODO-27: estancias 8 · serp 7 · home 2 · publicar 2.
 
 > **2026-07-18 (FABLE-5 — §44)**: **brain-kit v1.0 ✅ ENTREGADO** — kit de neurogénesis para el amigo de Daniel
 > (ZIP en `Desktop\brain-kit-v1.0.zip`; Daniel lo pasa por WhatsApp; instala el Fable del amigo con

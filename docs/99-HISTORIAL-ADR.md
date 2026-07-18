@@ -695,3 +695,36 @@ Cerebro: este ADR + fila `00` + bitácora `10`.
 **44.7 Doctrina**: §3.7 (verificación adversarial por iniciativa propia) · L-29 extendida a **documentación ejecutable**
 (un runbook que otros ejecutan sin ti exige dry-run mecánico contra el código real) · §G.4 captura (crudo+síntesis).
 Sin cache bump (nada del sitio). Futuras versiones: editar `brain-kit/` → re-verificar → re-zipear vX.Y.
+
+## 45. ADR-045 — TODO-27: TURISMO del portal FIEL (8 hallazgos) ⟦OPUS-4.8⟧ (2026-07-18)
+
+**45.1 Contexto/causa raíz**: 2ª página de TODO-27 (fidelidad del portal) tras la ficha (§43). Turismo tenía 8 hallazgos
+MEDIA/BAJA del re-audit §32.24. Causa raíz: el rebuild replicó el contenido pero divergió en el LAYOUT de dos secciones
+(#inversión y Zonas) y en 6 textos. Método L-29: leer el mockup real `ALTORRA Turismo.dc.html` → diff → corregir textual
+→ re-audit adversarial. A diferencia de la ficha, aquí los ALTA de turismo (§32.24: +18% retirado, 3 tarjetas de inversión
+restauradas) SÍ estaban aplicados — pero se verificó igual, no se dio por hecho (lección de la ficha §43).
+**45.2 Solución (8 correcciones, todas en `turismo.astro`)**: **MEDIA** — T1 #inversión reestructurada de split-2col+foto+
+lista-vertical → **copy arriba + grid de 3 cards de vidrio** (íconos distintos gráfico/lupa+/casa, caja translúcida gold-
+bright) + CTA; retirada la foto `.tur-inv__media` + CSS muerto del stat/perks · T2 párrafo #inversión restaurado ("más
+deseados del Caribe… sin que muevas un dedo") · T3 CTA #inversión "Hablar con un asesor" → "Agenda tu asesoría" · T4 6
+kickers de zonas (Frente al mar/Historia viva/Bohemio & vibrante/Tranquilo & exclusivo/Vistas & piscina/Naturaleza & calma)
++ enlace "Ver estadías →" · T5 zonas de foto-full-bleed+scrim+texto-blanco → **card blanca, foto arriba 196px, cuerpo
+debajo** (kicker oro + h3 navy + p gris) · T6 eyebrow contacto "Contacto" → "Tu Cartagena empieza aquí". **BAJA** — T7 hero
+1er CTA "Ver estancias" → "Explorar estadías" · T8 contacto 2º CTA de nav "/estancias" → **mailto al email real** (info@
+altorrainmobiliaria.co, exención #1). + limpieza de `const check` muerto.
+**45.3 No-regresión**: solo `turismo.astro`. Header/Footer/SITE/tokens INTACTOS. Secciones NO tocadas (servicios ×4,
+Pasadías, footer) verificadas fieles por el crítico. Build OK (10 rutas prerender).
+**45.4 Verificación (capas L-29)**: build ✅ · HTML construido (kickers ×6, "Ver estadías" ×6, tur-inv__card ×3, sin
+tur-inv__media/stat/perk/scrim, "Agenda tu asesoría", "Tu Cartagena empieza aquí", email real ✓) · DOM/computed en vivo
+(zona card bg blanco + título navy · inversión grid 3 cols, íconos distintos, ico gold-bright, `__in` display=block) ·
+render (get_page_text 1:1) · **re-audit adversarial** (workflow 8 refutadores effort:high + 1 crítico, ~919k tok): **8/8
+FIEL** (7 por refutador dedicado high; T1 = verificador falló por `StructuredOutput retry cap` tooling, confirmado por DOM
+en vivo + crítico) + crítico de completitud: **0 divergencias nuevas** en las 7 secciones.
+**45.5 Anti-patterns evitados**: NO inventar (todo del mockup, archivo:línea) · NO declarar "fiel" sin re-audit (§3.7/
+L-29) · NO tocar exenciones (contacto/rutas reales, tokens de color, superficie navy sellada, image-slots no portados,
+Pasadías/6-zonas deliberadas) · anti-código-muerto (retiré media/stat/perks/check muertos) · scope: solo turismo.
+**45.6 Archivos**: `portal/src/pages/turismo.astro`. Bóveda: `2026-07-18-turismo-reaudit-{crudo.json,sintesis.md}`.
+Cerebro: este ADR + `00` + `10` + `05`. INTACTOS: Header/Footer/PropertyCard/tokens/base/components.css.
+**45.7 Doctrina + cache**: L-29 (contar contra la fuente + re-audit adversarial), §3.3, §3.7. Nota: el tooling falla ~1
+agente/workflow (retry cap) — hit T1 aquí, ALTA-card3 en ficha; el crítico+DOM cubren el hueco. Sin cache bump (portal
+sin SW). Sigue TODO-27: estancias 8 · serp 7 · home 2 · publicar 2 (19).
