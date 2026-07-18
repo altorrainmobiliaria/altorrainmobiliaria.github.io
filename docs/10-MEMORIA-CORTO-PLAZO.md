@@ -49,7 +49,7 @@
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). K-06 ✅ CERRADO §33 (espejo en bóveda). | 🟡 abierto | |
 | **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **35 MEDIA/BAJA pendientes** (ficha 8 = primero). Síntesis de bóveda ya AUTOCONTENIDA (§33). Método L-29: diff vs `.dc.html` + re-auditar adversarial. | 🔄 OPUS | Frente 1 |
 | **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda): #1 ✅ (caja negra, §40) · **#2 ✅ 07-18 (§41)**: `boot-gate.mjs` bloqueante + poda −982c + one-in-one-out §G.5 + fix kernel ×3 · #3 ✅ · **sigue #4** `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento (>90d). | 🔄 sigue #4 | $0 |
-| **TODO-29** | 📣 **PAUTA**: skill ✅ (§37) · Meta ordenado ✅ (§38-§40) · **HUMO MONTADA Y PUBLICADA EN PAUSA ✅ (§42)**: campaña `120250036063330588`, $4.000/día, Desactivada, anuncio en revisión. **Encender humo = "sí" de Daniel + saldo** (~$5k). Al encender: verificar entrega/CPM/clic→chat correcto/facturación (fontanería §4b) → planilla CPQL. CAMPAÑA REAL converge con cierre de obra (números matrícula/RNT + privacidad + píxel+GA4 + landing). | 🟢 humo en pausa | enciende Daniel |
+| **TODO-29** | 📣 **PAUTA**: skill ✅ · Meta ordenado ✅ · humo montada ✅ · **HUMO ENCENDIDA 07-18 ✅ (§42.8)** — anuncio "Activo" (revisión aprobó), $4.000/día vs prepago ~$5k → muere sola ~1 día. **VIGILAR (no tocar)**: entrega/CPM real · chats entrantes (responder; saludo auto ya sale) · planilla CPQL desde el 1er lead · al agotarse el saldo verificar FACTURACIÓN → cierra fontanería §4b y calibra la CAMPAÑA REAL (gate = cierre de obra: matrícula/RNT + privacidad + píxel+GA4 + landing). | 🔥 VOLANDO | no tocar 7d |
 
 ---
 
@@ -60,8 +60,10 @@
 > PUBLICADA EN PAUSA (§42)** por extensión Chrome con Daniel EN VIVO (él subió los JPG — el file-picker solo
 > acepta adjuntos del chat; CSP de Facebook mata fetch/localhost). Desactivada, $0, anuncio en revisión.
 > Gotchas nuevos → **L-32** (página default de CARS · radio-clicks fantasma · listbox virtualizado).
-> **▶ RETOMAR**: (1) **HUMO: esperar "sí" de Daniel + saldo → encender** (1 clic al toggle de campaña); al
-> encender, fontanería §4b (entrega/CPM/clic→chat/factura) · (2) **TODO-28 #4** (`brain:kernel-pull`) → #5-#7 ·
-> (3) creativos campaña real (embudo §0b) cuando Daniel entregue números. (Ficha del portal sigue en Opus.)
+> **§42.8: Daniel dio el "sí" y la HUMO quedó ENCENDIDA el mismo 07-18 — anuncio "Activo" (revisión aprobada).**
+> **▶ RETOMAR**: (1) **HUMO volando — NO tocar**; próxima sesión: leer entrega/CPM/conversaciones en Ads
+> Manager + confirmar facturación cuando el prepago se agote (~1 día) → cierra fontanería §4b · (2) **TODO-28
+> #4** (`brain:kernel-pull`) → #5-#7 · (3) creativos campaña real (embudo §0b) cuando Daniel entregue números.
+> (Ficha del portal sigue en Opus.)
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*

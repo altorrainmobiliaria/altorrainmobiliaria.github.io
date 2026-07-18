@@ -618,3 +618,9 @@ sintético (escalera: seleccionar visible → reabrir).
 **42.6 Archivos**: cero código tocado; bóveda humo actualizada AS-BUILT; `activos-meta.md` (repo+user) con nota.
 **42.7 Doctrina**: dinero con Daniel presente ✅ · §0b intacto (pieza aprobada sin alteración IA) · §3.3 (cada
 paso verificado por screenshot/DOM; el resumen stale de plantilla se re-verificó por DOM antes de publicar).
+**42.8 ENCENDIDA (mismo 2026-07-18, "sí" explícito de Daniel: "Listo encendamos la pauta")**: toggle de campaña
+ON → toast "Campaña actualizada" → estado del anuncio **"Activo"** (la revisión de Meta APROBÓ la pieza en ~40
+min, sin sorpresas de política — check (d) de la fontanería ✅). Presupuesto $4.000/día contra prepago ~$4.992
+→ vuelo ~1 día y muere sola. Reglas vigentes: días 1-7 NO tocar NADA (editar resetea aprendizaje) · responder
+los chats entrantes (saludo automático ya configurado) · planilla CPQL desde el 1er chat · al agotarse el saldo,
+verificar facturación (check (a)) + CPM real (b) + clic→chat correcto (c).
