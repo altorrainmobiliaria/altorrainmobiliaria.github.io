@@ -484,3 +484,30 @@ Anti-patterns**: cero benchmarks convertidos en reglas (❓ explícitos con vía
 en todo claim de plataforma (L-30) · campañas EN PAUSA + "sí" de Daniel para dinero. **37.6 Modificados**:
 skills/pauta-captacion (nueva ×2) · 6 references parcheadas ×2 · inventario · docs. INTACTOS: portal, kernel.
 **37.7**: el ENCENDIDO de la pauta converge con el cierre de obra (entrega de números). Todo listo-para-encender.
+
+## 38. ADR — Meta Business ORDENADO en vivo + alineación de cerebros ×4 ejecutada ⟦FABLE-5⟧ (2026-07-18)
+
+**38.1**: Daniel conectó el MCP oficial de Meta + su Chrome y delegó la organización ("hoy no pautamos; ordenar
+todo"). **38.2 Meta (MCP + Business Suite en vivo, con sus 2 aprobaciones explícitas)**: diagnóstico completo →
+el desorden central era la cuenta publicitaria ACTIVA (`1784008112275023`, COP) flotando FUERA de los 2 portafolios
+→ **RECLAMADA al portafolio Altorra Inmobiliaria** (`807047192483289`; acción permanente + términos comerciales —
+ambas con ok explícito de Daniel vía AskUserQuestion) y **renombrada "ALTORRA Inmobiliaria - Ads"** · **píxel/dataset
+CREADO**: "ALTORRA Inmobiliaria - Web" `1032884172712946` (sin categorías restrictivas — Housing no aplica a CO §34)
+· inventario verificado: página `807043122483696` ✅ en portafolio · IG @altorrainmobiliaria ✅ (⚠️ login pendiente
+del dueño) · WABA `1089080446378494` con +57 300 2439810 ✅ (⚠️ "Sin conexión" → abrir app en el teléfono) · personas
+= solo Daniel ×2 identidades · cuenta vieja `36557834` CERRADA se deja quieta · saldo prepago ≈ COP 5k (recargar
+antes de encender). Cuenta activa aún NO habilitada para Ads MCP (rollout). Inventario completo + pendientes-dueño →
+`skills/pauta-captacion/references/activos-meta.md` (repo+user). Gotcha operativo: Business Suite en pestaña de
+FONDO nunca renderiza (throttling) → pestaña en primer plano (pariente de L-26). **38.3 Alineación de cerebros
+(workflow 3 agentes, mandato "alinea todos")**: constancias de liderazgo del 2026-07-10 POR FIN aplicadas —
+**bersaglio ✅ commit+push `486640f`** (rama Desarrollo; payload de lecciones cars —detached-HEAD y metas— documentado como bloqueado por su shard
+TODO-77 con instrucciones) · **insema ✅ commit+push `a042494`** (rama activa `cerebro/todo-32`; merge a main =
+dueño) · **cars ⚠️ aplicado + 45 archivos staged, commit BLOQUEADO por su propio pre-commit** (su `10` sobre cap
+PREEXISTENTE; sin burlar — resolución: poda del operador cars o `--no-verify` autorizado). Skills re-sincronizadas
+×15 por repo (verdad SEO §33 + refreshes paid-ads v2.2/ad-creative v2.8 + parches de vigencia §37) con verificación
+byte-idéntica; brain:check SANO en bersaglio/insema, preexistentes reportados sin tocar (límite de guardián).
+**38.4 Anti-patterns**: acciones irreversibles/términos SOLO con ok explícito · categorías restrictivas NO marcadas
+(evita recorte de entrega sin obligación legal) · clasificador/hooks jamás burlados · credenciales jamás tocadas
+(login IG = dueño). **38.5 Modificados**: pauta-captacion/references/activos-meta.md (nuevo ×2) + 10 + 05 + repos
+hermanos (sus commits). **38.6**: pauta lista-para-encender ahora también del lado META (faltan solo los 3
+pendientes-dueño + números al cierre de obra).
