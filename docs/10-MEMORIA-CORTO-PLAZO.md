@@ -59,12 +59,12 @@
 > minería (§35) · backlog (§36) · `pauta-captacion`+investigación (§37) · **Meta ORDENADO en vivo** (§38:
 > cuenta reclamada · píxel `1032884172712946` · activos → `pauta-captacion/references/activos-meta.md`) ·
 > **constancias ×3 COMPLETAS** (§39, TODO-20 cerrado) · pauta de HUMO ~COP 5k (playbook §4b). **▶ RETOMAR**:
-> boot normal → frente: (1) ficha del portal (Opus; síntesis de bóveda autocontenida) · (2) TODO-28 ·
-> (3) lotes TikTok / pauta de humo al estar los pendientes. Todo commiteado y pusheado ×4 repos + bóveda.
+> boot normal → frente: (1) ficha del portal (Opus) · (2) TODO-28 · (3) lotes TikTok / pauta de humo.
 
 > **2026-07-18 (FABLE-5 — post-§38)**: WhatsApp sync EN VIVO: +57 300 2439810 **Conectado** + vínculo
 > página FB↔WhatsApp ✅ (principal+CTA ON) → gate CTWA cumplido. Renombrar WABA: no expuesto en UI (no
 > reintentar). Alerta pago WA Manager = solo plantillas. `activos-meta` ×2 al día. **Falta-dueño**:
-> login IG (pantalla abierta) · saldo. 🐛 kernel: boot-budget imprime ✅ estando >objetivo → sinapsis.
+> login IG (popup OAuth sin completar) · saldo. Centro de seguridad ORDENADO ✅ (dominio + protección; detalle
+> y alerta residual → `activos-meta`). 🐛 kernel: boot-budget imprime ✅ >objetivo → sinapsis.
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*

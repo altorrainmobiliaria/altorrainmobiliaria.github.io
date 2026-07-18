@@ -17,10 +17,19 @@
 | Personas | Daniel (FB, acceso total, activo) + Daniel (identidad IG, inactivo) | ✅ sin terceros |
 
 ## Pendientes que solo el dueño puede hacer (cazarlos en el próximo lote)
-1. **Login de Instagram** en Business Suite (desbloquea asignaciones/apps del perfil). *(07-18: pantalla dejada abierta en Chrome con el botón "Iniciar sesión" listo.)*
+1. **Login de Instagram** en Business Suite (desbloquea asignaciones/apps del perfil). *(07-18: se lanzó el flujo — el modal de permisos avanza pero el popup de OAuth de IG quedó sin completar (¿bloqueado por Chrome?); el dueño debe: permitir popups de business.facebook.com o loguearse antes en instagram.com y reintentar "Iniciar sesión".)*
 2. ~~Abrir WhatsApp Business en el teléfono~~ ✅ **HECHO 2026-07-18** — número **Conectado** + vínculo página↔WhatsApp verificado (CTWA listo).
 3. **Recargar saldo/confirmar método de pago** antes de encender (prepago actual ≈ COP 5k).
 4. (Opcional, cosmético) Quitar el espacio final del nombre de la página. *(El renombre del WABA "propietario" NO está disponible en la UI — verificado 07-18.)*
+
+## Centro de seguridad del portfolio (ordenado 2026-07-18)
+- **Dominio de confianza agregado** ✅: `altorrainmobiliaria.co` (aprobación de pares) — ya figura en "Acción completada". Solo el dominio de producción; el staging workers.dev NO se agrega (no recibe pauta).
+- **Protección de la cuenta publicitaria**: guardada 2× con "Cambios aplicados" → **Protección predeterminada** (solo anuncios sospechosos requieren aprobación) + **Daniel Romero marcado como aprobador** (checkbox verificado). Se DESCARTÓ "adicional" (aprobar cada anuncio = fricción para operador único) y "personalizada" (tope por presupuesto redundante: la cuenta es prepago).
+- ⚠️ **Alerta residual que puede NO desaparecer**: el panel sigue diciendo "0 aprobadores"/"1 cuenta sin la opción". Diagnóstico: recomputo perezoso del panel o el contador solo cuenta pares NO-admin (los admins son revisores implícitos; en negocio unipersonal no existe "par"). **NO bloquea pautar** — no reintentar en loop.
+- **2FA del portfolio = "Nadie"** (pendiente decisión del dueño): subirla a "Todos" exige que su FB personal tenga 2FA activo ANTES o se bloquea el acceso. Proponérselo, no tocarlo unilateralmente.
+- **Verificación del negocio DISPONIBLE** ("Cumple los requisitos para la verificación"): opcional, NO es gate de pauta; requiere docs del negocio (dueño). Recomendable post-obra.
+- **NO se activó** "Require ads to use trusted website domains for all landing pages": interacción con destino CTWA (WhatsApp) sin verificar — revisitar tras la 1ª campaña.
+- Completadas previas: acceso total ≤10 usuarios ✅ · administrador alternativo ✅.
 
 ## Nota WhatsApp Manager (07-18)
 Alerta "Falta un método de pago válido" en WhatsApp Manager: aplica SOLO a conversaciones **iniciadas
