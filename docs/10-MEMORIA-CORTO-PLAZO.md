@@ -32,7 +32,9 @@
 > oro `#D4AF37` · plata `#BFC3C9` · grises fríos; fondo blanco, ORO predomina, sin verde/rojo/negro; Cormorant +
 > Hanken; neu+glass DUAL-MODE. Dev: `npm --prefix portal run dev` (4321). (La VOZ sí está EN FORJA — memoria.)
 >
-> **🚦 BLOQUEADORES (solo Daniel)**: matrícula real (footer `000000`) · dirección física · RNT. Contacto oficial ✅.
+> **🚦 BLOQUEADORES (solo Daniel)**: **matrícula y RNT YA EXISTEN** ✅ (2026-07-18) — los NÚMEROS los entrega al
+> CIERRE DE OBRA (web lista y confiable primero; hasta entonces footer `000000` y CERO pauta — Ley 820 art. 31
+> exige el nº en publicidad de arriendo). Falta: dirección física. Contacto oficial ✅.
 >
 > **🚫 Callejones (NO reintentar)**: (a) ⛔ NADA del sitio viejo (§15.7) · (b) NUNCA UI sin mockup · (c) datos del
 > portal = DEMO (`client.ts` listo) · (d) NUNCA dinero sin gate · JAMÁS el 323… personal · sin gráficas · ALTORRA
@@ -46,13 +48,13 @@
 |---|---|---|---|
 | **TODO-17** | **Ola 0 restos**: E2E "tras cache" en staging (gate T9) · deploy de rules (coordinado con retiro legacy, NO ahora) · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
 | **TODO-20** | Constancias liderazgo ×3 + import bersaglio: payloads en `sinapsis-cerebros/references/` — **verificado §33: SIGUEN sin aplicar** por los operadores destino. | ⏸️ externo | escalar en próxima sesión de cada repo |
-| **TODO-21** | **Lote-dueño**: matrícula real · dirección física · RNT · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño | pedir por LOTES |
+| **TODO-21** | **Lote-dueño**: entrega de Nº matrícula + Nº RNT (ya existen ✅; Daniel los da al CIERRE DE OBRA) · dirección física · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
 | **TODO-22** | **Auditoría Fable**: (a) ADR §22 `[REVISAR-FABLE]` (capa de datos); (b) decisión catálogo público SSG vs doc-índice (gatea datos reales). | 🔮 FABLE | |
 | **TODO-23** | 🔧 **Kernel hardening** (owner=cars, single-writer): K-01/02/04/05/09 + nuevos §33: priorizar warns en el truncado de `--boot` · gate #7 debe ver GIT de la bóveda · romper circularidad del boot-budget. **9/10 K sin resolver; kernel intacto desde 06-27 → SLA vencido, escalar por sinapsis.** | 🔴 kernel | §33 G-09 |
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). K-06 ✅ CERRADO §33 (espejo en bóveda). | 🟡 abierto | |
 | **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **35 MEDIA/BAJA pendientes** (ficha 8 = primero). Síntesis de bóveda ya AUTOCONTENIDA (§33). Método L-29: diff vs `.dc.html` + re-auditar adversarial. | 🔄 OPUS | Frente 1 |
 | **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda; unánime "idea correcta, automatizar"): #1 hooks PreCompact/SessionEnd (mata M-01/M-02) · #2 candado del boot en pre-commit + one-in-one-out · #4 `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento en hechos (>90d = re-verificar). #3 (respaldo memoria) ✅ HECHO. Los kernel-side van vía sinapsis a cars. | 🟢 listo p/ejecutar | ~2-3 días, $0 |
-| **TODO-29** | 📣 **PAUTA Meta + Google Ads — fase CONSTRUCCIÓN**: base COMPLETA (§34-§35: Housing ✅ · masterclass+ganchos+cronograma ✅ · `paid-ads` v2.2 con meta-decision-system TCPL + google-search-playbook · `ad-creative` v2.8 · video/offers/marketing-loops/image adoptadas · Brief ✅). Siguiente: investigación seria (docs oficiales Meta/Google + grandes del marketing) → skill de pauta ALTORRA-específica sobre esa base + más material TikTok de Daniel según llegue. RNT = gate de alojamientos. | 🔄 activo | Frente 2 |
+| **TODO-29** | 📣 **PAUTA Meta + Google Ads — fase CONSTRUCCIÓN**: base COMPLETA (§34-§36) + **workflow de investigación oficial EN VUELO** (`wf_1c796d45`: campañas Meta vigentes · píxel/CAPI en Workers · Google Ads local · benchmarks LatAm → blueprint) → construir skill `pauta-captacion`. **Matrícula y RNT ya existen**: números al cierre de obra ⇒ el LANZAMIENTO de pauta se alinea con web terminada (mientras tanto: construir todo listo-para-encender). | 🔄 activo | Frente 2 |
 
 ---
 

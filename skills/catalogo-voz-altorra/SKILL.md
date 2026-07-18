@@ -18,6 +18,9 @@ description: >-
 >   pieza (web, ficha, sello, pauta, post, WhatsApp, Journal) pasala por el **checklist
 >   anti-IA (§3.3)** + el **Test de Alma (§3.4)** + el **gate rapido (§3.5)**. Un solo "no"
 >   devuelve la pieza.
+> - ✅ **Matrícula de Arrendador y RNT: AMBOS EXISTEN** (Daniel confirma 2026-07-18); los NÚMEROS
+>   los entrega AL CIERRE DE OBRA (la web debe estar lista y generar confianza antes de exhibirlos).
+>   Hasta entonces: los placeholders siguen y NO SE PAUTA (arriendo exige el nº visible, Ley 820 art. 31).
 > - **Datos reales pendientes:** donde veas `No. ____` va el numero real (Matricula de
 >   Arrendador / RNT) del certificado del dueno. **NO inventes uno.** (El numero
 >   `AMC-OFI-0074376-2026` que aparecio en la deliberacion fue una ALUCINACION del modelo:

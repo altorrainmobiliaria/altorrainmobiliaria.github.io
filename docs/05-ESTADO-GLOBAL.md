@@ -13,7 +13,7 @@
 | **Skills visibilidad** | ✅ **Actualizadas 2026-07-18** con aprendizajes VERIFICADOS en prod bersaglio (ADR §33): Offer-sin-price INVÁLIDO · FAQPage sin rich result (may-2026) · aggregateRating solo on-site · "Solicitar indexación" = solo descubrimiento. Sincronizadas repo + `~/.claude/skills`. |
 
 ## ⚠️ Flags de riesgo activos
-- ⚖️ **Matrícula de arrendador OBTENIDA** ✅; el Nº real va al footer al cierre de obra (hoy `000000`) → blocker de producción. Ídem dirección física + RNT (solo Daniel los da).
+- ⚖️ **Matrícula de arrendador Y RNT: AMBOS OBTENIDOS** ✅ (Daniel confirma 2026-07-18); **los NÚMEROS los entrega al CIERRE DE OBRA** (decisión suya: la web debe estar lista y generar confianza antes de exhibirlos). Footer hoy `000000`. La pauta de arriendo exige el nº visible (Ley 820 art. 31) → **toda la pauta se enciende con la entrega, junto con la web**. Falta del dueño: dirección física.
 - 🔥 **Firebase BLAZE activo** ✅ (restaurado 2026-07-12 tras aviso de Google; sin costo — portal usa datos DEMO en Cloudflare aún).
 - 🔗 **Constancias de liderazgo ×3 pendientes** (payloads en `sinapsis-cerebros/references/`) + **skills visibilidad de cars/bersaglio (copias repo) desactualizadas** → las porta cada operador (el user-level ya quedó ✅ ×4).
 - 📣 **Pauta en preparación** (TODO-29, §34): Housing/Special Ad Category ✅ verificado (NO aplica a pauta→CO) · Brief de captación respaldado en bóveda `pauta/` (+gitignore) · masterclass del dueño ADOPTADA (`marketing-psicologico-conversion`). Esperando material TikTok de Daniel.
