@@ -61,9 +61,12 @@
 > acepta adjuntos del chat; CSP de Facebook mata fetch/localhost). Desactivada, $0, anuncio en revisión.
 > Gotchas nuevos → **L-32** (página default de CARS · radio-clicks fantasma · listbox virtualizado).
 > **§42.8: Daniel dio el "sí" y la HUMO quedó ENCENDIDA el mismo 07-18 — anuncio "Activo" (revisión aprobada).**
-> **▶ RETOMAR**: (1) **HUMO volando — NO tocar**; próxima sesión: leer entrega/CPM/conversaciones en Ads
-> Manager + confirmar facturación cuando el prepago se agote (~1 día) → cierra fontanería §4b · (2) **TODO-28
-> #4** (`brain:kernel-pull`) → #5-#7 · (3) creativos campaña real (embudo §0b) cuando Daniel entregue números.
-> (Ficha del portal sigue en Opus.)
+> **▶ RELEVO A OPUS 4.8 (orden de Daniel al cierre)**: (1) **TODO-27 — FICHA del portal (8 hallazgos, la más
+> urgente)** y luego turismo 8 · estancias 8 · serp 7 · home 2 · publicar 2. MÉTODO OBLIGATORIO L-29/L-24: leer
+> PRIMERO la síntesis de bóveda `2026-07-17-reauditoria-fidelidad-sintesis.md` (autocontenida, con "Qué NO
+> corregir") → diff vs `.dc.html` → corregir TEXTUAL → re-auditar adversarial ANTES de decir "fiel".
+> (2) ⛔ **HUMO volando — NO tocar Ads Manager** (muere sola ~1 día; los resultados los lee la próxima sesión
+> de pauta). (3) ⛔ **Kernel/TODO-28 #4-#7 = carril de FABLE** — Opus no toca `scripts/brain-*.mjs`.
+> (4) Creativos campaña real: esperan números de Daniel (embudo §0b cuando lleguen).
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*
