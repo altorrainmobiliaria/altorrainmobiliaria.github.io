@@ -13,46 +13,42 @@ import Footer from '../components/Footer.astro';
 import PropertyCard from '../components/PropertyCard.astro';
 
 export function getStaticPaths() {
+  // SPLIT INTENCIONAL del SERP mixto del mockup (§32.22): /comprar + /arrendar.
+  // El mockup mixto trae 4 cards EN VENTA + 1 ARRIENDO + 1 CORTA ESTANCIA. Poblamos cada ruta
+  // SOLO con sus cards REALES del mockup — CERO listings inventados (L-29). Antes /comprar tenía
+  // 'San Fernando' inventada y la corta-estancia de Getsemaní reetiquetada como venta $690M; y
+  // /arrendar tenía 5 listings inventados (+ zona 'Alameda La Victoria' fabricada). Todo retirado.
+  // La corta-estancia (Getsemaní · $850k/noche) NO va en un SERP de compra/arriendo → su hogar es
+  // el dominio de estancias. Datos = DEMO hasta el inventario real de Firestore (TODO-22).
   const venta = [
-    { img: '/assets/villa-pool.webp', alt: 'Apartamento en Castillogrande', badge: 'En venta', zona: 'Castillogrande', beds: 3, baths: 3, area: '142 m²', title: 'Apartamento con vista a la bahía', price: '$1.450.000.000', priceLabel: 'Desde', href: '/ficha' },
-    { img: '/assets/villa-modern.webp', alt: 'Casa en Manga', badge: 'En venta', zona: 'Manga', beds: 4, baths: 3, area: '210 m²', title: 'Casa republicana restaurada', price: '$980.000.000', priceLabel: 'Desde', href: '/ficha' },
-    { img: '/assets/estate-golden.webp', alt: 'Residencia en Bocagrande', badge: 'En venta', zona: 'Bocagrande', beds: 4, baths: 4, area: '260 m²', title: 'Penthouse frente al mar', price: '$2.100.000.000', priceLabel: 'Desde', href: '/ficha' },
-    { img: '/assets/chalet-dusk.webp', alt: 'Casa en Crespo', badge: 'En venta', zona: 'Crespo', beds: 3, baths: 2, area: '120 m²', title: 'Casa familiar cerca del mar', price: '$760.000.000', priceLabel: 'Desde', href: '/ficha' },
-    { img: '/assets/hero-keys.webp', alt: 'Apartamento en Getsemaní', badge: 'En venta', zona: 'Getsemaní', beds: 2, baths: 2, area: '88 m²', title: 'Loft de autor junto a la muralla', price: '$690.000.000', priceLabel: 'Desde', href: '/ficha' },
-    { img: '/assets/villa-modern.webp', alt: 'Apartamento en San Fernando', badge: 'En venta', zona: 'San Fernando', beds: 3, baths: 2, area: '105 m²', title: 'Apartamento nuevo con acabados premium', price: '$540.000.000', priceLabel: 'Desde', href: '/ficha' },
+    { img: '/assets/villa-pool.webp', alt: 'Apartamento en Castillogrande', badge: 'En venta', zona: 'Castillogrande', beds: 3, baths: 3, area: '142 m²', title: 'Apartamento con vista a la bahía', price: '$1.450.000.000', href: '/ficha' },
+    { img: '/assets/villa-modern.webp', alt: 'Casa en Manga', badge: 'En venta', zona: 'Manga', beds: 4, baths: 3, area: '210 m²', title: 'Casa republicana restaurada', price: '$980.000.000', href: '/ficha' },
+    { img: '/assets/estate-golden.webp', alt: 'Residencia en Bocagrande', badge: 'En venta', zona: 'Bocagrande', beds: 4, baths: 4, area: '260 m²', title: 'Penthouse frente al mar', price: '$2.100.000.000', href: '/ficha' },
+    { img: '/assets/chalet-dusk.webp', alt: 'Casa en Crespo', badge: 'En venta', zona: 'Crespo', beds: 3, baths: 2, area: '120 m²', title: 'Casa familiar cerca del mar', price: '$760.000.000', href: '/ficha' },
   ];
   const arriendo = [
-    { img: '/assets/chalet-dusk.webp', alt: 'Casona colonial amoblada', badge: 'Arriendo', zona: 'Centro Histórico', beds: 2, baths: 2, area: '95 m²', title: 'Casona colonial amoblada', price: '$8.500.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
-    { img: '/assets/hero-keys.webp', alt: 'Casa en Crespo', badge: 'Arriendo', zona: 'Crespo', beds: 3, baths: 2, area: '160 m²', title: 'Casa familiar en Crespo', price: '$3.200.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
-    { img: '/assets/villa-pool.webp', alt: 'Apartaestudio con piscina', badge: 'Arriendo', zona: 'Manga', beds: 1, baths: 1, area: '48 m²', title: 'Apartaestudio con piscina', price: '$2.100.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
-    { img: '/assets/villa-modern.webp', alt: 'Apartamento en Bocagrande', badge: 'Arriendo', zona: 'Bocagrande', beds: 2, baths: 2, area: '92 m²', title: 'Apartamento frente al mar', price: '$4.500.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
-    { img: '/assets/estate-golden.webp', alt: 'Penthouse en Castillogrande', badge: 'Arriendo', zona: 'Castillogrande', beds: 3, baths: 3, area: '180 m²', title: 'Penthouse con terraza', price: '$7.800.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
-    { img: '/assets/chalet-dusk.webp', alt: 'Casa en Alameda La Victoria', badge: 'Arriendo', zona: 'Alameda La Victoria', beds: 3, baths: 2, area: '110 m²', title: 'Casa amplia con patio', price: '$2.800.000', priceLabel: 'Canon', priceSuffix: '/mes', href: '/ficha' },
+    { img: '/assets/chalet-dusk.webp', alt: 'Casona colonial amoblada', badge: 'Arriendo', zona: 'Centro Histórico', beds: 2, baths: 2, area: '95 m²', title: 'Casona colonial amoblada', price: '$8.500.000', priceSuffix: '/mes', href: '/ficha' },
   ];
-  // PINS — uno por cada una de las 4 primeras cards de SU ruta, con el precio de ESA card.
-  // Antes se reusaba un único array (precios de VENTA) en las dos rutas y se emparejaba por
-  // índice ⇒ /arrendar mostraba precios de venta en el mapa, y la card 4 de /comprar (Crespo,
-  // $760M) encendía el pin "$8,5M/mes". El mockup empareja card↔pin de forma coherente (§32.24).
+  // PINS — uno por cada card de SU ruta, con el precio de ESA card (emparejamiento coherente §32.24).
   const pinsVenta = [
-    { left: '26%', top: '56%', label: '$1.450M' },        // Castillogrande · card 1
-    { left: '56%', top: '36%', label: '$980M', on: true }, // Manga · card 2
-    { left: '22%', top: '72%', label: '$2.100M' },         // Bocagrande · card 3
-    { left: '47%', top: '24%', label: '$760M' },           // Crespo · card 4
+    { left: '26%', top: '56%', label: '$1.450M' },         // Castillogrande · card 1
+    { left: '56%', top: '36%', label: '$980M', on: true },  // Manga · card 2
+    { left: '22%', top: '72%', label: '$2.100M' },          // Bocagrande · card 3
+    { left: '47%', top: '24%', label: '$760M' },            // Crespo · card 4
   ];
   const pinsArriendo = [
-    { left: '47%', top: '24%', label: '$8,5M/mes' },        // Centro Histórico · card 1
-    { left: '26%', top: '56%', label: '$3,2M/mes', on: true }, // Crespo · card 2
-    { left: '56%', top: '36%', label: '$2,1M/mes' },         // Manga · card 3
-    { left: '22%', top: '72%', label: '$4,5M/mes' },         // Bocagrande · card 4
+    { left: '47%', top: '24%', label: '$8,5M/mes' },        // Centro Histórico · Casona (única card real de arriendo)
   ];
   const zones = [
     { left: '52%', top: '20%', t: 'Manga' }, { left: '44%', top: '12%', t: 'Centro Hist.' },
     { left: '20%', top: '54%', t: 'Castillogrande' }, { left: '16%', top: '70%', t: 'Bocagrande' },
     { left: '66%', top: '60%', t: 'Tierrabomba' },
   ];
+  // count = titular DEMO (el mockup mixto muestra "128 propiedades"); se reemplaza por el conteo
+  // real de Firestore en TODO-22. arrendar refleja su inventario demo reducido (no el 83 fabricado).
   return [
     { params: { operacion: 'comprar' }, props: { op: 'comprar', titulo: 'Comprar', count: 128, props: venta, pins: pinsVenta, zones } },
-    { params: { operacion: 'arrendar' }, props: { op: 'arrendar', titulo: 'Arrendar', count: 83, props: arriendo, pins: pinsArriendo, zones } },
+    { params: { operacion: 'arrendar' }, props: { op: 'arrendar', titulo: 'Arrendar', count: 24, props: arriendo, pins: pinsArriendo, zones } },
   ];
 }
 
@@ -74,7 +70,7 @@ const filterBtns = ['Tipo', 'Precio', 'Habitaciones'];
         {filterBtns.map((f) => (
           <button class="serp-fbtn" type="button" data-filter aria-pressed="false">{f}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
         ))}
-        <button class="serp-fbtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>Más filtros</button>
+        <button class="serp-fbtn" type="button" data-filter aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>Más filtros</button>
         <a class="serp-save" href="/favoritos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Guardar búsqueda</a>
       </div>
     </div>
@@ -117,6 +113,7 @@ const filterBtns = ['Tipo', 'Precio', 'Habitaciones'];
           <span class="serp-map__land serp-map__land--2"></span>
           <span class="serp-map__road serp-map__road--1"></span>
           <span class="serp-map__road serp-map__road--2"></span>
+          <span class="serp-map__road serp-map__road--3"></span>
           <span class="serp-map__bay">Bahía de Cartagena</span>
           {zones.map((z) => <span class="serp-map__zone" style={`left:${z.left};top:${z.top}`}>{z.t}</span>)}
           {pins.map((pin, i) => (
@@ -135,7 +132,7 @@ const filterBtns = ['Tipo', 'Precio', 'Habitaciones'];
 
 <style>
   /* Barra de filtros */
-  .serp-filter { position: sticky; top: 0; z-index: var(--alt-z-sticky); border-bottom: 1px solid var(--alt-hairline); }
+  .serp-filter { position: sticky; top: 0; z-index: var(--alt-z-sticky); border-bottom: 1px solid var(--alt-hairline); transition: box-shadow var(--alt-dur-slow, 0.4s) var(--alt-ease); }
   .serp-filter__in { max-width: 1440px; margin-inline: auto; padding: 14px clamp(16px, 4vw, 48px); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .serp-search { display: flex; align-items: center; gap: 11px; flex: 1; min-width: 220px; background: var(--alt-white); border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-sm); padding: 11px 16px; }
   .serp-search svg { width: 18px; height: 18px; stroke: var(--alt-gold-raw); flex: none; }
@@ -173,6 +170,8 @@ const filterBtns = ['Tipo', 'Precio', 'Habitaciones'];
   .serp-map__road { position: absolute; height: 2px; background: rgba(27, 39, 51, 0.09); }
   .serp-map__road--1 { left: 4%; top: 22%; width: 74%; transform: rotate(16deg); }
   .serp-map__road--2 { left: -2%; top: 50%; width: 84%; transform: rotate(-7deg); }
+  /* 3ª vía VERTICAL del mockup (L226): 2px de ancho × 60% de alto, rotada 9° */
+  .serp-map__road--3 { left: 30%; top: 8%; width: 2px; height: 60%; background: rgba(27, 39, 51, 0.07); transform: rotate(9deg); }
   .serp-map__bay { position: absolute; left: 13%; bottom: 11%; font-family: var(--alt-font-display); font-style: italic; font-size: 16px; color: var(--alt-text-muted); letter-spacing: 0.04em; }
   .serp-map__zone { position: absolute; font-size: 9px; font-weight: var(--alt-fw-bold); letter-spacing: 0.18em; text-transform: uppercase; color: rgba(27, 39, 51, 0.5); }
   .serp-pin { position: absolute; transform: translate(-50%, -100%); background: var(--alt-white); border: 1px solid var(--alt-hairline-2); color: var(--alt-ink); font-weight: var(--alt-fw-bold); font-size: 11.5px; padding: 6px 11px; border-radius: var(--alt-r-pill); box-shadow: var(--alt-elev-pin, 0 8px 18px -8px rgba(27, 39, 51, 0.45)); white-space: nowrap; cursor: pointer; transition: transform var(--alt-dur) var(--alt-ease); }
@@ -229,4 +228,15 @@ const filterBtns = ['Tipo', 'Precio', 'Habitaciones'];
     card.addEventListener('focusin', () => setPin(id, true));
     card.addEventListener('focusout', () => setPin(id, false));
   });
+
+  // 4. SOMBRA DE LA BARRA DE FILTROS al hacer scroll (mockup res-filter: transition box-shadow +
+  //    listener scrollY > 4). Nace sin sombra y la gana al despegar del top.
+  const filterBar = document.querySelector<HTMLElement>('.serp-filter');
+  if (filterBar) {
+    const onFilterScroll = () => {
+      filterBar.style.boxShadow = window.scrollY > 4 ? '0 10px 30px -18px rgba(27,39,51,.35)' : 'none';
+    };
+    window.addEventListener('scroll', onFilterScroll, { passive: true });
+    onFilterScroll();
+  }
 </script>
