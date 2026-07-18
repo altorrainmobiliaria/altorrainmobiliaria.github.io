@@ -11,10 +11,11 @@
 
 > **Dos frentes abiertos, en este orden:**
 >
-> **FRENTE 1 — TODO-27: cerrar los 35 hallazgos MEDIA/BAJA de fidelidad del portal** (§32.24).
+> **FRENTE 1 — TODO-27: cerrar los MEDIA/BAJA de fidelidad del portal** (§32.24). **FICHA ✅ (§43).**
 > La síntesis de bóveda `2026-07-17-reauditoria-fidelidad-sintesis.md` es AUTOCONTENIDA (§33 la parcheó): lista 1:1
-> + tabla página→mockup→impl + bloque **"Qué NO corregir (intencional)"** — leerla ANTES de tocar. Por página:
-> **ficha 8 (LA MÁS URGENTE, sin tocar)** · turismo 8 · estancias 8 · serp 7 · home 2 · publicar 2.
+> + tabla página→mockup→impl + bloque **"Qué NO corregir (intencional)"** — leerla ANTES de tocar. Pendientes (27):
+> **turismo 8 · estancias 8 · serp 7 · home 2 · publicar 2.** ⚠️ Los "ALTA ✅" de la síntesis madre NO son de fiar
+> 1:1: la 3ª card ALTA de la FICHA nunca se corrigió (§43, el commit `3a66a69` era HOME) — verificar cada ALTA vs mockup.
 > **MÉTODO (L-29/L-24)**: bloque del `.dc.html` → corregir TEXTUAL → re-auditar adversarial ANTES de decir "fiel".
 > NUNCA inventar. Capas: build → estructura → computed (miente con `transition`, L-28) → screenshot Chrome → diff
 > vs fuente. Reusar piezas hechas (`.alt-rail`, `.alt-btn-sweep`, 6 cards NO intercambiables — ver síntesis).
@@ -47,7 +48,7 @@
 | **TODO-22** | **Auditoría Fable**: (a) ADR §22 `[REVISAR-FABLE]` (capa de datos); (b) decisión catálogo público SSG vs doc-índice (gatea datos reales). | 🔮 FABLE | |
 | **TODO-23** | 🔧 **Kernel hardening** (owner=**INMOBILIARIA**, escritor único ×4 — el wording "cars" era stale, §41): K-01/02/04/05/09 + §33: priorizar warns en truncado `--boot` · gate #7 debe ver GIT de la bóveda · circularidad boot-budget. 1er fix aplicado 07-18 (✅-falso, §41); resto de K abiertos. | 🔴 kernel | §33 G-09 |
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). K-06 ✅ CERRADO §33 (espejo en bóveda). | 🟡 abierto | |
-| **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **35 MEDIA/BAJA pendientes** (ficha 8 = primero). Síntesis de bóveda ya AUTOCONTENIDA (§33). Método L-29: diff vs `.dc.html` + re-auditar adversarial. | 🔄 OPUS | Frente 1 |
+| **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **FICHA ✅ (§43: 8 hallazgos + 1 del crítico + la 3ª card ALTA que §32.24 nunca tocó)** · **27 MEDIA/BAJA pendientes**: turismo 8 · estancias 8 · serp 7 · home 2 · publicar 2. Método L-29: diff vs `.dc.html` + re-audit adversarial. ⚠️ verificar los "ALTA ✅" de cada página 1:1 (uno se había perdido). | 🔄 OPUS | Frente 1 |
 | **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda): #1 ✅ (caja negra, §40) · **#2 ✅ 07-18 (§41)**: `boot-gate.mjs` bloqueante + poda −982c + one-in-one-out §G.5 + fix kernel ×3 · #3 ✅ · **sigue #4** `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento (>90d). | 🔄 sigue #4 | $0 |
 | **TODO-29** | 📣 **PAUTA**: skill ✅ · Meta ordenado ✅ · humo montada ✅ · **HUMO ENCENDIDA 07-18 ✅ (§42.8)** — anuncio "Activo" (revisión aprobó), $4.000/día vs prepago ~$5k → muere sola ~1 día. **VIGILAR (no tocar)**: entrega/CPM real · chats entrantes (responder; saludo auto ya sale) · planilla CPQL desde el 1er lead · al agotarse el saldo verificar FACTURACIÓN → cierra fontanería §4b y calibra la CAMPAÑA REAL (gate = cierre de obra: matrícula/RNT + privacidad + píxel+GA4 + landing). | 🔥 VOLANDO | no tocar 7d |
 
@@ -55,18 +56,8 @@
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-18 (FABLE-5 — §41+§42, sesión continua)**: **TODO-28 #2 ✅** (gate boot + poda + fix kernel ×3, §41)
-> · duplicado `multimedia/Piezas/` borrado (orden de Daniel; bóveda conserva el original) · **HUMO MONTADA Y
-> PUBLICADA EN PAUSA (§42)** por extensión Chrome con Daniel EN VIVO (él subió los JPG — el file-picker solo
-> acepta adjuntos del chat; CSP de Facebook mata fetch/localhost). Desactivada, $0, anuncio en revisión.
-> Gotchas nuevos → **L-32** (página default de CARS · radio-clicks fantasma · listbox virtualizado).
-> **§42.8: Daniel dio el "sí" y la HUMO quedó ENCENDIDA el mismo 07-18 — anuncio "Activo" (revisión aprobada).**
-> **▶ RELEVO A OPUS 4.8 (orden de Daniel al cierre)**: (1) **TODO-27 — FICHA del portal (8 hallazgos, la más
-> urgente)** y luego turismo 8 · estancias 8 · serp 7 · home 2 · publicar 2. MÉTODO OBLIGATORIO L-29/L-24: leer
-> PRIMERO la síntesis de bóveda `2026-07-17-reauditoria-fidelidad-sintesis.md` (autocontenida, con "Qué NO
-> corregir") → diff vs `.dc.html` → corregir TEXTUAL → re-auditar adversarial ANTES de decir "fiel".
-> (2) ⛔ **HUMO volando — NO tocar Ads Manager** (muere sola ~1 día; los resultados los lee la próxima sesión
-> de pauta). (3) ⛔ **Kernel/TODO-28 #4-#7 = carril de FABLE** — Opus no toca `scripts/brain-*.mjs`.
-> (4) Creativos campaña real: esperan números de Daniel (embudo §0b cuando lleguen).
+> **2026-07-18 (OPUS-4.8 — §43)**: **TODO-27 ficha ✅** — 8 hallazgos + la 3ª card ALTA que §32.24 nunca tocó
+> (`3a66a69` era HOME, no la ficha) + 1 del crítico de completitud. Verificado: build + DOM vivo + toggle real +
+> **re-audit adversarial** (9+1 agentes → 8/9 FIEL). L-28 recurrió (computed miente con `transition`). Bóveda `2026-07-18-ficha-reaudit-*`.
 
-> *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*
+> *(Bitácora 07-17/07-18 §32-§42 + relevo a Opus podados — consolidados en ADR §32.14-.24 / §41 / §42 / §43 + L-29/L-32 + bóveda. Constraints vivos → TODO-23/27/28/29 + 05. §G.4 GC.)*

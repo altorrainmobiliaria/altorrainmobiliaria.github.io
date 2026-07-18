@@ -624,3 +624,42 @@ min, sin sorpresas de política — check (d) de la fontanería ✅). Presupuest
 → vuelo ~1 día y muere sola. Reglas vigentes: días 1-7 NO tocar NADA (editar resetea aprendizaje) · responder
 los chats entrantes (saludo automático ya configurado) · planilla CPQL desde el 1er chat · al agotarse el saldo,
 verificar facturación (check (a)) + CPM real (b) + clic→chat correcto (c).
+
+## 43. ADR-043 — TODO-27: FICHA del portal FIEL (8 hallazgos + 1 del crítico) ⟦OPUS-4.8⟧ (2026-07-18)
+
+**43.1 Contexto/causa raíz**: Relevo de Fable a Opus (07-18). TODO-27 = cerrar los 35 MEDIA/BAJA de fidelidad del
+portal; la **ficha era la más urgente (8 hallazgos)**. Causa raíz de los 8: el rebuild §32.8-22 replicó color/estructura
+pero dejó **contenido inventado y interactividad muerta** donde el mockup callaba (el defecto de método de L-29). Método
+obligatorio: leer la síntesis de bóveda `2026-07-17-...` → diff vs `ALTORRA Ficha.dc.html` → corregir textual → **re-audit
+adversarial ANTES de decir "fiel"**. **Hallazgo capital**: leyendo el mockup REAL (no la síntesis) descubrí que la **3ª card
+ALTA de "Propiedades similares" NUNCA se corrigió** — la síntesis madre decía "13 ALTA ✅ (commit `3a66a69`)" pero ese commit
+arregló la 3ª card de `#destacadas` (HOME), homónima pero distinta; la de la ficha seguía inventada (Castillogrande/"Casa con
+jardín"/4·4·260/$3.400M/chalet-dusk). *(Refuerza L-29: contar contra la FUENTE, no contra el "✅" del corrector.)*
+**43.2 Solución (9 correcciones, todas en `ficha.astro`)**: **MEDIA** — M1 specs 2ª card similares → 4·4·260 (era 3·4·188) ·
+M2 sello "Verificado por ALTORRA" inventado → RETIRADO del aside (+ CSS `.ficha-seal` muerto) · M3 favorito del encabezado
+muerto → `ficha-fav`+`aria-pressed` + regla CSS `[aria-pressed='true']{bg navy·border navy·color gold-bright}` + listener que
+alterna (réplica del `toggleFav` del mockup; OFF usa `--alt-link` #7d6119 por a11y) · M4 badge "En venta" + "Desde" inventados
+→ retirados de las 3 cards (precio pelado). **BAJA** — B1 filas POI sin ícono → 6 íconos DISTINTOS del mockup (olas/ancla/bolsa/
+birrete/edificio/avión) navy · B2 flecha "Simular mi crédito" → SVG + hover `translateY(-2px)` · B3 "Propiedades similares"
+como `<section class="ficha-closer">` FUERA de `.ficha-secs` (fondo blanco·border-top·padding clamp(44,5vw,68)·h2 clamp(26,3vw,36))
+· B4 4ª miniatura chalet-dusk → villa-modern (chalet-dusk = 0 en la ficha). **+ ALTA 3ª card** → villa-pool/Crespo/3·2·120/
+"Casa familiar cerca del mar"/$760M. **+ 9ª (del crítico de completitud, fuera de la lista de 8, omitida por 2 auditorías
+previas)**: ícono "Muelle privado" perdió su 2º sub-path `M6 7h1M6 11h1M6 15h1` → restaurado.
+**43.3 No-regresión**: solo se editó `ficha.astro` (frontmatter + template + `<style>` + `<script>`). IDs/clases existentes
+intactos; PropertyCard/Header/Footer/tokens SIN tocar. `similares` sigue usando `<PropertyCard>` (fav/orbe = reuso de componente,
+exención #4). Build de Astro OK (10 rutas prerender, `/ficha` incluida), 0 errores de consola.
+**43.4 Verificación (capas L-29)**: (1) build ✅ · (2) HTML construido (grep: sello=0, chalet-dusk=0, Crespo/$760M/120m² ✓,
+2º sub-path Muelle ✓) · (3) DOM+computed en vivo (6 POI con svg navy, banda fuera de `.ficha-secs`, h2 36px) · (4) **interactividad
+real**: toggle del favorito disparado → `aria-pressed` alterna, estado ON = color `#ebd27e`·bg `#062743`·border navy (idéntico al
+mockup) · (5) **re-audit adversarial** (workflow 9 refutadores `effort:high` + 1 crítico completitud, ~1.1M tok): **8/9 FIEL high**
+(ALTA-card3 = verificador falló por tooling, confirmado por crítico+M1/M4+vivo) + crítico declara TODA la ficha fiel salvo la 9ª
+(ya corregida). ⚠️ **L-28 recurrió**: al medir el toggle, `color` leía gold-link (valor a mitad de `transition`) mientras `background`
+(no transicionado) leía bien; `transition:none` reveló el valor final correcto — debí consultar `30-LECCIONES` al ver la asimetría.
+**43.5 Anti-patterns evitados**: NO inventar (todo dato citado del mockup, archivo:línea) · NO declarar "fiel" sin re-audit
+adversarial (§3.7/L-29) · NO tocar exenciones "Qué NO corregir" (rutas/contacto reales, tokens de color, a11y, PropertyCard reuso,
+píxel) · scope-discipline: solo la ficha (Opus no toca Ads Manager ni `scripts/brain-*.mjs`, carril Fable).
+**43.6 Archivos**: `portal/src/pages/ficha.astro` (código). Bóveda: `2026-07-18-ficha-reaudit-{crudo.json,sintesis.md}`.
+Cerebro: este ADR + `00` + `10` + `05`. INTACTOS: PropertyCard/Header/Footer/tokens/base/components.css.
+**43.7 Doctrina + cache**: L-29 (contar contra la fuente + re-audit adversarial), L-28 (getComputedStyle miente con `transition`),
+§3.3 (evidencia archivo:línea), §3.7 (comité adversarial por iniciativa propia). **Sin cache bump** (portal greenfield no tiene
+SW; el `altorra-pwa-v5` rige solo el legacy — L-24/K-10). Sigue TODO-27: turismo 8 · estancias 8 · serp 7 · home 2 · publicar 2.
