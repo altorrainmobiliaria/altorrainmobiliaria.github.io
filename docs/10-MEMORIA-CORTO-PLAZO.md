@@ -59,7 +59,7 @@
 > **Meta ORDENADO en vivo** (§38: píxel `1032884172712946` · activos → `activos-meta.md`) · constancias ×3 (§39).
 > **▶ ORDEN DANIEL (07-18, tras la pieza)**: (1) TODO-28 · (2) lotes TikTok. (Ficha del portal sigue en Opus.)
 > **Pieza de HUMO VENTA ✅ HECHA** (artes+copy → bóveda `pauta/outputs/2026-07-18-humo/`, QC ×2 rondas):
-> falta OK de Daniel → montar `META_HUMO_Leads_CTWA_Propietarios-CTG_2026Q3` EN PAUSA (mínimo real lo dice Ads Manager).
+> falta OK de Daniel → montar la campaña EN PAUSA (naming/config → `copy-anuncio.md` de la bóveda).
 
 > **2026-07-18 (FABLE-5 — post-§38)**: WhatsApp sync EN VIVO: +57 300 2439810 **Conectado** + vínculo
 > página FB↔WhatsApp ✅ (principal+CTA ON) → gate CTWA cumplido. Renombrar WABA: no expuesto en UI (no
