@@ -55,11 +55,11 @@
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-18 (FABLE-5 — §33-§39, CIERRE — RELEVO CURADO)**: skills SEO (§33) · masterclass+Housing (§34) ·
-> minería (§35) · backlog (§36) · `pauta-captacion`+investigación (§37) · **Meta ORDENADO en vivo** (§38:
-> cuenta reclamada · píxel `1032884172712946` · activos → `pauta-captacion/references/activos-meta.md`) ·
-> **constancias ×3 COMPLETAS** (§39, TODO-20 cerrado) · pauta de HUMO ~COP 5k (playbook §4b). **▶ RETOMAR**:
-> boot normal → frente: (1) ficha del portal (Opus) · (2) TODO-28 · (3) lotes TikTok / pauta de humo.
+> **2026-07-18 (FABLE-5 — §33-§39, CIERRE — RELEVO CURADO)**: §33-§39 consolidados (detalle → ADRs + bóveda) ·
+> **Meta ORDENADO en vivo** (§38: píxel `1032884172712946` · activos → `activos-meta.md`) · constancias ×3 (§39).
+> **▶ ORDEN DANIEL (07-18, tras la pieza)**: (1) TODO-28 · (2) lotes TikTok. (Ficha del portal sigue en Opus.)
+> **Pieza de HUMO VENTA ✅ HECHA** (artes+copy → bóveda `pauta/outputs/2026-07-18-humo/`, QC ×2 rondas):
+> falta OK de Daniel → montar `META_HUMO_Leads_CTWA_Propietarios-CTG_2026Q3` EN PAUSA (mínimo real lo dice Ads Manager).
 
 > **2026-07-18 (FABLE-5 — post-§38)**: WhatsApp sync EN VIVO: +57 300 2439810 **Conectado** + vínculo
 > página FB↔WhatsApp ✅ (principal+CTA ON) → gate CTWA cumplido. Renombrar WABA: no expuesto en UI (no
