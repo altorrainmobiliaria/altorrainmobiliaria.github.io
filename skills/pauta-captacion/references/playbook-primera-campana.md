@@ -38,6 +38,15 @@ Cartagena"), la pregunta del form y la conversación. Housing/Special Ad Categor
   (incl. Search-Bar y Offer-Deadline ALTORRA) · voz por `catalogo-voz-altorra §6.3` (sin "precios desde",
   sin superlativos, sin barrios estigmatizados) · dolor con salida (`marketing-psicologico §10`).
 
+## 4b. Fase 0.5 — Campaña de HUMO (idea de Daniel, 2026-07-18)
+ANTES de la campaña real: una mini-campaña de prueba para **quemar el saldo prepago existente (~COP 5.000)**
+en 1-2 días. Objetivo: NO conseguir leads — verificar la FONTANERÍA con dinero simbólico: (a) la cuenta
+entrega y factura bien; (b) las métricas fluyen al Ads Manager (CPM real de Cartagena de primera mano);
+(c) el clic a WhatsApp abre el chat correcto; (d) revisión/aprobación de anuncios sin sorpresas de política.
+Config: misma estructura del §1-§3 (Leads+CTWA, amplio Cartagena) con UNA pieza. Muere sola al agotar el
+saldo. Lo aprendido calibra el presupuesto de la campaña real. Igual exige los gates §1 (números visibles
+si la pieza es de arriendo — o usar la pieza de VENTA que no exige matrícula).
+
 ## 5. Presupuesto COP
 - **COP 40.000-60.000/día ≈ 1,2-1,8M/mes** ❓ (síntesis de fuentes CO + criterio; piso ~600k/mes sin señal ❓).
 - Reglas OFICIALES: Meta ya NO publica mínimos fijos — **Ads Manager alerta el mínimo real en COP al crear el

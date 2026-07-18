@@ -43,7 +43,6 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-17** | **Ola 0 restos**: E2E "tras cache" en staging (gate T9) · deploy de rules (coordinado con retiro legacy, NO ahora) · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
-| **TODO-20** | Constancias liderazgo ×3: ✅ **bersaglio APLICADA+pusheada** (`486640f`) · ✅ **insema APLICADA+pusheada** (`a042494`, rama `cerebro/todo-32` — merge a main = dueño) · ⚠️ **cars: aplicada+45 archivos STAGED pero commit BLOQUEADO por su pre-commit** (su `10` excede cap PREEXISTENTE → su operador poda o Daniel autoriza `--no-verify`). Payload de lecciones cars→bersaglio (detached-HEAD + metas) espera su shard TODO-77 (instrucciones anotadas allá). §38. | 🟡 solo cars | |
 | **TODO-21** | **Lote-dueño**: entrega de Nº matrícula + Nº RNT (ya existen ✅; Daniel los da al CIERRE DE OBRA) · dirección física · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
 | **TODO-22** | **Auditoría Fable**: (a) ADR §22 `[REVISAR-FABLE]` (capa de datos); (b) decisión catálogo público SSG vs doc-índice (gatea datos reales). | 🔮 FABLE | |
 | **TODO-23** | 🔧 **Kernel hardening** (owner=cars, single-writer): K-01/02/04/05/09 + nuevos §33: priorizar warns en el truncado de `--boot` · gate #7 debe ver GIT de la bóveda · romper circularidad del boot-budget. **9/10 K sin resolver; kernel intacto desde 06-27 → SLA vencido, escalar por sinapsis.** | 🔴 kernel | §33 G-09 |
@@ -60,11 +59,12 @@
 > curados · auditoría Nivel-2 #3 (retrieval 5/5; M-01 reincidió →M-02; bóveda respaldada; memoria espejada;
 > GC pareado) · comité unánime pro-cerebro → TODO-28. Detalle COMPLETO → ADR §33 + bóveda `2026-07-18-*`.
 
-> **2026-07-18 tarde/noche (FABLE-5 — §34-§38)**: §34 masterclass+Housing+principios · §35 minería (paid-ads
-> v2.2 = base) · §36 BACKLOG ×proyectos · TODO-25 cerrado (bot revivió) · §37 skill `pauta-captacion` +
-> investigación oficial + 8 parches vigencia · **§38 Meta Business ORDENADO EN VIVO** (cuenta ads reclamada al
-> portafolio + píxel `1032884172712946` creado + inventario → `pauta-captacion/references/activos-meta.md`;
-> pendientes-dueño: login IG · WhatsApp sync · saldo) + **cerebros alineados** (bersaglio+insema pushed; cars
-> staged-bloqueado por su cap). Detalle → ADR §33-§38 + bóveda. **PRÓXIMO**: Frente 1 (ficha, Opus) · TODO-28.
+> **2026-07-18 (FABLE-5 — §33-§39, CIERRE — RELEVO CURADO)**: skills SEO (§33) · masterclass+Housing (§34) ·
+> minería (§35) · backlog (§36) · `pauta-captacion`+investigación (§37) · **Meta ORDENADO en vivo** (§38:
+> cuenta reclamada · píxel `1032884172712946` · activos → `pauta-captacion/references/activos-meta.md`) ·
+> **constancias ×3 COMPLETAS** (§39, TODO-20 cerrado) · pauta de HUMO ~COP 5k (playbook §4b).
+> **Pendientes-dueño Meta**: abrir app WhatsApp Business en el teléfono · login IG · saldo. **▶ RETOMAR**:
+> boot normal → frente: (1) ficha del portal (Opus; síntesis de bóveda autocontenida) · (2) TODO-28 ·
+> (3) lotes TikTok / pauta de humo al estar los pendientes. Todo commiteado y pusheado ×4 repos + bóveda.
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*

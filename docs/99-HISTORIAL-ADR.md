@@ -511,3 +511,17 @@ byte-idéntica; brain:check SANO en bersaglio/insema, preexistentes reportados s
 (login IG = dueño). **38.5 Modificados**: pauta-captacion/references/activos-meta.md (nuevo ×2) + 10 + 05 + repos
 hermanos (sus commits). **38.6**: pauta lista-para-encender ahora también del lado META (faltan solo los 3
 pendientes-dueño + números al cierre de obra).
+
+## 39. ADR — Constancias ×3 COMPLETAS (cars no-verify autorizado) + pauta de humo + cierre de sesión §33-§39 ⟦FABLE-5⟧ (2026-07-18)
+
+**39.1**: Daniel autorizó EXPLÍCITAMENTE el `--no-verify` para cars (su pre-commit bloqueaba por cap PREEXISTENTE
+de su `10`, ajeno a la sinapsis) → **commit `6a26ba83` + push a `dev` EJECUTADOS** · protocolo del payload
+CERRADO: constancia cars ✅ en `sinapsis-cerebros/SKILL.md §4` + archivo del payload borrado ⇒ **×3 CONSTANCIA DE
+LIDERAZGO COMPLETA (cars ✅ bersaglio ✅ insema ✅) — TODO-20 CERRADO** tras 8 días. Nota para el operador cars: su
+`10` sigue sobre cap (debe podar). **39.2 Pauta de HUMO** (idea de Daniel): mini-campaña de ~COP 5.000 (saldo
+prepago) para verificar FONTANERÍA (entrega/facturación/métricas/clic-a-WhatsApp/revisión de política) antes de
+la campaña real → `pauta-captacion/references/playbook-primera-campana.md §4b`; sujeta a los mismos gates (o usar
+la pieza de VENTA, que no exige matrícula). **39.3 Respuestas operativas dadas**: WhatsApp Web NO quita el "Sin
+conexión" (es espejo del teléfono; abrir la app en el celular sí) · guía de login IG entregada (credenciales =
+solo el dueño). **39.4 Cierre**: sesión saturada → relevo curado en `10` (3 frentes para retomar), TODO commiteado
+y pusheado en los 4 repos + bóveda, brain:check SANO. Racha del día: ADR §33→§39 en una sola sesión Fable.
