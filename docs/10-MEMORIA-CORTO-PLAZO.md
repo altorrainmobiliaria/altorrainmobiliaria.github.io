@@ -49,7 +49,7 @@
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). K-06 ✅ CERRADO §33 (espejo en bóveda). | 🟡 abierto | |
 | **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **35 MEDIA/BAJA pendientes** (ficha 8 = primero). Síntesis de bóveda ya AUTOCONTENIDA (§33). Método L-29: diff vs `.dc.html` + re-auditar adversarial. | 🔄 OPUS | Frente 1 |
 | **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda; unánime "idea correcta, automatizar"): #1 hooks PreCompact/SessionEnd (mata M-01/M-02) · #2 candado del boot en pre-commit + one-in-one-out · #4 `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento en hechos (>90d = re-verificar). #3 (respaldo memoria) ✅ HECHO. Los kernel-side van vía sinapsis a cars. | 🟢 listo p/ejecutar | ~2-3 días, $0 |
-| **TODO-29** | 📣 **PAUTA — skill `pauta-captacion` CONSTRUIDA** ✅ (§37: playbook 1ª campaña Leads+CTWA+Higher-Intent · setup en orden · CAPI-Worker $0 · 8 parches de vigencia · CPQL propia = benchmark). **Qué falta para ENCENDER** (converge con cierre de obra): números matrícula/RNT (Daniel) · política de privacidad publicada · WhatsApp Business↔página FB · píxel+GA4 en el portal · landing verificada → campaña EN PAUSA → "sí" de Daniel. Mientras: lotes TikTok al backlog + creativos con `ad-creative`+Brief. | 🟢 lista p/encender | gate=obra |
+| **TODO-29** | 📣 **PAUTA — skill `pauta-captacion` CONSTRUIDA** ✅ (§37: playbook 1ª campaña Leads+CTWA+Higher-Intent · setup en orden · CAPI-Worker $0 · 8 parches de vigencia · CPQL propia = benchmark). **Qué falta para ENCENDER** (converge con cierre de obra): números matrícula/RNT (Daniel) · política de privacidad publicada · píxel+GA4 en el portal · landing verificada → campaña EN PAUSA → "sí" de Daniel. WhatsApp↔página FB ✅ (07-18, Conectado + CTWA listo). Mientras: lotes TikTok al backlog + creativos con `ad-creative`+Brief. | 🟢 lista p/encender | gate=obra |
 
 ---
 
@@ -66,5 +66,11 @@
 > **Pendientes-dueño Meta**: abrir app WhatsApp Business en el teléfono · login IG · saldo. **▶ RETOMAR**:
 > boot normal → frente: (1) ficha del portal (Opus; síntesis de bóveda autocontenida) · (2) TODO-28 ·
 > (3) lotes TikTok / pauta de humo al estar los pendientes. Todo commiteado y pusheado ×4 repos + bóveda.
+
+> **2026-07-18 (FABLE-5 — post-§38, WhatsApp sync)**: Daniel abrió la app en el teléfono → verificado EN VIVO:
+> número +57 300 2439810 **Conectado** en el WABA · vínculo **página FB↔WhatsApp ✅** (número principal + CTA +
+> mostrar número ON) → gate CTWA de TODO-29 cumplido. Renombrar WABA: NO expuesto en la UI (verificado, no reintentar).
+> Alerta "falta método de pago" de WA Manager = solo plantillas, NO gate CTWA. `activos-meta.md` actualizado ×2 copias.
+> **Falta-dueño Meta**: login IG (pantalla dejada abierta en Chrome) · saldo.
 
 > *(Bitácora 07-17 §32 podada — consolidada en ADR §32.14-.24 + L-29 + síntesis de bóveda. §G.4 GC.)*
