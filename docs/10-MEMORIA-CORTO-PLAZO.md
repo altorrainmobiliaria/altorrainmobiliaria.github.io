@@ -22,24 +22,21 @@
 > **FRENTE 2 — TODO-29: skills de PAUTA (Meta + Google Ads)** — mandato Daniel 2026-07-18. ✅ Ya listo (§34):
 > Housing/Special Ad Category VERIFICADO en doc oficial (NO aplica a pauta→Colombia; SÍ si pautamos a EE.UU./
 > Canadá — ver `catalogo-voz-altorra §6.3`) · masterclass del dueño ADOPTADA (`marketing-psicologico-conversion`
-> +§10 guardarraíles) · Brief de captación leído y respaldado (bóveda `pauta/`). **Esperando: material TikTok que
+> +§10 guardarraíles) · Brief leído/respaldado (bóveda `pauta/`). **Esperando: material TikTok que
 > Daniel enviará (revisarlo CRÍTICAMENTE — puede ser básico/vacío) + skills que descargue.** Luego: investigación
 > seria (docs oficiales Meta/Google + los grandes del marketing) → proceso de pauta 100% funcional. Gap-analysis
 > en §33 (falta: audiencias/CBO/Advantage+/píxel-CAPI/presupuestos/Google Ads). ⚠️ RNT = prerequisito de pauta de
 > alojamientos.
 >
-> **🎨 DISEÑO SELLADO — NO re-litigar** (SSoT `portal/src/styles/tokens.css` + ADR §23-§23.9 + memorias de marca):
-> paleta navy `#062743` · blanco · dorado `#D4AF37` · plata `#BFC3C9` · grises `#E6EDF2`/`#F2F6F9` · disciplina
-> ESTRICTA (fondo blanco, DORADO predomina, SIN verde/rojo/negro; estados navy+oro+ÍCONO) · **Cormorant Garamond** +
-> **Hanken Grotesk** · neu protagonista + glass sutil, DUAL-MODE. Dev: `npm --prefix portal run dev` (puerto 4321).
+> **🎨 DISEÑO SELLADO — NO re-litigar** (SSoT `tokens.css` + ADR §23-§23.9 + memorias): navy `#062743` · blanco ·
+> oro `#D4AF37` · plata `#BFC3C9` · grises fríos; fondo blanco, ORO predomina, sin verde/rojo/negro; Cormorant +
+> Hanken; neu+glass DUAL-MODE. Dev: `npm --prefix portal run dev` (4321). (La VOZ sí está EN FORJA — memoria.)
 >
-> **🚦 BLOQUEADORES DE PRODUCCIÓN (solo Daniel)**: Nº matrícula real (footer `000000`) · dirección física · RNT.
-> Contacto oficial cableado ✅ (+57 300 243 9810 / info@altorrainmobiliaria.co).
+> **🚦 BLOQUEADORES (solo Daniel)**: matrícula real (footer `000000`) · dirección física · RNT. Contacto oficial ✅.
 >
-> **🚫 Callejones (NO reintentar)**: (a) ⛔ NADA del sitio viejo como base (ADR §15.7) · (b) NUNCA UI sin mockup
-> aprobado · (c) datos del portal = DEMO estáticos (`client.ts` listo para cablear) · (d) NUNCA dinero sin gate ·
-> JAMÁS el nº personal del dueño (323…) · sin gráficas (regla Daniel) · ALTORRA siempre MAYÚSCULA · (e) skills
-> portables: editar AMBAS copias (repo + `~/.claude/skills`) o se derivan (§33).
+> **🚫 Callejones (NO reintentar)**: (a) ⛔ NADA del sitio viejo (§15.7) · (b) NUNCA UI sin mockup · (c) datos del
+> portal = DEMO (`client.ts` listo) · (d) NUNCA dinero sin gate · JAMÁS el 323… personal · sin gráficas · ALTORRA
+> MAYÚSCULA · (e) skills portables: editar AMBAS copias (repo + user) o se derivan (§33).
 
 ---
 
