@@ -46,7 +46,8 @@
     "scripts/brain-diff.mjs",
     "scripts/brain-index.mjs"
   ],
-  "orphanAllowlist": [],
+  "orphanAllowlist": [".handoff-auto.md"],
+  "_orphanAllowlistRazon": "handoff-auto: TODO-28 #1 — foto de sesion escrita por HOOK (session-handoff.mjs), gitignored, efimera; su ruta de lectura es el hook SessionStart --boot-echo, no el grafo de neuronas",
   "peers": [
     "../altorracars.github.io",
     "../bersagliojewelry.github.io"

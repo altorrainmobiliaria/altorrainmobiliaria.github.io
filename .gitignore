@@ -44,3 +44,7 @@ Brief_Dise*.docx
 # Workspace de Antigravity (copia canonica de sus skills adoptadas vive en skills/)
 .agents/
 _tmp-guia-*.pdf
+
+# TODO-28 #1: foto de sesion del hook (estado local, no historia)
+docs/.handoff-auto.md
+.playwright-mcp/
