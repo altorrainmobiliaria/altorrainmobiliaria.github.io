@@ -58,9 +58,11 @@ const beneficios = [
 
         <div class="pub-form-wrap" id="empezar">
           <form class="pub-form" id="pub-form" novalidate>
+            <!-- h2 + subtítulo FUERA de .pub-form__fields: el mockup los deja persistir como
+                 encabezado sobre el mensaje de éxito (el script oculta SOLO los campos). -->
+            <h2 class="pub-form__h">Solicita tu avalúo gratis</h2>
+            <p class="pub-form__sub">Respuesta de un asesor en menos de 24 horas.</p>
             <div class="pub-form__fields">
-              <h2 class="pub-form__h">Solicita tu avalúo gratis</h2>
-              <p class="pub-form__sub">Respuesta de un asesor en menos de 24 horas.</p>
               <div><label class="alt-label" for="pub-name">Nombre</label><input class="alt-input" id="pub-name" name="nombre" type="text" placeholder="Tu nombre" required /></div>
               <div><label class="alt-label" for="pub-phone">Teléfono</label><input class="alt-input" id="pub-phone" name="telefono" type="tel" placeholder="+57 300 000 0000" required /></div>
               <div class="pub-form__grid">
@@ -165,8 +167,8 @@ const beneficios = [
   .pub-form-wrap { flex: 1 1 360px; min-width: 300px; max-width: 440px; }
   .pub-form { background: var(--alt-white); border-radius: var(--alt-r-2xl, 22px); padding: clamp(24px, 3vw, 34px); box-shadow: var(--alt-elev-form, 0 40px 90px -40px rgba(6, 39, 67, 0.55)); }
   .pub-form__fields { display: flex; flex-direction: column; gap: 13px; }
-  .pub-form__h { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 26px; color: var(--alt-ink); letter-spacing: normal; }
-  .pub-form__sub { font-size: 13.5px; color: var(--alt-text); margin-bottom: 9px; }
+  .pub-form__h { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 26px; color: var(--alt-ink); letter-spacing: normal; margin-bottom: 3px; }
+  .pub-form__sub { font-size: 13.5px; color: var(--alt-text); margin-bottom: 18px; }
   .pub-form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
   .pub-form__err { font-size: 12.5px; color: var(--alt-link); }
   .pub-form__submit { margin-top: 4px; width: 100%; }
@@ -176,7 +178,8 @@ const beneficios = [
   .pub-form__ok h3 { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 24px; color: var(--alt-ink); margin-bottom: 6px; letter-spacing: normal; }
   .pub-form__ok p { font-size: 14px; color: var(--alt-text); line-height: 1.55; }
 
-  /* Pasos */
+  /* Pasos — el mockup usa clamp(56px,7vw,96px); el .alt-section genérico llegaba a 112px (§ fidelidad) */
+  .pub-steps { padding-block: clamp(56px, 7vw, 96px); }
   .pub-center { text-align: center; margin-bottom: clamp(38px, 4vw, 58px); }
   .pub-center h2 { margin-top: var(--alt-space-3); }
   .pub-steps__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 26px; }

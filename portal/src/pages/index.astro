@@ -128,11 +128,13 @@ const arriendo = [
 //  #cerca no es una grilla de cards — es el split buscador + mapa ilustrado.)
 
 // Journal — 1 destacado + 3 horizontales.
-const journalMain = { img: '/assets/estate-golden.webp', cat: 'Mercado', date: '12 feb 2026', read: '8 min de lectura', title: 'Guía 2026: dónde comprar en Cartagena antes de la próxima ola de valorización', excerpt: 'Analizamos precio por m², proyección de obra nueva y liquidez zona por zona, para que tu compra sea patrimonio y no una apuesta.', href: '/journal' };
+// #journal — fotos EXACTAS del mockup (L1323/1334/1339/1345): principal=hero-invierte,
+// Rentas=hero-estancia, Inversión=villa-pool, Legal=villa-modern (antes reasignadas, §32.24 BAJA).
+const journalMain = { img: '/assets/hero-invierte.webp', cat: 'Mercado', date: '12 feb 2026', read: '8 min de lectura', title: 'Guía 2026: dónde comprar en Cartagena antes de la próxima ola de valorización', excerpt: 'Analizamos precio por m², proyección de obra nueva y liquidez zona por zona, para que tu compra sea patrimonio y no una apuesta.', href: '/journal' };
 const journalSide = [
-  { img: '/assets/villa-pool.webp', cat: 'Rentas', read: '5 min de lectura', title: 'Corta estancia: renta tu propiedad sin dolores de cabeza', href: '/journal' },
-  { img: '/assets/villa-modern.webp', cat: 'Inversión', read: '6 min de lectura', title: 'Manga o Bocagrande: en cuál invertir según tu objetivo', href: '/journal' },
-  { img: '/assets/chalet-dusk.webp', cat: 'Legal', read: '4 min de lectura', title: 'Checklist legal antes de firmar la promesa de compraventa', href: '/journal' },
+  { img: '/assets/hero-estancia.webp', cat: 'Rentas', read: '5 min de lectura', title: 'Corta estancia: renta tu propiedad sin dolores de cabeza', href: '/journal' },
+  { img: '/assets/villa-pool.webp', cat: 'Inversión', read: '6 min de lectura', title: 'Manga o Bocagrande: en cuál invertir según tu objetivo', href: '/journal' },
+  { img: '/assets/villa-modern.webp', cat: 'Legal', read: '4 min de lectura', title: 'Checklist legal antes de firmar la promesa de compraventa', href: '/journal' },
 ];
 
 const brokerPerks = [
@@ -154,7 +156,7 @@ const maneras = [
   { n: '01', t: 'Comprar', img: '/assets/villa-modern.webp', d: 'Tu hogar o tu próxima inversión, con acompañamiento legal de principio a fin.', href: '/comprar' },
   { n: '02', t: 'Arrendar', img: '/assets/chalet-dusk.webp', d: 'Contratos claros y estudios serios. Vive tranquilo, entrega tranquilo.', href: '/arrendar' },
   { n: '03', t: 'Invertir', img: '/assets/estate-golden.webp', d: 'Rentabilidad y valorización en la ciudad amurallada, con cifras sobre la mesa.', href: '/invertir' },
-  { n: '04', t: 'Estancias', img: '/assets/villa-pool.webp', d: 'Alójate frente al mar o entre murallas, con la confianza de un anfitrión verificado.', href: '/estancias' },
+  { n: '04', t: 'Estancias', img: '/assets/villa-pool.webp', d: 'Vive Cartagena por unos días en propiedades verificadas, listas para habitar.', href: '/estancias' },
 ];
 ---
 
