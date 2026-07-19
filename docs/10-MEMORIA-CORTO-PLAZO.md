@@ -11,12 +11,11 @@
 
 > **Dos frentes abiertos, en este orden:**
 >
-> **FRENTE 1 — TODO-27: cerrar los MEDIA/BAJA de fidelidad del portal** (§32.24). **FICHA ✅ (§43) · TURISMO ✅ (§45) · ESTANCIAS ✅ (§46) · SERP ✅ (§47).**
-> La síntesis de bóveda `2026-07-17-reauditoria-fidelidad-sintesis.md` es AUTOCONTENIDA (§33 la parcheó): lista 1:1
-> + tabla página→mockup→impl + bloque **"Qué NO corregir (intencional)"** — leerla ANTES de tocar. Pendientes (4, los
-> más livianos): **home 2 · publicar 2.** ⚠️ Los "ALTA ✅" de la síntesis madre NO son de fiar 1:1 (la 3ª card de la FICHA
-> §43 y los 5 listings de /arrendar §47 nunca se corrigieron); el crítico caza íconos SVG bespoke fuera de lista (ficha/estancias).
-> 🔸 **PENDIENTE de Daniel (§47)**: ¿/arrendar con 1 card honesto hasta Firestore, o cards demo marcadas?
+> **FRENTE 1 — TODO-27 ✅ CERRADO (§48)**: las **6 páginas del portal FIELES** al mockup (ficha §43 · turismo §45 ·
+> estancias §46 · serp §47 · home+publicar §48). 35 MEDIA/BAJA + 3 ALTA "fantasma" (marcados ✅ pero nunca corregidos:
+> ficha 3ª card · estancias galería · serp /arrendar) + 3 íconos del crítico. Método L-29 validado. Detalle → §43-§48 + bóveda.
+> **Go-forward del portal Ola 1** (NO es TODO-27): 🔸 **decisión Daniel /arrendar** (1 card honesto vs demo-padding, §47) ·
+> MapLibre real · datos Firestore (TODO-22) · wiring forms→`solicitudes` · redeploy del staging worker (batch).
 > **MÉTODO (L-29/L-24)**: bloque del `.dc.html` → corregir TEXTUAL → re-auditar adversarial ANTES de decir "fiel".
 > NUNCA inventar. Capas: build → estructura → computed (miente con `transition`, L-28) → screenshot Chrome → diff
 > vs fuente. Reusar piezas hechas (`.alt-rail`, `.alt-btn-sweep`, 6 cards NO intercambiables — ver síntesis).
@@ -49,7 +48,6 @@
 | **TODO-22** | **Auditoría Fable**: (a) ADR §22 `[REVISAR-FABLE]` (capa de datos); (b) decisión catálogo público SSG vs doc-índice (gatea datos reales). | 🔮 FABLE | |
 | **TODO-23** | 🔧 **Kernel hardening** (owner=**INMOBILIARIA**, escritor único ×4 — el wording "cars" era stale, §41): K-01/02/04/05/09 + §33: priorizar warns en truncado `--boot` · gate #7 debe ver GIT de la bóveda · circularidad boot-budget. 1er fix aplicado 07-18 (✅-falso, §41); resto de K abiertos. | 🔴 kernel | §33 G-09 |
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). K-06 ✅ CERRADO §33 (espejo en bóveda). | 🟡 abierto | |
-| **TODO-27** | 🎨 **REBUILD DE FIDELIDAD**: 13 ALTA ✅ · **FICHA (§43)·TURISMO (§45)·ESTANCIAS (§46)·SERP (§47) ✅** · **4 MEDIA/BAJA pendientes**: home 2 · publicar 2. Método L-29: diff vs `.dc.html` + re-audit adversarial. 🔸 pend. Daniel: /arrendar 1 card (§47). | 🔄 OPUS | Frente 1 |
 | **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda): #1 ✅ (caja negra, §40) · **#2 ✅ 07-18 (§41)**: `boot-gate.mjs` bloqueante + poda −982c + one-in-one-out §G.5 + fix kernel ×3 · #3 ✅ · **sigue #4** `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento (>90d). | 🔄 sigue #4 | $0 |
 | **TODO-29** | 📣 **PAUTA**: skill ✅ · Meta ordenado ✅ · humo montada ✅ · **HUMO ENCENDIDA 07-18 ✅ (§42.8)** — anuncio "Activo" (revisión aprobó), $4.000/día vs prepago ~$5k → muere sola ~1 día. **VIGILAR (no tocar)**: entrega/CPM real · chats entrantes (responder; saludo auto ya sale) · planilla CPQL desde el 1er lead · al agotarse el saldo verificar FACTURACIÓN → cierra fontanería §4b y calibra la CAMPAÑA REAL (gate = cierre de obra: matrícula/RNT + privacidad + píxel+GA4 + landing). | 🔥 VOLANDO | no tocar 7d |
 
@@ -57,14 +55,9 @@
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-18 (OPUS-4.8 — §47)**: **TODO-27 serp ✅** — 7 hallazgos + el ALTA de /arrendar (5 listings inventados,
-> nunca corregido). /comprar=4 venta + /arrendar=1 arriendo REALES (sin fakes) · Más filtros responde · sombra scroll
-> · 3ª vía vertical · precios pelados. Re-audit 7+1 → 8/8 FIEL, 0 fallos tooling, 0 nuevas. 2 decisiones: arrendar 1
-> card (🔸→Daniel) · corazón unificado. Aprendizaje: páginas con PropertyCard = 0 deriva de íconos SVG (vs ficha/estancias).
-> Bóveda `2026-07-18-serp-reaudit-*`. Sigue TODO-27: home 2 · publicar 2.
+> **2026-07-18 (OPUS-4.8 — §48)**: **🏁 TODO-27 ✅ CERRADO** — las **6 páginas del portal fieles al mockup** (ficha
+> §43 · turismo §45 · estancias §46 · serp §47 · home+publicar §48). 35 MEDIA/BAJA + **3 ALTA "fantasma"** (marcados ✅
+> pero nunca corregidos → contar contra la FUENTE, L-29) + 3 íconos del crítico. 5 workflows de re-audit adversarial
+> (~4.3M tok). Go-forward del portal → ver Foco (MapLibre/Firestore/forms/decisión /arrendar). Bóveda `2026-07-18-*-reaudit-*`.
 
-> **2026-07-18 (OPUS-4.8 — §46)**: **TODO-27 estancias ✅** — 8 hallazgos (galería mosaico + "Ver 18 fotos" · reserva
-> prellena fechas · breadcrumb · Interior=villa-modern · orden cabecera) + 2 íconos del crítico. Re-audit 8+1 → 8/8 FIEL.
-> Bóveda `2026-07-18-estancias-reaudit-*`.
-
-> *(Bitácora 07-17/07-18 §32-§45 + brain-kit §44 + relevo a Opus podados — consolidados en ADR §32.14-.24 / §41-§45 + L-28/L-29/L-32 + bóveda. Serie fidelidad: ficha §43 · turismo §45 · estancias §46; el crítico de completitud caza íconos SVG fuera de lista. Constraints vivos → TODO-23/27/28/29 + 05. §G.4 GC.)*
+> *(Bitácora 07-17/07-18 §32-§47 + brain-kit §44 + serie de fidelidad §43-§48 podados — consolidados en ADR + L-28/L-29/L-32 + bóveda. Constraints vivos → TODO-23/28/29 + 05. §G.4 GC.)*

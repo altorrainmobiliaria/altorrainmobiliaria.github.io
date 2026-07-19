@@ -798,3 +798,31 @@ Cerebro: este ADR + `00` + `10` + `05`. INTACTOS: PropertyCard/Header/Footer/tok
 §3.7. **Aprendizaje: las páginas con PropertyCard NO sufren deriva de íconos SVG (crítico 0 nuevas) vs ficha/estancias con
 SVG inline bespoke (1-2 nuevas)** — escrutar más las páginas con íconos propios. Sin cache bump. Sigue TODO-27: home 2 ·
 publicar 2 (4, los más livianos).
+
+## 48. ADR-048 — TODO-27 CERRADO: HOME + PUBLICAR FIEL (últimos 4 hallazgos) ⟦OPUS-4.8⟧ (2026-07-18)
+
+**48.1 Contexto**: Últimas 2 páginas del re-trabajo de fidelidad (TODO-27), tras ficha/turismo/estancias/serp (§43-§47).
+home 2 + publicar 2 = 4 hallazgos MEDIA/BAJA, los más livianos. Método L-29.
+**48.2 Solución**: **HOME** (`index.astro`) — H-1 texto card 04 'Estancias' en #maneras restaurado al mockup ("Vive
+Cartagena por unos días en propiedades verificadas, listas para habitar") · H-2 4 fotos del #journal → las del mockup
+(principal hero-invierte · Rentas hero-estancia · Inversión villa-pool · Legal villa-modern). **PUBLICAR** (`publicar.astro`)
+— P-1 h2 'Solicita tu avalúo gratis' + subtítulo movidos FUERA de `.pub-form__fields` → persisten como encabezado sobre el
+mensaje de éxito (el script oculta SOLO los campos) · P-2 sección 'Cuatro pasos' → override `.pub-steps { padding-block:
+clamp(56px,7vw,96px) }` (el `.alt-section` genérico llegaba a 112px vs 96px del mockup).
+**48.3 No-regresión**: solo `index.astro` + `publicar.astro`. Componentes/otras secciones INTACTOS. Build OK.
+**48.4 Verificación**: build ✅ · HTML construido (maneras 04 texto, journal imgs, pub-steps padding, h2 fuera de fields) ·
+DOM/computed vivo (journal = [hero-invierte, hero-estancia, villa-pool, villa-modern]; **P-1: al enviar el form el h2
+PERSISTE** + éxito visible; P-2 padding 89.6px=7vw) · **re-audit adversarial** (4 refutadores + 2 críticos, ~660k tok):
+**4/4 FIEL + ambos críticos 0 divergencias nuevas** — el crítico de home barrió anti-invención (L-29) y verificó TODAS las
+cifras del home contra el mockup (hero/ROI/reseñas/brokers/cerca), sin fakes.
+**48.5 🏁 CIERRE DE TODO-27** (fidelidad del portal, §32.24 → §43-§48): las **6 páginas fieles**. Total corregido: **35
+MEDIA/BAJA + 3 ALTA "fantasma"** (marcados ✅ pero nunca corregidos: ficha 3ª card §43, estancias galería §46, serp
+/arrendar §47) **+ 3 íconos SVG** que cazó el crítico de completitud (ficha Muelle §43, estancias Terraza/WiFi §46).
+**3 aprendizajes transversales**: (1) los "ALTA ✅" del corrector NO son de fiar 1:1 → contar contra la FUENTE (L-29); (2)
+el crítico caza íconos SVG solo en páginas con markup bespoke (ficha/estancias), no en las de componentes compartidos
+(turismo/serp/home/publicar); (3) el tooling (StructuredOutput retry cap) falla intermitente, cubierto por DOM+crítico.
+**48.6 Archivos**: `portal/src/pages/{index,publicar}.astro`. Bóveda: `2026-07-18-home-publicar-reaudit-{crudo.json,
+sintesis.md}`. Cerebro: este ADR + `00` + `10` + `05`.
+**48.7 Doctrina + go-forward**: L-29/§3.3/§3.7. Sin cache bump (portal sin SW). **Follow-ups del portal Ola 1 (NO parte de
+TODO-27)**: 🔸 decisión de Daniel sobre /arrendar (1 card honesto vs demo-padding, §47) · MapLibre real · datos Firestore
+(TODO-22) · wiring forms→`solicitudes` · redeploy del staging worker (batch).
