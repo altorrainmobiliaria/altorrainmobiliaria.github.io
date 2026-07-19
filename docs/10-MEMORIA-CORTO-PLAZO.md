@@ -51,14 +51,20 @@
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). K-06 ✅ CERRADO §33 (espejo en bóveda). | 🟡 abierto | |
 | **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda): #1 ✅ (caja negra, §40) · **#2 ✅ 07-18 (§41)**: `boot-gate.mjs` bloqueante + poda −982c + one-in-one-out §G.5 + fix kernel ×3 · #3 ✅ · **sigue #4** `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento (>90d). | 🔄 sigue #4 | $0 |
 | **TODO-29** | 📣 **PAUTA**: skill ✅ · Meta ordenado ✅ · humo montada ✅ · **HUMO ENCENDIDA 07-18 ✅ (§42.8)** — anuncio "Activo" (revisión aprobó), $4.000/día vs prepago ~$5k → muere sola ~1 día. **VIGILAR (no tocar)**: entrega/CPM real · chats entrantes (responder; saludo auto ya sale) · planilla CPQL desde el 1er lead · al agotarse el saldo verificar FACTURACIÓN → cierra fontanería §4b y calibra la CAMPAÑA REAL (gate = cierre de obra: matrícula/RNT + privacidad + píxel+GA4 + landing). | 🔥 VOLANDO | no tocar 7d |
+| **TODO-30** | 🌊 **Portal Ola 1 post-fidelidad** (fidelidad §43-§48 ✅ y LIVE): **MapLibre real** (reemplazar los mapas esquemáticos de ficha+serp; sub-decisión de costo = proveedor de tiles free-tier → §3.7) ← **siguiente recomendado (Opus)** · **wiring forms→`solicitudes`** (avalúo de publicar + contacto; gate legal = aviso Ley 1581) · datos reales Firestore = TODO-22 (Fable). | 🔄 OPUS | próximo Frente 1 |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **2026-07-18 (OPUS-4.8 — §48)**: **🏁 TODO-27 ✅ CERRADO** — las **6 páginas del portal fieles al mockup** (ficha
-> §43 · turismo §45 · estancias §46 · serp §47 · home+publicar §48). 35 MEDIA/BAJA + **3 ALTA "fantasma"** (marcados ✅
-> pero nunca corregidos → contar contra la FUENTE, L-29) + 3 íconos del crítico. 5 workflows de re-audit adversarial
-> (~4.3M tok). Go-forward del portal → ver Foco (MapLibre/Firestore/forms/decisión /arrendar). Bóveda `2026-07-18-*-reaudit-*`.
+> **▶ RELEVO A SESIÓN FRESCA (2026-07-18, contexto ~912k — Daniel pidió cerrar)**: (1) **TODO-27 CERRADO** — las 6
+> páginas del portal FIELES al mockup y **LIVE** en staging (`altorra-portal…workers.dev`; la CI `portal-ci.yml`
+> auto-despliega cada push del portal, §3.3). Serie §43-§48: 35 MEDIA/BAJA + **3 ALTA "fantasma"** (marcados ✅ pero
+> nunca corregidos → contar contra la FUENTE, L-29) + 3 íconos del crítico; 5 workflows de re-audit adversarial (~4.3M tok).
+> (2) **Siguiente = TODO-30 MapLibre real** (mi pick; arrancar EN FRESCO — es cost-sensitive: decidir proveedor de tiles
+> free-tier §3.7). (3) ⛔ **NO tocar**: HUMO volando (TODO-29/Ads Manager), kernel `scripts/brain-*.mjs` (carril Fable),
+> datos Firestore (TODO-22 = decisión Fable). (4) 🔸 **/arrendar decidido**: 1 card honesto hasta Firestore. (5) 🧹
+> **00-INDICE al tope** (~17.5k, nudge persistente) → shard = carril Fable (TODO-28 #5). (6) **brain-kit del amigo
+> ENTREGADO** (§44, ZIP en `Desktop\brain-kit-v1.0.zip`). Todo pusheado; git limpio en HEAD.
 
-> *(Bitácora 07-17/07-18 §32-§47 + brain-kit §44 + serie de fidelidad §43-§48 podados — consolidados en ADR + L-28/L-29/L-32 + bóveda. Constraints vivos → TODO-23/28/29 + 05. §G.4 GC.)*
+> *(Bitácora 07-17/07-18 §32-§48 + brain-kit §44 + serie de fidelidad §43-§48 podados — consolidados en ADR + L-28/L-29/L-32 + bóveda. Constraints vivos → TODO-23/28/29/30 + 05. §G.4 GC.)*
