@@ -14,8 +14,9 @@
 > **FRENTE 1 — TODO-27 ✅ CERRADO (§48)**: las **6 páginas del portal FIELES** al mockup (ficha §43 · turismo §45 ·
 > estancias §46 · serp §47 · home+publicar §48). 35 MEDIA/BAJA + 3 ALTA "fantasma" (marcados ✅ pero nunca corregidos:
 > ficha 3ª card · estancias galería · serp /arrendar) + 3 íconos del crítico. Método L-29 validado. Detalle → §43-§48 + bóveda.
-> **Go-forward del portal Ola 1** (NO es TODO-27): 🔸 **decisión Daniel /arrendar** (1 card honesto vs demo-padding, §47) ·
-> MapLibre real · datos Firestore (TODO-22) · wiring forms→`solicitudes` · redeploy del staging worker (batch).
+> **Go-forward del portal Ola 1** (NO es TODO-27): las 6 páginas fieles YA están LIVE en staging (la CI auto-despliega
+> cada push, §3.3). /arrendar = **1 card honesto hasta Firestore** (Daniel decidió 07-18). Fronts abiertos: MapLibre
+> real · datos Firestore (TODO-22, carril Fable) · wiring forms→`solicitudes` (gate legal Ley 1581).
 > **MÉTODO (L-29/L-24)**: bloque del `.dc.html` → corregir TEXTUAL → re-auditar adversarial ANTES de decir "fiel".
 > NUNCA inventar. Capas: build → estructura → computed (miente con `transition`, L-28) → screenshot Chrome → diff
 > vs fuente. Reusar piezas hechas (`.alt-rail`, `.alt-btn-sweep`, 6 cards NO intercambiables — ver síntesis).
