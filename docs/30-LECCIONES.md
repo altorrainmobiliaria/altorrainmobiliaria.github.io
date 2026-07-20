@@ -25,26 +25,9 @@ escriben a RTDB DESPUÉS del logout; (b) RTDB rules sin `.read` ni `.indexOn`. *
 **Disparador**: un guardado con `merge:true` es rechazado por reglas. **Causa**: las rules evalúan ambiguamente el merge.
 **Fix**: usar **`set()` SIN merge para CREAR**, **`update()` para EDITAR** (concurrencia optimista `_version`: create==1, update==prev+1 vía `runTransaction`).
 
-### L-05 — Modals no funcionan fuera de `index.html`
-**Disparador**: un modal no abre en una página que no es el index. **Causa**: HTML de modals hardcodeado solo en index.
-**Fix**: `loadModalsIfNeeded()` en `components.js` los inyecta dinámicamente (id `modals-container`).
+### L-05 — ⚰️ (sitio viejo retirado §15) Modals inyectados fuera de index → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md`
 
-### L-06 — Invalidación de cache en tiempo real cross-pestañas (`system/meta` → onSnapshot)
-**Disparador**: vas a tocar el flujo de invalidación de cache, el listener de `system/meta`, las reglas de `system`, o un
-admin reporta "edité una propiedad pero el sitio público no se actualiza". **Cadena E2E** (la fuente de verdad):
-```
-admin-properties.js:touchSystemMeta()  (tras crear/editar/cambiar-estado/borrar)
-  → setDoc('system/meta', {lastModified: serverTimestamp()})
-  → onSnapshot dispara en TODAS las pestañas → cache-manager.js:startMetaListener()
-  → invalidate() (memClear+lsClear+idbClear) + propertyDB.refresh() + dispatchEvent('altorra:cache-invalidated')
-  → listado-propiedades.js / scripts.js (bindRefreshListener) re-renderizan  → usuario ve el cambio en < 5s
-```
-**Diagnóstico por log**: `touchSystemMeta permission-denied` → reglas bloquearon el write (revisar `firestore.rules`
-regla `system/{docId}` — debe permitir write a editor/super_admin; **la línea exacta puede desincronizarse, leer el archivo
-real**, §3.3); `onSnapshot system/meta permission-denied` → la regla **read de `system` debe ser `allow read: if true``**;
-sin log `[AltorraCache]` → `cache-manager.js` no se cargó; se ve el log pero la UI no cambia → falta `bindRefreshListener()`.
-**Verificación consola**: pública `window.AltorraCache.info()` (`meta:'sin escuchar'` ⇒ onSnapshot no arrancó → `.invalidate()`).
-> Procedimiento manual completo (con snippet de touch manual) → `tests/MANUAL-meta-snapshot.md`.
+### L-06 — ⚰️ (sitio viejo retirado §15) Invalidación de cache `system/meta`→onSnapshot → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md` (resucitar si el cutover reusa SW/onSnapshot)
 
 ### L-07 — Primer deploy de Cloud Functions 2nd gen falla por Eventarc
 **Disparador**: deploy de CF con triggers (`onNewSolicitud`, etc.) falla con error 400 "Eventarc Service Agent permission
@@ -136,7 +119,7 @@ Cuando el portal maneje plata: (1) skill global `auditoria-financiera` (7 invari
 - **Carga de propiedades**: SIEMPRE `limit(9)` paginado, NUNCA todo el catálogo (free-tier).
 - **Caché frontend 3 capas**: Memory + IndexedDB + localStorage (reducir lecturas Firestore); TTL 5 min CRÍTICO.
 - **Deploy de reglas es MANUAL** (`firebase deploy --only firestore:rules`) — NO automático.
-- **Formularios** → Firestore `solicitudes` + Cloud Function email (eliminar dependencia de FormSubmit). ⚠️ Gap J2: quedaban `action` FormSubmit residuales → riesgo doble envío (verificar, `10` TODO-01).
+- **Formularios** → Firestore `solicitudes` + Cloud Function email. ⚰️ El gap J2 (FormSubmit residual) era del sitio viejo RETIRADO (§15 obsoletó TODO-01..08) → `_legacy/LECCIONES-SITIO-VIEJO.md`.
 
 ---
 
@@ -148,6 +131,9 @@ Cuando el portal maneje plata: (1) skill global `auditoria-financiera` (7 invari
 
 ### M-02 — La disciplina de cierre NO sobrevive a la saturación de contexto: la consolidación debe ser AUTOMÁTICA, no prometida *(auditoría §33, 2ª reincidencia de la clase M-01)*
 **Patrón**: M-01 se escribió el 07-12… y la clase reincidió el 07-17 IGUAL (`05` quedó 59 commits atrás contradiciendo a `10`, sello viejo), porque la sesión murió por contexto reventado — exactamente el momento en que la doctrina pide "consolida antes de cerrar". **Diagnóstico del comité (2026-07-18, unánime)**: el defecto es de DISEÑO, no de disciplina — el sistema exige escribir la memoria AL FINAL de la tarea, cuando el contexto está más saturado y el modelo es menos confiable; una LECCIÓN no arregla eso (esta es la prueba: M-01 existía y no evitó nada). **Regla**: los dolores reincidentes del cerebro se curan con AUTOMATISMOS (hooks PreCompact/SessionEnd que vuelcan estado, gates bloqueantes, scripts), NUNCA con más doctrina always-on — cada regla nueva del router debe desplazar una existente (one-in-one-out). Plan concreto → TODO-28 (mejoras #1/#2 del comité; crudo en bóveda `2026-07-18-comite-futuro-cerebro-*`).
+
+### M-03 — Un recurso COMPARTIDO ×4 no se protege con rituales POR-OPERADOR: el gate debe vivir EN EL RECURSO *(auditoría §49, reincidencia de la clase G-02)*
+**Patrón**: G-02 (bóveda sin commitear) se "curó" el 07-18 con un ritual ampliado en §G.4… y a <48h la bóveda estaba sucia OTRA VEZ — esta vez con crudos de bersaglio (incluida SU tabla de auditoría Nivel-2, el input de su próxima Sonda 0). El ritual es por-repo/por-operador, pero `brain-private` es UN recurso compartido ×4: basta que UN operador cierre sin commitear para que el respaldo falle, y el gate #7 del linter es ciego a git POR DISEÑO. **Regla**: los invariantes de un recurso compartido se protegen con un gate EN el recurso (hook/check que mire `git -C <bóveda> status`, TODO-23/31), no con doctrina replicada en N operadores. Mientras el gate no exista: cualquier operador que ENCUENTRE la bóveda sucia la commitea+pushea él mismo (respaldo ajeno = enriquecer, §G.4).
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > De la sesión cars (PLAN UNIFICADO, cars §237). Mismo dueño/operación en los 4 repos.

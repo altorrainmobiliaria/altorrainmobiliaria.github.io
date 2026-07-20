@@ -21,7 +21,7 @@
 | **W-03** | **Red-team de diseño (lentes empresariales)** | Antes de congelar un diseño caro de revertir | Supuestos frágiles, modos de fallo, sobre-ingeniería | Lentes (seguridad·costo·escala·datos·UX·mantenibilidad·negocio) atacan el diseño → síntesis |
 | **W-04** | **Verificación post-subagente** | Tras delegar a un subagente | Que el subagente **alucinó** (dice que hizo algo que no quedó en el repo) | Releer los archivos/estado REALES y comparar contra lo reportado |
 | **W-05** | **Testing de Cloud Functions (puro + integración)** | Antes de desplegar una CF | Bugs de lógica + glue del trigger | Separar **lógica pura** (test sin emulador) + **integración** (emulador real) |
-| **W-06** | **Análisis crítico multi-agente (fan-out → síntesis)** | Decisión que cruza varios temas independientes | Puntos ciegos, hechos no verificados, opciones no consideradas | N agentes ACOTADOS por sub-tema → sintetizar (L-50: inline+schema, sin tools, in-cwd) |
+| **W-06** | **Análisis crítico multi-agente (fan-out → síntesis)** | Decisión que cruza varios temas independientes | Puntos ciegos, hechos no verificados, opciones no consideradas | N agentes ACOTADOS por sub-tema → sintetizar (cars-L-50: inline+schema, sin tools, in-cwd) |
 | **W-07** | **Comité de expertos ×3** | Mejorar cualquier entregable importante | Debilidades, errores, falta de profundidad | Skill `comite-expertos` |
 | **W-08** | **Investigación profunda (grounded)** | Antes de afirmar hechos externos (legal, normativo, mercado) | Datos inventados o desactualizados | Skills `deep-research`/`legal-colombia` (fuentes primarias) + marcar lo no verificado `[a verificar]` |
 | **W-09** | **brain:check (linter del cerebro)** | Al arrancar/cerrar sesión o tras tocar el cerebro | Huérfanas, caps, índice desync, refs colgantes | `npm run brain:check` (`§G.4`) |
@@ -46,7 +46,7 @@
    • **SISTEMA VIVO → MCP del backend** (p.ej. firebase MCP: `firestore_query_collection`, `functions_get_logs`): leer datos/logs REALES, no inferir del código.
    • **DISEÑO/UI → MOCKUP** vía plugin de diseño: `visualize`/`show_widget` (rápido, inline) · Stitch/Canva/Figma. "Muéstrame cómo debe quedar" → yo **verifico/delibero** (no acato).
    • **RESEARCH/EVIDENCIA → `deep-research`** + firecrawl/exa.
-5. **COMITÉ ×3 ACOTADO** (`comite-expertos`, agentes inline+schema, sin tools) — ≥1 escéptico + ≥1 ejecutor (L-50).
+5. **COMITÉ ×3 ACOTADO** (`comite-expertos`, agentes inline+schema, sin tools) — ≥1 escéptico + ≥1 ejecutor (cars-L-50).
 6. **CONSEJO EXTERNO** (`docs/15`, Gemini/Antigravity, **read-only**) — prompt autocontenido CRUDO (anti-anclaje). Humano en el medio; verifico cada afirmación (no oráculo).
 7. **VEREDICTO** — yo delibero y decido; criterio de éxito ANTES de codear (`verification-before-completion`).
 8. **IMPLEMENTAR.**

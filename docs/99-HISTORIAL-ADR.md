@@ -278,6 +278,7 @@ Propagación cross-repo desde **cars TODO-32 / §229**. Instalado `scripts/brain
 **30.6 Archivos**: `05`/`10` (frescura+GC) · `00` (fila semántica diseño + refresco §23 + fix §28 + marca ⚰️ legacy en L-06 + fila §30) · `30` (**M-01**) · `99` (este ADR) · `.brain-manifest.json` (`deepAudit.last=2026-07-12`, `coveredHeaderCount=30`) · bóveda `2026-07-12-auditoria-*` + README. Kernel `brain-check/index/diff.mjs` INTACTO (single-writer=cars).
 
 **30.7 Doctrina + KPIs del lazo**: §3.3 (cada claim adversarial re-verificado contra archivo/git ANTES de escribirlo — deploy-info, líneas de `brain-check.mjs`, drift de §23) · §G.3/§G.4 (consolidación + captura de deliberación + GC pareado) · §G.2 🔵 (skill). KPI: hallazgo reincidente cerrado CON meta-lección (F3→M-01); tasa de re-investigación ≈ 0 (retrieval clean). Sin cache bump (no tocó el shell). `deepAudit` re-sellado → apaga el nudge.
+> ✅ Nota de cierre (auditoría §49): **TODO-25 CERRADO** con evidencia en commit `3285f5c` (`bump-version` revivió). El cierre vivía SOLO en el mensaje de commit — se registra aquí para el lector futuro (§2: todo TODO cerrado se marca en los docs).
 
 ## 31. ADR — Ola 1: GESTIÓN (`/gestion`, panel admin) — 8º y último mockup; portal COMPLETO ⟦OPUS-4.8⟧ (2026-07-12)
 
@@ -798,6 +799,9 @@ Cerebro: este ADR + `00` + `10` + `05`. INTACTOS: PropertyCard/Header/Footer/tok
 §3.7. **Aprendizaje: las páginas con PropertyCard NO sufren deriva de íconos SVG (crítico 0 nuevas) vs ficha/estancias con
 SVG inline bespoke (1-2 nuevas)** — escrutar más las páginas con íconos propios. Sin cache bump. Sigue TODO-27: home 2 ·
 publicar 2 (4, los más livianos).
+> ✅ RESUELTO 2026-07-18 (decisión de Daniel, registrada en auditoría §49): **/arrendar = 1 card honesto hasta datos
+> Firestore (TODO-22)** — la opción demo-padding quedó descartada. La síntesis serp de la bóveda aún dice "PENDIENTE";
+> esta línea es la verdad.
 
 ## 48. ADR-048 — TODO-27 CERRADO: HOME + PUBLICAR FIEL (últimos 4 hallazgos) ⟦OPUS-4.8⟧ (2026-07-18)
 
@@ -824,5 +828,17 @@ el crítico caza íconos SVG solo en páginas con markup bespoke (ficha/estancia
 **48.6 Archivos**: `portal/src/pages/{index,publicar}.astro`. Bóveda: `2026-07-18-home-publicar-reaudit-{crudo.json,
 sintesis.md}`. Cerebro: este ADR + `00` + `10` + `05`.
 **48.7 Doctrina + go-forward**: L-29/§3.3/§3.7. Sin cache bump (portal sin SW). **Follow-ups del portal Ola 1 (NO parte de
-TODO-27)**: 🔸 decisión de Daniel sobre /arrendar (1 card honesto vs demo-padding, §47) · MapLibre real · datos Firestore
-(TODO-22) · wiring forms→`solicitudes` · redeploy del staging worker (batch).
+TODO-27)**: 🔸 /arrendar ✅ RESUELTO (1 card honesto, apéndice §47) · MapLibre real (TODO-30) · datos Firestore
+(TODO-22) · wiring forms→`solicitudes`. (El "redeploy pendiente" era STALE — la CI auto-despliega cada push, `c0b7b8b`.)
+
+## 49. ADR — Auditoría Nivel-2 del cerebro #4 (encargo Daniel pre-TODO-30): SANO · 2 mentiras en boot curadas · TODO-30 blindado · M-03 ⟦FABLE-5⟧ (2026-07-20)
+
+**Deliberación:** workflow `auditoria-cerebro-nivel2-4` (6 sondas paralelas, ~850k tok, 6/6 OK, 0 errores) + sondas 0/5 directas. Crudo + tabla falsable → bóveda `research-archive/2026-07-20-auditoria-cerebro-nivel2-4-inmobiliaria.md`.
+
+**49.1 Causa/gatillo**: encargo directo de Daniel ("escaneo profundo holístico ANTES de TODO-30": errores, eficiencia, vacíos, pérdida de memoria, huérfanos). Previa #3 = §33 (2026-07-18, cubrió 39 headers).
+**49.2 Veredicto**: **SANO y FUNCIONAL** — retrieval frío 5/5 (4 respuestas con el boot puro, 0 saltos; la 5ª en 2 saltos deterministas vía índice, offset EXACTO) · índice §→línea 48/48 sin desync · hechos calientes consistentes entre nodos · memoria del harness espejada EN SYNC (diff = 0) · 0 contradicciones ALTA nodo-vs-realidad. PERO: **2 datos FALSOS en el boot** (05 decía "constancias ×3 pendientes" — §39 las cerró; y "Pendiente: 35 fidelidad" — §48 lo cerró), **1 vacío ALTO en el relevo de TODO-30** (sin criterio de validación del mapa real: los mockups son esquemáticos a propósito → chocaba con "NUNCA UI sin mockup"; y el proveedor de tiles se enmarcaba como decisión ABIERTA cuando §16 ya la selló: Protomaps `.pmtiles` en R2), y **REINCIDENCIA de la clase G-02** (bóveda compartida sucia otra vez a <48h de la "cura", carril bersaglio) → **M-03** (el gate debe vivir EN el recurso, no en rituales por-operador).
+**49.3 Curado en este cierre** (~20 hallazgos; tabla completa en bóveda): `05` re-sellado sin SHA (M-01) + footer `000000`=PORTAL (el modo obra no exhibe matrícula) + conteo 66 redirects reproducible + humo "verificar si agotada a D+2" · **TODO-30 blindado** (tiles SELLADOS · alcance SOLO ficha+serp, home ilustrada §32.18 · criterio de preservación pins/hover/paleta · exención mockup documentada) · `20` refrescada (HOME COMPLETA 17/17 fiel + 5 cards + primitivas §32) · `CLAUDE.md`: **Poppins acotada a LEGACY** (contradecía §1 Cormorant/Hanken — deriva semántica viva en el router) + Globals→puntero `20` (one-in-one-out) · `60`: la lección de cars citada sin prefijo → prefijada `cars-` ×2 · `30`: guardarraíl TODO-01 ⚰️ + L-05/L-06 cuarentenadas → `_legacy/LECCIONES-SITIO-VIEJO.md` + **M-03** · `42`: URGENTE vencida marcada · `99`: apéndices /arrendar RESUELTO (§47) + TODO-25 cerrado (§30) + follow-ups §48.7 reconciliados · `00`: fila-síntoma muerta retirada + 10 filas-miniADR destiladas a hooks (cura el excedido 17.6k→<16k) · **bóveda commiteada+pusheada** (incl. los crudos bersaglio huérfanos — respaldo ajeno, M-03).
+**49.4 ABIERTO (trackeado)**: **TODO-23 += sentencias kernel §49** (gate #7 git-aware de la bóveda vía fs · QUITAR #6b — sentencia G-11 con n=2 sin ejecutar · #13 regex de evidencia tautológica: endurecer o quitar · fusionar #1⊂#10 · validar `deepAudit.tableFile`) · **TODO-31 NUEVO**: SPOF (repos+bóveda+espejos+config en 1 cuenta GitHub + 1 disco; las curas G-03/G-04 CONCENTRARON en vez de redundar) → respaldo offsite mensual `git bundle` (medio = Daniel) + canario de boot (los hooks del harness mueren EN SILENCIO; marker+edad en boot-gate) + runbook de recuperación + GC mayor de `30` (shard L-22/26/28 → `31-VERIFICACION-UI` + fusión L-04/L-09) · **TODO-28 #6: proxy de costo ADOPTADO** — % commits `docs(cerebro)`/`archive` del mes = **49% > bandera roja 30%** → medir 2 semanas; si se sostiene, RECORTAR doctrina (criterio de salida §33), no añadir.
+**49.5 Sonda 0 (diff vs #3)**: G-01/G-05 curados y **SOSTENIDOS** (boot-gate funciona; 0 drift — primera auditoría a la que el cerebro llega fresco) · G-09/G-10/G-12 abiertos-tracked · clase G-02 REINCIDENTE → M-03 (el lazo KPI exige meta-lección).
+**49.6 Archivos**: `05`/`10` (re-sello + GC + TODO-30/31) · `CLAUDE.md` ×2 · `20`/`30`/`42`/`60`/`00`/`99` · `_legacy/LECCIONES-SITIO-VIEJO.md` (cuarentena nueva) · `.brain-manifest.json` (deepAudit 2026-07-20 · 49 headers · +`tableFile`) · bóveda `2026-07-20-auditoria-*` + README. **Kernel INTACTO** (sentencias → TODO-23).
+**49.7 Doctrina + KPIs**: §3.3 (cada hallazgo con evidencia `archivo:línea` re-verificable) · §G.3/§G.4 (GC pareado: boot 31184c → menor; `00` bajo cap) · §G.2 🔵 (skill `auditoria-cerebro`). KPI reincidencia: 1 (G-02→M-03, con meta-lección). Sin cache bump (no tocó el shell). **Nota Obsidian** (pregunta de Daniel): veredicto del comité §33 RATIFICADO con la validación empírica de HOY (retrieval 5/5) — markdown+git+ruteo curado sigue siendo superior a Obsidian/RAG/Letta **para ESTE cliente (un LLM sin memoria) a $0**; Obsidian optimiza para ojos humanos y ni compite en este nicho.

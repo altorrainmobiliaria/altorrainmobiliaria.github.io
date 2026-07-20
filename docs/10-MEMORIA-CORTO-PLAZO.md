@@ -7,36 +7,25 @@
 
 ---
 
-## 🎯 Foco actual (cierre 2026-07-18, sesión Fable §33)
+## 🎯 Foco actual (re-sellado 2026-07-20, auditoría Nivel-2 #4 → §49)
 
-> **Dos frentes abiertos, en este orden:**
+> **FRENTE 1 — portal**: TODO-27 ✅ CERRADO → §43-§48 + L-29 + bóveda. **Siguiente = TODO-30 (MapLibre, EN FRESCO —
+> su fila ya trae tiles sellados + criterio de mapa)**. Método de fidelidad → L-29/L-24/L-28 (`30`); piezas
+> reusables → `99 §32.10-.13` (5 cards NO intercambiables + `.alt-rail`/`.alt-btn-sweep`); mockups en `portal/design/mockups/`.
 >
-> **FRENTE 1 — TODO-27 ✅ CERRADO (§48)**: las **6 páginas del portal FIELES** al mockup (ficha §43 · turismo §45 ·
-> estancias §46 · serp §47 · home+publicar §48). 35 MEDIA/BAJA + 3 ALTA "fantasma" (marcados ✅ pero nunca corregidos:
-> ficha 3ª card · estancias galería · serp /arrendar) + 3 íconos del crítico. Método L-29 validado. Detalle → §43-§48 + bóveda.
-> **Go-forward del portal Ola 1** (NO es TODO-27): las 6 páginas fieles YA están LIVE en staging (la CI auto-despliega
-> cada push, §3.3). /arrendar = **1 card honesto hasta Firestore** (Daniel decidió 07-18). Fronts abiertos: MapLibre
-> real · datos Firestore (TODO-22, carril Fable) · wiring forms→`solicitudes` (gate legal Ley 1581).
-> **MÉTODO (L-29/L-24)**: bloque del `.dc.html` → corregir TEXTUAL → re-auditar adversarial ANTES de decir "fiel".
-> NUNCA inventar. Capas: build → estructura → computed (miente con `transition`, L-28) → screenshot Chrome → diff
-> vs fuente. Reusar piezas hechas (`.alt-rail`, `.alt-btn-sweep`, 6 cards NO intercambiables — ver síntesis).
+> **FRENTE 2 — PAUTA: ✅ LISTA-PARA-ENCENDER** (§33-§37; estado vivo de la humo → flag 📣 de `05`). SSoT = skill
+> **`pauta-captacion`** (playbook 1ª campaña + setup en orden + gates + vigencia fechada). El encendido de la campaña
+> REAL converge con el CIERRE DE OBRA (números matrícula/RNT + privacidad + píxel/GA4 + landing → EN PAUSA → "sí" de Daniel).
 >
-> **FRENTE 2 — PAUTA: ✅ LISTA-PARA-ENCENDER** (§33-§37). SSoT = skill **`pauta-captacion`**
-> (orquestadora: playbook 1ª campaña + setup en orden + gates + vigencia oficial fechada). Encendido converge
-> con el CIERRE DE OBRA (números matrícula/RNT + privacidad publicada + píxel/GA4 + landing verificada →
-> campaña EN PAUSA → "sí" de Daniel). Lotes TikTok → verificar → backlog `compartido-marketing/` → skills.
+> **🎨 DISEÑO SELLADO — NO re-litigar** → `CLAUDE.md §1` + `portal/src/styles/tokens.css` (SSoT) + ADR §23-§23.9.
+> Dev: `npm --prefix portal run dev` (4321). (La VOZ sí está EN FORJA — memoria.)
 >
-> **🎨 DISEÑO SELLADO — NO re-litigar** (SSoT `tokens.css` + ADR §23-§23.9 + memorias): navy `#062743` · blanco ·
-> oro `#D4AF37` · plata `#BFC3C9` · grises fríos; fondo blanco, ORO predomina, sin verde/rojo/negro; Cormorant +
-> Hanken; neu+glass DUAL-MODE. Dev: `npm --prefix portal run dev` (4321). (La VOZ sí está EN FORJA — memoria.)
+> **🚦 BLOQUEADORES (solo Daniel)** → flag ⚖️ de `05` + TODO-21.
 >
-> **🚦 BLOQUEADORES (solo Daniel)**: **matrícula y RNT YA EXISTEN** ✅ (2026-07-18) — los NÚMEROS los entrega al
-> CIERRE DE OBRA (web lista y confiable primero; hasta entonces footer `000000` y CERO pauta — Ley 820 art. 31
-> exige el nº en publicidad de arriendo). Falta: dirección física. Contacto oficial ✅.
->
-> **🚫 Callejones (NO reintentar)**: (a) ⛔ NADA del sitio viejo (§15.7) · (b) NUNCA UI sin mockup · (c) datos del
-> portal = DEMO (`client.ts` listo) · (d) NUNCA dinero sin gate · JAMÁS el 323… personal · sin gráficas · ALTORRA
-> MAYÚSCULA · (e) skills portables: editar AMBAS copias (repo + user) o se derivan (§33).
+> **🚫 Callejones (NO reintentar)**: (a) ⛔ NADA del sitio viejo (§15.7) · (b) NUNCA UI sin mockup (única exención
+> documentada: el mapa real de TODO-30, ver su fila) · (c) datos del portal = DEMO (`client.ts` listo) · (d) NUNCA
+> dinero sin gate · JAMÁS el 323… personal · sin gráficas · ALTORRA MAYÚSCULA · (e) skills portables: editar AMBAS
+> copias (repo + user) o se derivan (§33).
 
 ---
 
@@ -45,26 +34,25 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-17** | **Ola 0 restos**: E2E "tras cache" en staging (gate T9) · deploy de rules (coordinado con retiro legacy, NO ahora) · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
-| **TODO-21** | **Lote-dueño**: entrega de Nº matrícula + Nº RNT (ya existen ✅; Daniel los da al CIERRE DE OBRA) · dirección física · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
+| **TODO-21** | **Lote-dueño**: Nº matrícula + Nº RNT (existen ✅; Daniel los da al CIERRE DE OBRA) · dirección física · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
 | **TODO-22** | **Auditoría Fable**: (a) ADR §22 `[REVISAR-FABLE]` (capa de datos); (b) decisión catálogo público SSG vs doc-índice (gatea datos reales). | 🔮 FABLE | |
-| **TODO-23** | 🔧 **Kernel hardening** (owner=**INMOBILIARIA**, escritor único ×4 — el wording "cars" era stale, §41): K-01/02/04/05/09 + §33: priorizar warns en truncado `--boot` · gate #7 debe ver GIT de la bóveda · circularidad boot-budget. 1er fix aplicado 07-18 (✅-falso, §41); resto de K abiertos. | 🔴 kernel | §33 G-09 |
-| **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). K-06 ✅ CERRADO §33 (espejo en bóveda). | 🟡 abierto | |
-| **TODO-28** | 🧠 **Endurecer el cerebro** (comité §33, crudo en bóveda): #1 ✅ (caja negra, §40) · **#2 ✅ 07-18 (§41)**: `boot-gate.mjs` bloqueante + poda −982c + one-in-one-out §G.5 + fix kernel ×3 · #3 ✅ · **sigue #4** `brain:kernel-pull` · #5 índice `00` generado · #6 métrica costo-del-cerebro (>30% = bandera roja) · #7 sello de vencimiento (>90d). | 🔄 sigue #4 | $0 |
-| **TODO-29** | 📣 **PAUTA**: skill ✅ · Meta ordenado ✅ · humo montada ✅ · **HUMO ENCENDIDA 07-18 ✅ (§42.8)** — anuncio "Activo" (revisión aprobó), $4.000/día vs prepago ~$5k → muere sola ~1 día. **VIGILAR (no tocar)**: entrega/CPM real · chats entrantes (responder; saludo auto ya sale) · planilla CPQL desde el 1er lead · al agotarse el saldo verificar FACTURACIÓN → cierra fontanería §4b y calibra la CAMPAÑA REAL (gate = cierre de obra: matrícula/RNT + privacidad + píxel+GA4 + landing). | 🔥 VOLANDO | no tocar 7d |
-| **TODO-30** | 🌊 **Portal Ola 1 post-fidelidad** (fidelidad §43-§48 ✅ y LIVE): **MapLibre real** (reemplazar los mapas esquemáticos de ficha+serp; sub-decisión de costo = proveedor de tiles free-tier → §3.7) ← **siguiente recomendado (Opus)** · **wiring forms→`solicitudes`** (avalúo de publicar + contacto; gate legal = aviso Ley 1581) · datos reales Firestore = TODO-22 (Fable). | 🔄 OPUS | próximo Frente 1 |
+| **TODO-23** | 🔧 **Kernel hardening** (owner=INMOBILIARIA, escritor único ×4): K-01/02/04/05/09 + §33 + **§49**: gate #7 git-aware de la bóveda (vía fs, sin child_process) · QUITAR #6b (sentencia G-11, n=2) · #13 regex de evidencia endurecer-o-quitar (tautológica) · fusionar #1⊂#10 · validar `deepAudit.tableFile` · priorizar warns en truncado `--boot` · circularidad boot-budget. Masa-neta del kernel ≤ 0 por commit. | 🔴 kernel | §33 G-09 · §49 |
+| **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). | 🟡 abierto | |
+| **TODO-28** | 🧠 **Endurecer el cerebro**: #1-#3 ✅ (§40-§41) · **sigue #4** `brain:kernel-pull` · #5 índice `00` generado (destilado manual ✅ §49; generador pendiente) · #6 métrica costo-del-cerebro — **proxy ADOPTADO (§49): % commits `docs(cerebro)`/`archive` del mes = 49% > bandera 30% → medir 2 semanas; si se sostiene, RECORTAR doctrina** · #7 sello de vencimiento (>90d). | 🔄 sigue #4 | $0 |
+| **TODO-29** | 📣 **PAUTA**: humo encendida 07-18 → estado vivo en flag 📣 de `05`. **Paso siguiente**: al agotarse el saldo, verificar FACTURACIÓN → cierra fontanería §4b → calibra la CAMPAÑA REAL (gate = cierre de obra). | 🔥 vigilar | no tocar 7d |
+| **TODO-30** | 🌊 **MapLibre real (ficha+serp)** ← **siguiente (Opus)**. **Tiles SELLADOS — NO re-litigar**: MapLibre GL + **Protomaps `.pmtiles` en R2** (ADR §16.1 + `specs/R5-STACK-2026-07.md`; 13 sectores con centroides curados; cero APIs de pago). Queda solo IMPLEMENTAR (generar `.pmtiles` Cartagena-metro → subir a R2); si la implementación refuta el sellado → entonces sí §3.7. **Alcance**: SOLO `ficha.astro` (`.ficha-locmap`) + `[operacion].astro` (`.serp-map`) — el mapa de la HOME es ilustrado POR DISEÑO (§32.18), **NO tocarlo**. **Criterio de validación** (los mockups son esquemáticos a propósito → el mapa real es EXENCIÓN documentada al mandato mockup, mecanismo §47.2b): PRESERVAR pins de precio · emparejamiento card↔pin con hover (§47.3) · paleta navy/oro del panel; la fidelidad post-mapa se re-audita contra ESTA lista, no contra el `.dc.html`. Luego: wiring forms→`solicitudes` (gate legal = aviso Ley 1581) · datos Firestore = TODO-22 (Fable). | 🔄 OPUS | próximo Frente 1 |
+| **TODO-31** | 🛡️ **Resiliencia + GC mayor (§49)**: (a) **SPOF** — todo (repos+bóveda+espejos) en 1 cuenta GitHub + 1 disco → respaldo OFFSITE mensual (`git bundle` a medio fuera de GitHub; campo `lastOffsiteBackup` en manifest) — **el medio lo decide Daniel** · (b) canario de boot (marker timestamp; boot-gate avisa si hay commits sin boot reciente — hooks del harness mueren en silencio) · (c) runbook recuperación de cuenta en `50-CONFIG-INFRA` (2FA/códigos — verifica Daniel) · (d) GC de `30` (98%): shard L-22/L-26/L-28 → hoja `31-VERIFICACION-UI` + fusión L-04/L-09 (plan en tabla §49 de la bóveda). | 🟡 abierto | §49 |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **▶ RELEVO A SESIÓN FRESCA (2026-07-18, contexto ~912k — Daniel pidió cerrar)**: (1) **TODO-27 CERRADO** — las 6
-> páginas del portal FIELES al mockup y **LIVE** en staging (`altorra-portal…workers.dev`; la CI `portal-ci.yml`
-> auto-despliega cada push del portal, §3.3). Serie §43-§48: 35 MEDIA/BAJA + **3 ALTA "fantasma"** (marcados ✅ pero
-> nunca corregidos → contar contra la FUENTE, L-29) + 3 íconos del crítico; 5 workflows de re-audit adversarial (~4.3M tok).
-> (2) **Siguiente = TODO-30 MapLibre real** (mi pick; arrancar EN FRESCO — es cost-sensitive: decidir proveedor de tiles
-> free-tier §3.7). (3) ⛔ **NO tocar**: HUMO volando (TODO-29/Ads Manager), kernel `scripts/brain-*.mjs` (carril Fable),
-> datos Firestore (TODO-22 = decisión Fable). (4) 🔸 **/arrendar decidido**: 1 card honesto hasta Firestore. (5) 🧹
-> **00-INDICE al tope** (~17.5k, nudge persistente) → shard = carril Fable (TODO-28 #5). (6) **brain-kit del amigo
-> ENTREGADO** (§44, ZIP en `Desktop\brain-kit-v1.0.zip`). Todo pusheado; git limpio en HEAD.
-
-> *(Bitácora 07-17/07-18 §32-§48 + brain-kit §44 + serie de fidelidad §43-§48 podados — consolidados en ADR + L-28/L-29/L-32 + bóveda. Constraints vivos → TODO-23/28/29/30 + 05. §G.4 GC.)*
+> **▶ 2026-07-20 — Auditoría Nivel-2 #4 CERRADA (§49, Fable, workflow 6 sondas ~850k tok)**: veredicto SANO —
+> retrieval frío 5/5 (4 con boot puro) · índice 48/48 sin desync · 0 contradicciones ALTA vs realidad. **Curado en
+> este cierre**: 2 datos falsos en boot (constancias ×3 ya cerradas §39 · "35 fidelidad" ya cerrado §48) · footer
+> `000000` = PORTAL (no modo obra) · 05 sin SHA (M-01) · **TODO-30 blindado** (tiles sellados + criterio de mapa +
+> exención mockup + home excluida) · `20` refrescada (HOME fiel + 5 cards + primitivas) · Poppins acotada a LEGACY ·
+> lección de cars prefijada en `60` ×2 · TODO-25 nota de cierre (§30) · /arrendar RESUELTO apéndice (§47) · `00` destilado bajo cap ·
+> **M-03** (bóveda compartida sucia otra vez → el gate debe vivir EN el recurso) · bóveda commiteada+pusheada (incl.
+> crudos bersaglio huérfanos). **ABIERTO** → TODO-23 (sentencias kernel §49) · TODO-31 (SPOF/canario/GC-30) ·
+> TODO-28 #6 (costo 49% > 30% — vigilar). ⛔ NO tocar: HUMO (flag 📣 `05`) · datos Firestore (TODO-22).

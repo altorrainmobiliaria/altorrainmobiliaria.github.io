@@ -63,10 +63,11 @@
     }
   ],
   "deepAudit": {
-    "last": "2026-07-18",
-    "coveredHeaderCount": 39,
+    "last": "2026-07-20",
+    "coveredHeaderCount": 49,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "_que": "Nivel-2 #3 (ADR §33, encargo Daniel skills+cerebro): retrieval 5/5; REINCIDENCIA M-01 -> M-02; boveda entera respaldada (estaba SIN commitear); memoria harness espejada; comite futuro-del-cerebro 7 mejoras -> TODO-28. Artefactos boveda 2026-07-18-*. Previa #2 = §30 (2026-07-12, cubrio 30)"
+    "tableFile": "2026-07-20-auditoria-cerebro-nivel2-4-inmobiliaria.md",
+    "_que": "Nivel-2 #4 (ADR §49, encargo Daniel pre-TODO-30): retrieval 5/5; 2 mentiras en boot curadas; TODO-30 blindado; REINCIDENCIA clase G-02 -> M-03 (gate en el recurso); TODO-31 SPOF + proxy costo 49%>30%. tableFile = tabla falsable en archiveDir (kernel aun no la valida -> TODO-23). Previa #3 = §33 (2026-07-18, cubrio 39)"
   }
 }

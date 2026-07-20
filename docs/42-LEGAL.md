@@ -45,7 +45,7 @@ T&C por vertical · Política de Tratamiento de Datos (responsable+finalidades+d
 
 ## Agenda del abogado (top 10, deduplicada — íntegra en spec §4)
 
-1. **URGENTE (2026-07-11)**: consulta pública del decreto RNT de MinCIT cierra mañana — ¿comentar a nombre de Altorra?
+1. ⏳ **VENCIDA sin atender** (cerró 2026-07-12; marcada en auditoría §49): consulta pública del decreto RNT de MinCIT — no se comentó. Si el decreto sale, revisar impacto (seguimiento normativo).
 2. Mandato de recaudo vs D.1981/1988 num. 2 (>20 anfitriones/3 meses + ofertas a innominados): ¿basta cuenta separada + destinación específica, o exige fiducia?
 3. Vehículo de retención de fondos: cuenta separada + mandato vs. encargo fiduciario; ¿"Pagos a terceros" de Wompi cubre contractualmente el modelo marketplace?
 4. Retracto art. 47 L.1480 en reservas con fecha determinada: ¿aplica la ventana de 5 días hábiles? — define la política de cancelación.
