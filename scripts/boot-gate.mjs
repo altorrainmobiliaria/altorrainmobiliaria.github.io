@@ -27,9 +27,13 @@ const ALWAYS_ON = manifest.alwaysOn || [];
 // 🐤 Canario de boot (TODO-31b §49): session-handoff --boot-echo escribe docs/.boot-marker en CADA
 // SessionStart. Si nadie lo escribió en 48h, los hooks del harness están MUERTOS (el cerebro arranca
 // sin signos vitales y nada lo detecta — A-03). Un commit en ese estado se bloquea A PROPÓSITO.
+// v1.4 §51 (kernel-safe ×repos): solo aplica donde el contrato está INSTALADO (settings.json con
+// session-handoff) — un repo sin ese hook no debe bloquearse por un marker que nada escribe.
 const MARKER = join(ROOT, 'docs', '.boot-marker');
+const settingsP = join(ROOT, '.claude', 'settings.json');
+const canaryWired = existsSync(settingsP) && readFileSync(settingsP, 'utf-8').includes('session-handoff');
 const markerFresh = existsSync(MARKER) && (Date.now() - statSync(MARKER).mtimeMs) < 48 * 3.6e6;
-if (!markerFresh && !process.env.BOOT_CANARY_SKIP) {
+if (canaryWired && !markerFresh && !process.env.BOOT_CANARY_SKIP) {
   console.error('\n🐤 BOOT-CANARY: ningún SessionStart escribió docs/.boot-marker en 48h — los hooks del');
   console.error('   harness pueden estar MUERTOS (máquina nueva, settings.json roto, node fuera de PATH).');
   console.error('   Verifica .claude/settings.json y arranca una sesión (o corre:');

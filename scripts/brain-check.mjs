@@ -25,10 +25,11 @@
 //   (7) archiveDir íntegro [warn, --full]               (16) Fiabilidad M-22: `verificado-vivo` stale [info, --full]
 //       + 7b) bóveda: commits ≠ origin vía fs [warn]
 // ===========================================================
-const KERNEL_VERSION = '1.3.0';
+const KERNEL_VERSION = '1.4.0';
 import { readFileSync, readdirSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { createHash } from 'crypto';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DOCS = join(ROOT, 'docs');
@@ -69,6 +70,37 @@ for (const k of Object.keys(manifest)) {
 }
 if (Array.isArray(manifest.downgrades) && manifest.downgrades.length) {
   for (const d of manifest.downgrades) info(`DOWNGRADE activo: ${typeof d === 'string' ? d : JSON.stringify(d)} (visible por diseño — exige ADR)`);
+}
+// Compat kernel↔manifest (v1.4 §51): degradación RUIDOSA, jamás silencio.
+const REQUIRED_MANIFEST_MAJOR = 1;
+const mMajor = parseInt(String(manifest.brainTemplateVersion || '1').split('.')[0], 10) || 1;
+if (mMajor !== REQUIRED_MANIFEST_MAJOR) warn(`manifest brainTemplateVersion "${manifest.brainTemplateVersion}" ≠ major ${REQUIRED_MANIFEST_MAJOR} que exige este kernel → migrar el manifest (el kernel corre degradado)`);
+
+// 0) Identidad del kernel vs canónico (v1.4 §51 — reemplaza al viejo #11; corre también en --boot):
+//    el kernel canónico vive UNA vez en <bóveda>/kernel/; cada repo lo trae con `npm run brain:pull`
+//    que escribe scripts/.kernel-version.json (stamp commiteado). Editar scripts/*.mjs a mano = fork.
+{
+  const stampP = join(ROOT, 'scripts', '.kernel-version.json');
+  if (!existsSync(stampP)) { if (!BOOT) info('sin scripts/.kernel-version.json — repo pre-F1 (migrar: npm run brain:pull)'); }
+  else {
+    let stamp = null; try { stamp = JSON.parse(read(stampP)); } catch { warn('scripts/.kernel-version.json ilegible (JSON inválido)'); }
+    const shaHex = (p) => createHash('sha256').update(read(p).replace(/\r\n/g, '\n')).digest('hex');
+    let bad = 0;
+    for (const [name, h] of Object.entries((stamp && stamp.files) || {})) {
+      const p = join(ROOT, 'scripts', name);
+      if (!existsSync(p)) { warn(`kernel: ${name} está en el stamp pero AUSENTE en scripts/`); bad++; }
+      else if (shaHex(p) !== h) { warn(`kernel EDITADO LOCALMENTE: ${name} ≠ stamp (fork prohibido §51) → editar el CANÓNICO y npm run brain:pull`); bad++; }
+    }
+    let vault = manifest.archiveDir ? join(ROOT, manifest.archiveDir) : null;
+    if (vault) for (let i = 0; i < 4 && !existsSync(join(vault, '.git')); i++) vault = join(vault, '..');
+    const canonVerP = vault ? join(vault, 'kernel', 'VERSION') : null;
+    const canonVer = canonVerP && existsSync(canonVerP) ? read(canonVerP).trim() : null;
+    if (stamp && canonVer && canonVer !== stamp.version) { warn(`kernel v${stamp.version} STALE vs canónico v${canonVer} → npm run brain:pull`); bad++; }
+    if (stamp && !bad) {
+      if (BOOT) say(`  ✅ kernel v${stamp.version} íntegro${canonVer ? ' == canónico' : ''}`);
+      else ok(`kernel v${stamp.version} íntegro (${Object.keys(stamp.files || {}).length} archivos)${canonVer ? ' == canónico v' + canonVer : ' (canónico no clonado en esta máquina)'}`);
+    }
+  }
 }
 
 const DEFAULT_CAPS = {
@@ -427,10 +459,14 @@ else {
     for (const s of specs) {
       const t = read(join(sd, s));
       if (!/^##+\s*.*Checklist/im.test(t)) { noCk++; continue; }
+      // v1.4.1 §51: agregar POR SPEC (no por tick) — 33 warns idénticos en un repo hermano eran
+      // ruido inaccionable; 1 warn con conteo + 1er ejemplo empuja igual y se LEE.
+      let n = 0, first = '';
       for (const l of t.split('\n')) {
         if (!/^\s*-\s*\[x\]/i.test(l)) continue;
-        if (!EVIDENCE.test(l)) { warn(`${s}: ítem tickeado SIN evidencia resoluble: "${l.trim().slice(0, 70)}…"`); badTicks++; }
+        if (!EVIDENCE.test(l)) { n++; if (!first) first = l.trim().slice(0, 60); }
       }
+      if (n) { warn(`${s}: ${n} ítem(s) tickeado(s) SIN evidencia resoluble (1º: "${first}…") → anclar §/TODO/ruta/URL/sha`); badTicks += n; }
     }
     if (!badTicks) ok(`ticks de checklist con evidencia en ${specs.length - noCk} spec(s) con checklist`);
     if (noCk) info(`${noCk} spec(s) sin sección "## Checklist" (los previos a la convención §173 — info)`);

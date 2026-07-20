@@ -12,7 +12,8 @@
     "backup": "node scripts/backup-firestore.mjs",
     "brain:check": "node scripts/brain-check.mjs",
     "brain:diff": "node scripts/brain-diff.mjs",
-    "brain:index": "node scripts/brain-index.mjs"
+    "brain:index": "node scripts/brain-index.mjs",
+    "brain:pull": "node ../brain-private/kernel/pull.mjs"
   },
   "dependencies": {
     "firebase": "^12.9.0"
