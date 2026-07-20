@@ -47,4 +47,5 @@ _tmp-guia-*.pdf
 
 # TODO-28 #1: foto de sesion del hook (estado local, no historia)
 docs/.handoff-auto.md
+docs/.boot-marker
 .playwright-mcp/

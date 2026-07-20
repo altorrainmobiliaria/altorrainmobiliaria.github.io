@@ -16,15 +16,32 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'docs', '.handoff-auto.md');
+const MARKER = join(ROOT, 'docs', '.boot-marker'); // canario de boot (TODO-31b §49): prueba de que SessionStart corrió
 const mode = process.argv[2] || '--end';
 
-const git = (args) => {
-  try { return execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim(); }
+const git = (args, cwd = ROOT) => {
+  try { return execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim(); }
   catch { return '(git no disponible)'; }
+};
+
+// Guardián de la bóveda compartida (M-03 §49): el gate vive pegado al recurso, no en doctrina.
+// Devuelve null si no hay bóveda/git; si hay, {root, dirty: n} con n = archivos sin commitear.
+const boveda = () => {
+  try {
+    const archiveDir = JSON.parse(readFileSync(join(ROOT, 'docs', '.brain-manifest.json'), 'utf8')).archiveDir;
+    if (!archiveDir) return null;
+    let dir = join(ROOT, archiveDir);
+    for (let i = 0; i < 4 && !existsSync(join(dir, '.git')); i++) dir = join(dir, '..');
+    if (!existsSync(join(dir, '.git'))) return null;
+    const porcelain = git(['status', '--porcelain'], dir);
+    if (porcelain === '(git no disponible)') return null;
+    return { root: dir, dirty: porcelain ? porcelain.split('\n').length : 0 };
+  } catch { return null; }
 };
 
 try {
   if (mode === '--boot-echo') {
+    writeFileSync(MARKER, new Date().toISOString(), 'utf8'); // el canario: boot-gate exige este marker fresco
     if (existsSync(OUT)) {
       const ageH = (Date.now() - statSync(OUT).mtimeMs) / 3.6e6;
       if (ageH < 48) {
@@ -32,15 +49,19 @@ try {
         console.log(readFileSync(OUT, 'utf8'));
       }
     }
+    const b = boveda();
+    if (b && b.dirty) console.log(`\n⚠️ BÓVEDA COMPARTIDA SUCIA (M-03 §49): ${b.dirty} archivo(s) sin commitear en ${b.root} — commitea+pushea AHORA (respaldo ajeno también vale, aunque el crudo sea de otro cerebro).`);
     process.exit(0);
   }
 
+  const b = boveda();
   const foto = [
     `# 🕹️ Handoff automático (escrito por hook, no por Claude) — ${new Date().toISOString()}`,
     `> Foto REAL de git al cierre/compactación. Si contradice a docs/10, ESTA es la verdad (M-01).`,
     ``,
     `- Branch: ${git(['branch', '--show-current'])} · HEAD: ${git(['log', '-1', '--format=%h · %s'])}`,
     `- Sucios sin commit: ${git(['status', '--porcelain']) || '(limpio)'}`,
+    `- Bóveda (brain-private): ${b ? (b.dirty ? `⚠️ SUCIA — ${b.dirty} archivo(s) sin commitear (M-03: commitear+pushear)` : 'limpia ✅') : '(no accesible)'}`,
     ``,
     `## Últimos commits (24h)`,
     git(['log', '--since=24hours', '--format=- %h %s']) || '- (ninguno)',
