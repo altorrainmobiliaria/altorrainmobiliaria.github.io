@@ -40,7 +40,7 @@ preferir `getDoc` (1 lectura) sobre `getDocs` (N); imágenes <200KB; GitHub Acti
 - **`resenas`**: `{autor, rating 1-5, texto, fecha, fuente (google|directo), activa, orden}`.
 - **`usuarios`** (docID = Auth UID; solo super_admin): `{nombre, email, rol (super_admin|editor|viewer), activo, bloqueado, creadoEn, creadoPor}`.
 - **`config`**: doc `general` (whatsapp/email/redes/slogan), doc `counters` (totalPropiedades/totalCiudades, editable por editor).
-- **`system`**: doc `meta` `{lastModified}` — admin lo actualiza al cambiar propiedades; `cache-manager.js` lo escucha (onSnapshot) para invalidar caché en todas las tabs (ver `30 L-06`).
+- **`system`**: doc `meta` `{lastModified}` — admin lo actualiza al cambiar propiedades; `cache-manager.js` lo escucha (onSnapshot) para invalidar caché en todas las tabs (receta ⚰️ del sitio viejo → `_legacy/LECCIONES-SITIO-VIEJO.md`).
 - **`loginAttempts`** (docID = hash email): `{intentos, bloqueado, ultimoIntento}` — bloqueo tras 5 fallidos.
 - **`blog`** → ver §Blog abajo.
 

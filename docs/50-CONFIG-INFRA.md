@@ -85,3 +85,9 @@ $env:GOOGLE_APPLICATION_CREDENTIALS = "<ruta-SA-JSON>"; $env:DRY_RUN="1"; npm ru
 **`propiedades/` = VACÍA** (las 5 de abril ya no existen; `system/meta.lastModified` = 2026-04-17). Fichas de las 5
 rescatadas del git (`6149652:p/*.html`) → bóveda `research-archive/2026-07-10-cosecha-propiedades/`. `config/general`
 vivo (contacto correcto) · `solicitudes` protegida (conteo pendiente) · Storage sin censar. Detalle → `specs/R0-INVENTARIO-COSECHA.md`.
+
+## 🛡️ Respaldo OFFSITE (Cerebro v2 F0, ADR §50 — mata la mitad "disco" del SPOF)
+- **Default vigente**: `git bundle` de los repos git del ecosistema (4 negocios + `brain-private` + `bersaglio-design`) → `C:\Users\romad\OneDrive\backups-cerebro\` (OneDrive sincroniza fuera de la máquina). Sello: `lastOffsiteBackup` en `.brain-manifest.json` (lo lee el banner de F3).
+- **Comando** (por repo): `git bundle create <OneDrive>\backups-cerebro\<repo>-<fecha>.bundle --all` · **Restaurar**: `git clone <archivo>.bundle carpeta` (probado 2026-07-20).
+- **Cadencia**: en cada resonancia mensual (F3 lo automatiza). **Pendiente-opcional (decisión Daniel)**: espejo remoto push-mirror en 2ª cuenta git — mataría también la mitad "cuenta".
+- ⚠️ `brain-kit/` NO es repo git (no bundleable) — su respaldo es el ZIP del Desktop + el kit se regenera desde el canónico en F1.

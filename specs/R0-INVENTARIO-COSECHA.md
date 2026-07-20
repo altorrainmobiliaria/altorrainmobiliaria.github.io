@@ -8,9 +8,9 @@
 - [x] Censo de URLs indexadas (63, del `sitemap.xml` viejo vía git `6149652`) — base del mapa 301 (2026-07-10)
 - [x] Destilado `_legacy` (requisitos + datos + lecciones) — workflow `wf_a8b895c6` 9/9 agentes → `specs/R0-DESTILADO-LEGACY.md` (52 features · 21 activos · 39 lecciones candidatas · crudo en la bóveda `research-archive/2026-07-10`) (2026-07-10)
 - [x] Censo Firestore REAL (2026-07-10, REST pública + rules): **`propiedades` VACÍA** (las 5 propiedades ya NO están en la BD; `system/meta` sin tocar desde 2026-04-17) · `config/general` vivo y correcto (+57 300 243 9810 / info@) · `solicitudes` protegida por rules (conteo PENDIENTE — requiere MCP re-arrancado o consola) · **fichas de las 5 propiedades RESCATADAS del git (`6149652:p/*.html`, JSON-LD completo) → bóveda `research-archive/2026-07-10-cosecha-propiedades/`**
-- [x] Estado real Firebase (2026-07-10): **7 CFs gen2 vivas** (`functions:list` — `cleanupOldLoginAttempts` NO desplegada, la doc decía 8) · plan **Blaze** (confirmado por el dueño; ⚠️ el MCP reportó "Billing Enabled: No" — verificar en consola) · cuenta CLI `altorrainmobiliaria@gmail.com` activada como default del directorio · Storage sin censar
+- [x] Estado real Firebase (2026-07-10): **7 CFs gen2 vivas** (`functions:list` — `cleanupOldLoginAttempts` NO desplegada, la doc decía 8) · plan **Blaze** (confirmado por el dueño; ⚠️ el MCP reportó "Billing Enabled: No" — verificar en consola) · cuenta CLI `altorrainmobiliaria@gmail.com` activada como default del directorio · Storage sin censar → detalle vivo: docs/20-MEMORIA-ESPACIAL.md
 - [ ] Auditoría docs maestros del dueño (`ALTORRA Company (Legal)` + `all_docx_content.txt` 690KB)
-- [x] Estado matrícula de arrendador: **OBTENIDA** ✅ (dueño, 2026-07-10) — certificado/Nº se ve al final de la construcción; va al footer del portal como sello de confianza
+- [x] Estado matrícula de arrendador: **OBTENIDA** ✅ (dueño, 2026-07-10) — certificado/Nº se ve al final de la construcción; va al footer del portal como sello de confianza (→ TODO-21)
 - [ ] Plan de migración de datos → modelo nuevo (se sella en R5)
 
 ## 1. Censo de URLs indexadas (mapa 301 — destino se asigna en R5)
