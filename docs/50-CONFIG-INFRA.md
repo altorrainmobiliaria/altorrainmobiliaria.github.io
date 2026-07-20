@@ -88,6 +88,6 @@ vivo (contacto correcto) · `solicitudes` protegida (conteo pendiente) · Storag
 
 ## 🛡️ Respaldo OFFSITE (Cerebro v2 F0, ADR §50 — mata la mitad "disco" del SPOF)
 - **Default vigente**: `git bundle` de los repos git del ecosistema (4 negocios + `brain-private` + `bersaglio-design`) → `C:\Users\romad\OneDrive\backups-cerebro\` (OneDrive sincroniza fuera de la máquina). Sello: `lastOffsiteBackup` en `.brain-manifest.json` (lo lee el banner de F3).
-- **Comando** (por repo): `git bundle create <OneDrive>\backups-cerebro\<repo>-<fecha>.bundle --all` · **Restaurar**: `git clone <archivo>.bundle carpeta` (probado 2026-07-20).
+- **Comando** (por repo): `git bundle create <OneDrive>\backups-cerebro\<repo>-<fecha>.bundle --all` · **Restaurar**: `git clone <archivo>.bundle carpeta` (probado 2026-07-20 ×2: repo HEAD íntegro + bóveda 55 crudos). ⚠️ **Gotcha cazado EN la prueba**: en Windows el checkout de la bóveda falla con "Filename too long" (MAX_PATH 260) si la ruta destino es profunda → `git config --global core.longpaths true` (YA aplicado en esta máquina 2026-07-20) o restaurar en ruta corta (`C:\r\`). Un backup sin restore probado es teatro.
 - **Cadencia**: en cada resonancia mensual (F3 lo automatiza). **Pendiente-opcional (decisión Daniel)**: espejo remoto push-mirror en 2ª cuenta git — mataría también la mitad "cuenta".
 - ⚠️ `brain-kit/` NO es repo git (no bundleable) — su respaldo es el ZIP del Desktop + el kit se regenera desde el canónico en F1.
