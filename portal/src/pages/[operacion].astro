@@ -30,14 +30,17 @@ export function getStaticPaths() {
     { img: '/assets/chalet-dusk.webp', alt: 'Casona colonial amoblada', badge: 'Arriendo', zona: 'Centro Histórico', beds: 2, baths: 2, area: '95 m²', title: 'Casona colonial amoblada', price: '$8.500.000', priceSuffix: '/mes', href: '/ficha' },
   ];
   // PINS — uno por cada card de SU ruta, con el precio de ESA card (emparejamiento coherente §32.24).
-  const pinsVenta = [
-    { left: '26%', top: '56%', label: '$1.450M' },         // Castillogrande · card 1
-    { left: '56%', top: '36%', label: '$980M', on: true },  // Manga · card 2
-    { left: '22%', top: '72%', label: '$2.100M' },          // Bocagrande · card 3
-    { left: '47%', top: '24%', label: '$760M' },            // Crespo · card 4
+  // left/top = posición en el ESQUEMÁTICO (fallback); lat/lng = coord REAL del centroide del barrio
+  // (mapa MapLibre, TODO-30). Los centroides curados viven en el seed (firebase/seed/generar-propiedades).
+  type SerpPin = { left: string; top: string; label: string; lat: number; lng: number; on?: boolean };
+  const pinsVenta: SerpPin[] = [
+    { left: '26%', top: '56%', label: '$1.450M', lat: 10.393, lng: -75.560 },          // Castillogrande · card 1
+    { left: '56%', top: '36%', label: '$980M', on: true, lat: 10.410, lng: -75.535 },   // Manga · card 2
+    { left: '22%', top: '72%', label: '$2.100M', lat: 10.399, lng: -75.554 },           // Bocagrande · card 3
+    { left: '47%', top: '24%', label: '$760M', lat: 10.446, lng: -75.514 },             // Crespo · card 4
   ];
-  const pinsArriendo = [
-    { left: '47%', top: '24%', label: '$8,5M/mes' },        // Centro Histórico · Casona (única card real de arriendo)
+  const pinsArriendo: SerpPin[] = [
+    { left: '47%', top: '24%', label: '$8,5M/mes', lat: 10.424, lng: -75.551 },         // Centro Histórico · Casona
   ];
   const zones = [
     { left: '52%', top: '20%', t: 'Manga' }, { left: '44%', top: '12%', t: 'Centro Hist.' },
@@ -54,6 +57,9 @@ export function getStaticPaths() {
 
 const { op, count, props: results, pins, zones } = Astro.props;
 const filterBtns = ['Tipo', 'Precio', 'Habitaciones'];
+
+// Marcadores del mapa real (TODO-30): mismo índice `i` que la card → emparejamiento card↔pin.
+const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.label, active: !!p.on }));
 ---
 
 <BaseLayout title={`${op === 'comprar' ? 'Comprar' : 'Arrendar'} en Cartagena — ALTORRA`}>
@@ -107,21 +113,28 @@ const filterBtns = ['Tipo', 'Precio', 'Habitaciones'];
       </div>
 
       <aside class="serp-aside">
-        <div class="serp-map" role="img" aria-label="Mapa esquemático de Cartagena con las propiedades">
-          <span class="serp-map__grid"></span>
-          <span class="serp-map__land serp-map__land--1"></span>
-          <span class="serp-map__land serp-map__land--2"></span>
-          <span class="serp-map__road serp-map__road--1"></span>
-          <span class="serp-map__road serp-map__road--2"></span>
-          <span class="serp-map__road serp-map__road--3"></span>
-          <span class="serp-map__bay">Bahía de Cartagena</span>
-          {zones.map((z) => <span class="serp-map__zone" style={`left:${z.left};top:${z.top}`}>{z.t}</span>)}
+        <div class="serp-map alt-map" role="region" aria-label="Mapa de Cartagena con las propiedades"
+          data-alt-map
+          data-markers={JSON.stringify(mapMarkers)}
+          data-center="-75.535,10.41" data-zoom="12.4" data-fit="true" data-pin-class="alt-mappin">
+          {/* Lienzo del mapa real (MapLibre); aparece al pintar el basemap. */}
+          <div class="alt-map__canvas" data-map-canvas></div>
+          {/* Esquemático SELLADO = fallback hasta que el .pmtiles exista en R2 (data-schematic → se oculta en vivo). */}
+          <span class="serp-map__grid" data-schematic></span>
+          <span class="serp-map__land serp-map__land--1" data-schematic></span>
+          <span class="serp-map__land serp-map__land--2" data-schematic></span>
+          <span class="serp-map__road serp-map__road--1" data-schematic></span>
+          <span class="serp-map__road serp-map__road--2" data-schematic></span>
+          <span class="serp-map__road serp-map__road--3" data-schematic></span>
+          <span class="serp-map__bay" data-schematic>Bahía de Cartagena</span>
+          {zones.map((z) => <span class="serp-map__zone" data-schematic style={`left:${z.left};top:${z.top}`}>{z.t}</span>)}
           {pins.map((pin, i) => (
-            <span class={`serp-pin${pin.on ? ' is-on' : ''}`} id={`pin-${i}`} style={`left:${pin.left};top:${pin.top}`}>{pin.label}</span>
+            <span class={`serp-pin${pin.on ? ' is-on' : ''}`} data-schematic data-pin-idx={i} style={`left:${pin.left};top:${pin.top}`}>{pin.label}</span>
           ))}
+          {/* Chrome del panel (permanece sobre el mapa vivo). Zoom cableado a MapLibre. */}
           <span class="serp-map__draw"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Dibujar zona</span>
-          <span class="serp-map__zoom"><button type="button" aria-label="Acercar">+</button><button type="button" aria-label="Alejar">−</button></span>
-          <span class="serp-map__note">ALTORRA · mapa esquemático</span>
+          <span class="serp-map__zoom"><button type="button" data-map-zoom="in" aria-label="Acercar">+</button><button type="button" data-map-zoom="out" aria-label="Alejar">−</button></span>
+          <span class="serp-map__note" data-schematic>ALTORRA · mapa esquemático</span>
         </div>
       </aside>
     </div>
@@ -216,10 +229,11 @@ const filterBtns = ['Tipo', 'Precio', 'Habitaciones'];
   });
 
   // 3. HOVER-PIN — al posar en una card se ilumina su pin en el mapa. + focusin/focusout:
-  //    con teclado no hay hover, y el mockup dejaba fuera esa ruta.
+  //    con teclado no hay hover, y el mockup dejaba fuera esa ruta. Selecciona por `data-pin-idx`
+  //    → funciona igual sobre el pin ESQUEMÁTICO (fallback) y el marcador MapLibre (mapa vivo).
   const setPin = (id: string | undefined, on: boolean) => {
     if (!id) return;
-    document.getElementById('pin-' + id)?.classList.toggle('is-hot', on);
+    document.querySelectorAll('[data-pin-idx="' + id + '"]').forEach((el) => el.classList.toggle('is-hot', on));
   };
   document.querySelectorAll<HTMLElement>('.alt-pcard[data-pin]').forEach((card) => {
     const id = card.dataset.pin;
@@ -239,4 +253,8 @@ const filterBtns = ['Tipo', 'Precio', 'Habitaciones'];
     window.addEventListener('scroll', onFilterScroll, { passive: true });
     onFilterScroll();
   }
+
+  // 5. MAPA REAL (MapLibre + Protomaps, TODO-30). Isla client-side: monta sobre el esquemático
+  //    y lo reemplaza al pintar el basemap; si el .pmtiles aún no existe, el esquemático permanece.
+  import('../scripts/altorra-map').then((m) => m.bootMaps());
 </script>

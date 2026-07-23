@@ -21,7 +21,10 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.1.2",
-    "astro": "^7.0.7"
+    "@protomaps/basemaps": "^5.7.2",
+    "astro": "^7.0.7",
+    "maplibre-gl": "^6.0.0",
+    "pmtiles": "^4.4.1"
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^5.0.1",

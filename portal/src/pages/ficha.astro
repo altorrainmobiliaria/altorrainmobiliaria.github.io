@@ -167,13 +167,19 @@ const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con v
       <section class="ficha-sec">
         <h2>Ubicación</h2>
         <div class="ficha-loc">
-          <div class="ficha-locmap" role="img" aria-label="Ubicación esquemática en Castillogrande">
-            <span class="ficha-locmap__grid"></span>
-            <span class="ficha-locmap__land"></span>
-            <span class="ficha-locmap__road"></span>
-            <span class="ficha-locmap__bay">Bahía de Cartagena</span>
-            <span class="ficha-locmap__pin">Castillogrande</span>
-            <span class="ficha-locmap__note">ALTORRA · mapa esquemático</span>
+          <div class="ficha-locmap alt-map" role="region" aria-label="Ubicación en Castillogrande, Cartagena"
+            data-alt-map
+            data-markers={JSON.stringify([{ i: 0, lat: 10.393, lng: -75.560, label: 'Castillogrande' }])}
+            data-center="-75.560,10.393" data-zoom="15" data-pin-class="alt-mappin alt-mappin--ficha">
+            {/* Lienzo del mapa real (MapLibre); aparece al pintar el basemap. */}
+            <div class="alt-map__canvas" data-map-canvas></div>
+            {/* Esquemático SELLADO = fallback hasta que el .pmtiles exista en R2. */}
+            <span class="ficha-locmap__grid" data-schematic></span>
+            <span class="ficha-locmap__land" data-schematic></span>
+            <span class="ficha-locmap__road" data-schematic></span>
+            <span class="ficha-locmap__bay" data-schematic>Bahía de Cartagena</span>
+            <span class="ficha-locmap__pin" data-schematic data-pin-idx="0">Castillogrande</span>
+            <span class="ficha-locmap__note" data-schematic>ALTORRA · mapa esquemático</span>
           </div>
           <div class="ficha-poi">
             <p class="alt-eyebrow">Puntos de interés</p>
@@ -334,4 +340,7 @@ const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con v
     const on = fav.getAttribute('aria-pressed') === 'true';
     fav.setAttribute('aria-pressed', on ? 'false' : 'true');
   });
+
+  // Mapa real (MapLibre + Protomaps, TODO-30): monta sobre el esquemático y lo reemplaza al pintar.
+  import('../scripts/altorra-map').then((m) => m.bootMaps());
 </script>
