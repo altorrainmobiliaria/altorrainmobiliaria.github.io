@@ -9,6 +9,17 @@
 - **Gemini (Google) vía Antigravity** — el dueño lo corre. (Mismo provider que Altorra Cars.) Si no hay provider/tokens
   disponibles → sigo solo y **marco la decisión como NO revisada externamente** en el ADR.
 
+## §0b — Qué modelo pedir en Antigravity, por situación *(menú verificado por Daniel 2026-07-23 — HECHO CADUCABLE tipo L-30: re-mirar el menú al usarlo; portable ×4, hermanos lo portan por sinapsis)*
+> **Regla madre**: el valor del consejo es la **OTRA FAMILIA** (anti-monocultivo). Cada prompt al dueño **nombra el modelo** a elegir.
+
+| Modelo del menú | Cuándo pedirlo |
+|---|---|
+| **Gemini 3.1 Pro (High)** | ⭐ **DEFAULT de Decisión Fuerte**: crítica adversarial PROFUNDA (arquitectura/datos/seguridad/legal/dinero). El que más razona del menú; que sea lento no importa — se corre una vez. |
+| **Gemini 3.6 Flash (High)** | Barridos AMPLIOS donde el volumen pesa más que la profundidad (revisar muchos archivos/documentos, checklist largo, 2ª pasada rápida sobre un artefacto ya criticado). Fallback si 3.1 Pro no está disponible. |
+| Gemini 3.6/3.5 Flash (Medium/Low) · 3.1 Pro (Low) | 🚫 NO usarlos para el consejo: la crítica barata ya la da el comité interno ×3; una 2ª opinión débil ANCLA sin aportar. |
+| Claude Sonnet 4.6 / Opus 4.6 (Thinking) | ⛔ **MISMA familia que el operador** → NO cuentan como consejo externo (comparten sesgos de entrenamiento; serían espejo, no adversario). |
+| **GPT-OSS 120B (Medium)** | **3ª familia** (OpenAI open-weights): DESEMPATE cuando comité interno y Gemini divergen frontalmente. Modelo pequeño → su voto pesa MENOS y se verifica doble (§3.3); jamás árbitro único de arquitectura. |
+
 ## §1 — Cuándo SÍ / cuándo NO
 - **SÍ**: decisión cara de revertir (arquitectura/datos/seguridad/legal/dinero), incertidumbre genuina con varias opciones válidas, op irreversible.
 - **NO**: lo rutinario/reversible (el comité interno ×3 `comite-expertos` basta). No todo necesita 2ª opinión externa.

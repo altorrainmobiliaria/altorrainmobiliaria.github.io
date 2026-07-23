@@ -19,6 +19,7 @@
 | En qué se está trabajando / pendientes (TODO-NN) | `10-MEMORIA-CORTO-PLAZO` |
 | Dónde vive un componente, flujo, **schema Firestore**, blog | `20-MEMORIA-ESPACIAL` |
 | Un bug/síntoma que "te suena", receta, gotcha | `30-LECCIONES` |
+| Verificar UI (screenshot/computed/scroll/interacción · panel congelado vs Chrome) | hoja `31-VERIFICACION-UI` (L-22/L-26/L-28 completas; lápidas en `30`) |
 | Project ID, cuentas IAM, deploy, secrets | `50-CONFIG-INFRA` |
 | Competencia/mercado inmobiliario, benchmark | `40-LOBULOS` → `41-MERCADO` |
 | Legal Colombia: Ley 820/RNT/Habeas Data/pagos/firma/SIC — gates de features y agenda abogado | `40-LOBULOS` → `42-LEGAL` (detalle: `specs/R3-LEGAL-COLOMBIA-2026-07.md`) |
@@ -80,12 +81,12 @@
 | §32 | **Saga fidelidad + elevación del portal** (L-23→L-29): home 17/17 (§32.15) · `.alt-rail` + 5 cards NO intercambiables (§32.10-.13) · home-map ilustrado (§32.18) · re-audit adversarial → 35 pendientes = TODO-27. Síntesis en bóveda 07-17. ⟦OPUS-4.8⟧ | 293 |
 | §31 | **Ola 1: GESTIÓN** (`/gestion`, panel admin) — 8º y último mockup → **portal COMPLETO (8/8)**. Sidebar navy + KPIs + tabla pipeline + actividad + demanda; segmentado 3 roles (Admin/Aliado/Propietario) en JS vanilla sin innerHTML; noindex (prop `BaseLayout`); datos DEMO. 0 off-palette. ⟦OPUS-4.8⟧ | 283 |
 | §30 | **Auditoría Nivel-2 del cerebro #2** (post-Ola 1): SANO + retrieval funcional; 7 hallazgos in-repo curados (F-01 `05` rezagada→**M-01** 1ª meta-lección) + 10 kernel (Sonda 7)→TODO-23/24/25. GC pareado (boot<target). ⟦OPUS-4.8⟧ | 264 |
-| §29 | **Ola 1: TURISMO** (`/turismo`) — landing turismo+inversión (hero + zonas + experiencias + sección inversión navy + CTA). **HITO: todas las páginas públicas mockup-backed LIVE** (home/SERP/ficha/publicar/estancias/turismo). 0 off-palette. ⟦OPUS-4.8⟧ | 257 |
-| §28 | **Ola 1: ESTANCIAS** (`/estancias`): detalle de alojamiento + galería + amenidades + host + **widget de reserva funcional** (fechas → recalcula noches/subtotal/servicio/total; aseo=tarifa fija + stepper huéspedes). Pago Wompi = Ola 2. 0 off-palette. ⟦OPUS-4.8⟧ | 251 |
-| §27 | **Ola 1: 404 + PUBLICAR** (`/publicar`): hero + formulario de avalúo (validación+éxito client-side; POST a solicitudes pendiente) + 4 pasos + 3 planes (Gratis/Premium navy/Élite). 404 con Header/Footer. Viaje comprador+vendedor LIVE. 0 off-palette. ⟦OPUS-4.8⟧ | 243 |
-| §26 | **Ola 1: FICHA de inmueble** (`/ficha`): galería + specs + aside sticky (precio + CTA WhatsApp + sello Verificado por ALTORRA + asesora + financiación) + amenidades + ficha técnica + ubicación esquemática + similares (PropertyCard). Sin gráficas. 0 off-palette. ⟦OPUS-4.8⟧ | 233 |
-| §25 | **Ola 1: SERP resultados** (`[operacion].astro` dinámico → /comprar + /arrendar): barra de filtros glass + grid PropertyCard + aside sticky con mapa esquemático (MapLibre real pendiente) + footer. Reusa Header/Footer/PropertyCard. Verificado 0 off-palette. ⟦OPUS-4.8⟧ | 223 |
-| §24 | **Ola 1: Header compartido + HOME (parte 1)** — `Header.astro` (nav sticky 3 capas, data-driven, glass, drawer, contacto REAL) + `index.astro` home (hero neumórfico + buscador segmentado + "Cuatro maneras"). Verificado: 0 errores, 0 colores off-palette. Pendiente parte 2: secciones restantes + `Footer.astro` + optimizar imágenes (WebP). ⟦OPUS-4.8⟧ | 207 |
+| §29 | **Ola 1: TURISMO** (`/turismo`) — HITO: todas las públicas mockup-backed LIVE. ⟦OPUS-4.8⟧ | 257 |
+| §28 | **Ola 1: ESTANCIAS** (`/estancias`): detalle alojamiento + widget de reserva funcional (pago Wompi = Ola 2). ⟦OPUS-4.8⟧ | 251 |
+| §27 | **Ola 1: 404 + PUBLICAR** (`/publicar`): form avalúo client-side + 4 pasos + 3 planes. ⟦OPUS-4.8⟧ | 243 |
+| §26 | **Ola 1: FICHA de inmueble** (`/ficha`): galería + aside sticky (CTA/sello/asesora) + similares. ⟦OPUS-4.8⟧ | 233 |
+| §25 | **Ola 1: SERP resultados** (`[operacion].astro` → /comprar+/arrendar): filtros glass + aside mapa esquemático (MapLibre real → TODO-30). ⟦OPUS-4.8⟧ | 223 |
+| §24 | **Ola 1: Header compartido + HOME parte 1** (`Header.astro` nav 3 capas + hero neumórfico + buscador segmentado). ⟦OPUS-4.8⟧ | 207 |
 | §23 | **D1 design system** (de los 8 mockups): DUAL-MODE (blanco / neu `#E6EDF2` / navy) · `tokens.css`+`base`+`components` · styleguide `/design-system` · a11y AA · §23.8 paleta oficial · §23.9 tipografía Cormorant/Hanken. → L-22. ⟦OPUS-4.8⟧ | 193 |
 | §22 | **Ola 0.7 (parte 3/3): capa de datos `client.ts`** (lecturas públicas Firestore REST + Workers Caching, edge-safe). Decisión Fuerte OD1 `[REVISAR-FABLE]`: comité ×3 cazó BLOCKER de decode (mapa/array vacío) + anti-traversal + memo footgun + TTL por-PoP. Gate empírico: tsc + vitest 26/26 + astro build + verify:data + T6 rules 15/15 (emulador; confirma inexistente→403). ⟦OPUS-4.8⟧ | 181 |
 | §21 | **Ola 0.2: portal VIVO en Cloudflare Workers staging** (`altorra-portal.altorrainmobiliaria.workers.dev`): dueño creó cuenta CF+R2+token+secrets (guiado, Fincaraíz), CI desplegó. Verificado en vivo (home+SSR+noindex+favicon). KV auto-provisionado, R2 conectado. Gotcha: registrar subdominio workers.dev antes del 1er deploy (→ L-16). ⟦OPUS-4.8⟧ | 173 |

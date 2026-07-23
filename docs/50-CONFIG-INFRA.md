@@ -91,3 +91,13 @@ vivo (contacto correcto) · `solicitudes` protegida (conteo pendiente) · Storag
 - **Comando** (por repo): `git bundle create <OneDrive>\backups-cerebro\<repo>-<fecha>.bundle --all` · **Restaurar**: `git clone <archivo>.bundle carpeta` (probado 2026-07-20 ×2: repo HEAD íntegro + bóveda 55 crudos). ⚠️ **Gotcha cazado EN la prueba**: en Windows el checkout de la bóveda falla con "Filename too long" (MAX_PATH 260) si la ruta destino es profunda → `git config --global core.longpaths true` (YA aplicado en esta máquina 2026-07-20) o restaurar en ruta corta (`C:\r\`). Un backup sin restore probado es teatro.
 - **Cadencia**: en cada resonancia mensual (F3 lo automatiza). **Pendiente-opcional (decisión Daniel)**: espejo remoto push-mirror en 2ª cuenta git — mataría también la mitad "cuenta".
 - ⚠️ `brain-kit/` NO es repo git (no bundleable) — su respaldo es el ZIP del Desktop + el kit se regenera desde el canónico en F1.
+
+## 🚑 Runbook: recuperación de cuenta GitHub (TODO-31c — BORRADOR 2026-07-23; los ⚠️ los verifica DANIEL)
+> Ataca la mitad "cuenta" del SPOF (§49 A-01). La cuenta que administra los repos es `altorracars` (git user actual).
+1. **PREVENIR (una vez, HOY — dueño, ~5 min)**:
+   - `github.com/settings/security` → Two-factor authentication → **descargar los RECOVERY CODES** y guardarlos FUERA de esta máquina (impresos y/o OneDrive personal). ⚠️ [VERIFICA-DANIEL: ¿existen ya? ¿dónde están?]
+   - Añadir un **2º método 2FA** (passkey o SMS además de la app TOTP) y confirmar que el **email de recuperación** de la cuenta está vigente y accesible. ⚠️ [VERIFICA-DANIEL]
+2. **Si se pierde el 2FA** (teléfono dañado/robado) pero hay recovery codes: login normal → "Use a recovery code" → entrar → re-configurar 2FA. Cada código sirve UNA vez.
+3. **Si se pierde TODO** (password + 2FA + códigos): proceso oficial de account-recovery de GitHub (verificación por email + historial de dispositivos) — **tarda DÍAS y puede fallar**; por eso el paso 1 es el que de verdad importa.
+4. **Mientras tanto el negocio NO se detiene**: los bundles offsite (§Respaldo OFFSITE) restauran código+cerebro completos en cualquier máquina (`git clone <bundle>`); se trabaja local y al recuperar (o migrar a cuenta nueva) se re-apunta el remote: `git remote set-url origin <nueva-url>` + push.
+5. **Continuidad de superficies**: si la cuenta GitHub cae, el dominio sigue sirviendo el ÚLTIMO deploy de Pages (no se borra solo); el portal staging vive en **Cloudflare** (cuenta separada `altorrainmobiliaria@gmail.com`, 2FA propio ⚠️ [VERIFICA-DANIEL: recovery codes de CF también]) → las dos superficies no caen juntas.

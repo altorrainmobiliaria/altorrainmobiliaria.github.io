@@ -42,6 +42,7 @@ El cerebro se divide en **nodos**. Auto-cargas SOLO `CLAUDE.md` + `05` + `10` (�
 | 🛰️ **Consejo Externo** | `docs/15-CONSEJO-EXTERNO.md` | ❌ on-demand | Trigger de Decisión Fuerte: crítica adversarial del provider externo (de otra familia, no-Claude). Cuándo + anti-anclaje ahí. |
 | 🗺️ **Espacial** | `docs/20-MEMORIA-ESPACIAL.md` | ❌ on-demand | Trigger de Desorientación: dónde vive un componente, flujos, schema Firestore, blog. |
 | 🧪 **Procedimental (experiencia)** | `docs/30-LECCIONES.md` | ❌ on-demand | Trigger de Experiencia: ANTES de una op riesgosa/repetitiva (deploy CF, tocar caché/SW, reglas) o si un síntoma "te suena". Gotchas + recetas. |
+| 🖥️ **Verificación UI** | `docs/31-VERIFICACION-UI.md` | ❌ on-demand | Verificar UI en navegador: panel congelado · Chrome · computed vs `transition` (L-22/26/28). |
 | 🔁 **Workflows reutilizables** | `docs/60-WORKFLOWS.md` | ❌ on-demand | Trigger de Experiencia/Auditoría: catálogo W-01..W-11. **W-11 = SSoT del flujo fuerte** (leerlo ANTES de Decisión Fuerte/Diseño-UI). |
 | 🗂️ **Índice sináptico** | `docs/00-INDICE.md` | ❌ on-demand | ANTES de leer el historial (offset exacto) Y para el enrutamiento semántico (síntoma → neurona). |
 | 📚 **Largo Plazo** | `docs/99-HISTORIAL-ADR.md` | ❌ on-demand | Trigger de Error / detalle histórico de un §. NUNCA completo — usa offset/limit. |
@@ -121,7 +122,7 @@ Antes de CUALQUIER commit no-trivial: 5 secciones → (A) archivos a modificar, 
 
 ### 3.5 Observadores, eventos globales y concurrencia
 - CERO `MutationObserver` global con `subtree:true` que ejecute ops DOM. CERO `pointermove` persistente global (solo durante drag activo). Selectores substring `[class*="x"]` peligrosos — excluir namespaces con `:not()`.
-- Concurrencia optimista Firestore: `_version: 1` al crear; `runTransaction` → `_version + 1` al actualizar. `set()` SIN merge para CREAR, `update()` para EDITAR (L-04).
+- Concurrencia optimista Firestore: `_version: 1` al crear; `runTransaction` → `_version + 1` al actualizar. `set()` SIN merge para CREAR, `update()` para EDITAR (L-09).
 
 ### 3.6 🏛️ REGLA DE ORO — Piensa como arquitecto (SIEMPRE, antes de tocar nada)
 > Tu trabajo va MÁS ALLÁ del código: tomas decisiones que impactan TODO el sistema — cómo se conecta, escala, se asegura, cuesta y evoluciona. *El código hace que funcione; la arquitectura hace que sobreviva.*
