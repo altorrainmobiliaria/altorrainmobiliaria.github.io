@@ -20,6 +20,7 @@
 | Dónde vive un componente, flujo, **schema Firestore**, blog | `20-MEMORIA-ESPACIAL` |
 | Un bug/síntoma que "te suena", receta, gotcha | `30-LECCIONES` |
 | Mapa (MapLibre/Protomaps/pmtiles/tiles/marcadores/R2 tiles) · binding CF desde ruta SSR | `99 §55` + `30 L-33` (`cloudflare:workers`) + `50 §Tiles` (subir .pmtiles) |
+| Catálogo (índice denormalizado `indices/*` · `catalogo.get` · `/api/catalogo` · SERP con datos reales) | decisión `99 §54`(+.8) · obra lectura `99 §56` · falta Function de escritura (§56.7) |
 | Verificar UI (screenshot/computed/scroll/interacción · panel congelado vs Chrome) | hoja `31-VERIFICACION-UI` (L-22/L-26/L-28 completas; lápidas en `30`) |
 | Project ID, cuentas IAM, deploy, secrets | `50-CONFIG-INFRA` |
 | Competencia/mercado inmobiliario, benchmark | `40-LOBULOS` → `41-MERCADO` |
@@ -93,6 +94,7 @@
 | §21 | **Ola 0.2: portal VIVO en Cloudflare Workers staging** (`altorra-portal.altorrainmobiliaria.workers.dev`): dueño creó cuenta CF+R2+token+secrets (guiado, Fincaraíz), CI desplegó. Verificado en vivo (home+SSR+noindex+favicon). KV auto-provisionado, R2 conectado. Gotcha: registrar subdominio workers.dev antes del 1er deploy (→ L-16). ⟦OPUS-4.8⟧ | 173 |
 | §52 | **CEREBRO v2 · F2 piloto** (TODO-32): 💓 heartbeat (sidecar `.estado-auto` — el 05 pierde lo derivable; costo-cerebro midió 52% 🔴) · 🧊 consolidación-en-frío · 📦 brain:archive (este ADR nació de él) · punto ciego gate #0 cazado EN VIVO → v1.5.1 compara contenido. ⟦FABLE-5⟧ | 871 |
 | §53 | **CEREBRO v2 · F3 — 🏁 v2 NÚCLEO COMPLETO** (TODO-32): gate #14 escala con gracia (probado con cars: gap 22 → WARN) · 🧭 banner en cristiano en cada boot · skill `mantenimiento-general` (ejecutor, jamás calendario) · kernel v1.6.0 ×4 · bundles frescos. Restos: hooks hermanos + TODO-31 c/d. ⟦FABLE-5⟧ | 881 |
+| §56 | **§54 obra — catálogo camino de LECTURA** (índice denormalizado `indices/catalogo-{shard}`): `catalogo.get()` + rules `indices` + ruta `/api/catalogo/*.json` + tests (33 unit + 20 rules). Ruta DORMIDA (SERP sigue demo) hasta la mitad de ESCRITURA (Function) + cutover. ⟦OPUS-4.8⟧ | 912 |
 | §55 | **TODO-30: mapa REAL MapLibre v6 + Protomaps (.pmtiles en R2)** en ficha+SERP (isla client-side · marcadores navy/oro · card↔pin · degradación al esquemático). Implementación LISTA + fallback verificado-vivo; faltan 2 compuertas (subir `.pmtiles` a R2 · verif. visual Chrome). BUG: `locals.runtime.env` removido v6 → `cloudflare:workers` (L-33). ⟦OPUS-4.8⟧ | 902 |
 | §54 | **TODO-22: §22 auditado ✅ + OD-Catálogo = B doc-índice SELLADA** (comité 3/3 + Gemini convergió doble-ciego §54.8 · rebuild total idempotente · gates G1-G12+2 · purga Workers Cache ~GLOBAL verificada en docs vivas · `s-maxage` desactiva SWR → deuda headers a la obra). ⟦FABLE-5⟧ | 891 |
 

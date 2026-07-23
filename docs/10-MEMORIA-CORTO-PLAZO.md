@@ -39,31 +39,18 @@
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). | 🟡 abierto | |
 | **TODO-28** | 🧠 **Endurecer el cerebro**: #1-#3 ✅ (§40-§41) · **#4 ✅ `brain:pull` (F1 §51)** · #5 filas del índice auto vía `brain:archive` ✅ (§52; generador completo = opcional) · **#6 ✅ AUTOMATIZADA en el heartbeat** (§52: % por paths en cada boot — hoy **52% 🔴, mes 1 de medición**; >30% dos meses → PODAR doctrina) · #7 sello de vencimiento en hechos >90d (pendiente — candidato a resonancia). | 🟡 #7 | $0 |
 | **TODO-29** | 📣 **PAUTA**: humo encendida 07-18 → estado vivo en flag 📣 de `05`. **Paso siguiente**: al agotarse el saldo, verificar FACTURACIÓN → cierra fontanería §4b → calibra la CAMPAÑA REAL (gate = cierre de obra). | 🔥 vigilar | no tocar 7d |
-| **TODO-30** | 🗺️ **MapLibre real — IMPLEMENTADO (§55, Opus 2026-07-23)**: isla `altorra-map.ts` + ruta R2 `tiles/[file].ts` + fallback esquemático; 5 gates verdes + camino vivo (marcadores+card↔pin+404 limpio; bug 500 `locals.runtime.env`→`cloudflare:workers` cazado). **Faltan 2 compuertas para CERRAR**: (a) generar+subir `cartagena.pmtiles` a R2 (`50 §Tiles`; go-pmtiles) · (b) verif. VISUAL en Chrome del dueño. Luego: wiring forms→`solicitudes` · datos = OBRA catálogo §54. | 🟡 2 compuertas | §55 |
+| **TODO-30** | 🗺️ **MapLibre real — IMPLEMENTADO (§55, Opus 2026-07-23)**: isla `altorra-map.ts` + ruta R2 `tiles/[file].ts` + fallback esquemático; 5 gates verdes + camino vivo (marcadores+card↔pin+404 limpio; bug 500 `locals.runtime.env`→`cloudflare:workers` cazado). **Faltan 2 compuertas para CERRAR**: (a) generar+subir `cartagena.pmtiles` a R2 (`50 §Tiles`; go-pmtiles) · (b) verif. VISUAL en Chrome del dueño. Luego: wiring forms→`solicitudes`. | 🟡 2 compuertas | §55 |
+| **TODO-22** | **OBRA del catálogo (§54 sellada)**: LECTURA ✅ (§56: `catalogo.get`+rules `indices`+ruta `/api/catalogo`+tests 33 unit/20 rules; ruta DORMIDA, SERP sigue demo). **Falta ESCRITURA**: subsistema de Cloud Functions en el portal + Function `onWrite(propiedades)` rebuild-TOTAL idempotente + debounce/purga/seed/reconciliación (§56.7 + gates §54.5); deploy=cutover. Luego wiring SERP tras flag demo\|live. | 🟡 escritura | §56 |
 | **TODO-32** | 🧠 **CEREBRO v2 ×4 — APROBADO por Daniel (2026-07-20)**. SSoT = bóveda `2026-07-20-cerebro-v2-sintesis-propuesta.md` + regla de admisión de maquinaria. **F0 ✅ (§50)** kill-list + offsite probado · **F1 ✅ (§51)**: canónico en `brain-private/kernel/` + `brain:pull` + gate #0 BLOQUEANTE — **×4 en v1.4.1, fix propagado <2 min**. Deuda visible en hermanos (cars 7 · bersaglio 8 problemas + auditorías vencidas) = SUS carriles. `core.hooksPath` diferido a F2/F3. **🏁 v2 NÚCLEO COMPLETO ✅** (F0 §50 · F1 §51 · F2 §52 · F3 §53, kernel **v1.6.0** ×4): las 4 clases de dolor probadas quedaron imposibles-por-diseño o empujadas-por-gate. **Restos vivos**: (a) F2-s2 — cablear hook SessionStart en los 3 hermanos (kernelFiles+settings; carril de cada repo, la instrucción vive en la skill) · (b) **PODA REAL de doctrina** cuando la métrica del banner marque >30% dos meses (criterio de salida — hoy 52% 🔴, mes 1 de medición) · (c) TODO-31: solo queda la verificación de Daniel (recovery codes). Mantenimiento mensual: el banner avisa TOCA → Daniel dice "haz el mantenimiento mensual" → skill `mantenimiento-general`. | 🟡 restos a/b/c | §53 · bóveda |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **▶ 2026-07-23 (sesión OPUS 4.8 — implementación TODO-30, tras el carril cerebro de Fable)**:
-> Mapa REAL MapLibre v6 + Protomaps (.pmtiles en R2) en ficha+SERP (§55). Isla client-side + ruta R2 con RANGE +
-> degradación al esquemático sellado (marcadores navy/oro + card↔pin por `data-pin-idx`). 5 gates verdes + camino
-> vivo en dev. **Bug cazado por el reflejo caza-bugs (no lo vieron los gates)**: ruta R2 daba 500 →
-> `Astro.locals.runtime.env` REMOVIDO en Astro v6 → `import { env } from 'cloudflare:workers'` (L-33 · leí el stack,
-> no adiviné). **Faltan 2 compuertas del dueño para CERRAR**: subir `cartagena.pmtiles` a R2 (`50 §Tiles`, go-pmtiles)
-> + verif. VISUAL en su Chrome (WebGL no renderiza en el panel, L-26). Código pusheado `9860587`.
-
-> **▶ 2026-07-23 (sesión Fable, carril cerebro post-v2 — mandato Daniel: terminar lo que falta → luego análisis holístico ×4)**:
-> (1) ✅ **TODO-31d**: shard `31-VERIFICACION-UI` (L-22/L-26/L-28 movidas ÍNTEGRAS, lápidas en `30`) + fusión
-> L-04→L-09 + GC ligero de `00` (§24-§29 comprimidas) → `30` y `00` salen del pre-shard.
-> (2) ✅ **TODO-31 CERRADO COMPLETO y retirado de la tabla** (§49-§50 + `50 §Runbook`): offsite ✅ · canario/guardián ✅ ·
-> runbook ✅ + **códigos 2FA GitHub+CF descargados por Daniel (2026-07-23, → su Google Drive personal)** · GC `30` ✅.
-> (3) ✅ **Consejo Externo §0b**: catálogo de modelos Antigravity FECHADO (routing por situación → `15 §0b`).
-> 🔁 **SINAPSIS PENDIENTE**: cars/bersaglio portan §0b en SU próxima sesión (skill `sinapsis-cerebros`).
-> (4) ✅ **TODO-22 SELLADO el mismo día** (§54 + adenda .8): comité 3/3 + Gemini convergió DOBLE-CIEGO en B ·
-> contradicción purga resuelta en docs vivas (Workers Cache ~global; el clásico es por-DC) · `s-maxage` desactiva
-> SWR + drift cache.ts↔R5-Q1 cazados → deuda headers a la obra (L-18 actualizada).
-> **SIGUE = TODO-30 MapLibre (sesión Opus EN FRESCO — fila blindada)**. Resonancias: TODO-23 K-rest · hooks hermanos.
-> (5) ⚠️ **HUMO a D+5**: seguro agotada — verificar Ads Manager con navegador (TODO-29 · fontanería §4b).
-> (6) ⛔ NO tocar: diseño sellado · deuda de carriles hermanos (SUS sesiones) · kernel local (flujo → TODO-23).
+> **▶ 2026-07-23 (día completo — durable en ADRs §49-§56; aquí solo lo vivo)**: Fable cerró el carril cerebro
+> (v2 §49-§53 · TODO-31 CERRADO incl. códigos 2FA de Daniel · consejo `15 §0b` · TODO-22 decisión §54+.8).
+> Opus implementó **TODO-30 mapa** (§55, 2 compuertas: tiles+Chrome) y la **LECTURA del catálogo** (§56).
+> **Accionables vivos**: (a) 🔁 sinapsis: cars/bersaglio portan `15 §0b` en SU sesión (`sinapsis-cerebros`) ·
+> (b) ⚠️ HUMO a D+5 seguro agotada → verificar Ads Manager con navegador (TODO-29 · fontanería §4b) ·
+> (c) ⛔ NO tocar: diseño sellado · deuda de hermanos (SUS sesiones) · kernel local (flujo → TODO-23).
+> **SIGUIENTE Opus**: mitad de ESCRITURA del catálogo (TODO-22 · Function, §56.7) o cerrar TODO-30 (tiles).
