@@ -137,7 +137,7 @@ Antes de CUALQUIER commit no-trivial: 5 secciones → (A) archivos a modificar, 
 
 Al cambiar comportamiento o archivos del shell:
 - Incrementar `CACHE_NAME` en `service-worker.js` (formato `altorra-pwa-vN` → `vN+1`, MAYOR).
-- **La versión vigente vive en `docs/05-ESTADO-GLOBAL.md`**. Tras bumpear, actualízala ahí (Reflejo de Frescura §G.4). `brain:check` valida `05` == SW.
+- La versión vigente la reporta el **heartbeat** (sidecar `.estado-auto`, generado del SW en cada boot, §52) — ya NO se duplica a mano en `05`.
 - Cliente invalida con **Ctrl+Shift+R** la primera vez.
 
 ---

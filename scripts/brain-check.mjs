@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // ===========================================================
-// 🧠 brain-check v1.3 — Linter de integridad del cerebro neuronal (CANÓNICO · portable)
+// 🧠 brain-check v1.5 — Linter de integridad del cerebro neuronal (CANÓNICO · portable)
 // ===========================================================
 // KERNEL del cerebro multi-proyecto (ADR §170/§171/§173; v1.3 = kill-list F0 Cerebro v2, inmobiliaria §50).
 // Este archivo es IDÉNTICO en los 4 repos — escritor único = operador-inmobiliaria (§41).
@@ -25,7 +25,7 @@
 //   (7) archiveDir íntegro [warn, --full]               (16) Fiabilidad M-22: `verificado-vivo` stale [info, --full]
 //       + 7b) bóveda: commits ≠ origin vía fs [warn]
 // ===========================================================
-const KERNEL_VERSION = '1.4.0';
+const KERNEL_VERSION = '1.5.1';
 import { readFileSync, readdirSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -96,6 +96,12 @@ if (mMajor !== REQUIRED_MANIFEST_MAJOR) warn(`manifest brainTemplateVersion "${m
     const canonVerP = vault ? join(vault, 'kernel', 'VERSION') : null;
     const canonVer = canonVerP && existsSync(canonVerP) ? read(canonVerP).trim() : null;
     if (stamp && canonVer && canonVer !== stamp.version) { warn(`kernel v${stamp.version} STALE vs canónico v${canonVer} → npm run brain:pull`); bad++; }
+    // v1.5.1 §52 (punto ciego cazado EN VIVO): una edición del canónico SIN bump de VERSION era
+    // invisible (el gate solo miraba stamp+versión). Con el canónico presente, comparar CONTENIDO.
+    if (stamp && vault && existsSync(join(vault, 'kernel'))) for (const name of Object.keys(stamp.files || {})) {
+      const c = join(vault, 'kernel', name), l = join(ROOT, 'scripts', name);
+      if (existsSync(c) && existsSync(l) && shaHex(c) !== shaHex(l)) { warn(`kernel: ${name} difiere del CANÓNICO aun con versión igual (edición canónica sin bump / pull a medias) → npm run brain:pull`); bad++; break; }
+    }
     if (stamp && !bad) {
       if (BOOT) say(`  ✅ kernel v${stamp.version} íntegro${canonVer ? ' == canónico' : ''}`);
       else ok(`kernel v${stamp.version} íntegro (${Object.keys(stamp.files || {}).length} archivos)${canonVer ? ' == canónico v' + canonVer : ' (canónico no clonado en esta máquina)'}`);
@@ -218,7 +224,7 @@ if (hasSwSection && swFile) {
         const nv = (s) => String(s).replace(/^v/, '');
         if (nv(vig) === nv(swVer)) ok(`05 cache vigente == SW ("${swVer}")`);
         else warn(`05 STALE: declara "${vig}" pero SW="${swVer}" → actualizar 05`);
-      } else info('05 sin "Cache version vigente" parseable');
+      } else if (!existsSync(join(DOCS, '.estado-auto.md'))) info('05 sin "Cache version vigente" parseable (y sin heartbeat §52 — en era-heartbeat el campo vive en el sidecar)');
     }
   }
 } else head('  ℹ️  sin service-worker o sin §4 — omitido');

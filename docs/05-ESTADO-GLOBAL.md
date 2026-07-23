@@ -1,13 +1,12 @@
 # 🩺 05 — ESTADO GLOBAL (Altorra Inmobiliaria · Heartbeat)
 
 > Nodo de signos vitales. Se **AUTO-CARGA** (con `CLAUDE.md` + `10`). "¿En qué estado está el sistema AHORA?". Tope ~25 líneas (§G.5) — tablero, no bitácora.
-> ✅ **git RE-VERIFICADO 2026-07-20** (auditoría Nivel-2 #4, §49): `HEAD == origin/main` (sin SHA — corolario M-01). FIREBASE (CFs, datos) sigue sin re-verificar → §3.3 antes de afirmar.
+> 💓 Lo DERIVABLE (git/SW-cache/costo/consolidación) ya **NO vive aquí**: lo genera el heartbeat en CADA boot (sidecar `docs/.estado-auto.md`, §52) — este nodo solo guarda JUICIO. FIREBASE (CFs, datos) sigue sin re-verificar → §3.3 antes de afirmar.
 
 | Señal | Valor (al **2026-07-20**) |
 |---|---|
 | **Misión** | 🏗️ **GREENFIELD TOTAL** (kickoff = SSoT en `specs/`): portal nuevo desde cero. **R0-R4 ✅ + STACK SELLADO** (ADR §16: Workers+Astro híbrido+Firebase+R2+Wompi+MapLibre). Fable planifica/audita · Opus implementa. 🏛️ Este operador = **escritor único del kernel ×4** (ADR §15). |
-| **Build** | ✅ **MODO OBRA LIVE** `verificado-vivo: 2026-07-10` (curl+sentinela): mantenimiento + **66 redirects→home** (53 raíz incl. 404 + 7 `blog/` + 6 `p/`) + `.nojekyll` (L-13, §15). Sitio viejo RETIRADO. GSC preservado. |
-| **Cache version vigente** | `altorra-pwa-v5` (`service-worker.js` = **kill-switch** — modo obra 2026-07-10). |
+| **Build** | ✅ **MODO OBRA LIVE** `verificado-vivo: 2026-07-10` (curl+sentinela): mantenimiento + **66 redirects→home** (53 raíz incl. 404 + 7 `blog/` + 6 `p/`) + `.nojekyll` (L-13, §15). El SW legacy = **kill-switch** del modo obra (su versión vigente → heartbeat). Sitio viejo RETIRADO. GSC preservado. |
 | **Branch / Deploy** | `main`; GH Pages auto al push; **Claude pushea/mergea** (ADR §15.7) y ejecuta deploy Firebase (delegado 2026-07-11; `50-CONFIG-INFRA`). La CI `portal-ci.yml` **AUTO-DESPLIEGA cada push del portal** (`CF_DEPLOY_ENABLED` ON — verificado en Actions, run del 07-19). |
 | **Portal (staging)** | ✅ **OLA 1 FIDELIDAD COMPLETA Y LIVE (TODO-27 CERRADO §48)**: las **6 páginas FIELES** al mockup (§43-§48), en `altorra-portal.altorrainmobiliaria.workers.dev` (Astro+Workers, noindex). `verificado-vivo: 2026-07-20` (curl 200 + noindex). **Go-forward → TODO-30** (`10`). |
 

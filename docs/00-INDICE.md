@@ -89,6 +89,7 @@
 | §23 | **D1 design system** (de los 8 mockups): DUAL-MODE (blanco / neu `#E6EDF2` / navy) · `tokens.css`+`base`+`components` · styleguide `/design-system` · a11y AA · §23.8 paleta oficial · §23.9 tipografía Cormorant/Hanken. → L-22. ⟦OPUS-4.8⟧ | 193 |
 | §22 | **Ola 0.7 (parte 3/3): capa de datos `client.ts`** (lecturas públicas Firestore REST + Workers Caching, edge-safe). Decisión Fuerte OD1 `[REVISAR-FABLE]`: comité ×3 cazó BLOCKER de decode (mapa/array vacío) + anti-traversal + memo footgun + TTL por-PoP. Gate empírico: tsc + vitest 26/26 + astro build + verify:data + T6 rules 15/15 (emulador; confirma inexistente→403). ⟦OPUS-4.8⟧ | 181 |
 | §21 | **Ola 0.2: portal VIVO en Cloudflare Workers staging** (`altorra-portal.altorrainmobiliaria.workers.dev`): dueño creó cuenta CF+R2+token+secrets (guiado, Fincaraíz), CI desplegó. Verificado en vivo (home+SSR+noindex+favicon). KV auto-provisionado, R2 conectado. Gotcha: registrar subdominio workers.dev antes del 1er deploy (→ L-16). ⟦OPUS-4.8⟧ | 173 |
+| §52 | **CEREBRO v2 · F2 piloto** (TODO-32): 💓 heartbeat (sidecar `.estado-auto` — el 05 pierde lo derivable; costo-cerebro midió 52% 🔴) · 🧊 consolidación-en-frío · 📦 brain:archive (este ADR nació de él) · punto ciego gate #0 cazado EN VIVO → v1.5.1 compara contenido. ⟦FABLE-5⟧ | 871 |
 
 ---
 
