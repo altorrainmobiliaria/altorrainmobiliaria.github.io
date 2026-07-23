@@ -92,7 +92,7 @@ vivo (contacto correcto) · `solicitudes` protegida (conteo pendiente) · Storag
 - **Cadencia**: en cada resonancia mensual (F3 lo automatiza). **Pendiente-opcional (decisión Daniel)**: espejo remoto push-mirror en 2ª cuenta git — mataría también la mitad "cuenta".
 - ⚠️ `brain-kit/` NO es repo git (no bundleable) — su respaldo es el ZIP del Desktop + el kit se regenera desde el canónico en F1.
 
-## 🚑 Runbook: recuperación de cuenta GitHub (TODO-31c — BORRADOR 2026-07-23; los ⚠️ los verifica DANIEL)
+## 🚑 Runbook: recuperación de cuenta GitHub (TODO-31c — ✅ EJECUTADO por Daniel 2026-07-23: recovery codes de GitHub Y Cloudflare descargados → su **Google Drive personal**; la guía queda para re-generarlos si rota el 2FA)
 > Ataca la mitad "cuenta" del SPOF (§49 A-01). La cuenta que administra los repos es `altorracars` (git user actual).
 1. **PREVENIR (una vez, HOY — dueño, ~5 min). Guía EN CRISTIANO, clic por clic**:
    - **GitHub**: entrar a `github.com` → clic en tu **foto** (arriba a la derecha) → **Settings** → menú izquierdo **Password and authentication** → bajar a **Two-factor authentication** → **Recovery codes** → botón **View** (puede pedir confirmar identidad) → botón **Download** → se descarga un archivito de texto.
