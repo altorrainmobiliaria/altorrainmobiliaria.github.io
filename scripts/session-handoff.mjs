@@ -47,6 +47,8 @@ const boveda = () => {
 // Cada sonda degrada RUIDOSA: fallo = "❌ NO VERIFICADO (motivo)", jamás un valor viejo con sello fresco.
 const heartbeat = () => {
   const probe = (fn) => { try { const v = fn(); return (v == null || v === '' || v === '(git no disponible)') ? '❌ NO VERIFICADO' : v; } catch (e) { return `❌ NO VERIFICADO (${String(e && e.message || e).slice(0, 40)})`; } };
+  let costoPct = null; // lo llena la sonda de costo; el banner en cristiano lo reusa (F3 §53)
+  let manifest = {}; try { manifest = JSON.parse(readFileSync(join(ROOT, 'docs', '.brain-manifest.json'), 'utf8')); } catch { /* banner degrada */ }
   const BRAIN_RE = /^(docs\/|CLAUDE\.md$|skills\/|scripts\/(brain|boot-gate|session-handoff)|_legacy\/)/;
   const swP = ['service-worker.js', 'public/sw.js', 'sw.js', 'public/service-worker.js'].map((c) => join(ROOT, c)).find((p) => existsSync(p));
   const lines = [
@@ -57,9 +59,20 @@ const heartbeat = () => {
     `- origin visto hace: ${probe(() => { const p = join(ROOT, '.git', 'FETCH_HEAD'); if (!existsSync(p)) return 'NUNCA → git fetch antes de afirmar deploy (§3.3)'; const h = (Date.now() - statSync(p).mtimeMs) / 3.6e6; return `${h.toFixed(1)}h${h > 24 ? ' ⚠️ refs remotas VIEJAS → git fetch antes de afirmar deploy (§3.3)' : ''}`; })}`,
     `- SW cache vigente: ${swP ? probe(() => (readFileSync(swP, 'utf8').match(/CACHE_(?:NAME|VERSION)\s*=\s*['"]([^'"]+)['"]/) || [])[1]) + ` (${swP.split(/[\\/]/).pop()})` : '(sin service worker)'}`,
     `- CNAME: ${probe(() => existsSync(join(ROOT, 'CNAME')) ? readFileSync(join(ROOT, 'CNAME'), 'utf8').trim() : '(no aplica)')}`,
-    `- 🧮 costo-cerebro 30d: ${probe(() => { const out = git(['log', '--since=30.days', '--name-only', '--format=%x01']); const cs = out.split('\x01').map((c) => c.trim()).filter(Boolean); if (!cs.length) return 'sin commits en 30d'; const brain = cs.filter((c) => { const fs_ = c.split('\n').map((l) => l.trim()).filter(Boolean); return fs_.length && fs_.every((f) => BRAIN_RE.test(f)); }).length; const pct = Math.round((brain / cs.length) * 100); return `${pct}% (${brain}/${cs.length} commits solo-cerebro, por paths)${pct > 30 ? ' 🔴 > bandera 30% (TODO-28 #6: recortar doctrina, no añadir)' : ' ✅ ≤ 30%'}`; })}`,
+    `- 🧮 costo-cerebro 30d: ${probe(() => { const out = git(['log', '--since=30.days', '--name-only', '--format=%x01']); const cs = out.split('\x01').map((c) => c.trim()).filter(Boolean); if (!cs.length) return 'sin commits en 30d'; const brain = cs.filter((c) => { const fs_ = c.split('\n').map((l) => l.trim()).filter(Boolean); return fs_.length && fs_.every((f) => BRAIN_RE.test(f)); }).length; costoPct = Math.round((brain / cs.length) * 100); return `${costoPct}% (${brain}/${cs.length} commits solo-cerebro, por paths)${costoPct > 30 ? ' 🔴 > bandera 30% (TODO-28 #6: recortar doctrina, no añadir)' : ' ✅ ≤ 30%'}`; })}`,
     `- 🧊 consolidación: ${probe(() => { const last99 = git(['log', '-1', '--format=%ct', '--', 'docs/99-HISTORIAL-ADR.md']); if (!/^\d+$/.test(last99)) return 'sin 99 trackeado'; const prod = git(['log', `--since=${new Date(+last99 * 1000).toISOString()}`, '--name-only', '--format=%x01']).split('\x01').map((c) => c.trim()).filter(Boolean).filter((c) => c.split('\n').map((l) => l.trim()).filter(Boolean).some((f) => f && !BRAIN_RE.test(f))).length; return prod >= 3 ? `⚠️ ${prod} commits de PRODUCTO sin ADR desde el último toque a 99 → CONSOLIDAR EN FRÍO es la 1ª tarea de ESTA sesión (contexto fresco > saturado, M-02; fontanería: npm run brain:archive)` : `al día (${prod} commit(s) de producto desde el último ADR)`; })}`,
   ];
+  // 🧭 Banner EN CRISTIANO (F3 §53 — primer entregable visible para el dueño; el calendario vive
+  // en el tool, no en el humano: cuando algo dice TOCA, un mensaje suyo dispara el mantenimiento).
+  const dias = (iso) => Math.floor((Date.now() - new Date(iso)) / 86400000);
+  const backup = manifest.lastOffsiteBackup ? dias(manifest.lastOffsiteBackup) : null;
+  const da = manifest.deepAudit || {};
+  const audDias = da.last ? dias(da.last) : null;
+  const audToca = audDias != null && da.maxDays && audDias > da.maxDays;
+  lines.push('', '🧭 EN CRISTIANO (para el dueño):',
+    `   · Mantenimiento del cerebro: ${costoPct != null ? costoPct + '% del trabajo del mes (meta: menos del 30%)' : 'sin medir aún'}${costoPct > 30 ? ' 🔴' : ''}`,
+    `   · Copia de seguridad externa: ${backup != null ? `hace ${backup} día(s)${backup > 35 ? ' ⚠️ TOCA renovarla' : ' ✅'}` : '⚠️ NUNCA hecha'}`,
+    `   · Revisión profunda del cerebro: ${audDias != null ? (audToca ? `⚠️ TOCA (última hace ${audDias} días)` : `al día (hace ${audDias} días)`) : '⚠️ nunca'}${audToca || (backup != null && backup > 35) ? ' → di: "haz el mantenimiento mensual"' : ''}`);
   return lines.join('\n');
 };
 

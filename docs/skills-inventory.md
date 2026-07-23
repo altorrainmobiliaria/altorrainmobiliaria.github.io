@@ -294,3 +294,4 @@ Paquete desarrollado por el dueño (Antigravity) para integraciones de pago Womp
 | `wompi-webhooks-validator` | skill | Validación criptográfica (SHA-256) + idempotencia de webhooks |
 | `wompi_support_agent` | agente | Diagnóstico errores HTTP/transaccionales (401/404/422, DECLINED, webhooks) |
 | `wompi_qa_agent` | agente | Planes de prueba + edge cases (idempotencia, doble-gasto, firma falsa) |
+| `mantenimiento-general` | skill (repo+user, PORTABLE ×4) | EJECUTOR de la resonancia mensual del cerebro (F3 §53): bundle offsite + rotación auditoría Nivel-2 + poda one-in-one-out + kernel ×4; se dispara por el banner/gate #14, jamás por calendario |

@@ -49,7 +49,7 @@
     "scripts/boot-gate.mjs",
     "scripts/brain-archive.mjs"
   ],
-  "lastOffsiteBackup": "2026-07-20",
+  "lastOffsiteBackup": "2026-07-23",
   "orphanAllowlist": [".handoff-auto.md", ".estado-auto.md"],
   "_orphanAllowlistRazon": "handoff-auto (TODO-28 #1) y estado-auto (heartbeat F2 §52): sidecars escritos por HOOK (session-handoff.mjs), gitignored, efimeros; su ruta de lectura es el SessionStart --boot-echo, no el grafo de neuronas",
   "peers": [
