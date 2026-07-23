@@ -92,6 +92,22 @@ vivo (contacto correcto) · `solicitudes` protegida (conteo pendiente) · Storag
 - **Cadencia**: en cada resonancia mensual (F3 lo automatiza). **Pendiente-opcional (decisión Daniel)**: espejo remoto push-mirror en 2ª cuenta git — mataría también la mitad "cuenta".
 - ⚠️ `brain-kit/` NO es repo git (no bundleable) — su respaldo es el ZIP del Desktop + el kit se regenera desde el canónico en F1.
 
+## 🗺️ §Tiles — generar y subir el basemap `.pmtiles` a R2 (cierra TODO-30 · ADR §55)
+> El mapa real (ficha+SERP) sirve el basemap desde R2 vía la ruta `portal/src/pages/tiles/[file].ts` (con RANGE).
+> Hasta que el objeto exista, el cliente muestra el ESQUEMÁTICO sellado (degradación limpia). Dos pasos:
+1. **Generar el extracto** (necesita el CLI `go-pmtiles` — descarga de `github.com/protomaps/go-pmtiles/releases`; NO estaba instalado en la sesión de implementación). bbox Cartagena-metro (cubre los 10 barrios del seed + margen):
+   ```bash
+   pmtiles extract https://build.protomaps.com/<AAAAMMDD>.pmtiles cartagena.pmtiles \
+     --bbox=-75.60,10.30,-75.42,10.52 --maxzoom=15
+   ```
+   (`<AAAAMMDD>` = build reciente de Protomaps; maxzoom 15 = nivel calle, archivo pequeño ~pocos MB.)
+2. **Subir a R2** (deploy delegado a Claude, §2 — o el dueño):
+   ```bash
+   wrangler r2 object put altorra-portal-media/cartagena.pmtiles --file=cartagena.pmtiles \
+     --content-type=application/octet-stream --remote
+   ```
+   Tras subir, el mapa aparece solo (el cliente detecta `isSourceLoaded`). Verificación VISUAL = Chrome del dueño (un mapa WebGL NO renderiza en el panel integrado, L-26). Alternativa de smoke-test SIN subir: `PUBLIC_PMTILES_URL=https://build.protomaps.com/<AAAAMMDD>.pmtiles` (tercero, solo prueba; prod = R2).
+
 ## 🚑 Runbook: recuperación de cuenta GitHub (TODO-31c — ✅ EJECUTADO por Daniel 2026-07-23: recovery codes de GitHub Y Cloudflare descargados → su **Google Drive personal**; la guía queda para re-generarlos si rota el 2FA)
 > Ataca la mitad "cuenta" del SPOF (§49 A-01). La cuenta que administra los repos es `altorracars` (git user actual).
 1. **PREVENIR (una vez, HOY — dueño, ~5 min). Guía EN CRISTIANO, clic por clic**:
