@@ -32,6 +32,8 @@ async function seed() {
     await setDoc(doc(db, 'config/gestion'), { moraDias: [5, 10] });
     await setDoc(doc(db, 'disponibilidad/INM-1_2026-07-15'), { estado: 'libre' });
     await setDoc(doc(db, 'captaciones/INM-1'), { propietario: { nombre: 'X' } });
+    // Índice de catálogo (OD-Catálogo §54): solo lo escribe la Function; contiene resúmenes de PUBLICADAS.
+    await setDoc(doc(db, 'indices/catalogo-venta'), { _version: 1, items: [{ id: 'INM-1', titulo: 'Pub' }] });
   });
 }
 
@@ -83,6 +85,25 @@ describe('disponibilidad — get público; list/write denegados', () => {
   });
   it('anónimo WRITE disponibilidad → DENEGADO', async () => {
     await assertFails(setDoc(doc(anon(), 'disponibilidad/x'), { estado: 'libre' }));
+  });
+});
+
+describe('indices/catalogo — get público de shards conocidos; list/write denegados (anti-oráculo §54)', () => {
+  beforeEach(seed);
+  it('anónimo GET indices/catalogo-venta → OK (solo contiene publicadas, no filtra borradores)', async () => {
+    await assertSucceeds(getDoc(doc(anon(), 'indices/catalogo-venta')));
+  });
+  it('anónimo GET indices/catalogo-DESCONOCIDO (fuera de la allow-list) → DENEGADO', async () => {
+    await assertFails(getDoc(doc(anon(), 'indices/catalogo-secreto')));
+  });
+  it('anónimo LIST indices → DENEGADO (el índice se sirve por edge/JSON cacheado, no por query)', async () => {
+    await assertFails(getDocs(collection(anon(), 'indices')));
+  });
+  it('anónimo WRITE indices → DENEGADO (solo la Cloud Function escribe)', async () => {
+    await assertFails(setDoc(doc(anon(), 'indices/catalogo-venta'), { _version: 2, items: [] }));
+  });
+  it('el BORRADOR sigue oculto aunque exista el índice (no hay fuga por la nueva colección)', async () => {
+    await assertFails(getDoc(doc(anon(), 'propiedades/INM-2')));
   });
 });
 

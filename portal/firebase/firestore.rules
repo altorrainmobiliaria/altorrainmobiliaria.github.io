@@ -40,6 +40,13 @@ service cloud.firestore {
       allow list: if isStaff();
       allow write: if false;
     }
+    // Índice de catálogo denormalizado (OD-Catálogo §54): GET público SOLO de los shards CONOCIDOS
+    // (allow-list explícita, defensa en profundidad §54.4). Contenido = solo resúmenes de propiedades
+    // PUBLICADAS (la Function filtra estado) → NO filtra borradores por diseño. LIST y WRITE denegados.
+    match /indices/{doc} {
+      allow get: if doc in ['catalogo-venta', 'catalogo-arriendo', 'catalogo-dias'];
+      allow list, write: if false;
+    }
 
     // ---------- INTERNO / PII (lectura solo staff; escritura solo Functions) ----------
     match /captaciones/{id} { allow read: if isStaff(); allow write: if false; } // PII propietario/dirección/matrícula/comisión

@@ -17,6 +17,13 @@
 export const cacheTagProp = (id: string): string => `prop:${id}`;
 export const cacheTagConfig = (doc: string): string => `config:${doc}`;
 export const cacheTagDisp = (propiedadId: string): string => `disp:${propiedadId}`;
+/** Tag del índice de catálogo por shard (OD-Catálogo §54): la Function `onWrite` purga `catalogo:{shard}`. */
+export const cacheTagCatalogo = (shard: string): string => `catalogo:${shard}`;
+
+/** Catálogo (SERP/mapa/similares): EDGE-ONLY purgeable — `s-maxage` (sin `max-age` → NO cachea en navegador,
+ *  donde la purga no llega; §54.8 deuda de headers). TTL = TECHO DURO de staleness (la purga por tag del
+ *  `onWrite` acelera; si falla, el TTL acota). 10 min: la frescura real la da la purga, no un TTL corto. */
+export const CACHE_CONTROL_CATALOGO = 'public, s-maxage=600';
 
 /** Ficha / config: casi-estáticos; frescura por purga → 1 día. */
 export const CACHE_CONTROL_FICHA = 'public, s-maxage=86400';

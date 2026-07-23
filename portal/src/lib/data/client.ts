@@ -9,6 +9,7 @@
 import { getDoc, type LowLevelResult } from './firestore-rest';
 import type { Propiedad, Disponibilidad } from '../domain/propiedades';
 import type { ConfigGeneral } from '../domain/config';
+import { CATALOGO_SHARDS, catalogoVacio, type CatalogoIndice, type CatalogoShard } from '../domain/catalogo';
 
 // Config PÚBLICA de Firebase (la apiKey es pública por diseño; misma que `js/firebase-config.js` legacy).
 // Se usa como fallback: prioridad env runtime (wrangler [vars]) → build-time (import.meta.env) → esta constante.
@@ -29,6 +30,15 @@ export interface RuntimeEnv {
  * de "no existe" (evita un oráculo de listings sin publicar — comité OD1). `error` = fallo transitorio.
  */
 export type ReadResult<T> = { ok: true; data: T } | { ok: false; reason: 'unavailable' | 'error' };
+
+/**
+ * Resultado del índice de CATÁLOGO (OD-Catálogo §54). Semántica DISTINTA a `ReadResult` a propósito:
+ * `not-found` → **vacío canónico** (estado-cero legítimo: el índice es público por definición, aún no poblado);
+ * `denied`/`error` → `'unavailable'` (reglas rotas o red: señal RUIDOSA, JAMÁS disfrazada de vacío — §54.4 cond.2).
+ */
+export type CatalogoResult =
+  | { ok: true; data: CatalogoIndice }
+  | { ok: false; reason: 'unavailable' };
 
 // Forma válida de un docId/segmento: alfanumérico + '-'/'_'. Cubre `INM-YYYYMM-XXXX`, `ALT-AR-*`,
 // `general`/`system-meta` y `{propiedadId}_{YYYY-MM-DD}`. Excluye '/', '.', '..' y control chars
@@ -67,6 +77,8 @@ export interface DataClient {
     getGeneral(): Promise<ReadResult<ConfigGeneral>>;
   };
   disponibilidad: { get(propiedadId: string, fecha: string): Promise<ReadResult<Disponibilidad>> };
+  /** Índice de catálogo por shard (venta|arriendo|dias). GET puntual del doc `indices/catalogo-{shard}`. */
+  catalogo: { get(shard: CatalogoShard): Promise<CatalogoResult> };
 }
 
 /**
@@ -120,6 +132,23 @@ export function getDataClient(env?: RuntimeEnv, opts?: { fetchImpl?: typeof fetc
         if (!ID_RE.test(propiedadId) || !FECHA_RE.test(fecha)) return { ok: false, reason: 'unavailable' };
         // docId determinista, top-level, byte-idéntico al que escribirá la Cloud Function (OD6/anti-overbooking).
         return toPublic<Disponibilidad>(await read(['disponibilidad', `${propiedadId}_${fecha}`]));
+      },
+    },
+    catalogo: {
+      async get(shard) {
+        // shard viene de una lista CERRADA → `catalogo-${shard}` es seguro (sin traversal).
+        if (!CATALOGO_SHARDS.includes(shard)) return { ok: false, reason: 'unavailable' };
+        const r = await read(['indices', `catalogo-${shard}`]);
+        if (r.ok) {
+          const items = (r.data as { items?: unknown }).items;
+          // Doc corrupto (sin `items` array) → degradado SEGURO (estado-cero, sin crash del SERP — G8 §54.5).
+          if (!Array.isArray(items)) return { ok: true, data: catalogoVacio() };
+          return { ok: true, data: r.data as unknown as CatalogoIndice };
+        }
+        // not-found = el índice aún no existe → vacío canónico (estado-cero legítimo, NO error).
+        if (r.reason === 'not-found') return { ok: true, data: catalogoVacio() };
+        // denied (reglas mal configuradas) o error (red): unavailable — nunca silencio.
+        return { ok: false, reason: 'unavailable' };
       },
     },
   };

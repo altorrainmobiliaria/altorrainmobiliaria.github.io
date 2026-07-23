@@ -4,3 +4,4 @@ export * from './propiedades';
 export * from './crm';
 export * from './gestion';
 export * from './config';
+export * from './catalogo';
