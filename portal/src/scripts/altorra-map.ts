@@ -1,10 +1,14 @@
 // Mapa REAL del portal — MapLibre GL + Protomaps (.pmtiles) — TODO-30 / ADR §16.1.
 // Cliente ÚNICO compartido por la ficha y el SERP. Se ejecuta SOLO en el navegador (isla).
 //
-// DISEÑO (honra el sello + degradación limpia):
-//  · El basemap vive en un `.pmtiles` servido desde R2 vía la ruta Worker `/tiles/…` (cero APIs de pago).
-//  · La URL del pmtiles es CONFIGURABLE (`PUBLIC_PMTILES_URL`); default = ruta R2. Hasta que el archivo
-//    exista (lo sube el dueño), el mapa NO pinta y el ESQUEMÁTICO SELLADO permanece visible (fallback).
+// DISEÑO (degradación limpia):
+//  · El basemap vive en un `.pmtiles` de Cartagena (~3.3 MB, generado con go-pmtiles) EMPACADO como asset
+//    estático en `public/basemap/` → se despliega con el sitio (cero APIs de pago, cero credenciales R2).
+//    Refinamiento del sello "pmtiles en R2" (§3.7, ADR §55.8): para UN basemap chico e inmutable, el asset
+//    estático es más simple que R2 (que sigue siendo el hogar de las FOTOS: muchas, grandes, de usuario).
+//  · La URL es CONFIGURABLE (`PUBLIC_PMTILES_URL`); default = el asset estático. La ruta Worker R2
+//    `/tiles/[file]` queda como alternativa para tiles futuros/grandes. Si el archivo faltara, el mapa NO
+//    pinta y el ESQUEMÁTICO SELLADO permanece visible (fallback).
 //  · Al pintar el basemap real, el contenedor recibe `.is-live` → se oculta el esquemático y aparecen
 //    los pines-precio como marcadores MapLibre (se mueven con el mapa). El emparejamiento card↔pin
 //    (hover) sigue funcionando: los marcadores llevan `data-pin-idx` igual que los pines esquemáticos.
@@ -28,9 +32,9 @@ interface PinData {
   active?: boolean; // pin resaltado por defecto (mockup: card 2 "is-on")
 }
 
-// URL del basemap. Default = ruta R2 (sello). Un `.pmtiles` remoto (p.ej. build.protomaps.com) se
-// puede inyectar por env para una prueba en vivo antes de subir el extracto a R2.
-const PMTILES_URL = (import.meta.env.PUBLIC_PMTILES_URL as string | undefined) || '/tiles/cartagena.pmtiles';
+// URL del basemap. Default = asset estático empacado con el sitio. Override por env para apuntar a la
+// ruta R2 (`/tiles/cartagena.pmtiles`) o a un `.pmtiles` remoto (p.ej. build.protomaps.com) en pruebas.
+const PMTILES_URL = (import.meta.env.PUBLIC_PMTILES_URL as string | undefined) || '/basemap/cartagena.pmtiles';
 
 let protocolReady = false;
 let booted = false;
