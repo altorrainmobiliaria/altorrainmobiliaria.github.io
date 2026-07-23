@@ -94,9 +94,11 @@ vivo (contacto correcto) · `solicitudes` protegida (conteo pendiente) · Storag
 
 ## 🚑 Runbook: recuperación de cuenta GitHub (TODO-31c — BORRADOR 2026-07-23; los ⚠️ los verifica DANIEL)
 > Ataca la mitad "cuenta" del SPOF (§49 A-01). La cuenta que administra los repos es `altorracars` (git user actual).
-1. **PREVENIR (una vez, HOY — dueño, ~5 min)**:
-   - `github.com/settings/security` → Two-factor authentication → **descargar los RECOVERY CODES** y guardarlos FUERA de esta máquina (impresos y/o OneDrive personal). ⚠️ [VERIFICA-DANIEL: ¿existen ya? ¿dónde están?]
-   - Añadir un **2º método 2FA** (passkey o SMS además de la app TOTP) y confirmar que el **email de recuperación** de la cuenta está vigente y accesible. ⚠️ [VERIFICA-DANIEL]
+1. **PREVENIR (una vez, HOY — dueño, ~5 min). Guía EN CRISTIANO, clic por clic**:
+   - **GitHub**: entrar a `github.com` → clic en tu **foto** (arriba a la derecha) → **Settings** → menú izquierdo **Password and authentication** → bajar a **Two-factor authentication** → **Recovery codes** → botón **View** (puede pedir confirmar identidad) → botón **Download** → se descarga un archivito de texto.
+   - **Cloudflare**: entrar a `dash.cloudflare.com` → icono de **persona** (arriba a la derecha) → **My Profile** → pestaña **Authentication** → **Backup Codes** → **View/Download**.
+   - **Guardar AMBOS archivos FUERA de este PC**: subirlos a tu OneDrive PERSONAL (carpeta privada) y/o imprimirlos. 🔒 Son SECRETOS: **jamás pegarlos en un chat** (ni a Claude) ni mandarlos por WhatsApp/email.
+   - Confirmar que el **email de recuperación** de ambas cuentas está vigente y accesible. ⚠️ [VERIFICA-DANIEL]
 2. **Si se pierde el 2FA** (teléfono dañado/robado) pero hay recovery codes: login normal → "Use a recovery code" → entrar → re-configurar 2FA. Cada código sirve UNA vez.
 3. **Si se pierde TODO** (password + 2FA + códigos): proceso oficial de account-recovery de GitHub (verificación por email + historial de dispositivos) — **tarda DÍAS y puede fallar**; por eso el paso 1 es el que de verdad importa.
 4. **Mientras tanto el negocio NO se detiene**: los bundles offsite (§Respaldo OFFSITE) restauran código+cerebro completos en cualquier máquina (`git clone <bundle>`); se trabaja local y al recuperar (o migrar a cuenta nueva) se re-apunta el remote: `git remote set-url origin <nueva-url>` + push.

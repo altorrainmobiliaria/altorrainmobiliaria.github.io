@@ -17,4 +17,4 @@
 - 📣 **HUMO encendida 07-18** (§42.8): campaña `120250036063330588` Leads+CTWA $4.000/día; muere sola al agotar el prepago ~$5k (**a D+2 probablemente YA agotada — verificar en Ads Manager por navegador**). Días 1-7 NO tocar · responder chats · planilla CPQL desde el 1er lead. Al agotarse: verificar factura/CPM/clic→chat (fontanería §4b) → calibra la campaña REAL (gate = cierre de obra). Ads-MCP sin habilitar — operación por navegador · activos → `activos-meta.md`.
 
 ## 🧩 Sub-sistemas
-mantenimiento LIVE ✅ · `admin.html` (consulta legacy) ✅ · 7 CF legacy censadas ✅ · sitio público viejo ⛔ RETIRADO · **modelo de datos v1** (§22 `[REVISAR-FABLE]`; E2E 21/21 emulador) · D1 sellado (§23, tokens.css = SSoT) · `gestion` (admin 3 roles, §31) · Pendiente → **TODO-30** (`10`).
+mantenimiento LIVE ✅ · `admin.html` (consulta legacy) ✅ · 7 CF legacy censadas ✅ · sitio público viejo ⛔ RETIRADO · **modelo de datos v1** (§22 auditado ✅ + catálogo=doc-índice §54; E2E 21/21) · D1 sellado (§23, tokens.css = SSoT) · `gestion` (admin 3 roles, §31) · Pendiente → **TODO-30** (`10`).
