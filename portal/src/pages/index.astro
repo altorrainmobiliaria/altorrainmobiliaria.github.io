@@ -97,7 +97,14 @@ const posts = [
 
 // EN VENTA — riel horizontal de `LuCard` (réplica fiel del mockup #venta, L451-564).
 // Swatches en tokens de paleta (el mockup traía #8a6d1f/#c7d3dd ajenos → §3.2 disciplina estricta).
-const venta = [
+// `swatches` tipado al UNION de la paleta (= prop de LuCard): sin la anotación, el literal infiere
+// `string[]` y no encaja en `Array<'navy'|'gold'|'gold-bright'|'silver'>` (astro check ts2322).
+type SwatchTok = 'navy' | 'gold' | 'gold-bright' | 'silver';
+const venta: Array<{
+  img: string; alt: string; imgPos?: string; badge: string; zona: string; title: string;
+  tagline: string; swatches: SwatchTok[]; tipologias: string; specs: string[];
+  price: string; note: string; href: string;
+}> = [
   { img: '/assets/villa-pool.webp', alt: 'Apartamento en Castillogrande', imgPos: 'center 60%', badge: 'En venta', zona: 'Castillogrande', title: 'Torre Marea', tagline: 'Vista abierta a la bahía.', swatches: ['navy', 'gold', 'silver'], tipologias: '3 tipologías', specs: ['3 hab.', '3 baños', '142 m²'], price: 'Desde $1.450M', note: 'o crédito desde $6.2M/mes', href: '/ficha' },
   { img: '/assets/villa-modern.webp', alt: 'Casa republicana en Manga', badge: 'En venta', zona: 'Manga', title: 'Casa Republicana', tagline: 'Patrimonio restaurado con alma.', swatches: ['gold', 'navy'], tipologias: '2 tipologías', specs: ['4 hab.', '3 baños', '210 m²'], price: 'Desde $980M', note: 'o crédito desde $4.1M/mes', href: '/ficha' },
   { img: '/assets/estate-golden.webp', alt: 'Penthouse en Bocagrande', badge: 'En venta', zona: 'Bocagrande', title: 'Penthouse Dorado', tagline: 'Terraza privada con piscina.', swatches: ['gold-bright', 'gold', 'navy', 'silver'], tipologias: 'única', specs: ['4 hab.', '4 baños', '320 m²'], price: 'Desde $3.200M', note: 'o crédito desde $13.6M/mes', href: '/ficha' },
