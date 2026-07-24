@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2022",
+    "lib": ["es2022"],
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "sourceMap": true,
+    // rootDir = `portal/` para poder REUSAR la lógica del dominio (`src/lib/domain/catalogo.ts`) sin
+    // duplicarla: el contrato del índice tiene UN dueño (ADR §57). El emitido conserva la estructura →
+    // `main` = lib/functions/src/index.js. `catalogo.ts` solo tiene imports de TIPO ⇒ su JS no arrastra deps.
+    "rootDir": "..",
+    "outDir": "lib"
+  },
+  "include": ["src/**/*.ts", "../src/lib/domain/**/*.ts"],
+  "exclude": ["../src/lib/domain/**/*.test.ts", "lib"]
+}

@@ -1,5 +1,7 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+  // `functions/` es un codebase APARTE (Cloud Functions, CommonJS + Node 20) con su PROPIO tsconfig:
+  // typecheckearlo aquí lo haría dos veces con settings distintos y mete su `lib/` compilado como ruido.
+  "exclude": ["dist", "functions"]
 }

@@ -5,6 +5,10 @@ node_modules/
 dist/
 .astro/
 
+# build de las Cloud Functions del portal (se regenera con `npm --prefix portal/functions run build`;
+# el predeploy de firebase.json lo reconstruye — commitearlo arriesga drift fuente↔compilado)
+functions/lib/
+
 # cloudflare / wrangler
 .wrangler/
 worker-configuration.d.ts
