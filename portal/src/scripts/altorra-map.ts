@@ -2,13 +2,12 @@
 // Cliente ÚNICO compartido por la ficha y el SERP. Se ejecuta SOLO en el navegador (isla).
 //
 // DISEÑO (degradación limpia):
-//  · El basemap vive en un `.pmtiles` de Cartagena (~3.3 MB, generado con go-pmtiles) EMPACADO como asset
-//    estático en `public/basemap/` → se despliega con el sitio (cero APIs de pago, cero credenciales R2).
-//    Refinamiento del sello "pmtiles en R2" (§3.7, ADR §55.8): para UN basemap chico e inmutable, el asset
-//    estático es más simple que R2 (que sigue siendo el hogar de las FOTOS: muchas, grandes, de usuario).
-//  · La URL es CONFIGURABLE (`PUBLIC_PMTILES_URL`); default = el asset estático. La ruta Worker R2
-//    `/tiles/[file]` queda como alternativa para tiles futuros/grandes. Si el archivo faltara, el mapa NO
-//    pinta y el ESQUEMÁTICO SELLADO permanece visible (fallback).
+//  · El basemap vive en un `.pmtiles` de Cartagena (~3.3 MB, generado con go-pmtiles) EMPACADO en
+//    `public/basemap/` y SERVIDO por la ruta Worker `/tiles/[file]` CON soporte de RANGE (§55.9).
+//    ⚠️ NO servirlo como asset estático plano: Cloudflare Static Assets IGNORA el header Range (200 +
+//    archivo entero) y pmtiles.js NECESITA range → el Worker trocea el rango (ADR §55.9). Cero R2/credenciales.
+//  · La URL es CONFIGURABLE (`PUBLIC_PMTILES_URL`); default = la ruta Worker. Si el archivo faltara, el
+//    mapa NO pinta y el ESQUEMÁTICO SELLADO permanece visible (fallback).
 //  · Al pintar el basemap real, el contenedor recibe `.is-live` → se oculta el esquemático y aparecen
 //    los pines-precio como marcadores MapLibre (se mueven con el mapa). El emparejamiento card↔pin
 //    (hover) sigue funcionando: los marcadores llevan `data-pin-idx` igual que los pines esquemáticos.
@@ -34,7 +33,7 @@ interface PinData {
 
 // URL del basemap. Default = asset estático empacado con el sitio. Override por env para apuntar a la
 // ruta R2 (`/tiles/cartagena.pmtiles`) o a un `.pmtiles` remoto (p.ej. build.protomaps.com) en pruebas.
-const PMTILES_URL = (import.meta.env.PUBLIC_PMTILES_URL as string | undefined) || '/basemap/cartagena.pmtiles';
+const PMTILES_URL = (import.meta.env.PUBLIC_PMTILES_URL as string | undefined) || '/tiles/cartagena.pmtiles';
 
 let protocolReady = false;
 let booted = false;

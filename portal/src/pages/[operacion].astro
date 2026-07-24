@@ -35,7 +35,7 @@ export function getStaticPaths() {
   type SerpPin = { left: string; top: string; label: string; lat: number; lng: number; on?: boolean };
   const pinsVenta: SerpPin[] = [
     { left: '26%', top: '56%', label: '$1.450M', lat: 10.393, lng: -75.560 },          // Castillogrande · card 1
-    { left: '56%', top: '36%', label: '$980M', on: true, lat: 10.410, lng: -75.535 },   // Manga · card 2
+    { left: '56%', top: '36%', label: '$980M', lat: 10.410, lng: -75.535 },            // Manga · card 2 (sin pre-resaltar: solo se ilumina al hover, feedback Daniel)
     { left: '22%', top: '72%', label: '$2.100M', lat: 10.399, lng: -75.554 },           // Bocagrande · card 3
     { left: '47%', top: '24%', label: '$760M', lat: 10.446, lng: -75.514 },             // Crespo · card 4
   ];
