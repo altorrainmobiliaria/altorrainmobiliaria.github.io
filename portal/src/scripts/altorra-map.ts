@@ -23,12 +23,54 @@ import { layers, namedFlavor } from '@protomaps/basemaps';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './altorra-map.css';
 
-interface PinData {
+export interface PinData {
   i: number; // índice para emparejar con su card (data-pin-idx)
   lat: number;
   lng: number;
   label?: string; // precio corto, p.ej. "$980M"
   active?: boolean; // pin resaltado por defecto (mockup: card 2 "is-on")
+}
+
+/** Estado por contenedor: permite REEMPLAZAR los pines cuando el catálogo real llega (isla del SERP). */
+interface EstadoMapa {
+  map: MapLibreMap;
+  marcadores: Marker[];
+  pinClass: string;
+  fit: boolean;
+}
+const estados = new WeakMap<HTMLElement, EstadoMapa>();
+
+function pintarPines(el: HTMLElement, pins: PinData[]): void {
+  const st = estados.get(el);
+  if (!st) return;
+  for (const m of st.marcadores) m.remove();
+  st.marcadores = [];
+
+  for (const p of pins) {
+    if (typeof p.lat !== 'number' || typeof p.lng !== 'number') continue;
+    const pin = document.createElement('button');
+    pin.type = 'button';
+    pin.className = st.pinClass;
+    if (p.active) pin.classList.add('is-on');
+    pin.dataset.pinIdx = String(p.i);
+    pin.textContent = p.label ?? '';
+    pin.setAttribute('aria-label', p.label ? `Propiedad · ${p.label}` : 'Propiedad');
+    st.marcadores.push(new Marker({ element: pin, anchor: 'bottom' }).setLngLat([p.lng, p.lat]).addTo(st.map));
+  }
+
+  if (st.fit && pins.length > 1) {
+    const b = new LngLatBounds();
+    for (const p of pins) if (typeof p.lat === 'number' && typeof p.lng === 'number') b.extend([p.lng, p.lat]);
+    st.map.fitBounds(b, { padding: 70, maxZoom: 15, duration: 0 });
+  }
+}
+
+/**
+ * Reemplaza los pines del mapa (los del catálogo REAL sustituyen a los del shell). Idempotente y
+ * seguro si el mapa aún no montó (WebGL no disponible): simplemente no hace nada.
+ */
+export function setMarkers(el: HTMLElement, pins: PinData[]): void {
+  pintarPines(el, pins);
 }
 
 // URL del basemap. Default = asset estático empacado con el sitio. Override por env para apuntar a la
@@ -101,24 +143,9 @@ function initOne(el: HTMLElement): void {
   el.querySelector('[data-map-zoom="out"]')?.addEventListener('click', () => map.zoomOut());
 
   // Pines-precio como marcadores (se mueven con el mapa). Reusan el look sellado por la clase.
-  for (const p of pins) {
-    if (typeof p.lat !== 'number' || typeof p.lng !== 'number') continue;
-    const pin = document.createElement('button');
-    pin.type = 'button';
-    pin.className = pinClass;
-    if (p.active) pin.classList.add('is-on');
-    pin.dataset.pinIdx = String(p.i);
-    pin.textContent = p.label ?? '';
-    pin.setAttribute('aria-label', p.label ? `Propiedad · ${p.label}` : 'Propiedad');
-    new Marker({ element: pin, anchor: 'bottom' }).setLngLat([p.lng, p.lat]).addTo(map);
-  }
-
-  // Encuadrar a los pines cuando hay varios (SERP); la ficha usa center+zoom fijos.
-  if (fit && pins.length > 1) {
-    const b = new LngLatBounds();
-    for (const p of pins) b.extend([p.lng, p.lat]);
-    map.fitBounds(b, { padding: 70, maxZoom: 15, duration: 0 });
-  }
+  // El estado queda registrado para que la isla del catálogo pueda REEMPLAZARLOS (`setMarkers`).
+  estados.set(el, { map, marcadores: [], pinClass, fit });
+  pintarPines(el, pins);
 
   // Subir la cortina del esquemático SOLO cuando la FUENTE pmtiles cargó de verdad (no en `load`:
   // el estilo carga aunque el .pmtiles falle → `load` mostraría un mapa EN BLANCO). `isSourceLoaded`

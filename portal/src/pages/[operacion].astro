@@ -85,7 +85,7 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
     <div class="serp-head">
       <div>
         <p class="alt-eyebrow">Resultados</p>
-        <h1 class="serp-h1">{count} propiedades <span>en Cartagena de Indias</span></h1>
+        <h1 class="serp-h1" data-serp-count>{count} propiedades <span>en Cartagena de Indias</span></h1>
       </div>
       <div class="serp-sort">
         <label for="serp-order">Ordenar por</label>
@@ -98,13 +98,23 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
       </div>
     </div>
 
-    <!-- Layout: resultados + mapa -->
-    <div class="serp-body">
+    <!-- Layout: resultados + mapa. `data-serp` = raíz de la isla del catálogo real (§59). -->
+    <div class="serp-body" data-serp={op}>
       <div class="serp-list">
         <div class="serp-grid">
           {/* Las primeras 4 cards se enlazan con los 4 pins del mapa (hover-pin, §32.22) */}
           {results.map((p, i) => <PropertyCard {...p} pin={i < pins.length ? String(i) : undefined} />)}
         </div>
+
+        {/* MOLDE de card para la isla del catálogo REAL: lo renderiza el MISMO `PropertyCard`, así el
+            markup tiene UN dueño y no puede divergir del componente (L-29). Trae todas las partes
+            opcionales; la isla elimina las que no apliquen. No se muestra ni se indexa (<template>). */}
+        <template id="tpl-pcard">
+          <PropertyCard
+            img="" alt="" badge="En venta" zona="" beds={0} baths={0} area="0 m²"
+            title="" price="" priceLabel="Desde" priceSuffix="/mes" href="#"
+          />
+        </template>
         <div class="serp-more">
           <a class="alt-btn alt-btn--outline" href="#">Cargar más propiedades
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
@@ -173,6 +183,11 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
   .serp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); gap: clamp(18px, 2vw, 26px); }
   .serp-more { display: flex; justify-content: center; margin-top: 38px; }
 
+  /* Estado VACÍO / error de la isla del catálogo real (§59) — paleta sellada, sin rojos (§3.2). */
+  .serp-msg { grid-column: 1 / -1; background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-lg); padding: 44px 28px; text-align: center; box-shadow: var(--alt-elev-card); }
+  .serp-msg__t { font-family: var(--alt-font-display); font-size: 22px; color: var(--alt-ink); margin-bottom: 8px; }
+  .serp-msg__d { font-size: 14px; color: var(--alt-text-muted); }
+
   /* Mapa esquemático (placeholder — MapLibre real = follow-up) */
   .serp-aside { flex: 1 1 340px; min-width: 300px; position: sticky; top: 86px; align-self: flex-start; }
   .serp-map { position: relative; height: min(78vh, 720px); min-height: 440px; border-radius: var(--alt-r-2xl, 22px); overflow: hidden; border: 1px solid var(--alt-hairline); box-shadow: var(--alt-elev-aside); background: linear-gradient(160deg, #ffffff, var(--alt-mist)); }
@@ -231,17 +246,18 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
   // 3. HOVER-PIN — al posar en una card se ilumina su pin en el mapa. + focusin/focusout:
   //    con teclado no hay hover, y el mockup dejaba fuera esa ruta. Selecciona por `data-pin-idx`
   //    → funciona igual sobre el pin ESQUEMÁTICO (fallback) y el marcador MapLibre (mapa vivo).
+  //    DELEGADO en el grid: la isla del catálogo real REEMPLAZA las cards (§59) y unos listeners
+  //    puestos por-card al arrancar se perderían con ese re-render. La delegación sobrevive.
   const setPin = (id: string | undefined, on: boolean) => {
     if (!id) return;
     document.querySelectorAll('[data-pin-idx="' + id + '"]').forEach((el) => el.classList.toggle('is-hot', on));
   };
-  document.querySelectorAll<HTMLElement>('.alt-pcard[data-pin]').forEach((card) => {
-    const id = card.dataset.pin;
-    card.addEventListener('mouseenter', () => setPin(id, true));
-    card.addEventListener('mouseleave', () => setPin(id, false));
-    card.addEventListener('focusin', () => setPin(id, true));
-    card.addEventListener('focusout', () => setPin(id, false));
-  });
+  const grid = document.querySelector<HTMLElement>('.serp-grid');
+  const pinDe = (e: Event) => (e.target as HTMLElement)?.closest?.<HTMLElement>('.alt-pcard[data-pin]')?.dataset.pin;
+  grid?.addEventListener('mouseover', (e) => setPin(pinDe(e), true));
+  grid?.addEventListener('mouseout', (e) => setPin(pinDe(e), false));
+  grid?.addEventListener('focusin', (e) => setPin(pinDe(e), true));
+  grid?.addEventListener('focusout', (e) => setPin(pinDe(e), false));
 
   // 4. SOMBRA DE LA BARRA DE FILTROS al hacer scroll (mockup res-filter: transition box-shadow +
   //    listener scrollY > 4). Nace sin sombra y la gana al despegar del top.
@@ -257,4 +273,8 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
   // 5. MAPA REAL (MapLibre + Protomaps, TODO-30). Isla client-side: monta sobre el esquemático
   //    y lo reemplaza al pintar el basemap; si el .pmtiles aún no existe, el esquemático permanece.
   import('../scripts/altorra-map').then((m) => m.bootMaps());
+
+  // 6. CATÁLOGO REAL (§59). Con `PUBLIC_CATALOGO_SOURCE=demo` (default) es un NO-OP: el SERP sigue
+  //    en demo. En `live` reemplaza cards y pines con el inventario real. Cutover = flip de flag.
+  import('../scripts/serp-catalogo').then((m) => m.bootCatalogo());
 </script>
