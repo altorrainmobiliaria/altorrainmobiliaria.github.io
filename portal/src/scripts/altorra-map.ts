@@ -124,11 +124,20 @@ function initOne(el: HTMLElement): void {
   // el estilo carga aunque el .pmtiles falle → `load` mostraría un mapa EN BLANCO). `isSourceLoaded`
   // solo es true si los tiles del viewport llegaron. Sin .pmtiles → nunca va a vivo → esquemático se queda.
   let wentLive = false;
-  map.on('sourcedata', (e) => {
-    if (!wentLive && e.sourceId === 'protomaps' && e.isSourceLoaded) {
+  const goLive = () => {
+    if (!wentLive) {
       wentLive = true;
       el.classList.add('is-live');
     }
+  };
+  // Señal primaria: la FUENTE pmtiles cargó sus tiles del viewport.
+  map.on('sourcedata', (e) => {
+    if (e.sourceId === 'protomaps' && e.isSourceLoaded) goLive();
+  });
+  // Refuerzo: `idle` = mapa terminó de cargar+pintar. Solo subimos si la fuente está REALMENTE cargada
+  // (idle sin tiles = fuente rota → NO ir a vivo, quedarse en el esquemático).
+  map.on('idle', () => {
+    if (!wentLive && map.isSourceLoaded('protomaps')) goLive();
   });
 
   // Fallo de fuente/tiles (aún no hay .pmtiles, red caída): no hacemos nada — el default ES el
