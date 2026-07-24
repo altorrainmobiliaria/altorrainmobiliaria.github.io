@@ -6,6 +6,16 @@
 > computed styles y espía de métodos, JAMÁS para juicio visual ni nada guiado por frames; **el juicio visual va SIEMPRE
 > por la extensión de Chrome** (`mcp__claude-in-chrome__*`); y `getComputedStyle` **MIENTE** en toda propiedad con
 > `transition` (mata la transición antes de medir). Orden de capas (L-27): build → estructura → computed → ojo.
+>
+> **⚠️ MATIZ CRÍTICO (2026-07-23, TODO-30/§55.9) — la extensión Chrome AUTOMATIZADA también congela el rAF de JavaScript**:
+> la corrección de L-26 ("la extensión RENDERIZA/ANIMA perfecto") es cierta para **animaciones CSS** (corren en el
+> compositor, siguen en 2º plano) pero **FALSA para contenido guiado por `requestAnimationFrame` en JS** — mapas WebGL
+> (MapLibre), `<canvas>` animado, bucles de tile-loading: cuando la pestaña automatizada está en 2º plano/sin foco,
+> Chrome ESTRANGULA el rAF de JS a 0 (probado: un `await` sobre un loop de rAF hace TIMEOUT del CDP; el mapa monta el
+> canvas pero NUNCA pide/pinta tiles). ⇒ un mapa WebGL **NO se puede verificar VISUALMENTE** ni en el panel ni en la
+> extensión automatizada. **Verifícalo FUNCIONALMENTE**: lee los datos con la MISMA librería apuntada a PROD (p.ej.
+> `pmtiles.js` `getHeader()`+`getZxy()` desde staging → prueba archivo+servicio+rangos end-to-end, L-34). El render en
+> sí corre en el navegador FOREGROUND del dueño. Distinción clave: CSS-anim = visible en la extensión · JS-rAF = NO.
 
 ---
 
