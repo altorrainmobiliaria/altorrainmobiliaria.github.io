@@ -4,7 +4,8 @@
 // un GET puntual por id (NO viola `verify:data`) + Workers Caching. Alimenta: cards del SERP + filtros
 // client-side + pins del mapa (TODO-30) + "similares" de la ficha. Solo-lectura pública.
 
-import type { ISODate, COP, Operacion, TipoInmueble } from './shared';
+import type { ISODate, COP, Operacion, TipoInmueble, EstadoPropiedad } from './shared';
+import type { Propiedad } from './propiedades';
 
 /** Shards del índice por operación (doc `indices/catalogo-{shard}`). Sharding desde el día 1 (§54.4): el
  *  límite de 1 MiB por doc coincide con el tripwire de búsqueda (~2K listings) → el mecanismo expira donde debe. */
@@ -61,4 +62,106 @@ export interface CatalogoIndice {
 /** Vacío canónico que el cliente devuelve cuando el índice aún no existe (NO es error — es estado-cero). */
 export function catalogoVacio(): CatalogoIndice {
   return { _version: 0, items: [] };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CONSTRUCCIÓN DEL ÍNDICE (camino de ESCRITURA, §54.4) — lógica PURA y determinista.
+// La ejecuta la Cloud Function `onWrite(propiedades)` con un REBUILD TOTAL idempotente. Vive aquí (dominio)
+// y no en la Function para que sea testeable sin emulador y para que el CONTRATO tenga un solo dueño.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Estados que SÍ salen en el catálogo público — espeja la whitelist de `firestore.rules`. */
+export const ESTADOS_PUBLICADOS: readonly EstadoPropiedad[] = ['disponible', 'reservado', 'cerrado'];
+
+export function esPublicada(p: Pick<Propiedad, 'estado'>): boolean {
+  return ESTADOS_PUBLICADOS.includes(p.estado);
+}
+
+/** Precio de DISPLAY según la operación (doble-precio de arriendo → se muestra el canon). */
+export function precioDisplay(p: Pick<Propiedad, 'operacion' | 'precio'>): COP | null {
+  if (p.operacion === 'venta') return p.precio?.valorVenta ?? null;
+  if (p.operacion === 'arriendo') return p.precio?.canon ?? null;
+  return p.precio?.precioNoche ?? null; // alojamiento
+}
+
+/** Motivo por el que una propiedad PUBLICADA no pudo entrar al índice (se REPORTA, no se oculta en silencio). */
+export interface OmitidaCatalogo {
+  id: string;
+  motivo: 'sin-precio' | 'sin-imagen' | 'sin-titulo';
+}
+
+/**
+ * Propiedad → resumen del catálogo. Devuelve `null` + motivo si NO puede pintar una card honesta
+ * (sin precio / sin imagen / sin título): mejor omitir y REPORTAR que mostrar una card rota o inventar datos (L-29).
+ */
+export function propiedadAResumen(p: Propiedad): { resumen: CatalogoResumen } | { omitida: OmitidaCatalogo } {
+  if (!p.titulo) return { omitida: { id: p.id, motivo: 'sin-titulo' } };
+  const precio = precioDisplay(p);
+  if (precio == null) return { omitida: { id: p.id, motivo: 'sin-precio' } };
+  const thumb = p.imagenPortada ?? p.imagenes?.[0];
+  if (!thumb) return { omitida: { id: p.id, motivo: 'sin-imagen' } };
+
+  // Badges SOLO desde flags REALES del dominio (nada inventado, L-29); máx 2.
+  const badges: string[] = [];
+  if (p.verificadoAltorra) badges.push('verificado');
+  if (p.featured) badges.push('destacado');
+
+  return {
+    resumen: {
+      id: p.id,
+      slug: p.slug ?? p.id,
+      titulo: p.titulo,
+      operacion: p.operacion,
+      tipo: p.tipo,
+      precio,
+      sector: p.geo?.barrio ?? '',
+      // Centroide del barrio; sin coords → card SÍ, pin NO (contrato del mapa, TODO-30).
+      coords: p.geo?.lat != null && p.geo?.lng != null ? { lat: p.geo.lat, lng: p.geo.lng } : null,
+      hab: p.specs?.habitaciones,
+      ban: p.specs?.banos,
+      area: p.specs?.areaConstruidaM2 ?? p.specs?.areaPrivadaM2,
+      thumb,
+      ...(badges.length ? { badges: badges.slice(0, 2) } : {}),
+      pub: p.updatedAt,
+    },
+  };
+}
+
+export interface IndiceConstruido {
+  items: CatalogoResumen[];
+  actualizado: ISODate;
+}
+export interface ResultadoIndices {
+  /** SIEMPRE los 3 shards (aunque vacíos): despublicar el último escribe lista VACÍA, no borra (§54.4 cond.2). */
+  indices: Record<CatalogoShard, IndiceConstruido>;
+  omitidas: OmitidaCatalogo[];
+}
+
+/**
+ * REBUILD TOTAL de los 3 shards desde el estado VIVO de `propiedades`. **Idempotente y determinista**
+ * (mismo input → mismo output byte-a-byte): ordena por `pub` desc y desempata por `id` asc, así dos
+ * ejecuciones concurrentes convergen al MISMO doc (§54.4 cond.1: patch incremental PROHIBIDO).
+ */
+export function construirIndices(propiedades: Propiedad[], actualizado: ISODate): ResultadoIndices {
+  const indices: Record<CatalogoShard, IndiceConstruido> = {
+    venta: { items: [], actualizado },
+    arriendo: { items: [], actualizado },
+    dias: { items: [], actualizado },
+  };
+  const omitidas: OmitidaCatalogo[] = [];
+
+  for (const p of propiedades) {
+    if (!esPublicada(p)) continue; // borradores/inactivos JAMÁS entran (anti-oráculo §54.4 cond.4)
+    const r = propiedadAResumen(p);
+    if ('omitida' in r) {
+      omitidas.push(r.omitida);
+      continue;
+    }
+    indices[operacionAShard(p.operacion)].items.push(r.resumen);
+  }
+
+  for (const shard of CATALOGO_SHARDS) {
+    indices[shard].items.sort((a, b) => (a.pub === b.pub ? a.id.localeCompare(b.id) : a.pub < b.pub ? 1 : -1));
+  }
+  return { indices, omitidas };
 }
