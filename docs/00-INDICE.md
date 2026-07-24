@@ -20,7 +20,7 @@
 | Dónde vive un componente, flujo, **schema Firestore**, blog | `20-MEMORIA-ESPACIAL` |
 | Un bug/síntoma que "te suena", receta, gotcha | `30-LECCIONES` |
 | Mapa (MapLibre/Protomaps/pmtiles/tiles/marcadores/R2 tiles) · binding CF desde ruta SSR | `99 §55` + `30 L-33` (`cloudflare:workers`) + `50 §Tiles` (subir .pmtiles) |
-| Catálogo (índice denormalizado `indices/*` · `catalogo.get` · `/api/catalogo` · SERP con datos reales) | `99 §54`(decisión) · `§56`lectura · `§57`núcleo · `§58`Functions · `§59`SERP+flag · `30 L-35`/`L-36` |
+| Catálogo (índice denormalizado `indices/*` · `catalogo.get` · `/api/catalogo` · SERP con datos reales) | `99 §54`decisión · `§56`lectura · `§57`núcleo · `§58`Functions · `§59`SERP+flag · **`§60`frontera+ficha** · `30 L-35`/`L-36` |
 | Verificar UI (screenshot/computed/scroll/interacción · panel congelado vs Chrome) | hoja `31-VERIFICACION-UI` (L-22/L-26/L-28 completas; lápidas en `30`) |
 | Project ID, cuentas IAM, deploy, secrets | `50-CONFIG-INFRA` |
 | Competencia/mercado inmobiliario, benchmark | `40-LOBULOS` → `41-MERCADO` |
@@ -69,7 +69,7 @@
 | §46 | **TODO-27: ESTANCIAS FIEL** (`estancias.astro`): galería mosaico · reserva prellena fechas · breadcrumb · íconos. Re-audit 8/8. ⟦OPUS-4.8⟧ | 733 |
 | §45 | **TODO-27: TURISMO FIEL** (`turismo.astro`): #inversión (grid 3 cards vidrio, sin foto) · zonas card-blanca + kicker · copy/CTA/hero. Re-audit 8/8. ⟦OPUS-4.8⟧ | 700 |
 | §44 | **brain-kit v1.0** (encargo Daniel): kit de neurogénesis PORTABLE (kernel fork + plantillas §G + 38 skills + runbook 10 fases). Verif. adversarial: 25 hallazgos aplicados, 0 fugas. En `GitHub/brain-kit/`. ⟦FABLE-5⟧ | 668 |
-| §43 | **TODO-27: FICHA FIEL** (8 + 1 del crítico, `ficha.astro`): specs/sello-retirado/favorito-toggle/badge · POI-íconos/flecha/banda-cierre/miniatura · **ALTA 3ª card que §32.24 nunca tocó (`3a66a69` era HOME) → Crespo**. Re-audit 9+1 → 8/9. L-28 recurrió (computed miente con `transition`). Bóveda `2026-07-18-ficha-reaudit-*`. ⟦OPUS-4.8⟧ | 629 |
+| §43 | **TODO-27: FICHA FIEL** (`ficha.astro`, 8+1): specs · favorito · POIs · banda de cierre · ALTA 3ª card→Crespo. Re-audit 8/9; L-28 recurrió. ⟦OPUS-4.8⟧ | 629 |
 | §42 | **HUMO MONTADA (pausa) y §42.8 ENCENDIDA — "Activo"** (extensión Chrome, Daniel en vivo): campaña `120250036063330588` Leads+CTWA $4.000/día · Cartagena+40km · pieza v4 + chat USTED sin formulario · 5 auto-mejoras IA apagadas · revisión de Meta APROBÓ. Desviaciones: edad 25 (tope A+), idiomas Todos. Gotcha página default de CARS → L-32. ⟦FABLE-5⟧ | 595 |
 | §41 | **TODO-28 #2 ✅ candado del boot** (`boot-gate.mjs` bloqueante + poda router + one-in-one-out) + fix kernel ✅-falso ×3 + HUMO bloqueada por rollout Ads-MCP (runbook en bóveda). ⟦FABLE-5⟧ | 566 |
 | §40 | **Meta 100% operativo + pieza de humo APROBADA** (embudo `pauta-captacion §0b` + L-31) + caja negra anti-saturación (TODO-28 #1, session-handoff). ⟦FABLE-5⟧ | 530 |
@@ -94,6 +94,7 @@
 | §21 | **Ola 0.2: portal VIVO en Cloudflare Workers staging** (`altorra-portal.altorrainmobiliaria.workers.dev`): dueño creó cuenta CF+R2+token+secrets (guiado, Fincaraíz), CI desplegó. Verificado en vivo (home+SSR+noindex+favicon). KV auto-provisionado, R2 conectado. Gotcha: registrar subdominio workers.dev antes del 1er deploy (→ L-16). ⟦OPUS-4.8⟧ | 173 |
 | §52 | **CEREBRO v2 · F2 piloto** (TODO-32): 💓 heartbeat (sidecar `.estado-auto` — el 05 pierde lo derivable; costo-cerebro midió 52% 🔴) · 🧊 consolidación-en-frío · 📦 brain:archive (este ADR nació de él) · punto ciego gate #0 cazado EN VIVO → v1.5.1 compara contenido. ⟦FABLE-5⟧ | 871 |
 | §53 | **CEREBRO v2 · F3 — 🏁 v2 NÚCLEO COMPLETO** (TODO-32): gate #14 escala con gracia (probado con cars: gap 22 → WARN) · 🧭 banner en cristiano en cada boot · skill `mantenimiento-general` (ejecutor, jamás calendario) · kernel v1.6.0 ×4 · bundles frescos. Restos: hooks hermanos + TODO-31 c/d. ⟦FABLE-5⟧ | 881 |
+| §60 | **Hallazgo: la FICHA pide 4 datos que el modelo NO tiene** (dirección exacta=PII prohibida · financiación=afirmación financiera · asesor · POIs) → NO construirla a ciegas (L-29) + **frontera pre-cutover verificada** (Republicar sin auth · purga sin secreto). ⟦OPUS-5⟧ | 956 |
 | §59 | **§54 obra — SERP cableado al catálogo REAL** (isla tras flag `demo\|live`; markup clonado del `<template>` de PropertyCard = un solo dueño · `setMarkers` · hover delegado · estados vacío/error). **Cutover = flip de flag.** Bug del fallo parcial → L-36. ⟦OPUS-5⟧ | 946 |
 | §58 | **§54 obra — PLOMERÍA del catálogo**: `portal/functions/` como CODEBASE APARTE (deploy aislado del legacy) · `rebuildCatalogo` con **guarda anti-adelantamiento** (→ L-35) · triggers onWrite+barrido+Republicar (coalescencia que NO pierde ediciones). Emulador 33/33 (GATE-CRASH+CARRERA). Deploy=cutover. ⟦OPUS-5⟧ | 936 |
 | §57 | **§54 obra — NÚCLEO del camino de ESCRITURA** (`construirIndices` rebuild TOTAL idempotente + determinista · `propiedadAResumen` · omitidas REPORTADAS con motivo · lógica PURA en dominio, no en la Function). vitest 42/42. Falta la PLOMERÍA (Functions+trigger+purga, deploy=cutover). **Gobernanza: implementador = ⟦OPUS-5⟧ desde 2026-07-24.** | 926 |
