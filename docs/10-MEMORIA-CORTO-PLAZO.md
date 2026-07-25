@@ -7,15 +7,17 @@
 
 ---
 
-## 🎯 Foco actual (re-sellado 2026-07-20, auditoría Nivel-2 #4 → §49)
+## 🎯 Foco actual (re-sellado 2026-07-24 · pivote de misión §61)
 
-> **FRENTE 1 — portal**: TODO-27 ✅ CERRADO → §43-§48 + L-29 + bóveda. **Siguiente = TODO-30 (MapLibre, EN FRESCO —
-> su fila ya trae tiles sellados + criterio de mapa)**. Método de fidelidad → L-29/L-24/L-28 (`30`); piezas
-> reusables → `99 §32.10-.13` (5 cards NO intercambiables + `.alt-rail`/`.alt-btn-sweep`); mockups en `portal/design/mockups/`.
+> **⭐ FRENTE 0 — FUNDACIÓN OPERATIVA (nuevo arco, mandato Daniel 2026-07-24) = TODO-34 ← SIGUIENTE (sesión
+> fresca Fable)**: armar la inmobiliaria COMPLETA con datos reales (procesos, legal, docs, capacitaciones);
+> Claude = abogado + todos los empleados a la vez; cerebro dual Code+Chat. Plan F1-F4 en la fila TODO-34.
 >
-> **FRENTE 2 — PAUTA: ✅ LISTA-PARA-ENCENDER** (§33-§37; estado vivo de la humo → flag 📣 de `05`). SSoT = skill
-> **`pauta-captacion`** (playbook 1ª campaña + setup en orden + gates + vigencia fechada). El encendido de la campaña
-> REAL converge con el CIERRE DE OBRA (números matrícula/RNT + privacidad + píxel/GA4 + landing → EN PAUSA → "sí" de Daniel).
+> **FRENTE 1 — portal**: TODO-27 ✅ · TODO-30 mapa ✅ (§55, falta vista foreground) · catálogo §56-§59 ✅
+> hasta la FRONTERA pre-cutover (§60). Método fidelidad → L-29/L-24/L-28; mockups en `portal/design/mockups/`.
+>
+> **FRENTE 2 — PAUTA ✅ LISTA-PARA-ENCENDER** (§33-§37; humo → flag 📣 de `05`; SSoT = skill `pauta-captacion`).
+> El encendido REAL converge con el CIERRE DE OBRA → "sí" de Daniel.
 >
 > **🎨 DISEÑO SELLADO — NO re-litigar** → `CLAUDE.md §1` + `portal/src/styles/tokens.css` (SSoT) + ADR §23-§23.9.
 > Dev: `npm --prefix portal run dev` (4321). (La VOZ sí está EN FORJA — memoria.)
@@ -39,21 +41,20 @@
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). | 🟡 abierto | |
 | **TODO-28** | 🧠 **Endurecer el cerebro**: #1-#3 ✅ (§40-§41) · **#4 ✅ `brain:pull` (F1 §51)** · #5 filas del índice auto vía `brain:archive` ✅ (§52; generador completo = opcional) · **#6 ✅ AUTOMATIZADA en el heartbeat** (§52: % por paths en cada boot — hoy **52% 🔴, mes 1 de medición**; >30% dos meses → PODAR doctrina) · #7 sello de vencimiento en hechos >90d (pendiente — candidato a resonancia). | 🟡 #7 | $0 |
 | **TODO-29** | 📣 **PAUTA**: humo encendida 07-18 → estado vivo en flag 📣 de `05`. **Paso siguiente**: al agotarse el saldo, verificar FACTURACIÓN → cierra fontanería §4b → calibra la CAMPAÑA REAL (gate = cierre de obra). | 🔥 vigilar | no tocar 7d |
-| **TODO-30** | 🗺️ **MapLibre real — CÓDIGO COMPLETO + verificado a nivel de datos (§55/.8/.9, Opus 2026-07-23)**: isla `altorra-map.ts` + basemap Cartagena servido por ruta Worker con RANGE (`tiles/[file].ts` lee ASSETS y troceá; §55.9 — Static Assets ignora Range, L-34) + fallback + card↔pin (pin pre-resaltado quitado). **Verificado E2E**: pmtiles.js leyó tiles REALES z10/12/14 desde staging vía 206. **Falta solo la VISTA en foreground** (rAF congelado en pestañas automatizadas — panel Y extensión, L-34/31 → no verificable por mí; render corre en el Chrome de Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista foreground | §55.9 |
+| **TODO-30** | 🗺️ **MapLibre real ✅ CÓDIGO COMPLETO (§55/.8/.9)** — tiles por Worker+Range, verificado E2E con pmtiles.js (z10/12/14 desde staging). **Falta SOLO la vista en foreground** (rAF congelado en pestañas automatizadas, L-34/`31` → la confirma Daniel en su Chrome). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§59; frontera verificada §60)**. Para ver datos reales: (1) **deploy COORDINADO en el cutover** (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. **Lo demás está BLOQUEADO por causas reales (§60.4)**: ficha dinámica → 4 bloques sin dato, 2 con filo legal (§60.2/.3) · botón Republicar → `gestion` SIN auth · purga HMAC → secreto CF (dueño). | 🟢 cutover | §60 |
-| **TODO-33** | 🧾 **FICHA dinámica — decisiones ANTES de construir (§60.3)**: (a) dirección exacta = OMITIR siempre (PII) · (b) financiación = legal define disclaimer o se omite la cifra · (c) asesor = `asesorId` en el modelo vs bloque genérico "Equipo ALTORRA" · (d) POIs = omitir en v1. Regla: en real, bloque sin dato se OMITE (jamás heredar el demo). | 🔵 decisión | §60 |
+| **TODO-33** | 🧾 **FICHA dinámica — decisiones ANTES de construir (§60.3)**: (a) dirección exacta = OMITIR siempre (PII) · (b) financiación = legal define disclaimer o se omite la cifra · (c) asesor = `asesorId` en el modelo vs bloque genérico "Equipo ALTORRA" · (d) POIs = omitir en v1. Regla: en real, bloque sin dato se OMITE (jamás heredar el demo). Sus insumos legales saldrán de TODO-34. | 🔵 decisión | §60 |
+| **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61 = SSoT del arco: mandato + corpus 83 docs con operación VIVA + gaps)**. **PLAN F1-F4 (Fable orquesta, sesión fresca)**: F1 ingesta+triaje del corpus (atajo: `all_docx_content.txt` 675K en `Downloads/ALTORRA Company (Legal)/`; Drive vía MCP o carpeta local) · F2 investigación web + consejo externo (`15 §0b`) · F3 neurogénesis (lóbulo OPERACIÓN + skills financiero·legal·contable·administración·arriendos larga/corta + **cerebro DUAL Code+Chat**) · F4 entregables reales (manuales·contratos faltantes·checklists·capacitaciones). Gates: legal best-effort `.gov.co` · L-29 nada inventado · docs del dueño traen ERRORES → triaje. | ⭐ SIGUIENTE (Fable) | §61 |
 | **TODO-32** | 🧠 **CEREBRO v2 ×4 — APROBADO por Daniel (2026-07-20)**. SSoT = bóveda `2026-07-20-cerebro-v2-sintesis-propuesta.md` + regla de admisión de maquinaria. **F0 ✅ (§50)** kill-list + offsite probado · **F1 ✅ (§51)**: canónico en `brain-private/kernel/` + `brain:pull` + gate #0 BLOQUEANTE — **×4 en v1.4.1, fix propagado <2 min**. Deuda visible en hermanos (cars 7 · bersaglio 8 problemas + auditorías vencidas) = SUS carriles. `core.hooksPath` diferido a F2/F3. **🏁 v2 NÚCLEO COMPLETO ✅** (F0 §50 · F1 §51 · F2 §52 · F3 §53, kernel **v1.6.0** ×4): las 4 clases de dolor probadas quedaron imposibles-por-diseño o empujadas-por-gate. **Restos vivos**: (a) F2-s2 — cablear hook SessionStart en los 3 hermanos (kernelFiles+settings; carril de cada repo, la instrucción vive en la skill) · (b) **PODA REAL de doctrina** cuando la métrica del banner marque >30% dos meses (criterio de salida — hoy 52% 🔴, mes 1 de medición) · (c) TODO-31: solo queda la verificación de Daniel (recovery codes). Mantenimiento mensual: el banner avisa TOCA → Daniel dice "haz el mantenimiento mensual" → skill `mantenimiento-general`. | 🟡 restos a/b/c | §53 · bóveda |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **▶ 2026-07-23 (día completo — durable en ADRs §49-§56; aquí solo lo vivo)**: Fable cerró el carril cerebro
-> (v2 §49-§53 · TODO-31 CERRADO incl. códigos 2FA de Daniel · consejo `15 §0b` · TODO-22 decisión §54+.8).
-> Opus implementó **TODO-30 mapa** (§55, 2 compuertas: tiles+Chrome) y la **LECTURA del catálogo** (§56).
-> **Accionables vivos**: (a) 🔁 sinapsis: cars/bersaglio portan `15 §0b` en SU sesión (`sinapsis-cerebros`) ·
-> (b) ⚠️ HUMO a D+5 seguro agotada → verificar Ads Manager con navegador (TODO-29 · fontanería §4b) ·
-> (c) ⛔ NO tocar: diseño sellado · deuda de hermanos (SUS sesiones) · kernel local (flujo → TODO-23).
-> **2026-07-24 (OPUS-5)**: núcleo de ESCRITURA del catálogo (§57) · 🏷️ **el rol de implementador pasa a
-> Opus 5** (Daniel; tag `OPUS-5` desde hoy, los ⟦OPUS-4.8⟧ históricos NO se reescriben — `CLAUDE.md §2`).
-> **SIGUIENTE**: la PLOMERÍA de la Function (§57.7) — o el wiring SERP tras el flag, si se prefiere ver datos.
+> **▶ RELEVO A SESIÓN FRESCA (2026-07-24, cierre del arco portal → arranca FUNDACIÓN)**: en 2 días quedó
+> **TODO-30 mapa ✅** (§55) y **TODO-22 catálogo ✅ hasta la frontera pre-cutover** (§56-§59; frontera y ficha
+> → §60). 🏷️ Implementador = **Opus 5** desde hoy (históricos NO se reescriben). **⭐ SIGUIENTE = TODO-34
+> FUNDACIÓN (sesión fresca, FABLE orquesta)** — su fila trae corpus+gaps+plan F1-F4; arranque: leer §61 +
+> probar el conector Drive; el volcado `all_docx_content.txt` (675K) es el atajo de ingesta.
+> **Accionables vivos**: (a) 🔁 sinapsis `15 §0b` a cars/bersaglio (SUS sesiones) · (b) ⚠️ HUMO: verificar
+> Ads Manager (TODO-29) · (c) ⛔ NO tocar: diseño sellado · deuda de hermanos · kernel local (→ TODO-23).
