@@ -27,6 +27,12 @@
 
 ## Cómo opera HOY (probado con papeles reales, no manual)
 
+> ⚡ **Actualización Daniel 2026-07-24**: **NO hay contratos vigentes** — todos los arrendamientos/administraciones
+> finalizaron; COMPANY **arranca de cero**. Las plantillas canónicas = las de última actualización del Drive
+> (= CONSOLIDADO del corpus, confirma el dictamen F1). ⇒ No hay migración de contratos vivos: el pasado se
+> CIERRA documentalmente (soportes bajo la SAS vieja) y lo próximo que se firme nace en COMPANY con el kit limpio.
+> Lo de abajo describe el ciclo YA DEMOSTRADO (2025→feb-2026) — es la experiencia real, no el estado presente.
+
 Administración de vivienda bajo mandato, ciclo completo demostrado con 2 aptos en Conjunto Milán (Parque
 Heredia): recauda el cargo mensual integral del arrendatario → descuenta **10% + IVA 19%** (la cifra REAL;
 las plantillas dicen 8-12%) → paga la cuota PH ella misma vía PSE (aprovecha descuento por pronto pago) →
@@ -83,21 +89,63 @@ canon ANUAL") · protocolo de mora **D1 vs D5** para el primer hito (y el mismo 
 7. **Calidad**: el sistema de códigos es heredado de un HSEQ ajeno, formatos vacíos, 2 convenciones
    (NN-XXX vs XXX-NN) → lista maestra + control documental propio.
 
-## Riesgos legales a VERIFICAR en F2 (fuentes `.gov.co` — lo que `42-LEGAL` aún no cubre)
+## Marco legal operativo VERIFICADO (F2 2026-07-24 · citas verbatim + URLs → bóveda `f2-...-CRUDO`)
 
-Mora/intereses/restitución + preaviso e indemnización (L.820 arts. 22-25) · tope incremento canon (art. 20) ·
-legalidad del pago anticipado de cánones · "depósito 1-2 cánones" ofrecido en docs del dueño (vs prohibición
-art. 16 — 42-LEGAL regla 1 ya dice CERO depósitos) · cláusulas del CAR-000/FII-000 de dudosa eficacia
-(renuncias a orden público, mora automática 1 día, impugnación 48h, cobro a valor de bien nuevo) · promesa
-de compraventa: requisitos reales (autenticación NO es requisito de validez — verificar) · ruta
-venta→notaría (gastos 50/50, retención fuente, beneficencia+registro) · arriendo comercial C.Co ·
-umbrales SAGRILAFT vs Régimen de Medidas Mínimas (CE 100-000016 Supersociedades — microempresa) · régimen
-IVA de comisiones (la FE real cobra IVA con pie "no responsable") · Ley 2300/2023 (20 llamadas frías/día) ·
-avalúos en el objeto social sin RAA (Ley 1673).
+> 6 frentes `.gov.co` (45+ claims con norma exacta) + consejo externo integrado. ⛔ NO es asesoría — gate abogado.
+
+**ILEGALES (retirar/reescribir):** depósito 1-2 cánones en vivienda (L.820 §16; multa ≤100 SMLMV §34 +
+riesgo de matrícula — en arriendo COMERCIAL sí es válido) · preaviso de 2 meses (mínimo legal 3; sin
+constancia escrita → renovación automática, §22-8/§24-5) · renuncia del arrendatario a reclamación
+administrativa (ineficaz, CC 16 + §33.a.5) · cláusulas probatorias del FII-000 — impugnación 48h, "prueba
+irrefragable", renuncia a peritajes = "por no escritas" (CGP 13); reposición a valor de bien NUEVO excede
+CC 1613-14 · operar/publicitar corta estancia sin RNT (cierre inmediato por alcaldía, L.1558 §33 par.5).
+**RIESGOSAS:** anticipo de 8 meses (lícito como precio; recaracterizable como depósito si respalda
+incumplimientos, §16 inc.2) · terminación "con efecto inmediato" (restitución SOLO judicial, CGP 384) ·
+FE cobrando IVA con pie "no responsable" (una SAS es SIEMPRE responsable — §437 par.3 es solo para PN;
+corregir plantilla Siigo + verificar resp. 48 en RUT) · llamadas frías sin protocolo (Ley 2300 §5: L-V
+7-19, Sáb 8-15, mecanismo de exclusión; números sin autorización → L.1581 §9) · anunciar DataCrédito sin
+autorización documentada (la finalidad contractual ampara — L.1266 §15/C-1011-08 — pero sin prueba =
+indefensión ante SIC) · autodeclarar SAGRILAFT (NO es sujeto obligado por umbrales; y ⚠️ la CE 100-000016
+fue DEROGADA el 2-jul-2026 por la **CE 100-000020, Cap. IX, umbrales en UVB** — citar la nueva) · cláusula
+penal 3 cánones + perjuicios + 20% cobranza (el cúmulo exige pacto expreso CC 1600; tope mercantil 100%
+C.Co 867) · "comprador paga los gastos" (default legal = mitades CC 1862; la retención es SIEMPRE del
+vendedor, E.T. 398) · anticipos de hospedaje sin factura (alojamiento turístico = IVA 19%; parafiscal
+Fontur 2,5‰ SIN umbral desde L.2068; SIRE obligatorio con extranjeros — multa 105-2.631 UVT; el retracto
+de 5 días del art. 47 SÍ aplica a reservas a distancia).
+**LEGALES confirmadas:** esquema mandato canon-neto CON 4 formalidades (facturar el canon por cuenta del
+mandante · facturar la comisión con IVA · certificación al propietario · contabilidad separada — D.1625
+§1.6.1.4.9 y §1.2.4.11) · migración de contratos por CESIÓN (C.Co 887 ss.) CON aceptación del propietario
+(intuitu personae) + notificación escrita al arrendatario — o refirma, que con 1-2 contratos es lo simple ·
+codeudor/póliza/pagaré-con-carta-de-instrucciones en vivienda (C.Co 622) · comisión solo al registro
+verificado (más garantista que C.Co 1341) · prohibir subarriendo turístico al arrendatario (§17 default).
+**Datos duros para manuales:** reajuste del canon = tras 12 meses "bajo un mismo precio", ≤100% IPC del año
+anterior, NOTIFICADO o es inoponible (§20) · tope canon = 1% del valor comercial (≤2× avalúo catastral,
+§18) · terminación por arrendador: en prórrogas 3 meses + 3 cánones (§22-7); al vencimiento con causales
+especiales (caución 6 meses) o ≥4 años con 1,5 cánones (§22-8) · retención venta (PN): 1% hasta 10.000 UVT
++ 2,5% exceso (D.572/2025 — tarifa VOLÁTIL en 2026: verificar con el notario al cierre) · retefuente
+comisiones a PJ: 11% · retefuente canon: 3,5% y la practica el MANDATARIO · promesa: 4 requisitos (L.153
+§89) y la autenticación NO es de validez · el dominio se transfiere con la INSCRIPCIÓN en ORIP (CC 756) ·
+contenido mínimo del contrato = §3 de la L.820 (no §11) · paz y salvo predial obligatorio para escriturar
+(L.14/83 §27); el de PH no es bloqueante (constancia + solidaridad, L.675 §29) · RNBD: NO obligada
+(<100.000 UVT de activos, D.90/2018) · **RUB: 2 meses desde el RUT ⇒ venció ~jul-2026 → reportar YA**
+(sanción E.T. 658-3) · EEFF certificados por RL + contador (L.222 §37) · TRA/registro de huéspedes =
+prueba del contrato de hospedaje (L.2068 §21-22).
+**❓ Agenda abogado (no verificado en fuente oficial):** régimen de intereses sobre cánones (CC 1617 reglas
+3a-4a vs mercantil + unificación CSJ) · taxatividad de causales de terminación · tarifa registro Bolívar +
+estampillas · aplicación de L.1480 al arriendo de vivienda (concepto SIC) · frecuencia de Ley 2300 en
+prospección · valor UVB 2026 · reglamento PH silente vs autorización expresa para vivienda turística.
 
 ## Estado del arco TODO-34
 
-**F1 ✅** (este lóbulo + bóveda). **F2** = investigación `.gov.co` de la lista de arriba + consejo externo
-(prompt para Daniel → Gemini 3.1 Pro High). **F3** = este lóbulo ES la neurogénesis; skills nacen DESPUÉS
-de F4 (envuelven entregables — crearlas antes sería teatro). **F4** = backlog de arriba, por riesgo.
-Cuestionario de decisiones que SOLO Daniel puede tomar → bóveda SINTESIS §6.
+**F1 ✅** (§62) · **F2 ✅** (§63: 6 frentes verificados + consejo externo Gemini integrado — adoptado el
+reorden tesorería-primero; refutado diferir compliance de datos; su cita SAGRILAFT nació derogada).
+**F3** = este lóbulo ES la neurogénesis; skills tras F4. **F4 (orden final, ajustado al "cero contratos
+vigentes" §63.8)**: **#0** **reporte RUB YA** (vencido ~jul-2026) + Protocolo de Tesorería (cuenta escudo
+ANTES del primer mandato nuevo) + soportes históricos del anticipo/giros (SAS vieja) → **#1** corrección
+facturación/IVA (plantilla Siigo + resp. 48 en RUT) → **#2** **KIT DE ARRANQUE**: contrato canónico de
+administración + arrendamiento LIMPIOS (aplicando veredictos F2) + tarifario oficial + tabla única de
+umbrales — sin esto NO se puede firmar el próximo cliente → **#3** matrícula (resolución al expediente;
+los modelos se presentan a la autoridad, §29-b — conecta con #2) → **#4** societario liviano: acuerdo de
+accionistas + actas/libros + destino de la SAS vieja → **#5** compliance datos (Política + KYC sin
+FONPRECON; gate del portal/pauta) → **#6** corta estancia: RECOMENDACIÓN pausar hasta RNT+TRA+SIRE+política
+de cancelación (decisión Daniel). Cuestionario de decisiones SOLO-Daniel → bóveda SINTESIS §6.
