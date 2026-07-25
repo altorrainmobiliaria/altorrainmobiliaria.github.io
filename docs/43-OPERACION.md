@@ -141,9 +141,11 @@ prospección · valor UVB 2026 · reglamento PH silente vs autorización expresa
 **F1 ✅** (§62) · **F2 ✅** (§63: 6 frentes verificados + consejo externo Gemini integrado — adoptado el
 reorden tesorería-primero; refutado diferir compliance de datos; su cita SAGRILAFT nació derogada).
 **F3** = este lóbulo ES la neurogénesis; skills tras F4. **F4 (orden final, ajustado al "cero contratos
-vigentes" §63.8)**: **#0** **reporte RUB YA** (vencido ~jul-2026) + Protocolo de Tesorería (cuenta escudo
-ANTES del primer mandato nuevo) + soportes históricos del anticipo/giros (SAS vieja) → **#1** corrección
-facturación/IVA (plantilla Siigo + resp. 48 en RUT) → **#2** **KIT DE ARRANQUE**: contrato canónico de
+vigentes" §63.8)**: **#0** reporte RUB (✅ Daniel lo declaró reportado 07-25 — archivar acuse) + Protocolo
+de Tesorería (cuenta escudo ANTES del primer mandato nuevo; Daniel la tramita) + soportes históricos del
+anticipo/giros (SAS vieja) → **#1** **HABILITAR FE de COMPANY** (⚡ Daniel 07-25: la FE/Siigo 2025 era de
+la SAS VIEJA; COMPANY sin convenio hoy → gate antes del primer cobro; proveedor en investigación) +
+resp. 48 en RUT → **#2** **KIT DE ARRANQUE**: contrato canónico de
 administración + arrendamiento LIMPIOS (aplicando veredictos F2) + tarifario oficial + tabla única de
 umbrales — sin esto NO se puede firmar el próximo cliente → **#3** matrícula (resolución al expediente;
 los modelos se presentan a la autoridad, §29-b — conecta con #2) → **#4** societario liviano: acuerdo de
