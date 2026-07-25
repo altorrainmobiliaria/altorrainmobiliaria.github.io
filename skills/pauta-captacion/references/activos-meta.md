@@ -36,6 +36,24 @@ Alerta "Falta un método de pago válido" en WhatsApp Manager: aplica SOLO a con
 por el negocio** (plantillas / API). Las iniciadas por el cliente (CTWA = nuestro playbook) siguen en
 período gratuito → **NO es gate para encender la pauta**. Se revisará si algún día enviamos plantillas.
 
+## 🟣 BERSAGLIO JEWELRY como SOCIO (agregado 2026-07-25 — operador = líder de pautas ×2 por mandato Daniel)
+
+> Bersaglio nos asignó activos como socio (modelo agencia): se operan desde ESTE Business de Altorra
+> (Administrador de anuncios → cambiar de cuenta). Voz = `catalogo-voz-bersaglio`, JAMÁS la de Altorra.
+> Constancia completa para su cerebro: bóveda `brain-private/bersaglio/research-archive/2026-07-25-meta-business-setup-lider-pautas.md`.
+
+| Activo de Bersaglio (portfolio `417509312346303`, renombrado "Bersaglio Jewelry" hoy) | ID | Nuestro acceso |
+|---|---|---|
+| Página **Bersaglio Jewelry** (102 seg FB · IG 1,8k vinculado) | asset de la página | Contenido + Anuncios + Estadísticas |
+| Cuenta publicitaria del negocio | `2064219544145066` | **ACCESO TOTAL** · COP $0 · SIN método de pago |
+| WhatsApp Product Catalog | — | Solo crear anuncios |
+| ⚠️ IG `bersaglio_jewelry` | — | NO compartible aún (exige re-login IG en su Business — vía celular) |
+| 💰 Saldo prepago **COP $118.835** | cuenta PERSONAL de Kary `2199223463669869` | NO compartida (personal); decisión pendiente Daniel/Kary: reclamarla al portfolio (irreversible) o quemar el saldo desde su login |
+
+Gates antes de la 1ª campaña Bersaglio: dónde vive el presupuesto (cuenta del negocio + método de pago
+NUEVO vs saldo de Kary) · creatividades OK de Daniel · píxel de Bersaglio NO existe (crear dataset y
+cablearlo a `bersagliojewelry.co` si la campaña optimiza a web; para interacción/CTWA no es gate).
+
 ## Nota MCP
 El conector oficial (`mcp.facebook.com/ads`) está instalado y responde; la cuenta activa aún dice
 *"Ads MCP is gradually being rolled out"* → hasta que Meta la habilite, la operación fina va por el
