@@ -61,13 +61,14 @@ liquidación" = herramienta de venta), Serena del Mar, y un lote rural 12.000 m�
 | Capacitación leads | Decks PDF (el doc SGC formal PAL01 está a medio construir, NIT en blanco) | Protocolo: SLA <5 min · BANT · 6 escenarios A1/A2/B1/B2/C/D · cadencia D0/1/3/5/8/15 |
 | Tarifario | SOLO alojamientos existe | El inmobiliario NO EXISTE (scripts con `[%]`) — F4 con decisión de Daniel |
 
-## Cifras EN GUERRA (unificar con Daniel antes de generar cualquier plantilla)
+## Tarifario y umbrales OFICIALES (sellados por Daniel 2026-07-25 — derogan toda cifra previa)
 
-Ingresos arrendatario **2× vs 2.5×** canon · codeudor **1×/1.5×/3×** · fotos mínimas **15 vs 20** · ACM área
-**±15% vs ±20%** · arras **10-20% vs 10-30%** · prima póliza **50-80% vs 50-70%** (y error ×12: dice "del
-canon ANUAL") · protocolo de mora **D1 vs D5** para el primer hito (y el mismo deck se contradice tabla-vs-FAQ)
-· comisión admin sobre **canon solo vs cargo integral** (práctica real ≠ cotización ≠ contrato) ·
-**SAGRILAFT vs SARLAFT** (ni el término está unificado). La resolución = tabla canónica única (F4).
+**Administración vivienda: 10% + IVA sobre el cargo mensual integral (canon + cuota PH cuando aplique)** ·
+administración/colocación COMERCIAL: ⟦PENDIENTE decisión Daniel⟧ · **venta: 3%** · solo-colocación de
+arriendo: 1 canon (<3 años) / 2 (3-9) / 3 (≥10) · **ingresos arrendatario: 2× canon · codeudor: 2×** ·
+alojamientos: tarifario 2026 existente. **Corta estancia: FORMALIZAR TODO** (mandato 2026-07-25): RNT +
+TRA + SIRE + Fontur + contrato de hospedaje + política de cancelación — no se pausa la línea. Micro-cifras
+restantes (fotos, ACM ±%, arras, mora unificada) las propone el KIT en `02-TABLA-UNICA` → OK de Daniel.
 
 ## Gaps mayores (backlog F4, por riesgo)
 
