@@ -51,9 +51,8 @@
 
 ## 📝 Bitácora (efímera)
 
-> **▶ 2026-07-25 (sesión Fable)**: TODO-34 F1→F4-w1 ✅ (§62-§64) — kit de 14 docs LISTO en bóveda.
-> ⚠️ **Para Daniel: TODO vive en `entregables-fundacion/00-LEEME.md`** (acciones + decisiones) ·
-> extra: re-exportar `ALTORRA_LIMPIO_FINAL.xlsx` (corrupto).
-> **Accionables vivos**: (a) 🔁 sinapsis `15 §0b` a cars/bersaglio (SUS sesiones) · (b) ⚠️ HUMO: verificar
-> Ads Manager (TODO-29) · (c) ⛔ NO tocar: diseño sellado · deuda de hermanos · kernel local (→ TODO-23) ·
-> (d) 🔬 auditoría Nivel-2 VENCIDA (13 ADRs desde la #4) → Daniel dispara `mantenimiento-general`.
+> **▶ RELEVO FRESCO (2026-07-27, Fable)**: TODO-34 sistema 00-23 ✅ (pelota = `00-LEEME` + Gemini del
+> manual). **Líder de pautas ×2**: Meta Bersaglio listo, ACCESO TOTAL ×3 vía socio Altorra → mapa =
+> `activos-meta.md §Bersaglio` (SIGUE: verificar activos desde el usuario ALTORRA → 1ª pauta, voz
+> `catalogo-voz-bersaglio`, presupuesto=Daniel). **Vivos**: ⚠️ HUMO (TODO-29) · ⛔ diseño/hermanos/kernel ·
+> 🔬 auditoría Nivel-2 VENCIDA → `mantenimiento-general` (Daniel).
