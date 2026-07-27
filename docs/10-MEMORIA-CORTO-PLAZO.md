@@ -53,8 +53,8 @@
 
 > **▶ PAUTA BERSAGLIO EN CURSO (2026-07-27, Fable)**: plan v2 post-comité ✅ → bóveda
 > `bersaglio/2026-07-27-plan-pauta-semana1-SINTESIS.md`. Todo lo verificado en vivo (MCP, IVA 19%,
-> WhatsApp, decisión Daniel: cuenta Kary 14.200/día) → `activos-meta §Bersaglio`. **SIGUE**: insumos
-> Daniel (precios/material/garantía/.mp4/foto anillos — ⛔ Imagen 1 no sale: réplicas Cartier) →
-> re-export → montar EN PAUSA por navegador → "sí" → encender.
+> WhatsApp, decisión Daniel: cuenta Kary 14.200/día) → `activos-meta §Bersaglio`. Insumos Daniel ✅
+> (18k · garantía vida · video nuevo OK reemplaza anillos · WA 9:30-18:30 ×3 — addendum v2.1 bóveda).
+> **SIGUE**: foto original topos sin texto → overlays → montar EN PAUSA (navegador) → "sí" → encender.
 > **Vivos**: TODO-34 (pelota Daniel+Gemini) · ⚠️ HUMO (TODO-29) · ⛔ diseño/hermanos/kernel · 🔬 auditoría
 > Nivel-2 VENCIDA → `mantenimiento-general` (Daniel).
