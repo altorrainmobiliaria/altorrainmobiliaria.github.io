@@ -112,3 +112,27 @@ Encontradas ON sin pedirlas: **Mejoras en el texto** (reescribe el copy → aña
 ("WhatsApp Video…"). Identificar SIEMPRE por **resolución + duración** contra el archivo local
 (caso real: se cargó un video viejo 476×846 en vez del correcto 576×1024). Si la biblioteca no lista el
 archivo, es que NO se subió — no asumir.
+
+## 10. 📐 BENCHMARKS REALES DE LA CUENTA (humo Altorra, 19-21 jul 2026) — reemplazan los estimados
+Primera pauta real de Altorra (`120250036063330588`, CTWA Propietarios-CTG, Cartagena, $4.000/día sobre
+saldo prepago de $5.000). **Verificado en Ads Manager 2026-07-27** (`verificado-vivo`). Muestra MINÚSCULA
+(3 conversaciones) → son órdenes de magnitud, no verdad estadística; recalibrar con la campaña real.
+
+| Métrica | Real | Benchmark que teníamos | Veredicto |
+|---|---|---|---|
+| Gasto total | $4.992 (19-jul $2.619 · 20 $1.764 · 21 $605 · restos $4) | — | saldo agotado a $0 |
+| Impresiones / Alcance | 551 / 401 personas | — | frecuencia **1,37** (sin fatiga) |
+| **CPM** | **$9.059** | USD 2,0-3,2 ≈ COP 8.200-13.100 | ✅ banda baja |
+| CTR (todos) / (enlace) | **1,63%** / 0,73% | 0,6-1,6% ecommerce | ✅ en banda alta |
+| CPC (todos) / (enlace) | $555 / $1.248 | — | — |
+| **Clic→chat** | **75%** (3 de 4 clics al enlace) | 50-60% esperado | ⭐ excelente — la fontanería CTWA FUNCIONA |
+| **Costo por conversación** | **$1.664** | sano <$4.000 | ⭐ 2,4× mejor que el umbral |
+
+**Fontanería CERRADA ✅**: 6 transacciones "Pagado" vía saldo de prepago, **todas con Identificador de
+factura de IVA** (`FBADS-624-…`, descargables) → Meta factura con IVA en Colombia, confirmado por 2ª vez
+(la 1ª fue la cuenta de Kary/Bersaglio). El objetivo real de la humo era ESTO, no vender.
+⚠️ **Meta NO gastó el diario completo** ($2.619 de $4.000 el mejor día): con audiencia local + puja de
+volumen, el techo real de entrega en Cartagena está por debajo del presupuesto — no subir el diario a
+ciegas en la campaña real.
+🚨 **Estado hoy: entrega = "Error en el pago"** (saldo $0, sin cobro automático). La campaña sigue ACTIVA
+y arrancaría sola al recargar → **apagarla o dejarla en pausa antes de recargar**, o gastará sin plan.
