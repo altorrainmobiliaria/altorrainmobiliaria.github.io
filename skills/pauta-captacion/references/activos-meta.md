@@ -45,14 +45,24 @@ período gratuito → **NO es gate para encender la pauta**. Se revisará si alg
 | Activo de Bersaglio (portfolio `417509312346303`, renombrado "Bersaglio Jewelry") | ID | Nuestro acceso |
 |---|---|---|
 | Página **Bersaglio Jewelry** (102 seg FB · IG 1,8k vinculado) | asset de la página | **ACCESO TOTAL** (todo excepto acciones delicadas — elevado 2026-07-27, orden Daniel, verificado tras recarga) |
-| Cuenta publicitaria del negocio | `2064219544145066` | **ACCESO TOTAL** · COP $0 · SIN método de pago |
+| Cuenta publicitaria del negocio | `2064219544145066` | **ACCESO TOTAL** · COP $0 · SIN método de pago · **✅ Ads-MCP HABILITADO** (verificado 2026-07-27) |
 | WhatsApp Product Catalog | — | **ACCESO TOTAL** (administrar todo — elevado 2026-07-27) |
+| **WABA "Bersaglio Jewelry -By KaryMendoza"** | `351366081401444` | En el portfolio Bersaglio · número **+57 301 3752592 Conectado, calidad Alta** (`verificado-vivo: 2026-07-27`) → CTWA viable |
 | ⚠️ IG `bersaglio_jewelry` | — | NO compartible aún (exige re-login IG en su Business — vía celular) |
-| 💰 Saldo prepago **COP $118.835** | cuenta PERSONAL de Kary `2199223463669869` | NO compartida (personal); decisión pendiente Daniel/Kary: reclamarla al portfolio (irreversible) o quemar el saldo desde su login |
+| 💰 Saldo prepago **COP $118.835** | cuenta PERSONAL de Kary `2199223463669869` | **DECISIÓN DANIEL 2026-07-27: pautar AQUÍ** (sin reclamar — se opera vía sesión IG de Bersaglio en Chrome, botón "Continuar con Instagram" en business.facebook.com). Recarga real: $100.000 el 25-jul (Mastercard ····3355). **⚠️ IVA 19% APLICA** (facturas FBADS-270-* en cada gasto; ID fiscal 329083056 verificado) → gasto neto máx = saldo/1,19. Límite diario Meta: $96.806. |
 
-Gates antes de la 1ª campaña Bersaglio: dónde vive el presupuesto (cuenta del negocio + método de pago
-NUEVO vs saldo de Kary) · creatividades OK de Daniel · píxel de Bersaglio NO existe (crear dataset y
-cablearlo a `bersagliojewelry.co` si la campaña optimiza a web; para interacción/CTWA no es gate).
+📚 **RCA MCP (2026-07-27)**: el conector Meta Ads solo ve cuentas asignadas a la PERSONA, no al Business.
+El acceso de socio (Business Altorra) NO bastaba: hubo que **asignar a Daniel (persona) el activo** en
+Configuración del Business de Altorra → Cuentas publicitarias → `2064…` → Asignar personas → acceso total.
+Tras eso la cuenta apareció en `ads_get_ad_accounts` CON Ads-MCP habilitado (a diferencia de la de Altorra,
+aún en rollout). Lección: al recibir un activo como socio, SIEMPRE asignar también a la persona operadora.
+⚠️ La cuenta de Kary NO es visible por MCP (es personal de ella) → la 1ª campaña se monta POR NAVEGADOR.
+
+**1ª campaña (semana 28 jul–3 ago 2026)**: plan v2 post-comité + estudio (10 agentes) → bóveda
+`brain-private/bersaglio/2026-07-27-plan-pauta-semana1-SINTESIS.md` (+ CRUDO json). Claves: CTWA a
++57 301 3752592 · 1 campaña/1 conjunto/2-3 anuncios · **COP 14.200/día** (IVA dentro del saldo) · spend cap
+99.400 · ⛔ Imagen 1 (anillos réplica Cartier) NO sale ni sin textos (distinctive features) · gates con
+insumos de Daniel en la síntesis. Píxel de Bersaglio NO existe (para CTWA no es gate).
 
 ## Nota MCP
 El conector oficial (`mcp.facebook.com/ads`) está instalado y responde; la cuenta activa aún dice

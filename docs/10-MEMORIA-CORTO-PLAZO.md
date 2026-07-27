@@ -51,8 +51,10 @@
 
 ## 📝 Bitácora (efímera)
 
-> **▶ RELEVO FRESCO (2026-07-27, Fable)**: TODO-34 sistema 00-23 ✅ (pelota = `00-LEEME` + Gemini del
-> manual). **Líder de pautas ×2**: Meta Bersaglio listo, ACCESO TOTAL ×3 vía socio Altorra → mapa =
-> `activos-meta.md §Bersaglio` (SIGUE: verificar activos desde el usuario ALTORRA → 1ª pauta, voz
-> `catalogo-voz-bersaglio`, presupuesto=Daniel). **Vivos**: ⚠️ HUMO (TODO-29) · ⛔ diseño/hermanos/kernel ·
-> 🔬 auditoría Nivel-2 VENCIDA → `mantenimiento-general` (Daniel).
+> **▶ PAUTA BERSAGLIO EN CURSO (2026-07-27, Fable)**: plan v2 post-comité ✅ → bóveda
+> `bersaglio/2026-07-27-plan-pauta-semana1-SINTESIS.md`. Todo lo verificado en vivo (MCP, IVA 19%,
+> WhatsApp, decisión Daniel: cuenta Kary 14.200/día) → `activos-meta §Bersaglio`. **SIGUE**: insumos
+> Daniel (precios/material/garantía/.mp4/foto anillos — ⛔ Imagen 1 no sale: réplicas Cartier) →
+> re-export → montar EN PAUSA por navegador → "sí" → encender.
+> **Vivos**: TODO-34 (pelota Daniel+Gemini) · ⚠️ HUMO (TODO-29) · ⛔ diseño/hermanos/kernel · 🔬 auditoría
+> Nivel-2 VENCIDA → `mantenimiento-general` (Daniel).
