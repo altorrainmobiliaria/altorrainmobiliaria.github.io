@@ -93,3 +93,22 @@ CPL/CPQL de PROPIETARIOS (no existe público → planilla desde día 1, recalibr
 no doc → usar Higher Intent+OTP oficial) · split retargeting (Meta no prescribe) · mínimos COP (alerta del
 Ads Manager) · Zaraz server-side (validar) · TRM (confirmar) · edad propietario (breakdown día 14) ·
 WhatsApp Flows (verificar disponibilidad en la cuenta) · CPC keywords Cartagena (Keyword Planner, fase 2).
+
+## 9. ⛔ Advantage+ auto-activa IA que REESCRIBE tu anuncio (verificado en vivo 2026-07-27, Bersaglio)
+Meta activa "Mejoras de contenido Advantage+" **por defecto** y las esconde en 3 PESTAÑAS del paso *Mejoras*
+(`Para revisión` · `Contenido multimedia` · `Texto`). Revisar SOLO la primera deja las otras ON.
+Encontradas ON sin pedirlas: **Mejoras en el texto** (reescribe el copy → añadió un emoji 💎 al título),
+**Agregar superposiciones**, **Agregar animación**, **Retoques visuales/de video**, **Agregar música**.
+- **Riesgo real**: (a) legal — si la IA reescribe el copy puede borrar la vigencia de la promo (art. 33
+  Ley 1480) o alterar claims regulados (quilates, "certificada", garantía); (b) producto — retoque/animación
+  sobre foto de gema altera color o saca de cuadro el rótulo legal. En joyería el color ES el valor.
+- **Regla**: barrer las **3 pestañas** de Mejoras en CADA anuncio y dejar TODO en OFF cuando la creatividad
+  lleve texto legal o foto real de producto. Meta pide motivo al desactivar → "Desactivar" y seguir.
+- **Audio**: Meta ofrece "Agregar música" SOLO a imágenes (las convierte en video). A un **video subido NO
+  le puede poner música** — solo "Retoques de video". Video mudo → o se deja mudo, o se edita por fuera con
+  pista licenciada. Para producto con texto en pantalla, mudo es aceptable (~85% ve sin sonido).
+
+**Selección de assets — nunca por nombre**: Meta re-comprime y varios archivos comparten prefijo
+("WhatsApp Video…"). Identificar SIEMPRE por **resolución + duración** contra el archivo local
+(caso real: se cargó un video viejo 476×846 en vez del correcto 576×1024). Si la biblioteca no lista el
+archivo, es que NO se subió — no asumir.

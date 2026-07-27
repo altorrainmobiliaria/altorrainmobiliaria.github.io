@@ -51,10 +51,9 @@
 
 ## 📝 Bitácora (efímera)
 
-> **▶ PAUTA BERSAGLIO EN CURSO (2026-07-27, Fable)**: plan v2 post-comité ✅ → bóveda
-> `bersaglio/2026-07-27-plan-pauta-semana1-SINTESIS.md`. Todo lo verificado en vivo (MCP, IVA 19%,
-> WhatsApp, decisión Daniel: cuenta Kary 14.200/día) → `activos-meta §Bersaglio`. Insumos Daniel ✅
-> (18k · garantía vida · video nuevo OK reemplaza anillos · WA 9:30-18:30 ×3 — addendum v2.1 bóveda).
-> **SIGUE**: foto original topos sin texto → overlays → montar EN PAUSA (navegador) → "sí" → encender.
+> **▶ PAUTA BERSAGLIO semana1 — MONTADA EN BORRADOR ✅ (2026-07-27)**: plan+insumos → bóveda
+> `bersaglio/2026-07-27-plan-pauta-semana1-SINTESIS.md` (+addendum v2.1); cuentas/IVA/WhatsApp →
+> `activos-meta §Bersaglio`; método → playbook §9. 1 conj · $14.200/día · A1/A2/A3 · IA Advantage+ OFF.
+> **SIGUE**: "sí" de Daniel → Revisar y publicar → arranca lun 28, 6:00.
 > **Vivos**: TODO-34 (pelota Daniel+Gemini) · ⚠️ HUMO (TODO-29) · ⛔ diseño/hermanos/kernel · 🔬 auditoría
 > Nivel-2 VENCIDA → `mantenimiento-general` (Daniel).
