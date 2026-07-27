@@ -39,6 +39,30 @@
 | Cualquier cobro del portal | Facturación electrónica DIAN habilitada | Res. DIAN 000165/2023 |
 | Preaviso de terminación 100% digital | Validar equivalente funcional electrónico (zona gris) | Ley 820 arts.22.7,24 vs Ley 527 |
 
+## 📜 Instrumentos de cobro — reglas estructurales del pagaré (verificadas 2026-07-27, doc 23 V3)
+
+> Salieron de una auditoría adversarial ×3 (juez ejecutor · abogado del deudor · operador) que **reprobó** el primer
+> borrador con 28 hallazgos. Aplican a TODO instrumento de cobro que redactemos, no solo al pagaré.
+
+1. **Un anexo NUNCA autoriza más que su contrato madre.** Si el anexo cobra un concepto que la cláusula del contrato
+   no prevé, ese llenado es "contra instrucciones" (C.Co. 622). Ampliar el anexo obliga a parchear el contrato en el
+   mismo cambio (así nacieron el PARÁGRAFO 3 de la NOVENA y la DÉCIMA SEGUNDA del doc 04).
+2. **El título lleva SOLO capital.** Meter intereses en el valor de cara y luego cobrar intereses sobre ese total es
+   anatocismo: el art. 886 C.Co. solo lo admite desde la demanda judicial o por acuerdo POSTERIOR al vencimiento (la
+   carta de instrucciones es anterior). Los intereses se piden como accesorio (CGP 424).
+3. **Cláusula penal e intereses de mora son ALTERNATIVOS, nunca sumables.** En deudas de dinero los intereses *son*
+   la indemnización por la mora (C.C. 1617) y no puede pedirse a la vez la pena y la indemnización (C.C. 1600,
+   verificado literal). Por defecto la pena se excluye del título: el contrato ya presta mérito ejecutivo por ella.
+4. **Cero indeterminación en lo que el deudor firma.** "Tasa más baja defendible", casillas ☐ de beneficiario,
+   ⟦PENDIENTE⟧ dentro del texto vinculante → deuda no líquida (CGP 424) o beneficiario indeterminado (C.Co. 709
+   num. 2). La elección editorial se resuelve generando **archivos distintos**, jamás con una marca de lapicero.
+5. **No autoimponerse caducidades que la ley no exige.** La acción cambiaria directa dura 3 años (C.Co. 789); poner
+   6 meses en la carta es regalarle al deudor, con su firma, una excepción gratuita. Las metas internas de gestión
+   viven en el instructivo interno, nunca en el documento que firma el deudor.
+6. **Biometría = dato sensible.** Huella y cédula exigen autorización explícita, separada e informada, con derecho a
+   negarse sin consecuencias (Ley 1581 arts. 5-6; sanción art. 23 = cierre definitivo de la operación). Es la regla
+   dura #7 de este lóbulo aplicada al papel, no solo al portal.
+
 ## Checklist de lanzamiento (textos/páginas obligatorios — MVP)
 
 T&C por vertical · Política de Tratamiento de Datos (responsable+finalidades+derechos+transmisión internacional EE.UU./Firebase declarada) · Aviso de Privacidad en cada formulario (checkbox no premarcado) · Autorización explícita separada para datos sensibles · Política de cancelación + reversión + retracto (art. 47, validar con abogado antes de publicar) · Página PQR · Número de matrícula de arrendador (footer + fichas + pauta) · Número RNT (propio + por alojamiento) · Disclaimer del estimador ("Rango", no avalúo) + Rentímetro (no garantía de rentabilidad) · Declaración PH del anfitrión (checkbox+timestamp) · Identificación del proveedor + tarifario público · Contrato de mandato de recaudo (redactado por abogado, firmado antes de habilitar calendario). Ola 2 suma: Acuerdo de uso de firma electrónica (clic-wrap) · Autorización de consulta a centrales · Plantillas de arrendamiento/administración versionadas sin cláusulas de cobro al inquilino · Formato de garantía de servicios públicos. Regla transversal: TODO texto legal se versiona (fecha+hash) y la aceptación referencia esa versión exacta; nada marcado "→ abogado" se publica con redacción provisional.
