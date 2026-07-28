@@ -53,7 +53,8 @@ OPINIÓN — ninguna opinión corre sobre aire** (basura entra, basura sale).
 **FASE B — DELIBERACIÓN (sobre la evidencia de Fase A):**
 5. **COMITÉ** acotado (`comite-expertos`) razona sobre el diagnóstico verificado (lógica/trade-offs).
 6. **CONSEJO** (Gemini/Antigravity, `docs/15`) crítica adversarial externa → **YO verifico cada claim**
-   (la gema, paso 4). → **VEREDICTO** (yo) → **implementar por fase** → **EXTENSIÓN (gate empírico live)**
+   (la gema, paso 4). ⚠️ **NO es una consulta de una ronda: es un DEBATE — ver §🥊 abajo.**
+   → **VEREDICTO** (yo) → **implementar por fase** → **EXTENSIÓN (gate empírico live)**
    cierra con Pruebas de Estado.
 
 **Por qué "nunca falla":** evidencia (2-4) SIEMPRE antes que opinión (5-6), y el gate empírico (extensión
@@ -132,6 +133,33 @@ dispara SOLO si su gatillo aplica (meter `legal-colombia` en una decisión de ca
 
 > **Fuera del pipeline de decisión:** `auditoria-cerebro` / `claude-md-improver` = mantenimiento de cerebro
 > POST-cierre, no capas de validación. No los metas como etapa.
+
+## 🥊 El consejo externo es un DEBATE de 3 rondas, no una consulta *(probado en los contratos ALTORRA, 2026-07-28)*
+
+Una sola ronda desperdicia el instrumento. El valor NO está en la opinión externa: está en el **desacuerdo
+más la fuente leída**. Estructura probada:
+
+- **R1 — ojos frescos (anti-anclaje).** No revelar mi postura ni los hallazgos del comité. Pregunta abierta
+  sobre el artefacto, apuntando a rutas reales.
+- **R2 — DEBATE.** Le muestro qué adopté, **qué le refuto y por qué**, y la decisión que tomé; le pido que
+  defienda, conceda o ataque. **Aquí es donde piensa de verdad**: en la prueba real concedió 3 de 3
+  refutaciones y aportó 4 mejoras que no habían salido en R1 (incluida la mejor idea de toda la sesión).
+- **R3 — caza de REGRESIONES sobre el texto final**, entregándole el registro de cambios. Es un trabajo
+  distinto —no opinar, sino encontrar lo que rompió la reescritura— y es obligatorio tras una reescritura
+  grande ([[L-31]]: los defectos nuevos nacen de las correcciones).
+- **Criterio de cierre**: se para cuando una ronda completa no produce **ningún hallazgo CRÍTICO ni MAYOR
+  confirmado**. Sin criterio de parada el debate gira para siempre y empieza a añadir ruido, no seguridad.
+
+**⚠️ El riesgo real, con evidencia de esa sesión**: el asesor externo no solo puede equivocarse — puede
+recomendar con total seguridad algo **ILEGAL y accionable** (propuso entrar al inmueble con dos testigos =
+vía de hecho prohibida por la Ley 820 y el art. 384 CGP; la habríamos firmado). Y en la misma sesión **yo
+también fallé** (una palabra —"indemnización"— que anulaba el mérito ejecutivo). Conclusión operativa:
+la verificación corre en **ambas direcciones**, ninguna cita entra sin fuente leída ESE turno (§3.3), y el
+asesor se trata como insumo, jamás como oráculo. Si comité y consejo quedan frontalmente enfrentados →
+**tercera familia** de modelo como desempate (`docs/15` §0b).
+
+**Entrega**: el prompt de cada ronda va **en el chat, en bloque copiable** — archivarlo es para el cerebro,
+dárselo es para el dueño. Nunca mandarlo a abrir una carpeta.
 
 ## 🎯 Cada capa caza un error DISTINTO (regla anti-solape)
 Plugins-MCP→**realidad del backend** (lo que el sistema vivo HACE vs lo que el código dice) · Extensión→**realidad

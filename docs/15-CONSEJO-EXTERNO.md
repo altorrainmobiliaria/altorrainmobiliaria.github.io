@@ -25,6 +25,14 @@
 - **NO**: lo rutinario/reversible (el comité interno ×3 `comite-expertos` basta). No todo necesita 2ª opinión externa.
 
 ## §2 — Cómo (protocolo)
+0. **📋 ENTREGA: el prompt va SIEMPRE en el CHAT, en bloque copiable** (regla de Daniel 2026-07-28: *"no debo
+   hacer nada manual"*). Archivarlo en la bóveda es para el cerebro; **dárselo es para él**. Jamás mandarlo a
+   abrir una carpeta a buscar el archivo — el archivo es el respaldo, NO el canal de entrega.
+0b. **🥊 Son 3 RONDAS, no una consulta** — R1 ojos frescos (anti-anclaje) · R2 **debate** (le muestro qué le
+   refuto y por qué; ahí es donde piensa de verdad) · R3 caza de **regresiones** sobre el texto final con el
+   registro de cambios. Cierre: cuando una ronda no produzca hallazgo CRÍTICO ni MAYOR confirmado.
+   **Protocolo completo (portable ×4) → skill `proceso-decision-fuerte` §🥊**, con la evidencia de por qué:
+   el consejo llegó a recomendar algo ILEGAL con total seguridad.
 1. **Prompt autocontenido**: el provider externo (Gemini vía Antigravity) **SÍ ve el repo y el cerebro locales (solo-lectura)** →
    el prompt **apunta a rutas/archivos reales** (no se pega el código a mano) + estado factual, restricciones, la decisión, las preguntas.
 2. **Anti-anclaje** (decisiones TOP): NO incluyas tu postura/respuesta para no sesgarlo; pídele su criterio independiente.
