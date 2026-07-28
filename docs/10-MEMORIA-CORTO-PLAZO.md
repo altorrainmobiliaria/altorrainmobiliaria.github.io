@@ -9,20 +9,17 @@
 
 ## 🎯 Foco actual (re-sellado 2026-07-24 · pivote de misión §61)
 
-> **⭐ FRENTE 0 — FUNDACIÓN OPERATIVA (nuevo arco, mandato Daniel 2026-07-24) = TODO-34 ← SIGUIENTE (sesión
-> fresca Fable)**: armar la inmobiliaria COMPLETA con datos reales (procesos, legal, docs, capacitaciones);
-> Claude = abogado + todos los empleados a la vez; cerebro dual Code+Chat. Plan F1-F4 en la fila TODO-34.
+> **⭐ FRENTE 0 — FUNDACIÓN OPERATIVA = TODO-34 (mandato Daniel 24-jul)**: armar la inmobiliaria COMPLETA con datos
+> reales (procesos, legal, docs, capacitaciones); Claude = abogado + todos los empleados a la vez. Plan en TODO-34.
 >
-> **FRENTE 1 — portal**: TODO-27 ✅ · TODO-30 mapa ✅ (§55, falta vista foreground) · catálogo §56-§59 ✅
-> hasta la FRONTERA pre-cutover (§60). Método fidelidad → L-29/L-24/L-28; mockups en `portal/design/mockups/`.
+> **FRENTE 1 — portal**: TODO-27 ✅ · TODO-30 mapa ✅ (falta vista foreground) · catálogo §56-§59 ✅ hasta la
+> FRONTERA pre-cutover (§60). Fidelidad → L-29/L-24/L-28; mockups en `portal/design/mockups/`.
 >
-> **FRENTE 2 — PAUTA ✅ LISTA-PARA-ENCENDER** (§33-§37; humo → flag 📣 de `05`; SSoT = skill `pauta-captacion`).
-> El encendido REAL converge con el CIERRE DE OBRA → "sí" de Daniel.
+> **FRENTE 2 — PAUTA ✅ LISTA-PARA-ENCENDER** (§33-§37; SSoT = skill `pauta-captacion`). El encendido REAL
+> converge con el CIERRE DE OBRA → "sí" de Daniel.
 >
-> **🎨 DISEÑO SELLADO — NO re-litigar** → `CLAUDE.md §1` + `portal/src/styles/tokens.css` (SSoT) + ADR §23-§23.9.
-> Dev: `npm --prefix portal run dev` (4321). (La VOZ sí está EN FORJA — memoria.)
->
-> **🚦 BLOQUEADORES (solo Daniel)** → flag ⚖️ de `05` + TODO-21.
+> **🎨 DISEÑO SELLADO — NO re-litigar** → `CLAUDE.md §1` + `portal/src/styles/tokens.css` + ADR §23-§23.9.
+> Dev: `npm --prefix portal run dev` (4321). **🚦 BLOQUEADORES (solo Daniel)** → flag ⚖️ de `05` + TODO-21.
 >
 > **🚫 Callejones (NO reintentar)**: (a) ⛔ NADA del sitio viejo (§15.7) · (b) NUNCA UI sin mockup (única exención
 > documentada: el mapa real de TODO-30, ver su fila) · (c) datos del portal = DEMO (`client.ts` listo) · (d) NUNCA
@@ -51,19 +48,22 @@
 
 ## 📝 Bitácora (efímera)
 
-> **▶ 🔥 PAUTA BERSAGLIO semana1 — EN VIVO desde 2026-07-27**: campaña `120250983749280439` ACTIVA ·
-> adset `120250983973160439` · **$13.000/día** · 27-jul→3-ago · 3 anuncios APROBADOS, cero rechazo IP.
-> Plan+umbrales → bóveda `2026-07-27-plan-pauta-semana1-SINTESIS.md`; cuentas/IVA → `activos-meta §Bersaglio`;
-> lección IA Advantage+ → playbook §9. ⛔ NO editar días 1-7.
+> **▶ 🔥 PAUTA BERSAGLIO semana1 EN VIVO (27-jul→3-ago)**: campaña `120250983749280439` · adset
+> `120250983973160439` · **$13.000/día** · 3 anuncios aprobados. Plan+umbrales → bóveda
+> `2026-07-27-plan-pauta-semana1-SINTESIS.md`; cuentas/IVA → `activos-meta §Bersaglio`. ⛔ NO editar días 1-7.
 > **Pelota Daniel**: guion WhatsApp al equipo (Tania/Daniela/Kary 9:30-18:30) + precios amatista/dúo.
 >
-> **▶ 📜 PAGARÉ (doc 23) — ⛔ RETIRADO por Daniel el 27-jul**: *"no usaremos pagarés, todo será con la aseguradora"*.
-> Barrido en 11 piezas: la DÉCIMA SEGUNDA del 04 pasó de pagaré a **PÓLIZA** (vacío que el contrato tenía) + salida
-> por **codeudor** sin póliza; el título de cobro es el **contrato**. Doc 23 conservado (§G.4). **Sobrevive**:
-> dictámenes D-2/D-3/D-4 · 6 reglas de cobro (`42`) · **hallazgo art. 74 CGP** (el poder real de ALTORRA faculta
-> bien pero le falta escritura pública). Lecciones **L-31/L-32**.
-> **Método corregido por Daniel**: *"el abogado mío eres tú"* → nada de "pendiente de abogado": dictaminar con la
-> norma leída, declarar riesgo, él decide (memoria + `42`). **Y no volver a pedir la matrícula.**
+> **▶ 📜 PAGARÉ ⛔ RETIRADO (27-jul)**: garantía = aseguradora; la DÉCIMA SEGUNDA del 04 pasó a **PÓLIZA** + codeudor
+> sin ella; título de cobro = el contrato. Barrido en 11 piezas; doc 23 conservado (§G.4). Sobrevive: dictámenes
+> D-2/D-4 · reglas de cobro (`42`) · **art. 74 CGP** (al poder real le falta escritura pública). Lecciones L-31/L-32.
+> **Método (Daniel)**: *"el abogado mío eres tú"* → dictaminar con la norma leída y declarar riesgo, él decide
+> (memoria + `42`). **Y no volver a pedir la matrícula.**
+>
+> **▶ 🖨️ MEMBRETE CORPORATIVO ✅ (28-jul)**: los 24 Word se **generan** desde el contrato REAL de ALTORRA
+> (`_plantilla/generar-documentos.ps1`) — Century Gothic 9, **Carta** (decisión de Daniel: sus originales mezclaban
+> Carta y Oficio), logo + tabla CÓDIGO/VERSIÓN/PÁGINA, códigos `CAD`/`CAR`+21. 24/24 verificados, 388 págs.
+> ⚠️ **No editar los Word a mano**: la fuente es el `.md`. Detalle → `43 §Documentos corporativos`.
+> Copia de trabajo de Daniel: `Downloads\ALTORRA Company (Legal)\…\KIT ALTORRA`.
 >
 > **Vivos**: TODO-34 (pelota Daniel+Gemini) · ⚠️ HUMO (TODO-29) · ⛔ diseño/hermanos/kernel · 🔬 auditoría
 > Nivel-2 VENCIDA → `mantenimiento-general` (Daniel).

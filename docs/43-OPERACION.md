@@ -46,6 +46,18 @@ check-in) pero operación informal (anticipo 50% por Nequi/transferencia, sin re
 cancelación ni RNT en ningún doc). Prospectos activos: administración (cotización "simulación de
 liquidación" = herramienta de venta), Serena del Mar, y un lote rural 12.000 m² en Turbana (topografía).
 
+## 🖨️ Documentos corporativos — cómo se generan (2026-07-28)
+
+Los `.md` de la bóveda `entregables-fundacion/` son la **fuente**; los Word con membrete se **generan**
+con `_plantilla/generar-documentos.ps1` (24 docs, ~3 min). ⚠️ **Editar un Word a mano = perder el cambio**
+en la siguiente tanda. Identidad extraída del contrato REAL de ALTORRA, no inventada: **Century Gothic
+9 pt · Carta 21,6 × 27,9 · márgenes 2,5/3 cm · membrete con logo + tabla CÓDIGO/VERSIÓN/PÁGINA**.
+Códigos por familia (`CAD` administración · `CAR` arriendo · +21 nuevos) → `_plantilla/LEEME.md`.
+**Método clave**: el generador **parte del documento original y le vacía el cuerpo** — copiar el
+encabezado a un documento nuevo pierde 2 de las 4 imágenes del membrete. Los `.docx` van en `.gitignore`
+(2,6 MB c/u = 64 MB por tanda, regenerables). Copia de trabajo de Daniel:
+`Downloads\ALTORRA Company (Legal)\…\KIT ALTORRA`.
+
 ## Qué documento MANDA por dominio (dictámenes del triaje)
 
 | Dominio | Canónico | Nota |
