@@ -36,7 +36,7 @@
 | **TODO-23** | 🔧 **Kernel hardening RESTANTE** (owner=INMOBILIARIA): K-01/02/04/05/09 (§30.4) · priorizar warns en truncado `--boot` · circularidad boot-budget. Flujo obligatorio: editar CANÓNICO → bump `VERSION` → `brain:pull` ×4. | 🟡 K restantes | §50 |
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy aún se sirve). | 🟡 abierto | |
 | **TODO-28** | 🧠 **Endurecer el cerebro**: #1-#3 ✅ (§40-§41) · **#4 ✅ `brain:pull` (F1 §51)** · #5 filas del índice auto vía `brain:archive` ✅ (§52; generador completo = opcional) · **#6 ✅ AUTOMATIZADA en el heartbeat** (§52: % por paths en cada boot — hoy **52% 🔴, mes 1 de medición**; >30% dos meses → PODAR doctrina) · #7 sello de vencimiento >90d (candidato a resonancia) · **#8 SHARD de `30`** (rebasó el tope; venía al 96% — extraer familia a hermana, no recortar más). | 🟡 #7 #8 | $0 |
-| **TODO-29** | 📣 **PAUTA**: humo encendida 07-18 → estado vivo en flag 📣 de `05`. **Paso siguiente**: al agotarse el saldo, verificar FACTURACIÓN → cierra fontanería §4b → calibra la CAMPAÑA REAL (gate = cierre de obra). | 🔥 vigilar | no tocar 7d |
+| **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada y fontanería §4b OK (estado → flag 📣 de `05`). Resta **calibrar la campaña REAL**, gateada por el cierre de obra. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-30** | 🗺️ **MapLibre real ✅ CÓDIGO COMPLETO (§55)** — tiles por Worker+Range, verificado E2E. **Falta SOLO la vista en foreground** (rAF congelado en pestañas automatizadas, L-34 → la confirma Daniel en su Chrome). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§60)**. Para datos reales: (1) deploy COORDINADO en el cutover (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. Lo demás BLOQUEADO por causas reales (§60.4); insumos legales de la ficha → TODO-33. | 🟢 cutover | §60 |
 | **TODO-33** | 🧾 **FICHA dinámica — decisiones ANTES de construir (§60.3)**: dirección exacta = OMITIR (PII) · financiación = disclaimer legal o se omite la cifra · asesor = `asesorId` vs bloque genérico · POIs fuera en v1. Regla: bloque sin dato se OMITE (jamás heredar el demo). | 🔵 decisión | §60 |
@@ -48,29 +48,31 @@
 ## 📝 Bitácora (efímera)
 
 > **▶ 🔥 PAUTA BERSAGLIO semana1 EN VIVO (27-jul→3-ago)**: campaña `120250983749280439` · adset
-> `120250983973160439` · **$13.000/día** · 3 anuncios aprobados. Plan+umbrales → bóveda
-> `2026-07-27-plan-pauta-semana1-SINTESIS.md`; cuentas/IVA → `activos-meta §Bersaglio`. ⛔ NO editar días 1-7.
-> **Pelota Daniel**: guion WhatsApp al equipo (Tania/Daniela/Kary 9:30-18:30) + precios amatista/dúo.
+> `120250983973160439` · **$13.000/día** · 3 anuncios OK. ⛔ NO editar días 1-7. Plan+umbrales → bóveda
+> `2026-07-27-plan-pauta-semana1-SINTESIS.md`. **Pelota Daniel**: guion WhatsApp al equipo + precios amatista/dúo.
 >
 > **▶ ⚖️ BLINDAJE DE CONTRATOS → ADR §66 (28-jul)**. Pagaré RETIRADO · **ALTORRA arrienda EN NOMBRE PROPIO**
 > (C.Co. 1262; decisión de Claude bajo delegación, revierte la del 27-jul por el art. 74 CGP) · dictámenes propios
-> en vez de "pendiente de abogado" (*"el abogado mío eres tú"*). Comité ×6 + consejo ×2: 136→126 hallazgos.
-> **Aplicadas ya** (2 commits en bóveda; detalle íntegro en §66).
+> en vez de "pendiente de abogado" (*"el abogado mío eres tú"*). Comité ×6 + consejo ×2: 136→126 hallazgos, aplicadas.
 >
-> **⏭️ FALTA (sesión fresca, en este orden):**
-> 1. **Última tanda del doc 04**: limpiar notas ⟦⟧ y ⟦PENDIENTE⟧ del texto que se firma (una dice "pendiente de
->    abogado" y otra confiesa que un texto no se verificó) · NOTA PARA DANIEL desactualizada (dice que la figura de
->    firma sigue abierta) · mérito ejecutivo (VIGÉSIMA CUARTA) enumera de menos · recibos sin imputación de pago ·
->    inventario/silencio · "valor de bien nuevo" · codeudor. **Síntesis con el texto exacto** →
->    `scratchpad/comite-sintesis.md` (items 12-30); si se perdió → output del workflow `ww4v7o1wr`.
-> 2. **Comité ACOTADO de re-revisión** sobre los contratos ya corregidos, con foco en lo que **nadie ha auditado**:
->    la figura de ALTORRA arrendadora en nombre propio y el fondo de reserva frente al art. 16.
-> 3. **Consejo externo R3** = caza de REGRESIONES sobre el texto final, entregándole el registro de cambios
->    (protocolo de 3 rondas → skill `proceso-decision-fuerte` §🥊). **El prompt va EN EL CHAT.**
-> 4. Cierre: cuando una ronda no produzca hallazgo CRÍTICO ni MAYOR confirmado. Luego regenerar Word + copiar a
+> **🛑 COMITÉ R3 YA COMPRADO — NO RELANZAR.** 6 lentes + 58 veredictos de refutación, archivados EN CALIENTE
+> (Daniel al 87% del semanal). Crudos + índice → bóveda `research-archive/2026-07-28-comite-r3-contratos/`
+> (empezar por `00-LEEME.md`). Re-extraer del journal si hiciera falta:
+> `node scripts/extraer-journal.mjs <journal.jsonl> <salida>`.
+>
+> **✅ Hecho**: **gate de emisión** en `_plantilla/generar-documentos.ps1` (ningún doc de firma se genera con marcas
+> de trabajo; 11 bloquean) · notas de redacción fuera del papel → `_notas/`.
+>
+> **⏭️ FALTA (en este orden; el detalle vive en el `00-LEEME` de la bóveda, no aquí):**
+> 1. **Una sola pasada** sobre 03 y 04: tanda final del 04 + regresiones de figura del 03 (el poder art. 74 CGP y
+>    el beneficiario de los títulos valores siguen escritos para la figura vieja).
+> 2. **Reconciliar cerebro vs. contrato**: `42-LEGAL` regla #3 dice pena e intereses **ALTERNATIVOS**; el 04
+>    (VIGÉSIMA TERCERA, 28-jul) los hace **ACUMULABLES por causas separadas**. Uno está mal.
+> 3. **Consejo externo R3** = caza de REGRESIONES sobre el texto final, con el registro de cambios
+>    (3 rondas → skill `proceso-decision-fuerte` §🥊). **El prompt va EN EL CHAT.**
+> 4. Cierre: cuando una ronda no dé hallazgo CRÍTICO ni MAYOR. Regenerar Word (**gate en verde**) + copiar a
 >    `Downloads\ALTORRA Company (Legal)\…\KIT ALTORRA`.
 >
 > ⚠️ **No volver a pedir el nº de matrícula** (Daniel lo entrega al cierre de obra). **No editar los Word a mano.**
->
-> **▶ 🖨️ MEMBRETE CORPORATIVO ✅ (28-jul)**: los 24 Word se **generan** desde el contrato REAL de ALTORRA
-> (Century Gothic 9 · Carta · códigos CAD/CAR+21). Detalle → `43 §Documentos corporativos`.
+> 🧾 Deuda: art. 1096 C.Co. del 04 **sin transcribir de fuente oficial** · `15-MANUAL-MAESTRO` = 132 marcas /
+> 112 `PENDIENTE` (el doc más sucio del kit, y lo leen los empleados).
