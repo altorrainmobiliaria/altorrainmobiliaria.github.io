@@ -60,18 +60,15 @@
 > bóveda `research-archive/2026-07-28-comite-r3-contratos/` (`00-LEEME.md` → `SINTESIS-FINAL.md`).
 > Re-extraer: `node scripts/extraer-journal.mjs <journal.jsonl> <salida>`.
 >
-> **✅ Hecho**: **gate de emisión** en `generar-documentos.ps1` (ningún doc de firma sale con marcas; 11
-> bloquean) · notas de redacción fuera del papel → `_notas/`.
+> **✅ Hecho**: las **12 correcciones R3 APLICADAS** a 03/04 (ambos pasan el gate; Word regenerado 21/17 págs) ·
+> **gate de emisión** en `generar-documentos.ps1` · notas fuera del papel → `_notas/` · `42-LEGAL` #3 reconciliada.
 >
-> **⏭️ FALTA (en este orden; el detalle vive en el `00-LEEME` de la bóveda, no aquí):**
-> 1. **Una sola pasada** sobre 03 y 04: tanda final del 04 + regresiones de figura del 03 (el poder art. 74 CGP y
->    el beneficiario de los títulos valores siguen escritos para la figura vieja).
-> 2. **Reconciliar cerebro vs. contrato**: `42-LEGAL` regla #3 dice pena e intereses **ALTERNATIVOS**; el 04
->    (VIGÉSIMA TERCERA, 28-jul) los hace **ACUMULABLES por causas separadas**. Uno está mal.
-> 3. **Consejo externo R3** = caza de REGRESIONES sobre el texto final, con el registro de cambios
+> **⏭️ FALTA:**
+> 1. **Tanda vieja del 04** (rondas 1-2, nunca aplicada): mérito ejecutivo · imputación de pagos · silencio del
+>    inventario · "valor de bien nuevo" · codeudor · póliza revocada · requisitos del preaviso.
+> 2. **Consejo externo R3** = caza de REGRESIONES sobre el texto final, con el registro de cambios
 >    (3 rondas → skill `proceso-decision-fuerte` §🥊). **El prompt va EN EL CHAT.**
-> 4. Cierre: cuando una ronda no dé hallazgo CRÍTICO ni MAYOR. Regenerar Word (**gate en verde**) + copiar a
->    `Downloads\ALTORRA Company (Legal)\…\KIT ALTORRA`.
+> 3. Cierre: cuando una ronda no dé CRÍTICO ni MAYOR → **ADR §67** + copiar a `…\KIT ALTORRA`.
 >
 > ⚠️ **No volver a pedir el nº de matrícula** (Daniel lo entrega al cierre de obra). **No editar los Word a mano.**
 > 🧾 Deuda: art. 1096 C.Co. del 04 **sin transcribir de fuente oficial** · `15-MANUAL-MAESTRO` = 132 marcas /
