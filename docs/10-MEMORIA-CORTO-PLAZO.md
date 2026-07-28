@@ -38,7 +38,7 @@
 | **TODO-17** | **Ola 0 restos**: E2E "tras cache" en staging (gate T9) · deploy de rules (coordinado con retiro legacy, NO ahora) · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | abogado (i)=gate CUTOVER |
 | **TODO-21** | **Lote-dueño**: Nº matrícula + Nº RNT (existen ✅; Daniel los da al CIERRE DE OBRA) · dirección física · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
 | **TODO-23** | 🔧 **Kernel hardening RESTANTE** (owner=INMOBILIARIA): K-01/02/04/05/09 (§30.4) · priorizar warns en truncado `--boot` · circularidad boot-budget. Las sentencias §49 (kill-list #6b/#11 · #13 · #1⊂#10 · gate #7b · tableFile) **✅ EJECUTADAS en F0 (§50)**. Flujo obligatorio de cambios: editar CANÓNICO → bump `VERSION` → `brain:pull` ×4 (masa-neta ≤ 0). | 🟡 K restantes | §50 |
-| **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). | 🟡 abierto | |
+| **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy aún se sirve). | 🟡 abierto | |
 | **TODO-28** | 🧠 **Endurecer el cerebro**: #1-#3 ✅ (§40-§41) · **#4 ✅ `brain:pull` (F1 §51)** · #5 filas del índice auto vía `brain:archive` ✅ (§52; generador completo = opcional) · **#6 ✅ AUTOMATIZADA en el heartbeat** (§52: % por paths en cada boot — hoy **52% 🔴, mes 1 de medición**; >30% dos meses → PODAR doctrina) · #7 sello de vencimiento >90d (candidato a resonancia) · **#8 SHARD de `30`** (rebasó el tope; venía al 96% — extraer familia a hermana, no recortar más). | 🟡 #7 #8 | $0 |
 | **TODO-29** | 📣 **PAUTA**: humo encendida 07-18 → estado vivo en flag 📣 de `05`. **Paso siguiente**: al agotarse el saldo, verificar FACTURACIÓN → cierra fontanería §4b → calibra la CAMPAÑA REAL (gate = cierre de obra). | 🔥 vigilar | no tocar 7d |
 | **TODO-30** | 🗺️ **MapLibre real ✅ CÓDIGO COMPLETO (§55/.8/.9)** — tiles por Worker+Range, verificado E2E con pmtiles.js (z10/12/14 desde staging). **Falta SOLO la vista en foreground** (rAF congelado en pestañas automatizadas, L-34/`31` → la confirma Daniel en su Chrome). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
@@ -57,13 +57,13 @@
 > lección IA Advantage+ → playbook §9. ⛔ NO editar días 1-7.
 > **Pelota Daniel**: guion WhatsApp al equipo (Tania/Daniela/Kary 9:30-18:30) + precios amatista/dúo.
 >
-> **▶ 📜 DOC 23 PAGARÉ V3.1 — dos pasadas adversariales cerradas (27-jul)**: V2 reprobado (28 hallazgos) → V3 →
-> re-auditoría ×4 (juez · abogado del deudor · operador · **regresión**) 4/4 CORREGIR, 56 brutos → 42 → **26
-> aplicadas**. Bloqueantes cazados: 6.1 "suspendía" la prescripción · **el contrato y el pagaré nombraban acreedores
-> distintos** (verificado a mano: la comparecencia del 04 llama ARRENDADOR al PROPIETARIO). Reglas → `42`; crudo →
-> `research-archive/2026-07-27-pagare-doc23-REAUDITORIA-V3-*`.
-> **⛔ Pelota ABOGADO (única que bloquea imprimir)**: ¿ARRENDADOR = ALTORRA o = propietario? Las 2 ramas ya están
-> escritas en el doc 23 y en la comparecencia del 04. **Pelota Daniel**: nº de matrícula (⟦PENDIENTE⟧ ×3 en el 04).
+> **▶ 📜 DOC 23 PAGARÉ V3.2 (27-jul)**: 2 pasadas adversariales (V2 reprobado 28 hallazgos → V3 → re-auditoría ×4
+> con lente de **regresión**, 4/4 CORREGIR, 56→42→**26 aplicadas**). Bloqueantes: 6.1 "suspendía" la prescripción ·
+> contrato y pagaré nombraban **acreedores distintos**. **✅ Figura de firma RESUELTA (Daniel)**: ALTORRA arrienda
+> **en representación** → ARRENDADOR y beneficiario = **el propietario**; ALTORRA custodia/cobra en su nombre (poder
+> del 03). Aplicado a 03+04+23. Reglas → `42`; crudo → bóveda `2026-07-27-pagare-doc23-REAUDITORIA-V3-*`.
+> **Pelota Daniel**: nº de matrícula (⟦PENDIENTE⟧ ×3 en el 04). **Pelota abogado**: ¿basta el mandato escrito para
+> firmar en representación? ¿el poder del 03 alcanza para el ejecutivo sin endoso?
 >
 > **Vivos**: TODO-34 (pelota Daniel+Gemini) · ⚠️ HUMO (TODO-29) · ⛔ diseño/hermanos/kernel · 🔬 auditoría
 > Nivel-2 VENCIDA → `mantenimiento-general` (Daniel).
