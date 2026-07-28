@@ -39,7 +39,7 @@
 | **TODO-21** | **Lote-dueño**: Nº matrícula + Nº RNT (existen ✅; Daniel los da al CIERRE DE OBRA) · dirección física · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
 | **TODO-23** | 🔧 **Kernel hardening RESTANTE** (owner=INMOBILIARIA): K-01/02/04/05/09 (§30.4) · priorizar warns en truncado `--boot` · circularidad boot-budget. Las sentencias §49 (kill-list #6b/#11 · #13 · #1⊂#10 · gate #7b · tableFile) **✅ EJECUTADAS en F0 (§50)**. Flujo obligatorio de cambios: editar CANÓNICO → bump `VERSION` → `brain:pull` ×4 (masa-neta ≤ 0). | 🟡 K restantes | §50 |
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07, regex anclada) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy AÚN se sirve — conservar hasta entonces). | 🟡 abierto | |
-| **TODO-28** | 🧠 **Endurecer el cerebro**: #1-#3 ✅ (§40-§41) · **#4 ✅ `brain:pull` (F1 §51)** · #5 filas del índice auto vía `brain:archive` ✅ (§52; generador completo = opcional) · **#6 ✅ AUTOMATIZADA en el heartbeat** (§52: % por paths en cada boot — hoy **52% 🔴, mes 1 de medición**; >30% dos meses → PODAR doctrina) · #7 sello de vencimiento en hechos >90d (pendiente — candidato a resonancia). | 🟡 #7 | $0 |
+| **TODO-28** | 🧠 **Endurecer el cerebro**: #1-#3 ✅ (§40-§41) · **#4 ✅ `brain:pull` (F1 §51)** · #5 filas del índice auto vía `brain:archive` ✅ (§52; generador completo = opcional) · **#6 ✅ AUTOMATIZADA en el heartbeat** (§52: % por paths en cada boot — hoy **52% 🔴, mes 1 de medición**; >30% dos meses → PODAR doctrina) · #7 sello de vencimiento >90d (candidato a resonancia) · **#8 SHARD de `30`** (rebasó el tope; venía al 96% — extraer familia a hermana, no recortar más). | 🟡 #7 #8 | $0 |
 | **TODO-29** | 📣 **PAUTA**: humo encendida 07-18 → estado vivo en flag 📣 de `05`. **Paso siguiente**: al agotarse el saldo, verificar FACTURACIÓN → cierra fontanería §4b → calibra la CAMPAÑA REAL (gate = cierre de obra). | 🔥 vigilar | no tocar 7d |
 | **TODO-30** | 🗺️ **MapLibre real ✅ CÓDIGO COMPLETO (§55/.8/.9)** — tiles por Worker+Range, verificado E2E con pmtiles.js (z10/12/14 desde staging). **Falta SOLO la vista en foreground** (rAF congelado en pestañas automatizadas, L-34/`31` → la confirma Daniel en su Chrome). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§59; frontera verificada §60)**. Para ver datos reales: (1) **deploy COORDINADO en el cutover** (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. **Lo demás está BLOQUEADO por causas reales (§60.4)**: ficha dinámica → 4 bloques sin dato, 2 con filo legal (§60.2/.3) · botón Republicar → `gestion` SIN auth · purga HMAC → secreto CF (dueño). | 🟢 cutover | §60 |
@@ -52,9 +52,9 @@
 ## 📝 Bitácora (efímera)
 
 > **▶ 🔥 PAUTA BERSAGLIO semana1 — EN VIVO desde 2026-07-27**: campaña `120250983749280439` ACTIVA ·
-> adset `120250983973160439` · **$13.000/día** · 27-jul→3-ago · 3 anuncios APROBADOS (cero rechazo IP ✅).
-> Plan+revisión diaria+umbrales → bóveda `2026-07-27-plan-pauta-semana1-SINTESIS.md`; cuentas/IVA →
-> `activos-meta §Bersaglio`; lección IA Advantage+ → playbook §9. ⛔ NO editar días 1-7.
+> adset `120250983973160439` · **$13.000/día** · 27-jul→3-ago · 3 anuncios APROBADOS, cero rechazo IP.
+> Plan+umbrales → bóveda `2026-07-27-plan-pauta-semana1-SINTESIS.md`; cuentas/IVA → `activos-meta §Bersaglio`;
+> lección IA Advantage+ → playbook §9. ⛔ NO editar días 1-7.
 > **Pelota Daniel**: guion WhatsApp al equipo (Tania/Daniela/Kary 9:30-18:30) + precios amatista/dúo.
 >
 > **▶ 📜 DOC 23 PAGARÉ V3.1 — dos pasadas adversariales cerradas (27-jul)**: V2 reprobado (28 hallazgos) → V3 →
