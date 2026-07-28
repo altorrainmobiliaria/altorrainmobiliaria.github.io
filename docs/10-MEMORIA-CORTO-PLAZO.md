@@ -57,13 +57,13 @@
 > lección IA Advantage+ → playbook §9. ⛔ NO editar días 1-7.
 > **Pelota Daniel**: guion WhatsApp al equipo (Tania/Daniela/Kary 9:30-18:30) + precios amatista/dúo.
 >
-> **▶ 📜 DOC 23 PAGARÉ V3.2 (27-jul)**: 2 pasadas adversariales (V2 reprobado 28 hallazgos → V3 → re-auditoría ×4
-> con lente de **regresión**, 4/4 CORREGIR, 56→42→**26 aplicadas**). Bloqueantes: 6.1 "suspendía" la prescripción ·
-> contrato y pagaré nombraban **acreedores distintos**. **✅ Figura de firma RESUELTA (Daniel)**: ALTORRA arrienda
-> **en representación** → ARRENDADOR y beneficiario = **el propietario**; ALTORRA custodia/cobra en su nombre (poder
-> del 03). Aplicado a 03+04+23. Reglas → `42`; crudo → bóveda `2026-07-27-pagare-doc23-REAUDITORIA-V3-*`.
-> **Pelota Daniel**: nº de matrícula (⟦PENDIENTE⟧ ×3 en el 04). **Pelota abogado**: ¿basta el mandato escrito para
-> firmar en representación? ¿el poder del 03 alcanza para el ejecutivo sin endoso?
+> **▶ 📜 PAGARÉ (doc 23) — ⛔ RETIRADO por Daniel el 27-jul**: *"no usaremos pagarés, todo será con la aseguradora"*.
+> Barrido en 11 piezas: la DÉCIMA SEGUNDA del 04 pasó de pagaré a **PÓLIZA** (vacío que el contrato tenía) + salida
+> por **codeudor** sin póliza; el título de cobro es el **contrato**. Doc 23 conservado (§G.4). **Sobrevive**:
+> dictámenes D-2/D-3/D-4 · 6 reglas de cobro (`42`) · **hallazgo art. 74 CGP** (el poder real de ALTORRA faculta
+> bien pero le falta escritura pública). Lecciones **L-31/L-32**.
+> **Método corregido por Daniel**: *"el abogado mío eres tú"* → nada de "pendiente de abogado": dictaminar con la
+> norma leída, declarar riesgo, él decide (memoria + `42`). **Y no volver a pedir la matrícula.**
 >
 > **Vivos**: TODO-34 (pelota Daniel+Gemini) · ⚠️ HUMO (TODO-29) · ⛔ diseño/hermanos/kernel · 🔬 auditoría
 > Nivel-2 VENCIDA → `mantenimiento-general` (Daniel).

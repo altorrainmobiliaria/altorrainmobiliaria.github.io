@@ -42,10 +42,13 @@
 | Cualquier cobro del portal | Facturación electrónica DIAN habilitada | Res. DIAN 000165/2023 |
 | Preaviso de terminación 100% digital | Validar equivalente funcional electrónico (zona gris) | Ley 820 arts.22.7,24 vs Ley 527 |
 
-## 📜 Instrumentos de cobro — reglas estructurales del pagaré (verificadas 2026-07-27, doc 23 V3)
+## 📜 Instrumentos de cobro — reglas estructurales (verificadas 2026-07-27)
 
-> Salieron de una auditoría adversarial ×3 (juez ejecutor · abogado del deudor · operador) que **reprobó** el primer
-> borrador con 28 hallazgos. Aplican a TODO instrumento de cobro que redactemos, no solo al pagaré.
+> ⚠️ **ALTORRA NO usa pagaré** (decisión de Daniel, 2026-07-27): la garantía del arriendo se maneja con la
+> **aseguradora**, con sus propias políticas; sin póliza, con **codeudor solidario**; y el título para cobrar es el
+> **propio contrato** (mérito ejecutivo, doc 04 cláusula VIGÉSIMA CUARTA). El doc 23 quedó retirado del kit.
+> **Estas reglas se conservan porque no eran del pagaré**: salieron de dos auditorías adversariales sobre él y
+> aplican a **TODO instrumento de cobro** que redactemos (acuerdos de pago, cheques, cualquier título futuro).
 
 1. **Un anexo NUNCA autoriza más que su contrato madre.** Si el anexo cobra un concepto que la cláusula del contrato
    no prevé, ese llenado es "contra instrucciones" (C.Co. 622). Ampliar el anexo obliga a parchear el contrato en el
@@ -70,7 +73,7 @@
 
 | Pregunta | Posición | Base | Riesgo residual |
 |---|---|---|---|
-| ¿Pagaré en blanco = caución prohibida en vivienda? | **NO** | Ley 820 art. 16 prohíbe *"depósitos en dinero efectivo u otra clase de cauciones **reales**"*; la frase antielusión dice *"**tales** garantías… de las indicadas en el inciso anterior"*. El pagaré es garantía **personal** cambiaria | Sin jurisprudencia en ningún sentido. Si cayera se pierde la **garantía**, no la deuda (el contrato presta mérito ejecutivo). Blindaje gratis: derecho de petición a la Alcaldía |
+| ¿Pagaré en blanco = caución prohibida en vivienda? *(dictamen archivado: ALTORRA ya no usa pagaré)* | **NO** | Ley 820 art. 16 prohíbe *"depósitos en dinero efectivo u otra clase de cauciones **reales**"*; la frase antielusión dice *"**tales** garantías… de las indicadas en el inciso anterior"*. El pagaré es garantía **personal** cambiaria | Sin objeto desde el 27-jul. **La misma base sirve para la póliza**: es un seguro contratado por el arrendador a su costa, no un depósito ni una caución real a cargo del arrendatario |
 | ¿Intereses de mora sobre cánones? | **Sí al 6%, pero rubro EN RIESGO** | C.C. art. 1617: regla 1ª permite intereses convencionales; **regla 3ª** "los intereses atrasados no producen interés" y **regla 4ª** extiende eso a *"toda especie de rentas, **cánones** y pensiones periódicas"* (lectura estricta recogida por el Consejo de Estado) | Acotado por diseño: los intereses van FUERA del valor de cara del título → si el juez los niega, **el capital sigue exigible** |
 | ¿Mandato escrito basta para firmar el arriendo por el propietario? | **Sí, sin notaría** | C.C. art. 2149: el mandato puede constar por documento privado; el arriendo no es acto solemne | Nulo para la firma |
 | ¿El poder de administración sirve para demandar? | **La facultad sí, la forma no** | CGP art. 74: poder general para toda clase de procesos **solo por escritura pública**; el especial exige asunto identificado + **presentación personal**; solo litigan abogados inscritos | Operativo: sin escritura, cada demanda depende de que el propietario firme y presente el poder a tiempo |
