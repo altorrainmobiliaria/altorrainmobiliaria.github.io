@@ -64,11 +64,10 @@
 > **gate de emisión** en `generar-documentos.ps1` · notas fuera del papel → `_notas/` · `42-LEGAL` #3 reconciliada.
 >
 > **⏭️ FALTA:**
-> 1. **Tanda vieja del 04** (rondas 1-2, nunca aplicada): mérito ejecutivo · imputación de pagos · silencio del
->    inventario · "valor de bien nuevo" · codeudor · póliza revocada · requisitos del preaviso.
-> 2. **Consejo externo R3** = caza de REGRESIONES sobre el texto final, con el registro de cambios
->    (3 rondas → skill `proceso-decision-fuerte` §🥊). **El prompt va EN EL CHAT.**
-> 3. Cierre: cuando una ronda no dé CRÍTICO ni MAYOR → **ADR §67** + copiar a `…\KIT ALTORRA`.
+> 1. **Consejo externo R3 — prompt ENTREGADO en el chat** (28-jul). Caza de REGRESIONES sobre el texto final;
+>    se le adjuntan los 2 contratos + `REGISTRO-DE-CAMBIOS-para-consejo-R3.md`. Pelota de Daniel: pegarlo.
+> 2. Cierre: cuando una ronda no dé CRÍTICO ni MAYOR → **ADR §67** + copiar a `…\KIT ALTORRA`.
+> 3. Luego → backlog del kit **B-01..B-03** (22 docs sin auditar, 1 a la vez).
 >
 > ⚠️ **No volver a pedir el nº de matrícula** (Daniel lo entrega al cierre de obra). **No editar los Word a mano.**
 > 🧾 Deuda: art. 1096 C.Co. del 04 **sin transcribir de fuente oficial** · `15-MANUAL-MAESTRO` = 132 marcas /
