@@ -1012,3 +1012,55 @@ TODO-27)**: 🔸 /arrendar ✅ RESUELTO (1 card honesto, apéndice §47) · MapL
 **65.5 Anti-patterns**: cifras de mercado sin fuente → NO adoptadas (cliente misterioso listado) · "garantizamos el pago" y renta-garantizada-con-caja-propia = PROHIBIDOS por regla de marca (anti-modelo Coninsa) · el manual DELEGA en el kit (auditor de usabilidad cazó duplicaciones).
 **65.6 Archivos**: bóveda — `15-MANUAL...` + fragmentos + 16-23 + 22 + docx ×12 + CRUDOs 2a/2b + prompt consejo-externo-manual; repo — 99/00/10/43.
 **65.7 Doctrina**: delegación total de Daniel operada como "recomendación-con-fuente ADOPTADA y vetable" (dinero/legal sigue siendo suyo: veta, no decide a ciegas) · L-30 (Airbnb reestructuró oct-2025; precios Siigo = comparador). **Restos del arco TODO-34**: Daniel ejecuta LEEME (FE-DIAN · cuenta escudo · cotizaciones póliza · acuse RUB · resolución matrícula al final) + corre el consejo externo del manual (prompt listo) · abogado (doc 23 + agenda cap 8 §8.4) · skills F3 cuando el sistema ruede · cerebro dual Code+Chat. Sin cache bump.
+
+## 66. ADR — TODO-34: blindaje de los contratos 03 y 04 (pagaré retirado · figura de firma en nombre propio · comité ×6 + consejo externo ×2) ⟦OPUS-5⟧ (2026-07-28)
+
+> Daniel: *"los contratos de ALTORRA deben ser altamente blindados para proteger a la compañía y proteger la propiedad
+> de nuestro cliente… que el inquilino no la tenga fácil"* · *"el abogado mío eres tú"* · *"toma tú las decisiones"*.
+
+**66.1 Causa raíz.** El kit fundacional (§64-§65) nació del corpus heredado y arrastraba supuestos nunca confirmados
+con el dueño ni contrastados con la operación real: exigía **pagaré** en todo arriendo, no tenía cláusula de **póliza**
+pese a que la garantía real es un seguro, pactaba la prima **anual** cuando El Libertador la cobra **mensual**, y dejaba
+la figura de firma ambigua (comparecencia vs. bloque de firmas). Además, el método de trabajo parqueaba las preguntas
+legales en un "gate de abogado" que no existe.
+
+**66.2 Solución estructural.** (a) **Pagaré RETIRADO** del kit (decisión de Daniel): la garantía es la **póliza** y,
+sin ella, **codeudor solidario**; el título de cobro es el propio contrato (mérito ejecutivo). Barrido en 11 piezas; la
+cláusula DÉCIMA SEGUNDA del 04 pasó de pagaré a **PÓLIZA DE ARRENDAMIENTO** —vacío que el contrato tenía—; doc 23
+conservado con banner de retiro (§G.4). (b) **Figura de firma: ALTORRA arrienda EN NOMBRE PROPIO** por cuenta del
+propietario (C.Co. art. 1262) — decisión tomada por Claude bajo delegación expresa, revirtiendo la de representación
+del 27-jul. Motivo: como representante no podía otorgar poder al abogado y cada demanda dependía de que el propietario
+firmara y presentara personalmente el poder (**CGP art. 74**), con la aseguradora negando el siniestro por inacción.
+Contrapartida asumida y compensada en el 03 (fondo de reserva · obligación de fondear reparaciones · indemnidad con
+mérito ejecutivo). (c) **Dictámenes propios** en vez de "pendiente de abogado": art. 16 L820 (el pagaré es garantía
+personal, no caución real) · art. 1617 reglas 3ª-4ª (los intereses sobre cánones son rubro EN RIESGO → van fuera del
+capital) · art. 2149 C.C. (basta mandato escrito para firmar) · art. 74 CGP (la facultad de nombrar abogado sirve; le
+falta la forma).
+
+**66.3 No-regresión.** Numeración de cláusulas intacta (la DÉCIMA SEGUNDA se repurposó, no se eliminó, para no romper
+las ~35 remisiones cruzadas que el lente de coherencia verificó una por una). Contratos regenerados a Word con el
+membrete corporativo; kit copiado a la carpeta de trabajo de Daniel.
+
+**66.4 Verificación.** **Dos rondas adversariales sobre el pagaré** (28 hallazgos → V3 → 26 más → V3.1/V3.2) y
+**comité ×6 + consejo externo ×2 rondas sobre los contratos**: 6/6 CORREGIR, 136 hallazgos → **126 sobrevivientes**
+(2 CRÍTICOS, 56 MAYORES, 68 menores), **1 sola** corrección con riesgo ALTO de nulidad y **14 descartadas con razón
+escrita**. Normas leídas literalmente en fuente oficial esta sesión: C.C. 1600, 1617, 1634, 2149, 2189, 2194, 2195 ·
+C.Co. 886 · CGP 74 · Ley 820 art. 16 · Ley 2157/2021 art. 13 par. 2.
+
+**66.5 Anti-patterns evitados.** El consejo externo propuso una **retoma privada del inmueble con dos testigos** —vía
+de hecho prohibida (Ley 820 + CGP 384)— y la concedió al ser refutada: evidencia dura de que un asesor externo puede
+recomendar algo **ilegal con total seguridad**. El comité propuso bajar la pena de 3 a 2 cánones (regalaba un canon en
+toda la cartera), reciprocidad de la pena (**válida, y por eso peligrosa**: se ejecutaría contra el propietario) y
+varias **presunciones probatorias** que el art. 13 del CGP tiene por no escritas y que arrastran consigo el efecto
+buscado. Todas descartadas con su porqué.
+
+**66.6 Archivos.** Bóveda: `03`, `04`, `23` (retirado), `00-LEEME`, `02`, `18`, `17`, manual caps 00/02/03/08 + maestro,
+`_plantilla/` (generador de Word con membrete real), `research-archive/2026-07-27-pagare-*` y `2026-07-28-consejo-*`.
+Repo: `42-LEGAL` (dictámenes + instrumentos de cobro) · `43-OPERACION` (§documentos corporativos) · `30` (L-31, L-32) ·
+`15` (consejo = 3 rondas) · skill `proceso-decision-fuerte` (§🥊 debate + 🪜 escalera del desacuerdo) · `10` · `99`/`00`.
+
+**66.7 Doctrina.** **L-31** (los defectos nuevos nacen de las correcciones → lente de regresión + refutación) ·
+**L-32** (confirmar que el mecanismo sigue vigente antes de construir el instrumento) · el consejo externo es un
+**debate de 3 rondas** con criterio de cierre · la **escalera del desacuerdo persistente** (hecho → fuente; riesgo →
+dueño; incertidumbre → posición conservadora declarada; diseño empatado → reversibilidad) · y la regla de entrega:
+**lo que Daniel ejecuta va en el chat**, no en una carpeta.
