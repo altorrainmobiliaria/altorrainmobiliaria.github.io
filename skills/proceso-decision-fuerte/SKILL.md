@@ -161,6 +161,33 @@ asesor se trata como insumo, jamás como oráculo. Si comité y consejo quedan f
 **Entrega**: el prompt de cada ronda va **en el chat, en bloque copiable** — archivarlo es para el cerebro,
 dárselo es para el dueño. Nunca mandarlo a abrir una carpeta.
 
+### 🪜 Cuando el desacuerdo PERSISTE (comité vs. yo · consejo vs. yo)
+
+El desacuerdo es **información, no ruido** — pero cada tipo se resuelve distinto. **Clasificar antes de
+discutir**; casi todo el tiempo perdido viene de debatir en la categoría equivocada:
+
+1. **¿Es un HECHO?** (qué dice la norma, el código, el dato) → **no se debate: decide la fuente leída**.
+   Quien no puede citar, no gana. La mayoría de los desacuerdos mueren aquí, y rápido.
+2. **¿Es APETITO DE RIESGO?** (cuánto exponerse, cuánto pagar, qué se sacrifica) → **no es mío: es del
+   dueño**. Yo entrego las dos opciones con su consecuencia y su precio; él elige. Disfrazar esto de
+   discusión técnica —y decidirlo yo— es el error más caro de todos.
+3. **¿Es INCERTIDUMBRE GENUINA?** (la fuente no lo resuelve; no hay jurisprudencia) → **nadie gana**.
+   Salida: posición **conservadora** + riesgo **declarado y cuantificado**; y si existe un trámite que
+   convierta la duda en respuesta escrita de la autoridad (p. ej. derecho de petición), proponerlo.
+4. **¿Es criterio de DISEÑO y siguen empatados?** → **tercera familia** de modelo como desempate
+   (`docs/15` §0b). Si el empate persiste: gana **la opción más barata de revertir**, no la mejor
+   argumentada. La reversibilidad es el criterio, no la elocuencia.
+
+**Si el consejo mantiene su postura al final, NO se entierra**: se documenta como **disenso abierto** en el
+ADR o en el propio entregable — *"el consejo sostiene X por estas razones; se adoptó Y por estas otras"*—
+para que el humano que revise después (abogado, auditor, socio) lo vea marcado. **Un consenso falso es peor
+que un disenso anotado.**
+
+**⚠️ Anti-teatro**: si yo "decido" siempre a mi favor, el debate es decoración cara. Contramedida: **toda
+refutación mía va escrita con su razón** (sección "lo que NO hay que tocar" de la síntesis), auditable por
+el dueño. Señales de que estoy racionalizando y no razonando: refuto sin citar fuente · la razón es "no me
+convence" · adopté cero hallazgos que contradijeran mi propio trabajo previo.
+
 ## 🎯 Cada capa caza un error DISTINTO (regla anti-solape)
 Plugins-MCP→**realidad del backend** (lo que el sistema vivo HACE vs lo que el código dice) · Extensión→**realidad
 de la superficie** (UX/flujo del usuario real) · Verificar→**hecho** (ground-truth falso) · Arquitecto→**diseño/omisión**
