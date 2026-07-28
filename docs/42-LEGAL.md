@@ -56,9 +56,13 @@
 2. **El título lleva SOLO capital.** Meter intereses en el valor de cara y luego cobrar intereses sobre ese total es
    anatocismo: el art. 886 C.Co. solo lo admite desde la demanda judicial o por acuerdo POSTERIOR al vencimiento (la
    carta de instrucciones es anterior). Los intereses se piden como accesorio (CGP 424).
-3. **Cláusula penal e intereses de mora son ALTERNATIVOS, nunca sumables.** En deudas de dinero los intereses *son*
-   la indemnización por la mora (C.C. 1617) y no puede pedirse a la vez la pena y la indemnización (C.C. 1600,
-   verificado literal). Por defecto la pena se excluye del título: el contrato ya presta mérito ejecutivo por ella.
+3. **Pena e intereses: decide la CAUSA, no la etiqueta** (corregido 2026-07-28, comité R3 §66). El art. 1600 prohíbe
+   pedir a la vez *la pena y la indemnización* **por el mismo hecho**; en deudas de dinero los intereses *son* esa
+   indemnización (C.C. 1617). Luego: pena que sanciona **el retardo en pagar** = alternativa con los intereses, hay
+   que elegir. Pena que sanciona **conductas** (subarriendo, cambio de destinación, no restituir) + intereses por el
+   retardo = **causas distintas, se cobran ambos sin violar el 1600** (arquitectura del doc 04: VIGÉSIMA TERCERA y
+   PARÁGRAFO 3 de la NOVENA). ⚠️ Esta regla decía antes "ALTERNATIVOS, nunca sumables" en abstracto, y así regalaba
+   un rubro en cada conflicto. Al redactar: **separa las causas de forma expresa, o pierdes la acumulación**.
 4. **Cero indeterminación en lo que el deudor firma.** "Tasa más baja defendible", casillas ☐ de beneficiario,
    ⟦PENDIENTE⟧ dentro del texto vinculante → deuda no líquida (CGP 424) o beneficiario indeterminado (C.Co. 709
    num. 2). La elección editorial se resuelve generando **archivos distintos**, jamás con una marca de lapicero.
