@@ -2,7 +2,10 @@
 
 > Lóbulo hijo de `40-LOBULOS-DOMINIO`. Esencia LEGAL operativa del portal (R3 2026-07-10, 17 agentes,
 > claims verificados). Detalle completo con artículos/fuentes → `specs/R3-LEGAL-COLOMBIA-2026-07.md`.
-> ⛔ NO es asesoría legal: gate de ABOGADO obligatorio antes de lanzar features/textos con implicación legal.
+> ⛔ NO es asesoría legal certificada. **PERO no existe abogado externo** (Daniel, 2026-07-27: *"el abogado mío eres
+> tú"*): el "gate de abogado" NO es esperar a nadie — es **dictaminar**: leer la norma en fuente oficial, tomar
+> posición, dejar el fundamento y **medir el riesgo residual** para que Daniel decida. Prohibido dejar preguntas
+> legales como pendiente ajeno. Ejemplo de formato → doc 23 § 7.3 (D-1 a D-4) en la bóveda.
 > Convenciones: 🔶 = hallazgo CORREGIDO en verificación adversarial · ❓ = NO-VERIFICABLE, pendiente de abogado.
 
 ## Reglas duras que moldean el PRODUCTO (lo que el diseño no puede violar)
@@ -62,6 +65,15 @@
 6. **Biometría = dato sensible.** Huella y cédula exigen autorización explícita, separada e informada, con derecho a
    negarse sin consecuencias (Ley 1581 arts. 5-6; sanción art. 23 = cierre definitivo de la operación). Es la regla
    dura #7 de este lóbulo aplicada al papel, no solo al portal.
+
+## 📌 Dictámenes propios (2026-07-27) — normas leídas literalmente, posición tomada
+
+| Pregunta | Posición | Base | Riesgo residual |
+|---|---|---|---|
+| ¿Pagaré en blanco = caución prohibida en vivienda? | **NO** | Ley 820 art. 16 prohíbe *"depósitos en dinero efectivo u otra clase de cauciones **reales**"*; la frase antielusión dice *"**tales** garantías… de las indicadas en el inciso anterior"*. El pagaré es garantía **personal** cambiaria | Sin jurisprudencia en ningún sentido. Si cayera se pierde la **garantía**, no la deuda (el contrato presta mérito ejecutivo). Blindaje gratis: derecho de petición a la Alcaldía |
+| ¿Intereses de mora sobre cánones? | **Sí al 6%, pero rubro EN RIESGO** | C.C. art. 1617: regla 1ª permite intereses convencionales; **regla 3ª** "los intereses atrasados no producen interés" y **regla 4ª** extiende eso a *"toda especie de rentas, **cánones** y pensiones periódicas"* (lectura estricta recogida por el Consejo de Estado) | Acotado por diseño: los intereses van FUERA del valor de cara del título → si el juez los niega, **el capital sigue exigible** |
+| ¿Mandato escrito basta para firmar el arriendo por el propietario? | **Sí, sin notaría** | C.C. art. 2149: el mandato puede constar por documento privado; el arriendo no es acto solemne | Nulo para la firma |
+| ¿El poder de administración sirve para demandar? | **La facultad sí, la forma no** | CGP art. 74: poder general para toda clase de procesos **solo por escritura pública**; el especial exige asunto identificado + **presentación personal**; solo litigan abogados inscritos | Operativo: sin escritura, cada demanda depende de que el propietario firme y presente el poder a tiempo |
 
 ## Checklist de lanzamiento (textos/páginas obligatorios — MVP)
 
