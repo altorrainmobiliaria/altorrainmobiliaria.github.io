@@ -55,13 +55,13 @@
 > (C.Co. 1262; decisión de Claude bajo delegación, revierte la del 27-jul por el art. 74 CGP) · dictámenes propios
 > en vez de "pendiente de abogado" (*"el abogado mío eres tú"*). Comité ×6 + consejo ×2: 136→126 hallazgos, aplicadas.
 >
-> **🛑 COMITÉ R3 YA COMPRADO — NO RELANZAR.** 6 lentes + 58 veredictos de refutación, archivados EN CALIENTE
-> (Daniel al 87% del semanal). Crudos + índice → bóveda `research-archive/2026-07-28-comite-r3-contratos/`
-> (empezar por `00-LEEME.md`). Re-extraer del journal si hiciera falta:
-> `node scripts/extraer-journal.mjs <journal.jsonl> <salida>`.
+> **🛑 COMITÉ R3 YA COMPRADO — NO RELANZAR** (121 agentes · 18,8M tok). 57 hallazgos → **32 vivos = 12
+> correcciones (4 CRÍTICAS)**. Titular: *el doc 03 nunca se enteró del cambio de figura*. Crudos + índice →
+> bóveda `research-archive/2026-07-28-comite-r3-contratos/` (`00-LEEME.md` → `SINTESIS-FINAL.md`).
+> Re-extraer: `node scripts/extraer-journal.mjs <journal.jsonl> <salida>`.
 >
-> **✅ Hecho**: **gate de emisión** en `_plantilla/generar-documentos.ps1` (ningún doc de firma se genera con marcas
-> de trabajo; 11 bloquean) · notas de redacción fuera del papel → `_notas/`.
+> **✅ Hecho**: **gate de emisión** en `generar-documentos.ps1` (ningún doc de firma sale con marcas; 11
+> bloquean) · notas de redacción fuera del papel → `_notas/`.
 >
 > **⏭️ FALTA (en este orden; el detalle vive en el `00-LEEME` de la bóveda, no aquí):**
 > 1. **Una sola pasada** sobre 03 y 04: tanda final del 04 + regresiones de figura del 03 (el poder art. 74 CGP y
