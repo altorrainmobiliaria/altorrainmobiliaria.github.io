@@ -44,7 +44,7 @@
 | **TODO-30** | 🗺️ **MapLibre real ✅ CÓDIGO COMPLETO (§55/.8/.9)** — tiles por Worker+Range, verificado E2E con pmtiles.js (z10/12/14 desde staging). **Falta SOLO la vista en foreground** (rAF congelado en pestañas automatizadas, L-34/`31` → la confirma Daniel en su Chrome). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§59; frontera verificada §60)**. Para ver datos reales: (1) **deploy COORDINADO en el cutover** (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. **Lo demás está BLOQUEADO por causas reales (§60.4)**: ficha dinámica → 4 bloques sin dato, 2 con filo legal (§60.2/.3) · botón Republicar → `gestion` SIN auth · purga HMAC → secreto CF (dueño). | 🟢 cutover | §60 |
 | **TODO-33** | 🧾 **FICHA dinámica — decisiones ANTES de construir (§60.3)**: (a) dirección exacta = OMITIR siempre (PII) · (b) financiación = legal define disclaimer o se omite la cifra · (c) asesor = `asesorId` en el modelo vs bloque genérico "Equipo ALTORRA" · (d) POIs = omitir en v1. Regla: en real, bloque sin dato se OMITE (jamás heredar el demo). Sus insumos legales saldrán de TODO-34. | 🔵 decisión | §60 |
-| **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§65)**. Sistema documental **00-23 COMPLETO** en bóveda `entregables-fundacion/`. **27-jul**: póliza **DECIDIDA ✅ El Libertador/Bolívar** (fuente → `research-archive/2026-07-27-POLIZA-*`; sus 2 cambios de proceso **PROPAGADOS ✅** a manual §3.6 + doc 17: acta bloqueante · ventana 60d) · **FE-DIAN ⏸️ CONGELADA por Daniel** (archivada, no ejecutar) · **doc 23 pagaré → V3 ESCRITO ✅** (28 hallazgos de la auditoría ×3 aplicados; ya no es stub: piezas A-D + control de cambios). Trajo **parches de coherencia al doc 03** (facultad expresa sobre títulos valores, cl. DÉCIMA TERCERA) **y al doc 04** (NOVENA par. 3 sumas hasta restitución real · DÉCIMA SEGUNDA solo-capital y pena/intereses alternativos); 4 docx regenerados. **Falta: (a) re-auditoría adversarial del V3 — pelota de Daniel (¿la corro?), (b) abogado.** Reglas estructurales capturadas → `42 §Instrumentos de cobro`. Pelotas de ambos lados + acciones abiertas → `00-LEEME`. | 🔄 EN CURSO | §65 · `43` |
+| **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§65)**. Sistema documental **00-23 COMPLETO** en bóveda `entregables-fundacion/`. **27-jul**: póliza **DECIDIDA ✅** El Libertador/Bolívar + sus 2 cambios de proceso **PROPAGADOS ✅** (manual §3.6 + doc 17: acta bloqueante · ventana 60d) · **FE-DIAN ⏸️ CONGELADA** (archivada, no ejecutar) · **doc 23 pagaré V3.1 ✅** tras 2 auditorías adversariales, con parches de coherencia al 03 (facultad sobre títulos valores) y al 04 (NOVENA par. 3 · DÉCIMA SEGUNDA · VIGÉSIMA TERCERA · nº de contrato) — detalle en bitácora. Reglas → `42 §Instrumentos de cobro`. Pelotas y acciones → `00-LEEME`. | 🔄 EN CURSO | §65 · `43` |
 | **TODO-32** | 🧠 **CEREBRO v2 ×4 — 🏁 NÚCLEO COMPLETO ✅** (F0 §50 · F1 §51 · F2 §52 · F3 §53; kernel **v1.6.0** ×4; SSoT de la propuesta en bóveda). **Restos vivos**: (a) cablear hook SessionStart en los 3 hermanos (carril de cada repo; instrucción en la skill) · (b) **PODA REAL de doctrina** cuando el banner marque >30% dos meses (hoy 52% 🔴, mes 1) · (c) TODO-31: solo falta la verificación de Daniel (recovery codes). Mantenimiento mensual: el banner avisa → Daniel pide "haz el mantenimiento mensual" → skill `mantenimiento-general`. | 🟡 restos a/b/c | §53 · bóveda |
 
 ---
@@ -57,10 +57,13 @@
 > `activos-meta §Bersaglio`; lección IA Advantage+ → playbook §9. ⛔ NO editar días 1-7.
 > **Pelota Daniel**: guion WhatsApp al equipo (Tania/Daniela/Kary 9:30-18:30) + precios amatista/dúo.
 >
-> **▶ 📜 DOC 23 PAGARÉ V3 escrito el 27-jul** (reemplaza el V2 reprobado): capital puro (art. 886) · pena e intereses
-> **alternativos** (C.C. 1600/1617) · vigencia **3 años** (art. 789, fuera la caducidad de 6 meses) · beneficiario
-> impreso · tasa 6% · huella opt-in · piezas C y D. Reglas → `42`; insumos → `research-archive/2026-07-27-pagare-*`.
-> **Pelota Daniel**: ¿corro la re-auditoría ×3 del V3? Sin ella el doc no sale a abogado.
+> **▶ 📜 DOC 23 PAGARÉ V3.1 — dos pasadas adversariales cerradas (27-jul)**: V2 reprobado (28 hallazgos) → V3 →
+> re-auditoría ×4 (juez · abogado del deudor · operador · **regresión**) 4/4 CORREGIR, 56 brutos → 42 → **26
+> aplicadas**. Bloqueantes cazados: 6.1 "suspendía" la prescripción · **el contrato y el pagaré nombraban acreedores
+> distintos** (verificado a mano: la comparecencia del 04 llama ARRENDADOR al PROPIETARIO). Reglas → `42`; crudo →
+> `research-archive/2026-07-27-pagare-doc23-REAUDITORIA-V3-*`.
+> **⛔ Pelota ABOGADO (única que bloquea imprimir)**: ¿ARRENDADOR = ALTORRA o = propietario? Las 2 ramas ya están
+> escritas en el doc 23 y en la comparecencia del 04. **Pelota Daniel**: nº de matrícula (⟦PENDIENTE⟧ ×3 en el 04).
 >
 > **Vivos**: TODO-34 (pelota Daniel+Gemini) · ⚠️ HUMO (TODO-29) · ⛔ diseño/hermanos/kernel · 🔬 auditoría
 > Nivel-2 VENCIDA → `mantenimiento-general` (Daniel).
