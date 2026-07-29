@@ -51,24 +51,25 @@
 > `120250983973160439` · **$13.000/día** · 3 anuncios OK. ⛔ NO editar días 1-7. Plan+umbrales → bóveda
 > `2026-07-27-plan-pauta-semana1-SINTESIS.md`. **Pelota Daniel**: guion WhatsApp al equipo + precios amatista/dúo.
 >
-> **▶ ⚖️ BLINDAJE DE CONTRATOS → ADR §66 (28-jul)**. Pagaré RETIRADO · **ALTORRA arrienda EN NOMBRE PROPIO**
-> (C.Co. 1262; decisión de Claude bajo delegación, revierte la del 27-jul por el art. 74 CGP) · dictámenes propios
-> en vez de "pendiente de abogado" (*"el abogado mío eres tú"*). Comité ×6 + consejo ×2: 136→126 hallazgos, aplicadas.
+> **▶ ⚖️ KIT FUNDACIONAL CONSOLIDADO → ADR §66 + §67 (28-jul). 24/24 documentos generan; los 11 de FIRMA pasan
+> el GATE DE EMISIÓN en verde.** Figura sellada: **ALTORRA arrienda EN NOMBRE PROPIO** (C.Co. 1262). Pagaré
+> retirado. Comité ×6 + consejo ×2 (§66) → comité R3 de 121 agentes + consejo externo R3 (§67).
 >
-> **🛑 COMITÉ R3 YA COMPRADO — NO RELANZAR** (121 agentes · 18,8M tok). 57 hallazgos → **32 vivos = 12
-> correcciones (4 CRÍTICAS)**. Titular: *el doc 03 nunca se enteró del cambio de figura*. Crudos + índice →
-> bóveda `research-archive/2026-07-28-comite-r3-contratos/` (`00-LEEME.md` → `SINTESIS-FINAL.md`).
-> Re-extraer: `node scripts/extraer-journal.mjs <journal.jsonl> <salida>`.
+> **🛑 NO RELANZAR el comité R3** (18,8M tok ya pagados). Crudos, síntesis, dictamen del consejo y registro de
+> cambios → bóveda `research-archive/2026-07-28-comite-r3-contratos/` (empezar por `00-LEEME.md`).
 >
-> **✅ Hecho**: las **12 correcciones R3 APLICADAS** a 03/04 (ambos pasan el gate; Word regenerado 21/17 págs) ·
-> **gate de emisión** en `generar-documentos.ps1` · notas fuera del papel → `_notas/` · `42-LEGAL` #3 reconciliada.
+> **⏭️ PELOTAS DE DANIEL** (nada de esto lo puedo cerrar yo):
+> 1. **B-04** — ALTORRA **no tiene contrato de usuario con DataCrédito/TransUnion**: sin él NO se puede consultar
+>    a nadie, aunque el arrendatario firme. Y el doc 04 ya le anuncia que se le consultará. ¿Afiliarse, o apoyarse
+>    solo en el estudio de la aseguradora?
+> 2. **Publicar la Política de Datos** en `altorrainmobiliaria.co/legal/politica-tratamiento-datos` — los 24 docs
+>    ya la declaran ahí. Ya no es decisión, es despliegue.
+> 3. Nº de **matrícula de arrendador** y **RNT** (al cierre de obra) · vetar/ajustar los 6 estándares del `02 §2`
+>    sellados bajo delegación.
 >
-> **⏭️ FALTA:**
-> 1. **Consejo externo R3 — prompt ENTREGADO en el chat** (28-jul). Caza de REGRESIONES sobre el texto final;
->    se le adjuntan los 2 contratos + `REGISTRO-DE-CAMBIOS-para-consejo-R3.md`. Pelota de Daniel: pegarlo.
-> 2. Cierre: cuando una ronda no dé CRÍTICO ni MAYOR → **ADR §67** + copiar a `…\KIT ALTORRA`.
-> 3. Luego → backlog del kit **B-01..B-03** (22 docs sin auditar, 1 a la vez).
+> **⏭️ LO QUE SIGO YO** → backlog **B-01..B-04** en bóveda `_notas/BACKLOG-REVISION-KIT.md` (B-01/B-02 ✅):
+> 257 marcas en docs INTERNOS (manual 194 · pagaré 60), **una por una, sin script** (L-33) · verificar el
+> **art. 1096 C.Co.** (única cita del kit escrita sin leer la fuente) · copiar el kit a `…\KIT ALTORRA`.
 >
-> ⚠️ **No volver a pedir el nº de matrícula** (Daniel lo entrega al cierre de obra). **No editar los Word a mano.**
-> 🧾 Deuda: art. 1096 C.Co. del 04 **sin transcribir de fuente oficial** · `15-MANUAL-MAESTRO` = 132 marcas /
-> 112 `PENDIENTE` (el doc más sucio del kit, y lo leen los empleados).
+> ⚠️ **No editar los Word a mano** — se generan. **Maestro y fragmentos del manual se mantienen a mano por
+> duplicado, sin generador**: por eso la misma cifra mala vivía en 3 sitios.

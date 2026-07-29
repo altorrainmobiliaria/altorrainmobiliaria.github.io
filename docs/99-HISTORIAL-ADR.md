@@ -1064,3 +1064,56 @@ Repo: `42-LEGAL` (dictámenes + instrumentos de cobro) · `43-OPERACION` (§docu
 **debate de 3 rondas** con criterio de cierre · la **escalera del desacuerdo persistente** (hecho → fuente; riesgo →
 dueño; incertidumbre → posición conservadora declarada; diseño empatado → reversibilidad) · y la regla de entrega:
 **lo que Daniel ejecuta va en el chat**, no en una carpeta.
+
+## 67. ADR — TODO-34: consolidación del KIT COMPLETO (24 docs) · gate de emisión · comité R3 + consejo R3 ⟦OPUS-5⟧ (2026-07-28)
+
+> Daniel: *"revisar los demás documentos para que todo quede alineado y corregir todo en caso de fugas, vacíos legales,
+> errores y demás"* · *"la rapidez hace que erremos mucho, podemos trabajar documento por documento y consolidarlo"*.
+
+**67.1 Causa raíz.** El §66 blindó los contratos 03/04 pero dejó tres deudas que sólo se ven al mirar el kit como
+sistema: (a) el **doc 03 nunca se enteró del cambio de figura** —su objeto no autorizaba arrendar en nombre propio y
+su DÉCIMA TERCERA seguía diciendo que el arrendador y la parte procesal era el PROPIETARIO—, de modo que el mandato
+que firma el propietario **contradecía** al arriendo que firma el inquilino; (b) el generador de Word **no filtra
+nada**, así que ~570 marcas `⟦⟧` y 131 líneas de "NOTA PARA DANIEL" —incluida *"NO es asesoría legal"*— se imprimían
+en el papel que firma un tercero; (c) los 22 documentos restantes **nunca habían sido auditados** y arrastraban cifras
+que contradecían a los contratos.
+
+**67.2 Solución estructural.** (a) **GATE DE EMISIÓN** en `_plantilla/generar-documentos.ps1`: aborta la generación de
+los 11 documentos **de firma** que traigan marcas de trabajo, advierte en los internos, `-Force` para saltarlo. Es
+determinista: el problema era de *pipeline*, no de disciplina. (b) **Comité R3** (121 agentes) sobre la figura en
+nombre propio + el fondo de reserva: 57 hallazgos → 32 vivos → **12 correcciones (4 críticas)**, aplicadas. (c)
+**Consejo externo R3** (caza de regresiones): 3 hallazgos, los 3 reales; **2 de sus 3 remedios se refutaron o
+ampliaron**. (d) **Consolidación documento por documento** de los 24, con el método que fijó Daniel.
+
+**67.3 No-regresión.** Todas las remisiones internas de 03 y 04 resuelven tras renumerar parágrafos en TERCERA,
+DÉCIMA PRIMERA y VIGÉSIMA SÉPTIMA (verificado con barrido). **24/24 documentos generan** y los 11 de firma pasan el
+gate en verde. Numeración de cláusulas intacta en todo el kit.
+
+**67.4 Verificación.** Comité R3: 6 lentes independientes → **doble refutación adversarial por hallazgo** (existencia
+del defecto + daño de la corrección); basta que UN escéptico refute para que caiga. Consejo R3 verificado contra el
+texto literal antes de aplicar: su H1 (crítico) era correcto y se **mejoró** poniendo la regla en la cláusula de
+terminación; su H2 proponía suprimir una frase que se llevaba por delante **recibir títulos judiciales**, y se
+desambiguó en vez de borrar; su H3 exceptuaba sólo al PROPIETARIO cuando la cesión admite cualquier cesionario.
+
+**67.5 Anti-patterns evitados.** No se limpiaron con script las 257 marcas internas restantes: **muchas no son notas
+de redacción sino el inventario de lo que falta decidir** — una de ellas escondía que ALTORRA **no tiene contrato de
+usuario con DataCrédito ni TransUnion** (B-04), y borrarla habría eliminado el hallazgo. Tampoco se contractualizó el
+protocolo D1→D45 completo (sólo el D5 es promesa válida; elevar cada hito convierte un retraso operativo en
+incumplimiento demandable).
+
+**67.6 Hallazgos de dinero.** `02` mandaba liquidar la mora a **1,5×IBC** (techo *mercantil*) contra un contrato civil
+al **6%** → cobrarlo hace **perder todos los intereses** (C.Co. 884), devolver el exceso doblado (L.45/1990 art. 72) y
+expone a usura · `02` y el manual cotizaban la prima de la póliza al **doble** de la real (2,05% mensual) · `01`
+cotizaba **el mismo servicio a dos precios** (filas 2b vs 4, la 4 sin decir "vivienda") · `03` dejaba sin tarifa los
+contratos de **9 a 10 años** · `23` (pagaré retirado) **afirmaba la figura derogada** · el `04` exigía un **Anexo C-1
+que no existía** en el kit.
+
+**67.7 Doctrina.** **L-33** (una nota "para retirar" suele ser el inventario de lo que falta: leerla antes de
+borrarla) · **L-34** (renumerar un documento rompe las remisiones de los demás: al renumerar, buscar quién cita) ·
+el gate determinista vence a la disciplina · el asesor externo se verifica **en ambas direcciones**.
+
+**67.8 Archivos.** Bóveda: los 24 `entregables-fundacion/*.md` · `_plantilla/generar-documentos.ps1` (gate) ·
+`_notas/NOTAS-DE-REDACCION` + `_notas/BACKLOG-REVISION-KIT` (B-01..B-04) ·
+`research-archive/2026-07-28-comite-r3-contratos/` (journal, resultados, síntesis, dictamen R3, registro de cambios,
+121 transcripciones). Repo: `42-LEGAL` · `30` (L-33, L-34) · `10` · `99`/`00` · `scripts/extraer-journal.mjs` +
+`scripts/limpiar-marcas-contrato.mjs`.
