@@ -62,9 +62,9 @@
 > `/legal/politica-tratamiento-datos` (los 24 docs ya la declaran ahí; es despliegue, no decisión) ·
 > **(3)** Nº de matrícula y RNT (al cierre de obra) + vetar/ajustar los 6 estándares del `02 §2`.
 >
-> **▶ 🔍 B-03: 134 vivos · APLICANDO — 5/14 críticos ✅** (commits `kit B-03 (n/n)` en la bóveda): `00-LEEME`+`23`
-> (figura derogada · poder · prima) · `11-HOSPEDAJE` · los descargos que se autodesacreditan. **Siguen**: `12`(3)
-> `16`(3) `07` `06` `14`. Método: remedio del ESCÉPTICO + lente de regresión + gate tras cada documento.
+> **▶ 🔍 B-03: 🏁 LOS 14 CRÍTICOS CERRADOS** (6 commits `kit B-03 (n/n)` en la bóveda): `00-LEEME`+`23` · `11` ·
+> `05`/`06` · `16` · `12` · `07` · `14`. **Siguen 28 altos y 92 medios/bajos** (los leves NO pasaron por
+> escéptico: verificar antes de aplicar). Método: remedio del ESCÉPTICO + regresión + gate tras cada doc.
 > ⚠️ En **33 de los 42 serios el escéptico dictaminó que la corrección del auditor ROMPE algo** (79%, LD-01 a
 > escala) → se aplica el `remedio_mejor`. Pendiente gordo: **`13-ACCIONISTAS` es INFIRMABLE** (pena sin monto,
 > supramayoría en blanco). Detalle por documento → `SINTESIS-CURADA.md` de la bóveda.
