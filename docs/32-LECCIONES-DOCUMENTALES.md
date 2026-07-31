@@ -15,6 +15,7 @@
 | `L-32` (kit) | **LD-02** | Confirmar el MECANISMO antes de construir el instrumento |
 | `L-33` (kit) | **LD-03** | Una nota "para retirar" suele ser el inventario de lo que falta |
 | `L-34` (kit) | **LD-04** | Renumerar rompe las remisiones de los demás |
+| *(nueva)* | **LD-05** | Auditar el kit contra el kit no basta: el documento madre está fuera |
 
 > ⚠️ Las `L-31`..`L-34` **que siguen en `30`** son otras cosas (pieza de humo · Ads Manager multi-marca ·
 > `cloudflare:workers` · Range en Workers Static Assets). Si un ADR viejo dice "L-33" y habla del kit, quiere
@@ -23,6 +24,9 @@
 ---
 
 ## Lecciones (LD-NN)
+
+### LD-05 — 📜 Auditar el kit CONTRA EL KIT no basta: el documento madre está fuera del kit *(acuerdo de accionistas, 2026-07-31)*
+**Disparador**: 14 auditores y sus escépticos revisaron los 24 documentos del kit con un paquete de contexto que traía las decisiones vigentes, el contexto legal, la póliza y los contratos 03/04… pero **NO los ESTATUTOS de la sociedad**. Resultado: el acuerdo de accionistas se auditó a ciegas y se le reportaron como "vacíos que debe decidir el dueño" **cuatro cosas que los estatutos ya tenían resueltas** — el precio de las acciones (art. 8º e: peritos, o los designa la Cámara de Comercio), la supramayoría (art. 13º: 70%, el mismo que los docs 14/15 ya citaban y que yo di por inventado), el derecho de preferencia con sus plazos, y el mecanismo para forzar el cierre de un pleito (art. 24º: conciliación + arbitramento, que hace innecesario el poder irrevocable que un auditor propuso y su escéptico tumbó por peligroso). Se le llevaron al dueño 4 decisiones; **3 no existían**. **Regla**: antes de auditar un entregable, identifica su **documento madre fuera del kit** —estatutos, escritura, licencia, contrato marco, resolución— e **inclúyelo en el paquete de contexto**; un pacto parasocial sin los estatutos es como auditar un anexo sin su contrato ([[LD-01]] corolario 5). **Señal de que falta la madre**: el documento auditado *remite* a algo que el auditor nunca vio (aquí, el propio 1.2 decía "en caso de contradicción prevalecerán los estatutos" y nadie los abrió). Hermana de [[LD-02]]: allá se construyó un instrumento que el negocio no usa; aquí se auditó uno sin leer la norma que lo gobierna.
 
 ### LD-04 — 🔗 Renumerar un documento ROMPE las remisiones de los demás: al renumerar, busca quién te cita *(kit ALTORRA, 2026-07-28)*
 **Disparador**: al consolidar el tarifario a V2 fusioné y reordené sus filas. El manual seguía citando "filas 2/2b/2c" y "fila 2c" —que dejaron de existir— y ACM, venta y alojamientos se corrieron de lugar: **37 remisiones en 8 archivos** apuntaban al servicio equivocado, así que un asesor cotizando por el manual leía otra tarifa. **Regla**: renumerar es un cambio de INTERFAZ, no de contenido — antes de cerrarlo, grep de quién cita el número, y al reparar **añade el nombre junto al número** ("fila 7 — ACM") para que el próximo cambio falle ruidoso y no en silencio. Aplica a cláusulas, parágrafos, anexos, filas y numerales. Hermana de [[LD-01]]. **Reincidió sobre el propio cerebro** el 2026-07-28 (los IDs de lección de esta hoja) → [[M-04]].
