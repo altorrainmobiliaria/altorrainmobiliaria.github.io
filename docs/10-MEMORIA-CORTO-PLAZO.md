@@ -53,9 +53,8 @@
 > Todo → bóveda `2026-07-31-pauta-bersaglio-escala-SINTESIS.md` 🛑 NO RELANZAR · skill
 > `meta-ads-diagnostico` D-1..D-12. **Daniel**: margen de 3 piezas · foto de topo en oreja.
 >
-> **▶ ⚖️ KIT — lo ya decidido y ya pagado vive en ADR §66 · §67 · §68** (figura en nombre propio · pagaré
-> retirado · gate de emisión · fuente única del manual). 🛑 **NO RELANZAR** el comité R3 (18,8M tok) ni la
-> auditoría B-03: crudos en bóveda `2026-07-28-comite-r3-contratos/` y `2026-07-28-auditoria-kit-b03/`.
+> **▶ ⚖️ KIT — lo decidido y ya pagado vive en ADR §66 · §67 · §68.** 🛑 **NO RELANZAR** el comité R3 ni la
+> auditoría B-03 (crudos en bóveda: `2026-07-28-comite-r3-contratos/` · `2026-07-28-auditoria-kit-b03/`).
 >
 > **⏭️ PELOTAS DE DANIEL** (no las puedo cerrar yo): **(1) B-04** — sin contrato de usuario con
 > DataCrédito/TransUnion **NO se puede consultar a nadie** aunque el arrendatario firme, y el doc 04 ya se lo
@@ -63,12 +62,12 @@
 > `/legal/politica-tratamiento-datos` (los 24 docs ya la declaran ahí; es despliegue, no decisión) ·
 > **(3)** Nº de matrícula y RNT (al cierre de obra) + vetar/ajustar los 6 estándares del `02 §2`.
 >
-> **▶ 🔍 B-03 CERRADA (113 agentes): 191 brutos → 57 refutados → 134 VIVOS (14 críticos), SIN APLICAR.**
-> ⚠️ En **33 de los 42 serios el escéptico dictaminó que la corrección propuesta ROMPE algo** (79%): se aplica
-> el `remedio_mejor`, no el del auditor (LD-01 a escala). Lo gordo: el **`00-LEEME` proclama la figura
-> DEROGADA** —es la primera hoja— · **`11-HOSPEDAJE`** retiene el 100% (ineficaz, Ley 1480 art. 43.5) e IVA de
-> un servicio no prestado · **`13-ACCIONISTAS` es infirmable** (pena sin monto, supramayoría en blanco).
-> Leer `SINTESIS-CURADA.md` de la bóveda; NO relanzar (12,8M tok).
+> **▶ 🔍 B-03: 134 vivos · APLICANDO — 5/14 críticos ✅** (commits `kit B-03 (n/n)` en la bóveda): `00-LEEME`+`23`
+> (figura derogada · poder · prima) · `11-HOSPEDAJE` · los descargos que se autodesacreditan. **Siguen**: `12`(3)
+> `16`(3) `07` `06` `14`. Método: remedio del ESCÉPTICO + lente de regresión + gate tras cada documento.
+> ⚠️ En **33 de los 42 serios el escéptico dictaminó que la corrección del auditor ROMPE algo** (79%, LD-01 a
+> escala) → se aplica el `remedio_mejor`. Pendiente gordo: **`13-ACCIONISTAS` es INFIRMABLE** (pena sin monto,
+> supramayoría en blanco). Detalle por documento → `SINTESIS-CURADA.md` de la bóveda.
 >
 > **⏭️ LO QUE SIGO YO** (backlog **B-01..B-04**, bóveda `_notas/BACKLOG-REVISION-KIT.md`): **(1) aplicar los
 > 191 hallazgos de B-03**, uno a uno · (2) copiar el kit a `…\KIT ALTORRA` (los Word de allá son del 28-jul).
