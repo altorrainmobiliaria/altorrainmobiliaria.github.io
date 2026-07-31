@@ -60,19 +60,20 @@
 > DataCrédito/TransUnion **NO se puede consultar a nadie** aunque el arrendatario firme, y el doc 04 ya se lo
 > anuncia: ¿afiliarse, o apoyarse solo en la aseguradora? · **(2) publicar la Política de Datos** en
 > `/legal/politica-tratamiento-datos` (los 24 docs ya la declaran ahí; es despliegue, no decisión) ·
-> **(3)** Nº de matrícula y RNT (al cierre de obra) + vetar/ajustar los 6 estándares del `02 §2`.
+> **(3)** Nº de matrícula y RNT (al cierre de obra) + vetar/ajustar los 6 estándares del `02 §2` ·
+> **(4) 🆕 ACUERDO DE ACCIONISTAS (doc 13) — 4 decisiones de LOS TRES SOCIOS, no solo tuyas**: precio al que se
+> compran las acciones cuando no hay comprador que lo fije (hoy **los herederos entran a la sociedad** y nadie
+> puede comprarles) · ¿hay arrastre, que obligaría al 20% a vender? · cómo se cierra el shotgun si el perdedor
+> no entrega los títulos (⚠️ NO con poder al Gerente: está sindicado y no se puede remover) · monto de la pena
+> y la supramayoría, hoy en blanco mientras el 14 y el 15 ya publican "70%". **El 13 lleva banner de NO FIRMAR.**
 >
-> **▶ 🔍 B-03: 🏁 LOS 14 CRÍTICOS CERRADOS** (6 commits `kit B-03 (n/n)` en la bóveda): `00-LEEME`+`23` · `11` ·
-> `05`/`06` · `16` · `12` · `07` · `14`. **Siguen 28 altos y 92 medios/bajos** (los leves NO pasaron por
-> escéptico: verificar antes de aplicar). Método: remedio del ESCÉPTICO + regresión + gate tras cada doc.
-> ⚠️ En **33 de los 42 serios el escéptico dictaminó que la corrección del auditor ROMPE algo** (79%, LD-01 a
-> escala) → se aplica el `remedio_mejor`. Pendiente gordo: **`13-ACCIONISTAS` es INFIRMABLE** (pena sin monto,
-> supramayoría en blanco). Detalle por documento → `SINTESIS-CURADA.md` de la bóveda.
+> **▶ 🔍 B-03: 🏁 LOS 14 CRÍTICOS CERRADOS** (commits `kit B-03 (n/n)` en la bóveda). **Siguen 28 altos y 92
+> leves** (los leves NO pasaron por escéptico: verificar antes de aplicar). Método: remedio del ESCÉPTICO +
+> regresión + gate tras cada doc — en **33 de 42 serios el escéptico dictaminó que la corrección del auditor
+> ROMPE algo** (79%). Detalle → `SINTESIS-CURADA.md` de la bóveda.
 >
-> **⏭️ LO QUE SIGO YO** (backlog **B-01..B-04**, bóveda `_notas/BACKLOG-REVISION-KIT.md`): **(1) aplicar los
-> 191 hallazgos de B-03**, uno a uno · (2) copiar el kit a `…\KIT ALTORRA` (los Word de allá son del 28-jul).
-> ✅ Cerrados en §68/§69: art. 1096 · fuente única del manual · las marcas (los `⟦PENDIENTE⟧` **se quedan**:
-> el manual los declara como convención, LD-03) · auditoría Nivel-2 #5.
+> **⏭️ LO QUE SIGO YO**: los altos y leves que quedan de B-03 · copiar el kit a `…\KIT ALTORRA` (los Word de
+> allá son del 28-jul). Backlog B-01..B-04 en la bóveda.
 >
 > ⚠️ **Ni los Word ni el manual maestro se editan a mano**: se GENERAN (`generar-documentos.ps1` ·
 > `ensamblar-manual.ps1`, §68). Editar el maestro directo fue lo que duplicó y desincronizó el capítulo 2.
