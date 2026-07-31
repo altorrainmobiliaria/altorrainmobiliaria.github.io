@@ -38,7 +38,7 @@
 | **TODO-30** | 🗺️ **MapLibre real ✅ CÓDIGO COMPLETO (§55)** — tiles por Worker+Range, verificado E2E. **Falta SOLO la vista en foreground** (rAF congelado en pestañas automatizadas, L-34 → la confirma Daniel en su Chrome). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§60)**. Para datos reales: (1) deploy COORDINADO en el cutover (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. Lo demás BLOQUEADO por causas reales (§60.4); insumos legales de la ficha → TODO-33. | 🟢 cutover | §60 |
 | **TODO-33** | 🧾 **FICHA dinámica — decisiones ANTES de construir (§60.3)**: dirección exacta = OMITIR (PII) · financiación = disclaimer legal o se omite la cifra · asesor = `asesorId` vs bloque genérico · POIs fuera en v1. Regla: bloque sin dato se OMITE (jamás heredar el demo). | 🔵 decisión | §60 |
-| **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§68)**. Kit 00-23 + membrete (`43`). Póliza ✅ · FE-DIAN ⏸️ · 03/04 blindados (§66). **Los 22 restantes YA AUDITADOS ✅ (§68)** — faltan por APLICAR, uno a la vez. | 🔄 aplicar §68 | §66/§68 · `43` |
+| **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§68)**. Kit 00-23 + membrete (`43`). Póliza ✅ · FE-DIAN ⏸️ · 03/04 blindados (§66). **Los 22 restantes AUDITADOS ✅ (§68)** — faltan por APLICAR los **134 vivos**, uno a la vez. | 🔄 aplicar §68 | §66/§68 · `43` |
 | **TODO-32** | 🧠 **CEREBRO v2 ×4 — 🏁 NÚCLEO COMPLETO ✅** (F0-F3, §50-§53; kernel **v1.6.0** ×4). **Restos**: (a) hook SessionStart en los 3 hermanos · (b) PODA REAL de doctrina si el banner >30% dos meses. Mensual: el banner avisa → skill `mantenimiento-general`. | 🟡 restos a/b | §53 |
 | **TODO-35** | 🛡️ **El kit legal no tiene linter** (auditoría #5, N5-05 · CRÍTICO): `brain:check` protege la doc del negocio con 16 chequeos; los **24 documentos que la empresa FIRMA** solo tienen el gate de marcas. **Ningún gate cruza documento↔documento** — por eso el `00-LEEME` proclamó la figura derogada sin que nadie lo notara. Construir chequeos de consistencia (figura · cifras vs 01/02 · remisiones · URLs declaradas). | 🔴 abierto | §69 |
 | **TODO-31** | 🛡️ **SPOF del sistema** (de la auditoría #4; perdió su fila → restituida en §69): (a) todo ×4 —repos, bóveda, espejos— cuelga de **1 cuenta + 1 disco**: falta bundle offsite mensual · (b) **canario del harness**: el boot cuelga de hooks SessionStart y si cambia el schema muere EN SILENCIO · (c) recovery codes: los verifica Daniel. | 🔴 a/b | §49·§69 |
@@ -61,10 +61,12 @@
 > `/legal/politica-tratamiento-datos` (los 24 docs ya la declaran ahí; es despliegue, no decisión) ·
 > **(3)** Nº de matrícula y RNT (al cierre de obra) + vetar/ajustar los 6 estándares del `02 §2`.
 >
-> **▶ 🔍 B-03: 191 hallazgos SIN APLICAR** (25 críticos; lente de regresión al aplicar, LD-01). Lo gordo ya
-> sabido: el **`00-LEEME` proclama la figura de arrendador DEROGADA** —y es lo primero que se lee— · el
-> **`11-HOSPEDAJE` retiene el 100%** (art. 43.5 Ley 1480) e IVA de un servicio no prestado · el
-> **`14-SOCIETARIA` no menciona lo laboral**.
+> **▶ 🔍 B-03 CERRADA (113 agentes): 191 brutos → 57 refutados → 134 VIVOS (14 críticos), SIN APLICAR.**
+> ⚠️ En **33 de los 42 serios el escéptico dictaminó que la corrección propuesta ROMPE algo** (79%): se aplica
+> el `remedio_mejor`, no el del auditor (LD-01 a escala). Lo gordo: el **`00-LEEME` proclama la figura
+> DEROGADA** —es la primera hoja— · **`11-HOSPEDAJE`** retiene el 100% (ineficaz, Ley 1480 art. 43.5) e IVA de
+> un servicio no prestado · **`13-ACCIONISTAS` es infirmable** (pena sin monto, supramayoría en blanco).
+> Leer `SINTESIS-CURADA.md` de la bóveda; NO relanzar (12,8M tok).
 >
 > **⏭️ LO QUE SIGO YO** (backlog **B-01..B-04**, bóveda `_notas/BACKLOG-REVISION-KIT.md`): **(1) aplicar los
 > 191 hallazgos de B-03**, uno a uno · (2) copiar el kit a `…\KIT ALTORRA` (los Word de allá son del 28-jul).

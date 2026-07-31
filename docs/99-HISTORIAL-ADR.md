@@ -1158,6 +1158,16 @@ concatenación y el generador no inventa nada. `brain:check`: 7/7 neuronas dentr
 perdió ninguna auditoría** — los crudos se extrajeron del journal a la bóveda ANTES de relanzar, y el resto se
 completó con `resumeFromRunId` (los 86 resultados pagados vuelven cacheados).
 
+**68.4-bis Adenda (2026-07-31) — la corrida cerró y el filtro adversarial cambió el titular.** 113 agentes,
+0 errores. De los **191 brutos**, los 99 serios pasaron por un escéptico independiente: **57 murieron refutados**
+y quedan **134 vivos (14 críticos · 28 altos · 67 medios · 25 bajos)**. Los medios/bajos NO se refutaron por
+diseño: son *sin verificar*, no *confirmados*. **El hallazgo que importa no está en el kit sino en la auditoría**:
+en **33 de los 42 serios supervivientes (79%)** el escéptico dictaminó que **la corrección propuesta por el
+auditor rompe algo** — el defecto es real, el remedio no. Aplicar los hallazgos tal como vienen habría metido
+defectos nuevos en cuatro de cada cinco parches; se aplica el `remedio_mejor` del escéptico. Es [[LD-01]] medido:
+ya no es una anécdota del pagaré, es una tasa. Síntesis curada por documento en la bóveda
+(`SINTESIS-CURADA.md`), crudos y retorno emparejado al lado.
+
 **68.5 Anti-patterns evitados.** No se limpiaron las 112 marcas `⟦PENDIENTE⟧` del manual: el propio manual
 **declara ⟦⟧ como convención** en su cap. 0, así que ahí no son suciedad sino el inventario de lo que falta
 (LD-03 otra vez). Lo que sí salió fueron las **"NOTA PARA DANIEL"** de la portada y de los caps 01/02, que
