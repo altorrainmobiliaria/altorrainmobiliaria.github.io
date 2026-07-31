@@ -47,9 +47,11 @@
 
 ## 📝 Bitácora (efímera)
 
-> **▶ 🔥 PAUTA BERSAGLIO semana1 EN VIVO (27-jul→3-ago)**: campaña `120250983749280439` · adset
-> `120250983973160439` · **$13.000/día** · 3 anuncios OK. ⛔ NO editar días 1-7. Plan+umbrales → bóveda
-> `2026-07-27-plan-pauta-semana1-SINTESIS.md`. **Pelota Daniel**: guion WhatsApp al equipo + precios amatista/dúo.
+> **▶ 🔥 PAUTA BERSAGLIO semana 2 VIVA · 🔁 REVISAR LUNES 3-AGO** — `120251090001200439`: Cartagena ciudad
+> +0km · $8.000/día · fin 10-ago · precio pegado a SU producto (topos $2.280.000 / pulseras 10-20-30M).
+> S1: **0 ventas de 33 chats**. **PARADA**: sin 1 venta ni 3 visitas al 10-ago → NO recargar.
+> Todo → bóveda `2026-07-31-pauta-bersaglio-escala-SINTESIS.md` 🛑 NO RELANZAR · skill
+> `meta-ads-diagnostico` D-1..D-12. **Daniel**: margen de 3 piezas · foto de topo en oreja.
 >
 > **▶ ⚖️ KIT — lo ya decidido y ya pagado vive en ADR §66 · §67 · §68** (figura en nombre propio · pagaré
 > retirado · gate de emisión · fuente única del manual). 🛑 **NO RELANZAR** el comité R3 (18,8M tok) ni la
