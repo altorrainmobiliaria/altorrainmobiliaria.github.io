@@ -20,8 +20,13 @@ const lentes = resultados.filter((r) => r.result && Array.isArray(r.result.halla
 const veredictos = resultados.filter((r) => r.result && typeof r.result.refutado === 'boolean')
 const textos = resultados.filter((r) => typeof r.result === 'string')
 
-let md = `# COMITÉ R3 — contratos 03/04 · resultados CRUDOS recuperados del journal\n\n`
-md += `> Extraído del \`journal.jsonl\` del workflow \`wf_ad7fef94-309\` (2026-07-28).\n`
+// Título y procedencia: se pasan por argv para que el digest diga de QUÉ corrida salió.
+// Sin esto el extractor rotulaba todo como "comité R3", que era el primer uso (ADR §67).
+const titulo = process.argv[4] || 'Resultados CRUDOS recuperados del journal'
+const procedencia = process.argv[5] || journalPath
+
+let md = `# ${titulo}\n\n`
+md += `> Extraído del \`journal.jsonl\` de ${procedencia}.\n`
 md += `> **Estos son tokens ya gastados.** Si una sesión futura necesita estos hallazgos, los lee de aquí:\n`
 md += `> NO se relanza el comité. Relanzarlo es pagar dos veces por lo mismo.\n\n`
 md += `- Devoluciones registradas: **${resultados.length}**\n`

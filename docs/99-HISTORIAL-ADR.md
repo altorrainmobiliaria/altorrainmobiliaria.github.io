@@ -1056,11 +1056,11 @@ buscado. Todas descartadas con su porqué.
 
 **66.6 Archivos.** Bóveda: `03`, `04`, `23` (retirado), `00-LEEME`, `02`, `18`, `17`, manual caps 00/02/03/08 + maestro,
 `_plantilla/` (generador de Word con membrete real), `research-archive/2026-07-27-pagare-*` y `2026-07-28-consejo-*`.
-Repo: `42-LEGAL` (dictámenes + instrumentos de cobro) · `43-OPERACION` (§documentos corporativos) · `30` (L-31, L-32) ·
+Repo: `42-LEGAL` (dictámenes + instrumentos de cobro) · `43-OPERACION` (§documentos corporativos) · `32` (LD-01, LD-02) ·
 `15` (consejo = 3 rondas) · skill `proceso-decision-fuerte` (§🥊 debate + 🪜 escalera del desacuerdo) · `10` · `99`/`00`.
 
-**66.7 Doctrina.** **L-31** (los defectos nuevos nacen de las correcciones → lente de regresión + refutación) ·
-**L-32** (confirmar que el mecanismo sigue vigente antes de construir el instrumento) · el consejo externo es un
+**66.7 Doctrina.** **LD-01** (los defectos nuevos nacen de las correcciones → lente de regresión + refutación) ·
+**LD-02** (confirmar que el mecanismo sigue vigente antes de construir el instrumento) · el consejo externo es un
 **debate de 3 rondas** con criterio de cierre · la **escalera del desacuerdo persistente** (hecho → fuente; riesgo →
 dueño; incertidumbre → posición conservadora declarada; diseño empatado → reversibilidad) · y la regla de entrega:
 **lo que Daniel ejecuta va en el chat**, no en una carpeta.
@@ -1108,12 +1108,119 @@ cotizaba **el mismo servicio a dos precios** (filas 2b vs 4, la 4 sin decir "viv
 contratos de **9 a 10 años** · `23` (pagaré retirado) **afirmaba la figura derogada** · el `04` exigía un **Anexo C-1
 que no existía** en el kit.
 
-**67.7 Doctrina.** **L-33** (una nota "para retirar" suele ser el inventario de lo que falta: leerla antes de
-borrarla) · **L-34** (renumerar un documento rompe las remisiones de los demás: al renumerar, buscar quién cita) ·
+**67.7 Doctrina.** **LD-03** (una nota "para retirar" suele ser el inventario de lo que falta: leerla antes de
+borrarla) · **LD-04** (renumerar un documento rompe las remisiones de los demás: al renumerar, buscar quién cita) ·
 el gate determinista vence a la disciplina · el asesor externo se verifica **en ambas direcciones**.
 
 **67.8 Archivos.** Bóveda: los 24 `entregables-fundacion/*.md` · `_plantilla/generar-documentos.ps1` (gate) ·
 `_notas/NOTAS-DE-REDACCION` + `_notas/BACKLOG-REVISION-KIT` (B-01..B-04) ·
 `research-archive/2026-07-28-comite-r3-contratos/` (journal, resultados, síntesis, dictamen R3, registro de cambios,
-121 transcripciones). Repo: `42-LEGAL` · `30` (L-33, L-34) · `10` · `99`/`00` · `scripts/extraer-journal.mjs` +
+121 transcripciones). Repo: `42-LEGAL` · `32` (LD-03, LD-04) · `10` · `99`/`00` · `scripts/extraer-journal.mjs` +
 `scripts/limpiar-marcas-contrato.mjs`.
+
+---
+
+## 68. ADR — Fuente única del manual (cap. 2 duplicado y divergente) · namespace `LD-NN` · art. 1096 verificado · auditoría B-03 ⟦OPUS-5⟧ (2026-07-28/31)
+
+> Daniel: *"HAS TODO LO QUE ESTA PENDIENTE DEL CEREBRO"*. Barrido de todo lo abierto, no de una tarea suelta.
+
+**68.1 Causa raíz.** Cuatro defectos independientes, todos de la misma familia — **una fuente de verdad
+duplicada a mano**: (a) el **capítulo 2 del manual estaba DOS VECES** dentro del maestro (666 líneas), y las
+dos copias habían **divergido justo en la fila que manda**: una decía "garantía = póliza o codeudor, **sin
+pagarés**" y la otra seguía exigiendo *"en TODOS los casos pagaré con carta de instrucciones"* — el documento
+**RETIRADO** del kit. Un asesor que leyera el manual encontraba las dos, y la última gana. Origen: el maestro
+y los 10 fragmentos se mantenían a mano por duplicado, así que cada corrección tenía que aplicarse dos veces.
+(b) Las lecciones **`L-31`..`L-34` estaban asignadas dos veces cada una** (frente técnico y frente legal las
+tomaron el mismo día), con citas apuntando a sentidos contrarios en `10`, `00`, `20`, `31`, `99 §55`/`§66`/`§67`
+y en dos skills. (c) `.auditoria-contratos/` guardaba **copias íntegras de los contratos 03 y 04** dentro de un
+repo **público** de GitHub Pages, sin gitignore. (d) La única cita del kit escrita sin leer la fuente
+(**C.Co. art. 1096**) seguía abierta como deuda declarada.
+
+**68.2 Solución estructural.** (a) **El maestro se GENERA**: `_plantilla/ensamblar-manual.ps1` +
+`15-manual-fragmentos/_portada.md`; los fragmentos son la fuente y `-Verificar` falla si alguien parcheó el
+maestro a mano. La duplicación deja de ser posible por construcción, en vez de depender de acordarse.
+(b) **Namespace `LD-NN` y hoja propia** `docs/32-LECCIONES-DOCUMENTALES.md` para la familia legal/documental
+(LD-01..LD-04), con el mapa viejo→nuevo escrito y las citas reparadas una por una. (c) Gate de `.gitignore`
+para `.auditoria-contratos/` y `.astro/`. (d) Art. 1096 leído en dos fuentes independientes que coinciden
+literalmente, más el **art. 1099** (no alcanza al arrendatario): el PARÁGRAFO 4 de la DÉCIMA SEGUNDA pasa a
+**seguir la norma** — "por ministerio de la ley y hasta concurrencia del importe" — e incorpora la segunda
+frase del artículo (excepciones oponibles), que la ley concede igual y cuya omisión solo daba cara de abusiva.
+
+**68.3 No-regresión.** El maestro regenerado difiere del anterior en **exactamente** lo previsto: −666 líneas
+(la copia rancia) y las tres reescrituras de cabecera. Verificado: 0 encabezados duplicados · el capítulo 2
+aparece 1 vez · 0 menciones del pagaré como regla vigente. La comparación fragmentos↔maestro daba **31 líneas
+de diferencia sobre 358.000 caracteres** antes de tocar nada — prueba de que el maestro ya era la
+concatenación y el generador no inventa nada. `brain:check`: 7/7 neuronas dentro de tope, boot 31.294c.
+
+**68.4 Verificación.** Auditoría **B-03** por workflow: un auditor dedicado por documento (método de Daniel:
+*uno a la vez*) + un escéptico independiente por hallazgo serio. **14/14 documentos auditados · 191 hallazgos
+(25 críticos, 74 altos)**. La corrida se cortó por límite semanal de la cuenta con 72 de 99 veredictos; **no se
+perdió ninguna auditoría** — los crudos se extrajeron del journal a la bóveda ANTES de relanzar, y el resto se
+completó con `resumeFromRunId` (los 86 resultados pagados vuelven cacheados).
+
+**68.5 Anti-patterns evitados.** No se limpiaron las 112 marcas `⟦PENDIENTE⟧` del manual: el propio manual
+**declara ⟦⟧ como convención** en su cap. 0, así que ahí no son suciedad sino el inventario de lo que falta
+(LD-03 otra vez). Lo que sí salió fueron las **"NOTA PARA DANIEL"** de la portada y de los caps 01/02, que
+decían *"NO es asesoría legal"* y *"validar con abogado"* en el documento que leen los empleados. Tampoco se
+recortó `00-INDICE` para callar al linter: es un **registro** que crece ~200c por ADR, así que se subió su cap
+con la razón escrita y se fijó el control real (**longitud de fila ≤200c**, no el total).
+
+**68.6 Doctrina.** **M-04** — un ID lo asigna quien escribe, y dos frentes en paralelo colisionan en silencio;
+cuando una familia crece en su propio frente, **namespace y hoja propios** en vez de estirar una secuencia
+compartida. Corolario general de §68: **todo lo que se mantiene por duplicado a mano diverge**, y siempre por
+la línea que importa — la cura es un generador, no disciplina.
+
+**68.7 Archivos.** Bóveda: `_plantilla/ensamblar-manual.ps1` · `15-manual-fragmentos/_portada.md` + caps 00/01/02
+· `15-MANUAL-MAESTRO` (regenerado) · `04` (PARÁGRAFO 4) · `_notas/NOTAS-DE-REDACCION` ·
+`research-archive/2026-07-28-auditoria-kit-b03/` (00-LEEME + 191 hallazgos + 72 veredictos).
+Repo: `32-LECCIONES-DOCUMENTALES` (nueva) · `30` (M-04, −gobernanza) · `60` (§Gobernanza) · `CLAUDE.md` §0 ·
+`00` · `10` · `.gitignore` · `.brain-manifest.json` · `scripts/extraer-journal.mjs` (título parametrizado).
+
+---
+
+## 69. ADR — Auditoría de cerebro Nivel-2 #5: el retrieval funciona, la cobertura no llega al kit ⟦OPUS-5⟧ (2026-07-31)
+
+> No la pidió nadie: la disparó el **gate de pre-commit** (`brain:check #13`: *"19 ADRs nuevos ≥ 12; gracia
+> agotada"*), que bloqueó el commit de §68. El gate hizo exactamente lo que se diseñó para hacer.
+
+**69.1 Causa raíz.** La auditoría #4 (§49) dejó tres hallazgos ABIERTOS con dueño declarado — **A-01** (todo el
+sistema ×4 cuelga de 1 cuenta + 1 disco), **A-02** (costo del cerebro 49% > bandera 30%) y **A-03** (canario del
+harness) — y los tres fueron a parar a `TODO-31`… que **perdió su fila en `10`** y sobrevivía como media frase
+dentro de la celda de `TODO-32`. Once días invisibles. Es la clase **H-11 ("cierre-invisible") REINCIDENTE**: un
+accionable que existe pero que ningún boot muestra deja de existir en la práctica.
+
+**69.2 Solución estructural.** Fila `TODO-31` restituida con sus tres items explícitos. Los **dos fallos de
+enrutamiento** que cazó el retrieval-drill se curaron en el acto, no se anotaron para después: (a) el índice
+**no tenía fila para la decisión más consecuente del proyecto** —quién firma como ARRENDADOR—, así que un
+operador frío tenía que escanear ~70 títulos de ADR y reconocer el correcto por intuición; (b) la fila de mapa
+citaba **`L-33`** (binding removido, error de build) para un síntoma que es **`L-34`** (Range ignorado: *carga
+en dev, no en prod*). Ambas filas nuevas.
+
+**69.3 No-regresión.** Las 18 curaciones de la #4 aguantaron 11 días sin reabrirse. `brain:check` en verde
+(7/7 neuronas, 68 ADRs indexados, bóveda == origin). **GC pareado: masa-neta del boot −37c** — la auditoría no
+engordó lo que audita. Poda real ejecutada: `CLAUDE.md §4` (cache bump) era un **casi-duplicado** del bullet de
+SW de §3.2 → fusionada, referencias repuntadas.
+
+**69.4 Verificación — RETRIEVAL-DRILL (la sonda que mide la FUNCIÓN, no el almacén).** Agente frío, sin
+contexto, arrancando solo con el boot: **5 de 6 preguntas sin perderse**, dos de ellas (callejones prohibidos ·
+qué significa `⟦PENDIENTE⟧`) **sin salir del boot**. La hoja `32` recién creada enrutó limpio desde `CLAUDE.md §0`
+a `LD-01` y `LD-03`: **el shard de §68 no rompió el ruteo**. Y el agente **redescubrió por su cuenta** la
+contradicción del `00-LEEME` — buena señal del cerebro, mala del kit.
+
+**69.5 Anti-patterns evitados.** No se saltó el gate con `--no-verify` (habría sido un `git commit` limpio y una
+deuda escondida). No se retiró ningún chequeo del linter por "no cazar nada": los tres candidatos llevan **una**
+auditoría en blanco y la regla pide dos. No se maquilló A-02: el costo **subió de 49% a 55%** y queda escrito.
+
+**69.6 El hallazgo que importa (N5-05, crítico).** **El kit legal no tiene linter.** `brain:check` protege con
+16 chequeos la documentación *sobre* el negocio; los **24 documentos con los que la empresa firma contratos**
+solo tienen el gate de marcas de trabajo, y **ningún gate cruza documento↔documento**. Por eso el `00-LEEME`
+—lo primero que se lee del kit— pudo proclamar la figura de arrendador DEROGADA sin que nada saltara, hasta que
+lo encontró una auditoría de 191 hallazgos pagada aparte. **El activo más caro es el menos protegido** → TODO-35.
+
+**69.7 Doctrina.** Un hallazgo sin fila en el ledger es un hallazgo cerrado de facto: al cerrar una auditoría,
+**cada ABIERTO se verifica en el boot, no en la tabla**. Y el corolario de N5-05: la protección automática debe
+seguir al VALOR (lo que se firma), no al artefacto que resulta más cómodo de lintar.
+
+**69.8 Archivos.** Bóveda: `2026-07-31-auditoria-cerebro-nivel2-5-inmobiliaria.md` (tabla falsable N5-01..N5-06 +
+diff contra la #4) + fila en el README del archive. Repo: `10` (TODO-31 restituido · TODO-35 nuevo) · `00`
+(2 filas de enrutamiento) · `CLAUDE.md` (§4 fusionada en §3.2) · `05` · `.brain-manifest.json` (`deepAudit`).

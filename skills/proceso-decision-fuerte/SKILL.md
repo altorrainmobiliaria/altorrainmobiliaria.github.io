@@ -146,7 +146,7 @@ más la fuente leída**. Estructura probada:
   refutaciones y aportó 4 mejoras que no habían salido en R1 (incluida la mejor idea de toda la sesión).
 - **R3 — caza de REGRESIONES sobre el texto final**, entregándole el registro de cambios. Es un trabajo
   distinto —no opinar, sino encontrar lo que rompió la reescritura— y es obligatorio tras una reescritura
-  grande ([[L-31]]: los defectos nuevos nacen de las correcciones).
+  grande ([[LD-01]]: los defectos nuevos nacen de las correcciones).
 - **Criterio de cierre**: se para cuando una ronda completa no produce **ningún hallazgo CRÍTICO ni MAYOR
   confirmado**. Sin criterio de parada el debate gira para siempre y empieza a añadir ruido, no seguridad.
 

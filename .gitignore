@@ -45,6 +45,14 @@ Brief_Dise*.docx
 .agents/
 _tmp-guia-*.pdf
 
+# Paquete de contexto de las auditorias del kit: contiene COPIAS INTEGRAS de los
+# contratos 03/04 y del contexto legal. Este repo es PUBLICO (GitHub Pages) -> jamas al repo.
+# Su casa definitiva es la boveda privada brain-private/altorrainmobiliaria/.
+.auditoria-contratos/
+
+# Cache de tipos generada por Astro (portal)
+.astro/
+
 # TODO-28 #1: foto de sesion del hook (estado local, no historia)
 docs/.handoff-auto.md
 docs/.boot-marker

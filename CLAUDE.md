@@ -42,7 +42,7 @@ El cerebro se divide en **nodos**. Auto-cargas SOLO `CLAUDE.md` + `05` + `10` (�
 | 🛰️ **Consejo Externo** | `docs/15-CONSEJO-EXTERNO.md` | ❌ on-demand | Trigger de Decisión Fuerte: crítica adversarial del provider externo (de otra familia, no-Claude). Cuándo + anti-anclaje ahí. |
 | 🗺️ **Espacial** | `docs/20-MEMORIA-ESPACIAL.md` | ❌ on-demand | Trigger de Desorientación: dónde vive un componente, flujos, schema Firestore, blog. |
 | 🧪 **Procedimental (experiencia)** | `docs/30-LECCIONES.md` | ❌ on-demand | Trigger de Experiencia: ANTES de una op riesgosa/repetitiva (deploy CF, tocar caché/SW, reglas) o si un síntoma "te suena". Gotchas + recetas. |
-| 🖥️ **Verificación UI** | `docs/31-VERIFICACION-UI.md` | ❌ on-demand | Verificar UI en navegador: panel congelado · Chrome · computed vs `transition` (L-22/26/28). |
+| 🧩 **Hojas hijas de `30`** | `docs/31-VERIFICACION-UI.md` · `docs/32-LECCIONES-DOCUMENTALES.md` | ❌ on-demand | Ramas de la procedimental: **UI en navegador** (L-22/26/28) · **legal/documental** (`LD-NN`: contratos, manual, formatos, entregables). |
 | 🔁 **Workflows reutilizables** | `docs/60-WORKFLOWS.md` | ❌ on-demand | Trigger de Experiencia/Auditoría: catálogo W-01..W-11. **W-11 = SSoT del flujo fuerte** (leerlo ANTES de Decisión Fuerte/Diseño-UI). |
 | 🗂️ **Índice sináptico** | `docs/00-INDICE.md` | ❌ on-demand | ANTES de leer el historial (offset exacto) Y para el enrutamiento semántico (síntoma → neurona). |
 | 📚 **Largo Plazo** | `docs/99-HISTORIAL-ADR.md` | ❌ on-demand | Trigger de Error / detalle histórico de un §. NUNCA completo — usa offset/limit. |
@@ -110,7 +110,7 @@ Encabezado `## NN. ADR-NNN — <título>` + cita del cliente si reportó, y 7 pu
 - NO cambiar vars CSS (`--gold`/`--accent`/etc.), la tipografía **Poppins** (⚠️ solo LEGACY — el portal usa Cormorant+Hanken, §1), colores de botones/badges/cards ni el layout existente. NO borrar `CNAME`.
 - NO hardcodear URLs (usar colección `config` de Firestore o vars CSS). NUNCA renombrar IDs/clases/funciones exportadas sin migración (cambios aditivos).
 - **NUNCA `onSnapshot()` en colecciones completas desde páginas públicas** (solo admin). **NUNCA queries Firestore sin `limit()`** — paginar (default `limit(9)`, 9-20 máx). Free-tier Blaze es sagrado (`20-ESPACIAL §Blaze`).
-- Service Worker: bumpear `CACHE_NAME` (`service-worker.js`, formato `altorra-pwa-vN`) al cambiar el shell; GitHub Actions lo bumpea. Cliente invalida con **Ctrl+Shift+R**.
+- Service Worker: bumpear `CACHE_NAME` (`service-worker.js`, `altorra-pwa-vN`→`vN+1`) al cambiar el shell; GitHub Actions lo bumpea y el heartbeat reporta la vigente (§52) — NO se copia a mano en `05`. Cliente invalida con **Ctrl+Shift+R**.
 - Globals/readiness del LEGACY (`window.*`, `altorra:db-ready`) → `20 §Stack` (dueño del inventario).
 
 ### 3.3 Verifica, no asumas — evidencia antes de afirmar (UNIVERSAL)
@@ -131,15 +131,6 @@ Antes de CUALQUIER commit no-trivial: 5 secciones → (A) archivos a modificar, 
 ### 3.7 🧠 Calidad por defecto — auto-crítica SIEMPRE · Comité ×3 por iniciativa propia
 - **Auto-crítica SIEMPRE (casi gratis)**: antes de entregar CUALQUIER respuesta sustantiva, una pasada interna — *"¿qué falla? ¿asumí algo falso? ¿se puede mejorar?"* — y corrige.
 - **Comité ×3 por INICIATIVA PROPIA (caro)**: dispara `comite-expertos` SIN que lo pidan cuando la respuesta sea una DECISIÓN con consecuencias, tenga incertidumbre genuina, sea cara de revertir o un entregable importante. Anúncialo. En Decisión Fuerte suma 2ª opinión externa (`15-CONSEJO-EXTERNO`). NO en lo trivial (datos/estados/ediciones mecánicas/charla).
-
----
-
-## §4 — Cache bump (Service Worker · `service-worker.js`)
-
-Al cambiar comportamiento o archivos del shell:
-- Incrementar `CACHE_NAME` en `service-worker.js` (formato `altorra-pwa-vN` → `vN+1`, MAYOR).
-- La versión vigente la reporta el **heartbeat** (sidecar `.estado-auto`, generado del SW en cada boot, §52) — ya NO se duplica a mano en `05`.
-- Cliente invalida con **Ctrl+Shift+R** la primera vez.
 
 ---
 
@@ -174,7 +165,7 @@ Reflejos VINCULANTES que disparas con juicio durante el trabajo normal, **sin qu
 - **Higiene = GC**: `10` es pizarra (cap ~110). Al cerrar tarea, si supera el cap → poda: consolida a `99`/`30`, recorta `10` al foco vivo. ⛔ Nunca volcar a `99` sin convertir en ADR.
 - **Auto-auditoría (arranque Y pre-cierre)**: corre **`npm run brain:check`**. Al arrancar: si reporta problemas o `05`/`10` viejos → arréglalos ANTES. Antes de cerrar/idle — PROACTIVO: barrido holístico (brain:check + frescura vs git real) → cerebro impecable para el próximo "tú".
 - **Auto-mejora / Autocrítica / Desafío Crítico**: llena vacíos; si el cerebro contribuyó a un error nombra el DEFECTO y corrígelo (`30 §Meta`); cuestiona reglas con EVIDENCIA verificable.
-- **Cierre (anti "lo documento después")**: una tarea NO está cerrada hasta verificar: ¿`10` refleja el progreso? ¿`05` si cambió la salud? ¿decisión → ADR en `99` + `00`? ¿lección → `30`? ¿cache bump §4? ¿`brain:check` SANO? **¿hubo deliberación (comité/Gemini/workflow)? → CRUDO + SÍNTESIS enlazados, o la tarea está INCOMPLETA** (✅ con deliberación no capturada = NO cerrada). Si falta algo, vuelve y hazlo.
+- **Cierre (anti "lo documento después")**: una tarea NO está cerrada hasta verificar: ¿`10` refleja el progreso? ¿`05` si cambió la salud? ¿decisión → ADR en `99` + `00`? ¿lección → `30`? ¿cache bump §3.2? ¿`brain:check` SANO? **¿hubo deliberación (comité/Gemini/workflow)? → CRUDO + SÍNTESIS enlazados, o la tarea está INCOMPLETA** (✅ con deliberación no capturada = NO cerrada). Si falta algo, vuelve y hazlo.
 - **Catalogación de Skills**: skill nueva en `skills/` o `~/.claude/skills/` → documéntala en el inventario de skills del repo (`skills-inventory`, créalo si hace falta) en el mismo cambio. Backstop: `brain:check` check #6.
 
 **🛡️ Límite de guardián**: los reflejos ENRIQUECEN, nunca borran a la ligera. Eliminar/reescribir conocimiento histórico exige certeza verificada (§3.3). Ante la duda: **apendar, no sobrescribir; cuarentenar en `_legacy/`, no borrar.**
@@ -186,5 +177,5 @@ Cada neurona tiene un TOPE BLANDO (señal, no muro). Los caps reales (en **chars
 
 ## §7 — Cómo retomar (recap rápido)
 1. **Boot** (§G.1): `CLAUDE.md` + `05` + `10` + `brain:check`; imprime signos vitales; pendientes = TODO-NN.
-2. **Antes de tocar código**: IAP §3.4 · triggers §G.2. **Antes de commit**: §2. **Tras CADA tarea**: §G.4 + cache bump §4 (si aplica).
+2. **Antes de tocar código**: IAP §3.4 · triggers §G.2. **Antes de commit**: §2. **Tras CADA tarea**: §G.4 + cache bump §3.2 (si aplica).
 3. **Entorno**: Windows + PowerShell · raíz del repo · git/deploy delegados a Claude (§2).

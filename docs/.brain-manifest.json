@@ -31,7 +31,8 @@
     },
     "docs/00-INDICE.md": {
       "lines": 450,
-      "chars": 16000
+      "chars": 24000,
+      "_comment": "Subido de 16000 a 24000 el 2026-07-28 (ADR §68). Razon: 00 no es una neurona de doctrina sino un REGISTRO que crece ~200c por cada ADR nuevo; su mapa §->linea ocupa 13.4k de los 17.2k con 67 ADRs. Recortarlo destruye enrutamiento, que es justo su funcion. El control real de esta neurona NO es el total sino la LONGITUD DE FILA (objetivo <=200c): si una fila necesita mas, el detalle va al ADR. Revisar de nuevo hacia los ~100 ADRs."
     },
     "docs/40-LOBULOS-DOMINIO.md": {
       "lines": 280,
@@ -50,7 +51,10 @@
     "scripts/brain-archive.mjs"
   ],
   "lastOffsiteBackup": "2026-07-23",
-  "orphanAllowlist": [".handoff-auto.md", ".estado-auto.md"],
+  "orphanAllowlist": [
+    ".handoff-auto.md",
+    ".estado-auto.md"
+  ],
   "_orphanAllowlistRazon": "handoff-auto (TODO-28 #1) y estado-auto (heartbeat F2 §52): sidecars escritos por HOOK (session-handoff.mjs), gitignored, efimeros; su ruta de lectura es el SessionStart --boot-echo, no el grafo de neuronas",
   "peers": [
     "../altorracars.github.io",
@@ -78,11 +82,11 @@
     }
   ],
   "deepAudit": {
-    "last": "2026-07-20",
-    "coveredHeaderCount": 49,
+    "last": "2026-07-31",
+    "coveredHeaderCount": 68,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "tableFile": "2026-07-20-auditoria-cerebro-nivel2-4-inmobiliaria.md",
-    "_que": "Nivel-2 #4 (ADR §49, encargo Daniel pre-TODO-30): retrieval 5/5; 2 mentiras en boot curadas; TODO-30 blindado; REINCIDENCIA clase G-02 -> M-03 (gate en el recurso); TODO-31 SPOF + proxy costo 49%>30%. tableFile = tabla falsable en archiveDir (kernel aun no la valida -> TODO-23). Previa #3 = §33 (2026-07-18, cubrio 39)"
+    "tableFile": "2026-07-31-auditoria-cerebro-nivel2-5-inmobiliaria.md",
+    "_que": "Nivel-2 #5 (ADR §69, disparada por el GATE de pre-commit, no por encargo): retrieval 5/6 -> 2 fallos de ruteo CURADOS (falta fila del ARRENDADOR; el sintoma dev-si/prod-no citaba L-33 en vez de L-34). REINCIDENTE clase H-11: TODO-31 perdio su fila (A-01 SPOF + A-03 canario seguian ABIERTOS e invisibles) -> restituida. REINCIDENTE A-02: costo 49%->55%. CRITICO N5-05: el kit legal NO tiene linter (16 checks protegen la doc del negocio; 24 docs de firma solo tienen el gate de marcas) -> TODO-35. Masa-neta del boot: -2c. Previa #4 = §49 (2026-07-20, cubrio 49)."
   }
 }

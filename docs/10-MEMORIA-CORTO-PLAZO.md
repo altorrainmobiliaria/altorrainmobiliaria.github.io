@@ -7,16 +7,14 @@
 
 ---
 
-## 🎯 Foco actual (re-sellado 2026-07-24 · pivote de misión §61)
+## 🎯 Foco actual (re-sellado 2026-07-31 · pivote de misión §61)
 
 > **⭐ FRENTE 0 — FUNDACIÓN OPERATIVA = TODO-34 (mandato Daniel 24-jul)**: armar la inmobiliaria COMPLETA con datos
 > reales (procesos, legal, docs, capacitaciones); Claude = abogado + todos los empleados a la vez. Plan en TODO-34.
 >
 > **FRENTE 1 — portal**: TODO-27 ✅ · TODO-30 mapa ✅ (falta vista foreground) · catálogo §56-§59 ✅ hasta la
 > FRONTERA pre-cutover (§60). Fidelidad → L-29/L-24/L-28; mockups en `portal/design/mockups/`.
->
-> **FRENTE 2 — PAUTA ✅ LISTA-PARA-ENCENDER** (§33-§37; SSoT = skill `pauta-captacion`). El encendido REAL
-> converge con el CIERRE DE OBRA → "sí" de Daniel.
+> **FRENTE 2 — PAUTA ✅ LISTA-PARA-ENCENDER** (§33-§37; SSoT = skill `pauta-captacion`), converge con el CIERRE DE OBRA.
 >
 > **🎨 DISEÑO SELLADO — NO re-litigar** → `CLAUDE.md §1` + `portal/src/styles/tokens.css` + ADR §23-§23.9.
 > Dev: `npm --prefix portal run dev` (4321). **🚦 BLOQUEADORES (solo Daniel)** → flag ⚖️ de `05` + TODO-21.
@@ -35,13 +33,15 @@
 | **TODO-21** | **Lote-dueño**: Nº matrícula + Nº RNT (existen ✅; Daniel los da al CIERRE DE OBRA) · dirección física · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
 | **TODO-23** | 🔧 **Kernel hardening RESTANTE** (owner=INMOBILIARIA): K-01/02/04/05/09 (§30.4) · priorizar warns en truncado `--boot` · circularidad boot-budget. Flujo obligatorio: editar CANÓNICO → bump `VERSION` → `brain:pull` ×4. | 🟡 K restantes | §50 |
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07) · re-apuntar cache/ssotFact al portal EN EL CUTOVER (K-10/G-12: el SW legacy aún se sirve). | 🟡 abierto | |
-| **TODO-28** | 🧠 **Endurecer el cerebro**: #1-#3 ✅ (§40-§41) · **#4 ✅ `brain:pull` (F1 §51)** · #5 filas del índice auto vía `brain:archive` ✅ (§52; generador completo = opcional) · **#6 ✅ AUTOMATIZADA en el heartbeat** (§52: % por paths en cada boot — hoy **52% 🔴, mes 1 de medición**; >30% dos meses → PODAR doctrina) · #7 sello de vencimiento >90d (candidato a resonancia) · **#8 SHARD de `30`** (rebasó el tope; venía al 96% — extraer familia a hermana, no recortar más). | 🟡 #7 #8 | $0 |
+| **TODO-28** | 🧠 **Endurecer el cerebro** — #1-#6 ✅ (§40-§41, §51-§52) y **#8 ✅ shard de `30` → hoja `32` (§68)**. Vivo: **#7** sello de vencimiento >90d (candidato a resonancia). El banner de costo marca **55% 🔴** (mes 1; >30% dos meses → PODAR doctrina). | 🟡 #7 | $0 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada y fontanería §4b OK (estado → flag 📣 de `05`). Resta **calibrar la campaña REAL**, gateada por el cierre de obra. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-30** | 🗺️ **MapLibre real ✅ CÓDIGO COMPLETO (§55)** — tiles por Worker+Range, verificado E2E. **Falta SOLO la vista en foreground** (rAF congelado en pestañas automatizadas, L-34 → la confirma Daniel en su Chrome). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§60)**. Para datos reales: (1) deploy COORDINADO en el cutover (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. Lo demás BLOQUEADO por causas reales (§60.4); insumos legales de la ficha → TODO-33. | 🟢 cutover | §60 |
 | **TODO-33** | 🧾 **FICHA dinámica — decisiones ANTES de construir (§60.3)**: dirección exacta = OMITIR (PII) · financiación = disclaimer legal o se omite la cifra · asesor = `asesorId` vs bloque genérico · POIs fuera en v1. Regla: bloque sin dato se OMITE (jamás heredar el demo). | 🔵 decisión | §60 |
-| **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§66)**. Kit 00-23 + membrete (`43 §Doc. corporativos`). Póliza **DECIDIDA ✅** · **FE-DIAN ⏸️** · contratos 03/04 → §66 (pagaré retirado · nombre propio · dictámenes propios). ⚠️ **Los otros 22 docs NUNCA auditados** y el kit arrastra ~570 marcas de trabajo → backlog **B-01..B-03** en `_notas/BACKLOG-REVISION-KIT.md`; método fijado por Daniel: **1 documento a la vez**. | 🔄 EN CURSO | §66 · `43` |
-| **TODO-32** | 🧠 **CEREBRO v2 ×4 — 🏁 NÚCLEO COMPLETO ✅** (F0 §50 · F1 §51 · F2 §52 · F3 §53; kernel **v1.6.0** ×4; SSoT de la propuesta en bóveda). **Restos vivos**: (a) cablear hook SessionStart en los 3 hermanos (carril de cada repo; instrucción en la skill) · (b) **PODA REAL de doctrina** cuando el banner marque >30% dos meses (hoy 52% 🔴, mes 1) · (c) TODO-31: solo falta la verificación de Daniel (recovery codes). Mantenimiento mensual: el banner avisa → Daniel pide "haz el mantenimiento mensual" → skill `mantenimiento-general`. | 🟡 restos a/b/c | §53 · bóveda |
+| **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§68)**. Kit 00-23 + membrete (`43`). Póliza ✅ · FE-DIAN ⏸️ · 03/04 blindados (§66). **Los 22 restantes YA AUDITADOS ✅ (§68)** — faltan por APLICAR, uno a la vez. | 🔄 aplicar §68 | §66/§68 · `43` |
+| **TODO-32** | 🧠 **CEREBRO v2 ×4 — 🏁 NÚCLEO COMPLETO ✅** (F0-F3, §50-§53; kernel **v1.6.0** ×4). **Restos**: (a) hook SessionStart en los 3 hermanos · (b) PODA REAL de doctrina si el banner >30% dos meses. Mensual: el banner avisa → skill `mantenimiento-general`. | 🟡 restos a/b | §53 |
+| **TODO-35** | 🛡️ **El kit legal no tiene linter** (auditoría #5, N5-05 · CRÍTICO): `brain:check` protege la doc del negocio con 16 chequeos; los **24 documentos que la empresa FIRMA** solo tienen el gate de marcas. **Ningún gate cruza documento↔documento** — por eso el `00-LEEME` proclamó la figura derogada sin que nadie lo notara. Construir chequeos de consistencia (figura · cifras vs 01/02 · remisiones · URLs declaradas). | 🔴 abierto | §69 |
+| **TODO-31** | 🛡️ **SPOF del sistema** (de la auditoría #4; perdió su fila → restituida en §69): (a) todo ×4 —repos, bóveda, espejos— cuelga de **1 cuenta + 1 disco**: falta bundle offsite mensual · (b) **canario del harness**: el boot cuelga de hooks SessionStart y si cambia el schema muere EN SILENCIO · (c) recovery codes: los verifica Daniel. | 🔴 a/b | §49·§69 |
 
 ---
 
@@ -51,25 +51,25 @@
 > `120250983973160439` · **$13.000/día** · 3 anuncios OK. ⛔ NO editar días 1-7. Plan+umbrales → bóveda
 > `2026-07-27-plan-pauta-semana1-SINTESIS.md`. **Pelota Daniel**: guion WhatsApp al equipo + precios amatista/dúo.
 >
-> **▶ ⚖️ KIT FUNDACIONAL CONSOLIDADO → ADR §66 + §67 (28-jul). 24/24 documentos generan; los 11 de FIRMA pasan
-> el GATE DE EMISIÓN en verde.** Figura sellada: **ALTORRA arrienda EN NOMBRE PROPIO** (C.Co. 1262). Pagaré
-> retirado. Comité ×6 + consejo ×2 (§66) → comité R3 de 121 agentes + consejo externo R3 (§67).
+> **▶ ⚖️ KIT — lo ya decidido y ya pagado vive en ADR §66 · §67 · §68** (figura en nombre propio · pagaré
+> retirado · gate de emisión · fuente única del manual). 🛑 **NO RELANZAR** el comité R3 (18,8M tok) ni la
+> auditoría B-03: crudos en bóveda `2026-07-28-comite-r3-contratos/` y `2026-07-28-auditoria-kit-b03/`.
 >
-> **🛑 NO RELANZAR el comité R3** (18,8M tok ya pagados). Crudos, síntesis, dictamen del consejo y registro de
-> cambios → bóveda `research-archive/2026-07-28-comite-r3-contratos/` (empezar por `00-LEEME.md`).
+> **⏭️ PELOTAS DE DANIEL** (no las puedo cerrar yo): **(1) B-04** — sin contrato de usuario con
+> DataCrédito/TransUnion **NO se puede consultar a nadie** aunque el arrendatario firme, y el doc 04 ya se lo
+> anuncia: ¿afiliarse, o apoyarse solo en la aseguradora? · **(2) publicar la Política de Datos** en
+> `/legal/politica-tratamiento-datos` (los 24 docs ya la declaran ahí; es despliegue, no decisión) ·
+> **(3)** Nº de matrícula y RNT (al cierre de obra) + vetar/ajustar los 6 estándares del `02 §2`.
 >
-> **⏭️ PELOTAS DE DANIEL** (nada de esto lo puedo cerrar yo):
-> 1. **B-04** — ALTORRA **no tiene contrato de usuario con DataCrédito/TransUnion**: sin él NO se puede consultar
->    a nadie, aunque el arrendatario firme. Y el doc 04 ya le anuncia que se le consultará. ¿Afiliarse, o apoyarse
->    solo en el estudio de la aseguradora?
-> 2. **Publicar la Política de Datos** en `altorrainmobiliaria.co/legal/politica-tratamiento-datos` — los 24 docs
->    ya la declaran ahí. Ya no es decisión, es despliegue.
-> 3. Nº de **matrícula de arrendador** y **RNT** (al cierre de obra) · vetar/ajustar los 6 estándares del `02 §2`
->    sellados bajo delegación.
+> **▶ 🔍 B-03: 191 hallazgos SIN APLICAR** (25 críticos; lente de regresión al aplicar, LD-01). Lo gordo ya
+> sabido: el **`00-LEEME` proclama la figura de arrendador DEROGADA** —y es lo primero que se lee— · el
+> **`11-HOSPEDAJE` retiene el 100%** (art. 43.5 Ley 1480) e IVA de un servicio no prestado · el
+> **`14-SOCIETARIA` no menciona lo laboral**.
 >
-> **⏭️ LO QUE SIGO YO** → backlog **B-01..B-04** en bóveda `_notas/BACKLOG-REVISION-KIT.md` (B-01/B-02 ✅):
-> 257 marcas en docs INTERNOS (manual 194 · pagaré 60), **una por una, sin script** (L-33) · verificar el
-> **art. 1096 C.Co.** (única cita del kit escrita sin leer la fuente) · copiar el kit a `…\KIT ALTORRA`.
+> **⏭️ LO QUE SIGO YO** (backlog **B-01..B-04**, bóveda `_notas/BACKLOG-REVISION-KIT.md`): **(1) aplicar los
+> 191 hallazgos de B-03**, uno a uno · (2) copiar el kit a `…\KIT ALTORRA` (los Word de allá son del 28-jul).
+> ✅ Cerrados en §68/§69: art. 1096 · fuente única del manual · las marcas (los `⟦PENDIENTE⟧` **se quedan**:
+> el manual los declara como convención, LD-03) · auditoría Nivel-2 #5.
 >
-> ⚠️ **No editar los Word a mano** — se generan. **Maestro y fragmentos del manual se mantienen a mano por
-> duplicado, sin generador**: por eso la misma cifra mala vivía en 3 sitios.
+> ⚠️ **Ni los Word ni el manual maestro se editan a mano**: se GENERAN (`generar-documentos.ps1` ·
+> `ensamblar-manual.ps1`, §68). Editar el maestro directo fue lo que duplicó y desincronizó el capítulo 2.
