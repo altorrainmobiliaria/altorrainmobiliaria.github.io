@@ -134,6 +134,13 @@ Antes de CUALQUIER commit no-trivial: 5 secciones → (A) archivos a modificar, 
 
 ---
 
+## §4 — Cache bump (Service Worker)
+
+La regla vive en **§3.2** (bumpear CACHE_NAME al cambiar el shell). Este ancla existe porque el chequeo #4 del
+linter la usa para cruzar SW vs lo que declara el heartbeat: si desaparece, el cruce se apaga EN SILENCIO (§69).
+
+---
+
 ## §G — Gobernanza Neuronal (sistema nervioso · cómo operas la memoria)
 
 Esta sección es tu sistema nervioso. Define qué lees, cuándo escalas y cómo consolidas. **Es vinculante.**
@@ -173,9 +180,3 @@ Reflejos VINCULANTES que disparas con juicio durante el trabajo normal, **sin qu
 ### G.5 — Capacidad de neuronas y Sharding (economía de contexto)
 Cada neurona tiene un TOPE BLANDO (señal, no muro). Los caps reales (en **chars**, unidad de contexto) viven en `docs/.brain-manifest.json`; `brain:check` los valida. `CLAUDE.md`/`05`/`10` son always-on (cuidar el boot ≤ ~31.5k chars). Al acercarse al tope: NO engordar — extraer una sub-categoría a una neurona hermana `docs/NN-NOMBRE.md`, dejando en la madre un **puntero a la hija**. **One-in-one-out (TODO-28 #2)**: toda regla nueva en el router desplaza o fusiona una existente — gate determinista: `scripts/boot-gate.mjs` bloquea el commit si el boot supera el objetivo. 🔗 Nada huérfano: si una neurona existe y `CLAUDE.md` no la conoce, el cerebro está roto.
 
----
-
-## §7 — Cómo retomar (recap rápido)
-1. **Boot** (§G.1): `CLAUDE.md` + `05` + `10` + `brain:check`; imprime signos vitales; pendientes = TODO-NN.
-2. **Antes de tocar código**: IAP §3.4 · triggers §G.2. **Antes de commit**: §2. **Tras CADA tarea**: §G.4 + cache bump §3.2 (si aplica).
-3. **Entorno**: Windows + PowerShell · raíz del repo · git/deploy delegados a Claude (§2).

@@ -1221,6 +1221,13 @@ lo encontró una auditoría de 191 hallazgos pagada aparte. **El activo más car
 **cada ABIERTO se verifica en el boot, no en la tabla**. Y el corolario de N5-05: la protección automática debe
 seguir al VALOR (lo que se firma), no al artefacto que resulta más cómodo de lintar.
 
+**69.7-bis Adenda — la poda apagó un gate, en el mismo commit que lo condenaba.** Fusionar §4 en §3.2 dejó al
+chequeo #4 del linter sin su ancla (`/## §4 — Cache bump/`) y el cruce SW↔heartbeat pasó a **"omitido" en
+silencio** — la clase exacta que este ADR llama crítica. Se restituyó §4 como **ancla + puntero** (120c en vez de
+407c) y los chars se buscaron en **§7 ("Cómo retomar")**, que era un recap literal de §G.1/§2/§3.4 — esta vez
+**verificando primero** que ningún gate anclara ahí. Masa-neta final **−149c**. Regla que queda: antes de borrar
+una sección del router, `grep` del kernel — un heading puede ser la API de un chequeo.
+
 **69.8 Archivos.** Bóveda: `2026-07-31-auditoria-cerebro-nivel2-5-inmobiliaria.md` (tabla falsable N5-01..N5-06 +
 diff contra la #4) + fila en el README del archive. Repo: `10` (TODO-31 restituido · TODO-35 nuevo) · `00`
 (2 filas de enrutamiento) · `CLAUDE.md` (§4 fusionada en §3.2) · `05` · `.brain-manifest.json` (`deepAudit`).
