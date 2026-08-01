@@ -1418,3 +1418,58 @@ commitear. bersaglio: `session-report-*.html` al `.gitignore` (llevaba desde el 
 **72.8 Doctrina.** Corolario de [[LD-04]] aplicado al ecosistema: **si un gate existe en un repo y no en
 sus hermanos, los hermanos derivan** — y la deriva se mide, no se supone (cars +4.1k, bersaglio +11.6k).
 Corolario del §52 confirmado: el estado derivable se GENERA o miente.
+
+## 73. ADR — auditoría Nivel-2 de insemastereo aplicada · bersaglio vuelve a ser commiteable · 6 chequeos a la cola del kernel ⟦OPUS-5⟧ (2026-08-01)
+
+**Deliberación:** `brain-private/insemastereo/research-archive/2026-08-01-auditoria-nivel2-*` (tabla + crudo +
+workflow). Síntesis por-repo → insemastereo `99` ADR-F. Aquí queda lo que es **del ecosistema**.
+
+**73.1 Lo que la auditoría probó del método, no solo del repo.** Corrió sobre el hermano más pequeño y
+encontró **36 hallazgos (14 tras filtrar)** en un cerebro que el linter declaraba SANO en sus 16 gates. El de
+más peso —el `05` afirmando *«main == origin/main, pusheado ✓, 3 commits»* cuando el HEAD estaba en otra rama
+y `main` iba 24 detrás— **lo reportaron cinco sondas por separado**, sin verse entre ellas. Un defecto que
+cinco lentes independientes encuentran no es un descuido: es **estructural**, y su causa es la de siempre —
+un dato **volátil** copiado a mano en un nodo que se lee en cada arranque.
+
+**73.2 La ironía que vale como doctrina (N2-02).** La respuesta correcta **ya existía en el repo**: el
+heartbeat instalado ese mismo día (§72) genera `docs/.estado-auto.md` con rama, HEAD, sucios y deuda de
+consolidación en cada boot. Pero **ningún nodo de ruteo llegaba a él**. Es decir: yo cerré §72 declarando el
+TODO-32(a) hecho, y horas después una auditoría demostró que había dejado la mitad — **generar la verdad no
+basta, hay que ENRUTARLA**. Corregido en los tres hermanos (fila en el §0 con la regla de desempate: *si
+contradice al `05`, manda el sidecar*). Y salió un defecto de kernel: el gate #10 **no puede ver dotfiles** —
+su `edgeRe` exige que el nombre empiece por carácter de palabra— así que un sidecar generado queda marcado
+huérfano para siempre; hoy se tapa con `orphanAllowlist`, el arreglo de fondo va a la cola (#17-bis).
+
+**73.3 bersaglio llevaba tiempo sin poder commitear su cerebro.** Su `CLAUDE.md` estaba **2.6k chars sobre su
+tope duro** y el gate bloqueaba *cualquier* commit de cerebro. No era una advertencia: era una parálisis, y
+explica por qué era el hermano más rezagado. **30.009c → 26.719c**, sin perder una sola regla: (a) **§G.4**
+6.5k→4.4k — inmobiliaria ya había destilado esa misma gobernanza a la mitad y los hermanos nunca recibieron la
+versión corta (doctrina vigente: *escritor único de §G = inmobiliaria*); (b) **§G.5** 2.9k→1.7k — su tabla
+copiaba **a mano 15 topes que ya viven en `.brain-manifest.json`** y que el linter valida; los números vuelven
+a su dueño y queda la estrategia de poda, que es juicio. La tabla además **tapaba un hueco real**:
+`docs/35-LECCIONES-DINERO.md` existía desde el 27-jul con 6.1k y **ningún cap lo vigilaba**.
+
+**73.4 El patrón, ya en tres repos el mismo día.** cars: la caché del SW copiada al `05` (8 días de desfase).
+insemastereo: el estado de git copiado al `05` (42 días). bersaglio: los caps copiados al `CLAUDE.md` (uno
+faltaba). **Tres cerebros, tres nodos distintos, un solo defecto**: un hecho cuyo dueño es otro (el cron, git,
+el manifest) copiado a un nodo que se lee siempre. Ninguno se detectó por revisión: los tres se detectaron
+**contrastando el nodo contra la fuente**.
+
+**73.5 Los 6 chequeos que suben a TODO-23** (kernel canónico, `../brain-private/kernel/` + `brain:pull` ×4):
+**#17** leer el git del PROPIO repo (hoy el único bloque git del kernel mira la bóveda, no el repo — habría
+cazado 73.1 el primer día) · **#18** cambio sin consolidar (existe el gate inverso, no este) · **#19** la
+cobertura de fiabilidad invertida: hoy da ✅ con cobertura CERO, o sea el opt-in premia no usarlo · **#20**
+anclas de deliberación fuera de `archiveDir` (dos punteros rotos convivían con un «✅ archiveDir íntegro») ·
+**#21** `deepAudit` sin `tableFile` — el sub-gate se apaga solo si falta la clave · **#22** `ssotFact` del tag
+de modelo. Más **#17-bis**: admitir el punto inicial en `edgeRe` (73.2).
+
+**73.6 Anti-patterns evitados.** NO se usó `--no-verify` para saltar el gate de bersaglio: el gate tenía razón
+y el arreglo era destilar. NO se subió el cap del manifest para «resolver» el exceso (eso es apagar la alarma).
+NO se editó `brain-check.mjs` en ningún repo: el kernel se toca en el canónico y se propaga. NO se pusheó a
+`main` en insemastereo — su regla reserva el merge al dueño.
+
+**73.7 Doctrina.** **[[LD-06]] tiene un hermano de infraestructura**: así como con fan-out el defecto vive
+ENTRE documentos, con un ecosistema de repos el defecto vive **ENTRE cerebros** — un gate que existe en uno y
+no en sus hermanos garantiza deriva, y la deriva no se supone: se mide. Corolario operativo verificado hoy:
+**un pendiente que describe un mundo que ya no existe es peor que ninguno** (2 de los 3 puntos del TODO-31
+eran falsos y desviaban trabajo).
