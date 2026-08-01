@@ -67,14 +67,14 @@
 > escéptico: son *sin verificar*, no *confirmados*. Método: remedio del **ESCÉPTICO** (el 79% de los del auditor
 > rompían algo) + regresión + gate tras cada doc. Detalle → `SINTESIS-CURADA.md` de la bóveda.
 >
-> 📜 **LOS ESTATUTOS MANDAN sobre el kit** y viven FUERA de él (`Downloads/ALTORRA Company (Legal)/Estatutos/`,
-> V5). Ya resuelven precio de acciones (peritos/Cámara, art. 8º e), preferencia, **supramayoría 70%** (art. 13º)
-> y **arbitramento** (art. 24º). Antes de auditar un entregable, **abre su documento madre** ([[LD-05]]).
-> ⛔ **Doc 13 (acuerdo de accionistas) RETIRADO** por decisión de Daniel el 31-jul: no es necesario. Riesgos
-> asumidos y escritos en su banner (muerte de un socio · sin arrastre · gerencia removible por cualquier 60%).
+> 📜 **LOS ESTATUTOS MANDAN sobre el kit** (V5, art. 8º/13º/24º) — qué resuelven → §70.2 y la cabecera de
+> `ESTATUTOS-V5.md`. [[LD-05]]: abre el documento madre ANTES de auditar. ⛔ **Doc 13 RETIRADO** el 31-jul
+> por decisión de Daniel; riesgos asumidos escritos en su banner.
 >
-> **⏭️ LO QUE SIGO YO**: los altos y leves que quedan de B-03 · copiar el kit a `…\KIT ALTORRA` (los Word de
-> allá son del 28-jul). Backlog B-01..B-04 en la bóveda.
+> **⏭️ LO QUE SIGO YO**: los altos y leves que quedan de B-03. Backlog B-01..B-04 en la bóveda.
+> ✅ 31-jul: los 22 Word vivos regenerados en `…\KIT ALTORRA`; el 13 y el 23 movidos a `_RETIRADOS (no firmar)\`.
+> ✅ `.auditoria-contratos/` refrescado desde la fuente viva **+ `ESTATUTOS-V5.md`** (LD-05: el documento
+> madre entra al paquete de contexto; gitignored — lleva las cédulas de los 3 socios, JAMÁS commitear).
 >
 > ⚠️ **Ni los Word ni el manual maestro se editan a mano**: se GENERAN (`generar-documentos.ps1` ·
 > `ensamblar-manual.ps1`, §68). Editar el maestro directo fue lo que duplicó y desincronizó el capítulo 2.
