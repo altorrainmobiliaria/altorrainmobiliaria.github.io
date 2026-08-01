@@ -25,7 +25,7 @@
 | Catálogo (índice denormalizado `indices/*` · `catalogo.get` · `/api/catalogo` · SERP con datos reales) | `99 §54`decisión · `§56`lectura · `§57`núcleo · `§58`Functions · `§59`SERP+flag · **`§60`frontera+ficha** · `30 L-35`/`L-36` |
 | Verificar UI (screenshot/computed/scroll/interacción · panel congelado vs Chrome) | hoja `31-VERIFICACION-UI` (L-22/L-26/L-28 completas; lápidas en `30`) |
 | Redactar/corregir/renumerar/retirar un entregable legal u operativo · auditar documentos | hoja `32-LECCIONES-DOCUMENTALES` (`LD-01..LD-05`; antes eran `L-31..L-34` "del kit", ADR §68) |
-| Hoja hija de 30 — meta-aprendizajes M-NN: dónde falló el cerebro como MEMORIA (no bugs de producto). Stub en 30, detalle aquí. | hoja `33-LECCIONES-META.md |
+| El cerebro me falló COMO MEMORIA (nodo stale, ruteo errado, regla mala) · meta-aprendizajes `M-NN` | hoja `33-LECCIONES-META.md` (stub en `30`, detalle allá) |
 | **Algo societario**: precio de acciones · mayorías · quién manda · pleito entre socios · quién es gerente | 📜 **ESTATUTOS V5 primero** (`Downloads/ALTORRA Company (Legal)/Estatutos/`) — mandan sobre todo el kit. Resumen y qué NO cubren → `99 §70` |
 | Project ID, cuentas IAM, deploy, secrets | `50-CONFIG-INFRA` |
 | Competencia/mercado inmobiliario, benchmark | `40-LOBULOS` → `41-MERCADO` |
@@ -112,6 +112,7 @@
 | §76 | **52 neuronas bajo techo + shard de §Meta → `33-LECCIONES-META`**: las 44 sin cap quedaron decididas (cap medido o noCap con razón). Y la trampa que estuve a punto de hacer DOS veces: subir un límite en vez de cumplirlo — el gate pasa, la deriva sigue, y queda evidencia falsa de control (M-05). | 1555 |
 | §77 | **El kernel corregido 3 veces POR PROBARLO** (v1.7.2): #17 no disparaba, luego acusaba a un puntero de neurona, luego a una skill. Y el gate #4 quedó obsoleto por el arreglo que él provocó: exigía en el 05 un dato que la doctrina nueva elimina. bersaglio: 05 en tope por primera vez. → M-06. | 1591 |
 | §78 | **cars en presupuesto (35.9k→29.7k) por MOVER, no por raspar**: sus 25 pendientes congelados (§302) salían del boot en cada sesión → hoja `11`. Congelado ≠ cerrado y el shard es reversible. Caps coherentes ×4 (22 apretados). Pagué los 1.9k que consumí en insemastereo; los 308c que restan se dejan A LA VISTA en vez de subir el techo. | 1631 |
+| §79 | **bersaglio −23% de boot (43.1k→33.3k)**: gobernanza y doctrinas que inmobiliaria ya había destilado y los hermanos nunca recibieron + el backlog sin empezar sale del boot (decisión del dueño). El gate me paró: abreviar nombres de archivo ganó 542c y dejó 5 neuronas inalcanzables. | 1667 |
 | §65 | **TODO-34 F4-w2 ✅: MANUAL MAESTRO (10 caps) + mercado → sistema documental 00-23 COMPLETO**. Tarifas comerciales adoptadas-vetables con costumbre certificada · FE gratuita DIAN soporta mandato nativo · prompt consejo externo del manual listo. | 1006 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |

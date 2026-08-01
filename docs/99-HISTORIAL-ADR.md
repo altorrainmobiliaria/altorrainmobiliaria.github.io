@@ -1663,3 +1663,33 @@ exactamente la trampa que el gate existe para impedir**.
 **«¿qué hace este contenido en el boot?»**. Un pendiente congelado, un dato derivable y una tabla de topes
 copiada tienen algo en común: **no son grasa, están en el sitio equivocado**. Destilar es reescribir; lo que
 cierra las brechas grandes es MOVER.
+
+## 79. ADR — bersaglio: −23% de boot, y el recorte que rompió el ruteo ⟦OPUS-5⟧ (2026-08-01)
+
+**79.1 43.116c → 33.302c** en el arranque de cada sesión, sin perder una sola regla. Todo salió de
+**duplicación**, no de contenido: §G.1/§G.2/§G.3 (4.075→2.743) y §3.6/§3.7 (3.128→1.558) eran la misma
+doctrina que inmobiliaria ya tenía destilada y que los hermanos nunca recibieron —los 6 triggers, los 6 ejes
+de decisión, el disparo del comité y su lista de *cuándo NO*, todos intactos—; las 5 hijas de `30` tenían fila
+propia en el §0 repitiendo lo que el propio `30` dice en cada stub.
+
+**79.2 El backlog sale del boot (decisión del dueño).** De sus 22 pendientes, **10 estaban marcados 🔲 sin
+empezar** y se releían enteros en cada arranque. El `10` se define a sí mismo como *la pizarra del SPRINT
+ACTIVO*: 10 items sin empezar son **backlog**, no sprint. → `11-BACKLOG.md`, con la misma disciplina que el
+ledger congelado de cars (§78.2): **no se cierran**, la hoja declara cuándo leerla, y **al entrar en sprint
+vuelven al `10`**. El shard fue por ESTADO, no por tamaño. Lo decidió Daniel al presentarle las tres opciones
+—incluida la de subir el techo, que descartó.
+
+**79.3 El gate me paró a mitad, y tenía razón.** Al apretar la fila de las hijas de `30` abrevié sus nombres
+de archivo (`32-CARGA` en vez de `docs/32-LECCIONES-CARGA.md`): gané 542c y **dejé 5 neuronas inalcanzables**
+—el chequeo de huérfanas las marcó una por una. **Un router más corto que deja de rutear no es más barato,
+es inútil.** Restituidos los nombres completos, el ahorro real fue de 477c.
+
+**79.4 Estado del trinquete.** inmo **31.450** ✅ · cars **29.715** ✅ · bersaglio **33.302** (+1.802) ·
+insema **28.308** (+308). Quedan **2.1k repartidos entre dos repos** para que el `boot-gate` pueda subir al
+kernel. Se deja para una pasada en frío: los cortes fáciles ya se hicieron y los que quedan exigen juicio, no
+tijera — y **ningún techo se sube para llegar** (M-05).
+
+**79.5 Doctrina.** Confirmado en los tres hermanos: **el mayor gasto de contexto de un cerebro no es lo que
+sabe, es lo que repite.** La gobernanza vivía ×4 en versiones divergentes, las hijas se anunciaban dos veces,
+los topes se copiaban del manifest, el estado derivable se copiaba de git. Cuando el escritor único destila
+una vez, los hermanos siguen pagando el precio viejo **hasta que alguien mira**.
