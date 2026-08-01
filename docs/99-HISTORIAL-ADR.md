@@ -1302,3 +1302,69 @@ estatutos vivían sin hablarse.
 **70.8 Archivos.** Bóveda: `13` (retirado) · `00-LEEME` (retiro + puntero a los estatutos + regla de prevalencia) ·
 `_plantilla/generar-documentos.ps1` (13 fuera de la lista de firma) · `02` `04` `05` `06` `07` `11` `12` `14` `16`
 `23` + manual y fragmentos. Repo: `32` (LD-05 + reincidencia de LD-02) · `10` · `05` · `99`/`00`.
+
+## 71. ADR — los 23 ALTOS de B-03 aplicados · el kit estrena sus 2 primeros gates documento↔documento ⟦OPUS-5⟧ (2026-07-31)
+
+**71.1 Causa raíz.** No había una: los 23 altos eran deuda conocida de §68. Lo que sí apareció fue una
+**causa raíz de método**: los remedios se escribieron el 28-jul contra un texto que cambió el 31-jul al
+aplicar los 14 críticos. Al re-verificarlos contra el papel de hoy, **1 ya estaba resuelto** y **12 de 23
+bajaron de gravedad**. Un remedio es una hipótesis con fecha ([[LD-06]] corolario).
+
+**71.2 Solución estructural.** Workflow de 13 agentes (`wf_7c4b1723-5c1`, ~2M tok): 12 planificadores —uno
+por documento, que **planifican pero no editan**— y 1 revisor que cruza los 12 planes. La aplicación la
+hace un solo escritor, en serie, con un aplicador que **aborta si el ancla no es única**. Ese diseño no es
+estético: 2 de los 3 bloqueantes que apareció fueron choques de escritura que sólo existen si hay
+concurrencia, y uno de ellos —dos planes con el mismo `old_string` sobre 05:62— **habría perdido un edit
+sin dejar rastro**.
+
+**71.3 Los 3 bloqueantes.** (a) El doc 16 recibía el bloque del Fondo de Reserva **dos veces**, con dos
+nombres (`C-bis` vs `C3`); fusionado, canónico `C-bis` porque la `D` ya era SOPORTES ANEXOS. (b) 05:62 con
+ancla compartida; fusionado a mano en C1/C2 + C-bis. (c) **El grave**: los planes 07 y 08 iban a escribir
+filas mutuamente excluyentes en el control de versiones de la Política, y la del 08 declaraba *«sin cambios
+en finalidades… no se configura cambio sustancial del art. 5 del D.1377»*. El git lo desmiente (`edc269e`:
+*"07 y 08 V2 — el Anexo C-1 que el contrato exige NO existía"*). **Decisión: se sube a V2 y la fila dice el
+cambio real.** El deber de comunicar no aplica —pero porque la Política **nunca se publicó**, no porque no
+hubiera cambio. Mismo destino, sin firmar algo falso.
+
+**71.4 Lo que ningún plan reportó y sí vio el revisor.** El **Formato C** se encabezaba *"Responsable:
+ALTORRA"* en el formato que autoriza la **validación biométrica facial**, cuyo Responsable —según la propia
+Política (07 §6.1) y el contrato (04, Anexo C-1)— es la **aseguradora**: el titular firmaba autorizando a
+quien no trata el dato. Separado, y añadido el traslado de sus derechos a la aseguradora en 2 días hábiles.
+El **doc 14** mandaba *«contrasta contra ella el Doc 13… antes de firmar nada»* —retirado el día anterior—
+y afirmaba que no hay copia de los estatutos, falso desde el 31-jul; purgadas también 3 referencias vivas
+al doc 13 en los fragmentos del manual. El **día cero del giro**: el plan 16 lo ataba a *"la última fecha
+de la tabla A"*, que incluye **recobros** — un recobro del día 28 habría corrido el plazo **contra el
+propietario y contra el contrato** (03 Cl. Quinta parág. 2: acreditación del *cargo mensual integral*).
+
+**71.5 Normas.** Verificadas en fuente oficial ANTES de escribirlas: **Ley 1336/2009 arts. 1 y 5**
+(*«adoptar, fijar en lugar público y actualizar»* el código ESCNNA, e incluye alojamientos **no
+turísticos**; el doc 11 se lo exigía al huésped sin declararlo cumplido) · **Resolución MinCIT 3840/2009**
+· **E.T. art. 847**. Registradas en `DECISIONES-VIGENTES §4`. ⚠️ **D.572/2025 queda marcado EN LITIGIO**:
+el normograma DIAN muestra vigente su art. 6 y fuentes secundarias sostienen que la suspensión del Consejo
+de Estado (exp. 11001-03-27-000-2025-00055-00, 07-05-2026) cubre los arts. 2 a 8. **Discrepancia no
+resuelta y no ocultada**: los docs 20 y 15/cap04 prohíben cotizar con la tabla — manda la liquidación de la
+notaría. Ningún agente había mirado si la norma seguía viva.
+
+**71.6 Anti-patterns evitados.** **NO** se borró el rótulo `Matrícula` (la regla que proponía el plan 07
+habría abortado la emisión de **7 de los 10 documentos de firma**, y el blanco es legítimo por decisión
+cerrada del dueño: el número llega al cierre de obra). **NO** se borró un blanco en 1 de 9 documentos —
+eso cambia un hueco por una discrepancia. **NO** se tocaron las `V1` propias de cada documento al subir la
+Política a V2. **NO** se aplicaron los 85 leves: no pasaron por escéptico (§70.6).
+
+**71.7 Verificación.** Aplicador con chequeo de unicidad: **46/48 edits, 0 anclas fallidas**, 2 descartados
+y rehechos a mano. Manual reensamblado desde fragmentos + `ensamblar-manual.ps1 -Verificar` OK. Gate de
+emisión **verde, 24/24 emitidos**. Detector de cicatrices probado 8/8 (5 campos legítimos no marcados,
+3 cicatrices reales detectadas). Los 22 Word vivos regenerados en la carpeta del dueño.
+
+**71.8 TODO-35 arranca.** El generador estrena los **dos primeros cruces documento↔documento**, que es el
+hueco por el que se coló el `00-LEEME`: (1) **detector de cicatrices de redacción** —guiones que cierran
+una frase ya terminada— con *lookbehind* de abreviaturas, porque sin él abortaba el doc 11 por su propio
+encabezado de partes (`RNT No. ____` es campo, no cicatriz); (2) **coherencia de la versión de la
+Política**: se calcula del doc 07 y aborta si cualquier documento le declara otra al titular (Ley 1581
+art. 8 num. 2). Faltan los cruces de cifras vs 01/02, remisiones y URLs declaradas.
+
+**71.9 Doctrina.** **[[LD-06]]** (nueva): con fan-out sobre documentos que se citan entre sí, el defecto
+deja de vivir en un documento y pasa a vivir ENTRE ellos — la fase de colisiones no es opcional, se
+planifica en paralelo y se aplica en serie, y el aplicador verifica unicidad de anclas. Corolario: **un
+remedio es una hipótesis con fecha**; se re-verifica contra el archivo, no contra el informe. Crudos +
+síntesis → `research-archive/2026-07-31-kit-b03-altos/`.
