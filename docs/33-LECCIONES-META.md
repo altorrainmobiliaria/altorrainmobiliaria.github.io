@@ -51,3 +51,18 @@ defecto vivo que lo motivó, **(b)** callar con el texto correcto, y **(c)** no 
 vecino. Sin las tres, lo que tienes es un ✅ decorativo — peor que no tener gate, porque genera confianza falsa.
 **Corolario**: un gate puede volverse obsoleto **por el propio arreglo que él provocó**; al cambiar una
 doctrina, revisa qué gate la vigilaba (aquí, el #4 vigilaba un campo que la doctrina nueva ELIMINA).
+
+### M-07 — Un gate del kernel solo protege donde su DISPARADOR está cableado *(2026-08-01, ADR §81)*
+**Patrón**: subí el candado de boot al kernel para que fuera bloqueante «×4» y, antes de escribirlo, fui a
+verificar la frase (§3.3). Tres repos tenían `core.hooksPath=githooks`; **`insemastereo` no tenía
+`pre-commit` en absoluto** — corría con los hooks por defecto, vacíos. El kernel estaba byte-idéntico en
+los cuatro ([[M-03]] cumplida), pero un gate compartido tiene **DOS mitades**: el **código** (kernel,
+byte-idéntico) y el **CABLEADO** (instance: `core.hooksPath` + `githooks/pre-commit` +
+`.claude/settings.json`). El linter validaba la primera y **nunca miraba la segunda**, así que ese repo
+commiteaba sin que nada lo revisara y todas las corridas imprimían ✅.
+**Por qué no se ve**: su fallo es por AUSENCIA — no hay línea mala que leer, hay una llamada que nadie
+hace. Variante silenciosa del ✅ decorativo de [[M-06]]: el gate no miente, **nadie lo llama**.
+**Regla**: «está en el kernel» ≠ «está activo». Al subir un gate a un recurso compartido, verifica su
+DISPARADOR **repo por repo** en el mismo cambio y, si puedes, **mecanízalo**: el **#25** del kernel lee
+`.git/config`, resuelve `hooksPath` y exige un `pre-commit` que invoque a `brain-check`. Generaliza: todo
+automatismo tiene un punto de enganche, y el enganche también necesita su gate.

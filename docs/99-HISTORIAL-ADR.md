@@ -1737,3 +1737,54 @@ commits de producto sin ADR, insemastereo 4) · **85 leves** de B-03, que NO pas
 `/legal/politica-tratamiento-datos` —los 24 documentos ya la fijan en *V2 · 28-07-2026*— · **B-04**: sin
 contrato con DataCrédito/TransUnion no se puede consultar a nadie aunque el arrendatario firme, y el doc 04
 ya se lo anuncia · **recovery codes** · Nº de matrícula y RNT al cierre de obra.
+
+## 81. ADR — el trinquete de boot se cierra ×4 y el candado SUBE AL KERNEL (v1.8.0) ⟦OPUS-5⟧ (2026-08-01)
+
+Cierra **TODO-36**. Los dos repos que faltaban entran en presupuesto y, cumplida la condición ×4, el
+candado de boot deja de ser un script instance-side de inmobiliaria y pasa a ser un chequeo del kernel,
+bloqueante en los cuatro cerebros. En el camino apareció un hueco que ningún linter miraba.
+
+**81.1 — Causa raíz.** El `boot-gate.mjs` nació INSTANCE-SIDE a propósito (comité 2026-07-18): el kernel
+mantendría el presupuesto de boot en **informativo** hasta que los repos estuvieran todos por debajo,
+porque un gate que nace bloqueando sobre un repo que ya lo incumple se salta con `--no-verify` el primer
+día y muere. La condición estaba escrita (§173) y pendiente: bersaglio **+1.802c** e insema **+385c**.
+
+**81.2 — Solución estructural.** (a) **Poda real, sin tocar un solo techo** ([[M-05]]): bersaglio
+**33.302 → 31.448c** e insema **28.385 → 27.546c**. En bersaglio el grueso salió de DESPLAZAR, no de
+raspar — el mapa de «cómo se poda cada neurona» de `§G.5` bajó a `60-WORKFLOWS §Mapa de PODA` (solo se
+necesita al podar, no en cada arranque), el `§7 Cómo retomar` era un índice duplicado de §G.1/§G.2/§2/§3.4
+y se retiró dejando su única línea propia (Entorno) en `§1`, y se corrigieron dos duplicaciones de SSoT
+(las «características clave» que el propio `§1` declaraba propiedad del `05`; el interinato narrado a la
+vez en `05` y en `10`). En insema, GC de doctrina: 4 TODO ✅ colapsados a una fila-puntero y la bitácora
+de junio consolidada. (b) El gate **sube al kernel** como parte del chequeo **#2** y su canario 🐤 baja al
+**#24**; `scripts/boot-gate.mjs` y su bloque del `pre-commit` se BORRAN (one-in-one-out, tal como el
+propio script pedía en su cabecera). (c) Nace el chequeo **#25** (ver 81.5).
+
+**81.3 — No-regresión.** `brain:check --full` **SANO en los 4** tras `brain:pull` de v1.8.0. Ninguna
+neurona quedó huérfana: el #5 confirma que las 20 hojas referenciadas de bersaglio siguen existiendo —
+el riesgo real de esta poda, y justo el que rompió el ruteo en §79. Cero cambios de producto.
+
+**81.4 — Verificación (M-06: un gate solo existe si lo has visto DISPARAR).** El #2 se probó bajando el
+objetivo de inmobiliaria a 31.000 con boot real 31.441: **disparó** con el exceso exacto (441c) y sumó
+problema; restaurado, **calló**. El #25 se probó quitándole a insema `core.hooksPath`: **disparó**;
+restaurado, **calló**. Los 4 repos legítimos dan verde (no acusa inocentes).
+
+**81.5 — Hallazgo: `insemastereo` no tenía `pre-commit`.** Iba a escribir «bloqueante ×4» y fui a
+verificarlo (§3.3). Tres repos tenían `core.hooksPath=githooks`; el cuarto corría con los hooks por
+defecto, vacíos. **El gate compartido tiene dos mitades**: el código (kernel, byte-idéntico) y el
+CABLEADO (instance), y el linter validaba la primera sin mirar nunca la segunda — así que ese repo
+commiteaba sin que ningún chequeo lo mirara, y todas las corridas decían ✅. Cableado el hook, y
+mecanizado en el **#25** (`¿alguien me invoca?`: lee `.git/config` con fs —sin `child_process`, como el
+resto del kernel—, resuelve `hooksPath` y exige un `pre-commit` que llame a `brain-check`). Lección
+[[M-07]].
+
+**81.6 — Archivos.** Kernel: `brain-check.mjs` (#2 a warn · +#24 canario · +#25 cableado) · `VERSION`
+1.7.2→**1.8.0** · `boot-gate.mjs` **BORRADO**. inmobiliaria: `CLAUDE.md §G.5` (el gate ya no cita un
+script propio) · `.brain-manifest.json` (fuera de `kernelFiles`) · `githooks/pre-commit` · `scripts/`
+(pull). bersaglio: `CLAUDE.md` · `05` · `10` · `60-WORKFLOWS`. insema: `CLAUDE.md` · `10` · `githooks/`
+(nuevo) + `core.hooksPath`. **INTACTOS**: todo el producto de los 4 repos.
+
+**81.7 — Doctrina.** §G.5 one-in-one-out · [[M-05]] (el techo no se mueve para alcanzarlo) · [[M-06]]
+(ver el gate disparar) · [[M-03]] (el gate vive en el recurso compartido — y §81.5 le añade que su
+DISPARADOR sigue siendo instance) · §3.3 (verificar antes de afirmar «×4»). Sin cache bump: nada del
+shell. Deliberación: ninguna (ejecución de una condición ya decidida en §173).

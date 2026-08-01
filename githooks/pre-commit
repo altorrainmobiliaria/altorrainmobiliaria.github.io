@@ -26,11 +26,7 @@ if ! node scripts/brain-check.mjs; then
   exit 1
 fi
 
-# 🔒 Candado del boot (TODO-28 #2, comité 2026-07-18): always-on > objetivo → NO pasa.
-# Provisional instance-side; cuando el gate suba al kernel (condición §173 ×3) este bloque se BORRA.
-if ! node scripts/boot-gate.mjs; then
-  echo ""
-  echo "❌ COMMIT BLOQUEADO: presupuesto de boot excedido — poda antes de commitear."
-  exit 1
-fi
+# 🔒 El candado del boot y el canario 🐤 SUBIERON AL KERNEL en v1.8.0 (ADR §81): hoy son los
+# chequeos #2 y #24 de brain-check.mjs (arriba), bloqueantes en los 4 repos. El antiguo
+# scripts/boot-gate.mjs instance-side se retiró en el mismo cambio (one-in-one-out).
 exit 0

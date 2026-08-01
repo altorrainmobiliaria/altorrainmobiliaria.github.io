@@ -31,7 +31,7 @@
 |---|---|---|---|
 | **TODO-17** | **Ola 0 restos**: E2E "tras cache" en staging (T9) · deploy de rules (en el cutover, NO ahora) · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | gate=CUTOVER |
 | **TODO-21** | **Lote-dueño**: Nº matrícula + Nº RNT (existen ✅; Daniel los da al CIERRE DE OBRA) · dirección física · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
-| **TODO-23** | 🔧 **Kernel hardening RESTANTE** (owner=INMOBILIARIA): K-01/02/04/05/09 (§30.4) · warns en truncado `--boot` · circularidad boot-budget. **✅ #17 y #23 LIVE en kernel v1.7.0 (§75)** — verificados encendidos. **En cola**: #18-#22 + #17-bis (§73.5). Resta declarar `caps`/`noCap` en los 3 hermanos (44 neuronas sin techo: cars 19 · bersaglio 11 · insema 4). Flujo obligatorio: editar CANÓNICO → bump `VERSION` → `brain:pull` ×4. | 🟡 K restantes | §50 |
+| **TODO-23** | 🔧 **Kernel hardening RESTANTE** (owner=INMOBILIARIA): K-01/02/04/05/09 (§30.4) · warns en truncado `--boot` · circularidad boot-budget. **✅ #17 y #23 LIVE en kernel v1.7.0 (§75)** — verificados encendidos. **En cola**: #18-#22 + #17-bis (§73.5). Resta declarar `caps`/`noCap` en los 3 hermanos (44 neuronas sin techo: cars 19 · bersaglio 11 · insema 4). Flujo obligatorio: editar CANÓNICO → bump `VERSION` → `brain:pull` ×4. ⚠️ `brain-kit` sigue SIN git (sin historial, fuera de los bundles). | 🟡 K restantes | §50 |
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07) · re-apuntar cache/ssotFact al portal en el CUTOVER (K-10/G-12). | 🟡 abierto | |
 | **TODO-28** | 🧠 **Endurecer el cerebro** — #1-#6 ✅ (§40-§41, §51-§52) y **#8 ✅ shard de `30` → hojas `32` (§68) y `33`-meta (§76)**. Vivo: **#7** sello de vencimiento >90d (candidato a resonancia). Costo → TODO-32(b). | 🟡 #7 | $0 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada y fontanería §4b OK (estado → flag 📣 de `05`). Resta **calibrar la campaña REAL**, gateada por el cierre de obra. | ⏸️ gate obra | `pauta-captacion` §10 |
@@ -40,16 +40,15 @@
 | **TODO-33** | 🧾 **FICHA dinámica — 4 decisiones ANTES de construir (§60.3)**: dirección exacta · financiación · asesor · POIs. Regla: **bloque sin dato se OMITE** (jamás heredar el demo). | 🔵 decisión | §60 |
 | **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§71)**. Kit 00-22 + membrete (`43`). Póliza ✅ · FE-DIAN ⏸️ · 03/04 blindados (§66) · **14 críticos + 23 altos de B-03 aplicados (§70·§71)**. Restan **85 leves** (⚠️ sin escéptico). Retirados: 13 y 23. | 🟢 leves | §71 · `43` |
 | **TODO-32** | 🧠 **CEREBRO v2 ×4** (§50-§53; kernel v1.6.0 ×4). **(a) ✅ CERRADO §72**: heartbeat+handoff+canario ya corren en los 3 hermanos. **(b) vivo**: el banner >30% en LOS CUATRO (cars 43 · bersaglio 61 · insema 56 · inmo 56) — 2º mes ⇒ toca PODA REAL, no añadir. | 🟡 poda (b) | §72 |
-| **TODO-36** | ⚖️ **Trinquete de boot ×4** (§74·§78·§79): **inmo ✅ · cars ✅ 35.9k→29.7k · bersaglio 43.1k→33.3k (+1.8k) · insema +308c**. Restan **2.1k entre los dos** para subir el `boot-gate` al kernel — una pasada en frío, sin subir techos (M-05). ⚠️ `brain-kit` NO está bajo git: sin historial y fuera de los bundles. | 🟡 2.1k | §79 |
 | **TODO-35** | 🛡️ **Linter del kit legal — 2 de 6 (§71.8)**: el generador ya cruza documento↔documento (cicatrices de redacción · versión de la Política). **Faltan**: cifras vs `01`/`02` · remisiones ([[LD-04]]) · URLs declaradas · figura del arrendador. | 🟡 2 de 6 | §71 · §69 |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **▶ 🧠 CIERRE 01-ago (§80): los 4 cerebros MERGEADOS a `main`** — 28 commits, cero producto. **4/4 SANOS ·
-> kernel v1.7.2 · 0 neuronas sin techo.** Restan **2.1k de boot** (bersaglio +1.8k · insema +308c) y **no se
-> cierran subiendo techos** ([[M-05]]). Mapa de la sesión → §70-§80.
+> **▶ 🔒 01-ago (§81): TODO-36 CERRADO — el candado de boot SUBIÓ AL KERNEL** (v1.8.0, bloqueante ×4).
+> bersaglio 33.3k→31.4k · insema 28.4k→27.5k, **sin subir un techo** ([[M-05]]). Hallazgo: **insema no
+> tenía pre-commit** → nace el chequeo #25 y [[M-07]]. Sesión previa (los 4 a `main`) → §80.
 >
 > **▶ 🔥 PAUTA BERSAGLIO · 🔁 REVISAR LUNES 3-AGO** — `120251090001200439`: $8.000/día, fin 10-ago. S1: **0
 > ventas de 33 chats**. **PARADA: sin 1 venta ni 3 visitas al 10-ago → NO recargar.** Detalle → bóveda

@@ -83,7 +83,6 @@
     "scripts/brain-diff.mjs",
     "scripts/brain-index.mjs",
     "scripts/session-handoff.mjs",
-    "scripts/boot-gate.mjs",
     "scripts/brain-archive.mjs"
   ],
   "lastOffsiteBackup": "2026-07-23",
