@@ -32,4 +32,22 @@ gate**. Es peor que no tener el gate, porque ahora hay evidencia falsa de contro
 **Regla**: **un cap excedido es la señal de DESTILAR, no de subir el techo.** Un límite solo se sube con una
 razón que NO sea «hoy no lo cumplo» —cambió el alcance, se midió mal al declararlo (§74.3), la neurona absorbió
 otra— y esa razón se escribe. Corolario de la Regla de ADMISIÓN (§G.4): un gate que se puede ajustar para que
-pase es teatro, igual que uno que nunca dispara ([[M-06]] si reincide).
+pase es teatro, igual que uno que nunca dispara ([[M-06]]).
+
+### M-06 — Un gate solo existe si lo has visto DISPARAR: tres formas de que mienta, y las tres dan ✅ *(2026-08-01, ADR §75-§77)*
+**Patrón**: escribí el chequeo #17 (*¿el cerebro miente sobre en qué rama estás?*) y **hubo que corregirlo tres
+veces** — cada una descubierta **probándolo**, ninguna razonándolo. (1) **No disparaba**: buscaba `rama X` y el
+texto real decía «Local `main` == `origin/main`». Teatro puro, y habría quedado como un ✅ decorativo para
+siempre. (2) **Acusaba a un inocente**: señalaba a `CLAUDE.md` por «declarar la rama `05`», que es un puntero a
+neurona. (3) **Volvió a acusar** en bersaglio, esta vez a una skill (`arquitecto-software`) y a un tag de modelo
+(`OPUS-5`), por recoger cualquier backtick de una línea git-ish. Y el mismo día el gate **#4 quedó obsoleto por
+su propio arreglo**: exigía que el `05` declarara la caché justo cuando lo correcto pasó a ser que **no** la
+declare (la genera el heartbeat), así que gritaba «05 STALE» **precisamente en los repos que ya habían hecho lo
+correcto**.
+**Las tres formas de mentir de un gate** —y las tres imprimen verde—: **no dispara** cuando debe · **dispara
+contra un inocente** · **se puede ajustar para que pase** ([[M-05]]).
+**Regla**: un gate no está terminado cuando compila, sino cuando lo has visto **(a)** disparar restituyendo el
+defecto vivo que lo motivó, **(b)** callar con el texto correcto, y **(c)** no acusar a ningún caso legítimo
+vecino. Sin las tres, lo que tienes es un ✅ decorativo — peor que no tener gate, porque genera confianza falsa.
+**Corolario**: un gate puede volverse obsoleto **por el propio arreglo que él provocó**; al cambiar una
+doctrina, revisa qué gate la vigilaba (aquí, el #4 vigilaba un campo que la doctrina nueva ELIMINA).

@@ -1587,3 +1587,43 @@ La fila del §0 se **extendió** en vez de añadirse una nueva, por economía de
 (§75.2, la v1 de #17), **dispara contra un inocente** (§75.2, la v2), o **se puede ajustar para que pase**
 (§76.2). Las tres dan ✅. Un gate solo vale si se verificó contra el defecto vivo *y* su umbral es más difícil
 de mover que el problema de arreglar.
+
+## 77. ADR — el kernel corregido tres veces por probarlo, y un gate que su propio arreglo dejó obsoleto ⟦OPUS-5⟧ (2026-08-01)
+
+**77.1 Tres correcciones a #17, ninguna por razonar.** El chequeo *«¿el cerebro miente sobre en qué rama
+estás?»* nació en §75 y hubo que arreglarlo **tres veces**, cada una al probarlo contra la realidad: (a) **no
+disparaba** —buscaba `rama X` y el texto real decía «Local \`main\` == \`origin/main\`»—; (b) **acusaba a
+`CLAUDE.md`** de declarar la rama \`05\`, que es un puntero a neurona; (c) **volvió a acusar** en bersaglio, a
+una skill (\`arquitecto-software\`) y a un tag de modelo (\`OPUS-5\`), por recoger cualquier backtick de una
+línea git-ish. La v4 se queda con **dos señales inequívocas**: `origin/<x>` —que nadie escribe salvo para
+hablar de una rama— y un token pegado a la palabra *rama/branch*. **Precisión sobre recall**: perder una
+mentira rara cuesta menos que perder la confianza en el gate ([[M-05]]).
+
+**77.2 El gate #4, obsoleto por el arreglo que él mismo provocó.** Vigilaba que el `05` declarara la versión
+de caché igual que el SW. Pero la doctrina cambió hoy —ese dato es DERIVABLE y lo genera el heartbeat, el `05`
+ya no debe declararlo— así que el gate empezó a gritar **«05 STALE» exactamente en los repos que acababan de
+hacer lo correcto**, tomando el puntero \`docs/.estado-auto.md\` por un número de versión. Corregido: el
+candidato tiene que **parecer** una versión, no ser cualquier backtick de la fila. **Al cambiar una doctrina
+hay que preguntarse qué gate la vigilaba** — puede estar defendiendo el mundo anterior.
+
+**77.3 bersaglio: el `05` en tope por primera vez** (4.725c → **4.216c**, 25/25 líneas). Suelta caché y
+alineación de ramas al heartbeat —**tercer repo con el mismo dato copiado a mano**, tras cars e insemastereo—,
+la narrativa del interinato baja a §192-§194 dejando solo las reglas vivas (marca `[OPUS-5]`, el gotcha de
+auditar por AMBOS marcadores, el gate de Daniel), y la regla de deploy manual deja de estar escrita **en dos
+filas**: el comando sube a la fila que ya la declaraba.
+
+**77.4 Doctrina → [[M-06]].** Un gate no está terminado cuando compila, sino cuando lo has visto **(a)**
+disparar restituyendo el defecto vivo que lo motivó, **(b)** callar con el texto correcto y **(c)** no acusar
+a un caso legítimo vecino. Sin las tres, es un ✅ decorativo — y eso es **peor** que no tener gate, porque
+genera confianza falsa. Las tres formas de que un gate mienta, todas vistas en 24h: no dispara · acusa a un
+inocente · se puede ajustar para que pase.
+
+**77.5 Los pares de caps eran incoherentes entre sí** (hallazgo N2-13 de la auditoría, generalizado). Cada
+neurona tiene tope de **líneas** y de **chars**, y yo los derivaba por separado (`real × 1.35`) sin mirar la
+**densidad real** de cada archivo. Resultado: el eje equivocado disparaba primero. `31-VERIFICACION-UI` tiene
+306 chars/línea y `40-LOBULOS` 84 — con el mismo criterio uniforme, en una manda un eje y en la otra el otro.
+Ahora `lines = chars / densidad-real`, así ambos aprietan en el mismo punto. **11 pares corregidos, y 7 se
+APRETARON** (`CLAUDE.md` 320→230 líneas · `20` 280→90 · `30` 350→180 · `00` 450→160). Los 4 que subieron
+—`10`, `60`, `15`, `33`— **no tocaron su cap de chars**, que sigue siendo el vinculante: el presupuesto de
+contexto no se movió ni un carácter, solo dejó de dispararse el eje secundario antes de tiempo. Eso lo
+distingue de la trampa de [[M-05]]: ahí se mueve **el techo**; aquí se corrige **cuál de los dos ejes es**.
