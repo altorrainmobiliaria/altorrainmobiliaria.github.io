@@ -1269,6 +1269,9 @@ documentos de firma del generador). **Riesgos asumidos conscientemente y escrito
 un accionista deja entrar a los herederos (el art. 8º somete a preferencia la *enajenación*, y heredar no lo es) ·
 **no hay arrastre** · y la **gerencia no queda blindada**: los estatutos permiten a la Asamblea remover libremente
 al Gerente (arts. 14º e y 16º) con quórum >50% y mayoría simple, y en un **40/40/20 cualquier pareja suma 60%**.
+**Efecto en el backlog de B-03** (verificado en `SINTESIS-CURADA.md`: total 134 = 14 críticos · 28 altos · 92 leves;
+sección `## 13` = 0 críticos · **5 altos · 7 leves**): al salir el 13, el pendiente real baja a **23 altos y 85
+leves**. `05` había quedado con el 28 y ambos nodos con el 92 — corregidos el 31-jul en este mismo cierre.
 
 **70.4 Verificación.** Las normas nuevas se leyeron en fuente ANTES de escribirlas: **Ley 675/2001 art. 46** (70%
 para reformar el reglamento de PH), **C.Co. art. 164** (el inscrito conserva su carácter), **Ley 1258 art. 24**
