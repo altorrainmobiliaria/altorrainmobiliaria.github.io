@@ -1241,3 +1241,61 @@ una sección del router, `grep` del kernel — un heading puede ser la API de un
 **69.8 Archivos.** Bóveda: `2026-07-31-auditoria-cerebro-nivel2-5-inmobiliaria.md` (tabla falsable N5-01..N5-06 +
 diff contra la #4) + fila en el README del archive. Repo: `10` (TODO-31 restituido · TODO-35 nuevo) · `00`
 (2 filas de enrutamiento) · `CLAUDE.md` (§4 fusionada en §3.2) · `05` · `.brain-manifest.json` (`deepAudit`).
+
+---
+
+## 70. ADR — B-03 aplicada (14 críticos) · los ESTATUTOS entran al cerebro · el doc 13 se retira ⟦OPUS-5⟧ (2026-07-31)
+
+> Daniel, tras leer las 4 "decisiones" que le subí sobre el acuerdo de accionistas: *"No entiendo eso de las
+> acciones… nosotros no estamos vendiendo acciones en Altorra"* → adjuntó los estatutos → *"No no es necesario"*.
+
+**70.1 Causa raíz.** Dos fallos de método, uno encima del otro. (a) **La auditoría B-03 revisó el kit CONTRA EL
+KIT**: su paquete de contexto traía decisiones vigentes, contexto legal, póliza y los contratos 03/04, pero **no
+los ESTATUTOS de la sociedad** — el documento que gobierna todo lo societario. 14 auditores y sus escépticos
+revisaron un pacto parasocial sin abrir la norma que lo rige, y la señal estaba impresa en el propio documento
+(*"en caso de contradicción prevalecerán los estatutos"*). (b) **Nunca se preguntó si el acuerdo se iba a usar**,
+que es exactamente el disparador de [[LD-02]] — reincidencia del pagaré, a cuatro días de distancia.
+
+**70.2 Lo que los estatutos ya resolvían** (V5, constitución 30-abr-2026, registrada en Cámara): **precio de las
+acciones en desacuerdo** → peritos, o los designa la Cámara de Comercio (art. 8º e) · **derecho de preferencia**
+con plazos de 5 y 10 días hábiles (art. 8º) · **supramayoría del 70%** para reformas y para enajenar la totalidad
+de los bienes sociales (art. 13º) — el mismo 70% que los docs 14/15 citaban y que la auditoría dio por inventado ·
+**conciliación + tribunal de arbitramento** de la Cámara de Comercio para toda diferencia entre socios (art. 24º),
+que hace innecesario el poder irrevocable que un auditor propuso y su escéptico tumbó por peligroso. **De las 4
+preguntas que se le llevaron al dueño, 3 no existían.**
+
+**70.3 Decisión del dueño: el doc 13 se RETIRA del kit** (no se firma, se conserva auditado, sale de la lista de
+documentos de firma del generador). **Riesgos asumidos conscientemente y escritos en su banner**: la **muerte** de
+un accionista deja entrar a los herederos (el art. 8º somete a preferencia la *enajenación*, y heredar no lo es) ·
+**no hay arrastre** · y la **gerencia no queda blindada**: los estatutos permiten a la Asamblea remover libremente
+al Gerente (arts. 14º e y 16º) con quórum >50% y mayoría simple, y en un **40/40/20 cualquier pareja suma 60%**.
+
+**70.4 Verificación.** Las normas nuevas se leyeron en fuente ANTES de escribirlas: **Ley 675/2001 art. 46** (70%
+para reformar el reglamento de PH), **C.Co. art. 164** (el inscrito conserva su carácter), **Ley 1258 art. 24**
+(representante para información, 5 días comunes) y **Ley 1480 art. 43 num. 5** (ineficacia de la cláusula de
+no-reintegro). Gate de emisión en verde tras cada documento; `brain:check` SANO; boot dentro de presupuesto.
+
+**70.5 Los 14 críticos aplicados** (6 commits `kit B-03 (n/n)` en la bóveda): `00-LEEME` proclamaba la figura de
+arrendador DEROGADA y vendía una escritura pública por propietario · `11-HOSPEDAJE` pactaba una retención del 100%
+**ineficaz de pleno derecho**, retenía IVA de un servicio no prestado y calculaba la escala sobre *lo pagado*, lo
+que premiaba con $1.500.000 a quien no pagaba el saldo · `16-LIQUIDACIÓN` descontaba la prima **una vez al año**
+siendo mensual (~$497.000/inmueble/año de fuga) y no sabía expresar un mes sin recaudo · `12-CORTA-ESTANCIA`
+mandaba a cobrar sin facturación habilitada y dejaba en blanco el caso más frecuente de PH · `07` negaba tratar
+datos sensibles cuando la biometría es el proceso estándar · `06` tenía vacía la sección del "cómo" · `14`
+derivaba a un abogado inexistente · y cuatro entregables se autodesacreditaban.
+
+**70.6 Anti-patterns evitados.** **El 79% de las correcciones del auditor fueron marcadas dañinas por sus
+escépticos y NO se aplicaron** — entre ellas: crear un cobro contra un consumidor que canceló, autoatribuirse ante
+la SIC un tratamiento biométrico que ejecuta la aseguradora, rotular la cédula como dato sensible, y dar poder
+irrevocable al Gerente. Los **92 hallazgos medios/bajos NO se aplicaron a ciegas**: no pasaron por escéptico, así
+que son *sin verificar*, no *confirmados*.
+
+**70.7 Doctrina.** **[[LD-05]]** (nueva): auditar el kit contra el kit no basta — identifica el **documento madre
+fuera del kit** e inclúyelo en el paquete de contexto. **[[LD-02]] reincidente**: la pregunta *"¿esto lo vas a
+usar?"* se hace antes de la primera línea **y otra vez antes de mandarlo a auditar**, porque auditar es el gasto
+grande. Corolario del §68 que se confirma: lo que se mantiene por duplicado a mano diverge — aquí, el kit y los
+estatutos vivían sin hablarse.
+
+**70.8 Archivos.** Bóveda: `13` (retirado) · `00-LEEME` (retiro + puntero a los estatutos + regla de prevalencia) ·
+`_plantilla/generar-documentos.ps1` (13 fuera de la lista de firma) · `02` `04` `05` `06` `07` `11` `12` `14` `16`
+`23` + manual y fragmentos. Repo: `32` (LD-05 + reincidencia de LD-02) · `10` · `05` · `99`/`00`.

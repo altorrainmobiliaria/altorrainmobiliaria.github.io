@@ -38,7 +38,7 @@
 | **TODO-30** | 🗺️ **MapLibre real ✅ CÓDIGO COMPLETO (§55)** — tiles por Worker+Range, verificado E2E. **Falta SOLO la vista en foreground** (rAF congelado en pestañas automatizadas, L-34 → la confirma Daniel en su Chrome). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§60)**. Para datos reales: (1) deploy COORDINADO en el cutover (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. Lo demás BLOQUEADO por causas reales (§60.4); insumos legales de la ficha → TODO-33. | 🟢 cutover | §60 |
 | **TODO-33** | 🧾 **FICHA dinámica — decisiones ANTES de construir (§60.3)**: dirección exacta = OMITIR (PII) · financiación = disclaimer legal o se omite la cifra · asesor = `asesorId` vs bloque genérico · POIs fuera en v1. Regla: bloque sin dato se OMITE (jamás heredar el demo). | 🔵 decisión | §60 |
-| **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§68)**. Kit 00-23 + membrete (`43`). Póliza ✅ · FE-DIAN ⏸️ · 03/04 blindados (§66). **Los 22 restantes AUDITADOS ✅ (§68)** — faltan por APLICAR los **134 vivos**, uno a la vez. | 🔄 aplicar §68 | §66/§68 · `43` |
+| **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§70)**. Kit 00-22 + membrete (`43`). Póliza ✅ · FE-DIAN ⏸️ · 03/04 blindados (§66) · **14 críticos de B-03 aplicados (§70)**. Restan **23 altos + 92 leves**. Retirados: 13 y 23. | 🔄 altos §70 | §70 · `43` |
 | **TODO-32** | 🧠 **CEREBRO v2 ×4 — 🏁 NÚCLEO COMPLETO ✅** (F0-F3, §50-§53; kernel **v1.6.0** ×4). **Restos**: (a) hook SessionStart en los 3 hermanos · (b) PODA REAL de doctrina si el banner >30% dos meses. Mensual: el banner avisa → skill `mantenimiento-general`. | 🟡 restos a/b | §53 |
 | **TODO-35** | 🛡️ **El kit legal no tiene linter** (auditoría #5, N5-05 · CRÍTICO): `brain:check` protege la doc del negocio con 16 chequeos; los **24 documentos que la empresa FIRMA** solo tienen el gate de marcas. **Ningún gate cruza documento↔documento** — por eso el `00-LEEME` proclamó la figura derogada sin que nadie lo notara. Construir chequeos de consistencia (figura · cifras vs 01/02 · remisiones · URLs declaradas). | 🔴 abierto | §69 |
 | **TODO-31** | 🛡️ **SPOF del sistema** (de la auditoría #4; perdió su fila → restituida en §69): (a) todo ×4 —repos, bóveda, espejos— cuelga de **1 cuenta + 1 disco**: falta bundle offsite mensual · (b) **canario del harness**: el boot cuelga de hooks SessionStart y si cambia el schema muere EN SILENCIO · (c) recovery codes: los verifica Daniel. | 🔴 a/b | §49·§69 |
@@ -61,16 +61,17 @@
 > anuncia: ¿afiliarse, o apoyarse solo en la aseguradora? · **(2) publicar la Política de Datos** en
 > `/legal/politica-tratamiento-datos` (los 24 docs ya la declaran ahí; es despliegue, no decisión) ·
 > **(3)** Nº de matrícula y RNT (al cierre de obra) + vetar/ajustar los 6 estándares del `02 §2` ·
-> **(4) 🆕 ACUERDO DE ACCIONISTAS (doc 13) — 4 decisiones de LOS TRES SOCIOS, no solo tuyas**: precio al que se
-> compran las acciones cuando no hay comprador que lo fije (hoy **los herederos entran a la sociedad** y nadie
-> puede comprarles) · ¿hay arrastre, que obligaría al 20% a vender? · cómo se cierra el shotgun si el perdedor
-> no entrega los títulos (⚠️ NO con poder al Gerente: está sindicado y no se puede remover) · monto de la pena
-> y la supramayoría, hoy en blanco mientras el 14 y el 15 ya publican "70%". **El 13 lleva banner de NO FIRMAR.**
+> ~~(4) acuerdo de accionistas~~ → **CERRADO 31-jul: Daniel decidió que no es necesario** (doc 13 retirado, §70).
 >
-> **▶ 🔍 B-03: 🏁 LOS 14 CRÍTICOS CERRADOS** (commits `kit B-03 (n/n)` en la bóveda). **Siguen 28 altos y 92
-> leves** (los leves NO pasaron por escéptico: verificar antes de aplicar). Método: remedio del ESCÉPTICO +
-> regresión + gate tras cada doc — en **33 de 42 serios el escéptico dictaminó que la corrección del auditor
-> ROMPE algo** (79%). Detalle → `SINTESIS-CURADA.md` de la bóveda.
+> **▶ 🔍 B-03: 🏁 LOS 14 CRÍTICOS APLICADOS (§70)**. **Siguen 23 altos y 92 leves** — los leves NO pasaron por
+> escéptico: son *sin verificar*, no *confirmados*. Método: remedio del **ESCÉPTICO** (el 79% de los del auditor
+> rompían algo) + regresión + gate tras cada doc. Detalle → `SINTESIS-CURADA.md` de la bóveda.
+>
+> 📜 **LOS ESTATUTOS MANDAN sobre el kit** y viven FUERA de él (`Downloads/ALTORRA Company (Legal)/Estatutos/`,
+> V5). Ya resuelven precio de acciones (peritos/Cámara, art. 8º e), preferencia, **supramayoría 70%** (art. 13º)
+> y **arbitramento** (art. 24º). Antes de auditar un entregable, **abre su documento madre** ([[LD-05]]).
+> ⛔ **Doc 13 (acuerdo de accionistas) RETIRADO** por decisión de Daniel el 31-jul: no es necesario. Riesgos
+> asumidos y escritos en su banner (muerte de un socio · sin arrastre · gerencia removible por cualquier 60%).
 >
 > **⏭️ LO QUE SIGO YO**: los altos y leves que quedan de B-03 · copiar el kit a `…\KIT ALTORRA` (los Word de
 > allá son del 28-jul). Backlog B-01..B-04 en la bóveda.
