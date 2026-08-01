@@ -40,12 +40,15 @@
 | **TODO-33** | 🧾 **FICHA dinámica — 4 decisiones ANTES de construir (§60.3)**: dirección exacta · financiación · asesor · POIs. Regla: **bloque sin dato se OMITE** (jamás heredar el demo). | 🔵 decisión | §60 |
 | **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§71)**. Kit 00-22 + membrete (`43`). Póliza ✅ · FE-DIAN ⏸️ · 03/04 blindados (§66) · **14 críticos + 23 altos de B-03 aplicados (§70·§71)**. Restan **85 leves** (⚠️ sin escéptico). Retirados: 13 y 23. | 🟢 leves | §71 · `43` |
 | **TODO-32** | 🧠 **CEREBRO v2 ×4** (§50-§53; kernel v1.6.0 ×4). **(a) ✅ CERRADO §72**: heartbeat+handoff+canario ya corren en los 3 hermanos. **(b) vivo**: el banner >30% en LOS CUATRO (cars 43 · bersaglio 61 · insema 56 · inmo 56) — 2º mes ⇒ toca PODA REAL, no añadir. | 🟡 poda (b) | §72 |
-| **TODO-35** | 🛡️ **Linter del kit legal — 2 de 6 (§71.8)**: el generador ya cruza documento↔documento (cicatrices de redacción · versión de la Política). **Faltan**: cifras vs `01`/`02` · remisiones ([[LD-04]]) · URLs declaradas · figura del arrendador. | 🟡 2 de 6 | §71 · §69 |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
+> **▶ 🛡️ 01-ago (§82): TODO-35 CERRADO — el kit de firma ya tiene sus 6 gates cruzados** (cierra el
+> crítico N5-05). Cazó 2 defectos reales: el `00-LEEME` y el manual mandaban al **doc 13 retirado**. Las
+> 2 excepciones que solo salen probando → [[LD-07]]. Correrlos: `generar-documentos.ps1 -SoloGates` (3 s).
+>
 > **▶ 🔒 01-ago (§81): TODO-36 CERRADO — el candado de boot SUBIÓ AL KERNEL** (v1.8.0, bloqueante ×4).
 > bersaglio 33.3k→31.4k · insema 28.4k→27.5k, **sin subir un techo** ([[M-05]]). Hallazgo: **insema no
 > tenía pre-commit** → nace el chequeo #25 y [[M-07]]. Sesión previa (los 4 a `main`) → §80.

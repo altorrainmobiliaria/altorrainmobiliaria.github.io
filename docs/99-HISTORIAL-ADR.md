@@ -1788,3 +1788,50 @@ script propio) · `.brain-manifest.json` (fuera de `kernelFiles`) · `githooks/p
 (ver el gate disparar) · [[M-03]] (el gate vive en el recurso compartido — y §81.5 le añade que su
 DISPARADOR sigue siendo instance) · §3.3 (verificar antes de afirmar «×4»). Sin cache bump: nada del
 shell. Deliberación: ninguna (ejecución de una condición ya decidida en §173).
+
+## 82. ADR — TODO-35 cerrado: el kit que la empresa FIRMA estrena sus 6 gates cruzados ⟦OPUS-5⟧ (2026-08-01)
+
+Cierra el hallazgo **crítico N5-05** de la auditoría #5: `brain:check` protegía la documentación *sobre*
+el negocio con 25 chequeos, mientras los **24 documentos que la empresa firma** tenían uno solo (marcas de
+trabajo). El activo más caro era el menos protegido.
+
+**82.1 — Causa raíz.** Ningún gate cruzaba **documento contra documento**. Por eso el `00-LEEME` pudo
+proclamar durante días una figura de arrendador derogada, y solo lo cazó una auditoría de 191 hallazgos
+pagada aparte. Un corrector que mira un documento a la vez es ciego al defecto que vive ENTRE dos.
+
+**82.2 — Solución.** El generador estrena los 4 cruces que faltaban (los dos primeros son de §71.8):
+**(3) cifras** contra la tabla única del doc `02` — el doc 02 sella el valor Y nombra el derogado, así que
+el gate lleva solo el derogado y el sellado va en el mensaje; **(4) remisiones a documentos RETIRADOS**
+(13 y 23); **(5) identidad y canales** en documentos de firma — NIT de la sociedad vieja, celular
+PERSONAL del dueño, URLs propias no declaradas; **(6) anclas de la figura del ARRENDADOR** (§66): si una
+edición futura borra el parágrafo del mandato sin representación (C.Com. art. 1262), el contrato cambia de
+naturaleza en silencio, y ahora eso aborta la emisión.
+
+**82.3 — Las dos excepciones que solo aparecieron AL PROBARLO.** La versión obvia daba **100% de falsos
+positivos**: las 5 apariciones vivas de cifras derogadas estaban dentro de su propia cláusula de
+derogación. Y el doc `22` **reporta** *"rango nacional 8-12%"* como hecho de mercado observado — su oficio
+es mirar hacia afuera — y el gate lo acusaba de usar la tarifa derogada de ALTORRA. De ahí las dos
+ventanas: `MARCA_DEROGA` (la mención que deroga) y `MARCA_AJENA` (la cifra atribuida a un tercero) → [[LD-07]].
+
+**82.4 — Verificación (M-06, las tres formas de mentir en una sola corrida).** (a) **No disparaba**: la
+primera prueba imprimió "los gates pasaron" porque copié el script al scratchpad y `$base` cuelga de
+`$PSScriptRoot` — escaneó una carpeta sin documentos. Un ✅ obtenido sin mirar nada. (b) **Acusaba a
+inocentes**: dio por ausente el ancla del ARRENDADOR que **sí existe** en el doc `04` (el `**` de markdown
+no caía donde el patrón lo esperaba) y comparó la URL con los asteriscos pegados. (c) **Calla con el texto
+correcto**: corregido, el gate deja limpio todo el corpus salvo los defectos reales. Se añadió
+`-SoloGates` (3 s, sin abrir Word) porque un gate que exige generar 24 Word de 2,6 MB no se vuelve a probar.
+
+**82.5 — Los 2 defectos REALES que cazó.** (1) `00-LEEME:85` mandaba al dueño a *"conversar el acuerdo de
+accionistas con tus socios (doc 13)"* — retirado el 31-07-2026 por decisión suya; la gobernanza la fijan
+los **ESTATUTOS V5** (40/40/20). (2) El manual maestro listaba `13-ACUERDO-ACCIONISTAS` entre los
+"Documentos del kit" **en el mismo archivo** que, 100 líneas después, decía que se había retirado. Ambos
+corregidos en la fuente (`00-LEEME` y el fragmento `cap08`), manual **reensamblado** — no editado a mano.
+
+**82.6 — Archivos.** Bóveda: `_plantilla/generar-documentos.ps1` (+4 gates, `-SoloGates`, 2 ventanas de
+excepción) · `00-LEEME.md` · `15-manual-fragmentos/cap08-legal-compliance.md` · `15-MANUAL-MAESTRO-ALTORRA.md`
+(regenerado). Repo: `99` · `00` · `10` · `32` ([[LD-07]]). **INTACTOS**: los 24 `.md` de firma salvo el
+`00-LEEME`, y todo el código del sitio.
+
+**82.7 — Doctrina.** §3.3 (probar antes de afirmar que un gate funciona) · [[M-06]] (verlo disparar) ·
+[[LD-06]] (el defecto vive ENTRE documentos) · [[LD-04]] (remisiones). Sin cache bump. Deliberación:
+ninguna — ejecución de un pendiente ya decidido en §69/§71.
