@@ -1627,3 +1627,39 @@ APRETARON** (`CLAUDE.md` 320→230 líneas · `20` 280→90 · `30` 350→180 ·
 —`10`, `60`, `15`, `33`— **no tocaron su cap de chars**, que sigue siendo el vinculante: el presupuesto de
 contexto no se movió ni un carácter, solo dejó de dispararse el eje secundario antes de tiempo. Eso lo
 distingue de la trampa de [[M-05]]: ahí se mueve **el techo**; aquí se corrige **cuál de los dos ejes es**.
+
+## 78. ADR — cars entra en presupuesto por una decisión estructural, no por raspar ⟦OPUS-5⟧ (2026-08-01)
+
+**78.1 El último tramo no salió de recortar.** cars llevaba toda la noche bajando de a 50c: soltar la caché
+al heartbeat, destilar §G.4/§G.5, compactar la bitácora. De 35.946c llegó a 33.4k y ahí se atascó — porque lo
+que quedaba era **contenido legítimo**. El cierre vino de mirar qué hace ese contenido en el boot: su `10`
+cargaba **25 pendientes CONGELADOS** (4.5k) de un proyecto **en PAUSA por el pivote §302**, releídos en cada
+arranque para trabajo que nadie iba a tomar. Salen a `11-PENDIENTES-CONGELADOS.md`. **35.946 → 29.715c.**
+
+**78.2 Congelado ≠ cerrado, y el shard es reversible.** Ninguno de los 25 se cierra: cerrar uno sigue
+exigiendo su ADR. Y la hoja declara **cuándo volver a leerla** («cuando el dueño diga: volvemos a cars») y
+que entonces **regresan al `10`** — el shard fue por PAUSA, no por tamaño. En el boot queda lo que de verdad
+sirve a una sesión nueva: el **Foco** (caminos A/B/C) y los **🚫 callejones**, que el drill de retrieval de la
+auditoría identificó como el mejor activo de un cerebro.
+
+**78.3 Los pares de caps, coherentes en los 4.** `lines = chars / densidad-real`, para que ambos ejes
+aprieten en el mismo punto (§77.5). **22 apretados · 4 relajados · ningún cap de chars tocado** — los 4 que
+subieron lo hicieron sin mover el presupuesto vinculante, que es la diferencia con la trampa de [[M-05]].
+
+**78.4 Pagué el boot que consumí.** En insemastereo añadí ~1.9k esta noche (ruteo del heartbeat, gobernanza
+del kernel, el TODO de la rama sin mergear) **sin aplicar one-in-one-out**. Devuelto ~880c destilando lo que
+yo mismo escribí, ahora que su detalle vive en su ADR-F. Quedan **308c (1,1%)** y **se dejan a la vista**: se
+podría alegar «cambió el alcance» —lo que lo empujó carga peso real en cada sesión— pero la justificación es
+lo bastante floja como para que **dejar la brecha visible sea más honesto que moverla**. El nudge mantiene la
+presión; el techo no se toca.
+
+**78.5 Estado del trinquete.** inmobiliaria **31.474/31.500 ✅** · cars **29.715/31.500 ✅** · insema
+**28.308/28.000** (+308) · bersaglio **38.740/31.500** (+7.240) ← **el único bloqueante real**. Su
+`CLAUDE.md` (26.7k) es el 69% de su boot. Hasta que baje, el `boot-gate` no sube al kernel: su cabecera lo
+condiciona a que los 3 hermanos estén bajo presupuesto, y **cumplir esa condición subiendo techos sería
+exactamente la trampa que el gate existe para impedir**.
+
+**78.6 Doctrina.** Cuando raspar deja de rendir, la pregunta correcta no es *«¿qué más recorto?»* sino
+**«¿qué hace este contenido en el boot?»**. Un pendiente congelado, un dato derivable y una tabla de topes
+copiada tienen algo en común: **no son grasa, están en el sitio equivocado**. Destilar es reescribir; lo que
+cierra las brechas grandes es MOVER.
