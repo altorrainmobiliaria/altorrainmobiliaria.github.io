@@ -1473,3 +1473,46 @@ ENTRE documentos, con un ecosistema de repos el defecto vive **ENTRE cerebros** 
 no en sus hermanos garantiza deriva, y la deriva no se supone: se mide. Corolario operativo verificado hoy:
 **un pendiente que describe un mundo que ya no existe es peor que ninguno** (2 de los 3 puntos del TODO-31
 eran falsos y desviaban trabajo).
+
+## 74. ADR — cars destilado, `brain-kit` descongelado, y el hueco que deja crecer una neurona sin techo ⟦OPUS-5⟧ (2026-08-01)
+
+**74.1 cars: 35.946c → 33.944c de boot**, y su `CLAUDE.md` vuelve dentro de tope (24.438 → 22.592). El
+espacio salió de tres sitios, ninguno por recorte a ojo: (a) **§G.4** 6.2k→4.4k, la misma gobernanza que
+inmobiliaria ya había destilado a la mitad y que los hermanos nunca recibieron — de paso se plegó el reflejo
+de **catalogación de skills, que cars no tenía escrito** aunque su gate #6 sí lo vigila; (b) el **`05` soltó
+caché y rama**: ahora que cars tiene heartbeat esos valores se generan, y copiarlos era lo que hacía reincidir
+L-02 (el día anterior declaraba una caché de 8 días atrás); (c) **§G.5**, cuya tabla copiaba a mano los topes
+del manifest y además **había envejecido** — declaraba UNA hija de `30` cuando ya hay tres.
+
+**74.2 El hueco que la tabla tapaba, y que es general.** Al sustituir la tabla por el manifest aparecieron dos
+hojas **sin cap declarado**: `31-LECCIONES-GIT` y `32-LECCIONES-META`. La segunda tenía **27.4k** y **ningún
+gate la miraba**. No es un caso aislado: el barrido ×4 encontró neuronas sin cap en los cuatro repos. **El
+linter solo vigila lo que el manifest declara, y el manifest calla sobre el resto** — así una hoja crece sin
+techo y en silencio hasta que alguien tropieza con ella. → chequeo **#23**: toda `docs/*.md` sin `cap` ni
+pertenencia a una lista `noCap` explícita **con razón** es un warn; la ausencia deja de ser una opción por
+omisión y pasa a ser una decisión escrita. (Mismo día, mismo patrón que bersaglio §73.3.)
+
+**74.3 Error propio, corregido en el mismo turno.** Al declarar el cap de `32-LECCIONES-META` puse **16.000
+inventado** sin medir el archivo: creó un gate bloqueante falso sobre una hoja de 27.4k. Corregido fijándolo
+desde el **tamaño real medido + holgura**. La regla que queda escrita en su manifest: **un cap se mide, no se
+supone** — es exactamente el mismo defecto que llevo tres ADRs persiguiendo (un número puesto a mano sin
+contrastar contra su fuente), esta vez cometido por mí.
+
+**74.4 `brain-kit` descongelado.** La plantilla de instalación estaba en el **18-jul, pre-v1.6.0**: su
+`brain-check` era de la era v1.x y su `session-handoff` (2.8k vs 9.5k) **no tenía heartbeat**. Un cerebro
+instalado desde ahí nacía sin la mitad de la maquinaria y **sin avisar de nada**. Refrescado a v1.6.0 (6/6
+idénticos al canónico, `brain-archive` incluido, que faltaba) + aviso en su README con el comando de refresco
+y el de verificación, porque **volverá a envejecer**: es una copia, y las copias se desincronizan. ⚠️ Y no
+está bajo git: sin historial y **fuera de los bundles offsite** — a diferencia del kernel, que vive en la
+bóveda versionada.
+
+**74.5 Lo que NO se hizo, y por qué.** No se instaló el `boot-gate` en los hermanos. Su propia cabecera
+condiciona la subida al kernel a que **los 3 repos estén bajo presupuesto**, y cars sigue +2.4k. Se podía
+"cumplir" subiendo su `bootCharsTarget` al valor de hoy — y eso es exactamente la trampa que el gate existe
+para impedir: **un techo que se mueve para alcanzarlo no es un techo**. Se deja el objetivo intacto y la
+distancia visible. Tampoco se hizo GC del `10` de cars: su ledger está limpio (gate #9 pasa) y sus 25 filas
+son pendientes reales de un proyecto pausado, no narrativa consolidable — podarlas sería perder estado.
+
+**74.6 Doctrina.** Corolario de §73.7, ahora medido: **el silencio de la configuración es una decisión que
+nadie tomó**. Un cap ausente, una clave que ningún gate lee, una copia sin fecha de caducidad — las tres dan
+verde y las tres esconden deriva. Un gate que solo comprueba lo declarado premia no declarar.
