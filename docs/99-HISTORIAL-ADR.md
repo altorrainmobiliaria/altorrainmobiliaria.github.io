@@ -1368,3 +1368,53 @@ deja de vivir en un documento y pasa a vivir ENTRE ellos — la fase de colision
 planifica en paralelo y se aplica en serie, y el aplicador verifica unicidad de anclas. Corolario: **un
 remedio es una hipótesis con fecha**; se re-verifica contra el archivo, no contra el informe. Crudos +
 síntesis → `research-archive/2026-07-31-kit-b03-altos/`.
+
+## 72. ADR — el heartbeat llega a los 3 hermanos: TODO-32(a) cerrado y el SPOF re-medido ⟦OPUS-5⟧ (2026-08-01)
+
+**72.1 Causa raíz.** Los 4 repos comparten kernel v1.6.0, pero `kernelFiles` es **por-repo** y los
+hermanos solo declaraban 2-3 archivos: tenían el linter en `SessionStart` y nada más. Sin heartbeat, el
+estado DERIVABLE (branch, sucios, cache del SW, costo, consolidación) **se copia a mano al `05`** — y un
+dato copiado a mano se desincroniza siempre. Se verificó mordiendo el mismo día: el `05` de cars declaraba
+`v20260724020458` mientras el SW iba en `v20260801024429`, 8 días de desfase. Su propia lección L-02 ya
+había diagnosticado el drift como ESTRUCTURAL y había respondido *"sincronizar a mano en cada merge"* —
+tratar el síntoma. **insemastereo estaba peor: no tenía NINGÚN hook `SessionStart`**, así que tampoco
+corría la auto-auditoría.
+
+**72.2 Solución.** `session-handoff.mjs` (canónico v1.6.0) declarado en los `kernelFiles` de los 3 y
+distribuido con `brain:pull`; hooks `SessionStart` (+`--boot-echo`), `PreCompact`, `SessionEnd` y `Stop`
+cableados; sidecars generados al `.gitignore`. A insemastereo se le añadió además `brain-check --boot`.
+El script ya estaba **escrito para ser portable** —sondea 4 rutas de service-worker, degrada CNAME a
+"(no aplica)", lee el manifest de cada repo y jamás bloquea (exit 0 siempre)—, así que no hubo que
+bifurcarlo: cero strings de inmobiliaria dentro.
+
+**72.3 Verificación en los 3 repos.** Se corrió el heartbeat en cada uno y **produjo señal REAL desde el
+primer arranque**, no plantilla: bersaglio detecta `sw.js`/`bersaglio-v98`, insemastereo reporta
+"(sin service worker)" —correcto, es una landing—, y ambos CNAME "(no aplica)". Y destapó deuda que nadie
+estaba mirando: **cars con 9 commits de producto sin ADR** e insemastereo con 4.
+
+**72.4 El SPOF re-medido (TODO-31), y dos de tres eran falsos.** (a) *"falta bundle offsite mensual"* —
+**FALSO**: `OneDrive/backups-cerebro/` tiene los 5 repos + la bóveda, último set 23-jul, y el heartbeat ya
+lo vigila. (b) *"canario del harness"* — **ya no**: el marker de boot viaja con este cambio a los 4.
+Queda solo (c), los recovery codes, que son de Daniel. **Un pendiente que describe un mundo que ya no
+existe es peor que ninguno**: ocupa boot y desvía trabajo.
+
+**72.5 Lo que este cambio DESTAPÓ y no cierra.** (1) **El `boot-gate` solo existe en inmobiliaria**, y es
+—no por casualidad— el único repo dentro de presupuesto: cars va **+4.1k** y bersaglio **+11.6k (37%)**
+sobre su objetivo, quemados en cada arranque de cada sesión. Encenderlo hoy les bloquearía todo commit de
+cerebro, así que el orden correcto es **destilar primero y poner el trinquete después** (techo = el valor
+ya destilado). (2) **`brain-kit/` está congelado el 18-jul, pre-v1.6.0**: quien instale un cerebro nuevo
+desde la plantilla lo estrena viejo. (3) El banner de costo supera el 30% en **los cuatro** (cars 43 ·
+bersaglio 61 · insema 56 · inmo 56): segundo mes ⇒ toca poda real. → **TODO-36** y **TODO-32(b)**.
+
+**72.6 Anti-patterns evitados.** NO se instaló `boot-gate` como bloqueante en repos que ya lo violan
+(sería un gate que nadie puede satisfacer: se desactiva y muere la disciplina). NO se editó
+`session-handoff.mjs` por-repo: el canónico es uno y se distribuye. NO se pusheó a `main` en insemastereo
+—su CLAUDE.md reserva el merge al dueño—, se pushó la rama `cerebro/todo-32`.
+
+**72.7 Higiene del mismo turno.** Las 4 copias de la skill `meta-ads-diagnostico` quedaron idénticas
+(verificado por hash ignorando CRLF) y commiteadas en los 3 hermanos, que la tenían sincronizada pero sin
+commitear. bersaglio: `session-report-*.html` al `.gitignore` (llevaba desde el 8-jul ensuciando el árbol).
+
+**72.8 Doctrina.** Corolario de [[LD-04]] aplicado al ecosistema: **si un gate existe en un repo y no en
+sus hermanos, los hermanos derivan** — y la deriva se mide, no se supone (cars +4.1k, bersaglio +11.6k).
+Corolario del §52 confirmado: el estado derivable se GENERA o miente.
