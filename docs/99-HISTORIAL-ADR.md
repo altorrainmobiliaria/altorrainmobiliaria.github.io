@@ -1693,3 +1693,47 @@ tijera — y **ningún techo se sube para llegar** (M-05).
 sabe, es lo que repite.** La gobernanza vivía ×4 en versiones divergentes, las hijas se anunciaban dos veces,
 los topes se copiaban del manifest, el estado derivable se copiaba de git. Cuando el escritor único destila
 una vez, los hermanos siguen pagando el precio viejo **hasta que alguien mira**.
+
+## 80. ADR — CIERRE de la sesión del 31-jul/01-ago: los 4 cerebros mergeados a `main` ⟦OPUS-5⟧ (2026-08-01)
+
+**80.1 Lo pendiente, mergeado.** Daniel autorizó cerrar todo. **28 commits** entraron a `main`: cars `dev`→
+`main` (8) · bersaglio `Desarrollo`→`main` (8) · **insemastereo `cerebro/todo-32`→`main` (12)**, que llevaba
+desde el **18-jul** viviendo solo en la rama. Se verificó ANTES de mergear que **ninguno tocaba producto**:
+cero HTML/CSS/JS/assets/reglas/functions — solo `docs/`, `scripts/`, `.claude/` y la línea de `brain:pull` en
+un `package.json`. Por eso los merges no dispararon despliegue real aunque bersaglio publique al pushear.
+
+**80.2 El gate cazó mi propio desorden al cerrar.** Tras mergear dejé cars parado en `main`, y el chequeo
+**#17 —escrito esta misma noche—** avisó: *«el `05` declara la rama `dev` pero estás en `main`»*. Cars tiene
+**rama ÚNICA `dev` (§231)**; quedarme en `main` violaba su convención. Devueltos cars a `dev` y bersaglio a
+`Desarrollo`, ambos sincronizados con `main`. El gate se ganó el sueldo el día que nació.
+
+**80.3 Balance de la sesión.** Empezó con *«¿tenemos algo pendiente del cerebro?»* y terminó con **10 ADRs
+(§70-§80)**, 3 lecciones nuevas ([[LD-06]], [[M-05]], [[M-06]]) y el kernel de **v1.6.0 → v1.7.2**.
+
+| | al empezar | al cerrar |
+|---|---|---|
+| Kit legal | 14 críticos aplicados, 23 altos abiertos | **23 altos aplicados** (85 leves, sin escéptico) |
+| Cerebros SANOS | 3 de 4 (insema con auditoría vencida 43d) | **4 de 4** |
+| Boot inmobiliaria | 31.489c | 31.376c |
+| Boot cars | 35.946c | **29.715c** ✅ |
+| Boot bersaglio | 43.116c | **33.302c** (+1.8k) |
+| Boot insemastereo | 27.305c | 28.308c (+308c) |
+| Neuronas sin techo | **44** | **0** |
+| Chequeos del kernel | 16 | **18** (#17 git propio · #23 sin techo) |
+
+**80.4 El hilo que atravesó todo.** Tres cerebros mentían en el mismo sitio por la misma causa: **un dato
+cuyo dueño es otro —el cron, git, el manifest— copiado a mano a un nodo que se lee siempre**. cars declaraba
+una caché de 8 días atrás; insemastereo, una rama equivocada durante 42 días; bersaglio, unos topes que ya
+habían envejecido. Ninguno se detectó revisando: **los tres se detectaron contrastando el nodo contra su
+fuente**, que es justo lo que ahora hacen el heartbeat y los gates #17/#23.
+
+**80.5 Lo que queda, sin adornos.** **2,1k de boot** repartidos entre bersaglio (+1.802) e insemastereo
+(+308) — hasta cerrarlos el `boot-gate` no sube al kernel, y **no se cierran subiendo techos** ([[M-05]]) ·
+chequeos **#18-#22 + #17-bis** en cola (TODO-23) · deuda de consolidación que destapó el heartbeat (cars 9
+commits de producto sin ADR, insemastereo 4) · **85 leves** de B-03, que NO pasaron por escéptico ·
+`brain-kit` refrescado pero **fuera de git y de los bundles**.
+
+**80.6 Y lo que es de Daniel** (no lo puedo cerrar yo): publicar la **Política de Datos V2** en
+`/legal/politica-tratamiento-datos` —los 24 documentos ya la fijan en *V2 · 28-07-2026*— · **B-04**: sin
+contrato con DataCrédito/TransUnion no se puede consultar a nadie aunque el arrendatario firme, y el doc 04
+ya se lo anuncia · **recovery codes** · Nº de matrícula y RNT al cierre de obra.

@@ -3,10 +3,10 @@
 > Nodo de signos vitales. Se **AUTO-CARGA** (con `CLAUDE.md` + `10`). "¿En qué estado está el sistema AHORA?". Tope ~25 líneas (§G.5) — tablero, no bitácora.
 > 💓 Lo DERIVABLE (git/SW-cache/costo/consolidación) ya **NO vive aquí**: lo genera el heartbeat en CADA boot (sidecar `docs/.estado-auto.md`, §52) — este nodo solo guarda JUICIO. FIREBASE (CFs, datos) sigue sin re-verificar → §3.3 antes de afirmar.
 
-| Señal | Valor (al **2026-07-31**) |
+| Señal | Valor (al **2026-08-01**) |
 |---|---|
 | **Misión** | ⭐ **FRENTE 0 = FUNDACIÓN OPERATIVA** (TODO-34, mandato 24-jul) sobre 🏗️ **GREENFIELD** del portal (**R0-R4 ✅ + STACK SELLADO** §16). Fable planifica/audita · Opus implementa. 🏛️ Escritor único del kernel ×4 (§15). |
-| **Kit fundacional** | 📜 **24/24 generan** + gate de emisión verde (§67) · **24/24 AUDITADOS** (§68: 191 brutos → 57 refutados → **134 vivos**). **🏁 14 CRÍTICOS + 23 ALTOS aplicados** (§70·§71); quedan **85 leves SIN escéptico**. Síntesis → bóveda `2026-07-28-auditoria-kit-b03/SINTESIS-CURADA.md`. El manual (15) **ya no se edita a mano**: se ensambla de sus fragmentos. |
+| **Kit fundacional** | 📜 **24/24 generan** + gate de emisión verde (§67) · **24/24 AUDITADOS** (§68: 191 brutos → 57 refutados → **134 vivos**). **🏁 14 CRÍTICOS + 23 ALTOS aplicados** (§70·§71); quedan **85 leves SIN escéptico** (⚠️ *sin verificar*, no *confirmados*). Síntesis → bóveda `2026-07-28-auditoria-kit-b03/SINTESIS-CURADA.md`. El manual (15) **ya no se edita a mano**: se ensambla de sus fragmentos. |
 | **Build** | ✅ **MODO OBRA LIVE** `verificado-vivo: 2026-07-10` (curl+sentinela): mantenimiento + 66 redirects→home + `.nojekyll` (L-13, §15). El SW legacy = **kill-switch** del modo obra. Sitio viejo RETIRADO; GSC preservado. |
 | **Branch / Deploy** | `main` → GH Pages auto al push; **Claude pushea/mergea y despliega Firebase** (§15.7, delegado; detalle → `50-CONFIG-INFRA`). CI `portal-ci.yml` **auto-despliega el portal** en cada push (`CF_DEPLOY_ENABLED` ON, verificado 07-19). |
 | **Portal (staging)** | ✅ **OLA 1 FIDELIDAD COMPLETA Y LIVE (TODO-27 CERRADO §48)**: las **6 páginas FIELES** al mockup (§43-§48), en `altorra-portal.altorrainmobiliaria.workers.dev` (Astro+Workers, noindex). `verificado-vivo: 2026-07-20` (curl 200 + noindex). **Go-forward → TODO-30** (`10`). |

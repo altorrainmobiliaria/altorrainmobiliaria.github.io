@@ -35,9 +35,9 @@
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07) · re-apuntar cache/ssotFact al portal en el CUTOVER (K-10/G-12). | 🟡 abierto | |
 | **TODO-28** | 🧠 **Endurecer el cerebro** — #1-#6 ✅ (§40-§41, §51-§52) y **#8 ✅ shard de `30` → hojas `32` (§68) y `33`-meta (§76)**. Vivo: **#7** sello de vencimiento >90d (candidato a resonancia). Costo → TODO-32(b). | 🟡 #7 | $0 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada y fontanería §4b OK (estado → flag 📣 de `05`). Resta **calibrar la campaña REAL**, gateada por el cierre de obra. | ⏸️ gate obra | `pauta-captacion` §10 |
-| **TODO-30** | 🗺️ **MapLibre real ✅ CÓDIGO COMPLETO (§55)** — tiles por Worker+Range, verificado E2E. **Falta SOLO la vista en foreground** (rAF congelado en pestañas automatizadas, L-34 → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
+| **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, L-34 → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§60)**. Para datos reales: (1) deploy COORDINADO en el cutover (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. Lo demás BLOQUEADO por causas reales (§60.4); insumos legales de la ficha → TODO-33. | 🟢 cutover | §60 |
-| **TODO-33** | 🧾 **FICHA dinámica — decisiones ANTES de construir (§60.3)**: dirección exacta = OMITIR (PII) · financiación = disclaimer legal o se omite la cifra · asesor = `asesorId` vs bloque genérico · POIs fuera en v1. Regla: bloque sin dato se OMITE (jamás heredar el demo). | 🔵 decisión | §60 |
+| **TODO-33** | 🧾 **FICHA dinámica — 4 decisiones ANTES de construir (§60.3)**: dirección exacta · financiación · asesor · POIs. Regla: **bloque sin dato se OMITE** (jamás heredar el demo). | 🔵 decisión | §60 |
 | **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§71)**. Kit 00-22 + membrete (`43`). Póliza ✅ · FE-DIAN ⏸️ · 03/04 blindados (§66) · **14 críticos + 23 altos de B-03 aplicados (§70·§71)**. Restan **85 leves** (⚠️ sin escéptico). Retirados: 13 y 23. | 🟢 leves | §71 · `43` |
 | **TODO-32** | 🧠 **CEREBRO v2 ×4** (§50-§53; kernel v1.6.0 ×4). **(a) ✅ CERRADO §72**: heartbeat+handoff+canario ya corren en los 3 hermanos. **(b) vivo**: el banner >30% en LOS CUATRO (cars 43 · bersaglio 61 · insema 56 · inmo 56) — 2º mes ⇒ toca PODA REAL, no añadir. | 🟡 poda (b) | §72 |
 | **TODO-36** | ⚖️ **Trinquete de boot ×4** (§74·§78·§79): **inmo ✅ · cars ✅ 35.9k→29.7k · bersaglio 43.1k→33.3k (+1.8k) · insema +308c**. Restan **2.1k entre los dos** para subir el `boot-gate` al kernel — una pasada en frío, sin subir techos (M-05). ⚠️ `brain-kit` NO está bajo git: sin historial y fuera de los bundles. | 🟡 2.1k | §79 |
@@ -47,11 +47,14 @@
 
 ## 📝 Bitácora (efímera)
 
-> **▶ 🔥 PAUTA BERSAGLIO semana 2 VIVA · 🔁 REVISAR LUNES 3-AGO** — `120251090001200439`: Cartagena ciudad
-> +0km · $8.000/día · fin 10-ago · precio pegado a SU producto (topos $2.280.000 / pulseras 10-20-30M).
-> S1: **0 ventas de 33 chats**. **PARADA**: sin 1 venta ni 3 visitas al 10-ago → NO recargar.
-> Todo → bóveda `2026-07-31-pauta-bersaglio-escala-SINTESIS.md` 🛑 NO RELANZAR · skill
-> `meta-ads-diagnostico` D-1..D-12. **Daniel**: margen de 3 piezas · foto de topo en oreja.
+> **▶ 🧠 CIERRE 01-ago (§80): los 4 cerebros MERGEADOS a `main`** — 28 commits, cero producto. **4/4 SANOS ·
+> kernel v1.7.2 · 0 neuronas sin techo.** Restan **2.1k de boot** (bersaglio +1.8k · insema +308c) y **no se
+> cierran subiendo techos** ([[M-05]]). Mapa de la sesión → §70-§80.
+>
+> **▶ 🔥 PAUTA BERSAGLIO · 🔁 REVISAR LUNES 3-AGO** — `120251090001200439`: $8.000/día, fin 10-ago. S1: **0
+> ventas de 33 chats**. **PARADA: sin 1 venta ni 3 visitas al 10-ago → NO recargar.** Detalle → bóveda
+> `2026-07-31-pauta-bersaglio-escala-SINTESIS.md` 🛑 NO RELANZAR · skill `meta-ads-diagnostico` D-1..D-12.
+> **Daniel**: margen de 3 piezas · foto de topo en oreja.
 >
 > **▶ ⚖️ KIT — lo decidido y ya pagado vive en §66-§68 y §70-§71. 🛑 NO RELANZAR** el comité R3, la auditoría
 > B-03 ni los 12 planificadores — crudos en bóveda (`2026-07-28-comite-r3-contratos/` ·
