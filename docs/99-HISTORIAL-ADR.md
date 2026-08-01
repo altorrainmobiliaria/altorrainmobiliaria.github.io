@@ -1551,3 +1551,39 @@ en el mismo turno es la mejor prueba de que sirve.
 **75.5 Doctrina.** **Un gate se verifica ENCENDIDO**: se restituye el defecto que lo motivó y se comprueba
 que dispara, que calla cuando debe y que no acusa a un inocente. Sin esas tres, lo que hay es un ✅ decorativo
 — exactamente lo que la Regla de ADMISIÓN (§G.4) llama anti-teatro, aplicada ahora al propio linter.
+
+## 76. ADR — 52 neuronas bajo techo, shard de `§Meta`, y la trampa que estuve a punto de hacer dos veces ⟦OPUS-5⟧ (2026-08-01)
+
+**76.1 Las 44 sin techo, decididas.** El chequeo #23 (v1.7.0) las sacó a la luz; ahora cada `docs/*.md` de los
+4 repos tiene **cap medido** o **`noCap` con su razón**. Total: **52 con cap · 17 sin tope declarado**. La
+clasificación no es cosmética — son tres clases con destinos distintos: (a) **neuronas** `NN-NOMBRE` → cap
+medido (tamaño real + 35%); (b) **`99` y `skills-inventory`** → `noCap`, porque el `99` nunca se lee entero y
+el inventario es 1:1 con `skills/` (ya lo vigila el gate #6); (c) **documentos que viven en `docs/` y NO son
+neuronas** —planes, manuales, handoffs— → `noCap` con esa razón escrita. Esa tercera clase es un hallazgo en
+sí: cars tiene un plan de ejecución de **93k** dentro de `docs/`, que el router nunca enruta y nadie poda.
+
+**76.2 La trampa, dos veces en un turno.** Estuve a punto de **subir un límite en vez de cumplirlo**:
+(1) el `boot-gate` no se podía instalar en los hermanos porque cars iba +2.4k, y bastaba subir su
+`bootCharsTarget` al valor de hoy para que la condición *«los 3 bajo presupuesto»* se cumpliera sola;
+(2) el script que declaraba los 44 caps **subía automáticamente** cualquier cap ya declarado que el archivo
+excediera — habría elevado en silencio **9 topes deliberados**, incluido el del `05` de cars (2.800c, decisión
+editorial explícita: *«tablero, no bitácora»*). Las dos veces el resultado inmediato es un ✅ y ningún gate se
+queja; el límite sigue ahí, el linter pasa, y la deriva continúa **con la bendición del gate**. Eso es peor que
+no tener el gate: hay evidencia falsa de control. → **[[M-05]]**, y la regla dura: **un cap excedido es la
+señal de destilar, no de subir el techo**; un límite solo sube con una razón que no sea «hoy no lo cumplo».
+
+**76.3 Shard de `§Meta` → `33-LECCIONES-META.md`.** `30` estaba al **98% de su cap** y marcada pre-shard desde
+hacía días; añadir M-05 ahí habría sido exactamente lo que §G.5 prohíbe. Los M-NN salen a una hoja hija con la
+convención ya establecida (stub `### M-NN` en `30`, que es donde el kernel los lee; detalle en la hija). `30`:
+39.328c → **35.111c**. Cierra el **#8 de TODO-28**, que llevaba desde §68 a medias.
+
+**76.4 El linter cazó la neurogénesis incompleta en caliente.** Al crear la hija, el gate saltó de inmediato
+con las dos cosas que §G.4/§G.5 exigen y yo aún no había hecho: *«neurona sin registro DIRECTO en CLAUDE.md
+§0»* y *«sin caps ni noCap»*. No hubo que acordarse del protocolo: la maquinaria lo pidió. Es la diferencia
+entre una regla `[HONOR]` y una mecanizada, y aquí se vio funcionando el mismo día que se escribió el gate.
+La fila del §0 se **extendió** en vez de añadirse una nueva, por economía del boot (one-in-one-out §G.5).
+
+**76.5 Doctrina.** Tres formas de que un gate mienta, las tres vistas hoy: **no dispara** cuando debería
+(§75.2, la v1 de #17), **dispara contra un inocente** (§75.2, la v2), o **se puede ajustar para que pase**
+(§76.2). Las tres dan ✅. Un gate solo vale si se verificó contra el defecto vivo *y* su umbral es más difícil
+de mover que el problema de arreglar.

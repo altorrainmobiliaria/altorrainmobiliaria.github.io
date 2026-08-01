@@ -42,7 +42,7 @@ El cerebro se divide en **nodos**. Auto-cargas SOLO `CLAUDE.md` + `05` + `10` (�
 | 🛰️ **Consejo Externo** | `docs/15-CONSEJO-EXTERNO.md` | ❌ on-demand | Trigger de Decisión Fuerte: crítica adversarial del provider externo (de otra familia, no-Claude). Cuándo + anti-anclaje ahí. |
 | 🗺️ **Espacial** | `docs/20-MEMORIA-ESPACIAL.md` | ❌ on-demand | Trigger de Desorientación: dónde vive un componente, flujos, schema Firestore, blog. |
 | 🧪 **Procedimental (experiencia)** | `docs/30-LECCIONES.md` | ❌ on-demand | Trigger de Experiencia: ANTES de una op riesgosa/repetitiva (deploy CF, tocar caché/SW, reglas) o si un síntoma "te suena". Gotchas + recetas. |
-| 🧩 **Hojas hijas de `30`** | `docs/31-VERIFICACION-UI.md` · `docs/32-LECCIONES-DOCUMENTALES.md` | ❌ on-demand | Ramas de la procedimental: **UI en navegador** (L-22/26/28) · **legal/documental** (`LD-NN`: contratos, manual, formatos, entregables). |
+| 🧩 **Hojas hijas de `30`** | `docs/31-VERIFICACION-UI.md` · `docs/32-LECCIONES-DOCUMENTALES.md` · `docs/33-LECCIONES-META.md` | ❌ on-demand | Ramas de la procedimental: **UI en navegador** (L-22/26/28) · **legal/documental** (`LD-NN`) · **meta** (`M-NN`: dónde falló el cerebro como memoria). El stub vive en `30`; el detalle, aquí. |
 | 🔁 **Workflows reutilizables** | `docs/60-WORKFLOWS.md` | ❌ on-demand | Trigger de Experiencia/Auditoría: catálogo W-01..W-11. **W-11 = SSoT del flujo fuerte** (leerlo ANTES de Decisión Fuerte/Diseño-UI). |
 | 🗂️ **Índice sináptico** | `docs/00-INDICE.md` | ❌ on-demand | ANTES de leer el historial (offset exacto) Y para el enrutamiento semántico (síntoma → neurona). |
 | 📚 **Largo Plazo** | `docs/99-HISTORIAL-ADR.md` | ❌ on-demand | Trigger de Error / detalle histórico de un §. NUNCA completo — usa offset/limit. |
