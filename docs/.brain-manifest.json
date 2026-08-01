@@ -37,6 +37,38 @@
     "docs/40-LOBULOS-DOMINIO.md": {
       "lines": 280,
       "chars": 16000
+    },
+    "docs/43-OPERACION.md": {
+      "lines": 230,
+      "chars": 20000
+    },
+    "docs/42-LEGAL.md": {
+      "lines": 140,
+      "chars": 20000
+    },
+    "docs/50-CONFIG-INFRA.md": {
+      "lines": 170,
+      "chars": 16000
+    },
+    "docs/32-LECCIONES-DOCUMENTALES.md": {
+      "lines": 110,
+      "chars": 16000
+    },
+    "docs/31-VERIFICACION-UI.md": {
+      "lines": 90,
+      "chars": 14000
+    },
+    "docs/60-WORKFLOWS.md": {
+      "lines": 90,
+      "chars": 12000
+    },
+    "docs/15-CONSEJO-EXTERNO.md": {
+      "lines": 60,
+      "chars": 9000
+    },
+    "docs/41-MERCADO.md": {
+      "lines": 140,
+      "chars": 12000
     }
   },
   "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",
@@ -88,5 +120,11 @@
     "maxDays": 30,
     "tableFile": "2026-07-31-auditoria-cerebro-nivel2-5-inmobiliaria.md",
     "_que": "Nivel-2 #5 (ADR §69, disparada por el GATE de pre-commit, no por encargo): retrieval 5/6 -> 2 fallos de ruteo CURADOS (falta fila del ARRENDADOR; el sintoma dev-si/prod-no citaba L-33 en vez de L-34). REINCIDENTE clase H-11: TODO-31 perdio su fila (A-01 SPOF + A-03 canario seguian ABIERTOS e invisibles) -> restituida. REINCIDENTE A-02: costo 49%->55%. CRITICO N5-05: el kit legal NO tiene linter (16 checks protegen la doc del negocio; 24 docs de firma solo tienen el gate de marcas) -> TODO-35. Masa-neta del boot: -2c. Previa #4 = §49 (2026-07-20, cubrio 49)."
-  }
+  },
+  "noCap": {
+    "docs/99-HISTORIAL-ADR.md": "Largo Plazo: NUNCA se lee entero, solo offset/limit vía el índice (§0). Un cap aquí no significaría nada.",
+    "docs/skills-inventory.md": "Registro 1:1 con las carpetas de skills/ — su tamaño lo fija el inventario real, no una decisión editorial. Lo vigila el gate #6.",
+    "docs/00-INDICE.md.bak": "Artefacto residual, no neurona."
+  },
+  "_caps_que": "Topes por-repo. Cada neurona tiene cap MEDIDO (tamaño real + ~35% de holgura) o entrada en noCap CON RAZON — nunca por omision (chequeo #23, ADR §74). Los caps NO se inventan: §74.3 documenta como una cifra a ojo creo un gate bloqueante falso."
 }

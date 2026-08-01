@@ -1516,3 +1516,38 @@ son pendientes reales de un proyecto pausado, no narrativa consolidable — poda
 **74.6 Doctrina.** Corolario de §73.7, ahora medido: **el silencio de la configuración es una decisión que
 nadie tomó**. Un cap ausente, una clave que ningún gate lee, una copia sin fecha de caducidad — las tres dan
 verde y las tres esconden deriva. Un gate que solo comprueba lo declarado premia no declarar.
+
+## 75. ADR — kernel v1.7.0: los dos chequeos que habrían cazado todo lo de hoy ⟦OPUS-5⟧ (2026-08-01)
+
+**75.1 #17 — el kernel no miraba el git del repo que audita.** Su único bloque git (#7b) mira la **bóveda**.
+Del propio repo no sabía nada, y por eso el `05` de insemastereo declaró *«main == origin/main, pusheado ✓,
+3 commits»* durante **42 días** con el HEAD en otra rama y `main` 24 commits detrás, mientras los 16 gates
+daban SANO. Ahora se lee `.git/HEAD` + refs por fs (sin `child_process`, como #7b) y se contrasta contra lo
+que declaran los nodos always-on. **Por ARCHIVO, no en bolsa común**: el defecto era que el nodo que se lee
+PRIMERO mentía aunque otro dijera la verdad — sumar los tokens de todos daba por sana la mentira.
+
+**75.2 Se verificó ENCENDIDO, y hubo que corregirlo dos veces.** Un gate que nunca dispara es
+indistinguible de uno que funciona, así que se probó **restituyendo la mentira histórica** en el `05`:
+- **v1 no cazó nada**: buscaba `rama X` / `branch X` y el texto real decía *«Local \`main\` == \`origin/main\`»*.
+  Era teatro puro, y solo se supo porque se probó contra el defecto vivo en vez de darlo por bueno.
+- **v2 disparó de más**: acusaba a `CLAUDE.md` de *«declarar la rama \`05\`»* — en un cerebro los backticks
+  son casi siempre punteros a nodos, no ramas. **Un gate ruidoso se acaba ignorando: así es como muere.**
+- **v3**: dispara solo en el archivo que miente, calla con el texto correcto, y **no da falso positivo en
+  cars**, que declara un flujo `dev`→`main` legítimo. Las tres condiciones se comprobaron, no se supusieron.
+
+**75.3 #23 — el silencio del manifest.** El linter solo vigila lo declarado; sobre el resto, el manifest
+callaba. Así `32-LECCIONES-META` de cars llegó a **27k sin que ningún gate la mirara**, y el barrido ×4
+encontró **44 neuronas sin techo** (cars 19 · bersaglio 11 · inmobiliaria 10 · insema 4). Ahora cada
+`docs/*.md` necesita **cap medido** o entrada en **`noCap` con su razón**: no declarar deja de ser una opción
+por omisión y pasa a ser una decisión que alguien escribe.
+
+**75.4 El linter me cazó a mí, dos veces, en este mismo turno.** Al declarar los caps de inmobiliaria (a)
+añadí la clave `noCap` sin registrarla en `KNOWN_KEYS` → el gate #15 la marcó como desconocida (*«un typo
+apaga gates en silencio»*), y (b) calculé los caps de líneas con una media inventada de 110 chars/línea en
+vez de contar → dos neuronas nacieron violando su propio tope. **Es el defecto de §74.3 repetido por mí, un
+ADR después**: estimar en lugar de medir. Corregido midiendo archivo por archivo. Que el gate me lo cazara
+en el mismo turno es la mejor prueba de que sirve.
+
+**75.5 Doctrina.** **Un gate se verifica ENCENDIDO**: se restituye el defecto que lo motivó y se comprueba
+que dispara, que calla cuando debe y que no acusa a un inocente. Sin esas tres, lo que hay es un ✅ decorativo
+— exactamente lo que la Regla de ADMISIÓN (§G.4) llama anti-teatro, aplicada ahora al propio linter.

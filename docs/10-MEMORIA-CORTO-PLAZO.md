@@ -31,7 +31,7 @@
 |---|---|---|---|
 | **TODO-17** | **Ola 0 restos**: E2E "tras cache" en staging (T9) · deploy de rules (en el cutover, NO ahora) · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | gate=CUTOVER |
 | **TODO-21** | **Lote-dueño**: Nº matrícula + Nº RNT (existen ✅; Daniel los da al CIERRE DE OBRA) · dirección física · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
-| **TODO-23** | 🔧 **Kernel hardening RESTANTE** (owner=INMOBILIARIA): K-01/02/04/05/09 (§30.4) · warns en truncado `--boot` · circularidad boot-budget · **8 chequeos en cola (#17-#23 + #17-bis) → detalle en §73.5/§74**. Los dos que más duelen: **#17** (git del PROPIO repo) y **#23** (neurona sin cap declarado ⇒ crece sin techo). Flujo obligatorio: editar CANÓNICO → bump `VERSION` → `brain:pull` ×4. | 🟡 K restantes | §50 |
+| **TODO-23** | 🔧 **Kernel hardening RESTANTE** (owner=INMOBILIARIA): K-01/02/04/05/09 (§30.4) · warns en truncado `--boot` · circularidad boot-budget. **✅ #17 y #23 LIVE en kernel v1.7.0 (§75)** — verificados encendidos. **En cola**: #18-#22 + #17-bis (§73.5). Resta declarar `caps`/`noCap` en los 3 hermanos (44 neuronas sin techo: cars 19 · bersaglio 11 · insema 4). Flujo obligatorio: editar CANÓNICO → bump `VERSION` → `brain:pull` ×4. | 🟡 K restantes | §50 |
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07) · re-apuntar cache/ssotFact al portal en el CUTOVER (K-10/G-12). | 🟡 abierto | |
 | **TODO-28** | 🧠 **Endurecer el cerebro** — #1-#6 ✅ (§40-§41, §51-§52) y **#8 ✅ shard de `30` → hoja `32` (§68)**. Vivo: **#7** sello de vencimiento >90d (candidato a resonancia). Costo → TODO-32(b). | 🟡 #7 | $0 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada y fontanería §4b OK (estado → flag 📣 de `05`). Resta **calibrar la campaña REAL**, gateada por el cierre de obra. | ⏸️ gate obra | `pauta-captacion` §10 |
@@ -42,7 +42,6 @@
 | **TODO-32** | 🧠 **CEREBRO v2 ×4** (§50-§53; kernel v1.6.0 ×4). **(a) ✅ CERRADO §72**: heartbeat+handoff+canario ya corren en los 3 hermanos. **(b) vivo**: el banner >30% en LOS CUATRO (cars 43 · bersaglio 61 · insema 56 · inmo 56) — 2º mes ⇒ toca PODA REAL, no añadir. | 🟡 poda (b) | §72 |
 | **TODO-36** | ⚖️ **Trinquete de boot ×4** (§74): bersaglio ✅ 30k→26.7k · cars ✅ 35.9k→33.9k (sigue +2.4k del objetivo) · `brain-kit` ✅ refrescado a v1.6.0. **Resta**: bajar cars a 31.5k y recién ahí subir el `boot-gate` al kernel (su cabecera lo condiciona a que los 3 estén bajo presupuesto — **subir el techo para "cumplir" sería trampa**). ⚠️ `brain-kit` NO está bajo git: sin historial y fuera de los bundles. | 🟡 cars 2.4k | §74 |
 | **TODO-35** | 🛡️ **Linter del kit legal — 2 de 6 (§71.8)**: el generador ya cruza documento↔documento (cicatrices de redacción · versión de la Política). **Faltan**: cifras vs `01`/`02` · remisiones ([[LD-04]]) · URLs declaradas · figura del arrendador. | 🟡 2 de 6 | §71 · §69 |
-| **TODO-31** | 🛡️ **SPOF** (§49·§69): (a) ✅ bundles offsite en OneDrive, 5 repos, último 23-jul — el heartbeat lo vigila · (b) ✅ canario de boot ×4 (§72) · (c) **recovery codes: los verifica Daniel** — único resto. | ⏸️ dueño (c) | §72 |
 
 ---
 
@@ -62,7 +61,7 @@
 > DataCrédito/TransUnion **NO se puede consultar a nadie** aunque el arrendatario firme, y el doc 04 ya se lo
 > anuncia: ¿afiliarse, o apoyarse solo en la aseguradora? · **(2) publicar la Política de Datos V2** en
 > `/legal/politica-tratamiento-datos` — despliegue, no decisión, y ahora los 24 docs la fijan en **V2 ·
-> 28-07-2026**: lo que se publique debe ser ese texto (§71.3) · **(3)** Nº de matrícula y RNT (al cierre de
+> 28-07-2026**: lo que se publique debe ser ese texto (§71.3) · **(3)** verificar los **recovery codes** (último resto del SPOF, §72) · **(4)** Nº de matrícula y RNT (al cierre de
 > obra) + vetar/ajustar los 6 estándares del `02 §2`.
 >
 > Quedan **85 leves** SIN escéptico: *sin verificar*, no *confirmados* — aplicarlos en lote es el error del
