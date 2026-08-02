@@ -1835,3 +1835,59 @@ excepción) · `00-LEEME.md` · `15-manual-fragmentos/cap08-legal-compliance.md`
 **82.7 — Doctrina.** §3.3 (probar antes de afirmar que un gate funciona) · [[M-06]] (verlo disparar) ·
 [[LD-06]] (el defecto vive ENTRE documentos) · [[LD-04]] (remisiones). Sin cache bump. Deliberación:
 ninguna — ejecución de un pendiente ya decidido en §69/§71.
+
+## 83. ADR — Auditoría de cerebro Nivel-2 #6: 44 hallazgos vivos, kernel v1.9.0 y el proceso que murió dos veces ⟦OPUS-5⟧ (2026-08-02)
+
+Sexta auditoría semántica (la #5 fue el 31-jul, cubrió 68 headers; ésta cubre 82: §69-§82). Método: **10
+sondas en paralelo → cada hallazgo pasado por un escéptico que intenta REFUTARLO** (dos para altos y
+críticos) → sobrevive solo si la mayoría lo sostiene. **109 brutos → 44 vivos · 47 refutados · 18 sin
+escéptico.** Tabla completa → bóveda `2026-08-02-auditoria-cerebro-nivel2-6-inmobiliaria.md`.
+
+**83.1 — El proceso murió dos veces y el sintetizador nunca corrió.** El workflow vive DENTRO del proceso
+anfitrión: al salir éste, mueren sus agentes. La primera caída avisó; la segunda quedó muda y el contador
+siguió marcando "13 agentes en vuelo" durante **25 horas**. Lo detecté mirando la **fecha del último
+archivo escrito**, no el contador. Lo salvó algo que no diseñé: el `journal.jsonl` persiste el payload
+completo de cada agente en cuanto responde — las sondas y los escépticos (lo caro) estaban intactos.
+Reconstruí los 109 hallazgos y los 136 veredictos desde disco en vez de relanzar por tercera vez, que
+habría re-pagado ~7 h de cómputo para obtener lo que ya tenía. Lección → [[M-08]].
+
+**83.2 — Kernel v1.9.0: cinco correcciones, todas vistas disparar.** (a) **#9 con la polaridad invertida**:
+solo cazaba la fila ✅ que YA estaba en `99` (benigna, higiene); era **ciega a la fila ✅ sin ningún § que la
+respalde**, que es el caso grave — trabajo dado por cerrado que no está en ninguna parte. Al encenderlo cazó
+una fila **mía**, escrita el día anterior en insema. (b) **#15 `REQUIRED_KEYS`**: el schema vigilaba las
+claves de MÁS y era ciego a las de MENOS — borrar `bootCharsTarget` apagaba el candado de boot **en
+silencio**, un día después de volverlo bloqueante. (c) **#4 caché**: faltaba `js/cache-manager.js`, la ruta
+REAL de este repo, así que el cruce no corría nunca… y el boot imprimía **"✅ cache verificada"** igual;
+ahora el ✅ exige cruces reales y, si no los hay, lo dice. (d) **#2 boot**: publica los sidecars del
+heartbeat que el candado no mide (se generan, no se podan) para que el número no sea menor que el boot real.
+(e) **#26 NUEVO**: longitud de fila del índice — la regla «≤200c» llevaba escrita en el manifest **sin gate**
+y la incumplían 33 filas (§71 = 449c).
+
+**83.3 — El hallazgo crítico (N6-01) no era del cerebro, era del negocio.** Los dos hechos vivos de la pauta
+de Bersaglio —la **arquitectura de precios confirmada** (topos $2.280.000 de entrada; pulseras 10/20/30 M) y
+la **regla anti-strike de marcas registradas**— existían SOLO en una memoria de sesión del harness de otro
+repo, con su nodo dueño (`44-PAUTA-META`) declarado y vacío. Si esa memoria se pierde, se pierde el porqué de
+la semana 1 (33 conversaciones, 0 ventas) y un riesgo legal que **salpica al Business de Altorra**. Bajados a
+su nodo; cap del lóbulo re-medido con razón escrita (la neurona absorbió otra, [[M-05]]).
+
+**83.4 — Mentiras del router corregidas** (todas verificadas por mí antes de tocar, §3.3): `CLAUDE.md` decía
+que **GitHub Actions bumpea el `CACHE_NAME`** — ningún workflow lo hace, es a mano; decía que el CI regenera
+SEO y sitemap con schedule de 4 h — `og-publish.yml` está en `workflow_dispatch` MANUAL desde el modo obra y
+dispararlo **pisaría los stubs de redirect**. El `05` daba la **matrícula de arrendador por OBTENIDA con ✅**
+mientras `43-OPERACION` dice que **no consta la resolución**: ahora el always-on lleva la incertidumbre, no
+el ✅. En insema, el `05` declaraba una rama «pendiente de merge» que llevaba mergeada desde `094b08f` y un
+«Kernel v1.6.0» contra un stamp que decía otra cosa — **en la misma celda que advierte que copiar datos
+volátiles ahí desincroniza siempre**.
+
+**83.5 — Lo que NO era (47 refutados).** El escéptico mató 43% de la cosecha: falsas contradicciones de
+cifras del kit, capas ya cubiertas por otro gate, y severidades infladas. Queda escrito en la tabla para que
+la #7 no los vuelva a levantar — el trabajo de refutar solo rinde si se conserva.
+
+**83.6 — Cierre.** GC pareado: masa-neta del boot **−36c** ✅. `deepAudit` → 2026-08-02 / 83 headers. Restan
+**30 abiertos + 18 sin escéptico** → **TODO-37** (⚠️ *sin verificar* ≠ *confirmados*: aplicarlos en lote es
+el error del §70.6). Archivos: kernel `brain-check.mjs` + `VERSION` · `CLAUDE.md` · `05` · `10` · `33`
+([[M-08]]) · `00` · manifest · bersaglio `44` + manifest · insema `05` + `10`.
+
+**83.7 — Doctrina.** [[M-06]] (verlo disparar: las 5 correcciones se probaron encendiéndolas) · [[M-08]]
+(nueva) · [[M-05]] (el cap se re-mide con razón, no se sube para caber) · §3.3 · skill `auditoria-cerebro`.
+Deliberación: 166 agentes, crudos en el journal del workflow; síntesis reconstruida a mano (§83.1).

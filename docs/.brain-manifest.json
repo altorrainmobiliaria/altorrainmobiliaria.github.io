@@ -71,8 +71,9 @@
       "chars": 12000
     },
     "docs/33-LECCIONES-META.md": {
-      "lines": 70,
-      "chars": 10000
+      "lines": 110,
+      "chars": 15000,
+      "_comment": "Re-medido el 2026-08-02 (ADR 83) al entrar M-08. Razon M-05-valida: este shard es un REGISTRO que crece ~1.2k por leccion meta; su tamano lo fija cuantas veces el cerebro fallo, no una decision editorial. Cap MEDIDO sobre el real + 30% (74.3), no a ojo. Si crece mas alla de ~15 lecciones, shard por familia (gates / ledger / proceso)."
     }
   },
   "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",
@@ -117,12 +118,12 @@
     }
   ],
   "deepAudit": {
-    "last": "2026-07-31",
-    "coveredHeaderCount": 68,
+    "last": "2026-08-02",
+    "coveredHeaderCount": 83,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "tableFile": "2026-07-31-auditoria-cerebro-nivel2-5-inmobiliaria.md",
-    "_que": "Nivel-2 #5 (ADR §69, disparada por el GATE de pre-commit, no por encargo): retrieval 5/6 -> 2 fallos de ruteo CURADOS (falta fila del ARRENDADOR; el sintoma dev-si/prod-no citaba L-33 en vez de L-34). REINCIDENTE clase H-11: TODO-31 perdio su fila (A-01 SPOF + A-03 canario seguian ABIERTOS e invisibles) -> restituida. REINCIDENTE A-02: costo 49%->55%. CRITICO N5-05: el kit legal NO tiene linter (16 checks protegen la doc del negocio; 24 docs de firma solo tienen el gate de marcas) -> TODO-35. Masa-neta del boot: -2c. Previa #4 = §49 (2026-07-20, cubrio 49)."
+    "tableFile": "2026-08-02-auditoria-cerebro-nivel2-6-inmobiliaria.md",
+    "_que": "Nivel-2 #6 (ADR 83). 109 brutos -> 44 vivos / 47 refutados / 18 sin esceptico. CRITICO N6-01: los precios confirmados y la regla anti-strike de Bersaglio vivian solo en la memoria del harness, con su nodo dueno vacio -> bajados a 44-PAUTA-META. Kernel v1.9.0 con 5 correcciones (el #9 era ciego a la fila cerrada SIN ADR; borrar una clave del manifest apagaba gates; el boot mentia con cache verificada; +#26 longitud de fila del indice). El workflow murio 2 veces y el sintetizador nunca corrio -> tabla reconstruida del journal (M-08). Masa-neta del boot: -36c. Restan 30 abiertos + 18 sin esceptico -> TODO-37. Previa #5 = 69 (2026-07-31, cubrio 68)."
   },
   "noCap": {
     "docs/99-HISTORIAL-ADR.md": "Largo Plazo: NUNCA se lee entero, solo offset/limit vía el índice (§0). Un cap aquí no significaría nada.",

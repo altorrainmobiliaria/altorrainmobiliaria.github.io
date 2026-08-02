@@ -69,7 +69,7 @@ NUNCA leas `docs/99-HISTORIAL-ADR.md` completo (puede llegar a 40k+ líneas = mu
 
 - **Negocio**: **Altorra Inmobiliaria** — inmobiliaria colombiana, sede **Cartagena**. Compra/venta/arriendo + alojamientos por días. Marca dorada (`--gold #d4af37`). **Eslogan oficial: "Seguridad, Legalidad y Confianza"** (Daniel 2026-07-11). Posicionamiento "premium que no excluye"; misión/visión/voz → memoria `identidad-marca-inmobiliaria` + `sello-marca-altorra`. Hermana de Altorra Cars (mismo dueño, patrones análogos); Bersaglio NO es hermana.
 - **Stack**: HTML/CSS/JS **vanilla** (sin frameworks, sin bundler) + **Firebase SDK v12.9.0 MODULAR (ESM)** vía CDN gstatic (≠ cars: Compat v11). Firestore, Auth, Storage, Cloud Functions (Node 20, `us-central1`), RTDB (presencia), GA4. Node SDK = `firebase-admin v13`.
-- **Hosting / Deploy**: **GitHub Pages** con dominio propio **`altorrainmobiliaria.co`** (archivo `CNAME` — NO borrar). Push a `main` → auto-deploy. CI: GitHub Actions regenera SEO (`/p/{id}.html`) + sitemap (`og-publish.yml`); `bump-version.yml` bumpea `data/deploy-info.json` en cada push. Schedule máx cada 4h.
+- **Hosting / Deploy**: **GitHub Pages** con dominio propio **`altorrainmobiliaria.co`** (archivo `CNAME` — NO borrar). Push a `main` → auto-deploy. `bump-version.yml` bumpea `data/deploy-info.json` en cada push. ⚠️ `og-publish.yml` (SEO `/p/{id}.html` + sitemap) está en **`workflow_dispatch` MANUAL** desde el modo obra: dispararlo PISARÍA los stubs de redirect.
 - **Project ID Firebase**: `altorra-inmobiliaria-345c6`. **Detalle infra/IAM/secrets/CLI → `docs/50-CONFIG-INFRA.md`** (la `apiKey` de Firebase es PÚBLICA por diseño; jamás commitear secrets).
 - **Áreas**: sitio viejo RETIRADO (modo obra); quedan `admin.html` (consulta legacy, `window.IP`) + `portal/` greenfield. Mapa → `20-ESPACIAL`.
 - **Identidad de MARCA**: navy `#062743` · dorado `#d4af37` · plata `#BFC3C9` · blanco — **sin negro** (el negro es de cars). Design system **SELLADO**: `tokens.css` del portal = SSoT (ADR §23-§23.9; fuentes Cormorant Garamond + Hanken Grotesk).
@@ -110,7 +110,7 @@ Encabezado `## NN. ADR-NNN — <título>` + cita del cliente si reportó, y 7 pu
 - NO cambiar vars CSS (`--gold`/`--accent`/etc.), la tipografía **Poppins** (⚠️ solo LEGACY — el portal usa Cormorant+Hanken, §1), colores de botones/badges/cards ni el layout existente. NO borrar `CNAME`.
 - NO hardcodear URLs (usar colección `config` de Firestore o vars CSS). NUNCA renombrar IDs/clases/funciones exportadas sin migración (cambios aditivos).
 - **NUNCA `onSnapshot()` en colecciones completas desde páginas públicas** (solo admin). **NUNCA queries Firestore sin `limit()`** — paginar (default `limit(9)`, 9-20 máx). Free-tier Blaze es sagrado (`20-ESPACIAL §Blaze`).
-- Service Worker: bumpear `CACHE_NAME` (`service-worker.js`, `altorra-pwa-vN`→`vN+1`) al cambiar el shell; GitHub Actions lo bumpea y el heartbeat reporta la vigente (§52) — NO se copia a mano en `05`. Cliente invalida con **Ctrl+Shift+R**.
+- Service Worker: bumpear `CACHE_NAME` (`service-worker.js`, `altorra-pwa-vN`→`vN+1`) al cambiar el shell — **a MANO: ningún workflow lo bumpea**. El heartbeat reporta la vigente (§52); NO se copia al `05`. Cliente invalida con **Ctrl+Shift+R**.
 - Globals/readiness del LEGACY (`window.*`, `altorra:db-ready`) → `20 §Stack` (dueño del inventario).
 
 ### 3.3 Verifica, no asumas — evidencia antes de afirmar (UNIVERSAL)

@@ -31,7 +31,7 @@
 |---|---|---|---|
 | **TODO-17** | **Ola 0 restos**: E2E "tras cache" en staging (T9) · deploy de rules (en el cutover, NO ahora) · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | gate=CUTOVER |
 | **TODO-21** | **Lote-dueño**: Nº matrícula + Nº RNT (existen ✅; Daniel los da al CIERRE DE OBRA) · dirección física · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
-| **TODO-23** | 🔧 **Kernel hardening RESTANTE** (owner=INMOBILIARIA): K-01/02/04/05/09 (§30.4) · warns en truncado `--boot` · circularidad boot-budget. **✅ #17 y #23 LIVE en kernel v1.7.0 (§75)** — verificados encendidos. **En cola**: #18-#22 + #17-bis (§73.5). Resta declarar `caps`/`noCap` en los 3 hermanos (44 neuronas sin techo: cars 19 · bersaglio 11 · insema 4). Flujo obligatorio: editar CANÓNICO → bump `VERSION` → `brain:pull` ×4. ⚠️ `brain-kit` sigue SIN git (sin historial, fuera de los bundles). | 🟡 K restantes | §50 |
+| **TODO-23** | 🔧 **Kernel hardening RESTANTE** (owner=INMOBILIARIA): K-01/02/04/05/09 (§30.4) · warns en truncado `--boot` · circularidad boot-budget. **✅ #17 y #23 LIVE en kernel v1.7.0 (§75)** — verificados encendidos. **En cola**: #18-#22 + #17-bis (§73.5). `caps`/`noCap` ×4 ✅ CERRADO (§76.1 · §80.3: 44 sin techo → 0). Flujo obligatorio: editar CANÓNICO → bump `VERSION` → `brain:pull` ×4. ⚠️ `brain-kit` sigue SIN git (sin historial, fuera de los bundles). | 🟡 K restantes | §50 |
 | **TODO-24** | 🧷 **SSoT/instance**: ssotFact de paleta (K-07) · re-apuntar cache/ssotFact al portal en el CUTOVER (K-10/G-12). | 🟡 abierto | |
 | **TODO-28** | 🧠 **Endurecer el cerebro** — #1-#6 ✅ (§40-§41, §51-§52) y **#8 ✅ shard de `30` → hojas `32` (§68) y `33`-meta (§76)**. Vivo: **#7** sello de vencimiento >90d (candidato a resonancia). Costo → TODO-32(b). | 🟡 #7 | $0 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada y fontanería §4b OK (estado → flag 📣 de `05`). Resta **calibrar la campaña REAL**, gateada por el cierre de obra. | ⏸️ gate obra | `pauta-captacion` §10 |
@@ -39,28 +39,28 @@
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§60)**. Para datos reales: (1) deploy COORDINADO en el cutover (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. Lo demás BLOQUEADO por causas reales (§60.4); insumos legales de la ficha → TODO-33. | 🟢 cutover | §60 |
 | **TODO-33** | 🧾 **FICHA dinámica — 4 decisiones ANTES de construir (§60.3)**: dirección exacta · financiación · asesor · POIs. Regla: **bloque sin dato se OMITE** (jamás heredar el demo). | 🔵 decisión | §60 |
 | **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§71)**. Kit 00-22 + membrete (`43`). Póliza ✅ · FE-DIAN ⏸️ · 03/04 blindados (§66) · **14 críticos + 23 altos de B-03 aplicados (§70·§71)**. Restan **85 leves** (⚠️ sin escéptico). Retirados: 13 y 23. | 🟢 leves | §71 · `43` |
+| **TODO-37** | 🔬 **Hallazgos vivos de la auditoría #6** (tabla → bóveda `2026-08-02-auditoria-cerebro-nivel2-6-inmobiliaria.md`): **30 ABIERTOS** verificados + **18 SIN escéptico** (⚠️ *sin verificar*, no *confirmados* — aplicarlos en lote es el error del §70.6). Los 14 aplicados ya están en §83. | 🟡 30+18 | §83 |
 | **TODO-32** | 🧠 **CEREBRO v2 ×4** (§50-§53; kernel v1.6.0 ×4). **(a) ✅ CERRADO §72**: heartbeat+handoff+canario ya corren en los 3 hermanos. **(b) vivo**: el banner >30% en LOS CUATRO (cars 43 · bersaglio 61 · insema 56 · inmo 56) — 2º mes ⇒ toca PODA REAL, no añadir. | 🟡 poda (b) | §72 |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **▶ 🛡️ 01-ago (§82): TODO-35 CERRADO — el kit de firma ya tiene sus 6 gates cruzados** (cierra el
-> crítico N5-05). Cazó 2 defectos reales: el `00-LEEME` y el manual mandaban al **doc 13 retirado**. Las
-> 2 excepciones que solo salen probando → [[LD-07]]. Correrlos: `generar-documentos.ps1 -SoloGates` (3 s).
+> **▶ 🔬 02-ago (§83): AUDITORÍA Nivel-2 #6 — 109 brutos → 44 vivos** (47 refutados). Kernel **v1.9.0**:
+> #9 era ciego a la fila ✅ sin ADR · borrar una clave del manifest apagaba gates · el boot mentía con
+> "cache verificada" · nace #26. Tabla → bóveda. **El workflow murió 2 veces** → [[M-08]]. Restan **30
+> abiertos + 18 sin escéptico** → TODO-37.
 >
-> **▶ 🔒 01-ago (§81): TODO-36 CERRADO — el candado de boot SUBIÓ AL KERNEL** (v1.8.0, bloqueante ×4).
-> bersaglio 33.3k→31.4k · insema 28.4k→27.5k, **sin subir un techo** ([[M-05]]). Hallazgo: **insema no
-> tenía pre-commit** → nace el chequeo #25 y [[M-07]]. Sesión previa (los 4 a `main`) → §80.
+> **▶ 01-ago: §81 TODO-36** (candado de boot al kernel, [[M-07]]) · **§82 TODO-35** (6 gates del kit,
+> [[LD-07]] · correrlos con `generar-documentos.ps1 -SoloGates`). Detalle en sus ADRs.
 >
 > **▶ 🔥 PAUTA BERSAGLIO · 🔁 REVISAR LUNES 3-AGO** — `120251090001200439`: $8.000/día, fin 10-ago. S1: **0
 > ventas de 33 chats**. **PARADA: sin 1 venta ni 3 visitas al 10-ago → NO recargar.** Detalle → bóveda
 > `2026-07-31-pauta-bersaglio-escala-SINTESIS.md` 🛑 NO RELANZAR · skill `meta-ads-diagnostico` D-1..D-12.
 > **Daniel**: margen de 3 piezas · foto de topo en oreja.
 >
-> **▶ ⚖️ KIT — lo decidido y ya pagado vive en §66-§68 y §70-§71. 🛑 NO RELANZAR** el comité R3, la auditoría
-> B-03 ni los 12 planificadores — crudos en bóveda (`2026-07-28-comite-r3-contratos/` ·
-> `2026-07-28-auditoria-kit-b03/` · `2026-07-31-kit-b03-altos/`).
+> **▶ ⚖️ KIT — lo decidido y pagado vive en §66-§68 y §70-§71. 🛑 NO RELANZAR** el comité R3, la auditoría
+> B-03 ni los 12 planificadores — crudos en bóveda (`2026-07-28-*` · `2026-07-31-kit-b03-altos/`).
 >
 > **⏭️ PELOTAS DE DANIEL** (no las puedo cerrar yo): **(1) B-04** — sin contrato de usuario con
 > DataCrédito/TransUnion **NO se puede consultar a nadie** aunque el arrendatario firme, y el doc 04 ya se lo
@@ -69,17 +69,12 @@
 > 28-07-2026**: lo que se publique debe ser ese texto (§71.3) · **(3)** verificar los **recovery codes** (último resto del SPOF, §72) · **(4)** Nº de matrícula y RNT (al cierre de
 > obra) + vetar/ajustar los 6 estándares del `02 §2`.
 >
-> Quedan **85 leves** SIN escéptico: *sin verificar*, no *confirmados* — aplicarlos en lote es el error del
-> §70.6. Método que funcionó → [[LD-06]].
+> 📜 **LOS ESTATUTOS MANDAN sobre el kit** (V5, art. 8º/13º/24º) → §70.2. [[LD-05]]: abre el documento madre
+> ANTES de auditar; entra al paquete de contexto pero es **gitignored** (cédulas de los 3 socios).
+> ⛔ **Doc 13 RETIRADO** el 31-jul por Daniel; riesgos asumidos, en su banner.
 >
-> 📜 **LOS ESTATUTOS MANDAN sobre el kit** (V5, art. 8º/13º/24º) — qué resuelven → §70.2 y la cabecera de
-> `ESTATUTOS-V5.md`. [[LD-05]]: abre el documento madre ANTES de auditar. ⛔ **Doc 13 RETIRADO** el 31-jul
-> por decisión de Daniel; riesgos asumidos escritos en su banner.
->
-> **⏭️ LO QUE SIGO YO**: los 85 leves. Backlog B-01..B-04 en la bóveda.
-> ✅ 31-jul: los 22 Word vivos regenerados en `…\KIT ALTORRA`; el 13 y el 23 movidos a `_RETIRADOS (no firmar)\`.
-> ✅ `.auditoria-contratos/` refrescado desde la fuente viva **+ `ESTATUTOS-V5.md`** (LD-05: el documento
-> madre entra al paquete de contexto; gitignored — lleva las cédulas de los 3 socios, JAMÁS commitear).
+> **⏭️ LO QUE SIGO YO**: los 85 leves del kit (TODO-34) + los vivos de la auditoría (TODO-37). Backlog
+> B-01..B-04 en la bóveda.
 >
 > ⚠️ **Ni los Word ni el manual maestro se editan a mano**: se GENERAN (`generar-documentos.ps1` ·
 > `ensamblar-manual.ps1`, §68). Editar el maestro directo fue lo que duplicó y desincronizó el capítulo 2.
