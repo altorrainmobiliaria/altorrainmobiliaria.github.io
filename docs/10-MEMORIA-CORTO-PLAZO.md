@@ -39,8 +39,8 @@
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§60)**. Para datos reales: (1) deploy COORDINADO en el cutover (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. Lo demás BLOQUEADO por causas reales (§60.4); insumos legales de la ficha → TODO-33. | 🟢 cutover | §60 |
 | **TODO-33** | 🧾 **FICHA dinámica — 4 decisiones ANTES de construir (§60.3)**: dirección exacta · financiación · asesor · POIs. Regla: **bloque sin dato se OMITE** (jamás heredar el demo). | 🔵 decisión | §60 |
 | **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§71)**. Kit 00-22 + membrete (`43`). Póliza ✅ · FE-DIAN ⏸️ · 03/04 blindados (§66) · **14 críticos + 23 altos de B-03 aplicados (§70·§71)**. Restan **85 leves** (⚠️ sin escéptico). Retirados: 13 y 23. | 🟢 leves | §71 · `43` |
-| **TODO-37** | 🔬 **Hallazgos vivos de la auditoría #6** (tabla → bóveda `2026-08-02-auditoria-cerebro-nivel2-6-inmobiliaria.md`): **20 ABIERTOS** verificados + **18 SIN escéptico** (⚠️ *sin verificar*, no *confirmados* — aplicarlos en lote es el error del §70.6). Aplicados: 14 en §83 + 10 en los lotes 1-2 (ruteo a `43` · hook 100755 y falla-CERRADO ×4 · espejo de memoria · `MEMORY.md` · #7 ciego a carpetas). | 🟡 23+18 | §83 |
-| **TODO-32** | 🧠 **CEREBRO v2 ×4** (§50-§53; kernel v1.6.0 ×4). **(a) ✅ CERRADO §72**: heartbeat+handoff+canario ya corren en los 3 hermanos. **(b) vivo**: el banner >30% en LOS CUATRO (cars 43 · bersaglio 61 · insema 56 · inmo 56) — 2º mes ⇒ toca PODA REAL, no añadir. | 🟡 poda (b) | §72 |
+| **TODO-37** | 🔬 **Hallazgos vivos de la auditoría #6** (tabla → bóveda `2026-08-02-auditoria-cerebro-nivel2-6-inmobiliaria.md`): **20 ABIERTOS** verificados + **18 SIN escéptico** (⚠️ *sin verificar*, no *confirmados* — aplicarlos en lote es el error del §70.6). Aplicados: 14 en §83 + 10 en los lotes 1-2 (ruteo a `43` · hook 100755 y falla-CERRADO ×4 · espejo de memoria · `MEMORY.md` · #7 ciego a carpetas). | 🟡 20+18 | §83 |
+| **TODO-32** | 🧠 **CEREBRO v2 ×4** (§50-§53; versión del kernel → su stamp, no aquí). **(a) ✅ CERRADO §72**: heartbeat+handoff+canario ya corren en los 3 hermanos. **(b) vivo**: el banner >30% en LOS CUATRO (cars 43 · bersaglio 61 · insema 56 · inmo 56) — 2º mes ⇒ toca PODA REAL, no añadir. | 🟡 poda (b) | §72 |
 
 ---
 
@@ -48,8 +48,8 @@
 
 > **▶ 🔬 02-ago (§83): AUDITORÍA Nivel-2 #6 — 109 brutos → 44 vivos** (47 refutados). Kernel **v1.9.0**:
 > #9 era ciego a la fila ✅ sin ADR · borrar una clave del manifest apagaba gates · el boot mentía con
-> "cache verificada" · nace #26. Tabla → bóveda. **El workflow murió 2 veces** → [[M-08]]. Restan **30
-> abiertos + 18 sin escéptico** → TODO-37.
+> "cache verificada" · nace #26. Tabla → bóveda. **v1.9.1**: el #7 no veía las carpetas de deliberación —
+> la más cara llevaba meses sin fila. El workflow no murió: se **colgó** 37 h con el panel en verde → [[M-08]].
 >
 > **▶ 01-ago: §81 TODO-36** (candado de boot al kernel, [[M-07]]) · **§82 TODO-35** (6 gates del kit,
 > [[LD-07]] · correrlos con `generar-documentos.ps1 -SoloGates`). Detalle en sus ADRs.
