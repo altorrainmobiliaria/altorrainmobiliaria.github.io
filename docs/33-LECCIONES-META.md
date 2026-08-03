@@ -69,15 +69,21 @@ automatismo tiene un punto de enganche, y el enganche también necesita su gate.
 
 ### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega *(auditoría #6, 2026-08-01/02, ADR §83)*
 **Patrón**: lancé la auditoría Nivel-2 #6 como workflow en segundo plano — 10 sondas, un escéptico por
-hallazgo, un sintetizador al final. **Murió dos veces**: el workflow vive DENTRO del proceso anfitrión y al
-salir éste mueren todos sus agentes. La primera vez avisó; la segunda quedó en silencio y estuve **25 horas
-creyendo que trabajaba**, hasta que miré la fecha del último archivo escrito en vez del contador de agentes.
+hallazgo, un sintetizador al final. **Falló dos veces, de dos maneras que desde fuera se ven IGUAL** — y esa es la
+parte útil. (1) **Muerte**: el workflow vive DENTRO del proceso anfitrión; al salir éste, sus agentes mueren.
+Avisó. (2) **Cuelgue**: un solo agente (`H2-insema`) no devolvió NUNCA — 37 h —, el orquestador siguió vivo
+esperándolo y **nada progresó desde hacía 25 h**. Aquí las dos señales disponibles se contradicen y **cada una
+miente por separado**: el panel decía «En ejecución, 86 agentes» (cierto: el proceso vive) y el disco decía
+«última escritura ayer 13:03» (cierto: no avanza). Yo leí solo el disco y lo llamé muerto; el panel solo, y lo
+habría llamado sano. **Coste de no cruzarlas: 10,9M tokens** ardiendo en un agente colgado.
 **Lo que salvó el trabajo** fue algo que yo no diseñé: el `journal.jsonl` persiste **el payload completo de
 cada agente en cuanto responde**. Las sondas y los escépticos —lo caro— estaban intactos; lo único perdido
 fue el sintetizador, que es lo barato. Reconstruí los 109 hallazgos y los 136 veredictos leyendo el journal.
 **Reglas**: (1) **el paso que consolida no va dentro del proceso frágil** — si N agentes producen y uno
-sintetiza, sintetiza TÚ con lo que quedó en disco; (2) **para saber si un proceso vive, mira el reloj de sus
-escrituras, no su contador de tareas**: 13 agentes figuraban "en vuelo" y llevaban un día muertos; (3) antes
+sintetiza, sintetiza TÚ con lo que quedó en disco; (2) **«¿vive?» y «¿avanza?» son dos preguntas y hacen
+falta las dos**: el contador responde la primera, el reloj de las escrituras la segunda; vivo-y-sin-avanzar
+es un cuelgue y exige matarlo, no esperarlo. Ponle **techo de tiempo por agente** o el que se cuelgue se
+lleva el presupuesto entero; (3) antes
 de relanzar por tercera vez, pregunta si los datos ya están en disco — relanzar habría re-pagado 7 horas de
 cómputo para reconstruir lo que ya tenía. **Corolario**: un contador de progreso que no distingue "trabajando"
 de "muerto a media faena" es un ✅ decorativo con otra ropa ([[M-06]]).

@@ -1843,10 +1843,13 @@ sondas en paralelo → cada hallazgo pasado por un escéptico que intenta REFUTA
 críticos) → sobrevive solo si la mayoría lo sostiene. **109 brutos → 44 vivos · 47 refutados · 18 sin
 escéptico.** Tabla completa → bóveda `2026-08-02-auditoria-cerebro-nivel2-6-inmobiliaria.md`.
 
-**83.1 — El proceso murió dos veces y el sintetizador nunca corrió.** El workflow vive DENTRO del proceso
-anfitrión: al salir éste, mueren sus agentes. La primera caída avisó; la segunda quedó muda y el contador
-siguió marcando "13 agentes en vuelo" durante **25 horas**. Lo detecté mirando la **fecha del último
-archivo escrito**, no el contador. Lo salvó algo que no diseñé: el `journal.jsonl` persiste el payload
+**83.1 — Falló dos veces, de dos maneras distintas, y el sintetizador nunca corrió.** (1) **Muerte**: el
+workflow vive DENTRO del proceso anfitrión y al salir éste mueren sus agentes — avisó. (2) **Cuelgue**: un
+solo agente (`H2-insema`) no devolvió nunca (**37 h**), el orquestador siguió vivo esperándolo y nada
+progresó en **25 h**. Las dos señales disponibles se contradecían y **cada una miente por separado**: el
+panel decía «En ejecución, 86 agentes, 10,9M tokens» (cierto, el proceso vive) y el disco decía «última
+escritura ayer 13:03» (cierto, no avanza). Leí solo el disco y lo di por muerto. La respuesta correcta
+exige cruzar ambas: *¿vive?* la da el contador, *¿avanza?* el reloj de las escrituras. Lo salvó algo que no diseñé: el `journal.jsonl` persiste el payload
 completo de cada agente en cuanto responde — las sondas y los escépticos (lo caro) estaban intactos.
 Reconstruí los 109 hallazgos y los 136 veredictos desde disco en vez de relanzar por tercera vez, que
 habría re-pagado ~7 h de cómputo para obtener lo que ya tenía. Lección → [[M-08]].
