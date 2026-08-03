@@ -39,20 +39,19 @@
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§60)**. Para datos reales: (1) deploy COORDINADO en el cutover (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. Lo demás BLOQUEADO por causas reales (§60.4); insumos legales de la ficha → TODO-33. | 🟢 cutover | §60 |
 | **TODO-33** | 🧾 **FICHA dinámica — 4 decisiones ANTES de construir (§60.3)**: dirección exacta · financiación · asesor · POIs. Regla: **bloque sin dato se OMITE** (jamás heredar el demo). | 🔵 decisión | §60 |
 | **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§71)**. Kit 00-22 + membrete (`43`). Póliza ✅ · FE-DIAN ⏸️ · 03/04 blindados (§66) · **14 críticos + 23 altos de B-03 aplicados (§70·§71)**. Restan **85 leves** (⚠️ sin escéptico). Retirados: 13 y 23. | 🟢 leves | §71 · `43` |
-| **TODO-37** | 🔬 **Hallazgos vivos de la auditoría #6** (tabla → bóveda `2026-08-02-auditoria-cerebro-nivel2-6-inmobiliaria.md`): **los 18 sin escéptico YA VERIFICADOS** (13 con escéptico + 2 por mí; 5 ya estaban cerrados): 2 refutados, el resto degradado a *baja*. **40/44 aplicados** (§83 + lotes 1-7). Quedan **4 abiertos de baja severidad** con su arreglo escrito en la tabla de la bóveda. Anti-engorde: no se retira ningún gate (§83.8). | 🟡 4 bajas | §83 |
+| **TODO-37** | 🔬 **Auditoría #6: 40/44 aplicados** (§83). Restan **4 de severidad BAJA**, con su arreglo ya escrito → bóveda `2026-08-03-verificacion-18-sin-esceptico.md`. Los 18 sin escéptico quedaron verificados (2 refutados, resto degradado a *baja*). Anti-engorde: no se retira ningún gate (§83.8). | 🟡 4 bajas | §83 |
 | **TODO-32** | 🧠 **CEREBRO v2 ×4** (§50-§53; versión del kernel → su stamp, no aquí). **(a) ✅ CERRADO §72**: heartbeat+handoff+canario ya corren en los 3 hermanos. **(b) vivo**: el banner >30% en LOS CUATRO (cars 43 · bersaglio 61 · insema 56 · inmo 56) — 2º mes ⇒ toca PODA REAL, no añadir. | 🟡 poda (b) | §72 |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> **▶ 🔬 02-ago (§83): AUDITORÍA Nivel-2 #6 — 109 brutos → 44 vivos** (47 refutados). En el kernel:
-> #9 era ciego a la fila ✅ sin ADR · borrar una clave del manifest apagaba gates · el boot mentía con
-> "cache verificada" · nace #26. Tabla → bóveda. **v1.9.1**: el #7 no veía las carpetas de deliberación —
-> la más cara llevaba meses sin fila. El workflow no murió: se **colgó** 37 h con el panel en verde → [[M-08]].
+> **▶ 🔬 02/03-ago (§83): AUDITORÍA Nivel-2 #6 CERRADA** — 109 brutos → 44 vivos, **40 aplicados**. Kernel
+> v1.7.2→**v1.10.2** (7 gates nuevos/corregidos: #24 canario · #25 cableado · #26 fila del índice · #27 rutas
+> fantasma). 2 workflows se **colgaron** con el panel en verde → [[M-08]]. Todo en §83 y en la bóveda.
 >
 > **▶ 01-ago: §81 TODO-36** (candado de boot al kernel, [[M-07]]) · **§82 TODO-35** (6 gates del kit,
-> [[LD-07]] · correrlos con `generar-documentos.ps1 -SoloGates`). Detalle en sus ADRs.
+> [[LD-07]] · `generar-documentos.ps1 -SoloGates`). ✅ cars y bersaglio MERGEADOS a `main` (03-ago).
 >
 > **▶ 🔥 PAUTA BERSAGLIO · 🔁 REVISAR LUNES 3-AGO** — `120251090001200439`: $8.000/día, fin 10-ago. S1: **0
 > ventas de 33 chats**. **PARADA: sin 1 venta ni 3 visitas al 10-ago → NO recargar.** Detalle → bóveda
@@ -73,8 +72,10 @@
 > ANTES de auditar; entra al paquete de contexto pero es **gitignored** (cédulas de los 3 socios).
 > ⛔ **Doc 13 RETIRADO** el 31-jul por Daniel; riesgos asumidos, en su banner.
 >
-> **⏭️ LO QUE SIGO YO**: los 85 leves del kit (TODO-34) + los vivos de la auditoría (TODO-37). Backlog
-> B-01..B-04 en la bóveda.
+> **⏭️ LO QUE SIGO YO, EN ORDEN**: **(1) TODO-32(b) — la PODA REAL del router**: el boot va al **99,6%** y
+> el pre-aviso lleva días encendido; los recortes de urgencia ya no dan más. **(2)** los 85 leves del kit
+> (TODO-34). **(3)** los 4 restos *bajos* de TODO-37 — su arreglo concreto ya está escrito en la bóveda
+> (`2026-08-03-verificacion-18-sin-esceptico.md`). Backlog B-01..B-04 en la bóveda.
 >
 > ⚠️ **Ni los Word ni el manual maestro se editan a mano**: se GENERAN (`generar-documentos.ps1` ·
 > `ensamblar-manual.ps1`, §68). Editar el maestro directo fue lo que duplicó y desincronizó el capítulo 2.
