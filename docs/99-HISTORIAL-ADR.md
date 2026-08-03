@@ -1912,6 +1912,24 @@ exige medir, no contar auditorías. Nota de método: la primera versión de ese 
 escapes comidos (`[Kk]ernels+v?d+.d+.d+`): **válida, sin matchear nada, y con ✅ falso** → lint nuevo en
 v1.9.3. Tercera vez en dos días que un gate miente por no probarlo ([[M-06]]).
 
+**83.9 — Lote 5: la Frescura deja de ser [HONOR] (chequeo #27).** `§G.4` manda actualizar el nodo espacial
+en el MISMO cambio que mueve un componente, y eso no tenía gate: era honor. Al mecanizarlo apareció que el
+`20` de inmobiliaria citaba **`render.js` con una función `renderPropertyCard()` que no existe en ninguna
+parte del repo** y un `toast.js` cuyo código vive en `utils.js` — y que el inventario listaba **12 de los 36
+archivos reales**. Re-contado contra el disco y agrupado por área. En los hermanos cazó 4 más: bersaglio
+afirmaba un `js/components.js` que nunca existió (los componentes viven en `js/components/`), e insema
+mandaba a ficheros del PROTOTIPO sin decir que están en otro repo.
+
+**Hizo falta corregir el gate TRES veces, y las tres probándolo** ([[M-06]] forma 2, «acusa a un inocente»):
+(1) escaneaba todo `docs/` → **137 falsos positivos** en cars, porque el historial `99` y el índice `00`
+citan el pasado **por diseño** —un ADR es un registro fechado, no una afirmación sobre hoy— y las lecciones
+usan rutas-plantilla (`admin-X.js`); acotado a las neuronas del PRESENTE (`05`/`10`/`20`/`21`/`22`/`50`).
+(2) Acusaba a la línea que **ya documentaba** el renombre (``ex `dashboard.js` ``) → ventana de negación
+ampliada. (3) Acusaba lo que vive FUERA del repo (la bóveda, un prototipo en `Desktop/`) por leer línea a
+línea sin el contexto que lo establecía dos líneas antes. **De 137 ruidos a 6 hallazgos reales.** La lección
+es la misma que el kit enseñó en [[LD-07]]: un gate que cruza documentos necesita las excepciones que solo
+aparecen corriéndolo sobre el corpus — la mención que **niega** y la referencia a lo **externo**.
+
 **83.7 — Doctrina.** [[M-06]] (verlo disparar: las 5 correcciones se probaron encendiéndolas) · [[M-08]]
 (nueva) · [[M-05]] (el cap se re-mide con razón, no se sube para caber) · §3.3 · skill `auditoria-cerebro`.
 Deliberación: 166 agentes, crudos en el journal del workflow; síntesis reconstruida a mano (§83.1).
