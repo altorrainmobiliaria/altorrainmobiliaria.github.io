@@ -27,7 +27,7 @@ escriben a RTDB DESPUÉS del logout; (b) RTDB rules sin `.read` ni `.indexOn`. *
 **Disparador**: error de lease en Firestore. **Causa**: múltiples tabs compartiendo IndexedDB. **Fix**:
 `window.clearFirestoreCache()` desde consola.
 
-### L-04 — ⚗️ FUSIONADA en L-09 (merge:true vs rules/upsert) — regla viva en `CLAUDE.md §3.5`: `set()` SIN merge para CREAR, `update()` para EDITAR
+### L-04 — ⚗️ FUSIONADA en L-09 (merge:true vs rules/upsert) — regla viva **aquí, en L-09**: `set()` SIN merge para CREAR, `update()` para EDITAR (el puntero apuntaba a `CLAUDE.md §3.5`, que se mudó a `34-DOCTRINA-CODIGO` en la poda §84; el dueño del hecho siempre fue L-09)
 
 ### L-05 — ⚰️ (sitio viejo retirado §15) Modals inyectados fuera de index → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md`
 
@@ -145,6 +145,7 @@ Cuando el portal maneje plata: (1) skill global `auditoria-financiera` (7 invari
 ### M-06 — Un gate solo existe si lo has visto DISPARAR: tres formas de que mienta, las tres dan ✅ → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
 ### M-07 — Un gate del kernel solo protege donde su DISPARADOR está cableado (el 4º repo no tenía pre-commit) → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
 ### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
+### M-09 — El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es frecuencia × costo de omisión → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > 🧩 **Mudadas a `60-WORKFLOWS §Gobernanza`** el 2026-07-28 (ADR §68): hablan de CÓMO se conduce la

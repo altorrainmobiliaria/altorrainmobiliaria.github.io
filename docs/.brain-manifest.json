@@ -70,6 +70,11 @@
       "lines": 140,
       "chars": 12000
     },
+    "docs/34-DOCTRINA-CODIGO.md": {
+      "lines": 70,
+      "chars": 4500,
+      "_comment": "Nacio el 2026-08-03 en la poda del router (ADR 84): absorbe CLAUDE.md 3.1 (performance), 3.5 (observadores) y el stack/CSS del legacy, que se auto-cargaban en CADA sesion aunque casi nunca se tocara codigo. Cap MEDIDO sobre el real (3353c / 53L) + 35%, con lines derivado de la densidad real (~63 c/linea) para que ambos ejes aprieten en el mismo punto (regla de _caps_que). Si crece mas alla de esto, shard por mundo (legacy / portal) en vez de subir el techo."
+    },
     "docs/33-LECCIONES-META.md": {
       "lines": 110,
       "chars": 15000,

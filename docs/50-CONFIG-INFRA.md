@@ -72,6 +72,13 @@ $env:GOOGLE_APPLICATION_CREDENTIALS = "<ruta-SA-JSON>"; npm run upload
 $env:GOOGLE_APPLICATION_CREDENTIALS = "<ruta-SA-JSON>"; $env:DRY_RUN="1"; npm run migrate-images
 ```
 
+## ⚙️ Workflows de GitHub Actions del repo (bajado del router en la poda §84)
+- **`bump-version.yml`** — bumpea `data/deploy-info.json` en CADA push a `main`. Automático, no requiere nada.
+- **`portal-ci.yml`** — auto-despliega el portal al Worker en cada push (`CF_DEPLOY_ENABLED` ON; estado → `05`).
+- ⛔ **`og-publish.yml`** (SEO `/p/{id}.html` + sitemap) está en **`workflow_dispatch` MANUAL desde que entró
+  el modo obra: dispararlo PISARÍA los stubs de redirect** y resucitaría el sitio viejo por la puerta de atrás.
+  No se toca hasta el cutover. (Requiere el secret `GOOGLE_APPLICATION_CREDENTIALS_JSON`, ver §Secretos.)
+
 ## 🔒 Secretos (NO en este repo — solo se nombra su ubicación)
 > NUNCA escribir el valor real aquí ni en ningún archivo versionado.
 - **Service Account JSON** (`sa-altorra-inmobiliaria.json`) — vive FUERA del repo (carpeta home del dueño). Generar desde

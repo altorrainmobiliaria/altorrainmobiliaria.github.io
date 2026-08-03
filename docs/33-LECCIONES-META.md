@@ -87,3 +87,22 @@ lleva el presupuesto entero; (3) antes
 de relanzar por tercera vez, pregunta si los datos ya están en disco — relanzar habría re-pagado 7 horas de
 cómputo para reconstruir lo que ya tenía. **Corolario**: un contador de progreso que no distingue "trabajando"
 de "muerto a media faena" es un ✅ decorativo con otra ropa ([[M-06]]).
+
+### M-09 — El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es frecuencia × costo de omisión *(2026-08-03, ADR §84)*
+**Patrón**: el router llegó al **99,8% del presupuesto de boot** (69c de margen) y el diagnóstico escrito en
+`10` era *"los recortes de urgencia ya no dan más"*. Al medirlo, el problema no era el estilo: **`§3.1`
+performance, `§3.5` observadores y el grueso de `§3.2` (stack, CSS legacy, Poppins) pesaban ~2.2k de 20.4k y
+gobiernan un sitio RETIRADO**, en un repo cuyo frente vivo es la fundación operativa — documentos legales,
+pauta, procesos. Se auto-cargaban en CADA sesión para no usarse en casi ninguna.
+**Por qué el cerebro contribuyó**: había gate para el TECHO (#2) y doctrina para no subirlo ([[M-05]]), pero
+**ninguna regla decía qué se gana el derecho a estar siempre cargado**. Con criterio de entrada
+("¿es importante?") y sin criterio de salida, un always-on solo puede crecer: toda doctrina es importante
+para alguien, y el que la escribe nunca es el que paga su renta.
+**Regla**: lo que se queda en el always-on se decide por **frecuencia de uso × costo de omitirlo**, no por
+importancia. Alto costo aunque sea raro (borrar `CNAME`, una query sin `limit()` contra el free-tier) → se
+queda. Importante pero de uso episódico (cómo animar un CSS) → **hoja hija + puntero + trigger en §G.2**;
+sigue siendo vinculante, deja de cobrar renta en cada arranque.
+**Corolario operativo**: antes de mudar cualquier regla, `grep` para saber si es ÚNICA o copia (lo único se
+muda, lo copiado se deja de repetir), **NO renumerar secciones citadas** (`§3.3` lo citan 8 neuronas y 2
+scripts), y **corregir en el mismo commit el puntero vivo que apuntaba a lo movido** — aquí `30` L-04, que
+mandaba a un `§3.5` que dejó de existir. Un puntero roto es una regla apagada en silencio.

@@ -6,7 +6,7 @@
 ---
 
 ## §Stack y módulos JS
-- **Frontend**: vanilla + Firebase **modular v12.9.0 ESM** (CDN gstatic). NO namespacing admin/public (a diferencia de cars).
+- **Frontend**: vanilla + Firebase **modular v12.9.0 ESM** (CDN gstatic). NO namespacing admin/public (a diferencia de cars). **Node/scripts/CFs**: `firebase-admin v13`. (Doctrina de cómo escribir código → `34-DOCTRINA-CODIGO`.)
 - **Globals `window.*`**: `db`, `auth`, `storage`, `functions`, `firebaseAnalytics`, `rtdb`, `propertyDB` (clase `PropertyDatabase`), `AltorraCache`, `AltorraUtils`, `AltorraFavoritos`. Readiness: evento `altorra:db-ready` (`await waitForDB()`).
 - **Archivos JS** (kebab-case en `js/`) — inventario **RE-CONTADO contra el disco** el 2026-08-02: **36 archivos**. Antes se listaban 12 y **dos no existían**: `render.js`/`renderPropertyCard()` (no existe esa función en NINGUNA parte del repo) y `toast.js` (el toast vive en `utils.js`). Verificable: `node` + `readdirSync('js')`.
   - **Núcleo**: `firebase-config.js` · `database.js` (`PropertyDatabase`) · `cache-manager.js` (en `js/`, **NO** `js/core/`) · `utils.js` (`AltorraUtils`, **aquí vive `showToast`**) · `components.js` (inyecta header/footer/modals, `loadModalsIfNeeded()`) · `i18n.js` · `firestore-meter.js` (medidor de lecturas, guardián del free-tier).

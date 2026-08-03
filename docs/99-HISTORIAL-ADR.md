@@ -1959,3 +1959,85 @@ calla el día que importa.
 **83.7 — Doctrina.** [[M-06]] (verlo disparar: las 5 correcciones se probaron encendiéndolas) · [[M-08]]
 (nueva) · [[M-05]] (el cap se re-mide con razón, no se sube para caber) · §3.3 · skill `auditoria-cerebro`.
 Deliberación: 166 agentes, crudos en el journal del workflow; síntesis reconstruida a mano (§83.1).
+
+---
+
+## 84. ADR — La poda REAL del router: el always-on deja de pagar por lo que casi nunca se usa ⟦OPUS-5⟧ (2026-08-03)
+
+> Contexto: TODO-32(b). El pre-aviso del boot llevaba días encendido y el arranque de esta sesión lo
+> dijo sin ambigüedad: **31.431c de 31.500 — 69c de margen**. La próxima regla que entrara al router
+> bloqueaba el commit. El `10` ya había registrado el diagnóstico: *"los recortes de urgencia ya no dan más"*.
+
+**84.1 — Causa raíz.** No era que el router estuviera mal escrito: era que **no tenía criterio de
+SALIDA**. El candado (#2) mide el techo y [[M-05]] prohíbe subirlo, pero ninguna regla decía qué se
+GANA el derecho a auto-cargarse en cada sesión. Así, todo entraba por **importancia** y nada salía
+nunca — y una doctrina importante que se usa una vez cada veinte sesiones cuesta exactamente lo mismo,
+cada sesión, que una que se usa siempre. Medido: `§3.1` (performance), `§3.5` (observadores) y el
+grueso de `§3.2` (stack, CSS del legacy, tipografía Poppins) sumaban **~2.2k de los 20.4k** del router
+y solo aplican cuando se escribe código — que en un repo cuyo frente activo es la **fundación
+operativa** (documentos legales, pauta, procesos) casi nunca pasa. El sitio que gobiernan, además,
+está **RETIRADO**.
+
+Y había una segunda capa, más barata de ver y más tonta: **duplicación interna**. La columna «Cuándo
+leerlo» de la tabla `§0` repetía, fila por fila, los triggers que `§G.2` ya define — dos copias de la
+misma regla de ruteo envejeciendo por separado.
+
+**84.2 — Solución estructural.** Tres movimientos, ninguno de ellos "raspar prosa":
+
+1. **Neurogénesis: nace `docs/34-DOCTRINA-CODIGO.md`** (hoja hija de `30`), con `§3.1`, `§3.5`, el
+   stack de los dos mundos y las reglas congeladas del CSS legacy. El router conserva **solo lo que
+   cuesta dinero o es irreversible**: `limit()`/`onSnapshot` (free-tier), cache bump del SW, no borrar
+   `CNAME`, no hardcodear URLs, no renombrar IDs/clases exportadas. Puntero en `§3.2` + **trigger 🖥️
+   nuevo en `§G.2`** ("ANTES de escribir o editar código") + fila en `§0` + fila de ruteo en `00`.
+2. **`§0` deja de duplicar `§G.2`**: la tabla pasa a declarar **QUÉ contiene** cada nodo; el CUÁNDO
+   vive en un solo sitio, los triggers.
+3. **Tres cifras del manifest que el router copiaba, cortadas**: el cap del `10` ("~110", que ya estaba
+   **desincronizado** — el manifest dice 170L/16.000c), el presupuesto de boot ("~31.5k") y la versión
+   del SDK de Firebase (dueño: `20 §Stack`). Es exactamente la clase de duplicado que el `ssotFact` del
+   kernel cazó en §83.10; aquí se corrigió a mano porque el dueño es un JSON, no un texto escaneable.
+
+De regalo, el `05` bajó del 92% de su cap: sus filas narraban la **historia** de auditorías que ya
+viven en §68/§70/§71 y en TODO-34 (191 brutos → 57 refutados → 134 vivos, §43-§48…). Un tablero
+declara estado; el relato es del ADR.
+
+**84.3 — No-regresión.** Ninguna regla se perdió: todas se **movieron con puntero**, ninguna se borró
+(límite de guardián, §G.4). Verificado antes de tocar nada, con `grep`, qué era único y qué era copia:
+`MutationObserver`, `pointermove`, `transition: all`, `decoding=` y **Poppins** vivían SOLO en el
+router → se mudaron a `34`. `_legacy`, `12.9.0`, `og-publish`, `window.IP`, `us-central1` ya estaban en
+`20`/`50` → se dejaron de repetir. `firebase-admin v13` y el detalle de `bump-version.yml` /
+`og-publish.yml` no vivían en ninguna neurona viva (solo en ADRs viejos) → bajaron a `20 §Stack` y a un
+`§Workflows de GitHub Actions` nuevo en `50`.
+
+**Y la numeración NO se tocó.** `§3.3` está citado desde 8 neuronas y 2 scripts del kernel; renumerar
+`§3.x` habría roto decenas de punteros. `§3.1` y `§3.5` desaparecen como secciones pero el `§3` declara
+adónde se fueron, y los ADRs viejos que los citan siguen aterrizando. El único puntero VIVO que
+apuntaba a lo movido —`30` L-04, que mandaba a `CLAUDE.md §3.5`— se corrigió en el mismo cambio: el
+dueño del hecho siempre fue L-09, dentro de su propia neurona.
+
+**84.4 — Verificación.** `npm run brain:check`: **CEREBRO SANO**, 27 chequeos, cero warnings.
+**Boot 31.431c → 28.441c (−2.990c, ~−854 tokens en CADA arranque)**, del 99,8% al 90,3% del objetivo —
+sin mover el techo. `CLAUDE.md` 20.378c → 17.485c. El pre-shard del `05` desapareció (queda solo `00`).
+Gates que dependían del texto del router, comprobados uno a uno: `##  §4 — Cache bump` intacto (#4),
+las 16 hojas `docs/*.md` que cita existen (#10 «hojas referenciadas»), las 20 neuronas siguen
+alcanzables y registradas (#10 BFS), `34` entra con cap **medido** (3.353c + 35%) y no por omisión
+(#23), y ninguna neurona cita rutas fantasma (#27).
+
+**84.5 — Anti-patterns evitados.** No subir el techo para caber ([[M-05]]). No borrar conocimiento
+"porque parece viejo" (§G.4 guardián: se movió, con puntero, tras verificar unicidad). No renumerar
+secciones citadas. No declarar un gate que no existe: el "lee `34` antes de tocar código" va marcado
+**[HONOR]** explícito (regla de ADMISIÓN, §G.3) porque **ningún linter puede comprobar que leí un
+archivo** — inventarle un gate habría sido teatro, que es justo lo que [[M-06]] enseña a no hacer.
+
+**84.6 — Archivos.** Modificados: `CLAUDE.md` · `docs/05-ESTADO-GLOBAL.md` · `docs/00-INDICE.md` ·
+`docs/20-MEMORIA-ESPACIAL.md` · `docs/30-LECCIONES.md` (L-04) · `docs/50-CONFIG-INFRA.md` ·
+`docs/.brain-manifest.json` · `docs/10-MEMORIA-CORTO-PLAZO.md` · `docs/33-LECCIONES-META.md`.
+Creado: `docs/34-DOCTRINA-CODIGO.md`. **INTACTOS y verificados**: el kernel (`scripts/*.mjs` — esta
+poda es de instancia, no de kernel; no hubo bump) · `service-worker.js` (sin cambio de shell → sin
+cache bump) · todo `portal/` y el código de producción.
+
+**84.7 — Doctrina.** Nace [[M-09]] (el criterio de permanencia en el always-on = frecuencia de uso ×
+costo de omisión, no importancia) · §G.5 (extraer a hermana con puntero, one-in-one-out) · §G.4
+(Frescura de punteros, captura) · §3.3 (cada mudanza se decidió con un `grep`, no con memoria).
+Sin comité ×3 ni consejo externo: Daniel dejó instrucción explícita de sesión de no lanzar agentes ni
+workflows, así que esta decisión queda marcada como **NO revisada por terceros** (§G.2 🛰️) — el
+trabajo se hizo con auto-crítica y verificación mecánica.

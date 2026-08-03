@@ -40,12 +40,19 @@
 | **TODO-33** | 🧾 **FICHA dinámica — 4 decisiones ANTES de construir (§60.3)**: dirección exacta · financiación · asesor · POIs. Regla: **bloque sin dato se OMITE** (jamás heredar el demo). | 🔵 decisión | §60 |
 | **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§71)**. Kit 00-22 + membrete (`43`). Póliza ✅ · FE-DIAN ⏸️ · 03/04 blindados (§66) · **14 críticos + 23 altos de B-03 aplicados (§70·§71)**. Restan **85 leves** (⚠️ sin escéptico). Retirados: 13 y 23. | 🟢 leves | §71 · `43` |
 | **TODO-37** | 🔬 **Auditoría #6: 40/44 aplicados** (§83). Restan **4 de severidad BAJA**, con su arreglo ya escrito → bóveda `2026-08-03-verificacion-18-sin-esceptico.md`. Los 18 sin escéptico quedaron verificados (2 refutados, resto degradado a *baja*). Anti-engorde: no se retira ningún gate (§83.8). | 🟡 4 bajas | §83 |
-| **TODO-32** | 🧠 **CEREBRO v2 ×4** (§50-§53; versión del kernel → su stamp, no aquí). **(a) ✅ CERRADO §72**: heartbeat+handoff+canario ya corren en los 3 hermanos. **(b) vivo**: el banner >30% en LOS CUATRO (cars 43 · bersaglio 61 · insema 56 · inmo 56) — 2º mes ⇒ toca PODA REAL, no añadir. | 🟡 poda (b) | §72 |
+| **TODO-32** | 🧠 **CEREBRO v2 ×4** (§50-§53; versión del kernel → su stamp, no aquí). **(a) ✅ CERRADO §72**. **(b)**: la **poda del router de inmobiliaria ✅ HECHA (§84)** — boot 31.4k→28.4k (99,8%→90,3%) sin subir el techo, con criterio nuevo [[M-09]]. Restan: (i) llevar M-09 a los 3 hermanos (cars/bersaglio/insema siguen con su doctrina de código en el always-on); (ii) el **banner de costo** (57%) que NO baja podando — solo baja con commits de PRODUCTO. | 🟡 (b) hermanos | §84 |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
+> **▶ ✂️ 03-ago (§84): PODA REAL del router.** Boot **31.431c → 28.441c** (99,8% → 90,3%) *sin mover el
+> techo*. Nace **`34-DOCTRINA-CODIGO`** (perf `§3.1` · observadores `§3.5` · stack · CSS legacy salen del
+> always-on: gobiernan un sitio RETIRADO y se cargaban en cada sesión). `§0` deja de duplicar los triggers
+> de `§G.2`; 3 cifras que el router copiaba del manifest, cortadas (una ya estaba stale). Nada borrado: todo
+> movido con puntero, verificado con `grep` antes. Criterio nuevo → [[M-09]]. **`00-INDICE` queda al 99% de
+> su cap** → siguiente GC: range-shard `00a-INDICE` (el kernel ya lo soporta por patrón).
+>
 > **▶ 🔬 02/03-ago (§83): AUDITORÍA Nivel-2 #6 CERRADA** — 109 brutos → 44 vivos, **40 aplicados**. Kernel
 > v1.7.2→**v1.10.2** (7 gates nuevos/corregidos: #24 canario · #25 cableado · #26 fila del índice · #27 rutas
 > fantasma). 2 workflows se **colgaron** con el panel en verde → [[M-08]]. Todo en §83 y en la bóveda.
@@ -72,10 +79,10 @@
 > ANTES de auditar; entra al paquete de contexto pero es **gitignored** (cédulas de los 3 socios).
 > ⛔ **Doc 13 RETIRADO** el 31-jul por Daniel; riesgos asumidos, en su banner.
 >
-> **⏭️ LO QUE SIGO YO, EN ORDEN**: **(1) TODO-32(b) — la PODA REAL del router**: el boot va al **99,6%** y
-> el pre-aviso lleva días encendido; los recortes de urgencia ya no dan más. **(2)** los 85 leves del kit
-> (TODO-34). **(3)** los 4 restos *bajos* de TODO-37 — su arreglo concreto ya está escrito en la bóveda
-> (`2026-08-03-verificacion-18-sin-esceptico.md`). Backlog B-01..B-04 en la bóveda.
+> **⏭️ LO QUE SIGO YO, EN ORDEN**: ~~(1) poda del router~~ **✅ §84**. **(1) los 85 leves del kit**
+> (TODO-34) — el bloque grande que queda del frente vivo. **(2)** los 4 restos *bajos* de TODO-37, con su
+> arreglo ya escrito en la bóveda (`2026-08-03-verificacion-18-sin-esceptico.md`). **(3)** llevar [[M-09]] a
+> los 3 hermanos (TODO-32b). Backlog B-01..B-04 en la bóveda.
 >
 > ⚠️ **Ni los Word ni el manual maestro se editan a mano**: se GENERAN (`generar-documentos.ps1` ·
 > `ensamblar-manual.ps1`, §68). Editar el maestro directo fue lo que duplicó y desincronizó el capítulo 2.
