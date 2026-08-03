@@ -1891,6 +1891,27 @@ la #7 no los vuelva a levantar — el trabajo de refutar solo rinde si se conser
 el error del §70.6). Archivos: kernel `brain-check.mjs` + `VERSION` · `CLAUDE.md` · `05` · `10` · `33`
 ([[M-08]]) · `00` · manifest · bersaglio `44` + manifest · insema `05` + `10`.
 
+**83.8 — Lotes 1-4 de TODO-37 (30 de 44 aplicados) y el veredicto ANTI-ENGORDE.** Además de lo anterior:
+el índice no tenía fila de ruteo a `43-OPERACION` (toda la operación real del negocio era inalcanzable
+desde la capa síntoma→neurona) · el `pre-commit` estaba commiteado **100644 en los CUATRO repos** (en un
+clon POSIX git lo ignora en silencio) y **fallaba ABIERTO** sin `node` en PATH mientras el #25 lo declaraba
+cableado · el censo de Cloud Functions no cuadraba entre `05` (7), `20` (8, nombrando una que **no
+existe**) y el código (9): no era descuido sino una **distinción que faltaba** — desplegadas vs. en código,
+ahora explícita y **verificada contra producción** (7 desplegadas; las 2 restantes, `processNurturingEmails`
+y `sendNewsletter`, son las únicas que escriben hacia afuera solas y **desplegarlas queda marcado como
+decisión de negocio**) · las **57 razones de refutación de B-03** estaban cortadas a mitad de frase (de
+203.269 chars sobrevivía el 20%), re-renderizadas íntegras desde el JSON y verificadas 57/57.
+
+**El anti-engorde salió al revés de lo esperado.** La skill pide proponer el RETIRO de gates que no cazan
+nada en dos auditorías, y los candidatos eran #4 (caché), #8 (SSoT) y #13 (specs). Al medirlos: **#4 sí
+trabaja** — en cars hace una comparación real y pasa; solo le faltaba decir la verdad donde no tiene con qué
+cruzar. Y **#8 no era inútil: estaba SIN DATOS**. Se declaró la versión del kernel como `ssotFact` (dueño =
+su stamp) y al encenderlo cazó **dos duplicados vivos** que llevaban días mintiendo. **Conclusión: no se
+retira ninguno.** Un gate que pasa en blanco puede estar mal configurado en vez de sobrar — distinguirlo
+exige medir, no contar auditorías. Nota de método: la primera versión de ese `ssotFact` llegó con los
+escapes comidos (`[Kk]ernels+v?d+.d+.d+`): **válida, sin matchear nada, y con ✅ falso** → lint nuevo en
+v1.9.3. Tercera vez en dos días que un gate miente por no probarlo ([[M-06]]).
+
 **83.7 — Doctrina.** [[M-06]] (verlo disparar: las 5 correcciones se probaron encendiéndolas) · [[M-08]]
 (nueva) · [[M-05]] (el cap se re-mide con razón, no se sube para caber) · §3.3 · skill `auditoria-cerebro`.
 Deliberación: 166 agentes, crudos en el journal del workflow; síntesis reconstruida a mano (§83.1).
