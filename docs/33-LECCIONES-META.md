@@ -67,6 +67,9 @@ DISPARADOR **repo por repo** en el mismo cambio y, si puedes, **mecanízalo**: e
 `.git/config`, resuelve `hooksPath` y exige un `pre-commit` que invoque a `brain-check`. Generaliza: todo
 automatismo tiene un punto de enganche, y el enganche también necesita su gate.
 
+**⚠️ Forma 2 — el gate que le pregunta al VIGILADO si debe vigilarlo** *(2026-08-03, ADR §85, U-13)*. El
+canario #24 caza que el hook `SessionStart` desaparezca, y decidía si aplicaba leyendo **el propio `.claude/settings.json`**: borras el hook y el gate contesta *amablemente* «no aplica en este repo». **Falla ABIERTO ante justo la regresión que existe para cazar**, y su silencio es idéntico al de un repo donde nunca aplicó. **Regla**: la condición de aplicabilidad de un gate NO vive dentro de su objeto vigilado — sube a una declaración aparte y auditable (`harnessCanary` en el manifest, como `bootCharsTarget` en el #15), de modo que apagarla sea explícito **y borrarla también avise** (`REQUIRED_KEYS`). Test de bolsillo: *si el atacante es la ausencia de X, ¿mi gate le pregunta a X?*
+
 ### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega *(auditoría #6, 2026-08-01/02, ADR §83)*
 **Patrón**: lancé la auditoría Nivel-2 #6 como workflow en segundo plano — 10 sondas, un escéptico por
 hallazgo, un sintetizador al final. **Falló dos veces, de dos maneras que desde fuera se ven IGUAL** — y esa es la

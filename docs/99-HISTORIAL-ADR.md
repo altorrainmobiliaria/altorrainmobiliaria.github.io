@@ -2041,3 +2041,97 @@ costo de omisión, no importancia) · §G.5 (extraer a hermana con puntero, one-
 Sin comité ×3 ni consejo externo: Daniel dejó instrucción explícita de sesión de no lanzar agentes ni
 workflows, así que esta decisión queda marcada como **NO revisada por terceros** (§G.2 🛰️) — el
 trabajo se hizo con auto-crítica y verificación mecánica.
+
+---
+
+## 85. ADR — TODO-37 cerrado: el gate que le preguntaba al vigilado, y el ✅ que tapaba tres gates apagados ⟦OPUS-5⟧ (2026-08-03)
+
+> Cierre de los restos de la auditoría Nivel-2 #6. El `10` decía «restan 4 de severidad BAJA»; al
+> verificarlos uno por uno eran **6** —el recuento agrupaba los tres del kernel como uno— y **dos ya
+> estaban cerrados** sin que nadie lo hubiera anotado: U-18 (el `05` no marcaba los docs retirados) y
+> U-15 (el boot al filo) los cerró la poda de §84 unas horas antes, de rebote.
+
+**85.1 — Causa raíz (tres defectos independientes, un patrón común: el gate que se apaga solo).**
+
+- **U-13 — el canario le preguntaba al archivo VIGILADO si debía vigilarlo.** El chequeo #24 existe para
+  cazar que el hook `SessionStart` desaparezca. Decidía si aplicaba leyendo… `.claude/settings.json`, el
+  mismo archivo cuya desaparición vigila: `if (!wired) info('sin hook — no aplica en este repo')`. Borra
+  el hook y el gate contesta amablemente que ahí no hace falta. **Falla ABIERTO exactamente ante la
+  regresión que existe para cazar.**
+- **U-04 — tres gates apagados bajo un ✅.** Sin la bóveda clonada, el gate 7 (integridad del
+  `archiveDir`), el 7b (respaldo remoto) y la mitad del #0 (comparar el kernel contra el CANÓNICO) no
+  pueden correr. Se anunciaban con `info()`, que no cuenta como problema, y el veredicto final seguía
+  imprimiendo **«✅ CEREBRO SANO»**. Es la tercera forma de [[M-06]]: el gate no miente — miente el
+  **resumen**. En una máquina sin la bóveda, el linter daba luz verde a un cerebro cuyo respaldo nadie
+  había verificado.
+- **U-02 — el dato del boot real se callaba justo en el boot.** La línea «+ sidecars: Nc → boot REAL ≈»
+  estaba guardada tras `&& !BOOT`, así que se veía en `--full` y se ocultaba en el arranque, que es
+  precisamente el momento en que uno decide si le cabe una regla más en el router.
+
+**85.2 — Solución (kernel v1.10.2 → v1.10.3, canónico + `brain:pull` ×4).**
+
+1. **`degrade()`** junto a `warn`/`info`: no bloquea —no hay nada que arreglar en el repo— pero **cuenta**,
+   y el veredicto final cambia a `🟠 ESTRUCTURA ÍNTEGRA, pero N gate(s) DEGRADADOS (no pudieron correr) —
+   NO es un cerebro verificado`. Íntegro ≠ verificado. Lo usan el #0 (canónico ausente), el 7/7b (bóveda)
+   y el #14-`tableFile`.
+2. **`harnessCanary` sube al manifest** (como `bootCharsTarget` en el #15) y entra a `KNOWN_KEYS` **y** a
+   `REQUIRED_KEYS`: declarado-pero-no-cableado ahora es **`warn` bloqueante**; apagarlo exige poner
+   `false` con su razón, y **borrar la clave también avisa**. Los 4 repos verificados uno por uno antes de
+   declararlo: los 4 tienen el hook cableado.
+3. **La línea del boot real se publica siempre**, también en `--boot`.
+
+**85.3 — Lo que REFUTÉ del arreglo escrito.** La síntesis proponía además que la banda de pre-aviso del
+97% calculara el porcentaje sobre `bootChars + sidecars`. **No se aplica**: el candado bloquea sobre los
+3 archivos EDITABLES, y nadie puede podar un sidecar GENERADO. Un umbral sobre algo inaccionable produce
+un aviso permanente que no se puede cerrar — que es literalmente el guardián que ladra a un repo dormido
+que la v1.10.1 acababa de callar. Se publica el número, no se castiga con él. También se dejó fuera el
+sidecar `.boot-echo-chars` propuesto (medir el eco exacto): añade superficie en 4 repos para ganar ~600c
+de precisión sobre una cifra ya rotulada «≈».
+
+**85.4 — Verificación (M-06: verlos DISPARAR, no razonarlos).** Se montó un repo de prueba desechable sin
+bóveda, sin canónico y sin hook. **(A)** `harnessCanary:true` sin hook → el `warn` nuevo salta.
+**(B)** `harnessCanary:false` → 0 problemas, **3 DEGRADADOS** y el veredicto `🟠` sustituye al ✅ que antes
+se daba solo. **(C)** sin la clave → `warn` del `REQUIRED_KEYS`. Además, el primer intento del mensaje de
+(B) decía «no declarado» cuando estaba declarado en `false`: corregido y re-probado — una mentira pequeña
+en un mensaje de gate envejece igual de mal que una grande. Los **4 cerebros SANOS** tras el pull.
+
+**85.5 — Los 3 de documentación (no-kernel).** **U-07**: el `50` decía en su cabecera que Claude despliega
+Firebase y 59 líneas más abajo titulaba los comandos «los corre el dueño»; además pedía que
+`functions:list` mostrara «~8» cuando el censo verificado contra producción dice **7** (§83.8). **U-17**:
+la mora del kit va a **dos tasas distintas** —`03:287` a 1,5×IBC (C.Co. 884, mercantil) y `04:71` al 6%
+(C.C. 1617, vivienda civil)— y **eso no es un defecto sino una calificación pendiente**; abierto como
+**B-05** en la bóveda y enrutado desde `42-LEGAL` para que no dependa de que alguien abra un backlog de
+78 KB. Verificando la afirmación «5 remisiones heredan la tasa» apareció el matiz que la hace accionable:
+remiten **por nombre de cláusula**, no repitiendo el número, así que la decisión de Daniel se aplicaría en
+**un solo párrafo**. **U-11**: la memoria `sello-marca-altorra` seguía declarando Cardo/Helvetica como
+tipografía de la WEB y el ocre muralla como acento vivo; anotada como SUPERSEDED (sin borrar: el
+razonamiento del logo sigue siendo válido) y re-espejada en la bóveda. Su hermana
+`identidad-marca-inmobiliaria` **no** tenía el defecto: ya traía su bloque de supersede.
+
+**85.6 — Archivos.** Kernel CANÓNICO `brain-private/kernel/brain-check.mjs` + `VERSION` → 1.10.3, y
+`scripts/` + `.kernel-version.json` de **los 4 repos** vía `brain:pull`; `docs/.brain-manifest.json` ×4
+(`harnessCanary`). En inmobiliaria: `docs/50-CONFIG-INFRA.md` · `docs/42-LEGAL.md` · `docs/33-LECCIONES-META.md`
+(M-07 forma 2) · `10` · `00` · `99`. Bóveda: `_notas/BACKLOG-REVISION-KIT.md` (B-05) +
+`memory-mirror/memory/sello-marca-altorra.md`. **INTACTOS**: `CLAUDE.md` (la poda de §84 ya cerró lo suyo)
+· `service-worker.js` · todo el código de producto.
+
+**85.7 — Doctrina.** [[M-06]] (los 3 gates probados encendidos, en 3 escenarios) · [[M-07]] **forma 2**
+(un gate que lee su condición de aplicabilidad DEL PROPIO archivo que vigila falla abierto) · §3.3 (la
+afirmación de «5 remisiones» se comprobó con `grep`, y el matiz apareció ahí) · §G.4 límite de guardián
+(la memoria se ANOTA, no se reescribe). Sin comité ni consejo externo: instrucción de sesión de Daniel de
+no lanzar agentes ni workflows → decisión marcada como **NO revisada por terceros**.
+
+**85.8 — Y el índice se shardó, porque la factura la paga quien la genera.** Añadir §84 y §85 dejó
+`00-INDICE` un 0,4% sobre su cap. Se destilaron ~500c de narrativa de filas viejas (gate #26: *la fila
+enruta, el detalle va al ADR*) y aun así seguía arriba: `00` es un **registro** que crece ~200c por ADR,
+así que raspar solo compra semanas. Se ejecutó el **range-shard** que el kernel ya soportaba y que estaba
+en cola: nace **`docs/00a-INDICE-HISTORICO.md`** con las 20 filas de **§01-§20** —la era del sitio público
+hoy RETIRADO— y el `00` vivo queda en 22.186c/24.000 con una fila-puntero. El descubrimiento es **por
+patrón** (`00[a-z]?-INDICE*.md`), así que los chequeos #3, #5a y #9 siguen leyendo los dos como UN índice:
+verificado, **85 ADRs indexados** y desync limpio tras el corte.
+
+Dos caps se re-DERIVARON en el camino, y conviene decir por qué **no** es subir el techo ([[M-05]]): en
+`33` el eje `lines` (110) asumía 136 c/línea cuando la densidad real medida es 131 —el eje equivocado
+disparaba primero, justo lo que `_caps_que` prohíbe— y en `00a` pasaba lo mismo (40 líneas marcaban
+pre-shard al 90% en un fichero que **por diseño no crece**). En ambos el eje que aprieta de verdad,
+`chars`, quedó **intacto**. Un cap incoherente no protege: entrena a ignorar el aviso.

@@ -39,19 +39,24 @@
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§60)**. Para datos reales: (1) deploy COORDINADO en el cutover (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. Lo demás BLOQUEADO por causas reales (§60.4); insumos legales de la ficha → TODO-33. | 🟢 cutover | §60 |
 | **TODO-33** | 🧾 **FICHA dinámica — 4 decisiones ANTES de construir (§60.3)**: dirección exacta · financiación · asesor · POIs. Regla: **bloque sin dato se OMITE** (jamás heredar el demo). | 🔵 decisión | §60 |
 | **TODO-34** | ⭐ **FUNDACIÓN OPERATIVA (§61-§71)**. Kit 00-22 + membrete (`43`). Póliza ✅ · FE-DIAN ⏸️ · 03/04 blindados (§66) · **14 críticos + 23 altos de B-03 aplicados (§70·§71)**. Restan **85 leves** (⚠️ sin escéptico). Retirados: 13 y 23. | 🟢 leves | §71 · `43` |
-| **TODO-37** | 🔬 **Auditoría #6: 40/44 aplicados** (§83). Restan **4 de severidad BAJA**, con su arreglo ya escrito → bóveda `2026-08-03-verificacion-18-sin-esceptico.md`. Los 18 sin escéptico quedaron verificados (2 refutados, resto degradado a *baja*). Anti-engorde: no se retira ningún gate (§83.8). | 🟡 4 bajas | §83 |
 | **TODO-32** | 🧠 **CEREBRO v2 ×4** (§50-§53; versión del kernel → su stamp, no aquí). **(a) ✅ CERRADO §72**. **(b)**: la **poda del router de inmobiliaria ✅ HECHA (§84)** — boot 31.4k→28.4k (99,8%→90,3%) sin subir el techo, con criterio nuevo [[M-09]]. Restan: (i) llevar M-09 a los 3 hermanos (cars/bersaglio/insema siguen con su doctrina de código en el always-on); (ii) el **banner de costo** (57%) que NO baja podando — solo baja con commits de PRODUCTO. | 🟡 (b) hermanos | §84 |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
+> **▶ 🔒 03-ago (§85): TODO-37 CERRADO · kernel bumpeado y propagado ×4.** Los "4 restantes" eran **6**; dos los cerró
+> §84 de rebote. Lo gordo: el canario #24 **le preguntaba a `settings.json` —el archivo que vigila— si
+> debía vigilarlo** (fallo ABIERTO → `harnessCanary` en el manifest, [[M-07]] forma 2), y sin bóveda
+> clonada **3 gates apagados salían bajo un ✅** (→ `degrade()` + veredicto `🟠`). Probados en 3 escenarios
+> con un repo de prueba. **B-05 nuevo**: la mora del kit va a dos tasas (03 a 1,5×IBC · 04 al 6%) — es
+> **decisión de Daniel**, no defecto, y se aplicaría en UN párrafo.
+>
 > **▶ ✂️ 03-ago (§84): PODA REAL del router.** Boot **31.431c → 28.441c** (99,8% → 90,3%) *sin mover el
 > techo*. Nace **`34-DOCTRINA-CODIGO`** (perf `§3.1` · observadores `§3.5` · stack · CSS legacy salen del
 > always-on: gobiernan un sitio RETIRADO y se cargaban en cada sesión). `§0` deja de duplicar los triggers
 > de `§G.2`; 3 cifras que el router copiaba del manifest, cortadas (una ya estaba stale). Nada borrado: todo
-> movido con puntero, verificado con `grep` antes. Criterio nuevo → [[M-09]]. **`00-INDICE` queda al 99% de
-> su cap** → siguiente GC: range-shard `00a-INDICE` (el kernel ya lo soporta por patrón).
+> movido con puntero, verificado con `grep` antes. Criterio nuevo → [[M-09]]. (El `00` se shardó en §85.8.)
 >
 > **▶ 🔬 02/03-ago (§83): AUDITORÍA Nivel-2 #6 CERRADA** — 109 brutos → 44 vivos, **40 aplicados**. Kernel
 > v1.7.2→**v1.10.2** (7 gates nuevos/corregidos: #24 canario · #25 cableado · #26 fila del índice · #27 rutas
@@ -79,10 +84,11 @@
 > ANTES de auditar; entra al paquete de contexto pero es **gitignored** (cédulas de los 3 socios).
 > ⛔ **Doc 13 RETIRADO** el 31-jul por Daniel; riesgos asumidos, en su banner.
 >
-> **⏭️ LO QUE SIGO YO, EN ORDEN**: ~~(1) poda del router~~ **✅ §84**. **(1) los 85 leves del kit**
-> (TODO-34) — el bloque grande que queda del frente vivo. **(2)** los 4 restos *bajos* de TODO-37, con su
-> arreglo ya escrito en la bóveda (`2026-08-03-verificacion-18-sin-esceptico.md`). **(3)** llevar [[M-09]] a
-> los 3 hermanos (TODO-32b). Backlog B-01..B-04 en la bóveda.
+> **⏭️ LO QUE SIGO YO, EN ORDEN**: ~~poda del router~~ **✅ §84** · ~~restos de TODO-37~~ **✅ §85**.
+> **(1) los 85 leves del kit** (TODO-34) — el bloque grande que queda del frente vivo; ⚠️ *sin escéptico*,
+> así que NO se aplican en lote (error del §70.6). **(2)** llevar [[M-09]] a los 3 hermanos (TODO-32b):
+> siguen con su doctrina de código en el always-on. **(3)** el kit legal restante.
+> Backlog **B-01..B-05** en la bóveda (B-05 nuevo, mora del kit).
 >
 > ⚠️ **Ni los Word ni el manual maestro se editan a mano**: se GENERAN (`generar-documentos.ps1` ·
 > `ensamblar-manual.ps1`, §68). Editar el maestro directo fue lo que duplicó y desincronizó el capítulo 2.

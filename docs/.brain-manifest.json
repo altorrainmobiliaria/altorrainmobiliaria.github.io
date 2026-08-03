@@ -29,6 +29,11 @@
       "lines": 180,
       "chars": 40000
     },
+    "docs/00a-INDICE-HISTORICO.md": {
+      "lines": 49,
+      "chars": 4000,
+      "_comment": "Shard de RANGO del indice (ADR 85): §01-§20, la era del sitio viejo RETIRADO. El kernel descubre las hermanas por patron 00[a-z]?-INDICE*.md y las lee como UNA, asi que mover filas aqui no rompe #3/#5a/#9. Cap MEDIDO sobre el real (2950c / 36L): chars = real+35%; lines = 4000/82 (densidad real 82 c/linea) = 49, NO 36*1.1 — con 40 el eje lines marcaba pre-shard al 90% en un fichero que por diseno NO crece (_caps_que: los dos ejes deben apretar en el mismo punto). Este shard es CERRADO por diseno: no crece (nadie escribe ADRs nuevos del sitio retirado). Si el 00 vivo vuelve a apretar, el siguiente rango es 00b, NO subir este techo."
+    },
     "docs/00-INDICE.md": {
       "lines": 160,
       "chars": 24000,
@@ -76,14 +81,16 @@
       "_comment": "Nacio el 2026-08-03 en la poda del router (ADR 84): absorbe CLAUDE.md 3.1 (performance), 3.5 (observadores) y el stack/CSS del legacy, que se auto-cargaban en CADA sesion aunque casi nunca se tocara codigo. Cap MEDIDO sobre el real (3353c / 53L) + 35%, con lines derivado de la densidad real (~63 c/linea) para que ambos ejes aprieten en el mismo punto (regla de _caps_que). Si crece mas alla de esto, shard por mundo (legacy / portal) en vez de subir el techo."
     },
     "docs/33-LECCIONES-META.md": {
-      "lines": 110,
+      "lines": 114,
       "chars": 15000,
-      "_comment": "Re-medido el 2026-08-02 (ADR 83) al entrar M-08. Razon M-05-valida: este shard es un REGISTRO que crece ~1.2k por leccion meta; su tamano lo fija cuantas veces el cerebro fallo, no una decision editorial. Cap MEDIDO sobre el real + 30% (74.3), no a ojo. Si crece mas alla de ~15 lecciones, shard por familia (gates / ledger / proceso)."
+      "_comment": "Re-medido el 2026-08-02 (ADR 83) al entrar M-08. Razon M-05-valida: este shard es un REGISTRO que crece ~1.2k por leccion meta; su tamano lo fija cuantas veces el cerebro fallo, no una decision editorial. Cap MEDIDO sobre el real + 30% (74.3), no a ojo. Si crece mas alla de ~15 lecciones, shard por familia (gates / ledger / proceso). | 2026-08-03 (ADR 85): el eje lines se re-DERIVO 110->114. NO es subir un techo (M-05): chars sigue en 15000 y es el que aprieta (98%); 110 lineas asumia 136 c/linea y la densidad REAL medida es 131, asi que el eje equivocado disparaba primero — justo lo que _caps_que prohibe. 15000/131 = 114."
     }
   },
   "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",
   "specsDir": "specs",
   "staleDays": 10,
+  "harnessCanary": true,
+  "_harnessCanary_que": "v1.10.3 (#24, inmobiliaria ADR 85 U-13): declara que ESTE repo debe tener el hook SessionStart (session-handoff) cableado en .claude/settings.json. Antes el gate se lo preguntaba al propio archivo vigilado, asi que borrar el hook lo apagaba en silencio (fallo ABIERTO). Verificado 2026-08-03: los 4 repos lo tienen cableado. Un repo nuevo del brain-kit pone false CON su razon.",
   "kernelFiles": [
     "scripts/brain-check.mjs",
     "scripts/brain-diff.mjs",

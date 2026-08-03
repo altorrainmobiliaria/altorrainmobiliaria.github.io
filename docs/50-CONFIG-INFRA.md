@@ -59,12 +59,12 @@ Siguen vivas sin sitio que las use (modo obra) — su apagado/mantenimiento se d
 | `794130975989-compute@developer.gserviceaccount.com` | Cloud Run Invoker |
 APIs requeridas: cloudbuild · eventarc · run · pubsub (`.googleapis.com`). Opción A: esperar 10 min y reintentar.
 
-## Comandos de deploy (PowerShell — los corre el dueño)
+## Comandos de deploy (PowerShell — los corre CLAUDE, ver §Deploy de Firebase)
 ```powershell
 # Functions (2nd gen)
 cd functions; npm install; cd ..
 firebase deploy --only functions --account altorrainmobiliaria@gmail.com
-firebase functions:list --account altorrainmobiliaria@gmail.com   # debe mostrar ~8
+firebase functions:list --account altorrainmobiliaria@gmail.com   # debe mostrar 7 (§Cloud Functions)
 # Reglas (MANUAL, no automático)
 firebase deploy --only firestore:rules --account altorrainmobiliaria@gmail.com
 # Subir propiedades / migrar imágenes (requieren el SA JSON, ver §Secretos)
