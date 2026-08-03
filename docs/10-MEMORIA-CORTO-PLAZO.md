@@ -46,7 +46,7 @@
 
 ## 📝 Bitácora (efímera)
 
-> **▶ 🔬 02-ago (§83): AUDITORÍA Nivel-2 #6 — 109 brutos → 44 vivos** (47 refutados). Kernel **v1.9.0**:
+> **▶ 🔬 02-ago (§83): AUDITORÍA Nivel-2 #6 — 109 brutos → 44 vivos** (47 refutados). En el kernel:
 > #9 era ciego a la fila ✅ sin ADR · borrar una clave del manifest apagaba gates · el boot mentía con
 > "cache verificada" · nace #26. Tabla → bóveda. **v1.9.1**: el #7 no veía las carpetas de deliberación —
 > la más cara llevaba meses sin fila. El workflow no murió: se **colgó** 37 h con el panel en verde → [[M-08]].
