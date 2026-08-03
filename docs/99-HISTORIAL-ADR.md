@@ -1930,6 +1930,32 @@ línea sin el contexto que lo establecía dos líneas antes. **De 137 ruidos a 6
 es la misma que el kit enseñó en [[LD-07]]: un gate que cruza documentos necesita las excepciones que solo
 aparecen corriéndolo sobre el corpus — la mención que **niega** y la referencia a lo **externo**.
 
+**83.10 — Los 18 SIN escéptico, verificados (lotes 6-7).** La #5 dejó una regla dura: *sin verificar* ≠
+*confirmados*, y aplicarlos en lote es el error del §70.6. Se verificaron los 18: **5 ya estaban cerrados**
+por los lotes 1-5, **13 fueron a un escéptico dedicado** (11 devolvieron veredicto; 2 se colgaron y los
+verifiqué yo). Resultado: **2 REFUTADOS** y el resto **degradado casi en bloque a severidad baja** — el
+filtro adversarial rebajó U-02 de alta a baja y U-07 de alta a media al comprobar el impacto real.
+
+Lo aplicado de ahí: el `ssotFact` de la versión del kernel **nació ciego a las negritas** (``kernel
+**v1.7.2**`` no matcheaba, y el `05` de bersaglio llevaba ese dato stale sin que el gate lo viera) — es
+literalmente el corolario de [[LD-07]] que yo mismo había escrito **24 h antes**: *quita el markdown antes
+de comparar prosa*. Una lección escrita no protege sola; protege cuando el siguiente gate la aplica.
+Además: `lastOffsiteBackup` faltaba en dos manifests y su banner le decía al dueño «copia de seguridad
+externa: NUNCA hecha» cuando los bundles del 23-jul **sí** los incluían (verificado en OneDrive); el `05` de
+bersaglio copiaba su propio tope del manifest; el índice anunciaba `LD-01..LD-05` con siete lecciones ya
+escritas (sustituido por `familia LD-NN`, que no envejece); el `50-CONFIG-INFRA` **se contradecía a sí mismo**
+sobre quién despliega Firebase —su cabecera decía DUEÑO y su §38 decía CLAUDE desde el 2026-07-11—; el `05`
+presentaba el kit como 24 documentos vivos cuando **2 están retirados y solo 22 se firman**; y la memoria
+del harness declaraba el stack como «**candidato** a sellar: Cloudflare **Pages**» cuando está SELLADO desde
+el 2026-07-10 y lo sellado fue **Workers** (§16) — una línea que se auto-carga en CADA sesión.
+
+**Y el canario de boot se recalibró (v1.10.1).** Comparaba el marker contra el reloj, así que un repo en
+PAUSA lo incumplía siempre: insema gritaba «hooks muertos» en cada corrida. Ahora compara contra la
+**actividad real de git** (`.git/logs/HEAD` vía fs) con umbral **crónico** (168 h): los hermanos se mantienen
+a ráfagas desde la sesión de otro —ahí el pre-commit sí corre; lo que no dispara es el SessionStart, que no
+existe— y eso no es una avería. Un guardián que ladra a un repo dormido enseña a ignorarlo, y entonces
+calla el día que importa.
+
 **83.7 — Doctrina.** [[M-06]] (verlo disparar: las 5 correcciones se probaron encendiéndolas) · [[M-08]]
 (nueva) · [[M-05]] (el cap se re-mide con razón, no se sube para caber) · §3.3 · skill `auditoria-cerebro`.
 Deliberación: 166 agentes, crudos en el journal del workflow; síntesis reconstruida a mano (§83.1).

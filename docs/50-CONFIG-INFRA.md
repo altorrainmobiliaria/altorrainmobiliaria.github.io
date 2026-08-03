@@ -1,7 +1,7 @@
 # 🔐 50 — CONFIG / INFRA (Altorra Inmobiliaria)
 
 > Identificadores de infraestructura y deploy. **Deploy WEB (GH Pages) = Claude** (delegación 2026-07-10,
-> ADR §15.7); **deploy FIREBASE (functions/rules) = DUEÑO**.
+> ADR §15.7); **deploy FIREBASE (functions/rules) = CLAUDE** desde el 2026-07-11 (§Deploy de Firebase).
 > 🔒 **Regla de oro (plan v5 Q7)**: los identificadores PÚBLICOS (Project ID, cuentas, roles IAM, comandos) van
 > aquí committeados — son identidades/config, NO secretos. Los valores SECRETOS (claves, SA JSON) **NUNCA** se
 > escriben aquí: solo se nombra su ubicación (gitignored / fuera del repo). Destilado de `_legacy/DEPLOY-RUNBOOK.md`.
