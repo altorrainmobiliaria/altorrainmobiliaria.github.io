@@ -2135,3 +2135,61 @@ Dos caps se re-DERIVARON en el camino, y conviene decir por qué **no** es subir
 disparaba primero, justo lo que `_caps_que` prohíbe— y en `00a` pasaba lo mismo (40 líneas marcaban
 pre-shard al 90% en un fichero que **por diseño no crece**). En ambos el eje que aprieta de verdad,
 `chars`, quedó **intacto**. Un cap incoherente no protege: entrena a ignorar el aviso.
+
+---
+
+## 86. ADR — Los "85 leves" del kit eran 92, y el primer lote ya trajo un remedio que apuntaba al documento equivocado ⟦OPUS-5⟧ (2026-08-03)
+
+> Arranque de TODO-34 por su bloque grande: los hallazgos **medios y bajos** de la auditoría B-03,
+> los únicos que **no pasaron por escéptico** (por diseño de la corrida: solo se refutaron críticos
+> y altos). La regla de §83.10 manda tratarlos como *sin verificar*, no como confirmados.
+
+**86.1 — La cifra estaba mal, y el error tenía forma.** `05` y `10` decían **85**. El JSON de la
+corrida dice `vivos = 134` = 14 críticos + 28 altos + **67 medios + 25 bajos = 92**. El "85" salía
+de descontar los 7 del grupo `00-23-retirados`… sin ver que **el doc 13 también está retirado**
+(otros 7). Y el descuento era doblemente malo: ese grupo **no es homogéneo** — mezcla hallazgos del
+doc 23 (retirado) con otros de `00-LEEME` y `15-MANUAL`, que están **VIVOS**. Descartar el grupo
+entero por su nombre habría enterrado defectos de documentos en uso. Es la misma clase de error que
+§85 encontró en el conteo de TODO-37 ("4 restantes" que eran 6): **un agregado que nadie volvió a
+derivar de su fuente**.
+
+**86.2 — Triage mecánico antes de leer 92 hallazgos.** Buscando en el documento de HOY los
+fragmentos entrecomillados de cada hallazgo: **36 «el texto sigue ahí» · 27 «ya no está» · 29 sin
+pista utilizable**. No es un veredicto —es una heurística de orden— pero dice dónde empezar y
+sugiere que ~1 de cada 3 ya lo cerraron los lotes de críticos y altos.
+
+**86.3 — Lote 1: 7 aplicados, 1 refutado.** En `16-FORMATO-LIQUIDACION-MENSUAL`: `B7` descontaba
+retenciones **sin concepto, base ni tarifa** y remitía a un anexo que no estaba en la lista de
+soportes (desglosado, + el soporte que alimenta la **certificación anual de la cláusula octava**);
+`B6` imprimía la referencia interna **«doc 05 §5»** en el papel del cliente, con un nombre
+—"recobros a favor de ALTORRA"— que chocaba con el renglón `A3` de ingresos; y dos cargos distintos
+aprobaban el mismo acto (*"la aprueba el gerente"* vs *"Representante legal"*) sin el plazo que el
+contrato sí fija. En `21-PQRS`: el documento invocaba *"el horario oficial"* **sin tener ni una
+regla de franja horaria** —el único del kit sin ella— y su plazo de 24 h del acuse autorizaba, tal
+como estaba escrito, escribirle a un cliente de madrugada; las Plantillas 4.A/4.B le prometían al
+titular la leyenda *"reclamo en trámite"* y el aviso de prórroga que **el registro no programaba ni
+podía evidenciar**; y faltaba el guardarraíl de la figura de firma frente al ARRENDATARIO.
+
+**86.4 — Lo que hizo falta verificar, y por qué.** [[LD-01]] dice que el remedio puede romper lo que
+el defecto no rompía, así que **ninguna cita del auditor se copió**: la cláusula séptima num. 5 y su
+PARÁGRAFO 2, la octava num. 3, y el *"dentro de los cinco (5) primeros días hábiles"* de la quinta
+PARÁGRAFO 3 se leyeron **literalmente en el contrato** antes de escribirlas. Las tres eran exactas.
+La cuarta **no**: el hallazgo afirmaba que el mismo blanco de URL existía *"en la cláusula vigésima
+del doc 03"* y ahí **no existe** — un `grep` sobre el kit lo situó en los docs **16, 17 y 18**. O
+sea: el remedio, aplicado tal como venía, habría editado una cláusula sana **y dejado intactos dos
+documentos que sí tenían el defecto**. El hallazgo era real y su alcance estaba mal medido en los
+dos sentidos a la vez.
+
+**86.5 — La URL no se inventó.** La ruta `/legal/politica-tratamiento-datos` está **decidida** (`10`,
+pelota #2 de Daniel); lo pendiente es publicarla, que es despliegue, no decisión. Dejar el blanco
+significaba imprimirlo **todos los meses**; escribir la ruta decidida es lo coherente con §71.3.
+
+**86.6 — Verificación.** `generar-documentos.ps1 -SoloGates`: **verde antes y después** (los 6 gates
+cruzados de §82, incluida la coherencia "todas las remisiones a la Política dicen V2"). El trabajo
+queda **reanudable**: ledger en la bóveda con la cifra real, el triage, el método que funcionó y el
+orden de los lotes siguientes (`2026-08-03-leves-b03-LEDGER.md`, indexado en el README).
+
+**86.7 — Doctrina.** [[LD-01]] (el remedio se verifica, no se copia) · §3.3 (las 4 citas se leyeron
+en la fuente; una cayó) · §83.10 (*sin verificar* ≠ *confirmado*: 92 uno por uno, jamás en lote) ·
+§G.4 captura (ledger reanudable antes de cerrar). Sin comité ni consejo externo: instrucción de
+sesión de no lanzar agentes ni workflows → **NO revisado por terceros**.
