@@ -134,6 +134,26 @@ Cuando el portal maneje plata: (1) skill global `auditoria-financiera` (7 invari
 
 ---
 
+
+### L-37 — 🎨 Los enlaces de Claude Design CADUCAN al re-guardar: el mockup se trae por MCP, no por URL *(2026-08-19, ADR §89)*
+
+**Disparador**: Daniel comparte el enlace de una pantalla recién diseñada («el enlace caduca en 10 min») y
+al abrirlo responde **`file not found`** — por `curl` y por navegador con sesión, o sea no es permisos.
+
+**Causa**: la URL apunta a un **bundle** (`/serve/.bundles/<uuid>.html`) y Claude Design **genera un uuid
+nuevo en cada guardado**. El enlace no expira por tiempo: muere en cuanto el diseño se vuelve a guardar,
+aunque hayan pasado segundos. Perseguir un enlace nuevo es una carrera que se pierde sola.
+
+**Receta**: traerlo por el **MCP de Claude Design** (herramienta `DesignSync`), que direcciona por
+`projectId` y no depende del bundle:
+1. `list_files` con el `projectId` (sale de la URL `claude.ai/design/p/<projectId>`) → los paths reales.
+2. `get_file` con el path del `.dc.html` → el contenido íntegro.
+3. Guardarlo en `portal/design/mockups/ALTORRA <Pantalla>.dc.html`, que es donde viven los demás y donde
+   `20 §Portal` los declara como SSoT visual.
+
+**Corolario**: el mockup **se archiva en el repo**, no se consume desde un enlace. Un diseño que solo
+existe en una URL no es fuente de verdad de nada — la siguiente sesión no lo alcanza.
+
 ## §Meta — meta-aprendizajes del propio cerebro
 > Se llena cuando el cerebro contribuye a un error — Reflejo de Autocrítica §G.4.
 
