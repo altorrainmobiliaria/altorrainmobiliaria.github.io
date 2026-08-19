@@ -2259,3 +2259,78 @@ doblemente porque el frente que arranca ahora se construye sobre ese staging.
 vez contra mí) · §3.3 (todo verificado contra el texto de hoy: 4 hallazgos murieron ahí) · §83.10 (*sin
 verificar* ≠ *confirmado*) · §G.4 (ledger reanudable + `05` re-sellado antes de pausar). Sin comité ni
 consejo externo: instrucción de sesión de no lanzar agentes ni workflows → **NO revisado por terceros**.
+
+---
+
+## 88. ADR — El formulario de captación deja de perder los leads (y al probarlo, el correo de avisos lleva roto quién sabe cuánto) ⟦OPUS-5⟧ (2026-08-19)
+
+> Arranque del frente PÁGINA tras congelar cerebro y kit. Primera pieza: que el portal **capture** de
+> verdad. Hasta hoy `/publicar` era una demo bonita — el propietario llenaba "Solicita tu avalúo gratis",
+> veía *"¡Solicitud recibida!"* y **el lead se evaporaba**: el código tenía un `TODO: POST real`.
+
+**88.1 — Por qué se pudo hacer HOY y no en el cutover.** El instinto decía "esto va bloqueado como el
+catálogo". No: §60.4 bloquea la ficha, el botón Republicar y la purga, no los formularios. Lo que
+decide es si las reglas permiten crear. Se consultaron las **reglas VIVAS de producción** (no el archivo
+del repo, que TODO-17 dice que tiene cambios sin desplegar): `solicitudes` → **`allow create: if true`**.
+Y `onNewSolicitud` ya está **desplegada** esperando esos documentos. O sea: cero deploys, cero secretos,
+cero cutover. La distinción archivo-del-repo vs reglas-vivas es la que evitó parar sin motivo.
+
+**88.2 — Endpoint, no SDK en el navegador.** Se añadió `src/pages/api/solicitud.ts` en vez de meter el
+SDK modular de Firestore en el cliente. Tres razones: **(a)** cero peso extra —el SDK son ~100 KB en una
+página de captación, justo donde el LCP paga—; **(b)** la validación vive en el servidor, donde no se
+salta desde la consola; **(c)** el formulario **funciona sin JavaScript**: el `<form>` lleva
+`method="post" action="/api/solicitud"` y el endpoint responde 303 a `/publicar?ok=1` (POST-Redirect-GET,
+así un F5 no reenvía el lead). Con JS, la isla hace `fetch` y pinta el mismo estado de éxito sin recargar.
+La capa `firestore-rest.ts` **nació read-only**; gana `encodeValue` + `createDoc` de forma **aditiva**,
+con su mismo contrato: edge-safe, sin SDK, y **no lanza nunca**.
+
+**88.3 — Tres detalles que habrían roto el lead en silencio.** (1) El `<select name="tipo">` del
+formulario es el tipo de **INMUEBLE**, y el campo `tipo` del documento es el tipo de **LEAD** (taxonomía
+de `calculateLeadScore`). Escribir `tipo: 'Apartamento'` no habría fallado: habría dado 5 puntos en vez
+de 15 y un asunto de correo equivocado, para siempre y sin error visible. Va como
+`tipo: 'solicitud_avaluo'` y el inmueble en `datosExtra.tipoInmueble`. (2) El correo al admin renderiza
+literalmente «*{tipoInmueble} en {ciudad}*», así que `datosExtra.ciudad` lleva la zona
+(«Bocagrande, Cartagena»): sin eso el lead le llega a Daniel sin saber de qué barrio es. (3) Las
+allow-lists de zona y tipo se copiaron del `<select>` **real**; las que había escrito de memoria tenían
+"Centro" y "Getsemaní" donde el formulario dice "Centro Histórico", y habrían descartado zonas válidas.
+
+**88.4 — Verificación END-TO-END contra Firestore real (no contra el diff).** Validación: nombre vacío
+**422** · teléfono basura **422** · URL en el nombre **422** (anti-bot) · cuerpo >4 KB **413**. Camino
+feliz: **200**, y el documento aterrizó con la forma exacta —`createdAt` es un **Timestamp real**, no una
+cadena; `precioAproximado: null` sobrevivió sin corromperse— y `onNewSolicitud` **disparó 2 segundos
+después** (log de Cloud Logging). El lead de prueba quedó borrado. En el navegador: con campos vacíos
+muestra el error, **no toca la red** y no pinta éxito; consola limpia. `astro check` 0 errores ·
+**vitest 53/53** (11 nuevos sobre `encodeValue`/`createDoc`, incluido el ida-y-vuelta con `decodeValue`
+y el 403 de las Rules) · build OK.
+
+**88.5 — Lo que apareció al probar, y que no es mío: el aviso de leads está ROTO en producción.**
+`onNewSolicitud` disparó y falló al enviar: `Invalid login: 535-5.7.8 Username and Password not accepted`.
+Las credenciales de Gmail (`EMAIL_USER`/`EMAIL_PASS`) no sirven. **Consecuencia: hoy, cualquier lead que
+entre por el sitio viejo tampoco le avisa a nadie** — llega a Firestore y ahí se queda. Además el
+documento quedó **sin `leadScore`, sin `leadTier` y sin `nurturing`**, aunque el código del repo los
+escribe ANTES del envío: eso apunta a que la versión desplegada no es la del repo (`05` ya declara
+9 en código / 7 desplegadas), pero **no está verificado** y se deja dicho como hipótesis, no como hecho.
+→ Sube a `10` como pendiente de dueño (rotar la contraseña de aplicación) + revisar el deploy de la Function.
+
+**88.6 — L-33 volvió a cobrar, y el cerebro ya la tenía escrita.** La primera versión leía
+`locals.runtime.env` para la config; Astro v6 lo removió y el camino feliz devolvió **500**. La lección
+estaba en `30 L-33` desde TODO-30 — la escribí yo. El trigger 🖥️ me llevó a `34-DOCTRINA-CODIGO` (que
+leí), pero el gotcha vive en `30`, y a `30` solo se va cuando *el síntoma suena*: aquí el síntoma llegó
+después del error. El arreglo es además más simple que el original: `getPublicFirebaseConfig()` sin
+argumentos, igual que hace `middleware.ts` con el cliente de lectura.
+
+**88.7 — No-regresión.** `firestore-rest.ts` y `client.ts` solo GANAN exports (ninguna firma existente
+cambió; los 42 tests previos siguen verdes). `publicar.astro` conserva su markup fiel al mockup —no se
+añadió ni un campo, aunque el scoring premia el correo con 10 puntos (§88.8)—. Ninguna otra colección se
+toca: el endpoint escribe **solo** `solicitudes`. Frescura: `20 §Portal` documenta la ruta nueva en el
+mismo cambio (§G.4).
+
+**88.8 — Hallazgo para decidir, no para arreglar solo.** El mockup de `/publicar` pide 4 campos y **no
+incluye correo**. Sin correo, un lead legítimo de propietario puntúa ~35 y le llega a Daniel etiquetado
+**`[COLD]`**, que es una señal falsa. Son dos caminos y ninguno lo decide el implementador: añadir el
+campo al mockup, o re-pesar el scoring. Queda anotado en `10`.
+
+**88.9 — Doctrina.** §3.3 (reglas VIVAS, no el archivo; allow-lists del `<select>` real, no de memoria) ·
+§G.4 caza-bugs (el camino END-TO-END destapó el correo roto, que el diff jamás habría mostrado) ·
+[[L-33]] (reincidente) · §G.4 Frescura (`20` en el mismo cambio) · callejón (b) *nunca UI sin mockup*
+(por eso `/ingresar` y `/favoritos` NO se construyeron: no existe mockup de ninguna).

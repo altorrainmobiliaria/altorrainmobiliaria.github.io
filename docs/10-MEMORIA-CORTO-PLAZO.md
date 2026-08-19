@@ -45,15 +45,9 @@
 
 ## 📝 Bitácora (efímera)
 
-> **▶ ⏸️ 19-ago (§87): lotes 2-3 de los leves (28/92) y PAUSA DEL CEREBRO.** El grupo "retirados" NO era
-> moot: 5 de 7 eran de documentos VIVOS, y en el doc 13 la **no-competencia faltaba en su lista de riesgos
-> asumidos** (añadida — la decisión de retirarlo no se toca, ahora está informada). En los documentos de
-> FIRMA, **7/7 vivos**: la **retención en la fuente se repartía por mitades** como si fuera costa de
-> escritura (la soporta el VENDEDOR) y no había salida para el negocio que muere ya celebrado → nace la
-> **FASE G**. 2º remedio dañino refutado. `05` re-verificado EN VIVO (sitio 200 + sentinela · portal 200 +
-> noindex) y re-sellado.
->
-> **▶ 01/03-ago — CONSOLIDADO, el relato vive en sus ADRs**: §81/§82 (candado de boot al kernel · 6 gates
+> **▶ 01/03-ago + 19-ago — CONSOLIDADO, el relato vive en sus ADRs**: **§87** lotes 2-3 de los leves
+> (28/92; el grupo "retirados" no era moot y los documentos de FIRMA salieron 7/7 vivos, con la retención
+> repartida por mitades) ·: §81/§82 (candado de boot al kernel · 6 gates
 > del kit) · **§83** auditoría Nivel-2 #6 · **§84** poda del router ([[M-09]]) · **§85** TODO-37 cerrado y
 > kernel ×4 ([[M-07]] forma 2) + **B-05** (la mora del kit a dos tasas: decisión de Daniel, un párrafo).
 >
@@ -76,9 +70,23 @@
 > ANTES de auditar; entra al paquete de contexto pero es **gitignored** (cédulas de los 3 socios).
 > ⛔ **Doc 13 RETIRADO** el 31-jul por Daniel; riesgos asumidos, en su banner.
 >
+> **▶ 🏗️ 19-ago (§88): el formulario de captación ya NO pierde los leads.** `/publicar` era demo. Ahora
+> `/api/solicitud` → `solicitudes` con el contrato del legacy, **y funciona sin JavaScript**. Se pudo hoy
+> porque las reglas VIVAS ya traen `allow create: if true` (consultadas, no leídas del repo). Verificado
+> end-to-end contra Firestore real y desplegado en staging. [[L-33]] volvió a cobrar (`locals.runtime.env`).
+>
+> **🔴 DESTAPADO AL PROBAR — el aviso de leads está ROTO en producción**: `onNewSolicitud` dispara y falla
+> con `535-5.7.8 Username and Password not accepted`. **Hoy ningún lead le avisa a nadie, tampoco los del
+> sitio viejo.** Además el documento queda sin `leadScore`/`nurturing`, lo que sugiere —sin verificar— que
+> la Function desplegada no es la del repo. → **pelota de Daniel**: rotar la contraseña de aplicación.
+>
 > **⏭️ 🏗️ FRENTE ACTIVO DESDE EL 19-AGO: CONSTRUIR LA PÁGINA.** Daniel congela cerebro y kit —el 73% del
 > trabajo del mes era mantenimiento y la web no avanzaba— y el esfuerzo se vuelca al portal. **Opus 5 para
 > TODO** (fase de implementación), esfuerzo Max, sin ultracode.
+> **Siguiente en la página**: `/ingresar` y `/favoritos` están enlazadas en el header y dan **404** — son
+> las 2 pantallas del mockup que nunca se construyeron, y **no tienen mockup propio**, así que necesitan el
+> tuyo antes (callejón b). Decisión abierta: el form de `/publicar` **no pide correo** (fiel al mockup) y
+> eso hace que un propietario real llegue etiquetado `[COLD]` — o se añade el campo, o se re-pesa el scoring.
 > **En pausa, reanudables y sin bloquear nada**: los 64 leves restantes del kit (ledger en bóveda) ·
 > [[M-09]] a los 3 hermanos (TODO-32b) · Backlog **B-01..B-05** en la bóveda.
 >
