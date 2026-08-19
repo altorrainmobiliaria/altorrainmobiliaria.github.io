@@ -2334,3 +2334,83 @@ campo al mockup, o re-pesar el scoring. Queda anotado en `10`.
 §G.4 caza-bugs (el camino END-TO-END destapó el correo roto, que el diff jamás habría mostrado) ·
 [[L-33]] (reincidente) · §G.4 Frescura (`20` en el mismo cambio) · callejón (b) *nunca UI sin mockup*
 (por eso `/ingresar` y `/favoritos` NO se construyeron: no existe mockup de ninguna).
+
+---
+
+## 89. ADR — `/ingresar` y `/favoritos`: las dos pantallas que el header llevaba enlazando a un 404 desde el primer día ⟦OPUS-5⟧ (2026-08-19)
+
+> El `Header.astro` es fiel al mockup y siempre trajo *Favoritos* e *Ingresar*. Sus páginas nunca se
+> construyeron: eran las 2 de las 8 pantallas que faltaban, y **no tenían mockup propio**, así que el
+> callejón (b) —*nunca UI sin mockup*— las mantuvo cerradas. Daniel generó el mockup hoy; se importó con
+> el **MCP de Claude Design** y quedó guardado como los otros ocho.
+
+**89.0 — Nota de método sobre el mockup.** El primer enlace que llegó devolvía `file not found`: Claude
+Design **cambia el id del bundle en cada guardado**, así que un enlace compartido muere en cuanto se
+vuelve a guardar. El MCP (`list_files` + `get_file` sobre el `projectId`) lo trae sin caducidad y sin
+depender de que el enlace siga vivo. Queda como la vía por defecto.
+
+**89.1 — La decisión que ordena todo lo demás: los favoritos NO van detrás del login.** Viven en
+`localStorage`. No es una simplificación: **es lo que dice el propio mockup** —*«Ingresar para
+sincronizarlos»*, *«Tus favoritos se sincronizan en todos tus dispositivos»*—. El acceso es para
+**sincronizar**, no la puerta de entrada. Un corazón que exige crear cuenta es un corazón que nadie
+toca, y en un portal inmobiliario esa fricción se paga en captación. Consecuencia: **funciona hoy para
+el 100% de los visitantes**, sin auth, sin cuentas, sin cutover.
+
+**89.2 — La instantánea, en vez de una consulta.** Al dar corazón se guarda una **foto de la card leída
+del DOM** (imagen, badge, zona, título, precio, specs, enlace). Dos ventajas: `/favoritos` se pinta sin
+tocar la red, y sirve igual con el catálogo en `demo` o en `live` — no hay que esperar al cutover. La
+contrapartida se asume y se escribe: si el inmueble cambia de precio, la tarjeta guardada envejece hasta
+que se vuelva a visitar; se refrescará contra `/api/catalogo` cuando el catálogo pase a vivo (TODO-22).
+Se lee del DOM **en el momento del clic** en vez de imprimir un `data-` en cada card: serían ~300 bytes
+de más **por card** en todos los listados del sitio, pagados por todos para que unos pocos guarden.
+
+**89.3 — Las cards se CLONAN, no se re-escriben.** `/favoritos` construye cada tarjeta clonando el
+`<template id="tpl-pcard">` que contiene el `PropertyCard` real y rellenándolo con `textContent` — el
+mismo patrón de la isla del SERP (§59). Así el markup de la card tiene **un solo dueño** y no puede
+divergir (L-29), y no entra `innerHTML` en el portal. El primer borrador sí lo usaba: lo frenó el hook
+de seguridad del harness, y al buscar la alternativa apareció que el patrón correcto **ya existía en la
+casa**. Fue una corrección afortunada — el resultado es mejor código, no solo más seguro.
+
+**89.4 — El corazón se cablea una vez, en el layout.** `BaseLayout` llama a `cablearCorazones()`, que
+toma **toda `.alt-pcard`** de la página y sincroniza su estado con lo guardado. Va ahí y no en cada
+página porque las cards salen en home, SERP, ficha y turismo: repetir el import página por página es la
+vía segura a que una se quede sin él. Es idempotente, así que la isla del SERP puede re-cablear las
+cards que inyecta.
+
+**89.5 — Dos defectos cazados mirando la pantalla, no el diff.** (1) Las specs se guardaban como
+`["4","3","210 m²"]`, **sin decir cuál era cuál**: el molde re-pinta los íconos en orden fijo, así que
+una card sin baños —un lote— habría puesto el ícono de cama junto a los metros cuadrados. `PropertyCard`
+ahora etiqueta cada span con `data-spec` (bed/bath/area) y la instantánea guarda el **tipo** junto al
+valor. (2) Usé `.alt-field` para los campos de `/ingresar` creyendo que era la pila etiqueta+campo, y
+esa primitiva es un contenedor **horizontal** (ícono + input): la etiqueta salía **al lado** del campo.
+Se vio en la captura y se corrigió al patrón real del portal (`publicar.astro`). Ninguno de los dos
+aparece en un `astro check` verde.
+
+**89.6 — Lo que NO se abrió, y por qué no es deuda técnica.** **Crear cuenta** no funciona: captar los
+datos de una cuenta nueva exige la **Política de Tratamiento de Datos PUBLICADA** (Ley 1581 art. 9, gate
+de `42-LEGAL`: *«Política + Aviso + checkbox con prueba»*), y sigue sin publicarse — es la pelota #2 de
+Daniel. Además, la línea legal que trae el mockup (*«Al continuar aceptas…»*) es **consentimiento
+tácito**, que no satisface ese gate para una captura de datos. El botón dice la verdad —*las cuentas
+abren muy pronto, y mientras tanto no las necesitas*— en vez de ofrecer un formulario que hoy no debería
+existir. **Ingresar** sí funciona: el proveedor de correo/contraseña está **verificado activo** (lo usa
+el admin); el de Google no tiene evidencia de estarlo, así que su `auth/operation-not-allowed` se traduce
+a un mensaje humano en vez de reventar con un código.
+
+**89.7 — Verificación (las dos fronteras del estado-cero, §G.4).** Guardar el primero desde `/comprar`
+→ aparece en `/favoritos` con foto, badge, zona, specis correctas y corazón lleno. Quitar hasta el
+último → el contador pasa a *«Nada guardado todavía»*, la lista se oculta y entra el estado vacío, con
+el singular/plural bien resuelto en el paso intermedio. En `/ingresar`: el ojo alterna, el envío vacío
+avisa sin ir a la red, «olvidé mi contraseña» sin correo pide el correo. `astro check` **0 errores** ·
+**vitest 53/53** · build OK · consola limpia.
+
+**89.8 — No-regresión.** `PropertyCard` solo GANA atributos (`data-spec`); ninguna firma cambió y las 4
+páginas que la usan siguen idénticas. `BaseLayout` gana un script que degrada solo si `localStorage` no
+está disponible (Safari privado, cuota llena) — los favoritos son una comodidad y **jamás** deben romper
+la página que los muestra. `firebase` pasa de `devDependencies` a `dependencies`: viaja al bundle del
+cliente y no puede depender de que el CI instale las de desarrollo (hoy `npm ci` las instala, pero un
+`--omit=dev` futuro rompería el deploy sin decir por qué).
+
+**89.9 — Doctrina.** Callejón (b) *nunca UI sin mockup* (respetado: se esperó al mockup) · L-29 (un dueño
+por markup) · §G.4 caza-bugs (los 2 defectos salieron del navegador, no del diff) · §G.4 Frescura (`20`
+en el mismo cambio) · gate legal de `42-LEGAL` por encima de la fidelidad al mockup · §3.3 (proveedores
+de acceso verificados contra Firebase, no supuestos).

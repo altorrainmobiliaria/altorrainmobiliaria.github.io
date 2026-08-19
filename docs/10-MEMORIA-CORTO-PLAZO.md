@@ -70,12 +70,17 @@
 > ANTES de auditar; entra al paquete de contexto pero es **gitignored** (cédulas de los 3 socios).
 > ⛔ **Doc 13 RETIRADO** el 31-jul por Daniel; riesgos asumidos, en su banner.
 >
-> **▶ 🏗️ 19-ago (§88): el formulario de captación ya NO pierde los leads.** `/publicar` era demo. Ahora
-> `/api/solicitud` → `solicitudes` con el contrato del legacy, **y funciona sin JavaScript**. Se pudo hoy
-> porque las reglas VIVAS ya traen `allow create: if true` (consultadas, no leídas del repo). Verificado
-> end-to-end contra Firestore real y desplegado en staging. [[L-33]] volvió a cobrar (`locals.runtime.env`).
+> **▶ 🏗️ 19-ago (§89): `/ingresar` y `/favoritos` construidas y VIVAS** — el header las enlazaba a un
+> 404 desde siempre. Mockup de Daniel importado por el MCP de Claude Design (⚠️ los enlaces de Design
+> CADUCAN al re-guardar; el MCP no). **Los favoritos van en localStorage, no detrás del login**: el
+> acceso es para SINCRONIZAR, así funcionan hoy para todo el mundo. **Crear cuenta NO se abre**: falta
+> publicar la Política de Datos — es tu pelota #2, y hasta que no esté, no se pueden captar datos de
+> cuentas nuevas (Ley 1581 art. 9). Google como proveedor: sin evidencia de estar habilitado, verifícalo.
 >
-> **🔴 DESTAPADO AL PROBAR — el aviso de leads está ROTO en producción**: `onNewSolicitud` dispara y falla
+> > **▶ 🏗️ 19-ago (§88): el formulario de captación ya NO pierde los leads** (`/publicar` era demo; ahora
+> `/api/solicitud` → `solicitudes`, y funciona sin JavaScript). Relato completo en su ADR.
+>
+> **🔴 SIGUE ABIERTO — el aviso de leads está ROTO en producción**: `onNewSolicitud` dispara y falla
 > con `535-5.7.8 Username and Password not accepted`. **Hoy ningún lead le avisa a nadie, tampoco los del
 > sitio viejo.** Además el documento queda sin `leadScore`/`nurturing`, lo que sugiere —sin verificar— que
 > la Function desplegada no es la del repo. → **pelota de Daniel**: rotar la contraseña de aplicación.
