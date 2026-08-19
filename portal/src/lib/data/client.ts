@@ -61,6 +61,15 @@ function resolveConfig(env?: RuntimeEnv): { apiKey: string; projectId: string } 
   return { apiKey, projectId };
 }
 
+/**
+ * Config PÚBLICA para consumidores que NO son el cliente de lectura. Hoy: el endpoint de leads
+ * (`/api/solicitud`), que ESCRIBE y por eso NO cuelga del `DataClient` — este sigue siendo read-only
+ * por contrato (§88). Misma cascada de resolución: env de runtime → build-time → constante.
+ */
+export function getPublicFirebaseConfig(env?: RuntimeEnv): { apiKey: string; projectId: string } {
+  return resolveConfig(env);
+}
+
 /** Colapsa el resultado de bajo nivel al contrato público (sin `reason`/`status` que filtren existencia). */
 function toPublic<T>(r: LowLevelResult): ReadResult<T> {
   if (r.ok) return { ok: true, data: r.data as T }; // NOTA: cast sin validación runtime (hardening futuro: zod).

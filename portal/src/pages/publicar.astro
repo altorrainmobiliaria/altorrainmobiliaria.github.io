@@ -57,7 +57,7 @@ const beneficios = [
         </div>
 
         <div class="pub-form-wrap" id="empezar">
-          <form class="pub-form" id="pub-form" novalidate>
+          <form class="pub-form" id="pub-form" method="post" action="/api/solicitud" novalidate>
             <!-- h2 + subtítulo FUERA de .pub-form__fields: el mockup los deja persistir como
                  encabezado sobre el mensaje de éxito (el script oculta SOLO los campos). -->
             <h2 class="pub-form__h">Solicita tu avalúo gratis</h2>
@@ -74,6 +74,7 @@ const beneficios = [
                 </div>
               </div>
               <p class="pub-form__err" id="pub-err" hidden>Ingresa tu nombre y teléfono para continuar.</p>
+              <p class="pub-form__err" id="pub-net" hidden>No pudimos enviar tu solicitud. Revisa tu conexión e inténtalo de nuevo.</p>
               <button class="alt-btn alt-btn--navy pub-form__submit" type="submit">Solicitar avalúo<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
             </div>
             <div class="pub-form__ok" id="pub-ok" hidden>
@@ -226,19 +227,44 @@ const beneficios = [
 </style>
 
 <script>
-  // Formulario de avalúo — validación client-side + estado de éxito.
-  // TODO: POST real a `solicitudes` vía Cloud Function (hoy demo client-side).
+  // Formulario de avalúo — envío REAL a `solicitudes` vía /api/solicitud (§88).
+  // El <form> ya lleva method/action: sin JavaScript el POST nativo funciona igual y vuelve
+  // con ?ok=1. Esto solo lo mejora (sin recargar) y muestra el mismo estado de éxito.
   const form = document.getElementById('pub-form') as HTMLFormElement | null;
   const err = document.getElementById('pub-err');
+  const net = document.getElementById('pub-net');
   const fields = document.querySelector('.pub-form__fields') as HTMLElement | null;
   const ok = document.getElementById('pub-ok');
-  form?.addEventListener('submit', (e) => {
+  const btn = form?.querySelector('.pub-form__submit') as HTMLButtonElement | null;
+
+  const exito = () => { fields?.setAttribute('hidden', ''); ok?.removeAttribute('hidden'); };
+
+  // Camino SIN JavaScript: el endpoint redirigió con ?ok=1 y hay que pintar el éxito al cargar.
+  const q = new URLSearchParams(location.search);
+  if (q.get('ok') === '1') exito();
+  if (q.get('error') === '1') net?.removeAttribute('hidden');
+
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const name = (document.getElementById('pub-name') as HTMLInputElement)?.value.trim();
     const phone = (document.getElementById('pub-phone') as HTMLInputElement)?.value.trim();
     if (!name || !phone) { err?.removeAttribute('hidden'); return; }
     err?.setAttribute('hidden', '');
-    fields?.setAttribute('hidden', '');
-    ok?.removeAttribute('hidden');
+    net?.setAttribute('hidden', '');
+
+    // Doble envío: un propietario impaciente da dos clics y crearía dos leads.
+    if (btn) { btn.disabled = true; btn.dataset.label = btn.textContent || ''; btn.textContent = 'Enviando…'; }
+    try {
+      const res = await fetch('/api/solicitud', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify(Object.fromEntries(new FormData(form) as unknown as Iterable<[string, string]>)),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      exito();
+    } catch {
+      net?.removeAttribute('hidden');
+      if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label || 'Solicitar avalúo'; }
+    }
   });
 </script>

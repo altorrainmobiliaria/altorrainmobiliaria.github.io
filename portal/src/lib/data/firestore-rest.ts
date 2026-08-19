@@ -122,3 +122,72 @@ export async function getDoc(segments: readonly string[], opts: GetDocOptions): 
     return { ok: false, reason: 'error' };
   }
 }
+
+// ─── ESCRITURA (añadido §88 — leads del formulario público) ─────────────────────────────────────
+// La capa nació read-only. La ÚNICA escritura pública que existe es la creación de un lead en
+// `solicitudes`, cuya Rule dice `allow create: if true` (verificada contra las reglas VIVAS el
+// 2026-08-19, no contra el archivo del repo). Sigue el mismo contrato que las lecturas: edge-safe
+// (solo `fetch`/`URL`), sin SDK, y **no lanza NUNCA**.
+
+/** Codifica un valor JS → formato REST tipado. Inverso de `decodeValue`, acotado a lo que escribimos. */
+export function encodeValue(v: unknown): FsValue {
+  if (v === null || v === undefined) return { nullValue: null };
+  if (typeof v === 'string') return { stringValue: v };
+  if (typeof v === 'boolean') return { booleanValue: v };
+  if (typeof v === 'number') {
+    // Los enteros DEBEN viajar como string (`integerValue`); si no, Firestore los guarda como double
+    // y `_version`/precios dejarían de comparar igual que los que escribe el legacy.
+    return Number.isInteger(v) ? { integerValue: String(v) } : { doubleValue: v };
+  }
+  if (v instanceof Date) return { timestampValue: v.toISOString() };
+  if (Array.isArray(v)) return { arrayValue: { values: v.map(encodeValue) } };
+  if (typeof v === 'object') {
+    const fields: Record<string, FsValue> = {};
+    for (const [k, val] of Object.entries(v as Record<string, unknown>)) fields[k] = encodeValue(val);
+    return { mapValue: { fields } };
+  }
+  // bigint/symbol/function no aparecen en nuestro dominio: se degradan a null en vez de romper el POST.
+  return { nullValue: null };
+}
+
+export type CreateResult =
+  | { ok: true; id: string }
+  | { ok: false; reason: 'denied' | 'error'; status?: number };
+
+/**
+ * Crea un documento con id auto-generado en una colección de primer nivel.
+ *
+ * `collection` NO se interpola cruda: se `encodeURIComponent`a igual que los segmentos de `getDoc`
+ * (el mismo hallazgo del comité OD1 sobre path-traversal aplica a la escritura).
+ *
+ * Las Security Rules son la frontera real: si la Rule niega, esto devuelve `denied` — nunca lanza.
+ */
+export async function createDoc(
+  collection: string,
+  data: Record<string, unknown>,
+  opts: GetDocOptions,
+): Promise<CreateResult> {
+  const { apiKey, projectId, signal, fetchImpl = globalThis.fetch, baseUrl = FS_BASE } = opts;
+  const url =
+    `${baseUrl}/projects/${encodeURIComponent(projectId)}/databases/${DEFAULT_DATABASE}` +
+    `/documents/${encodeURIComponent(collection)}?key=${encodeURIComponent(apiKey)}`;
+  const fields: Record<string, FsValue> = {};
+  for (const [k, v] of Object.entries(data)) fields[k] = encodeValue(v);
+  try {
+    const res = await fetchImpl(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({ fields }),
+      signal,
+    });
+    if (res.status === 200) {
+      const json = (await res.json()) as FsDocument;
+      // `name` = projects/…/documents/{coll}/{docId} → el id es el último segmento.
+      return { ok: true, id: (json.name || '').split('/').pop() || '' };
+    }
+    if (res.status === 403) return { ok: false, reason: 'denied', status: 403 };
+    return { ok: false, reason: 'error', status: res.status };
+  } catch {
+    return { ok: false, reason: 'error' };
+  }
+}
