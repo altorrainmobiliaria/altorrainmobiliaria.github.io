@@ -1,0 +1,271 @@
+---
+/*
+ * INGRESAR (/ingresar) — réplica de `ALTORRA Ingresar-Favoritos.dc.html`, artboards 1a/1b/1c.
+ * El header ya enlazaba aquí y daba 404 desde que existe el portal (§89).
+ *
+ * Acceso de CLIENTES, no del panel interno. Firebase Auth se carga con `import()` dinámico SOLO al
+ * enviar: la página pesa lo mismo que cualquier otra hasta que alguien decide entrar (mismo patrón
+ * que el legacy). El proveedor de correo/contraseña está verificado activo; el de Google puede no
+ * estarlo y ese caso se trata explícitamente en vez de reventar con un error críptico.
+ *
+ * ⚠️ CREAR CUENTA no se abre todavía, y no es una omisión técnica: captar datos de una cuenta nueva
+ * exige la Política de Tratamiento de Datos PUBLICADA (Ley 1581 art. 9 + gate de `42-LEGAL`), y hoy
+ * sigue sin publicarse. El botón lo dice en vez de fingir.
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+
+const ojo =
+  '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>';
+---
+
+<BaseLayout title="Ingresar — ALTORRA Inmobiliaria" description="Entra a tu cuenta de ALTORRA Inmobiliaria para guardar favoritos y seguir tus solicitudes.">
+  <main id="main" class="ing">
+    <div class="ing__top">
+      <a class="ing__back" href="/">← Volver al portal</a>
+      <p class="ing__asesor">¿Eres asesor? <a href="/gestion">Panel interno</a></p>
+    </div>
+
+    <section class="ing__wrap">
+      <div class="ing__card alt-card alt-card--neu">
+        <a class="ing__brand" href="/" aria-label="ALTORRA Inmobiliaria — ir al inicio">
+          <span class="ing__mark" aria-hidden="true">A</span>
+          <span class="ing__word"><span class="ing__word-a">ALTORRA</span><span class="ing__word-b">INMOBILIARIA</span></span>
+        </a>
+
+        <div class="ing__intro">
+          <h1 class="ing__h">Bienvenido de nuevo</h1>
+          <p class="ing__p">Ingresa para guardar tus favoritos y seguir tus solicitudes.</p>
+        </div>
+
+        <div class="alt-alert alt-alert--warning ing__alert" id="ing-error" hidden role="alert">
+          <strong id="ing-error-h">Credenciales incorrectas</strong>
+          <span id="ing-error-p">Revisa tu correo y contraseña e inténtalo de nuevo.</span>
+        </div>
+
+        <button class="ing__google alt-btn alt-btn--outline" type="button" id="ing-google">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M23.5 12.27c0-.79-.07-1.55-.2-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.64v3h3.87c2.26-2.09 3.56-5.17 3.56-8.88z"/><path fill="currentColor" d="M12 24c3.24 0 5.96-1.08 7.94-2.91l-3.87-3c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09A12 12 0 0 0 12 24z" opacity=".75"/><path fill="currentColor" d="M5.27 14.28a7.2 7.2 0 0 1 0-4.56V6.63H1.29a12 12 0 0 0 0 10.74z" opacity=".5"/><path fill="currentColor" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.43-3.43C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.29 6.63l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z" opacity=".9"/></svg>
+          Continuar con Google
+        </button>
+
+        <div class="ing__sep"><span>o con tu correo</span></div>
+
+        <form class="ing__form" id="ing-form" novalidate>
+          <div class="ing__group">
+            <label class="alt-label" for="ing-mail">Correo electrónico</label>
+            <input class="alt-input" id="ing-mail" name="email" type="email" autocomplete="email" placeholder="nombre@correo.com" required />
+          </div>
+
+          <div class="ing__group">
+            <label class="alt-label" for="ing-pass">Contraseña</label>
+            <span class="ing__pw">
+              <input class="alt-input" id="ing-pass" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required />
+              <button class="ing__eye" type="button" id="ing-eye" aria-label="Mostrar contraseña" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={ojo}></svg>
+              </button>
+            </span>
+          </div>
+
+          <div class="ing__row">
+            <label class="ing__check"><input type="checkbox" id="ing-recordar" checked /> <span>Recordarme</span></label>
+            <button class="ing__link" type="button" id="ing-olvide">¿Olvidaste tu contraseña?</button>
+          </div>
+
+          <button class="alt-btn alt-btn--gold ing__submit" type="submit" id="ing-submit">Ingresar</button>
+        </form>
+
+        <p class="ing__alt">¿Aún no tienes cuenta? <button class="ing__link" type="button" id="ing-crear">Crear cuenta</button></p>
+
+        <p class="ing__legal">
+          Al continuar aceptas nuestros Términos y la <a href="/legal/politica-tratamiento-datos">Política de Tratamiento de Datos</a> de ALTORRA Inmobiliaria.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .ing { background: var(--alt-surface-neu); min-height: 100vh; display: flex; flex-direction: column; }
+  .ing__top { display: flex; align-items: center; justify-content: space-between; gap: var(--alt-space-4); padding: var(--alt-space-5) clamp(20px, 5vw, 56px) 0; }
+  .ing__back, .ing__asesor { font-size: var(--alt-fs-sm); color: var(--alt-text-soft); margin: 0; }
+  .ing__asesor a { font-weight: 600; }
+
+  .ing__wrap { flex: 1; display: grid; place-items: center; padding: clamp(24px, 5vw, 56px) 20px clamp(48px, 8vw, 88px); }
+  .ing__card { width: 100%; max-width: 468px; padding: clamp(28px, 4vw, 44px); display: flex; flex-direction: column; gap: var(--alt-space-5); }
+
+  .ing__brand { display: flex; align-items: center; gap: var(--alt-space-3); justify-content: center; }
+  .ing__mark { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--alt-surface); color: var(--alt-gold); font-family: var(--alt-font-display); font-size: 26px; font-weight: 600; box-shadow: var(--alt-neu-out); }
+  .ing__word { display: flex; flex-direction: column; line-height: 1.1; }
+  .ing__word-a { font-family: var(--alt-font-display); font-size: 20px; font-weight: 600; letter-spacing: .06em; color: var(--alt-ink); }
+  .ing__word-b { font-size: 9.5px; font-weight: 600; letter-spacing: .28em; color: var(--alt-silver); }
+
+  .ing__intro { text-align: center; }
+  .ing__h { font-family: var(--alt-font-display); font-size: var(--alt-fs-h2); color: var(--alt-ink); margin: 0; }
+  .ing__p { margin: var(--alt-space-2) 0 0; font-size: var(--alt-fs-sm); color: var(--alt-text-soft); }
+
+  .ing__alert { display: flex; flex-direction: column; gap: 2px; text-align: left; }
+  .ing__alert span { font-size: var(--alt-fs-sm); }
+
+  .ing__google { width: 100%; justify-content: center; gap: 10px; }
+
+  .ing__sep { display: flex; align-items: center; gap: var(--alt-space-3); color: var(--alt-text-soft); font-size: 12.5px; }
+  .ing__sep::before, .ing__sep::after { content: ''; flex: 1; height: 1px; background: var(--alt-line); }
+
+  .ing__form { display: flex; flex-direction: column; gap: var(--alt-space-4); }
+  .ing__group { display: flex; flex-direction: column; gap: 7px; }
+  .ing__group .alt-input { width: 100%; }
+  .ing__pw { position: relative; display: block; }
+  .ing__pw .alt-input { width: 100%; padding-right: 44px; }
+  .ing__eye { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 32px; height: 32px; border: 0; background: none; color: var(--alt-text-soft); cursor: pointer; border-radius: 8px; }
+  .ing__eye svg { width: 19px; height: 19px; }
+  .ing__eye:hover { color: var(--alt-gold); }
+
+  .ing__row { display: flex; align-items: center; justify-content: space-between; gap: var(--alt-space-3); flex-wrap: wrap; font-size: var(--alt-fs-sm); }
+  .ing__check { display: inline-flex; align-items: center; gap: 8px; color: var(--alt-text-soft); cursor: pointer; }
+
+  .ing__link { border: 0; background: none; padding: 0; font: inherit; color: var(--alt-ink); font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .ing__link:hover { color: var(--alt-gold); }
+
+  .ing__submit { width: 100%; justify-content: center; }
+  .ing__alt { margin: 0; text-align: center; font-size: var(--alt-fs-sm); color: var(--alt-text-soft); }
+  .ing__legal { margin: 0; text-align: center; font-size: 12.5px; line-height: 1.6; color: var(--alt-silver); }
+</style>
+
+<script>
+  const form = document.getElementById('ing-form') as HTMLFormElement | null;
+  const mail = document.getElementById('ing-mail') as HTMLInputElement | null;
+  const pass = document.getElementById('ing-pass') as HTMLInputElement | null;
+  const eye = document.getElementById('ing-eye');
+  const submit = document.getElementById('ing-submit') as HTMLButtonElement | null;
+  const alerta = document.getElementById('ing-error');
+  const alertaH = document.getElementById('ing-error-h');
+  const alertaP = document.getElementById('ing-error-p');
+
+  function avisar(titulo: string, detalle: string): void {
+    if (alertaH) alertaH.textContent = titulo;
+    if (alertaP) alertaP.textContent = detalle;
+    alerta?.removeAttribute('hidden');
+  }
+  const limpiarAviso = () => alerta?.setAttribute('hidden', '');
+
+  // Mostrar/ocultar contraseña.
+  eye?.addEventListener('click', () => {
+    if (!pass) return;
+    const verLo = pass.type === 'password';
+    pass.type = verLo ? 'text' : 'password';
+    eye.setAttribute('aria-pressed', String(verLo));
+    eye.setAttribute('aria-label', verLo ? 'Ocultar contraseña' : 'Mostrar contraseña');
+  });
+
+  /* Firebase Auth se carga SOLO cuando alguien intenta entrar: la página no paga ese peso por
+     existir. La config pública es la misma del resto del portal. */
+  async function auth() {
+    const [{ initializeApp, getApps }, authMod] = await Promise.all([
+      import('firebase/app'),
+      import('firebase/auth'),
+    ]);
+    const cfg = {
+      apiKey: 'AIzaSyCLxOwj3837m6p9QFDBWzVTuNUFhBkCg_I',
+      authDomain: 'altorra-inmobiliaria-345c6.firebaseapp.com',
+      projectId: 'altorra-inmobiliaria-345c6',
+    };
+    const app = getApps().length ? getApps()[0] : initializeApp(cfg);
+    return { a: authMod.getAuth(app), m: authMod };
+  }
+
+  /** Traduce los códigos de Firebase a algo que un propietario entienda. */
+  function explicar(code: string): [string, string] {
+    switch (code) {
+      case 'auth/invalid-credential':
+      case 'auth/wrong-password':
+      case 'auth/user-not-found':
+        return ['Credenciales incorrectas', 'Revisa tu correo y contraseña e inténtalo de nuevo.'];
+      case 'auth/too-many-requests':
+        return ['Demasiados intentos', 'Por seguridad bloqueamos el acceso un momento. Vuelve a intentar en unos minutos.'];
+      case 'auth/network-request-failed':
+        return ['Sin conexión', 'No pudimos contactar el servidor. Revisa tu internet e inténtalo de nuevo.'];
+      case 'auth/operation-not-allowed':
+        return ['Este acceso no está habilitado', 'Escríbenos por WhatsApp y te ayudamos a entrar mientras lo activamos.'];
+      case 'auth/popup-closed-by-user':
+      case 'auth/cancelled-popup-request':
+        return ['Se cerró la ventana', 'No alcanzaste a completar el acceso con Google. Puedes intentarlo otra vez.'];
+      default:
+        return ['No pudimos ingresar', 'Ocurrió un problema al validar tus datos. Inténtalo de nuevo.'];
+    }
+  }
+
+  function cargando(on: boolean, texto = 'Ingresar'): void {
+    if (!submit) return;
+    submit.disabled = on;
+    submit.textContent = on ? 'Entrando…' : texto;
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    limpiarAviso();
+    const correo = mail?.value.trim() || '';
+    const clave = pass?.value || '';
+    if (!correo || !clave) {
+      avisar('Faltan datos', 'Escribe tu correo y tu contraseña para continuar.');
+      return;
+    }
+    cargando(true);
+    try {
+      const { a, m } = await auth();
+      const recordar = (document.getElementById('ing-recordar') as HTMLInputElement | null)?.checked ?? true;
+      await m.setPersistence(a, recordar ? m.browserLocalPersistence : m.browserSessionPersistence);
+      await m.signInWithEmailAndPassword(a, correo, clave);
+      // Vuelve a donde venía (el enlace del header suele salir de favoritos).
+      const destino = new URLSearchParams(location.search).get('volver');
+      location.href = destino && destino.startsWith('/') ? destino : '/favoritos';
+    } catch (err) {
+      const [t, d] = explicar((err as { code?: string })?.code || '');
+      avisar(t, d);
+      cargando(false);
+    }
+  });
+
+  document.getElementById('ing-google')?.addEventListener('click', async () => {
+    limpiarAviso();
+    try {
+      const { a, m } = await auth();
+      await m.signInWithPopup(a, new m.GoogleAuthProvider());
+      location.href = '/favoritos';
+    } catch (err) {
+      const [t, d] = explicar((err as { code?: string })?.code || '');
+      avisar(t, d);
+    }
+  });
+
+  document.getElementById('ing-olvide')?.addEventListener('click', async () => {
+    limpiarAviso();
+    const correo = mail?.value.trim() || '';
+    if (!correo) {
+      avisar('Escribe tu correo', 'Necesitamos tu correo para enviarte el enlace de recuperación.');
+      mail?.focus();
+      return;
+    }
+    try {
+      const { a, m } = await auth();
+      await m.sendPasswordResetEmail(a, correo);
+      avisar('Revisa tu correo', `Enviamos un enlace a ${correo} para que crees una contraseña nueva.`);
+    } catch (err) {
+      const [t, d] = explicar((err as { code?: string })?.code || '');
+      avisar(t, d);
+    }
+  });
+
+  /* Crear cuenta NO se abre todavía. No es que falte código: captar los datos de una cuenta nueva
+     exige la Política de Tratamiento de Datos PUBLICADA (Ley 1581 art. 9). Decirlo es más honesto
+     que un formulario que no debería existir. */
+  document.getElementById('ing-crear')?.addEventListener('click', () => {
+    avisar(
+      'Las cuentas abren muy pronto',
+      'Mientras tanto no necesitas cuenta: tus favoritos se guardan en este navegador y puedes escribirnos por WhatsApp al +57 300 243 9810.',
+    );
+  });
+</script>

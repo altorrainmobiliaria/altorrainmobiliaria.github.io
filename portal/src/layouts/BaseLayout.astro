@@ -48,5 +48,16 @@ const indexable = import.meta.env.PUBLIC_SITE_ENV === 'production' && !noindex;
   </head>
   <body>
     <slot />
+
+    {/* Favoritos (§89): cablea el corazon de CUALQUIER .alt-pcard de la pagina y deja su estado
+        sincronizado con lo guardado. Va en el layout porque las cards salen en home, SERP, ficha y
+        turismo: repetir el import en cada pagina seria la via segura a que una se quede sin el.
+        El modulo no toca la red y degrada solo si localStorage no esta disponible. */}
+    <script>
+      import { cablearCorazones } from '../scripts/favoritos';
+      cablearCorazones();
+      // La isla del SERP inyecta cards despues; se re-cablea cuando avisa (es idempotente).
+      document.addEventListener('altorra:catalogo-pintado', () => cablearCorazones());
+    </script>
   </body>
 </html>

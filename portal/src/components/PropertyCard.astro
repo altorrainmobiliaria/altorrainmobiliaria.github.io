@@ -40,9 +40,9 @@ const specIcon = {
     <div class="alt-pcard__meta">
       <span class="alt-pcard__zona">{zona}</span>
       <div class="alt-pcard__specs">
-        {beds != null && <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={specIcon.bed}></svg>{beds}</span>}
-        {baths != null && <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={specIcon.bath}></svg>{baths}</span>}
-        {area && <span><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={specIcon.area}></svg>{area}</span>}
+        {beds != null && <span data-spec="bed"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={specIcon.bed}></svg>{beds}</span>}
+        {baths != null && <span data-spec="bath"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={specIcon.bath}></svg>{baths}</span>}
+        {area && <span data-spec="area"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={specIcon.area}></svg>{area}</span>}
       </div>
     </div>
     <h3 class="alt-pcard__title"><a href={href}>{title}</a></h3>
