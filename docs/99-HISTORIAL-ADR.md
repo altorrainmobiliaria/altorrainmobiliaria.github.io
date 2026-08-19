@@ -2193,3 +2193,69 @@ orden de los lotes siguientes (`2026-08-03-leves-b03-LEDGER.md`, indexado en el 
 en la fuente; una cayó) · §83.10 (*sin verificar* ≠ *confirmado*: 92 uno por uno, jamás en lote) ·
 §G.4 captura (ledger reanudable antes de cerrar). Sin comité ni consejo externo: instrucción de
 sesión de no lanzar agentes ni workflows → **NO revisado por terceros**.
+
+---
+
+## 87. ADR — Lotes 2 y 3 de los leves: el grupo "retirados" no era moot, y los documentos de firma tenían un error de impuestos ⟦OPUS-5⟧ (2026-08-19)
+
+> Segunda tanda de TODO-34 tras 16 días de pausa. Cierra el bloque barato (los supuestamente moot) y el
+> bloque caro (lo que firma un tercero). **Marcador: 28 de 92 · 18 aplicados · 6 moot · 4 ya resueltos ·
+> 2 remedios refutados.** Al final, Daniel congela el frente para volcar todo en construir la página.
+
+**87.1 — El grupo "retirados" era una trampa de nombre.** El ledger ya avisaba que
+`00-23-retirados` mezclaba documentos vivos; al abrirlo, **5 de sus 7 hallazgos eran de `00-LEEME` y del
+manual**, no del doc 23. Y en `13-accionistas` —doc retirado entero— **dos hallazgos sobrevivían al
+retiro** porque no hablaban de cláusulas sino de **obligaciones que existen igual**: el RUB tras un
+traspaso de acciones (verificado: **ya lo cubre el doc 14 vivo**, con su recordatorio permanente y su
+calendario) y la **no-competencia**. Este segundo importa: el banner de retiro **enumera** lo que Daniel
+asume conscientemente al no firmar —muerte de accionista, ausencia de arrastre, gerencia no blindada— y
+**la no-competencia no estaba en la lista**. Un accionista puede montar una inmobiliaria paralela en
+Cartagena o desviar a otra sociedad un negocio que llegó por ALTORRA, y los estatutos V5 no lo cierran
+(la lealtad del art. 23 de la Ley 222 obliga al **administrador**, no al accionista que no administra).
+Se añadió como cuarto riesgo asumido — **la decisión de retirar el doc 13 no se toca; lo que cambia es que
+ahora está informada**. Detalle: el banner cerraba con *«si alguno de esos tres»* y hubo que corregir el
+conteo, que es la clase de residuo que deja toda inserción en una lista numerada.
+
+**87.2 — Cuatro ya estaban resueltos, y uno de los remedios era dañino.** El `00-LEEME` ya no truncaba su
+frase de apertura, el manual ya no dice *«en representación»* (ni él ni su fragmento gemelo), y el ACM ya
+apuntaba a la fila 7 del tarifario. Pero el hallazgo de las cifras del doc 02 proponía **borrar el numeral
+de "decisiones pendientes"**, y el texto de hoy dice algo más fino y más correcto: los estándares están
+*sellados bajo delegación y rigen ya*, **y las cifras siguen siendo vetables por Daniel**. Aplicar el
+remedio le habría borrado el veto. Es el segundo remedio dañino de este frente ([[LD-01]]).
+
+**87.3 — Lo que seguía vivo y no era menor.** `00-LEEME` describía una facultad del doc 03 **que el
+contrato hoy niega**: decía que ALTORRA queda facultada para recibir títulos valores y figurar como
+beneficiaria, cuando el PARÁGRAFO 2 vigente abre con *«no exige ni recibe títulos valores en garantía del
+arrendamiento»*. El índice del kit contradecía al contrato que indexa. Y doc 22 §1 adopta **también** la
+venta comercial 3%+IVA, que es la fila 6 del tarifario, de modo que el índice citaba `filas 2, 4 y 5` en
+dos sitios donde faltaba la 6.
+
+**87.4 — Los documentos de FIRMA: 7 de 7 vivos, y uno era un error de impuestos.** El ítem 16 del
+checklist de venta metía la **retención en la fuente** dentro del paquete cuya regla supletiva es
+«mitades» (C.C. 1862) — pero esa regla habla de *costas de la escritura*, y la retención **la soporta el
+vendedor** porque es anticipo de SU renta. Repartirla a medias es cobrarle al comprador un impuesto ajeno.
+Su hermano: la conciliación de la comisión no contemplaba que el pagador fuera **agente de retención**, así
+que la factura llega neta y la diferencia queda como un faltante sin explicación. Además, el checklist
+**no tenía salida para el negocio que muere después de celebrado**, cuando la comisión ya se causó (C.Co.
+1341) — cobrarla contra el registro es política de ALTORRA, no ley: nace la **FASE G**, cuya regla dura es
+que *el silencio no es una decisión*. En la oferta irrevocable faltaba el estándar sellado de arras
+(10-20%) con su advertencia de que **sin tipificar la ley las presume de retractación**, faltaba quién paga
+los gastos, y el oferente firmaba **una hora de vencimiento que dependía de un hecho futuro** —la entrega
+al propietario, posterior a su propia firma—. Y el acta de entrega, que el checklist de VENTA manda usar,
+no tenía casilla para *Vendedor → Comprador* e imprimía «Matrícula de Arrendador» en una compraventa.
+
+**87.5 — El gate me cazó a mí.** Al escribir el banner del doc 23 cité **literalmente** la fórmula
+prohibida para declarar que no rige, y el gate del kit la contó como marca de trabajo nueva (231 → 232).
+Es [[LD-07]] otra vez —*la cita que DEROGA*— y la ventana de negación no la cubre. Reformulado sin citar
+el literal: 231 de vuelta. Se deja anotado en el ledger; endurecer el gate no compensa hoy (el documento
+está retirado y es interno, no bloquea la emisión).
+
+**87.6 — Frescura al cerrar.** El `05` llevaba 16 días sin re-sellar y su claim más viejo, 40. **Re-verificado
+en vivo hoy**: el sitio público responde 200 con la sentinela «portal en construcción» (modo obra intacto) y
+el portal staging responde 200, 135 KB, con `noindex, nofollow`. Ambos re-sellados a 2026-08-19 — importa
+doblemente porque el frente que arranca ahora se construye sobre ese staging.
+
+**87.7 — Doctrina.** [[LD-01]] (2 remedios dañinos ya en este frente) · [[LD-07]] (la cita que deroga, esta
+vez contra mí) · §3.3 (todo verificado contra el texto de hoy: 4 hallazgos murieron ahí) · §83.10 (*sin
+verificar* ≠ *confirmado*) · §G.4 (ledger reanudable + `05` re-sellado antes de pausar). Sin comité ni
+consejo externo: instrucción de sesión de no lanzar agentes ni workflows → **NO revisado por terceros**.
