@@ -58,7 +58,9 @@
 >    cablear (el mockup de la ficha tiene 0 inputs). El agujero era un `mailto:` en «Solicitar
 >    información» → ahora WhatsApp con contexto. Falta: ¿registrar el clic como lead? (decisión, no bug).
 > 2. **TODO-30**: falta solo la vista del mapa en foreground (la confirma Daniel, L-34).
-> 3. **Optimizar imágenes del portal** a WebP <150KB (`public/assets` sigue con JPG pesados; §3.1 → `34`).
+> 3. ✅ **Imágenes (20-ago)**: diagnóstico viejo — ya eran WebP, cero JPG. `srcset` MIDIÓ **peor**
+>    (+63% desktop) por 7 fotos demo en 66 huecos → revertido salvo el emblema (−76%). Reactivar en
+>    el CUTOVER con fotos reales. Por qué y cómo → [[L-38]] + `portal/src/lib/img.ts`.
 >
 > ⚠️ **Antes de tocar código, lee `34-DOCTRINA-CODIGO`** (trigger 🖥️) y, si el síntoma te suena, `30`:
 > [[L-33]] (`locals.runtime.env` removido en Astro v6) YA cobró dos veces, la última el 19-ago.

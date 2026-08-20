@@ -135,6 +135,25 @@ Cuando el portal maneje plata: (1) skill global `auditoria-financiera` (7 invari
 ---
 
 
+### L-38 — 🖼️ `srcset` puede EMPEORAR el peso cuando la MISMA foto sirve a huecos de tamaños dispares *(2026-08-20, portal)*
+
+**Disparador**: la pizarra pedía «optimizar imágenes del portal a WebP <150KB». Al medir, el diagnóstico
+era viejo: **ya eran WebP** (10 archivos, 1.4 MB) y no había JPG. Se montó `srcset` en 66 huecos con
+variantes 480/800/1200w… y **el peso SUBIÓ**: desktop **+63%**, móvil **+21%**. **Causa**: el portal usa
+**7 fotos demo reutilizadas en 66 huecos** de tamaños muy distintos (un hero de 1265px y una card de
+300px comparten archivo) ⇒ el navegador baja **2-3 variantes del MISMO archivo** en vez de una sola, y la
+fragmentación cuesta más que lo que ahorra el tamaño. **Reglas**: (1) `srcset` gana cuando cada imagen se
+usa en **1-2 tamaños** (catálogo real, 1 foto por ficha) — con imágenes compartidas hay que MEDIR
+antes/después y estar dispuesto a NO aplicarlo; (2) lo que gana **siempre y sin fragmentación** son los
+**logos/íconos** pintados siempre pequeños (el emblema de 248px que se pinta a 30px bajó 33 KB → 8 KB,
+−76%, en todas las páginas); (3) **recomprimir un WebP ya lossy no da nada** (a ~40 dB PSNR el peso queda
+igual) y **AVIF desde un WebP lossy pesa MÁS** (518 KB vs 438 KB): la ganancia de formato exige el
+ORIGINAL sin pérdidas, que no está en el repo; (4) 🎯 **la trampa de medición**: forzar `loading="eager"`
+para "ver todo cargado" hace que los slides ocultos de un carrusel elijan variantes con anchos
+equivocados — dio un falso **−78%**. Mide con el layout REAL o calcula la elección de forma determinista
+(`ancho_css × dpr` → primer candidato ≥ ese valor). Se revirtió todo salvo el emblema; el helper
+`portal/src/lib/img.ts` conserva el hallazgo y las condiciones para reactivarlo en el cutover.
+
 ### L-37 — 🎨 Los enlaces de Claude Design CADUCAN al re-guardar: el mockup se trae por MCP, no por URL *(2026-08-19, ADR §89)*
 
 **Disparador**: Daniel comparte el enlace de una pantalla recién diseñada («el enlace caduca en 10 min») y
