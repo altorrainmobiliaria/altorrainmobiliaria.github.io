@@ -54,8 +54,9 @@
 > **ya captura**: `/publicar` crea leads reales en `solicitudes` (§88).
 >
 > **Lo siguiente, en orden:**
-> 1. **Formularios de contacto de la ficha y el home** → misma tubería de `/api/solicitud` que ya está
->    probada. Es por donde entra el COMPRADOR, y hoy tampoco captura.
+> 1. ✅ **Contacto del COMPRADOR (20-ago)**: el diagnóstico viejo era FALSO — no hay formularios que
+>    cablear (el mockup de la ficha tiene 0 inputs). El agujero era un `mailto:` en «Solicitar
+>    información» → ahora WhatsApp con contexto. Falta: ¿registrar el clic como lead? (decisión, no bug).
 > 2. **TODO-30**: falta solo la vista del mapa en foreground (la confirma Daniel, L-34).
 > 3. **Optimizar imágenes del portal** a WebP <150KB (`public/assets` sigue con JPG pesados; §3.1 → `34`).
 >
@@ -92,10 +93,7 @@
 > **(8)** el form de `/publicar` **no pide correo** (fiel al mockup) y eso hace que un propietario real
 > llegue etiquetado `[COLD]`: o se añade el campo al mockup, o se re-pesa el scoring.
 
-> **▶ CONSOLIDADO — el relato completo vive en sus ADRs**: §81/§82 (candado de boot al kernel · 6 gates
-> del kit) · **§83** auditoría Nivel-2 #6 · **§84** poda del router ([[M-09]]) · **§85** TODO-37 cerrado +
-> kernel ×4 ([[M-07]] forma 2) · **§86-§87** leves del kit 28/92 + **B-05** · **§88** leads cableados ·
-> **§89** `/ingresar` y `/favoritos`.
+> **▶ CONSOLIDADO** — §81-§89 ya son ADRs; el relato y el ruteo viven en `00-INDICE` → `99` (SSoT).
 
 > **⏸️ EN PAUSA, reanudable y sin bloquear nada**: los **64 leves** restantes del kit (ledger en bóveda,
 > `2026-08-03-leves-b03-LEDGER.md`) · [[M-09]] a los 3 hermanos (TODO-32b) · backlog **B-01..B-05**.
