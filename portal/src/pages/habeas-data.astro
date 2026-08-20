@@ -1,0 +1,26 @@
+---
+/*
+ * Habeas Data — página PRÁCTICA de ejercicio de derechos.
+ *
+ * Enlazada desde el footer de TODO el sitio; daba 404 hasta el 2026-08-20.
+ *
+ * Decisión de diseño: NO duplica el texto legal. Los derechos y procedimientos ya viven en la
+ * Política (§9 y §10) y dos copias del mismo texto legal divergen con el tiempo — eso es
+ * precisamente lo que la regla de versionado de `42-LEGAL` intenta evitar. Aquí va el "cómo se
+ * hace" (canal, qué incluir, plazos) y se remite a la Política para el texto normativo.
+ */
+export const prerender = true;
+
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { Content } from '../content/legal/habeas-data.md';
+import { LEGAL } from '../lib/config/legal';
+---
+
+<LegalLayout
+  title="Habeas Data — tus derechos sobre tus datos"
+  description="Cómo conocer, actualizar, rectificar o suprimir tus datos personales en ALTORRA, revocar la autorización y los plazos de respuesta (Ley 1581 de 2012)."
+  version={LEGAL.politicaDatos.version}
+  vigencia={LEGAL.politicaDatos.vigencia}
+>
+  <Content />
+</LegalLayout>

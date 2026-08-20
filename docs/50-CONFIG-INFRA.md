@@ -79,6 +79,30 @@ $env:GOOGLE_APPLICATION_CREDENTIALS = "<ruta-SA-JSON>"; $env:DRY_RUN="1"; npm ru
   el modo obra: dispararlo PISARÍA los stubs de redirect** y resucitaría el sitio viejo por la puerta de atrás.
   No se toca hasta el cutover. (Requiere el secret `GOOGLE_APPLICATION_CREDENTIALS_JSON`, ver §Secretos.)
 
+## 🔴 Credenciales locales: la máquina está logueada con la cuenta de CARS, no la de INMOBILIARIA
+
+**Verificado 2026-08-20** al intentar borrar un documento de `solicitudes`:
+- `gcloud` **no tiene cuentas** (`gcloud auth list` → vacío); solo hay **ADC** y su token pertenece a
+  **`altorracarssale@gmail.com`**, con `quota_project_id: altorra-cars`.
+- El **CLI de Firebase** está autenticado con **la misma cuenta de Cars** (`~/.config/configstore/firebase-tools.json`).
+  Ve el proyecto `altorra-inmobiliaria-345c6` (aparece en `projects:list`), pero la **API de Firestore
+  responde 403 `PERMISSION_DENIED`** en lectura, incluso forzando `x-goog-user-project`.
+
+**Consecuencia operativa (no es un detalle):** desde esta máquina **NO se puede leer ni escribir Firestore
+de la inmobiliaria por vía admin**. Eso bloquea: borrar/inspeccionar leads, **sembrar las propiedades
+reales**, verificar el catálogo tras el cutover y cualquier auditoría de datos. El portal **sí** escribe
+(usa la `apiKey` pública + rules `allow create: if true`), por eso los formularios funcionan: la asimetría
+es que **crear** es público y **leer/borrar** exige auth.
+
+**Para desbloquear** (una de las dos, decide el dueño): (a) `firebase login` / `gcloud auth application-default
+login` con la cuenta dueña del proyecto de inmobiliaria; o (b) dar rol `roles/datastore.user` sobre
+`altorra-inmobiliaria-345c6` a `altorracarssale@gmail.com`. ⚠️ Ojo con (b): mezcla las identidades de los
+dos negocios, que hoy están separadas.
+
+⚠️ **Efecto colateral ya visible**: quedó en `solicitudes` un lead de prueba «PRUEBA GATE LEGAL - IGNORAR»
+(teléfono ficticio `+57 300 000 0000`, creado al verificar el gate de Habeas Data el 20-ago). Es inocuo y
+está autoidentificado, pero **no se puede borrar hasta resolver lo anterior**.
+
 ## 🔒 Secretos (NO en este repo — solo se nombra su ubicación)
 > NUNCA escribir el valor real aquí ni en ningún archivo versionado.
 - **Service Account JSON** (`sa-altorra-inmobiliaria.json`) — vive FUERA del repo (carpeta home del dueño). Generar desde
