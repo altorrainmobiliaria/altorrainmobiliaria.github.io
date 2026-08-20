@@ -2414,3 +2414,49 @@ cliente y no puede depender de que el CI instale las de desarrollo (hoy `npm ci`
 por markup) · §G.4 caza-bugs (los 2 defectos salieron del navegador, no del diff) · §G.4 Frescura (`20`
 en el mismo cambio) · gate legal de `42-LEGAL` por encima de la fidelidad al mockup · §3.3 (proveedores
 de acceso verificados contra Firebase, no supuestos).
+
+## 90. ADR — Auditoría Nivel-2 #7: el ruteo está sano, el territorio no; y tres gates verdes cubrían media promesa ⟦OPUS-5⟧ (2026-08-20)
+
+> Encargo directo de Daniel («audita el cerebro»), NO por nudge del linter (verde: 18d < 30, gap 6 ADRs < 12).
+> Deliberación: `../brain-private/altorrainmobiliaria/research-archive/2026-08-20-auditoria-cerebro-nivel2-7-inmobiliaria.md`
+
+**90.1 — Causa raíz (RCA).** 16 hallazgos vivos. La clase dominante **no es ruteo, es frescura**: los 4
+retrieval-drills fríos (boot puro) llegaron **4/4 a la neurona correcta**, sin adivinar y sin leer `99`
+de más — pero **2 de 4 habrían respondido MAL** porque la neurona correcta estaba desactualizada. El
+cerebro sabe a dónde mandarte; lo que falla es lo que encuentras al llegar. La raíz mecánica es [[M-10]]:
+**#27** valida `neurona→archivo inexistente` pero no el inverso (`creas` sin gate, 7 páginas huérfanas);
+**#5** valida que una ref EXISTA, no que sea CORRECTA (`10:38` mandaba a `L-34`=Range donde iba
+`L-39`=rAF, con 48/48 en verde); y la **memoria del harness no la mira NINGÚN gate** (`grep`=0 hits),
+que es por qué N6-22 y N6-30 llegaron **reincidentes** desde la #6.
+
+**90.2 — Solución estructural.** (a) [[M-10]] nombra la clase y fija la regla: *al declarar un gate,
+escribe al lado la mitad que NO cubre; toda capa sin gate se declara sin-gate, o su silencio se lee como
+✅*. (b) Los 2 reincidentes se CURARON en la capa donde vivían (memoria del harness). (c) Los punteros
+podridos y las cifras contradictorias se corrigieron contra evidencia verificada, no contra memoria.
+
+**90.3 — No-regresión.** Ningún ID, función ni callsite tocado. `brain:check` SANO; gate #5 pasa a
+**49/49** con M-10 registrada por su stub en `30` (la convención stub-en-30 / cuerpo-en-33 se descubrió
+leyendo el kernel, no se supuso). Caps de `30` y `33` **NO se subieron**: quedan visiblemente en `↗`
+como deuda declarada — subir el techo para alcanzarlo es justo lo que [[M-05]] prohíbe.
+
+**90.4 — Verificación.** Todo hallazgo trae `archivo:línea` + comando. En vivo: `curl` 200 · 62.344 B en
+`/legal/politica-tratamiento-datos/` · `curl` 200 + sentinela «en construcción» en el dominio ·
+`git fetch` + `origin/main` contiene `e80306c` · `ls` de mockups = 9 · `find` de páginas = 18.
+
+**90.5 — Anti-patterns evitados.** Cero score numérico (no reproducible). Un refutado registrado CON su
+porqué (la «contradicción de versión» de `L-33` era coherente: `v6+` = de v6 en adelante, verificado
+contra `portal/package.json:23,25`). No se re-litigaron los 47 refutados de la #6. No se tocó la conducta
+del botón «Crear cuenta»: es decisión de producto de Daniel, no del auditor.
+
+**90.6 — Lo más caro que salió, y no lo encontró el linter.** **N7-00**: el tablero `05` declaraba la
+campaña de humo **DESACTIVADA**, y su **propio SSoT declarado** (`pauta-captacion` playbook §4b) dice que
+**sigue ACTIVA y arranca sola al recargar saldo**. La lección general —[[D-15]] «sin saldo» ≠ «apagado»,
+6 zombies con $32.000/día armados— se destiló **el mismo día** desde Bersaglio y **no se re-aplicó al caso
+propio abierto**. Destilar hacia arriba sin barrer hacia atrás deja el riesgo justo donde estaba.
+
+**90.7 — Gobernanza: el límite que se levantó a mitad de auditoría.** La sesión arrancó respetando
+`10:50-52` («sin ultracode — nada de agentes ni workflows»). Daniel la levantó en vivo («no podemos poner
+límites a la inteligencia»). Los 4 drills fríos se lanzaron entonces y **encontraron 3 hallazgos que la
+verificación directa NO vio** (N7-04 · la 4ª cifra de páginas · N7-06), además de N7-00. Queda escrito
+que lo del 19-ago era un límite de **ALCANCE** (la página primero), no de **CAPACIDAD** — confundirlos
+costó, medible, cuatro hallazgos. **GC pareado: boot 31481 → 31394c (−87c)**, margen 19c → 106c.

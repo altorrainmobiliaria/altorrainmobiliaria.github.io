@@ -141,12 +141,12 @@
     }
   ],
   "deepAudit": {
-    "last": "2026-08-02",
-    "coveredHeaderCount": 83,
+    "last": "2026-08-20",
+    "coveredHeaderCount": 90,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "tableFile": "2026-08-02-auditoria-cerebro-nivel2-6-inmobiliaria.md",
-    "_que": "Nivel-2 #6 (ADR 83). 109 brutos -> 44 vivos / 47 refutados / 18 sin esceptico. CRITICO N6-01: los precios confirmados y la regla anti-strike de Bersaglio vivian solo en la memoria del harness, con su nodo dueno vacio -> bajados a 44-PAUTA-META. Kernel v1.9.0 con 5 correcciones (el #9 era ciego a la fila cerrada SIN ADR; borrar una clave del manifest apagaba gates; el boot mentia con cache verificada; +#26 longitud de fila del indice). El workflow murio 2 veces y el sintetizador nunca corrio -> tabla reconstruida del journal (M-08). Masa-neta del boot: -36c. Restan 30 abiertos + 18 sin esceptico -> TODO-37. Previa #5 = 69 (2026-07-31, cubrio 68)."
+    "tableFile": "2026-08-20-auditoria-cerebro-nivel2-7-inmobiliaria.md",
+    "_que": "Nivel-2 #7 (ADR 90), por ENCARGO de Daniel (el nudge estaba verde). 16 hallazgos vivos + 1 refutado + 1 curado en sesion. Sonda 3 con 4 drills FRIOS: ruteo SANO 4/4 (ninguno adivino, ninguno leyo 99 de mas) pero 2/4 habrian respondido MAL -> el cuello no es ruteo, es FRESCURA. M-10 unifica la clase: un gate cubre UNA direccion y el ✅ se lee como cobertura total (#27 sin el verbo creas; #5 valida existencia no correccion -> 10:38 mandaba a L-34 en vez de L-39; la memoria del harness SIN gate -> N6-22 y N6-30 llegaron REINCIDENTES). Lo mas caro (N7-00) no lo vio el linter: el 05 daba la campana de humo DESACTIVADA y su propio SSoT la da ACTIVA y arrancando sola al recargar -> pelota de Daniel. Caps de 30/33/00 NO se subieron: quedan en ↗ como deuda declarada (M-05). GC pareado: boot 31481->31394c (-87c). Previa #6 = 83 (2026-08-02)."
   },
   "noCap": {
     "docs/99-HISTORIAL-ADR.md": "Largo Plazo: NUNCA se lee entero, solo offset/limit vía el índice (§0). Un cap aquí no significaría nada.",

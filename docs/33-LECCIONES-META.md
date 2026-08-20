@@ -109,3 +109,10 @@ sigue siendo vinculante, deja de cobrar renta en cada arranque.
 muda, lo copiado se deja de repetir), **NO renumerar secciones citadas** (`§3.3` lo citan 8 neuronas y 2
 scripts), y **corregir en el mismo commit el puntero vivo que apuntaba a lo movido** — aquí `30` L-04, que
 mandaba a un `§3.5` que dejó de existir. Un puntero roto es una regla apagada en silencio.
+
+### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total *(auditoría #7, 2026-08-20, ADR §90)*
+Tres hallazgos de la #7 son **la misma falla**, y ninguno lo cazó un gate porque los tres gates estaban en verde:
+(a) **#27 rutas fantasma** valida `neurona → archivo inexistente`, pero §G.4 promete *«mueves/**creas**/renombras/eliminas → actualiza `20`»*: el verbo **creas** —el caso MÁS frecuente, porque nace de trabajar rápido— no tiene gate. 7 páginas del portal quedaron sin documentar bajo un ✅.
+(b) **#5 refs `L-`/`M-`** valida que la ref **EXISTA**, no que sea **CORRECTA**: `10` citaba `L-34` (Range/pmtiles) donde iba `L-39` (rAF). Un drill frío confirmó que habría diagnosticado mal. 48/48 «resuelven» ✅.
+(c) **la memoria del harness** (`.claude/.../memory/`) no la mira **ningún** gate (`grep` = 0 hits). Por eso N6-22 y N6-30 llegaron **reincidentes** desde la #6: una capa fuera de alcance no produce hallazgos, produce **silencio**, y el silencio se lee igual que un ✅.
+**Regla**: al declarar un gate, escribe la **mitad que NO cubre** al lado de la que sí — en su comentario y en la doctrina que lo cita. Un gate sin su complemento declarado no es cobertura parcial: es cobertura **aparente**. Y **toda capa sin gate se declara explícitamente sin-gate**, o su ausencia de hallazgos se confundirá con salud.

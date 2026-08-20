@@ -11,7 +11,7 @@
 
 > **🏗️ FRENTE ACTIVO = LA PÁGINA** (portal). Qué sigue y en qué estado está → bloque de ARRANQUE EN FRÍO
 > de la bitácora. TODO-27 ✅ · TODO-30 mapa ✅ (falta la vista foreground) · catálogo §56-§59 ✅ hasta la
-> FRONTERA pre-cutover (§60) · **§88 leads** ✅ · **§89 las 8 pantallas** ✅. Fidelidad → L-29/L-24/L-28;
+> FRONTERA pre-cutover (§60) · **§88 leads** ✅ · **§89 header sin 404s** ✅. Fidelidad → L-29/L-24/L-28;
 > mockups en `portal/design/mockups/` (9). Dev: `npm --prefix portal run dev` (4321).
 >
 > **⏸️ EN PAUSA por decisión de Daniel (19-ago)**: FRENTE 0 fundación operativa (TODO-34, kit legal) y el
@@ -32,10 +32,10 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-17** | **Ola 0 restos**: E2E "tras cache" en staging (T9) · deploy de rules (en el cutover, NO ahora) · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | gate=CUTOVER |
-| **TODO-21** | **Lote-dueño**: Nº matrícula + Nº RNT (existen ✅; Daniel los da al CIERRE DE OBRA) · dirección física · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
-| **TODO-CEREBRO** | 🧠 ⏸️ **Mantenimiento del cerebro, TODO en pausa (19-ago)** — se retoma cuando la página respire. **TODO-23** kernel hardening restante (K-01/02/04/05/09 §30.4; flujo: editar CANÓNICO → bump `VERSION` → `brain:pull` ×4; `brain-kit` sigue SIN git) · **TODO-24** ssotFact de paleta + re-apuntar cache al portal en el CUTOVER · **TODO-28** #7 sello de vencimiento >90d · **TODO-32(b)** llevar [[M-09]] a los hermanos (insema al 98,5%, sin podar a propósito §87) y el banner de costo, que **solo baja con commits de PRODUCTO**. | ⏸️ pausa | §84·§87·§195 |
+| **TODO-21** | **Lote-dueño**: Nº **RNT** (la matrícula ya está PUBLICADA, `05`) · dirección física y COMERCIAL · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
+| **TODO-CEREBRO** | 🧠 ⏸️ **Mantenimiento del cerebro, TODO en pausa (19-ago)** — se retoma cuando la página respire. **TODO-23** kernel hardening restante (K-01/02/04/05/09 §30.4; flujo: editar CANÓNICO → bump `VERSION` → `brain:pull` ×4; `brain-kit` sigue SIN git) · **TODO-24** ssotFact de paleta + re-apuntar cache al portal en el CUTOVER · **TODO-28** #7 sello de vencimiento >90d · **TODO-38** (§90): gate #27 sin el verbo `creas` · #5 valida existencia, no corrección · `30`/`33`/`00` en ↗ (los 10 stubs `M-` de `30` duplican casi el exceso exacto) · pelotas sin ID. · **TODO-32(b)** llevar [[M-09]] a los hermanos (insema al 98,5%, sin podar a propósito §87) y el banner de costo, que **solo baja con commits de PRODUCTO**. | ⏸️ pausa | §84·§87·§195 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada y fontanería §4b OK (estado → flag 📣 de `05`). Resta **calibrar la campaña REAL**, gateada por el cierre de obra. | ⏸️ gate obra | `pauta-captacion` §10 |
-| **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, L-34 → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
+| **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, [[L-39]] → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§60)**. Para datos reales: (1) deploy COORDINADO en el cutover (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. Lo demás BLOQUEADO por causas reales (§60.4); insumos legales de la ficha → TODO-33. | 🟢 cutover | §60 |
 | **TODO-33** | 🧾 **FICHA dinámica — 4 decisiones ANTES de construir (§60.3)**: dirección exacta · financiación · asesor · POIs. Regla: **bloque sin dato se OMITE** (jamás heredar el demo). | 🔵 decisión | §60 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa (19-ago)**. Kit 00-22 emitido y auditado; críticos y altos aplicados (§70·§71). De los leves van **28/92** (§86-§87): 18 aplicados · 6 moot · 4 ya resueltos · **2 remedios refutados**. ⚠️ sin escéptico ⇒ **uno por uno, NUNCA en lote** (§70.6). No bloquea nada: el kit no se firma hasta el cierre de obra. Ledger reanudable → bóveda `2026-08-03-leves-b03-LEDGER.md`. | ⏸️ 28/92 | §87 · `43` |
@@ -47,10 +47,11 @@
 > ### 🏗️ ARRANQUE EN FRÍO — lee esto y ya sabes dónde estás (2026-08-19)
 >
 > **Frente activo: CONSTRUIR LA PÁGINA.** Daniel congeló cerebro y kit el 19-ago (el 72% del trabajo del
-> mes era mantenimiento y la web no avanzaba). **Opus 5 para TODO**, esfuerzo Max, **sin ultracode** —
-> nada de agentes ni workflows por reflejo; si algo pide comité, se le pide a él primero.
+> mes era mantenimiento y la web no avanzaba). **Opus 5 para TODO**, esfuerzo Max.
+> **20-ago Daniel LEVANTA el límite de capacidad** («no podemos poner límites a la inteligencia»):
+> agentes y workflows LIBRES bajo tu juicio. Sigue vigente la **prioridad**: la página primero.
 >
-> **Las 8 pantallas del portal EXISTEN**: el header ya no tiene un solo enlace roto (§89). Y el portal
+> **El portal tiene 18 páginas** (8 fieles a mockup + legales + nav; censo → `20`), sin 404s (§89).
 > **ya captura**: `/publicar` crea leads reales en `solicitudes` (§88).
 >
 > **Lo siguiente:** **TODO-30** — la vista la confirma **Daniel** (con la ventana al frente): toda pestaña
@@ -62,27 +63,25 @@
 > ⚠️ **Antes de tocar código, lee `34-DOCTRINA-CODIGO`** (trigger 🖥️) y, si el síntoma te suena, `30`:
 > [[L-33]] (`locals.runtime.env` removido en Astro v6) YA cobró dos veces, la última el 19-ago.
 
-> **🔴 ABIERTO Y CARO — el aviso de leads está ROTO en producción.** `onNewSolicitud` dispara y falla con
-> `535-5.7.8 Username and Password not accepted`: las credenciales de Gmail (`EMAIL_USER`/`EMAIL_PASS`)
-> no sirven. **Censo 20-ago: 16 leads del SITIO VIEJO, 14 PENDIENTES y 0 avisados** (16-abr→09-jul; 3 son
-> propietarios). El portal nuevo aún no capta nada. → `43 §14 LEADS`. Además el documento no recibe `leadScore`/`nurturing` aunque el código del
-> repo los escribe antes del envío, lo que **sugiere (sin verificar)** que la Function desplegada no es la
-> del repo. → **pelota de Daniel**: rotar la contraseña de aplicación. Capturar mejor no sirve sin esto.
+> **🔴 ABIERTO Y CARO — el aviso de leads está ROTO en producción.** `onNewSolicitud` falla con
+> `535-5.7.8`: las credenciales de Gmail no sirven. **Censo 20-ago: 16 leads del SITIO VIEJO, 14
+> PENDIENTES y 0 avisados** (3 propietarios). El doc tampoco recibe `leadScore` aunque el repo lo
+> escribe ⇒ **sugiere (sin verificar)** que la Function desplegada NO es la del repo. → `43 §14 LEADS`.
 
-> **▶ ✅ PAUTA BERSAGLIO — CERRADA 20-ago** (0 ventas · 0 visitas · se quemó todo el saldo · 63
-> conversaciones ⇒ Meta NO es el canal a este precio) + 6 campañas zombie apagadas. Todo el detalle →
-> `bersagliojewelry/docs/44-PAUTA-META.md §DESENLACE` + hoja `44a`; doctrina → `meta-ads-diagnostico`.
+> **▶ ✅ PAUTA BERSAGLIO CERRADA 20-ago** (0 ventas/63 conv ⇒ Meta no es el canal a ese precio; 6 zombies
+> apagadas). Detalle → `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`; doctrina → `meta-ads-diagnostico`.
 > ⏭️ **VIVO**: **26 conversaciones sin leer** (9+ días) en el WhatsApp de Bersaglio · avisarle a **Kary**.
 
 > **⏭️ PELOTAS DE DANIEL** (no las puedo cerrar yo):
+> **(0) 🔴 ¿LA CAMPAÑA DE HUMO ESTÁ REALMENTE APAGADA?** El `05` dice DESACTIVADA; el playbook §4b dice
+> que sigue **ACTIVA** y **arranca sola al recargar saldo**. [[D-15]]: «sin saldo» ≠ «apagado» (§90).
 > **(1)** rotar la **contraseña de aplicación de Gmail** — sin eso los leads no avisan (arriba).
-> **(2) publicar la Política de Datos V2** en `/legal/politica-tratamiento-datos`. Es despliegue, no
-> decisión, y ahora **bloquea dos cosas**: los 24 docs la fijan en **V2 · 28-07-2026** (§71.3) y **sin ella
-> no se puede abrir "Crear cuenta"** en el portal (Ley 1581 art. 9, §89.6).
+> **(2)** ✅ Política V2 **PUBLICADA y LIVE** (20-ago, `curl` 200). Queda TU visto bueno para **abrir
+> "Crear cuenta"**: el código de `/ingresar` aún la bloquea citando una política que YA existe (§90).
 > **(3) B-04** — sin contrato con DataCrédito/TransUnion **NO se puede consultar a nadie** aunque el
 > arrendatario firme, y el doc 04 ya se lo anuncia: ¿afiliarse, o apoyarse solo en la aseguradora?
 > **(4)** verificar los **recovery codes** (último resto del SPOF, §72).
-> **(5)** Nº de **matrícula y RNT** (al cierre de obra) + vetar/ajustar los 6 estándares del `02 §2`.
+> **(5)** Nº de **RNT** (la matrícula `6636` YA está publicada) + vetar los 6 estándares del `02 §2`.
 > **(6)** ¿**Google** como proveedor de acceso está habilitado en Firebase? Sin evidencia de que lo esté;
 > el botón ya avisa en cristiano si no lo está, pero es un interruptor de su consola.
 > **(7)** decidir la **tasa de mora del doc 03** (B-05: 1,5×IBC vs 6%) — un párrafo, y las 5 remisiones
@@ -90,14 +89,12 @@
 > **(8)** el form de `/publicar` **no pide correo** (fiel al mockup) y eso hace que un propietario real
 > llegue etiquetado `[COLD]`: o se añade el campo al mockup, o se re-pesa el scoring.
 
-> **▶ CONSOLIDADO** — §81-§89 ya son ADRs; el relato y el ruteo viven en `00-INDICE` → `99` (SSoT).
+> **▶ CONSOLIDADO** — §81-§90 ya son ADRs; el relato y el ruteo viven en `00-INDICE` → `99` (SSoT).
 
 > **⏸️ EN PAUSA, reanudable y sin bloquear nada**: 64 leves del kit (ledger en bóveda) · [[M-09]] a los
 > 3 hermanos (TODO-32b) · backlog B-01..B-05. 🛑 **NO RELANZAR** el comité R3, la auditoría B-03 ni los
 > 12 planificadores: está pagado y en la bóveda (`2026-07-28-*` · `2026-07-31-kit-b03-altos/`).
 
-> 📜 **LOS ESTATUTOS MANDAN sobre el kit** (V5, art. 8º/13º/24º) → §70.2. [[LD-05]]: abre el documento
-> madre ANTES de auditar; entra al contexto pero es **gitignored** (cédulas de los 3 socios).
-> ⛔ **Docs 13 y 23 RETIRADOS**; sus riesgos asumidos están enumerados en el banner del 13 (4 desde §87).
-> ⚠️ **Ni los Word ni el manual maestro se editan a mano**: se GENERAN (`generar-documentos.ps1` ·
-> `ensamblar-manual.ps1`, §68). Editar el maestro directo fue lo que duplicó y desincronizó el capítulo 2.
+> 📜 **Kit (⏸️ pausa)**: los **ESTATUTOS MANDAN** (V5, art. 8º/13º/24º, §70.2) y se abren ANTES de auditar
+> ([[LD-05]]; gitignored, cédulas). ⛔ Docs **13 y 23 RETIRADOS** (§87). ⚠️ **Word y manual NUNCA a mano**:
+> se GENERAN (§68 · detalle en `43`) — editar el maestro directo desincronizó el capítulo 2.

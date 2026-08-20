@@ -161,6 +161,7 @@ Cuando el portal maneje plata: (1) skill global `auditoria-financiera` (7 invari
 ### M-07 — Un gate del kernel solo protege donde su DISPARADOR está cableado (el 4º repo no tenía pre-commit) → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
 ### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
 ### M-09 — El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es frecuencia × costo de omisión → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
+### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > 🧩 **Mudadas a `60-WORKFLOWS §Gobernanza`** el 2026-07-28 (ADR §68): hablan de CÓMO se conduce la
