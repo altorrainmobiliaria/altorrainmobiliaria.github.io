@@ -84,6 +84,23 @@ workflow genérico inventado, ni digitalizar errores: su operación, elevada a e
 7. Modelo de datos v1 (Firestore): `propiedades` (schema desde destilado R0 + los .xlsx FTI-01 del dueño — 2ª pasada pendiente del crítico R4), `solicitudes` (taxonomía R0), `disponibilidad` (corta estancia), `config` — **Y las entidades del módulo GESTIÓN (§3b) desde el día 1**: `contratos` (administración y arriendo: partes, vigencia, renovación automática, % honorarios, docs adjuntos), `pagos` (calendario canon/honorarios/servicios), `novedades` (tickets inquilino/propietario), `expedientes`. Modelarlas tarde = remodelar caro. Índices compuestos DECLARADOS de antemano (tope 200).
 
 ### 🌊 OLA 1 — MVP público (el portal que reemplaza la obra) · gate de salida: cutover DNS
+
+> 📊 **ESTADO REAL medido contra el código el 2026-08-20** (ADR §90). ⚠️ Ojo con el `05`: dice «OLA 1
+> FIDELIDAD COMPLETA» y eso significa **fiel a los mockups**, NO **completa según este plan**. Son cosas
+> distintas y confundirlas hace creer que la ola está cerrada.
+>
+> **✅ EN PIE (7/13)**: 1 Home (`index.astro`, 17/17) · 2 SERP (`[operacion].astro` + MapLibre §55) ·
+> 3 Ficha (`ficha.astro`, datos DEMO — 4 decisiones abiertas en TODO-33) · 5 Corta estancia
+> (`estancias.astro`, sin dinero) · 6 Publica (`publicar.astro`, capta de verdad §88) · 10+13 Admin y
+> GESTIÓN (`gestion.astro`, 3 roles §31) · 12 Leads (`solicitudes` §88 — ⚠️ el aviso por email sigue ROTO, `43`).
+>
+> **❌ NO EXISTEN (5/13)** — `find` sobre `portal/src` no encuentra ni un archivo:
+> · **4 Landings SSG de sector** (13+ barrios con contenido editorial REAL — el legacy SÍ las tenía)
+> · **7 Página de PRECIOS pública** (op.7, el *diferenciador gratis* del plan)
+> · **8 Alertas guardadas + digest diario**
+> · **9 Rango ALTORRA + Rentímetro turístico**
+> · **11 SEO técnico**: sin `sitemap`, sin `robots`, sin mapa de 301 — y el 301 es **gate del cutover**.
+
 Superficies (todas con mockup D2 aprobado):
 1. **Home** (search-pill + categorías + zonas + trust).
 2. **SERP** por operación (shell estático + isla client sobre JSON paginado; mapa split-view MapLibre con pins de precio; filtros chips; noindex).

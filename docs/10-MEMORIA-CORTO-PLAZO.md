@@ -30,14 +30,15 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-17** | **Ola 0 restos**: E2E "tras cache" en staging (T9) · deploy de rules (en el cutover, NO ahora) · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | gate=CUTOVER |
+| **TODO-17** | **Ola 0 restos**: E2E "tras cache" en staging (T9) · deploy de rules (en el cutover) · 0.4 obra AEO (0.6 legal ✅ §90). | 🔄 OPUS | gate=CUTOVER |
 | **TODO-21** | **Lote-dueño**: Nº **RNT** (la matrícula ya está PUBLICADA, `05`) · dirección física y COMERCIAL · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
 | **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4; editar CANÓNICO → bump `VERSION` → `brain:pull` ×4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-38** (§90) gates a medias: #27 sin `creas` · #5 existencia≠corrección · `§NN` sueltos sin gate · `30`/`33`/`00` en ↗ · pelotas sin ID · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO). | 🔄 | §84·§87·§90 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada y fontanería §4b OK (estado → flag 📣 de `05`). Resta **calibrar la campaña REAL**, gateada por el cierre de obra. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, [[L-39]] → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
+| **TODO-39** | 🌊 **OLA 1: faltan 5 de 13 superficies** (§90; «fidelidad completa» del `05` = fiel-al-mockup, NO ola-completa): landings de sector · precios público · alertas · Rango/Rentímetro · **SEO técnico** (sin sitemap/robots/301; el 301 es GATE del cutover). | 🟢 construir | MEGA-PLAN §OLA 1 |
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§60)**. Para datos reales: (1) deploy COORDINADO en el cutover (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. Lo demás BLOQUEADO por causas reales (§60.4); insumos legales de la ficha → TODO-33. | 🟢 cutover | §60 |
 | **TODO-33** | 🧾 **FICHA dinámica — 4 decisiones ANTES de construir (§60.3)**: dirección exacta · financiación · asesor · POIs. Regla: **bloque sin dato se OMITE** (jamás heredar el demo). | 🔵 decisión | §60 |
-| **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa (19-ago)**. Kit 00-22 emitido y auditado; críticos y altos aplicados (§70·§71). De los leves van **28/92** (§86-§87): 18 aplicados · 6 moot · 4 ya resueltos · **2 remedios refutados**. ⚠️ sin escéptico ⇒ **uno por uno, NUNCA en lote** (§70.6). No bloquea nada: el kit no se firma hasta el cierre de obra. Ledger reanudable → bóveda `2026-08-03-leves-b03-LEDGER.md`. | ⏸️ 28/92 | §87 · `43` |
+| **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa (19-ago)**. Kit 00-22 emitido y auditado; críticos y altos aplicados (§70·§71). Leves **28/92** (§86-§87). ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger reanudable → bóveda `2026-08-03-leves-b03-LEDGER.md`. | ⏸️ 28/92 | §87 · `43` |
 
 ---
 
@@ -62,10 +63,9 @@
 > ⚠️ **Antes de tocar código, lee `34-DOCTRINA-CODIGO`** (trigger 🖥️) y, si el síntoma te suena, `30`:
 > [[L-33]] (`locals.runtime.env` removido en Astro v6) YA cobró dos veces, la última el 19-ago.
 
-> **🔴 ABIERTO Y CARO — el aviso de leads está ROTO en producción.** `onNewSolicitud` falla con
-> `535-5.7.8`: las credenciales de Gmail no sirven. **Censo 20-ago: 16 leads del SITIO VIEJO, 14
-> PENDIENTES y 0 avisados** (3 propietarios). El doc tampoco recibe `leadScore` aunque el repo lo
-> escribe ⇒ **sugiere (sin verificar)** que la Function desplegada NO es la del repo. → `43 §14 LEADS`.
+> **🔴 SIGUE ROTO — el aviso de leads.** `onNewSolicitud` falla con `535-5.7.8` (credenciales de Gmail).
+> Los 16 del sitio viejo se BORRARON el 20-ago (exportados antes, `43`), pero **es la misma Function que
+> avisará los del portal nuevo**: lanzar sin rotar la contraseña = perderlos igual, y sin evidencia.
 
 > **▶ ✅ PAUTA BERSAGLIO CERRADA 20-ago** (0 ventas/63 conv ⇒ Meta no es el canal a ese precio; 6 zombies ✅verificado 20-ago (0 activas en todo el histórico)
 > apagadas). Detalle → `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`; doctrina → `meta-ads-diagnostico`.

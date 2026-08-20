@@ -44,48 +44,28 @@
   personal de Daniel, prohibido publicar (memoria `identidad-marca-inmobiliaria`). El correo del acto
   (`altorracompanysas@gmail.com`) es interno; el público sigue siendo `info@altorrainmobiliaria.co`.
 
-## 🔴 14 LEADS REALES SIN GESTIONAR en `solicitudes` (censo directo 2026-08-20)
+## 🧹 LEADS — los 16 del sitio viejo, BORRADOS el 2026-08-20 (decisión de Daniel)
 
-Primer censo hecho **leyendo Firestore de verdad** (posible desde que Daniel autenticó el CLI con
-`altorrainmobiliaria@gmail.com` el 20-ago; antes la máquina solo tenía la cuenta de Cars, §50).
+**Qué hubo**: 16 leads reales en `solicitudes` del 2026-04-16 al 2026-07-09 (14 `pendiente` · 2 `cerrado`),
+**todos del SITIO VIEJO** — verificado mapeando cada `origen` a su archivo en `js/` legacy. El portal nuevo
+nunca captó uno real (escribe `origen: portal-publicar`; sigue en staging `noindex`). **Ninguno de los 16
+tenía `emailSent`**: nadie recibió aviso jamás. Esperaron entre 42 y 126 días.
 
-**16 leads reales · del 2026-04-16 al 2026-07-09 · 14 en estado `pendiente` · 2 cerrados.**
-**Los 16 tienen `emailSent != true`: NADIE recibió aviso automático de ninguno.**
+**Qué se hizo**: Daniel decidió eliminarlos (*«son de la antigua plataforma, crearemos un portal nuevo más
+operativo y escalable»*). **Exportados ANTES** a copia local fuera de git (datos personales):
+`backups/solicitudes-EXPORT-2026-08-20.json` + `backups/HOJA-LLAMADAS-14-leads.md`. Borrado ejecutado por
+Daniel con `firestore:delete --recursive` (Claude no ejecuta destrucción de datos reales) y **verificado
+vía REST: la colección quedó en 0 documentos** (`verificado-vivo: 2026-08-20`).
 
-⚠️ **DE DÓNDE SALEN (la pregunta correcta de Daniel: si el portal no se ha lanzado, ¿cómo hay leads?).**
-**NO son del portal nuevo: son del SITIO VIEJO**, de cuando estaba en producción. Verificado mapeando
-cada `origen` a su archivo en `js/` legacy: `contacto`→`admin-*.js` · `guia-inversionista-2026`→
-`exit-intent.js` · `publicar-propiedad`→`contact-forms.js` · `renta-turistica`→`blog-list.js` ·
-`simulador-hipotecario`→`simulador-hipotecario.js` · `wizard-publicar-home`→`wizard-publicar.js`.
-El portal nuevo escribe con `origen: 'portal-publicar'` y **no tiene ni un lead real** (el único que
-hubo fue la prueba del gate, borrada el 20-ago) — correcto: sigue en staging con `noindex`.
-⇒ **La última captación fue el 09-jul**; desde que el sitio viejo entró en modo obra, el negocio NO
-capta por web. Eso sube la prioridad del cutover: hoy no hay ningún canal web vivo trayendo clientes.
+## 🔴 LO QUE EL BORRADO **NO** ARREGLÓ — sigue vivo y muerde al portal nuevo
 
-| Origen | # | Por qué duele |
-|---|---|---|
-| `guia-inversionista-2026` | 5 | inversionistas que pidieron material |
-| `contacto` | 5 | consultas directas |
-| `publicar-propiedad` | 3 | **PROPIETARIOS ofreciendo inmueble — el lead más valioso de una inmobiliaria** |
-| `renta-turistica` · `simulador-hipotecario` · `wizard-publicar-home` | 3 | intención alta |
-
-**Causa**: la Cloud Function `onNewSolicitud` falla con `535-5.7.8 Username and Password not accepted`
-(credenciales de Gmail) — ya estaba documentado como bug, pero **sin dimensionar**: el censo lo convierte
-de "el aviso está roto" a "hay 14 personas esperando respuesta, algunas desde hace 4 meses".
-
-**Qué hacer, en orden**: (1) rotar la contraseña de aplicación de Gmail (pelota de Daniel) para que
-`onNewSolicitud` vuelva a avisar; (2) **trabajar los 14 pendientes a mano AHORA** — no esperan a la web;
-(3) los 3 de `publicar-propiedad` primero: son captación, el lado del que vive el negocio.
-⚠️ Ley 2300/2023 fija horarios de contacto comercial (L-V 7-19, S 8-15) — ver `42-LEGAL`.
-
-📦 **EXPORTADOS el 2026-08-20** antes de cualquier borrado (Daniel decidió eliminarlos: *«son de la
-antigua plataforma, crearemos un portal nuevo más operativo y escalable»*). Copia local **fuera de git**
-(datos personales): `backups/solicitudes-EXPORT-2026-08-20.json` (16 docs crudos) + `backups/HOJA-LLAMADAS-14-leads.md`
-(los 14 vivos, propietarios primero). Espera real al exportar: **42 a 126 días**. Reparto de los 14:
-**2 propietarios** (el 3º `publicar-propiedad` está `cerrado`) · 5 inversionistas · 1 hipoteca · 1 renta
-turística · 5 consultas. **El borrado NO lo ejecuta Claude** (destrucción de datos reales = mano del dueño);
-comando en `50`. Borrar no arregla el aviso roto: solo quita la evidencia de que 14 personas no fueron atendidas.
-
+`onNewSolicitud` falla con **`535-5.7.8 Username and Password not accepted`**: las credenciales de Gmail
+(`EMAIL_USER`/`EMAIL_PASS`) no sirven. **Es la misma Function que avisará los leads del portal nuevo.** Si
+se lanza sin rotar la contraseña de aplicación (pelota de Daniel), los leads nuevos se pierden EXACTAMENTE
+igual que los 16 — solo que esta vez sin evidencia de que pasó. Sospecha sin verificar: el doc tampoco
+recibía `leadScore`/`nurturing` aunque el repo los escribe antes del envío ⇒ la Function desplegada podría
+no ser la del repo.
+⚠️ Al retomar contacto comercial, **Ley 2300/2023**: L-V 7:00-19:00 · Sáb 8:00-15:00 → `42-LEGAL`.
 ## Cómo opera HOY (probado con papeles reales, no manual)
 
 > ⚡ **Actualización Daniel 2026-07-24**: **NO hay contratos vigentes** — todos los arrendamientos/administraciones
