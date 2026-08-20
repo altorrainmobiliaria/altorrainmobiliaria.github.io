@@ -153,5 +153,14 @@
     "docs/skills-inventory.md": "Registro 1:1 con las carpetas de skills/ — su tamaño lo fija el inventario real, no una decisión editorial. Lo vigila el gate #6.",
     "docs/00-INDICE.md.bak": "Artefacto residual, no neurona."
   },
-  "_caps_que": "Topes por-repo. Cada neurona tiene cap MEDIDO (tamaño real + ~35% de holgura) o entrada en noCap CON RAZON — nunca por omision (chequeo #23, ADR §74). Los caps NO se inventan: §74.3 documenta como una cifra a ojo creo un gate bloqueante falso. Los dos ejes se derivan uno del otro: lines = chars/densidad-real, para que ambos aprieten en el mismo punto. Un par incoherente hace que el eje equivocado dispare primero (hallazgo N2-13 de la auditoria de insemastereo)."
+  "_caps_que": "Topes por-repo. Cada neurona tiene cap MEDIDO (tamaño real + ~35% de holgura) o entrada en noCap CON RAZON — nunca por omision (chequeo #23, ADR §74). Los caps NO se inventan: §74.3 documenta como una cifra a ojo creo un gate bloqueante falso. Los dos ejes se derivan uno del otro: lines = chars/densidad-real, para que ambos aprieten en el mismo punto. Un par incoherente hace que el eje equivocado dispare primero (hallazgo N2-13 de la auditoria de insemastereo).",
+  "workDirs": [
+    "specs"
+  ],
+  "workAllowlist": [
+    "specs/R0-DESTILADO-LEGACY.md",
+    "specs/R4-OPERACION-MARKETING-2026-07.md",
+    "specs/R5-PROMPT-GEMINI-STACK.md"
+  ],
+  "workAllowlistRazon": "Investigación R0-R5 de julio-2026 ya DESTILADA a sus neuronas (schema y stack -> 20 · operación -> 43 · mercado -> 41): son la materia prima, no trabajo pendiente. Se conservan como evidencia de procedencia. Si alguna vuelve a definir trabajo POR HACER, sáquela de aquí y cítela desde su nodo dueño."
 }

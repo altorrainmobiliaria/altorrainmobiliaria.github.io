@@ -42,6 +42,7 @@ Auto-cargas SOLO `CLAUDE.md` + `05` + `10` (§G.1); el resto se lee on-demand. E
 | 📚 **Largo Plazo** | `docs/99-HISTORIAL-ADR.md` | ❌ | El "por qué" de cada decisión (ADRs). NUNCA completo — offset/limit. |
 | 🎯 **Lóbulos de Dominio** | `docs/40-LOBULOS-DOMINIO.md` | ❌ | Registry de dominios; los hijos (`41-MERCADO`…) nacen con contenido REAL. |
 | 🔐 **Config / Infra** | `docs/50-CONFIG-INFRA.md` | ❌ | Project ID, IAM, comandos de deploy, workflows de CI. Los secretos reales viven gitignored. |
+| 🎯 **Misión** | `specs/MEGA-PLAN-INMOBILIARIA.md` (+ `VISION-FUNCIONAL-PRODUCTO.md`) | ❌ | QUÉ construimos y en qué orden: 4 olas + gates del dueño. **Léelo ANTES de planear producto**: el `10` dice qué toca HOY, esto dice por qué (gate #28). |
 | 🛠️ **Skills externas** | `skills/` + tool Skill | ❌ | Expertise portable de terceros; NO es neurona. Catálogo → `docs/skills-inventory.md` (el repo NO es la fuente de las cargadas). |
 
 **Hojas de detalle**: convención `docs/<tema>.md`; nacen con contenido y SIEMPRE referenciadas desde su neurona madre — nada huérfano (§G.5).

@@ -27,7 +27,7 @@
 //       (0-canónico, 7, 7b, 14-tableFile) DEGRADAN si la bóveda o el canónico no están clonados
 //       + 7b) bóveda: commits ≠ origin vía fs [warn]
 // ===========================================================
-const KERNEL_VERSION = '1.10.3';
+const KERNEL_VERSION = '1.11.0';
 import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -75,6 +75,9 @@ const KNOWN_KEYS = new Set([
   'downgrades', 'orphanAllowlist', 'verifiedLiveStaleDays', 'verifiedLiveScan', 'lastOffsiteBackup',
   'harnessCanary', // v1.10.3 (#24): declara si este repo DEBE tener el SessionStart cableado
   'noCap', // v1.7 (#23): { "docs/X.md": "razón" } — declarar SIN tope es una decisión, no un olvido
+  // v1.11.0 (#28): directorios de TRABAJO fuera de `docs/` (planes, specs) que el cerebro debe citar,
+  // su allowlist y la RAZÓN de esa allowlist (una excepción sin razón es una fuga con permiso).
+  'workDirs', 'workAllowlist', 'workAllowlistRazon',
 ]);
 for (const k of Object.keys(manifest)) {
   if (!k.startsWith('_') && !KNOWN_KEYS.has(k)) warn(`manifest: clave desconocida "${k}" (¿typo? un typo apaga gates en silencio) — schema v1.2`);
@@ -865,6 +868,38 @@ else {
 }
 
 // ---- salida (presupuesto de stdout en --boot) ----
+// 28) Trabajo PENDIENTE fuera de `docs/` que NADIE cita (anti-fuga) [--full]
+//     Nace de un fallo REAL (inmobiliaria, 2026-08-20): el MEGA-PLAN del portal —el documento que
+//     define TODO el trabajo del proyecto: 4 olas, 13 superficies y los gates del dueño— vive en
+//     `specs/` y NINGÚN nodo del cerebro lo citaba. El operador arrancó en frío, leyó CLAUDE.md +
+//     05 + 10 como manda §G.1, y se dispuso a improvisar un plan que YA EXISTÍA. El gate #10 no lo
+//     caza porque su universo es solo `docs/`. Mandato del dueño: «debe haber una forma de verificar
+//     todo lo pendiente, porque si al operador se le olvida queda en el olvido».
+//     Un plan que nadie cita no está guardado: está perdido con copia de seguridad.
+head('\n28) Planes/specs alcanzables desde el cerebro (anti-fuga):');
+if (BOOT) head('  ⏭️  omitido en --boot');
+else {
+  const workDirs = manifest.workDirs || ['specs'];
+  const allowW = new Set(manifest.workAllowlist || []);
+  let brainText = claude;
+  for (const f of readdirSync(DOCS).filter((f) => f.endsWith('.md'))) brainText += read(join(DOCS, f));
+  const sueltos = []; let total = 0;
+  for (const d of workDirs) {
+    const p = join(ROOT, d);
+    if (!existsSync(p)) continue;
+    let ents = []; try { ents = readdirSync(p).filter((f) => f.endsWith('.md')); } catch { continue; }
+    for (const f of ents) {
+      total++;
+      if (allowW.has(`${d}/${f}`)) continue;
+      if (!brainText.includes(f)) sueltos.push(`${d}/${f}`);
+    }
+  }
+  if (sueltos.length)
+    warn(`${sueltos.length} documento(s) de trabajo que NINGÚN nodo cita → INVISIBLES al arrancar en frío: ${sueltos.slice(0, 6).join(' · ')}${sueltos.length > 6 ? ' …' : ''} → cítalos desde su nodo dueño, o decláralos en manifest.workAllowlist CON razón`);
+  else if (total) ok(`${total} documento(s) de trabajo citados desde el cerebro`);
+  else head('  ℹ️  sin directorios de trabajo declarados (manifest.workDirs)');
+}
+
 const sano = '✅ CEREBRO SANO (estructura íntegra' + (manifest.deepAudit && manifest.deepAudit.last ? ' · auditoría semántica: ' + manifest.deepAudit.last : '') + ')';
 const parcial = `🟠 ESTRUCTURA ÍNTEGRA, pero ${degraded} gate(s) DEGRADADOS (no pudieron correr) — NO es un cerebro verificado: clona la bóveda / el canónico y re-corre`;
 lines.push(`\n${problems ? '⚠️  ' + problems + ' problema(s) — revisar antes de avanzar' : (degraded ? parcial : sano)}\n`);

@@ -92,10 +92,9 @@
 
 > **▶ CONSOLIDADO** — §81-§89 ya son ADRs; el relato y el ruteo viven en `00-INDICE` → `99` (SSoT).
 
-> **⏸️ EN PAUSA, reanudable y sin bloquear nada**: los **64 leves** restantes del kit (ledger en bóveda,
-> `2026-08-03-leves-b03-LEDGER.md`) · [[M-09]] a los 3 hermanos (TODO-32b) · backlog **B-01..B-05**.
-> 🛑 **NO RELANZAR** el comité R3, la auditoría B-03 ni los 12 planificadores — está todo pagado y en la
-> bóveda (`2026-07-28-*` · `2026-07-31-kit-b03-altos/`).
+> **⏸️ EN PAUSA, reanudable y sin bloquear nada**: 64 leves del kit (ledger en bóveda) · [[M-09]] a los
+> 3 hermanos (TODO-32b) · backlog B-01..B-05. 🛑 **NO RELANZAR** el comité R3, la auditoría B-03 ni los
+> 12 planificadores: está pagado y en la bóveda (`2026-07-28-*` · `2026-07-31-kit-b03-altos/`).
 
 > 📜 **LOS ESTATUTOS MANDAN sobre el kit** (V5, art. 8º/13º/24º) → §70.2. [[LD-05]]: abre el documento
 > madre ANTES de auditar; entra al contexto pero es **gitignored** (cédulas de los 3 socios).
