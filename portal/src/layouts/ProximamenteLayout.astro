@@ -1,0 +1,58 @@
+---
+/*
+ * Sección anunciada pero aún no abierta — plantilla compartida.
+ *
+ * Por qué existe: la home y el footer enlazan a secciones que el MEGA-PLAN sí contempla
+ * (`/aliados`, `/invertir`, `/journal`) pero que todavía NO tienen mockup aprobado. El cerebro
+ * prohíbe construir UI sin mockup (callejón (b) de `10`), y a la vez un enlace propio que responde
+ * 404 es un defecto de calidad. Esta plantilla resuelve las dos cosas: NO inventa diseño —clona el
+ * patrón ya aprobado de `404.astro`— y convierte el error en una promesa honesta con salida útil.
+ *
+ * ⚠️ Es TEMPORAL. Cuando cada sección tenga su mockup (carril D), se reemplaza por la página real.
+ */
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../lib/config/site';
+
+interface Props {
+  title: string;
+  encabezado: string;
+  texto: string;
+  waTexto: string;
+  description?: string;
+}
+const { title, encabezado, texto, waTexto, description } = Astro.props;
+const wa = `${SITE.contact.whatsappLink}?text=${encodeURIComponent(waTexto)}`;
+---
+
+<BaseLayout title={`${title} — ALTORRA Inmobiliaria`} description={description}>
+  <Header active="" />
+
+  <main id="main" class="nf">
+    <div class="alt-container nf__in">
+      <p class="alt-eyebrow">Próximamente</p>
+      <h1 class="nf__h">{encabezado}</h1>
+      <p class="nf__p">{texto}</p>
+      <hr class="alt-divider alt-divider--center nf__div" />
+      <div class="nf__cta">
+        <a class="alt-btn alt-btn--gold" href={wa} target="_blank" rel="noopener">Hablar con un asesor
+          <span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </a>
+        <a class="alt-btn alt-btn--outline" href="/comprar">Ver propiedades</a>
+      </div>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* Mismos valores que `404.astro`: es el patrón ya aprobado, no una variante nueva. */
+  .nf { display: grid; place-items: center; padding-block: clamp(64px, 12vw, 140px); background: var(--alt-surface-neu); }
+  .nf__in { max-width: 600px; text-align: center; }
+  .nf__h { font-size: var(--alt-fs-h1); margin-top: var(--alt-space-3); }
+  .nf__p { margin-top: var(--alt-space-4); font-size: var(--alt-fs-lg); color: var(--alt-text); }
+  .nf__div { margin: var(--alt-space-6) auto; }
+  .nf__cta { display: flex; gap: var(--alt-space-4); justify-content: center; flex-wrap: wrap; }
+</style>
