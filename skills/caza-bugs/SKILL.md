@@ -34,6 +34,27 @@ Recorre las **dos fronteras** + la carrera de carga:
 Los demás estados (lleno, idempotencia/re-montar) son secundarios; no diluyas el filo en una
 lista de QA genérica.
 
+## 2b. Checklist del DINERO (obligatorio si el subsistema mueve plata)
+Nace de un bug REAL (traslado duplicado de $5.6M, 2026-07-09): el camino vivo del dinero tiene
+fronteras propias que el checklist visual no cubre. Si el diff toca caja/pagos/stock/saldos:
+- **Ida-y-vuelta con recarga**: haz la operación → navega a OTRA página → VUELVE (recarga
+  completa). ¿La UI pide repetir la operación? ¿El estimado cuadra? (El bug real: 4 listeners
+  llegaban en desorden al recargar y el modal pedía trasladar de nuevo lo ya trasladado.)
+- **Foto incompleta**: ¿alguna decisión AUTOMÁTICA (modal, bloqueo, alerta, cálculo) se dispara
+  con datos a medio llegar? Toda automatización sobre datos remotos exige un gate de "fuentes
+  listas". Los botones manuales pueden ser optimistas; lo automático NO.
+- **Conservación**: después de cada operación, suma las tres vistas del mismo peso — UI
+  estimada, sello/ecuación del servidor y ledger. ¿Dan el MISMO número? Un descuadre entre
+  vistas es el bug, aunque cada vista "se vea bien" sola.
+- **El camino de deshacer**: anula/reversa/cancela la operación recién hecha. ¿TODAS las vistas
+  se netean (no solo una)? (Bug real #2: la reversa arreglaba la bóveda pero el cierre del turno
+  seguía contando el fantasma.) ¿Deshacer dos veces está bloqueado?
+- **Negativos a la vista**: fuerza un estado imposible (deshacer tras mover el dinero). ¿El
+  número negativo SE VE en rojo, o un formateador lo recorta a $0 y esconde la anomalía?
+- **Doble sesión**: la misma operación desde dos pestañas/sesiones. ¿Idempotencia real o
+  duplicado con id nuevo?
+Donde caces uno, blíndalo con un test de integración del ESCENARIO completo (no del paso).
+
 ## 3. "Rozar" — el disparador (con su frontera)
 - **SÍ dispara** si mi diff cambia una entrada/salida/contrato, **O el estado compartido** (doc
   de BD, sessionStorage, caché) que **otro** subsistema lee — aunque no edite su archivo.
@@ -49,6 +70,19 @@ flujo por código de forma **adversarial** (¿qué monta el nodo? ¿quién dispa
 qué orden?), no una sola pasada complaciente. **Donde caces el bug, blíndalo con un test del
 estado-cero** (p. ej.: `renderX()` con 0 ítems emite el contenedor que `refreshX()` puede
 poblar) vía `test-driven-development` — ese test es el único gate mecanizable real.
+
+## 4b. 🔇 El fallback SILENCIOSO — el bug que se disfraza de "funciona"
+Un `catch {}` vacío o un `on('error', () => {})` puesto "para degradar con elegancia" **no degrada:
+OCULTA**. La UI muestra el estado de reserva, nadie ve un error, y el sistema queda en un fallo
+PERMANENTE que además se documenta como verdad ("solo falta X"). Caso propio 2026-08-20: el basemap
+de un portal llevaba semanas sin pintar y el estado registraba «falta solo la vista en foreground»;
+el error real (`There is no tile manager with ID …`) solo apareció al añadir un `console.error` en DEV.
+**Reglas**: (1) todo fallback **grita en DEV aunque calle en PROD** — silenciar es una decisión de UX,
+nunca de observabilidad; (2) al auditar un subsistema con modo degradado, busca **la señal binaria que
+distingue vivo de fallback** (aquí: la clase `.is-live` que el propio código añade) y compruébala — no
+juzgues por captura de pantalla, porque el fallback se ve BIEN; (3) si el código no expone su estado,
+**añade una sonda gateada por DEV** antes de seguir adivinando; (4) desconfía de un estado que diga
+"verificado" sin decir QUÉ se verificó: aquí se había verificado el SERVIDOR de tiles, no el render.
 
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
