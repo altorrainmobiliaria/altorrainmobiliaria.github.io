@@ -394,6 +394,15 @@ que nadie lo decida. **Al cerrar cualquier campaña revisa el toggle de TODA la 
 **personal no reclamada**, ninguna herramienta automática la ve: cada revisión exige un navegador logueado.
 Verifícalo ANTES de prometer monitoreo — `ads_get_ad_accounts` lista lo alcanzable; si la cuenta no aparece
 ahí, **no existe para el automatismo** por más permisos que tenga el humano dueño.
+**D-16b · Que `ads_get_ad_accounts` la LISTE no significa que puedas CONSULTARLA.** D-16 dice que si la
+cuenta no aparece, no existe para el automatismo — cierto, pero **insuficiente**: puede aparecer, estar
+dentro de un portfolio y seguir siendo inalcanzable. El flag que manda es **`is_ads_mcp_enabled`**. Caso
+ALTORRA (2026-08-20): `1784008112275023`, `account_status: ACTIVE`, `is_queryable: true`, business
+«Altorra Inmobiliaria» — y `is_ads_mcp_enabled: false`, razón *«Ads MCP is gradually being rolled out»*.
+La herramienta **PROHÍBE** usar esa cuenta en llamadas siguientes, así que no hay diagnóstico automático:
+la única vía es navegador logueado. **Lee el flag, no la presencia en la lista**, ANTES de prometer que
+vigilas una cuenta. Y aprovecha lo que el listado da gratis: **`has_payment_method`** — una cuenta ACTIVA
+con método de pago y un zombie de [[D-15]] dentro no es un riesgo teórico: tiene por dónde cobrar.
 
 **D-17 · Para que el TICKET ALTO llegue a vender, hay que cerrar el loop de señal.** Con CTWA y sin señal
 downstream, Meta optimiza hacia *quien chatea*, jamás hacia *quien compra* (D-5): ese techo no se rompe con
