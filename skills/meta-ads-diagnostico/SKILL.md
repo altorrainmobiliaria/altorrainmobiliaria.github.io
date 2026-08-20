@@ -245,6 +245,13 @@ Si el anuncio funciona pero nadie compra/consulta/deja datos, el problema puede 
   orden visual / claridad del CTA / mapa de atención predicho. Verificar que existan y sean gratis ANTES de
   recomendarlas a un cliente; mientras tanto, el mismo chequeo se hace con criterio propio + skills `page-cro`/
   `form-cro`: ¿se entiende el botón principal? ¿el visitante sabe qué hacer? ¿hay distracciones que no venden?
+- 🔴 **Sigue cada CTA hasta el FINAL, no hasta el clic** (caso propio 2026-08-20): un botón puede verse
+  impecable y entregar a un canal muerto. En la ficha del portal, «Solicitar información» apuntaba a
+  `mailto:` — eso pierde el lead **dos veces**: exige un cliente de correo configurado (en móvil casi
+  nadie lo tiene) **y** el buzón destino tenía el aviso automático caído. Ni PageSpeed, ni el screenshot,
+  ni la revisión visual lo cazan: se ve bien (pariente de L-29). **Chequeo por CADA CTA**: (1) ¿a dónde va
+  el `href` REAL?; (2) ¿quién atiende ese canal HOY?; (3) ¿dónde queda REGISTRADO el lead? Si alguna
+  respuesta es "no sé", ese CTA no puede recibir tráfico pagado.
 - Regla: **pauta nueva solo sobre landing verificada** (velocidad + CTA claro + tracking del lead funcionando).
 
 ## Higiene de cuenta: las "pruebas" automáticas de Meta (aporte Daniel 2026-07-18 — ⚠️ con matiz)
