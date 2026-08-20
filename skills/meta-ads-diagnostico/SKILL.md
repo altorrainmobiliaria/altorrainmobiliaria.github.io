@@ -352,3 +352,48 @@ tras cruzar la hora real de llegada de los chats (D-9).
 · *Respuestas de Meta Business Agent* (IA que contesta 24 h) — tapa el hueco nocturno, pero una IA
 improvisando precios, plazos o garantías sobre ticket alto es riesgo legal directo (Colombia, Ley 1480:
 lo anunciado obliga). Solo con guion cerrado y decisión explícita del dueño.
+
+---
+
+### 🏁 DESENLACE del caso Bersaglio (campaña 2 — verificado en Ads Manager 2026-08-20)
+
+> Se aplicaron las correcciones D-2/D-3/D-4/D-6: Cartagena ciudad **+0 km**, **precio visible en el texto**,
+> 2 anuncios con producto de entrada, duplicado en pausa, $8.000/día, 9 días. Resultado: **26 conversaciones
+> a $2.812** (vs. $1.233), **$73.099 gastados**, **0 ventas y 0 visitas al local**. Detalle →
+> `bersagliojewelry.github.io/docs/44a-PAUTA-DESENLACE-2026-08.md`.
+
+**D-13 · La hipótesis correcta, bien ejecutada, también puede dar cero — y eso ES un resultado.** El costo
+por conversación subió $1.233 → **$2.812**, exactamente el rango que D-2 predice como señal de mejora, y
+trajo 26 conversaciones cuando se pronosticaron 10-15: **la corrección funcionó**. Y aun así, cero. Con
+**63 conversaciones acumuladas → 0 ventas bajo dos configuraciones OPUESTAS** (nacional sin precio /
+hiperlocal con precio), deja de ser un problema de campaña y pasa a ser **ajuste producto-canal-precio**.
+No sigas iterando creativo: la campaña ya hizo su trabajo — **compró la respuesta**. Saber parar es el
+entregable. ⚠️ Y no confundas los dos diagnósticos: *"el anuncio está mal"* se arregla con pauta;
+*"no hay comprador a este precio en este canal"* no se arregla con pauta.
+
+**D-14 · Un criterio de parada sin VIGILANTE es documentación, no control.** El criterio estaba impecable y
+escrito antes de gastar el primer peso (9 días · 1 venta o 3 visitas · no recargar), con revisiones
+pactadas para el día 3 y el día 10. **Ninguna de las dos se hizo.** La campaña no se detuvo por decisión:
+se detuvo al **vaciarse la cuenta**, y se supo 9 días tarde. Al fijar el criterio, agenda la lectura como
+tarea con dueño y fecha — si nadie abre el tablero ese día, el criterio no existe.
+
+**D-15 · "Sin saldo" ≠ "apagado": caza las campañas ZOMBIE.** Al agotarse el saldo Meta **no apaga** nada:
+deja las campañas **ACTIVAS** marcadas *"Error en el pago"*. Caso: **6 campañas vivas**, incluidos boosts
+de hasta 5 meses atrás, con **≥$32.000/día armados** esperando el próximo abono para arrancar solas y sin
+que nadie lo decida. **Al cerrar cualquier campaña revisa el toggle de TODA la cuenta**, ordenando por
+*Entrega* ascendente para que "Error en el pago" suba arriba. Un boost viejo gasta igual que uno de ayer.
+
+**D-16 · Cuenta fuera del portfolio = punto ciego permanente.** Si la campaña vive en una cuenta publicitaria
+**personal no reclamada**, ninguna herramienta automática la ve: cada revisión exige un navegador logueado.
+Verifícalo ANTES de prometer monitoreo — `ads_get_ad_accounts` lista lo alcanzable; si la cuenta no aparece
+ahí, **no existe para el automatismo** por más permisos que tenga el humano dueño.
+
+**D-17 · Para que el TICKET ALTO llegue a vender, hay que cerrar el loop de señal.** Con CTWA y sin señal
+downstream, Meta optimiza hacia *quien chatea*, jamás hacia *quien compra* (D-5): ese techo no se rompe con
+creativo ni con segmentación, y es el que topó este caso. La ruta, en orden:
+1. **Margen bruto real por pieza** → sin eso no hay CAC permisible ni forma de saber si un canal sirve (D-11).
+2. **Devolver el evento de COMPRA a Meta** (CAPI de WhatsApp, o el evento desde el CRM) para que la subasta
+   pueda aprender a buscar compradores en vez de conversadores.
+3. **Mientras esa señal no exista, el tráfico frío es caro para ticket alto**: el dinero rinde más en
+   audiencias **tibias** (interactuadores, seguidores, base de clientes) y en palancas offline (tienda,
+   referidos, recompra). El frío se vuelve viable el día que exista un **producto de entrada real** (D-10).
