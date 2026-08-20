@@ -53,8 +53,9 @@
 > **Las 8 pantallas del portal EXISTEN**: el header ya no tiene un solo enlace roto (§89). Y el portal
 > **ya captura**: `/publicar` crea leads reales en `solicitudes` (§88).
 >
-> **Lo siguiente:** **TODO-30 REABIERTO** — la vista sí funciona (Chrome real), pero el **basemap nunca
-> ha pintado**: falla maplibre v6, no el .pmtiles ni el Worker. Hipótesis sin probar: bajar a v5 → [[L-39]].
+> **Lo siguiente:** **TODO-30** — la vista la confirma **Daniel** (con la ventana al frente): toda pestaña
+> automatizada va `hidden` y el `rAF` congelado hace que el mapa parezca roto sin estarlo → [[L-39]].
+> Ya verificado por mí: `.pmtiles` sano y el Worker de rangos responde 206. NO tocar las dependencias.
 > ✅ Cerrado el 20-ago: contacto del comprador (era un `mailto:`, no formularios) e imágenes (no había
 > JPG; `srcset` MIDIÓ peor con fotos demo → solo el emblema, −76%) → [[L-38]] + `portal/src/lib/img.ts`.
 >

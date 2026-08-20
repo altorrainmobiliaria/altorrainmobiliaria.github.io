@@ -77,6 +77,15 @@ OCULTA**. La UI muestra el estado de reserva, nadie ve un error, y el sistema qu
 PERMANENTE que además se documenta como verdad ("solo falta X"). Caso propio 2026-08-20: el basemap
 de un portal llevaba semanas sin pintar y el estado registraba «falta solo la vista en foreground»;
 el error real (`There is no tile manager with ID …`) solo apareció al añadir un `console.error` en DEV.
+**⚠️ Antes de culpar a una librería, comprueba `document.visibilityState`**: en una pestaña `hidden`
+(y toda pestaña automatizada suele estarlo) Chrome congela `requestAnimationFrame` → mapas, canvas,
+WebGL y animaciones **nunca completan su carga** y producen síntomas idénticos a un bug real, con
+errores internos incluidos que parecen la causa. Caso propio 2026-08-20: 4 cambios de dependencia
+probados contra un "bug" que era una pestaña oculta. **Bisecciona hacia abajo hasta el caso mínimo**
+(un estilo sin fuentes, un canvas que solo pinta un color): si el mínimo TAMPOCO funciona, el problema
+no está donde crees. Y si el mismo síntoma sobrevive a **dos versiones mayores distintas** de la
+librería, la hipótesis es errónea, no la versión.
+
 **Reglas**: (1) todo fallback **grita en DEV aunque calle en PROD** — silenciar es una decisión de UX,
 nunca de observabilidad; (2) al auditar un subsistema con modo degradado, busca **la señal binaria que
 distingue vivo de fallback** (aquí: la clase `.is-live` que el propio código añade) y compruébala — no
