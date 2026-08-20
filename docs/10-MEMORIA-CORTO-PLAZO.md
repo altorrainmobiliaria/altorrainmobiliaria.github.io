@@ -14,9 +14,8 @@
 > FRONTERA pre-cutover (§60) · **§88 leads** ✅ · **§89 header sin 404s** ✅. Fidelidad → L-29/L-24/L-28;
 > mockups en `portal/design/mockups/` (9). Dev: `npm --prefix portal run dev` (4321).
 >
-> **⏸️ EN PAUSA por decisión de Daniel (19-ago)**: FRENTE 0 fundación operativa (TODO-34, kit legal) y el
-> mantenimiento del cerebro. **FRENTE PAUTA**: lista para encender, gateada por el CIERRE DE OBRA (§33-§37,
-> SSoT = skill `pauta-captacion`).
+> **⏸️ EN PAUSA (19-ago)**: FRENTE 0 fundación (TODO-34, kit legal). **FRENTE PAUTA**: lista, gateada
+> por el CIERRE DE OBRA (§33-§37, SSoT = skill `pauta-captacion`).
 >
 > **🎨 DISEÑO SELLADO — NO re-litigar** → `CLAUDE.md §1` + `portal/src/styles/tokens.css` + ADR §23-§23.9.
 > **🚦 BLOQUEADORES (solo Daniel)** → flag ⚖️ de `05` + TODO-21 + las pelotas de la bitácora.
@@ -33,7 +32,7 @@
 |---|---|---|---|
 | **TODO-17** | **Ola 0 restos**: E2E "tras cache" en staging (T9) · deploy de rules (en el cutover, NO ahora) · 0.4 obra AEO · 0.6 legal DRAFT. | 🔄 OPUS | gate=CUTOVER |
 | **TODO-21** | **Lote-dueño**: Nº **RNT** (la matrícula ya está PUBLICADA, `05`) · dirección física y COMERCIAL · abogado toque (i) (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño (gate=obra lista) | |
-| **TODO-CEREBRO** | 🧠 ⏸️ **Mantenimiento del cerebro, TODO en pausa (19-ago)** — se retoma cuando la página respire. **TODO-23** kernel hardening restante (K-01/02/04/05/09 §30.4; flujo: editar CANÓNICO → bump `VERSION` → `brain:pull` ×4; `brain-kit` sigue SIN git) · **TODO-24** ssotFact de paleta + re-apuntar cache al portal en el CUTOVER · **TODO-28** #7 sello de vencimiento >90d · **TODO-38** (§90): gate #27 sin el verbo `creas` · #5 valida existencia, no corrección · `30`/`33`/`00` en ↗ (los 10 stubs `M-` de `30` duplican casi el exceso exacto) · pelotas sin ID. · **TODO-32(b)** llevar [[M-09]] a los hermanos (insema al 98,5%, sin podar a propósito §87) y el banner de costo, que **solo baja con commits de PRODUCTO**. | ⏸️ pausa | §84·§87·§195 |
+| **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4; editar CANÓNICO → bump `VERSION` → `brain:pull` ×4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-38** (§90) gates a medias: #27 sin `creas` · #5 existencia≠corrección · `§NN` sueltos sin gate · `30`/`33`/`00` en ↗ · pelotas sin ID · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO). | 🔄 | §84·§87·§90 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada y fontanería §4b OK (estado → flag 📣 de `05`). Resta **calibrar la campaña REAL**, gateada por el cierre de obra. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, [[L-39]] → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-22** | **CATÁLOGO — completo hasta la FRONTERA pre-cutover (§56-§60)**. Para datos reales: (1) deploy COORDINADO en el cutover (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades. Lo demás BLOQUEADO por causas reales (§60.4); insumos legales de la ficha → TODO-33. | 🟢 cutover | §60 |
@@ -68,13 +67,16 @@
 > PENDIENTES y 0 avisados** (3 propietarios). El doc tampoco recibe `leadScore` aunque el repo lo
 > escribe ⇒ **sugiere (sin verificar)** que la Function desplegada NO es la del repo. → `43 §14 LEADS`.
 
-> **▶ ✅ PAUTA BERSAGLIO CERRADA 20-ago** (0 ventas/63 conv ⇒ Meta no es el canal a ese precio; 6 zombies
+> **▶ ✅ PAUTA BERSAGLIO CERRADA 20-ago** (0 ventas/63 conv ⇒ Meta no es el canal a ese precio; 6 zombies ✅verificado 20-ago (0 activas en todo el histórico)
 > apagadas). Detalle → `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`; doctrina → `meta-ads-diagnostico`.
 > ⏭️ **VIVO**: **26 conversaciones sin leer** (9+ días) en el WhatsApp de Bersaglio · avisarle a **Kary**.
 
 > **⏭️ PELOTAS DE DANIEL** (no las puedo cerrar yo):
-> **(0) 🔴 ¿LA CAMPAÑA DE HUMO ESTÁ REALMENTE APAGADA?** El `05` dice DESACTIVADA; el playbook §4b dice
-> que sigue **ACTIVA** y **arranca sola al recargar saldo**. [[D-15]]: «sin saldo» ≠ «apagado» (§90).
+> **(0) 🔴 ¿LA CAMPAÑA DE HUMO ESTÁ REALMENTE APAGADA?** El playbook §4b la da **ACTIVA y arrancando
+> sola al recargar** ([[D-15]]); cuenta `1784008112275023` ACTIVA **con método de pago**. **NO puedo
+> verlo yo**: Ads-MCP bloqueado por rollout + tu Chrome logueado como `bersaglio_jewelry`, que no ve
+> Altorra ([[D-16c]]). Chequeo bueno: SOLO `Entrega=Activo` + rango Máximo ([[D-15b]]); el botón
+> «Anuncios activos» de Meta ESCONDE zombies (exige impresiones>0, y un zombie tiene 0).
 > **(1)** rotar la **contraseña de aplicación de Gmail** — sin eso los leads no avisan (arriba).
 > **(2)** ✅ Política V2 **PUBLICADA y LIVE** (20-ago, `curl` 200). Queda TU visto bueno para **abrir
 > "Crear cuenta"**: el código de `/ingresar` aún la bloquea citando una política que YA existe (§90).
