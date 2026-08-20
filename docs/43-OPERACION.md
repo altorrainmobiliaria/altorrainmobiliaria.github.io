@@ -52,6 +52,16 @@ Primer censo hecho **leyendo Firestore de verdad** (posible desde que Daniel aut
 **16 leads reales · del 2026-04-16 al 2026-07-09 · 14 en estado `pendiente` · 2 cerrados.**
 **Los 16 tienen `emailSent != true`: NADIE recibió aviso automático de ninguno.**
 
+⚠️ **DE DÓNDE SALEN (la pregunta correcta de Daniel: si el portal no se ha lanzado, ¿cómo hay leads?).**
+**NO son del portal nuevo: son del SITIO VIEJO**, de cuando estaba en producción. Verificado mapeando
+cada `origen` a su archivo en `js/` legacy: `contacto`→`admin-*.js` · `guia-inversionista-2026`→
+`exit-intent.js` · `publicar-propiedad`→`contact-forms.js` · `renta-turistica`→`blog-list.js` ·
+`simulador-hipotecario`→`simulador-hipotecario.js` · `wizard-publicar-home`→`wizard-publicar.js`.
+El portal nuevo escribe con `origen: 'portal-publicar'` y **no tiene ni un lead real** (el único que
+hubo fue la prueba del gate, borrada el 20-ago) — correcto: sigue en staging con `noindex`.
+⇒ **La última captación fue el 09-jul**; desde que el sitio viejo entró en modo obra, el negocio NO
+capta por web. Eso sube la prioridad del cutover: hoy no hay ningún canal web vivo trayendo clientes.
+
 | Origen | # | Por qué duele |
 |---|---|---|
 | `guia-inversionista-2026` | 5 | inversionistas que pidieron material |
