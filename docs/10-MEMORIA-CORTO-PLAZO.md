@@ -69,17 +69,12 @@
 > repo los escribe antes del envío, lo que **sugiere (sin verificar)** que la Function desplegada no es la
 > del repo. → **pelota de Daniel**: rotar la contraseña de aplicación. Capturar mejor no sirve sin esto.
 
-> **▶ ✅ PAUTA BERSAGLIO — CERRADA el 20-ago: 0 ventas y 0 visitas, criterio de muerte cumplido.**
-> Verificado en Ads Manager por navegador: la de Cartagena trajo **26 conversaciones a $2.812** y gastó
-> **$73.099**; total del periodo **$78.139** = **se quemó TODO el saldo** (quedaban ~$78.147). La campaña
-> no se apagó, **se quedó sin plata** (~9-ago, nadie hizo las 2 revisiones pactadas). Acumulado de la
-> prueba: **63 conversaciones → 0 ventas** con dos configuraciones opuestas ⇒ **Meta NO es el canal para
-> este producto a este precio**. 🧟 Se hallaron **6 campañas ZOMBIE** encendidas en "Error en el pago"
-> (boosts de marzo/junio, ≥$32.000/día armados si entraba saldo): **las 6 APAGADAS y verificadas**.
-> ⏭️ **Pelota de Daniel**: las **26 conversaciones llevan 9+ días sin leer** en el WhatsApp de Bersaglio
-> — es lo único recuperable de los $73.099. Y avisarle a **Kary** que se tocó su cuenta personal.
-> Detalle COMPLETO → nodo dueño `bersagliojewelry.github.io/docs/44-PAUTA-META.md §DESENLACE` (cifras,
-> veredicto, zombies y la regla nueva) · bóveda `2026-07-31-pauta-bersaglio-escala-SINTESIS.md`.
+> **▶ ✅ PAUTA BERSAGLIO — CERRADA 20-ago** (0 ventas · 0 visitas · $78.139 = todo el saldo · 63
+> conversaciones en 2 configuraciones opuestas ⇒ Meta NO es el canal a este precio). 6 campañas ZOMBIE
+> ("Error en el pago" ≠ apagado) halladas y APAGADAS. Todo → `bersagliojewelry/docs/44-PAUTA-META.md
+> §DESENLACE` + hoja `44a`; lo transferible → skill `meta-ads-diagnostico` D-13..D-17.
+> ⏭️ **Pelota de Daniel**: **26 conversaciones sin leer** (9+ días) en el WhatsApp de Bersaglio — lo único
+> recuperable de $73.099 — y avisarle a **Kary** que se tocó su cuenta personal.
 
 > **⏭️ PELOTAS DE DANIEL** (no las puedo cerrar yo):
 > **(1)** rotar la **contraseña de aplicación de Gmail** — sin eso los leads no avisan (arriba).
