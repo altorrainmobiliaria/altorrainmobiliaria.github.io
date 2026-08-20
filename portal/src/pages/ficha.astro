@@ -52,6 +52,11 @@ const similares = [
 ];
 
 const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con vista a la bahía en Castillogrande.');
+// Segundo CTA del aside. El mockup lo deja en href="#" (su único `mailto:` vive en el FOOTER, que es
+// donde corresponde): §32.2 «contacto real ≠ placeholder». Antes apuntaba a `mailto:` y eso perdía el
+// lead DOS veces — exige un cliente de correo configurado en el dispositivo Y apunta al buzón cuyo
+// aviso automático está caído (`onNewSolicitud`, credenciales de Gmail). WhatsApp es el canal vivo.
+const waInfo = encodeURIComponent('Hola ALTORRA, quisiera más información sobre el Apartamento con vista a la bahía en Castillogrande.');
 ---
 
 <BaseLayout title="Apartamento con vista a la bahía, Castillogrande — ALTORRA">
@@ -123,7 +128,7 @@ const waMsg = encodeURIComponent('Hola ALTORRA, me interesa el Apartamento con v
           <p class="ficha-price__val">$1.450.000.000</p>
           <p class="ficha-price__sub">$10.211.000 / m² · Administración $1.2M</p>
           <a class="alt-btn alt-btn--navy ficha-price__cta" href={`${SITE.contact.whatsappLink}?text=${waMsg}`}>Agendar visita<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
-          <a class="ficha-price__alt" href={`mailto:${SITE.contact.email}`}>Solicitar información</a>
+          <a class="ficha-price__alt" href={`${SITE.contact.whatsappLink}?text=${waInfo}`}>Solicitar información</a>
           <div class="ficha-advisor">
             <span class="ficha-advisor__ini">MR</span>
             <div class="ficha-advisor__info">
