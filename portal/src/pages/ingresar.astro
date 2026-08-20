@@ -8,9 +8,9 @@
  * que el legacy). El proveedor de correo/contraseña está verificado activo; el de Google puede no
  * estarlo y ese caso se trata explícitamente en vez de reventar con un error críptico.
  *
- * ⚠️ CREAR CUENTA no se abre todavía, y no es una omisión técnica: captar datos de una cuenta nueva
- * exige la Política de Tratamiento de Datos PUBLICADA (Ley 1581 art. 9 + gate de `42-LEGAL`), y hoy
- * sigue sin publicarse. El botón lo dice en vez de fingir.
+ * ⚠️ CREAR CUENTA sigue cerrado, pero YA NO por la política: la Política de Tratamiento de Datos
+ * está PUBLICADA y LIVE desde el 2026-08-20 (ADR §90, verificada con curl 200) y el gate de Ley 1581
+ * art. 9 quedó LEVANTADO. Lo que falta es el visto bueno del dueño. El botón lo dice en vez de fingir.
  */
 export const prerender = true;
 
@@ -259,9 +259,9 @@ const ojo =
     }
   });
 
-  /* Crear cuenta NO se abre todavía. No es que falte código: captar los datos de una cuenta nueva
-     exige la Política de Tratamiento de Datos PUBLICADA (Ley 1581 art. 9). Decirlo es más honesto
-     que un formulario que no debería existir. */
+  /* Crear cuenta sigue cerrado por DECISIÓN del dueño, no por el gate legal: la Política de
+     Tratamiento de Datos ya está publicada (ADR §90). Decirlo es más honesto que un formulario
+     prematuro. La conducta del botón NO cambia hasta que Daniel dé el visto bueno. */
   document.getElementById('ing-crear')?.addEventListener('click', () => {
     avisar(
       'Las cuentas abren muy pronto',
