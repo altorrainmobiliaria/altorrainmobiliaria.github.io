@@ -135,6 +135,10 @@ function initOne(el: HTMLElement): void {
     return;
   }
 
+  // Sonda de diagnóstico SOLO en dev: sin acceso al objeto `map` no hay forma de auditar por qué
+  // el basemap no pinta (los errores se silencian a propósito). No existe en el bundle de prod.
+  if (import.meta.env.DEV) (window as unknown as Record<string, unknown>).__altorraMap = map;
+
   // Sin rotación (mapa urbano plano).
   map.touchZoomRotate.disableRotation();
 
@@ -169,8 +173,11 @@ function initOne(el: HTMLElement): void {
 
   // Fallo de fuente/tiles (aún no hay .pmtiles, red caída): no hacemos nada — el default ES el
   // esquemático sellado (no añadimos `is-live` hasta confirmar carga). Silenciamos para no ensuciar consola.
-  map.on('error', (_e: ErrorEvent) => {
-    /* degradación silenciosa: permanecer en el esquemático */
+  map.on('error', (e: ErrorEvent) => {
+    // En PROD, degradación silenciosa: el default ES el esquemático sellado, nunca una caja rota.
+    // En DEV gritamos: el silencio TOTAL es justo lo que dejó un basemap que no pintaba semanas sin
+    // diagnosticar — no había forma de saber por qué (TODO-30 / §55.9).
+    if (import.meta.env.DEV) console.error('[altorra-map] error de fuente/tiles →', e?.error?.message ?? e);
   });
 }
 
