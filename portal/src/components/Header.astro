@@ -1,4 +1,5 @@
 ---
+import { srcsetDe, SIZES } from '../lib/img';
 /*
  * Header / navegación COMPARTIDA — v3 (feedback Daniel 2026-07-12):
  *   · Íconos PROFESIONALES: arte oficial de Lucide (UI) + Simple Icons (redes), embebido inline.
@@ -87,7 +88,7 @@ const nav = [
   <div class="alt-hdr__bar">
     <div class="alt-hdr__bar-in">
       <a class="alt-hdr__logo" href="/" aria-label={`${SITE.name} — inicio`}>
-        <img class="alt-hdr__mark" src="/assets/altorra-emblema.webp" alt="" width="29" height="40" />
+        <img class="alt-hdr__mark" src="/assets/altorra-emblema.webp" srcset={srcsetDe("/assets/altorra-emblema.webp")} sizes={SIZES.logo} alt="" width="29" height="40" />
         <span class="alt-hdr__word">
           <span class="alt-hdr__word-name">ALTORRA</span>
           <span class="alt-hdr__word-sub">Inmobiliaria</span>

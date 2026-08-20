@@ -1,4 +1,5 @@
 ---
+import { srcsetDe, SIZES } from '../lib/img';
 /*
  * Footer COMPARTIDO (Ola 1). Réplica del footer de ALTORRA Portal.dc.html, tokenizado.
  * Sección navy (--alt-surface-ink) con 5 columnas + barra legal. Contacto/razón social REALES (SITE).
@@ -33,7 +34,7 @@ const icon = {
       <!-- Marca -->
       <div class="alt-ft__brand">
         <div class="alt-ft__logo">
-          <img src="/assets/altorra-emblema.webp" alt="" width="32" height="44" />
+          <img src="/assets/altorra-emblema.webp" srcset={srcsetDe("/assets/altorra-emblema.webp")} sizes={SIZES.logo} alt="" width="32" height="44" />
           <span class="alt-wordmark">ALTORRA<small>INMOBILIARIA</small></span>
         </div>
         <p class="alt-ft__tagline">Cartagena, a tu altura.</p>

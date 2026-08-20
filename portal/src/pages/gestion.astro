@@ -1,4 +1,5 @@
 ---
+import { srcsetDe, SIZES } from '../lib/img';
 /*
  * GESTIÓN — panel de administración (Ola 1). Réplica de ALTORRA Gestion.dc.html (mockup aprobado).
  * Dashboard con 3 VISTAS por rol (Admin / Aliado / Propietario) que intercambian TODA la data
@@ -126,7 +127,7 @@ const init = DATA.admin;
     <!-- ===================== SIDEBAR ===================== -->
     <aside class="gx-side">
       <a class="gx-brand" href="/" aria-label="ALTORRA — volver al portal">
-        <img src="/assets/altorra-emblema.webp" alt="" width="31" height="42" />
+        <img src="/assets/altorra-emblema.webp" srcset={srcsetDe("/assets/altorra-emblema.webp")} sizes={SIZES.logo} alt="" width="31" height="42" />
         <span class="gx-brand__txt">
           <span class="gx-brand__name">ALTORRA</span>
           <span class="gx-brand__sub">GESTIÓN</span>
