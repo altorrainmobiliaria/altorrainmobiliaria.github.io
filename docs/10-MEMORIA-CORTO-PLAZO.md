@@ -53,14 +53,9 @@
 > **Las 8 pantallas del portal EXISTEN**: el header ya no tiene un solo enlace roto (§89). Y el portal
 > **ya captura**: `/publicar` crea leads reales en `solicitudes` (§88).
 >
-> **Lo siguiente, en orden:**
-> 1. ✅ **Contacto del COMPRADOR (20-ago)**: el diagnóstico viejo era FALSO — no hay formularios que
->    cablear (el mockup de la ficha tiene 0 inputs). El agujero era un `mailto:` en «Solicitar
->    información» → ahora WhatsApp con contexto. Falta: ¿registrar el clic como lead? (decisión, no bug).
-> 2. **TODO-30**: falta solo la vista del mapa en foreground (la confirma Daniel, L-34).
-> 3. ✅ **Imágenes (20-ago)**: diagnóstico viejo — ya eran WebP, cero JPG. `srcset` MIDIÓ **peor**
->    (+63% desktop) por 7 fotos demo en 66 huecos → revertido salvo el emblema (−76%). Reactivar en
->    el CUTOVER con fotos reales. Por qué y cómo → [[L-38]] + `portal/src/lib/img.ts`.
+> **Lo siguiente:** **TODO-30** — falta solo la vista del mapa en foreground (la confirma Daniel, L-34).
+> ✅ Cerrado el 20-ago: contacto del comprador (era un `mailto:`, no formularios) e imágenes (no había
+> JPG; `srcset` MIDIÓ peor con fotos demo → solo el emblema, −76%) → [[L-38]] + `portal/src/lib/img.ts`.
 >
 > ⚠️ **Antes de tocar código, lee `34-DOCTRINA-CODIGO`** (trigger 🖥️) y, si el síntoma te suena, `30`:
 > [[L-33]] (`locals.runtime.env` removido en Astro v6) YA cobró dos veces, la última el 19-ago.
@@ -72,12 +67,10 @@
 > repo los escribe antes del envío, lo que **sugiere (sin verificar)** que la Function desplegada no es la
 > del repo. → **pelota de Daniel**: rotar la contraseña de aplicación. Capturar mejor no sirve sin esto.
 
-> **▶ ✅ PAUTA BERSAGLIO — CERRADA 20-ago** (0 ventas · 0 visitas · $78.139 = todo el saldo · 63
-> conversaciones en 2 configuraciones opuestas ⇒ Meta NO es el canal a este precio). 6 campañas ZOMBIE
-> ("Error en el pago" ≠ apagado) halladas y APAGADAS. Todo → `bersagliojewelry/docs/44-PAUTA-META.md
-> §DESENLACE` + hoja `44a`; lo transferible → skill `meta-ads-diagnostico` D-13..D-17.
-> ⏭️ **Pelota de Daniel**: **26 conversaciones sin leer** (9+ días) en el WhatsApp de Bersaglio — lo único
-> recuperable de $73.099 — y avisarle a **Kary** que se tocó su cuenta personal.
+> **▶ ✅ PAUTA BERSAGLIO — CERRADA 20-ago** (0 ventas · 0 visitas · se quemó todo el saldo · 63
+> conversaciones ⇒ Meta NO es el canal a este precio) + 6 campañas zombie apagadas. Todo el detalle →
+> `bersagliojewelry/docs/44-PAUTA-META.md §DESENLACE` + hoja `44a`; doctrina → `meta-ads-diagnostico`.
+> ⏭️ **VIVO**: **26 conversaciones sin leer** (9+ días) en el WhatsApp de Bersaglio · avisarle a **Kary**.
 
 > **⏭️ PELOTAS DE DANIEL** (no las puedo cerrar yo):
 > **(1)** rotar la **contraseña de aplicación de Gmail** — sin eso los leads no avisan (arriba).
