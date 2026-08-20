@@ -12,6 +12,12 @@ export const SITE = {
   // JAMÁS usarla en contratos/facturas/footer nuevos (ADR §18 / MEGA-PLAN §4.5).
   legalName: 'ALTORRA COMPANY S.A.S.',
   nit: '902063965-4',
+  // Matrícula de Arrendador (Ley 820/2003 art. 28) — OBLIGATORIA en toda publicidad de arriendo
+  // de vivienda (art. 31). Es el número de la Resolución 6636 del 23-jul-2026 de la Alcaldía de
+  // Cartagena: su art. 2º decía «asígnese el número que le corresponda por el sistema», y la
+  // Oficina Asesora Jurídica confirmó el 2026-08-20 que ese número ES el de la resolución y que
+  // el registro digital ya está inscrito. Detalle y evidencia → `43-OPERACION §Matrícula`.
+  matriculaArrendador: '6636',
   slogan: 'Gestión integral en soluciones inmobiliarias',
   city: 'Cartagena de Indias, Colombia',
   domain: 'altorrainmobiliaria.co',

@@ -9,7 +9,7 @@
 | NIT | 902.063.965-4 |
 | Matrícula mercantil | 10011978 — Cámara de Comercio de Cartagena |
 | Establecimiento de comercio | "ALTORRA INMOBILIARIA" (matrícula 10013497) |
-| Matrícula de Arrendador No. | _En trámite de expedición. Se publicará aquí y en el pie de página del sitio al recibirse (Ley 820/2003, art. 31)._ |
+| Matrícula de Arrendador No. | **6636** — Resolución 6636 del 23 de julio de 2026, Alcaldía Distrital de Cartagena de Indias (Ley 820 de 2003, art. 28) |
 | Domicilio | Cartagena de Indias, D. T. y C., Colombia |
 | Dirección de notificaciones | Cartagena de Indias, D. T. y C. — canal de notificaciones: **info@altorrainmobiliaria.co** · WhatsApp **+57 300 243 9810** |
 | Teléfono | +57 300 243 9810 |

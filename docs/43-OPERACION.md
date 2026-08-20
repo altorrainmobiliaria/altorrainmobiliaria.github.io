@@ -24,11 +24,15 @@
   expediente CUADRA con lo que ya sabíamos: radicado EXT-AMC-26-0060455 (13-may) → requerimiento
   AMC-OFI-0074376-2026 (25-may, rechazo del modelo "sin local físico", D.D. 1476/2025) → subsanación
   EXT-AMC-26-0073992 con certificados del 09-jun → otorgamiento 23-jul. Copia → bóveda `expediente-legal/`.
-- 🔴 **PERO la matrícula de arrendador NO tiene NÚMERO todavía**: el **art. 2º** ordena "INSCRIBIR en el
-  registro digital de arrendadores … y **asígnese el número que le corresponda por el sistema**" ⇒ el número
-  lo emite el sistema DESPUÉS del acto. **Ley 820 art. 31 exige ese nº en TODA la publicidad de arriendo de
-  vivienda** ⇒ sigue siendo gate de la pauta y del footer. **Falta pedir a la Alcaldía la constancia de
-  inscripción con el número asignado** (seguimiento sobre la 6636, no trámite nuevo).
+- ✅ **NÚMERO DE MATRÍCULA DE ARRENDADOR = `6636`** (= el número de la Resolución). El art. 2º decía
+  «asígnese el número que le corresponda por el sistema» y quedaba la duda; **la Oficina Asesora
+  Jurídica lo aclaró por WhatsApp el 2026-08-20**: *«el número de matrícula de arrendador es el número
+  de la resolución, el registro quiere decir que en nuestros registros digitales ya se encuentra
+  inscrito»*. ⇒ **gate de Ley 820 art. 31 LEVANTADO**: ya se publica en el footer del portal y en la
+  Política, y la pauta de arriendo deja de estar bloqueada por este motivo.
+  ⚠️ **Fuerza probatoria**: es una afirmación de la entidad por chat, no una constancia sellada. Sirve
+  para publicar (es la interpretación oficial de quien administra el registro), pero conviene pedir la
+  **constancia escrita de inscripción** para el expediente. NO bloquea nada.
 - ⚠️ **Discrepancia de números — verificar en Cámara de Comercio**: la resolución llama al establecimiento
   "ALTORRA INMOBILIARIA **con Matrícula No. 10011978**", pero según este mismo nodo 10011978 es la matrícula
   **mercantil de la SOCIEDAD** y el establecimiento es **10013497**. Lo cazó Daniel al leer el acto. Uno de
