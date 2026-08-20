@@ -79,7 +79,7 @@ $env:GOOGLE_APPLICATION_CREDENTIALS = "<ruta-SA-JSON>"; $env:DRY_RUN="1"; npm ru
   el modo obra: dispararlo PISARÍA los stubs de redirect** y resucitaría el sitio viejo por la puerta de atrás.
   No se toca hasta el cutover. (Requiere el secret `GOOGLE_APPLICATION_CREDENTIALS_JSON`, ver §Secretos.)
 
-## 🔴 Credenciales locales: la máquina está logueada con la cuenta de CARS, no la de INMOBILIARIA
+## ✅ Credenciales locales — RESUELTO 2026-08-20 (antes: solo la cuenta de CARS)
 
 **Verificado 2026-08-20** al intentar borrar un documento de `solicitudes`:
 - `gcloud` **no tiene cuentas** (`gcloud auth list` → vacío); solo hay **ADC** y su token pertenece a
@@ -94,14 +94,20 @@ reales**, verificar el catálogo tras el cutover y cualquier auditoría de datos
 (usa la `apiKey` pública + rules `allow create: if true`), por eso los formularios funcionan: la asimetría
 es que **crear** es público y **leer/borrar** exige auth.
 
-**Para desbloquear** (una de las dos, decide el dueño): (a) `firebase login` / `gcloud auth application-default
+**RESUELTO**: Daniel corrió `firebase login --reauth` el 2026-08-20 y el CLI quedó como
+**`altorrainmobiliaria@gmail.com`**. Verificado en vivo: lectura de `solicitudes` OK (16 docs) y borrado
+de un documento OK. El token del CLI (`~/.config/configstore/firebase-tools.json`) sirve como Bearer
+para la REST API de Firestore — así se hizo el censo de leads (`43 §14 LEADS`).
+⚠️ **El ADC de `gcloud` SIGUE siendo el de Cars** (`altorracarssale@gmail.com`, quota `altorra-cars`):
+para todo lo que use ADC en vez del CLI, sigue haciendo falta `gcloud auth application-default login`.
+
+*(Histórico — cómo se desbloqueó)* Las opciones eran: (a) `firebase login` / `gcloud auth application-default
 login` con la cuenta dueña del proyecto de inmobiliaria; o (b) dar rol `roles/datastore.user` sobre
 `altorra-inmobiliaria-345c6` a `altorracarssale@gmail.com`. ⚠️ Ojo con (b): mezcla las identidades de los
 dos negocios, que hoy están separadas.
 
-⚠️ **Efecto colateral ya visible**: quedó en `solicitudes` un lead de prueba «PRUEBA GATE LEGAL - IGNORAR»
-(teléfono ficticio `+57 300 000 0000`, creado al verificar el gate de Habeas Data el 20-ago). Es inocuo y
-está autoidentificado, pero **no se puede borrar hasta resolver lo anterior**.
+✅ El lead de prueba «PRUEBA GATE LEGAL - IGNORAR» creado al verificar el gate se **borró el 20-ago**
+(`firestore:delete`, verificado: 404 y la colección pasó de 17 a 16 documentos).
 
 ## 🔒 Secretos (NO en este repo — solo se nombra su ubicación)
 > NUNCA escribir el valor real aquí ni en ningún archivo versionado.

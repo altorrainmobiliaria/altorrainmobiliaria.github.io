@@ -44,6 +44,30 @@
   personal de Daniel, prohibido publicar (memoria `identidad-marca-inmobiliaria`). El correo del acto
   (`altorracompanysas@gmail.com`) es interno; el público sigue siendo `info@altorrainmobiliaria.co`.
 
+## 🔴 14 LEADS REALES SIN GESTIONAR en `solicitudes` (censo directo 2026-08-20)
+
+Primer censo hecho **leyendo Firestore de verdad** (posible desde que Daniel autenticó el CLI con
+`altorrainmobiliaria@gmail.com` el 20-ago; antes la máquina solo tenía la cuenta de Cars, §50).
+
+**16 leads reales · del 2026-04-16 al 2026-07-09 · 14 en estado `pendiente` · 2 cerrados.**
+**Los 16 tienen `emailSent != true`: NADIE recibió aviso automático de ninguno.**
+
+| Origen | # | Por qué duele |
+|---|---|---|
+| `guia-inversionista-2026` | 5 | inversionistas que pidieron material |
+| `contacto` | 5 | consultas directas |
+| `publicar-propiedad` | 3 | **PROPIETARIOS ofreciendo inmueble — el lead más valioso de una inmobiliaria** |
+| `renta-turistica` · `simulador-hipotecario` · `wizard-publicar-home` | 3 | intención alta |
+
+**Causa**: la Cloud Function `onNewSolicitud` falla con `535-5.7.8 Username and Password not accepted`
+(credenciales de Gmail) — ya estaba documentado como bug, pero **sin dimensionar**: el censo lo convierte
+de "el aviso está roto" a "hay 14 personas esperando respuesta, algunas desde hace 4 meses".
+
+**Qué hacer, en orden**: (1) rotar la contraseña de aplicación de Gmail (pelota de Daniel) para que
+`onNewSolicitud` vuelva a avisar; (2) **trabajar los 14 pendientes a mano AHORA** — no esperan a la web;
+(3) los 3 de `publicar-propiedad` primero: son captación, el lado del que vive el negocio.
+⚠️ Ley 2300/2023 fija horarios de contacto comercial (L-V 7-19, S 8-15) — ver `42-LEGAL`.
+
 ## Cómo opera HOY (probado con papeles reales, no manual)
 
 > ⚡ **Actualización Daniel 2026-07-24**: **NO hay contratos vigentes** — todos los arrendamientos/administraciones

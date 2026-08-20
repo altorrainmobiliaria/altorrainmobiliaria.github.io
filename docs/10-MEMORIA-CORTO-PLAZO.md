@@ -64,8 +64,8 @@
 
 > **🔴 ABIERTO Y CARO — el aviso de leads está ROTO en producción.** `onNewSolicitud` dispara y falla con
 > `535-5.7.8 Username and Password not accepted`: las credenciales de Gmail (`EMAIL_USER`/`EMAIL_PASS`)
-> no sirven. **Hoy ningún lead le avisa a nadie — tampoco los del sitio viejo**; quedan en Firestore hasta
-> que alguien abra el panel. Además el documento no recibe `leadScore`/`nurturing` aunque el código del
+> no sirven. **Censo 20-ago: 16 leads reales, 14 PENDIENTES y 0 avisados**, del 16-abr al 09-jul (3 son
+> propietarios). Detalle y plan → `43 §14 LEADS`. Además el documento no recibe `leadScore`/`nurturing` aunque el código del
 > repo los escribe antes del envío, lo que **sugiere (sin verificar)** que la Function desplegada no es la
 > del repo. → **pelota de Daniel**: rotar la contraseña de aplicación. Capturar mejor no sirve sin esto.
 
