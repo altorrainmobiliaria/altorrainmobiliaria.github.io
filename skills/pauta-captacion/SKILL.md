@@ -22,6 +22,28 @@ description: "ORQUESTADORA de la pauta de captación de propietarios de ALTORRA 
 | Método kill/keep/scale + Andromeda + estructura Google Search | `paid-ads` v2.2 (⚠️ con los parches de vigencia 2026-07-18 en sus references) |
 | Las 3 piezas creativas | `Brief_Diseño_Piezas_Captacion` (bóveda `pauta/`) |
 
+## §0c 🧠 REGISTRO DE APRENDIZAJE PROPIO (la fuente experta CRECE — mandato Daniel 2026-08-20)
+
+> Esta constelación no es solo doctrina leída: es **expertise ganada en campañas reales**. Regla del
+> router (`CLAUDE.md §G.4 · Destilar a SKILLS`): **toda campaña que se cierra —venda o no, de CUALQUIER
+> negocio— deja su aprendizaje transferible aquí dentro.** El caso con cifras va a su neurona; la regla
+> que sirve para la próxima campaña va a la skill. Un aprendizaje que se queda en el caso NO cuenta.
+
+| Serie | Dónde vive | Qué acumula | Estado |
+|---|---|---|---|
+| **`D-NN`** | `meta-ads-diagnostico` §caso Bersaglio | Meta Ads — experiencia PROPIA verificada en Ads Manager | **D-1..D-17** (2 campañas cerradas) |
+| **`G-NN`** | *(nacerá en `meta-ads-diagnostico` o skill hermana)* | Google Ads — **vacío a propósito**: aún no corrimos ninguna | ⛔ sin experiencia real |
+| `L-NN` / `M-NN` | `30-LECCIONES` / `33-LECCIONES-META` | Gotchas técnicos y fallos del propio método | vivo |
+
+**Jerarquía de fiabilidad al escribir aquí** (hereda L-30): **experiencia propia MEDIDA** (con cifras y
+fecha) > **doc oficial** de la plataforma (con URL) > benchmark ajeno (marcar ❓). Nunca al revés, y
+**jamás inventar la serie `G-NN` desde teoría**: una skill que afirma de más se convierte en la fuente de
+verdad de todos los proyectos futuros y propaga el error. Sin campaña real, la casilla se queda vacía.
+
+**Meta de negocio que ordena este registro**: que Bersaglio y ALTORRA vendan con pauta. Techo actual
+identificado (D-17): sin señal de compra downstream, Meta optimiza hacia *quien chatea*, no hacia *quien
+compra*. Ese es el problema a resolver, y cada campaña nueva debe acercarse a él o descartarlo con datos.
+
 ## §0b EMBUDO CREATIVO obligatorio (mandato Daniel 2026-07-18: "el proceso debe ser pro, no una sola skill")
 Ninguna pieza ni copy que vaya a DINERO sale de una sola fuente ni de una sola pasada. Pipeline vinculante:
 1. **Grounding sweep** (SIEMPRE, antes de crear): Brief de bóveda (`pauta/`) + backlog TikTok
