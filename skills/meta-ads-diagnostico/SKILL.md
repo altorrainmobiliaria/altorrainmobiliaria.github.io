@@ -390,6 +390,16 @@ de hasta 5 meses atrás, con **≥$32.000/día armados** esperando el próximo a
 que nadie lo decida. **Al cerrar cualquier campaña revisa el toggle de TODA la cuenta**, ordenando por
 *Entrega* ascendente para que "Error en el pago" suba arriba. Un boost viejo gasta igual que uno de ayer.
 
+
+**D-15b · El botón «Anuncios activos» de Ads Manager NO es el chequeo de [[D-15]]: lo ESCONDE.**
+Verificado 2026-08-20 leyendo el `filter_set` de la URL: el preset aplica **DOS** filtros —
+`Impresiones (Campaña) > 0` **Y** `Entrega = Activo`. Un zombie tiene entrega **ACTIVA** y **cero
+impresiones** (justamente por eso es zombie: no hay saldo que gastar), así que el preset lo filtra
+JUSTO fuera y devuelve *«No hay resultados»* — un todo-limpio **falso**. Chequeo correcto: **quita el
+filtro de impresiones** y deja SOLO `Entrega = Activo`, **y pon el rango en Máximo** (D-15 habla de
+boosts de 5 meses atrás; una ventana de 30 días los esconde). Así verificado en Bersaglio: **0 activas
+en jul-2023 → ago-2026**, lo que confirma que las 6 zombies quedaron realmente apagadas.
+
 **D-16 · Cuenta fuera del portfolio = punto ciego permanente.** Si la campaña vive en una cuenta publicitaria
 **personal no reclamada**, ninguna herramienta automática la ve: cada revisión exige un navegador logueado.
 Verifícalo ANTES de prometer monitoreo — `ads_get_ad_accounts` lista lo alcanzable; si la cuenta no aparece
@@ -403,6 +413,15 @@ La herramienta **PROHÍBE** usar esa cuenta en llamadas siguientes, así que no 
 la única vía es navegador logueado. **Lee el flag, no la presencia en la lista**, ANTES de prometer que
 vigilas una cuenta. Y aprovecha lo que el listado da gratis: **`has_payment_method`** — una cuenta ACTIVA
 con método de pago y un zombie de [[D-15]] dentro no es un riesgo teórico: tiene por dónde cobrar.
+
+
+**D-16c · El navegador solo es alternativa si la SESIÓN tiene acceso — y Meta REDIRIGE EN SILENCIO.**
+[[D-16b]] manda al navegador cuando `is_ads_mcp_enabled` es false. Falta un paso previo: comprueba
+**quién está logueado**. Caso 2026-08-20: se pidió `act=1784008112275023` (ALTORRA) y Ads Manager
+cargó **`act=2199223463669869`** (Bersaglio) sin un solo error — el Chrome estaba logueado como
+`bersaglio_jewelry`, cuyo selector dice *«Tu cuenta: 1 cuenta publicitaria»* y buscar «altorra»
+devuelve *«No hay resultados»*. **El riesgo no es quedarte sin datos: es leer la cuenta EQUIVOCADA y
+creer que leíste la tuya.** Verifica el `act=` de la URL **DESPUÉS** de cargar, nunca el que pediste.
 
 **D-17 · Para que el TICKET ALTO llegue a vender, hay que cerrar el loop de señal.** Con CTWA y sin señal
 downstream, Meta optimiza hacia *quien chatea*, jamás hacia *quien compra* (D-5): ese techo no se rompe con
