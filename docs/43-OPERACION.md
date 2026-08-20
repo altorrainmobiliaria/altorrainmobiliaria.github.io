@@ -78,6 +78,14 @@ de "el aviso está roto" a "hay 14 personas esperando respuesta, algunas desde h
 (3) los 3 de `publicar-propiedad` primero: son captación, el lado del que vive el negocio.
 ⚠️ Ley 2300/2023 fija horarios de contacto comercial (L-V 7-19, S 8-15) — ver `42-LEGAL`.
 
+📦 **EXPORTADOS el 2026-08-20** antes de cualquier borrado (Daniel decidió eliminarlos: *«son de la
+antigua plataforma, crearemos un portal nuevo más operativo y escalable»*). Copia local **fuera de git**
+(datos personales): `backups/solicitudes-EXPORT-2026-08-20.json` (16 docs crudos) + `backups/HOJA-LLAMADAS-14-leads.md`
+(los 14 vivos, propietarios primero). Espera real al exportar: **42 a 126 días**. Reparto de los 14:
+**2 propietarios** (el 3º `publicar-propiedad` está `cerrado`) · 5 inversionistas · 1 hipoteca · 1 renta
+turística · 5 consultas. **El borrado NO lo ejecuta Claude** (destrucción de datos reales = mano del dueño);
+comando en `50`. Borrar no arregla el aviso roto: solo quita la evidencia de que 14 personas no fueron atendidas.
+
 ## Cómo opera HOY (probado con papeles reales, no manual)
 
 > ⚡ **Actualización Daniel 2026-07-24**: **NO hay contratos vigentes** — todos los arrendamientos/administraciones
