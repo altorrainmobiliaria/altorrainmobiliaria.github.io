@@ -19,11 +19,26 @@
 - ⚠️ **Gobernanza**: el gerente NO tiene mayoría accionaria; reformas estatutarias y enajenación total
   exigen supramayoría (70%) y el quórum exige pluralidad → toda decisión estructural es multi-socio.
   Detalle (composición, nombres) → bóveda.
-- ⚠️ **Matrícula de arrendador**: el corpus solo prueba el trámite (requerimiento AMC-OFI-0074376-2026 del
-  25-may — la Alcaldía RECHAZÓ el modelo "inmobiliaria digital sin local", exige establecimiento físico,
-  Decreto Distrital 1476/2025 — y la subsanación aparente: establecimiento 05-jun + certificados 09-jun).
-  **NO consta la resolución de otorgamiento**; Daniel la declaró obtenida (2026-07-18, flag `05`) → pedirle
-  la RESOLUCIÓN física para el expediente. El nº se publica al cierre de obra (Ley 820 art. 31).
+- ✅ **Matrícula de arrendador: OTORGADA — `Resolución 6636` del 23-jul-2026** (Oficina Asesora Jurídica,
+  Alcaldía de Cartagena; firma Milton José Pereira Blanco). Daniel entregó el papel el 2026-08-20 y el
+  expediente CUADRA con lo que ya sabíamos: radicado EXT-AMC-26-0060455 (13-may) → requerimiento
+  AMC-OFI-0074376-2026 (25-may, rechazo del modelo "sin local físico", D.D. 1476/2025) → subsanación
+  EXT-AMC-26-0073992 con certificados del 09-jun → otorgamiento 23-jul. Copia → bóveda `expediente-legal/`.
+- 🔴 **PERO la matrícula de arrendador NO tiene NÚMERO todavía**: el **art. 2º** ordena "INSCRIBIR en el
+  registro digital de arrendadores … y **asígnese el número que le corresponda por el sistema**" ⇒ el número
+  lo emite el sistema DESPUÉS del acto. **Ley 820 art. 31 exige ese nº en TODA la publicidad de arriendo de
+  vivienda** ⇒ sigue siendo gate de la pauta y del footer. **Falta pedir a la Alcaldía la constancia de
+  inscripción con el número asignado** (seguimiento sobre la 6636, no trámite nuevo).
+- ⚠️ **Discrepancia de números — verificar en Cámara de Comercio**: la resolución llama al establecimiento
+  "ALTORRA INMOBILIARIA **con Matrícula No. 10011978**", pero según este mismo nodo 10011978 es la matrícula
+  **mercantil de la SOCIEDAD** y el establecimiento es **10013497**. Lo cazó Daniel al leer el acto. Uno de
+  los dos está mal: si es la Alcaldía, conviene corregirlo por vía de reposición (art. 4º) ANTES de que ese
+  número circule en documentos; si es nuestro registro, corregir aquí. **Ningún número se publica hasta
+  aclararlo.**
+- ⛔ **Datos personales del acto que NO se publican**: cédula del rep. legal, `Barrio Santa Lucía Mz E Lt 6`
+  (domicilio del representante, no dirección comercial verificada) y el teléfono **323 501 6747** — es el
+  personal de Daniel, prohibido publicar (memoria `identidad-marca-inmobiliaria`). El correo del acto
+  (`altorracompanysas@gmail.com`) es interno; el público sigue siendo `info@altorrainmobiliaria.co`.
 
 ## Cómo opera HOY (probado con papeles reales, no manual)
 
