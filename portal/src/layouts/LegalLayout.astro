@@ -1,0 +1,128 @@
+---
+/*
+ * LegalLayout — plantilla de DOCUMENTO LEGAL (política, T&C, habeas data, aviso de privacidad).
+ *
+ * Por qué existe: `42-LEGAL` §6 declara Habeas Data como "el gate MÁS TEMPRANO del portal" —
+ * la Política de Tratamiento y el Aviso de Privacidad deben estar PUBLICADOS antes del primer
+ * formulario. Hasta el 2026-08-20 el footer enlazaba a /terminos, /privacidad y /habeas-data y
+ * las TRES daban 404 en todas las páginas del sitio.
+ *
+ * Diseño: NO inventa UI. Reutiliza BaseLayout + Header + Footer y las primitivas ya selladas
+ * (`alt-container`, `alt-section`, `alt-eyebrow`) + tokens `--alt-*`. Solo añade tipografía de
+ * lectura larga para el cuerpo del documento, que ningún mockup cubre por no ser una pantalla
+ * de producto. Disciplina de color intacta: navy/dorado/grises fríos, sin negro.
+ *
+ * Versionado: `42-LEGAL` exige que "TODO texto legal se versiona (fecha+hash) y la aceptación
+ * referencia esa versión exacta" → la versión se muestra y sale de `src/lib/config/legal.ts`,
+ * que es la MISMA fuente que sella el formulario al guardar el consentimiento.
+ */
+import BaseLayout from './BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../lib/config/site';
+
+interface Props {
+  title: string;
+  description?: string;
+  version: string;
+  vigencia: string;
+}
+const { title, description, version, vigencia } = Astro.props;
+---
+
+<BaseLayout title={`${title} — ALTORRA Inmobiliaria`} description={description}>
+  <Header active="" />
+
+  <main id="main" class="alt-container alt-section legal">
+    <p class="alt-eyebrow">Documento legal</p>
+    <h1 class="legal__h1">{title}</h1>
+    <p class="legal__meta">
+      Versión <strong>{version}</strong> · Vigente desde <strong>{vigencia}</strong><br />
+      {SITE.legalName} · NIT {SITE.nit} · {SITE.city}
+    </p>
+
+    <article class="legal__doc">
+      <slot />
+    </article>
+
+    <aside class="legal__pqr">
+      <h2>¿Necesitas ejercer tus derechos?</h2>
+      <p>
+        Puedes consultar, actualizar, rectificar o suprimir tus datos, o revocar la autorización,
+        escribiendo a <a href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a> o por
+        WhatsApp al <a href={SITE.contact.whatsappLink} target="_blank" rel="noopener">{SITE.contact.whatsapp}</a>.
+        Respondemos las consultas en <strong>10 días hábiles</strong> y los reclamos en
+        <strong>15 días hábiles</strong> (Ley 1581 de 2012, arts. 14 y 15).
+      </p>
+    </aside>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .legal { max-width: 860px; }
+  .legal__h1 {
+    font-family: var(--alt-font-display, 'Cormorant Garamond', serif);
+    font-size: clamp(32px, 4vw, 46px);
+    line-height: 1.15;
+    color: var(--alt-navy);
+    margin: 6px 0 14px;
+  }
+  .legal__meta {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--alt-gray-600, #5b6572);
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--alt-gold);
+    margin-bottom: 30px;
+  }
+
+  /* Cuerpo del documento: lectura larga, jerarquía sobria. */
+  .legal__doc { font-size: 16px; line-height: 1.75; color: var(--alt-ink, #23303d); }
+  .legal__doc :global(h1) { display: none; } /* el título ya lo pinta la plantilla */
+  .legal__doc :global(h2) {
+    font-family: var(--alt-font-display, 'Cormorant Garamond', serif);
+    font-size: clamp(23px, 2.4vw, 29px);
+    color: var(--alt-navy);
+    margin: 38px 0 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--alt-gray-200, #e3e8ee);
+  }
+  .legal__doc :global(h3) {
+    font-size: 17px;
+    font-weight: var(--alt-fw-semibold, 600);
+    color: var(--alt-navy);
+    margin: 24px 0 8px;
+  }
+  .legal__doc :global(p) { margin: 0 0 14px; }
+  .legal__doc :global(ul), .legal__doc :global(ol) { margin: 0 0 16px; padding-left: 22px; }
+  .legal__doc :global(li) { margin-bottom: 7px; }
+  .legal__doc :global(strong) { color: var(--alt-navy); font-weight: var(--alt-fw-semibold, 600); }
+  .legal__doc :global(a) { color: var(--alt-link); text-decoration: underline; text-underline-offset: 2px; }
+  .legal__doc :global(hr) { border: 0; border-top: 1px solid var(--alt-gray-200, #e3e8ee); margin: 30px 0; }
+  .legal__doc :global(code) {
+    background: var(--alt-mist, #f2f6f9); padding: 2px 6px; border-radius: 4px; font-size: 14px;
+  }
+  /* Tablas del documento: deben poder desplazarse en móvil sin romper la página. */
+  .legal__doc :global(table) {
+    width: 100%; border-collapse: collapse; margin: 0 0 20px; font-size: 15px; display: block; overflow-x: auto;
+  }
+  .legal__doc :global(th), .legal__doc :global(td) {
+    border: 1px solid var(--alt-gray-200, #e3e8ee); padding: 9px 12px; text-align: left; vertical-align: top;
+  }
+  .legal__doc :global(th) { background: var(--alt-mist, #f2f6f9); color: var(--alt-navy); font-weight: var(--alt-fw-semibold, 600); }
+
+  .legal__pqr {
+    margin-top: 44px; padding: 22px 24px;
+    background: var(--alt-mist, #f2f6f9);
+    border-left: 3px solid var(--alt-gold);
+    border-radius: var(--alt-r-sm, 12px);
+  }
+  .legal__pqr h2 {
+    font-family: var(--alt-font-display, 'Cormorant Garamond', serif);
+    font-size: 22px; color: var(--alt-navy); margin: 0 0 8px;
+  }
+  .legal__pqr p { margin: 0; font-size: 15px; line-height: 1.7; }
+  .legal__pqr a { color: var(--alt-link); }
+</style>

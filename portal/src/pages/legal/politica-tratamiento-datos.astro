@@ -1,0 +1,28 @@
+---
+/*
+ * Política de Tratamiento de Datos Personales — el documento V2 del kit fundacional, PUBLICADO.
+ *
+ * Hasta el 2026-08-20 esta ruta daba 404 mientras `/publicar` ya capturaba nombre y teléfono
+ * reales: incumplimiento del gate de `42-LEGAL` §6 (Ley 1581/2012 arts. 9 y 12). El texto NO se
+ * redactó aquí — se publica el del kit (`07-POLITICA-TRATAMIENTO-DATOS`, V2 · 2026-07-28), que
+ * ya está auditado; la copia vive en `src/content/legal/` para que se versione con el portal.
+ *
+ * ⚠️ Dos campos del kit quedaron marcados como pendientes en vez de inventados: la matrícula de
+ * arrendador y la dirección física (TODO-21, los entrega Daniel). El domicilio y los canales de
+ * notificación SÍ son reales.
+ */
+export const prerender = true;
+
+import LegalLayout from '../../layouts/LegalLayout.astro';
+import { LEGAL } from '../../lib/config/legal';
+import { Content } from '../../content/legal/politica-tratamiento-datos.md';
+---
+
+<LegalLayout
+  title={LEGAL.politicaDatos.titulo}
+  description="Política de Tratamiento de Datos Personales de ALTORRA COMPANY S.A.S. — finalidades, derechos del titular y canales de atención (Ley 1581 de 2012)."
+  version={LEGAL.politicaDatos.version}
+  vigencia={LEGAL.politicaDatos.vigencia}
+>
+  <Content />
+</LegalLayout>
