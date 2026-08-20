@@ -1,4 +1,5 @@
 ---
+import { LEGAL, TEXTO_AUTORIZACION, TEXTO_MARKETING, RUTA_AVISO } from '../lib/config/legal';
 /*
  * PUBLICAR — "Publica tu inmueble" (Ola 1). Réplica de ALTORRA Publica.dc.html.
  * Hero con formulario de avalúo (lead) + "cuatro pasos" + 3 planes. Reutiliza Header/Footer.
@@ -73,6 +74,22 @@ const beneficios = [
                   <select class="alt-select" id="pub-tipo" name="tipo"><option>Apartamento</option><option>Casa</option><option>Lote</option><option>Oficina</option><option>Local</option></select>
                 </div>
               </div>
+              <!-- GATE DE HABEAS DATA (Ley 1581/2012 art. 9 · D.1377/2013 art. 7 · kit `08` §2.2).
+                   NINGUNA casilla viene premarcada: el silencio no es autorización. El texto es el
+                   del kit, y su versión se sella en el lead junto con la versión de la Política. -->
+              <div class="pub-form__legal">
+                <label class="pub-check">
+                  <input type="checkbox" name="autorizacion" value="on" required />
+                  <span>
+                    {TEXTO_AUTORIZACION.p1}<a href={RUTA_AVISO} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkAviso}</a>{TEXTO_AUTORIZACION.p2}<a href={LEGAL.politicaDatos.ruta} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkPolitica}</a>{TEXTO_AUTORIZACION.p3}
+                  </span>
+                </label>
+                <label class="pub-check">
+                  <input type="checkbox" name="marketing" value="on" />
+                  <span>{TEXTO_MARKETING}</span>
+                </label>
+              </div>
+              <p class="pub-form__err" id="pub-legal" hidden>Para continuar necesitamos tu autorización de tratamiento de datos.</p>
               <p class="pub-form__err" id="pub-err" hidden>Ingresa tu nombre y teléfono para continuar.</p>
               <p class="pub-form__err" id="pub-net" hidden>No pudimos enviar tu solicitud. Revisa tu conexión e inténtalo de nuevo.</p>
               <button class="alt-btn alt-btn--navy pub-form__submit" type="submit">Solicitar avalúo<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
@@ -152,6 +169,16 @@ const beneficios = [
 </BaseLayout>
 
 <style>
+  /* Bloque de consentimiento (gate de Habeas Data). Sobrio: no compite con el CTA. */
+  .pub-form__legal { display: grid; gap: 10px; margin: 4px 0 2px; }
+  .pub-check { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+  .pub-check input {
+    flex: none; width: 17px; height: 17px; margin-top: 2px; cursor: pointer;
+    accent-color: var(--alt-gold);
+  }
+  .pub-check span { font-size: 12.5px; line-height: 1.5; color: var(--alt-gray-600, #5b6572); }
+  .pub-check a { color: var(--alt-link); text-decoration: underline; text-underline-offset: 2px; }
+
   /* Hero */
   .pub-hero { position: relative; overflow: hidden; background: var(--alt-white); }
   .pub-hero__bg { position: absolute; inset: 0; background-size: cover; background-position: center right; opacity: 0.07; }
@@ -233,6 +260,7 @@ const beneficios = [
   const form = document.getElementById('pub-form') as HTMLFormElement | null;
   const err = document.getElementById('pub-err');
   const net = document.getElementById('pub-net');
+  const errLegal = document.getElementById('pub-legal');
   const fields = document.querySelector('.pub-form__fields') as HTMLElement | null;
   const ok = document.getElementById('pub-ok');
   const btn = form?.querySelector('.pub-form__submit') as HTMLButtonElement | null;
@@ -250,6 +278,12 @@ const beneficios = [
     const phone = (document.getElementById('pub-phone') as HTMLInputElement)?.value.trim();
     if (!name || !phone) { err?.removeAttribute('hidden'); return; }
     err?.setAttribute('hidden', '');
+
+    // Gate de Habeas Data también en el cliente: el servidor ya lo rechaza (422), pero un aviso
+    // aquí evita que el propietario pierda lo escrito. NUNCA se premarca ni se marca por él.
+    const autoriza = (form.querySelector('input[name="autorizacion"]') as HTMLInputElement | null)?.checked;
+    if (!autoriza) { errLegal?.removeAttribute('hidden'); return; }
+    errLegal?.setAttribute('hidden', '');
     net?.setAttribute('hidden', '');
 
     // Doble envío: un propietario impaciente da dos clics y crearía dos leads.

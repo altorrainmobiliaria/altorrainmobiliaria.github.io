@@ -17,6 +17,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { createDoc } from '../../lib/data/firestore-rest';
 import { getPublicFirebaseConfig } from '../../lib/data/client';
+import { LEGAL } from '../../lib/config/legal';
 
 /** Tope de bytes del cuerpo: un lead legítimo son ~300 bytes. Corta payloads de abuso antes de parsear. */
 const MAX_BODY = 4096;
@@ -64,6 +65,16 @@ export const POST: APIRoute = async ({ request }) => {
   if (nombre.length < 2 || SPAM_RE.test(nombre)) return json({ ok: false, reason: 'nombre' }, 422);
   if (!TEL_RE.test(telefono)) return json({ ok: false, reason: 'telefono' }, 422);
 
+  // 2b) GATE DE HABEAS DATA (Ley 1581/2012 art. 9 · D.1377/2013 art. 7 · kit `08` §2.2).
+  //     «El backend nunca envía el dato a la base si la casilla principal no está marcada» y
+  //     «el silencio jamás equivale a autorización». Un checkbox HTML sin marcar NO viaja en el
+  //     POST, así que su AUSENCIA es exactamente el caso a rechazar — por eso se exige presencia
+  //     explícita en vez de comprobar un valor negativo.
+  const autorizacion = String(campos.autorizacion ?? '').trim().toLowerCase();
+  const autorizo = autorizacion === 'on' || autorizacion === 'true' || autorizacion === '1';
+  if (!autorizo) return json({ ok: false, reason: 'autorizacion' }, 422);
+  const marketing = ['on', 'true', '1'].includes(String(campos.marketing ?? '').trim().toLowerCase());
+
   const zonaIn = limpiar(campos.zona, 40);
   const tipoIn = limpiar(campos.tipo, 40);
   const zona = ZONAS.includes(zonaIn) ? zonaIn : '';
@@ -87,6 +98,19 @@ export const POST: APIRoute = async ({ request }) => {
       operacion: 'avaluo',
       precioAproximado: null,
       descripcion: '',
+    },
+    // Prueba de consentimiento conservable (kit `08` §2.2 «Registro de prueba»): sin esto la
+    // autorización no es demostrable ante la SIC, y una autorización que no se puede probar
+    // equivale a no tenerla.
+    consentimiento: {
+      autorizado: true,
+      textoVersion: LEGAL.formatoAutorizacion,
+      politicaVersion: `${LEGAL.politicaDatos.version} · ${LEGAL.politicaDatos.vigencia}`,
+      formulario: 'publicar-propiedad',
+      marketing,
+      aceptadoEn: ahora.toISOString(),
+      ip: request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || '',
+      userAgent: (request.headers.get('user-agent') || '').slice(0, 200),
     },
     estado: 'pendiente',
     createdAt: ahora,
