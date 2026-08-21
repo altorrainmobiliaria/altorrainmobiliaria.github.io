@@ -2556,3 +2556,41 @@ sobre el dominio de producción y nunca sobre el host del request (en staging se
 **92.7 — Doctrina.** §G.2 🔵 skill del dominio ANTES de escribir (`catalogo-voz-altorra`) · §3.3
 (el inventario de zonas se contó contra los 301 reales) · §G.4 caza-bugs (el JSON-LD ausente y el
 canonical faltante salieron de mirar el camino vivo) · §G.4 Frescura a mano en `20` ([[M-10]] (a)).
+
+## 93. ADR — `/precios`: publicar lo que se cobra, con las cifras selladas y los huecos a la vista ⟦OPUS-5⟧ (2026-08-21)
+
+> Ítem 7 de OLA 1. El MEGA-PLAN lo llama «el diferenciador gratis» (op.7).
+
+**93.1 — Causa raíz.** En el mercado inmobiliario de Cartagena casi nadie publica sus comisiones y el
+cliente las descubre al final del proceso, cuando ya invirtió tiempo. Publicarlas antes es la versión
+operativa de la voz «los números van claros y de frente», y no cuesta nada construirla.
+
+**93.2 — El error que se evitó, y es el hallazgo de este ADR.** El MEGA-PLAN ítem 7 trae «venta 2-3%»
+y «captación arriendo 50-100% del primer canon». Antes de escribir una cifra se fue al nodo dueño:
+`43 §Tarifario y umbrales OFICIALES`, **sellado por Daniel el 2026-07-25 y encabezado «derogan toda
+cifra previa»**, dice **venta 3%** y colocación por **DURACIÓN del contrato** (1 canon <3 años · 2
+entre 3-9 · 3 desde 10), que no es un porcentaje. **Las del plan están superadas.** Copiar el
+documento de planificación en vez de consultar al dueño del hecho habría publicado precios
+equivocados. Clase [[M-10]] en su variante de datos: dos fuentes, una autoritativa, y ningún gate que
+avise cuál manda. Queda escrito en la cabecera de `tarifas.ts`.
+
+**93.3 — Lo que no está decidido se dice.** Comercial y alojamiento por días salen como «Sin tarifa
+cerrada» con su explicación, porque en el sellado el comercial está literalmente ⟦PENDIENTE decisión
+Daniel⟧ y el de alojamientos tiene tarifario propio por temporada. La voz §6.1 prohíbe «precios
+desde»: inventar un rango para tapar el hueco habría sido peor que el hueco.
+
+**93.4 — El argumento central no es una cifra.** `42-LEGAL` confirma **cero depósitos y cauciones al
+arrendatario de vivienda** (Ley 820/2003 arts. 15, 16 y 18, directas, indirectas o con otro nombre):
+el ingreso sale solo del lado propietario. Tiene sección propia porque en el mercado se cobra igual, y
+quien lo ha vivido reconoce la diferencia sin que haya que explicársela.
+
+**93.5 — Verificación en vivo.** `/precios` 200 · `<title>` único · canonical al dominio de producción
+· `BreadcrumbList` + **`FAQPage`** con las 4 preguntas que llegan por WhatsApp, cada respuesta atada a
+una tarifa sellada o a una obligación legal verificada · las 5 filas rindiendo sus cifras · sitemap
+26 → **27 URLs** · enlazada desde el footer (sin eso nacía huérfana).
+
+**93.6 — Riesgo abierto que NO se tocó.** El footer ofrece **«Avalúo gratis»**, y el MEGA-PLAN B13 dice
+**NUNCA llamar «avalúo»** a nuestra estimación (en Colombia el avalúo es actividad regulada, Ley
+1673/2013 y su RAA). La skill `catalogo-voz-altorra`, en cambio, usa «Avalúo» suelto en §8 y en el
+menú de WhatsApp §6.4. **Dos fuentes del cerebro se contradicen en algo con peso legal**, así que no
+se cambió por cuenta propia: queda para Daniel en TODO-39.
