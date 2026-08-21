@@ -44,24 +44,24 @@
 
 ## 📝 Bitácora (efímera)
 
-> ### 🏗️ ARRANQUE EN FRÍO — lee esto y ya sabes dónde estás (2026-08-19)
+> ### 🏗️ ARRANQUE EN FRÍO — lee esto y ya sabes dónde estás (2026-08-21)
 >
-> **Frente activo: CONSTRUIR LA PÁGINA.** Daniel congeló cerebro y kit el 19-ago (el 72% del trabajo del
-> mes era mantenimiento y la web no avanzaba). **Opus 5 para TODO**, esfuerzo Max.
-> **20-ago Daniel LEVANTA el límite de capacidad** («no podemos poner límites a la inteligencia»):
-> agentes y workflows LIBRES bajo tu juicio. Sigue vigente la **prioridad**: la página primero.
+> **Frente activo: TERMINAR EL MEGA-PLAN** (web + sistema). Daniel el 21-ago: *«las campañas al final,
+> nos interesa terminar la página web y el sistema, todo el mega plan»*. **Opus 5 para TODO**, esfuerzo
+> Max, agentes y workflows LIBRES bajo tu juicio (levantó ese límite el 20-ago).
 >
-> **El portal tiene 18 páginas** (8 fieles a mockup + legales + nav; censo → `20`), sin 404s (§89).
-> **ya captura**: `/publicar` crea leads reales en `solicitudes` (§88).
+> **OLA 1 va 12 de 13** (TODO-39). La noche del 20→21-ago cerró: §91 SEO técnico · §92 las 13 landings
+> de zona · §93 `/precios` · §94 Rango ALTORRA · §95 JSON-LD del negocio. **23 páginas** (censo → `20`);
+> `/publicar` y el Rango captan leads REALES en `solicitudes` (§88, §94).
 >
-> **Lo siguiente:** **TODO-30** — la vista la confirma **Daniel** (con la ventana al frente): toda pestaña
-> automatizada va `hidden` y el `rAF` congelado hace que el mapa parezca roto sin estarlo → [[L-39]].
-> Ya verificado por mí: `.pmtiles` sano y el Worker de rangos responde 206. NO tocar las dependencias.
-> ✅ Cerrado el 20-ago: contacto del comprador (era un `mailto:`, no formularios) e imágenes (no había
-> JPG; `srcset` MIDIÓ peor con fotos demo → solo el emblema, −76%) → [[L-38]] + `portal/src/lib/img.ts`.
+> **Lo siguiente, en orden**: (1) **TODO-30**, la vista del mapa en foreground — solo la confirma Daniel
+> con la ventana al frente ([[L-39]]) · (2) **TODO-22/33**, el catálogo REAL, gate del cutover y de casi
+> todo lo que queda · (3) **OLA 2** (`MEGA-PLAN`). El 13º (alertas) espera clave de Resend Y catálogo
+> real: una alerta sin catálogo no tiene contra qué dispararse.
 >
 > ⚠️ **Antes de tocar código, lee `34-DOCTRINA-CODIGO`** (trigger 🖥️) y, si el síntoma te suena, `30`:
-> [[L-33]] (`locals.runtime.env` removido en Astro v6) YA cobró dos veces, la última el 19-ago.
+> [[L-33]] (`locals.runtime.env` removido en Astro v6) YA cobró dos veces.
+
 
 > **🔴 SIGUE ROTO — el aviso de leads.** `onNewSolicitud` falla con `535-5.7.8` (credenciales de Gmail).
 > Los 16 del sitio viejo se BORRARON el 20-ago (exportados antes, `43`), pero **es la misma Function que
@@ -72,11 +72,6 @@
 > ⏭️ **VIVO**: **26 conversaciones sin leer** (9+ días) en el WhatsApp de Bersaglio · avisarle a **Kary**.
 
 > **⏭️ PELOTAS DE DANIEL** (no las puedo cerrar yo):
-> **(0) 🔴 ¿LA CAMPAÑA DE HUMO ESTÁ REALMENTE APAGADA?** El playbook §4b la da **ACTIVA y arrancando
-> sola al recargar** ([[D-15]]); cuenta `1784008112275023` ACTIVA **con método de pago**. **NO puedo
-> verlo yo**: Ads-MCP bloqueado por rollout + tu Chrome logueado como `bersaglio_jewelry`, que no ve
-> Altorra ([[D-16c]]). Chequeo bueno: SOLO `Entrega=Activo` + rango Máximo ([[D-15b]]); el botón
-> «Anuncios activos» de Meta ESCONDE zombies (exige impresiones>0, y un zombie tiene 0).
 > **(1)** rotar la **contraseña de aplicación de Gmail** — sin eso los leads no avisan (arriba).
 > **(2)** ✅ Política V2 **PUBLICADA y LIVE** (20-ago, `curl` 200). Queda TU visto bueno para **abrir
 > "Crear cuenta"**: el código de `/ingresar` aún la bloquea citando una política que YA existe (§90).
@@ -90,8 +85,13 @@
 > lo heredan solas.
 > **(8)** el form de `/publicar` **no pide correo** (fiel al mockup) y eso hace que un propietario real
 > llegue etiquetado `[COLD]`: o se añade el campo al mockup, o se re-pesa el scoring.
+> **(9) 📣 PAUTA — al final por decisión tuya (21-ago), y es seguro aplazarla CON UNA CONDICIÓN:** la
+> campaña de humo puede seguir ACTIVA (playbook §4b) y **solo muerde el día que recargues saldo**
+> ([[D-15]]). Mientras no recargues, no gasta. **Antes de recargar un peso**, compruébala con tu sesión
+> de Meta (la de Bersaglio no ve Altorra, [[D-16c]]): filtro SOLO `Entrega=Activo` + rango Máximo, que
+> el botón «Anuncios activos» ESCONDE los zombies ([[D-15b]]).
 
-> **▶ CONSOLIDADO** — §81-§90 ya son ADRs; el relato y el ruteo viven en `00-INDICE` → `99` (SSoT).
+> **▶ CONSOLIDADO** — §81-§95 ya son ADRs; el relato y el ruteo viven en `00-INDICE` → `99` (SSoT).
 
 > **⏸️ EN PAUSA, reanudable y sin bloquear nada**: 64 leves del kit (ledger en bóveda) · [[M-09]] a los
 > 3 hermanos (TODO-32b) · backlog B-01..B-05. 🛑 **NO RELANZAR** el comité R3, la auditoría B-03 ni los
