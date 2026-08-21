@@ -2636,3 +2636,32 @@ camino de código hasta la escritura.
 `Header.astro:78` («Avalúos»). No se tocó: la skill `catalogo-voz-altorra` usa «Avalúo» con
 normalidad en §8 y §6.4, así que **dos fuentes del cerebro se contradicen en algo con peso legal** y
 esa la decide Daniel. Sigue en TODO-39.
+
+## 95. ADR — La identidad del negocio en JSON-LD, y las dos cosas que NO se declararon ⟦OPUS-5⟧ (2026-08-21)
+
+**95.1 — Causa raíz.** §92 destapó que el portal no tenía **ningún** structured data mientras el
+legacy lo tenía en 43 páginas: la migración se lo dejó entero por el camino. Sin él, Google y los
+motores de respuesta saben lo que dice cada página pero no **quién** es ALTORRA.
+
+**95.2 — Solución.** `components/JsonLdNegocio.astro` emitido desde `BaseLayout`, o sea en TODAS las
+rutas. Tipo **`RealEstateAgent`** (subtipo de `LocalBusiness`), no `Organization` a secas: perder la
+señal local en una inmobiliaria de una sola ciudad sería regalar la única ventaja estructural que
+tiene. Va en el layout porque la identidad no cambia entre rutas y repetirla por página es la vía
+segura a que una se quede sin ella.
+
+**95.3 — Las dos ausencias deliberadas, que son el contenido real de este ADR.**
+(a) **Sin `streetAddress`**: `05` dice que la dirección COMERCIAL todavía falta (la del acto
+administrativo es el domicilio del representante). Un `PostalAddress` sin calle es válido; uno con
+una calle inventada es una mentira que Google indexa y que además chocaría con el Perfil de Empresa
+el día que se reclame.
+(b) **Sin `aggregateRating` ni `review`**: no hay reseñas propias. Inventarlas es lo que sanciona la
+SIC y por lo que Google aplica acciones manuales. Es el mismo criterio de §92.3 aplicado al markup.
+
+**95.4 — Verificación.** Presente en home, SERP, `/precios` y `/zona/*` · JSON parseado y válido ·
+comprobado explícitamente que NO salen `streetAddress` ni `aggregateRating` · matrícula `6636`, NIT
+y eslogan correctos en el markup.
+
+**95.5 — Lo que sigue faltando y por qué.** Falta el markup a nivel de INMUEBLE en la ficha
+(MEGA-PLAN ítem 3). No se hizo a propósito: el catálogo es DEMO (§56-§60), y emitir
+`RealEstateListing` de propiedades que no existen es publicar datos estructurados falsos. Entra con
+el catálogo real.
