@@ -352,7 +352,7 @@ Aquí la voz se toma más aire: analiza el mercado, explica el porqué de los pr
 > 1. Comprar o arrendar
 > 2. Vender o consignar tu propiedad
 > 3. Administración de inmuebles
-> 4. Avalúo de tu propiedad
+> 4. Valoración de tu propiedad
 > 5. Alojamiento por días
 > Escríbeme el número o cuéntame con tus palabras. Aquí estamos."
 
@@ -398,7 +398,12 @@ Una sola voz; cambia el trato y el foco, no la marca.
 - **Compra / venta.** Trato "tú" (o "usted" si el perfil marca distancia). Aplomo y calma: decidir con la información completa, la firma revisada, sin sorpresas del pasado. Cero "legado", "patrimonio", "certeza absoluta".
 - **Arriendo.** Dinámico pero seguro. Claridad del acuerdo desde el inicio: canon y administración por separado, sin cuotas escondidas. Cero depósitos al inquilino (Ley 820). Respeto por la palabra.
 - **Administración / consignación (propietarios).** Registro "usted". Aplomo y descanso: "Usted descansa, nosotros nos encargamos." Contamos cómo trabajamos, no prometemos rentabilidad.
-- **Avalúo.** Criterio y dato: la ciudad que conocemos calle por calle, el número explicado con calma.
+- **Valoración** (⛔ NUNCA «avalúo»). Criterio y dato: la ciudad que conocemos calle por calle, el número
+  explicado con calma. **La palabra está vetada**: en Colombia el avalúo es actividad REGULADA (Ley
+  1673/2013 — solo avaluadores inscritos en el RAA), así que llamar «avalúo» a una estimación propia
+  —y peor, ofrecerla gratis— no es impreciso, es exponerse. Di «valoración», «estimación» o «rango», y
+  acompáñalo del aviso de que no tiene validez legal y de a quién acudir si hace falta el documento.
+  Esta regla es del DOMINIO, no de esta marca: aplica a cualquier inmobiliaria en Colombia.
 - **Alojamiento por días.** El anfitrión de aquí: check-in sin enredos, reglas claras. **RNT No. ____ obligatorio** en toda pieza. Precio por noche y aseo desglosados, total de la estadía a la vista.
 - **Crecimiento nacional (interno / futuro).** "Nuestra raíz es cartagenera, nuestra exigencia es nacional." Sin declarar liderazgo presente.
 

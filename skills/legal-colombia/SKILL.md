@@ -59,6 +59,20 @@ Usa este método. (Puedes usar esos plugins solo si el usuario pide EXPLÍCITAME
   como prueba; si no coinciden carácter a carácter, lo que se firmó y lo que se enseñó no son lo
   mismo. Y guarda con cada aceptación la **versión del texto** más fecha, IP y user-agent: una
   autorización que no se puede probar equivale a no tenerla.
+- **Palabras que nombran una PROFESIÓN REGULADA (regla operativa, 2026-08-21):** en Colombia varias
+  actividades solo puede ejercerlas quien está inscrito en un registro, y **usar su nombre en la
+  publicidad ya es ejercerla a ojos del regulador**, aunque por dentro sea otra cosa. El caso que más
+  se repite en inmobiliaria es **«avalúo»** (Ley 1673/2013: solo avaluadores inscritos en el **RAA**);
+  la misma lógica cubre «perito», «auditoría» o «asesoría jurídica» ofrecidas por quien no lo es.
+  **La señal de alarma es el combo `gratis` + `nuestro`**: si lo regalas es porque no lo estás
+  encargando a un profesional inscrito, y entonces lo que ofreces no es eso. **Qué hacer:** (1) di
+  «valoración», «estimación» o «rango», nunca el término regulado; (2) acompáñalo del aviso de que
+  **no tiene validez legal** y de a quién acudir si hace falta el documento; (3) distingue dos casos
+  al auditar un sitio — el texto que describe *tu propia estimación* se corrige sin preguntar a nadie,
+  mientras que el que **reclama una línea de servicio** («ofrecemos avalúos») depende de un HECHO
+  (¿lo contratas a un inscrito?) que solo tiene el dueño: ahí no reescribas, pregunta. **Trampa
+  frecuente:** el sitio ya tiene una página que lo hace BIEN y otra que lo hace mal — dos páginas
+  ofreciendo lo mismo con nombres distintos es la firma de este defecto, y la buena te da el texto.
 - **RUCOM (ANM):** comercializar oro/esmeraldas sin registro o sin certificado de origen → **decomiso**.
 - **SAGRILAFT / UIAF:** la joyería es **sector de alto riesgo de lavado**; obligaciones según umbral de tamaño.
 - **IVA 19%** sobre joyería terminada (no asumir exclusión del oro). **Factura electrónica DIAN** obligatoria.
