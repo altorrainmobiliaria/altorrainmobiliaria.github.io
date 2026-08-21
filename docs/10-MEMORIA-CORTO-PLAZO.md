@@ -29,13 +29,13 @@
 |---|---|---|---|
 | **TODO-17** | **Ola 0 restos**: E2E "tras cache" (T9) · deploy de rules · 0.4 obra AEO. | 🔄 | gate=CUTOVER |
 | **TODO-21** | **Lote-dueño**: Nº **RNT** (la matrícula ya está PUBLICADA, `05`) · dirección física y COMERCIAL · abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño | gate=obra |
-| **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4; editar CANÓNICO → bump `VERSION` → `brain:pull` ×4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-38** (§90) gates a medias: #27 sin `creas` · #5 existencia≠corrección · `§NN` sueltos sin gate · `30`/`33`/`00`/`20` en ↗ · pelotas sin ID · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO) · **TODO-40** ✅ shard de `30` hecho (L-01..L-21 → `35`, §97) y `33` destilado. QUEDA `00` (25k/24k) con `00a` casi lleno → `00b` o destilar filas; NO subir techos ([[M-05]]). | 🔄 | §84·§87·§90·§96 |
+| **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-38** (§90) gates a medias: #27 sin `creas` · #5 existencia≠corrección · `§NN` sueltos sin gate · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO) · **TODO-40** ✅ shard de `30` hecho (L-01..L-21 → `35`, §97) y `33` destilado. QUEDA `00` (25k/24k) con `00a` casi lleno → `00b` o destilar filas; NO subir techos ([[M-05]]). | 🔄 | §84·§87·§90·§96 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, [[L-39]] → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-39** | 🌊 **OLA 1 ✅ 13 de 13** (§91 SEO · §92 zonas · §93 precios · §94 Rango · §95 JSON-LD · **§96 alertas**). Queda SOLO lo que no es código: (a) ⚠️ **tuya (§94.6)**: «Avalúo» sale en `Header`/`Footer` y B13 lo PROHÍBE (Ley 1673), la skill de voz sí lo usa — dos fuentes del cerebro en contradicción legal; (b) el **go/no-go de ola** con Daniel (MEGA-PLAN §4.4). | 🟢 código listo | §96 |
 | **TODO-22** | **CATÁLOGO — código COMPLETO, incluida la FICHA (§97)**. Para datos reales, en el cutover: (1) deploy COORDINADO (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades · (4) fichas al sitemap, derivadas del índice. | 🟢 cutover | §60 · §97 |
-| **TODO-41** | ⚡ **Workers Caching NO está habilitado** (`wrangler.jsonc` sin clave `cache`, verificado §97.10): HOY todo `s-maxage` del portal es INERTE y cada visita paga sus lecturas de Firestore. El cambio es una línea; es infraestructura, así que se hace mirando, no de pasada. Con el catálogo real esto decide el free-tier. | 🔴 infra | §97 |
-| **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa (19-ago)**. Kit emitido y auditado, críticos y altos aplicados; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea nada: el kit no se firma hasta el cierre de obra. Ledger → bóveda `2026-08-03-leves-b03-LEDGER.md`. | ⏸️ 28/92 | §87 · `43` |
+| **TODO-42** | 🔴 **`isStaff()` es INSATISFACIBLE** (§98.5, verificado): las reglas del portal exigen el custom claim `admin` y **nadie lo pone nunca** (`setCustomUserClaims` = 0 en todo el repo); el legacy usa otro mecanismo (`usuarios.rol`). Al desplegar las reglas, el back-office muere para TODOS, Daniel incluido. Decisión con deliberación adversarial en curso. **Bloquea el cutover.** | 🔴 seguridad | §98 |
+| **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
 
@@ -56,11 +56,13 @@
 > **§97: la FICHA ya es dinámica** — `/inmueble/<slug>` lee Firestore, con gate de publicación en el
 > dominio ([[L-42]]) y bloque sin dato OMITIDO. El código del portal público está COMPLETO.
 >
-> **Lo siguiente, en orden**: (1) **TODO-41**, habilitar Workers Caching — una línea, pero decide el
-> free-tier · (2) **TODO-22**, el catálogo REAL, gate del cutover · (3) **TODO-30**, la vista del mapa
-> en foreground, que solo confirma Daniel ([[L-39]]) · (4) **OLA 2** (`MEGA-PLAN`): el abogado gatea el
-> RAIL DE PAGO, **no toda la ola** — reléela antes de darla por bloqueada ([[L-40]] ya cobró 3 veces,
-> [[M-11]]).
+> **§98**: Workers Caching ✅ encendido (llevaba sin habilitar desde Ola 0: todo `s-maxage` era inerte)
+> y `/gestion` ✅ tras puerta de acceso.
+>
+> **Lo siguiente, en orden**: (1) **TODO-42**, el claim de staff — bloquea el cutover y es seguridad ·
+> (2) **TODO-22**, el catálogo REAL · (3) **TODO-30**, la vista del mapa, que solo confirma Daniel
+> ([[L-39]]) · (4) **OLA 2**: el abogado gatea el RAIL DE PAGO, **no toda la ola** — reléela antes de
+> darla por bloqueada ([[L-40]] ya cobró 3 veces, [[M-11]]).
 >
 > ⚠️ **Antes de tocar código, lee `34-DOCTRINA-CODIGO`** (trigger 🖥️) y, si el síntoma te suena, `30`:
 > [[L-33]] (`locals.runtime.env` removido en Astro v6) YA cobró dos veces, y [[L-41]] (cabeceras

@@ -47,7 +47,7 @@ el id del documento no. **Corolario**: si ya tienes claves derivadas de URLs vie
 durante una temporada — pero arregla la fuente, porque aceptar formatos no reconstruye lo que ya se perdió.
 **Y un slug tampoco sirve**: basta corregir una tilde del título para que cambie.
 
-### L-42 — 🚧 Una defensa que solo vive en las Security Rules NO EXISTE hasta que las Rules se despliegan *(2026-08-21, ADR §97.6)*
+### L-42 — 🚧 Lo que está escrito en un COMENTARIO no está desplegado: reglas, config y premisas de arquitectura *(2026-08-21, ADR §97.6 · §98.1)*
 **Disparador**: el código confía en que la base filtrará («las reglas ya no dejan leer los borradores»),
 y las reglas que hacen eso están en el repo, no en producción. **Caso**: la ficha de inmueble no
 comprobaba el estado de publicación porque `firestore.rules` tiene `allow get: if resource.data.estado in
@@ -60,6 +60,7 @@ Rules — defensa en profundidad, no delegación; (2) usa la MISMA lista que ya 
 whitelist de estados con la que se construye el índice del catálogo) para que no puedan discrepar;
 (3) desconfía de todo comentario que diga «las reglas ya lo impiden» sin decir **desplegadas desde cuándo**.
 Portátil a cualquier backend con reglas declarativas (Firebase, Supabase RLS, políticas de S3).
+**SEGUNDO CASO, el mismo día (§98.1)**: `lib/data/cache.ts` explicaba desde Ola 0 que la caché del edge se sienta DELANTE del Worker y que por eso un acierto cuesta CERO lecturas — y sobre esa premisa se eligieron todos los TTL del portal. La clave `cache` **nunca se puso en `wrangler.jsonc`**: cada `s-maxage` emitido era inerte y cada visita pagaba sus lecturas. **La clase es la misma y es más ancha que la seguridad**: un comentario describe cómo funciona el sistema, no cómo está configurado. **Regla ampliada**: cuando un archivo explique una premisa de arquitectura —una caché, un índice, un trigger, una política— comprueba que exista la CONFIGURACIÓN que la enciende, y déjalo escrito con la fecha. Barato: `grep` de la clave en el archivo de config, o el esquema del propio proveedor. **Y audita ANTES de encender**: con la caché apagada, una ruta sin cabecera no tenía consecuencia; con la caché encendida, una URL con un token dentro se habría guardado en una caché compartida el mismo día.
 
 ### L-41 — 🧱 Las cabeceras de `Response.redirect()` son INMUTABLES: un middleware que hace `headers.set()` revienta todo redirect *(2026-08-21, ADR §96.6b)*
 **Disparador**: un endpoint que responde con `Response.redirect(...)` devuelve **500** y el error apunta al

@@ -2854,3 +2854,59 @@ la lista de trampas ANTES de escribir, y uno de revisión adversarial (4 lentes 
 hallazgo) que produjo 33 hallazgos de los que sobrevivieron 17. **La revisión encontró más bugs reales
 que el recon**, y el refutador tumbó la mitad — incluidos los que yo ya había arreglado mientras
 corría. Doctrina: §3.3 · §3.4 IAP · §G.2 🖥️ · §G.4 caza-bugs y destilar a skills.
+
+## 98. ADR — Dos premisas que el portal daba por ciertas y no lo eran ⟦OPUS-5⟧ (2026-08-21)
+
+> Ni una línea de funcionalidad nueva. Las dos cosas que se arreglan aquí estaban DOCUMENTADAS como si
+> ya funcionaran.
+
+**98.1 — Workers Caching llevaba sin habilitar desde Ola 0.** `lib/data/cache.ts` explica desde el
+primer día que la caché se sienta DELANTE del Worker y que por eso un acierto cuesta CERO lecturas de
+Firestore; sobre esa premisa se eligieron todos los TTL del portal. Pero `wrangler.jsonc` **no tenía la
+clave `cache`**, así que cada `s-maxage` emitido era inerte y cada visita pagaba sus lecturas. El
+modelo de coste entero descansaba sobre algo que nadie encendió. Se habilitó con
+`cache: { enabled: true, cross_version_cache: false }`, y las dos decisiones tienen razón:
+· la **clave se verificó contra `node_modules/wrangler/config-schema.json`** (definición `CacheOptions`)
+y no de memoria ([[L-14]]);
+· **`cross_version_cache: false`** hace que un DESPLIEGUE invalide lo cacheado — hoy no existe la purga
+por tag (§60.4), así que republicar es la única palanca de invalidación que tenemos y conviene que
+funcione.
+
+**98.2 — Auditar ANTES de encender, no después.** Con la caché apagada, una ruta sin cabecera no tenía
+consecuencia. Al encenderla, sí. El barrido de las 10 rutas SSR encontró dos sin ninguna cabecera, y
+una de ellas es **`/alertas/baja?id=…&t=TOKEN`**: una URL con un secreto dentro que se habría guardado
+en una caché compartida. Las dos van ahora `private, no-store`. El orden importó: encender primero
+habría metido el token en la caché el mismo día.
+
+**98.3 — El panel de gestión no tenía puerta.** §60.4 lo dejó anotado y hoy se verificó: **cero**
+referencias a Auth en `gestion.astro`. La interfaz completa de administración se le mostraba a
+cualquiera que escribiera la dirección. Ahora el panel **nace `hidden` en el HTML servido** (fail-closed:
+si el script no corre, no se abre), sin sesión redirige a `/ingresar?volver=/gestion`, y con sesión sin
+permiso muestra un mensaje claro en vez de un panel vacío que parece roto. Se espera a que Firebase
+RESTAURE la sesión antes de decidir: leer el usuario sin esperar devuelve `null` en la primera pintura y
+echaría al login a quien sí está dentro.
+⚠️ **Está escrito en el código con todas las letras: esto NO es la frontera de seguridad.** Corre en el
+navegador y se salta con la consola. La frontera real son las Rules, que aún no se despliegan.
+
+**98.4 — Dos duplicaciones que iban a divergir.** La config pública de Firebase estaba en `client.ts` y
+OTRA VEZ, a mano, dentro del script de `/ingresar` — con un `authDomain` que solo existía en la segunda
+copia. Y el cargador de Auth vivía dentro de esa página, así que `/gestion` habría necesitado una
+tercera. Ahora: `lib/config/firebase-publico.ts` (el valor) y `scripts/auth.ts` (el cargador). **La
+excepción del gate `verify:data` se MUDÓ con el cargador**: el permiso apunta al dueño de la
+responsabilidad en vez de multiplicarse por cada página que necesite sesión.
+
+**98.5 — 🔴 EL HALLAZGO GORDO, verificado y sin resolver aquí: `isStaff()` es INSATISFACIBLE.** Las
+reglas del portal definen `isStaff()` como `request.auth.token.admin == true` —un **custom claim**— y
+con eso gatean toda la superficie interna: leads, captaciones (PII), contratos, pagos, expedientes,
+alertas y el `list` de propiedades. Pero **`setCustomUserClaims` no aparece en NINGÚN sitio del
+proyecto** (`grep` verificado; el único acierto es una plantilla dentro de una skill ajena). Nadie pone
+ese claim nunca. Y el legacy usa un mecanismo DISTINTO: `get(/usuarios/{uid}).data.rol`.
+⇒ El día que las reglas del portal se desplieguen, **el back-office queda inaccesible para todos,
+incluido el dueño**, y no por un bug sino por un hueco entre dos sistemas de permisos que nunca se
+presentaron. La decisión de cómo cerrarlo (claims sincronizados · reglas con `get()` · arranque manual)
+toca seguridad y es cara de revertir, así que va a su propio ADR con deliberación adversarial.
+
+**98.6 — Doctrina.** [[L-42]] cubre esto y se amplía: **lo que está escrito en un comentario no está
+desplegado**. Pasó dos veces el mismo día — una defensa de seguridad que dependía de reglas sin
+desplegar (§97.6) y un modelo de coste que dependía de una clave de configuración que nadie puso.
+§3.3 (cada afirmación contra el archivo real) · §G.4 caza-bugs.
