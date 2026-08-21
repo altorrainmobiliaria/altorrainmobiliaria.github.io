@@ -18,9 +18,11 @@ description: >-
 >   pieza (web, ficha, sello, pauta, post, WhatsApp, Journal) pasala por el **checklist
 >   anti-IA (§3.3)** + el **Test de Alma (§3.4)** + el **gate rapido (§3.5)**. Un solo "no"
 >   devuelve la pieza.
-> - ✅ **Matrícula de Arrendador y RNT: AMBOS EXISTEN** (Daniel confirma 2026-07-18); los NÚMEROS
->   los entrega AL CIERRE DE OBRA (la web debe estar lista y generar confianza antes de exhibirlos).
->   Hasta entonces: los placeholders siguen y NO SE PAUTA (arriendo exige el nº visible, Ley 820 art. 31).
+> - ✅ **Matrícula de Arrendador: PUBLICADA — `No. 6636`** (Resolución 6636 del 23-jul-2026, Alcaldía de
+>   Cartagena; la Oficina Asesora Jurídica confirmó el 2026-08-20 que ese número ES el de la resolución).
+>   **Úsalo, ya no hay placeholder**: vive en `portal/src/lib/config/site.ts` y sale en el footer y en las
+>   landings. El gate de Ley 820 art. 31 quedó LEVANTADO: la pauta de arriendo deja de estar bloqueada por
+>   esto. ⚠️ El **RNT** SÍ sigue pendiente de número: sin él NO se publica ni se pauta pieza de alojamiento.
 > - **Datos reales pendientes:** donde veas `No. ____` va el numero real (Matricula de
 >   Arrendador / RNT) del certificado del dueno. **NO inventes uno.** (El numero
 >   `AMC-OFI-0074376-2026` que aparecio en la deliberacion fue una ALUCINACION del modelo:
@@ -409,7 +411,7 @@ Una sola voz; cambia el trato y el foco, no la marca.
 ## 9. Estado / pendientes de ratificacion del dueno
 
 - **Trato tu/usted (registro dual):** default operativo = "tu" con leads (compra/arriendo/alojamiento), "usted" con propietarios. Recomendado; pendiente confirmacion final de Daniel.
-- **Matricula de Arrendador: numero REAL:** placeholder `No. ____`, del certificado fisico. El `AMC-OFI-0074376-2026` de la deliberacion fue alucinacion: descartado.
+- ~~Matricula de Arrendador~~ ✅ **RESUELTO 2026-08-20: `No. 6636`** (ADR §90). El `AMC-OFI-0074376-2026` de la deliberacion fue alucinacion: descartado.
 - **RNT alojamientos: numero REAL:** placeholder `No. ____`. **Blocker legal:** sin RNT visible no se publica ni pauta ninguna pieza de estadia por dias.
 - **Eslogan "Seguridad, Legalidad y Confianza":** vive como lockup junto al logo y en el footer, NO como muletilla de cuerpo.
 - **Horario WhatsApp** (plantilla de ausencia): definir cual rige (L-V 9-18 / Sab 9-14 vs 8-19).
