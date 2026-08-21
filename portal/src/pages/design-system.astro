@@ -35,7 +35,11 @@ const type = [
 ];
 ---
 
-<BaseLayout title="Design System D1 — ALTORRA (dev)">
+{/* `noindex` EXPLÍCITO, no heredado del gate de staging (ADR §95.6). Sin esta prop, un build de
+    producción publicaría la guía de estilos de desarrollo como página indexable. El `Disallow` del
+    `robots.txt` no basta: impide RASTREAR, no INDEXAR — Google puede indexar una URL que no puede
+    leer si la descubre por un enlace. Mismo tratamiento que `/gestion`. */}
+<BaseLayout title="Design System D1 — ALTORRA (dev)" noindex>
   <a href="#main" class="alt-skip-link">Saltar al contenido</a>
 
   <header class="ds-head">

@@ -2665,3 +2665,20 @@ y eslogan correctos en el markup.
 (MEGA-PLAN ítem 3). No se hizo a propósito: el catálogo es DEMO (§56-§60), y emitir
 `RealEstateListing` de propiedades que no existen es publicar datos estructurados falsos. Entra con
 el catálogo real.
+
+**95.6 — Lo que destapó el barrido END-TO-END, y por qué se hace.** Al cerrar la noche se recorrió el
+build de PRODUCCIÓN entero en vez de confiar en los diffs, y salieron dos cosas que ningún commit
+individual habría enseñado:
+
+(a) **`/invertir.html` no tenía redirect.** El comentario de `redirects.ts` decía «68 públicas + 6
+técnicas» y el disco tiene 74 archivos: **68+6=74 cuadraba de casualidad y era falso por los dos
+lados** (son 65 y 9). Ese descuadre escondía una URL del sitio viejo que habría dado **404 tras el
+cutover**. Corregido y, más importante, **verificado por conteo contra el disco**: 74 = 65 con 301 +
+9 exentas, **0 sin cubrir**. La cifra que no se puede reproducir con un comando no es una cifra.
+
+(b) **`/design-system` era INDEXABLE en producción.** Confiaba en el gate de staging en vez de forzar
+`noindex` como hace `/gestion`, así que un build de producción habría publicado la guía de estilos
+de desarrollo. El `Disallow` del `robots.txt` **no basta**: impide RASTREAR, no INDEXAR — Google
+puede indexar una URL que no puede leer si la descubre por un enlace. Ahora lo fuerza explícito.
+
+Las dos son de la misma familia: un número que nadie recontó y un gate que cubría una dirección.

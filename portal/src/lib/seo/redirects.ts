@@ -6,8 +6,13 @@
  * ganado. Un 301 conserva la señal; un 404 la borra.
  *
  * INVENTARIO REAL (contado, no estimado — `ls *.html` en la raíz del repo el 2026-08-21):
- * 59 en raíz + 7 en `/blog` + 6 en `/p` + 2 en `/snippets` = 74 archivos.
- * De esos, 68 fueron URLs públicas y entran aquí; 6 son técnicos y NO se redirigen (ver §NO-TOCAR).
+ * 59 en raíz + 7 en `/blog` + 6 en `/p` + 2 en `/snippets` = **74 archivos**.
+ * De esos, **65 son URLs públicas** y entran aquí; **9 son técnicos** y NO se redirigen (§NO-TOCAR).
+ *
+ * ⚠️ Estas cifras se corrigieron el 2026-08-21 tras CONTARLAS contra el disco (ADR §95.6): decían
+ * «68 públicas + 6 técnicas», y esa aritmética que no cerraba escondía que **`/invertir.html` no
+ * tenía redirect** y habría dado 404 tras el cutover. Si vuelves a tocar esta lista, re-corre el
+ * conteo contra el disco en vez de fiarte del comentario: fue el descuadre lo que delató el hueco.
  *
  * REGLA DE DESTINO: se redirige a la página que responde la MISMA intención, nunca "todo a la home"
  * — un 301 masivo a `/` Google lo trata como soft-404 y no transfiere señal. Cuando la superficie
@@ -58,6 +63,7 @@ const REDIRECTS_MANUALES: Redirect[] = [
   { de: '/turismo-inmobiliario.html', a: '/turismo' },
 
   // ── Inversión ───────────────────────────────────────────────────────────────────────────────
+  { de: '/invertir.html', a: '/invertir' },
   { de: '/invertir-airbnb-cartagena.html', a: '/invertir' },
   { de: '/guia-inversionista-2026.html', a: '/invertir' },
   { de: '/foreign-investors.html', a: '/invertir' },
