@@ -27,15 +27,15 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-17** | **Ola 0 restos**: E2E "tras cache" (T9) · deploy de rules · 0.4 obra AEO. | 🔄 | gate=CUTOVER |
+| **TODO-17** | **Ola 0 restos**: E2E "tras cache" (T9) · 0.4 obra AEO (el deploy de rules ya es la fase 2 del runbook). | 🔄 | gate=CUTOVER |
 | **TODO-21** | **Lote-dueño**: Nº **RNT** · dirección física y COMERCIAL · abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño | gate=obra |
-| **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-38** (§90) gates a medias: #27 sin `creas` · #5 existencia≠corrección · `§NN` sueltos sin gate · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO) · **TODO-40** ✅ shard de `30` hecho (L-01..L-21 → `35`, §97) y `33` destilado. QUEDA `00` (25k/24k) con `00a` casi lleno → `00b` o destilar filas; NO subir techos ([[M-05]]). | 🔄 | §84·§87·§90·§96 |
+| **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-38** (§90) gates a medias: #27 sin `creas` · #5 existencia≠corrección · `§NN` sueltos sin gate · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO) · **TODO-40** ✅ cerrado (`30`→`35` · `33` destilado · `00`→`00b`, §100). Frente vivo: **`30` al 92% de chars** → shard ANTES de reventar; NO subir techos ([[M-05]]). | 🔄 | §84·§87·§90·§96 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
-| **TODO-44** | 🖥️ **Admin v1 — falta la otra mitad** (ítem 10). ✅ puerta de acceso (§98) + bandeja de leads REAL (§101). Resta **CRUD de propiedades**, cola de verificación y export. **No lo gatea nadie**: el ruleset fusionado ya permite la escritura por rol (§100). | 🟢 | §101 |
+| **TODO-44** | 🖥️ **Admin v1 — el CRUD pasó a REQUISITO DEL CUTOVER (§103)**: el único alta que existe es la de `admin.html` y escribe un modelo que el portal DESCARTA (índice vacío, cero errores). Sin CRUD propio no hay catálogo real. ✅ puerta (§98) + leads (§101). Resta CRUD, cola de verificación y export. No lo gatea nadie (§100). | 🔴 SIGUIENTE | §103 |
 | **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, [[L-39]] → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-39** | 🌊 **OLA 1 ✅ 13 de 13** (§91-§96 → `00`). Queda SOLO lo que no es código: (a) ⚠️ **tuya (§94.6)**: «Avalúo» sale en `Header`/`Footer` y B13 lo PROHÍBE (Ley 1673), la skill de voz sí lo usa — dos fuentes del cerebro en contradicción legal; (b) el **go/no-go de ola** con Daniel (MEGA-PLAN §4.4). | 🟢 código listo | §96 |
-| **TODO-22** | **CATÁLOGO — código COMPLETO, incluida la FICHA (§97)**. Los pasos para datos reales son las **fases 3-4 del `specs/CUTOVER-RUNBOOK.md`** (§102), no se repiten aquí; resta después: fichas al sitemap, derivadas del índice. | 🟢 cutover | §102 |
-| **TODO-42** | 🔑 **Claim de staff — CÓDIGO LISTO, falta desplegar** (§99). El claim se deriva de `usuarios/{uid}` con un trigger, en el codebase del legacy, y se despliega SOLO (no toca reglas). Es la **fase 1 del runbook** (§102) y se puede hacer HOY, aislada: no toca ni una línea de reglas. ⏭️ **Daniel**: (1) me confirma el deploy — concede permisos de admin, prefiero que lo sepas; (2) pulsa «Sincronizar permisos» en admin.html → Usuarios; (3) abre `/gestion` y ve el panel. | 🟡 deploy | §99 · §102 |
+| **TODO-22** | **CATÁLOGO — código COMPLETO, incluida la FICHA (§97)**. Datos reales = **fases 3-4 del runbook**; después, fichas al sitemap desde el índice. | 🟢 cutover | §102 |
+| **TODO-42** | 🔑 **Claim de staff — CÓDIGO LISTO, falta desplegar** (§99) = **fase 1 del runbook**, aislada y se puede hacer HOY (no toca reglas). ⏭️ **Daniel**: (1) me confirma el deploy — concede permisos de admin, prefiero que lo sepas; (2) pulsa «Sincronizar permisos» en admin.html → Usuarios; (3) abre `/gestion`. | 🟡 deploy | §102 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -59,8 +59,14 @@
 > grande: `PUBLIC_SITE_ENV` **no se declaraba en el CI**, así que todo build del repo salía `noindex`
 > — el del cutover incluido. Ya son 3 perillas por variable de repositorio, con defaults seguros.
 >
-> **Lo siguiente, en orden**: (1) **el cutover**, con el runbook en la mano (claims y reglas LISTOS y
-> probados, §99-§100) · (2) **TODO-22**, el catálogo REAL · (3) **TODO-30**, la vista del mapa, que solo confirma Daniel
+> **§103: el panel viejo escribe OTRO modelo.** `admin.html` y el portal comparten `propiedades` con
+> esquemas incompatibles ⇒ una propiedad creada allá pasa el filtro y luego se cae: índice vacío, SERP
+> sin resultados, cero errores. Ya se reporta como `esquema-legacy`, pero **el catálogo sigue vacío**:
+> por eso el CRUD del portal (TODO-44) dejó de ser mejora y es requisito del cutover.
+>
+> **Lo siguiente, en orden**: (1) **TODO-44, el CRUD** — sin él la fase 4 del runbook no se puede
+> hacer · (2) **el cutover** con el runbook en la mano (claims y reglas LISTOS, §99-§100) ·
+> (3) **TODO-30**, la vista del mapa, que solo confirma Daniel
 > ([[L-39]]) · (4) **OLA 2**: el abogado gatea el RAIL DE PAGO, **no toda la ola** — reléela antes de
 > darla por bloqueada ([[L-40]] ya cobró 3 veces, [[M-11]]).
 >
@@ -84,12 +90,9 @@
 > **(7)** decidir la **tasa de mora del doc 03** (B-05: 1,5×IBC vs 6%) — un párrafo, y las 5 remisiones
 > lo heredan solas.
 > **(8)** `/publicar` **no pide correo** (fiel al mockup) ⇒ el propietario llega `[COLD]`: ¿campo nuevo o re-pesar?
-> **(10) 📧 RESEND — el último gate de las alertas (§96).** El sistema está construido y probado, pero no
-> manda un solo correo hasta que existan dos cosas tuyas: (a) el **dominio `altorrainmobiliaria.co`
-> verificado en Resend** (registros DNS en Hostinger) y (b) el secreto
-> `firebase functions:secrets:set RESEND_API_KEY`. Sin eso el digest NO falla: aplica las bajas, no
-> envía y lo deja escrito en el log. Es gratis (3.000/mes · 100/día) y **no depende del Gmail roto**,
-> que es otro asunto y va al final por decisión tuya.
+> **(10) 📧 RESEND — el último gate de las alertas (§96)**: dominio verificado + clave = **fase 0.2 del
+> runbook** (detalle allá). Sin eso el digest NO falla, solo no envía. Gratis y **no depende del Gmail
+> roto**, que es otro asunto y va al final por decisión tuya.
 > **(9) 📣 PAUTA — al final por decisión tuya (21-ago); aplazarla es seguro** porque la campaña de humo
 > **solo muerde el día que recargues saldo** ([[D-15]]). **Antes de recargar un peso**: sesión de Meta
 > de Altorra ([[D-16c]]), filtro SOLO `Entrega=Activo` + rango Máximo ([[D-15b]] — «Anuncios activos»

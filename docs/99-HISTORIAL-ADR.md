@@ -3156,3 +3156,60 @@ runbook). INTACTOS: todo el código del portal, los rulesets y las Functions.
 **102.7 — Doctrina.** §3.3 (el interruptor se probó, no se supuso) · §G.3 SSoT (el runbook es el dueño
 del orden; los demás apuntan) · [[L-42]] (lo que está en un comentario no está desplegado) · §G.4
 frescura: el runbook se actualiza en el MISMO cambio que añada una dependencia nueva.
+
+---
+
+## 103. ADR — El otro escritor: dos modelos en la misma colección, y un catálogo que salía vacío sin decir por qué ⟦OPUS-5⟧ (2026-08-21)
+
+Salió de una pregunta de prioridad, no de un bug reportado. Con OLA 1 cerrada en código, ¿tocaba
+construir el CRUD del panel nuevo (TODO-44) si `admin.html` ya tiene uno funcionando? Al ir a
+comprobar si duplicaba trabajo, apareció que no duplicaba nada: **escriben cosas distintas**.
+
+**103.1 — Causa raíz.** `admin.html` y el portal comparten la colección `propiedades` y escriben
+modelos INCOMPATIBLES. El viejo (`js/admin-properties.js`) deja campos planos (`barrio`,
+`habitaciones`, `coords`), el precio como **entero** y la operación como **`comprar|arrendar|dias`**;
+el portal espera `geo`/`specs` anidados, el precio como **objeto** (`{valorVenta|canon|precioNoche}`) y
+la operación como **`venta|arriendo|alojamiento`** — cero solapamiento en el enum. Y `leerPublicadas()`
+hace `doc.data() as Propiedad`: un cast que el compilador acepta y que **no comprueba nada**. El
+documento viejo entra, **pasa el filtro de publicadas** (su `estado: 'disponible'` sí coincide) y se
+cae después, al leer un campo que en su modelo vive en otro sitio.
+
+El síntoma es de los peores: **índice vacío, SERP diciendo «no hay resultados», cero excepciones, cero
+logs de error.** Y encima con un diagnóstico equivocado — la omisión se atribuía a `sin-precio`, cuando
+el precio SÍ estaba, solo que como entero. Eso manda a mirar donde no es.
+
+**103.2 — Solución estructural.** `esEsquemaLegacy()` en el dominio, con un motivo PROPIO
+(`esquema-legacy`) evaluado ANTES que los demás. No adivina: mira exactamente las dos cosas que el
+modelo sellado cierra — que la `operacion` esté en `OPERACIONES` y que `precio` sea un objeto. Basta
+una para delatarlo, porque una migración a medias es tan inservible como ninguna. El MISMO predicado se
+aplica en `buscarFicha()`: el índice ya filtra, pero el id del legacy **lo teclea una persona** y nada
+le impide escribir uno con forma canónica, y esa rama se salta el índice — sin el guardián saldría una
+ficha con título y foto, sin precio, con aspecto de correcta y encima indexable. Y el doc de control
+pasa a guardar `omitidasPorMotivo`: «omitidas: 5» a secas no responde ninguna pregunta.
+
+**103.3 — No-regresión.** Ni una propiedad del modelo nuevo cambia de comportamiento (hay test que lo
+fija). El predicado es puro y aditivo; `precioDisplay`, `esPublicada` y `construirIndices` intactos en
+su lógica. `admin.html` y su CRUD, sin tocar: sigue siendo el panel del legacy y sigue funcionando para
+lo suyo.
+
+**103.4 — Verificación.** La prueba se escribió ANTES del arreglo y con la carga REAL que arma
+`js/admin-properties.js` (no una inventada): reprodujo el índice vacío y el motivo `sin-precio`
+engañoso. 163 tests verdes (8 nuevos) · `build`, `verify:build` y `verify:data` verdes.
+
+**103.5 — Anti-patterns evitados.** NO se metió una capa anticorrupción que tradujera el modelo viejo
+al nuevo: con ~5 propiedades legacy sería sostener dos esquemas para siempre a cambio de ahorrar cinco
+altas a mano. NO se dejó el desajuste dentro del cubo de `sin-precio` «porque total, se omite igual»:
+el motivo ES el diagnóstico. NO se afirmó el defecto de memoria — se leyeron los dos escritores y se
+demostró con un test.
+
+**103.6 — Archivos.** Modificados: `portal/src/lib/domain/catalogo.ts` (+ test),
+`portal/src/lib/data/buscar-ficha.ts` (+ test), `portal/functions/src/catalogo-rebuild.ts`,
+`specs/CUTOVER-RUNBOOK.md` (aviso en la fase 4). INTACTOS: `admin.html`, `js/admin-properties.js`,
+rulesets, el resto del portal.
+
+**103.7 — Lo que esto DESBLOQUEA, y por qué TODO-44 deja de ser opcional.** La fase 4 del runbook decía
+«cargar las primeras propiedades» y **no tenía herramienta detrás**: el único CRUD que existe escribe el
+modelo que el portal descarta. O sea que el portal necesita su propio alta de propiedades no como mejora
+del back-office, sino como **requisito del cutover**. El runbook ya lo dice donde se va a leer.
+**103.8 — Doctrina**: §3.3 (evidencia antes de afirmar: se leyeron los dos escritores) · §G.4 caza-bugs
+(al tocar el catálogo se recorrió también la ficha, que era donde estaba el hueco) · nueva [[L-45]].

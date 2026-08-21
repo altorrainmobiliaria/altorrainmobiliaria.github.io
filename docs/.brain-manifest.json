@@ -26,8 +26,9 @@
       "chars": 16000
     },
     "docs/30-LECCIONES.md": {
-      "lines": 180,
-      "chars": 40000
+      "lines": 231,
+      "chars": 40000,
+      "_comment": "lines MEDIDO, no subido para escapar de un aviso (M-05). Densidad real de este fichero = 173 c/linea (36900c / 213L); con lines=180 el eje de lineas disparaba al 78% del eje de chars, o sea gritaba contra un fichero sano — el mismo fallo de calibracion que documenta 00a (_caps_que: los dos ejes deben apretar en el mismo punto). 40000/173 = 231. El eje VIVO de esta neurona es chars, y esta al 92%: el proximo shard de 30 NO es opcional. Cuando toque, el grupo con frontera limpia son los guardarrailes de diseno o el rango L-22..L-35, NO subir de 40000."
     },
     "docs/00a-INDICE-HISTORICO.md": {
       "lines": 49,

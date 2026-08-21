@@ -14,27 +14,30 @@
 
 ## Lecciones (L-NN)
 
-### L-01 — "Access denied for UID" al login (red lenta ≠ permiso denegado) → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-02 — RTDB `permission_denied` en presencia → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-03 — Firestore "Failed to obtain primary lease" → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-04 — ⚗️ FUSIONADA en L-09 (merge:true vs rules/upsert) — regla viva **aquí, en L-09**: `set()` SIN merge para CREAR, `update()` para EDITAR (el puntero apuntaba a `CLAUDE.md §3.5`, que se mudó a `34-DOCTRINA-CODIGO` en la poda §84; el dueño del hecho siempre fue L-09) → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-05 — ⚰️ (sitio viejo retirado §15) Modals inyectados fuera de index → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md` → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-06 — ⚰️ (sitio viejo retirado §15) Invalidación de cache `system/meta`→onSnapshot → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md` (resucitar si el cutover reusa SW/onSnapshot) → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-07 — Primer deploy de Cloud Functions 2nd gen falla por Eventarc → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-08 — Reglas Firestore: leer un campo AUSENTE de `resource.data` LANZA (no es null) → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-09 — Upsert de ingestión: `merge:true` PISA los campos presentes y NO borra los ausentes → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-10 — Un GET público linkeado por WhatsApp/email JAMÁS muta estado → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-11 — Cloud Functions gen2: tres gotchas de operación que se ven como bugs → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-12 — Dinero (arriendos/comisiones/pagos): método ANTES de construir → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-13 — GitHub Pages (deploy-from-branch): sin `.nojekyll` Jekyll construye TODO el repo — y si falla, PRODUCCIÓN SE CONGELA EN SILENCIO → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-14 — Stack que evoluciona rápido (Astro/adapter CF): verificar versión y config contra DOCS, no de memoria → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-15 — Windows: `wrangler dev` deja un `workerd.exe` huérfano que bloquea `dist/` (`EPERM` en el siguiente build) → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-16 — Primer deploy a Cloudflare Workers: registrar el subdominio `workers.dev` ANTES (falla en CI no-interactivo) → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-17 — Decodificar el REST de Firestore: mapas/arrays VACÍOS y despacho por clave → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-18 — Cloudflare: DOS cachés distintas; en `workers.dev` solo sirve **Workers Caching** → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-19 — `@astrojs/cloudflare` v14: `locals.runtime` deprecado/sin tipo; `platformProxy` removido → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-20 — Firestore Rules: un `get` de doc INEXISTENTE con `resource.data` en la regla → 403, no 404 → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
-### L-21 — Aislar tests que comparten un emulador Firestore: projectId PROPIO por archivo → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+> 🧩 **`L-01`..`L-21` viven COMPLETAS en `35-LECCIONES-PLATAFORMA.md`** — aquí queda el titular, que es lo que
+> hace falta para reconocer el síntoma. Si te suena, ábrelo allá.
+
+### L-01 — "Access denied for UID" al login (red lenta ≠ permiso denegado)
+### L-02 — RTDB `permission_denied` en presencia
+### L-03 — Firestore "Failed to obtain primary lease"
+### L-04 — ⚗️ FUSIONADA en L-09 (merge:true vs rules/upsert) — regla viva **aquí, en L-09**: `set()` SIN merge para CREAR, `update()` para EDITAR (el puntero apuntaba a `CLAUDE.md §3.5`, que se mudó a `34-DOCTRINA-CODIGO` en la poda §84; el dueño del hecho siempre fue L-09)
+### L-05 — ⚰️ (sitio viejo retirado §15) Modals inyectados fuera de index → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md`
+### L-06 — ⚰️ (sitio viejo retirado §15) Invalidación de cache `system/meta`→onSnapshot → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md` (resucitar si el cutover reusa SW/onSnapshot)
+### L-07 — Primer deploy de Cloud Functions 2nd gen falla por Eventarc
+### L-08 — Reglas Firestore: leer un campo AUSENTE de `resource.data` LANZA (no es null)
+### L-09 — Upsert de ingestión: `merge:true` PISA los campos presentes y NO borra los ausentes
+### L-10 — Un GET público linkeado por WhatsApp/email JAMÁS muta estado
+### L-11 — Cloud Functions gen2: tres gotchas de operación que se ven como bugs
+### L-12 — Dinero (arriendos/comisiones/pagos): método ANTES de construir
+### L-13 — GitHub Pages (deploy-from-branch): sin `.nojekyll` Jekyll construye TODO el repo — y si falla, PRODUCCIÓN SE CONGELA EN SILENCIO
+### L-14 — Stack que evoluciona rápido (Astro/adapter CF): verificar versión y config contra DOCS, no de memoria
+### L-15 — Windows: `wrangler dev` deja un `workerd.exe` huérfano que bloquea `dist/` (`EPERM` en el siguiente build)
+### L-16 — Primer deploy a Cloudflare Workers: registrar el subdominio `workers.dev` ANTES (falla en CI no-interactivo)
+### L-17 — Decodificar el REST de Firestore: mapas/arrays VACÍOS y despacho por clave
+### L-18 — Cloudflare: DOS cachés distintas; en `workers.dev` solo sirve **Workers Caching**
+### L-19 — `@astrojs/cloudflare` v14: `locals.runtime` deprecado/sin tipo; `platformProxy` removido
+### L-20 — Firestore Rules: un `get` de doc INEXISTENTE con `resource.data` en la regla → 403, no 404
+### L-21 — Aislar tests que comparten un emulador Firestore: projectId PROPIO por archivo
 
 ### L-44 — 🔐 Un ruleset se REEMPLAZA, no se fusiona: dos archivos con el mismo nombre son una trampa silenciosa *(2026-08-21, ADR §100)*
 **Disparador**: dos ficheros `firestore.rules` en un mismo repo —uno en la raíz y otro en la carpeta de un
@@ -155,6 +158,21 @@ diciendo a alguien que no podrá preguntarte.
 
 ---
 
+### L-45 — 🔀 Dos escritores, una colección, dos modelos: el `as T` a ciegas convierte «datos viejos» en «catálogo vacío sin errores» *(2026-08-21, ADR §103)*
+**Disparador**: un sistema que se está reemplazando y el nuevo comparten el MISMO almacén (aquí, la
+colección `propiedades`), y el viejo sigue siendo el único que sabe escribir. **Causa**: en una base sin
+esquema, el lector nuevo hace `doc.data() as Propiedad` — un cast que el compilador acepta y que NO
+comprueba nada. El documento viejo entra, **pasa los filtros** (el `estado` sí coincidía) y solo revienta
+al leer un campo que en su modelo vive en otro sitio. **Síntoma**: índice vacío, listado sin resultados,
+cero excepciones, cero logs de error. **Y el agravante**: la omisión se atribuye al primer campo que dé
+nulo — aquí «sin precio», cuando el precio SÍ estaba, solo que como entero en vez de objeto; un
+diagnóstico que manda a mirar donde no es. **Reglas**: (a) donde dos escritores comparten un almacén, el
+lector VALIDA la forma en la frontera y no se fía del cast; (b) el desajuste de esquema es un motivo
+PROPIO, nunca se mete en el cubo de un síntoma existente — el motivo es el diagnóstico; (c) detéctalo por
+lo que el modelo cierra (enumeraciones, tipo de un campo), no por heurísticas; (d) el conteo de descartes
+se guarda **por motivo**, no como total: «5 omitidas» no responde ninguna pregunta; (e) aplica el mismo
+guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero la ficha por id se lo saltaba.
+
 ## Guardarraíles de diseño (vinculantes)
 - **Carga de propiedades**: SIEMPRE `limit(9)` paginado, NUNCA todo el catálogo (free-tier).
 - **Caché frontend 3 capas**: Memory + IndexedDB + localStorage (reducir lecturas Firestore); TTL 5 min CRÍTICO.
@@ -174,18 +192,19 @@ diciendo a alguien que no podrá preguntarte.
 
 ## §Meta — meta-aprendizajes del propio cerebro
 > Se llena cuando el cerebro contribuye a un error — Reflejo de Autocrítica §G.4.
+> 🧩 **Todas viven COMPLETAS en `33-LECCIONES-META.md`**; aquí queda el titular.
 
-### M-01 — El tablero `05` se rezaga cuando la realidad avanza si el CIERRE no lo re-fresca en el mismo commit → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
-### M-02 — La disciplina de cierre NO sobrevive a la saturación de contexto: la consolidación debe ser AUTOMÁTICA, no prometida → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
-### M-03 — Un recurso COMPARTIDO ×4 no se protege con rituales POR-OPERADOR: el gate debe vivir EN EL RECURSO → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
-### M-04 — Un ID lo asigna quien escribe, y dos frentes escribiendo en paralelo colisionan en silencio → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
-### M-05 — Un techo que se mueve para alcanzarlo no es un techo → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
-### M-06 — Un gate solo existe si lo has visto DISPARAR: tres formas de que mienta, las tres dan ✅ → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
-### M-07 — Un gate del kernel solo protege donde su DISPARADOR está cableado (el 4º repo no tenía pre-commit) → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
-### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
-### M-09 — El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es frecuencia × costo de omisión → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
-### M-11 — Escribir la lección NO la aplica: si el PENDIENTE no se re-etiqueta, el cerebro la ignora otra vez → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
-### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
+### M-01 — El tablero `05` se rezaga cuando la realidad avanza si el CIERRE no lo re-fresca en el mismo commit
+### M-02 — La disciplina de cierre NO sobrevive a la saturación de contexto: la consolidación debe ser AUTOMÁTICA, no prometida
+### M-03 — Un recurso COMPARTIDO ×4 no se protege con rituales POR-OPERADOR: el gate debe vivir EN EL RECURSO
+### M-04 — Un ID lo asigna quien escribe, y dos frentes escribiendo en paralelo colisionan en silencio
+### M-05 — Un techo que se mueve para alcanzarlo no es un techo
+### M-06 — Un gate solo existe si lo has visto DISPARAR: tres formas de que mienta, las tres dan ✅
+### M-07 — Un gate del kernel solo protege donde su DISPARADOR está cableado (el 4º repo no tenía pre-commit)
+### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega
+### M-09 — El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es frecuencia × costo de omisión
+### M-11 — Escribir la lección NO la aplica: si el PENDIENTE no se re-etiqueta, el cerebro la ignora otra vez
+### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > 🧩 **Mudadas a `60-WORKFLOWS §Gobernanza`** el 2026-07-28 (ADR §68): hablan de CÓMO se conduce la
