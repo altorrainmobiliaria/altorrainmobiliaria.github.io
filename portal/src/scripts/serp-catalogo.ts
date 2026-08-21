@@ -8,6 +8,10 @@
 // `PropertyCard.astro`. Así el HTML tiene UN dueño y no puede divergir del componente (L-29).
 
 import { setMarkers, type PinData } from './altorra-map';
+// La composición de URLs de media tiene UN dueño (`lib/media`). La isla tenía su propia copia y
+// esa copia devolvía la clave RELATIVA cuando no hay base configurada, así que la misma foto
+// resolvía distinto según la ruta desde la que se pintara. Dos copias, dos comportamientos.
+import { urlMedia } from '../lib/media';
 
 type Operacion = 'venta' | 'arriendo' | 'alojamiento';
 
@@ -31,13 +35,7 @@ interface CatalogoItem {
 const FUENTE = (import.meta.env.PUBLIC_CATALOGO_SOURCE as string | undefined) ?? 'demo';
 /** Override de la URL del JSON (pruebas con fixture; en prod = la ruta del Worker). */
 const URL_OVERRIDE = import.meta.env.PUBLIC_CATALOGO_URL as string | undefined;
-/** Base pública de los binarios (R2). Vacío ⇒ la key se usa tal cual (rutas relativas del sitio). */
-const MEDIA_BASE = (import.meta.env.PUBLIC_MEDIA_BASE as string | undefined) ?? '';
-
 const nf = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 });
-
-const urlMedia = (key: string): string =>
-  /^(https?:)?\/\//.test(key) || key.startsWith('/') ? key : `${MEDIA_BASE}${key}`;
 
 const etiquetaBadge = (op: Operacion): string =>
   op === 'venta' ? 'En venta' : op === 'arriendo' ? 'Arriendo' : 'Corta estancia';
@@ -59,8 +57,12 @@ function precioPin(v: number, op: Operacion): string {
   return `$${txt}M${suf}`;
 }
 
-/** Ficha del inmueble. Hoy `/ficha` es la demo estática; el `id` viaja para cuando sea dinámica. */
-const hrefFicha = (it: CatalogoItem): string => `/ficha?id=${encodeURIComponent(it.id)}`;
+/**
+ * Ficha del inmueble — la ruta CANÓNICA (§97). Antes apuntaba a `/ficha?id=…`, que hoy responde un 301
+ * hacia aquí: enlazar el destino final ahorra un salto por card y evita repartir el posicionamiento
+ * entre dos URLs. El `slug` manda; sin slug, el id, que siempre existe.
+ */
+const hrefFicha = (it: CatalogoItem): string => `/inmueble/${encodeURIComponent(it.slug || it.id)}`;
 
 function texto(root: ParentNode, sel: string, valor: string | null): void {
   const el = root.querySelector<HTMLElement>(sel);
@@ -76,6 +78,9 @@ function construirCard(tpl: HTMLTemplateElement, it: CatalogoItem, idx: number):
   if (!card) return null;
 
   card.dataset.pin = String(idx);
+  // Clave ESTABLE para favoritos: el id del documento, que no cambia nunca. Derivarlo de la URL
+  // ataba lo guardado en localStorage al formato del enlace, y ese formato ya cambió una vez (§97).
+  card.dataset.inmId = it.id;
 
   const img = frag.querySelector<HTMLImageElement>('.alt-pcard__media img');
   if (img) {
@@ -210,6 +215,10 @@ export async function bootCatalogo(): Promise<void> {
     return;
   }
   grid.replaceChildren(frag);
+  // AVISO de que hay cards nuevas en el DOM. `BaseLayout` escucha este evento para re-cablear los
+  // corazones de favoritos, y nadie lo despachaba: en `live`, TODAS las cards del SERP salían con el
+  // corazón muerto — se pintaba, se podía pulsar y no guardaba nada, sin un error en consola.
+  document.dispatchEvent(new CustomEvent('altorra:catalogo-pintado'));
 
   // Pines del mapa: SOLO los que tienen coordenadas (card sí, pin no — contrato del §57).
   const pines: PinData[] = items

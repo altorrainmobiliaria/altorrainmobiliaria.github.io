@@ -29,7 +29,11 @@ interface Entrada {
  * Solo páginas públicas con contenido propio. Ausentes a propósito:
  * · `/gestion` · `/design-system` · `/404`   → internas (además llevan `noindex` en BaseLayout).
  * · `/favoritos` · `/ingresar`               → utilidades del usuario, sin contenido indexable.
- * · fichas de inmueble                       → entran cuando el catálogo deje de ser DEMO (§60).
+ * · `/ficha`                                → andamio DEMO (§97): un inmueble que no existe.
+ * · fichas de inmueble (`/inmueble/<slug>`)  → la ruta ya existe (§97); las URLs entran cuando el
+ *   catálogo deje de ser DEMO. Se derivarán del índice, como las zonas se derivan de `ZONAS`. NO se
+ *   hace ya porque hoy el índice está vacío y ataría el build a una lectura de red que, si falla,
+ *   dejaría el sitemap sin fichas SIN dar error. Es paso de cutover (TODO-22).
  * (las landings de barrio `/zona/<slug>` SÍ entran: se derivan de `ZONAS` al final de la lista).
  */
 const RUTAS: Entrada[] = [

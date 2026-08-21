@@ -25,8 +25,23 @@ export const cacheTagCatalogo = (shard: string): string => `catalogo:${shard}`;
  *  `onWrite` acelera; si falla, el TTL acota). 10 min: la frescura real la da la purga, no un TTL corto. */
 export const CACHE_CONTROL_CATALOGO = 'public, s-maxage=600';
 
-/** Ficha / config: casi-estáticos; frescura por purga → 1 día. */
+/** Ficha / config: casi-estáticos; frescura por purga → 1 día. **Presupone la purga desplegada.** */
 export const CACHE_CONTROL_FICHA = 'public, s-maxage=86400';
+
+/**
+ * Ficha MIENTRAS la purga no exista (estado de HOY — §60.4 lo dejó verificado: el endpoint de purga
+ * por tag exige un secreto de Cloudflare que todavía no está).
+ *
+ * La premisa del TTL largo de arriba es «la frescura la da la purga». Sin purga esa premisa es FALSA,
+ * y un día de caché significa que un inmueble vendido o retirado sigue publicado 24 horas — con su
+ * precio, su teléfono y su promesa. En una inmobiliaria eso no es un dato viejo: es una visita
+ * perdida y una conversación incómoda.
+ *
+ * 5 minutos es el techo de staleness que sí se puede defender sin purga. Cuesta más lecturas (una por
+ * PoP y ventana), pero el free-tier de Firestore aguanta de sobra con el catálogo real que viene.
+ * ⚠️ El día que la purga se despliegue, esta constante SE BORRA y la ficha vuelve a `CACHE_CONTROL_FICHA`.
+ */
+export const CACHE_CONTROL_FICHA_SIN_PURGA = 'public, s-maxage=300';
 /** Disponibilidad: time-sensitive (anti doble-reserva) → TTL corto + purga en el `onWrite`. */
 export const CACHE_CONTROL_DISPONIBILIDAD = 'public, s-maxage=60';
 /** No disponible / no encontrado: respuesta GENÉRICA (no filtra existencia); TTL corto para absorber

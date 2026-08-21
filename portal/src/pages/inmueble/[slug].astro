@@ -1,0 +1,123 @@
+---
+/*
+ * FICHA DE INMUEBLE — la ruta CANÓNICA (`/inmueble/<slug>`).
+ *
+ * POR QUÉ UNA RUTA CON SLUG Y NO `/ficha?id=…`: en un portal inmobiliario la ficha ES la página que
+ * trae el tráfico. Una URL con la operación y el barrio dentro se puede leer, compartir por WhatsApp y
+ * posicionar; una con un parámetro de consulta no. `/ficha?id=…` sigue funcionando y redirige aquí con
+ * un 301, para que los enlaces que ya se hayan repartido no se pierdan.
+ *
+ * SSR (`prerender=false`) y no estático: el catálogo cambia todos los días y prerenderizar exigiría un
+ * build por cada alta. El caché del edge hace el trabajo que haría el prerender, y encima se puede
+ * invalidar.
+ *
+ * ⚠️ El TTL de caché es CORTO a propósito mientras la purga por tag no exista (§60.4). Ver
+ * `CACHE_CONTROL_FICHA_SIN_PURGA`: con un día de caché y sin purga, un inmueble vendido seguiría
+ * publicado 24 horas.
+ */
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import FichaInmueble from '../../components/FichaInmueble.astro';
+import { buscarFicha } from '../../lib/data/buscar-ficha';
+import { CACHE_CONTROL_FICHA_SIN_PURGA, CACHE_CONTROL_NOT_FOUND, CACHE_CONTROL_PRIVATE, cacheTagProp } from '../../lib/data/cache';
+import { descripcionSeo, publicable, rutaFicha, similares as elegirSimilares, tituloSeo } from '../../lib/domain/ficha';
+import { urlMedia } from '../../lib/media';
+import { SITE } from '../../lib/config/site';
+
+const slug = Astro.params.slug ?? '';
+const encontrada = await buscarFicha(Astro.locals.altorra, slug);
+
+/**
+ * GATE LEGAL, fail-closed. Un alojamiento turístico SIN RNT no se puede anunciar: la sanción es cierre
+ * del establecimiento (`43 §Marco legal`, gate B3). Se trata como «no encontrada» a propósito y no con
+ * un mensaje de error: al visitante no le sirve saber que nos falta un registro, y decirlo en la página
+ * sería anunciar el incumplimiento. El hueco se ve en el panel, que es donde se arregla.
+ */
+const r = encontrada.estado === 'ok' && !publicable(encontrada.p) ? ({ estado: 'no-encontrada' } as const) : encontrada;
+
+// La URL canónica se calcula desde el SLUG del documento, no desde la que pidió el visitante: si
+// alguien entra por el id, la página se declara canónica en su dirección bonita y no se duplica.
+const canonical = r.estado === 'ok' ? new URL(rutaFicha(r.p), Astro.site ?? `https://${SITE.domain}`).href : '';
+
+if (r.estado === 'ok') {
+  Astro.response.headers.set('cache-control', CACHE_CONTROL_FICHA_SIN_PURGA);
+  // El tag deja la puerta lista para la purga selectiva del `onWrite` el día que exista.
+  Astro.response.headers.set('cache-tag', cacheTagProp(r.p.id));
+} else if (r.estado === 'no-encontrada') {
+  Astro.response.status = 404;
+  Astro.response.headers.set('cache-control', CACHE_CONTROL_NOT_FOUND);
+} else {
+  // Fallo transitorio: 503 y SIN caché. Cachear un error convertiría un hipo de red en una ficha
+  // desaparecida durante todo el TTL.
+  Astro.response.status = 503;
+  Astro.response.headers.set('cache-control', CACHE_CONTROL_PRIVATE);
+}
+
+const parecidas = r.estado === 'ok' ? elegirSimilares(r.similares, r.p, 3) : [];
+// La foto del inmueble ES la tarjeta cuando alguien lo comparte por WhatsApp. Sin ella el enlace sale
+// pelado y casi nadie lo abre.
+const ogImage = r.estado === 'ok' ? urlMedia(r.p.imagenPortada ?? r.p.imagenes?.[0] ?? '') : undefined;
+const title = r.estado === 'ok' ? tituloSeo(r.p) : 'Inmueble no disponible — ALTORRA';
+const description =
+  r.estado === 'ok'
+    ? descripcionSeo(r.p)
+    : 'Este inmueble ya no está publicado. Mira el resto del catálogo de ALTORRA en Cartagena.';
+---
+
+{/* `canonical` explícito: la ficha responde por slug Y por id, y sin esto cada URL se declararía
+    canónica de sí misma — el mismo inmueble compitiendo consigo mismo en el buscador. */}
+<BaseLayout
+  title={title}
+  description={description}
+  noindex={r.estado !== 'ok'}
+  image={ogImage}
+  canonical={r.estado === 'ok' ? rutaFicha(r.p) : undefined}
+>
+  <Header active={r.estado === 'ok' ? '' : ''} />
+
+  {r.estado === 'ok' ? (
+    <FichaInmueble p={r.p} similares={parecidas} canonical={canonical} />
+  ) : (
+    <main id="main" class="fnf">
+      <div class="alt-container fnf__in">
+        <p class="alt-eyebrow">{r.estado === 'error' ? 'Error temporal' : 'Publicación no disponible'}</p>
+        <h1 class="fnf__h1">
+          {r.estado === 'error' ? 'No pudimos cargar este inmueble.' : 'Este inmueble ya no está publicado.'}
+        </h1>
+        <p class="fnf__p">
+          {r.estado === 'error'
+            ? 'Fue un problema de nuestro lado. Vuelve a intentarlo en un momento, o escríbenos y te lo mandamos por WhatsApp.'
+            : 'Puede que se haya vendido, arrendado o retirado. Te ayudamos a encontrar algo parecido: dinos qué buscas y te avisamos cuando entre.'}
+        </p>
+        <div class="fnf__cta">
+          <a class="alt-btn alt-btn--navy" href="/comprar">Ver el catálogo</a>
+          <a class="alt-btn alt-btn--outline" href="/alertas">Crear una alerta</a>
+        </div>
+        <p class="fnf__wa">
+          ¿Prefieres que te escribamos? <a href={SITE.contact.whatsappLink} rel="noopener">Hablar por WhatsApp</a>
+        </p>
+      </div>
+    </main>
+  )}
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .fnf__in { max-width: 44rem; padding-block: clamp(3rem, 8vw, 6rem); }
+  .fnf__h1 {
+    font-family: var(--alt-font-display);
+    font-weight: var(--alt-fw-semibold);
+    font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+    color: var(--alt-ink);
+    line-height: 1.15;
+    margin: 0.4rem 0 0.9rem;
+  }
+  .fnf__p { color: var(--alt-text); line-height: 1.65; margin: 0 0 1.75rem; }
+  .fnf__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  .fnf__wa { margin: 1.5rem 0 0; font-size: 0.9rem; color: var(--alt-text); }
+  .fnf__wa a { color: var(--alt-link); }
+</style>

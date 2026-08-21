@@ -124,9 +124,24 @@ export function alternar(card: HTMLElement, id: string): boolean {
   return true;
 }
 
-/** Id estable de una card: el `id` de su enlace a la ficha. */
+/**
+ * Id estable de una card.
+ *
+ * ⚠️ PRIMERO EL DATO, DESPUÉS LA URL. Antes esto se derivaba SOLO del `?id=` del enlace, y esa era una
+ * bomba de relojería: el día que la ficha cambió a `/inmueble/<slug>` (§97) el id de todas las cards
+ * habría cambiado con ella, y los favoritos ya guardados en `localStorage` se habrían quedado
+ * huérfanos — corazones apagados sobre inmuebles que la persona sí guardó, sin un solo error.
+ *
+ * El `data-inm-id` es el id del documento, que **no cambia nunca**; el slug sí (basta con corregir una
+ * tilde del título). Las dos formas de URL se siguen leyendo como respaldo, para las cards que aún no
+ * llevan el atributo.
+ */
 export function idDeCard(card: HTMLElement): string {
+  const propio = card.dataset.inmId?.trim();
+  if (propio) return propio;
   const href = card.querySelector<HTMLAnchorElement>('a[href]')?.getAttribute('href') || '';
+  const canonico = href.match(/\/inmueble\/([^/?#]+)/);
+  if (canonico) return decodeURIComponent(canonico[1]);
   const m = href.match(/[?&]id=([^&#]+)/);
   if (m) return decodeURIComponent(m[1]);
   // Sin id en la URL (cards demo): se usa el título normalizado, que es estable dentro del sitio.
