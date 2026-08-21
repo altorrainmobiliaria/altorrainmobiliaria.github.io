@@ -92,7 +92,9 @@ describe('construirIndices — rebuild TOTAL idempotente (§54.4 cond.1)', () =>
       [
         prop({ id: 'V1', operacion: 'venta' }),
         prop({ id: 'A1', operacion: 'arriendo', precio: { moneda: 'COP', canon: 3_000_000 } }),
-        prop({ id: 'D1', operacion: 'alojamiento', precio: { moneda: 'COP', precioNoche: 400_000 } }),
+        // `rnt` no es adorno: desde §104 un alojamiento sin él NO entra al índice (gate B3). Este
+        // fixture lo daba por bueno, o sea que la prueba de sharding modelaba un anuncio ilegal.
+        prop({ id: 'D1', operacion: 'alojamiento', rnt: 'RNT-100001', precio: { moneda: 'COP', precioNoche: 400_000 } }),
         prop({ id: 'OCULTA', estado: 'borrador' }),
         prop({ id: 'INACTIVA', estado: 'inactivo' }),
       ],
@@ -192,5 +194,35 @@ describe('🔴 documentos del panel LEGACY en la misma colección', () => {
     expect(indices.venta.items).toHaveLength(0);
     expect(indices.arriendo.items).toHaveLength(0);
     expect(omitidas.map((o) => o.motivo)).toEqual(['esquema-legacy', 'esquema-legacy']);
+  });
+});
+
+describe('🔴 gate LEGAL del RNT en el LISTADO, no solo en la ficha (§104)', () => {
+  const aloj = (over: Partial<Propiedad> = {}) =>
+    prop({ operacion: 'alojamiento', precio: { moneda: 'COP', precioNoche: 350_000 }, ...over });
+
+  it('un alojamiento SIN RNT no entra al índice — la card ya sería publicidad ilegal', () => {
+    const r = propiedadAResumen(aloj());
+    expect('omitida' in r && r.omitida.motivo).toBe('sin-rnt');
+  });
+
+  it('con RNT entra con normalidad', () => {
+    expect('resumen' in propiedadAResumen(aloj({ rnt: 'RNT-100001' }))).toBe(true);
+  });
+
+  it('un RNT en blanco NO cuenta como RNT (fail-closed)', () => {
+    const r = propiedadAResumen(aloj({ rnt: '   ' }));
+    expect('omitida' in r && r.omitida.motivo).toBe('sin-rnt');
+  });
+
+  it('venta y arriendo no piden RNT: el gate es solo del turístico', () => {
+    expect('resumen' in propiedadAResumen(prop())).toBe(true);
+    expect('resumen' in propiedadAResumen(prop({ operacion: 'arriendo', precio: { moneda: 'COP', canon: 4_500_000 } }))).toBe(true);
+  });
+
+  it('listado y ficha NO pueden discrepar: lo que el índice omite, la ficha tampoco publica', () => {
+    const { indices, omitidas } = construirIndices([aloj({ id: 'INM-202608-0001' })], '2026-08-21T00:00:00Z');
+    expect(indices.dias.items).toHaveLength(0);
+    expect(omitidas[0].motivo).toBe('sin-rnt');
   });
 });

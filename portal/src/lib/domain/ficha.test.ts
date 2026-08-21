@@ -3,7 +3,6 @@ import {
   amenidadesVisibles,
   avisoEstado,
   exhibeMatricula,
-  publicable,
   descripcionSeo,
   fichaTecnica,
   frescuraTexto,
@@ -19,6 +18,7 @@ import {
   ubicacionPublica,
   valorPrecio,
 } from './ficha';
+import { publicable } from './propiedades';
 import type { Propiedad } from './propiedades';
 import type { CatalogoResumen } from './catalogo';
 

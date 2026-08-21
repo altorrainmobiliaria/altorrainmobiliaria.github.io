@@ -6,6 +6,7 @@
 
 import { OPERACIONES } from './shared';
 import type { ISODate, COP, Operacion, TipoInmueble, EstadoPropiedad } from './shared';
+import { publicable } from './propiedades';
 import type { Propiedad } from './propiedades';
 
 /** Shards del índice por operación (doc `indices/catalogo-{shard}`). Sharding desde el día 1 (§54.4): el
@@ -88,7 +89,7 @@ export function precioDisplay(p: Pick<Propiedad, 'operacion' | 'precio'>): COP |
 /** Motivo por el que una propiedad PUBLICADA no pudo entrar al índice (se REPORTA, no se oculta en silencio). */
 export interface OmitidaCatalogo {
   id: string;
-  motivo: 'sin-precio' | 'sin-imagen' | 'sin-titulo' | 'esquema-legacy';
+  motivo: 'sin-precio' | 'sin-imagen' | 'sin-titulo' | 'esquema-legacy' | 'sin-rnt';
 }
 
 /**
@@ -122,6 +123,11 @@ export function propiedadAResumen(p: Propiedad): { resumen: CatalogoResumen } | 
   if (!p.titulo) return { omitida: { id: p.id, motivo: 'sin-titulo' } };
   // ANTES que nada lo demás: un documento del panel viejo no tiene «un campo mal», tiene OTRO modelo.
   if (esEsquemaLegacy(p)) return { omitida: { id: p.id, motivo: 'esquema-legacy' } };
+  // 🔴 GATE LEGAL antes que los de datos (§104). `publicable()` bloqueaba la FICHA de un alojamiento
+  // sin RNT, pero el índice no lo llamaba: la card habría salido en /estancias con foto y precio —
+  // que es EXACTAMENTE la publicidad de hospedaje sin registro que el gate B3 existe para impedir— y
+  // encima enlazando a una ficha que devuelve 404. El mismo guardián en TODOS los lectores ([[L-45]]).
+  if (!publicable(p)) return { omitida: { id: p.id, motivo: 'sin-rnt' } };
   const precio = precioDisplay(p);
   if (precio == null) return { omitida: { id: p.id, motivo: 'sin-precio' } };
   const thumb = p.imagenPortada ?? p.imagenes?.[0];

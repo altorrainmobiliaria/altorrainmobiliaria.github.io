@@ -329,21 +329,6 @@ export function similares(items: readonly CatalogoResumen[], p: Propiedad, tope 
 // GATES DE PUBLICACIÓN — lo que decide si una ficha se puede enseñar, y cómo
 // ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * ¿Se puede PUBLICAR esta ficha?
- *
- * Hoy hay un solo caso que la bloquea, y es legal, no de datos: **alojamiento turístico sin RNT**.
- * El Registro Nacional de Turismo es obligatorio para prestar servicios de hospedaje y anunciarse sin
- * él expone a cierre inmediato del establecimiento (verificación legal de `43 §Marco legal`, gate B3).
- * El tipo lo deja opcional porque el modelo es permisivo; la ley no lo es.
- *
- * Fail-closed A PROPÓSITO: ante la duda no se publica. Una propiedad que desaparece del portal es un
- * problema de datos que alguien arregla en una tarde; una multa por publicidad ilegal, no.
- */
-export function publicable(p: Propiedad): boolean {
-  if (p.operacion === 'alojamiento' && !p.rnt?.trim()) return false;
-  return true;
-}
 
 /**
  * ¿Se puede exhibir la matrícula de arrendador en ESTA ficha?

@@ -111,3 +111,24 @@ export interface Disponibilidad extends Versioned {
   estado: EstadoDisponibilidad;
   reservaId?: string;
 }
+
+/*
+ * ⬇️ Vivía en `ficha.ts` y se mudó AQUÍ en §104. Razón: no es un detalle de la vista de ficha, es
+ * un INVARIANTE LEGAL del modelo, y el catálogo también tiene que respetarlo — pero `catalogo.ts`
+ * no puede importar de `ficha.ts` sin crear un ciclo. El modelo es el dueño de sus invariantes.
+ */
+/**
+ * ¿Se puede PUBLICAR esta ficha?
+ *
+ * Hoy hay un solo caso que la bloquea, y es legal, no de datos: **alojamiento turístico sin RNT**.
+ * El Registro Nacional de Turismo es obligatorio para prestar servicios de hospedaje y anunciarse sin
+ * él expone a cierre inmediato del establecimiento (verificación legal de `43 §Marco legal`, gate B3).
+ * El tipo lo deja opcional porque el modelo es permisivo; la ley no lo es.
+ *
+ * Fail-closed A PROPÓSITO: ante la duda no se publica. Una propiedad que desaparece del portal es un
+ * problema de datos que alguien arregla en una tarde; una multa por publicidad ilegal, no.
+ */
+export function publicable(p: Propiedad): boolean {
+  if (p.operacion === 'alojamiento' && !p.rnt?.trim()) return false;
+  return true;
+}
