@@ -64,10 +64,10 @@ const REDIRECTS_MANUALES: Redirect[] = [
   { de: '/simulador.html', a: '/invertir' },
   { de: '/simulador-notarial.html', a: '/invertir' },
 
-  // ⚠️ B13: JAMÁS llamar "avalúo" a nuestra estimación. La superficie correcta es el Rango ALTORRA
-  // (OLA 1 ítem 9), que no existe todavía. Mientras tanto va a `/publicar`, que es donde el
-  // propietario que quería saber cuánto vale su casa ACTÚA — y es captación, no una página muerta.
-  { de: '/avaluo.html', a: '/publicar', pendiente: '/rango-altorra' },
+  // ⚠️ B13: JAMÁS llamar "avalúo" a nuestra estimación (en Colombia es actividad regulada, Ley
+  // 1673/2013). Su destino definitivo ya existe: el Rango ALTORRA (ADR §94), que dice con esas
+  // palabras que es orientativo y no un avalúo con validez legal. Era el último `pendiente` del mapa.
+  { de: '/avaluo.html', a: '/rango-altorra' },
 
   // ── Editorial / blog ────────────────────────────────────────────────────────────────────────
   { de: '/blog.html', a: '/journal' },

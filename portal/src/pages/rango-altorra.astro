@@ -1,0 +1,273 @@
+---
+/*
+ * RANGO ALTORRA — estimación de precio, contacto-primero (OLA 1 ítem 9, ADR §94).
+ *
+ * 🔴 B13, LA REGLA QUE MANDA EN ESTE ARCHIVO: **JAMÁS llamar «avalúo» a esto**. En Colombia el
+ * avalúo es actividad REGULADA (Ley 1673/2013: avaluadores inscritos en el RAA), así que ofrecer
+ * un «avalúo gratis» desde una inmobiliaria no es solo impreciso, es exponerse. Lo que damos es un
+ * RANGO orientativo que da un asesor mirando la zona y el inmueble. La página lo dice con esas
+ * palabras, sin adornos, y ese es justo el punto: quien necesite un avalúo con validez legal debe
+ * saber que esto no lo es.
+ *
+ * CONTACTO-PRIMERO (así lo define el MEGA-PLAN ítem 9). No hay número en pantalla ni calculadora:
+ * el visitante deja sus datos y un asesor le devuelve el rango. Por eso esta página se puede
+ * construir HOY sin los rangos de barrio que solo Daniel tiene — y de paso es captación de
+ * PROPIETARIOS, que es de donde sale el inventario que hoy no existe.
+ *
+ * Es también el destino definitivo de `/avaluo.html`, el último `pendiente` que quedaba en el mapa
+ * de 301 (§91).
+ *
+ * Progresivamente mejorado: sin JavaScript es un formulario nativo completo que postea y funciona.
+ * Con JavaScript se parte en dos pasos. El fallback no es un extra, es el comportamiento base.
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../lib/config/site';
+import { TEXTO_AUTORIZACION, TEXTO_MARKETING, RUTA_AVISO } from '../lib/config/legal';
+import { ZONAS } from '../lib/content/zonas';
+
+const TIPOS = ['Apartamento', 'Casa', 'Lote', 'Oficina', 'Local'];
+const base = Astro.site?.origin ?? `https://${SITE.domain}`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Inicio', item: base },
+    { '@type': 'ListItem', position: 2, name: 'Rango ALTORRA', item: `${base}/rango-altorra` },
+  ],
+};
+---
+
+<BaseLayout
+  title="Rango ALTORRA — cuánto vale tu inmueble en Cartagena"
+  description="Te decimos en qué rango de precio está tu inmueble en Cartagena. Lo estima un asesor mirando tu zona, sin costo y sin compromiso."
+>
+  <Header />
+
+  <main id="contenido">
+    <section class="alt-section ra-hero">
+      <div class="alt-container">
+        <p class="alt-eyebrow">Rango ALTORRA</p>
+        <h1 class="ra-hero__h1">¿En cuánto está tu inmueble?</h1>
+        <p class="ra-hero__sub">
+          Cuéntanos qué tienes y en qué zona. Un asesor revisa cómo se está moviendo ese sector y te
+          devuelve un rango de precio, con la explicación de cómo llegó a él.
+        </p>
+        <p class="ra-hero__aviso">
+          Es una estimación orientativa para que tomes una decisión, no un avalúo comercial con
+          validez legal. Si necesitas ese documento, te decimos con quién hacerlo.
+        </p>
+      </div>
+    </section>
+
+    <section class="alt-section">
+      <div class="alt-container ra-form-wrap">
+        <form class="ra-form" id="ra-form" method="post" action="/api/solicitud" novalidate>
+          {/* Le dice al endpoint de qué formulario viene: sin esto el lead llegaría marcado como
+              si saliera de /publicar y nadie podría triarlo (lista blanca en `api/solicitud.ts`). */}
+          <input type="hidden" name="formulario" value="rango-altorra" />
+
+          <fieldset class="ra-paso" id="ra-paso-1">
+            <legend class="ra-paso__n">1. Tu inmueble</legend>
+            <div class="ra-grid">
+              <div>
+                <label class="alt-label" for="ra-tipo">Qué es</label>
+                <select class="alt-select" id="ra-tipo" name="tipo">
+                  {TIPOS.map((t) => <option>{t}</option>)}
+                </select>
+              </div>
+              <div>
+                <label class="alt-label" for="ra-zona">En qué zona</label>
+                <select class="alt-select" id="ra-zona" name="zona">
+                  {ZONAS.map((z) => <option>{z.nombre}</option>)}
+                </select>
+              </div>
+            </div>
+            <button class="alt-btn alt-btn--outline ra-siguiente" type="button" id="ra-next" hidden>
+              Continuar
+            </button>
+          </fieldset>
+
+          <fieldset class="ra-paso" id="ra-paso-2">
+            <legend class="ra-paso__n">2. Dónde te respondemos</legend>
+            <div class="ra-grid">
+              <div>
+                <label class="alt-label" for="ra-nombre">Nombre</label>
+                <input class="alt-input" id="ra-nombre" name="nombre" type="text" placeholder="Tu nombre" />
+              </div>
+              <div>
+                <label class="alt-label" for="ra-tel">WhatsApp</label>
+                <input class="alt-input" id="ra-tel" name="telefono" type="tel" placeholder="300 000 0000" />
+              </div>
+            </div>
+
+            {/* Gate de habeas data. Texto y versionado salen de `config/legal.ts`, que es su SSoT:
+                la prueba que se archiva referencia esa versión exacta (kit `08` §2.2). */}
+            <div class="ra-legal">
+              <label class="ra-check">
+                <input type="checkbox" name="autorizacion" value="on" required />
+                <span>
+                  {TEXTO_AUTORIZACION.p1}<a href={RUTA_AVISO} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkAviso}</a>{TEXTO_AUTORIZACION.p2}
+                </span>
+              </label>
+              <label class="ra-check">
+                <input type="checkbox" name="marketing" value="on" />
+                <span>{TEXTO_MARKETING}</span>
+              </label>
+            </div>
+
+            <p class="ra-err" id="ra-err" hidden>Necesitamos tu nombre y tu WhatsApp para responderte.</p>
+            <p class="ra-err" id="ra-err-legal" hidden>Para continuar necesitamos tu autorización de tratamiento de datos.</p>
+            <p class="ra-err" id="ra-err-net" hidden>No pudimos enviar tu solicitud. Revisa tu conexión e inténtalo de nuevo.</p>
+
+            <button class="alt-btn alt-btn--navy ra-submit" type="submit">Pedir mi rango</button>
+            <p class="ra-nota">Te respondemos por WhatsApp. No compartimos tus datos con nadie más.</p>
+          </fieldset>
+
+          <div class="ra-ok" id="ra-ok" hidden>
+            <h2 class="ra-ok__h">Listo, ya lo tenemos.</h2>
+            <p class="ra-ok__p">
+              Un asesor revisa tu zona y te escribe por WhatsApp con el rango y con cómo llegó a él.
+              Si mientras tanto quieres adelantarnos algo del inmueble, escríbenos y seguimos por ahí.
+            </p>
+            <a class="alt-btn alt-btn--gold" href={SITE.contact.whatsappLink} rel="noopener">Escribirnos ahora</a>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="alt-section alt-section--alt">
+      <div class="alt-container ra-como">
+        <h2 class="ra-h2">Cómo sacamos el rango</h2>
+        <ol class="ra-pasos">
+          <li>Miramos qué se está pidiendo y qué se está cerrando en tu zona.</li>
+          <li>Ajustamos por lo que distingue a tu inmueble: estado, piso, vista, área.</li>
+          <li>Te damos un rango con su explicación, para que sepas de dónde sale cada extremo.</li>
+        </ol>
+        <p class="ra-como__cierre">
+          Si después decides vender o arrendar con nosotros, revisamos los papeles documento por
+          documento antes de publicar. Y si decides no hacerlo, el rango es tuyo igual.
+        </p>
+        <p class="ra-legal-pie">Matrícula de Arrendador No. {SITE.matriculaArrendador}</p>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+</BaseLayout>
+
+<script>
+  /*
+   * Mejora progresiva. Sin este script el formulario ya funciona: los dos fieldsets están visibles
+   * y el POST nativo lleva al endpoint. El script solo (a) lo parte en dos pasos y (b) evita la
+   * recarga. Por eso el botón "Continuar" nace `hidden` y lo revela el JS: si el JS no corre, no
+   * aparece un botón que no haría nada.
+   */
+  const form = document.getElementById('ra-form') as HTMLFormElement | null;
+  if (form) {
+    const paso1 = document.getElementById('ra-paso-1')!;
+    const paso2 = document.getElementById('ra-paso-2')!;
+    const next = document.getElementById('ra-next') as HTMLButtonElement;
+    const ok = document.getElementById('ra-ok')!;
+    const err = document.getElementById('ra-err')!;
+    const errLegal = document.getElementById('ra-err-legal')!;
+    const errNet = document.getElementById('ra-err-net')!;
+
+    next.hidden = false;
+    paso2.hidden = true;
+    next.addEventListener('click', () => {
+      paso1.hidden = true;
+      paso2.hidden = false;
+      (document.getElementById('ra-nombre') as HTMLInputElement)?.focus();
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      [err, errLegal, errNet].forEach((n) => (n.hidden = true));
+      const datos = new FormData(form);
+      const nombre = String(datos.get('nombre') ?? '').trim();
+      const tel = String(datos.get('telefono') ?? '').trim();
+      if (nombre.length < 2 || tel.length < 7) { err.hidden = false; return; }
+      if (!datos.get('autorizacion')) { errLegal.hidden = false; return; }
+
+      try {
+        const r = await fetch('/api/solicitud', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(datos)),
+        });
+        if (!r.ok) throw new Error(String(r.status));
+        paso1.hidden = true;
+        paso2.hidden = true;
+        ok.hidden = false;
+      } catch {
+        // Falla RUIDOSA: el lead no se pudo guardar y hay que decirlo. Un "gracias" tras un error
+        // pierde al propietario y encima le hace creer que ya lo llamaremos.
+        errNet.hidden = false;
+      }
+    });
+  }
+</script>
+
+<style>
+  .ra-hero { padding-block: var(--alt-space-8) var(--alt-space-5); }
+  .ra-hero__h1 {
+    font-family: var(--alt-font-display);
+    font-size: var(--alt-fs-hero);
+    font-weight: var(--alt-fw-semibold);
+    color: var(--alt-text-strong);
+    letter-spacing: var(--alt-tracking-tight);
+    margin: var(--alt-space-2) 0 var(--alt-space-3);
+  }
+  .ra-hero__sub { font-size: var(--alt-fs-lg); color: var(--alt-text-muted); max-width: 60ch; margin: 0 0 var(--alt-space-4); }
+  .ra-hero__aviso {
+    font-size: var(--alt-fs-sm);
+    color: var(--alt-text-soft);
+    max-width: 60ch;
+    margin: 0;
+    padding-left: var(--alt-space-4);
+    border-left: 2px solid var(--alt-gold);
+  }
+
+  .ra-form-wrap { max-width: 46rem; }
+  .ra-form {
+    background: var(--alt-surface-neu);
+    border-radius: var(--alt-r-lg);
+    box-shadow: var(--alt-elev-card);
+    padding: var(--alt-space-6);
+  }
+  .ra-paso { border: 0; padding: 0; margin: 0 0 var(--alt-space-5); }
+  .ra-paso__n {
+    font-family: var(--alt-font-display);
+    font-size: var(--alt-fs-h3);
+    font-weight: var(--alt-fw-semibold);
+    color: var(--alt-text-strong);
+    padding: 0;
+    margin-bottom: var(--alt-space-4);
+  }
+  .ra-grid { display: grid; gap: var(--alt-space-4); }
+  @media (min-width: 560px) { .ra-grid { grid-template-columns: 1fr 1fr; } }
+  .ra-siguiente { margin-top: var(--alt-space-4); }
+
+  .ra-legal { margin: var(--alt-space-5) 0 0; display: grid; gap: var(--alt-space-3); }
+  .ra-check { display: flex; gap: var(--alt-space-3); align-items: flex-start; font-size: var(--alt-fs-xs); color: var(--alt-text-soft); line-height: 1.6; }
+  .ra-check input { margin-top: 0.2em; flex: none; }
+  .ra-err { color: var(--alt-error); font-size: var(--alt-fs-sm); margin: var(--alt-space-3) 0 0; }
+  .ra-submit { margin-top: var(--alt-space-5); }
+  .ra-nota { font-size: var(--alt-fs-xs); color: var(--alt-text-soft); margin: var(--alt-space-3) 0 0; }
+
+  .ra-ok { text-align: center; padding: var(--alt-space-4) 0; }
+  .ra-ok__h { font-family: var(--alt-font-display); font-size: var(--alt-fs-h2); font-weight: var(--alt-fw-semibold); color: var(--alt-text-strong); margin: 0 0 var(--alt-space-3); }
+  .ra-ok__p { color: var(--alt-text-muted); max-width: 52ch; margin: 0 auto var(--alt-space-5); }
+
+  .ra-como { max-width: 70ch; }
+  .ra-h2 { font-family: var(--alt-font-display); font-size: var(--alt-fs-h2); font-weight: var(--alt-fw-semibold); color: var(--alt-text-strong); margin: 0 0 var(--alt-space-4); }
+  .ra-pasos { color: var(--alt-text); display: grid; gap: var(--alt-space-3); margin: 0 0 var(--alt-space-5); padding-left: var(--alt-space-5); }
+  .ra-como__cierre { color: var(--alt-text-muted); margin: 0; }
+  .ra-legal-pie { margin: var(--alt-space-5) 0 0; font-size: var(--alt-fs-xs); color: var(--alt-text-soft); letter-spacing: var(--alt-tracking-eyebrow); }
+</style>

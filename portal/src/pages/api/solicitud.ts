@@ -18,13 +18,36 @@ import type { APIRoute } from 'astro';
 import { createDoc } from '../../lib/data/firestore-rest';
 import { getPublicFirebaseConfig } from '../../lib/data/client';
 import { LEGAL } from '../../lib/config/legal';
+import { ZONAS as ZONAS_LANDING } from '../../lib/content/zonas';
 
 /** Tope de bytes del cuerpo: un lead legítimo son ~300 bytes. Corta payloads de abuso antes de parsear. */
 const MAX_BODY = 4096;
 
-/** Valores que el `<select>` de `/publicar` puede emitir. Allow-list: lo que no esté aquí no se guarda. */
-const ZONAS = ['Castillogrande', 'Bocagrande', 'Manga', 'Crespo', 'Centro Histórico', 'La Boquilla'];
+/**
+ * Zonas aceptadas. Allow-list: lo que no esté aquí NO se guarda, y ese descarte es silencioso.
+ *
+ * Son la UNIÓN de dos conjuntos, y por eso se compone en vez de escribirse a mano: las 6 del
+ * `<select>` de `/publicar` (que vienen del mockup) y las 13 de las landings de zona (`zonas.ts`,
+ * ADR §92), que ofrece el formulario del Rango. Cuando se añada una zona en `zonas.ts` entrará aquí
+ * sola; escribir la lista a mano habría hecho que la zona nueva se perdiera sin un solo error.
+ */
+const ZONAS_PUBLICAR = ['Castillogrande', 'Bocagrande', 'Manga', 'Crespo', 'Centro Histórico', 'La Boquilla'];
+const ZONAS = [...new Set([...ZONAS_PUBLICAR, ...ZONAS_LANDING.map((z) => z.nombre)])];
 const TIPOS_INMUEBLE = ['Apartamento', 'Casa', 'Lote', 'Oficina', 'Local'];
+
+/**
+ * FORMULARIOS que pueden escribir aquí, y el `origen` con el que queda el lead (ADR §94).
+ *
+ * Lista BLANCA a propósito. El `origen` es lo que permite triar los leads y decidir a cuál llamar
+ * primero; dejar que el cliente mande una cadena libre lo dejaría a merced de un bot. El censo de
+ * `docs/43 §LEADS` se hizo mapeando cada `origen` a su formulario: si todos los leads dijeran lo
+ * mismo, ese censo habría sido imposible.
+ */
+const FORMULARIOS: Record<string, { origen: string; operacion: string }> = {
+  'publicar-propiedad': { origen: 'portal-publicar', operacion: 'avaluo' },
+  'rango-altorra': { origen: 'portal-rango', operacion: 'rango' },
+};
+const FORMULARIO_POR_DEFECTO = 'publicar-propiedad';
 
 // Quita caracteres de CONTROL (no imprimibles). Escrito como \u0000-\u001f a proposito: la forma
 // "corta" [ -] es un RANGO espacio..guion que borraria los espacios de un nombre compuesto.
@@ -80,6 +103,12 @@ export const POST: APIRoute = async ({ request }) => {
   const zona = ZONAS.includes(zonaIn) ? zonaIn : '';
   const tipoInmueble = TIPOS_INMUEBLE.includes(tipoIn) ? tipoIn : '';
 
+  // 2c) Formulario de procedencia. Lo que no esté en la lista blanca se trata como el de siempre,
+  //     que es el comportamiento que ya existía: un valor raro no puede inventarse un origen nuevo.
+  const formIn = limpiar(campos.formulario, 40);
+  const formulario = FORMULARIOS[formIn] ? formIn : FORMULARIO_POR_DEFECTO;
+  const { origen, operacion } = FORMULARIOS[formulario];
+
   // 3) Documento. `tipo` es el tipo de LEAD (taxonomía de `onNewSolicitud`), NO el tipo de inmueble:
   //    el `<select name="tipo">` del form es el del inmueble y viaja en `datosExtra.tipoInmueble`.
   //    `ciudad` lleva la zona porque el correo al admin renderiza «{tipoInmueble} en {ciudad}»; sin
@@ -90,12 +119,12 @@ export const POST: APIRoute = async ({ request }) => {
     telefono,
     email: '', // el mockup no pide correo — ver §88: cuesta 10 puntos de lead score
     tipo: 'solicitud_avaluo',
-    origen: 'portal-publicar',
+    origen,
     datosExtra: {
       zona,
       ciudad: zona ? `${zona}, Cartagena` : 'Cartagena',
       tipoInmueble,
-      operacion: 'avaluo',
+      operacion,
       precioAproximado: null,
       descripcion: '',
     },
@@ -106,7 +135,7 @@ export const POST: APIRoute = async ({ request }) => {
       autorizado: true,
       textoVersion: LEGAL.formatoAutorizacion,
       politicaVersion: `${LEGAL.politicaDatos.version} · ${LEGAL.politicaDatos.vigencia}`,
-      formulario: 'publicar-propiedad',
+      formulario,
       marketing,
       aceptadoEn: ahora.toISOString(),
       ip: request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || '',
