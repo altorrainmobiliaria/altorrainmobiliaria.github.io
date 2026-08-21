@@ -121,6 +121,33 @@ y un camino B (degradado, de error, sin JS, sin permisos), **B no está probado 
 disparado tú**. Enuméralos antes de cerrar: es una lista corta y casi siempre hay uno que nadie ha
 ejecutado nunca.
 
+## 4d. 🚧 La defensa que vive en la CONFIGURACIÓN y no en el código
+Un comentario que dice *«esto no puede pasar, las reglas ya lo impiden»* apunta a un archivo del repo,
+y lo que corre en producción es **el que está desplegado**. Entre los dos no hay nada: ningún gate
+compara el ruleset del repo con el vivo, así que la diferencia no produce error, produce **confianza**.
+Caso propio (2026-08-21): una página no comprobaba el estado de publicación de un registro porque las
+Security Rules filtraban por estado — y esas reglas llevaban semanas sin desplegarse; el ruleset vivo
+era el anterior, con lectura abierta. Un borrador se habría publicado entero, con precio y contacto, e
+indexable.
+**Comprobación**, no razonamiento: pregúntale al proveedor qué hay desplegado (`firebase deploy --only
+… --dry-run`, la consola, `terraform plan`, el panel del CDN) y compáralo con el archivo. Si no puedes
+comprobarlo en el momento, **asume que NO está** y pon el invariante también en el código.
+**Regla portable**: el invariante que protege un dato se implementa en el código *aunque* también viva
+en la configuración — defensa en profundidad, no delegación. Y reutiliza la MISMA lista que ya use otro
+camino del sistema (aquí, la whitelist de estados con la que se construye el índice del catálogo), para
+que las dos no puedan discrepar. Aplica igual a Firebase Rules, RLS de Supabase, políticas de bucket,
+reglas de WAF y CORS del CDN.
+
+## 4e. 🔑 Identificadores que se derivan de la presentación
+Antes de cambiar el formato de una URL, busca quién la está PARSEANDO. Es un patrón silencioso:
+guardas algo con una clave sacada de la dirección (`?id=`, un segmento del path) y el día que la
+dirección cambia, todo lo guardado deja de reconocerse — sin error, sin log, y con la interfaz
+pintándose perfectamente. Caso propio: los favoritos en `localStorage` sacaban su clave del `?id=` del
+enlace de cada tarjeta. **Regla**: la clave de persistencia sale del DATO (un atributo que pone quien
+conoce el registro), nunca de parsear la presentación; y un *slug* tampoco sirve, porque cambia al
+corregir una tilde del título. Aceptar el formato viejo además del nuevo evita romper a partir de hoy,
+pero **no reconstruye lo que ya se perdió**: por eso se arregla la fuente, no solo el lector.
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.
