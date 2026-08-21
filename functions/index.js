@@ -835,3 +835,151 @@ exports.sendNewsletter = onCall(
     return { success: true, sent, errors, total: snap.size };
   }
 );
+
+// ══════════════════════════════════════════════════════════════════════════
+// 10. CLAIMS DE STAFF — el documento manda, el token es su espejo
+//
+// EL PROBLEMA QUE RESUELVE (ADR §99): las reglas del PORTAL definen su gate de staff como
+// `request.auth.token.admin == true` —un custom claim— tanto en Firestore
+// (`portal/firebase/firestore.rules`) como en Storage (`portal/firebase/storage.rules`, que guarda
+// cédulas y contratos escaneados). Y ese claim NO LO PONÍA NADIE: `setCustomUserClaims` no aparecía
+// en todo el proyecto. `isStaff()` era insatisfacible, así que el día del cutover el back-office
+// habría quedado inaccesible para todos, el dueño incluido.
+//
+// POR QUÉ UN CLAIM Y NO UN `get()` EN LAS REGLAS: un `get()` dentro de una regla se ejecuta —y se
+// FACTURA— aunque la petición acabe denegada. Y en este portal `request.auth != null` no es un estado
+// raro: `/ingresar` deja entrar a cualquiera con un Gmail. Un bucle desde la consola del navegador
+// vaciaría las 50.000 lecturas diarias del free-tier sin ser staff. Un claim cuesta CERO lecturas.
+// Además las reglas de Storage no pueden leer Firestore, así que el claim es el único mecanismo que
+// arregla las dos mitades a la vez.
+//
+// POR QUÉ VIVE AQUÍ, en el codebase del LEGACY, y no en el del portal: la fuente de verdad es la
+// colección `usuarios`, que el dueño ya administra desde `admin.html`, y este archivo ya tiene todo
+// lo necesario (`onDocumentWritten`, `getAuth`, `requireSuperAdmin`). Así esto se despliega SOLO, sin
+// tocar una línea de reglas y sin esperar al cutover: el claim empieza a existir hoy y está verificado
+// semanas antes de que alguien lo necesite.
+// ══════════════════════════════════════════════════════════════════════════
+
+/** Roles del legacy que dan acceso al back-office del portal. */
+const ROLES_STAFF = ['super_admin', 'editor', 'viewer'];
+
+/**
+ * Documento de `usuarios` → claims que le tocan.
+ *
+ * `activo === true` ESTRICTO, no `!= false`: es lista blanca, no lista negra. Un `"false"` tecleado
+ * como TEXTO en la consola de Firebase no debe conceder acceso, y un documento al que le falte el
+ * campo tampoco — `js/admin-auth.js` ya rechaza esos, así que toda cuenta que hoy funciona lo trae.
+ *
+ * El `rol` viaja en el claim desde el primer despliegue aunque hoy nadie lo mire: sin él, afinar
+ * permisos por rol más adelante obligaría a re-emitir el token de todo el mundo.
+ */
+function claimDesdeDoc(d) {
+  const vivo = !!d && d.activo === true && d.bloqueado !== true;
+  const staff = vivo && ROLES_STAFF.includes(d.rol);
+  return { admin: staff, rol: staff ? d.rol : null };
+}
+
+/**
+ * Deja el claim de un uid igual a lo que dice su documento. Idempotente y convergente.
+ *
+ * RELEE EL DOCUMENTO en vez de usar el payload del evento: los triggers son at-least-once y sin orden
+ * garantizado, así que un reintento viejo que llegue DESPUÉS de una revocación dejaría el claim pegado
+ * en «concedido». Releyendo, cualquier orden de llegada converge al estado real.
+ */
+async function sincronizarClaim(uid) {
+  const snap = await db.collection('usuarios').doc(uid).get();
+  const objetivo = claimDesdeDoc(snap.exists ? snap.data() : undefined);
+
+  let usuario;
+  try {
+    usuario = await auth.getUser(uid);
+  } catch {
+    // Documento sin cuenta de Auth: casi siempre un uid mal copiado a mano en la consola. Se reporta
+    // y se sigue; no es un fallo que deba reintentarse eternamente.
+    console.error(`[claims] usuarios/${uid} no tiene cuenta en Auth (¿uid mal copiado?)`);
+    return false;
+  }
+
+  // La revocación va ANTES del corte por idempotencia, y a propósito: revocar es idempotente (solo
+  // adelanta `tokensValidAfterTime`). Si en una pasada anterior el claim se escribió pero la
+  // revocación falló, el reintento saldría por el `return false` de abajo y no revocaría NUNCA.
+  if (!objetivo.admin) await auth.revokeRefreshTokens(uid);
+
+  const actual = usuario.customClaims || {};
+  if (actual.admin === objetivo.admin && (actual.rol ?? null) === objetivo.rol) return false;
+
+  // Se preservan los claims ajenos: este proceso es dueño de `admin` y `rol`, de nada más.
+  await auth.setCustomUserClaims(uid, { ...actual, ...objetivo });
+  console.info(`[claims] ${uid} → admin=${objetivo.admin} rol=${objetivo.rol}`);
+  return true;
+}
+
+/**
+ * Cualquier cambio en `usuarios/{uid}` re-sincroniza su claim. Alta, cambio de rol, desactivación y
+ * borrado entran todos por aquí.
+ *
+ * `retry: true` es SEGURO porque `sincronizarClaim` es idempotente y relee el estado real. Y no hay
+ * bucle posible: esta función escribe en Auth, jamás en `usuarios`.
+ */
+exports.claimsStaffSync = onDocumentWritten(
+  { document: 'usuarios/{uid}', region: REGION, retry: true },
+  async (event) => {
+    await sincronizarClaim(event.params.uid);
+  },
+);
+
+/**
+ * Backfill y reconciliación a demanda — la palanca del día cero y la cura de cualquier deriva.
+ *
+ * La guarda es `requireSuperAdmin`, que lee el DOCUMENTO y no el claim. Por eso funciona cuando
+ * todavía no hay ni un claim puesto: no hace falta service account, ni consola, ni descargar claves.
+ *
+ * Pagina de verdad. Un `limit()` pelado dejaría al staff a partir del tope sin sincronizar y —peor—
+ * el barrido de huérfanos de abajo lo leería como «no está en la lista» y le revocaría el acceso.
+ */
+exports.sincronizarClaimsV2 = onCall({ region: REGION }, async (request) => {
+  await requireSuperAdmin(request.auth?.uid);
+
+  const vivos = new Set();
+  let ultimo = null;
+  let censoCompleto = false;
+  const PAGINA = 200;
+
+  for (;;) {
+    let q = db.collection('usuarios').orderBy('__name__').limit(PAGINA);
+    if (ultimo) q = q.startAfter(ultimo);
+    const page = await q.get();
+    for (const d of page.docs) {
+      vivos.add(d.id);
+      await sincronizarClaim(d.id);
+    }
+    if (page.size < PAGINA) {
+      censoCompleto = true;
+      break;
+    }
+    ultimo = page.docs[page.size - 1];
+  }
+
+  // HUÉRFANOS: alguien con el claim puesto y sin documento (se borró el usuario sin pasar por aquí).
+  // ⚠️ FUSIBLE: solo se barre si el censo salió COMPLETO y con al menos un vivo. Un censo parcial
+  // —porque una página falló— jamás puede interpretarse como «revócaselo a todos».
+  let huerfanos = 0;
+  if (censoCompleto && vivos.size > 0) {
+    let token;
+    do {
+      // `listUsers(1000)` a secas MIENTE en silencio por encima de 1000 cuentas: hay que paginar.
+      const page = await auth.listUsers(1000, token);
+      for (const u of page.users) {
+        if (u.customClaims?.admin === true && !vivos.has(u.uid)) {
+          await auth.setCustomUserClaims(u.uid, { ...u.customClaims, admin: false, rol: null });
+          await auth.revokeRefreshTokens(u.uid);
+          huerfanos++;
+        }
+      }
+      token = page.pageToken;
+    } while (token);
+  }
+
+  console.info(`[claims] backfill: ${vivos.size} sincronizados · ${huerfanos} huérfanos revocados`);
+  return { ok: true, sincronizados: vivos.size, huerfanos, censoCompleto };
+});

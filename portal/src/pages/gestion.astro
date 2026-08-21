@@ -144,9 +144,14 @@ const init = DATA.admin;
       Entraste con <span id="gx-quien">tu cuenta</span>, pero no tiene permisos de gestión. Si crees que
       deberían dártelos, pídeselos a quien administra el portal.
     </p>
+    <p class="gx-gate__d">
+      Si te acaban de dar el acceso, tu sesión todavía lleva los permisos de antes: pulsa
+      «Volver a comprobar».
+    </p>
     <p class="gx-gate__acc">
+      <button class="alt-btn alt-btn--navy" type="button" id="gx-reintentar">Volver a comprobar</button>
       <a class="alt-btn alt-btn--outline" href="/">Volver al portal</a>
-      <button class="alt-btn alt-btn--navy" type="button" id="gx-salir">Salir de la sesión</button>
+      <button class="alt-btn alt-btn--outline" type="button" id="gx-salir">Salir de la sesión</button>
     </p>
   </div>
 
@@ -428,6 +433,22 @@ const init = DATA.admin;
   }
 
   document.getElementById('gx-salir')?.addEventListener('click', () => void salir());
+
+  /* Volver a comprobar FORZANDO el refresco del token. Los claims viajan dentro del token y este se
+     renueva cada hora, así que sin esto a quien le acaban de dar permiso le tocaba esperar o cerrar
+     sesión — y lo más probable es que pensara que algo estaba roto. */
+  const reintentar = document.getElementById('gx-reintentar') as HTMLButtonElement | null;
+  reintentar?.addEventListener('click', async () => {
+    reintentar.disabled = true;
+    reintentar.textContent = 'Comprobando…';
+    const r = await estadoAcceso(true).catch(() => null);
+    if (r?.estado === 'staff') {
+      mostrar(panel);
+      return;
+    }
+    reintentar.disabled = false;
+    reintentar.textContent = 'Volver a comprobar';
+  });
 
   estadoAcceso()
     .then((r) => {

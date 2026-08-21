@@ -57,7 +57,7 @@ export type EstadoAcceso =
  * si aquí se usara otro criterio (un correo en una lista, por ejemplo), la interfaz diría que sí y la
  * base diría que no, y el panel se vería vacío sin explicación.
  */
-export async function estadoAcceso(): Promise<EstadoAcceso> {
+export async function estadoAcceso(forzarRefresco = false): Promise<EstadoAcceso> {
   const { auth, mod } = await cargarAuth();
   const usuario = await new Promise<import('firebase/auth').User | null>((resolve) => {
     const off = mod.onAuthStateChanged(auth, (u) => {
@@ -67,10 +67,14 @@ export async function estadoAcceso(): Promise<EstadoAcceso> {
   });
   if (!usuario) return { estado: 'anonimo' };
 
-  // `getIdTokenResult()` sin forzar refresco usa el token en caché: si a alguien le acaban de dar el
-  // claim, lo verá al renovar (una hora como mucho, o cerrando y abriendo sesión). Forzar refresco en
-  // cada carga del panel sería una llamada de red por visita para un caso que pasa una vez.
-  const token = await usuario.getIdTokenResult();
+  // Sin `forzarRefresco` se usa el token en CACHÉ: es lo correcto por defecto, porque forzar una
+  // llamada de red en cada carga del panel encarece el caso normal para servir a uno que pasa una vez.
+  //
+  // El caso que pasa una vez: a alguien le acaban de dar el permiso y su token todavía no lo lleva —
+  // los claims viajan DENTRO del token y este se renueva cada hora. Vería «no tienes permiso» y
+  // pensaría que falló. Por eso el estado de «sin permiso» ofrece volver a comprobar, y esa comprobación
+  // sí fuerza el refresco: es el único momento en que la llamada extra se gana su coste.
+  const token = await usuario.getIdTokenResult(forzarRefresco);
   const esStaff = token.claims.admin === true;
   return esStaff
     ? { estado: 'staff', email: usuario.email }
