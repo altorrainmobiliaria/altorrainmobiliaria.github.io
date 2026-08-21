@@ -2,7 +2,7 @@
 import { LEGAL, TEXTO_AUTORIZACION, TEXTO_MARKETING, RUTA_AVISO } from '../lib/config/legal';
 /*
  * PUBLICAR — "Publica tu inmueble" (Ola 1). Réplica de ALTORRA Publica.dc.html.
- * Hero con formulario de avalúo (lead) + "cuatro pasos" + 3 planes. Reutiliza Header/Footer.
+ * Hero con formulario de VALORACIÓN (lead — nunca «avalúo»: B13/Ley 1673, ver §105) + "cuatro pasos" + 3 planes. Reutiliza Header/Footer.
  * El form es client-side (validación + éxito). POST real a `solicitudes` (Cloud Function) = follow-up.
  */
 export const prerender = true;
@@ -18,13 +18,13 @@ const stats = [
 ];
 const pasos = [
   { n: '01', t: 'Cuéntanos', d: 'Compártenos los datos de tu inmueble en dos minutos con el formulario.' },
-  { n: '02', t: 'Avalúo experto', d: 'Un asesor visita, fotografía y define el precio justo con datos de mercado.' },
+  { n: '02', t: 'Valoración experta', d: 'Un asesor visita, fotografía y define el precio justo con datos de mercado.' },
   { n: '03', t: 'Publicamos', d: 'Tu propiedad en el portal, redes y nuestra red privada de compradores.' },
   { n: '04', t: 'Cerramos', d: 'Acompañamiento legal y financiero hasta la firma de la escritura.' },
 ];
 const planes = [
   { tier: 'Publicación', price: 'Gratis', sub: 'Publica y recibe contactos por tu cuenta.', perks: ['Ficha en el portal ALTORRA', 'Hasta 10 fotos', 'Contactos directos'], cta: 'Empezar gratis', featured: false },
-  { tier: 'Gestión Premium', price: '3%', unit: 'al vender', sub: 'Nosotros gestionamos todo el proceso.', perks: ['Todo lo de Publicación', 'Avalúo y fotografía profesional', 'Visitas y negociación gestionadas', 'Acompañamiento legal'], cta: 'Solicitar avalúo', featured: true },
+  { tier: 'Gestión Premium', price: '3%', unit: 'al vender', sub: 'Nosotros gestionamos todo el proceso.', perks: ['Todo lo de Publicación', 'Avalúo y fotografía profesional', 'Visitas y negociación gestionadas', 'Acompañamiento legal'], cta: 'Pedir valoración', featured: true },
   { tier: 'Concierge Élite', price: 'A medida', sub: 'Para propiedades de alto valor y exclusividad.', perks: ['Todo lo de Premium', 'Video y tour 3D', 'Marketing internacional', 'Abogado dedicado'], cta: 'Hablar con un asesor', featured: false },
 ];
 const check = '<path d="M20 6L9 17l-5-5"/>';
@@ -33,7 +33,7 @@ const check = '<path d="M20 6L9 17l-5-5"/>';
 // icono + h3 + texto. Íconos y textos EXACTOS del mockup.
 const beneficios = [
   { i: '<circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>', t: 'Máxima exposición', d: 'Portal, redes y una red privada de compradores nacionales e internacionales.' },
-  { i: '<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>', t: 'Avalúo justo', d: 'Precio basado en datos reales del mercado de Cartagena, no en corazonadas.' },
+  { i: '<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>', t: 'Precio justo', d: 'Basado en datos reales del mercado de Cartagena, no en corazonadas.' },
   { i: '<path d="M12 3l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V6z"/><path d="M9 12l2 2 4-4"/>', t: 'Respaldo legal', d: 'Revisión de documentos, escritura y todo el proceso jurídico acompañado.' },
   { i: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>', t: 'Seguridad total', d: 'Compradores verificados y pagos protegidos en cada etapa de la operación.' },
 ];
@@ -51,7 +51,7 @@ const beneficios = [
         <div class="pub-hero__copy">
           <p class="alt-eyebrow">Propietarios</p>
           <h1 class="pub-hero__h">Vende o arrienda con quien conoce Cartagena.</h1>
-          <p class="pub-hero__p">Avalúo experto, fotografía profesional y una red de compradores calificados. Tú decides el precio; nosotros ponemos el respaldo.</p>
+          <p class="pub-hero__p">Valoración experta, fotografía profesional y una red de compradores calificados. Tú decides el precio; nosotros ponemos el respaldo.</p>
           <div class="pub-stats">
             {stats.map((s) => <div><span class="pub-stat__n">{s.n}</span><span class="pub-stat__l">{s.l}</span></div>)}
           </div>
@@ -61,8 +61,12 @@ const beneficios = [
           <form class="pub-form" id="pub-form" method="post" action="/api/solicitud" novalidate>
             <!-- h2 + subtítulo FUERA de .pub-form__fields: el mockup los deja persistir como
                  encabezado sobre el mensaje de éxito (el script oculta SOLO los campos). -->
-            <h2 class="pub-form__h">Solicita tu avalúo gratis</h2>
+            <h2 class="pub-form__h">Pide tu valoración gratis</h2>
             <p class="pub-form__sub">Respuesta de un asesor en menos de 24 horas.</p>
+            <p class="pub-form__aviso">
+              Es una estimación orientativa, no un avalúo comercial con validez legal. Si necesitas
+              ese documento, te decimos con quién hacerlo.
+            </p>
             <div class="pub-form__fields">
               <div><label class="alt-label" for="pub-name">Nombre</label><input class="alt-input" id="pub-name" name="nombre" type="text" placeholder="Tu nombre" required /></div>
               <div><label class="alt-label" for="pub-phone">Teléfono</label><input class="alt-input" id="pub-phone" name="telefono" type="tel" placeholder="+57 300 000 0000" required /></div>
@@ -92,12 +96,12 @@ const beneficios = [
               <p class="pub-form__err" id="pub-legal" hidden>Para continuar necesitamos tu autorización de tratamiento de datos.</p>
               <p class="pub-form__err" id="pub-err" hidden>Ingresa tu nombre y teléfono para continuar.</p>
               <p class="pub-form__err" id="pub-net" hidden>No pudimos enviar tu solicitud. Revisa tu conexión e inténtalo de nuevo.</p>
-              <button class="alt-btn alt-btn--navy pub-form__submit" type="submit">Solicitar avalúo<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+              <button class="alt-btn alt-btn--navy pub-form__submit" type="submit">Pedir valoración<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
             </div>
             <div class="pub-form__ok" id="pub-ok" hidden>
               <span class="pub-form__ok-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" set:html={check}></svg></span>
               <h3>¡Solicitud recibida!</h3>
-              <p>Un asesor ALTORRA te contactará en las próximas 24 horas para coordinar tu avalúo.</p>
+              <p>Un asesor ALTORRA te contactará en las próximas 24 horas para coordinar la visita.</p>
             </div>
           </form>
         </div>
@@ -196,7 +200,17 @@ const beneficios = [
   .pub-form { background: var(--alt-white); border-radius: var(--alt-r-2xl, 22px); padding: clamp(24px, 3vw, 34px); box-shadow: var(--alt-elev-form, 0 40px 90px -40px rgba(6, 39, 67, 0.55)); }
   .pub-form__fields { display: flex; flex-direction: column; gap: 13px; }
   .pub-form__h { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 26px; color: var(--alt-ink); letter-spacing: normal; margin-bottom: 3px; }
-  .pub-form__sub { font-size: 13.5px; color: var(--alt-text); margin-bottom: 18px; }
+  .pub-form__sub { font-size: 13.5px; color: var(--alt-text); margin-bottom: 10px; }
+  /* Aviso legal del estimador (B13 / Ley 1673). MISMO tratamiento que `.ra-hero__aviso` de
+     `/rango-altorra`: filo de oro a la izquierda, texto suave. Se lee como una nota honesta, no
+     como letra pequeña escondida — que es justo lo que la norma quiere evitar. */
+  .pub-form__aviso {
+    font-size: var(--alt-fs-sm);
+    color: var(--alt-text-soft);
+    margin: 0 0 18px;
+    padding-left: var(--alt-space-4);
+    border-left: 2px solid var(--alt-gold);
+  }
   .pub-form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
   .pub-form__err { font-size: 12.5px; color: var(--alt-link); }
   .pub-form__submit { margin-top: 4px; width: 100%; }
@@ -254,7 +268,7 @@ const beneficios = [
 </style>
 
 <script>
-  // Formulario de avalúo — envío REAL a `solicitudes` vía /api/solicitud (§88).
+  // Formulario de valoración — envío REAL a `solicitudes` vía /api/solicitud (§88).
   // El <form> ya lleva method/action: sin JavaScript el POST nativo funciona igual y vuelve
   // con ?ok=1. Esto solo lo mejora (sin recargar) y muestra el mismo estado de éxito.
   const form = document.getElementById('pub-form') as HTMLFormElement | null;
@@ -298,7 +312,7 @@ const beneficios = [
       exito();
     } catch {
       net?.removeAttribute('hidden');
-      if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label || 'Solicitar avalúo'; }
+      if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label || 'Pedir valoración'; }
     }
   });
 </script>
