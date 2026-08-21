@@ -21,6 +21,30 @@ const FORBIDDEN = [
   { re: /[:/](runQuery|listDocuments)\b/, why: 'endpoint REST de lista/query (lectura no acotada — usar GET puntual o doc-índice)' },
 ];
 
+/**
+ * EXCEPCIONES — estrechas, con nombre y motivo (ADR §96).
+ *
+ * Por qué existen: `/ingresar` (§89/§90) necesita el SDK de Auth de verdad. El inicio de sesión con
+ * Google es un flujo de ventana emergente con intercambio de tokens; no hay REST que lo sustituya, y
+ * el SDK se carga con `import()` dinámico, así que ni siquiera entra en el bundle de las demás rutas.
+ *
+ * Por qué se añaden AHORA: el gate llevaba en rojo desde que existe esa página, y un gate que siempre
+ * falla deja de avisar de nada. Un candado que suena todo el rato se ignora igual que uno apagado.
+ *
+ * La excepción es por ARCHIVO y por PATRÓN: `firebase/firestore` sigue prohibido en `/ingresar` igual
+ * que en el resto. Ampliar esta lista sin escribir el motivo es exactamente cómo muere un gate.
+ */
+const EXCEPCIONES = [
+  {
+    archivo: /pages[\\/]ingresar\.astro$/,
+    re: /\bimport\(['"]firebase\/(app|auth)['"]\)/,
+    motivo: 'Auth con Google exige el SDK (no hay REST equivalente); carga dinámica, fuera del bundle común',
+  },
+];
+
+const exceptuado = (file, code) =>
+  EXCEPCIONES.some((e) => e.archivo.test(file) && e.re.test(code));
+
 const SKIP_FILE = /\.test\.ts$/;
 const files = [];
 (function walk(dir) {
@@ -36,8 +60,11 @@ const violations = [];
 for (const file of files) {
   const lines = readFileSync(file, 'utf8').split('\n');
   lines.forEach((line, i) => {
+    const rel = relative(root, file);
     for (const { re, why } of FORBIDDEN) {
-      if (re.test(line)) violations.push({ file: relative(root, file), line: i + 1, why, code: line.trim() });
+      if (re.test(line) && !exceptuado(rel, line.trim())) {
+        violations.push({ file: rel, line: i + 1, why, code: line.trim() });
+      }
     }
   });
 }

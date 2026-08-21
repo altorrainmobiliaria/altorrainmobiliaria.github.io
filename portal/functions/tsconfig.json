@@ -15,6 +15,8 @@
     "rootDir": "..",
     "outDir": "lib"
   },
-  "include": ["src/**/*.ts", "../src/lib/domain/**/*.ts"],
+  // `config` entra porque `domain/alertas.ts` importa el TIPO de la prueba de consentimiento desde
+  // `config/legal.ts` (§96). Es solo un `import type`, así que no arrastra nada al JS emitido.
+  "include": ["src/**/*.ts", "../src/lib/domain/**/*.ts", "../src/lib/config/**/*.ts"],
   "exclude": ["../src/lib/domain/**/*.test.ts", "lib"]
 }

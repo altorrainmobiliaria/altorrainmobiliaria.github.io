@@ -30,8 +30,25 @@ export const onRequest = defineMiddleware(async (context, next) => {
   // sale de import.meta.env/constante; el override por env de runtime (wrangler [vars]) es hook post-MVP.
   context.locals.altorra = getDataClient();
   const response = await next();
-  if (!IS_PRODUCTION) {
+  if (IS_PRODUCTION) return response;
+
+  // ⚠️ CABECERAS INMUTABLES (cazado en vivo el 2026-08-21, ADR §96). `Response.redirect()` devuelve
+  // una respuesta cuyas cabeceras NO se pueden tocar: `set()` lanza «Can't modify immutable headers»
+  // y el request entero acaba en 500. Eso alcanzaba a TODO endpoint que responda con un redirect, o
+  // sea al fallback SIN JavaScript de los formularios de leads (`api/solicitud`, `api/alerta`), que
+  // es justo el camino que nadie prueba en el navegador porque el JS lo tapa.
+  // Solo pasa fuera de producción, que es donde se verifica todo: es decir, exactamente donde más
+  // engaña. Se reconstruye la respuesta en vez de perderla.
+  try {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow');
+    return response;
+  } catch {
+    const headers = new Headers(response.headers);
+    headers.set('X-Robots-Tag', 'noindex, nofollow');
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   }
-  return response;
 });

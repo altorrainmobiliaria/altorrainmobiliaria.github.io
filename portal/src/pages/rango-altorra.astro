@@ -26,7 +26,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { SITE } from '../lib/config/site';
-import { TEXTO_AUTORIZACION, TEXTO_MARKETING, RUTA_AVISO } from '../lib/config/legal';
+import { LEGAL, TEXTO_AUTORIZACION, TEXTO_MARKETING, RUTA_AVISO } from '../lib/config/legal';
 import { ZONAS } from '../lib/content/zonas';
 
 const TIPOS = ['Apartamento', 'Casa', 'Lote', 'Oficina', 'Local'];
@@ -111,7 +111,12 @@ const jsonLd = {
               <label class="ra-check">
                 <input type="checkbox" name="autorizacion" value="on" required />
                 <span>
-                  {TEXTO_AUTORIZACION.p1}<a href={RUTA_AVISO} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkAviso}</a>{TEXTO_AUTORIZACION.p2}
+                  {/* El texto va COMPLETO (p1…p3). Hasta el 2026-08-21 se cortaba en `p2`, o sea en
+                      «conforme a su », y con él se perdían el enlace a la Política y la mención de la
+                      transmisión a proveedores en EE. UU. La prueba que se archiva es el texto
+                      `plano`, que sí los incluye: enseñar menos de lo que se archiva rompe la regla
+                      del kit `08` §2.2 de que el titular acepte exactamente lo que leyó (ADR §96). */}
+                  {TEXTO_AUTORIZACION.p1}<a href={RUTA_AVISO} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkAviso}</a>{TEXTO_AUTORIZACION.p2}<a href={LEGAL.politicaDatos.ruta} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkPolitica}</a>{TEXTO_AUTORIZACION.p3}
                 </span>
               </label>
               <label class="ra-check">

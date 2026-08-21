@@ -50,7 +50,69 @@ service cloud.firestore {
 
     // ---------- INTERNO / PII (lectura solo staff; escritura solo Functions) ----------
     match /captaciones/{id} { allow read: if isStaff(); allow write: if false; } // PII propietario/dirección/matrícula/comisión
-    match /solicitudes/{id} { allow read: if isStaff(); allow write: if false; } // alta de leads por Cloud Function
+
+    // ⚠️ ALTA PÚBLICA ACOTADA — `solicitudes` y `alertas` son las DOS colecciones donde un visitante
+    // anónimo puede CREAR (nunca leer, nunca editar, nunca borrar). No es una relajación: es lo que el
+    // portal ya hace hoy y estas reglas no reflejaban.
+    //
+    // EL BUG QUE ESTO ARREGLA (ADR §96): `pages/api/solicitud.ts` escribe `solicitudes` por REST con la
+    // apiKey pública, y funciona porque el ruleset VIVO del proyecto sigue siendo el del legacy. Con
+    // `allow write: if false` aquí, el día que este archivo se despliegue (cutover, TODO-17) los
+    // formularios de `/publicar` y del Rango dejarían de capturar leads — sin un solo error en la web,
+    // que es la peor forma de romperse. La postura «toda escritura pasa por Functions» se mantiene para
+    // todo lo demás: aquí lo que entra es un ALTA sin estado ni dinero, y los invariantes caros
+    // (scoring, contadores, envío) los siguen poniendo las Functions después.
+    match /solicitudes/{id} {
+      allow read: if isStaff();
+      allow create: if request.resource.data.estado == 'pendiente'
+                    && request.resource.data.consentimiento.autorizado == true
+                    && request.resource.data.nombre is string
+                    && request.resource.data.nombre.size() >= 2
+                    && request.resource.data.nombre.size() <= 80
+                    && request.resource.data.telefono is string
+                    && request.resource.data.telefono.size() <= 25
+                    && request.resource.data.emailSent == false;
+      allow update, delete: if false;
+    }
+
+    // Alertas guardadas (OLA 1 ítem 8). El `create` valida FORMA y TOPES, que es lo que las reglas
+    // pueden comprobar de verdad; el correo se valida en el endpoint. `hasOnly` cierra la puerta a que
+    // alguien meta campos que la Function no espera. Nadie puede LEERLAS: dentro va el `token` de la
+    // baja, y un token legible no protege nada.
+    match /alertas/{id} {
+      allow read: if isStaff();
+      allow create: if request.resource.data.keys().hasOnly(
+                         ['email', 'criterios', 'estado', 'token', 'consentimiento',
+                          'ultimoEnvio', 'enviados', 'createdAt', 'updatedAt', '_version'])
+                    && request.resource.data.estado == 'activa'
+                    && request.resource.data.enviados == 0
+                    && request.resource.data._version == 1
+                    && request.resource.data.email is string
+                    && request.resource.data.email.size() <= 120
+                    && request.resource.data.token is string
+                    && request.resource.data.token.size() >= 16
+                    && request.resource.data.consentimiento.autorizado == true
+                    && request.resource.data.criterios.operacion in ['venta', 'arriendo', 'alojamiento']
+                    && request.resource.data.criterios.tipos.size() <= 8
+                    && request.resource.data.criterios.zonas.size() <= 8;
+      // El paso a `baja` lo hace SOLO la Function del digest (Admin SDK, que bypassa estas reglas).
+      allow update, delete: if false;
+    }
+
+    // Peticiones de BAJA (append-only). Es el permiso más pequeño que permite revocar sin dejar que el
+    // público edite `alertas`: aquí solo se pide la baja, y la Function la aplica tras comprobar el
+    // token. `aplicada == false` obliga a que nadie la marque como hecha al crearla.
+    match /bajasAlertas/{id} {
+      allow read: if isStaff();
+      allow create: if request.resource.data.keys().hasOnly(['alertaId', 'token', 'createdAt', 'aplicada'])
+                    && request.resource.data.alertaId is string
+                    && request.resource.data.alertaId.size() <= 64
+                    && request.resource.data.token is string
+                    && request.resource.data.token.size() <= 64
+                    && request.resource.data.aplicada == false;
+      allow update, delete: if false;
+    }
+
     match /actividades/{id} { allow read: if isStaff(); allow write: if false; }
     match /expedientes/{id} { allow read: if isStaff(); allow write: if false; }
     match /contratos/{id}   { allow read: if isStaff(); allow write: if false; }

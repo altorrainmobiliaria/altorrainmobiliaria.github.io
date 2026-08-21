@@ -1,0 +1,438 @@
+---
+/*
+ * ALERTAS GUARDADAS (/alertas) — ítem 8 de OLA 1, el último que le faltaba a la ola.
+ *
+ * DE DÓNDE SALE: el botón «Guardar búsqueda» de la barra de filtros de la SERP, que existe en el
+ * mockup aprobado `ALTORRA Resultados.dc.html` y hasta hoy apuntaba a `/favoritos`, que es otra cosa
+ * (favoritos guarda INMUEBLES; una alerta guarda una BÚSQUEDA). Esta página es su destino real, y por
+ * eso llega con los criterios en la URL: quien la abre no tiene que volver a describir lo que busca.
+ *
+ * QUÉ PROMETE, Y NADA MÁS: un correo al día como mucho, solo si entró algo que cumple los criterios.
+ * Si no entra nada, no se escribe. Esa frase está en la página porque es exactamente lo que hace el
+ * digest, y prometer «novedades diarias» cuando el catálogo puede estar quieto sería empezar mintiendo.
+ *
+ * SSR (`prerender = false`) porque lee los criterios del query string. Es la razón por la que no se
+ * puede prerenderizar y no un descuido.
+ *
+ * Progresivamente mejorado: sin JavaScript el formulario postea nativo a `/api/alerta` y la respuesta
+ * vuelve por 303 con `?ok=1` o `?error=…`. El script solo evita la recarga.
+ */
+export const prerender = false;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../lib/config/site';
+import { LEGAL, TEXTO_AUTORIZACION, RUTA_AVISO } from '../lib/config/legal';
+import { ZONAS } from '../lib/content/zonas';
+import {
+  etiquetaTipo,
+  normalizarCriterios,
+  operacionARuta,
+  resumenCriterios,
+} from '../lib/domain/alertas';
+import { TIPOS_INMUEBLE } from '../lib/domain/shared';
+
+const q = Object.fromEntries(Astro.url.searchParams);
+// La MISMA función que usa el endpoint. Si la página interpretara los criterios por su cuenta, lo que
+// se ve en pantalla y lo que se guarda podrían separarse sin que nada fallara.
+const criterios = normalizarCriterios(q);
+
+const ok = Astro.url.searchParams.get('ok') === '1';
+const error = Astro.url.searchParams.get('error');
+const MENSAJE_ERROR: Record<string, string> = {
+  email: 'Ese correo no parece válido. Revísalo y vuelve a intentarlo.',
+  autorizacion: 'Para crear la alerta necesitamos tu autorización de tratamiento de datos.',
+  guardar: 'No pudimos guardar tu alerta. Vuelve a intentarlo en un momento.',
+};
+
+// Solo los tipos que se publican de verdad en un portal residencial y comercial de Cartagena. La lista
+// completa del dominio incluye `otro`, que en un selector no le dice nada a nadie.
+const TIPOS_UI = TIPOS_INMUEBLE.filter((t) => t !== 'otro');
+
+const base = Astro.site?.origin ?? `https://${SITE.domain}`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Inicio', item: base },
+    { '@type': 'ListItem', position: 2, name: 'Alertas', item: `${base}/alertas` },
+  ],
+};
+---
+
+<BaseLayout
+  title="Alertas de inmuebles en Cartagena — ALTORRA"
+  description="Guarda tu búsqueda y te escribimos cuando entre un inmueble que cumpla lo que pediste. Un correo al día como máximo, y solo si hay algo nuevo."
+>
+  <Header />
+
+  <main id="contenido">
+    <section class="alt-section al-hero">
+      <div class="alt-container">
+        <p class="alt-eyebrow">Alertas</p>
+        <h1 class="al-h1">Que te avisemos nosotros</h1>
+        <p class="al-sub">
+          Si hoy no está lo que buscas, guarda la búsqueda. Cuando entre un inmueble que cumpla estos
+          criterios te llega un correo. Un correo al día como máximo, y solo si hay algo nuevo.
+        </p>
+      </div>
+    </section>
+
+    <section class="alt-section al-form-wrap" id="alerta">
+      <div class="alt-container al-cols">
+        <div class="al-card">
+          {ok && (
+            <div class="al-ok" role="status">
+              <h2 class="al-ok__h">Alerta creada.</h2>
+              <p class="al-ok__p">
+                Te escribimos a ese correo cuando entre algo que cumpla lo que pediste. Cada mensaje
+                trae su enlace para darte de baja, y basta con pulsarlo una vez.
+              </p>
+              <a class="alt-btn alt-btn--outline" href={operacionARuta(criterios.operacion)}>
+                Seguir viendo inmuebles
+              </a>
+            </div>
+          )}
+
+          {!ok && (
+            <form class="al-form" id="al-form" method="post" action="/api/alerta">
+              <h2 class="al-form__h">Tu búsqueda</h2>
+              <p class="al-form__resumen" id="al-resumen">{resumenCriterios(criterios)}</p>
+
+              <input type="hidden" name="operacion" value={criterios.operacion} id="al-operacion" />
+
+              <div class="al-grid">
+                <div>
+                  <label class="alt-label" for="al-op">Operación</label>
+                  <select class="alt-input" id="al-op">
+                    <option value="venta" selected={criterios.operacion === 'venta'}>Compra</option>
+                    <option value="arriendo" selected={criterios.operacion === 'arriendo'}>Arriendo</option>
+                    <option value="alojamiento" selected={criterios.operacion === 'alojamiento'}>Por días</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="alt-label" for="al-tipo">Tipo</label>
+                  <select class="alt-input" id="al-tipo" name="tipos">
+                    <option value="">Cualquiera</option>
+                    {TIPOS_UI.map((t) => (
+                      <option value={t} selected={criterios.tipos.includes(t)}>{etiquetaTipo(t)}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label class="alt-label" for="al-zona">Zona</label>
+                  <select class="alt-input" id="al-zona" name="zonas">
+                    <option value="">Toda Cartagena</option>
+                    {ZONAS.map((z) => (
+                      <option value={z.nombre} selected={criterios.zonas.some((x) => x === z.nombre)}>
+                        {z.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label class="alt-label" for="al-hab">Habitaciones</label>
+                  <select class="alt-input" id="al-hab" name="habMin">
+                    <option value="">Las que sean</option>
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <option value={n} selected={criterios.habMin === n}>{n} o más</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label class="alt-label" for="al-min">Desde (COP)</label>
+                  <input
+                    class="alt-input"
+                    id="al-min"
+                    name="precioMin"
+                    type="text"
+                    inputmode="numeric"
+                    placeholder="Sin mínimo"
+                    value={criterios.precioMin ?? ''}
+                  />
+                </div>
+                <div>
+                  <label class="alt-label" for="al-max">Hasta (COP)</label>
+                  <input
+                    class="alt-input"
+                    id="al-max"
+                    name="precioMax"
+                    type="text"
+                    inputmode="numeric"
+                    placeholder="Sin máximo"
+                    value={criterios.precioMax ?? ''}
+                  />
+                </div>
+              </div>
+
+              <h2 class="al-form__h al-form__h--2">Dónde te avisamos</h2>
+              <label class="alt-label" for="al-email">Correo</label>
+              <input
+                class="alt-input"
+                id="al-email"
+                name="email"
+                type="email"
+                required
+                autocomplete="email"
+                placeholder="tunombre@correo.com"
+              />
+              <p class="al-nota">
+                Es el único dato que te pedimos. Sin nombre y sin teléfono: para avisarte de un inmueble
+                no hacen falta.
+              </p>
+
+              {/* Gate de habeas data. El texto y su versión salen de `config/legal.ts`, que es su SSoT:
+                  la prueba que se archiva referencia esa versión exacta (kit `08` §2.2). Va COMPLETO
+                  (p1…p3), con los DOS enlaces: enseñar menos de lo que se archiva rompe la regla de
+                  que el titular acepte exactamente lo que leyó. */}
+              <label class="al-check">
+                <input type="checkbox" name="autorizacion" value="on" required />
+                <span>
+                  {TEXTO_AUTORIZACION.p1}<a href={RUTA_AVISO} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkAviso}</a>{TEXTO_AUTORIZACION.p2}<a href={LEGAL.politicaDatos.ruta} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkPolitica}</a>{TEXTO_AUTORIZACION.p3}
+                </span>
+              </label>
+
+              {error && <p class="al-err" role="alert">{MENSAJE_ERROR[error] ?? MENSAJE_ERROR.guardar}</p>}
+              <p class="al-err" id="al-err" hidden></p>
+
+              <button class="alt-btn alt-btn--navy al-submit" type="submit">Crear la alerta</button>
+            </form>
+          )}
+        </div>
+
+        <aside class="al-aside">
+          <h2 class="al-aside__h">Cómo funciona</h2>
+          <ol class="al-pasos">
+            <li>Guardas la búsqueda con los filtros que ya elegiste.</li>
+            <li>Cada día revisamos qué entró al catálogo.</li>
+            <li>Si algo cumple tus criterios, te llega un correo. Si no, no te escribimos.</li>
+          </ol>
+          <p class="al-aside__p">
+            Puedes darte de baja desde cualquiera de esos correos. También puedes escribirnos y lo
+            hacemos nosotros.
+          </p>
+          <a class="al-aside__wa" href={SITE.contact.whatsappLink} rel="noopener">
+            Escribirnos por WhatsApp
+          </a>
+          <p class="al-aside__legal">Matrícula de Arrendador No. {SITE.matriculaArrendador}</p>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+</BaseLayout>
+
+<script>
+  /*
+   * Mejora progresiva. Sin este script el formulario ya funciona entero (POST nativo + 303). El script
+   * hace dos cosas: mantener el `<input hidden>` de operación sincronizado con su `<select>` —el select
+   * no lleva `name` a propósito, para que no viajen dos valores de operación— y postear por fetch para
+   * no perder la página.
+   */
+  const form = document.getElementById('al-form') as HTMLFormElement | null;
+  if (form) {
+    const selOp = document.getElementById('al-op') as HTMLSelectElement | null;
+    const hiddenOp = document.getElementById('al-operacion') as HTMLInputElement | null;
+    const err = document.getElementById('al-err') as HTMLParagraphElement | null;
+
+    selOp?.addEventListener('change', () => {
+      if (hiddenOp && selOp) hiddenOp.value = selOp.value;
+    });
+
+    const fallar = (msg: string) => {
+      if (!err) return;
+      err.textContent = msg;
+      err.hidden = false;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (err) err.hidden = true;
+      const datos = new FormData(form);
+      if (!datos.get('autorizacion')) {
+        fallar('Para crear la alerta necesitamos tu autorización de tratamiento de datos.');
+        return;
+      }
+      try {
+        const r = await fetch('/api/alerta', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          body: JSON.stringify(Object.fromEntries(datos)),
+        });
+        const data = (await r.json()) as { ok?: boolean; reason?: string };
+        if (!r.ok || !data.ok) {
+          // Falla RUIDOSO. Un «gracias» sobre un error deja a la persona esperando correos que no
+          // van a llegar, que es peor que decirle que lo intente de nuevo (§94.4).
+          fallar(
+            data.reason === 'email'
+              ? 'Ese correo no parece válido. Revísalo y vuelve a intentarlo.'
+              : 'No pudimos guardar tu alerta. Vuelve a intentarlo en un momento.',
+          );
+          return;
+        }
+        const url = new URL(window.location.href);
+        url.searchParams.set('ok', '1');
+        url.searchParams.delete('error');
+        window.location.assign(`${url.pathname}?${url.searchParams.toString()}#alerta`);
+      } catch {
+        fallar('No pudimos guardar tu alerta. Revisa tu conexión e inténtalo de nuevo.');
+      }
+    });
+  }
+</script>
+
+<style>
+  .al-hero {
+    padding-block: clamp(2.5rem, 6vw, 4.5rem) 0;
+  }
+  .al-h1 {
+    font-family: var(--alt-font-display, 'Cormorant Garamond', serif);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 600;
+    color: var(--alt-text-strong);
+    margin: 0.4rem 0 0.75rem;
+    line-height: 1.1;
+  }
+  .al-sub {
+    max-width: 46rem;
+    color: var(--alt-text);
+    font-size: 1.05rem;
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  .al-cols {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .al-cols {
+      grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    }
+  }
+
+  .al-card {
+    background: var(--alt-surface);
+    border: 1px solid var(--alt-hairline);
+    border-radius: var(--alt-radius-lg, 18px);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    box-shadow: 0 18px 40px -30px rgba(var(--alt-shadow-navy-rgb), 0.55);
+  }
+
+  .al-form__h {
+    font-family: var(--alt-font-display, 'Cormorant Garamond', serif);
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--alt-text-strong);
+    margin: 0 0 0.35rem;
+  }
+  .al-form__h--2 {
+    margin-top: 1.75rem;
+  }
+  .al-form__resumen {
+    color: var(--alt-link);
+    font-weight: 600;
+    margin: 0 0 1.1rem;
+  }
+
+  .al-grid {
+    display: grid;
+    gap: 0.9rem;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  }
+
+  .al-nota {
+    color: var(--alt-text);
+    font-size: 0.9rem;
+    margin: 0.5rem 0 1.1rem;
+  }
+
+  .al-check {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    color: var(--alt-text);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    margin-bottom: 1.1rem;
+  }
+  .al-check input {
+    margin-top: 0.2rem;
+    flex: 0 0 auto;
+  }
+  .al-check a {
+    color: var(--alt-link);
+  }
+
+  .al-err {
+    color: var(--alt-error);
+    background: var(--alt-status-bg);
+    border-left: 3px solid var(--alt-error);
+    padding: 0.7rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin: 0 0 1rem;
+  }
+
+  .al-submit {
+    width: 100%;
+  }
+
+  .al-ok__h {
+    font-family: var(--alt-font-display, 'Cormorant Garamond', serif);
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--alt-text-strong);
+    margin: 0 0 0.5rem;
+  }
+  .al-ok__p {
+    color: var(--alt-text);
+    line-height: 1.65;
+    margin: 0 0 1.25rem;
+  }
+
+  .al-aside {
+    background: var(--alt-surface-alt);
+    border-radius: var(--alt-radius-lg, 18px);
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+  }
+  .al-aside__h {
+    font-family: var(--alt-font-display, 'Cormorant Garamond', serif);
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--alt-text-strong);
+    margin: 0 0 0.75rem;
+  }
+  .al-pasos {
+    margin: 0 0 1rem;
+    padding-left: 1.1rem;
+    color: var(--alt-text);
+    line-height: 1.6;
+  }
+  .al-pasos li + li {
+    margin-top: 0.45rem;
+  }
+  .al-aside__p {
+    color: var(--alt-text);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin: 0 0 1rem;
+  }
+  .al-aside__wa {
+    display: inline-block;
+    color: var(--alt-link);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+  }
+  .al-aside__legal {
+    margin: 1.25rem 0 0;
+    font-size: 0.78rem;
+    color: var(--alt-text-soft);
+  }
+</style>

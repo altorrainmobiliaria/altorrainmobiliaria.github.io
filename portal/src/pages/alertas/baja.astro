@@ -1,0 +1,120 @@
+---
+/*
+ * BAJA de una alerta (/alertas/baja) — el destino del enlace que lleva cada correo del digest.
+ *
+ * POR QUÉ ESTA PÁGINA EXISTE en vez de que el enlace ejecute la baja directamente: los escáneres de
+ * seguridad de Gmail, Outlook y los antivirus corporativos ABREN los enlaces de un correo para
+ * revisarlos. Si el GET diera de baja, esos robots darían de baja a gente que ni llegó a leer el
+ * mensaje. Aquí el enlace solo enseña un botón; la baja ocurre en el POST, que solo hace una persona.
+ *
+ * `noindex` explícito: es una página de utilidad con un token en la URL. No tiene nada que hacer en un
+ * buscador y sería feo que un token acabara indexado.
+ */
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE } from '../../lib/config/site';
+
+const id = Astro.url.searchParams.get('id') ?? '';
+const token = Astro.url.searchParams.get('t') ?? '';
+const ok = Astro.url.searchParams.get('ok') === '1';
+const error = Astro.url.searchParams.get('error');
+const enlaceValido = /^[A-Za-z0-9_-]{1,64}$/.test(id) && token.length > 0;
+---
+
+<BaseLayout title="Dar de baja una alerta — ALTORRA" noindex={true}>
+  <Header />
+
+  <main id="contenido">
+    <section class="alt-section">
+      <div class="alt-container ab-wrap">
+        {ok && (
+          <>
+            <h1 class="ab-h1">Listo, no volvemos a escribirte.</h1>
+            <p class="ab-p">
+              Esa alerta queda cancelada. Si algún día quieres volver a activarla, puedes crearla otra
+              vez desde cualquier búsqueda del portal.
+            </p>
+            <a class="alt-btn alt-btn--outline" href="/comprar">Ver inmuebles</a>
+          </>
+        )}
+
+        {!ok && !enlaceValido && (
+          <>
+            <h1 class="ab-h1">Este enlace no sirve.</h1>
+            <p class="ab-p">
+              Puede que se haya cortado al copiarlo. Abre el enlace «Darme de baja» directamente desde
+              el último correo que te enviamos, o escríbenos y lo hacemos nosotros.
+            </p>
+            <a class="alt-btn alt-btn--outline" href={SITE.contact.whatsappLink} rel="noopener">
+              Escribirnos por WhatsApp
+            </a>
+          </>
+        )}
+
+        {!ok && enlaceValido && (
+          <>
+            <h1 class="ab-h1">¿Cancelamos esta alerta?</h1>
+            <p class="ab-p">
+              Dejarás de recibir los correos de esta búsqueda. Tus favoritos y cualquier otra alerta que
+              tengas siguen igual.
+            </p>
+            {error && (
+              <p class="ab-err" role="alert">
+                No pudimos registrar la baja. Vuelve a intentarlo, o escríbenos y la hacemos nosotros.
+              </p>
+            )}
+            {/* POST nativo: funciona sin JavaScript y, sobre todo, deja la baja fuera del GET. */}
+            <form method="post" action="/api/alerta/baja">
+              <input type="hidden" name="id" value={id} />
+              <input type="hidden" name="t" value={token} />
+              <button class="alt-btn alt-btn--navy" type="submit">Sí, dar de baja</button>
+            </form>
+            <p class="ab-nota">
+              Si llegaste aquí por error, cierra esta página: no se cancela nada hasta que pulses el
+              botón.
+            </p>
+          </>
+        )}
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .ab-wrap {
+    max-width: 40rem;
+    padding-block: clamp(2rem, 6vw, 4rem);
+  }
+  .ab-h1 {
+    font-family: var(--alt-font-display, 'Cormorant Garamond', serif);
+    font-size: clamp(1.75rem, 4vw, 2.6rem);
+    font-weight: 600;
+    color: var(--alt-text-strong);
+    margin: 0 0 0.75rem;
+    line-height: 1.15;
+  }
+  .ab-p {
+    color: var(--alt-text);
+    line-height: 1.65;
+    margin: 0 0 1.5rem;
+  }
+  .ab-err {
+    color: var(--alt-error);
+    background: var(--alt-status-bg);
+    border-left: 3px solid var(--alt-error);
+    padding: 0.7rem 0.9rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin: 0 0 1.25rem;
+  }
+  .ab-nota {
+    margin: 1rem 0 0;
+    font-size: 0.85rem;
+    color: var(--alt-text-soft);
+  }
+</style>

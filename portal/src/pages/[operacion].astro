@@ -77,7 +77,11 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
           <button class="serp-fbtn" type="button" data-filter aria-pressed="false">{f}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
         ))}
         <button class="serp-fbtn" type="button" data-filter aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>Más filtros</button>
-        <a class="serp-save" href="/favoritos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Guardar búsqueda</a>
+        {/* «Guardar búsqueda» es del mockup aprobado, pero apuntaba a /favoritos, que guarda INMUEBLES.
+            Una búsqueda guardada es otra cosa: su destino real es la alerta (ADR §96, OLA 1 ítem 8).
+            La operación viaja como el NOMBRE DE LA RUTA (`comprar`/`arrendar`) porque el normalizador
+            de criterios acepta ambos vocabularios; así este enlace no necesita traducir nada. */}
+        <a class="serp-save" href={`/alertas?operacion=${op}`}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Guardar búsqueda</a>
       </div>
     </div>
 

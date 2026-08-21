@@ -42,6 +42,10 @@ const RUTAS: Entrada[] = [
   { ruta: '/precios', prioridad: 0.8, frecuencia: 'monthly' },
   // Rango ALTORRA: captación de PROPIETARIOS, que es de donde sale el inventario.
   { ruta: '/rango-altorra', prioridad: 0.8, frecuencia: 'monthly' },
+  // Alertas (§96). Entra aunque sea una utilidad, al revés que `/favoritos` e `/ingresar`: explica un
+  // servicio con palabras propias y responde una intención real («que me avisen cuando salga algo»).
+  // `/alertas/baja` NO entra: lleva un token en la URL y es `noindex` por eso mismo.
+  { ruta: '/alertas', prioridad: 0.6, frecuencia: 'monthly' },
   { ruta: '/turismo', prioridad: 0.7, frecuencia: 'weekly' },
   { ruta: '/invertir', prioridad: 0.7, frecuencia: 'weekly' },
   { ruta: '/journal', prioridad: 0.6, frecuencia: 'weekly' },

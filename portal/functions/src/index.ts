@@ -1,7 +1,11 @@
 // Cloud Functions del PORTAL — codebase `portal`, AISLADO del legacy (ADR §58).
-// Único trabajo hoy: mantener el índice de catálogo `indices/catalogo-{shard}` (decisión §54).
-// La lógica del índice vive en `src/lib/domain/catalogo.ts` (pura, §57) y la plomería en
-// `catalogo-rebuild.ts` (testeable contra el emulador). Aquí SOLO se registran los triggers.
+// Dos trabajos: mantener el índice de catálogo `indices/catalogo-{shard}` (decisión §54) y mandar el
+// digest diario de alertas guardadas (§96). La lógica de negocio vive en `src/lib/domain/*` (pura) y
+// la plomería en `catalogo-rebuild.ts` y `alertas-digest.ts` (testeables). Aquí SOLO se registran los
+// triggers.
+//
+// ⚠️ CLOUD SCHEDULER: el free tier son 3 jobs. Aquí se consumen 2 (`catalogoBarrido` y
+//    `alertasDigest`). Queda UNO. El siguiente cron que se añada debe entrar en un job existente.
 //
 // ⚠️ DEPLOY = COORDINADO con el cutover (TODO-17): comparte proyecto Firebase con el legacy.
 //    `firebase deploy --only functions:portal --config portal/firebase/firebase.json`
@@ -9,10 +13,20 @@
 import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
+import { defineSecret } from 'firebase-functions/params';
 import * as logger from 'firebase-functions/logger';
 import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { DOC_CONTROL, lineasReporte, rebuildCatalogo } from './catalogo-rebuild';
+import { correrDigest, lineasDigest } from './alertas-digest';
+
+/**
+ * Clave de la API de Resend. Es un SECRETO gestionado (Secret Manager), nunca una variable de entorno
+ * en claro: una clave de envío filtrada permite mandar correo firmado con nuestro dominio.
+ * Se carga con `firebase functions:secrets:set RESEND_API_KEY` (lo hace el dueño → `50-CONFIG-INFRA`).
+ * Sin ella el digest NO falla: aplica las bajas, no envía, y lo deja dicho en el log.
+ */
+const RESEND_API_KEY = defineSecret('RESEND_API_KEY');
 
 const REGION = 'us-central1';
 
@@ -70,6 +84,32 @@ export const catalogoBarrido = onSchedule(
     const vencido = !lastRunMs || Date.now() - lastRunMs > RECONCILIAR_MS;
     if (!pending && !vencido) return;
     await rebuildYLoguear(pending ? 'barrido-pendiente' : 'reconciliacion');
+  },
+);
+
+/**
+ * DIGEST DIARIO de alertas guardadas (§96). Una sola corrida al día, a las 7:00 de Cartagena: es la
+ * hora a la que se abre el correo, y concentrar el envío evita el goteo que entrena a la gente a
+ * ignorarlo.
+ *
+ * `retry: false` a propósito, al revés que el rebuild del catálogo: reintentar un envío de correo no
+ * es idempotente y duplicaría mensajes. Lo que no salió hoy sale mañana, porque `ultimoEnvio` solo
+ * avanza cuando el envío se aceptó.
+ */
+export const alertasDigest = onSchedule(
+  {
+    schedule: '0 7 * * *',
+    region: REGION,
+    timeZone: 'America/Bogota',
+    secrets: [RESEND_API_KEY],
+    // El lote puede llegar a 90 correos en una sola petición a Resend; 120s da margen de sobra sin
+    // dejar la Function colgada si la API no responde.
+    timeoutSeconds: 120,
+    retryCount: 0,
+  },
+  async () => {
+    const reporte = await correrDigest(db(), { apiKeyResend: RESEND_API_KEY.value() });
+    for (const l of lineasDigest(reporte)) logger.info(l);
   },
 );
 
