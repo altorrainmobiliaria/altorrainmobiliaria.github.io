@@ -154,3 +154,16 @@ vivo (contacto correcto) · `solicitudes` protegida (conteo pendiente) · Storag
 3. **Si se pierde TODO** (password + 2FA + códigos): proceso oficial de account-recovery de GitHub (verificación por email + historial de dispositivos) — **tarda DÍAS y puede fallar**; por eso el paso 1 es el que de verdad importa.
 4. **Mientras tanto el negocio NO se detiene**: los bundles offsite (§Respaldo OFFSITE) restauran código+cerebro completos en cualquier máquina (`git clone <bundle>`); se trabaja local y al recuperar (o migrar a cuenta nueva) se re-apunta el remote: `git remote set-url origin <nueva-url>` + push.
 5. **Continuidad de superficies**: si la cuenta GitHub cae, el dominio sigue sirviendo el ÚLTIMO deploy de Pages (no se borra solo); el portal staging vive en **Cloudflare** (cuenta separada `altorrainmobiliaria@gmail.com`, 2FA propio ⚠️ [VERIFICA-DANIEL: recovery codes de CF también]) → las dos superficies no caen juntas.
+
+## 🚀 CUTOVER — el checklist que evita desindexar el dominio (ADR §91)
+
+⚠️ El portal indexa **solo** con `PUBLIC_SITE_ENV=production`; por defecto sale `noindex` +
+`Disallow: /`. Correcto en staging, **catastrófico en el dominio real** (Google desindexa y el sitio
+se ve perfecto). Hasta el 2026-08-21 esa variable **no se declaraba en NINGÚN sitio** del repo.
+
+1. `PUBLIC_SITE_ENV=production` en el deploy de producción (hoy el CI solo tiene staging).
+2. `npm run verify:build` con esa env → la #6 **FALLA** si sobrevive `noindex` o `Disallow: /`.
+3. **NO borrar `googlec4e47cae776946d9.html`** (propiedad de GSC): ya duplicado en `portal/public/`.
+4. Los **301** salen solos: `portal/src/lib/seo/redirects.ts` (68 URLs) vía `middleware.ts`; las 9 exentas, en su `§NO-TOCAR`.
+5. Tras el DNS: enviar `sitemap.xml` en GSC — **y RE-enviarlo al añadir URLs** (skill `search-console-setup-y-diagnostico`).
+6. Sin fe: `curl -s https://altorrainmobiliaria.co | grep -i noindex` **vacío**, y su `/robots.txt` sin `Disallow: /`.

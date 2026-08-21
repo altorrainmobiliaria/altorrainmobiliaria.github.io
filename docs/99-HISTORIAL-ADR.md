@@ -2460,3 +2460,59 @@ límites a la inteligencia»). Los 4 drills fríos se lanzaron entonces y **enco
 verificación directa NO vio** (N7-04 · la 4ª cifra de páginas · N7-06), además de N7-00. Queda escrito
 que lo del 19-ago era un límite de **ALCANCE** (la página primero), no de **CAPACIDAD** — confundirlos
 costó, medible, cuatro hallazgos. **GC pareado: boot 31481 → 31394c (−87c)**, margen 19c → 106c.
+
+## 91. ADR — SEO técnico de OLA 1: el mapa de 301 y el interruptor que desindexaba el dominio en silencio ⟦OPUS-5⟧ (2026-08-21)
+
+> Ítem 11 de OLA 1 (MEGA-PLAN), el primero de los 5 que §90 encontró sin construir. Gate del cutover.
+
+**91.1 — Causa raíz (RCA).** Al abrir el ítem apareció algo que no se buscaba: **`PUBLIC_SITE_ENV` se
+LEE en dos sitios (`BaseLayout.astro:22`, `middleware.ts:14`) y no se DECLARA en ninguno** — ni en
+`portal-ci.yml`, ni en `wrangler.toml` (`[vars]` no existe), ni en un `.env`. O sea: **todo build que
+se ha hecho jamás sale `noindex, nofollow`**, y el del cutover también saldría así. El sitio se vería
+perfecto para un humano mientras le pide a Google que lo desindexe. Es exactamente *«el bug clásico»*
+que nombra la skill `search-console-setup-y-diagnostico` («un `noindex` global de "en construcción"
+que nadie quitó»), y de la clase [[M-10]]: un mecanismo correcto en UNA dirección (proteger el
+staging) sin nada que vigile la otra (abrirlo en producción).
+
+**91.2 — Solución estructural.** (a) **`src/lib/seo/redirects.ts`**: las **68 URLs públicas** del
+sitio viejo mapeadas a la página que responde la MISMA intención — nunca "todo a la home", que Google
+trata como soft-404 y no transfiere señal. Donde la superficie ideal aún no existe (13 barrios, Rango
+ALTORRA) se apunta al destino real más cercano con un campo `pendiente` que dice a qué re-apuntarlo:
+re-apuntar un 301 después es barato, mandarlo hoy a un 404 pierde la señal para siempre. Un `§NO-TOCAR`
+enumera las **9 rutas exentas y por qué**, para que nadie las "complete" por simetría. (b) Se aplica en
+`middleware.ts` **antes** de montar la capa de datos. (c) `robots.txt` y `sitemap.xml` como endpoints
+prerenderizados conscientes del entorno. (d) **El candado**: `verify-build.mjs` #6 **FALLA** el build
+si en producción sobrevive un `noindex` o un `Disallow: /`, y **avisa en amarillo** cuando no es
+producción. Los dos sentidos, que es lo que [[M-10]] exige.
+
+**91.3 — No-regresión.** Sitemap escrito a mano y NO con `@astrojs/sitemap`: el integrador barre todas
+las rutas emitidas y aquí hay tres que jamás deben entrar (`/gestion`, `/design-system`, `/404`).
+Declarar la lista cuesta unas líneas y hace imposible filtrar una interna por descuido. Cero IDs,
+funciones o rutas renombradas; el cambio es aditivo salvo el eslogan (§91.6).
+
+**91.4 — Verificación (en vivo, no por diff).** `npm run build` + `verify:build` en los **dos** modos:
+staging avisa y confirma `noindex=true · Disallow=true`; **producción compilada por primera vez en la
+historia del repo** y verde (`noindex-en-home=false · Disallow-total=false · sitemap-declarado=true`).
+Servidor de dev y `curl`: 8 redirects de muestra devuelven **301** al destino correcto (barrio,
+listado, blog, ficha, captación, legal); `/robots.txt` y `/sitemap.xml` **200** (13 URLs, dominio de
+producción); `googlec4e47cae776946d9.html` **200**.
+
+**91.5 — Anti-patterns evitados.** No se redirigió en bloque a `/`. No se tocó `@astrojs/sitemap`. No
+se metió el archivo de verificación de GSC en el mapa de 301 (redirigirlo = perder la propiedad y con
+ella el histórico): se **duplicó** a `portal/public/`, porque tras el cutover el dominio lo sirve el
+Worker y el archivo del legacy deja de ser alcanzable. Eso salió de PROBARLO: daba 404.
+
+**91.6 — Archivos.** NUEVOS: `portal/src/lib/seo/redirects.ts` · `portal/src/pages/robots.txt.ts` ·
+`portal/src/pages/sitemap.xml.ts` · `portal/public/googlec4e47cae776946d9.html`. MODIFICADOS:
+`middleware.ts` (+6 líneas) · `scripts/verify-build.mjs` (verificación #6) · `lib/config/site.ts`
+(**bug de marca cazado al pasar**: el eslogan era el viejo *«Gestión integral en soluciones
+inmobiliarias»*, que `CLAUDE.md §1` REEMPLAZÓ por **«Seguridad, Legalidad y Confianza»** — el kernel
+se reconcilió en su día y el código no, y salía en el `<title>` de la home). INTACTOS: astro.config,
+wrangler, todas las páginas.
+
+**91.7 — Doctrina aplicada.** §G.2 🖥️ (`34` leída antes de tocar código) · §G.2 🔵 (skill del dominio
+ANTES de decidir: de ahí salió "cero noindex residual" y la regla de re-enviar el sitemap) · §3.3
+(el inventario de 74 URLs se CONTÓ, no se estimó) · §G.4 caza-bugs (el 404 del archivo de GSC y el
+eslogan salieron de recorrer el camino vivo, no del diff) · **§G.4 Frescura a mano**: el gate #27 es
+CIEGO a archivos nuevos ([[M-10]] (a)), así que `20` se actualizó manualmente o estos 4 archivos
+habrían nacido indocumentados. Sin cache bump: el portal no tiene SW.
