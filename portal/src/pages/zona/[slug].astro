@@ -1,0 +1,193 @@
+---
+/*
+ * LANDING DE ZONA — `/zona/<slug>` (OLA 1 ítem 4, ADR §92).
+ *
+ * Son los destinos definitivos de los 13 barrios que el sitio viejo tenía como landing propia. El
+ * mapa de 301 (§91) los apuntaba provisionalmente al SERP; con esta ruta viva se re-apuntan aquí,
+ * que es donde el contenido responde de verdad la intención de la búsqueda.
+ *
+ * Prerender: contenido editorial que no cambia por request. Estático = servido desde el edge sin
+ * invocar el Worker, que es lo que el stack sellado quiere para todo lo que puede ser estático.
+ *
+ * JSON-LD: el legacy tenía BreadcrumbList en 43 páginas y el portal nuevo NO tenía ni uno solo
+ * (verificado con grep el 2026-08-21). Estas landings estrenan el patrón; extenderlo a home, SERP y
+ * ficha queda en TODO-39. Sin `Place.geo` a propósito: no vamos a inventar coordenadas de barrio.
+ */
+export const prerender = true;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE } from '../../lib/config/site';
+import { ZONAS, type Zona } from '../../lib/content/zonas';
+
+export function getStaticPaths() {
+  return ZONAS.map((zona) => ({ params: { slug: zona.slug }, props: { zona } }));
+}
+
+interface Props { zona: Zona }
+const { zona } = Astro.props;
+
+const base = Astro.site?.origin ?? `https://${SITE.domain}`;
+const url = `${base}/zona/${zona.slug}`;
+const otras = ZONAS.filter((z) => z.slug !== zona.slug);
+
+const ETIQUETA_OP: Record<string, string> = {
+  comprar: 'En venta',
+  arrendar: 'En arriendo',
+  estancias: 'Por días',
+};
+const RUTA_OP: Record<string, string> = {
+  comprar: '/comprar',
+  arrendar: '/arrendar',
+  estancias: '/estancias',
+};
+
+const waTexto = encodeURIComponent(`Hola ALTORRA, me interesa ${zona.nombre} en Cartagena.`);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: base },
+        { '@type': 'ListItem', position: 2, name: 'Zonas de Cartagena', item: `${base}/comprar` },
+        { '@type': 'ListItem', position: 3, name: zona.nombre, item: url },
+      ],
+    },
+    {
+      '@type': 'Place',
+      name: zona.nombre,
+      description: zona.descripcion,
+      url,
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Cartagena de Indias',
+        addressRegion: 'Bolívar',
+        addressCountry: 'CO',
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout title={`${zona.titulo} | ALTORRA`} description={zona.descripcion}>
+  <Header />
+
+  <main id="contenido">
+    <section class="alt-section zona-hero">
+      <div class="alt-container">
+        <p class="alt-eyebrow">Cartagena de Indias</p>
+        <h1 class="zona-hero__h1">{zona.nombre}</h1>
+        <p class="zona-hero__sub">{zona.descripcion}</p>
+        <div class="zona-hero__ops">
+          {zona.operaciones.map((op) => (
+            <a class="alt-btn alt-btn--navy" href={`${RUTA_OP[op]}?zona=${zona.slug}`}>
+              {ETIQUETA_OP[op]} en {zona.nombre}
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="alt-section">
+      <div class="alt-container zona-cuerpo">
+        <p class="zona-cuerpo__texto">{zona.cuerpo}</p>
+
+        <h2 class="zona-h2">Cómo es la zona</h2>
+        <ul class="zona-rasgos">
+          {zona.rasgos.map((r) => <li class="zona-rasgo">{r}</li>)}
+        </ul>
+
+        <h2 class="zona-h2">A quién le sirve</h2>
+        <p class="zona-cuerpo__texto">{zona.paraQuien}</p>
+      </div>
+    </section>
+
+    {/* La afirmación de cobertura va UNA sola vez por página (voz §Regla de variedad). */}
+    <section class="alt-section alt-section--ink">
+      <div class="alt-container zona-cta">
+        <h2 class="zona-cta__h2">Trabajamos {zona.nombre} con el mismo equipo que el resto de la ciudad.</h2>
+        <p class="zona-cta__p">
+          Antes de mostrarte una propiedad aquí revisamos sus papeles documento por documento. Cuando
+          quieras verla, te acompañamos con calma.
+        </p>
+        <a class="alt-btn alt-btn--gold" href={`${SITE.contact.whatsappLink}?text=${waTexto}`} rel="noopener">
+          Hablemos de {zona.nombre}
+        </a>
+        <p class="zona-cta__legal">Matrícula de Arrendador No. {SITE.matriculaArrendador}</p>
+      </div>
+    </section>
+
+    <section class="alt-section alt-section--alt">
+      <div class="alt-container">
+        <h2 class="zona-h2">Otras zonas de Cartagena</h2>
+        <ul class="zona-otras">
+          {otras.map((z) => (
+            <li><a class="alt-chip" href={`/zona/${z.slug}`}>{z.nombre}</a></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+</BaseLayout>
+
+<style>
+  .zona-hero { padding-block: var(--alt-space-8) var(--alt-space-6); }
+  .zona-hero__h1 {
+    font-family: var(--alt-font-display);
+    font-size: var(--alt-fs-hero);
+    font-weight: var(--alt-fw-semibold);
+    color: var(--alt-text-strong);
+    letter-spacing: var(--alt-tracking-tight);
+    margin: var(--alt-space-2) 0 var(--alt-space-3);
+  }
+  .zona-hero__sub {
+    font-size: var(--alt-fs-lg);
+    color: var(--alt-text-muted);
+    max-width: 62ch;
+    margin: 0 0 var(--alt-space-5);
+  }
+  .zona-hero__ops { display: flex; flex-wrap: wrap; gap: var(--alt-space-3); }
+
+  .zona-cuerpo { max-width: 72ch; }
+  .zona-cuerpo__texto { font-size: var(--alt-fs-body); color: var(--alt-text); line-height: 1.75; }
+  .zona-h2 {
+    font-family: var(--alt-font-display);
+    font-size: var(--alt-fs-h2);
+    font-weight: var(--alt-fw-semibold);
+    color: var(--alt-text-strong);
+    margin: var(--alt-space-7) 0 var(--alt-space-4);
+  }
+  .zona-rasgos { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--alt-space-3); }
+  @media (min-width: 640px) { .zona-rasgos { grid-template-columns: 1fr 1fr; } }
+  .zona-rasgo {
+    background: var(--alt-surface-neu);
+    border-radius: var(--alt-r-lg);
+    box-shadow: var(--alt-elev-card);
+    padding: var(--alt-space-4);
+    color: var(--alt-text);
+    font-size: var(--alt-fs-sm);
+  }
+
+  .zona-cta { text-align: center; max-width: 64ch; margin-inline: auto; }
+  .zona-cta__h2 {
+    font-family: var(--alt-font-display);
+    font-size: var(--alt-fs-h2);
+    font-weight: var(--alt-fw-semibold);
+    margin: 0 0 var(--alt-space-3);
+  }
+  .zona-cta__p { color: var(--alt-text-soft); margin: 0 0 var(--alt-space-5); }
+  .zona-cta__legal {
+    margin: var(--alt-space-5) 0 0;
+    font-size: var(--alt-fs-xs);
+    color: var(--alt-text-soft);
+    letter-spacing: var(--alt-tracking-eyebrow);
+  }
+
+  .zona-otras { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--alt-space-2); }
+</style>

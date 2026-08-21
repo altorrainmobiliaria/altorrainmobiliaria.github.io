@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { ZONAS } from '../lib/content/zonas';
 
 /**
  * `sitemap.xml` (MEGA-PLAN §OLA 1 ítem 11 · ADR §90).
@@ -29,7 +30,7 @@ interface Entrada {
  * · `/gestion` · `/design-system` · `/404`   → internas (además llevan `noindex` en BaseLayout).
  * · `/favoritos` · `/ingresar`               → utilidades del usuario, sin contenido indexable.
  * · fichas de inmueble                       → entran cuando el catálogo deje de ser DEMO (§60).
- * · landings de barrio `/zona/<slug>`        → entran al construir OLA 1 ítem 4.
+ * (las landings de barrio `/zona/<slug>` SÍ entran: se derivan de `ZONAS` al final de la lista).
  */
 const RUTAS: Entrada[] = [
   { ruta: '/', prioridad: 1.0, frecuencia: 'daily' },
@@ -49,11 +50,22 @@ const RUTAS: Entrada[] = [
   { ruta: '/legal/politica-tratamiento-datos', prioridad: 0.3, frecuencia: 'yearly' },
 ];
 
+/**
+ * Landings de zona (ADR §92). Se DERIVAN de `ZONAS` para que una landing nueva entre al sitemap
+ * sola: el olvido más común al añadir contenido es no meterlo al sitemap, y entonces Google tarda
+ * semanas o no la descubre. ⚠️ Al añadir zonas hay que RE-ENVIAR el sitemap en GSC (§50 cutover).
+ */
+const RUTAS_ZONA: Entrada[] = ZONAS.map((z) => ({
+  ruta: `/zona/${z.slug}`,
+  prioridad: 0.7,
+  frecuencia: 'monthly',
+}));
+
 export const GET: APIRoute = ({ site }) => {
   const base = (site?.origin ?? 'https://altorrainmobiliaria.co').replace(/\/$/, '');
   const lastmod = new Date().toISOString().slice(0, 10);
 
-  const urls = RUTAS.map(
+  const urls = [...RUTAS, ...RUTAS_ZONA].map(
     ({ ruta, prioridad, frecuencia }) => `  <url>
     <loc>${base}${ruta}</loc>
     <lastmod>${lastmod}</lastmod>

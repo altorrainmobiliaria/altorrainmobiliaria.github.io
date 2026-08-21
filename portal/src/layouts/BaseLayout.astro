@@ -13,9 +13,18 @@ interface Props {
 
 const {
   title,
-  description = 'Altorra Inmobiliaria — gestión integral en soluciones inmobiliarias. Cartagena de Indias.',
+  // Eslogan OFICIAL (`CLAUDE.md §1`); el anterior «gestión integral en soluciones inmobiliarias»
+  // quedó REEMPLAZADO. Y la marca se escribe SIEMPRE en mayúscula (voz §3.2), nunca «Altorra».
+  description = 'ALTORRA Inmobiliaria — Seguridad, Legalidad y Confianza. Cartagena de Indias.',
   noindex = false,
 } = Astro.props;
+
+// CANONICAL AUTORREFERENCIAL en TODA página (requisito de `search-console-setup-y-diagnostico` §2).
+// Se resuelve aquí y no página por página: un canonical que falta o apunta mal hace que Google
+// indexe otra URL en tu lugar, y es el tipo de error que nadie ve mirando la pantalla.
+// Siempre sobre el dominio de PRODUCCIÓN (`site` de astro.config), nunca sobre el host del request:
+// en staging el host es *.workers.dev y auto-referenciarlo enseñaría el staging.
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://altorrainmobiliaria.co').href;
 
 // Indexable SOLO en build de producción; por defecto (staging *.workers.dev) => noindex (O3/T1).
 // `noindex` fuerza noindex SIEMPRE (páginas internas/admin: /gestion, /design-system).
@@ -30,6 +39,7 @@ const indexable = import.meta.env.PUBLIC_SITE_ENV === 'production' && !noindex;
     <title>{title}</title>
     <meta name="description" content={description} />
     {!indexable && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     {/*

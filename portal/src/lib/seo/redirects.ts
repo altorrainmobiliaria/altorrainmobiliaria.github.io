@@ -16,6 +16,8 @@
  * más tarde es barato y no pierde señal; mandarlo a un 404 hoy sí la pierde.
  */
 
+import { ZONAS } from "../content/zonas";
+
 export interface Redirect {
   /** Ruta vieja tal cual la conoce Google, con `.html`. */
   de: string;
@@ -25,22 +27,17 @@ export interface Redirect {
   pendiente?: string;
 }
 
-/** Los 13 barrios que el sitio viejo tenía como landing propia (MEGA-PLAN OLA 1 ítem 4). */
-export const BARRIOS = [
-  'alto-bosque', 'cielo-mar', 'el-cabrero', 'el-laguito', 'karibana', 'la-boquilla',
-  'manzanillo-del-mar', 'marbella', 'pie-de-la-popa', 'san-diego', 'serena-del-mar', 'tierrabomba',
-] as const;
-
 /**
- * Barrios → SERP filtrado por zona. Es un destino REAL y temático (no la home), así que el 301
- * transfiere. Al construir `/zona/<slug>` (ítem 4) se re-apunta: ahí es donde vive el contenido
- * editorial por barrio que el sitio viejo sí tenía y hoy no tenemos.
+ * Barrios → su landing `/zona/<slug>` (ADR §92). Se DERIVAN de `ZONAS`, que es el nodo dueño del
+ * censo de zonas: así es IMPOSIBLE que exista una landing sin su 301, o un 301 apuntando a una
+ * landing que nadie construyó. Al añadir una zona en `zonas.ts`, su redirect aparece solo.
+ *
+ * Excepción `baru`: en el sitio viejo su URL era `/propiedades-baru.html`, no `/baru.html`, así que
+ * su entrada va abajo a mano. Las demás siguen el patrón `/<slug>.html`.
  */
-const REDIRECTS_BARRIOS: Redirect[] = BARRIOS.map((b) => ({
-  de: `/${b}.html`,
-  a: `/comprar?zona=${b}`,
-  pendiente: `/zona/${b}`,
-}));
+const REDIRECTS_BARRIOS: Redirect[] = ZONAS
+  .filter((z) => z.slug !== 'baru')
+  .map((z) => ({ de: `/${z.slug}.html`, a: `/zona/${z.slug}` }));
 
 const REDIRECTS_MANUALES: Redirect[] = [
   // ── Listados y operación ────────────────────────────────────────────────────────────────────
@@ -48,7 +45,7 @@ const REDIRECTS_MANUALES: Redirect[] = [
   { de: '/propiedades-comprar.html', a: '/comprar' },
   { de: '/propiedades-arrendar.html', a: '/arrendar' },
   { de: '/propiedades-alojamientos.html', a: '/estancias' },
-  { de: '/propiedades-baru.html', a: '/comprar?zona=baru', pendiente: '/zona/baru' },
+  { de: '/propiedades-baru.html', a: '/zona/baru' },
   { de: '/comprar-apartamento-cartagena.html', a: '/comprar?tipo=apartamento' },
   { de: '/arrendar-apartamento-cartagena.html', a: '/arrendar?tipo=apartamento' },
   { de: '/lotes-campestres-cartagena.html', a: '/comprar?tipo=lote' },
