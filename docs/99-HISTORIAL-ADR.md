@@ -3260,3 +3260,60 @@ esconderá, que es la forma más cara de decir que no. El escritor tiene que val
 predicados que el lector — es la lección entera de [[L-45]] aplicada al alta.
 **104.8 — Doctrina**: §3.3 · §G.4 caza-bugs (recorrer TODOS los lectores, no solo el que tocaste) ·
 [[L-45]](e) · gate legal B3 de `42-LEGAL`.
+
+---
+
+## 105. ADR — «Avalúo»: dos páginas ofreciendo lo mismo con nombres distintos ⟦OPUS-5⟧ (2026-08-21)
+
+Era el punto (a) de TODO-39, aparcado en §93.6 como *«dos fuentes del cerebro se contradicen en algo con
+peso legal, así que no se cambió por cuenta propia»*. Se desbloqueó leyendo la regla de verdad en vez
+del resumen de la regla.
+
+**105.1 — Causa raíz, y por qué la nota estaba mal planteada.** El `10` lo resumía como «B13 PROHÍBE la
+palabra». `42-LEGAL §9` dice algo más estrecho y más útil: **nunca llamar «avalúo» a NUESTRA
+estimación** (Ley 1673/2013 — el avalúo es actividad regulada; solo avaluadores inscritos en el RAA).
+No es un veto al vocabulario: es un veto a **atribuirse una actividad regulada**. Con esa lectura, el
+caso deja de ser ambiguo y se parte limpio en dos.
+
+Y el sitio contenía su propia contradicción, página contra página: `/rango-altorra` capta propietarios
+llamándolo «Rango», con disclaimer y sin usar jamás la palabra (§94), mientras `/publicar` capta
+**exactamente lo mismo** —el dueño deja sus datos, un asesor le devuelve un precio— bajo el título
+**«Solicita tu avalúo gratis»** y sin aviso ninguno. Gratis + nuestro + llamado avalúo es la forma
+exacta que la norma persigue: si lo regalas es porque no lo estás encargando a un inscrito.
+
+**105.2 — Solución estructural: el corte por quién produce el número.** (a) Donde el texto describe **a
+un asesor de ALTORRA fijando el precio** —H2 del formulario, botón, mensaje de éxito, hero, paso 02,
+tarjeta de beneficio, CTA del plan, «Avalúo gratis» del footer, subtítulo del menú— se renombra a
+**valoración**, y `/publicar` gana el **disclaimer** con el mismo tratamiento visual que el de
+`/rango-altorra` (filo de oro, texto suave: se lee como nota honesta, no como letra pequeña). (b) Donde
+el texto **reclama una línea de servicio** —«Avalúos» en el menú Gestión, «Avalúo y fotografía
+profesional» en el plan Premium— **no se toca**: si ALTORRA lo contrata a un avaluador inscrito son
+correctos, y si no, sobran. Eso es un **HECHO que solo tiene Daniel**, no una decisión de redacción, y
+el porqué quedó escrito EN EL CÓDIGO junto a cada uno para que no parezca un olvido.
+
+**105.3 — La otra mitad de la contradicción.** La skill `catalogo-voz-altorra` usaba «Avalúo» suelto en
+el menú de WhatsApp y en la guía de registro por línea de negocio. Corregida en AMBAS copias (§33): sin
+esto, el próximo «yo» vuelve a escribir la palabra con toda la razón del mundo, porque la voz de marca
+se la estaba pidiendo. Arreglar el sitio y dejar la fuente intacta es arreglar el síntoma.
+
+**105.4 — Verificación EN VIVO** (no solo build): `/publicar` sirve H2 «Pide tu valoración gratis»,
+botón «Pedir valoración», y el aviso con `border-left` **`rgb(212,175,55)`** — el dorado oficial, no un
+color inventado. Barrido del texto renderizado: solo quedan dos «avalúo» en la página, el del propio
+disclaimer y el del plan pagado que se dejó a propósito. 168 tests + `build` + `verify:build`.
+
+**105.5 — Anti-patterns evitados.** NO se borró la línea de servicio del menú «para ir a lo seguro»:
+quitarle a un negocio un servicio que quizá sí presta no es prudencia, es decidir por él. NO se dejó el
+formulario gratuito como estaba esperando a que Daniel opinara: ahí no había nada que opinar, había una
+norma y una página hermana que ya la cumplía. NO se tocó solo el sitio dejando la skill contradiciéndolo.
+
+**105.6 — Archivos.** `portal/src/pages/publicar.astro` (copy + disclaimer + estilo), `Footer.astro`,
+`Header.astro`, `skills/catalogo-voz-altorra/SKILL.md` (×2 copias),
+`skills/legal-colombia/SKILL.md` (×2 — la regla transferible). INTACTOS: `/rango-altorra`, que ya
+estaba bien, y toda la capa de datos.
+
+**105.7 — Lo transferible** (a `legal-colombia`): usar en publicidad el nombre de una **profesión
+regulada** ya es ejercerla a ojos del regulador; la señal de alarma es el combo **`gratis` + `nuestro`**;
+y al auditar, distinguir el texto que describe *tu propia estimación* (se corrige sin preguntar) del que
+**reclama una línea de servicio** (depende de un hecho del dueño: se pregunta, no se reescribe).
+**105.8 — Doctrina**: §3.3 (se leyó `42-LEGAL §9`, no el resumen del `10` — que es lo que llevaba el
+caso bloqueado) · §G.4 destilar a skills · gate B13.

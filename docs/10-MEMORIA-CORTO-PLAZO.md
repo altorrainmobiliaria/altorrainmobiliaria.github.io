@@ -27,13 +27,13 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-17** | **Ola 0 restos**: E2E "tras cache" (T9) · 0.4 obra AEO (el deploy de rules ya es la fase 2 del runbook). | 🔄 | gate=CUTOVER |
+| **TODO-17** | **Ola 0 restos**: E2E "tras cache" (T9) · 0.4 obra AEO. | 🔄 | gate=CUTOVER |
 | **TODO-21** | **Lote-dueño**: Nº **RNT** · dirección física y COMERCIAL · abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño | gate=obra |
 | **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-38** (§90) gates a medias: #27 sin `creas` · #5 existencia≠corrección · `§NN` sueltos sin gate · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO) · **TODO-40** ✅ cerrado (`30`→`35` · `33` destilado · `00`→`00b`, §100). Frente vivo: **`30` al 92% de chars** → shard ANTES de reventar; NO subir techos ([[M-05]]). | 🔄 | §84·§87·§90·§96 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-44** | 🖥️ **Admin v1 — el CRUD pasó a REQUISITO DEL CUTOVER (§103)**: el único alta que existe es la de `admin.html` y escribe un modelo que el portal DESCARTA (índice vacío, cero errores). Sin CRUD propio no hay catálogo real. ✅ puerta (§98) + leads (§101). Resta CRUD, cola de verificación y export. No lo gatea nadie (§100). | 🔴 SIGUIENTE | §103 |
 | **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, [[L-39]] → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
-| **TODO-39** | 🌊 **OLA 1 ✅ 13 de 13** (§91-§96 → `00`). Queda SOLO lo que no es código: (a) ⚠️ **tuya (§94.6)**: «Avalúo» sale en `Header`/`Footer` y B13 lo PROHÍBE (Ley 1673), la skill de voz sí lo usa — dos fuentes del cerebro en contradicción legal; (b) el **go/no-go de ola** con Daniel (MEGA-PLAN §4.4). | 🟢 código listo | §96 |
+| **TODO-39** | 🌊 **OLA 1 ✅ 13 de 13** (§91-§96 → `00`). (a) ✅ «Avalúo» RESUELTO en §105 (queda 1 pregunta suya → pelota 11); (b) el **go/no-go de ola** con Daniel (MEGA-PLAN §4.4). | 🟢 código listo | §105 |
 | **TODO-22** | **CATÁLOGO — código COMPLETO, incluida la FICHA (§97)**. Datos reales = **fases 3-4 del runbook**; después, fichas al sitemap desde el índice. | 🟢 cutover | §102 |
 | **TODO-42** | 🔑 **Claim de staff — CÓDIGO LISTO, falta desplegar** (§99) = **fase 1 del runbook**, aislada y se puede hacer HOY (no toca reglas). ⏭️ **Daniel**: (1) me confirma el deploy — concede permisos de admin, prefiero que lo sepas; (2) pulsa «Sincronizar permisos» en admin.html → Usuarios; (3) abre `/gestion`. | 🟡 deploy | §102 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
@@ -54,10 +54,9 @@
 > `/inmueble/<slug>` (§97), Workers Caching encendido y `/gestion` tras puerta (§98). Lo que falta de
 > OLA 1 ya no es código: el go/no-go del dueño y la contradicción de «Avalúo» (§94.6).
 >
-> **§102: el cutover ya no se improvisa** → **`specs/CUTOVER-RUNBOOK.md`** es el SSoT del orden: seis
-> fases, quién hace cada paso, verificación con evidencia y vuelta atrás. Salió de ahí un hallazgo
-> grande: `PUBLIC_SITE_ENV` **no se declaraba en el CI**, así que todo build del repo salía `noindex`
-> — el del cutover incluido. Ya son 3 perillas por variable de repositorio, con defaults seguros.
+> **§102: el cutover ya no se improvisa** → **`specs/CUTOVER-RUNBOOK.md`** es el SSoT del orden (6 fases,
+> con verificación y vuelta atrás). De ahí salió que `PUBLIC_SITE_ENV` no se declaraba en el CI: TODO
+> build del repo salía `noindex`. Ya son 3 perillas por variable de repositorio, con defaults seguros.
 >
 > **§103: el panel viejo escribe OTRO modelo.** `admin.html` y el portal comparten `propiedades` con
 > esquemas incompatibles ⇒ una propiedad creada allá pasa el filtro y luego se cae: índice vacío, SERP
@@ -93,6 +92,9 @@
 > **(10) 📧 RESEND — el último gate de las alertas (§96)**: dominio verificado + clave = **fase 0.2 del
 > runbook** (detalle allá). Sin eso el digest NO falla, solo no envía. Gratis y **no depende del Gmail
 > roto**, que es otro asunto y va al final por decisión tuya.
+> **(11) ⚖️ ¿ALTORRA contrata un avaluador inscrito en el RAA?** De eso, y solo de eso, depende si se
+> quedan «Avalúos» (menú Gestión) y «Avalúo y fotografía profesional» (plan Premium). Todo lo demás ya
+> dejó de llamarse avalúo (§105). Si la respuesta es no, se quitan esas dos y listo.
 > **(9) 📣 PAUTA — al final por decisión tuya (21-ago); aplazarla es seguro** porque la campaña de humo
 > **solo muerde el día que recargues saldo** ([[D-15]]). **Antes de recargar un peso**: sesión de Meta
 > de Altorra ([[D-16c]]), filtro SOLO `Entrega=Activo` + rango Máximo ([[D-15b]] — «Anuncios activos»
