@@ -1,0 +1,59 @@
+---
+/*
+ * JSON-LD del NEGOCIO — se emite en TODAS las páginas desde `BaseLayout` (ADR §95).
+ *
+ * POR QUÉ EXISTE: el sitio viejo tenía structured data en 43 páginas y el portal nuevo no tenía
+ * NINGUNO hasta §92 (verificado con grep). Esto es lo que permite que Google y los motores de
+ * respuesta (ChatGPT, Perplexity) sepan QUIÉN es ALTORRA, no solo qué dice cada página. Va en el
+ * layout y no página por página porque la identidad del negocio no cambia entre rutas.
+ *
+ * `RealEstateAgent` es subtipo de `LocalBusiness` y es el tipo exacto del negocio. No se usa
+ * `Organization` a secas: perder la señal local en una inmobiliaria de una sola ciudad sería
+ * regalar justo la ventaja que tenemos.
+ *
+ * ⚠️ SOLO HECHOS VERIFICADOS. En particular NO se declara `streetAddress`: `docs/05` dice que la
+ * dirección COMERCIAL todavía falta (la del acto administrativo es el domicilio del representante).
+ * Un `PostalAddress` sin calle es válido; uno con una calle inventada es una mentira que Google
+ * indexa y que además contradiría lo que diga el Perfil de Empresa cuando se reclame.
+ *
+ * Tampoco se declara `aggregateRating` ni `review`: no hay reseñas propias, e inventarlas es
+ * exactamente lo que sanciona la SIC y por lo que Google aplica acciones manuales.
+ */
+import { SITE } from '../lib/config/site';
+
+const base = Astro.site?.origin ?? `https://${SITE.domain}`;
+
+const negocio = {
+  '@context': 'https://schema.org',
+  '@type': 'RealEstateAgent',
+  '@id': `${base}/#negocio`,
+  name: SITE.name,
+  legalName: SITE.legalName,
+  slogan: SITE.slogan,
+  url: base,
+  logo: `${base}/assets/altorra-emblema.webp`,
+  image: `${base}/assets/altorra-emblema.webp`,
+  telephone: SITE.contact.whatsapp,
+  email: SITE.contact.email,
+  // NIT. `taxID` es el campo correcto para el identificador tributario del negocio.
+  taxID: SITE.nit,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Cartagena de Indias',
+    addressRegion: 'Bolívar',
+    addressCountry: 'CO',
+  },
+  areaServed: { '@type': 'City', name: 'Cartagena de Indias' },
+  availableLanguage: ['es', 'en'],
+  sameAs: [SITE.social.instagram, SITE.social.facebook, SITE.social.tiktok],
+  // Credencial pública por mandato legal (Ley 820/2003 art. 31). Declararla como identificador
+  // estructurado la hace verificable por máquina, que es justo el punto de este bloque.
+  identifier: {
+    '@type': 'PropertyValue',
+    name: 'Matrícula de Arrendador',
+    value: SITE.matriculaArrendador,
+  },
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(negocio)} is:inline />

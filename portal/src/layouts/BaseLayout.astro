@@ -4,6 +4,7 @@
 import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/components.css';
+import JsonLdNegocio from '../components/JsonLdNegocio.astro';
 
 interface Props {
   title: string;
@@ -55,6 +56,12 @@ const indexable = import.meta.env.PUBLIC_SITE_ENV === 'production' && !noindex;
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
     />
+
+    {/* Identidad del negocio en JSON-LD, en TODAS las páginas (ADR §95). Va en el layout porque
+        quién es ALTORRA no cambia entre rutas, y porque repetirlo por página es la vía segura a
+        que una se quede sin él. Las páginas que además tienen structured data PROPIO (zonas,
+        precios, Rango) emiten su bloque aparte: varios JSON-LD por documento son válidos. */}
+    <JsonLdNegocio />
   </head>
   <body>
     <slot />
