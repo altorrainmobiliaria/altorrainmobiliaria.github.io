@@ -93,6 +93,34 @@ juzgues por captura de pantalla, porque el fallback se ve BIEN; (3) si el códig
 **añade una sonda gateada por DEV** antes de seguir adivinando; (4) desconfía de un estado que diga
 "verificado" sin decir QUÉ se verificó: aquí se había verificado el SERVIDOR de tiles, no el render.
 
+## 4c. 🕳️ El camino que el JS TAPA — el fallback que nadie ejecuta jamás
+Un formulario progresivamente mejorado tiene DOS caminos: el `fetch` de la isla y el POST nativo del
+navegador. Al probar en un navegador **siempre corre el primero**, así que el segundo puede llevar
+meses roto sin que ninguna verificación lo note — y es justo el que atiende a quien tiene el JS
+bloqueado, la red a medias o un bot de accesibilidad. **Ejercítalo con `curl`**, que es lo único que
+lo dispara de verdad:
+- POST nativo = `Content-Type: application/x-www-form-urlencoded` **y** cabecera `Origin` del propio
+  sitio. Sin `Origin` muchos frameworks (Astro, SvelteKit, Next con Server Actions) devuelven **403**
+  por su comprobación anti-CSRF, y ese 403 se confunde con un bug tuyo: no lo es, es que `curl` no
+  simula un navegador salvo que se lo digas.
+- Espera un **303 con `Location`**, no un 200: el patrón correcto es POST-Redirect-GET (un F5 no
+  puede reenviar el formulario).
+- Comprueba que el redirect **conserva el contexto** (la búsqueda, los filtros, lo ya escrito). Un
+  error que devuelve el formulario en blanco pierde al usuario igual que un fallo.
+
+**Y desconfía del middleware que toca TODAS las respuestas.** Una cabecera añadida a cada respuesta
+(noindex de staging, request-id, CORS) alcanza también a las respuestas que el framework fabrica, y
+algunas son **inmutables** por el estándar Fetch — `Response.redirect()` y `Response.error()` nacen
+con las cabeceras congeladas y cualquier `set()` **lanza**. Resultado: 500 en todo endpoint que
+redirija, o sea exactamente el fallback sin JS. Si además la cabecera solo se añade fuera de
+producción, el 500 aparece **solo en staging**, que es donde se verifica todo. Patrón seguro:
+`try { headers.set(...) } catch { reconstruir la Response con Headers nuevas }`.
+
+**Regla portable**: cuando un subsistema tenga un camino A (el que usa la gente con todo funcionando)
+y un camino B (degradado, de error, sin JS, sin permisos), **B no está probado hasta que lo hayas
+disparado tú**. Enuméralos antes de cerrar: es una lista corta y casi siempre hay uno que nadie ha
+ejecutado nunca.
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.

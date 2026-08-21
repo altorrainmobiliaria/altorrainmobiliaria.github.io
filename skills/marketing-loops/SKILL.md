@@ -96,6 +96,28 @@ Default to time-of-day cron for review-style loops (weekly review, ranking watch
 
 When nothing in the catalog fits, author a new loop from `references/loop-template.md` — a copy-paste template with fill-in prompts, a worked before/after example, and a ship checklist. Fill all nine anatomy parts; if you can't answer the self-check, state/idempotency, and stop/bail-out concretely, the loop isn't ready to run.
 
+## The digest loop — the four rules that decide whether it survives
+
+A saved-search / new-match digest is the cheapest recurring loop there is, and the one most often
+shipped broken. Four rules, learned the hard way (ALTORRA portal, 2026-08-21):
+
+1. **Advance the "already sent" watermark ONLY after the provider accepted the batch.** If a network
+   failure moves it anyway, every item published in that window is invisible forever. Accept the
+   opposite risk deliberately: a lost response means someone gets the same digest twice. Repeating is
+   noise; losing breaks the promise the signup page made.
+2. **Take "now" BEFORE you read the data, not after you send.** Anything published between the read
+   and the send would otherwise fall below the watermark and never be announced.
+3. **Unsubscribe is a POST, never a GET.** Gmail, Outlook and corporate antivirus *open* the links in
+   a message to scan them; with the opt-out on the GET they will unsubscribe people who never read
+   it. Link to a page with a button, and also send `List-Unsubscribe` +
+   `List-Unsubscribe-Post: List-Unsubscribe=One-Click` (RFC 8058) so the mail client renders its own
+   button — without it, people use "mark as spam" to stop the mail, and that burns the domain.
+4. **Send nothing when there is nothing.** A digest that goes out empty on a quiet day trains people
+   to ignore it, and the promise on the signup page should say so in those words: *one email a day at
+   most, and only if there is something new*. Cap the items per email and link to the full search —
+   and if a daily quota forces you to defer some recipients, **log what was deferred**: a silent
+   truncation reads as "nobody matched."
+
 ## Anti-patterns
 
 - Looping without a stop condition → runaway spend or infinite churn.

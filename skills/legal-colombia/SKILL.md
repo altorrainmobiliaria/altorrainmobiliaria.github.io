@@ -48,6 +48,17 @@ Usa este método. (Puedes usar esos plugins solo si el usuario pide EXPLÍCITAME
 - **Retracto (Ley 1480 Art. 47):** 5 días hábiles; pero piezas **a la medida/personalizadas NO admiten
   retracto** — clave en joyería; advertirlo.
 - **Habeas Data (Ley 1581):** **consentimiento tácito PROHIBIDO** — autorización previa, expresa, informada.
+- **Habeas Data en la INTERFAZ, no solo en el papel (regla operativa, 2026-08-21):** la autorización
+  solo vale si es **informada**, y eso se juzga por lo que el titular VIO, no por lo que quedó
+  guardado. Tres formas de romperlo sin darse cuenta: (a) el texto legal se guarda **partido en
+  fragmentos** para poder enlazar documentos, y una plantilla pinta la mitad — la frase termina en
+  «conforme a su» y suena completa; (b) la casilla viene **premarcada** o el envío se acepta sin ella
+  (el silencio jamás equivale a autorización, D.1377/2013 art. 7); (c) el correo periódico **no lleva
+  salida**, cuando revocar debe ser tan fácil como autorizar (Ley 1581 art. 8 lit. e). **Verificación
+  barata que caza (a):** compara el `textContent` renderizado contra la cadena completa que se archiva
+  como prueba; si no coinciden carácter a carácter, lo que se firmó y lo que se enseñó no son lo
+  mismo. Y guarda con cada aceptación la **versión del texto** más fecha, IP y user-agent: una
+  autorización que no se puede probar equivale a no tenerla.
 - **RUCOM (ANM):** comercializar oro/esmeraldas sin registro o sin certificado de origen → **decomiso**.
 - **SAGRILAFT / UIAF:** la joyería es **sector de alto riesgo de lavado**; obligaciones según umbral de tamaño.
 - **IVA 19%** sobre joyería terminada (no asumir exclusión del oro). **Factura electrónica DIAN** obligatoria.
