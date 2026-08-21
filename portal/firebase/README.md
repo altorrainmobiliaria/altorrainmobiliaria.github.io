@@ -25,14 +25,22 @@
 firebase deploy --only firestore:rules,firestore:indexes,storage --project altorra-inmobiliaria-345c6
 ```
 
-**COORDINACIÓN CRÍTICA**: el proyecto Firestore lo comparte el **sitio legacy** (admin.html de consulta).
-Desplegar estas reglas **REEMPLAZA el ruleset del proyecto** → el `default deny-all` deniega toda colección
-legacy no declarada aquí. Por eso:
-- **NO desplegar** hasta coordinar con el retiro del legacy (idealmente en/cerca del **cutover**), o
-- añadir primero las match-rules de las colecciones legacy que el admin de consulta aún necesite.
+**RULESET ÚNICO Y FUSIONADO** (ADR §100). Firestore no fusiona rulesets: el último despliegue REEMPLAZA.
+Por eso `firestore.rules` y `storage.rules` de esta carpeta contienen **legacy + portal**, y los DOS
+`firebase.json` (el de la raíz y el de aquí) apuntan a estos mismos archivos — antes había dos ficheros
+con el mismo nombre y desplegar desde la carpeta equivocada revertía el otro en silencio. Los rulesets
+anteriores quedaron en `_legacy/*.PRE-FUSION` (son la vuelta atrás).
 
-**Pendiente antes de desplegar** (T6): tests de reglas contra el **emulador de Firebase**
-(`firebase emulators:exec`) — la partición PUBLIC/PII y el `deny-all` deben probarse, no asumirse.
+🔴 **ORDEN DE DESPLIEGUE, no negociable** (los permisos salen de custom claims, ADR §99):
+1. `firebase deploy --only functions:default` (trigger `claimsStaffSync` + `sincronizarClaimsV2`).
+2. El dueño pulsa **«Sincronizar permisos»** en admin.html → Usuarios.
+3. Comprobar que admin.html sigue entrando y que `/gestion` abre el panel.
+4. **Solo entonces** desplegar las reglas.
+Si se despliegan antes de que existan los claims, NADIE es staff y el panel queda inaccesible.
+
+✅ **Tests de reglas contra el emulador: HECHOS** (`npm run test:rules`, 80 verdes) — cubren que las
+colecciones del legacy siguen vivas, que un autenticado SIN permisos no consigue nada, la distinción
+viewer/editor/super_admin, y los dos agujeros cerrados (`system` y `newsletter`).
 
 ## Nota de acceso (OD1 — decisión fuerte, marcada para ratificación Fable)
 

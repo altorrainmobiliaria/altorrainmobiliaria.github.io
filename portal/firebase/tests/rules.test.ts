@@ -7,7 +7,7 @@ import {
   initializeTestEnvironment,
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { doc, getDoc, getDocs, collection, setDoc } from 'firebase/firestore';
+import { doc, getDoc, getDocs, collection, setDoc, deleteDoc } from 'firebase/firestore';
 
 // T6 (plan endurecido): verifica las Rules del portal (parte 2) contra el emulador. Owner-free (Java local).
 // projectId `demo-*` → rules-unit-testing NUNCA toca el backend real.
@@ -38,7 +38,16 @@ async function seed() {
 }
 
 const anon = () => env.unauthenticatedContext().firestore();
-const staff = () => env.authenticatedContext('admin-uid', { admin: true }).firestore();
+/** Staff genérico (viewer). El claim `admin` es el que exige `esStaff()`; el `rol` afina. */
+const staff = () => env.authenticatedContext('viewer-uid', { admin: true, rol: 'viewer' }).firestore();
+const editor = () => env.authenticatedContext('editor-uid', { admin: true, rol: 'editor' }).firestore();
+const superAdmin = () => env.authenticatedContext('super-uid', { admin: true, rol: 'super_admin' }).firestore();
+/**
+ * 🔴 EL ADVERSARIO QUE IMPORTA: alguien AUTENTICADO y SIN permisos. No es un caso raro — `/ingresar`
+ * deja entrar a cualquiera con un Gmail, así que este es el visitante por defecto del portal con
+ * sesión iniciada. Casi todos los tests nuevos comprueban que a este NO se le abre nada.
+ */
+const cliente = () => env.authenticatedContext('cliente-uid', {}).firestore();
 
 describe('propiedades — get whitelisteado por estado; list/write denegados', () => {
   beforeEach(seed);
@@ -205,5 +214,171 @@ describe('bajasAlertas — append-only, la salida del correo', () => {
   });
   it('anónimo READ de las bajas → DENEGADO', async () => {
     await assertFails(getDoc(doc(anon(), 'bajasAlertas/b-1')));
+  });
+});
+
+// ═════════════════════════════════════════════════════════════════════════════════════════════
+// RULESET FUSIONADO (ADR §100) — lo que hay que demostrar es que el legacy SIGUE VIVO y que el
+// adversario que importa —alguien autenticado y sin permisos— no consigue nada.
+// ═════════════════════════════════════════════════════════════════════════════════════════════
+
+async function seedFusion() {
+  await env.withSecurityRulesDisabled(async (ctx) => {
+    const db = ctx.firestore();
+    await setDoc(doc(db, 'resenas/r-1'), { texto: 'Excelente', _version: 1 });
+    await setDoc(doc(db, 'blog/post-1'), { titulo: 'Guía de arriendo', _version: 1 });
+    await setDoc(doc(db, 'system/meta'), { cacheVersion: 5 });
+    await setDoc(doc(db, 'auditLog/a-1'), { accion: 'crear' });
+    await setDoc(doc(db, 'newsletter/n-1'), { email: 'persona@correo.com', activo: true });
+    await setDoc(doc(db, 'usuarios/viewer-uid'), { rol: 'viewer', activo: true });
+    await setDoc(doc(db, 'usuarios/cliente-uid'), { rol: 'viewer', activo: true });
+    await setDoc(doc(db, 'loginAttempts/hash-1'), { intentos: 1 });
+    await setDoc(doc(db, 'drafts_activos/editor-uid'), { propId: 'INM-1' });
+    await setDoc(doc(db, 'alertas/a-1'), { email: 'x@y.co', token: 'secreto-largo-de-sobra' });
+    await setDoc(doc(db, 'contratos/c-1'), { estado: 'vigente' });
+    await setDoc(doc(db, 'pagos/p-1'), { estado: 'pendiente' });
+    await setDoc(doc(db, 'solicitudes/lead-x'), { nombre: 'Ana', estado: 'pendiente' });
+  });
+}
+
+describe('legacy VIVO — admin.html no se puede quedar sin sus colecciones', () => {
+  beforeEach(async () => {
+    await seed();
+    await seedFusion();
+  });
+
+  it('🔴 loginAttempts sigue abierto: se escribe ANTES de tener sesión', async () => {
+    // Si esto falla, el login del panel legacy revienta con «Error inesperado» DESPUÉS de autenticar
+    // bien, porque `resetLoginAttempts()` corre dentro del try sin catch propio.
+    await assertSucceeds(getDoc(doc(anon(), 'loginAttempts/hash-1')));
+    await assertSucceeds(setDoc(doc(anon(), 'loginAttempts/hash-2'), { intentos: 1 }));
+  });
+
+  it('reseñas y blog siguen siendo de lectura pública', async () => {
+    await assertSucceeds(getDoc(doc(anon(), 'resenas/r-1')));
+    await assertSucceeds(getDoc(doc(anon(), 'blog/post-1')));
+  });
+
+  it('un editor sigue pudiendo escribir reseñas, blog y system/meta', async () => {
+    await assertSucceeds(setDoc(doc(editor(), 'resenas/r-2'), { texto: 'Buena' }));
+    await assertSucceeds(setDoc(doc(editor(), 'blog/post-2'), { titulo: 'Nueva', _version: 1 }));
+    await assertSucceeds(setDoc(doc(editor(), 'system/meta'), { cacheVersion: 6 }));
+  });
+
+  it('drafts_activos: cada editor escribe SOLO el suyo', async () => {
+    await assertSucceeds(setDoc(doc(editor(), 'drafts_activos/editor-uid'), { propId: 'INM-2' }));
+    await assertFails(setDoc(doc(editor(), 'drafts_activos/otro-uid'), { propId: 'INM-3' }));
+  });
+
+  it('el auditLog es INMUTABLE incluso para el super_admin', async () => {
+    await assertFails(setDoc(doc(superAdmin(), 'auditLog/a-1'), { accion: 'editado' }));
+  });
+
+  it('el borrador de un usuario es suyo y de nadie más', async () => {
+    await assertSucceeds(getDoc(doc(cliente(), 'usuarios/cliente-uid/drafts/d-1')));
+    await assertFails(getDoc(doc(cliente(), 'usuarios/viewer-uid/drafts/d-1')));
+  });
+});
+
+describe('🔴 el adversario: autenticado y SIN permisos (cualquiera con un Gmail)', () => {
+  beforeEach(async () => {
+    await seed();
+    await seedFusion();
+  });
+
+  it('no lee leads, ni captaciones, ni contratos, ni pagos', async () => {
+    for (const ruta of ['solicitudes/lead-x', 'captaciones/INM-1', 'contratos/c-1', 'pagos/p-1']) {
+      await assertFails(getDoc(doc(cliente(), ruta)));
+    }
+  });
+
+  it('no lee las alertas (dentro va el token de la baja)', async () => {
+    await assertFails(getDoc(doc(cliente(), 'alertas/a-1')));
+  });
+
+  it('no LISTA propiedades (eso destaparía los borradores)', async () => {
+    await assertFails(getDocs(collection(cliente(), 'propiedades')));
+  });
+
+  it('no lee un BORRADOR aunque sepa su id', async () => {
+    await assertFails(getDoc(doc(cliente(), 'propiedades/INM-2')));
+  });
+
+  it('no escribe propiedades ni se asciende a sí mismo', async () => {
+    await assertFails(setDoc(doc(cliente(), 'propiedades/INM-9'), { estado: 'disponible', _version: 1 }));
+    // El que de verdad importa: si pudiera escribir su propio `rol`, el trigger de claims se lo
+    // convertiría en permisos REALES. Esta es la puerta que sostiene todo el modelo (§99).
+    await assertFails(setDoc(doc(cliente(), 'usuarios/cliente-uid'), { rol: 'super_admin', activo: true }));
+  });
+
+  it('no lista el equipo (eso es solo del super_admin)', async () => {
+    await assertFails(getDocs(collection(cliente(), 'usuarios')));
+  });
+
+  it('sí lee su propio perfil, que es lo único suyo', async () => {
+    await assertSucceeds(getDoc(doc(cliente(), 'usuarios/cliente-uid')));
+  });
+});
+
+describe('roles: viewer, editor y super_admin no son lo mismo', () => {
+  beforeEach(async () => {
+    await seed();
+    await seedFusion();
+  });
+
+  it('un viewer LEE el panel pero no escribe contenido', async () => {
+    await assertSucceeds(getDoc(doc(staff(), 'captaciones/INM-1')));
+    await assertFails(setDoc(doc(staff(), 'resenas/r-9'), { texto: 'no' }));
+    await assertFails(setDoc(doc(staff(), 'propiedades/INM-9'), { estado: 'disponible', _version: 1 }));
+  });
+
+  it('solo el super_admin lista el equipo', async () => {
+    await assertSucceeds(getDocs(collection(superAdmin(), 'usuarios')));
+    await assertFails(getDocs(collection(editor(), 'usuarios')));
+  });
+
+  it('solo el super_admin borra una propiedad', async () => {
+    await assertFails(deleteDoc(doc(editor(), 'propiedades/INM-1')));
+    await assertSucceeds(deleteDoc(doc(superAdmin(), 'propiedades/INM-1')));
+  });
+
+  it('un editor crea con _version 1 y no puede saltarse la concurrencia', async () => {
+    await assertSucceeds(setDoc(doc(editor(), 'propiedades/INM-7'), { estado: 'disponible', _version: 1 }));
+    await assertFails(setDoc(doc(editor(), 'propiedades/INM-8'), { estado: 'disponible', _version: 5 }));
+  });
+});
+
+describe('🔧 los dos agujeros que se cerraron', () => {
+  beforeEach(async () => {
+    await seed();
+    await seedFusion();
+  });
+
+  it('un ANÓNIMO ya NO puede crear documentos en `system`', async () => {
+    // Antes: `allow write: if isEditorOrAbove() || !exists(...)`. Esa segunda mitad era la puerta.
+    await assertFails(setDoc(doc(anon(), 'system/inventado'), { lo: 'que sea' }));
+  });
+
+  it('un ANÓNIMO ya NO puede reescribir la suscripción de otro', async () => {
+    // El alta pública se conserva; modificarla ya es cosa de editores.
+    await assertSucceeds(setDoc(doc(anon(), 'newsletter/n-2'), { email: 'nueva@correo.com', activo: true }));
+    await assertFails(setDoc(doc(anon(), 'newsletter/n-1'), { email: 'secuestrada@x.com', activo: true }));
+  });
+});
+
+describe('el staff conserva sus propias fichas (el escape que evita perder el catálogo)', () => {
+  beforeEach(async () => {
+    await seed();
+    await seedFusion();
+  });
+
+  it('el staff SÍ lee un borrador; el público no', async () => {
+    await assertSucceeds(getDoc(doc(staff(), 'propiedades/INM-2')));
+    await assertFails(getDoc(doc(anon(), 'propiedades/INM-2')));
+  });
+
+  it('el staff LISTA propiedades; el público no', async () => {
+    await assertSucceeds(getDocs(collection(staff(), 'propiedades')));
+    await assertFails(getDocs(collection(anon(), 'propiedades')));
   });
 });

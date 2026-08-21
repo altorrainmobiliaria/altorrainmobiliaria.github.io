@@ -1,69 +1,105 @@
 rules_version = '2';
 
-// Reglas Firestore del PORTAL (modelo de datos v1, Ola 0.7). Frontera PÚBLICO vs INTERNO/PII (OD3),
-// endurecidas tras revisión adversarial ×3 lentes (fail-closed + free-tier).
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// REGLAS DE FIRESTORE — RULESET ÚNICO Y FUSIONADO (legacy + portal). ADR §100.
 //
-// POSTURA DE ESCRITURA (OD1, marcada para ratificación Fable): TODA escritura pasa por Cloud Functions
-// (Admin SDK, que BYPASSA estas reglas) → los invariantes viven server-side: contador INM atómico (OD8),
-// `_version` (L-04), transacción anti-overbooking, `leadScore`, validación de garantía (OD9). Por eso el
-// cliente NUNCA escribe directo (`allow write: if false`). El client SDK del admin es solo para LECTURA
-// acotada (realtime de admin). Seeding = scripts Admin SDK (bypassan reglas).
+// 🔴 POR QUÉ ESTE ARCHIVO ES FUSIONADO Y NO EL DEL PORTAL A SECAS:
+// hasta hoy había DOS rulesets con el mismo nombre — uno en la raíz (el VIVO, del sitio legacy) y otro
+// aquí (el del portal, nunca desplegado). Desplegar este tal como estaba **mataba `admin.html`**: su
+// `deny-all` final tumbaba las colecciones que el panel legacy sigue usando (`loginAttempts`, `resenas`,
+// `blog`, `auditLog`, `drafts_activos`, `newsletter`, `analytics_events`, `system`, `usuarios/*/drafts`),
+// y el camino estaba trazado: `resetLoginAttempts()` corre dentro del `try` del login sin catch propio,
+// así que el rechazo salta al catch general y el dueño vería «Error inesperado» DESPUÉS de autenticar
+// bien. Firestore no fusiona rulesets: el último despliegue REEMPLAZA. Por eso hay uno solo, y por eso
+// los dos `firebase.json` apuntan a ESTE archivo.
 //
-// ⚠️ `firebase deploy --only firestore:rules,firestore:indexes` = lo hace el DUEÑO, COORDINADO: el proyecto
-//    `altorra-inmobiliaria-345c6` lo comparte el legacy → el `default deny-all` reemplaza su ruleset (ver README).
-// TODO(0.7): tests contra el emulador (T6) antes de desplegar.
+// 🔴 PRERREQUISITO DE DESPLIEGUE, NO NEGOCIABLE (ADR §99):
+// los permisos se leen de CUSTOM CLAIMS (`token.admin`, `token.rol`), no de un `get()` a `usuarios`.
+// Eso cuesta CERO lecturas — un `get()` dentro de una regla se factura AUNQUE la petición se deniegue,
+// y en este portal cualquiera con un Gmail consigue estar autenticado, así que un bucle desde la
+// consola vaciaría el free-tier sin conseguir un dato. Pero implica un ORDEN:
+//   1) desplegar `functions:default` (trigger `claimsStaffSync` + `sincronizarClaimsV2`),
+//   2) el dueño pulsa «Sincronizar permisos» en admin.html → Usuarios,
+//   3) comprobar que admin.html sigue entrando y que `/gestion` abre el panel,
+//   4) SOLO ENTONCES desplegar estas reglas.
+// Si se despliegan antes de que existan los claims, NADIE es staff y el panel queda inaccesible. La
+// vuelta atrás es redesplegar el ruleset anterior (`_legacy/firestore.rules.PRE-FUSION`), dos minutos.
+//
+// POSTURA DE ESCRITURA: el destino es que toda escritura de estado pase por Cloud Functions (Admin SDK,
+// que bypassa estas reglas). Todavía NO se puede imponer: `js/admin-properties.js` escribe `propiedades`
+// desde el cliente y `js/admin-leads.js` actualiza `solicitudes`. Mientras esas Functions no existan,
+// esas dos escrituras siguen permitidas POR ROL y con `_version`. Lo que ya nace cerrado nace cerrado.
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Staff = autenticado CON custom claim `admin==true` (lo setea un proceso de confianza vía Admin SDK).
-    function isStaff() {
-      return request.auth != null && request.auth.token.admin == true;
+    // ── HELPERS ─────────────────────────────────────────────────────────────────────────────────
+    // Todos leen del TOKEN. Ninguno toca la base: cero lecturas facturables, y sin el vector de
+    // agotamiento de cuota que tenía la versión con `get()`.
+
+    function autenticado() { return request.auth != null; }
+    /** Rol del claim, sincronizado desde `usuarios/{uid}` por la Function `claimsStaffSync` (§99). */
+    function rol() { return request.auth.token.rol; }
+    /** Staff = cualquiera del equipo (super_admin, editor o viewer). Espeja `isStaff()` de storage.rules. */
+    function esStaff() { return autenticado() && request.auth.token.admin == true; }
+    function esSuperAdmin() { return esStaff() && rol() == 'super_admin'; }
+    function esEditorOMas() { return esStaff() && rol() in ['super_admin', 'editor']; }
+
+    // Concurrencia optimista (L-09): `_version` 1 al crear, +1 en cada update.
+    function versionValida() {
+      return request.resource.data._version == resource.data._version + 1
+          || (resource.data._version == null && request.resource.data._version == 1);
+    }
+    function versionCreacionValida() { return request.resource.data._version == 1; }
+
+    /** Estados que salen en el catálogo público. Espeja `ESTADOS_PUBLICADOS` de `domain/catalogo.ts`. */
+    function estadoPublicado() {
+      return resource.data.estado in ['disponible', 'reservado', 'cerrado'];
     }
 
-    // ---------- PÚBLICO (lectura acotada, FAIL-CLOSED) ----------
-    // Catálogo: GET solo de estados realmente públicos (whitelist; 'cerrado' = ficha permanente por SEO).
-    // LIST público denegado (la SERP se sirve de JSON cacheado, no de queries de cliente — free-tier).
-    match /propiedades/{id} {
-      allow get: if resource.data.estado in ['disponible', 'reservado', 'cerrado'];
-      allow list: if isStaff();
-      allow write: if false;
+    // ── PROPIEDADES ─────────────────────────────────────────────────────────────────────────────
+    // FUSIÓN CON CRITERIO: el legacy tenía `allow read: if true`, o sea que CUALQUIERA podía leer un
+    // BORRADOR — un inmueble sin aprobar, con su precio y sus notas. Se adopta la whitelist del portal,
+    // que es más estricta, MÁS un escape de staff: sin él, el equipo perdería sus propias fichas de
+    // vendidos y arrendados en el panel.
+    match /propiedades/{propId} {
+      allow get: if esStaff() || estadoPublicado();
+      // LIST denegado al público: la SERP se sirve del índice denormalizado, no de queries (free-tier).
+      allow list: if esStaff();
+      allow create: if esSuperAdmin() || (esEditorOMas() && versionCreacionValida());
+      allow update: if esSuperAdmin() || (esEditorOMas() && versionValida());
+      allow delete: if esSuperAdmin();
+
+      // Historial de cambios — INMUTABLE.
+      match /auditLog/{logId} {
+        allow read: if esStaff();
+        allow create: if esEditorOMas();
+        allow update: if false;
+        allow delete: if esSuperAdmin();
+      }
     }
-    // Disponibilidad: GET puntual público; LIST denegado (el calendario se sirve por edge/JSON cacheado — OD1).
-    match /disponibilidad/{id} {
-      allow get: if true;
-      allow list: if false;
-      allow write: if false;
-    }
-    // Config: GET público SOLO de docs no sensibles (general/promo/system-meta); gestion/counters = staff.
-    match /config/{doc} {
-      allow get: if !(doc in ['gestion', 'counters']) || isStaff();
-      allow list: if isStaff();
-      allow write: if false;
-    }
-    // Índice de catálogo denormalizado (OD-Catálogo §54): GET público SOLO de los shards CONOCIDOS
-    // (allow-list explícita, defensa en profundidad §54.4). Contenido = solo resúmenes de propiedades
-    // PUBLICADAS (la Function filtra estado) → NO filtra borradores por diseño. LIST y WRITE denegados.
+
+    // ── ÍNDICE DE CATÁLOGO (portal, §54) ────────────────────────────────────────────────────────
+    // GET público SOLO de los shards conocidos (allow-list explícita). Lo escribe solo la Function.
     match /indices/{doc} {
       allow get: if doc in ['catalogo-venta', 'catalogo-arriendo', 'catalogo-dias'];
       allow list, write: if false;
     }
 
-    // ---------- INTERNO / PII (lectura solo staff; escritura solo Functions) ----------
-    match /captaciones/{id} { allow read: if isStaff(); allow write: if false; } // PII propietario/dirección/matrícula/comisión
+    // ── DISPONIBILIDAD (corta estancia, portal) ─────────────────────────────────────────────────
+    match /disponibilidad/{id} {
+      allow get: if true;
+      allow list: if esStaff();   // el calendario público se sirve por JSON cacheado, no por query
+      allow write: if false;      // la reserva es transaccional y vive en una Function
+    }
 
-    // ⚠️ ALTA PÚBLICA ACOTADA — `solicitudes` y `alertas` son las DOS colecciones donde un visitante
-    // anónimo puede CREAR (nunca leer, nunca editar, nunca borrar). No es una relajación: es lo que el
-    // portal ya hace hoy y estas reglas no reflejaban.
-    //
-    // EL BUG QUE ESTO ARREGLA (ADR §96): `pages/api/solicitud.ts` escribe `solicitudes` por REST con la
-    // apiKey pública, y funciona porque el ruleset VIVO del proyecto sigue siendo el del legacy. Con
-    // `allow write: if false` aquí, el día que este archivo se despliegue (cutover, TODO-17) los
-    // formularios de `/publicar` y del Rango dejarían de capturar leads — sin un solo error en la web,
-    // que es la peor forma de romperse. La postura «toda escritura pasa por Functions» se mantiene para
-    // todo lo demás: aquí lo que entra es un ALTA sin estado ni dinero, y los invariantes caros
-    // (scoring, contadores, envío) los siguen poniendo las Functions después.
+    // ── SOLICITUDES / LEADS ─────────────────────────────────────────────────────────────────────
+    // Alta PÚBLICA acotada (§96): el endpoint del portal y los formularios escriben aquí sin sesión,
+    // pero con forma validada. `update` sigue abierto a editores porque `js/admin-leads.js` cambia el
+    // estado del lead desde el cliente.
     match /solicitudes/{id} {
-      allow read: if isStaff();
+      allow read: if esStaff();
       allow create: if request.resource.data.estado == 'pendiente'
                     && request.resource.data.consentimiento.autorizado == true
                     && request.resource.data.nombre is string
@@ -72,15 +108,14 @@ service cloud.firestore {
                     && request.resource.data.telefono is string
                     && request.resource.data.telefono.size() <= 25
                     && request.resource.data.emailSent == false;
-      allow update, delete: if false;
+      allow update: if esEditorOMas();
+      allow delete: if esSuperAdmin();
     }
 
-    // Alertas guardadas (OLA 1 ítem 8). El `create` valida FORMA y TOPES, que es lo que las reglas
-    // pueden comprobar de verdad; el correo se valida en el endpoint. `hasOnly` cierra la puerta a que
-    // alguien meta campos que la Function no espera. Nadie puede LEERLAS: dentro va el `token` de la
-    // baja, y un token legible no protege nada.
+    // ── ALERTAS GUARDADAS (portal, §96) ─────────────────────────────────────────────────────────
+    // Nadie las LEE salvo staff: dentro va el token de la baja, y un token legible no protege nada.
     match /alertas/{id} {
-      allow read: if isStaff();
+      allow read: if esStaff();
       allow create: if request.resource.data.keys().hasOnly(
                          ['email', 'criterios', 'estado', 'token', 'consentimiento',
                           'ultimoEnvio', 'enviados', 'createdAt', 'updatedAt', '_version'])
@@ -95,15 +130,14 @@ service cloud.firestore {
                     && request.resource.data.criterios.operacion in ['venta', 'arriendo', 'alojamiento']
                     && request.resource.data.criterios.tipos.size() <= 8
                     && request.resource.data.criterios.zonas.size() <= 8;
-      // El paso a `baja` lo hace SOLO la Function del digest (Admin SDK, que bypassa estas reglas).
+      // El paso a `baja` lo hace SOLO la Function del digest (Admin SDK).
       allow update, delete: if false;
     }
 
-    // Peticiones de BAJA (append-only). Es el permiso más pequeño que permite revocar sin dejar que el
-    // público edite `alertas`: aquí solo se pide la baja, y la Function la aplica tras comprobar el
-    // token. `aplicada == false` obliga a que nadie la marque como hecha al crearla.
+    // Peticiones de BAJA (append-only): el permiso más pequeño que permite revocar sin dejar que el
+    // público edite `alertas`, y de paso deja rastro de la revocación (Ley 1581 art. 8).
     match /bajasAlertas/{id} {
-      allow read: if isStaff();
+      allow read: if esStaff();
       allow create: if request.resource.data.keys().hasOnly(['alertaId', 'token', 'createdAt', 'aplicada'])
                     && request.resource.data.alertaId is string
                     && request.resource.data.alertaId.size() <= 64
@@ -113,13 +147,102 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    match /actividades/{id} { allow read: if isStaff(); allow write: if false; }
-    match /expedientes/{id} { allow read: if isStaff(); allow write: if false; }
-    match /contratos/{id}   { allow read: if isStaff(); allow write: if false; }
-    match /pagos/{id}       { allow read: if isStaff(); allow write: if false; }
-    match /novedades/{id}   { allow read: if isStaff(); allow write: if false; }
+    // ── INTERNO / PII (portal) — lectura solo staff; escritura solo Functions ────────────────────
+    match /captaciones/{id} { allow read: if esStaff(); allow write: if false; } // PII, dirección, comisión
+    match /actividades/{id} { allow read: if esStaff(); allow write: if false; }
+    match /expedientes/{id} { allow read: if esStaff(); allow write: if false; }
+    match /contratos/{id}   { allow read: if esStaff(); allow write: if false; }
+    match /pagos/{id}       { allow read: if esStaff(); allow write: if false; }
+    match /novedades/{id}   { allow read: if esStaff(); allow write: if false; }
 
-    // ---------- DEFAULT: todo lo no declarado, DENEGADO (incluye loginAttempts C-25 y legacy) ----------
+    // ── USUARIOS ────────────────────────────────────────────────────────────────────────────────
+    // Sin recursión: la versión anterior necesitaba LEER `usuarios` para saber si podías leer
+    // `usuarios`. Ahora manda el claim. Solo el super_admin LISTA el equipo — un viewer no tiene por
+    // qué ver quién más tiene acceso.
+    match /usuarios/{userId} {
+      allow get: if autenticado() && (request.auth.uid == userId || esSuperAdmin());
+      allow list: if esSuperAdmin();
+      // Escritura SOLO por las callables (`createManagedUserV2` y compañía), que bypassan estas reglas.
+      // Cerrarlo aquí es lo que impide que alguien se escriba su propio `rol` y el trigger de claims
+      // se lo convierta en permisos reales.
+      allow write: if false;
+
+      match /drafts/{draftId} {
+        allow read, write: if autenticado() && request.auth.uid == userId;
+      }
+    }
+
+    // ── CONFIG ──────────────────────────────────────────────────────────────────────────────────
+    // GET público salvo los dos docs sensibles. LIST solo staff.
+    match /config/{docId} {
+      allow get: if !(docId in ['gestion', 'counters']) || esStaff();
+      allow list: if esStaff();
+      allow write: if esSuperAdmin() || (esEditorOMas() && docId == 'counters');
+    }
+
+    // ── SYSTEM (invalidación de caché del legacy) ───────────────────────────────────────────────
+    // 🔧 AGUJERO CERRADO: antes decía `allow write: if isEditorOrAbove() || !exists(...)`, y esa
+    // segunda mitad dejaba que un ANÓNIMO creara cualquier documento nuevo en `system`. Solo editores.
+    // `js/admin-properties.js` escribe `system/meta` como editor, así que nada se rompe.
+    match /system/{docId} {
+      allow read: if true;
+      allow write: if esEditorOMas();
+    }
+
+    // ── LOGIN ATTEMPTS (rate limiting cross-device del legacy) ──────────────────────────────────
+    // Abierto POR DISEÑO: se escribe ANTES de tener sesión, que es justo cuando hay que contar los
+    // intentos. Su debilidad conocida (cualquiera puede resetear el contador de otro) es inherente a
+    // un rate limit de cliente; el límite que de verdad protege es el de Firebase Auth.
+    match /loginAttempts/{emailHash} {
+      allow read, create, update: if true;
+      allow delete: if esSuperAdmin();
+    }
+
+    // ── LEGACY: contenido y operación del sitio viejo (lo usa `admin.html`) ─────────────────────
+    match /resenas/{id} {
+      allow read: if true;
+      allow create, update: if esEditorOMas();
+      allow delete: if esSuperAdmin();
+    }
+
+    match /blog/{postId} {
+      allow read: if true;
+      allow create: if esSuperAdmin() || (esEditorOMas() && versionCreacionValida());
+      allow update: if esSuperAdmin() || (esEditorOMas() && versionValida());
+      allow delete: if esSuperAdmin();
+    }
+
+    match /auditLog/{logId} {
+      allow read: if esStaff();
+      allow create: if esEditorOMas();
+      allow update: if false;   // INMUTABLE
+      allow delete: if esSuperAdmin();
+    }
+
+    match /drafts_activos/{userId} {
+      allow read: if esEditorOMas();
+      allow write: if esEditorOMas() && request.auth.uid == userId;
+      allow delete: if esEditorOMas();
+    }
+
+    // 🔧 AGUJERO CERRADO: `allow update: if true` dejaba que cualquiera reescribiera la suscripción de
+    // otro (correos incluidos). El alta pública se conserva; modificarla ya es cosa de editores.
+    // ⚠️ Esto rompe el re-alta del `js/newsletter.js` del sitio viejo, que está RETIRADO.
+    match /newsletter/{subId} {
+      allow create: if true;
+      allow read: if esStaff();
+      allow update: if esEditorOMas();
+      allow delete: if esSuperAdmin();
+    }
+
+    match /analytics_events/{eventId} {
+      allow create: if true;
+      allow read: if esStaff();
+      allow update: if false;
+      allow delete: if esSuperAdmin();
+    }
+
+    // ── DEFAULT: todo lo no declarado, DENEGADO ─────────────────────────────────────────────────
     match /{document=**} {
       allow read, write: if false;
     }

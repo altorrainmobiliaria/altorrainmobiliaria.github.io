@@ -1,18 +1,60 @@
 rules_version = '2';
 
-// Reglas de Firebase Storage del PORTAL — documentos PRIVADOS (gate B5).
-// Aquí viven cédulas, contratos escaneados, extractos, docs de expediente (PII sensible).
-// ⛔ Deny público TOTAL: solo staff/Functions. Las imágenes PÚBLICAS del catálogo NO viven aquí
-//    (van a Cloudflare R2 — stack sellado ADR §16).
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// REGLAS DE STORAGE — RULESET ÚNICO Y FUSIONADO (legacy + portal). ADR §100.
 //
-// ⚠️ Deploy = DUEÑO, COORDINADO: el bucket lo comparte el legacy (reemplaza su ruleset de Storage). Ver README.
+// 🔴 QUÉ SE ARREGLA AQUÍ: la versión anterior de este archivo declaraba `match /{allPaths=**}` con
+// `allow read, write: if isStaff()`. Eso no solo chocaba con el ruleset del legacy — lo TAPABA:
+// las imágenes de propiedades (`propiedades/`) y la multimedia del sitio (`multimedia/`) son de
+// LECTURA PÚBLICA, y con esa regla habrían dejado de cargar en cuanto se desplegara. Un bucket no se
+// protege poniendo un candado en la raíz: se protege dando a lo privado su propio prefijo.
+//
+// Y el `isStaff()` que usaba era el mismo claim insatisfacible de Firestore (§98.5): nadie lo ponía,
+// así que ni el staff podía entrar. Ahora el claim existe (§99) y esto funciona de verdad.
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
 service firebase.storage {
   match /b/{bucket}/o {
-    function isStaff() {
+
+    /** Mismo claim que `isStaff()` en Firestore. Storage NO puede consultar Firestore, y por eso el
+     *  permiso tenía que viajar en el token: fue una de las razones de peso para elegir claims (§99.3). */
+    function esStaff() {
       return request.auth != null && request.auth.token.admin == true;
     }
+
+    // ── PÚBLICO (legacy): imágenes del catálogo y multimedia del sitio ──────────────────────────
+    // Lectura abierta porque son las fotos que se muestran en la web. Escritura solo autenticado, con
+    // tope de tamaño y tipo — el mismo contrato con el que el panel legacy sube desde el cliente.
+    // ⚠️ Las imágenes del PORTAL nuevo no viven aquí: van a Cloudflare R2 (stack sellado, ADR §16).
+    match /propiedades/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    match /multimedia/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    // ── PRIVADO (portal): documentos con PII — gate B5 ──────────────────────────────────────────
+    // Cédulas, contratos escaneados, extractos, soportes de expediente. Prefijo PROPIO y solo staff;
+    // ni lectura pública ni escritura anónima. La escritura desde el cliente se permite a staff porque
+    // el panel sube soportes; cuando exista la Function de carga, esto pasa a `write: if false`.
+    match /privado/{allPaths=**} {
+      allow read, write: if esStaff();
+    }
+
+    match /expedientes/{allPaths=**} {
+      allow read, write: if esStaff();
+    }
+
+    // ── DEFAULT: todo lo no declarado, DENEGADO ─────────────────────────────────────────────────
     match /{allPaths=**} {
-      allow read, write: if isStaff();
+      allow read, write: if false;
     }
   }
 }
