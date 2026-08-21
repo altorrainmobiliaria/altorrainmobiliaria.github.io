@@ -2767,3 +2767,90 @@ reporta `sin-novedades`. (3) Cloud Scheduler va por **2 de 3** jobs del free tie
 §G.2 🖥️ (`34` antes de tocar código) · §G.4 caza-bugs (los 3 hallazgos salieron de recorrer el camino
 vivo, no el diff) · §G.4 destilar a skills (`caza-bugs`, `legal-colombia`, `marketing-loops`) ·
 §G.4 Frescura en `20`.
+
+## 97. ADR — La ficha dinámica: el gate estaba sobre inventar, no sobre construir ⟦OPUS-5⟧ (2026-08-21)
+
+> TODO-33 desbloqueado y construido. La ficha era la última superficie del portal que seguía siendo
+> una maqueta con datos de muestra.
+
+**97.1 — El gate, releído (tercera vez en tres días).** §60.3 decidió NO construir la ficha porque 4
+bloques del diseño no tenían fuente de datos. Releyéndolo campo por campo, **tres ya traían decisión
+escrita**: la dirección exacta está PROHIBIDA por diseño (PII, vive en `captaciones`), los POIs con
+minutos se omiten en v1, y la financiación es una afirmación sobre un crédito que tiene carril legal
+propio. El cuarto —el asesor— traía default honesto en el mismo ADR: bloque genérico del equipo. O
+sea que el gate estaba sobre **inventar** esos bloques, no sobre construir la página. Es [[L-40]] por
+tercera vez esta semana (§94.1 el Rango, §96.1 las alertas, y ahora esta). La lección ya estaba
+escrita las tres veces; lo que faltó fue re-etiquetar el pendiente. → [[M-11]].
+
+**97.2 — Ruta canónica `/inmueble/<slug>`.** En un portal inmobiliario la ficha ES la página que trae
+tráfico, y una URL con el barrio dentro se comparte por WhatsApp y se posiciona; una con parámetro de
+consulta, no. Hay además una trampa concreta que el recon destapó: `BaseLayout` construye el canonical
+con `Astro.url.pathname`, que **ignora el query string** — con `/ficha?id=X` las N fichas del catálogo
+habrían emitido el MISMO canonical y Google habría indexado una sola propiedad, con la página
+perfecta en pantalla. `/ficha?id=` responde 301 hacia la canónica; sin parámetro sostiene el andamio
+demo, que muere en el cutover.
+
+**97.3 — Un solo dueño del markup.** Dos rutas pintan la ficha, así que el cuerpo vive en
+`components/FichaInmueble.astro` y en ningún otro sitio. Copiarlo habría sido el mismo error que las
+cards del SERP (L-29): dos copias que divergen sin que nada falle. La lógica de VISTA vive aparte en
+`lib/domain/ficha.ts`, pura y testeada; la plantilla solo decide si pinta.
+
+**97.4 — La regla que gobierna cada bloque.** *Un bloque sin dato se OMITE; jamás hereda el valor del
+demo.* Por eso casi todas las funciones del modelo de vista devuelven listas que pueden venir vacías,
+y por eso la mayoría de los 47 tests comprueba una **ausencia**: el fallo que importa no es verse
+feo, es verse bien y ser mentira. La columna que dejaron los POIs la ocupa algo que sí es verdad: la
+ZONA, con enlace a su landing de §92 — dato real y enlazado interno hacia contenido.
+
+**97.5 — Tres gates nuevos, los tres fail-closed.** (a) **Alojamiento sin RNT NO se publica**: el
+tipo lo deja opcional, la ley no, y la sanción es cierre del establecimiento (gate B3). (b) La
+**matrícula de arrendador** solo se exhibe en arriendo Y en Cartagena: la habilitación es municipal y
+enseñarla sobre un inmueble de otra ciudad afirmaría algo que allí no existe. (c) **`reservado` y
+`cerrado`** son estados PÚBLICOS por las Rules (la ficha se conserva por SEO): ahora llevan aviso
+visible, badge coherente y el CTA deja de ofrecer una visita a un inmueble ya vendido.
+
+**97.6 — El hallazgo que más pesa, y no lo vi yo.** La ficha **no comprobaba que la propiedad
+estuviera publicada**. Las Rules del portal filtran por estado pero **no están desplegadas**: el
+ruleset vivo es el del legacy, con `allow read: if true` sobre `propiedades`. Y con un id canónico la
+búsqueda se salta el índice —que sí filtra— y va directo al documento. Un BORRADOR se habría
+publicado entero e indexable. El gate está ahora en el DOMINIO (`esPublicada`, la misma whitelist del
+índice). → [[L-42]]: **una defensa que solo vive en las Rules no existe hasta que las Rules se
+despliegan**; mientras tanto es un comentario.
+
+**97.7 — Seis bugs propios más, todos cazados por la revisión adversarial antes de commitear.**
+`urlMedia` devolvía la clave relativa sin base configurada, así que la misma foto resolvía distinto
+según la ruta y en la ficha daba 404 · favoritos derivaba su id estable del `?id=` del enlace, así que
+cambiar la URL habría dejado huérfano lo guardado en `localStorage` (→ [[L-43]]) · el área se
+rotulaba «Construidos» aunque el dato fuera privada · el JSON-LD declaraba `geo` con el centroide del
+BARRIO como si fuera la posición del inmueble, y el barrio como `addressLocality` borrando la ciudad ·
+sin canonical explícito, id y slug se declaraban canónicos cada uno de sí mismo · y la demo llevaba
+sello «Verificado por ALTORRA» sobre un inmueble que no existe, que es fabricar una verificación.
+
+**97.8 — Tres bugs PREVIOS arreglados de paso** (§G.4 caza-bugs, el camino vivo): el evento
+`altorra:catalogo-pintado` **no lo despachaba nadie**, así que en `live` todas las cards del SERP
+salían con el corazón muerto · el portal **no emitía ni una etiqueta Open Graph**, y en Colombia un
+inmueble se comparte por WhatsApp: salía un enlace pelado · una administración que va aparte y sin
+cifra no se decía, y callarlo hace que el visitante asuma que está incluida (drip pricing, Ley 1480
+art. 26).
+
+**97.9 — Coste, contado.** Una visita cuesta **2 lecturas** por id canónico o por slug de venta, y 4
+en el peor caso. El slug se resuelve contra el índice **en serie parando al primer acierto**: en
+paralelo eran siempre 3. La ficha usa TTL de 5 minutos y no el de un día, porque la constante larga
+presupone la purga por tag y §60.4 dejó verificado que la purga no existe.
+
+**97.10 — Lo que NO se arregló aquí, y por qué.** `wrangler.jsonc` no tiene la clave `cache`: **Workers
+Caching no está habilitado**, así que HOY todas las cabeceras `s-maxage` del portal son inertes y cada
+visita paga sus lecturas. Es infraestructura con efectos de coste y de frescura en producción, y no se
+toca como efecto colateral de un cambio de ficha. Queda en `10` con el cambio exacto.
+
+**97.11 — Verificación.** 141 tests (61 nuevos) · `build`, `verify:build` y `verify:data` verdes · en
+el navegador: 301 de `/ficha?id=`, 404 de slug inexistente, y las ramas de arriendo, zona con landing
+y «vendido» comprobadas UNA A UNA con fixtures temporales revertidas · JSON-LD sin `streetAddress`,
+sin `geo` y sin reseñas · cero recursos fallidos en pestaña limpia. ⚠️ **Contra datos reales no se
+probó**: no hay catálogo. Los 14 tests de `buscar-ficha` recorren el mismo código con el cliente
+inyectado y contando lecturas.
+
+**97.12 — Método.** Se usaron dos workflows: uno de reconocimiento (5 lectores + síntesis) que produjo
+la lista de trampas ANTES de escribir, y uno de revisión adversarial (4 lentes + un refutador por
+hallazgo) que produjo 33 hallazgos de los que sobrevivieron 17. **La revisión encontró más bugs reales
+que el recon**, y el refutador tumbó la mitad — incluidos los que yo ya había arreglado mientras
+corría. Doctrina: §3.3 · §3.4 IAP · §G.2 🖥️ · §G.4 caza-bugs y destilar a skills.

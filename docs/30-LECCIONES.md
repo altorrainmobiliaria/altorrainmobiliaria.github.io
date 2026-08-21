@@ -14,73 +14,52 @@
 
 ## Lecciones (L-NN)
 
-### L-01 — "Access denied for UID" al login (red lenta ≠ permiso denegado)
-**Disparador**: el login falla intermitentemente con "access denied". **Causa**: un error de RED se trató como permiso
-denegado y se hizo `signOut`. **Fix**: **retry 3× con backoff ANTES de `signOut`** — no asumir denegado a la primera.
+### L-01 — "Access denied for UID" al login (red lenta ≠ permiso denegado) → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-02 — RTDB `permission_denied` en presencia → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-03 — Firestore "Failed to obtain primary lease" → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-04 — ⚗️ FUSIONADA en L-09 (merge:true vs rules/upsert) — regla viva **aquí, en L-09**: `set()` SIN merge para CREAR, `update()` para EDITAR (el puntero apuntaba a `CLAUDE.md §3.5`, que se mudó a `34-DOCTRINA-CODIGO` en la poda §84; el dueño del hecho siempre fue L-09) → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-05 — ⚰️ (sitio viejo retirado §15) Modals inyectados fuera de index → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md` → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-06 — ⚰️ (sitio viejo retirado §15) Invalidación de cache `system/meta`→onSnapshot → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md` (resucitar si el cutover reusa SW/onSnapshot) → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-07 — Primer deploy de Cloud Functions 2nd gen falla por Eventarc → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-08 — Reglas Firestore: leer un campo AUSENTE de `resource.data` LANZA (no es null) → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-09 — Upsert de ingestión: `merge:true` PISA los campos presentes y NO borra los ausentes → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-10 — Un GET público linkeado por WhatsApp/email JAMÁS muta estado → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-11 — Cloud Functions gen2: tres gotchas de operación que se ven como bugs → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-12 — Dinero (arriendos/comisiones/pagos): método ANTES de construir → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-13 — GitHub Pages (deploy-from-branch): sin `.nojekyll` Jekyll construye TODO el repo — y si falla, PRODUCCIÓN SE CONGELA EN SILENCIO → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-14 — Stack que evoluciona rápido (Astro/adapter CF): verificar versión y config contra DOCS, no de memoria → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-15 — Windows: `wrangler dev` deja un `workerd.exe` huérfano que bloquea `dist/` (`EPERM` en el siguiente build) → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-16 — Primer deploy a Cloudflare Workers: registrar el subdominio `workers.dev` ANTES (falla en CI no-interactivo) → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-17 — Decodificar el REST de Firestore: mapas/arrays VACÍOS y despacho por clave → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-18 — Cloudflare: DOS cachés distintas; en `workers.dev` solo sirve **Workers Caching** → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-19 — `@astrojs/cloudflare` v14: `locals.runtime` deprecado/sin tipo; `platformProxy` removido → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-20 — Firestore Rules: un `get` de doc INEXISTENTE con `resource.data` en la regla → 403, no 404 → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
+### L-21 — Aislar tests que comparten un emulador Firestore: projectId PROPIO por archivo → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
 
-### L-02 — RTDB `permission_denied` en presencia
-**Disparador**: el widget de presencia se queda "Cargando…" o tira `permission_denied`. **Causa**: (a) listeners que
-escriben a RTDB DESPUÉS del logout; (b) RTDB rules sin `.read` ni `.indexOn`. **Fix**: guards que verifican
-`auth.currentUser` antes de CADA write a RTDB; en las rules de presencia: `.read: "auth != null"` + `.indexOn: ["online"]`.
+### L-43 — 🔑 Un identificador ESTABLE no se deriva de la URL: cambia la ruta y se te queda huérfano lo guardado *(2026-08-21, ADR §97.7)*
+**Disparador**: cambias el formato de una URL (de `?id=X` a `/algo/<slug>`) y algo que la gente había
+guardado deja de reconocerse. **Caso**: los favoritos del portal derivaban su clave del `?id=` del enlace
+de la card. Migrar la ficha a `/inmueble/<slug>` habría cambiado la clave de TODAS las cards a la vez:
+corazones apagados sobre inmuebles que la persona sí guardó, sin un error en consola y sin forma de que
+nadie lo notara mirando la pantalla. **Regla**: un id de persistencia sale del DATO (`data-*` puesto por
+quien conoce el registro), nunca de parsear la dirección. La URL es presentación y la presentación cambia;
+el id del documento no. **Corolario**: si ya tienes claves derivadas de URLs viejas, acepta las dos formas
+durante una temporada — pero arregla la fuente, porque aceptar formatos no reconstruye lo que ya se perdió.
+**Y un slug tampoco sirve**: basta corregir una tilde del título para que cambie.
 
-### L-03 — Firestore "Failed to obtain primary lease"
-**Disparador**: error de lease en Firestore. **Causa**: múltiples tabs compartiendo IndexedDB. **Fix**:
-`window.clearFirestoreCache()` desde consola.
-
-### L-04 — ⚗️ FUSIONADA en L-09 (merge:true vs rules/upsert) — regla viva **aquí, en L-09**: `set()` SIN merge para CREAR, `update()` para EDITAR (el puntero apuntaba a `CLAUDE.md §3.5`, que se mudó a `34-DOCTRINA-CODIGO` en la poda §84; el dueño del hecho siempre fue L-09)
-
-### L-05 — ⚰️ (sitio viejo retirado §15) Modals inyectados fuera de index → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md`
-
-### L-06 — ⚰️ (sitio viejo retirado §15) Invalidación de cache `system/meta`→onSnapshot → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md` (resucitar si el cutover reusa SW/onSnapshot)
-
-### L-07 — Primer deploy de Cloud Functions 2nd gen falla por Eventarc
-**Disparador**: deploy de CF con triggers (`onNewSolicitud`, etc.) falla con error 400 "Eventarc Service Agent permission
-denied / Invalid resource state". **Causa**: en el 1er deploy 2nd gen los permisos de Eventarc/Cloud Build se están
-propagando. **Fix**: (a) Opción A — esperar 5-10 min y reintentar (suele auto-resolverse); (b) si persiste, otorgar en IAM
-`roles/eventarc.serviceAgent` a `service-<projNum>@gcp-sa-eventarc.iam.gserviceaccount.com` y `roles/cloudbuild.builds.builder`
-a `<projNum>@cloudbuild.gserviceaccount.com`, habilitar APIs cloudbuild/eventarc/run/pubsub. Cuentas exactas → `50-CONFIG-INFRA`.
-
-### L-08 — Reglas Firestore: leer un campo AUSENTE de `resource.data` LANZA (no es null) *(importada de cars — sinapsis 2026-07-10)*
-**Disparador**: una regla con `resource.data.x == null` o que compara `_version` falla con `Property x is undefined` al tocar docs viejos/seed. **Causa**: en rules, acceder a una clave inexistente es un evaluation-error, NO `null` — y el `||` no rescata (el primer operando ya lanzó). **Fix**: guardar la PRESENCIA antes de leer: `!('x' in resource.data) || resource.data.x is T`, o `resource.data.get('x', default)`. En los tests de rules, sembrar también docs LEGACY sin el campo — los tests que siempre lo siembran esconden el bug (a cars le duró meses).
-
-### L-09 — Upsert de ingestión: `merge:true` PISA los campos presentes y NO borra los ausentes *(importada de cars — sinapsis 2026-07-10; ABSORBE L-04)*
-**Disparador**: un trigger/función hace upsert de una entidad (contacto/solicitud) por clave de dedup. **Causa doble**: (a) `set(full, {merge:true})` sobrescribe los campos PRESENTES → un 2º evento del mismo sujeto pisa `createdAt`/campos ya editados por un humano (corrupción silenciosa); (b) para QUITAR una clave de un mapa, merge no basta — `deleteField()` o `update()` del campo completo ("lo borré y sigue ahí"). **Fix**: transacción: `tx.get(ref)` → si no existe `tx.set(full)`; si existe `tx.update({soloVolátiles})`; y el mark de idempotencia (`_ingestedAt`) DENTRO de la MISMA transacción — marcarlo en un update separado deja ventana de crash → duplicados en el reintento. **(c) (era L-04)** las security rules evalúan `merge:true` ambiguamente → rechazo espurio: `set()` SIN merge para CREAR, `update()` para EDITAR, `_version` optimista (create==1, update==prev+1) vía `runTransaction`.
-
-### L-10 — Un GET público linkeado por WhatsApp/email JAMÁS muta estado *(importada de cars — sinapsis 2026-07-10)*
-**Disparador**: magic-links de confirmar/cancelar/unsubscribe en emails o WhatsApp. **Causa**: WhatsApp hace fetch del link al COMPONER el mensaje (vista previa); Outlook SafeLinks/antivirus igual → "el cliente confirmó sin abrir el link". **Fix**: GET = página intersticial con botón; SOLO el POST muta (`req.method === 'POST'`). De paso: escapar todo dato reflejado (XSS) + header CSP.
-
-### L-11 — Cloud Functions gen2: tres gotchas de operación que se ven como bugs *(importadas de bersaglio — sinapsis 2026-07-10)*
-**(a) Callable v2 devuelve 403 SIN ejecutarse** (cero logs): falta el invoker público — firebase-tools NO lo re-aplica en update → borrar y re-desplegar la function (bersaglio §115). **(b) `firebase functions:secrets:set` NO re-empaqueta `functions/.env`**: tras cambiar env-vars no-secretas, re-deploy COMPLETO de la function o sigue leyendo el `.env` viejo (bersaglio). **(c) "Desactivar" un usuario = deshabilitar la CUENTA de Auth** (`updateUser({disabled:true})` vía CF) — un campo `activo:false` en un doc NO es credencial: el token sigue vivo (bersaglio §66).
-
-### L-13 — GitHub Pages (deploy-from-branch): sin `.nojekyll` Jekyll construye TODO el repo — y si falla, PRODUCCIÓN SE CONGELA EN SILENCIO
-**Disparador**: pusheas a `main` y el dominio sigue sirviendo contenido viejo; o el `deploy-info` live está meses atrás. **Causa**: Pages corre "Build with Jekyll" sobre el repo ENTERO (`docs/`, `_legacy/`, `skills/`, node_modules committeados); un archivo que Jekyll no traga rompe el build → deploy `skipped` → el dominio sirve el ÚLTIMO build exitoso, sin síntoma visible (descubierto 2026-07-10: fallaba desde ANTES de la sesión; el deploy-info live era de mayo). **Fix**: (a) `.nojekyll` en la raíz = deploy crudo (lo correcto para un sitio estático puro); (b) verificar deploy con SENTINELA ÚNICA del contenido nuevo + cache-buster `?cb=` — grep de un string que ya existía en el sitio viejo = falso positivo (pasó con `info@…`); (c) el estado real del build vive en la API pública de Actions (`…/actions/runs` + `jobs_url`, sin token) — JAMÁS asumir "push = deployado" (§3.3).
-
-### L-12 — Dinero (arriendos/comisiones/pagos): método ANTES de construir *(sinapsis 2026-07-10)*
-Cuando el portal maneje plata: (1) skill global `auditoria-financiera` (7 invariantes del dinero + 4 fases; nació del incidente bersaglio §181 — traslado duplicado de $5.6M por carrera de listeners); (2) checklist del dinero de `caza-bugs §2b` al tocar cualquier flujo; (3) regla madre: JAMÁS una decisión automática (modal/bloqueo/cálculo) sobre una foto incompleta de listeners — gate de fuentes-listas o agregado server-side en UNA transacción; deshacer netea TODAS las vistas del mismo peso; los formateadores jamás recortan un negativo a "$0".
-
-### L-14 — Stack que evoluciona rápido (Astro/adapter CF): verificar versión y config contra DOCS, no de memoria *(Ola 0.1, ADR §19)*
-**Disparador**: scaffold nuevo de un stack sellado (Astro + `@astrojs/cloudflare`). **Trampa**: pinear versiones o escribir la config de memoria. Realidad 2026-07-10: `@latest` trajo Astro **7** / adapter **v14** / wrangler 4.110 / TS 7 — mayores más nuevos que el cutoff. **Gotcha load-bearing**: en Astro **6+** el `main` del `wrangler.jsonc` apunta al **entrypoint unificado** `@astrojs/cloudflare/entrypoints/server` (resuelve en `node_modules` en build-time), NO a `dist/server/entry.mjs` (no existe aún → `@cloudflare/vite-plugin` lanza "main doesn't point to an existing file"). El adapter LEE el `wrangler.jsonc` raíz y FUSIONA los bindings en el `dist/server/wrangler.json` generado. **Receta**: instalar `@latest` → build real → inspeccionar el `dist/server/wrangler.json` generado (ground truth) → `wrangler deploy --dry-run` (valida offline, sin cuenta CF) → `wrangler dev` para verificar SSR+estática en vivo. Docs: context7 `/withastro/docs` + cloudflare-docs MCP.
-
-### L-15 — Windows: `wrangler dev` deja un `workerd.exe` huérfano que bloquea `dist/` (`EPERM` en el siguiente build) *(Ola 0.1)*
-**Disparador**: tras un `wrangler dev`, el siguiente `astro build` falla en `emptyDir`/`rmdirSync` con `EPERM: \\?\...\dist\client`. **Causa**: matar el proceso *listener* de wrangler NO mata su hijo `workerd.exe`, que sigue reteniendo un handle sobre `dist/`. **Fix**: `taskkill //F //IM workerd.exe` antes de reconstruir. **Prevención**: no dejar `wrangler dev` corriendo entre builds; al terminar la verificación en vivo, matar el árbol completo (listener + workerd).
-
-### L-16 — Primer deploy a Cloudflare Workers: registrar el subdominio `workers.dev` ANTES (falla en CI no-interactivo) *(Ola 0.2, ADR §21)*
-**Disparador**: `wrangler deploy` en CI falla, pero SÓLO al final: sube el Worker y provisiona todo, y luego `✘ [ERROR] You can either deploy... or register a workers.dev subdomain` + `npx failed exit 1`. **Causa**: cuenta nueva sin subdominio `workers.dev` registrado; wrangler no puede registrarlo en modo no-interactivo (log: *"Using fallback value in non-interactive context: no"*). **Fix**: el dueño lo registra en el dashboard (**Compute → Workers & Pages** → se auto-asigna al entrar, o elige nombre) → **Re-run failed jobs**. **Del mismo deploy (gotchas confirmados)**: (a) el **auto-provisioning del KV `SESSION` SÍ funcionó** en CI (creó `altorra-portal-session`) — la preocupación F1 de la revisión no se materializó; (b) el **bucket R2 con nombre explícito debe pre-existir** (se creó antes); (c) tras registrar el subdominio, tarda **1-5 min en propagar** (SSL) — `curl` da `HTTP 000`/exit 35 hasta entonces, NO es error. Diagnóstico del log de Actions: requiere login (API pública da 403 al log; el `status`/`jobs` sí son públicos, L-13). Portable a cars/bersaglio si despliegan a CF.
-
-### L-17 — Decodificar el REST de Firestore: mapas/arrays VACÍOS y despacho por clave *(Ola 0.7, ADR §22)*
-**Disparador**: una `Propiedad` legítima con `amenidades:{}` / `imagenes:[]` / `priceHistory` ausente crashea el decoder (TypeError → 500 en el camino feliz). **Causa**: el REST de Firestore OMITE la clave interna cuando la colección está vacía → un mapa vacío llega como `{mapValue:{}}` (SIN `fields`) y un array vacío como `{arrayValue:{}}` (SIN `values`); iterar `.fields`/`.values` sobre `undefined` lanza. **Fix**: defaults `?? {}` / `?? []` antes de iterar, y envolver el decode en try/catch. **Regla hermana**: despachar SIEMPRE por PRESENCIA de clave (`'booleanValue' in v`), NUNCA por truthiness — si no, `booleanValue:false` y `nullValue:null` se corrompen a `undefined` (mata un `Record<string,boolean>`). `integerValue` llega como STRING → `Number()` (exacto para COP <2^53, sin BigInt). Portable a cualquier lector REST de Firestore.
-
-### L-18 — Cloudflare: DOS cachés distintas; en `workers.dev` solo sirve **Workers Caching** *(Ola 0.7, ADR §22 / sello T8)*
-**Disparador**: elegir cómo cachear lecturas en el edge sin sangrar free-tier. **Causa/hecho (verificado docs vivas)**: (1) el caché de *subrequest* `fetch()` (`cf.cacheTtl/cacheEverything/cacheTags`) y el `caches.default` clásico dependen de ZONA → quedan MUDOS en `*.workers.dev` (staging); (2) **Workers Caching** (`cache:{enabled:true}` en wrangler ≥4.69.0) se sienta DELANTE del Worker (un hit NO lo ejecuta), "pertenece al Worker, no al dominio" → funciona igual en staging y prod. **Fix/doctrina**: cachear a nivel de respuesta con `Cache-Control` + `Cache-Tag`; purga programática `ctx.cache.purge({tags})` SIN token de zona. Es **POR-PoP** (data-center) → TTL LARGO (horas/día) + frescura por PURGA, no TTL corto (un `s-maxage` bajo multiplica revalidaciones = lecturas ×nº de PoPs). **⚠️ ACTUALIZADA 2026-07-23 (docs vivas, §54.8)**: las COPIAS del caché son por-PoP pero la **PURGA del Workers Cache es ~GLOBAL** (monta la infra de zone-purge; el Cache API CLÁSICO sí purga solo su data-center — no confundirlos, el comité OD-Catálogo tropezó ahí) · **SWR SÍ se honra PERO `s-maxage`/`must-revalidate` lo DESACTIVAN** → con `s-maxage` no hay stale-serving; elegir headers consciente: edge-only purgeable (`s-maxage`) vs `max-age`+SWR (cachea TAMBIÉN en navegador, donde la purga no llega).
-
-### L-19 — `@astrojs/cloudflare` v14: `locals.runtime` deprecado/sin tipo; `platformProxy` removido *(Ola 0.7, ADR §22)*
-**Disparador**: `middleware.ts(x): Property 'runtime' does not exist on type 'Locals'` al threadear el env de runtime. **Causa**: en el adapter v14 el tipo `Runtime` exportado es `{ cfContext: ExecutionContext }`; `locals.runtime` sigue existiendo en runtime pero como **getter DEPRECADO y sin tipo**. Aparte, `tsc` marca `platformProxy` en `astro.config.mjs` (`no existe en type 'Options'`) — la opción fue removida (afecta solo bindings en `astro dev`, no el deploy). **Fix**: para config PÚBLICA (apiKey/projectId) NO threadear `locals.runtime.env` — usar `import.meta.env`/constante; dejar el param `env?` como hook forward. Verificar tipos con `astro sync` + `tsc --noEmit` (el pin TS7 del proyecto choca con `@astrojs/check@0.9`, que aún exige TS5). **RESUELTO el `platformProxy`** (mismo día): el fix es QUITAR la opción — el adapter v14 se construye sobre el **Cloudflare Vite plugin**, que corre el dev server en **workerd REAL** y carga los bindings de `wrangler.jsonc` AUTOMÁTICAMENTE (verificado: `astro dev` sirve SSR+estático; el adapter loguea `Enabling sessions with Cloudflare KV`). Bindings remotos = opt-in por-binding con `"remote": true`. `Options` del adapter v14 = `Pick<PluginConfig, ...>` + `imageService`/`sessionKVBindingName`/`prerenderEnvironment` (ya NO `platformProxy`).
-
-### L-20 — Firestore Rules: un `get` de doc INEXISTENTE con `resource.data` en la regla → 403, no 404 *(Ola 0.7, ADR §22, confirmado T6 emulador)*
-**Disparador**: mapear el resultado de lectura pública sin filtrar existencia. **Causa**: una regla `allow get: if resource.data.estado in [...]` evalúa sobre `resource == null` para un doc inexistente → deniega → **PERMISSION_DENIED (403)**, no 404. Así, doc-borrador-existente y doc-inexistente devuelven AMBOS 403 (bueno anti-enumeración). **Fix**: en la capa pública COLAPSAR `denied`+`not-found` en un único `unavailable` y NO exponer `reason`/`status` al render (evita un oráculo de listings sin publicar). Verificado con `@firebase/rules-unit-testing` contra el emulador (owner-free, requiere Java).
-
-### L-21 — Aislar tests que comparten un emulador Firestore: projectId PROPIO por archivo *(Ola 0.7, ADR §22.8, confirmado en vivo)*
-**Disparador**: 2 tests E2E (`config/general`, `disponibilidad`) fallaban SOLO al correr junto a `rules.test.ts`; corridos aislados PASABAN — síntoma parcial (unos `ok:true`, otros `ok:false`) clásico de carrera. **Causa**: vitest **paraleliza ARCHIVOS** de test, y ambos golpeaban el MISMO emulador + MISMO `projectId`; `rules.test.ts` hace `beforeEach(clearFirestore)` que **BORRA toda la base del proyecto** → arrasaba la semilla que el E2E sembró una vez en `beforeAll`, a mitad de camino (el raw-REST daba 200… hasta que el otro archivo borraba). **Fix**: **projectId distinto por archivo** (`demo-altorra` vs `demo-altorra-e2e`) — el emulador aísla datos por projectId, sin colisión aunque corran en paralelo (quitar `singleProjectMode` del `firebase.json`). Peores alternativas: serializar (`fileParallelism:false`, más lento) o re-sembrar en `beforeEach` (no protege de clears concurrentes). Diagnóstico que lo cazó: comparar `getDoc` crudo vs `client()` DENTRO del test (aisló código-cliente OK vs contaminación de datos). Portátil a cualquier suite que comparta un backend emulado entre archivos.
+### L-42 — 🚧 Una defensa que solo vive en las Security Rules NO EXISTE hasta que las Rules se despliegan *(2026-08-21, ADR §97.6)*
+**Disparador**: el código confía en que la base filtrará («las reglas ya no dejan leer los borradores»),
+y las reglas que hacen eso están en el repo, no en producción. **Caso**: la ficha de inmueble no
+comprobaba el estado de publicación porque `firestore.rules` tiene `allow get: if resource.data.estado in
+[...]`. Pero ese archivo NO estaba desplegado —el ruleset vivo era el del sitio viejo, con `allow read: if
+true`— así que un BORRADOR se habría publicado entero, con precio, contacto e indexable. **La distancia
+entre `git` y el proyecto de Firebase no la cubre nadie**: no hay gate que compare el ruleset del repo con
+el vivo, y el comentario del código describía una frontera que en producción no estaba puesta.
+**Reglas**: (1) el invariante que protege un dato se implementa en el CÓDIGO aunque también esté en las
+Rules — defensa en profundidad, no delegación; (2) usa la MISMA lista que ya use otro camino (aquí, la
+whitelist de estados con la que se construye el índice del catálogo) para que no puedan discrepar;
+(3) desconfía de todo comentario que diga «las reglas ya lo impiden» sin decir **desplegadas desde cuándo**.
+Portátil a cualquier backend con reglas declarativas (Firebase, Supabase RLS, políticas de S3).
 
 ### L-41 — 🧱 Las cabeceras de `Response.redirect()` son INMUTABLES: un middleware que hace `headers.set()` revienta todo redirect *(2026-08-21, ADR §96.6b)*
 **Disparador**: un endpoint que responde con `Response.redirect(...)` devuelve **500** y el error apunta al
@@ -186,6 +165,7 @@ diciendo a alguien que no podrá preguntarte.
 ### M-07 — Un gate del kernel solo protege donde su DISPARADOR está cableado (el 4º repo no tenía pre-commit) → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
 ### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
 ### M-09 — El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es frecuencia × costo de omisión → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
+### M-11 — Escribir la lección NO la aplica: si el PENDIENTE no se re-etiqueta, el cerebro la ignora otra vez → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
 ### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total → 🧩 **shard `33-LECCIONES-META.md`** (completa allá)
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
