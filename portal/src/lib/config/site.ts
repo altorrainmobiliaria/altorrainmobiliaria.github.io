@@ -18,7 +18,10 @@ export const SITE = {
   // Oficina Asesora Jurídica confirmó el 2026-08-20 que ese número ES el de la resolución y que
   // el registro digital ya está inscrito. Detalle y evidencia → `43-OPERACION §Matrícula`.
   matriculaArrendador: '6636',
-  slogan: 'Gestión integral en soluciones inmobiliarias',
+  // Eslogan OFICIAL (Daniel 2026-07-11, `CLAUDE.md §1`). REEMPLAZA al viejo «Gestión integral en
+  // soluciones inmobiliarias», que estuvo aquí hasta 2026-08-21: el kernel se reconcilió en su día
+  // pero el código no, y salía en el <title> de la home. No reintroducirlo.
+  slogan: 'Seguridad, Legalidad y Confianza',
   city: 'Cartagena de Indias, Colombia',
   domain: 'altorrainmobiliaria.co',
   contact: {

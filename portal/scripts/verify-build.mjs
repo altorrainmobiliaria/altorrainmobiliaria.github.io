@@ -47,6 +47,36 @@ if (existsSync(wjc)) {
 }
 check('wrangler.jsonc de deploy (entrypoint unificado + bindings)', dOk, dDetail);
 
+// 6. INDEXABILIDAD — el candado que evita el fallo más caro y más silencioso del cutover.
+//    Todo el portal se indexa SOLO si se compila con PUBLIC_SITE_ENV=production; por defecto sale
+//    `noindex, nofollow`. Eso protege al staging, pero significa que un build de producción hecho
+//    SIN la variable publica el sitio nuevo pidiéndole a Google que lo desindexe — y se ve perfecto
+//    para un humano. La skill `search-console-setup-y-diagnostico` lo llama "el bug clásico".
+//    En producción esto FALLA el build; fuera de producción AVISA, para que nadie despliegue a
+//    ciegas al dominio real. (ADR §90 · MEGA-PLAN OLA 1 ítem 11.)
+const ES_PROD = process.env.PUBLIC_SITE_ENV === 'production';
+const home = resolve(root, 'dist/client/index.html');
+const robots = resolve(root, 'dist/client/robots.txt');
+const homeTxt = existsSync(home) ? readFileSync(home, 'utf8') : '';
+const robotsTxt = existsSync(robots) ? readFileSync(robots, 'utf8') : '';
+const tieneNoindex = /noindex/i.test(homeTxt);
+const bloqueaTodo = /^\s*Disallow:\s*\/\s*$/im.test(robotsTxt);
+
+if (ES_PROD) {
+  check(
+    'indexable en PRODUCCIÓN (sin noindex residual, robots abierto)',
+    !tieneNoindex && !bloqueaTodo && /Sitemap:/i.test(robotsTxt),
+    `noindex-en-home=${tieneNoindex} · robots-Disallow-total=${bloqueaTodo} · sitemap-declarado=${/Sitemap:/i.test(robotsTxt)}`,
+  );
+} else {
+  check('staging correctamente NO indexable', tieneNoindex && bloqueaTodo, `noindex=${tieneNoindex} · Disallow=${bloqueaTodo}`);
+  console.log(
+    '\n⚠️  Este build es NO INDEXABLE (PUBLIC_SITE_ENV != production).\n' +
+    '   Correcto para staging. Si esto va al dominio REAL, Google desindexa el sitio:\n' +
+    '   el cutover se construye con  PUBLIC_SITE_ENV=production  (checklist en docs/50-CONFIG-INFRA).\n',
+  );
+}
+
 let failed = 0;
 for (const c of checks) {
   console.log(`${c.ok ? '✅' : '❌'} ${c.name}${c.detail ? ` — ${c.detail}` : ''}`);

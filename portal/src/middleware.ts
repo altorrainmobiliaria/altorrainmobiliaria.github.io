@@ -1,5 +1,6 @@
 import { defineMiddleware } from 'astro:middleware';
 import { getDataClient } from './lib/data/client';
+import { resolverRedirect } from './lib/seo/redirects';
 
 // STAGING NO INDEXABLE (mitigación O3/T1 + O13 del plan endurecido).
 // Regla: nada se indexa salvo que el build sea explícitamente de PRODUCCIÓN
@@ -14,6 +15,15 @@ import { getDataClient } from './lib/data/client';
 const IS_PRODUCTION = import.meta.env.PUBLIC_SITE_ENV === 'production';
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  // 301 del sitio viejo → portal nuevo. Va PRIMERO y corta el request: no tiene sentido montar la
+  // capa de datos ni renderizar para algo que se va a redirigir. Las rutas `.html` del legacy no
+  // existen como asset estático en este build, así que el Worker las recibe y llegan hasta aquí.
+  // Es GATE DEL CUTOVER: sin esto, el histórico de Search Console del sitio viejo cae en 404.
+  const destino = resolverRedirect(context.url.pathname);
+  if (destino) {
+    return context.redirect(destino, 301);
+  }
+
   // Capa de datos: 1 instancia POR-REQUEST (memo request-scoped; evita el footgun del estado de módulo
   // que PERSISTE entre requests del mismo isolate en Workers — comité OD1). Lazy: no toca la red hasta
   // un `.get()`, así el overhead en rutas que no leen datos es nulo. La config pública (apiKey/projectId)
