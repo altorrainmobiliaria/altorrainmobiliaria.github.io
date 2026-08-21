@@ -20,6 +20,8 @@ import { FIREBASE_PUBLICO } from '../lib/config/firebase-publico';
 export interface AuthCargado {
   auth: import('firebase/auth').Auth;
   mod: typeof import('firebase/auth');
+  /** La app ya inicializada. La expone para que otros módulos (p. ej. el panel) no la re-inicialicen. */
+  app: import('firebase/app').FirebaseApp;
 }
 
 let promesa: Promise<AuthCargado> | null = null;
@@ -33,7 +35,7 @@ export function cargarAuth(): Promise<AuthCargado> {
         import('firebase/auth'),
       ]);
       const app = getApps().length ? getApps()[0] : initializeApp({ ...FIREBASE_PUBLICO });
-      return { auth: mod.getAuth(app), mod };
+      return { auth: mod.getAuth(app), mod, app };
     })();
   }
   return promesa;

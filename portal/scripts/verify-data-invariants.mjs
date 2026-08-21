@@ -45,6 +45,15 @@ const EXCEPCIONES = [
     re: /['"]firebase\/(app|auth)['"]/,
     motivo: 'Auth con Google exige el SDK (no hay REST equivalente); carga dinámica en un solo módulo',
   },
+  {
+    // El PANEL no es superficie pública: lo abren una o dos personas del equipo, detrás de sesión y
+    // del claim de staff. El gate existe para que una lectura de más no se multiplique por cada
+    // visitante — aquí no hay visitantes. La doctrina del proyecto ya lo contempla al decir «cero
+    // onSnapshot PÚBLICO (solo admin)». Aun así el módulo no usa listeners: pide una vez, con limit().
+    archivo: /scripts[\\/]gestion-.*\.ts$/,
+    re: /['"]firebase\/(app|auth|firestore)['"]/,
+    motivo: 'Panel interno tras sesión + claim de staff; consulta acotada con limit() y sin listeners',
+  },
 ];
 
 const exceptuado = (file, code) =>

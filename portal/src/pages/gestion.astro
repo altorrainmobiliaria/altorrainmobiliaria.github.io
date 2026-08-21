@@ -283,6 +283,10 @@ const init = DATA.admin;
 </BaseLayout>
 
 <style>
+  /* Fila de MENSAJE de la tabla (vacío, cargando o error): ocupa el ancho y no parece un dato. */
+  .gx-tr--msg { grid-template-columns: 1fr !important; padding-block: 22px; }
+  .gx-tr--msg span { white-space: normal; }
+
   /* Puerta de acceso: pantalla completa, centrada, con la tipografía y la paleta del portal. */
   .gx-gate {
     min-height: 60vh;
@@ -423,6 +427,7 @@ const init = DATA.admin;
    * echaría al login cada vez que recarga — el error clásico de esta API.
    */
   import { estadoAcceso, salir } from '../scripts/auth';
+  import { montarLeads } from '../scripts/gestion-leads';
 
   const puerta = document.getElementById('gx-gate');
   const denegado = document.getElementById('gx-denegado');
@@ -444,6 +449,7 @@ const init = DATA.admin;
     const r = await estadoAcceso(true).catch(() => null);
     if (r?.estado === 'staff') {
       mostrar(panel);
+      void montarLeads();
       return;
     }
     reintentar.disabled = false;
@@ -465,6 +471,9 @@ const init = DATA.admin;
         return;
       }
       mostrar(panel);
+      // Los datos REALES solo se piden cuando ya se sabe que quien mira es del equipo: pedir algo que
+      // las Rules van a denegar solo ensucia la consola y confunde al siguiente que la mire.
+      void montarLeads();
     })
     .catch(() => {
       // Si Auth no carga (red caída, bloqueador), NO se abre el panel: fail-closed. Y se dice por qué,
