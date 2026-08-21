@@ -2516,3 +2516,43 @@ ANTES de decidir: de ahí salió "cero noindex residual" y la regla de re-enviar
 eslogan salieron de recorrer el camino vivo, no del diff) · **§G.4 Frescura a mano**: el gate #27 es
 CIEGO a archivos nuevos ([[M-10]] (a)), así que `20` se actualizó manualmente o estos 4 archivos
 habrían nacido indocumentados. Sin cache bump: el portal no tiene SW.
+
+## 92. ADR — Las 13 landings de zona: contenido honesto donde el legacy tenía posicionamiento ⟦OPUS-5⟧ (2026-08-21)
+
+> Ítem 4 de OLA 1. Cierra el `pendiente` que §91 dejó abierto en los 13 redirects de barrio.
+
+**92.1 — Causa raíz.** El sitio viejo tenía 13 landings de barrio con posicionamiento ganado. El
+portal nuevo no tenía ninguna, así que el mapa de 301 las apuntaba al SERP: destino correcto pero
+genérico, que no responde la intención de «cómo es El Laguito». Sin estas páginas el cutover conserva
+la URL y pierde la razón por la que Google la premiaba.
+
+**92.2 — Solución estructural.** `lib/content/zonas.ts` (contenido, dueño del censo de zonas) +
+`pages/zona/[slug].astro` (plantilla, prerender). **Los redirects de barrio y las filas del sitemap se
+DERIVAN de `ZONAS`**: es imposible que nazca una landing sin su 301 o sin entrar al sitemap, que es el
+olvido más común al añadir contenido. Los 13 `pendiente` de §91 quedan cerrados; sobrevive uno solo
+(`/avaluo.html` → Rango ALTORRA, ítem 9).
+
+**92.3 — Veracidad (la decisión de diseño que manda aquí).** CERO datos cuantitativos: ni precio por
+m², ni valorización, ni proyectos, ni número de unidades. Todo el contenido es cualitativo y
+verificable caminando la ciudad. No es prudencia abstracta: `[operacion].astro:20` documenta que este
+portal YA tuvo 5 listings y una zona («Alameda La Victoria») **fabricados**, retirados después. Lo que
+solo puede aportar Daniel vive en `PENDIENTE_DUENO` y **no se renderiza**. Un hueco honesto vale más
+que una cifra que nadie puede sostener, y en una inmobiliaria un dato falso cuesta el negocio.
+
+**92.4 — Voz.** Cada texto pasó el checklist anti-IA de `catalogo-voz-altorra` §3.3. La afirmación de
+cobertura se hace UNA vez por página y vive en la plantilla: repetirla catorce veces la habría
+convertido en muletilla, que es justo lo que la §Regla de variedad prohíbe.
+
+**92.5 — Verificación en vivo.** 4 redirects de muestra → 301 a su landing · `/zona/el-laguito` 200
+con `<title>` único, canonical al dominio de producción y JSON-LD completo · sitemap 13 → **26 URLs**.
+
+**92.6 — Dos hallazgos al pasar.** (a) **El portal no tenía NI UN JSON-LD** (`grep` = 0), cuando el
+legacy tenía `BreadcrumbList` en 43 páginas: **el structured data entero se perdió en la migración**.
+Estas landings estrenan el patrón; extenderlo a home, SERP y ficha entra en TODO-39. (b) **`BaseLayout`
+no emitía `canonical` en ninguna página** y su `description` por defecto arrastraba el eslogan viejo
+con la marca en minúscula mixta. El canonical se resuelve ahora en el layout para TODAS las páginas,
+sobre el dominio de producción y nunca sobre el host del request (en staging sería `*.workers.dev`).
+
+**92.7 — Doctrina.** §G.2 🔵 skill del dominio ANTES de escribir (`catalogo-voz-altorra`) · §3.3
+(el inventario de zonas se contó contra los 301 reales) · §G.4 caza-bugs (el JSON-LD ausente y el
+canonical faltante salieron de mirar el camino vivo) · §G.4 Frescura a mano en `20` ([[M-10]] (a)).
