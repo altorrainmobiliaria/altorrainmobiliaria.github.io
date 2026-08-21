@@ -1,0 +1,205 @@
+---
+/*
+ * PRECIOS — tarifas públicas (OLA 1 ítem 7, ADR §93).
+ *
+ * El MEGA-PLAN la llama «el diferenciador gratis»: en este mercado casi nadie publica lo que cobra,
+ * y quien pregunta suele descubrirlo al final. Enseñarlo antes de que el cliente invierta tiempo es
+ * la versión operativa de «los números van claros y de frente».
+ *
+ * Las cifras NO se escriben aquí: viven en `lib/content/tarifas.ts`, que documenta su procedencia
+ * (tarifario sellado por Daniel 2026-07-25) y por qué NO se usan las del MEGA-PLAN, que quedaron
+ * superadas. Separar dato de plantilla evita que una cifra se edite en el sitio equivocado.
+ *
+ * Lo que todavía no está decidido (comercial, alojamiento) se muestra diciendo que no está decidido.
+ * La voz §6.1 prohíbe «precios desde»; inventar un rango para no dejar el hueco sería peor.
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../lib/config/site';
+import { TARIFAS, NADA_AL_ARRENDATARIO, SIN_LETRA_PEQUENA } from '../lib/content/tarifas';
+
+const base = Astro.site?.origin ?? `https://${SITE.domain}`;
+const waTexto = encodeURIComponent('Hola ALTORRA, quiero saber qué tarifa aplica a mi caso.');
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: base },
+        { '@type': 'ListItem', position: 2, name: 'Precios', item: `${base}/precios` },
+      ],
+    },
+    {
+      // FAQPage con las preguntas que de verdad llegan por WhatsApp. Sin inventar respuestas:
+      // cada una sale de una tarifa sellada o de una obligación legal verificada en `42-LEGAL`.
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: '¿Cuánto cobra ALTORRA por vender mi inmueble?',
+          acceptedAnswer: { '@type': 'Answer', text: '3% sobre el valor final de la venta, facturado con IVA. Se causa cuando la venta queda registrada.' },
+        },
+        {
+          '@type': 'Question',
+          name: '¿Cuánto cuesta la administración de un arriendo de vivienda?',
+          acceptedAnswer: { '@type': 'Answer', text: '10% más IVA sobre el cargo mensual integral, que es el canon más la cuota de administración cuando aplique. Lo paga el propietario y se descuenta de cada giro.' },
+        },
+        {
+          '@type': 'Question',
+          name: '¿El arrendatario paga comisión?',
+          acceptedAnswer: { '@type': 'Answer', text: 'No. La Ley 820 de 2003 prohíbe cobrar depósitos o cauciones al arrendatario de vivienda. Los honorarios los paga el propietario.' },
+        },
+        {
+          '@type': 'Question',
+          name: '¿Cuesta algo publicar mi propiedad?',
+          acceptedAnswer: { '@type': 'Answer', text: 'No. Publicar es gratis y la publicación no vence.' },
+        },
+      ],
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Precios y comisiones | ALTORRA Inmobiliaria"
+  description="Lo que cobra ALTORRA por vender, arrendar y administrar en Cartagena, a la vista y sin letra pequeña. El arrendatario de vivienda no paga comisión."
+>
+  <Header />
+
+  <main id="contenido">
+    <section class="alt-section pr-hero">
+      <div class="alt-container">
+        <p class="alt-eyebrow">Tarifas</p>
+        <h1 class="pr-hero__h1">Lo que cobramos, antes de que preguntes.</h1>
+        <p class="pr-hero__sub">
+          En Cartagena casi nadie publica sus comisiones y el cliente las descubre al final. Aquí las
+          dejamos a la vista para que compares con calma y decidas con el número delante.
+        </p>
+      </div>
+    </section>
+
+    <section class="alt-section">
+      <div class="alt-container pr-tabla">
+        {TARIFAS.map((t) => (
+          <article class="pr-fila">
+            <div class="pr-fila__cabeza">
+              <h2 class="pr-fila__servicio">{t.servicio}</h2>
+              {t.cifra
+                ? <p class="pr-fila__cifra">{t.cifra}</p>
+                : <p class="pr-fila__cifra pr-fila__cifra--abierta">Sin tarifa cerrada</p>}
+            </div>
+            <p class="pr-fila__base">{t.base}</p>
+            <p class="pr-fila__paga"><strong>Quién paga:</strong> {t.paga}</p>
+            {t.nota && <p class="pr-fila__nota">{t.nota}</p>}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="alt-section alt-section--ink">
+      <div class="alt-container pr-inquilino">
+        <h2 class="pr-inquilino__h2">{NADA_AL_ARRENDATARIO.titulo}</h2>
+        <p class="pr-inquilino__p">{NADA_AL_ARRENDATARIO.cuerpo}</p>
+      </div>
+    </section>
+
+    <section class="alt-section alt-section--alt">
+      <div class="alt-container pr-fina">
+        <h2 class="pr-h2">Sin letra pequeña</h2>
+        <ul class="pr-lista">
+          {SIN_LETRA_PEQUENA.map((l) => <li class="pr-lista__item">{l}</li>)}
+        </ul>
+        <a class="alt-btn alt-btn--navy pr-cta" href={`${SITE.contact.whatsappLink}?text=${waTexto}`} rel="noopener">
+          Pregúntanos qué aplica a tu caso
+        </a>
+        <p class="pr-legal">Matrícula de Arrendador No. {SITE.matriculaArrendador}</p>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+</BaseLayout>
+
+<style>
+  .pr-hero { padding-block: var(--alt-space-8) var(--alt-space-5); }
+  .pr-hero__h1 {
+    font-family: var(--alt-font-display);
+    font-size: var(--alt-fs-hero);
+    font-weight: var(--alt-fw-semibold);
+    color: var(--alt-text-strong);
+    letter-spacing: var(--alt-tracking-tight);
+    margin: var(--alt-space-2) 0 var(--alt-space-3);
+  }
+  .pr-hero__sub { font-size: var(--alt-fs-lg); color: var(--alt-text-muted); max-width: 64ch; margin: 0; }
+
+  .pr-tabla { display: grid; gap: var(--alt-space-4); }
+  .pr-fila {
+    background: var(--alt-surface-neu);
+    border-radius: var(--alt-r-lg);
+    box-shadow: var(--alt-elev-card);
+    padding: var(--alt-space-5);
+  }
+  .pr-fila__cabeza {
+    display: flex; flex-wrap: wrap; align-items: baseline;
+    justify-content: space-between; gap: var(--alt-space-3);
+  }
+  .pr-fila__servicio {
+    font-family: var(--alt-font-display);
+    font-size: var(--alt-fs-h3);
+    font-weight: var(--alt-fw-semibold);
+    color: var(--alt-text-strong);
+    margin: 0;
+  }
+  .pr-fila__cifra {
+    font-family: var(--alt-font-display);
+    font-size: var(--alt-fs-h2);
+    font-weight: var(--alt-fw-bold);
+    color: var(--alt-gold, var(--alt-text-strong));
+    margin: 0;
+    white-space: nowrap;
+  }
+  .pr-fila__cifra--abierta {
+    font-size: var(--alt-fs-sm);
+    font-family: var(--alt-font-body);
+    font-weight: var(--alt-fw-medium);
+    color: var(--alt-text-soft);
+    white-space: normal;
+  }
+  .pr-fila__base { color: var(--alt-text-muted); margin: var(--alt-space-2) 0 var(--alt-space-3); }
+  .pr-fila__paga { color: var(--alt-text); margin: 0 0 var(--alt-space-2); font-size: var(--alt-fs-sm); }
+  .pr-fila__nota { color: var(--alt-text-soft); margin: 0; font-size: var(--alt-fs-sm); }
+
+  .pr-inquilino { max-width: 66ch; margin-inline: auto; text-align: center; }
+  .pr-inquilino__h2 {
+    font-family: var(--alt-font-display);
+    font-size: var(--alt-fs-h2);
+    font-weight: var(--alt-fw-semibold);
+    margin: 0 0 var(--alt-space-3);
+  }
+  .pr-inquilino__p { color: var(--alt-text-soft); margin: 0; line-height: 1.75; }
+
+  .pr-fina { max-width: 70ch; }
+  .pr-h2 {
+    font-family: var(--alt-font-display);
+    font-size: var(--alt-fs-h2);
+    font-weight: var(--alt-fw-semibold);
+    color: var(--alt-text-strong);
+    margin: 0 0 var(--alt-space-4);
+  }
+  .pr-lista { list-style: none; padding: 0; margin: 0 0 var(--alt-space-6); display: grid; gap: var(--alt-space-3); }
+  .pr-lista__item { color: var(--alt-text); padding-left: var(--alt-space-4); position: relative; }
+  .pr-lista__item::before { content: '·'; position: absolute; left: 0; color: var(--alt-text-soft); font-weight: var(--alt-fw-bold); }
+  .pr-cta { margin-top: var(--alt-space-2); }
+  .pr-legal {
+    margin: var(--alt-space-5) 0 0;
+    font-size: var(--alt-fs-xs);
+    color: var(--alt-text-soft);
+    letter-spacing: var(--alt-tracking-eyebrow);
+  }
+</style>

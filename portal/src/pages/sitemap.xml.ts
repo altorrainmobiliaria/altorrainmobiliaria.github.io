@@ -38,6 +38,8 @@ const RUTAS: Entrada[] = [
   { ruta: '/arrendar', prioridad: 0.9, frecuencia: 'daily' },
   { ruta: '/estancias', prioridad: 0.8, frecuencia: 'weekly' },
   { ruta: '/publicar', prioridad: 0.8, frecuencia: 'monthly' },
+  // Precios: diferenciador del plan (op.7) y la pregunta nº1 que llega por WhatsApp.
+  { ruta: '/precios', prioridad: 0.8, frecuencia: 'monthly' },
   { ruta: '/turismo', prioridad: 0.7, frecuencia: 'weekly' },
   { ruta: '/invertir', prioridad: 0.7, frecuencia: 'weekly' },
   { ruta: '/journal', prioridad: 0.6, frecuencia: 'weekly' },
