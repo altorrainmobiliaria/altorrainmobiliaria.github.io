@@ -23,7 +23,7 @@
 import type { DataClient } from './client';
 import type { Propiedad } from '../domain/propiedades';
 import type { CatalogoResumen, CatalogoShard } from '../domain/catalogo';
-import { CATALOGO_SHARDS, esPublicada, operacionAShard } from '../domain/catalogo';
+import { CATALOGO_SHARDS, esEsquemaLegacy, esPublicada, operacionAShard } from '../domain/catalogo';
 
 /** Id canónico de propiedad: `INM-YYYYMM-XXXX` (contador atómico, OD8). */
 export const ID_PROPIEDAD_RE = /^INM-\d{6}-\d{4}$/i;
@@ -126,6 +126,13 @@ export async function buscarFicha(cliente: DataClient, parametro: string): Promi
   // Se usa `esPublicada`, la MISMA whitelist con la que se construye el índice del catálogo, para que
   // la ficha y el listado no puedan discrepar sobre qué está publicado.
   if (!esPublicada(r.data)) return { estado: 'no-encontrada' };
+
+  // 🔴 Y el mismo gate para el OTRO modelo (§103). El índice ya deja fuera los documentos del panel
+  // viejo, así que por slug no se llega a uno — pero el id del legacy lo escribe una persona A MANO y
+  // nada le impide teclear uno con forma canónica, y esa rama SE SALTA el índice. El resultado sería
+  // una ficha con título y foto, sin precio ni specs, con aspecto de correcta y encima indexable.
+  // Se reutiliza el predicado del catálogo a propósito: ficha y listado no pueden discrepar.
+  if (esEsquemaLegacy(r.data)) return { estado: 'no-encontrada' };
 
   // Para «similares». Si este shard falla, la ficha se publica igual SIN similares: perder una banda
   // de recomendaciones no justifica esconder el inmueble.

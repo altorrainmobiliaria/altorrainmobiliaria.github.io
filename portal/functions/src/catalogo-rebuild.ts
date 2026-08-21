@@ -97,14 +97,32 @@ export async function rebuildCatalogo(db: Firestore, motivo: string): Promise<Re
       porShard[shard] = { items: items.length, bytes, escrito: true };
     });
 
+    // El DESGLOSE por motivo va al doc de control, no solo al log: es la única señal que se puede
+    // mirar sin abrir Cloud Logging, y «omitidas: 5» a secas no dice si falta una foto o si los
+    // documentos son del panel viejo (§103). Son 4 claves, no un doc gordo.
     tx.set(
       db.doc(DOC_CONTROL),
-      { lastRun: snapshotAt, pending: false, motivo, leidas: propiedades.length, omitidas: omitidas.length },
+      {
+        lastRun: snapshotAt,
+        pending: false,
+        motivo,
+        leidas: propiedades.length,
+        omitidas: omitidas.length,
+        omitidasPorMotivo: contarPorMotivo(omitidas),
+      },
       { merge: true },
     );
   });
 
   return { snapshotAt, motivo, leidas: propiedades.length, porShard, omitidas };
+}
+
+/** Cuántas omitidas por cada motivo — `{ 'esquema-legacy': 5 }` responde solo la pregunta del cutover. */
+export function contarPorMotivo(omitidas: OmitidaCatalogo[]): Record<string, number> {
+  return omitidas.reduce<Record<string, number>>((acc, o) => {
+    acc[o.motivo] = (acc[o.motivo] ?? 0) + 1;
+    return acc;
+  }, {});
 }
 
 /** Líneas de log del reporte — las omitidas y el tamaño son SEÑAL operativa, no ruido (§57.2). */

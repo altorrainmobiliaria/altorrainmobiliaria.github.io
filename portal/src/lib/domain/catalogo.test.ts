@@ -125,3 +125,72 @@ describe('construirIndices — rebuild TOTAL idempotente (§54.4 cond.1)', () =>
     expect(JSON.stringify(r2)).toBe(JSON.stringify(r1)); // byte-idéntico
   });
 });
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// 🔴 EL OTRO ESCRITOR (§103). `admin.html` y el portal escriben la MISMA colección `propiedades`
+// con modelos INCOMPATIBLES, y hoy el panel legacy es el ÚNICO CRUD que existe. La carga de abajo
+// no es inventada: son los campos EXACTOS que arma `js/admin-properties.js` al guardar.
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+/** Documento tal cual lo deja `admin.html` (plano, `operacion` de la ruta vieja, precio entero). */
+function propLegacy(over: Record<string, unknown> = {}): Propiedad {
+  return {
+    id: 'ALT-045',
+    titulo: 'Apartamento en Bocagrande',
+    tipo: 'apartamento',
+    operacion: 'comprar',            // el select legacy: comprar | arrendar | dias
+    estado: 'disponible',            // ✅ SÍ pasa el filtro de publicadas
+    ciudad: 'Cartagena',
+    barrio: 'Bocagrande',            // plano — el portal lo espera en `geo.barrio`
+    precio: 450_000_000,             // entero — el portal espera { valorVenta | canon | precioNoche }
+    habitaciones: 3,                 // planos — el portal los espera en `specs`
+    banos: 2,
+    sqm: 120,
+    coords: { lat: 10.399, lng: -75.554 }, // plano — el portal los espera en `geo`
+    imagenes: ['https://x/1.webp'],
+    imagen: 'https://x/1.webp',
+    _version: 1,
+    createdAt: '2026-07-01T00:00:00Z',
+    updatedAt: '2026-07-10T00:00:00Z',
+    ...over,
+  } as unknown as Propiedad;
+}
+
+describe('🔴 documentos del panel LEGACY en la misma colección', () => {
+  it('pasan el filtro de publicadas: el catálogo SÍ los lee', () => {
+    expect(esPublicada(propLegacy())).toBe(true);
+  });
+
+  it('se omiten con motivo `esquema-legacy`, NO con un motivo que despista', () => {
+    // Antes de §103 esto salía `sin-precio`, que manda a buscar un precio que SÍ está ahí —
+    // solo que en otra forma. Un diagnóstico equivocado cuesta horas el día del cutover.
+    const r = propiedadAResumen(propLegacy());
+    expect('omitida' in r && r.omitida.motivo).toBe('esquema-legacy');
+  });
+
+  it('lo detecta por la OPERACIÓN aunque el precio ya venga migrado', () => {
+    const r = propiedadAResumen(propLegacy({ precio: { moneda: 'COP', valorVenta: 450_000_000 } }));
+    expect('omitida' in r && r.omitida.motivo).toBe('esquema-legacy');
+  });
+
+  it('lo detecta por el PRECIO aunque la operación ya venga migrada', () => {
+    const r = propiedadAResumen(propLegacy({ operacion: 'venta' }));
+    expect('omitida' in r && r.omitida.motivo).toBe('esquema-legacy');
+  });
+
+  it('una propiedad del modelo NUEVO no se marca nunca como legacy', () => {
+    const r = propiedadAResumen(prop());
+    expect('resumen' in r).toBe(true);
+  });
+
+  it('el índice sale VACÍO con un catálogo entero del panel viejo — y lo REPORTA', () => {
+    // Este es el fallo real: 5 propiedades vivas en Firestore, SERP sin resultados, cero errores.
+    const { indices, omitidas } = construirIndices(
+      [propLegacy({ id: 'ALT-1' }), propLegacy({ id: 'ALT-2', operacion: 'arrendar' })],
+      '2026-08-21T00:00:00Z',
+    );
+    expect(indices.venta.items).toHaveLength(0);
+    expect(indices.arriendo.items).toHaveLength(0);
+    expect(omitidas.map((o) => o.motivo)).toEqual(['esquema-legacy', 'esquema-legacy']);
+  });
+});

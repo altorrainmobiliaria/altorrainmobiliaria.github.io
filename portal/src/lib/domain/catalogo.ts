@@ -4,6 +4,7 @@
 // un GET puntual por id (NO viola `verify:data`) + Workers Caching. Alimenta: cards del SERP + filtros
 // client-side + pins del mapa (TODO-30) + "similares" de la ficha. Solo-lectura pública.
 
+import { OPERACIONES } from './shared';
 import type { ISODate, COP, Operacion, TipoInmueble, EstadoPropiedad } from './shared';
 import type { Propiedad } from './propiedades';
 
@@ -87,7 +88,30 @@ export function precioDisplay(p: Pick<Propiedad, 'operacion' | 'precio'>): COP |
 /** Motivo por el que una propiedad PUBLICADA no pudo entrar al índice (se REPORTA, no se oculta en silencio). */
 export interface OmitidaCatalogo {
   id: string;
-  motivo: 'sin-precio' | 'sin-imagen' | 'sin-titulo';
+  motivo: 'sin-precio' | 'sin-imagen' | 'sin-titulo' | 'esquema-legacy';
+}
+
+/**
+ * ¿Este documento lo escribió el PANEL VIEJO? (§103)
+ *
+ * Los dos mundos comparten la colección `propiedades` y escriben modelos INCOMPATIBLES: `admin.html`
+ * deja campos planos (`barrio`, `habitaciones`, `coords`), un `precio` entero y una `operacion` de la
+ * ruta vieja (`comprar|arrendar|dias`), mientras el portal espera `geo`/`specs` anidados, un `precio`
+ * como objeto y `venta|arriendo|alojamiento`. Y `leerPublicadas()` hace un `as Propiedad` a ciegas:
+ * el documento viejo COMPILA, pasa el filtro de publicadas y solo revienta al leerlo.
+ *
+ * Por qué existe esta función en vez de dejar que falle sola: sin ella el documento cae en
+ * `sin-precio` — un motivo que manda a buscar un precio que SÍ está, solo que en otra forma. El
+ * síntoma (índice vacío, SERP sin resultados, cero errores) ya es bastante difícil sin encima un
+ * diagnóstico que apunta al sitio equivocado.
+ *
+ * La detección NO adivina: mira las dos cosas que el modelo sellado define de forma cerrada — que la
+ * `operacion` esté en `OPERACIONES` y que `precio` sea un objeto. Basta una para delatarlo, porque una
+ * migración a medias es tan inservible como ninguna.
+ */
+export function esEsquemaLegacy(p: Pick<Propiedad, 'operacion' | 'precio'>): boolean {
+  const precio: unknown = p.precio;
+  return !OPERACIONES.includes(p.operacion) || (precio != null && typeof precio !== 'object');
 }
 
 /**
@@ -96,6 +120,8 @@ export interface OmitidaCatalogo {
  */
 export function propiedadAResumen(p: Propiedad): { resumen: CatalogoResumen } | { omitida: OmitidaCatalogo } {
   if (!p.titulo) return { omitida: { id: p.id, motivo: 'sin-titulo' } };
+  // ANTES que nada lo demás: un documento del panel viejo no tiene «un campo mal», tiene OTRO modelo.
+  if (esEsquemaLegacy(p)) return { omitida: { id: p.id, motivo: 'esquema-legacy' } };
   const precio = precioDisplay(p);
   if (precio == null) return { omitida: { id: p.id, motivo: 'sin-precio' } };
   const thumb = p.imagenPortada ?? p.imagenes?.[0];

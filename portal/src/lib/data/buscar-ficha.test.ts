@@ -176,3 +176,34 @@ describe('buscarFicha', () => {
     expect(lecturas).toEqual([]);
   });
 });
+
+describe('🔴 documentos del panel LEGACY (§103)', () => {
+  // El id del panel viejo lo teclea una persona: nada le impide escribir uno con forma canónica, y esa
+  // rama de `buscarFicha` se salta el índice —que es lo único que hoy filtra el esquema.
+  const legacy = {
+    id: 'INM-202608-0009',
+    titulo: 'Casa en Manga',
+    tipo: 'casa',
+    operacion: 'comprar',
+    estado: 'disponible',
+    barrio: 'Manga',
+    precio: 900_000_000,
+    habitaciones: 4,
+    imagenes: ['https://x/1.webp'],
+    _version: 1,
+    createdAt: '2026-08-01T00:00:00Z',
+    updatedAt: '2026-08-01T00:00:00Z',
+  } as unknown as Propiedad;
+
+  it('un doc del modelo viejo con id canónico NO se publica como ficha', async () => {
+    const { cliente } = clienteFalso({ props: { 'INM-202608-0009': legacy } });
+    // Sin el gate saldría 'ok': título y foto sí tiene, y `esPublicada` lo deja pasar.
+    expect((await buscarFicha(cliente, 'INM-202608-0009')).estado).toBe('no-encontrada');
+  });
+
+  it('y no se cae por el camino: es 404, no 503', async () => {
+    const { cliente } = clienteFalso({ props: { 'INM-202608-0009': legacy } });
+    const r = await buscarFicha(cliente, 'INM-202608-0009');
+    expect(r.estado).not.toBe('error');
+  });
+});

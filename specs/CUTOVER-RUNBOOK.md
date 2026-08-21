@@ -24,7 +24,7 @@ adelante, no.
 
 | # | Qué falta | Para qué bloquea |
 |---|---|---|
-| 0.1 | **Inventario real**: al menos unas pocas propiedades para publicar | Sin esto el catálogo queda vacío y el portal se estrena sin nada que enseñar (fase 4) |
+| 0.1 | **Inventario real**: al menos unas pocas propiedades para publicar. ⚠️ **Cargarlas en `admin.html` NO sirve** — ver el aviso de la fase 4 | Sin esto el catálogo queda vacío y el portal se estrena sin nada que enseñar (fase 4) |
 | 0.2 | **Clave de Resend** + dominio `altorrainmobiliaria.co` verificado en Resend | Sin esto las alertas no mandan ni un correo (fase 3) |
 | 0.3 | **Decisión de mover el DNS** Hostinger → Cloudflare | Es el paso final y el único irreversible en horas (fase 5) |
 | 0.4 | **Contraseña de aplicación de Gmail rotada** | El aviso de leads por correo. ⚠️ Aplazado por decisión de Daniel; el panel ya enseña los leads sin depender de esto (§101) |
@@ -96,16 +96,28 @@ verdad cuando haya catálogo y una alerta con novedades.
 
 ## FASE 4 — Catálogo real
 
+> ⛔ **AVISO — el panel viejo NO sirve para cargar el catálogo del portal (§103).** `admin.html` y el
+> portal escriben la MISMA colección `propiedades` con modelos **incompatibles**: el viejo deja el
+> precio como un número entero, la operación como `comprar/arrendar/dias` y los datos planos; el portal
+> espera el precio como objeto, la operación como `venta/arriendo/alojamiento` y `geo`/`specs`
+> anidados. Una propiedad creada en `admin.html` **pasa el filtro de publicadas y luego se cae**: el
+> índice sale vacío, el SERP dice «no hay resultados» y no se registra ningún error.
+>
+> Desde §103 esa omisión se reporta con el motivo `esquema-legacy` (en el log y en el doc de control,
+> campo `omitidasPorMotivo`), así que el diagnóstico es inmediato — pero **el catálogo sigue vacío**.
+> **El portal necesita su propio alta de propiedades (TODO-44) antes de que esta fase pueda hacerse.**
+
 | Paso | Quién | Qué |
 |---|---|---|
-| 4.1 | 🧑 | Cargar las primeras propiedades (o entregárselas a Claude para sembrarlas) |
+| 4.1 | 🧑 | Cargar las primeras propiedades **desde el panel del portal** (TODO-44), o entregárselas a Claude para sembrarlas |
 | 4.2 | 🤖 | Comprobar que `indices/catalogo-*` se pobló (lo escribe la Function de la fase 3) |
 | 4.3 | 🧑 | Poner la variable de repositorio **`PORTAL_CATALOGO_SOURCE = live`** |
 | 4.4 | 🧑 | Poner **`PORTAL_MEDIA_BASE`** con la URL pública del bucket R2 |
 | 4.5 | 🤖 | Empujar cualquier cambio a `main` para que el CI reconstruya con esas variables |
 
 **Verificación**: el SERP de `/comprar` muestra los inmuebles REALES, y una ficha abre por su URL
-`/inmueble/<slug>`. Si las fotos salen rotas, es 4.4 (§97.7).
+`/inmueble/<slug>`. Si las fotos salen rotas, es 4.4 (§97.7). **Si el SERP sale vacío**, mira
+`omitidasPorMotivo` en el doc de control antes de tocar nada: dice exactamente por qué.
 
 **Vuelta atrás**: devolver `PORTAL_CATALOGO_SOURCE` a `demo`. El portal vuelve a las cards de muestra.
 
