@@ -3050,3 +3050,51 @@ promesa: los ficheros anteriores están en `_legacy/` y el comando es el mismo a
 contra una lista) · §3.4 IAP · §G.4 caza-bugs (los dos agujeros y el choque de Storage salieron de
 recorrer el ruleset vivo, no el diff) · [[M-06]] (un gate solo existe si lo has visto disparar: por eso
 21 tests nuevos y no una afirmación).
+
+## 101. ADR — La bandeja de leads: la primera pantalla del back-office con datos reales ⟦OPUS-5⟧ (2026-08-21)
+
+> Ítem 10 de OLA 1 («Admin v1 tras Auth»), su primera mitad de verdad. El panel ya tenía puerta (§98.3);
+> ahora tiene contenido.
+
+**101.1 — Por qué ESTA pantalla y no otra.** `/publicar` y el Rango capturan leads REALES desde §88 y
+§94, y el aviso por correo lleva roto desde entonces (credenciales de Gmail, pelota 1 del `10`). O sea
+que los leads entran y el dueño solo puede verlos abriendo la consola de Firebase. Esta pantalla cierra
+ese hueco **sin depender de que el correo vuelva** — que es lo importante, porque el correo depende de
+él y esto no.
+
+**101.2 — Por qué aquí sí se usa el SDK de Firestore.** El gate `verify:data` lo prohíbe en todo el
+portal, y con razón: protege las superficies PÚBLICAS, donde una lectura de más se multiplica por cada
+visitante. **El panel no es público** — lo abren una o dos personas tras sesión y claim de staff — y la
+propia doctrina lo contempla al decir «cero `onSnapshot` PÚBLICO (solo admin)». La excepción es por
+patrón de archivo (`scripts/gestion-*.ts`), con el motivo escrito, y se comprobó que el gate **sigue
+cazando** el mismo import fuera del panel (M-06: un gate solo existe si lo has visto disparar).
+
+**101.3 — Decisiones que no son de maquetación.** (a) **Sin listeners**: `onSnapshot` en una pestaña
+olvidada toda la tarde es el patrón que arruina una cuota, y aquí no compra nada porque los leads no
+llegan cada segundo. Consulta acotada con `limit(50)` y a otra cosa. (b) **El teléfono es un enlace a
+WhatsApp con el nombre ya dentro**: copiar un número a mano es la diferencia entre llamar en cinco
+minutos o en cinco horas, y el proceso del dueño pide SLA de 5 minutos. (c) **Si la consulta toca el
+tope, el KPI dice «50+»**, no «50»: un número exacto que en realidad está recortado es una cifra falsa
+con aspecto de dato.
+
+**101.4 — La regla que gobierna el fallo.** Si la lectura falla, los leads de MUESTRA se BORRAN y se
+dice qué pasó. Dejarlos sería peor que un panel vacío: alguien llamaría a personas que no existen. Es
+la misma disciplina de la ficha (§97.4) aplicada al back-office.
+
+**101.5 — Dos trampas documentadas en el código.** `createdAt` llega con DOS formas —`Timestamp` del
+SDK o texto ISO del endpoint REST— y asumir una sola no da error: pinta un guion en la columna de fecha
+y nadie sabe por qué ([[L-17]] otra vez). Y un `orderBy` **excluye** los documentos que no tengan ese
+campo: un lead sin `createdAt` sería invisible aquí y nadie lo sabría; hoy los dos caminos que escriben
+leads lo ponen siempre, y ese comentario está justo encima de la consulta para el día que cambie.
+
+**101.6 — Verificación.** 155 tests (14 nuevos, sobre la normalización, que es donde este proyecto ya
+se quemó) · build, `verify:build` y `verify:data` verdes · el gate probado en las dos direcciones · el
+panel sigue viajando `hidden` en el HTML servido. ⚠️ **NO verificado en vivo con datos reales**:
+requiere una sesión de staff con el claim, que todavía no está desplegado (§99). Lo probado es la
+lógica pura y que el panel no se abre sin permisos.
+
+**101.7 — Lo que le falta al ítem 10.** CRUD de propiedades, cola de verificación y export. El CRUD
+desde el panel ya es posible con el ruleset fusionado (§100 mantiene la escritura por rol), así que no
+está gateado por nadie: es trabajo. **101.8 — Doctrina**: §3.2 (`limit()` obligatorio, cero listeners
+públicos) · §3.3 (las clases del KPI se corrigieron contra el markup REAL, no de memoria — [[L-27]]) ·
+§G.4 caza-bugs.

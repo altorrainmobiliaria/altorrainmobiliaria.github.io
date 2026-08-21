@@ -34,7 +34,7 @@ Auto-cargas SOLO `CLAUDE.md` + `05` + `10` (§G.1); el resto se lee on-demand. E
 | 🩺 **Estado Global** | `docs/05-ESTADO-GLOBAL.md` | ✅ boot | Signos vitales: build, branch, flags de riesgo. |
 | ⚡ **Corto Plazo (WIP)** | `docs/10-MEMORIA-CORTO-PLAZO.md` | ✅ 2ª | Sprint actual, pendientes (TODO-NN), bitácora. |
 | 🛰️ **Consejo Externo** | `docs/15-CONSEJO-EXTERNO.md` | ❌ | Crítica adversarial de un provider de otra familia (no-Claude): cuándo pedirla + anti-anclaje. |
-| 🗺️ **Espacial** | `docs/20-MEMORIA-ESPACIAL.md` | ❌ | Dónde vive cada componente/flujo, stack real, schema Firestore, free-tier, blog, SEO. |
+| 🗺️ **Espacial** | `docs/20-MEMORIA-ESPACIAL.md` (+ hija `21-MAPA-PORTAL.md`) | ❌ | Stack real, schema Firestore, free-tier, blog, SEO. La hija: dónde vive cada archivo del PORTAL. |
 | 🧪 **Procedimental** | `docs/30-LECCIONES.md` | ❌ | Gotchas y recetas ya pagados (`L-NN`). |
 | 🧩 **Hojas hijas de `30`** | `docs/31-VERIFICACION-UI.md` · `docs/32-LECCIONES-DOCUMENTALES.md` · `docs/33-LECCIONES-META.md` · `docs/34-DOCTRINA-CODIGO.md` · `docs/35-LECCIONES-PLATAFORMA.md` | ❌ | UI en navegador · legal/documental (`LD-NN`) · meta (`M-NN`: dónde falló el cerebro) · 🖥️ doctrina de código · plataforma de Ola 0 (`L-01`..`L-21`). |
 | 🔁 **Workflows** | `docs/60-WORKFLOWS.md` | ❌ | Catálogo W-01..W-11; **W-11 = SSoT del flujo fuerte**. |

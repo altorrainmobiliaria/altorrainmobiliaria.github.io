@@ -85,6 +85,11 @@
       "chars": 22000,
       "_comment": "Nacio el 2026-08-21 (ADR 97) cuando 30-LECCIONES reventó su tope: absorbe L-01..L-21, los gotchas de INFRAESTRUCTURA de Ola 0 (Firebase, Functions gen2, Cloudflare/Astro/Wrangler, REST, emulador). Cap MEDIDO sobre el real (16471c / 83L) + 33%, con lines DERIVADO de la densidad real (198 c/linea) y no estimado a ojo: la primera version puso 60 lineas suponiendo parrafos mas largos y el eje equivocado disparo primero, que es justo lo que _caps_que prohibe (M-06: el gate acusaba a un inocente). Es un ARCHIVO de una era cerrada: crece poco y solo cuando se vuelve a tocar esa capa. Si creciera mucho, shard por proveedor (Firebase / Cloudflare) antes que subir el techo (M-05)."
     },
+    "docs/21-MAPA-PORTAL.md": {
+      "lines": 53,
+      "chars": 14000,
+      "_comment": "Nacio el 2026-08-21 (ADR 101) cuando 20-MEMORIA-ESPACIAL reventó su tope por tercera vez en un dia: la seccion del Portal era mas de la MITAD del archivo y es la que crece con cada superficie nueva. Cap MEDIDO sobre el real (10299c / 39L) + 36%, con lines DERIVADO de la densidad REAL (264 c/linea) -> 14000/264 = 53. La primera version puso 40 a ojo y el eje de lineas quedaba al 97% mientras chars iba al 74%: el eje equivocado habria disparado primero, que es lo que _caps_que prohibe. Es la SEGUNDA vez hoy que me pasa (ver 35-LECCIONES-PLATAFORMA): derivar, nunca estimar. Si crece mas alla de esto, shard por capa (paginas / datos / scripts) antes que subir el techo (M-05)."
+    },
     "docs/00b-INDICE-CONSTRUCCION.md": {
       "lines": 60,
       "chars": 13000,
