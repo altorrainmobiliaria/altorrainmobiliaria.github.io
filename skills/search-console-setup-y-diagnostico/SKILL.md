@@ -21,6 +21,25 @@ description: Dar de alta Google Search Console (GSC) y diagnosticar por qué un 
 - [ ] **canonical autorreferencial** correcto (cada ficha apunta a sí misma).
 - [ ] JSON-LD **válido** (Rich Results Test sin errores).
 - [ ] `robots.txt` con `Sitemap: <baseUrl>/sitemap.xml` + habilita bots IA.
+- [ ] 🔴 **Si la indexabilidad depende de una VARIABLE DE ENTORNO, verifica que alguien la DECLARE.**
+  El patrón «indexo solo si `SITE_ENV=production`» es correcto —protege al staging de competir con el
+  dominio— y a la vez un arma cargada: si nadie pone la variable en el deploy de producción, el sitio
+  nuevo sale pidiendo su propia desindexación **y se ve perfecto**. *(Caso real 2026-08-21, ALTORRA:
+  la variable se LEÍA en 2 archivos y no se DECLARABA en ninguno —ni CI, ni wrangler, ni `.env`— así
+  que todo build de la historia del repo era `noindex`, incluido el que iba al cutover.)*
+  **Cómo se caza**: `grep -rn VARIABLE` y comprueba que haya al menos una ASIGNACIÓN, no solo lecturas.
+  **Cómo se blinda**: una verificación en el build que **falle** si en producción sobrevive un `noindex`
+  o un `Disallow: /`, **y avise** cuando no es producción. Un gate que solo mira una dirección deja
+  pasar la otra en silencio.
+- [ ] **Antes de un cutover de dominio, el archivo de verificación de propiedad debe seguir dando 200.**
+  Si la propiedad se verificó por archivo HTML (no por TXT en DNS), ese archivo vive en el hosting VIEJO:
+  al mover el DNS deja de ser alcanzable y se pierde la propiedad —y con ella el histórico—. Cópialo al
+  sitio nuevo y **pruébalo con `curl`**; y NUNCA lo metas en el mapa de 301 (un redirect no lo valida).
+- [ ] **El mapa de 301 se hace por INTENCIÓN, no en bloque a la home.** Un 301 masivo a `/` Google lo
+  trata como soft-404 y no transfiere señal. Si la página destino ideal aún no existe, apunta al destino
+  real más cercano y deja anotado a qué re-apuntarlo: re-apuntar un 301 luego es barato; mandarlo hoy a
+  un 404 pierde la señal para siempre. Y deja escrito qué rutas NO se redirigen **y por qué**, o alguien
+  las «completará» por simetría.
 - [ ] **CERO `noindex` residual** (el bug clásico: un `noindex` global de "en construcción" que nadie quitó →
   Google obedece y NO indexa NADA). Búscalo: `curl -s <url> | grep -i noindex` debe salir vacío.
 
