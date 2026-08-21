@@ -55,6 +55,45 @@ filtros/orden) como un sistema profesional que escala a más módulos — NO fea
   de moldear un módulo o una fase: **barrido holístico del sistema completo, no la pieza aislada**.
 - Seguridad y mapa de código: consulta los lóbulos/neuronas del proyecto vía su `00-INDICE` / `40-LOBULOS-DOMINIO`.
 
+## Modelos de permiso en backends con reglas declarativas (Firebase, Supabase RLS, S3)
+
+Elegir cómo una regla sabe «quién eres» parece una decisión de estilo y es de coste, de alcance y de
+tiempo de revocación. Tres cosas que casi nadie mira antes de decidir, y que deciden por ti:
+
+1. **Una regla que hace `get()` SE FACTURA aunque deniegue.** No es un detalle: si tu app deja
+   autenticarse a cualquiera —un login social para clientes, por ejemplo— entonces «estar autenticado»
+   no es un estado raro, es el estado por defecto de un desconocido. Un bucle desde la consola del
+   navegador dispara esa lectura por petición y te vacía la cuota diaria sin conseguir un solo dato.
+   Un **claim dentro del token cuesta cero**: viaja firmado y la regla lo lee sin salir a ninguna parte.
+2. **Comprueba que el mecanismo alcance a TODAS las mitades.** Las reglas de almacenamiento de archivos
+   normalmente **no pueden consultar la base de datos**. Si eliges «la regla mira un documento», acabas
+   de dejar fuera el bucket donde viven los documentos escaneados y los adjuntos privados — que suele
+   ser lo más sensible que tienes. Un claim sí llega a los dos sitios.
+3. **Un token ya emitido no se puede matar.** Revocar refresh tokens, deshabilitar o incluso borrar la
+   cuenta impiden RENOVAR, no invalidan lo que ya se entregó: hay hasta una hora de acceso residual. Si
+   lo que proteges es LECTURA de datos sensibles, di el número en voz alta y escribe el procedimiento
+   de urgencia (desplegar a mano una regla más estricta). «Total, no puede escribir» no es una
+   respuesta cuando el activo es la información.
+
+**El patrón que resuelve los tres**: el **documento manda, el token es su espejo**. Una colección de
+usuarios es la fuente de verdad —tiene listado, autoría, interfaz y responde «¿quién tiene acceso
+hoy?»—, y un trigger deriva de ella el claim. Nadie escribe el claim a mano nunca.
+
+**Y al implementar ese trigger, cuatro cosas que solo aparecen intentando romperlo:**
+- **Relee el documento**, no uses el payload del evento: los triggers son *at-least-once* y sin orden
+  garantizado, así que un reintento viejo que llegue después de una revocación deja el permiso pegado
+  en «concedido».
+- **Revoca antes de cualquier corte por idempotencia**: si en una pasada el permiso se escribió y la
+  revocación falló, el reintento sale por el early-return y no revoca jamás.
+- **Lista blanca, no lista negra**: exige `activo === true`, no `!== false`. Un `"false"` tecleado como
+  TEXTO en una consola de administración no puede concederle acceso a nadie.
+- **El barrido de huérfanos lleva fusible**: solo corre si el censo salió COMPLETO. Un censo parcial
+  —porque una página falló o porque el listado miente en silencio por encima de su tope— jamás puede
+  interpretarse como «revócaselo a todos».
+
+**Despliégalo SOLO**, separado del cambio grande que lo motivó. Si no toca las reglas vivas, no puede
+romper nada, y el permiso queda verificado en producción semanas antes de que alguien dependa de él.
+
 ## Cuándo NO usar
 - Edits triviales sin consecuencias de diseño (un texto, un color, un typo).
 - Tareas que no son de código (salvo que haya una decisión de sistema detrás).
