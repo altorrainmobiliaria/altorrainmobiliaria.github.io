@@ -2594,3 +2594,45 @@ una tarifa sellada o a una obligación legal verificada · las 5 filas rindiendo
 1673/2013 y su RAA). La skill `catalogo-voz-altorra`, en cambio, usa «Avalúo» suelto en §8 y en el
 menú de WhatsApp §6.4. **Dos fuentes del cerebro se contradicen en algo con peso legal**, así que no
 se cambió por cuenta propia: queda para Daniel en TODO-39.
+
+## 94. ADR — Rango ALTORRA: el ítem que parecía gateado por el dueño y no lo estaba ⟦OPUS-5⟧ (2026-08-21)
+
+> Ítem 9 de OLA 1. Deja OLA 1 en **12 de 13**.
+
+**94.1 — Causa raíz / el desbloqueo.** El ítem se había clasificado como «necesita los rangos de 10
+barrios de Daniel». Releyendo el MEGA-PLAN dice **«landing multi-step CONTACTO-PRIMERO»**: el
+visitante deja sus datos y un asesor le devuelve el rango. **Sin número en pantalla, los rangos no
+son un prerrequisito para construirlo.** Lección de método: «gateado por el dueño» merece releerse
+antes de aceptarse, porque el gate puede estar en una parte del alcance y no en toda.
+
+**94.2 — B13 manda en este archivo.** En Colombia el avalúo es actividad **REGULADA** (Ley 1673/2013,
+avaluadores inscritos en el RAA). Ofrecer «avalúo gratis» desde una inmobiliaria no es impreciso, es
+exponerse. La página dice con todas las letras que es una estimación orientativa y **no** un avalúo
+con validez legal, y que para ese documento remitimos a quien corresponde.
+
+**94.3 — Dos integraciones que habrían roto EN SILENCIO.** (a) `api/solicitud.ts` hardcodeaba
+`origen: 'portal-publicar'`: los leads del Rango habrían llegado indistinguibles de los de
+`/publicar`, y el censo de `43 §LEADS` se hizo justamente mapeando `origen` → formulario. Ahora hay
+**lista blanca** de formularios (aceptar cadena libre sería regalarle el campo a un bot). (b) La
+allow-list de zonas del endpoint tenía **6** nombres y las landings de §92 tienen **13**: el
+formulario habría ofrecido zonas que el backend **descartaba sin un solo error**. Se compone como
+unión derivada de `zonas.ts`. Las dos son [[M-10]]: correcto en un sentido, mudo en el otro.
+
+**94.4 — Progresivamente mejorado, de verdad.** Sin JavaScript los dos fieldsets están visibles y el
+POST nativo funciona; el botón «Continuar» nace `hidden` y lo revela el JS, para no mostrar un botón
+que no haría nada. El fallo de red **falla RUIDOSO**: un «gracias» tras un error pierde al
+propietario y encima le hace creer que lo llamaremos.
+
+**94.5 — Verificación.** `/avaluo.html` → 301 al Rango (cierra el ÚLTIMO `pendiente` del mapa §91) ·
+página 200 con `<title>` único · los **3 gates** del endpoint responden 422 con el campo nuevo
+presente (habeas data · teléfono · spam) · 13 zonas y 5 tipos renderizando · sitemap 27 → **28**.
+⚠️ **El POST exitoso NO se probó a propósito**: escribiría un lead de prueba en la colección de
+producción que Daniel acaba de dejar en cero, y Claude no borra datos. Los gates recorren el mismo
+camino de código hasta la escritura.
+
+**94.6 — El riesgo de §93.6 se agrava.** La palabra «Avalúo» aparece **en esta misma página**, la
+única cuyo propósito es no decirla, porque viene de los componentes compartidos:
+`Footer.astro:15` («Avalúo gratis»), `Header.astro:56` («Avalúo, marketing y cierre») y
+`Header.astro:78` («Avalúos»). No se tocó: la skill `catalogo-voz-altorra` usa «Avalúo» con
+normalidad en §8 y §6.4, así que **dos fuentes del cerebro se contradicen en algo con peso legal** y
+esa la decide Daniel. Sigue en TODO-39.
