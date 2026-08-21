@@ -3317,3 +3317,69 @@ y al auditar, distinguir el texto que describe *tu propia estimación* (se corri
 **reclama una línea de servicio** (depende de un hecho del dueño: se pregunta, no se reescribe).
 **105.8 — Doctrina**: §3.3 (se leyó `42-LEGAL §9`, no el resumen del `10` — que es lo que llevaba el
 caso bloqueado) · §G.4 destilar a skills · gate B13.
+
+---
+
+## 106. ADR — Dos campos con tres lectores cada uno, y el recon que tumbó el plan del CRUD ⟦OPUS-5⟧ (2026-08-21)
+
+Iba a construir el alta de propiedades (TODO-44). Antes de escribir una línea lancé un reconocimiento
+de 4 lectores independientes —legal, lectores del dato, formulario del panel viejo, design system— con
+un adversario verificando el dossier contra el repo. **Ninguno de los hallazgos que más importan estaba
+en el dossier: salieron de la crítica.** Crudo en la bóveda, 852k tokens.
+
+**106.1 — Dos defectos VIVOS, ya desplegables, del patrón [[L-45]](e).**
+
+*(a) `geo.ciudad`.* Tres lectores del mismo campo, dos optimistas y uno fail-closed.
+`exhibeMatricula()` decide con `startsWith('cartagena')`, así que sin ciudad devuelve `false` y oculta
+la matrícula; pero `ubicacionPublica()` y el JSON-LD caían en `|| 'Cartagena de Indias'`. Con el campo
+vacío, el resultado era **un arriendo afirmándole al visitante Y a Google estar en Cartagena mientras
+omitía la Matrícula de Arrendador que la Ley 820 art. 31 exige en TODA publicidad de arriendo**. Un
+dato ausente convertido en publicidad sin habilitación, sin un solo error por ninguna parte. Y encima
+`addressRegion: 'Bolívar'` iba FIJO: un inmueble de otra ciudad salía en el departamento equivocado.
+
+*(b) `imagenPortada`.* El índice y el Open Graph usaban `??` —que solo cae al respaldo con
+`null`/`undefined`, **no** con cadena vacía— mientras el componente de la ficha usaba `||`, que sí cae.
+Con `imagenPortada: ''` la ficha se veía entera y, a la vez, no había card en el listado **ni imagen al
+compartir el enlace** — que en este negocio es el canal principal.
+
+**106.2 — Solución: un dueño por campo, y nadie inventa.** `ciudadDe()` y `departamentoDe()` en
+`ficha.ts`, `portadaDe()` en `propiedades.ts`. Sin ciudad no se afirma ninguna y el `address` sale
+incompleto —que es válido en Schema.org; uno que miente, no—; el departamento se DERIVA de la ciudad y
+se omite si no se sabe. Una cadena vacía es **ausencia**, no un valor. 8 tests nuevos que fijan
+explícitamente que los tres lectores coincidan pase lo que pase con el dato.
+
+**106.3 — Lo que el recon le hizo al plan de TODO-44 (esto es lo caro).** Cuatro premisas sobre las que
+iba a construir, refutadas con evidencia:
+
+1. **Las fotos no tienen camino.** `R2_MEDIA` existe **solo** como binding en `wrangler.jsonc`: cero
+   usos en `portal/src`, ni endpoint de subida ni URL firmada. Y copiar el flujo del panel viejo rompe
+   el build: `verify:data` prohíbe `firebase/storage` en TODO `portal/src`, y la excepción de
+   `scripts/gestion-*` cubre `app|auth|firestore` — **storage no**. Sin portada no hay card, así que
+   **el alta no puede producir una propiedad publicable hasta que exista un endpoint de subida a R2**.
+   Ese endpoint es ahora el primer trabajo de TODO-44, no un extra.
+2. **`_version` no protege a quien de verdad usa el panel.** La regla es
+   `esSuperAdmin() || (esEditorOMas() && versionCreacionValida())`: Daniel es super_admin y **bypassa**
+   el bloqueo optimista en create y en update. El compare-and-set del servidor es real para editores;
+   para el dueño, no. La defensa del alta tiene que ser un `tx.get()` dentro de la misma transacción.
+3. **`captaciones` es `write: false`** en el ruleset nuevo y ni existe en el vivo, y la Function que
+   sería su escritor no está escrita. Así que «la PII se mueve al documento privado» **no es
+   implementable desde el cliente**: o el alta pasa por un callable, o la primera fase no captura PII.
+4. **Nada de lo que guarde el formulario aparecería todavía.** La Function que escribe el índice es la
+   FASE 3 del cutover (sin desplegar) y el SERP corre con `PUBLIC_CATALOGO_SOURCE=demo`. El panel debe
+   **decirlo en pantalla**, o el primer alta real dispara la cacería de un bug que no existe.
+
+**106.4 — La respuesta a la trampa de §103, que es el corazón del alta.** El escritor debe correr los
+MISMOS predicados que el lector, **llamándolos**, no reimplementándolos: una función
+`problemasParaPublicar(p)` que invoque `esPublicada` + `propiedadAResumen` y devuelva los motivos. Y un
+test que fije el contrato: *para todo documento que el formulario acepte publicar, `construirIndices`
+devuelve `omitidas: []`*. Sin ese test, la próxima regla que se añada al lector reabre el hueco.
+
+**106.5 — Anti-patterns evitados.** NO se construyó el formulario con el dossier: cuatro de sus
+premisas eran falsas o estaban desfasadas, y el adversario costó una fracción de lo que habría costado
+descubrirlo con el código escrito. NO se «arreglaron» los lectores optimistas poniéndolos a todos a
+inventar Cartagena: la dirección correcta es la fail-closed.
+
+**106.6 — Archivos.** `domain/ficha.ts` (+`ciudadDe`/`departamentoDe`), `domain/propiedades.ts`
+(+`portadaDe`), `domain/catalogo.ts`, `components/FichaInmueble.astro`, `pages/inmueble/[slug].astro`,
++8 tests. **106.7 — Doctrina**: [[L-45]](e) por tercera vez en un día · §3.3 · §G.4 (crudo en bóveda +
+esta síntesis) · §3.7 (el recon fue por iniciativa propia, y pagó).

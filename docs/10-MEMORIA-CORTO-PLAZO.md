@@ -31,10 +31,10 @@
 | **TODO-21** | **Lote-dueño**: Nº **RNT** · dirección física y COMERCIAL · abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño | gate=obra |
 | **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-38** (§90) gates a medias: #27 sin `creas` · #5 existencia≠corrección · `§NN` sueltos sin gate · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO) · **TODO-40** ✅ cerrado (`30`→`35` · `33` destilado · `00`→`00b`, §100). Frente vivo: **`30` al 92% de chars** → shard ANTES de reventar; NO subir techos ([[M-05]]). | 🔄 | §84·§87·§90·§96 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
-| **TODO-44** | 🖥️ **Admin v1 — el CRUD pasó a REQUISITO DEL CUTOVER (§103)**: el único alta que existe es la de `admin.html` y escribe un modelo que el portal DESCARTA (índice vacío, cero errores). Sin CRUD propio no hay catálogo real. ✅ puerta (§98) + leads (§101). Resta CRUD, cola de verificación y export. No lo gatea nadie (§100). | 🔴 SIGUIENTE | §103 |
+| **TODO-44** | 🖥️ **CRUD = requisito del cutover (§103)** y el recon §106 fijó su ORDEN real: (1) **endpoint de subida a R2** — hoy `R2_MEDIA` es solo un binding, cero código, y sin portada NO hay card, así que el alta no puede producir nada publicable sin esto; (2) `problemasParaPublicar()` que LLAME a los predicados del lector + test del contrato; (3) el formulario. Ojo: `_version` NO ata al super_admin (`tx.get` en la misma transacción), `captaciones` es `write:false` (PII fuera de la fase 1) y el panel debe avisar que el índice aún no está desplegado. | 🔴 SIGUIENTE | §106 |
 | **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, [[L-39]] → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-39** | 🌊 **OLA 1 ✅ 13 de 13** (§91-§96 → `00`). (a) ✅ «Avalúo» RESUELTO en §105 (queda 1 pregunta suya → pelota 11); (b) el **go/no-go de ola** con Daniel (MEGA-PLAN §4.4). | 🟢 código listo | §105 |
-| **TODO-22** | **CATÁLOGO — código COMPLETO, incluida la FICHA (§97)**. Datos reales = **fases 3-4 del runbook**; después, fichas al sitemap desde el índice. | 🟢 cutover | §102 |
+| **TODO-22** | **CATÁLOGO completo, ficha incluida (§97)**. Datos reales = fases 3-4 del runbook; luego fichas al sitemap. | 🟢 cutover | §102 |
 | **TODO-42** | 🔑 **Claim de staff — CÓDIGO LISTO, falta desplegar** (§99) = **fase 1 del runbook**, aislada y se puede hacer HOY (no toca reglas). ⏭️ **Daniel**: (1) me confirma el deploy — concede permisos de admin, prefiero que lo sepas; (2) pulsa «Sincronizar permisos» en admin.html → Usuarios; (3) abre `/gestion`. | 🟡 deploy | §102 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
@@ -54,14 +54,13 @@
 > `/inmueble/<slug>` (§97), Workers Caching encendido y `/gestion` tras puerta (§98). Lo que falta de
 > OLA 1 ya no es código: el go/no-go del dueño y la contradicción de «Avalúo» (§94.6).
 >
-> **§102: el cutover ya no se improvisa** → **`specs/CUTOVER-RUNBOOK.md`** es el SSoT del orden (6 fases,
-> con verificación y vuelta atrás). De ahí salió que `PUBLIC_SITE_ENV` no se declaraba en el CI: TODO
-> build del repo salía `noindex`. Ya son 3 perillas por variable de repositorio, con defaults seguros.
+> **§102: el cutover ya no se improvisa** → **`specs/CUTOVER-RUNBOOK.md`** manda (6 fases, verificación
+> y vuelta atrás). De ahí salió que `PUBLIC_SITE_ENV` no se declaraba en el CI: TODO build salía
+> `noindex`. Ya son 3 perillas por variable de repositorio.
 >
-> **§103: el panel viejo escribe OTRO modelo.** `admin.html` y el portal comparten `propiedades` con
-> esquemas incompatibles ⇒ una propiedad creada allá pasa el filtro y luego se cae: índice vacío, SERP
-> sin resultados, cero errores. Ya se reporta como `esquema-legacy`, pero **el catálogo sigue vacío**:
-> por eso el CRUD del portal (TODO-44) dejó de ser mejora y es requisito del cutover.
+> **§103: el panel viejo escribe OTRO modelo** — esquemas incompatibles en la MISMA colección ⇒ lo que
+> se crea allá pasa el filtro y se cae luego: índice vacío, cero errores. Ya se reporta
+> (`esquema-legacy`), pero el catálogo sigue vacío ⇒ el CRUD es requisito del cutover, no mejora.
 >
 > **Lo siguiente, en orden**: (1) **TODO-44, el CRUD** — sin él la fase 4 del runbook no se puede
 > hacer · (2) **el cutover** con el runbook en la mano (claims y reglas LISTOS, §99-§100) ·
