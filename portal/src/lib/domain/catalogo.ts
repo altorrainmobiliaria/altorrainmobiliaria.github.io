@@ -6,7 +6,7 @@
 
 import { OPERACIONES } from './shared';
 import type { ISODate, COP, Operacion, TipoInmueble, EstadoPropiedad } from './shared';
-import { publicable } from './propiedades';
+import { portadaDe, publicable } from './propiedades';
 import type { Propiedad } from './propiedades';
 
 /** Shards del índice por operación (doc `indices/catalogo-{shard}`). Sharding desde el día 1 (§54.4): el
@@ -130,7 +130,7 @@ export function propiedadAResumen(p: Propiedad): { resumen: CatalogoResumen } | 
   if (!publicable(p)) return { omitida: { id: p.id, motivo: 'sin-rnt' } };
   const precio = precioDisplay(p);
   if (precio == null) return { omitida: { id: p.id, motivo: 'sin-precio' } };
-  const thumb = p.imagenPortada ?? p.imagenes?.[0];
+  const thumb = portadaDe(p);
   if (!thumb) return { omitida: { id: p.id, motivo: 'sin-imagen' } };
 
   // Badges SOLO desde flags REALES del dominio (nada inventado, L-29); máx 2.

@@ -112,6 +112,21 @@ export interface Disponibilidad extends Versioned {
   reservaId?: string;
 }
 
+/**
+ * La PORTADA del inmueble, o `''` si no hay ninguna imagen.
+ *
+ * DUEÑO ÚNICO a propósito (§106). Había tres lectores de este par de campos y no coincidían: el índice
+ * y el Open Graph usaban `imagenPortada ?? imagenes[0]` —donde `??` solo cae al respaldo si el valor es
+ * `null`/`undefined`, NO si es cadena vacía— mientras el componente de la ficha usaba `|| `, que sí
+ * cae. Con `imagenPortada: ''` el resultado era una ficha con su galería completa y, a la vez, sin card
+ * en el listado y sin imagen al compartir el enlace — que en este negocio es el canal principal.
+ *
+ * Una cadena vacía es AUSENCIA de portada, no una portada llamada «». [[L-45]](e).
+ */
+export function portadaDe(p: Pick<Propiedad, 'imagenPortada' | 'imagenes'>): string {
+  return p.imagenPortada?.trim() || p.imagenes?.find((i) => i?.trim()) || '';
+}
+
 /*
  * ⬇️ Vivía en `ficha.ts` y se mudó AQUÍ en §104. Razón: no es un detalle de la vista de ficha, es
  * un INVARIANTE LEGAL del modelo, y el catálogo también tiene que respetarlo — pero `catalogo.ts`

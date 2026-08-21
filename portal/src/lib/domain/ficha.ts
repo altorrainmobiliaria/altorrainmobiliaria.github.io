@@ -339,7 +339,19 @@ export function similares(items: readonly CatalogoResumen[], p: Propiedad, tope 
  */
 export function exhibeMatricula(p: Propiedad): boolean {
   if (p.operacion !== 'arriendo') return false;
-  return clave(p.geo?.ciudad ?? '').startsWith('cartagena');
+  return clave(ciudadDe(p) ?? '').startsWith('cartagena');
+}
+
+/**
+ * Departamento derivado de la CIUDAD, o `null` si no se puede afirmar.
+ *
+ * Solo se conoce con certeza el de la ciudad donde ALTORRA opera y está habilitada. Inventar el resto
+ * sería el mismo error que arregló §106, una capa más abajo: es preferible un `address` incompleto a
+ * uno que ubica el inmueble en un departamento que no es. Cuando haya operación en otras ciudades,
+ * esto crece con datos, no con suposiciones.
+ */
+export function departamentoDe(p: Propiedad): string | null {
+  return clave(ciudadDe(p) ?? '').startsWith('cartagena') ? 'Bolívar' : null;
 }
 
 /** Normaliza para comparar (sin tildes ni mayúsculas). Local a este módulo. */
@@ -385,11 +397,26 @@ export function avisoEstado(p: Propiedad): AvisoEstado | null {
 // TEXTO PÚBLICO Y CONTACTO
 // ─────────────────────────────────────────────────────────────────────────────
 
+/**
+ * La CIUDAD del inmueble, o `null` si el dato no está.
+ *
+ * DUEÑO ÚNICO a propósito (§106). Había tres lectores de `geo.ciudad` y no se ponían de acuerdo:
+ * `exhibeMatricula()` era fail-closed —sin ciudad, no enseña la matrícula— mientras las migas y el
+ * JSON-LD caían en un optimista `|| 'Cartagena de Indias'`. Con el campo vacío el resultado era un
+ * arriendo afirmándole al visitante Y a Google estar en Cartagena, y ocultando a la vez la **Matrícula
+ * de Arrendador** que la Ley 820 art. 31 exige en TODA publicidad de arriendo. Un dato que falta se
+ * convertía en publicidad sin habilitación, sin un solo error por ninguna parte.
+ *
+ * Ahora nadie inventa la ciudad: si no está, no se afirma. [[L-45]](e).
+ */
+export function ciudadDe(p: Propiedad): string | null {
+  return p.geo?.ciudad?.trim() || null;
+}
+
 /** Ubicación publicable: barrio y ciudad. La dirección exacta NO entra aquí ni en ningún otro sitio. */
 export function ubicacionPublica(p: Propiedad): string {
   const barrio = p.geo?.barrio?.trim();
-  const ciudad = p.geo?.ciudad?.trim() || 'Cartagena de Indias';
-  return barrio ? `${barrio}, ${ciudad}` : ciudad;
+  return [barrio, ciudadDe(p)].filter(Boolean).join(', ');
 }
 
 export function tituloSeo(p: Propiedad): string {
@@ -482,8 +509,14 @@ export function jsonLdInmueble(p: Propiedad, urlAbsoluta: string, imagenes: stri
       // `addressLocality` es la CIUDAD. Poner el barrio aquí borra la ciudad del address estructurado
       // y le dice a un motor de respuestas que «Castillogrande» es una localidad de Bolívar. El barrio
       // viaja en el nombre y en el texto de la página, que es donde significa lo que significa.
-      addressLocality: p.geo?.ciudad || 'Cartagena de Indias',
-      addressRegion: 'Bolívar',
+      //
+      // ⚠️ Sin ciudad NO se afirma ninguna (§106): antes caía en «Cartagena de Indias» y eso convertía
+      // un dato ausente en una afirmación de ubicación ante Google. Y el departamento se deriva de la
+      // ciudad en vez de ir fijo: «Bolívar» solo es cierto para Cartagena, así que un inmueble de otra
+      // ciudad salía en el departamento equivocado. Un `address` incompleto es válido en Schema.org;
+      // uno que miente, no.
+      ...(ciudadDe(p) ? { addressLocality: ciudadDe(p) as string } : {}),
+      ...(departamentoDe(p) ? { addressRegion: departamentoDe(p) as string } : {}),
       addressCountry: 'CO',
     },
   };

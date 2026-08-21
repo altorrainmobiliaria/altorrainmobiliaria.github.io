@@ -25,6 +25,7 @@ import { SITE } from '../lib/config/site';
 import { urlMedia } from '../lib/media';
 import PropertyCard from './PropertyCard.astro';
 import type { Propiedad } from '../lib/domain/propiedades';
+import { portadaDe } from '../lib/domain/propiedades';
 import type { CatalogoResumen } from '../lib/domain/catalogo';
 import { ZONAS } from '../lib/content/zonas';
 import {
@@ -56,7 +57,7 @@ interface Props {
 const { p, similares = [], canonical } = Astro.props;
 
 const imagenes = (p.imagenes ?? []).map(urlMedia).filter(Boolean);
-const portada = urlMedia(p.imagenPortada ?? '') || imagenes[0] || '';
+const portada = urlMedia(portadaDe(p));
 // La galería no repite la portada: el demo pintaba la misma foto dos veces porque tenía 4 y le sobraba.
 const secundarias = imagenes.filter((src) => src !== portada);
 const totalFotos = new Set([portada, ...imagenes].filter(Boolean)).size;

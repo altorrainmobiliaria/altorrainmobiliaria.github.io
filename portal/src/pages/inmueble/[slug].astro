@@ -24,7 +24,7 @@ import FichaInmueble from '../../components/FichaInmueble.astro';
 import { buscarFicha } from '../../lib/data/buscar-ficha';
 import { CACHE_CONTROL_FICHA_SIN_PURGA, CACHE_CONTROL_NOT_FOUND, CACHE_CONTROL_PRIVATE, cacheTagCatalogo, cacheTagProp } from '../../lib/data/cache';
 import { descripcionSeo, rutaFicha, similares as elegirSimilares, tituloSeo } from '../../lib/domain/ficha';
-import { publicable } from '../../lib/domain/propiedades';
+import { portadaDe, publicable } from '../../lib/domain/propiedades';
 import { operacionAShard } from '../../lib/domain/catalogo';
 import { urlMedia } from '../../lib/media';
 import { SITE } from '../../lib/config/site';
@@ -66,7 +66,7 @@ if (r.estado === 'ok') {
 const parecidas = r.estado === 'ok' ? elegirSimilares(r.similares, r.p, 3) : [];
 // La foto del inmueble ES la tarjeta cuando alguien lo comparte por WhatsApp. Sin ella el enlace sale
 // pelado y casi nadie lo abre.
-const ogImage = r.estado === 'ok' ? urlMedia(r.p.imagenPortada ?? r.p.imagenes?.[0] ?? '') : undefined;
+const ogImage = r.estado === 'ok' ? urlMedia(portadaDe(r.p)) : undefined;
 const title = r.estado === 'ok' ? tituloSeo(r.p) : 'Inmueble no disponible — ALTORRA';
 const description =
   r.estado === 'ok'

@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import {
   amenidadesVisibles,
+  ciudadDe,
+  departamentoDe,
   avisoEstado,
   exhibeMatricula,
   descripcionSeo,
@@ -18,7 +20,7 @@ import {
   ubicacionPublica,
   valorPrecio,
 } from './ficha';
-import { publicable } from './propiedades';
+import { portadaDe, publicable } from './propiedades';
 import type { Propiedad } from './propiedades';
 import type { CatalogoResumen } from './catalogo';
 
@@ -392,5 +394,73 @@ describe('area: el rotulo sigue al campo', () => {
     const r = specsVisibles(prop({ specs: { areaConstruidaM2: 142, areaPrivadaM2: 120 } }));
     expect(r[0].etiqueta).toBe('Construidos');
     expect(r[0].valor).toBe('142 m²');
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// §106 — TRES LECTORES DEL MISMO CAMPO QUE NO SE PONÍAN DE ACUERDO
+// Sin `geo.ciudad`, la ficha y el JSON-LD decían «Cartagena de Indias» mientras `exhibeMatricula()`
+// —fail-closed— la ocultaba: un arriendo anunciado en Cartagena SIN la matrícula que exige la Ley 820
+// art. 31. Estas pruebas fijan que los tres digan lo mismo, pase lo que pase con el dato.
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+describe('🔴 la ciudad no se inventa (§106)', () => {
+  const arriendo = (geo: Record<string, unknown>) =>
+    prop({ operacion: 'arriendo', precio: { moneda: 'COP', canon: 4_000_000 }, geo: geo as never });
+
+  it('sin ciudad: NADIE afirma una — ni el texto, ni el JSON-LD, ni la matrícula', () => {
+    const p = arriendo({ barrio: 'Manga' });
+    expect(ciudadDe(p)).toBeNull();
+    expect(ubicacionPublica(p)).toBe('Manga');
+    expect(ubicacionPublica(p)).not.toContain('Cartagena');
+    expect(exhibeMatricula(p)).toBe(false);
+    const ld = jsonLdInmueble(p, 'https://x', []) as { about: { address: Record<string, unknown> } };
+    expect(ld.about.address.addressLocality).toBeUndefined();
+    expect(ld.about.address.addressRegion).toBeUndefined();
+    expect(ld.about.address.addressCountry).toBe('CO');
+  });
+
+  it('una ciudad en blanco es AUSENCIA de ciudad, no una ciudad llamada «»', () => {
+    expect(ciudadDe(arriendo({ barrio: 'Manga', ciudad: '   ' }))).toBeNull();
+    expect(exhibeMatricula(arriendo({ barrio: 'Manga', ciudad: '   ' }))).toBe(false);
+  });
+
+  it('en Cartagena: matrícula SÍ, y el departamento se deriva', () => {
+    const p = arriendo({ barrio: 'Manga', ciudad: 'Cartagena de Indias' });
+    expect(exhibeMatricula(p)).toBe(true);
+    expect(departamentoDe(p)).toBe('Bolívar');
+    const ld = jsonLdInmueble(p, 'https://x', []) as { about: { address: Record<string, unknown> } };
+    expect(ld.about.address.addressLocality).toBe('Cartagena de Indias');
+    expect(ld.about.address.addressRegion).toBe('Bolívar');
+  });
+
+  it('en OTRA ciudad: ni matrícula (es municipal) ni «Bolívar» de oficio', () => {
+    const p = arriendo({ barrio: 'El Prado', ciudad: 'Barranquilla' });
+    expect(exhibeMatricula(p)).toBe(false);
+    expect(departamentoDe(p)).toBeNull();
+    const ld = jsonLdInmueble(p, 'https://x', []) as { about: { address: Record<string, unknown> } };
+    expect(ld.about.address.addressLocality).toBe('Barranquilla');
+    expect(ld.about.address.addressRegion).toBeUndefined();
+  });
+});
+
+describe('🔴 la portada: cadena vacía es AUSENCIA, no una portada llamada «» (§106)', () => {
+  it('cae a la primera imagen cuando la portada viene vacía', () => {
+    expect(portadaDe({ imagenPortada: '', imagenes: ['props/a.webp'] })).toBe('props/a.webp');
+    expect(portadaDe({ imagenPortada: '   ', imagenes: ['props/a.webp'] })).toBe('props/a.webp');
+    expect(portadaDe({ imagenPortada: undefined, imagenes: ['props/a.webp'] })).toBe('props/a.webp');
+  });
+
+  it('respeta la portada elegida cuando existe', () => {
+    expect(portadaDe({ imagenPortada: 'props/portada.webp', imagenes: ['props/a.webp'] })).toBe('props/portada.webp');
+  });
+
+  it('se salta las entradas vacías del array en vez de devolverlas', () => {
+    expect(portadaDe({ imagenPortada: '', imagenes: ['', '  ', 'props/b.webp'] })).toBe('props/b.webp');
+  });
+
+  it('sin ninguna imagen devuelve cadena vacía (y ahí SÍ no hay card)', () => {
+    expect(portadaDe({ imagenPortada: '', imagenes: [] })).toBe('');
+    expect(portadaDe({ imagenes: undefined as never })).toBe('');
   });
 });
