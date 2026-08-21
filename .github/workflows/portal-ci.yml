@@ -13,6 +13,28 @@ on:
       - 'portal/**'
       - '.github/workflows/portal-ci.yml'
 
+# ENTORNO DEL BUILD — el interruptor que decide si el sitio se deja INDEXAR.
+#
+# Por defecto `staging`: el portal sale `noindex` + `Disallow: /`, que es lo correcto mientras vive en
+# *.workers.dev y no debe competir con el dominio real. En el CUTOVER, el dueño pone la variable de
+# repositorio `PORTAL_SITE_ENV=production` y el siguiente push publica un sitio indexable.
+#
+# Hasta hoy esta variable NO SE DECLARABA EN NINGÚN SITIO (§91 lo cazó, §102 lo arregla): todo build
+# de la historia del repo salió `noindex`, incluido el que iba al cutover — y se veía perfecto.
+#
+# 🛡️ La red debajo: `npm run verify:build` #6 FALLA si en modo producción sobrevive un `noindex` o un
+# `Disallow: /`. Así, si alguien pone la variable y algo está mal, el CI se pone ROJO en vez de
+# publicar un sitio que le pide a Google que lo borre.
+env:
+  PUBLIC_SITE_ENV: ${{ vars.PORTAL_SITE_ENV || 'staging' }}
+  # Fuente del catálogo del SERP. `demo` = las cards de muestra del mockup; `live` = el índice REAL.
+  # Es el segundo interruptor del cutover, y va aquí por la misma razón: si vive solo en la cabeza de
+  # quien despliega, el día del cutover se olvida y el portal se estrena con inmuebles inventados.
+  PUBLIC_CATALOGO_SOURCE: ${{ vars.PORTAL_CATALOGO_SOURCE || 'demo' }}
+  # Base pública de las imágenes en R2. Vacía ⇒ las claves se sirven desde la raíz del sitio, que es lo
+  # correcto con datos demo. Con catálogo real hay que ponerla, o las fotos dan 404 (§97.7).
+  PUBLIC_MEDIA_BASE: ${{ vars.PORTAL_MEDIA_BASE || '' }}
+
 permissions:
   contents: read
 
