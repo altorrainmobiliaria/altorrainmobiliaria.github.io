@@ -242,11 +242,25 @@ describe('texto publico', () => {
     expect(d).toContain('Castillogrande');
   });
 
-  it('la miga del barrio lleva a SU landing cuando existe, y al SERP cuando no', () => {
-    const conZona = migas(prop(), 'marbella');
-    expect(conZona[2].href).toBe('/zona/marbella');
-    const sinZona = migas(prop());
-    expect(sinZona[2].href).toBe('/comprar');
+  it('la miga del barrio lleva a SU landing; sin landing va SIN enlace (no duplica una URL)', () => {
+    expect(migas(prop(), 'marbella')[2].href).toBe('/zona/marbella');
+    // Sin landing NO apunta a /comprar: esa URL ya es el peldaño anterior, y un breadcrumb con el
+    // mismo destino dos veces es un peldaño que no lleva a ningún sitio nuevo.
+    expect(migas(prop())[2].href).toBeNull();
+  });
+
+  it('el historial muestra la fecha en lenguaje humano, no ISO', () => {
+    const h = historialPrecio(prop({ priceHistory: [{ fecha: '2026-05-01', valor: 1_000_000 }] }));
+    expect(h[0].fecha).not.toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(h[0].fecha.toLowerCase()).toContain('2026');
+  });
+
+  it('la administracion incluida NO se contradice entre el precio y la ficha tecnica', () => {
+    const p2 = prop({ operacion: 'arriendo', precio: { moneda: 'COP', canon: 8_000_000, administracion: 1_200_000, adminIncluidaEnCanon: true } });
+    expect(precioFicha(p2)!.sub).toContain('incluida');
+    const fila = fichaTecnica(p2).find(([k]) => k === 'Administración')!;
+    expect(fila[1]).toContain('incluida en el canon');
+    expect(fila[1]).not.toContain('/ mes');
   });
 
   it('las migas terminan en la pagina actual, sin enlace', () => {

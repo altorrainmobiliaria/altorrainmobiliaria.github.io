@@ -23,7 +23,7 @@
 import type { DataClient } from './client';
 import type { Propiedad } from '../domain/propiedades';
 import type { CatalogoResumen, CatalogoShard } from '../domain/catalogo';
-import { CATALOGO_SHARDS, operacionAShard } from '../domain/catalogo';
+import { CATALOGO_SHARDS, esPublicada, operacionAShard } from '../domain/catalogo';
 
 /** Id canónico de propiedad: `INM-YYYYMM-XXXX` (contador atómico, OD8). */
 export const ID_PROPIEDAD_RE = /^INM-\d{6}-\d{4}$/i;
@@ -112,6 +112,20 @@ export async function buscarFicha(cliente: DataClient, parametro: string): Promi
 
   const r = await cliente.propiedades.get(id);
   if (!r.ok) return { estado: r.reason === 'error' ? 'error' : 'no-encontrada' };
+
+  // 🔴 GATE DE PUBLICACIÓN, en el DOMINIO y no solo en las Rules.
+  //
+  // Las Rules del portal filtran por estado (`allow get: if resource.data.estado in [...]`), pero NO
+  // ESTÁN DESPLEGADAS: el ruleset vivo del proyecto es el del legacy, que dice `allow read: if true`
+  // sobre `propiedades`. O sea que hoy cualquier documento es legible. Y con un id canónico esta
+  // función se salta el índice —que sí filtra— y va directo al documento.
+  //
+  // Sin esta línea, un BORRADOR se publicaría entero: galería, precio, WhatsApp, y encima indexable.
+  // Un inmueble que nadie aprobó, con un precio que nadie confirmó, en Google.
+  //
+  // Se usa `esPublicada`, la MISMA whitelist con la que se construye el índice del catálogo, para que
+  // la ficha y el listado no puedan discrepar sobre qué está publicado.
+  if (!esPublicada(r.data)) return { estado: 'no-encontrada' };
 
   // Para «similares». Si este shard falla, la ficha se publica igual SIN similares: perder una banda
   // de recomendaciones no justifica esconder el inmueble.

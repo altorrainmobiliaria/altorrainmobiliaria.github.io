@@ -182,7 +182,13 @@ export function fichaTecnica(p: Propiedad): Array<[string, string]> {
     filas.push(['Parqueadero', t[s.tipoParqueadero] ?? s.tipoParqueadero]);
   }
   if (s.cuartoUtil) filas.push(['Cuarto útil', 'Sí']);
-  if (p.precio?.administracion != null) filas.push(['Administración', `${pesos(p.precio.administracion)} / mes`]);
+  if (p.precio?.administracion != null) {
+    // Si va INCLUIDA en el canon, la fila lo dice. Antes el aside decía «Administración incluida» y
+    // esta fila, tres secciones más abajo, decía «Administración $1.200.000 / mes»: la misma página
+    // afirmando dos cosas distintas sobre lo que hay que pagar cada mes.
+    const nota = p.precio.adminIncluidaEnCanon ? ' (incluida en el canon)' : ' / mes';
+    filas.push(['Administración', `${pesos(p.precio.administracion)}${nota}`]);
+  }
   if (s.estrato != null) filas.push(['Estrato', String(s.estrato)]);
   if (p.codigoLegacy) filas.push(['Código', p.codigoLegacy]);
   // RNT: OBLIGATORIO y visible en alojamiento (gate B3). Si la propiedad es turística y NO lo trae, la
@@ -259,8 +265,17 @@ export function frescuraTexto(p: Propiedad, ahora: Date = new Date()): string | 
   return meses === 1 ? 'Confirmada hace un mes' : `Confirmada hace ${meses} meses`;
 }
 
+/** `2026-05-01` → «mayo de 2026». Una fecha ISO en pantalla se lee como un dato de sistema, no como
+ *  información para una persona; y el día exacto de un cambio de precio no aporta nada. */
+export function fechaLegible(iso: ISODate): string {
+  const t = Date.parse(iso);
+  if (!Number.isFinite(t)) return iso;
+  return new Intl.DateTimeFormat('es-CO', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(t));
+}
+
 export interface CambioPrecio {
-  fecha: ISODate;
+  /** Ya formateada para leer («mayo de 2026»), no ISO. */
+  fecha: string;
   valor: string;
   /** Dirección respecto al cambio anterior. `null` en el primer registro (no hay contra qué comparar). */
   direccion: 'baja' | 'sube' | null;
@@ -277,7 +292,7 @@ export function historialPrecio(p: Propiedad): CambioPrecio[] {
   const asc = [...bruto].sort((a, b) => Date.parse(a.fecha) - Date.parse(b.fecha));
   return asc
     .map((e, i) => ({
-      fecha: e.fecha,
+      fecha: fechaLegible(e.fecha),
       valor: pesos(e.valor),
       direccion: i === 0 ? null : e.valor < asc[i - 1].valor ? ('baja' as const) : e.valor > asc[i - 1].valor ? ('sube' as const) : null,
     }))
@@ -432,8 +447,10 @@ export function migas(p: Propiedad, slugZona?: string): Miga[] {
     // Si el barrio tiene landing propia (§92), la miga lleva ALLÍ y no al SERP genérico: es la página
     // que de verdad responde «cómo es este barrio», y de paso el enlazado interno apunta a contenido
     // en vez de a un listado. El slug se pasa desde fuera para que el dominio no dependa del contenido.
-    const destino = slugZona ? `/zona/${slugZona}` : rutaOperacion(p.operacion);
-    out.push({ nombre: barrio, href: destino });
+    // Sin landing propia, la miga va SIN enlace. Apuntarla a `/comprar` metía la misma URL dos veces
+    // en el BreadcrumbList (la del nivel anterior y esta), que es una ruta que no lleva a ningún sitio
+    // nuevo y un breadcrumb con un peldaño repetido.
+    out.push({ nombre: barrio, href: slugZona ? `/zona/${slugZona}` : null });
   }
   out.push({ nombre: p.titulo, href: null });
   return out;
@@ -485,8 +502,12 @@ export function jsonLdInmueble(p: Propiedad, urlAbsoluta: string, imagenes: stri
       addressCountry: 'CO',
     },
   };
-  if (p.specs?.habitaciones != null) lugar.numberOfRooms = p.specs.habitaciones;
-  if (p.specs?.banos != null) lugar.numberOfBathroomsTotal = p.specs.banos;
+  // `numberOfRooms` y `numberOfBathroomsTotal` son propiedades de `Accommodation`. Colgarlas de un
+  // `Place` genérico (que es lo honesto para un local o una bodega) produce markup que valida pero no
+  // significa nada. En lo comercial se omiten; el área sí es válida en cualquier `Place`.
+  const esResidencial = tipoSchema(p.tipo) !== 'Place';
+  if (esResidencial && p.specs?.habitaciones != null) lugar.numberOfRooms = p.specs.habitaciones;
+  if (esResidencial && p.specs?.banos != null) lugar.numberOfBathroomsTotal = p.specs.banos;
   if (area != null) lugar.floorSize = { '@type': 'QuantitativeValue', value: area, unitCode: 'MTK' };
   // ⛔ SIN `geo`. `Propiedad.geo.lat/lng` es el CENTROIDE APROXIMADO DEL BARRIO, no la posición del
   // inmueble (lo dice el propio modelo, y el mapa lo advierte en pantalla). Declararlo como

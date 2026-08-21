@@ -22,8 +22,9 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import FichaInmueble from '../../components/FichaInmueble.astro';
 import { buscarFicha } from '../../lib/data/buscar-ficha';
-import { CACHE_CONTROL_FICHA_SIN_PURGA, CACHE_CONTROL_NOT_FOUND, CACHE_CONTROL_PRIVATE, cacheTagProp } from '../../lib/data/cache';
+import { CACHE_CONTROL_FICHA_SIN_PURGA, CACHE_CONTROL_NOT_FOUND, CACHE_CONTROL_PRIVATE, cacheTagCatalogo, cacheTagProp } from '../../lib/data/cache';
 import { descripcionSeo, publicable, rutaFicha, similares as elegirSimilares, tituloSeo } from '../../lib/domain/ficha';
+import { operacionAShard } from '../../lib/domain/catalogo';
 import { urlMedia } from '../../lib/media';
 import { SITE } from '../../lib/config/site';
 
@@ -44,8 +45,13 @@ const canonical = r.estado === 'ok' ? new URL(rutaFicha(r.p), Astro.site ?? `htt
 
 if (r.estado === 'ok') {
   Astro.response.headers.set('cache-control', CACHE_CONTROL_FICHA_SIN_PURGA);
-  // El tag deja la puerta lista para la purga selectiva del `onWrite` el día que exista.
-  Astro.response.headers.set('cache-tag', cacheTagProp(r.p.id));
+  // DOS tags: el del inmueble y el de SU shard del catálogo. La ficha no depende solo de la propiedad
+  // —las «similares» salen del índice—, así que una purga del catálogo tiene que alcanzarla también.
+  // Con un solo tag, republicar el catálogo dejaría fichas mostrando similares que ya no existen.
+  Astro.response.headers.set(
+    'cache-tag',
+    `${cacheTagProp(r.p.id)},${cacheTagCatalogo(operacionAShard(r.p.operacion))}`,
+  );
 } else if (r.estado === 'no-encontrada') {
   Astro.response.status = 404;
   Astro.response.headers.set('cache-control', CACHE_CONTROL_NOT_FOUND);

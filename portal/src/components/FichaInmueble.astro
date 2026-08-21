@@ -121,7 +121,7 @@ const ICO_WA =
   {/* Galería. Sin fotos NO se pinta el bloque: un marco vacío se lee como error de la página. */}
   {portada && (
     <div class="ficha-gal-wrap">
-      <div class={`ficha-gal${secundarias.length === 0 ? ' ficha-gal--sola' : ''}`}>
+      <div class={`ficha-gal${secundarias.length === 0 ? ' ficha-gal--sola' : secundarias.length === 1 ? ' ficha-gal--par' : ''}`}>
         <div class="ficha-gal__main">
           <img id="ficha-main" src={portada} alt={p.titulo} fetchpriority="high" />
           {/* El badge sigue al ESTADO, no solo a la operación: sobre un inmueble ya vendido, un sello
@@ -347,7 +347,11 @@ const ICO_WA =
             </div>
           )}
         </div>
-        <p class="ficha-legal">La ubicación del mapa es aproximada: señala el sector, no la dirección del inmueble.</p>
+        {tieneMapa && (
+          /* El descargo pertenece al MAPA. Sin mapa, decir «la ubicación del mapa es aproximada» deja
+             al visitante buscando un mapa que no está. */
+          <p class="ficha-legal">La ubicación del mapa es aproximada: señala el sector, no la dirección del inmueble.</p>
+        )}
       </section>
     )}
   </div>
@@ -452,7 +456,6 @@ const ICO_WA =
   .ficha-thumb { width: 96px; height: 66px; border-radius: var(--alt-r-chip, 10px); overflow: hidden; cursor: pointer; padding: 0; border: 0; background: none; outline: 2px solid transparent; outline-offset: 1px; transition: outline-color var(--alt-dur) var(--alt-ease); }
   .ficha-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .ficha-thumb.is-on { outline-color: var(--alt-gold); }
-  .ficha-thumb--more { display: flex; align-items: center; justify-content: center; background: var(--alt-mist); font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-text); }
 
   /* Body */
   .ficha-body { max-width: 1300px; margin-inline: auto; padding: 34px clamp(16px, 4vw, 48px) 6px; display: flex; gap: clamp(28px, 3.4vw, 56px); flex-wrap: wrap; align-items: flex-start; }
@@ -516,13 +519,6 @@ const ICO_WA =
   .ficha-locmap__pin { position: absolute; left: 44%; top: 40%; transform: translate(-50%, -100%); background: var(--alt-ink); color: var(--alt-gold-bright); font-weight: var(--alt-fw-bold); font-size: 12px; padding: 7px 13px; border-radius: var(--alt-r-pill); box-shadow: 0 12px 26px -10px rgba(27, 39, 51, 0.6); white-space: nowrap; }
   .ficha-locmap__pin::after { content: ''; position: absolute; left: 50%; bottom: -4px; width: 9px; height: 9px; background: var(--alt-ink); transform: translateX(-50%) rotate(45deg); }
   .ficha-locmap__note { position: absolute; bottom: 12px; right: 14px; font-size: 9.5px; color: rgba(27, 39, 51, 0.4); }
-  .ficha-poi { background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-lg); padding: 22px 26px; }
-  .ficha-poi__row { display: flex; align-items: center; gap: 13px; padding: 13px 0; border-bottom: 1px solid var(--alt-hairline); font-size: 14px; color: var(--alt-ink); }
-  .ficha-poi__row:last-child { border-bottom: 0; }
-  .ficha-poi__ic { flex: none; display: inline-flex; color: var(--alt-ink); }
-  .ficha-poi__ic svg { width: 18px; height: 18px; }
-  .ficha-poi__t { flex: 1; }
-  .ficha-poi__min { font-size: 12.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-text); }
 
   /* Banda de cierre: Propiedades similares (fuera de .ficha-secs, ancho/padding propios, h2 mayor) */
   .ficha-closer { background: var(--alt-white); border-top: 1px solid var(--alt-hairline); }
@@ -536,6 +532,11 @@ const ICO_WA =
     .ficha-gal__cell { aspect-ratio: 16 / 10; }
     .ficha-loc { grid-template-columns: 1fr; }
   }
+
+  /* Con DOS fotos, la celda que sobra dejaba medio hueco gris: la principal deja de ocupar dos filas
+     y las dos quedan lado a lado, que es como se ve una galeria de dos. */
+  .ficha-gal--par { grid-auto-rows: auto; height: clamp(280px, 38vw, 420px); }
+  .ficha-gal--par .ficha-gal__main { grid-row: span 1; }
 
   /* Galeria con UNA sola foto: sin celdas secundarias la rejilla de 2 columnas dejaria un hueco. */
   .ficha-gal--sola { grid-template-columns: 1fr; }
