@@ -3213,3 +3213,50 @@ modelo que el portal descarta. O sea que el portal necesita su propio alta de pr
 del back-office, sino como **requisito del cutover**. El runbook ya lo dice donde se va a leer.
 **103.8 — Doctrina**: §3.3 (evidencia antes de afirmar: se leyeron los dos escritores) · §G.4 caza-bugs
 (al tocar el catálogo se recorrió también la ficha, que era donde estaba el hueco) · nueva [[L-45]].
+
+---
+
+## 104. ADR — El gate legal del RNT protegía la ficha y dejaba pasar la card ⟦OPUS-5⟧ (2026-08-21)
+
+Encontrado aplicando la regla (e) de [[L-45]] —*el mismo guardián en TODOS los lectores del almacén*—
+una hora después de escribirla. Es la segunda vez en el mismo día que esa regla cobra, lo cual dice
+menos de la suerte y más de que era la regla correcta.
+
+**104.1 — Causa raíz.** `publicable()` bloquea la ficha de un **alojamiento turístico sin RNT** (gate
+B3: anunciar hospedaje sin Registro Nacional de Turismo expone a cierre inmediato del establecimiento).
+Está bien escrita, es fail-closed y tiene tests. Pero **solo la llamaba la ruta de la ficha**: el índice
+del catálogo, que construye las cards del SERP, no la miraba. O sea que un alojamiento sin RNT habría
+salido en `/estancias` con su foto, su título y su precio —**que es exactamente la publicidad que el
+gate existe para impedir**— y encima enlazando a una ficha que devuelve 404. El guardián estaba puesto
+en la puerta que menos tráfico tiene.
+
+**104.2 — Solución estructural.** `publicable()` se muda de `ficha.ts` a **`propiedades.ts`**: no es un
+detalle de la vista de ficha, es un **invariante legal del modelo**, y además `catalogo.ts` no puede
+importar de `ficha.ts` sin crear un ciclo (`ficha` → `catalogo` ya existe). El modelo es el dueño de sus
+invariantes, así que cualquier lector puede exigirlo sin acoplarse a una vista. `propiedadAResumen` lo
+aplica con motivo **propio** (`sin-rnt`) y **antes** que los gates de datos: un bloqueo legal no se
+diagnostica como «le falta el precio».
+
+**104.3 — No-regresión.** Venta y arriendo no cambian (hay test). La ficha se comporta igual: el mismo
+predicado, movido, con sus llamantes reapuntados (`inmueble/[slug].astro` y el test). Ningún otro
+lector, ninguna regla, ninguna Function.
+
+**104.4 — Verificación.** 168 tests verdes, 5 nuevos, incluido uno que fija explícitamente que **listado
+y ficha no pueden discrepar**. Y la propia suite delató algo: el fixture `D1` de la prueba de sharding
+era un **alojamiento sin `rnt`** — la batería de pruebas llevaba modelando un anuncio ilegal como si
+fuera el caso normal. Corregido, con el porqué escrito al lado para que no vuelva.
+
+**104.5 — Anti-patterns evitados.** NO se dejó `publicable()` en `ficha.ts` importándolo con un ciclo
+«porque total, funciona». NO se metió el bloqueo legal en el cubo de `sin-precio`. NO se relajó el gate
+para que el fixture siguiera pasando — se corrigió el fixture, que era el que estaba mal.
+
+**104.6 — Archivos.** Modificados: `portal/src/lib/domain/propiedades.ts` (recibe `publicable`),
+`ficha.ts` (lo cede), `catalogo.ts` (lo aplica), `inmueble/[slug].astro` y los dos tests. INTACTOS:
+rulesets, Functions, resto del portal.
+
+**104.7 — Lo que deja dicho para el CRUD (TODO-44).** El formulario de alta **no puede permitir guardar
+un alojamiento sin RNT como disponible**: si lo permite, el sistema aceptará el dato y luego lo
+esconderá, que es la forma más cara de decir que no. El escritor tiene que validar con los MISMOS
+predicados que el lector — es la lección entera de [[L-45]] aplicada al alta.
+**104.8 — Doctrina**: §3.3 · §G.4 caza-bugs (recorrer TODOS los lectores, no solo el que tocaste) ·
+[[L-45]](e) · gate legal B3 de `42-LEGAL`.
