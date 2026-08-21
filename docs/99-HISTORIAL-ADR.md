@@ -2910,3 +2910,81 @@ toca seguridad y es cara de revertir, así que va a su propio ADR con deliberaci
 desplegado**. Pasó dos veces el mismo día — una defensa de seguridad que dependía de reglas sin
 desplegar (§97.6) y un modelo de coste que dependía de una clave de configuración que nadie puso.
 §3.3 (cada afirmación contra el archivo real) · §G.4 caza-bugs.
+
+## 99. ADR — Decisión Fuerte: el claim de staff que nadie ponía ⟦OPUS-5⟧ (2026-08-21)
+
+> Resuelve TODO-42, el hallazgo de §98.5. Deliberación adversarial (3 diseños independientes + un
+> revisor de seguridad rompiendo cada uno + síntesis). Crudo → bóveda `2026-08-21-decision-claims-staff-crudo.json`.
+
+**99.1 — El problema, verificado.** Las reglas del portal gatean su superficie interna con
+`request.auth.token.admin == true` —un custom claim— y `setCustomUserClaims` **no aparecía en ningún
+sitio del proyecto**. El legacy usa otro mecanismo (`usuarios.rol` leído con `get()` dentro de la
+regla). ⇒ `isStaff()` era insatisfacible: al desplegar, el back-office moría para todos.
+
+**99.2 — La decisión.** El claim `admin` se **DERIVA** del documento `usuarios/{uid}` mediante un
+trigger `onDocumentWritten`, y vive en el codebase del **LEGACY** (`functions/index.js`), no en el del
+portal. El documento manda; el token es su espejo, y nadie lo escribe a mano nunca. Se acompaña de una
+callable de backfill y reconciliación, guardada por `requireSuperAdmin` — que lee el DOCUMENTO y no el
+claim, y por eso funciona el día cero, sin ningún claim puesto y sin service account.
+
+**99.3 — Por qué el claim y no un `get()` en las reglas.** El argumento que mató a la alternativa es de
+COSTE y está verificado: un `get()` dentro de una regla **se ejecuta y se factura aunque la petición
+acabe denegada**. Y en este portal `request.auth != null` no es un estado raro: `/ingresar` da sesión a
+cualquiera con un Gmail. Un bucle desde la consola del navegador vaciaría las 50.000 lecturas diarias
+del free-tier sin ser staff. Un claim cuesta CERO lecturas y ese vector no existe.
+**Segundo motivo, que ninguna propuesta vio y sí el revisor**: `portal/firebase/storage.rules` tiene EL
+MISMO helper insatisfacible gateando `/{allPaths=**}` del bucket privado donde viven cédulas y
+contratos escaneados. Las Storage Rules **no pueden leer Firestore**, así que el claim es el único
+mecanismo que arregla las dos mitades a la vez.
+
+**99.4 — Por qué el documento como fuente de verdad.** El claim es buen caché y pésimo registro: no
+tiene listado, ni autoría, ni interfaz — nadie puede responder «¿quién tiene acceso hoy?» mirando
+tokens. `usuarios` ya tiene todo eso, ya está cerrado a `super_admin` y ya lo gestionan tres callables
+probadas en producción. La pregunta nunca fue «claims sí o no» (es el único mecanismo que las Rules
+leen gratis), sino **quién los escribe**. Respuesta: nadie a mano.
+
+**99.5 — Por qué se despliega SOLO, separado del cutover.** Este cambio no toca una línea de reglas: el
+ruleset vivo sigue siendo el del legacy, que no lee claims, así que nada cambia de comportamiento y
+nada se puede romper. El claim empieza a existir hoy y queda verificado semanas antes de que el cutover
+lo necesite. Atarlo al despliegue de reglas sería atar algo que funciona a algo que todavía no.
+
+**99.6 — Detalles que salieron de intentar romperlo, no de razonarlo.** (a) El trigger **relee el
+documento** en vez de usar el payload: los triggers son at-least-once y sin orden, así que un reintento
+viejo tras una revocación dejaría el claim pegado en «concedido». (b) La revocación va **antes** del
+corte por idempotencia: si el claim se escribió y la revocación falló, el reintento salía por el
+early-return y no revocaba nunca. (c) `activo === true` **estricto**: un `"false"` tecleado como TEXTO
+en la consola no puede conceder acceso. (d) El backfill **pagina de verdad** y su barrido de huérfanos
+lleva **fusible** — solo corre si el censo salió COMPLETO, porque un censo parcial jamás puede
+significar «revócaselo a todos». (e) `listUsers(1000)` a secas miente en silencio por encima de 1000
+cuentas.
+
+**99.7 — Riesgo residual, dicho sin adornos.** Al **revocar** hay hasta ~60 minutos de acceso de
+LECTURA que sobreviven: las reglas validan la firma y la expiración del token, no si el permiso sigue
+vigente, y ni revocar refresh tokens ni borrar la cuenta matan un token ya emitido. En un despido
+conflictivo eso es una hora de descarga libre de `captaciones` (PII, dirección, comisión), `contratos`
+y `pagos`. Para ese caso el procedimiento es manual y explícito. **Al conceder** pasa lo simétrico, y
+ese sí se mitigó: el estado de «sin permiso» ofrece *Volver a comprobar*, que fuerza el refresco del
+token. Y un `viewer` lee hoy lo mismo que un `super_admin` en el portal, porque `isStaff()` es un
+único booleano; el claim lleva `rol` desde el primer despliegue precisamente para poder afinarlo
+después sin re-emitir los tokens de todo el mundo.
+
+**99.8 — Hallazgo de regalo, y es del tamaño del anterior: DESPLEGAR LAS REGLAS DEL PORTAL TAL CUAL
+MATA `admin.html`.** Su `deny-all` final tumba las colecciones que el legacy sigue usando
+(`loginAttempts`, `resenas`, `blog`, `auditLog`, `drafts_activos`, `newsletter`, `analytics_events`,
+`system`, `usuarios/{uid}/drafts`), y el camino está trazado: `resetLoginAttempts()` corre dentro del
+`try` del login sin catch propio, así que el rechazo salta al catch general y el dueño ve «Error
+inesperado» **después de autenticar bien**. El ruleset del cutover tiene que ser FUSIONADO, no
+sustituido, y las reglas del portal necesitan además un bloque para `usuarios` (o el dueño se queda
+sin panel de permisos) y un escape de staff en `propiedades` (o el equipo pierde sus propias fichas de
+vendidos y arrendados). Todo ello → TODO-43.
+
+**99.9 — Verificación.** Las tres premisas del fallo se comprobaron contra el código ANTES de escribir
+nada: `requireSuperAdmin` lee el documento · `storage.rules` tiene el mismo helper · la forma de
+`usuarios` es la que escribe `createManagedUserV2`. Sintaxis del archivo validada (`node --check`);
+141 tests del portal verdes; `verify:data` y `verify:build` verdes. ⚠️ **NO desplegado**: desplegar una
+función que CONCEDE permisos de administrador es una acción que Daniel debe saber que ocurre, y además
+él tiene que pulsar el botón de sincronizar después.
+
+**99.10 — Doctrina.** §3.7 comité por iniciativa propia (decisión con consecuencias, cara de revertir) ·
+§G.2 🛰️ Decisión Fuerte · §3.3 (las premisas del fallo verificadas por mí, no aceptadas) · §G.4
+captura: crudo en bóveda + síntesis aquí, commiteados en el mismo cierre.

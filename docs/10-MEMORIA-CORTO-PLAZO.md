@@ -28,13 +28,14 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-17** | **Ola 0 restos**: E2E "tras cache" (T9) · deploy de rules · 0.4 obra AEO. | 🔄 | gate=CUTOVER |
-| **TODO-21** | **Lote-dueño**: Nº **RNT** (la matrícula ya está PUBLICADA, `05`) · dirección física y COMERCIAL · abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño | gate=obra |
+| **TODO-21** | **Lote-dueño**: Nº **RNT** · dirección física y COMERCIAL · abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño | gate=obra |
 | **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-38** (§90) gates a medias: #27 sin `creas` · #5 existencia≠corrección · `§NN` sueltos sin gate · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO) · **TODO-40** ✅ shard de `30` hecho (L-01..L-21 → `35`, §97) y `33` destilado. QUEDA `00` (25k/24k) con `00a` casi lleno → `00b` o destilar filas; NO subir techos ([[M-05]]). | 🔄 | §84·§87·§90·§96 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, [[L-39]] → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-39** | 🌊 **OLA 1 ✅ 13 de 13** (§91 SEO · §92 zonas · §93 precios · §94 Rango · §95 JSON-LD · **§96 alertas**). Queda SOLO lo que no es código: (a) ⚠️ **tuya (§94.6)**: «Avalúo» sale en `Header`/`Footer` y B13 lo PROHÍBE (Ley 1673), la skill de voz sí lo usa — dos fuentes del cerebro en contradicción legal; (b) el **go/no-go de ola** con Daniel (MEGA-PLAN §4.4). | 🟢 código listo | §96 |
 | **TODO-22** | **CATÁLOGO — código COMPLETO, incluida la FICHA (§97)**. Para datos reales, en el cutover: (1) deploy COORDINADO (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades · (4) fichas al sitemap, derivadas del índice. | 🟢 cutover | §60 · §97 |
-| **TODO-42** | 🔴 **`isStaff()` es INSATISFACIBLE** (§98.5, verificado): las reglas del portal exigen el custom claim `admin` y **nadie lo pone nunca** (`setCustomUserClaims` = 0 en todo el repo); el legacy usa otro mecanismo (`usuarios.rol`). Al desplegar las reglas, el back-office muere para TODOS, Daniel incluido. Decisión con deliberación adversarial en curso. **Bloquea el cutover.** | 🔴 seguridad | §98 |
+| **TODO-42** | 🔑 **Claim de staff — CÓDIGO LISTO, falta desplegar** (§99). El claim se deriva de `usuarios/{uid}` con un trigger, en el codebase del legacy, y se despliega SOLO (no toca reglas). ⏭️ **Daniel**: (1) me confirma el deploy — concede permisos de admin, prefiero que lo sepas; (2) pulsa «Sincronizar permisos» en admin.html → Usuarios; (3) abre `/gestion` y ve el panel. | 🟡 deploy | §99 |
+| **TODO-43** | 🔴 **El ruleset del cutover debe FUSIONARSE, no sustituirse** (§99.8): desplegar `portal/firebase/firestore.rules` tal cual **mata `admin.html`** (su deny-all tumba `loginAttempts`, `resenas`, `blog`, `auditLog`, `newsletter`, `system`…). Faltan además el bloque de `usuarios` y un escape de staff en `propiedades`. **Bloquea el cutover.** | 🔴 cutover | §99.8 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -59,7 +60,7 @@
 > **§98**: Workers Caching ✅ encendido (llevaba sin habilitar desde Ola 0: todo `s-maxage` era inerte)
 > y `/gestion` ✅ tras puerta de acceso.
 >
-> **Lo siguiente, en orden**: (1) **TODO-42**, el claim de staff — bloquea el cutover y es seguridad ·
+> **Lo siguiente, en orden**: (1) **TODO-43**, el ruleset FUSIONADO del cutover — hoy desplegar mata `admin.html` ·
 > (2) **TODO-22**, el catálogo REAL · (3) **TODO-30**, la vista del mapa, que solo confirma Daniel
 > ([[L-39]]) · (4) **OLA 2**: el abogado gatea el RAIL DE PAGO, **no toda la ola** — reléela antes de
 > darla por bloqueada ([[L-40]] ya cobró 3 veces, [[M-11]]).
@@ -76,18 +77,14 @@
 
 > **⏭️ PELOTAS DE DANIEL** (no las puedo cerrar yo):
 > **(1) 🔴 rotar la contraseña de aplicación de Gmail**: `onNewSolicitud` falla con `535-5.7.8` y es la MISMA Function que avisará los leads del portal nuevo. Lanzar sin rotarla = perderlos sin evidencia, igual que se perdieron los 16 del sitio viejo (exportados antes, `43`).
-> **(2)** ✅ Política V2 **PUBLICADA y LIVE** (20-ago, `curl` 200). Queda TU visto bueno para **abrir
-> "Crear cuenta"**: el código de `/ingresar` aún la bloquea citando una política que YA existe (§90).
-> **(3) B-04** — sin contrato con DataCrédito/TransUnion **NO se puede consultar a nadie** aunque el
-> arrendatario firme: ¿afiliarse, o apoyarse solo en la aseguradora?
-> **(4)** verificar los **recovery codes** (resto del SPOF, §72).
-> **(5)** Nº de **RNT** (la matrícula `6636` YA está publicada) + vetar los 6 estándares del `02 §2`.
-> **(6)** ¿**Google** como proveedor de acceso está habilitado en Firebase? Sin evidencia; el botón ya
-> avisa en cristiano si no lo está, pero el interruptor está en tu consola.
+> **(2)** Política V2 ✅ live. Queda TU visto bueno para abrir **«Crear cuenta»** en `/ingresar` (§90).
+> **(3) B-04** — sin contrato con DataCrédito/TransUnion **NO se puede consultar a nadie**: ¿afiliarse, o solo aseguradora?
+> **(4)** verificar los **recovery codes** (§72).
+> **(5)** Nº de **RNT** + vetar los 6 estándares del `02 §2`.
+> **(6)** ¿**Google** como proveedor de acceso habilitado en Firebase? Sin evidencia; el interruptor es tuyo.
 > **(7)** decidir la **tasa de mora del doc 03** (B-05: 1,5×IBC vs 6%) — un párrafo, y las 5 remisiones
 > lo heredan solas.
-> **(8)** el form de `/publicar` **no pide correo** (fiel al mockup) y eso hace que un propietario real
-> llegue etiquetado `[COLD]`: o se añade el campo al mockup, o se re-pesa el scoring.
+> **(8)** `/publicar` **no pide correo** (fiel al mockup) ⇒ el propietario llega `[COLD]`: ¿campo nuevo o re-pesar?
 > **(10) 📧 RESEND — el último gate de las alertas (§96).** El sistema está construido y probado, pero no
 > manda un solo correo hasta que existan dos cosas tuyas: (a) el **dominio `altorrainmobiliaria.co`
 > verificado en Resend** (registros DNS en Hostinger) y (b) el secreto
