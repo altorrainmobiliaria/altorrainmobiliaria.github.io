@@ -82,6 +82,20 @@ Cuando el portal maneje plata: (1) skill global `auditoria-financiera` (7 invari
 ### L-21 — Aislar tests que comparten un emulador Firestore: projectId PROPIO por archivo *(Ola 0.7, ADR §22.8, confirmado en vivo)*
 **Disparador**: 2 tests E2E (`config/general`, `disponibilidad`) fallaban SOLO al correr junto a `rules.test.ts`; corridos aislados PASABAN — síntoma parcial (unos `ok:true`, otros `ok:false`) clásico de carrera. **Causa**: vitest **paraleliza ARCHIVOS** de test, y ambos golpeaban el MISMO emulador + MISMO `projectId`; `rules.test.ts` hace `beforeEach(clearFirestore)` que **BORRA toda la base del proyecto** → arrasaba la semilla que el E2E sembró una vez en `beforeAll`, a mitad de camino (el raw-REST daba 200… hasta que el otro archivo borraba). **Fix**: **projectId distinto por archivo** (`demo-altorra` vs `demo-altorra-e2e`) — el emulador aísla datos por projectId, sin colisión aunque corran en paralelo (quitar `singleProjectMode` del `firebase.json`). Peores alternativas: serializar (`fileParallelism:false`, más lento) o re-sembrar en `beforeEach` (no protege de clears concurrentes). Diagnóstico que lo cazó: comparar `getDoc` crudo vs `client()` DENTRO del test (aisló código-cliente OK vs contaminación de datos). Portátil a cualquier suite que comparta un backend emulado entre archivos.
 
+### L-41 — 🧱 Las cabeceras de `Response.redirect()` son INMUTABLES: un middleware que hace `headers.set()` revienta todo redirect *(2026-08-21, ADR §96.6b)*
+**Disparador**: un endpoint que responde con `Response.redirect(...)` devuelve **500** y el error apunta al
+middleware, no al endpoint: «Can't modify immutable headers». **Causa**: la respuesta que fabrica
+`Response.redirect()` (igual que `Response.error()`) nace con `headers.guard = "immutable"`; cualquier
+`set()`/`append()` posterior **lanza**. Un middleware que añade una cabecera a TODA respuesta —el caso
+típico es un `X-Robots-Tag` de staging— alcanza así a todos los endpoints que redirigen. **Dónde muerde de
+verdad**: el fallback SIN JavaScript de los formularios (patrón POST-Redirect-GET), que es el camino que
+nadie prueba en el navegador porque el JS lo tapa; y si la cabecera solo se añade fuera de producción,
+el 500 aparece **únicamente en staging**, o sea justo donde se verifica todo. **Fix**: `try { set() } catch
+{ reconstruir la Response con unas `Headers` nuevas }` — la reconstrucción conserva `status`, `statusText`
+y `body`. **Anti-patrón**: quitar la cabecera del middleware «porque rompe» (pierdes el candado de
+noindex) o dejar de usar `Response.redirect` en los endpoints (arregla el síntoma en uno y deja la trampa
+puesta para el siguiente). Portátil a cualquier runtime que siga el estándar Fetch (Workers, Deno, Node 18+).
+
 ### L-40 — 🚪 «Gateado por el dueño» merece releerse: el gate puede estar en UNA PARTE del alcance, no en todo *(2026-08-21, ADR §94)*
 **Disparador**: un ítem lleva meses etiquetado como bloqueado por un dato que solo tiene el dueño, y nadie
 lo vuelve a abrir. **Caso**: el Rango ALTORRA figuraba como «necesita los rangos de 10 barrios de Daniel».

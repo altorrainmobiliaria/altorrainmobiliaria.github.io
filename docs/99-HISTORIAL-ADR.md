@@ -2682,3 +2682,88 @@ de desarrollo. El `Disallow` del `robots.txt` **no basta**: impide RASTREAR, no 
 puede indexar una URL que no puede leer si la descubre por un enlace. Ahora lo fuerza explícito.
 
 Las dos son de la misma familia: un número que nadie recontó y un gate que cubría una dirección.
+
+## 96. ADR — Alertas guardadas: OLA 1 cerrada, y tres cosas que ya estaban rotas ⟦OPUS-5⟧ (2026-08-21)
+
+> Ítem 8 de OLA 1. **Deja OLA 1 en 13 de 13.**
+
+**96.1 — El gate que no era gate.** El `10` daba las alertas por bloqueadas por «clave de Resend Y
+catálogo real». Los dos son gates de EJECUCIÓN, no de construcción: sin clave el digest no manda, y
+sin catálogo no hay contra qué disparar, pero ninguna de las dos cosas impide escribir el sistema.
+Es la segunda vez seguida que pasa (§94.1 con el Rango): **«gateado» merece releerse antes de
+aceptarse**, porque el gate suele estar en una parte del alcance y no en toda. Es la SEGUNDA vez
+que se cumple [[L-40]] en dos días: la lección ya estaba escrita y aun así el `10` seguía diciendo
+«gateado». Escribir la lección no basta si el pendiente no se re-etiqueta.
+
+**96.2 — El botón que ya existía.** «Guardar búsqueda» está en el mockup aprobado
+`ALTORRA Resultados.dc.html` desde el principio y apuntaba a `/favoritos`. Favoritos guarda
+INMUEBLES; una búsqueda guardada es otra cosa. No hubo que inventar UI: hubo que darle su destino.
+
+**96.3 — Un solo dueño del matching.** `src/lib/domain/alertas.ts` lo importan LOS DOS lados: el
+endpoint de Astro y la Cloud Function. Si el matching viviera en la Function, la web podría aceptar
+criterios que el digest no sabría interpretar, y ese desajuste **no da error: da silencio**. Mismo
+patrón que `catalogo.ts` (§57). El `tsconfig` de `portal/functions` ya tenía `rootDir: ".."` para
+justo esto.
+
+**96.4 — Las cuatro decisiones que sostienen el envío.**
+(a) **`ultimoEnvio` solo avanza si Resend aceptó el lote.** Al revés, un fallo de red dejaría la
+marca adelantada y esos inmuebles no se avisarían jamás. Se acepta el riesgo simétrico: si Resend
+acepta y la respuesta se pierde, alguien recibe el correo dos veces. Repetir es ruido; perder rompe
+la promesa que hizo la página.
+(b) **El «ahora» se toma ANTES de leer el catálogo.** Tomarlo después dejaría lo publicado entre la
+lectura y el envío por debajo de la marca, invisible para siempre.
+(c) **Costo constante**: el digest lee los 3 shards de `indices/catalogo-*`, no `propiedades`. El
+costo crece con las alertas, no con el catálogo: una corrida diaria usa ~1,4% del cupo de lecturas.
+(d) **La baja vive en `bajasAlertas`, append-only.** El público no puede leer `alertas` (dentro va el
+token), así que no puede haber un update que verifique el token desde el cliente. Un append con
+validación estricta es el permiso MÁS PEQUEÑO que resuelve el caso y además deja rastro de la
+revocación, que es lo que la Ley 1581 art. 8 espera poder demostrar. La Function la aplica ANTES de
+enviar nada, así que surte efecto antes del siguiente correo.
+
+**96.5 — La baja es un POST, y esa es la parte que se olvida.** Los escáneres de Gmail, Outlook y los
+antivirus corporativos **abren los enlaces** de un correo para revisarlos. Con la baja en el GET,
+esos robots darían de baja a gente que ni abrió el mensaje y nadie entendería por qué dejan de llegar
+las alertas. El enlace abre una página con un botón; la baja ocurre en el POST. Se soporta además el
+one-click de **RFC 8058**, que es el botón «Cancelar suscripción» que pinta el propio Gmail: sin esa
+cabecera, la gente usa «marcar como spam» para dejar de recibir, y eso sí quema el dominio.
+
+**96.6 — TRES BUGS CAZADOS AL PASAR, ninguno de las alertas** (§G.4 caza-bugs: el camino vivo, no el
+diff).
+(a) **`solicitudes` moría en el cutover.** Las reglas del repo dicen `allow write: if false` y
+`api/solicitud.ts` escribe ahí por REST público. Hoy funciona porque el ruleset VIVO sigue siendo el
+del legacy; el día que se desplieguen las del portal, `/publicar` y el Rango dejarían de captar leads
+**sin un solo error en pantalla**. Ahora hay alta pública ACOTADA (`solicitudes`, `alertas`,
+`bajasAlertas`: crear sí, leer/editar/borrar no) con 14 tests de reglas nuevos.
+(b) **`Response.redirect()` devuelve cabeceras INMUTABLES** y `middleware.ts` les hacía `set()` para
+el `X-Robots-Tag` de staging: 500 en **todo** endpoint que responda con un redirect, o sea el
+fallback SIN JavaScript de los formularios de leads. Solo ocurría fuera de producción, que es
+justamente donde se verifica todo. El §94.4 afirmaba que ese camino funcionaba: no era cierto en
+staging. → [[L-41]].
+(c) **`/rango-altorra` cortaba el texto de habeas data** en «conforme a su»: se perdían el enlace a
+la Política y la mención de transmisión a EE. UU., mientras la prueba archivada (`plano`) sí los
+incluye. Enseñar menos de lo que se archiva rompe la regla del kit `08` §2.2 de que el titular acepte
+exactamente lo que leyó. `/publicar` lo pintaba completo desde el principio; el §94 lo copió a medias.
+→ [[LD-08]].
+
+**96.7 — Un gate en rojo es un gate muerto.** `verify:data` fallaba desde que existe `/ingresar`,
+porque el login con Google exige el SDK de Auth y no hay REST equivalente. Un candado que suena
+siempre se ignora igual que uno apagado. Excepción **estrecha**: por archivo y por patrón, con el
+motivo escrito, y `firebase/firestore` sigue prohibido ahí. Se comprobó que el gate SIGUE cazando una
+violación real (archivo de prueba → falla → borrado). → TODO-38.
+
+**96.8 — Verificación.** 76 tests unitarios (23 nuevos, puros) + 59 contra el emulador (14 de reglas
+y 12 del digest, nuevos) · `build` OK · `verify:build` y `verify:data` verdes · gates del endpoint
+422/413 en vivo · POST nativo → 303 conservando la búsqueda · `X-Robots-Tag` sobrevive al redirect ·
+sitemap 28 → **29** · texto legal completo con sus DOS enlaces en `/alertas` y `/rango-altorra` ·
+tokens de marca correctos en el render (Cormorant, navy, dorado, fondo blanco, cero negro).
+⚠️ **El envío real NO se probó**: exige la clave de Resend con el dominio verificado, que es del
+dueño. Los 12 tests del digest recorren el mismo código con el `fetch` inyectado.
+
+**96.9 — Lo que queda abierto y NO puedo cerrar yo.** (1) `RESEND_API_KEY` como secreto + dominio
+verificado en Resend. (2) El catálogo real (TODO-22): hasta entonces el digest corre, aplica bajas y
+reporta `sin-novedades`. (3) Cloud Scheduler va por **2 de 3** jobs del free tier.
+
+**96.10 — Doctrina aplicada.** §3.3 (cada afirmación contra el código o el navegador) · §3.4 IAP ·
+§G.2 🖥️ (`34` antes de tocar código) · §G.4 caza-bugs (los 3 hallazgos salieron de recorrer el camino
+vivo, no el diff) · §G.4 destilar a skills (`caza-bugs`, `legal-colombia`, `marketing-loops`) ·
+§G.4 Frescura en `20`.
