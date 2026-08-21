@@ -10,13 +10,12 @@ import { getDoc, type LowLevelResult } from './firestore-rest';
 import type { Propiedad, Disponibilidad } from '../domain/propiedades';
 import type { ConfigGeneral } from '../domain/config';
 import { CATALOGO_SHARDS, catalogoVacio, type CatalogoIndice, type CatalogoShard } from '../domain/catalogo';
+import { FIREBASE_PUBLICO } from '../config/firebase-publico';
 
-// Config PÚBLICA de Firebase (la apiKey es pública por diseño; misma que `js/firebase-config.js` legacy).
-// Se usa como fallback: prioridad env runtime (wrangler [vars]) → build-time (import.meta.env) → esta constante.
-const PUBLIC_FIREBASE = {
-  apiKey: 'AIzaSyCLxOwj3837m6p9QFDBWzVTuNUFhBkCg_I',
-  projectId: 'altorra-inmobiliaria-345c6',
-} as const;
+// Config PÚBLICA de Firebase. El VALOR vive en `config/firebase-publico.ts`, que es su dueño único
+// (estaba aquí y OTRA VEZ, a mano, dentro del script de `/ingresar`). Aquí se conserva solo la CASCADA
+// de resolución: env de runtime (wrangler [vars]) → build-time (import.meta.env) → constante.
+const PUBLIC_FIREBASE = FIREBASE_PUBLICO;
 
 /** Subset del env de runtime de Cloudflare que este cliente consume (todo PÚBLICO). */
 export interface RuntimeEnv {

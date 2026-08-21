@@ -123,7 +123,34 @@ const init = DATA.admin;
 ---
 
 <BaseLayout title="Gestión — Panel ALTORRA" noindex>
-  <div class="gx-root">
+  {/*
+    PUERTA DE ACCESO (§98). El panel nace OCULTO y solo aparece cuando se ha comprobado que quien mira
+    tiene sesión y el permiso de staff. Sin esto, la interfaz completa de administración se le enseñaba
+    a cualquiera que escribiera la dirección.
+
+    ⚠️ Y hay que decirlo con todas las letras: **esto NO es la frontera de seguridad**. Corre en el
+    navegador y se salta con la consola abierta. La frontera real son las Security Rules de Firestore
+    (`isStaff()`), que deciden qué documentos se dejan leer pase lo que pase en la página — y que
+    todavía NO están desplegadas (TODO-17). Mientras el panel muestre datos DEMO no hay nada que
+    filtrar; el día que lea datos reales, lo que lo protege son las Rules, no este script.
+  */}
+  <div class="gx-gate" id="gx-gate" role="status">
+    <p class="gx-gate__t">Comprobando tu acceso…</p>
+  </div>
+
+  <div class="gx-gate" id="gx-denegado" hidden>
+    <p class="gx-gate__t">Esta zona es del equipo de ALTORRA.</p>
+    <p class="gx-gate__d">
+      Entraste con <span id="gx-quien">tu cuenta</span>, pero no tiene permisos de gestión. Si crees que
+      deberían dártelos, pídeselos a quien administra el portal.
+    </p>
+    <p class="gx-gate__acc">
+      <a class="alt-btn alt-btn--outline" href="/">Volver al portal</a>
+      <button class="alt-btn alt-btn--navy" type="button" id="gx-salir">Salir de la sesión</button>
+    </p>
+  </div>
+
+  <div class="gx-root" id="gx-panel" hidden>
     <!-- ===================== SIDEBAR ===================== -->
     <aside class="gx-side">
       <a class="gx-brand" href="/" aria-label="ALTORRA — volver al portal">
@@ -251,6 +278,29 @@ const init = DATA.admin;
 </BaseLayout>
 
 <style>
+  /* Puerta de acceso: pantalla completa, centrada, con la tipografía y la paleta del portal. */
+  .gx-gate {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    text-align: center;
+    padding: clamp(2rem, 6vw, 4rem) 1.25rem;
+  }
+  .gx-gate__t {
+    font-family: var(--alt-font-display);
+    font-weight: var(--alt-fw-semibold);
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+    color: var(--alt-ink);
+    margin: 0;
+  }
+  .gx-gate__d { color: var(--alt-text); max-width: 34rem; line-height: 1.6; margin: 0; }
+  .gx-gate__acc { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 0.75rem 0 0; }
+</style>
+
+<style>
   .gx-root { display: flex; flex-wrap: wrap; min-height: 100vh; width: 100%; background: var(--alt-surface); }
 
   /* ---- Sidebar ---- */
@@ -359,6 +409,58 @@ const init = DATA.admin;
 </style>
 
 <script>
+  /*
+   * PUERTA DE ACCESO del panel (§98). Ver la nota del markup: esto es UX y disuasión, no seguridad.
+   * La frontera real son las Security Rules; aquí solo se decide qué se le enseña a quién.
+   *
+   * El orden importa: se ESPERA a que Firebase restaure la sesión antes de decidir. Leer el usuario
+   * sin esperar devuelve `null` en la primera pintura aunque la persona esté dentro, y el panel la
+   * echaría al login cada vez que recarga — el error clásico de esta API.
+   */
+  import { estadoAcceso, salir } from '../scripts/auth';
+
+  const puerta = document.getElementById('gx-gate');
+  const denegado = document.getElementById('gx-denegado');
+  const panel = document.getElementById('gx-panel');
+
+  function mostrar(cual: HTMLElement | null): void {
+    for (const n of [puerta, denegado, panel]) if (n) n.hidden = n !== cual;
+  }
+
+  document.getElementById('gx-salir')?.addEventListener('click', () => void salir());
+
+  estadoAcceso()
+    .then((r) => {
+      if (r.estado === 'anonimo') {
+        // `volver` para que el login devuelva AQUÍ y no a favoritos: quien venía a gestionar no
+        // quiere acabar en su lista de favoritos después de escribir la contraseña.
+        window.location.href = '/ingresar?volver=' + encodeURIComponent('/gestion');
+        return;
+      }
+      if (r.estado === 'sin-permiso') {
+        const quien = document.getElementById('gx-quien');
+        if (quien && r.email) quien.textContent = r.email;
+        mostrar(denegado);
+        return;
+      }
+      mostrar(panel);
+    })
+    .catch(() => {
+      // Si Auth no carga (red caída, bloqueador), NO se abre el panel: fail-closed. Y se dice por qué,
+      // en vez de dejar «Comprobando tu acceso…» girando para siempre.
+      if (puerta) {
+        puerta.innerHTML = '';
+        const t = document.createElement('p');
+        t.className = 'gx-gate__t';
+        t.textContent = 'No pudimos comprobar tu acceso.';
+        const d = document.createElement('p');
+        d.className = 'gx-gate__d';
+        d.textContent = 'Revisa tu conexión y recarga la página. Si usas un bloqueador, puede estar frenando el inicio de sesión.';
+        puerta.appendChild(t);
+        puerta.appendChild(d);
+      }
+    });
+
   // Segmentado de 3 roles: alterna las vistas [data-set] (ya renderizadas) + textos (textContent).
   // Sin innerHTML: los strings van por textContent y los bloques se muestran/ocultan con `hidden`.
   type Str = { user: string; userRole: string; avatar: string; greeting: string; subtitle: string; tableTitle: string };

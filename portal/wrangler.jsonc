@@ -13,6 +13,18 @@
   },
   "observability": { "enabled": true },
 
+  // WORKERS CACHING — la premisa de TODO el modelo de coste del portal (`src/lib/data/cache.ts`).
+  // Estuvo SIN habilitar hasta el 2026-08-21 (§97.10): mientras tanto cada `s-maxage` que emitían las
+  // rutas era INERTE y cada visita pagaba sus lecturas de Firestore. La caché se sienta DELANTE del
+  // Worker, así que un acierto devuelve la respuesta sin ejecutarlo: cero lecturas.
+  // Clave verificada contra `node_modules/wrangler/config-schema.json` (definición `CacheOptions`),
+  // no de memoria (L-14).
+  //
+  // `cross_version_cache: false` A PROPÓSITO: hace que un DESPLIEGUE invalide lo cacheado. Hoy no
+  // existe la purga por tag (§60.4 lo dejó verificado: exige un secreto de Cloudflare), así que
+  // republicar es la ÚNICA palanca de invalidación que tenemos — y conviene que funcione.
+  "cache": { "enabled": true, "cross_version_cache": false },
+
   // --- Bindings (los RECURSOS reales los crea el dueño en su cuenta CF; ver docs/50-CONFIG-INFRA) ---
   // PRERREQUISITOS de deploy (documentados en README y en la guía Cloudflare de Ola 0.2):
   //  · El token CF debe tener scope de CREACIÓN de recursos: Workers Scripts:Edit +

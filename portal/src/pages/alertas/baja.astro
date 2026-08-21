@@ -16,6 +16,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { SITE } from '../../lib/config/site';
+import { CACHE_CONTROL_PRIVATE } from '../../lib/data/cache';
+
+// NUNCA se cachea: esta URL lleva el TOKEN de la baja dentro. Aunque la respuesta sea idéntica para
+// quien pida esa misma URL, un secreto no se guarda en una caché compartida — y además la página
+// refleja el resultado (`?ok=1`), así que una copia servida a destiempo diría algo que no pasó.
+Astro.response.headers.set('cache-control', CACHE_CONTROL_PRIVATE);
 
 const id = Astro.url.searchParams.get('id') ?? '';
 const token = Astro.url.searchParams.get('t') ?? '';

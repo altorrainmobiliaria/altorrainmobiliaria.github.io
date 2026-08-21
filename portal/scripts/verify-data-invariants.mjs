@@ -36,9 +36,14 @@ const FORBIDDEN = [
  */
 const EXCEPCIONES = [
   {
-    archivo: /pages[\\/]ingresar\.astro$/,
-    re: /\bimport\(['"]firebase\/(app|auth)['"]\)/,
-    motivo: 'Auth con Google exige el SDK (no hay REST equivalente); carga dinámica, fuera del bundle común',
+    // La excepción apunta al MÓDULO que carga Auth, no a cada página que necesita sesión. Antes era
+    // para `pages/ingresar.astro`; al extraer el cargador a `scripts/auth.ts` se mudó con él, así el
+    // permiso vive donde vive la responsabilidad y no se multiplica.
+    archivo: /scripts[\\/]auth\.ts$/,
+    // Cubre el `import()` dinámico Y las posiciones de TIPO (`import('firebase/auth').User`), que no
+    // generan código pero el patrón de este gate también las ve.
+    re: /['"]firebase\/(app|auth)['"]/,
+    motivo: 'Auth con Google exige el SDK (no hay REST equivalente); carga dinámica en un solo módulo',
   },
 ];
 

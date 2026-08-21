@@ -25,6 +25,7 @@ import Footer from '../components/Footer.astro';
 import { SITE } from '../lib/config/site';
 import { LEGAL, TEXTO_AUTORIZACION, RUTA_AVISO } from '../lib/config/legal';
 import { ZONAS } from '../lib/content/zonas';
+import { CACHE_CONTROL_PRIVATE } from '../lib/data/cache';
 import {
   etiquetaTipo,
   normalizarCriterios,
@@ -32,6 +33,11 @@ import {
   resumenCriterios,
 } from '../lib/domain/alertas';
 import { TIPOS_INMUEBLE } from '../lib/domain/shared';
+
+// Sin caché: la página refleja el resultado del envío (`?ok=1`, `?error=…`) y no hay nada que ganar
+// cacheando un formulario. Con Workers Caching activo (TODO-41), una respuesta sin esta cabecera SÍ se
+// guardaría, y «alerta creada» es exactamente lo que no debe servirse a destiempo.
+Astro.response.headers.set('cache-control', CACHE_CONTROL_PRIVATE);
 
 const q = Object.fromEntries(Astro.url.searchParams);
 // La MISMA función que usa el endpoint. Si la página interpretara los criterios por su cuenta, lo que

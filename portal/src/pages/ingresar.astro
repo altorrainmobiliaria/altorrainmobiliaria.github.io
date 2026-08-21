@@ -136,6 +136,7 @@ const ojo =
 </style>
 
 <script>
+  import { cargarAuth } from '../scripts/auth';
   const form = document.getElementById('ing-form') as HTMLFormElement | null;
   const mail = document.getElementById('ing-mail') as HTMLInputElement | null;
   const pass = document.getElementById('ing-pass') as HTMLInputElement | null;
@@ -161,21 +162,13 @@ const ojo =
     eye.setAttribute('aria-label', verLo ? 'Ocultar contraseña' : 'Mostrar contraseña');
   });
 
-  /* Firebase Auth se carga SOLO cuando alguien intenta entrar: la página no paga ese peso por
-     existir. La config pública es la misma del resto del portal. */
-  async function auth() {
-    const [{ initializeApp, getApps }, authMod] = await Promise.all([
-      import('firebase/app'),
-      import('firebase/auth'),
-    ]);
-    const cfg = {
-      apiKey: 'AIzaSyCLxOwj3837m6p9QFDBWzVTuNUFhBkCg_I',
-      authDomain: 'altorra-inmobiliaria-345c6.firebaseapp.com',
-      projectId: 'altorra-inmobiliaria-345c6',
-    };
-    const app = getApps().length ? getApps()[0] : initializeApp(cfg);
-    return { a: authMod.getAuth(app), m: authMod };
-  }
+  /* Firebase Auth se carga SOLO cuando alguien intenta entrar: la página no paga ese peso por existir.
+     El CARGADOR vive en `scripts/auth.ts`, que es su dueño único — antes esta página traía su propia
+     copia con la config de Firebase escrita a mano, y `/gestion` habría necesitado una tercera. */
+  const auth = async () => {
+    const { auth: a, mod: m } = await cargarAuth();
+    return { a, m };
+  };
 
   /** Traduce los códigos de Firebase a algo que un propietario entienda. */
   function explicar(code: string): [string, string] {
