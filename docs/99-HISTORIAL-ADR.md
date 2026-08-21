@@ -3098,3 +3098,61 @@ desde el panel ya es posible con el ruleset fusionado (§100 mantiene la escritu
 está gateado por nadie: es trabajo. **101.8 — Doctrina**: §3.2 (`limit()` obligatorio, cero listeners
 públicos) · §3.3 (las clases del KPI se corrigieron contra el markup REAL, no de memoria — [[L-27]]) ·
 §G.4 caza-bugs.
+
+---
+
+## 102. ADR — El runbook del cutover, y el interruptor que el CI no tenía ⟦OPUS-5⟧ (2026-08-21)
+
+Con OLA 1 completa en código, la pregunta dejó de ser «¿está construido?» y pasó a ser «¿cómo se
+enciende?». Al ir a responderla aparecieron dos cosas, y la segunda es la que asusta.
+
+**102.1 — Causa raíz (doble).**
+
+*(a) El interruptor que no existía.* §91 dejó el portal con un candado anti-`noindex`: sale
+`noindex` + `Disallow: /` salvo que `PUBLIC_SITE_ENV=production`. Correcto — pero esa variable **no se
+declaraba en ningún sitio del repositorio**. El workflow `portal-ci.yml` no la mencionaba, así que
+TODOS los builds de la historia del repo, incluido el que habría ido al cutover, salían no indexables.
+Y el fallo es silencioso: el sitio se ve perfecto, con la etiqueta que le pide a Google que lo ignore.
+§91 nombró el riesgo en un comentario; el comentario no despliega nada ([[L-42]]).
+
+*(b) El orden que solo existía en mi cabeza.* Los pasos del cutover estaban repartidos en seis
+documentos (`50`, `portal/firebase/README`, §91, §99, §100, §101) y con dependencias de orden que fui
+AÑADIENDO esta misma sesión: §99 obliga a desplegar los claims ANTES que las reglas, porque el ruleset
+nuevo lee un claim que hasta hoy no ponía nadie; si se hiciera al revés, nadie sería staff y el panel
+quedaría cerrado para todos, Daniel incluido. Reconstruir ese orden de memoria, un día de cutover, con
+el dominio en producción, es exactamente cómo se rompen las cosas.
+
+**102.2 — Solución estructural.** (a) Un bloque `env:` de nivel superior en `portal-ci.yml` con las
+TRES perillas del cutover leídas de variables de repositorio y con valor por defecto seguro:
+`PORTAL_SITE_ENV` (→ `staging`), `PORTAL_CATALOGO_SOURCE` (→ `demo`) y `PORTAL_MEDIA_BASE` (→ vacío).
+Encender el sitio pasa a ser un cambio de variable en la interfaz de GitHub, sin tocar código ni pedir
+una terminal. (b) **`specs/CUTOVER-RUNBOOK.md`**: un solo documento con las seis fases en orden, quién
+hace cada paso (🧑 dueño / 🤖 Claude), **la verificación con evidencia de cada uno y su vuelta atrás**.
+Los seis documentos que tenían trozos ahora APUNTAN al runbook en vez de repetir media secuencia — un
+hecho, un dueño (§G.3).
+
+**102.3 — No-regresión.** El bloque `env` no cambia el comportamiento por defecto: sin variables de
+repositorio definidas, el CI construye exactamente igual que ayer (staging, catálogo demo, medios
+locales). Ningún workflow más se toca; `og-publish.yml` y `bump-version.yml` siguen excluyendo
+`portal/**`. `50` conserva su checklist SEO, que es la mitad que más caro sale equivocarse.
+
+**102.4 — Verificación.** El interruptor probado **en las dos direcciones**, que es lo que faltaba:
+con `PUBLIC_SITE_ENV=production` el build sale indexable (`noindex-en-home=false`,
+`robots-Disallow-total=false`, `sitemap-declarado=true`) y de vuelta en staging vuelve a salir
+bloqueado (`noindex=true`, `Disallow=true`). YAML válido con las tres claves. `brain:check` SANO, con
+el runbook alcanzable desde el cerebro (gate #28) y su checklist con evidencia (gate #13).
+
+**102.5 — Anti-patterns evitados.** No se puso `production` como valor por defecto «para que ya quede»:
+un portal en `*.workers.dev` compitiendo con el dominio real es peor que uno no indexado. No se
+escribió un runbook de pasos sin verificación — un paso sin evidencia es una intención. No se dio por
+buena la cifra de pruebas que sostiene la fase 2: se contó (55 en `rules.test.ts`) en vez de repetir de
+memoria el 80 del total de la suite.
+
+**102.6 — Archivos.** Nuevo: `specs/CUTOVER-RUNBOOK.md`. Modificados: `.github/workflows/portal-ci.yml`
+(bloque `env` + el porqué), `docs/50-CONFIG-INFRA.md` (apunta al runbook; su paso 1 ya no miente),
+`specs/MEGA-PLAN-INMOBILIARIA.md` (OLA 1 completa en código; el gate de salida se ejecuta con el
+runbook). INTACTOS: todo el código del portal, los rulesets y las Functions.
+
+**102.7 — Doctrina.** §3.3 (el interruptor se probó, no se supuso) · §G.3 SSoT (el runbook es el dueño
+del orden; los demás apuntan) · [[L-42]] (lo que está en un comentario no está desplegado) · §G.4
+frescura: el runbook se actualiza en el MISMO cambio que añada una dependencia nueva.

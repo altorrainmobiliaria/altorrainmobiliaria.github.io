@@ -155,13 +155,20 @@ vivo (contacto correcto) · `solicitudes` protegida (conteo pendiente) · Storag
 4. **Mientras tanto el negocio NO se detiene**: los bundles offsite (§Respaldo OFFSITE) restauran código+cerebro completos en cualquier máquina (`git clone <bundle>`); se trabaja local y al recuperar (o migrar a cuenta nueva) se re-apunta el remote: `git remote set-url origin <nueva-url>` + push.
 5. **Continuidad de superficies**: si la cuenta GitHub cae, el dominio sigue sirviendo el ÚLTIMO deploy de Pages (no se borra solo); el portal staging vive en **Cloudflare** (cuenta separada `altorrainmobiliaria@gmail.com`, 2FA propio ⚠️ [VERIFICA-DANIEL: recovery codes de CF también]) → las dos superficies no caen juntas.
 
-## 🚀 CUTOVER — el checklist que evita desindexar el dominio (ADR §91)
+## 🚀 CUTOVER → el runbook COMPLETO vive en `specs/CUTOVER-RUNBOOK.md` (§102)
+
+Seis fases con dependencias entre ellas (permisos → reglas → Functions → catálogo → indexable+DNS →
+después), cada una con su verificación y su vuelta atrás. Lo de abajo es SOLO la mitad SEO, que se
+conserva porque es la que más caro sale equivocarse:
+
+### La mitad SEO (ADR §91)
 
 ⚠️ El portal indexa **solo** con `PUBLIC_SITE_ENV=production`; por defecto sale `noindex` +
 `Disallow: /`. Correcto en staging, **catastrófico en el dominio real** (Google desindexa y el sitio
 se ve perfecto). Hasta el 2026-08-21 esa variable **no se declaraba en NINGÚN sitio** del repo.
 
-1. `PUBLIC_SITE_ENV=production` en el deploy de producción (hoy el CI solo tiene staging).
+1. `PUBLIC_SITE_ENV=production`: ya NO se pone a mano — sale de la variable de repositorio
+   `PORTAL_SITE_ENV` (§102). Junto a ella viajan `PORTAL_CATALOGO_SOURCE` y `PORTAL_MEDIA_BASE`.
 2. `npm run verify:build` con esa env → la #6 **FALLA** si sobrevive `noindex` o `Disallow: /`.
 3. **NO borrar `googlec4e47cae776946d9.html`** (propiedad de GSC): ya duplicado en `portal/public/`.
 4. Los **301** salen solos: `portal/src/lib/seo/redirects.ts` (68 URLs) vía `middleware.ts`; las 9 exentas, en su `§NO-TOCAR`.

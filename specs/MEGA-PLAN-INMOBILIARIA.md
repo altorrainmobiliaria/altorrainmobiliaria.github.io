@@ -85,6 +85,9 @@ workflow genérico inventado, ni digitalizar errores: su operación, elevada a e
 
 ### 🌊 OLA 1 — MVP público (el portal que reemplaza la obra) · gate de salida: cutover DNS
 
+> ✅ **OLA 1 COMPLETA EN CÓDIGO (2026-08-21)**, los 13 ítems. El gate de salida se ejecuta con
+> **`specs/CUTOVER-RUNBOOK.md`** (§102): seis fases en orden, con verificación y vuelta atrás.
+
 > 📊 **ESTADO REAL medido contra el código el 2026-08-20** (ADR §90). ⚠️ Ojo con el `05`: dice «OLA 1
 > FIDELIDAD COMPLETA» y eso significa **fiel a los mockups**, NO **completa según este plan**. Son cosas
 > distintas y confundirlas hace creer que la ola está cerrada.

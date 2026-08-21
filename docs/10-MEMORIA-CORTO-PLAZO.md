@@ -33,9 +33,9 @@
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-44** | 🖥️ **Admin v1 — falta la otra mitad** (ítem 10). ✅ puerta de acceso (§98) + bandeja de leads REAL (§101). Resta **CRUD de propiedades**, cola de verificación y export. **No lo gatea nadie**: el ruleset fusionado ya permite la escritura por rol (§100). | 🟢 | §101 |
 | **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, [[L-39]] → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
-| **TODO-39** | 🌊 **OLA 1 ✅ 13 de 13** (§91 SEO · §92 zonas · §93 precios · §94 Rango · §95 JSON-LD · **§96 alertas**). Queda SOLO lo que no es código: (a) ⚠️ **tuya (§94.6)**: «Avalúo» sale en `Header`/`Footer` y B13 lo PROHÍBE (Ley 1673), la skill de voz sí lo usa — dos fuentes del cerebro en contradicción legal; (b) el **go/no-go de ola** con Daniel (MEGA-PLAN §4.4). | 🟢 código listo | §96 |
-| **TODO-22** | **CATÁLOGO — código COMPLETO, incluida la FICHA (§97)**. Para datos reales, en el cutover: (1) deploy COORDINADO (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades · (4) fichas al sitemap, derivadas del índice. | 🟢 cutover | §60 · §97 |
-| **TODO-42** | 🔑 **Claim de staff — CÓDIGO LISTO, falta desplegar** (§99). El claim se deriva de `usuarios/{uid}` con un trigger, en el codebase del legacy, y se despliega SOLO (no toca reglas). ⏭️ **Daniel**: (1) me confirma el deploy — concede permisos de admin, prefiero que lo sepas; (2) pulsa «Sincronizar permisos» en admin.html → Usuarios; (3) abre `/gestion` y ve el panel. | 🟡 deploy | §99 |
+| **TODO-39** | 🌊 **OLA 1 ✅ 13 de 13** (§91-§96 → `00`). Queda SOLO lo que no es código: (a) ⚠️ **tuya (§94.6)**: «Avalúo» sale en `Header`/`Footer` y B13 lo PROHÍBE (Ley 1673), la skill de voz sí lo usa — dos fuentes del cerebro en contradicción legal; (b) el **go/no-go de ola** con Daniel (MEGA-PLAN §4.4). | 🟢 código listo | §96 |
+| **TODO-22** | **CATÁLOGO — código COMPLETO, incluida la FICHA (§97)**. Los pasos para datos reales son las **fases 3-4 del `specs/CUTOVER-RUNBOOK.md`** (§102), no se repiten aquí; resta después: fichas al sitemap, derivadas del índice. | 🟢 cutover | §102 |
+| **TODO-42** | 🔑 **Claim de staff — CÓDIGO LISTO, falta desplegar** (§99). El claim se deriva de `usuarios/{uid}` con un trigger, en el codebase del legacy, y se despliega SOLO (no toca reglas). Es la **fase 1 del runbook** (§102) y se puede hacer HOY, aislada: no toca ni una línea de reglas. ⏭️ **Daniel**: (1) me confirma el deploy — concede permisos de admin, prefiero que lo sepas; (2) pulsa «Sincronizar permisos» en admin.html → Usuarios; (3) abre `/gestion` y ve el panel. | 🟡 deploy | §99 · §102 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -49,19 +49,18 @@
 > al FINAL, por decisión suya**. **Opus 5 para TODO**, esfuerzo Max, agentes y workflows LIBRES bajo tu
 > juicio (levantó ese límite el 20-ago).
 >
-> **🌊 OLA 1 CERRADA EN CÓDIGO: 13 de 13** (§91-§96). **25 páginas** (censo → `20`); `/publicar` y el
-> Rango captan leads REALES en `solicitudes` (§88, §94); `/alertas` guarda búsquedas y la Cloud Function
-> `alertasDigest` manda el resumen diario (§96). Lo que falta de OLA 1 ya no es código: es el go/no-go
-> del dueño y la contradicción de «Avalúo» (§94.6).
+> **🌊 OLA 1 CERRADA EN CÓDIGO: 13 de 13** (§91-§96) y **el portal público COMPLETO**: 25 páginas (censo
+> → `21`), leads REALES en `solicitudes` (§88, §94), alertas con digest diario (§96), la ficha dinámica
+> `/inmueble/<slug>` (§97), Workers Caching encendido y `/gestion` tras puerta (§98). Lo que falta de
+> OLA 1 ya no es código: el go/no-go del dueño y la contradicción de «Avalúo» (§94.6).
 >
-> **§97: la FICHA ya es dinámica** — `/inmueble/<slug>` lee Firestore, con gate de publicación en el
-> dominio ([[L-42]]) y bloque sin dato OMITIDO. El código del portal público está COMPLETO.
+> **§102: el cutover ya no se improvisa** → **`specs/CUTOVER-RUNBOOK.md`** es el SSoT del orden: seis
+> fases, quién hace cada paso, verificación con evidencia y vuelta atrás. Salió de ahí un hallazgo
+> grande: `PUBLIC_SITE_ENV` **no se declaraba en el CI**, así que todo build del repo salía `noindex`
+> — el del cutover incluido. Ya son 3 perillas por variable de repositorio, con defaults seguros.
 >
-> **§98**: Workers Caching ✅ encendido (llevaba sin habilitar desde Ola 0: todo `s-maxage` era inerte)
-> y `/gestion` ✅ tras puerta de acceso.
->
-> **Lo siguiente, en orden**: (1) **el cutover** — claims y reglas LISTOS y probados (§99-§100); el orden de despliegue, paso a paso, en `portal/firebase/README.md`, y NO se improvisa ·
-> (2) **TODO-22**, el catálogo REAL · (3) **TODO-30**, la vista del mapa, que solo confirma Daniel
+> **Lo siguiente, en orden**: (1) **el cutover**, con el runbook en la mano (claims y reglas LISTOS y
+> probados, §99-§100) · (2) **TODO-22**, el catálogo REAL · (3) **TODO-30**, la vista del mapa, que solo confirma Daniel
 > ([[L-39]]) · (4) **OLA 2**: el abogado gatea el RAIL DE PAGO, **no toda la ola** — reléela antes de
 > darla por bloqueada ([[L-40]] ya cobró 3 veces, [[M-11]]).
 >
@@ -95,8 +94,6 @@
 > **solo muerde el día que recargues saldo** ([[D-15]]). **Antes de recargar un peso**: sesión de Meta
 > de Altorra ([[D-16c]]), filtro SOLO `Entrega=Activo` + rango Máximo ([[D-15b]] — «Anuncios activos»
 > esconde los zombies).
-
-> **▶ CONSOLIDADO** — §81-§95 ya son ADRs; el relato y el ruteo viven en `00-INDICE` → `99` (SSoT).
 
 > **⏸️ EN PAUSA, reanudable y sin bloquear nada**: 64 leves del kit (ledger en bóveda) · [[M-09]] a los
 > 3 hermanos (TODO-32b) · backlog B-01..B-05. 🛑 **NO RELANZAR** el comité R3, la auditoría B-03 ni los
