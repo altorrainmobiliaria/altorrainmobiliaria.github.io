@@ -94,6 +94,43 @@ hoy?»—, y un trigger deriva de ella el claim. Nadie escribe el claim a mano n
 **Despliégalo SOLO**, separado del cambio grande que lo motivó. Si no toca las reglas vivas, no puede
 romper nada, y el permiso queda verificado en producción semanas antes de que alguien dependa de él.
 
+## Dos escritores sobre el mismo almacén (migraciones y sistemas que conviven)
+
+Casi ninguna sustitución de sistema es un salto: hay un periodo —meses— en el que el viejo y el nuevo
+comparten la base de datos. Es la fase donde más barato es equivocarse y más caro es enterarse tarde.
+
+**1. En una base sin esquema, el cast es una promesa que nadie comprueba.** `doc.data() as Modelo`
+(o su equivalente en cualquier lenguaje con tipos borrados en runtime) compila perfectamente sobre un
+documento del modelo viejo. El resultado no es una excepción: es que el documento **pasa los filtros**
+—porque los campos del filtro sí coinciden— y falla más abajo, al leer lo que en su modelo vive en otro
+sitio. Síntoma típico: **lista vacía, cero errores, cero logs.** Valida la FORMA en la frontera de
+lectura; el cast solo silencia al compilador.
+
+**2. El desajuste de esquema merece su PROPIO motivo de descarte.** Si lo dejas caer en un cubo que ya
+existe («sin precio», «sin imagen»), el sistema te da un diagnóstico **falso**: manda a buscar un
+precio que sí está, solo que en otra forma. El motivo ES el diagnóstico — la diferencia entre una
+respuesta en un minuto y una tarde de depuración el día del lanzamiento.
+
+**3. Detecta por lo que el modelo CIERRA, no por heurísticas.** Enumeraciones (¿está el valor en la
+lista?) y tipo de un campo (¿objeto o escalar?) son verificaciones exactas y baratas. «Parece viejo
+porque le falta X» envejece mal. Y basta UNA señal para descartar: una migración a medias es tan
+inservible como ninguna.
+
+**4. Los descartes se cuentan POR MOTIVO, nunca en total.** «5 omitidas» no responde ninguna pregunta;
+`{ "esquema-legacy": 5 }` responde la única que importa. Y guárdalo donde se pueda mirar sin abrir la
+consola de logs.
+
+**5. El guardián va en TODOS los lectores, no solo en el que descubriste.** Un almacén compartido suele
+tener varias puertas —el listado, la búsqueda por id, un export— y solo una de ellas filtra. La que se
+salta el filtro es justo la que sirve contenido de aspecto correcto. Reutiliza el MISMO predicado en
+todas: dos lectores que discrepan sobre qué es válido es el bug siguiente.
+
+**6. Adaptar o migrar es una cuestión de VOLUMEN, no de elegancia.** Una capa que traduce el modelo
+viejo al nuevo es correcta ante un corpus grande o un escritor viejo que no puedes apagar. Ante un
+puñado de registros es sostener dos esquemas para siempre a cambio de ahorrar unas altas a mano —
+**escribe la herramienta nueva y migra**. Y hasta que exista esa herramienta, di en voz alta que el
+sistema nuevo **no tiene forma de crear datos**: es un requisito del lanzamiento disfrazado de mejora.
+
 ## Cuándo NO usar
 - Edits triviales sin consecuencias de diseño (un texto, un color, un typo).
 - Tareas que no son de código (salvo que haya una decisión de sistema detrás).
