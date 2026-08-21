@@ -2988,3 +2988,65 @@ función que CONCEDE permisos de administrador es una acción que Daniel debe sa
 **99.10 — Doctrina.** §3.7 comité por iniciativa propia (decisión con consecuencias, cara de revertir) ·
 §G.2 🛰️ Decisión Fuerte · §3.3 (las premisas del fallo verificadas por mí, no aceptadas) · §G.4
 captura: crudo en bóveda + síntesis aquí, commiteados en el mismo cierre.
+
+## 100. ADR — Ruleset ÚNICO y fusionado: desplegar deja de ser un acto de fe ⟦OPUS-5⟧ (2026-08-21)
+
+> Cierra TODO-43, el bloqueador que destapó §99.8. Con esto el cutover deja de tener una bomba dentro.
+
+**100.1 — El problema.** Había **dos** rulesets con el mismo nombre: el de la raíz (el VIVO, del sitio
+legacy) y el del portal (escrito en Ola 0.7 y nunca desplegado). Firestore **no fusiona**: el último
+despliegue REEMPLAZA. Así que desplegar el del portal tumbaba de golpe las colecciones que `admin.html`
+sigue usando, y el camino estaba trazado hasta el síntoma: `resetLoginAttempts()` corre dentro del
+`try` del login sin catch propio, así que el rechazo salta al catch general y el dueño vería
+**«Error inesperado» DESPUÉS de autenticar bien**. Y con dos `firebase.json` apuntando cada uno al
+suyo, desplegar desde la carpeta equivocada revertía el otro **en silencio**.
+
+**100.2 — La forma de la solución.** Un solo `firestore.rules` y un solo `storage.rules`, en
+`portal/firebase/`, con los DOS `firebase.json` apuntando a ellos. Los anteriores quedan en
+`_legacy/*.PRE-FUSION` — no se borran: son la vuelta atrás de dos minutos.
+
+**100.3 — Permisos por CLAIM: cero lecturas.** Los helpers ya no hacen `get()` a `usuarios`. Un `get()`
+dentro de una regla **se factura aunque la petición se deniegue**, y aquí cualquiera con un Gmail está
+autenticado: era un vector de agotamiento de cuota, no una preferencia de estilo (§99.3). El precio es
+un **ORDEN de despliegue** que está escrito en el propio archivo: Functions del claim → sincronizar →
+comprobar → reglas. Desplegarlas antes deja a todos sin ser staff.
+
+**100.4 — Las decisiones de la fusión, que no fue copiar y pegar.**
+(a) **`propiedades`**: el legacy tenía `allow read: if true`, o sea que cualquiera podía leer un
+BORRADOR con su precio y sus notas. Se adopta la whitelist por estado del portal **más un escape de
+staff** — sin él, el equipo perdería sus propias fichas de vendidos y arrendados en el panel.
+(b) **Las escrituras de `propiedades` y `solicitudes` siguen permitidas POR ROL desde el cliente.** La
+postura «toda escritura por Functions» es el destino, no el presente: `js/admin-properties.js` y
+`js/admin-leads.js` escriben desde el navegador y las Functions de CRUD del portal no existen. Imponer
+hoy la postura habría dejado el panel sin poder editar el catálogo. Lo que ya nace cerrado, nace cerrado.
+(c) **`usuarios` sin recursión** (antes había que LEER `usuarios` para saber si podías leerla) y con la
+escritura cerrada a las callables: **esa es la puerta que sostiene todo el modelo de §99**, porque
+alguien que pudiera escribir su propio `rol` haría que el trigger se lo convirtiera en permisos reales.
+
+**100.5 — Dos agujeros cerrados, los dos del ruleset VIVO.** `system` tenía
+`allow write: if isEditorOrAbove() || !exists(...)`, y esa segunda mitad dejaba que un **anónimo**
+creara cualquier documento nuevo. `newsletter` tenía `allow update: if true`: cualquiera podía
+reescribir la suscripción de otro, correo incluido.
+
+**100.6 — Y Storage, que nadie había mirado.** El ruleset del portal ponía `allow read, write: if
+isStaff()` sobre `match /{allPaths=**}`. Eso no solo chocaba con el del legacy: lo **tapaba**. Las
+imágenes de propiedades y la multimedia del sitio son de LECTURA PÚBLICA y habrían dejado de cargar el
+día del despliegue. **Un bucket no se protege con un candado en la raíz**: lo privado —cédulas,
+contratos escaneados— tiene ahora su propio prefijo, y lo público sigue público.
+
+**100.7 — Verificación.** **80 tests contra el emulador real**, 21 nuevos, y el gate T6 que este mismo
+archivo llevaba pendiente desde Ola 0.7 queda cumplido. Cubren: el legacy VIVO (`loginAttempts` abierto
+—que es el que mata el login si se cierra—, reseñas y blog públicos, editor escribiendo, `auditLog`
+inmutable incluso para el super_admin) · **el adversario que importa**, autenticado y sin permisos: no
+lee leads ni captaciones ni contratos ni pagos, no lista propiedades, no lee un borrador y **no se
+asciende a sí mismo** · la distinción viewer/editor/super_admin · los dos agujeros cerrados · el escape
+de staff. Más 141 tests del portal y `verify:build` verdes.
+
+**100.8 — Lo que queda para el día del cutover.** Desplegar en el orden escrito, y con los ojos en
+`admin.html` inmediatamente después. La vuelta atrás está preparada y probada como concepto, no como
+promesa: los ficheros anteriores están en `_legacy/` y el comando es el mismo apuntando allí.
+
+**100.9 — Doctrina.** §3.3 (cada colección del legacy se verificó contra el código que la usa, no
+contra una lista) · §3.4 IAP · §G.4 caza-bugs (los dos agujeros y el choque de Storage salieron de
+recorrer el ruleset vivo, no el diff) · [[M-06]] (un gate solo existe si lo has visto disparar: por eso
+21 tests nuevos y no una afirmación).

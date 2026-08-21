@@ -36,6 +36,24 @@
 ### L-20 — Firestore Rules: un `get` de doc INEXISTENTE con `resource.data` en la regla → 403, no 404 → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
 ### L-21 — Aislar tests que comparten un emulador Firestore: projectId PROPIO por archivo → 🧩 **shard `35-LECCIONES-PLATAFORMA.md`** (completa allá)
 
+### L-44 — 🔐 Un ruleset se REEMPLAZA, no se fusiona: dos archivos con el mismo nombre son una trampa silenciosa *(2026-08-21, ADR §100)*
+**Disparador**: dos ficheros `firestore.rules` en un mismo repo —uno en la raíz y otro en la carpeta de un
+subproyecto— cada uno con su `firebase.json`. **Causa**: Firestore y Storage guardan UN ruleset por
+proyecto; el último despliegue **sustituye** al anterior. No hay fusión, no hay aviso, no hay conflicto:
+desplegar desde la carpeta equivocada revierte el trabajo de la otra **en silencio**, y el síntoma
+aparece lejos —en una pantalla que deja de cargar— y sin nada que lo relacione con el despliegue.
+**Y el `deny-all` final del archivo nuevo tumba TODO lo que el viejo declaraba** y él no: colecciones,
+subcolecciones y prefijos de bucket que otra parte del sistema sigue usando.
+**Reglas**: (1) **un proyecto, un ruleset**: si hay dos archivos, fusiónalos y haz que todas las
+configuraciones apunten al mismo — y guarda el anterior como vuelta atrás, no lo borres; (2) antes de
+desplegar un ruleset nuevo, **inventaría contra el CÓDIGO qué colecciones y rutas usa cada consumidor
+vivo**, no contra una lista de memoria: el `grep` de `collection('x')` es la fuente; (3) **un bucket no
+se protege con un candado en la raíz** — `match /{allPaths=**}` con permiso restringido no «añade»
+seguridad, TAPA lo que era público (fotos, adjuntos), así que lo privado va en su propio prefijo;
+(4) escribe el ORDEN de despliegue dentro del propio archivo si depende de otra cosa (aquí, que los
+permisos existieran antes de exigirlos). **Prueba que funcionó**: el emulador con un contexto por rol
+Y un adversario autenticado-sin-permisos; sin ese último, el test más importante no existe.
+
 ### L-43 — 🔑 Un identificador ESTABLE no se deriva de la URL: cambia la ruta y se te queda huérfano lo guardado *(2026-08-21, ADR §97.7)*
 **Disparador**: cambias el formato de una URL (de `?id=X` a `/algo/<slug>`) y algo que la gente había
 guardado deja de reconocerse. **Caso**: los favoritos del portal derivaban su clave del `?id=` del enlace

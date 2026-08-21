@@ -35,7 +35,6 @@
 | **TODO-39** | 🌊 **OLA 1 ✅ 13 de 13** (§91 SEO · §92 zonas · §93 precios · §94 Rango · §95 JSON-LD · **§96 alertas**). Queda SOLO lo que no es código: (a) ⚠️ **tuya (§94.6)**: «Avalúo» sale en `Header`/`Footer` y B13 lo PROHÍBE (Ley 1673), la skill de voz sí lo usa — dos fuentes del cerebro en contradicción legal; (b) el **go/no-go de ola** con Daniel (MEGA-PLAN §4.4). | 🟢 código listo | §96 |
 | **TODO-22** | **CATÁLOGO — código COMPLETO, incluida la FICHA (§97)**. Para datos reales, en el cutover: (1) deploy COORDINADO (rules + `functions:portal`) · (2) `PUBLIC_CATALOGO_SOURCE=live` · (3) sembrar propiedades · (4) fichas al sitemap, derivadas del índice. | 🟢 cutover | §60 · §97 |
 | **TODO-42** | 🔑 **Claim de staff — CÓDIGO LISTO, falta desplegar** (§99). El claim se deriva de `usuarios/{uid}` con un trigger, en el codebase del legacy, y se despliega SOLO (no toca reglas). ⏭️ **Daniel**: (1) me confirma el deploy — concede permisos de admin, prefiero que lo sepas; (2) pulsa «Sincronizar permisos» en admin.html → Usuarios; (3) abre `/gestion` y ve el panel. | 🟡 deploy | §99 |
-| **TODO-43** | 🔴 **El ruleset del cutover debe FUSIONARSE, no sustituirse** (§99.8): desplegar `portal/firebase/firestore.rules` tal cual **mata `admin.html`** (su deny-all tumba `loginAttempts`, `resenas`, `blog`, `auditLog`, `newsletter`, `system`…). Faltan además el bloque de `usuarios` y un escape de staff en `propiedades`. **Bloquea el cutover.** | 🔴 cutover | §99.8 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -60,7 +59,7 @@
 > **§98**: Workers Caching ✅ encendido (llevaba sin habilitar desde Ola 0: todo `s-maxage` era inerte)
 > y `/gestion` ✅ tras puerta de acceso.
 >
-> **Lo siguiente, en orden**: (1) **TODO-43**, el ruleset FUSIONADO del cutover — hoy desplegar mata `admin.html` ·
+> **Lo siguiente, en orden**: (1) **el cutover** — claims y reglas LISTOS y probados (§99-§100); el orden de despliegue, paso a paso, en `portal/firebase/README.md`, y NO se improvisa ·
 > (2) **TODO-22**, el catálogo REAL · (3) **TODO-30**, la vista del mapa, que solo confirma Daniel
 > ([[L-39]]) · (4) **OLA 2**: el abogado gatea el RAIL DE PAGO, **no toda la ola** — reléela antes de
 > darla por bloqueada ([[L-40]] ya cobró 3 veces, [[M-11]]).
