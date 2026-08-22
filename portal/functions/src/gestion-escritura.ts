@@ -24,7 +24,10 @@ import {
   explicarProblemaContrato,
   problemasDeContrato,
   type Contrato,
+  type Pago,
+  type TipoPago,
 } from '../../src/lib/domain/gestion';
+import { cifrasDePago, estadoDePago, idPago } from '../../src/lib/domain/agenda';
 
 const REGION = 'us-central1';
 
@@ -121,4 +124,80 @@ export const crearContrato = onCall({ region: REGION }, async (req) => {
 
   logger.info(`[gestion] contrato ${id} creado por ${quien.uid} (${quien.rol})`);
   return { ok: true, id, contrato: doc };
+});
+
+/**
+ * Registra un pago RECIBIDO. La otra mitad de «se pierden los contratos, se olvidan fechas».
+ *
+ * LO QUE SE TECLEA ES SOLO LO QUE PASÓ: cuánto entró y cuándo. El monto esperado, la fecha de
+ * vencimiento y el estado de mora los DERIVA la Function del contrato y del calendario
+ * (`cifrasDePago` + `estadoDePago`, los mismos que usa el panel). Si el operador escribiera el monto
+ * esperado, un dedo torcido convertiría un canon de 2.500.000 en 250.000 y la mora se calcularía
+ * contra una cifra inventada — sin que nada fallara.
+ *
+ * El id es DETERMINISTA (`contrato_periodo_tipo`, OD6): registrar dos veces el canon de agosto
+ * reescribe el MISMO documento en vez de crear un segundo cobro fantasma que descuadre la cartera.
+ */
+export const registrarPago = onCall({ region: REGION }, async (req) => {
+  const quien = exigirEditor(req);
+  const db = getFirestore();
+  const d = (req.data ?? {}) as {
+    contratoId?: string;
+    periodo?: string;
+    tipo?: TipoPago;
+    montoRecibido?: number;
+    fechaPago?: string;
+    montoEsperado?: number;
+  };
+
+  const contratoId = texto(d.contratoId);
+  const periodo = texto(d.periodo);
+  const tipo = (d.tipo ?? 'canon_inquilino') as TipoPago;
+  if (!contratoId || !/^\d{4}-\d{2}$/.test(periodo)) {
+    throw new HttpsError('invalid-argument', 'Falta el contrato o el periodo (AAAA-MM).');
+  }
+
+  const snapC = await db.doc(`contratos/${contratoId}`).get();
+  if (!snapC.exists) throw new HttpsError('not-found', `El contrato ${contratoId} no existe.`);
+  const contrato = { ...(snapC.data() as object), id: snapC.id } as Contrato;
+
+  // Los servicios públicos no salen del contrato (los trae la factura): ahí sí se acepta el monto.
+  const cifras = cifrasDePago(contrato, periodo, tipo);
+  const montoEsperado = cifras?.montoEsperado ?? Number(d.montoEsperado ?? 0);
+  const fechaVencimiento = cifras?.fechaVencimiento ?? `${periodo}-${String(contrato.diaPago ?? 1).padStart(2, '0')}`;
+  if (!montoEsperado || montoEsperado <= 0) {
+    throw new HttpsError('invalid-argument', 'No se pudo determinar el monto esperado. Para servicios públicos, indícalo.');
+  }
+
+  const ahora = new Date();
+  const hoy = ahora.toISOString().slice(0, 10);
+  const fechaPago = texto(d.fechaPago) || undefined;
+  const montoRecibido = Number(d.montoRecibido ?? 0) || undefined;
+
+  const derivado = estadoDePago({ fechaVencimiento, fechaPago, montoEsperado, montoRecibido }, hoy);
+  const id = idPago(contratoId, periodo, tipo);
+
+  const doc: Pago = {
+    id,
+    expedienteId: contrato.expedienteId,
+    contratoId,
+    periodo,
+    tipo,
+    montoEsperado,
+    ...(montoRecibido ? { montoRecibido } : {}),
+    fechaVencimiento,
+    ...(fechaPago ? { fechaPago } : {}),
+    estado: derivado.estado,
+    diasMora: derivado.diasMora,
+    moraTier: derivado.moraTier,
+    _version: 1,
+    createdAt: ahora.toISOString(),
+    updatedAt: ahora.toISOString(),
+  };
+
+  // `merge` a propósito: corregir un pago mal registrado tiene que poder hacerse sin borrar el
+  // documento. El id determinista hace que la corrección caiga sobre el mismo sitio.
+  await db.doc(`pagos/${id}`).set(doc, { merge: true });
+  logger.info(`[gestion] pago ${id} (${derivado.estado}) por ${quien.uid}`);
+  return { ok: true, id, pago: doc };
 });

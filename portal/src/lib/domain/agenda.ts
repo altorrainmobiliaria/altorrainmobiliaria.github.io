@@ -11,8 +11,8 @@
  * para que una Cloud Function mande el recordatorio, sin que las dos puedan discrepar sobre qué vence.
  */
 
-import type { ISODate } from './shared';
-import type { Contrato, EstadoPago, Pago } from './gestion';
+import type { COP, ISODate } from './shared';
+import type { Contrato, EstadoPago, Pago, TipoPago } from './gestion';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FECHAS — aritmética en UTC, sin librerías
@@ -264,4 +264,90 @@ export function accionDeMora(tier: number): string {
     default:
       return 'Escalar: cobro jurídico. Reunir soportes antes.';
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LO QUE SE ESPERA COBRAR Y PAGAR (§115) — las cifras salen del CONTRATO, no del teclado
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** IVA colombiano sobre servicios. Los honorarios de administración inmobiliaria lo causan. */
+export const IVA = 0.19;
+
+/**
+ * El id de un pago es DETERMINISTA: `<contrato>_<periodo>_<tipo>` (OD6).
+ *
+ * No es una comodidad, es la defensa contra el duplicado: registrar dos veces el canon de agosto
+ * escribe el MISMO documento en vez de crear un segundo cobro fantasma que descuadra la cartera. Con
+ * un id aleatorio, «¿ya registré este pago?» solo se puede contestar mirando, y se mira mal.
+ */
+export function idPago(contratoId: string, periodo: string, tipo: TipoPago): string {
+  return `${contratoId}_${periodo}_${tipo}`;
+}
+
+/** `YYYY-MM` del periodo al que pertenece una fecha. */
+export function periodoDe(iso: string): string {
+  return (iso ?? '').slice(0, 7);
+}
+
+export interface CifrasPago {
+  montoEsperado: COP;
+  fechaVencimiento: ISODate;
+}
+
+/** Redondeo al peso. En COP los céntimos no existen en la práctica y arrastrarlos descuadra sumas. */
+const alPeso = (n: number): number => Math.round(n);
+
+/**
+ * Los honorarios de administración de un periodo, con su IVA si aplica.
+ *
+ * El IVA se calcula SOBRE los honorarios, nunca sobre el canon: el servicio gravado es la
+ * administración, no el arriendo de vivienda (que está excluido). Confundirlos multiplica por cinco lo
+ * que se le cobra al propietario.
+ */
+export function honorariosDe(c: Pick<Contrato, 'canon' | 'honorariosPct' | 'ivaSobreHonorarios'>): COP {
+  if (!c.canon || !c.honorariosPct) return 0;
+  const base = (c.canon * c.honorariosPct) / 100;
+  return alPeso(c.ivaSobreHonorarios ? base * (1 + IVA) : base);
+}
+
+/**
+ * Qué se espera de un pago concreto, derivado del contrato.
+ *
+ * Se DERIVA a propósito: si el operador tecleara el monto esperado, un dedo torcido convertiría un
+ * canon de 2.500.000 en uno de 250.000 y la mora se calcularía contra una cifra inventada. Lo único
+ * que se teclea es lo que de verdad pasó — cuánto entró y cuándo.
+ *
+ * `null` cuando el contrato no sostiene ese tipo de pago (p. ej. honorarios sin porcentaje pactado).
+ */
+export function cifrasDePago(c: Contrato, periodo: string, tipo: TipoPago): CifrasPago | null {
+  const dia = Math.min(Math.max(Math.trunc(c.diaPago ?? 1), 1), 28);
+  const fechaVencimiento = `${periodo}-${String(dia).padStart(2, '0')}`;
+  const canon = c.canon ?? 0;
+
+  if (tipo === 'canon_inquilino') {
+    if (!canon) return null;
+    // Lo que debe el arrendatario incluye la administración SALVO que ya vaya dentro del canon. Se
+    // guardan por separado (doctrina de la casa: nada de cuotas escondidas), pero se cobran juntos.
+    const admin = c.adminIncluidaEnCanon ? 0 : (c.administracion ?? 0);
+    return { montoEsperado: alPeso(canon + admin), fechaVencimiento };
+  }
+
+  if (tipo === 'honorarios') {
+    const h = honorariosDe(c);
+    return h ? { montoEsperado: h, fechaVencimiento } : null;
+  }
+
+  if (tipo === 'payout_propietario') {
+    if (!canon) return null;
+    // El propietario recibe el canon MENOS los honorarios (con su IVA). La administración no entra:
+    // no es suya, es de la copropiedad. Y el giro va antes del día 10, no el día de pago del canon.
+    const neto = canon - honorariosDe(c);
+    return {
+      montoEsperado: alPeso(Math.max(0, neto)),
+      fechaVencimiento: `${periodo}-${String(DIA_TOPE_PAYOUT).padStart(2, '0')}`,
+    };
+  }
+
+  // `servicios_publicos`: el monto lo trae la factura, no el contrato. Se registra a mano.
+  return null;
 }

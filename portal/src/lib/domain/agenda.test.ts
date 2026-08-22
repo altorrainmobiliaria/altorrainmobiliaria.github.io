@@ -1,12 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import {
   accionDeMora,
+  cifrasDePago,
   agenda,
   diasDeMora,
   diasEntre,
   DIA_TOPE_PAYOUT,
   estadoDePago,
   hitosDeContrato,
+  honorariosDe,
+  idPago,
+  periodoDe,
   MESES_AVISO_RENOVACION,
   proximoDiaDePago,
   sumarMeses,
@@ -212,5 +216,66 @@ describe('mora — el protocolo del dueño, ejecutable', () => {
     }
     expect(accionDeMora(1)).not.toBe(accionDeMora(5));
     expect(accionDeMora(5)).toMatch(/jur/i);
+  });
+});
+
+describe('cifras de un pago (§115) — salen del CONTRATO, no del teclado', () => {
+  const c = (over: Partial<Contrato> = {}) =>
+    contrato({ canon: 2_500_000, administracion: 300_000, honorariosPct: 10, ...over });
+
+  it('el id es DETERMINISTA: registrar dos veces escribe el mismo documento', () => {
+    const a = idPago('CTR-1', '2026-08', 'canon_inquilino');
+    expect(a).toBe('CTR-1_2026-08_canon_inquilino');
+    expect(idPago('CTR-1', '2026-08', 'canon_inquilino')).toBe(a);
+    // El TIPO entra en el id: el canon y el giro al propietario del mismo mes son documentos distintos.
+    expect(idPago('CTR-1', '2026-08', 'payout_propietario')).not.toBe(a);
+  });
+
+  it('el arrendatario debe canon + administración, y vence su día de pago', () => {
+    const r = cifrasDePago(c(), '2026-08', 'canon_inquilino');
+    expect(r).toEqual({ montoEsperado: 2_800_000, fechaVencimiento: '2026-08-05' });
+  });
+
+  it('si la administración ya va dentro del canon, no se suma dos veces', () => {
+    const r = cifrasDePago(c({ adminIncluidaEnCanon: true }), '2026-08', 'canon_inquilino');
+    expect(r?.montoEsperado).toBe(2_500_000);
+  });
+
+  it('🎯 el IVA va sobre los HONORARIOS, jamás sobre el canon', () => {
+    // Confundirlos multiplicaría por cinco lo que se le cobra al propietario: el 19% de 250.000 son
+    // 47.500; el 19% de 2.500.000 serían 475.000.
+    expect(honorariosDe(c({ ivaSobreHonorarios: false }))).toBe(250_000);
+    expect(honorariosDe(c({ ivaSobreHonorarios: true }))).toBe(297_500);
+  });
+
+  it('sin porcentaje pactado no hay honorarios que cobrar', () => {
+    expect(honorariosDe(c({ honorariosPct: undefined }))).toBe(0);
+    expect(cifrasDePago(c({ honorariosPct: undefined }), '2026-08', 'honorarios')).toBeNull();
+  });
+
+  it('🎯 el propietario recibe canon − honorarios, y la administración NO es suya', () => {
+    // La administración es de la copropiedad; meterla en el giro sería pagarle al propietario un
+    // dinero que tiene que salir hacia otro sitio.
+    const r = cifrasDePago(c({ ivaSobreHonorarios: true }), '2026-08', 'payout_propietario');
+    expect(r?.montoEsperado).toBe(2_500_000 - 297_500);
+  });
+
+  it('el giro al propietario vence el día 10, no el día de pago del canon', () => {
+    const r = cifrasDePago(c({ diaPago: 5 }), '2026-08', 'payout_propietario');
+    expect(r?.fechaVencimiento).toBe('2026-08-10');
+  });
+
+  it('los servicios públicos no salen del contrato: los trae la factura', () => {
+    expect(cifrasDePago(c(), '2026-08', 'servicios_publicos')).toBeNull();
+  });
+
+  it('un contrato sin canon no genera cobro ni giro', () => {
+    expect(cifrasDePago(c({ canon: undefined }), '2026-08', 'canon_inquilino')).toBeNull();
+    expect(cifrasDePago(c({ canon: undefined }), '2026-08', 'payout_propietario')).toBeNull();
+  });
+
+  it('periodoDe recorta a año-mes', () => {
+    expect(periodoDe('2026-08-22T10:00:00Z')).toBe('2026-08');
+    expect(periodoDe('')).toBe('');
   });
 });

@@ -52,6 +52,14 @@ export interface Contrato extends Versioned, Auditable {
   estado: EstadoContrato;
   partes: { propietario?: ParteContrato; arrendatario?: ParteContrato; codeudor?: ParteContrato };
   canon?: COP;
+  /**
+   * Administración PACTADA en el contrato. Distinta de `Precio.administracion` del inmueble, que es la
+   * cifra del ANUNCIO: aquí está la que de verdad se firmó, y es la que se cobra y se concilia.
+   * Va SEPARADA del canon por doctrina (nada de cuotas escondidas) aunque se cobren juntos.
+   */
+  administracion?: COP;
+  /** Si va dentro del canon, no se suma aparte al cobrarle al arrendatario. */
+  adminIncluidaEnCanon?: boolean;
   diaPago?: number; // 1..28
   honorariosPct?: number; // administración
   ivaSobreHonorarios?: boolean;
