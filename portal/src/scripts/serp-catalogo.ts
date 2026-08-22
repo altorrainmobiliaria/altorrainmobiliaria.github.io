@@ -185,9 +185,11 @@ export async function bootCatalogo(): Promise<void> {
   // Contador honesto (el shell trae un número de demo). Se escribe SOLO el nodo de texto inicial del
   // h1: envolverlo en un <span> heredaría el estilo de `.serp-h1 span` (el "en Cartagena…") y rompería
   // la tipografía sellada (§3.2).
-  const h1 = document.querySelector<HTMLElement>('[data-serp-count]');
-  const nodoNum = h1 && Array.from(h1.childNodes).find((n) => n.nodeType === Node.TEXT_NODE && n.nodeValue?.trim());
-  if (nodoNum) nodoNum.nodeValue = `${items.length} `;
+  // Elemento propio y no «el primer nodo de texto con contenido»: aquel dependía de que el HTML
+  // empezara por el número, así que un espacio de más delante lo dejaba sin rellenar en silencio
+  // — y lo que quedaba en pantalla era el conteo inventado del build (§123).
+  const nodoNum = document.querySelector<HTMLElement>('[data-serp-n]');
+  if (nodoNum) nodoNum.textContent = `${items.length} `;
 
   if (items.length === 0) {
     mensaje(grid, 'Aún no hay propiedades publicadas', 'Muy pronto encontrarás aquí nuestro inventario.');

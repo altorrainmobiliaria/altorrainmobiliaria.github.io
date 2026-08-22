@@ -47,15 +47,13 @@ export function getStaticPaths() {
     { left: '20%', top: '54%', t: 'Castillogrande' }, { left: '16%', top: '70%', t: 'Bocagrande' },
     { left: '66%', top: '60%', t: 'Tierrabomba' },
   ];
-  // count = titular DEMO (el mockup mixto muestra "128 propiedades"); se reemplaza por el conteo
-  // real de Firestore en TODO-22. arrendar refleja su inventario demo reducido (no el 83 fabricado).
   return [
-    { params: { operacion: 'comprar' }, props: { op: 'comprar', titulo: 'Comprar', count: 128, props: venta, pins: pinsVenta, zones } },
-    { params: { operacion: 'arrendar' }, props: { op: 'arrendar', titulo: 'Arrendar', count: 24, props: arriendo, pins: pinsArriendo, zones } },
+    { params: { operacion: 'comprar' }, props: { op: 'comprar', titulo: 'Comprar', props: venta, pins: pinsVenta, zones } },
+    { params: { operacion: 'arrendar' }, props: { op: 'arrendar', titulo: 'Arrendar', props: arriendo, pins: pinsArriendo, zones } },
   ];
 }
 
-const { op, count, props: results, pins, zones } = Astro.props;
+const { op, props: results, pins, zones } = Astro.props;
 const filterBtns = ['Tipo', 'Precio', 'Habitaciones'];
 
 // Marcadores del mapa real (TODO-30): mismo índice `i` que la card → emparejamiento card↔pin.
@@ -89,7 +87,12 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
     <div class="serp-head">
       <div>
         <p class="alt-eyebrow">Resultados</p>
-        <h1 class="serp-h1" data-serp-count>{count} propiedades <span>en Cartagena de Indias</span></h1>
+        {/* El conteo lo rellena `serp-catalogo.ts` con los items REALES. Antes venía un «128»
+            inventado en el HTML servido y se corregía al hidratar: quien tuviera el JS lento
+            —o desactivado— leía una cifra de inventario que no existe (§123). Ahora nace vacío
+            y con su propio elemento: el selector anterior era «el primer nodo de texto», que
+            se rompe en cuanto alguien añade un espacio delante. */}
+        <h1 class="serp-h1" data-serp-count><span data-serp-n></span>Propiedades <span>en Cartagena de Indias</span></h1>
       </div>
       <div class="serp-sort">
         <label for="serp-order">Ordenar por</label>

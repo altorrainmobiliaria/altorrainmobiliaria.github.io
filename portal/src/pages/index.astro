@@ -24,23 +24,25 @@ const proyectos = [
   { img: '/assets/hero-estancia.webp', alt: 'Proyecto Muralla Loft, Getsemaní', name: 'MURALLA LOFT', place: 'Getsemaní', titleSize: 'clamp(22px, 2vw, 28px)', titleTrack: '0.13em', href: '/ficha' },
 ];
 
-// MEJOR VALORADAS — riel de `RankCard` (réplica fiel del mockup #valoradas, L1081-1155).
+// SELECCIÓN ALTORRA — riel de `RankCard` (mockup #valoradas, L1081-1155). Se llamaba «Mejor
+// valoradas»: un ranking necesita notas, y las que había eran inventadas (§123). La selección
+// es nuestra y eso sí lo podemos firmar.
 // Card NEUMÓRFICA con numeral calado; el mockup la pone sobre `var(--surface)` = lienzo neu.
 const valoradas = [
-  { img: '/assets/estate-golden.webp', alt: 'Villa frente al mar en Bocagrande', rank: '01', rating: '4.99', reviews: '214 reseñas', zona: 'Bocagrande', title: 'Villa frente al mar', price: '$3.200MM', href: '/ficha' },
-  { img: '/assets/villa-pool.webp', alt: 'Apartamento con vista a la bahía en Castillogrande', rank: '02', rating: '4.98', reviews: '187 reseñas', zona: 'Castillogrande', title: 'Apto vista a la bahía', price: '$1.450MM', href: '/ficha' },
-  { img: '/assets/chalet-dusk.webp', alt: 'Casa colonial restaurada en el Centro Histórico', rank: '03', rating: '4.96', reviews: '156 reseñas', zona: 'Centro Histórico', title: 'Casa colonial restaurada', price: '$2.800MM', href: '/ficha' },
-  { img: '/assets/villa-modern.webp', alt: 'Casa con jardín y estudio en Manga', rank: '04', rating: '4.94', reviews: '132 reseñas', zona: 'Manga', title: 'Casa con jardín y estudio', price: '$6.5M/mes', href: '/ficha' },
+  { img: '/assets/estate-golden.webp', alt: 'Villa frente al mar en Bocagrande', rank: '01', zona: 'Bocagrande', title: 'Villa frente al mar', price: '$3.200MM', href: '/ficha' },
+  { img: '/assets/villa-pool.webp', alt: 'Apartamento con vista a la bahía en Castillogrande', rank: '02', zona: 'Castillogrande', title: 'Apto vista a la bahía', price: '$1.450MM', href: '/ficha' },
+  { img: '/assets/chalet-dusk.webp', alt: 'Casa colonial restaurada en el Centro Histórico', rank: '03', zona: 'Centro Histórico', title: 'Casa colonial restaurada', price: '$2.800MM', href: '/ficha' },
+  { img: '/assets/villa-modern.webp', alt: 'Casa con jardín y estudio en Manga', rank: '04', zona: 'Manga', title: 'Casa con jardín y estudio', price: '$6.5M/mes', href: '/ficha' },
 ];
 
 // CORTA ESTANCIA — riel de `StayCard` (réplica fiel del mockup #estancias-list, L760-835).
 // Card `.bnb` del mockup: SIN caja, foto desnuda + texto suelto. NO es LuCard (§32.11).
 const estancias = [
-  { img: '/assets/hero-estancia.webp', alt: 'Terraza con piscina frente al mar', badge: 'Favorito entre huéspedes', title: 'Penthouse en Bocagrande', rating: '4.98', meta: 'Vista al mar · 6 huéspedes', price: '$680.000', href: '/estancias' },
-  { img: '/assets/chalet-dusk.webp', alt: 'Casa colonial con patio', badge: 'Favorito entre huéspedes', title: 'Casa colonial en el Centro', rating: '4.91', meta: 'Patio y piscina · 8 huéspedes', price: '$1.150.000', href: '/estancias' },
-  { img: '/assets/villa-pool.webp', alt: 'Apartamento frente a la playa en El Laguito', title: 'Apartamento en El Laguito', rating: '4.86', meta: 'Frente a la playa · 4 huéspedes', price: '$420.000', href: '/estancias' },
-  { img: '/assets/villa-modern.webp', alt: 'Loft de autor en Getsemaní', badge: 'Favorito entre huéspedes', title: 'Loft de autor en Getsemaní', rating: '5.0', meta: 'Diseño · 2 huéspedes', price: '$390.000', href: '/estancias' },
-  { img: '/assets/estate-golden.webp', alt: 'Villa con jardín privado en Manga', title: 'Villa con piscina en Manga', rating: '4.94', meta: 'Jardín privado · 10 huéspedes', price: '$1.480.000', href: '/estancias' },
+  { img: '/assets/hero-estancia.webp', alt: 'Terraza con piscina frente al mar', title: 'Penthouse en Bocagrande', meta: 'Vista al mar · 6 huéspedes', price: '$680.000', href: '/estancias' },
+  { img: '/assets/chalet-dusk.webp', alt: 'Casa colonial con patio', title: 'Casa colonial en el Centro', meta: 'Patio y piscina · 8 huéspedes', price: '$1.150.000', href: '/estancias' },
+  { img: '/assets/villa-pool.webp', alt: 'Apartamento frente a la playa en El Laguito', title: 'Apartamento en El Laguito', meta: 'Frente a la playa · 4 huéspedes', price: '$420.000', href: '/estancias' },
+  { img: '/assets/villa-modern.webp', alt: 'Loft de autor en Getsemaní', title: 'Loft de autor en Getsemaní', meta: 'Diseño · 2 huéspedes', price: '$390.000', href: '/estancias' },
+  { img: '/assets/estate-golden.webp', alt: 'Villa con jardín privado en Manga', title: 'Villa con piscina en Manga', meta: 'Jardín privado · 10 huéspedes', price: '$1.480.000', href: '/estancias' },
 ];
 
 // PROPIEDAD DEL DÍA — split editorial: UNA sola propiedad + 4 contadores (mockup L409-449).
@@ -52,24 +54,36 @@ const pdiaStats = [
 ];
 
 // INVERTIR — 3 tarjetas de cifra del split (mockup L1259-1272).
+//
+// Las tres del mockup eran de tres clases distintas y solo una se podía firmar (§123):
+//   · «+7% valorización anual promedio · zona norte» — una MEDICIÓN de mercado sin fuente. Puede que
+//     sea cierta; da igual: publicarla sin de dónde sale la convierte en nuestra afirmación, y quien
+//     compre por ese número nos la reclamará a nosotros. Vuelve cuando tenga fuente citable
+//     (el «Índice ALTORRA» de Ola 3 nace justo para eso).
+//   · «128 propiedades verificadas hoy» — falso y comprobable: hoy no hay ninguna sellada (§119).
+//   · «5 min tiempo de respuesta promedio» — no era una medición, era el COMPROMISO del dueño
+//     (proceso R4). Etiquetarlo como «promedio» lo convierte en un dato que nadie mide; dicho como
+//     promesa es verdad y además obliga.
+//
+// Se quedan las que son verificables por quien las lea: la matrícula está en la Resolución 6636 y en
+// el footer, y el compromiso es nuestro.
 const invertirStats = [
-  { n: '+7%', d: 'valorización anual promedio · zona norte' },
-  { n: '128', d: 'propiedades verificadas hoy' },
-  { n: '5 min', d: 'tiempo de respuesta promedio' },
+  { n: '5 min', d: 'nos comprometemos a responder' },
+  { n: '6636', d: 'matrícula de arrendador · Alcaldía de Cartagena' },
 ];
 
 // EXPLORA POR ZONA — mosaico de 10 tiles de ZONA (no de propiedades) (mockup L837-940).
 const zonas = [
-  { t: 'Bocagrande', n: '42 propiedades', img: '/assets/villa-pool.webp' },
-  { t: 'Castillogrande', n: '18 propiedades', img: '/assets/estate-golden.webp' },
-  { t: 'Centro Histórico', n: '27 propiedades', img: '/assets/chalet-dusk.webp' },
-  { t: 'Manga', n: '21 propiedades', img: '/assets/villa-modern.webp' },
-  { t: 'Getsemaní', n: '14 propiedades', img: '/assets/villa-pool.webp' },
-  { t: 'Crespo', n: '16 propiedades', img: '/assets/estate-golden.webp' },
-  { t: 'Marbella', n: '12 propiedades', img: '/assets/hero-invierte.webp' },
-  { t: 'La Boquilla', n: '33 propiedades', img: '/assets/hero-estancia.webp' },
-  { t: 'Pie de la Popa', n: '9 propiedades', img: '/assets/villa-modern.webp' },
-  { t: 'Cabrero', n: '11 propiedades', img: '/assets/chalet-dusk.webp' },
+  { t: 'Bocagrande', img: '/assets/villa-pool.webp' },
+  { t: 'Castillogrande', img: '/assets/estate-golden.webp' },
+  { t: 'Centro Histórico', img: '/assets/chalet-dusk.webp' },
+  { t: 'Manga', img: '/assets/villa-modern.webp' },
+  { t: 'Getsemaní', img: '/assets/villa-pool.webp' },
+  { t: 'Crespo', img: '/assets/estate-golden.webp' },
+  { t: 'Marbella', img: '/assets/hero-invierte.webp' },
+  { t: 'La Boquilla', img: '/assets/hero-estancia.webp' },
+  { t: 'Pie de la Popa', img: '/assets/villa-modern.webp' },
+  { t: 'Cabrero', img: '/assets/chalet-dusk.webp' },
 ];
 
 // RECIENTES — mosaico BENTO de 7 tiles con posicionamiento explícito (mockup L991-1079, CSS L183-190).
@@ -221,9 +235,10 @@ const maneras = [
             <div class="hbn__rise" style="max-width:560px">
               <div class="hbn__glass alt-glass">
                 <h1 class="hbn__h">Vive Cartagena por <span class="hbn__gold">unos días</span>.</h1>
+                {/* La nota «4.97 · 128 reseñas» era inventada (§123). Se queda lo que SÍ es
+                    comprobable —el precio desde el que arrancan las estancias— y el punto
+                    separador se va con ella: separaba dos cosas y ahora solo hay una. */}
                 <div class="hbn__rate">
-                  <span class="hbn__star"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 18.6 6.1 20.8l1.3-6.6L2.5 9l6.6-.8z"/></svg><b>4.97</b><small>· 128 reseñas</small></span>
-                  <span class="hbn__tdot" aria-hidden="true"></span>
                   <span class="hbn__from">Desde <b>$420k</b> / noche</span>
                 </div>
                 <p class="hbn__p">Propiedades verificadas dentro de la ciudad amurallada, listas para habitar, con anfitrión que responde.</p>
@@ -420,7 +435,9 @@ const maneras = [
         <div class="home-pgrid">
           {destacadas.map((p) => <PropertyCard {...p} />)}
           <div class="home-ctacard alt-card--ink">
-            <p class="home-ctacard__n">128 propiedades</p>
+            {/* Decía «128 propiedades», que nadie había contado (§123). La tarjeta invita a ver
+                el catálogo: para eso no hace falta una cifra, y la que había era falsa. */}
+            <p class="home-ctacard__n">Todo el catálogo</p>
             <p class="home-ctacard__d">en venta, arriendo y corta estancia en toda Cartagena.</p>
             <a class="alt-btn alt-btn--on-ink" href="/comprar">Ver todas
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -543,7 +560,10 @@ const maneras = [
             <span class="home-zona__scrim" aria-hidden="true"></span>
             <span class="home-zona__body">
               <span class="home-zona__t">{z.t}</span>
-              <span class="home-zona__n">{z.n}</span>
+              {/* El conteo por zona («42 propiedades en Bocagrande») era inventado y, a
+                  diferencia del del SERP, no lo corregía nadie al cargar (§123). Vuelve cuando
+                  el índice del catálogo pueda contarlo de verdad. */}
+              {z.n && <span class="home-zona__n">{z.n}</span>}
             </span>
           </a>
         ))}
@@ -660,23 +680,23 @@ const maneras = [
       </div>
     </section>
 
-    <!-- MEJOR VALORADAS — riel de RankCard (réplica fiel del mockup #valoradas) -->
+    <!-- SELECCIÓN ALTORRA — riel de RankCard (mockup #valoradas). Ver §123. -->
     <section id="valoradas" class="home-band home-band--neu home-railsec">
       <div class="alt-container" data-railwrap>
         <div class="home-sechead">
           <div class="home-valoradas__head">
-            <p class="alt-eyebrow">Mejor valoradas</p>
-            <h2>Las más queridas por nuestros clientes.</h2>
+            <p class="alt-eyebrow">Selección ALTORRA</p>
+            <h2>Las que enseñaríamos primero.</h2>
           </div>
           <div class="home-railsec__tools">
-            <a class="home-seelink" href="/comprar">Ver ranking
+            <a class="home-seelink" href="/comprar">Ver todas
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </a>
             <div class="home-railsec__navbtns">
               <button class="alt-rnav" type="button" data-rail="prev" aria-label="Ver valoradas anteriores">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
               </button>
-              <button class="alt-rnav" type="button" data-rail="next" aria-label="Ver más valoradas">
+              <button class="alt-rnav" type="button" data-rail="next" aria-label="Ver más de la selección">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
               </button>
             </div>

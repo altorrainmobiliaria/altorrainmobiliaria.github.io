@@ -16,7 +16,10 @@ interface Props {
   imgPos?: string;
   badge?: string;      // "Favorito entre huéspedes" — solo en algunas
   title: string;
-  rating: string;      // "4.98"
+  /* OPCIONALES desde §123: una nota y un conteo de reseñas son AFIRMACIONES sobre la
+     realidad, no adorno de tarjeta. Sin reseñas verdaderas detrás, la píldora NO se pinta —
+     y el día que las haya, vuelve sola. */
+  rating?: string;     // "4.98"
   meta: string;        // "Vista al mar · 6 huéspedes"
   price: string;       // "$680.000"
   priceUnit?: string;  // "COP noche"
@@ -36,10 +39,12 @@ const { img, alt, imgPos, badge, title, rating, meta, price, priceUnit = 'COP no
 
   <div class="alt-staycard__head">
     <span class="alt-staycard__t">{title}</span>
-    <span class="alt-staycard__rate">
-      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 18.6 6.1 20.8l1.3-6.6L2.5 9l6.6-.8z"/></svg>
-      {rating}
-    </span>
+    {rating && (
+      <span class="alt-staycard__rate">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 18.6 6.1 20.8l1.3-6.6L2.5 9l6.6-.8z"/></svg>
+        {rating}
+      </span>
+    )}
   </div>
   <p class="alt-staycard__meta">{meta}</p>
   <p class="alt-staycard__price"><b>{price}</b> {priceUnit}</p>
