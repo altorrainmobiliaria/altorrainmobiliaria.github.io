@@ -4161,3 +4161,59 @@ como **paso 1.8 del runbook**, para estrenarlo una vez y sabiendo lo que se hace
 **122.7 — Doctrina**: §3.3 · [[L-29]] · [[L-45]] · §G.4 (caza-bugs: recorrer el camino vivo).
 Destilado a `legal-colombia` (prueba social fabricada) y a `caza-bugs` (el éxito que no está
 cableado).
+
+---
+
+## 123. ADR — Era una clase, no un caso: 20 cifras inventadas en la home, y su gate ⟦OPUS-5⟧ (2026-08-22)
+
+§122 encontró prueba social fabricada en `/estancias`. La doctrina de caza-bugs dice que un defecto
+así se trata como CLASE, así que barrí las demás páginas públicas. La **home** —la más visible del
+sitio— llevaba más que estancias.
+
+**123.1 — El inventario del barrido.** 9 notas (4.99, 4.98, 4.96…) · 5 conteos de reseñas (214, 187,
+156, 132, 128) · 11 conteos de inventario («42 propiedades en Bocagrande», «128 propiedades») ·
+«Favorito entre huéspedes» ×3 · «+7% valorización anual promedio» · «128 propiedades verificadas
+hoy» · «5 min tiempo de respuesta promedio».
+
+**123.2 — Las tres cifras del bloque de inversión eran de tres clases distintas**, y esa distinción
+es la parte reutilizable. El **+7%** es una MEDICIÓN de mercado sin fuente: puede que sea cierta, y
+da igual — publicarla sin decir de dónde sale la convierte en *nuestra* afirmación, y quien compre
+por ese número nos la reclamará a nosotros. Las **128 verificadas** son falsas y comprobables: hoy no
+hay ninguna sellada (§119). Los **5 min** no eran una medición sino el **compromiso** del dueño
+(proceso R4) mal etiquetado: llamarlo «promedio» lo convierte en un dato que nadie mide; dicho como
+promesa es verdad y además obliga. Se quedan las dos que el lector puede verificar por su cuenta —el
+compromiso y la matrícula 6636, que está en la Resolución y en el footer.
+
+**123.3 — «Mejor valoradas» no sobrevive sin notas.** Quitar los `rating` dejaba una sección cuyo
+título afirmaba un ranking que ya nada sostenía. Pasa a **«Selección ALTORRA»**: la selección es
+nuestra y eso sí lo podemos firmar. El arreglo de una cifra arrastra la copia que la enmarcaba —
+cablear los datos y dejar el titular es cambiar una mentira por otra.
+
+**123.4 — Un fallo que el SERP ya corregía… y aun así estaba mal.** El «128 propiedades» del
+catálogo SÍ se sustituye al hidratar. Pero viajaba en el HTML servido, así que quien tuviera el JS
+lento leía un inventario que no existe. Y el selector era **«el primer nodo de texto con
+contenido»**: se rompe en cuanto alguien mete un espacio delante, y entonces lo que queda en pantalla
+es la cifra del build, en silencio. Ahora nace vacío y con elemento propio.
+
+**123.5 — La cura conserva el diseño.** `RankCard` y `StayCard` vuelven `rating`/`reviews`
+**opcionales**: la píldora no se pinta sin datos y vuelve sola cuando los haya. Igual que en §122 con
+las reseñas: borrar la sección habría obligado a rehacer la UI y a re-aprobar el mockup.
+
+**123.6 — El gate `verify:claims`.** Esta clase no rompe nada —compila, renderiza, se ve bien— y me
+costó DOS barridos completos encontrarla entera. Deja de ser lección y pasa a gate. No prohíbe
+cifras: **obliga a declararlas con su fuente** en `x-claimsVerificados`. Ese es el gate entero, y su
+tesis: *una cifra que nadie quiere firmar es exactamente la que no debería estar publicada*. Probado
+en los dos sentidos. Su primera versión marcó decenas de «4.5» que eran coordenadas de un `<path>`:
+**un gate que grita en cada corrida se apaga en una semana**, así que limpia SVG, estilos y
+comentarios antes de mirar.
+
+**123.7 — Kernel v1.14.0: el prefijo `x-`.** La config del gate nuevo es de ESTE repo, no del kernel.
+Sin espacio de nombres había dos malas salidas: meterla en `KNOWN_KEYS`, que comparten cuatro repos y
+acabaría siendo un cajón de sastre, o disfrazarla de comentario con `_`, que la vuelve invisible para
+quien lea el manifest buscando qué gates hay. Con `x-` —como las cabeceras de extensión de HTTP— la
+clave se declara, se ve, y el kernel no finge conocerla.
+
+**123.8 — Verificación.** 406 tests · typecheck · build · verify:build/data/css/**claims**. En el
+navegador: cero cifras inventadas, los tres rieles siguen pintando (4 selección, 5 estancias, 3
+destacadas), sin desborde y sin huecos donde estaban las píldoras. **123.9 — Doctrina**: §G.4
+(caza-bugs: el defecto es una clase) · [[L-29]] · §122 · Ley 1480 arts. 29-30.
