@@ -3437,3 +3437,125 @@ camino que nunca ha corrido no es un camino probado, por muchos tests que tenga 
 `pages/api/media/subir.ts`. INTACTOS: la capa de datos, las Rules, las Functions y el resto del portal.
 **107.7 — Doctrina**: §3.3 (el contrato externo se verificó, no se supuso) · §3.6 (la puerta vive donde
 está la frontera real) · §99 (el permiso viaja en el token) · contrato de `media.ts`.
+
+---
+
+## 108. ADR — El alta de propiedades: todo menos la pantalla ⟦OPUS-5⟧ (2026-08-22)
+
+Eslabones 2 y 3 de TODO-44, en el orden que fijó §106. El formulario se queda para el final por una
+razón de gobernanza, no técnica: el `10` prohíbe **UI sin mockup** y el recon confirmó que el mockup
+del panel no tiene ni un `<form>`. Así que primero todo lo que no es pantalla — que además es donde
+están las decisiones.
+
+**108.1 — El contrato del escritor, que es la respuesta a §103.** El defecto de fondo de aquel caso no
+fue el esquema viejo: fue que **escritor y lector no compartían las reglas**, y por eso se podía
+guardar algo que el catálogo descartaba en silencio. La defensa no es «acordarse de validar». Es
+`problemasParaPublicar()`, que **llama** a `esPublicada` y a `propiedadAResumen` en vez de reproducir
+sus condiciones: si mañana el índice añade un motivo, el formulario se entera solo. Para poder darlos
+TODOS de una vez —un formulario que revela los fallos de uno en uno obliga a guardar cuatro veces— las
+condiciones se extrajeron a `motivosDeOmision()`; `propiedadAResumen` sigue devolviendo el primero,
+porque al índice le basta. El test del contrato va en las **dos direcciones**: lo que el alta acepta
+publicar, `construirIndices` no lo omite; y si el índice omite algo, el escritor tenía que haberlo
+visto venir. Ese test es lo que impide que la próxima regla del lector reabra el hueco.
+
+**108.2 — Dos parsers numéricos, y no por gusto.** El primer intento tenía uno solo. Una prueba falló
+con `$ 450.000.000` y al arreglarla apareció lo interesante: en un **precio** colombiano el punto
+separa miles, pero en una **coordenada** el mismo punto es el decimal. Un parser «listo» que intentara
+adivinar convertiría `lat: 10.399` en la latitud **10399** — un inmueble de Cartagena en mitad del
+Ártico, sin un solo error. Son dos dominios distintos y ahora son dos funciones distintas. Lo destapó
+un test, no un repaso: es exactamente lo que valen.
+
+**108.3 — Lo que se arregló de paso.** (a) El **slug**: el generador de semilla usa
+`replace(/[^a-z]+/g,'-')`, que **borra los dígitos y convierte cada tilde en un guion** («Centro
+Histórico» → `centro-hist-rico`, «Villa 7» → `villa-`). La versión buena normaliza NFD y conserva
+dígitos. (b) El **código va al final del slug** por construcción, no por estética: el índice lo escribe
+una Function con retardo, así que dos altas seguidas no pueden comprobar la unicidad la una contra la
+otra. (c) La **vertical** sube al dominio con tests, y ante la duda sugiere **vivienda** — equivocarse
+ahí solo prohíbe de más, mientras clasificar una vivienda como comercial permitiría cobrar un depósito
+PROHIBIDO por el art. 16 de la Ley 820. (d) Al agotarse la secuencia del mes se **PARA**: emitir
+`INM-202608-10000` daría un id que `ID_PROPIEDAD_RE` no sabe leer y la ficha devolvería 404 para un
+inmueble que existe.
+
+**108.4 — La transacción, y el `_version` que no protege a quien usa el panel.** El código sale de un
+contador compartido por DOS escritores (este panel y el legacy), así que leer-modificar-escribir fuera
+de una transacción es la condición de carrera de manual — [[M-04]] ya la pagó. Pero lo que obliga al
+`tx.get` del documento es otra cosa: la regla es `esSuperAdmin() || (esEditorOMas() &&
+versionCreacionValida())`, o sea que **el compare-and-set del servidor existe para los editores y NO
+para el super_admin**, que es justo el usuario real del panel. Si el contador se desincronizara, un
+`set` sin comprobar BORRARÍA el inmueble que hubiera en ese código. El cuerpo de la transacción va
+separado del SDK para poder probarlo entero: un contador con basura o un código ocupado no se
+reproducen en un emulador sin montar carreras, y sí con una `tx` falsa.
+
+**108.5 — Anti-patterns evitados.** NO se reimplementaron las condiciones del lector en el escritor
+«porque son cuatro líneas» — esa copia ES §103. NO se escribió el contador entero (habría borrado las
+secuencias de los otros meses y las del panel viejo). NO se construyó la pantalla saltándose la regla
+del mockup: se hizo el mockup y se pidió el visto bueno.
+
+**108.6 — Archivos.** Nuevos: `domain/alta-propiedad.ts` (+test), `scripts/gestion-alta.ts` (+test),
+`design/mockups/ALTORRA Gestion-Alta.dc.html`. Modificado: `domain/catalogo.ts`
+(`motivosDeOmision` + `problemasParaPublicar` + `explicarProblema`), con el comportamiento del índice
+INTACTO — sus 20 pruebas pasan sin tocarlas. **262 tests** en total.
+
+**108.7 — Lo que falta y qué lo gatea.** Solo la pantalla, y la gatea el visto bueno del mockup. El
+resto del CRUD (editar, cola de verificación, export) sigue abierto en TODO-44.
+**108.8 — Doctrina**: §3.3 · §3.6 (la validación vive donde no puede divergir) · [[L-45]] · [[M-04]] ·
+[[L-09]] (`set` sin merge para crear) · regla del `10`: NUNCA UI sin mockup.
+
+---
+
+## 109. ADR — Auditoría Nivel-2 #8: el ✅ que no se había ganado ⟦OPUS-5⟧ (2026-08-22)
+
+> **Deliberación**: cruda en `research-archive/2026-08-22-auditoria-cerebro-nivel2-8-inmobiliaria.md`
+> (tabla de 14 hallazgos) + `journal.jsonl` de `wf_5668d8cb-f02`. 9 agentes, 1,4 M tokens.
+
+**109.1 — La disparó el GATE, no una persona.** Es la primera de la serie: `maxAdrGap: 12` con 18 ADRs
+nuevos y la gracia agotada, así que `brain:check` empezó a **bloquear los commits**. Se corrió en vez
+de saltarla, que era la otra opción y la mala.
+
+**109.2 — El hallazgo que engloba a los demás: el ✅ INMERECIDO.** Todos los gates verifican integridad
+**referencial** —¿existe la referencia?, ¿la línea apunta a un header?— y **ninguno verifica que la
+comparación que dicen hacer se haya hecho**. Tres pruebas independientes: el **#27** imprime «ninguna
+ruta fantasma» habiendo perdonado **90 rutas por coincidencia de nombre base** (`21` escribe `src/…`,
+el repo tiene `portal/src/…`); el **#16** aprueba «CF: 9 en código» contra **11 exports reales**,
+porque mide la EDAD del claim y jamás el claim; y el **#4** lleva desde siempre con cero cruces
+posibles sin decirlo. El remedio ya está inventado DENTRO del kernel y no se generalizó —el contador
+`cacheCruces` de v1.9.0—: **un gate con 0 comparaciones útiles debe DEGRADAR (🟠), no aprobar**. Eso
+convierte «¿qué gate lleva dos auditorías sin cazar nada?», que hoy cuesta una auditoría entera, en una
+línea gratis de cada arranque. Es el ataque real al 68 % de coste de mantenimiento.
+
+**109.3 — GC pareado, con una poda que la auditoría se ganó.** Se **borra `CLAUDE.md §4`** (271 c en un
+router al 99,5 %). Su gate no puede cruzar nada, verificado en tres frentes: `APP_VERSION` no existe en
+`js/`, el `05` dejó de traer el dato de caché por diseño en la era heartbeat, y el valor sí existe pero
+en un sidecar que el gate no lee. Encima vigila el Service Worker del **legacy RETIRADO**, sin tocar en
+43 días. **No se destruye conocimiento**: la regla de bumpear `CACHE_NAME` sigue viva en §3.2. Boot
+**31 345 → 31 106 c**, y con TODO-45 dentro cierra en **31 448 c** — por debajo de donde empezó.
+
+**109.4 — Cuatro reincidentes, una sola raíz.** Censo de páginas (4 respuestas otra vez), memoria del
+harness (dos hechos derogados en el índice que se auto-carga entero), gate #27 unidireccional y el
+conteo de mockups. Los cuatro comparten lo que la #7 ya había nombrado en [[M-10]]: **una capa o una
+dirección sin gate no produce hallazgos, produce silencio — y el silencio se lee igual que un ✅.** Que
+se repita no refuta la lección: la confirma, y prueba que el remedio no es otra lección sino el
+`degrade()`.
+
+**109.5 — El aviso con fecha.** A los 200 ADRs no revienta el `99` (3 931 c por ADR, se lee por
+offset): revienta el **ÍNDICE**, y no en 92 ADRs sino en **unos 4**. Está en 22 k/24 k y la fila se ha
+triplicado por era (104 c → 220 c → 314 c; las nuevas, 440-455 c) porque se escribe como **resumen del
+ADR** en vez de como ruteo. La regla ya está escrita —el propio gate #26 declara ≤200 c— y no se
+aplica. Con 2 lápidas en 108 ADRs, además, el shard por rango crece sin techo.
+
+**109.6 — Y la contradicción entre sondas, que es la parte útil.** La sonda de economía quiere podar
+995 c de bitácora del `10` porque ya son ADRs cerrados; la sonda de drills documenta que **esas líneas
+exactas son lo que hizo acertar a 3 de los 4 drills**. Las dos tienen razón por separado y juntas dan
+una instrucción destructiva. El orden correcto queda fijado en TODO-45: **primero la capa semántica,
+después la poda**. Al revés se cambia margen de contexto por ceguera de ruteo. Los 4 drills acertaron
+sin adivinar, pero **ninguno pasó por el enrutador oficial**: pasaron por la pizarra.
+
+**109.7 — Curado en la sesión.** `TODO-44` declaraba pendiente trabajo ya pusheado · el `05` copiaba un
+censo viejo y remitía al dueño equivocado (ahora APUNTA a `21`, que es el dueño) · `21` con el conteo
+real (24 `.astro` + 9 endpoints) · el `10` con 10 mockups · `MEMORY.md` con sus dos hechos derogados ·
+y un dump de 117 KB del panel `/gestion` que había quedado en `portal/public/`, que Astro copia
+VERBATIM al build. Ese último destapa un hueco de ALCANCE: `workDirs` es `["specs"]`, así que **nada en
+el cerebro mira lo que el portal PUBLICA**.
+
+**109.8 — Doctrina**: §G.4 (auditoría + captura de deliberación) · [[M-10]] · [[M-05]] (el techo no se
+mueve: se podó para que TODO-45 entrara) · §G.3 SSoT (el `05` apunta, no copia).

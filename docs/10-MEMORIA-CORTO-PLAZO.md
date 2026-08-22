@@ -11,7 +11,7 @@
 
 > **🏗️ FRENTE ACTIVO = LA PÁGINA** (portal). **Qué sigue y en qué estado está → el bloque de ARRANQUE EN
 > FRÍO de la bitácora** (no se repite aquí). Dev: `npm --prefix portal run dev` (4321); mockups en
-> `portal/design/mockups/` (9); fidelidad → [[L-29]]/[[L-24]]/[[L-28]].
+> `portal/design/mockups/` (10); fidelidad → [[L-29]]/[[L-24]]/[[L-28]].
 > **⏸️ EN PAUSA**: fundación (TODO-34) y pauta (TODO-29, SSoT = skill `pauta-captacion`).
 >
 > **🎨 DISEÑO SELLADO — NO re-litigar** → `CLAUDE.md §1` + `portal/src/styles/tokens.css` + ADR §23-§23.9.
@@ -29,13 +29,14 @@
 |---|---|---|---|
 | **TODO-17** | **Ola 0 restos**: E2E "tras cache" (T9) · 0.4 obra AEO. | 🔄 | gate=CUTOVER |
 | **TODO-21** | **Lote-dueño**: Nº **RNT** · dirección física y COMERCIAL · abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño | gate=obra |
-| **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-38** (§90) gates a medias: #27 sin `creas` · #5 existencia≠corrección · `§NN` sueltos sin gate · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO) · **TODO-40** ✅ cerrado (`30`→`35` · `33` destilado · `00`→`00b`, §100). Frente vivo: **`30` al 92% de chars** → shard ANTES de reventar; NO subir techos ([[M-05]]). | 🔄 | §84·§87·§90·§96 |
+| **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO) · **TODO-40** ✅ cerrado. Capacidad y gates a medias → absorbidos por **TODO-45**. | 🔄 | §84·§87·§90·§96 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-44** | 🖥️ **CRUD = requisito del cutover.** ✅ (1) subida a R2 + identidad en el edge (§107). Falta (2) `problemasParaPublicar()` LLAMANDO a los predicados del lector + test del contrato, y (3) el formulario. Ojo (§106): `_version` NO ata al super_admin (⇒ `tx.get` en la misma transacción), `captaciones` es `write:false` (PII fuera de fase 1) y el panel debe avisar que el índice no está desplegado. | 🔴 SIGUIENTE | §107 |
 | **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, [[L-39]] → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-39** | 🌊 **OLA 1 ✅ 13 de 13** (§91-§96 → `00`). (a) ✅ «Avalúo» RESUELTO en §105 (queda 1 pregunta suya → pelota 11); (b) el **go/no-go de ola** con Daniel (MEGA-PLAN §4.4). | 🟢 código listo | §105 |
 | **TODO-22** | **CATÁLOGO completo, ficha incluida (§97)**. Datos reales = fases 3-4 del runbook; luego fichas al sitemap. | 🟢 cutover | §102 |
 | **TODO-42** | 🔑 **Claim de staff — CÓDIGO LISTO, falta desplegar** (§99) = **fase 1 del runbook**, aislada y se puede hacer HOY (no toca reglas). ⏭️ **Daniel**: (1) me confirma el deploy — concede permisos de admin, prefiero que lo sepas; (2) pulsa «Sincronizar permisos» en admin.html → Usuarios; (3) abre `/gestion`. | 🟡 deploy | §102 |
+| **TODO-45** | 🔬 **Deuda de la auditoría #8** (§109, tabla en la bóveda). Por orden: (a) **capa semántica de `00` congelada 24 ADRs** — el ruteo que funciona hoy es la bitácora, así que ESTO va ANTES de podarla; (b) `degrade()` 🟠 cuando un gate hace 0 comparaciones (el ✅ inmerecido: #27 perdona 90 rutas por basename, #16 aprueba «CF 9» contra 11); (c) el **índice revienta en ~4 ADRs**, no en 92 → fila nueva ≤200c bloqueante; (d) umbrales en DÍAS en un repo que corre en COMMITS; (e) `33` por encima del tope. | 🔴 | §109 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---

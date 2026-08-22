@@ -108,13 +108,6 @@ Antes de CUALQUIER commit no-trivial: 5 secciones → (A) archivos a modificar, 
 
 ---
 
-## §4 — Cache bump (Service Worker)
-
-La regla vive en **§3.2** (bumpear CACHE_NAME al cambiar el shell). Este ancla existe porque el chequeo #4 del
-linter la usa para cruzar SW vs lo que declara el heartbeat: si desaparece, el cruce se apaga EN SILENCIO (§69).
-
----
-
 ## §G — Gobernanza Neuronal (sistema nervioso · cómo operas la memoria)
 
 Esta sección es tu sistema nervioso. Define qué lees, cuándo escalas y cómo consolidas. **Es vinculante.**

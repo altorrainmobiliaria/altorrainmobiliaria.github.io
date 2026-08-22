@@ -157,12 +157,12 @@
     }
   ],
   "deepAudit": {
-    "last": "2026-08-20",
-    "coveredHeaderCount": 90,
+    "last": "2026-08-22",
+    "coveredHeaderCount": 108,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "tableFile": "2026-08-20-auditoria-cerebro-nivel2-7-inmobiliaria.md",
-    "_que": "Nivel-2 #7 (ADR 90), por ENCARGO de Daniel (el nudge estaba verde). 16 hallazgos vivos + 1 refutado + 1 curado en sesion. Sonda 3 con 4 drills FRIOS: ruteo SANO 4/4 (ninguno adivino, ninguno leyo 99 de mas) pero 2/4 habrian respondido MAL -> el cuello no es ruteo, es FRESCURA. M-10 unifica la clase: un gate cubre UNA direccion y el ✅ se lee como cobertura total (#27 sin el verbo creas; #5 valida existencia no correccion -> 10:38 mandaba a L-34 en vez de L-39; la memoria del harness SIN gate -> N6-22 y N6-30 llegaron REINCIDENTES). Lo mas caro (N7-00) no lo vio el linter: el 05 daba la campana de humo DESACTIVADA y su propio SSoT la da ACTIVA y arrancando sola al recargar -> pelota de Daniel. Caps de 30/33/00 NO se subieron: quedan en ↗ como deuda declarada (M-05). GC pareado: boot 31481->31394c (-87c). Previa #6 = 83 (2026-08-02)."
+    "tableFile": "2026-08-22-auditoria-cerebro-nivel2-8-inmobiliaria.md",
+    "_que": "Nivel-2 #8 (ADR 109), disparada por el GATE (18 ADRs, gracia agotada) — la primera que NO se pide a mano. 9 agentes / 1,4M tokens. Lo mas util no fue un hallazgo sino una CLASE: el CHECK-INMERECIDO. El #27 imprime \"ninguna ruta fantasma\" habiendo perdonado 90 rutas por coincidencia de basename, y el #16 da OK a \"CF 9 en codigo\" contra 11 exports reales porque mide la EDAD del claim, nunca el claim. Un gate con 0 comparaciones utiles debe DEGRADAR, no aprobar. GC pareado: se BORRA el ancla CLAUDE.md 4 (271c) — su gate no puede cruzar nada (sin APP_VERSION en js/, y el 05 dejo de traer el dato en la era heartbeat) y vigila el SW del legacy RETIRADO, sin tocar en 43 dias. La regla real sigue viva en 3.2. Reincidentes de la #7: censo de paginas (4 respuestas otra vez) y memoria del harness (2 hechos derogados en MEMORY.md) — ambos con la misma raiz que la #7 ya nombro: capa sin gate. Aviso con fecha: el 00-INDICE esta a 22k/24k y la fila nueva pesa 440c, asi que caben ~4 ADRs, no 92. Previa #7 = 90 (2026-08-20)."
   },
   "noCap": {
     "docs/99-HISTORIAL-ADR.md": "Largo Plazo: NUNCA se lee entero, solo offset/limit vía el índice (§0). Un cap aquí no significaría nada.",
