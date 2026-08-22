@@ -4019,3 +4019,54 @@ a 315/636/1071, filas de 73 y 71 px, botón de 44 px dentro de su fila, cero rec
 y el CSV generado de punta a punta con BOM, coma entrecomillada, comillas duplicadas, HYPERLINK
 neutralizado y teléfono intacto. Destilado a `arquitecto-software` (export de datos) y a
 `validacion-live-chrome` (la guarda de medibilidad).
+
+---
+
+## 120. ADR — Kernel v1.12.0: un gate que no comparó nada ya no puede aprobar ⟦OPUS-5⟧ (2026-08-22)
+
+Deuda de la auditoría #8 (TODO-45 b, c, e, f). Su hallazgo no fue un bug sino una **clase**: el
+**«✅ inmerecido»** — gates que imprimen verde sin haber comparado nada. Ayer lo describí; hoy me lo
+hice a mí mismo midiendo una pantalla oculta (§119.5). Toca mecanizarlo.
+
+**120.1 — Tres gates que aprobaban sin comparar.**
+· **#8 (SSoT)** buscaba el hecho en los nodos NO-dueños y, al no encontrarlo, aprobaba — aunque el
+DUEÑO tampoco lo contuviera. Ahora comprueba el anclaje y **degrada** si el dueño no existe o ya no
+tiene el hecho. Al estrenarlo cazó uno de los tres: el fact del kernel apuntaba a
+`scripts/.kernel-version.json`, que guarda la versión como JSON y no como la prosa «kernel v1.x.y»
+que es lo que se prohíbe duplicar. **No estaba muerto: el manifest no sabía expresar que el dueño
+guarda el hecho en OTRA FORMA que la prohibida fuera.** De ahí `ownerRegex`.
+· **#16 (fiabilidad)** con 0 marcadores imprimía «check activo» — un ✅ por cero comparaciones. Y
+encima mide solo la EDAD del marcador, nunca el hecho: por eso el `05` pudo sostener «CF 9» contra 11
+exports con el claim fresquísimo. Ahora **degrada**.
+· **#27 (rutas fantasma)** perdonaba una ruta si existía un archivo con ese basename **en cualquier
+parte**. Sigue perdonándolo —un nodo puede citar `utils.js` sin su carpeta— pero ahora lo **cuenta y
+lo dice**: *«98 de 108 se aceptaron solo por coincidencia de nombre»*. Un ✅ que calla cuántas veces
+bajó el listón no es un ✅, es media verdad. La auditoría estimó 90; el número real es 98.
+
+**120.2 — El trinquete del índice (#26).** La regla «fila ≤200c» llevaba **52 filas incumpliéndose**
+y el gate solo hacía `info`: una intención con impresora. Ahora la deuda vieja se **congela** en
+`indexRowOverLimitBaseline` y una fila gorda NUEVA la supera y **bloquea**. Probado en los dos
+sentidos: inyecté una fila de 300c y avisó «53, son 1 MÁS que la deuda congelada». El número solo
+puede bajar — subirlo para dejar de ver el aviso es [[M-05]] con otro nombre.
+
+**120.3 — Los caps tenían el eje equivocado disparando.** El manifest ya declaraba
+`lines = chars/densidad-real` «para que ambos aprieten en el mismo punto», y **21 de 22 caps estaban
+puestos a ojo**: `30` llegó a 229/231 líneas con 1.700 chars libres, `10` habría bloqueado 20 líneas
+antes de tiempo. Se recalcularon todos con la regla declarada — **13 BAJARON y 8 subieron**, que es
+la prueba de que no es un ceiling-raising encubierto: el eje que DECIDE sigue siendo chars, intacto.
+
+**120.4 — Y el redondeo destapó un lazo.** Derivar `lines` de la densidad ACTUAL hace que cada
+edición mueva el techo: recorté `33` cuatro veces y el cap se movía con él, que es exactamente la
+clase de techo móvil que [[M-05]] prohíbe. Se redondea **hacia arriba**, para que `lines` quede como
+GUARDA (caza el nodo que se llena de líneas cortas) y nunca dispare antes que chars.
+
+**120.5 — GC real, no recalibración disfrazada.** `50` y `33` estaban por encima de su cap de CHARS,
+y eso no lo arregla ningún redondeo. `50`: el encabezado del runbook de recuperación repetía el
+cuerpo **y lo contradecía** (decía Google Drive donde el cuerpo decía OneDrive) — se comprimió y se
+corrigió. `33`: prosa de M-07, M-08 y M-09 apretada sin perder una sola regla, y la reincidencia de
+hoy anotada bajo **[[M-11]]**, que ya la había predicho («escribir la lección no la aplica»), en vez
+de abrir una meta-lección nueva: una reincidencia vale más que un número más. Ambas verdes.
+
+**120.6 — Lo que queda de TODO-45**: (d) los umbrales en DÍAS en un repo que corre en COMMITS, y (g)
+nuevo: las **98 rutas perdonadas por basename** ahora visibles — o los nodos citan rutas completas, o
+el ámbito del #27 se estrecha. **120.7 — Doctrina**: §G.5 · [[M-05]] · [[M-06]] · [[M-11]] · §109.

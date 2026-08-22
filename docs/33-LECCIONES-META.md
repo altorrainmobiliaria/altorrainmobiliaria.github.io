@@ -28,62 +28,54 @@
 **Regla**: un gate no está terminado cuando compila, sino cuando lo has visto **(a)** disparar restituyendo el defecto vivo que lo motivó, **(b)** callar con el texto correcto y **(c)** no acusar a un caso legítimo vecino. **Corolario**: al cambiar una doctrina, revisa qué gate la vigilaba.
 
 ### M-07 — Un gate del kernel solo protege donde su DISPARADOR está cableado *(2026-08-01, ADR §81)*
-**Patrón**: subí el candado de boot al kernel para que fuera bloqueante «×4» y, antes de escribirlo, fui a
-verificar la frase (§3.3). Tres repos tenían `core.hooksPath=githooks`; **`insemastereo` no tenía
-`pre-commit` en absoluto** — corría con los hooks por defecto, vacíos. El kernel estaba byte-idéntico en
-los cuatro ([[M-03]] cumplida), pero un gate compartido tiene **DOS mitades**: el **código** (kernel,
-byte-idéntico) y el **CABLEADO** (instance: `core.hooksPath` + `githooks/pre-commit` +
-`.claude/settings.json`). El linter validaba la primera y **nunca miraba la segunda**, así que ese repo
-commiteaba sin que nada lo revisara y todas las corridas imprimían ✅.
-**Por qué no se ve**: su fallo es por AUSENCIA — no hay línea mala que leer, hay una llamada que nadie
-hace. Variante silenciosa del ✅ decorativo de [[M-06]]: el gate no miente, **nadie lo llama**.
-**Regla**: «está en el kernel» ≠ «está activo». Al subir un gate a un recurso compartido, verifica su
-DISPARADOR **repo por repo** en el mismo cambio y, si puedes, **mecanízalo**: el **#25** del kernel lee
-`.git/config`, resuelve `hooksPath` y exige un `pre-commit` que invoque a `brain-check`. Generaliza: todo
-automatismo tiene un punto de enganche, y el enganche también necesita su gate.
+**Patrón**: subí el candado de boot al kernel como bloqueante «×4» y fui a verificar la frase (§3.3).
+Tres repos tenían `core.hooksPath=githooks`; **`insemastereo` no tenía `pre-commit` en absoluto**. El
+kernel estaba byte-idéntico en los cuatro ([[M-03]] cumplida), pero un gate compartido tiene **DOS
+mitades**: el **código** y el **CABLEADO** (`core.hooksPath` + `githooks/pre-commit` +
+`.claude/settings.json`). El linter validaba la primera y nunca la segunda: ese repo commiteaba sin que
+nada lo revisara y todas las corridas imprimían ✅. **Su fallo es por AUSENCIA** — no hay línea mala que
+leer, hay una llamada que nadie hace; variante silenciosa del ✅ decorativo de [[M-06]].
+**Regla**: «está en el kernel» ≠ «está activo». Verifica el DISPARADOR **repo por repo** en el mismo
+cambio y mecanízalo (el **#25** lee `.git/config` y exige un `pre-commit` que invoque a `brain-check`).
+Todo automatismo tiene un punto de enganche, y el enganche también necesita su gate.
 
 **⚠️ Forma 2 — el gate que le pregunta al VIGILADO si debe vigilarlo** *(2026-08-03, ADR §85, U-13)*. El
 canario #24 caza que el hook `SessionStart` desaparezca, y decidía si aplicaba leyendo **el propio `.claude/settings.json`**: borras el hook y el gate contesta *amablemente* «no aplica en este repo». **Falla ABIERTO ante justo la regresión que existe para cazar**, y su silencio es idéntico al de un repo donde nunca aplicó. **Regla**: la condición de aplicabilidad de un gate NO vive dentro de su objeto vigilado — sube a una declaración aparte y auditable (`harnessCanary` en el manifest, como `bootCharsTarget` en el #15), de modo que apagarla sea explícito **y borrarla también avise** (`REQUIRED_KEYS`). Test de bolsillo: *si el atacante es la ausencia de X, ¿mi gate le pregunta a X?*
 
 ### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega *(auditoría #6, 2026-08-01/02, ADR §83)*
-**Patrón**: lancé la auditoría Nivel-2 #6 como workflow en segundo plano — 10 sondas, un escéptico por
-hallazgo, un sintetizador al final. **Falló dos veces, de dos maneras que desde fuera se ven IGUAL** — y esa es la
-parte útil. (1) **Muerte**: el workflow vive DENTRO del proceso anfitrión; al salir éste, sus agentes mueren.
-Avisó. (2) **Cuelgue**: un solo agente (`H2-insema`) no devolvió NUNCA — 37 h —, el orquestador siguió vivo
-esperándolo y **nada progresó desde hacía 25 h**. Aquí las dos señales disponibles se contradicen y **cada una
-miente por separado**: el panel decía «En ejecución, 86 agentes» (cierto: el proceso vive) y el disco decía
-«última escritura ayer 13:03» (cierto: no avanza). Yo leí solo el disco y lo llamé muerto; el panel solo, y lo
-habría llamado sano. **Coste de no cruzarlas: 10,9M tokens** ardiendo en un agente colgado.
+**Patrón**: lancé la auditoría Nivel-2 #6 como workflow en segundo plano y **falló dos veces, de dos
+maneras que desde fuera se ven IGUAL**. (1) **Muerte**: el workflow vive DENTRO del proceso anfitrión; al
+salir éste, sus agentes mueren — avisó. (2) **Cuelgue**: un agente no devolvió NUNCA (37 h), el orquestador
+siguió esperándolo y **nada progresó en 25 h**. Las dos señales disponibles se contradicen y **cada una
+miente por separado**: el panel decía «En ejecución, 86 agentes» (cierto: vive) y el disco «última escritura
+ayer 13:03» (cierto: no avanza). Leí solo el disco y lo llamé muerto; el panel solo, y lo habría llamado
+sano. **Coste de no cruzarlas: 10,9M tokens** ardiendo en un agente colgado.
 **Lo que salvó el trabajo** fue algo que yo no diseñé: el `journal.jsonl` persiste **el payload completo de
 cada agente en cuanto responde**. Las sondas y los escépticos —lo caro— estaban intactos; lo único perdido
 fue el sintetizador, que es lo barato. Reconstruí los 109 hallazgos y los 136 veredictos leyendo el journal.
-**Reglas**: (1) **el paso que consolida no va dentro del proceso frágil** — si N agentes producen y uno
+**Reglas**: (1) **el paso que consolida no va en el proceso frágil** — si N agentes producen y uno
 sintetiza, sintetiza TÚ con lo que quedó en disco; (2) **«¿vive?» y «¿avanza?» son dos preguntas y hacen
 falta las dos**: el contador responde la primera, el reloj de las escrituras la segunda; vivo-y-sin-avanzar
-es un cuelgue y exige matarlo, no esperarlo. Ponle **techo de tiempo por agente** o el que se cuelgue se
-lleva el presupuesto entero; (3) antes
-de relanzar por tercera vez, pregunta si los datos ya están en disco — relanzar habría re-pagado 7 horas de
-cómputo para reconstruir lo que ya tenía. **Corolario**: un contador de progreso que no distingue "trabajando"
-de "muerto a media faena" es un ✅ decorativo con otra ropa ([[M-06]]).
+es un cuelgue y exige matarlo, no esperarlo. Ponle **techo de tiempo por agente**; (3) antes de relanzar,
+pregunta si los datos ya están en disco — relanzar habría re-pagado 7 h de cómputo por lo que ya tenía. **Corolario**: un contador que no distingue "trabajando" de "muerto a media faena" es un ✅ decorativo con otra ropa ([[M-06]]).
 
 ### M-09 — El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es frecuencia × costo de omisión *(2026-08-03, ADR §84)*
-**Patrón**: el router llegó al **99,8% del presupuesto de boot** (69c de margen) y el diagnóstico escrito en
-`10` era *"los recortes de urgencia ya no dan más"*. Al medirlo, el problema no era el estilo: **`§3.1`
-performance, `§3.5` observadores y el grueso de `§3.2` (stack, CSS legacy, Poppins) pesaban ~2.2k de 20.4k y
-gobiernan un sitio RETIRADO**, en un repo cuyo frente vivo es la fundación operativa — documentos legales,
-pauta, procesos. Se auto-cargaban en CADA sesión para no usarse en casi ninguna.
+**Patrón**: el router llegó al **99,8% del boot** y el diagnóstico escrito en `10` era *"los recortes de
+urgencia ya no dan más"*. Al medirlo, el problema no era el estilo: **`§3.1`, `§3.5` y el grueso de `§3.2`
+pesaban ~2.2k de 20.4k y gobiernan un sitio RETIRADO**, en un repo cuyo frente vivo es la fundación
+operativa. Se auto-cargaban en CADA sesión para no usarse en casi ninguna.
 **Por qué el cerebro contribuyó**: había gate para el TECHO (#2) y doctrina para no subirlo ([[M-05]]), pero
-**ninguna regla decía qué se gana el derecho a estar siempre cargado**. Con criterio de entrada
-("¿es importante?") y sin criterio de salida, un always-on solo puede crecer: toda doctrina es importante
-para alguien, y el que la escribe nunca es el que paga su renta.
+**ninguna regla decía qué se gana el derecho a estar siempre cargado**. Con criterio de entrada y sin
+criterio de salida, un always-on solo puede crecer: toda doctrina es importante para alguien, y el que la
+escribe nunca paga su renta.
 **Regla**: lo que se queda en el always-on se decide por **frecuencia de uso × costo de omitirlo**, no por
 importancia. Alto costo aunque sea raro (borrar `CNAME`, una query sin `limit()` contra el free-tier) → se
 queda. Importante pero de uso episódico (cómo animar un CSS) → **hoja hija + puntero + trigger en §G.2**;
 sigue siendo vinculante, deja de cobrar renta en cada arranque.
-**Corolario operativo**: antes de mudar cualquier regla, `grep` para saber si es ÚNICA o copia (lo único se
-muda, lo copiado se deja de repetir), **NO renumerar secciones citadas** (`§3.3` lo citan 8 neuronas y 2
-scripts), y **corregir en el mismo commit el puntero vivo que apuntaba a lo movido** — aquí `30` L-04, que
-mandaba a un `§3.5` que dejó de existir. Un puntero roto es una regla apagada en silencio.
+**Corolario operativo**: antes de mudar una regla, `grep` para saber si es ÚNICA o copia; **NO renumerar
+secciones citadas** (`§3.3` lo citan 8 neuronas y 2 scripts); y **corregir en el mismo commit el puntero
+que apuntaba a lo movido** — aquí `30` L-04, que mandaba a un `§3.5` ya inexistente. Un puntero roto es una
+regla apagada en silencio.
 
 ### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total *(auditoría #7, 2026-08-20, ADR §90)*
 Tres hallazgos de la #7 son **la misma falla**, y ninguno lo cazó un gate porque los tres gates estaban en verde:
@@ -98,3 +90,5 @@ Tres hallazgos de la #7 son **la misma falla**, y ninguno lo cazó un gate porqu
 **Por qué falla**: la lección vive en `30` y el que decide qué hacer lee el `10`. El pendiente sigue diciendo «bloqueado» con la misma redacción de hace un mes, y **la etiqueta gana a la lección** porque la etiqueta es lo que se lee al escoger tarea. Un `[[L-40]]` en la bitácora no basta: es una nota al pie sobre una etiqueta que afirma lo contrario.
 **Reglas**: (1) al escribir una lección que invalida una CLASE de afirmación, **barre los pendientes vivos de esa clase en el mismo commit** — no es trabajo extra, es la mitad de la lección; (2) un pendiente marcado «bloqueado» declara **qué parte exacta** toca el gate y **qué queda hacible sin él** (L-40 ya lo pedía como corolario: al no aplicarse a sí mismo, se demostró); (3) sospecha de toda etiqueta de bloqueo que nadie haya tocado desde que se escribió: no envejece bien, y nadie la revisa porque «ya está decidida».
 **Hermana de [[M-05]]** (un techo que se mueve no es un techo): allí la regla se dobla, aquí la regla se ignora — y las dos dan ✅ en todos los gates, porque escribir la lección es exactamente lo que los gates comprueban.
+
+**Reincidencia 2026-08-22 (§119.5)**: escribí que «un gate con 0 comparaciones debe DEGRADAR» y una hora después me di un ✅ comparando `[0,0,0]` con `[0,0,0]` sobre una pantalla oculta. La regla vivía en el cerebro; el trabajo, en el navegador. **Corolario**: una regla solo protege desde donde se hace el trabajo — por eso la guarda se copió a `31` y a la skill, no solo al ADR.
