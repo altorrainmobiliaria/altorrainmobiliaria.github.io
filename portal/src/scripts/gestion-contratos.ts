@@ -14,8 +14,8 @@
  */
 
 import { cargarAuth } from './auth';
-import { agenda, type Hito, type Urgencia } from '../lib/domain/agenda';
-import { explicarProblemaContrato, problemasDeContrato, type Contrato } from '../lib/domain/gestion';
+import { accionDeMora, agenda, estadoDePago, type Hito, type Urgencia } from '../lib/domain/agenda';
+import { explicarProblemaContrato, problemasDeContrato, type Contrato, type Pago } from '../lib/domain/gestion';
 import { formatoPrecio } from '../lib/domain/alertas';
 import { FIREBASE_PUBLICO } from '../lib/config/firebase-publico';
 
@@ -91,7 +91,7 @@ function pintarHito(h: Hito, nombre: string): HTMLElement {
   pill.textContent = textoPlazo(h.dias);
   cuando.appendChild(pill);
 
-  for (const n of [q, celda(h.fecha, 'gx-muted'), cuando, celda(h.detalle, 'gx-muted gx-ell')]) {
+  for (const n of [q, celda(h.fecha, 'gx-muted'), cuando, celda(h.detalle, 'gx-muted gx-wrap')]) {
     fila.appendChild(n);
   }
   return fila;
@@ -174,6 +174,152 @@ export async function montarContratos(): Promise<void> {
     );
     console.error('[gestion] contratos:', e);
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CARTERA — los pagos con su mora, y qué toca hacer con cada uno (§117)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const CONCEPTO: Record<string, string> = {
+  canon_inquilino: 'Canon',
+  payout_propietario: 'Giro al propietario',
+  honorarios: 'Honorarios',
+  servicios_publicos: 'Servicios públicos',
+};
+
+/**
+ * Fila de la cartera. El estado se RECALCULA aquí con `estadoDePago`, no se lee del documento.
+ *
+ * El campo `estado` guardado quedó congelado en el instante del registro; la mora, en cambio, crece
+ * con el calendario. Enseñar el guardado sería decir «pendiente» de algo que lleva veinte días
+ * vencido — exactamente el tipo de dato que parece correcto y ya no lo es.
+ */
+function pintarPago(p: Pago, hoy: string): HTMLElement {
+  const d = estadoDePago(p, hoy);
+  const fila = document.createElement('div');
+  fila.className = 'gx-tr';
+
+  const q = document.createElement('div');
+  q.className = 'gx-cli gx-cli--apilada';
+  const cod = document.createElement('span');
+  cod.className = 'gx-cod';
+  cod.textContent = p.contratoId;
+  const nom = document.createElement('span');
+  nom.className = 'gx-cli__name';
+  nom.textContent = CONCEPTO[p.tipo] ?? p.tipo;
+  q.appendChild(cod);
+  q.appendChild(nom);
+
+  const est = document.createElement('span');
+  const pill = document.createElement('span');
+  pill.className = `gx-pill gx-pill--${d.estado === 'al_dia' ? 'navy' : 'gold'}`;
+  pill.textContent = d.estado === 'al_dia' ? 'Al día' : d.estado === 'pendiente' ? 'Pendiente' : `${d.estado} · ${d.diasMora} d`;
+  est.appendChild(pill);
+
+  for (const n of [
+    q,
+    celda(p.periodo, 'gx-muted'),
+    celda(formatoPrecio(p.montoEsperado, 'arriendo').replace('/mes', ''), 'gx-muted'),
+    est,
+    celda(d.moraTier ? accionDeMora(d.moraTier) : '—', 'gx-muted gx-wrap'),
+  ]) {
+    fila.appendChild(n);
+  }
+  return fila;
+}
+
+/** Carga la cartera: los pagos más recientes con su estado recalculado. */
+export async function montarPagos(): Promise<void> {
+  const cuerpo = $('gx-pg-lista');
+  const resumen = $('gx-pg-resumen');
+  if (!cuerpo) return;
+  cuerpo.replaceChildren(mensaje('Cargando…'));
+
+  try {
+    const { db, mod } = await cargarFirestore();
+    const q = mod.query(mod.collection(db, 'pagos'), mod.orderBy('fechaVencimiento', 'desc'), mod.limit(TOPE));
+    const snap = await mod.getDocs(q);
+    if (snap.empty) {
+      cuerpo.replaceChildren(mensaje('Todavía no hay pagos registrados.'));
+      if (resumen) resumen.textContent = '';
+      return;
+    }
+    const hoy = hoyISO();
+    const pagos = snap.docs.map((d) => ({ ...(d.data() as object), id: d.id }) as Pago);
+    cuerpo.replaceChildren(...pagos.map((p) => pintarPago(p, hoy)));
+    if (resumen) {
+      const enMora = pagos.filter((p) => estadoDePago(p, hoy).moraTier > 0).length;
+      resumen.textContent = enMora ? `${enMora} en mora de ${pagos.length}` : `${pagos.length} al día`;
+    }
+  } catch (e) {
+    cuerpo.replaceChildren(mensaje('No pudimos cargar la cartera.'));
+    console.error('[gestion] pagos:', e);
+  }
+}
+
+/** Llama a `registrarPago` por HTTP, igual que `crearContrato` y por la misma razón. */
+async function llamarRegistrarPago(datos: Record<string, unknown>): Promise<{ ok: boolean; mensaje: string }> {
+  let token: string | null = null;
+  try {
+    const { auth } = await cargarAuth();
+    token = (await auth.currentUser?.getIdToken()) ?? null;
+  } catch {
+    token = null;
+  }
+  if (!token) return { ok: false, mensaje: 'Tu sesión caducó. Recarga la página y vuelve a entrar.' };
+
+  const url = `https://${REGION_FUNCTIONS}-${FIREBASE_PUBLICO.projectId}.cloudfunctions.net/registrarPago`;
+  try {
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` },
+      body: JSON.stringify({ data: datos }),
+    });
+    const cuerpo = (await resp.json().catch(() => null)) as
+      | { result?: { id?: string }; error?: { message?: string } }
+      | null;
+    if (resp.ok && cuerpo?.result?.id) return { ok: true, mensaje: `Pago ${cuerpo.result.id} registrado.` };
+    return { ok: false, mensaje: cuerpo?.error?.message ?? 'No se pudo registrar.' };
+  } catch {
+    return { ok: false, mensaje: 'No se pudo conectar. Revisa la conexión.' };
+  }
+}
+
+const numero = (id: string): number | undefined => {
+  const n = Number(val(id).replace(/[^\d]/g, ''));
+  return Number.isFinite(n) && n > 0 ? n : undefined;
+};
+
+/** Monta el registro de pagos. */
+export function montarRegistroPago(): void {
+  const form = $<HTMLFormElement>('gx-pg-form');
+  if (!form) return;
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const btn = $<HTMLButtonElement>('gx-pg-guardar');
+    const caja = $('gx-pg-msg');
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = 'Registrando…';
+    }
+    const r = await llamarRegistrarPago({
+      contratoId: val('p-contrato'),
+      periodo: val('p-periodo'),
+      tipo: val('p-tipo') || 'canon_inquilino',
+      montoRecibido: numero('p-recibido'),
+      fechaPago: val('p-fecha') || undefined,
+      montoEsperado: numero('p-esperado'),
+    });
+    if (caja) caja.textContent = r.mensaje;
+    if (r.ok) {
+      form.reset();
+      void montarPagos();
+    }
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Registrar pago';
+    }
+  });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

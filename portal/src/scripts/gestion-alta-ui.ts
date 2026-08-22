@@ -21,7 +21,7 @@ import { explicarProblema } from '../lib/domain/catalogo';
 import { TOPE_IMAGENES } from '../lib/media-subida';
 import { urlMedia } from '../lib/media';
 import { montarInmuebles } from './gestion-inmuebles';
-import { montarAltaContrato, montarContratos } from './gestion-contratos';
+import { montarAltaContrato, montarContratos, montarPagos, montarRegistroPago } from './gestion-contratos';
 import type { Propiedad } from '../lib/domain/propiedades';
 
 /** Lado mayor del derivado. Más allá de esto no se gana nitidez visible y sí peso. */
@@ -322,6 +322,7 @@ export function montarAlta(): void {
     contratos: () => {
       ver('contratos');
       void montarContratos();
+      void montarPagos();
     },
   };
 
@@ -338,6 +339,7 @@ export function montarAlta(): void {
   $('gx-inm-volver')?.addEventListener('click', () => ver(null));
   $('gx-ct-volver')?.addEventListener('click', () => ver(null));
   montarAltaContrato();
+  montarRegistroPago();
 
   // El listado avisa; esta pantalla es la única que sabe pintar un inmueble.
   document.addEventListener('altorra:editar-inmueble', (ev) => {

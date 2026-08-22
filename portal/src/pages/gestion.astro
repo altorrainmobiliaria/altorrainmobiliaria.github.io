@@ -376,6 +376,43 @@ const init = DATA.admin;
         </div>
       </div>
 
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Cartera</h2><span class="gx-psub" id="gx-pg-resumen"></span></div>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--pg">
+            <div class="gx-tr gx-tr--head"><span>Concepto</span><span>Periodo</span><span>Esperado</span><span>Estado</span><span>Qué hacer</span></div>
+            <div id="gx-pg-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-pg-form" novalidate>
+        <h2>Registrar un pago</h2>
+        <p class="gx-psub">Solo se teclea lo que PASÓ. El monto esperado y la mora los calcula el contrato.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="p-contrato">Contrato</label><input class="alt-input" id="p-contrato" type="text" placeholder="CTR-202608-0001" /></div>
+          <div><label class="alt-label" for="p-periodo">Periodo</label><input class="alt-input" id="p-periodo" type="month" /></div>
+          <div>
+            <label class="alt-label" for="p-tipo">Concepto</label>
+            <select class="alt-input" id="p-tipo">
+              <option value="canon_inquilino">Canon del arrendatario</option>
+              <option value="payout_propietario">Giro al propietario</option>
+              <option value="honorarios">Honorarios</option>
+              <option value="servicios_publicos">Servicios públicos</option>
+            </select>
+          </div>
+        </div>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="p-recibido">Monto recibido</label><input class="alt-input" id="p-recibido" type="text" inputmode="numeric" placeholder="$ 2.800.000" /></div>
+          <div><label class="alt-label" for="p-fecha">Fecha del pago</label><input class="alt-input" id="p-fecha" type="date" /><p class="gx-hint">En blanco = todavía no ha pagado.</p></div>
+          <div><label class="alt-label" for="p-esperado">Monto (solo servicios)</label><input class="alt-input" id="p-esperado" type="text" inputmode="numeric" placeholder="$ 180.000" /><p class="gx-hint">Los demás salen del contrato.</p></div>
+        </div>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-pg-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-pg-guardar">Registrar pago</button>
+        </div>
+      </form>
+
       <form class="gx-panel gx-pad gx-form" id="gx-ct-form" novalidate>
         <h2>Nuevo contrato</h2>
         <p class="gx-psub">De las fechas de vigencia salen los avisos de renovación.</p>
@@ -591,7 +628,23 @@ const init = DATA.admin;
   <script type="application/json" id="gx-strings" set:html={JSON.stringify(strings)}></script>
 </BaseLayout>
 
-<style>
+<!--
+  ⚠️ LOS TRES BLOQUES DE ESTILO VAN `is:global` A PROPÓSITO (§117).
+
+  Astro acota el CSS añadiendo `data-astro-cid-XXXX` a los elementos DE LA PLANTILLA y repitiéndolo
+  en cada selector (`.gx-tr` compila a `.gx-tr[data-astro-cid-XXXX]`). Los nodos que crea el
+  navegador en tiempo de ejecución —que aquí son CASI TODO: las filas de leads, inmuebles, agenda,
+  contratos y cartera— no llevan ese atributo, así que NINGUNA regla les aplicaba. Se veían sin
+  rejilla, sin tarjeta y con la tipografía del cuerpo, y nada fallaba: el CSS simplemente no
+  existía para ellos.
+
+  Se globaliza el bloque entero en vez de ir marcando `:global(...)` regla a regla porque esa lista
+  habría que mantenerla cada vez que un script añade una clase nueva — y olvidarla no rompe el
+  build, solo despinta la pantalla. El namespace `gx-` es el que acota: no aparece en ninguna otra
+  página (`grep -rl "gx-" src/` → solo gestion.astro y sus cuatro scripts). Lo comprueba el gate
+  `npm run verify:css`.
+-->
+<style is:global>
   /* Fila de MENSAJE de la tabla (vacío, cargando o error): ocupa el ancho y no parece un dato. */
   .gx-tr--msg { grid-template-columns: 1fr !important; padding-block: 22px; }
   .gx-tr--msg span { white-space: normal; }
@@ -618,7 +671,7 @@ const init = DATA.admin;
   .gx-gate__acc { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 0.75rem 0 0; }
 </style>
 
-<style>
+<style is:global>
   .gx-root { display: flex; flex-wrap: wrap; min-height: 100vh; width: 100%; background: var(--alt-surface); }
 
   /* ---- Sidebar ---- */
@@ -688,10 +741,18 @@ const init = DATA.admin;
   .gx-tr--head { padding: 10px 24px; border-top: 1px solid var(--alt-hairline); font-size: 10.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text-muted); }
   .gx-r { text-align: right; }
   .gx-cli { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  /* En la cartera la celda no lleva avatar sino CÓDIGO + concepto, y en fila los dos se estorban:
+     «Giro al propietario» pedía 112px de los 99 que le quedaban. Apilados cada uno tiene la
+     columna entera, y es la forma habitual de una celda con identificador y subtítulo. */
+  .gx-cli--apilada { flex-direction: column; align-items: flex-start; gap: 2px; }
   .gx-cli__ini { width: 34px; height: 34px; border-radius: 50%; background: var(--alt-mist); display: flex; align-items: center; justify-content: center; flex: none; font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
   .gx-cli__name { font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .gx-muted { font-size: 13px; color: var(--alt-text); }
   .gx-ell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* Para las celdas que dan una INSTRUCCIÓN, no un identificador: cortar «Preaviso de terminación
+     por mora. Escrito, con constancia…» deja al operador sin la mitad que le dice qué hacer.
+     Dos líneas caben de sobra; los códigos y los rangos de fecha siguen con `gx-ell`. */
+  .gx-wrap { white-space: normal; line-height: 1.35; }
   .gx-val { font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); white-space: nowrap; }
   .gx-pill { display: inline-flex; align-items: center; padding: 5px 11px; border-radius: var(--alt-r-pill); font-size: 11.5px; font-weight: var(--alt-fw-semibold); background: var(--alt-mist); }
   .gx-pill--gold { color: var(--alt-link); }
@@ -726,7 +787,9 @@ const init = DATA.admin;
   }
 </style>
 
-<style>
+<style is:global>
+  .gx-table__inner--pg .gx-tr { grid-template-columns: 1.6fr 1fr 1.1fr 1.2fr 2fr; }
+
   /* ══ CONTRATOS (§114) ════════════════════════════════════════════════════════════════════ */
   .gx-table__inner--agenda .gx-tr { grid-template-columns: 2fr 1fr 1fr 2.4fr; }
   .gx-table__inner--ct .gx-tr { grid-template-columns: 2fr 1fr 1.2fr 1fr 1.6fr; }
@@ -879,7 +942,9 @@ const init = DATA.admin;
 
   /* Error de campo: el borde se pone dorado, no rojo (la paleta no tiene rojo), y el texto va debajo
      del campo que lo causa — no en una lista al final que obliga a buscarlo. */
-  .alt-input.is-mal { border-color: var(--alt-gold); }
+  /* Anclada a `.gx-root`: `.alt-input` es del design system y con el bloque global esta regla
+     se aplicaría a TODO el sitio. `is-mal` la pone el script, por eso vive aquí y no en base. */
+  .gx-root .alt-input.is-mal { border-color: var(--alt-gold); }
   .gx-err { font-size: 12px; color: var(--alt-link); margin: 5px 0 0; font-weight: var(--alt-fw-medium); }
 </style>
 
