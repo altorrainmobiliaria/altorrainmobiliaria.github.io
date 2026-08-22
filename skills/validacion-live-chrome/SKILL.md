@@ -161,6 +161,12 @@ poblaciones distintas de nodos y pueden tener estilos distintos sin que nada avi
    sírvete el HTML de la ruta y renderízalo sin sus `<script>`. Se pierde el comportamiento, pero el
    layout y el CSS son reales — y es exactamente lo que estás juzgando.
 
+6. **Guarda de medibilidad: una comparación de ceros no es una comparación.** Si el contenedor está
+   oculto todo mide 0, y `[0,0,0] === [0,0,0]` da verde — te has dado un ✅ sin comparar nada. Antes
+   de emitir veredicto exige que la medida exista (`medible = cabecera.some(x => x > 0) &&
+   altos.every(h => h > 0)`) y devuelve «SIN MEDIR» si no. Comprueba también que la cadena de padres
+   hasta `body` está visible, no solo que el elemento existe.
+
 ## 6. Conexiones (doble vía)
 - **Hacia mí** (qué recorrer / cómo cerrar): `caza-bugs` · `verification-before-completion` · `anti-codigo-muerto` (que lo nuevo no dejó lo viejo roto EN VIVO).
 - **Soy el gate empírico DE**: `proceso-decision-fuerte` **paso 7** (pruebas de estado en un navegador REAL cierran la decisión).

