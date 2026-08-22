@@ -25,9 +25,11 @@
 //   (6) Skills↔inventario [warn, --full]                (15) Schema del manifest: clave desconocida [warn]
 //   (7) archiveDir íntegro [warn, --full]               (16) Fiabilidad M-22: `verificado-vivo` stale [info, --full]
 //       (0-canónico, 7, 7b, 14-tableFile) DEGRADAN si la bóveda o el canónico no están clonados
+//       v1.12.0: (8-dueño, 16-sin-marcadores, 27-sin-rutas) DEGRADAN si el gate no comparó NADA
+//       (el ✅ INMERECIDO, §120) · (26) trinquete de filas gordas del índice
 //       + 7b) bóveda: commits ≠ origin vía fs [warn]
 // ===========================================================
-const KERNEL_VERSION = '1.11.0';
+const KERNEL_VERSION = '1.12.0';
 import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -78,6 +80,8 @@ const KNOWN_KEYS = new Set([
   // v1.11.0 (#28): directorios de TRABAJO fuera de `docs/` (planes, specs) que el cerebro debe citar,
   // su allowlist y la RAZÓN de esa allowlist (una excepción sin razón es una fuga con permiso).
   'workDirs', 'workAllowlist', 'workAllowlistRazon',
+  // v1.12.0 (#26): deuda CONGELADA de filas gordas del índice. Trinquete: solo puede bajar.
+  'indexRowOverLimitBaseline',
 ]);
 for (const k of Object.keys(manifest)) {
   if (!k.startsWith('_') && !KNOWN_KEYS.has(k)) warn(`manifest: clave desconocida "${k}" (¿typo? un typo apaga gates en silencio) — schema v1.2`);
@@ -454,6 +458,21 @@ else {
       warn(`ssotFacts: la regex "${fact.regex}" parece tener los escapes COMIDOS (\\d/\\s/\\w sin barra invertida). Es válida pero no matchea nada → el gate daría ✅ en falso.`), hits++;
     try {
       const re = new RegExp(fact.regex, 'g');
+      // v1.12.0 (inmobiliaria §120, TODO-45b): el ✅ INMERECIDO. Este gate buscaba el hecho en los
+      // nodos NO-dueños y, al no encontrarlo, aprobaba. Pero si el DUEÑO tampoco lo contiene —el
+      // archivo se renombró, la cifra se reescribió, la regex quedó vieja— no hay nada que
+      // duplicar y el gate vigila un hecho que ya no existe. Aprobar eso es afirmar sin comparar.
+      // `ownerRegex` (opcional): hay hechos cuya forma PROHIBIDA fuera no es la forma en que el
+      // dueño los guarda. El stamp del kernel tiene `"version": "1.12.0"` en JSON, mientras que lo
+      // que no debe duplicarse por ahí es la PROSA «kernel v1.12.0». Sin esta distinción el gate
+      // exigía al dueño una cadena que nunca iba a tener, y degradaba un fact perfectamente vivo.
+      const ownerP = fact.owner ? join(ROOT, fact.owner) : null;
+      const anclaje = fact.ownerRegex || fact.regex;
+      if (!ownerP || !existsSync(ownerP)) {
+        degrade(`ssotFacts: el dueño "${fact.owner}" NO EXISTE → "${fact.regex}" no vigila nada`);
+      } else if (!new RegExp(anclaje).test(read(ownerP))) {
+        degrade(`ssotFacts: el dueño "${fact.owner}" ya NO contiene ${fact.ownerRegex ? `su anclaje "${anclaje}"` : `"${fact.regex}"`} → el hecho se movió o cambió de forma; este gate compara contra el vacío`);
+      }
       for (const rel of fact.scan || []) {
         if (rel === fact.owner) continue;
         const p = join(ROOT, rel);
@@ -614,7 +633,10 @@ else {
     }
   }
   if (total && !stale) ok(`${total} claim(s) \`verificado-vivo\` vigentes (≤ ${vlStaleDays}d)`);
-  else if (!total) ok('check de fiabilidad activo (sin marcadores `verificado-vivo:` aún — opt-in M-22/§257)');
+  // v1.12.0 (§120): sin marcadores este gate imprimía «check activo» — un ✅ por CERO comparaciones.
+  // Y encima mide solo la EDAD del marcador, nunca el hecho: por eso el 05 pudo sostener «CF 9»
+  // contra 11 exports reales con el claim fresquísimo. Que no verificó nada tiene que verse.
+  else if (!total) degrade('fiabilidad: 0 marcadores `verificado-vivo:` en los nodos escaneados → este gate NO comparó nada. Marca los claims sobre realidad externa (desplegado/live/datos) o retíralos.');
 }
 
 // 17) Git del PROPIO repo (auditoría Nivel-2 insemastereo 2026-08-01, N2-01) [--boot y --full]
@@ -800,11 +822,24 @@ else {
       if (m && l.length > RUIDO) gordas.push({ f: p.split(/[\\/]/).pop(), n: i + 1, s: m[1], c: l.length });
     });
   }
+  // v1.12.0 (§120, TODO-45c): era `info` puro, así que la regla «≤200c» llevaba 52 filas
+  // incumpliéndose sin que nada pasara — una intención con impresora. Ahora es un TRINQUETE: la
+  // deuda vieja se congela en un número declarado y una fila gorda NUEVA lo supera y BLOQUEA.
+  // El número solo puede BAJAR; subirlo para dejar de ver el aviso es exactamente [[M-05]].
+  const baseline = manifest.indexRowOverLimitBaseline;
   if (!gordas.length) ok(`filas §NN del índice dentro de ${LIMITE}c (+holgura)`);
   else {
     gordas.sort((a, b) => b.c - a.c);
     const top = gordas.slice(0, 5).map((g) => `§${g.s} (${g.c}c)`).join(' · ');
-    info(`${gordas.length} fila(s) §NN por encima de ${RUIDO}c (objetivo ${LIMITE}c): ${top}${gordas.length > 5 ? ' …' : ''} → el detalle va al ADR; la fila enruta`);
+    const detalle = `${gordas.length} fila(s) §NN por encima de ${RUIDO}c (objetivo ${LIMITE}c): ${top}${gordas.length > 5 ? ' …' : ''}`;
+    if (typeof baseline !== 'number') {
+      info(`${detalle} → el detalle va al ADR; la fila enruta. (Declara \`indexRowOverLimitBaseline\` en el manifest para congelar esta deuda y bloquear las nuevas.)`);
+    } else if (gordas.length > baseline) {
+      warn(`${detalle} → son ${gordas.length - baseline} MÁS que la deuda congelada (${baseline}). Acorta la fila nueva: el detalle va al ADR, la fila enruta.`);
+    } else {
+      if (gordas.length < baseline) info(`${detalle} → por DEBAJO de la deuda congelada (${baseline}): baja \`indexRowOverLimitBaseline\` a ${gordas.length} para que el trinquete no se afloje.`);
+      else info(`${detalle} → deuda congelada en ${baseline}; una fila gorda nueva bloquea.`);
+    }
   }
 }
 
@@ -843,6 +878,7 @@ else {
   const AMBITO = /^(05|10|20|21|22|50)[-.]/;
   const PLANTILLA = /(^|[/_-])[A-Z]([./_-]|$)|^[-.]/;   // `admin-X.js`, `X.ui.js`, `.dc.html`: patrón, no ruta
   const fantasmas = [];
+  let comparadas = 0, perdonadas = 0;
   for (const f of readdirSync(DOCS).filter((x) => AMBITO.test(x) && x.endsWith('.md'))) {
     const lineas = read(join(DOCS, f)).split('\n');
     // Contexto EXTERNO: una neurona describe legítimamente cosas que viven fuera del repo (la
@@ -857,14 +893,22 @@ else {
         const ruta = m[1];
         if (ruta.startsWith('..') || /^[A-Za-z]:/.test(ruta)) continue;   // cross-repo: no es asunto de este linter
         if (PLANTILLA.test(ruta)) continue;                               // ruta-plantilla, no ruta real
+        comparadas++;
         if (existsSync(join(ROOT, ruta))) continue;
-        if (porNombre.has(ruta.split('/').pop())) continue;               // existe, aunque el nodo cite otra ruta
+        // v1.12.0 (§120): perdonar por BASENAME es una comparación DÉBIL — dice «existe un archivo
+        // que se llama así en alguna parte», no «la ruta que citas es correcta». Se sigue
+        // perdonando (un nodo puede citar `utils.js` sin su carpeta), pero se CUENTA y se dice:
+        // un ✅ que calla cuántas veces bajó el listón no es un ✅, es una media verdad.
+        if (porNombre.has(ruta.split('/').pop())) { perdonadas++; continue; }
         fantasmas.push(`${f}:${i + 1} → \`${ruta}\``);
       }
     });
   }
-  if (!fantasmas.length) ok('ninguna neurona cita archivos inexistentes');
-  else { warn(`${fantasmas.length} ruta(s) FANTASMA citadas por neuronas (el archivo no existe en el repo): ${fantasmas.slice(0, 6).join(' · ')}${fantasmas.length > 6 ? ' …' : ''} → corregir el nodo o marcar la ruta como retirada`); }
+  if (!comparadas) degrade('rutas fantasma: 0 rutas citadas en el ámbito (05/10/20/21/22/50) → este gate NO comparó nada');
+  else if (!fantasmas.length) {
+    ok(`ninguna de las ${comparadas} ruta(s) citadas es fantasma`);
+    if (perdonadas) info(`${perdonadas} de esas ${comparadas} se aceptaron solo por COINCIDENCIA DE NOMBRE (existe un archivo así, pero en otra carpeta) → la ruta del nodo puede estar mal aunque el gate pase`);
+  } else { warn(`${fantasmas.length} ruta(s) FANTASMA citadas por neuronas (el archivo no existe en el repo): ${fantasmas.slice(0, 6).join(' · ')}${fantasmas.length > 6 ? ' …' : ''} → corregir el nodo o marcar la ruta como retirada`); }
 }
 
 // ---- salida (presupuesto de stdout en --boot) ----

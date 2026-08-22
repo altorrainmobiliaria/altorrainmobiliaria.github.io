@@ -10,38 +10,38 @@
   ],
   "caps": {
     "CLAUDE.md": {
-      "lines": 230,
+      "lines": 205,
       "chars": 25000
     },
     "docs/05-ESTADO-GLOBAL.md": {
-      "lines": 25,
+      "lines": 22,
       "chars": 4000
     },
     "docs/10-MEMORIA-CORTO-PLAZO.md": {
-      "lines": 170,
+      "lines": 191,
       "chars": 16000
     },
     "docs/20-MEMORIA-ESPACIAL.md": {
-      "lines": 90,
+      "lines": 128,
       "chars": 16000
     },
     "docs/30-LECCIONES.md": {
-      "lines": 231,
+      "lines": 240,
       "chars": 40000,
       "_comment": "lines MEDIDO, no subido para escapar de un aviso (M-05). Densidad real de este fichero = 173 c/linea (36900c / 213L); con lines=180 el eje de lineas disparaba al 78% del eje de chars, o sea gritaba contra un fichero sano — el mismo fallo de calibracion que documenta 00a (_caps_que: los dos ejes deben apretar en el mismo punto). 40000/173 = 231. El eje VIVO de esta neurona es chars, y esta al 92%: el proximo shard de 30 NO es opcional. Cuando toque, el grupo con frontera limpia son los guardarrailes de diseno o el rango L-22..L-35, NO subir de 40000."
     },
     "docs/00a-INDICE-HISTORICO.md": {
-      "lines": 49,
+      "lines": 48,
       "chars": 4000,
       "_comment": "Shard de RANGO del indice (ADR 85): §01-§20, la era del sitio viejo RETIRADO. El kernel descubre las hermanas por patron 00[a-z]?-INDICE*.md y las lee como UNA, asi que mover filas aqui no rompe #3/#5a/#9. Cap MEDIDO sobre el real (2950c / 36L): chars = real+35%; lines = 4000/82 (densidad real 82 c/linea) = 49, NO 36*1.1 — con 40 el eje lines marcaba pre-shard al 90% en un fichero que por diseno NO crece (_caps_que: los dos ejes deben apretar en el mismo punto). Este shard es CERRADO por diseno: no crece (nadie escribe ADRs nuevos del sitio retirado). Si el 00 vivo vuelve a apretar, el siguiente rango es 00b, NO subir este techo."
     },
     "docs/00-INDICE.md": {
-      "lines": 160,
+      "lines": 159,
       "chars": 24000,
       "_comment": "Subido de 16000 a 24000 el 2026-07-28 (ADR §68). Razon: 00 no es una neurona de doctrina sino un REGISTRO que crece ~200c por cada ADR nuevo; su mapa §->linea ocupa 13.4k de los 17.2k con 67 ADRs. Recortarlo destruye enrutamiento, que es justo su funcion. El control real de esta neurona NO es el total sino la LONGITUD DE FILA (objetivo <=200c): si una fila necesita mas, el detalle va al ADR. Revisar de nuevo hacia los ~100 ADRs."
     },
     "docs/40-LOBULOS-DOMINIO.md": {
-      "lines": 200,
+      "lines": 184,
       "chars": 16000
     },
     "docs/43-OPERACION.md": {
@@ -49,31 +49,31 @@
       "chars": 20000
     },
     "docs/42-LEGAL.md": {
-      "lines": 140,
+      "lines": 135,
       "chars": 20000
     },
     "docs/50-CONFIG-INFRA.md": {
-      "lines": 170,
+      "lines": 178,
       "chars": 16000
     },
     "docs/32-LECCIONES-DOCUMENTALES.md": {
-      "lines": 70,
+      "lines": 59,
       "chars": 16000
     },
     "docs/31-VERIFICACION-UI.md": {
-      "lines": 50,
+      "lines": 59,
       "chars": 14000
     },
     "docs/60-WORKFLOWS.md": {
-      "lines": 110,
+      "lines": 102,
       "chars": 12000
     },
     "docs/15-CONSEJO-EXTERNO.md": {
-      "lines": 80,
+      "lines": 77,
       "chars": 9000
     },
     "docs/41-MERCADO.md": {
-      "lines": 140,
+      "lines": 143,
       "chars": 12000
     },
     "docs/34-DOCTRINA-CODIGO.md": {
@@ -82,27 +82,27 @@
       "_comment": "Nacio el 2026-08-03 en la poda del router (ADR 84): absorbe CLAUDE.md 3.1 (performance), 3.5 (observadores) y el stack/CSS del legacy, que se auto-cargaban en CADA sesion aunque casi nunca se tocara codigo. Cap MEDIDO sobre el real (3353c / 53L) + 35%, con lines derivado de la densidad real (~63 c/linea) para que ambos ejes aprieten en el mismo punto (regla de _caps_que). Si crece mas alla de esto, shard por mundo (legacy / portal) en vez de subir el techo."
     },
     "docs/35-LECCIONES-PLATAFORMA.md": {
-      "lines": 110,
+      "lines": 120,
       "chars": 22000,
       "_comment": "Nacio el 2026-08-21 (ADR 97) cuando 30-LECCIONES reventó su tope: absorbe L-01..L-21, los gotchas de INFRAESTRUCTURA de Ola 0 (Firebase, Functions gen2, Cloudflare/Astro/Wrangler, REST, emulador). Cap MEDIDO sobre el real (16471c / 83L) + 33%, con lines DERIVADO de la densidad real (198 c/linea) y no estimado a ojo: la primera version puso 60 lineas suponiendo parrafos mas largos y el eje equivocado disparo primero, que es justo lo que _caps_que prohibe (M-06: el gate acusaba a un inocente). Es un ARCHIVO de una era cerrada: crece poco y solo cuando se vuelve a tocar esa capa. Si creciera mucho, shard por proveedor (Firebase / Cloudflare) antes que subir el techo (M-05)."
     },
     "docs/21-MAPA-PORTAL.md": {
-      "lines": 53,
+      "lines": 51,
       "chars": 14000,
       "_comment": "Nacio el 2026-08-21 (ADR 101) cuando 20-MEMORIA-ESPACIAL reventó su tope por tercera vez en un dia: la seccion del Portal era mas de la MITAD del archivo y es la que crece con cada superficie nueva. Cap MEDIDO sobre el real (10299c / 39L) + 36%, con lines DERIVADO de la densidad REAL (264 c/linea) -> 14000/264 = 53. La primera version puso 40 a ojo y el eje de lineas quedaba al 97% mientras chars iba al 74%: el eje equivocado habria disparado primero, que es lo que _caps_que prohibe. Es la SEGUNDA vez hoy que me pasa (ver 35-LECCIONES-PLATAFORMA): derivar, nunca estimar. Si crece mas alla de esto, shard por capa (paginas / datos / scripts) antes que subir el techo (M-05)."
     },
     "docs/00b-INDICE-CONSTRUCCION.md": {
-      "lines": 60,
+      "lines": 74,
       "chars": 13000,
       "_comment": "Nacio el 2026-08-21 (ADR 100) cuando 00-INDICE reventó su tope: absorbe las 40 filas de §21-§60, la era de CONSTRUCCION del greenfield. Es un ARCHIVO de ruteo historico: crece solo si se re-indexa algo viejo. Cap MEDIDO sobre el real (10069c / 51L) + 30%, con lines DERIVADO de la densidad real (~197 c/linea) para que ambos ejes aprieten a la vez y no dispare el equivocado (M-06)."
     },
     "docs/33-LECCIONES-META.md": {
-      "lines": 114,
+      "lines": 95,
       "chars": 15000,
       "_comment": "Re-medido el 2026-08-02 (ADR 83) al entrar M-08. Razon M-05-valida: este shard es un REGISTRO que crece ~1.2k por leccion meta; su tamano lo fija cuantas veces el cerebro fallo, no una decision editorial. Cap MEDIDO sobre el real + 30% (74.3), no a ojo. Si crece mas alla de ~15 lecciones, shard por familia (gates / ledger / proceso). | 2026-08-03 (ADR 85): el eje lines se re-DERIVO 110->114. NO es subir un techo (M-05): chars sigue en 15000 y es el que aprieta (98%); 110 lineas asumia 136 c/linea y la densidad REAL medida es 131, asi que el eje equivocado disparaba primero — justo lo que _caps_que prohibe. 15000/131 = 114."
     },
     "docs/00c-INDICE-FUNDACION.md": {
-      "lines": 59,
+      "lines": 60,
       "chars": 11919,
       "_comment": "Shard de RANGO del indice (ADR 116): 66-90, la era de fundacion. Cap MEDIDO sobre el real (8829c / 44L, densidad 200 c/linea): chars = real+35%, lines = cap_chars/densidad, para que los DOS ejes aprieten en el mismo punto (mismo criterio que 00a). Este shard es CERRADO por diseno: nadie escribe ADRs nuevos de ese rango. Si el 00 vivo vuelve a apretar, el siguiente rango es 00d, NO subir este techo."
     }
@@ -158,7 +158,8 @@
         "docs/10-MEMORIA-CORTO-PLAZO.md",
         "docs/20-MEMORIA-ESPACIAL.md"
       ],
-      "_que": "version del kernel (ADR inmobiliaria 83, TODO-37): el dueno es el STAMP que escribe brain:pull. Copiarla a un nodo always-on la desincroniza en el primer bump — paso 2 veces el mismo dia (insema declaraba v1.6.0 con el stamp en v1.9.0). El gate #8 lo caza solo si el hecho esta DECLARADO: no era un gate inutil, era un gate sin datos. | 2026-08-03: la regex nacio CIEGA a las negritas — `kernel **v1.7.2**` no matcheaba y el 05 de bersaglio llevaba un dato stale que el gate no veia. Corolario de LD-07: quitar/tolerar el markdown antes de comparar prosa."
+      "_que": "version del kernel (ADR inmobiliaria 83, TODO-37): el dueno es el STAMP que escribe brain:pull. Copiarla a un nodo always-on la desincroniza en el primer bump — paso 2 veces el mismo dia (insema declaraba v1.6.0 con el stamp en v1.9.0). El gate #8 lo caza solo si el hecho esta DECLARADO: no era un gate inutil, era un gate sin datos. | 2026-08-03: la regex nacio CIEGA a las negritas — `kernel **v1.7.2**` no matcheaba y el 05 de bersaglio llevaba un dato stale que el gate no veia. Corolario de LD-07: quitar/tolerar el markdown antes de comparar prosa. · ownerRegex (v1.12.0): el dueno guarda la version como JSON, no como la PROSA «kernel v1.x.y» que es lo que no debe duplicarse en los nodos. Sin el anclaje explicito el gate #8 degradaba un fact vivo.",
+      "ownerRegex": "\"version\"\\s*:\\s*\"\\d+\\.\\d+\\.\\d+\""
     }
   ],
   "deepAudit": {
@@ -174,7 +175,7 @@
     "docs/skills-inventory.md": "Registro 1:1 con las carpetas de skills/ — su tamaño lo fija el inventario real, no una decisión editorial. Lo vigila el gate #6.",
     "docs/00-INDICE.md.bak": "Artefacto residual, no neurona."
   },
-  "_caps_que": "Topes por-repo. Cada neurona tiene cap MEDIDO (tamaño real + ~35% de holgura) o entrada en noCap CON RAZON — nunca por omision (chequeo #23, ADR §74). Los caps NO se inventan: §74.3 documenta como una cifra a ojo creo un gate bloqueante falso. Los dos ejes se derivan uno del otro: lines = chars/densidad-real, para que ambos aprieten en el mismo punto. Un par incoherente hace que el eje equivocado dispare primero (hallazgo N2-13 de la auditoria de insemastereo).",
+  "_caps_que": "Topes por-repo. Cada neurona tiene cap MEDIDO (tamaño real + ~35% de holgura) o entrada en noCap CON RAZON — nunca por omision (chequeo #23, ADR §74). Los caps NO se inventan: §74.3 documenta como una cifra a ojo creo un gate bloqueante falso. Los dos ejes se derivan uno del otro: lines = chars/densidad-real, para que ambos aprieten en el mismo punto. Un par incoherente hace que el eje equivocado dispare primero (hallazgo N2-13 de la auditoria de insemastereo). · 2026-08-22 (ADR 120, TODO-45f): los `lines` se RECALCULARON todos con esta misma regla (chars/densidad-real). Estaban puestos a ojo y en 10 neuronas el eje de LINEAS disparaba antes que el de chars — el `30` llego a 229/231 con 1.700 chars libres. Recalibrar NO es subir un techo (M-05): el eje que DECIDE sigue siendo chars, que no se toco; lines es su guarda derivada, y en 5 de las 10 el numero BAJO. Al reescribir mucho una neurona, recalcular. · El redondeo es HACIA ARRIBA a proposito: derivar `lines` de la densidad ACTUAL crea un lazo —cada edicion cambia la densidad y con ella el techo, que es justo la clase de techo movil que M-05 prohibe—. Con techo hacia abajo el eje de lineas dispara UN paso antes que el de chars y el aviso que sale es el equivocado. Hacia arriba, `lines` queda como GUARDA (caza el nodo que se llena de lineas cortas) y quien DECIDE es siempre chars.",
   "workDirs": [
     "specs"
   ],
@@ -183,5 +184,7 @@
     "specs/R4-OPERACION-MARKETING-2026-07.md",
     "specs/R5-PROMPT-GEMINI-STACK.md"
   ],
-  "workAllowlistRazon": "Investigación R0-R5 de julio-2026 ya DESTILADA a sus neuronas (schema y stack -> 20 · operación -> 43 · mercado -> 41): son la materia prima, no trabajo pendiente. Se conservan como evidencia de procedencia. Si alguna vuelve a definir trabajo POR HACER, sáquela de aquí y cítela desde su nodo dueño."
+  "workAllowlistRazon": "Investigación R0-R5 de julio-2026 ya DESTILADA a sus neuronas (schema y stack -> 20 · operación -> 43 · mercado -> 41): son la materia prima, no trabajo pendiente. Se conservan como evidencia de procedencia. Si alguna vuelve a definir trabajo POR HACER, sáquela de aquí y cítela desde su nodo dueño.",
+  "indexRowOverLimitBaseline": 52,
+  "_indexRowOverLimitBaseline_que": "Deuda CONGELADA de filas §NN del indice por encima de 260c (objetivo 200c), medida el 2026-08-22 con 119 ADRs. TRINQUETE (#26, ADR 120): una fila gorda NUEVA supera este numero y BLOQUEA el commit; la deuda vieja no bloquea a nadie. Solo puede BAJAR — subirlo para dejar de ver el aviso es exactamente lo que M-05 prohibe. Al acortar filas viejas, bajalo al numero real."
 }
