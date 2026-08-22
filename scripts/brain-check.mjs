@@ -26,10 +26,11 @@
 //   (7) archiveDir íntegro [warn, --full]               (16) Fiabilidad M-22: `verificado-vivo` stale [info, --full]
 //       (0-canónico, 7, 7b, 14-tableFile) DEGRADAN si la bóveda o el canónico no están clonados
 //       v1.12.0: (8-dueño, 16-sin-marcadores, 27-sin-rutas) DEGRADAN si el gate no comparó NADA
+//       (29) v1.13.0: cifras CONTABLES del cerebro vs el código (cura «CF 9» contra 11 reales)
 //       (el ✅ INMERECIDO, §120) · (26) trinquete de filas gordas del índice
 //       + 7b) bóveda: commits ≠ origin vía fs [warn]
 // ===========================================================
-const KERNEL_VERSION = '1.12.0';
+const KERNEL_VERSION = '1.13.0';
 import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -82,6 +83,8 @@ const KNOWN_KEYS = new Set([
   'workDirs', 'workAllowlist', 'workAllowlistRazon',
   // v1.12.0 (#26): deuda CONGELADA de filas gordas del índice. Trinquete: solo puede bajar.
   'indexRowOverLimitBaseline',
+  // v1.13.0 (#29): cifras que el cerebro afirma y el kernel puede CONTAR en el repo.
+  'countableFacts',
 ]);
 for (const k of Object.keys(manifest)) {
   if (!k.startsWith('_') && !KNOWN_KEYS.has(k)) warn(`manifest: clave desconocida "${k}" (¿typo? un typo apaga gates en silencio) — schema v1.2`);
@@ -909,6 +912,44 @@ else {
     ok(`ninguna de las ${comparadas} ruta(s) citadas es fantasma`);
     if (perdonadas) info(`${perdonadas} de esas ${comparadas} se aceptaron solo por COINCIDENCIA DE NOMBRE (existe un archivo así, pero en otra carpeta) → la ruta del nodo puede estar mal aunque el gate pase`);
   } else { warn(`${fantasmas.length} ruta(s) FANTASMA citadas por neuronas (el archivo no existe en el repo): ${fantasmas.slice(0, 6).join(' · ')}${fantasmas.length > 6 ? ' …' : ''} → corregir el nodo o marcar la ruta como retirada`); }
+}
+
+// 29) Cifras VERIFICABLES: lo que el cerebro AFIRMA vs lo que hay [--full] (v1.13.0, §121)
+//     El #16 vigila la EDAD de un claim; nunca el claim. Por eso el `05` de inmobiliaria sostuvo
+//     «CF 9 en código» contra 11 exports reales con el marcador fresquísimo: fresco y falso a la vez.
+//     Este gate cierra ese hueco para las afirmaciones CONTABLES — las que se pueden resolver
+//     contando algo en el repo. No es genérico por diseño: cada cifra se declara, y declararla es
+//     aceptar que alguien la va a comprobar. Una cifra sin declarar sigue siendo palabra de nadie.
+head('\n29) Cifras verificables del cerebro (¿lo que afirma es lo que hay?):');
+if (BOOT) head('  ⏭️  omitido en --boot');
+else if (!Array.isArray(manifest.countableFacts) || !manifest.countableFacts.length) {
+  info('manifest sin countableFacts — gate omitido (declarar las cifras que el cerebro afirma)');
+} else {
+  for (const f of manifest.countableFacts) {
+    const fp = join(ROOT, f.countFile || '');
+    if (!f.countFile || !existsSync(fp)) { degrade(`cifra "${f.id}": el archivo a contar (${f.countFile}) no existe → nada que comparar`); continue; }
+    const src = read(fp);
+    // Los nombres pueden venir sueltos (`export const X`) o en lista (`export { a, b } from`).
+    const nombres = new Set();
+    for (const pat of f.countPatterns || []) {
+      for (const m of src.matchAll(new RegExp(pat, 'gm'))) {
+        for (const n of String(m[1] || '').split(',')) { const t = n.trim(); if (t) nombres.add(t); }
+      }
+    }
+    const real = nombres.size;
+    let visto = 0, malos = [];
+    for (const rel of f.claimScan || []) {
+      const p = join(ROOT, rel);
+      if (!existsSync(p)) continue;
+      for (const m of read(p).matchAll(new RegExp(f.claimRegex, 'g'))) {
+        visto++;
+        if (Number(m[1]) !== real) malos.push(`${rel} dice ${m[1]}`);
+      }
+    }
+    if (!visto) degrade(`cifra "${f.id}": el cerebro NO afirma nada que comparar (hay ${real} ${f.label}). Escríbelo donde toque o retira la cifra del manifest.`);
+    else if (malos.length) warn(`cifra "${f.id}": ${malos.join(' · ')} pero hay ${real} ${f.label} → corregir el nodo (contadas en ${f.countFile})`);
+    else ok(`${real} ${f.label} == lo que afirma el cerebro`);
+  }
 }
 
 // ---- salida (presupuesto de stdout en --boot) ----

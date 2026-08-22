@@ -186,5 +186,34 @@
   ],
   "workAllowlistRazon": "Investigación R0-R5 de julio-2026 ya DESTILADA a sus neuronas (schema y stack -> 20 · operación -> 43 · mercado -> 41): son la materia prima, no trabajo pendiente. Se conservan como evidencia de procedencia. Si alguna vuelve a definir trabajo POR HACER, sáquela de aquí y cítela desde su nodo dueño.",
   "indexRowOverLimitBaseline": 52,
-  "_indexRowOverLimitBaseline_que": "Deuda CONGELADA de filas §NN del indice por encima de 260c (objetivo 200c), medida el 2026-08-22 con 119 ADRs. TRINQUETE (#26, ADR 120): una fila gorda NUEVA supera este numero y BLOQUEA el commit; la deuda vieja no bloquea a nadie. Solo puede BAJAR — subirlo para dejar de ver el aviso es exactamente lo que M-05 prohibe. Al acortar filas viejas, bajalo al numero real."
+  "_indexRowOverLimitBaseline_que": "Deuda CONGELADA de filas §NN del indice por encima de 260c (objetivo 200c), medida el 2026-08-22 con 119 ADRs. TRINQUETE (#26, ADR 120): una fila gorda NUEVA supera este numero y BLOQUEA el commit; la deuda vieja no bloquea a nadie. Solo puede BAJAR — subirlo para dejar de ver el aviso es exactamente lo que M-05 prohibe. Al acortar filas viejas, bajalo al numero real.",
+  "countableFacts": [
+    {
+      "id": "cf-legacy",
+      "label": "Cloud Functions en el codebase LEGACY",
+      "countFile": "functions/index.js",
+      "countPatterns": [
+        "^exports\\.([A-Za-z0-9_]+)"
+      ],
+      "claimRegex": "CF legacy: (\\d+) en c[oó]digo",
+      "claimScan": [
+        "docs/05-ESTADO-GLOBAL.md"
+      ],
+      "_que": "El 05 sostuvo «CF 9 en codigo» contra 11 reales con el marcador verificado-vivo fresco (auditoria #8). Ahora se cuenta."
+    },
+    {
+      "id": "cf-portal",
+      "label": "Cloud Functions en el codebase PORTAL",
+      "countFile": "portal/functions/src/index.ts",
+      "countPatterns": [
+        "^export const (\\w+)",
+        "^export \\{([^}]*)\\} from"
+      ],
+      "claimRegex": "CF portal: (\\d+) en c[oó]digo",
+      "claimScan": [
+        "docs/05-ESTADO-GLOBAL.md"
+      ],
+      "_que": "Las del portal no estaban contadas en ningun nodo: crecieron de 4 a 9 entre ADR 113 y 118 sin que el cerebro se enterara."
+    }
+  ]
 }
