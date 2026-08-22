@@ -59,14 +59,14 @@
 > y vuelta atrás). De ahí salió que `PUBLIC_SITE_ENV` no se declaraba en el CI: TODO build salía
 > `noindex`. Ya son 3 perillas por variable de repositorio.
 >
-> **§103: el panel viejo escribe OTRO modelo** — esquemas incompatibles en la MISMA colección ⇒ lo que
-> se crea allá pasa el filtro y se cae luego: índice vacío, cero errores. Ya se reporta
-> (`esquema-legacy`), pero el catálogo sigue vacío ⇒ el CRUD es requisito del cutover, no mejora.
->
-> **Lo siguiente, en orden**: (1) **el cutover** — el CRUD ya no lo bloquea y la fase 4 se puede
-> hacer · (2) **TODO-45**, la deuda de la auditoría · (3) **TODO-30**, la vista del mapa, que solo confirma Daniel
-> ([[L-39]]) · (4) **OLA 2**: el abogado gatea el RAIL DE PAGO, **no toda la ola** — reléela antes de
-> darla por bloqueada ([[L-40]] ya cobró 3 veces, [[M-11]]).
+> **CENSO 2026-08-22 (§123): OLA 1 = 13/13 verificado ARCHIVO POR ARCHIVO, no de memoria.** La
+> construcción terminó; lo que queda son gates del DUEÑO y por eso no se avanza construyendo más.
+> **En orden**: (1) **claim de staff** (TODO-42, runbook fase 1) — sin él nada del panel corre en
+> vivo y bloquea a los otros cuatro · (2) **estrenar los caminos** (runbook 1.4-1.8: R2, alta,
+> gestión, sello, estancia) — nunca han escrito en Firestore real · (3) **inventario** (TODO-22) ·
+> (4) **Resend** · (5) **DNS/cutover**. Aparte: **TODO-45** (deuda de auditoría, mío) y **TODO-30**
+> (mapa, lo confirma Daniel, [[L-39]]). **OLA 2**: el abogado gatea el RAIL DE PAGO, **no toda la
+> ola** — reléela antes de darla por bloqueada ([[L-40]] ya cobró 3 veces, [[M-11]]).
 >
 > ⚠️ **Antes de tocar código, lee `34-DOCTRINA-CODIGO`** (trigger 🖥️) y, si el síntoma te suena, `30`:
 > [[L-33]] (`locals.runtime.env` removido en Astro v6) YA cobró dos veces, y [[L-41]] (cabeceras
