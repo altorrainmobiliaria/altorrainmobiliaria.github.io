@@ -49,6 +49,7 @@ ni siquiera lee claims. Nada cambia de comportamiento.
 | 1.5 | 🧑 | **Estrenar el alta entera**: `/gestion` → «+ Nuevo inmueble» → rellenar, subir una foto, guardar como **borrador**. Debe salir «Guardado como INM-…». Es la primera vez que ese camino corre completo. |
 | 1.6 | 🧑 | **Estrenar GESTIÓN**: `/gestion` → **Expedientes** → abrir uno (código antiguo `ALT-AR-…` basta) → registrar una novedad → moverla a HECHO escribiendo qué se hizo. Debe rechazar el cierre si dejas vacío «Qué se hizo». Son tres Cloud Functions que nunca han corrido. |
 | 1.7 | 🧑 | **Estrenar el sello y el export**: en **Inmuebles**, «Pendientes del sello» → **Verificar** la del paso 1.5 (debe rechazarla: un borrador con una foto no se lo ha ganado) → «Exportar CSV» y abrir el archivo en Excel: acentos correctos y columnas en su sitio. |
+| 1.8 | 🧑 | **Estrenar la solicitud de estancia** (§122): en `/estancias`, elegir fechas → «Solicitar estas fechas» → nombre, WhatsApp y marcar la autorización → «Enviar solicitud». Debe (a) aparecer el lead en **Gestión → Resumen** con origen `portal-estancias`, y (b) llegarte el correo de `onNewSolicitud` con las fechas dentro. Si el correo llega SIN las fechas, el fallo está en `datosExtra.descripcion`, no en el correo. |
 
 **Verificación**: el paso 1.3 ES la verificación. Además 🤖 comprueba en los logs que
 `claimsStaffSync` corrió sin errores.
@@ -61,7 +62,11 @@ instante en que se puede comprobar, así que se comprueba aquí. Lo mismo vale p
 (1.5): su dominio tiene 268 pruebas y su pantalla se verificó en el navegador, pero **escribir en
 Firestore con un claim de verdad no ha ocurrido nunca**. Y lo mismo, por la misma razón, para las
 cuatro puertas de escritura nuevas (1.6 y 1.7): `crearExpediente`, `crearNovedad`,
-`actualizarNovedad` (§118) y el sello `marcarVerificada` (§119). El paso 1.6 pide **provocar el
+`actualizarNovedad` (§118) y el sello `marcarVerificada` (§119). El **1.8** es de otra clase: la solicitud de
+estancia SÍ se probó entera en local —los tres rechazos del servidor y la pantalla completa con la red
+simulada— pero el `create` contra `solicitudes` **no se ejecutó a propósito**: dispara el correo real de
+`onNewSolicitud`, y meter un lead falso en la bandeja de Daniel para verificar un formulario es pagar la
+prueba con su tiempo. Se estrena aquí, una vez, sabiendo lo que se hace. El paso 1.6 pide **provocar el
 rechazo** —cerrar sin escribir la resolución— porque un gate que nunca se ha visto negar algo
 tampoco está probado: es la mitad del camino que suele quedarse sin recorrer.
 
