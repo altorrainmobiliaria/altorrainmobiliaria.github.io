@@ -19,6 +19,7 @@ import { createDoc } from '../../lib/data/firestore-rest';
 import { getPublicFirebaseConfig } from '../../lib/data/client';
 import { LEGAL } from '../../lib/config/legal';
 import { ZONAS as ZONAS_LANDING } from '../../lib/content/zonas';
+import { explicarProblemaReserva, problemasDeReserva, resumenReserva } from '../../lib/domain/reserva';
 
 /** Tope de bytes del cuerpo: un lead legítimo son ~300 bytes. Corta payloads de abuso antes de parsear. */
 const MAX_BODY = 4096;
@@ -43,9 +44,20 @@ const TIPOS_INMUEBLE = ['Apartamento', 'Casa', 'Lote', 'Oficina', 'Local'];
  * `docs/43 §LEADS` se hizo mapeando cada `origen` a su formulario: si todos los leads dijeran lo
  * mismo, ese censo habría sido imposible.
  */
-const FORMULARIOS: Record<string, { origen: string; operacion: string }> = {
-  'publicar-propiedad': { origen: 'portal-publicar', operacion: 'avaluo' },
-  'rango-altorra': { origen: 'portal-rango', operacion: 'rango' },
+const FORMULARIOS: Record<string, { origen: string; operacion: string; tipoLead?: string; volverA?: string }> = {
+  'publicar-propiedad': { origen: 'portal-publicar', operacion: 'avaluo', volverA: '/publicar' },
+  'rango-altorra': { origen: 'portal-rango', operacion: 'rango', volverA: '/publicar' },
+  // §122 — `tipoLead: 'contacto_propiedad'` y no un tipo nuevo A PROPÓSITO: quien manda el correo es
+  // `onNewSolicitud`, del codebase LEGACY, que NO se puede desplegar hasta el cutover. Un tipo que no
+  // conoce cae en `typeScores[...] || 5` y en `tipoLabel[...] || tipo`: el lead valdría 5 puntos en vez
+  // de 25 y el asunto del correo diría «reserva_estancia» en crudo. `contacto_propiedad` ya existe, ya
+  // puntúa alto y ya tiene secuencia. Cuando el portal se lleve los correos, tendrá tipo propio.
+  'reserva-estancia': {
+    origen: 'portal-estancias',
+    operacion: 'alojamiento',
+    tipoLead: 'contacto_propiedad',
+    volverA: '/estancias',
+  },
 };
 const FORMULARIO_POR_DEFECTO = 'publicar-propiedad';
 
@@ -107,7 +119,25 @@ export const POST: APIRoute = async ({ request }) => {
   //     que es el comportamiento que ya existía: un valor raro no puede inventarse un origen nuevo.
   const formIn = limpiar(campos.formulario, 40);
   const formulario = FORMULARIOS[formIn] ? formIn : FORMULARIO_POR_DEFECTO;
-  const { origen, operacion } = FORMULARIOS[formulario];
+  const { origen, operacion, tipoLead, volverA } = FORMULARIOS[formulario];
+
+  // 2d) SOLICITUD DE ESTANCIA (§122). Las fechas se validan AQUÍ además de en la página: la página
+  //     avisa para no hacer perder el viaje, pero el servidor es el que decide — un POST se fabrica
+  //     desde la consola en diez segundos, y una solicitud para llegar «ayer» es una llamada
+  //     desperdiciada de alguien del equipo.
+  let estancia: { llegada: string; salida: string; huespedes: number } | null = null;
+  if (formulario === 'reserva-estancia') {
+    const cand = {
+      llegada: limpiar(campos.llegada, 10),
+      salida: limpiar(campos.salida, 10),
+      huespedes: Number(campos.huespedes),
+    };
+    const malos = problemasDeReserva(cand, new Date().toISOString().slice(0, 10));
+    if (malos.length) {
+      return json({ ok: false, reason: 'estancia', mensajes: malos.map(explicarProblemaReserva) }, 422);
+    }
+    estancia = cand;
+  }
 
   // 3) Documento. `tipo` es el tipo de LEAD (taxonomía de `onNewSolicitud`), NO el tipo de inmueble:
   //    el `<select name="tipo">` del form es el del inmueble y viaja en `datosExtra.tipoInmueble`.
@@ -118,15 +148,30 @@ export const POST: APIRoute = async ({ request }) => {
     nombre,
     telefono,
     email: '', // el mockup no pide correo — ver §88: cuesta 10 puntos de lead score
-    tipo: 'solicitud_avaluo',
+    tipo: tipoLead ?? 'solicitud_avaluo',
     origen,
     datosExtra: {
       zona,
       ciudad: zona ? `${zona}, Cartagena` : 'Cartagena',
-      tipoInmueble,
+      // El correo al admin renderiza «{tipoInmueble} en {ciudad}». Para una estancia eso tiene que
+      // leerse como lo que es, no quedarse vacío.
+      tipoInmueble: estancia ? 'Corta estancia' : tipoInmueble,
       operacion,
       precioAproximado: null,
-      descripcion: '',
+      // La descripción es lo único del correo que puede llevar las fechas: la plantilla vive en una
+      // Function del legacy que no se puede tocar hasta el cutover, así que lo que no venga escrito
+      // en el documento no aparece en el correo.
+      descripcion: estancia ? resumenReserva(estancia) : '',
+      ...(estancia
+        ? {
+            llegada: estancia.llegada,
+            salida: estancia.salida,
+            huespedes: estancia.huespedes,
+            // Se dice en el propio dato: el catálogo de estancias todavía es un EJEMPLO (TODO-22).
+            // Sin esta línea, quien atienda el lead creería que hay un alojamiento concreto reservado.
+            sobre: 'consulta general de corta estancia — sin inventario publicado todavía',
+          }
+        : {}),
     },
     // Prueba de consentimiento conservable (kit `08` §2.2 «Registro de prueba»): sin esto la
     // autorización no es demostrable ante la SIC, y una autorización que no se puede probar
@@ -157,10 +202,14 @@ export const POST: APIRoute = async ({ request }) => {
   // 4) Respuesta. Sin JS el navegador siguió un POST normal → 303 de vuelta a la página (patrón
   //    POST-Redirect-GET, así un F5 no reenvía el lead). Con JS la isla lee el JSON.
   const quiereJson = (request.headers.get('accept') || '').includes('application/json');
+  // El destino sin JS sale del formulario: antes estaba fijo a `/publicar`, así que una solicitud
+  // desde estancias habría devuelto al visitante a otra página con un «ok» sobre algo que no pidió.
+  const vuelta = volverA ?? '/publicar';
+  const ancla = vuelta === '/publicar' ? '#empezar' : '#reservar';
   if (!r.ok) {
     if (quiereJson) return json({ ok: false, reason: r.reason }, r.reason === 'denied' ? 403 : 502);
-    return Response.redirect(new URL('/publicar?error=1#empezar', request.url), 303);
+    return Response.redirect(new URL(`${vuelta}?error=1${ancla}`, request.url), 303);
   }
   if (quiereJson) return json({ ok: true }, 200);
-  return Response.redirect(new URL('/publicar?ok=1#empezar', request.url), 303);
+  return Response.redirect(new URL(`${vuelta}?ok=1${ancla}`, request.url), 303);
 };
