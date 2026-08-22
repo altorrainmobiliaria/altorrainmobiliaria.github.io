@@ -131,6 +131,27 @@ puñado de registros es sostener dos esquemas para siempre a cambio de ahorrar u
 **escribe la herramienta nueva y migra**. Y hasta que exista esa herramienta, di en voz alta que el
 sistema nuevo **no tiene forma de crear datos**: es un requisito del lanzamiento disfrazado de mejora.
 
+**7. El ESCRITOR valida llamando al LECTOR, y el test va en las dos direcciones.** El corolario del
+punto 5, del otro lado del almacén: si un formulario decide por su cuenta qué es válido, tarde o
+temprano acepta algo que el lector descarta —y el usuario se queda mirando una lista vacía sin ningún
+error—. La defensa no es «acordarse de validar igual»: es que el escritor **invoque** los predicados
+del lector en vez de reproducir sus condiciones, aunque sean cuatro líneas. Copiarlas ES el bug.
+Cuando el lector solo devuelve el PRIMER fallo (le basta para descartar) pero el formulario los
+necesita todos, extrae la lista de condiciones a una función y deja que cada uno tome lo que quiera de
+ella. Y fija el contrato con un test **bidireccional**: *lo que el escritor acepta, el lector no lo
+descarta* **y** *lo que el lector descarta, el escritor lo había avisado*. Sin la segunda mitad, la
+próxima regla que se añada al lector reabre el hueco en silencio.
+
+**8. Un solo parser «listo» para dos dominios es una bomba de relojería.** El mismo carácter significa
+cosas distintas según lo que estés leyendo: en un precio de buena parte del mundo (España, Colombia,
+Alemania…) el punto separa **miles**, y en una coordenada, un área o una versión el mismo punto es el
+**decimal**. Un parser que intente adivinar acertará casi siempre y fallará justo donde duele:
+`lat: 10.399` interpretado como miles pone el inmueble en la latitud **10399**, sin lanzar nada.
+Escribe una función por dominio —`numeroDeDinero`, `numeroDecimal`— aunque se parezcan, y nómbralas
+por lo que leen, no por lo que devuelven. Vale lo mismo para fechas (`03/04` no es el mismo día a los
+dos lados del Atlántico) y para husos horarios. **Señal de que estás en esta trampa:** te descubres
+escribiendo una heurística con «si tiene tres dígitos después del punto, entonces…».
+
 ## Cuándo NO usar
 - Edits triviales sin consecuencias de diseño (un texto, un color, un typo).
 - Tareas que no son de código (salvo que haya una decisión de sistema detrás).
