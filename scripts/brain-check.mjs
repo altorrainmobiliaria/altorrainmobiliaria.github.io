@@ -30,7 +30,7 @@
 //       (el ✅ INMERECIDO, §120) · (26) trinquete de filas gordas del índice
 //       + 7b) bóveda: commits ≠ origin vía fs [warn]
 // ===========================================================
-const KERNEL_VERSION = '1.13.0';
+const KERNEL_VERSION = '1.14.0';
 import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -86,8 +86,15 @@ const KNOWN_KEYS = new Set([
   // v1.13.0 (#29): cifras que el cerebro afirma y el kernel puede CONTAR en el repo.
   'countableFacts',
 ]);
+// v1.14.0: prefijo `x-` para la config de gates PROPIOS de un repo (como las cabeceras de
+// extensión de HTTP). Sin él había dos malas salidas: meter una clave de un solo proyecto en
+// KNOWN_KEYS —que es compartida por los cuatro repos y acabaría siendo un cajón de sastre— o
+// disfrazarla de comentario con `_`, que la hace invisible para quien lea el manifest buscando
+// qué gates hay. Con `x-` la clave se declara, se ve, y el kernel no finge conocerla.
 for (const k of Object.keys(manifest)) {
-  if (!k.startsWith('_') && !KNOWN_KEYS.has(k)) warn(`manifest: clave desconocida "${k}" (¿typo? un typo apaga gates en silencio) — schema v1.2`);
+  if (!k.startsWith('_') && !k.startsWith('x-') && !KNOWN_KEYS.has(k)) {
+    warn(`manifest: clave desconocida "${k}" (¿typo? un typo apaga gates en silencio) — schema v1.2. Si es config de un gate PROPIO de este repo, nómbrala "x-${k}".`);
+  }
 }
 // v1.9.0 (§83) — el schema vigilaba las claves de MÁS y era ciego a las de MENOS. Cada gate
 // abajo hace `if (manifest.X)`, así que BORRAR una clave no rompe nada: apaga el gate y el

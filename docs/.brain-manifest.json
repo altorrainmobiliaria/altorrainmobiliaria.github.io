@@ -215,5 +215,7 @@
       ],
       "_que": "Las del portal no estaban contadas en ningun nodo: crecieron de 4 a 9 entre ADR 113 y 118 sin que el cerebro se enterara."
     }
-  ]
+  ],
+  "x-claimsVerificados": [],
+  "_x-claimsVerificados_que": "Cifras que SI se pueden publicar porque alguien las respalda, para el gate `verify:claims` (ADR 123). Cada entrada lleva su fuente. Vacio a proposito hoy: las que habia en la home y en estancias eran inventadas y se retiraron. Declarar una cifra aqui es firmarla — si nadie quiere firmarla, no deberia estar publicada."
 }
