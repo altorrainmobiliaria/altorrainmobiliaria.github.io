@@ -93,6 +93,16 @@ alcanzable —enlazada desde un menú, indexable, compartible— dejan de ser *p
 - **Qué cuenta como fabricado**: nombres de personas, fechas, notas y conteos («4.97 · 128 reseñas»),
   sellos de verificación, años de antigüedad, tiempos de respuesta. El texto de una amenidad no; una
   cifra que se lee como medición, sí.
+- **Tres clases de cifra, tres tratamientos.** Una **medición de mercado** («+7% de valorización»)
+  sin fuente citable pasa a ser TU afirmación, y quien invierta por ella te la reclamará a ti. Un
+  **hecho comprobable** («128 verificadas») o es verdad o es falso, y el visitante puede contarlo. Un
+  **compromiso** («respondemos en 5 minutos») es verdad si lo cumples — pero etiquetarlo como
+  «promedio» lo convierte en un dato que nadie mide. Reetiquétalo como promesa: obliga, y es honesto.
+- **Ponle gate.** No prohíbas cifras: exige que cada una se declare con su fuente en un archivo que
+  el CI lee. Una cifra que nadie quiere firmar es exactamente la que no debería estar publicada.
+- **Al quitar una cifra, arregla la copia que la enmarcaba.** Un titular «Los mejor valorados» sin
+  notas detrás sigue afirmando un ranking: cablear los datos y dejar el titular cambia una mentira
+  por otra.
 - Aplica igual a `sameAs`, a `aggregateRating` en el JSON-LD y a los logos de «confían en nosotros».
   El buscador los trata como afirmaciones, y las penaliza cuando no las respalda nada.
 

@@ -206,6 +206,19 @@ permisos de borrado, aunque viva en un temporal y se ejecute una sola vez.
    descarga toca el DOM. Y `revokeObjectURL` después del clic — antes cancela la descarga; nunca, y
    el archivo queda retenido en memoria mientras la pestaña siga abierta.
 
+## Config de gates propios en utillaje COMPARTIDO: usa un prefijo, no la lista común
+
+Cuando varios repos comparten un linter/kernel con un esquema de configuración validado, la config de
+un gate que solo existe en UNO de ellos no cabe en ninguna de las dos salidas obvias: meterla en la
+lista de claves conocidas contamina a los demás (y esa lista se convierte en un cajón de sastre), y
+disfrazarla de comentario (`_clave`) la vuelve invisible para quien lea el archivo buscando qué gates
+hay.
+
+**Reserva un prefijo de extensión** —`x-`, como las cabeceras de HTTP— y haz que el validador lo
+ignore explícitamente. La clave se declara, se ve, y el validador no finge conocerla. Es la
+diferencia entre un punto de extensión y una excepción: el primero se documenta una vez, la segunda
+se negocia cada vez.
+
 ## Cuándo NO usar
 - Edits triviales sin consecuencias de diseño (un texto, un color, un typo).
 - Tareas que no son de código (salvo que haya una decisión de sistema detrás).
