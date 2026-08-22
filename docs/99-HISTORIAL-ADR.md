@@ -3599,3 +3599,45 @@ casos reales. NO se añadió un listener «para que se actualice solo».
 Y el recordatorio honesto: **nada de esto ha corrido con un claim real** — es el paso 1.5 del runbook.
 **110.8 — Doctrina**: §3.2 (`limit()`, cero listeners) · [[L-45]] (el mismo predicado en todos los
 lectores) · §31 (verificación en navegador, no solo build).
+
+---
+
+## 111. ADR — Editar un inmueble, y la red que el ruleset no pone debajo de quien salta ⟦OPUS-5⟧ (2026-08-22)
+
+Cierra el CRUD: crear (§108), ver (§110), editar. Pulsar una fila del listado abre ese inmueble en el
+MISMO formulario del alta — un segundo formulario para lo mismo serían dos sitios donde divergir.
+
+**111.1 — El control de concurrencia va en el cliente, y no por comodidad.** `versionValida()` del
+ruleset es un compare-and-set correcto (`_version == resource.data._version + 1`), pero la regla
+completa es `esSuperAdmin() || (esEditorOMas() && versionValida())`: **al super_admin no le aplica**, y
+el super_admin es exactamente quien usa este panel. Confiar en el servidor aquí sería confiar en una
+red que no está puesta debajo de quien salta. Así que se compara **dentro de la transacción** contra la
+versión que se leyó al ABRIR el formulario: si alguien guardó entretanto, se PARA sin escribir. Perder
+un formulario a medio llenar es preferible a perder los cambios de otra persona sin que nadie se
+entere. Lo cazó el recon de §106; aquí se aplica.
+
+**111.2 — Dos cosas que una edición NO puede reinventar.** El **slug se congela**: regenerarlo cada vez
+que alguien corrige una errata del título —que es justo lo que hace el panel viejo— rompe el enlace que
+ya está en Google, en WhatsApp y en el correo que alguien mandó. Y **`createdAt` es del alta**: si se
+pisara, la «frescura» del inmueble se rejuvenecería sola cada vez que se toca un precio, que es
+mentirle al visitante sobre cuánto lleva publicado.
+
+**111.3 — El detalle que un repaso pierde.** Tras guardar, el testigo de versión **avanza en memoria**.
+Sin eso, pulsar Guardar dos veces seguidas hace que el segundo intento se rechace a sí mismo creyendo
+que otro tocó el documento — un bug que solo aparece al usar el formulario de verdad.
+
+**111.4 — Verificación.** 292 tests (24 nuevos) + 80 de emulador + `build` + `verify:build` +
+`verify:data`. Lo probado a conciencia es lo que puede PERDER datos: guardar con la versión buena,
+rechazar con una versión distinta sin escribir nada, el documento que ya no existe, y el caso de borde
+de un documento sin `_version` (cuenta como 0, no como «cualquiera»). Más un ida-y-vuelta
+documento → formulario → documento que comprueba que no se pierde ningún campo por el camino.
+
+**111.5 — Anti-patterns evitados.** NO se hizo un segundo formulario para editar. NO se confió en la
+regla del servidor «porque está escrita»: está escrita para un rol que no es el que la necesita. NO se
+regeneró el slug «para que refleje el título nuevo».
+
+**111.6 — Archivos.** `domain/alta-propiedad.ts` (`construirEdicion`, `baseDe`, `entradaDe`),
+`scripts/gestion-alta.ts` (`cuerpoDeEdicion`, `guardarEdicion`), `gestion-alta-ui.ts` (modo edición),
+`gestion-inmuebles.ts` (la fila avisa por evento), `gestion.astro` (fila pulsable, con foco de teclado).
+**111.7 — Qué queda de TODO-44**: cola de verificación y export. **111.8 — Doctrina**: §3.6 (la
+defensa vive donde de verdad protege) · [[L-09]] · §106 (el recon que destapó el bypass).
