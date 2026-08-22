@@ -21,6 +21,7 @@ import { explicarProblema } from '../lib/domain/catalogo';
 import { TOPE_IMAGENES } from '../lib/media-subida';
 import { urlMedia } from '../lib/media';
 import { montarInmuebles } from './gestion-inmuebles';
+import { montarAltaContrato, montarContratos } from './gestion-contratos';
 import type { Propiedad } from '../lib/domain/propiedades';
 
 /** Lado mayor del derivado. Más allá de esto no se gana nitidez visible y sí peso. */
@@ -273,12 +274,14 @@ export function montarAlta(): void {
   let codigo = '';
 
   const vistaInmuebles = $('gx-vista-inmuebles');
+  const vistaContratos = $('gx-vista-contratos');
 
   /** Solo una vista visible a la vez. `null` = volver al panel. */
-  const ver = (cual: 'alta' | 'inmuebles' | null) => {
+  const ver = (cual: 'alta' | 'inmuebles' | 'contratos' | null) => {
     vistaPanel.hidden = cual !== null;
     vistaAlta.hidden = cual !== 'alta';
     if (vistaInmuebles) vistaInmuebles.hidden = cual !== 'inmuebles';
+    if (vistaContratos) vistaContratos.hidden = cual !== 'contratos';
     if (cual === 'alta') {
       ajustarPorOperacion();
       pintarAviso();
@@ -307,20 +310,34 @@ export function montarAlta(): void {
   }));
 
   // La sección «Inmuebles» de la barra lateral.
-  document.querySelectorAll<HTMLAnchorElement>('.gx-nav__item').forEach((a, i) => {
+  // Se enruta por el ID del item, NUNCA por su posición. El orden del menú es una decisión de diseño
+  // y puede cambiar cualquier día; atarlo a un índice hace que reordenarlo abra la pantalla
+  // equivocada sin un solo error — pasó al añadir «Contratos», que quedó 2.º y no 3.º.
+  const DESTINOS: Record<string, () => void> = {
+    resumen: () => ver(null),
+    inmuebles: () => {
+      ver('inmuebles');
+      void montarInmuebles();
+    },
+    contratos: () => {
+      ver('contratos');
+      void montarContratos();
+    },
+  };
+
+  document.querySelectorAll<HTMLAnchorElement>('.gx-nav__item').forEach((a) => {
     a.addEventListener('click', (ev) => {
       ev.preventDefault();
+      const destino = DESTINOS[a.dataset.nav ?? ''];
+      if (!destino) return; // sección aún sin construir: no se hace nada, y el menú no cambia
       document.querySelectorAll('.gx-nav__item').forEach((n) => n.classList.remove('is-on'));
       a.classList.add('is-on');
-      if (i === 1) {
-        ver('inmuebles');
-        void montarInmuebles();
-      } else if (i === 0) {
-        ver(null);
-      }
+      destino();
     });
   });
   $('gx-inm-volver')?.addEventListener('click', () => ver(null));
+  $('gx-ct-volver')?.addEventListener('click', () => ver(null));
+  montarAltaContrato();
 
   // El listado avisa; esta pantalla es la única que sabe pintar un inmueble.
   document.addEventListener('altorra:editar-inmueble', (ev) => {

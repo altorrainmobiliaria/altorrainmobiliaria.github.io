@@ -17,6 +17,9 @@ import { TIPOS_INMUEBLE } from '../lib/domain/shared';
 const nav = [
   { id: 'resumen', label: 'Resumen', active: true, icon: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>' },
   { id: 'inmuebles', label: 'Inmuebles', icon: '<path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/>' },
+  // «Contratos» sale del mockup aprobado el 2026-08-22 (`ALTORRA Gestion-Alta.dc.html`). Se AÑADE:
+  // los que ya estaban vienen del mockup anterior, también aprobado, y quitarlos no lo pidió nadie.
+  { id: 'contratos', label: 'Contratos', icon: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h4"/>' },
   { id: 'leads', label: 'Leads', icon: '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.2 2.9-5.3 6.5-5.3s6.5 2.1 6.5 5.3"/><path d="M17 5.4A3.2 3.2 0 0 1 17 11.6M22 20c0-2.4-1.5-4.2-3.7-4.9"/>' },
   { id: 'visitas', label: 'Visitas', icon: '<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>' },
   { id: 'documentos', label: 'Documentos', icon: '<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M18 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8l5 5v11a2 2 0 0 1-2 2z"/><path d="M8 13h8M8 17h5"/>' },
@@ -198,7 +201,7 @@ const init = DATA.admin;
 
       <nav class="gx-nav" aria-label="Secciones de gestión">
         {nav.map((n) => (
-          <a href="#" class={`gx-nav__item${n.active ? ' is-on' : ''}`} aria-current={n.active ? 'page' : undefined}>
+          <a href="#" class={`gx-nav__item${n.active ? ' is-on' : ''}`} data-nav={n.id} aria-current={n.active ? 'page' : undefined}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={n.icon}></svg>
             {n.label}
           </a>
@@ -336,6 +339,86 @@ const init = DATA.admin;
           </div>
         </div>
       </div>
+     </div>
+
+     <!-- ══ CONTRATOS ═══════════════════════════════════════════════════════════════════════
+          GESTIÓN v1 (§114). La AGENDA va ARRIBA y la lista debajo, a propósito: la lista contesta
+          «¿qué tengo?» y la agenda contesta «¿qué se me está pasando?», que es la pregunta que hizo
+          falta el módulo («se pierden los contratos, se olvidan fechas»).
+          El alta NO escribe Firestore: `contratos` nace con `allow write: if false` (§100) y la única
+          puerta es la callable `crearContrato`, que impone el gate del art. 16 (§113).  -->
+     <div id="gx-vista-contratos" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-ct-volver">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Contratos</h1>
+          <p class="gx-sub" id="gx-ct-resumen"></p>
+        </div>
+      </header>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Qué viene</h2></div>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--agenda">
+            <div class="gx-tr gx-tr--head"><span>Hito</span><span>Fecha</span><span>Plazo</span><span>Detalle</span></div>
+            <div id="gx-ct-agenda"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Todos los contratos</h2></div>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--ct">
+            <div class="gx-tr gx-tr--head"><span>Contrato</span><span>Tipo</span><span>Canon</span><span>Estado</span><span>Vigencia</span></div>
+            <div id="gx-ct-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-ct-form" novalidate>
+        <h2>Nuevo contrato</h2>
+        <p class="gx-psub">De las fechas de vigencia salen los avisos de renovación.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="c-expediente">Expediente</label><input class="alt-input" id="c-expediente" type="text" placeholder="EXP-202608-0001" /></div>
+          <div>
+            <label class="alt-label" for="c-tipo">Tipo</label>
+            <select class="alt-input" id="c-tipo"><option value="arriendo">Arriendo</option><option value="administracion">Administración</option></select>
+          </div>
+          <div>
+            <label class="alt-label" for="c-vertical">Vertical legal</label>
+            <select class="alt-input" id="c-vertical"><option value="vivienda">Vivienda</option><option value="comercial">Comercial</option><option value="turistico">Turístico</option></select>
+            <p class="gx-hint">En vivienda el depósito en dinero está prohibido (Ley 820, art. 16).</p>
+          </div>
+        </div>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="c-propietario">Propietario</label><input class="alt-input" id="c-propietario" type="text" placeholder="Nombre completo" /></div>
+          <div><label class="alt-label" for="c-arrendatario">Arrendatario</label><input class="alt-input" id="c-arrendatario" type="text" placeholder="Nombre completo" /></div>
+          <div>
+            <label class="alt-label" for="c-garantia">Garantía</label>
+            <select class="alt-input" id="c-garantia"><option value="">Sin definir</option><option value="poliza">Póliza</option><option value="codeudor">Codeudor</option><option value="deposito_no_vivienda">Depósito (solo comercial)</option></select>
+          </div>
+        </div>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="c-canon">Canon mensual</label><input class="alt-input" id="c-canon" type="text" inputmode="numeric" placeholder="$ 2.500.000" /></div>
+          <div><label class="alt-label" for="c-diaPago">Día de pago</label><input class="alt-input" id="c-diaPago" type="text" inputmode="numeric" placeholder="5" /><p class="gx-hint">Entre 1 y 28, para que exista en febrero.</p></div>
+          <div><label class="alt-label" for="c-honorarios">Honorarios %</label><input class="alt-input" id="c-honorarios" type="text" inputmode="numeric" placeholder="10" /></div>
+        </div>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="c-inicio">Inicio</label><input class="alt-input" id="c-inicio" type="date" /></div>
+          <div><label class="alt-label" for="c-fin">Fin</label><input class="alt-input" id="c-fin" type="date" /></div>
+          <div class="gx-celda-nota">
+            <div>
+              <label class="gx-check"><input type="checkbox" id="c-renovacion" checked /> Renovación automática</label>
+              <label class="gx-check"><input type="checkbox" id="c-ipc" /> Incremento anual (IPC)</label>
+            </div>
+          </div>
+        </div>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-ct-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-ct-guardar">Guardar contrato</button>
+        </div>
+      </form>
      </div>
 
      <!-- ══ NUEVO INMUEBLE ═══════════════════════════════════════════════════════════════════
@@ -644,6 +727,16 @@ const init = DATA.admin;
 </style>
 
 <style>
+  /* ══ CONTRATOS (§114) ════════════════════════════════════════════════════════════════════ */
+  .gx-table__inner--agenda .gx-tr { grid-template-columns: 2fr 1fr 1fr 2.4fr; }
+  .gx-table__inner--ct .gx-tr { grid-template-columns: 2fr 1fr 1.2fr 1fr 1.6fr; }
+  .gx-check { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--alt-text); margin-bottom: 8px; }
+  .gx-check input { accent-color: var(--alt-surface-ink); }
+  /* El aviso del formulario ocupa el hueco del pie y solo aparece cuando tiene algo que decir. */
+  .gx-aviso--form { flex: 1 1 280px; margin: 0; font-size: 13px; }
+  .gx-aviso--form:empty { display: none; }
+  .gx-aviso--form ul { margin: 0; padding-left: 18px; color: var(--alt-text-soft); line-height: 1.6; }
+
   /* ══ LISTADO DE INMUEBLES (§110) ═════════════════════════════════════════════════════════ */
   .gx-table__inner--inm .gx-tr { grid-template-columns: 2.2fr 1fr 1.4fr 1.1fr 1fr; }
   .gx-cod {
