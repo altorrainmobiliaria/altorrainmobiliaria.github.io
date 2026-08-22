@@ -168,6 +168,11 @@ accesibilidad. La pregunta útil no es «¿pasa el build?» sino **«¿qué NO c
 Un script de mantenimiento que edita ficheros del propio proyecto es código de producción con
 permisos de borrado, aunque viva en un temporal y se ejecute una sola vez.
 
+0. **Esto vale para CUALQUIER forma de reescribir un archivo** — script, one-liner de terminal, comando
+   suelto. La primera redacción de esta regla decía «en un script» y su autor la incumplió una hora
+   después en un `python -c` de una línea, porque un one-liner no le pareció un script. **Una regla con
+   un “salvo los casos pequeños” implícito se rompe justo en los pequeños**, que son los que se escriben
+   sin pensar.
 1. **LEE A UNA VARIABLE ANTES DE ABRIR EN ESCRITURA.** En muchos lenguajes el receptor de la llamada
    se evalúa antes que sus argumentos, así que `open(p,'w').write(open(p).read() + X)` **trunca el
    archivo** y luego lee el vacío: queda un fichero con solo `X`. No lanza excepción y el script
