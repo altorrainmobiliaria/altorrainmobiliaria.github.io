@@ -655,6 +655,10 @@ const init = DATA.admin;
   }
   /* «No se ve» en ORO: en esta paleta el oro es lo que pide atención, y el rojo no existe. */
   .gx-vis__no { color: var(--alt-link); font-weight: var(--alt-fw-semibold); font-size: 13px; cursor: help; }
+  /* La fila entera abre el inmueble a editar. Con foco visible: se puede recorrer con el teclado. */
+  .gx-tr--click { cursor: pointer; transition: background var(--alt-dur-fast) var(--alt-ease); }
+  .gx-tr--click:hover { background: var(--alt-mist); }
+  .gx-tr--click:focus-visible { outline: 2px solid var(--alt-gold); outline-offset: -2px; }
 
   /* ══ PANTALLA «NUEVO INMUEBLE» (§108) ══════════════════════════════════════════════════════
      Todo sale de `tokens.css`. Ni un color suelto: la paleta es navy / dorado / plata / blanco, y

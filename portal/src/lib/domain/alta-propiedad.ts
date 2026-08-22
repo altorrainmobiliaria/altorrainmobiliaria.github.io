@@ -363,6 +363,91 @@ export function revisarAlta(entrada: EntradaAlta, ahora: Date): RevisionAlta {
   return { errores: [], problemas, seVeria: problemas.length === 0 };
 }
 
+/**
+ * Lo que un inmueble YA TIENE y una edición no puede reinventar. Se captura al ABRIR el formulario.
+ */
+export interface BaseEdicion {
+  id: string;
+  /** CONGELADO. Regenerarlo cambiaría la URL pública de un inmueble ya indexado. */
+  slug: string;
+  createdAt: string;
+  /** El `_version` que se leyó al abrir. Es el testigo del control de concurrencia. */
+  version: number;
+}
+
+/**
+ * Formulario → documento ACTUALIZADO.
+ *
+ * Reutiliza toda la validación del alta y luego impone lo que no le toca decidir a una edición:
+ *
+ * · **El `slug` NO se regenera.** Es la URL pública. Recalcularlo cada vez que alguien corrige una
+ *   errata del título —que es justo lo que hace el panel viejo— rompe el enlace que ya está en Google,
+ *   en WhatsApp y en el correo que alguien mandó. Se congela al crear y se queda.
+ * · **`createdAt` es del alta**, no de la última edición. Si se pisara, la «frescura» del inmueble se
+ *   rejuvenecería sola cada vez que se toca un precio.
+ * · **`_version` sube exactamente uno**, que es lo que espera la regla `versionValida()` del ruleset.
+ */
+export function construirEdicion(entrada: EntradaAlta, base: BaseEdicion, ahora: Date): ResultadoAlta {
+  const r = construirPropiedad(entrada, { codigo: base.id, ahora });
+  if (!r.ok) return r;
+  return {
+    ok: true,
+    propiedad: {
+      ...r.propiedad,
+      slug: base.slug || r.propiedad.slug,
+      createdAt: base.createdAt || r.propiedad.createdAt,
+      _version: base.version + 1,
+    },
+  };
+}
+
+/** Lo que se guarda al abrir el formulario para poder editar sin inventar nada. */
+export function baseDe(p: Propiedad): BaseEdicion {
+  return {
+    id: p.id,
+    slug: p.slug ?? '',
+    createdAt: p.createdAt,
+    version: typeof p._version === 'number' ? p._version : 0,
+  };
+}
+
+/**
+ * Documento existente → valores del formulario. El camino inverso de `construirPropiedad`.
+ *
+ * Los números se devuelven como TEXTO, que es lo que un `<input>` sabe recibir, y un campo ausente
+ * vuelve como cadena vacía en vez de «undefined»: el formulario no debe enseñar la palabra undefined
+ * jamás, y un 0 escrito ahí sería inventarse un dato que nadie puso.
+ */
+export function entradaDe(p: Propiedad): EntradaAlta {
+  const n = (v: number | undefined) => (v == null ? '' : String(v));
+  return {
+    operacion: p.operacion ?? '',
+    tipo: p.tipo ?? '',
+    vertical: p.vertical ?? '',
+    estado: p.estado ?? '',
+    titulo: p.titulo ?? '',
+    descripcion: p.descripcion ?? '',
+    ciudad: p.geo?.ciudad ?? '',
+    zona: p.geo?.zona ?? '',
+    barrio: p.geo?.barrio ?? '',
+    lat: n(p.geo?.lat),
+    lng: n(p.geo?.lng),
+    rnt: p.rnt ?? '',
+    valorVenta: n(p.precio?.valorVenta),
+    canon: n(p.precio?.canon),
+    administracion: n(p.precio?.administracion),
+    precioNoche: n(p.precio?.precioNoche),
+    habitaciones: n(p.specs?.habitaciones),
+    banos: n(p.specs?.banos),
+    areaConstruidaM2: n(p.specs?.areaConstruidaM2),
+    estrato: n(p.specs?.estrato),
+    parqueaderos: n(p.specs?.parqueaderos),
+    piso: n(p.specs?.piso),
+    imagenes: [...(p.imagenes ?? [])],
+    amenidades: { ...(p.amenidades ?? {}) },
+  };
+}
+
 /** El precio depende de la operación, y solo se guarda el campo que le corresponde. */
 function precioDeEntrada(
   operacion: Operacion,

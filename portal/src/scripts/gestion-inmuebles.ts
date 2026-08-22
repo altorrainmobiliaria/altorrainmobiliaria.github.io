@@ -24,6 +24,14 @@ import type { Propiedad } from '../lib/domain/propiedades';
 /** Tope de la consulta. `limit()` es OBLIGATORIO: una query sin él es una cuota abierta. */
 const TOPE = 50;
 
+/**
+ * Los documentos tal cual se leyeron, para poder abrirlos a editar sin volver a Firestore.
+ *
+ * Se guardan CRUDOS y no las filas ya formateadas: el formulario necesita el documento, y reconstruir
+ * un documento desde su presentación es cómo se pierden los campos que la tabla no enseña.
+ */
+const cargados = new Map<string, Propiedad>();
+
 export interface FilaInmueble {
   id: string;
   titulo: string;
@@ -94,8 +102,24 @@ function celda(texto: string, clase = ''): HTMLElement {
 
 function pintarFila(f: FilaInmueble): HTMLElement {
   const fila = document.createElement('div');
-  fila.className = 'gx-tr';
+  fila.className = 'gx-tr gx-tr--click';
   fila.dataset.inmId = f.id;
+  fila.tabIndex = 0;
+  fila.setAttribute('role', 'button');
+  fila.setAttribute('aria-label', `Editar ${f.titulo}`);
+  // Se AVISA en vez de editar en el sitio: el evento lo escucha la pantalla del alta, que es la única
+  // que sabe pintar un inmueble. Dos formularios para lo mismo serían dos sitios donde divergir.
+  const abrir = () => {
+    const p = cargados.get(f.id);
+    if (p) document.dispatchEvent(new CustomEvent('altorra:editar-inmueble', { detail: p }));
+  };
+  fila.addEventListener('click', abrir);
+  fila.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      abrir();
+    }
+  });
 
   const idc = document.createElement('div');
   idc.className = 'gx-cli';
@@ -157,7 +181,12 @@ export async function montarInmuebles(): Promise<void> {
       return;
     }
 
-    const filas = snap.docs.map((d) => filaInmueble({ ...(d.data() as object), id: d.id } as Propiedad));
+    cargados.clear();
+    const filas = snap.docs.map((d) => {
+      const p = { ...(d.data() as object), id: d.id } as Propiedad;
+      cargados.set(p.id, p);
+      return filaInmueble(p);
+    });
     cuerpo.replaceChildren(...filas.map(pintarFila));
 
     if (resumen) {

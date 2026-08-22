@@ -21,8 +21,8 @@
  */
 
 import { cargarAuth } from './auth';
-import { construirPropiedad, claveContador, codigoPropiedad, TOPE_SECUENCIA } from '../lib/domain/alta-propiedad';
-import type { ContextoAlta, EntradaAlta, ErrorCampo } from '../lib/domain/alta-propiedad';
+import { construirEdicion, construirPropiedad, claveContador, codigoPropiedad, TOPE_SECUENCIA } from '../lib/domain/alta-propiedad';
+import type { BaseEdicion, ContextoAlta, EntradaAlta, ErrorCampo } from '../lib/domain/alta-propiedad';
 import type { Propiedad } from '../lib/domain/propiedades';
 
 /** Doc de contadores atómicos (`config/counters`), contrato de `domain/config.ts`. */
@@ -32,6 +32,8 @@ export type FalloAlta =
   | { tipo: 'validacion'; errores: ErrorCampo[] }
   | { tipo: 'secuencia-agotada' }
   | { tipo: 'id-ocupado'; codigo: string }
+  | { tipo: 'no-existe'; codigo: string }
+  | { tipo: 'cambio-de-otro'; codigo: string }
   | { tipo: 'permiso' }
   | { tipo: 'red'; detalle: string };
 
@@ -202,6 +204,53 @@ export function guardarPropiedadNueva(
   );
 }
 
+/**
+ * El CUERPO de la EDICIÓN. El control de concurrencia va AQUÍ, no en las Rules.
+ *
+ * `versionValida()` del ruleset es un compare-and-set de verdad —`_version == resource._version + 1`—
+ * pero la regla completa es `esSuperAdmin() || (esEditorOMas() && versionValida())`, o sea que **al
+ * super_admin no le aplica**, y el super_admin es justo quien usa este panel. Confiar en el servidor
+ * aquí sería confiar en una red que no está puesta debajo de quien salta.
+ *
+ * Así que se compara dentro de la transacción contra la versión que se leyó al ABRIR el formulario. Si
+ * alguien guardó mientras tanto, se PARA: es preferible perder un formulario a perder los cambios de
+ * otra persona sin que nadie se entere.
+ */
+export async function cuerpoDeEdicion(
+  tx: TxAlta,
+  refs: RefsAlta,
+  entrada: EntradaAlta,
+  base: BaseEdicion,
+  ahora: Date,
+): Promise<ResultadoGuardado> {
+  const construida = construirEdicion(entrada, base, ahora);
+  if (!construida.ok) return { ok: false, fallo: { tipo: 'validacion', errores: construida.errores } };
+
+  const snap = await tx.get(refs.propiedad(base.id));
+  if (!snap.exists()) return { ok: false, fallo: { tipo: 'no-existe', codigo: base.id } };
+
+  const actual = snap.data()?._version;
+  const vive = typeof actual === 'number' ? actual : 0;
+  if (vive !== base.version) {
+    return { ok: false, fallo: { tipo: 'cambio-de-otro', codigo: base.id } };
+  }
+
+  tx.set(refs.propiedad(base.id), construida.propiedad);
+  return { ok: true, propiedad: construida.propiedad };
+}
+
+/** Guarda los cambios de un inmueble existente. */
+export function guardarEdicion(
+  entrada: EntradaAlta,
+  base: BaseEdicion,
+  ahora: Date = new Date(),
+): Promise<ResultadoGuardado> {
+  return enTransaccion(
+    (tx, refs) => cuerpoDeEdicion(tx, refs, entrada, base, ahora),
+    (fallo) => ({ ok: false, fallo }) as ResultadoGuardado,
+  );
+}
+
 /** El fallo, dicho para quien está delante del formulario. */
 export function explicarFallo(f: FalloAlta): string {
   switch (f.tipo) {
@@ -211,6 +260,10 @@ export function explicarFallo(f: FalloAlta): string {
       return `Se agotaron los ${TOPE_SECUENCIA} códigos de este mes. Avísale a quien lleve el sistema.`;
     case 'id-ocupado':
       return `El código ${f.codigo} ya está ocupado. El contador se desincronizó: no se guardó nada, avisa antes de reintentar.`;
+    case 'no-existe':
+      return `El inmueble ${f.codigo} ya no existe. Puede que lo hayan borrado mientras lo editabas.`;
+    case 'cambio-de-otro':
+      return `Alguien guardó cambios en ${f.codigo} mientras lo tenías abierto. NO se guardó nada, para no pisar su trabajo: vuelve a abrirlo y aplica lo tuyo sobre lo suyo.`;
     case 'permiso':
       return 'Tu sesión no tiene permiso para crear inmuebles. Cierra sesión y vuelve a entrar; si sigue igual, pide que te lo asignen.';
     case 'red':

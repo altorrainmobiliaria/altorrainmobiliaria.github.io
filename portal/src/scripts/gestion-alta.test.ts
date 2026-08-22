@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   cuerpoDeAcunar,
   cuerpoDeAlta,
+  cuerpoDeEdicion,
   explicarFallo,
   siguienteSecuencia,
   type RefsAlta,
@@ -178,5 +179,70 @@ describe('explicarFallo — cada fallo dice qué hacer, no solo qué pasó', () 
       expect(explicarFallo(f).length).toBeGreaterThan(15);
       expect(explicarFallo(f)).not.toContain('undefined');
     }
+  });
+});
+
+describe('🎯 cuerpoDeEdicion — el control de concurrencia que las Rules NO ponen (§111)', () => {
+  const ID = 'INM-202607-0042';
+  const base = { id: ID, slug: 'casa-manga-inm-202607-0042', createdAt: '2026-07-15T08:00:00.000Z', version: 6 };
+
+  /** `tx` falsa con un documento existente y su `_version`. */
+  function txConDoc(version: number | undefined, existe = true) {
+    const escrituras: Array<{ ref: string; datos: unknown; merge: boolean }> = [];
+    const refs: RefsAlta = { contadores: 'config/counters', propiedad: (c) => `propiedades/${c}` };
+    const tx: TxAlta = {
+      async get() {
+        return { exists: () => existe, data: () => (existe ? { _version: version } : undefined) };
+      },
+      set(ref, datos, op) {
+        escrituras.push({ ref: String(ref), datos, merge: !!op?.merge });
+      },
+    };
+    return { tx, refs, escrituras };
+  }
+
+  it('guarda cuando la versión de la base es la que se leyó al abrir', async () => {
+    const { tx, refs, escrituras } = txConDoc(6);
+    const r = await cuerpoDeEdicion(tx, refs, entrada(), base, AHORA);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.propiedad._version).toBe(7);
+    expect(escrituras).toHaveLength(1);
+  });
+
+  it('🔴 si OTRO guardó mientras tanto NO escribe nada — no se pisa su trabajo', async () => {
+    // Esta es la red que el ruleset no pone debajo del super_admin, que es quien usa el panel:
+    // `versionValida()` solo se evalúa en la rama `esEditorOMas()`.
+    const { tx, refs, escrituras } = txConDoc(9);
+    const r = await cuerpoDeEdicion(tx, refs, entrada(), base, AHORA);
+    expect(r).toEqual({ ok: false, fallo: { tipo: 'cambio-de-otro', codigo: ID } });
+    expect(escrituras).toEqual([]);
+  });
+
+  it('si el documento ya no existe, lo dice en vez de recrearlo', async () => {
+    const { tx, refs, escrituras } = txConDoc(undefined, false);
+    const r = await cuerpoDeEdicion(tx, refs, entrada(), base, AHORA);
+    expect(r).toEqual({ ok: false, fallo: { tipo: 'no-existe', codigo: ID } });
+    expect(escrituras).toEqual([]);
+  });
+
+  it('un documento sin `_version` cuenta como 0, no como «cualquiera»', async () => {
+    const { tx, refs } = txConDoc(undefined);
+    const desdeCero = { ...base, version: 0 };
+    expect((await cuerpoDeEdicion(tx, refs, entrada(), desdeCero, AHORA)).ok).toBe(true);
+    expect((await cuerpoDeEdicion(tx, refs, entrada(), base, AHORA)).ok).toBe(false);
+  });
+
+  it('una entrada inválida no llega ni a leer el documento', async () => {
+    const { tx, refs, escrituras } = txConDoc(6);
+    const r = await cuerpoDeEdicion(tx, refs, entrada({ titulo: '', imagenes: [] }), base, AHORA);
+    expect(r.ok === false && r.fallo.tipo).toBe('validacion');
+    expect(escrituras).toEqual([]);
+  });
+
+  it('los dos fallos nuevos explican qué hacer y que NO se guardó nada', () => {
+    expect(explicarFallo({ tipo: 'cambio-de-otro', codigo: ID })).toMatch(/no se guardó|no se guardo/i);
+    expect(explicarFallo({ tipo: 'cambio-de-otro', codigo: ID })).toContain(ID);
+    expect(explicarFallo({ tipo: 'no-existe', codigo: ID })).toContain(ID);
   });
 });

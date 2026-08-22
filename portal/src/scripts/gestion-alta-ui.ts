@@ -15,12 +15,13 @@
  */
 
 import { cargarAuth } from './auth';
-import { acunarCodigo, guardarPropiedadNueva, explicarFallo } from './gestion-alta';
-import { revisarAlta, type EntradaAlta } from '../lib/domain/alta-propiedad';
+import { acunarCodigo, guardarEdicion, guardarPropiedadNueva, explicarFallo } from './gestion-alta';
+import { baseDe, entradaDe, revisarAlta, type BaseEdicion, type EntradaAlta } from '../lib/domain/alta-propiedad';
 import { explicarProblema } from '../lib/domain/catalogo';
 import { TOPE_IMAGENES } from '../lib/media-subida';
 import { urlMedia } from '../lib/media';
 import { montarInmuebles } from './gestion-inmuebles';
+import type { Propiedad } from '../lib/domain/propiedades';
 
 /** Lado mayor del derivado. Más allá de esto no se gana nitidez visible y sí peso. */
 const LADO_MAX = 1600;
@@ -38,6 +39,12 @@ interface FotoEnCurso {
 const fotos: FotoEnCurso[] = [];
 const amenidades = new Set<string>();
 
+/**
+ * `null` = alta nueva. Con valor = se está EDITANDO ese inmueble, y `version` es el testigo que se
+ * leyó al abrirlo: si al guardar la de la base es otra, alguien tocó el documento entretanto.
+ */
+let edicion: BaseEdicion | null = null;
+
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T | null;
 const val = (id: string) => ($(id) as HTMLInputElement | null)?.value ?? '';
 
@@ -53,6 +60,40 @@ function leerEntrada(): EntradaAlta {
   e.imagenes = fotos.filter((f) => f.estado === 'lista').map((f) => f.clave);
   e.amenidades = Object.fromEntries([...amenidades].map((a) => [a, true]));
   return e;
+}
+
+/** Vuelca una entrada en los campos. El camino inverso de `leerEntrada`. */
+function escribirEntrada(e: EntradaAlta): void {
+  for (const [k, v] of Object.entries(e)) {
+    if (k === 'imagenes' || k === 'amenidades') continue;
+    const campo = $(`a-${k}`) as HTMLInputElement | null;
+    if (campo) campo.value = v == null ? '' : String(v);
+  }
+  const radio = document.querySelector<HTMLInputElement>(`input[name="estado"][value="${e.estado}"]`);
+  if (radio) radio.checked = true;
+  document.querySelectorAll('.gx-estado').forEach((l) => {
+    l.classList.toggle('is-on', !!l.querySelector<HTMLInputElement>('input')?.checked);
+  });
+
+  fotos.length = 0;
+  for (const clave of e.imagenes ?? []) fotos.push({ clave, previa: '', estado: 'lista' });
+
+  amenidades.clear();
+  for (const [a, puesta] of Object.entries(e.amenidades ?? {})) if (puesta) amenidades.add(a);
+  document.querySelectorAll<HTMLButtonElement>('.gx-chip').forEach((b) => {
+    b.setAttribute('aria-pressed', String(amenidades.has(b.dataset.amenidad ?? '')));
+  });
+}
+
+/** Deja el formulario como recién abierto. Sin esto, un alta después de una edición hereda sus fotos. */
+function limpiarFormulario(): void {
+  escribirEntrada({
+    operacion: 'venta', tipo: 'apartamento', vertical: '', estado: 'borrador', titulo: '',
+    descripcion: '', ciudad: 'Cartagena de Indias', barrio: '', imagenes: [], amenidades: {},
+  } as EntradaAlta);
+  const msg = $('gx-alta-msg');
+  if (msg) msg.textContent = '';
+  limpiarErrores();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -204,6 +245,16 @@ function ajustarPorOperacion(): void {
   });
 }
 
+/** Encabezado y botón, que cambian según se esté creando o editando. */
+function tituloPantalla(titulo: string, sub: string, boton: string): void {
+  const h = document.querySelector<HTMLElement>('#gx-vista-alta .gx-greet');
+  const p = document.querySelector<HTMLElement>('#gx-vista-alta .gx-sub');
+  const b = $('gx-alta-guardar');
+  if (h) h.textContent = titulo;
+  if (p) p.textContent = sub;
+  if (b) b.textContent = boton;
+}
+
 export function montarAlta(): void {
   const vistaPanel = $('gx-vista-panel');
   const vistaAlta = $('gx-vista-alta');
@@ -237,7 +288,11 @@ export function montarAlta(): void {
 
   // Los DOS botones «+ Nuevo inmueble» (el del panel y el del listado) abren lo mismo.
   document.querySelectorAll('.gx-new').forEach((b) => b.addEventListener('click', async () => {
+    edicion = null;
+    limpiarFormulario();
+    tituloPantalla('Nuevo inmueble', 'Se guarda como borrador. Solo sale al portal cuando lo pongas en «Disponible».', 'Guardar inmueble');
     ver('alta');
+    pintarAviso();
     if (codigo) return;
     const msg = $('gx-alta-msg');
     const r = await acunarCodigo();
@@ -266,6 +321,20 @@ export function montarAlta(): void {
     });
   });
   $('gx-inm-volver')?.addEventListener('click', () => ver(null));
+
+  // El listado avisa; esta pantalla es la única que sabe pintar un inmueble.
+  document.addEventListener('altorra:editar-inmueble', (ev) => {
+    const p = (ev as CustomEvent<Propiedad>).detail;
+    if (!p) return;
+    edicion = baseDe(p);
+    codigo = p.id; // las fotos nuevas van a la carpeta del inmueble, no a una provisional
+    escribirEntrada(entradaDe(p));
+    limpiarErrores();
+    tituloPantalla(p.titulo || p.id, `Editando ${p.id}. El enlace público no cambia aunque cambies el título.`, 'Guardar cambios');
+    ver('alta');
+    ajustarPorOperacion();
+    pintarAviso();
+  });
   $('gx-alta-volver')?.addEventListener('click', () => ver(null));
   $('gx-alta-cancelar')?.addEventListener('click', () => ver(null));
 
@@ -341,14 +410,19 @@ export function montarAlta(): void {
       btn.textContent = 'Guardando…';
     }
 
-    const r = await guardarPropiedadNueva(leerEntrada(), codigo);
+    const r = edicion
+      ? await guardarEdicion(leerEntrada(), edicion)
+      : await guardarPropiedadNueva(leerEntrada(), codigo);
 
     if (btn) {
       btn.disabled = false;
-      btn.textContent = 'Guardar inmueble';
+      btn.textContent = edicion ? 'Guardar cambios' : 'Guardar inmueble';
     }
     if (r.ok) {
-      if (msg) msg.textContent = `Guardado como ${r.propiedad.id}.`;
+      if (msg) msg.textContent = edicion ? `Cambios guardados en ${r.propiedad.id}.` : `Guardado como ${r.propiedad.id}.`;
+      // El testigo AVANZA tras guardar: si no, un segundo guardado seguido se rechazaría a sí mismo
+      // creyendo que otro tocó el documento.
+      if (edicion) edicion = { ...edicion, version: r.propiedad._version };
       return;
     }
     if (r.fallo.tipo === 'validacion') pintarErrores(r.fallo.errores);

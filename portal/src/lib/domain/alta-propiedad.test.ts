@@ -4,7 +4,10 @@ import {
   claveContador,
   CODIGO_PROVISIONAL,
   codigoPropiedad,
+  construirEdicion,
   construirPropiedad,
+  baseDe,
+  entradaDe,
   revisarAlta,
   slugPropiedad,
   TOPE_SECUENCIA,
@@ -313,5 +316,67 @@ describe('revisarAlta — el aviso de «¿se vería?» mientras se escribe', () 
     // Es un código con forma válida para poder evaluar, pero imposible como fecha: mes 00, año 0000.
     expect(CODIGO_PROVISIONAL).toBe('INM-000000-0000');
     expect(claveContador(AHORA)).not.toBe('INM-000000');
+  });
+});
+
+describe('construirEdicion — lo que una edición NO puede reinventar (§111)', () => {
+  const BASE = { id: 'INM-202607-0042', slug: 'casa-manga-inm-202607-0042', createdAt: '2026-07-15T08:00:00.000Z', version: 6 };
+  const editar = (over: Partial<EntradaAlta> = {}) =>
+    construirEdicion(entrada({ imagenes: ['props/INM-202607-0042/1.webp'], ...over }), BASE, AHORA);
+
+  it('🎯 el SLUG se congela aunque cambie el título: es la URL pública', () => {
+    // Regenerarlo cada vez que se corrige una errata —lo que hace el panel viejo— rompe el enlace que
+    // ya está en Google, en WhatsApp y en el correo que alguien mandó.
+    const r = editar({ titulo: 'Título completamente distinto' });
+    expect(r.ok && r.propiedad.slug).toBe('casa-manga-inm-202607-0042');
+    expect(r.ok && r.propiedad.titulo).toBe('Título completamente distinto');
+  });
+
+  it('`createdAt` es del ALTA, no de la edición', () => {
+    // Si se pisara, la «frescura» del inmueble se rejuvenecería sola al tocar un precio.
+    const r = editar();
+    expect(r.ok && r.propiedad.createdAt).toBe('2026-07-15T08:00:00.000Z');
+    expect(r.ok && r.propiedad.updatedAt).toBe(AHORA.toISOString());
+  });
+
+  it('`_version` sube exactamente uno, que es lo que espera la regla', () => {
+    expect(editar().ok && (editar() as { propiedad: { _version: number } }).propiedad._version).toBe(7);
+  });
+
+  it('conserva el id y sigue validando como el alta', () => {
+    const r = editar();
+    expect(r.ok && r.propiedad.id).toBe('INM-202607-0042');
+    expect(construirEdicion(entrada({ titulo: '', imagenes: [] }), BASE, AHORA).ok).toBe(false);
+  });
+});
+
+describe('entradaDe / baseDe — el camino de vuelta', () => {
+  it('ida y vuelta: documento → formulario → documento no pierde nada', () => {
+    const original = construir({ estado: 'disponible', habitaciones: '3', banos: '2', lat: '10.4', lng: '-75.55' });
+    expect(original.ok).toBe(true);
+    if (!original.ok) return;
+    const vuelta = construirEdicion(entradaDe(original.propiedad), baseDe(original.propiedad), AHORA);
+    expect(vuelta.ok).toBe(true);
+    if (!vuelta.ok) return;
+    expect(vuelta.propiedad.geo).toEqual(original.propiedad.geo);
+    expect(vuelta.propiedad.specs).toEqual(original.propiedad.specs);
+    expect(vuelta.propiedad.precio).toEqual(original.propiedad.precio);
+    expect(vuelta.propiedad.imagenes).toEqual(original.propiedad.imagenes);
+    expect(vuelta.propiedad.slug).toBe(original.propiedad.slug);
+  });
+
+  it('un campo ausente vuelve como cadena vacía, nunca como «undefined»', () => {
+    const r = construir({ habitaciones: '', estrato: '' });
+    if (!r.ok) return;
+    const e = entradaDe(r.propiedad);
+    expect(e.habitaciones).toBe('');
+    expect(e.estrato).toBe('');
+    expect(JSON.stringify(e)).not.toContain('undefined');
+  });
+
+  it('baseDe captura el testigo de concurrencia', () => {
+    const r = construir();
+    if (!r.ok) return;
+    expect(baseDe(r.propiedad).version).toBe(1);
   });
 });
