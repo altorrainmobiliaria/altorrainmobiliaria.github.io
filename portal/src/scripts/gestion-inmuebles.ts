@@ -129,7 +129,10 @@ function pintarFila(f: FilaInmueble): HTMLElement {
   const tit = document.createElement('span');
   tit.className = 'gx-cli__name';
   tit.textContent = f.titulo;
-  idc.append(cod, tit);
+  // `appendChild` y no `append`: los tipos de Workers fusionan `Element.append(string)` del
+  // HTMLRewriter con el del DOM y matan la sobrecarga con nodos ([[L-36]]).
+  idc.appendChild(cod);
+  idc.appendChild(tit);
 
   const estado = document.createElement('span');
   const pill = document.createElement('span');
@@ -149,7 +152,9 @@ function pintarFila(f: FilaInmueble): HTMLElement {
     vis.title = f.motivos.join(' · ');
   }
 
-  fila.append(idc, celda(f.operacion, 'gx-muted'), celda(f.ubicacion, 'gx-muted gx-ell'), estado, vis);
+  for (const n of [idc, celda(f.operacion, 'gx-muted'), celda(f.ubicacion, 'gx-muted gx-ell'), estado, vis]) {
+    fila.appendChild(n);
+  }
   return fila;
 }
 

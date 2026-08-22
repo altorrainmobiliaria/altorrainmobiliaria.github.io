@@ -6,6 +6,7 @@ import {
   explicarFallo,
   siguienteSecuencia,
   type RefsAlta,
+  type FalloAlta,
   type TxAlta,
 } from './gestion-alta';
 import type { EntradaAlta } from '../lib/domain/alta-propiedad';
@@ -168,13 +169,13 @@ describe('explicarFallo — cada fallo dice qué hacer, no solo qué pasó', () 
   });
 
   it('ninguno sale vacío ni con undefined', () => {
-    const todos = [
+    const todos: FalloAlta[] = [
       { tipo: 'validacion', errores: [] },
       { tipo: 'secuencia-agotada' },
       { tipo: 'id-ocupado', codigo: 'X' },
       { tipo: 'permiso' },
       { tipo: 'red', detalle: 'x' },
-    ] as const;
+    ];
     for (const f of todos) {
       expect(explicarFallo(f).length).toBeGreaterThan(15);
       expect(explicarFallo(f)).not.toContain('undefined');

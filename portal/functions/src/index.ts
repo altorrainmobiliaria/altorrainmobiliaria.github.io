@@ -20,6 +20,11 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { DOC_CONTROL, lineasReporte, rebuildCatalogo } from './catalogo-rebuild';
 import { correrDigest, lineasDigest } from './alertas-digest';
 
+// Escrituras de GESTION: la UNICA puerta a `contratos` (y pronto expedientes/pagos/novedades),
+// que nacen con `allow write: if false` por decision de §100. Re-exportado para que quede
+// registrado como Function del codebase `portal`.
+export { crearContrato } from './gestion-escritura';
+
 /**
  * Clave de la API de Resend. Es un SECRETO gestionado (Secret Manager), nunca una variable de entorno
  * en claro: una clave de envío filtrada permite mandar correo firmado con nuestro dominio.

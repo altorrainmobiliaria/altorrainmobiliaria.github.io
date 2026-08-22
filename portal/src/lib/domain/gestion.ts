@@ -102,3 +102,85 @@ export interface Novedad extends Versioned, Auditable {
   slaVencimiento?: ISODate; // PQRS ≤ 48h
   resolucion?: string;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INVARIANTES DEL CONTRATO (§113) — el modelo es el dueño de lo que lo hace válido
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type ProblemaContrato =
+  | 'sin-expediente'
+  | 'sin-partes'
+  | 'sin-vigencia'
+  | 'vigencia-invertida'
+  | 'sin-canon'
+  | 'dia-pago-invalido'
+  | 'honorarios-invalidos'
+  | 'deposito-en-vivienda';
+
+/**
+ * ¿Qué le impide a este contrato ser válido?
+ *
+ * Vive en el MODELO y no en la Cloud Function que lo va a usar, por la razón de siempre en este
+ * proyecto: la validación tiene que poder correrse también en el formulario, y dos copias de una regla
+ * divergen ([[L-45]]). La Function es quien la IMPONE —es la única que puede, porque estas colecciones
+ * nacen con `allow write: if false`— pero la regla es del modelo.
+ *
+ * 🔴 EL GATE QUE NO ES DE DATOS: **en vivienda urbana el depósito en dinero está PROHIBIDO** (art. 16
+ * de la Ley 820, y arts. 15 y 18 lo cierran para las formas indirectas y «con otro nombre»). Cobrarlo
+ * expone a multa de hasta 100 SMLMV y pone en riesgo la propia matrícula de arrendador. El tipo de
+ * garantía ya se llama `deposito_no_vivienda` para que nadie pueda decir que no lo sabía; esto lo hace
+ * ejecutable. En arriendo COMERCIAL sí es válido, y por eso el gate mira la `vertical` y no el tipo.
+ */
+export function problemasDeContrato(c: Partial<Contrato>): ProblemaContrato[] {
+  const out: ProblemaContrato[] = [];
+  if (!c.expedienteId?.trim()) out.push('sin-expediente');
+
+  const partes = c.partes ?? {};
+  const alguien = [partes.propietario, partes.arrendatario, partes.codeudor].some((p) => p?.nombre?.trim());
+  if (!alguien) out.push('sin-partes');
+
+  const ini = (c.vigenciaInicio ?? '').slice(0, 10);
+  const fin = (c.vigenciaFin ?? '').slice(0, 10);
+  if (!ini || !fin) out.push('sin-vigencia');
+  else if (fin <= ini) out.push('vigencia-invertida');
+
+  if (c.tipo === 'arriendo') {
+    if (!c.canon || c.canon <= 0) out.push('sin-canon');
+    // 1..28 y no 1..31: febrero. El modelo ya lo dice; aquí se impone.
+    if (c.diaPago != null && (!Number.isInteger(c.diaPago) || c.diaPago < 1 || c.diaPago > 28)) {
+      out.push('dia-pago-invalido');
+    }
+  }
+
+  if (c.honorariosPct != null && (c.honorariosPct <= 0 || c.honorariosPct > 100)) {
+    out.push('honorarios-invalidos');
+  }
+
+  if (c.vertical === 'vivienda' && c.garantia?.tipo === 'deposito_no_vivienda') {
+    out.push('deposito-en-vivienda');
+  }
+
+  return out;
+}
+
+/** El problema, dicho para quien está registrando el contrato. */
+export function explicarProblemaContrato(p: ProblemaContrato): string {
+  switch (p) {
+    case 'sin-expediente':
+      return 'Falta a qué expediente pertenece el contrato.';
+    case 'sin-partes':
+      return 'Hace falta al menos una parte con nombre (propietario o arrendatario).';
+    case 'sin-vigencia':
+      return 'Faltan las fechas de inicio y fin. De ellas salen los avisos de renovación.';
+    case 'vigencia-invertida':
+      return 'La fecha de fin tiene que ser posterior a la de inicio.';
+    case 'sin-canon':
+      return 'Un contrato de arriendo necesita su canon mensual.';
+    case 'dia-pago-invalido':
+      return 'El día de pago debe estar entre 1 y 28, para que exista en todos los meses.';
+    case 'honorarios-invalidos':
+      return 'El porcentaje de honorarios debe estar entre 0 y 100.';
+    case 'deposito-en-vivienda':
+      return 'En arriendo de VIVIENDA el depósito en dinero está prohibido por el art. 16 de la Ley 820 (multa de hasta 100 SMLMV y riesgo para la matrícula). Usa póliza o codeudor; el depósito solo vale en arriendo comercial.';
+  }
+}

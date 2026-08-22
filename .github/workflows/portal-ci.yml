@@ -58,6 +58,11 @@ jobs:
           cache: npm
           cache-dependency-path: portal/package-lock.json
       - run: npm ci
+      # 🛡️ TYPECHECK antes que nada: `astro build` TRANSPILA sin comprobar tipos, así que un import roto
+      # o una firma cambiada llegan a producción sin un solo aviso. Lo demostró §113: `gestion-leads.ts`
+      # llevaba desde §101 con un error de tipos dentro, en `main`, y ningún gate lo vio.
+      - name: Tipos (lo que el build NO comprueba)
+        run: npm run typecheck
       - run: npm run build
       - name: Verificar render híbrido (mitigación R2/R3)
         run: npm run verify:build

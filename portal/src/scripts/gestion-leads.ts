@@ -120,7 +120,9 @@ function pintarFila(lead: Lead): HTMLElement {
   const nom = document.createElement('span');
   nom.className = 'gx-cli__name';
   nom.textContent = lead.nombre;
-  cli.append(ini, nom);
+  // `appendChild` y no `append`: colisión de tipos de Workers ([[L-36]]).
+  cli.appendChild(ini);
+  cli.appendChild(nom);
 
   // Contacto: enlace directo a WhatsApp con el nombre dentro. El asesor no debería tener que copiar
   // un número a mano — ese roce es la diferencia entre llamar en 5 minutos o en 5 horas.
@@ -155,7 +157,7 @@ function pintarFila(lead: Lead): HTMLElement {
   cuando.textContent = haceCuanto(lead.createdAt);
   cuando.title = etiquetaOrigen(lead.origen);
 
-  fila.append(cli, contacto, zona, estado, cuando);
+  for (const n of [cli, contacto, zona, estado, cuando]) fila.appendChild(n);
   return fila;
 }
 

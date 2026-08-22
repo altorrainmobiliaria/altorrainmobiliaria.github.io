@@ -11,13 +11,14 @@
 
 import { claveValida } from '../media-subida';
 import { problemasParaPublicar, type ProblemaPublicacion } from './catalogo';
-import type { Amenidades, Geo, Precio, SpecsInmueble } from './propiedades';
+import type { Amenidades, Precio, SpecsInmueble } from './propiedades';
 import type { Propiedad } from './propiedades';
 import {
   ESTADOS_PROPIEDAD,
   OPERACIONES,
   TIPOS_INMUEBLE,
   VERTICALES,
+  type Geo,
   type EstadoPropiedad,
   type Operacion,
   type TipoInmueble,
