@@ -227,3 +227,9 @@ no hay excepción, el script imprime «hecho»: así me cargué `99-HISTORIAL-AD
   scripts que lo reescriban**, que es justo lo que §G.4 pide por otras razones.
 - Misma familia que [[L-46]]: utillaje propio que corrompe en SILENCIO. El patrón común es que el
   daño no lo reporta quien lo causa — lo reporta un gate más abajo, si existe.
+- **Reincidencia (mismo día, §121)**: volví a hacerlo **una hora después de escribir esta lección**, en un
+  `python -c` de una línea, sobre el `05`. La regla decía «en un **script** que reescribe un archivo…» y yo
+  no conté un one-liner como script. **Una regla con un “salvo los casos pequeños” implícito se rompe justo
+  en los pequeños**, que además son los que se escriben sin pensar. Redacción corregida: *cualquier* forma
+  de reescribir un archivo —script, one-liner, comando— lee a variable y afirma primero. Y otra vez lo
+  salvó el commit, no la pericia.

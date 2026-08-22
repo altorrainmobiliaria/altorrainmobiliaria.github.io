@@ -4070,3 +4070,37 @@ de abrir una meta-lección nueva: una reincidencia vale más que un número más
 **120.6 — Lo que queda de TODO-45**: (d) los umbrales en DÍAS en un repo que corre en COMMITS, y (g)
 nuevo: las **98 rutas perdonadas por basename** ahora visibles — o los nodos citan rutas completas, o
 el ámbito del #27 se estrecha. **120.7 — Doctrina**: §G.5 · [[M-05]] · [[M-06]] · [[M-11]] · §109.
+
+---
+
+## 121. ADR — El gate #29: una cifra del cerebro que se cuenta sola ⟦OPUS-5⟧ (2026-08-22)
+
+§120 hizo que los gates dejaran de aprobar sin comparar. Faltaba el caso concreto que lo destapó: el
+`05` sostenía **«CF: 9 en código»** contra **11 exports reales**, con su marcador `verificado-vivo`
+fresquísimo. **Fresco y falso a la vez** — porque el #16 vigila la EDAD del claim y nunca el claim.
+
+**121.1 — El censo real, contado.** Legacy (`functions/index.js`): **11** en código, 7 desplegadas.
+Portal (`portal/functions/src/index.ts`): **9**, ninguna desplegada — y el cerebro **no las mencionaba
+en ningún nodo**: crecieron de 4 a 9 entre §113 y §118 sin que nada se enterara. El `05` ya dice las
+dos cifras, separadas por codebase, que es como se despliegan.
+
+**121.2 — El gate #29 (kernel v1.13.0).** `countableFacts` declara una cifra: qué archivo contar, con
+qué patrones, y dónde la afirma el cerebro. Cuenta y compara. **No es genérico por diseño**: cada
+cifra se declara a mano, y declararla es aceptar que alguien la va a comprobar. Una cifra sin declarar
+sigue siendo palabra de nadie — pero ahora hay un sitio donde ponerla. Si el cerebro no afirma la
+cifra en ninguna parte, **degrada**: un gate sin claim que cruzar no aprueba (§120).
+
+**121.3 — Probado en los dos sentidos**, que es lo único que prueba un gate: con «9» pasa; cambiado a
+«4» avisa *«dice 4 pero hay 9»*. Un gate que nunca se ha visto negar algo no está probado.
+
+**121.4 — Y volví a hacer lo de [[L-47]], una hora después de escribirlo.** Un `python -c` de una
+línea con `open(p,'w').write(open(p).read()…)` sobre el `05`: truncado, y recuperado otra vez con
+`git checkout`. La causa no fue descuido sino **la redacción de mi propia regla**: decía «en un
+*script* que reescribe un archivo», y un one-liner no me pareció un script. **Una regla con un
+“salvo los casos pequeños” implícito se rompe justo en los pequeños** — que son, además, los que se
+escriben sin pensar. Corregida en [[L-47]] y en la skill: *cualquier* forma de reescribir un archivo.
+Es la tercera vez en esta sesión que el commit previo es lo que salva el trabajo, y la segunda
+confirmación de [[M-11]] en dos ADRs: escribir la lección no la aplica.
+
+**121.5 — Doctrina**: §3.3 (verificar antes de afirmar — el claim fresco era la trampa perfecta) ·
+[[M-06]] · [[M-11]] · §120.

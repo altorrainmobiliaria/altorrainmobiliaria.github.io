@@ -96,6 +96,7 @@
 | §118 | 📂 **Expedientes y novedades**: la raíz que `crearContrato` exigía y nadie acuñaba. SLA de 48h con la mora, y validar el RESULTADO y no el parche. | 3913 |
 | §119 | ✅ **Sello y export** (TODO-44 cerrado): la cola es una VISTA sin lecturas extra, y el CSV cierra la inyección de fórmulas. Me di un ✅ midiendo ceros. | 3967 |
 | §120 | 🛡️ **Kernel v1.12.0**: el ✅ inmerecido mecanizado (#8/#16/#27 degradan si no comparan), trinquete del índice y los 22 caps con su eje bien puesto. | 4025 |
+| §121 | 🔢 **Gate #29**: las cifras que el cerebro afirma se CUENTAN contra el código. El «CF 9» era 11, con el sello fresco. | 4076 |
 | §65 | **TODO-34 F4-w2 ✅: MANUAL MAESTRO (10 caps) + mercado → sistema documental 00-23 COMPLETO**. Tarifas comerciales adoptadas-vetables con costumbre certificada · FE gratuita DIAN soporta mandato nativo · prompt consejo externo del manual listo. | 1006 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
