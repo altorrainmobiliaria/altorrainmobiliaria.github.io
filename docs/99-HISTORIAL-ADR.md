@@ -4104,3 +4104,60 @@ confirmación de [[M-11]] en dos ADRs: escribir la lección no la aplica.
 
 **121.5 — Doctrina**: §3.3 (verificar antes de afirmar — el claim fresco era la trampa perfecta) ·
 [[M-06]] · [[M-11]] · §120.
+
+---
+
+## 122. ADR — La pantalla de estancias le decía dos mentiras a un visitante real ⟦OPUS-5⟧ (2026-08-22)
+
+Fui a conectar la solicitud de reserva (ítem 5 de Ola 1). Al abrir la página encontré dos cosas
+peores que la que iba a arreglar, y las dos llevaban meses en una página **pública, enlazada desde
+el menú principal y el footer**.
+
+**122.1 — El botón no enviaba nada.** `est-reservar` era literalmente
+`removeAttribute('hidden')` sobre el mensaje de éxito. El visitante elegía fechas, pulsaba
+«Reservar», leía *«Solicitud enviada · Alejandro te confirmará en breve»* — y en ALTORRA no se
+enteraba nadie, nunca. **Un fallo silencioso que además miente**: peor que una función ausente,
+porque la ausente no promete. Es la familia de §117 (el CSS que no llegaba) con las apuestas
+subidas: aquí el que pierde no es la pantalla, es una persona esperando una respuesta que no va a
+llegar.
+
+**122.2 — Y la mitad de la prueba social era inventada.** Un anfitrión («Alejandro C.,
+Superanfitrión, 6 años en ALTORRA, responde en ~1 h»), **dos reseñas firmadas con nombre y fecha**,
+un «4.97 · 128 reseñas» y cuatro barras de nota. Todo fabricado, heredado del mockup.
+Un testimonio inventado no es licencia de maqueta: es **publicidad engañosa** (Ley 1480, arts.
+29-30) y contradice la regla del propio proyecto — *«solo data REAL: nunca rating ni origen
+inventado»* ([[L-29]]). **Y marcarlo como «ejemplo» no lo cura**: la etiqueta se pierde en una
+captura de pantalla y la reseña no.
+
+**122.3 — La cura sin perder el diseño aprobado.** Las secciones NO se borraron: se volvieron
+**dependientes de datos**. Con las listas vacías no se pintan, y el día que existan reseñas reales
+vuelven solas con el mockup intacto. Borrarlas habría obligado a rehacer la UI —y a un mockup
+nuevo— cuando llegue el inventario; dejarlas cableadas a `[]` conserva la decisión de diseño y
+elimina la afirmación falsa. El alojamiento en sí queda dicho como lo que es: un ejemplo mientras
+no haya inventario (TODO-22).
+
+**122.4 — Tres decisiones del cableado que valen constancia.** (a) `tipoLead:
+'contacto_propiedad'` y no un tipo nuevo: quien manda el correo es `onNewSolicitud`, del codebase
+**legacy**, que no se puede desplegar hasta el cutover — un tipo desconocido cae en
+`typeScores[…] || 5` y el lead valdría 5 puntos en vez de 25, con el asunto en crudo. (b) Las fechas
+viajan **ya redactadas** en `datosExtra.descripcion`, porque la plantilla del correo vive en esa
+misma Function intocable: lo que no venga escrito en el documento, no aparece. (c) Se valida en el
+servidor **además** de en la página: un POST se fabrica desde la consola en diez segundos, y una
+solicitud para llegar «ayer» es una llamada desperdiciada de alguien del equipo.
+
+**122.5 — Un solo dueño para «cuántas noches son».** La página tenía su propia resta con
+`new Date('YYYY-MM-DD')`, que se interpreta en **UTC** mientras el navegador está en UTC-5: a
+ciertas horas la cuenta salía con un día de más. Ahora usa `noches()` del dominio, la misma que
+valida el endpoint ([[L-45]]).
+
+**122.6 — Verificación, y lo que deliberadamente NO se verificó.** 406 tests (14 nuevos, todos de
+fechas) · typecheck · build · verify:build/data/css. En el navegador: los tres rechazos del
+servidor (sin autorización, llegada en pasado, 400 huéspedes), el aviso del cliente con las fechas
+invertidas, la transición completa del formulario y el payload exacto. **El `create` contra
+`solicitudes` no se ejecutó a propósito**: dispara el correo real de `onNewSolicitud`, y meter un
+lead falso en la bandeja de Daniel para probar un formulario es pagar la prueba con su tiempo. Queda
+como **paso 1.8 del runbook**, para estrenarlo una vez y sabiendo lo que se hace.
+
+**122.7 — Doctrina**: §3.3 · [[L-29]] · [[L-45]] · §G.4 (caza-bugs: recorrer el camino vivo).
+Destilado a `legal-colombia` (prueba social fabricada) y a `caza-bugs` (el éxito que no está
+cableado).
