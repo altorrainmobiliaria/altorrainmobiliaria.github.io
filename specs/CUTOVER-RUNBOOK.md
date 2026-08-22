@@ -47,17 +47,23 @@ ni siquiera lee claims. Nada cambia de comportamiento.
 | 1.3 | 🧑 | Abrir `/gestion` con su cuenta y comprobar que **ve el panel**, no «no tienes permiso». Si sale eso último: cerrar sesión y volver a entrar (el permiso viaja dentro de la sesión). |
 | 1.4 | 🤖 | **Estrenar la subida a R2**: con una sesión que ya tenga el claim, `POST /api/media/subir` con una imagen WebP de prueba; debe devolver `201` con la clave, y la foto debe servirse desde el bucket. |
 | 1.5 | 🧑 | **Estrenar el alta entera**: `/gestion` → «+ Nuevo inmueble» → rellenar, subir una foto, guardar como **borrador**. Debe salir «Guardado como INM-…». Es la primera vez que ese camino corre completo. |
+| 1.6 | 🧑 | **Estrenar GESTIÓN**: `/gestion` → **Expedientes** → abrir uno (código antiguo `ALT-AR-…` basta) → registrar una novedad → moverla a HECHO escribiendo qué se hizo. Debe rechazar el cierre si dejas vacío «Qué se hizo». Son tres Cloud Functions que nunca han corrido. |
+| 1.7 | 🧑 | **Estrenar el sello y el export**: en **Inmuebles**, «Pendientes del sello» → **Verificar** la del paso 1.5 (debe rechazarla: un borrador con una foto no se lo ha ganado) → «Exportar CSV» y abrir el archivo en Excel: acentos correctos y columnas en su sitio. |
 
 **Verificación**: el paso 1.3 ES la verificación. Además 🤖 comprueba en los logs que
 `claimsStaffSync` corrió sin errores.
 
-⚠️ **Por qué los pasos 1.4 y 1.5 están aquí y no se dan por hechos** (§107.5, §108): la subida a R2 tiene 30 pruebas
+⚠️ **Por qué los pasos 1.4 a 1.7 están aquí y no se dan por hechos** (§107.5, §108): la subida a R2 tiene 30 pruebas
 alrededor —incluidas las del token, con firma RSA de verdad— pero **el `put` contra el bucket real
 nunca ha corrido**, porque hasta este momento no existía forma de tener un token con el claim. Un
 camino que nunca se ha ejecutado no está probado, por muchos tests que lo rodeen. Este es el primer
 instante en que se puede comprobar, así que se comprueba aquí. Lo mismo vale para el alta completa
 (1.5): su dominio tiene 268 pruebas y su pantalla se verificó en el navegador, pero **escribir en
-Firestore con un claim de verdad no ha ocurrido nunca**.
+Firestore con un claim de verdad no ha ocurrido nunca**. Y lo mismo, por la misma razón, para las
+cuatro puertas de escritura nuevas (1.6 y 1.7): `crearExpediente`, `crearNovedad`,
+`actualizarNovedad` (§118) y el sello `marcarVerificada` (§119). El paso 1.6 pide **provocar el
+rechazo** —cerrar sin escribir la resolución— porque un gate que nunca se ha visto negar algo
+tampoco está probado: es la mitad del camino que suele quedarse sin recorrer.
 
 **Vuelta atrás**: `firebase functions:delete claimsStaffSync sincronizarClaimsV2`. Los claims ya puestos
 no molestan a nadie: hoy nada los mira.

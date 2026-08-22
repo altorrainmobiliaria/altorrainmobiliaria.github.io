@@ -31,7 +31,6 @@
 | **TODO-21** | **Lote-dueño**: Nº **RNT** · dirección física y COMERCIAL · abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño | gate=obra |
 | **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO). Capacidad y gates a medias → **TODO-45**. | 🔄 | §84·§87·§90·§96 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
-| **TODO-44** | 🖥️ **CRUD CERRADO**: R2 + identidad en el edge (§107) · alta (§108) · listado con «¿se ve?» (§110) · edición (§111). Resta cola de verificación y export. ⚠️ Nada ha corrido con un claim real: paso 1.5 del runbook. | 🟢 | §111 |
 | **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, [[L-39]] → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-39** | 🌊 **OLA 1 ✅ 13 de 13** (§91-§96 → `00`). (a) ✅ «Avalúo» RESUELTO en §105 (queda 1 pregunta suya → pelota 11); (b) el **go/no-go de ola** con Daniel (MEGA-PLAN §4.4). | 🟢 código listo | §105 |
 | **TODO-22** | **CATÁLOGO completo, ficha incluida (§97)**. Datos reales = fases 3-4 del runbook; luego fichas al sitemap. | 🟢 cutover | §102 |

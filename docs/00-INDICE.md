@@ -42,6 +42,7 @@
 | **Cobrar el canon, honorarios, IVA, giro al propietario** · «¿cuánto le toca al dueño?» | `99 §115` (`cifrasDePago`: el IVA va sobre los honorarios, la administración no es del propietario) |
 | **Una tabla/lista sale despintada, sin rejilla ni tarjeta** · «el CSS no aplica y no falla nada» | `99 §117` (Astro acota con `data-astro-cid`; los nodos de runtime no lo llevan → `npm run verify:css`) |
 | **PQRS, tickets del inquilino, plazo de 48h** · «¿qué se me está pasando?» | `99 §118` (`estadoDeSla` vive con la mora en `agenda.ts`; no se cierra sin escribir qué se hizo) |
+| **Exportar a CSV/Excel** · «se abre con las columnas corridas» · «¿esto es seguro?» | `99 §119` (RFC 4180 + BOM + anti-fórmula CWE-1236: `src/lib/domain/csv.ts`) |
 | Project ID, cuentas IAM, deploy, secrets | `50-CONFIG-INFRA` |
 | Competencia/mercado inmobiliario, benchmark | `40-LOBULOS` → `41-MERCADO` |
 | Legal Colombia: Ley 820/RNT/Habeas Data/pagos/firma/SIC — gates de features y agenda abogado | `40-LOBULOS` → `42-LEGAL` (detalle: `specs/R3-LEGAL-COLOMBIA-2026-07.md`) |
@@ -93,6 +94,7 @@
 | §116 | 🗂️ **Tercer shard del índice** (§66-§90 → `00c`): el corte es semántico y el cap se MIDE, no se elige. | 3830 |
 | §117 | 🎨 **El CSS acotado no llega a los nodos que crea el JS**: 5 tablas y el aviso del catálogo público sin estilo. Gate `verify:css`. | 3857 |
 | §118 | 📂 **Expedientes y novedades**: la raíz que `crearContrato` exigía y nadie acuñaba. SLA de 48h con la mora, y validar el RESULTADO y no el parche. | 3913 |
+| §119 | ✅ **Sello y export** (TODO-44 cerrado): la cola es una VISTA sin lecturas extra, y el CSV cierra la inyección de fórmulas. Me di un ✅ midiendo ceros. | 3967 |
 | §65 | **TODO-34 F4-w2 ✅: MANUAL MAESTRO (10 caps) + mercado → sistema documental 00-23 COMPLETO**. Tarifas comerciales adoptadas-vetables con costumbre certificada · FE gratuita DIAN soporta mandato nativo · prompt consejo externo del manual listo. | 1006 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
