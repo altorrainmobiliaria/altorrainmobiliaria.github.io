@@ -91,6 +91,32 @@ vendored + `VERSION`**, sin lockstep; reusa la replicación-kernel del HUB; migr
   navegadores headless/sandbox **no siempre completan la conexión de Firestore** → el contenido dinámico no
   hidrata ahí; NO confundirlo con un bug del sitio (verificar el HTML servido con `curl` + test determinista).
 
+## 4bis. El CSS acotado del framework NO alcanza a los nodos que crea el JS
+
+Astro, Svelte y los SFC de Vue acotan el CSS de un componente **reescribiendo el selector**: `.fila`
+compila a `.fila[data-astro-cid-XXXX]` (o `.fila.svelte-abc123`), y el atributo se lo pone el
+compilador a los elementos **de la plantilla**. Un nodo creado en tiempo de ejecución con
+`document.createElement` no lo lleva, así que **ninguna regla le aplica**. No hay error, no hay
+warning, el build sale verde y los tests pasan: la pantalla simplemente sale despintada.
+
+- **Es peligroso justo donde más duele**: los paneles y listados renderizan por JS *casi todo* su
+  DOM, así que el fallo se concentra en el contenido, no en la cáscara. Y es INVISIBLE si solo miras
+  el markup estático — que es lo que ves si nunca hay datos reales delante.
+- **Dos arreglos, y la elección tiene criterio**: `:global(.x)` regla a regla cuando la página es
+  casi toda estática y sus clases no tienen namespace propio; el bloque entero `is:global` cuando la
+  página TIENE un namespace exclusivo y su DOM es mayormente de runtime. La segunda no es pereza: la
+  lista de `:global()` hay que mantenerla cada vez que un script añade una clase, y **olvidarla no
+  rompe nada que el build pueda ver**.
+- **Cuidado al globalizar**: si una regla se apoya en una clase del design system (`.alt-input.is-mal`),
+  ánclala a un contenedor de la página o se aplicará a todo el sitio.
+- **Ponle un gate, no una lección.** Estático y barato: clases que un script ASIGNA a nodos nuevos
+  (`className = '…'` o un `class="…"` de plantilla) ∩ clases definidas en un `<style>` sin
+  `is:global` de una página que cargue ese script. **`classList.add/toggle` NO cuenta**: casi siempre
+  son banderas de estado sobre elementos que ya venían en la plantilla, y contarlas solo da ruido.
+- **El gate tiene que seguir los imports.** Su primera versión miraba solo las menciones literales de
+  la página y se le escaparon 2 de 4 módulos, porque la página importaba uno que importaba a los
+  otros. Un gate que solo mira la superficie **aprueba lo que no comparó**.
+
 ## 5. Anti-contaminación por vertical (`validateTenant`, fail-fast — clave del HUB multi-proyecto)
 Validador **a mano** (sin Zod — build node-plano, dep-free, estilo REQUIRED_ANCHORS): asegura que `config.vertical`
 ∈ {JewelryStore, AutoDealer, RealEstateAgent} y que NO emite campos de otro vertical (joya con `kilometraje`/VIN,

@@ -138,6 +138,29 @@ Por cada escenario, exijo:
    - **SIEMPRE BOUNDED** (memoria `feedback-agent-machinery-bounded`): los fan-outs grandes cuelgan en esta máquina; la maquinaria anti-fallos no puede ser fuente de fallos. Defectos de DISEÑO → al backlog del rediseño, no al fix inmediato.
 4. Fix (directo o vía la maquinaria elegida) → re-emito el prompt (§2) con el escenario que falló → confirmo ✅ en vivo antes de cerrar.
 
+## 5bis. Mide el nodo que verá el usuario, no el que escribiste
+
+Un chequeo sobre el markup estático **no prueba nada** del contenido que pinta el JS: son dos
+poblaciones distintas de nodos y pueden tener estilos distintos sin que nada avise (ver
+`ssg-static-prerender` §4bis). Reglas de método:
+
+1. **Inyecta datos de prueba y mide el resultado**, no la plantilla. Una tabla vacía se ve perfecta.
+2. **Compara contra un control.** Duplica el nodo, ponle a mano lo que el framework le habría puesto
+   y mide los dos: «53px de alto contra 157, sin fondo, sin borde, sin padding» es un hallazgo;
+   «se ve raro» no. El control convierte una sospecha en evidencia.
+3. **La geometría es el instrumento cuando no hay captura de pantalla.** `getBoundingClientRect` +
+   `getComputedStyle` cazan lo que el ojo perdona y sobreviven a que el panel del navegador no esté
+   visible. Cuatro medidas que pagan siempre: (a) `left` de cabecera vs de fila — si no cuadran, la
+   rejilla no se aplicó; (b) `scrollWidth > clientWidth` — texto recortado; (c) `top` de un hermano
+   contra el `bottom` del anterior — solapes; (d) `body.scrollWidth` vs `clientWidth` — desborde.
+4. **El texto recortado se juzga por lo que ES, no por si cabe.** Un identificador o una fecha
+   aguantan puntos suspensivos; una INSTRUCCIÓN («Preaviso de terminación por mora. Escrito, con
+   constancia de entrega») cortada a la mitad deja al operador sin la parte que le dice qué hacer.
+   Esa envuelve.
+5. **Si la pantalla está tras una puerta de acceso que no puedes abrir**, no la des por buena:
+   sírvete el HTML de la ruta y renderízalo sin sus `<script>`. Se pierde el comportamiento, pero el
+   layout y el CSS son reales — y es exactamente lo que estás juzgando.
+
 ## 6. Conexiones (doble vía)
 - **Hacia mí** (qué recorrer / cómo cerrar): `caza-bugs` · `verification-before-completion` · `anti-codigo-muerto` (que lo nuevo no dejó lo viejo roto EN VIVO).
 - **Soy el gate empírico DE**: `proceso-decision-fuerte` **paso 7** (pruebas de estado en un navegador REAL cierran la decisión).
