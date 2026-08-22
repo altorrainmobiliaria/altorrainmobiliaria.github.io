@@ -3383,3 +3383,57 @@ inventar Cartagena: la dirección correcta es la fail-closed.
 (+`portadaDe`), `domain/catalogo.ts`, `components/FichaInmueble.astro`, `pages/inmueble/[slug].astro`,
 +8 tests. **106.7 — Doctrina**: [[L-45]](e) por tercera vez en un día · §3.3 · §G.4 (crudo en bóveda +
 esta síntesis) · §3.7 (el recon fue por iniciativa propia, y pagó).
+
+---
+
+## 107. ADR — Identidad en el edge, y las fotos ya tienen camino ⟦OPUS-5⟧ (2026-08-22)
+
+Primer eslabón de TODO-44, en el orden que fijó el recon de §106: antes del formulario, el sitio donde
+van las fotos. `R2_MEDIA` llevaba declarado desde Ola 0 —binding en `wrangler.jsonc`, bucket creado por
+Daniel en §21— y **sin una sola línea de código que subiera nada**. Como `propiedadAResumen` omite con
+`sin-imagen`, sin portada no hay card: el alta no podía producir una propiedad publicable.
+
+**107.1 — El problema real no era R2, era la puerta.** A R2 **no llegan las Security Rules de
+Firebase**. El Worker es el único sitio donde se puede decidir quién escribe en el bucket, y hasta hoy
+toda la superficie pública del portal era lectura anónima: no existía ninguna forma de contestar
+«¿quién eres?» en el edge. Descartados, con su razón: `firebase-admin` no corre en Workers y además
+`verify:data` lo prohíbe en todo `portal/src`; un secreto compartido con el cliente no es un secreto;
+y preguntarle el rol a Firestore es una lectura facturable por subida, justo lo que §99 decidió evitar
+al meter el permiso DENTRO del token.
+
+**107.2 — Solución: verificar el ID token con WebCrypto.** Un ID token de Firebase es un JWT RS256
+sobre claves públicas de Google. `lib/auth/verificar-id-token.ts` lo verifica sin dependencias, sin
+lecturas y comprobando el **mismo claim `admin`** que leen las Rules — así una puerta no puede abrirse
+con la otra cerrada. Decisiones que importan: `alg` **fijo** a RS256 (aceptar el de la cabecera es el
+agujero clásico del JWT: con `none`, o con un HMAC cuya clave es la pública de Google, cualquiera se
+firma sus propios tokens); las comprobaciones baratas van **antes** que la criptografía, porque
+rechazar mirando datos sin firmar es seguro —nunca se ACEPTA por ellos— y evita que un token inventado
+nos haga trabajar; el motivo del rechazo **viaja al cliente**, porque no le dice nada útil a un
+atacante y le ahorra una tarde a quien tenga el reloj desfasado; y las claves de Google se cachean
+respetando SU `max-age`, con la copia vieja como red si Google no responde.
+
+**107.3 — El endpoint.** `POST /api/media/subir?propiedad=INM-…&n=N`. Comprueba identidad **antes de
+leer el cuerpo** (uno que carga 3 MB y luego dice «no autorizado» es un amplificador); la clave la
+compone el SERVIDOR y el cliente nunca propone la ruta; solo WebP y 3 MB, porque convertir en el
+navegador —donde ya hay un canvas— sale gratis y hacerlo en el edge cuesta CPU por subida; la posición
+va en el nombre, así que resubir **reemplaza** en vez de dejar basura huérfana que nadie limpia; y
+devuelve la **CLAVE, nunca la URL** — devolver una URL sería invitar a guardarla en `imagenes[]`, que
+es exactamente el defecto que ya tiene la semilla del proyecto. Sin binding (en `astro dev`) lo dice en
+vez de fingir que guardó.
+
+**107.4 — Verificación.** 30 tests nuevos (210 en total). Los del token **no usan tokens de mentira**:
+generan un par RSA de verdad, firman el JWT y lo verifican — cubren `alg:none`, confusión de algoritmo,
+carga manipulada conservando la firma, otro proyecto de Firebase, caducidad con la holgura de reloj,
+rotación de claves y caída de red. El endpoint JWK de Google se comprobó **en vivo** antes de escribir
+código contra él (`{keys:[{kty,alg,use,kid,n,e}]}`, 4 claves), en vez de asumir su forma. En vivo: sin
+token `401 ausente`, token basura `401 malformado`. `build`, `verify:build` y `verify:data` verdes.
+
+**107.5 — Lo que NO está verificado, y dónde se verifica.** El `put` real contra el bucket **no se ha
+ejercitado**: hace falta un token con el claim `admin`, y ese claim depende de la **fase 1 del
+runbook** (§99). Está anotado en el runbook como paso de verificación en vez de darse por bueno — un
+camino que nunca ha corrido no es un camino probado, por muchos tests que tenga alrededor.
+
+**107.6 — Archivos.** Nuevos: `lib/auth/verificar-id-token.ts` (+test), `lib/media-subida.ts` (+test),
+`pages/api/media/subir.ts`. INTACTOS: la capa de datos, las Rules, las Functions y el resto del portal.
+**107.7 — Doctrina**: §3.3 (el contrato externo se verificó, no se supuso) · §3.6 (la puerta vive donde
+está la frontera real) · §99 (el permiso viaja en el token) · contrato de `media.ts`.

@@ -45,9 +45,16 @@ ni siquiera lee claims. Nada cambia de comportamiento.
 | 1.1 | 🤖 | `firebase deploy --only functions:default --account altorrainmobiliaria@gmail.com` |
 | 1.2 | 🧑 | Entrar a `admin.html` → **Usuarios** → pulsar **«Sincronizar permisos del portal»**. Sale un mensaje tipo «3 personas sincronizadas». |
 | 1.3 | 🧑 | Abrir `/gestion` con su cuenta y comprobar que **ve el panel**, no «no tienes permiso». Si sale eso último: cerrar sesión y volver a entrar (el permiso viaja dentro de la sesión). |
+| 1.4 | 🤖 | **Estrenar la subida a R2**: con una sesión que ya tenga el claim, `POST /api/media/subir` con una imagen WebP de prueba; debe devolver `201` con la clave, y la foto debe servirse desde el bucket. |
 
 **Verificación**: el paso 1.3 ES la verificación. Además 🤖 comprueba en los logs que
 `claimsStaffSync` corrió sin errores.
+
+⚠️ **Por qué el paso 1.4 está aquí y no se da por hecho** (§107.5): la subida a R2 tiene 30 pruebas
+alrededor —incluidas las del token, con firma RSA de verdad— pero **el `put` contra el bucket real
+nunca ha corrido**, porque hasta este momento no existía forma de tener un token con el claim. Un
+camino que nunca se ha ejecutado no está probado, por muchos tests que lo rodeen. Este es el primer
+instante en que se puede comprobar, así que se comprueba aquí.
 
 **Vuelta atrás**: `firebase functions:delete claimsStaffSync sincronizarClaimsV2`. Los claims ya puestos
 no molestan a nadie: hoy nada los mira.
