@@ -3739,3 +3739,46 @@ puso el gate legal en el formulario: ahí es una sugerencia, en la Function es u
 COMPRUEBA*. Si el empaquetador borra los tipos sin validarlos, el proyecto no tiene verificación de
 tipos aunque esté escrito en TypeScript — y la ausencia no se nota, porque todo compila.
 **113.7 — Doctrina**: §3.6 (la frontera donde de verdad protege) · [[L-45]] · [[L-36]] · §100.
+
+---
+
+## 114. ADR — La pantalla de contratos: dos piezas correctas que nadie podía usar ⟦OPUS-5⟧ (2026-08-22)
+
+**114.1 — El estado del que se partía.** La agenda sabía CALCULAR qué vence (§112) y la Cloud Function
+sabía GUARDAR un contrato con su gate legal (§113). Las dos correctas, las dos con tests, y **ninguna
+al alcance del dueño**. Es un patrón que este proyecto ya vio con el alta de inmuebles: piezas
+terminadas que no forman un camino.
+
+**114.2 — La agenda va ARRIBA, la lista debajo.** No es una preferencia de maquetación. La lista
+contesta *«¿qué tengo?»* y la agenda contesta *«¿qué se me está pasando?»* — y la segunda es la
+pregunta que hizo nacer el módulo (*«se pierden los contratos, se olvidan fechas»*). Lo vencido va
+primero y en oro; en esta paleta no hay rojo y no hace falta.
+
+**114.3 — El menú gana «Contratos», y se AÑADE.** Sale del mockup aprobado el 2026-08-22, que ya lo
+traía. Los que estaban —Visitas, Documentos— vienen del mockup anterior, también aprobado, y quitarlos
+no lo pidió nadie: los cambios son aditivos (§3.2).
+
+**114.4 — El alta llama a la callable por HTTP, sin SDK.** Al importar `firebase/functions` el gate
+`verify:data` lo cazó, y tenía razón: la doctrina del portal es *«la capa de datos usa REST, no el
+SDK»*. Ensanchar la excepción habría sido más rápido y peor. El protocolo de una callable son veinte
+líneas (`POST {data}` → `{result}` o `{error}`) y el token ya se sabía obtener desde §107. **Un gate
+que se abre cada vez que estorba deja de ser un gate.** Los mensajes de error salen de
+`error.details.mensajes`, donde la Function los pone YA redactados: repetirlos aquí sería una segunda
+copia de la misma verdad.
+
+**114.5 — Dos defectos que solo aparecieron MIRANDO**, con el build en verde:
+· El dev server devolvía **500 en `/gestion`** por una caché corrupta del optimizador de Vite
+(`.vite/deps_ssr`), no por el código. Borrarla lo resolvió. El build nunca lo habría dicho.
+· **«Contratos» quedó en la posición 2 del menú, no en la 3**, así que el cableado POR ÍNDICE abría la
+pantalla equivocada — sin error, sin aviso. El arreglo no fue cambiar el número: **el nav se enruta
+ahora por `id`**. El orden de un menú es una decisión de diseño y puede cambiar mañana; atarlo a una
+posición lo rompe en silencio, y una sección sin destino simplemente no hace nada en vez de abrir otra.
+
+**114.6 — Verificación.** 336 tests (7 nuevos, sobre cómo se lee un plazo y qué pide atención) +
+`typecheck` + `build` + `verify:build` + `verify:data`. En vivo: cabeceras y filas con la MISMA
+rejilla, 13 campos, sin scroll horizontal, y el menú con sus seis ids.
+
+**114.7 — Lo que le falta a GESTIÓN v1**: expedientes, pagos con su mora ya calculada, novedades y los
+adjuntos privados (gate B5). La agenda y los contratos ya están usables.
+**114.8 — Doctrina**: §31 (verificar en navegador: los dos defectos son suyos) · §3.2 (aditivo) ·
+[[L-45]] · el gate `verify:data`, que se respetó en vez de ensancharse.
