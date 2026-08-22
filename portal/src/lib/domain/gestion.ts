@@ -192,3 +192,69 @@ export function explicarProblemaContrato(p: ProblemaContrato): string {
       return 'En arriendo de VIVIENDA el depósito en dinero está prohibido por el art. 16 de la Ley 820 (multa de hasta 100 SMLMV y riesgo para la matrícula). Usa póliza o codeudor; el depósito solo vale en arriendo comercial.';
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INVARIANTES DEL EXPEDIENTE Y DE LA NOVEDAD (§118) — mismo criterio que §113:
+// el modelo es el dueño de lo que lo hace válido, y la Function los IMPONE con estos mismos
+// predicados. Una regla, un dueño ([[L-45]]).
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type ProblemaExpediente = 'sin-estado' | 'sin-referencia';
+
+/**
+ * Qué le falta a un expediente para poder guardarse.
+ *
+ * `sin-referencia` es el que de verdad importa: un expediente sin `propiedadId` NI `codigoLegacy` es
+ * una carpeta sobre nada. Después le colgarán contratos, pagos y novedades por FK, y nadie sabrá de
+ * qué inmueble hablan — y como el enlace es por FK y no por subcolección, no hay forma de deducirlo
+ * más tarde. Barato de exigir ahora, imposible de arreglar con datos encima.
+ */
+export function problemasDeExpediente(e: Partial<Expediente>): ProblemaExpediente[] {
+  const out: ProblemaExpediente[] = [];
+  if (!e.estado || !ESTADOS_EXPEDIENTE.includes(e.estado)) out.push('sin-estado');
+  if (!e.propiedadId?.trim() && !e.codigoLegacy?.trim()) out.push('sin-referencia');
+  return out;
+}
+
+export function explicarProblemaExpediente(p: ProblemaExpediente): string {
+  const t: Record<ProblemaExpediente, string> = {
+    'sin-estado': 'Falta el estado del arriendo (activo, preaviso o finalizado).',
+    'sin-referencia': 'Falta decir de qué inmueble es: elige uno del catálogo o escribe su código ALT-AR-*.',
+  };
+  return t[p];
+}
+
+export type ProblemaNovedad =
+  | 'sin-expediente'
+  | 'sin-tipo'
+  | 'sin-descripcion'
+  | 'cerrada-sin-resolucion';
+
+/**
+ * Qué le falta a una novedad.
+ *
+ * `cerrada-sin-resolucion` es un gate de VERDAD, no de forma: cerrar un ticket sin escribir qué se
+ * hizo deja el mismo rastro que no haberlo atendido, y a los tres meses —cuando el inquilino
+ * reclame lo mismo— nadie podrá decir si se resolvió. Es el «✅ inmerecido» de la operación: un
+ * estado que afirma más de lo que respalda.
+ */
+export function problemasDeNovedad(n: Partial<Novedad>): ProblemaNovedad[] {
+  const out: ProblemaNovedad[] = [];
+  if (!n.expedienteId?.trim()) out.push('sin-expediente');
+  if (!n.tipo?.trim()) out.push('sin-tipo');
+  if (!n.descripcion?.trim()) out.push('sin-descripcion');
+  if ((n.estado === 'HECHO' || n.estado === 'CERRADO') && !n.resolucion?.trim()) {
+    out.push('cerrada-sin-resolucion');
+  }
+  return out;
+}
+
+export function explicarProblemaNovedad(p: ProblemaNovedad): string {
+  const t: Record<ProblemaNovedad, string> = {
+    'sin-expediente': 'Falta el expediente al que pertenece.',
+    'sin-tipo': 'Falta de qué es: reparación, queja, solicitud…',
+    'sin-descripcion': 'Falta contar qué pasó.',
+    'cerrada-sin-resolucion': 'Para darla por resuelta hay que escribir qué se hizo.',
+  };
+  return t[p];
+}

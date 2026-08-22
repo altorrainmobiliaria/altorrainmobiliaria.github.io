@@ -12,7 +12,7 @@
  */
 
 import type { COP, ISODate } from './shared';
-import type { Contrato, EstadoPago, Pago, TipoPago } from './gestion';
+import type { Contrato, EstadoPago, Novedad, Pago, TipoPago } from './gestion';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FECHAS — aritmética en UTC, sin librerías
@@ -68,14 +68,15 @@ export function proximoDiaDePago(hoy: string, diaPago: number): string {
 // HITOS — lo que hay que hacer, y cuándo
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type TipoHito = 'canon' | 'payout' | 'preaviso' | 'renovacion' | 'ipc';
+export type TipoHito = 'canon' | 'payout' | 'preaviso' | 'renovacion' | 'ipc' | 'novedad';
 
 export type Urgencia = 'vencido' | 'hoy' | 'semana' | 'mes' | 'despues';
 
 export interface Hito {
   tipo: TipoHito;
   fecha: ISODate;
-  contratoId: string;
+  /** Ausente en los hitos de novedad: esas cuelgan del EXPEDIENTE, no de un contrato (§118). */
+  contratoId?: string;
   expedienteId: string;
   /** Para una persona, sin jerga. */
   titulo: string;
@@ -180,9 +181,15 @@ export function hitosDeContrato(c: Contrato, hoy: string): Hito[] {
  * Lo VENCIDO entra siempre, aunque quede fuera de la ventana hacia atrás: una fecha que se pasó no
  * deja de importar porque el calendario avance — al contrario, es lo primero que hay que ver.
  */
-export function agenda(contratos: Contrato[], hoy: string, diasVentana = 120): Hito[] {
-  return contratos
-    .flatMap((c) => hitosDeContrato(c, hoy))
+export function agenda(
+  contratos: Contrato[],
+  hoy: string,
+  diasVentana = 120,
+  // 4º y opcional a propósito: las novedades llegaron después (§118) y quien ya llamaba a `agenda`
+  // no tiene por qué enterarse. Aditivo, como manda §3.2.
+  novedades: Novedad[] = [],
+): Hito[] {
+  return [...contratos.flatMap((c) => hitosDeContrato(c, hoy)), ...novedades.flatMap((n) => hitosDeNovedad(n, hoy))]
     .filter((h) => h.dias <= diasVentana)
     .sort((a, b) => (a.fecha === b.fecha ? a.tipo.localeCompare(b.tipo) : a.fecha < b.fecha ? -1 : 1));
 }
@@ -350,4 +357,97 @@ export function cifrasDePago(c: Contrato, periodo: string, tipo: TipoPago): Cifr
 
   // `servicios_publicos`: el monto lo trae la factura, no el contrato. Se registra a mano.
   return null;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SLA DE LAS NOVEDADES (§118) — la misma familia que la mora: un reloj que corre solo
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Tope de respuesta de una PQRS. Vive aquí, con la mora, y no en el módulo de novedades, porque es
+ * la MISMA pregunta —«¿qué se me está pasando y qué hago?»— y partirla en dos dueños es como se
+ * llega a que dos pantallas den cuentas distintas del mismo retraso ([[L-45]]).
+ */
+export const HORAS_SLA_PQRS = 48;
+
+/** Horas entre dos instantes ISO. Negativo = el segundo ya pasó. */
+export function horasEntre(desde: string, hasta: string): number {
+  const a = Date.parse(desde);
+  const b = Date.parse(hasta);
+  if (!Number.isFinite(a) || !Number.isFinite(b)) return 0;
+  return Math.round(((b - a) / 3_600_000) * 100) / 100;
+}
+
+/**
+ * Cuándo vence el SLA de una novedad.
+ *
+ * Se cuenta desde que ENTRA, no desde que alguien la mira: el inquilino empezó a esperar cuando la
+ * reportó. Si el documento trae `slaVencimiento` explícito, manda ése — hay casos (una reparación
+ * pactada con el propietario) en que el plazo se acuerda y no se calcula.
+ */
+export function vencimientoSla(n: Pick<Novedad, 'createdAt' | 'slaVencimiento'>, horas = HORAS_SLA_PQRS): ISODate {
+  if (n.slaVencimiento) return n.slaVencimiento;
+  const t = Date.parse(n.createdAt);
+  return Number.isFinite(t) ? new Date(t + horas * 3_600_000).toISOString() : n.createdAt;
+}
+
+export interface EstadoSla {
+  vencimiento: ISODate;
+  /** Negativo = ya se pasó el plazo. */
+  horasRestantes: number;
+  vencida: boolean;
+  /** `true` cuando ya no corre el reloj: la novedad está resuelta. */
+  cerrada: boolean;
+  urgencia: Urgencia;
+}
+
+/**
+ * Estado del reloj de una novedad AHORA.
+ *
+ * Una novedad HECHA o CERRADA no vence: su reloj se paró al resolverse. Enseñarla en rojo tres
+ * semanas después solo entrena al operador a ignorar el color, que es como muere un tablero.
+ */
+export function estadoDeSla(
+  n: Pick<Novedad, 'createdAt' | 'slaVencimiento' | 'estado'>,
+  ahora: string,
+): EstadoSla {
+  const vencimiento = vencimientoSla(n);
+  const cerrada = n.estado === 'HECHO' || n.estado === 'CERRADO';
+  const horasRestantes = horasEntre(ahora, vencimiento);
+  const urgencia: Urgencia = cerrada
+    ? 'despues'
+    : horasRestantes < 0
+      ? 'vencido'
+      : horasRestantes <= 12
+        ? 'hoy'
+        : horasRestantes <= HORAS_SLA_PQRS
+          ? 'semana'
+          : 'mes';
+  return { vencimiento, horasRestantes, vencida: !cerrada && horasRestantes < 0, cerrada, urgencia };
+}
+
+/** Qué hacer con una novedad según lo que marque su reloj. Espeja `accionDeMora`. */
+export function accionDeSla(e: EstadoSla): string {
+  if (e.cerrada) return 'Resuelta.';
+  if (e.vencida) return `Fuera de plazo por ${Math.abs(Math.round(e.horasRestantes))} h. Responder HOY y explicar la demora.`;
+  if (e.horasRestantes <= 12) return `Quedan ${Math.round(e.horasRestantes)} h. Responder antes de que venza.`;
+  return `Quedan ${Math.round(e.horasRestantes)} h de las ${HORAS_SLA_PQRS} de plazo.`;
+}
+
+/** Hitos de agenda de una novedad abierta: la única que pide sitio en el tablero. */
+export function hitosDeNovedad(n: Novedad, hoy: string): Hito[] {
+  const e = estadoDeSla(n, `${hoy}T00:00:00.000Z`);
+  if (e.cerrada) return [];
+  const fecha = e.vencimiento.slice(0, 10);
+  return [
+    {
+      tipo: 'novedad',
+      fecha,
+      expedienteId: n.expedienteId,
+      titulo: `Novedad: ${n.tipo}`,
+      detalle: `${n.descripcion.slice(0, 120)} — ${accionDeSla(e)}`,
+      dias: diasEntre(hoy, fecha),
+      urgencia: e.urgencia,
+    },
+  ];
 }
