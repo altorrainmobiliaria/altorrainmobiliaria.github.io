@@ -3907,3 +3907,57 @@ credenciales de staff): se pierde el comportamiento, pero el layout y el CSS son
 Destilado a `ssg-static-prerender` §4bis (el gotcha de plataforma) y a `validacion-live-chrome` §5bis
 (medir el nodo que verá el usuario, con control y con geometría). Doctrina: §3.3 · §G.4 (caza-bugs:
 recorrer el camino vivo, no el diff).
+
+---
+
+## 118. ADR — Expedientes y novedades: la llave que nadie fabricaba ⟦OPUS-5⟧ (2026-08-22)
+
+`crearContrato` (§113) exigía un `expedienteId` desde hacía cinco ADRs y **no había forma de acuñar
+uno** desde ninguna pantalla. La puerta pedía una llave que no fabricaba nadie: GESTIÓN v1 no era
+usable de extremo a extremo aunque cada pieza suelta funcionara.
+
+**118.1 — Dos invariantes que valen lo que cuesta imponerlos.** `sin-referencia`: un expediente sin
+inmueble del catálogo NI código antiguo es una carpeta sobre nada, y como los hijos cuelgan por **FK
+y no por subcolección** (decisión de §19, para permitir queries cross-expediente), después no hay de
+dónde deducir de qué inmueble hablaba. `cerrada-sin-resolucion`: cerrar un ticket sin escribir qué se
+hizo deja el mismo rastro que no haberlo atendido — es el **«✅ inmerecido» de la operación**, un
+estado que afirma más de lo que respalda, la misma familia que los gates que aprueban sin comparar.
+
+**118.2 — El reloj vive con la mora, no aparte.** El SLA de 48h se implementó en `agenda.ts` porque
+es la MISMA pregunta que la mora —*«¿qué se me está pasando y qué hago?»*— y partirla en dos dueños
+es exactamente como se llega a que dos pantallas den cuentas distintas del mismo retraso ([[L-45]]).
+Cuenta desde que la novedad **entra**, no desde que alguien la mira: el inquilino empezó a esperar
+cuando la reportó. Y una novedad resuelta **no vence**: su reloj se paró. Enseñarla en rojo tres
+semanas después solo entrena al operador a ignorar el color, que es como muere un tablero.
+
+**118.3 — `actualizarNovedad` valida el RESULTADO, no el parche.** Es la trampa entera del endpoint:
+mandar `{estado:'CERRADO'}` a secas pasaría cualquier validación hecha sobre la entrada —«no trae
+resolución, pero es que no trae nada»— y cerraría el ticket sin decir qué se hizo, justo lo que el
+invariante existe para impedir. Se fusiona con lo guardado y **después** se juzga. En transacción con
+`_version`, porque dos personas atendiendo la misma queja es el caso NORMAL de una inmobiliaria
+pequeña. El plazo lo pone el servidor por el mismo motivo que las cifras de pago (§115): si lo
+mandara el cliente, un reloj mal puesto bastaría para que un ticket de tres días saliera en verde.
+
+**118.4 — Lo aditivo se hizo aditivo.** `Hito.contratoId` pasó a opcional (los hitos de novedad
+cuelgan del expediente) y el **typecheck sacó a sus dos lectores en el acto** — tercera vez que ese
+gate se paga solo desde §113. `agenda()` recibe las novedades como 4º parámetro opcional: quien ya la
+llamaba no se entera (§3.2).
+
+**118.5 — La UI, sin mockup nuevo y a propósito.** Compone los mismos componentes del mockup del
+panel ya aprobado, igual que contratos (§114) y cartera (§117): no es diseño nuevo, es el lenguaje
+aprobado aplicado a dos entidades más. Los desplegables se llenan **desde el dominio**
+(`ESTADOS_EXPEDIENTE`/`ESTADOS_NOVEDAD`) — una copia en el HTML se queda vieja sin que nadie lo note.
+Los mensajes del invariante viajan hasta el aviso del formulario: un `invalid-argument` que solo dice
+«datos inválidos» obliga a adivinar cuál de los seis campos.
+
+**118.6 — Dos errores de tipos, una sola causa.** Los tipos de Cloudflare Workers fusionan
+`Element.append(string)` y `Element.remove(): Element` del HTMLRewriter con los del DOM: eso mata la
+sobrecarga variádica de `append` y deja a `HTMLSelectElement` fuera del constraint `extends
+HTMLElement`. Me alineé con el patrón que ya compila en el resto del panel (`for…of` + `appendChild`,
+y cast directo) en vez de inventar uno — familia de [[L-36]].
+
+**118.7 — Verificación.** 368 tests (22 nuevos, verdes a la primera) · `typecheck` en los dos
+codebases · `build` · `verify:build` · `verify:data` · `verify:css`. Medido en el navegador: las dos
+tablas cuadran columna a columna, cero recortes, cero solapes, sin desborde. De paso se fueron dos
+clases de ancho que daban el mismo resultado. **Falta**: estrenar el camino con datos reales (paso
+1.5 del runbook, cuando exista el claim) y los adjuntos privados (gate B5 del dueño).

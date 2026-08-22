@@ -40,3 +40,7 @@
 - **Leads / captación** (ADR §88): `src/pages/api/solicitud.ts` (POST, `prerender=false`) crea en `solicitudes` con el MISMO contrato del legacy, para que `onNewSolicitud` lo recoja. Escritura de bajo nivel en `src/lib/data/firestore-rest.ts` (`encodeValue`+`createDoc`). Desde §96-§97 hay **tres** escrituras públicas (`solicitudes`, `alertas`, `bajasAlertas`), todas con alta ACOTADA en las Rules. ⚠️ `tipo` del doc = tipo de LEAD, no de inmueble (ese va en `datosExtra.tipoInmueble`).
 - **Dev**: `npm --prefix portal run dev` (`astro dev`, `.claude/launch.json` config `portal`, puerto 4321). Staging LIVE = `altorra-portal.altorrainmobiliaria.workers.dev` (noindex).
 
+## §GESTIÓN — scripts del panel (§118)
+`src/scripts/gestion-novedades.ts` = expedientes + novedades (PQRS con SLA de 48h). Llama a las
+callables por HTTP plano, como `gestion-contratos.ts`: `verify:data` prohíbe `firebase/functions`.
+Vista `gx-vista-novedades` en `src/pages/gestion.astro`; gate `verify:css` sobre su CSS (§117).

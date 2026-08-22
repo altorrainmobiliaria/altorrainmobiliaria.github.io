@@ -211,3 +211,19 @@ guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero 
 > 🧩 **Mudadas a `60-WORKFLOWS §Gobernanza`** el 2026-07-28 (ADR §68): hablan de CÓMO se conduce la
 > maquinaria (Chrome live · comité/workflow acotado · asesor externo), que es el dominio de `60`, no una
 > lección de bug. Vinculantes igual.
+
+### L-47 — 🐍 `open(p,'w').write(open(p).read()+X)` **borra el archivo**: el truncado ocurre antes de la lectura *(§118)*
+Python evalúa el objeto sobre el que se llama al método ANTES que sus argumentos. En
+`io.open(p,'w').write(io.open(p).read() + X)` el `'w'` **trunca el archivo a cero** y solo después se
+evalúa la lectura — que devuelve cadena vacía. El resultado es un archivo con SOLO `X`. No hay error,
+no hay excepción, el script imprime «hecho»: así me cargué `99-HISTORIAL-ADR.md` entero (3909 líneas,
+117 ADRs → 55 líneas) y lo delató un `brain:check` que dijo «1 ADRs indexados».
+- **Regla**: en un script que reescribe un archivo, **LEE A UNA VARIABLE primero** y afirma sobre ella
+  (`assert prev.count('
+## ') >= 100`) antes de abrir en `'w'`. Un `assert` sobre el contenido viejo
+  es lo único que distingue «append» de «reemplazo total».
+- **Lo que salvó el día fue el commit**, no la pericia: el archivo estaba en git sin modificar, y
+  `git checkout --` lo devolvió intacto. Corolario operativo: **commitea el cerebro antes de correr
+  scripts que lo reescriban**, que es justo lo que §G.4 pide por otras razones.
+- Misma familia que [[L-46]]: utillaje propio que corrompe en SILENCIO. El patrón común es que el
+  daño no lo reporta quien lo causa — lo reporta un gate más abajo, si existe.
