@@ -65,6 +65,8 @@ jobs:
         run: npm run typecheck
       - name: CSS de runtime alcanzable (§117 — Astro acota y el JS crea nodos sin el atributo)
         run: npm run verify:css
+      - name: Cifras sin respaldo en paginas publicas (§123 — Ley 1480, cero-demo)
+        run: npm run verify:claims
       - run: npm run build
       - name: Verificar render híbrido (mitigación R2/R3)
         run: npm run verify:build
