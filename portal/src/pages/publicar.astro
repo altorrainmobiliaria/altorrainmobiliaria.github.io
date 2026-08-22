@@ -22,9 +22,13 @@ const pasos = [
   { n: '03', t: 'Publicamos', d: 'Tu propiedad en el portal, redes y nuestra red privada de compradores.' },
   { n: '04', t: 'Cerramos', d: 'Acompañamiento legal y financiero hasta la firma de la escritura.' },
 ];
+// ⚖️ Aquí decía «Avalúo y fotografía profesional». El «Avalúo» se RETIRÓ el 2026-08-22 (§105):
+// Daniel confirmó que NO hay avaluador inscrito en el RAA detrás, y sin él ofrecerlo es reclamar una
+// actividad regulada (Ley 1673). La fotografía profesional SÍ es real, así que esa se queda: lo que
+// sobraba era la palabra, no el servicio.
 const planes = [
   { tier: 'Publicación', price: 'Gratis', sub: 'Publica y recibe contactos por tu cuenta.', perks: ['Ficha en el portal ALTORRA', 'Hasta 10 fotos', 'Contactos directos'], cta: 'Empezar gratis', featured: false },
-  { tier: 'Gestión Premium', price: '3%', unit: 'al vender', sub: 'Nosotros gestionamos todo el proceso.', perks: ['Todo lo de Publicación', 'Avalúo y fotografía profesional', 'Visitas y negociación gestionadas', 'Acompañamiento legal'], cta: 'Pedir valoración', featured: true },
+  { tier: 'Gestión Premium', price: '3%', unit: 'al vender', sub: 'Nosotros gestionamos todo el proceso.', perks: ['Todo lo de Publicación', 'Fotografía profesional', 'Visitas y negociación gestionadas', 'Acompañamiento legal'], cta: 'Pedir valoración', featured: true },
   { tier: 'Concierge Élite', price: 'A medida', sub: 'Para propiedades de alto valor y exclusividad.', perks: ['Todo lo de Premium', 'Video y tour 3D', 'Marketing internacional', 'Abogado dedicado'], cta: 'Hablar con un asesor', featured: false },
 ];
 const check = '<path d="M20 6L9 17l-5-5"/>';
