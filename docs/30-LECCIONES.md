@@ -158,6 +158,7 @@ diciendo a alguien que no podrá preguntarte.
 
 ---
 
+### L-46 — El shell (y el lenguaje que lo llama) SE COMEN texto y nada falla: comillas simples o por ARCHIVO
 ### L-45 — 🔀 Dos escritores, una colección, dos modelos: el `as T` a ciegas convierte «datos viejos» en «catálogo vacío sin errores» *(2026-08-21, ADR §103)*
 **Disparador**: un sistema que se está reemplazando y el nuevo comparten el MISMO almacén (aquí, la
 colección `propiedades`), y el viejo sigue siendo el único que sabe escribir. **Causa**: en una base sin

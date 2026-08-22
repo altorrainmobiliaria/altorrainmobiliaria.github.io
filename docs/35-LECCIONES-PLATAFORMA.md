@@ -51,6 +51,22 @@ a `<projNum>@cloudbuild.gserviceaccount.com`, habilitar APIs cloudbuild/eventarc
 ### L-11 — Cloud Functions gen2: tres gotchas de operación que se ven como bugs *(importadas de bersaglio — sinapsis 2026-07-10)*
 **(a) Callable v2 devuelve 403 SIN ejecutarse** (cero logs): falta el invoker público — firebase-tools NO lo re-aplica en update → borrar y re-desplegar la function (bersaglio §115). **(b) `firebase functions:secrets:set` NO re-empaqueta `functions/.env`**: tras cambiar env-vars no-secretas, re-deploy COMPLETO de la function o sigue leyendo el `.env` viejo (bersaglio). **(c) "Desactivar" un usuario = deshabilitar la CUENTA de Auth** (`updateUser({disabled:true})` vía CF) — un campo `activo:false` en un doc NO es credencial: el token sigue vivo (bersaglio §66).
 
+### L-46 — El shell (y el lenguaje que lo llama) SE COMEN texto y nada falla: comillas simples o por ARCHIVO *(2026-08-22, ADR §112)*
+**Disparador**: pasar texto con `` ` ``, `$`, `!` o escapes `\uXXXX` a un comando entre **comillas dobles**, o a un
+heredoc sin entrecomillar. El caso típico: `git commit -m "…"` con un identificador entre backticks.
+**Causa**: bash sustituye comandos DENTRO de comillas dobles, así que un backtick-hoy-backtick intenta EJECUTAR
+`hoy`, falla, y sustituye por **cadena vacía**. El comando termina con ÉXITO y el texto queda mutilado —
+«con &nbsp; inyectado», con un doble espacio donde estaba la palabra.
+**La misma clase, TRES veces en un día**: (1) escapes numéricos escritos por heredoc que salieron como caracteres
+literales y dejaron un archivo «binario»; (2) este; (3) y otra vez al escribir ESTA lección — primero por meter un
+escape numérico en una cadena de Python no-cruda, y luego por citar el propio delimitador de cadena DENTRO de la
+cadena, que la cerró antes de tiempo. **Por qué es de las caras**: no hay error, no hay aviso, y el daño solo se ve
+releyendo con atención.
+**Reglas**: (a) mensaje de commit o texto largo → comillas **SIMPLES**, o `git commit -F archivo`; (b) contenido con
+caracteres especiales → **herramienta de escritura de archivos**, nunca heredoc ni `-m`; (c) en Python, cadena CRUDA
+en cuanto aparezca una barra invertida, y NUNCA citar dentro el delimitador que la abre; (d) preferir clases Unicode
+legibles (`\p{Mn}`, `\p{Cc}`) a escapes numéricos: sobreviven a cualquier capa de comillas; (e) detección barata a
+posteriori: un **doble espacio a mitad de línea** es la firma.
 ### L-13 — GitHub Pages (deploy-from-branch): sin `.nojekyll` Jekyll construye TODO el repo — y si falla, PRODUCCIÓN SE CONGELA EN SILENCIO
 **Disparador**: pusheas a `main` y el dominio sigue sirviendo contenido viejo; o el `deploy-info` live está meses atrás. **Causa**: Pages corre "Build with Jekyll" sobre el repo ENTERO (`docs/`, `_legacy/`, `skills/`, node_modules committeados); un archivo que Jekyll no traga rompe el build → deploy `skipped` → el dominio sirve el ÚLTIMO build exitoso, sin síntoma visible (descubierto 2026-07-10: fallaba desde ANTES de la sesión; el deploy-info live era de mayo). **Fix**: (a) `.nojekyll` en la raíz = deploy crudo (lo correcto para un sitio estático puro); (b) verificar deploy con SENTINELA ÚNICA del contenido nuevo + cache-buster `?cb=` — grep de un string que ya existía en el sitio viejo = falso positivo (pasó con `info@…`); (c) el estado real del build vive en la API pública de Actions (`…/actions/runs` + `jobs_url`, sin token) — JAMÁS asumir "push = deployado" (§3.3).
 
