@@ -309,6 +309,35 @@ const init = DATA.admin;
       </section>
      </div>
 
+     <!-- ══ INMUEBLES ═══════════════════════════════════════════════════════════════════════
+          Cierra el círculo que dejó abierto el alta (§110): sin esto se puede crear una propiedad y
+          no volver a verla desde el portal. La columna que justifica la pantalla es la última —«¿se
+          ve?»— y NO sale del estado: sale de `problemasParaPublicar()`, los mismos predicados que
+          construyen el índice del catálogo. Un «disponible» sin foto tampoco aparece.  -->
+     <div id="gx-vista-inmuebles" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-inm-volver">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Inmuebles</h1>
+          <p class="gx-sub" id="gx-inm-resumen"></p>
+        </div>
+        <div class="gx-head__actions">
+          <button class="gx-new gx-new--inm" type="button"><span aria-hidden="true">+</span>Nuevo inmueble</button>
+        </div>
+      </header>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--inm">
+            <div class="gx-tr gx-tr--head">
+              <span>Inmueble</span><span>Operación</span><span>Ubicación</span><span>Estado</span><span>¿Se ve?</span>
+            </div>
+            <div id="gx-inm-cuerpo"></div>
+          </div>
+        </div>
+      </div>
+     </div>
+
      <!-- ══ NUEVO INMUEBLE ═══════════════════════════════════════════════════════════════════
           Réplica del mockup `ALTORRA Gestion-Alta.dc.html`, aprobado por Daniel el 2026-08-22.
           PANTALLA y no ventana emergente: son seis bloques más galería, y eso dentro de un modal
@@ -615,6 +644,18 @@ const init = DATA.admin;
 </style>
 
 <style>
+  /* ══ LISTADO DE INMUEBLES (§110) ═════════════════════════════════════════════════════════ */
+  .gx-table__inner--inm .gx-tr { grid-template-columns: 2.2fr 1fr 1.4fr 1.1fr 1fr; }
+  .gx-cod {
+    display: block;
+    font-size: 11px;
+    font-weight: var(--alt-fw-semibold);
+    letter-spacing: 0.04em;
+    color: var(--alt-text-muted);
+  }
+  /* «No se ve» en ORO: en esta paleta el oro es lo que pide atención, y el rojo no existe. */
+  .gx-vis__no { color: var(--alt-link); font-weight: var(--alt-fw-semibold); font-size: 13px; cursor: help; }
+
   /* ══ PANTALLA «NUEVO INMUEBLE» (§108) ══════════════════════════════════════════════════════
      Todo sale de `tokens.css`. Ni un color suelto: la paleta es navy / dorado / plata / blanco, y
      los estados NO usan verde ni rojo — la jerarquía se hace con oro (pide acción) y navy (reposo). */

@@ -20,6 +20,7 @@ import { revisarAlta, type EntradaAlta } from '../lib/domain/alta-propiedad';
 import { explicarProblema } from '../lib/domain/catalogo';
 import { TOPE_IMAGENES } from '../lib/media-subida';
 import { urlMedia } from '../lib/media';
+import { montarInmuebles } from './gestion-inmuebles';
 
 /** Lado mayor del derivado. Más allá de esto no se gana nitidez visible y sí peso. */
 const LADO_MAX = 1600;
@@ -220,18 +221,23 @@ export function montarAlta(): void {
    */
   let codigo = '';
 
-  const ver = (alta: boolean) => {
-    vistaPanel.hidden = alta;
-    vistaAlta.hidden = !alta;
-    if (alta) {
+  const vistaInmuebles = $('gx-vista-inmuebles');
+
+  /** Solo una vista visible a la vez. `null` = volver al panel. */
+  const ver = (cual: 'alta' | 'inmuebles' | null) => {
+    vistaPanel.hidden = cual !== null;
+    vistaAlta.hidden = cual !== 'alta';
+    if (vistaInmuebles) vistaInmuebles.hidden = cual !== 'inmuebles';
+    if (cual === 'alta') {
       ajustarPorOperacion();
       pintarAviso();
-      window.scrollTo({ top: 0 });
     }
+    window.scrollTo({ top: 0 });
   };
 
-  document.querySelector('.gx-new')?.addEventListener('click', async () => {
-    ver(true);
+  // Los DOS botones «+ Nuevo inmueble» (el del panel y el del listado) abren lo mismo.
+  document.querySelectorAll('.gx-new').forEach((b) => b.addEventListener('click', async () => {
+    ver('alta');
     if (codigo) return;
     const msg = $('gx-alta-msg');
     const r = await acunarCodigo();
@@ -243,9 +249,25 @@ export function montarAlta(): void {
     // Sin código no se pueden subir fotos ni guardar. Se dice, en vez de dejar que el primer intento
     // de subida falle con un mensaje que no explica nada.
     if (msg) msg.textContent = `No se pudo asignar el código del inmueble. ${explicarFallo(r.fallo)}`;
+  }));
+
+  // La sección «Inmuebles» de la barra lateral.
+  document.querySelectorAll<HTMLAnchorElement>('.gx-nav__item').forEach((a, i) => {
+    a.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      document.querySelectorAll('.gx-nav__item').forEach((n) => n.classList.remove('is-on'));
+      a.classList.add('is-on');
+      if (i === 1) {
+        ver('inmuebles');
+        void montarInmuebles();
+      } else if (i === 0) {
+        ver(null);
+      }
+    });
   });
-  $('gx-alta-volver')?.addEventListener('click', () => ver(false));
-  $('gx-alta-cancelar')?.addEventListener('click', () => ver(false));
+  $('gx-inm-volver')?.addEventListener('click', () => ver(null));
+  $('gx-alta-volver')?.addEventListener('click', () => ver(null));
+  $('gx-alta-cancelar')?.addEventListener('click', () => ver(null));
 
   // El aviso se recalcula con cada tecla: la pregunta «¿esto se va a ver?» tiene respuesta en todo
   // momento, así que esconderla hasta pulsar Guardar sería esconderla a propósito.
