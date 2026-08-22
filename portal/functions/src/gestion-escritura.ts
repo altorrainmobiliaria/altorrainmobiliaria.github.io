@@ -22,12 +22,18 @@ import { getFirestore, type Firestore } from 'firebase-admin/firestore';
 import * as logger from 'firebase-functions/logger';
 import {
   explicarProblemaContrato,
+  explicarProblemaExpediente,
+  explicarProblemaNovedad,
   problemasDeContrato,
+  problemasDeExpediente,
+  problemasDeNovedad,
   type Contrato,
+  type Expediente,
+  type Novedad,
   type Pago,
   type TipoPago,
 } from '../../src/lib/domain/gestion';
-import { cifrasDePago, estadoDePago, idPago } from '../../src/lib/domain/agenda';
+import { cifrasDePago, estadoDePago, idPago, vencimientoSla } from '../../src/lib/domain/agenda';
 
 const REGION = 'us-central1';
 
@@ -200,4 +206,141 @@ export const registrarPago = onCall({ region: REGION }, async (req) => {
   await db.doc(`pagos/${id}`).set(doc, { merge: true });
   logger.info(`[gestion] pago ${id} (${derivado.estado}) por ${quien.uid}`);
   return { ok: true, id, pago: doc };
+});
+
+/**
+ * Crea el EXPEDIENTE: el agregado raíz del que cuelgan contratos, pagos y novedades por FK.
+ *
+ * Hasta hoy `crearContrato` exigía un `expedienteId` que no había forma de acuñar — la puerta pedía
+ * una llave que no fabricaba nadie. Esto la fabrica.
+ */
+export const crearExpediente = onCall({ region: REGION }, async (req) => {
+  const quien = exigirEditor(req);
+  const db = getFirestore();
+  const entrada = (req.data ?? {}) as Partial<Expediente>;
+
+  const problemas = problemasDeExpediente(entrada);
+  if (problemas.length) {
+    throw new HttpsError('invalid-argument', 'El expediente no se puede abrir todavía.', {
+      problemas,
+      mensajes: problemas.map(explicarProblemaExpediente),
+    });
+  }
+
+  const ahora = new Date();
+  const iso = ahora.toISOString();
+  const id = await acunarId(db, 'EXP', ahora);
+  const doc: Expediente = { ...(entrada as Expediente), id, _version: 1, createdAt: iso, updatedAt: iso };
+
+  try {
+    await db.doc(`expedientes/${id}`).create(doc);
+  } catch {
+    throw new HttpsError('aborted', `El código ${id} ya estaba ocupado. No se guardó nada; reintenta.`);
+  }
+  logger.info(`[gestion] expediente ${id} abierto por ${quien.uid}`);
+  return { ok: true, id, expediente: doc };
+});
+
+/**
+ * Registra una NOVEDAD (PQRS del inquilino o del propietario).
+ *
+ * El plazo lo pone el SERVIDOR, no el formulario: es lo único que hace comparable el SLA entre
+ * tickets, y si lo mandara el cliente bastaría un reloj mal puesto —o mala fe— para que una novedad
+ * llevara tres días abierta y el tablero la enseñara en verde. Solo se respeta un `slaVencimiento`
+ * explícito cuando el plazo se PACTÓ (una reparación acordada con el propietario), y aun así queda
+ * escrito quién lo puso.
+ */
+export const crearNovedad = onCall({ region: REGION }, async (req) => {
+  const quien = exigirEditor(req);
+  const db = getFirestore();
+  const entrada = (req.data ?? {}) as Partial<Novedad>;
+
+  const estado = entrada.estado ?? 'PENDIENTE';
+  const problemas = problemasDeNovedad({ ...entrada, estado });
+  if (problemas.length) {
+    throw new HttpsError('invalid-argument', 'La novedad no se puede guardar todavía.', {
+      problemas,
+      mensajes: problemas.map(explicarProblemaNovedad),
+    });
+  }
+
+  // 🔴 El expediente tiene que EXISTIR. Sin esto se crean tickets colgando de una FK inventada, que
+  // no fallan al escribir y desaparecen de toda vista que agrupe por expediente.
+  const exp = await db.doc(`expedientes/${String(entrada.expedienteId)}`).get();
+  if (!exp.exists) throw new HttpsError('not-found', `El expediente ${entrada.expedienteId} no existe.`);
+
+  const ahora = new Date();
+  const iso = ahora.toISOString();
+  const id = await acunarId(db, 'NOV', ahora);
+  const doc: Novedad = {
+    ...(entrada as Novedad),
+    id,
+    estado,
+    slaVencimiento: vencimientoSla({ createdAt: iso, slaVencimiento: entrada.slaVencimiento }),
+    _version: 1,
+    createdAt: iso,
+    updatedAt: iso,
+  };
+
+  try {
+    await db.doc(`novedades/${id}`).create(doc);
+  } catch {
+    throw new HttpsError('aborted', `El código ${id} ya estaba ocupado. No se guardó nada; reintenta.`);
+  }
+  logger.info(`[gestion] novedad ${id} (${doc.tipo}) abierta por ${quien.uid}`);
+  return { ok: true, id, novedad: doc };
+});
+
+/**
+ * Mueve una novedad de estado. **La única forma de cerrarla.**
+ *
+ * VALIDA EL DOCUMENTO RESULTANTE, NO EL PARCHE. Es la trampa entera de este endpoint: mandar
+ * `{estado:'CERRADO'}` a secas pasaría cualquier validación hecha sobre la entrada —«no trae
+ * resolución, pero es que no trae nada»— y cerraría el ticket sin decir qué se hizo, que es
+ * exactamente lo que el invariante existe para impedir. Se fusiona primero y se juzga después.
+ *
+ * Y va en TRANSACCIÓN con `_version`: dos personas atendiendo la misma queja es el caso NORMAL de
+ * una inmobiliaria pequeña, no el raro, y sin esto la segunda pisa la resolución de la primera sin
+ * que ninguna se entere.
+ */
+export const actualizarNovedad = onCall({ region: REGION }, async (req) => {
+  const quien = exigirEditor(req);
+  const db = getFirestore();
+  const d = (req.data ?? {}) as { id?: string; _version?: number } & Partial<Novedad>;
+
+  const id = texto(d.id);
+  if (!id) throw new HttpsError('invalid-argument', 'Falta el identificador de la novedad.');
+
+  const ref = db.doc(`novedades/${id}`);
+  const { doc, problemas } = await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError('not-found', `La novedad ${id} no existe.`);
+    const actual = snap.data() as Novedad;
+
+    if (typeof d._version === 'number' && d._version !== actual._version) {
+      throw new HttpsError(
+        'aborted',
+        'Alguien más actualizó esta novedad mientras la editabas. Recarga para ver lo que quedó.',
+      );
+    }
+
+    const { id: _i, _version: _v, createdAt: _c, ...parche } = d;
+    const fusionado: Novedad = { ...actual, ...parche, id, createdAt: actual.createdAt };
+    const malos = problemasDeNovedad(fusionado);
+    if (malos.length) return { doc: fusionado, problemas: malos };
+
+    fusionado._version = (actual._version ?? 1) + 1;
+    fusionado.updatedAt = new Date().toISOString();
+    tx.set(ref, fusionado);
+    return { doc: fusionado, problemas: [] as ReturnType<typeof problemasDeNovedad> };
+  });
+
+  if (problemas.length) {
+    throw new HttpsError('invalid-argument', 'La novedad no se puede dejar así.', {
+      problemas,
+      mensajes: problemas.map(explicarProblemaNovedad),
+    });
+  }
+  logger.info(`[gestion] novedad ${id} → ${doc.estado} por ${quien.uid}`);
+  return { ok: true, id, novedad: doc };
 });
