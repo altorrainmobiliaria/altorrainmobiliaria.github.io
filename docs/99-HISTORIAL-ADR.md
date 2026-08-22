@@ -3689,3 +3689,53 @@ pasaron, y el vencido que sobrevive a la ventana.
 y los adjuntos privados (gate B5). Lo construido es el cerebro del módulo, no su cara.
 **112.7 — Doctrina**: §3.6 · [[L-45]] (un solo dueño de la regla) · [[L-46]] (nació de esta sesión) ·
 gate legal de la Ley 820 en `42-LEGAL`.
+
+---
+
+## 113. ADR — El gate del depósito, y el gate de tipos que no existía ⟦OPUS-5⟧ (2026-08-22)
+
+Dos cosas, y la segunda salió de la primera sin buscarla.
+
+**113.1 — GESTIÓN v1 gana su camino de ESCRITURA, y no por el cliente.** `contratos`, `expedientes`,
+`pagos` y `novedades` nacieron con `allow write: if false`, y no por descuido: el ruleset lo dejó
+escrito al fusionarse (§100) — *«el destino es que toda escritura de estado pase por Cloud Functions…
+lo que ya nace cerrado nace cerrado»*. Así que la puerta es una **callable**, `crearContrato`, y lo que
+impone es lo que un formulario no puede garantizar:
+
+· **El gate del art. 16 de la Ley 820**: en arriendo de VIVIENDA el depósito en dinero está PROHIBIDO
+—directo, indirecto o «con otro nombre» (arts. 15 y 18)—, con multa de hasta 100 SMLMV y riesgo para la
+propia matrícula de arrendador. El modelo lo prometía **desde el día 1** (*«la CF de creación de
+contrato valida `garantia` contra `vertical`»*) y no existía ni la función ni la Function. Ahora existe,
+con test, y el mensaje CITA la norma y ofrece la salida (póliza o codeudor).
+· Los invariantes de datos, con `problemasDeContrato()` en el **dominio** para que el formulario pueda
+usar los MISMOS y no puedan divergir ([[L-45]]).
+· El rol, leído del **token**: cero lecturas facturables (§99).
+
+Dos detalles que se decidieron y no se heredaron: la validación corre **antes** de tocar el contador
+—un contrato inválido no debe quemar un código— y el documento se escribe con **`create`**, no `set`:
+si el contador se desincronizó, falla en vez de sobrescribir un contrato vivo.
+
+**113.2 — El hallazgo gordo: el portal NO tenía gate de tipos.** `astro build` **transpila sin
+comprobar**, así que un import roto o una firma cambiada llegan a producción sin un solo aviso. Se
+descubrió de rebote: el `tsc` de las Functions —que sí comprueba— se quejó de un import que **yo mismo**
+había roto en `alta-propiedad.ts` (`Geo` se exporta desde `shared`, no desde `propiedades`). Al correr
+el typecheck sobre el portal entero aparecieron **4 errores, y uno llevaba en `main` desde §101**
+(`gestion-leads.ts`), invisible durante once ADRs. Dos de ellos eran el gotcha que este cerebro ya
+tenía documentado en [[L-36]]: los tipos de Cloudflare Workers fusionan `Element.append(string)` del
+HTMLRewriter con el del DOM y matan la sobrecarga que acepta nodos; `appendChild` no colisiona.
+
+**113.3 — La corrección estructural.** Los 4 arreglados, `npm run typecheck` añadido y **cableado al CI
+antes del build**. Un gate que solo vive en `package.json` no protege nada — es literalmente el
+chequeo #25 de este mismo cerebro aplicado a otro linter.
+
+**113.4 — Verificación.** 329 tests (12 nuevos, todos sobre el gate legal y los invariantes) +
+`typecheck` limpio + `build` + `verify:build` + `verify:data`.
+
+**113.5 — Anti-patterns evitados.** NO se abrió `contratos` a escritura desde el cliente «porque sería
+más rápido»: habría deshecho una decisión deliberada de §100 en el módulo que más PII maneja. NO se
+puso el gate legal en el formulario: ahí es una sugerencia, en la Function es una frontera.
+
+**113.6 — Lo transferible** (a `arquitecto-software`): *un build que TRANSPILA no es un build que
+COMPRUEBA*. Si el empaquetador borra los tipos sin validarlos, el proyecto no tiene verificación de
+tipos aunque esté escrito en TypeScript — y la ausencia no se nota, porque todo compila.
+**113.7 — Doctrina**: §3.6 (la frontera donde de verdad protege) · [[L-45]] · [[L-36]] · §100.

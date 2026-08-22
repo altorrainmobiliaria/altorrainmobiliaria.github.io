@@ -152,6 +152,17 @@ por lo que leen, no por lo que devuelven. Vale lo mismo para fechas (`03/04` no 
 dos lados del Atlántico) y para husos horarios. **Señal de que estás en esta trampa:** te descubres
 escribiendo una heurística con «si tiene tres dígitos después del punto, entonces…».
 
+**9. Un build que TRANSPILA no es un build que COMPRUEBA.** Muchos empaquetadores modernos (esbuild,
+Vite, SWC y todo lo construido encima: Astro, Next, Remix) **borran los tipos sin validarlos** —es lo
+que los hace rápidos—. El efecto es que un proyecto escrito íntegramente en TypeScript puede no tener
+NINGUNA verificación de tipos, y la ausencia no se nota: todo compila, todo arranca, y un import roto o
+una firma cambiada llegan a producción sin un aviso. **Comprueba ahora mismo si tu proyecto tiene un
+paso de tipos DISTINTO del build** —`tsc --noEmit`, `astro check`, `vue-tsc`— y si no lo tiene,
+añádelo y **cablealo al CI antes del build**; en `package.json` solo, no protege nada. Cuando lo
+enciendas por primera vez espera errores viejos: aparecerán todos los que llevaban tiempo dentro, y
+alguno tendrá meses. **Vale igual para lo que el build tampoco mira**: linters, tamaño del bundle,
+accesibilidad. La pregunta útil no es «¿pasa el build?» sino **«¿qué NO comprueba el build?»**.
+
 ## Cuándo NO usar
 - Edits triviales sin consecuencias de diseño (un texto, un color, un typo).
 - Tareas que no son de código (salvo que haya una decisión de sistema detrás).

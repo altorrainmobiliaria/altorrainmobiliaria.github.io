@@ -38,6 +38,7 @@
 | **La ficha de inmueble** (`/inmueble/<slug>`, slug, gate de publicación, Open Graph) | `99 §97` + `§111` (el slug se CONGELA al crear) |
 | **Auditoría del cerebro**: qué falla, qué gate quitar, por qué un ✅ puede no valer | `99 §109` (la clase del *✅ inmerecido*) + tabla en la bóveda |
 | **Vencimientos, renovaciones, mora, pagos del canon** · «¿qué vence esta semana?» | `99 §112` (agenda pura, `hoy` inyectado) + `domain/gestion.ts` el modelo |
+| **Registrar un contrato** · depósito/garantía · «¿puedo pedir un mes de depósito?» | `99 §113` (callable `crearContrato`; en VIVIENDA el depósito está PROHIBIDO, art. 16 Ley 820) |
 | Project ID, cuentas IAM, deploy, secrets | `50-CONFIG-INFRA` |
 | Competencia/mercado inmobiliario, benchmark | `40-LOBULOS` → `41-MERCADO` |
 | Legal Colombia: Ley 820/RNT/Habeas Data/pagos/firma/SIC — gates de features y agenda abogado | `40-LOBULOS` → `42-LEGAL` (detalle: `specs/R3-LEGAL-COLOMBIA-2026-07.md`) |
@@ -100,6 +101,7 @@
 | §110 | 📋 **Listado de inmuebles**: se podía crear y no volver a verlo. La columna «¿se ve?» NO sale del estado —engaña en dos casos reales— sino de `problemasParaPublicar()`. | 3565 |
 | §111 | ✏️ **Editar un inmueble** (CRUD cerrado). El compare-and-set va en el CLIENTE: la regla del servidor no ata al super_admin, que es quien usa el panel. Slug y `createdAt` congelados. | 3605 |
 | §112 | 📅 **Agenda operativa** (GESTIÓN v1, 1er trozo): el modelo no derivaba nada. Aviso de renovación a 4 meses (el legal son 3), mora por escalones el día exacto, y `setMonth` desborda. | 3647 |
+| §113 | ⚖️ **`crearContrato`** impone el gate del art. 16 (depósito prohibido en vivienda). Y el portal **no tenía typecheck**: 4 errores, uno en `main` desde §101. | 3695 |
 | §88 | 🏗️ **El formulario de captación deja de perder los leads**: `/publicar` era demo. Endpoint `/api/solicitud` (funciona SIN JS) → `solicitudes` con el contrato del legacy. Probando END-TO-END salió que **el correo de avisos está ROTO** (Gmail). [[L-33]] reincidente. | 2265 |
 | §87 | **Leves lotes 2-3 (28/92)**: el grupo «retirados» NO era moot (5 de 7 eran de documentos vivos). En los de FIRMA, 7/7 vivos: la **retención se repartía por mitades** y no había salida para el negocio que muere ya celebrado (FASE G). 2º remedio dañino. | 2199 |
 | §86 | **Los "85 leves" del kit eran 92** (el descuento no vio que el doc 13 también está retirado, y el grupo descontado mezclaba documentos VIVOS). Lote 1: **7 aplicados · 1 REFUTADO** — el remedio situaba un blanco de URL en una cláusula sana del 03 y no veía los docs 17/18, que sí lo tenían. Ledger reanudable en bóveda. | 2141 |
