@@ -63,6 +63,8 @@ jobs:
       # llevaba desde §101 con un error de tipos dentro, en `main`, y ningún gate lo vio.
       - name: Tipos (lo que el build NO comprueba)
         run: npm run typecheck
+      - name: CSS de runtime alcanzable (§117 — Astro acota y el JS crea nodos sin el atributo)
+        run: npm run verify:css
       - run: npm run build
       - name: Verificar render híbrido (mitigación R2/R3)
         run: npm run verify:build

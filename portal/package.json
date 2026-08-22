@@ -11,6 +11,7 @@
     "deploy": "wrangler deploy",
     "typecheck": "tsc --noEmit",
     "verify:build": "node ./scripts/verify-build.mjs",
+    "verify:css": "node ./scripts/verify-css-runtime.mjs",
     "verify:data": "node ./scripts/verify-data-invariants.mjs",
     "test": "vitest run",
     "test:rules": "firebase emulators:exec --only firestore --config firebase/firebase.json --project demo-altorra \"vitest run --config vitest.rules.config.ts\"",

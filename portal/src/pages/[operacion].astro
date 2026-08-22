@@ -188,9 +188,14 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
   .serp-more { display: flex; justify-content: center; margin-top: 38px; }
 
   /* Estado VACÍO / error de la isla del catálogo real (§59) — paleta sellada, sin rojos (§3.2). */
-  .serp-msg { grid-column: 1 / -1; background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-lg); padding: 44px 28px; text-align: center; box-shadow: var(--alt-elev-card); }
-  .serp-msg__t { font-family: var(--alt-font-display); font-size: 22px; color: var(--alt-ink); margin-bottom: 8px; }
-  .serp-msg__d { font-size: 14px; color: var(--alt-text-muted); }
+  /* `:global` porque estas tres las pinta `serp-catalogo.ts` en tiempo de ejecución y el CSS
+     acotado de Astro no alcanza a los nodos que crea el navegador (§117). Sin esto el aviso de
+     «no encontramos inmuebles» salía como texto suelto: sin tarjeta, sin centrar y en la
+     tipografía del cuerpo. Aquí se marcan una a una —y no el bloque entero— porque esta página
+     es casi toda estática y `serp-` no es un namespace exclusivo como el `gx-` de gestión. */
+  :global(.serp-msg) { grid-column: 1 / -1; background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-lg); padding: 44px 28px; text-align: center; box-shadow: var(--alt-elev-card); }
+  :global(.serp-msg__t) { font-family: var(--alt-font-display); font-size: 22px; color: var(--alt-ink); margin-bottom: 8px; }
+  :global(.serp-msg__d) { font-size: 14px; color: var(--alt-text-muted); }
 
   /* Mapa esquemático (placeholder — MapLibre real = follow-up) */
   .serp-aside { flex: 1 1 340px; min-width: 300px; position: sticky; top: 86px; align-self: flex-start; }
