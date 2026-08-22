@@ -2,8 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   aTrozoUrl,
   claveContador,
+  CODIGO_PROVISIONAL,
   codigoPropiedad,
   construirPropiedad,
+  revisarAlta,
   slugPropiedad,
   TOPE_SECUENCIA,
   verticalSugerida,
@@ -283,5 +285,33 @@ describe('🔴 dinero colombiano vs decimal de máquina: DOS parsers, no uno lis
     expect(construir({ valorVenta: 'como unos 450 palos' }).ok).toBe(true); // «450» sí se lee
     const r = construir({ valorVenta: 'no sé' });
     expect(r.ok).toBe(false);
+  });
+});
+
+describe('revisarAlta — el aviso de «¿se vería?» mientras se escribe', () => {
+  const revisar = (over: Partial<EntradaAlta> = {}) => revisarAlta(entrada(over), AHORA);
+
+  it('un formulario completo y disponible SE VERÍA', () => {
+    const r = revisar({ estado: 'disponible' });
+    expect(r).toEqual({ errores: [], problemas: [], seVeria: true });
+  });
+
+  it('un borrador completo NO se vería, y dice exactamente por qué', () => {
+    const r = revisar({ estado: 'borrador' });
+    expect(r.errores).toEqual([]);
+    expect(r.problemas).toEqual(['estado-no-publicado']);
+    expect(r.seVeria).toBe(false);
+  });
+
+  it('a medio llenar devuelve los campos que faltan, no un «no se puede»', () => {
+    const r = revisar({ titulo: '', imagenes: [] });
+    expect(r.seVeria).toBe(false);
+    expect(r.errores.map((e) => e.campo)).toEqual(expect.arrayContaining(['titulo', 'imagenes']));
+  });
+
+  it('el código provisional NUNCA se confunde con uno real', () => {
+    // Es un código con forma válida para poder evaluar, pero imposible como fecha: mes 00, año 0000.
+    expect(CODIGO_PROVISIONAL).toBe('INM-000000-0000');
+    expect(claveContador(AHORA)).not.toBe('INM-000000');
   });
 });

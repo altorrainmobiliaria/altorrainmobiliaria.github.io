@@ -62,41 +62,74 @@ export interface RefsAlta {
   propiedad: (codigo: string) => unknown;
 }
 
+export type ResultadoCodigoAcunado =
+  | { ok: true; codigo: string }
+  | { ok: false; fallo: FalloAlta };
+
+/** Cuántas veces se salta un código ya ocupado antes de rendirse. Un contador sano no salta ninguna. */
+const MAX_SALTOS = 20;
+
 /**
- * El CUERPO de la transacción, separado del SDK para poder probarlo entero sin Firestore.
+ * ACUÑA el código, y nada más. Transacción propia, ANTES de que la persona escriba nada.
  *
- * Orden: leer contador → acuñar código → construir y VALIDAR el documento → comprobar que el código
- * está libre → escribir propiedad y contador. La validación va antes del `get` del documento para no
- * gastar una lectura en algo que ni siquiera es guardable.
+ * POR QUÉ SEPARADO DEL GUARDADO, que era como estaba al principio: las fotos se suben a R2 con la
+ * clave `props/<CÓDIGO>/N.webp`, y se suben MIENTRAS se rellena el formulario. Si el código se acuñara
+ * al guardar, las fotos habrían ido a parar a una carpeta provisional y las claves guardadas en
+ * `imagenes[]` apuntarían para siempre a un sitio que no es el del inmueble. No falla en el momento
+ * —la foto se ve, porque la clave existe— y por eso es de los errores que se descubren tarde.
+ *
+ * El precio de acuñar antes es que un formulario abandonado quema un número. Un hueco en la secuencia
+ * no le hace daño a nadie; una galería colgando de la carpeta equivocada, sí.
+ *
+ * Salta los códigos ocupados en vez de fallar: si el contador se desincronizó (el panel viejo escribe
+ * la MISMA colección) lo sano es avanzar hasta el primero libre, no bloquear el alta.
+ */
+export async function cuerpoDeAcunar(tx: TxAlta, refs: RefsAlta, ahora: Date): Promise<ResultadoCodigoAcunado> {
+  const claveMes = claveContador(ahora);
+  const snap = await tx.get(refs.contadores);
+  let secuencia = siguienteSecuencia(snap.data(), claveMes);
+
+  for (let salto = 0; salto < MAX_SALTOS; salto++) {
+    const codigo = codigoPropiedad(claveMes, secuencia);
+    if (!codigo.ok) return { ok: false, fallo: { tipo: 'secuencia-agotada' } };
+    const ocupado = (await tx.get(refs.propiedad(codigo.codigo))).exists();
+    if (!ocupado) {
+      // Merge: este documento lo comparten TODAS las secuencias del proyecto —los otros meses y las
+      // del panel viejo—, y escribirlo entero las borraría.
+      tx.set(refs.contadores, { [claveMes]: secuencia }, { merge: true });
+      return { ok: true, codigo: codigo.codigo };
+    }
+    secuencia++;
+  }
+  return { ok: false, fallo: { tipo: 'id-ocupado', codigo: `${claveMes}-*` } };
+}
+
+/**
+ * El CUERPO del GUARDADO, separado del SDK para poder probarlo entero sin Firestore.
+ *
+ * Recibe el código ya acuñado. Orden: construir y VALIDAR → comprobar que sigue libre → escribir. La
+ * validación va antes del `get` para no gastar una lectura en algo que ni siquiera es guardable.
  */
 export async function cuerpoDeAlta(
   tx: TxAlta,
   refs: RefsAlta,
   entrada: EntradaAlta,
+  codigo: string,
   ahora: Date,
 ): Promise<ResultadoGuardado> {
-  const claveMes = claveContador(ahora);
-  const snapContadores = await tx.get(refs.contadores);
-  const secuencia = siguienteSecuencia(snapContadores.data(), claveMes);
-
-  const codigo = codigoPropiedad(claveMes, secuencia);
-  if (!codigo.ok) return { ok: false, fallo: { tipo: 'secuencia-agotada' } };
-
-  const ctx: ContextoAlta = { codigo: codigo.codigo, ahora };
+  const ctx: ContextoAlta = { codigo, ahora };
   const construida = construirPropiedad(entrada, ctx);
   if (!construida.ok) return { ok: false, fallo: { tipo: 'validacion', errores: construida.errores } };
 
-  // 🔴 La red que las Rules NO ponen para el super_admin. Si el contador se desincronizó —porque el
-  // panel viejo escribió, porque alguien lo editó a mano— el código podría estar ocupado, y un `set`
-  // sin esta comprobación BORRARÍA el inmueble que hay ahí. Es preferible fallar y que alguien mire.
-  const yaExiste = await tx.get(refs.propiedad(codigo.codigo));
-  if (yaExiste.exists()) return { ok: false, fallo: { tipo: 'id-ocupado', codigo: codigo.codigo } };
+  // 🔴 La red que las Rules NO ponen para el super_admin. La regla es
+  // `esSuperAdmin() || (esEditorOMas() && versionCreacionValida())`, así que quien usa este panel crea
+  // saltándose el compare-and-set del servidor. Sin este `get` DENTRO de la transacción, escribir
+  // sobre un código ya ocupado BORRARÍA el inmueble que hubiera ahí.
+  const yaExiste = await tx.get(refs.propiedad(codigo));
+  if (yaExiste.exists()) return { ok: false, fallo: { tipo: 'id-ocupado', codigo } };
 
-  // La propiedad se crea ENTERA, sin merge (L-09: `set` sin merge para crear, `update` para editar).
-  tx.set(refs.propiedad(codigo.codigo), construida.propiedad);
-  // El contador SÍ con merge: ese documento lo comparten TODAS las secuencias del proyecto —los otros
-  // meses y las del panel viejo—, y escribirlo entero las borraría.
-  tx.set(refs.contadores, { [claveMes]: secuencia }, { merge: true });
+  // ENTERA, sin merge (L-09: `set` sin merge para crear, `update` para editar).
+  tx.set(refs.propiedad(codigo), construida.propiedad);
   return { ok: true, propiedad: construida.propiedad };
 }
 
@@ -107,20 +140,17 @@ async function cargarFirestore() {
   return { db: mod.getFirestore(app), mod };
 }
 
-/**
- * Crea la propiedad. Devuelve el fallo con su tipo, no un booleano: el formulario tiene que poder
- * pintar los errores JUNTO A SU CAMPO, y «no se pudo guardar» a secas no le sirve a nadie.
- */
-export async function guardarPropiedadNueva(
-  entrada: EntradaAlta,
-  ahora: Date = new Date(),
-): Promise<ResultadoGuardado> {
+/** Envuelve una transacción de Firestore con la cara abstracta que usan los cuerpos. */
+async function enTransaccion<T>(
+  corre: (tx: TxAlta, refs: RefsAlta) => Promise<T>,
+  siFalla: (fallo: FalloAlta) => T,
+): Promise<T> {
   let db: Awaited<ReturnType<typeof cargarFirestore>>['db'];
   let mod: Awaited<ReturnType<typeof cargarFirestore>>['mod'];
   try {
     ({ db, mod } = await cargarFirestore());
   } catch (e) {
-    return { ok: false, fallo: { tipo: 'red', detalle: String(e) } };
+    return siFalla({ tipo: 'red', detalle: String(e) });
   }
 
   const refs: RefsAlta = {
@@ -137,15 +167,39 @@ export async function guardarPropiedadNueva(
           else tx.set(ref as never, datos as never);
         },
       };
-      return cuerpoDeAlta(adaptada, refs, entrada, ahora);
+      return corre(adaptada, refs);
     });
   } catch (e) {
     const msg = String(e);
     // Las Rules deniegan con `permission-denied`. Se distingue porque la acción del operador es
     // distinta: si es permiso, cerrar sesión y volver a entrar; si es red, reintentar.
-    if (/permission|PERMISSION_DENIED/i.test(msg)) return { ok: false, fallo: { tipo: 'permiso' } };
-    return { ok: false, fallo: { tipo: 'red', detalle: msg } };
+    if (/permission|PERMISSION_DENIED/i.test(msg)) return siFalla({ tipo: 'permiso' });
+    return siFalla({ tipo: 'red', detalle: msg });
   }
+}
+
+/** Acuña el código del inmueble. Se llama al ABRIR el formulario, porque las fotos lo necesitan. */
+export function acunarCodigo(ahora: Date = new Date()): Promise<ResultadoCodigoAcunado> {
+  return enTransaccion(
+    (tx, refs) => cuerpoDeAcunar(tx, refs, ahora),
+    (fallo) => ({ ok: false, fallo }) as ResultadoCodigoAcunado,
+  );
+}
+
+/**
+ * Guarda la propiedad con el código ya acuñado. Devuelve el fallo con su tipo, no un booleano: el
+ * formulario tiene que poder pintar los errores JUNTO A SU CAMPO, y «no se pudo guardar» a secas no le
+ * sirve a nadie.
+ */
+export function guardarPropiedadNueva(
+  entrada: EntradaAlta,
+  codigo: string,
+  ahora: Date = new Date(),
+): Promise<ResultadoGuardado> {
+  return enTransaccion(
+    (tx, refs) => cuerpoDeAlta(tx, refs, entrada, codigo, ahora),
+    (fallo) => ({ ok: false, fallo }) as ResultadoGuardado,
+  );
 }
 
 /** El fallo, dicho para quien está delante del formulario. */

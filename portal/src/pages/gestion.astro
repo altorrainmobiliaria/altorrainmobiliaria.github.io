@@ -11,6 +11,8 @@ import { srcsetDe, SIZES } from '../lib/img';
 export const prerender = true;
 
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { ZONAS } from '../lib/content/zonas';
+import { TIPOS_INMUEBLE } from '../lib/domain/shared';
 
 const nav = [
   { id: 'resumen', label: 'Resumen', active: true, icon: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>' },
@@ -106,6 +108,34 @@ const DATA = {
   },
 };
 
+// ── Opciones del formulario de ALTA (§108). Los valores salen del modelo SELLADO para que no puedan
+//    divergir: si mañana `TIPOS_INMUEBLE` gana un tipo, el desplegable lo tiene sin tocar esta página.
+const TIPOS: Array<[string, string]> = TIPOS_INMUEBLE.map((t) => [
+  t,
+  (t.charAt(0).toUpperCase() + t.slice(1)).replace(/_/g, ' '),
+]);
+const SPECS: Array<[string, string]> = [
+  ['habitaciones', 'Habitaciones'],
+  ['banos', 'Baños'],
+  ['areaConstruidaM2', 'Área m²'],
+  ['estrato', 'Estrato'],
+  ['parqueaderos', 'Parqueaderos'],
+  ['piso', 'Piso'],
+];
+const AMENIDADES = [
+  'Piscina', 'Gimnasio', 'Ascensor', 'Portería 24h', 'Balcón',
+  'Amoblado', 'Aire acondicionado', 'Terraza', 'Zona BBQ', 'Admite mascotas',
+];
+// El texto de cada estado dice su CONSECUENCIA, no su nombre. «Cerrado» es contraintuitivo a
+// propósito: NO retira el inmueble (decisión de SEO), y elegirlo mal no produce ninguna señal.
+const ESTADOS: Array<[string, string, string]> = [
+  ['borrador', 'Borrador', 'Solo lo ve el equipo. Es lo que se guarda por defecto.'],
+  ['disponible', 'Disponible', 'Sale al portal y a Google.'],
+  ['reservado', 'Reservado', 'SIGUE saliendo en el portal, con el aviso puesto.'],
+  ['cerrado', 'Vendido o arrendado', 'También SIGUE saliendo, con su aviso. Ayuda a que Google no pierda la página.'],
+  ['inactivo', 'Inactivo', 'Desaparece del portal. Es el que retira el inmueble de verdad.'],
+];
+
 const roles = Object.keys(DATA);
 // Solo los campos de texto por rol → se aplican con textContent (seguro, sin innerHTML).
 const strings = Object.fromEntries(
@@ -186,6 +216,7 @@ const init = DATA.admin;
 
     <!-- ===================== MAIN ===================== -->
     <main class="gx-main" id="main">
+     <div id="gx-vista-panel">
       <header class="gx-head">
         <div>
           <h1 class="gx-greet" id="gx-greeting">{init.greeting}</h1>
@@ -276,6 +307,172 @@ const init = DATA.admin;
           </div>
         </div>
       </section>
+     </div>
+
+     <!-- ══ NUEVO INMUEBLE ═══════════════════════════════════════════════════════════════════
+          Réplica del mockup `ALTORRA Gestion-Alta.dc.html`, aprobado por Daniel el 2026-08-22.
+          PANTALLA y no ventana emergente: son seis bloques más galería, y eso dentro de un modal
+          obliga a hacer scroll en una caja flotante.
+          NO hay lenguaje visual nuevo: los campos son las clases `alt-*` que ya usa `/publicar` y las
+          tarjetas los `gx-panel` del propio panel. Lo único nuevo es cómo se agrupan.  -->
+     <div id="gx-vista-alta" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-alta-volver">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Nuevo inmueble</h1>
+          <p class="gx-sub">Se guarda como borrador. Solo sale al portal cuando lo pongas en «Disponible».</p>
+        </div>
+      </header>
+
+      <!-- Aviso de visibilidad. Lo pinta `revisarAlta()`, que pregunta a los MISMOS predicados que usa
+           el índice del catálogo — no a una copia. Si dice «se verá», el listado no lo puede omitir:
+           es un contrato con test en las dos direcciones (§108). -->
+      <div class="gx-aviso" id="gx-alta-aviso" role="status" aria-live="polite" hidden></div>
+
+      <form class="gx-form" id="gx-alta-form" novalidate>
+        <section class="gx-panel gx-pad">
+          <h2>Qué es</h2>
+          <p class="gx-psub">La operación decide qué precio se pide y qué obligaciones legales aplican.</p>
+          <div class="gx-fgrid">
+            <div>
+              <label class="alt-label" for="a-operacion">Operación</label>
+              <select class="alt-input" id="a-operacion" name="operacion">
+                <option value="venta">Venta</option>
+                <option value="arriendo">Arriendo</option>
+                <option value="alojamiento">Alojamiento por días</option>
+              </select>
+            </div>
+            <div>
+              <label class="alt-label" for="a-tipo">Tipo</label>
+              <select class="alt-input" id="a-tipo" name="tipo">
+                {TIPOS.map((t) => <option value={t[0]}>{t[1]}</option>)}
+              </select>
+            </div>
+            <div>
+              <label class="alt-label" for="a-vertical">Vertical legal</label>
+              <select class="alt-input" id="a-vertical" name="vertical">
+                <option value="">Sugerida automáticamente</option>
+                <option value="vivienda">Vivienda</option>
+                <option value="comercial">Comercial</option>
+                <option value="turistico">Turístico</option>
+              </select>
+              <p class="gx-hint">Decide qué prohíbe la ley: en vivienda no se puede pedir depósito.</p>
+            </div>
+          </div>
+          <div class="gx-frow">
+            <label class="alt-label" for="a-titulo">Título</label>
+            <input class="alt-input" id="a-titulo" name="titulo" type="text" placeholder="Apartamento con vista al mar en Bocagrande" />
+            <p class="gx-hint">Es lo que se lee en la tarjeta del listado y en Google.</p>
+          </div>
+          <div class="gx-frow">
+            <label class="alt-label" for="a-descripcion">Descripción</label>
+            <textarea class="alt-input gx-ta" id="a-descripcion" name="descripcion" rows="4" placeholder="Cuenta lo que una foto no dice: la luz, el barrio, qué hay cerca."></textarea>
+          </div>
+        </section>
+
+        <section class="gx-panel gx-pad">
+          <h2>Dónde</h2>
+          <p class="gx-psub">Nunca se publica la dirección exacta. Solo barrio y ciudad.</p>
+          <div class="gx-fgrid">
+            <div>
+              <label class="alt-label" for="a-ciudad">Ciudad</label>
+              <input class="alt-input" id="a-ciudad" name="ciudad" type="text" value="Cartagena de Indias" />
+              <p class="gx-hint">De la ciudad depende que se muestre la matrícula de arrendador.</p>
+            </div>
+            <div>
+              <label class="alt-label" for="a-barrio">Barrio</label>
+              <input class="alt-input" id="a-barrio" name="barrio" type="text" list="a-barrios" placeholder="Bocagrande" />
+              <datalist id="a-barrios">{ZONAS.map((z) => <option value={z.nombre}></option>)}</datalist>
+            </div>
+            <div data-solo="alojamiento" hidden>
+              <label class="alt-label" for="a-rnt">RNT</label>
+              <input class="alt-input" id="a-rnt" name="rnt" type="text" placeholder="RNT-000000" />
+              <p class="gx-hint">Obligatorio por ley para anunciar hospedaje.</p>
+            </div>
+          </div>
+          <div class="gx-fgrid">
+            <div><label class="alt-label" for="a-lat">Latitud</label><input class="alt-input" id="a-lat" name="lat" type="text" placeholder="10.399" /></div>
+            <div><label class="alt-label" for="a-lng">Longitud</label><input class="alt-input" id="a-lng" name="lng" type="text" placeholder="-75.554" /></div>
+            <div class="gx-celda-nota"><p class="gx-hint">Aproximadas, para el pin del mapa. Opcionales, y van las dos o ninguna.</p></div>
+          </div>
+        </section>
+
+        <section class="gx-panel gx-pad">
+          <h2>Cuánto</h2>
+          <p class="gx-psub">Solo se piden los precios de la operación elegida.</p>
+          <div class="gx-fgrid">
+            <div data-solo="venta">
+              <label class="alt-label" for="a-valorVenta">Valor de venta</label>
+              <input class="alt-input" id="a-valorVenta" name="valorVenta" type="text" inputmode="numeric" placeholder="$ 450.000.000" />
+            </div>
+            <div data-solo="arriendo" hidden>
+              <label class="alt-label" for="a-canon">Canon mensual</label>
+              <input class="alt-input" id="a-canon" name="canon" type="text" inputmode="numeric" placeholder="$ 4.500.000" />
+            </div>
+            <div data-solo="arriendo" hidden>
+              <label class="alt-label" for="a-administracion">Administración</label>
+              <input class="alt-input" id="a-administracion" name="administracion" type="text" inputmode="numeric" placeholder="$ 380.000" />
+              <p class="gx-hint">Aparte del canon, nunca dentro.</p>
+            </div>
+            <div data-solo="alojamiento" hidden>
+              <label class="alt-label" for="a-precioNoche">Precio por noche</label>
+              <input class="alt-input" id="a-precioNoche" name="precioNoche" type="text" inputmode="numeric" placeholder="$ 350.000" />
+            </div>
+          </div>
+        </section>
+
+        <section class="gx-panel gx-pad">
+          <h2>Cómo es</h2>
+          <p class="gx-psub">Lo que se deje en blanco simplemente no se muestra. No se inventa nada.</p>
+          <div class="gx-fgrid gx-fgrid--corta">
+            {SPECS.map((f) => (
+              <div>
+                <label class="alt-label" for={`a-${f[0]}`}>{f[1]}</label>
+                <input class="alt-input" id={`a-${f[0]}`} name={f[0]} type="text" inputmode="numeric" />
+              </div>
+            ))}
+          </div>
+          <div class="gx-frow">
+            <span class="alt-label">Amenidades</span>
+            <div class="gx-chips" id="gx-alta-amenidades">
+              {AMENIDADES.map((a) => (
+                <button class="gx-chip" type="button" aria-pressed="false" data-amenidad={a}>{a}</button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section class="gx-panel gx-pad">
+          <h2>Fotos</h2>
+          <p class="gx-psub">La primera es la portada: la que sale en el listado y al compartir por WhatsApp.</p>
+          <div class="gx-fotos" id="gx-alta-fotos"></div>
+          <label class="gx-subir" for="a-fotos">
+            <span aria-hidden="true">+</span> Añadir fotos
+            <input id="a-fotos" type="file" accept="image/*" multiple hidden />
+          </label>
+          <p class="gx-hint">Se convierten a WebP en tu navegador antes de subirse, así pesan una fracción y cargan rápido en móvil.</p>
+        </section>
+
+        <section class="gx-panel gx-pad">
+          <h2>Publicación</h2>
+          <p class="gx-psub">Tres grupos con consecuencias distintas. Elegir mal no da ningún aviso, así que aquí se dice.</p>
+          <div class="gx-estados">
+            {ESTADOS.map((e, i) => (
+              <label class={`gx-estado${i === 0 ? ' is-on' : ''}`}>
+                <input type="radio" name="estado" value={e[0]} checked={i === 0} />
+                <span><b>{e[1]}</b>{e[2]}</span>
+              </label>
+            ))}
+          </div>
+        </section>
+
+        <div class="gx-pie">
+          <p class="gx-pie__msg" id="gx-alta-msg" role="status" aria-live="polite"></p>
+          <button class="alt-btn alt-btn--outline" type="button" id="gx-alta-cancelar">Cancelar</button>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-alta-guardar">Guardar inmueble</button>
+        </div>
+      </form>
+     </div>
     </main>
   </div>
 
@@ -417,6 +614,137 @@ const init = DATA.admin;
   }
 </style>
 
+<style>
+  /* ══ PANTALLA «NUEVO INMUEBLE» (§108) ══════════════════════════════════════════════════════
+     Todo sale de `tokens.css`. Ni un color suelto: la paleta es navy / dorado / plata / blanco, y
+     los estados NO usan verde ni rojo — la jerarquía se hace con oro (pide acción) y navy (reposo). */
+
+  .gx-volver {
+    background: none;
+    border: 0;
+    padding: 0 0 6px;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: var(--alt-fw-semibold);
+    color: var(--alt-link);
+    cursor: pointer;
+  }
+  .gx-volver:hover { text-decoration: underline; }
+
+  .gx-form { display: flex; flex-direction: column; gap: clamp(16px, 2vw, 22px); }
+  /* El `h2` de `.gx-panel` computa margen 0 aquí, así que el subtítulo necesita separación POSITIVA.
+     El `-10px` que había asumía un margen que no existe y montaba el texto encima del título. */
+  .gx-psub { font-size: 12.5px; color: var(--alt-text-soft); margin: 5px 0 18px; }
+
+  .gx-fgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+    gap: 16px;
+  }
+  .gx-fgrid + .gx-fgrid { margin-top: 16px; }
+  .gx-fgrid--corta { grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); }
+  .gx-frow { margin-top: 16px; }
+  .gx-hint { font-size: 11.5px; color: var(--alt-text-soft); margin: 6px 0 0; line-height: 1.45; }
+  /* Celda de la rejilla que solo lleva una nota: se alinea ABAJO, a la altura de los campos vecinos.
+     El `align-self` tiene que ir en la CELDA (el `div`), no en el párrafo — que es lo que fallaba: el
+     elemento de la rejilla es el contenedor, y el hijo no hereda su alineación. */
+  .gx-celda-nota { display: flex; align-items: flex-end; }
+  .gx-celda-nota .gx-hint { margin: 0 0 13px; }
+  .gx-ta { font-family: inherit; resize: vertical; }
+
+  /* Aviso de visibilidad: filo de oro, igual que el disclaimer de `/publicar`. Se lee como una nota
+     honesta, no como una alarma — porque «es un borrador» no es un error. */
+  .gx-aviso {
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+    background: var(--alt-surface);
+    border: 1px solid var(--alt-hairline);
+    border-left: 3px solid var(--alt-gold);
+    border-radius: 14px;
+    padding: 15px 18px;
+    margin-bottom: 4px;
+  }
+  .gx-aviso__t { font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); margin: 0 0 5px; }
+  .gx-aviso ul { margin: 0; padding-left: 17px; font-size: 13px; color: var(--alt-text-soft); line-height: 1.65; }
+
+  /* Amenidades: píldora navy cuando está puesta, contorno cuando no. Mismo patrón que los chips del SERP. */
+  .gx-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 10px; }
+  .gx-chip {
+    padding: 8px 15px;
+    border-radius: 999px;
+    border: 1px solid var(--alt-hairline-2);
+    background: var(--alt-surface);
+    color: var(--alt-text-soft);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .2s, color .2s, border-color .2s;
+  }
+  .gx-chip[aria-pressed='true'] {
+    background: var(--alt-surface-ink);
+    border-color: var(--alt-surface-ink);
+    color: #fff;
+    font-weight: var(--alt-fw-medium);
+  }
+
+  /* Galería: la primera lleva el sello de PORTADA porque es la que decide la tarjeta y el enlace
+     compartido — no es decoración, es la consecuencia del orden. */
+  .gx-fotos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr));
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .gx-fotos:empty { display: none; }
+  .gx-foto { position: relative; aspect-ratio: 4 / 3; border-radius: 13px; overflow: hidden; background: var(--alt-mist); }
+  .gx-foto img { width: 100%; height: 100%; object-fit: cover; }
+  .gx-foto__sello {
+    position: absolute; top: 9px; left: 9px;
+    padding: 4px 10px; border-radius: 999px;
+    background: var(--alt-gold); color: var(--alt-surface-ink);
+    font-size: 10.5px; font-weight: var(--alt-fw-bold); letter-spacing: .04em;
+  }
+  .gx-foto__x {
+    position: absolute; top: 8px; right: 8px;
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 0; background: rgba(6, 39, 67, .82); color: #fff;
+    font-size: 15px; line-height: 1; cursor: pointer;
+  }
+  .gx-foto--subiendo { display: flex; align-items: center; justify-content: center; }
+  .gx-foto--subiendo span { font-size: 12px; color: var(--alt-text-soft); }
+
+  .gx-subir {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 18px; border-radius: 12px;
+    border: 1px dashed var(--alt-hairline-2);
+    background: var(--alt-surface);
+    color: var(--alt-text-soft);
+    font-size: 13.5px; cursor: pointer;
+  }
+  .gx-subir span { font-size: 19px; line-height: 1; color: var(--alt-link); }
+
+  .gx-estados { display: flex; flex-direction: column; gap: 11px; }
+  .gx-estado {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 14px 17px; border: 1px solid var(--alt-hairline-2);
+    border-radius: 13px; cursor: pointer;
+  }
+  .gx-estado.is-on { border-color: var(--alt-surface-ink); background: var(--alt-mist); }
+  .gx-estado input { margin-top: 3px; accent-color: var(--alt-surface-ink); }
+  .gx-estado b { display: block; font-size: 14px; color: var(--alt-ink); }
+  .gx-estado span { font-size: 12.5px; color: var(--alt-text-soft); line-height: 1.5; }
+
+  .gx-pie { display: flex; justify-content: flex-end; align-items: center; gap: 12px; flex-wrap: wrap; padding-bottom: 12px; }
+  .gx-pie__msg { flex: 1 1 220px; margin: 0; font-size: 13px; color: var(--alt-text-soft); }
+  .gx-pie__msg:empty { display: none; }
+
+  /* Error de campo: el borde se pone dorado, no rojo (la paleta no tiene rojo), y el texto va debajo
+     del campo que lo causa — no en una lista al final que obliga a buscarlo. */
+  .alt-input.is-mal { border-color: var(--alt-gold); }
+  .gx-err { font-size: 12px; color: var(--alt-link); margin: 5px 0 0; font-weight: var(--alt-fw-medium); }
+</style>
+
 <script>
   /*
    * PUERTA DE ACCESO del panel (§98). Ver la nota del markup: esto es UX y disuasión, no seguridad.
@@ -428,6 +756,7 @@ const init = DATA.admin;
    */
   import { estadoAcceso, salir } from '../scripts/auth';
   import { montarLeads } from '../scripts/gestion-leads';
+  import { montarAlta } from '../scripts/gestion-alta-ui';
 
   const puerta = document.getElementById('gx-gate');
   const denegado = document.getElementById('gx-denegado');
@@ -450,6 +779,7 @@ const init = DATA.admin;
     if (r?.estado === 'staff') {
       mostrar(panel);
       void montarLeads();
+      montarAlta();
       return;
     }
     reintentar.disabled = false;
@@ -474,6 +804,7 @@ const init = DATA.admin;
       // Los datos REALES solo se piden cuando ya se sabe que quien mira es del equipo: pedir algo que
       // las Rules van a denegar solo ensucia la consola y confunde al siguiente que la mire.
       void montarLeads();
+      montarAlta();
     })
     .catch(() => {
       // Si Auth no carga (red caída, bloqueador), NO se abre el panel: fail-closed. Y se dice por qué,

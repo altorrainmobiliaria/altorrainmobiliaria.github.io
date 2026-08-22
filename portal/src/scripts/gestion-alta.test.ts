@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { cuerpoDeAlta, explicarFallo, siguienteSecuencia, type RefsAlta, type TxAlta } from './gestion-alta';
+import {
+  cuerpoDeAcunar,
+  cuerpoDeAlta,
+  explicarFallo,
+  siguienteSecuencia,
+  type RefsAlta,
+  type TxAlta,
+} from './gestion-alta';
 import type { EntradaAlta } from '../lib/domain/alta-propiedad';
 
 // Transacción del alta (§108). Se prueba el CUERPO, separado del SDK a propósito: lo que puede salir
@@ -65,69 +72,83 @@ describe('siguienteSecuencia — un contador con basura no rompe el alta', () =>
   });
 });
 
-describe('cuerpoDeAlta — el camino bueno', () => {
-  it('acuña el código del mes y escribe propiedad + contador', async () => {
+describe('cuerpoDeAcunar — el código se acuña ANTES, porque las fotos lo necesitan', () => {
+  it('devuelve el siguiente del mes y deja el contador al día', async () => {
     const { tx, refs, escrituras } = txFalsa({ contadores: { 'INM-202608': 6 } });
-    const r = await cuerpoDeAlta(tx, refs, entrada(), AHORA);
-    expect(r.ok).toBe(true);
-    if (!r.ok) return;
-    expect(r.propiedad.id).toBe('INM-202608-0007');
-    expect(escrituras).toHaveLength(2);
-    expect(escrituras[0]).toMatchObject({ ref: 'propiedades/INM-202608-0007', merge: false });
-    expect(escrituras[1]).toMatchObject({ ref: 'config/counters', merge: true });
-  });
-
-  it('🔴 el contador se escribe con MERGE: borrarlo entero se llevaría los otros meses', async () => {
-    const { tx, refs, escrituras } = txFalsa({ contadores: { 'INM-202607': 40, 'INM-202608': 1 } });
-    await cuerpoDeAlta(tx, refs, entrada(), AHORA);
-    const contador = escrituras.find((e) => e.ref === 'config/counters');
-    expect(contador?.merge).toBe(true);
-    expect(contador?.datos).toEqual({ 'INM-202608': 2 });
-  });
-
-  it('la propiedad se crea ENTERA, sin merge (L-09)', async () => {
-    const { tx, refs, escrituras } = txFalsa();
-    await cuerpoDeAlta(tx, refs, entrada(), AHORA);
-    expect(escrituras.find((e) => e.ref.startsWith('propiedades/'))?.merge).toBe(false);
+    const r = await cuerpoDeAcunar(tx, refs, AHORA);
+    expect(r).toEqual({ ok: true, codigo: 'INM-202608-0007' });
+    expect(escrituras).toEqual([{ ref: 'config/counters', datos: { 'INM-202608': 7 }, merge: true }]);
   });
 
   it('el primer alta de un mes empieza en 0001', async () => {
     const { tx, refs } = txFalsa();
-    const r = await cuerpoDeAlta(tx, refs, entrada(), AHORA);
-    expect(r.ok && r.propiedad.id).toBe('INM-202608-0001');
+    expect(await cuerpoDeAcunar(tx, refs, AHORA)).toEqual({ ok: true, codigo: 'INM-202608-0001' });
   });
-});
 
-describe('🔴 cuerpoDeAlta — lo que impide perder datos', () => {
-  it('🎯 si el código ya está ocupado NO escribe nada: no sobrescribe un inmueble existente', async () => {
-    // Esta es la red que las Rules NO ponen para el super_admin, que es justo quien usa el panel.
-    const { tx, refs, escrituras } = txFalsa({ contadores: { 'INM-202608': 0 }, ocupados: ['INM-202608-0001'] });
-    const r = await cuerpoDeAlta(tx, refs, entrada(), AHORA);
+  it('🔴 el contador se escribe con MERGE: entero se llevaría los otros meses', async () => {
+    const { tx, refs, escrituras } = txFalsa({ contadores: { 'INM-202607': 40, 'INM-202608': 1 } });
+    await cuerpoDeAcunar(tx, refs, AHORA);
+    expect(escrituras[0].merge).toBe(true);
+    expect(escrituras[0].datos).toEqual({ 'INM-202608': 2 });
+  });
+
+  it('🎯 SALTA los códigos ocupados en vez de bloquear el alta', async () => {
+    // El contador se desincroniza de verdad: el panel viejo escribe la MISMA colección. Lo sano es
+    // avanzar hasta el primero libre, no dejar al operador sin poder dar de alta.
+    const { tx, refs } = txFalsa({ ocupados: ['INM-202608-0001', 'INM-202608-0002'] });
+    expect(await cuerpoDeAcunar(tx, refs, AHORA)).toEqual({ ok: true, codigo: 'INM-202608-0003' });
+  });
+
+  it('se rinde si TODO está ocupado, en vez de girar para siempre', async () => {
+    const ocupados = Array.from({ length: 40 }, (_, i) => `INM-202608-${String(i + 1).padStart(4, '0')}`);
+    const { tx, refs, escrituras } = txFalsa({ ocupados });
+    const r = await cuerpoDeAcunar(tx, refs, AHORA);
     expect(r.ok).toBe(false);
-    if (r.ok) return;
-    expect(r.fallo).toEqual({ tipo: 'id-ocupado', codigo: 'INM-202608-0001' });
     expect(escrituras).toEqual([]);
   });
 
   it('con la secuencia agotada falla y no escribe', async () => {
     const { tx, refs, escrituras } = txFalsa({ contadores: { 'INM-202608': 9999 } });
-    const r = await cuerpoDeAlta(tx, refs, entrada(), AHORA);
+    const r = await cuerpoDeAcunar(tx, refs, AHORA);
     expect(r.ok === false && r.fallo.tipo).toBe('secuencia-agotada');
+    expect(escrituras).toEqual([]);
+  });
+});
+
+describe('cuerpoDeAlta — guardar con el código ya acuñado', () => {
+  const CODIGO = 'INM-202608-0007';
+
+  it('escribe la propiedad ENTERA y no toca el contador', async () => {
+    const { tx, refs, escrituras } = txFalsa();
+    const r = await cuerpoDeAlta(tx, refs, entrada(), CODIGO, AHORA);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.propiedad.id).toBe(CODIGO);
+    // Una sola escritura: la propiedad. El contador ya se movió al acuñar.
+    expect(escrituras).toEqual([
+      { ref: `propiedades/${CODIGO}`, datos: r.propiedad, merge: false },
+    ]);
+  });
+
+  it('🎯 si el código YA está ocupado no escribe nada: no sobrescribe un inmueble', async () => {
+    // Esta es la red que las Rules NO ponen para el super_admin, que es justo quien usa el panel.
+    const { tx, refs, escrituras } = txFalsa({ ocupados: [CODIGO] });
+    const r = await cuerpoDeAlta(tx, refs, entrada(), CODIGO, AHORA);
+    expect(r).toEqual({ ok: false, fallo: { tipo: 'id-ocupado', codigo: CODIGO } });
     expect(escrituras).toEqual([]);
   });
 
   it('una entrada inválida no gasta ni la lectura del documento ni una escritura', async () => {
     const { tx, refs, escrituras, lecturas } = txFalsa();
-    const r = await cuerpoDeAlta(tx, refs, entrada({ titulo: '', imagenes: [] }), AHORA);
+    const r = await cuerpoDeAlta(tx, refs, entrada({ titulo: '', imagenes: [] }), CODIGO, AHORA);
     expect(r.ok === false && r.fallo.tipo).toBe('validacion');
     expect(escrituras).toEqual([]);
-    // Solo se leyó el contador; el documento de la propiedad NO, porque ni siquiera era guardable.
-    expect(lecturas).toEqual(['config/counters']);
+    expect(lecturas).toEqual([]); // ni siquiera se mira si existe: no era guardable
   });
 
   it('el fallo de validación viaja con los campos, para pintarlos donde están', async () => {
     const { tx, refs } = txFalsa();
-    const r = await cuerpoDeAlta(tx, refs, entrada({ titulo: '', ciudad: '' }), AHORA);
+    const r = await cuerpoDeAlta(tx, refs, entrada({ titulo: '', ciudad: '' }), CODIGO, AHORA);
     expect(r.ok).toBe(false);
     if (r.ok || r.fallo.tipo !== 'validacion') return;
     expect(r.fallo.errores.map((e) => e.campo)).toEqual(expect.arrayContaining(['titulo', 'ciudad']));

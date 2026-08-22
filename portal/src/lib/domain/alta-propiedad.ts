@@ -10,6 +10,7 @@
  */
 
 import { claveValida } from '../media-subida';
+import { problemasParaPublicar, type ProblemaPublicacion } from './catalogo';
 import type { Amenidades, Geo, Precio, SpecsInmueble } from './propiedades';
 import type { Propiedad } from './propiedades';
 import {
@@ -327,6 +328,39 @@ export function construirPropiedad(entrada: EntradaAlta, ctx: ContextoAlta): Res
   if (rnt) propiedad.rnt = rnt;
 
   return { ok: true, propiedad };
+}
+
+/**
+ * Código PROVISIONAL para evaluar un formulario a medio llenar.
+ *
+ * El código real lo acuña la transacción al guardar, pero el aviso de «¿se vería?» tiene que poder
+ * responder ANTES — mientras la persona escribe. Este valor nunca se guarda: solo existe para que
+ * `construirPropiedad` pueda armar un documento y preguntarle al lector.
+ */
+export const CODIGO_PROVISIONAL = 'INM-000000-0000';
+
+export interface RevisionAlta {
+  /** Lo que impide construir el documento. Se pinta junto a su campo. */
+  errores: ErrorCampo[];
+  /** Si se pudo construir: por qué NO se vería en el catálogo (vacío = se ve). */
+  problemas: ProblemaPublicacion[];
+  /** `true` solo si, guardándolo así, aparecería en el portal. */
+  seVeria: boolean;
+}
+
+/**
+ * Revisa el formulario en vivo: qué falta y si el resultado se vería.
+ *
+ * Existe para que el panel pueda decirlo ANTES de guardar. El sistema sabe exactamente qué le falta a
+ * una ficha para salir en el catálogo —lo sabe el índice, y `problemasParaPublicar` se lo pregunta a
+ * él, no a una copia— así que dejar que alguien guarde y descubra el silencio después sería esconder
+ * a propósito una respuesta que ya tenemos.
+ */
+export function revisarAlta(entrada: EntradaAlta, ahora: Date): RevisionAlta {
+  const r = construirPropiedad(entrada, { codigo: CODIGO_PROVISIONAL, ahora });
+  if (!r.ok) return { errores: r.errores, problemas: [], seVeria: false };
+  const problemas = problemasParaPublicar(r.propiedad);
+  return { errores: [], problemas, seVeria: problemas.length === 0 };
 }
 
 /** El precio depende de la operación, y solo se guarda el campo que le corresponde. */
