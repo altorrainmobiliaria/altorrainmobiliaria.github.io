@@ -3559,3 +3559,43 @@ el cerebro mira lo que el portal PUBLICA**.
 
 **109.8 — Doctrina**: §G.4 (auditoría + captura de deliberación) · [[M-10]] · [[M-05]] (el techo no se
 mueve: se podó para que TODO-45 entrara) · §G.3 SSoT (el `05` apunta, no copia).
+
+---
+
+## 110. ADR — El listado de inmuebles, y la columna que desmiente al estado ⟦OPUS-5⟧ (2026-08-22)
+
+**110.1 — El hueco.** Desde §108 el panel sabía CREAR un inmueble y no sabía enseñarlo. Quien diera de
+alta una propiedad no volvería a verla desde el portal: tendría que abrir la consola de Firebase para
+comprobar si quedó bien, corregir un precio o saber si está publicada. **Un CRUD que solo hace la C es
+un formulario.** Y el hueco no lo señaló ningún gate — lo señaló preguntarse qué hace el operador
+justo DESPUÉS de pulsar Guardar.
+
+**110.2 — La columna que justifica la pantalla: «¿se ve?».** No sale del estado, y ahí está todo el
+valor. El estado ENGAÑA en las dos direcciones: un **«disponible» sin foto** no aparece en ningún
+listado, y un **«vendido» SÍ sigue publicado** con su aviso (decisión de SEO — retirar la página le
+regala el posicionamiento a otro). Un operador que mirara la casilla de estado para dar su trabajo por
+hecho se equivocaría en los dos casos. La columna sale de `problemasParaPublicar()`, o sea de los
+MISMOS predicados que construyen el índice del catálogo, así que el listado del panel y el listado
+público no pueden discrepar. Y el porqué viaja en el `title`: la respuesta está a un hover, no en otra
+pantalla.
+
+**110.3 — Lo que se respetó del resto del panel.** Consulta acotada con `limit(50)`, **sin listeners**
+(el patrón que arruina una cuota es una pestaña olvidada toda la tarde), ordenada por `updatedAt` —lo
+último TOCADO es lo que se está trabajando, no lo último creado— y con fallo RUIDOSO: si la lectura no
+va, lo dice, en vez de dejar datos de muestra que hagan creer que hay inventario donde no lo hay.
+
+**110.4 — Verificación.** 279 tests (11 nuevos, todos sobre la columna que puede mentir: «disponible»
+sin foto, alojamiento sin RNT, y el caso contraintuitivo de «vendido»). En vivo: cabecera y filas con
+la MISMA rejilla —si no cuadran, la tabla sale descuadrada y eso el build no lo ve—, «No se ve» en oro
+`#7d6119` porque en esta paleta el rojo no existe, y sin scroll horizontal.
+
+**110.5 — Anti-patterns evitados.** NO se calculó la visibilidad a partir del estado «porque es lo
+obvio»: habría sido una tercera copia de una regla que ya tiene dueño, y la copia habría mentido en dos
+casos reales. NO se añadió un listener «para que se actualice solo».
+
+**110.6 — Archivos.** Nuevos: `scripts/gestion-inmuebles.ts` (+test). Modificados: `gestion.astro`
+(tercera vista + estilos) y `gestion-alta-ui.ts` (el conmutador pasa de dos vistas a tres).
+**110.7 — Lo que queda de TODO-44**: EDITAR un inmueble ya creado, la cola de verificación y el export.
+Y el recordatorio honesto: **nada de esto ha corrido con un claim real** — es el paso 1.5 del runbook.
+**110.8 — Doctrina**: §3.2 (`limit()`, cero listeners) · [[L-45]] (el mismo predicado en todos los
+lectores) · §31 (verificación en navegador, no solo build).
