@@ -1,0 +1,44 @@
+# 🗂️ 00c — ÍNDICE DE FUNDACIÓN (§66-§90 · kit legal, operación y cierre de Ola 1)
+
+> **Tercer shard de rango de `00-INDICE`** (ADR §116). El kernel descubre las hermanas por PATRÓN
+> (`00[a-z]?-INDICE*.md`) y trata a las cuatro como UN índice: los chequeos #3 (desync), #5a (ADRs
+> indexados) y #9 (consolidado) leen todas. Mover filas aquí **no** las saca del cerebro.
+>
+> **Por qué ESTAS y no otras**: son la era en que el negocio se puso en pie por fuera del código —
+> los 24 documentos del kit societario, los gates legales, la operación real del dueño, las auditorías
+> del propio cerebro— más el tramo que cerró OLA 1. Se consultan cuando la pregunta es «¿por qué el
+> contrato dice esto?» o «¿qué decidió aquella auditoría?», no cuando se está construyendo.
+>
+> **Por qué AHORA**: la auditoría §109 avisó con fecha de que al índice vivo le quedaban unas cuatro
+> filas antes de reventar su tope, y la causa era que las filas se escribían como resumen del ADR en
+> vez de como ruteo. Se corrigieron las peores (§110) y aun así el crecimiento lo alcanzó.
+>
+> ⚠️ Las líneas son **pistas**; `npm run brain:check` valida el desync y `brain:index` lo reconcilia.
+
+| § | Qué se decidió | Línea en `99` |
+|---|---|---|
+| §66 | **CONTRATOS 03/04 BLINDADOS**: pagaré RETIRADO · ALTORRA arrienda EN NOMBRE PROPIO (C.Co. 1262) · dictámenes propios en vez de "pendiente de abogado". Comité ×6 + consejo externo ×2: 136 hallazgos → 126. Cláusulas reescritas: 12ª del 04 pagaré→PÓLIZA · fondo de reserva · fallecimiento · art. 22 · pena/intereses. | 1016 |
+| §67 | **KIT COMPLETO (24 docs) + GATE DE EMISIÓN**: el doc 03 no se había enterado del cambio de figura (el mandato contradecía al arriendo). Comité R3 + consejo R3. Ningún doc de firma se emite con marcas: 24/24, 11/11 en verde. | 1068 |
+| §68 | **FUENTE ÚNICA DEL MANUAL**: el cap. 2 estaba DOS VECES en el maestro y las copias habían divergido en la fila del pagaré RETIRADO → el maestro ahora se GENERA de los fragmentos (`ensamblar-manual.ps1`). Namespace `LD-NN` + hoja `32` (colisión L-31..L-34, M-04). C.Co. 1096/1099 verificados. Auditoría B-03: 14/14 docs, 191 hallazgos. | 1123 |
+| §69 | **Auditoría Nivel-2 #5** (la disparó el GATE de pre-commit, no un encargo): retrieval frío **5/6** · 2 fallos de ruteo CURADOS (faltaba la fila del ARRENDADOR; dev-sí/prod-no citaba L-33 en vez de L-34) · **REINCIDENTE**: TODO-31 perdió su fila y A-01/A-03 llevaban 11 días invisibles · **CRÍTICO: el kit legal no tiene linter** → TODO-35. | 1191 |
+| §70 | **B-03 APLICADA (14 críticos) + los ESTATUTOS entran al cerebro**: la auditoría revisó el kit contra el kit y nunca abrió los estatutos → 3 de las 4 decisiones subidas al dueño YA estaban resueltas ahí (precio por peritos art. 8º e · supramayoría 70% art. 13º · arbitramento art. 24º). Daniel RETIRA el doc 13. [[LD-05]] + LD-02 reincidente. | 1247 |
+| §71 | **23 ALTOS de B-03 aplicados + los 2 primeros gates documento↔documento** (12 planificadores + 1 revisor de colisiones). 21 vigentes · 12 degradados. El revisor cazó 2 choques de escritura. → [[LD-06]] | 1306 |
+| §72 | **Heartbeat+handoff a los 3 hermanos (TODO-32a ✅)**: sin él el estado derivable se copia a mano y se desincroniza (el 05 de cars declaraba una cache de 8 días atrás; insema no tenía NINGÚN SessionStart). Re-midió el SPOF: 2 de 3 pendientes eran falsos. Destapó que el boot-gate solo existía en inmobiliaria (→ §81) y que `brain-kit` sigue congelado. | 1372 |
+| §73 | **Auditoría de insemastereo aplicada + bersaglio destilado**: 36 hallazgos → 14 en un cerebro que el linter daba SANO; 5 sondas cazaron el mismo `05` mintiendo sobre git. El heartbeat generaba la verdad y ningún nodo la enrutaba (§72 a medias). bersaglio llevaba tiempo sin poder commitear → destilado. 6 chequeos de kernel a TODO-23. | 1422 |
+| §74 | **cars destilado 35.9k→33.9k + `brain-kit` descongelado**: la tabla de topes de §G.5 tapaba 2 hojas SIN cap (una de 27k, ningún gate la miraba) → nace el chequeo #23. Los caps se MIDEN, no se inventan. | 1477 |
+| §75 | **kernel v1.7.0 — chequeos #17 y #23**: el kernel nunca miraba el git del repo que audita (por eso un 05 mintió 42 días con 16 gates en verde), ni vigilaba las neuronas que el manifest no declara (44 sin techo ×4). Verificados ENCENDIDOS: la v1 de #17 no cazaba el caso real y la v2 acusaba a un inocente ([[M-06]]). | 1520 |
+| §76 | **52 neuronas bajo techo + shard de §Meta → `33-LECCIONES-META`**: las 44 sin cap quedaron decididas (cap medido o noCap con razón). Y la trampa que estuve a punto de hacer DOS veces: subir un límite en vez de cumplirlo — el gate pasa, la deriva sigue, y queda evidencia falsa de control (M-05). | 1555 |
+| §77 | **El kernel corregido 3 veces POR PROBARLO** (v1.7.2): #17 no disparaba, luego acusaba a un puntero de neurona, luego a una skill. Y el gate #4 quedó obsoleto por el arreglo que él provocó: exigía en el 05 un dato que la doctrina nueva elimina. bersaglio: 05 en tope por primera vez. → M-06. | 1591 |
+| §78 | **cars en presupuesto (35.9k→29.7k) por MOVER, no por raspar**: sus 25 pendientes congelados (§302) salían del boot en cada sesión → hoja `11`. Congelado ≠ cerrado y el shard es reversible. Caps coherentes ×4 (22 apretados). Los 308c que restaron se dejan A LA VISTA en vez de subir el techo ([[M-05]]). | 1631 |
+| §79 | **bersaglio −23% de boot (43.1k→33.3k)**: gobernanza y doctrinas que inmobiliaria ya había destilado y los hermanos nunca recibieron + el backlog sin empezar sale del boot (decisión del dueño). El gate me paró: abreviar nombres de archivo ganó 542c y dejó 5 neuronas inalcanzables. | 1667 |
+| §80 | **CIERRE 31-jul/01-ago: los 4 cerebros mergeados a main** (28 commits, cero producto — verificado antes). El #17 cazó que yo mismo dejé cars fuera de su rama única. Balance: 23 altos del kit · 4/4 SANOS · 44 neuronas sin techo → 0. | 1697 |
+| §83 | **AUDITORÍA Nivel-2 #6: 109 brutos → 44 vivos** (47 refutados). Kernel **v1.9.0** ×5: #9 ciego a la fila ✅ sin ADR · borrar clave del manifest apagaba gates · el boot mentía «cache verificada» · +#26 fila del índice. CRÍTICO N6-01: precios y regla anti-strike de Bersaglio vivían solo en la memoria del harness. El workflow murió 2 veces → [[M-08]]. | 1839 |
+| §89 | 🏗️ **`/ingresar` y `/favoritos`** — las 2 pantallas que el header enlazaba a un 404. Favoritos en **localStorage, NO tras el login** (el mockup dice «ingresar para SINCRONIZARLOS»). **Crear cuenta NO se abre**: falta publicar la Política (Ley 1581 art. 9). | 2340 |
+| §90 | 🔬 **Auditoría Nivel-2 #7** (4 drills fríos): ruteo SANO 4/4 pero **2/4 responderían MAL** por frescura. [[M-10]]: tres gates verdes cubrían MEDIA promesa. **N7-00**: la campaña de humo puede ser ZOMBIE (`05` la da apagada, su SSoT ACTIVA). | 2418 |
+| §88 | 🏗️ **El formulario de captación deja de perder los leads**: `/publicar` era demo. Endpoint `/api/solicitud` (funciona SIN JS) → `solicitudes` con el contrato del legacy. Probando END-TO-END salió que **el correo de avisos está ROTO** (Gmail). [[L-33]] reincidente. | 2265 |
+| §87 | **Leves lotes 2-3 (28/92)**: el grupo «retirados» NO era moot (5 de 7 eran de documentos vivos). En los de FIRMA, 7/7 vivos: la **retención se repartía por mitades** y no había salida para el negocio que muere ya celebrado (FASE G). 2º remedio dañino. | 2199 |
+| §86 | **Los "85 leves" del kit eran 92** (el descuento no vio que el doc 13 también está retirado, y el grupo descontado mezclaba documentos VIVOS). Lote 1: **7 aplicados · 1 REFUTADO** — el remedio situaba un blanco de URL en una cláusula sana del 03 y no veía los docs 17/18, que sí lo tenían. Ledger reanudable en bóveda. | 2141 |
+| §85 | **TODO-37 CERRADO**: el canario #24 le preguntaba al archivo que vigila si debía vigilarlo (fallo ABIERTO) → `harnessCanary` al manifest, [[M-07]] forma 2. Sin bóveda, 3 gates apagados salían bajo un ✅ → `degrade()` + veredicto 🟠. Mora del kit → B-05. | 2047 |
+| §84 | **PODA REAL del router (TODO-32b): boot 31.4k→28.4k sin subir el techo.** Nace `34-DOCTRINA-CODIGO` (perf/observadores/stack/CSS legacy salen del always-on) · `§0` deja de duplicar los triggers de `§G.2` · 3 cifras copiadas del manifest, cortadas. Criterio → [[M-09]]. | 1965 |
+| §82 | **TODO-35 CERRADO: el kit de firma estrena sus 6 gates cruzados** (cifras vs doc 02 · remisiones a docs RETIRADOS · identidad/canales · anclas de la figura del ARRENDADOR). Cierra el crítico N5-05. Las 2 excepciones que solo salen probando: la cita que DEROGA y la cifra AJENA ([[LD-07]]). Cazó 2 remisiones vivas al doc 13 RETIRADO. Nuevo `-SoloGates`. | 1792 |
+| §81 | **TODO-36 CERRADO: trinquete de boot ×4, candado AL KERNEL v1.8.0.** bersaglio y insema podados **sin subir un techo** ([[M-05]]). `boot-gate.mjs` borrado (one-in-one-out) → chequeos #2 y #24. Hallazgo: **insema no tenía pre-commit** → nace el #25 y [[M-07]]. | 1741 |

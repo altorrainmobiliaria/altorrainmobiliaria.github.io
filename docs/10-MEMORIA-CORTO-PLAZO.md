@@ -37,7 +37,7 @@
 | **TODO-22** | **CATÁLOGO completo, ficha incluida (§97)**. Datos reales = fases 3-4 del runbook; luego fichas al sitemap. | 🟢 cutover | §102 |
 | **TODO-42** | 🔑 **Claim de staff — CÓDIGO LISTO, falta desplegar** (§99) = **fase 1 del runbook**, aislada y se puede hacer HOY (no toca reglas). ⏭️ **Daniel**: (1) me confirma el deploy — concede permisos de admin, prefiero que lo sepas; (2) pulsa «Sincronizar permisos» en admin.html → Usuarios; (3) abre `/gestion`. | 🟡 deploy | §102 |
 | **TODO-45** | 🔬 **Deuda de la auditoría #8** (§109, tabla en la bóveda). Por orden: (a) **capa semántica de `00` congelada 24 ADRs** — el ruteo que funciona hoy es la bitácora, así que ESTO va ANTES de podarla; (b) `degrade()` 🟠 cuando un gate hace 0 comparaciones (el ✅ inmerecido: #27 perdona 90 rutas por basename, #16 aprueba «CF 9» contra 11); (c) el **índice revienta en ~4 ADRs**, no en 92 → fila nueva ≤200c bloqueante; (d) umbrales en DÍAS en un repo que corre en COMMITS; (e) `33` por encima del tope. | 🔴 | §109 |
-| **TODO-46** | 📅 **GESTIÓN v1** (ítem 13). ✅ agenda (§112) · contratos con el gate del depósito (§113) · pantalla (§114) · pagos con IVA y mora (§115, falta su pantalla). Resta expedientes, novedades y adjuntos privados (B5). | 🟢 | §115 |
+| **TODO-46** | 📅 **GESTIÓN v1** (ítem 13). ✅ agenda (§112) · contratos con el gate del depósito (§113) · pantalla (§114) · pagos (§115) · cartera + registro (§117). Resta expedientes, novedades y adjuntos privados (B5). | 🟢 | §117 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---

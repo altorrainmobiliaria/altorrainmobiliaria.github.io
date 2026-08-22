@@ -50,3 +50,18 @@
 - **Concurrencia Firestore** (`set()` SIN merge para CREAR · `update()` para EDITAR · `_version`
   optimista create==1/update==prev+1 vía `runTransaction`): la regla y sus trampas viven completas en
   **`30` L-09** (dueño único, con el caso de la ventana de crash y el sello anti-adelantamiento).
+
+## §CSS del PORTAL — el acotado de Astro y los nodos de runtime (§117)
+
+**Antes de escribir un `<style>` en una página que renderice contenido por JS, lee esto.** Astro
+compila `.fila` a `.fila[data-astro-cid-XXXX]` y le pone el atributo a los elementos **de la
+plantilla**. Un nodo hecho con `document.createElement` NO lo lleva → la regla no le aplica **jamás**,
+sin error, sin warning y con el build verde. Costó 4 ADRs de tablas despintadas.
+
+- **Regla**: toda clase que un script ASIGNE a un nodo nuevo tiene que estar en un `<style is:global>`
+  o marcada `:global(.clase)`. **Gate: `npm run verify:css`** (en CI, antes del build).
+- Bloque entero global solo si la página tiene **namespace exclusivo** (`gx-`) y su DOM es casi todo
+  de runtime; si no, `:global()` regla a regla.
+- Al globalizar, ancla al contenedor de la página toda regla apoyada en una clase del design system
+  (`.gx-root .alt-input.is-mal`) o se aplicará a todo el sitio.
+- `classList.add/toggle` sobre un elemento de la plantilla **no** falla: ese ya lleva el atributo.

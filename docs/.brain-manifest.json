@@ -100,6 +100,11 @@
       "lines": 114,
       "chars": 15000,
       "_comment": "Re-medido el 2026-08-02 (ADR 83) al entrar M-08. Razon M-05-valida: este shard es un REGISTRO que crece ~1.2k por leccion meta; su tamano lo fija cuantas veces el cerebro fallo, no una decision editorial. Cap MEDIDO sobre el real + 30% (74.3), no a ojo. Si crece mas alla de ~15 lecciones, shard por familia (gates / ledger / proceso). | 2026-08-03 (ADR 85): el eje lines se re-DERIVO 110->114. NO es subir un techo (M-05): chars sigue en 15000 y es el que aprieta (98%); 110 lineas asumia 136 c/linea y la densidad REAL medida es 131, asi que el eje equivocado disparaba primero — justo lo que _caps_que prohibe. 15000/131 = 114."
+    },
+    "docs/00c-INDICE-FUNDACION.md": {
+      "lines": 59,
+      "chars": 11919,
+      "_comment": "Shard de RANGO del indice (ADR 116): 66-90, la era de fundacion. Cap MEDIDO sobre el real (8829c / 44L, densidad 200 c/linea): chars = real+35%, lines = cap_chars/densidad, para que los DOS ejes aprieten en el mismo punto (mismo criterio que 00a). Este shard es CERRADO por diseno: nadie escribe ADRs nuevos de ese rango. Si el 00 vivo vuelve a apretar, el siguiente rango es 00d, NO subir este techo."
     }
   },
   "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",

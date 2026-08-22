@@ -3824,3 +3824,86 @@ codebases + `build` + `verify:data`.
 **115.6 — Lo que falta de GESTIÓN v1**: la pantalla de pagos (la Function ya guarda), expedientes,
 novedades y los adjuntos privados (B5). **115.7 — Doctrina**: §3.6 · [[L-45]] (una regla, un dueño:
 `cifrasDePago` la usan el panel y la Function) · §113 (el gate de tipos que lo cazó).
+
+---
+
+## 116. ADR — El tercer shard del índice, y por qué el rango se corta donde se corta ⟦OPUS-5⟧ (2026-08-22)
+
+`00-INDICE` estaba a **tres filas** de su tope: la siguiente decisión que documentara habría bloqueado
+el commit. La auditoría §109 lo avisó con fecha y §110 corrigió las peores filas; el crecimiento las
+alcanzó igual.
+
+**116.1 — El corte es semántico, no aritmético.** Se extraen §66-§90 a `docs/00c-INDICE-FUNDACION.md`:
+la era en que el negocio se puso en pie **por fuera del código** —los 24 documentos del kit
+societario, los gates legales, la operación real del dueño, las auditorías del propio cerebro— más el
+tramo que cerró OLA 1. Se consultan cuando la pregunta es *«¿por qué el contrato dice esto?»*, no
+cuando se está construyendo; el índice vivo queda con §91-§115, que es lo que se toca a diario. Un
+corte por la mitad habría dejado la construcción partida en dos sitios.
+
+**116.2 — El cap se MIDE, no se elige.** Igual que en `00a`: `chars = real + 35 %` y
+`lines = cap_chars / densidad_real`, para que los dos ejes aprieten en el mismo punto. Un cap de
+líneas holgado frente a uno de chars ajustado apaga medio gate en silencio. Y va con una instrucción
+dentro del propio manifest: este shard es **cerrado por diseño** (nadie escribe ADRs de ese rango), así
+que si el índice vivo vuelve a apretar el siguiente rango es `00d` — **no subir este techo** ([[M-05]]).
+
+**116.3 — Resultado.** 23490c → 16149c (de reventar al 67 %), sitio para ~35 ADRs más. El kernel
+descubre las hermanas por patrón (`00[a-z]?-INDICE*.md`) y sigue leyendo los cuatro como UNO: los
+chequeos #3, #5a y #9 no se enteran. Se actualizó la fila del router (16 chars MENOS que la anterior).
+
+**116.4 — Doctrina**: §G.5 (sharding) · §100 (el precedente `00a`/`00b`) · [[M-05]].
+
+---
+
+## 117. ADR — El CSS que nunca llegó a las filas: cuatro ADRs pintando en vano ⟦OPUS-5⟧ (2026-08-22)
+
+Iba a cerrar la pantalla de pagos. Al medirla en el navegador, las columnas de la cabecera y las de la
+primera fila no coincidían — y la causa no era mi tabla.
+
+**117.1 — Causa raíz.** Astro acota el CSS **reescribiendo el selector**: `.gx-tr` compila a
+`.gx-tr[data-astro-cid-XXXX]`, y el atributo lo pone el compilador a los elementos **de la plantilla**.
+Los nodos que crea el navegador con `document.createElement` no lo llevan, así que **ninguna regla les
+aplicaba**. Las CINCO tablas del panel —leads (§101), inmuebles (§110), agenda y contratos (§114) y la
+cartera de hoy— renderizaban sus filas sin rejilla, sin tarjeta y con la tipografía del cuerpo.
+
+**117.2 — Por qué sobrevivió cuatro ADRs.** No rompe el build, no ensucia la consola, no falla ningún
+test: la pantalla sale despintada y ya. Y es invisible si solo miras el markup **estático**, que es
+justo lo que ves cuando todavía no hay datos delante — en §114 encontré dos defectos de layout
+*mirando*, pero los dos eran de la cáscara, porque nunca hubo una fila real en pantalla.
+
+**117.3 — El defecto era de CLASE, no de página.** Al buscar el mismo patrón apareció en el catálogo
+**público**: `serp-catalogo.ts` crea el aviso de «no encontramos inmuebles» y sus tres reglas estaban
+acotadas. Medido con un control —el mismo nodo duplicado, uno creado por JS y otro con el atributo
+puesto a mano—: **53 px de alto contra 157**, sin fondo, sin borde, sin radio, sin padding, título en
+Hanken 16px en vez de Cormorant 22px. Eso es evidencia; «se ve raro» no lo es.
+
+**117.4 — Dos arreglos distintos, con criterio.** En gestión se globalizan los tres bloques: el
+namespace `gx-` no existe en ninguna otra página y **casi todo su DOM es de runtime**, así que una
+lista de `:global()` habría que mantenerla cada vez que un script añade una clase — y olvidarla no
+rompe nada que el build pueda ver. En el catálogo, cirugía: tres `:global()`, porque la página es casi
+toda estática y `serp-` no es un namespace exclusivo. La única regla apoyada en una clase del design
+system (`.alt-input.is-mal`) se ancló a `.gx-root` para que no escapara al resto del sitio.
+
+**117.5 — El gate, y el gate del gate.** `npm run verify:css` cruza *clases que un script ASIGNA a
+nodos nuevos* contra *clases definidas en un `<style>` sin `is:global` de una página que cargue ese
+script*. `classList.add/toggle` queda fuera a propósito: son banderas de estado sobre elementos que ya
+venían en la plantilla. Su primera versión **aprobaba de más** —solo miraba las menciones literales de
+la página y se le escaparon 2 de los 4 módulos de gestión, porque la página importa `gestion-alta-ui`
+y es ÉSE quien importa las listas—; ahora sigue los imports. Es la misma familia del «✅ inmerecido»
+que vengo cazando en los gates del cerebro (TODO-45): **uno que solo mira la superficie aprueba lo que
+no comparó**. Verificado en los dos sentidos: falla con 32 clases en 5 módulos antes del arreglo, pasa
+después.
+
+**117.6 — Dos defectos más, de los que solo se ven midiendo.** La columna «Qué hacer» recortaba la
+instrucción a la mitad (407 px en 242) — y esa columna existe para leerse: las celdas de INSTRUCCIÓN
+ahora envuelven, los códigos y las fechas siguen con puntos suspensivos. Y la celda de identificador
+ponía código y concepto en fila estorbándose («Giro al propietario» pedía 112 px de los 99 que le
+quedaban): van apilados. Cierre medido: columnas cuadradas al píxel, cero recortes, cero solapes, sin
+desborde.
+
+**117.7 — Verificación y doctrina.** 346 tests · `typecheck` en los dos codebases · `build` ·
+`verify:build` · `verify:data` · el nuevo `verify:css` en CI antes del build. La pantalla se inspeccionó
+sirviendo el HTML de `/gestion` sin sus `<script>` (la puerta de acceso es fail-closed y no hay
+credenciales de staff): se pierde el comportamiento, pero el layout y el CSS son los reales.
+Destilado a `ssg-static-prerender` §4bis (el gotcha de plataforma) y a `validacion-live-chrome` §5bis
+(medir el nodo que verá el usuario, con control y con geometría). Doctrina: §3.3 · §G.4 (caza-bugs:
+recorrer el camino vivo, no el diff).
