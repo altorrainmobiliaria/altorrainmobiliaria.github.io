@@ -17,6 +17,10 @@
  */
 
 import { cargarAuth } from './auth';
+import { colaDeVerificacion, esperaSello, explicarReparo, reparosParaSellar } from '../lib/domain/verificacion';
+import { aCsv, nombreExport, type Columna } from '../lib/domain/csv';
+import { descargarTexto } from './descargar';
+import { explicarSello, marcarVerificada } from './gestion-alta';
 import { explicarProblema, precioDisplay, problemasParaPublicar } from '../lib/domain/catalogo';
 import { formatoPrecio } from '../lib/domain/alertas';
 import type { Propiedad } from '../lib/domain/propiedades';
@@ -166,6 +170,116 @@ function mensaje(txt: string): HTMLElement {
 }
 
 /** Monta el listado. Lo llama el panel al entrar en la sección «Inmuebles». */
+// ─────────────────────────────────────────────────────────────────────────────
+// COLA DE VERIFICACIÓN (§119) — se deriva de lo YA CARGADO, sin una sola lectura más
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Pinta la cola a partir del mismo `Map` que llenó la lista.
+ *
+ * Cero lecturas extra: la cola es una VISTA de los inmuebles que ya están en memoria, no otra
+ * consulta. Una segunda query sobre `propiedades` para enseñar un subconjunto de lo que ya tienes
+ * delante es exactamente el gasto que el free-tier no perdona (§20 Blaze).
+ */
+function pintarCola(): void {
+  const cuerpo = document.getElementById('gx-vf-lista');
+  const resumen = document.getElementById('gx-vf-resumen');
+  if (!cuerpo) return;
+
+  const cola = colaDeVerificacion([...cargados.values()]);
+  if (!cola.length) {
+    cuerpo.replaceChildren(mensaje('Nada pendiente de verificar.'));
+    if (resumen) resumen.textContent = '';
+    return;
+  }
+
+  cuerpo.replaceChildren(
+    ...cola.map((p) => {
+      const listo = esperaSello(p);
+      const fila = document.createElement('div');
+      fila.className = 'gx-tr';
+
+      const q = document.createElement('div');
+      q.className = 'gx-cli gx-cli--apilada';
+      q.appendChild(celda(p.id, 'gx-cod'));
+      q.appendChild(celda(p.titulo ?? '—', 'gx-cli__name'));
+
+      const motivo = listo
+        ? celda('Lista para el sello.', 'gx-muted gx-wrap')
+        : celda(reparosParaSellar(p).map(explicarReparo).join(' '), 'gx-muted gx-wrap');
+
+      const accion = document.createElement('span');
+      if (listo) {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'alt-btn alt-btn--navy gx-btn-fila';
+        btn.textContent = 'Verificar';
+        btn.addEventListener('click', async () => {
+          btn.disabled = true;
+          btn.textContent = 'Verificando…';
+          const r = await marcarVerificada(p.id);
+          if (r.ok) {
+            // Se recarga la lista entera y no solo la fila: el sello cambia también la columna
+            // «¿se ve?» y el resumen de arriba. Repintar media pantalla es como se queda una tabla
+            // diciendo una cosa y la de al lado otra.
+            void montarInmuebles();
+            return;
+          }
+          btn.disabled = false;
+          btn.textContent = 'Verificar';
+          const caja = document.getElementById('gx-vf-msg');
+          if (caja) caja.textContent = explicarSello(r);
+        });
+        accion.appendChild(btn);
+      } else {
+        accion.appendChild(celda('—', 'gx-muted'));
+      }
+
+      for (const n of [q, motivo, accion]) fila.appendChild(n);
+      return fila;
+    }),
+  );
+
+  if (resumen) {
+    const listas = cola.filter(esperaSello).length;
+    resumen.textContent = listas
+      ? `${listas} lista(s) para sellar de ${cola.length} sin verificar`
+      : `${cola.length} sin verificar, ninguna lista todavía`;
+  }
+}
+
+/** Columnas del export de inmuebles. Lo que el dueño mira en una hoja, no el documento entero. */
+const COLUMNAS_INMUEBLE: Columna<Propiedad>[] = [
+  { titulo: 'Código', valor: (p) => p.id },
+  { titulo: 'Título', valor: (p) => p.titulo },
+  { titulo: 'Operación', valor: (p) => p.operacion },
+  { titulo: 'Tipo', valor: (p) => p.tipo },
+  { titulo: 'Estado', valor: (p) => p.estado },
+  { titulo: 'Ciudad', valor: (p) => p.geo?.ciudad },
+  { titulo: 'Barrio', valor: (p) => p.geo?.barrio },
+  { titulo: 'Venta', valor: (p) => p.precio?.valorVenta },
+  { titulo: 'Canon', valor: (p) => p.precio?.canon },
+  { titulo: 'Noche', valor: (p) => p.precio?.precioNoche },
+  { titulo: 'Área construida m2', valor: (p) => p.specs?.areaConstruidaM2 },
+  { titulo: 'Habitaciones', valor: (p) => p.specs?.habitaciones },
+  { titulo: 'Baños', valor: (p) => p.specs?.banos },
+  { titulo: 'Fotos', valor: (p) => p.imagenes?.length ?? 0 },
+  { titulo: 'Verificado', valor: (p) => (p.verificadoAltorra ? 'sí' : 'no') },
+  { titulo: 'Verificado el', valor: (p) => p.verificadoEn?.slice(0, 10) },
+  { titulo: 'Se ve en el portal', valor: (p) => (problemasParaPublicar(p).length ? 'no' : 'sí') },
+  { titulo: 'Actualizado', valor: (p) => p.updatedAt?.slice(0, 10) },
+];
+
+/** Cablea el botón de export. Exporta lo CARGADO, y lo dice si está topado. */
+export function montarExportInmuebles(): void {
+  const btn = document.getElementById('gx-inm-export');
+  btn?.addEventListener('click', () => {
+    const filas = [...cargados.values()];
+    if (!filas.length) return;
+    descargarTexto(nombreExport('inmuebles'), aCsv(filas, COLUMNAS_INMUEBLE));
+  });
+}
+
 export async function montarInmuebles(): Promise<void> {
   const cuerpo = document.getElementById('gx-inm-cuerpo');
   const resumen = document.getElementById('gx-inm-resumen');
@@ -180,6 +294,8 @@ export async function montarInmuebles(): Promise<void> {
     const snap = await mod.getDocs(q);
 
     if (snap.empty) {
+      cargados.clear();
+      pintarCola();
       cuerpo.replaceChildren(
         mensaje('Todavía no hay inmuebles. Usa «+ Nuevo inmueble» para dar de alta el primero.'),
       );
@@ -193,6 +309,8 @@ export async function montarInmuebles(): Promise<void> {
       return filaInmueble(p);
     });
     cuerpo.replaceChildren(...filas.map(pintarFila));
+
+    pintarCola();
 
     if (resumen) {
       const invisibles = cuentaInvisibles(filas);

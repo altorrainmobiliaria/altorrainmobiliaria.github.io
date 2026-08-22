@@ -261,7 +261,10 @@ const init = DATA.admin;
         <div class="gx-panel gx-table">
           <div class="gx-panel__head">
             <h2 id="gx-table-title">{init.tableTitle}</h2>
-            <a href="#" class="gx-link">Ver todo &#8594;</a>
+            <div class="gx-head__actions">
+              <button class="alt-btn alt-btn--ghost gx-btn-fila" type="button" id="gx-leads-export">Exportar CSV</button>
+              <a href="#" class="gx-link">Ver todo &#8594;</a>
+            </div>
           </div>
           <div class="gx-scrollx">
             <div class="gx-table__inner">
@@ -328,6 +331,7 @@ const init = DATA.admin;
           <p class="gx-sub" id="gx-inm-resumen"></p>
         </div>
         <div class="gx-head__actions">
+          <button class="alt-btn alt-btn--ghost" type="button" id="gx-inm-export">Exportar CSV</button>
           <button class="gx-new gx-new--inm" type="button"><span aria-hidden="true">+</span>Nuevo inmueble</button>
         </div>
       </header>
@@ -341,6 +345,18 @@ const init = DATA.admin;
             <div id="gx-inm-cuerpo"></div>
           </div>
         </div>
+      </div>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Pendientes del sello</h2><span class="gx-psub" id="gx-vf-resumen"></span></div>
+        <p class="gx-psub gx-pad-x">El sello «Verificado por ALTORRA» es una promesa al comprador, no una etiqueta: se pone cuando alguien fue a ver el inmueble.</p>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--vf">
+            <div class="gx-tr gx-tr--head"><span>Inmueble</span><span>Qué falta</span><span></span></div>
+            <div id="gx-vf-lista"></div>
+          </div>
+        </div>
+        <div class="gx-aviso gx-aviso--form gx-pad-x" id="gx-vf-msg" role="status" aria-live="polite"></div>
       </div>
      </div>
 
@@ -433,6 +449,7 @@ const init = DATA.admin;
           <button class="alt-btn alt-btn--navy" type="submit" id="gx-rv-guardar">Actualizar</button>
         </div>
       </form>
+
     </div>
 
      <div id="gx-vista-contratos" hidden>
@@ -876,6 +893,10 @@ const init = DATA.admin;
 </style>
 
 <style is:global>
+  .gx-table__inner--vf .gx-tr { grid-template-columns: 2.2fr 3fr 1fr; align-items: center; }
+  .gx-btn-fila { padding: 7px 15px; font-size: 13px; }
+  .gx-pad-x { padding-inline: 20px; }
+
   .gx-table__inner--ex .gx-tr { grid-template-columns: 2.2fr 1fr 2.6fr; }
   .gx-table__inner--nv .gx-tr { grid-template-columns: 1.9fr 1.2fr 1fr 0.7fr 2.2fr; }
   /* Campo que ocupa la fila entera: una descripción de una frase en un tercio de ancho se lee peor
@@ -1053,7 +1074,7 @@ const init = DATA.admin;
    * echaría al login cada vez que recarga — el error clásico de esta API.
    */
   import { estadoAcceso, salir } from '../scripts/auth';
-  import { montarLeads } from '../scripts/gestion-leads';
+  import { montarExportLeads, montarLeads } from '../scripts/gestion-leads';
   import { montarAlta } from '../scripts/gestion-alta-ui';
 
   const puerta = document.getElementById('gx-gate');
@@ -1069,6 +1090,7 @@ const init = DATA.admin;
   /* Volver a comprobar FORZANDO el refresco del token. Los claims viajan dentro del token y este se
      renueva cada hora, así que sin esto a quien le acaban de dar permiso le tocaba esperar o cerrar
      sesión — y lo más probable es que pensara que algo estaba roto. */
+  montarExportLeads();
   const reintentar = document.getElementById('gx-reintentar') as HTMLButtonElement | null;
   reintentar?.addEventListener('click', async () => {
     reintentar.disabled = true;

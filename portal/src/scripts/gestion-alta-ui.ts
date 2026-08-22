@@ -20,7 +20,7 @@ import { baseDe, entradaDe, revisarAlta, type BaseEdicion, type EntradaAlta } fr
 import { explicarProblema } from '../lib/domain/catalogo';
 import { TOPE_IMAGENES } from '../lib/media-subida';
 import { urlMedia } from '../lib/media';
-import { montarInmuebles } from './gestion-inmuebles';
+import { montarExportInmuebles, montarInmuebles } from './gestion-inmuebles';
 import { montarAltaContrato, montarContratos, montarPagos, montarRegistroPago } from './gestion-contratos';
 import { montarExpedientes, montarFormularios, montarNovedades } from './gestion-novedades';
 import type { Propiedad } from '../lib/domain/propiedades';
@@ -350,6 +350,7 @@ export function montarAlta(): void {
   montarAltaContrato();
   montarRegistroPago();
   montarFormularios();
+  montarExportInmuebles();
 
   // El listado avisa; esta pantalla es la única que sabe pintar un inmueble.
   document.addEventListener('altorra:editar-inmueble', (ev) => {

@@ -21,6 +21,7 @@
  */
 
 import { cargarAuth } from './auth';
+import { reparosParaSellar, selloDeVerificacion, explicarReparo, type ReparoVerificacion } from '../lib/domain/verificacion';
 import { construirEdicion, construirPropiedad, claveContador, codigoPropiedad, TOPE_SECUENCIA } from '../lib/domain/alta-propiedad';
 import type { BaseEdicion, ContextoAlta, EntradaAlta, ErrorCampo } from '../lib/domain/alta-propiedad';
 import type { Propiedad } from '../lib/domain/propiedades';
@@ -269,4 +270,64 @@ export function explicarFallo(f: FalloAlta): string {
     case 'red':
       return 'No se pudo guardar. Revisa la conexión y vuelve a intentarlo — no se creó nada a medias.';
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SELLO «Verificado por ALTORRA» (§119)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Otorga el sello dentro de la transacción.
+ *
+ * **Relee la propiedad y decide sobre lo LEÍDO, no sobre la fila pintada.** La cola puede llevar
+ * minutos en pantalla: en ese rato alguien pudo quitarle las fotos, bajarla de estado o sellarla
+ * desde otro equipo. Juzgar con `selloDeVerificacion` sobre el documento fresco es lo que impide
+ * que el sello —que es una promesa al comprador— se lo lleve algo que ya no lo cumple.
+ *
+ * Sale con `merge`: el sello toca tres campos y no tiene por qué conocer los otros treinta. Escribir
+ * el documento entero desde una fila de tabla es como se pierden campos que la lista no cargó.
+ */
+export async function cuerpoDeSello(
+  tx: TxAlta,
+  refs: RefsAlta,
+  id: string,
+  ahora: Date,
+): Promise<ResultadoSello> {
+  const snap = await tx.get(refs.propiedad(id));
+  if (!snap.exists()) return { ok: false, fallo: { tipo: 'no-existe', codigo: id } };
+
+  const viva = { ...(snap.data() as object), id } as Propiedad;
+  const parche = selloDeVerificacion(viva, ahora);
+  if (!parche) {
+    return viva.verificadoAltorra
+      ? { ok: false, motivo: 'ya-sellada' }
+      : { ok: false, motivo: 'no-se-lo-gano', reparos: reparosParaSellar(viva) };
+  }
+
+  tx.set(refs.propiedad(id), parche, { merge: true });
+  return { ok: true, id, verificadoEn: parche.verificadoEn };
+}
+
+export type ResultadoSello =
+  | { ok: true; id: string; verificadoEn: string }
+  | { ok: false; fallo: FalloAlta }
+  | { ok: false; motivo: 'ya-sellada' }
+  | { ok: false; motivo: 'no-se-lo-gano'; reparos: ReparoVerificacion[] };
+
+/** Marca una propiedad como verificada. */
+export function marcarVerificada(id: string, ahora: Date = new Date()): Promise<ResultadoSello> {
+  return enTransaccion(
+    (tx, refs) => cuerpoDeSello(tx, refs, id, ahora),
+    (fallo) => ({ ok: false, fallo }) as ResultadoSello,
+  );
+}
+
+/** El resultado del sello, dicho para quien está mirando la cola. */
+export function explicarSello(r: Extract<ResultadoSello, { ok: false }>): string {
+  if ('motivo' in r) {
+    return r.motivo === 'ya-sellada'
+      ? 'Esta ya estaba verificada. Recarga la cola.'
+      : `No se puede verificar todavía: ${r.reparos.map(explicarReparo).join(' ')}`;
+  }
+  return explicarFallo(r.fallo);
 }

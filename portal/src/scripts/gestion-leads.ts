@@ -20,9 +20,14 @@
  */
 
 import { cargarAuth } from './auth';
+import { aCsv, nombreExport, type Columna } from '../lib/domain/csv';
+import { descargarTexto } from './descargar';
 
 /** Tope de la consulta. `limit()` es OBLIGATORIO en este proyecto: una query sin él es una cuota abierta. */
 const TOPE = 50;
+
+/** Lo último que se cargó. El export sale de AQUÍ y no de una segunda consulta. */
+const cargados: Lead[] = [];
 
 export interface Lead {
   id: string;
@@ -176,6 +181,38 @@ function pintarMensaje(txt: string): HTMLElement {
  * Monta la bandeja. La llama el panel DESPUÉS de confirmar que quien mira es del equipo — no antes:
  * pedir datos que las Rules van a denegar solo sirve para ensuciar la consola.
  */
+/**
+ * Columnas del export de leads.
+ *
+ * ⚠️ Este archivo lleva DATOS PERSONALES de gente real: nombre, teléfono y correo de quien escribió
+ * al portal. Sale del navegador del equipo a su disco y no pasa por ningún sitio más — pero una vez
+ * descargado ya es responsabilidad de quien lo tenga (Habeas Data, Ley 1581). Por eso el nombre del
+ * archivo dice qué es: nadie debería encontrárselo en Descargas y no saber que son personas.
+ *
+ * El escapado anti-fórmula de `campoCsv` importa aquí MÁS que en inmuebles: estos campos los teclea
+ * un desconocido en un formulario público.
+ */
+const COLUMNAS_LEAD: Columna<Lead>[] = [
+  { titulo: 'Lead', valor: (l) => l.id },
+  { titulo: 'Nombre', valor: (l) => l.nombre },
+  { titulo: 'Teléfono', valor: (l) => l.telefono },
+  { titulo: 'Email', valor: (l) => l.email },
+  { titulo: 'Origen', valor: (l) => etiquetaOrigen(l.origen) },
+  { titulo: 'Estado', valor: (l) => l.estado },
+  { titulo: 'Zona', valor: (l) => l.zona },
+  { titulo: 'Tipo', valor: (l) => l.tipoInmueble },
+  { titulo: 'Calidad', valor: (l) => l.leadTier },
+  { titulo: 'Entró el', valor: (l) => l.createdAt?.toISOString().slice(0, 10) },
+];
+
+/** Cablea el export de leads. */
+export function montarExportLeads(): void {
+  document.getElementById('gx-leads-export')?.addEventListener('click', () => {
+    if (!cargados.length) return;
+    descargarTexto(nombreExport('leads-datos-personales'), aCsv(cargados, COLUMNAS_LEAD));
+  });
+}
+
 export async function montarLeads(): Promise<void> {
   const conjunto = document.querySelector<HTMLElement>('.gx-row-set[data-set="admin"]');
   const cabecera = document.querySelector<HTMLElement>('.gx-tr--head');
@@ -207,6 +244,7 @@ export async function montarLeads(): Promise<void> {
     const snap = await mod.getDocs(q);
 
     if (snap.empty) {
+      cargados.length = 0;
       conjunto.replaceChildren(
         pintarMensaje('Todavía no ha entrado ningún lead. Cuando alguien deje sus datos en el portal, aparece aquí.'),
       );
@@ -215,6 +253,8 @@ export async function montarLeads(): Promise<void> {
     }
 
     const leads = snap.docs.map((d) => normalizar(d.id, d.data() as Record<string, unknown>));
+    cargados.length = 0;
+    cargados.push(...leads);
     conjunto.replaceChildren(...leads.map(pintarFila));
     actualizarKpi(leads.filter((l) => l.estado === 'pendiente').length, snap.size >= TOPE);
   } catch (e) {
