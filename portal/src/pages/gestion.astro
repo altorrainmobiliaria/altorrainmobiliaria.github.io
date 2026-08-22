@@ -20,6 +20,9 @@ const nav = [
   // «Contratos» sale del mockup aprobado el 2026-08-22 (`ALTORRA Gestion-Alta.dc.html`). Se AÑADE:
   // los que ya estaban vienen del mockup anterior, también aprobado, y quitarlos no lo pidió nadie.
   { id: 'contratos', label: 'Contratos', icon: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h4"/>' },
+  // «Expedientes» es el agregado RAÍZ: contratos, pagos y novedades cuelgan de él. Va justo
+  // después de Contratos porque es donde el operador acaba cuando algo no cuadra.
+  { id: 'expedientes', label: 'Expedientes', icon: '<path d="M3 7.5A2 2 0 0 1 5 5.5h4l2 2.5h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M8 14h8"/>' },
   { id: 'leads', label: 'Leads', icon: '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.2 2.9-5.3 6.5-5.3s6.5 2.1 6.5 5.3"/><path d="M17 5.4A3.2 3.2 0 0 1 17 11.6M22 20c0-2.4-1.5-4.2-3.7-4.9"/>' },
   { id: 'visitas', label: 'Visitas', icon: '<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>' },
   { id: 'documentos', label: 'Documentos', icon: '<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M18 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8l5 5v11a2 2 0 0 1-2 2z"/><path d="M8 13h8M8 17h5"/>' },
@@ -347,6 +350,91 @@ const init = DATA.admin;
           falta el módulo («se pierden los contratos, se olvidan fechas»).
           El alta NO escribe Firestore: `contratos` nace con `allow write: if false` (§100) y la única
           puerta es la callable `crearContrato`, que impone el gate del art. 16 (§113).  -->
+     <div id="gx-vista-novedades" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-nv-volver">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Expedientes y novedades</h1>
+          <p class="gx-sub">Un expediente por inmueble administrado. De él cuelgan sus contratos, sus pagos y sus novedades.</p>
+        </div>
+      </header>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Expedientes</h2></div>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--ex">
+            <div class="gx-tr gx-tr--head"><span>Expediente</span><span>Estado</span><span>Notas</span></div>
+            <div id="gx-ex-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-ex-form" novalidate>
+        <h2>Abrir un expediente</h2>
+        <p class="gx-psub">Hace falta decir de qué inmueble es: uno del catálogo o su código antiguo. Cualquiera de los dos basta.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="e-propiedad">Inmueble del catálogo</label><input class="alt-input" id="e-propiedad" type="text" placeholder="INM-202608-0003" /></div>
+          <div><label class="alt-label" for="e-legacy">o código antiguo</label><input class="alt-input" id="e-legacy" type="text" placeholder="ALT-AR-014" /></div>
+          <div><label class="alt-label" for="e-estado">Estado del arriendo</label><select class="alt-input" id="e-estado"></select></div>
+        </div>
+        <div class="gx-fgrid">
+          <div class="gx-ancho"><label class="alt-label" for="e-notas">Notas</label><input class="alt-input" id="e-notas" type="text" placeholder="Lo que haga falta recordar de este inmueble" /></div>
+        </div>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-ex-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-ex-guardar">Abrir expediente</button>
+        </div>
+      </form>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Novedades</h2><span class="gx-psub" id="gx-nv-resumen"></span></div>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--nv">
+            <div class="gx-tr gx-tr--head"><span>Novedad</span><span>Expediente</span><span>Estado</span><span>Plazo</span><span>Qué hacer</span></div>
+            <div id="gx-nv-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-nv-form" novalidate>
+        <h2>Registrar una novedad</h2>
+        <p class="gx-psub">El plazo de respuesta lo pone el sistema al guardarla: 48 horas desde que entra, no desde que alguien la mira.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="n-expediente">Expediente</label><input class="alt-input" id="n-expediente" type="text" placeholder="EXP-202608-0001" /></div>
+          <div>
+            <label class="alt-label" for="n-quien">La reporta</label>
+            <select class="alt-input" id="n-quien">
+              <option value="inquilino">El arrendatario</option>
+              <option value="propietario">El propietario</option>
+              <option value="admin">Nosotros</option>
+            </select>
+          </div>
+          <div><label class="alt-label" for="n-tipo">De qué es</label><input class="alt-input" id="n-tipo" type="text" placeholder="reparación · queja · solicitud" /></div>
+        </div>
+        <div class="gx-fgrid">
+          <div class="gx-ancho"><label class="alt-label" for="n-descripcion">Qué pasó</label><input class="alt-input" id="n-descripcion" type="text" placeholder="Fuga en el lavaplatos de la cocina" /></div>
+        </div>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-nv-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-nv-guardar">Registrar novedad</button>
+        </div>
+      </form>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-rv-form" novalidate>
+        <h2>Mover una novedad</h2>
+        <p class="gx-psub">Para darla por resuelta hay que escribir qué se hizo. Sin eso no se puede cerrar — a los tres meses nadie recordará si se atendió.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="r-id">Novedad</label><input class="alt-input" id="r-id" type="text" placeholder="NOV-202608-0001" /></div>
+          <div><label class="alt-label" for="r-estado">Nuevo estado</label><select class="alt-input" id="r-estado"></select></div>
+          <div><label class="alt-label" for="r-resolucion">Qué se hizo</label><input class="alt-input" id="r-resolucion" type="text" placeholder="Se cambió el sifón; el inquilino confirmó." /></div>
+        </div>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-rv-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-rv-guardar">Actualizar</button>
+        </div>
+      </form>
+    </div>
+
      <div id="gx-vista-contratos" hidden>
       <header class="gx-head">
         <div>
@@ -788,6 +876,13 @@ const init = DATA.admin;
 </style>
 
 <style is:global>
+  .gx-table__inner--ex .gx-tr { grid-template-columns: 2.2fr 1fr 2.6fr; }
+  .gx-table__inner--nv .gx-tr { grid-template-columns: 1.9fr 1.2fr 1fr 0.7fr 2.2fr; }
+  /* Campo que ocupa la fila entera: una descripción de una frase en un tercio de ancho se lee peor
+     que el problema que describe. Un solo nombre — `span 2` daba EXACTAMENTE lo mismo en esta
+     rejilla, y dos clases para un mismo resultado es como empieza a pudrirse una hoja de estilos. */
+  .gx-ancho { grid-column: 1 / -1; }
+
   .gx-table__inner--pg .gx-tr { grid-template-columns: 1.6fr 1fr 1.1fr 1.2fr 2fr; }
 
   /* ══ CONTRATOS (§114) ════════════════════════════════════════════════════════════════════ */

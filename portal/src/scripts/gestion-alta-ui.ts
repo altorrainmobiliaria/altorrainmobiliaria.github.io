@@ -22,6 +22,7 @@ import { TOPE_IMAGENES } from '../lib/media-subida';
 import { urlMedia } from '../lib/media';
 import { montarInmuebles } from './gestion-inmuebles';
 import { montarAltaContrato, montarContratos, montarPagos, montarRegistroPago } from './gestion-contratos';
+import { montarExpedientes, montarFormularios, montarNovedades } from './gestion-novedades';
 import type { Propiedad } from '../lib/domain/propiedades';
 
 /** Lado mayor del derivado. Más allá de esto no se gana nitidez visible y sí peso. */
@@ -277,11 +278,13 @@ export function montarAlta(): void {
   const vistaContratos = $('gx-vista-contratos');
 
   /** Solo una vista visible a la vez. `null` = volver al panel. */
-  const ver = (cual: 'alta' | 'inmuebles' | 'contratos' | null) => {
+  const vistaNovedades = $('gx-vista-novedades');
+  const ver = (cual: 'alta' | 'inmuebles' | 'contratos' | 'novedades' | null) => {
     vistaPanel.hidden = cual !== null;
     vistaAlta.hidden = cual !== 'alta';
     if (vistaInmuebles) vistaInmuebles.hidden = cual !== 'inmuebles';
     if (vistaContratos) vistaContratos.hidden = cual !== 'contratos';
+    if (vistaNovedades) vistaNovedades.hidden = cual !== 'novedades';
     if (cual === 'alta') {
       ajustarPorOperacion();
       pintarAviso();
@@ -324,6 +327,11 @@ export function montarAlta(): void {
       void montarContratos();
       void montarPagos();
     },
+    expedientes: () => {
+      ver('novedades');
+      void montarExpedientes();
+      void montarNovedades();
+    },
   };
 
   document.querySelectorAll<HTMLAnchorElement>('.gx-nav__item').forEach((a) => {
@@ -338,8 +346,10 @@ export function montarAlta(): void {
   });
   $('gx-inm-volver')?.addEventListener('click', () => ver(null));
   $('gx-ct-volver')?.addEventListener('click', () => ver(null));
+  $('gx-nv-volver')?.addEventListener('click', () => ver(null));
   montarAltaContrato();
   montarRegistroPago();
+  montarFormularios();
 
   // El listado avisa; esta pantalla es la única que sabe pintar un inmueble.
   document.addEventListener('altorra:editar-inmueble', (ev) => {

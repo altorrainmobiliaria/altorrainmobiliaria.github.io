@@ -81,7 +81,9 @@ function pintarHito(h: Hito, nombre: string): HTMLElement {
   t.textContent = h.titulo;
   const d = document.createElement('span');
   d.className = 'gx-cod';
-  d.textContent = nombre || h.contratoId;
+  // Sin contrato (los hitos de novedad cuelgan del expediente, §118) la celda cae al expediente:
+  // dejarla vacía obligaría a abrir el ticket solo para saber de qué inmueble habla.
+  d.textContent = nombre || h.contratoId || h.expedienteId;
   q.appendChild(d);
   q.appendChild(t);
 
@@ -158,7 +160,7 @@ export async function montarContratos(): Promise<void> {
     const hoy = hoyISO();
     const hitos = agenda(contratos, hoy, DIAS_AGENDA);
     cuerpoAgenda.replaceChildren(
-      ...(hitos.length ? hitos.map((h) => pintarHito(h, nombres.get(h.contratoId) ?? '')) : [mensaje('Nada vence en los próximos meses.')]),
+      ...(hitos.length ? hitos.map((h) => pintarHito(h, (h.contratoId && nombres.get(h.contratoId)) || '')) : [mensaje('Nada vence en los próximos meses.')]),
     );
     cuerpoLista.replaceChildren(...contratos.map(pintarContrato));
 
