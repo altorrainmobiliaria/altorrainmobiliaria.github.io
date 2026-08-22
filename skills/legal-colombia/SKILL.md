@@ -79,6 +79,23 @@ Usa este método. (Puedes usar esos plugins solo si el usuario pide EXPLÍCITAME
 
 ---
 
+## Prueba social FABRICADA en una maqueta que ya es pública (Ley 1480, arts. 29-30)
+
+Las réplicas de mockup llegan con reseñas, ratings y anfitriones de relleno. En cuanto esa página es
+alcanzable —enlazada desde un menú, indexable, compartible— dejan de ser *placeholder* y pasan a ser
+**publicidad engañosa**: un testimonio con nombre y fecha afirma que una persona real dijo eso.
+
+- **No lo cura etiquetarlo.** «Ejemplo» o «datos de muestra» se pierde en una captura de pantalla; la
+  reseña no. Tampoco lo cura el `noindex`: un enlace en el menú principal ya es publicación.
+- **Cúralo sin perder el diseño**: haz la sección **dependiente de datos** y pásale una lista vacía.
+  Con `[]` no se pinta; el día que haya reseñas reales vuelve sola con el diseño aprobado intacto.
+  Borrarla obliga a rehacer la UI —y a re-aprobar el mockup— cuando lleguen los datos.
+- **Qué cuenta como fabricado**: nombres de personas, fechas, notas y conteos («4.97 · 128 reseñas»),
+  sellos de verificación, años de antigüedad, tiempos de respuesta. El texto de una amenidad no; una
+  cifra que se lee como medición, sí.
+- Aplica igual a `sameAs`, a `aggregateRating` en el JSON-LD y a los logos de «confían en nosotros».
+  El buscador los trata como afirmaciones, y las penaliza cuando no las respalda nada.
+
 ## Cuándo NO usar esta skill
 
 - El usuario pide explícitamente un asunto legal de **otro país** (ahí sí los plugins extranjeros aplican).

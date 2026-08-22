@@ -148,6 +148,24 @@ conoce el registro), nunca de parsear la presentación; y un *slug* tampoco sirv
 corregir una tilde del título. Aceptar el formato viejo además del nuevo evita romper a partir de hoy,
 pero **no reconstruye lo que ya se perdió**: por eso se arregla la fuente, no solo el lector.
 
+## 4f. ✅ El ÉXITO que no está cableado — el peor de los fallos silenciosos
+
+Un `mostrarExito()` conectado a nada: el botón revela el mensaje de confirmación y **no envía**. Es
+la forma más dañina del fallback silencioso (§4b), porque las otras solo fallan — ésta **miente**, y
+quien se lo cree es una persona esperando una respuesta que no va a llegar.
+
+- **Dónde vive**: en réplicas de mockup y prototipos que se dieron por terminados. El mockup pintaba
+  el estado de éxito para enseñarlo, y al implementar quedó el `hidden`/`removeAttribute` como si
+  fuera el comportamiento. Nadie lo nota porque **la pantalla hace exactamente lo que se espera**.
+- **Cómo cazarlo, en un minuto**: por cada mensaje de éxito de la interfaz, busca su emisor y sigue
+  el hilo hasta una llamada de red o una escritura. `grep` de los ids de confirmación contra `fetch`
+  / `submit` / el cliente de datos. Si el hilo se corta antes, es un éxito de mentira.
+- **La misma sonda en negativo**: ¿qué mensaje sale cuando el envío FALLA? Si no existe ninguno,
+  probablemente tampoco existe el envío.
+- **Al arreglarlo, arregla también el TEXTO.** Si el flujo no es lo que el mensaje promete
+  («reserva confirmada» cuando es una solicitud), cablearlo sin tocar la copia sustituye una mentira
+  técnica por una comercial.
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.
