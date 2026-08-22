@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:#FFFFFF;font-family:'Hanken Grotesk',Helvetica,Arial,sans-serif;color:#062743;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  img{display:block;max-width:100%}
+  a{color:#A6801E;text-decoration:none}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+
+<!--
+  ALTORRA · GESTIÓN — NUEVO INMUEBLE
+
+  Es la pantalla que abre el botón «+ Nuevo inmueble» del panel. PANTALLA, no ventana emergente: el
+  alta tiene seis bloques y una galería de fotos, y meter eso en un modal obliga a hacer scroll dentro
+  de una caja flotante. Además el panel ya sabe navegar entre secciones.
+
+  NO INVENTA LENGUAJE VISUAL: los campos son los mismos de «ALTORRA Publica» (borde gris, radio 11,
+  foco dorado) y las tarjetas son las mismas del panel de «ALTORRA Gestión» (blanco, radio 20, borde
+  finísimo y sombra baja). Lo único nuevo es cómo se agrupan.
+
+  DOS COSAS QUE NO SON DECORACIÓN:
+  · El aviso de arriba dice si el inmueble SE VERÁ o no, y por qué, ANTES de guardar. El sistema sabe
+    exactamente qué le falta a una ficha para salir en el catálogo, así que no tiene sentido dejar que
+    alguien guarde y descubra el silencio después.
+  · El estado por defecto es BORRADOR. Nada se publica por accidente.
+-->
+
+<div style="display:flex;flex-wrap:wrap;min-height:100vh;width:100%;background:#FFFFFF">
+
+  <!-- ══ BARRA LATERAL — idéntica a la del panel ══════════════════════════════════════════════ -->
+  <aside style="flex:0 0 246px;background:#062743;color:rgba(255,255,255,.72);display:flex;flex-direction:column;padding:22px 16px;position:sticky;top:0;align-self:flex-start;height:100vh;min-width:0">
+    <a href="ALTORRA Portal.dc.html" style="display:flex;align-items:center;gap:11px;padding:6px 8px 22px">
+      <span style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#D4AF37,#BFC3C9);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-size:19px;color:#062743">A</span>
+      <span style="display:flex;flex-direction:column;line-height:1.1">
+        <span style="font-family:'Cormorant Garamond',Georgia,serif;font-size:17px;font-weight:600;color:#fff;letter-spacing:.06em">ALTORRA</span>
+        <span style="font-size:9.5px;letter-spacing:.22em;color:#D4AF37">GESTIÓN</span>
+      </span>
+    </a>
+    <nav style="display:flex;flex-direction:column;gap:2px;margin-top:6px">
+      <a href="ALTORRA Gestion.dc.html" style="padding:10px 12px;border-radius:10px;font-size:13.5px;color:rgba(255,255,255,.72)">Resumen</a>
+      <a href="#" style="padding:10px 12px;border-radius:10px;font-size:13.5px;background:rgba(255,255,255,.09);color:#fff;font-weight:600">Inmuebles</a>
+      <a href="#" style="padding:10px 12px;border-radius:10px;font-size:13.5px;color:rgba(255,255,255,.72)">Leads</a>
+      <a href="#" style="padding:10px 12px;border-radius:10px;font-size:13.5px;color:rgba(255,255,255,.72)">Contratos</a>
+      <a href="#" style="padding:10px 12px;border-radius:10px;font-size:13.5px;color:rgba(255,255,255,.72)">Pagos</a>
+    </nav>
+  </aside>
+
+  <!-- ══ CONTENIDO ════════════════════════════════════════════════════════════════════════════ -->
+  <main style="flex:1 1 640px;min-width:0;padding:clamp(20px,3vw,34px);display:flex;flex-direction:column;gap:clamp(18px,2vw,24px);background:#FBFCFD">
+
+    <header style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap">
+      <div>
+        <a href="ALTORRA Gestion.dc.html" style="font-size:12.5px;font-weight:600;color:#A6801E">&#8592; Volver al panel</a>
+        <h1 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(26px,3.4vw,34px);color:#062743;margin:6px 0 4px;letter-spacing:-.01em">Nuevo inmueble</h1>
+        <p style="font-size:13.5px;color:#6b7c93;margin:0">Se guarda como borrador. Solo sale al portal cuando tú lo pongas en «Disponible».</p>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button style="padding:11px 18px;border-radius:11px;background:#fff;color:#062743;font-weight:600;font-size:13.5px;border:1px solid rgba(27,39,51,.18);cursor:pointer">Cancelar</button>
+        <button style="padding:11px 20px;border-radius:11px;background:#062743;color:#fff;font-weight:600;font-size:13.5px;border:none;cursor:pointer">Guardar inmueble</button>
+      </div>
+    </header>
+
+    <!-- ══ AVISO DE VISIBILIDAD — lo que el sistema YA SABE, dicho antes de guardar ══════════ -->
+    <!-- Se pinta desde `problemasParaPublicar()`, que llama a los mismos predicados que el índice
+         del catálogo. Si esto dice «se verá», el listado NO lo puede omitir: es un contrato con test. -->
+    <div style="display:flex;gap:13px;align-items:flex-start;background:#fff;border:1px solid rgba(27,39,51,.07);border-left:3px solid #D4AF37;border-radius:14px;padding:16px 18px;box-shadow:0 2px 5px rgba(27,39,51,.03)">
+      <span style="width:22px;height:22px;flex:none;border-radius:50%;background:#f2f6f9;display:flex;align-items:center;justify-content:center;margin-top:1px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2.2" stroke-linecap="round"><path d="M12 8v5"></path><path d="M12 16.5v.01"></path></svg>
+      </span>
+      <div style="min-width:0">
+        <div style="font-size:13.5px;font-weight:600;color:#062743;margin-bottom:5px">Todavía no se vería en el portal</div>
+        <ul style="margin:0;padding-left:17px;font-size:13px;color:#6b7c93;line-height:1.65">
+          <li>No hay ninguna foto. Sin portada el inmueble no aparece en los listados.</li>
+          <li>Está en borrador. Solo lo ve el equipo.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ══ 1 · QUÉ ES ═══════════════════════════════════════════════════════════════════════ -->
+    <section style="background:#fff;border:1px solid rgba(27,39,51,.07);border-radius:20px;padding:24px 26px;box-shadow:0 2px 5px rgba(27,39,51,.03),0 22px 46px -36px rgba(27,39,51,.4);animation:rise .5s cubic-bezier(.2,.7,.2,1) both">
+      <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:20px;color:#062743;margin:0 0 4px">Qué es</h2>
+      <p style="font-size:12.5px;color:#98a9ba;margin:0 0 20px">La operación decide qué precio se pide y qué obligaciones legales aplican.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:16px">
+        <div>
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Operación</label>
+          <select style="width:100%;padding:13px 12px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14px;color:#062743;outline:none;background:#fff;cursor:pointer"><option>Venta</option><option>Arriendo</option><option>Alojamiento por días</option></select>
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Tipo</label>
+          <select style="width:100%;padding:13px 12px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14px;color:#062743;outline:none;background:#fff;cursor:pointer"><option>Apartamento</option><option>Casa</option><option>Apartaestudio</option><option>Local</option><option>Oficina</option><option>Bodega</option><option>Lote</option><option>Finca</option></select>
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Vertical legal</label>
+          <select style="width:100%;padding:13px 12px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14px;color:#062743;outline:none;background:#fff;cursor:pointer"><option>Vivienda (sugerida)</option><option>Comercial</option><option>Turístico</option></select>
+          <p style="font-size:11.5px;color:#98a9ba;margin:6px 0 0;line-height:1.45">Se sugiere sola. Decide qué prohíbe la ley: en vivienda no se puede pedir depósito.</p>
+        </div>
+      </div>
+      <div style="margin-top:16px">
+        <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Título</label>
+        <input type="text" placeholder="Apartamento con vista al mar en Bocagrande" style="width:100%;padding:13px 14px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14.5px;color:#062743;outline:none" style-focus="border-color:#D4AF37">
+        <p style="font-size:11.5px;color:#98a9ba;margin:6px 0 0">Es lo que se lee en la tarjeta del listado y en Google.</p>
+      </div>
+      <div style="margin-top:16px">
+        <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Descripción</label>
+        <textarea rows="4" placeholder="Cuenta lo que una foto no dice: la luz, el barrio, qué hay cerca." style="width:100%;padding:13px 14px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14.5px;color:#062743;outline:none;font-family:inherit;resize:vertical" style-focus="border-color:#D4AF37"></textarea>
+      </div>
+    </section>
+
+    <!-- ══ 2 · DÓNDE ════════════════════════════════════════════════════════════════════════ -->
+    <section style="background:#fff;border:1px solid rgba(27,39,51,.07);border-radius:20px;padding:24px 26px;box-shadow:0 2px 5px rgba(27,39,51,.03),0 22px 46px -36px rgba(27,39,51,.4)">
+      <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:20px;color:#062743;margin:0 0 4px">Dónde</h2>
+      <p style="font-size:12.5px;color:#98a9ba;margin:0 0 20px">Nunca se publica la dirección exacta. Solo barrio y ciudad.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(190px,100%),1fr));gap:16px">
+        <div>
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Ciudad</label>
+          <select style="width:100%;padding:13px 12px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14px;color:#062743;outline:none;background:#fff;cursor:pointer"><option>Cartagena de Indias</option></select>
+          <p style="font-size:11.5px;color:#98a9ba;margin:6px 0 0;line-height:1.45">De la ciudad depende que se muestre la matrícula de arrendador.</p>
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Barrio</label>
+          <select style="width:100%;padding:13px 12px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14px;color:#062743;outline:none;background:#fff;cursor:pointer"><option>Bocagrande</option><option>Castillogrande</option><option>Manga</option><option>Centro Histórico</option><option>Getsemaní</option><option>La Boquilla</option></select>
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Punto en el mapa</label>
+          <button style="width:100%;padding:13px 12px;border:1px dashed rgba(27,39,51,.28);border-radius:11px;font-size:13.5px;color:#6b7c93;background:#fff;cursor:pointer;text-align:left">Marcar en el mapa &#8594;</button>
+          <p style="font-size:11.5px;color:#98a9ba;margin:6px 0 0;line-height:1.45">Aproximado, para el pin. Opcional.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 3 · CUÁNTO — los campos cambian con la operación ═════════════════════════════════ -->
+    <section style="background:#fff;border:1px solid rgba(27,39,51,.07);border-radius:20px;padding:24px 26px;box-shadow:0 2px 5px rgba(27,39,51,.03),0 22px 46px -36px rgba(27,39,51,.4)">
+      <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:20px;color:#062743;margin:0 0 4px">Cuánto</h2>
+      <p style="font-size:12.5px;color:#98a9ba;margin:0 0 20px">Solo se piden los precios de la operación elegida. Aquí, venta.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:16px">
+        <div>
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Valor de venta</label>
+          <input type="text" placeholder="$ 450.000.000" style="width:100%;padding:13px 14px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14.5px;color:#062743;outline:none" style-focus="border-color:#D4AF37">
+        </div>
+        <div style="opacity:.4;pointer-events:none">
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Canon mensual</label>
+          <input type="text" placeholder="Solo en arriendo" style="width:100%;padding:13px 14px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14.5px;color:#062743;outline:none;background:#FBFCFD">
+        </div>
+        <div style="opacity:.4;pointer-events:none">
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Administración</label>
+          <input type="text" placeholder="Aparte del canon, nunca dentro" style="width:100%;padding:13px 14px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14.5px;color:#062743;outline:none;background:#FBFCFD">
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 4 · CÓMO ES ══════════════════════════════════════════════════════════════════════ -->
+    <section style="background:#fff;border:1px solid rgba(27,39,51,.07);border-radius:20px;padding:24px 26px;box-shadow:0 2px 5px rgba(27,39,51,.03),0 22px 46px -36px rgba(27,39,51,.4)">
+      <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:20px;color:#062743;margin:0 0 4px">Cómo es</h2>
+      <p style="font-size:12.5px;color:#98a9ba;margin:0 0 20px">Lo que se deje en blanco simplemente no se muestra. No se inventa nada.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr));gap:16px">
+        <div><label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Habitaciones</label><input type="text" placeholder="3" style="width:100%;padding:13px 14px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14.5px;color:#062743;outline:none" style-focus="border-color:#D4AF37"></div>
+        <div><label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Baños</label><input type="text" placeholder="2" style="width:100%;padding:13px 14px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14.5px;color:#062743;outline:none" style-focus="border-color:#D4AF37"></div>
+        <div><label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Área m²</label><input type="text" placeholder="120" style="width:100%;padding:13px 14px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14.5px;color:#062743;outline:none" style-focus="border-color:#D4AF37"></div>
+        <div><label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Estrato</label><input type="text" placeholder="5" style="width:100%;padding:13px 14px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14.5px;color:#062743;outline:none" style-focus="border-color:#D4AF37"></div>
+        <div><label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Parqueaderos</label><input type="text" placeholder="1" style="width:100%;padding:13px 14px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14.5px;color:#062743;outline:none" style-focus="border-color:#D4AF37"></div>
+        <div><label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:6px">Piso</label><input type="text" placeholder="8" style="width:100%;padding:13px 14px;border:1px solid rgba(27,39,51,.18);border-radius:11px;font-size:14.5px;color:#062743;outline:none" style-focus="border-color:#D4AF37"></div>
+      </div>
+      <div style="margin-top:20px">
+        <label style="display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#6b7c93;margin-bottom:10px">Amenidades</label>
+        <div style="display:flex;flex-wrap:wrap;gap:9px">
+          <span style="padding:8px 15px;border-radius:999px;border:1px solid #062743;background:#062743;color:#fff;font-size:13px;font-weight:500;cursor:pointer">Piscina</span>
+          <span style="padding:8px 15px;border-radius:999px;border:1px solid rgba(27,39,51,.18);color:#6b7c93;font-size:13px;cursor:pointer">Gimnasio</span>
+          <span style="padding:8px 15px;border-radius:999px;border:1px solid #062743;background:#062743;color:#fff;font-size:13px;font-weight:500;cursor:pointer">Ascensor</span>
+          <span style="padding:8px 15px;border-radius:999px;border:1px solid rgba(27,39,51,.18);color:#6b7c93;font-size:13px;cursor:pointer">Portería 24h</span>
+          <span style="padding:8px 15px;border-radius:999px;border:1px solid rgba(27,39,51,.18);color:#6b7c93;font-size:13px;cursor:pointer">Balcón</span>
+          <span style="padding:8px 15px;border-radius:999px;border:1px solid rgba(27,39,51,.18);color:#6b7c93;font-size:13px;cursor:pointer">Amoblado</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ 5 · FOTOS — la primera es la portada, y sin ninguna no hay tarjeta ═══════════════ -->
+    <section style="background:#fff;border:1px solid rgba(27,39,51,.07);border-radius:20px;padding:24px 26px;box-shadow:0 2px 5px rgba(27,39,51,.03),0 22px 46px -36px rgba(27,39,51,.4)">
+      <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:20px;color:#062743;margin:0 0 4px">Fotos</h2>
+      <p style="font-size:12.5px;color:#98a9ba;margin:0 0 20px">La primera es la portada: es la que sale en el listado y al compartir por WhatsApp. Arrastra para reordenar.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(150px,100%),1fr));gap:14px">
+        <div style="position:relative;aspect-ratio:4/3;border-radius:13px;overflow:hidden;background:#f2f6f9">
+          <image-slot prompt="Sala luminosa de apartamento en Cartagena, ventanal al mar, decoracion sobria" style="width:100%;height:100%;object-fit:cover"></image-slot>
+          <span style="position:absolute;top:9px;left:9px;padding:4px 10px;border-radius:999px;background:#D4AF37;color:#062743;font-size:10.5px;font-weight:700;letter-spacing:.04em">PORTADA</span>
+        </div>
+        <div style="position:relative;aspect-ratio:4/3;border-radius:13px;overflow:hidden;background:#f2f6f9">
+          <image-slot prompt="Cocina moderna blanca de apartamento" style="width:100%;height:100%;object-fit:cover"></image-slot>
+        </div>
+        <div style="position:relative;aspect-ratio:4/3;border-radius:13px;overflow:hidden;background:#f2f6f9">
+          <image-slot prompt="Habitacion principal con vista al mar" style="width:100%;height:100%;object-fit:cover"></image-slot>
+        </div>
+        <button style="aspect-ratio:4/3;border-radius:13px;border:1px dashed rgba(27,39,51,.28);background:#FBFCFD;color:#6b7c93;font-size:13px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;font-family:inherit">
+          <span style="font-size:22px;line-height:1;color:#A6801E">+</span>
+          Añadir fotos
+        </button>
+      </div>
+      <p style="font-size:11.5px;color:#98a9ba;margin:14px 0 0;line-height:1.5">Se convierten a WebP en tu navegador antes de subirse, así pesan una décima parte y cargan rápido en móvil.</p>
+    </section>
+
+    <!-- ══ 6 · PUBLICACIÓN ══════════════════════════════════════════════════════════════════ -->
+    <section style="background:#fff;border:1px solid rgba(27,39,51,.07);border-radius:20px;padding:24px 26px;box-shadow:0 2px 5px rgba(27,39,51,.03),0 22px 46px -36px rgba(27,39,51,.4)">
+      <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:20px;color:#062743;margin:0 0 4px">Publicación</h2>
+      <p style="font-size:12.5px;color:#98a9ba;margin:0 0 20px">Tres grupos con consecuencias distintas. Elegir mal no da ningún aviso, así que aquí se dice.</p>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <label style="display:flex;gap:12px;align-items:flex-start;padding:15px 17px;border:1px solid #062743;border-radius:13px;cursor:pointer;background:#FBFCFD">
+          <span style="width:17px;height:17px;flex:none;border-radius:50%;border:5px solid #062743;margin-top:1px"></span>
+          <span><span style="display:block;font-size:14px;font-weight:600;color:#062743">Borrador</span><span style="font-size:12.5px;color:#6b7c93">Solo lo ve el equipo. Es lo que se guarda por defecto.</span></span>
+        </label>
+        <label style="display:flex;gap:12px;align-items:flex-start;padding:15px 17px;border:1px solid rgba(27,39,51,.18);border-radius:13px;cursor:pointer">
+          <span style="width:17px;height:17px;flex:none;border-radius:50%;border:1px solid rgba(27,39,51,.3);margin-top:1px"></span>
+          <span><span style="display:block;font-size:14px;font-weight:600;color:#062743">Disponible</span><span style="font-size:12.5px;color:#6b7c93">Sale al portal y a Google.</span></span>
+        </label>
+        <label style="display:flex;gap:12px;align-items:flex-start;padding:15px 17px;border:1px solid rgba(27,39,51,.18);border-radius:13px;cursor:pointer">
+          <span style="width:17px;height:17px;flex:none;border-radius:50%;border:1px solid rgba(27,39,51,.3);margin-top:1px"></span>
+          <span><span style="display:block;font-size:14px;font-weight:600;color:#062743">Reservado &nbsp;·&nbsp; Vendido o arrendado</span><span style="font-size:12.5px;color:#6b7c93">SIGUEN saliendo en el portal, con el aviso puesto. Ayuda a que Google no pierda la página.</span></span>
+        </label>
+        <label style="display:flex;gap:12px;align-items:flex-start;padding:15px 17px;border:1px solid rgba(27,39,51,.18);border-radius:13px;cursor:pointer">
+          <span style="width:17px;height:17px;flex:none;border-radius:50%;border:1px solid rgba(27,39,51,.3);margin-top:1px"></span>
+          <span><span style="display:block;font-size:14px;font-weight:600;color:#062743">Inactivo</span><span style="font-size:12.5px;color:#6b7c93">Desaparece del portal. Es el que hay que usar para retirarlo de verdad.</span></span>
+        </label>
+      </div>
+    </section>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;padding-bottom:10px">
+      <button style="padding:12px 20px;border-radius:11px;background:#fff;color:#062743;font-weight:600;font-size:14px;border:1px solid rgba(27,39,51,.18);cursor:pointer">Cancelar</button>
+      <button style="padding:12px 26px;border-radius:11px;background:#062743;color:#fff;font-weight:600;font-size:14px;border:none;cursor:pointer">Guardar inmueble</button>
+    </div>
+
+  </main>
+</div>
+
+</x-dc>
+</body>
+</html>
