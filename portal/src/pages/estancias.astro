@@ -9,6 +9,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { LEGAL, TEXTO_AUTORIZACION, RUTA_AVISO } from '../lib/config/legal';
 
 // Galería del mockup (L118-129): 3 fotos en mosaico. [0] principal (villa-pool),
 // [1] Interior (villa-modern — el mockup usa villa-modern para Interior, no chalet-dusk),
@@ -38,16 +39,23 @@ const ofrece = [
 ];
 
 // RESEÑAS — la sección que faltaba (mockup L171-189). 4 barras + 2 reseñas, textos exactos.
-const notas = [
-  { l: 'Limpieza', v: '5.0', pct: 99 },
-  { l: 'Ubicación', v: '5.0', pct: 99 },
-  { l: 'Comunicación', v: '4.9', pct: 98 },
-  { l: 'Precio', v: '4.7', pct: 94 },
-];
-const resenas = [
-  { ini: 'VL', quien: 'Valentina L.', cuando: 'Marzo 2025', txt: 'Una joya en el Centro. La terraza al atardecer no tiene precio y Alejandro estuvo pendiente de todo. Volveremos sin dudarlo.' },
-  { ini: 'TS', quien: 'Thomas S.', cuando: 'Febrero 2025', txt: 'Impecable, exactamente como en las fotos. Ubicación perfecta para caminar a todos lados. La piscina fue el plan de los niños cada tarde.' },
-];
+/*
+ * ⛔ CERO-DEMO (§122). Aquí vivían un anfitrión («Alejandro C., Superanfitrión, 6 años en ALTORRA»),
+ * dos reseñas firmadas con nombre y fecha, un «4.97 · 128 reseñas» y sus cuatro barras de nota.
+ * TODO inventado, en una página PÚBLICA enlazada desde el menú principal.
+ *
+ * No es una licencia de maqueta: un testimonio fabricado es publicidad engañosa (Ley 1480, arts.
+ * 29-30) y contradice la regla del propio proyecto — «solo data REAL: nunca rating, sameAs u origen
+ * inventado» ([[L-29]]). Marcarlo como «ejemplo» tampoco valdría: la etiqueta se pierde en una
+ * captura de pantalla, la reseña no.
+ *
+ * Las secciones NO se borraron: se volvieron dependientes de datos. Con las listas vacías no se
+ * pintan, y el día que haya reseñas REALES vuelven solas con el diseño aprobado intacto.
+ */
+const notas: { l: string; v: string; pct: number }[] = [];
+const resenas: { ini: string; quien: string; cuando: string; txt: string }[] = [];
+const puntuacion: { nota: string; total: number } | null = null;
+const anfitrion: { ini: string; nombre: string; rol: string } | null = null;
 ---
 
 <BaseLayout title="Casa con piscina y terraza colonial — Estancias ALTORRA">
@@ -62,8 +70,12 @@ const resenas = [
           <h1 class="est-h1">Casa con piscina y terraza colonial</h1>
         </div>
         <div class="est-head__tags">
-          <span class="est-rating"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"/></svg> 4.97 · 128 reseñas</span>
-          <span class="alt-seal est-verif"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/><path d="M9 12l2 2 4-4"/></svg> Anfitrión verificado</span>
+          {puntuacion && (
+            <span class="est-rating"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"/></svg> {puntuacion.nota} · {puntuacion.total} reseñas</span>
+          )}
+          {anfitrion && (
+            <span class="alt-seal est-verif"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/><path d="M9 12l2 2 4-4"/></svg> Anfitrión verificado</span>
+          )}
         </div>
       </div>
       <div class="est-gal">
@@ -99,46 +111,50 @@ const resenas = [
           </div>
         </div>
 
-        <div class="est-sec est-host">
-          <span class="est-host__ini">AC</span>
-          <div>
-            <p class="est-host__name">Anfitrión: Alejandro C.</p>
-            <p class="est-host__role">Superanfitrión · 6 años en ALTORRA · responde en ~1 h</p>
+        {anfitrion && (
+          <div class="est-sec est-host">
+            <span class="est-host__ini">{anfitrion.ini}</span>
+            <div>
+              <p class="est-host__name">Anfitrión: {anfitrion.nombre}</p>
+              <p class="est-host__role">{anfitrion.rol}</p>
+            </div>
           </div>
-        </div>
+        )}
 
-        <!-- RESEÑAS — era la sección AUSENTE de Estancias (§32.2). Réplica fiel del mockup (L171-189). -->
-        <div class="est-sec est-rev">
-          <h2 class="est-rev__h">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"/></svg>
-            4.97 · 128 reseñas
-          </h2>
+        {/* RESEÑAS (mockup L171-189). Solo se pinta con reseñas REALES — §122. */}
+        {resenas.length > 0 && (
+          <div class="est-sec est-rev">
+            <h2 class="est-rev__h">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"/></svg>
+              {puntuacion ? `${puntuacion.nota} · ${puntuacion.total} reseñas` : `${resenas.length} reseñas`}
+            </h2>
 
-          <div class="est-rev__notas">
-            {notas.map((n) => (
-              <div class="est-rev__nota">
-                <span class="est-rev__nl">{n.l}</span>
-                <span class="est-rev__track"><span class="est-rev__fill" style={`width:${n.pct}%`}></span></span>
-                <span class="est-rev__nv">{n.v}</span>
-              </div>
-            ))}
-          </div>
-
-          <div class="est-rev__list">
-            {resenas.map((r) => (
-              <article class="est-rev__item">
-                <div class="est-rev__who">
-                  <span class="est-rev__ini" aria-hidden="true">{r.ini}</span>
-                  <div>
-                    <p class="est-rev__name">{r.quien}</p>
-                    <p class="est-rev__when">{r.cuando}</p>
-                  </div>
+            <div class="est-rev__notas">
+              {notas.map((n) => (
+                <div class="est-rev__nota">
+                  <span class="est-rev__nl">{n.l}</span>
+                  <span class="est-rev__track"><span class="est-rev__fill" style={`width:${n.pct}%`}></span></span>
+                  <span class="est-rev__nv">{n.v}</span>
                 </div>
-                <p class="est-rev__txt">{r.txt}</p>
-              </article>
-            ))}
+              ))}
+            </div>
+
+            <div class="est-rev__list">
+              {resenas.map((r) => (
+                <article class="est-rev__item">
+                  <div class="est-rev__who">
+                    <span class="est-rev__ini" aria-hidden="true">{r.ini}</span>
+                    <div>
+                      <p class="est-rev__name">{r.quien}</p>
+                      <p class="est-rev__when">{r.cuando}</p>
+                    </div>
+                  </div>
+                  <p class="est-rev__txt">{r.txt}</p>
+                </article>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <!-- Widget de reserva -->
@@ -146,7 +162,6 @@ const resenas = [
         <div class="est-book">
           <div class="est-book__top">
             <p class="est-book__price"><b>$850.000</b> / noche</p>
-            <span class="est-book__rate"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"/></svg> 4.97</span>
           </div>
           <div class="est-book__box">
             <div class="est-book__dates">
@@ -162,8 +177,23 @@ const resenas = [
               </div>
             </div>
           </div>
-          <button class="alt-btn alt-btn--navy est-book__cta" id="est-reservar" type="button">Reservar<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
-          <p class="est-book__note">No se hará ningún cargo por ahora</p>
+          <button class="alt-btn alt-btn--navy est-book__cta" id="est-reservar" type="button">Solicitar estas fechas<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+          <p class="est-book__note">No es una reserva ni se cobra nada: te confirmamos disponibilidad por WhatsApp.</p>
+
+          <!-- Paso de contacto. Aparece al pedir las fechas: pedir nombre y teléfono ANTES de que
+               nadie haya elegido nada es la forma más rápida de que se vayan. -->
+          <form class="est-datos" id="est-datos" hidden novalidate>
+            <label class="est-f"><span>Tu nombre</span><input class="alt-input" type="text" id="est-nombre" name="nombre" autocomplete="name" required /></label>
+            <label class="est-f"><span>WhatsApp</span><input class="alt-input" type="tel" id="est-tel" name="telefono" autocomplete="tel" placeholder="300 123 4567" required /></label>
+            <label class="est-check">
+              <input type="checkbox" id="est-auth" name="autorizacion" value="on" required />
+              <span>
+                {TEXTO_AUTORIZACION.p1}<a href={RUTA_AVISO} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkAviso}</a>{TEXTO_AUTORIZACION.p2}<a href={LEGAL.politicaDatos.ruta} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkPolitica}</a>{TEXTO_AUTORIZACION.p3}
+              </span>
+            </label>
+            <button class="alt-btn alt-btn--navy est-book__cta" type="submit" id="est-enviar">Enviar solicitud</button>
+            <p class="est-err" id="est-err" role="alert" hidden></p>
+          </form>
           <div class="est-book__lines">
             <div class="est-line"><span id="est-line">$850.000 × 3 noches</span><span id="est-subtotal">$2.550.000</span></div>
             <div class="est-line"><span>Tarifa de limpieza</span><span>$180.000</span></div>
@@ -172,10 +202,11 @@ const resenas = [
           </div>
           <div class="alt-alert alt-alert--success est-confirm" id="est-confirm" hidden>
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-            Solicitud enviada · Alejandro te confirmará en breve.
+            <span>Recibimos tu solicitud. Te escribimos por WhatsApp para confirmar disponibilidad — <b>todavía no es una reserva</b>.</span>
           </div>
         </div>
-        <p class="est-cancel">Cancelación gratuita hasta 5 días antes</p>
+        <p class="est-cancel">Este alojamiento es un <b>ejemplo</b>: todavía no publicamos el inventario de corta
+          estancia. Cuéntanos tus fechas y te proponemos lo que tengamos disponible.</p>
       </aside>
     </div>
   </main>
@@ -245,6 +276,14 @@ const resenas = [
   .est-line { display: flex; justify-content: space-between; font-size: 14px; color: var(--alt-text); }
   .est-line--total { padding-top: 13px; border-top: 1px solid var(--alt-hairline); margin-top: 2px; }
   .est-line--total span { font-size: 16px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); }
+  /* Paso de contacto (§122): aparece bajo el CTA cuando las fechas ya son válidas. */
+  .est-datos { display: grid; gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--alt-hairline); }
+  .est-f { display: grid; gap: 5px; font-size: 12.5px; color: var(--alt-text); }
+  .est-check { display: flex; gap: 9px; align-items: flex-start; font-size: 11.5px; line-height: 1.45; color: var(--alt-text-muted); }
+  .est-check input { margin-top: 2px; flex: 0 0 auto; }
+  .est-check a { color: var(--alt-navy); }
+  /* El error va en dorado y con ícono implícito: la paleta no tiene rojo (identidad de marca). */
+  .est-err { font-size: 12.5px; line-height: 1.4; color: var(--alt-ink); background: var(--alt-mist); border-left: 3px solid var(--alt-gold); padding: 9px 11px; border-radius: 8px; }
   .est-confirm { margin-top: 16px; }
   .est-cancel { text-align: center; font-size: 12px; color: var(--alt-text); margin-top: 14px; }
 
@@ -282,6 +321,13 @@ const resenas = [
 </style>
 
 <script>
+  import { explicarProblemaReserva, noches, problemasDeReserva } from '../lib/domain/reserva';
+
+  /** Hoy en `YYYY-MM-DD` LOCAL: el visitante elige fechas en su calendario, no en UTC. */
+  const hoyISO = () => {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  };
   // Reserva: recalcula noches/subtotal/servicio/total según fechas; stepper de huéspedes; confirmar.
   const PRICE = 850000, CLEANING = 180000, SERVICE_RATE = 0.1;
   const fmt = (n: number) => '$' + n.toLocaleString('es-CO');
@@ -291,11 +337,11 @@ const resenas = [
   function recalc() {
     const ci = ($('est-ci') as HTMLInputElement)?.value;
     const co = ($('est-co') as HTMLInputElement)?.value;
-    let nights = 3;
-    if (ci && co) {
-      const d = (new Date(co).getTime() - new Date(ci).getTime()) / 86400000;
-      nights = d > 0 ? Math.round(d) : 0;
-    }
+    // `noches()` del dominio, no una resta aquí: la misma cuenta la hace el endpoint al validar, y
+    // dos implementaciones de la misma regla acaban discrepando en el caso raro ([[L-45]]). La de
+    // aquí además usaba `new Date(co)` sobre un `YYYY-MM-DD`, que se interpreta en UTC mientras el
+    // navegador está en UTC-5: a ciertas horas la cuenta salía con un día de más.
+    const nights = ci && co ? noches(ci, co) : 0;
     const subtotal = PRICE * nights;
     const service = Math.round(subtotal * SERVICE_RATE);
     const total = nights > 0 ? subtotal + CLEANING + service : 0;
@@ -314,7 +360,68 @@ const resenas = [
   $('est-co')?.addEventListener('change', recalc);
   $('est-dec')?.addEventListener('click', () => setGuests(guests - 1));
   $('est-inc')?.addEventListener('click', () => setGuests(guests + 1));
-  $('est-reservar')?.addEventListener('click', () => $('est-confirm')?.removeAttribute('hidden'));
+  // ── SOLICITUD REAL (§122) ──────────────────────────────────────────────────────────────────
+  // Antes esto era `removeAttribute('hidden')` sobre el mensaje de éxito: el visitante leía
+  // «Solicitud enviada» y no se enviaba NADA. Un fallo silencioso que además mentía.
+  const err = (txt: string) => {
+    const e = $('est-err');
+    if (!e) return;
+    e.textContent = txt;
+    e.removeAttribute('hidden');
+  };
+
+  $('est-reservar')?.addEventListener('click', () => {
+    const ci = ($('est-ci') as HTMLInputElement | null)?.value ?? '';
+    const co = ($('est-co') as HTMLInputElement | null)?.value ?? '';
+    const malos = problemasDeReserva({ llegada: ci, salida: co, huespedes: guests }, hoyISO());
+    if (malos.length) { err(malos.map(explicarProblemaReserva).join(' ')); return; }
+    $('est-err')?.setAttribute('hidden', '');
+    $('est-datos')?.removeAttribute('hidden');
+    ($('est-nombre') as HTMLInputElement | null)?.focus();
+  });
+
+  $('est-datos')?.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const btn = $('est-enviar') as HTMLButtonElement | null;
+    const nombre = (($('est-nombre') as HTMLInputElement | null)?.value ?? '').trim();
+    const telefono = (($('est-tel') as HTMLInputElement | null)?.value ?? '').trim();
+    const autoriza = ($('est-auth') as HTMLInputElement | null)?.checked;
+
+    if (nombre.length < 2) { err('Dinos cómo te llamas.'); return; }
+    if (telefono.length < 7) { err('Necesitamos un WhatsApp para confirmarte.'); return; }
+    // El servidor ya lo rechaza (422), pero avisar aquí evita que pierda lo escrito. NUNCA se
+    // premarca ni se marca por él: el silencio no es autorización (Ley 1581 art. 9).
+    if (!autoriza) { err('Marca la autorización de datos para poder responderte.'); return; }
+    $('est-err')?.setAttribute('hidden', '');
+
+    if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
+    try {
+      const res = await fetch('/api/solicitud', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify({
+          formulario: 'reserva-estancia',
+          nombre,
+          telefono,
+          autorizacion: 'on',
+          llegada: ($('est-ci') as HTMLInputElement | null)?.value ?? '',
+          salida: ($('est-co') as HTMLInputElement | null)?.value ?? '',
+          huespedes: guests,
+        }),
+      });
+      const cuerpo = (await res.json().catch(() => null)) as { ok?: boolean; mensajes?: string[] } | null;
+      if (!res.ok || !cuerpo?.ok) {
+        err(cuerpo?.mensajes?.join(' ') || 'No pudimos enviar la solicitud. Intenta de nuevo o escríbenos por WhatsApp.');
+        if (btn) { btn.disabled = false; btn.textContent = 'Enviar solicitud'; }
+        return;
+      }
+      $('est-datos')?.setAttribute('hidden', '');
+      $('est-confirm')?.removeAttribute('hidden');
+    } catch {
+      err('No pudimos conectar. Revisa tu conexión o escríbenos por WhatsApp.');
+      if (btn) { btn.disabled = false; btn.textContent = 'Enviar solicitud'; }
+    }
+  });
 
   // Prellenar fechas: llegada hoy+7, salida hoy+10 + fijar mínimos (como el mockup, componentDidMount).
   // Antes los inputs nacían vacíos y "$850.000 × 3 noches" era texto estático mentiroso; sin `min` se
