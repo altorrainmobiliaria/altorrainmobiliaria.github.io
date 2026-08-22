@@ -27,7 +27,7 @@
 
 | ID | Item | Estado | Nota |
 |---|---|---|---|
-| **TODO-17** | **Ola 0 restos**: E2E "tras cache" (T9) · 0.4 obra AEO. | 🔄 | gate=CUTOVER |
+| **TODO-17** | **Ola 0 restos**: E2E "tras cache" · obra AEO. | 🔄 | gate=CUTOVER |
 | **TODO-21** | **Lote-dueño**: Nº **RNT** · dirección física y COMERCIAL · abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ dueño | gate=obra |
 | **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO) · **TODO-40** ✅ cerrado. Capacidad y gates a medias → absorbidos por **TODO-45**. | 🔄 | §84·§87·§90·§96 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
@@ -37,6 +37,7 @@
 | **TODO-22** | **CATÁLOGO completo, ficha incluida (§97)**. Datos reales = fases 3-4 del runbook; luego fichas al sitemap. | 🟢 cutover | §102 |
 | **TODO-42** | 🔑 **Claim de staff — CÓDIGO LISTO, falta desplegar** (§99) = **fase 1 del runbook**, aislada y se puede hacer HOY (no toca reglas). ⏭️ **Daniel**: (1) me confirma el deploy — concede permisos de admin, prefiero que lo sepas; (2) pulsa «Sincronizar permisos» en admin.html → Usuarios; (3) abre `/gestion`. | 🟡 deploy | §102 |
 | **TODO-45** | 🔬 **Deuda de la auditoría #8** (§109, tabla en la bóveda). Por orden: (a) **capa semántica de `00` congelada 24 ADRs** — el ruteo que funciona hoy es la bitácora, así que ESTO va ANTES de podarla; (b) `degrade()` 🟠 cuando un gate hace 0 comparaciones (el ✅ inmerecido: #27 perdona 90 rutas por basename, #16 aprueba «CF 9» contra 11); (c) el **índice revienta en ~4 ADRs**, no en 92 → fila nueva ≤200c bloqueante; (d) umbrales en DÍAS en un repo que corre en COMMITS; (e) `33` por encima del tope. | 🔴 | §109 |
+| **TODO-46** | 📅 **GESTIÓN v1** (ítem 13 de OLA 1). ✅ la AGENDA pura: vencimientos, aviso de renovación a 4 meses, mora por escalones (§112). Falta la pantalla, el alta de contratos/expedientes, novedades y adjuntos privados (gate B5). Es la herramienta DIARIA del dueño. | 🔴 | §112 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---

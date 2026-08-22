@@ -3641,3 +3641,51 @@ regeneró el slug «para que refleje el título nuevo».
 `gestion-inmuebles.ts` (la fila avisa por evento), `gestion.astro` (fila pulsable, con foco de teclado).
 **111.7 — Qué queda de TODO-44**: cola de verificación y export. **111.8 — Doctrina**: §3.6 (la
 defensa vive donde de verdad protege) · [[L-09]] · §106 (el recon que destapó el bypass).
+
+---
+
+## 112. ADR — La agenda operativa: un esquema sin lógica no recuerda fechas ⟦OPUS-5⟧ (2026-08-22)
+
+Primer trozo de **GESTIÓN v1** (ítem 13 de OLA 1) y respuesta directa a lo que el dueño describió como
+su problema real: *«llevamos todo en la mente y por WhatsApp… se pierden los contratos, se olvidan
+fechas»*.
+
+**112.1 — El hueco.** El módulo tenía desde el día 1 el MODELO completo —`gestion.ts`: expedientes,
+contratos, pagos, novedades, 104 líneas de tipos bien pensados— y **ni una línea que derivara nada de
+él**. Un esquema guarda fechas; no las recuerda. Nada calculaba qué vence, a quién hay que avisar ni
+quién está en mora.
+
+**112.2 — Decisiones que quedan fijadas con test, no con un comentario.**
+· **El aviso de renovación llega a 4 meses, no a 3.** El preaviso legal de la Ley 820 es de tres:
+avisar a los tres es avisar el día del plazo, sin margen para decidir, hablar con el propietario y
+mandar la comunicación. El detalle del hito CITA la norma, para que quien lo lea sepa por qué no puede
+posponerlo.
+· **El escalón de mora entra el día EXACTO** (`>=`), no al siguiente. El protocolo del dueño dice «al
+día 5»; redondear a favor del moroso es cómo una cobranza se retrasa sola.
+· **«Parcial» no es «al día».** Recibir la mitad no salda nada, y enseñarlo como saldado es cómo se
+pierde la otra mitad.
+· **Si ya se pagó, la mora deja de crecer**: es la que hubo AL PAGAR, no la que habría hoy.
+· **Lo vencido entra SIEMPRE en la agenda**, aunque quede fuera de la ventana. Una fecha que se pasó no
+deja de importar porque el calendario avance: es lo primero que hay que ver.
+· **El estado del pago se DERIVA del calendario**, no se lee del documento. Guardar «mora» y confiar en
+el campo es garantizar que un día se quede viejo: eso cambia solo con el tiempo, sin que nadie escriba.
+· **Un contrato terminado no genera agenda.** Llenar la lista de ruido esconde lo urgente.
+
+**112.3 — Una trampa de JavaScript que aquí cuesta caro.** `setMonth` **desborda en silencio**: 31 de
+enero + 1 mes da **3 de marzo**, no 28 de febrero. En una agenda de contratos eso mueve un vencimiento
+a otro mes sin que nadie lo note. `sumarMeses()` se queda en el último día del mes destino, con test de
+año bisiesto.
+
+**112.4 — Todo puro y con `hoy` inyectado**, y por dos razones que importan: se prueba el día 4 de mora
+sin esperar cuatro días, y **la misma función servirá para pintar el panel Y para la Cloud Function del
+recordatorio** — sin que las dos puedan discrepar sobre qué vence, que es el defecto que este proyecto
+ya conoce de sobra ([[L-45]]).
+
+**112.5 — Verificación.** 25 tests nuevos (317 en total), y lo probado son las decisiones: los días
+exactos de cada escalón, el aviso a 4 meses, el bisiesto, el aniversario del IPC saltando los que ya
+pasaron, y el vencido que sobrevive a la ventana.
+
+**112.6 — Lo que falta de GESTIÓN v1.** La pantalla, el alta de contratos y expedientes, las novedades
+y los adjuntos privados (gate B5). Lo construido es el cerebro del módulo, no su cara.
+**112.7 — Doctrina**: §3.6 · [[L-45]] (un solo dueño de la regla) · [[L-46]] (nació de esta sesión) ·
+gate legal de la Ley 820 en `42-LEGAL`.
