@@ -3782,3 +3782,45 @@ rejilla, 13 campos, sin scroll horizontal, y el menú con sus seis ids.
 adjuntos privados (gate B5). La agenda y los contratos ya están usables.
 **114.8 — Doctrina**: §31 (verificar en navegador: los dos defectos son suyos) · §3.2 (aditivo) ·
 [[L-45]] · el gate `verify:data`, que se respetó en vez de ensancharse.
+
+---
+
+## 115. ADR — Los pagos: las cifras salen del contrato, no del teclado ⟦OPUS-5⟧ (2026-08-22)
+
+La otra mitad de *«se pierden los contratos, se olvidan fechas»*. La mora ya estaba calculada y probada
+(§112); faltaba **de dónde salen las cifras** y dónde se registra lo que de verdad entró.
+
+**115.1 — Lo que se teclea es solo lo que PASÓ.** Cuánto entró y cuándo. El monto esperado, la fecha de
+vencimiento y el estado de mora los **deriva** la Function del contrato y del calendario, con las
+mismas funciones que usa el panel. Si el operador escribiera el monto esperado, un dedo torcido
+convertiría un canon de 2.500.000 en 250.000 y **la mora se calcularía contra una cifra inventada** sin
+que nada fallara. El único caso que acepta monto es `servicios_publicos`, porque ahí la cifra la trae
+la factura y no el contrato.
+
+**115.2 — Matemática con consecuencias, fijada con test.**
+· El **IVA (19 %) va sobre los HONORARIOS, jamás sobre el canon**. El servicio gravado es la
+administración; el arriendo de vivienda está excluido. Confundirlos multiplica por cinco lo que se le
+cobra al propietario: el 19 % de 250.000 son 47.500; el de 2.500.000 serían 475.000.
+· El **propietario recibe canon − honorarios** (con su IVA). La administración **no entra**: no es
+suya, es de la copropiedad, y metérsela sería pagarle un dinero que tiene que salir hacia otro sitio.
+· El **arrendatario debe canon + administración**, salvo que ya vaya incluida en el canon.
+· El **giro al propietario vence el día 10**, no el día de pago del canon (proceso A1-A5 del dueño).
+
+**115.3 — El id determinista es una defensa, no una comodidad.** `contrato_periodo_tipo` (OD6):
+registrar dos veces el canon de agosto reescribe el MISMO documento en vez de crear un segundo cobro
+fantasma que descuadre la cartera. Con un id aleatorio, *«¿ya registré este pago?»* solo se contesta
+mirando — y se mira mal. Se escribe con `merge` para poder corregir sin borrar.
+
+**115.4 — El gate de tipos se pagó solo, una hora después de añadirlo.** Me cazó **inventando** un
+campo: usé `administracion` en `Contrato` y ese campo vive en el `Precio` del INMUEBLE. Y lo
+interesante es que la respuesta correcta no era quitar la línea: **el contrato SÍ necesita su propia
+administración** —la del anuncio es una cifra, la firmada es otra, y la que se cobra y se concilia es
+la segunda—, así que el modelo la gana con su bandera de si va incluida en el canon. Un error de tipos
+señalando un hueco del modelo.
+
+**115.5 — Verificación.** 346 tests (11 nuevos, todos sobre las cifras) + `typecheck` en los DOS
+codebases + `build` + `verify:data`.
+
+**115.6 — Lo que falta de GESTIÓN v1**: la pantalla de pagos (la Function ya guarda), expedientes,
+novedades y los adjuntos privados (B5). **115.7 — Doctrina**: §3.6 · [[L-45]] (una regla, un dueño:
+`cifrasDePago` la usan el panel y la Function) · §113 (el gate de tipos que lo cazó).
