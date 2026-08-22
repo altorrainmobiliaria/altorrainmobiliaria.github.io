@@ -163,6 +163,26 @@ enciendas por primera vez espera errores viejos: aparecerán todos los que lleva
 alguno tendrá meses. **Vale igual para lo que el build tampoco mira**: linters, tamaño del bundle,
 accesibilidad. La pregunta útil no es «¿pasa el build?» sino **«¿qué NO comprueba el build?»**.
 
+## Scripts que reescriben archivos (el modo más silencioso de perder trabajo)
+
+Un script de mantenimiento que edita ficheros del propio proyecto es código de producción con
+permisos de borrado, aunque viva en un temporal y se ejecute una sola vez.
+
+1. **LEE A UNA VARIABLE ANTES DE ABRIR EN ESCRITURA.** En muchos lenguajes el receptor de la llamada
+   se evalúa antes que sus argumentos, así que `open(p,'w').write(open(p).read() + X)` **trunca el
+   archivo** y luego lee el vacío: queda un fichero con solo `X`. No lanza excepción y el script
+   imprime «hecho». Así se pierde un historial de 3900 líneas sin un solo error en pantalla.
+2. **Afirma sobre el contenido VIEJO antes de escribir** (`assert prev.count('## ') >= 100`). Ese
+   assert es lo único que distingue mecánicamente un *append* de un *reemplazo total*.
+3. **Commitea antes de correr el script.** Lo que salva no es la pericia: es que `git checkout --`
+   pueda devolver el archivo intacto. Si lo que vas a reescribir no está commiteado, comitéalo antes.
+4. **Escribe la verificación en el propio script**: cuenta las unidades esperadas (secciones, filas,
+   registros) DESPUÉS de escribir y falla si bajaron. El daño lo suele delatar un gate de más abajo —
+   si existe; no cuentes con ello.
+5. **Y el escalón anterior: no pases el script por el shell.** Un heredoc puede comerse una barra
+   invertida o expandir algo entre comillas, y entonces depuras un error que TÚ no escribiste.
+   Escribe el script a un archivo y ejecuta el archivo.
+
 ## Cuándo NO usar
 - Edits triviales sin consecuencias de diseño (un texto, un color, un typo).
 - Tareas que no son de código (salvo que haya una decisión de sistema detrás).
