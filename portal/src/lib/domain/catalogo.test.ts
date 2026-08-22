@@ -1,5 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import { construirIndices, propiedadAResumen, precioDisplay, esPublicada } from './catalogo';
+import {
+  construirIndices,
+  esPublicada,
+  explicarProblema,
+  precioDisplay,
+  problemasParaPublicar,
+  propiedadAResumen,
+} from './catalogo';
+import type { ProblemaPublicacion } from './catalogo';
 import type { Propiedad } from './propiedades';
 
 // Construcción del índice de catálogo (camino de ESCRITURA, §54.4). Lógica PURA → sin emulador.
@@ -224,5 +232,69 @@ describe('🔴 gate LEGAL del RNT en el LISTADO, no solo en la ficha (§104)', (
     const { indices, omitidas } = construirIndices([aloj({ id: 'INM-202608-0001' })], '2026-08-21T00:00:00Z');
     expect(indices.dias.items).toHaveLength(0);
     expect(omitidas[0].motivo).toBe('sin-rnt');
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// §108 — EL CONTRATO DEL ESCRITOR. La respuesta a §103: el formulario NO puede dejar guardar algo
+// que el índice descarte en silencio, y la única forma de garantizarlo es que llame a los predicados
+// del lector en vez de copiar sus condiciones. Este bloque ES ese contrato.
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+describe('problemasParaPublicar — el escritor pregunta con las reglas del lector', () => {
+  it('🎯 EL CONTRATO: lo que no tiene problemas, el índice NO lo omite', () => {
+    const p = prop();
+    expect(problemasParaPublicar(p)).toEqual([]);
+    expect(construirIndices([p], '2026-08-22T00:00:00Z').omitidas).toEqual([]);
+  });
+
+  it('🎯 Y AL REVÉS: si el índice lo omite, el escritor tenía que haberlo dicho', () => {
+    // Recorre todas las formas de romper una propiedad y comprueba las dos direcciones a la vez.
+    const rotas: Propiedad[] = [
+      prop({ titulo: '' }),
+      prop({ precio: { moneda: 'COP' } }),
+      prop({ imagenes: [], imagenPortada: '' }),
+      prop({ operacion: 'alojamiento', precio: { moneda: 'COP', precioNoche: 1 } }), // sin RNT
+      propLegacy() as Propiedad,
+    ];
+    for (const r of rotas) {
+      const problemas = problemasParaPublicar(r);
+      const { omitidas } = construirIndices([r], '2026-08-22T00:00:00Z');
+      expect(problemas.length).toBeGreaterThan(0);
+      // El motivo que reporta el índice SIEMPRE está entre los que el escritor vio venir.
+      expect(problemas).toContain(omitidas[0].motivo);
+    }
+  });
+
+  it('los enseña TODOS de una vez, no de uno en uno', () => {
+    // Un formulario que solo dice el primer fallo obliga a guardar cuatro veces para enterarse de todo.
+    const p = prop({ titulo: '', precio: { moneda: 'COP' }, imagenes: [], imagenPortada: '' });
+    const problemas = problemasParaPublicar(p);
+    expect(problemas).toContain('sin-titulo');
+    expect(problemas).toContain('sin-precio');
+    expect(problemas).toContain('sin-imagen');
+  });
+
+  it('un borrador se avisa, pero no como si estuviera roto', () => {
+    const p = prop({ estado: 'borrador' });
+    expect(problemasParaPublicar(p)).toEqual(['estado-no-publicado']);
+  });
+
+  it('`cerrado` y `reservado` SÍ salen publicados: no son un problema', () => {
+    // Contraintuitivo a propósito (decisión de SEO): marcar «cerrado» NO retira el inmueble, solo
+    // cambia el aviso. Quien quiera retirarlo de verdad usa `inactivo`.
+    expect(problemasParaPublicar(prop({ estado: 'cerrado' }))).toEqual([]);
+    expect(problemasParaPublicar(prop({ estado: 'reservado' }))).toEqual([]);
+    expect(problemasParaPublicar(prop({ estado: 'inactivo' }))).toEqual(['estado-no-publicado']);
+  });
+
+  it('todo problema tiene un texto para una persona', () => {
+    const todos: ProblemaPublicacion[] = [
+      'estado-no-publicado', 'sin-titulo', 'esquema-legacy', 'sin-rnt', 'sin-precio', 'sin-imagen',
+    ];
+    for (const m of todos) {
+      expect(explicarProblema(m).length).toBeGreaterThan(20);
+      expect(explicarProblema(m)).not.toContain('undefined');
+    }
   });
 });

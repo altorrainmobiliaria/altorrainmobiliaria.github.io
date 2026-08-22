@@ -116,22 +116,40 @@ export function esEsquemaLegacy(p: Pick<Propiedad, 'operacion' | 'precio'>): boo
 }
 
 /**
- * Propiedad → resumen del catálogo. Devuelve `null` + motivo si NO puede pintar una card honesta
- * (sin precio / sin imagen / sin título): mejor omitir y REPORTAR que mostrar una card rota o inventar datos (L-29).
+ * TODOS los motivos por los que esta propiedad NO entraría al índice, en orden de gravedad.
+ *
+ * DUEÑO ÚNICO de las condiciones (§108). Antes vivían inline dentro de `propiedadAResumen`, que
+ * devuelve solo el PRIMERO porque para el índice basta con saber que se omite. El formulario de alta
+ * necesita justo lo contrario: enseñarlos TODOS de una vez, o el operador arregla el título, guarda,
+ * y solo entonces descubre que además falta el precio. Extraerlos aquí permite las dos cosas sin que
+ * nadie duplique una condición — que es exactamente cómo se abrió el hueco de §103.
  */
-export function propiedadAResumen(p: Propiedad): { resumen: CatalogoResumen } | { omitida: OmitidaCatalogo } {
-  if (!p.titulo) return { omitida: { id: p.id, motivo: 'sin-titulo' } };
+export function motivosDeOmision(p: Propiedad): OmitidaCatalogo['motivo'][] {
+  const out: OmitidaCatalogo['motivo'][] = [];
+  if (!p.titulo) out.push('sin-titulo');
   // ANTES que nada lo demás: un documento del panel viejo no tiene «un campo mal», tiene OTRO modelo.
-  if (esEsquemaLegacy(p)) return { omitida: { id: p.id, motivo: 'esquema-legacy' } };
+  if (esEsquemaLegacy(p)) out.push('esquema-legacy');
   // 🔴 GATE LEGAL antes que los de datos (§104). `publicable()` bloqueaba la FICHA de un alojamiento
   // sin RNT, pero el índice no lo llamaba: la card habría salido en /estancias con foto y precio —
   // que es EXACTAMENTE la publicidad de hospedaje sin registro que el gate B3 existe para impedir— y
   // encima enlazando a una ficha que devuelve 404. El mismo guardián en TODOS los lectores ([[L-45]]).
-  if (!publicable(p)) return { omitida: { id: p.id, motivo: 'sin-rnt' } };
-  const precio = precioDisplay(p);
-  if (precio == null) return { omitida: { id: p.id, motivo: 'sin-precio' } };
+  if (!publicable(p)) out.push('sin-rnt');
+  if (precioDisplay(p) == null) out.push('sin-precio');
+  if (!portadaDe(p)) out.push('sin-imagen');
+  return out;
+}
+
+/**
+ * Propiedad → resumen del catálogo. Devuelve `null` + motivo si NO puede pintar una card honesta
+ * (sin precio / sin imagen / sin título): mejor omitir y REPORTAR que mostrar una card rota o inventar datos (L-29).
+ */
+export function propiedadAResumen(p: Propiedad): { resumen: CatalogoResumen } | { omitida: OmitidaCatalogo } {
+  // El PRIMER motivo es el que se reporta: para el índice basta con saber que no entra, y el primero
+  // es el más grave por el orden en que se evalúan. La lista completa es para quien está EDITANDO.
+  const motivos = motivosDeOmision(p);
+  if (motivos.length) return { omitida: { id: p.id, motivo: motivos[0] } };
+  const precio = precioDisplay(p) as COP;
   const thumb = portadaDe(p);
-  if (!thumb) return { omitida: { id: p.id, motivo: 'sin-imagen' } };
 
   // Badges SOLO desde flags REALES del dominio (nada inventado, L-29); máx 2.
   const badges: string[] = [];
@@ -157,6 +175,56 @@ export function propiedadAResumen(p: Propiedad): { resumen: CatalogoResumen } | 
       pub: p.updatedAt,
     },
   };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// EL CONTRATO DEL ESCRITOR (§108) — lo que el formulario de alta debe preguntarse ANTES de guardar
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Un motivo de omisión, más el que solo tiene sentido para quien está editando. */
+export type ProblemaPublicacion = OmitidaCatalogo['motivo'] | 'estado-no-publicado';
+
+/**
+ * ¿Por qué esta propiedad NO se vería en el catálogo si se guardara así?
+ *
+ * ESTA ES LA RESPUESTA A §103. El defecto de fondo de aquel caso no fue el esquema viejo: fue que el
+ * ESCRITOR y el LECTOR no compartían las reglas, así que se podía guardar algo que el catálogo
+ * descartaba en silencio. La defensa no es «acordarse de validar»: es que el escritor **llame** a los
+ * predicados del lector en vez de reproducir sus condiciones. Si mañana el índice añade un motivo, el
+ * formulario se entera solo — y si alguien lo rompe, lo caza el test del contrato.
+ *
+ * ⚠️ `estado-no-publicado` NO siempre es un problema: guardar un borrador es legítimo y frecuente. Es
+ * el formulario quien decide si avisar, según lo que el operador haya elegido. Se devuelve porque la
+ * pregunta que contesta esta función es «¿se vería?», y un borrador no se ve.
+ */
+export function problemasParaPublicar(p: Propiedad): ProblemaPublicacion[] {
+  const out: ProblemaPublicacion[] = [];
+  if (!esPublicada(p)) out.push('estado-no-publicado');
+  out.push(...motivosDeOmision(p));
+  return out;
+}
+
+/**
+ * El problema, dicho para una persona que está rellenando un formulario.
+ *
+ * Cada texto dice QUÉ falta y QUÉ consecuencia tiene, porque «sin-imagen» a secas no le explica a
+ * nadie que su inmueble no va a aparecer en ningún listado.
+ */
+export function explicarProblema(m: ProblemaPublicacion): string {
+  switch (m) {
+    case 'estado-no-publicado':
+      return 'Está en un estado que no sale al portal (borrador, en verificación o inactivo). Solo lo ve el equipo.';
+    case 'sin-titulo':
+      return 'Falta el título. Sin él no se puede pintar la tarjeta del listado.';
+    case 'esquema-legacy':
+      return 'Este documento tiene el formato del panel antiguo. Hay que volver a capturarlo desde aquí.';
+    case 'sin-rnt':
+      return 'Un alojamiento turístico necesita su número de RNT para poder anunciarse. Es obligación legal, no un dato de más.';
+    case 'sin-precio':
+      return 'Falta el precio de la operación elegida (venta, canon de arriendo o precio por noche).';
+    case 'sin-imagen':
+      return 'No hay ninguna foto. Sin portada el inmueble no aparece en los listados.';
+  }
 }
 
 export interface IndiceConstruido {
