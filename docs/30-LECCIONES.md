@@ -14,7 +14,7 @@
 
 ## Lecciones (L-NN)
 
-> 🧩 **`L-01`..`L-21` viven COMPLETAS en `35-LECCIONES-PLATAFORMA.md`** — aquí queda el titular, que es lo que
+> 🧩 **`L-01`..`L-21` y `L-49` viven COMPLETAS en `35-LECCIONES-PLATAFORMA.md`** — aquí queda el titular, que es lo que
 > hace falta para reconocer el síntoma. Si te suena, ábrelo allá.
 
 ### L-01 — "Access denied for UID" al login (red lenta ≠ permiso denegado)
@@ -38,6 +38,7 @@
 ### L-19 — `@astrojs/cloudflare` v14: `locals.runtime` deprecado/sin tipo; `platformProxy` removido
 ### L-20 — Firestore Rules: un `get` de doc INEXISTENTE con `resource.data` en la regla → 403, no 404
 ### L-21 — Aislar tests que comparten un emulador Firestore: projectId PROPIO por archivo
+### L-49 — La configuración de la CONSOLA es parte del sistema y NO está en el repo: ningún gate puede verla (un botón impecable, muerto en producción)
 
 ### L-44 — 🔐 Un ruleset se REEMPLAZA, no se fusiona: dos archivos con el mismo nombre son una trampa silenciosa *(2026-08-21, ADR §100)*
 **Disparador**: dos ficheros `firestore.rules` en un mismo repo —uno en la raíz y otro en la carpeta de un

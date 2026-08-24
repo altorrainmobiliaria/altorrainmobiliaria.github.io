@@ -14,7 +14,7 @@
 
 ---
 > ⚠️ El portal (`portal/`) es SEPARADO del sitio legacy de §Stack. Stack sellado ADR §16.
-- **Diseño fuente (SSoT visual)**: `portal/design/` — `mockups/*.dc.html` (**9** aprobados por Daniel), `assets/` (logo+fotos), `VISION-DUENO.md` (paleta+visión funcional), `screenshots/`.
+- **Diseño fuente (SSoT visual)**: `portal/design/` — `mockups/*.dc.html` (**9** aprobados por Daniel + **`ALTORRA Acceso.dc.html`** PROPUESTO 2026-08-24, 7 artboards del rediseño del ingreso, §129 — pendiente de aprobación), `assets/` (logo+fotos), `VISION-DUENO.md` (paleta+visión funcional), `screenshots/`.
 - **Design system D1** (ADR §23 + §23.8): `portal/src/styles/tokens.css` = **SSoT de los tokens** `--alt-*` (paleta oficial y Liquid Glass) → `base.css` (reset + tipografía + a11y) → `components.css` (primitivas `.alt-*` y la firma `.alt-card--vitrina`). Importados EN ORDEN en `BaseLayout` (+ Cormorant Garamond y Hanken Grotesk). **Styleguide viva** = `/design-system` (noindex; excluir de prod en el cutover). **Lenguaje**: neumorfismo protagonista + Liquid Glass sutil; superficie DUAL-MODE (blanco plano · `--alt-surface-neu` en home y nav · navy en secciones). El inventario completo de primitivas y sus variables vive en los propios archivos, que son su dueño — aquí no se duplica. A11y AA verificado.
 - **Capa de datos** (ADR §22): `src/lib/data/` (`client.ts`+`firestore-rest.ts`+`cache.ts`, edge-safe REST) · `src/lib/domain/` (tipos) · `src/middleware.ts` (cablea `locals.altorra`). Firebase emulador+seed en `portal/firebase/`.
 - **Catálogo denormalizado** (§54 decisión + §56 obra-lectura): colección `indices/catalogo`, un doc-índice por operación que evita N lecturas por SERP (free-tier sagrado). Detalle del schema, de la invalidación y del coste en sus ADR.

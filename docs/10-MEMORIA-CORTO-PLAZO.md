@@ -36,7 +36,7 @@
 | **TODO-42** | 🔑 **Claim de staff — DESPLEGADO** (§124) + **botón «Sincronizar permisos» construido** (§126, no existía) + **recuperación de contraseña** en el panel (§128, tampoco existía). ⏭️ Falta el clic de Daniel (`info@altorrainmobiliaria.co`); pasos → runbook 1.2. Hasta entonces la fase 2 (reglas) NO se despliega. | 🟡 clic | §128 |
 | **TODO-45** | 🔬 **Deuda de la auditoría #8** (§109). ✅ (a) capa semántica · (b) `degrade()` en #8/#16/#27 · (c) trinquete del índice · (e)(f) los 22 caps recalibrados y `33`/`50` podados — todo en §120. Resta: **(d)** umbrales en DÍAS en un repo que corre en COMMITS; **(g)** las 98 rutas que el #27 perdona por basename (o rutas completas en los nodos, o estrechar su ámbito). | 🟡 | §120 |
 | **TODO-46** | 📅 **GESTIÓN v1** (ítem 13). ✅ agenda · contratos · pagos y cartera · expedientes y novedades con SLA (§112-§118). Resta adjuntos privados (B5) y estrenarlo con datos reales (runbook 1.5). | 🟢 | §118 |
-| **TODO-47** | 🚪 **REDISEÑO DEL ACCESO** (Daniel 24-ago: «muy básico»). INVESTIGAR a fondo ANTES de diseñar: 2FA · sesión · recuperación · rate-limit · roles · alta-baja · auditoría · a11y, para admin Y clientes. Hoy: email+clave, 3 roles (§31), `loginAttempts`, recuperación (§128). ⚠️ UI ⇒ mockup antes. | 🔴 siguiente | §128 |
+| **TODO-47** | 🚪 **ACCESO — investigación CERRADA (§129), construcción NO empezada.** 9 huecos con evidencia; 3 graves: sin 2FA · el candado `loginAttempts` **se puede usar CONTRA el dueño** (regla abierta, hash del correo calculable) y además se saltea · el alta **inventa la contraseña** del otro. Mockup PROPUESTO (7 artboards, `design/mockups/ALTORRA Acceso.dc.html`) — **sin aprobar**. Doctrina portable → skill `acceso-y-autenticacion`. ⏭️ 4 decisiones de Daniel (Identity Platform **sin vuelta atrás**, dominio+Google, «Crear cuenta», Resend) y el orden de obra, en el artefacto. Los pasos 1-3 (quitar el candado, encender la bitácora, devolver el corte por inactividad) **no dependen de él**. | 🟡 dueño | §129 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -50,17 +50,10 @@
 > al FINAL, por decisión suya**. **Opus 5 para TODO**, esfuerzo Max, agentes y workflows LIBRES bajo tu
 > juicio (levantó ese límite el 20-ago).
 >
-> **🌊 OLA 1 CERRADA EN CÓDIGO: 13 de 13** (§91-§96) y **el portal público COMPLETO**: 25 páginas (censo
-> → `21`), leads REALES en `solicitudes` (§88, §94), alertas con digest diario (§96), la ficha dinámica
-> `/inmueble/<slug>` (§97), Workers Caching encendido y `/gestion` tras puerta (§98). Lo que falta de
-> OLA 1 ya no es código: el go/no-go del dueño y la contradicción de «Avalúo» (§94.6).
->
-> **§102: el cutover ya no se improvisa** → **`specs/CUTOVER-RUNBOOK.md`** manda (6 fases, verificación
-> y vuelta atrás). De ahí salió que `PUBLIC_SITE_ENV` no se declaraba en el CI: TODO build salía
-> `noindex`. Ya son 3 perillas por variable de repositorio.
->
-> **CENSO 2026-08-22 (§123): OLA 1 = 13/13 verificado ARCHIVO POR ARCHIVO, no de memoria.** La
-> construcción terminó; lo que queda son gates del DUEÑO y por eso no se avanza construyendo más.
+> **🌊 OLA 1 = 13/13, verificado ARCHIVO POR ARCHIVO el 22-ago (§123), no de memoria.** El portal público
+> está COMPLETO (censo → `21`; detalle en §88-§98). La construcción terminó: lo que queda son **gates del
+> DUEÑO**, y por eso no se avanza construyendo más. Sueltos de OLA 1: la contradicción de «Avalúo» (§94.6).
+> El cutover NO se improvisa → **`specs/CUTOVER-RUNBOOK.md`** manda (§102).
 > **En orden**: (1) **claim de staff** (TODO-42, runbook fase 1) — sin él nada del panel corre en
 > vivo y bloquea a los otros cuatro · (2) **estrenar los caminos** (runbook 1.4-1.8: R2, alta,
 > gestión, sello, estancia) — nunca han escrito en Firestore real · (3) **inventario** (TODO-22) ·

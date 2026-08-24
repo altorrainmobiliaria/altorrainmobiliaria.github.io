@@ -4427,3 +4427,55 @@ intentando usar lo que construimos**, no un gate. Tres huecos seguidos en el cam
 del proyecto —entrar al panel— y ninguno era de código: eran de *lo que faltaba*. Un sistema se
 prueba recorriéndolo entero desde donde entra el usuario, no desde donde el autor cree que empieza.
 **128.7 — Doctrina**: §3.3 · §126 · §127 (auditoría #9: la sonda más barata es un humano).
+
+
+## 129. ADR — El candado del acceso también servía para dejar fuera al dueño ⟦OPUS-5⟧ (2026-08-24)
+
+> *«revisa el sistema de acceso de usuario es muy basico has una investigacion exhaustiva de como debe
+> ser el diseño completo del panel de ingreso de admin o usuarios para mejorarlo»* — Daniel, 24-ago.
+
+**129.1 — Causa raíz.** El acceso creció por adición y nunca se diseñó como sistema: el panel legacy
+trajo su login del patrón de cars, el portal escribió el suyo, y cada uno resolvió a su manera lo mismo.
+De ahí salen los **nueve huecos** que encontré (evidencia archivo por archivo en el artefacto), y **tres
+son graves**:
+
+- **(a) Ningún segundo factor** en ninguna de las dos puertas, para un panel que abre contratos y cédulas.
+- **(b) `loginAttempts` es un arma, no un candado.** La regla es `allow read, create, update: if true` —
+  abierta *por diseño*, porque se escribe antes de tener sesión. Pero el id del documento es el SHA-256 del
+  correo, que **calcula cualquiera**: se puede escribir `bloqueado:true` sobre `info@altorrainmobiliaria.co`
+  y dejar al dueño fuera 15 minutos, indefinidamente. Y **tampoco protege**: quien prueba contraseñas pone
+  su propio contador en cero antes de cada intento. Un candado que solo el atacante abre y solo la víctima
+  sufre. La regla ya documentaba la mitad del problema («cualquiera puede resetear el contador de otro»);
+  lo que nadie había visto es la **otra mitad, que es la ofensiva**.
+- **(c) El alta inventa la contraseña ajena.** `createManagedUserV2` recibe `password` del formulario: el
+  administrador teclea la clave de otro y se la manda por chat. Queda ahí para siempre y dos personas la saben.
+
+**129.2 — Solución (DISEÑADA, no construida).** **Una puerta, tres exigencias.** Paso 1 pide solo el correo
+(identifier-first) y con él decide qué pedir después: al cliente poco —incluido entrar por enlace al correo—,
+al equipo contraseña + TOTP, y al equipo **nunca** enlace al correo, porque convertiría su bandeja en la llave
+maestra. Más: invitación con caducidad en vez de contraseña inventada; **suspender** además de eliminar;
+bitácora que alguien escriba; y «Mi seguridad» (ver y cortar sesiones), que hoy no existe en ninguna parte.
+
+**129.3 — No-regresión.** Cero código tocado: solo mockup y documentación. El único fichero nuevo bajo
+`portal/` es un `.dc.html` que no entra al build (`design/` no es `src/`).
+
+**129.4 — Verificación (lo que NO se dedujo).** Cuatro sondas en vivo, porque este sistema no se audita
+leyéndolo: (a) `GET identitytoolkit/v1/projects?key=` → `authorizedDomains` **no incluye el dominio real**;
+(b) pulsé «Continuar con Google» en staging y falla con el mensaje genérico — el error muere en el `default`
+del traductor; (c) `sendOobCode` con un correo inventado responde éxito ⇒ la **protección de enumeración SÍ
+está activa** (mi hipótesis de que `/ingresar` filtraba cuentas era FALSA, y la sonda la mató en un minuto);
+(d) grep en todo el código: **cero escrituras** a `auditLog`.
+
+**129.5 — Anti-patterns evitados.** No propuse rodar TOTP a mano (la parte más delicada del sistema es la que
+menos se improvisa) ni passkeys, que Firebase aún no soporta a agosto-2026 — y eso queda **escrito con fecha**
+para que nadie repita la búsqueda. No conté el mockup como aprobado en `21` (sería §126 otra vez). No decidí
+yo el salto a Identity Platform: es gratis a nuestra escala **y sin vuelta atrás**, y las dos cosas se dicen
+por separado porque el coste no es el riesgo.
+
+**129.6 — Archivos.** NUEVOS: `portal/design/mockups/ALTORRA Acceso.dc.html` · `skills/acceso-y-autenticacion/`
+(+ copia user-level, §33). MODIFICADOS: `10` (TODO-47 + GC pareado, **−69c**) · `21` (mockup propuesto) ·
+`35` ([[L-49]]) · `skills-inventory` · `00c`. **INTACTOS**: todo `portal/src`, `functions/`, `js/`, las reglas.
+
+**129.7 — Doctrina.** [[L-49]] (la consola no está en el repo y ningún gate la ve) · §3.3 (verificar, no asumir
+— aquí cobró a mi favor y en mi contra) · §126/§128 (la clase que esto continúa) · §G.4 (skill del dominio: no
+existía, se creó).
