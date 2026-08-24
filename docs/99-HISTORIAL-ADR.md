@@ -4312,3 +4312,79 @@ exactamente el hueco que [[M-07]] describe para el cableado, aplicado al resulta
 verify:claims, build, verify:build): los cinco verdes. **125.8 — Doctrina**: §3.3 · [[M-06]] ·
 [[M-07]] · [[L-48]] · §113 (donde nació) · §124 (mismo día: verificar contra la realidad, no contra
 el mensaje de éxito).
+
+---
+
+## 126. ADR — El runbook mandaba a pulsar un botón que nunca se construyó ⟦OPUS-5⟧ (2026-08-24)
+
+> «no entiendo donde le doy admin» — Daniel, mirando la página que le acababa de entregar.
+
+Tenía razón: **no había dónde**. El runbook manda desde §102 a *«entrar a `admin.html` → Usuarios →
+pulsar **Sincronizar permisos del portal**»*, y ese botón **no existe en el panel**. `grep` sobre
+todo el legacy: cero coincidencias. La instrucción llevaba dos días mandando a pulsar algo que no
+estaba, y era **el paso que bloquea el cutover entero**.
+
+**126.1 — Es la misma clase de defecto de toda la sesión, en el sitio menos esperado.** §117 (el CSS
+que no llegaba), §122 (el botón que no enviaba), §125 (el CI rojo que nadie miraba) y §121 (la cifra
+que nadie contaba) comparten raíz: **algo escrito que nadie cruzó contra la realidad**. Aquí no fue
+una neurona ni el código: fue **el PLAN**. Un runbook es una neurona más, y la suya envejece igual —
+solo que su lector es una persona a punto de tocar producción.
+
+**126.2 — Por qué ningún gate lo cazó.** El #27 caza rutas de archivo inexistentes citadas por las
+neuronas. Un **botón** citado por un spec no es una ruta: no hay nada que `existsSync` pueda mirar.
+Es un hueco real del sistema de gates, y de momento queda nombrado, no cerrado — mecanizar «el
+elemento de interfaz que este documento promete, ¿existe?» pide un vocabulario que hoy no tenemos.
+Lo que sí se puede hacer, y se hizo, es **la sonda humana**: entregar el paso a paso y que alguien
+intente seguirlo. Daniel lo cazó en un minuto.
+
+**126.3 — Se construyó, no se reescribió el plan.** La alternativa barata era corregir el runbook
+para que dijera otra cosa. Pero el paso era el correcto: el portal decide quién es del equipo leyendo
+un **custom claim**, `claimsStaffSync` solo lo pone al ESCRIBIR un usuario, y a los que ya existían
+no les había escrito nadie. Hacía falta el backfill, y `sincronizarClaimsV2` —desplegada en §124— ya
+existía para eso. Faltaba **su botón**.
+
+**126.4 — Tres capas antes de conceder un permiso.** El botón vive en la sección marcada
+`data-role="super_admin"`; `syncClaims()` vuelve a comprobar `isSuperAdmin()`; y la Function exige
+`requireSuperAdmin` leyendo el DOCUMENTO —no el claim— para poder funcionar el día cero. Sigue el
+patrón del panel (delegación de eventos, `callFunction`, `showToast`) en vez de inventar uno: el
+legacy está congelado, y esto es **aditivo** (§3.2).
+
+**126.5 — El mensaje dice lo que hay que saber.** «3 personas sincronizadas» —lo que el runbook
+promete— más «cierra sesión y vuelve a entrar», porque el permiso viaja dentro del token y sin eso
+Daniel vería «no tienes permiso» y pensaría que falló. Y si el censo sale **incompleto** no se calla:
+significa que el fusible de la Function saltó el barrido de huérfanos, y quien pulsó tiene que saber
+que la pasada quedó a medias.
+
+**126.6 — Doctrina**: §3.3 · [[M-06]] · §102 (el runbook es SSoT del orden, y como toda neurona
+envejece) · §125 (mismo día: lo escrito que nadie cruzó con la realidad).
+
+---
+
+## 127. ADR — Auditoría Nivel-2 #9: la sonda más barata es una persona intentando seguirte ⟦OPUS-5⟧ (2026-08-24)
+
+**Deliberación:** `../brain-private/altorrainmobiliaria/research-archive/2026-08-24-auditoria-cerebro-nivel2-9-inmobiliaria.md`
+
+Disparada por el gate con la gracia agotada (18 ADRs). **PARCIAL y declarada como tal**: las sondas 3,
+4, 5 y 7 exigen subagentes fríos y el dueño dejó instrucción de no usarlos, así que se corrieron las de
+verificación directa (0, 1, 2, 6) y el resto queda marcado. La propia skill lo prevé: *una auditoría
+parcial honesta vale más que una completa fingida*.
+
+**127.1 — Cero reincidentes.** Los cinco hallazgos cerrados de la #8 siguen cerrados; quedan abiertos
+los dos que ya estaban en TODO-45 (umbrales en días, 98 rutas por basename).
+
+**127.2 — Seis hallazgos nuevos, cuatro cerrados el mismo día**: el CI con 8 corridas en rojo (§125),
+el botón fantasma del runbook (§126), el censo de Cloud Functions falso (§121/§124) y staging con 10
+ADRs de atraso (§125). Abiertos: el BOOT sostenido al 99.7 % y —el más incómodo— que **ningún gate
+puede cazar lo del botón**: el #27 valida rutas de archivo, y «un elemento de interfaz que este spec
+promete» no es una ruta. Hueco nombrado, no cerrado (TODO-45 h).
+
+**127.3 — Lo que enseña sobre el MÉTODO, que es lo que vale.** Las auditorías #7 y #8 sondearon el
+cerebro **preguntándole**. Ésta lo sondeó **usándolo**: desplegando, abriendo el sitio vivo y
+entregándole a una persona un paso a paso. Cuatro de los seis hallazgos los destapó la realidad, no
+una pregunta — y el más caro lo cazó **Daniel en un minuto** («no entiendo dónde le doy admin»)
+cuando ningún gate podía. **La sonda más barata que existe es un humano intentando ejecutar tus
+instrucciones**, y conviene provocarla antes de que la provoque el cutover.
+
+**127.4 — Y un patrón que ya es regla.** Los dos hechos falsos del `05` tenían marcador de frescura
+**vigente**. Un `verificado-vivo` fresco no dice que el hecho sea cierto: dice que alguien lo miró
+aquel día. Para lo contable está el #29; para lo externo no hay más red que volver a mirar.

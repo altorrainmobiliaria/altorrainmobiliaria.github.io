@@ -168,12 +168,12 @@
     }
   ],
   "deepAudit": {
-    "last": "2026-08-22",
-    "coveredHeaderCount": 108,
+    "last": "2026-08-24",
+    "coveredHeaderCount": 127,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "tableFile": "2026-08-22-auditoria-cerebro-nivel2-8-inmobiliaria.md",
-    "_que": "Nivel-2 #8 (ADR 109), disparada por el GATE (18 ADRs, gracia agotada) — la primera que NO se pide a mano. 9 agentes / 1,4M tokens. Lo mas util no fue un hallazgo sino una CLASE: el CHECK-INMERECIDO. El #27 imprime \"ninguna ruta fantasma\" habiendo perdonado 90 rutas por coincidencia de basename, y el #16 da OK a \"CF 9 en codigo\" contra 11 exports reales porque mide la EDAD del claim, nunca el claim. Un gate con 0 comparaciones utiles debe DEGRADAR, no aprobar. GC pareado: se BORRA el ancla CLAUDE.md 4 (271c) — su gate no puede cruzar nada (sin APP_VERSION en js/, y el 05 dejo de traer el dato en la era heartbeat) y vigila el SW del legacy RETIRADO, sin tocar en 43 dias. La regla real sigue viva en 3.2. Reincidentes de la #7: censo de paginas (4 respuestas otra vez) y memoria del harness (2 hechos derogados en MEMORY.md) — ambos con la misma raiz que la #7 ya nombro: capa sin gate. Aviso con fecha: el 00-INDICE esta a 22k/24k y la fila nueva pesa 440c, asi que caben ~4 ADRs, no 92. Previa #7 = 90 (2026-08-20)."
+    "tableFile": "2026-08-24-auditoria-cerebro-nivel2-9-inmobiliaria.md",
+    "_que": "Nivel-2 #9 (ADR 127) — PARCIAL y declarada como tal: las sondas 3/4/5/7 exigen subagentes y el dueno dejo instruccion de no usarlos, asi que se corrieron las de verificacion DIRECTA (0,1,2,6) y el resto queda marcado pendiente. Rasgo de la edicion: los hallazgos no salieron de sondear el cerebro sino de USARLO — desplegar, mirar el sitio vivo y darle a una persona un paso a paso que intento seguir. 6 hallazgos, 4 ya cerrados el mismo dia (CI 8 corridas rojo · boton fantasma del runbook · censo de CF falso · staging con 10 ADRs de atraso). Cero reincidentes de la #8. Previa #8 = 108 headers (2026-08-22)."
   },
   "noCap": {
     "docs/99-HISTORIAL-ADR.md": "Largo Plazo: NUNCA se lee entero, solo offset/limit vía el índice (§0). Un cap aquí no significaría nada.",
