@@ -114,6 +114,7 @@ de mis capacidades. Implicaciones:
 | `full-output-enforcement` | `taste-skill-main/output-skill` | Forzar salida completa (anti-truncado) | ✅ |
 | `canvas-design-creative` | | Arte/posters/PDF/PNG por filosofía de diseño | ✅ |
 | `accessibility-audit` | | **Creada en Altorra** (§48): framework WCAG 2.2 AA portable | ✅ |
+| `acceso-y-autenticacion` | | **Creada en Altorra** (§129): diseñar/auditar el ingreso — puerta única, 2FA, sesión, alta-baja, bitácora. Portable, copia en `~/.claude/skills/` | ✅ |
 
 ---
 
