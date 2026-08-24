@@ -234,7 +234,14 @@
         <div class="admin-card">
           <div class="admin-card-header">
             <h2>Usuarios admin</h2>
-            <button class="btn-admin primary" id="btnNewUser">+ Nuevo usuario</button>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <!-- Sincroniza los permisos del PORTAL nuevo (custom claims). El runbook del cutover lo
+                   pedía desde §102 y el botón no existía: la instrucción mandaba a pulsar algo que no
+                   estaba. Llama a `sincronizarClaimsV2`, cuya guarda lee el DOCUMENTO y no el claim,
+                   así que funciona el día cero, cuando todavía no hay ni un claim puesto. -->
+              <button class="btn-admin ghost" id="btnSyncClaims" title="Da a cada usuario del equipo el permiso que necesita el portal nuevo (/gestion)">Sincronizar permisos del portal</button>
+              <button class="btn-admin primary" id="btnNewUser">+ Nuevo usuario</button>
+            </div>
           </div>
           <div class="admin-card-body">
             <div class="admin-table-wrap">

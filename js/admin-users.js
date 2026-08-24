@@ -56,6 +56,44 @@
     return fn(data);
   }
 
+  /* ─── Sincronizar permisos del PORTAL (custom claims) ──── */
+  /*
+   * Por qué existe: el portal nuevo (`/gestion`) decide quién es del equipo leyendo un CUSTOM CLAIM
+   * del token, no el documento de `usuarios`. El claim lo pone `claimsStaffSync` cuando se ESCRIBE
+   * un usuario — pero a los que ya existían no les había escrito nadie. Esto es el backfill.
+   *
+   * Se puede pulsar sin miedo y las veces que haga falta: la Function es idempotente (a quien ya
+   * tiene el claim correcto no le toca nada) y su guarda lee el DOCUMENTO, no el claim, para poder
+   * funcionar el día cero — cuando todavía no hay ni un permiso puesto.
+   */
+  async function syncClaims() {
+    const btn = document.getElementById('btnSyncClaims');
+    if (!window.AdminAuth?.isSuperAdmin()) {
+      showToast('Solo un super admin puede sincronizar permisos', 'error');
+      return;
+    }
+    const original = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Sincronizando…'; }
+    try {
+      const res = await callFunction('sincronizarClaimsV2', {});
+      const d = (res && res.data) || {};
+      const n = d.sincronizados || 0;
+      const personas = n === 1 ? '1 persona sincronizada' : n + ' personas sincronizadas';
+      const revocados = d.huerfanos ? ' · ' + d.huerfanos + ' permiso(s) retirado(s)' : '';
+      showToast(personas + revocados + '. Cierra sesión y vuelve a entrar para que te aplique.', 'success');
+      // El censo incompleto NO se calla: significa que el barrido de huérfanos se saltó a propósito
+      // (fusible de la Function), y quien pulsó tiene que saber que la pasada quedó a medias.
+      if (d.censoCompleto === false) {
+        showToast('Aviso: el censo quedó incompleto, vuelve a pulsar en un momento', 'error');
+      }
+    } catch (e) {
+      console.error('[admin] sincronizarClaimsV2:', e);
+      showToast('No se pudieron sincronizar los permisos: ' + (e && e.message ? e.message : 'error'), 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = original || 'Sincronizar permisos del portal'; }
+    }
+  }
+
   /* ─── Usuarios ──────────────────────────────────────────── */
   async function loadUsers() {
     if (!window.AdminAuth?.isSuperAdmin()) return;
@@ -302,6 +340,7 @@
   function bindEvents() {
     document.addEventListener('click', (e) => {
       if (e.target.closest('#btnNewUser'))          openModal('userModal');
+      if (e.target.closest('#btnSyncClaims'))       syncClaims();
       if (e.target.closest('#newUserSaveBtn'))      createUser();
       if (e.target.closest('[data-close-modal="userModal"]'))   closeModal('userModal');
       if (e.target.closest('#btnNewResena'))        openNewResena();
