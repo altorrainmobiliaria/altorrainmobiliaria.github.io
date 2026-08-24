@@ -217,6 +217,48 @@
   }
 
   /* ─── Login ────────────────────────────────────────────── */
+  /* ─── Recuperar contraseña (§128) ───────────────────────
+   * Firebase manda el correo por su propia infraestructura, NO por el SMTP de Gmail del proyecto:
+   * funciona aunque la contraseña de aplicación siga sin rotar.
+   *
+   * El mensaje es el MISMO exista o no la cuenta, a propósito: decir «ese correo no está
+   * registrado» convierte el formulario en un detector de qué direcciones tienen acceso al panel.
+   */
+  async function recuperarPassword() {
+    const btn   = document.getElementById('btnForgotPass');
+    const input = document.getElementById('loginEmail');
+    const email = (input && input.value || '').trim();
+    const err   = document.getElementById('loginError');
+
+    const decir = (msg) => { if (err) { err.textContent = msg; err.hidden = false; } };
+
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      decir('Escribe tu correo arriba y vuelve a pulsar aquí.');
+      if (input) input.focus();
+      return;
+    }
+    const original = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
+    try {
+      const { sendPasswordResetEmail } =
+        await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js');
+      await sendPasswordResetEmail(window.auth, email);
+      decir('Si ese correo tiene acceso al panel, le llega un enlace para cambiar la contraseña. Revisa también la carpeta de spam.');
+    } catch (e) {
+      console.error('[admin] sendPasswordResetEmail:', e);
+      // `auth/user-not-found` se trata como éxito por lo mismo de arriba: no se filtra quién existe.
+      if (e && e.code === 'auth/user-not-found') {
+        decir('Si ese correo tiene acceso al panel, le llega un enlace para cambiar la contraseña. Revisa también la carpeta de spam.');
+      } else if (e && e.code === 'auth/too-many-requests') {
+        decir('Demasiados intentos seguidos. Espera unos minutos y vuelve a intentarlo.');
+      } else {
+        decir('No pudimos enviar el correo. Revisa la conexión e inténtalo de nuevo.');
+      }
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = original || '¿Olvidaste tu contraseña?'; }
+    }
+  }
+
   async function handleLogin(email, password) {
     if (!window.db || !window.auth) {
       showLogin('Firebase no está disponible aún. Intenta en unos segundos.');
@@ -349,6 +391,9 @@
   function bindLoginForm() {
     const form = $('#loginForm');
     if (!form) return;
+
+    // Recuperación de contraseña (§128): mismo sitio donde se cablea el login.
+    form.querySelector('#btnForgotPass')?.addEventListener('click', recuperarPassword);
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();

@@ -11,6 +11,18 @@
   <link rel="stylesheet" href="css/admin.css"/>
   <script type="module" src="js/firebase-config.js"></script>
   <script src="js/firestore-meter.js" defer></script>
+<style>
+  /* Enlace de recuperación: deliberadamente DISCRETO — compite con «Iniciar sesión», que es la
+     acción principal, así que se comporta como enlace y no como segundo botón. */
+  .btn-forgot {
+    display: block; width: 100%; margin-top: 14px; padding: 6px;
+    background: none; border: 0; cursor: pointer;
+    font: inherit; font-size: 13.5px; color: #6b7c93;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .btn-forgot:hover { color: #062743; }
+  .btn-forgot:disabled { opacity: .55; cursor: default; text-decoration: none; }
+</style>
 </head>
 <body>
 
@@ -31,6 +43,11 @@
       <label for="loginPassword">Contraseña</label>
       <input type="password" id="loginPassword" autocomplete="current-password" placeholder="••••••••" required/>
       <button type="submit" class="btn-login" id="loginBtn">Iniciar sesión</button>
+      <!-- Recuperación de contraseña (§128). No existía: quien perdiera la clave se quedaba fuera de
+           su propio panel sin más salida que la consola de Firebase. Usa el correo que manda Firebase
+           Auth, NO el SMTP de Gmail — así que funciona aunque la contraseña de aplicación esté sin
+           rotar (gate 0.4). -->
+      <button type="button" class="btn-forgot" id="btnForgotPass">¿Olvidaste tu contraseña?</button>
     </form>
   </div>
 </div>
