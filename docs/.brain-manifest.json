@@ -105,6 +105,11 @@
       "lines": 60,
       "chars": 11919,
       "_comment": "Shard de RANGO del indice (ADR 116): 66-90, la era de fundacion. Cap MEDIDO sobre el real (8829c / 44L, densidad 200 c/linea): chars = real+35%, lines = cap_chars/densidad, para que los DOS ejes aprieten en el mismo punto (mismo criterio que 00a). Este shard es CERRADO por diseno: nadie escribe ADRs nuevos de ese rango. Si el 00 vivo vuelve a apretar, el siguiente rango es 00d, NO subir este techo."
+    },
+    "docs/36-LECCIONES-UTILLAJE.md": {
+      "lines": 90,
+      "chars": 11502,
+      "_comment": "Hoja hija de 30 (ADR 125). Cap MEDIDO sobre el real (8520c / 66L, densidad 129): chars = real+35%, lines = ceil(cap/densidad) para que el eje de lineas sea GUARDA y no un segundo techo. Familia que crece rapido — al llenarse, destilar; NO subir el techo (M-05)."
     }
   },
   "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",

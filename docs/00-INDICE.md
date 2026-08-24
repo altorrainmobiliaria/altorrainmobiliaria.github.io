@@ -44,6 +44,7 @@
 | **PQRS, tickets del inquilino, plazo de 48h** · «¿qué se me está pasando?» | `99 §118` (`estadoDeSla` vive con la mora en `agenda.ts`; no se cierra sin escribir qué se hizo) |
 | **Exportar a CSV/Excel** · «se abre con las columnas corridas» · «¿esto es seguro?» | `99 §119` (RFC 4180 + BOM + anti-fórmula CWE-1236: `src/lib/domain/csv.ts`) |
 | **Reseñas / testimonios / rating en el sitio** · «es solo la maqueta» | `99 §122` (fabricarlos es Ley 1480; secciones dependientes de datos, no borradas) |
+| **«En local pasa y en CI falla»** · el sitio vivo contradice al repo | `99 §125` ([[L-48]]: un prerrequisito GENERADO y gitignored; que lo genere el propio script) |
 | Project ID, cuentas IAM, deploy, secrets | `50-CONFIG-INFRA` |
 | Competencia/mercado inmobiliario, benchmark | `40-LOBULOS` → `41-MERCADO` |
 | Legal Colombia: Ley 820/RNT/Habeas Data/pagos/firma/SIC — gates de features y agenda abogado | `40-LOBULOS` → `42-LEGAL` (detalle: `specs/R3-LEGAL-COLOMBIA-2026-07.md`) |
@@ -101,6 +102,7 @@
 | §122 | 🏖️ **Estancias**: el botón «Reservar» no enviaba nada y las reseñas eran inventadas (Ley 1480). Solicitud real + secciones dependientes de datos. | 4110 |
 | §123 | 📊 **20 cifras inventadas en la home** + gate `verify:claims`: una cifra publicada tiene que tener quien la firme. Kernel v1.14.0 (`x-`). | 4167 |
 | §124 | 🚀 **Fase 1 DESPLEGADA** (claims): el alcance del runbook se estrechó a mano — `functions:default` habría encendido los correos de nurturing. Paré antes del backfill. | 4223 |
+| §125 | 🔴 **El CI llevaba 8 corridas rojo** desde el commit que añadió el gate: nada de §113-§123 se desplegó. Prerrequisito generado + ignorado = local ≠ CI. | 4270 |
 | §65 | **TODO-34 F4-w2 ✅: MANUAL MAESTRO (10 caps) + mercado → sistema documental 00-23 COMPLETO**. Tarifas comerciales adoptadas-vetables con costumbre certificada · FE gratuita DIAN soporta mandato nativo · prompt consejo externo del manual listo. | 1006 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |

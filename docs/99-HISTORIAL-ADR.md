@@ -4264,3 +4264,51 @@ secuencia que no se cierra la puerta desde dentro. Lo que sí se hizo para des-a
 
 **124.6 — Doctrina**: §3.3 (verificar con `functions:list`, no con el mensaje de éxito) · [[M-06]]
 (una baranda se cumple, no se rodea) · §121 (gate #29) · §102 (el runbook es el SSoT del orden).
+
+---
+
+## 125. ADR — El gate que yo añadí llevaba 8 corridas en rojo, y nadie miraba ⟦OPUS-5⟧ (2026-08-24)
+
+Fui a verificar el portal en staging —el `05` decía que no se había mirado desde §96— y el sitio vivo
+servía «Mejor valoradas» y «214 reseñas», que **ya no existen en el código**. El sitio contradecía al
+repo, y llevaba dos días así.
+
+**125.1 — El alcance del daño.** `portal-ci` falla desde `f244760c`, que es **exactamente el commit
+donde añadí el paso `typecheck` al CI** (§113). Ocho corridas rojas seguidas. Y como el job de deploy
+declara `needs: build`, se **saltaba en silencio**: nada de §113 a §123 llegó nunca a staging — el
+gate del depósito, la pantalla de contratos, los pagos, expedientes y novedades, el sello, el export,
+el CSS que no alcanzaba a las filas y la limpieza de las 20 cifras inventadas. Todo verde en local.
+Todo sin desplegar.
+
+**125.2 — La ironía exacta.** El ADR §113 celebra que *«el gate de tipos se pagó solo una hora
+después de añadirlo»*, y era verdad: cazó un campo inventado. Lo que no dice —porque no lo miré— es
+que **ese mismo gate estaba rojo en CI desde el minuto uno**, tapando la cañería entera. Un gate
+puede ser útil y estar roto a la vez.
+
+**125.3 — Causa raíz.** `worker-configuration.d.ts` lo genera `wrangler types` desde `wrangler.jsonc`
+y está en `.gitignore`. En mi máquina existía —de haber corrido wrangler alguna vez—; en un checkout
+limpio, no. Así que `tsc` resolvía `cloudflare:workers` en local y no en CI: **el gate pasaba donde no
+importaba y fallaba donde sí**.
+
+**125.4 — Reproducir ANTES de arreglar descartó mi primera hipótesis.** Supuse que faltaba `.astro/`
+(los tipos que genera Astro, también ignorados). Moví la carpeta y corrí `typecheck`: **pasó igual**.
+La hipótesis era falsa y habría producido un arreglo que no arregla nada, con el CI siguiendo rojo y
+yo creyendo lo contrario. El diagnóstico real salió de clonar el repo en limpio, `npm ci`, y correr
+la secuencia del CI entera.
+
+**125.5 — La cura es de clase.** No se commitea el `.d.ts` generado —eso cura el síntoma y abre el
+drift contra `wrangler.jsonc`—: **el script genera su propio prerrequisito**
+(`wrangler types && tsc --noEmit`). Un script que se prepara a sí mismo no puede divergir entre local
+y CI, que es el defecto entero. Regla general: *si una herramienta necesita un archivo GENERADO y ese
+archivo está en `.gitignore`, generarlo es parte del comando, no del entorno.*
+
+**125.6 — Y la meta-lección, que es la que duele.** [[M-06]] dice que un gate solo existe si lo has
+visto DISPARAR, y enumera tres formas de que mienta —las tres dando ✅—. Ésta es la **cuarta**: el
+gate **falla correctamente, en un sitio que nadie mira**, y su fallo detiene la tubería. No hay ✅
+falso; hay un ❌ verdadero que nadie lee. Añadir un gate a un CI y no verlo correr EN CI es
+exactamente el hueco que [[M-07]] describe para el cableado, aplicado al resultado.
+
+**125.7 — Verificación.** Clon limpio + `npm ci` + los cinco pasos del CI (typecheck, verify:css,
+verify:claims, build, verify:build): los cinco verdes. **125.8 — Doctrina**: §3.3 · [[M-06]] ·
+[[M-07]] · [[L-48]] · §113 (donde nació) · §124 (mismo día: verificar contra la realidad, no contra
+el mensaje de éxito).
