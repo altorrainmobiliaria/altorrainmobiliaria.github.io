@@ -105,6 +105,7 @@
 | §125 | 🔴 **El CI llevaba 8 corridas rojo** desde el commit que añadió el gate: nada de §113-§123 se desplegó. Prerrequisito generado + ignorado = local ≠ CI. | 4270 |
 | §126 | 🔘 **El runbook mandaba a pulsar un botón que no existía** — el paso que bloquea el cutover. Construido; ningún gate caza un elemento de UI prometido por un spec. | 4318 |
 | §127 | 🔬 **Auditoría #9** (parcial, sin subagentes): 6 hallazgos, 4 cerrados el mismo día. Los encontró USAR el cerebro, no sondearlo. | 4363 |
+| §128 | 🔑 **El dueño no podía entrar a su panel**: sin recuperación de contraseña, y leyendo el placeholder como si fuera la cuenta. | 4394 |
 | §65 | **TODO-34 F4-w2 ✅: MANUAL MAESTRO (10 caps) + mercado → sistema documental 00-23 COMPLETO**. Tarifas comerciales adoptadas-vetables con costumbre certificada · FE gratuita DIAN soporta mandato nativo · prompt consejo externo del manual listo. | 1006 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |

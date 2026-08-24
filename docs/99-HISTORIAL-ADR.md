@@ -4388,3 +4388,42 @@ instrucciones**, y conviene provocarla antes de que la provoque el cutover.
 **127.4 — Y un patrón que ya es regla.** Los dos hechos falsos del `05` tenían marcador de frescura
 **vigente**. Un `verificado-vivo` fresco no dice que el hecho sea cierto: dice que alguien lo miró
 aquel día. Para lo contable está el #29; para lo externo no hay más red que volver a mirar.
+
+---
+
+## 128. ADR — El dueño no podía entrar a su propio panel ⟦OPUS-5⟧ (2026-08-24)
+
+> «No me sé las credenciales para iniciar, ¿qué hago?» — Daniel, un paso después del §126.
+
+**128.1 — Dos huecos, uno detrás del otro.** (a) El panel **no tenía recuperación de contraseña**:
+quien perdiera la clave se quedaba fuera de su propio admin sin más salida que la consola de Firebase
+—que ni siquiera se le había dicho—. (b) El campo de correo muestra `admin@altorrainmobiliaria.co`
+como **placeholder**, y Daniel lo estaba leyendo como si fuera la cuenta. Es la misma clase que
+persigo desde §117: **un texto que aparenta ser un hecho**. Aquí ni siquiera es una afirmación falsa,
+es una convención de formulario que un no-programador lee como dato.
+
+**128.2 — Por qué el correo de Firebase y no el nuestro.** `sendPasswordResetEmail` sale por la
+infraestructura de Firebase Auth, **no por el SMTP de Gmail del proyecto**. Eso importa aquí más que
+de costumbre: la contraseña de aplicación de Gmail lleva meses sin rotar (gate 0.4, aplazado por el
+propio dueño). Si la recuperación dependiera de nuestro SMTP, el arreglo de hoy habría nacido roto —
+y roto exactamente en el caso que existe para resolver.
+
+**128.3 — El mensaje es el mismo exista o no la cuenta**, incluido el `auth/user-not-found`, que se
+trata como éxito. Decir «ese correo no está registrado» convertiría el formulario público del panel
+en un **detector de qué direcciones tienen acceso**. La excepción es `auth/too-many-requests`, que sí
+se dice tal cual: ahí el usuario puede hacer algo —esperar—, y callarlo sería dejarle reintentando.
+
+**128.4 — Discreto a propósito.** Enlace subrayado, no un segundo botón: compite con «Iniciar
+sesión», que es la acción principal, y un panel con dos botones del mismo peso no tiene acción
+principal.
+
+**128.5 — Verificado en la página VIVA**, no en el archivo: enlace visible, del ancho del botón, sin
+desborde, y al pulsarlo con el correo vacío avisa en vez de romperse. **No se envió ningún correo de
+prueba**: mandar un correo de recuperación a una dirección real es una acción hacia fuera, y el gate
+que la justifica es que la pida su dueño.
+
+**128.6 — El patrón de estas tres últimas.** §126, §128 y el propio §125 los destapó **una persona
+intentando usar lo que construimos**, no un gate. Tres huecos seguidos en el camino más importante
+del proyecto —entrar al panel— y ninguno era de código: eran de *lo que faltaba*. Un sistema se
+prueba recorriéndolo entero desde donde entra el usuario, no desde donde el autor cree que empieza.
+**128.7 — Doctrina**: §3.3 · §126 · §127 (auditoría #9: la sonda más barata es un humano).
