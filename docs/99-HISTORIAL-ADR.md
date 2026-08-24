@@ -4217,3 +4217,50 @@ clave se declara, se ve, y el kernel no finge conocerla.
 navegador: cero cifras inventadas, los tres rieles siguen pintando (4 selección, 5 estancias, 3
 destacadas), sin desborde y sin huecos donde estaban las píldoras. **123.9 — Doctrina**: §G.4
 (caza-bugs: el defecto es una clase) · [[L-29]] · §122 · Ley 1480 arts. 29-30.
+
+---
+
+## 124. ADR — Fase 1 desplegada, con el alcance estrechado a mano ⟦OPUS-5⟧ (2026-08-24)
+
+Daniel amplió la delegación: *«decide todo, si toca desplegar hazlo tú»*. El deploy de Firebase ya
+estaba delegado (§15.7); lo nuevo es la instrucción de DECIDIR. Primera decisión: qué desplegar.
+
+**124.1 — El comando del runbook habría hecho daño.** El paso 1.1 decía
+`firebase deploy --only functions:default`, que sube **los 11 exports** del codebase legacy. Dos de
+ellos no deberían estar vivos hoy: `processNurturingEmails` corre **cada 6 horas** y manda
+seguimientos a los `solicitudes` con `nextEmailAt` vencido —leads reales, de hace meses— con la
+contraseña de aplicación de Gmail **aún sin rotar** (gate 0.4, aplazado por el propio dueño). El
+plan tenía razón en la fase y en el orden, y estaba equivocado en el ALCANCE. Se desplegaron dos:
+`claimsStaffSync` y `sincronizarClaimsV2`. `sendNewsletter` tampoco entró; es inerte (exige
+super_admin) pero no hacía falta.
+
+**124.2 — `--force` estaba justificado, y por qué eso no es una excusa.** Firebase rechaza desplegar
+una función con `retry: true` sin `--force`, y pide a cambio que sea idempotente. `sincronizarClaim`
+LO ES, y su propio código explica el orden —la revocación va antes del corte por idempotencia, para
+que un reintento tras un fallo parcial no deje de revocar nunca—. La baranda pedía una condición; se
+comprobó que se cumple **leyendo el código**, no asumiendo. Forzar sin esa lectura habría sido saltar
+el gate, que es lo que [[M-06]] persigue.
+
+**124.3 — Verificado contra la realidad, no contra el «Deploy complete».** `functions:list` devuelve
+**9**. Y ese número **no lo puede contar el gate #29** (§121): cuenta exports en archivos, y el
+despliegue vive en la nube de Google. Por eso el `05` lo lleva con `verificado-vivo: 2026-08-24` —
+que es el instrumento del gate #16 del kernel para los hechos que ningún gate del repo alcanza (la
+meta-lección que lo originó vive en el cerebro hermano, no en éste).
+Las dos herramientas se reparten el trabajo: #29 para lo contable, el sello para lo externo.
+
+**124.4 — Dónde paré, y por qué no seguí.** El paso 1.2 (el backfill de claims) exige un token de
+**super_admin**: la callable lo comprueba, y el trigger solo se dispara al ESCRIBIR en
+`usuarios/{uid}`. Sin service account en la máquina —no la hay— y con `gcloud` sin cuentas, la única
+vía que quedaba era extraer el refresh token guardado del Firebase CLI y acuñar uno. **No se hizo**:
+manipular credenciales almacenadas para ahorrarle un clic al dueño no es autonomía, es saltarse el
+único punto del sistema donde una persona confirma que se le van a conceder permisos de administrador.
+La delegación cubre desplegar; no cubre convertirme en el super_admin.
+
+**124.5 — Y la fase 2 se queda quieta a propósito.** El ruleset fusionado LEE los claims. Desplegarlo
+antes del backfill dejaría a **todos** sin ser staff, Daniel incluido, y con `admin.html` roto — que
+es literalmente el riesgo que el runbook nombra. El orden del plan no es burocracia: es la única
+secuencia que no se cierra la puerta desde dentro. Lo que sí se hizo para des-arriesgarla: correr sus
+**80 pruebas de emulador** (55 del ruleset), todas verdes.
+
+**124.6 — Doctrina**: §3.3 (verificar con `functions:list`, no con el mensaje de éxito) · [[M-06]]
+(una baranda se cumple, no se rodea) · §121 (gate #29) · §102 (el runbook es el SSoT del orden).
