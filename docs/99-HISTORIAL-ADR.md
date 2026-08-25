@@ -5138,3 +5138,40 @@ ejecuta al menos una vez, o se marca explícitamente como no verificado.
 **140.7 — Archivos.** `firebase.json` (raíz: nuevo codebase `portal`) · `portal/firebase/firebase.json`
 (bloque `functions` retirado) · `portal/functions/src/index.ts` (centinela del secreto) ·
 `specs/CUTOVER-RUNBOOK.md` (pasos 1.4, 1.6, 3.2 y 3.3 corregidos) · `docs/05` (censo 9/5).
+
+
+## 141. ADR — Las cinco puertas de escritura, probadas antes de que el dueño las estrene ⟦OPUS-5⟧ (2026-08-25)
+
+**141.1 — Por qué ahora.** El runbook (paso 1.6) le pide a Daniel estrenar `crearExpediente`,
+`crearNovedad` y `actualizarNovedad` — *«tres Cloud Functions que nunca han corrido»*. Que su primera
+ejecución en la vida sea con él delante, en producción y con datos reales, es **pagar la prueba con su
+tiempo y su confianza**. Ahora corren antes: Admin SDK contra Firestore emulado, el MISMO código
+desplegado, invocado con el `.run()` que la propia librería expone para esto (verificado en su `.d.ts`).
+
+**141.2 — Qué cubren, y sobre todo los RECHAZOS.** 16 pruebas nuevas (101 contra el emulador). La
+puerta de permisos, incluida la distinción entre «no has entrado» y «tu rol no alcanza». El acuñado
+transaccional y consecutivo del código. La escritura real con sus sellos de auditoría. Y los rechazos:
+novedad colgando de un expediente inexistente, novedad sin descripción, y **el que el runbook manda
+provocar** —cerrar sin escribir qué se hizo— comprobando además que el documento **no se movió**.
+*Un gate que nunca se ha visto negar algo tampoco está probado.*
+
+**141.3 — 🔴 CUATRO copias de `firebase-admin` en el repo**, cada una con su PROPIO registro de apps:
+raíz 13.8 · `functions/` 13.8 · `portal/functions/` 13.10 · `portal/` 14.2. La prueba inicializaba la
+app con la de `portal/` y la Function llamaba a `getFirestore()` con la de `portal/functions/`:
+`app/no-app` en 14 de 16, con un mensaje que no menciona versiones por ningún lado. Se fija por alias
+la del **codebase**, que es la que corre en producción. Efecto lateral que importa: hasta hoy
+`catalogo-rebuild.test.ts` decía *«el MISMO código que la Function»* — cierto del código y **falso del
+SDK**. Ahora es cierto de los dos.
+
+**141.4 — Y un fallo mío que la prueba destapó.** `pedir(datos, undefined)` disparaba el **parámetro
+por defecto** de JavaScript y colaba la sesión del dueño, así que el caso «sin sesión» pasaba… porque
+sí había sesión. `null`, no `undefined`. La prueba falló y me señaló a mí, que es exactamente para lo
+que sirve escribirla antes de darla por buena.
+
+**141.5 — Probadas en los dos sentidos.** Colando `viewer` en los roles de escritura, 2 fallan y
+nombran el caso; sin él, 101 verdes ([[M-06]]). **Lo que NO prueban, y se dice**: el transporte del
+callable (cabeceras, CORS, verificación real del token). Eso lo pone Google y solo se ejerce con una
+sesión de verdad — sigue siendo el paso 1.6, ahora con el camino de datos despejado.
+
+**141.6 — Archivos.** `portal/firebase/tests/gestion-escritura.test.ts` (nuevo) ·
+`portal/vitest.rules.config.ts` (alias del SDK).
