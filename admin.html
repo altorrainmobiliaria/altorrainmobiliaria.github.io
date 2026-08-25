@@ -13,6 +13,12 @@
        avisos del login: arreglado, desplegado, y el dueño seguía sin ver nada. SUBIR LA FECHA cada vez
        que se toque `admin.css`, igual que se bumpea el `CACHE_NAME` del service worker (§3.2). -->
   <link rel="stylesheet" href="css/admin.css?v=20260825b"/>
+  <!-- El panel no declaraba icono, así que el navegador pedía `/favicon.ico` y se comía un 404 en cada
+       carga. Es cosmético, pero pintaba un error ROJO en la consola — y la consola es justo donde se
+       diagnostican los fallos de verdad (§133, §135). Ruido que tapa señal. Se reutiliza el mismo logo
+       que ya usa el sitio público, verificado 200. -->
+  <link rel="icon" type="image/png" href="/assets/brand/altorra-inmobiliaria-logo.png">
+
   <!-- El `?v=` va en TODOS los recursos locales, no solo en el CSS (§133, §135): una corrección que
        está en el servidor y no llega al navegador no es una corrección. Subir la fecha al tocarlos. -->
   <script type="module" src="js/firebase-config.js?v=20260825b"></script>
