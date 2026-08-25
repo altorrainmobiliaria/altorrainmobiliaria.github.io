@@ -120,6 +120,7 @@
 | §140 | 🚀 **El codebase `portal` nunca se había desplegado, y no podía**: el comando del runbook fallaba siempre · un secreto ausente bloqueaba las 9 · el `ignore` se comía el punto de entrada. 5 puertas de GESTIÓN VIVAS. | 5078 |
 | §65 | **TODO-34 F4-w2 ✅: MANUAL MAESTRO (10 caps) + mercado → sistema documental 00-23 COMPLETO**. Tarifas comerciales adoptadas-vetables con costumbre certificada · FE gratuita DIAN soporta mandato nativo · prompt consejo externo del manual listo. | 1006 |
 | §141 | 🧪 **Las 5 puertas de escritura, probadas contra el emulador** antes de que el dueño las estrene (16 pruebas, con los RECHAZOS). Destapó **4 copias de `firebase-admin`** con registros de apps distintos. | 5143 |
+| §142 | 🗄️ **La BÓVEDA del expediente** (B5): no es subir archivos, es saber QUÉ FALTA. Nunca `getDownloadURL` (enlace público). Y `verify:data` **existía y no lo corría nadie** → meta-gate de cableado. | 5180 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

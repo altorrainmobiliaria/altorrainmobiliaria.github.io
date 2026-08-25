@@ -5175,3 +5175,74 @@ sesión de verdad — sigue siendo el paso 1.6, ahora con el camino de datos des
 
 **141.6 — Archivos.** `portal/firebase/tests/gestion-escritura.test.ts` (nuevo) ·
 `portal/vitest.rules.config.ts` (alias del SDK).
+
+
+## 142. ADR — La bóveda del expediente, y el gate que nadie corría ⟦OPUS-5⟧ (2026-08-25)
+
+**142.1 — La idea, que no es «subir archivos».** TODO-46(b), gate B5: lo último que le faltaba a
+GESTIÓN v1. Un cajón de PDFs no cambia nada — el dueño ya tiene ese cajón en WhatsApp. Lo que hoy no
+puede contestar sin abrir carpetas es **«¿qué me falta?»**: que el expediente de la calle 47 lleva
+ocho meses sin el contrato firmado, o que la póliza venció en marzo. Por eso la pantalla **no empieza
+por la lista de archivos**: empieza por lo que falta y por lo que caduca, en ese orden — una póliza
+vencida cuesta más que un papel que falta.
+
+La mitad del trabajo es la **lista canónica** de lo que exige cada clase de expediente
+(`lib/domain/documentos.ts`, puro, 27 pruebas). Sin ella la pantalla no puede existir. Sale de la
+operación real del dueño pasada por el filtro que manda el MEGA-PLAN §3b: **la póliza NO es
+obligatoria** —en vivienda la garantía admite varias formas y el depósito en dinero está prohibido
+(art. 16, Ley 820)— porque exigirla convertiría una opción legítima en un requisito inventado.
+
+**142.2 — Tres puertas, y por qué no una.** El archivo sube **directo a Storage** (pasar 10 MB por una
+Function sería gastar memoria por nada), pero a una ruta que **acuña el servidor**:
+- `prepararDocumento` valida TODO **antes** de que el archivo viaje. Rechazar 10 MB *después* de
+  subirlos por una conexión de Cartagena es gastarle un minuto a alguien para decirle que el tipo no
+  valía.
+- `confirmarDocumento` toma el tamaño y el tipo **del objeto real**, no de lo que diga el navegador.
+  *Un registro que se cree lo que le cuentan no es un registro: es una declaración jurada de la parte
+  interesada.*
+- `retirarDocumento` exige motivo y **conserva el objeto**: retirar no es borrar (§C-2).
+
+Desplegadas y verificadas contra `functions:list` ([[L-51]]): 12 en código / 8 desplegadas.
+
+**142.3 — 🔴 NUNCA `getDownloadURL()`.** Emite una URL **con un token dentro**: cualquiera que la
+tenga abre el archivo, sin sesión y saltándose las Rules. Para la cédula de un arrendatario eso es una
+fuga esperando un reenvío de WhatsApp. Se usa `getBlob()`, que descarga **con la sesión** y sí pasa
+por las Rules — y la pantalla lo dice, porque si no alguien va a intentar «copiar el enlace» y no va a
+entender por qué no puede. Y la **ruta no lleva el nombre del archivo**: un `Cédula Juan Pérez.pdf`
+pondría el nombre de una persona en logs y mensajes de error.
+
+**142.4 — 🔴 `verify:data` EXISTÍA Y NO LO CORRÍA NADIE.** Ni el CI ni mi rutina. Vigila el free-tier
+—cero SDK de Firestore en el portal, cero `onSnapshot`, cero lista sin acotar— y llevaba **meses**
+siendo decorativo. Lo descubrí porque **lo puse en rojo yo mismo dos veces el mismo día** sin
+enterarme: primero en `/seguridad` (§137) y luego aquí. Es el chequeo #25 del linter del cerebro
+—*«un gate que nadie invoca no protege nada»*— y el portal no lo tenía. Ahora:
+- `verify:data` cableado al CI;
+- **meta-gate** en `verify:build`: que TODO `verify:*` de `package.json` esté invocado por el CI,
+  probado en los dos sentidos.
+
+**142.5 — Y el gate marcaba `import type`.** Un import de solo-tipo se borra al compilar y no embarca
+un byte de SDK; marcarlo obligaba a pedir una excepción para algo que **no puede hacer daño**, y así es
+como un gate se llena de excepciones hasta que deja de significar nada. Corregido. La única excepción
+nueva es `firebase/storage` en el módulo de la bóveda, con su razón escrita: **compra la opción
+segura** (`getBlob` en vez de un enlace público).
+
+**142.6 — Seis de siete clases nuevas, sin una sola regla de CSS.** `verify:css` comprueba
+ALCANZABILIDAD, no existencia: pasaba en verde y las filas habrían salido crudas. Es la familia de
+§117 y §133. Se escribieron **a la vez** que el JavaScript que crea los nodos —única forma de que no
+se separen— y la clase que sobraba se retiró en vez de inventarle una regla vacía. Verificado en el
+**artefacto servido**: las cuatro reglas están en el CSS de `dist` ([[L-50]]).
+
+**142.7 — De paso, la cuarta copia.** `llamarCallable` iba por su cuarta copia idéntica; se extrajo a
+`scripts/callable.ts`. *Cuatro copias de un contrato de red es cómo se arregla un fallo en tres
+sitios y se olvida el cuarto.* Los dos módulos viejos conservan la suya: funcionan, y migrarlos hoy
+sería riesgo sin ganancia — se traen cuando se toquen.
+
+**142.8 — Lo que NO está, y se dice.** La pantalla del expediente por dentro (artboard 2a) y el
+visor con la bitácora de accesos (4a) siguen en el mockup, sin construir. Y **el mockup no está
+aprobado**: se dibujó para que Daniel lo vea, no en vez de que lo vea.
+
+**142.9 — Archivos.** `portal/design/mockups/ALTORRA Documentos.dc.html` ·
+`src/lib/domain/documentos.ts` + `.test.ts` · `functions/src/documentos.ts` ·
+`src/scripts/gestion-documentos.ts` · `src/scripts/callable.ts` · `src/pages/gestion.astro` ·
+`src/scripts/gestion-alta-ui.ts` · `firebase/firestore.rules` + `.indexes.json` ·
+`scripts/verify-data-invariants.mjs` · `scripts/verify-build.mjs` · `.github/workflows/portal-ci.yml`.

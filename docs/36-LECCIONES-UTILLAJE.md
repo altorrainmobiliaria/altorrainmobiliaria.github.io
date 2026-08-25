@@ -39,6 +39,9 @@ el script diciendo «hecho» (así se perdió `99` entero). **Regla portable**: 
 '` en un archivo **CRLF** deja dos filas pegadas en una sola línea; el siguiente script que divida por `
 ` las ve como UNA y al reescribirla **borra la otra** (pasó con una fila del índice, y lo cazó `brain:check` #5). Detecta el fin de línea del archivo y ÚSALO para unir, no el del lenguaje.
 
+### L-56 — 🧰 Un gate puede existir y NO CORRERLO NADIE — ni el CI ni tú *(§142)*
+`verify:data` llevaba meses en `package.json` sin estar en el CI ni en ninguna rutina. Vigila algo caro (el free-tier) y era **decorativo**. Lo descubrí porque **lo puse en rojo yo mismo dos veces el mismo día** sin enterarme. **Cómo se caza, y es barato**: un meta-gate que compare la lista de scripts `verify:*` contra lo que el CI invoca de verdad — el linter del cerebro ya lo tenía (#25) y el proyecto no. **Regla portable**: escribir el gate es la mitad; **cablearlo es la otra mitad**, y la que se olvida. Prima de [[L-52]]: allí el gate corría sin mirar el archivo; aquí ni siquiera corría.
+
 ### L-52 — 🧰 Un gate puede correr en VERDE sobre archivos que **nunca abre** *(§138)*
 **Disparador**: `npm run typecheck` pasa y crees que el proyecto está chequeado. **Causa**: `tsc` **no
 lee los `.astro`**. Como casi toda la lógica de navegador vive en los `<script>` de las páginas, el gate
