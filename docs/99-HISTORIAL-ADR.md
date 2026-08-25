@@ -4601,3 +4601,67 @@ definida en el mismo cambio para no repetir §117). **INTACTOS**: reglas, portal
 «restablecer contraseña» de Firebase: funciona, pero se puede personalizar (consola). Y lo de §130 sin
 cambios: Identity Platform + TOTP (sin vuelta atrás), contraseña mínima 6→12, anti-bot apagado, dominio
 sin autorizar. Todo eso vive en una consola web y **ningún gate lo ve** ([[L-49]]).
+
+
+## 132. ADR — La consola dejó de ser un muro: Identity Platform, y la fase 2 EN VIVO ⟦OPUS-5⟧ (2026-08-25)
+
+> *«Que necesitas de mi, te autorizo todo»* · *«no me lances todo lo que necesitas de mi enseguida no soy
+> un experto necesitamos ir paso a paso»* — Daniel.
+
+**132.1 — El muro que se cayó.** [[L-49]] decía que la configuración de la consola es parte del sistema y
+**ningún gate la ve**. Era cierto y además era un tapón: cinco cosas del acceso vivían tras clics que solo
+podía dar el dueño. Un `gcloud auth login` suyo —**un** comando— convirtió cuatro de las cinco en llamadas
+de API verificables. La quinta (subir a Identity Platform) resultó irreductible, y se comprobó por
+agotamiento, no por suposición: la API responde
+`OPERATION_NOT_ALLOWED: MFA can only be enabled in GCIP or Firebase Auth upgraded to aligned product`,
+y no hay servicio que `gcloud services enable` pueda encender. Esa sí la pulsó él.
+
+**132.2 — Lo que quedó activo.**
+| Qué | Antes | Ahora | Quién |
+|---|---|---|---|
+| Identity Platform | no | **activo** (Blaze, gratis <50k MAU) | Daniel (4 pasos) |
+| Segundo factor | `DISABLED` | **`ENABLED` con TOTP** (SIN SMS) | API |
+| Contraseña mínima | **6** | **12**, sin reglas de composición | API |
+| Dominios autorizados | 3 (ninguno real) | +`altorrainmobiliaria.co`, `www`, staging | API |
+| Claim del dueño | **(ninguno)** | `{admin:true, rol:super_admin}` | el TRIGGER |
+| Reglas fase 2 | congeladas | **DESPLEGADAS** | CLI |
+
+**132.3 — TODO-42 cerrado por el camino correcto.** El claim del dueño se puso **tocando su documento**
+en `usuarios`, no escribiéndolo a mano: `claimsStaffSync` lo detectó y lo aplicó **en ~5 segundos**. Se
+eligió así a propósito — escribir el claim por fuera habría hecho el trabajo igual de rápido y no habría
+demostrado nada, y además dejaría DOS caminos hacia el mismo permiso, que es como empiezan las
+contradicciones. Ahora sabemos que la tubería funciona porque la usamos, no porque la leímos.
+
+**132.4 — La fase 2, en vivo y verificada por sonda.** Con el dueño ya con claim (y siendo el ÚNICO
+usuario del proyecto: 1 cuenta, 1 documento), desplegar dejó de ser peligroso. Medido en producción antes
+y después: `loginAttempts` pasó de **404 (abierto) a 403 (cerrado)** y `auditLog` a 403 — el arma de §130
+ya no existe ni a nivel de regla. Lecturas públicas intactas: `config/general` 200, portal 200 en cuatro
+rutas, sitio real y panel 200. El `404` de `indices/catalogo-venta` es «permitido y vacío», no bloqueo
+([[L-20]] al revés: sin `resource.data` en la regla, un doc inexistente da 404).
+
+**132.5 — Lo que NO se hizo, y por qué.** **Protección anti-bot (reCAPTCHA Enterprise): aplazada.**
+Sería añadir una dependencia de API de pago para una amenaza que hoy no es material —**1 usuario**, sin
+registro público abierto— cuando el límite por IP de Firebase ya cubre la fuerza bruta. Su momento es el
+día que se abra «Crear cuenta», no antes. Preferir el gesto completo al gesto oportuno también es una
+decisión, y esta va escrita para que no parezca un olvido.
+
+**132.6 — Anti-patterns evitados.** Extraer el refresh token guardado del CLI de Firebase para operar sin
+él (se rechazó en §124 y se sigue rechazando: manejar credenciales en claro no lo autoriza ningún permiso).
+Aceptar términos en su nombre. `forceUpgradeOnSignin` en la política de contraseña — habría forzado a
+cambiar la clave a todo el mundo, incluido el dueño, y el propio NIST retiró la rotación por calendario.
+Y volcar la config completa del proyecto a la consola: trae el `signerKey` del hash de contraseñas, así
+que se extrajeron solo campos concretos y el fichero se borró del disco en el mismo script.
+
+**132.7 — Doctrina nueva, del propio Daniel.** *«cualquier cosa que me toque hacer a mi la hacemos paso a
+paso con tu guia y con pantallazos»*. Vinculante y grabado en la memoria del harness
+(`reglas-operacion-daniel`): **un paso por mensaje**, anclado a SU pantalla y no a la ruta teórica del
+menú, con pantallazo ANTES de lo irreversible, y **verificando por API antes de mandarlo a clicar** —
+cada clic que se le ahorra es trabajo que no puede hacer mal. La cola de pendientes la lleva el nodo `10`;
+él solo ve el siguiente. Cuando pregunte «¿qué necesitas de mí?», la respuesta es **el próximo paso**, no
+el inventario. Funcionó: el upgrade salió a la primera y él confirmó las dos cifras que importaban con las
+palabras de Google, no con las mías.
+
+**132.8 — Lo que sigue.** Falta la pantalla de INSCRIPCIÓN del segundo factor (hoy está disponible pero
+nadie lo tiene puesto: `mfaInfo` vacío). Hasta que el dueño lo inscriba, las Rules NO pueden exigir
+`request.auth.token.firebase.sign_in_second_factor` — exigirlo antes lo dejaría fuera. Ese es el orden:
+inscribir primero, exigir después. Y el correo del dueño sigue **sin verificar** (`emailVerified: false`).
