@@ -4754,8 +4754,17 @@ un golpe las dos hipótesis que siempre se confunden («no tiene permiso» vs «
    «Cargando…» para siempre. **Un panel que falla en silencio le hace creer al dueño que el sistema está
    VACÍO cuando está ROTO** — y son cosas muy distintas de arreglar. Ahora lo dice en pantalla.
 
-**134.5 — Verificación.** Esperado a que los 14 índices pasaran de `CREATING` a `READY` (unos 4 min) y
-re-corridas las 5 consultas: **5 de 5 en verde**. Antes: 4 ✅ / 1 ❌.
+**134.5 — Verificación, en dos capas.** (a) **Datos**: esperado a que los 14 índices pasaran de
+`CREATING` a `READY` (~4 min) y re-corridas las 5 consultas: **5 de 5 en verde** (antes 4 ✅ / 1 ❌).
+(b) **Interfaz**, en el navegador del dueño y sobre el sitio VIVO — porque «la consulta funciona» y «el
+panel lo muestra» no son lo mismo (§133). Se provocó **el peor caso**, las 5 consultas DENEGADAS: las
+seis tarjetas pasaron de «—» a **0**, la tabla de «Cargando…» a «No hay leads aún.», y apareció el aviso
+—**46 px de alto**, navy sobre gris con filo dorado— nombrando exactamente lo que no cargó. Detalle que
+confirma que la degradación es POR PIEZA y no en bloque: el aviso **no menciona las reseñas**, porque
+`resenas` tiene lectura pública y esa sí resolvió. 4 cayeron, 1 pasó, y el panel lo distinguió.
+⚠️ Medir con el panel oculto habría dado un falso negativo (`#adminApp` es `display:none` sin sesión, así
+que todo lo de dentro mide 0 px): se abrió a mano SOLO para medir. Un 0 px puede ser un bug o el
+contenedor — comprobar cuál antes de cantarlo.
 
 **134.6 — Lo que el episodio confirmó de paso.** La base está **vacía de verdad** (propiedades,
 solicitudes, reseñas, analytics y newsletter: 0 documentos) — el panel no mentía al no tener qué
