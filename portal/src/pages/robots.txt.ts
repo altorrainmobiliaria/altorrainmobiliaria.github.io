@@ -27,7 +27,7 @@ const ES_PRODUCCION = import.meta.env.PUBLIC_SITE_ENV === 'production';
 const BOTS_IA = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-User', 'PerplexityBot', 'Google-Extended'];
 
 /** Rutas internas: nunca se rastrean, ni siquiera en producción. */
-const PRIVADAS = ['/gestion', '/design-system', '/api/'];
+const PRIVADAS = ['/gestion', '/seguridad', '/design-system', '/api/'];
 
 export const GET: APIRoute = ({ site }) => {
   const base = (site?.origin ?? 'https://altorrainmobiliaria.co').replace(/\/$/, '');

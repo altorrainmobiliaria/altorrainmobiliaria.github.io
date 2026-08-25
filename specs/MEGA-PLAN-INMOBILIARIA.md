@@ -88,21 +88,26 @@ workflow genérico inventado, ni digitalizar errores: su operación, elevada a e
 > ✅ **OLA 1 COMPLETA EN CÓDIGO (2026-08-21)**, los 13 ítems. El gate de salida se ejecuta con
 > **`specs/CUTOVER-RUNBOOK.md`** (§102): seis fases en orden, con verificación y vuelta atrás.
 
-> 📊 **ESTADO REAL medido contra el código el 2026-08-20** (ADR §90). ⚠️ Ojo con el `05`: dice «OLA 1
-> FIDELIDAD COMPLETA» y eso significa **fiel a los mockups**, NO **completa según este plan**. Son cosas
-> distintas y confundirlas hace creer que la ola está cerrada.
+> 📊 **ESTADO REAL: 13/13 EN CÓDIGO**, re-medido archivo por archivo el **2026-08-25**.
 >
-> **✅ EN PIE (7/13)**: 1 Home (`index.astro`, 17/17) · 2 SERP (`[operacion].astro` + MapLibre §55) ·
-> 3 Ficha (`ficha.astro`, datos DEMO — 4 decisiones abiertas en TODO-33) · 5 Corta estancia
-> (`estancias.astro`, sin dinero) · 6 Publica (`publicar.astro`, capta de verdad §88) · 10+13 Admin y
-> GESTIÓN (`gestion.astro`, 3 roles §31) · 12 Leads (`solicitudes` §88 — ⚠️ el aviso por email sigue ROTO, `43`).
+> ⚠️ **Esta casilla ya se equivocó una vez y conviene saber cómo**: entre el 20 y el 22 de agosto se
+> construyeron los cinco ítems que faltaban, pero el bloque de aquí seguía diciendo «NO EXISTEN (5/13)»
+> — cinco días declarando ausente lo que ya estaba en `main`. El nodo `10` sí lo había registrado
+> (§123). **Un plan que se lee como SSoT y no se re-mide miente con autoridad**; se corrigió al
+> comprobarlo de nuevo contra el código, no contra el recuerdo.
 >
-> **❌ NO EXISTEN (5/13)** — `find` sobre `portal/src` no encuentra ni un archivo:
-> · **4 Landings SSG de sector** (13+ barrios con contenido editorial REAL — el legacy SÍ las tenía)
-> · **7 Página de PRECIOS pública** (op.7, el *diferenciador gratis* del plan)
-> · **8 Alertas guardadas + digest diario**
-> · **9 Rango ALTORRA + Rentímetro turístico**
-> · **11 SEO técnico**: sin `sitemap`, sin `robots`, sin mapa de 301 — y el 301 es **gate del cutover**.
+> **✅ LOS 13, con dónde vive cada uno** — 1 Home (`index.astro`) · 2 SERP (`[operacion].astro` +
+> MapLibre §55) · 3 Ficha (`ficha.astro` + `inmueble/[slug].astro`, datos DEMO — TODO-33) ·
+> **4 Landings SSG (`zona/[slug].astro`, 13 barrios generados)** · 5 Corta estancia (`estancias.astro`,
+> sin dinero) · 6 Publica (`publicar.astro`, capta de verdad §88) · **7 Precios (`precios.astro`)** ·
+> **8 Alertas (`alertas.astro` + `api/alerta.ts` + `alertas/baja` + la Function `alertasDigest`)** ·
+> **9 Rango ALTORRA (`rango-altorra.astro`)** · 10+13 Admin y GESTIÓN (`gestion.astro`, 3 roles §31) ·
+> **11 SEO técnico (`sitemap.xml.ts`, `robots.txt.ts`, y el mapa de 301 en `lib/seo/redirects.ts`)** ·
+> 12 Leads (`solicitudes` §88 — ⚠️ el aviso por email sigue ROTO, `43`).
+>
+> **Lo que de verdad falta para cerrar la ola NO es construir, es ESTRENAR**: ninguno de estos caminos
+> ha escrito todavía en Firestore real, y el catálogo está vacío (medido, no supuesto). Eso lo ordena
+> `specs/CUTOVER-RUNBOOK.md`, fases 1.4-1.8. El estado vivo manda desde `docs/10`.
 
 Superficies (todas con mockup D2 aprobado):
 1. **Home** (search-pill + categorías + zonas + trust).

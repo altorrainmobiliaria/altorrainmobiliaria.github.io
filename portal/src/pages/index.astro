@@ -148,15 +148,34 @@ const arriendo = [
 // (El array `cerca` con 3 propiedades INVENTADAS se retiró en §32.18: no existían en el mockup.
 //  #cerca no es una grilla de cards — es el split buscador + mapa ilustrado.)
 
-// Journal — 1 destacado + 3 horizontales.
-// #journal — fotos EXACTAS del mockup (L1323/1334/1339/1345): principal=hero-invierte,
-// Rentas=hero-estancia, Inversión=villa-pool, Legal=villa-modern (antes reasignadas, §32.24 BAJA).
-const journalMain = { img: '/assets/hero-invierte.webp', cat: 'Mercado', date: '12 feb 2026', read: '8 min de lectura', title: 'Guía 2026: dónde comprar en Cartagena antes de la próxima ola de valorización', excerpt: 'Analizamos precio por m², proyección de obra nueva y liquidez zona por zona, para que tu compra sea patrimonio y no una apuesta.', href: '/journal' };
-const journalSide = [
-  { img: '/assets/hero-estancia.webp', cat: 'Rentas', read: '5 min de lectura', title: 'Corta estancia: renta tu propiedad sin dolores de cabeza', href: '/journal' },
-  { img: '/assets/villa-pool.webp', cat: 'Inversión', read: '6 min de lectura', title: 'Manga o Bocagrande: en cuál invertir según tu objetivo', href: '/journal' },
-  { img: '/assets/villa-modern.webp', cat: 'Legal', read: '4 min de lectura', title: 'Checklist legal antes de firmar la promesa de compraventa', href: '/journal' },
-];
+/*
+ * Journal — 1 destacado + 3 horizontales. #journal, fotos EXACTAS del mockup (L1323/1334/1339/1345).
+ *
+ * ⚠️ HOY ESTÁ VACÍO A PROPÓSITO, y hay que decir por qué. Aquí vivían cuatro artículos con título,
+ * categoría, fecha («12 feb 2026») y tiempo de lectura («8 min») — y NINGUNO existe: los cuatro
+ * enlazaban a `/journal`, que es una página de «próximamente». Es la misma clase de invento que se
+ * retiró de las reseñas (§122) y de los conteos por zona (§123), y contra el que existe el gate
+ * `verify:claims`: en la home, que es la página que más se ve, y con fechas que dan apariencia de
+ * hemeroteca. Una promesa editorial que al pulsarla dice «está en camino» gasta confianza, que es
+ * justo lo que la marca vende.
+ *
+ * La sección NO se borra: se vuelve dependiente de datos. Con la lista vacía no se pinta, y el día
+ * que haya artículos REALES vuelve sola con el diseño aprobado intacto. Construir el Journal es
+ * trabajo propio y gateado por su mockup — está anotado en `docs/10`.
+ */
+interface ArticuloJournal {
+  img: string;
+  cat: string;
+  read: string;
+  title: string;
+  href: string;
+  date?: string;
+  excerpt?: string;
+}
+/** El destacado y los tres laterales. Vacíos hasta que haya Journal de verdad. */
+const journalMain: ArticuloJournal | null = ((): ArticuloJournal | null => null)();
+const journalSide: ArticuloJournal[] = [];
+const hayJournal = journalMain !== null || journalSide.length > 0;
 
 const brokerPerks = [
   'Comisiones entre las más competitivas del mercado',
@@ -811,7 +830,7 @@ const maneras = [
     </section>
 
     <!-- JOURNAL -->
-    <section id="journal" class="home-band">
+    <section id="journal" class="home-band" style={hayJournal ? undefined : 'display:none'}>
       <div class="alt-container">
         <div class="home-sechead">
           <div>
@@ -823,15 +842,17 @@ const maneras = [
             </a>
         </div>
         <div class="home-journal">
-          <a class="home-jmain" href={journalMain.href}>
-            <div class="home-jmain__media">
-              <img src={journalMain.img} alt="" loading="lazy" decoding="async" />
-              <span class="home-jcat">{journalMain.cat}</span>
-            </div>
-            <div class="home-jmeta"><span>{journalMain.date}</span><span class="home-jdot"></span><span>{journalMain.read}</span></div>
-            <h3 class="home-jmain__t">{journalMain.title}</h3>
-            <p class="home-jmain__x">{journalMain.excerpt}</p>
-          </a>
+          {journalMain && (
+            <a class="home-jmain" href={journalMain.href}>
+              <div class="home-jmain__media">
+                <img src={journalMain.img} alt="" loading="lazy" decoding="async" />
+                <span class="home-jcat">{journalMain.cat}</span>
+              </div>
+              <div class="home-jmeta"><span>{journalMain.date}</span><span class="home-jdot"></span><span>{journalMain.read}</span></div>
+              <h3 class="home-jmain__t">{journalMain.title}</h3>
+              <p class="home-jmain__x">{journalMain.excerpt}</p>
+            </a>
+          )}
           <div class="home-jside">
             {journalSide.map((j) => (
               <a class="home-jrow" href={j.href}>

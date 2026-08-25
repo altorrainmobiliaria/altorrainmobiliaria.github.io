@@ -65,6 +65,15 @@ const PATRONES = [
     que: 'una cifra de mercado sin fuente pasa a ser NUESTRA afirmación' },
   { id: 'distinción', re: /\b(?:superanfitri[oó]n|favorito entre hu[eé]spedes|l[ií]der del mercado|n[uú]mero 1)\b/gi,
     que: 'una distinción que nadie ha otorgado' },
+  /*
+   * Añadido tras encontrar en la HOME cuatro artículos del Journal con titular, categoría, fecha
+   * («12 feb 2026») y tiempo de lectura («8 min de lectura») — y los cuatro enlazando a una página
+   * de «próximamente». Ninguno de los cinco patrones de arriba lo veía: no es una cifra de negocio,
+   * es una firma EDITORIAL, y engaña igual. El tiempo de lectura es la señal limpia: solo aparece
+   * pegado a un artículo que alguien escribió y midió.
+   */
+  { id: 'editorial', re: /\b\d{1,3}\s*min(?:utos)?\s+de\s+lectura\b/gi,
+    que: 'un tiempo de lectura afirma que ese artículo existe y está escrito' },
 ];
 
 let manifest = {};
