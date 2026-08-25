@@ -26,7 +26,21 @@
     // portal son sin extension: `/comprar`, `/zona/x`). El archivo de verificacion de Search Console
     // TAMBIEN pasa por el Worker a proposito: ahora es una ruta que responde 200, en vez de un asset
     // al que la capa de assets le quitaba el `.html` con un 307 (§145).
-    "run_worker_first": ["/*.html"]
+    "run_worker_first": ["/*.html"],
+
+    // UNA SOLA FORMA CANÓNICA DE CADA DIRECCIÓN, y que sea la que el sitio ya escribe.
+    // Sin esta clave la capa de assets usa `auto-trailing-slash`: `/journal` responde **307** hacia
+    // `/journal/`. Medido en el worker de staging, y le pasa a TODA página estática (`/comprar`,
+    // `/precios`, `/zona/x`), no solo a las nuevas. Nadie lo nota abriendo el sitio —el navegador
+    // sigue el salto— pero el coste es real y silencioso:
+    //   · los 65 redirects del sitio viejo aterrizan en una URL que a su vez redirige = CADENA;
+    //   · el `sitemap.xml` declara URLs que responden con redirección;
+    //   · y el `<link rel=canonical>` dice `/journal` mientras el servidor prefiere `/journal/`,
+    //     o sea dos señales en contra sobre cuál es la dirección buena.
+    // `drop-trailing-slash` hace que el servidor prefiera la MISMA forma que ya usan los enlaces
+    // internos, el sitemap, el canonical y el destino de cada 301. Valor verificado contra
+    // `node_modules/wrangler/config-schema.json` (enum de `html_handling`), no de memoria (L-14).
+    "html_handling": "drop-trailing-slash"
   },
   "observability": { "enabled": true },
 

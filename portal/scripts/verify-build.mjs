@@ -50,8 +50,16 @@ if (existsSync(wjc)) {
    * rompe nada visible; solo apaga, en silencio, la preservación de años de posicionamiento.
    */
   const hasWorkerFirst = /"run_worker_first"\s*:\s*\[[^\]]*"\/\*\.html"/.test(txt);
-  dOk = hasMain && hasAssets && hasR2 && hasWorkerFirst;
-  dDetail = `main-entrypoint=${hasMain} · ASSETS=${hasAssets} · R2_MEDIA=${hasR2} · run_worker_first(/*.html)=${hasWorkerFirst}`;
+  /*
+   * 🔴 `html_handling: drop-trailing-slash` — la MISMA clase de candado, y por la misma razón (§150).
+   * Sin esta clave el valor por defecto es `auto-trailing-slash` y `/journal` responde 307 hacia
+   * `/journal/`: los enlaces internos, el sitemap, el canonical y el destino de los 65 redirects
+   * dicen una forma y el servidor prefiere la otra. Nadie lo nota —el navegador sigue el salto— y
+   * el precio se paga en señales contradictorias y en cadenas de redirección.
+   */
+  const hasSinBarra = /"html_handling"\s*:\s*"drop-trailing-slash"/.test(txt);
+  dOk = hasMain && hasAssets && hasR2 && hasWorkerFirst && hasSinBarra;
+  dDetail = `main-entrypoint=${hasMain} · ASSETS=${hasAssets} · R2_MEDIA=${hasR2} · run_worker_first(/*.html)=${hasWorkerFirst} · html_handling(sin barra)=${hasSinBarra}`;
 }
 check('wrangler.jsonc de deploy (entrypoint + bindings + los 301 alcanzables)', dOk, dDetail);
 
