@@ -107,6 +107,7 @@
 | §127 | 🔬 **Auditoría #9** (parcial, sin subagentes): 6 hallazgos, 4 cerrados el mismo día. Los encontró USAR el cerebro, no sondearlo. | 4363 |
 | §128 | 🔑 **El dueño no podía entrar a su panel**: sin recuperación de contraseña, y leyendo el placeholder como si fuera la cuenta. | 4394 |
 | §129 | 🚪 **El candado del acceso también dejaba fuera al dueño**: `loginAttempts` es abierto y el id es el hash del correo ⇒ bloqueo dirigido, y encima se saltea. 9 huecos, mockup de puerta única, skill `acceso-y-autenticacion`. | 4432 |
+| §130 | 🔐 **El 2FA de cars decide en una variable del navegador** (la sesión ya existe al pedir el código). `loginAttempts` retirado · bitácora que alguien escribe · rol en `/gestion` · [[L-50]]. | 4484 |
 | §65 | **TODO-34 F4-w2 ✅: MANUAL MAESTRO (10 caps) + mercado → sistema documental 00-23 COMPLETO**. Tarifas comerciales adoptadas-vetables con costumbre certificada · FE gratuita DIAN soporta mandato nativo · prompt consejo externo del manual listo. | 1006 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |

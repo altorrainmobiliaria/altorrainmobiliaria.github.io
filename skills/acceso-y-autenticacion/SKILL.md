@@ -81,6 +81,39 @@ Que la colección exista, tenga permisos y esté protegida contra modificación 
 escriba en ella. **Busca los puntos de escritura antes de creer que hay registro.** Si no aparecen, no
 hay auditoría — hay la ilusión de auditoría, que es peor porque nadie va a buscar más.
 
+### B-6 · ⚠️ Un segundo factor que decide en una variable del navegador NO es un segundo factor
+El patrón se repite y siempre convence: primero `signIn(usuario, clave)`, y DESPUÉS una pantalla que
+pide un código; al validarlo se pone `_2faVerificado = true` y se muestra el panel.
+
+**Está roto de raíz, y no por un descuido: por el orden.** Cuando aparece la pantalla del código, la
+sesión YA existe y ya es válida — el servidor emitió el token al aceptar la contraseña. Las reglas de
+la base ven un usuario plenamente autorizado. Lo único que hace el código es cambiar un `display`.
+Quien tenga la contraseña entra igual: no pasa por la interfaz y consulta los datos directamente.
+
+**La pregunta que lo desenmascara en diez segundos**: *¿puede existir una sesión válida ANTES de
+introducir el segundo factor?* Si la respuesta es sí, no hay segundo factor: hay una cortina.
+
+**Cómo se ve el de verdad.** El proveedor rechaza el login y no entrega NINGUNA sesión hasta que se
+resuelve el segundo paso (en Firebase, `signInWithEmailAndPassword` lanza `auth/multi-factor-auth-required`
+y devuelve un *resolver*, no un usuario). Y el token resultante **lo dice**: Firebase expone
+`firebase.sign_in_second_factor`, así que hasta las reglas de la base pueden exigirlo. Un factor que el
+servidor no puede comprobar no protege datos del servidor.
+
+**Señales de que estás ante la versión falsa**, sin leer todo el código:
+- El código se verifica con una API de *perfil* (`updatePhoneNumber`, `updateEmail`) en vez de una de
+  autenticación. Confirma que la persona controla el teléfono… después de haberla dejado entrar.
+- Las reglas de seguridad no mencionan el segundo factor por ningún lado. Si el servidor no lo sabe,
+  no lo exige.
+- El estado vive en una variable de módulo, no en el token.
+
+### B-7 · «Dispositivo de confianza» por huella del navegador: forjable, y encima es el camino fácil
+Para no pedir el código en cada visita se guarda un testigo local. Cuando el navegador lo borra
+—iOS lo hace solo a los 7 días— la tentación es reconocer el equipo por su *huella*: agente de usuario,
+plataforma, resolución, zona horaria. **Esos cuatro datos los envía cualquiera y los copia cualquiera**:
+quien tenga la contraseña y sepa qué computador usa la víctima se salta el segundo factor sin más.
+Si el testigo además se guarda en un documento que el propio usuario puede leer, basta con copiarlo.
+Un recuerdo de dispositivo debe atarse a algo que el servidor firme, o no atarse a nada.
+
 ---
 
 ## C. Alta, baja y sesión
@@ -181,3 +214,4 @@ Sobre cualquier sistema de acceso, en este orden:
 8. ¿Los proveedores sociales de la pantalla funcionan en el dominio real? → **B-2**, **E-3**.
 9. ¿El mensaje cambia según si la cuenta existe? Pruébalo, no lo leas. → **B-3**, **D-3**.
 10. ¿Hay segundo factor donde hay datos personales de terceros? → **D-1**.
+11. Y si dicen que sí: **¿puede existir una sesión válida ANTES del segundo factor?** → **B-6**. Si la respuesta es sí, no lo hay.

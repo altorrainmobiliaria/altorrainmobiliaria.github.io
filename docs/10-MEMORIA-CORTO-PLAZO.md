@@ -36,7 +36,7 @@
 | **TODO-42** | 🔑 **Claim de staff — DESPLEGADO** (§124) + **botón «Sincronizar permisos» construido** (§126, no existía) + **recuperación de contraseña** en el panel (§128, tampoco existía). ⏭️ Falta el clic de Daniel (`info@altorrainmobiliaria.co`); pasos → runbook 1.2. Hasta entonces la fase 2 (reglas) NO se despliega. | 🟡 clic | §128 |
 | **TODO-45** | 🔬 **Deuda de la auditoría #8** (§109). ✅ (a) capa semántica · (b) `degrade()` en #8/#16/#27 · (c) trinquete del índice · (e)(f) los 22 caps recalibrados y `33`/`50` podados — todo en §120. Resta: **(d)** umbrales en DÍAS en un repo que corre en COMMITS; **(g)** las 98 rutas que el #27 perdona por basename (o rutas completas en los nodos, o estrechar su ámbito). | 🟡 | §120 |
 | **TODO-46** | 📅 **GESTIÓN v1** (ítem 13). ✅ agenda · contratos · pagos y cartera · expedientes y novedades con SLA (§112-§118). Resta adjuntos privados (B5) y estrenarlo con datos reales (runbook 1.5). | 🟢 | §118 |
-| **TODO-47** | 🚪 **ACCESO — investigación CERRADA (§129), construcción NO empezada.** 9 huecos con evidencia; 3 graves: sin 2FA · el candado `loginAttempts` **se puede usar CONTRA el dueño** (regla abierta, hash del correo calculable) y además se saltea · el alta **inventa la contraseña** del otro. Mockup PROPUESTO (7 artboards, `design/mockups/ALTORRA Acceso.dc.html`) — **sin aprobar**. Doctrina portable → skill `acceso-y-autenticacion`. ⏭️ 4 decisiones de Daniel (Identity Platform **sin vuelta atrás**, dominio+Google, «Crear cuenta», Resend) y el orden de obra, en el artefacto. Los pasos 1-3 (quitar el candado, encender la bitácora, devolver el corte por inactividad) **no dependen de él**. | 🟡 dueño | §129 |
+| **TODO-47** | 🚪 **ACCESO — fase 1 CONSTRUIDA y en producción (§130)**. ✅ candado `loginAttempts` retirado (era un arma contra el dueño; la cura es el JS y ya vive) · bitácora REAL (`registrarEvento`, CF nº12 desplegada) · `/gestion` distingue ROL · vuelve el corte por inactividad · gate `verify:css` con sonda 2 ([[L-50]]). 🔎 **El 2FA de cars NO sirve de modelo**: decide en una variable del navegador, la sesión ya existe cuando pide el código (§130.1) — su propio cerebro ya lo aparcó (cars TODO-43). ⏭️ **Falta**: (a) Identity Platform + TOTP — gate del dueño, **sin vuelta atrás**, gratis <50k · (b) consola: contraseña mínima 6→12, anti-bot apagado, dominio sin autorizar (Google roto) · (c) invitación en vez de contraseña inventada + «suspender» · (d) puerta única de 2 pasos (mockup 1a-1c, **sin aprobar**). | 🟡 dueño | §130 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -77,7 +77,6 @@
 > **(3) B-04** — sin contrato con DataCrédito/TransUnion **NO se puede consultar a nadie**: ¿afiliarse, o solo aseguradora?
 > **(4)** verificar los **recovery codes** (§72).
 > **(5)** Nº de **RNT** + vetar los 6 estándares del `02 §2`.
-> **(6)** ¿**Google** como proveedor de acceso habilitado en Firebase? Sin evidencia; el interruptor es tuyo.
 > **(7)** decidir la **tasa de mora del doc 03** (B-05: 1,5×IBC vs 6%) — un párrafo, y las 5 remisiones
 > lo heredan solas.
 > **(8)** `/publicar` **no pide correo** (fiel al mockup) ⇒ el propietario llega `[COLD]`: ¿campo nuevo o re-pesar?

@@ -4479,3 +4479,76 @@ por separado porque el coste no es el riesgo.
 **129.7 — Doctrina.** [[L-49]] (la consola no está en el repo y ningún gate la ve) · §3.3 (verificar, no asumir
 — aquí cobró a mi favor y en mi contra) · §126/§128 (la clase que esto continúa) · §G.4 (skill del dominio: no
 existía, se creó).
+
+
+## 130. ADR — El segundo factor de cars era una variable de JavaScript ⟦OPUS-5⟧ (2026-08-25)
+
+> *«Pero el segundo factor no se puede activar con firebase creo que con la web de altorra cars se hizo,
+> revisalo. HAZ TODO LO QUE TENGAS QUE HACER… NO LAS MAS FACILES SINO LAS MAS SEGURAS Y AVANZADAS»* — Daniel.
+
+**130.1 — Lo que pedía comprobar, comprobado.** Daniel tenía razón en el hecho y se le escapaba la
+consecuencia: **cars SÍ tiene 2FA, y NO usa la API nativa de Firebase** — usa `PhoneAuthProvider` +
+`RecaptchaVerifier`, que sí están en el plan gratuito. Pero el ORDEN lo invalida entero:
+
+1. `signInWithEmailAndPassword()` ya terminó ⇒ **la sesión existe y es válida**; las Rules ven un
+   usuario plenamente autorizado.
+2. La pantalla del código llega DESPUÉS, y al validar hace `_2faPendingUser.updatePhoneNumber(cred)`
+   — una API de **perfil**, no de autenticación: confirma que la persona controla el teléfono *después
+   de haberla dejado entrar*.
+3. La decisión de mostrar el panel es `if (…habilitado2FA && !_2faVerified)`, con `_2faVerified` como
+   **variable de módulo del navegador** (`admin-auth.js:1320`).
+4. Las Rules de cars **no mencionan el segundo factor por ningún lado** (`grep`: solo aparece
+   `habilitado2FA` como campo escribible del propio usuario).
+
+⇒ Quien tenga la contraseña entra igual: no pasa por la interfaz. **Es una cortina, no una puerta.**
+Peor: el «dispositivo de confianza» cae, si se borró el almacenamiento local, a una **huella del
+navegador** (agente + plataforma + resolución + zona horaria) — cuatro datos que cualquiera envía.
+
+**No es una enmienda a cars: es lo que el propio cerebro de cars ya concluyó.** Su §253 aparcó el
+stack SMS al portar el panel nuevo y dejó TODO-43 escrito: *«Reimplementar TOTP+recovery»*. Coincidimos.
+
+**130.2 — Lo hecho HOY (construido, no propuesto).**
+- 🔴 **`loginAttempts` RETIRADO.** Estaba roto en las dos direcciones y solo se había documentado una.
+  La nueva: el id del documento es el SHA-256 del correo, y **un hash no es un secreto** — se podía
+  calcular el del dueño y escribirle `bloqueado:true` en bucle. Sonda REST a producción: **404, no 403**
+  ⇒ la regla abierta estaba VIVA. **La cura es el cambio de JS, no la regla**: en cuanto el panel deja
+  de CONSULTAR el contador, escribir ahí no le hace nada a nadie — y eso ya está en producción
+  (verificado sirviendo el archivo del dominio real). La regla cerrada viaja con la fase 2 (TODO-42).
+- 📓 **Bitácora REAL**: `registrarEvento` (Cloud Function nº 12, desplegada) escribe `auditLog` con el
+  uid del token verificado. Antes la regla decía `create: if esEditorOMas()` — **el vigilado redactaba
+  su propia bitácora** — y aun así nadie escribía en ella. Lectura restringida al super_admin: lleva IP
+  y hábitos de terceros (minimización, Ley 1581). Mismo cierre en `propiedades/{id}/auditLog`.
+- 🎭 **El panel distingue el ROL.** `/gestion` solo preguntaba «¿eres del equipo?»: un `viewer` veía los
+  mismos formularios que el dueño y la base se los rechazaba — la peor combinación, porque parece roto
+  en vez de parecer vedado. Se marca `data-puede-editar` en el `<body>` (no clase por elemento: así una
+  pantalla nueva hereda la regla sin que nadie se acuerde). Claim ausente ⇒ **rol mínimo**, nunca máximo.
+- ⏱️ **Vuelve el corte por inactividad** (30 min, aviso a 1 min): lo tenía el panel VIEJO y se perdió en
+  la mudanza — la clase [[L-46]]/B-4, funciones que solo se echan de menos el día que hacen falta.
+
+**130.3 — No-regresión.** 82 tests de reglas (eran 80) · 406 unitarios · typecheck 0 · los 4 `verify:*`.
+Censo de CF re-cuadrado: 12 en código / 10 desplegadas (lo cazó el gate #29, no yo).
+
+**130.4 — Verificación (medida, no deducida).** Panel real en el navegador: como **editor**, 6
+formularios y «+ Nuevo inmueble» visibles; como **solo consulta**, **0 formularios** y el botón en
+`display:none`. Producción sirviendo `admin-auth.js` sin una sola referencia al candado.
+
+**130.5 — El bug que casi cuela, y lo que enseñó.** Escribí la regla del rol con `:global()` por
+costumbre. Dentro de un `<style is:global>` **Astro no la resuelve**: sale literal al CSS y el navegador
+**descarta la regla entera, en silencio**. Compiló limpio y los cuatro gates dijeron ✅. Apareció al
+abrir el `.css` servido ([[L-50]]). Se enseña a `verify:css` una sonda nueva — **y se PROBÓ que muerde**
+(falla con el bug metido a propósito, pasa sin él). Al escribirla, el heredoc convirtió mis `\b` en
+**bytes de retroceso invisibles** y el gate dijo ✅ sobre el bug para el que fue escrito: [[L-46]], que
+estaba con el cuerpo VACÍO, ahora lo cuenta. [[M-06]], cuarta forma, otra vez.
+
+**130.6 — Archivos.** MODIFICADOS: `js/admin-auth.js` · `functions/index.js` · `portal/firebase/firestore.rules`
++ sus tests · `portal/src/scripts/auth.ts` · `portal/src/pages/gestion.astro` · `portal/scripts/verify-css-runtime.mjs`
+· skill `acceso-y-autenticacion` (B-6, B-7 · ambas copias) · `05` `10` `30` `36`. **INTACTOS**: el resto
+de `portal/src`, `admin.html`, el service worker (es un kill-switch SIN handler de `fetch` — se verificó
+antes de bumpear por reflejo: no cachea nada).
+
+**130.7 — Doctrina y lo que queda decidido.** El camino del 2FA es **Identity Platform + TOTP**, y la
+razón no es la comodidad: es que ahí **no existe sesión** hasta resolver el segundo factor, y el token
+lo declara (`firebase.sign_in_second_factor`), de modo que hasta las Rules pueden exigirlo. Rodarlo a
+mano reproduce lo de cars. Gratis hasta 50.000 usuarios/mes, **sin vuelta atrás** ⇒ sigue siendo gate
+del dueño. Sin decidir: contraseña mínima del proyecto en **6 caracteres** y protección anti-bot
+**apagada** — ambas de consola ([[L-49]]). Doctrina portable → skill `acceso-y-autenticacion` §B-6/B-7.
