@@ -298,9 +298,13 @@ const init = DATA.admin;
             <h2 id="gx-table-title">{init.tableTitle}</h2>
             <div class="gx-head__actions">
               <button class="alt-btn alt-btn--ghost gx-btn-fila" type="button" id="gx-leads-export">Exportar CSV</button>
-              <a href="#" class="gx-link">Ver todo &#8594;</a>
+              <button class="gx-link gx-link--btn" type="button" id="gx-leads-vertodo">Ver todo &#8594;</button>
             </div>
           </div>
+          {/* Lo que responde «Ver todo». La consulta está topada a 50 por doctrina de free-tier, así
+              que la respuesta honesta depende de si ese tope se tocó o no — y se dice, en vez de
+              fingir una paginación que no existe. */}
+          <p class="gx-tabla-nota" id="gx-leads-nota" role="status" hidden></p>
           <div class="gx-scrollx">
             <div class="gx-table__inner">
               <div class="gx-tr gx-tr--head">
@@ -876,6 +880,11 @@ const init = DATA.admin;
   .gx-col .gx-panel h2 { font-size: 20px; margin-bottom: 18px; }
   .gx-link { font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-link); white-space: nowrap; text-decoration: none; }
   .gx-link:hover { text-decoration: underline; }
+  /* «Ver todo» era un `<a href="#">` sin nadie que lo escuchara: pulsarlo no hacía nada y encima
+     saltaba al principio de la página. Ahora es un botón —que es lo que siempre fue— y responde. */
+  .gx-link--btn { border: 0; background: none; padding: 0; font-family: inherit; cursor: pointer; }
+  .gx-tabla-nota { margin: 0 clamp(14px, 2vw, 22px) 14px; padding: 9px 12px; border-radius: var(--alt-r-sm); background: var(--alt-mist); border-left: 2px solid var(--alt-gold); color: var(--alt-text-soft); font-size: 12.5px; line-height: 1.6; }
+  .gx-tabla-nota[hidden] { display: none; }
 
   .gx-scrollx { overflow-x: auto; }
   .gx-scrollx::-webkit-scrollbar { height: 8px; }
@@ -1147,7 +1156,7 @@ const init = DATA.admin;
    * echaría al login cada vez que recarga — el error clásico de esta API.
    */
   import { estadoAcceso, salir, type EstadoAcceso } from '../scripts/auth';
-  import { montarExportLeads, montarLeads } from '../scripts/gestion-leads';
+  import { montarExportLeads, montarLeads, montarVerTodoLeads } from '../scripts/gestion-leads';
   import { montarAlta } from '../scripts/gestion-alta-ui';
 
   const puerta = document.getElementById('gx-gate');
@@ -1248,6 +1257,7 @@ const init = DATA.admin;
      renueva cada hora, así que sin esto a quien le acaban de dar permiso le tocaba esperar o cerrar
      sesión — y lo más probable es que pensara que algo estaba roto. */
   montarExportLeads();
+  montarVerTodoLeads();
   const reintentar = document.getElementById('gx-reintentar') as HTMLButtonElement | null;
   reintentar?.addEventListener('click', async () => {
     reintentar.disabled = true;

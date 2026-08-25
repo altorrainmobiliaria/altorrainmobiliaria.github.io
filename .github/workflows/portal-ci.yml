@@ -70,6 +70,10 @@ jobs:
       # declarada «réplica fiel del mockup». Solo se ve midiendo en el navegador — o con este gate.
       - name: Variables CSS que existen de verdad
         run: npm run verify:tokens
+      # 🛡️ Un boton que nadie escucha no falla: se pulsa y no pasa nada. Desde fuera es
+      # indistinguible de un panel roto (§126, y cuatro mas en el panel de gestion en una tarde).
+      - name: Controles que de verdad hacen algo
+        run: npm run verify:controles
       - name: Cifras sin respaldo en paginas publicas (§123 — Ley 1480, cero-demo)
         run: npm run verify:claims
       - run: npm run build

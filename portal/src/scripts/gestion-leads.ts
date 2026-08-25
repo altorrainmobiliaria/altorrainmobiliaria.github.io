@@ -29,6 +29,12 @@ const TOPE = 50;
 /** Lo último que se cargó. El export sale de AQUÍ y no de una segunda consulta. */
 const cargados: Lead[] = [];
 
+/**
+ * ¿La última consulta tocó el tope? Lo necesita «Ver todo» para responder la verdad: con menos de
+ * `TOPE` leads ya los estás viendo todos, y con el tope tocado hay más que esta tabla no trae.
+ */
+let tocoElTope = false;
+
 export interface Lead {
   id: string;
   nombre: string;
@@ -213,6 +219,28 @@ export function montarExportLeads(): void {
   });
 }
 
+/**
+ * «Ver todo» — antes era un `<a href="#">` que NADIE escuchaba: pulsarlo no hacía nada y encima
+ * saltaba al principio de la página.
+ *
+ * No se convierte en paginación porque no la hay (ni mockup para diseñarla), y la consulta está
+ * topada a 50 a propósito: `limit()` es obligatorio en este proyecto y una tabla sin tope es una
+ * cuota abierta. Lo que sí se puede hacer es DECIR la verdad, que depende de si el tope se tocó.
+ * Un control que explica por qué no puede hacer más es honesto; uno que no responde, no.
+ */
+export function montarVerTodoLeads(): void {
+  const nota = document.getElementById('gx-leads-nota');
+  document.getElementById('gx-leads-vertodo')?.addEventListener('click', () => {
+    if (!nota) return;
+    nota.textContent = !cargados.length
+      ? 'Todavía no hay leads que mostrar.'
+      : tocoElTope
+        ? `Esta tabla trae los ${TOPE} más recientes, y hay más. Para verlos todos usa «Exportar CSV»: sale el mismo listado, completo y con los datos de contacto.`
+        : `Ya los estás viendo todos: son ${cargados.length}. Cuando pasen de ${TOPE}, esta tabla mostrará solo los más recientes y te lo dirá aquí.`;
+    nota.hidden = false;
+  });
+}
+
 export async function montarLeads(): Promise<void> {
   const conjunto = document.querySelector<HTMLElement>('.gx-row-set[data-set="admin"]');
   const cabecera = document.querySelector<HTMLElement>('.gx-tr--head');
@@ -248,6 +276,7 @@ export async function montarLeads(): Promise<void> {
       conjunto.replaceChildren(
         pintarMensaje('Todavía no ha entrado ningún lead. Cuando alguien deje sus datos en el portal, aparece aquí.'),
       );
+      tocoElTope = false;
       actualizarKpi(0, false);
       return;
     }
@@ -256,7 +285,8 @@ export async function montarLeads(): Promise<void> {
     cargados.length = 0;
     cargados.push(...leads);
     conjunto.replaceChildren(...leads.map(pintarFila));
-    actualizarKpi(leads.filter((l) => l.estado === 'pendiente').length, snap.size >= TOPE);
+    tocoElTope = snap.size >= TOPE;
+    actualizarKpi(leads.filter((l) => l.estado === 'pendiente').length, tocoElTope);
   } catch (e) {
     // FALLA RUIDOSO y, sobre todo, BORRA lo que hubiera: dejar los leads de muestra a la vista sería
     // que alguien llamara a personas que no existen.
