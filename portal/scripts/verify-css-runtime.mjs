@@ -66,12 +66,14 @@ function clasesAcotadas(pagina) {
 }
 
 const scripts = new Map();
+const fuentes = new Map();
 const importa = new Map();
 for (const f of archivos(join(SRC, 'scripts'), '.ts')) {
   if (f.endsWith('.test.ts')) continue;
   const codigo = readFileSync(f, 'utf8');
   const nombre = basename(f, '.ts');
   scripts.set(nombre, clasesDeRuntime(codigo));
+  fuentes.set(nombre, codigo);
   importa.set(nombre, [...codigo.matchAll(/from\s+'\.\/([\w-]+)'/g)].map((m) => m[1]));
 }
 
@@ -167,16 +169,27 @@ for (const f of archivos(join(SRC, 'pages'), '.astro')) {
   if (!bloques) continue;
   const bloque = bloques.join('\n');
   const declarados = new Set([...src.matchAll(/\bid="([\w-]+)"/g)].map((m) => m[1]));
+
+  /*
+   * ⚠️ Y LOS MÓDULOS QUE LA PÁGINA CARGA, no solo su `<script>` inline. Esa era la mitad que
+   * faltaba: el panel de gestión busca **63 ids** desde `src/scripts/gestion-*.ts`, y la primera
+   * versión de esta sonda no miraba ni uno. Renombrar un id en el markup y olvidar el módulo habría
+   * pasado en verde — que es justo el fallo que la sonda existe para cazar (§143).
+   */
+  const codigoDeModulos = [...alcanzables(src)].map((n) => fuentes.get(n) ?? '').join('\n');
+  const todoElCodigo = `${bloque}\n${codigoDeModulos}`;
+
   const buscados = new Set([
-    ...[...bloque.matchAll(/getElementById\(\s*'([\w-]+)'\s*\)/g)].map((m) => m[1]),
-    // El atajo local que varias páginas definen: `const $ = (id) => document.getElementById(id)`.
-    ...(/const \$ = \(\s*id/.test(bloque)
-      ? [...bloque.matchAll(/\$\(\s*'([\w-]+)'\s*\)/g)].map((m) => m[1])
+    ...[...todoElCodigo.matchAll(/getElementById\(\s*'([\w-]+)'\s*\)/g)].map((m) => m[1]),
+    // El atajo `const $ = (id) => …` lo definen la página y varios módulos. Se admite la forma con
+    // genérico (`$<HTMLInputElement>('id')`), que es como lo escriben los módulos del panel.
+    ...(/const \$ = [^\n]*\bid\b/.test(todoElCodigo)
+      ? [...todoElCodigo.matchAll(/\$(?:<[^>]*>)?\(\s*'([\w-]+)'\s*\)/g)].map((m) => m[1])
       : []),
   ]);
   for (const id of buscados) {
     // Un id que el propio script ASIGNA en tiempo de ejecución no está en el markup, y es correcto.
-    const loCrea = new RegExp(`\\.id = '${id}'`).test(bloque);
+    const loCrea = new RegExp(`\\.id = '${id}'`).test(todoElCodigo);
     if (!declarados.has(id) && !loCrea) idsHuerfanos.push({ archivo: relative(RAIZ, f), id });
   }
 }
