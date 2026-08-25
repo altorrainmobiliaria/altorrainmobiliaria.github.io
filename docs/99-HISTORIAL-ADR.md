@@ -4665,3 +4665,54 @@ palabras de Google, no con las mías.
 nadie lo tiene puesto: `mfaInfo` vacío). Hasta que el dueño lo inscriba, las Rules NO pueden exigir
 `request.auth.token.firebase.sign_in_second_factor` — exigirlo antes lo dejaría fuera. Ese es el orden:
 inscribir primero, exigir después. Y el correo del dueño sigue **sin verificar** (`emailVerified: false`).
+
+
+## 133. ADR — Los avisos del login no se han visto NUNCA ⟦OPUS-5⟧ (2026-08-25)
+
+> *«le doy olvide la contraseña dice enviando no pasa mas nada, no llega correo, no hay un aviso de que
+> paso si hay error nada»* — Daniel, intentando entrar a su panel.
+
+**133.1 — Causa raíz.** Dos contratos distintos para lo mismo, y ninguno completo:
+- el **CSS** decía `.login-error { display:none }` y solo destapaba con una clase `.visible`;
+- el **JavaScript** trabaja con el atributo `hidden` (`errEl.hidden = false`).
+
+Nadie añadía `.visible` jamás. Medido en el sitio VIVO: `hidden=false` ✔, texto escrito ✔,
+**`display:"none"` y altura 0px** ✘. El mensaje se escribía y el navegador lo tapaba.
+
+⚠️ **El alcance es mucho mayor que la recuperación**: NINGÚN aviso de esa pantalla se ha visto nunca
+—ni «correo o contraseña incorrectos», ni «demasiados intentos», ni la confirmación de §128—. Se
+entraba a ciegas. Eso explica por qué §128 se dio por resuelto y no lo estaba: se verificó que el
+elemento existía y que el clic respondía, **no que el mensaje se VIERA**.
+
+**133.2 — Y una segunda capa, que confundía más.** Corregido y desplegado, el servidor servía el CSS
+nuevo… y el navegador seguía con el viejo: `admin.css` se enlazaba **sin parámetro de versión**. El JS
+sí se refrescaba (Daniel ya veía el «Enviando…» nuevo), así que el síntoma era **asimétrico** — media
+corrección visible y media invisible, sin patrón aparente. Misma familia que el `CACHE_NAME` del
+service worker (§3.2): **arreglarlo en el servidor no es arreglarlo para el usuario.** Fix: `?v=fecha`
+en el enlace, con la regla de bumpearlo escrita en la propia línea, que es donde se va a leer.
+
+**133.3 — El correo tampoco era lo que parecía.** `sendPasswordResetEmail` **resuelve en 816 ms** — no
+falla. Y `altorrainmobiliaria.co` tiene MX a **Hostinger**: el buzón `info@` NO es Gmail. El mensaje
+salía y llegaba a un buzón que el dueño no estaba mirando. **Regla**: antes de declarar «el correo no
+funciona», comprobar (a) que la llamada resuelve y (b) **a dónde apunta el MX del dominio**.
+
+**133.4 — Solución.** El CSS honra `hidden`, que es el mecanismo del propio navegador: no puede
+desincronizarse con el JS porque es el MISMO atributo, y los lectores de pantalla ya lo entienden.
+`.visible` se conserva por si algún camino viejo la usa. De paso, el color: era **ROJO**
+(`#fef2f2`/`--danger`) y la marca no tiene rojo — y ese mismo recuadro da noticias BUENAS («te llega un
+enlace»), que en rojo asustan sin motivo. Pasa a navy sobre gris de paleta con filo dorado.
+
+**133.5 — Verificación (medida, no deducida).** En producción: al abrir, oculto (0px); sin correo,
+**visible 62px**; tras pedir el enlace, **visible 104px**; texto navy `rgb(6,39,67)`, filo dorado
+`rgb(212,175,55)`. Y la hoja servida es `admin.css?v=20260825`.
+
+**133.6 — La sonda que faltaba, y que ahora es doctrina.** Comprobar que el JS pone el texto y quita
+`hidden` **NO ES SUFICIENTE**: hay que medir `getComputedStyle(el).display` **y la ALTURA** del
+elemento. **Un mensaje de 0 px de alto está escrito y no existe.** Es la tercera vez que muerde la misma
+familia —§117 (CSS acotado que no alcanza), [[L-50]] (`:global()` que anula la regla) y ahora ésta—: en
+las tres, el CSS decidía y nadie se lo preguntó. Por eso el gate #31 de `verify:css` no basta para el
+legacy, que no pasa por Astro: aquí la única red es **mirar el píxel**.
+
+**133.7 — Archivos.** `css/admin.css` (la regla y el color) · `admin.html` (`?v=` + la regla de
+bumpearlo). **INTACTOS**: `js/admin-auth.js` —su lógica era correcta desde §128, el fallo nunca estuvo
+ahí— y todo lo demás.
