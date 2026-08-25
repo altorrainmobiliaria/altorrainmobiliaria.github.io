@@ -5438,3 +5438,73 @@ disparador auto-vigilado.
 
 **146.7 — Archivos.** `docs/33-LECCIONES-META.md` (M-23, con M-11 destilada) · `docs/30-LECCIONES.md`
 (titular) · `docs/.brain-manifest.json` · `docs/10-MEMORIA-CORTO-PLAZO.md` · la bóveda + su README.
+
+## 147. ADR — El Journal: la autoridad se publica con la norma al lado ⟦OPUS-5⟧ (2026-08-25)
+
+**147.0 — Qué era y qué es.** `/journal` llevaba desde siempre siendo una pantalla de
+«próximamente», y la banda del Journal de la home estaba ESCONDIDA desde §138.3 porque los cuatro
+artículos que anunciaba —con fecha y «8 min de lectura»— no existían. La VISIÓN §5 lo pone como
+motor de autoridad SEO/AEO, o sea que la sección no era un adorno pendiente: es la pieza que
+convierte el eslogan en algo que se puede leer sin llamar a nadie. Hoy hay cuatro artículos REALES y
+la banda volvió sola, con el diseño aprobado intacto — que es exactamente lo que se prometió al
+vaciarla.
+
+**147.1 — La decisión de fondo NO es de diseño: la norma y la interpretación se ven DISTINTAS.** La
+investigación legal (`specs/R3-LEGAL`) separa en cada ficha «qué dice el texto» de «qué se entiende
+en la práctica», y esa separación tenía que SOBREVIVIR hasta la página pública. Decir «es ilegal
+cobrar el estudio de documentos» como si fuera texto de ley es falso: el art. 16 de la Ley 820
+prohíbe depósitos y cauciones reales; lo del estudio es lectura dominante, no literalidad. Por eso
+hay dos bloques con forma deliberadamente distinta —`jrn-ley`, con filete de oro y el artículo
+citado; `jrn-practica`, con borde punteado y el rótulo «interpretación, no texto legal»—. *Si se
+vieran iguales, el lector no podría separarlos, y nosotros responderíamos igual por los dos.*
+
+**147.2 — La regla editorial es un TIPO, no una buena intención.** «Un artículo sin fuentes no se
+publica» no se sostiene con disciplina: `fuentes` es obligatoria y con mínimo una entrada en el
+esquema de la colección, así que un artículo sin fuente **rompe el build**. Igual la categoría, que
+es un enum cerrado de cuatro. El gate se probó solo, sin buscarlo: dos `resumen` se pasaron del tope
+y el build los rechazó nombrando archivo y campo.
+
+**147.3 — El tiempo de lectura se CALCULA; no hay dónde teclearlo.** Es la respuesta directa a
+§138.3: el frontmatter no tiene campo de «minutos», se derivan de las palabras del cuerpo. Y contar
+palabras tiene su trampa —la sintaxis del markdown no se lee en voz alta—, así que `palabras()`
+descuenta bloques de código, imágenes y URLs de enlace. **Ahí salió un bug que caza una prueba y no
+un navegador**: quitaba los ENLACES antes que las IMÁGENES, y como una imagen es un enlace con `!`
+delante, la regla general se tragaba a la específica y el texto alternativo se colaba como prosa,
+inflando el tiempo de todo artículo con imagen. Lo específico va antes que lo general.
+
+**147.4 — Sin URLs de categoría, a propósito.** Lo natural sería `/journal/categoria/mercado`. Con
+cuatro cajones y dos todavía vacíos, eso son dos direcciones indexables sin contenido —contenido
+delgado, que no posiciona y hay que mantener—. Las pastillas FILTRAN en el sitio, sin crear
+direcciones, y el estado vacío aparece al filtrar por un cajón que aún no tiene nada. Sin JavaScript
+se ven los cuatro artículos, que es la respuesta correcta: el filtro quita cosas de la vista, así
+que su ausencia no rompe nada, solo enseña de más.
+
+**147.5 — La dependencia va del framework al dominio, nunca al revés.** `CATEGORIAS` es decisión
+EDITORIAL, o sea dominio. Puesta en `content.config.ts` —que es donde parecía natural, porque es
+quien la valida— obligaría al módulo de dominio a importar `astro:content`, que solo existe dentro
+del build de Astro: sus pruebas dejarían de poder correr. Vive en `lib/content/journal.ts` y el
+esquema la importa. Lo destapó la primera ejecución de las pruebas, no una revisión.
+
+**147.6 — Verificado en el navegador, no supuesto.** Las cuatro rutas responden 200; en el destacado
+se midieron 4 bloques de ley y 2 de práctica, con el filete en `rgb(212,175,55)` y el punteado
+aplicado; 3 fuentes enlazadas a `funcionpublica.gov.co`; el filtro va 4 → 1 → 0 (estado vacío) → 3 →
+4; la banda de la home pinta 1 destacado + 3 filas con fecha real y lectura calculada; canonical,
+`og:image` y `BlogPosting` con `citation` presentes. Build, typecheck (0 errores), 476 pruebas (32
+nuevas) y los 7 gates `verify:*` en verde.
+
+**147.7 — De paso, dos cosas de higiene.** Los enlaces a las fuentes van SIN `nofollow`: `nofollow`
+es para el enlace del que uno no responde —pauta, contenido ajeno—, y estos son citas deliberadas a
+la fuente oficial; enlazarlas y responder por ellas ES el argumento del artículo. Y los cuatro
+artículos entran al `sitemap.xml` DERIVADOS de la colección, con su fecha real como `lastmod`: el
+olvido más común al publicar es no meter la URL en el sitemap, y entonces el texto existe para quien
+tenga el enlace y para nadie más. ⚠️ Al desplegar hay que RE-ENVIAR el sitemap en Search Console.
+
+**147.8 — Lo que queda.** El mockup `ALTORRA Journal.dc.html` (4 artboards) está **SIN aprobar** por
+el dueño, igual que el de Documentos. Y las categorías «Mercado» y «Guías de zona» siguen vacías a
+propósito: se llenan con material propio, no con relleno.
+
+**147.9 — Archivos.** `portal/src/content.config.ts` · `portal/src/content/journal/*.md` (4) ·
+`portal/src/lib/content/journal.ts` (+ `.test.ts`) · `portal/src/pages/journal.astro` ·
+`portal/src/pages/journal/[slug].astro` · `portal/src/pages/index.astro` ·
+`portal/src/pages/sitemap.xml.ts` · `portal/src/styles/components.css` ·
+`portal/design/mockups/ALTORRA Journal.dc.html`.
