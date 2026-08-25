@@ -5291,3 +5291,31 @@ fallado con «acción no reconocida» y se habría perdido en silencio.
 **143.4 — Archivos.** `portal/scripts/verify-css-runtime.mjs` (sonda 3 ampliada) ·
 `portal/src/pages/gestion.astro` · `portal/src/scripts/gestion-documentos.ts` · `functions/index.js` ·
 `docs/10` (TODO-45 cerrada, su contenido movido a TODO-23).
+
+
+## 144. ADR — Dos Functions más del cutover, sin gastar un solo recurso del dueño ⟦OPUS-5⟧ (2026-08-25)
+
+**144.1 — La fase 3 del runbook no era indivisible.** Estaba escrita como un bloque —«desplegar
+`functions:portal`»— detrás del gate de Resend. Pero de las cuatro que faltaban, **solo dos son
+programadas**: `catalogoBarrido` y `alertasDigest`. Las otras dos —`catalogoOnPropiedadWrite`, un
+disparador de Firestore, y `catalogoRepublicar`, una callable— **no consumen nada** mientras nadie
+escriba ni pulse. Tratar el bloque como indivisible mantenía bloqueado lo que no lo estaba.
+
+**144.2 — Lo que gana el paso 1.5.** Con el disparador vivo, **el índice del catálogo se reconstruye
+solo** en cuanto Daniel guarde su primera propiedad. Sin él, habría creado el inmueble y el catálogo
+público habría seguido vacío — y eso se lee como «el alta no funcionó», no como «falta desplegar una
+Function». El paso más delicado del estreno queda con una pieza menos que explicar.
+
+**144.3 — `--force`, y por qué está justificado.** `catalogoOnPropiedadWrite` declara `retry: true` y
+la CLI exige `--force` para desplegar una función con política de reintento. Es la misma situación de
+§102 (paso 1.1) y la misma justificación, que **está escrita en el propio código**: el rebuild es
+idempotente y converge (§57.2), así que un reintento no puede dejar el índice peor. *Un `--force` se
+justifica leyendo la razón, no repitiendo el comando que funcionó la vez pasada.*
+
+**144.4 — Lo que se dejó fuera, y de quién es la decisión.** Las dos programadas comprometen **2 de
+los 3 jobs gratuitos** de Cloud Scheduler, y una espera la clave de Resend. Eso es un compromiso de
+recurso y un gate del dueño: se quedan en la fase 3, ahora reducida a exactamente eso. **12 en código
+/ 10 desplegadas**, verificado contra `functions:list`.
+
+**144.5 — Archivos.** `docs/05` (censo) · `specs/CUTOVER-RUNBOOK.md` (fase 3.3 reducida a las dos que
+de verdad quedan).

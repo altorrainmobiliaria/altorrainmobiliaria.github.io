@@ -122,6 +122,7 @@
 | §141 | 🧪 **Las 5 puertas de escritura, probadas contra el emulador** antes de que el dueño las estrene (16 pruebas, con los RECHAZOS). Destapó **4 copias de `firebase-admin`** con registros de apps distintos. | 5143 |
 | §142 | 🗄️ **La BÓVEDA del expediente** (B5): no es subir archivos, es saber QUÉ FALTA. Nunca `getDownloadURL` (enlace público). Y `verify:data` **existía y no lo corría nadie** → meta-gate de cableado. | 5180 |
 | §143 | 🔬 **TODO-45 no era deuda del repo**: los 92 basename son buena escritura, y el arreglo vive en el KERNEL → movida a TODO-23. + la sonda de ids miraba media página (63 ids de módulos, sin cubrir). | 5251 |
+| §144 | 🚀 **La fase 3 del cutover no era indivisible**: 2 de las 4 Functions que faltaban NO son programadas y no comprometían nada. Desplegadas — el índice del catálogo ya se reconstruye solo. | 5296 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |
