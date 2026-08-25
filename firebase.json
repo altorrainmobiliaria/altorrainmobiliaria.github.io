@@ -1,6 +1,8 @@
 {
   "firestore": {
-    "rules": "portal/firebase/firestore.rules"
+    "rules": "portal/firebase/firestore.rules",
+    "_comment_indexes": "§134 — esta línea FALTABA, y su ausencia no daba error: `firebase deploy --only firestore:indexes` no encontraba nada que desplegar y respondía «Deploy complete!» igual. Resultado: los 14 índices del archivo NUNCA se desplegaron, y toda consulta que filtre por un campo y ordene por otro fallaba con FAILED_PRECONDITION. Lo destapó el dashboard del panel viejo, que se quedaba entero en «Cargando…» por una sola consulta.",
+    "indexes": "portal/firebase/firestore.indexes.json"
   },
   "storage": {
     "rules": "portal/firebase/storage.rules"
