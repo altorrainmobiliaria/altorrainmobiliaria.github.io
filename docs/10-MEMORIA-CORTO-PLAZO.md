@@ -27,13 +27,13 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-17 · 21** | **Ola 0 restos** (E2E "tras cache" · obra AEO) · **lote-dueño**: RNT, dirección COMERCIAL, abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ | gate=obra/cutover |
-| **TODO-CEREBRO** | 🧠 **Mantenimiento** (sin pausa desde 20-ago). **TODO-23** kernel: K-01/02/04/05/09 + **de §143**: que el #27 resuelva el nombre contra la CARPETA del nodo (hoy perdona 92 basename) · que los umbrales del #16 sean en COMMITS, como ya lo es el de auditoría. **TODO-24** ssotFact de paleta + cache EN EL CUTOVER · **TODO-28** #7 sello >90d · **TODO-32(b)** [[M-09]] a los hermanos. 🔬 auditoría #10 HECHA (§146): el BOOT al 99% **crónico** solo baja con shard del `10` o poda del router — no con una línea menos por commit. ⚠️ El banner de costo solo baja con commits de PRODUCTO. | 🔄 | §84·§143 |
+| **TODO-CEREBRO** | 🧠 **Mantenimiento** (sin pausa desde 20-ago). **TODO-23** kernel: K-01/02/04/05/09 + **de §143**: que el #27 resuelva el nombre contra la CARPETA del nodo (hoy perdona 92 basename) · que los umbrales del #16 sean en COMMITS, como ya lo es el de auditoría. **K-10 (§152)**: dos lecciones con el MISMO `L-NN` en nodos distintos no las caza nadie — pasó con L-46. **TODO-24** ssotFact de paleta + cache EN EL CUTOVER · **TODO-28** #7 sello >90d · **TODO-32(b)** [[M-09]] a los hermanos. 🔬 auditoría #10 HECHA (§146): el BOOT al 99% **crónico** solo baja con shard del `10` o poda del router — no con una línea menos por commit. ⚠️ El banner de costo solo baja con commits de PRODUCTO. | 🔄 | §84·§143 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-30 · 22** | 🗺️ **MapLibre COMPLETO (§55)** — falta solo la vista en foreground, la confirma Daniel ([[L-39]]) · 🏠 **CATÁLOGO con ficha (§97)**: datos reales = fases 3-4 del runbook, luego fichas al sitemap. | 🟢 | §55.9 · §102 |
 | **TODO-46** | 📅 **GESTIÓN v1 (ítem 13) — COMPLETA en código.** Expedientes, contratos, pagos, novedades (§112-§118) con sus 5 puertas desplegadas y PROBADAS contra el emulador (§140-§141) · **bóveda de documentos** construida, desplegada y ya **LEGIBLE**: quién abrió cada documento, con su índice en producción (§142, §148). ⏭️ Falta **aprobar el mockup** y **ESTRENARLA con datos reales** (runbook 1.5-1.6), que es lo único que puede verificar el render en vivo. | 🟢 | §148 |
 | **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR. Detalle → §129-§138.** Identity Platform ACTIVO · reglas fase 2 EN VIVO · resolver del código en las DOS puertas · `/seguridad` para inscribirlo · `cerrarMisSesiones` y `retirarSegundoFactorDe` verificadas. ⏭️ **Daniel**: inscribir su 2FA (clave manual; el QR se aplazó, §137.5) · verificar su correo. ⏭️ **Mío, DESPUÉS de que él se inscriba**: exigirlo en las Rules — antes NO, expulsa a todos · el QR verificable · **puerta única (mockup APROBADO)** ⚠️ con desviación obligada: el paso 2 del dibujo distingue cliente de equipo y eso ENUMERA cuentas de staff — se construye idéntico para todos. 🚫 anti-bot aplazado (§132.5). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL — PUBLICADO (§147).** 5 artículos con la norma .gov.co citada; «Guías de zona» estrenada con un HUB que enlaza las 13 landings. Mockup **APROBADO**. ⏭️ Falta: «Mercado» sigue vacía (sin dato verificado que citar) · RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
-| **TODO-49** | 🏷️ **OLA 2 — arrancada por lo que NO gatea el abogado** ([[L-40]]). **Pipeline de compraventa COMPLETO** (§151): dominio, puerta desplegada y verificada en producción, y pantalla. ⏭️ Siguiente sin gate: perfil de inquilino reutilizable (Fase 0, checklist + revisión humana) y panel de leads del aliado. 🚫 El rail de pago Wompi SÍ lo gatea el abogado (B2/B9). | 🔵 mío | §151 |
+| **TODO-49** | 🏷️ **OLA 2 — arrancada por lo que NO gatea el abogado** ([[L-40]]). **Pipeline de compraventa COMPLETO** (§151): dominio, puerta desplegada y verificada en producción, y pantalla. **Perfil de inquilino 1→N**: dominio y las 5 puertas DESPLEGADAS (§152). ⏭️ Siguiente sin gate: sus dos pantallas y el panel de leads del aliado. ⚠️ Estrenarlo depende de abrir «Crear cuenta» (pelota 2). 🚫 El rail de pago Wompi SÍ lo gatea el abogado (B2/B9). | 🔵 mío | §151 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -67,8 +67,7 @@
 
 
 
-> **▶ BERSAGLIO** (dueño → `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`; doctrina →
-> `meta-ads-diagnostico`). ⏭️ **VIVO**: 26 conversaciones sin leer (9+ días) · avisarle a **Kary**.
+> **▶ BERSAGLIO** — estado vivo en su nodo dueño: `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`.
 
 > **⏭️ PELOTAS DE DANIEL** (no las puedo cerrar yo):
 > **(1) 🔴 rotar la contraseña de aplicación de Gmail**: `onNewSolicitud` falla con `535-5.7.8` y es la MISMA Function que avisará los leads del portal nuevo. Lanzar sin rotarla = perderlos sin evidencia, igual que se perdieron los 16 del sitio viejo (exportados antes, `43`).
@@ -89,5 +88,4 @@
 > 3 hermanos (TODO-32b) · backlog B-01..B-05. 🛑 **NO RELANZAR** el comité R3, la auditoría B-03 ni los
 > 12 planificadores: está pagado y en la bóveda (`2026-07-28-*` · `2026-07-31-kit-b03-altos/`).
 
-> 📜 **Kit (⏸️ pausa · dueño → `43`)**: los ESTATUTOS MANDAN y se abren ANTES de auditar ([[LD-05]]) ·
-> docs 13 y 23 RETIRADOS · ⚠️ Word y manual **NUNCA a mano**: se GENERAN (§68).
+> 📜 **Kit (⏸️ pausa · dueño → `43`)**: reglas vivas en [[LD-05]] y §68.

@@ -5701,3 +5701,65 @@ runbook.
 `portal/src/scripts/gestion-ventas.ts` · `portal/src/pages/gestion.astro` ·
 `portal/firebase/firestore.rules` · `portal/firebase/firestore.indexes.json` ·
 `portal/src/lib/domain/documentos.ts` · `portal/design/mockups/ALTORRA Venta.dc.html`.
+
+## 152. ADR — El perfil de inquilino: el único sitio donde escribe alguien de fuera ⟦OPUS-5⟧ (2026-08-25)
+
+**152.0 — Qué resuelve.** Hoy un arrendatario entrega la misma carpeta de papeles en cada inmueble
+al que aspira, y en cada uno le vuelven a pedir lo mismo, un codeudor y un «estudio». El perfil
+reutilizable 1→N (Ola 2 · MEGA-PLAN item 3, Fase 0 del QuintoAndar-criollo) le deja subirlos UNA vez.
+Se eligió este item por lo mismo que el pipeline de venta: **no mueve un peso**, así que no lo gatea
+el abogado ([[L-40]]).
+
+**152.1 — ⚖️ TRES LÍMITES LEGALES QUE DAN FORMA AL MODELO, y ninguno es un detalle.**
+1. **No se consulta a NINGUNA central de riesgo.** Sin contrato con DataCrédito o TransUnion,
+   consultar a una persona no es una opción cara: es ilegal (gate B-04). Por eso este perfil **no
+   tiene puntaje crediticio** y no lo tendrá hasta que ese contrato exista. Lo que hay es
+   verificación DOCUMENTAL con revisión humana, que es otra cosa — y se dice como es.
+2. **Al aspirante no se le cobra nada** (art. 16 Ley 820 + la lectura dominante sobre el mal llamado
+   «estudio de documentos», que §147 explica en público). El ingreso vive del lado del propietario.
+   Si algún día alguien quiere cobrar aquí, tendrá que cambiar esa línea a propósito.
+3. **Son SUS datos, no los de un tercero** — al revés que la bóveda del expediente (§142). El
+   consentimiento es directo, pero la Ley 1581 sigue pidiendo finalidad y caducidad: el perfil
+   **caduca a los 180 días** y vuelve a `borrador`, a manos de su dueño. No se borra ni se queda
+   «verificado» mintiendo.
+
+**152.2 — La decisión de seguridad, y es una sola.** Este es el **único sitio del sistema donde
+escribe alguien de FUERA del equipo**. Lo que lo hace seguro no es el rol —el titular no tiene
+ninguno— sino que **el `uid` sale del token y jamás del cuerpo de la llamada**. Hay prueba de ello:
+mandar `uid: 'ana-uid'` desde la sesión de otra persona no escribe en el perfil de Ana, escribe en el
+suyo. Lo mismo en Storage: la carpeta lleva el `uid` DENTRO, y por eso la ruta la acuña el servidor —
+si la eligiera el navegador, «cada uno solo bajo la suya» no significaría nada.
+
+**152.3 — Y el revisor no puede tocar lo que revisa.** `revisarPerfil` solo cambia el estado y, si
+devuelve, escribe qué falta. No edita datos ni soportes. *Un revisor que puede tocar lo que revisa no
+es un revisor.* Simétricamente, en revisión el titular no puede editar: cambiar los datos mientras
+alguien los mira convierte la revisión en una foto de algo que ya no existe.
+
+**152.4 — Dos decisiones de producto que son de fondo.** La **referencia de arriendo anterior no es
+obligatoria**: quien arrienda por primera vez no puede tenerla, y exigírsela sería cerrarle la puerta
+por ser joven. Y **«con observaciones» no es un rechazo**: es la vuelta a la persona con lo que
+falta, y devolver EXIGE escribir cuáles. *Un sistema que solo sabe decir «no» obliga a empezar de
+cero por una foto borrosa.*
+
+**152.5 — Dos bugs que cazaron las pruebas, no una revisión.**
+· **`{...actual, observaciones: undefined}` revienta la escritura entera.** En JavaScript «undefined»
+y «no está» se leen igual; para Firestore `undefined` es un error de validación. La línea parecía
+limpiar el campo y tumbaba el `set()`. Con un `set()` completo, lo que borra es **omitir la clave**.
+· 🔴 **Las pruebas del emulador no podían correr en paralelo, y llevaba latente desde siempre.**
+Comparten una instancia, una app por defecto (las Functions llaman a `getFirestore()` a secas) y por
+tanto una base de datos; varios archivos limpian `config` en su `beforeEach`, que es donde vive el
+contador de códigos. Con dos archivos la carrera no se daba. Apareció con el **tercero**, y **acusó a
+una prueba de contadores que llevaba semanas bien**. *Un fallo que culpa a un inocente es el peor
+tipo de fallo*, porque manda a arreglar lo que no está roto. `fileParallelism: false`, con el porqué
+escrito en el config.
+
+**152.6 — Verificado, y lo que falta.** 36 pruebas de dominio + **19 contra el emulador** (141 en
+total) y las cinco Functions confirmadas en producción con `functions:list` — 30 desplegadas entre
+los dos codebases. **Lo que NO está**: las dos pantallas (la del titular y la de revisión), y
+estrenarlo depende de que se abra «Crear cuenta» en `/ingresar`: sin cuentas no hay titular que suba
+nada. Es la pelota 2 del `10`, y se dice en vez de construir un formulario que nadie puede usar.
+
+**152.7 — Archivos.** `portal/src/lib/domain/perfil-inquilino.ts` (+ `.test.ts`) ·
+`portal/functions/src/perfil-escritura.ts` (+ `firebase/tests/perfil-escritura.test.ts`) ·
+`portal/firebase/firestore.rules` · `portal/firebase/storage.rules` ·
+`portal/firebase/tests/rules.test.ts` · `portal/vitest.rules.config.ts`.
