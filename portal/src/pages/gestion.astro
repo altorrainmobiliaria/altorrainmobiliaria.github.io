@@ -222,6 +222,15 @@ const init = DATA.admin;
 
     <!-- ===================== MAIN ===================== -->
     <main class="gx-main" id="main">
+     <!-- Aviso de sesión a punto de cerrarse por inactividad (§130). Aparece 1 minuto antes, igual
+          que en el panel viejo: cerrar sin avisar hace perder lo que se estuviera escribiendo.
+          `role="status"` y no `alert`: es información, no una emergencia, y `alert` interrumpe al
+          lector de pantalla a mitad de frase. -->
+     <div class="gx-sesion" id="gx-aviso-sesion" role="status" hidden>
+       <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg>
+       <span>Tu sesión se cerrará en un minuto por inactividad. Mueve el ratón o escribe algo para seguir.</span>
+     </div>
+
      <div id="gx-vista-panel">
       <header class="gx-head">
         <div>
@@ -1062,6 +1071,39 @@ const init = DATA.admin;
      se aplicaría a TODO el sitio. `is-mal` la pone el script, por eso vive aquí y no en base. */
   .gx-root .alt-input.is-mal { border-color: var(--alt-gold); }
   .gx-err { font-size: 12px; color: var(--alt-link); margin: 5px 0 0; font-weight: var(--alt-fw-medium); }
+
+  /* ── Aviso de sesión por inactividad (§130) ────────────────────────────────────────────────
+     Navy sobre franja clara con filo dorado: la paleta no tiene rojo, y de todas formas esto no es
+     una alarma — es un aviso a tiempo. */
+  .gx-sesion {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; gap: 10px;
+    margin: 0 0 var(--alt-space-4);
+    padding: 12px 16px; border-radius: 12px;
+    background: var(--alt-surface-alt); border-left: 3px solid var(--alt-gold);
+    font-size: 13.5px; color: var(--alt-ink);
+  }
+  .gx-sesion svg { flex: 0 0 auto; color: var(--alt-link-lg); }
+  .gx-sesion[hidden] { display: none; }
+
+  /* ── El panel según el ROL (§130) ──────────────────────────────────────────────────────────
+     Quien entra con acceso de SOLO CONSULTA no ve los controles que escriben. Antes los veía todos
+     y la base se los rechazaba, que es la peor combinación: parece roto en vez de parecer vedado.
+
+     Se cuelga de `body[data-puede-editar]`, que pone el script al abrir el panel, y NO de una clase
+     por elemento. Así una pantalla nueva hereda la regla sin que nadie se acuerde de añadirla — que
+     es exactamente la clase de olvido que produce estos huecos.
+
+     ⚠️ SIN `:global()`, y no por gusto: este bloque ya es `<style is:global>`, y ahí Astro NO procesa
+     esa función — la deja escrita tal cual en el CSS servido. El navegador no sabe leerla y descarta
+     la regla ENTERA, en silencio. Lo escribí con `:global()` por costumbre, compiló sin una queja,
+     los cuatro gates pasaron, y solo apareció al mirar el CSS de verdad (§130, familia de §117).
+
+     ⚠️ Esto decide qué se DIBUJA. Quien impide de verdad la escritura es la Security Rule
+     (`esEditorOMas()`), que ya la denegaba y la sigue denegando. Ocultar no es proteger. */
+  body[data-puede-editar='false'] .gx-form,
+  body[data-puede-editar='false'] .gx-new,
+  body[data-puede-editar='false'] #gx-vista-alta { display: none; }
 </style>
 
 <script>
@@ -1073,7 +1115,7 @@ const init = DATA.admin;
    * sin esperar devuelve `null` en la primera pintura aunque la persona esté dentro, y el panel la
    * echaría al login cada vez que recarga — el error clásico de esta API.
    */
-  import { estadoAcceso, salir } from '../scripts/auth';
+  import { estadoAcceso, salir, type EstadoAcceso } from '../scripts/auth';
   import { montarExportLeads, montarLeads } from '../scripts/gestion-leads';
   import { montarAlta } from '../scripts/gestion-alta-ui';
 
@@ -1087,6 +1129,79 @@ const init = DATA.admin;
 
   document.getElementById('gx-salir')?.addEventListener('click', () => void salir());
 
+  /* ── El panel según el ROL (§130) ────────────────────────────────────────────────────────────
+   * Antes, este panel solo preguntaba «¿eres del equipo?». Quien tuviera acceso de SOLO CONSULTA
+   * veía la misma pantalla que el dueño: los formularios de alta, los botones de guardar, todo. La
+   * base se lo habría denegado —esa parte sí estaba bien— pero la interfaz se lo ofrecía igual, y una
+   * interfaz que ofrece lo que la base va a rechazar enseña a la gente que el sistema está roto.
+   *
+   * Se marca en el `<body>` con `data-rol` en vez de recorrer nodos: así el CSS oculta lo que toque
+   * en la misma pintura, sin parpadeo, y una pantalla nueva hereda la regla sin acordarse de nada.
+   */
+  const NOMBRE_ROL: Record<string, string> = {
+    super_admin: 'Administrador',
+    editor: 'Editor',
+    viewer: 'Solo consulta',
+  };
+
+  function aplicarRol(r: Extract<EstadoAcceso, { estado: 'staff' }>): void {
+    document.body.dataset.rol = r.rol;
+    document.body.dataset.puedeEditar = String(r.puedeEditar);
+
+    // Se reutilizan los huecos que ya existían en la barra lateral —traían el nombre de DEMO— en vez
+    // de añadir otros: dos sitios distintos diciendo quién eres acaban contradiciéndose.
+    const rolEl = document.getElementById('gx-user-role');
+    if (rolEl) rolEl.textContent = NOMBRE_ROL[r.rol] || r.rol;
+    const nombreEl = document.getElementById('gx-user');
+    const avatarEl = document.getElementById('gx-avatar');
+    if (r.email) {
+      const usuario = r.email.split('@')[0];
+      if (nombreEl) { nombreEl.textContent = usuario; nombreEl.title = r.email; }
+      if (avatarEl) avatarEl.textContent = usuario.charAt(0).toUpperCase();
+    }
+  }
+
+  /* ── Corte por inactividad (§130) ────────────────────────────────────────────────────────────
+   * El panel VIEJO cerraba la sesión a los 30 minutos sin actividad y avisaba un minuto antes. Al
+   * mudarnos al portal eso se perdió por el camino y nadie lo notó — es de las funciones que solo se
+   * echan de menos el día que hacen falta. Aquí abre contratos y cédulas escaneadas: un panel
+   * abierto en una pantalla que alguien dejó sola es la fuga más barata que existe.
+   */
+  const INACTIVIDAD_MS = 30 * 60 * 1000;
+  const AVISO_MS = 60 * 1000;
+  let tempCierre: number | undefined;
+  let tempAviso: number | undefined;
+
+  function reiniciarInactividad(): void {
+    window.clearTimeout(tempCierre);
+    window.clearTimeout(tempAviso);
+    document.getElementById('gx-aviso-sesion')?.setAttribute('hidden', '');
+    tempAviso = window.setTimeout(() => {
+      document.getElementById('gx-aviso-sesion')?.removeAttribute('hidden');
+    }, INACTIVIDAD_MS - AVISO_MS);
+    tempCierre = window.setTimeout(() => void salir(), INACTIVIDAD_MS);
+  }
+
+  function vigilarInactividad(): void {
+    // `passive` porque ninguno de estos necesita cancelar el evento, y sin él el navegador no puede
+    // adelantar el desplazamiento — se nota en móvil.
+    for (const ev of ['pointerdown', 'keydown', 'scroll', 'touchstart'] as const) {
+      document.addEventListener(ev, reiniciarInactividad, { passive: true });
+    }
+    reiniciarInactividad();
+  }
+
+  /** Todo lo que hay que encender cuando ya se sabe que quien mira es del equipo. */
+  function abrirPanel(r: Extract<EstadoAcceso, { estado: 'staff' }>): void {
+    aplicarRol(r);
+    mostrar(panel);
+    vigilarInactividad();
+    // Los datos REALES solo se piden cuando ya se sabe que quien mira es del equipo: pedir algo que
+    // las Rules van a denegar solo ensucia la consola y confunde al siguiente que la mire.
+    void montarLeads();
+    if (r.puedeEditar) montarAlta();
+  }
+
   /* Volver a comprobar FORZANDO el refresco del token. Los claims viajan dentro del token y este se
      renueva cada hora, así que sin esto a quien le acaban de dar permiso le tocaba esperar o cerrar
      sesión — y lo más probable es que pensara que algo estaba roto. */
@@ -1097,9 +1212,7 @@ const init = DATA.admin;
     reintentar.textContent = 'Comprobando…';
     const r = await estadoAcceso(true).catch(() => null);
     if (r?.estado === 'staff') {
-      mostrar(panel);
-      void montarLeads();
-      montarAlta();
+      abrirPanel(r);
       return;
     }
     reintentar.disabled = false;
@@ -1120,11 +1233,7 @@ const init = DATA.admin;
         mostrar(denegado);
         return;
       }
-      mostrar(panel);
-      // Los datos REALES solo se piden cuando ya se sabe que quien mira es del equipo: pedir algo que
-      // las Rules van a denegar solo ensucia la consola y confunde al siguiente que la mire.
-      void montarLeads();
-      montarAlta();
+      abrirPanel(r);
     })
     .catch(() => {
       // Si Auth no carga (red caída, bloqueador), NO se abre el panel: fail-closed. Y se dice por qué,

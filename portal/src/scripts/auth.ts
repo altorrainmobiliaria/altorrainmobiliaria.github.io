@@ -41,11 +41,32 @@ export function cargarAuth(): Promise<AuthCargado> {
   return promesa;
 }
 
+/**
+ * Los tres roles del equipo. Viven en el claim `rol`, que pone `claimsStaffSync` leyendo
+ * `usuarios/{uid}` — el mismo que consultan las Rules (`esSuperAdmin()`, `esEditorOMas()`).
+ */
+export type Rol = 'super_admin' | 'editor' | 'viewer';
+
 /** Estado de acceso de quien mira la página. */
 export type EstadoAcceso =
   | { estado: 'anonimo' }
   | { estado: 'sin-permiso'; email: string | null }
-  | { estado: 'staff'; email: string | null };
+  | { estado: 'staff'; email: string | null; rol: Rol; puedeEditar: boolean; esDueno: boolean };
+
+/**
+ * Traduce el claim a los dos permisos que la interfaz necesita de verdad. Se derivan AQUÍ, en un
+ * sitio único, porque el error clásico es que cada pantalla invente su propia comparación de strings
+ * y una se olvide de un rol.
+ *
+ * ⚠️ Esto decide qué se DIBUJA, no qué se puede hacer: quien manda es la Rule. La interfaz que
+ * ofrece un botón que la base va a rechazar no es más segura ni menos — es simplemente mentirosa.
+ */
+function permisosDe(rol: Rol) {
+  return {
+    puedeEditar: rol === 'super_admin' || rol === 'editor',
+    esDueno: rol === 'super_admin',
+  };
+}
 
 /**
  * Resuelve el estado de acceso una vez, esperando a que Firebase restaure la sesión.
@@ -77,10 +98,15 @@ export async function estadoAcceso(forzarRefresco = false): Promise<EstadoAcceso
   // pensaría que falló. Por eso el estado de «sin permiso» ofrece volver a comprobar, y esa comprobación
   // sí fuerza el refresco: es el único momento en que la llamada extra se gana su coste.
   const token = await usuario.getIdTokenResult(forzarRefresco);
-  const esStaff = token.claims.admin === true;
-  return esStaff
-    ? { estado: 'staff', email: usuario.email }
-    : { estado: 'sin-permiso', email: usuario.email };
+  if (token.claims.admin !== true) return { estado: 'sin-permiso', email: usuario.email };
+
+  // El rol viaja en el mismo token que el permiso. Si falta —claim viejo, sincronización a medias—
+  // se asume el MÍNIMO (`viewer`), nunca el máximo: un claim ausente no es una promoción. (§130)
+  const crudo = token.claims.rol;
+  const rol: Rol =
+    crudo === 'super_admin' || crudo === 'editor' || crudo === 'viewer' ? crudo : 'viewer';
+
+  return { estado: 'staff', email: usuario.email, rol, ...permisosDe(rol) };
 }
 
 /** Cierra la sesión y devuelve a la home. */

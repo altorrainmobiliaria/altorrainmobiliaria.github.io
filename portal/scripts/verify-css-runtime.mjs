@@ -119,5 +119,38 @@ if (hallazgos.length) {
   process.exit(1);
 }
 
+// ── Sonda 2: `:global()` dentro de un bloque que YA es global (§130) ────────────────────────────
+//
+// Por qué existe: `:global()` es una función de COMPILACIÓN, no un selector que el navegador
+// entienda. Astro la resuelve en los `<style>` acotados… y la IGNORA en los `<style is:global>`,
+// donde la deja escrita tal cual. El resultado es un selector inválido, y un selector inválido no
+// falla: el navegador **descarta la regla entera, en silencio**.
+//
+// Lo pagó §130: una regla que ocultaba los formularios de escritura a quien solo tiene permiso de
+// consulta quedó muerta. Compiló limpio, y los cuatro gates —este incluido— dijeron ✅. La sonda de
+// arriba mira lo contrario (CSS acotado que no alcanza al JS); esta mira el exceso de globalidad.
+const redundantes = [];
+for (const f of archivos(join(SRC, 'pages'), '.astro').concat(archivos(join(SRC, 'components'), '.astro'))) {
+  const texto = readFileSync(f, 'utf8');
+  // Recorre cada bloque <style…> y solo acusa a los que se declaran globales.
+  for (const m of texto.matchAll(/<style([^>]*)>([\s\S]*?)<\/style>/g)) {
+    if (!/\bis:global\b/.test(m[1])) continue;
+    // Los COMENTARIOS se quitan antes de mirar: esta regla se explica a sí misma escribiendo
+    // `:global()` en prosa, y un gate que se acusa por su propia documentación es un gate que se apaga.
+    const css = m[2].replace(/\/\*[\s\S]*?\*\//g, ' ');
+    const dentro = [...css.matchAll(/:global\s*\(/g)];
+    if (dentro.length) redundantes.push({ archivo: relative(RAIZ, f), veces: dentro.length });
+  }
+}
+
+if (redundantes.length) {
+  console.error('❌ verify:css — `:global()` dentro de un `<style is:global>`:\n');
+  for (const r of redundantes) console.error(`   ${r.archivo}  →  ${r.veces} vez/veces`);
+  console.error('\n   Ahí Astro NO la resuelve: sale literal al CSS, el navegador no la entiende y');
+  console.error('   DESCARTA LA REGLA ENTERA sin avisar. El bloque ya es global — quita el `:global()`.');
+  process.exit(1);
+}
+
 const n = [...scripts.values()].reduce((a, s) => a + s.size, 0);
 console.log(`✅ verify:css — ${scripts.size} script(s) y ${n} clase(s) de runtime: todas alcanzables.`);
+console.log('✅ verify:css — sin `:global()` redundante en bloques ya globales.');
