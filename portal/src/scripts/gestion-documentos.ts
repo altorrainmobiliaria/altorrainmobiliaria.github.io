@@ -160,7 +160,7 @@ export async function montarDocumentos(): Promise<void> {
 
 function filaCaducidad(c: Caducidad): HTMLElement {
   const f = document.createElement('div');
-  f.className = 'gx-tr gx-doc-fila gx-doc-fila--aviso';
+  f.className = 'gx-tr gx-doc-fila--aviso';
   const q = document.createElement('div');
   q.className = 'gx-cli gx-cli--apilada';
   q.appendChild(celda(c.documento.expedienteId, 'gx-cod'));
@@ -173,7 +173,7 @@ function filaCaducidad(c: Caducidad): HTMLElement {
 
 function filaHueco(e: Expediente, falta: TipoDocumento[]): HTMLElement {
   const f = document.createElement('div');
-  f.className = 'gx-tr gx-doc-fila';
+  f.className = 'gx-tr';
   const q = document.createElement('div');
   q.className = 'gx-cli gx-cli--apilada';
   q.appendChild(celda(e.codigoLegacy || e.id, 'gx-cod'));
@@ -280,6 +280,67 @@ export async function retirarDocumento(id: string, motivo: string, avisar: (txt:
   const r = await llamar('retirarDocumento', { id, motivo });
   avisar(r.ok ? 'Retirado.' : r.mensaje);
   return r.ok;
+}
+
+/* ─── El formulario ──────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Cablea el formulario de subida.
+ *
+ * La casilla de autorización NO es decorativa: es el consentimiento del art. 9 de la Ley 1581 sobre
+ * datos de un TERCERO (la cédula del arrendatario no es nuestra). Sin ella no se sube, y se dice por
+ * qué — un formulario que bloquea sin explicar se lee como un error del sistema.
+ */
+export function montarFormularioDocumento(): void {
+  const form = $<HTMLFormElement>('gx-doc-form');
+  if (!form) return;
+  const msg = $('gx-doc-msg');
+  const avisar = (t: string) => {
+    if (msg) msg.textContent = t;
+  };
+  const val = (id: string) => ($(id) as HTMLInputElement | null)?.value.trim() ?? '';
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const archivo = ($('d-archivo') as HTMLInputElement | null)?.files?.[0];
+    if (!archivo) {
+      avisar('Elige el archivo que quieres guardar.');
+      return;
+    }
+    if (!($('d-autorizacion') as HTMLInputElement | null)?.checked) {
+      avisar('Marca la autorización: son datos de otra persona, y la ley pide decir que se cuenta con su permiso.');
+      return;
+    }
+
+    const boton = $<HTMLButtonElement>('gx-doc-guardar');
+    if (boton) {
+      boton.disabled = true;
+      boton.textContent = 'Guardando…';
+    }
+    try {
+      const ok = await subirDocumento(
+        archivo,
+        {
+          expedienteId: val('d-expediente'),
+          tipo: (($('d-tipo') as HTMLSelectElement | null)?.value ?? 'otro') as TipoDocumento,
+          finalidad: val('d-finalidad'),
+          ...(val('d-vence') ? { vence: val('d-vence') } : {}),
+        },
+        avisar,
+      );
+      if (ok) {
+        form.reset();
+        // Se recarga la lista: si el documento cerró un hueco, ese hueco debe desaparecer AHORA.
+        // Dejar la pantalla vieja después de escribir es lo que hace dudar de si se guardó.
+        await montarDocumentos();
+      }
+    } finally {
+      if (boton) {
+        boton.disabled = false;
+        boton.textContent = 'Guardar en la bóveda';
+      }
+    }
+  });
 }
 
 /** Para las pruebas y para la vista por expediente: lo último cargado, sin volver a consultar. */

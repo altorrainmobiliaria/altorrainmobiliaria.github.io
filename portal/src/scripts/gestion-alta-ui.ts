@@ -22,6 +22,7 @@ import { TOPE_IMAGENES } from '../lib/media-subida';
 import { urlMedia } from '../lib/media';
 import { montarExportInmuebles, montarInmuebles } from './gestion-inmuebles';
 import { montarAltaContrato, montarContratos, montarPagos, montarRegistroPago } from './gestion-contratos';
+import { montarDocumentos, montarFormularioDocumento } from './gestion-documentos';
 import { montarExpedientes, montarFormularios, montarNovedades } from './gestion-novedades';
 import type { Propiedad } from '../lib/domain/propiedades';
 
@@ -279,12 +280,14 @@ export function montarAlta(): void {
 
   /** Solo una vista visible a la vez. `null` = volver al panel. */
   const vistaNovedades = $('gx-vista-novedades');
-  const ver = (cual: 'alta' | 'inmuebles' | 'contratos' | 'novedades' | null) => {
+  const vistaDocumentos = $('gx-vista-documentos');
+  const ver = (cual: 'alta' | 'inmuebles' | 'contratos' | 'novedades' | 'documentos' | null) => {
     vistaPanel.hidden = cual !== null;
     vistaAlta.hidden = cual !== 'alta';
     if (vistaInmuebles) vistaInmuebles.hidden = cual !== 'inmuebles';
     if (vistaContratos) vistaContratos.hidden = cual !== 'contratos';
     if (vistaNovedades) vistaNovedades.hidden = cual !== 'novedades';
+    if (vistaDocumentos) vistaDocumentos.hidden = cual !== 'documentos';
     if (cual === 'alta') {
       ajustarPorOperacion();
       pintarAviso();
@@ -344,6 +347,10 @@ export function montarAlta(): void {
      * mapa y el enrutador salía por `if (!destino) return` — o sea, pulsarla no hacía NADA. Ahora
      * lleva al Resumen y deja la tabla a la vista, que es lo que la persona esperaba.
      */
+    documentos: () => {
+      ver('documentos');
+      void montarDocumentos();
+    },
     leads: () => {
       ver(null);
       document.getElementById('gx-table-title')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -388,7 +395,9 @@ export function montarAlta(): void {
   $('gx-inm-volver')?.addEventListener('click', () => ver(null));
   $('gx-ct-volver')?.addEventListener('click', () => ver(null));
   $('gx-nv-volver')?.addEventListener('click', () => ver(null));
+  $('gx-doc-volver')?.addEventListener('click', () => ver(null));
   montarAltaContrato();
+  montarFormularioDocumento();
   montarRegistroPago();
   montarFormularios();
   montarExportInmuebles();

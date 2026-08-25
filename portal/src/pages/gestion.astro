@@ -13,6 +13,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { ZONAS } from '../lib/content/zonas';
 import { TIPOS_INMUEBLE } from '../lib/domain/shared';
+import { NOMBRE_DOCUMENTO, TIPOS_DOCUMENTO } from '../lib/domain/documentos';
 
 const nav = [
   { id: 'resumen', label: 'Resumen', active: true, icon: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>' },
@@ -32,13 +33,15 @@ const nav = [
    * pasa. Cuando la sección exista, se quita el `pronto` y se le da su destino.
    */
   { id: 'visitas', label: 'Visitas', pronto: true, icon: '<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>' },
-  { id: 'documentos', label: 'Documentos', pronto: true, icon: '<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M18 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8l5 5v11a2 2 0 0 1-2 2z"/><path d="M8 13h8M8 17h5"/>' },
+  { id: 'documentos', label: 'Documentos', icon: '<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M18 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8l5 5v11a2 2 0 0 1-2 2z"/><path d="M8 13h8M8 17h5"/>' },
 ];
+
+/** Los tipos de documento, para el desplegable. La lista vive en el DOMINIO, no aquí. */
+const TIPOS_DOC = TIPOS_DOCUMENTO.map((id) => ({ id, nombre: NOMBRE_DOCUMENTO[id] }));
 
 /** Lo que se le dice a alguien que pulsa una sección que aún no existe. Nunca el silencio. */
 const NOTA_PRONTO: Record<string, string> = {
   visitas: 'Las visitas se agendan hoy desde la ficha de cada inmueble y desde WhatsApp. La agenda del panel llega con el cutover.',
-  documentos: 'Los documentos del expediente (contratos escaneados, soportes) se guardan en la bóveda privada, y la pantalla para verlos aquí todavía no está.',
 };
 
 // Iconos por KPI (línea navy en tile mist) — mismo lenguaje visual del mockup, uno por métrica.
@@ -608,6 +611,69 @@ const init = DATA.admin;
           obliga a hacer scroll en una caja flotante.
           NO hay lenguaje visual nuevo: los campos son las clases `alt-*` que ya usa `/publicar` y las
           tarjetas los `gx-panel` del propio panel. Lo único nuevo es cómo se agrupan.  -->
+     <!-- ══ DOCUMENTOS ══════════════════════════════════════════════════════════════════════
+          La BÓVEDA del expediente (gate B5, §142; mockup `ALTORRA Documentos`).
+
+          ⚠️ La pantalla NO empieza por la lista de archivos: empieza por lo que FALTA y lo que
+          CADUCA. Un cajón de PDFs no cambia nada —el dueño ya tiene ese cajón en WhatsApp—; lo que
+          hoy no puede contestar sin abrir carpetas es «¿qué me falta?». Esa cuenta la hace
+          `lib/domain/documentos` con la LISTA CANÓNICA de lo que exige cada clase de expediente. -->
+     <div id="gx-vista-documentos" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-doc-volver">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Documentos</h1>
+          <p class="gx-sub">Lo primero no son los archivos: es lo que falta y lo que caduca.</p>
+        </div>
+      </header>
+
+      <div class="gx-kpi-set">
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-doc-kpi-faltan">—</div><div class="gx-kpi__lbl">expedientes con algo pendiente</div></div>
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-doc-kpi-vencen">—</div><div class="gx-kpi__lbl">documentos vencidos o por vencer</div></div>
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-doc-kpi-total">—</div><div class="gx-kpi__lbl">documentos guardados</div></div>
+      </div>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Qué falta y qué caduca</h2></div>
+        <p class="gx-psub gx-pad-x">Sale de la lista canónica por tipo de expediente, no de una nota mental: administración y arriendo piden cosas distintas.</p>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--doc">
+            <div class="gx-tr gx-tr--head"><span>Expediente</span><span>Qué pasa</span><span>Vence</span></div>
+            <div id="gx-doc-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-doc-form" novalidate>
+        <h2 class="gx-form__h">Subir un documento</h2>
+        <p class="gx-psub">La finalidad y la caducidad se escriben AL SUBIR. Un archivo sin fecha de retiro se queda para siempre, y guardar de más es lo que la ley llama tratar sin necesidad.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="d-expediente">Expediente</label><input class="alt-input" id="d-expediente" type="text" placeholder="EXP-202608-0001" /></div>
+          <div>
+            <label class="alt-label" for="d-tipo">Qué es</label>
+            <select class="alt-select" id="d-tipo">
+              {TIPOS_DOC.map((t) => <option value={t.id}>{t.nombre}</option>)}
+            </select>
+          </div>
+        </div>
+        <div class="gx-fgrid">
+          <div class="gx-ancho"><label class="alt-label" for="d-finalidad">Para qué se guarda</label><input class="alt-input" id="d-finalidad" type="text" placeholder="Administrar este inmueble" /></div>
+        </div>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="d-vence">¿Caduca? (opcional)</label><input class="alt-input" id="d-vence" type="date" /></div>
+          <div><label class="alt-label" for="d-archivo">Archivo</label><input class="alt-input" id="d-archivo" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" /></div>
+        </div>
+        <label class="gx-doc-check">
+          <input type="checkbox" id="d-autorizacion" />
+          <span>Este documento contiene datos personales de un tercero y cuento con su autorización para tratarlos con la finalidad escrita arriba. (Ley 1581 · art. 9)</span>
+        </label>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-doc-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-doc-guardar">Guardar en la bóveda</button>
+        </div>
+      </form>
+     </div>
+
      <div id="gx-vista-alta" hidden>
       <header class="gx-head">
         <div>
@@ -943,6 +1009,16 @@ const init = DATA.admin;
 
 <style is:global>
   .gx-table__inner--vf .gx-tr { grid-template-columns: 2.2fr 3fr 1fr; align-items: center; }
+
+  /* BÓVEDA (§142). Estas reglas se escriben A LA VEZ que el JavaScript que crea las filas: una clase
+     sin regla no falla, solo despinta — y eso es exactamente lo que costó §117 y §133. */
+  .gx-table__inner--doc .gx-tr { grid-template-columns: 1.8fr 3fr 1fr; align-items: center; }
+  .gx-doc-fila--aviso { background: var(--alt-mist); border-left: 3px solid var(--alt-gold); }
+  /* Vencido = navy con más peso + el dato al lado. NO rojo: la paleta no lo tiene, y el color por sí
+     solo tampoco sirve a quien no lo distingue (el texto ya dice «venció hace 5 meses»). */
+  .gx-doc-vencido { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
+  .gx-doc-check { display: flex; gap: 11px; align-items: flex-start; margin-top: 4px; padding: 13px 15px; border-radius: var(--alt-r-sm); background: var(--alt-mist); border-left: 3px solid var(--alt-gold); font-size: 13px; line-height: 1.65; color: var(--alt-text-soft); }
+  .gx-doc-check input { margin-top: 2px; flex: none; }
   .gx-btn-fila { padding: 7px 15px; font-size: 13px; }
   .gx-pad-x { padding-inline: 20px; }
 
