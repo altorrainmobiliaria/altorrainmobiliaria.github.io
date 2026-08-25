@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  body { margin:0; background:#E6EDF2; font-family:'Hanken Grotesk',sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:#062743; text-decoration:none; }
+  a:hover { color:#D4AF37; }
+</style>
+</helmet>
+
+<!--
+  ══════════════════════════════════════════════════════════════════
+  ALTORRA · JOURNAL — el motor de autoridad (TODO-48 · VISIÓN §5)
+
+  LA IDEA CENTRAL, en una frase: **el Journal no es un blog, es la prueba pública de que sabemos de
+  qué hablamos**. Un blog inmobiliario típico publica "5 consejos para comprar casa" y no lo lee
+  nadie, porque no dice nada que no diga otro. Lo que ALTORRA sí puede publicar y casi nadie más: lo
+  que la ley colombiana EXIGE, con el artículo citado y el enlace a la fuente .gov.co. Eso es el
+  eslogan —Seguridad, Legalidad y Confianza— convertido en una página que se puede leer sin llamar a
+  nadie. Y es lo que un motor de respuestas (AEO) puede citar: una afirmación con su norma al lado.
+
+  CINCO DECISIONES QUE NO SON DE DISEÑO, SINO DE FONDO:
+
+  1. ⚖️ LA NORMA Y LA INTERPRETACIÓN VAN SEPARADAS, SIEMPRE. La investigación legal (R3) separa "qué
+     dice el texto" de "qué se entiende en la práctica" — y esa separación tiene que SOBREVIVIR hasta
+     la página pública. Decir "es ilegal cobrar el estudio de documentos" como si fuera texto de ley
+     es falso: el art. 16 prohíbe depósitos y cauciones; lo del estudio es lectura dominante, no
+     literalidad. Por eso el artículo tiene dos bloques con forma distinta: **lo que dice la ley**
+     (barra dorada, con el artículo) y **en la práctica** (borde punteado, marcado como
+     interpretación). Si se ven iguales, el lector no puede distinguirlos — y nosotros respondemos
+     igual por los dos.
+
+  2. 🔗 CADA ARTÍCULO TERMINA EN SUS FUENTES. Enlaces reales a funcionpublica.gov.co y compañía. No
+     es adorno académico: es la diferencia entre "confíe en nosotros" y "compruébelo usted". Un
+     artículo sin fuentes no se publica.
+
+  3. ⏱️ NI FECHAS NI TIEMPOS DE LECTURA INVENTADOS. En la home vivieron cuatro artículos con fecha y
+     «8 min de lectura» que no existían (§138.3). Aquí la fecha es la real y el tiempo de lectura se
+     CALCULA de las palabras del texto. Un dato de apariencia editorial que nadie verificó es
+     exactamente lo que gastó la confianza la vez pasada.
+
+  4. 🗂️ CUATRO CATEGORÍAS, NI UNA MÁS, Y SIN ETIQUETAS LIBRES. Ley y contratos · Mercado · Guías de
+     zona · Corta estancia. Las etiquetas libres paren páginas casi vacías —contenido delgado— que
+     nadie mantiene y que a Google no le gustan. Cuatro cajones, y los que estén vacíos lo dicen.
+
+  5. 📣 EL CIERRE NO ES «CONTÁCTENOS», ES LA SIGUIENTE PREGUNTA. Cada artículo cierra ofreciendo lo
+     que la persona necesita DESPUÉS de leerlo (entregar su inmueble, ver los arriendos administrados,
+     escribir por WhatsApp), no un formulario genérico. El artículo resuelve una duda; el cierre
+     resuelve el paso siguiente.
+
+  PALETA: navy #062743 · dorado #D4AF37 · plata #BFC3C9 · fondo blanco / lienzo #E6EDF2.
+  SIN negro, SIN verde, SIN rojo. Tipografías: Cormorant Garamond (títulos) + Hanken Grotesk (texto).
+  El lenguaje de tarjeta —destacado grande + filas horizontales— es el MISMO de la banda del Journal
+  de la home, que ya está aprobada (mockup Portal L1323-1345). Aquí se continúa, no se reinventa.
+  ══════════════════════════════════════════════════════════════════
+-->
+
+<section style="display:flex;flex-direction:column;gap:14px;padding:64px 64px 8px">
+  <h1 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:600;color:#062743;letter-spacing:-0.015em">Journal — la autoridad, escrita</h1>
+  <p style="margin:0;max-width:920px;font-size:15.5px;line-height:1.75;color:#5B6B7A">
+    Cuatro pantallas. La primera es el índice: un destacado y la lista. La segunda es el artículo por
+    dentro, con la separación entre <strong style="color:#062743;font-weight:600">lo que dice la ley</strong> y
+    <strong style="color:#062743;font-weight:600">lo que pasa en la práctica</strong>. La tercera es el cierre:
+    las fuentes citadas y el paso siguiente. La cuarta es una categoría todavía sin artículos — porque
+    el día 1 hay cuatro textos y cuatro cajones, y ese estado también hay que dibujarlo.
+  </p>
+</section>
+
+<!-- ══════════════════════════ 1a · ÍNDICE DEL JOURNAL ══════════════════════════ -->
+<section style="padding:40px 64px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">1a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">Journal · índice</h2>
+    <span style="font-size:13.5px;color:#5B6B7A">Un destacado y la lista. Con cuatro artículos, una grilla de tres columnas se ve vacía; una jerarquía se ve editorial.</span>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:26px;padding:44px 46px;box-shadow:10px 10px 30px rgba(6,39,67,0.09),-8px -8px 24px #FFFFFF;display:flex;flex-direction:column;gap:34px">
+
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:760px">
+      <p style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#D4AF37">El Journal</p>
+      <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;color:#062743;line-height:1.05">Lo que hay que saber antes de firmar.</h3>
+      <p style="margin:0;font-size:15.5px;line-height:1.7;color:#5B6B7A">Guías de mercado, zonas de Cartagena y —sobre todo— lo que la ley colombiana exige de un arriendo, una venta o un alojamiento por días. Cada afirmación, con su norma citada.</p>
+    </div>
+
+    <div style="display:flex;gap:11px;flex-wrap:wrap">
+      <span style="font-size:12.5px;font-weight:600;letter-spacing:0.04em;color:#FFFFFF;background:#062743;border-radius:100px;padding:9px 18px">Todo</span>
+      <span style="font-size:12.5px;font-weight:600;letter-spacing:0.04em;color:#062743;background:#F4F7FA;border-radius:100px;padding:9px 18px;box-shadow:inset 3px 3px 7px rgba(6,39,67,0.07),inset -3px -3px 7px #FFFFFF">Ley y contratos <span style="color:#8A98A6">3</span></span>
+      <span style="font-size:12.5px;font-weight:600;letter-spacing:0.04em;color:#062743;background:#F4F7FA;border-radius:100px;padding:9px 18px;box-shadow:inset 3px 3px 7px rgba(6,39,67,0.07),inset -3px -3px 7px #FFFFFF">Corta estancia <span style="color:#8A98A6">1</span></span>
+      <span style="font-size:12.5px;font-weight:600;letter-spacing:0.04em;color:#8A98A6;background:#F4F7FA;border-radius:100px;padding:9px 18px;box-shadow:inset 3px 3px 7px rgba(6,39,67,0.07),inset -3px -3px 7px #FFFFFF">Mercado <span style="color:#BFC3C9">0</span></span>
+      <span style="font-size:12.5px;font-weight:600;letter-spacing:0.04em;color:#8A98A6;background:#F4F7FA;border-radius:100px;padding:9px 18px;box-shadow:inset 3px 3px 7px rgba(6,39,67,0.07),inset -3px -3px 7px #FFFFFF">Guías de zona <span style="color:#BFC3C9">0</span></span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:34px;align-items:start">
+
+      <!-- DESTACADO -->
+      <a style="display:flex;flex-direction:column;gap:14px">
+        <div style="position:relative;border-radius:20px;overflow:hidden;height:330px;background:#DCE5EC">
+          <image-slot prompt="Fachada de edificio residencial contemporaneo en Cartagena de Indias al atardecer, luz calida dorada, cielo despejado, arquitectura limpia, fotografia editorial de bienes raices premium, sin personas, sin texto" style="width:100%;height:100%"></image-slot>
+          <span style="position:absolute;top:15px;left:15px;background:rgba(255,255,255,0.95);color:#062743;padding:6px 13px;border-radius:100px;font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase">Ley y contratos</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:#8A98A6">
+          <span>25 de agosto de 2026</span>
+          <span style="width:3px;height:3px;border-radius:50%;background:#BFC3C9"></span>
+          <span>6 min de lectura</span>
+        </div>
+        <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743;line-height:1.08">La matrícula de arrendador: qué es, quién la necesita y por qué debe estar a la vista</h3>
+        <p style="margin:0;font-size:15px;line-height:1.7;color:#5B6B7A">En Colombia, quien vive de arrendar o de intermediar arriendos de vivienda tiene que estar matriculado ante la alcaldía de su municipio — y anunciarse sin ese número es sancionable. Qué exige la Ley 820 de 2003, dónde debe aparecer el número y cómo comprobar el de cualquiera. Incluido el nuestro.</p>
+      </a>
+
+      <!-- LISTA -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+
+        <a style="display:grid;grid-template-columns:132px 1fr;gap:18px;align-items:center">
+          <div style="border-radius:16px;overflow:hidden;height:98px;background:#DCE5EC">
+            <image-slot prompt="Llaves de casa sobre un contrato de arrendamiento impreso, escritorio de madera clara, luz natural suave, fotografia cenital minimalista, sin texto legible" style="width:100%;height:100%"></image-slot>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <span style="font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#D4AF37">Ley y contratos</span>
+            <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#062743;line-height:1.12">El depósito está prohibido: qué sí pueden pedirle como garantía</h3>
+            <span style="font-size:12px;color:#8A98A6">5 min de lectura</span>
+          </div>
+        </a>
+
+        <a style="display:grid;grid-template-columns:132px 1fr;gap:18px;align-items:center">
+          <div style="border-radius:16px;overflow:hidden;height:98px;background:#DCE5EC">
+            <image-slot prompt="Plano arquitectonico y calculadora sobre mesa blanca, luz de estudio suave, composicion ordenada, fotografia editorial minimalista, sin texto legible" style="width:100%;height:100%"></image-slot>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <span style="font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#D4AF37">Ley y contratos</span>
+            <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#062743;line-height:1.12">Por qué no le decimos «avalúo» a nuestra estimación de precio</h3>
+            <span style="font-size:12px;color:#8A98A6">4 min de lectura</span>
+          </div>
+        </a>
+
+        <a style="display:grid;grid-template-columns:132px 1fr;gap:18px;align-items:center">
+          <div style="border-radius:16px;overflow:hidden;height:98px;background:#DCE5EC">
+            <image-slot prompt="Balcon con vista al mar Caribe en Cartagena, muebles claros, plantas tropicales, luz de manana, fotografia de alojamiento premium, sin personas, sin texto" style="width:100%;height:100%"></image-slot>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <span style="font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#D4AF37">Corta estancia</span>
+            <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:#062743;line-height:1.12">Alquilar por días en Cartagena: el RNT y el permiso de la copropiedad</h3>
+            <span style="font-size:12px;color:#8A98A6">6 min de lectura</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 1b · EL ARTÍCULO POR DENTRO ══════════════════════════ -->
+<section style="padding:40px 64px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">1b</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">El artículo · la respuesta primero</h2>
+    <span style="font-size:13.5px;color:#5B6B7A">Arriba la respuesta corta —es lo que cita un motor de respuestas—; abajo el desarrollo, con la ley y la práctica separadas.</span>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:26px;padding:0 0 46px;box-shadow:10px 10px 30px rgba(6,39,67,0.09),-8px -8px 24px #FFFFFF;overflow:hidden">
+
+    <div style="height:300px;background:#DCE5EC">
+      <image-slot prompt="Fachada de edificio residencial contemporaneo en Cartagena de Indias al atardecer, luz calida dorada, arquitectura limpia, fotografia editorial de bienes raices premium, sin personas, sin texto" style="width:100%;height:100%"></image-slot>
+    </div>
+
+    <div style="max-width:760px;margin:0 auto;padding:40px 46px 0;display:flex;flex-direction:column;gap:26px">
+
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:9px;font-size:12.5px;color:#8A98A6">
+          <span style="color:#062743">Journal</span>
+          <span>·</span>
+          <span style="color:#D4AF37;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;font-size:10.5px">Ley y contratos</span>
+        </div>
+        <h1 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;color:#062743;line-height:1.06;letter-spacing:-0.01em">La matrícula de arrendador: qué es, quién la necesita y por qué debe estar a la vista</h1>
+        <div style="display:flex;align-items:center;gap:10px;font-size:12.5px;color:#8A98A6">
+          <span>25 de agosto de 2026</span>
+          <span style="width:3px;height:3px;border-radius:50%;background:#BFC3C9"></span>
+          <span>6 min de lectura</span>
+          <span style="width:3px;height:3px;border-radius:50%;background:#BFC3C9"></span>
+          <span>Equipo ALTORRA</span>
+        </div>
+      </div>
+
+      <!-- RESPUESTA CORTA — el bloque que un motor de respuestas puede citar entero -->
+      <div style="background:#F4F7FA;border-radius:20px;padding:26px 28px;box-shadow:inset 4px 4px 10px rgba(6,39,67,0.06),inset -4px -4px 10px #FFFFFF;display:flex;flex-direction:column;gap:12px">
+        <p style="margin:0;font-size:10.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#D4AF37">En corto</p>
+        <p style="margin:0;font-size:16.5px;line-height:1.7;color:#062743">
+          Si usted vive de arrendar viviendas —propias o de terceros— o de poner en contacto a arrendadores con arrendatarios, en un municipio de más de 15.000 habitantes <strong style="font-weight:600">debe matricularse ante la alcaldía</strong>. Y al anunciarse debe indicar el número de matrícula vigente. Lo dice la Ley 820 de 2003, artículos 28 y 31.
+        </p>
+      </div>
+
+      <p style="margin:0;font-size:16.5px;line-height:1.85;color:#3D4C5A">La mayoría de quienes arriendan en Colombia nunca han oído hablar de la matrícula de arrendador. No es un trámite oscuro ni opcional: es el registro que la ley exige para ejercer la actividad, y ejercerla sin él es sancionable con multas de hasta cien salarios mínimos.</p>
+
+      <h2 style="margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-size:29px;font-weight:600;color:#062743;line-height:1.15">Quién está obligado</h2>
+      <p style="margin:0;font-size:16.5px;line-height:1.85;color:#3D4C5A">La obligación no depende de tener oficina ni aviso en la calle, sino de la actividad.</p>
+
+      <!-- BLOQUE «LO QUE DICE LA LEY» — barra dorada, con el artículo -->
+      <div style="border-left:3px solid #D4AF37;background:#FBFCFD;border-radius:0 16px 16px 0;padding:22px 26px;display:flex;flex-direction:column;gap:10px">
+        <p style="margin:0;font-size:10.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#062743">Lo que dice la ley</p>
+        <p style="margin:0;font-size:15.5px;line-height:1.8;color:#3D4C5A"><strong style="color:#062743;font-weight:600">Ley 820 de 2003, artículo 28.</strong> Debe matricularse toda persona natural o jurídica cuya actividad principal sea arrendar inmuebles de vivienda urbana de su propiedad o de terceros, o hacer labores de intermediación entre arrendadores y arrendatarios, en municipios de más de 15.000 habitantes. También los propietarios o subarrendadores con más de cinco contratos. Y se presume que ejerce la actividad quien aparezca arrendando más de diez inmuebles en un mismo municipio.</p>
+      </div>
+
+      <!-- BLOQUE «EN LA PRÁCTICA» — forma DISTINTA: es lectura, no norma -->
+      <div style="background:#FFFFFF;border:1px dashed #BFC3C9;border-radius:16px;padding:22px 26px;display:flex;flex-direction:column;gap:10px">
+        <p style="margin:0;font-size:10.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#8A98A6">En la práctica · interpretación, no texto legal</p>
+        <p style="margin:0;font-size:15.5px;line-height:1.8;color:#3D4C5A">Un propietario con un solo apartamento arrendado no está obligado. Quien administra los cuatro de la familia, tampoco — hasta que pasa de cinco contratos. La frontera que traza la ley es la actividad habitual, no la escritura.</p>
+      </div>
+
+      <h2 style="margin:14px 0 0;font-family:'Cormorant Garamond',serif;font-size:29px;font-weight:600;color:#062743;line-height:1.15">Es por municipio, no nacional</h2>
+      <p style="margin:0;font-size:16.5px;line-height:1.85;color:#3D4C5A">Quien opere en Cartagena y en Barranquilla necesita las dos matrículas: el reglamento obliga a matricularse en todos los municipios donde se desarrolle la actividad.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 1c · EL CIERRE: FUENTES Y PASO SIGUIENTE ══════════════════════════ -->
+<section style="padding:40px 64px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">1c</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">El cierre · fuentes y paso siguiente</h2>
+    <span style="font-size:13.5px;color:#5B6B7A">«Compruébelo usted» en vez de «confíe en nosotros». Y después, lo que la persona necesita hacer — no un formulario.</span>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:26px;padding:44px 46px;box-shadow:10px 10px 30px rgba(6,39,67,0.09),-8px -8px 24px #FFFFFF;max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:30px">
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <p style="margin:0;font-size:10.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#D4AF37">Las fuentes de este artículo</p>
+      <p style="margin:0;font-size:14.5px;line-height:1.7;color:#5B6B7A">Todo lo anterior sale de estos textos oficiales. Los enlazamos para que no tenga que creernos.</p>
+      <div style="display:flex;flex-direction:column;gap:11px;margin-top:4px">
+        <div style="display:flex;gap:12px;align-items:flex-start;background:#F4F7FA;border-radius:14px;padding:15px 18px;box-shadow:inset 3px 3px 7px rgba(6,39,67,0.06),inset -3px -3px 7px #FFFFFF">
+          <span style="font-size:11px;font-weight:700;color:#D4AF37;letter-spacing:0.08em;padding-top:2px">01</span>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <span style="font-size:14.5px;font-weight:600;color:#062743">Ley 820 de 2003 — régimen de arrendamiento de vivienda urbana</span>
+            <span style="font-size:12.5px;color:#8A98A6">funcionpublica.gov.co · Gestor Normativo</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;background:#F4F7FA;border-radius:14px;padding:15px 18px;box-shadow:inset 3px 3px 7px rgba(6,39,67,0.06),inset -3px -3px 7px #FFFFFF">
+          <span style="font-size:11px;font-weight:700;color:#D4AF37;letter-spacing:0.08em;padding-top:2px">02</span>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <span style="font-size:14.5px;font-weight:600;color:#062743">Decreto 51 de 2004 — reglamenta la matrícula de arrendadores</span>
+            <span style="font-size:12.5px;color:#8A98A6">funcionpublica.gov.co · Gestor Normativo</span>
+          </div>
+        </div>
+      </div>
+      <p style="margin:6px 0 0;font-size:12.5px;line-height:1.65;color:#8A98A6;font-style:italic">Este artículo explica normas de carácter general y no sustituye la asesoría jurídica sobre un caso concreto. Última revisión: 25 de agosto de 2026.</p>
+    </div>
+
+    <div style="background:#062743;border-radius:22px;padding:32px 34px;display:flex;flex-direction:column;gap:16px">
+      <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:#FFFFFF;line-height:1.15">¿Va a entregar su inmueble en administración?</h3>
+      <p style="margin:0;font-size:15px;line-height:1.7;color:#BFC3C9">ALTORRA tiene matrícula de arrendador vigente en Cartagena, y el número está en el pie de cada página de este sitio. Así se ve un arriendo administrado por nosotros.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px">
+        <span style="background:#D4AF37;color:#062743;font-size:14px;font-weight:600;border-radius:100px;padding:13px 26px">Entregar mi inmueble</span>
+        <span style="border:1px solid rgba(255,255,255,0.35);color:#FFFFFF;font-size:14px;font-weight:600;border-radius:100px;padding:13px 26px">Ver arriendos administrados</span>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <p style="margin:0;font-size:10.5px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#D4AF37">Seguir leyendo</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:7px;background:#F4F7FA;border-radius:16px;padding:18px 20px">
+          <span style="font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8A98A6">Ley y contratos</span>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:#062743;line-height:1.15">El depósito está prohibido: qué sí pueden pedirle como garantía</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:7px;background:#F4F7FA;border-radius:16px;padding:18px 20px">
+          <span style="font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#8A98A6">Corta estancia</span>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:#062743;line-height:1.15">Alquilar por días en Cartagena: el RNT y el permiso de la copropiedad</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════ 1d · CATEGORÍA SIN ARTÍCULOS ══════════════════════════ -->
+<section style="padding:40px 64px 80px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">1d</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">Una categoría todavía vacía</h2>
+    <span style="font-size:13.5px;color:#5B6B7A">El día 1 hay cuatro artículos y cuatro cajones. Dos están vacíos, y decirlo cuesta menos que fingir.</span>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:26px;padding:56px 46px;box-shadow:10px 10px 30px rgba(6,39,67,0.09),-8px -8px 24px #FFFFFF;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center">
+    <div style="width:64px;height:64px;border-radius:50%;background:#F4F7FA;box-shadow:inset 4px 4px 9px rgba(6,39,67,0.07),inset -4px -4px 9px #FFFFFF;display:flex;align-items:center;justify-content:center">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#D4AF37" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H14l6 6v8.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5z"/><path d="M14 4v6h6"/></svg>
+    </div>
+    <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:#062743">Todavía no hay nada aquí.</h3>
+    <p style="margin:0;max-width:520px;font-size:15px;line-height:1.75;color:#5B6B7A">Estamos escribiendo las guías de mercado de Cartagena. Mientras tanto, lo que sí está listo es la sección de <strong style="color:#062743;font-weight:600">Ley y contratos</strong> — o escríbanos y le respondemos su pregunta concreta.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:6px">
+      <span style="background:#062743;color:#FFFFFF;font-size:14px;font-weight:600;border-radius:100px;padding:12px 24px">Ver Ley y contratos</span>
+      <span style="background:#F4F7FA;color:#062743;font-size:14px;font-weight:600;border-radius:100px;padding:12px 24px;box-shadow:4px 4px 10px rgba(6,39,67,0.08),-3px -3px 8px #FFFFFF">Escribir por WhatsApp</span>
+    </div>
+  </div>
+</section>
+
+</x-dc>
+</body>
+</html>

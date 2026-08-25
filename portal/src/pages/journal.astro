@@ -1,13 +1,238 @@
 ---
-/* Enlazada desde la sección Journal de la home. MEGA-PLAN Ola 1.4 (contenido editorial por
-   barrio, motor de SEO). Sin mockup aún. */
+/*
+ * JOURNAL — el índice (TODO-48 · VISIÓN §5 · mockup `design/mockups/ALTORRA Journal.dc.html`).
+ *
+ * Hasta hoy esta ruta era un «próximamente». Deja de serlo porque ya hay artículos REALES: la
+ * sección existe para dar autoridad (SEO/AEO), y una promesa editorial que al pulsarla dice «está
+ * en camino» hace lo contrario — es lo mismo que se retiró de la home en §138.3.
+ *
+ * POR QUÉ LAS CATEGORÍAS NO SON PÁGINAS. Lo natural sería `/journal/categoria/mercado`. Con cuatro
+ * cajones y dos todavía vacíos, eso serían dos URLs indexables sin contenido: contenido delgado,
+ * que no ayuda a posicionar y que además hay que mantener. Las pastillas FILTRAN AQUÍ MISMO, sin
+ * crear direcciones. El día que un cajón tenga material propio para sostener una página, se hace
+ * la página — no antes.
+ *
+ * Prerender: el índice cambia cuando cambia el contenido, y el contenido se despliega. Estático.
+ */
 export const prerender = true;
-import ProximamenteLayout from '../layouts/ProximamenteLayout.astro';
+
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../lib/config/site';
+import {
+  CATEGORIAS,
+  ETIQUETA,
+  conteoPorCategoria,
+  destacadoYResto,
+  fechaISO,
+  fechaLarga,
+  tiempoDeLectura,
+} from '../lib/content/journal';
+
+const articulos = await getCollection('journal');
+const { destacado, resto } = destacadoYResto(articulos);
+const conteo = conteoPorCategoria(articulos);
+
+const base = Astro.site?.origin ?? `https://${SITE.domain}`;
+const url = `${base}/journal`;
+const waTexto = encodeURIComponent(
+  'Hola ALTORRA, tengo una consulta sobre el mercado inmobiliario en Cartagena.',
+);
+const DESCRIPCION =
+  'Guías de mercado, zonas de Cartagena y lo que la ley colombiana exige de un arriendo, una venta o un alojamiento por días. Cada afirmación, con su norma citada.';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: base },
+        { '@type': 'ListItem', position: 2, name: 'Journal', item: url },
+      ],
+    },
+    {
+      '@type': 'Blog',
+      name: 'Journal de ALTORRA',
+      description: DESCRIPCION,
+      url,
+      inLanguage: 'es-CO',
+      publisher: { '@type': 'Organization', name: 'ALTORRA Inmobiliaria', url: base },
+      blogPost: articulos.map((a) => ({
+        '@type': 'BlogPosting',
+        headline: a.data.titulo,
+        datePublished: fechaISO(a.data.fecha),
+        url: `${base}/journal/${a.id}`,
+      })),
+    },
+  ],
+};
 ---
-<ProximamenteLayout
-  title="Journal"
-  encabezado="Nuestro Journal está en camino."
-  texto="Guías de barrio, análisis del mercado de Cartagena y todo lo que hay que saber antes de comprar, arrendar o invertir aquí. Si tienes una pregunta concreta sobre una zona, escríbenos: te respondemos con datos reales."
-  waTexto="Hola ALTORRA, tengo una consulta sobre el mercado inmobiliario en Cartagena."
-  description="Journal de ALTORRA — guías de barrio y análisis del mercado inmobiliario de Cartagena."
-/>
+
+<BaseLayout title="Journal | ALTORRA Inmobiliaria" description={DESCRIPCION}>
+  <Header />
+
+  <main id="contenido">
+    <section class="alt-section">
+      <div class="alt-container">
+        <div class="jrn-head">
+          <p class="alt-eyebrow">El Journal</p>
+          <h1>Lo que hay que saber antes de firmar.</h1>
+          <p class="jrn-head__x">{DESCRIPCION}</p>
+        </div>
+
+        <div class="jrn-pills" id="jrn-filtros">
+          <button class="jrn-pill" type="button" data-cat="todo" aria-pressed="true">Todo</button>
+          {
+            CATEGORIAS.map((c) => (
+              <button class="jrn-pill" type="button" data-cat={c} aria-pressed="false">
+                {ETIQUETA[c]}
+                <span class="jrn-pill__n">{conteo[c]}</span>
+              </button>
+            ))
+          }
+        </div>
+
+        <div class="jrn-grid" id="jrn-lista">
+          {
+            destacado && (
+              <a class="jrn-main" href={`/journal/${destacado.id}`} data-cat={destacado.data.categoria}>
+                <div class="jrn-main__media">
+                  <img
+                    src={destacado.data.portada}
+                    alt={destacado.data.portadaAlt}
+                    width="720"
+                    height="450"
+                    loading="eager"
+                    decoding="async"
+                  />
+                  <span class="jrn-cat">{ETIQUETA[destacado.data.categoria]}</span>
+                </div>
+                <div class="jrn-meta">
+                  <time datetime={fechaISO(destacado.data.fecha)}>{fechaLarga(destacado.data.fecha)}</time>
+                  <span class="jrn-dot" />
+                  <span>{tiempoDeLectura(destacado.body ?? '')}</span>
+                </div>
+                <h2 class="jrn-main__t">{destacado.data.titulo}</h2>
+                <p class="jrn-main__x">{destacado.data.resumen}</p>
+              </a>
+            )
+          }
+
+          <div class="jrn-side">
+            {
+              resto.map((a) => (
+                <a class="jrn-row" href={`/journal/${a.id}`} data-cat={a.data.categoria}>
+                  <div class="jrn-row__media">
+                    <img
+                      src={a.data.portada}
+                      alt={a.data.portadaAlt}
+                      width="264"
+                      height="198"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <div>
+                    <span class="jrn-row__cat">{ETIQUETA[a.data.categoria]}</span>
+                    <h2 class="jrn-row__t">{a.data.titulo}</h2>
+                    <span class="jrn-row__read">{tiempoDeLectura(a.body ?? '')}</span>
+                  </div>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+
+        {/* Estado vacío: se enseña cuando el filtro no deja nada, no cuando falta contenido. */}
+        <div class="jrn-vacio" id="jrn-vacio" hidden>
+          <div class="jrn-vacio__icono">
+            <svg
+              viewBox="0 0 24 24"
+              width="26"
+              height="26"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H14l6 6v8.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5z"></path>
+              <path d="M14 4v6h6"></path>
+            </svg>
+          </div>
+          <h2>Todavía no hay nada aquí.</h2>
+          <p>
+            Estamos escribiendo esta sección. Mientras tanto, lo que sí está listo es
+            <strong>Ley y contratos</strong> — o escríbanos y le respondemos su pregunta concreta.
+          </p>
+          <div class="jrn-cta__botones">
+            <button class="alt-btn alt-btn--navy" type="button" data-ir-a="ley-y-contratos">
+              Ver Ley y contratos
+            </button>
+            <a
+              class="alt-btn alt-btn--outline"
+              href={`${SITE.contact.whatsappLink}?text=${waTexto}`}
+              rel="noopener"
+            >
+              Escribir por WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+</BaseLayout>
+
+<script>
+  /*
+   * Filtro de categorías. Sin JavaScript se ven TODOS los artículos, que es la respuesta correcta:
+   * el filtro quita cosas de la vista, así que su ausencia no rompe nada — solo enseña de más.
+   * Por eso el marcado nace completo y esto solo esconde.
+   */
+  const filtros = document.getElementById('jrn-filtros');
+  const lista = document.getElementById('jrn-lista');
+  const vacio = document.getElementById('jrn-vacio');
+
+  if (filtros && lista && vacio) {
+    const tarjetas = Array.from(lista.querySelectorAll<HTMLElement>('[data-cat]'));
+    const pastillas = Array.from(document.querySelectorAll<HTMLButtonElement>('.jrn-pill[data-cat]'));
+
+    const aplicar = (cat: string) => {
+      let visibles = 0;
+      for (const t of tarjetas) {
+        const mostrar = cat === 'todo' || t.dataset.cat === cat;
+        t.hidden = !mostrar;
+        if (mostrar) visibles += 1;
+      }
+      // La columna lateral se vacía al filtrar por el cajón del destacado: sin esto quedaría un
+      // hueco de rejilla, que se lee como «falta algo aquí».
+      lista.hidden = visibles === 0;
+      vacio.hidden = visibles > 0;
+      for (const p of pastillas) {
+        p.setAttribute('aria-pressed', String(p.dataset.cat === cat));
+      }
+    };
+
+    for (const p of pastillas) {
+      p.addEventListener('click', () => aplicar(p.dataset.cat ?? 'todo'));
+    }
+
+    /*
+     * El botón del estado vacío lleva a un cajón, pero NO es una pastilla de filtro: es una salida.
+     * Por eso no comparte el gancho `data-cat` — si lo compartiera, `aria-pressed` lo marcaría como
+     * "pulsado" a la vez que la pastilla real, y un lector de pantalla anunciaría dos filtros
+     * activos donde solo hay uno.
+     */
+    for (const b of document.querySelectorAll<HTMLButtonElement>('[data-ir-a]')) {
+      b.addEventListener('click', () => aplicar(b.dataset.irA ?? 'todo'));
+    }
+  }
+</script>

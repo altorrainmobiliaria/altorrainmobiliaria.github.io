@@ -1,0 +1,214 @@
+---
+/*
+ * EL ARTÍCULO DEL JOURNAL — `/journal/<slug>` (TODO-48 · mockup artboards 1b y 1c).
+ *
+ * LO QUE HACE ESTA PÁGINA Y NO HACE UN BLOG CUALQUIERA: publica la respuesta ARRIBA («En corto») y
+ * las FUENTES abajo. Las dos cosas son la misma apuesta. La respuesta corta es lo que un motor de
+ * respuestas puede citar entero sin resumir por su cuenta —si no le damos la frase, se la inventa
+ * él—, y las fuentes son la diferencia entre «confíe en nosotros» y «compruébelo usted», que es lo
+ * único que hace defendible escribir sobre norma colombiana sin abogado de planta.
+ *
+ * El esquema de la colección obliga a que `fuentes` traiga al menos una: un artículo sin fuentes no
+ * llega a esta plantilla, rompe el build. La regla editorial es un tipo, no una buena intención.
+ *
+ * Prerender: son textos, no datos. Estáticos y servidos desde el edge.
+ */
+export const prerender = true;
+
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { SITE } from '../../lib/config/site';
+import {
+  ETIQUETA,
+  fechaISO,
+  fechaLarga,
+  relacionados,
+  tiempoDeLectura,
+} from '../../lib/content/journal';
+
+export async function getStaticPaths() {
+  const articulos = await getCollection('journal');
+  return articulos.map((articulo) => ({
+    params: { slug: articulo.id },
+    props: { articulo, otros: relacionados(articulo, articulos) },
+  }));
+}
+
+interface Props {
+  articulo: CollectionEntry<'journal'>;
+  otros: CollectionEntry<'journal'>[];
+}
+const { articulo, otros } = Astro.props;
+const { Content } = await render(articulo);
+const d = articulo.data;
+
+const base = Astro.site?.origin ?? `https://${SITE.domain}`;
+const url = `${base}/journal/${articulo.id}`;
+const lectura = tiempoDeLectura(articulo.body ?? '');
+const waTexto = encodeURIComponent(
+  `Hola ALTORRA, leí «${d.titulo}» en su Journal y tengo una consulta.`,
+);
+
+/*
+ * JSON-LD. `citation` lleva las MISMAS fuentes que se ven en la página: si la lista visible y la
+ * declarada divergen, la que se queda desactualizada es siempre la que nadie mira.
+ * `author` y `publisher` son la Organización, no una persona: los textos los firma el equipo, y
+ * atribuirlos a un nombre inventado sería la misma clase de adorno que las fechas falsas.
+ */
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: base },
+        { '@type': 'ListItem', position: 2, name: 'Journal', item: `${base}/journal` },
+        { '@type': 'ListItem', position: 3, name: d.titulo, item: url },
+      ],
+    },
+    {
+      '@type': 'BlogPosting',
+      headline: d.titulo,
+      description: d.resumen,
+      abstract: d.enCorto,
+      articleSection: ETIQUETA[d.categoria],
+      inLanguage: 'es-CO',
+      url,
+      mainEntityOfPage: url,
+      image: new URL(d.portada, base).href,
+      datePublished: fechaISO(d.fecha),
+      dateModified: fechaISO(d.actualizado ?? d.fecha),
+      author: { '@type': 'Organization', name: 'ALTORRA Inmobiliaria', url: base },
+      publisher: { '@type': 'Organization', name: 'ALTORRA Inmobiliaria', url: base },
+      citation: d.fuentes.map((f) => ({
+        '@type': 'CreativeWork',
+        name: f.titulo,
+        publisher: { '@type': 'Organization', name: f.entidad },
+        url: f.url,
+      })),
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={`${d.titulo} | Journal ALTORRA`}
+  description={d.resumen}
+  image={d.portada}
+  canonical={`/journal/${articulo.id}`}
+>
+  <Header />
+
+  <main id="contenido">
+    <article class="alt-section">
+      <div class="alt-container">
+        <div class="jrn-art">
+          <div class="jrn-portada">
+            <img
+              src={d.portada}
+              alt={d.portadaAlt}
+              width="1120"
+              height="490"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+
+          <nav class="jrn-migas" aria-label="Ruta">
+            <a href="/journal">Journal</a>
+            <span aria-hidden="true">·</span>
+            <span class="jrn-migas__cat">{ETIQUETA[d.categoria]}</span>
+          </nav>
+
+          <h1>{d.titulo}</h1>
+
+          <div class="jrn-meta">
+            <time datetime={fechaISO(d.fecha)}>{fechaLarga(d.fecha)}</time>
+            <span class="jrn-dot"></span>
+            <span>{lectura}</span>
+            <span class="jrn-dot"></span>
+            <span>Equipo ALTORRA</span>
+          </div>
+
+          <div class="jrn-corto">
+            <p class="jrn-corto__k">En corto</p>
+            <p>{d.enCorto}</p>
+          </div>
+
+          <div class="jrn-cuerpo">
+            <Content />
+          </div>
+
+          <section class="jrn-fuentes" aria-labelledby="jrn-fuentes-t">
+            <p class="jrn-fuentes__k" id="jrn-fuentes-t">Las fuentes de este artículo</p>
+            <p class="jrn-head__x">
+              Todo lo anterior sale de estos textos oficiales. Los enlazamos para que no tenga que
+              creernos.
+            </p>
+            {
+              d.fuentes.map((f, i) => (
+                <div class="jrn-fuente">
+                  <span class="jrn-fuente__n">{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    {/* SIN `nofollow`, a propósito. `nofollow` es para el enlace del que uno no
+                        responde —pauta, contenido de terceros, comentarios—. Estos son citas
+                        deliberadas a la fuente oficial: enlazarlas y responder por ellas ES el
+                        argumento del artículo. `noopener` sí, que es seguridad, no confianza. */}
+                    <a class="jrn-fuente__t" href={f.url} target="_blank" rel="noopener">
+                      {f.titulo}
+                    </a>
+                    <span class="jrn-fuente__e">{f.entidad}</span>
+                  </div>
+                </div>
+              ))
+            }
+            <p class="jrn-aviso">
+              Este artículo explica normas de carácter general y no sustituye la asesoría jurídica
+              sobre un caso concreto. Última revisión: {fechaLarga(d.actualizado ?? d.fecha)}.
+            </p>
+          </section>
+
+          <section class="jrn-cta">
+            <h2>¿Va a entregar su inmueble en administración?</h2>
+            <p>
+              ALTORRA tiene Matrícula de Arrendador {SITE.matriculaArrendador} vigente en Cartagena,
+              y el número está en el pie de cada página de este sitio.
+            </p>
+            <div class="jrn-cta__botones">
+              <a class="alt-btn alt-btn--gold" href="/publicar">Entregar mi inmueble</a>
+              <a
+                class="alt-btn alt-btn--outline"
+                href={`${SITE.contact.whatsappLink}?text=${waTexto}`}
+                rel="noopener">Escribirnos</a
+              >
+            </div>
+          </section>
+
+          {
+            otros.length > 0 && (
+              <section aria-labelledby="jrn-sigue-t">
+                <p class="jrn-fuentes__k" id="jrn-sigue-t">
+                  Seguir leyendo
+                </p>
+                <div class="jrn-sigue">
+                  {otros.map((o) => (
+                    <a class="jrn-sigue__card" href={`/journal/${o.id}`}>
+                      <span class="jrn-sigue__cat">{ETIQUETA[o.data.categoria]}</span>
+                      <span class="jrn-sigue__t">{o.data.titulo}</span>
+                    </a>
+                  ))}
+                </div>
+              </section>
+            )
+          }
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <Footer />
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+</BaseLayout>

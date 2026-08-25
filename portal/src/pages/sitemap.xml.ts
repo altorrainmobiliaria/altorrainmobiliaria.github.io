@@ -1,5 +1,7 @@
 import type { APIRoute } from 'astro';
+import { getCollection } from 'astro:content';
 import { ZONAS } from '../lib/content/zonas';
+import { fechaISO } from '../lib/content/journal';
 
 /**
  * `sitemap.xml` (MEGA-PLAN §OLA 1 ítem 11 · ADR §90).
@@ -23,6 +25,12 @@ interface Entrada {
   /** 0.0–1.0 — importancia RELATIVA dentro de este sitio, no una nota absoluta. */
   prioridad: number;
   frecuencia: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  /**
+   * Fecha REAL de la última modificación, cuando se sabe. Sin esto todas las URLs declaran la fecha
+   * del build, que es mentira barata: Google aprende a ignorar un `lastmod` que cambia entero cada
+   * despliegue, y entonces deja de servir para lo unico que sirve — avisar de lo que SÍ cambió.
+   */
+  lastmod?: string;
 }
 
 /**
@@ -73,14 +81,29 @@ const RUTAS_ZONA: Entrada[] = ZONAS.map((z) => ({
   frecuencia: 'monthly',
 }));
 
-export const GET: APIRoute = ({ site }) => {
+/**
+ * Artículos del Journal (TODO-48). Se DERIVAN de la colección por la misma razón que las zonas: el
+ * olvido más común al publicar es no meter la URL en el sitemap, y entonces el artículo existe para
+ * quien tenga el enlace y para nadie más. Cada uno declara su fecha real de publicación o revisión.
+ */
+async function rutasDelJournal(): Promise<Entrada[]> {
+  const artículos = await getCollection('journal');
+  return artículos.map((a) => ({
+    ruta: `/journal/${a.id}`,
+    prioridad: 0.6,
+    frecuencia: 'yearly' as const,
+    lastmod: fechaISO(a.data.actualizado ?? a.data.fecha),
+  }));
+}
+
+export const GET: APIRoute = async ({ site }) => {
   const base = (site?.origin ?? 'https://altorrainmobiliaria.co').replace(/\/$/, '');
   const lastmod = new Date().toISOString().slice(0, 10);
 
-  const urls = [...RUTAS, ...RUTAS_ZONA].map(
-    ({ ruta, prioridad, frecuencia }) => `  <url>
+  const urls = [...RUTAS, ...RUTAS_ZONA, ...(await rutasDelJournal())].map(
+    ({ ruta, prioridad, frecuencia, lastmod: propio }) => `  <url>
     <loc>${base}${ruta}</loc>
-    <lastmod>${lastmod}</lastmod>
+    <lastmod>${propio ?? lastmod}</lastmod>
     <changefreq>${frecuencia}</changefreq>
     <priority>${prioridad.toFixed(1)}</priority>
   </url>`,

@@ -12,6 +12,13 @@ import StayCard from '../components/StayCard.astro';
 import RankCard from '../components/RankCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { SITE } from '../lib/config/site';
+import { getCollection } from 'astro:content';
+import {
+  ETIQUETA,
+  destacadoYResto,
+  fechaLarga,
+  tiempoDeLectura,
+} from '../lib/content/journal';
 
 // PROYECTOS — riel de pósters 3/4 (réplica fiel del mockup #proyectos, L1172-1247).
 // titleSize/titleTrack = ajuste óptico por longitud del nombre, tal cual el mockup.
@@ -172,9 +179,28 @@ interface ArticuloJournal {
   date?: string;
   excerpt?: string;
 }
-/** El destacado y los tres laterales. Vacíos hasta que haya Journal de verdad. */
-const journalMain: ArticuloJournal | null = ((): ArticuloJournal | null => null)();
-const journalSide: ArticuloJournal[] = [];
+/*
+ * EL DESTACADO Y LOS TRES LATERALES — ya NO están vacíos: salen de la colección `journal`, que a
+ * partir de hoy tiene artículos de verdad (TODO-48). La sección volvió sola, con el diseño aprobado
+ * intacto, que era exactamente lo que se prometió al vaciarla.
+ *
+ * La fecha y el tiempo de lectura NO se escriben aquí: la primera es la del frontmatter y el segundo
+ * se calcula de las palabras del texto. Es la misma regla que se rompió en §138.3, ahora imposible
+ * de romper — no hay dónde teclear un «8 min».
+ */
+const publicados = await getCollection('journal');
+const { destacado: jDestacado, resto: jResto } = destacadoYResto(publicados);
+const aTarjeta = (a: (typeof publicados)[number]): ArticuloJournal => ({
+  img: a.data.portada,
+  cat: ETIQUETA[a.data.categoria],
+  read: tiempoDeLectura(a.body ?? ''),
+  title: a.data.titulo,
+  href: `/journal/${a.id}`,
+  date: fechaLarga(a.data.fecha),
+  excerpt: a.data.resumen,
+});
+const journalMain: ArticuloJournal | null = jDestacado ? aTarjeta(jDestacado) : null;
+const journalSide: ArticuloJournal[] = jResto.slice(0, 3).map(aTarjeta);
 const hayJournal = journalMain !== null || journalSide.length > 0;
 
 const brokerPerks = [
