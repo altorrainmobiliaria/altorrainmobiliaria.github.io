@@ -12,7 +12,7 @@
        una corrección puede estar en el servidor y no verse en pantalla — pasó exactamente eso con los
        avisos del login: arreglado, desplegado, y el dueño seguía sin ver nada. SUBIR LA FECHA cada vez
        que se toque `admin.css`, igual que se bumpea el `CACHE_NAME` del service worker (§3.2). -->
-  <link rel="stylesheet" href="css/admin.css?v=20260825b"/>
+  <link rel="stylesheet" href="css/admin.css?v=20260825c"/>
   <!-- El panel no declaraba icono, así que el navegador pedía `/favicon.ico` y se comía un 404 en cada
        carga. Es cosmético, pero pintaba un error ROJO en la consola — y la consola es justo donde se
        diagnostican los fallos de verdad (§133, §135). Ruido que tapa señal. Se reutiliza el mismo logo
@@ -21,8 +21,8 @@
 
   <!-- El `?v=` va en TODOS los recursos locales, no solo en el CSS (§133, §135): una corrección que
        está en el servidor y no llega al navegador no es una corrección. Subir la fecha al tocarlos. -->
-  <script type="module" src="js/firebase-config.js?v=20260825b"></script>
-  <script src="js/firestore-meter.js?v=20260825b" defer></script>
+  <script type="module" src="js/firebase-config.js?v=20260825c"></script>
+  <script src="js/firestore-meter.js?v=20260825c" defer></script>
 <style>
   /* Enlace de recuperación: deliberadamente DISCRETO — compite con «Iniciar sesión», que es la
      acción principal, así que se comporta como enlace y no como segundo botón. */
@@ -588,13 +588,13 @@ document.addEventListener('click', function(e) {
 </script>
 
 <!-- Scripts admin (defer: se cargan después del DOM) -->
-<script src="js/utils.js?v=20260825b" defer></script>
-<script src="js/admin-auth.js?v=20260825b" defer></script>
-<script src="js/admin-dashboard.js?v=20260825b" defer></script>
-<script src="js/admin-properties.js?v=20260825b" defer></script>
-<script src="js/admin-leads.js?v=20260825b" defer></script>
-<script src="js/admin-kanban.js?v=20260825b" defer></script>
-<script src="js/admin-users.js?v=20260825b" defer></script>
+<script src="js/utils.js?v=20260825c" defer></script>
+<script src="js/admin-auth.js?v=20260825c" defer></script>
+<script src="js/admin-dashboard.js?v=20260825c" defer></script>
+<script src="js/admin-properties.js?v=20260825c" defer></script>
+<script src="js/admin-leads.js?v=20260825c" defer></script>
+<script src="js/admin-kanban.js?v=20260825c" defer></script>
+<script src="js/admin-users.js?v=20260825c" defer></script>
 
 </body>
 </html>

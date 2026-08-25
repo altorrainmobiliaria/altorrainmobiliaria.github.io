@@ -405,10 +405,24 @@
         return;
       }
 
-      // Usuario ya autenticado (recarga de página)
-      const profile = await loadUserProfile(fbUser.uid);
-      if (!profile || profile.bloqueado || !profile.activo) {
-        await signOut('Sesión inválida. Por favor inicia sesión nuevamente.');
+      /* Usuario ya autenticado (recarga de página, o el eco del propio login).
+       *
+       * ⚠️ ESTE CALLSITE SE ME QUEDÓ ATRÁS (§136) y expulsaba a todo el mundo. Al cambiar
+       * `loadUserProfile` para que devolviera `{ ok, perfil }` en vez del perfil pelado (§135),
+       * actualicé `handleLogin` y NO éste. Aquí seguía leyendo `profile.activo` sobre el envoltorio:
+       * `undefined` → `!undefined` es `true` → `signOut()`. Entrabas bien y un instante después el
+       * oyente te echaba, y los «permission denied» del panel eran la CONSECUENCIA de quedarte sin
+       * sesión, no la causa. Un cambio de contrato con un callsite sin migrar (§3.2: los cambios son
+       * ADITIVOS; si no pueden serlo, se migran TODOS los callsites en el mismo commit).
+       */
+      const res = await loadUserProfile(fbUser.uid);
+      if (!res.ok) {
+        await signOut(explicarPerfil(res));
+        return;
+      }
+      const profile = res.perfil;
+      if (profile.bloqueado || !profile.activo) {
+        await signOut('Tu cuenta está desactivada. Contacta al administrador.');
         return;
       }
 

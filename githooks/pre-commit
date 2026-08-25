@@ -11,6 +11,22 @@
 # Saltar (intencional): git commit --no-verify
 # ===========================================================
 staged=$(git diff --cached --name-only)
+
+# ── Contratos del panel LEGACY (§136) ──────────────────────────────────────
+# Va ANTES del corte del cerebro: este gate mira `js/`, no `docs/`, y si se
+# pusiera después no correría nunca en un commit de solo código — que es
+# justamente cuando hace falta. Un cambio de contrato con un callsite sin
+# migrar dejó al dueño fuera de su propio panel.
+if echo "$staged" | grep -qE '^js/'; then
+  if command -v node >/dev/null 2>&1; then
+    node scripts/verify-contratos-legacy.mjs || {
+      echo ""
+      echo "❌ COMMIT BLOQUEADO: hay un callsite con el contrato viejo (arriba, con su línea)."
+      exit 1
+    }
+  fi
+fi
+
 echo "$staged" | grep -qE '^(CLAUDE\.md|docs/)' || exit 0   # nada del cerebro staged → no aplica
 
 if ! command -v node >/dev/null 2>&1; then
