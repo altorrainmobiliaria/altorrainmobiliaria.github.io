@@ -4779,3 +4779,68 @@ entero, en silencio** — eso vuelve a pasar con cualquier otra consulta si no s
 **134.8 — Archivos.** `firebase.json` · `portal/firebase/firestore.indexes.json` ·
 `js/admin-dashboard.js` · `css/admin.css` (`.dash-fallo`, definida en el MISMO cambio que la crea —
 [[L-51]]) · `admin.html` (`?v=` bumpeado).
+
+
+## 135. ADR — La persistencia offline dejaba al dueño fuera de su propio panel ⟦OPUS-5⟧ (2026-08-25)
+
+> *«Ahora al ingresar me dice que no se encontró mi perfil de usuario»* · *«De igual forma te comparto
+> la consola»* — Daniel. Esa segunda frase es la que resolvió el caso.
+
+**135.1 — Causa raíz.** `enableMultiTabIndexedDbPersistence()` comparte **una sola conexión entre todas
+las pestañas** abiertas: una hace de «principal» y las demás salen por ella. Si la principal es una
+pestaña vieja **sin sesión**, las lecturas de las otras viajan **sin credencial** y Firestore responde
+`Missing or insufficient permissions` — aunque la persona esté perfectamente autenticada en la pestaña
+que está mirando. Explica lo que parecía caprichoso: entró bien a las 02:38 y falló después, con
+pestañas acumuladas de tanto recargar. Los **3 reintentos** que ya había en `loadUserProfile` existían
+por este mismo bug (`fix Access denied for UID`), pero **reintentar no arregla salir por la puerta
+equivocada**. Google la marcó DEPRECADA y el aviso llevaba tiempo en consola, ignorado.
+
+**135.2 — 🎯 Me equivoqué, y lo corrigió su consola.** Aposté por la caché: *«`getDoc` responde desde
+IndexedDB y una ficha que no está ahí vuelve como no-existe»*. Coherente, verificable… y **falsa**. El
+volcado que mandó decía `Missing or insufficient permissions`, o sea **permiso denegado**, no
+«no existe». La lección no es «equivocarse»: es que **una hipótesis elegante sin la evidencia del sitio
+del fallo cuesta más que no tener ninguna**, porque se actúa sobre ella. Diez segundos de consola del
+usuario valieron más que tres razonamientos míos. Es §127 otra vez: *la sonda más barata que existe es
+la persona que tiene el problema delante.*
+
+**135.3 — Lo que SÍ se descartó antes, con evidencia.** El documento `usuarios/{uid}` estaba intacto
+(`rol: super_admin`, `activo: true`; mi `PATCH` de §132 solo añadió `actualizadoEn`). El ruleset VIVO
+—traído de la API, no del archivo— permite `request.auth.uid == userId`, y se probó en el emulador con
+**3 tests nuevos** (`perfil-propio.test.ts`), incluido el del **día cero**: leer la ficha propia **sin
+claims**, que es el caso que, de fallar, sería un candado con la llave dentro — nadie podría entrar la
+primera vez a pedir el permiso que necesita para entrar. Y `system/meta` existe, así que la escritura
+anónima del arranque tampoco corría. Tres hipótesis muertas ANTES de tocar código.
+
+**135.4 — Se retira la persistencia, y la segunda razón pesa más que la primera.**
+1. Causaba el fallo de acceso (135.1).
+2. 🔒 **Copiaba a IndexedDB TODO lo que el panel lee**: leads con nombre y teléfono, contratos,
+   expedientes. En un computador compartido o robado eso queda ahí, **legible y sin sesión**. Para un
+   panel que maneja cédulas y arriendos, el principio de minimización de la Ley 1581 no admite «lo
+   cacheo por comodidad». Esta razón sola habría bastado.
+
+Lo que se pierde es trabajar sin internet — que en un panel de administración **no es una función: es
+mirar datos viejos creyendo que son de hoy**.
+
+**135.5 — Y tres endurecimientos que el episodio destapó.**
+- `await getIdToken()` antes de leer: convierte una **carrera** de propagación en una **espera**.
+- `getDocFromServer` en vez de `getDoc`: **una decisión de ACCESO no se toma con un «no encontrado» que
+  en realidad significa «no miré».**
+- El mensaje deja de mentir. `loadUserProfile` devolvía `null` para dos cosas incompatibles —«tu ficha
+  no existe» (cosa del administrador) y «no pude leerla» (cosa del sistema)— y siempre se contaba la
+  primera. **Un diagnóstico falso manda a buscar el problema al sitio equivocado, que es peor que no dar
+  ninguno.** Ahora distingue `no-existe` / `denegado` / `sin-lectura` y lleva el código al final para
+  poder pedirlo por teléfono.
+
+**135.6 — `?v=` en TODOS los recursos, no solo el CSS.** §133 lo puso en la hoja de estilos; aquí quedó
+claro que la regla no era «del CSS» sino de cualquier archivo servido: **una corrección que está en el
+servidor y no llega al navegador no es una corrección**. Los 9 scripts locales llevan versión.
+
+**135.7 — Verificación.** 85 tests de reglas (eran 82). En el navegador del dueño, sobre el sitio vivo:
+9 de 9 scripts versionados, hoja `admin.css?v=20260825b`, Firebase inicializado, y **el aviso de
+deprecación desapareció de la consola** — antes 3 errores + 1 warning, ahora 2 logs limpios. Lo que NO
+se pudo verificar y se dice: el login completo, porque exige su contraseña y **no se suplanta al dueño
+para probar**.
+
+**135.8 — Archivos.** `js/firebase-config.js` (fuera la persistencia) · `js/admin-auth.js`
+(`getIdToken`, `getDocFromServer`, `explicarPerfil`) · `admin.html` (`?v=` ×9) ·
+`portal/firebase/tests/perfil-propio.test.ts` (nuevo).
