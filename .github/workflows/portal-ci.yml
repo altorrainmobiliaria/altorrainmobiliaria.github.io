@@ -79,6 +79,10 @@ jobs:
       - run: npm run build
       - name: Verificar render híbrido (mitigación R2/R3)
         run: npm run verify:build
+      # 🛡️ DESPUES del build a proposito: mira el HTML SERVIDO, donde los enlaces ya estan resueltos.
+      # Dos versiones que leian el codigo fuente pasaron en verde con un enlace roto delante.
+      - name: Enlaces internos que resuelven de verdad (§89)
+        run: npm run verify:enlaces
 
   deploy-staging:
     name: Deploy a Cloudflare Workers (staging)

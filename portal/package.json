@@ -15,6 +15,7 @@
     "verify:css": "node ./scripts/verify-css-runtime.mjs",
     "verify:tokens": "node ./scripts/verify-tokens.mjs",
     "verify:controles": "node ./scripts/verify-controles.mjs",
+    "verify:enlaces": "node ./scripts/verify-enlaces.mjs",
     "verify:claims": "node ./scripts/verify-claims.mjs",
     "verify:data": "node ./scripts/verify-data-invariants.mjs",
     "test": "vitest run",
