@@ -151,6 +151,46 @@ if (redundantes.length) {
   process.exit(1);
 }
 
+// ── Sonda 3: un `id` que el script BUSCA y el markup no declara (§138) ─────────────────────────
+//
+// Por qué existe: `document.getElementById('x')` con un id que no está en la página devuelve `null`,
+// y el estilo defensivo de este proyecto —`$('x')?.addEventListener(...)`— convierte eso en **nada**.
+// No hay excepción, no hay aviso en consola: el control simplemente no hace nada. Renombrar un id en
+// el markup y olvidar el script es de los descuidos más fáciles de cometer y más difíciles de ver.
+//
+// Es la familia de [[L-52]]: el fallo no rompe, **falla ABIERTO**. Se mira DENTRO de cada página,
+// que es donde ocurre — el `<script>` y su markup viven en el mismo archivo.
+const idsHuerfanos = [];
+for (const f of archivos(join(SRC, 'pages'), '.astro')) {
+  const src = readFileSync(f, 'utf8');
+  const bloques = src.match(/<script[\s\S]*?<\/script>/g);
+  if (!bloques) continue;
+  const bloque = bloques.join('\n');
+  const declarados = new Set([...src.matchAll(/\bid="([\w-]+)"/g)].map((m) => m[1]));
+  const buscados = new Set([
+    ...[...bloque.matchAll(/getElementById\(\s*'([\w-]+)'\s*\)/g)].map((m) => m[1]),
+    // El atajo local que varias páginas definen: `const $ = (id) => document.getElementById(id)`.
+    ...(/const \$ = \(\s*id/.test(bloque)
+      ? [...bloque.matchAll(/\$\(\s*'([\w-]+)'\s*\)/g)].map((m) => m[1])
+      : []),
+  ]);
+  for (const id of buscados) {
+    // Un id que el propio script ASIGNA en tiempo de ejecución no está en el markup, y es correcto.
+    const loCrea = new RegExp(`\\.id = '${id}'`).test(bloque);
+    if (!declarados.has(id) && !loCrea) idsHuerfanos.push({ archivo: relative(RAIZ, f), id });
+  }
+}
+if (idsHuerfanos.length) {
+  console.error('❌ verify:css — el script busca ids que la página NO declara:');
+  console.error('');
+  for (const h of idsHuerfanos) console.error(`   ${h.archivo}  →  getElementById('${h.id}')`);
+  console.error('');
+  console.error('   Devuelve `null`, el `?.` se lo traga, y el control queda MUERTO sin un solo aviso.');
+  console.error('   Mira si el id se renombró en el markup, o si ese nodo todavía no existe.');
+  process.exit(1);
+}
+
 const n = [...scripts.values()].reduce((a, s) => a + s.size, 0);
 console.log(`✅ verify:css — ${scripts.size} script(s) y ${n} clase(s) de runtime: todas alcanzables.`);
 console.log('✅ verify:css — sin `:global()` redundante en bloques ya globales.');
+console.log(`✅ verify:css — todos los \`getElementById\` de las páginas tienen su nodo.`);
