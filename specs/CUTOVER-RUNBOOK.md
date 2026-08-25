@@ -164,7 +164,7 @@ esa variable no se declaraba en NINGÚN sitio del repo (§91 la cazó, §102 la 
 | 5.2 | 🤖 | Empujar a `main` y comprobar que el CI queda VERDE. Si `verify:build` falla, es el candado #6 haciendo su trabajo: **no se sigue** |
 | 5.3 | 🧑 | Mover el DNS de `altorrainmobiliaria.co` de Hostinger a Cloudflare |
 | 5.4 | 🤖 | `curl -s https://altorrainmobiliaria.co \| grep -i noindex` → **vacío**, y `/robots.txt` sin `Disallow: /` |
-| 5.5 | 🤖 | Comprobar una muestra de los 301 del sitio viejo (68 URLs mapeadas) |
+| 5.5 | 🤖 | Comprobar los 301 del sitio viejo — **los 65, uno por uno**, no una muestra (`scripts` del ensayo). `ensayado: 2026-08-25` sobre el worker de staging: 64/65 + `/index.html` 200 con canonical a `/`, que es consolidación correcta |
 | 5.6 | 🧑 | En Search Console: **reenviar `sitemap.xml`** |
 
 🔴 **CONSECUENCIA QUE HAY QUE ACEPTAR A CONCIENCIA (§145.7): `/admin.html` MUERE aquí.** Medido: hoy
@@ -211,7 +211,7 @@ Se marca con la EVIDENCIA al lado, no con fe.
 > en revertirse.
 
 **Ensayados hasta hoy (2026-08-25)**
-- ✅ 1.1 claims desplegados · 3.3 parcial (10 de 12 CF vivas) · 5.5 **301 verificados 64/65 uno por uno**
+- ✅ 1.1 claims desplegados · 3.3 parcial (10 de 12 CF vivas) · 5.5 **301 verificados 64/65 uno por uno, y EN VIVO contra el worker ya desplegado** (§150) — el ensayo destapó de paso que toda página estática respondía 307 hacia su forma con barra
 - ⚠️ 1.4 **REASIGNADO**: era 🤖 y es imposible para 🤖 (exige un token con el claim) → §140.5
 - ❌ sin ensayar: 4.x (catálogo real, necesita datos) · 5.4 y 6.x (necesitan el DNS movido)
 

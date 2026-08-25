@@ -5591,3 +5591,50 @@ es burocracia: es lo único que impide que el arranque de cada sesión engorde u
 
 **149.4 — Archivos.** `docs/22-MAPA-GESTION.md` (nuevo) · `docs/21-MAPA-PORTAL.md` (queda el
 puntero) · `docs/.brain-manifest.json` (cap medido) · `CLAUDE.md` §0 y §G.1.
+
+## 150. ADR — El ensayo del paso 5.5 destapó otra cosa: todo el sitio redirigía a su propia forma con barra ⟦OPUS-5⟧ (2026-08-25)
+
+**150.0 — Cómo salió, y por qué importa cómo.** Fui a saldar la deuda que §145 dejó abierta —comprobar
+los 301 **en vivo** contra el worker ya desplegado, no contra `wrangler dev`—. Los 65 pasaron: 64
+correctos y `/index.html` con su 200 y canonical a `/`. Pero al mirar las rutas NUEVAS del Journal
+apareció otra cosa: `/journal` respondía **307** hacia `/journal/`. Y no era del Journal — le pasaba
+a `/comprar`, a `/precios`, a `/zona/el-laguito` y a toda página estática, desde el primer despliegue.
+*El ensayo encuentra lo que no ibas a buscar; eso es lo que lo hace distinto de releer el plan.*
+
+**150.1 — Qué costaba, y por qué nadie lo había visto.** Es el valor por defecto de la capa de assets
+de Cloudflare (`auto-trailing-slash`). Abriendo el sitio no se nota: el navegador sigue el salto y la
+página se ve. El precio se paga en sitios donde nadie mira:
+
+- los **65 redirects del sitio viejo** aterrizan en una URL que a su vez redirige — una **cadena**
+  justo en las direcciones que llevan años indexadas, que es donde menos conviene tenerla;
+- el `sitemap.xml` declara URLs que responden con redirección;
+- y el `<link rel="canonical">` dice `/journal` mientras el servidor prefiere `/journal/`: **dos
+  señales contradictorias** sobre cuál es la dirección buena, emitidas por el mismo sitio.
+
+**150.2 — El arreglo: una sola forma, y que sea la que el sitio ya escribe.**
+`html_handling: "drop-trailing-slash"`. No es una preferencia estética: los enlaces internos, el
+sitemap, el canonical y el destino de cada uno de los 301 **ya** usan la forma sin barra. Lo único
+que discrepaba era el servidor. Valor verificado contra el enum de `config-schema.json`, no de
+memoria ([[L-14]]).
+
+**150.3 — Medido sobre un build FRESCO, que es la lección de §145.6.** Primero se comprobó que la
+config **generada** (`dist/server/wrangler.json`, la que wrangler usa de verdad) lleva la clave —el
+adapter la copia—; después, con el worker local: sin barra → **200 directo** en `/journal`,
+`/comprar`, `/precios`, `/zona/el-laguito` y el artículo; con barra → 307 hacia la forma sin barra.
+Y lo que no debía moverse, no se movió: 64/65 redirects, el token de Search Console en 200, y 404
+honesto tanto en `/no-existe` como en `/inventado.html`.
+
+**150.4 — Candado, porque quitarlo no rompe nada visible.** `verify:build` exige la clave. Y aquí
+hubo una lección de método dentro de la lección: **mi primera prueba de mordida apuntó al archivo
+equivocado** —toqué el generado, y el gate lee la fuente— así que salió verde y estuve a un paso de
+anotar «el gate no muerde». Repetida sobre `wrangler.jsonc`: rojo al quitar la clave, verde al
+restaurarla. *Un gate que solo se ha visto en verde no está probado, y una prueba mal apuntada se
+parece muchísimo a una prueba.*
+
+**150.5 — Y el paso 5.5 ya está ENSAYADO.** Es la regla que nació hoy con [[M-23]]: todo paso 🤖 del
+runbook lleva su marca `ensayado: <fecha>`. El 5.5 la tiene, con su resultado escrito —64/65 y por
+qué el que falta no es un fallo—. También se corrigió el texto del paso: decía «comprobar una
+muestra», y una muestra no sirve para esto; se comprueban los 65.
+
+**150.6 — Archivos.** `portal/wrangler.jsonc` · `portal/scripts/verify-build.mjs` ·
+`specs/CUTOVER-RUNBOOK.md` (paso 5.5 + tabla de ensayados).
