@@ -126,6 +126,8 @@
 | §145 | 🔴 **El mapa de 301 llevaba SIEMPRE sin ejecutarse** — y mi 1ª causa fue equivocada. Astro no corre el middleware en rutas que no existen. 64/65 verificados uno por uno. + `/admin.html` muere en el cutover. | 5323 |
 | §146 | 🔬 **Auditoría Nivel-2 #10**: los hallazgos salieron de EJECUTAR el runbook, no de leer el cerebro. 2 reincidencias (runbook no ensayado → M-23 · BOOT al 99% crónico). `verify:data` no lo corría nadie; 3 gates miraban donde no hacía falta. | 5396 |
 | §147 | 📰 **El Journal, publicado**: 4 artículos con su norma .gov.co citada. Ley e interpretación se ven DISTINTAS a propósito; `fuentes` obligatoria = sin fuente NO compila; la lectura se calcula. | 5442 |
+| §148 | 🔎 **La bóveda ya se puede LEER**: quién abrió cada documento. Solo el super_admin (lleva IP de terceros) · ni IP ni ciudad, aunque estén · prueba nueva: `get` y `list` NO son el mismo permiso. | 5512 |
+| §149 | ✂️ **El mapa del portal se parte en dos**: sale el back-office a `22-MAPA-GESTION` (−2422c en `21`). Frontera por PRODUCTO, no por tamaño: un shard por volumen se vuelve a llenar. Boot −23c. | 5565 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

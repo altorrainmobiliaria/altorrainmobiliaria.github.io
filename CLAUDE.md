@@ -34,7 +34,7 @@ Auto-cargas SOLO `CLAUDE.md` + `05` + `10` (§G.1); el resto se lee on-demand. E
 | 🩺 **Estado Global** | `docs/05-ESTADO-GLOBAL.md` | ✅ boot | Signos vitales: build, branch, flags de riesgo. |
 | ⚡ **Corto Plazo (WIP)** | `docs/10-MEMORIA-CORTO-PLAZO.md` | ✅ 2ª | Sprint actual, pendientes (TODO-NN), bitácora. |
 | 🛰️ **Consejo Externo** | `docs/15-CONSEJO-EXTERNO.md` | ❌ | Crítica adversarial de un provider de otra familia (no-Claude): cuándo pedirla + anti-anclaje. |
-| 🗺️ **Espacial** | `docs/20-MEMORIA-ESPACIAL.md` (+ hija `21-MAPA-PORTAL.md`) | ❌ | Stack real, schema Firestore, free-tier, blog, SEO. La hija: dónde vive cada archivo del PORTAL. |
+| 🗺️ **Espacial** | `docs/20-MEMORIA-ESPACIAL.md` (+ hijas `21-MAPA-PORTAL.md` · `22-MAPA-GESTION.md`) | ❌ | Stack real, schema Firestore, free-tier, SEO. Las hijas: dónde vive cada archivo del PORTAL público y del PANEL. |
 | 🧪 **Procedimental** | `docs/30-LECCIONES.md` | ❌ | Gotchas y recetas ya pagados (`L-NN`). |
 | 🧩 **Hojas hijas de `30`** | `docs/31-VERIFICACION-UI.md` · `docs/32-LECCIONES-DOCUMENTALES.md` · `docs/33-LECCIONES-META.md` · `docs/34-DOCTRINA-CODIGO.md` · `docs/35-LECCIONES-PLATAFORMA.md` · `docs/36-LECCIONES-UTILLAJE.md` | ❌ | UI en navegador · legal/documental (`LD-NN`) · meta (`M-NN`: dónde falló el cerebro) · 🖥️ doctrina de código · plataforma de Ola 0 · 🧰 utillaje (cuando miente la herramienta). |
 | 🔁 **Workflows** | `docs/60-WORKFLOWS.md` | ❌ | Catálogo W-01..W-11; **W-11 = SSoT del flujo fuerte**. |
@@ -113,7 +113,7 @@ Antes de CUALQUIER commit no-trivial: 5 secciones → (A) archivos a modificar, 
 Esta sección es tu sistema nervioso. Define qué lees, cuándo escalas y cómo consolidas. **Es vinculante.**
 
 ### G.1 — Directiva de Ignorancia Selectiva (arranque de sesión)
-Al iniciar una conversación nueva estás **estrictamente obligado** a leer SOLO: (1) `CLAUDE.md` (este, auto-cargado); (2) `docs/05-ESTADO-GLOBAL.md`; (3) `docs/10-MEMORIA-CORTO-PLAZO.md` (el WIP vivo). Al arrancar, **imprime 2-3 líneas de signos vitales** de `05`. **IGNORA el resto** (Espacial/Índice/Largo Plazo/hojas) salvo que un trigger (§G.2) o el usuario lo pida. No leas el historial "por si acaso".
+Al iniciar una conversación nueva estás **estrictamente obligado** a leer SOLO: `CLAUDE.md` (auto-cargado) + `docs/05-ESTADO-GLOBAL.md` + `docs/10-MEMORIA-CORTO-PLAZO.md` (el WIP vivo), e **imprime 2-3 líneas de signos vitales** de `05`. **IGNORA el resto** salvo que lo pida un trigger (§G.2) o el usuario. No leas el historial "por si acaso".
 
 ### G.2 — Triggers de Recuperación (Escalation Path)
 - **🔴 Error / Saturación**: si fallas **2 veces** con el mismo bug, DETENTE y lee el Largo Plazo (`00-INDICE` → tramo de `99`) buscando el § o un bug análogo ANTES de la 3ª solución (prohibido adivinar, §3.3). Loops/contexto saturado: consolida `10` (con 🚫 callejones) y ofrece relevo curado.

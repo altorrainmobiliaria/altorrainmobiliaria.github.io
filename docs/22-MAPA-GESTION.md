@@ -1,0 +1,15 @@
+# 🛠️ 22 — MAPA DE GESTIÓN (el back-office · hoja hija de `21-MAPA-PORTAL`)
+
+> **Dónde vive cada cosa del PANEL** — el producto que usa el equipo, no el visitante. Salió de
+> `21` el 2026-08-25 (ADR §149) cuando esa neurona rozó su tope por TERCERA vez en un día: la
+> frontera es limpia —sitio público vs. back-office— y este lado es el que crece con cada pieza de
+> la operación, así que aquí tiene sitio para crecer sin empujar al mapa del portal.
+>
+> Lo de FUERA sigue en `21`: páginas públicas, design system, SEO, catálogo, zonas, ficha.
+
+- **BITÁCORA de la bóveda** (§148): `lib/domain/bitacora.ts` = dominio puro (limpia lo que sale de `auditLog`, hora de Colombia a mano, tope 25 y aviso de corte); la consulta y el panel plegable, en `scripts/gestion-documentos.ts`. ⚠️ **Solo la ve el super_admin** —las Rules la reservan porque lleva IP de terceros (§130)— y necesita el índice compuesto `auditLog` (`objetivo`+`creadoEn`), YA en producción. La consulta se probó en el emulador aparte del `get`: en Firestore son permisos DISTINTOS.
+- **GESTIÓN v1** (§112 agenda · §113 Function · §114 pantalla): `scripts/gestion-contratos.ts` (agenda arriba, lista debajo, alta que llama la callable **por HTTP**, sin SDK) · `lib/domain/agenda.ts` (vencimientos, mora — puro, `hoy` inyectado) · `lib/domain/gestion.ts` (modelo + `problemasDeContrato` con el gate del art. 16) · `functions/src/gestion-escritura.ts` = **única** puerta de escritura. El nav se rutea por `data-nav`, no por posición.
+- **Panel de gestión — CUATRO vistas** (§110, §114): `gx-vista-panel` (resumen) · `gx-vista-inmuebles` listado con la columna **«¿se ve?»**, que sale de `problemasParaPublicar()` y NO del estado (`scripts/gestion-inmuebles.ts`) · `gx-vista-alta` = alta **y edición** (§111) (`gestion-alta-ui.ts` pinta · `gestion-alta.ts` acuña y guarda · `lib/domain/alta-propiedad.ts` decide). Mockup `ALTORRA Gestion-Alta.dc.html`, aprobado 2026-08-22.
+- **Panel de gestión** (§98 puerta · §101 leads): `src/pages/gestion.astro` (estático, `noindex`; el panel nace `hidden` y solo se abre con sesión + claim `admin`) · `src/scripts/gestion-leads.ts` = bandeja de leads REAL, consulta acotada `limit(50)` y **sin listeners**; si la lectura falla BORRA los datos de muestra. ⚠️ Es la única superficie que usa el SDK de Firestore, con excepción declarada en `verify:data` por patrón `scripts/gestion-*`. Falta CRUD y export → TODO-44.
+- **Bóveda de documentos** (§142, gate B5): `src/lib/domain/documentos.ts` = **dueño de la lista canónica** de lo que exige cada expediente (`faltantes`, `porVencer`) · `src/scripts/gestion-documentos.ts` (vista + subida en 3 tiempos + `getBlob`, **nunca `getDownloadURL`**) · la vista vive dentro de `gestion.astro` (`#gx-vista-documentos`) · `portal/functions/src/documentos.ts` = las 3 puertas de escritura · mockup `portal/design/mockups/ALTORRA Documentos.dc.html` (**sin aprobar**).
+- **Llamar a una callable** (§142): `src/scripts/callable.ts` = **dueño único** del protocolo por HTTP plano (`verify:data` prohíbe `firebase/functions`). ⚠️ `gestion-novedades` y `gestion-contratos` conservan su copia propia: se traen aquí cuando se toquen.

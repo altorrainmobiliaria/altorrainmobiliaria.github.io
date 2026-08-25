@@ -5508,3 +5508,86 @@ propósito: se llenan con material propio, no con relleno.
 `portal/src/pages/journal/[slug].astro` · `portal/src/pages/index.astro` ·
 `portal/src/pages/sitemap.xml.ts` · `portal/src/styles/components.css` ·
 `portal/design/mockups/ALTORRA Journal.dc.html`.
+
+## 148. ADR — La bóveda ya se puede LEER: quién abrió cada documento ⟦OPUS-5⟧ (2026-08-25)
+
+**148.0 — La mitad que faltaba.** Desde §142 la bóveda REGISTRA cada apertura: el servidor escribe
+en `auditLog` con el uid del token verificado. Lo que no existía es la otra mitad —consultarla—, y
+una bitácora que nadie puede leer es exactamente igual de útil que no tenerla. Es el artboard 4a del
+mockup de Documentos, el único que quedaba sin construir. *Un registro sin lectura no es una
+garantía: es una intención archivada.*
+
+**148.1 — No la ve todo el equipo, y se dice por qué.** `auditLog` guarda IP, navegador y patrón de
+acceso de OTRAS personas del equipo — dato personal de terceros, y el principio de minimización de
+la Ley 1581 no pide menos. Las Rules ya la reservaban al super_admin (§130) y esa decisión se
+RESPETA en vez de pelearse: el resto del staff ve la sección con la explicación de por qué no ve las
+filas. *Un panel que esconde algo sin decirlo se lee como un error; uno que lo dice, como una
+política.* Y no se intenta la consulta que se sabe denegada: pedirla para que falle sería gastar una
+lectura y un mensaje de error feo para llegar a la misma pantalla.
+
+**148.2 — Ni IP ni ciudad, aunque estén guardadas.** El mockup dibuja una tercera columna
+—«Cartagena»— y NO se construye. Deducir ciudad de una IP exige un servicio de terceros al que
+habría que mandarle la IP de nuestra propia gente, y para la pregunta que esta pantalla contesta
+—«¿quién abrió la cédula del inquilino?»— la ciudad no aporta nada. En su lugar va **qué hizo**
+(abrió o retiró), que sí distingue dos hechos muy distintos, y el motivo del retiro cuando lo hay:
+es lo único que explica un hueco seis meses después. Desviación del mockup, deliberada y escrita
+donde se ve.
+
+**148.3 — Se corta, y se dice dónde.** `limit(25)` —obligatorio en este proyecto: sin él es cuota
+abierta— y, si llegan justo 25, la pantalla avisa de que hay más. El aviso se pasa de prudente a
+propósito (no distingue el caso de exactamente 25 en total), porque **un listado truncado en
+silencio se lee como completo**, y ese error sí es caro.
+
+**148.4 — El índice, desplegado y COMPROBADO en producción.** La consulta filtra por `objetivo` y
+ordena por `creadoEn`: necesita índice compuesto. Sin él la pantalla no fallaría en pruebas —fallaría
+con `FAILED_PRECONDITION` el día que el dueño la abriera—, que es exactamente lo que costó §134. Se
+añadió a `portal/firebase/firestore.indexes.json`, se desplegó (y la CLI **nombró el archivo**, que
+es la señal de [[L-51]]) y se verificó contra producción: **16 índices, con el de `auditLog` en
+`objetivo` ASC + `creadoEn` DESC**.
+
+**148.5 — La prueba que faltaba: `get` y `list` NO son el mismo permiso.** Ya había prueba de que el
+editor no puede LEER una entrada del `auditLog` por su id. Pero esta pantalla no hace un `get`: hace
+una BÚSQUEDA, y en Firestore una regla puede dejar leer un documento y negar la consulta que lo
+encuentra. Se añadió una prueba nueva contra el emulador con la consulta EXACTA que corre el panel:
+el super_admin pasa; el editor y el cliente autenticado, no. Total: 102 pruebas de Rules.
+
+**148.6 — Lo que NO se pudo verificar, dicho.** El render en vivo del panel exige una sesión de
+staff, que no tengo. Queda para el paso 1.6 del runbook, con el dueño delante. Lo que sí está
+verificado sin sesión: el dominio puro (22 pruebas: fechas de Firestore sin resolver, marcas rotas,
+orden, filtrado por documento, hora de Colombia), las Rules contra el emulador, el índice en
+producción, `typecheck` con 0 errores y los 7 gates.
+
+**148.7 — Archivos.** `portal/src/lib/domain/bitacora.ts` (+ `.test.ts`) ·
+`portal/src/scripts/gestion-documentos.ts` · `portal/src/pages/gestion.astro` (estilos `gx-doc-bit`)
+· `portal/firebase/firestore.indexes.json` · `portal/firebase/tests/rules.test.ts` ·
+`portal/src/content.config.ts` (`z.url()`, que `z.string().url()` quedó obsoleta en Zod 4).
+
+## 149. ADR — El mapa del portal se parte en dos: sitio público y back-office ⟦OPUS-5⟧ (2026-08-25)
+
+**149.0 — Por qué hoy y no antes.** `21-MAPA-PORTAL` rozó su tope **tres veces en el mismo día**: al
+añadir el Journal, al añadir la bitácora de la bóveda, y otra vez tras podar. Podar una cuarta vez
+habría sido seguir pagando el mismo peaje con documentación buena —el detalle que se recorta suele
+ser el que alguien necesitará—, y §G.5 es explícita: **al acercarse al tope no se engorda, se
+extrae**. La auditoría de hoy ya había nombrado esto (N10-02): el arreglo real es un shard, no una
+línea menos por commit.
+
+**149.1 — La frontera, y por qué es limpia.** Sale el **back-office** —el panel y sus cuatro vistas,
+la bóveda de documentos con su bitácora, contratos, y el módulo que habla con las callables— a
+`docs/22-MAPA-GESTION.md`. Se queda el **sitio público**: páginas, design system, SEO, catálogo,
+zonas, ficha, Journal. No es un corte por tamaño: son **dos productos con dos usuarios** (el
+visitante y el equipo), y el que crece con cada pieza de la operación es el segundo. *Un shard por
+volumen se vuelve a llenar; uno por frontera, no.*
+
+**149.2 — Números.** `21` pasa de **14190c a 11769c** (−2422, seis entradas movidas) y `22` nace con
+3160c sobre un tope de 9000 — margen amplio **a propósito**: este nodo está hecho para crecer, y el
+que no debía crecer más era `21`. El eje de líneas se derivó de la densidad real (~226 c/línea) para
+que ambos aprieten en el mismo punto, que es la regla `_caps_que` de siempre ([[M-06]]).
+
+**149.3 — Registrado, no colgado.** El gate #10 exige **registro DIRECTO en `CLAUDE.md` §0**: ser
+alcanzable por otra neurona no basta. Y como el router es always-on, entrar cuesta — así que se
+aplicó one-in-one-out: la §G.1 decía dos veces lo mismo (la lista numerada y luego la paráfrasis de
+la misma orden) y se quedó con una. **Balance del boot: −23c.** *La regla de una-entra-una-sale no
+es burocracia: es lo único que impide que el arranque de cada sesión engorde un poco cada día.*
+
+**149.4 — Archivos.** `docs/22-MAPA-GESTION.md` (nuevo) · `docs/21-MAPA-PORTAL.md` (queda el
+puntero) · `docs/.brain-manifest.json` (cap medido) · `CLAUDE.md` §0 y §G.1.

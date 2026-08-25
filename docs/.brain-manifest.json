@@ -110,6 +110,11 @@
       "lines": 90,
       "chars": 11502,
       "_comment": "Hoja hija de 30 (ADR 125). Cap MEDIDO sobre el real (8520c / 66L, densidad 129): chars = real+35%, lines = ceil(cap/densidad) para que el eje de lineas sea GUARDA y no un segundo techo. Familia que crece rapido — al llenarse, destilar; NO subir el techo (M-05)."
+    },
+    "docs/22-MAPA-GESTION.md": {
+      "chars": 9000,
+      "lines": 40,
+      "_comment": "Nacio el 2026-08-25 en el shard de 21 (ADR 149): absorbe el BACK-OFFICE (panel y sus 4 vistas, boveda de documentos y su bitacora, contratos, callable), que es el lado que crece con cada pieza de la operacion. Cap MEDIDO sobre el real (3160c / 14L) con margen amplio a proposito: este nodo esta hecho para crecer, y el que no debia crecer mas era 21. lines DERIVADO de la densidad real (~226 c/linea): 9000/226 = 40, para que ambos ejes aprieten a la vez (_caps_que). Si algun dia aprieta, la frontera siguiente es GESTION v1 (contratos/pagos/novedades) vs. BOVEDA de documentos, NO subir el techo."
     }
   },
   "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",
