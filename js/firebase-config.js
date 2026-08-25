@@ -48,7 +48,7 @@ window.AltorraKeys = Object.assign({
     const [
       { initializeApp },
       { getAuth, onAuthStateChanged },
-      { getFirestore, enableMultiTabIndexedDbPersistence, doc, getDoc, setDoc, serverTimestamp },
+      { getFirestore, doc, getDoc, setDoc, serverTimestamp },
     ] = await Promise.all([
       import('https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js'),
       import('https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js'),
@@ -59,17 +59,29 @@ window.AltorraKeys = Object.assign({
     window.auth        = getAuth(window.firebaseApp);
     window.db          = getFirestore(window.firebaseApp);
 
-    // Persistencia offline multi-tab (IndexedDB)
-    try {
-      await enableMultiTabIndexedDbPersistence(window.db);
-    } catch (err) {
-      if (err.code === 'failed-precondition') {
-        // Múltiples tabs — solo la primera obtiene persistencia
-        console.warn('[Firebase] Persistencia limitada (múltiples tabs).');
-      } else if (err.code === 'unimplemented') {
-        console.warn('[Firebase] Navegador sin soporte de IndexedDB.');
-      }
-    }
+    /* ── SIN persistencia offline, a propósito (§135) ─────────────────────────────────────────────
+     * Aquí vivía `enableMultiTabIndexedDbPersistence()`. Se retira por DOS razones, y la segunda
+     * pesa más que la primera:
+     *
+     * 1️⃣ CAUSABA UN FALLO DE ACCESO. Esa API comparte UNA sola conexión entre todas las pestañas
+     *    abiertas: una hace de «principal» y las demás salen por ella. Si la principal es una pestaña
+     *    vieja sin sesión, las lecturas de las otras viajan **sin credencial** y Firestore responde
+     *    `Missing or insufficient permissions` — aunque la persona esté perfectamente autenticada en
+     *    la pestaña que mira. Es lo que dejó al dueño fuera de su panel: entraba bien y el sistema le
+     *    decía «no se encontró tu perfil». Los 3 reintentos que había ya existían por este mismo bug
+     *    («fix Access denied for UID»), pero reintentar no arregla salir por la puerta equivocada.
+     *    Google además la marcó DEPRECADA; el aviso salía en consola desde hace tiempo.
+     *
+     * 2️⃣ 🔒 GUARDABA DATOS AJENOS EN EL DISCO DEL NAVEGADOR. La persistencia copia a IndexedDB TODO
+     *    lo que el panel lee: leads con nombre y teléfono, contratos, expedientes. En un computador
+     *    compartido o robado, eso queda ahí, legible, sin sesión. Para un panel que maneja cédulas y
+     *    arriendos, el principio de minimización de la Ley 1581 no admite «lo cacheo por comodidad».
+     *
+     * ¿Qué se pierde? Trabajar sin internet. En un panel de administración eso no es una función:
+     * es una forma de mirar datos viejos creyendo que son de hoy. Si algún día hiciera falta, la API
+     * viva es `persistentLocalCache({ tabManager: persistentMultipleTabManager() })` — pero volvería
+     * a traer el punto 2️⃣, así que tendría que decidirse a sabiendas.
+     */
 
     // Asegurar documento system/meta para cache-manager
     try {

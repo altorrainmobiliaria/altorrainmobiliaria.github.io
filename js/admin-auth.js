@@ -134,22 +134,52 @@
     }
   }
 
-  /* ─── Carga de perfil con retry (fix "Access denied for UID") ── */
+  /* ─── Carga de perfil (§135) ───────────────────────────────────────────────────────────────────
+   * Devuelve `{ ok: true, perfil }` o `{ ok: false, causa, detalle }`. Antes devolvía `null` en TODOS
+   * los casos malos, y eso escondía dos problemas muy distintos bajo un solo mensaje:
+   *   · «tu ficha no existe»       → hay que crearla (cosa del administrador);
+   *   · «no pude leer tu ficha»    → red, permisos o caché (cosa del sistema).
+   * Al dueño se le decía siempre lo primero, aunque fuera lo segundo. Un diagnóstico falso manda a
+   * buscar el problema al sitio equivocado, que es peor que no dar ninguno.
+   *
+   * ⚠️ Y la razón por la que ahora se lee `getDocFromServer` y no `getDoc`: este panel tiene
+   * PERSISTENCIA OFFLINE. Con ella, si el SDK cree que no hay red, `getDoc` responde **desde la caché
+   * local**, y una ficha que nunca se guardó ahí vuelve como «no existe». O sea: una decisión de
+   * ACCESO tomada con un «no encontrado» que en realidad significa «no miré». `getDocFromServer`
+   * obliga a preguntarle al servidor y, si no puede, FALLA — que es la respuesta honesta.
+   */
   async function loadUserProfile(uid, attempt = 1) {
-    const { getDoc, doc } =
+    const { getDocFromServer, doc } =
       await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
     try {
-      const snap = await getDoc(doc(window.db, 'usuarios', uid));
-      if (!snap.exists()) return null;
-      return snap.data();
+      const snap = await getDocFromServer(doc(window.db, 'usuarios', uid));
+      if (!snap.exists()) return { ok: false, causa: 'no-existe' };
+      return { ok: true, perfil: snap.data() };
     } catch (err) {
-      if (attempt < PROFILE_RETRY_MAX) {
+      // `permission-denied` NO se reintenta: reintentar lo denegado solo retrasa el mensaje.
+      if (err?.code !== 'permission-denied' && attempt < PROFILE_RETRY_MAX) {
         await new Promise(r => setTimeout(r, 500 * attempt));
         return loadUserProfile(uid, attempt + 1);
       }
-      console.error('[AdminAuth] Error cargando perfil tras', PROFILE_RETRY_MAX, 'intentos:', err);
-      return null;
+      console.error('[AdminAuth] no se pudo leer usuarios/' + uid, '→', err?.code, err?.message);
+      return {
+        ok: false,
+        causa: err?.code === 'permission-denied' ? 'denegado' : 'sin-lectura',
+        detalle: err?.code || 'desconocido',
+      };
     }
+  }
+
+  /** Traduce el porqué a algo accionable. El código va al final para poder pedírselo por teléfono. */
+  function explicarPerfil(r) {
+    if (r.causa === 'no-existe') {
+      return 'Tu cuenta existe pero no tiene ficha en el equipo. Pídele a un administrador que te dé de alta.';
+    }
+    if (r.causa === 'denegado') {
+      return 'Tu cuenta no tiene permiso para entrar al panel. Pídele a un administrador que te lo dé.';
+    }
+    return 'No pudimos verificar tu perfil (conexión o servidor). Revisa tu internet y vuelve a intentarlo. [' +
+      (r.detalle || '?') + ']';
   }
 
   /* ─── RBAC — mostrar/ocultar UI según rol ──────────────── */
@@ -298,14 +328,23 @@
 
       const uid = credential.user.uid;
 
+      /* 2b. Esperar a que la credencial esté REALMENTE lista antes de leer nada (§135).
+       * `signInWithEmailAndPassword` resuelve en cuanto el servidor acepta la contraseña, pero el
+       * token tarda un instante más en quedar disponible para Firestore. Leer en ese hueco devuelve
+       * `Missing or insufficient permissions` — que se lee como «no tienes permiso» cuando en realidad
+       * es «todavía no le he dicho quién eres». Los 3 reintentos de abajo existían por esto; pedir el
+       * token de forma explícita convierte una carrera en una espera. */
+      await credential.user.getIdToken();
+
       // 3. Cargar perfil desde Firestore
-      const profile = await loadUserProfile(uid);
-      if (!profile) {
+      const res = await loadUserProfile(uid);
+      if (!res.ok) {
         await signOut();
-        showLogin('No se encontró tu perfil de usuario. Contacta al administrador.');
+        showLogin(explicarPerfil(res));
         setLoginLoading(false);
         return;
       }
+      const profile = res.perfil;
 
       // 4. Verificar que no está bloqueado en Firestore
       if (profile.bloqueado || !profile.activo) {
