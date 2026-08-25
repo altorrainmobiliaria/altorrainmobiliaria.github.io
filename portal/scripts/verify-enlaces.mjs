@@ -121,3 +121,62 @@ if (rotos.length) {
 }
 
 console.log(`✅ verify:enlaces — ${vistos.size} enlace(s) interno(s) del HTML servido: todos resuelven.`);
+
+/*
+ * ── Sonda 2: COBERTURA DEL MAPA DE 301 — el gate del cutover (§145) ────────────────────────────
+ *
+ * QUÉ CAZA. Una URL del sitio viejo que no esté ni redirigida ni declarada como intencionalmente
+ * no-redirigida. Ese hueco no se nota el día del cutover: se nota **meses después**, cuando alguien
+ * llega desde Google a una dirección que lleva años indexada y se come un 404. Para entonces la
+ * posición ya se perdió y no hay forma de saber cuánta.
+ *
+ * POR QUÉ AHORA. `redirects.ts` ya tenía la respuesta bien hecha: 65 redirigidas + una lista
+ * `NO_REDIRIGIR` con NUEVE excepciones, cada una con su razón escrita —incluida la del archivo de
+ * verificación de Search Console, que si se redirige **pierde la propiedad y con ella el histórico**—.
+ * Lo que no tenía es quien la hiciera cumplir: la lista estaba **exportada y sin un solo consumidor**.
+ * Una declaración que nada comprueba envejece sola, y esta envejece justo hasta el cutover.
+ *
+ * ⚠️ Tras el cutover los `.html` viejos se borran del árbol (decisión del MEGA-PLAN §1). Entonces
+ * este chequeo pasará porque no habrá nada que cubrir, y eso es correcto: su trabajo habrá terminado.
+ */
+const LEGACY_FUERA = new Set(['portal', 'node_modules', '_legacy', '.git', 'dist', 'skills', 'docs', 'specs']);
+function htmlLegacy(dir, base, acc = []) {
+  for (const n of readdirSync(dir)) {
+    if (LEGACY_FUERA.has(n) || n.startsWith('.')) continue;
+    const p = join(dir, n);
+    if (statSync(p).isDirectory()) htmlLegacy(p, base, acc);
+    else if (n.endsWith('.html')) acc.push('/' + relative(base, p).replace(/\\/g, '/'));
+  }
+  return acc;
+}
+
+const REPO = join(RAIZ, '..');
+const fuenteRed = join(RAIZ, 'src/lib/seo/redirects.ts');
+if (existsSync(fuenteRed)) {
+  const red = readFileSync(fuenteRed, 'utf8');
+  const zonasSrc = join(RAIZ, 'src/lib/content/zonas.ts');
+  const cubiertas = new Set([...red.matchAll(/de:\s*'([^']+)'/g)].map((m) => m[1]));
+  // Las de barrio se DERIVAN de `ZONAS`; `baru` no, porque en el sitio viejo tenía otra dirección.
+  if (existsSync(zonasSrc)) {
+    for (const m of readFileSync(zonasSrc, 'utf8').matchAll(/slug: '([a-z-]+)'/g)) {
+      if (m[1] !== 'baru') cubiertas.add(`/${m[1]}.html`);
+    }
+  }
+  const bloque = red.slice(red.indexOf('export const NO_REDIRIGIR'));
+  for (const m of bloque.slice(0, bloque.indexOf('];')).matchAll(/'(\/[^']+)'/g)) cubiertas.add(m[1]);
+
+  const viejas = htmlLegacy(REPO, REPO);
+  const huerfanas = viejas.filter((v) => !cubiertas.has(v)).sort();
+  if (huerfanas.length) {
+    console.error('');
+    console.error('❌ verify:enlaces — URLs del sitio viejo SIN 301 y sin declararse como excepción:');
+    console.error('');
+    for (const h of huerfanas) console.error(`   ${h}`);
+    console.error('');
+    console.error('   El día del cutover eso es un 404 para quien llegue desde Google, y la posición');
+    console.error('   ganada se pierde sin aviso. O le das su `{de, a}` en `redirects.ts`, o la añades');
+    console.error('   a `NO_REDIRIGIR` CON SU RAZÓN escrita — que es lo que hace útil a esa lista.');
+    process.exit(1);
+  }
+  console.log(`✅ verify:enlaces — las ${viejas.length} URLs del sitio viejo están cubiertas por el mapa de 301.`);
+}
