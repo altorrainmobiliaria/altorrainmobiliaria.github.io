@@ -5246,3 +5246,48 @@ aprobado**: se dibujó para que Daniel lo vea, no en vez de que lo vea.
 `src/scripts/gestion-documentos.ts` · `src/scripts/callable.ts` · `src/pages/gestion.astro` ·
 `src/scripts/gestion-alta-ui.ts` · `firebase/firestore.rules` + `.indexes.json` ·
 `scripts/verify-data-invariants.mjs` · `scripts/verify-build.mjs` · `.github/workflows/portal-ci.yml`.
+
+
+## 143. ADR — La deuda de auditoría que no era del repo, y la sonda que miraba media página ⟦OPUS-5⟧ (2026-08-25)
+
+**143.1 — TODO-45 (d) y (g): analizadas, y ninguna es trabajo de este repo.** Llevaban desde §120 en
+la pizarra descritas como deuda pendiente. Al mirarlas de verdad:
+
+- **(g) «las 98 rutas que el #27 perdona por basename».** Se sacó la lista —92 hoy— y **no son
+  descuido**. Los nodos escriben *«**Núcleo**: `firebase-config.js` · `database.js` · …»* y
+  *«**Páginas** (`src/pages/`): …»*: establecen la carpeta UNA vez y listan. Eso es buena escritura;
+  repetir `js/` cuarenta veces engordaría dos neuronas que están al 92% y 96% de su tope para no
+  añadir información. **El que no sabe resolverlo es el linter**, que compara contra el repo entero y
+  concluye «existe algo llamado así en alguna parte». El arreglo correcto no es reescribir los nodos:
+  es que el chequeo resuelva el nombre suelto **contra la carpeta que el nodo ya estableció**.
+- **(d) «umbrales en DÍAS en un repo que corre en COMMITS».** Parte ya está hecha —el disparador de la
+  auditoría Nivel-2 cuenta ADRs, no días— y lo que queda (`staleDays`, el sello del respaldo) es la
+  misma clase de cambio.
+
+**Y las dos viven en `scripts/brain-check.mjs`, que es KERNEL** — uno de los cinco archivos canónicos
+compartidos por los cuatro repos, con su propio chequeo de integridad. Tocarlo aquí rompería el #1 y
+dejaría este repo divergente. Así que **no es que estuvieran pendientes: estaban en la lista
+equivocada**. Se mueven a TODO-23 (endurecimiento del kernel) con el diseño ya escrito, y TODO-45 se
+cierra. *Una tarea en la lista de quien no puede hacerla parece trabajo pendiente y es ruido* — la
+misma forma del paso 1.4 del runbook (§140.5).
+
+**143.2 — La sonda de ids miraba media página.** La sonda 3 de `verify:css` (§138) comprueba que todo
+`getElementById` tenga su nodo… y nació mirando **solo el `<script>` inline** de cada página. El
+panel de gestión busca **63 ids desde `src/scripts/gestion-*.ts`**, y no miraba ni uno. O sea: el gate
+que existe para cazar «renombraste un id y olvidaste el script» **no cubría el sitio donde ese script
+vive**. Ahora reutiliza `alcanzables()`, que ya sabía qué módulos carga cada página incluidos los que
+llegan por import — esa lección ya se había pagado una vez en la sonda 1. Probado con un id que solo
+busca un módulo. Los 63 resuelven.
+
+**143.3 — La bóveda, por dentro.** Segunda pantalla del mockup: al pulsar «Ver» se abre el expediente
+con lo que falta y lo que hay, **con el mismo peso visual** — si el que falta se pintara más flojo se
+leería como opcional, y son precisamente los obligatorios. Al retirar se pide el **motivo**, no un
+«¿seguro?»: *un «sí» no dice nada en seis meses; «lo reemplazó el contrato firmado del 3 de marzo»
+sí.* Y abrir un documento con datos de un tercero **queda escrito** en `auditLog` (§130) — va después
+de entregar el archivo y sin esperar, porque una bitácora no debe poder retrasar que alguien abra un
+documento suyo. `registrarEvento` desplegada con las dos acciones nuevas; sin eso el registro habría
+fallado con «acción no reconocida» y se habría perdido en silencio.
+
+**143.4 — Archivos.** `portal/scripts/verify-css-runtime.mjs` (sonda 3 ampliada) ·
+`portal/src/pages/gestion.astro` · `portal/src/scripts/gestion-documentos.ts` · `functions/index.js` ·
+`docs/10` (TODO-45 cerrada, su contenido movido a TODO-23).
