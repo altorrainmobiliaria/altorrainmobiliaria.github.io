@@ -245,6 +245,7 @@ async function seedFusion() {
     await setDoc(doc(db, 'usuarios/cliente-uid'), { rol: 'viewer', activo: true });
     await setDoc(doc(db, 'loginAttempts/hash-1'), { intentos: 1 });
     await setDoc(doc(db, 'drafts_activos/editor-uid'), { propId: 'INM-1' });
+    await setDoc(doc(db, 'ventas/VTA-1'), { etapa: 'oferta', compradorNombre: 'Ana' });
     await setDoc(doc(db, 'alertas/a-1'), { email: 'x@y.co', token: 'secreto-largo-de-sobra' });
     await setDoc(doc(db, 'contratos/c-1'), { estado: 'vigente' });
     await setDoc(doc(db, 'pagos/p-1'), { estado: 'pendiente' });
@@ -322,6 +323,16 @@ describe('legacy VIVO — admin.html no se puede quedar sin sus colecciones', ()
     await assertSucceeds(getDocs(consulta(superAdmin())));
     await assertFails(getDocs(consulta(editor())));
     await assertFails(getDocs(consulta(cliente())));
+  });
+
+  it('🔒 las ventas las LEE el staff y no las escribe NADIE desde el cliente', async () => {
+    // Lleva nombre del comprador y cifras del negocio: no es dato público. Y la escritura es
+    // server-only porque el ORDEN de las etapas tiene consecuencias legales (§151).
+    await assertSucceeds(getDoc(doc(staff(), 'ventas/VTA-1')));
+    await assertFails(getDoc(doc(cliente(), 'ventas/VTA-1')));
+    await assertFails(getDoc(doc(anon(), 'ventas/VTA-1')));
+    await assertFails(setDoc(doc(superAdmin(), 'ventas/VTA-2'), { etapa: 'registro' }));
+    await assertFails(setDoc(doc(editor(), 'ventas/VTA-1'), { etapa: 'registro' }));
   });
 
   it('el borrador de un usuario es suyo y de nadie más', async () => {

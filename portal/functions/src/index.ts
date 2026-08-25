@@ -38,6 +38,11 @@ export {
 // Storage; lo que NO se delega al navegador es decidir dónde escribe ni cuánto pesa lo que subió.
 export { confirmarDocumento, prepararDocumento, retirarDocumento } from './documentos';
 
+// PIPELINE DE VENTA (Ola 2 · GESTIÓN v2, §151). `ventas` nace con `allow write: if false`: el
+// ORDEN legal de las 7 etapas y el folio de matrícula al registrar no pueden depender de que el
+// formulario se acuerde de aplicarlos.
+export { crearVenta, moverVenta } from './venta-escritura';
+
 /**
  * Clave de la API de Resend. Es un SECRETO gestionado (Secret Manager), nunca una variable de entorno
  * en claro: una clave de envío filtrada permite mandar correo firmado con nuestro dominio.

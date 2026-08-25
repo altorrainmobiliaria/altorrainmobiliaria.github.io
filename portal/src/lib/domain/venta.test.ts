@@ -3,10 +3,12 @@ import {
   avance,
   avisosDe,
   ETAPAS,
+  explicarProblema,
   moverEtapa,
   NOMBRE_ETAPA,
   posicion,
   problemasAlMover,
+  problemasDeVenta,
   QUE_ES,
   SALTABLES,
   soportesFaltantes,
@@ -207,6 +209,59 @@ describe('avance', () => {
   it('se mide por POSICIÓN: saltarse el crédito no te deja atrás', () => {
     // Una compra de contado en escritura va tan avanzada como una financiada en escritura.
     expect(avance('escritura')).toBeCloseTo(5 / 6);
+  });
+});
+
+describe('problemasDeVenta', () => {
+  const minima = { expedienteId: 'EXP-1', propiedadId: 'INM-1', compradorNombre: 'Ana' };
+
+  it('con lo mínimo, se puede guardar', () => {
+    expect(problemasDeVenta(minima)).toEqual([]);
+  });
+
+  it('exige expediente, inmueble y comprador', () => {
+    expect(problemasDeVenta({}).sort()).toEqual(['sin-comprador', 'sin-expediente', 'sin-propiedad']);
+  });
+
+  it('los espacios en blanco no cuentan como nombre', () => {
+    expect(problemasDeVenta({ ...minima, compradorNombre: '   ' })).toEqual(['sin-comprador']);
+  });
+
+  it('puede nacer SIN precio: en `interes` todavía no hay cifra', () => {
+    expect(problemasDeVenta({ ...minima, etapa: 'interes' })).toEqual([]);
+  });
+
+  it('pero un precio de cero o negativo es error de captura, no un dato', () => {
+    expect(problemasDeVenta({ ...minima, precioOfrecido: 0 })).toEqual(['precioOfrecido-invalido']);
+    expect(problemasDeVenta({ ...minima, precioAcordado: -5 })).toEqual(['precioAcordado-invalido']);
+  });
+
+  it('un precio que no es número tampoco pasa', () => {
+    expect(problemasDeVenta({ ...minima, precioOfrecido: '400000' as unknown as number })).toEqual([
+      'precioOfrecido-invalido',
+    ]);
+    expect(problemasDeVenta({ ...minima, precioOfrecido: Number.NaN })).toEqual(['precioOfrecido-invalido']);
+  });
+
+  it('una etapa inventada se rechaza al crear', () => {
+    expect(problemasDeVenta({ ...minima, etapa: 'firmado' as Etapa })).toEqual(['etapa-desconocida']);
+  });
+});
+
+describe('explicarProblema', () => {
+  it('traduce los códigos simples', () => {
+    expect(explicarProblema('sin-comprador')).toContain('comprador');
+    expect(explicarProblema('registro-sin-folio')).toContain('matrícula');
+  });
+
+  it('resuelve la lista de etapas que no se pueden saltar', () => {
+    expect(explicarProblema('no-se-puede-saltar:estudio-titulos,escritura')).toBe(
+      'No se puede saltar: Estudio de títulos y Escritura pública.',
+    );
+  });
+
+  it('un código desconocido se devuelve tal cual en vez de desaparecer', () => {
+    expect(explicarProblema('algo-nuevo')).toBe('algo-nuevo');
   });
 });
 

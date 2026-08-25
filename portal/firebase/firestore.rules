@@ -244,6 +244,19 @@ service cloud.firestore {
       allow delete: if esSuperAdmin();
     }
 
+    // ── VENTAS (pipeline de compraventa, §151) ──────────────────────────────────────────────────
+    // Misma postura que expedientes/contratos (§100, §113): la ESCRITURA es server-only. Aquí no se
+    // guarda un estado cualquiera — se guarda en qué punto de una compraventa está una operación de
+    // cientos de millones, y el orden de esas etapas tiene consecuencias legales (art. 756 C.C.:
+    // hasta el registro, el vendedor sigue siendo el dueño). Eso lo impone `crearVenta`/`moverVenta`,
+    // que además escriben el historial con el uid del TOKEN: un historial que el interesado puede
+    // redactar no es un historial.
+    // LECTURA: staff. Lleva el nombre del comprador y cifras del negocio — no es dato público.
+    match /ventas/{ventaId} {
+      allow read: if esStaff();
+      allow write: if false;   // SOLO el servidor
+    }
+
     match /drafts_activos/{userId} {
       allow read: if esEditorOMas();
       allow write: if esEditorOMas() && request.auth.uid == userId;

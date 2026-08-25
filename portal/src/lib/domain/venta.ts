@@ -121,6 +121,51 @@ export interface Venta extends Versioned, Auditable {
 export const posicion = (e: Etapa): number => ETAPAS.indexOf(e);
 
 /**
+ * Lo que le falta a una venta para poder NACER. Devuelve códigos; vacío = se puede guardar.
+ *
+ * Vive aquí y no en la Cloud Function a propósito: el formulario y el servidor tienen que decidir lo
+ * MISMO, y dos copias de la misma regla se separan el día que alguien arregla una sola ([[L-45]]).
+ */
+export function problemasDeVenta(v: Partial<Venta>): string[] {
+  const problemas: string[] = [];
+  if (!v.expedienteId?.trim()) problemas.push('sin-expediente');
+  if (!v.propiedadId?.trim()) problemas.push('sin-propiedad');
+  if (!v.compradorNombre?.trim()) problemas.push('sin-comprador');
+  // El precio ofrecido es opcional —una venta puede nacer en `interes`, sin cifra— pero si viene,
+  // tiene que ser un número positivo: un cero o un negativo aquí es un error de captura, no un dato.
+  for (const campo of ['precioOfrecido', 'precioAcordado'] as const) {
+    const n = v[campo];
+    if (n !== undefined && (typeof n !== 'number' || !Number.isFinite(n) || n <= 0)) {
+      problemas.push(`${campo}-invalido`);
+    }
+  }
+  if (v.etapa !== undefined && posicion(v.etapa) < 0) problemas.push('etapa-desconocida');
+  return problemas;
+}
+
+/** Qué decirle a una persona por cada problema. Un código a secas obliga a adivinar. */
+export const EXPLICA_PROBLEMA: Record<string, string> = {
+  'sin-expediente': 'La venta tiene que colgar de un expediente.',
+  'sin-propiedad': 'Falta el inmueble que se vende.',
+  'sin-comprador': 'Falta el nombre del comprador.',
+  'precioOfrecido-invalido': 'El precio ofrecido tiene que ser un número mayor que cero.',
+  'precioAcordado-invalido': 'El precio acordado tiene que ser un número mayor que cero.',
+  'etapa-desconocida': 'Esa etapa no existe en el proceso.',
+  'sin-cambio': 'La venta ya está en esa etapa.',
+  'retroceso-sin-motivo': 'Para devolver una venta hay que escribir por qué.',
+  'registro-es-final': 'Ya está registrada: deshacer eso no es un cambio de estado, es otra escritura.',
+  'registro-sin-folio': 'No se marca como registrada sin el número de matrícula inmobiliaria.',
+};
+
+export const explicarProblema = (codigo: string): string => {
+  if (codigo.startsWith('no-se-puede-saltar:')) {
+    const etapas = codigo.slice('no-se-puede-saltar:'.length).split(',') as Etapa[];
+    return `No se puede saltar: ${etapas.map((e) => NOMBRE_ETAPA[e] ?? e).join(' y ')}.`;
+  }
+  return EXPLICA_PROBLEMA[codigo] ?? codigo;
+};
+
+/**
  * ¿Está VENDIDA? Solo en `registro`. Es la función que cualquier otra parte del sistema debe
  * preguntar en vez de comparar contra `'escritura'` por su cuenta — un solo sitio que lo sepa.
  */
