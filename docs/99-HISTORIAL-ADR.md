@@ -4897,3 +4897,111 @@ red; el resto del panel sigue sin ella, y eso pesa a favor de retirarlo cuanto a
 **136.6 — Archivos.** `js/admin-auth.js` (el callsite) · `scripts/verify-contratos-legacy.mjs` (nuevo) ·
 `githooks/pre-commit` (cableado) · `admin.html` (`?v=20260825c` + icono, que quitó el 404 rojo que
 ensuciaba la consola justo donde se diagnostica).
+
+
+## 137. ADR — El segundo factor, y el paso que el cerebro no tenía apuntado ⟦OPUS-5⟧ (2026-08-25)
+
+**137.1 — El orden son TRES pasos, no dos.** El `10` decía «inscribir ANTES de exigirlo en las Rules,
+o expulsa a todos». Correcto, e incompleto. Falta uno antes, y es el que muerde primero:
+
+1. **RESOLVER** — que el login sepa terminar cuando Firebase pide el código.
+2. **INSCRIBIR** — que exista una pantalla para activarlo.
+3. **EXIGIR** — que las Rules lo pidan.
+
+Firebase no avisa de que hará falta un código hasta **después** de aceptar la contraseña: responde
+`auth/multi-factor-auth-required`. Ni el panel legacy ni `/ingresar` conocían ese código, así que
+caían al `catch` genérico y contestaban **«correo o contraseña incorrectos»** — una mentira— con la
+contraseña buena escrita. El primer día que alguien activara su doble verificación se quedaba fuera.
+Es §136 otra vez: un camino con dos salidas y solo una migrada. La diferencia es que esta vez se vio
+**antes** de que costara.
+
+**137.2 — Lo construido.** `portal/src/scripts/mfa.ts` es el dueño único (lo mismo que hizo `auth.ts`
+con la carga de Firebase: si cada pantalla trae su copia, una se olvida del caso raro). Encima:
+`/ingresar` con el paso de seis casillas; `/seguridad` NUEVA (activar, retirar, agregar una segunda
+aplicación, re-autenticar, cambiar contraseña, cerrar todas las sesiones); el panel legacy con el
+mismo resolver, porque es donde el dueño entra cada día; y dos Cloud Functions,
+`cerrarMisSesiones` y `retirarSegundoFactorDe` — desplegadas y **verificadas contra la lista real**,
+no contra el «Deploy complete» ([[L-51]]).
+
+**137.3 — Verificado, no supuesto.** La API se leyó del `.d.ts` del SDK **12.16.0 instalado en este
+repo**; y como el legacy carga otro build (12.9.0 de gstatic), se comprobó con `curl` que ESE exporta
+`getMultiFactorResolver` y `TotpMultiFactorGenerator`. Las cuatro conductas de las casillas —salto
+automático, filtrado de no-dígitos, retroceso y **pegar «492 118»**— se midieron en el navegador real.
+Lo de pegar no es adorno: los gestores de contraseñas copian el código con un espacio, y sin limpiarlo
+un código CORRECTO se rechaza y la culpa parece de quien lo escribió.
+
+**137.4 — Tres cosas del mockup que NO se construyeron, y por qué.** Se escriben en el archivo para que
+nadie las lea como descuido:
+- **«Confiar en este equipo 30 días»** — solo se sostiene con una marca en el navegador, que escribe
+  cualquiera con la consola abierta. Sería la cortina de §130 con otro nombre.
+- **«Códigos de respaldo»** — Firebase **no los emite para TOTP**; no existen en su API. Prometerlos y
+  no tenerlos el día que alguien pierda el teléfono es peor que no ofrecerlos. El rescate real: una
+  SEGUNDA aplicación inscrita, o `retirarSegundoFactorDe` en manos de un super_admin (nunca sobre sí
+  mismo; el dueño se rescata desde Google Cloud, con otra credencial — ese aislamiento es el punto).
+- **Lista de sesiones por dispositivo** — Firebase no la expone. Se ofrece cerrarlas TODAS, con ese
+  nombre. Dibujar una tabla que el sistema no puede llenar con la verdad es peor que no dibujarla.
+
+**137.5 — Y tampoco hay QR.** Generarlo exigía un codificador propio **sin forma de comprobarlo**
+(no hay implementación de referencia en esta máquina con la que contrastar) o una dependencia nueva
+que renderiza un SECRETO. Mandar el secreto a un servicio de QR quedó descartado de entrada: sería
+entregarle a un tercero la semilla del segundo factor. La clave manual funciona en **toda** aplicación
+de autenticación y es correcta por construcción — sale del SDK. Queda anotado como mejora, no como
+deuda oculta.
+
+**137.6 — Límite honesto de «cerrar sesiones».** `revokeRefreshTokens` invalida los tokens de refresco,
+**no** el token de acceso que ya esté en circulación; ese caduca solo en menos de una hora. O sea:
+corta el acceso «en cuanto expire lo que ya tenía», no «en este segundo». Las Rules podrían hacerlo
+inmediato comprobando `auth.token.auth_time`, y eso queda escrito como trabajo futuro en vez de
+fingir que el botón hace más de lo que hace.
+
+**137.7 — Archivos.** `portal/src/scripts/mfa.ts` + `mfa.test.ts` (11 pruebas, probadas rompiéndolas) ·
+`portal/src/pages/seguridad.astro` (nueva) · `ingresar.astro` · `gestion.astro` (el enlace) ·
+`js/admin-auth.js` (resolver + `continuarConSesion` extraída, porque ahora hay DOS caminos que
+terminan igual) · `admin.html` · `css/admin.css` (y el login legacy deja de ser NEGRO: esa paleta era
+de cars) · `functions/index.js`. **Exigirlo en las Rules NO se tocó**: nadie está inscrito todavía.
+
+## 138. ADR — Tres gates que miraban a otro lado ⟦OPUS-5⟧ (2026-08-25)
+
+**138.1 — El chequeo de tipos no leía los `.astro`.** `npm run typecheck` era `tsc --noEmit`, y `tsc`
+**no abre los `.astro`**. Como casi toda la lógica de navegador del portal vive en los `<script>` de
+las páginas, el gate llevaba desde siempre revisando solo `src/lib` y `src/scripts` mientras se creía
+completo. Se probó con una sonda deliberada (`const x: number = 'texto'` dentro de una página): `tsc`
+la dio por buena, `astro check` la cazó. Al encenderlo de verdad aparecieron **15 errores reales**:
+- `FichaInmueble.astro` **entero sin chequear** — una expresión regular en línea (`split(/\n{2,}/)`)
+  rompe el parser del chequeo aunque Astro la compile bien. Sacarla a una constante cuesta una línea.
+- `estancias.astro`: cuatro `const … = null` se estrechan a `never` y dejaban **todo** el bloque de
+  reseñas fuera del chequeo — justo el que habrá que revisar el día que lleguen datos.
+- `index.astro`: `z.n` leía un campo retirado del dato en §123. `undefined && …` no pinta nada, así
+  que no se veía: **parecía condicional y era código muerto**.
+
+**138.2 — Variables CSS que no existen no fallan: se descartan.** `box-shadow: var(--alt-neu-out)` con
+una variable que nadie declaró no es un error — el navegador tira la propiedad y sigue. `/ingresar`
+se escribió como «réplica fiel del mockup» (§89) usando `--alt-neu-out`, `--alt-neu-in` y
+`--alt-line`: **tres nombres inventados** (los reales son `--alt-nm-up`, `--alt-nm-in`,
+`--alt-hairline`). El emblema «A» del login llevaba meses sin relieve y los separadores sin línea, en
+una página declarada fiel. Se descubrió **midiendo la sombra en el navegador**, no leyendo el código.
+Nace `verify:tokens`; nada más encenderlo encontró dos casos más que nadie había tocado (el CTA de
+planes de `/publicar` sin borde redondeado). Y hubo que corregirlo de un falso positivo en su primera
+corrida —señalaba una variable escrita dentro de un COMENTARIO—: *un gate que se equivoca es un gate
+que se aprende a ignorar, y entonces no protege de nada.*
+
+**138.3 — Y el gate de cifras no veía las EDITORIALES.** La home anunciaba cuatro artículos del Journal
+con titular, categoría, fecha (**«12 feb 2026»**) y tiempo de lectura (**«8 min»**), y los cuatro
+enlazaban a `/journal`, que es una página de «próximamente». `verify:claims` no lo marcaba: sus cinco
+patrones buscan cifras de NEGOCIO (reseñas, inventario, rentabilidad) y esto es una firma **editorial**
+— engaña igual, y en la página que más se ve. Se añade un sexto patrón: el **tiempo de lectura**, que
+es la señal limpia porque solo aparece pegado a un artículo que alguien escribió y midió. La sección
+no se borra: se vuelve dependiente de datos, como se hizo con las reseñas (§122).
+
+**138.4 — El patrón, que es lo que hay que llevarse.** Los tres son **la misma falla con tres caras**:
+el gate existía, corría en verde, y no miraba donde hacía falta. §133 (el CSS tapaba los avisos), §134
+(el deploy no desplegaba) y §136 (el gate colocado después del corte) son la misma familia. La pregunta
+que los caza no es «¿tengo un gate?» sino **«¿qué vería este gate si el fallo estuviera delante?»** — y
+la única forma de responderla es **meter el fallo a propósito**. Los tres de aquí se probaron así, en
+los dos sentidos ([[M-06]], que ya va por su quinta aplicación esta semana).
+
+**138.5 — Archivos.** `portal/package.json` (`typecheck` → `astro check`) · `portal/scripts/verify-tokens.mjs`
+(nuevo) · `portal/scripts/verify-claims.mjs` (+1 patrón) · `.github/workflows/portal-ci.yml` ·
+`FichaInmueble.astro` · `estancias.astro` · `index.astro` · `favoritos.astro` · `publicar.astro` ·
+`ingresar.astro`. Y `specs/MEGA-PLAN-INMOBILIARIA.md`, que llevaba cinco días declarando inexistentes
+cinco ítems ya construidos: **un plan que se lee como SSoT y no se re-mide miente con autoridad.**

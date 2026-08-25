@@ -114,6 +114,27 @@ quien tenga la contraseña y sepa qué computador usa la víctima se salta el se
 Si el testigo además se guarda en un documento que el propio usuario puede leer, basta con copiarlo.
 Un recuerdo de dispositivo debe atarse a algo que el servidor firme, o no atarse a nada.
 
+### B-8 · ⚠️ El orden es **resolver → inscribir → exigir**, y casi todo el mundo se salta el primero
+Un segundo factor se despliega en tres pasos, y el que suele faltar es el PRIMERO:
+
+1. **RESOLVER** — que el ingreso sepa terminar cuando la plataforma pide el código.
+2. **INSCRIBIR** — que exista una pantalla para activarlo.
+3. **EXIGIR** — que las reglas del servidor lo pidan.
+
+Es fácil ver el 2→3 («si lo exijo antes de que nadie lo tenga, dejo a todos fuera») y no ver el 1→2.
+El motivo es que **la plataforma no avisa antes**: acepta la contraseña y solo entonces responde «falta
+el segundo factor» (`auth/multi-factor-auth-required` en Firebase). El `catch` genérico de un login
+normal trata eso como un fallo cualquiera y contesta **«credenciales incorrectas»** — con la contraseña
+correcta escrita. La primera persona que se inscriba se queda fuera, y el mensaje la manda a buscar el
+problema donde no está.
+
+**Prueba que lo caza en 30 segundos**: antes de que nadie se inscriba, pregúntate *«¿qué mensaje verá
+quien SÍ tenga el factor?»* y sigue el camino del error en el código. Si termina en el mensaje genérico,
+todavía no puedes inscribir a nadie.
+
+**Corolario**: el resolver hay que ponerlo en **todas** las puertas, no solo en la nueva. Un panel viejo
+que sigue vivo es una puerta.
+
 ---
 
 ## C. Alta, baja y sesión
@@ -147,6 +168,29 @@ sensible) es lo que hace que C-3 muerda en segundos en vez de en una hora.
 —*¿habrá quedado abierto en algún teléfono?*— en una acción. Sin esto, cerrar el acceso de alguien que se
 va es un acto de fe.
 
+### C-6 · Inscribir un segundo factor puede CERRAR las demás sesiones — dilo antes, no después
+Varias plataformas revocan los tokens de refresco al inscribir un factor (Firebase lo hace y lo
+documenta). La persona activa su seguridad y, sin aviso, se le cierra el panel en el otro computador.
+Es una consecuencia normal que sin explicación se lee como una avería, y hace que la siguiente persona
+no lo active. **Una frase antes del botón** convierte un susto en un trámite.
+
+Lo mismo con **la autenticación reciente**: tocar la seguridad de una cuenta suele exigir volver a
+escribir la contraseña. No es un capricho — sin eso, un computador desatendido con la sesión abierta
+basta para cambiarle el segundo factor a otra persona. Y ojo: si la cuenta YA tiene factor, esa
+re-autenticación **también** pedirá el código, así que el formulario tiene que saber pedir las dos
+cosas o deja a la persona en un callejón.
+
+### C-7 · Tiene que haber una vía de rescate, y no puede depender del factor que se perdió
+Un segundo factor bien hecho no tiene puerta trasera: quien pierde el teléfono no entra, y eso es lo que
+lo hace valer. Pero un equipo sin ninguna forma de rescate termina no activándolo nunca — o peor,
+activándolo y quedándose fuera. Tres vías, en orden de preferencia:
+1. **Una SEGUNDA aplicación inscrita** (el gestor de contraseñas del computador además del teléfono).
+   Es la única que no depende de nadie más.
+2. **Un administrador** que pueda retirar el factor de otra persona **desde el servidor**, nunca el suyo
+   propio, y **dejándolo escrito** en la bitácora: un rescate silencioso es indistinguible de un abuso.
+3. **La consola del proveedor**, con una credencial DISTINTA (la cuenta de la nube). Es la salida del
+   dueño, y que sea otra credencial es justamente el aislamiento que se busca.
+
 ---
 
 ## D. Factores y contraseñas
@@ -176,6 +220,25 @@ tener el correo. (OWASP ASVS 6.4.3.)
 ### D-5 · Avisa a la persona de lo que le pasa a su cuenta
 Ingreso desde un dispositivo nuevo, cambio de contraseña, cambio de correo, segundo factor desactivado.
 El usuario es el único detector de intrusiones que conoce su propia rutina. (ASVS 6.3.5 y 6.3.7.)
+
+### D-6 · No prometas en la pantalla lo que la plataforma no emite
+El caso canónico son los **códigos de respaldo**: casi todo mockup de doble verificación los dibuja, y
+varias plataformas —Firebase entre ellas— **no los emiten para TOTP**; no existen en su API. Dibujar
+«ver mis códigos de respaldo» y no tenerlos el día que alguien pierde el teléfono es peor que no
+ofrecerlos: la persona contaba con una salida que nunca hubo. Lo mismo con la **lista de sesiones por
+dispositivo** cuando el proveedor solo permite cerrarlas todas.
+
+**Qué hacer**: comprobar la API ANTES de replicar el mockup, y sustituir cada pieza imposible por la
+verdad más cercana que sí se pueda sostener — con su nombre real («cerrar todas las sesiones», no
+«cerrar esta»). Y escribir la desviación en el propio archivo, o el siguiente que compare pantalla y
+diseño la leerá como un descuido y la «arreglará».
+
+### D-7 · El secreto del segundo factor NO sale de la máquina de quien lo inscribe
+Al inscribir TOTP se genera una semilla; el código QR es solo esa semilla dibujada. Mandarla a un
+servicio externo que «genera QR» —una imagen por URL— es entregarle a un tercero el segundo factor de
+esa cuenta, y queda en sus registros. Si no hay forma de dibujar el QR localmente que puedas
+**verificar**, la salida honesta es ofrecer la **clave manual**: funciona en toda aplicación de
+autenticación, es correcta por construcción porque sale del propio SDK, y no viaja a ninguna parte.
 
 ---
 
@@ -215,3 +278,9 @@ Sobre cualquier sistema de acceso, en este orden:
 9. ¿El mensaje cambia según si la cuenta existe? Pruébalo, no lo leas. → **B-3**, **D-3**.
 10. ¿Hay segundo factor donde hay datos personales de terceros? → **D-1**.
 11. Y si dicen que sí: **¿puede existir una sesión válida ANTES del segundo factor?** → **B-6**. Si la respuesta es sí, no lo hay.
+12. Antes de inscribir a nadie: **¿qué mensaje ve quien SÍ tiene el factor?** Sigue el camino del error.
+    Si acaba en «credenciales incorrectas», falta el resolver → **B-8**, y aún no puedes inscribir a nadie.
+13. ¿El resolver está en **todas** las puertas, incluida la vieja que sigue viva? → **B-8**.
+14. ¿La pantalla promete códigos de respaldo, o una lista de sesiones, que la plataforma no emite? → **D-6**.
+15. ¿La semilla del segundo factor sale de la máquina para dibujar un QR? → **D-7**, no debe.
+16. ¿Hay vía de rescate que NO dependa del factor perdido, y queda escrita? → **C-7**.

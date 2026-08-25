@@ -36,27 +36,24 @@
 ### L-50 — Astro: `:global()` dentro de un `<style is:global>` NO se resuelve — sale literal y el navegador DESCARTA la regla *(§130)*
 **Disparador**: escribes `:global(body[data-x]) .clase {…}` por costumbre defensiva; compila sin una queja y la regla no aplica. **Causa**: `:global()` es una función de COMPILACIÓN. Astro la resuelve en los `<style>` **acotados**; en los `is:global` la deja **escrita tal cual** en el CSS servido, el navegador no la entiende, y un selector inválido no avisa: **descarta la regla entera, en silencio**. **Cómo se cazó**: ni el build, ni los 4 gates, ni la consola dijeron nada — solo **abrir el `.css` de `dist/` y buscar `:global(`**. Familia de §117: el CSS que no llega no rompe, deja sin pintar. **Gate**: sonda 2 de `verify:css` (ignora comentarios, o la propia explicación se acusaría). **Regla portable**: si el mecanismo es de COMPILACIÓN, verifica el **artefacto servido**, no el fuente.
 
-### L-47 — 🐍 `open(p,'w').write(open(p).read()+X)` **borra el archivo**: el truncado ocurre antes de la lectura *(§118)*
-Python evalúa el objeto sobre el que se llama al método ANTES que sus argumentos. En
-`io.open(p,'w').write(io.open(p).read() + X)` el `'w'` **trunca el archivo a cero** y solo después se
-evalúa la lectura — que devuelve cadena vacía. El resultado es un archivo con SOLO `X`. No hay error,
-no hay excepción, el script imprime «hecho»: así me cargué `99-HISTORIAL-ADR.md` entero (3909 líneas,
-117 ADRs → 55 líneas) y lo delató un `brain:check` que dijo «1 ADRs indexados».
-- **Regla**: en un script que reescribe un archivo, **LEE A UNA VARIABLE primero** y afirma sobre ella
-  (`assert prev.count('
-## ') >= 100`) antes de abrir en `'w'`. Un `assert` sobre el contenido viejo
-  es lo único que distingue «append» de «reemplazo total».
-- **Lo que salvó el día fue el commit**, no la pericia: el archivo estaba en git sin modificar, y
-  `git checkout --` lo devolvió intacto. Corolario operativo: **commitea el cerebro antes de correr
-  scripts que lo reescriban**, que es justo lo que §G.4 pide por otras razones.
-- Misma familia que [[L-46]]: utillaje propio que corrompe en SILENCIO. El patrón común es que el
-  daño no lo reporta quien lo causa — lo reporta un gate más abajo, si existe.
-- **Reincidencia (mismo día, §121)**: volví a hacerlo **una hora después de escribir esta lección**, en un
-  `python -c` de una línea, sobre el `05`. La regla decía «en un **script** que reescribe un archivo…» y yo
-  no conté un one-liner como script. **Una regla con un “salvo los casos pequeños” implícito se rompe justo
-  en los pequeños**, que además son los que se escriben sin pensar. Redacción corregida: *cualquier* forma
-  de reescribir un archivo —script, one-liner, comando— lee a variable y afirma primero. Y otra vez lo
-  salvó el commit, no la pericia.
+### L-47 — 🐍 `open(p,'w').write(open(p).read()+X)` **borra el archivo** *(relato completo → §118)*
+Python trunca con `'w'` **antes** de evaluar la lectura: queda un archivo con solo `X`, sin error y con
+el script diciendo «hecho» (así se perdió `99` entero). **Regla portable**: al reescribir un archivo,
+**lee a una variable primero** y **afirma sobre ella** (`assert prev.length > N`) antes de abrir en
+`'w'`. Ese `assert` es lo único que distingue «añadir» de «reemplazarlo todo».
+
+### L-52 — 🧰 Un gate puede correr en VERDE sobre archivos que **nunca abre** *(§138)*
+**Disparador**: `npm run typecheck` pasa y crees que el proyecto está chequeado. **Causa**: `tsc` **no
+lee los `.astro`**. Como casi toda la lógica de navegador vive en los `<script>` de las páginas, el gate
+revisaba solo `src/lib` y `src/scripts` creyéndose completo; al cambiarlo por `astro check` aparecieron
+**15 errores reales**, uno de ellos un componente ENTERO sin chequear porque una regex en línea rompe su
+parser aunque Astro la compile bien. **Cómo se caza**: mete una sonda deliberada (`const x: number =
+'texto'`) en un archivo del tipo que dudas; si el gate no la ve, no cubre ese tipo. **Prima hermana en
+CSS**: `var(--x)` con una variable que nadie declaró **no es un error** — el navegador descarta la
+propiedad y sigue; así el emblema del login estuvo meses sin relieve en una página declarada «réplica
+fiel» (gate: `verify:tokens`). **Regla portable**: no preguntes «¿pasa mi gate?» sino **«¿qué ARCHIVOS
+abre, y qué vería si el fallo estuviera delante?»**. Un gate que falla ABIERTO —descarta lo que no
+entiende— es indistinguible de uno que funciona ([[M-06]]).
 
 ### L-48 — 🧪 Un prerrequisito GENERADO y gitignored hace que el gate pase en local y falle en CI *(§125)*
 `worker-configuration.d.ts` lo produce `wrangler types` y está en `.gitignore`. En la máquina de quien

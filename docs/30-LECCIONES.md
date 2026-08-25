@@ -39,6 +39,8 @@
 ### L-20 — Firestore Rules: un `get` de doc INEXISTENTE con `resource.data` en la regla → 403, no 404
 ### L-21 — Aislar tests que comparten un emulador Firestore: projectId PROPIO por archivo
 ### L-49 — La configuración de la CONSOLA es parte del sistema y NO está en el repo: ningún gate puede verla (un botón impecable, muerto en producción)
+### L-53 — 🔐 Firebase MFA (TOTP): pide el código DESPUÉS de la contraseña, `enroll()` revoca las demás sesiones, y NO existen códigos de respaldo
+### L-54 — 🌩️ Los tipos de Cloudflare Workers PISAN el DOM: `Element.append` deja de ser la del navegador (usa `appendChild`)
 
 ### L-44 — 🔐 Un ruleset se REEMPLAZA, no se fusiona: dos archivos con el mismo nombre son una trampa silenciosa *(2026-08-21, ADR §100)*
 **Disparador**: dos ficheros `firestore.rules` en un mismo repo —uno en la raíz y otro en la carpeta de un
@@ -211,3 +213,4 @@ siendo el índice de todas y una cita `[[L-NN]]` resuelva sin salir de aquí (§
 ### L-48 — 🧪 Un prerrequisito GENERADO y gitignored hace que el gate pase en local y falle en CI *(§125)*
 ### L-50 — Astro: `:global()` dentro de un `<style is:global>` NO se resuelve — sale literal y el navegador DESCARTA la regla entera, en silencio *(§130)*
 ### L-51 — Un «Deploy complete!» puede no desplegar NADA: si la CLI no nombra el archivo, no hubo archivo *(§134)*
+### L-52 — 🧰 Un gate puede correr en VERDE sobre archivos que **nunca abre**: `tsc` no lee los `.astro`, y un `var(--x)` inexistente se descarta sin avisar *(§138)*
