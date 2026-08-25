@@ -167,7 +167,17 @@ esa variable no se declaraba en NINGÚN sitio del repo (§91 la cazó, §102 la 
 | 5.5 | 🤖 | Comprobar una muestra de los 301 del sitio viejo (68 URLs mapeadas) |
 | 5.6 | 🧑 | En Search Console: **reenviar `sitemap.xml`** |
 
-**⛔ NO borrar `googlec4e47cae776946d9.html`** (verificación de propiedad de GSC).
+🔴 **CONSECUENCIA QUE HAY QUE ACEPTAR A CONCIENCIA (§145.7): `/admin.html` MUERE aquí.** Medido: hoy
+responde 200 en el dominio (GitHub Pages) y **404 en el Worker**. En cuanto el DNS se mueva, el panel
+al que Daniel entra todos los días deja de existir en el dominio, y su reemplazo es `/gestion` — que
+NO tiene todavía todo lo del viejo (reseñas, usuarios, newsletter). Puede ser lo correcto; lo que no
+vale es enterarse el día del cambio.
+
+✅ **Los 301 ya funcionan** (§145): 64 de 65 verificados UNO POR UNO contra un servidor real. El
+único desvío es `/index.html`, que responde 200 con canonical a `/` — Google consolida.
+
+**⛔ NO borrar `googlec4e47cae776946d9.html`** (verificación de propiedad de GSC). Ya no es un archivo
+de `public/`: es la ruta `src/pages/googlec4e47cae776946d9.html.ts`, que responde 200 con el token.
 **⛔ NO disparar `og-publish.yml`**: en modo obra pisaría los stubs de redirect.
 
 **Vuelta atrás**: devolver `PORTAL_SITE_ENV` a `staging` y volver a empujar. El DNS es lo único que
@@ -189,6 +199,21 @@ tarda horas en revertirse — por eso va al final, cuando todo lo demás está v
 ## Checklist
 
 Se marca con la EVIDENCIA al lado, no con fe.
+
+> 🔴 **REGLA NUEVA — todo paso 🤖 se ENSAYA antes del día D (§145.9, reincidencia N9-02).** Este
+> runbook ya ha fallado tres veces por lo mismo: un botón que prometía y no existía (§126), un comando
+> que no funcionaba desde el día que se escribió (§140.1), un paso asignado a quien no podía hacerlo
+> (§140.5) y un mapa de 301 que nunca se ejecutó (§145). Los cuatro se descubrieron **ensayando**, no
+> leyendo. Ningún gate puede cazarlos: no son rutas de archivo ni tipos, son promesas.
+>
+> Por eso cada paso 🤖 lleva su marca `ensayado: <fecha>` o `ensayado: NO`. Un paso sin ensayar es una
+> **hipótesis**, y este documento se ejecuta el día que el DNS ya se movió — el único que tarda horas
+> en revertirse.
+
+**Ensayados hasta hoy (2026-08-25)**
+- ✅ 1.1 claims desplegados · 3.3 parcial (10 de 12 CF vivas) · 5.5 **301 verificados 64/65 uno por uno**
+- ⚠️ 1.4 **REASIGNADO**: era 🤖 y es imposible para 🤖 (exige un token con el claim) → §140.5
+- ❌ sin ensayar: 4.x (catálogo real, necesita datos) · 5.4 y 6.x (necesitan el DNS movido)
 
 - [ ] F1 · claims desplegados y sincronizados — *evidencia*: Daniel ve el panel en `/gestion`
 - [ ] F2 · reglas fusionadas desplegadas — *evidencia*: `admin.html` entra y abre Propiedades y Leads

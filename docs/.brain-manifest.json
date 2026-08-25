@@ -168,12 +168,12 @@
     }
   ],
   "deepAudit": {
-    "last": "2026-08-24",
-    "coveredHeaderCount": 127,
+    "last": "2026-08-25",
+    "coveredHeaderCount": 145,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "tableFile": "2026-08-24-auditoria-cerebro-nivel2-9-inmobiliaria.md",
-    "_que": "Nivel-2 #9 (ADR 127) — PARCIAL y declarada como tal: las sondas 3/4/5/7 exigen subagentes y el dueno dejo instruccion de no usarlos, asi que se corrieron las de verificacion DIRECTA (0,1,2,6) y el resto queda marcado pendiente. Rasgo de la edicion: los hallazgos no salieron de sondear el cerebro sino de USARLO — desplegar, mirar el sitio vivo y darle a una persona un paso a paso que intento seguir. 6 hallazgos, 4 ya cerrados el mismo dia (CI 8 corridas rojo · boton fantasma del runbook · censo de CF falso · staging con 10 ADRs de atraso). Cero reincidentes de la #8. Previa #8 = 108 headers (2026-08-22)."
+    "tableFile": "2026-08-25-auditoria-cerebro-nivel2-10-inmobiliaria.md",
+    "_que": "Nivel-2 #10 (ADR 146) — PARCIAL y declarada: las sondas 3/4/5/7 exigen subagentes y el dueno dejo instruccion de no usarlos, asi que se corrieron las de verificacion DIRECTA (0,1,2,6). Rasgo de la edicion: los hallazgos NO salieron de sondear el cerebro sino de EJECUTAR EL RUNBOOK POR ADELANTADO — hacer el paso 5.5 antes de tiempo destapo que el mapa de 301 llevaba desde siempre sin ejecutarse (37 de 65 muertos incluso tras el primer arreglo). 6 hallazgos, 4 cerrados el mismo dia. DOS REINCIDENTES de la #9: N9-02 (el runbook promete lo que nadie ha ensayado, ×4 esta vez) y N9-05 (boot cronico al 99-100%). Previa #9 = 127 headers (2026-08-24)."
   },
   "noCap": {
     "docs/99-HISTORIAL-ADR.md": "Largo Plazo: NUNCA se lee entero, solo offset/limit vía el índice (§0). Un cap aquí no significaría nada.",

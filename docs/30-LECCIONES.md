@@ -194,6 +194,7 @@ guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero 
 ### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega
 ### M-09 — El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es frecuencia × costo de omisión
 ### M-11 — Escribir la lección NO la aplica: si el PENDIENTE no se re-etiqueta, el cerebro la ignora otra vez
+### M-23 — Un paso de procedimiento que nadie ha ejecutado no es documentación: es una HIPÓTESIS, y se comprueba el peor día *(auditoría #10, §140 · §145)*
 ### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]

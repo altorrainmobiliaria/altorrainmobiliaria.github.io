@@ -5319,3 +5319,122 @@ recurso y un gate del dueño: se quedan en la fase 3, ahora reducida a exactamen
 
 **144.5 — Archivos.** `docs/05` (censo) · `specs/CUTOVER-RUNBOOK.md` (fase 3.3 reducida a las dos que
 de verdad quedan).
+
+## 145. ADR — El mapa de 301 llevaba desde siempre sin ejecutarse (y mi primer diagnóstico falló) ⟦OPUS-5⟧ (2026-08-25)
+
+**145.0 — Cómo salió.** Hice por adelantado el paso **5.5** del runbook —*«comprobar una muestra de
+los 301»*— contra el worker de staging. No pasaba **ninguno**: `/propiedades-comprar.html`,
+`/el-laguito.html`, `/avaluo.html`, `/blog.html` → **todos 404**.
+
+**145.1 — 🔴 Y me equivoqué de causa, dos veces.** Lo escribo antes que el arreglo porque es la parte
+que enseña algo:
+
+1. **Primera hipótesis: la capa de assets responde antes que el Worker.** Encajaba con la evidencia
+   —el 404 llegaba **sin `X-Robots-Tag`**, la cabecera que el middleware pone en toda respuesta fuera
+   de producción— así que la di por buena y **la escribí en un ADR**. Puse `run_worker_first` y
+   desplegué. Seguía en 404.
+2. **Y las dos pruebas con que la «descarté» no probaron nada**: cambié `wrangler.jsonc` y volví a
+   medir **sin reconstruir**. El adaptador de Astro genera `dist/server/wrangler.json` y es ESE el que
+   wrangler usa (lo dice al arrancar: *«Using redirected Wrangler configuration»*). Mis dos
+   experimentos corrieron contra la config vieja. **Un experimento que no cambia lo que cree cambiar
+   no refuta ni confirma: solo da confianza.**
+
+**145.2 — La causa real.** **Astro no ejecuta el middleware para una ruta que no existe.** El
+adaptador comprueba primero si alguna ruta casa; si ninguna casa, responde 404 sin llegar a
+`render()` — y el middleware vive dentro de `render()`. El mapa estaba escrito, probado en unidad y
+**muerto en producción**, y ninguna prueba unitaria podía verlo: la función devolvía el destino
+correcto: nadie la llamaba.
+
+**145.3 — Y el primer arreglo tampoco bastó.** Declaré los 65 en `redirects` de `astro.config.mjs`.
+Funcionaron **28**. A los otros **37** Astro les puso `prerender: true` —por una heurística sobre el
+destino— y **no emitió el archivo estático**, así que respondían 404. Contados uno por uno en el
+manifiesto construido, no supuestos. Pelearse con esa heurística es frágil: cambia cada vez que una
+página gana o pierde su `prerender`.
+
+**145.4 — El arreglo que sí.** Una ruta con parámetro-resto, **SSR por construcción**:
+`src/pages/[...legacy].html.ts`. Cubre cualquier `.html` del legacy —incluidos los de `/blog/…`—,
+usa el MISMO mapa que ya es dueño de la lista, y no se traga los 404 legítimos porque el portal nuevo
+no usa `.html` en ninguna de sus direcciones. Un mecanismo, una fuente. Los `redirects` del config se
+retiran: dos mecanismos se desincronizan.
+
+**145.5 — Verificado UNO POR UNO, no por muestra.** **64 de 65** contra un servidor real. El único
+desvío es `/index.html`, que responde **200** en vez de 301 — Astro trata esa dirección como la home,
+y su `<link rel="canonical">` apunta a `/`, así que Google consolida. Se deja así y se dice, en vez de
+forzar la routing de Astro por un caso que no pierde nada. Y las **9** de `NO_REDIRIGIR` comprobadas:
+ninguna redirige, y la de Search Console responde **200** con su contenido exacto.
+
+**145.6 — El archivo de Search Console, además, cambiaba de comportamiento.** Medido en los dos sitios:
+**200 hoy en GitHub Pages**, **307 en el Worker** (la capa de assets le quitaba el `.html`). Es el
+único archivo que sostiene la propiedad del sitio, y perderla no cuesta un error visible: cuesta el
+histórico entero. Ahora es una **ruta** que responde 200 con el token exacto, y su copia de `public/`
+se retiró — dos fuentes para el mismo token es cómo se actualiza una y se olvida la otra.
+
+**145.7 — 🔴 Consecuencia del cutover que NO estaba escrita: `/admin.html` morirá.** Medido: hoy
+responde **200** en el dominio (GitHub Pages) y **404** en el Worker. El día que el DNS se mueva,
+Daniel pierde el panel al que entra todos los días. Puede ser lo correcto —el plan es retirarlo— pero
+**no estaba dicho en ninguna parte del runbook**, y enterarse el día del cambio no es enterarse: es un
+susto. Queda anotado en la fase 5 como consecuencia a aceptar a conciencia.
+
+**145.8 — Candados.** `verify:build` exige `run_worker_first` con `/*.html` (sin él la capa de assets
+sí gana, y esa parte de la primera hipótesis era cierta). `verify:enlaces` gana una sonda de
+**cobertura**: toda `.html` del sitio viejo o tiene su `{de, a}` o está en `NO_REDIRIGIR` —lista que
+estaba exportada **y sin un solo consumidor**—. Cobertura verificada: 74 = 65 + 9.
+
+**145.9 — La lección.** Familia de §134 y §140: **procedimiento escrito y jamás ejecutado**. Con un
+agravante propio: aquí el código era correcto, las pruebas unitarias verdes, y aun así el sistema no
+hacía lo que decía — porque **nadie llamaba a la función**. *Una prueba unitaria demuestra que la
+función responde bien; no demuestra que alguien la use.* Y el corolario del método: **si mides sin
+reconstruir, no estás midiendo tu cambio.**
+
+**145.10 — Archivos.** `portal/src/pages/[...legacy].html.ts` (nueva, el mecanismo) ·
+`portal/src/pages/googlec4e47cae776946d9.html.ts` (nueva, dueña del token) ·
+`portal/public/googlec4e47cae776946d9.html` (retirada) · `portal/astro.config.mjs` ·
+`portal/wrangler.jsonc` · `portal/scripts/verify-build.mjs` · `portal/scripts/verify-enlaces.mjs` ·
+`specs/CUTOVER-RUNBOOK.md`.
+
+
+## 146. ADR — Auditoría de cerebro Nivel-2 #10: la auditoría más útil fue USAR el sistema ⟦OPUS-5⟧ (2026-08-25)
+
+**Deliberación:** `brain-private/altorrainmobiliaria/research-archive/2026-08-25-auditoria-cerebro-nivel2-10-inmobiliaria.md`
+(tabla completa de hallazgos, sonda por sonda). Previa: #9, 127 headers. Esta: **145 ADRs, 18 nuevos**.
+
+**146.1 — El rasgo de esta edición.** Los hallazgos NO salieron de sondear el cerebro. Salieron de
+**ejecutar el runbook por adelantado**: hacer el paso 5.5 antes de tiempo destapó que el mapa de 301
+llevaba desde siempre sin ejecutarse (§145). *Leer la memoria valida lo que dice; usar el sistema
+valida lo que hace* — y la distancia entre ambas cosas es donde vive el daño.
+
+**146.2 — Cierre del diff vs la #9 (sonda 0).** Cuatro cerrados con evidencia del día: el CI en rojo
+sin dueño (verde en las 6 últimas, por API), el censo de Functions falso (el gate #29 lo cazó dos
+veces hoy), el sello fresco sobre un hecho falso (re-sellado con `curl` real contra el worker) y su
+gemelo de frescura. **Dos REINCIDENTES**, que es lo que obliga a meta-lección:
+- **N9-02 ×4** — el runbook promete lo que nadie ha ensayado → **M-23**, y la regla de `ensayado:`
+  por paso 🤖 en `specs/CUTOVER-RUNBOOK.md`, que el gate #13 ya sabe exigir.
+- **N9-05** — BOOT entre 99.1% y 100% **todo el día**; cada ADR obligó a una poda en el mismo commit.
+  Ya no es un aviso, es el modo de operación → el arreglo real es shard del `10` o poda del router
+  (TODO-23), no una línea menos por commit.
+
+**146.3 — Lo que destapó de gates (y no es poco).** `verify:data` **existía y no lo corría nadie** —
+meses de gate decorativo sobre el free-tier (§142.4); tres gates propios **miraban donde no hacía
+falta**: `tsc` no lee los `.astro` (15 errores ocultos), la sonda de ids no leía los módulos (63 ids),
+el de cifras no veía las editoriales (§138, §143.2). Todos cerrados y probados **en los dos sentidos**
+— un gate que solo se ha visto en verde no se ha probado. Y un meta-gate nuevo: todo `verify:*` tiene
+que estar invocado por el CI, porque *el modo de fallar de un gate es que nadie lo llame*.
+
+**146.4 — Y una deuda que no era deuda.** TODO-45 llevaba desde §120 en la pizarra pareciendo trabajo
+pendiente: los 92 basename «perdonados» son **buena escritura**, y el arreglo vive en el KERNEL, no
+aquí. Movida a TODO-23 con su diseño. *Una pizarra con deuda ajena cuesta atención cada vez que se
+lee.*
+
+**146.5 — Sondas no corridas, declaradas.** 3 (retrieval-drill), 4 (fidelidad de la deliberación) y 7
+(voz adversarial) exigen subagentes, y el dueño dejó instrucción de no usarlos; 5 (MEMORY.md del
+harness) queda pendiente. Se corrieron las de verificación DIRECTA: 0, 1, 2 y 6. **Parcial y dicho**,
+igual que la #9 — la skill lo contempla, y una auditoría parcial honesta vale más que una completa
+fingida.
+
+**146.6 — GC pareado.** El delta de boot de esta auditoría es ≤ 0: la fila de TODO-45 salió del `10`
+(−415c) y M-11 se destiló al escribir M-23 (−1159c netos en `33`). `deepAudit` actualizado en el
+manifest (`last` 2026-08-25, `coveredHeaderCount` 145) — que es lo que apaga el nudge y hace al
+disparador auto-vigilado.
+
+**146.7 — Archivos.** `docs/33-LECCIONES-META.md` (M-23, con M-11 destilada) · `docs/30-LECCIONES.md`
+(titular) · `docs/.brain-manifest.json` · `docs/10-MEMORIA-CORTO-PLAZO.md` · la bóveda + su README.
