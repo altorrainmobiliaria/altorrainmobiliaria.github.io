@@ -67,11 +67,31 @@ input, select, textarea { font-family: inherit; }
 }
 .login-form .btn-login:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(212,175,55,.3); }
 .login-form .btn-login:disabled { opacity: .6; transform: none; cursor: not-allowed; }
+/* ── Avisos de la pantalla de acceso (§133) ───────────────────────────────────────────────────────
+ * ⚠️ ESTO ESTUVO ROTO DESDE SIEMPRE, y en silencio. El CSS decía `display:none` y solo se destapaba
+ * con una clase `.visible`… que NADIE añadía nunca: el JavaScript trabaja con el atributo `hidden`
+ * (`errEl.hidden = false`). Dos contratos distintos para lo mismo, y ninguno de los dos completo.
+ *
+ * Consecuencia: el mensaje se escribía, el atributo se quitaba, y el navegador lo seguía tapando.
+ * NINGÚN aviso del login se ha visto jamás — ni «correo o contraseña incorrectos», ni «demasiados
+ * intentos», ni la confirmación de la recuperación. Se entraba a ciegas. Lo destapó el dueño diciendo
+ * «dice enviando, no pasa más nada, no hay un aviso de que pasó»: tenía toda la razón.
+ *
+ * Ahora manda `hidden`, que es el mecanismo del propio navegador: no se puede desincronizar con el JS
+ * porque es el MISMO atributo, y los lectores de pantalla ya lo entienden sin ayuda.
+ */
 .login-error {
-  background: #fef2f2; color: var(--danger); border-radius: 8px;
-  padding: 10px 14px; font-size: .88rem; font-weight: 600;
-  margin-bottom: 14px; display: none;
+  /* Navy sobre gris de paleta con filo dorado. Antes era ROJO (#fef2f2 / --danger), y la marca no
+     tiene rojo; además este mismo recuadro da noticias BUENAS —«te llega un enlace»— y anunciarlas
+     en rojo asusta sin motivo. Estados = navy + oro, como manda `tokens.css`. */
+  background: #f4f7fa; color: #062743;
+  border-left: 3px solid var(--gold, #d4af37); border-radius: 8px;
+  padding: 10px 14px; font-size: .88rem; font-weight: 600; line-height: 1.5;
+  margin-bottom: 14px;
+  display: block;              /* visible por defecto: lo oculta `hidden`, abajo */
 }
+.login-error[hidden] { display: none; }
+/* Se conserva por si algún camino viejo aún añade la clase — cuesta una línea y evita una regresión. */
 .login-error.visible { display: block; }
 
 /* ── Layout principal ────────────────────────────────────────────────────── */
