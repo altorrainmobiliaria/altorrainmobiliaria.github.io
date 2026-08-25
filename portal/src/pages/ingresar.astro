@@ -29,7 +29,7 @@ const ojo =
     </div>
 
     <section class="ing__wrap">
-      <div class="ing__card alt-card alt-card--neu">
+      <div class="ing__card alt-card alt-card--neu" id="ing-paso1">
         <a class="ing__brand" href="/" aria-label="ALTORRA Inmobiliaria — ir al inicio">
           <span class="ing__mark" aria-hidden="true">A</span>
           <span class="ing__word"><span class="ing__word-a">ALTORRA</span><span class="ing__word-b">INMOBILIARIA</span></span>
@@ -82,6 +82,45 @@ const ojo =
           Al continuar aceptas nuestros Términos y la <a href="/legal/politica-tratamiento-datos">Política de Tratamiento de Datos</a> de ALTORRA Inmobiliaria.
         </p>
       </div>
+
+      {/*
+        PASO 2 — el código de seis dígitos (mockup `ALTORRA Acceso`, artboard 2a).
+        Vive escondido y solo aparece cuando Firebase lo pide. Mientras nadie tenga segundo factor
+        inscrito, este bloque no se muestra jamás: el cambio es INERTE hasta que alguien lo active.
+      */}
+      <div class="ing__card alt-card alt-card--neu ing__card--dos" id="ing-paso2" hidden>
+        <div class="ing__2fa-icono" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.6"></rect><path d="M10.5 18.5h3"></path></svg>
+        </div>
+
+        <div class="ing__intro">
+          <h2 class="ing__h" id="ing-2fa-h">Confirma que eres tú</h2>
+          <p class="ing__p">Abre tu aplicación de autenticación y escribe el código de seis dígitos que aparece para ALTORRA.</p>
+        </div>
+
+        <div class="alt-alert alt-alert--warning ing__alert" id="ing-2fa-error" hidden role="alert">
+          <strong id="ing-2fa-error-h">Ese código no sirvió</strong>
+          <span id="ing-2fa-error-p">Los códigos cambian cada 30 segundos.</span>
+        </div>
+
+        <div class="ing__codigo" role="group" aria-labelledby="ing-2fa-h" id="ing-codigo">
+          <input class="ing__digito" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="Dígito 1 de 6" />
+          <input class="ing__digito" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 2 de 6" />
+          <input class="ing__digito" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 3 de 6" />
+          <input class="ing__digito" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 4 de 6" />
+          <input class="ing__digito" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 5 de 6" />
+          <input class="ing__digito" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 6 de 6" />
+        </div>
+
+        <button class="alt-btn alt-btn--gold ing__submit" type="button" id="ing-2fa-enviar">Entrar</button>
+
+        <p class="ing__2fa-ayuda">
+          ¿La aplicación no muestra ALTORRA, o perdiste el teléfono? Escríbenos por WhatsApp al
+          <a href="https://wa.me/573002439810" rel="noopener">+57 300 243 9810</a> y te devolvemos el acceso.
+        </p>
+
+        <button class="ing__link ing__2fa-volver" type="button" id="ing-2fa-cancelar">Cancelar y volver</button>
+      </div>
     </section>
   </main>
 
@@ -98,7 +137,7 @@ const ojo =
   .ing__card { width: 100%; max-width: 468px; padding: clamp(28px, 4vw, 44px); display: flex; flex-direction: column; gap: var(--alt-space-5); }
 
   .ing__brand { display: flex; align-items: center; gap: var(--alt-space-3); justify-content: center; }
-  .ing__mark { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--alt-surface); color: var(--alt-gold); font-family: var(--alt-font-display); font-size: 26px; font-weight: 600; box-shadow: var(--alt-neu-out); }
+  .ing__mark { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--alt-surface); color: var(--alt-gold); font-family: var(--alt-font-display); font-size: 26px; font-weight: 600; box-shadow: var(--alt-nm-up-sm); }
   .ing__word { display: flex; flex-direction: column; line-height: 1.1; }
   .ing__word-a { font-family: var(--alt-font-display); font-size: 20px; font-weight: 600; letter-spacing: .06em; color: var(--alt-ink); }
   .ing__word-b { font-size: 9.5px; font-weight: 600; letter-spacing: .28em; color: var(--alt-silver); }
@@ -113,7 +152,7 @@ const ojo =
   .ing__google { width: 100%; justify-content: center; gap: 10px; }
 
   .ing__sep { display: flex; align-items: center; gap: var(--alt-space-3); color: var(--alt-text-soft); font-size: 12.5px; }
-  .ing__sep::before, .ing__sep::after { content: ''; flex: 1; height: 1px; background: var(--alt-line); }
+  .ing__sep::before, .ing__sep::after { content: ''; flex: 1; height: 1px; background: var(--alt-hairline); }
 
   .ing__form { display: flex; flex-direction: column; gap: var(--alt-space-4); }
   .ing__group { display: flex; flex-direction: column; gap: 7px; }
@@ -131,12 +170,41 @@ const ojo =
   .ing__link:hover { color: var(--alt-gold); }
 
   .ing__submit { width: 100%; justify-content: center; }
+
+  /* ── Paso 2 · código de seis dígitos ───────────────────────────────────────────────────────── */
+  .ing__card--dos { align-items: center; text-align: center; }
+  .ing__2fa-icono { display: grid; place-items: center; width: 66px; height: 66px; border-radius: 20px; background: var(--alt-surface); color: var(--alt-gold); box-shadow: var(--alt-nm-up); }
+
+  .ing__codigo { display: flex; gap: 10px; justify-content: center; flex-wrap: nowrap; }
+  .ing__digito {
+    width: 46px; height: 58px; text-align: center;
+    font-family: var(--alt-font-display); font-size: 26px; font-weight: 600; color: var(--alt-ink);
+    border: 1px solid var(--alt-hairline); border-radius: 12px;
+    background: var(--alt-surface); box-shadow: var(--alt-nm-in-sm);
+  }
+  .ing__digito:focus { outline: none; border-color: var(--alt-gold); box-shadow: var(--alt-nm-in-sm), 0 0 0 3px rgba(212, 175, 55, .22); }
+
+  .ing__2fa-ayuda { margin: 0; font-size: 12.5px; line-height: 1.65; color: var(--alt-silver); }
+  .ing__2fa-ayuda a { font-weight: 600; color: var(--alt-text-soft); }
+  .ing__2fa-volver { align-self: center; }
+
+  @media (max-width: 400px) {
+    .ing__codigo { gap: 7px; }
+    .ing__digito { width: 40px; height: 52px; font-size: 22px; }
+  }
   .ing__alt { margin: 0; text-align: center; font-size: var(--alt-fs-sm); color: var(--alt-text-soft); }
   .ing__legal { margin: 0; text-align: center; font-size: 12.5px; line-height: 1.6; color: var(--alt-silver); }
 </style>
 
 <script>
   import { cargarAuth } from '../scripts/auth';
+  import {
+    completarConCodigo,
+    explicarSegundoFactor,
+    leerReto,
+    pideSegundoFactor,
+    type RetoSegundoFactor,
+  } from '../scripts/mfa';
   const form = document.getElementById('ing-form') as HTMLFormElement | null;
   const mail = document.getElementById('ing-mail') as HTMLInputElement | null;
   const pass = document.getElementById('ing-pass') as HTMLInputElement | null;
@@ -197,6 +265,128 @@ const ojo =
     submit.textContent = on ? 'Entrando…' : texto;
   }
 
+  /* ─── PASO 2 · el código de seis dígitos ────────────────────────────────────────────────────────
+   * Se activa SOLO cuando Firebase responde `auth/multi-factor-auth-required`. Hasta que alguien
+   * inscriba un segundo factor eso no ocurre nunca, así que todo este bloque está dormido — pero
+   * tiene que existir ANTES de la primera inscripción: sin él, inscribirse es encerrarse fuera.  */
+  const paso1 = document.getElementById('ing-paso1');
+  const paso2 = document.getElementById('ing-paso2');
+  const cajaCodigo = document.getElementById('ing-codigo');
+  const digitos = Array.from(
+    cajaCodigo?.querySelectorAll<HTMLInputElement>('.ing__digito') ?? [],
+  );
+  const btn2fa = document.getElementById('ing-2fa-enviar') as HTMLButtonElement | null;
+  const alerta2 = document.getElementById('ing-2fa-error');
+  const alerta2H = document.getElementById('ing-2fa-error-h');
+  const alerta2P = document.getElementById('ing-2fa-error-p');
+  let reto: RetoSegundoFactor | null = null;
+
+  function avisar2(titulo: string, detalle: string): void {
+    if (alerta2H) alerta2H.textContent = titulo;
+    if (alerta2P) alerta2P.textContent = detalle;
+    alerta2?.removeAttribute('hidden');
+  }
+
+  /** A dónde va quien acaba de entrar. Vive aquí porque ahora hay DOS caminos que terminan igual. */
+  function irADestino(): void {
+    const destino = new URLSearchParams(location.search).get('volver');
+    location.href = destino && destino.startsWith('/') ? destino : '/favoritos';
+  }
+
+  function mostrarPaso2(r: RetoSegundoFactor): void {
+    reto = r;
+    alerta2?.setAttribute('hidden', '');
+    paso1?.setAttribute('hidden', '');
+    paso2?.removeAttribute('hidden');
+    digitos.forEach((d) => (d.value = ''));
+    digitos[0]?.focus();
+  }
+
+  function volverAPaso1(): void {
+    reto = null;
+    paso2?.setAttribute('hidden', '');
+    paso1?.removeAttribute('hidden');
+    cargando(false);
+  }
+
+  const codigoEscrito = (): string => digitos.map((d) => d.value).join('');
+
+  /* Un solo dígito por casilla, avance automático, y PEGAR reparte los seis de una.
+     Lo de pegar no es un lujo: los gestores de contraseñas que guardan el TOTP copian el código
+     entero, y sin esto solo entraría el primer dígito. */
+  digitos.forEach((casilla, i) => {
+    casilla.addEventListener('input', () => {
+      casilla.value = casilla.value.replace(/\D/g, '').slice(0, 1);
+      if (casilla.value && i < digitos.length - 1) digitos[i + 1]?.focus();
+      if (codigoEscrito().length === 6) void enviarCodigo();
+    });
+    casilla.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !casilla.value && i > 0) digitos[i - 1]?.focus();
+      if (e.key === 'ArrowLeft' && i > 0) digitos[i - 1]?.focus();
+      if (e.key === 'ArrowRight' && i < digitos.length - 1) digitos[i + 1]?.focus();
+    });
+    casilla.addEventListener('paste', (e) => {
+      const texto = e.clipboardData?.getData('text') ?? '';
+      const soloNumeros = texto.replace(/\D/g, '').slice(0, 6);
+      if (!soloNumeros) return;
+      e.preventDefault();
+      soloNumeros.split('').forEach((n, k) => {
+        if (digitos[k]) digitos[k].value = n;
+      });
+      digitos[Math.min(soloNumeros.length, 5)]?.focus();
+      if (soloNumeros.length === 6) void enviarCodigo();
+    });
+  });
+
+  let enviando = false;
+  async function enviarCodigo(): Promise<void> {
+    if (!reto || enviando) return;
+    const codigo = codigoEscrito();
+    if (codigo.length !== 6) {
+      avisar2('Falta algún dígito', 'El código tiene seis números.');
+      return;
+    }
+    enviando = true;
+    alerta2?.setAttribute('hidden', '');
+    if (btn2fa) {
+      btn2fa.disabled = true;
+      btn2fa.textContent = 'Verificando…';
+    }
+    try {
+      await completarConCodigo(reto.resolver, reto.factores[0]?.id ?? '', codigo);
+      irADestino();
+    } catch (err) {
+      const [t, d] = explicarSegundoFactor((err as { code?: string })?.code || '');
+      avisar2(t, d);
+      digitos.forEach((x) => (x.value = ''));
+      digitos[0]?.focus();
+    } finally {
+      enviando = false;
+      if (btn2fa) {
+        btn2fa.disabled = false;
+        btn2fa.textContent = 'Entrar';
+      }
+    }
+  }
+
+  btn2fa?.addEventListener('click', () => void enviarCodigo());
+  document.getElementById('ing-2fa-cancelar')?.addEventListener('click', volverAPaso1);
+
+  /**
+   * Un único sitio donde se decide qué hacer con un error de ingreso. Antes cada camino (correo,
+   * Google) tenía su propio `catch` y si mañana se añade un tercero es fácil que se olvide el caso
+   * del segundo factor — que es justo el que deja a alguien fuera.
+   */
+  async function manejarErrorDeIngreso(err: unknown): Promise<void> {
+    if (pideSegundoFactor(err)) {
+      mostrarPaso2(await leerReto(err));
+      return;
+    }
+    const [t, d] = explicar((err as { code?: string })?.code || '');
+    avisar(t, d);
+    cargando(false);
+  }
+
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     limpiarAviso();
@@ -213,12 +403,9 @@ const ojo =
       await m.setPersistence(a, recordar ? m.browserLocalPersistence : m.browserSessionPersistence);
       await m.signInWithEmailAndPassword(a, correo, clave);
       // Vuelve a donde venía (el enlace del header suele salir de favoritos).
-      const destino = new URLSearchParams(location.search).get('volver');
-      location.href = destino && destino.startsWith('/') ? destino : '/favoritos';
+      irADestino();
     } catch (err) {
-      const [t, d] = explicar((err as { code?: string })?.code || '');
-      avisar(t, d);
-      cargando(false);
+      await manejarErrorDeIngreso(err);
     }
   });
 
@@ -227,10 +414,9 @@ const ojo =
     try {
       const { a, m } = await auth();
       await m.signInWithPopup(a, new m.GoogleAuthProvider());
-      location.href = '/favoritos';
+      irADestino();
     } catch (err) {
-      const [t, d] = explicar((err as { code?: string })?.code || '');
-      avisar(t, d);
+      await manejarErrorDeIngreso(err);
     }
   });
 

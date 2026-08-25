@@ -49,6 +49,10 @@
       adminApp.classList.remove('visible');
       adminApp.style.display = 'none';
     }
+    // Volver al login SIEMPRE cierra el paso del código: si no, un fallo posterior dejaría la
+    // pantalla del segundo factor encima con un reto ya caducado, y el aviso se escribiría en el
+    // recuadro de abajo, tapado. Es la misma clase de desincronización de §133.
+    mostrarPantallaMfa(false);
     if (msg) {
       const errEl = $('#loginError');
       if (errEl) { errEl.textContent = msg; errEl.hidden = false; }
@@ -84,6 +88,120 @@
     if (!btn) return;
     btn.disabled = loading;
     btn.textContent = loading ? 'Verificando...' : 'Iniciar sesión';
+  }
+
+  /* ─── SEGUNDO FACTOR ──────────────────────────────────────────────────────────────────────────
+   * Esto NO inscribe a nadie: solo sabe TERMINAR un ingreso cuando la cuenta ya tiene un segundo
+   * factor activo. Y ese orden es deliberado.
+   *
+   * Firebase no avisa de que hará falta un código hasta que la contraseña ya fue aceptada: responde
+   * `auth/multi-factor-auth-required`. Un panel que no conozca ese código lo trata como un fallo
+   * cualquiera y contesta «correo o contraseña incorrectos» — con la contraseña buena escrita. El
+   * resultado no es un mensaje feo: es una persona encerrada fuera de su propio panel, exactamente
+   * como en §136, y esta vez se ve venir. Por eso el resolver se despliega ANTES de que exista
+   * ninguna pantalla para inscribirse.
+   *
+   * ⚠️ Mientras nadie tenga segundo factor, nada de esto se ejecuta jamás. El cambio es INERTE hasta
+   * el día que haga falta, que es la única forma segura de preparar un camino que todavía no se usa.
+   */
+  let _retoMfa = null;   // { resolver, idFactor } — vive solo entre la contraseña y el código.
+
+  function mostrarAvisoMfa(msg) {
+    const el = $('#mfaError');
+    if (el) { el.textContent = msg; el.hidden = false; }
+  }
+
+  function mostrarPantallaMfa(mostrar) {
+    const login = $('#loginForm');
+    const mfa   = $('#mfaForm');
+    if (login) login.hidden = mostrar;
+    if (mfa)   mfa.hidden   = !mostrar;
+    if (mostrar) {
+      const campo = $('#mfaCode');
+      if (campo) { campo.value = ''; campo.focus(); }
+    } else {
+      _retoMfa = null;
+      const el = $('#mfaError');
+      if (el) el.hidden = true;
+    }
+  }
+
+  /** Prepara el reto a partir del error y enseña el campo del código. */
+  async function pedirSegundoFactor(authErr) {
+    try {
+      const { getMultiFactorResolver } =
+        await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js');
+      const resolver = getMultiFactorResolver(window.auth, authErr);
+      // Solo se ofrecen los TOTP: es el único tipo que este proyecto inscribe. Ofrecer un método que
+      // no se sabe completar deja a la persona mirando un formulario que nunca va a aceptarla.
+      const totp = resolver.hints.filter((h) => h.factorId === 'totp');
+      if (!totp.length) {
+        showLogin('Tu cuenta pide un segundo factor que este panel todavía no sabe pedir. Escríbenos por WhatsApp al +57 300 243 9810.');
+        return;
+      }
+      _retoMfa = { resolver, idFactor: totp[0].uid };
+      mostrarPantallaMfa(true);
+    } catch (err) {
+      console.error('[AdminAuth] no se pudo preparar el segundo factor:', err);
+      showLogin('No pudimos continuar con la verificación en dos pasos. Inténtalo de nuevo.');
+    }
+  }
+
+  /** Traduce los códigos del segundo factor. «Error inesperado» manda a buscar donde no es. */
+  function explicarCodigo(code) {
+    switch (code) {
+      case 'auth/invalid-verification-code':
+      case 'auth/invalid-verification-id':
+        return 'Ese código no sirvió. Cambian cada 30 segundos: escribe el que aparece AHORA en tu aplicación.';
+      case 'auth/code-expired':
+        return 'El código ya venció. Escribe el que muestra tu aplicación en este momento.';
+      case 'auth/totp-challenge-timeout':
+        return 'Se acabó el tiempo. Vuelve atrás y escribe tu contraseña otra vez.';
+      case 'auth/too-many-requests':
+        return 'Demasiados intentos seguidos. Espera unos minutos antes de volver a probar.';
+      case 'auth/network-request-failed':
+        return 'No pudimos contactar el servidor. Revisa tu conexión e inténtalo de nuevo.';
+      default:
+        return 'No pudimos verificar el código. Revisa que la hora de tu teléfono esté en automático: si va adelantada o atrasada, los códigos no coinciden.';
+    }
+  }
+
+  /** Cablea el formulario del código. Se llama junto al del login, en el mismo sitio. */
+  function bindMfaForm() {
+    const form = $('#mfaForm');
+    if (!form) return;
+
+    form.querySelector('#mfaCancel')?.addEventListener('click', () => mostrarPantallaMfa(false));
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!_retoMfa) { mostrarPantallaMfa(false); return; }
+
+      // Los gestores de contraseñas pegan el código con un espacio en medio. Sin limpiarlo, un
+      // código correcto se rechaza y la culpa parece de quien lo escribió.
+      const codigo = ($('#mfaCode')?.value || '').replace(/\D/g, '').slice(0, 6);
+      if (codigo.length !== 6) { mostrarAvisoMfa('El código tiene seis números.'); return; }
+
+      const btn = $('#mfaBtn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Verificando...'; }
+      const el = $('#mfaError');
+      if (el) el.hidden = true;
+
+      try {
+        const { TotpMultiFactorGenerator } =
+          await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js');
+        const assertion = TotpMultiFactorGenerator.assertionForSignIn(_retoMfa.idFactor, codigo);
+        const cred = await _retoMfa.resolver.resolveSignIn(assertion);
+        mostrarPantallaMfa(false);
+        await continuarConSesion(cred.user);
+      } catch (err) {
+        mostrarAvisoMfa(explicarCodigo(err && err.code));
+        const campo = $('#mfaCode');
+        if (campo) { campo.value = ''; campo.focus(); }
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
+      }
+    });
   }
 
   /* ─── El candado de intentos: RETIRADO (§130) ─────────────────────────────────────────────────
@@ -313,6 +431,16 @@
       try {
         credential = await signInWithEmailAndPassword(window.auth, email.trim(), password);
       } catch (authErr) {
+        /* 1b. ¿Falta el SEGUNDO FACTOR? Entonces la contraseña era CORRECTA y solo queda el código.
+         * Sin esta rama, este mismo `catch` respondería «Correo o contraseña incorrectos» —una
+         * mentira— y encerraría fuera a quien acabara de activar su doble verificación. Por eso
+         * este código existe ANTES de que exista la pantalla que inscribe: el orden es resolver →
+         * inscribir → exigir, y saltárselo es un autoencierro. */
+        if (authErr && authErr.code === 'auth/multi-factor-auth-required') {
+          await pedirSegundoFactor(authErr);
+          setLoginLoading(false);
+          return;
+        }
         // El mensaje NO distingue «no existe» de «clave mala»: decirlo convertiría el formulario en
         // un detector de qué correos tienen acceso al panel (misma razón que en la recuperación, §128).
         if (authErr && authErr.code === 'auth/too-many-requests') {
@@ -326,7 +454,26 @@
         return;
       }
 
-      const uid = credential.user.uid;
+      await continuarConSesion(credential.user);
+
+    } catch (err) {
+      console.error('[AdminAuth] Error inesperado en login:', err);
+      showLogin('Error inesperado. Intenta de nuevo.');
+    } finally {
+      setLoginLoading(false);
+    }
+  }
+
+  /**
+   * Lo que pasa DESPUÉS de que Firebase acepta a alguien: perfil, permisos, bitácora y panel.
+   *
+   * Vive aparte porque ahora hay DOS caminos que terminan aquí —contraseña sola, y contraseña más
+   * código— y duplicar esta secuencia es cómo se pierde una comprobación en uno de los dos. Es la
+   * misma lección de §136 mirada de frente: un contrato con dos usos se migra entero o no se toca.
+   */
+  async function continuarConSesion(user) {
+    try {
+      const uid = user.uid;
 
       /* 2b. Esperar a que la credencial esté REALMENTE lista antes de leer nada (§135).
        * `signInWithEmailAndPassword` resuelve en cuanto el servidor acepta la contraseña, pero el
@@ -334,7 +481,7 @@
        * `Missing or insufficient permissions` — que se lee como «no tienes permiso» cuando en realidad
        * es «todavía no le he dicho quién eres». Los 3 reintentos de abajo existían por esto; pedir el
        * token de forma explícita convierte una carrera en una espera. */
-      await credential.user.getIdToken();
+      await user.getIdToken();
 
       // 3. Cargar perfil desde Firestore
       const res = await loadUserProfile(uid);
@@ -368,7 +515,7 @@
       //    registro se pierde pero la persona entra igual — una bitácora no debe poder tumbar el acceso.
       void registrarAcceso();
 
-      _currentUser  = { uid, email: credential.user.email, ...profile };
+      _currentUser  = { uid, email: user.email, ...profile };
       _sessionStart = Date.now();
 
       applyRolePermissions(profile.rol);
@@ -446,6 +593,10 @@
 
     // Recuperación de contraseña (§128): mismo sitio donde se cablea el login.
     form.querySelector('#btnForgotPass')?.addEventListener('click', recuperarPassword);
+
+    // El paso del código se cablea AQUÍ, junto al login, y no en su propio arranque: dos puntos de
+    // inicialización distintos es cómo uno de los dos se queda sin cablear el día que se toque.
+    bindMfaForm();
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();

@@ -1089,6 +1089,7 @@ exports.sincronizarClaimsV2 = onCall({ region: REGION }, async (request) => {
 const ACCIONES_VALIDAS = new Set([
   'acceso', 'salida', 'password-cambiada', 'usuario-creado', 'usuario-eliminado',
   'rol-cambiado', 'usuario-suspendido', 'usuario-reactivado', 'claims-sincronizados',
+  'sesiones-cerradas', 'segundo-factor-retirado',
 ]);
 
 exports.registrarEvento = onCall({ region: REGION }, async (request) => {
@@ -1137,6 +1138,86 @@ exports.registrarEvento = onCall({ region: REGION }, async (request) => {
 
   await db.collection('auditLog').add(entrada);
   return { ok: true };
+});
+
+// ══════════════════════════════════════════════════════════════════════════
+// 13. cerrarMisSesiones — la única forma real de cerrar sesión en OTRO dispositivo
+// ══════════════════════════════════════════════════════════════════════════
+/*
+ * QUÉ RESUELVE. Hasta hoy, si a alguien le robaban el computador con el panel abierto, no había
+ * nada que hacer: cerrar sesión en un navegador no cierra los demás. La sesión de Firebase se
+ * sostiene con un *refresh token* que vive en cada dispositivo y se renueva solo; el navegador no
+ * puede tocar los de los otros. El servidor sí — `revokeRefreshTokens` los invalida TODOS.
+ *
+ * POR QUÉ NO ACEPTA UN `uid`. A propósito: se revoca el del token verificado de quien llama, y
+ * punto. Si aceptara un uid, cualquiera con sesión podría echar a otro del sistema, y eso es una
+ * negación de servicio con nombre de función de seguridad. Para el caso legítimo —el dueño echando
+ * a alguien que ya no trabaja aquí— ya existe `suspenderUsuarioV2`, que además deja constancia.
+ *
+ * ⚠️ LÍMITE HONESTO, y hay que decirlo: revocar el refresh token NO mata el token de acceso que ya
+ * esté en circulación. Ese caduca solo, en menos de una hora. O sea que cerrar las sesiones corta el
+ * acceso «en cuanto expire lo que ya tenía», no «en este mismo segundo». Las Rules pueden hacerlo
+ * inmediato si comprueban `auth.token.auth_time`, y eso queda anotado como trabajo futuro en vez de
+ * fingir que este botón hace más de lo que hace.
+ */
+exports.cerrarMisSesiones = onCall({ region: REGION }, async (request) => {
+  const uid = request.auth?.uid;
+  if (!uid) throw new HttpsError('unauthenticated', 'Se requiere sesión.');
+
+  await getAuth().revokeRefreshTokens(uid);
+  await anotar('sesiones-cerradas', uid, { objetivo: uid });
+
+  return { ok: true };
+});
+
+// ══════════════════════════════════════════════════════════════════════════
+// 14. retirarSegundoFactorDe — el rescate cuando alguien pierde el teléfono
+// ══════════════════════════════════════════════════════════════════════════
+/*
+ * POR QUÉ EXISTE. Un segundo factor bien hecho no tiene puerta trasera: quien pierde el teléfono no
+ * entra, y eso es exactamente lo que lo hace valer. Pero un equipo sin ninguna forma de rescate
+ * termina no activándolo nunca — o peor, activándolo y quedándose sin panel. Firebase no emite
+ * códigos de respaldo para TOTP (no existen en su API), así que el rescate tiene que ser una persona.
+ *
+ * QUIÉN PUEDE. Solo un super_admin, y NUNCA sobre sí mismo: si pudiera quitarse el suyo, bastaría
+ * con el computador desatendido de un dueño para desactivar la protección de la cuenta más
+ * poderosa del sistema. El dueño que se quede fuera de su propia cuenta se rescata desde la consola
+ * de Google Cloud, con una credencial distinta — que es justo el aislamiento que se busca.
+ *
+ * Queda ESCRITO en la bitácora, con quién lo hizo y a quién. Un rescate silencioso es
+ * indistinguible de un abuso.
+ */
+exports.retirarSegundoFactorDe = onCall({ region: REGION }, async (request) => {
+  await requireSuperAdmin(request.auth?.uid);
+
+  const { uid } = request.data || {};
+  if (!uid || typeof uid !== 'string') {
+    throw new HttpsError('invalid-argument', 'Se requiere el uid de la persona.');
+  }
+  if (uid === request.auth.uid) {
+    throw new HttpsError('failed-precondition',
+      'No puedes retirarte tu propio segundo factor desde aquí: hazlo en «Mi seguridad», que pide tu contraseña.');
+  }
+
+  const usuario = await getAuth().getUser(uid).catch(() => null);
+  if (!usuario) throw new HttpsError('not-found', 'Esa cuenta no existe.');
+
+  const inscritos = usuario.multiFactor?.enrolledFactors || [];
+  if (!inscritos.length) {
+    throw new HttpsError('failed-precondition', 'Esa cuenta no tiene segundo factor activo.');
+  }
+
+  // Se vacía la lista entera: el caso real es «perdí el teléfono», no «quiero quitar uno de tres».
+  await getAuth().updateUser(uid, { multiFactor: { enrolledFactors: [] } });
+  // Y se le cierran las sesiones: si alguien pidió este rescate porque le robaron el dispositivo,
+  // dejarle las sesiones vivas al ladrón vaciaría de sentido el rescate.
+  await getAuth().revokeRefreshTokens(uid);
+  await anotar('segundo-factor-retirado', request.auth.uid, {
+    objetivo: uid,
+    detalle: `retirados ${inscritos.length} factor(es)`,
+  });
+
+  return { ok: true, retirados: inscritos.length };
 });
 
 /** Uso interno: escribe en la bitácora sin pasar por el callable (para las Functions de usuarios). */

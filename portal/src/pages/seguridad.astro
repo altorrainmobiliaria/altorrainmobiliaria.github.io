@@ -1,0 +1,594 @@
+---
+/*
+ * MI SEGURIDAD (/seguridad) — mockup `ALTORRA Acceso`, artboard 5a.
+ *
+ * Aquí se ACTIVA la verificación en dos pasos. Es el paso que faltaba: el proveedor ya la soporta
+ * (Identity Platform, §132) y las Rules podrán exigirla algún día, pero sin una pantalla que la
+ * inscriba nadie la tiene y exigirla dejaría fuera a todo el equipo de golpe.
+ *
+ * TRES DESVIACIONES DELIBERADAS DEL MOCKUP, cada una con su razón. Se escriben aquí para que quien
+ * compare pantalla y diseño no las lea como descuidos:
+ *
+ *   1. **No hay «confiar en este equipo 30 días».** Eso solo se puede sostener con una marca en el
+ *      navegador, y una marca en el navegador la escribe cualquiera con la consola abierta. Sería la
+ *      misma cortina que se documentó del panel hermano (§130): un segundo factor que se declara
+ *      cumplido en una variable no es un segundo factor.
+ *   2. **No hay «códigos de respaldo».** Firebase no los emite para TOTP — no existen en su API.
+ *      Prometerlos en pantalla y no tenerlos el día que alguien pierda el teléfono es peor que no
+ *      ofrecerlos. La salida real se explica abajo: una SEGUNDA aplicación inscrita.
+ *   3. **No hay lista de «sesiones abiertas» por dispositivo.** Firebase Auth no la expone; lo que sí
+ *      permite es cerrarlas TODAS de golpe. Se ofrece eso, con ese nombre, en vez de dibujar una
+ *      tabla que el sistema no puede llenar con la verdad.
+ *
+ * ⚠️ Lo de siempre: esta página conduce la conversación con Firebase, no decide nada. Quien valida
+ * el código es el servidor de Identity Platform.
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Mi seguridad — ALTORRA Inmobiliaria"
+  description="Activa la verificación en dos pasos y administra el acceso a tu cuenta de ALTORRA Inmobiliaria."
+  noindex
+>
+  <main id="main" class="seg">
+    <div class="seg__top">
+      <a class="seg__back" href="/gestion">← Volver al panel</a>
+    </div>
+
+    <section class="seg__wrap">
+      <header class="seg__head">
+        <p class="alt-eyebrow">Tu cuenta</p>
+        <h1 class="seg__h">Mi seguridad</h1>
+        <p class="seg__sub" id="seg-quien">Comprobando tu sesión…</p>
+      </header>
+
+      {/* Mientras no se sabe quién mira, no se enseña nada: una pantalla de seguridad que parpadea
+          con datos de otro es exactamente lo que no debe pasar. */}
+      <div class="alt-card alt-card--neu seg__card" id="seg-anonimo" hidden>
+        <h2 class="seg__ch">Necesitas entrar primero</h2>
+        <p class="seg__p">Para administrar la seguridad de tu cuenta hay que haber ingresado.</p>
+        <p><a class="alt-btn alt-btn--gold" href="/ingresar?volver=%2Fseguridad">Ingresar</a></p>
+      </div>
+
+      <div id="seg-panel" hidden>
+        {/* ══════════════ SEGUNDO FACTOR ══════════════ */}
+        <div class="alt-card alt-card--neu seg__card">
+          <div class="seg__card-top">
+            <div>
+              <h2 class="seg__ch">Verificación en dos pasos</h2>
+              <p class="seg__p" id="seg-2fa-resumen">Comprobando…</p>
+            </div>
+            <span class="alt-badge seg__badge" id="seg-2fa-badge" hidden>ACTIVA</span>
+          </div>
+
+          <div class="alt-alert seg__alerta" id="seg-aviso" hidden role="alert">
+            <strong id="seg-aviso-h"></strong>
+            <span id="seg-aviso-p"></span>
+          </div>
+
+          {/* ── Estado A: todavía no la tiene ── */}
+          <div id="seg-sin" hidden>
+            <p class="seg__p">
+              Con la verificación en dos pasos, saber tu contraseña ya no basta para entrar: hace falta
+              además el código que solo aparece en tu teléfono. Es la diferencia entre que te roben la
+              contraseña y que te roben la cuenta.
+            </p>
+            <p class="seg__p seg__p--nota">
+              Usamos una <strong>aplicación de autenticación</strong> —Google Authenticator, Microsoft
+              Authenticator, o el mismo gestor de contraseñas que ya usas— y no mensajes de texto. El SMS
+              se cobra por mensaje y se intercepta cambiando la SIM; la aplicación no cuesta nada y no
+              tiene ese problema.
+            </p>
+            <button class="alt-btn alt-btn--gold" type="button" id="seg-activar">Activar la verificación en dos pasos</button>
+          </div>
+
+          {/* ── Estado B: ya la tiene ── */}
+          <div id="seg-con" hidden>
+            <ul class="seg__lista" id="seg-factores"></ul>
+            <p class="seg__p seg__p--nota">
+              <strong>Si pierdes el teléfono</strong> no hay forma de entrar solo con la contraseña — es
+              justo lo que protege. Por eso conviene tener <strong>una segunda aplicación</strong>
+              inscrita (por ejemplo, el gestor de contraseñas del computador además del teléfono).
+              Si te quedas fuera, escríbenos por WhatsApp al
+              <a href="https://wa.me/573002439810" rel="noopener">+57 300 243 9810</a>.
+            </p>
+            <p class="seg__acc">
+              <button class="alt-btn alt-btn--outline" type="button" id="seg-agregar">Agregar otra aplicación</button>
+            </p>
+          </div>
+
+          {/* ── Flujo de alta ── */}
+          <div id="seg-alta" hidden>
+            <ol class="seg__pasos">
+              <li>
+                <h3 class="seg__pt">1 · Agrega ALTORRA a tu aplicación</h3>
+                <p class="seg__p">
+                  Abre tu aplicación de autenticación, elige «agregar cuenta» → «introducir clave
+                  manualmente» y escribe esta clave:
+                </p>
+                <div class="seg__clave">
+                  <code id="seg-clave">…</code>
+                  <button class="alt-btn alt-btn--outline seg__copiar" type="button" id="seg-copiar">Copiar</button>
+                </div>
+                <p class="seg__p seg__p--nota">
+                  Si estás en el teléfono, este enlace la agrega sola:
+                  <a id="seg-enlace" href="#" rel="noopener">abrir en mi aplicación</a>.
+                  La cuenta aparecerá como <strong>ALTORRA Inmobiliaria</strong>.
+                </p>
+              </li>
+              <li>
+                <h3 class="seg__pt">2 · Escribe el código que te muestra</h3>
+                <p class="seg__p">Seis dígitos. Cambian cada 30 segundos: escribe el que ves ahora.</p>
+                <div class="seg__codigo">
+                  <input class="alt-input seg__input-codigo" id="seg-codigo" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="000000" />
+                  <button class="alt-btn alt-btn--gold" type="button" id="seg-confirmar">Activar</button>
+                </div>
+              </li>
+            </ol>
+            <p class="seg__p seg__p--nota">
+              Al terminar, <strong>se cerrarán tus sesiones abiertas en otros dispositivos</strong> y
+              tendrás que volver a entrar en ellos. Lo hace Firebase por seguridad y es normal.
+            </p>
+            <button class="seg__link" type="button" id="seg-cancelar-alta">Cancelar</button>
+          </div>
+
+          {/* ── Reautenticación ── */}
+          <div id="seg-reauth" hidden>
+            <h3 class="seg__pt">Confirma que eres tú</h3>
+            <p class="seg__p">
+              Para cambiar la seguridad de tu cuenta necesitamos tu contraseña otra vez. Así un
+              computador desatendido con tu sesión abierta no basta para tocarla.
+            </p>
+            <div class="seg__campo">
+              <label class="alt-label" for="seg-clave-actual">Tu contraseña</label>
+              <input class="alt-input" id="seg-clave-actual" type="password" autocomplete="current-password" placeholder="••••••••" />
+            </div>
+            <div class="seg__campo" id="seg-campo-codigo2" hidden>
+              <label class="alt-label" for="seg-codigo2">Código de tu aplicación</label>
+              <input class="alt-input" id="seg-codigo2" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="000000" />
+            </div>
+            <p class="seg__acc">
+              <button class="alt-btn alt-btn--gold" type="button" id="seg-reauth-ok">Continuar</button>
+              <button class="seg__link" type="button" id="seg-reauth-no">Cancelar</button>
+            </p>
+          </div>
+        </div>
+
+        {/* ══════════════ CONTRASEÑA ══════════════ */}
+        <div class="alt-card alt-card--neu seg__card">
+          <h2 class="seg__ch">Contraseña</h2>
+          <p class="seg__p">
+            Te enviamos un enlace al correo para que crees una nueva. No te vamos a obligar a cambiarla
+            cada tantos meses: cambiarla por calendario no protege de nada y empuja a elegir claves
+            peores. Cámbiala si crees que alguien la sabe.
+          </p>
+          <button class="alt-btn alt-btn--outline" type="button" id="seg-cambiar-clave">Enviarme el enlace</button>
+        </div>
+
+        {/* ══════════════ SESIONES ══════════════ */}
+        <div class="alt-card alt-card--neu seg__card">
+          <h2 class="seg__ch">Sesiones abiertas</h2>
+          <p class="seg__p">
+            Si perdiste un computador o un teléfono con tu sesión abierta, ciérralas todas y vuelve a
+            entrar aquí. Se cierran <strong>todas</strong> — incluida esta.
+          </p>
+          <p class="seg__p seg__p--nota">
+            No podemos mostrarte una por una: Firebase no lleva una lista de dispositivos. Preferimos
+            decírtelo a dibujar una tabla que no sabríamos llenar con la verdad.
+          </p>
+          <button class="alt-btn alt-btn--outline" type="button" id="seg-cerrar-todo">Cerrar todas las sesiones</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .seg { background: var(--alt-surface-neu); min-height: 100vh; display: flex; flex-direction: column; }
+  .seg__top { padding: var(--alt-space-5) clamp(20px, 5vw, 56px) 0; }
+  .seg__back { font-size: var(--alt-fs-sm); color: var(--alt-text-soft); }
+
+  .seg__wrap { flex: 1; width: 100%; max-width: 720px; margin: 0 auto; padding: clamp(20px, 4vw, 40px) 20px clamp(48px, 8vw, 88px); display: flex; flex-direction: column; gap: var(--alt-space-5); }
+  .seg__head { text-align: center; }
+  .seg__h { font-family: var(--alt-font-display); font-size: var(--alt-fs-h1); color: var(--alt-ink); margin: var(--alt-space-2) 0 0; }
+  .seg__sub { margin: var(--alt-space-2) 0 0; font-size: var(--alt-fs-sm); color: var(--alt-text-soft); }
+
+  .seg__card { padding: clamp(22px, 3.4vw, 34px); display: flex; flex-direction: column; gap: var(--alt-space-4); }
+  .seg__card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--alt-space-4); }
+  .seg__ch { font-family: var(--alt-font-display); font-size: var(--alt-fs-h3); color: var(--alt-ink); margin: 0; }
+  .seg__p { margin: 0; font-size: var(--alt-fs-sm); line-height: 1.7; color: var(--alt-text-soft); }
+  .seg__p--nota { font-size: 12.8px; color: var(--alt-silver); }
+  .seg__p strong { color: var(--alt-ink); font-weight: 600; }
+  .seg__badge { flex: none; }
+
+  .seg__alerta { display: flex; flex-direction: column; gap: 2px; }
+  .seg__alerta span { font-size: var(--alt-fs-sm); }
+
+  .seg__lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .seg__item { display: flex; align-items: center; justify-content: space-between; gap: var(--alt-space-3); padding: 13px 16px; border-radius: var(--alt-r-sm); background: var(--alt-surface); box-shadow: var(--alt-nm-up-sm); }
+  .seg__item-n { font-size: var(--alt-fs-sm); font-weight: 600; color: var(--alt-ink); }
+  .seg__item-d { font-size: 12.5px; color: var(--alt-silver); }
+
+  .seg__pasos { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: var(--alt-space-5); }
+  .seg__pt { font-size: var(--alt-fs-sm); font-weight: 700; color: var(--alt-ink); margin: 0 0 6px; letter-spacing: .01em; }
+
+  .seg__clave { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .seg__clave code { flex: 1; min-width: 220px; padding: 12px 14px; border-radius: var(--alt-r-sm); background: var(--alt-surface); box-shadow: var(--alt-nm-in-sm); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; letter-spacing: .1em; color: var(--alt-ink); word-break: break-all; }
+
+  .seg__codigo { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .seg__input-codigo { flex: 1; min-width: 150px; text-align: center; font-family: var(--alt-font-display); font-size: 21px; letter-spacing: .3em; }
+
+  .seg__campo { display: flex; flex-direction: column; gap: 7px; }
+  .seg__campo .alt-input { width: 100%; }
+
+  .seg__acc { display: flex; align-items: center; gap: var(--alt-space-3); flex-wrap: wrap; margin: 0; }
+  .seg__link { border: 0; background: none; padding: 0; font: inherit; font-size: var(--alt-fs-sm); color: var(--alt-text-soft); font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; align-self: flex-start; }
+  .seg__link:hover { color: var(--alt-gold); }
+</style>
+
+<script>
+  import { cargarAuth, estadoAcceso } from '../scripts/auth';
+  import {
+    completarConCodigo,
+    confirmarInscripcion,
+    empezarInscripcion,
+    explicarSegundoFactor,
+    factoresDe,
+    limpiarCodigo,
+    reautenticar,
+    retirarFactor,
+    type FactorInscrito,
+    type InscripcionEnCurso,
+    type RetoSegundoFactor,
+  } from '../scripts/mfa';
+  import type { User } from 'firebase/auth';
+
+  const $ = (id: string) => document.getElementById(id);
+  const ver = (id: string, mostrar: boolean) =>
+    mostrar ? $(id)?.removeAttribute('hidden') : $(id)?.setAttribute('hidden', '');
+
+  function avisar(titulo: string, detalle: string, tono: 'info' | 'warning' = 'warning'): void {
+    const caja = $('seg-aviso');
+    if (!caja) return;
+    caja.className = `alt-alert alt-alert--${tono} seg__alerta`;
+    const h = $('seg-aviso-h');
+    const p = $('seg-aviso-p');
+    if (h) h.textContent = titulo;
+    if (p) p.textContent = detalle;
+    caja.removeAttribute('hidden');
+    caja.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  const callar = () => $('seg-aviso')?.setAttribute('hidden', '');
+
+  /* ─── Estado de la página ──────────────────────────────────────────────────────────────────────
+   * `pendiente` es lo que había que hacer cuando Firebase pidió confirmar la contraseña. Se guarda
+   * para retomarlo DESPUÉS de re-autenticar, en vez de pedirle a la persona que vuelva a pulsar el
+   * botón que ya pulsó — que es la forma más rápida de que abandone a mitad de activar su seguridad. */
+  let usuario: User | null = null;
+  let alta: InscripcionEnCurso | null = null;
+  let retoReauth: RetoSegundoFactor | null = null;
+  let pendiente: (() => Promise<void>) | null = null;
+
+  /** Vuelve a leer los factores y repinta. Un solo sitio que decide qué se ve. */
+  async function pintar(): Promise<void> {
+    if (!usuario) return;
+    const factores = await factoresDe(usuario);
+    const tiene = factores.length > 0;
+
+    ver('seg-2fa-badge', tiene);
+    ver('seg-sin', !tiene);
+    ver('seg-con', tiene);
+
+    const resumen = $('seg-2fa-resumen');
+    if (resumen) {
+      resumen.textContent = tiene
+        ? `Activa desde el ${factores[0].desde}. Entrar pide tu contraseña y un código de tu aplicación.`
+        : 'Todavía no está activa. Hoy tu contraseña es lo único que protege esta cuenta.';
+    }
+
+    const lista = $('seg-factores');
+    if (lista) {
+      // Se construye con nodos, no con `innerHTML`: el nombre del factor lo escribe una persona y
+      // pegarlo como HTML sería meter texto de usuario en el documento sin escapar.
+      lista.textContent = '';
+      for (const f of factores) lista.appendChild(filaFactor(f, factores.length));
+    }
+  }
+
+  function filaFactor(f: FactorInscrito, cuantos: number): HTMLLIElement {
+    const li = document.createElement('li');
+    li.className = 'seg__item';
+
+    const id = document.createElement('div');
+    const n = document.createElement('div');
+    n.className = 'seg__item-n';
+    n.textContent = f.nombre;
+    const d = document.createElement('div');
+    d.className = 'seg__item-d';
+    d.textContent = `Activa desde el ${f.desde}`;
+    // ⚠️ `appendChild`, no `append`. En este repo `append` NO es la del DOM: los tipos de Cloudflare
+    // Workers (`worker-configuration.d.ts`) declaran su propio `Element.append(content: string |
+    // ReadableStream | Response)` para HTMLRewriter, y esa firma pisa la del navegador en TODO el
+    // proyecto. El código funcionaría igual en el navegador, pero el chequeo de tipos lo marca — y un
+    // error que se aprende a ignorar deja de ser un error.
+    id.appendChild(n);
+    id.appendChild(d);
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'seg__link';
+    btn.textContent = 'Retirar';
+    btn.addEventListener('click', () => void quitar(f, cuantos));
+
+    li.appendChild(id);
+    li.appendChild(btn);
+    return li;
+  }
+
+  /* ─── Re-autenticación ────────────────────────────────────────────────────────────────────────
+   * Firebase exige contraseña reciente para tocar el segundo factor. Cuando la cuenta YA tiene uno,
+   * re-autenticar TAMBIÉN pide el código — el propio SDK lo documenta— así que este formulario sabe
+   * pedir las dos cosas. Sin eso, quien quisiera retirar su factor se quedaría en un callejón.        */
+  function pedirContrasena(volverA: () => Promise<void>): void {
+    pendiente = volverA;
+    retoReauth = null;
+    ver('seg-campo-codigo2', false);
+    ver('seg-reauth', true);
+    ($('seg-clave-actual') as HTMLInputElement | null)?.focus();
+  }
+
+  async function confirmarReauth(): Promise<void> {
+    if (!usuario) return;
+    const clave = ($('seg-clave-actual') as HTMLInputElement | null)?.value || '';
+    const codigo = limpiarCodigo(($('seg-codigo2') as HTMLInputElement | null)?.value || '');
+
+    try {
+      // Segunda vuelta: ya sabemos que hace falta el código y tenemos el reto guardado.
+      if (retoReauth) {
+        if (codigo.length !== 6) {
+          avisar('Falta el código', 'Escribe los seis dígitos que muestra tu aplicación.');
+          return;
+        }
+        await completarConCodigo(retoReauth.resolver, retoReauth.factores[0]?.id ?? '', codigo);
+      } else {
+        if (!clave) {
+          avisar('Falta tu contraseña', 'Escríbela para poder continuar.');
+          return;
+        }
+        const r = await reautenticar(usuario, clave);
+        if (!r.ok) {
+          // Tiene segundo factor: se queda en la misma pantalla y ahora también pide el código.
+          retoReauth = r.reto;
+          ver('seg-campo-codigo2', true);
+          avisar(
+            'Falta un paso más',
+            'Escribe también el código de seis dígitos de tu aplicación.',
+            'info',
+          );
+          ($('seg-codigo2') as HTMLInputElement | null)?.focus();
+          return;
+        }
+      }
+
+      callar();
+      ver('seg-reauth', false);
+      const seguir = pendiente;
+      pendiente = null;
+      retoReauth = null;
+      const campo = $('seg-clave-actual') as HTMLInputElement | null;
+      if (campo) campo.value = '';
+      if (seguir) await seguir();
+    } catch (err) {
+      const code = (err as { code?: string })?.code || '';
+      if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
+        avisar('Esa contraseña no es', 'Vuelve a escribirla. Si no la recuerdas, pide el enlace abajo.');
+        return;
+      }
+      const [t, d] = explicarSegundoFactor(code);
+      avisar(t, d);
+    }
+  }
+
+  /* ─── Alta del segundo factor ─────────────────────────────────────────────────────────────────── */
+  async function empezar(): Promise<void> {
+    if (!usuario) return;
+    callar();
+    try {
+      alta = await empezarInscripcion(usuario);
+      const clave = $('seg-clave');
+      if (clave) clave.textContent = alta.claveManual;
+      const enlace = $('seg-enlace') as HTMLAnchorElement | null;
+      if (enlace) enlace.href = alta.urlQr;
+      ver('seg-sin', false);
+      ver('seg-con', false);
+      ver('seg-alta', true);
+      ($('seg-codigo') as HTMLInputElement | null)?.focus();
+    } catch (err) {
+      if ((err as { code?: string })?.code === 'auth/requires-recent-login') {
+        pedirContrasena(empezar);
+        return;
+      }
+      const [t, d] = explicarSegundoFactor((err as { code?: string })?.code || '');
+      avisar(t, d);
+    }
+  }
+
+  async function confirmar(): Promise<void> {
+    if (!usuario || !alta) return;
+    const codigo = limpiarCodigo(($('seg-codigo') as HTMLInputElement | null)?.value || '');
+    if (codigo.length !== 6) {
+      avisar('Falta algún dígito', 'El código tiene seis números.');
+      return;
+    }
+    const btn = $('seg-confirmar') as HTMLButtonElement | null;
+    if (btn) { btn.disabled = true; btn.textContent = 'Activando…'; }
+    try {
+      await confirmarInscripcion(alta.secreto, codigo, usuario);
+      alta = null;
+      ver('seg-alta', false);
+      await pintar();
+      avisar(
+        'Listo — tu cuenta quedó protegida',
+        'La próxima vez que entres te pediremos el código además de la contraseña. Si tenías el panel abierto en otro dispositivo, allí habrá que volver a entrar.',
+        'info',
+      );
+    } catch (err) {
+      if ((err as { code?: string })?.code === 'auth/requires-recent-login') {
+        pedirContrasena(confirmar);
+        return;
+      }
+      const [t, d] = explicarSegundoFactor((err as { code?: string })?.code || '');
+      avisar(t, d);
+      const campo = $('seg-codigo') as HTMLInputElement | null;
+      if (campo) { campo.value = ''; campo.focus(); }
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'Activar'; }
+    }
+  }
+
+  async function quitar(f: FactorInscrito, cuantos: number): Promise<void> {
+    if (!usuario) return;
+    const ultimo = cuantos <= 1;
+    const aviso = ultimo
+      ? `Vas a retirar «${f.nombre}», que es tu ÚNICA verificación en dos pasos. Después, saber tu contraseña volverá a ser suficiente para entrar a tu cuenta. ¿Seguro?`
+      : `Vas a retirar «${f.nombre}». Te quedarán otras aplicaciones activas. ¿Seguro?`;
+    if (!window.confirm(aviso)) return;
+
+    callar();
+    try {
+      await retirarFactor(usuario, f.id);
+      await pintar();
+      avisar(
+        'Se retiró esa aplicación',
+        ultimo
+          ? 'Tu cuenta vuelve a depender solo de la contraseña. Puedes activarla otra vez cuando quieras.'
+          : 'Las demás siguen activas.',
+        'info',
+      );
+    } catch (err) {
+      if ((err as { code?: string })?.code === 'auth/requires-recent-login') {
+        pedirContrasena(() => quitar(f, cuantos));
+        return;
+      }
+      const [t, d] = explicarSegundoFactor((err as { code?: string })?.code || '');
+      avisar(t, d);
+    }
+  }
+
+  /* ─── Contraseña y sesiones ───────────────────────────────────────────────────────────────────── */
+  async function enviarEnlaceDeClave(): Promise<void> {
+    if (!usuario?.email) return;
+    callar();
+    try {
+      const { auth, mod } = await cargarAuth();
+      await mod.sendPasswordResetEmail(auth, usuario.email);
+      avisar('Revisa tu correo', `Enviamos un enlace a ${usuario.email} para que crees una contraseña nueva.`, 'info');
+    } catch (err) {
+      const [t, d] = explicarSegundoFactor((err as { code?: string })?.code || '');
+      avisar(t, d);
+    }
+  }
+
+  /*
+   * Cerrar TODAS las sesiones. El navegador no puede revocar los tokens de otros dispositivos —eso
+   * solo lo hace el servidor con el SDK de administración—, así que se llama a la Function
+   * `cerrarMisSesiones`, que revoca por el uid del token verificado. Nadie puede cerrarle la sesión
+   * a otro: la Function no acepta un uid como parámetro, a propósito.
+   */
+  async function cerrarTodo(): Promise<void> {
+    if (!window.confirm('Se cerrarán TODAS tus sesiones, incluida esta. Tendrás que volver a entrar. ¿Seguro?')) return;
+    callar();
+    const btn = $('seg-cerrar-todo') as HTMLButtonElement | null;
+    if (btn) { btn.disabled = true; btn.textContent = 'Cerrando…'; }
+    try {
+      const [{ getFunctions, httpsCallable }, { app, auth, mod }] = await Promise.all([
+        import('firebase/functions'),
+        cargarAuth(),
+      ]);
+      await httpsCallable(getFunctions(app), 'cerrarMisSesiones')({});
+      await mod.signOut(auth);
+      window.location.href = '/ingresar?volver=%2Fseguridad';
+    } catch (err) {
+      avisar(
+        'No pudimos cerrarlas',
+        'Inténtalo de nuevo en un momento. Si te urge, cambia tu contraseña: eso también invalida las sesiones abiertas.',
+      );
+      if (btn) { btn.disabled = false; btn.textContent = 'Cerrar todas las sesiones'; }
+    }
+  }
+
+  /* ─── Arranque ─────────────────────────────────────────────────────────────────────────────────
+   * Se espera al estado real de la sesión antes de pintar nada: leer `currentUser` de una vez
+   * devuelve `null` en la primera pintura aunque haya sesión, y esta pantalla enseñaría «entra
+   * primero» a alguien que ya está dentro. Es el error clásico de esta API, documentado en `auth.ts`. */
+  (async () => {
+    const estado = await estadoAcceso();
+    if (estado.estado === 'anonimo') {
+      const sub = $('seg-quien');
+      if (sub) sub.textContent = 'No has ingresado.';
+      ver('seg-anonimo', true);
+      return;
+    }
+    const { auth } = await cargarAuth();
+    usuario = auth.currentUser;
+    if (!usuario) {
+      ver('seg-anonimo', true);
+      return;
+    }
+    const sub = $('seg-quien');
+    if (sub) sub.textContent = usuario.email || 'Tu cuenta';
+    ver('seg-panel', true);
+    await pintar();
+  })();
+
+  $('seg-activar')?.addEventListener('click', () => void empezar());
+  $('seg-agregar')?.addEventListener('click', () => void empezar());
+  $('seg-confirmar')?.addEventListener('click', () => void confirmar());
+  $('seg-cancelar-alta')?.addEventListener('click', () => {
+    alta = null;
+    ver('seg-alta', false);
+    void pintar();
+  });
+  $('seg-reauth-ok')?.addEventListener('click', () => void confirmarReauth());
+  $('seg-reauth-no')?.addEventListener('click', () => {
+    pendiente = null;
+    retoReauth = null;
+    ver('seg-reauth', false);
+    void pintar();
+  });
+  $('seg-cambiar-clave')?.addEventListener('click', () => void enviarEnlaceDeClave());
+  $('seg-cerrar-todo')?.addEventListener('click', () => void cerrarTodo());
+
+  $('seg-copiar')?.addEventListener('click', async () => {
+    if (!alta) return;
+    try {
+      await navigator.clipboard.writeText(alta.claveManual);
+      const b = $('seg-copiar');
+      if (b) {
+        b.textContent = 'Copiada';
+        window.setTimeout(() => (b.textContent = 'Copiar'), 1800);
+      }
+    } catch {
+      // Sin permiso de portapapeles (o sin HTTPS): la clave está a la vista, se puede seleccionar.
+      avisar('Cópiala a mano', 'Tu navegador no nos dejó usar el portapapeles, pero la clave está ahí para seleccionarla.', 'info');
+    }
+  });
+
+  // Enter en los campos de código hace lo mismo que el botón: escribir seis dígitos y tener que
+  // buscar el ratón es la clase de fricción que hace que la gente no active su seguridad.
+  ($('seg-codigo') as HTMLInputElement | null)?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') void confirmar();
+  });
+  ($('seg-codigo2') as HTMLInputElement | null)?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') void confirmarReauth();
+  });
+  ($('seg-clave-actual') as HTMLInputElement | null)?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') void confirmarReauth();
+  });
+</script>

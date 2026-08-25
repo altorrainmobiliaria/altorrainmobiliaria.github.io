@@ -33,7 +33,10 @@ input, select, textarea { font-family: inherit; }
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0b0b0b 0%, #1a1a1a 100%);
+  /* NAVY, no negro. Este degradado venía copiado del panel de Altorra Cars, donde el negro SÍ es de
+     la marca. En inmobiliaria no lo es —la paleta es navy · dorado · plata · blanco, sin negro— y
+     esta pantalla es lo primero que se ve al entrar cada día. Cuesta una línea. */
+  background: linear-gradient(135deg, #062743 0%, #0a3a63 100%);
   padding: 16px;
 }
 .login-card {
@@ -91,6 +94,13 @@ input, select, textarea { font-family: inherit; }
   display: block;              /* visible por defecto: lo oculta `hidden`, abajo */
 }
 .login-error[hidden] { display: none; }
+
+/* El formulario del segundo factor se enseña y se esconde con `hidden`. La regla se escribe
+   EXPLÍCITA aunque el navegador ya la traiga: es exactamente el descuido que dejó los avisos
+   invisibles durante meses aquí arriba, y confiar en el estilo por defecto es lo que lo permitió. */
+.login-form[hidden] { display: none; }
+/* Explicación corta encima del campo del código. Sin estilo propio se leería como un párrafo suelto. */
+.login-nota { margin: 0 0 14px; font-size: .84rem; line-height: 1.55; color: var(--muted, #6b7280); }
 /* Se conserva por si algún camino viejo aún añade la clase — cuesta una línea y evita una regresión. */
 .login-error.visible { display: block; }
 
