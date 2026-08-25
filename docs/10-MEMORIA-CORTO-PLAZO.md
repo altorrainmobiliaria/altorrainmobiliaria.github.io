@@ -35,7 +35,7 @@
 | **TODO-22** | **CATÁLOGO completo, ficha incluida (§97)**. Datos reales = fases 3-4 del runbook; luego fichas al sitemap. | 🟢 cutover | §102 |
 | **TODO-45** | 🔬 **Deuda de la auditoría #8** (§109). ✅ (a) capa semántica · (b) `degrade()` en #8/#16/#27 · (c) trinquete del índice · (e)(f) los 22 caps recalibrados y `33`/`50` podados — todo en §120. Resta: **(d)** umbrales en DÍAS en un repo que corre en COMMITS; **(g)** las 98 rutas que el #27 perdona por basename (o rutas completas en los nodos, o estrechar su ámbito). | 🟡 | §120 |
 | **TODO-46** | 📅 **GESTIÓN v1** (ítem 13). ✅ agenda · contratos · pagos y cartera · expedientes y novedades con SLA (§112-§118). Resta adjuntos privados (B5) y estrenarlo con datos reales (runbook 1.5). | 🟢 | §118 |
-| **TODO-47** | 🚪 **ACCESO — Identity Platform ACTIVO y fase 2 EN VIVO (§130-§132)**. ✅ candado retirado (404→403 medido) · bitácora real · rol en `/gestion` · inactividad · invitación · suspender · **2FA TOTP disponible** · clave 6→12 · dominio autorizado · claim del dueño puesto por el trigger. ⏭️ **Mío**: pantalla de INSCRIPCIÓN del 2FA (sin ella nadie lo tiene y las Rules no pueden exigirlo — inscribir ANTES de exigir) · puerta única de 2 pasos (mockup sin aprobar). ⏭️ **Daniel, de a uno**: cerrar y reabrir sesión (su token aún no lleva el claim) · inscribir su 2FA cuando exista la pantalla · verificar su correo. 🚫 anti-bot APLAZADO a propósito (§132.5). | 🟢 mío | §132 |
+| **TODO-47** | 🚪 **ACCESO — Identity Platform ACTIVO, fase 2 EN VIVO, legacy SANEADO. Detalle → §129-§136.** Candado retirado · bitácora REAL (4 accesos con IP) · rol en `/gestion` · inactividad · invitación · suspender · 2FA TOTP disponible · clave 6→12 · dominio autorizado · 14 índices desplegados · consola del panel LIMPIA (25-ago). ⏭️ **Mío**: pantalla de INSCRIPCIÓN del 2FA — **inscribir ANTES de exigirlo** en las Rules, o expulsa a todos · puerta única (mockup `ALTORRA Acceso.dc.html`, **SIN aprobar**). ⏭️ **Daniel**: inscribir su 2FA · verificar su correo. 🚫 anti-bot aplazado (§132.5). | 🟢 mío | §136 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -53,12 +53,16 @@
 > está COMPLETO (censo → `21`; detalle en §88-§98). La construcción terminó: lo que queda son **gates del
 > DUEÑO**, y por eso no se avanza construyendo más. Sueltos de OLA 1: la contradicción de «Avalúo» (§94.6).
 > El cutover NO se improvisa → **`specs/CUTOVER-RUNBOOK.md`** manda (§102).
-> **En orden**: (1) **claim de staff** (TODO-42, runbook fase 1) — sin él nada del panel corre en
-> vivo y bloquea a los otros cuatro · (2) **estrenar los caminos** (runbook 1.4-1.8: R2, alta,
-> gestión, sello, estancia) — nunca han escrito en Firestore real · (3) **inventario** (TODO-22) ·
-> (4) **Resend** · (5) **DNS/cutover**. Aparte: **TODO-45** (deuda de auditoría, mío) y **TODO-30**
-> (mapa, lo confirma Daniel, [[L-39]]). **OLA 2**: el abogado gatea el RAIL DE PAGO, **no toda la
-> ola** — reléela antes de darla por bloqueada ([[L-40]] ya cobró 3 veces, [[M-11]]).
+> **En orden** (el paso 1 se CERRÓ el 25-ago y desbloqueó al resto, §132): ~~claim de staff~~ ✅ ·
+> (1) **estrenar los caminos** (runbook 1.4-1.8: R2, alta, gestión, sello, estancia) — nunca han
+> escrito en Firestore real · (2) **inventario** (TODO-22; la base está VACÍA de verdad, medido) ·
+> (3) **Resend** · (4) **DNS/cutover**. Aparte: **TODO-45** (deuda de auditoría, mío) y **TODO-30**
+> (mapa, lo confirma Daniel, [[L-39]]). **OLA 2**: el abogado gatea el RAIL DE PAGO, **no toda la**
+> ola — reléela antes de darla por bloqueada ([[L-40]] ya cobró 3 veces, [[M-11]]).
+>
+> 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y en dos días se le
+> cazaron 4 fallos que solo destapó la CONSOLA DEL DUEÑO (§133-§136). Pesa a favor de retirarlo
+> cuanto antes en el cutover; mientras viva, cada cambio suyo se apoya en la atención.
 >
 > ⚠️ **Antes de tocar código, lee `34-DOCTRINA-CODIGO`** (trigger 🖥️) y, si el síntoma te suena, `30`:
 > [[L-33]] (`locals.runtime.env` removido en Astro v6) YA cobró dos veces, y [[L-41]] (cabeceras
