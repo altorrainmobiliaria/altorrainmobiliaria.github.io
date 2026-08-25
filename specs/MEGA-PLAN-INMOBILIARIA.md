@@ -57,7 +57,9 @@
   fuera de la plataforma) con estado de mora según SU protocolo (día 5/10/15/30/45).
 - **GESTIÓN v2 (Ola 2)**: cobro del canon EN plataforma (Wompi recurrente + payout al propietario con
   honorarios descontados — gate B9) · liquidaciones de corta estancia al anfitrión (check-in/out,
-  limpieza) · pipeline de VENTA de las 7 etapas (oferta→promesa→escritura→registro ORIP) con documentos.
+  limpieza) · ✅ **pipeline de VENTA de las 7 etapas — HECHO el 2026-08-25** (§151): dominio, puerta
+  desplegada y pantalla. La regla que lo gobierna: la venta se perfecciona con el REGISTRO, no con la
+  escritura (art. 756 C.C.). Los otros dos puntos siguen gateados por el abogado (B9).
 - **GESTIÓN v3 (Ola 3)**: portal del propietario (ve su inmueble, pagos, reportes) + portal del inquilino
   (paga, reporta novedades, descarga paz y salvos) — el "app de propietarios" de la Fase 3 de sus docs.
 
@@ -128,7 +130,10 @@ Superficies (todas con mockup D2 aprobado):
 0. **GESTIÓN v2** (§3b): cobro de canon en plataforma + payout con honorarios + liquidaciones corta estancia + pipeline de venta con documentos.
 1. **Booking con pago protegido Wompi** (diseño (a) del ADR §16: mandato + estados retenido/liberado/reversado + webhook idempotente + reversión art. 51). Skills `wompi-*` + `auditoria-financiera` (L-12: método ANTES de construir).
 2. **Portal de aliados self-service** (op.11): precios públicos (ancla Proppit $200-300K/mes — nosotros por valor), panel de leads con trazabilidad (el listón de Fincaraíz OV es bajísimo), suscripción Wompi.
-3. **Perfil de inquilino reutilizable 1→N** (QuintoAndar-criollo Fase 0: checklist documental + revisión humana SLA 24h; docs privados en Firebase Storage con B5).
+3. ✅ **Perfil de inquilino reutilizable 1→N — Fase 0 HECHA el 2026-08-25** (§152 dominio y las 5
+   puertas · §153 la revisión, ordenada por espera). 🚫 SIN central de riesgo: sin contrato con
+   DataCrédito es ilegal (B-04), así que verifica DOCUMENTOS, no solvencia. ⏭️ Falta la pantalla del
+   TITULAR, y depende de abrir «Crear cuenta» en `/ingresar` — sin cuentas no hay quien suba nada.
 4. Monetización particulares (destacados) — SOLO cuando haya liquidez de tráfico.
 5. WhatsApp Business API (plantillas) si el volumen lo pide.
 
