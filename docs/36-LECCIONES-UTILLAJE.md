@@ -18,14 +18,8 @@
 ### L-27 — Un `grep` te da la HOJA, no la RAMA: nunca asumas la forma del dato sin leer el padre *(ADR §32.14; §3.3 incumplida por mí mismo)*
 **Disparador**: `grep "whatsapp" site.ts` devolvió `whatsapp:` y `whatsappLink:`; escribí `SITE.contacto.whatsappLink` → **página caída**. La clave real es **`contact`** (inglés). **Causa**: el grep muestra la línea que coincide, **NO su ANIDAMIENTO** — vi las hojas y aluciné la rama por inercia del idioma en un repo bilingüe. **Reglas**: (1) para LEER un valor, grep basta; para ESCRIBIR una ruta (`a.b.c`), **lee la estructura**; (2) sospecha de tu inercia lingüística (`contact`/`contacto`); (3) 🎯 **quién caza el bug importa**: aquí fue el BUILD, no el barrido visual. Cada capa ve un fallo distinto y ninguna sustituye a las otras — build (compila) → estructura (está) → estilos calculados (se aplica) → comportamiento (funciona). Ordénalas así: la primera es la más barata. Detalle → §32.14.
 
-### L-37 — 🎨 Los enlaces de Claude Design CADUCAN al re-guardar: el mockup se trae por MCP, no por URL *(2026-08-19, ADR §89)*
-
-**Disparador**: Daniel comparte el enlace de una pantalla recién diseñada («el enlace caduca en 10 min») y al abrirlo responde **`file not found`** — por `curl` y por navegador con sesión, o sea no es permisos. **Causa**: la URL apunta a un **bundle** (`/serve/.bundles/<uuid>.html`) y Claude Design **genera un uuid nuevo en cada guardado**. El enlace no expira por tiempo: muere en cuanto el diseño se vuelve a guardar, aunque hayan pasado segundos. Perseguir un enlace nuevo es una carrera que se pierde sola. **Receta**: traerlo por el **MCP de Claude Design** (herramienta `DesignSync`), que direcciona por `projectId` y no depende del bundle: 1. `list_files` con el `projectId` (sale de la URL `claude.ai/design/p/<projectId>`) → los paths reales. 2. `get_file` con el path del `.dc.html` → el contenido íntegro. 3. Guardarlo en `portal/design/mockups/ALTORRA <Pantalla>.dc.html`, que es donde viven los demás y donde `20 §Portal` los declara como SSoT visual. **Corolario**: el mockup **se archiva en el repo**, no se consume desde un enlace. Un diseño que solo existe en una URL no es fuente de verdad de nada — la siguiente sesión no lo alcanza.
-
-## §Meta — meta-aprendizajes del propio cerebro
-> Se llena cuando el cerebro contribuye a un error — Reflejo de Autocrítica §G.4.
-> 🧩 **Todas viven COMPLETAS en `33-LECCIONES-META.md`**; aquí queda el titular.
-
+### L-37 — 🎨 Los enlaces de Claude Design CADUCAN al re-guardar *(§89)*
+El mockup se trae por MCP, nunca por URL guardada: la URL apunta a una versión que deja de existir.
 ### L-46 — El shell (y el lenguaje que lo llama) SE COMEN texto y nada falla: comillas simples o por ARCHIVO
 **Disparador**: generas un archivo con heredoc (`python - <<'PY'`) y el contenido llega CORRUPTO sin que nada falle. **Casos, en orden de crueldad**: (a) los `\n` se vuelven salto de línea REAL dentro de una cadena JS → `SyntaxError`; el caso amable, porque revienta y se ve. (b) 🔴 **`\b` se vuelve un BYTE de retroceso (0x08), invisible**: Python lo lee como carácter de control, no como el `\b` de una regex. `/\bis:global\b/` quedó `/‹0x08›is:global‹0x08›/` — **válida, y capaz de no casar NUNCA**. Pasó `node --check`, el gate corrió y dijo ✅ *sobre el mismo bug para el que fue escrito* (§130); encima la edición por coincidencia exacta fallaba «sin motivo», porque el texto en disco no era el que se veía. (c) el shell se traga los signos de dólar, los backticks y las comillas dobles antes de que el intérprete los vea.
 **Reglas**: (1) contenido con escapes de regex → **escríbelo con la herramienta de ficheros, NO por heredoc**; el heredoc vale para texto plano, y en cuanto hay `\b`/`\s`/`\d`/`\n` sobra una capa que los reinterpreta. (2) Si no hay remedio: **cadena RAW** (`r'''…'''`) y delimitador entrecomillado (`<<'PY'`, nunca `<<PY`). (3) **Mira los BYTES** al terminar (`cat -A`) — `node --check` valida sintaxis, no intención. (4) ⚠️ En `String.replace`, la CADENA de reemplazo interpreta `$&` y `` $` `` (= «todo lo anterior al match»): usa **función** de reemplazo y el texto entra literal. (5) 🎯 **Prueba que el gate MUERDA**: reintroduce el defecto, comprueba que falla, restaura. Un gate recién escrito que pasa en verde no está probado, está *sin* probar — y esa es la diferencia entre un gate y un adorno ([[M-06]], 4ª forma).
@@ -41,6 +35,9 @@ Python trunca con `'w'` **antes** de evaluar la lectura: queda un archivo con so
 el script diciendo «hecho» (así se perdió `99` entero). **Regla portable**: al reescribir un archivo,
 **lee a una variable primero** y **afirma sobre ella** (`assert prev.length > N`) antes de abrir en
 `'w'`. Ese `assert` es lo único que distingue «añadir» de «reemplazarlo todo».
+**Hermana, en Windows**: insertar con `'
+'` en un archivo **CRLF** deja dos filas pegadas en una sola línea; el siguiente script que divida por `
+` las ve como UNA y al reescribirla **borra la otra** (pasó con una fila del índice, y lo cazó `brain:check` #5). Detecta el fin de línea del archivo y ÚSALO para unir, no el del lenguaje.
 
 ### L-52 — 🧰 Un gate puede correr en VERDE sobre archivos que **nunca abre** *(§138)*
 **Disparador**: `npm run typecheck` pasa y crees que el proyecto está chequeado. **Causa**: `tsc` **no

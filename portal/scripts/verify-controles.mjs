@@ -60,8 +60,19 @@ const js = [
   .map(soloJs)
   .join('\n');
 
-/** ¿Alguien BUSCA el elemento por este id? */
-const porId = (id) => new RegExp(`getElementById\\(\\s*['"\`]${id}['"\`]|\\$\\(\\s*['"\`]${id}['"\`]|querySelector[All]*\\([^)]*#${id}\\b`).test(js);
+/**
+ * ¿Alguien BUSCA el elemento por este id?
+ *
+ * ⚠️ Incluye `closest('#id')` y `matches('#id')`. Son el patrón de DELEGACIÓN —un solo oyente en el
+ * documento que pregunta «¿el clic vino de este botón?»— y es como está cableado medio panel legacy.
+ * Sin esta rama, el barrido acusaba a los tres botones «+ Nuevo» de un panel que los tiene
+ * perfectamente vivos. Tercer falso positivo de esta familia; los tres, buscando al oyente donde no
+ * mira nadie.
+ */
+const porId = (id) =>
+  new RegExp(
+    `getElementById\\(\\s*['"\`]${id}['"\`]|\\$\\(\\s*['"\`]#?${id}['"\`]|querySelector[All]*\\([^)]*#${id}\\b|closest\\(\\s*['"\`]#${id}['"\`]|matches\\(\\s*['"\`]#${id}['"\`]`,
+  ).test(js);
 
 /** ¿Alguien BUSCA elementos por esta clase? Mencionarla no cuenta: hay que estar seleccionando. */
 const porClase = (c) =>

@@ -166,6 +166,35 @@ quien se lo cree es una persona esperando una respuesta que no va a llegar.
   («reserva confirmada» cuando es una solicitud), cablearlo sin tocar la copia sustituye una mentira
   técnica por una comercial.
 
+## 4g. 🕹️ El control que NO RESPONDE — hermano del éxito no cableado
+
+Un botón o un enlace que nadie escucha. No falla, no avisa, no ensucia la consola: se pulsa y **no
+pasa nada**. Si §4f miente diciendo que algo salió bien, éste no dice nada — y el silencio se
+interpreta igual de mal: *«esto está roto»*, no *«esto todavía no existe»*.
+
+- **Dónde vive**: menús laterales de paneles (secciones planeadas y no construidas), «Ver todo →»
+  junto a tablas topadas, y cualquier `<a href="#">` que en realidad quería ser un botón. Casi
+  siempre viene del mockup: allí el menú tenía siete entradas porque el diseño las imaginaba todas.
+- **Cómo cazarlo, con un barrido**: por cada `<button>` y cada `<a href="#">`, comprueba si alguien
+  lo BUSCA por su `id`, su clase o su `data-*`. Se automatiza en 60 líneas y encuentra en minutos
+  lo que a mano no se ve nunca.
+- **⚠️ Y el barrido tiene tres trampas** — las tres son «buscar al oyente donde no mira nadie», y las
+  tres producen falsos positivos que matan el gate antes de que sirva:
+  1. **El CSS no escucha.** Si lees el archivo entero, una regla `.mi-clase { … }` del `<style>`
+     hace pasar por cableado a un control que no lo está. Mira SOLO el `<script>`.
+  2. **Mencionar no es escuchar.** `el.className = 'mi-clase'` es una asignación. Solo cuentan los
+     contextos donde la clase SIRVE PARA ENCONTRAR el elemento (`querySelector`, `closest`,
+     `matches`, `getElementsByClassName`).
+  3. **La delegación existe.** Medio panel puede estar cableado con un único oyente en el documento
+     que pregunta `e.target.closest('#miBoton')`. Sin esa rama acusarás a controles perfectamente
+     vivos.
+- **Tres salidas legítimas, y el silencio no es una**: cablearlo · quitarlo · o dejar que **diga** por
+  qué todavía no puede hacer nada, y dónde se hace hoy esa tarea. La tercera es la que se olvida, y
+  suele ser la correcta cuando la sección es real pero futura.
+- **Regla del gate, y vale para cualquier gate**: corrige sus **falsos positivos ANTES de encenderlo**.
+  Un gate que acusa a un inocente se desactiva solo —en la cabeza de quien lo lee— y el día que grite
+  de verdad, nadie mira.
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.

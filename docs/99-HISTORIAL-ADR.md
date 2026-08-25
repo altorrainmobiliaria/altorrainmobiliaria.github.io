@@ -5005,3 +5005,54 @@ los dos sentidos ([[M-06]], que ya va por su quinta aplicación esta semana).
 `FichaInmueble.astro` · `estancias.astro` · `index.astro` · `favoritos.astro` · `publicar.astro` ·
 `ingresar.astro`. Y `specs/MEGA-PLAN-INMOBILIARIA.md`, que llevaba cinco días declarando inexistentes
 cinco ítems ya construidos: **un plan que se lee como SSoT y no se re-mide miente con autoridad.**
+
+
+## 139. ADR — El panel del dueño tenía media interfaz muda ⟦OPUS-5⟧ (2026-08-25)
+
+**139.1 — El menú entero, mudo para quien solo consulta.** El panel hacía
+`if (r.puedeEditar) montarAlta()`, y dentro de esa función vive —además del formulario de alta— **el
+enrutador de la barra lateral**. Consecuencia: a un `viewer` no se le cableaba nada y **ninguna
+sección respondía**. Un panel entero inerte por una condición escrita para otra cosa.
+
+Lo que hace daño no es el olvido, es el razonamiento: no cablear el código se había convertido, sin que
+nadie lo decidiera, en una **capa de seguridad de facto**. Y no lo es. Las capas reales son las Security
+Rules (servidor) y el CSS que esconde los controles de edición; «no llamar a la función» era un efecto
+colateral que además apagaba la navegación. Ahora la navegación se monta para todos y la restricción
+vive donde le toca: una guarda **explícita** dentro del botón «+ Nuevo inmueble». *Navegar no es editar.*
+
+**139.2 — Y tres entradas del menú que no hacían nada.** `leads`, `visitas` y `documentos` no estaban
+en el mapa de destinos, y el enrutador salía por un `return` mudo con un comentario que lo daba por
+bueno («sección aún sin construir: no se hace nada»). Desde fuera, un menú que no responde **no se
+distingue de un panel roto**. Es §126 otra vez.
+- **Leads** ya funciona: no tenía vista propia porque su tabla vive en el Resumen, así que lleva allí.
+- **Visitas** y **Documentos** se marcan «pronto» y, al pulsarlas, DICEN qué pasa y dónde se hace hoy
+  esa tarea. El menú no se mueve: no has ido a ninguna parte, y fingir lo contrario sería peor.
+- **«Ver todo →»** de la tabla de leads era un `<a href="#">` sin oyente que además saltaba al
+  principio de la página. No se convierte en paginación —no la hay, ni mockup para diseñarla, y la
+  consulta está topada a 50 por doctrina de free-tier—: ahora **dice la verdad**, distinguiendo «ya los
+  estás viendo todos, son N» de «hay más, usa Exportar CSV». *Un control que explica por qué no puede
+  hacer más es honesto; uno que calla, no.*
+
+**139.3 — Gate nuevo: `verify:controles`.** Sexto gate del portal. Busca `<button>` y `<a href="#">`
+que nadie escuche. Y en su primera corrida encontró uno que **mi propio barrido manual había aprobado**:
+yo conté `wa.className = 'gx-link'` como si fuera un oyente, y es una asignación.
+
+**139.4 — Tres falsos positivos, y por qué importan más que los aciertos.** El gate acusó a inocentes
+tres veces antes de cablearse, siempre por lo mismo — **buscar al oyente donde no mira nadie**:
+1. leía el `.astro` entero, y `.gx-link { … }` del `<style>` pasaba por manejador (**el CSS no
+   escucha**);
+2. exigía `[data-x]` con el corchete pegado, y el selector real llevaba valor
+   (`[data-map-zoom="in"]`) → acusó a los botones de zoom del mapa, que están vivos;
+3. no conocía la **delegación** (`closest('#id')`) → acusó a los tres botones «+ Nuevo» del panel
+   legacy, que están perfectamente cableados.
+*Un gate que acusa a un inocente se desactiva solo, en la cabeza de quien lo lee* — y entonces el día
+que grite de verdad, nadie mira. Corregir los tres antes de encenderlo vale más que lo que caza.
+
+**139.5 — El panel LEGACY, barrido y LIMPIO en este eje.** Se le pasó el mismo barrido a `admin.html`
++ `js/`: los tres únicos sospechosos eran los «+ Nuevo», y están cableados por delegación. Se dice
+porque el hallazgo negativo también es un hallazgo: ese panel no tiene tipos, ni pruebas, ni build, y
+saber que en esto está sano es información, no ausencia de ella.
+
+**139.6 — Archivos.** `portal/scripts/verify-controles.mjs` (nuevo) · `portal/package.json` ·
+`.github/workflows/portal-ci.yml` · `portal/src/pages/gestion.astro` ·
+`portal/src/scripts/gestion-alta-ui.ts` · `portal/src/scripts/gestion-leads.ts`.
