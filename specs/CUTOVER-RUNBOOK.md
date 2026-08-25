@@ -45,9 +45,9 @@ ni siquiera lee claims. Nada cambia de comportamiento.
 | 1.1 | 🤖 | ✅ **HECHO 2026-08-24** — pero con alcance ESTRECHADO a propósito: `firebase deploy --only functions:claimsStaffSync,functions:sincronizarClaimsV2 --force`. El `functions:default` del plan habría subido los 11 exports, incluido `processNurturingEmails`, que corre **cada 6 horas** y mandaría seguimientos a leads reales con la contraseña de Gmail aún sin rotar. `--force` fue necesario por el `retry: true` del trigger, y está justificado: `sincronizarClaim` es idempotente y su código documenta por qué. Verificado: `functions:list` da **9**. |
 | 1.2 | 🧑 | **← EMPIEZA AQUÍ.** Entrar a **https://altorrainmobiliaria.co/admin.html** → **Usuarios** → pulsar **«Sincronizar permisos del portal»** (el botón se construyó el 2026-08-24: hasta entonces este paso mandaba a pulsar algo que NO EXISTÍA, §126). Sale un mensaje tipo «3 personas sincronizadas». ⚠️ Es lo único que 🤖 NO puede hacer: la callable exige un token de super_admin, y no hay service account en la máquina ni credenciales que Claude deba manejar. |
 | 1.3 | 🧑 | Abrir `/gestion` con su cuenta y comprobar que **ve el panel**, no «no tienes permiso». Si sale eso último: cerrar sesión y volver a entrar (el permiso viaja dentro de la sesión). |
-| 1.4 | 🤖 | **Estrenar la subida a R2**: con una sesión que ya tenga el claim, `POST /api/media/subir` con una imagen WebP de prueba; debe devolver `201` con la clave, y la foto debe servirse desde el bucket. |
+| 1.4 | 🧑 | **Estrenar la subida a R2 — REASIGNADO (§140).** Venía marcado 🤖 y **es imposible para 🤖**: el endpoint exige un ID token de Firebase con el claim `admin`, verificado contra las claves de Google, y no hay forma honesta de que Claude obtenga uno (no maneja credenciales del dueño, §124). Un paso asignado a quien no puede hacerlo es un paso que no ocurre nunca. **No hace falta por separado**: el paso 1.5 sube una foto y recorre exactamente este camino. Se deja aquí solo como recordatorio de qué mirar si 1.5 falla al subir — la respuesta del endpoint dice el motivo (`401` = token; `503` = claves de Google). |
 | 1.5 | 🧑 | **Estrenar el alta entera**: `/gestion` → «+ Nuevo inmueble» → rellenar, subir una foto, guardar como **borrador**. Debe salir «Guardado como INM-…». Es la primera vez que ese camino corre completo. |
-| 1.6 | 🧑 | **Estrenar GESTIÓN**: `/gestion` → **Expedientes** → abrir uno (código antiguo `ALT-AR-…` basta) → registrar una novedad → moverla a HECHO escribiendo qué se hizo. Debe rechazar el cierre si dejas vacío «Qué se hizo». Son tres Cloud Functions que nunca han corrido. |
+| 1.6 | 🧑 | **Estrenar GESTIÓN**: `/gestion` → **Expedientes** → abrir uno (código antiguo `ALT-AR-…` basta) → registrar una novedad → moverla a HECHO escribiendo qué se hizo. Debe rechazar el cierre si dejas vacío «Qué se hizo». Son tres Cloud Functions que nunca han corrido. ✅ **YA SE PUEDE (§140)**: hasta el 25-ago este paso era IMPOSIBLE y no lo decía — esas Functions viven en el codebase `portal`, que tenía **9 en código y 0 desplegadas**, y su despliegue estaba en la fase 3, detrás del gate de Resend. Las cinco puertas de escritura (`crearExpediente`, `crearNovedad`, `actualizarNovedad`, `crearContrato`, `registrarPago`) están **desplegadas y verificadas contra `functions:list`**. |
 | 1.7 | 🧑 | **Estrenar el sello y el export**: en **Inmuebles**, «Pendientes del sello» → **Verificar** la del paso 1.5 (debe rechazarla: un borrador con una foto no se lo ha ganado) → «Exportar CSV» y abrir el archivo en Excel: acentos correctos y columnas en su sitio. |
 | 1.8 | 🧑 | **Estrenar la solicitud de estancia** (§122): en `/estancias`, elegir fechas → «Solicitar estas fechas» → nombre, WhatsApp y marcar la autorización → «Enviar solicitud». Debe (a) aparecer el lead en **Gestión → Resumen** con origen `portal-estancias`, y (b) llegarte el correo de `onNewSolicitud` con las fechas dentro. Si el correo llega SIN las fechas, el fallo está en `datosExtra.descripcion`, no en el correo. |
 
@@ -102,10 +102,17 @@ justo después de autenticar bien.
 |---|---|---|
 | 3.1 | 🧑 | Verificar el dominio en Resend y entregar la clave (gate 0.2) |
 | 3.2 | 🤖 | `firebase functions:secrets:set RESEND_API_KEY` |
-| 3.3 | 🤖 | `firebase deploy --only functions:portal --config portal/firebase/firebase.json` |
+| 3.3 | 🤖 | `firebase deploy --only functions:portal:catalogoOnPropiedadWrite,functions:portal:catalogoBarrido,functions:portal:catalogoRepublicar,functions:portal:alertasDigest --project altorra-inmobiliaria-345c6` — **desde la RAÍZ**. ⚠️ El comando que había aquí (`--config portal/firebase/firebase.json`) **fallaba siempre** (§140): esa config declaraba `source: '../functions'`, que se sale del directorio del proyecto. Ya no existe ese bloque; el codebase `portal` vive en el `firebase.json` de la raíz. Las cinco de GESTIÓN ya están fuera desde el 25-ago, así que aquí solo quedan estas cuatro. |
 
 Esto despliega el rebuild del catálogo (`catalogoOnPropiedadWrite`, `catalogoBarrido`,
-`catalogoRepublicar`) y el digest de alertas (`alertasDigest`).
+`catalogoRepublicar`) y el digest de alertas (`alertasDigest`) — las **cuatro que faltan** del codebase
+`portal`; las cinco de GESTIÓN salieron antes (§140).
+
+⚠️ **El secreto ya EXISTE con un centinela** (`SIN-CONFIGURAR`), porque `defineSecret()` bloqueaba el
+despliegue de TODO el codebase mientras no existiera — incluidas funciones que no tocan el correo
+(§140). El paso 3.2 pasa a ser **sobreescribir** ese valor con la clave real, no crearlo. Si se
+desplegara el digest con el centinela puesto, el código lo trata como «sin clave»: aplica las bajas y
+no envía, que es la conducta que ya estaba diseñada.
 
 **Verificación**: 🤖 comprueba en los logs que el barrido corre; el digest solo se podrá comprobar de
 verdad cuando haya catálogo y una alerta con novedades.

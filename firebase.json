@@ -10,11 +10,19 @@
   "database": {
     "rules": "database.rules.json"
   },
+  "_comment_functions": "§140 — el codebase `portal` vive AQUÍ y no en portal/firebase/firebase.json, y no es capricho: allí se declaraba `source: '../functions'`, que se sale del directorio del proyecto (el que contiene el firebase.json). El comando que documentaba el runbook —`firebase deploy --only functions:portal --config portal/firebase/firebase.json`— responde `Error: ../functions is outside of project directory` SIEMPRE, desde el día que se escribió. Nadie lo notó porque ese codebase nunca se había desplegado: 9 funciones en código, 0 en producción. Con la ruta desde la raíz, ambos codebases resuelven. ⚠️ Consecuencia: `--only functions` a secas desplegaría LOS DOS. Se scopea siempre: `functions:default:<nombre>` o `functions:portal:<nombre>`.",
   "functions": [
     {
       "source": "functions",
       "codebase": "default",
       "ignore": ["node_modules", ".git"]
+    },
+    {
+      "source": "portal/functions",
+      "codebase": "portal",
+      "_comment_ignore": "§140 — el patrón `src` (a secas) que traía la config vieja es una TRAMPA: se comporta como en .gitignore y casa con CUALQUIER carpeta llamada `src` a cualquier profundidad, incluida `lib/functions/src/` — que es justo donde `tsc` deja el compilado. Cloud Build subía el paquete SIN el punto de entrada y fallaba con `lib/functions/src/index.js does not exist`. Se quita: subir unos KB de TypeScript no cuesta nada y quita un pie de banco. Otro defecto que nadie vio porque este codebase nunca se había desplegado.",
+      "ignore": ["node_modules", ".git"],
+      "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run build"]
     }
   ]
 }

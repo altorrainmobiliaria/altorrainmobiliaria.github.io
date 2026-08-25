@@ -39,6 +39,27 @@ export {
  */
 const RESEND_API_KEY = defineSecret('RESEND_API_KEY');
 
+/**
+ * ⚠️ UN SECRETO QUE NADIE TIENE BLOQUEA EL CODEBASE ENTERO (§140).
+ *
+ * `defineSecret()` se evalúa al CARGAR el módulo, y la CLI exige que todos los parámetros del codebase
+ * se puedan resolver **antes** de desplegar — aunque despliegues un subconjunto que no los usa. O sea:
+ * mientras no exista `RESEND_API_KEY` en Secret Manager, no se puede desplegar NI UNA de las nueve
+ * funciones de este codebase, incluidas las cinco puertas de escritura de GESTIÓN, que no tienen nada
+ * que ver con el correo. El runbook pedía estrenar tres de ellas en la fase 1 y desplegarlas en la
+ * fase 3, detrás del gate de Resend; el acoplamiento no estaba escrito en ningún sitio.
+ *
+ * La salida: el secreto EXISTE con este valor centinela, que significa «todavía no configurado». El
+ * digest ya sabía qué hacer sin clave —aplicar las bajas y no enviar—, así que se traduce el centinela
+ * a cadena vacía y ese camino se reutiliza tal cual. Cuando el dueño entregue la clave real, basta
+ * sobreescribir el secreto: no hay que tocar código.
+ */
+const RESEND_SIN_CONFIGURAR = 'SIN-CONFIGURAR';
+const claveResend = (): string => {
+  const v = RESEND_API_KEY.value();
+  return v === RESEND_SIN_CONFIGURAR ? '' : v;
+};
+
 const REGION = 'us-central1';
 
 /**
@@ -119,7 +140,7 @@ export const alertasDigest = onSchedule(
     retryCount: 0,
   },
   async () => {
-    const reporte = await correrDigest(db(), { apiKeyResend: RESEND_API_KEY.value() });
+    const reporte = await correrDigest(db(), { apiKeyResend: claveResend() });
     for (const l of lineasDigest(reporte)) logger.info(l);
   },
 );

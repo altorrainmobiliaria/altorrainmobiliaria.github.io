@@ -5073,3 +5073,68 @@ desarrollo vivo. Se dice porque el susto fue real y la conclusión inicial, equi
 **139.6 — Archivos.** `portal/scripts/verify-controles.mjs` (nuevo) · `portal/package.json` ·
 `.github/workflows/portal-ci.yml` · `portal/src/pages/gestion.astro` ·
 `portal/src/scripts/gestion-alta-ui.ts` · `portal/src/scripts/gestion-leads.ts`.
+
+
+## 140. ADR — Un codebase entero que nunca se había desplegado, y tres razones por las que no podía ⟦OPUS-5⟧ (2026-08-25)
+
+**140.0 — Cómo salió a la luz.** Leyendo el runbook del cutover para ver qué podía adelantar solo. El
+paso **1.6** le pide al dueño estrenar tres Cloud Functions «que nunca han corrido»… y esas Functions
+viven en el codebase `portal`, que tenía **9 en código y 0 desplegadas**. Su despliegue está en la
+**fase 3**, detrás del gate de Resend. O sea: un paso de la fase 1 que no podía funcionar hasta la
+fase 3, y el acoplamiento **no estaba escrito en ningún sitio**. El dueño lo habría descubierto
+pulsando y viendo un error, que es la forma más cara de enterarse.
+
+Al intentar desplegarlo aparecieron **tres defectos encadenados**, ninguno visible hasta ese momento
+porque *nadie había ejecutado nunca ese comando*.
+
+**140.1 — El comando documentado no funciona. Nunca funcionó.**
+`firebase deploy --only functions:portal --config portal/firebase/firebase.json` responde
+`Error: ../functions is outside of project directory`, **siempre**. Esa config declaraba
+`source: "../functions"`, y el «directorio del proyecto» es el que contiene el `firebase.json` —
+así que la ruta se sale por definición, se ejecute desde donde se ejecute. Estaba escrito en el
+runbook (§102) y en el propio `index.ts`. **Arreglo**: el codebase `portal` se muda al
+`firebase.json` de la RAÍZ, con `source: "portal/functions"`, junto al `default`. El bloque
+`functions` de `portal/firebase/firebase.json` se retira; allí quedan las reglas y el emulador, que
+es lo único que se usa desde ese directorio (verificado: `npm run test:rules` sigue verde).
+
+**140.2 — Un secreto que nadie tiene bloquea el codebase ENTERO.** `defineSecret('RESEND_API_KEY')`
+se evalúa al cargar el módulo, y la CLI exige que **todos** los parámetros del codebase se resuelvan
+antes de desplegar — aunque despliegues un subconjunto que no los usa. Mientras Resend no estuviera
+configurado, no se podía desplegar **ni una** de las nueve, incluidas cinco puertas de escritura que
+no tienen nada que ver con el correo. Esa es la razón REAL por la que la fase 1.6 dependía de la 3.1.
+**Arreglo**: el secreto existe con el centinela `SIN-CONFIGURAR`, y el código lo traduce a cadena
+vacía — reutilizando el camino que el digest **ya tenía** para «sin clave»: aplica las bajas, no envía,
+y lo dice en el log. Cuando llegue la clave real, se sobreescribe el secreto y no se toca código.
+
+**140.3 — Y el `ignore` se comía el punto de entrada.** Con eso resuelto, Cloud Build falló con
+`lib/functions/src/index.js does not exist`. El patrón `"src"` del `ignore` se comporta como en
+`.gitignore`: casa con **cualquier** carpeta llamada `src` a cualquier profundidad — incluida
+`lib/functions/src/`, que es exactamente donde `tsc` deja el compilado. Se subía el paquete sin su
+punto de entrada. **Arreglo**: se quita; subir unos KB de TypeScript no cuesta nada y quita un pie de
+banco.
+
+**140.4 — Lo desplegado, y lo que se dejó fuera A PROPÓSITO.** Salen las **cinco puertas de escritura
+de GESTIÓN** (`crearExpediente`, `crearNovedad`, `actualizarNovedad`, `crearContrato`,
+`registrarPago`) — callables, coste cero mientras nadie las use, y son las que desbloquean el paso
+1.6. **NO** salen las cuatro del catálogo y alertas: dos son `onSchedule` y consumirían **2 de los 3
+jobs gratuitos** de Cloud Scheduler, que es un compromiso de recurso que le toca al dueño en su fase.
+Verificado contra `functions:list`, no contra el «Deploy complete» ([[L-51]]): **5 de 5 vivas**, 18
+funciones en total en el proyecto.
+
+**140.5 — Y un paso asignado a quien no puede hacerlo.** El **1.4** («estrenar la subida a R2») venía
+marcado 🤖 y es **imposible para mí**: el endpoint exige un ID token de Firebase con el claim `admin`
+verificado contra las claves de Google, y obtenerlo pasaría por manejar credenciales del dueño — cosa
+que no hago (§124, reafirmado en §132.6). Además es **redundante**: el paso 1.5 sube una foto y recorre
+ese mismo camino. Se reasigna y se deja como pista de diagnóstico por si 1.5 falla al subir. *Un paso
+asignado a quien no puede ejecutarlo es un paso que no ocurre nunca* — y en un runbook eso se descubre
+el día del cutover.
+
+**140.6 — El patrón.** Los tres defectos de §140.1-.3 comparten causa con §134 (los índices que nunca
+se desplegaron) y con §126 (el botón que el runbook prometía): **configuración y procedimiento que se
+escriben y no se ejecutan**. Un comando documentado y jamás corrido no es documentación, es una
+hipótesis. La regla que se lleva: **el primer uso de un procedimiento es parte de escribirlo** — o se
+ejecuta al menos una vez, o se marca explícitamente como no verificado.
+
+**140.7 — Archivos.** `firebase.json` (raíz: nuevo codebase `portal`) · `portal/firebase/firebase.json`
+(bloque `functions` retirado) · `portal/functions/src/index.ts` (centinela del secreto) ·
+`specs/CUTOVER-RUNBOOK.md` (pasos 1.4, 1.6, 3.2 y 3.3 corregidos) · `docs/05` (censo 9/5).

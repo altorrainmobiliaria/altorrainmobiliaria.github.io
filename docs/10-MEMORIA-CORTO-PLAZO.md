@@ -27,12 +27,12 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-17 · 21** | **Ola 0 restos** (E2E "tras cache" · obra AEO) · **lote-dueño**: RNT, dirección COMERCIAL, abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ | gate=obra/cutover |
-| **TODO-CEREBRO** | 🧠 **Mantenimiento del cerebro** (ya NO en pausa: 20-ago Daniel levantó el límite de capacidad). **TODO-23** kernel hardening K-01/02/04/05/09 (§30.4) · **TODO-24** ssotFact de paleta + cache al portal en el CUTOVER · **TODO-28** #7 sello >90d · **TODO-32(b)** [[M-09]] a los hermanos + banner de costo (solo baja con commits de PRODUCTO). Capacidad y gates a medias → **TODO-45**. | 🔄 | §84·§87·§90·§96 |
+| **TODO-CEREBRO** | 🧠 **Mantenimiento** (sin pausa desde 20-ago). Abiertos: **TODO-23** kernel K-01/02/04/05/09 · **TODO-24** ssotFact de paleta + cache al portal EN EL CUTOVER · **TODO-28** #7 sello >90d · **TODO-32(b)** [[M-09]] a los hermanos. Capacidad y gates a medias → **TODO-45**. 🔬 auditoría Nivel-2 VENCIDA. ⚠️ El banner de costo solo baja con commits de PRODUCTO. | 🔄 | §84·§87·§96 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-30** | 🗺️ **MapLibre ✅ COMPLETO (§55)** — falta SOLO la vista en foreground (rAF congelado en pestañas automatizadas, [[L-39]] → la confirma Daniel). Luego: wiring forms→`solicitudes`. | 🟢 vista | §55.9 |
 | **TODO-22** | **CATÁLOGO completo, ficha incluida (§97)**. Datos reales = fases 3-4 del runbook; luego fichas al sitemap. | 🟢 cutover | §102 |
 | **TODO-45** | 🔬 **Deuda de la auditoría #8** — lo cerrado está en §120. Resta: **(d)** umbrales en DÍAS en un repo que corre en COMMITS · **(g)** las 98 rutas que el #27 perdona por basename (rutas completas en los nodos, o estrechar su ámbito). | 🟡 | §120 |
-| **TODO-46** | 📅 **GESTIÓN v1 (ítem 13) — hecha** (§112-§118). Resta: adjuntos privados (B5) y ESTRENARLA con datos reales (runbook 1.5). | 🟢 | §118 |
+| **TODO-46** | 📅 **GESTIÓN v1 (ítem 13) — hecha** (§112-§118) y sus **5 puertas de escritura YA DESPLEGADAS** (§140). Resta: adjuntos privados (B5) y ESTRENARLA con datos reales (runbook 1.5-1.6, ya posible). | 🟢 | §140 |
 | **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR. Detalle → §129-§138.** Identity Platform ACTIVO · reglas fase 2 EN VIVO · bitácora REAL · **resolver del código en las DOS puertas** (portal y legacy) · **`/seguridad` para inscribirlo** · `cerrarMisSesiones` y `retirarSegundoFactorDe` DESPLEGADAS y verificadas. ⏭️ **Daniel**: inscribir su 2FA en `/seguridad` (con clave manual; el QR se aplazó a propósito, §137.5) · verificar su correo. ⏭️ **Mío, DESPUÉS de que él se inscriba**: exigirlo en las Rules (`sign_in_second_factor`) — antes NO, expulsa a todos · el QR verificable · puerta única (mockup **SIN aprobar**). 🚫 anti-bot aplazado (§132.5). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL — hoy es un «próximamente» y la home lo anunciaba con 4 artículos INVENTADOS** (retirados, §138.3). Está en la VISIÓN §5 como motor de autoridad SEO/AEO. Falta: mockup (gate «nunca UI sin mockup») + contenido REAL — hay materia prima verificada en `specs/R1-COMPETENCIA` y `R3-LEGAL`. La sección de la home vuelve sola en cuanto haya artículos. | 🔵 mío | §138 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
@@ -52,7 +52,8 @@
 > faltaban 5). Censo → `21`. **Pero «13/13» NO es «cerrada»**: ninguno de esos caminos ha escrito aún en
 > Firestore real y la base está VACÍA (medido). Y sigue habiendo construcción propia — ver TODO-48.
 > El cutover NO se improvisa → **`specs/CUTOVER-RUNBOOK.md`** manda (§102). Suelto: «Avalúo» (§94.6).
-> **En orden**: (1) **estrenar los caminos** (runbook 1.4-1.8: R2, alta, gestión, sello, estancia) ·
+> **En orden**: (1) **estrenar los caminos** (runbook 1.4-1.8, **corregido en §140**: el 1.6 era
+> IMPOSIBLE y no lo decía, y el 1.4 estaba asignado a quien no puede hacerlo) ·
 > (2) **inventario** (TODO-22) · (3) **Resend** · (4) **DNS/cutover**. Aparte: **TODO-45**, **TODO-48**
 > (míos) y **TODO-30** (lo confirma Daniel, [[L-39]]). **OLA 2**: el abogado gatea el RAIL DE PAGO,
 > **no toda la ola** ([[L-40]] ya cobró 3 veces, [[M-11]]).
@@ -78,19 +79,15 @@
 > **(2)** Política V2 ✅ live. Queda TU visto bueno para abrir **«Crear cuenta»** en `/ingresar` (§90).
 > **(3) B-04** — sin contrato con DataCrédito/TransUnion **NO se puede consultar a nadie**: ¿afiliarse, o solo aseguradora?
 > **(4-5)** verificar los **recovery codes** (§72) · Nº de **RNT** + vetar los 6 estándares del `02 §2`.
-> **(7)** decidir la **tasa de mora del doc 03** (B-05: 1,5×IBC vs 6%) — un párrafo, y las 5 remisiones
-> lo heredan solas.
-> **(8)** `/publicar` **no pide correo** (fiel al mockup) ⇒ el propietario llega `[COLD]`: ¿campo nuevo o re-pesar?
-> **(10) 📧 RESEND — el último gate de las alertas (§96)**: dominio verificado + clave = **fase 0.2 del
-> runbook** (detalle allá). Sin eso el digest NO falla, solo no envía. Gratis y **no depende del Gmail
-> roto**, que es otro asunto y va al final por decisión tuya.
-> **(11) ⚖️ ¿ALTORRA contrata un avaluador inscrito en el RAA?** De eso, y solo de eso, depende si se
-> quedan «Avalúos» (menú Gestión) y «Avalúo y fotografía profesional» (plan Premium). Todo lo demás ya
-> dejó de llamarse avalúo (§105). Si la respuesta es no, se quitan esas dos y listo.
-> **(9) 📣 PAUTA — al final por decisión tuya (21-ago); aplazarla es seguro** porque la campaña de humo
-> **solo muerde el día que recargues saldo** ([[D-15]]). **Antes de recargar un peso**: sesión de Meta
-> de Altorra ([[D-16c]]), filtro SOLO `Entrega=Activo` + rango Máximo ([[D-15b]] — «Anuncios activos»
-> esconde los zombies).
+> **(7)** **tasa de mora del doc 03** (B-05: 1,5×IBC vs 6%) — un párrafo, y las 5 remisiones lo heredan.
+> **(8)** `/publicar` **no pide correo** (fiel al mockup) ⇒ el propietario llega `[COLD]`: ¿campo o re-pesar?
+> **(10) 📧 RESEND** — dominio verificado + clave (runbook fase 0.2). Sin eso el digest no falla, solo no
+> envía. Gratis, y **no depende del Gmail roto**. ⚠️ El secreto ya existe con centinela (§140).
+> **(11) ⚖️ ¿avaluador inscrito en el RAA?** Solo de eso depende si se quedan «Avalúos» (menú Gestión) y
+> «Avalúo y fotografía profesional» (Premium). Si no: se quitan esas dos y listo (§105).
+> **(9) 📣 PAUTA — al final por decisión tuya; aplazarla es SEGURO**: la campaña de humo solo muerde el
+> día que recargues saldo ([[D-15]]). **Antes de recargar**: sesión de Meta de Altorra ([[D-16c]]) +
+> filtro `Entrega=Activo` con rango Máximo ([[D-15b]] — «Anuncios activos» esconde los zombies).
 
 > **⏸️ EN PAUSA, reanudable y sin bloquear nada**: 64 leves del kit (ledger en bóveda) · [[M-09]] a los
 > 3 hermanos (TODO-32b) · backlog B-01..B-05. 🛑 **NO RELANZAR** el comité R3, la auditoría B-03 ni los

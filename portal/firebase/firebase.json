@@ -1,4 +1,5 @@
 {
+  "_comment": "Config del EMULADOR y de las reglas del portal. ⚠️ El bloque `functions` VIVIA AQUI y se retiro en §140: declaraba `source: \"../functions\"`, que se sale del directorio del proyecto, asi que el comando del runbook fallaba SIEMPRE con `Error: ../functions is outside of project directory`. Nadie lo noto porque este codebase nunca se habia desplegado. El codebase `portal` vive ahora en el `firebase.json` de la RAIZ, con la ruta completa. Aqui se deja solo lo que de verdad se usa desde este directorio: las reglas y el emulador de `npm run test:rules`.",
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
@@ -6,14 +7,6 @@
   "storage": {
     "rules": "storage.rules"
   },
-  "functions": [
-    {
-      "source": "../functions",
-      "codebase": "portal",
-      "ignore": ["node_modules", ".git", "src", "tsconfig.json"],
-      "predeploy": ["npm --prefix \"$RESOURCE_DIR\" run build"]
-    }
-  ],
   "emulators": {
     "firestore": { "port": 8080 },
     "functions": { "port": 5001 },
