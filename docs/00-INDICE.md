@@ -129,6 +129,7 @@
 | §148 | 🔎 **La bóveda ya se puede LEER**: quién abrió cada documento. Solo el super_admin (lleva IP de terceros) · ni IP ni ciudad, aunque estén · prueba nueva: `get` y `list` NO son el mismo permiso. | 5516 |
 | §149 | ✂️ **El mapa del portal se parte en dos**: sale el back-office a `22-MAPA-GESTION` (−2422c en `21`). Frontera por PRODUCTO, no por tamaño: un shard por volumen se vuelve a llenar. Boot −23c. | 5569 |
 | §150 | ↩️ **Todo el sitio redirigía a su forma CON barra** (307), desde el primer deploy: cadena en los 65 redirects y canonical peleado con el servidor. `drop-trailing-slash` + gate. Paso 5.5 ENSAYADO. | 5599 |
+| §151 | 🏷️ **Pipeline de compraventa, 7 etapas** (Ola 2). La venta se perfecciona con el REGISTRO, no con la escritura (art. 756 C.C.): `vendida()` solo en registro y la pantalla grita en escritura. No es un kanban, a propósito. | 5646 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

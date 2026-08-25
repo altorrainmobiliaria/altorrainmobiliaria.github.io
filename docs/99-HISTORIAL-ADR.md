@@ -5642,3 +5642,62 @@ muestra», y una muestra no sirve para esto; se comprueban los 65.
 
 **150.6 — Archivos.** `portal/wrangler.jsonc` · `portal/scripts/verify-build.mjs` ·
 `specs/CUTOVER-RUNBOOK.md` (paso 5.5 + tabla de ensayados).
+
+## 151. ADR — El pipeline de compraventa, y la regla que casi nadie pone en el tablero ⟦OPUS-5⟧ (2026-08-25)
+
+**151.0 — Qué se construyó, y por qué este item.** Primer trozo de la **Ola 2 · GESTIÓN v2**: las 7
+etapas de una compraventa, de punta a punta —dominio puro, puerta de escritura desplegada y pantalla
+en el panel—. Se eligió este y no el rail de pago porque el rail lo gatea el abogado (B2/B9) y esto
+no: no mueve un peso, registra en qué punto está una operación. [[L-40]] ya cobró tres veces la
+lección de que *el abogado gatea el DINERO, no la ola entera*.
+
+**151.1 — ⚖️ LA REGLA QUE GOBIERNA TODO: la venta se perfecciona con el REGISTRO, no con la
+escritura.** El art. 756 del Código Civil dice que la tradición del dominio de los bienes raíces se
+efectúa por la INSCRIPCIÓN del título en la Oficina de Registro. Entre firmar en notaría y quedar
+inscrito hay días —a veces semanas— en los que el vendedor sigue siendo el dueño de registro: puede
+caer un embargo, puede registrarse otro título antes. **Un tablero que pinte «VENDIDO» el día de la
+notaría le está diciendo al equipo que suelte una operación que todavía puede torcerse.** Por eso
+`vendida()` es cierto SOLO en `registro`, hay prueba de que ninguna etapa anterior cuenta, y la
+pantalla GRITA justo ahí — que es el único punto del proceso donde todo parece terminado y no lo
+está. *Si el sistema calla en ese punto, calla en el peor sitio.*
+
+**151.2 — Dos reglas de orden que tampoco son de orden.**
+· **El estudio de títulos va ANTES de la promesa y no se puede saltar.** Firmar la promesa crea
+obligaciones y suele traer arras; descubrir después una hipoteca, una limitación de dominio o una
+sucesión sin liquidar convierte un hallazgo barato en una pérdida cara. Saltables hay exactamente
+dos: la promesa (no siempre hay plazo que asegurar) y el crédito (hay compras de contado).
+· **Retroceder se puede, pero exige motivo escrito.** Una venta que se cae es información; una que
+retrocede en silencio esconde justo lo que hay que ver. El servidor lo rechaza sin motivo, así que
+no es cortesía del formulario.
+
+**151.3 — Lo único que BLOQUEA por documento, y por qué solo eso.** No se marca REGISTRADA sin
+número de matrícula inmobiliaria: ese número **es** el registro, y la casilla que dice que una venta
+terminó es exactamente la que no puede mentir. El resto de soportes —certificado de tradición,
+promesa, escritura, paz y salvo— **avisan pero no impiden trabajar**, porque en la vida real se
+mueve la operación y se escanea el papel después. Un gate que obliga a escanear antes de mover se
+salta por WhatsApp el primer día.
+
+**151.4 — La bóveda no se duplica.** Los cinco tipos de documento de compraventa entran en la MISMA
+lista canónica de `documentos.ts` (§142). Un expediente no tiene un cajón para arriendo y otro para
+venta; y la pantalla de venta lee los documentos del expediente, sin colección paralela.
+
+**151.5 — La pantalla ordena por RIESGO, y NO es un kanban.** Siete columnas convierten el proceso
+en un juego de tarjetas: se ve bonito con veinte ventas y vacío con tres, no cabe en un portátil, y
+—lo que importa— ordena por ETAPA, que es la dimensión que menos dice. La lista va por lo que hay
+que atender hoy: escriturado-sin-registrar, luego soportes pendientes, y al fondo lo cerrado.
+Además, solo se ofrecen los destinos que el dominio acepta: *un botón que la puerta va a rechazar
+enseña a la gente que el sistema está roto*.
+
+**151.6 — Verificado, y lo que no.** 49 pruebas de dominio + **18 contra el emulador** con el mismo
+código que se desplegó. Las del emulador prueban lo que el dominio no puede: **que la puerta invoque
+la regla** —una regla de dominio que la puerta no llama es una regla que no existe— y que cada
+rechazo deje la venta DONDE ESTABA. `crearVenta` y `moverVenta` verificadas en producción con
+`functions:list`, y los dos índices de `ventas` con `firestore:indexes`. **Lo que NO se pudo
+verificar**: el render en vivo del panel, que exige sesión de staff; queda para el paso 1.6 del
+runbook.
+
+**151.7 — Archivos.** `portal/src/lib/domain/venta.ts` (+ `.test.ts`) ·
+`portal/functions/src/venta-escritura.ts` (+ `firebase/tests/venta-escritura.test.ts`) ·
+`portal/src/scripts/gestion-ventas.ts` · `portal/src/pages/gestion.astro` ·
+`portal/firebase/firestore.rules` · `portal/firebase/firestore.indexes.json` ·
+`portal/src/lib/domain/documentos.ts` · `portal/design/mockups/ALTORRA Venta.dc.html`.
