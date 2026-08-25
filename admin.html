@@ -8,7 +8,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700;800&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/admin.css"/>
+  <!-- ⚠️ El `?v=` NO es decorativo (§133). Sin él, el navegador se queda con su copia vieja del CSS y
+       una corrección puede estar en el servidor y no verse en pantalla — pasó exactamente eso con los
+       avisos del login: arreglado, desplegado, y el dueño seguía sin ver nada. SUBIR LA FECHA cada vez
+       que se toque `admin.css`, igual que se bumpea el `CACHE_NAME` del service worker (§3.2). -->
+  <link rel="stylesheet" href="css/admin.css?v=20260825"/>
   <script type="module" src="js/firebase-config.js"></script>
   <script src="js/firestore-meter.js" defer></script>
 <style>
