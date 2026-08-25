@@ -294,6 +294,13 @@ export function montarAlta(): void {
 
   // Los DOS botones «+ Nuevo inmueble» (el del panel y el del listado) abren lo mismo.
   document.querySelectorAll('.gx-new').forEach((b) => b.addEventListener('click', async () => {
+    /*
+     * Guarda de rol DENTRO del botón. Antes esta protección la daba, por accidente, el hecho de no
+     * cablear nada para quien solo consulta — y eso dejaba también el MENÚ muerto. Ahora la
+     * navegación se monta para todos y la restricción vive donde le toca: en la acción concreta.
+     * No es la frontera (esa son las Rules): es que la interfaz no ofrezca lo que la base va a negar.
+     */
+    if (document.body.dataset.puedeEditar === 'false') return;
     edicion = null;
     limpiarFormulario();
     tituloPantalla('Nuevo inmueble', 'Se guarda como borrador. Solo sale al portal cuando lo pongas en «Disponible».', 'Guardar inmueble');
@@ -332,13 +339,47 @@ export function montarAlta(): void {
       void montarExpedientes();
       void montarNovedades();
     },
+    /*
+     * «Leads» NO tiene vista propia: la tabla vive en el Resumen. Antes esta entrada no estaba en el
+     * mapa y el enrutador salía por `if (!destino) return` — o sea, pulsarla no hacía NADA. Ahora
+     * lleva al Resumen y deja la tabla a la vista, que es lo que la persona esperaba.
+     */
+    leads: () => {
+      ver(null);
+      document.getElementById('gx-table-title')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    },
   };
+
+  /** Textos de las secciones que aún no existen. Vienen del markup para no duplicarlos aquí. */
+  const notasPronto: Record<string, string> = (() => {
+    try {
+      return JSON.parse(document.getElementById('gx-nav-notas')?.textContent || '{}');
+    } catch {
+      return {};
+    }
+  })();
+  const notaEl = $('gx-nav-nota');
 
   document.querySelectorAll<HTMLAnchorElement>('.gx-nav__item').forEach((a) => {
     a.addEventListener('click', (ev) => {
       ev.preventDefault();
-      const destino = DESTINOS[a.dataset.nav ?? ''];
-      if (!destino) return; // sección aún sin construir: no se hace nada, y el menú no cambia
+      const id = a.dataset.nav ?? '';
+      const destino = DESTINOS[id];
+
+      /*
+       * Sección que todavía no existe: se DICE. Antes esto era un `return` mudo, y un menú que no
+       * responde no se distingue de un panel roto — es el «botón fantasma» de §126, que ya costó una
+       * vez. El menú no cambia de sitio a propósito: no has ido a ninguna parte.
+       */
+      if (!destino) {
+        if (notaEl) {
+          notaEl.textContent = notasPronto[id] || 'Esta sección todavía no está lista.';
+          notaEl.hidden = false;
+        }
+        return;
+      }
+
+      if (notaEl) notaEl.hidden = true;
       document.querySelectorAll('.gx-nav__item').forEach((n) => n.classList.remove('is-on'));
       a.classList.add('is-on');
       destino();

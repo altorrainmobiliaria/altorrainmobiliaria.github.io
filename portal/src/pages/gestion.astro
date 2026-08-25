@@ -24,9 +24,22 @@ const nav = [
   // después de Contratos porque es donde el operador acaba cuando algo no cuadra.
   { id: 'expedientes', label: 'Expedientes', icon: '<path d="M3 7.5A2 2 0 0 1 5 5.5h4l2 2.5h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M8 14h8"/>' },
   { id: 'leads', label: 'Leads', icon: '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.2 2.9-5.3 6.5-5.3s6.5 2.1 6.5 5.3"/><path d="M17 5.4A3.2 3.2 0 0 1 17 11.6M22 20c0-2.4-1.5-4.2-3.7-4.9"/>' },
-  { id: 'visitas', label: 'Visitas', icon: '<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>' },
-  { id: 'documentos', label: 'Documentos', icon: '<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M18 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8l5 5v11a2 2 0 0 1-2 2z"/><path d="M8 13h8M8 17h5"/>' },
+  /*
+   * `pronto` = la sección está en el menú del mockup pero todavía no existe. Hasta hoy estas dos
+   * entradas —y «Leads»— eran enlaces que al pulsarlos **no hacían absolutamente nada**: el enrutador
+   * hacía `if (!destino) return`. Desde fuera, un menú que no responde no se distingue de un panel
+   * roto, y es exactamente el «botón fantasma» de §126. Ahora se marcan y, al pulsarlas, DICEN qué
+   * pasa. Cuando la sección exista, se quita el `pronto` y se le da su destino.
+   */
+  { id: 'visitas', label: 'Visitas', pronto: true, icon: '<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>' },
+  { id: 'documentos', label: 'Documentos', pronto: true, icon: '<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M18 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8l5 5v11a2 2 0 0 1-2 2z"/><path d="M8 13h8M8 17h5"/>' },
 ];
+
+/** Lo que se le dice a alguien que pulsa una sección que aún no existe. Nunca el silencio. */
+const NOTA_PRONTO: Record<string, string> = {
+  visitas: 'Las visitas se agendan hoy desde la ficha de cada inmueble y desde WhatsApp. La agenda del panel llega con el cutover.',
+  documentos: 'Los documentos del expediente (contratos escaneados, soportes) se guardan en la bóveda privada, y la pantalla para verlos aquí todavía no está.',
+};
 
 // Iconos por KPI (línea navy en tile mist) — mismo lenguaje visual del mockup, uno por métrica.
 const KPI_ICONS = [
@@ -204,12 +217,18 @@ const init = DATA.admin;
 
       <nav class="gx-nav" aria-label="Secciones de gestión">
         {nav.map((n) => (
-          <a href="#" class={`gx-nav__item${n.active ? ' is-on' : ''}`} data-nav={n.id} aria-current={n.active ? 'page' : undefined}>
+          <a href="#" class={`gx-nav__item${n.active ? ' is-on' : ''}`} data-nav={n.id} data-pronto={'pronto' in n ? '1' : undefined} aria-current={n.active ? 'page' : undefined}>
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={n.icon}></svg>
             {n.label}
+            {'pronto' in n && <span class="gx-nav__pronto">pronto</span>}
           </a>
         ))}
       </nav>
+
+      {/* Lo que responde una sección que aún no existe. Vive pegado al menú, que es donde se hizo
+          la pregunta: un aviso que aparece en otra parte de la pantalla no se ve. */}
+      <p class="gx-nav__nota" id="gx-nav-nota" role="status" hidden></p>
+      <script type="application/json" id="gx-nav-notas" set:html={JSON.stringify(NOTA_PRONTO)}></script>
 
       <div class="gx-me">
         <span class="gx-me__av" id="gx-avatar">{init.avatar}</span>
@@ -807,6 +826,9 @@ const init = DATA.admin;
   .gx-nav__item svg { width: 18px; height: 18px; flex: none; }
   .gx-nav__item:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
   .gx-nav__item.is-on { background: rgba(235, 210, 126, 0.14); color: var(--alt-gold-bright); font-weight: var(--alt-fw-semibold); }
+  .gx-nav__pronto { margin-left: auto; font-size: 9.5px; font-weight: var(--alt-fw-semibold); letter-spacing: .1em; text-transform: uppercase; color: var(--alt-gold-bright); opacity: .75; }
+  .gx-nav__nota { margin: 8px 12px 0; padding: 10px 12px; border-radius: var(--alt-r-sm); background: rgba(235, 210, 126, 0.1); border-left: 2px solid var(--alt-gold-bright); color: var(--alt-on-ink-muted); font-size: 12px; line-height: 1.6; }
+  .gx-nav__nota[hidden] { display: none; }
   .gx-me { margin-top: auto; display: flex; align-items: center; gap: 11px; padding: 12px 10px; border-top: 1px solid var(--alt-hairline-ink); }
   .gx-me__av { width: 38px; height: 38px; border-radius: 50%; background: var(--alt-navy); border: 1px solid rgba(235, 210, 126, 0.4); display: flex; align-items: center; justify-content: center; flex: none; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 15px; color: var(--alt-gold-bright); }
   .gx-me__id { min-width: 0; }
@@ -1208,7 +1230,18 @@ const init = DATA.admin;
     // Los datos REALES solo se piden cuando ya se sabe que quien mira es del equipo: pedir algo que
     // las Rules van a denegar solo ensucia la consola y confunde al siguiente que la mire.
     void montarLeads();
-    if (r.puedeEditar) montarAlta();
+    /*
+     * ⚠️ SE MONTA SIEMPRE, y antes NO. Aquí ponía `if (r.puedeEditar) montarAlta()`, y dentro de esa
+     * función vive —además del formulario de alta— **el enrutador de la barra lateral**. Consecuencia:
+     * a quien entra en modo «solo consulta» no se le cableaba el menú y NINGUNA sección respondía.
+     * Un panel entero mudo por una condición pensada para otra cosa.
+     *
+     * Navegar no es editar. Lo que impide escribir a un `viewer` sigue en pie y son las capas que de
+     * verdad mandan: las Security Rules (servidor), el CSS que esconde los controles de edición
+     * (`body[data-puede-editar='false']`), y la guarda dentro del propio botón «+ Nuevo inmueble».
+     * No cablear el código nunca fue una de esas capas — era un efecto colateral.
+     */
+    montarAlta();
   }
 
   /* Volver a comprobar FORZANDO el refresco del token. Los claims viajan dentro del token y este se
