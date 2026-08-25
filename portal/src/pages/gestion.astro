@@ -1040,6 +1040,13 @@ const init = DATA.admin;
   /* Un hueco pesa lo mismo que un archivo: si el que falta se viera más flojo, se leería como opcional. */
   .gx-doc-falta { background: var(--alt-mist); border-left: 3px solid var(--alt-gold); }
   .gx-doc-acc { display: inline-flex; gap: 12px; }
+  /* Bitácora de un documento (§148, artboard 4a). Nace plegada y se sangra bajo su fila para que se
+     lea como parte de ella y no como una fila más de la tabla. */
+  .gx-doc-bit { padding: 14px 18px 14px 34px; border-left: 3px solid var(--alt-gold); background: var(--alt-mist); }
+  .gx-doc-bit__aviso { margin: 0 0 12px; font-size: 13px; line-height: 1.65; color: var(--alt-text); }
+  .gx-doc-bit__aviso strong { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
+  .gx-doc-bit__k { margin: 0 0 8px; font-size: 11px; font-weight: var(--alt-fw-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text-soft); }
+  .gx-doc-bit__fila { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 14px; padding: 9px 0; border-top: 1px solid var(--alt-hairline); font-size: 13px; }
   .gx-btn-fila { padding: 7px 15px; font-size: 13px; }
   .gx-pad-x { padding-inline: 20px; }
 

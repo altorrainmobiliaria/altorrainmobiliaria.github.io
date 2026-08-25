@@ -7,7 +7,18 @@ import {
   initializeTestEnvironment,
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { doc, getDoc, getDocs, collection, setDoc, deleteDoc } from 'firebase/firestore';
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  setDoc,
+  where,
+} from 'firebase/firestore';
 
 // T6 (plan endurecido): verifica las Rules del portal (parte 2) contra el emulador. Owner-free (Java local).
 // projectId `demo-*` → rules-unit-testing NUNCA toca el backend real.
@@ -293,6 +304,24 @@ describe('legacy VIVO — admin.html no se puede quedar sin sus colecciones', ()
     await assertSucceeds(getDoc(doc(superAdmin(), 'auditLog/a-1')));
     await assertFails(getDoc(doc(editor(), 'auditLog/a-1')));
     await assertFails(getDoc(doc(anon(), 'auditLog/a-1')));
+  });
+
+  /*
+   * La CONSULTA de la bóveda, no un `get` suelto (§148). Importa probarla aparte porque en Firestore
+   * `get` y `list` son permisos DISTINTOS: una regla puede dejar leer un documento por su id y negar
+   * la búsqueda, y es justo la búsqueda lo que hace el panel al abrir «Quién lo abrió».
+   */
+  it('🔒 la CONSULTA de la bitácora de un documento sigue la misma frontera que el `get`', async () => {
+    const consulta = (db: ReturnType<typeof superAdmin>) =>
+      query(
+        collection(db, 'auditLog'),
+        where('objetivo', '==', 'DOC-1'),
+        orderBy('creadoEn', 'desc'),
+        limit(25),
+      );
+    await assertSucceeds(getDocs(consulta(superAdmin())));
+    await assertFails(getDocs(consulta(editor())));
+    await assertFails(getDocs(consulta(cliente())));
   });
 
   it('el borrador de un usuario es suyo y de nadie más', async () => {

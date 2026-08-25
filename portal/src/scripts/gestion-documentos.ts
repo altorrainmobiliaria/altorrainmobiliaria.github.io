@@ -31,6 +31,15 @@ import {
   type TipoDocumento,
 } from '../lib/domain/documentos';
 import type { Contrato, Expediente } from '../lib/domain/gestion';
+import {
+  accesosDe,
+  cuandoEs,
+  hayMas,
+  TOPE_BITACORA,
+  VERBO,
+  type Acceso,
+  type EntradaCruda,
+} from '../lib/domain/bitacora';
 
 /** Tope de las consultas. `limit()` es obligatorio en este proyecto: sin él es una cuota abierta. */
 const TOPE = 200;
@@ -338,7 +347,9 @@ export function abrirExpediente(expedienteId: string): void {
       : 'Todavía no tiene contratos, así que no se le exige ningún documento.';
   }
 
-  const filas: HTMLElement[] = [...falta.map(filaFalta), ...suyos.map(filaGuardado)];
+  // Cada documento aporta DOS nodos: su fila y el panel de bitácora, que nace plegado. Se devuelven
+  // juntos y planos porque la fila es una rejilla de tres columnas: meter el panel DENTRO la rompería.
+  const filas: HTMLElement[] = [...falta.map(filaFalta), ...suyos.flatMap(filaGuardado)];
   lista.replaceChildren(...(filas.length ? filas : [mensaje('Sin documentos y sin nada pendiente.')]));
   panel.removeAttribute('hidden');
   panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -353,7 +364,7 @@ function filaFalta(tipo: TipoDocumento): HTMLElement {
   return f;
 }
 
-function filaGuardado(d: Documento): HTMLElement {
+function filaGuardado(d: Documento): HTMLElement[] {
   const f = document.createElement('div');
   f.className = 'gx-tr';
   const q = document.createElement('div');
@@ -391,9 +402,121 @@ function filaGuardado(d: Documento): HTMLElement {
     }
   });
 
+  /*
+   * «Quién lo abrió» — la mitad que faltaba de la bóveda (§148, artboard 4a). Escribir la bitácora
+   * y no poder leerla es exactamente igual de útil que no escribirla: el día que alguien pregunte
+   * quién vio la cédula de un inquilino, o hay respuesta o no la hay.
+   */
+  const panel = panelBitacora(d);
+  const historial = document.createElement('button');
+  historial.type = 'button';
+  historial.className = 'gx-link gx-link--btn';
+  historial.textContent = 'Quién lo abrió';
+  historial.setAttribute('aria-expanded', 'false');
+  historial.addEventListener('click', () => void alternarBitacora(d, panel, historial));
+
   acc.appendChild(abrir);
+  acc.appendChild(historial);
   acc.appendChild(quitar);
   f.appendChild(acc);
+  return [f, panel];
+}
+
+/* ─── La bitácora de un documento (mockup 4a) ────────────────────────────────────────────────── */
+
+/** El panel plegado. Nace vacío: la consulta solo se hace si alguien lo abre. */
+function panelBitacora(d: Documento): HTMLElement {
+  const p = document.createElement('div');
+  p.className = 'gx-doc-bit';
+  p.id = `gx-doc-bit-${d.id}`;
+  p.hidden = true;
+  return p;
+}
+
+async function alternarBitacora(d: Documento, panel: HTMLElement, boton: HTMLButtonElement): Promise<void> {
+  if (!panel.hidden) {
+    panel.hidden = true;
+    boton.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  panel.hidden = false;
+  boton.setAttribute('aria-expanded', 'true');
+  panel.replaceChildren(avisoSinEnlace(), mensaje('Cargando la bitácora…'));
+
+  /*
+   * EL AVISO VA PRIMERO Y SIEMPRE, aunque la bitácora falle o esté vacía: explica por qué no existe
+   * un «copiar enlace», y esa es la parte que le ahorra a alguien intentar reenviar el documento.
+   */
+  const aviso = avisoSinEnlace();
+
+  // La bitácora la reservan las Reglas al super_admin: guarda IP y patrón de acceso de OTRAS personas
+  // del equipo (§130). No se intenta la consulta que se sabe denegada — se explica.
+  if (document.body.dataset.rol !== 'super_admin') {
+    panel.replaceChildren(
+      aviso,
+      mensaje('La bitácora de accesos solo la ve el administrador: guarda datos de acceso de otras personas del equipo.'),
+    );
+    return;
+  }
+
+  try {
+    const { accesos, cortada } = await traerBitacora(d.id);
+    const filas: HTMLElement[] = [aviso, tituloBitacora()];
+    if (accesos.length === 0) {
+      filas.push(mensaje('Todavía no lo ha abierto nadie.'));
+    } else {
+      for (const a of accesos) filas.push(filaAcceso(a));
+      if (cortada) filas.push(mensaje(`Se muestran los ${TOPE_BITACORA} accesos más recientes.`));
+    }
+    panel.replaceChildren(...filas);
+  } catch (e) {
+    // FALLA RUIDOSO: una bitácora que se ve vacía porque la consulta falló diría que nadie lo abrió.
+    panel.replaceChildren(aviso, mensaje('No pudimos cargar la bitácora de este documento.'));
+    console.error('[documentos] bitácora:', e);
+  }
+}
+
+async function traerBitacora(documentoId: string): Promise<{ accesos: Acceso[]; cortada: boolean }> {
+  const { db, mod } = await cargarFirestore();
+  const q = mod.query(
+    mod.collection(db, 'auditLog'),
+    mod.where('objetivo', '==', documentoId),
+    mod.orderBy('creadoEn', 'desc'),
+    mod.limit(TOPE_BITACORA),
+  );
+  const snap = await mod.getDocs(q);
+  const crudas = snap.docs.map((doc) => doc.data() as EntradaCruda);
+  return { accesos: accesosDe(documentoId, crudas), cortada: hayMas(crudas.length) };
+}
+
+function avisoSinEnlace(): HTMLElement {
+  const a = document.createElement('p');
+  a.className = 'gx-doc-bit__aviso';
+  const fuerte = document.createElement('strong');
+  fuerte.textContent = 'No hay enlace que se pueda copiar, y es a propósito.';
+  a.appendChild(fuerte);
+  a.appendChild(
+    document.createTextNode(
+      ' El archivo se descarga con tu sesión, y sin sesión no se abre. Un enlace con el documento dentro viaja por WhatsApp y ya no se puede recoger.',
+    ),
+  );
+  return a;
+}
+
+function tituloBitacora(): HTMLElement {
+  const t = document.createElement('p');
+  t.className = 'gx-doc-bit__k';
+  t.textContent = 'Quién lo ha abierto';
+  return t;
+}
+
+function filaAcceso(a: Acceso): HTMLElement {
+  const f = document.createElement('div');
+  f.className = 'gx-doc-bit__fila';
+  f.appendChild(celda(`${VERBO[a.accion]} · ${a.quien}`, 'gx-cod'));
+  f.appendChild(celda(cuandoEs(a.cuando), 'gx-muted'));
+  // El motivo del retiro es lo único que explica un hueco seis meses después. Si lo hay, se enseña.
+  f.appendChild(celda(a.detalle ?? '', 'gx-muted'));
   return f;
 }
 

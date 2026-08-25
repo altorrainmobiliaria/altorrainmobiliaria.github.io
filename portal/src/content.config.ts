@@ -52,7 +52,8 @@ const journal = defineCollection({
         z.object({
           titulo: z.string(),
           entidad: z.string(),
-          url: z.string().url(),
+          // `z.url()`, no `z.string().url()`: la segunda quedó obsoleta en Zod 4 y el typecheck lo avisa.
+          url: z.url(),
         }),
       )
       .min(1),
