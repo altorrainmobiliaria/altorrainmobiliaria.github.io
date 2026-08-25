@@ -146,6 +146,8 @@
             <option value="editor"      ${u.rol==='editor'      ?'selected':''}>Editor</option>
             <option value="super_admin" ${u.rol==='super_admin' ?'selected':''}>Super Admin</option>
           </select>
+          <button class="btn-admin btn-sm" onclick="AdminUsers.reenviarInvitacion('${escHtml(u.email || '')}')" title="Le manda un correo para que elija una contraseña nueva">Reenviar invitación</button>
+          <button class="btn-admin btn-sm" onclick="AdminUsers.alternarActivo('${escHtml(u._uid)}', ${!activo}, '${escHtml(u.email || '')}')" title="${activo ? 'Le corta el acceso ahora mismo, sin borrar nada' : 'Le devuelve el acceso'}">${activo ? 'Suspender' : 'Reactivar'}</button>
           <button class="btn-admin btn-sm btn-danger" onclick="AdminUsers.confirmDelete('${escHtml(u._uid)}', '${escHtml(u.email || '')}')">Eliminar</button>
           ` : '<em>(tú)</em>'}
         </td>
@@ -153,40 +155,92 @@
     }).join('');
   }
 
-  /* ─── Crear usuario ─────────────────────────────────────── */
+  /* ─── Invitar a alguien al equipo (§131) ──────────────────────────────────────────────────────
+   * Antes esto pedía una «contraseña temporal» que tecleaba el administrador y le mandaba a la otra
+   * persona por WhatsApp: quedaba en un chat para siempre y la sabían dos. Ahora la Function genera
+   * una credencial aleatoria que NO VE NADIE, y desde aquí se dispara el correo para que la persona
+   * elija la suya.
+   *
+   * El correo lo manda **Firebase con su propia infraestructura**, no el SMTP de Gmail del proyecto:
+   * por eso funciona hoy, con la contraseña de aplicación sin rotar (misma razón que en §128).
+   *
+   * Si el correo falla, la cuenta YA existe — y decirlo importa: el remedio es reenviar la invitación,
+   * no volver a crear al usuario. Un mensaje de «error» a secas llevaría a intentar lo segundo.
+   */
   async function createUser() {
     if (!window.AdminAuth?.isSuperAdmin()) {
       showToast('Solo super admin puede crear usuarios', 'error');
       return;
     }
 
-    const nombre   = $('#newUserNombre')?.value.trim()    || '';
-    const email    = $('#newUserEmail')?.value.trim()     || '';
-    const password = $('#newUserPassword')?.value         || '';
-    const rol      = $('#newUserRol')?.value              || 'editor';
+    const nombre = $('#newUserNombre')?.value.trim() || '';
+    const email  = $('#newUserEmail')?.value.trim()  || '';
+    const rol    = $('#newUserRol')?.value           || 'editor';
 
-    if (!nombre || !email || !password) {
-      showToast('Completa todos los campos', 'error');
-      return;
-    }
-    if (password.length < 8) {
-      showToast('La contraseña debe tener mínimo 8 caracteres', 'error');
+    if (!nombre || !email) {
+      showToast('Escribe el nombre y el correo', 'error');
       return;
     }
 
     const btn = $('#newUserSaveBtn');
-    if (btn) { btn.disabled = true; btn.textContent = 'Creando...'; }
+    if (btn) { btn.disabled = true; btn.textContent = 'Invitando...'; }
 
     try {
-      await callFunction('createManagedUserV2', { nombre, email, password, rol });
-      showToast(`Usuario "${email}" creado correctamente`);
-      closeModal('userModal');
-      await loadUsers();
+      await callFunction('createManagedUserV2', { nombre, email, rol });
     } catch (err) {
       console.error('[AdminUsers] Error creando usuario:', err);
-      showToast('Error al crear usuario: ' + (err.message || ''), 'error');
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = 'Crear usuario'; }
+      showToast('No se pudo crear el usuario: ' + (err.message || ''), 'error');
+      if (btn) { btn.disabled = false; btn.textContent = 'Enviar invitación'; }
+      return;
+    }
+
+    // La cuenta ya existe a partir de aquí: los fallos siguientes NO se cuentan como fallo de alta.
+    try {
+      await enviarInvitacion(email);
+      showToast(`Invitación enviada a ${email}`);
+    } catch (err) {
+      console.error('[AdminUsers] Error enviando la invitación:', err);
+      showToast(`Usuario creado, pero el correo no salió. Usa «Reenviar invitación» en la fila de ${email}.`, 'error');
+    }
+
+    closeModal('userModal');
+    await loadUsers();
+    if (btn) { btn.disabled = false; btn.textContent = 'Enviar invitación'; }
+  }
+
+  /** Manda el enlace para que la persona elija su contraseña. También sirve para reenviar. */
+  async function enviarInvitacion(email) {
+    const { sendPasswordResetEmail } =
+      await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js');
+    await sendPasswordResetEmail(window.auth, email);
+  }
+
+  async function reenviarInvitacion(email) {
+    if (!window.AdminAuth?.isSuperAdmin()) { showToast('Sin permisos', 'error'); return; }
+    try {
+      await enviarInvitacion(email);
+      showToast(`Invitación reenviada a ${email}`);
+    } catch (err) {
+      showToast('No se pudo enviar el correo: ' + (err.message || ''), 'error');
+    }
+  }
+
+  /* ─── Suspender / reactivar (§131) ────────────────────────────────────────────────────────────
+   * Corta el acceso al instante SIN destruir la cuenta: la Function escribe `activo`, el trigger de
+   * claims relee el documento, revoca el permiso y **invalida los tokens**. La sesión que esa persona
+   * tuviera abierta en otro dispositivo muere en el acto, no dentro de una hora.
+   */
+  async function alternarActivo(uid, activo, email) {
+    if (!window.AdminAuth?.isSuperAdmin()) { showToast('Sin permisos', 'error'); return; }
+    const accion = activo ? 'reactivar' : 'suspender';
+    if (!confirm(`¿Seguro que quieres ${accion} a "${email}"?` +
+      (activo ? '' : '\n\nSe le cierra la sesión en todos sus dispositivos de inmediato. Se puede reactivar cuando quieras.'))) return;
+    try {
+      await callFunction('suspenderUsuarioV2', { uid, activo });
+      showToast(activo ? `"${email}" reactivado` : `"${email}" suspendido`);
+      await loadUsers();
+    } catch (err) {
+      showToast(`No se pudo ${accion}: ` + (err.message || ''), 'error');
     }
   }
 
@@ -366,6 +420,10 @@
     createUser,
     changeRole,
     confirmDelete,
+    // §131 — los invocan los `onclick` de la tabla, así que TIENEN que salir aquí: sin esto los
+    // botones existen, se ven, y no hacen nada (la clase de §126, un control que promete y no cumple).
+    alternarActivo,
+    reenviarInvitacion,
     openEditResena,
     openNewResena,
     saveResena,

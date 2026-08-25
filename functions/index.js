@@ -43,6 +43,9 @@ const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestor
 const { getAuth }            = require('firebase-admin/auth');
 const nodemailer             = require('nodemailer');
 const https                  = require('https');
+// Aleatoriedad CRIPTOGRÁFICA para la credencial inicial (§131). `Math.random()` no sirve aquí: es
+// predecible, y una contraseña inicial predecible es una puerta abierta hasta que alguien la cambie.
+const { randomBytes }        = require('crypto');
 
 initializeApp();
 const db   = getFirestore();
@@ -589,17 +592,37 @@ exports.createManagedUserV2 = onCall(
   async (request) => {
     await requireSuperAdmin(request.auth?.uid);
 
-    const { email, password, nombre, rol = 'editor' } = request.data;
-    if (!email || !password || !nombre) {
-      throw new HttpsError('invalid-argument', 'Se requieren email, password y nombre.');
+    const { email, nombre, rol = 'editor' } = request.data;
+    if (!email || !nombre) {
+      throw new HttpsError('invalid-argument', 'Se requieren email y nombre.');
     }
     if (!['super_admin', 'editor', 'viewer'].includes(rol)) {
       throw new HttpsError('invalid-argument', 'Rol inválido.');
     }
 
+    /*
+     * §131 — NADIE INVENTA LA CONTRASEÑA DE NADIE.
+     *
+     * Antes esta función recibía `password` desde el formulario: el administrador tecleaba la clave de
+     * otra persona y se la mandaba por WhatsApp. Esa clave quedaba en un chat para siempre y la sabían
+     * DOS personas — la titular de la cuenta y quien se la puso.
+     *
+     * Ahora se genera aquí una credencial aleatoria que **no ve nadie, nunca**: no se devuelve, no se
+     * registra, no se guarda. Solo existe para que la cuenta pueda crearse. Acto seguido, quien invita
+     * dispara el correo de «elige tu contraseña» y la persona escoge la suya.
+     *
+     * 32 bytes de `randomBytes` en base64url ≈ 256 bits de entropía: no es adivinable ni por accidente
+     * ni a propósito, que es justo lo que pide OWASP ASVS 6.4.1 de una credencial inicial.
+     */
+    const claveEfimera = randomBytes(32).toString('base64url');
+
     let userRecord;
     try {
-      userRecord = await auth.createUser({ email, password, displayName: nombre });
+      userRecord = await auth.createUser({
+        email,
+        password: claveEfimera,
+        displayName: nombre,
+      });
     } catch (err) {
       throw new HttpsError('already-exists', 'Error creando usuario: ' + err.message);
     }
@@ -646,6 +669,56 @@ exports.deleteManagedUserV2 = onCall(
     return { success: true };
   }
 );
+
+// ══════════════════════════════════════════════════════════════════════════
+// 6b. suspenderUsuarioV2 — apagar el acceso SIN borrar la cuenta (§131)
+// ══════════════════════════════════════════════════════════════════════════
+/*
+ * Por qué hacía falta: la única salida era «Eliminar», que borra la cuenta de Auth y el documento.
+ * Es irreversible, y casi nunca es lo que uno quiere. Cuando alguien se va —o se va de vacaciones, o
+ * hay una duda que aclarar— lo que hace falta es cortarle el acceso HOY y poder devolvérselo mañana.
+ * Obligar a elegir entre «no hacer nada» y «destruir» hace que se elija no hacer nada.
+ *
+ * Cómo corta de verdad: escribe `activo` en `usuarios/{uid}`, y eso dispara `claimsStaffSync`, que
+ * relee el documento, pone `admin:false` y **revoca los tokens**. O sea, la sesión abierta en otro
+ * dispositivo muere en el acto, no dentro de una hora. Aquí no se toca el claim a mano a propósito:
+ * un solo camino hacia los permisos es lo que evita que dos sitios digan cosas distintas.
+ */
+exports.suspenderUsuarioV2 = onCall({ region: REGION }, async (request) => {
+  await requireSuperAdmin(request.auth?.uid);
+
+  const { uid, activo } = request.data || {};
+  if (!uid || typeof activo !== 'boolean') {
+    throw new HttpsError('invalid-argument', 'Se requieren uid y activo (booleano).');
+  }
+  // Suspenderse a uno mismo deja el sistema sin nadie que pueda reactivar a nadie.
+  if (uid === request.auth.uid) {
+    throw new HttpsError('failed-precondition', 'No puedes suspenderte a ti mismo.');
+  }
+
+  const ref  = db.collection('usuarios').doc(uid);
+  const snap = await ref.get();
+  if (!snap.exists) throw new HttpsError('not-found', 'Usuario no existe en /usuarios.');
+
+  // Si se suspende al ÚLTIMO super_admin activo, nadie podría volver a entrar a administrar.
+  if (!activo && snap.data().rol === 'super_admin') {
+    const vivos = await db.collection('usuarios').where('rol', '==', 'super_admin').get();
+    const otros = vivos.docs.filter((d) => d.id !== uid && d.data().activo !== false);
+    if (!otros.length) {
+      throw new HttpsError('failed-precondition',
+        'Es el único super admin activo: suspenderlo dejaría el panel sin quien lo administre.');
+    }
+  }
+
+  await ref.update({
+    activo,
+    actualizadoEn:  FieldValue.serverTimestamp(),
+    actualizadoPor: request.auth.uid,
+  });
+  await anotar(activo ? 'usuario-reactivado' : 'usuario-suspendido', request.auth.uid, { objetivo: uid });
+
+  return { success: true, activo };
+});
 
 // ══════════════════════════════════════════════════════════════════════════
 // 7. updateUserRoleV2 — Cambiar el rol de un usuario admin

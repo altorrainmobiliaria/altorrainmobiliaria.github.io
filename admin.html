@@ -22,6 +22,15 @@
   }
   .btn-forgot:hover { color: #062743; }
   .btn-forgot:disabled { opacity: .55; cursor: default; text-decoration: none; }
+
+  /* Nota al pie de un formulario: explica una decisión que si no parecería un olvido (§131).
+     Filo dorado y no color de alerta — la paleta no tiene rojo y esto no es un error. */
+  .form-nota {
+    margin: 14px 0 0; padding: 10px 14px;
+    background: #f4f7fa; border-left: 3px solid #d4af37; border-radius: 8px;
+    font-size: 13px; line-height: 1.6; color: #5b6b7a;
+  }
+  .form-nota strong { color: #062743; font-weight: 600; }
 </style>
 </head>
 <body>
@@ -504,7 +513,7 @@
 <div class="modal-overlay" id="userModal" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
   <div class="modal-box" style="max-width:440px">
     <div class="modal-header">
-      <h3 id="userModalTitle">Nuevo usuario admin</h3>
+      <h3 id="userModalTitle">Invitar a alguien al equipo</h3>
       <button class="modal-close" data-close-modal="userModal" aria-label="Cerrar">✕</button>
     </div>
     <div class="modal-body">
@@ -518,10 +527,10 @@
             <label for="newUserEmail">Correo electrónico *</label>
             <input type="email" id="newUserEmail" required/>
           </div>
-          <div class="form-group">
-            <label for="newUserPassword">Contraseña temporal *</label>
-            <input type="password" id="newUserPassword" required minlength="8" placeholder="Mínimo 8 caracteres"/>
-          </div>
+          <!-- El campo «Contraseña temporal» se retiró (§131): obligaba al administrador a inventar la
+               clave de otra persona y a mandársela por chat, donde queda para siempre y ya la saben dos.
+               Ahora el servidor genera una que no ve nadie y a la persona le llega un enlace para elegir
+               la suya. -->
           <div class="form-group">
             <label for="newUserRol">Rol *</label>
             <select id="newUserRol" required>
@@ -531,11 +540,12 @@
             </select>
           </div>
         </div>
+        <p class="form-nota">Le llegará un correo para que <strong>elija su propia contraseña</strong>. Tú no la sabrás nunca, y eso es a propósito.</p>
       </form>
     </div>
     <div class="modal-footer">
       <button class="btn-admin ghost" data-close-modal="userModal">Cancelar</button>
-      <button class="btn-admin primary" id="newUserSaveBtn">Crear usuario</button>
+      <button class="btn-admin primary" id="newUserSaveBtn">Enviar invitación</button>
     </div>
   </div>
 </div>
