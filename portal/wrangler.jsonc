@@ -9,7 +9,24 @@
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "binding": "ASSETS",
-    "directory": "./dist/client"
+    "directory": "./dist/client",
+
+    // 🔴 EL MAPA DE 301 NO CORRIA. Medido en el worker de staging: toda URL del sitio viejo
+    // (`/propiedades-comprar.html`, `/el-laguito.html`, `/avaluo.html`…) devolvia 404, no 301. El
+    // middleware esta bien escrito y resuelve el redirect ANTES que nada — pero nunca llegaba a
+    // ejecutarse: la capa de assets de Cloudflare responde primero y, al no encontrar el archivo,
+    // sirve `404.html` sin invocar al Worker. La prueba: ese 404 llegaba SIN la cabecera
+    // `X-Robots-Tag`, que el middleware pone en toda respuesta fuera de produccion.
+    //
+    // Consecuencia si no se arregla: el dia del cutover, las 65 direcciones del sitio viejo
+    // —indexadas durante anos— empiezan a devolver 404 y su posicion se pierde sin un solo aviso.
+    // Es el gate del paso 5.5 del runbook, y habria fallado el dia que se ejecutara.
+    //
+    // `run_worker_first` con `/*.html` manda al Worker exactamente las rutas del legacy (las del
+    // portal son sin extension: `/comprar`, `/zona/x`). El archivo de verificacion de Search Console
+    // TAMBIEN pasa por el Worker a proposito: ahora es una ruta que responde 200, en vez de un asset
+    // al que la capa de assets le quitaba el `.html` con un 307 (§145).
+    "run_worker_first": ["/*.html"]
   },
   "observability": { "enabled": true },
 

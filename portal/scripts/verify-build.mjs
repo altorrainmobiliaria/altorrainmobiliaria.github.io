@@ -42,10 +42,18 @@ if (existsSync(wjc)) {
   const hasMain = txt.includes('@astrojs/cloudflare/entrypoints/server');
   const hasAssets = /"binding":\s*"ASSETS"/.test(txt);
   const hasR2 = /"binding":\s*"R2_MEDIA"/.test(txt);
-  dOk = hasMain && hasAssets && hasR2;
-  dDetail = `main-entrypoint=${hasMain} · ASSETS=${hasAssets} · R2_MEDIA=${hasR2}`;
+  /*
+   * 🔴 `run_worker_first` con `/*.html` ES EL GATE DEL MAPA DE 301 (§145). Sin él, la capa de assets
+   * de Cloudflare responde ANTES que el Worker y sirve `404.html`: el middleware —que resuelve el
+   * redirect en su primera línea— no llega a ejecutarse nunca. Medido en staging: las 65 URLs del
+   * sitio viejo devolvían 404, no 301. Se comprueba aquí porque quitar una línea de una config no
+   * rompe nada visible; solo apaga, en silencio, la preservación de años de posicionamiento.
+   */
+  const hasWorkerFirst = /"run_worker_first"\s*:\s*\[[^\]]*"\/\*\.html"/.test(txt);
+  dOk = hasMain && hasAssets && hasR2 && hasWorkerFirst;
+  dDetail = `main-entrypoint=${hasMain} · ASSETS=${hasAssets} · R2_MEDIA=${hasR2} · run_worker_first(/*.html)=${hasWorkerFirst}`;
 }
-check('wrangler.jsonc de deploy (entrypoint unificado + bindings)', dOk, dDetail);
+check('wrangler.jsonc de deploy (entrypoint + bindings + los 301 alcanzables)', dOk, dDetail);
 
 // 6. INDEXABILIDAD — el candado que evita el fallo más caro y más silencioso del cutover.
 //    Todo el portal se indexa SOLO si se compila con PUBLIC_SITE_ENV=production; por defecto sale
