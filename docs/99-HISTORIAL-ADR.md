@@ -5763,3 +5763,49 @@ nada. Es la pelota 2 del `10`, y se dice en vez de construir un formulario que n
 `portal/functions/src/perfil-escritura.ts` (+ `firebase/tests/perfil-escritura.test.ts`) ·
 `portal/firebase/firestore.rules` · `portal/firebase/storage.rules` ·
 `portal/firebase/tests/rules.test.ts` · `portal/vitest.rules.config.ts`.
+
+## 153. ADR — La revisión del perfil: la promesa de 24 horas necesitaba un sitio donde verse ⟦OPUS-5⟧ (2026-08-25)
+
+**153.0 — Por qué esta mitad y no la del titular.** El perfil (§152) tiene dos caras: la del
+aspirante que sube y la del equipo que revisa. Se construyó **la del equipo**, porque es la única
+usable hoy: la del titular exige que se abra «Crear cuenta» en `/ingresar`, que es pelota del dueño.
+Construir un formulario que nadie puede abrir sería otra pieza para la pila de lo que se hizo y nunca
+se ejerció — la pila que este cerebro lleva meses pagando (§134, §140, §145).
+
+**153.1 — La decisión que ordena la pantalla: el cuello de botella es una persona leyendo papeles.**
+La promesa pública son 24 horas hábiles. Una promesa sin un sitio donde se vea **cuánto lleva
+esperando cada quien** no es una promesa, es un deseo. Por eso la cola se ordena por ESPERA y no por
+fecha de llegada, y quien se pasó del plazo va primero. *Un tablero que ordena por lo que llegó
+antes cuenta la historia; uno que ordena por lo que se está incumpliendo cambia lo que haces hoy.*
+
+**153.2 — ⚖️ Son papeles de personas de FUERA del equipo.** Cédulas y nóminas de aspirantes. Dos
+consecuencias, las dos con código detrás y no solo con buena intención:
+· se descargan con **`getBlob`**, que pasa por las Reglas y no deja enlace que reenviar — nunca
+`getDownloadURL`, que emite una URL con token que abre cualquiera (§142);
+· **abrir un soporte queda escrito** con el uid del token. `registrarEvento` gana `perfil-abierto` y
+`perfil-dictaminado`, y se desplegó. Si algún día alguien pregunta quién vio la cédula de un
+aspirante, o hay respuesta o no la hay.
+
+**153.3 — 🚫 Y lo que la pantalla NO hace, que es tan decisión como lo que hace.** No hay puntaje, ni
+semáforo de riesgo, ni «score». Sin contrato con una central, consultar a alguien es ilegal (B-04) —
+y **pintar un color de riesgo a partir de sus papeles sería inventar exactamente eso con otro
+nombre**. Lo que la pantalla dice es qué documentos hay y cuáles faltan.
+
+**153.4 — Devolver exige escribir qué falta, y el texto va a la persona.** No es un «rechazado» con
+un aspa. *Quien recibe «la cédula está borrosa» sube otra foto en dos minutos; quien recibe un «no»
+empieza de cero o se va.* El servidor ya lo rechazaba sin motivo (§152), así que la pantalla no está
+siendo amable: dice antes lo que ya era obligatorio, para no gastar el viaje.
+
+**153.5 — El gate mordió, y era correcto que mordiera.** `verify:data` marcó el import de
+`firebase/storage` en el módulo nuevo. La excepción se amplía **por la misma razón** que la de la
+bóveda —`getBlob` compra la opción segura— y no por comodidad: sigue siendo por ARCHIVO y por
+PATRÓN, y `firebase/firestore` no entra por ahí. *Ampliar una excepción sin escribir el motivo es
+exactamente cómo muere un gate*, y este ya lo tenía escrito desde §96.
+
+**153.6 — El mockup dibuja SOLO lo nuevo.** La lista, las tarjetas de cifra y el panel de detalle
+reutilizan componentes ya aprobados; re-dibujarlos habría sido teatro. Se dibuja lo que cambia: la
+cola ordenada por espera y la decisión.
+
+**153.7 — Archivos.** `portal/src/scripts/gestion-perfiles.ts` · `portal/src/pages/gestion.astro` ·
+`portal/src/scripts/gestion-alta-ui.ts` · `functions/index.js` (`ACCIONES_VALIDAS`) ·
+`portal/scripts/verify-data-invariants.mjs` · `portal/design/mockups/ALTORRA Perfiles.dc.html`.

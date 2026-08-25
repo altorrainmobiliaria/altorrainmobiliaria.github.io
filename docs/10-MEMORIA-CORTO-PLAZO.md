@@ -33,7 +33,7 @@
 | **TODO-46** | 📅 **GESTIÓN v1 (ítem 13) — COMPLETA en código.** Expedientes, contratos, pagos, novedades (§112-§118) con sus 5 puertas desplegadas y PROBADAS contra el emulador (§140-§141) · **bóveda de documentos** construida, desplegada y ya **LEGIBLE**: quién abrió cada documento, con su índice en producción (§142, §148). ⏭️ Falta **aprobar el mockup** y **ESTRENARLA con datos reales** (runbook 1.5-1.6), que es lo único que puede verificar el render en vivo. | 🟢 | §148 |
 | **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR. Detalle → §129-§138.** Identity Platform ACTIVO · reglas fase 2 EN VIVO · resolver del código en las DOS puertas · `/seguridad` para inscribirlo · `cerrarMisSesiones` y `retirarSegundoFactorDe` verificadas. ⏭️ **Daniel**: inscribir su 2FA (clave manual; el QR se aplazó, §137.5) · verificar su correo. ⏭️ **Mío, DESPUÉS de que él se inscriba**: exigirlo en las Rules — antes NO, expulsa a todos · el QR verificable · **puerta única (mockup APROBADO)** ⚠️ con desviación obligada: el paso 2 del dibujo distingue cliente de equipo y eso ENUMERA cuentas de staff — se construye idéntico para todos. 🚫 anti-bot aplazado (§132.5). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL — PUBLICADO (§147).** 5 artículos con la norma .gov.co citada; «Guías de zona» estrenada con un HUB que enlaza las 13 landings. Mockup **APROBADO**. ⏭️ Falta: «Mercado» sigue vacía (sin dato verificado que citar) · RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
-| **TODO-49** | 🏷️ **OLA 2 — arrancada por lo que NO gatea el abogado** ([[L-40]]). **Pipeline de compraventa COMPLETO** (§151): dominio, puerta desplegada y verificada en producción, y pantalla. **Perfil de inquilino 1→N**: dominio y las 5 puertas DESPLEGADAS (§152). ⏭️ Siguiente sin gate: sus dos pantallas y el panel de leads del aliado. ⚠️ Estrenarlo depende de abrir «Crear cuenta» (pelota 2). 🚫 El rail de pago Wompi SÍ lo gatea el abogado (B2/B9). | 🔵 mío | §151 |
+| **TODO-49** | 🏷️ **OLA 2 — arrancada por lo que NO gatea el abogado** ([[L-40]]). **Pipeline de compraventa COMPLETO** (§151): dominio, puerta desplegada y verificada en producción, y pantalla. **Perfil de inquilino 1→N**: dominio y las 5 puertas DESPLEGADAS (§152). Y la **pantalla de REVISIÓN** (§153), que el equipo sí puede usar hoy. ⏭️ Falta la del titular, y depende de abrir «Crear cuenta» (pelota 2): sin cuentas no hay quien suba nada. ⏭️ Sin gate: panel de leads del aliado. 🚫 El rail de pago Wompi SÍ lo gatea el abogado (B2/B9). | 🔵 mío | §151 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -47,14 +47,12 @@
 > al FINAL, por decisión suya**. **Opus 5 para TODO**, esfuerzo Max, agentes y workflows LIBRES bajo tu
 > juicio (levantó ese límite el 20-ago).
 >
-> **🌊 OLA 1 = 13/13 EN CÓDIGO**, re-medido el 25-ago (§138: el MEGA-PLAN llevaba 5 días diciendo que
-> faltaban 5). Censo → `21`. **Pero «13/13» NO es «cerrada»**: ninguno de esos caminos ha escrito aún en
-> Firestore real y la base está VACÍA (medido). El Journal ya está publicado (§147).
-> El cutover NO se improvisa → **`specs/CUTOVER-RUNBOOK.md`** manda (§102). Suelto: «Avalúo» (§94.6).
-> **En orden**: (1) **estrenar los caminos** (runbook 1.4-1.8, **corregido en §140**: el 1.6 era
-> IMPOSIBLE y no lo decía, y el 1.4 estaba asignado a quien no puede hacerlo) ·
-> (2) **inventario** (TODO-22) · (3) **Resend** · (4) **DNS/cutover**. Aparte: **TODO-30**, que lo confirma Daniel ([[L-39]]). **OLA 2**: el abogado gatea el RAIL DE PAGO,
-> **no toda la ola** ([[L-40]] ya cobró 3 veces, [[M-11]]).
+> **🌊 OLA 1 = 13/13 EN CÓDIGO** (§138). Censo → `21`. **Pero «13/13» NO es «cerrada»**: ninguno de
+> esos caminos ha escrito aún en Firestore real y la base está VACÍA (medido). El cutover NO se
+> improvisa → **`specs/CUTOVER-RUNBOOK.md`** manda (§102), ya corregido (§140). Suelto: «Avalúo» (§94.6).
+> **En orden**: (1) **estrenar los caminos** (runbook 1.4-1.8) · (2) **inventario** (TODO-22) ·
+> (3) **Resend** · (4) **DNS/cutover**. Aparte: **TODO-30**, que lo confirma Daniel ([[L-39]]).
+> **OLA 2**: el abogado gatea el RAIL DE PAGO, **no toda la ola** ([[L-40]] ya cobró 3 veces, [[M-11]]).
 >
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos
 > que solo vio la consola del dueño (§133-§136): pesa a favor de retirarlo pronto en el cutover. El
