@@ -4716,3 +4716,57 @@ legacy, que no pasa por Astro: aquí la única red es **mirar el píxel**.
 **133.7 — Archivos.** `css/admin.css` (la regla y el color) · `admin.html` (`?v=` + la regla de
 bumpearlo). **INTACTOS**: `js/admin-auth.js` —su lógica era correcta desde §128, el fallo nunca estuvo
 ahí— y todo lo demás.
+
+
+## 134. ADR — Los 14 índices de Firestore no se desplegaron NUNCA ⟦OPUS-5⟧ (2026-08-25)
+
+> *«Listo ya la cambie logre entrar»* — Daniel, entrando por fin al panel… y encontrándolo lleno de
+> guiones y un «Cargando…» que no terminaba nunca.
+
+**134.1 — Causa raíz, en dos capas.**
+- **La visible**: el dashboard lanza **5 consultas con `Promise.all`**. La de `analytics_events`
+  (`where type == 'whatsapp_click'` + `orderBy createdAt`) exige un índice COMPUESTO y lanzaba
+  `FAILED_PRECONDITION`. Con `Promise.all`, **esa sola se lleva por delante a las otras cuatro**: ni una
+  cifra se pinta. Un panel entero parecía roto por una tarjeta.
+- **La de fondo**: el índice no existía porque **NINGUNO existía**. `firebase firestore:indexes`
+  devolvía **0** con 14 escritos en el archivo. El `firebase.json` de la RAÍZ —el que usa el deploy—
+  declaraba `firestore.rules` pero **no `firestore.indexes`**. Sin esa clave no hay nada que desplegar,
+  y `firebase deploy --only firestore:indexes` responde **«Deploy complete!»** igual.
+
+**134.2 — La señal que lo delata, para la próxima.** El mensaje de la CLI **cambia**: sin la clave dice
+`deploying indexes...` y calla; con ella dice `deployed indexes in <archivo> successfully`.
+**Ausencia del nombre del archivo = no se desplegó nada.** Es la familia de [[L-49]]/§125 —configuración
+que calla, no falla y reporta éxito— y aquí el síntoma apareció a kilómetros de la causa: un panel
+LEGACY clavado, por una clave ausente en un JSON de infraestructura.
+
+**134.3 — Cómo se aisló (y por qué así).** Las 5 consultas se reprodujeron **una por una** contra
+producción **con credencial de admin**: eso salta las REGLAS pero **no los ÍNDICES**, así que separa de
+un golpe las dos hipótesis que siempre se confunden («no tiene permiso» vs «falta un índice»). Cuatro
+✅ y una ❌ señalaron la culpable en un intento.
+
+**134.4 — Solución, en tres capas.**
+1. La clave `indexes` en el `firebase.json` raíz + el índice de `analytics_events` en el archivo.
+   **0 → 14 índices desplegados.**
+2. **`Promise.allSettled` en vez de `Promise.all`**: cada consulta cae sola, lo que se pudo leer se
+   pinta y lo que no, **se dice**. Un panel que muestra 5 de 6 cifras y avisa de la que falta es
+   infinitamente más útil que uno que no muestra ninguna.
+3. El `catch` del dashboard **solo hacía `console.error`**. Los números se quedaban en «—» y la tabla en
+   «Cargando…» para siempre. **Un panel que falla en silencio le hace creer al dueño que el sistema está
+   VACÍO cuando está ROTO** — y son cosas muy distintas de arreglar. Ahora lo dice en pantalla.
+
+**134.5 — Verificación.** Esperado a que los 14 índices pasaran de `CREATING` a `READY` (unos 4 min) y
+re-corridas las 5 consultas: **5 de 5 en verde**. Antes: 4 ✅ / 1 ❌.
+
+**134.6 — Lo que el episodio confirmó de paso.** La base está **vacía de verdad** (propiedades,
+solicitudes, reseñas, analytics y newsletter: 0 documentos) — el panel no mentía al no tener qué
+mostrar. Y `auditLog` tenía **1 documento**: el acceso del propio Daniel, con su IP y su rol, escrito
+por `registrarEvento` (§130) en producción. La bitácora funciona.
+
+**134.7 — Anti-patterns evitados.** Crear el índice desde el enlace del error (habría funcionado, y el
+archivo del repo habría seguido mintiendo). Dar por buena la salida de la CLI sin comprobar el estado
+real. Y arreglar solo el índice: el defecto que importa es que **una consulta rota tumbara el panel
+entero, en silencio** — eso vuelve a pasar con cualquier otra consulta si no se cambia `Promise.all`.
+
+**134.8 — Archivos.** `firebase.json` · `portal/firebase/firestore.indexes.json` ·
+`js/admin-dashboard.js` · `css/admin.css` (`.dash-fallo`, definida en el MISMO cambio que la crea —
+[[L-51]]) · `admin.html` (`?v=` bumpeado).
