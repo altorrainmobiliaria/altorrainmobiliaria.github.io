@@ -65,6 +65,11 @@ jobs:
         run: npm run typecheck
       - name: CSS de runtime alcanzable (§117 — Astro acota y el JS crea nodos sin el atributo)
         run: npm run verify:css
+      # 🛡️ Una `var(--x)` que nadie declaró NO es un error: el navegador descarta la propiedad y sigue.
+      # El emblema del login llevaba meses sin relieve por tres nombres inventados, con la página
+      # declarada «réplica fiel del mockup». Solo se ve midiendo en el navegador — o con este gate.
+      - name: Variables CSS que existen de verdad
+        run: npm run verify:tokens
       - name: Cifras sin respaldo en paginas publicas (§123 — Ley 1480, cero-demo)
         run: npm run verify:claims
       - run: npm run build

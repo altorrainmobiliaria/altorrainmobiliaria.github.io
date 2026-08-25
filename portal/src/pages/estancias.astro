@@ -52,10 +52,25 @@ const ofrece = [
  * Las secciones NO se borraron: se volvieron dependientes de datos. Con las listas vacías no se
  * pintan, y el día que haya reseñas REALES vuelven solas con el diseño aprobado intacto.
  */
-const notas: { l: string; v: string; pct: number }[] = [];
-const resenas: { ini: string; quien: string; cuando: string; txt: string }[] = [];
-const puntuacion: { nota: string; total: number } | null = null;
-const anfitrion: { ini: string; nombre: string; rol: string } | null = null;
+interface Resenas {
+  notas: { l: string; v: string; pct: number }[];
+  resenas: { ini: string; quien: string; cuando: string; txt: string }[];
+  puntuacion: { nota: string; total: number } | null;
+  anfitrion: { ini: string; nombre: string; rol: string } | null;
+}
+
+/*
+ * Vienen de una FUNCION y no de cuatro `const … = null`, y no es adorno: a un `const` anotado
+ * `X | null` e inicializado a `null`, TypeScript le estrecha el tipo a `null`, y dentro de
+ * `puntuacion && (…)` la variable pasa a ser `never`. Resultado: `.nota` y `.total` daban error y
+ * TODO el bloque de resenas quedaba fuera del chequeo — justo el que hay que revisar el dia que
+ * lleguen datos de verdad. El tipo de retorno declarado corta ese estrechamiento y marca la costura
+ * por donde entraran los datos reales.
+ */
+function datosDeResenas(): Resenas {
+  return { notas: [], resenas: [], puntuacion: null, anfitrion: null };
+}
+const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
 ---
 
 <BaseLayout title="Casa con piscina y terraza colonial — Estancias ALTORRA">

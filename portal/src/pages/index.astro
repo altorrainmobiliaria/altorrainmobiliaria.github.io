@@ -561,9 +561,10 @@ const maneras = [
             <span class="home-zona__body">
               <span class="home-zona__t">{z.t}</span>
               {/* El conteo por zona («42 propiedades en Bocagrande») era inventado y, a
-                  diferencia del del SERP, no lo corregía nadie al cargar (§123). Vuelve cuando
-                  el índice del catálogo pueda contarlo de verdad. */}
-              {z.n && <span class="home-zona__n">{z.n}</span>}
+                  diferencia del del SERP, no lo corregía nadie al cargar (§123). Se quitó del DATO
+                  pero la línea que lo pintaba se quedó atrás leyendo un campo que ya no existe:
+                  `undefined && …` no pinta nada, así que no se veía — parecía condicional y era
+                  código muerto. Vuelve cuando el índice del catálogo pueda contarlo de verdad. */}
             </span>
           </a>
         ))}
