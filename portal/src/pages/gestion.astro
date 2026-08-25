@@ -21,6 +21,9 @@ const nav = [
   // «Contratos» sale del mockup aprobado el 2026-08-22 (`ALTORRA Gestion-Alta.dc.html`). Se AÑADE:
   // los que ya estaban vienen del mockup anterior, también aprobado, y quitarlos no lo pidió nadie.
   { id: 'contratos', label: 'Contratos', icon: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h4"/>' },
+  // «Ventas» va junto a Contratos: son las dos formas en que una operación termina, y el
+  // operador que revisa una revisa la otra.
+  { id: 'ventas', label: 'Ventas', icon: '<path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="m9 14 2 2 4-4"/>' },
   // «Expedientes» es el agregado RAÍZ: contratos, pagos y novedades cuelgan de él. Va justo
   // después de Contratos porque es donde el operador acaba cuando algo no cuadra.
   { id: 'expedientes', label: 'Expedientes', icon: '<path d="M3 7.5A2 2 0 0 1 5 5.5h4l2 2.5h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M8 14h8"/>' },
@@ -618,6 +621,63 @@ const init = DATA.admin;
           CADUCA. Un cajón de PDFs no cambia nada —el dueño ya tiene ese cajón en WhatsApp—; lo que
           hoy no puede contestar sin abrir carpetas es «¿qué me falta?». Esa cuenta la hace
           `lib/domain/documentos` con la LISTA CANÓNICA de lo que exige cada clase de expediente. -->
+     <div id="gx-vista-ventas" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-vta-volver-panel">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Ventas</h1>
+          <p class="gx-sub">Ordenadas por lo que hay que atender, no por etapa.</p>
+        </div>
+      </header>
+
+      <div class="gx-kpi-set">
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-vta-kpi-riesgo">—</div><div class="gx-kpi__lbl">escrituradas SIN registrar</div></div>
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-vta-kpi-soportes">—</div><div class="gx-kpi__lbl">con soportes pendientes</div></div>
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-vta-kpi-abiertas">—</div><div class="gx-kpi__lbl">abiertas</div></div>
+      </div>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Qué atender</h2></div>
+        <p class="gx-psub gx-pad-x">En Colombia la venta se perfecciona con el REGISTRO, no con la escritura (art. 756 C.C.). Por eso lo escriturado y sin registrar va primero: es el único punto donde todo parece terminado y no lo está.</p>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--doc">
+            <div class="gx-tr gx-tr--head"><span>Venta</span><span>Etapa</span><span>Qué pasa</span><span></span></div>
+            <div id="gx-vta-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gx-panel gx-table" id="gx-vta-detalle" hidden>
+        <div class="gx-panel__head">
+          <h2 id="gx-vta-det-titulo">Venta</h2>
+          <button class="gx-link gx-link--btn" type="button" id="gx-vta-det-cerrar">Cerrar</button>
+        </div>
+        <p class="gx-psub gx-pad-x" id="gx-vta-det-resumen"></p>
+        <div class="gx-pad-x gx-vta-escalera" id="gx-vta-det-escalera"></div>
+        <div class="gx-pad-x gx-vta-acciones" id="gx-vta-det-acciones"></div>
+        <p class="gx-psub gx-pad-x">Quién la ha movido</p>
+        <div class="gx-pad-x" id="gx-vta-det-historial"></div>
+        <div class="gx-aviso gx-aviso--form gx-pad-x" id="gx-vta-det-msg" role="status" aria-live="polite"></div>
+      </div>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-vta-form" novalidate>
+        <h2 class="gx-form__h">Abrir una venta</h2>
+        <p class="gx-psub">Nace en «Interés»: todavía no hay nada firmado ni prometido. El precio ofrecido es opcional.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="v-expediente">Expediente</label><input class="alt-input" id="v-expediente" type="text" placeholder="EXP-202608-0001" /></div>
+          <div><label class="alt-label" for="v-propiedad">Inmueble</label><input class="alt-input" id="v-propiedad" type="text" placeholder="INM-202608-0001" /></div>
+        </div>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="v-comprador">Comprador</label><input class="alt-input" id="v-comprador" type="text" placeholder="Nombre completo" /></div>
+          <div><label class="alt-label" for="v-precio">Precio ofrecido (opcional)</label><input class="alt-input" id="v-precio" type="text" inputmode="numeric" placeholder="480000000" /></div>
+        </div>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-vta-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-vta-guardar">Abrir venta</button>
+        </div>
+      </form>
+     </div>
+
      <div id="gx-vista-documentos" hidden>
       <header class="gx-head">
         <div>
@@ -1046,6 +1106,20 @@ const init = DATA.admin;
   .gx-doc-bit__aviso { margin: 0 0 12px; font-size: 13px; line-height: 1.65; color: var(--alt-text); }
   .gx-doc-bit__aviso strong { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
   .gx-doc-bit__k { margin: 0 0 8px; font-size: 11px; font-weight: var(--alt-fw-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text-soft); }
+  /* VENTAS (§151). La escalera de 7 peldaños: cumplidos en navy, el actual en oro, los que faltan en
+     plata. Solo el actual lleva su explicación — repetirla en los siete esconde la línea que hay que
+     leer. */
+  .gx-vta-escalera { display: flex; flex-direction: column; gap: 2px; margin: 16px 0 20px; }
+  .gx-vta-paso { display: flex; gap: 14px; align-items: flex-start; padding: 8px 0; }
+  .gx-vta-paso__n { width: 22px; height: 22px; border-radius: var(--alt-r-circle); background: var(--alt-surface-neu); color: var(--alt-text-soft); font-size: 11px; font-weight: var(--alt-fw-bold); display: flex; align-items: center; justify-content: center; flex: none; }
+  .gx-vta-paso.is-hecho .gx-vta-paso__n { background: var(--alt-ink); color: #fff; }
+  .gx-vta-paso.is-on .gx-vta-paso__n { background: var(--alt-gold); color: var(--alt-ink); }
+  .gx-vta-paso__t { font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-text-soft); }
+  .gx-vta-paso.is-hecho .gx-vta-paso__t, .gx-vta-paso.is-on .gx-vta-paso__t { color: var(--alt-ink); }
+  .gx-vta-paso__d { font-size: 12.5px; line-height: 1.55; color: var(--alt-text); margin-top: 2px; }
+  .gx-vta-acciones { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
+  /* La fila que hay que mirar HOY. Filete de oro, no rojo: el riesgo se dice con la paleta. */
+  .gx-vta-alerta { background: var(--alt-mist); border-left: 3px solid var(--alt-gold); }
   .gx-doc-bit__fila { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 14px; padding: 9px 0; border-top: 1px solid var(--alt-hairline); font-size: 13px; }
   .gx-btn-fila { padding: 7px 15px; font-size: 13px; }
   .gx-pad-x { padding-inline: 20px; }
