@@ -1090,6 +1090,9 @@ const ACCIONES_VALIDAS = new Set([
   'acceso', 'salida', 'password-cambiada', 'usuario-creado', 'usuario-eliminado',
   'rol-cambiado', 'usuario-suspendido', 'usuario-reactivado', 'claims-sincronizados',
   'sesiones-cerradas', 'segundo-factor-retirado',
+  // La BÓVEDA (§143). Abrir un documento con datos de un tercero es un ACCESO, y una bóveda sin
+  // bitácora de accesos es un archivador con la llave puesta. `objetivo` lleva el id del documento.
+  'documento-abierto', 'documento-retirado',
 ]);
 
 exports.registrarEvento = onCall({ region: REGION }, async (request) => {

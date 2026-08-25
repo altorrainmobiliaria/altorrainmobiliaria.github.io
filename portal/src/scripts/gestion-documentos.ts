@@ -168,6 +168,7 @@ function filaCaducidad(c: Caducidad): HTMLElement {
   f.appendChild(q);
   f.appendChild(celda(enPalabras(c.dias), c.vencido ? 'gx-doc-vencido' : ''));
   f.appendChild(celda(c.documento.vence?.slice(0, 10) ?? '—', 'gx-muted'));
+  f.appendChild(botonVer(c.documento.expedienteId));
   return f;
 }
 
@@ -180,8 +181,18 @@ function filaHueco(e: Expediente, falta: TipoDocumento[]): HTMLElement {
   q.appendChild(celda(`${falta.length} ${falta.length === 1 ? 'documento' : 'documentos'} por subir`, 'gx-cli__name'));
   f.appendChild(q);
   f.appendChild(celda(falta.map((t) => NOMBRE_DOCUMENTO[t]).join(' · ')));
-  f.appendChild(celda('—', 'gx-muted'));
+  f.appendChild(botonVer(e.id));
   return f;
+}
+
+/** «Ver» es un BOTÓN, no una fila que reacciona al clic: se alcanza con el teclado y se anuncia solo. */
+function botonVer(expedienteId: string): HTMLElement {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'gx-link gx-link--btn';
+  b.textContent = 'Ver';
+  b.addEventListener('click', () => abrirExpediente(expedienteId));
+  return b;
 }
 
 /* ─── Subir ──────────────────────────────────────────────────────────────────────────────────── */
@@ -269,6 +280,21 @@ export async function abrirDocumento(doc: Documento, avisar: (txt: string) => vo
     a.remove();
     URL.revokeObjectURL(url);
     avisar('');
+
+    /*
+     * Queda ESCRITO quién lo abrió. Una bóveda sin bitácora de accesos es un archivador con la llave
+     * puesta: el día que alguien pregunte quién vio la cédula de un inquilino, o hay respuesta o no la
+     * hay. La escribe el SERVIDOR con el uid del token verificado (§130); desde aquí solo se avisa.
+     *
+     * No se espera (`void`) y va DESPUÉS de entregar el archivo, a propósito: una bitácora no debe
+     * poder retrasar —ni mucho menos impedir— que alguien abra un documento suyo.
+     */
+    void llamar('registrarEvento', {
+      accion: 'documento-abierto',
+      origen: 'portal-gestion',
+      objetivo: doc.id,
+      detalle: `${doc.tipo} · expediente ${doc.expedienteId}`,
+    });
   } catch (e) {
     avisar('No se pudo abrir. Si acabas de recibir permisos, cierra sesión y vuelve a entrar.');
     console.error('[documentos] abrir:', e);
@@ -278,8 +304,97 @@ export async function abrirDocumento(doc: Documento, avisar: (txt: string) => vo
 /** Retirar ≠ eliminar: deja de estar a la vista y queda constancia de quién y por qué. */
 export async function retirarDocumento(id: string, motivo: string, avisar: (txt: string) => void): Promise<boolean> {
   const r = await llamar('retirarDocumento', { id, motivo });
+  if (r.ok) {
+    void llamar('registrarEvento', { accion: 'documento-retirado', origen: 'portal-gestion', objetivo: id, detalle: motivo });
+  }
   avisar(r.ok ? 'Retirado.' : r.mensaje);
   return r.ok;
+}
+
+/* ─── El expediente por dentro (mockup 2a) ───────────────────────────────────────────────────── */
+
+/**
+ * Abre un expediente y enseña lo que falta y lo que hay, en ese orden y con el mismo peso visual.
+ *
+ * Que un hueco se vea igual de importante que un archivo no es un capricho de diseño: si el que falta
+ * se pintara más flojo, se leería como opcional — y son precisamente los obligatorios.
+ */
+export function abrirExpediente(expedienteId: string): void {
+  const panel = $('gx-doc-detalle');
+  const lista = $('gx-doc-det-lista');
+  if (!panel || !lista) return;
+
+  const exp = cargados.expedientes.find((e) => e.id === expedienteId);
+  const tipos = [...new Set(cargados.contratos.filter((c) => c.expedienteId === expedienteId).map((c) => c.tipo))];
+  const suyos = cargados.documentos.filter((d) => d.expedienteId === expedienteId && vigente(d));
+  const falta = faltantes(suyos, tipos);
+
+  const titulo = $('gx-doc-det-titulo');
+  if (titulo) titulo.textContent = `${exp?.codigoLegacy || expedienteId} · Documentos`;
+  const resumen = $('gx-doc-det-resumen');
+  if (resumen) {
+    resumen.textContent = tipos.length
+      ? `Faltan ${falta.length} de ${falta.length + suyos.length}. La lista sale de sus contratos: ${tipos.join(' y ')}.`
+      : 'Todavía no tiene contratos, así que no se le exige ningún documento.';
+  }
+
+  const filas: HTMLElement[] = [...falta.map(filaFalta), ...suyos.map(filaGuardado)];
+  lista.replaceChildren(...(filas.length ? filas : [mensaje('Sin documentos y sin nada pendiente.')]));
+  panel.removeAttribute('hidden');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function filaFalta(tipo: TipoDocumento): HTMLElement {
+  const f = document.createElement('div');
+  f.className = 'gx-tr gx-doc-falta';
+  f.appendChild(celda(NOMBRE_DOCUMENTO[tipo], 'gx-cod'));
+  f.appendChild(celda('falta — obligatorio', 'gx-muted'));
+  f.appendChild(celda(''));
+  return f;
+}
+
+function filaGuardado(d: Documento): HTMLElement {
+  const f = document.createElement('div');
+  f.className = 'gx-tr';
+  const q = document.createElement('div');
+  q.className = 'gx-cli gx-cli--apilada';
+  q.appendChild(celda(NOMBRE_DOCUMENTO[d.tipo], 'gx-cod'));
+  q.appendChild(celda(d.nombreArchivo, 'gx-cli__name'));
+  f.appendChild(q);
+  f.appendChild(celda(`${kb(d.bytes)}${d.vence ? ` · vence ${d.vence.slice(0, 10)}` : ' · sin caducidad'}`, 'gx-muted'));
+
+  const acc = document.createElement('span');
+  acc.className = 'gx-doc-acc';
+  const msg = $('gx-doc-det-msg');
+  const avisar = (t: string) => {
+    if (msg) msg.textContent = t;
+  };
+
+  const abrir = document.createElement('button');
+  abrir.type = 'button';
+  abrir.className = 'gx-link gx-link--btn';
+  abrir.textContent = 'Abrir';
+  abrir.addEventListener('click', () => void abrirDocumento(d, avisar));
+
+  const quitar = document.createElement('button');
+  quitar.type = 'button';
+  quitar.className = 'gx-link gx-link--btn gx-muted';
+  quitar.textContent = 'Retirar';
+  quitar.addEventListener('click', async () => {
+    // Se pide el MOTIVO, no una confirmación de «¿seguro?». Un «sí» no dice nada en seis meses;
+    // «lo reemplazó el contrato firmado del 3 de marzo» sí.
+    const motivo = window.prompt(`¿Por qué retiras «${NOMBRE_DOCUMENTO[d.tipo]}»? Queda escrito.`);
+    if (!motivo) return;
+    if (await retirarDocumento(d.id, motivo, avisar)) {
+      await montarDocumentos();
+      abrirExpediente(d.expedienteId);
+    }
+  });
+
+  acc.appendChild(abrir);
+  acc.appendChild(quitar);
+  f.appendChild(acc);
+  return f;
 }
 
 /* ─── El formulario ──────────────────────────────────────────────────────────────────────────── */
@@ -292,6 +407,10 @@ export async function retirarDocumento(id: string, motivo: string, avisar: (txt:
  * qué — un formulario que bloquea sin explicar se lee como un error del sistema.
  */
 export function montarFormularioDocumento(): void {
+  // Cerrar el detalle. Sin esto el panel se quedaría abierto sobre el expediente de antes al volver
+  // a la lista — y un panel que muestra datos de otro es peor que uno vacío.
+  $('gx-doc-det-cerrar')?.addEventListener('click', () => $('gx-doc-detalle')?.setAttribute('hidden', ''));
+
   const form = $<HTMLFormElement>('gx-doc-form');
   if (!form) return;
   const msg = $('gx-doc-msg');

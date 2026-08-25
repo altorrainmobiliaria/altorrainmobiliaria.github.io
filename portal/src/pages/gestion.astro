@@ -638,10 +638,27 @@ const init = DATA.admin;
         <p class="gx-psub gx-pad-x">Sale de la lista canónica por tipo de expediente, no de una nota mental: administración y arriendo piden cosas distintas.</p>
         <div class="gx-scrollx">
           <div class="gx-table__inner gx-table__inner--doc">
-            <div class="gx-tr gx-tr--head"><span>Expediente</span><span>Qué pasa</span><span>Vence</span></div>
+            <div class="gx-tr gx-tr--head"><span>Expediente</span><span>Qué pasa</span><span>Vence</span><span></span></div>
             <div id="gx-doc-lista"></div>
           </div>
         </div>
+      </div>
+
+      <!-- El expediente POR DENTRO (mockup 2a). Aparece al pulsar «Ver» en una fila: lo que falta y
+           lo que hay, con el mismo peso visual — un hueco es tan dato como un archivo. -->
+      <div class="gx-panel gx-table" id="gx-doc-detalle" hidden>
+        <div class="gx-panel__head">
+          <h2 id="gx-doc-det-titulo">Expediente</h2>
+          <button class="gx-link gx-link--btn" type="button" id="gx-doc-det-cerrar">Cerrar</button>
+        </div>
+        <p class="gx-psub gx-pad-x" id="gx-doc-det-resumen"></p>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--docdet">
+            <div class="gx-tr gx-tr--head"><span>Documento</span><span>Detalle</span><span></span></div>
+            <div id="gx-doc-det-lista"></div>
+          </div>
+        </div>
+        <div class="gx-aviso gx-aviso--form gx-pad-x" id="gx-doc-det-msg" role="status" aria-live="polite"></div>
       </div>
 
       <form class="gx-panel gx-pad gx-form" id="gx-doc-form" novalidate>
@@ -1012,13 +1029,17 @@ const init = DATA.admin;
 
   /* BÓVEDA (§142). Estas reglas se escriben A LA VEZ que el JavaScript que crea las filas: una clase
      sin regla no falla, solo despinta — y eso es exactamente lo que costó §117 y §133. */
-  .gx-table__inner--doc .gx-tr { grid-template-columns: 1.8fr 3fr 1fr; align-items: center; }
+  .gx-table__inner--doc .gx-tr { grid-template-columns: 1.8fr 3fr 1fr auto; align-items: center; }
   .gx-doc-fila--aviso { background: var(--alt-mist); border-left: 3px solid var(--alt-gold); }
   /* Vencido = navy con más peso + el dato al lado. NO rojo: la paleta no lo tiene, y el color por sí
      solo tampoco sirve a quien no lo distingue (el texto ya dice «venció hace 5 meses»). */
   .gx-doc-vencido { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
   .gx-doc-check { display: flex; gap: 11px; align-items: flex-start; margin-top: 4px; padding: 13px 15px; border-radius: var(--alt-r-sm); background: var(--alt-mist); border-left: 3px solid var(--alt-gold); font-size: 13px; line-height: 1.65; color: var(--alt-text-soft); }
   .gx-doc-check input { margin-top: 2px; flex: none; }
+  .gx-table__inner--docdet .gx-tr { grid-template-columns: 2fr 2.6fr auto; align-items: center; }
+  /* Un hueco pesa lo mismo que un archivo: si el que falta se viera más flojo, se leería como opcional. */
+  .gx-doc-falta { background: var(--alt-mist); border-left: 3px solid var(--alt-gold); }
+  .gx-doc-acc { display: inline-flex; gap: 12px; }
   .gx-btn-fila { padding: 7px 15px; font-size: 13px; }
   .gx-pad-x { padding-inline: 20px; }
 
