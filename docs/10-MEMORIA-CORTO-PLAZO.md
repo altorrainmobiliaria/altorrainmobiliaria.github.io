@@ -48,19 +48,18 @@
 >
 > **🌊 OLA 1 = 13/13 EN CÓDIGO**, re-medido el 25-ago (§138: el MEGA-PLAN llevaba 5 días diciendo que
 > faltaban 5). Censo → `21`. **Pero «13/13» NO es «cerrada»**: ninguno de esos caminos ha escrito aún en
-> Firestore real y la base está VACÍA (medido). Y sigue habiendo construcción propia — ver TODO-48.
+> Firestore real y la base está VACÍA (medido). El Journal ya está publicado (§147).
 > El cutover NO se improvisa → **`specs/CUTOVER-RUNBOOK.md`** manda (§102). Suelto: «Avalúo» (§94.6).
 > **En orden**: (1) **estrenar los caminos** (runbook 1.4-1.8, **corregido en §140**: el 1.6 era
 > IMPOSIBLE y no lo decía, y el 1.4 estaba asignado a quien no puede hacerlo) ·
-> (2) **inventario** (TODO-22) · (3) **Resend** · (4) **DNS/cutover**. Aparte: **TODO-45**, **TODO-48**
-> (míos) y **TODO-30** (lo confirma Daniel, [[L-39]]). **OLA 2**: el abogado gatea el RAIL DE PAGO,
+> (2) **inventario** (TODO-22) · (3) **Resend** · (4) **DNS/cutover**. Aparte: **TODO-30**, que lo confirma Daniel ([[L-39]]). **OLA 2**: el abogado gatea el RAIL DE PAGO,
 > **no toda la ola** ([[L-40]] ya cobró 3 veces, [[M-11]]).
 >
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos que
 > solo destapó la CONSOLA DEL DUEÑO (§133-§136). Pesa a favor de retirarlo pronto en el cutover.
 > 🛡️ **Y el portal tampoco la tenía entera**: `tsc` no leía los `.astro` (§138). Hoy son **7 gates**
-> (+ `tokens`, `controles`, `enlaces`) y el portal está **barrido en vivo**: 27 rutas 200, 763 enlaces
-> que resuelven, cero recursos fallidos (§139.8). Si un gate pasa, pregúntate **qué archivos abre**
+> (+ `tokens`, `controles`, `enlaces`) y el portal está **barrido en vivo**: 885 enlaces internos que
+> resuelven y los 65 redirects del sitio viejo comprobados contra el worker (§139.8, §150). Si un gate pasa, pregúntate **qué archivos abre**
 > ([[L-52]]) — tres de los de esta semana pasaron en verde con el fallo delante.
 >
 > ⚠️ **Antes de tocar código, lee `34-DOCTRINA-CODIGO`** (trigger 🖥️) y, si el síntoma te suena, `30`:
