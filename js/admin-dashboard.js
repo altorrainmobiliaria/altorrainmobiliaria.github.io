@@ -79,18 +79,45 @@
       var thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      var [propsSnap, leadsSnap, resenasSnap, waSnap, nlSnap] = await Promise.all([
-        m.getDocs(m.query(m.collection(window.db, 'propiedades'), m.where('disponible', '==', true), m.limit(200))),
-        m.getDocs(m.query(m.collection(window.db, 'solicitudes'), m.orderBy('createdAt', 'desc'), m.limit(200))),
-        m.getDocs(m.query(m.collection(window.db, 'resenas'), m.where('activa', '==', true))),
-        m.getDocs(m.query(
+      /*
+       * §134 — `allSettled`, NO `all`.
+       *
+       * Con `Promise.all`, si UNA de las cinco consultas revienta, **caen las cinco**: no se pinta
+       * ningún número y la tabla se queda en «Cargando…» para siempre. Fue exactamente lo que pasó —
+       * a `analytics_events` le faltaba un índice compuesto (filtrar por `type` y ordenar por
+       * `createdAt` lo exige), y el panel entero pareció roto por una tarjeta.
+       *
+       * Con `allSettled` cada consulta cae sola: lo que se pudo leer se pinta, y lo que no, lo dice.
+       * Un panel que muestra 5 de 6 cifras y avisa de la que falta es infinitamente más útil que uno
+       * que no muestra ninguna.
+       */
+      var consultas = [
+        ['propiedades', m.query(m.collection(window.db, 'propiedades'), m.where('disponible', '==', true), m.limit(200))],
+        ['solicitudes', m.query(m.collection(window.db, 'solicitudes'), m.orderBy('createdAt', 'desc'), m.limit(200))],
+        ['resenas',     m.query(m.collection(window.db, 'resenas'), m.where('activa', '==', true))],
+        ['analytics_events', m.query(
           m.collection(window.db, 'analytics_events'),
           m.where('type', '==', 'whatsapp_click'),
           m.orderBy('createdAt', 'desc'),
           m.limit(500)
-        )),
-        m.getDocs(m.query(m.collection(window.db, 'newsletter'), m.where('activo', '==', true), m.limit(500))),
-      ]);
+        )],
+        ['newsletter',  m.query(m.collection(window.db, 'newsletter'), m.where('activo', '==', true), m.limit(500))],
+      ];
+
+      var resultados = await Promise.allSettled(consultas.map(function (c) { return m.getDocs(c[1]); }));
+      var fallidas = [];
+      var VACIO = { size: 0, docs: [] };
+
+      resultados.forEach(function (r, i) {
+        if (r.status === 'rejected') {
+          fallidas.push(consultas[i][0]);
+          console.error('[Dashboard] falló la consulta de', consultas[i][0], '→', r.reason?.code, r.reason?.message);
+        }
+      });
+      var dato = function (i) { return resultados[i].status === 'fulfilled' ? resultados[i].value : VACIO; };
+
+      var propsSnap = dato(0), leadsSnap = dato(1), resenasSnap = dato(2), waSnap = dato(3), nlSnap = dato(4);
+      avisarFallos(fallidas);
 
       try {
         window.AltorraMeter?.add(
@@ -116,8 +143,49 @@
       try { window.AltorraMeter?.renderWidget('readsMeterContainer'); } catch (_) {}
 
     } catch (err) {
+      // §134 — antes esto SOLO escribía en la consola. El resultado: los números se quedaban en «—» y
+      // la tabla en «Cargando…» eternamente, sin una sola pista de por qué. Un panel que falla en
+      // silencio le hace creer al dueño que el sistema está VACÍO cuando está ROTO — y son cosas muy
+      // distintas de arreglar.
       console.error('[Dashboard] Error:', err);
+      var caja = $('recentLeads');
+      if (caja) {
+        caja.textContent = '';
+        caja.appendChild(parrafoDeFallo(
+          'No pudimos cargar la información del panel. Recarga la página; si sigue igual, avísale a quien lo mantiene.'
+        ));
+      }
     }
+  }
+
+  /** Párrafo de aviso, construido con nodos (nada de `innerHTML`: aquí no hace falta y no se arriesga). */
+  function parrafoDeFallo(texto) {
+    var p = document.createElement('p');
+    p.className = 'dash-fallo';
+    p.setAttribute('role', 'status');
+    p.textContent = texto;
+    return p;
+  }
+
+  /*
+   * Dice QUÉ no se pudo leer, en cristiano y sin nombres de colección sueltos (§134).
+   * Va encima de los leads recientes porque es donde ya está mirando quien abre el panel.
+   */
+  function avisarFallos(fallidas) {
+    var caja = $('recentLeads');
+    if (!caja || !fallidas.length) return;
+    var NOMBRES = {
+      propiedades: 'los inmuebles',
+      solicitudes: 'los leads',
+      resenas: 'las reseñas',
+      analytics_events: 'los clics de WhatsApp',
+      newsletter: 'los suscriptores',
+    };
+    var lista = fallidas.map(function (f) { return NOMBRES[f] || f; }).join(', ');
+    var previo = caja.parentElement && caja.parentElement.querySelector('.dash-fallo');
+    if (previo) previo.remove();   // no acumular avisos al recargar el panel
+    var aviso = parrafoDeFallo('No pudimos cargar ' + lista + '. El resto de las cifras sí son correctas.');
+    if (caja.parentElement) caja.parentElement.insertBefore(aviso, caja);
   }
 
   function setStatCard(id, value, sub) {

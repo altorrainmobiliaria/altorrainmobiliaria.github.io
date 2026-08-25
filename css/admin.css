@@ -94,6 +94,16 @@ input, select, textarea { font-family: inherit; }
 /* Se conserva por si algún camino viejo aún añade la clase — cuesta una línea y evita una regresión. */
 .login-error.visible { display: block; }
 
+/* Aviso de que una parte del panel no cargó (§134). El nodo lo CREA el JavaScript, así que la regla
+   se escribe aquí a la vez que el código — un mensaje sin estilo es un mensaje invisible, que es
+   justo el fallo de §133 y no se repite dos veces seguidas a propósito. */
+.dash-fallo {
+  margin: 0 0 14px; padding: 12px 16px;
+  background: #f4f7fa; color: #062743;
+  border-left: 3px solid var(--gold, #d4af37); border-radius: 8px;
+  font-size: .88rem; font-weight: 600; line-height: 1.55;
+}
+
 /* ── Layout principal ────────────────────────────────────────────────────── */
 #adminApp { display: none; min-height: 100vh; }
 #adminApp.visible { display: flex; }
