@@ -29,6 +29,13 @@ export const TIPOS_DOCUMENTO = [
   'poliza-arrendamiento',
   'paz-y-salvo',
   'soporte-pago',
+  // --- Compraventa (§151). Son documentos de la MISMA bóveda: la lista canónica es una sola,
+  //     porque un expediente no tiene un cajón para arriendo y otro para venta.
+  'cedula-comprador',
+  'certificado-tradicion',
+  'estudio-titulos',
+  'promesa-compraventa',
+  'escritura-publica',
   'otro',
 ] as const;
 export type TipoDocumento = (typeof TIPOS_DOCUMENTO)[number];
@@ -43,6 +50,11 @@ export const NOMBRE_DOCUMENTO: Record<TipoDocumento, string> = {
   'poliza-arrendamiento': 'Póliza de arrendamiento',
   'paz-y-salvo': 'Paz y salvo',
   'soporte-pago': 'Soporte de pago',
+  'cedula-comprador': 'Cédula del comprador',
+  'certificado-tradicion': 'Certificado de tradición y libertad',
+  'estudio-titulos': 'Estudio de títulos',
+  'promesa-compraventa': 'Promesa de compraventa',
+  'escritura-publica': 'Escritura pública',
   otro: 'Otro documento',
 };
 
