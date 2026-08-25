@@ -4552,3 +4552,52 @@ lo declara (`firebase.sign_in_second_factor`), de modo que hasta las Rules puede
 mano reproduce lo de cars. Gratis hasta 50.000 usuarios/mes, **sin vuelta atrás** ⇒ sigue siendo gate
 del dueño. Sin decidir: contraseña mínima del proyecto en **6 caracteres** y protección anti-bot
 **apagada** — ambas de consola ([[L-49]]). Doctrina portable → skill `acceso-y-autenticacion` §B-6/B-7.
+
+
+## 131. ADR — Invitar en vez de inventar, suspender en vez de borrar ⟦OPUS-5⟧ (2026-08-25)
+
+> *«Que necesitas de mi, te autorizo todo»* — Daniel, tras §130.
+
+**131.1 — Causa raíz.** Las dos operaciones más delicadas del equipo —dar de alta y dar de baja— estaban
+resueltas de la forma más cómoda de programar, no de la más segura de operar:
+- **El alta pedía la contraseña de otro.** `createManagedUserV2` recibía `password` de un formulario que
+  rellenaba el administrador; la clave viajaba por WhatsApp, quedaba en un chat para siempre, y la sabían
+  DOS personas. La cuenta nacía comprometida y nada avisaba de ello.
+- **La baja solo sabía destruir.** La única acción era «Eliminar», que borra la cuenta de Auth y el
+  documento, sin vuelta atrás. Cuando alguien se va de vacaciones, o hay una duda que aclarar, obligar a
+  elegir entre *no hacer nada* y *destruir* hace que se elija **no hacer nada** — y el acceso sigue vivo.
+
+**131.2 — Solución.**
+- **Invitación.** El servidor genera `randomBytes(32)` en base64url (~256 bits) que **no ve nadie**: no se
+  devuelve, no se registra, no se guarda. Solo existe para que la cuenta pueda crearse. Después, quien
+  invita dispara `sendPasswordResetEmail` y la persona elige la suya. **El correo lo manda Firebase con su
+  propia infraestructura**, no el SMTP de Gmail — por eso funciona HOY, con la contraseña de aplicación
+  aún sin rotar (misma razón que §128). Cumple ASVS 6.4.1 (credencial inicial aleatoria y caducable).
+- **Suspender.** `suspenderUsuarioV2` escribe `activo` en el documento y **nada más**: de ahí,
+  `claimsStaffSync` relee, pone `admin:false` y **revoca los tokens**. La sesión abierta en otro
+  dispositivo muere en el acto, no dentro de una hora. Verificado leyendo `claimDesdeDoc`, que exige
+  `activo === true`. Se tocó el claim por UN solo camino a propósito: dos caminos hacia el mismo permiso
+  acaban diciendo cosas distintas.
+
+**131.3 — No-regresión.** Dos guardas que evitan dejar el sistema sin timón: no puedes suspenderte a ti
+mismo, y **no se puede suspender al último super_admin activo** (se cuenta antes de escribir). `Eliminar`
+sigue existiendo para cuando de verdad toca. La UI expone `alternarActivo` y `reenviarInvitacion` en
+`window.AdminUsers` — sin eso los botones existirían y no harían nada, que es §126 otra vez.
+
+**131.4 — Verificación.** Ambas Functions desplegadas y listadas (censo 13 en código / 11 desplegadas,
+cuadrado con el gate #29). Sintaxis validada en los tres archivos tocados.
+
+**131.5 — Anti-patterns evitados.** `Math.random()` para la credencial inicial (predecible ⇒ puerta
+abierta hasta que alguien la cambie). Devolver la clave generada «por comodidad» — eso reintroduce el
+problema entero. Tocar el claim a mano en la suspensión en vez de dejar que el trigger converja. Y decir
+«error» cuando falla SOLO el correo: la cuenta ya existe, y el remedio es reenviar, no volver a crear —
+un mensaje genérico llevaría a intentar lo segundo y a chocar con «ya existe».
+
+**131.6 — Archivos.** MODIFICADOS: `functions/index.js` (+`suspenderUsuarioV2`, alta sin contraseña,
+`randomBytes`) · `js/admin-users.js` · `admin.html` (fuera el campo «Contraseña temporal»; `.form-nota`
+definida en el mismo cambio para no repetir §117). **INTACTOS**: reglas, portal, `admin-auth.js`.
+
+**131.7 — Lo que sigue necesitando al dueño.** El correo de invitación llega con la plantilla de
+«restablecer contraseña» de Firebase: funciona, pero se puede personalizar (consola). Y lo de §130 sin
+cambios: Identity Platform + TOTP (sin vuelta atrás), contraseña mínima 6→12, anti-bot apagado, dominio
+sin autorizar. Todo eso vive en una consola web y **ningún gate lo ve** ([[L-49]]).
