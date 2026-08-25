@@ -5053,6 +5053,23 @@ que grite de verdad, nadie mira. Corregir los tres antes de encenderlo vale más
 porque el hallazgo negativo también es un hallazgo: ese panel no tiene tipos, ni pruebas, ni build, y
 saber que en esto está sano es información, no ausencia de ella.
 
+**139.7 — Séptimo gate, y tres intentos hasta que sirvió: `verify:enlaces`.** Un enlace hacia una
+página que nadie construyó no rompe el build ni ensucia la consola: se descubre cuando alguien lo
+pulsa. Pasó con `/ingresar` en el header y llevaba roto **desde que el portal existe** (§89) — en el
+enlace de «entrar». Escribí dos versiones que **pasaron en verde con el fallo delante**: la 1ª solo
+veía `href="/algo"` literal y el pie de página construye los suyos desde un ARRAY; la 2ª leía también
+las cadenas del frontmatter, y entonces acusó a `/mes` y `/noche` (sufijos de precio) y a un
+`/avaluo.html` escrito dentro de un COMENTARIO. El problema de fondo era **adivinar qué cadena es un
+enlace**. La tercera mira el **HTML construido**, donde no hay que adivinar: cada `<a href>` está
+resuelto, los comentarios no existen y los arrays ya se pintaron. *Cuando el fuente obliga a adivinar,
+mira el artefacto* ([[L-50]]). 763 enlaces comprobados; todos resuelven.
+
+**139.8 — Barrido EN VIVO del portal** (`verificado-vivo: 2026-08-25`): 27 rutas → 200; cero recursos
+fallidos en home, `/comprar` y `/estancias`; mapa dibujado; 32 enlaces internos distintos contra el
+servidor, ninguno roto. ⚠️ Cuatro páginas legales dieron **500** al principio y durante un rato pareció
+un fallo del gate B1 — era la **caché del optimizador de Vite**, rota por construir con el servidor de
+desarrollo vivo. Se dice porque el susto fue real y la conclusión inicial, equivocada.
+
 **139.6 — Archivos.** `portal/scripts/verify-controles.mjs` (nuevo) · `portal/package.json` ·
 `.github/workflows/portal-ci.yml` · `portal/src/pages/gestion.astro` ·
 `portal/src/scripts/gestion-alta-ui.ts` · `portal/src/scripts/gestion-leads.ts`.

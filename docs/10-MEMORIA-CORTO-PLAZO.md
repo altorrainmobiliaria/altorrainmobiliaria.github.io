@@ -59,8 +59,10 @@
 >
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos que
 > solo destapó la CONSOLA DEL DUEÑO (§133-§136). Pesa a favor de retirarlo pronto en el cutover.
-> 🛡️ **Y el portal tampoco la tenía entera**: `tsc` no leía los `.astro` (§138). Hoy el gate es
-> `astro check` + `verify:tokens`. Si un gate pasa, pregúntate **qué archivos abre** ([[L-52]]).
+> 🛡️ **Y el portal tampoco la tenía entera**: `tsc` no leía los `.astro` (§138). Hoy son **7 gates**
+> (+ `tokens`, `controles`, `enlaces`) y el portal está **barrido en vivo**: 27 rutas 200, 763 enlaces
+> que resuelven, cero recursos fallidos (§139.8). Si un gate pasa, pregúntate **qué archivos abre**
+> ([[L-52]]) — tres de los de esta semana pasaron en verde con el fallo delante.
 >
 > ⚠️ **Antes de tocar código, lee `34-DOCTRINA-CODIGO`** (trigger 🖥️) y, si el síntoma te suena, `30`:
 > [[L-33]] (`locals.runtime.env` removido en Astro v6) YA cobró dos veces, y [[L-41]] (cabeceras
