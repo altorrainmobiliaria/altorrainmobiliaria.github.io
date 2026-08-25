@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#E6EDF2; font-family:'Hanken Grotesk',sans-serif; -webkit-font-smoothing:antialiased; }
+</style>
+</helmet>
+
+<!--
+  ══════════════════════════════════════════════════════════════════
+  ALTORRA · PERFILES — la revisión humana del perfil de inquilino (Ola 2, §152/§153)
+
+  ALCANCE, dicho primero: esto dibuja SOLO lo que es nuevo. La lista, las tarjetas de cifra y el
+  panel de detalle reutilizan componentes ya aprobados (`ALTORRA Gestion` y `ALTORRA Documentos`);
+  re-dibujarlos aquí sería teatro. Lo que sí cambia y por eso se dibuja: **cómo se decide**.
+
+  LA IDEA CENTRAL: **el cuello de botella de este producto es una persona leyendo papeles.** La
+  promesa pública son 24 horas hábiles, y una promesa sin un sitio donde se vea cuánto lleva
+  esperando cada quien es un deseo. Por eso la lista se ordena por ESPERA, no por fecha de llegada,
+  y quien se pasó del plazo va primero con filete de oro.
+
+  TRES DECISIONES QUE NO SON DE PINTAR:
+
+  1. ⚖️ **Aquí hay cédulas y nóminas de personas que NO son del equipo.** Se descargan con `getBlob`,
+     que pasa por las Reglas y no deja enlace que reenviar — nunca `getDownloadURL` (§142). Y abrir
+     un soporte QUEDA ESCRITO: si algún día alguien pregunta quién vio la cédula de un aspirante, o
+     hay respuesta o no la hay.
+
+  2. ✍️ **Devolver EXIGE escribir qué falta, y el texto va a la persona.** No es un «rechazado» con
+     un aspa. Quien recibe «la cédula está borrosa» sube otra foto en dos minutos; quien recibe un
+     «no» empieza de cero o se va. El servidor rechaza la devolución sin motivo, así que la pantalla
+     no está siendo amable: está diciendo lo que ya es obligatorio.
+
+  3. 🚫 **NO hay puntaje, ni semáforo de riesgo, ni «score».** Sin contrato con una central, consultar
+     a alguien es ilegal (B-04), y pintar un color de riesgo a partir de sus papeles sería inventar
+     exactamente eso con otro nombre. Lo que la pantalla dice es qué documentos hay y cuáles faltan.
+
+  PALETA: navy #062743 · dorado #D4AF37 · plata #BFC3C9 · lienzo #E6EDF2. SIN rojo ni verde: el
+  retraso se dice con oro y con palabras.
+  ══════════════════════════════════════════════════════════════════
+-->
+
+<section style="display:flex;flex-direction:column;gap:14px;padding:64px 64px 8px">
+  <h1 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:600;color:#062743;letter-spacing:-0.015em">Perfiles — la revisión</h1>
+  <p style="margin:0;max-width:900px;font-size:15.5px;line-height:1.75;color:#5B6B7A">
+    Dos pantallas, y solo lo nuevo. La primera ordena por <strong style="color:#062743;font-weight:600">quién
+    lleva más esperando</strong>. La segunda es la decisión: verificar, o devolver diciendo qué falta.
+  </p>
+</section>
+
+<!-- ══════════════════════════ 1a · LA COLA ══════════════════════════ -->
+<section style="padding:40px 64px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">1a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">La cola de revisión</h2>
+    <span style="font-size:13.5px;color:#5B6B7A">Ordenada por espera. La promesa son 24 horas hábiles.</span>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:22px;padding:34px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-6px -6px 14px #FFFFFF;display:flex;flex-direction:column;gap:18px">
+
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div style="flex:1;min-width:160px;background:#F4F7FA;border-radius:16px;padding:18px 20px;box-shadow:inset 3px 3px 7px rgba(6,39,67,0.06),inset -3px -3px 7px #FFFFFF">
+        <div style="font-size:28px;font-weight:700;color:#062743">1</div>
+        <div style="font-size:12.5px;color:#5B6B7A;margin-top:2px">fuera del plazo prometido</div>
+      </div>
+      <div style="flex:1;min-width:160px;background:#F4F7FA;border-radius:16px;padding:18px 20px;box-shadow:inset 3px 3px 7px rgba(6,39,67,0.06),inset -3px -3px 7px #FFFFFF">
+        <div style="font-size:28px;font-weight:700;color:#062743">3</div>
+        <div style="font-size:12.5px;color:#5B6B7A;margin-top:2px">esperando revisión</div>
+      </div>
+      <div style="flex:1;min-width:160px;background:#F4F7FA;border-radius:16px;padding:18px 20px;box-shadow:inset 3px 3px 7px rgba(6,39,67,0.06),inset -3px -3px 7px #FFFFFF">
+        <div style="font-size:28px;font-weight:700;color:#062743">12</div>
+        <div style="font-size:12.5px;color:#5B6B7A;margin-top:2px">verificados y vigentes</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.5fr 1fr 1.1fr 90px;gap:14px;padding:0 4px;font-size:11.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#8B9AA8">
+      <span>Aspirante</span><span>Estado</span><span>Espera</span><span></span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.5fr 1fr 1.1fr 90px;gap:14px;align-items:center;background:#FFFDF7;border-left:3px solid #D4AF37;border-radius:0 12px 12px 0;padding:15px 16px">
+      <div>
+        <div style="font-size:14.5px;font-weight:600;color:#062743">Ana Restrepo</div>
+        <div style="font-size:12.5px;color:#8B9AA8">ana@correo.com · 4 de 4 soportes</div>
+      </div>
+      <div style="font-size:13.5px;color:#062743;font-weight:600">Enviado a revisión</div>
+      <div style="font-size:13px;color:#5B6B7A">3 días · <strong style="color:#062743">fuera de plazo</strong></div>
+      <button style="border:1px solid #062743;background:#FFF;color:#062743;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:600;font-family:'Hanken Grotesk',sans-serif">Revisar</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.5fr 1fr 1.1fr 90px;gap:14px;align-items:center;background:#F4F7FA;border-radius:12px;padding:15px 16px">
+      <div>
+        <div style="font-size:14.5px;font-weight:600;color:#062743">Jorge Villa</div>
+        <div style="font-size:12.5px;color:#8B9AA8">jorge@correo.com · 3 de 3 (primer arriendo)</div>
+      </div>
+      <div style="font-size:13.5px;color:#062743;font-weight:600">Enviado a revisión</div>
+      <div style="font-size:13px;color:#5B6B7A">hoy</div>
+      <button style="border:1px solid #062743;background:#FFF;color:#062743;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:600;font-family:'Hanken Grotesk',sans-serif">Revisar</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.5fr 1fr 1.1fr 90px;gap:14px;align-items:center;background:#F4F7FA;border-radius:12px;padding:15px 16px">
+      <div>
+        <div style="font-size:14.5px;font-weight:600;color:#062743">Marta Gil</div>
+        <div style="font-size:12.5px;color:#8B9AA8">marta@correo.com · verificado el 2 de julio</div>
+      </div>
+      <div style="font-size:13.5px;color:#8B9AA8;font-weight:600">Verificado</div>
+      <div style="font-size:13px;color:#8B9AA8">vence en 132 días</div>
+      <span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 2a · LA DECISIÓN ══════════════════════════ -->
+<section style="padding:40px 64px 80px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">2a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">La decisión</h2>
+    <span style="font-size:13.5px;color:#5B6B7A">Verificar, o devolver diciendo qué falta</span>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:22px;padding:34px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-6px -6px 14px #FFFFFF;max-width:760px;display:flex;flex-direction:column;gap:22px">
+    <div>
+      <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:#062743">Ana Restrepo</h3>
+      <p style="margin:5px 0 0;font-size:13.5px;color:#8B9AA8">ana@correo.com · 300 243 9810 · lleva 3 días esperando</p>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <div style="font-size:11.5px;font-weight:600;letter-spacing:0.08em;color:#8B9AA8;text-transform:uppercase">Lo que subió</div>
+      <div style="display:grid;grid-template-columns:1.4fr 1fr 90px;gap:14px;background:#F4F7FA;border-radius:12px;padding:12px 15px;font-size:13.5px;color:#5B6B7A;align-items:center">
+        <span style="color:#062743;font-weight:600">Documento de identidad</span><span>cedula.pdf</span>
+        <button style="border:0;background:none;color:#7d6119;font-size:13px;font-weight:600;text-decoration:underline;font-family:'Hanken Grotesk',sans-serif">Abrir</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1.4fr 1fr 90px;gap:14px;background:#F4F7FA;border-radius:12px;padding:12px 15px;font-size:13.5px;color:#5B6B7A;align-items:center">
+        <span style="color:#062743;font-weight:600">Soporte de ingresos</span><span>nomina.pdf</span>
+        <button style="border:0;background:none;color:#7d6119;font-size:13px;font-weight:600;text-decoration:underline;font-family:'Hanken Grotesk',sans-serif">Abrir</button>
+      </div>
+    </div>
+
+    <div style="background:#FFFDF7;border-left:3px solid #D4AF37;border-radius:0 12px 12px 0;padding:14px 16px;font-size:13px;line-height:1.7;color:#5B6B7A">
+      <strong style="color:#062743;font-weight:600">Estos papeles son de una persona de fuera.</strong> Se descargan con tu sesión y no dejan enlace que reenviar. Abrir uno queda escrito con tu nombre y la fecha.
+    </div>
+
+    <div style="border-top:1px solid rgba(27,39,51,0.1);padding-top:20px;display:flex;flex-direction:column;gap:14px">
+      <label style="display:flex;flex-direction:column;gap:7px">
+        <span style="font-size:13px;font-weight:600;color:#062743">Si algo falta, escribe qué</span>
+        <input placeholder="La cédula está borrosa por el reverso." style="border:1px solid rgba(27,39,51,0.16);border-radius:11px;padding:12px 14px;font-size:14px;font-family:'Hanken Grotesk',sans-serif;color:#062743">
+        <span style="font-size:12.5px;color:#5B6B7A;line-height:1.6">Este texto le llega a la persona tal cual. Quien lee «la cédula está borrosa» sube otra en dos minutos; quien lee «rechazado» se va.</span>
+      </label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button style="background:#062743;color:#FFF;border:0;border-radius:11px;padding:12px 22px;font-size:14px;font-weight:600;font-family:'Hanken Grotesk',sans-serif">Verificar</button>
+        <button style="background:#FFF;color:#062743;border:1px solid rgba(27,39,51,0.16);border-radius:11px;padding:12px 22px;font-size:14px;font-weight:600;font-family:'Hanken Grotesk',sans-serif">Devolver con observaciones</button>
+      </div>
+      <p style="margin:0;font-size:12.5px;color:#8B9AA8;line-height:1.6">No hay puntaje ni semáforo de riesgo: sin contrato con una central, consultar a alguien es ilegal. Lo que se verifica son los documentos.</p>
+    </div>
+  </div>
+</section>
+
+</x-dc>
+</body>
+</html>

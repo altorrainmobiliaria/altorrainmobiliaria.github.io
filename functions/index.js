@@ -1093,6 +1093,10 @@ const ACCIONES_VALIDAS = new Set([
   // La BÓVEDA (§143). Abrir un documento con datos de un tercero es un ACCESO, y una bóveda sin
   // bitácora de accesos es un archivador con la llave puesta. `objetivo` lleva el id del documento.
   'documento-abierto', 'documento-retirado',
+  // El PERFIL DE INQUILINO (§153). Aquí los papeles son de alguien de FUERA del equipo —cédula,
+  // nómina— y quien los abre es quien los revisa. Mismo criterio que la bóveda: si algún día
+  // alguien pregunta quién vio la cédula de un aspirante, o hay respuesta o no la hay.
+  'perfil-abierto', 'perfil-dictaminado',
 ]);
 
 exports.registrarEvento = onCall({ region: REGION }, async (request) => {

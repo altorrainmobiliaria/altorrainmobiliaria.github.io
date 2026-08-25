@@ -67,7 +67,11 @@ const EXCEPCIONES = [
     // que descarga CON la sesión y pasa por las Storage Rules. La alternativa —`getDownloadURL`—
     // emite una URL con token que abre CUALQUIERA que la tenga, sin sesión. Para la cédula de un
     // arrendatario eso es una fuga esperando un reenvío. La excepción compra la opción segura.
-    archivo: /scripts[\\/]gestion-documentos\.ts$/,
+    // Se amplía a `gestion-perfiles.ts` (§153) por la MISMA razón, no por comodidad: ahí se abren
+    // cédulas y nóminas de aspirantes a inquilino —personas de FUERA del equipo— y `getBlob` es lo
+    // que permite descargarlas con la sesión en vez de emitir un enlace que abre cualquiera. La
+    // excepción sigue siendo por ARCHIVO y por PATRÓN: `firebase/firestore` no entra por aquí.
+    archivo: /scripts[\\/]gestion-(documentos|perfiles)\.ts$/,
     re: /['"]firebase\/storage['"]/,
     motivo: 'Bóveda privada: `getBlob` respeta las Rules; `getDownloadURL` emitiría un enlace público',
   },

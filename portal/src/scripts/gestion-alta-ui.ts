@@ -24,6 +24,7 @@ import { montarExportInmuebles, montarInmuebles } from './gestion-inmuebles';
 import { montarAltaContrato, montarContratos, montarPagos, montarRegistroPago } from './gestion-contratos';
 import { montarDocumentos, montarFormularioDocumento } from './gestion-documentos';
 import { montarFormularioVenta, montarVentas } from './gestion-ventas';
+import { montarPanelPerfiles, montarPerfiles } from './gestion-perfiles';
 import { montarExpedientes, montarFormularios, montarNovedades } from './gestion-novedades';
 import type { Propiedad } from '../lib/domain/propiedades';
 
@@ -283,7 +284,8 @@ export function montarAlta(): void {
   const vistaNovedades = $('gx-vista-novedades');
   const vistaDocumentos = $('gx-vista-documentos');
   const vistaVentas = $('gx-vista-ventas');
-  const ver = (cual: 'alta' | 'inmuebles' | 'contratos' | 'novedades' | 'documentos' | 'ventas' | null) => {
+  const vistaPerfiles = $('gx-vista-perfiles');
+  const ver = (cual: 'alta' | 'inmuebles' | 'contratos' | 'novedades' | 'documentos' | 'ventas' | 'perfiles' | null) => {
     vistaPanel.hidden = cual !== null;
     vistaAlta.hidden = cual !== 'alta';
     if (vistaInmuebles) vistaInmuebles.hidden = cual !== 'inmuebles';
@@ -291,6 +293,7 @@ export function montarAlta(): void {
     if (vistaNovedades) vistaNovedades.hidden = cual !== 'novedades';
     if (vistaDocumentos) vistaDocumentos.hidden = cual !== 'documentos';
     if (vistaVentas) vistaVentas.hidden = cual !== 'ventas';
+    if (vistaPerfiles) vistaPerfiles.hidden = cual !== 'perfiles';
     if (cual === 'alta') {
       ajustarPorOperacion();
       pintarAviso();
@@ -358,6 +361,10 @@ export function montarAlta(): void {
       ver('ventas');
       void montarVentas();
     },
+    perfiles: () => {
+      ver('perfiles');
+      void montarPerfiles();
+    },
     leads: () => {
       ver(null);
       document.getElementById('gx-table-title')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -404,9 +411,11 @@ export function montarAlta(): void {
   $('gx-nv-volver')?.addEventListener('click', () => ver(null));
   $('gx-doc-volver')?.addEventListener('click', () => ver(null));
   $('gx-vta-volver-panel')?.addEventListener('click', () => ver(null));
+  $('gx-pf-volver-panel')?.addEventListener('click', () => ver(null));
   montarAltaContrato();
   montarFormularioDocumento();
   montarFormularioVenta();
+  montarPanelPerfiles();
   montarRegistroPago();
   montarFormularios();
   montarExportInmuebles();

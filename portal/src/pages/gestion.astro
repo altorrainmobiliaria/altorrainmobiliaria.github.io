@@ -27,6 +27,9 @@ const nav = [
   // «Expedientes» es el agregado RAÍZ: contratos, pagos y novedades cuelgan de él. Va justo
   // después de Contratos porque es donde el operador acaba cuando algo no cuadra.
   { id: 'expedientes', label: 'Expedientes', icon: '<path d="M3 7.5A2 2 0 0 1 5 5.5h4l2 2.5h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M8 14h8"/>' },
+  // «Perfiles» va junto a Leads: los dos son personas esperando una respuesta nuestra, y la
+  // promesa de las 24 horas se incumple en el mismo sitio donde se incumple la de un lead.
+  { id: 'perfiles', label: 'Perfiles', icon: '<circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.4 3.1-5.6 7-5.6s7 2.2 7 5.6"/>' },
   { id: 'leads', label: 'Leads', icon: '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.2 2.9-5.3 6.5-5.3s6.5 2.1 6.5 5.3"/><path d="M17 5.4A3.2 3.2 0 0 1 17 11.6M22 20c0-2.4-1.5-4.2-3.7-4.9"/>' },
   /*
    * `pronto` = la sección está en el menú del mockup pero todavía no existe. Hasta hoy estas dos
@@ -676,6 +679,55 @@ const init = DATA.admin;
           <button class="alt-btn alt-btn--navy" type="submit" id="gx-vta-guardar">Abrir venta</button>
         </div>
       </form>
+     </div>
+
+     <div id="gx-vista-perfiles" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-pf-volver-panel">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Perfiles</h1>
+          <p class="gx-sub">Ordenados por quién lleva más esperando. La promesa son 24 horas hábiles.</p>
+        </div>
+      </header>
+
+      <div class="gx-kpi-set">
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-pf-kpi-tarde">&#8212;</div><div class="gx-kpi__lbl">fuera del plazo prometido</div></div>
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-pf-kpi-cola">&#8212;</div><div class="gx-kpi__lbl">esperando revisi&#243;n</div></div>
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-pf-kpi-vigentes">&#8212;</div><div class="gx-kpi__lbl">verificados y vigentes</div></div>
+      </div>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>La cola de revisi&#243;n</h2></div>
+        <p class="gx-psub gx-pad-x">Sin puntaje ni sem&#225;foro de riesgo: sin contrato con una central, consultar a alguien es ilegal. Lo que se verifica son los documentos.</p>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--doc">
+            <div class="gx-tr gx-tr--head"><span>Aspirante</span><span>Estado</span><span>Espera</span><span></span></div>
+            <div id="gx-pf-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gx-panel gx-table" id="gx-pf-detalle" hidden>
+        <div class="gx-panel__head">
+          <h2 id="gx-pf-det-titulo">Perfil</h2>
+          <button class="gx-link gx-link--btn" type="button" id="gx-pf-det-cerrar">Cerrar</button>
+        </div>
+        <p class="gx-psub gx-pad-x" id="gx-pf-det-resumen"></p>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--docdet">
+            <div class="gx-tr gx-tr--head"><span>Documento</span><span>Archivo</span><span></span></div>
+            <div id="gx-pf-det-soportes"></div>
+          </div>
+        </div>
+        <p class="gx-doc-bit__aviso gx-pad-x"><strong>Estos papeles son de una persona de fuera.</strong> Se descargan con tu sesi&#243;n y no dejan enlace que reenviar. Abrir uno queda escrito con tu nombre y la fecha.</p>
+        <div class="gx-pad-x">
+          <label class="alt-label" for="gx-pf-obs">Si algo falta, escribe qu&#233;</label>
+          <input class="alt-input" id="gx-pf-obs" type="text" placeholder="La c&#233;dula est&#225; borrosa por el reverso." />
+          <p class="gx-psub">Este texto le llega a la persona tal cual. Quien lee &#171;la c&#233;dula est&#225; borrosa&#187; sube otra en dos minutos; quien lee &#171;rechazado&#187; se va.</p>
+        </div>
+        <div class="gx-pad-x gx-vta-acciones" id="gx-pf-det-acciones"></div>
+        <div class="gx-aviso gx-aviso--form gx-pad-x" id="gx-pf-det-msg" role="status" aria-live="polite"></div>
+      </div>
      </div>
 
      <div id="gx-vista-documentos" hidden>
