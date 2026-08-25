@@ -4844,3 +4844,56 @@ para probar**.
 **135.8 — Archivos.** `js/firebase-config.js` (fuera la persistencia) · `js/admin-auth.js`
 (`getIdToken`, `getDocFromServer`, `explicarPerfil`) · `admin.html` (`?v=` ×9) ·
 `portal/firebase/tests/perfil-propio.test.ts` (nuevo).
+
+
+## 136. ADR — Un callsite sin migrar expulsaba al dueño un instante después de entrar ⟦OPUS-5⟧ (2026-08-25)
+
+> *«estas afirmando cosas que no son asi yo cerre todo hasta reinicie el pc»* — Daniel, corrigiéndome.
+
+**136.1 — Causa raíz: mía, del turno anterior.** En §135 cambié `loadUserProfile()` para que devolviera
+`{ ok, perfil }` en vez del perfil pelado. Migré `handleLogin` y **NO** el oyente de
+`onAuthStateChanged`, que siguió evaluando el envoltorio:
+
+```js
+const profile = await loadUserProfile(uid);              // ahora { ok:true, perfil:{…} }
+if (!profile || profile.bloqueado || !profile.activo)    // !undefined === true
+    signOut('Sesión inválida…');
+```
+
+Entraba con la contraseña correcta y **un instante después el oyente lo echaba**. Los siete
+`permission-denied` de su consola eran la **consecuencia** de quedarse sin sesión, no la causa — y
+parecían el problema. Es §3.2 al pie de la letra: *los cambios son ADITIVOS; si no pueden serlo, se
+migran TODOS los callsites en el mismo commit.*
+
+**136.2 — 🔴 Y le di una explicación FALSA, dos veces seguidas.** Le dije que la vez anterior había
+entrado *«porque cerraste todas las pestañas»*. Había **reiniciado el PC entero**. Inventé una causa
+plausible para un hecho que no verifiqué, **veinticuatro horas después de escribir §135.2 sobre
+exactamente eso**. La forma es siempre la misma: una explicación elegante llega antes que la evidencia,
+y suena tan bien que ya no se busca la evidencia. **Documentar una lección no vacuna contra ella.**
+
+Regla operativa que sí muerde, porque no depende de acordarse: **si una afirmación sobre CAUSA no puede
+citar la sonda que la respalda, se escribe como pregunta, no como conclusión.** «Puede que fuera X,
+compruébalo así» en vez de «fue X».
+
+**136.3 — Solución.** El callsite migrado. Y como el panel legacy es **vanilla sin tests ni tipos**
+—nada podía ver esto—, nace el gate `scripts/verify-contratos-legacy.mjs`: declara que todo uso de
+`loadUserProfile` debe consultar `.ok`, y señala archivo y línea. **Cableado al pre-commit ANTES del
+corte por `docs/`**: si fuera después no correría en un commit de solo código, que es justo cuando hace
+falta — un gate colocado donde no mira es el hallazgo N9-06 otra vez.
+
+**136.4 — Verificación.** El gate **probado en los dos sentidos**: con el bug reintroducido falla y
+apunta a `js/admin-auth.js:418`; sin él, pasa. *Un gate recién escrito que pasa en verde no está
+probado, está SIN probar* ([[M-06]], 4ª forma — tercera vez que se aplica esta semana). Y el archivo
+servido por producción se leyó de vuelta para confirmar que lleva `const res` / `if (!res.ok)`.
+⚠️ **Lo que NO se pudo verificar, y se dice**: el login completo de punta a punta, porque exige la
+contraseña del dueño y **no se le suplanta para probar**. Esa es precisamente la razón de ser del gate.
+
+**136.5 — Lo que este episodio dice del método.** Tres fallos seguidos (§133, §135, §136) los destapó
+**la consola del dueño**, no un gate. Dos de los tres los introduje o los diagnostiqué mal yo. El patrón
+no es «faltan gates»: es que **el legacy no tiene ninguna red** —ni tipos, ni tests, ni build— y ahí
+cada cambio se apoya en la atención, que es el material menos fiable que existe. §136.3 pone la primera
+red; el resto del panel sigue sin ella, y eso pesa a favor de retirarlo cuanto antes en el cutover.
+
+**136.6 — Archivos.** `js/admin-auth.js` (el callsite) · `scripts/verify-contratos-legacy.mjs` (nuevo) ·
+`githooks/pre-commit` (cableado) · `admin.html` (`?v=20260825c` + icono, que quitó el 404 rojo que
+ensuciaba la consola justo donde se diagnostica).
