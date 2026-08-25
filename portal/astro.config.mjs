@@ -14,6 +14,14 @@ export default defineConfig({
   // canonical/sitemap/og deben volverse conscientes del entorno antes de emitir URLs (no en ítem 1).
   site: 'https://altorrainmobiliaria.co',
   output: 'server',
+
+  /*
+   * ⚠️ LOS 301 DEL SITIO VIEJO NO VIVEN AQUÍ, y no por descuido (§145). Se declararon en `redirects`
+   * de este config y funcionaron 28 de 65: a los otros 37 Astro les puso `prerender: true` por una
+   * heurística sobre el destino y NO emitió el archivo, así que respondían 404. Pelearse con esa
+   * heurística es frágil —cambia cada vez que una página gana o pierde su `prerender`—, así que el
+   * mecanismo es una ruta con parámetro-resto, SSR por construcción: `src/pages/[...legacy].html.ts`.
+   */
   adapter: cloudflare({
     // Bindings (R2/KV de wrangler.jsonc) se emulan AUTOMÁTICAMENTE en `astro dev`: el adapter v14 se
     // construye sobre el Cloudflare Vite plugin, que corre el dev server dentro de workerd REAL (ya no
