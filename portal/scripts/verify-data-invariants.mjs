@@ -16,7 +16,10 @@ const srcDir = resolve(root, 'src');
 // Patrón → por qué está prohibido.
 const FORBIDDEN = [
   { re: /\bimport\b[^\n]*['"]firebase-admin/, why: "SDK 'firebase-admin' (no corre en Workers; escrituras = Cloud Functions)" },
-  { re: /\bimport\b[^\n]*['"]firebase\/(firestore|app|auth|functions|storage|database|analytics)/, why: 'SDK cliente de Firebase (la capa de datos usa REST, no el SDK)' },
+  // `import type` NO cuenta: se borra al compilar y no embarca un solo byte de SDK. Marcarlo era un
+  // falso positivo del propio gate y obligaba a pedir una excepción para algo que no puede hacer daño
+  // — que es como se llena de excepciones un gate hasta que deja de significar nada (§142).
+  { re: /\bimport\b(?!\s+type\b)[^\n]*['"]firebase\/(firestore|app|auth|functions|storage|database|analytics)/, why: 'SDK cliente de Firebase (la capa de datos usa REST, no el SDK)' },
   { re: /\.onSnapshot\s*\(/, why: 'onSnapshot (listener realtime — prohibido en superficies públicas, free-tier)' },
   { re: /[:/](runQuery|listDocuments)\b/, why: 'endpoint REST de lista/query (lectura no acotada — usar GET puntual o doc-índice)' },
 ];
@@ -53,6 +56,20 @@ const EXCEPCIONES = [
     archivo: /scripts[\\/]gestion-.*\.ts$/,
     re: /['"]firebase\/(app|auth|firestore)['"]/,
     motivo: 'Panel interno tras sesión + claim de staff; consulta acotada con limit() y sin listeners',
+  },
+  {
+    // LA BÓVEDA (gate B5, §142). Aquí no hay alternativa REST razonable: subir por REST significa
+    // implementar a mano el protocolo de subida reanudable de Google, y descargar significa pedir una
+    // URL firmada… que es justo lo que NO queremos (ver abajo). El SDK se carga con `import()`
+    // dinámico y solo en este módulo, que vive detrás de sesión + claim de staff.
+    //
+    // 🔴 Y la razón de fondo por la que este permiso vale la pena: con el SDK se puede usar `getBlob`,
+    // que descarga CON la sesión y pasa por las Storage Rules. La alternativa —`getDownloadURL`—
+    // emite una URL con token que abre CUALQUIERA que la tenga, sin sesión. Para la cédula de un
+    // arrendatario eso es una fuga esperando un reenvío. La excepción compra la opción segura.
+    archivo: /scripts[\\/]gestion-documentos\.ts$/,
+    re: /['"]firebase\/storage['"]/,
+    motivo: 'Bóveda privada: `getBlob` respeta las Rules; `getDownloadURL` emitiría un enlace público',
   },
 ];
 

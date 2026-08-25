@@ -83,6 +83,11 @@ jobs:
         run: npm run verify:controles
       - name: Cifras sin respaldo en paginas publicas (§123 — Ley 1480, cero-demo)
         run: npm run verify:claims
+      # 🛡️ EXISTIA Y NO LO CORRIA NADIE (§142): ni el CI ni la rutina. Vigila el free-tier —cero SDK de
+      # Firestore en el portal, cero onSnapshot, cero lista/query sin acotar— y lo puse en rojo yo
+      # mismo dos veces el mismo dia sin enterarme. Un gate que nadie invoca no protege nada.
+      - name: Invariantes de datos (free-tier sagrado)
+        run: npm run verify:data
       - run: npm run build
       - name: Verificar render híbrido (mitigación R2/R3)
         run: npm run verify:build

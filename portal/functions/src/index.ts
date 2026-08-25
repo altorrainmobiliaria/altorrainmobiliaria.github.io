@@ -8,7 +8,9 @@
 //    `alertasDigest`). Queda UNO. El siguiente cron que se añada debe entrar en un job existente.
 //
 // ⚠️ DEPLOY = COORDINADO con el cutover (TODO-17): comparte proyecto Firebase con el legacy.
-//    `firebase deploy --only functions:portal --config portal/firebase/firebase.json`
+//    `firebase deploy --only functions:portal:<nombre> --project altorra-inmobiliaria-345c6` DESDE LA RAIZ.
+//    ⚠️ El comando con `--config portal/firebase/firebase.json` que habia aqui NO FUNCIONA y nunca
+//    funciono (§140): `source: '../functions'` se sale del directorio del proyecto.
 
 import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
@@ -30,6 +32,11 @@ export {
   crearNovedad,
   registrarPago,
 } from './gestion-escritura';
+
+// La BÓVEDA del expediente (gate B5, §142). Tres puertas: reservar la ruta, confirmar contra el
+// objeto REAL de Storage, y retirar dejando constancia. El archivo lo sube el navegador directo a
+// Storage; lo que NO se delega al navegador es decidir dónde escribe ni cuánto pesa lo que subió.
+export { confirmarDocumento, prepararDocumento, retirarDocumento } from './documentos';
 
 /**
  * Clave de la API de Resend. Es un SECRETO gestionado (Secret Manager), nunca una variable de entorno

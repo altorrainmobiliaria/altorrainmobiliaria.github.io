@@ -77,6 +77,29 @@ if (ES_PROD) {
   );
 }
 
+/*
+ * ── META-GATE: ¿algún `verify:*` se quedó sin cablear al CI? (§142) ──────────────────────────────
+ *
+ * `verify:data` existía desde Ola 0 y NO LO CORRÍA NADIE — ni el CI ni la rutina. Vigila el free-tier
+ * (cero SDK de Firestore en el portal, cero `onSnapshot`, cero lista sin acotar) y llevaba meses
+ * siendo decorativo; lo puse en rojo yo mismo dos veces en un día sin enterarme.
+ *
+ * Es exactamente el chequeo #25 del linter del cerebro —«un gate que nadie invoca no protege nada»—
+ * y el portal no lo tenía. Vive aquí, en el gate del CABLEADO, porque de eso trata: de que la
+ * plomería esté conectada.
+ */
+const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
+const ciPath = resolve(root, '..', '.github/workflows/portal-ci.yml');
+const ci = existsSync(ciPath) ? readFileSync(ciPath, 'utf8') : '';
+const gates = Object.keys(pkg.scripts ?? {}).filter((k) => k.startsWith('verify:'));
+const sueltos = gates.filter((g) => !ci.includes(`npm run ${g}`));
+check(
+  `los ${gates.length} gates verify:* están cableados al CI`,
+  ci !== '' && sueltos.length === 0,
+  sueltos.length ? `sin cablear: ${sueltos.join(', ')} — un gate que nadie invoca no protege nada` : '',
+);
+
+
 let failed = 0;
 for (const c of checks) {
   console.log(`${c.ok ? '✅' : '❌'} ${c.name}${c.detail ? ` — ${c.detail}` : ''}`);

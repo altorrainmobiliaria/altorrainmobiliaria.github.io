@@ -234,6 +234,7 @@ import Footer from '../components/Footer.astro';
 
 <script>
   import { cargarAuth, estadoAcceso } from '../scripts/auth';
+  import { llamarCallable } from '../scripts/callable';
   import {
     completarConCodigo,
     confirmarInscripcion,
@@ -507,11 +508,11 @@ import Footer from '../components/Footer.astro';
     const btn = $('seg-cerrar-todo') as HTMLButtonElement | null;
     if (btn) { btn.disabled = true; btn.textContent = 'Cerrando…'; }
     try {
-      const [{ getFunctions, httpsCallable }, { app, auth, mod }] = await Promise.all([
-        import('firebase/functions'),
-        cargarAuth(),
-      ]);
-      await httpsCallable(getFunctions(app), 'cerrarMisSesiones')({});
+      /* Por HTTP plano, no con `firebase/functions`: es la convención del panel y `verify:data`
+         prohíbe ese SDK en el portal. El protocolo callable es un POST con el token en la cabecera. */
+      const r = await llamarCallable('cerrarMisSesiones', {});
+      if (!r.ok) throw new Error(r.mensaje);
+      const { auth, mod } = await cargarAuth();
       await mod.signOut(auth);
       window.location.href = '/ingresar?volver=%2Fseguridad';
     } catch (err) {

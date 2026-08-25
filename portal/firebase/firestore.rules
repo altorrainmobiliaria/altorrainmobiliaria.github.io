@@ -156,6 +156,11 @@ service cloud.firestore {
     match /contratos/{id}   { allow read: if esStaff(); allow write: if false; }
     match /pagos/{id}       { allow read: if esStaff(); allow write: if false; }
     match /novedades/{id}   { allow read: if esStaff(); allow write: if false; }
+    // La BÓVEDA (§142). Aquí solo vive la FICHA del documento —tipo, finalidad, caducidad, ruta—; el
+    // archivo está en Storage, con sus propias reglas. La ficha se lee para saber QUÉ HAY y QUÉ FALTA
+    // sin descargar nada, que es medio módulo. Escritura solo por Function: la ruta y el tamaño los
+    // pone el servidor mirando el objeto real, no el navegador (ver `functions/src/documentos.ts`).
+    match /documentos/{id}  { allow read: if esStaff(); allow write: if false; }
 
     // ── USUARIOS ────────────────────────────────────────────────────────────────────────────────
     // Sin recursión: la versión anterior necesitaba LEER `usuarios` para saber si podías leer
