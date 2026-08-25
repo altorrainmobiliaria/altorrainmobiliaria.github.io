@@ -5500,8 +5500,12 @@ olvido más común al publicar es no meter la URL en el sitemap, y entonces el t
 tenga el enlace y para nadie más. ⚠️ Al desplegar hay que RE-ENVIAR el sitemap en Search Console.
 
 **147.8 — Lo que queda.** El mockup `ALTORRA Journal.dc.html` (4 artboards) está **SIN aprobar** por
-el dueño, igual que el de Documentos. Y las categorías «Mercado» y «Guías de zona» siguen vacías a
-propósito: se llenan con material propio, no con relleno.
+el dueño, igual que el de Documentos. **«Guías de zona» se estrenó el mismo día** con «Comprar
+para rentar», que además es un HUB: enlaza las 13 landings repartidas por el modelo que corre en
+cada una, y reparte hacia ellas la autoridad que el cutover conserva (885 enlaces internos, todos
+resuelven). Se ancló en norma —Ley 820 vs. Ley 300 + Decreto 1836— y no en «ambiente de barrio»
+por una razón de diseño: un texto cualitativo no tiene fuentes que citar, y el esquema las exige.
+«Mercado» sigue vacía a propósito: no hay dato de mercado verificado que citar.
 
 **147.9 — Archivos.** `portal/src/content.config.ts` · `portal/src/content/journal/*.md` (4) ·
 `portal/src/lib/content/journal.ts` (+ `.test.ts`) · `portal/src/pages/journal.astro` ·
