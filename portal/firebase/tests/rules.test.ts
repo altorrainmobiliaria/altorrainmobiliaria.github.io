@@ -246,6 +246,7 @@ async function seedFusion() {
     await setDoc(doc(db, 'loginAttempts/hash-1'), { intentos: 1 });
     await setDoc(doc(db, 'drafts_activos/editor-uid'), { propId: 'INM-1' });
     await setDoc(doc(db, 'ventas/VTA-1'), { etapa: 'oferta', compradorNombre: 'Ana' });
+    await setDoc(doc(db, 'perfiles/cliente-uid'), { uid: 'cliente-uid', estado: 'enviado' });
     await setDoc(doc(db, 'alertas/a-1'), { email: 'x@y.co', token: 'secreto-largo-de-sobra' });
     await setDoc(doc(db, 'contratos/c-1'), { estado: 'vigente' });
     await setDoc(doc(db, 'pagos/p-1'), { estado: 'pendiente' });
@@ -333,6 +334,19 @@ describe('legacy VIVO — admin.html no se puede quedar sin sus colecciones', ()
     await assertFails(getDoc(doc(anon(), 'ventas/VTA-1')));
     await assertFails(setDoc(doc(superAdmin(), 'ventas/VTA-2'), { etapa: 'registro' }));
     await assertFails(setDoc(doc(editor(), 'ventas/VTA-1'), { etapa: 'registro' }));
+  });
+
+  it('🔒 el perfil de inquilino: lo lee SU titular y el staff; no lo escribe nadie', async () => {
+    // Es el unico documento del sistema con datos de alguien de FUERA del equipo que esa persona
+    // misma alimenta. Su titular lo ve porque es suyo; el staff porque tiene que revisarlo; y el
+    // estado del proceso solo lo mueve el servidor — no quien tiene interes en el resultado (§152).
+    await assertSucceeds(getDoc(doc(cliente(), 'perfiles/cliente-uid')));
+    await assertSucceeds(getDoc(doc(staff(), 'perfiles/cliente-uid')));
+    await assertFails(getDoc(doc(anon(), 'perfiles/cliente-uid')));
+    await assertFails(setDoc(doc(cliente(), 'perfiles/cliente-uid'), { estado: 'verificado' }));
+    await assertFails(setDoc(doc(superAdmin(), 'perfiles/cliente-uid'), { estado: 'verificado' }));
+    // Y NADIE de fuera lista la coleccion: seria un censo de quien busca arriendo en la ciudad.
+    await assertFails(getDocs(collection(cliente(), 'perfiles')));
   });
 
   it('el borrador de un usuario es suyo y de nadie más', async () => {

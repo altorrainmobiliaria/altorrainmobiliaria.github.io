@@ -43,6 +43,16 @@ export { confirmarDocumento, prepararDocumento, retirarDocumento } from './docum
 // formulario se acuerde de aplicarlos.
 export { crearVenta, moverVenta } from './venta-escritura';
 
+// PERFIL DE INQUILINO 1→N (Ola 2, §152). Es el ÚNICO sitio del sistema donde escribe alguien de
+// FUERA del equipo, así que el `uid` sale del token y jamás del cuerpo de la llamada.
+export {
+  confirmarSoporte,
+  enviarPerfil,
+  guardarPerfil,
+  prepararSoporte,
+  revisarPerfil,
+} from './perfil-escritura';
+
 /**
  * Clave de la API de Resend. Es un SECRETO gestionado (Secret Manager), nunca una variable de entorno
  * en claro: una clave de envío filtrada permite mandar correo firmado con nuestro dominio.

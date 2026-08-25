@@ -257,6 +257,17 @@ service cloud.firestore {
       allow write: if false;   // SOLO el servidor
     }
 
+    // ── PERFIL DE INQUILINO (§152) ──────────────────────────────────────────────────────────────
+    // Lo LEE su titular (es suyo) y el staff (tiene que revisarlo). Lo ESCRIBE solo el servidor: el
+    // estado del proceso —enviado, verificado— no puede moverlo quien tiene interés en el resultado.
+    // ⚖️ Datos personales de alguien de FUERA del equipo: nadie más lo ve, y ni siquiera se puede
+    // listar la colección, que sería un censo de quién está buscando arriendo en la ciudad.
+    match /perfiles/{uid} {
+      allow get: if esStaff() || (request.auth != null && request.auth.uid == uid);
+      allow list: if esStaff();
+      allow write: if false;   // SOLO el servidor
+    }
+
     match /drafts_activos/{userId} {
       allow read: if esEditorOMas();
       allow write: if esEditorOMas() && request.auth.uid == userId;

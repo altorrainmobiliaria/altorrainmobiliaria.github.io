@@ -109,6 +109,18 @@ export interface PerfilInquilino extends Versioned, Auditable {
   autorizaTratamiento?: boolean;
 }
 
+/**
+ * RUTA DEL SOPORTE en el bucket privado. La pone el SERVIDOR, nunca el formulario — mismo criterio
+ * que la bóveda (§142.2), y aquí con una razón extra: el `uid` va DENTRO de la ruta, así que las
+ * Storage Rules pueden dejar a cada persona escribir solo bajo la suya. Si la ruta la eligiera el
+ * navegador, «solo bajo la suya» no significaría nada.
+ *
+ * El nombre del archivo NO entra: viene de la persona y podría traer su cédula, un acento raro o una
+ * barra. Se guarda como dato y se sirve al descargar; la ruta se construye con el id.
+ */
+export const claveSoporte = (uid: string, requisito: Requisito, id: string, ext: string): string =>
+  `perfiles/${uid}/${requisito}/${id}.${ext.replace(/[^a-z0-9]/gi, '').toLowerCase() || 'bin'}`;
+
 /** Qué requisitos le faltan al perfil, contando que la referencia puede no aplicar. */
 export function faltantes(p: Pick<PerfilInquilino, 'soportes' | 'primerArriendo'>): Requisito[] {
   const hay = new Set(p.soportes.map((s) => s.requisito));

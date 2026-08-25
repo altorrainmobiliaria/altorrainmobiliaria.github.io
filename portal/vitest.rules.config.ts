@@ -26,5 +26,19 @@ export default defineConfig({
     include: ['firebase/tests/**/*.test.ts'],
     testTimeout: 20000,
     hookTimeout: 20000,
+    /*
+     * 🔴 UN ARCHIVO A LA VEZ, y no es una preferencia de estilo (§152).
+     *
+     * Estas pruebas no son unitarias: comparten UNA instancia del emulador, UNA app por defecto de
+     * Firebase (las Functions llaman a `getFirestore()` a secas, así que no puede ser otra) y, por
+     * tanto, UNA base de datos. Varios archivos limpian `config` en su `beforeEach` porque ahí vive
+     * el contador de códigos — y en paralelo, el `beforeEach` de uno borra el contador que otro está
+     * usando a mitad de una prueba.
+     *
+     * Estuvo latente todo el tiempo: con dos archivos la carrera no se daba, y apareció el día que
+     * entró el tercero, acusando a una prueba de contadores que llevaba semanas bien. Un fallo que
+     * culpa a un inocente es el peor tipo de fallo, así que se cierra la puerta en vez de reordenar.
+     */
+    fileParallelism: false,
   },
 });

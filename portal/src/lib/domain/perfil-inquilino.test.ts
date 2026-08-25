@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  claveSoporte,
   diasDeVigencia,
   diasEsperando,
   ESTADOS,
@@ -76,6 +77,21 @@ describe('faltantes', () => {
 
   it('pero sí debe los tres obligatorios, aunque sea su primer arriendo', () => {
     expect(faltantes({ soportes: [sop('cedula')], primerArriendo: true })).toEqual(['ingresos', 'laboral']);
+  });
+});
+
+describe('claveSoporte', () => {
+  it('mete el uid DENTRO de la ruta: es lo que deja a las Rules acotar por persona', () => {
+    expect(claveSoporte('U1', 'cedula', 'S-9', 'pdf')).toBe('perfiles/U1/cedula/S-9.pdf');
+  });
+
+  it('el nombre del archivo NO entra: podría traer la cédula de alguien, o una barra', () => {
+    expect(claveSoporte('U1', 'ingresos', 'S-9', 'pdf')).not.toContain('nomina');
+  });
+
+  it('la extensión se limpia: nada de rutas coladas por ahí', () => {
+    expect(claveSoporte('U1', 'cedula', 'S-9', '../../png')).toBe('perfiles/U1/cedula/S-9.png');
+    expect(claveSoporte('U1', 'cedula', 'S-9', '')).toBe('perfiles/U1/cedula/S-9.bin');
   });
 });
 

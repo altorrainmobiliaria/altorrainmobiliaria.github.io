@@ -52,6 +52,23 @@ service firebase.storage {
       allow read, write: if esStaff();
     }
 
+    // ── PERFIL DE INQUILINO (§152) ──────────────────────────────────────────────────────────────
+    // La carpeta lleva el `uid` DENTRO, y esa es toda la seguridad: cada persona escribe solo bajo la
+    // suya. Por eso la ruta la acuña el servidor (`prepararSoporte`) y nunca el formulario — si la
+    // eligiera el navegador, «solo bajo la suya» no significaría nada.
+    //
+    // ⚖️ Aquí hay cédulas y soportes de ingresos de personas que NO son del equipo. El staff LEE para
+    // revisar —es el trabajo— pero no escribe: un revisor que puede tocar lo que revisa no es un
+    // revisor. Y el titular escribe lo suyo, con el mismo tope y tipos que la bóveda.
+    match /perfiles/{uid}/{allPaths=**} {
+      allow read: if esStaff() || (request.auth != null && request.auth.uid == uid);
+      allow write: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.size < 10 * 1024 * 1024
+        && (request.resource.contentType.matches('image/.*')
+            || request.resource.contentType == 'application/pdf');
+    }
+
     // ── DEFAULT: todo lo no declarado, DENEGADO ─────────────────────────────────────────────────
     match /{allPaths=**} {
       allow read, write: if false;
