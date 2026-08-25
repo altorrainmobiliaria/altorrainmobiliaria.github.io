@@ -614,6 +614,9 @@ exports.createManagedUserV2 = onCall(
       creadoPor: request.auth.uid,
     });
 
+    await anotar('usuario-creado', request.auth.uid, {
+      objetivo: userRecord.uid, detalle: `${email} como ${rol}`,
+    });
     return { success: true, uid: userRecord.uid };
   }
 );
@@ -639,6 +642,7 @@ exports.deleteManagedUserV2 = onCall(
     }
 
     await db.collection('usuarios').doc(uid).delete();
+    await anotar('usuario-eliminado', request.auth.uid, { objetivo: uid });
     return { success: true };
   }
 );
@@ -668,10 +672,14 @@ exports.updateUserRoleV2 = onCall(
       throw new HttpsError('not-found', 'Usuario no existe en /usuarios.');
     }
 
+    const rolAnterior = snap.data().rol;
     await ref.update({
       rol,
       actualizadoEn:  FieldValue.serverTimestamp(),
       actualizadoPor: request.auth.uid,
+    });
+    await anotar('rol-cambiado', request.auth.uid, {
+      objetivo: uid, detalle: `${rolAnterior} → ${rol}`,
     });
 
     return { success: true };
@@ -983,3 +991,91 @@ exports.sincronizarClaimsV2 = onCall({ region: REGION }, async (request) => {
   console.info(`[claims] backfill: ${vivos.size} sincronizados · ${huerfanos} huérfanos revocados`);
   return { ok: true, sincronizados: vivos.size, huerfanos, censoCompleto };
 });
+
+
+// ══════════════════════════════════════════════════════════════════════════
+// 12. registrarEvento — la BITÁCORA de acceso y de cambios (§130)
+// ══════════════════════════════════════════════════════════════════════════
+/*
+ * `auditLog` llevaba desde siempre declarada en las Security Rules —con permisos, con la regla de
+ * inmutabilidad y todo— y NADIE escribía en ella. Una bitácora declarada y vacía es peor que no
+ * tenerla: el día que pase algo, quien la abra creerá que hubo registro.
+ *
+ * Por qué la escribe el SERVIDOR y no el navegador:
+ *   · La regla anterior era `create: if esEditorOMas()`, o sea que la redactaba el propio vigilado.
+ *     Podía inventarse entradas, o simplemente no escribir la que le incomodara.
+ *   · Aquí el uid, el correo y el rol NO vienen del cuerpo de la llamada: se leen del token que ya
+ *     verificó Firebase, y del documento de `usuarios`. El cliente solo puede decir QUÉ hizo, nunca
+ *     QUIÉN es.
+ *   · La IP la ve esta Function; el navegador no puede mentir sobre ella.
+ *
+ * ⚠️ Lo que esta bitácora NO ve, dicho aquí para que nadie lo descubra tarde: los intentos FALLIDOS.
+ * Un login que falla nunca llega a nuestro backend, así que registrarlos exige las *blocking
+ * functions* del proveedor (`beforeUserSignedIn`), que son de Identity Platform.
+ */
+const ACCIONES_VALIDAS = new Set([
+  'acceso', 'salida', 'password-cambiada', 'usuario-creado', 'usuario-eliminado',
+  'rol-cambiado', 'usuario-suspendido', 'usuario-reactivado', 'claims-sincronizados',
+]);
+
+exports.registrarEvento = onCall({ region: REGION }, async (request) => {
+  const uid = request.auth?.uid;
+  if (!uid) throw new HttpsError('unauthenticated', 'Se requiere sesión.');
+
+  const accion = String(request.data?.accion || '').slice(0, 40);
+  if (!ACCIONES_VALIDAS.has(accion)) {
+    throw new HttpsError('invalid-argument', `Acción no reconocida: ${accion}`);
+  }
+
+  // El perfil se relee: el rol que importa es el que hay AHORA en la base, no el que el token
+  // arrastre desde hace una hora (los claims viajan dentro del token y se renuevan cada 60 min).
+  let perfil = {};
+  try {
+    const snap = await db.collection('usuarios').doc(uid).get();
+    if (snap.exists) perfil = snap.data();
+  } catch (e) {
+    console.warn('[auditLog] no se pudo leer el perfil de', uid, e.message);
+  }
+
+  // `rawRequest` es el Request de Express que hay debajo del callable. Detrás de un balanceador la
+  // IP del cliente va en `x-forwarded-for`, y es una LISTA: la primera es la del cliente, las demás
+  // son los saltos. Quedarse con la última daría siempre la del proxy de Google.
+  const cabeceras = request.rawRequest?.headers || {};
+  const reenviada = String(cabeceras['x-forwarded-for'] || '').split(',')[0].trim();
+  const ip = reenviada || request.rawRequest?.ip || null;
+
+  const entrada = {
+    accion,
+    uid,
+    email:      request.auth.token?.email || perfil.email || null,
+    rol:        perfil.rol || null,
+    origen:     String(request.data?.origen || 'desconocido').slice(0, 40),
+    // `detalle` es lo ÚNICO que viene del cliente sin verificar. Se guarda como texto y acotado,
+    // para que no pueda usarse ni para inflar el documento ni para colar estructuras.
+    detalle:    request.data?.detalle ? String(request.data.detalle).slice(0, 300) : null,
+    objetivo:   request.data?.objetivo ? String(request.data.objetivo).slice(0, 128) : null,
+    ip,
+    userAgent:  String(cabeceras['user-agent'] || '').slice(0, 200) || null,
+    // Segundo factor: hoy siempre `null` porque no hay MFA. Cuando lo haya, el token traerá
+    // `firebase.sign_in_second_factor` y esta columna dirá, por cada entrada, si se pasó o no.
+    segundoFactor: request.auth.token?.firebase?.sign_in_second_factor || null,
+    creadoEn:   FieldValue.serverTimestamp(),
+  };
+
+  await db.collection('auditLog').add(entrada);
+  return { ok: true };
+});
+
+/** Uso interno: escribe en la bitácora sin pasar por el callable (para las Functions de usuarios). */
+async function anotar(accion, actorUid, campos = {}) {
+  try {
+    await db.collection('auditLog').add({
+      accion, uid: actorUid, origen: 'servidor',
+      ...campos,
+      creadoEn: FieldValue.serverTimestamp(),
+    });
+  } catch (e) {
+    // Nunca tumbar la operación por no poder anotarla.
+    console.error('[auditLog] fallo al anotar', accion, e.message);
+  }
+}

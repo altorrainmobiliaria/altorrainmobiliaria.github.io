@@ -71,10 +71,12 @@ service cloud.firestore {
       allow update: if esSuperAdmin() || (esEditorOMas() && versionValida());
       allow delete: if esSuperAdmin();
 
-      // Historial de cambios — INMUTABLE.
+      // Historial de cambios — INMUTABLE, y desde §130 también SERVER-ONLY: `create: if esEditorOMas()`
+      // dejaba que el propio editor redactara el historial de sus cambios. Nadie escribía aquí
+      // (verificado en todo el código), así que cerrarlo no rompe nada y lo deja listo para `anotar()`.
       match /auditLog/{logId} {
         allow read: if esStaff();
-        allow create: if esEditorOMas();
+        allow create: if false;   // SOLO el servidor
         allow update: if false;
         allow delete: if esSuperAdmin();
       }
@@ -189,13 +191,23 @@ service cloud.firestore {
       allow write: if esEditorOMas();
     }
 
-    // ── LOGIN ATTEMPTS (rate limiting cross-device del legacy) ──────────────────────────────────
-    // Abierto POR DISEÑO: se escribe ANTES de tener sesión, que es justo cuando hay que contar los
-    // intentos. Su debilidad conocida (cualquiera puede resetear el contador de otro) es inherente a
-    // un rate limit de cliente; el límite que de verdad protege es el de Firebase Auth.
+    // ── LOGIN ATTEMPTS — CERRADO (§130) ─────────────────────────────────────────────────────────
+    // Estuvo abierto (`if true`) porque el contador se escribe ANTES de tener sesión. El comentario
+    // viejo reconocía media debilidad —«cualquiera puede resetear el contador de otro»— y la daba por
+    // inherente. La OTRA media, que nadie había nombrado, es la que lo condena: **el id del documento
+    // es el SHA-256 del correo, y un hash no es un secreto**. Cualquiera puede calcular el de
+    // `info@altorrainmobiliaria.co`, escribir `bloqueado:true` y dejar al dueño fuera 15 minutos, en
+    // bucle. Un candado que solo el atacante abre y solo la víctima sufre.
+    //
+    // No se movió al servidor: bloquear cuentas por intentos fallidos ES la puerta de la negación de
+    // servicio (OWASP ASVS 6.1.1 pide explícitamente que los controles «prevent malicious account
+    // lockout»). Quien protege de verdad contra fuerza bruta es el límite por IP de Firebase Auth,
+    // que vive en el servidor de Google y no se puede manipular desde aquí.
+    //
+    // Se deja el `match` en vez de borrarlo: sin él la colección caería en el deny-all final —el mismo
+    // efecto— pero un futuro lector no sabría que esto se decidió, y lo reintentaría.
     match /loginAttempts/{emailHash} {
-      allow read, create, update: if true;
-      allow delete: if esSuperAdmin();
+      allow read, write: if false;
     }
 
     // ── LEGACY: contenido y operación del sitio viejo (lo usa `admin.html`) ─────────────────────
@@ -212,9 +224,17 @@ service cloud.firestore {
       allow delete: if esSuperAdmin();
     }
 
+    // ── BITÁCORA DE ACCESO Y DE CAMBIOS (§130) ──────────────────────────────────────────────────
+    // Antes: `create: if esEditorOMas()`. Es decir, la escribía el CLIENTE — y una bitácora que el
+    // vigilado puede redactar no es una bitácora. Nadie escribía en ella, así que cerrarla no rompe
+    // nada; ahora la escribe SOLO `registrarEvento` (Cloud Function), que bypassa estas reglas y pone
+    // el uid VERIFICADO del token, no el que diga el navegador.
+    //
+    // Lectura: solo el super_admin. Guarda IP y patrón de acceso de otras personas del equipo — dato
+    // personal de terceros, y el principio de minimización de la Ley 1581 no pide menos.
     match /auditLog/{logId} {
-      allow read: if esStaff();
-      allow create: if esEditorOMas();
+      allow read: if esSuperAdmin();
+      allow create: if false;   // SOLO el servidor
       allow update: if false;   // INMUTABLE
       allow delete: if esSuperAdmin();
     }

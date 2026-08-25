@@ -2,18 +2,23 @@
  * admin-auth.js — Autenticación y RBAC del panel de administración
  * Altorra Inmobiliaria
  *
- * Patrón: Altorra Cars admin-auth.js
  * Flujo:
- *   1. Verificar loginAttempts (bloqueo tras 5 intentos)
- *   2. signInWithEmailAndPassword()
- *   3. Cargar perfil usuarios/{uid} → rol
- *   4. Verificar estado bloqueado
+ *   1. signInWithEmailAndPassword()  ← el límite de fuerza bruta lo pone el proveedor, no nosotros
+ *   2. Cargar perfil usuarios/{uid} → rol
+ *   3. Verificar estado bloqueado / desactivado
+ *   4. Registrar el acceso en la bitácora (servidor)
  *   5. applyRolePermissions() → mostrar/ocultar UI
  *
  * Seguridad:
- *   - Timeout de sesión: 8 horas
- *   - Inactividad: 30 min (advertencia 1 min antes)
+ *   - Timeout de sesión: 8 horas · Inactividad: 30 min (advertencia 1 min antes)
  *   - Retry 3x con backoff al cargar perfil (fix bug "Access denied for UID")
+ *   - Recuperación de contraseña sin filtrar qué correos existen (§128)
+ *   - Bitácora de acceso escrita por el SERVIDOR (§130)
+ *
+ * ⚠️ Esto NO es una frontera de seguridad: corre en el navegador y decide qué se DIBUJA. La frontera
+ * son las Security Rules. Se dejó de imitar el patrón de Altorra Cars justamente por ahí: allá el
+ * segundo factor se resuelve con una variable de JavaScript (`_2faVerified`), y una variable del
+ * navegador no protege un dato del servidor (§130).
  */
 
 (function () {
@@ -23,9 +28,8 @@
   const SESSION_MAX_MS    = 8 * 60 * 60 * 1000;   // 8 horas
   const INACTIVITY_MS     = 30 * 60 * 1000;        // 30 min
   const WARN_BEFORE_MS    = 60 * 1000;             // 1 min antes de expirar
-  const MAX_LOGIN_ATTEMPTS = 5;
-  const LOCKOUT_MS        = 15 * 60 * 1000;        // 15 min bloqueo
   const PROFILE_RETRY_MAX = 3;
+  // MAX_LOGIN_ATTEMPTS y LOCKOUT_MS se fueron con el candado de intentos (§130).
 
   /* ─── Estado interno ──────────────────────────────────── */
   let _inactivityTimer = null;
@@ -82,52 +86,52 @@
     btn.textContent = loading ? 'Verificando...' : 'Iniciar sesión';
   }
 
-  /* ─── Hash rápido de email para loginAttempts ────────── */
-  async function hashEmail(email) {
-    const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(email.toLowerCase().trim()));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('').slice(0, 20);
-  }
+  /* ─── El candado de intentos: RETIRADO (§130) ─────────────────────────────────────────────────
+   * Aquí vivían `hashEmail`, `checkLoginAttempts`, `recordLoginFailure` y `resetLoginAttempts`:
+   * un contador en Firestore, indexado por el SHA-256 del correo, que bloqueaba la cuenta 15 minutos
+   * tras 5 fallos. Se retira entero, y no por simplificar:
+   *
+   *   · NO protegía — el contador vivía donde escribe el atacante. Poner `intentos:0` antes de cada
+   *     prueba lo desactivaba, y la regla lo permitía (`allow create, update: if true`).
+   *   · SÍ atacaba — un hash NO es un secreto. Cualquiera calcula el de `info@altorrainmobiliaria.co`,
+   *     escribe `bloqueado:true` y deja al dueño fuera. En bucle, indefinidamente.
+   *
+   * Quien protege de verdad es el límite por IP de **Firebase Auth**: vive en el servidor de Google,
+   * es anterior a nuestro código y no se puede tocar desde el navegador. Cuando salta, la propia
+   * librería devuelve `auth/too-many-requests`, que ya se traduce abajo.
+   *
+   * ⚠️ Bloquear una cuenta por intentos fallidos es, por diseño, una negación de servicio esperando
+   * a que alguien la use (OWASP ASVS 6.1.1: los controles anti-automatización deben *«prevent
+   * malicious account lockout»*). La defensa correcta no es contar en el cliente: es la protección
+   * anti-bot del proveedor — hoy APAGADA, y es de las cosas que hay que encender en la consola.
+   */
 
-  /* ─── Control de intentos de login ───────────────────── */
-  async function checkLoginAttempts(emailHash) {
-    const { getDoc, doc } = await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
+  /* ─── Bitácora de acceso (§130) ───────────────────────────────────────────────────────────────
+   * La colección `auditLog` existía en las reglas desde siempre… y NADIE escribía en ella. Una
+   * bitácora declarada y vacía es peor que ninguna: quien la busque el día que pase algo creerá que
+   * hubo registro y no lo hubo.
+   *
+   * Se escribe desde el SERVIDOR a propósito. El navegador solo dispara la llamada; el uid, el correo
+   * y el rol los pone la Function leyéndolos del token verificado, y la IP la ve ella. Si lo escribiera
+   * el cliente, el vigilado estaría redactando su propia bitácora — y las reglas ahora lo prohíben
+   * (`create: if false`).
+   *
+   * ⚠️ Límite honesto: esto registra los ingresos que SALEN BIEN. Un intento fallido nunca llega a
+   * nuestro backend, así que registrarlos de verdad exige las *blocking functions* del proveedor.
+   * Queda dicho aquí para que nadie lea esta bitácora creyendo que ve los ataques.
+   */
+  async function registrarAcceso() {
     try {
-      const snap = await getDoc(doc(window.db, 'loginAttempts', emailHash));
-      if (!snap.exists()) return { blocked: false, intentos: 0 };
-      const d = snap.data();
-      if (d.bloqueado) {
-        const elapsed = Date.now() - d.ultimoIntento.toMillis();
-        if (elapsed < LOCKOUT_MS) {
-          const remaining = Math.ceil((LOCKOUT_MS - elapsed) / 60000);
-          return { blocked: true, remaining };
-        }
-        // El bloqueo expiró — resetear
-        await resetLoginAttempts(emailHash);
-      }
-      return { blocked: false, intentos: d.intentos || 0 };
-    } catch {
-      return { blocked: false, intentos: 0 };
+      const { httpsCallable } =
+        await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-functions.js');
+      await httpsCallable(window.functions, 'registrarEvento')({
+        accion: 'acceso',
+        origen: 'panel-legacy',
+      });
+    } catch (err) {
+      // Nunca romper el login por la bitácora.
+      console.warn('[AdminAuth] no se pudo registrar el acceso:', err && err.code);
     }
-  }
-
-  async function recordLoginFailure(emailHash, intentos) {
-    const { setDoc, doc, serverTimestamp } =
-      await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
-    const newIntentos = intentos + 1;
-    await setDoc(doc(window.db, 'loginAttempts', emailHash), {
-      intentos:      newIntentos,
-      bloqueado:     newIntentos >= MAX_LOGIN_ATTEMPTS,
-      ultimoIntento: serverTimestamp(),
-    }, { merge: true });
-    return newIntentos;
-  }
-
-  async function resetLoginAttempts(emailHash) {
-    const { setDoc, doc, serverTimestamp } =
-      await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
-    await setDoc(doc(window.db, 'loginAttempts', emailHash), {
-      intentos: 0, bloqueado: false, ultimoIntento: serverTimestamp(),
-    }, { merge: true });
   }
 
   /* ─── Carga de perfil con retry (fix "Access denied for UID") ── */
@@ -270,17 +274,8 @@
     if (errEl) errEl.hidden = true;
 
     try {
-      const emailHash = await hashEmail(email);
-
-      // 1. Verificar bloqueo por intentos
-      const { blocked, remaining, intentos } = await checkLoginAttempts(emailHash);
-      if (blocked) {
-        showLogin(`Cuenta bloqueada. Intenta de nuevo en ${remaining} minutos.`);
-        setLoginLoading(false);
-        return;
-      }
-
-      // 2. Autenticar con Firebase
+      // 1. Autenticar con Firebase. El límite de fuerza bruta lo pone el propio proveedor (§130):
+      //    es por IP, vive en su servidor y devuelve `auth/too-many-requests` cuando salta.
       const { signInWithEmailAndPassword } =
         await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js');
 
@@ -288,12 +283,14 @@
       try {
         credential = await signInWithEmailAndPassword(window.auth, email.trim(), password);
       } catch (authErr) {
-        const newIntentos = await recordLoginFailure(emailHash, intentos || 0);
-        const remaining = MAX_LOGIN_ATTEMPTS - newIntentos;
-        if (remaining <= 0) {
-          showLogin('Demasiados intentos fallidos. Cuenta bloqueada por 15 minutos.');
+        // El mensaje NO distingue «no existe» de «clave mala»: decirlo convertiría el formulario en
+        // un detector de qué correos tienen acceso al panel (misma razón que en la recuperación, §128).
+        if (authErr && authErr.code === 'auth/too-many-requests') {
+          showLogin('Demasiados intentos seguidos desde esta conexión. Espera unos minutos y vuelve a intentarlo.');
+        } else if (authErr && authErr.code === 'auth/network-request-failed') {
+          showLogin('No pudimos contactar el servidor. Revisa tu conexión e inténtalo de nuevo.');
         } else {
-          showLogin(`Email o contraseña incorrectos. ${remaining} intento(s) restante(s).`);
+          showLogin('Correo o contraseña incorrectos.');
         }
         setLoginLoading(false);
         return;
@@ -327,8 +324,10 @@
         return;
       }
 
-      // 6. Login exitoso — resetear intentos
-      await resetLoginAttempts(emailHash);
+      // 6. Login exitoso — dejarlo ESCRITO (§130). La bitácora la escribe el servidor con el uid del
+      //    token verificado; desde aquí solo se avisa. No se espera (`void`): si la red falla, el
+      //    registro se pierde pero la persona entra igual — una bitácora no debe poder tumbar el acceso.
+      void registrarAcceso();
 
       _currentUser  = { uid, email: credential.user.email, ...profile };
       _sessionStart = Date.now();

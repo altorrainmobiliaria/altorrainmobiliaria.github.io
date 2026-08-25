@@ -247,11 +247,18 @@ describe('legacy VIVO — admin.html no se puede quedar sin sus colecciones', ()
     await seedFusion();
   });
 
-  it('🔴 loginAttempts sigue abierto: se escribe ANTES de tener sesión', async () => {
-    // Si esto falla, el login del panel legacy revienta con «Error inesperado» DESPUÉS de autenticar
-    // bien, porque `resetLoginAttempts()` corre dentro del try sin catch propio.
-    await assertSucceeds(getDoc(doc(anon(), 'loginAttempts/hash-1')));
-    await assertSucceeds(setDoc(doc(anon(), 'loginAttempts/hash-2'), { intentos: 1 }));
+  it('🔒 loginAttempts está CERRADO: nadie puede bloquear la cuenta de otro (§130)', async () => {
+    // Este test decía lo CONTRARIO —«sigue abierto», y lo daba por bueno—. La regla permitía
+    // `create/update` a cualquiera porque el contador se escribe antes de tener sesión; lo que nadie
+    // había visto es que el id del documento es el SHA-256 del correo, y un hash no es un secreto:
+    // se podía calcular el del dueño y escribirle `bloqueado:true` en bucle.
+    //
+    // El ataque, escrito como test para que no vuelva:
+    await assertFails(setDoc(doc(anon(), 'loginAttempts/hash-1'), { bloqueado: true }));
+    // Y tampoco se puede leer el estado de bloqueo ajeno (era un oráculo de qué correos existen):
+    await assertFails(getDoc(doc(anon(), 'loginAttempts/hash-1')));
+    // Ni siquiera desde dentro: la colección está muerta a propósito.
+    await assertFails(setDoc(doc(editor(), 'loginAttempts/hash-2'), { intentos: 0 }));
   });
 
   it('reseñas y blog siguen siendo de lectura pública', async () => {
@@ -272,6 +279,20 @@ describe('legacy VIVO — admin.html no se puede quedar sin sus colecciones', ()
 
   it('el auditLog es INMUTABLE incluso para el super_admin', async () => {
     await assertFails(setDoc(doc(superAdmin(), 'auditLog/a-1'), { accion: 'editado' }));
+  });
+
+  it('🔒 la bitácora la escribe el SERVIDOR: nadie la redacta desde el navegador (§130)', async () => {
+    // Antes era `create: if esEditorOMas()`, o sea que el vigilado redactaba su propia bitácora:
+    // podía inventarse entradas ajenas, o simplemente no escribir la que le incomodara.
+    await assertFails(setDoc(doc(editor(), 'auditLog/falsa-1'), { accion: 'acceso', uid: 'otro' }));
+    await assertFails(setDoc(doc(superAdmin(), 'auditLog/falsa-2'), { accion: 'acceso' }));
+    // La escribe `registrarEvento`, que al ser Admin SDK bypassa estas reglas y pone el uid del token.
+  });
+
+  it('🔒 la bitácora solo la LEE el super_admin: lleva IP y hábitos de terceros (§130)', async () => {
+    await assertSucceeds(getDoc(doc(superAdmin(), 'auditLog/a-1')));
+    await assertFails(getDoc(doc(editor(), 'auditLog/a-1')));
+    await assertFails(getDoc(doc(anon(), 'auditLog/a-1')));
   });
 
   it('el borrador de un usuario es suyo y de nadie más', async () => {
