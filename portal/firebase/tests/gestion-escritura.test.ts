@@ -24,6 +24,7 @@ import {
   crearExpediente,
   crearNovedad,
 } from '../../functions/src/gestion-escritura';
+import type { Expediente, Novedad } from '../../src/lib/domain/gestion';
 
 let app: App;
 let db: Firestore;
@@ -115,7 +116,7 @@ describe('crearExpediente', () => {
     const r = (await crearExpediente.run(pedir(EXPEDIENTE_VALIDO))) as {
       ok: boolean;
       id: string;
-      expediente: Record<string, unknown>;
+      expediente: Expediente;
     };
     expect(r.ok).toBe(true);
     expect(r.id).toMatch(/^EXP-\d{6}-0001$/);
@@ -167,12 +168,12 @@ describe('crearNovedad', () => {
 
   it('la abre, le pone el SLA desde el SERVIDOR y la deja PENDIENTE', async () => {
     const exp = await conExpediente();
-    const r = (await crearNovedad.run(pedir(NOVEDAD(exp)))) as { id: string; novedad: Record<string, unknown> };
+    const r = (await crearNovedad.run(pedir(NOVEDAD(exp)))) as { id: string; novedad: Novedad };
     expect(r.id).toMatch(/^NOV-\d{6}-0001$/);
     expect(r.novedad.estado).toBe('PENDIENTE');
     // El plazo NO lo manda el formulario: si lo mandara, un reloj mal puesto falsearía el tablero.
     expect(typeof r.novedad.slaVencimiento).toBe('string');
-    expect(Date.parse(String(r.novedad.slaVencimiento))).toBeGreaterThan(Date.parse(String(r.novedad.createdAt)));
+    expect(Date.parse(r.novedad.slaVencimiento ?? '')).toBeGreaterThan(Date.parse(r.novedad.createdAt));
   });
 
   it('🔴 con un expediente que NO existe: rechaza', async () => {

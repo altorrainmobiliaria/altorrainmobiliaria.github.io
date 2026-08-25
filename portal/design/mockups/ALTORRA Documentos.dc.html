@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  body { margin:0; background:#E6EDF2; font-family:'Hanken Grotesk',sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:#062743; text-decoration:none; }
+  a:hover { color:#D4AF37; }
+  button { font-family:'Hanken Grotesk',sans-serif; cursor:pointer; }
+</style>
+</helmet>
+
+<!--
+  ══════════════════════════════════════════════════════════════════
+  ALTORRA · DOCUMENTOS — la bóveda privada del expediente (TODO-46 b · gate B5)
+
+  LA IDEA CENTRAL, en una frase: **esto no es un depósito de archivos, es la respuesta a "¿qué me
+  falta?"**. Un cajón donde se suben PDFs no cambia nada: el dueño ya tiene eso en WhatsApp y en el
+  escritorio. Lo que hoy no tiene —y le cuesta dinero— es saber, sin abrir nada, que el expediente
+  de la calle 47 lleva ocho meses sin el contrato firmado escaneado, o que la póliza del arrendatario
+  venció en marzo. Por eso la pantalla principal NO empieza por la lista de archivos: empieza por lo
+  que falta y por lo que caduca.
+
+  TRES DECISIONES QUE NO SON DE DISEÑO, SINO DE FONDO:
+
+  1. ⚖️ SON DATOS DE TERCEROS, NO NUESTROS. Aquí viven cédulas y contratos de propietarios e
+     inquilinos: Ley 1581 (finalidad, seguridad art. 4g, minimización). Cada documento nace con su
+     FINALIDAD escrita y su fecha de retiro, porque un archivo sin fecha de caducidad se queda para
+     siempre — y guardar de más es exactamente lo que la ley llama tratar sin necesidad.
+
+  2. 🔗 NUNCA UN ENLACE COMPARTIBLE. Firebase sabe emitir una URL de descarga con un token dentro:
+     cualquiera con ese enlace abre el archivo, sin sesión y sin que las Reglas puedan impedirlo. Para
+     la cédula de un arrendatario eso es una fuga esperando a un reenvío de WhatsApp. Se descarga con
+     la sesión (`getBlob`), que sí pasa por las Reglas, y la pantalla lo DICE — porque si no lo dice,
+     alguien va a intentar "copiar el enlace" y no entender por qué no puede.
+
+  3. 👁️ QUIÉN LO ABRIÓ QUEDA ESCRITO. Una bóveda sin bitácora de accesos es un archivador con la
+     llave puesta. Se reutiliza `auditLog`, que ya existe y ya la escribe el servidor (§130).
+
+  PALETA: navy #062743 · dorado #D4AF37 · plata #BFC3C9 · fondo blanco / lienzo #E6EDF2.
+  SIN negro, SIN verde, SIN rojo — los estados se dicen con navy + oro + ícono (tokens.css manda).
+  ══════════════════════════════════════════════════════════════════
+-->
+
+<section style="display:flex;flex-direction:column;gap:14px;padding:64px 64px 8px">
+  <h1 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:600;color:#062743;letter-spacing:-0.015em">Documentos — la bóveda del expediente</h1>
+  <p style="margin:0;max-width:900px;font-size:15.5px;line-height:1.75;color:#5B6B7A">
+    Cuatro pantallas. La primera contesta <strong style="color:#062743;font-weight:600">«¿qué me falta?»</strong>,
+    que es la pregunta que hoy nadie puede contestar sin abrir carpetas. La segunda es el expediente por
+    dentro. La tercera es subir, con la finalidad y la caducidad escritas desde el principio. La cuarta es
+    abrir un documento — y dejar constancia de quién lo abrió.
+  </p>
+</section>
+
+<!-- ══════════════════════════ 1a · QUÉ FALTA ══════════════════════════ -->
+<section style="padding:40px 64px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">1a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">Documentos · qué falta</h2>
+    <span style="font-size:14px;color:#5B6B7A">Lo primero que se ve no son archivos: son huecos</span>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:22px;padding:34px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-6px -6px 14px #FFFFFF;display:flex;flex-direction:column;gap:26px">
+
+    <!-- Tres cifras que valen algo -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <div style="background:#F4F7FA;border-radius:16px;padding:20px 22px;border-left:3px solid #D4AF37">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;color:#062743;line-height:1">7</div>
+        <div style="font-size:13px;color:#5B6B7A;margin-top:4px">expedientes con algo pendiente</div>
+      </div>
+      <div style="background:#F4F7FA;border-radius:16px;padding:20px 22px;border-left:3px solid #D4AF37">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;color:#062743;line-height:1">2</div>
+        <div style="font-size:13px;color:#5B6B7A;margin-top:4px">documentos vencidos o por vencer</div>
+      </div>
+      <div style="background:#F4F7FA;border-radius:16px;padding:20px 22px;border-left:3px solid #BFC3C9">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;color:#062743;line-height:1">41</div>
+        <div style="font-size:13px;color:#5B6B7A;margin-top:4px">documentos guardados</div>
+      </div>
+    </div>
+
+    <!-- La lista, ordenada por lo que duele -->
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:grid;grid-template-columns:1.6fr 2.2fr 1fr auto;gap:14px;padding:0 16px;font-size:11.5px;font-weight:600;letter-spacing:0.08em;color:#8B9AA8;text-transform:uppercase">
+        <span>Expediente</span><span>Qué falta</span><span>Desde</span><span></span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.6fr 2.2fr 1fr auto;gap:14px;align-items:center;background:#FFFDF7;border-radius:14px;padding:15px 16px;border-left:3px solid #D4AF37">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#062743">ALT-AR-0031</div>
+          <div style="font-size:12px;color:#8B9AA8">Apto. 502 · Manga</div>
+        </div>
+        <div style="font-size:13.5px;color:#5B6B7A">Contrato de arriendo firmado · Cédula del arrendatario</div>
+        <div style="font-size:13px;color:#5B6B7A">hace 8 meses</div>
+        <button style="border:1px solid #D4AF37;background:#FFFFFF;color:#062743;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:600">Subir</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.6fr 2.2fr 1fr auto;gap:14px;align-items:center;background:#FFFDF7;border-radius:14px;padding:15px 16px;border-left:3px solid #D4AF37">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#062743">ALT-AR-0044</div>
+          <div style="font-size:12px;color:#8B9AA8">Casa · Crespo</div>
+        </div>
+        <div style="font-size:13.5px;color:#5B6B7A">
+          <span style="display:inline-flex;align-items:center;gap:6px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2.2" stroke-linecap="round"><path d="M10.3 3.6L1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4"/><path d="M12 17.2h.01"/></svg>
+            Póliza de arrendamiento <strong style="color:#062743;font-weight:600">vencida el 14 de marzo</strong>
+          </span>
+        </div>
+        <div style="font-size:13px;color:#5B6B7A">—</div>
+        <button style="border:1px solid #D4AF37;background:#FFFFFF;color:#062743;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:600">Renovar</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1.6fr 2.2fr 1fr auto;gap:14px;align-items:center;background:#F4F7FA;border-radius:14px;padding:15px 16px">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#062743">ALT-AR-0012</div>
+          <div style="font-size:12px;color:#8B9AA8">Apto. 1201 · Bocagrande</div>
+        </div>
+        <div style="font-size:13.5px;color:#5B6B7A">Acta de entrega</div>
+        <div style="font-size:13px;color:#5B6B7A">hace 2 meses</div>
+        <button style="border:1px solid #D4AF37;background:#FFFFFF;color:#062743;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:600">Subir</button>
+      </div>
+    </div>
+
+    <p style="margin:0;font-size:12.5px;line-height:1.7;color:#8B9AA8;background:#F4F7FA;border-left:2px solid #BFC3C9;border-radius:10px;padding:12px 14px">
+      <strong style="color:#062743;font-weight:600">De dónde sale «qué falta»:</strong> de la LISTA CANÓNICA por tipo de
+      expediente (administración y arriendo piden cosas distintas), no de una nota mental. Si esa lista no
+      existe, esta pantalla no puede existir — y esa es la mitad del trabajo, no el subir archivos.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 2a · DENTRO DE UN EXPEDIENTE ══════════════════════════ -->
+<section style="padding:40px 64px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">2a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">Expediente ALT-AR-0031 · Documentos</h2>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:22px;padding:34px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-6px -6px 14px #FFFFFF;display:flex;flex-direction:column;gap:24px">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+      <div>
+        <h3 style="margin:0;font-size:16px;font-weight:600;color:#062743">Apto. 502 · Manga</h3>
+        <p style="margin:4px 0 0;font-size:13px;color:#8B9AA8">Contrato de administración vigente desde el 1 de noviembre de 2025</p>
+      </div>
+      <button style="border:0;background:#D4AF37;color:#062743;border-radius:12px;padding:11px 20px;font-size:14px;font-weight:600">+ Subir documento</button>
+    </div>
+
+    <!-- Checklist: primero lo que falta, con el mismo peso visual que lo que hay -->
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <div style="font-size:11.5px;font-weight:600;letter-spacing:0.08em;color:#8B9AA8;text-transform:uppercase">Faltan 2 de 6</div>
+
+      <div style="display:flex;align-items:center;gap:13px;background:#FFFDF7;border-radius:12px;padding:13px 15px;border-left:3px solid #D4AF37">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.2h.01"/></svg>
+        <span style="flex:1;font-size:14px;color:#062743">Contrato de arriendo firmado</span>
+        <span style="font-size:12.5px;color:#8B9AA8">obligatorio</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:13px;background:#FFFDF7;border-radius:12px;padding:13px 15px;border-left:3px solid #D4AF37">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16.2h.01"/></svg>
+        <span style="flex:1;font-size:14px;color:#062743">Cédula del arrendatario</span>
+        <span style="font-size:12.5px;color:#8B9AA8">obligatorio</span>
+      </div>
+
+      <div style="height:6px"></div>
+      <div style="font-size:11.5px;font-weight:600;letter-spacing:0.08em;color:#8B9AA8;text-transform:uppercase">Guardados</div>
+
+      <div style="display:grid;grid-template-columns:auto 1fr auto auto auto;gap:14px;align-items:center;background:#F4F7FA;border-radius:12px;padding:13px 15px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#062743" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M18 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8l5 5v11a2 2 0 0 1-2 2z"/></svg>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#062743">Contrato de administración</div>
+          <div style="font-size:12px;color:#8B9AA8">PDF · 1,2 MB · subido por Daniel el 3 de noviembre de 2025</div>
+        </div>
+        <span style="font-size:12.5px;color:#5B6B7A">vence 01/11/2026</span>
+        <button style="border:0;background:none;color:#062743;font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px">Abrir</button>
+        <button style="border:0;background:none;color:#8B9AA8;font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px">Retirar</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:auto 1fr auto auto auto;gap:14px;align-items:center;background:#F4F7FA;border-radius:12px;padding:13px 15px">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#062743" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M18 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8l5 5v11a2 2 0 0 1-2 2z"/></svg>
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#062743">Cédula del propietario</div>
+          <div style="font-size:12px;color:#8B9AA8">PDF · 340 KB · subido por Daniel el 3 de noviembre de 2025</div>
+        </div>
+        <span style="font-size:12.5px;color:#5B6B7A">sin caducidad</span>
+        <button style="border:0;background:none;color:#062743;font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px">Abrir</button>
+        <button style="border:0;background:none;color:#8B9AA8;font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:3px">Retirar</button>
+      </div>
+    </div>
+
+    <p style="margin:0;font-size:12.5px;line-height:1.7;color:#8B9AA8;background:#F4F7FA;border-left:2px solid #BFC3C9;border-radius:10px;padding:12px 14px">
+      <strong style="color:#062743;font-weight:600">«Retirar», no «eliminar»:</strong> el archivo deja de estar a la vista y
+      queda registrado quién lo retiró y cuándo. Borrar de verdad un soporte de un contrato vivo es la clase
+      de acción que no se puede deshacer y que un día hace falta en un juzgado.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 3a · SUBIR ══════════════════════════ -->
+<section style="padding:40px 64px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">3a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">Subir un documento</h2>
+    <span style="font-size:14px;color:#5B6B7A">La finalidad y la caducidad se escriben AL SUBIR, no después</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1.15fr 0.85fr;gap:22px;align-items:start">
+    <div style="background:#FFFFFF;border-radius:22px;padding:34px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-6px -6px 14px #FFFFFF;display:flex;flex-direction:column;gap:20px">
+
+      <div style="border:2px dashed #BFC3C9;border-radius:16px;padding:34px;text-align:center;background:#F4F7FA">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5-5 5 5"/><path d="M12 5v12"/></svg>
+        <div style="margin-top:10px;font-size:15px;font-weight:600;color:#062743">Arrastra el archivo o búscalo</div>
+        <div style="margin-top:4px;font-size:12.5px;color:#8B9AA8">PDF, JPG o PNG · hasta 10 MB</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:7px">
+        <label style="font-size:13px;font-weight:600;color:#5B6B7A">Qué es</label>
+        <div style="border:1px solid rgba(27,39,51,0.1);border-radius:12px;padding:12px 14px;font-size:14px;color:#062743;background:#FFFFFF">Contrato de arriendo firmado</div>
+        <div style="font-size:12px;color:#8B9AA8">De la lista canónica. Si eliges uno que faltaba, el hueco se cierra solo.</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <label style="font-size:13px;font-weight:600;color:#5B6B7A">¿Caduca?</label>
+          <div style="border:1px solid rgba(27,39,51,0.1);border-radius:12px;padding:12px 14px;font-size:14px;color:#062743">31 / 10 / 2026</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <label style="font-size:13px;font-weight:600;color:#5B6B7A">Avisar antes</label>
+          <div style="border:1px solid rgba(27,39,51,0.1);border-radius:12px;padding:12px 14px;font-size:14px;color:#062743">30 días</div>
+        </div>
+      </div>
+
+      <label style="display:flex;gap:11px;align-items:flex-start;font-size:13px;line-height:1.65;color:#5B6B7A;background:#FFFDF7;border-left:3px solid #D4AF37;border-radius:10px;padding:13px 15px">
+        <span style="flex:none;width:17px;height:17px;border:1.6px solid #D4AF37;border-radius:5px;margin-top:1px"></span>
+        <span>Este documento contiene datos personales de un tercero y cuento con su autorización para tratarlos con la finalidad de <strong style="color:#062743;font-weight:600">administrar este inmueble</strong>. (Ley 1581 · art. 9)</span>
+      </label>
+
+      <button style="border:0;background:#D4AF37;color:#062743;border-radius:12px;padding:13px;font-size:15px;font-weight:600">Guardar en la bóveda</button>
+    </div>
+
+    <div style="background:#062743;border-radius:22px;padding:30px;color:#E6EDF2;display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;color:#EBD27E">POR QUÉ TANTA PREGUNTA</div>
+      <p style="margin:0;font-size:14px;line-height:1.75;color:#C6D2DC">
+        Porque un archivo sin finalidad ni fecha de retiro se queda para siempre, y guardar de más es
+        justamente lo que la ley llama tratar sin necesidad. Preguntarlo al subir cuesta diez segundos;
+        reconstruirlo dos años después, cuando alguien pida que se borren sus datos, no se puede.
+      </p>
+      <p style="margin:0;font-size:14px;line-height:1.75;color:#C6D2DC">
+        Y la caducidad no es burocracia: es lo que hace posible la pantalla <strong style="color:#FFFFFF;font-weight:600">1a</strong>.
+        Sin fecha, nadie se entera de que una póliza venció hasta que hace falta.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 4a · ABRIR ══════════════════════════ -->
+<section style="padding:40px 64px 72px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">4a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">Abrir un documento</h2>
+    <span style="font-size:14px;color:#5B6B7A">Sin enlace compartible, y con constancia de quién lo abrió</span>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:22px;padding:34px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-6px -6px 14px #FFFFFF;display:flex;flex-direction:column;gap:22px">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+      <div>
+        <h3 style="margin:0;font-size:16px;font-weight:600;color:#062743">Contrato de administración · ALT-AR-0031</h3>
+        <p style="margin:4px 0 0;font-size:13px;color:#8B9AA8">PDF · 1,2 MB · vence el 1 de noviembre de 2026</p>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button style="border:1px solid #062743;background:#FFFFFF;color:#062743;border-radius:11px;padding:10px 18px;font-size:13.5px;font-weight:600">Descargar</button>
+        <button style="border:1px solid rgba(27,39,51,0.16);background:#FFFFFF;color:#8B9AA8;border-radius:11px;padding:10px 18px;font-size:13.5px;font-weight:600" disabled>Copiar enlace</button>
+      </div>
+    </div>
+
+    <div style="background:#FFFDF7;border-left:3px solid #D4AF37;border-radius:12px;padding:14px 16px;font-size:13.5px;line-height:1.7;color:#5B6B7A">
+      <strong style="color:#062743;font-weight:600">«Copiar enlace» está apagado a propósito.</strong> No existe un enlace que se
+      pueda mandar: el archivo se descarga con tu sesión, y sin sesión no se abre. Un enlace con el
+      documento dentro viaja por WhatsApp y ya no se puede recoger.
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <div style="font-size:11.5px;font-weight:600;letter-spacing:0.08em;color:#8B9AA8;text-transform:uppercase">Quién lo ha abierto</div>
+      <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;background:#F4F7FA;border-radius:12px;padding:12px 15px;font-size:13.5px;color:#5B6B7A">
+        <span style="color:#062743;font-weight:600">Daniel · Administrador</span><span>Hoy, 9:42 a.&nbsp;m.</span><span>Cartagena</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:14px;background:#F4F7FA;border-radius:12px;padding:12px 15px;font-size:13.5px;color:#5B6B7A">
+        <span style="color:#062743;font-weight:600">Daniel · Administrador</span><span>3 nov 2025</span><span>Cartagena</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:#062743;border-radius:22px;padding:30px 34px;color:#E6EDF2;display:flex;flex-direction:column;gap:12px">
+    <div style="font-size:12px;font-weight:700;letter-spacing:0.14em;color:#EBD27E">LO QUE ESTA BÓVEDA RESUELVE DE VERDAD</div>
+    <p style="margin:0;max-width:900px;font-size:14.5px;line-height:1.8;color:#C6D2DC">
+      Hoy los soportes de un contrato viven en el WhatsApp de quien los recibió. Eso significa tres cosas:
+      que nadie sabe qué falta hasta que hace falta, que una póliza vencida se descubre cuando hay un
+      siniestro, y que la cédula de un inquilino está en el carrete de un teléfono. Esta pantalla no es
+      un cajón más bonito — es <strong style="color:#FFFFFF;font-weight:600">saber qué falta antes de que importe</strong>,
+      y poder decir con nombre y fecha quién abrió qué.
+    </p>
+  </div>
+</section>
+</x-dc>
+</body>
+</html>

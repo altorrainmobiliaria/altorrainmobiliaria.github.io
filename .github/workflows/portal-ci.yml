@@ -58,6 +58,13 @@ jobs:
           cache: npm
           cache-dependency-path: portal/package-lock.json
       - run: npm ci
+      # 🛡️ Las pruebas de `firebase/tests/` importan `functions/src/*`, y ESE paquete tiene sus propias
+      # dependencias (`firebase-functions`, `firebase-admin`) que `npm ci` de `portal` no instala.
+      # Sin esto, en CI esos imports no resuelven, sus tipos degradan a `any` y el chequeo los da por
+      # buenos: LOCAL EN ROJO Y CI EN VERDE — el espejo de [[L-48]], y igual de inútil. Se comprobó
+      # con un error real que pase en CI y fallaba en la maquina (§142).
+      - name: Dependencias del codebase `portal` de Functions (o el typecheck miente en verde)
+        run: npm ci --prefix functions
       # 🛡️ TYPECHECK antes que nada: `astro build` TRANSPILA sin comprobar tipos, así que un import roto
       # o una firma cambiada llegan a producción sin un solo aviso. Lo demostró §113: `gestion-leads.ts`
       # llevaba desde §101 con un error de tipos dentro, en `main`, y ningún gate lo vio.
