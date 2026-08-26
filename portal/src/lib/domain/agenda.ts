@@ -140,6 +140,23 @@ export function hitosDeContrato(c: Contrato, hoy: string): Hito[] {
   }
 
   // 3. El aviso de renovación, y la renovación en sí.
+  /*
+   * ⚠️ PARA QUIEN VENGA A CONSTRUIR EL ENVÍO DEL PREAVISO: **no puede ser 100 % digital** (§185).
+   *
+   * Los arts. 22 num. 7 y 24 de la Ley 820 piden **DOS** cosas, no una: que el aviso sea *escrito* **y**
+   * que vaya *«a través del servicio postal autorizado»*. La Ley 527 da equivalente funcional del
+   * ESCRITO y de la FIRMA — **no de un CANAL de entrega designado por la ley**, que no existe en esa
+   * norma. Y el art. 12 de la 820 refuerza la lógica postal: el contrato debe decir la DIRECCIÓN donde
+   * se reciben las notificaciones judiciales y extrajudiciales.
+   *
+   * 🔴 Lo que se juega: un preaviso mandado SOLO por correo o WhatsApp puede declararse ineficaz, y
+   * entonces el contrato **se prorroga otro año** — el arrendador pierde doce meses por un ahorro de
+   * sello. Por eso el correo/WhatsApp es COPIA DE CORTESÍA y jamás el acto que produce el efecto.
+   *
+   * Lo que sí le toca al producto: **generar** el documento con las fechas ya calculadas aquí,
+   * **recordar** el plazo, y **guardar la evidencia del envío postal** (guía, fecha de imposición,
+   * constancia de entrega). Regular el CÓMO es donde está el valor — ver [[LD-09]].
+   */
   if (c.vigenciaFin) {
     const aviso = sumarMeses(c.vigenciaFin, -MESES_AVISO_RENOVACION);
     out.push(hito({

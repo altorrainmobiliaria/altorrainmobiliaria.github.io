@@ -7478,3 +7478,58 @@ necesita está escribiendo una cláusula, no consultando el marco legal.
 postal autorizado admite equivalente electrónico. Es otra pregunta y merece su propia vuelta.
 
 **Fuente**: [Ley 820 de 2003 — Gestor Normativo, Función Pública](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=8738)
+
+## 185. ADR-185 — El preaviso NO puede ser digital: la ley pide dos cosas y la 527 solo cura una
+
+**185.0 — Exposición viva, y esta vez SÍ la hay.** `agenda.ts` ya modela el hito `preaviso` y calcula
+su fecha (3 meses de la Ley 820, con un mes de margen). O sea: el producto **avisa** del plazo pero no
+lo **envía**, y el siguiente paso natural de esa función es justo lo que esta pregunta gobierna. No es
+una duda de archivo: es el diseño del módulo de terminación.
+
+**185.1 — El texto, y la clave está en que son DOS requisitos.** Verificado literal:
+> Art. 22 num. 7: *«previo aviso **escrito** dirigido al arrendatario **a través del servicio postal
+> autorizado**, con una antelación no menor de tres (3) meses…»* — y el art. 24 dice lo mismo para el
+> arrendatario.
+
+La ley no pide «un aviso escrito». Pide un aviso **escrito** *y* que viaje **por un canal
+determinado**. Leerlo como un solo requisito es de donde nace la ilusión de que la firma electrónica
+lo resuelve.
+
+**185.2 — Y la Ley 527 solo cura el primero.** Su equivalencia funcional cubre el **escrito**, la
+**firma** y el **original** — la FORMA del documento. **No existe en esa ley un equivalente funcional
+del CANAL de entrega**: nada dice que un correo sustituya a un operador postal habilitado. Y tiene
+sentido, porque lo que el canal aporta no es forma sino **prueba**: un tercero habilitado certifica
+que se entregó, cuándo y a quién. El art. 12 de la Ley 820 refuerza la misma lógica al exigir que el
+contrato indique la **dirección** donde se reciben las notificaciones judiciales y extrajudiciales.
+
+**185.3 — Dictamen: el preaviso NO puede ser 100 % digital.** El correo o el WhatsApp son **copia de
+cortesía** y jamás el acto que produce el efecto. Lo que se juega no es un formalismo: un preaviso
+mandado solo por email puede declararse ineficaz, y entonces **el contrato se prorroga otro año** — el
+propietario pierde doce meses por ahorrarse un envío certificado. Es el mismo perfil de coste
+asimétrico de §184, y cae del mismo lado.
+
+**185.4 — Y aquí está el valor de producto, que no es el que parecía.** La pregunta se planteó como
+«¿puedo hacerlo digital?» y la respuesta útil es otra: **el producto no debe ENVIAR el preaviso, debe
+INSTRUMENTARLO.** Tres cosas, todas construibles:
+· **Generar** el documento con las fechas que `agenda.ts` ya calcula (que es donde se equivoca la
+  gente: contar tres meses desde el día equivocado).
+· **Recordar** el plazo con margen — ya lo hace.
+· **Guardar la evidencia del envío**: guía, fecha de imposición, constancia de entrega. *Ese* es el
+  campo que falta, y es lo que salva una restitución en juicio.
+Es exactamente la distinción de [[LD-09]]: no se puede ampliar el QUÉ, y todo el valor está en
+regular el CÓMO.
+
+**185.5 — Dónde se escribió, y por qué ahí.** El dictamen va como comentario **en `agenda.ts`, junto
+al hito del preaviso**, no solo en el nodo legal. Quien construya el envío llegará a ese código, no a
+`42-LEGAL` — es [[M-26]] aplicado: la regla vive donde el lector aterriza ANTES de actuar, y el caso
+completo en el ADR.
+
+**185.6 — Deuda declarada, que ya no es podable.** `42-LEGAL` cierra en **20002/20000**: lleva tres
+vueltas al 100 % y en ésta pagué el impuesto en trozos de 20 y 60 caracteres. Eso ya no es GC, es
+síntoma: **el nodo necesita shard**, y la frontera limpia está a la vista — separar los *dictámenes
+tomados* (§165, §171, §183, §184, §185…) de las *reglas duras del producto* y los *gates por feature*.
+Queda propuesto, no hecho, y con su frontera nombrada para que la próxima vuelta no tenga que
+re-descubrirla.
+
+**Fuentes**: [Ley 820 de 2003](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=8738) ·
+[Ley 527 de 1999](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=4276)

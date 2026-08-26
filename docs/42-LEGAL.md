@@ -39,7 +39,7 @@
 | "Certificado de buen pagador" | Solo versión "constancia privada al titular, sin score" | Ley 1266 arts.3,12-13,18 |
 | Estimador como "Avalúo Altorra" | Bloqueado el nombre; solo "Rango" con disclaimer | Ley 1673 arts.3,9-10,21-22 |
 | Cualquier cobro del portal | Facturación electrónica DIAN habilitada | Res. DIAN 000165/2023 |
-| Preaviso de terminación 100% digital | Validar equivalente funcional electrónico (zona gris) | Ley 820 arts.22.7,24 vs Ley 527 |
+| Preaviso de terminación 100% digital | ⛔ **§185: NO.** Pide escrito **Y** servicio postal autorizado; la 527 equivale el escrito, no el CANAL. Digital = cortesía | Ley 820 arts.22.7,24,12 · Ley 527 |
 
 ## 📜 Instrumentos de cobro — reglas estructurales (verificadas 2026-07-27)
 
@@ -93,11 +93,11 @@ T&C por vertical · Política de Tratamiento de Datos (responsable+finalidades+d
 1. ⏳ **VENCIDA sin atender** (cerró 2026-07-12; marcada en auditoría §49): consulta pública del decreto RNT de MinCIT — no se comentó. Si el decreto sale, revisar impacto (seguimiento normativo).
 2. Mandato de recaudo vs D.1981/1988 num. 2 (>20 anfitriones/3 meses + ofertas a innominados): ¿basta cuenta separada + destinación específica, o exige fiducia?
 3. Vehículo de retención de fondos: cuenta separada + mandato vs. encargo fiduciario; ¿"Pagos a terceros" de Wompi cubre contractualmente el modelo marketplace?
-4b. ✅ **RESUELTA (§183) — ¿la 1480 aplica al ARRIENDO?** No es sí/no: es **supletoria**. El art. 2 lo dice literal: aplica donde *«no exista regulación especial, evento en el cual aplicará la regulación especial y **suplementariamente** las normas de esta Ley»*. El arriendo de vivienda SÍ tiene régimen especial (Ley 820) ⇒ 820 manda y la 1480 llena vacíos. **Operativo: NO publicar página de «retracto» para el arriendo** — anunciaría un derecho que ahí no opera; la protección que muerde es el art. 16 de la 820 (nada al arrendatario fuera del canon). ⚠️ NO cierra la 4: en RESERVAS el régimen especial es turismo (Ley 2068), otra pregunta.
+4b. ✅ **RESUELTA (§183) — ¿la 1480 aplica al ARRIENDO?** No es sí/no: es **supletoria**. El art. 2 lo dice literal: aplica donde *«no exista regulación especial, evento en el cual aplicará la regulación especial y **suplementariamente** las normas de esta Ley»*. El arriendo de vivienda SÍ tiene régimen especial (Ley 820) ⇒ 820 manda y la 1480 llena vacíos. **Operativo: NO publicar página de «retracto» para el arriendo** — anunciaría un derecho que ahí no opera; la protección que muerde es el art. 16 de la 820 (nada al arrendatario fuera del canon). ⚠️ NO cierra la 4: en RESERVAS el régimen especial es turismo (Ley 2068).
 4. Retracto art. 47 L.1480 en reservas con fecha determinada: ¿aplica la ventana de 5 días hábiles? — define la política de cancelación. *(F2 §63 2026-07-24, fuente oficial: el art. 47 —adicionado L.2439/2024— SÍ aplica a ventas a distancia y sus 7 excepciones NO cubren servicios con fecha determinada ⇒ política de no-reembolso solo puede operar FUERA del retracto e informada antes de reservar; queda al abogado solo el matiz doctrinal SIC.)*
 5. RNT: ¿inscripción de la plataforma es independiente y adicional al RNT como prestador? ¿La operación actual de alojamientos por días ya exige RNT hoy?
 6. Exclusión de plataformas del art. 3 num. 8 Ley 2068 (solo listado, sin intermediación de pago): ¿decide el secuenciamiento del roadmap?
 7. Fee de "estudio/verificación" al aplicante de vivienda (patrón Zillow): ¿caución indirecta prohibida por art. 16 Ley 820?
 8. Consulta a centrales de riesgo: ¿formato de autorización (checkbox+evidencia vs. OTP/firma) y alcance por consulta?
-9. Preaviso de terminación 100% digital: ¿equivalente funcional electrónico del "servicio postal autorizado" (Ley 527)?
+9. ~~Preaviso 100% digital~~ ✅ **§185** (no: la 527 equivale el escrito, no el canal).
 10. Garantía al propietario (Ola 2-3): estructura con aseguradora/afianzadora y rol legal permitido de Altorra — tema sin investigación propia, encargar completo.

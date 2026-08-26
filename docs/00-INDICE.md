@@ -134,6 +134,7 @@
 | §182 | 🔬 **Auditoría Nivel-2 #12**: 18 ADRs, y casi todos la misma frase — algo cuyo NOMBRE prometía una comprobación que no ocurría. Gates a medias ×5. 3 abiertos, declarados. | 7326 |
 | §183 | ⚖️ **La 1480 y el arriendo: SUPLETORIA**, no sí/no — art. 2 literal: si hay régimen especial (Ley 820) manda ése. NO se publica página de retracto para arriendo. No cierra la de RESERVAS. | 7383 |
 | §184 | ⚖️ **Taxatividad de causales**: la Ley 820 NO dice «solamente» ni tiene irrenunciabilidad — el texto no cierra. Aun así no se amplía, por costes asimétricos. Nace [[LD-09]]. | 7430 |
+| §185 | 📮 **El preaviso NO puede ser digital**: la Ley 820 pide escrito **Y** servicio postal; la 527 equivale el escrito, no el CANAL. El producto no lo ENVÍA, lo INSTRUMENTA (evidencia del envío). | 7482 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |
