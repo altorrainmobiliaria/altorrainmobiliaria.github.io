@@ -8389,3 +8389,52 @@ en **censo**. [[L-60]] nació de una colisión y, aplicada a todo el proyecto en
 que llevaba meses ahí — en la colección más importante, y con una advertencia del router apuntando a
 ella sin que nadie la hubiera comprobado. **Cuando escribas una lección de la forma «mira si hay más de
 uno», el paso siguiente no es recordarla: es CONTARLOS.**
+
+## 202. ADR-202 — El censo de colecciones: confirmó un riesgo conocido y destapó tres fallos MÍOS
+
+**Contexto.** El §201 convirtió [[L-60]] en censo y funcionó. Se intentó el siguiente eje: **qué
+colecciones escribe cada codebase**, porque una escrita por los dos con formas distintas es una mina
+de cutover.
+
+### 202.1 — El resultado, y por qué no me lo creí
+La sonda devolvió **«0 colecciones escritas por ambos lados»** y, entre las de solo lectura,
+**`propiedades`**. Eso **no puede ser cierto**: el panel del portal crea inmuebles (paso 1.5 del
+runbook). *El resultado limpio se cayó por contradecir algo que yo ya sabía* — no por ninguna
+propiedad del propio resultado.
+
+### 202.2 — Tres fallos de la sonda, todos con salida tranquilizadora
+1. **v1 solo entendía la API namespaced** (`.collection('x')…​.set()`); el portal usa la **modular**.
+   Corregido… y el resultado **no cambió**, lo que debería haber sido la segunda alarma.
+2. **v2 seguía siendo línea a línea**, así que es **ciega al código bien factorizado**: `gestion-alta.ts`
+   construye la referencia en un helper (`mod.doc(db,'propiedades',codigo)`) y escribe en una
+   transacción, **líneas más abajo**. 🎯 *Una sonda línea-a-línea funciona mejor cuanto peor está
+   escrito el código que audita* — y falla justo donde el código es bueno.
+3. **Ninguna abrió `js/`**, donde vive medio panel legacy (`admin-properties.js` y nueve más). El
+   censo del legacy se limitó a la raíz por una condición mía.
+
+### 202.3 — Lo que el censo, ya corregido, CONFIRMA (no descubre)
+`propiedades` la escriben **los dos lados**: `portal/src/scripts/gestion-alta.ts` y
+`js/admin-properties.js` (con `setDoc`, `tx.update` y `deleteDoc`). **Y el cerebro ya lo sabía, a
+fondo**: el aviso de la FASE 4 del runbook (§103) explica que los modelos son **incompatibles** —precio
+entero vs objeto, `comprar/arrendar/dias` vs `venta/arriendo/alojamiento`, plano vs anidado— y que una
+propiedad creada en `admin.html` *«pasa el filtro de publicadas y luego se cae»*, con motivo
+`esquema-legacy` para diagnosticarlo. **Esto es confirmación independiente, no hallazgo**, y así se
+reporta: presentarlo como descubrimiento sería inflar el trabajo.
+
+### 202.4 — 🎯 El hallazgo de verdad es sobre mi método → [[M-27]]
+Por la **mañana** amplié `verify:claims` porque no abría los artículos del journal, y le pegué un
+contador con este argumento, escrito por mí en el commit: *«ese número es lo único que distingue “lo
+revisé” de “no hice nada”»*. Por la **tarde** escribí tres sondas de censo y **ninguna imprimía qué
+había mirado**.
+La asimetría que lo explica: esa misma mañana otra sonda mía gritó **94 % de discrepancia** y la
+comprobé **en el acto** (§198.1), porque un número catastrófico pide explicación. Éstas susurraron
+«todo limpio» **tres veces** y solo las cacé por conocimiento previo. **Un resultado tranquilizador no
+se audita solo, y su forma más peligrosa es el cero**: *«no encontré nada»* es indistinguible de *«no
+miré en ningún sitio»*.
+**Y el defecto del cerebro que destapa**: [[L-52]] («verde sobre archivos que nunca abre») estaba
+redactada para los **gates**, y yo la leía como una regla de gates. No lo es — es una regla de
+**cualquier cosa que enumere**, incluidos los scripts de un solo uso. Alcance corregido en M-27.
+
+### 202.5 — Archivos
+`docs/33-LECCIONES-META.md` (M-27) · `docs/30-LECCIONES.md` (stub). **INTACTO**: todo el código y todo
+lo desplegado. Esta vuelta no tocó producción, a propósito.
