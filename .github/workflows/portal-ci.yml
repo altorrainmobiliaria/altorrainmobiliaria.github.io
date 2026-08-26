@@ -85,6 +85,18 @@ jobs:
       # mas grande del proyecto.
       - name: Pruebas unitarias (donde viven los invariantes legales)
         run: npm run test
+      # 🛡️ Y LAS DEL EMULADOR (§177). Estaban fuera «porque necesitan Java», y ese motivo caduco el dia
+      # que se midio: 141 pruebas en 24 SEGUNDOS con el arranque del emulador incluido. Son las unicas
+      # que ejercitan las Security Rules y el codigo REAL de las Functions contra Firestore. El precio
+      # de tenerlas fuera ya se cobro: el gate de PH de §174 rompio una de ellas y estuvo rota en
+      # `main` sin que nada lo dijera, porque ningun gate la abria.
+      - name: Java para el emulador de Firestore
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Pruebas contra el EMULADOR (rules + Functions reales)
+        run: npm run test:rules
       - name: CSS de runtime alcanzable (§117 — Astro acota y el JS crea nodos sin el atributo)
         run: npm run verify:css
       # 🛡️ Una `var(--x)` que nadie declaró NO es un error: el navegador descarta la propiedad y sigue.

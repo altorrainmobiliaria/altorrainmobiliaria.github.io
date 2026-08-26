@@ -68,9 +68,17 @@ describe('rebuildCatalogo — contra el emulador (Admin SDK, mismo código que l
   it('anti-oráculo: BORRADOR/inactivo nunca entran; cada operación va a SU shard', async () => {
     await sembrar('V1');
     await sembrar('A1', { operacion: 'arriendo', precio: { moneda: 'COP', canon: 3_000_000 } });
-    // `rnt` obligatorio desde §104: sin él el alojamiento NO entra al índice (gate legal B3). Este
-    // fixture lo omitía, igual que el de la suite unitaria — dos sitios modelando un anuncio ilegal.
-    await sembrar('D1', { operacion: 'alojamiento', rnt: 'RNT-100001', precio: { moneda: 'COP', precioNoche: 400_000 } });
+    // Un alojamiento necesita DOS cosas para entrar al índice, y las dos son legales: el `rnt` (§104)
+    // y la autorización del reglamento de PH (§174). ⚠️ ESTE FIXTURE SE HA QUEDADO ATRÁS DOS VECES,
+    // las dos por lo mismo: su gemelo de la suite unitaria se actualiza —porque corre en cada
+    // `npm run verify`— y éste no, porque hasta §177 no lo corría NADIE. No es descuido: es lo que
+    // pasa siempre con la copia que ningún gate abre.
+    await sembrar('D1', {
+      operacion: 'alojamiento',
+      rnt: 'RNT-100001',
+      autorizacionPH: { situacion: 'autoriza-expreso', declaradaEn: '2026-08-26T00:00:00Z' },
+      precio: { moneda: 'COP', precioNoche: 400_000 },
+    });
     await sembrar('OCULTA', { estado: 'borrador' });
     await sembrar('INACTIVA', { estado: 'inactivo' });
 

@@ -204,16 +204,22 @@ check(
  */
 const lock = JSON.parse(readFileSync(resolve(root, 'package-lock.json'), 'utf8'));
 const enLock = (n) => Boolean(lock.packages?.[`node_modules/${n}`]);
-const faltan = ['@astrojs/check', 'typescript'].filter((n) => !enLock(n));
+/*
+ * `firebase-tools` está en la misma lista y por el mismo motivo (§177): `npm run test:rules` lo
+ * invoca, y tampoco estaba declarado — funcionaba en local porque vive instalado a lo global en la
+ * máquina de quien programa. Tercera vez en un día que un PRERREQUISITO DE UN GATE no está declarado;
+ * a la tercera deja de ser mala suerte y pasa a ser una propiedad del repo que hay que vigilar.
+ */
+const faltan = ['@astrojs/check', 'typescript', 'firebase-tools'].filter((n) => !enLock(n));
 check(
-  'el checker de tipos está en el LOCKFILE (sin él, `astro check` sale verde sin mirar)',
+  'los prerrequisitos de los gates están en el LOCKFILE (si no, se apagan en silencio)',
   faltan.length === 0,
   faltan.length
     ? `ausente(s) del lockfile: ${faltan.join(', ')} — \`npm ci\` no los instala y el gate se apaga EN SILENCIO`
     : '',
 );
 
-for (const s of ['typecheck', 'typecheck:functions', 'test']) {
+for (const s of ['typecheck', 'typecheck:functions', 'test', 'test:rules']) {
   check(
     `\`npm run ${s}\` corre en el CI y en \`npm run verify\``,
     ci.includes(`npm run ${s}`) && agregado.includes(`npm run ${s}`),
