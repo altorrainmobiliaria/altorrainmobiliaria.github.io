@@ -29,6 +29,7 @@ documentos monolíticos en la raíz. Con la instalación del cerebro multi-proye
 | `PLAN-MEJORAS.md` | 21.3 | Roadmap fechado 2026-04-16 (anterior a AVANCES; desync interno) | `docs/10` (gaps J1-J5, fuente de verdad = AVANCES). ⚠️ NO usar su "qué sigue". |
 | `DEPLOY-RUNBOOK.md` | 10.0 | Runbook de deploy/infra | `docs/50-CONFIG-INFRA` (Project ID/IAM público; secrets nombrados, no copiados) |
 | `CONTENIDO-EDITORIAL.md` | 8.1 | Guía editorial del blog | `docs/20-MEMORIA-ESPACIAL §Blog` (schema colección `blog` + flujos) |
+| `firestore.indexes-nurturing.json` | 0.4 | Era `firestore.indexes.json` en la RAÍZ, donde parece el archivo canónico — y no lo es: `firebase.json` despliega `portal/firebase/firestore.indexes.json`. Nadie lo referenciaba, así que su único índice **nunca se desplegó**. Lo creó el commit del nurturing legacy (`741a358`). | ADR §198 — y es **prerrequisito de encender el nurturing**: `processNurturingEmails` hace la consulta compuesta de 3 campos que este índice sirve, así que sin desplegarlo fallaría con `FAILED_PRECONDITION`. NO se despliega ahora a propósito: un índice sobre `solicitudes` encarece cada escritura de un lead, y la función está apagada. |
 
 > **Verificación de cero-pérdida**: los 7 archivos están aquí ÍNTEGROS (git los movió como renames `R`, history intacta
 > — `git log --follow _legacy/<archivo>`). Las semillas destiladas a los nodos son un RESUMEN; el detalle completo vive aquí.

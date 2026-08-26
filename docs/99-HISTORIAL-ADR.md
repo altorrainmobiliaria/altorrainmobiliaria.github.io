@@ -8151,3 +8151,59 @@ declara que **las Cloud Functions van a mano**—, no donde se notaba. **INTACTO
 free tier de Cloud Scheduler son 3 jobs. Y `avisoLeadNuevo` está vivo pero **muda**: escribirá el
 puntaje y no enviará nada hasta que exista la clave de Resend — que sigue siendo la pelota 🅰️ de
 Daniel. Es el estado correcto, no un fallo, pero conviene que él lo sepa así.
+
+## 198. ADR-198 — Barrido «repo contra producción»: los índices aguantan, y aparece el 5.º bloqueo del nurturing
+
+**Contexto.** El §197 encontró una función construida y sin desplegar comparando el repo con la API.
+La técnica funcionó, así que se aplicó al resto de lo que compara **dos mundos**: índices y reglas.
+
+### 198.1 — Índices: 18 = 18, exacto
+`firestore:indexes` contra `portal/firebase/firestore.indexes.json`: **18 desplegados, 18 declarados,
+cero de más y cero de menos**. **El arreglo de §134 aguantó** — aquella vez los 14 índices no se
+desplegaron NUNCA porque a `firebase.json` le faltaba la clave, y la CLI decía «Deploy complete!»
+igual ([[L-51]]).
+⚠️ **La primera medición dio 18 contra 1, y era MÍA la culpa, no del proyecto**: Firestore **añade
+`__name__`** como último campo de todo índice desplegado, así que incluirlo en la firma hacía que
+**todo** desencajara por construcción. *Una sonda que reporta el 100 % de discrepancia casi nunca ha
+encontrado el 100 % de los bugs: se ha equivocado de comparación.* Corregida, cuadró exacto.
+
+### 198.2 — El archivo que parece canónico y está muerto
+En la RAÍZ vivía `firestore.indexes.json` — nombre canónico, sitio canónico — **y no lo despliega
+nadie**: `firebase.json` apunta a `portal/firebase/firestore.indexes.json`. Caí en la trampa yo mismo
+tres minutos antes, leyéndolo y concluyendo «el proyecto declara 1 índice». Lo creó el commit del
+nurturing legacy (`741a358`). **Cuarentenado** en `_legacy/firestore.indexes-nurturing.json` con su
+fila de inventario, no borrado (límite de guardián §G.4).
+
+### 198.3 — 🔴 El hallazgo que importa: el nurturing tiene un 5.º bloqueo
+`processNurturingEmails` consulta `nurturing.completed == false` **y** `nurturing.unsubscribed ==
+false` **y** `nurturing.nextEmailAt <= now` — dos igualdades más un rango, que Firestore **no sirve
+sin índice compuesto**. Ese índice **solo existía en el archivo huérfano**. Es decir: encender el
+nurturing hoy —aun resueltos los cuatro bloqueos de §192— habría fallado con **`FAILED_PRECONDITION`
+en la primera vuelta**, que es exactamente el modo de fallo de §134.
+**Y NO se despliega ahora, a propósito**: un índice sobre `solicitudes` encarece **cada escritura de
+un lead**, y la función está apagada. Se declara como **prerrequisito de encendido**, no como deuda.
+
+### 198.4 — Reglas: lo que NO se pudo medir, dicho como tal
+No hay comando en la CLI para **leer** las reglas desplegadas (`firestore:indexes` existe;
+`firestore:rules` no). Por eso las reglas llevan **sello humano** en el `05` y no gate — y es la misma
+asimetría de §197: **una afirmación cuyo lado de producción no es contable desde donde estás**. Las
+verificó §132 el 25-ago; **esta vuelta NO se re-verificaron**, y así queda dicho en vez de sumarlas al
+barrido limpio. Lo que sí corre: las 155 pruebas de emulador sobre las reglas DEL REPO.
+
+### 198.5 — Anti-patterns evitados
+No dar por bueno el primer resultado alarmante (18 vs 1) sin preguntarse si la sonda estaba bien
+escrita. No desplegar «por si acaso» un índice que cuesta en cada escritura. No borrar un archivo
+huérfano: cuarentena con inventario. No presentar como «tres barridos limpios» uno que solo pudo ser
+dos.
+
+### 198.6 — Archivos
+`firestore.indexes.json` → `_legacy/firestore.indexes-nurturing.json` (con `git mv`, historia intacta)
+· `_legacy/README.md` (fila de inventario). **INTACTOS**: `firebase.json`,
+`portal/firebase/firestore.indexes.json` y todo el código — este barrido no cambió nada que corra.
+
+### 198.7 — Doctrina
+Generaliza [[L-51]]: *tras un deploy declarativo, consulta el estado REAL*. La forma nueva es
+preventiva y más barata: **enumera los pares «declarado ↔ desplegado» del proyecto y compáralos uno a
+uno** —funciones, índices, reglas, secretos—. Donde no exista forma de leer el lado desplegado, eso
+**no es un par verificable**: se marca como sello y se dice, en vez de dejar que herede el ✅ del
+vecino. → [[L-59]].

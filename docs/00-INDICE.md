@@ -108,6 +108,7 @@
 | §195 | 📰 **Mercado estrena** (costos de cerrar en Cartagena) y `verify:claims` NO abria ni un articulo: solo recogia `.astro`, y el journal es markdown. 39 -> 47 archivos, y el ✅ ya dice cuantos leyo. L-52 reincide 5 ADRs despues. | 7994 |
 | §196 | ✂️ **Quinto shard** (§121-§160 → `00e`): el gate paro el commit y funciono. De paso, el router ENUMERABA los rangos de cada shard — un dato que caduca en cada particion, en el nodo que se lee siempre. Margen del arranque: 16c → 42c. | 8061 |
 | §197 | 🚀 **`avisoLeadNuevo` no estaba desplegada**: la resta del 05 no daba (20-17=3, explicaba 2). «CF» era CloudFlare Y Cloud Functions en el mismo nodo. Ya vive: 18/20, cero huerfanas. | 8106 |
+| §198 | 🔎 **Repo contra produccion**: indices 18=18 (el arreglo del §134 aguanta). Pero el `firestore.indexes.json` de la RAIZ no lo despliega nadie — y era el unico hogar del indice sin el cual el nurturing fallaria. 5.o bloqueo. | 8155 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

@@ -223,3 +223,4 @@ siendo el índice de todas y una cita `[[L-NN]]` resuelva sin salir de aquí (§
 ### L-56 — 🧰 Un gate puede existir y NO CORRERLO NADIE: escribirlo es la mitad, cablearlo es la otra *(§142)*
 ### L-57 — 🎭 Una herramienta sin su prerrequisito puede **PREGUNTAR en vez de fallar**, y sin terminal eso sale **exit 0**: el gate afirma haber pasado sin mirar nada *(§175)*
 ### L-58 — 🎭 Un gate puede imprimir un número CIERTO de una comparación que no significa nada: un porcentaje sin su denominador auditado es decoración *(§193)*
+### L-59 — 📋 Enumera los pares «declarado ↔ desplegado» y compáralos uno a uno: lo que no se puede LEER no es un par verificable, es un sello *(§198)*
