@@ -111,6 +111,7 @@
 | §198 | 🔎 **Repo contra produccion**: indices 18=18 (el arreglo del §134 aguanta). Pero el `firestore.indexes.json` de la RAIZ no lo despliega nadie — y era el unico hogar del indice sin el cual el nurturing fallaria. 5.o bloqueo. | 8155 |
 | §199 | 🔀 **Desplegue un trigger sobre una coleccion que ya tenia otro**: los dos escribian leadScore con algoritmos distintos. Retirada la legacy. Dos escritores no fallan, DISCREPAN a veces. | 8236 |
 | §200 | 🔬 **Auditoria Nivel-2 #13**: 8 hallazgos, 5 cerrados. **2 los cause yo esa misma sesion** y solo salieron mirando PRODUCCION, no el cerebro. Variante nueva: el falso ROJO. Boot 31482->31301. | 8291 |
+| §201 | 🧮 **L-60 hecha CENSO**: 9 oyentes, 1 colision mas: `propiedades` con DOS oyentes, la coleccion central. La alarma del router NO era (og-publish ya desarmado), pero queda una maquina inerte que cobra y registra ✅ de un no-op. | 8340 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

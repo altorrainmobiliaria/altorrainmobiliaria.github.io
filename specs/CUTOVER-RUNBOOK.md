@@ -196,6 +196,13 @@ tarda horas en revertirse — por eso va al final, cuando todo lo demás está v
 - **Purga por tag**: mientras no exista, la ficha usa un TTL corto (5 min) y un despliegue invalida la
   caché. Cuando exista, se vuelve al TTL largo y se borra `CACHE_CONTROL_FICHA_SIN_PURGA`.
 - **Vigilar el free-tier los primeros días**: es la primera vez que el catálogo real recibe tráfico.
+- **Retirar la maquinaria de SEO legacy** (§201): `onPropertyChange` está DESPLEGADA y dispara en
+  CADA escritura de `propiedades` — dos operaciones de Firestore más una llamada a GitHub—, y **no
+  sirve para nada**: `og-publish.yml` ya no escucha `repository_dispatch`. Peor, registra
+  «GitHub Actions disparado ✅» porque GitHub responde 204 aunque no lo escuche nadie. Con ella se van
+  `triggerSeoRegeneration` (callable que **no invoca ningún panel**) y el uso del secreto `GITHUB_PAT`,
+  que es una credencial viva al servicio de nada. ⚠️ **No es urgente ni peligroso** —es inerte— pero
+  empieza a costar justo cuando entre el catálogo real, así que este es su momento.
 
 ---
 

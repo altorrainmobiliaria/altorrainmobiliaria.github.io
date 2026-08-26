@@ -8336,3 +8336,56 @@ Añadir a la skill una sonda fija: **un par «declarado ↔ desplegado» medido 
 auditoría lo descubrió por accidente y fue lo más rentable que hizo. Y su corolario honesto: cuando no
 exista forma de LEER el lado desplegado —las reglas de Firestore, los secretos huérfanos— eso **no es
 una casilla verde ni roja: es una casilla que no existe**, y se dice.
+
+## 201. ADR-201 — L-60 aplicada a TODO el proyecto: una segunda colisión, y una máquina que dice ✅ sin hacer nada
+
+**Contexto.** El §199 encontró dos triggers escribiendo el mismo campo **de uno en uno**. En vez de
+darlo por cerrado, se aplicó la lección **de forma sistemática**: enumerar TODOS los oyentes de evento
+de los dos codebases y agruparlos por `(tipo de evento, ruta)`. Es lectura pura y cuesta un script.
+
+### 201.1 — El censo
+9 oyentes de evento entre los dos codebases (Firestore + Scheduler). **Una sola colisión**, y no era la
+que ya conocía: **`propiedades/{propId}` tiene DOS `onDocumentWritten`** —`catalogoOnPropiedadWrite`
+(portal) y `onPropertyChange` (legacy)—, **las dos desplegadas**, sobre la colección **central** del
+negocio. El censo confirmó además que la de `solicitudes` quedó resuelta (§199).
+
+### 201.2 — La alarma que NO era (y por qué se comprobó igual)
+`onPropertyChange` dispara **GitHub Actions**, y el router advierte en mayúsculas: *«NO dispares
+`og-publish.yml`: en modo obra PISARÍA los stubs de redirect»*. Escribir la primera propiedad real
+—paso 1.5 del runbook— parecía capaz de resucitar el sitio viejo.
+**No lo es**: `og-publish.yml` tiene los triggers automáticos **desactivados** (`on:` solo
+`workflow_dispatch`). Alguien ya lo desarmó. **Verificado, no supuesto** — que es justo lo que la
+advertencia del router merecía.
+
+### 201.3 — Lo que sí queda: una máquina inerte que cobra y miente
+Con el receptor desarmado, `onPropertyChange` sigue **desplegada** y en **cada escritura** de
+`propiedades` hace: 1 invocación · 1 lectura + 1 escritura de Firestore (`system/seoDebounce`) · 1
+llamada HTTPS a GitHub con el PAT. Resultado útil: **ninguno**.
+Y hay dos detalles que lo hacen peor que un simple desperdicio:
+1. **Registra el éxito de un no-op**: GitHub responde **204 aunque no haya workflow escuchando**, así
+   que el log dice literalmente *«GitHub Actions disparado ✅»*. Quien depure esto creerá que funcionó.
+2. **El debounce falla ABIERTO** (`catch (_) { return true; }`): si la lectura de Firestore falla,
+   dispara igual. Aquí solo cuesta dinero, pero es el patrón que [[L-52]] señala como indistinguible
+   de uno que funciona.
+Con ella viven **`triggerSeoRegeneration`** —callable desplegada que **no invoca ningún panel**
+(comprobado: cero referencias en `admin.html`)— y el uso del secreto **`GITHUB_PAT`**: una credencial
+viva al servicio de nada.
+
+### 201.4 — Decisión: se DOCUMENTA, no se ejecuta
+**No se retira en esta vuelta, y la razón es de método, no técnica.** Tras el §199 —un fallo que causé
+yo por actuar sobre producción sin mirar el vecindario— anuncié que me inclinaría a verificar antes que
+a cambiar. Retirar tres cosas de producción diez minutos después contradiría eso, y **la urgencia no lo
+justifica: el cluster es inerte**. Queda como paso de la **FASE 6** del runbook, con el argumento de
+oportunidad escrito: no cuesta nada hoy porque `propiedades` está vacía, y empieza a costar **justo
+cuando entre el catálogo real**.
+
+### 201.5 — Archivos
+`specs/CUTOVER-RUNBOOK.md` (fase 6). **INTACTO**: todo el código y todo lo desplegado — esta vuelta no
+tocó producción, a propósito.
+
+### 201.6 — 🎯 Doctrina
+Una lección se cobra dos veces: la primera cuando arreglas **el caso**, la segunda cuando la conviertes
+en **censo**. [[L-60]] nació de una colisión y, aplicada a todo el proyecto en un script, encontró otra
+que llevaba meses ahí — en la colección más importante, y con una advertencia del router apuntando a
+ella sin que nadie la hubiera comprobado. **Cuando escribas una lección de la forma «mira si hay más de
+uno», el paso siguiente no es recordarla: es CONTARLOS.**
