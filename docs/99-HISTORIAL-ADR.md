@@ -8903,3 +8903,26 @@ Tercera vez hoy que **la instrucción, no la realidad, era lo defectuoso** (§20
 regla, cabe que el resultado sea que la regla estaba mal** — y esa salida es tan válida como el
 incumplimiento. Ir a auditar el cumplimiento **suponiendo que la regla es correcta** convierte la
 auditoría en una búsqueda de culpables donde no hay culpa.
+
+### 212.6 — El repaso, completo: TRES páginas, ninguna sobreafirma
+Además de `/nosotros`, se leyeron como las sirve el worker:
+- **`/invertir`** — la de más riesgo, porque prometer rentabilidades está regulado. **No promete ni una
+  cifra**: encuadra los dos modelos por lo que cada uno EXIGE legalmente (Ley 820 vs. Ley 300 + RNT +
+  reglamento de PH), no por lo que rinden. Es la forma correcta de escribir esa página.
+- **`/precios`** — publica las comisiones reales con **quién paga y cuándo** («se causa al registro, no
+  a la firma de la promesa»), y donde no hay número cerrado **dice que no lo hay** en vez de inventarlo.
+⚠️ **Y un umbral que estuve a punto de «corregir» mal**: `/invertir` dice que hace falta matrícula de
+arrendador *«si se hace de forma habitual o con más de cinco contratos»*, mientras `42-LEGAL` resume
+«umbral >5 contratos» y `R3 GATE 2` dice «SIN umbral». No se contradicen: **el intermediario profesional
+la necesita SIEMPRE; el umbral de >5 es del PROPIETARIO/subarrendador** — y la página le habla al
+inversionista, así que está bien. 🎯 *Dos resúmenes de la misma norma pueden parecer opuestos porque
+cada uno habla de un sujeto distinto; leer el titular y no el cuerpo habría «arreglado» algo correcto.*
+
+### 212.7 — [[L-46]] por UNDÉCIMA vez, en este mismo apéndice
+Los acentos graves de `/invertir`, `/precios`, `42-LEGAL` y `R3` iban dentro de un `python3 -c "…"`, y
+bash los ejecutó: el texto se apendó **con huecos donde iban los nombres**. Reparado por fichero, que
+es lo que la regla manda **desde la octava**. Sin daño: se detectó al leer la salida, no después.
+🎯 **Y la observación honesta**: la regla es correcta y aun así falla, porque el disparador («voy a meter
+un backtick») ocurre *mientras* redacto el comando, no cuando decido la herramienta. Está declarada
+[HONOR] irreducible desde §179 y esta undécima **no cambia el diagnóstico, lo confirma**: ningún gate
+puede verlo — la corrupción sucede en la llamada, antes de que exista nada que revisar.
