@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#E6EDF2; font-family:'Hanken Grotesk',sans-serif; -webkit-font-smoothing:antialiased; }
+</style>
+</helmet>
+
+<!--
+  ══════════════════════════════════════════════════════════════════
+  ALTORRA · MI PERFIL — el lado del arrendatario (Ola 2, §155)
+
+  LA IDEA CENTRAL: **esta pantalla la abre alguien nervioso.** Está buscando dónde vivir, ya le han
+  pedido papeles en tres sitios y en dos le pidieron codeudor. Todo lo que aquí se lea tiene que
+  quitarle miedo, no añadírselo — y la forma de quitarlo no es un texto amable, es decirle QUÉ pasa,
+  QUÉ falta y CUÁNTO va a tardar.
+
+  CUATRO DECISIONES QUE NO SON DE PINTAR:
+
+  1. 📋 **Cada requisito dice QUÉ SIRVE, antes de que suba lo que no era.** «Soporte de ingresos» no
+     significa nada; «los últimos tres desprendibles, o extractos de tres meses si eres
+     independiente» sí. Casi todo el reproceso de una revisión documental nace de una etiqueta vaga.
+
+  2. 🙋 **«Es mi primer arriendo» es una casilla, no una excusa.** Al marcarla, la referencia de
+     arriendo anterior deja de pedirse — porque quien nunca ha arrendado no puede tenerla, y
+     exigírsela es cerrarle la puerta por ser joven. Es de las pocas cosas que separan este producto
+     del de al lado.
+
+  3. ⏱️ **El estado dice cuánto falta, no cómo se llama.** «Enviado a revisión» no informa de nada;
+     «lo estamos revisando, te respondemos antes de 24 horas hábiles» sí. Y si volvió con
+     observaciones, lo primero que se lee es LO QUE FALTA, no la palabra «observaciones».
+
+  4. 💸 **Se dice, en la pantalla, que esto no cuesta nada.** Porque en el mercado sí cobran: el mal
+     llamado «estudio de documentos». Decirlo aquí es a la vez cumplir la ley (art. 16 de la Ley 820
+     prohíbe cobros al arrendatario de vivienda) y el argumento comercial más corto que existe.
+
+  🚫 Lo que NO aparece y no aparecerá hasta que exista contrato con una central: puntaje, «score» o
+  cualquier color de riesgo. Sin ese contrato, consultar a alguien es ilegal.
+
+  PALETA: navy #062743 · dorado #D4AF37 · plata #BFC3C9 · lienzo #E6EDF2.
+  ══════════════════════════════════════════════════════════════════
+-->
+
+<section style="display:flex;flex-direction:column;gap:14px;padding:64px 64px 8px">
+  <h1 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:600;color:#062743;letter-spacing:-0.015em">Mi perfil — el lado del arrendatario</h1>
+  <p style="margin:0;max-width:900px;font-size:15.5px;line-height:1.75;color:#5B6B7A">
+    Dos estados. El primero es preparar el perfil: qué se pide y qué sirve como soporte. El segundo
+    es cuando ya volvió con algo que corregir — y ahí lo primero que se lee es <strong style="color:#062743;font-weight:600">lo
+    que falta</strong>, no la palabra «observaciones».
+  </p>
+</section>
+
+<!-- ══════════════════════════ 1a · PREPARANDO ══════════════════════════ -->
+<section style="padding:40px 64px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">1a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">Preparando el perfil</h2>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:22px;padding:34px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-6px -6px 14px #FFFFFF;max-width:760px;display:flex;flex-direction:column;gap:22px">
+    <div>
+      <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:#062743">Tu perfil de arrendatario</h3>
+      <p style="margin:6px 0 0;font-size:15px;line-height:1.7;color:#5B6B7A">Súbelo una vez y sirve para todos los inmuebles que te interesen. <strong style="color:#062743;font-weight:600">No cuesta nada</strong> — ni ahora ni después: por ley no se le puede cobrar al arrendatario de vivienda.</p>
+    </div>
+
+    <label style="display:flex;align-items:flex-start;gap:10px;background:#F4F7FA;border-radius:12px;padding:14px 16px;font-size:14px;line-height:1.6;color:#5B6B7A">
+      <input type="checkbox" style="margin-top:3px">
+      <span><strong style="color:#062743;font-weight:600">Es mi primer arriendo.</strong> Marca esto si nunca has tenido un contrato a tu nombre: dejamos de pedirte la referencia del arrendador anterior.</span>
+    </label>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:grid;grid-template-columns:1fr 130px;gap:14px;align-items:center;background:#F4F7FA;border-radius:12px;padding:15px 16px">
+        <div>
+          <div style="font-size:14.5px;font-weight:600;color:#062743">Documento de identidad ✓</div>
+          <div style="font-size:12.5px;color:#8B9AA8;margin-top:2px">cedula.pdf · subido</div>
+        </div>
+        <button style="border:1px solid rgba(27,39,51,0.16);background:#FFF;color:#062743;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600;font-family:'Hanken Grotesk',sans-serif">Cambiar</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 130px;gap:14px;align-items:center;background:#FFFDF7;border-left:3px solid #D4AF37;border-radius:0 12px 12px 0;padding:15px 16px">
+        <div>
+          <div style="font-size:14.5px;font-weight:600;color:#062743">Soporte de ingresos</div>
+          <div style="font-size:12.5px;color:#5B6B7A;margin-top:3px;line-height:1.6">Últimos tres desprendibles de nómina, o extractos bancarios de tres meses si eres independiente.</div>
+        </div>
+        <button style="border:0;background:#062743;color:#FFF;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600;font-family:'Hanken Grotesk',sans-serif">Subir</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 130px;gap:14px;align-items:center;background:#F4F7FA;border-radius:12px;padding:15px 16px">
+        <div>
+          <div style="font-size:14.5px;font-weight:600;color:#062743">Certificación laboral o de actividad</div>
+          <div style="font-size:12.5px;color:#5B6B7A;margin-top:3px;line-height:1.6">Certificación con cargo y antigüedad, o el RUT y la declaración si trabajas por tu cuenta.</div>
+        </div>
+        <button style="border:0;background:#062743;color:#FFF;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600;font-family:'Hanken Grotesk',sans-serif">Subir</button>
+      </div>
+    </div>
+
+    <div>
+      <button style="border:0;background:#D4AF37;color:#062743;border-radius:11px;padding:13px 26px;font-size:14.5px;font-weight:600;font-family:'Hanken Grotesk',sans-serif">Enviar a revisión</button>
+      <p style="margin:10px 0 0;font-size:12.5px;color:#8B9AA8;line-height:1.6">Cuando lo envíes, una persona lo revisa. Te respondemos antes de 24 horas hábiles.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 2a · VOLVIÓ CON ALGO QUE CORREGIR ══════════════════════════ -->
+<section style="padding:40px 64px 80px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">2a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">Volvió con algo que corregir</h2>
+    <span style="font-size:13.5px;color:#5B6B7A">Lo primero que se lee es qué falta</span>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:22px;padding:34px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-6px -6px 14px #FFFFFF;max-width:760px;display:flex;flex-direction:column;gap:20px">
+    <div style="background:#FFFDF7;border-left:3px solid #D4AF37;border-radius:0 14px 14px 0;padding:20px 22px">
+      <div style="font-size:11.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#062743;margin-bottom:8px">Falta una cosa</div>
+      <p style="margin:0;font-size:16px;line-height:1.7;color:#062743">La cédula está borrosa por el reverso. ¿Puedes subir otra foto con mejor luz?</p>
+      <p style="margin:10px 0 0;font-size:13px;color:#5B6B7A">Cuando la cambies, vuelve a enviar y lo miramos otra vez. No pierdes nada de lo que ya subiste.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 130px;gap:14px;align-items:center;background:#F4F7FA;border-radius:12px;padding:15px 16px">
+      <div>
+        <div style="font-size:14.5px;font-weight:600;color:#062743">Documento de identidad</div>
+        <div style="font-size:12.5px;color:#8B9AA8;margin-top:2px">cedula.pdf · subido el 21 de agosto</div>
+      </div>
+      <button style="border:0;background:#062743;color:#FFF;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:600;font-family:'Hanken Grotesk',sans-serif">Cambiar</button>
+    </div>
+
+    <button style="border:0;background:#D4AF37;color:#062743;border-radius:11px;padding:13px 26px;font-size:14.5px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;align-self:flex-start">Volver a enviar</button>
+  </div>
+</section>
+
+</x-dc>
+</body>
+</html>

@@ -74,11 +74,11 @@
 | §94 | 🏷️ **Rango ALTORRA** (ítem 9): parecía gateado por Daniel y NO lo estaba — es contacto-primero, así que los rangos no son prerrequisito. Cierra el último `pendiente` del mapa de 301. B13: NO es un avalúo (Ley 1673). | 2598 |
 | §95 | 🔖 **JSON-LD del negocio** en todas las rutas (`RealEstateAgent`, desde `BaseLayout`). Lo valioso son las 2 ausencias deliberadas: **sin `streetAddress`** (falta la dirección comercial) y **sin `aggregateRating`** (no hay reseñas; inventarlas la sanciona la SIC). | 2640 |
 | §96 | 🔔 **Alertas guardadas + digest diario** (ítem 8) → **OLA 1 = 13/13**. Matching con UN dueño (web y Function importan el mismo módulo); la baja es **POST, nunca GET**. Y 3 bugs previos de propina ([[L-41]], [[LD-08]]). | 2686 |
-| §97 | 🏠 **La ficha dinámica** (TODO-33): el gate de §60 estaba sobre INVENTAR los 4 bloques sin fuente, no sobre construir — [[L-40]] por 3ª vez. Ruta canónica `/inmueble/<slug>`. Lo grave lo cazó la revisión adversarial: **no comprobaba que la propiedad estuviera publicada** ([[L-42]]). | 2771 |
+| §97 | 🏠 **La ficha dinámica** (TODO-33): el gate de §60 era sobre INVENTAR los 4 bloques, no sobre construir — [[L-40]] 3ª vez. Ruta canónica `/inmueble/<slug>`. Lo grave lo cazó la revisión adversarial: no comprobaba que estuviera PUBLICADA ([[L-42]]). | 2771 |
 | §98 | 🔌 **Dos premisas falsas**: Workers Caching llevaba sin habilitar desde Ola 0 (todo `s-maxage` era INERTE) y el panel no tenía puerta. 🔴 Y el hallazgo gordo: **`isStaff()` es insatisfacible** — el back-office moriría al desplegar las reglas. | 2858 |
 | §99 | 🔑 **Decisión Fuerte: el claim de staff** (TODO-42). Se DERIVA de `usuarios/{uid}` con un trigger, en el legacy, y se despliega SOLO. Mató el `get()` en reglas (se factura aunque deniegue). 🎁 De regalo: las reglas del portal **matan `admin.html`** → TODO-43. | 2914 |
 | §100 | 🔐 **Ruleset ÚNICO y fusionado** (TODO-43): había DOS con el mismo nombre y Firestore no fusiona — desplegar el del portal **mataba `admin.html`**. Permisos por CLAIM, escape de staff, 2 agujeros cerrados y el deny de Storage que tapaba las fotos. **80 tests**. | 2992 |
-| §101 | 📥 **Bandeja de leads REAL** en el panel (ítem 10, 1ª mitad): los leads entraban desde §88 y solo se veían en la consola de Firebase, con el correo roto. Consulta acotada, sin listeners, teléfono como enlace a WhatsApp. Si falla, **borra los de muestra** — enseñarlos haría llamar a gente que no existe. | 3054 |
+| §101 | 📥 **Bandeja de leads REAL** en el panel (ítem 10): entraban desde §88 y solo se veían en la consola de Firebase, con el correo roto. Consulta acotada, sin listeners. Si falla, **borra los de muestra** — enseñarlos haría llamar a gente que no existe. | 3054 |
 | §102 | 🚀 **El runbook del cutover** + el interruptor que el CI **no declaraba**: sin `PUBLIC_SITE_ENV`, TODO build de la historia salía `noindex` — incluido el del cutover. 3 perillas con defaults seguros y seis fases con vuelta atrás. | 3104 |
 | §103 | 🔀 **Dos escritores, un almacén, dos modelos**: `admin.html` y el portal escriben `propiedades` con esquemas incompatibles → índice vacío y cero errores. Motivo propio `esquema-legacy`. | 3162 |
 | §104 | ⚖️ **El gate del RNT protegía la ficha y dejaba pasar la card**. `publicable()` se muda al MODELO; motivo `sin-rnt`. | 3219 |
@@ -136,7 +136,7 @@
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |
-| §61 | ⭐ **PIVOTE DE MISIÓN: Fundación Operativa (TODO-34)** — armar la inmobiliaria completa con datos reales (Claude=abogado+empleados · cerebro dual Code+Chat). Corpus REAL: 83 docs + operación VIVA (2 administrados); gaps: corta estancia · notaría · inquilino · contable. Plan F1-F4. | 965 |
+| §61 | ⭐ **PIVOTE DE MISIÓN: Fundación Operativa (TODO-34)** — armar la inmobiliaria con datos reales (Claude = abogado + empleados · cerebro dual). Corpus: 83 docs + operación VIVA. Plan F1-F4. | 965 |
 
 ---
 

@@ -1,0 +1,138 @@
+---
+/*
+ * MI PERFIL (/mi-perfil) — el perfil de arrendatario, del lado de su dueño (Ola 2 · §155).
+ * Mockup: `design/mockups/ALTORRA Mi perfil.dc.html`.
+ *
+ * `noindex` a propósito: es una pantalla de cuenta. Que Google la indexe no aporta nada y solo
+ * consigue que aparezca en resultados una URL que a un anónimo le dice «entra primero».
+ *
+ * La lógica vive en `scripts/mi-perfil.ts` — aquí solo el andamio y los estilos. La página es
+ * PÚBLICA y por eso ese módulo no carga el SDK de Firestore ni el de Storage: todo va por REST.
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Mi perfil de arrendatario — ALTORRA Inmobiliaria"
+  description="Prepara una sola vez tu perfil de arrendatario y úsalo en todos los inmuebles que te interesen."
+  noindex
+>
+  <main id="main" class="mp">
+    <div class="mp__top">
+      <a class="mp__back" href="/">&#8592; Volver al portal</a>
+    </div>
+
+    <section class="mp__wrap">
+      <header class="mp__head">
+        <p class="alt-eyebrow">Tu cuenta</p>
+        <h1 class="mp__h">Mi perfil de arrendatario</h1>
+        <p class="mp__sub" id="mp-correo">Comprobando tu sesión…</p>
+      </header>
+
+      <div class="alt-card alt-card--neu mp__card" id="mp-anonimo" hidden>
+        <h2 class="mp__ch">Necesitas entrar primero</h2>
+        <p class="mp__p">Tu perfil es tuyo, así que hace falta tu sesión para verlo.</p>
+        <p><a class="alt-btn alt-btn--gold" href="/ingresar?volver=%2Fmi-perfil">Ingresar</a></p>
+      </div>
+
+      <div id="mp-panel" hidden>
+        <div class="alt-card alt-card--neu mp__card">
+          <div class="mp__intro">
+            <h2 class="mp__ch">Súbelo una vez y sirve para todos</h2>
+            <p class="mp__p">
+              Los mismos papeles valen para cualquier inmueble que te interese, y no tienes que
+              volver a entregarlos en cada uno. <strong>No cuesta nada</strong> &#8212; ni ahora ni
+              después: por ley no se le puede cobrar al arrendatario de vivienda.
+            </p>
+          </div>
+
+          <p class="mp__estado" id="mp-estado">Comprobando…</p>
+          <span class="alt-badge mp__badge" id="mp-estado-nombre"></span>
+
+          <div class="mp__obs" id="mp-observaciones" hidden>
+            <p class="mp__obs-k">Falta una cosa</p>
+            <p class="mp__obs-t" id="mp-observaciones-txt"></p>
+            <p class="mp__obs-d">Cuando lo corrijas, vuelve a enviar y lo miramos otra vez. No pierdes nada de lo que ya subiste.</p>
+          </div>
+
+          <label class="mp__primero">
+            <input type="checkbox" id="mp-primero" />
+            <span><strong>Es mi primer arriendo.</strong> Marca esto si nunca has tenido un contrato a tu nombre: dejamos de pedirte la referencia del arrendador anterior.</span>
+          </label>
+
+          <div class="mp__reqs" id="mp-requisitos"></div>
+
+          <input type="file" id="mp-archivo" accept=".pdf,.jpg,.jpeg,.png,.webp" hidden />
+
+          <div class="mp__pie">
+            <button class="alt-btn alt-btn--gold" type="button" id="mp-enviar" disabled>Enviar a revisión</button>
+            <p class="mp__nota">Cuando lo envíes, una persona lo revisa. Te respondemos antes de 24 horas hábiles.</p>
+          </div>
+
+          <p class="mp__msg" id="mp-msg" role="status" aria-live="polite"></p>
+
+          <p class="mp__legal">
+            No consultamos centrales de riesgo: sin un contrato con ellas, hacerlo es ilegal. Lo que
+            revisamos son tus documentos. Tus datos se tratan conforme a nuestra
+            <a href="/legal/politica-tratamiento-datos">Política de Tratamiento de Datos</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .mp { background: var(--alt-surface-neu); min-height: 100vh; padding: 28px 20px 64px; }
+  .mp__top { max-width: 760px; margin: 0 auto 18px; }
+  .mp__back { font-size: 13.5px; color: var(--alt-text-soft); text-decoration: none; }
+  .mp__back:hover { color: var(--alt-link-lg); }
+  .mp__wrap { max-width: 760px; margin: 0 auto; }
+  .mp__head { margin-bottom: 22px; }
+  .mp__h { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(28px, 4.4vw, 40px); line-height: 1.08; color: var(--alt-ink); margin: 6px 0 4px; }
+  .mp__sub { font-size: 13.5px; color: var(--alt-text-soft); margin: 0; }
+  .mp__card { padding: 30px; display: flex; flex-direction: column; gap: 18px; }
+  .mp__ch { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 26px; line-height: 1.15; color: var(--alt-ink); margin: 0 0 8px; }
+  .mp__p { font-size: 15px; line-height: 1.7; color: var(--alt-text); margin: 0; }
+  .mp__estado { font-size: 14.5px; line-height: 1.6; color: var(--alt-ink); margin: 0; }
+  .mp__badge { align-self: flex-start; }
+
+  /* Lo que falta va PRIMERO y con filete de oro: es lo único que la persona necesita leer. */
+  .mp__obs { border-left: 3px solid var(--alt-gold); background: var(--alt-mist); border-radius: 0 var(--alt-r-md) var(--alt-r-md) 0; padding: 18px 20px; }
+  .mp__obs-k { margin: 0 0 8px; font-size: 11px; font-weight: var(--alt-fw-bold); letter-spacing: 0.14em; text-transform: uppercase; color: var(--alt-ink); }
+  .mp__obs-t { margin: 0; font-size: 16px; line-height: 1.7; color: var(--alt-ink); }
+  .mp__obs-d { margin: 10px 0 0; font-size: 13px; color: var(--alt-text); }
+
+  .mp__primero { display: flex; align-items: flex-start; gap: 10px; background: var(--alt-mist); border-radius: var(--alt-r-sm); padding: 14px 16px; font-size: 14px; line-height: 1.6; color: var(--alt-text); cursor: pointer; }
+  .mp__primero input { margin-top: 3px; flex: none; }
+  .mp__primero strong { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
+
+  .mp__reqs { display: flex; flex-direction: column; gap: 12px; }
+  .mp-req { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; background: var(--alt-mist); border-radius: var(--alt-r-sm); padding: 15px 16px; }
+  /* Lo que falta se marca con oro, no con rojo: es una tarea pendiente, no un error de la persona. */
+  .mp-req--falta { background: var(--alt-surface); border-left: 3px solid var(--alt-gold); border-radius: 0 var(--alt-r-sm) var(--alt-r-sm) 0; }
+  .mp-req__t { font-size: 14.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
+  .mp-req__d { font-size: 12.5px; line-height: 1.6; color: var(--alt-text); margin-top: 3px; }
+  .mp-req__b { padding: 9px 16px; font-size: 13px; }
+
+  .mp__pie { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .mp__nota { margin: 0; font-size: 12.5px; color: var(--alt-text-soft); line-height: 1.6; }
+  .mp__msg { margin: 0; font-size: 13.5px; color: var(--alt-text); min-height: 1.2em; }
+  .mp__legal { margin: 0; font-size: 12.5px; line-height: 1.65; color: var(--alt-text-soft); border-top: 1px solid var(--alt-hairline); padding-top: 16px; }
+  .mp__legal a { color: var(--alt-link); text-decoration: underline; text-underline-offset: 2px; }
+
+  @media (max-width: 560px) {
+    .mp-req { grid-template-columns: 1fr; }
+    .mp-req__b { justify-self: stretch; }
+  }
+</style>
+
+<script>
+  import { montarMiPerfil } from '../scripts/mi-perfil';
+  void montarMiPerfil();
+</script>

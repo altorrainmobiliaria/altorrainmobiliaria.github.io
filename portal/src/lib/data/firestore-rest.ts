@@ -48,6 +48,15 @@ export interface GetDocOptions {
   fetchImpl?: typeof fetch;
   /** Override de la base REST (por defecto Firestore real). Solo para el emulador local en tests E2E. */
   baseUrl?: string;
+  /**
+   * ID token de la sesión, para leer un documento que las Rules reservan a su titular (§155).
+   *
+   * Existe para que una página PÚBLICA pueda leer lo suyo **sin arrastrar el SDK de Firestore**: la
+   * `apiKey` sola identifica el proyecto y no autoriza nada, así que sin esto una lectura protegida
+   * responde 403. Es el mismo contrato de siempre —edge-safe, solo `fetch`, no lanza nunca—, solo
+   * que con la sesión puesta.
+   */
+  idToken?: string;
 }
 
 /**
@@ -103,13 +112,15 @@ export function decodeDocument(doc: FsDocument): Record<string, unknown> {
  * No lanza NUNCA: mapea status (200/404/403/otro) y captura fallos de red/abort/JSON.
  */
 export async function getDoc(segments: readonly string[], opts: GetDocOptions): Promise<LowLevelResult> {
-  const { apiKey, projectId, signal, fetchImpl = globalThis.fetch, baseUrl = FS_BASE } = opts;
+  const { apiKey, projectId, signal, fetchImpl = globalThis.fetch, baseUrl = FS_BASE, idToken } = opts;
   const path = segments.map((s) => encodeURIComponent(s)).join('/');
   const url =
     `${baseUrl}/projects/${encodeURIComponent(projectId)}/databases/${DEFAULT_DATABASE}/documents/${path}` +
     `?key=${encodeURIComponent(apiKey)}`;
   try {
-    const res = await fetchImpl(url, { method: 'GET', headers: { accept: 'application/json' }, signal });
+    const cabeceras: Record<string, string> = { accept: 'application/json' };
+    if (idToken) cabeceras.authorization = `Bearer ${idToken}`;
+    const res = await fetchImpl(url, { method: 'GET', headers: cabeceras, signal });
     if (res.status === 200) {
       const json = (await res.json()) as FsDocument;
       return { ok: true, data: decodeDocument(json) };
