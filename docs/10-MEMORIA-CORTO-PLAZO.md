@@ -58,9 +58,9 @@
 > 🏁 **La web pública ya no tiene ni un «próximamente»** (26-ago, §158-§159; el menú muerto y sus 468
 > enlaces los caza ya la sonda 3 de `verify:enlaces`). Verifícalo con un grep, no con esta línea.
 >
-> 🔌 **LA RED NO ESTABA ENCHUFADA** (26-ago, §174): el CI no corría `npm run test` —855 pruebas, y
-> ninguna bloqueaba un despliegue— ni `verify` corría `typecheck` (26 errores en `main`, CI en rojo,
-> deploy parado). Ya están en ambos, con gate. Antes de fiarte de un ✅, pregunta **qué abre**.
+> 🎭 **UN ✅ NO PRUEBA QUE MIRARA** (§174-§175): el CI no corría `test` y su `typecheck` salía verde
+> **sin checker** (`astro check` sin el suyo PREGUNTA, y sin terminal eso es exit 0). Ya
+> arreglado, con sonda. **El CI nunca estuvo rojo**: lo afirmé sin mirar (§3.3).
 > Y **alojamiento lleva DOS gates**: RNT + reglamento de PH que autorice EXPRESAMENTE (el silencio no
 > vale). ⏭️ El control nuevo del alta **no tiene mockup**: al repaso de Daniel.
 >

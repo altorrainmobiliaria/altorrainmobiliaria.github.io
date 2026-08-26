@@ -301,6 +301,38 @@ preguntas inversas, que son las que descubren:
 - Al escribir un archivo NUEVO, no des por hecho que los gates lo cubren: pregúntate cuál de ellos
   **abre este archivo**. Un archivo nuevo es donde más fácil entra lo que ningún gate mira.
 
+### 4j-bis. 🎭 El gate que AFIRMA haber pasado — el peor de los tres
+
+Hay una escalera de maldad y conviene tenerla presente, porque cada peldaño se detecta distinto:
+**no tener gate** < **tener uno que nadie invoca** (§4j) < **tener uno que dice ✅ sin mirar**.
+
+El tercero aparece cuando a una herramienta de CLI le falta su prerrequisito y, en vez de fallar,
+**pregunta**: `«npm i <paquete> — Continue?»`. En un CI sin terminal nadie contesta, el proceso
+termina con **código 0** y el paso sale en verde sin haber abierto un archivo. Caso real: un día
+entero de «Tipos ✅» con 26 errores dentro, cuatro corridas verdes y deploy incluido.
+
+**Y por qué en tu máquina sí funciona.** Porque el paquete estaba en el `node_modules` de la RAÍZ del
+repo, no en el del subproyecto: Node lo encuentra subiendo un nivel. El CI instala dentro del
+subproyecto y allí no existe. *Una dependencia que solo existe por la disposición de carpetas de
+quien programa no existe.* Es la divergencia local↔CI por la cara que nadie mira: no «rojo en CI,
+verde en local», sino **verde en CI porque el gate se apagó**.
+
+**Cómo cazarlo.**
+- Exige el prerrequisito **en el LOCKFILE**, no en `node_modules`. El lockfile es lo que reinstala el
+  CI; `node_modules` es exactamente lo que te engaña.
+- **Estrena todo gate rompiéndolo a propósito EN EL ENTORNO DONDE VA A CORRER.** Un worktree con
+  instalación limpia sobre un commit malo conocido lo responde en dos comandos, y la respuesta es un
+  antes/después que se puede enseñar: *antes exit 0 sin salida; después exit 1 con los 26 errores.*
+  Un gate que nunca se ha visto en ROJO en CI no está probado: está estrenado a medias.
+- Desconfía de un ✅ que no dice **cuánto** miró. Exige a tus gates que impriman el recuento
+  (archivos, enlaces, pruebas): un número es lo único que distingue «revisado» de «no hice nada».
+- El prerrequisito también puede estar presente y ser **incompatible** (versión fuera del peer). Eso
+  al menos lanza, y por eso es menos grave: el silencio es el enemigo, no el error.
+
+**Y una regla de método, que es de donde salió todo esto**: una corrida de CI en verde **no es
+evidencia de que el gate mirara**. Si vas a afirmar el estado de un despliegue, ábrelo y míralo — la
+deducción «mi gate falla en local, luego el CI está rojo» puede ser exactamente al revés.
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.

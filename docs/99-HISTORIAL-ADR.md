@@ -6867,7 +6867,11 @@ dos días.
 **174.3 El hallazgo GORDO, que no venía en el encargo.** Al correr `typecheck` antes de tocar nada
 aparecieron **26 errores de tipos en `main`**, todos en `gestion-liquidacion.ts` — un archivo escrito
 ESE MISMO DÍA. `npm run verify` daba verde porque **no corre `typecheck`**, y el único que lo corre es
-el CI, que llevaba desde entonces **en rojo, bloqueando el despliegue del portal**. Tirando del hilo
+el CI. ❌ **CORRECCIÓN (§175)**: aquí escribí *«el CI llevaba desde entonces en rojo, bloqueando el
+despliegue»*. **ES FALSO** y era una DEDUCCIÓN, no una observación —`gh` no estaba instalado y lo di
+por cierto igual, violando §3.3 en el mismo ADR que presume de medir—. El CI estaba **VERDE**: pasó
+cuatro veces sobre el archivo roto y desplegó. La razón es peor que un CI en rojo y la cuenta §175.
+Tirando del hilo
 apareció lo peor: **el CI tampoco corría `npm run test`**. 855 pruebas unitarias —el gate del RNT, la
 prohibición del depósito en vivienda (Ley 820 art. 16), la liquidación peso por peso, la ventana de la
 Ley 2300, la máquina de estados del mandato— y **ninguna bloqueaba un despliegue**. La red más grande
@@ -6922,3 +6926,60 @@ transferible legal va a `legal-colombia-inmobiliario`.
 formulario existente — **no hay mockup propio** y entra en el repaso de mockups que Daniel ya debe.
 Y las pruebas de reglas (`test:rules`) siguen fuera del CI porque necesitan el emulador con Java:
 declarado, no resuelto.
+
+## 175. ADR-175 — El gate que PREGUNTA en vez de fallar: un día entero de «Tipos ✅» sin mirar un archivo
+
+**175.0 — De dónde salió.** De ir a comprobar una afirmación mía. En §174 escribí que el CI estaba en
+rojo y bloqueando despliegues; era una **deducción** (typecheck rojo en mi máquina + el CI corre
+typecheck) presentada como hecho, con `gh` sin instalar y sin haber mirado. Al abrir la API pública de
+Actions: **las 12 últimas corridas de `portal-ci` en VERDE**, incluidas **cuatro que contenían el
+archivo con 26 errores de tipos**, con el paso «Tipos» en ✅ y el deploy a staging hecho. La
+corrección está puesta en §174.3; el commit `17417ab` se quedó con el texto equivocado porque
+reescribir historia empujada cuesta más de lo que arregla.
+
+**175.1 Causa raíz (medida, no deducida).** `astro check` **sin `@astrojs/check` instalado NO falla**:
+imprime `npm i @astrojs/check typescript` + `Continue?` y **espera respuesta**. En un runner sin
+terminal la pregunta no se contesta y el proceso termina con **código 0**. El paso sale verde sin
+haber abierto un solo archivo. *Una herramienta que ante la falta de su prerrequisito PREGUNTA en vez
+de fallar convierte tu gate en un adorno, y lo hace del lado silencioso.*
+
+**175.2 Por qué en local sí funcionaba — la divergencia.** `@astrojs/check` estaba en el
+`node_modules` de la **RAÍZ del repo**, no en el de `portal/`. Node lo encuentra subiendo un nivel, así
+que en mi máquina el gate era REAL (cazó los 26 y una sonda deliberada). El CI hace `npm ci` **dentro
+de `portal/`**: allí no existía. **Una dependencia que solo existe por la disposición de carpetas del
+que programa no existe.** Es la familia de [[L-48]] —local y CI discrepando— pero por la cara que no
+se mira: no «rojo en CI, verde en local», sino **verde en CI porque el gate se apagó**.
+
+**175.3 El segundo defecto, debajo.** `portal` declaraba `typescript@^7.0.2` mientras **Astro 7 pinea
+`^6.0.3`** y `@astrojs/check` exige `^5||^6` **y lo comprueba en tiempo de ejecución**
+(`assertCompatibleTypeScript`). Al instalar el checker con TS 7, lanzaba. Se alinea a `^6.0.3`, que es
+lo que soporta la propia cadena de herramientas; TS aquí solo chequea (Astro transpila con esbuild),
+así que el build no se toca. Íbamos por delante de nuestro toolchain y el precio lo pagó el gate.
+
+**175.4 Solución estructural.** (a) `@astrojs/check` pasa a `devDependencies` **y al lockfile**, que es
+lo que `npm ci` respeta; (b) `typescript` a `^6.0.3`; (c) **sonda nueva** en `verify:build` que exige
+ambos **en el LOCKFILE** —no en `node_modules`, que es justo lo que engañaba—. Se eligió vigilar el
+lockfile y no «¿el checker corrió?» porque es estático, barato y ataca exactamente el modo de fallo.
+
+**175.5 Verificación — el antes/después que lo prueba.** En un worktree aparte, sobre el commit
+histórico roto (`0b274f8`) y con `npm ci` limpio, o sea las condiciones EXACTAS del CI:
+- **antes**: `typecheck` **exit 0**, sin salida útil → el CI lo daba por bueno.
+- **después**: `typecheck` **exit 1**, **26 errores** → el CI lo habría parado.
+Y la sonda mordida en las dos direcciones: fuera del lockfile → rojo con el mensaje correcto;
+restaurada → verde. Suite completa: **855/855**, `typecheck` 0 errores con checker de verdad, 7 gates.
+
+**175.6 Anti-patterns evitados.** No se forzó `--legacy-peer-deps` para tapar el conflicto: se
+comprobó qué versión de TS soporta la cadena y se alineó (el `.npmrc` que llegué a escribir se
+descartó al encontrar la causa real). No se dio por buena ninguna corrida de CI sin abrir la API. No
+se reescribió el commit con la afirmación falsa: se corrige donde se lee, en el ADR.
+
+**175.7 Doctrina.** Nace [[L-57]]. Y una regla de método que va al router por la puerta de §3.3: **una
+corrida de CI en verde no es evidencia de que el gate mirara** — hay que poder decir qué revisó y
+cuántos archivos. El corolario práctico: **todo gate nuevo se estrena rompiéndolo a propósito EN EL
+ENTORNO DONDE VA A CORRER**, no solo en la máquina de quien lo escribe. Un gate que nunca se ha visto
+en rojo en CI no está probado: está estrenado a medias.
+
+**175.8 Meta.** Es el cuarto pariente del mismo día ([[M-25]] · [[L-56]] · [[M-26]]) y el más caro,
+porque los otros tres fallaban *hacia el silencio* y este falla **hacia el ✅**: no es que nadie
+mirara, es que algo dijo «mirado» sin mirar. En orden de maldad: no tener gate < tener uno que nadie
+invoca < tener uno que **afirma haber pasado**.
