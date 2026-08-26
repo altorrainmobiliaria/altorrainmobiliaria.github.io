@@ -115,6 +115,26 @@ check(
   sueltos.length ? `sin cablear: ${sueltos.join(', ')} — un gate que nadie invoca no protege nada` : '',
 );
 
+/*
+ * Y que `npm run verify` los corra TODOS (§157).
+ *
+ * Por qué existe este segundo candado: el de arriba comprueba que el CI los invoque, y eso llega
+ * TARDE — el CI corre después de empujar. En local hay que acordarse de siete nombres, y el día que
+ * uno se olvida se empuja creyendo que está todo verde. Pasó: se corrieron cinco de siete y `verify:css`
+ * salió rojo en el CI, con el commit ya escrito diciendo «los 7 en verde».
+ * El atajo `npm run verify` arregla eso, pero solo si NO se queda atrás — así que se comprueba que
+ * nombre a nombre los contenga. *Un atajo que envejece es peor que no tenerlo: se confía en él.*
+ */
+const agregado = pkg.scripts?.verify ?? '';
+const fuera = gates.filter((g) => !agregado.includes(`npm run ${g}`));
+check(
+  '`npm run verify` corre TODOS los gates',
+  agregado !== '' && fuera.length === 0,
+  fuera.length
+    ? `fuera del atajo: ${fuera.join(', ')} — en local nadie recuerda ${gates.length} nombres`
+    : `${gates.length} gates en un solo comando`,
+);
+
 
 let failed = 0;
 for (const c of checks) {

@@ -113,12 +113,19 @@ import Footer from '../components/Footer.astro';
   .mp__primero strong { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
 
   .mp__reqs { display: flex; flex-direction: column; gap: 12px; }
-  .mp-req { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; background: var(--alt-mist); border-radius: var(--alt-r-sm); padding: 15px 16px; }
+
+  /* 🔴 `:global()` EN LAS CINCO, y no es descuido: estas filas las CREA el JS en tiempo de ejecución
+     (`scripts/mi-perfil.ts`). Astro compila `.x` a `.x[data-astro-cid-…]` y un nodo creado con
+     `createElement` no lleva ese atributo, así que la regla acotada no lo alcanzaría nunca — el CSS
+     no rompe, simplemente deja sin pintar (§117). Lo caza `verify:css`, que fue quien avisó.
+     Este `<style>` es ACOTADO, así que `:global()` sí se resuelve aquí; dentro de un `is:global`
+     saldría literal y el navegador descartaría la regla ([[L-50]]). */
+  :global(.mp-req) { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; background: var(--alt-mist); border-radius: var(--alt-r-sm); padding: 15px 16px; }
   /* Lo que falta se marca con oro, no con rojo: es una tarea pendiente, no un error de la persona. */
-  .mp-req--falta { background: var(--alt-surface); border-left: 3px solid var(--alt-gold); border-radius: 0 var(--alt-r-sm) var(--alt-r-sm) 0; }
-  .mp-req__t { font-size: 14.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
-  .mp-req__d { font-size: 12.5px; line-height: 1.6; color: var(--alt-text); margin-top: 3px; }
-  .mp-req__b { padding: 9px 16px; font-size: 13px; }
+  :global(.mp-req--falta) { background: var(--alt-surface); border-left: 3px solid var(--alt-gold); border-radius: 0 var(--alt-r-sm) var(--alt-r-sm) 0; }
+  :global(.mp-req__t) { font-size: 14.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
+  :global(.mp-req__d) { font-size: 12.5px; line-height: 1.6; color: var(--alt-text); margin-top: 3px; }
+  :global(.mp-req__b) { padding: 9px 16px; font-size: 13px; }
 
   .mp__pie { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
   .mp__nota { margin: 0; font-size: 12.5px; color: var(--alt-text-soft); line-height: 1.6; }
@@ -127,8 +134,8 @@ import Footer from '../components/Footer.astro';
   .mp__legal a { color: var(--alt-link); text-decoration: underline; text-underline-offset: 2px; }
 
   @media (max-width: 560px) {
-    .mp-req { grid-template-columns: 1fr; }
-    .mp-req__b { justify-self: stretch; }
+    :global(.mp-req) { grid-template-columns: 1fr; }
+    :global(.mp-req__b) { justify-self: stretch; }
   }
 </style>
 
