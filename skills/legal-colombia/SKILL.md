@@ -106,6 +106,17 @@ Usa este método. (Puedes usar esos plugins solo si el usuario pide EXPLÍCITAME
   campos que el sistema pide de verdad. Aconsejar lo que no se comprueba es la forma más cara de
   tener razón.
 
+- **Antes de escalarle algo al cliente, pregúntate si falta una ELECCIÓN o una CALIFICACIÓN (regla
+  operativa, 2026-08-26).** Una elección entre opciones legalmente válidas es suya; determinar bajo qué
+  régimen cae un acto es tuya, y disfrazarla de «decisión del cliente» le pasa trabajo tuyo y bloquea
+  el proyecto. Caso: dos documentos del mismo kit liquidaban la mora a tasas distintas y llevaban
+  meses marcados como «decisión pendiente del dueño». No lo eran: uno es un **mandato mercantil** y el
+  otro un **arrendamiento de vivienda**, dos regímenes distintos, y **cada documento ya llevaba la
+  tasa del suyo**. Lo que faltaba era una cláusula que explicara la diferencia.
+  **Corolario**: una divergencia entre dos documentos NO es automáticamente una incoherencia — puede
+  que hablen de obligaciones distintas. Antes de unificarlas, pregunta si son la misma obligación; si
+  no lo son, unificarlas es el error, y lo que toca es explicar por qué difieren.
+
 ## Prueba social FABRICADA en una maqueta que ya es pública (Ley 1480, arts. 29-30)
 
 Las réplicas de mockup llegan con reseñas, ratings y anfitriones de relleno. En cuanto esa página es

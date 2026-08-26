@@ -78,7 +78,7 @@
 > **(1) 🔴 rotar la contraseña de aplicación de Gmail**: `onNewSolicitud` falla con `535-5.7.8` y es la MISMA Function que avisará los leads del portal nuevo. Lanzar sin rotarla = perderlos sin evidencia, igual que se perdieron los 16 del sitio viejo (exportados antes, `43`).
 > **(3) B-04** — sin contrato con DataCrédito/TransUnion **NO se puede consultar a nadie**: ¿afiliarse, o solo aseguradora?
 > **(4-5)** verificar los **recovery codes** (§72) · Nº de **RNT** + vetar los 6 estándares del `02 §2`.
-> **(7)** **tasa de mora del doc 03** (B-05: 1,5×IBC vs 6%) — un párrafo, y las 5 remisiones lo heredan.
+> ~~**(7)** tasa de mora del doc 03~~ **RESUELTA, no era tuya** (§181): dos contratos, dos regímenes.
 > **(8)** `/publicar` **no pide correo** (fiel al mockup) ⇒ el propietario llega `[COLD]`: ¿campo o re-pesar?
 > **(10) 📧 RESEND** — dominio verificado + clave (runbook fase 0.2). Sin eso el digest no falla, solo no
 > envía. Gratis, y **no depende del Gmail roto**. ⚠️ El secreto ya existe con centinela (§140).

@@ -7273,3 +7273,109 @@ nodo puede romper el gate que lo LEE. Al acortar, comprueba qué patrones depend
 margen sigue siendo estrecho y eso NO se arregla aquí: los topes individuales suman 39000 mientras el
 presupuesto de arranque son 31500, así que un nodo puede estar «dentro de tope» y el arranque estar
 fuera. Queda anotado como lo que es — una calibración pendiente, no una avería.
+
+## 181. ADR-181 — La «divergencia» de tasas no era una divergencia: eran dos contratos
+
+**181.0 — Cómo empecé, y por qué cambié de tarea.** El plan era el panel de leads del aliado (lo
+último de la Ola 2 que no depende de cuentas de Daniel). Antes de escribir nada leí lo que la web
+PROMETE, y `/aliados` dice, firmado y publicado: *«no hay un formulario que te dé de alta ni un panel
+de aliado donde entrar: eso está en el plan, pero todavía no existe»* y *«las comisiones no están
+publicadas porque no están cerradas»*. Un panel de leads implica atribución y liquidación — o sea,
+reglas de negocio **que Daniel no ha decidido**. Construirlo sería inventarme el modelo comercial:
+exactamente lo que llevo toda la noche criticándole a otros (§174: no inventarse un deber que nadie
+impuso). **Se cambia de tarea y se dice por qué.** Verificar el plan antes de ejecutarlo también es
+trabajo.
+
+**181.1 — Lo que sí estaba maduro, y estaba mal clasificado.** La agenda del abogado tenía *«régimen
+de intereses sobre cánones»*, y la pizarra tenía la pelota **(7)**: *«tasa de mora del doc 03: 1,5×IBC
+vs 6%»*, marcada como **decisión de Daniel**. Primero lo barato: ¿el código cobra intereses? **No** —
+`agenda.ts` calcula DÍAS de mora y escalones, no dinero. Cero exposición viva. El artefacto afectado
+es documental: el kit.
+
+**181.2 — Y buscando antes de escribir, la respuesta ya estaba.** `42-LEGAL` ya tenía el dictamen del
+canon (6 %, con el rubro EN RIESGO por la regla 4ª del C.C. 1617 —que extiende a *«rentas, cánones y
+pensiones periódicas»* la prohibición de intereses sobre intereses— y ya acotado por diseño: los
+intereses van FUERA del valor de cara del título, así que si un juez los niega el capital sigue
+exigible). Lo que seguía abierto era el doc 03 contra el doc 04.
+
+**181.3 — El dictamen: no había nada que decidir.** Son **dos contratos bajo dos regímenes**:
+· **doc 03** = mandato de administración y recaudo con ALTORRA. Es **mandato COMERCIAL**, y esa
+  caracterización **no la invento aquí**: está verificada en `specs/R3 §GATE 1` — *«Rol de Altorra:
+  mandataria de recaudo del anfitrión (C.Co. 1262 ss.)»*. Luego su mora se rige por **C.Co. 884**:
+  1,5× el bancario corriente, con el techo de usura.
+· **doc 04** = arrendamiento de **vivienda urbana** entre propietario e inquilino. Acto civil →
+  **C.C. 1617** → 6 %.
+Cada documento **ya llevaba la tasa de su régimen**. Lo que faltaba no era una decisión: era una
+**cláusula que explicara por qué difieren**, para que quien lea el kit no lo tome por incoherencia.
+Tarea editorial de un párrafo, mía, para cuando TODO-34 se reanude — y el ⛔ de siempre sigue en pie:
+**no bajar el 03 a 6%**, que en un mandato mercantil regala intereses legítimos.
+
+**181.4 — Lo que NO cierro, dicho.** Si el propietario no es comerciante, queda por confirmar en
+fuente si el acto mixto arrastra igual al régimen mercantil (C.Co. 22). **No hace falta para la
+conclusión** —la caracterización del mandato ya está verificada por otra vía— pero conviene cerrarlo
+antes de firmar, y por eso queda escrito como pendiente y no como sabido. Tampoco se tocó el kit:
+está en pausa y se audita documento a documento (§70.6).
+
+**181.5 — El patrón, que ya va por dos.** Igual que §174: una pregunta en la agenda **cuya respuesta
+llevaba semanas verificada dos carpetas más allá**, y encima mal clasificada — «decisión del dueño»
+cuando era una caracterización jurídica, que es trabajo mío. **Regla**: antes de escalarle algo al
+dueño, pregúntate si lo que falta es una **elección** (suya) o una **calificación** (mía). Una
+divergencia entre dos documentos tampoco es automáticamente una incoherencia: puede que hablen de
+obligaciones distintas, y entonces lo que falta es explicarlo, no unificarlo.
+
+## 182. ADR-182 — Auditoría Nivel-2 #12: dieciocho ADRs y una sola frase con distinta ropa
+
+**Deliberación**: `2026-08-26-auditoria-cerebro-nivel2-12-inmobiliaria.md` (bóveda) — tabla completa
+de 7 hallazgos y cobertura sonda por sonda.
+
+**182.0 — Disparo NO voluntario.** El linter bloqueó un commit: *«Nivel-2 MUY vencida, 18 ADRs nuevos
+≥ 12, gracia agotada»*. La #11 había sido ESE MISMO DÍA con 163 headers; la noche produjo 18 más. Se
+corre porque el gate lo exige, no porque me apeteciera — y `--no-verify` está prohibido, que es
+exactamente el punto de tenerlo.
+
+**182.1 — Se aplicó la lección de la #11, y ahorró dos pendientes falsos.** La #11 dejó escrito que
+*«un pendiente heredado se hereda sin volver a preguntarse si sigue siendo cierto»* (la sonda 5 llevaba
+dos ediciones marcada PENDIENTE y nunca necesitó subagentes). Al re-examinarlas: la **sonda 4** no
+necesitaba subagente y resultó **N/A** —no hubo deliberación nueva en la ventana—, y la **7** se corrió
+como autocrítica, **declarando que le falta independencia**. Solo la **3** (retrieval-drill con
+subagente frío) sigue pendiente de verdad, porque esta sesión tiene instrucción de no usar el
+AgentTool. *Un pendiente honesto es «no se pudo», no «no se miró».*
+
+**182.2 — El hallazgo que resume la noche.** Dieciocho ADRs, y la mayoría son **la misma frase con
+distinta ropa**: algo cuyo nombre, comentario o ✅ prometía una comprobación que no ocurría. El
+checker de tipos que **preguntaba en vez de fallar** (§175); el `tsconfig` que miraba otra carpeta y
+dejaba 9 Cloud Functions sin gate (§176); 141 pruebas fuera del CI por un motivo **caducado** (§177);
+el comentario que juraba *«cambia aquí y solo aquí»* al lado de una de DOS copias (§178); el test
+llamado *«los roles espejan a las Rules»* que **no abre las Rules** (§179); la copia rancia del paso
+más caro del cutover (§180). **No es mala suerte: un repo acumula promesas más rápido que mecanismos,
+y las promesas bien escritas son las que más tardan en delatarse.**
+
+**182.3 — La variante nueva, que merece nombre.** [[M-25]] decía «una regla escrita da la sensación de
+estar aplicada». La noche añade un pariente peor: **el NOMBRE que promete una verificación**. Un
+comentario que promete lo lee quien pasa por ahí; un nombre —de test, de función, de sección— lo lee
+**todo el que busca si alguien comprueba eso**, y le contesta que sí. Por eso apaga la pregunta con
+más eficacia. Quitar una promesa falsa vale tanto como añadir una comprobación.
+
+**182.4 — Reincidentes, y qué se hizo.** *Gates a medias* va por **×5** (tres en una sola noche), y
+debajo apareció su causa común: **los prerrequisitos de los gates de este repo no se declaran** —
+`@astrojs/check`, `typescript` y `firebase-tools`, tres veces el mismo día. Cerrado con la sonda del
+**lockfile**, que ataca la causa y no los síntomas. *Boot crónico* va por **×4**: §180 hizo poda real
+y corrigió el diagnóstico, pero la causa estructural queda ABIERTA y declarada — los topes
+individuales suman **39000** contra un presupuesto de arranque de **31500**, así que un nodo puede
+estar «dentro de tope» con el arranque fuera, y ningún aviso por nodo puede dispararse a tiempo.
+
+**182.5 — Lo que queda ABIERTO, dicho sin adornos.** (a) `10` afirma *«la base está VACÍA (medido)»*
+**sin sello de fecha**, y ya no se puede re-medir desde el repo: las Rules niegan `list` a anónimos
+—correcto por diseño— así que un `curl` devuelve `PERMISSION_DENIED`. Una afirmación *medida* sin
+CUÁNDO envejece en silencio, y ésta sostiene razonamientos de producto. (b) La calibración de topes de
+(182.4). (c) Los sellos `verificado-vivo:` solo se vigilan a **90 días**, laxo para un tablero que se
+lee cada sesión.
+
+**182.6 — Y lo que sí funcionó.** **Tres veces un gate me cazó a mí**: el linter bloqueando este
+commit; el chequeo #29 declarándose **DEGRADADO** cuando comprimí la frase que leía (§180.4); y las
+mordidas en tres direcciones que exigieron que cada gate nuevo se probara rompiéndolo. El lazo está
+cerrado donde hay mecanismo. **El trabajo pendiente no es escribir más reglas: es que cada regla nueva
+salga con el suyo el mismo día.**
+
+**182.7 — GC pareado.** Arranque **31062 → 31059**. Delta ≤ 0, como exige el protocolo: la auditoría
+que engorda el cerebro que audita no ha terminado.

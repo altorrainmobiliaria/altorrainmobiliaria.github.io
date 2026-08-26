@@ -189,8 +189,9 @@ contenido mínimo del contrato = §3 de la L.820 (no §11) · paz y salvo predia
 (<100.000 UVT de activos, D.90/2018) · **RUB: 2 meses desde el RUT ⇒ venció ~jul-2026 → reportar YA**
 (sanción E.T. 658-3) · EEFF certificados por RL + contador (L.222 §37) · TRA/registro de huéspedes =
 prueba del contrato de hospedaje (L.2068 §21-22).
-**❓ Agenda abogado (no verificado en fuente oficial):** régimen de intereses sobre cánones (CC 1617 reglas
-3a-4a vs mercantil + unificación CSJ) · taxatividad de causales de terminación · tarifa registro Bolívar +
+**❓ Agenda abogado (no verificado en fuente oficial):** ~~régimen de intereses sobre cánones~~ (RESUELTA → §181: sobre el CANON, 6 % y con el rubro en
+riesgo por CC 1617 regla 4a, ya acotado por diseño; y la «divergencia» del kit no lo era — mandato COMERCIAL
+1,5×IBC vs vivienda CIVIL 6 %, dos regímenes distintos) · taxatividad de causales de terminación · tarifa registro Bolívar +
 estampillas · aplicación de L.1480 al arriendo de vivienda (concepto SIC) · ~~frecuencia de Ley 2300~~ (RESUELTA → §172: aplica a la prospección
 comercial, no solo a la cobranza, y ya hay calendario y guardias en el código) · valor UVB 2026 · ~~reglamento PH silente vs autorización expresa~~ (RESUELTA → §174: **el silencio NO autoriza**; hace falta permiso EXPRESO —D.1074/2015 art. 2.2.4.1.2.2 num. 8, L.675/2001 art. 18.1— instrumentado como DECLARACIÓN fechada del prestador, ya bloqueante en el alta y en `publicable()`. ⚠️ La respuesta llevaba **un mes** verificada en `specs/R3-LEGAL-COLOMBIA` §GATE 5 mientras esta lista seguía preguntándola: antes de agendar algo aquí, búscalo en `specs/R3`).
 
