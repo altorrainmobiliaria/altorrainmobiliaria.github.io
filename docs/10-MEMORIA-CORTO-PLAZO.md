@@ -50,7 +50,7 @@
 > **🌊 OLA 1 = 13/13 EN CÓDIGO** (§138; censo → `21`) **pero NO cerrada**: ningún camino ha escrito
 > aún en Firestore real y la base está VACÍA (medido). Manda **`specs/CUTOVER-RUNBOOK.md`** (§102,
 > §140): estrenar los caminos (1.4-1.8) → inventario → cutover. El resto, en PELOTAS.
-> **OLA 2**: el «gate del abogado» NO EXISTE — el abogado soy yo (Daniel, 26-ago) → TODO-49, §165.
+> **OLA 2**: el «gate del abogado» NO EXISTE — el abogado soy yo (Daniel, 26-ago) → TODO-49, §165. **Agenda legal a CERO** (§194).
 >
 > 🎭 **UN ✅ NO PRUEBA QUE MIRARA** (§174-§177): el CI no corría `test`, su `typecheck` salía verde
 > **sin checker**, `functions/` no se chequeaba y 141 pruebas de emulador estaban fuera. Los cuatro
