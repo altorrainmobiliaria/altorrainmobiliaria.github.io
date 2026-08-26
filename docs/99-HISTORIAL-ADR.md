@@ -5969,3 +5969,101 @@ se amplía en vez de duplicarse: es la misma, vista desde el otro extremo.
 
 **157.5 — Archivos.** `portal/src/pages/mi-perfil.astro` (`:global()`) · `portal/package.json`
 (`verify`) · `portal/scripts/verify-build.mjs` (el candado nuevo) · `docs/36` ([[L-56]] ampliada).
+
+## 158. ADR — La página del «próximamente» que menos podía serlo ⟦OPUS-5⟧ (2026-08-26)
+
+**158.0 — Por qué esta y no otra.** `/invertir` era el destino de DOS redirects del sitio viejo
+(`/invertir.html` y `/invertir-airbnb-cartagena.html`): direcciones con años de posicionamiento
+detrás. Mandar tráfico indexado a una pantalla que dice «llega pronto» es el peor de los dos mundos
+— se paga el coste de conservar la URL y se tira al visitante que llega por ella.
+
+**158.1 — El «próximamente» prometía algo que no podemos cumplir.** Decía *«rentabilidad estimada
+por zona»*. Ese dato no existe verificado, y publicarlo a ojo sería inventar cifras justo en la
+página que más caro cuesta equivocar: la de quien va a poner dinero. La página nueva **cambia la
+promesa y explica por qué**, en una sección propia («Lo que no vamos a publicar aquí»). Misma regla
+que gobierna `zonas.ts` y el Journal, aplicada donde más tienta romperla.
+
+**158.2 — Qué dice en su lugar.** Los dos modelos de renta (`MODELOS`) descritos no por rendimiento
+sino por **lo que cada uno EXIGE** y a quién le encaja: arriendo por meses bajo Ley 820/2003 frente
+a alojamiento por días con RNT obligatorio (Ley 300/1996, Ley 2068/2020 art. 38). Y tres cosas que
+se revisan antes de firmar (`ANTES_DE_FIRMAR`). Cero porcentajes en toda la página — comprobado por
+`verify:claims`.
+
+**158.3 — Sin mockup propio, y es deliberado.** No estrena un solo componente: reutiliza la
+estructura de las landings de zona (§92), que ya tiene mockup aprobado. Dibujar otro para volver a
+colocar lo mismo sería teatro de proceso. La regla «NUNCA UI sin mockup» protege contra inventar
+interfaz, no contra reutilizar la aprobada — lo NUEVO aquí es el texto.
+
+**158.4 — Archivos.** `portal/src/pages/invertir.astro` (reescrita; deja de usar
+`ProximamenteLayout`). Commit `5dda21f`.
+
+## 159. ADR — Dos anclas fantasma vivían en las 74 páginas, y ningún gate las veía ⟦OPUS-5⟧ (2026-08-26)
+
+**159.0 — Lo que había que hacer.** Cerrar los dos últimos huecos de la web pública: `/aliados`
+seguía siendo un cartel de obra (enlazada 3× ) y `#nosotros` no llevaba a ningún sitio. Lo que
+apareció al tirar del hilo fue bastante más grande.
+
+**159.1 — `/nosotros` nace, y la mitad del trabajo es lo que NO dice.** El ancla `#nosotros` estaba
+en el header Y en el pie: en las 74 páginas del sitio, sin un solo `id="nosotros"` en el proyecto.
+Los mockups lo dibujaban como `href="#"`, así que el destino **nunca llegó a decidirse** y el código
+heredó un ancla inventada — el «botón fantasma» de §126, multiplicado por cada página. La página
+nueva no inventa historia: ni «20 años de experiencia», ni fundadores, ni fotos de un equipo que
+nadie ha fotografiado. Solo lo comprobable —razón social, NIT, la Matrícula de Arrendador 6636— y
+una sección que dice en voz alta lo que todavía no podemos demostrar. *Una página «Nosotros» con
+logros inventados rompe justo lo que esta marca dice vender.*
+
+**159.2 — `/aliados`, escrita alrededor de tres cosas que no puede decir.** (a) **Comisiones**: no
+están cerradas, y la página lo dice con esas palabras en vez de poner una cifra que después se
+mueva. (b) **El portal self-service de aliados**: existe en el MEGA-PLAN (Ola 2.2), no en el código,
+y su pasarela está detrás del gate del abogado (B2/B9) — no se promete fecha. (c) **Que cubrimos la
+matrícula del aliado**: no se puede. Por eso su pieza central no es un incentivo sino un REQUISITO —
+quien intermedia arriendos de vivienda de forma habitual necesita **su propia** matrícula (Ley 820
+art. 28), y se lo decimos antes de que entre. Es lo que ningún programa de captación cuenta en su
+página.
+
+**159.3 — El hallazgo grande salió de MEDIR, no de leer.** Al contar todas las anclas del HTML
+construido contra los `id` de su página de destino: **`#servicios` no existe en ninguna página**, y
+SEIS entradas del menú principal apuntaban ahí. **468 enlaces muertos en 36 páginas**, en la
+navegación más usada del sitio. Buscar `#nosotros` a mano encuentra un ancla; medir el agregado
+encuentra el menú entero. *Cuando el defecto vive en un componente compartido, la medición agregada
+es el único ángulo que lo revela.*
+
+**159.4 — Dos entradas se RETIRAN, y es una decisión de negocio.** «Crédito de Vivienda» (no
+prestamos ese servicio ni hay página que lo describa) y «Pagos en Línea» (el carril de Wompi,
+bloqueado). Una entrada de menú es una promesa, y prometer crédito en un sitio inmobiliario es de lo
+más delicado que se puede poner. Queda anotado para Daniel por si alguno sí es un servicio real.
+
+**159.5 — Por qué NINGÚN gate lo vio: el hueco estaba en la juntura.** `verify:enlaces` solo miraba
+rutas `/algo`; `verify:controles` solo caza el `href="#"` **literal** —la firma del enlace que
+quería ser un botón—. Nadie miraba `href="#algo"`. Peor: la cabecera de `verify:enlaces`
+**justificaba por escrito** dejar las anclas fuera «porque comprobarlas exige red». Eso valía para
+los enlaces externos y se extendió al ancla sin volver a mirarlo — el destino de un `#ancla` está
+DENTRO del mismo HTML que el gate ya tiene abierto. *Una exclusión razonada mal envejece peor que
+una sin razonar: nadie la vuelve a cuestionar porque parece que ya se pensó.*
+
+**159.6 — Sonda 3 de `verify:enlaces`.** Comprueba anclas de la misma página (`#x`) y de otra
+prerenderizada (`/ruta#x`). Si el destino es SSR no hay HTML que abrir y **no se juzga**: un gate que
+adivina, miente. El informe agrupa **por ancla y no por página** — un `#x` roto en un componente
+compartido son 74 filas idénticas, y ahí el informe deja de leerse justo cuando más hay que leerlo.
+
+**159.7 — Mordida probada en las dos direcciones, contra el artefacto que el gate lee de verdad**
+(§150.4): con el `dist/` anterior salió ROJO con exit 1 —«#servicios — 468 enlace(s) en 36
+página(s)»— y tras reconstruir con el menú corregido, verde: 341 anclas aterrizan en un id real.
+
+**159.8 — Verificación.** Los 7 gates en verde con `npm run verify` (§157), 583 tests unitarios, y
+el DOM del servidor de desarrollo comprobado a mano: h1 navy `#062743` en Cormorant Garamond, filete
+dorado `#d4af37`, fondo blanco, NIT y matrícula visibles, cero asteriscos de markdown sin renderizar,
+cero anclas sin destino. **Ya no queda ni un `ProximamenteLayout` en `src/pages/`.** Y **en el worker desplegado** (no solo en local): `/nosotros`, `/aliados`, `/invertir`, `/journal` y `/` → 200, con el NIT y la matrícula servidos y **cero `#servicios`** en el HTML del menú.
+
+**159.9 — Archivos.** `portal/src/pages/nosotros.astro` (nueva) · `portal/src/pages/aliados.astro`
+(reescrita) · `portal/src/components/Header.astro` (ancla + menú «Servicios») ·
+`portal/src/components/Footer.astro` (ancla) · `portal/scripts/verify-enlaces.mjs` (sonda 3).
+Commits `60a7ce7` y `4fdf3d0`.
+
+**159.10 — El GC pareado, y lo que demuestra.** Escribir esto en el cerebro empujó el BOOT por encima
+del techo (one-in-one-out, §G.5). Se pagó con poda REAL: tres filas TODO que **narraban lo ya
+construido** —y eso vive en su ADR— pasaron a puntero + lo que falta, la pelota (2) cerrada se retiró
+(vive en §154) y la bitácora se comprimió sin perder un solo hecho ni un puntero: **751c + 111c + 308c
+liberados**. Aun así el margen quedó en ~340c. *Es la confirmación empírica del diagnóstico de §146:
+el boot al 99% es CRÓNICO y no lo arregla podar mejor cada vez — pide **shard del `10`** o **poda del
+router**.* Un GC que hay que repetir en cada commit no es higiene, es un impuesto.

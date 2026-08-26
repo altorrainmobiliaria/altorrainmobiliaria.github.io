@@ -27,20 +27,20 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-17 · 21** | **Ola 0 restos** (E2E "tras cache" · obra AEO) · **lote-dueño**: RNT, dirección COMERCIAL, abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ | gate=obra/cutover |
-| **TODO-CEREBRO** | 🧠 **Mantenimiento** (sin pausa desde 20-ago). **TODO-23** kernel: K-01/02/04/05/09 + **de §143**: que el #27 resuelva el nombre contra la CARPETA del nodo (hoy perdona 92 basename) · que los umbrales del #16 sean en COMMITS, como ya lo es el de auditoría. **K-10 (§152)**: dos lecciones con el MISMO `L-NN` en nodos distintos no las caza nadie — pasó con L-46. **TODO-24** ssotFact de paleta + cache EN EL CUTOVER · **TODO-28** #7 sello >90d · **TODO-32(b)** [[M-09]] a los hermanos. 🔬 auditoría #10 HECHA (§146): el BOOT al 99% **crónico** solo baja con shard del `10` o poda del router — no con una línea menos por commit. ⚠️ El banner de costo solo baja con commits de PRODUCTO. | 🔄 | §84·§143 |
+| **TODO-CEREBRO** | 🧠 **Mantenimiento** (sin pausa desde 20-ago). **TODO-23** kernel: K-01/02/04/05/09 + de §143: el #27 debe resolver el nombre contra la CARPETA del nodo (hoy perdona 92 basename) y los umbrales del #16 ir en COMMITS. **K-10 (§152)**: dos lecciones con el MISMO `L-NN` en nodos distintos no las caza nadie. **TODO-24** ssotFact de paleta + cache EN EL CUTOVER · **TODO-28** #7 sello >90d · **TODO-32(b)** [[M-09]] a los hermanos. 🔴 **BOOT al 99% = CRÓNICO** (§146): solo baja con **shard del `10`** o **poda del router**; el GC de §159 liberó 751c y volvió a tocar techo el mismo día. | 🔄 | §84·§143·§146 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-30 · 22** | 🗺️ **MapLibre COMPLETO (§55)** — falta solo la vista en foreground, la confirma Daniel ([[L-39]]) · 🏠 **CATÁLOGO con ficha (§97)**: datos reales = fases 3-4 del runbook, luego fichas al sitemap. | 🟢 | §55.9 · §102 |
-| **TODO-46** | 📅 **GESTIÓN v1 (ítem 13) — COMPLETA en código.** Expedientes, contratos, pagos, novedades (§112-§118) con sus 5 puertas desplegadas y PROBADAS contra el emulador (§140-§141) · **bóveda de documentos** construida, desplegada y ya **LEGIBLE**: quién abrió cada documento, con su índice en producción (§142, §148). ⏭️ Falta **aprobar el mockup** y **ESTRENARLA con datos reales** (runbook 1.5-1.6), que es lo único que puede verificar el render en vivo. | 🟢 | §148 |
-| **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR. Detalle → §129-§138.** Identity Platform ACTIVO · reglas fase 2 EN VIVO · resolver del código en las DOS puertas · `/seguridad` para inscribirlo · `cerrarMisSesiones` y `retirarSegundoFactorDe` verificadas. ⏭️ **Daniel**: inscribir su 2FA (clave manual; el QR se aplazó, §137.5) · verificar su correo. ⏭️ **Mío, DESPUÉS de que él se inscriba**: exigirlo en las Rules — antes NO, expulsa a todos · el QR verificable · **puerta única (mockup APROBADO)** ⚠️ con desviación obligada: el paso 2 del dibujo distingue cliente de equipo y eso ENUMERA cuentas de staff — se construye idéntico para todos. 🚫 anti-bot aplazado (§132.5). | 🟢 Daniel | §137 |
+| **TODO-46** | 📅 **GESTIÓN v1 (ítem 13) — COMPLETA en código**, puertas desplegadas y probadas; bóveda de documentos legible con su índice en producción → §112-§118, §140-§142, §148. ⏭️ Falta **aprobar el mockup** y **ESTRENARLA con datos reales** (runbook 1.5-1.6): es lo único que puede verificar el render en vivo. | 🟢 | §148 |
+| **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR** → §129-§138. ⏭️ **Daniel**: inscribir su 2FA (clave manual; el QR se aplazó, §137.5) · verificar su correo. ⏭️ **Mío, DESPUÉS de que él se inscriba**: exigirlo en las Rules —antes NO, expulsa a todos— · el QR verificable · **puerta única** (mockup APROBADO) ⚠️ con la desviación obligada del paso 2, que enumeraría cuentas de staff (§137.6). 🚫 anti-bot aplazado (§132.5). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL — PUBLICADO (§147).** 5 artículos con la norma .gov.co citada; «Guías de zona» estrenada con un HUB que enlaza las 13 landings. Mockup **APROBADO**. ⏭️ Falta: «Mercado» sigue vacía (sin dato verificado que citar) · RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
-| **TODO-49** | 🏷️ **OLA 2 — arrancada por lo que NO gatea el abogado** ([[L-40]]). **Pipeline de compraventa COMPLETO** (§151): dominio, puerta desplegada y verificada en producción, y pantalla. **Perfil de inquilino 1→N**: dominio y las 5 puertas DESPLEGADAS (§152). Y la **pantalla de REVISIÓN** (§153), que el equipo sí puede usar hoy. Y la del TITULAR (`/mi-perfil`, §155), que habla con Firebase SIN cargar Firebase. **El perfil está COMPLETO por los dos lados.** ⏭️ Después: panel de leads del aliado. 🚫 El rail de pago Wompi SÍ lo gatea el abogado (B2/B9). | 🔵 mío | §151 |
+| **TODO-49** | 🏷️ **OLA 2 — arrancada por lo que NO gatea el abogado** ([[L-40]]). Pipeline de compraventa y **perfil de inquilino COMPLETO por los dos lados** (titular y revisión) → §151-§153, §155. ⏭️ Después: panel de leads del aliado. 🚫 El rail de pago Wompi SÍ lo gatea el abogado (B2/B9). | 🔵 mío | §151 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
 
 ## 📝 Bitácora (efímera)
 
-> ### 🏗️ ARRANQUE EN FRÍO — lee esto y ya sabes dónde estás (2026-08-21, 2ª foto del día)
+> ### 🏗️ ARRANQUE EN FRÍO — lee esto y ya sabes dónde estás (21-ago)
 >
 > **Frente activo: TERMINAR EL MEGA-PLAN** (web + sistema). Daniel el 21-ago: *«las campañas al final,
 > nos interesa terminar la página web y el sistema, todo el mega plan»*; **Meta ads y el Gmail roto van
@@ -54,14 +54,17 @@
 > (3) **Resend** · (4) **DNS/cutover**. Aparte: **TODO-30**, que lo confirma Daniel ([[L-39]]).
 > **OLA 2**: el abogado gatea el RAIL DE PAGO, **no toda la ola** ([[L-40]] ya cobró 3 veces, [[M-11]]).
 >
+> 🏁 **LA WEB PÚBLICA YA NO TIENE NI UN «PRÓXIMAMENTE»** (26-ago, §158-§159): cayeron `/invertir`,
+> `/nosotros` (que ni existía: era un ancla fantasma en las 74 páginas) y `/aliados`. Compruébalo con
+> un grep de `ProximamenteLayout` antes de creerte esta línea. Y midiendo las anclas del build salió
+> el menú: `#servicios` **no existe** y 6 entradas apuntaban ahí — 468 enlaces muertos, que ya caza la
+> **sonda 3** de `verify:enlaces`.
+>
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos
 > que solo vio la consola del dueño (§133-§136): pesa a favor de retirarlo pronto en el cutover. El
-> portal sí la tiene: **7 gates** y barrido en vivo (885 enlaces + los 65 redirects, §150). Si un gate
-> pasa, pregúntate **qué archivos abre** ([[L-52]]). Y córrelos con **`npm run verify`**, no de memoria (§157).
->
-> ⚠️ **Antes de tocar código, lee `34-DOCTRINA-CODIGO`** (trigger 🖥️) y, si el síntoma te suena, `30`:
-> [[L-33]] (`locals.runtime.env` removido en Astro v6) YA cobró dos veces, y [[L-41]] (cabeceras
-> inmutables en los redirect) explica por qué un endpoint puede dar 500 SOLO en staging.
+> portal sí: **7 gates** (1043 enlaces, 341 anclas y los 65 redirects) + [[L-33]] y [[L-41]] entre los
+> gotchas que YA cobraron. Si un gate pasa, pregúntate **qué archivos abre** ([[L-52]]); y córrelos con
+> **`npm run verify`**, no de memoria (§157).
 
 
 
@@ -69,7 +72,6 @@
 
 > **⏭️ PELOTAS DE DANIEL** (no las puedo cerrar yo):
 > **(1) 🔴 rotar la contraseña de aplicación de Gmail**: `onNewSolicitud` falla con `535-5.7.8` y es la MISMA Function que avisará los leads del portal nuevo. Lanzar sin rotarla = perderlos sin evidencia, igual que se perdieron los 16 del sitio viejo (exportados antes, `43`).
-> **(2)** ✅ CERRADA: «Crear cuenta» ABIERTA el 25-ago con su visto bueno (§154).
 > **(3) B-04** — sin contrato con DataCrédito/TransUnion **NO se puede consultar a nadie**: ¿afiliarse, o solo aseguradora?
 > **(4-5)** verificar los **recovery codes** (§72) · Nº de **RNT** + vetar los 6 estándares del `02 §2`.
 > **(7)** **tasa de mora del doc 03** (B-05: 1,5×IBC vs 6%) — un párrafo, y las 5 remisiones lo heredan.
@@ -78,6 +80,10 @@
 > envía. Gratis, y **no depende del Gmail roto**. ⚠️ El secreto ya existe con centinela (§140).
 > **(11) ⚖️ ¿avaluador inscrito en el RAA?** Solo de eso depende si se quedan «Avalúos» (menú Gestión) y
 > «Avalúo y fotografía profesional» (Premium). Si no: se quitan esas dos y listo (§105).
+> **(12) 💳 ¿«Crédito de Vivienda» y «Pagos en Línea» son servicios REALES?** Estaban en el menú
+> apuntando a un ancla que no existe, y las retiré (§159.4): del primero no hay ni página ni servicio
+> verificable —y prometer crédito es de lo más delicado que se puede poner—, y el segundo es el carril
+> de Wompi, que sigue tras el gate del abogado. Si alguno SÍ se presta, dilo y se le hace su página.
 > **(9) 📣 PAUTA — al final por decisión tuya; aplazarla es SEGURO**: la campaña de humo solo muerde el
 > día que recargues saldo ([[D-15]]). **Antes de recargar**: sesión de Meta de Altorra ([[D-16c]]) +
 > filtro `Entrega=Activo` con rango Máximo ([[D-15b]] — «Anuncios activos» esconde los zombies).

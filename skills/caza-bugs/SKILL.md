@@ -195,6 +195,42 @@ interpreta igual de mal: *«esto está roto»*, no *«esto todavía no existe»*
   Un gate que acusa a un inocente se desactiva solo —en la cabeza de quien lo lee— y el día que grite
   de verdad, nadie mira.
 
+## 4h. 👻 El ancla que no aterriza — y el hueco ENTRE dos gates
+
+Primo de §4g, pero se escapa de su red: `href="#seccion"` cuyo `id` **no existe en la página de
+destino**. El navegador no protesta ni ensucia la consola; se queda exactamente donde está. Para
+quien lo pulsa no es un error, es *«esta web no responde»* — y es peor que un 404, porque un 404 al
+menos se ve.
+
+- **Dónde vive**: en el header y el pie, o sea en TODAS las páginas a la vez. Casi siempre nace del
+  mockup, que dibujó el enlace como `href="#"` porque el destino aún no estaba decidido; alguien le
+  puso después un nombre plausible (`#nosotros`, `#servicios`) y nadie comprobó que existiera.
+- **Cómo cazarlo**: por cada `<a href="#x">` o `<a href="/ruta#x">` del **HTML construido**, mira si
+  `id="x"` (o `name="x"`) está en el HTML de esa página. No hace falta red ni navegador: el destino
+  está dentro del archivo que ya tienes abierto. Si la ruta destino se sirve en el servidor y no hay
+  HTML que abrir, **no lo juzgues** — un gate que adivina, miente.
+- **Agrupa el informe por ANCLA, no por página.** Un `#x` roto en un componente compartido son 74
+  filas idénticas, y el informe deja de leerse justo cuando más hay que leerlo.
+
+### Las tres lecciones transferibles (valen para cualquier proyecto)
+
+1. **El defecto vive en la JUNTURA de dos gates, no dentro de ninguno.** Un gate miraba rutas
+   `/algo`; el otro, el `href="#"` literal. Nadie miraba `href="#algo"`. Al auditar una red de
+   verificación, no preguntes *«¿es profundo cada gate?»* sino **«¿qué cae entre dos?»** — dibuja el
+   universo de casos y marca cuál gate cubre cada uno. Los sistemas de verificación fallan más por
+   solapamiento incompleto que por falta de profundidad.
+2. **Una exclusión MAL RAZONADA envejece peor que una sin razonar.** La cabecera del gate justificaba
+   por escrito dejar las anclas fuera «porque comprobarlas exige red». Era cierto de los enlaces
+   externos y se extendió al ancla sin volver a mirarlo. Nadie la re-cuestionó **porque parecía ya
+   pensada**. Cuando leas el `ALCANCE` de un gate, trátalo como una hipótesis a refutar, no como
+   documentación: cada exclusión debe nombrar el caso que excluye y por qué ESE caso.
+3. **Cuando el defecto vive en un componente compartido, la medición AGREGADA es el único ángulo que
+   lo revela.** Buscar el síntoma conocido a mano encuentra una instancia; contar todas las
+   ocurrencias del patrón contra su condición de validez encuentra el sistema entero. Aquí: buscar
+   `#nosotros` daba un ancla; medir las 664 anclas del build dio **468 enlaces muertos en el menú
+   principal**, que nadie iba a buscar. *Si acabas de encontrar una instancia de un patrón, mide el
+   patrón antes de arreglar la instancia.*
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.
