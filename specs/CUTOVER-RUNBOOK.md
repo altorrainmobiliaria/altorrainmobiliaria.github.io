@@ -137,7 +137,7 @@ verdad cuando haya catálogo y una alerta con novedades.
 
 | Paso | Quién | Qué |
 |---|---|---|
-| 4.1 | 🧑 | Cargar las primeras propiedades **desde el panel del portal** (TODO-44), o entregárselas a Claude para sembrarlas |
+| 4.1 | 🧑 | Cargar las primeras propiedades **desde el panel del portal** (TODO-44). ⛔ **La opción «entregárselas a Claude para sembrarlas» se RETIRA** (§209) y por dos motivos, cada uno suficiente: (a) sembrar exige un **service account**, una credencial del dueño que Claude no debe manejar (§124) — el paso estaba asignado a quien no puede hacerlo, como ya pasó con el 1.4 (§140); (b) el único script que existe, `scripts/upload-to-firestore.mjs`, escribe el **modelo LEGACY**, así que su salida **desaparece del catálogo sin dar error** (§103). Ya lleva el aviso en su cabecera. Lo que Claude SÍ puede: preparar los datos y el script; **ejecutarlo con credenciales es del dueño**. |
 | 4.2 | 🤖 | Comprobar que `indices/catalogo-*` se pobló (lo escribe la Function de la fase 3) |
 | 4.3 | 🧑 | Poner la variable de repositorio **`PORTAL_CATALOGO_SOURCE = live`** |
 | 4.4 | 🧑 | Poner **`PORTAL_MEDIA_BASE`** con la URL pública del bucket R2 |

@@ -8727,3 +8727,47 @@ gravedad al repartirla**.
 ### 208.5 — Archivos
 `docs/10`: los cuatro K con su veredicto medido; K-09 retirado. **INTACTO**: el kernel — a propósito,
 y con el arreglo escrito para quien lo tome con la cabeza fresca.
+
+## 209. ADR-209 — El paso que ofrece sembrar el catálogo: sin herramienta correcta, y asignado a quien no puede
+
+**Contexto.** Tras cinco vueltas auditando el ledger del cerebro, el latido llevaba el día marcando que
+el mantenimiento se come el **51 %** del trabajo del mes contra una bandera del 30 %. Seguir ahí era
+ignorar mi propia señal, así que esta vuelta va a **producto**: el paso **4.1** del cutover, que es el
+que pone el catálogo real y por tanto el que decide si el portal se estrena con algo que enseñar.
+
+### 209.1 — Decía *«…o entregárselas a Claude para sembrarlas»*, y eso falla por dos sitios
+**(a) Credencial que no debo manejar.** Sembrar usa `firebase-admin`, y el único script existente
+arranca con `GOOGLE_APPLICATION_CREDENTIALS=/ruta/a/serviceAccount.json`. Es una credencial del dueño;
+§124 ya lo estableció y mis propias reglas de operación también. **Es un paso asignado a quien no puede
+ejecutarlo** — el mismo defecto que §140 corrigió en el paso 1.4, reaparecido en otro sitio del mismo
+documento. *Un runbook con un paso imposible no falla: se detiene, y nadie sabe por qué.*
+**(b) El único script escribe el modelo EQUIVOCADO.** `upload-to-firestore.mjs` pone
+`operacion: 'comprar'` y `precio` como **número**; el portal espera `venta|arriendo|alojamiento` y
+`precio` como **objeto**, con `geo` y `specs` anidados. Es exactamente la incompatibilidad que §103
+documentó: la propiedad **pasa el filtro de publicadas y luego se cae**, el índice sale vacío, el
+buscador dice «no hay resultados» y **no se registra ningún error**.
+
+### 209.2 — Y la tercera capa, que es la que convierte esto en trampa
+El script **no llevaba ningún aviso**. Su cabecera lo presenta como la herramienta actual («*Migra las
+propiedades a Firestore*»), sin una línea que diga que es del sitio viejo. Las tres capas juntas hacen
+el recorrido completo: en el paso 4.1 uno alcanza el script obvio, **corre con éxito**, y el catálogo
+se queda vacío. Es la firma del día entero: *una superficie que promete lo que su interior no entrega.*
+
+### 209.3 — Lo corregido
+- **`scripts/upload-to-firestore.mjs`**: aviso en cabecera, con el porqué y el síntoma exacto —para que
+  quien lo abra lo entienda sin tener que encontrar el §103— y el puntero a la vía buena.
+- **Runbook 4.1**: la opción se **retira** con sus dos motivos escritos, y se sustituye por el reparto
+  honesto: **Claude prepara los datos y el script; ejecutarlo con credenciales es del dueño.** Eso sí
+  es cierto y sí se puede cumplir.
+
+### 209.4 — Lo que un sembrador correcto tendría que respetar (por si se construye)
+No basta con escribir documentos bien formados. El código `INM-YYYYMM-NNNN` sale de un **contador con
+DOS escritores** (el panel del portal y el legacy), y por eso el alta lo acuña **dentro de una
+transacción** sobre `config/counters`. Escribir la propiedad por fuera se salta esa transacción y puede
+**duplicar códigos**. Un sembrador correcto reutiliza `construirPropiedad()` del dominio y la misma
+transacción — no re-implementa el modelo, que es justo el error que cometió el script viejo.
+
+### 209.5 — Archivos
+`scripts/upload-to-firestore.mjs` (aviso) · `specs/CUTOVER-RUNBOOK.md` (paso 4.1). **INTACTO**: la
+lógica del script — no se toca ni se borra; sigue sirviendo para lo que se escribió, que es el modelo
+legacy. Lo que faltaba no era código: era **decir en voz alta para qué NO sirve**.

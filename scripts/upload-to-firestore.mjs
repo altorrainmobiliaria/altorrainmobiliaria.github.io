@@ -2,6 +2,17 @@
  * upload-to-firestore.mjs
  * Migra las propiedades de properties/data.json a Firestore.
  *
+ * ⛔ ESCRIBE EL **MODELO LEGACY**, Y SU SALIDA DESAPARECE DEL CATÁLOGO DEL PORTAL (ADR §103, §209).
+ *   Este script fue de la migración del sitio VIEJO. Pone `operacion: 'comprar'` y `precio` como
+ *   NÚMERO; el portal espera `venta|arriendo|alojamiento` y `precio` como OBJETO, con `geo` y `specs`
+ *   anidados. Una propiedad escrita así **pasa el filtro de publicadas y luego se cae**: el índice
+ *   sale vacío, el buscador dice «no hay resultados» y **no se registra ningún error**. Desde §103 la
+ *   omisión se reporta con el motivo `esquema-legacy`, pero el catálogo sigue vacío igual.
+ *
+ *   ✅ Para sembrar el catálogo del PORTAL: el alta de `/gestion`, que acuña el código `INM-…` en una
+ *   TRANSACCIÓN sobre `config/counters` — un contador con DOS escritores. Escribir el documento por
+ *   fuera se salta esa transacción y puede duplicar códigos.
+ *
  * USO:
  *   export GOOGLE_APPLICATION_CREDENTIALS="/ruta/a/serviceAccount.json"
  *   node scripts/upload-to-firestore.mjs

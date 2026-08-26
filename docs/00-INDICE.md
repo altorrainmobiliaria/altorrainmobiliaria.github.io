@@ -119,6 +119,7 @@
 | §206 | ⏳ **Un hallazgo sobre frescura que estaba el mismo caducado**: decia 90 dias y el chequeo 7; son 30 y es el 16, y nunca fue 90. Lo hereda la sonda 0 sin medir la PREMISA. Se retira, no se cierra. | 8594 |
 | §207 | 🔁 **El pendiente que avisaba de colisiones ERA una colision**: dos K-10 distintos, y su cita a §152 falsa. Cuatro vueltas, cuatro pendientes que exageraban lo que falta. Un ledger envejece en esa direccion. | 8638 |
 | §208 | 📏 **Los cuatro K medidos**: la pizarra del WIP esta fuera de los DOS mecanismos de frescura — dos fichas que eran un solo agujero grave. 9 pendientes medidos, solo un tercio describia la realidad. | 8687 |
+| §209 | 🌱 **Sembrar el catalogo: paso imposible y herramienta equivocada**. Exigia una credencial que no debo manejar, y el unico script escribe el modelo legacy — corre con exito y el catalogo queda vacio. Sin un solo aviso. | 8731 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |
