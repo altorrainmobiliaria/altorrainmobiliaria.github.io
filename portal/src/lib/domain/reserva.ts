@@ -1,8 +1,9 @@
 /*
  * SOLICITUD DE ESTANCIA (§122) — lo que se puede pedir y lo que se le dice a quien lo pide.
  *
- * Hoy NO es una reserva: es una solicitud. El pago protegido (Wompi custodia) es de Ola 2 y está
- * detrás del gate del abogado, así que aquí no se mueve un peso ni se bloquea un calendario. Esa
+ * Hoy NO es una reserva: es una solicitud. El pago protegido (Wompi custodia) es de Ola 2 y espera la
+ * cuenta de comercio del dueño —lo legal ya se dictaminó (§165)—, así que aquí no se mueve un peso ni
+ * se bloquea un calendario. Esa
  * diferencia no es un matiz legal: alguien que cree tener alojamiento confirmado para sus vacaciones
  * y llega a Cartagena sin nada tiene un problema serio, y lo tuvo por lo que decía nuestra pantalla.
  *
