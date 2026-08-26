@@ -188,6 +188,14 @@ interpreta igual de mal: *«esto está roto»*, no *«esto todavía no existe»*
   3. **La delegación existe.** Medio panel puede estar cableado con un único oyente en el documento
      que pregunta `e.target.closest('#miBoton')`. Sin esa rama acusarás a controles perfectamente
      vivos.
+  4. **🔴 LA BUENA PRÁCTICA PUEDE DEJARLO CIEGO — y es la trampa peor, porque falla en VERDE.** Un
+     barrido que busca `class="…"` o `className = '…'` no ve nada en un módulo que pasa las clases
+     como ARGUMENTO (`el('div', 'mi-clase')`)… que es justo lo que sale de prohibir `innerHTML` por
+     seguridad. Caso real: un módulo aportaba **0 clases visibles y 16 invisibles**, y el gate decía
+     ✅. *El código más limpio acaba siendo el menos vigilado, porque los patrones del barrido se
+     escribieron mirando el código sucio.* **Comprobación de bolsillo, y cuesta un minuto**: tras
+     añadir un módulo, mira si el CONTADOR del gate subió. Si escribiste 200 líneas y el gate ve las
+     mismas clases que antes, no es que esté todo bien: es que no te está mirando.
 - **Tres salidas legítimas, y el silencio no es una**: cablearlo · quitarlo · o dejar que **diga** por
   qué todavía no puede hacer nada, y dónde se hace hoy esa tarea. La tercera es la que se olvida, y
   suele ser la correcta cuando la sección es real pero futura.

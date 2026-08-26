@@ -6447,3 +6447,57 @@ aritmética, **que no mueve un peso de nadie**. Tampoco hay pantalla todavía: �
 
 **166.7 — Archivos.** `portal/src/lib/domain/liquidacion.ts` (+ `.test.ts`, 135 pruebas). 726 tests
 totales, 7 gates en verde. Commit `2425fd1`.
+
+## 167. ADR — La pantalla de liquidación, y la buena práctica que dejó ciego a un gate ⟦OPUS-5⟧ (2026-08-26)
+
+**167.0 — La pantalla.** §166 dejó el cálculo; faltaba que alguien pudiera verlo. Mockup nuevo
+(`ALTORRA Liquidacion.dc.html`) y vista en `/gestion`, enrutada por ID como manda §139. **La idea que
+gobierna el diseño: esto no es una calculadora, es un COMPROBANTE.** Un número sin desglose es un
+número que hay que creerse, y «créeme» es lo contrario de lo que vende esta marca.
+
+**167.1 — Cuatro decisiones que no son de pintar.**
+· **Cada línea dice A QUIÉN va el dinero**, no solo cuánto se resta. «Cuota de administración
+−$300.000» es un descuento; «→ a la copropiedad» es una explicación. Mismo peso, media conversación
+menos al mes.
+· **La retención que NO aplica también se pinta**, apagada y con su razón. *El silencio sobre una
+retención es como nace una duda*: quien oyó que «a los arriendos les retienen» y no ve la línea no
+concluye «no aplica», concluye «me falta algo».
+· **El cuadre se VE, no se promete.** El dominio lo garantiza calculando el giro por diferencia
+(§166.3), pero garantizarlo en un test es para nosotros; enseñarlo es para quien recibe el dinero. Si
+algún día no cuadrara, se vería ahí —en **oro**, que esta paleta no tiene rojo— y no en un log.
+· **No hay botón de pagar.** Calcula y muestra; el giro depende de la cuenta de comercio y de las
+tres condiciones de §165. *Un botón que parece pagar y no paga es peor que no tenerlo.*
+
+**167.2 — Cero `innerHTML`**, que es doctrina del panel (§31) y no una preferencia: aquí se pintan
+nombres de personas que vienen de Firestore, y construir markup con ellos es por donde entra un XSS en
+un back-office. Los `<strong>` y las flechas se arman con nodos. *(Lo avisó un hook antes de escribir
+el archivo, y tenía razón dos veces: por seguridad y por doctrina.)*
+
+**167.3 — 🔴 Y AQUÍ EL HALLAZGO QUE VALE MÁS QUE LA PANTALLA.** `verify:css` —el gate que caza el CSS
+acotado que no alcanza a los nodos creados por JS (§117)— **no veía ni una sola clase del módulo
+nuevo**: 0 visibles, **16 invisibles**. Solo entendía `className = '...'` y `class="..."` dentro de
+plantillas de string. Mi módulo las pasa como **argumento de un helper**: `el('div', 'gx-liq__fila')`.
+
+Y eso no es una excentricidad mía: **es exactamente lo que sale de prohibir `innerHTML`**. Sin
+plantillas de string, el nombre de la clase deja de aparecer en un `class="…"` y pasa a ser un
+argumento. *O sea que seguir la doctrina del panel volvía ciego al gate que protege ese mismo panel* —
+la peor forma de quedarse ciego, porque **el código más limpio es el que menos se vigila**. Ensanchado
+con un patrón que exige que el 1.er argumento sea un nombre de etiqueta en minúsculas, para no
+tragarse cualquier par de cadenas: las clases vistas suben de **89 a 109**.
+
+**167.4 — Y mi primera mordida apuntó MAL, otra vez.** Renombré una regla dentro de un bloque
+`is:global` y el gate pasó en verde; casi lo anoto como «el gate está roto». **Tenía razón el gate**:
+vigila estilos ACOTADOS, no la existencia de una regla, y los del panel son globales a propósito.
+Rehecha donde toca —una regla `gx-liq__cuadre` en un `<style>` acotado— sale **roja con exit 1**
+nombrando clase y módulo. Es la tercera vez hoy que una prueba mal apuntada casi produce un
+diagnóstico falso (§160.4, §162): *antes de acusar al gate, lee qué dice que vigila.*
+
+**167.5 — Verificación.** 7 gates en verde, 726 tests, la vista y sus 4 ids presentes en el HTML
+servido, la entrada del menú enrutada por ID (no por posición, §139) y las reglas CSS confirmadas
+dentro del bundle de `/gestion`. La liquidación con datos reales espera contratos reales, que son de
+la fase 4 del runbook.
+
+**167.6 — Archivos.** `portal/design/mockups/ALTORRA Liquidacion.dc.html` (nuevo) ·
+`src/scripts/gestion-liquidacion.ts` (nuevo) · `src/pages/gestion.astro` (vista, menú, estilos) ·
+`src/scripts/gestion-alta-ui.ts` (enrutado) · `scripts/verify-css-runtime.mjs` (extracción ensanchada).
+Commits `0b274f8` y el anterior. ⏭️ El mockup queda **pendiente del visto bueno de Daniel**.
