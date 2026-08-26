@@ -132,6 +132,7 @@
 | §180 | ✂️ **Poda del arranque**, y debajo 3 hechos rancios: `50` decía 7 CF desplegadas vs 13 · copia atrasada del cutover · «68 URLs», la aritmética que escondió un 404. Un gate me cazó a mí. | 7224 |
 | §181 | ⚖️ **La divergencia de tasas no lo era**: doc 03 es mandato COMERCIAL (1,5×IBC) y doc 04 vivienda CIVIL (6%). Pelota (7) cerrada. Antes de escalar: ¿falta una ELECCIÓN (suya) o una CALIFICACIÓN (mía)? | 7277 |
 | §182 | 🔬 **Auditoría Nivel-2 #12**: 18 ADRs, y casi todos la misma frase — algo cuyo NOMBRE prometía una comprobación que no ocurría. Gates a medias ×5. 3 abiertos, declarados. | 7326 |
+| §183 | ⚖️ **La 1480 y el arriendo: SUPLETORIA**, no sí/no — art. 2 literal: si hay régimen especial (Ley 820) manda ése. NO se publica página de retracto para arriendo. No cierra la de RESERVAS. | 7383 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

@@ -117,6 +117,19 @@ Usa este método. (Puedes usar esos plugins solo si el usuario pide EXPLÍCITAME
   que hablen de obligaciones distintas. Antes de unificarlas, pregunta si son la misma obligación; si
   no lo son, unificarlas es el error, y lo que toca es explicar por qué difieren.
 
+- **«¿Aplica esta ley?» suele estar MAL PLANTEADA: pregunta por la JERARQUÍA, no por sí/no (regla
+  operativa, 2026-08-26).** Muchas leyes marco definen su propio lugar frente a los regímenes
+  especiales, y esa cláusula decide el caso entera. El Estatuto del Consumidor colombiano lo dice en su
+  art. 2: sus normas aplican en los sectores *«respecto de los cuales no exista regulación especial,
+  evento en el cual aplicará la regulación especial y **suplementariamente** las normas establecidas en
+  esta Ley»*. Luego para un arriendo de vivienda urbana —que tiene régimen propio, Ley 820 de 2003— la
+  respuesta no es «sí» ni «no»: es **supletoria**. **Método**: antes de razonar sobre el fondo, busca el
+  artículo de ámbito de aplicación de la ley marco; muchas veces la respuesta está ahí y ahorra la
+  discusión entera.
+  **Y la consecuencia práctica que más se olvida**: si la ley marco NO gobierna, **no publiques la
+  página que anuncia sus derechos**. Prometer un derecho que en ese contrato no opera es peor que no
+  mencionarlo. Busca cuál es la protección que sí muerde en el régimen especial y comunica esa.
+
 ## Prueba social FABRICADA en una maqueta que ya es pública (Ley 1480, arts. 29-30)
 
 Las réplicas de mockup llegan con reseñas, ratings y anfitriones de relleno. En cuanto esa página es

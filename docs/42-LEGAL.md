@@ -2,10 +2,9 @@
 
 > Lóbulo hijo de `40-LOBULOS-DOMINIO`. Esencia LEGAL operativa del portal (R3 2026-07-10, 17 agentes,
 > claims verificados). Detalle completo con artículos/fuentes → `specs/R3-LEGAL-COLOMBIA-2026-07.md`.
-> ⛔ NO es asesoría legal certificada. **PERO no existe abogado externo** (Daniel, 2026-07-27: *"el abogado mío eres
-> tú"*): el "gate de abogado" NO es esperar a nadie — es **dictaminar**: leer la norma en fuente oficial, tomar
-> posición, dejar el fundamento y **medir el riesgo residual** para que Daniel decida. Prohibido dejar preguntas
-> legales como pendiente ajeno. Ejemplo de formato → doc 23 § 7.3 (D-1 a D-4) en la bóveda.
+> ⛔ NO es asesoría certificada, y **no hay abogado externo**: el "gate de abogado" no es esperar a nadie — es
+> **dictaminar** (norma en fuente oficial, posición, fundamento, riesgo residual medido). Detalle → §165.
+> Prohibido dejar una pregunta legal como pendiente ajeno.
 > Convenciones: 🔶 = hallazgo CORREGIDO en verificación adversarial · ❓ = NO-VERIFICABLE, pendiente de abogado.
 
 ## Reglas duras que moldean el PRODUCTO (lo que el diseño no puede violar)
@@ -94,6 +93,7 @@ T&C por vertical · Política de Tratamiento de Datos (responsable+finalidades+d
 1. ⏳ **VENCIDA sin atender** (cerró 2026-07-12; marcada en auditoría §49): consulta pública del decreto RNT de MinCIT — no se comentó. Si el decreto sale, revisar impacto (seguimiento normativo).
 2. Mandato de recaudo vs D.1981/1988 num. 2 (>20 anfitriones/3 meses + ofertas a innominados): ¿basta cuenta separada + destinación específica, o exige fiducia?
 3. Vehículo de retención de fondos: cuenta separada + mandato vs. encargo fiduciario; ¿"Pagos a terceros" de Wompi cubre contractualmente el modelo marketplace?
+4b. ✅ **RESUELTA (§183) — ¿la 1480 aplica al ARRIENDO?** No es sí/no: es **supletoria**. El art. 2 lo dice literal: aplica donde *«no exista regulación especial, evento en el cual aplicará la regulación especial y **suplementariamente** las normas de esta Ley»*. El arriendo de vivienda SÍ tiene régimen especial (Ley 820) ⇒ 820 manda y la 1480 llena vacíos. **Operativo: NO publicar página de «retracto» para el arriendo** — anunciaría un derecho que ahí no opera; la protección que muerde es el art. 16 de la 820 (nada al arrendatario fuera del canon). ⚠️ NO cierra la 4: en RESERVAS el régimen especial es turismo (Ley 2068), otra pregunta.
 4. Retracto art. 47 L.1480 en reservas con fecha determinada: ¿aplica la ventana de 5 días hábiles? — define la política de cancelación. *(F2 §63 2026-07-24, fuente oficial: el art. 47 —adicionado L.2439/2024— SÍ aplica a ventas a distancia y sus 7 excepciones NO cubren servicios con fecha determinada ⇒ política de no-reembolso solo puede operar FUERA del retracto e informada antes de reservar; queda al abogado solo el matiz doctrinal SIC.)*
 5. RNT: ¿inscripción de la plataforma es independiente y adicional al RNT como prestador? ¿La operación actual de alojamientos por días ya exige RNT hoy?
 6. Exclusión de plataformas del art. 3 num. 8 Ley 2068 (solo listado, sin intermediación de pago): ¿decide el secuenciamiento del roadmap?

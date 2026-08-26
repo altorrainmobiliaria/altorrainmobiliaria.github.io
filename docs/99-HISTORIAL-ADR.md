@@ -7379,3 +7379,50 @@ salga con el suyo el mismo día.**
 
 **182.7 — GC pareado.** Arranque **31062 → 31059**. Delta ≤ 0, como exige el protocolo: la auditoría
 que engorda el cerebro que audita no ha terminado.
+
+## 183. ADR-183 — La Ley 1480 y el arriendo: la respuesta no es sí ni no, es «supletoria»
+
+**183.0 — Antes de investigar, medir la exposición.** La agenda del abogado tenía *«aplicación de
+L.1480 al arriendo de vivienda (concepto SIC)»*. Primero lo barato: **¿algo del portal depende hoy de
+esa respuesta?** Barrido de `pages/`, `components/` y `content/`: **cero** referencias a retracto o
+reversión en la web pública. Exposición viva = ninguna. Eso no anula la pregunta —el kit de contratos
+y la futura página de retracto sí dependen— pero cambia la urgencia y evita investigar con prisa algo
+que no la tiene.
+
+**183.1 — Y antes de eso, buscar si ya estaba contestada.** Sí y no: `R3` cubre los arts. 47 y 51 de
+la Ley 1480 **para RESERVAS de corta estancia** (`§GATE 3`, con el retracto en zona gris declarada).
+Lo que NO cubría es el **arriendo de vivienda**, que es otra relación con otro régimen. Van tres
+vueltas seguidas en que la primera pregunta útil es *«¿esto ya está resuelto en otra carpeta?»* — y
+esta vez la respuesta fue «una mitad sí», que también es información.
+
+**183.2 — El dictamen, y sale de UNA frase de la propia ley.** No es si aplica o no aplica: es que la
+1480 es **SUPLETORIA**. El art. 2, verificado literal en el Gestor Normativo de Función Pública:
+> *«Las normas contenidas en esta ley son aplicables en general a las relaciones de consumo … en todos
+> los sectores de la economía respecto de los cuales **no exista regulación especial, evento en el
+> cual aplicará la regulación especial y suplementariamente las normas establecidas en esta Ley**.»*
+
+El arriendo de vivienda urbana **sí tiene régimen especial**: la **Ley 820 de 2003**. Luego 820 manda
+y la 1480 solo llena vacíos. *La pregunta estaba mal planteada desde el principio: «¿aplica?» no tiene
+respuesta binaria cuando la propia ley define su lugar en la jerarquía.*
+
+**183.3 — Consecuencia operativa, que es lo que importa.** **No se publica una página de «derecho de
+retracto» para el arriendo.** Anunciaría un derecho que en ese contrato no opera como en una venta a
+distancia, y prometer un derecho que luego no se honra es peor que no mencionarlo — es la familia de
+las cifras sin respaldo que ya vigila `verify:claims`. La protección que de verdad muerde en vivienda
+no es el retracto: es el **art. 16 de la Ley 820**, que prohíbe cobrarle al arrendatario cualquier
+cosa fuera del canon, y eso ya está codificado como regla dura del producto (`42-LEGAL` #1).
+
+**183.4 — Lo que este dictamen NO cierra, dicho en voz alta.** La pregunta 4 de `42-LEGAL` —el
+retracto del art. 47 en **reservas con fecha determinada**— **sigue abierta**, y esto no la toca: ahí
+el régimen especial es el de **turismo** (Ley 2068), no el de vivienda, así que la regla del art. 2
+lleva a otro sitio. Confundir las dos habría sido cerrar una pregunta con la respuesta de su vecina.
+Del art. 47 sí quedó verificado el texto de sus excepciones —entre ellas *«servicios cuya prestación
+haya comenzado con el acuerdo del consumidor»*, que es justo la que hace gris el caso de las
+reservas—; el alcance del artículo lo devolvió la fuente **resumido, no literal**, y por eso no se
+apoya nada en él.
+
+**183.5 — GC pareado.** El dictamen entró y algo salió: la cabecera de `42-LEGAL` narraba la historia
+del «gate del abogado» que **§165 ya posee entera**, así que se compacta a un puntero. `42-LEGAL`
+queda en 19979/20000. *Un nodo al 100 % no admite una regla nueva sin decidir cuál se va.*
+
+**Fuente**: [Ley 1480 de 2011 — Gestor Normativo, Función Pública](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=44306)
