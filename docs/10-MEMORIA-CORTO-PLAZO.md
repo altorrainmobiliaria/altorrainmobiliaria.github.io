@@ -49,17 +49,20 @@
 >
 > **🌊 OLA 1 = 13/13 EN CÓDIGO** (§138). Censo → `21`. **Pero «13/13» NO es «cerrada»**: ninguno de
 > esos caminos ha escrito aún en Firestore real y la base está VACÍA (medido). El cutover NO se
-> improvisa → **`specs/CUTOVER-RUNBOOK.md`** manda (§102), ya corregido (§140). Suelto: «Avalúo» (§94.6).
+> improvisa → **`specs/CUTOVER-RUNBOOK.md`** manda (§102), ya corregido (§140).
 > **En orden**: (1) **estrenar los caminos** (runbook 1.4-1.8) · (2) **inventario** (TODO-22) ·
 > (3) **Resend** · (4) **DNS/cutover**. Aparte: **TODO-30**, que lo confirma Daniel ([[L-39]]).
 > **OLA 2**: el «gate del abogado» NO EXISTE — el abogado soy yo (Daniel, 26-ago). Detalle en TODO-49
 > y §165 ([[L-40]] ya cobró 3 veces, [[M-11]]).
 >
-> 🏁 **LA WEB PÚBLICA YA NO TIENE NI UN «PRÓXIMAMENTE»** (26-ago, §158-§159): cayeron `/invertir`,
-> `/nosotros` (que ni existía: era un ancla fantasma en las 74 páginas) y `/aliados`. Compruébalo con
-> un grep de `ProximamenteLayout` antes de creerte esta línea. Y midiendo las anclas del build salió
-> el menú: `#servicios` **no existe** y 6 entradas apuntaban ahí — 468 enlaces muertos, que ya caza la
-> **sonda 3** de `verify:enlaces`.
+> 🏁 **La web pública ya no tiene ni un «próximamente»** (26-ago, §158-§159; el menú muerto y sus 468
+> enlaces los caza ya la sonda 3 de `verify:enlaces`). Verifícalo con un grep, no con esta línea.
+>
+> 🔌 **LA RED NO ESTABA ENCHUFADA** (26-ago, §174): el CI no corría `npm run test` —855 pruebas, y
+> ninguna bloqueaba un despliegue— ni `verify` corría `typecheck` (26 errores en `main`, CI en rojo,
+> deploy parado). Ya están en ambos, con gate. Antes de fiarte de un ✅, pregunta **qué abre**.
+> Y **alojamiento lleva DOS gates**: RNT + reglamento de PH que autorice EXPRESAMENTE (el silencio no
+> vale). ⏭️ El control nuevo del alta **no tiene mockup**: al repaso de Daniel.
 >
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos
 > que solo vio la consola del dueño (§133-§136): pesa a favor de retirarlo pronto en el cutover. El

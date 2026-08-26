@@ -123,6 +123,7 @@
 | §171 | 🛡️ **La garantía de arriendo**, el último gate «sin investigar»: solo como AGENCIA del asegurador, con su carta de autorización previa (Ley 510/99 art. 101). Corredor no se puede ser; garantía propia, jamás. | 6652 |
 | §172 | ⏰ **La Ley 2300 SÍ aplica** a la prospección comercial, no solo a la cobranza — y DOS programadas escribían fuera de ventana (una a la 1 de la madrugada). Nace el calendario de festivos, calculado y no copiado. | 6708 |
 | §173 | 🪧 **Una regla escrita da la sensación de estar APLICADA** (M-25, 4× en un día). El panel decía «Tu avalúo» con la prohibición en CUATRO sitios. Sonda nueva + shard de `33` → `37`, que ya iba por la tercera recomendación. | 6773 |
+| §174 | 🏠 **El reglamento de PH que CALLA no autoriza** (D.1074 · L.675 art. 18.1): gate de 3 estados en el alta. Y el gordo: 26 errores de tipos en `main` + **855 pruebas que el CI no corría**. Nace [[M-26]]. | 6822 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

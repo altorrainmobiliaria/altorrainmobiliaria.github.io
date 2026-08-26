@@ -23,9 +23,9 @@
 
 - **Versiones exactas, módulos, globals y censo de Cloud Functions → `20 §Stack`** (dueño único: no
   se copian aquí, que fue justo la triple contabilidad que la auditoría #6 tuvo que deshacer).
-- **Prohibido en AMBOS mundos**: React/Vue/Angular/Svelte · Tailwind/Bootstrap. Astro es el **build**
-  del portal, no una excusa para una SPA pesada: JS mínimo, islas, free-tier sagrado, `limit(9)`,
-  cero `onSnapshot` público (esas dos últimas son reglas de router, `CLAUDE.md §3.2`).
+- **Lo prohibido en AMBOS mundos** (frameworks, Tailwind/Bootstrap, `onSnapshot` público, `limit()`)
+  lo manda `CLAUDE.md §3.2` — dueño único, aquí NO se repite. Lo que sí añade este nodo: Astro es el
+  **build** del portal, no una excusa para una SPA pesada. JS mínimo, islas.
 
 ## §Performance (ambos mundos) — ex `CLAUDE.md §3.1`
 
@@ -36,11 +36,9 @@
 
 ## §HTML/CSS del LEGACY (congelado — no "mejorar")
 
-- NO cambiar vars CSS (`--gold`/`--accent`/…), la tipografía **Poppins**, colores de
-  botones/badges/cards ni el layout existente.
-- El portal **NO hereda** esto: su design system está sellado aparte (`CLAUDE.md §1`, ADR §23-§23.9).
-- Las reglas de **contrato** —no hardcodear URLs, no renombrar IDs/clases/funciones exportadas, no
-  borrar `CNAME`— se quedaron en el router (`§3.2`): rompen callsites o el dominio, y eso es irreversible.
+- Del sitio viejo ya solo queda `admin.html`, y sale en el cutover: NO tocar sus vars CSS
+  (`--gold`/`--accent`/…), Poppins, colores ni layout. El portal **no hereda** nada de esto (D1
+  sellado aparte, `CLAUDE.md §1`). Las reglas de contrato (URLs, IDs, `CNAME`) son del router `§3.2`.
 
 ## §Observadores, eventos globales y concurrencia — ex `CLAUDE.md §3.5`
 
@@ -50,6 +48,14 @@
 - **Concurrencia Firestore** (`set()` SIN merge para CREAR · `update()` para EDITAR · `_version`
   optimista create==1/update==prev+1 vía `runTransaction`): la regla y sus trampas viven completas en
   **`30` L-09** (dueño único, con el caso de la ventana de crash y el sello anti-adelantamiento).
+
+## §Escribir DOM en el PORTAL — los tipos de Workers PISAN los del navegador ([[L-54]] · §174)
+
+- **`appendChild()`, NUNCA `append()`**: el `Element.append(string|Response)` del HTMLRewriter gana en
+  todo el proyecto y el error no nombra a Cloudflare. **`HTMLSelectElement`** tampoco satisface ese
+  `HTMLElement` fusionado (`remove()` devuelve `void` vs `Element`) — castea; `HTMLInputElement` sí.
+- Está AQUÍ y no solo en `30` porque §G.2 abre este nodo **antes** de escribir, y el de lecciones solo
+  «si un síntoma te suena»: se reincidió 22× con la lección ya escrita al lado ([[M-26]]).
 
 ## §CSS del PORTAL — el acotado de Astro y los nodos de runtime (§117)
 

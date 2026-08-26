@@ -79,6 +79,33 @@ Usa este método. (Puedes usar esos plugins solo si el usuario pide EXPLÍCITAME
 
 ---
 
+- **El SILENCIO de un reglamento NO es un permiso (regla operativa, 2026-08-26).** Caso canónico:
+  alojamiento turístico en propiedad horizontal — el reglamento debe autorizarlo **previamente y de
+  manera expresa** (D.1074/2015 art. 2.2.4.1.2.2 num. 8, confirmado por el Consejo de Estado; la
+  destinación de unidades privadas la manda el reglamento, Ley 675/2001 art. 18 num. 1, con sanción
+  en el art. 59). *«No lo prohíbe»* y *«lo autoriza»* son cosas distintas, y la ley pide la segunda.
+  **Cómo se rompe sin darse cuenta**: modelar el permiso como un **booleano**. Ausente o `false`
+  mezcla «me dijeron que no» con «nadie lo preguntó», y el estado por defecto acaba siendo el
+  permisivo. **Regla portable**: cuando la ley exige autorización EXPRESA, el modelo lleva **tres**
+  valores —`no-aplica` · `autoriza-expreso` · `sin-autorizacion`— y el silencio se archiva en el
+  tercero. *Un tipo debe obligar al estado peligroso a decir su nombre.*
+- **Declarar vs. verificar: mira en cabeza de QUIÉN puso la ley el deber (regla operativa,
+  2026-08-26).** Antes de exigirle documentos a un cliente, comprueba si la norma te obliga a ti a
+  comprobarlos o si obliga al prestador a declararlos. En el caso PH la declaración es del prestador
+  y **ninguna norma obliga a la plataforma a leerse cada reglamento**: pedir copia de todos habría
+  sido inventarse un deber y frenar el inventario. Pero la declaración **se guarda con fecha**,
+  porque el riesgo propio de la plataforma llega por otro lado (publicidad engañosa, Ley 1480) y
+  porque una declaración sin fecha no es evidencia de nada. **Y deja el campo del documento creado
+  desde el día 1** aunque hoy nadie lo mire: si el borrador de norma que ya circula convierte la
+  declaración en PRUEBA, el cambio es llenar un campo y no migrar un modelo.
+- **La web pública es una fuente de requisitos legales que tu propio backoffice suele incumplir
+  (regla operativa, 2026-08-26).** Si una página tuya le dice al cliente «comprueba X antes de
+  comprar», tu formulario de alta tiene que preguntar X. Pasó literal: `/invertir` exigía verificar
+  la autorización del reglamento y el alta solo pedía el RNT. **Barrido barato**: extrae del HTML
+  servido las frases en imperativo o con «debe/exige/autorice» y contrástalas una a una con los
+  campos que el sistema pide de verdad. Aconsejar lo que no se comprueba es la forma más cara de
+  tener razón.
+
 ## Prueba social FABRICADA en una maqueta que ya es pública (Ley 1480, arts. 29-30)
 
 Las réplicas de mockup llegan con reseñas, ratings y anfitriones de relleno. En cuanto esa página es

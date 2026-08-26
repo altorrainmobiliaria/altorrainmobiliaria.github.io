@@ -199,6 +199,7 @@ guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero 
 ### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total
 ### M-24 — Una lección CORRECTA archivada bajo el disparador equivocado no dispara: se redacta por su condición mínima detectable, no por la escena en que se descubrió *(§160)*
 ### M-25 — Una regla ESCRITA da la sensación de estar APLICADA: si nadie la vigila, es una nota, no una regla — y cuanto mejor escrita, más engaña *(4× el 26-ago: §162, §163, §172, §173)*
+### M-26 — Un nodo que se consulta CUANDO ALGO FALLA no puede evitar el fallo: la lección estaba bien escrita y en su sitio, pero el router solo llevaba a ella DESPUÉS *(§174)*
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > 🧩 **Mudadas a `60-WORKFLOWS §Gobernanza`** el 2026-07-28 (ADR §68): hablan de CÓMO se conduce la

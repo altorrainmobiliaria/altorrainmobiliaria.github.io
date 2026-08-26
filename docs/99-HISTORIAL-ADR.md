@@ -6818,3 +6818,107 @@ nodo nuevo va **medido sobre el real +20 %**, no a ojo ([[M-05]]).
 **173.6 — Archivos.** `portal/src/pages/gestion.astro` · `api/solicitud.ts` ·
 `portal/scripts/verify-claims.mjs` (sonda 2) · `docs/33` y `docs/37` (shard) · `docs/30` · `CLAUDE.md`
 · el manifest. 848 tests, 7 gates en verde (22 chequeos).
+
+## 174. ADR-174 — El reglamento que calla no autoriza; y las 855 pruebas que no bloqueaban nada
+
+**174.0 — De dónde salió.** `43-OPERACION` cerraba su lista de *«❓ Agenda abogado (no verificado en
+fuente oficial)»* con **«reglamento PH silente vs autorización expresa para vivienda turística»**. Es
+la que más pesa en producto de las que quedaban: de ella depende **qué inmuebles se pueden publicar
+por días**. Lo primero fue buscar la regla antes de escribirla ([[M-25]] corolario) — y ya estaba
+resuelta y verificada en fuente desde julio, en `specs/R3-LEGAL-COLOMBIA-2026-07.md` («GATE 5 ✅
+RESUELTO»). La pregunta llevaba un mes en la agenda **con la respuesta ya escrita dos carpetas más
+allá**.
+
+**174.1 Causa raíz.** La norma estaba verificada, escrita y **publicada en la web pública**: la página
+`/invertir` le dice al comprador, palabra por palabra, *«que el reglamento de propiedad horizontal
+autorice expresamente el uso turístico»* y le añade *«esta pregunta va antes que el precio»*. El
+formulario de alta del panel **nunca la preguntó**: pedía el RNT y nada más. Aconsejábamos al cliente
+comprobar exactamente lo que nuestro propio inventario no comprobaba. Quinta aparición de [[M-25]] en
+dos días.
+
+**174.2 Solución estructural — el dictamen, y por qué.**
+- **Qué exige la ley**: para prestar alojamiento turístico en inmueble sometido a PH, el reglamento
+  debe permitirlo **previamente y de manera expresa**; el prestador lo DECLARA al inscribir el RNT
+  (**D.1074/2015 art. 2.2.4.1.2.2 num. 8**; el Consejo de Estado negó la nulidad del requisito). La
+  destinación de las unidades privadas la manda el reglamento (**Ley 675/2001 art. 18 num. 1**) y la
+  copropiedad sanciona el incumplimiento (**art. 59**). ⚖️ **El silencio NO autoriza.**
+- **Cómo lo instrumentamos: DECLARACIÓN, no verificación documental.** La norma pone la declaración
+  en cabeza del prestador y ninguna obliga al portal a leerse cada reglamento. Exigir copia de todos
+  sería inventarnos un deber que la ley no impone y frenar el inventario entero por una cautela que
+  nadie pidió. Pero se **guarda con fecha**, porque el riesgo que sí nos toca es publicidad engañosa
+  (Ley 1480) y en Cartagena la restitución de destinación en el Centro Histórico no es teórica.
+- **`SITUACIONES_PH` tiene TRES valores** (`no-aplica` · `autoriza-expreso` · `sin-autorizacion`) **y
+  no dos**. Con un booleano, el silencio caería del lado del «sí» por omisión — justo el error que el
+  gate existe para impedir. Un reglamento que calla se trata igual que el que prohíbe: distintos para
+  el propietario (el silencio se puede convertir en permiso llevándolo a la asamblea), idénticos para
+  nosotros hoy. *Cuando un dominio tiene un estado peligroso-por-defecto, el tipo debe obligarlo a
+  decir su nombre.*
+- **Bloqueante en las dos puntas**, como el RNT: en el alta (no se guarda) y en `publicable()` (no se
+  indexa ni se sirve la ficha). Fail-closed.
+- **`motivoLegalNoPublicable()` devuelve CUÁL de los dos gates falló.** Cuando ambos compartían el
+  código `sin-rnt`, a quien le faltaba el permiso de la copropiedad se le mandaba a buscar el RNT que
+  ya tenía. Un motivo equivocado cuesta más que ninguno.
+- **`documento?`** queda preparado para adjuntar reglamento o acta: el proyecto de decreto de 2026
+  pasaría de declarar a **probar**, y ese día el cambio es llenar un campo, no migrar un modelo.
+- **El round-trip de edición conserva `declaradaEn`**: la fecha vale como evidencia por decir CUÁNDO
+  se afirmó; corregir una errata del título no es volver a afirmarlo. Cambiar la situación sí la
+  renueva.
+
+**174.3 El hallazgo GORDO, que no venía en el encargo.** Al correr `typecheck` antes de tocar nada
+aparecieron **26 errores de tipos en `main`**, todos en `gestion-liquidacion.ts` — un archivo escrito
+ESE MISMO DÍA. `npm run verify` daba verde porque **no corre `typecheck`**, y el único que lo corre es
+el CI, que llevaba desde entonces **en rojo, bloqueando el despliegue del portal**. Tirando del hilo
+apareció lo peor: **el CI tampoco corría `npm run test`**. 855 pruebas unitarias —el gate del RNT, la
+prohibición del depósito en vivienda (Ley 820 art. 16), la liquidación peso por peso, la ventana de la
+Ley 2300, la máquina de estados del mandato— y **ninguna bloqueaba un despliegue**. La red más grande
+del proyecto no estaba enchufada. Tercera reincidencia de [[L-56]], ahora afilada: el meta-gate del
+cableado **enumeraba por prefijo** (`verify:*`), así que `typecheck` y `test` le eran invisibles — la
+mitad no cubierta de un gate que se leía como cobertura total ([[M-10]]).
+
+**174.4 La causa de los 26, y el defecto del cerebro.** Es [[L-54]]: los tipos de Workers declaran
+`Element.append(string|ReadableStream|Response)` para el HTMLRewriter y esa firma gana en todo el
+proyecto, así que `nodo.append(hijo)` deja de compilar con un error que **no nombra a Cloudflare**.
+La lección estaba escrita, correcta y bien titulada… **del día anterior** (§138), y aun así la pisé 22
+veces. No falló su disparador ([[M-24]]) ni le faltaba mecanismo ([[M-25]]): falló el **enrutamiento**
+→ **[[M-26]]**. §G.2 manda leer `34-DOCTRINA-CODIGO` *antes* de escribir código y `30-LECCIONES`
+*«si un síntoma te suena»*; la regla vivía solo en la rama reactiva, que por construcción llega tarde.
+Corregido: la regla de Workers↔DOM ahora vive también en `34`, que es el nodo que el router abre
+antes. Primo del mismo fallo, nuevo: **`HTMLSelectElement` tampoco satisface el `HTMLElement`
+fusionado** (su `remove()` devuelve `void`; el del HTMLRewriter, `Element`); los demás paneles no lo
+pisaron porque solo usan `HTMLInputElement`.
+
+**174.5 No-regresión.** IDs, funciones exportadas y callsites intactos; el cambio es **aditivo**.
+`publicable()` sobrevive como azúcar sobre `motivoLegalNoPublicable()` para los lectores a los que
+les basta el sí/no. Sin datos reales que migrar: la base está VACÍA (medido) y `/estancias` no lee un
+catálogo de alojamientos, así que el gate fail-closed no deja a nadie fuera hoy. `pesos()` se añade en
+`liquidacion.ts` en vez de abusar de `formatoPrecio`, que exige una operación y le pega «al mes» /
+«por noche» — en la línea del IVA de un comprobante eso sería mentira.
+
+**174.6 Tests / verificación.** **855/855** (+7: el silencio bloquea, el motivo es el correcto, fuera
+de PH se publica, venta y arriendo no piden nada, la fecha queda sellada). `typecheck` **0 errores**
+(de 26). Los 7 gates en verde, con `verify:controles` confirmando que el `<select>` nuevo tiene nombre
+accesible. El gate nuevo del cableado **mordido en las dos direcciones**: se quitó `typecheck` del
+atajo → rojo con el mensaje correcto; restaurado → verde. Las 5 pruebas que rompió el gate al nacer
+eran las fixtures de alojamiento sin declaración: se actualizaron para afirmar la verdad NUEVA (con
+RNT pero sin PH **sigue** sin publicarse), no para ablandarla.
+
+**174.7 Anti-patterns evitados.** No se re-investigó lo ya verificado en `R3` (§3.3). No se inventó un
+deber legal que la norma no impone. No se modeló el silencio como booleano. No se ablandó ninguna
+prueba para que pasara. No se tocó `--no-verify` con el CI en rojo.
+
+**174.8 Archivos.** `shared.ts` (`SITUACIONES_PH`) · `propiedades.ts` (`AutorizacionPH`,
+`motivoLegalNoPublicable`) · `catalogo.ts` (motivo propio + texto) · `alta-propiedad.ts` (campo,
+validación, round-trip) · `gestion.astro` + `gestion-alta-ui.ts` (el control) · `liquidacion.ts`
+(`pesos`) · `gestion-liquidacion.ts` (los 26) · `package.json` + `portal-ci.yml` +
+`verify-build.mjs` (el cableado). **INTACTOS**: `ficha.ts` — el RNT se exhibe porque la ley lo exige;
+la autorización de PH **no se publica**, es evidencia interna.
+
+**174.9 Doctrina.** [[M-26]] nace · [[L-56]] afilada (3ª reincidencia) · [[M-25]] 5ª aparición · la
+regla Workers↔DOM baja a `34`. Sin cache bump (no cambia el shell del legacy). Skills alimentadas:
+`caza-bugs` (el meta-gate que enumera por convención) y `auditoria-financiera` no aplica aquí; la
+transferible legal va a `legal-colombia-inmobiliario`.
+
+**⏭️ Queda abierto y declarado**: el control del alta se añadió por necesidad legal con las clases del
+formulario existente — **no hay mockup propio** y entra en el repaso de mockups que Daniel ya debe.
+Y las pruebas de reglas (`test:rules`) siguen fuera del CI porque necesitan el emulador con Java:
+declarado, no resuelto.

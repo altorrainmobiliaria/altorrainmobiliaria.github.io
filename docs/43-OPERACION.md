@@ -192,7 +192,7 @@ prueba del contrato de hospedaje (L.2068 §21-22).
 **❓ Agenda abogado (no verificado en fuente oficial):** régimen de intereses sobre cánones (CC 1617 reglas
 3a-4a vs mercantil + unificación CSJ) · taxatividad de causales de terminación · tarifa registro Bolívar +
 estampillas · aplicación de L.1480 al arriendo de vivienda (concepto SIC) · ~~frecuencia de Ley 2300~~ (RESUELTA → §172: aplica a la prospección
-comercial, no solo a la cobranza, y ya hay calendario y guardias en el código) · valor UVB 2026 · reglamento PH silente vs autorización expresa para vivienda turística.
+comercial, no solo a la cobranza, y ya hay calendario y guardias en el código) · valor UVB 2026 · ~~reglamento PH silente vs autorización expresa~~ (RESUELTA → §174: **el silencio NO autoriza**; hace falta permiso EXPRESO —D.1074/2015 art. 2.2.4.1.2.2 num. 8, L.675/2001 art. 18.1— instrumentado como DECLARACIÓN fechada del prestador, ya bloqueante en el alta y en `publicable()`. ⚠️ La respuesta llevaba **un mes** verificada en `specs/R3-LEGAL-COLOMBIA` §GATE 5 mientras esta lista seguía preguntándola: antes de agendar algo aquí, búscalo en `specs/R3`).
 
 ## Estado del arco TODO-34
 

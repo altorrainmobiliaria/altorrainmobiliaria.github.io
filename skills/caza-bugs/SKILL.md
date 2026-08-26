@@ -271,6 +271,36 @@ taparlo a la vez.
    comentario, descríbela con palabras en vez de escribirla; (c) los comentarios internos van en la
    sintaxis que NO viaja al cliente.
 
+## 4j. 🧮 El meta-gate que enumera POR CONVENCIÓN — solo protege a quien la respeta
+
+Un meta-gate («¿están todos mis gates cableados al CI?») casi siempre se escribe enumerando por
+patrón de nombre: `Object.keys(scripts).filter(k => k.startsWith('verify:'))`. Funciona, sale verde y
+**es exactamente donde se esconde el agujero**: los comprobadores que no siguen la convención le son
+invisibles, y el que no la sigue es justo el que nadie vigila.
+
+Caso real (2026-08-26): el meta-gate contaba 7 gates `verify:*` cableados ✅ mientras `typecheck` y
+`test` —que no llevan el prefijo— estaban fuera. Resultado: `npm run verify` daba verde con **26
+errores de tipos** ya en la rama principal (el CI llevaba días en rojo, con los despliegues parados) y
+**855 pruebas unitarias que el CI no ejecutaba nunca**. Entre ellas, las que sostienen invariantes
+legales del producto. La red más grande del proyecto no estaba enchufada, bajo un ✅.
+
+**Cómo cazarlo, barato y sin leer código.** No preguntes «¿están mis gates en el CI?» sino las dos
+preguntas inversas, que son las que descubren:
+1. **Del CI hacia el package**: lista TODO lo que el CI ejecuta y compáralo con lo que corre tu atajo
+   local. Lo que el CI corre y el atajo no, es una trampa: empujarás creyendo que está verde.
+2. **Del package hacia el CI**: lista TODOS los scripts que verifican algo —no solo los del prefijo—
+   y comprueba cuáles no aparecen en el CI. Un `test` que nadie invoca no es una red: es un archivo.
+
+**Reglas.**
+- Enumera contra **lo que se ejecuta de verdad**, no contra un patrón de nombres. Si necesitas el
+  patrón, **nombra explícitamente** los que quedan fuera de él, en el propio gate.
+- Comprueba **las DOS puntas** —CI y atajo local— porque fallan por puntas distintas: en el caso real
+  `typecheck` estaba en el CI y faltaba en el atajo; `test` faltaba en los dos.
+- El comando que dice «verificar» debe correr **lo mismo que corre el CI**. Si corre menos, no
+  verifica: informa. Y se confía en él exactamente igual.
+- Al escribir un archivo NUEVO, no des por hecho que los gates lo cubren: pregúntate cuál de ellos
+  **abre este archivo**. Un archivo nuevo es donde más fácil entra lo que ningún gate mira.
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.
