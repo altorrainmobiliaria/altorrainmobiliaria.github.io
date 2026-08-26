@@ -12,6 +12,13 @@
 > 4. **Corre en un sitio y no en otro** ([[L-48]]) — prerrequisito generado y gitignored.
 > 5. **Afirma haber pasado sin mirar nada** ([[L-57]]) — le falta su prerrequisito y en vez de
 >    fallar PREGUNTA; sin terminal, no contestar sale con código 0.
+> 6. **Existe, se invoca, mira el archivo… y está FUERA del CI por un motivo que CADUCÓ** (§177).
+>    141 pruebas de emulador llevaban meses fuera «porque necesitan Java»; al medirlo eran **24
+>    segundos** con el arranque incluido. Mientras estuvieron fuera, una se rompió y siguió rota en la
+>    rama principal sin que nada lo dijera. **Un motivo para no correr un gate tiene fecha de
+>    caducidad, y nadie la mira si no se vuelve a medir.** Corolario: cuando una regla nueva te obliga
+>    a tocar un fixture, **búscale los gemelos** — el que corre en el gate se arregla solo; el que no,
+>    se queda callado.
 >
 > **Prueba de bolsillo para cualquier gate**: *que imprima CUÁNTO miró* (archivos, enlaces,
 > pruebas). Un número es lo único que distingue «revisado» de «no hice nada». Y **estrénalo

@@ -7056,3 +7056,57 @@ propósito: necesita `defineSecret('WOMPI_EVENTS_SECRET')` y §140 enseñó que 
 ver. El secreto solo lo puede crear Daniel; el alta son cinco líneas el día que exista. (b) Falta la
 prueba de la TRANSACCIÓN contra el emulador (`firebase/tests/`), que es lo único que puede demostrar
 la atomicidad real. (c) `test:rules` sigue fuera del CI porque necesita Java: declarado, no resuelto.
+
+## 177. ADR-177 — La línea base estaba roja y la había roto yo: 141 pruebas fuera de todo gate
+
+**177.0 — De dónde salió.** §176 dejó declarado que faltaba la prueba de la TRANSACCIÓN contra el
+emulador — lo único capaz de demostrar que anotar la clave y mover el mandato son atómicos. Antes de
+escribirla, dos comprobaciones de método: ¿tengo Java? (sí, Temurin 25) y ¿cómo está la suite HOY?
+
+**177.1 — La línea base estaba ROJA, y era mía.** `catalogo-rebuild.test.ts` fallaba: el gate de
+propiedad horizontal de §174 hizo que un alojamiento sin `autorizacionPH` dejara de entrar al índice,
+y **actualicé el fixture de la suite unitaria pero no el del emulador**. El comentario que ya vivía
+junto a ese fixture avisaba de que a ese mismo par de archivos le había pasado antes por lo mismo.
+*No fue descuido: es lo que le pasa siempre a la copia que ningún gate abre.* Estuvo roto en `main`
+desde §174 y lo único que lo delató fue que decidí correr la suite a mano.
+
+**177.2 — El motivo por el que estaban fuera había caducado.** «Necesitan el emulador con Java» era
+cierto y bastaba para dejarlas fuera del CI… hasta que alguien lo midiera: **141 pruebas en 24
+segundos**, arranque del emulador incluido. Y no son pruebas cualesquiera: son **las únicas** que
+ejercitan las Security Rules y el código REAL de las Functions contra Firestore. La suite entera de
+gates —typecheck de los dos codebases, 872 unitarias, 149 de emulador, los 7 `verify:*`— cuesta ahora
+**50 segundos**. *Un motivo para no hacer algo tiene fecha de caducidad, y nadie la mira si no se
+vuelve a medir.*
+
+**177.3 — Y el prerrequisito tampoco estaba declarado (tercera vez en un día).** `npm run test:rules`
+invoca `firebase-tools`, que **no estaba en `package.json` ni en el lockfile**: funcionaba en local
+porque vive instalado a lo global en esta máquina. Es exactamente §175 otra vez —y §176 fue el
+tsconfig que excluía `functions/`—. Tres incidentes distintos, un solo patrón: **los prerrequisitos
+de los gates de este repo no se declaran**. A la tercera deja de ser mala suerte y pasa a ser una
+propiedad del repo que hay que vigilar, así que la sonda del lockfile pasa a exigir los tres:
+`@astrojs/check`, `typescript` y `firebase-tools`.
+
+**177.4 — La prueba que motivó todo.** 8 casos contra el emulador, con la firma **calculada de
+verdad** (no simulada), que demuestran lo que el dominio puro no puede:
+· **Atomicidad**: `anotada === movida`, siempre. Si pudieran separarse, el estado «clave en el libro y
+  mandato sin mover» es precisamente el pago perdido — el reintento llegaría y se descartaría como
+  duplicado, sin un error en ningún log.
+· **La carrera real de §176.3**: referencia que aún no existe → 500 sin anotar → llega el mandato →
+  el reintento lo acredita en vez de descartarlo. La secuencia entera, no la intención.
+· **El `PENDING` tardío** sobre un mandato ya girado: no lo toca, y `giradoEl` sigue donde estaba.
+· **La firma falsificada** no ocupa la clave: se comprueba enviando después el evento legítimo con
+  ese mismo id y viendo que SÍ entra.
+
+**177.5 — Verificación, con la mordida que importa.** Se desactivó el movimiento del mandato DENTRO
+de la transacción: **5 pruebas en rojo**, incluida la de atomicidad. Restaurado: verde. Total
+**1013 pruebas** (872 + 149 + las 8 nuevas dentro de esa cuenta). `verify` completo en 50 s, exit 0.
+
+**177.6 — Doctrina.** [[L-56]] gana su cuarta cara: no basta con que el gate exista, ni con que se
+invoque, ni con que mire el archivo — también hay que **volver a medir la razón por la que se dejó
+fuera**. Y el corolario de §174 se confirma con un caso propio: cuando una regla nueva obliga a tocar
+un fixture, **búscale los gemelos** — el que corre en el gate se arregla solo; el que no, se queda
+callado hasta que alguien lo abra a mano.
+
+**177.7 — Lo que sigue declarado y NO hecho.** El endpoint del webhook **sigue sin registrarse** en
+`index.ts` (§176.7): necesita `WOMPI_EVENTS_SECRET`, y un secreto inexistente bloquea el despliegue
+del codebase entero (§140). Eso no lo destraba una prueba: lo destraba una cuenta de Daniel.
