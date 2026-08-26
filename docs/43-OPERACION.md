@@ -30,15 +30,14 @@
   de la resolución, el registro quiere decir que en nuestros registros digitales ya se encuentra
   inscrito»*. ⇒ **gate de Ley 820 art. 31 LEVANTADO**: ya se publica en el footer del portal y en la
   Política, y la pauta de arriendo deja de estar bloqueada por este motivo.
-  ⚠️ **Fuerza probatoria**: es una afirmación de la entidad por chat, no una constancia sellada. Sirve
-  para publicar (es la interpretación oficial de quien administra el registro), pero conviene pedir la
-  **constancia escrita de inscripción** para el expediente. NO bloquea nada.
-- ⚠️ **Discrepancia de números — verificar en Cámara de Comercio**: la resolución llama al establecimiento
-  "ALTORRA INMOBILIARIA **con Matrícula No. 10011978**", pero según este mismo nodo 10011978 es la matrícula
-  **mercantil de la SOCIEDAD** y el establecimiento es **10013497**. Lo cazó Daniel al leer el acto. Uno de
-  los dos está mal: si es la Alcaldía, conviene corregirlo por vía de reposición (art. 4º) ANTES de que ese
-  número circule en documentos; si es nuestro registro, corregir aquí. **Ningún número se publica hasta
-  aclararlo.**
+  ⚠️ Es una afirmación por chat, no constancia sellada: sirve para publicar, pero conviene pedir la
+  **constancia escrita** para el expediente. NO bloquea nada.
+- ⚠️ **Números cruzados en la RESOLUCIÓN** (revisado §212): llama al establecimiento con **10011978**, que
+  es la mercantil de la SOCIEDAD (la del establecimiento es **10013497**). Lo cazó Daniel leyendo el acto.
+  ✅ Lo NUESTRO está bien y **ya publicado**: la Política separa ambos con la asignación correcta
+  (comprobado en el HTML servido), así que la vieja orden de *«no publicar hasta aclarar»* llevaba tiempo
+  contradicha por el propio sitio y **se retira**. ⏭️ Queda confirmar en Cámara y, si erró la Alcaldía,
+  pedir corrección (art. 4º) antes de usar la resolución como soporte ante terceros. **No bloquea nada.**
 - ⛔ **Datos personales del acto que NO se publican**: cédula del rep. legal, `Barrio Santa Lucía Mz E Lt 6`
   (domicilio del representante, no dirección comercial verificada) y el teléfono **323 501 6747** — es el
   personal de Daniel, prohibido publicar (memoria `identidad-marca-inmobiliaria`). El correo del acto

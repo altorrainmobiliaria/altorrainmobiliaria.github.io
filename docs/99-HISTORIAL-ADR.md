@@ -8858,3 +8858,48 @@ código — la misma forma, otro sustrato.
 la premisa corregida) · `docs/43-OPERACION.md` (sección invertida: de riesgo abierto a riesgo cerrado).
 **INTACTO**: `35-LECCIONES-PLATAFORMA`, que la menciona dentro de una lección sobre un fallo de deploy
 pasado — ahí es **historia**, y la historia no se actualiza.
+
+## 212. ADR-212 — Una orden de «no publicar» que el sitio llevaba tiempo contradiciendo
+
+**Contexto.** Revisión de las páginas institucionales buscando **afirmaciones sin respaldo** — lo que
+`verify:claims` no puede juzgar, porque caza patrones (reseñas, notas, distinciones) y no una promesa
+exagerada. En Colombia eso no es estilo: es exposición bajo la Ley 1480 arts. 29-30.
+
+### 212.1 — El resultado del repaso: la página es EJEMPLAR, y conviene decirlo
+`/nosotros` no tiene una sola afirmación que no se pueda comprobar. Y lo hace explícito: *«Son
+decisiones, no logros. Un logro habría que demostrarlo con datos; una decisión se comprueba abriendo el
+sitio»*, con una sección entera —*«Lo que todavía no le vamos a contar»*— explicando por qué no publica
+inmuebles vendidos ni años de trayectoria. **No hay nada que corregir**, y registrarlo importa: si
+alguien vuelve a auditar esta página, que sepa que ya se hizo y con qué resultado.
+
+### 212.2 — Lo que sí apareció, y por el camino largo
+`43` traía una instrucción dura sobre los números de matrícula: *«**Ningún número se publica hasta
+aclararlo**»*, escrita cuando Daniel descubrió que la resolución de la Alcaldía llama al establecimiento
+con **10011978** — que es la mercantil de la SOCIEDAD, siendo la del establecimiento **10013497**.
+Fui a comprobar que el sitio la respetara. **No la respeta: los dos números llevan tiempo publicados**
+en la Política de Tratamiento de Datos.
+🎯 **Y están BIEN.** El HTML servido los separa con la asignación correcta —sociedad y establecimiento,
+cada uno con el suyo—. Es decir: lo nuestro era correcto, lo publicado era prudente, y **la orden era
+la equivocada**. La discrepancia nunca estuvo en nuestros datos; está **dentro del acto de la Alcaldía**.
+
+### 212.3 — Por qué la orden estaba mal, y no solo desfasada
+*«No publicar hasta aclarar»* trata la duda como si fuera nuestra. No lo era: nuestros registros son
+internamente consistentes y el acto ajeno es el que cruza dos números. Aplicada al pie de la letra,
+esa orden habría dejado la Política de Datos **sin identificar al responsable del tratamiento**, que es
+justo lo que esa página existe para hacer. *Una regla cautelar escrita en caliente puede pedir algo peor
+que el riesgo del que protege.*
+Retirada, y sustituida por lo que de verdad queda: **confirmar en Cámara de Comercio** cuál corresponde
+a cuál y, si erró la Alcaldía, pedir corrección por el art. 4º **antes de que la resolución se use como
+soporte ante un tercero**. No bloquea publicar ni operar.
+
+### 212.4 — Archivos
+`docs/43-OPERACION.md`: la instrucción retirada con su motivo, lo pendiente reformulado como trámite
+ante la entidad, y dos podas para que el nodo vuelva a caber (19944/20000). **INTACTO**: el sitio — no
+había nada que arreglar ahí, que era el hallazgo.
+
+### 212.5 — Doctrina
+Tercera vez hoy que **la instrucción, no la realidad, era lo defectuoso** (§205 un riesgo inexistente ·
+§206 un umbral falso · §212 una cautela contraproducente). 🎯 **Al comprobar si el sistema cumple una
+regla, cabe que el resultado sea que la regla estaba mal** — y esa salida es tan válida como el
+incumplimiento. Ir a auditar el cumplimiento **suponiendo que la regla es correcta** convierte la
+auditoría en una búsqueda de culpables donde no hay culpa.
