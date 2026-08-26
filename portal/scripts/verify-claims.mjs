@@ -23,14 +23,27 @@ import { join, relative } from 'node:path';
 const RAIZ = new URL('..', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
 const SRC = join(RAIZ, 'src');
 
-function astro(dir, acc = []) {
+function porExtension(dir, ext, acc = []) {
+  if (!existsSync(dir)) return acc;
   for (const n of readdirSync(dir)) {
     const p = join(dir, n);
-    if (statSync(p).isDirectory()) astro(p, acc);
-    else if (p.endsWith('.astro')) acc.push(p);
+    if (statSync(p).isDirectory()) porExtension(p, ext, acc);
+    else if (p.endsWith(ext)) acc.push(p);
   }
   return acc;
 }
+const astro = (dir, acc = []) => porExtension(dir, '.astro', acc);
+
+/**
+ * §195 — El gate corría en verde sobre el sitio donde MÁS afirmaciones hay.
+ *
+ * Solo recogía `.astro`, así que los artículos del journal —markdown en `src/content`— no los abría
+ * NUNCA. Y el journal es justo la parte del portal cuya premisa impresa es «cada afirmación, con su
+ * norma citada»: prosa larga, persuasiva, publicada en el mismo sitio y compartible. Si una frase de
+ * prueba social fabricada («líderes del mercado», «4,9 en reseñas») iba a colarse en algún sitio, era
+ * ahí, no en un componente. Familia de [[L-52]]: un gate verde sobre archivos que nunca abre.
+ */
+const contenido = (acc = []) => porExtension(join(SRC, 'content'), '.md', acc);
 
 /**
  * Deja solo lo que un visitante puede LEER.
@@ -90,7 +103,8 @@ if (existsSync(mp)) {
 const APROBADAS = new Set((manifest['x-claimsVerificados'] || []).map((c) => (typeof c === 'string' ? c : c.cifra)));
 
 const hallazgos = [];
-for (const f of [...astro(join(SRC, 'pages')), ...astro(join(SRC, 'components'))]) {
+const ESCANEADOS = [...astro(join(SRC, 'pages')), ...astro(join(SRC, 'components')), ...contenido()];
+for (const f of ESCANEADOS) {
   const texto = soloTextoVisible(readFileSync(f, 'utf8'));
   for (const p of PATRONES) {
     for (const m of texto.matchAll(p.re)) {
@@ -114,7 +128,12 @@ if (hallazgos.length) {
   process.exit(1);
 }
 
-console.log(`✅ verify:claims — ninguna cifra sin respaldo en las páginas públicas (${APROBADAS.size} declarada(s) como verificada).`);
+// El número de archivos NO es decoración: es lo único que distingue «lo revisé» de «no hice nada»
+// (§195 — este gate estuvo verde sin abrir el journal, y el ✅ se veía idéntico).
+console.log(
+  `✅ verify:claims — ${ESCANEADOS.length} archivo(s) leídos (páginas, componentes y contenido): ` +
+    `ninguna cifra sin respaldo (${APROBADAS.size} declarada(s) como verificada).`,
+);
 /*
  * ── SONDA 2: LA PALABRA PROHIBIDA, RECLAMADA COMO NUESTRA (§173) ───────────────────────────────
  *
