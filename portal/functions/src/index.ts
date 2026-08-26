@@ -14,6 +14,7 @@
 
 import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { motivoNoContacto, explicarNoContacto } from '../../src/lib/domain/calendario-co';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { defineSecret } from 'firebase-functions/params';
 import * as logger from 'firebase-functions/logger';
@@ -142,9 +143,19 @@ export const catalogoBarrido = onSchedule(
 );
 
 /**
- * DIGEST DIARIO de alertas guardadas (§96). Una sola corrida al día, a las 7:00 de Cartagena: es la
- * hora a la que se abre el correo, y concentrar el envío evita el goteo que entrena a la gente a
- * ignorarlo.
+ * DIGEST DIARIO de alertas guardadas (§96). Una sola corrida al día por la mañana: es la hora a la
+ * que se abre el correo, y concentrar el envío evita el goteo que entrena a la gente a ignorarlo.
+ *
+ * 🔴 A LAS 8:00 Y DE LUNES A SÁBADO, no a las 7:00 todos los días (§172). La **Ley 2300 de 2023**
+ * extiende a los mensajes comerciales la ventana de la cobranza: L-V de 7:00 a 19:00, **sábados de
+ * 8:00 a 15:00** y **nunca domingos ni festivos**. A las 7:00 el sábado se está fuera por una hora, y
+ * el domingo se está fuera del todo. La hora se mueve una hora —coste pequeño— y se gana el sábado
+ * entero de forma legal.
+ *
+ * ⚖️ Y sí, esto es discutible: quien se suscribió a una alerta PIDIÓ recibirla, y se puede argumentar
+ * que es un servicio solicitado y no publicidad. Se elige la lectura conservadora porque el coste de
+ * respetarla es una hora y dieciocho días al año, y el de equivocarse es una multa — y porque el
+ * eslogan de esta marca empieza por «Legalidad».
  *
  * `retry: false` a propósito, al revés que el rebuild del catálogo: reintentar un envío de correo no
  * es idempotente y duplicaría mensajes. Lo que no salió hoy sale mañana, porque `ultimoEnvio` solo
@@ -152,7 +163,7 @@ export const catalogoBarrido = onSchedule(
  */
 export const alertasDigest = onSchedule(
   {
-    schedule: '0 7 * * *',
+    schedule: '0 8 * * 1-6',
     region: REGION,
     timeZone: 'America/Bogota',
     secrets: [RESEND_API_KEY],
@@ -162,6 +173,22 @@ export const alertasDigest = onSchedule(
     retryCount: 0,
   },
   async () => {
+    /*
+     * El cron sabe de días de la semana y de horas, pero NO de festivos — y Colombia tiene 18 al año,
+     * varios entre semana. El guardia va aquí, con el calendario del dominio (`calendario-co`), que
+     * los calcula en vez de leerlos de una lista que caduca cada 31 de diciembre.
+     */
+    const hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Bogota' });
+    const hora = Number(
+      new Date().toLocaleString('en-GB', { timeZone: 'America/Bogota', hour: '2-digit', hour12: false }),
+    );
+    const motivo = motivoNoContacto(hoy, hora);
+    if (motivo) {
+      // Se registra y se sale. Lo que no salió hoy sale mañana: `ultimoEnvio` solo avanza al enviar.
+      logger.info(`[alertasDigest] no se envía (${hoy} ${hora}h): ${explicarNoContacto(motivo)}`);
+      return;
+    }
+
     const reporte = await correrDigest(db(), { apiKeyResend: claveResend() });
     for (const l of lineasDigest(reporte)) logger.info(l);
   },

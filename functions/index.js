@@ -760,11 +760,33 @@ exports.updateUserRoleV2 = onCall(
 );
 
 // ══════════════════════════════════════════════════════════════════════════
-// 8. processNurturingEmails — Scheduled: send follow-up emails
-//    Runs every 6 hours, queries solicitudes due for next nurturing email
+// 8. processNurturingEmails — seguimiento comercial a leads.
+//
+// 🔴 EL HORARIO ERA ILEGAL, y no de una forma discutible (§172). Corría `every 6 hours`, que en UTC
+//    dispara a las 00/06/12/18 — o sea, en hora de Colombia, **a la 1 de la madrugada** y también los
+//    domingos. La **Ley 2300 de 2023** extiende a los mensajes comerciales las mismas reglas de la
+//    cobranza: solo **lunes a viernes de 7:00 a 19:00 y sábados de 8:00 a 15:00**, y **NUNCA domingos
+//    ni festivos**. Un correo comercial de madrugada no es un detalle de cortesía: es una infracción.
+//    Ahora el cron vive dentro de la ventana y en la zona horaria de Bogotá, no en UTC.
+//
+// ⚠️ LO QUE ESTE CRON **NO** RESUELVE, y hay que resolver ANTES de desplegarla: los **festivos**.
+//    Colombia tiene 18 al año y varios caen entre semana. El calendario ya existe y está probado
+//    (`portal/src/lib/domain/calendario-co.ts`, `esFestivo`), pero vive en el codebase del PORTAL y
+//    esta Function es del legacy: no se puede importar. **Duplicar el algoritmo aquí sería peor**
+//    —dos calendarios que se separan sin avisar—, así que la salida correcta es mover el nurturing al
+//    codebase del portal cuando se decida encenderlo.
+//
+// 🚫 SIGUE SIN DESPLEGARSE, y ahora por DOS razones: la contraseña de Gmail sin rotar y el hueco de
+//    los festivos. Desplegarla es una decisión de negocio (`20-MEMORIA-ESPACIAL`), no fontanería.
 // ══════════════════════════════════════════════════════════════════════════
 exports.processNurturingEmails = onSchedule(
-  { schedule: 'every 6 hours', region: REGION, secrets: [EMAIL_USER, EMAIL_PASS] },
+  {
+    // 9:00 y 15:00, de lunes a viernes, hora de Colombia: dentro de la ventana con margen sobrado.
+    schedule: '0 9,15 * * 1-5',
+    timeZone: 'America/Bogota',
+    region: REGION,
+    secrets: [EMAIL_USER, EMAIL_PASS],
+  },
   async () => {
     const now = Timestamp.now();
 
