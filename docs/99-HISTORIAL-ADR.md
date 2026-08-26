@@ -7816,3 +7816,46 @@ daban por bueno — que es justo el hueco que §176 existía para tapar.
 **191.5 — Verificación.** **910 unitarias + 155 de emulador** (+6), `typecheck` de los dos codebases
 en 0, los 8 gates. Registrado en `21-MAPA-PORTAL` en el mismo cambio: la entrada de leads decía que
 `onNewSolicitud` recoge el documento, y eso dejó de ser cierto anoche.
+
+## 192. ADR-192 — El nurturing: un bloqueo menos, uno nuevo, y por qué NO se porta tal cual
+
+**192.0 — Tirando del hilo de §188.** Si el portal ya manda el correo del lead y le pone el puntaje,
+¿qué queda en la Function legacy? El **nurturing**: la secuencia de seguimiento que arranca con cada
+lead. Y ahí importa una cosa — si el seguimiento sigue colgando de un camino roto, los leads del
+portal se avisan y se puntúan pero **nadie los persigue**, que es donde está el dinero.
+
+**192.1 — El comentario de esa Function volvía a nombrar su propia salida.** Igual que §122 (ver
+§190), `processNurturingEmails` documentaba sus bloqueos Y su solución: *«duplicar el algoritmo de
+festivos aquí sería peor —dos calendarios que se separan sin avisar—, así que la salida correcta es
+mover el nurturing al codebase del portal»*. Es la segunda vez en la noche que un apaño bien escrito
+se deja retirar solo. **Vale la pena decirlo como regla: un comentario que nombra su condición de
+liberación es un activo; uno que solo dice «temporal» es deuda perpetua.**
+
+**192.2 — Estado revisado: de tres bloqueos, uno cayó.** ✅ La contraseña de Gmail **ya no bloquea** —
+el portal manda por Resend desde §188, y el nurturing hereda ese camino si se mueve allí. ⏳ Los
+festivos siguen sin resolver *en el legacy*, con la misma salida de siempre. ⚖️ Y encenderlo sigue
+siendo decisión de negocio, no fontanería.
+
+**192.3 — Y apareció un CUARTO que nadie había escrito: las plantillas apuntan al sitio retirado.**
+Los correos enlazan a ocho URLs del sitio viejo. Se comprobaron **una a una** contra `redirects.ts`:
+las ocho tienen redirect, así que **ninguna daría 404** — buena noticia, y no se daba por supuesta.
+🔴 Pero `/detalle-propiedad.html?id=X` redirige a `/comprar` y **pierde la propiedad**: un correo que
+dice *«Ver la propiedad que te interesó»* aterrizaría en el listado genérico. *Un enlace que no rompe
+pero pierde su destino es peor que uno roto: el roto se reporta, éste solo decepciona en silencio.*
+Para leads viejos no tiene arreglo —esos inmuebles ya no existen—; para los nuevos el enlace correcto
+es `/inmueble/<slug>`, que **solo se puede construir desde el portal**.
+
+**192.4 — La decisión: NO portarlo tal cual, y no construirlo hoy.** Mover el nurturing al portal
+resuelve los tres bloqueos técnicos de una vez, y **reescribir las plantillas en el legacy sería
+trabajo tirado**. Pero no se construye en esta vuelta, y por dos razones que conviene separar: (a)
+encenderlo es una decisión de negocio de Daniel, y construir una secuencia de correos que persigue
+gente durante siete días sin que él la haya aprobado sería decidir por él; (b) hay una **restricción
+de diseño declarada** que no se puede saltar: el free tier de Cloud Scheduler son 3 jobs, el portal ya
+gasta 2 y *«el siguiente cron debe entrar en un job existente»*. Eso es una decisión de arquitectura
+con coste, no un detalle de implementación.
+
+**192.5 — Lo que sí se hizo.** Dejar el estado REVISADO donde lo va a leer quien lo encienda: en el
+comentario de la propia Function, no solo en este ADR ([[M-26]]). Con las cuatro razones numeradas,
+cuál cayó, cuál es nueva, y la conclusión de que portar resuelve tres de una vez. *Un bloqueo que se
+revisa y se documenta vale más que uno que se arrastra sin fecha* — y ésta es la diferencia entre un
+pendiente y una decisión aplazada con criterio.

@@ -776,8 +776,23 @@ exports.updateUserRoleV2 = onCall(
 //    —dos calendarios que se separan sin avisar—, así que la salida correcta es mover el nurturing al
 //    codebase del portal cuando se decida encenderlo.
 //
-// 🚫 SIGUE SIN DESPLEGARSE, y ahora por DOS razones: la contraseña de Gmail sin rotar y el hueco de
-//    los festivos. Desplegarla es una decisión de negocio (`20-MEMORIA-ESPACIAL`), no fontanería.
+// 🚫 SIGUE SIN DESPLEGARSE. Estado REVISADO el 2026-08-26 (§192) — de tres razones quedan dos, y
+//    apareció una CUARTA que no estaba escrita:
+//    ✅ (1) La contraseña de Gmail YA NO BLOQUEA: el portal manda por Resend desde §188. Si el
+//       nurturing se mueve allí, hereda ese camino y no necesita el SMTP roto.
+//    ⏳ (2) Los festivos siguen sin resolver AQUÍ, y la salida sigue siendo la que ya decía este
+//       comentario: mover el nurturing al portal, donde `calendario-co.ts` ya existe y está probado.
+//    🔴 (3) NUEVO — **las plantillas apuntan al sitio RETIRADO**. Las 8 URLs que envían
+//       (`avaluo` · `contacto` · `detalle-propiedad` · `invertir` · `propiedades-comprar` ·
+//       `publicar-propiedad` · `quienes-somos` · `renta-turistica`) SÍ tienen redirect —comprobado
+//       una a una contra `portal/src/lib/seo/redirects.ts`, ninguna daría 404—, **pero
+//       `/detalle-propiedad.html?id=X` redirige a `/comprar` y PIERDE la propiedad**: el correo dice
+//       «Ver la propiedad que te interesó» y aterriza en el listado genérico. Para leads viejos no
+//       tiene arreglo (esos inmuebles ya no existen); para los nuevos, el enlace correcto es
+//       `/inmueble/<slug>`, que solo se puede construir desde el portal.
+//    ⚖️ (4) Y encenderlo sigue siendo una **decisión de negocio**, no fontanería.
+//    ⇒ Conclusión: mover el nurturing al portal resuelve (1), (2) y (3) de una vez. Portarlo tal cual
+//      aquí no resuelve ninguna, y **reescribir las plantillas en el legacy sería trabajo tirado**.
 // ══════════════════════════════════════════════════════════════════════════
 exports.processNurturingEmails = onSchedule(
   {
