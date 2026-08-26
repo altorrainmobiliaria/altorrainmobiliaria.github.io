@@ -2,8 +2,8 @@
 // Verifica el CABLEADO HÍBRIDO del build — materializa la mitigación del riesgo
 // sellado R2/R3 ("rendering mal cableado", specs/R5-STACK). Corre en CI tras
 // `astro build` (job `build` de portal-ci.yml). Falla ruidosamente (exit 1).
-import { existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { relative, resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const checks = [];
@@ -135,6 +135,82 @@ check(
     : `${gates.length} gates en un solo comando`,
 );
 
+
+/*
+ * ── SONDA: o dices `noindex`, o estás en el SITEMAP (§162) ─────────────────────────────────────
+ *
+ * QUÉ CAZA. Una página pública que nadie metió al sitemap. No rompe nada, no sale en ninguna
+ * consola: simplemente Google tarda semanas en descubrirla, o no la descubre. `/nosotros` nació el
+ * 26-ago, se enlazó desde el header y el pie de las 74 páginas… y quedó fuera del sitemap.
+ *
+ * 🔴 LO QUE HACE ESTE FALLO ESPECIALMENTE CRUEL: `sitemap.xml.ts` **predijo su propia avería**. Su
+ * comentario dice, textualmente, que las zonas y los artículos se DERIVAN «porque el olvido más
+ * común al añadir contenido es no meterlo al sitemap». La lista de páginas fijas siguió siendo
+ * manual, y el olvido llegó por ahí. *Un comentario que nombra el riesgo no lo mitiga: lo documenta.*
+ *
+ * LA REGLA, y es una equivalencia en los DOS sentidos:
+ *   · una página que NO declara `noindex` DEBE estar en el sitemap;
+ *   · una página que SÍ lo declara NO puede estar.
+ * Sin la segunda mitad, la primera se cumple metiéndolo todo — incluido el panel interno.
+ *
+ * ⚠️ SE MIRA EL FUENTE PARA `noindex`, no el HTML construido, y es deliberado: en un build de
+ * staging TODAS las páginas llevan `noindex` (es lo que protege al staging, §90), así que el
+ * artefacto no puede distinguir «interna» de «pública» y el gate pasaría siempre. Es el caso raro en
+ * el que el fuente dice la verdad y el artefacto no.
+ */
+const PAGES_DIR = resolve(root, 'src/pages');
+const sitemapPath = resolve(root, 'dist/client/sitemap.xml');
+
+/**
+ * Excepciones, cada una con su razón — que es la única forma honesta de excluir algo:
+ * · `/404`   la página de error no se anuncia; se sirve con estado 404 y ya declara `noindex`.
+ * · rutas con comodín (`[slug]`): sus URLs reales las derivan `ZONAS` y la colección del Journal,
+ *   y eso ya se comprueba abajo contando las que SÍ salieron.
+ */
+const SIN_SITEMAP = new Set(['/404']);
+
+function astroPages(dir, acc = []) {
+  if (!existsSync(dir)) return acc;
+  for (const n of readdirSync(dir)) {
+    const p = resolve(dir, n);
+    if (statSync(p).isDirectory()) astroPages(p, acc);
+    else if (n.endsWith('.astro')) acc.push(p);
+  }
+  return acc;
+}
+
+if (existsSync(sitemapPath)) {
+  const xml = readFileSync(sitemapPath, 'utf8');
+  const enSitemap = new Set(
+    [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].replace(/^https?:\/\/[^/]+/, '') || '/'),
+  );
+
+  const faltan = [];
+  const sobran = [];
+  for (const f of astroPages(PAGES_DIR)) {
+    const rel = relative(PAGES_DIR, f).replace(/\\/g, '/').replace(/\.astro$/, '');
+    if (rel.includes('[')) continue; // dinámicas: sus URLs se derivan, no se declaran
+    const ruta = rel === 'index' ? '/' : `/${rel}`;
+    if (SIN_SITEMAP.has(ruta)) continue;
+    const src = readFileSync(f, 'utf8');
+    const interna = /\bnoindex\b/.test(src);
+    if (!interna && !enSitemap.has(ruta)) faltan.push(ruta);
+    if (interna && enSitemap.has(ruta)) sobran.push(ruta);
+  }
+
+  const detalle = [
+    faltan.length ? `PÚBLICAS y fuera del sitemap: ${faltan.join(', ')} → o entran en \`RUTAS\` de \`src/pages/sitemap.xml.ts\`, o llevan \`noindex\`` : '',
+    sobran.length ? `\`noindex\` y ANUNCIADAS (le pides que indexe lo que le prohíbes): ${sobran.join(', ')}` : '',
+  ].filter(Boolean).join(' · ');
+
+  check(
+    `sitemap ⇄ páginas: o \`noindex\`, o anunciada (${enSitemap.size} URLs)`,
+    !faltan.length && !sobran.length,
+    detalle,
+  );
+} else {
+  console.log('ℹ️  sin `dist/client/sitemap.xml`: la sonda del sitemap no corre (el CI siempre lo tiene).');
+}
 
 let failed = 0;
 for (const c of checks) {
