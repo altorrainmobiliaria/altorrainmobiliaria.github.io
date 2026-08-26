@@ -55,30 +55,30 @@
 > 🎭 **UN ✅ NO PRUEBA QUE MIRARA** (§174-§177, §195): 8 gates cableados **tras** hallarlos verdes
 > sin mirar nada; `verify:claims` no abría el journal. **El CI nunca estuvo rojo**: lo afirmé sin mirar.
 >
-> 🔍 **26-ago — se auditó lo que nadie audita.** De **9 pendientes**, **solo un tercio describía la
-> realidad** (§204-§208); el runbook tenía **5 de 30 pasos asignados a quien no puede** (§210).
 > ⚠️ **ESTE nodo está FUERA de los dos mecanismos de frescura** —ni fecha que el gate lea, ni marcador
-> `verificado-vivo`— y el arreglo está **especificado, no hecho** (§208). 📄 Brief de Daniel (memoria
-> `brief-lanzamiento-artifact`): **si cambias el reparto 🤖/🧑 o las PELOTAS, ábrelo en el MISMO turno**
-> — vive fuera del repo y ningún gate lo ve envejecer (§211).
+> `verificado-vivo`— y el arreglo está **especificado, no hecho** (§208; de ahí que un tercio de los
+> pendientes mintiera, §204-§210). 📄 Brief de Daniel (memoria `brief-lanzamiento-artifact`): **si
+> cambias el reparto 🤖/🧑 o las PELOTAS, ábrelo en el MISMO turno** — ningún gate lo ve envejecer (§211).
 >
 > 🏨 **Alojamiento lleva DOS gates**: RNT + reglamento de PH que autorice EXPRESAMENTE (§178-§179).
 >
-> 📬 **LEADS — camino roto sustituido** (§188-§192): el aviso sale por **Resend** desde el portal,
-> no por el Gmail caído; puntaje corregido y probado contra el emulador. ⏭ Nurturing **apagado** (§192:
-> sus plantillas enlazan al sitio retirado).
+> 📬 **LEADS**: el aviso sale por **Resend** desde el portal, no por el Gmail caído (§188-§192).
+> ⏭ Nurturing **apagado** (§192: sus plantillas enlazan al sitio retirado).
 >
 > ⏭️ **La evidencia postal NO tiene interfaz** (§204): sin fecha de IMPOSICIÓN el preaviso puede ser ineficaz y el contrato se prorroga un año. Encargo escrito. *El control de PH ya estaba HECHO.*
 >
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos
-> que solo vio la consola del dueño (§133-§136): pesa a favor de retirarlo pronto. Si un gate pasa,
-> pregúntate **qué archivos abre** ([[L-52]]); y córrelos con **`npm run verify`**, no de memoria.
+> que solo vio la consola del dueño (§133-§136). Si un gate pasa, pregunta **qué abre** ([[L-52]]); córrelos
+> con **`npm --prefix portal run verify`** (en la RAÍZ no existe `verify`), no de memoria.
 
 
-> 🔀 **26-ago — el censo saltó a las HERMANAS** (§216, vivas): Bersaglio **LIMPIA** (42 págs). **Cars**: `4.9 · 247 reseñas` sin fuente en el pie de **65 páginas** + stats que su propio spec
-> dejó «a confirmar» en mayo ⇒ **LEGAL-08/09** en su `42-LEGAL` (push a su `dev`; **no** mezclé a `main`:
-> documentar no redespliega un sitio). Su simulador de crédito, **exonerado**.
+> 🔬 **Auditoría N2 #14** (§218): 5 de 10 REINCIDENTES, un hilo — *arreglos correctos con el alcance
+> enumerado a mano*. ⏭ **Abiertos**: patrones de `verify:claims` (van CON el arreglo de las páginas) ·
+> boot al 100 % · «promesa sin mecanismo». 🎯 **Un plural que delimita un universo es un COMANDO.**
 
+> 🔀 **26-ago — el censo saltó a las HERMANAS** (§216, vivas): Bersaglio e INSEMA **LIMPIAS**. **Cars**:
+> `4.9 · 247 reseñas` sin fuente en el pie de **65 páginas** + stats que su spec dejó «a confirmar» en mayo
+> ⇒ **LEGAL-08/09** en su `42-LEGAL` (push a su `dev`; no a `main`).
 > **▶ BERSAGLIO** — estado vivo en su nodo dueño: `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`.
 
 > **⏭️ PELOTAS DE DANIEL — ordenadas por lo que DESBLOQUEAN** (§188; antes era una lista plana de 13).

@@ -64,5 +64,26 @@ en un PR con logs limpios. El gate REPORTA + BLOQUEA; nunca borra solo (guardiá
 5. Verifica completitud de deploy (todos los targets).
 6. Un humano borra lo cuarentenado tras logs limpios, en un PR.
 
+## 8. Retirar es CÓDIGO **y** PRODUCCIÓN — con una sola de las dos, no está retirado: está esperando
+
+La retirada tiene **dos superficies**, y casi siempre se limpia una y se declara hecha la faena. Peor:
+la evidencia del cierre es **verdadera** (*«borrado con éxito»*), y por eso nadie vuelve a mirarlo.
+
+- **Solo de PRODUCCIÓN** → el artefacto sigue en el repositorio, **a un despliegue de volver**. Y suele
+  volver con el defecto por el que lo retiraste: credenciales caducadas, un endpoint muerto, plantillas
+  que apuntan a un sitio que ya no existe. Caso real: una función retirada de la nube siguió meses en
+  su archivo, y el comando que la resucitaba estaba escrito **en la cabecera de ese mismo archivo**.
+- **Solo del CÓDIGO** → queda un proceso vivo que **nada explica**: nadie sabe qué lo apaga, quién lo
+  desplegó ni qué toca. Es el peor de los dos.
+- **El censo que lo prueba va en DOS direcciones.** *Desplegado sin código* caza lo huérfano;
+  *en código sin desplegar* caza lo que puede resucitar. Un censo de un solo sentido da media verdad
+  y la sensación entera de haber mirado.
+- **Lo que quede declarado y no desplegado a propósito, márcalo EN EL CÓDIGO**, junto a su definición,
+  y arregla el comando de despliegue que documentes: si tu instrucción es *«despliega todo»*, tu
+  documentación está armando la mina que tu censo acaba de desactivar.
+- **Y al retirar, busca quién lo NOMBRA**, no solo quién lo llama: comentarios, avisos de convivencia,
+  mapas y recuentos. Un aviso que describía un peligro real se vuelve mentira el día que lo cierras —
+  actualízalo en vez de borrarlo, porque quien tropiece con el síntoma buscará quién lo causaba.
+
 ## 7. Salida (veredicto citable, no "OK")
 `viejo retirado/cuarentenado: [X] · deadcode:check: [0 huérfanas / N] · camino vivo con motor actual: [OK/FALLA] · deploy completo: [sí/no]`.

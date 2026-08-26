@@ -205,11 +205,11 @@
   ],
   "deepAudit": {
     "last": "2026-08-26",
-    "coveredHeaderCount": 199,
+    "coveredHeaderCount": 218,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "tableFile": "2026-08-26-auditoria-cerebro-nivel2-13-inmobiliaria.md",
-    "_que": "Nivel-2 #13 (ADR 200) - PARCIAL y declarada: solo la sonda 3 (retrieval-drill) exige subagente y la sesion lo prohibe. SEGUNDA del mismo dia porque el dia produjo 18 ADRs. 8 hallazgos: 5 cerrados en el turno, 3 abiertos (N13-05 boot al 99.4 - la causa sigue pero YA NO ENGANA: el linter publica el tope REAL desde §193; N13-06 L-46 novena vez, [HONOR] irreducible; N13-08 la base VACIA no es comprobable ni desde el repo ni desde el sitio hasta el cutover). REINCIDENTES: gates a medias (x6, un dia despues de declararse x5) y promesa sin mecanismo. NUEVO Y NOTABLE: 2 de los 8 hallazgos los CAUSE yo en esta misma sesion (desplegar un trigger sin mirar quien mas escucha; una sonda propia que reportaba 94 por ciento de falso rojo). La sonda mas rentable no fue mirar el cerebro sino la PRODUCCION. Previa #12 = 181 headers el mismo dia."
+    "tableFile": "2026-08-26-auditoria-cerebro-nivel2-14-inmobiliaria.md",
+    "_que": "Nivel-2 #14 (ADR 218) - PARCIAL y declarada: sondas 3 y 7 exigen subagente y la sesion prohibe el AgentTool. TERCERA del mismo dia: el dia produjo 36 ADRs (181->217). 10 hallazgos, 5 REINCIDENTES y un hilo unico: un arreglo correcto con el ALCANCE ENUMERADO A MANO (180 corrigio 50 y no 20; la #13 retiro de produccion y no del codigo; N13-01 amplio los archivos y no los patrones). NUEVO y el que mas pesa: N14-06, el defecto aparecio DENTRO del ADR que lo denuncia (216 enumero dos hermanas siendo tres) el mismo dia y con la medicion ya hecha - saber un defecto no protege de el, solo protege el habito mecanico. Abiertos: N14-03 (patrones de verify:claims, espera mockup), N14-04 (boot al 100 por ciento), N14-07 (promesa sin mecanismo, la familia mas reincidente). Previa #13 = 199 headers."
   },
   "noCap": {
     "docs/99-HISTORIAL-ADR.md": "Largo Plazo: NUNCA se lee entero, solo offset/limit vía el índice (§0). Un cap aquí no significaría nada.",

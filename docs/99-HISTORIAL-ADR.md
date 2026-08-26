@@ -9201,3 +9201,127 @@ memoria**, con la medición a un comando de distancia y ya hecha.
 escribiéndolo y caí dentro del propio texto que lo denuncia. Se cura **con el hábito mecánico**: cuando
 escribas un plural que delimita un universo (*«las hermanas», «las páginas», «los callsites»*),
 **ese plural es un comando pendiente, no un hecho**. Ejecútalo ahí mismo, aunque creas saber el resultado.
+
+## 217. ADR-217 — Retirar la maquinaria de SEO legacy, y descubrir que retirar «de producción» no es retirar
+
+**Contexto.** Paso planificado de la **FASE 6** del runbook (§201): la maquinaria de SEO legacy es
+inerte pero empieza a costar el día que entre el catálogo real. Trabajo mío, sin depender de nadie.
+
+### 217.1 — Verificado ANTES de tocar (§3.3), y una de las comprobaciones destapó el coste real
+`og-publish.yml` tiene **solo `workflow_dispatch`** — el `repository_dispatch` está desactivado desde
+el modo obra—, así que el disparo no llega a ningún sitio. Nadie llama a `triggerSeoRegeneration`
+(grep en todo el repo: cero). Y el «✅» falso está en el código: `if (res.statusCode === 204) resolve(true)`
+— GitHub responde 204 a un dispatch que no escucha nadie, así que la Function **registraba éxito**.
+🎯 **Lo que no estaba medido**: `catalogoOnPropiedadWrite` (portal, útil) escucha `propiedades/{propId}`
+y `onPropertyChange` (legacy, inerte) **escuchaba la misma ruta**. Cada escritura de una propiedad
+despertaba **dos** Cloud Functions, una de ellas para nada, más su lectura de Firestore del debounce.
+
+### 217.2 — El censo DECLARADO ↔ DESPLEGADO, en los dos sentidos (L-59)
+Contra la API, no de memoria: **30 desplegadas · 15 legacy en código · 28 portal en código**.
+- **Huérfanas en producción (desplegadas sin código): CERO.** Sano.
+- **Declaradas y no desplegadas: 5** — `onNewSolicitud`, `processNurturingEmails`, `sendNewsletter`
+  (legacy) y `catalogoBarrido`, `alertasDigest` (portal, programadas).
+✅ **Y el cerebro ya lo contaba bien**: `05` decía *«15 en código / 12 desplegadas … las 3 legacy fuera
+a propósito»*. El recuento era exacto. **Lo que no estaba escrito en ninguna parte era el MECANISMO que
+lo deshace.**
+
+### 217.3 — La instrucción peligrosa estaba en la cabecera del propio archivo
+`functions/index.js` documentaba, bajo `DEPLOY:`, el comando **`firebase deploy --only functions`**.
+Ese comando alcanza a **los DOS codebases** (`default` y `portal`, ambos en `firebase.json`) y habría
+**creado las cinco**: dos que mandan correo por el SMTP de Gmail caído (`535-5.7.8`) con plantillas que
+enlazan al sitio retirado (§192), y dos programadas que consumen 2 de los 3 jobs gratuitos de Scheduler.
+🎯 **Un recuento correcto puede convivir con una instrucción que lo falsifica, a doce líneas de
+distancia.** El número decía la verdad; el comando de al lado la deshacía.
+**Arreglado**: esa sección es ahora una ADVERTENCIA que nombra las cinco, exige desplegar por nombre
+(`--only functions:default:<nombre>`) y escribe la receta de retirada. Las dos que quedan sin desplegar
+llevan `// ⛔ NO DESPLEGADA (a propósito)` encima de su `exports`.
+
+### 217.4 — `onNewSolicitud`: retirada en §199 de producción, viva en el archivo desde entonces
+`50` la tachaba como *«RETIRADA §199»* y `05` la contaba entre las «15 en código». Las dos decían la
+verdad, y juntas describían **una mina**: a un `deploy` de volver, con su SMTP roto. Ahora sale también
+del código, con su huérfana `calculateLeadScore` (nadie más la usaba; el puntaje vive en el portal
+desde §188-§192).
+📌 Y su aviso hermano se cierra: `portal/functions/src/lead-aviso.ts` advertía *«`onNewSolicitud` sigue
+existiendo y escucha la MISMA colección … si alguien arregla esa contraseña sin leer esto, saldrían DOS
+correos por lead»*. **Era cierto y ya no lo es**: la nota se reescribe diciendo que el peligro está
+cerrado — pero **se deja**, porque quien encuentre el SMTP roto buscará quién lo usaba.
+
+### 217.5 — Qué se hizo y con qué evidencia
+`functions/index.js`: **1285 → 1056 líneas** (fuera `onPropertyChange`, `triggerSeoRegeneration`,
+`onNewSolicitud`, `triggerGitHubActions`, `shouldTriggerSeo`, `calculateLeadScore`, el secreto
+`GITHUB_PAT`, las constantes `GITHUB_OWNER`/`GITHUB_REPO`/`SEO_EVENT`, el `require('https')` y
+`onDocumentCreated` del import; **10 banners renumerados** para que la numeración no mienta).
+Verificación: `node --check` OK · `npm --prefix portal run verify` **verde entero** (116 archivos de
+datos, 1067 enlaces, 350 anclas, 522 símbolos, 144 tokens) · `typecheck:functions` limpio ·
+`firebase functions:delete onPropertyChange triggerSeoRegeneration` → **«Successful delete operation»**
+y el recuento contra la API baja de **30 a 28**. Censo re-hecho: el hueco legacy queda **exactamente**
+en las dos intencionales.
+**Frescura (§G.4)**: `05` (12/10) · `20` · `50` · el runbook · y **tres comentarios rancios** — uno
+nombraba a `onNewSolicitud` como quien manda el paso 0 del nurturing, otro comparaba con un debounce
+que ya no existe, el tercero era el aviso de convivencia.
+
+### 217.6 — Para Daniel (una frase, cuando quiera)
+El **`GITHUB_PAT`** ya no lo usa nada. Es un token con permiso `repo` + `workflow` sobre el repositorio,
+vivo al servicio de cero. **Puede revocarlo en GitHub**; el secreto de Firebase se queda inerte y no
+molesta. No corre prisa y no rompe nada — pero una credencial que no sirve a nadie solo puede restar.
+
+### 217.7 — Doctrina
+🎯 **Retirar algo es sacarlo del CÓDIGO *y* de PRODUCCIÓN. Con una sola de las dos, no está retirado:
+está esperando.** Si solo lo borras de producción, el propio comando de deploy que documenta el archivo
+lo devuelve. Si solo lo borras del código, queda huérfano corriendo sin nada que lo explique — y ese
+caso es peor, porque nadie sabrá qué lo apaga.
+**Corolario medible**: el censo que lo prueba es de **dos direcciones**. «Desplegadas sin código» caza
+lo huérfano; «en código sin desplegar» caza lo que puede resucitar. Un censo de un solo sentido da la
+mitad de la verdad y la sensación entera de haber mirado.
+
+## 218. ADR-218 — Auditoría Nivel-2 #14: cinco reincidentes, un solo hilo, y el defecto que apareció dentro del texto que lo denuncia
+
+**Deliberación**: `../brain-private/altorrainmobiliaria/research-archive/2026-08-26-auditoria-cerebro-nivel2-14-inmobiliaria.md`
+(tabla de 10 hallazgos con evidencia y estado) + fila en el README de la bóveda.
+
+**Disparador**: el gate la exigió — **217 headers contra 199 cubiertos** por la #13 (umbral 12). Tercera
+del mismo día porque el día produjo 36 ADRs (§181→§217). **PARCIAL y declarada**: las sondas 3
+(retrieval-drill) y 7 (voz adversarial) piden un subagente frío y **esta sesión tiene prohibido el
+AgentTool**; se marcan pendientes, no se fingen.
+
+### 218.1 — Lo que encontró
+**10 hallazgos, 6 cerrados en el turno, 3 abiertos, 1 pendiente de subagentes. Cinco son REINCIDENTES.**
+- **N14-01 🔴** `20-MEMORIA-ESPACIAL:19` afirmaba **«9 en CÓDIGO · 7 DESPLEGADAS»** con sello del 2-ago.
+  Es **la misma cifra falsa que §180 corrigió en `50`** — y §180 comparó `50` contra `05` **sin mirar
+  este nodo**. 24 días viva. Agravante: hoy edité la línea de abajo sin verla. ✅ El nodo deja de llevar
+  números y nombra al dueño (`05`).
+- **N14-02 🔴** la #13 cerró su N13-02 con la evidencia *«retirada la legacy (`functions:delete`)»*, y
+  **la retirada era media**: el código sobrevivió. ✅ cerrado hoy (§217).
+- **N14-03 🟠** `verify:claims` se arregló para **abrir** el journal y sus **patrones** siguen ciegos a
+  la prueba social del propio sitio (§215.3). 🟡 abierto: va con el arreglo de las páginas.
+- **N14-04 🟠** boot **31499/31500 = 100 %**. 🟡 abierto, estructural, vigilado.
+- **N14-05 🟡** la herramienta mordió dos veces (heredoc que colapsa `\`; `open(p,'w')` que vació un
+  archivo pese a L-47). ✅ L-47 reescrita en principio; L-46 sigue [HONOR].
+- **N14-06 🟠 NUEVA** — abajo.
+- **N14-07 🟡** «promesa sin mecanismo» otra vez, ahora en un repo hermano (§216.5).
+- **N14-08 🟠 NUEVA** la cabecera de `functions/index.js` documentaba el comando que deshacía el
+  recuento que `05` mantenía correcto (§217.3). ✅ cerrado.
+- **N14-09 🟢** `MEMORY.md` y sus 9 memorias no contradicen ningún nodo; dos declaran su nodo dueño.
+
+### 218.2 — El hilo único: no fueron errores de juicio, fueron LISTAS
+Los cinco reincidentes comparten forma, y es la misma que el historial lleva dos días catalogando:
+**un arreglo correcto cuyo ALCANCE se enumeró a mano.** §180 arregló `50` y no `20`. La #13 retiró de
+producción y no del código. N13-01 amplió los archivos y no los patrones. §215 limpió tres cifras y
+dejó el hero. En los cuatro, la parte hecha estaba **bien hecha** — y el arreglo quedó registrado como
+completo, que es lo que impide volver a mirarlo.
+
+### 218.3 — Y el hallazgo que quita la excusa cómoda (N14-06)
+§216 —el ADR que **denuncia** enumerar de memoria y prescribe *derivar la lista de una medición*—
+**enumeró «las hermanas» como dos siendo tres**, teniendo la carpeta listada en su propio turno.
+🎯 El defecto no apareció por ignorancia ni por prisa: apareció **dentro del texto que lo denuncia**,
+el mismo día, con la medición ya hecha a un comando de distancia.
+**Eso descarta la explicación cómoda** (*«no lo sabía»*) y deja la incómoda: **saber un defecto no
+protege de él. Solo protege el hábito mecánico.** De ahí la regla que sale a skill y que es la única
+forma operativa que se me ocurre de convertirlo en reflejo: **un plural que delimita un universo
+—«las hermanas», «las páginas», «los callsites», «los nodos»— es un COMANDO PENDIENTE, no un hecho.
+Ejecútalo ahí mismo, aunque creas saber el resultado.**
+
+### 218.4 — Cierre de la skill
+Tabla → bóveda (+ fila en su README) · síntesis → este ADR + fila en `00` · `deepAudit` → `last`
+2026-08-26, `coveredHeaderCount` **218** · hallazgos abiertos → `10` · **GC pareado**: el boot cierra
+en delta ≤ 0 (era 31499/31500, y lo que entra se paga podando en el mismo turno).

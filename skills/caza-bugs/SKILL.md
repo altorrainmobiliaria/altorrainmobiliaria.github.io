@@ -513,6 +513,12 @@ segundo, sin pensarla: barres *lo que tienes a mano*, que casi nunca es *lo que 
   parcial, un layout) antes de decir «una línea»: pueden ser sesenta y cinco páginas.
 - **Publica siempre el denominador.** «Limpio» sin «de cuántos» es indistinguible de «no lo miré», y
   dentro de dos semanas —incluido para ti— ya no habrá forma de saber cuál de las dos fue.
+- **Un plural que delimita un universo es un COMANDO pendiente, no un hecho.** Cuando escribas
+  *«las hermanas»*, *«las páginas»*, *«los callsites»*, *«los nodos»*, *«todos los X»* — esa frase
+  está afirmando el resultado de una medición que quizá no hiciste. Ejecútala ahí mismo, **aunque
+  creas saber el resultado**: el caso más caro documentado de este patrón ocurrió *dentro del texto
+  que lo denunciaba*, el mismo día, con el comando ya escrito en el propio turno. Saber el defecto
+  no protege de él; solo protege el hábito mecánico.
 - **Reporta también lo EXONERADO, con su motivo.** El candidato a peor hallazgo que resulta estar bien
   protegido es información de primera: te dice que tu intuición de riesgo apunta a la página que
   *parece* peligrosa, y que lo desprotegido está donde nadie clasificó nada como afirmación.

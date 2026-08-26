@@ -46,10 +46,14 @@
 ## Cloud Functions del LEGACY — QUÉ es cada una (el censo VIVO lo lleva `05`)
 ⚠️ Decía «7 DESPLEGADAS» mientras `05` decía 13: dos nodos contradiciéndose, y éste llevaba seis
 semanas rancio (§180). El recuento tiene un dueño, `05`; aquí solo los nombres. ⚠️ **Y los nombres TAMBIÉN caducan** (§211): esta línea afirmaba que no, y el 26-ago `onNewSolicitud` se retiró (§199).
-⚰️ ~~`onNewSolicitud`~~ (RETIRADA §199) · `onSolicitudStatusChanged` (email cliente) · `onPropertyChange`
-(regen SEO debounce 5min) · `triggerSeoRegeneration` (HTTPS callable super_admin) · `createManagedUserV2`
-· `deleteManagedUserV2` · `updateUserRoleV2`. Siguen vivas sin sitio que las use (modo obra) — su
-apagado se decide con el MEGA-PLAN.
+⚰️ **RETIRADAS del código Y de producción el 26-ago**: ~~`onNewSolicitud`~~ (§199 prod, §217 código) ·
+~~`onPropertyChange`~~ + ~~`triggerSeoRegeneration`~~ (§217 — con ellas muere el uso de `GITHUB_PAT`).
+VIVAS: `onSolicitudStatusChanged` (email cliente) · `createManagedUserV2` · `deleteManagedUserV2` ·
+`updateUserRoleV2` · `suspenderUsuarioV2` · `claimsStaffSync` · `sincronizarClaimsV2` · `registrarEvento`
+· `cerrarMisSesiones` · `retirarSegundoFactorDe`. **EN CÓDIGO Y NO DESPLEGADAS a propósito**:
+`processNurturingEmails` · `sendNewsletter` — marcadas con ⛔ en el archivo.
+🔴 **`firebase deploy --only functions` alcanza a los DOS codebases y las RESUCITARÍA** (más las 2
+programadas del portal). Despliega por nombre: `--only functions:default:<nombre>` (§217).
 🔴 **DOS del legacy se quedan SIN desplegar A PROPÓSITO**: mandan correo solas, y mientras la
 contraseña de aplicación de Gmail siga rota (pelota 1 del `10`) desplegarlas es fabricar fallos
 silenciosos. No es un olvido del deploy — es una decisión, y por eso está escrita.
