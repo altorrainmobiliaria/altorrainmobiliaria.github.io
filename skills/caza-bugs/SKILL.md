@@ -472,6 +472,29 @@ mensaje. En todos, cada parte se declara «dentro de su límite» hasta el día 
 `X/Y` que una herramienta imprima, la primera pregunta no es si `X` está bien calculado — es **si `Y` es
 de verdad el techo**.
 
+### 4m-bis. La cifra COMPUESTA cuya mitad no vigila nadie
+
+Variante de la anterior, y se caza con aritmética de primaria. Una afirmación del tipo **«20 en código
+/ 17 desplegadas»** compara **dos mundos**: uno lo puede contar una herramienta desde donde estás; el
+otro **no**. Y ahí está la trampa — el ✅ del lado contable **hace parecer verificada la frase entera**.
+
+**Caso real**: un gate contaba las funciones del repositorio y decía «20 == lo que afirma la
+documentación» ✅. La misma línea añadía «17 desplegadas — las 2 que faltan son las programadas».
+**20 − 17 = 3.** La tercera llevaba semanas escrita, probada y **sin correr**, y nadie lo vio porque
+la mitad no contable envejece sola mientras la contable renueva el visto bueno a su lado.
+
+**Lo que lo delató no fue un gate: fue que la resta no daba.**
+🎯 **Una cifra compuesta que no cuadra consigo misma es la sonda más barata que existe, y es gratis.**
+Cuando leas «A de B», «X de Y», «N de M activos» — haz la resta y exige que el resto esté explicado por
+nombre. Si el texto dice «faltan 2» y la resta da 3, hay una tercera cosa que nadie está mirando.
+
+**Y la causa de fondo, que conviene buscar aparte**: pregúntate **por qué** nadie desplegó / migró /
+apagó lo que falta. En el caso real la respuesta era una **colisión de siglas** dentro del mismo
+documento —el mismo prefijo significaba dos productos distintos a cuatro líneas de distancia—, de
+modo que dos frases ciertas, leídas juntas, afirmaban algo falso que ninguna decía. Arreglar la cifra
+sin arreglar la ambigüedad garantiza la reincidencia: corrige **donde nace**, no donde se nota.
+
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.
