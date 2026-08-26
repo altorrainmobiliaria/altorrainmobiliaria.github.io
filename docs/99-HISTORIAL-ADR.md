@@ -6600,3 +6600,51 @@ idempotencia, que hablaba del qué y no del cuándo.
 se conecta cuando exista la cuenta de comercio, y eso es de Daniel (§165.7).
 
 **169.9 — Archivos.** `portal/src/lib/domain/wompi-evento.ts` (+ `.test.ts`). Commit `0267991`.
+
+## 170. ADR — El mandato: liberar es una decisión, y un «reversado» puede esconder una deuda ⟦OPUS-5⟧ (2026-08-26)
+
+**170.0 — La pieza que faltaba entre las otras dos.** El webhook dice qué pasó (§169) y la
+liquidación dice cuánto le toca a cada uno (§166); esto decide **cuándo el dinero deja de estar
+retenido**. Es donde una decisión mal tomada no se arregla con un `revert`: se arregla llamando a
+alguien para pedirle que devuelva una plata que ya recibió. 36 pruebas.
+
+**170.1 — El principio ya estaba escrito y no tenía código detrás.** `42-LEGAL` §11 decía: *«mientras
+el fondo está retenido (mandato) la reversión es trivial — diseñar el flujo así desde el día 1»*. Es
+exactamente el patrón de §162 y §163 (**riesgo entendido, sin mecanismo**), y esta vez el mecanismo es
+el propio diseño de la máquina: **desde `retenido` se puede ir a los dos sitios, y esa es toda la
+gracia**. «Liberar» tiene condiciones; no es el efecto automático de un `APPROVED`.
+
+**170.2 — La condición que más sorprende, y está verificada.** El **retracto de 5 días HÁBILES** del
+art. 47 de la Ley 1480 **sí aplica a reservas a distancia** (`43-OPERACION`). Liberar antes es
+exponerse a devolver un dinero ya girado: el consumidor puede retractarse **tenga uno el dinero o
+no**. La ventana no es una cortesía, es *el plazo durante el cual la reversión sigue siendo barata*.
+*Mordida: al quitar el control, cae 1 prueba.*
+
+**170.3 — 🔴 Y el caso que nadie modela: reversar DESPUÉS de liberar.** Pasa —un contracargo llega
+tarde, el art. 51 obliga a reversar— y la tentación es prohibir la transición «porque no debería
+ocurrir». Prohibirla **no evita el contracargo: solo evita verlo**. El sistema tendría un mandato en
+`reversado` idéntico al que se reversó a tiempo y **nadie sabría que hay plata fuera**. Por eso la
+transición existe y `saldoEnContra()` la hace visible: *un estado que oculta una deuda es peor que no
+tener el estado*. Una prueba comprueba justo eso — los dos «reversado» son **indistinguibles por el
+estado y distintos por el saldo**. *Mordida: al quitar la transición caen 5 pruebas.*
+
+**170.4 — Días HÁBILES, y un margen declarado.** La norma dice hábiles, y la diferencia con los
+corridos es de hasta **cuatro días reales** en una semana con festivo — justo el margen en el que
+alguien libera «ya pasó la semana» y se equivoca. *Mordida: al contarlos corridos caen 3 pruebas.*
+Como todavía no hay calendario de festivos colombianos, el cálculo es **conservador por el lado
+equivocado** (podría decir «ya venció» un día antes), así que el vencimiento exige **un día de
+margen**, escrito con su porqué y con la instrucción de quitarlo cuando exista el calendario. *Un
+margen declarado es honesto; un margen silencioso es un error esperando fecha.*
+
+**170.5 — `urgencia()` ordena por lo que duele.** La plata fuera va **siempre primero** (100), después
+lo retenido con el retracto ya vencido (50) —que es dinero parado que se puede girar—, después lo
+retenido fresco. Mismo criterio que el pipeline de venta (§151): la lista se ordena por riesgo, no por
+estado.
+
+**170.6 — No muta.** Devuelve un mandato nuevo, como `moverEtapa`. *Un objeto de dinero que se
+modifica en sitio es un objeto del que nadie puede decir cómo llegó a estar así.*
+
+**170.7 — Verificación.** 811 tests (36 nuevos), 7 gates en verde. Sin puerta de escritura todavía: la
+Cloud Function se escribe cuando exista la cuenta de comercio (§165.7), y el dominio ya la espera.
+
+**170.8 — Archivos.** `portal/src/lib/domain/mandato.ts` (+ `.test.ts`). Commit `0ba7452`.
