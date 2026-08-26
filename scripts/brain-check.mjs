@@ -30,7 +30,7 @@
 //       (el ✅ INMERECIDO, §120) · (26) trinquete de filas gordas del índice
 //       + 7b) bóveda: commits ≠ origin vía fs [warn]
 // ===========================================================
-const KERNEL_VERSION = '1.14.0';
+const KERNEL_VERSION = '1.15.0';
 import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -181,6 +181,19 @@ head('\n2) Capacidad de neuronas (§G.5 · chars = unidad real de contexto):');
 let bootChars = 0;
 const preShard = [];
 let okCaps = 0, capCount = 0;
+// (ADR §193) Para un nodo always-on su `cap` NO es el techo que aprieta: los tres caps suman
+// 39000c sobre un presupuesto de 31500, asi que ninguno puede alcanzarse a la vez. El `10` decia
+// "9331c/16000 · 58%" cuando su margen REAL era 124c — un numero que se LEE como holgura y
+// significa lo contrario (familia `38-GATES-QUE-MIENTEN`). Se publica el techo EFECTIVO =
+// presupuesto - lo que ocupan los OTROS always-on. Solo se REPORTA: el candado sigue siendo UNO
+// (el total), porque repartir la culpa entre nodos no tiene respuesta objetiva — por eso §G.5
+// dice "paga donde esta el peso" y el pre-aviso del 97% vive en el bloque del boot, no aqui.
+const bootReal = {};
+if (BOOT_CHARS_TARGET) for (const rel of ALWAYS_ON) {
+  const p = join(ROOT, rel);
+  if (existsSync(p)) bootReal[rel] = read(p).length;
+}
+const bootTotalAO = Object.values(bootReal).reduce((a, b) => a + b, 0);
 for (const [rel, cap] of Object.entries(CAPS)) {
   const p = join(ROOT, rel);
   if (!existsSync(p)) continue;
@@ -193,7 +206,11 @@ for (const [rel, cap] of Object.entries(CAPS)) {
   const over = (lc && nLines > Math.round(lc * 1.1)) || (cc && chars > Math.round(cc * 1.1));
   const nudge = (lc && nLines > lc) || (cc && chars > cc);
   const near = (cc && chars >= Math.round(cc * 0.9)) || (lc && nLines >= Math.round(lc * 0.9));
-  const tag = cc ? `${chars}c/${cc} · ${nLines}L/${lc}` : `${nLines}L/${lc} (${chars}c)`;
+  let tag = cc ? `${chars}c/${cc} · ${nLines}L/${lc}` : `${nLines}L/${lc} (${chars}c)`;
+  if (cc && rel in bootReal) {
+    const efectivo = BOOT_CHARS_TARGET - (bootTotalAO - bootReal[rel]);
+    if (efectivo < cc) tag += ` · ⚠️ tope REAL ${efectivo}c (lo fija el BOOT, no su cap)`;
+  }
   if (over) warn(`${rel}: ${tag} → SHARD/poda (excede tope)`);
   else if (nudge) say(`  ↗  ${rel}: ${tag} (leve exceso — destilar)`);
   else { ok(`${rel}: ${tag}`); okCaps++; if (near) preShard.push(rel); }
@@ -201,6 +218,12 @@ for (const [rel, cap] of Object.entries(CAPS)) {
 if (BOOT && okCaps) say(`  ✅ ${okCaps}/${capCount} neuronas dentro de tope`);
 if (preShard.length) info(`pre-shard: ${preShard.length} neurona(s) ≥90% de su cap (${preShard.join(', ')}) — planear shard/GC ANTES de reventar`);
 if (BOOT_CHARS_TARGET) {
+  // (ADR §193) Aviso estructural: si los caps de los always-on suman mas que el presupuesto,
+  // esos topes son DECORATIVOS y hay que decirlo — es la premisa que hacia enganosa la linea de
+  // arriba. No bloquea: no es un error, es una eleccion (dar holgura nominal a la pizarra).
+  const sumaAO = ALWAYS_ON.reduce((a, rel) => a + ((CAPS[rel] && CAPS[rel].chars) || 0), 0);
+  if (sumaAO > BOOT_CHARS_TARGET)
+    info(`los caps de los always-on suman ${sumaAO}c sobre un presupuesto de ${BOOT_CHARS_TARGET}c → NINGUNO de esos topes es el que aprieta; manda el TOTAL. Leer "x% de su cap" como holgura es justo el error que evita el «tope REAL» de arriba.`);
   const bootTok = Math.round(bootChars / 3.5);
   // 🔒 GATE DE BOOT — BLOQUEANTE desde v1.8.0 (inmobiliaria ADR §81).
   // Fue INFORMATIVO por diseño mientras algún repo estuviera sobre presupuesto (condición §173);
