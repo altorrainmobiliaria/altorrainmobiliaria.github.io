@@ -23,7 +23,7 @@
  *      `matches`, `getElementsByClassName`.
  */
 
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative, basename } from 'node:path';
 
 const RAIZ = new URL('..', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
@@ -133,3 +133,75 @@ if (muertos.length) {
 }
 
 console.log('✅ verify:controles — ningún botón ni enlace-ancla sin quien lo escuche.');
+
+/*
+ * ── Sonda 2: CAMPOS QUE NADIE SABE QUÉ PIDEN (§160) ────────────────────────────────────────────
+ *
+ * QUÉ CAZA. Un `<input>` sin nombre accesible: sin `<label>` (ni envolvente ni con `for`), sin
+ * `aria-label` y sin `aria-labelledby`. Es el primo silencioso del botón fantasma — el control SÍ
+ * funciona, pero quien usa un lector de pantalla llega a él y oye «cuadro de edición» y nada más.
+ *
+ * ⚠️ Y NO, EL `placeholder` NO CUENTA. Es el atajo que todo el mundo da por bueno: desaparece en
+ * cuanto escribes una letra, así que justo cuando alguien vuelve al campo a corregir, ya no queda
+ * quien diga qué pedía. Los navegadores lo exponen como último recurso y con avisos; tratarlo como
+ * etiqueta es escribir el bug y taparlo a la vez.
+ *
+ * LO QUE COSTÓ. Dos campos: el del **código de 2FA** en `/seguridad` —el punto exacto donde alguien
+ * está peleándose con seis dígitos que caducan en 30 segundos— y el ejemplo del styleguide, que es
+ * de donde se COPIA (un mal ejemplo ahí se replica en cada campo que nazca después).
+ *
+ * ⚠️ MIRA EL BUILD, no el `.astro`, y por la misma razón que `verify:enlaces` (§145): en el HTML
+ * construido el `<label>` ya está pintado y no hay que adivinar qué envuelve a qué.
+ *
+ * TRES FALSOS POSITIVOS QUE HAY QUE MATAR ANTES DE ENCENDERLO (§4g: un gate que acusa a un inocente
+ * se apaga solo en la cabeza de quien lo lee):
+ *   1. Los `<template>` son ESQUELETOS que el JS clona y rellena — sus huecos no son defectos.
+ *   2. Un `<label>` que ENVUELVE al input lo etiqueta igual que uno con `for`.
+ *   3. Un input con el atributo `hidden` (o `type="hidden"`) no está en el árbol de accesibilidad:
+ *      el `<input type="file" hidden>` de `/mi-perfil` lo dispara un botón que sí tiene nombre.
+ */
+const DIST = join(RAIZ, 'dist', 'client');
+
+if (existsSync(DIST)) {
+  const sinNombre = [];
+  for (const f of archivos(DIST, '.html')) {
+    const bruto = readFileSync(f, 'utf8');
+    /*
+     * 🔴 SE QUITAN TAMBIÉN LOS COMENTARIOS, y no es paranoia: la PRIMERA mordida de esta sonda
+     * salió verde con el defecto delante porque el comentario que yo mismo había escrito encima
+     * del campo —explicando por qué usaba `aria-label` y no un `<label>`— contenía el texto
+     * literal `<label>`, y la comprobación de «¿hay un label que lo envuelva?» se lo tragó. Es la
+     * regla 1 de la cabecera otra vez, con otro disfraz: *no leas partes del archivo que no pueden
+     * ser lo que buscas*. El `<script>` y el `<style>` se van por lo mismo.
+     */
+    const html = bruto
+      .replace(/<template[^>]*>[\s\S]*?<\/template>/g, '')
+      .replace(/<!--[\s\S]*?-->/g, '')
+      .replace(/<script[\s\S]*?<\/script>/g, '')
+      .replace(/<style[\s\S]*?<\/style>/g, '');
+    const pagina = '/' + relative(DIST, f).replace(/\\/g, '/').replace(/index\.html$/, '');
+    for (const m of html.matchAll(/<input\b([^>]*)>/g)) {
+      const a = m[1];
+      if (/type="(hidden|submit|button|image)"/.test(a) || /\shidden(?=[\s/>])/.test(a)) continue;
+      const id = a.match(/\bid="([^"]+)"/)?.[1];
+      const envuelto = html.lastIndexOf('<label', m.index) > html.lastIndexOf('</label>', m.index);
+      const tieneNombre =
+        /aria-label(ledby)?="/.test(a) || envuelto || (id && html.includes(`for="${id}"`));
+      if (!tieneNombre) sinNombre.push({ pagina, quien: id ?? a.trim().slice(0, 60) });
+    }
+  }
+
+  if (sinNombre.length) {
+    console.error('❌ verify:controles — campos sin nombre accesible:');
+    console.error('');
+    for (const s of sinNombre) console.error(`   en ${s.pagina}  →  ${s.quien}`);
+    console.error('');
+    console.error('   Un `placeholder` NO es una etiqueta: se borra al escribir, y quien vuelve al');
+    console.error('   campo a corregir ya no tiene quién le diga qué pedía. Pon `aria-label` o un');
+    console.error('   `<label>` — envolvente o con `for` (§160).');
+    process.exit(1);
+  }
+  console.log('✅ verify:controles — todos los campos tienen nombre accesible (el placeholder no cuenta).');
+} else {
+  console.log('ℹ️  verify:controles — sin `dist/`, la sonda de nombres accesibles no corre (el CI siempre lo tiene).');
+}
