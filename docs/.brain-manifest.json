@@ -141,6 +141,11 @@
       "lines": 110,
       "chars": 12000,
       "_comment": "Nodo de CRECIMIENTO declarado (ADR 194): nace con Bolivar (~6.3k) y le faltan ORIP, notariales, retencion y predial. El cap deja sitio para esos cuatro; si se acerca, la frontera natural del shard es por JURISDICCION (departamental / nacional)."
+    },
+    "docs/00e-INDICE-ACCESO.md": {
+      "lines": 60,
+      "chars": 10599,
+      "_comment": "Shard de rango CERRADO (ADR 196): §121-§160 no crecen. El cap deja 15 por ciento por si alguna fila se reescribe, no para admitir filas nuevas — esas van al 00 vivo."
     }
   },
   "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",

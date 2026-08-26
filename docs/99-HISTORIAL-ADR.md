@@ -7990,3 +7990,115 @@ de una inmobiliaria que arranca suben más rápido, así que el margen se estrec
 alguna vez se cruza, hay transición hasta el **31-may-2027**. Y ⚠️ el SMLMV 2026 que fija el acantilado
 viene de un decreto **transitorio** (D. 0159/2026, tras la suspensión del D. 1469/2025 por el Consejo
 de Estado): si cambia, el umbral se mueve. Nada de esto es concepto de abogado titulado (§G.2).
+
+## 195. ADR-195 — «Mercado» estrena, y el gate de las afirmaciones no leía ni un artículo
+
+**Contexto.** Con la agenda legal a cero (§194) fui a buscar producto sin bloquear. Descarté dos
+candidatos **verificando en vez de suponer**, que es la mitad útil de esta vuelta:
+1. El redirect `/detalle-propiedad.html → /comprar` lo tenía anotado como bloqueo en §192. **No es un
+   bug**: el propio código lo razona —no hay correspondencia id-viejo→id-nuevo porque el catálogo se
+   rehizo, y mandar un producto retirado a su categoría es lo que Google espera—. Mi nota describía un
+   problema de NURTURING (un correo que promete «vea su propiedad» y aterriza en una lista), no de
+   redirects. Se corrige la atribución, no el código.
+2. Fui a mirar la píldora «Mercado 0» del journal **en el sitio vivo** y me llevé una corrección:
+   `altorrainmobiliaria.co` sirve la página de OBRA. El journal solo existe en el worker de staging
+   (noindex). Iba a reportar un defecto público que no era público.
+3. Y en staging, el estado vacío **ya estaba bien resuelto**: *«Todavía no hay nada aquí… lo que sí
+   está listo es Ley y contratos»* con dos CTA. No era un «próximamente» disfrazado.
+
+Conclusión: no había defecto, había un **hueco de contenido** — el único que no dependía de Daniel.
+
+### 195.1 — Causa raíz del gate (verificada leyendo el código)
+`verify:claims` recogía sus archivos con `p.endsWith('.astro')`. Los artículos del journal son
+**markdown en `src/content`**, así que **no los abría nunca**. Y el journal es justo la parte del
+portal cuya premisa impresa es *«Cada afirmación, con su norma citada»*: prosa larga, persuasiva,
+publicada y compartible. Si una frase de prueba social fabricada iba a colarse en algún sitio, era ahí
+y no en un componente de layout. Lo encontré escribiendo un artículo lleno de cifras y viendo al gate
+declarar que todo estaba bien — con un ✅ **idéntico** al de siempre.
+
+### 195.2 — Solución
+Recolector generalizado por extensión + `src/content/**.md` al barrido: **39 → 47 archivos**. Y el ✅
+ahora **publica cuántos leyó**, que es la prueba de bolsillo que el propio cerebro exige y cuya
+ausencia dejó vivir esto: un número que baja de golpe se ve; un ✅ mudo, no.
+
+### 195.3 — Verificación (que MUERDA, y en las dos puntas)
+Frase fabricada dentro de un artículo → **exit 1** con archivo y línea, cazando los dos patrones
+(«1.200 reseñas» y «líder del mercado»); restaurado → **exit 0**. Comprobé el **código de salida de
+verdad**, no la pinta de la salida: la primera medición leyó el `$?` de un `head` en la tubería, que
+es 0 aunque el gate falle — confundir «imprime rojo» con «falla» es exactamente [[L-57]]. Suite
+completa: 8 gates, 910 pruebas unitarias + 155 de emulador.
+
+### 195.4 — El artículo
+`costos-de-cerrar-compraventa-cartagena.md`, categoría **mercado** (de 0 a 1). Publica lo verificado
+en §194: los dos tributos (1 % + 0,5-1 %), el **techo legal** del 1 %, el **escalón de los 135 SMLMV**
+—que se aplica sobre el valor completo, no sobre el excedente— y, lo que más cambia una negociación,
+que *«el comprador paga los gastos»* **no es la ley**: la Ley 223 dice por mitades salvo manifestación
+**expresa**, y una manifestación expresa es una cláusula, no una conversación.
+**Honestidad del texto, deliberada**: la conversión del umbral a pesos va marcada como *aritmética, no
+norma*; se enumera lo que la cuenta **NO** incluye (notariales, ORIP, retención, predial); y se cierra
+diciendo para qué sirve —planear, no liquidar—. **Solo se citan las dos fuentes que abrí y leí**; el
+decreto del salario mínimo NO se cita porque no conseguí abrirlo, aunque tuviera el dato por otras
+vías. Esa es la diferencia entre citar y aparentar que se citó.
+
+### 195.5 — Anti-patterns evitados
+No «arreglar» lo que no está roto (el redirect, el estado vacío). No reportar como público lo que vive
+en staging — lo cazó ir a mirar, no razonar. No publicar una calculadora: es un artículo con marco y
+fuentes, que es de otra especie y de otro riesgo.
+
+### 195.6 — Archivos
+`portal/scripts/verify-claims.mjs` · **NUEVO** `portal/src/content/journal/costos-de-cerrar-compraventa-cartagena.md`.
+**INTACTOS**: `redirects.ts` (verificado correcto), `journal.astro` y el estado vacío (ya bien resueltos).
+
+### 195.7 — Doctrina y riesgo residual
+[[L-52]] otra vez —verde sobre archivos que nunca abre— **cinco ADRs después de escribirla**. Lo que
+enseña no es el bug sino el intervalo: *una lección sin una sonda que la aplique no impide su
+reincidencia; solo permite reconocerla más rápido cuando vuelve.* Por eso el arreglo lleva el contador
+pegado, no solo el barrido más ancho.
+⚠️ **Pre-cutover**: el artículo sale a un sitio **noindex**, pero antes de que el dominio apunte al
+portal conviene una **lectura humana de las cifras** — una tabla equivocada de cara al público es más
+cara que la revisión, y es la misma reserva que ya declara `45`.
+
+## 196. ADR-196 — Quinto shard del índice, y una enumeración que caducaba en cada partición
+
+**Disparador.** El linter **bloqueó el commit** del ADR §195: `00-INDICE` en 26519c/24000 y 164L/159.
+No fue una sorpresa — es el mismo mecanismo del §156, y funcionó como debe: el gate paró antes, no
+después.
+
+### 196.1 — La partición
+**§121-§160 → `docs/00e-INDICE-ACCESO.md`** (40 filas). El criterio no es «los siguientes cuarenta»
+sino el hilo real del tramo: es cuando **el panel dejó de ser código y pasó a tener dueño dentro**
+—recuperación de contraseña, 2FA de punta a punta, las cinco puertas de escritura, la bóveda— y
+cuando se armó **lo que lo pone en producción**: los 14 índices que nunca se desplegaron, el codebase
+`portal` que no podía desplegarse, el mapa de 301 que jamás se ejecutó y los tres gates que miraban a
+otro lado. Historia cerrada: se consulta, no se edita. `00` queda en **18374c/24000**.
+
+### 196.2 — 🎯 El hallazgo de paso: el router enumeraba lo que envejece
+La celda del índice en `CLAUDE.md` decía *«Los shards guardan §01-§20, §21-§60, §66-§90 y §91-§120»* y
+listaba `00a·00b·00c·00d`. **Las dos cosas caducan en cada partición** — y viven en el nodo que se lee
+en CADA sesión, que es el peor sitio posible para un dato con fecha de vencimiento. Sustituido por
+*«Los shards guardan la historia ya CERRADA»* y `00a…00e`: **cierto hoy y cierto tras el sexto shard**.
+Es [[L-58]] aplicada al revés — allí un número mentía sobre su denominador; aquí una enumeración
+correcta se vuelve falsa sola con el tiempo. Ambas comparten la cura: **no publiques en el nodo
+siempre-cargado un hecho que envejece sin que nadie lo toque.**
+Beneficio medido: el router baja 26c y el margen del arranque pasa de **16c a 42c**. La poda se pagó.
+Corregidos además dos punteros que decían «el kernel lee los **cuatro** índices» y «los **cinco**» —
+stale ambos, y por la misma razón; se retiran en vez de renumerarse.
+
+### 196.3 — No-regresión
+El kernel descubre las hermanas por PATRÓN (`00[a-z]?-INDICE*.md`), así que `00e` entra sin tocar
+código. ⚠️ Y una asimetría que comprobé porque no era obvia: **`brain:index` reescribe SOLO el `00`
+vivo** —no toca ningún shard—, pero el **chequeo #3 sí los lee los seis** y confirma las **196
+entradas contra headers válidos**. La asimetría es correcta, no un olvido: `99` es **append-only**, así
+que las líneas de los ADRs viejos no se mueven y no hay nada que reconciliar. Si alguien editara un ADR
+antiguo sí se desplazarían todas las de abajo — y ahí **el #3 lo detecta aunque nadie lo arregle solo**.
+Auto-arreglo donde hace falta, detección en todo. `brain:check` **SANO**.
+
+### 196.4 — Archivos
+**NUEVO** `docs/00e-INDICE-ACCESO.md` · `docs/00-INDICE.md` (−40 filas, +1 puntero, 2 conteos stale
+retirados) · `CLAUDE.md` (celda del índice) · manifest (cap del shard, declarado como **cerrado**: el
+15 % de holgura es para reescribir una fila, no para admitir filas nuevas — esas van al `00` vivo).
+
+### 196.5 — Doctrina
+Comprimir vale contra la grasa; **contra la historia cerrada, mudar** (§156, confirmado por quinta
+vez). Y el corolario que añade esta vuelta: cuando mudes, mira si el nodo que ENRUTA describía lo
+mudado **enumerándolo** — esa frase es la que se rompe, y ningún gate la ve.
