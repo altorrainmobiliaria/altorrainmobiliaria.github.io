@@ -1,5 +1,5 @@
-// Endpoint de LEADS del portal (§88). Recibe el formulario público de `/publicar` ("Solicita tu avalúo
-// gratis") y crea el documento en `solicitudes` — la MISMA colección y el MISMO contrato que escribe el
+// Endpoint de LEADS del portal (§88). Recibe el formulario público de `/publicar` ("Pide tu valoración
+// gratis" — JAMAS «avalúo», B13) y crea el documento en `solicitudes` — la MISMA colección y el MISMO contrato que escribe el
 // legacy (`js/contact-forms.js`), para que la Cloud Function ya desplegada `onNewSolicitud` lo recoja sin
 // tocar nada: correo al admin + lead scoring + arranque de nurturing.
 //
