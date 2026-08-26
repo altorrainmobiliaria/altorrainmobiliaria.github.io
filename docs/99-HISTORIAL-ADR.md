@@ -6143,3 +6143,45 @@ servidor de desarrollo comprobado a mano y el título de la política impreso **
 `legal/politica-tratamiento-datos.astro` · `src/content/legal/politica-tratamiento-datos.md` ·
 `portal/scripts/verify-controles.mjs` (sonda 2) · `docs/36` ([[L-46]] regla 1 afilada) · `docs/33`
 ([[M-24]]). Commits `ae855a9` y `a6ba910`.
+
+## 161. ADR — Las migas de pan: ocho copias, diez ausencias, y una migración con foto previa ⟦OPUS-5⟧ (2026-08-26)
+
+**161.0 — Lo que había.** El mismo bloque de nueve líneas de `BreadcrumbList` copiado en **ocho**
+páginas, y **diez públicas sin ninguna**: `/aliados`, `/comprar`, `/arrendar`, `/estancias`,
+`/publicar`, `/turismo` y las **cuatro legales**. No se ve mirando el sitio: se ve en el resultado de
+Google, donde unas páginas muestran su ruta («altorrainmobiliaria.co › Precios») y otras enseñan la
+URL cruda. Y con el bloque copiado, *«añadirlo donde falta» era copiarlo diez veces más* — que es
+como la duplicación se defiende sola.
+
+**161.1 — La forma.** `src/lib/seo/breadcrumbs.ts`: función pura, sin dependencias de Astro, para
+poder probarla sin montar una página (8 pruebas). El invariante que la motiva no es la estética sino
+un fallo silencioso: **`item` SIEMPRE absoluto**, porque Google descarta sin decir nada una URL
+relativa dentro del JSON-LD y **el schema roto se ve idéntico a uno sano**. `BaseLayout` gana una
+prop `miga`, así que una página nueva la tiene con UNA línea; `LegalLayout` la pasa por los cuatro
+documentos legales de una vez.
+
+**161.2 — La migración se hizo con FOTO PREVIA, y ese es el método.** Se guardó el JSON-LD de todas
+las páginas construidas ANTES de tocar nada. Tras migrar las ocho, el diff dijo: **23 idénticas byte
+a byte · 0 cambiadas · 0 perdidas · 0 duplicadas · 10 nuevas**. *Refactorizar salida visible sin esa
+foto es cambiar a ciegas y llamarlo equivalencia* — la prueba unitaria dice que la función hace lo
+que quieres, no que la página siga emitiendo lo que emitía.
+
+**161.3 — Dos decisiones con su razón.** (a) La miga de las legales es **PLANA** —«Inicio ›
+Términos», no «Inicio › Legal › Términos»— porque **`/legal` no existe como página**: un tramo
+intermedio hacia una URL que nadie construyó es el ancla fantasma de §159 otra vez, con la diferencia
+de que aquí quien se come el 404 es el buscador. (b) **`FichaInmueble.astro` no se migra**: su último
+tramo omite `item` a propósito (es la página actual) y uniformarlo perdería ese matiz. Un helper que
+obliga a todos a ser iguales deja de servir al que era distinto por una razón.
+
+**161.4 — Un fallo mío que casi entra.** Escribí `{miga?.length && (…)}`. Con un array **vacío** eso
+evalúa a `0`, y un `0` en una expresión de plantilla **se pinta**: un cero suelto en mitad del
+`<head>`. Va como `miga && miga.length > 0`.
+
+**161.5 — Sin gate, y a propósito.** No se añade un chequeo de «toda página pública tiene miga». Los
+gates de esta tanda se ganaron su sitio por lo que cazaron —el de anclas, 468 enlaces muertos— y éste
+cazaría una carencia de SEO menor sobre una superficie que ahora se declara con una línea. Queda
+anotado: si vuelve a haber tres páginas sin miga, entonces sí (§G.5, anti-engorde).
+
+**161.6 — Archivos.** `portal/src/lib/seo/breadcrumbs.ts` (+ `.test.ts`, 8 pruebas) ·
+`layouts/BaseLayout.astro` (prop `miga`) · `layouts/LegalLayout.astro` · y 13 páginas.
+Verificado: 7 gates en verde, 591 tests. Commit `0d27eca`.
