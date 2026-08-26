@@ -23,6 +23,7 @@ import * as logger from 'firebase-functions/logger';
 import { getFirestore } from 'firebase-admin/firestore';
 import { asuntoDeLead, contactabilidad, cuerpoDeLead } from '../../src/lib/domain/lead-aviso';
 import type { Solicitud } from '../../src/lib/domain/crm';
+import { camposDe, puntuar, type CampoLead } from '../../src/lib/domain/lead-score';
 
 /** A dónde llega el aviso. Es el buzón del negocio, nunca el personal del dueño. */
 const DESTINO = 'info@altorrainmobiliaria.co';
@@ -74,6 +75,17 @@ export async function avisarLead(s: Solicitud, opts: OpcionesAviso): Promise<Rep
     : { enviado: false, motivo: 'fallo-envio', status: res.status, asunto };
 }
 
+/** Qué campos llegaron con contenido real. Solo cuentan los que su formulario ofrecía (§189). */
+export function camposLlenosDe(s: Solicitud): CampoLead[] {
+  const out: CampoLead[] = [];
+  if (s.contacto?.nombre?.trim()) out.push('nombre');
+  if (s.contacto?.telefono?.trim()) out.push('telefono');
+  if (s.contacto?.email?.trim()) out.push('email');
+  if (s.mensaje?.trim()) out.push('mensaje');
+  if (s.propiedadId?.trim()) out.push('propiedad');
+  return out;
+}
+
 /** Lo que se registra. Un aviso que no salió tiene que dejar rastro: así se perdieron los 16. */
 export function lineasAviso(id: string, r: ReporteAviso): string[] {
   if (r.enviado) return [`[lead] ${id} avisado · «${r.asunto}»`];
@@ -102,12 +114,28 @@ export const construirTriggerLead = (region: string, secrets: unknown[], clave: 
         logger.warn(`[lead] ${id} llegó SIN forma de contacto — revisar el formulario de origen`);
       }
 
+      /*
+       * PUNTÚA con el scorer del portal (§189), que NO castiga por campos que el formulario nunca
+       * pidió. El legacy también escribe un `leadScore`; el nuestro va después y manda mientras
+       * convivan. Se escribe SIEMPRE, aunque el correo falle: el puntaje es del lead, no del aviso.
+       */
+      const puntaje = puntuar({
+        tipo: (datos as { tipo?: string }).tipo ?? 'otro',
+        camposOfrecidos: camposDe(s.source ?? ''),
+        camposLlenos: camposLlenosDe(s),
+      });
+
       const r = await avisarLead(s, { apiKeyResend: clave() });
       for (const l of lineasAviso(id, r)) (r.enviado ? logger.info : logger.error)(l);
-      if (r.enviado) {
-        // Marca de que el aviso SALIÓ. Los 16 leads perdidos no tenían esta marca, y por eso nadie
-        // pudo saber que no se habían enviado hasta que fue tarde.
-        await getFirestore().doc(`solicitudes/${id}`).set({ avisoEnviadoEl: new Date().toISOString() }, { merge: true });
-      }
+      // El puntaje se escribe SIEMPRE; la marca de aviso, solo si el correo salió de verdad. Los 16
+      // leads perdidos no tenían esa marca, y por eso nadie supo que no se habían enviado.
+      await getFirestore().doc(`solicitudes/${id}`).set(
+        {
+          leadScore: puntaje.score,
+          leadTier: puntaje.tier,
+          ...(r.enviado ? { avisoEnviadoEl: new Date().toISOString() } : {}),
+        },
+        { merge: true },
+      );
     },
   );

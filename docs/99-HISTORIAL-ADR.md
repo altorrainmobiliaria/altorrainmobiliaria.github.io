@@ -7687,3 +7687,55 @@ hoy** (DataCrédito, recovery codes, pauta). De trece sueltas a **una que import
 **188.8 — Verificación.** 896 unitarias (+9) y 149 de emulador, `typecheck` de los dos codebases en 0,
 los 8 gates. El chequeo #29 confirma **20 Cloud Functions en el portal == lo que afirma el cerebro**:
 el censo de `05` se actualizó en el MISMO cambio, que es justo lo que ese gate existe para forzar.
+
+## 189. ADR-189 — El puntaje medía el formulario, no al lead
+
+**189.0 — La mitad de una pelota que era mía.** La (8) decía: *«`/publicar` no pide correo ⇒ el
+propietario llega `[COLD]`: ¿campo o re-pesar?»*, y estaba en la lista del dueño. Pero solo la primera
+opción es suya —añadir un campo cambia el mockup—; **re-pesar es mío**, y era lo correcto.
+
+**189.1 — El defecto, dicho corto.** El scorer legacy sumaba `+10 si hay email`. El formulario de
+`/publicar` **no pide correo**, así que ningún propietario podía ganar esos diez puntos jamás.
+*Penalizar por un campo que nunca se ofreció no es medir: es descontar por una pregunta que no
+hicimos.* Y después alguien lee «cold» en el panel y trata como tibio a un interesado que hizo todo
+lo que se le pidió.
+
+**189.2 — Y al medirlo, era peor de lo que decía la pelota.** El intake (`/api/solicitud.ts`) solo
+acepta **nombre y teléfono** —más las fechas en estancias—. Ni correo, ni mensaje, ni presupuesto, ni
+id de propiedad. El legacy repartía puntos por los cinco: **ningún lead del portal podía acercarse al
+techo**, hiciera lo que hiciera. La pelota hablaba de un campo; eran cuatro.
+
+**189.3 — El segundo defecto, que no venía en el encargo.** El legacy sumaba **+5 si el lead entra en
+horario de oficina**. Eso no mide intención: mide NUESTRO horario. Y peor — hace el puntaje
+**irreproducible**: el mismo lead re-puntuado otro día da otro número, así que ningún recálculo ni
+backfill cuadra jamás. Fuera. Cuándo llegó es un dato de operación (a quién despertar), no de calidad.
+
+**189.4 — El diseño, y cómo una prueba lo corrigió.** La primera versión normalizaba todo en un solo
+bote: `(intención + campos) / (máximo + campos)`. Una prueba la tumbó — **el techo se movía con el
+número de campos**, porque la penalización por baja intención se diluía cuanto más largo fuera el
+formulario. O sea: pedir una casilla más subía el techo del lead. Absurdo.
+La versión buena son **dos mitades explícitas**: `0.5 × intención + 0.5 × relleno`. Cada una responde
+a lo suyo, y el techo queda donde debe — *lo fija la intención; los campos solo dicen cuánto de ella
+se llegó a demostrar*. Hay una prueba que fija exactamente esa propiedad: añadir o quitar un campo
+ofrecido **no** mueve el techo.
+
+**189.5 — Y dos correcciones sobre mí mismo, que es lo que más enseñó.** Dos pruebas fallaron y en
+**ambas la equivocada era la prueba**, no el código: (a) asumí que un lead perfecto de `/publicar`
+debía llegar a `A`, cuando publicar SÍ es menos caliente que pedir una visita — y el tier debe
+reflejarlo; (b) asumí que un tipo desconocido debía hundirse a `D`, cuando alguien que contesta todo
+lo que se le pide no es el peor lead: hundirlo sería castigarle por **nuestra** falta de datos.
+*Una prueba que falla no siempre acusa al código; a veces acusa a la suposición con la que se
+escribió.*
+
+**189.6 — Y mi propio gate me paró.** `verify:simbolos` —el de §178— rechazó el commit: había llamado
+`Resultado` al tipo del puntaje y ya existía otro `Resultado` en `mandato.ts`. Renombrado a
+`ResultadoScore`. **El gate que escribí hace dos vueltas cazó un gemelo mío a los diez minutos**, que
+es exactamente para lo que estaba. Y al cambiar el diseño quedaron dos comentarios describiendo la
+versión vieja —la «proporción de lo alcanzable» y un `techoAlcanzable` que prometía que todo
+formulario llega a `A`—: corregidos en el mismo cambio, porque un comentario que describe un diseño
+que ya no existe es la avería de §178 esperando a que alguien se la crea.
+
+**189.7 — Verificación.** 907 unitarias (+11) y 149 de emulador, `typecheck` de los dos codebases en
+0, los 8 gates. El puntaje se escribe SIEMPRE en el trigger de §188, aunque el correo falle: el
+puntaje es del lead, no del aviso. ⚠️ Declarado: el scorer legacy sigue escribiendo el suyo; el
+nuestro va después y manda mientras convivan, y el legacy se retira en el cutover.
