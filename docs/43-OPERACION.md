@@ -191,8 +191,8 @@ contenido mínimo del contrato = §3 de la L.820 (no §11) · paz y salvo predia
 prueba del contrato de hospedaje (L.2068 §21-22).
 **❓ Agenda abogado (no verificado en fuente oficial):** régimen de intereses sobre cánones (CC 1617 reglas
 3a-4a vs mercantil + unificación CSJ) · taxatividad de causales de terminación · tarifa registro Bolívar +
-estampillas · aplicación de L.1480 al arriendo de vivienda (concepto SIC) · frecuencia de Ley 2300 en
-prospección · valor UVB 2026 · reglamento PH silente vs autorización expresa para vivienda turística.
+estampillas · aplicación de L.1480 al arriendo de vivienda (concepto SIC) · ~~frecuencia de Ley 2300~~ (RESUELTA → §172: aplica a la prospección
+comercial, no solo a la cobranza, y ya hay calendario y guardias en el código) · valor UVB 2026 · reglamento PH silente vs autorización expresa para vivienda turística.
 
 ## Estado del arco TODO-34
 

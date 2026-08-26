@@ -6704,3 +6704,68 @@ un tercero** (§G.2).
 **171.8 — Archivos.** `docs/42-LEGAL.md` (dictamen nuevo + la fila del gate, que deja de decir «sin
 investigar»). **Fuentes**: [Ley 510 de 1999](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=9916) ·
 [¿Quiénes son los intermediarios de seguros? — Superfinanciera](https://www.superfinanciera.gov.co/publicaciones/10115518/quienes-son-los-intermediarios-de-seguros/).
+
+## 172. ADR — La Ley 2300 SÍ nos aplica, y dos programadas escribían fuera de la ventana ⟦OPUS-5⟧ (2026-08-26)
+
+**172.0 — De dónde salió.** `43-OPERACION` tenía una lista de siete preguntas bajo *«❓ Agenda abogado
+(no verificado en fuente oficial)»*, y una era **«frecuencia de Ley 2300 en prospección»**. Con el
+abogado siendo yo (§165), esa lista dejó de ser una espera.
+
+**172.1 — Aplica, y por una vía que no es la obvia.** La Ley 2300 de 2023 se lee como una ley de
+**cobranza**, y esa lectura invita a descartarla: ALTORRA no cobra deudas. Pero su artículo de ofertas
+comerciales extiende **las mismas reglas** *«a las relaciones comerciales entre los productores y
+proveedores de bienes y servicios […] frente al envío de mensajes publicitarios a través de SMS,
+mensajería por aplicaciones o web, correos electrónicos y llamadas telefónicas de carácter comercial o
+publicitario»*. **Un WhatsApp de prospección de una inmobiliaria es exactamente eso.** La ventana:
+**L–V de 7:00 a 19:00, sábados de 8:00 a 15:00, nunca domingos ni festivos**; y una vez hay contacto
+directo, no se puede insistir por varios canales en la misma semana ni dos veces el mismo día.
+
+**172.1b — 🔴 Y AQUÍ EL HALLAZGO QUE DE VERDAD IMPORTA: la regla YA ESTABA ESCRITA.** `43-OPERACION` lleva tiempo diciendo, con estas palabras, *«⚠️ Al retomar contacto comercial, Ley 2300/2023: L-V 7:00-19:00 · Sáb 8:00-15:00»*. O sea que **no descubrí la norma: descubrí que la norma no estaba conectada a nada**. Dos crons la incumplían mientras el cerebro la recitaba. Es la TERCERA vez en el mismo día del mismo patrón — §162 (el sitemap predijo su avería), §163 (el interruptor cableado sin quién hiciera ruido) y esta. *Escribir la regla y aplicarla son dos trabajos distintos, y el primero da la sensación de haber hecho el segundo.*
+
+**172.2 — Y entonces fui a mirar qué del sistema contacta a alguien por su cuenta.** Dos hallazgos.
+
+· 🔴 **`processNurturingEmails`** (legacy, **no desplegada**) corría **`every 6 hours`**. Firebase
+programa en UTC, así que eso dispara a las 00/06/12/18 — en hora de Colombia, **a la 1 de la
+madrugada**, y también los domingos. *Un correo comercial de madrugada no es un detalle de cortesía.*
+Ahora corre `0 9,15 * * 1-5` con `timeZone: America/Bogota`. **Arreglarlo hoy es gratis porque no está
+desplegada; arreglarlo después habría sido un incidente.**
+
+· 🔴 **`alertasDigest`** (portal, **sí desplegada**) enviaba a las **7:00 todos los días**. Los sábados
+la ventana no ha abierto (empieza a las 8) y los domingos y festivos no hay ventana. **Hoy calla solo
+porque falta la clave de Resend**: era una mina con fecha de activación — el día que Daniel entregue
+la clave, empieza a incumplir. Ahora `0 8 * * 1-6` más un guardia de festivos.
+
+**172.3 — Para poder comprobar «festivo» hubo que construir el calendario, y pagó una deuda vieja.**
+§170 dejó el vencimiento del retracto con **un día de margen** porque no sabía de festivos; el margen
+estaba declarado y era honesto, pero era un parche. Nace `calendario-co.ts`: Pascua por aritmética,
+Ley Emiliani, los 18 festivos **calculados y no copiados** —*una lista caduca cada 31 de diciembre y
+falla en silencio*— y la ventana de contacto. El margen del retracto **ya no está**: el plazo es el que
+dice la ley, ni un día más —que retendría dinero sin causa— ni uno menos.
+
+**172.4 — 🎯 El invariante que valida el algoritmo sin lista externa: los emilianistas SIEMPRE caen en
+LUNES.** Probado para 17 años seguidos. Si uno cayera en martes, el desplazamiento estaría mal y no
+habría forma de notarlo mirando una fecha suelta.
+
+**172.5 — Y una prueba me corrigió a mí.** Exigí «18 festivos siempre» y 2025 devolvió 17. No era un
+bug: en 2025 **San Pedro y San Pablo cae en domingo**, Emiliani lo corre al lunes **30 de junio**… y
+ahí ya está el **Sagrado Corazón**. Dos celebraciones, **una sola fecha**. Son 18 celebraciones, no
+siempre 18 fechas — *una constante que «siempre» vale 18 es una constante que un día vale 17*. Quedó
+en el módulo, con su prueba, y con el calendario 2025 completo comparado día por día contra el oficial.
+
+**172.6 — Lo que NO se resolvió, declarado.** El nurturing del legacy **no puede** usar el calendario:
+vive en otro codebase y no importa del portal. **Duplicar el algoritmo sería peor** —dos calendarios
+que se separan sin avisar—, así que la salida correcta es mover el nurturing al portal cuando se
+decida encenderlo. Sigue sin desplegarse, y ahora por **dos** razones.
+
+**172.7 — Una decisión discutible, dicha en voz alta.** Quien se suscribió a una alerta **pidió**
+recibirla, y se puede argumentar que es un servicio solicitado y no publicidad. Se elige la lectura
+conservadora: *el coste de respetarla es una hora y dieciocho días al año; el de equivocarse es una
+multa* — y el eslogan de esta marca empieza por «Legalidad».
+
+**172.8 — Y un descuido propio, cazado en el momento**: escribí un segundo guardia de festivos que era
+**código muerto** (`motivoNoContacto` ya los comprueba). *Una red de seguridad que nunca se ejecuta es
+peor que ninguna, porque alguien confía en ella.*
+
+**172.9 — Archivos.** `portal/src/lib/domain/calendario-co.ts` (+ `.test.ts`, 39 pruebas) ·
+`mandato.ts` y su test (margen retirado) · `functions/index.js` · `portal/functions/src/index.ts`.
+848 tests, 7 gates en verde. **Fuente**: [Ley 2300 de 2023](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=213990).
