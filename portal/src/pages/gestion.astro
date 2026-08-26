@@ -24,6 +24,9 @@ const nav = [
   // «Ventas» va junto a Contratos: son las dos formas en que una operación termina, y el
   // operador que revisa una revisa la otra.
   { id: 'ventas', label: 'Ventas', icon: '<path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="m9 14 2 2 4-4"/>' },
+  // «Liquidación» va pegada a Contratos porque se responde con el mismo dato: abierto un contrato,
+  // la pregunta siguiente es siempre «¿y cuánto le giro este mes?» (§167).
+  { id: 'liquidacion', label: 'Liquidación', icon: '<path d="M12 3v18"/><path d="M16.5 7.5c0-1.7-2-2.5-4.5-2.5S7.5 5.8 7.5 7.5 9.5 10 12 10s4.5 1 4.5 2.7-2 2.8-4.5 2.8-4.5-1-4.5-2.5"/>' },
   // «Expedientes» es el agregado RAÍZ: contratos, pagos y novedades cuelgan de él. Va justo
   // después de Contratos porque es donde el operador acaba cuando algo no cuadra.
   { id: 'expedientes', label: 'Expedientes', icon: '<path d="M3 7.5A2 2 0 0 1 5 5.5h4l2 2.5h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M8 14h8"/>' },
@@ -679,6 +682,37 @@ const init = DATA.admin;
           <button class="alt-btn alt-btn--navy" type="submit" id="gx-vta-guardar">Abrir venta</button>
         </div>
       </form>
+     </div>
+
+     <div id="gx-vista-liquidacion" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-liq-volver-panel">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Liquidaci&#243;n del mes</h1>
+          <p class="gx-sub">Lo que se le cobra al arrendatario y a d&#243;nde va cada peso. Es la cuenta que el propietario revisa: sale entera, no resumida.</p>
+        </div>
+      </header>
+
+      <div class="gx-panel gx-liq__barra">
+        <label class="gx-liq__campo">
+          <span>Contrato</span>
+          <select id="gx-liq-contrato"><option>Cargando&#8230;</option></select>
+        </label>
+        {/* La bandera que NO puede ser una constante (§166.1): sin este dato en el contrato, el
+            default es «no retiene» — el caso de vivienda. Marcarla por si acaso le restaría a cada
+            propietario un 3,5 % que nadie le practic&#243;. */}
+        <label class="gx-liq__check">
+          <input type="checkbox" id="gx-liq-retiene" />
+          <span>El arrendatario es agente de retenci&#243;n <em>(empresa que retiene el 3,5 % del canon)</em></span>
+        </label>
+      </div>
+
+      <div class="gx-panel gx-liq" id="gx-liq-cuerpo"></div>
+
+      {/* Lo que esta pantalla NO hace. Va aqu&#237; y no en un pie de p&#225;gina: se lee donde se decide. */}
+      <div class="gx-liq__nota">
+        <p><strong>Esta pantalla calcula y muestra; no mueve dinero.</strong> El giro se hace por fuera mientras no est&#233; la cuenta de comercio, y las tres condiciones del dictamen (&#167;165) siguen mandando: el dinero no reposa en cuenta de ALTORRA, el mandato dice recaudo y giro, y no se le ofrece a nadie sin contrato firmado.</p>
+      </div>
      </div>
 
      <div id="gx-vista-perfiles" hidden>
@@ -1374,6 +1408,60 @@ const init = DATA.admin;
   body[data-puede-editar='false'] .gx-form,
   body[data-puede-editar='false'] .gx-new,
   body[data-puede-editar='false'] #gx-vista-alta { display: none; }
+
+  /* ═══ LIQUIDACIÓN (§167) — el comprobante del mes ═══
+     `is:global` como el resto del panel (§117): estas clases las crea el JS con `createElement`, y una
+     regla acotada por Astro no alcanza a un nodo sin el atributo `data-astro-cid-*`. */
+  .gx-liq__barra { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; padding: 18px 20px; margin-bottom: 16px; }
+  .gx-liq__campo { flex: 1 1 300px; display: block; }
+  .gx-liq__campo > span { display: block; font-size: 12px; font-weight: 600; color: var(--gx-navy, #062743); margin-bottom: 6px; }
+  .gx-liq__campo select { width: 100%; padding: 11px 12px; border: 1px solid #DDE4EA; border-radius: 10px; font: inherit; font-size: 14px; color: var(--gx-navy, #062743); background: #fff; }
+  .gx-liq__check { flex: 1 1 340px; display: flex; align-items: flex-start; gap: 9px; font-size: 13.5px; line-height: 1.55; color: #5B6572; cursor: pointer; }
+  .gx-liq__check input { margin-top: 3px; flex: none; }
+  .gx-liq__check em { font-style: normal; color: #8A94A0; }
+
+  .gx-liq { padding: 28px 30px; }
+  .gx-liq__msg { margin: 0; font-size: 14px; color: #8A94A0; }
+
+  .gx-liq__top { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid #EDF1F5; }
+  .gx-liq__top-t { margin: 0; font-size: 16px; font-weight: 600; color: var(--gx-navy, #062743); }
+  .gx-liq__top-d { margin: 4px 0 0; font-size: 13px; color: #8A94A0; }
+  .gx-liq__top-n { margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 600; color: var(--gx-navy, #062743); white-space: nowrap; }
+
+  .gx-liq__eyebrow { margin: 22px 0 10px; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #8A94A0; font-weight: 600; }
+
+  .gx-liq__fila { display: flex; justify-content: space-between; gap: 16px; padding: 13px 0; border-bottom: 1px solid #F4F7F9; }
+  /* La línea que NO aplica se apaga, no se esconde: enseñarla es la mitad del punto (§167). */
+  .gx-liq__fila--nula { background: #FBFCFD; margin: 0 -12px; padding-left: 12px; padding-right: 12px; border-radius: 8px; }
+  .gx-liq__fila--nula .gx-liq__concepto, .gx-liq__fila--nula .gx-liq__monto { color: #5B6572; }
+  .gx-liq__concepto { font-size: 14.5px; color: var(--gx-navy, #062743); font-weight: 500; }
+  .gx-liq__destino { display: block; font-size: 12.5px; color: #8A94A0; margin-top: 2px; }
+  .gx-liq__destino strong { color: var(--gx-navy, #062743); }
+  .gx-liq__monto { font-size: 15px; color: var(--gx-navy, #062743); white-space: nowrap; }
+
+  .gx-liq__giro { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-top: 20px; padding: 20px 22px; background: var(--gx-navy, #062743); border-radius: 14px; }
+  .gx-liq__giro-t { margin: 0; font-size: 15px; font-weight: 600; color: #fff; }
+  .gx-liq__giro-d { margin: 4px 0 0; font-size: 12.5px; color: #BFC3C9; }
+  .gx-liq__giro-n { margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; color: #d4af37; white-space: nowrap; }
+
+  .gx-liq__cuadre { margin: 16px 0 0; padding-top: 14px; border-top: 1px dashed #DDE4EA; font-size: 12.5px; line-height: 1.7; color: #8A94A0; }
+  .gx-liq__cuadre strong { color: var(--gx-navy, #062743); }
+  /* Si no cuadrara, se ve en ORO y no en rojo: la disciplina de color de la marca no tiene rojo, y
+     un descuadre es un aviso para parar, no un error del sistema. */
+  .gx-liq__cuadre--mal { border-top: 2px solid #d4af37; color: var(--gx-navy, #062743); font-weight: 500; }
+
+  .gx-liq__problemas { border-left: 3px solid #d4af37; padding: 4px 0 4px 18px; }
+  .gx-liq__problemas-t { margin: 0 0 8px; font-size: 15px; font-weight: 600; color: var(--gx-navy, #062743); }
+  .gx-liq__problemas-d { margin: 0 0 6px; font-size: 13.5px; line-height: 1.65; color: #5B6572; }
+
+  .gx-liq__nota { margin-top: 18px; border-left: 3px solid #d4af37; background: #fff; border-radius: 0 14px 14px 0; padding: 16px 20px; }
+  .gx-liq__nota p { margin: 0; font-size: 13.5px; line-height: 1.75; color: #5B6572; }
+  .gx-liq__nota strong { color: var(--gx-navy, #062743); }
+
+  @media (max-width: 620px) {
+    .gx-liq { padding: 20px 18px; }
+    .gx-liq__top, .gx-liq__giro, .gx-liq__fila { flex-direction: column; align-items: flex-start; gap: 6px; }
+  }
 </style>
 
 <script>

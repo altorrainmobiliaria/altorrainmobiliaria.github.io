@@ -21,6 +21,7 @@ import { explicarProblema } from '../lib/domain/catalogo';
 import { TOPE_IMAGENES } from '../lib/media-subida';
 import { urlMedia } from '../lib/media';
 import { montarExportInmuebles, montarInmuebles } from './gestion-inmuebles';
+import { montarLiquidacion } from './gestion-liquidacion';
 import { montarAltaContrato, montarContratos, montarPagos, montarRegistroPago } from './gestion-contratos';
 import { montarDocumentos, montarFormularioDocumento } from './gestion-documentos';
 import { montarFormularioVenta, montarVentas } from './gestion-ventas';
@@ -285,7 +286,12 @@ export function montarAlta(): void {
   const vistaDocumentos = $('gx-vista-documentos');
   const vistaVentas = $('gx-vista-ventas');
   const vistaPerfiles = $('gx-vista-perfiles');
-  const ver = (cual: 'alta' | 'inmuebles' | 'contratos' | 'novedades' | 'documentos' | 'ventas' | 'perfiles' | null) => {
+  const vistaLiquidacion = $('gx-vista-liquidacion');
+  const ver = (
+    cual:
+      | 'alta' | 'inmuebles' | 'contratos' | 'novedades' | 'documentos' | 'ventas' | 'perfiles'
+      | 'liquidacion' | null,
+  ) => {
     vistaPanel.hidden = cual !== null;
     vistaAlta.hidden = cual !== 'alta';
     if (vistaInmuebles) vistaInmuebles.hidden = cual !== 'inmuebles';
@@ -294,6 +300,7 @@ export function montarAlta(): void {
     if (vistaDocumentos) vistaDocumentos.hidden = cual !== 'documentos';
     if (vistaVentas) vistaVentas.hidden = cual !== 'ventas';
     if (vistaPerfiles) vistaPerfiles.hidden = cual !== 'perfiles';
+    if (vistaLiquidacion) vistaLiquidacion.hidden = cual !== 'liquidacion';
     if (cual === 'alta') {
       ajustarPorOperacion();
       pintarAviso();
@@ -365,6 +372,10 @@ export function montarAlta(): void {
       ver('perfiles');
       void montarPerfiles();
     },
+    liquidacion: () => {
+      ver('liquidacion');
+      void montarLiquidacion();
+    },
     leads: () => {
       ver(null);
       document.getElementById('gx-table-title')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -412,6 +423,7 @@ export function montarAlta(): void {
   $('gx-doc-volver')?.addEventListener('click', () => ver(null));
   $('gx-vta-volver-panel')?.addEventListener('click', () => ver(null));
   $('gx-pf-volver-panel')?.addEventListener('click', () => ver(null));
+  $('gx-liq-volver-panel')?.addEventListener('click', () => ver(null));
   montarAltaContrato();
   montarFormularioDocumento();
   montarFormularioVenta();

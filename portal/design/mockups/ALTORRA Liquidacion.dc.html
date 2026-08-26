@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#E6EDF2; font-family:'Hanken Grotesk',sans-serif; -webkit-font-smoothing:antialiased; }
+</style>
+</helmet>
+
+<!--
+  ══════════════════════════════════════════════
+  ALTORRA · LIQUIDACIÓN DEL MANDATO — el mes, peso por peso (Ola 2 · GESTIÓN v2, §166)
+
+  LA IDEA CENTRAL, en una frase: **esto no es una calculadora, es un COMPROBANTE.** El dominio
+  (`lib/domain/liquidacion.ts`) ya sabe cuánto le toca al propietario; lo que falta no es el número,
+  es que se pueda VER POR QUÉ es ese. Una cifra sin desglose es una cifra que hay que creerse, y
+  «créeme» es exactamente lo contrario de lo que vende esta marca.
+
+  CUATRO DECISIONES QUE NO SON DE PINTAR:
+
+  1. 💵 **CADA LÍNEA DICE A QUIÉN VA EL DINERO, no solo cuánto se resta.** «Cuota de administración
+     −$300.000» es un descuento; «Cuota de administración → a la copropiedad» es una explicación. El
+     propietario que ve la primera pregunta; el que ve la segunda, no. Es el mismo peso y media
+     conversación menos al mes.
+
+  2. 🔍 **LO QUE NO SE RETUVO TAMBIÉN SE DICE.** Cuando la retención del 3,5 % no aplica —el caso
+     normal en vivienda— la pantalla lo dice con esas palabras en vez de callarse. El silencio sobre
+     una retención es como nace una duda: el propietario que oyó que «a los arriendos les retienen»
+     y no ve la línea, no concluye «no aplica», concluye «me falta algo». Y al revés: cuando SÍ
+     aplica, dice a quién se le giró (la DIAN, por cuenta de él) y que le llegará su certificado.
+
+  3. 🧮 **EL CUADRE SE VE, no se promete.** Abajo del todo, una línea que suma todas las salidas y
+     las compara con lo cobrado. El dominio garantiza que cuadra —el giro se calcula por diferencia,
+     §166.3— pero garantizarlo en un test es para nosotros; enseñarlo es para él. Si algún día no
+     cuadrara, aquí se vería en oro y no en un log que nadie abre.
+
+  4. 🚫 **NO HAY BOTÓN DE «PAGAR».** Esta pantalla CALCULA y MUESTRA; no mueve un peso. El giro real
+     depende de la cuenta de comercio (§165) y de las tres condiciones del dictamen. Un botón que
+     parece pagar y no paga es peor que no tenerlo: quien lo pulsa cree que ya está.
+
+  ⚠️ CONTRA LA TENTACIÓN DE «SIMPLIFICAR»: es tentador enseñar solo «Le giramos $1.726.300» y
+  esconder el detalle tras un «ver desglose». No. El desglose ES la pantalla. Lo que se esconde
+  detrás de un clic, en la práctica, no existe — y este es justo el número sobre el que un cliente
+  llama a preguntar.
+
+  Colores: navy #062743 · dorado #d4af37 · plata #BFC3C9 · fondo blanco. Sin negro, sin verde ni
+  rojo de estado (un descuento legítimo NO es un error y no se pinta como tal).
+  ══════════════════════════════════════════════
+-->
+
+<div style="max-width:980px;margin:0 auto;padding:40px 24px 72px;">
+
+  <!-- ═══ Cabecera de la vista ═══ -->
+  <div style="margin-bottom:26px;">
+    <p style="margin:0 0 6px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A94A0;font-weight:600;">Gestión · Mandato</p>
+    <h1 style="margin:0 0 8px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:38px;line-height:1.1;color:#062743;">Liquidación del mes</h1>
+    <p style="margin:0;font-size:14.5px;line-height:1.7;color:#5B6572;max-width:64ch;">
+      Lo que se le cobra al arrendatario y a dónde va cada peso. Es la cuenta que el propietario
+      revisa: aquí sale entera, no resumida.
+    </p>
+  </div>
+
+  <!-- ═══ Selector de contrato + período ═══ -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;background:#fff;border-radius:16px;padding:18px 20px;box-shadow:0 1px 3px rgba(6,39,67,.06);margin-bottom:22px;">
+    <label style="flex:1 1 260px;">
+      <span style="display:block;font-size:12px;font-weight:600;color:#062743;margin-bottom:6px;">Contrato</span>
+      <select style="width:100%;padding:11px 12px;border:1px solid #DDE4EA;border-radius:10px;font:inherit;font-size:14px;color:#062743;background:#fff;">
+        <option>CAD-0007 · Apto 502, Torre Milán — Bocagrande</option>
+        <option>CAD-0011 · Casa 14, Manzanillo del Mar</option>
+      </select>
+    </label>
+    <label style="flex:0 1 170px;">
+      <span style="display:block;font-size:12px;font-weight:600;color:#062743;margin-bottom:6px;">Período</span>
+      <select style="width:100%;padding:11px 12px;border:1px solid #DDE4EA;border-radius:10px;font:inherit;font-size:14px;color:#062743;background:#fff;">
+        <option>Agosto 2026</option>
+        <option>Julio 2026</option>
+      </select>
+    </label>
+    <button style="padding:11px 22px;border:0;border-radius:10px;background:#d4af37;color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;">Calcular</button>
+  </div>
+
+  <!-- ═══ El comprobante ═══ -->
+  <div style="background:#fff;border-radius:18px;padding:30px 32px;box-shadow:0 1px 3px rgba(6,39,67,.06);">
+
+    <!-- Lo cobrado: el punto de partida -->
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding-bottom:18px;border-bottom:1px solid #EDF1F5;">
+      <div>
+        <p style="margin:0;font-size:16px;font-weight:600;color:#062743;">Se le cobra al arrendatario</p>
+        <p style="margin:4px 0 0;font-size:13px;color:#8A94A0;">Canon $2.000.000 + cuota de administración $300.000, cobrados por separado</p>
+      </div>
+      <p style="margin:0;font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;color:#062743;white-space:nowrap;">$2.300.000</p>
+    </div>
+
+    <!-- A dónde va cada peso. CADA LÍNEA CON DESTINATARIO. -->
+    <p style="margin:22px 0 12px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A94A0;font-weight:600;">A dónde va</p>
+
+    <div style="display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid #F4F7F9;">
+      <div><span style="font-size:14.5px;color:#062743;font-weight:500;">Cuota de administración</span>
+        <span style="display:block;font-size:12.5px;color:#8A94A0;margin-top:2px;">→ a la copropiedad. No es ingreso de ALTORRA ni del propietario.</span></div>
+      <span style="font-size:15px;color:#062743;white-space:nowrap;">$300.000</span>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid #F4F7F9;">
+      <div><span style="font-size:14.5px;color:#062743;font-weight:500;">Honorarios de administración · 10 %</span>
+        <span style="display:block;font-size:12.5px;color:#8A94A0;margin-top:2px;">→ a ALTORRA. Sobre el cargo mensual integral ($2.300.000).</span></div>
+      <span style="font-size:15px;color:#062743;white-space:nowrap;">$230.000</span>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid #F4F7F9;">
+      <div><span style="font-size:14.5px;color:#062743;font-weight:500;">IVA sobre los honorarios · 19 %</span>
+        <span style="display:block;font-size:12.5px;color:#8A94A0;margin-top:2px;">→ a la DIAN. Lo factura ALTORRA y lo declara.</span></div>
+      <span style="font-size:15px;color:#062743;white-space:nowrap;">$43.700</span>
+    </div>
+
+    <!-- 🔍 LA LÍNEA QUE NO SE CALLA: la retención que NO aplica -->
+    <div style="display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid #F4F7F9;background:#FBFCFD;margin:0 -12px;padding-left:12px;padding-right:12px;border-radius:8px;">
+      <div><span style="font-size:14.5px;color:#5B6572;font-weight:500;">Retención en la fuente sobre el canon · 3,5 %</span>
+        <span style="display:block;font-size:12.5px;color:#8A94A0;margin-top:2px;"><strong style="color:#062743;">No aplica en este contrato</strong>: la retención la practica quien paga, y el arrendatario no es agente de retención.</span></div>
+      <span style="font-size:15px;color:#8A94A0;white-space:nowrap;">$0</span>
+    </div>
+
+    <!-- El número que él mira -->
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:20px;padding:20px 22px;background:#062743;border-radius:14px;">
+      <div>
+        <p style="margin:0;font-size:15px;font-weight:600;color:#fff;">Se le gira al propietario</p>
+        <p style="margin:4px 0 0;font-size:12.5px;color:#BFC3C9;">Daniel Romero · cuenta terminada en 4417 · giro dentro de los 5 días hábiles</p>
+      </div>
+      <p style="margin:0;font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:#d4af37;white-space:nowrap;">$1.726.300</p>
+    </div>
+
+    <!-- 🧮 EL CUADRE, A LA VISTA -->
+    <p style="margin:16px 0 0;padding-top:14px;border-top:1px dashed #DDE4EA;font-size:12.5px;line-height:1.7;color:#8A94A0;">
+      <strong style="color:#062743;">Cuadra:</strong> $1.726.300 + $300.000 + $230.000 + $43.700 + $0 =
+      <strong style="color:#062743;">$2.300.000</strong>, exactamente lo cobrado. Ni un peso sin destino.
+    </p>
+  </div>
+
+  <!-- ═══ Lo que esta pantalla NO hace ═══ -->
+  <div style="margin-top:20px;border-left:3px solid #d4af37;padding:16px 20px;background:#fff;border-radius:0 14px 14px 0;">
+    <p style="margin:0;font-size:13.5px;line-height:1.75;color:#5B6572;">
+      <strong style="color:#062743;">Esta pantalla calcula y muestra; no mueve dinero.</strong> El giro
+      se hace por fuera mientras no esté la cuenta de comercio, y las tres condiciones del dictamen
+      (§165) siguen mandando: el dinero no reposa en cuenta de ALTORRA, el mandato dice recaudo y giro,
+      y no se le ofrece a nadie que no tenga contrato firmado.
+    </p>
+  </div>
+
+</div>
+
+</x-dc>
+</body>
+</html>
