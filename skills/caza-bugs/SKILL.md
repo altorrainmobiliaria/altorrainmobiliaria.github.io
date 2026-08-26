@@ -428,6 +428,50 @@ encontró nada que comparar y dice ✅ es el peor de los gates que mienten, y aq
 permisos. Pruébalo en **tres** direcciones, no dos: cambia el lado A, cambia el lado B, y **rompe la
 extracción** — esa tercera es la que distingue un comparador de un adorno.
 
+## 4m. 🧮 El UMBRAL cuyo denominador nadie audita — el gate en el que no hay nada roto
+
+Las especies anteriores dejan rastro: algo no se ejecuta (§4j), algo no se abre, algo afirma sin mirar
+(§4j-bis). Ésta no deja ninguno. El gate **corre**, **abre el archivo**, e imprime un número **cierto**
+— y la comparación no significa nada, porque su **denominador** no puede ser lo que aparenta.
+
+**El caso que la enseñó**: un linter reportaba un archivo como `9331/16000 · 58 %`. Su margen real eran
+**124**. La cifra que todo el mundo lee como holgura estaba equivocada **54 veces**, llevaba meses así, y
+estaba igual en los tres repositorios que compartían la herramienta. No había bug: el cálculo hacía
+exactamente lo que decía. Fallaba una **premisa** que nadie había puesto en voz alta — *«el límite de
+cada parte es su techo»*— verdad para treinta casos y mentira para tres, porque esos tres vivían además
+bajo un **límite global** y **sus límites locales sumaban más que él**. No podían cumplirse a la vez.
+
+**Por qué sobrevive tanto.** Un número correcto no invita a comprobarlo, y el porcentaje responde a una
+pregunta distinta de la que uno cree hacer: `9331/16000` contesta *«¿cuánto de mi límite gasté?»*, y
+quien lo lee entiende *«¿cuánto me cabe?»*. Mientras las dos preguntas den respuestas parecidas nadie
+nota nada; el día que divergen, la herramienta sigue en verde.
+
+**Cómo se caza — al revés que las demás**: no auditando el gate, sino **la aritmética de sus umbrales**.
+La pregunta de una línea, y vale para cualquier sistema con límites anidados:
+
+> **¿Pueden cumplirse TODOS los límites locales a la vez sin romper el global?**
+> Si `Σ(locales) > global`, los locales son **decorativos** y el porcentaje que publican es ficción.
+
+Dónde aparece fuera de un linter: cuotas por servicio contra la cuota de la cuenta · presupuestos por
+equipo contra el del departamento · `maxConnections` por instancia contra el límite del motor de base de
+datos · reintentos por capa contra el *timeout* del cliente · tamaños por adjunto contra el máximo del
+mensaje. En todos, cada parte se declara «dentro de su límite» hasta el día que coinciden.
+
+**Qué hacer, y qué NO hacer.**
+1. **Publica el límite EFECTIVO donde se lee**: `global − lo que ocupan los demás`. La cifra honesta va
+   en la salida, no en un comentario del archivo de configuración que nadie abre.
+2. **Deja UN solo gate bloqueando: el global.** Es tentador convertir cada límite efectivo en gate, y es
+   un error — **repartir la culpa entre partes no tiene respuesta objetiva**: si una parte se pasa y otra
+   va sobrada, ningún criterio mecánico dice cuál recorta. Eso lo decide una persona. Y tres avisos
+   diciendo lo mismo no dan el triple de seguridad: enseñan a ignorar los tres.
+3. **No recalibres a una partición exacta sólo para que cuadre.** Si el reparto exacto deja a cada parte
+   con margen cero, el gate muerde en cada cambio y acabas desactivándolo. El diagnóstico honesto no es
+   *«hay que ajustar los límites»*: es *«el sistema está al 99 % y no hay sitio»*. Dilo así.
+
+🎯 **La regla, portable**: **un porcentaje sin su denominador auditado es decoración.** Ante cualquier
+`X/Y` que una herramienta imprima, la primera pregunta no es si `X` está bien calculado — es **si `Y` es
+de verdad el techo**.
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.
