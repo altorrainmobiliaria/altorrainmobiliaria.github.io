@@ -222,7 +222,14 @@ describe('las claves de Google: caché y caída de red', () => {
   });
 });
 
-describe('los roles espejan a las Rules', () => {
+/*
+ * ⚠️ ESTE BLOQUE SE LLAMABA «los roles espejan a las Rules» y NO abría el archivo de Rules ni una vez
+ * (§179): comprobaba que estas funciones hacen lo que esta misma prueba espera, que es otra cosa. El
+ * nombre prometía una verificación que no ocurría — la especie del comentario «cambia aquí y solo
+ * aquí» de §178. Lo que sí prueba es útil y se queda; el ESPEJO de verdad, comparando estas listas
+ * contra `firebase/firestore.rules`, lo hace ahora `verify:data`.
+ */
+describe('qué decide cada rol (el espejo contra las Rules lo comprueba `verify:data`)', () => {
   const t = (over: Record<string, unknown> = {}) =>
     ({ uid: 'u', admin: true, rol: 'editor', ...over }) as never;
 

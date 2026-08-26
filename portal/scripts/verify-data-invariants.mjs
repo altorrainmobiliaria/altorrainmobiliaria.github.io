@@ -7,7 +7,7 @@
 // El catálogo público (grillas comprar/arrendar/alojamientos) NO se sirve por list de Firestore: se
 // resuelve por SSG a build-time (Admin SDK, cero lecturas runtime) o por doc-índice denormalizado
 // (1 GET) mantenido por Cloud Function — decisión de Ola 1 (ver src/lib/data/README.md).
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { resolve, relative, extname } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
@@ -111,3 +111,72 @@ if (violations.length) {
   process.exit(1);
 }
 console.log(`✅ verify:data — ${files.length} archivos escaneados: sin SDK de Firestore, sin onSnapshot, sin lista/query no acotada.`);
+
+/*
+ * ── SONDA: LOS ESPEJOS DE `firestore.rules` (§179) ──────────────────────────────────────────────
+ *
+ * QUÉ CAZA. Que una lista escrita DOS veces —una en las Rules, otra en TypeScript— deje de coincidir.
+ * El código dice «espeja las Rules» en tres sitios y **nadie lo comprobaba**: hay una prueba llamada
+ * *«los roles espejan a las Rules»* que no abre el archivo de Rules ni una vez — afirma que las
+ * funciones de TS hacen lo que la propia prueba espera. Es el patrón de §178, el comentario que
+ * promete unicidad: aquí es un NOMBRE que promete una verificación que no ocurre.
+ *
+ * POR QUÉ IMPORTA que coincidan. Las Rules son la frontera REAL y el TS es quien decide qué se pinta.
+ * Si divergen: o el índice publica fichas que las Rules niegan (tarjetas que llevan a un 404), o hay
+ * inmuebles publicables que nadie indexa (inventario invisible). Ninguna de las dos avisa.
+ *
+ * 🔒 FALLA SI NO PUEDE LEER. Si un patrón deja de encontrar su lista, esta sonda se pone ROJA en vez
+ * de pasar: un comparador que no encuentra nada que comparar y dice «✅» es exactamente el gate que
+ * miente ([[L-52]]). Aquí eso importa más que de costumbre — lo que compara son permisos.
+ */
+const rulesPath = resolve(root, 'firebase/firestore.rules');
+const rules = existsSync(rulesPath) ? readFileSync(rulesPath, 'utf8') : '';
+const espejos = [];
+
+/** Saca los literales de una lista `['a', 'b']` del primer trozo que case. */
+const listaDe = (texto, re) => {
+  const m = texto.match(re);
+  if (!m) return null;
+  const items = [...m[1].matchAll(/'([^']+)'/g)].map((x) => x[1]);
+  return items.length ? items.sort() : null;
+};
+
+const compara = (nombre, enRules, enCodigo, pista) => {
+  if (!enRules || !enCodigo) {
+    espejos.push({ nombre, error: `no se pudo LEER ${!enRules ? 'las Rules' : 'el código'} (${pista})` });
+    return;
+  }
+  if (JSON.stringify(enRules) !== JSON.stringify(enCodigo)) {
+    espejos.push({ nombre, error: `rules=[${enRules}] vs código=[${enCodigo}]` });
+  }
+};
+
+const catalogoTs = readFileSync(resolve(srcDir, 'lib/domain/catalogo.ts'), 'utf8');
+const tokenTs = readFileSync(resolve(srcDir, 'lib/auth/verificar-id-token.ts'), 'utf8');
+
+// 1. Estados que salen al catálogo público.
+compara(
+  'estados publicados',
+  listaDe(rules, /resource\.data\.estado in \(?(\[[^\]]+\])/),
+  listaDe(catalogoTs, /ESTADOS_PUBLICADOS[^=]*=\s*(\[[^\]]+\])/),
+  'estado in [...] / ESTADOS_PUBLICADOS',
+);
+
+// 2. Quién puede escribir contenido. En el TS son dos comparaciones `===`, no una lista.
+const rolesTs = [...(tokenTs.match(/function esEditorOMas[\s\S]{0,240}?\n}/) ?? [''])[0]
+  .matchAll(/rol === '([^']+)'/g)].map((m) => m[1]).sort();
+compara(
+  'roles que escriben (esEditorOMas)',
+  listaDe(rules, /function esEditorOMas\(\)[^\n]*rol\(\) in (\[[^\]]+\])/),
+  rolesTs.length ? rolesTs : null,
+  'esEditorOMas',
+);
+
+if (espejos.length) {
+  console.error('❌ verify:data — ESPEJOS de `firestore.rules` que no cuadran:\n');
+  for (const e of espejos) console.error(`   ${e.nombre}: ${e.error}`);
+  console.error('\n   Las Rules son la frontera REAL; el TS decide qué se pinta. Si divergen, o se');
+  console.error('   publican fichas que las Rules niegan, o hay inventario que nadie indexa (§179).');
+  process.exit(1);
+}
+console.log('✅ verify:data — los 2 espejos de `firestore.rules` (estados públicos · roles) cuadran con el código.');
