@@ -493,6 +493,19 @@ mensaje. En todos, cada parte se declara «dentro de su límite» hasta el día 
 `X/Y` que una herramienta imprima, la primera pregunta no es si `X` está bien calculado — es **si `Y` es
 de verdad el techo**.
 
+- **Un contador AGREGADO es una opinión disfrazada de medida.** Si tu número suma casos que piden
+  respuestas distintas —«está bien», «está abreviado», «es ambiguo», «está mal»—, no informa: sólo
+  sube y baja, y lo que alarma sin informar se aprende a ignorar. Medido en un caso real: de 123
+  rutas que un gate agrupaba como *«aceptadas por coincidencia de nombre — pueden estar mal»*,
+  **119 resolvían por sufijo único** (abreviaturas legítimas y sin ambigüedad) y sólo 4 eran
+  irresolubles para un lector. La cura no es afinar el umbral: es **partir el número por clase** y
+  nombrar, con su línea, sólo la clase que pide acción.
+- **Un umbral se denomina en la unidad en la que el sistema AVANZA.** Si el trabajo se mide en
+  commits, «hace 30 días» mide el calendario del observador, no la realidad observada: un sello de
+  **7 días** puede llevar **327 commits** detrás. Usa umbral doble —lo que llegue antes— y, cuando la
+  marca no tenga la resolución de esa unidad (una fecha sin commit), **redondea hacia el lado que no
+  exagera**: es preferible tardar en avisar a gritar por trabajo que no ocurrió.
+
 ### 4m-bis. La cifra COMPUESTA cuya mitad no vigila nadie
 
 Variante de la anterior, y se caza con aritmética de primaria. Una afirmación del tipo **«20 en código

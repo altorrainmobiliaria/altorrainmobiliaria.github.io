@@ -9451,3 +9451,60 @@ siente como tener los dos** — el ✅ es idéntico.
 Corolario práctico: por cada regla del tipo *«X debe llevar Y»*, escribe las dos direcciones o declara
 por escrito cuál falta. La que falta es siempre la de *«¿existe?»*, porque es la que no tiene por
 dónde empezar a recorrer.
+
+## 221. ADR-221 — Los dos últimos de §143: un contador que alarmaba sin informar, y un umbral en la unidad equivocada
+
+**Contexto.** Lo que quedaba de **TODO-23**: (a) que el **#27** resuelva el nombre contra la carpeta
+del nodo —hoy acepta la mayoría por basename—, y (b) que los umbrales del **#16** vayan en **COMMITS**,
+no en días. Los dos venían de §143 con el diseño escrito y sin ejecutar.
+
+### 221.1 — El #27: la «coincidencia de nombre» no era una, eran cinco
+El gate tenía **dos** desenlaces: la ruta existe tal cual, o *«existe un fichero que se llama así en
+alguna parte»* — y de esas últimas avisaba en bloque: *«la ruta del nodo puede estar mal aunque el gate
+pase»*. Medido sobre los cuatro repos: **123 perdonadas, y 119 resolvían por SUFIJO ÚNICO.**
+🎯 Es decir: el 97 % eran **abreviaturas legítimas y sin ambigüedad** —el mapa del portal cita
+`src/lib/x.ts` y sólo hay un fichero que termine así—, y el gate las metía en el mismo saco que un
+error real. **Un contador que colapsa situaciones distintas en un número alarma sin informar**, y lo
+que alarma sin informar se aprende a ignorar.
+Ahora la resolución tiene **grados**, y sólo se nombra lo que un lector no podría resolver:
+`exacta` · `sufijo único` · `nombre único` · **`AMBIGUA`** (más de un candidato → se lista con su
+línea y sus candidatos) · `FANTASMA`.
+📌 Y de paso un falso positivo que llevaba escondido: **una ruta que empieza por `/` es una URL del
+sitio, no un fichero del repo**. El gate acusaba a `50-CONFIG-INFRA` por citar correctamente
+`/invertir.html`.
+**Rendimiento inmediato**: inmobiliaria tenía **1 ambigua real** —`components.css`, que podía ser la
+del portal o la de una plantilla de skill— y se desambiguó; **cars tiene 3** (`cinematic.css`,
+`toast.js`, `auth.js`), cada una con sus candidatos impresos. Antes, ninguna de las cuatro era
+distinguible del ruido.
+**Mordisco (L-46 #5)**: dos rutas inventadas → `⚠️ 2 ruta(s) FANTASMA`; restaurado → verde; git limpio.
+
+### 221.2 — El #16 y el #12: el calendario mentía, y no poco
+*«Umbrales en DÍAS en un repo que corre en COMMITS»* sonaba a pulido. Al medirlo: un sello de
+**hace 7 días llevaba 327 commits detrás**. Por calendario, fresquísimo; por trabajo real, un fósil.
+Ahora el umbral es **doble** y marca stale por lo que llegue antes (días **o** commits). Los commits
+se cuentan con el reflog leído por `fs`, sin `child_process`, igual que el canario del #24.
+⚠️ **Detalle que decide la dirección del error**: el sello tiene granularidad de DÍA, así que se cuenta
+desde el **final** del día sellado. Nunca sobre-cuenta lo que se selló esa misma tarde — si se
+equivoca, se equivoca por defecto.
+**Y en la primera corrida marcó dos claims que el calendario daba por frescos**:
+- `Build — MODO OBRA LIVE` (7d / 321 commits): **re-verificado de verdad** contra el dominio —
+  `curl` → **HTTP 200** y la sentinela *«portal en construcción»* presente— y re-sellado a hoy.
+- `reglas fase 2 EN VIVO` (1d / 114 commits): **no lo pude verificar desde aquí** (exigiría leer las
+  reglas DESPLEGADAS, no las del repo), así que **se queda marcado**. 🎯 Eso no es el gate fallando:
+  es el gate haciendo su trabajo. Re-sellar sin comprobar habría sido el vicio que el marcador
+  existe para cazar: fresco y falso a la vez.
+
+### 221.3 — TODO-23 CERRADO
+Con esto se cierran los dos ítems de §143 y, con ellos, **el endurecimiento del kernel entero**:
+K-01+K-04 (§219) · K-05 (§220) · K-02/K-09 (§208) · K-11 (§205·§207) · #27 y #16 (aquí).
+Kernel **v1.19.0** repartido a los cuatro repos, íntegro == canónico en todos.
+
+### 221.4 — Doctrina
+1. **Un contador agregado es una opinión disfrazada de medida.** Si el número suma casos que exigen
+   respuestas distintas —«está bien», «está abreviado», «es ambiguo», «está mal»—, no informa: sólo
+   sube y baja. La cura no es afinar el umbral: es **partir el número por clase** y nombrar sólo la
+   que pide acción.
+2. **Un umbral se denomina en la unidad en la que el sistema avanza.** Si el trabajo se mide en
+   commits, un umbral en días mide el calendario del observador, no la realidad observada. Y cuando
+   la marca no tiene la resolución de esa unidad —un sello con fecha, sin commit—, **redondea hacia
+   el lado que no exagera**.
