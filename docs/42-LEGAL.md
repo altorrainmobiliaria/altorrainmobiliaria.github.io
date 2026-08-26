@@ -7,6 +7,10 @@
 > Prohibido dejar una pregunta legal como pendiente ajeno.
 > Convenciones: 🔶 = hallazgo CORREGIDO en verificación adversarial · ❓ = NO-VERIFICABLE, pendiente de abogado.
 
+> 💰 **Cuánto CUESTA cada trámite → `docs/45-COSTOS-TRANSACCION.md`** (hija, §194):
+> tarifas oficiales —hoy el registro y las estampillas de Bolívar; mañana ORIP, notariales,
+> retención y predial—. Aquí vive el DERECHO; allí, el precio.
+
 ## Reglas duras que moldean el PRODUCTO (lo que el diseño no puede violar)
 
 1. **Cero depósitos/cauciones al inquilino de vivienda** (Ley 820/2003 arts. 15,16,18, directas/indirectas/con otro nombre). Revenue SOLO del lado propietario (comisión, fee de garantía, success fee). Único depósito legal: garantía de servicios públicos (D.3130/2003, tope = 2×cargo fijo + 2×consumo prom., a favor de la ESP).

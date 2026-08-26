@@ -7920,3 +7920,73 @@ Familia de `38-GATES-QUE-MIENTEN`, con una variante nueva que merece nombre prop
 pasaba en verde sobre nada; **pasaba en verde diciendo un número verdadero de una pregunta que
 nadie hacía**. `9331/16000` es cierto. La pregunta que uno cree estar haciendo —*¿cuánto me cabe?*—
 tiene otra respuesta. → [[L-58]].
+
+## 194. ADR-194 — Los dos últimos de la agenda legal, cerrados con el límite que los hace robustos
+
+**Contexto.** La «agenda del abogado» de `43` bajó de nueve preguntas a dos: **valor UVB 2026** y
+**tarifa de registro en Bolívar + estampillas**. Ninguna estaba en `specs/R3` (lo comprobé primero,
+que es la regla que la propia lista se escribió tras §174). Las dos son cifras, y las dos exigían
+fuente externa.
+
+### 194.1 — Lo que de verdad estaba en juego (no eran dos datos sueltos)
+**(a) La UVB no era trivia**: `43` afirmaba *«SAGRILAFT: NO es sujeto obligado por umbrales»*, pero la
+circular que sostenía esa afirmación —CE 100-000016— **fue derogada** el 2-jul-2026 por la
+**CE 100-000020**, que unifica SAGRILAFT y PTEE en un **Cap. IX** nuevo y reexpresa los umbrales **en
+UVB**. Sin el valor de la UVB, la conclusión colgaba de una norma muerta.
+**(b) La tarifa de Bolívar** alimenta el *«quién paga los gastos»* de la compraventa (Ola 2) y una
+eventual estimación de cierre.
+
+### 194.2 — Lo verificado
+**UVB 2026 = $12.110** — Res. **3488 del 31-dic-2025**, **MinHacienda** (no DIAN, que era mi primer
+supuesto). La creó el **art. 313 de la Ley 2294/2023**, reemplazando el art. 49 de la Ley 1955/2019.
+Comprobación interna: `11.552 × 1,0483 = 12.109,96` — el valor 2025, el IPC y el 2026 son mutuamente
+consistentes, que es lo que un número inventado no hace. 🔴 **No aplica a lo tributario, aduanero ni
+cambiario** (eso sigue en UVT), así que el «RNBD: <100.000 UVT» de `43` NO se toca.
+Umbrales del Cap. IX, convertidos: general 4.929.017 UVB = **COP 59.690 M** · sectores especiales
+3.696.762 UVB = **COP 44.768 M** · **medidas mínimas 369.676 UVB = COP 4.477 M en ingresos** o
+616.127 UVB = COP 7.461 M en activos, medidos sobre ingresos O activos **al 31-dic del año anterior**.
+**Bolívar**: impuesto de registro **1 %** para acto con cuantía en ORIP · estampilla pro-desarrollo
+**0 % VIP / 0,5 % hasta 135 SMLMV / 1 % por encima** · **por partes iguales salvo pacto expreso** ·
+sin recibo no hay registro · base nunca inferior al avalúo catastral. Tabla, ejemplos y el
+**acantilado de los 135 SMLMV (`$236.372.175`, salto de ~$1,18 M por un peso)** → **`45`**.
+
+### 194.3 — 🎯 La doctrina: el LÍMITE que hace robusta una conclusión incierta
+En ambos casos quedó una incertidumbre que **no pude eliminar**, y en ambos la conclusión aguanta por
+la misma razón — que conviene nombrar porque es reutilizable:
+- **SAGRILAFT**: dos fuentes discrepan sobre si lo inmobiliario cuenta como «sector especial». **Da
+  igual**: ese umbral (3.696.762 UVB) es **más alto** que el de medidas mínimas, y lo que ata siempre
+  es el **piso**. La conclusión no depende de la disputa.
+- **Bolívar**: leí el **PROYECTO** de Estatuto Tributario (dic-2024) y hay prensa de que se aprobó y
+  sancionó, pero **no confirmé el número de ordenanza ni que el articulado sobreviviera al debate**.
+  **Da igual para el techo**: el 1 % es el **máximo que la Ley 223/1995 art. 230 permite** (banda
+  0,5 %–1 %), y el régimen anterior cobraba menos. Cualquier versión final es **igual o menor**.
+> **Cuando no puedas cerrar una incertidumbre, busca la COTA que la vuelve irrelevante.** Un
+> «entre X e Y, y nunca más de Y» verificado vale más que un «Y exacto» sin verificar — y se puede
+> entregar hoy. Lo que NO vale es callar la incertidumbre: la cota se declara junto al número.
+
+### 194.4 — Neurogénesis: `45-COSTOS-TRANSACCION`
+El dictamen de Bolívar **no cabía en `44`** (10369/10415) **y tampoco era de su especie**: `44` guarda
+posiciones jurídicas, esto es una tabla de precios. Se separó por esa frontera, no por tamaño — y con
+razón de crecimiento declarada: faltan ORIP, notariales, retención (E.T. 398) y predial. Conectada por
+los cuatro sitios que exige §G.5: registro directo en `40`, puntero desde la madre `42`, cap en el
+manifest (12000c, con la frontera del futuro shard declarada: por JURISDICCIÓN) y fila en `00`.
+
+### 194.5 — Anti-patterns evitados
+No copiar el detalle al nodo que enruta: `43` quedó con punteros, no con la tabla (y pagó sus propios
+excesos dos veces en este cambio). No citar un borrador como ley: el estatuto se declara **proyecto**
+con su evidencia de sanción aparte. No heredar una conclusión: el «no obligada» se **recomprobó**
+contra la norma viva en vez de arrastrarse.
+
+### 194.6 — Archivos
+**NUEVO** `docs/45-COSTOS-TRANSACCION.md` · `44` (dictamen SAGRILAFT/UVB) · `43` (dos ítems cerrados +
+dos podas: un duplicado de `44` y el propio puntero) · `40` (hija 2) · `42` (puntero) · manifest (cap).
+**INTACTO**: todo el código — esto no toca producto todavía.
+
+### 194.7 — Riesgo residual que Daniel debe conocer
+La determinación de SAGRILAFT es **aritmética sobre cifras que el repositorio no tiene**: ingresos o
+activos totales a 31-dic. ⚠️ Y hay **dos NIT** — si los contratos vivos siguen en la sociedad vieja,
+cada sociedad se evalúa por separado. Se **recalcula cada año**: la UVB sube con IPC, pero los ingresos
+de una inmobiliaria que arranca suben más rápido, así que el margen se estrecha **por arriba**. Si
+alguna vez se cruza, hay transición hasta el **31-may-2027**. Y ⚠️ el SMLMV 2026 que fija el acantilado
+viene de un decreto **transitorio** (D. 0159/2026, tras la suspensión del D. 1469/2025 por el Consejo
+de Estado): si cambia, el umbral se mueve. Nada de esto es concepto de abogado titulado (§G.2).

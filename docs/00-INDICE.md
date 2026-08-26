@@ -143,6 +143,7 @@
 | §191 | 🧪 **La asimetria probada**: el puntaje se guarda SIEMPRE, la marca «avisado» solo si el correo salio. Una marca que miente CIERRA la pregunta — asi se perdieron los 16. | 7781 |
 | §192 | 📨 **Nurturing revisado**: Gmail ya no bloquea (Resend), y aparece un 4o bloqueo — las plantillas enlazan al sitio retirado y «ver la propiedad» PIERDE la propiedad. No se porta tal cual. | 7820 |
 | §193 | 📏 **El margen que un nodo de boot creia tener**: los caps de los 3 always-on suman mas que el presupuesto, asi que ninguno es su techo. El WIP marcaba 58 por ciento con 124c reales — error de 54x. Kernel v1.15.0 publica el tope EFECTIVO. | 7863 |
+| §194 | ⚖️ **Agenda legal a CERO**: UVB 2026 = 12.110 (recomprueba SAGRILAFT) y Bolivar = 1 por ciento + 0,5-1 de estampilla, por mitades. Doctrina: si no puedes cerrar una incertidumbre, busca la COTA que la vuelve irrelevante. Nace `45`. | 7924 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

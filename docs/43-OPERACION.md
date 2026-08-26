@@ -159,8 +159,9 @@ FE cobrando IVA con pie "no responsable" (una SAS es SIEMPRE responsable — §4
 corregir plantilla Siigo + verificar resp. 48 en RUT) · llamadas frías sin protocolo (Ley 2300 §5: L-V
 7-19, Sáb 8-15, mecanismo de exclusión; números sin autorización → L.1581 §9) · anunciar DataCrédito sin
 autorización documentada (la finalidad contractual ampara — L.1266 §15/C-1011-08 — pero sin prueba =
-indefensión ante SIC) · autodeclarar SAGRILAFT (NO es sujeto obligado por umbrales; y ⚠️ la CE 100-000016
-fue DEROGADA el 2-jul-2026 por la **CE 100-000020, Cap. IX, umbrales en UVB** — citar la nueva) · cláusula
+indefensión ante SIC) · autodeclarar SAGRILAFT (NO es sujeto obligado por umbrales, **recomprobado contra la CE
+100-000020 Cap. IX** que derogó la 100-000016 el 2-jul-2026 — el piso son **369.676 UVB = COP 4.477
+millones** de ingresos a 31-dic; cifras, límites y qué mirar → dictamen en `44`) · cláusula
 penal 3 cánones + perjuicios + 20% cobranza (el cúmulo exige pacto expreso CC 1600; tope mercantil 100%
 C.Co 867) · "comprador paga los gastos" (default legal = mitades CC 1862; la retención es SIEMPRE del
 vendedor, E.T. 398) · anticipos de hospedaje sin factura (alojamiento turístico = IVA 19%; parafiscal
@@ -189,11 +190,8 @@ contenido mínimo del contrato = §3 de la L.820 (no §11) · paz y salvo predia
 (<100.000 UVT de activos, D.90/2018) · **RUB: 2 meses desde el RUT ⇒ venció ~jul-2026 → reportar YA**
 (sanción E.T. 658-3) · EEFF certificados por RL + contador (L.222 §37) · TRA/registro de huéspedes =
 prueba del contrato de hospedaje (L.2068 §21-22).
-**❓ Agenda abogado (no verificado en fuente oficial):** ~~régimen de intereses sobre cánones~~ (RESUELTA → §181: sobre el CANON, 6 % y con el rubro en
-riesgo por CC 1617 regla 4a, ya acotado por diseño; y la «divergencia» del kit no lo era — mandato COMERCIAL
-1,5×IBC vs vivienda CIVIL 6 %, dos regímenes distintos) · ~~taxatividad de causales de terminación~~ (RESUELTA → §184: la ley **NO dice «solamente»** y no hay cláusula de irrenunciabilidad, o sea el texto no la cierra; **aun así NO se amplía la lista** por costes asimétricos → [[LD-09]]. Sí se pacta el PROCEDIMIENTO) · tarifa registro Bolívar +
-estampillas · ~~aplicación de L.1480 al arriendo de vivienda~~ (RESUELTA → §183: **régimen especial manda, la 1480 es SUPLETORIA** —art. 2 literal— luego Ley 820 primero; y NO se publica página de retracto para el arriendo. ⚠️ NO cierra la de RESERVAS, que es otra) · ~~frecuencia de Ley 2300~~ (RESUELTA → §172: aplica a la prospección
-comercial, no solo a la cobranza, y ya hay calendario y guardias en el código) · valor UVB 2026 · ~~reglamento PH silente vs autorización expresa~~ (RESUELTA → §174: **el silencio NO autoriza**; hace falta permiso EXPRESO —D.1074/2015 art. 2.2.4.1.2.2 num. 8, L.675/2001 art. 18.1— instrumentado como DECLARACIÓN fechada del prestador, ya bloqueante en el alta y en `publicable()`. ⚠️ La respuesta llevaba **un mes** verificada en `specs/R3-LEGAL-COLOMBIA` §GATE 5 mientras esta lista seguía preguntándola: antes de agendar algo aquí, búscalo en `specs/R3`).
+**❓ Agenda abogado (no verificado en fuente oficial):** ~~régimen de intereses sobre cánones~~ (RESUELTA → §181; el dictamen completo, en `44`) · ~~taxatividad de causales de terminación~~ (RESUELTA → §184: la ley **NO dice «solamente»** y no hay cláusula de irrenunciabilidad, o sea el texto no la cierra; **aun así NO se amplía la lista** por costes asimétricos → [[LD-09]]. Sí se pacta el PROCEDIMIENTO) · ~~tarifa registro Bolívar + estampillas~~ (RESUELTA → §194: **1 % + 0,5-1 %** y por MITADES salvo pacto; tabla, techo legal y acantilado → `45`) · ~~aplicación de L.1480 al arriendo de vivienda~~ (RESUELTA → §183: **régimen especial manda, la 1480 es SUPLETORIA** —art. 2 literal— luego Ley 820 primero; y NO se publica página de retracto para el arriendo. ⚠️ NO cierra la de RESERVAS, que es otra) · ~~frecuencia de Ley 2300~~ (RESUELTA → §172: aplica a la prospección
+comercial, no solo a la cobranza, y ya hay calendario y guardias en el código) · ~~valor UVB 2026~~ (RESUELTA → §194 y dictamen en `44`: **$12.110**, Res. 3488/2025 de MinHacienda; sirvió para RECOMPROBAR el «no obligada» de SAGRILAFT contra la circular NUEVA) · ~~reglamento PH silente vs autorización expresa~~ (RESUELTA → §174: **el silencio NO autoriza**; hace falta permiso EXPRESO —D.1074/2015 art. 2.2.4.1.2.2 num. 8, L.675/2001 art. 18.1— instrumentado como DECLARACIÓN fechada del prestador, ya bloqueante en el alta y en `publicable()`. ⚠️ La respuesta llevaba **un mes** verificada en `specs/R3-LEGAL-COLOMBIA` §GATE 5 mientras esta lista seguía preguntándola: antes de agendar algo aquí, búscalo en `specs/R3`).
 
 ## Estado del arco TODO-34
 
