@@ -115,6 +115,7 @@
 | §163 | 🏚️ **El cutover podía publicar 38 enlaces a un inmueble que NO EXISTE**. El interruptor estaba cableado; faltaba quien hiciera ruido al olvidarlo. Gemelo del candado de indexabilidad: los dos se ven perfectos. | 6238 |
 | §164 | 🔬 **Auditoría Nivel-2 #11** (disparada por el linter, que BLOQUEÓ un commit). La receta del boot crónico llevaba 2 ediciones MAL APUNTADA: el router es el 59% y su cap no disparaba nunca. Cap 25k→19k. | 6280 |
 | §165 | ⚖️ **El «gate del abogado» no existía** (Daniel: «mi abogado eres tú»). Dictamen propio: el recaudo de cánones NO es captación masiva (`D.1068/2015 art. 2.18.2.1`), con 3 condiciones de diseño vinculantes. | 6339 |
+| §166 | 💵 **La liquidación del mandato**: `payout_propietario` existía como tipo y nadie calculaba su monto. La retefuente del 3,5% NO es constante (depende de quién paga). Invariante: entra = sale, probado con 112 combinaciones. | 6404 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

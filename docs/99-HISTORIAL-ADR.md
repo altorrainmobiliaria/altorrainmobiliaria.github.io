@@ -6400,3 +6400,50 @@ probar desde ya, con el mismo patrón que el pipeline de venta y el perfil de in
 falso). **Fuentes**: [D.1068/2015 art. 2.18.2.1 vía Superfinanciera](https://www.superfinanciera.gov.co/publicaciones/10115318/normas-de-captacion-ilegal/) ·
 [D.1981/1988 (compilado)](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=75473) ·
 [Ley 820 de 2003](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=8738).
+
+## 166. ADR — La liquidación del mandato: la cuenta que el propietario mira cada mes ⟦OPUS-5⟧ (2026-08-26)
+
+**166.0 — El hueco.** `gestion.ts` modelaba `contratos` y `pagos` desde §112, e incluso declaraba el
+tipo de pago `payout_propietario`… **sin que nada calculara su monto**. Esa cuenta se hace hoy a mano.
+Es, además, el único número del sistema que un cliente revisa **todos los meses**: si baila un peso,
+lo nota. Ahora es una función pura con 135 pruebas y las reglas fiscales escritas.
+
+**166.1 — La decisión que más importa, y va CONTRA lo que decía el kit.** `43-OPERACION` anotaba
+«retefuente canon: 3,5 % y la practica el MANDATARIO», y leído rápido eso es una constante. **No lo
+es**: la retención por arrendamiento de inmueble depende de **quién paga** — solo la hay si el
+arrendatario es agente de retención. El caso normal de este negocio, una familia arrendando vivienda,
+**no retiene nada**. Haberla codificado fija le habría puesto a cada propietario de vivienda un
+descuento del 3,5 % que nadie le practicó: *dinero que no cuadra, en el documento donde menos se
+perdona*. Va como **bandera explícita con default `false`**. (`D.1625/2016 art. 1.2.4.11`: en el
+mandato el mandatario practica las retenciones «teniendo en cuenta la calidad del mandante» — la
+obligación se **hereda**, no se inventa.)
+
+**166.2 — Un error de modelado cazado al escribirlo.** La primera versión solo giraba la cuota a la
+copropiedad **cuando se cobraba aparte**. Con la administración INCLUIDA en el canon, eso dejaba al
+propietario pagándole a la PH por su cuenta — justo en el caso en que él cree tenerlo delegado, y se
+descubriría cuando llegara el requerimiento de la administración. Ahora la cuota se gira **siempre que
+exista**, y las dos formas de pactarlo le dejan al propietario exactamente lo mismo; lo único que
+cambia es qué se le factura al arrendatario. Es coherente con la tarifa: los honorarios son sobre el
+«cargo mensual integral», y no se cobra comisión sobre un dinero que no se maneja.
+
+**166.3 — El invariante, que es lo que hace confiable una liquidación.** *Lo que entra es exactamente
+lo que sale*: `cobro = giro + cuota PH + honorarios + IVA + retención`. Para que el redondeo no pueda
+abrir un hueco, **el giro al propietario se calcula por DIFERENCIA, no con fórmula propia**. Probado
+sobre 7 canones feos × 4 cuotas × incluida/aparte × retiene/no — 112 combinaciones. **Mordida
+probada**: sustituyendo la diferencia por una fórmula, **caen 65 de las 135 pruebas**; restaurada,
+pasan las 135. *Un peso perdido al redondear es un peso que alguien tiene que explicarle a un cliente.*
+
+**166.4 — Las tarifas son parámetros con fuente, no números mágicos.** 10 % de administración de
+vivienda (tarifario sellado de `43`, el mismo que publica `/precios`), IVA 19 %, 3,5 % de
+arrendamiento, 11 % de honorarios a PJ. Cada una con su comentario y su origen, y el contrato puede
+pactar la suya. Cuando cambie una tarifa, cambia en un sitio.
+
+**166.5 — Y caza el error de dedo más caro**: un `honorariosPct` de `10` donde iba `0.1`. No es una
+regla legal, es de cordura — un honorario mayor que medio canon es casi siempre eso.
+
+**166.6 — Lo que este módulo NO hace, y es deliberado.** No decide si se puede cobrar: eso lo gobierna
+§165 y sus tres condiciones, más las cuentas del dueño (Wompi, RNT, DIAN). Aquí solo se hace la
+aritmética, **que no mueve un peso de nadie**. Tampoco hay pantalla todavía: «NUNCA UI sin mockup».
+
+**166.7 — Archivos.** `portal/src/lib/domain/liquidacion.ts` (+ `.test.ts`, 135 pruebas). 726 tests
+totales, 7 gates en verde. Commit `2425fd1`.
