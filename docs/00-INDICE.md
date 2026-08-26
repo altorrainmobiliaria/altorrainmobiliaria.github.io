@@ -114,6 +114,7 @@
 | §201 | 🧮 **L-60 hecha CENSO**: 9 oyentes, 1 colision mas: `propiedades` con DOS oyentes, la coleccion central. La alarma del router NO era (og-publish ya desarmado), pero queda una maquina inerte que cobra y registra ✅ de un no-op. | 8340 |
 | §202 | 🪞 **Tres sondas de censo sin decir QUE miraron**, el mismo dia que arregle un gate por eso. Las tres dijeron «limpio» y las tres estaban mal. Un cero es indistinguible de «no mire en ningun sitio» → M-27. | 8393 |
 | §203 | 📄 **Los pendientes de Daniel en SU lenguaje** (artifact): Resend primero, la ruta de 5 tramos, seis preguntas de una frase. El dato ya existia; faltaba decir el coste en su moneda. URL en la memoria del harness. | 8442 |
+| §204 | 📮 **De las dos pantallas pendientes, una ya estaba HECHA**. La otra —evidencia postal— no tiene NI UN campo, y su fallo se mide en meses de renta. Una lista de pendientes envejece hacia arriba. | 8484 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

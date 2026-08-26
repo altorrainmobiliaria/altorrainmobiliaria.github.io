@@ -8480,3 +8480,61 @@ que correrlo, no recordarlo* — más aún cuando se le entrega al dueño.
 **NUEVO**: memoria `brief-lanzamiento-artifact` + su puntero en el índice del harness. **INTACTO**:
 todo el repositorio — la página se deriva de `10` y del runbook, que siguen siendo los dueños del
 dato; la página es una VISTA, y por eso no se duplicó nada en el cerebro.
+
+## 204. ADR-204 — «Las dos pantallas sin mockup» eran una, y la otra es la que puede costar un año de arriendo
+
+**Contexto.** El `10` arrastraba una línea: *«Sin mockup, y por eso sin hacer: el control de PH en el
+alta, la pantalla de evidencia postal»*. Fui a escribir el encargo de mockup de las dos y, al mirar el
+código antes —§3.3—, resultó que **no son la misma clase de pendiente**.
+
+### 204.1 — El control de PH YA ESTÁ HECHO
+`gestion.astro:915` tiene su `<label>` y su `<select id="a-situacionPH">`; `gestion-alta-ui.ts` lo
+recoge entre los campos del alta; `alta-propiedad.ts` construye la `AutorizacionPH` con su
+`declaradaEn` y conserva la fecha en el round-trip de edición; y hay pruebas de dominio y de catálogo
+que lo cubren. **Funciona y bloquea la publicación** cuando el reglamento no autoriza expresamente.
+Lo que §174 dejó «abierto» no era la funcionalidad: era que **se estiló con las clases que ya
+existían, sin pasar por diseño**. Eso es una revisión estética pendiente, no una pantalla que falte.
+*La línea del `10` convertía una deuda de diseño en una funcionalidad ausente, y las dos cosas se
+priorizan distinto.*
+
+### 204.2 — La evidencia postal no tiene NADA de interfaz
+`preaviso.ts` y sus 15 pruebas existen y son correctas —incluida la regla que importa, que la cuenta
+va desde la fecha de **IMPOSICIÓN** y no desde la de redacción—, pero **no hay ni un campo en toda la
+aplicación** donde alguien escriba esa fecha. Verificado: cero coincidencias de `impuestoEl` fuera del
+dominio y sus pruebas. La lógica está lista y **nadie puede alimentarla**.
+
+### 204.3 — Por qué ésta sí importa
+Un preaviso de terminación mandado sin poder probar CUÁNDO se impuso puede declararse ineficaz, y
+entonces **el contrato se prorroga otro año** (§185). El coste del hueco no es una molestia de
+usabilidad: es un año de arriendo bajo condiciones que el propietario quería terminar. **Es el único
+pendiente de producto cuyo fallo se mide en meses de renta.**
+
+### 204.4 — Lo que la pantalla tiene que capturar (spec para el mockup)
+No es un formulario cualquiera: cada campo existe porque un juez podría pedirlo.
+- **Fecha de IMPOSICIÓN** (obligatoria) — la que manda para el plazo. No es «hoy» por defecto: se
+  teclea mirando la guía, porque casi siempre es anterior al momento de registrarla.
+- **Número de guía** del operador postal y **operador** — es lo que permite pedir la constancia después.
+- **Constancia de entrega** (fecha + adjunto, opcional al crear) — llega días más tarde; la pantalla
+  tiene que aceptar que **se complete en dos momentos**, y eso es lo que la hace distinta de un alta.
+- **A quién se notificó y en qué dirección**, tomadas del contrato, no re-escritas a mano.
+- **El efecto calculado, visible al guardar**: `preaviso.ts` ya sabe decir si el contrato **termina** o
+  **se prorroga** con esa fecha. Enseñarlo en el momento de teclear convierte un error de dedo en algo
+  que se ve, en vez de en una sorpresa dentro de un año.
+- **Estado sin evidencia**: un preaviso registrado sin fecha de imposición debe verse **incompleto**,
+  no válido. La marca de la marca para eso es navy con oro, no rojo (identidad sellada).
+
+### 204.5 — Lo que NO se hace y por qué
+No se construye sin mockup aprobado — es un callejón declarado del proyecto, sin exención aquí. Y no
+se propone un diseño en este ADR: lo que faltaba era **el encargo**, y ahora está escrito. La decisión
+de Daniel es de una frase: aprobar el mockup cuando lo vea.
+
+### 204.6 — Archivos
+`docs/10-MEMORIA-CORTO-PLAZO.md`: la línea corregida — el control de PH pasa de «sin hacer» a «hecho,
+falta el paso de diseño», y la evidencia postal queda sola como lo que de verdad falta.
+**INTACTO**: todo el código. Este ADR corrige el REGISTRO, no el producto.
+
+### 204.7 — Doctrina
+Fui a escribir un encargo para dos pendientes y, mirando el código primero, uno resultó estar hecho.
+🎯 **Una lista de pendientes envejece en la dirección que nadie comprueba: hacia arriba.** Se revisa lo
+que se cierra —eso se tacha— y no lo que sigue abierto, porque «sigue abierto» no pide evidencia. Los
+pendientes viejos merecen la misma pregunta que las afirmaciones viejas: *¿esto sigue siendo cierto?*

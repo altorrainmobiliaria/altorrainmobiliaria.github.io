@@ -69,7 +69,7 @@
 > correo salió**. ⏭️ El nurturing sigue apagado: 3 bloqueos revisados en §192 (uno cayó, uno nuevo —
 > sus plantillas enlazan al sitio retirado).
 >
-> ⏭️ **Sin mockup, y por eso sin hacer**: el control de PH en el alta, la pantalla de evidencia postal.
+> ⏭️ **La evidencia postal NO tiene interfaz** (§204): sin fecha de IMPOSICIÓN el preaviso puede ser ineficaz y el contrato se prorroga un año. Encargo escrito. *El control de PH ya estaba HECHO.*
 >
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos
 > que solo vio la consola del dueño (§133-§136): pesa a favor de retirarlo pronto. Si un gate pasa,
