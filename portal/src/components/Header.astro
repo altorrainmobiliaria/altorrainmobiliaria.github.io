@@ -73,16 +73,24 @@ const nav = [
     featured: { img: '/assets/villa-modern.webp', eyebrow: 'Cartagena te espera', title: 'Vive la ciudad amurallada', href: '/turismo' },
   },
   {
-    key: 'servicios', label: 'Servicios', href: '#servicios', type: 'mega', align: 'right',
+    key: 'servicios', label: 'Servicios', href: '/precios', type: 'mega', align: 'right',
     cols: [
       // ⚖️ «Avalúos» RETIRADO el 2026-08-22 (§105): reclamaba una línea de servicio regulada (Ley 1673,
       // avaluadores del RAA) que ALTORRA no presta — confirmado por Daniel. Lo que sí ofrecemos, la
       // estimación de precio, ya tiene su sitio y su nombre: el Rango ALTORRA.
-      { title: 'Gestión', links: [['Administración y Arriendo', '#servicios'], ['Compra & Venta', '#servicios'], ['Rango ALTORRA', '/rango-altorra'], ['Gerencia de Proyectos', '#servicios']] },
-      { title: 'Financiero & Marketing', links: [['Marketing Inmobiliario', '#servicios'], ['Crédito de Vivienda', '#servicios'], ['Pagos en Línea', '#servicios']] },
+      //
+      // 🔴 2026-08-26 (§159): SEIS de estas siete entradas apuntaban a `#servicios`, un ancla que NO
+      // EXISTE en ninguna página del portal — el menú principal, en las 74 páginas, con seis destinos
+      // muertos. Misma familia que el `#nosotros` fantasma. Ahora cada una lleva a la página que de
+      // verdad responde a su nombre, y las dos que no tenían destino honesto —«Crédito de Vivienda»
+      // (no prestamos ese servicio) y «Pagos en Línea» (el carril de Wompi, detrás del gate del
+      // abogado)— se RETIRAN: una entrada de menú es una promesa, y prometer crédito es de lo más
+      // delicado que se puede poner en un sitio inmobiliario.
+      { title: 'Gestión', links: [['Administración y Arriendo', '/publicar'], ['Compra & Venta', '/comprar'], ['Gerencia de Proyectos', '/#proyectos']] },
+      { title: 'Valoración & Asesoría', links: [['Rango ALTORRA', '/rango-altorra'], ['Marketing Inmobiliario', '/publicar'], ['Invertir en Cartagena', '/invertir'], ['Programa de aliados', '/aliados']] },
     ],
   },
-  { key: 'nosotros', label: 'Nosotros', href: '#nosotros', type: 'link' },
+  { key: 'nosotros', label: 'Nosotros', href: '/nosotros', type: 'link' },
   { key: 'contacto', label: 'Contacto', href: '#contacto', type: 'link' },
 ];
 ---
@@ -168,7 +176,7 @@ const nav = [
         </div>
       </details>
     ))}
-    <a class="alt-hdr__det-flat" href="#nosotros">Nosotros</a>
+    <a class="alt-hdr__det-flat" href="/nosotros">Nosotros</a>
     <a class="alt-hdr__det-flat" href="#contacto">Contacto</a>
     <div class="alt-hdr__drawer-cta">
       <a class="alt-hdr__pub" href="/publicar"><span>Publica tu inmueble</span></a>

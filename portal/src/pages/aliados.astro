@@ -1,13 +1,195 @@
 ---
-/* Enlazada 2× desde la home ("Postúlate como broker" / "Conoce el modelo"). MEGA-PLAN Ola 2.2
-   (portal de aliados self-service). Sin mockup aún → plantilla de sección anunciada. */
+/*
+ * ALIADOS (/aliados) — el último «próximamente» del portal público (§159).
+ *
+ * Enlazada 2× desde la home («Postúlate como broker» / «Conoce el modelo») y una vez desde el
+ * footer: tres puertas que llevaban a un cartel de obra.
+ *
+ * 🔴 LAS TRES COSAS QUE ESTA PÁGINA NO PUEDE DECIR, y por qué se escribió alrededor de ellas:
+ *
+ *   1. **Comisiones.** No están decididas. Publicar un porcentaje que después se mueve es la peor
+ *      forma de empezar una relación comercial, así que la página dice que no están definidas y que
+ *      se acuerdan hablando. Un número inventado aquí sería el mismo pecado que un «20 años de
+ *      experiencia» en /nosotros.
+ *   2. **El portal self-service de aliados.** Existe en el MEGA-PLAN (Ola 2.2), no en el código. Y
+ *      su pasarela de pagos está detrás del gate del abogado (B2/B9). No se promete una fecha.
+ *   3. **Que nosotros cubrimos la matrícula del aliado.** No la cubrimos: no se puede. La matrícula
+ *      de arrendador es de quien ejerce la actividad, y si el aliado intermedia arriendos de
+ *      vivienda de forma habitual, le aplica a ÉL. Decírselo antes de que entre es lo único honesto
+ *      — y es, además, lo que ningún programa de aliados cuenta en su página de captación.
+ *
+ * Por eso la pieza central de esta página no es un incentivo: es un requisito. CTA de contacto,
+ * no de registro, porque no hay nada donde registrarse todavía.
+ *
+ * SIN MOCKUP PROPIO: misma estructura editorial que `/nosotros` y las landings de zona (§92).
+ */
 export const prerender = true;
-import ProximamenteLayout from '../layouts/ProximamenteLayout.astro';
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../lib/config/site';
+
+const DESCRIPCION =
+  'Programa de aliados de ALTORRA en Cartagena: para brokers, agentes independientes y captadores. Qué aportamos, qué te vamos a pedir y qué todavía no está definido.';
+
+const waTexto = encodeURIComponent('Hola ALTORRA, me interesa el programa de aliados y brokers.');
+const waLink = `${SITE.contact.whatsappLink}?text=${waTexto}`;
+
+/** Para quién es. Perfiles reales, no «emprendedores del sector inmobiliario». */
+const PERFILES = [
+  {
+    t: 'Agentes independientes',
+    d: 'Trabajas por tu cuenta, tienes clientes y no tienes con quién respaldar el papeleo cuando la operación se pone seria.',
+  },
+  {
+    t: 'Captadores de inmuebles',
+    d: 'Consigues propietarios que quieren vender o arrendar, pero no quieres —o no puedes— administrarlos tú.',
+  },
+  {
+    t: 'Inmobiliarias pequeñas',
+    d: 'Tienes cartera propia y te falta músculo para una operación puntual: un estudio de títulos, una escritura, un arriendo con garantía.',
+  },
+];
+
+/** Lo que ponemos nosotros. Todo comprobable hoy, en este mismo sitio. */
+const APORTAMOS = [
+  {
+    t: 'La estructura legal',
+    d: `Razón social con NIT, matrícula de arrendador No. ${SITE.matriculaArrendador} y modelos de contrato revisados. La operación se firma con una empresa que existe y responde.`,
+  },
+  {
+    t: 'El expediente del inmueble',
+    d: 'Cada operación lleva su carpeta de documentos con registro de quién abrió qué y cuándo. No es un grupo de WhatsApp con fotos de escrituras.',
+  },
+  {
+    t: 'El seguimiento de la venta',
+    d: 'Compraventa por etapas, de la oferta al registro en la Oficina de Instrumentos Públicos. Sabes en qué punto está tu negocio sin tener que preguntar.',
+  },
+  {
+    t: 'El perfil del arrendatario',
+    d: 'El candidato prepara sus documentos una vez y sirven para todos los inmuebles. Tú no persigues papeles y él no paga por entregarlos.',
+  },
+];
 ---
-<ProximamenteLayout
-  title="Aliados y brokers"
-  encabezado="Nuestro programa de aliados abre pronto."
-  texto="Estamos terminando el portal para brokers y agentes aliados: leads con trazabilidad, comisiones claras y respaldo jurídico de ALTORRA. Si quieres entrar desde el primer día, escríbenos y te avisamos antes que a nadie."
-  waTexto="Hola ALTORRA, me interesa el programa de aliados y brokers."
-  description="Programa de aliados y brokers de ALTORRA Inmobiliaria en Cartagena — próximamente."
-/>
+
+<BaseLayout title="Programa de aliados y brokers | ALTORRA Inmobiliaria" description={DESCRIPCION}>
+  <Header />
+
+  <main id="contenido">
+    <section class="alt-section">
+      <div class="alt-container">
+        <p class="alt-eyebrow">Aliados · {SITE.city}</p>
+        <h1 class="ali-h">Tú traes el negocio. Nosotros ponemos la estructura.</h1>
+        <p class="ali-lead">
+          Trabajamos con brokers y agentes independientes en Cartagena: tú conoces a tu cliente,
+          nosotros ponemos la empresa, los contratos y el seguimiento. No es una franquicia ni te
+          pedimos exclusividad.
+        </p>
+      </div>
+    </section>
+
+    <section class="alt-section alt-section--alt">
+      <div class="alt-container">
+        <h2 class="ali-h2">Para quién es</h2>
+        <div class="ali-grid">
+          {
+            PERFILES.map((x) => (
+              <div class="ali-item">
+                <h3 class="ali-item__t">{x.t}</h3>
+                <p class="ali-item__d">{x.d}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="alt-section">
+      <div class="alt-container">
+        <h2 class="ali-h2">Lo que ponemos nosotros</h2>
+        <div class="ali-grid">
+          {
+            APORTAMOS.map((x) => (
+              <div class="ali-item">
+                <h3 class="ali-item__t">{x.t}</h3>
+                <p class="ali-item__d">{x.d}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="alt-section alt-section--alt">
+      <div class="alt-container">
+        <div class="ali-aviso">
+          <h2 class="ali-h2">Lo primero que te vamos a preguntar</h2>
+          <p class="ali-p">
+            Si tu actividad habitual incluye <strong>intermediar arriendos de vivienda</strong>, la
+            Ley 820 de 2003 te exige tu <strong>propia matrícula de arrendador</strong> ante la
+            alcaldía. No basta con la nuestra: la matrícula es de quien ejerce la actividad, y
+            anunciarse sin ella es sancionable.
+          </p>
+          <p class="ali-p">
+            Te lo decimos antes de empezar y no después, porque es el requisito que más gente
+            descubre tarde. Si aún no la tienes, se puede tramitar — y mientras tanto hay
+            operaciones que sí puedes trabajar con nosotros sin ese registro, como la compraventa.
+            Está todo explicado, con los artículos citados, en
+            <a href="/journal/matricula-de-arrendador">nuestro artículo sobre la matrícula</a>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="alt-section">
+      <div class="alt-container">
+        <h2 class="ali-h2">Cómo funciona hoy, sin adornos</h2>
+        <p class="ali-p">
+          <strong>Se acuerda hablando, caso por caso.</strong> No hay un formulario que te dé de alta
+          ni un panel de aliado donde entrar: eso está en el plan, pero todavía no existe y no le
+          vamos a poner una fecha que no podamos cumplir. Hoy nos escribes, miramos tu caso y
+          definimos la operación.
+        </p>
+        <p class="ali-p">
+          <strong>Las comisiones no están publicadas porque no están cerradas.</strong> Preferimos
+          decir esto a poner un porcentaje que después se mueva. Se conversan al principio, quedan
+          por escrito en el acuerdo de cada operación, y no cambian a mitad de camino.
+        </p>
+      </div>
+    </section>
+
+    <section class="alt-section alt-section--alt">
+      <div class="alt-container ali-cierre">
+        <h2 class="ali-h2">Hablemos</h2>
+        <p class="ali-p">
+          Cuéntanos qué haces hoy y qué operación tienes en mano. Si encaja, seguimos; y si no
+          encaja, te lo decimos igual de rápido.
+        </p>
+        <div class="ali-cta">
+          <a class="alt-btn alt-btn--gold" href={waLink} rel="noopener">Escribirnos por WhatsApp</a>
+          <a class="alt-btn alt-btn--outline" href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .ali-h { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(30px, 5vw, 46px); line-height: 1.05; color: var(--alt-ink); margin: 8px 0 14px; max-width: 20ch; }
+  .ali-lead { font-size: clamp(15px, 1.8vw, 17px); line-height: 1.75; color: var(--alt-text); max-width: 62ch; margin: 0; }
+  .ali-h2 { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(24px, 3vw, 34px); line-height: 1.12; color: var(--alt-ink); margin: 0 0 16px; }
+  .ali-p { font-size: 15.5px; line-height: 1.8; color: var(--alt-text); max-width: 68ch; margin: 0 0 18px; }
+  .ali-p strong { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
+  .ali-p a { color: var(--alt-link); text-decoration: underline; text-underline-offset: 3px; }
+  .ali-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 24px; }
+  .ali-item__t { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 20px; line-height: 1.2; color: var(--alt-ink); margin: 0 0 8px; }
+  .ali-item__d { font-size: 14.5px; line-height: 1.7; color: var(--alt-text); margin: 0; }
+  /* El requisito legal va con filete de oro, como los avisos del resto del portal: es lo único de
+     esta página que puede costarle dinero a quien no lo lea. */
+  .ali-aviso { border-left: 3px solid var(--alt-gold); padding-left: 24px; }
+  .ali-cierre { max-width: 68ch; }
+  .ali-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+</style>

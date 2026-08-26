@@ -1,0 +1,160 @@
+---
+/*
+ * NOSOTROS (/nosotros) — la página que el enlace prometía y no existía (§158).
+ *
+ * 🔴 POR QUÉ NACE: `#nosotros` estaba en el header Y en el footer, o sea en TODAS las páginas del
+ * sitio, y no llevaba a ningún sitio — no hay ni un `id="nosotros"` en el proyecto. Los mockups lo
+ * dibujaban como `href="#"`, así que la dirección nunca se decidió y el código heredó un ancla
+ * inventada. Es el «botón fantasma» de §126, multiplicado por cada página.
+ *
+ * ⚠️ LO QUE ESTA PÁGINA NO HACE, y es la mitad del trabajo: no inventa una historia. Nada de «20
+ * años de experiencia», ni fundadores, ni fotos de un equipo que no se ha fotografiado, ni cifras de
+ * inmuebles vendidos. **Todo lo que aquí se afirma se puede comprobar**: la razón social y el NIT
+ * están en el registro mercantil, la matrícula de arrendador es la Resolución 6636 de la Alcaldía de
+ * Cartagena, y el resto son decisiones nuestras, que son afirmaciones sobre lo que hacemos y no
+ * sobre lo que hemos logrado. Una página «Nosotros» con logros inventados es la forma más barata de
+ * romper justo lo que dice vender esta marca.
+ *
+ * SIN MOCKUP PROPIO: reutiliza la estructura editorial de las landings de zona (§92), que ya está
+ * aprobada. Lo nuevo es el texto.
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../lib/config/site';
+
+const DESCRIPCION =
+  'Quiénes somos: una inmobiliaria de Cartagena que pone por delante lo que se puede comprobar — razón social, NIT y matrícula de arrendador a la vista.';
+
+const waTexto = encodeURIComponent('Hola ALTORRA, quisiera hablar con alguien del equipo.');
+
+/**
+ * Lo que hacemos, dicho como decisiones y no como logros. Un logro hay que demostrarlo con datos que
+ * no tenemos publicados; una decisión se demuestra abriendo el sitio y comprobándola.
+ */
+const COMO_TRABAJAMOS = [
+  {
+    t: 'Los papeles, a la vista',
+    d: 'Nuestra matrícula de arrendador está en el pie de cada página y en cada ficha de arriendo que administramos, porque la Ley 820 lo exige en toda publicidad — y porque es lo primero que debería preguntarle a cualquiera.',
+  },
+  {
+    t: 'No le cobramos al arrendatario',
+    d: 'Ni depósito, ni «mes de garantía», ni estudio de documentos. El artículo 16 de la Ley 820 lo prohíbe en vivienda, y nuestro modelo vive del lado del propietario.',
+  },
+  {
+    t: 'No llamamos «avalúo» a lo que no lo es',
+    d: 'El avalúo lo firma una persona inscrita en el Registro Abierto de Avaluadores. Lo que damos nosotros es un rango orientativo de precio, y lo decimos con esas palabras.',
+  },
+  {
+    t: 'No publicamos cifras que no podamos sostener',
+    d: 'Ni rentabilidades, ni ocupaciones estimadas, ni conteos de inmuebles por barrio. Si un número no se puede comprobar, no entra a este sitio.',
+  },
+];
+
+const base = Astro.site?.origin ?? `https://${SITE.domain}`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: base },
+        { '@type': 'ListItem', position: 2, name: 'Nosotros', item: `${base}/nosotros` },
+      ],
+    },
+  ],
+};
+---
+
+<BaseLayout title="Nosotros | ALTORRA Inmobiliaria" description={DESCRIPCION}>
+  <Header />
+
+  <main id="contenido">
+    <section class="alt-section nos-hero">
+      <div class="alt-container">
+        <p class="alt-eyebrow">{SITE.city}</p>
+        <h1 class="nos-h">{SITE.slogan}</h1>
+        <p class="nos-lead">
+          No es un lema de campaña: es el orden en que tomamos las decisiones. Primero que sea
+          seguro, después que sea legal, y la confianza viene de que las dos primeras se puedan
+          comprobar sin llamarnos.
+        </p>
+      </div>
+    </section>
+
+    <section class="alt-section">
+      <div class="alt-container">
+        <h2 class="nos-h2">Quiénes somos, con nombre y número</h2>
+        <p class="nos-p">
+          <strong>{SITE.legalName}</strong>, NIT {SITE.nit}, con sede en Cartagena de Indias.
+          Trabajamos compra, venta, arriendo y alojamiento por días, y administramos inmuebles de
+          propietarios que prefieren no ocuparse del día a día.
+        </p>
+        <p class="nos-p">
+          Tenemos <strong>Matrícula de Arrendador No. {SITE.matriculaArrendador}</strong>, otorgada
+          por la Alcaldía de Cartagena. Ese número aparece en el pie de todas las páginas de este
+          sitio, y puede comprobarlo ante la alcaldía. Si alguna vez le ofrecen administrarle un
+          inmueble de vivienda sin ese número, esa es la primera pregunta que conviene hacer — se lo
+          explicamos con la ley en la mano en
+          <a href="/journal/matricula-de-arrendador">este artículo</a>.
+        </p>
+      </div>
+    </section>
+
+    <section class="alt-section alt-section--alt">
+      <div class="alt-container">
+        <h2 class="nos-h2">Cómo trabajamos</h2>
+        <p class="nos-p">
+          Son decisiones, no logros. Un logro habría que demostrarlo con datos; una decisión se
+          comprueba abriendo el sitio.
+        </p>
+        <div class="nos-grid">
+          {
+            COMO_TRABAJAMOS.map((x) => (
+              <div class="nos-item">
+                <h3 class="nos-item__t">{x.t}</h3>
+                <p class="nos-item__d">{x.d}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="alt-section">
+      <div class="alt-container nos-honesto">
+        <h2 class="nos-h2">Lo que todavía no le vamos a contar</h2>
+        <p class="nos-p">
+          Cuántos inmuebles hemos vendido, cuántas familias hemos acomodado o cuántos años llevamos.
+          No porque sea secreto: porque <strong>todavía no tenemos esos números publicados de forma
+          que usted pueda comprobarlos</strong>, y ponerlos aquí sin eso sería pedirle que nos crea. Preferimos
+          que nos juzgue por lo que sí puede verificar hoy.
+        </p>
+        <div class="nos-cta">
+          <a class="alt-btn alt-btn--gold" href={`${SITE.contact.whatsappLink}?text=${waTexto}`} rel="noopener">Escribirnos por WhatsApp</a>
+          <a class="alt-btn alt-btn--outline" href="/journal">Leer el Journal</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+</BaseLayout>
+
+<style>
+  .nos-h { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(30px, 5vw, 46px); line-height: 1.05; color: var(--alt-ink); margin: 8px 0 14px; }
+  .nos-lead { font-size: clamp(15px, 1.8vw, 17px); line-height: 1.75; color: var(--alt-text); max-width: 60ch; margin: 0; }
+  .nos-h2 { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(24px, 3vw, 34px); line-height: 1.12; color: var(--alt-ink); margin: 0 0 14px; }
+  .nos-p { font-size: 15.5px; line-height: 1.8; color: var(--alt-text); max-width: 68ch; margin: 0 0 18px; }
+  .nos-p strong { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
+  .nos-p a { color: var(--alt-link); text-decoration: underline; text-underline-offset: 3px; }
+  .nos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-top: 8px; }
+  .nos-item__t { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 20px; line-height: 1.2; color: var(--alt-ink); margin: 0 0 8px; }
+  .nos-item__d { font-size: 14.5px; line-height: 1.7; color: var(--alt-text); margin: 0; }
+  .nos-honesto { border-left: 3px solid var(--alt-gold); padding-left: 24px; }
+  .nos-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+</style>
