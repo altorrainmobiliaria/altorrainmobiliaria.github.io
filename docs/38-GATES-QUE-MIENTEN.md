@@ -12,13 +12,12 @@
 > 4. **Corre en un sitio y no en otro** ([[L-48]]) — prerrequisito generado y gitignored.
 > 5. **Afirma haber pasado sin mirar nada** ([[L-57]]) — le falta su prerrequisito y en vez de
 >    fallar PREGUNTA; sin terminal, no contestar sale con código 0.
-> 6. **Existe, se invoca, mira el archivo… y está FUERA del CI por un motivo que CADUCÓ** (§177).
->    141 pruebas de emulador llevaban meses fuera «porque necesitan Java»; al medirlo eran **24
->    segundos** con el arranque incluido. Mientras estuvieron fuera, una se rompió y siguió rota en la
->    rama principal sin que nada lo dijera. **Un motivo para no correr un gate tiene fecha de
->    caducidad, y nadie la mira si no se vuelve a medir.** Corolario: cuando una regla nueva te obliga
->    a tocar un fixture, **búscale los gemelos** — el que corre en el gate se arregla solo; el que no,
->    se queda callado.
+> 6. **Está FUERA del CI por un motivo que CADUCÓ** (§177) — 141 pruebas excluidas «porque necesitan
+>    Java»; medido, eran 24 s, y una llevaba meses rota en la rama principal. **Un motivo para no
+>    correr un gate caduca, y nadie lo mira si no se vuelve a medir.** Al tocar un fixture, búscale
+>    los gemelos: el que corre en el gate se arregla solo; el que no, calla.
+> 7. **Corre, mira el archivo, imprime un número CIERTO… de una comparación que no significa nada**
+>    ([[L-58]]) — el peldaño más insidioso, porque no hay nada roto que encontrar.
 >
 > **Prueba de bolsillo para cualquier gate**: *que imprima CUÁNTO miró* (archivos, enlaces,
 > pruebas). Un número es lo único que distingue «revisado» de «no hice nada». Y **estrénalo
@@ -28,14 +27,16 @@
 > (`«CF legacy: N en código»`) y acortar la frase les quita lo que buscaban (§180). Se declaró
 > DEGRADADO, no verde. **Al acortar, mira qué patrones dependen de esas palabras.**
 >
-> ⏱️ **Y el detector más barato de todos: el RELOJ.** El paso «Tipos» de este repo tardaba **4 s** en
-> todas y cada una de sus corridas históricas, y **21 s** en la primera con checker de verdad. Cuatro
-> segundos para 160 archivos era la confesión, escrita en la pantalla de cada corrida, y nadie la leyó
-> porque estaba en verde. **Un gate sospechosamente RÁPIDO no está optimizado: está sin hacer nada.**
-> La duración por paso la da la API de Actions sin credenciales, y compararla contra la del día que
-> sabías que funcionaba cuesta un comando.
-
+> ⏱️ **Y el detector más barato de todos: el RELOJ.** El paso «Tipos» tardaba **4 s** en todas sus
+> corridas históricas y **21 s** en la primera con checker de verdad. **Un gate sospechosamente
+> RÁPIDO no está optimizado: está sin hacer nada** — y la duración por paso la da la API de
+> Actions sin credenciales, así que compararla con la del día que funcionaba cuesta un comando.
 ---
+
+### L-58 — 🎭 Un gate puede imprimir un número CIERTO de una comparación que no significa nada *(§193)*
+**Disparador**: el linter reportaba la pizarra del WIP como `9331c/16000 · 58 %`; su margen real eran **124c**. La cifra que se lee como holgura, equivocada **54 veces**, meses así y en los TRES repos (peor en el hermano: 5553c imaginarios, en su propio router). **Causa**: no hay bug — el cálculo hace lo que dice. Falla la **PREMISA**: «el cap de una neurona es su techo» es verdad para 30 nodos y mentira para 3, porque los caps de los `alwaysOn` **suman más que el presupuesto de arranque** (39000 sobre 31500) y no pueden cumplirse a la vez. Nadie lo había dicho en voz alta, así que nadie lo comprobó.
+**Por qué es el peldaño peor**: los otros seis dejan rastro —algo no corre, algo no se abre, algo tarda 4 s—. Aquí todo funciona y la salida es correcta; lo único equivocado es la pregunta que uno CREE hacer: `9331/16000` responde *«¿cuánto de mi cap gasté?»* y uno lee *«¿cuánto me cabe?»*. Se detecta al revés que los demás: **no auditando el gate, sino la ARITMÉTICA de sus umbrales** — ¿pueden cumplirse todos a la vez?
+**Regla portable**: 🎯 **un porcentaje sin su denominador auditado es decoración.** Si un límite local convive con uno global, publica el **efectivo** (`global − lo que ocupan los demás`) donde se lee, y deja **UN** gate bloqueando: repartir la culpa entre partes no tiene respuesta objetiva, y tres avisos iguales enseñan a ignorar los tres.
 
 ### L-57 — 🎭 Una herramienta a la que le falta su prerrequisito puede **PREGUNTAR en vez de fallar** — y sin terminal, «no contestar» sale con código 0 *(§175)*
 **Disparador (condición mínima)**: una CLI que *puede autoinstalarse algo* corre en CI. Basta con que tenga modo interactivo — no hace falta que falle nada para sospechar.
@@ -43,29 +44,15 @@
 **Cómo se caza**: (a) exige el checker **en el LOCKFILE**, no en `node_modules` — el lockfile es lo que reinstala el CI y `node_modules` es lo que engaña; (b) **estrena cada gate rompiéndolo a propósito EN EL ENTORNO DONDE CORRE**: un worktree con `npm ci` limpio sobre un commit malo conocido da el antes/después en dos comandos; (c) desconfía de un ✅ que no dice **cuántos archivos** miró.
 **Regla portable**: *no tener gate < tener uno que nadie invoca ([[L-56]]) < tener uno que **afirma haber pasado***. Una corrida en verde **no prueba que el gate mirara**.
 
-### L-56 — 🧰 Un gate puede existir y NO CORRERLO NADIE — ni el CI ni tú *(§142)*
-`verify:data` llevaba meses en `package.json` sin estar en el CI ni en ninguna rutina: vigila algo caro (el free-tier) y era **decorativo**. Lo descubrí porque **lo puse en rojo yo mismo dos veces el mismo día** sin enterarme. **Cómo se caza, barato**: un meta-gate que compare los scripts `verify:*` contra lo que el CI invoca de verdad — el linter del cerebro ya lo tenía (#25) y el proyecto no. **Regla portable**: escribir el gate es la mitad; **cablearlo es la otra**, y la que se olvida. Prima de [[L-52]]: allí el gate corría sin mirar el archivo; aquí ni siquiera corría. **REINCIDIÓ del otro lado** *(§157)*: los 7 gates estaban cableados al CI, pero en LOCAL hay que acordarse de siete nombres — corrí cinco y escribí en el commit «los 7 en verde». El CI puso rojo `verify:css` y tenía razón. El candado de arriba llega TARDE (el CI corre después de empujar), así que hace falta el hermano: un comando que los corra TODOS y un gate que compruebe, nombre a nombre, que el atajo no se quede atrás. *Un atajo que envejece es peor que no tenerlo: se confía en él.*
-**TERCERA REINCIDENCIA, y la peor** *(§174)*: el meta-gate que vigila el cableado **enumeraba por PREFIJO** — `Object.keys(scripts).filter(k => k.startsWith('verify:'))` — así que `typecheck` y `test`, que no lo llevan, le eran INVISIBLES. Resultado: `npm run verify` daba verde con **26 errores de tipos en `main`**, y **las 855 pruebas unitarias no las corría el CI**: el gate del RNT, la prohibición del depósito en vivienda y la ventana de la Ley 2300 no bloqueaban ningún despliegue. **Regla afilada**: un meta-gate que enumera por convención de nombre solo protege a quien la respeta, y el que la incumple es justo el que hay que vigilar. Enumera contra la lista de lo que **el CI ejecuta de verdad**, o nombra explícitamente los que no encajan en el patrón — y comprueba **las dos puntas** (CI y atajo local), porque estos dos fallaron por puntas distintas.
+### L-56 — 🧰 Un gate puede existir y NO CORRERLO NADIE — ni el CI ni tú *(§142 · §157 · §174)*
+`verify:data` llevaba meses en `package.json` fuera del CI y de toda rutina: vigilaba algo caro (el free-tier) y era **decorativo**. Lo descubrí porque **lo puse en rojo yo mismo dos veces el mismo día** sin enterarme. **Regla portable**: escribir el gate es la mitad; **cablearlo es la otra**, y la que se olvida. Prima de [[L-52]]: allí corría sin mirar el archivo; aquí ni corría.
+**TRES reincidencias, y lo que las une**: (a) *§157* — cableados al CI, pero en LOCAL hay que acordarse de siete nombres: corrí cinco y escribí «los 7 en verde»; el CI puso rojo y tenía razón. El candado del CI llega TARDE, después de empujar. (b) *§174, la peor* — el meta-gate que vigila el cableado **enumeraba por PREFIJO** (`startsWith('verify:')`), así que `typecheck` y `test` le eran INVISIBLES: `npm run verify` daba verde con **26 errores de tipos en `main`** y **855 pruebas que el CI no corría** (entre ellas el gate del RNT y la ventana de la Ley 2300). 🎯 **El patrón**: cada vez el hueco estaba en la punta que el guardián no enumeraba — y quien incumple la convención es justo a quien hay que vigilar. Enumera contra **lo que el CI ejecuta de verdad**, nombra aparte los que no encajan en el patrón, y comprueba **las dos puntas** (CI y atajo local). *Un atajo que envejece es peor que no tenerlo: se confía en él.*
 
 ### L-52 — 🧰 Un gate puede correr en VERDE sobre archivos que **nunca abre** *(§138)*
-**Disparador**: `npm run typecheck` pasa y crees que el proyecto está chequeado. **Causa**: `tsc` **no
-lee los `.astro`**. Como casi toda la lógica de navegador vive en los `<script>` de las páginas, el gate
-revisaba solo `src/lib` y `src/scripts` creyéndose completo; al cambiarlo por `astro check` aparecieron
-**15 errores reales**, uno de ellos un componente ENTERO sin chequear porque una regex en línea rompe su
-parser aunque Astro la compile bien. **Cómo se caza**: mete una sonda deliberada (`const x: number =
-'texto'`) en un archivo del tipo que dudas; si el gate no la ve, no cubre ese tipo. **Prima hermana en
-CSS**: `var(--x)` con una variable que nadie declaró **no es un error** — el navegador descarta la
-propiedad y sigue; así el emblema del login estuvo meses sin relieve en una página declarada «réplica
-fiel» (gate: `verify:tokens`). **Regla portable**: no preguntes «¿pasa mi gate?» sino **«¿qué ARCHIVOS
-abre, y qué vería si el fallo estuviera delante?»**. Un gate que falla ABIERTO —descarta lo que no
-entiende— es indistinguible de uno que funciona ([[M-06]]).
+**Disparador**: `npm run typecheck` pasa y crees que el proyecto está chequeado. **Causa**: `tsc` **no lee los `.astro`**, y ahí vive casi toda la lógica de navegador; al cambiarlo por `astro check` salieron **15 errores reales**, uno un componente ENTERO invisible porque una regex en línea rompe su parser. **Prima hermana en CSS**: `var(--x)` sin declarar **no es un error** — el navegador descarta la propiedad y sigue (así el emblema del login estuvo meses sin relieve en una página declarada «réplica fiel»).
+**Cómo se caza**: sonda deliberada (`const x: number = 'texto'`) en un archivo del tipo que dudas; si el gate no la ve, no cubre ese tipo. **Regla portable**: no preguntes «¿pasa mi gate?» sino **«¿qué ARCHIVOS abre, y qué vería si el fallo estuviera delante?»**. Un gate que falla ABIERTO —descarta lo que no entiende— es indistinguible de uno que funciona ([[M-06]]).
 
 ### L-48 — 🧪 Un prerrequisito GENERADO y gitignored hace que el gate pase en local y falle en CI *(§125)*
 `worker-configuration.d.ts` lo produce `wrangler types` y está en `.gitignore`: en la máquina de quien escribió el gate existía; en el checkout limpio del CI, no. Resultado: `typecheck` verde en local y **8 corridas rojas seguidas en CI**, con el deploy saltándose en silencio por `needs: build`. Dos días sin desplegar, y el sitio vivo contradiciendo al repo.
-- **Regla**: si un comando necesita un archivo **generado** que no está commiteado, **generarlo es
-  parte del comando**, no del entorno: `"typecheck": "wrangler types && tsc --noEmit"`. Un script que
-  se prepara a sí mismo no puede divergir entre local y CI.
-- **NO lo cures commiteando el archivo generado**: quita el síntoma y abre drift contra su fuente.
-- **Reproduce antes de arreglar.** La 1.ª hipótesis (`.astro/` ausente) era FALSA: sin `.astro` el typecheck pasa igual. El diagnóstico salió de clonar en limpio, `npm ci` y correr la secuencia del CI entera. Arreglar sobre una hipótesis no verificada deja el CI rojo y a ti tranquilo.
-- **Al añadir un paso al CI, míralo correr EN CI antes de dar la tarea por cerrada** — es la cuarta
-  forma de [[M-06]]: un ❌ verdadero que nadie lee para la tubería igual que un ✅ falso la deja pasar.
+- **Regla**: si un comando necesita un archivo **generado** y no commiteado, **generarlo es parte del comando**, no del entorno (`"typecheck": "wrangler types && tsc --noEmit"`). Un script que se prepara a sí mismo no diverge entre local y CI. Y **NO lo cures commiteando el generado**: quita el síntoma y abre drift contra su fuente.
+- **Reproduce antes de arreglar.** La 1.ª hipótesis (`.astro/` ausente) era FALSA. El diagnóstico salió de clonar en limpio y correr la secuencia del CI entera. Arreglar sobre una hipótesis sin verificar deja el CI rojo y a ti tranquilo. Y **al añadir un paso al CI, míralo correr EN CI** antes de cerrar — 4.ª forma de [[M-06]]: un ❌ que nadie lee para la tubería igual que un ✅ falso la deja pasar.

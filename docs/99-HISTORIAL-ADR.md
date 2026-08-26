@@ -7859,3 +7859,64 @@ comentario de la propia Function, no solo en este ADR ([[M-26]]). Con las cuatro
 cuál cayó, cuál es nueva, y la conclusión de que portar resuelve tres de una vez. *Un bloqueo que se
 revisa y se documenta vale más que uno que se arrastra sin fecha* — y ésta es la diferencia entre un
 pendiente y una decisión aplazada con criterio.
+
+## 193. ADR-193 — El margen que un nodo de arranque creía tener, y no tenía
+
+**Contexto.** Al podar el `10` para meter la bitácora de la noche, el linter pedía 760c y yo los
+buscaba a ciegas. Al mirar el manifest para entender cuánto sobraba de verdad, salió el defecto.
+
+### 193.1 — Causa raíz (verificada leyendo el código)
+El chequeo #2 compara cada neurona contra **su** `cap` del manifest. Para las neuronas normales eso
+es correcto: su cap ES su techo. Para las tres **always-on** no, y por una razón aritmética que nadie
+había puesto en voz alta: sus caps suman `19000 + 4000 + 16000 = 39000` sobre un `bootCharsTarget`
+de **31500**. Los tres topes no pueden alcanzarse a la vez — sobran 7500 caracteres que no existen.
+
+Consecuencia medida, no estimada: el `10` se reportaba como `9331c/16000 · 58%` cuando su margen
+real era `31500 − 18420 − 3625 − 9331` = **124c**. La cifra que se lee como holgura estaba
+equivocada por un factor de **54**. Y no era local: al repartir el kernel apareció igual en los dos
+hermanos — cars `4030c/8000` con techo real 5771 (2229c imaginarios), bersaglio `20135c/27000` con
+techo real 21447 (**5553c** imaginarios, y precisamente en su router).
+
+No es un error de cálculo: el cálculo hace exactamente lo que dice. Es una **premisa falsa** —
+«el cap de una neurona es su techo»— que es verdad para 30 nodos y mentira para 3, y nada lo decía.
+
+### 193.2 — Solución estructural (kernel v1.15.0)
+Dos líneas, **ambas de reporte**:
+1. Por nodo always-on, el **tope EFECTIVO** = `bootCharsTarget − (lo que ocupan los otros always-on)`.
+   La línea pasa a `9372c/16000 · ⚠️ tope REAL 9420c (lo fija el BOOT, no su cap)`.
+2. Un aviso estructural, una sola vez: los caps de los always-on suman más que el presupuesto, luego
+   **son decorativos**. Es la premisa, dicha en voz alta donde se lee.
+
+### 193.3 — Lo que deliberadamente NO se hizo, y por qué
+**No bloquea.** Se consideró convertir el tope efectivo en gate y se descartó con motivo: repartir la
+culpa entre nodos **no tiene respuesta objetiva**. Si el router se pasa y la pizarra va sobrada, no
+hay criterio mecánico que diga cuál de los dos poda — eso lo resuelve un humano con §G.5 («paga
+donde está el peso»). Además el pre-aviso del 97% ya vive en el bloque del total. Tres gates
+diciendo lo mismo no dan tres veces la seguridad: enseñan a ignorar los tres (lección del canario).
+**Tampoco se recalibraron los caps a una partición exacta**: la única partición válida hoy deja ~20c
+de margen por nodo, o sea un gate que muerde en cada commit. El diagnóstico honesto es otro y ya se
+publica: *el arranque está al 99,8 % y no hay sitio.*
+
+### 193.4 — Verificación
+Probado que **muerde**: con `bootCharsTarget` subido a 50000 las cuatro líneas desaparecen (0
+coincidencias); restaurado, vuelven las 4. Responden al dato, no se imprimen siempre. Corrido en los
+tres repos: inmobiliaria SANO; cars 3→1 problema (los 2 que caen eran kernel stale, el que queda es
+su canario de hooks); bersaglio 3→1 (queda su auditoría Nivel-2 vencida, ajena).
+
+### 193.5 — Anti-patterns evitados
+Afirmar sin medir (§3.3): el «caps 39000 vs 31500» estaba **anotado como sospecha** desde la
+auditoría anterior y aquí se comprobó leyendo el manifest antes de escribir una línea. Y no se
+subió el techo, que es la salida falsa que §G.5 prohíbe (M-05).
+
+### 193.6 — Archivos
+`scripts/brain-check.mjs` (vía canónico) · `../brain-private/kernel/brain-check.mjs` + `VERSION`
+1.14.0→1.15.0 · repartido a cars y bersaglio. **INTACTOS**: los manifests de los tres (no se tocó
+ni un cap: el cambio es de reporte, no de política).
+
+### 193.7 — Doctrina
+El **gate #0 me paró por fork** (§51): edité `scripts/brain-check.mjs` a mano y el linter lo cazó
+contra su stamp. Tenía razón y el flujo correcto —canónico + `brain:pull`— es el que quedó.
+Familia de `38-GATES-QUE-MIENTEN`, con una variante nueva que merece nombre propio: aquí el gate no
+pasaba en verde sobre nada; **pasaba en verde diciendo un número verdadero de una pregunta que
+nadie hacía**. `9331/16000` es cierto. La pregunta que uno cree estar haciendo —*¿cuánto me cabe?*—
+tiene otra respuesta. → [[L-58]].
