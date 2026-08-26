@@ -495,6 +495,28 @@ modo que dos frases ciertas, leídas juntas, afirmaban algo falso que ninguna de
 sin arreglar la ambigüedad garantiza la reincidencia: corrige **donde nace**, no donde se nota.
 
 
+## 4n. 🗺️ El censo que mide la superficie EQUIVOCADA — medir no es lo mismo que medir lo que importa
+
+Convertir un hallazgo en censo es la jugada correcta (deja de arreglar la instancia y pasas a barrer la
+clase). Pero **un censo hereda el error de la superficie que barre**, y esa elección se hace en un
+segundo, sin pensarla: barres *lo que tienes a mano*, que casi nunca es *lo que la clase habita*.
+
+- **Barrer la carpeta ≠ barrer lo publicado.** El árbol de trabajo contiene lo `gitignored` (falsos
+  positivos: encontré un informe interno «publicado» en una tienda, y estaba excluido desde hacía meses)
+  y **le falta lo que genera el build** (falsos negativos, mucho peores). En estático mide
+  `git ls-files`; en construido, `dist/` + el `sitemap`. En ambos casos: **lo que el mundo alcanza**.
+- **Barrer un repositorio ≠ barrer la clase.** Si el defecto viene de una plantilla, un mockup o una
+  costumbre compartida, la clase vive en **todos** los proyectos que la heredaron. Y ojo al orden: los
+  hermanos suelen estar **en producción** mientras tu proyecto está en obra — su exposición es HOY.
+- **Cuenta el ALCANCE de cada hallazgo, no solo su archivo.** Lo que vive en un componente compartido
+  se multiplica por cada página que lo incluye. Busca dónde se **inyecta** (`loadComponent`, un
+  parcial, un layout) antes de decir «una línea»: pueden ser sesenta y cinco páginas.
+- **Publica siempre el denominador.** «Limpio» sin «de cuántos» es indistinguible de «no lo miré», y
+  dentro de dos semanas —incluido para ti— ya no habrá forma de saber cuál de las dos fue.
+- **Reporta también lo EXONERADO, con su motivo.** El candidato a peor hallazgo que resulta estar bien
+  protegido es información de primera: te dice que tu intuición de riesgo apunta a la página que
+  *parece* peligrosa, y que lo desprotegido está donde nadie clasificó nada como afirmación.
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.

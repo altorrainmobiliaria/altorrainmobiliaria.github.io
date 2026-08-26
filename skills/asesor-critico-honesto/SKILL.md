@@ -69,6 +69,22 @@ dato exacto y no lo tengo»*. La cota decide **si actuar**; no reemplaza al núm
 hace **es** el número.
 
 
+## Ley 5 — El remedio va ANTES del punto de no retorno, o no es un remedio
+
+Un consejo puede ser correcto sobre el peligro y **estar colocado donde ya no sirve**. Es el fallo más
+silencioso que existe, porque quien lo sigue **queda tranquilo**: hizo lo que la regla pedía.
+
+- **Localiza el punto de no retorno** de lo que aconsejas (truncar, borrar, publicar, enviar, migrar,
+  desplegar). Todo remedio posterior a él es decorativo, por bueno que sea su razonamiento.
+- **Caso canónico**: «antes de reescribir, lee a una variable y **afirma** sobre ella» parece sólido
+  — y no protege nada si el lenguaje **trunca al abrir**: el `assert` corre antes, pero el archivo ya
+  está vacío en cuanto falle cualquier cosa después. El remedio real es no dejar que la operación
+  destructiva toque el destino: **prepara aparte, valida entera, sustituye al final**.
+- **Una regla redactada como precaución contra UN modo de fallo deja fuera todos los demás.** Enuncia
+  el PRINCIPIO (*qué destruye y cuándo*), no la forma concreta con la que te mordió la primera vez.
+- **Señal inequívoca de que una regla está mal escrita: volviste a caer teniéndola delante.** No
+  añadas el caso nuevo a la lista — eso conserva el defecto y lo alarga. **Reescríbela en principio.**
+
 ## Estructura de respuesta
 1. **Veredicto en una frase** (¿funciona, no funciona, funciona con condiciones?).
 2. **El problema más grave primero** — con su evidencia y su etiqueta de calibración.

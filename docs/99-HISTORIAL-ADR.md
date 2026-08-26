@@ -9088,3 +9088,103 @@ Tres veces hoy el mismo patrón, y ya no es casualidad: **§213** el candado enu
 dejó el hero. 🎯 **Un arreglo que se aplica a una LISTA hereda el error de la lista, y nadie vuelve a
 mirarlo porque el arreglo consta como hecho.** El antídoto no es enumerar mejor: es **derivar la lista
 de una medición** —barrer todas las páginas y ver cuáles casan— en vez de escribirla de memoria.
+
+## 216. ADR-216 — El censo cruzado a las hermanas: Bersaglio limpia, Cars con dos, y mi propio censo midiendo la superficie equivocada
+
+**Contexto.** §215.6 cerró con una doctrina: *no enumerar mejor, sino **derivar la lista de una
+medición***. Su primera aplicación era obvia y no la había hecho: **las hermanas**. `altorracars` y
+`bersagliojewelry` nacieron de mockups parecidos y — a diferencia del portal — **están VIVAS e
+indexadas**. Si el patrón estaba allí, la exposición no era del cutover: era de hoy.
+
+### 216.1 — Y la primera medición fue la equivocada (el defecto es mío)
+Barrí los `.html` del **árbol de trabajo**. En Bersaglio saltó `session-report-20260708-2357.html`:
+un informe interno de consumo de tokens de una sesión mía, con pinta de estar publicado en la tienda.
+No lo está: **`.gitignore:61` lo excluye** (`session-report-*.html`) — alguien ya lo había previsto.
+🎯 **El árbol de trabajo NO es la superficie publicada.** Para el portal medí `dist/` + sitemap (lo
+servido); para las hermanas medí carpetas. Una medición sobre la superficie equivocada es una lista de
+memoria con pasos extra — exactamente lo que §215.6 dice evitar, cometido al aplicar §215.6.
+**Corrección**: censo #2 restringido a `git ls-files` (lo que git publica). Es el que vale.
+
+### 216.2 — Bersaglio: LIMPIA
+**42 páginas públicas rastreadas, cero coincidencias** en rentabilidad, prueba social, superlativo,
+conteo de negocio y promesa. Su único hallazgo (`13 años de oficio`) es comprobable y verdadero. Nada
+que hacer — y decirlo explícitamente vale, porque un censo que solo reporta lo sucio no distingue
+«limpio» de «no lo miré».
+
+### 216.3 — Cars: el simulador de crédito queda EXONERADO, y la inversión importa
+`simulador-credito.html` cotiza tasas mensuales por perfil (`1.27%` / `1.45%` / `1.65%` / `1.88%`).
+Era mi candidato a peor hallazgo: publicidad de producto financiero sin ser entidad financiera.
+**No lo es.** Tiene *gate* de aceptación («No acepto / Acepto los términos»), y por escrito: *«NO
+constituye una oferta comercial, propuesta formal, ni compromiso de aprobación de crédito»*, *«las
+tasas … son referenciales y pueden variar en cualquier momento sin previo aviso»*, y un bloque final
+en mayúsculas. 🎯 **La página que cotiza intereses está mejor protegida que la que promete ROI.**
+Lo que se ve peligroso se blinda; lo que no parece una afirmación —una estrellita en el pie— viaja sin
+nada. **El riesgo no vive donde la página parece jurídica.**
+
+### 216.4 — Cars, hallazgo real 1: `4.9 · 247 reseñas Google` en el pie de 65 páginas
+`snippets/footer.html:75-76`, texto plano: `<strong>4.9</strong>` + `· 247 reseñas Google`. **Sin
+enlace al perfil de Google.** `js/core/components.js:152` lo inyecta en todo `footer-placeholder`:
+**65 páginas públicas** lo muestran, vivas e indexadas.
+⚠️ **No afirmo que sea falso** — probablemente es cierto y comprobable en el perfil de Google. Afirmo
+lo verificable: **no es comprobable desde el repositorio, no enlaza a su fuente, y el cerebro de Cars
+no lo registra en ninguna parte**. Si es cierto, el arreglo es **un `<a href>` al perfil**, no un
+rediseño: la cifra deja de ser nuestra palabra y pasa a ser la de Google. Es la reparación más barata
+de todo el día.
+
+### 216.5 — Cars, hallazgo real 2: y su propio cerebro ya lo tenía escrito
+`nosotros.html`: `2.400+ Clientes desde 2017` · `21 días Promedio para vender` · `+500 vehículos
+verificados` (`16 Marcas` y `5 Bancos aliados` sí son contables). Misma forma que el trío de
+`/publicar` en §215.
+🎯 **Y no es que nadie lo supiera.** `docs/superpowers/specs/2026-05-26-rediseno-index-fase1-design.md`,
+sección **«12. Decisiones diferidas / a confirmar en review»**, línea 228: *«**Stats**: cifras de
+marketing ("21 días", "2400+", "0%") — **confirmar valores** o hacerlas configurables»*. Y la 101 las
+llama, con todas las letras, *«copy de marketing»* frente a las *«cifras reales donde mapean»*.
+**Quedó escrito el 26-may-2026, no se confirmó nunca, y salió a producción igual.** Tres meses vivas.
+
+### 216.6 — Doctrina: el pendiente que vive en un SPEC no se cierra
+§215 fue un arreglo que enumeró y dejó fuera. Éste es peor y es otra especie: **no se olvidó — se
+anotó**. Una sección «a confirmar en review» es **un ledger sin gate**: el spec se archiva cuando la
+fase entrega, y sus preguntas abiertas se archivan con él, marcadas como decididas por el mero hecho
+de estar escritas. 🎯 **Un pendiente solo existe si vive donde algo lo mira** (el `10`, con su `TODO-NN`
+y su gate). En un anexo de diseño, un pendiente es una nota de despedida.
+**Corolario para mí**: cuando cierre una fase con «decisiones diferidas», esas líneas **se mudan al
+ledger** antes de archivar el spec, o no se difirieron: se abandonaron.
+
+### 216.7 — Alcance y decisión
+**No edito la UI de Cars** (misma regla: nunca UI sin mockup, y el 216.4 tiene además decisión de
+negocio: enlazar o retirar). **No es mi repositorio de tarea**, pero dejarlo sin registrar donde su
+propio dueño lo mire sería repetir el defecto de 216.6 desde fuera. Por eso: fila en el ledger de Cars
+(`docs/10`, aditiva, solo-docs) + entrada en el brief de Daniel. Aquí queda el censo completo:
+**171 páginas públicas rastreadas** entre las dos hermanas.
+**Archivos INTACTOS**: todo `altorracars` salvo su `docs/10`; todo `bersagliojewelry`.
+
+### 216.8 — Y por el camino vacié un archivo, con la lección ya escrita desde hace meses
+Al insertar `LEGAL-08/09` en el `42-LEGAL` de cars, el script murió con `UnicodeEncodeError` (escribí un emoji como **par
+subrogado UTF-16** en vez de su punto de código). **El archivo quedó en 0 bytes.** Restaurado íntegro con
+`git checkout --` en el acto (20439c, sin pérdida) porque estaba limpio y commiteado.
+🎯 **Lo grave no es el fallo: es que L-47 existe desde §118 y describe esta trampa.** Su regla decía *«lee a
+una variable primero y **afirma** sobre ella antes de abrir en `'w'`»*. **Eso hice.** Y perdí el archivo
+igual, porque `'w'` **trunca al abrir** y mi fallo ocurrió *después*, durante el `.write()`.
+**El remedio estaba del lado equivocado del punto de no retorno**: el `assert` protege contra leer-tras-truncar,
+no contra fallar-tras-truncar. Una lección escrita como *precaución contra un modo de fallo* deja fuera todos
+los demás — la misma forma que §215 y §216.6, ahora dentro del propio cerebro.
+**Corregido**: L-47 pasa de describir una FORMA (`open(p,'w').write(open(p).read()+X)`) a enunciar el
+PRINCIPIO (*trunca al abrir, falle lo que falle después*), con una regla única —validar en memoria, escribir a
+`.tmp`, `os.replace`— que además **desactiva sola** a su tercera hermana (escribir bytes no traduce saltos).
+`36` queda en 11496c/11502 sin subir el techo: lo que entró se pagó comprimiendo lo que la regla nueva volvió
+redundante.
+
+### 216.9 — El canario de arranque de cars me bloqueó el commit, y su premisa era mía
+`brain:check` #24 en cars: *«una SEMANA de actividad git (última hace 5h) sin que ningún SessionStart escriba
+`docs/.boot-marker` (609h) — los hooks del harness NO disparan aquí»*. **Commit bloqueado** (y `--no-verify`
+está prohibido, §2).
+**Diagnóstico**: sus hooks están **bien** configurados (`.claude/settings.json` → `SessionStart` corre
+`brain-check --boot` + `session-handoff --boot-echo`). La «actividad de hace 5h» era **mía**: el commit
+`0ef5a8cc chore(kernel): al día con el canónico v1.15.0`, empujado a cars **desde la sesión de este repo**.
+🎯 **El canario infiere «los hooks están rotos» de «hubo commits sin arranque». La distribución cruzada de
+kernel produce exactamente eso: commits en un repo donde nadie abrió sesión.** La premisa era cierta cuando lo
+escribí, y la rompió una práctica que adopté después — yo mismo.
+**Resuelto sin cegarlo**: corrí el remedio que el propio gate ofrece (`node scripts/session-handoff.mjs
+--boot-echo`), que es literalmente el hook que faltó; NO usé `BOOT_CANARY_SKIP=1`, que lo apagaría para
+siempre. **Pendiente de kernel** (no hoy: sería el 2.º bump del día sobre un kernel compartido): que #24
+excluya los commits de distribución de kernel antes de acusar a los hooks.

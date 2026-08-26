@@ -35,3 +35,29 @@ Agravante: L-54 se había escrito **el día anterior** (§138), y el error que p
 **Qué pasó**: por la mañana amplié `verify:claims` porque no abría los artículos del journal, y le pegué un contador —*«47 archivos leídos»*— con este argumento escrito en el commit: *«ese número es lo único que distingue “lo revisé” de “no hice nada”»*. Por la tarde escribí **tres sondas ad-hoc** de censo y **ninguna imprimía cuántos archivos había abierto**. Las tres devolvieron *«0 colecciones escritas por ambos lados»*, y las tres estaban mal: la 1.ª no entendía la API modular, la 2.ª seguía siendo línea a línea —así que era **ciega al código bien factorizado**, donde la referencia se construye en un helper y el verbo cae en otra línea— y **ninguna de las dos abrió `js/`**, que es donde vive medio panel legacy.
 🎯 **La asimetría que lo explica**: esa misma mañana otra sonda mía reportó **94 % de discrepancia** y la comprobé **en el acto**, porque un número catastrófico pide explicación. Estas susurraron *«todo limpio»* tres veces seguidas y solo las cacé porque yo **sabía** que `propiedades` tiene que escribirse. **Un resultado tranquilizador no se audita solo.** Y su forma más peligrosa es el cero: *«no encontré nada»* es indistinguible de *«no miré en ningún sitio»*.
 **Regla**: 🎯 **una sonda ad-hoc debe imprimir su COBERTURA —cuántos archivos, qué directorios— junto al resultado, y con más razón cuando el resultado es cero.** Aplico a mis scripts de una vez el mismo listón que le exijo a un gate del CI; la diferencia entre los dos es que el gate lo vuelve a decir cada día y el script solo tenía una oportunidad. **Y el defecto del cerebro que esto destapa**: [[L-52]] («verde sobre archivos que nunca abre») estaba escrita para los **gates**, y yo la leía como una regla de gates. No lo es: es una regla de **cualquier cosa que enumere**. Corregido su alcance.
+
+### M-28 — Una lección mía llevaba meses escrita y su remedio estaba del lado equivocado del corte *(§216.8)*
+**Qué pasó**: L-47 (desde §118) avisa de que `open(p,'w')` destruye el archivo, y prescribe *«lee a una
+variable y **afirma** antes de abrir en `'w'`»*. Hice las dos cosas y **vacié `42-LEGAL` de cars igual**: el
+fallo fue un `UnicodeEncodeError` *durante* el `.write()`, ya truncado. El `assert` cubre leer-tras-truncar;
+no cubre fallar-tras-truncar.
+**El defecto**: la lección estaba redactada como **precaución contra el modo de fallo que la originó**, no
+como principio. Al leerla, reconocí la trampa, apliqué su remedio y me quedé tranquilo — la lección **produjo
+confianza sin producir protección**, que es peor que no tenerla.
+**Cómo se aplica**: al escribir una lección, pregunta *«¿este remedio protege del PELIGRO, o solo del CAMINO
+por el que llegué al peligro?»*. Si el peligro tiene un punto de no retorno (truncar, borrar, publicar,
+enviar), **el remedio va ANTES de ese punto o no es un remedio**. Y si ya existe una lección y vuelves a
+caer, el defecto no es tuyo: **es de su redacción** — reescríbela en principio, no añadas un caso más.
+
+### M-29 — Un gate de un repo hermano infería una causa de una correlación, y quien rompió la premisa fui yo *(§216.9)*
+**Qué pasó**: el canario de arranque de cars deduce *«los hooks del harness no disparan aquí»* de *«hay
+actividad git reciente y ningún `SessionStart` escribió el marcador»*. Me bloqueó un commit. Sus hooks estaban
+perfectos: la actividad era un commit de **distribución de kernel** que empujé desde la sesión de OTRO repo.
+**El defecto**: la premisa *«commits ⇒ alguien trabajó aquí en sesión»* era cierta cuando escribí el gate, y
+dejó de serlo cuando adopté el kernel compartido entre repos. **Nadie revisó la premisa porque el gate seguía
+pasando** — hasta que un día no.
+**Cómo se aplica**: (1) un gate que infiere una CAUSA de una CORRELACIÓN debe nombrar su premisa por escrito,
+para que se pueda auditar; (2) al adoptar una práctica nueva que cruza repos o entornos, pregunta *«¿qué gate
+supone que esto no pasa?»*; (3) ante un gate que bloquea, **verifica la premisa antes que el síntoma** —y
+prefiere el remedio que la vuelve cierta sobre el interruptor que lo apaga (`SKIP=1` es ceguera permanente
+a cambio de un commit).

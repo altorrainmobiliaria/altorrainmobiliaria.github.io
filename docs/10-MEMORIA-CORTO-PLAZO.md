@@ -52,24 +52,20 @@
 > §140): estrenar los caminos (1.4-1.8) → inventario → cutover. El resto, en PELOTAS.
 > **OLA 2**: el «gate del abogado» NO EXISTE — el abogado soy yo (Daniel, 26-ago) → TODO-49, §165. **Agenda legal a CERO** (§194).
 >
-> 🎭 **UN ✅ NO PRUEBA QUE MIRARA** (§174-§177, §195): 8 gates y ~1065 pruebas, cableados **después**
-> de encontrarlos verdes sin mirar nada — el último, `verify:claims`, no abría el journal, que es donde
-> más se afirma. **El CI nunca estuvo rojo**: lo afirmé sin mirar (§3.3).
+> 🎭 **UN ✅ NO PRUEBA QUE MIRARA** (§174-§177, §195): 8 gates cableados **tras** hallarlos verdes
+> sin mirar nada; `verify:claims` no abría el journal. **El CI nunca estuvo rojo**: lo afirmé sin mirar.
 >
-> 🔍 **26-ago — se auditó lo que nadie audita.** De **9 pendientes** medidos, **solo un tercio
-> describía la realidad**: 3 ya hechos, 2 falsos, 1 mal etiquetado (§204-§208). ⚠️ **ESTE nodo está
-> FUERA de los dos mecanismos de frescura** —ni fecha que el gate lea, ni marcador `verificado-vivo`—
-> y el arreglo está **especificado, no hecho** (§208). El runbook tenía **5 de 30 pasos asignados a
-> quien no puede ejecutarlos** (§210). 📄 Daniel tiene su brief (memoria `brief-lanzamiento-artifact`):
-> **si cambias el reparto 🤖/🧑 o las PELOTAS, ábrelo en el MISMO turno** — vive fuera del repo y
-> ningún gate lo ve envejecer (§211).
+> 🔍 **26-ago — se auditó lo que nadie audita.** De **9 pendientes**, **solo un tercio describía la
+> realidad** (§204-§208); el runbook tenía **5 de 30 pasos asignados a quien no puede** (§210).
+> ⚠️ **ESTE nodo está FUERA de los dos mecanismos de frescura** —ni fecha que el gate lea, ni marcador
+> `verificado-vivo`— y el arreglo está **especificado, no hecho** (§208). 📄 Brief de Daniel (memoria
+> `brief-lanzamiento-artifact`): **si cambias el reparto 🤖/🧑 o las PELOTAS, ábrelo en el MISMO turno**
+> — vive fuera del repo y ningún gate lo ve envejecer (§211).
 >
 > 🏨 **Alojamiento lleva DOS gates**: RNT + reglamento de PH que autorice EXPRESAMENTE (§178-§179).
 >
-> 📬 **LEADS — el camino roto está sustituido** (§188-§192): el aviso sale por **Resend** desde el
-> portal, no por el Gmail caído; el puntaje ya **no castiga por campos que el formulario nunca pide**;
-> y está probado contra el emulador que **el puntaje se guarda siempre y la marca «avisado» solo si el
-> correo salió**. ⏭️ El nurturing sigue apagado: 3 bloqueos revisados en §192 (uno cayó, uno nuevo —
+> 📬 **LEADS — camino roto sustituido** (§188-§192): el aviso sale por **Resend** desde el portal,
+> no por el Gmail caído; puntaje corregido y probado contra el emulador. ⏭ Nurturing **apagado** (§192:
 > sus plantillas enlazan al sitio retirado).
 >
 > ⏭️ **La evidencia postal NO tiene interfaz** (§204): sin fecha de IMPOSICIÓN el preaviso puede ser ineficaz y el contrato se prorroga un año. Encargo escrito. *El control de PH ya estaba HECHO.*
@@ -78,6 +74,10 @@
 > que solo vio la consola del dueño (§133-§136): pesa a favor de retirarlo pronto. Si un gate pasa,
 > pregúntate **qué archivos abre** ([[L-52]]); y córrelos con **`npm run verify`**, no de memoria.
 
+
+> 🔀 **26-ago — el censo saltó a las HERMANAS** (§216, vivas): Bersaglio **LIMPIA** (42 págs). **Cars**: `4.9 · 247 reseñas` sin fuente en el pie de **65 páginas** + stats que su propio spec
+> dejó «a confirmar» en mayo ⇒ **LEGAL-08/09** en su `42-LEGAL` (push a su `dev`; **no** mezclé a `main`:
+> documentar no redespliega un sitio). Su simulador de crédito, **exonerado**.
 
 > **▶ BERSAGLIO** — estado vivo en su nodo dueño: `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`.
 

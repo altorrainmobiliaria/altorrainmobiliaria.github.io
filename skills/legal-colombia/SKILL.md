@@ -156,6 +156,28 @@ alcanzable —enlazada desde un menú, indexable, compartible— dejan de ser *p
   por otra.
 - Aplica igual a `sameAs`, a `aggregateRating` en el JSON-LD y a los logos de «confían en nosotros».
   El buscador los trata como afirmaciones, y las penaliza cuando no las respalda nada.
+- **Censa la superficie PUBLICADA, no la carpeta.** Barrer los archivos del disco mete falsos
+  positivos (lo `gitignored` no está publicado) y puede perderse lo que genera el build. Mide lo que
+  el mundo alcanza: `git ls-files` en un sitio estático, `dist/` + `sitemap.xml` en uno construido.
+  Y **di cuántos archivos abriste**: sin ese número, «limpio» y «no lo miré» se escriben igual.
+- **Extiende el censo a las propiedades HERMANAS del mismo dueño.** Suelen nacer del mismo mockup y
+  heredan las mismas cifras de relleno — pero **están vivas e indexadas**, así que su exposición es
+  HOY, no el día del lanzamiento. La prioridad se invierte respecto de dónde estás trabajando.
+- **Cuenta el ALCANCE antes de calificar la gravedad.** Una cifra dentro de un componente compartido
+  (un pie, una cabecera, un parcial inyectado por JS) se multiplica por cada página que lo incluye:
+  una línea puede ser la afirmación más repetida del sitio. Busca **dónde se inyecta**, no dónde vive.
+- **El remedio más barato casi nunca es borrar: es CITAR.** Si la cifra es externa y verdadera
+  (reseñas de Google, un registro público), un enlace a la fuente **traslada la afirmación al
+  tercero**: deja de ser tu palabra. Cuesta un `<a href>`, no un rediseño ni una decisión de negocio.
+  Solo cuando no hay fuente citable llega la disyuntiva cara (sustituir por lo contable, o retirar).
+- **El riesgo NO está donde la página parece jurídica.** Lo que se ve peligroso —un simulador de
+  crédito, una página de términos— suele llegar blindado: gate de aceptación, «no constituye oferta»,
+  cifras marcadas como referenciales. Lo que viaja sin nada es lo que **nadie clasificó como
+  afirmación**: una estrellita en el pie, un contador en un «nosotros». Empieza por ahí.
+- **Un pendiente sobre una cifra que vive en un SPEC no se cierra.** Las secciones tipo «decisiones
+  diferidas / a confirmar en review» se archivan con la fase, y sus preguntas abiertas se archivan
+  marcadas como decididas por el mero hecho de estar escritas. Al cerrar una fase, **esas líneas se
+  mudan al ledger** (con su ID y su gate) o no se difirieron: se abandonaron — y salen a producción.
 
 ## 🧮 DOS unidades de cuenta, y usar la equivocada es un error de fondo
 
