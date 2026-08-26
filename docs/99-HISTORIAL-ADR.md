@@ -7777,3 +7777,42 @@ los dos mundos durante el cutover) para no cambiar una mentira por otra.
 
 **190.5 — Verificación.** 910 unitarias (+3) y 149 de emulador, `typecheck` de los dos codebases en 0,
 los 8 gates.
+
+## 191. ADR-191 — La asimetría que salva un lead, probada contra el emulador
+
+**191.0 — Escrita el MISMO día que la Function, no meses después.** §177 dejó la lección con un coste
+concreto: las pruebas de emulador son las únicas que ven las escrituras reales, y por estar fuera de
+todo gate una se rompió y siguió rota en `main` sin que nada lo dijera. Aquí se aplica en el momento
+que corresponde — acabo de construir una Function que escribe en Firestore (§188-§189) y **nada
+probaba que escribiera**.
+
+**191.1 — Para poder probarla, la plomería sale del trigger.** `procesarLeadNuevo(db, id, s, opts)`
+concentra puntuar + avisar + escribir; el trigger queda en lo que debe ser, un `if` y una llamada.
+Mismo movimiento que en el webhook de pagos (§176): lo que hay que demostrar no es el envoltorio del
+evento, son las escrituras.
+
+**191.2 — El invariante que ahora está demostrado.** Es una **asimetría**, y es todo el punto:
+· El **puntaje se guarda SIEMPRE** — es del lead, no del aviso. Hoy no hay clave de Resend y no sale
+  ningún correo; el lead tiene que quedar puntuado igual, o el día que se configure la clave habría
+  un agujero de leads sin tier que nadie recordaría rellenar.
+· La marca **`avisoEnviadoEl` solo si el correo salió de verdad**: ni sin clave, ni cuando Resend
+  rechaza. *Una marca que dice «avisado» sin que nadie recibiera nada es peor que no tener marca,
+  porque CIERRA la pregunta.* Es exactamente lo que pasó con los 16 leads del sitio viejo — ninguno
+  tenía marca, y nadie miró en 126 días.
+· Escribe con `merge`: no pisa lo que el lead ya traía.
+· Y el puntaje que se guarda es el del portal: un propietario que llena todo lo que `/publicar` pide
+  sale en `B`, no en el suelo donde lo dejaba el legacy (§189).
+
+**191.3 — Mordida en la dirección correcta.** Forzando la marca a escribirse siempre, **dos pruebas en
+rojo**, y precisamente las dos del caso peligroso (sin clave · Resend rechaza). Restaurado, verde. Una
+prueba de escritura que no se ha visto fallar no prueba que la escritura sea condicional.
+
+**191.4 — Y el gate de tipos me paró antes del commit.** Las seis pruebas **pasaban** y aun así
+`npm run verify` se puso rojo: `typecheck` rechazaba un cast de `Solicitud` a
+`Record<string, unknown>`. **Vitest no typecheckea**; el gate que cablée en §176 sí. Es la quinta vez
+en la sesión que un gate me corrige a mí, y la primera en que lo hace sobre algo que las pruebas
+daban por bueno — que es justo el hueco que §176 existía para tapar.
+
+**191.5 — Verificación.** **910 unitarias + 155 de emulador** (+6), `typecheck` de los dos codebases
+en 0, los 8 gates. Registrado en `21-MAPA-PORTAL` en el mismo cambio: la entrada de leads decía que
+`onNewSolicitud` recoge el documento, y eso dejó de ser cierto anoche.

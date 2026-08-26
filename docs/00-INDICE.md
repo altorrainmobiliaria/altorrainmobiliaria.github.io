@@ -140,6 +140,7 @@
 | §188 | 📬 **Aviso de leads a Resend** — mata la dependencia del Gmail roto y FUNDE dos pelotas del dueno en una. Sin guardia de Ley 2300 a proposito: va a ALTORRA, no a un consumidor. | 7633 |
 | §189 | 📊 **El puntaje media el FORMULARIO, no al lead**: +10 por un correo que nunca se pide. Dos mitades (intencion + relleno) y fuera el bonus horario, que lo hacia irreproducible. | 7691 |
 | §190 | 🔓 **El apaño que escribio su propia condicion de liberacion**: §122 dejo sus 3 razones, las 3 murieron y se retiro. Mapa origen->tipo al dominio, con prueba que rompe el build si falta. | 7743 |
+| §191 | 🧪 **La asimetria probada**: el puntaje se guarda SIEMPRE, la marca «avisado» solo si el correo salio. Una marca que miente CIERRA la pregunta — asi se perdieron los 16. | 7781 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |
