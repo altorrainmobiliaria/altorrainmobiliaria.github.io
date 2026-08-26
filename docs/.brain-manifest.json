@@ -131,6 +131,11 @@
       "lines": 66,
       "chars": 8990,
       "_comment": "Shard de 36 el 2026-08-26 (ADR 175): la familia de 'gates que mienten' (L-48, L-52, L-56, L-57) crecio TRES veces en un solo dia y reventaba el tope de 36. Se parte por TEMA, no por era: aqui las cuatro completas + la escalera de gravedad que las ordena; en 36 quedan los titulares. Cap MEDIDO sobre el real (7192c / 53L) + 25%, no a ojo (M-05). ESTE nodo SI deberia crecer: cada vez que un ✅ resulte no significar lo que parece, su leccion viene aqui."
+    },
+    "docs/44-DICTAMENES.md": {
+      "lines": 40,
+      "chars": 10415,
+      "_comment": "Shard de 42-LEGAL el 2026-08-26 (ADR 186): 42 llevaba TRES vueltas al 100% y el impuesto se pagaba en trozos de 20 caracteres (§185.6). Se parte por FRONTERA, no por tamano: las reglas duras, los gates por feature y el checklist son doctrina ESTABLE; los dictamenes son un REGISTRO que crece uno por pregunta cerrada. Cap MEDIDO sobre el real (7715c / 30L) + 35%, con lines DERIVADO de la densidad real (~257 c/linea) para que ambos ejes aprieten en el mismo punto. ESTE nodo SI debe crecer: cada dictamen nuevo entra aqui. Si revienta, el siguiente corte es por MATERIA (recaudo/seguros vs vivienda/consumidor), no subir el techo."
     }
   },
   "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",

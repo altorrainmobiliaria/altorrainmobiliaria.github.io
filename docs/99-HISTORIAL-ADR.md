@@ -7533,3 +7533,51 @@ re-descubrirla.
 
 **Fuentes**: [Ley 820 de 2003](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=8738) ·
 [Ley 527 de 1999](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=4276)
+
+## 186. ADR-186 — Shard de `42-LEGAL`: se parte por FRONTERA, no por tamaño
+
+**186.0 — La deuda estaba declarada y con la frontera puesta.** §185.6 dejó escrito que `42-LEGAL`
+llevaba **tres vueltas al 100 %** y que el impuesto se estaba pagando en trozos de veinte y sesenta
+caracteres — *«eso ya no es GC, es síntoma»*— con la frontera nombrada de antemano para no tener que
+re-descubrirla. Esta vuelta solo hubo que ejecutar lo decidido, que es exactamente para lo que sirve
+declarar una deuda en vez de arrastrarla.
+
+**186.1 — Medir antes de cortar, y el número confirmó la frontera.** Las seis secciones del nodo:
+reglas duras 3838c · gates por feature 2207c · instrumentos de cobro 3029c · **dictámenes 6591c** ·
+checklist 1238c · agenda 2446c. Los dictámenes eran **la sección más grande** y —lo que decide— **la
+única que crece sola**: una entrada por pregunta cerrada, y yo solo le había añadido cinco esa noche
+(§165, §171, §183, §184, §185). Las otras cinco secciones son doctrina ESTABLE: se corrigen, no se
+acumulan. *La frontera correcta no es «lo que pesa» sino «lo que crece», porque el que crece va a
+volver a reventar el techo y el otro no.*
+
+**186.2 — El corte.** Nace `docs/44-DICTAMENES.md` con los dictámenes íntegros y, en su cabecera, lo
+que un lector necesita antes de creerse ninguno: qué es un dictamen aquí (leer la norma en fuente,
+tomar posición, dejar fundamento, **medir el riesgo residual**) y qué NO es (concepto de abogado
+titulado, ni revisado por tercero). En `42-LEGAL` queda un puntero — los gates por feature ya citan
+su § cada uno, así que el enrutamiento no se rompe. **`42-LEGAL`: 19998 → 13776** (69 % de su tope,
+con aire para años). Cap del nodo nuevo **MEDIDO** sobre el real +35 %, con las líneas DERIVADAS de la
+densidad real para que los dos ejes apreten en el mismo punto.
+
+**186.3 — Y el linter exigió lo que yo no había hecho.** Registré la hija en el router y di el shard
+por bueno; `brain:check` respondió: *«neurona 44-DICTAMENES sin registro DIRECTO en 40-LOBULOS»*. Es
+la regla de «nada huérfano» de §G.5, y tenía razón: una hoja referenciada desde el router pero no
+desde **su neurona madre** es alcanzable por casualidad, no por estructura. **Van cuatro veces hoy que
+un gate me corrige a mí**, y las cuatro han sido baratas.
+
+**186.4 — [[L-46]] por SEXTA vez, y esta cambia la gravedad de la lección.** Insertando el registro en
+`40-LOBULOS` con `python3 -c "…"`, el texto llevaba `` `docs/44-DICTAMENES.md` `` entre acentos
+graves. Bash los expandió e **intentó EJECUTAR el archivo markdown como script**: las líneas que
+empiezan por `>` son redirecciones, así que dejó un fichero basura de 0 bytes en la raíz del repo
+(verificado con `git status`, borrado tras comprobar que estaba vacío y sin trackear). El texto entró
+mutilado —el nombre del archivo desapareció— y por eso el linter no veía el registro.
+🔴 **Lo importante no es el carácter perdido: es que un nombre entre backticks dentro de comillas
+dobles es una ORDEN DE EJECUTARLO.** Cinco veces conté esta lección como «el shell se come texto», y
+contada así se subestima sola. Es ejecución arbitraria de lo que haya ahí dentro. La regla no cambia
+—*el texto nunca viaja como argumento de shell*— pero su **motivo** sí, y con el motivo bueno cuesta
+más ignorarla.
+
+**186.5 — Verificación.** `42-LEGAL` 13776/20000 y `44-DICTAMENES` 7717/10415, ambos con sus dos ejes
+holgados. Contenido del nodo nuevo íntegro (lo escribió un script en FICHERO, no un `-c`, que es
+justamente la salida que la regla prescribe). `brain:check`: **CEREBRO SANO**, con la hija registrada
+en el router Y en su madre. Arranque 31142 — el shard costó ~80c de router y compró aire real donde
+apretaba.

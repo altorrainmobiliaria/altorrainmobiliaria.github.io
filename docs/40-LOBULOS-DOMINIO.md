@@ -9,7 +9,7 @@
 | Lóbulo | Archivo | Dominio | Origen |
 |---|---|---|---|
 | 📊 **Mercado / Competencia** | `docs/41-MERCADO.md` | Inteligencia inmobiliaria Cartagena/Colombia: benchmark de competidores, matriz impacto×esfuerzo, estrategia anti-rival | Destilado de `_legacy/MEGA-PLAN.md` (2026-06-09) |
-| ⚖️ **Legal** | `docs/42-LEGAL.md` | Marco legal Colombia del portal: reglas duras que moldean el producto, gates bloqueantes por feature, checklist de textos obligatorios, agenda del abogado (Ley 820, RNT, Habeas Data, pagos/D.1981, firma electrónica, SIC, tributario) | Workflow R3 `wf_5cf498d4` (17 agentes, 2026-07-10) — detalle en `specs/R3-LEGAL-COLOMBIA-2026-07.md` |
+| ⚖️ **Legal** | `docs/42-LEGAL.md` | Marco legal Colombia del portal: reglas duras que moldean el producto, gates bloqueantes por feature, checklist de textos obligatorios, agenda del abogado (Ley 820, RNT, Habeas Data, pagos/D.1981, firma electrónica, SIC, tributario). 🌿 **Hija: `docs/44-DICTAMENES.md`** — el «por qué» de cada posición tomada; se separó porque es un REGISTRO que crece (uno por pregunta cerrada) mientras el resto de este nodo es doctrina estable (§186) | Workflow R3 `wf_5cf498d4` (17 agentes, 2026-07-10) — detalle en `specs/R3-LEGAL-COLOMBIA-2026-07.md` |
 | 🏢 **Operación** | `docs/43-OPERACION.md` | Fundación Operativa (TODO-34): identidad legal real (doble NIT), cómo opera HOY (administración probada), dictámenes de versión canónica del corpus, cifras en guerra, backlog F4 por riesgo, lista de verificación legal F2. Sin PII (repo público) — detalle → bóveda | Triaje F1 `wf_5acd4002` (9 lectores, 143 archivos, 2026-07-24, ADR §62) |
 
 ## Rangos de namespace (SCHEMA)
