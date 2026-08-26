@@ -8207,3 +8207,28 @@ preventiva y más barata: **enumera los pares «declarado ↔ desplegado» del p
 uno** —funciones, índices, reglas, secretos—. Donde no exista forma de leer el lado desplegado, eso
 **no es un par verificable**: se marca como sello y se dice, en vez de dejar que herede el ✅ del
 vecino. → [[L-59]].
+
+### 198.8 — Cuarto par: SECRETOS (una dirección medida, la otra no)
+Cerrando el barrido. **Declarado → existe: ✅ 4/4.** Las llamadas reales a `defineSecret()` son
+`RESEND_API_KEY` (portal) y `EMAIL_USER` · `EMAIL_PASS` · `GITHUB_PAT` (legacy), y **los cuatro existen**
+en Secret Manager. `WOMPI_EVENTS_SECRET` **NO existe** — y eso es *coherente*, no un fallo: es
+exactamente la razón por la que el endpoint del webhook sigue sin registrarse (§140, §176).
+⚠️ **Falso positivo de mi primer grep**: salieron además `LLM_API_KEY` y `SOMESERVICE_KEY`. No son del
+proyecto — viven en `skills/crm-architect/assets/templates/`, una **plantilla**. *Al enumerar «lo que
+el proyecto declara», los assets de las skills contaminan el barrido: hay que excluirlos o mirarlos
+uno a uno.*
+**Existe → lo declara alguien: ⚠️ NO comprobable con seguridad.** El único comando que lo sabría es
+`functions:secrets:prune`, y **no tiene `--dry-run`**: solo `--force`, y **destruye**. Sin `--force`
+preguntaría, y sin terminal eso es [[L-57]]. Así que no se corrió: un secreto huérfano es higiene
+menor y no justifica un comando destructivo a ciegas.
+
+### 198.9 — El marcador del barrido completo, sin redondear
+| par | declarado → desplegado | desplegado → declarado |
+|---|---|---|
+| **funciones** | ✅ 18/20 portal · 13/15 legacy, las 4 ausentes explicadas | ✅ **cero huérfanas** |
+| **índices** | ✅ 18 = 18 | ✅ 18 = 18 |
+| **reglas** | ⚠️ no hay comando que las LEA (sello de §132, 25-ago) | ⚠️ ídem |
+| **secretos** | ✅ 4/4 | ⚠️ solo con un comando destructivo |
+**Cinco casillas medidas de ocho, y tres declaradas como no medibles.** Ese es el resultado honesto —
+y es más útil que un «todo en orden», porque dice **dónde** el proyecto depende de la memoria de
+alguien en vez de una comprobación: en las reglas, y en saber qué secretos sobran.
