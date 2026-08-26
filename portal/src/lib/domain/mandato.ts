@@ -26,6 +26,7 @@
  */
 
 import type { COP } from './shared';
+import { diasHabiles } from './calendario-co';
 
 export const ESTADOS_MANDATO = ['esperando', 'retenido', 'liberado', 'reversado', 'fallido'] as const;
 export type EstadoMandato = (typeof ESTADOS_MANDATO)[number];
@@ -65,32 +66,17 @@ const PERMITIDAS: Record<EstadoMandato, Transicion[]> = {
   fallido: [],
 };
 
-/** Días HÁBILES entre dos fechas ISO (excluye sábados y domingos; los festivos, ver la nota). */
-export function diasHabiles(desde: string, hasta: string): number {
-  const a = new Date(`${desde}T00:00:00Z`);
-  const b = new Date(`${hasta}T00:00:00Z`);
-  if (Number.isNaN(a.getTime()) || Number.isNaN(b.getTime()) || b < a) return 0;
-  let n = 0;
-  const cur = new Date(a);
-  while (cur < b) {
-    cur.setUTCDate(cur.getUTCDate() + 1);
-    const d = cur.getUTCDay();
-    if (d !== 0 && d !== 6) n += 1;
-  }
-  return n;
-}
-
 /**
  * ¿Venció ya el retracto?
  *
- * ⚠️ **No descuenta los festivos colombianos, y eso hace que la cuenta sea CONSERVADORA por el lado
- * equivocado**: con un festivo dentro, el plazo real es más largo que el calculado, así que esta
- * función podría decir «ya venció» un día antes de tiempo. Por eso `problemasParaLiberar` exige el
- * vencimiento **más un día de margen**: mientras no haya un calendario de festivos, el margen sale
- * más barato que una reversión después de girar. Cuando exista el calendario, se quita el margen.
+ * ✅ **El margen de un día YA NO ESTÁ, y esa es la noticia** (§172). La primera versión sumaba un día
+ * de más porque `diasHabiles` no sabía de festivos y podía decir «ya venció» antes de tiempo; el
+ * margen estaba declarado y era honesto, pero era un parche. Ahora el cálculo viene de
+ * `calendario-co`, que **descuenta los 18 festivos colombianos**, así que el plazo es el que dice la
+ * ley: ni un día más —que retendría dinero sin causa— ni uno menos.
  */
 export function retractoVencido(aprobadoEl: string, hoy: string): boolean {
-  return diasHabiles(aprobadoEl, hoy) >= DIAS_RETRACTO_HABILES + 1;
+  return diasHabiles(aprobadoEl, hoy) >= DIAS_RETRACTO_HABILES;
 }
 
 /** Lo que impide liberar. Vacío = se puede. No lanza: devuelve razones. */

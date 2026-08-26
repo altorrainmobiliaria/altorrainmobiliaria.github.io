@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { diasHabiles } from './calendario-co';
 import {
   DIAS_RETRACTO_HABILES,
-  diasHabiles,
   explicarProblemaMandato,
   mover,
   problemasParaLiberar,
@@ -20,36 +20,30 @@ const m = (estado: EstadoMandato, extra: Partial<Mandato> = {}): Mandato => ({
   ...extra,
 });
 
-describe('diasHabiles — se cuentan hábiles porque así lo dice la norma', () => {
-  it('no cuenta sábado ni domingo', () => {
-    // 2026-08-27 es jueves. Al martes siguiente (2026-09-01) hay 3 hábiles: vie, lun, mar.
-    expect(diasHabiles('2026-08-27', '2026-09-01')).toBe(3);
-  });
-
-  it('un fin de semana entero suma cero', () => {
-    // sábado 2026-08-29 → domingo 2026-08-30
-    expect(diasHabiles('2026-08-29', '2026-08-30')).toBe(0);
-  });
-
-  it('mismo día es cero, y hacia atrás también', () => {
-    expect(diasHabiles('2026-08-27', '2026-08-27')).toBe(0);
-    expect(diasHabiles('2026-08-27', '2026-08-20')).toBe(0);
-  });
-
-  it('no explota con fechas basura', () => {
-    expect(diasHabiles('no-es-fecha', '2026-08-27')).toBe(0);
+describe('diasHabiles — el dueño es `calendario-co`, aquí solo se comprueba el enganche', () => {
+  it('🎯 ahora DESCUENTA festivos: la Semana Santa de 2026 quita dos días', () => {
+    // Antes de §172 esta cuenta daba 5 y por eso `retractoVencido` sumaba un día de margen.
+    expect(diasHabiles('2026-03-30', '2026-04-06')).toBe(3);
   });
 });
 
-describe('retractoVencido — con un día de MARGEN a propósito', () => {
-  it('a los 5 hábiles TODAVÍA no vence: falta el margen por los festivos', () => {
-    // lunes 2026-08-24 + 5 hábiles = lunes 2026-08-31
+describe('retractoVencido — SIN margen, porque ya hay calendario (§172)', () => {
+  it('🎯 a los 5 hábiles VENCE: ni un día más, que sería retener dinero sin causa', () => {
+    // lunes 2026-08-24 + 5 hábiles = lunes 2026-08-31, y no hay festivo en medio.
     expect(diasHabiles('2026-08-24', '2026-08-31')).toBe(DIAS_RETRACTO_HABILES);
-    expect(retractoVencido('2026-08-24', '2026-08-31')).toBe(false);
+    expect(retractoVencido('2026-08-24', '2026-08-31')).toBe(true);
   });
 
-  it('al sexto hábil sí vence', () => {
-    expect(retractoVencido('2026-08-24', '2026-09-01')).toBe(true);
+  it('al cuarto hábil todavía NO vence', () => {
+    expect(retractoVencido('2026-08-24', '2026-08-28')).toBe(false);
+  });
+
+  it('🔴 con un festivo en medio, el plazo se ESTIRA — que es justo lo que el margen tapaba', () => {
+    // Del jueves 2026-12-03 al jueves 2026-12-10 hay 5 días de semana, pero el 8 es festivo:
+    // solo 4 hábiles, así que el retracto sigue corriendo.
+    expect(diasHabiles('2026-12-03', '2026-12-10')).toBe(4);
+    expect(retractoVencido('2026-12-03', '2026-12-10')).toBe(false);
+    expect(retractoVencido('2026-12-03', '2026-12-11')).toBe(true);
   });
 
   it('el día siguiente a la aprobación nunca vence', () => {
