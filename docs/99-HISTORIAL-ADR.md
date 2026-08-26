@@ -5809,3 +5809,50 @@ cola ordenada por espera y la decisión.
 **153.7 — Archivos.** `portal/src/scripts/gestion-perfiles.ts` · `portal/src/pages/gestion.astro` ·
 `portal/src/scripts/gestion-alta-ui.ts` · `functions/index.js` (`ACCIONES_VALIDAS`) ·
 `portal/scripts/verify-data-invariants.mjs` · `portal/design/mockups/ALTORRA Perfiles.dc.html`.
+
+## 154. ADR — «Crear cuenta» abierta, y la casilla que sin prueba no prueba nada ⟦OPUS-5⟧ (2026-08-25)
+
+**154.0 — La decisión, y de quién era.** El registro público llevaba cerrado desde §90 esperando el
+visto bueno del dueño — **no** por el gate legal: la Política de Tratamiento de Datos está publicada
+y verificada desde el 20 de agosto. Daniel lo dio el 2026-08-25, preguntado explícitamente y con el
+riesgo delante. *Un «apruebo todo» no cubre por sí solo abrir una puerta al público: eso se pregunta
+aparte.*
+
+**154.1 — ⚠️ El riesgo que se acepta, dicho donde vive.** El anti-bot sigue aplazado (§132.5), así
+que **cualquiera con un correo puede tener SESIÓN**. Lo que no puede tener es **permisos**: el claim
+`admin` lo pone un trigger desde `usuarios/{uid}` (§99) y ninguna cuenta nueva lo trae. Una sesión
+sin claim no abre nada del panel ni lee un dato ajeno — y eso lo sostienen las Rules, no la pantalla.
+La distinción importa: lo que se abre es la puerta del vestíbulo, no la de la caja fuerte.
+
+**154.2 — ⚖️ La casilla no es decoración, y dibujarla no basta.** La Ley 1581 (art. 9) exige
+autorización **previa y expresa**, y el Decreto 1377 (art. 5) exige **conservar prueba** de ella. De
+ahí tres cosas concretas:
+· **no viene marcada de fábrica** — una casilla pre-marcada no es previa ni expresa;
+· **sin ella no se crea la cuenta**, y el mensaje explica por qué en vez de decir «campo requerido»;
+· al crearse **se registra la PRUEBA en el servidor**, reutilizando `registrarEvento`, que ya
+escribía exactamente lo que hace falta: uid verificado, correo, IP, navegador y fecha.
+*Una casilla marcada sin ese registro no prueba nada el día que alguien la reclame*, que es el único
+día en que importa.
+
+**154.3 — Verificación del correo, de inmediato.** Es lo más barato que frena el registro basura
+mientras no exista el anti-bot, y de paso confirma que el correo por el que vamos a escribirle es
+suyo. No bloquea la sesión: se le dice. Bloquearla convertiría un incordio en una puerta cerrada
+para quien tiene el correo lento.
+
+**154.4 — Desviación del mockup, deliberada.** El dibujo pide «mínimo 10 caracteres»; el mínimo REAL
+lo impone Identity Platform y son **12**. Construirlo fiel habría hecho un formulario que **miente** y
+que devuelve un error de plataforma que no explica nada. Se comprueba en el cliente antes de llamar,
+para no gastar el viaje.
+
+**154.5 — Verificado sin crear ninguna cuenta.** Las dos tarjetas alternan; la casilla no nace
+marcada; el enlace apunta a la Política; y las tres ramas de validación —datos vacíos, clave corta,
+sin autorización— cortan ANTES de llamar a Firebase, comprobado además en la pestaña de red: **cero
+peticiones a identitytoolkit**. Probar el camino feliz habría exigido crear una cuenta real, que es
+justo lo que no se hace desde aquí.
+
+**154.6 — Qué desbloquea.** La pantalla del titular del perfil de inquilino (§152), los favoritos con
+cuenta y las alertas asociadas a una persona. Es la pieza que convierte el portal de un catálogo en
+un sitio con usuarios.
+
+**154.7 — Archivos.** `portal/src/pages/ingresar.astro` · `functions/index.js` (`cuenta-creada` en
+`ACCIONES_VALIDAS`, desplegado).

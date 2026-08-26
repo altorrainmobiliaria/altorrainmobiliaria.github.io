@@ -132,6 +132,7 @@
 | §151 | 🏷️ **Pipeline de compraventa, 7 etapas** (Ola 2). La venta se perfecciona con el REGISTRO, no con la escritura (art. 756 C.C.): `vendida()` solo en registro y la pantalla grita en escritura. No es un kanban, a propósito. | 5646 |
 | §152 | 🪪 **Perfil de inquilino 1→N** (Ola 2): el ÚNICO sitio donde escribe alguien de FUERA — el `uid` sale del token, nunca del cuerpo. Sin central de riesgo (ilegal sin contrato) y sin cobrar al aspirante. | 5705 |
 | §153 | ⏱️ **La revisión del perfil**: la cola se ordena por ESPERA, no por llegada — una promesa de 24h sin dónde verse es un deseo. Sin puntaje (sería inventar la central de riesgo). Abrir un soporte queda escrito. | 5767 |
+| §154 | 🔓 **«Crear cuenta» ABIERTA** (visto bueno del dueño). Sesión ≠ permisos: el claim no viaja con el alta. Y la casilla de habeas data deja PRUEBA en el servidor — sin ella, marcarla no prueba nada. | 5813 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |
