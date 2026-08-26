@@ -6547,3 +6547,56 @@ certificar, y eso es de la fase 4 del runbook.
 
 **168.7 — Archivos.** `portal/src/lib/domain/certificacion.ts` (+ `.test.ts`) · `docs/43-OPERACION.md`
 (la nota corregida). Commit `0144955`.
+
+## 169. ADR — El webhook de Wompi: tres trampas conocidas y una cuarta que salió escribiéndolo ⟦OPUS-5⟧ (2026-08-26)
+
+**169.0 — Por qué AHORA, sin cuenta de comercio.** Es la pieza de más riesgo del carril de pago: un
+webhook mal tratado **no da un error, da un cobro doble o un pago que nunca se acredita**. El dominio
+no necesita cuenta, y el día que la haya lo último que se quiere es estar escribiendo esto con dinero
+de verdad corriendo por delante. 26 pruebas, cada trampa con su mordida probada.
+
+**169.1 — Trampa 1: la firma NO lleva un conjunto FIJO de campos.** El evento trae
+`signature.properties`, un array de rutas que hay que resolver **en orden** contra el JSON. Hardcodear
+`id + status + amount_in_cents` funciona hasta el primer evento con otro `properties`, y entonces la
+validación empieza a rechazar eventos **legítimos** — o peor, alguien la desactiva «porque da
+problemas». Es **SHA-256 simple, no HMAC**, y el secreto va de **sufijo**. *Mordida: al hardcodearlo
+caen 2 pruebas.* Y si una ruta no resuelve se devuelve `null`, nunca cadena vacía: **una firma a
+medias es una firma inventada** que además puede llegar a coincidir con algo.
+
+**169.2 — Trampa 2: la clave idempotente NO es `transaction.id`.** Una misma transacción emite varios
+eventos (PSE y Nequi mandan `PENDING` y después `APPROVED`). Con la transacción como clave, el
+segundo —**el que confirma el pago**— se descarta como duplicado y el cobro queda eternamente
+pendiente. Se usa el `id` del EVENTO, y en su defecto `transaction.id + status`. *Mordida: 2 pruebas.*
+
+**169.3 — Trampa 3: firma inválida ⇒ responder 200 igualmente.** Suena al revés y no lo es: Wompi
+reintenta lo no-200 hasta **3 veces en 24 h**, así que devolver error a un evento **falsificado**
+gasta ese presupuesto en el atacante. El 500 se reserva para una caída **nuestra**, que es la que sí
+conviene que se reintente.
+
+**169.4 — 🔴 Y la cuarta, que no estaba en la skill y salió escribiendo el módulo: EL ORDEN.**
+Primero la firma, **después** la idempotencia. Al revés, basta con enviar basura llevando la clave de
+un evento legítimo para que el de verdad se descarte luego como «duplicado»: **una denegación de
+servicio dirigida contra un cobro concreto, gratis**. *Un guardia que apunta en la lista antes de
+mirar el carnet no es un guardia.* Corolario: la clave se marca como vista **cuando el evento se
+procesó**, no cuando se recibió. *Mordida: al invertir el orden, cae 1 prueba.*
+
+**169.5 — `APPROVED` es «retenido», NO «liberado».** Que el pago se aprobara solo dice que el dinero
+salió del arrendatario. Liberarlo al propietario es una **decisión nuestra** con sus condiciones
+(§165), no la consecuencia automática de un webhook. Confundir las dos cosas es exactamente cómo se
+gira dinero que después hay que devolver. Y el `default` del mapeo va al estado más conservador: **un
+`status` que no conoces no es «aprobado»**.
+
+**169.6 — Puro y síncrono a propósito.** Produce la **cadena** a firmar, no el hash. Así se prueba el
+90 % del riesgo —orden de campos, sufijo del secreto, `properties` dinámico, ruta que no resuelve—
+con pruebas de tabla y **sin criptografía, sin servidor y sin credenciales**. Quien tenga
+`crypto.subtle` hashea y compara; la comparación en tiempo constante sí vive aquí, porque es lógica.
+
+**169.7 — Lo transferible sale del caso y entra a DOS skills** (mandato §G.4): `wompi-webhooks-
+validator` gana los puntos 4, 5 y 6 (el orden, el `default` conservador, la cadena pura separada del
+hash) — que **no tenía**; y `auditoria-financiera` gana el corolario del orden en su invariante 3 de
+idempotencia, que hablaba del qué y no del cuándo.
+
+**169.8 — Verificación.** 775 tests (26 nuevos), 7 gates en verde. Sin endpoint todavía: el dominio
+se conecta cuando exista la cuenta de comercio, y eso es de Daniel (§165.7).
+
+**169.9 — Archivos.** `portal/src/lib/domain/wompi-evento.ts` (+ `.test.ts`). Commit `0267991`.
