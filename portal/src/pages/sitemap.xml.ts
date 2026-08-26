@@ -62,6 +62,11 @@ const RUTAS: Entrada[] = [
   { ruta: '/invertir', prioridad: 0.7, frecuencia: 'weekly' },
   { ruta: '/journal', prioridad: 0.6, frecuencia: 'weekly' },
   { ruta: '/aliados', prioridad: 0.5, frecuencia: 'monthly' },
+  // Nosotros (§159): la razon social, el NIT y la matricula, que son lo que alguien busca
+  // cuando quiere comprobar con quien esta hablando. Faltaba, y sin sitemap una pagina nueva
+  // depende de que Google la tropiece por un enlace — que es justo lo que este archivo dice
+  // que pasa, en su propio comentario, y le paso igual (§162).
+  { ruta: '/nosotros', prioridad: 0.5, frecuencia: 'monthly' },
   // Legales: prioridad baja pero SÍ indexables — son señal de confianza y la matrícula de
   // arrendador debe ser públicamente verificable (Ley 820 art. 31).
   { ruta: '/terminos', prioridad: 0.3, frecuencia: 'yearly' },
