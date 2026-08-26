@@ -43,11 +43,18 @@
 > ⚠️ El deploy de las **rules/indexes/storage del portal** es **COORDINADO**: reemplaza el ruleset del proyecto
 > compartido con el legacy → NO desplegar hasta el retiro del legacy / cutover (ver `portal/firebase/README.md`).
 
-## Cloud Functions (7 DESPLEGADAS — verificado `functions:list` 2026-07-10)
+## Cloud Functions del LEGACY — QUÉ es cada una (el censo VIVO lo lleva `05`)
+⚠️ Decía «7 DESPLEGADAS» mientras `05` decía 13: dos nodos contradiciéndose, y éste llevaba seis
+semanas rancio (§180). El recuento tiene un dueño, `05`; aquí solo los nombres, que no caducan.
 `onNewSolicitud` (email admin + lead scoring) · `onSolicitudStatusChanged` (email cliente) · `onPropertyChange`
 (regen SEO debounce 5min) · `triggerSeoRegeneration` (HTTPS callable super_admin) · `createManagedUserV2`
-· `deleteManagedUserV2` · `updateUserRoleV2`. ⚠️ `cleanupOldLoginAttempts` NO está desplegada (la doc vieja decía 8).
-Siguen vivas sin sitio que las use (modo obra) — su apagado/mantenimiento se decide con el MEGA-PLAN.
+· `deleteManagedUserV2` · `updateUserRoleV2`. Siguen vivas sin sitio que las use (modo obra) — su
+apagado se decide con el MEGA-PLAN.
+🔴 **DOS del legacy se quedan SIN desplegar A PROPÓSITO**: mandan correo solas, y mientras la
+contraseña de aplicación de Gmail siga rota (pelota 1 del `10`) desplegarlas es fabricar fallos
+silenciosos. No es un olvido del deploy — es una decisión, y por eso está escrita.
+🔑 **Política de contraseña del proyecto: mínimo 12 caracteres** (Identity Platform, consola — ningún
+gate la ve, [[L-49]]).
 
 ## Bloqueante Eventarc / CF 2nd gen (IAM — PÚBLICO; son identidades, no secretos)
 1er deploy 2nd gen falla con "Eventarc Service Agent permission denied" (ver `30 L-07`). Otorgar en IAM
@@ -118,10 +125,11 @@ dos negocios, que hoy están separadas.
 - **Google Maps API key** y **VAPID key (FCM)** — opcionales, en `js/firebase-config.js` (`window.AltorraKeys.gmapsApiKey`/`vapidKey`).
   Restringir GMAPS por HTTP referrer (`https://altorrainmobiliaria.co/*`). La `apiKey` de Firebase SÍ es pública (frontend).
 
-## Datos vivos (censo REAL 2026-07-10 vía REST pública + rules — reemplaza al seed de abril)
-**`propiedades/` = VACÍA** (las 5 de abril ya no existen; `system/meta.lastModified` = 2026-04-17). Fichas de las 5
-rescatadas del git (`6149652:p/*.html`) → bóveda `research-archive/2026-07-10-cosecha-propiedades/`. `config/general`
-vivo (contacto correcto) · `solicitudes` protegida (conteo pendiente) · Storage sin censar. Detalle → `specs/R0-INVENTARIO-COSECHA.md`.
+## Datos vivos — el censo NO vive aquí
+Es ESTADO, y el estado tiene su dueño: `10` («la base está VACÍA, medido»). Aquí quedaba un censo del
+2026-07-10 que ya nadie refrescaba — la misma avería que el recuento de CF de arriba (§180). Las
+fichas rescatadas del sitio viejo → bóveda `2026-07-10-cosecha-propiedades/`; detalle del barrido →
+`specs/R0-INVENTARIO-COSECHA.md`.
 
 ## 🛡️ Respaldo OFFSITE (Cerebro v2 F0, ADR §50 — mata la mitad "disco" del SPOF)
 - **Default vigente**: `git bundle` de los repos git del ecosistema (4 negocios + `brain-private` + `bersaglio-design`) → `C:\Users\romad\OneDrive\backups-cerebro\` (OneDrive sincroniza fuera de la máquina). Sello: `lastOffsiteBackup` en `.brain-manifest.json` (lo lee el banner de F3).
@@ -158,19 +166,12 @@ vivo (contacto correcto) · `solicitudes` protegida (conteo pendiente) · Storag
 ## 🚀 CUTOVER → el runbook COMPLETO vive en `specs/CUTOVER-RUNBOOK.md` (§102)
 
 Seis fases con dependencias entre ellas (permisos → reglas → Functions → catálogo → indexable+DNS →
-después), cada una con su verificación y su vuelta atrás. Lo de abajo es SOLO la mitad SEO, que se
-conserva porque es la que más caro sale equivocarse:
+después), cada una con su verificación y su vuelta atrás. **Los pasos NO se copian aquí** (§180): la
+copia de «la mitad SEO» que había ya iba por detrás —le faltaba el segundo error catastrófico, el
+catálogo de muestra en el dominio real (§163)— y decía **68 URLs**, la aritmética que `redirects.ts`
+corrigió el 21-ago porque **escondía que `/invertir.html` no tenía redirect** (404 tras el cutover).
+*Una copia rancia del paso más caro es peor que un puntero.* Son **65 + 9 exentas = 74**, y de esa
+cuenta manda el código.
 
-### La mitad SEO (ADR §91)
-
-⚠️ El portal indexa **solo** con `PUBLIC_SITE_ENV=production`; por defecto sale `noindex` +
-`Disallow: /`. Correcto en staging, **catastrófico en el dominio real** (Google desindexa y el sitio
-se ve perfecto). Hasta el 2026-08-21 esa variable **no se declaraba en NINGÚN sitio** del repo.
-
-1. `PUBLIC_SITE_ENV=production`: ya NO se pone a mano — sale de la variable de repositorio
-   `PORTAL_SITE_ENV` (§102). Junto a ella viajan `PORTAL_CATALOGO_SOURCE` y `PORTAL_MEDIA_BASE`.
-2. `npm run verify:build` con esa env → la #6 **FALLA** si sobrevive `noindex` o `Disallow: /`.
-3. **NO borrar `googlec4e47cae776946d9.html`** (propiedad de GSC): ya duplicado en `portal/public/`.
-4. Los **301** salen solos: `portal/src/lib/seo/redirects.ts` (68 URLs) vía `middleware.ts`; las 9 exentas, en su `§NO-TOCAR`.
-5. Tras el DNS: enviar `sitemap.xml` en GSC — **y RE-enviarlo al añadir URLs** (skill `search-console-setup-y-diagnostico`).
-6. Sin fe: `curl -s https://altorrainmobiliaria.co | grep -i noindex` **vacío**, y su `/robots.txt` sin `Disallow: /`.
+Lo único de aquí, porque el runbook no lo dice: los **301 salen solos** desde `seo/redirects.ts` vía
+`middleware.ts`, y las exentas en su `§NO-TOCAR`. Si tocas la lista, **re-cuenta contra el disco**.
