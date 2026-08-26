@@ -70,6 +70,13 @@ jobs:
       # llevaba desde §101 con un error de tipos dentro, en `main`, y ningún gate lo vio.
       - name: Tipos (lo que el build NO comprueba)
         run: npm run typecheck
+      # 🛡️ Y las Functions APARTE (§176): el `tsconfig` del portal EXCLUYE `functions/`, asi que
+      # `astro check` no las mira. Solo entraban de refilon las que importa `firebase/tests/`. O sea:
+      # nueve Functions desplegadas —dinero, documentos, estado legal— sin gate de tipos. Se comprobo
+      # con un error deliberado: pasaba en verde. Es [[L-52]] otra vez, el gate que corre sobre
+      # archivos que nunca abre.
+      - name: Tipos de las Cloud Functions (el tsconfig del portal las excluye)
+        run: npm run typecheck:functions
       # 🛡️ LAS PRUEBAS NO LAS CORRIA NADIE (§174). 855 pruebas unitarias —el gate del RNT, la
       # prohibicion del deposito en vivienda, la liquidacion peso por peso, la ventana de la Ley 2300,
       # la maquina de estados del mandato— y NINGUNA bloqueaba un despliegue: se escribian, se corrian

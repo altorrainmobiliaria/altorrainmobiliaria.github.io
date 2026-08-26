@@ -213,7 +213,7 @@ check(
     : '',
 );
 
-for (const s of ['typecheck', 'test']) {
+for (const s of ['typecheck', 'typecheck:functions', 'test']) {
   check(
     `\`npm run ${s}\` corre en el CI y en \`npm run verify\``,
     ci.includes(`npm run ${s}`) && agregado.includes(`npm run ${s}`),
