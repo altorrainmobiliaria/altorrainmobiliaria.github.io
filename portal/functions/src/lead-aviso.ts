@@ -20,10 +20,10 @@
 
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import * as logger from 'firebase-functions/logger';
-import { getFirestore } from 'firebase-admin/firestore';
+import { getFirestore, type Firestore } from 'firebase-admin/firestore';
 import { asuntoDeLead, contactabilidad, cuerpoDeLead } from '../../src/lib/domain/lead-aviso';
 import type { Solicitud } from '../../src/lib/domain/crm';
-import { camposDe, puntuar, type CampoLead } from '../../src/lib/domain/lead-score';
+import { camposDe, puntuar, tipoDe, type CampoLead } from '../../src/lib/domain/lead-score';
 
 /** A dónde llega el aviso. Es el buzón del negocio, nunca el personal del dueño. */
 const DESTINO = 'info@altorrainmobiliaria.co';
@@ -86,6 +86,40 @@ export function camposLlenosDe(s: Solicitud): CampoLead[] {
   return out;
 }
 
+/**
+ * PUNTÚA, AVISA y ESCRIBE. Vive fuera del trigger para poder probarse contra el emulador — el trigger
+ * en sí no es más que un `if` y una llamada, y lo que hay que demostrar es que las escrituras ocurren.
+ *
+ * 🔴 EL ORDEN Y LA CONDICIÓN IMPORTAN, y por eso están en una sola función: **el puntaje se escribe
+ * SIEMPRE** —es del lead, no del aviso— y **la marca `avisoEnviadoEl` solo si el correo salió de
+ * verdad**. Ponerla siempre sería repetir el accidente de los 16: una marca que dice «avisado» sin
+ * que nadie recibiera nada es peor que no tener marca, porque cierra la pregunta.
+ */
+export async function procesarLeadNuevo(
+  db: Firestore,
+  id: string,
+  s: Solicitud,
+  opts: OpcionesAviso,
+): Promise<ReporteAviso> {
+  const puntaje = puntuar({
+    tipo: (s as { tipo?: string }).tipo ?? tipoDe(s.source ?? ''),
+    camposOfrecidos: camposDe(s.source ?? ''),
+    camposLlenos: camposLlenosDe(s),
+  });
+
+  const r = await avisarLead(s, opts);
+
+  await db.doc(`solicitudes/${id}`).set(
+    {
+      leadScore: puntaje.score,
+      leadTier: puntaje.tier,
+      ...(r.enviado ? { avisoEnviadoEl: new Date().toISOString() } : {}),
+    },
+    { merge: true },
+  );
+  return r;
+}
+
 /** Lo que se registra. Un aviso que no salió tiene que dejar rastro: así se perdieron los 16. */
 export function lineasAviso(id: string, r: ReporteAviso): string[] {
   if (r.enviado) return [`[lead] ${id} avisado · «${r.asunto}»`];
@@ -114,28 +148,7 @@ export const construirTriggerLead = (region: string, secrets: unknown[], clave: 
         logger.warn(`[lead] ${id} llegó SIN forma de contacto — revisar el formulario de origen`);
       }
 
-      /*
-       * PUNTÚA con el scorer del portal (§189), que NO castiga por campos que el formulario nunca
-       * pidió. El legacy también escribe un `leadScore`; el nuestro va después y manda mientras
-       * convivan. Se escribe SIEMPRE, aunque el correo falle: el puntaje es del lead, no del aviso.
-       */
-      const puntaje = puntuar({
-        tipo: (datos as { tipo?: string }).tipo ?? 'otro',
-        camposOfrecidos: camposDe(s.source ?? ''),
-        camposLlenos: camposLlenosDe(s),
-      });
-
-      const r = await avisarLead(s, { apiKeyResend: clave() });
+      const r = await procesarLeadNuevo(getFirestore(), id, s, { apiKeyResend: clave() });
       for (const l of lineasAviso(id, r)) (r.enviado ? logger.info : logger.error)(l);
-      // El puntaje se escribe SIEMPRE; la marca de aviso, solo si el correo salió de verdad. Los 16
-      // leads perdidos no tenían esa marca, y por eso nadie supo que no se habían enviado.
-      await getFirestore().doc(`solicitudes/${id}`).set(
-        {
-          leadScore: puntaje.score,
-          leadTier: puntaje.tier,
-          ...(r.enviado ? { avisoEnviadoEl: new Date().toISOString() } : {}),
-        },
-        { merge: true },
-      );
     },
   );
