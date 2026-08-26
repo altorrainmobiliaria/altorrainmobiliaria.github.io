@@ -47,6 +47,18 @@ function clasesDeRuntime(codigo) {
   for (const m of codigo.matchAll(/class=\\?["'`]([a-zA-Z][\w\- ]*)["'`\\]/g)) {
     for (const c of m[1].split(/\s+/)) if (c) out.add(c);
   }
+  /*
+   * 🔴 CLASES QUE VAN POR HELPER — `el('div', 'mi-clase')`. Este gate NO las veía, y el módulo que lo
+   * destapó aportaba CERO clases visibles y DIECISÉIS invisibles (§167). No es un caso raro: es lo que
+   * sale de prohibir `innerHTML` (§31). Sin plantillas de string, el nombre de la clase deja de
+   * aparecer en un `class="…"` y pasa a ser un ARGUMENTO — o sea que **la buena práctica volvía ciego
+   * al gate**, que es la peor forma de quedarse ciego.
+   * El patrón exige que el 1.er argumento sea un nombre de etiqueta en minúsculas, para no tragarse
+   * cualquier par de cadenas de cualquier llamada.
+   */
+  for (const m of codigo.matchAll(/\(\s*[`'"][a-z][a-z0-9]*[`'"]\s*,\s*[`'"]([a-zA-Z][\w\- ]*)[`'"$]/g)) {
+    for (const c of m[1].split(/\s+/)) if (c) out.add(c);
+  }
   return out;
 }
 
