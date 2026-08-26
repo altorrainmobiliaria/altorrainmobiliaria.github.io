@@ -109,6 +109,7 @@
 | §157 | 🧰 **Corrí 5 gates de 7 y escribí «los 7 en verde»**. El arreglo no es acordarse mejor: `npm run verify` + un candado que comprueba que el atajo no se quede atrás. Reincidencia de [[L-56]] por el lado humano. | 5942 |
 | §158 | 🏗️ **`/invertir` deja de ser un «próximamente»**: es destino de DOS redirects con años indexados, y el cartel prometía una «rentabilidad por zona» que no existe verificada. | 5973 |
 | §159 | 👻 **Dos anclas fantasma en las 74 páginas** (`#nosotros`, `#servicios`: 468 enlaces muertos en el menú). El hueco vivía en la JUNTURA de dos gates. Nacen `/nosotros` y `/aliados`. | 6000 |
+| §160 | 🔬 **Barrido agregado del build**: 4 defectos (título legal DUPLICADO, 2FA sin nombre accesible, el héroe leyendo sus 4 titulares) y **2 falsos hallazgos verificados**. Un comentario mío cegó a su propio gate. | 6071 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

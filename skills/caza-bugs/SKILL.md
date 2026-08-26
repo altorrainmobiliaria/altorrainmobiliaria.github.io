@@ -231,6 +231,38 @@ menos se ve.
    principal**, que nadie iba a buscar. *Si acabas de encontrar una instancia de un patrón, mide el
    patrón antes de arreglar la instancia.*
 
+## 4i. 🔇 El control que funciona pero no dice qué pide — y el comentario que no es neutral
+
+Un `<input>` sin nombre accesible: sin etiqueta (ni envolvente ni con `for`), sin `aria-label`, sin
+`aria-labelledby`. El control **funciona**; lo que no hay es forma de saber qué pide. Y el
+`placeholder` **no cuenta**: se borra en cuanto escribes, así que justo cuando alguien vuelve al campo
+a corregir, ya no queda quien diga qué se le pedía. Tratarlo como etiqueta es escribir el bug y
+taparlo a la vez.
+
+- **Dónde duele más**: códigos de un solo uso, importes, campos con formato estricto — donde la
+  persona ya está peleando con algo que caduca.
+- **Barrido**: sobre el HTML CONSTRUIDO (ahí la etiqueta ya está pintada y no hay que adivinar qué
+  envuelve a qué). Falsos positivos a matar antes de encenderlo: los `<template>`, la etiqueta
+  ENVOLVENTE, y el input con atributo `hidden` (suele dispararlo un botón que sí tiene nombre).
+
+### Dos hermanos del mismo barrido, que valen para cualquier proyecto
+
+1. **`opacity: 0` esconde de los OJOS y de nadie más.** El nodo sigue en el árbol de accesibilidad y
+   sus enlaces siguen en el orden de foco — `pointer-events: none` bloquea el ratón, no el tabulador.
+   Un carrusel de N paneles así hace que un lector de pantalla lea los N titulares seguidos, y un
+   teclado se pare en botones invisibles. El arreglo sin tocar el diseño es meter `visibility` en la
+   transición (`visibility 0s linear <duración>` al ocultar): el fundido se ve igual y solo queda uno.
+   *Al auditar «lo que se ve», pregunta siempre qué es lo que se sigue oyendo.*
+2. **🔴 Un comentario NO es terreno neutral.** Lo lee el compilador, lo leen tus gates, y en HTML lo
+   lee el navegador. Dos veces seguidas en una misma tarde el CONTENIDO de un comentario averió justo
+   aquello que documentaba: primero cegó al gate —la nota explicaba por qué NO se usaba una etiqueta,
+   y al nombrarla con sus signos de menor y mayor hizo pasar la comprobación de «¿hay etiqueta?»—, y
+   después, reescrita en sintaxis de bloque, llevaba dentro el token que cierra el comentario y tumbó
+   el build. **Reglas**: (a) un gate quita comentarios, `<script>` y `<style>` antes de analizar —
+   *no leas partes del archivo que no pueden ser lo que buscas*; (b) al citar sintaxis dentro de un
+   comentario, descríbela con palabras en vez de escribirla; (c) los comentarios internos van en la
+   sintaxis que NO viaja al cliente.
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.

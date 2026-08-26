@@ -6067,3 +6067,79 @@ construido** —y eso vive en su ADR— pasaron a puntero + lo que falta, la pel
 liberados**. Aun así el margen quedó en ~340c. *Es la confirmación empírica del diagnóstico de §146:
 el boot al 99% es CRÓNICO y no lo arregla podar mejor cada vez — pide **shard del `10`** o **poda del
 router**.* Un GC que hay que repetir en cada commit no es higiene, es un impuesto.
+
+## 160. ADR — El barrido agregado: cuatro defectos, dos falsos hallazgos y un comentario que cegó a su propio gate ⟦OPUS-5⟧ (2026-08-26)
+
+**160.0 — De dónde sale.** §159 dejó escrita una regla: *«si acabas de encontrar UNA instancia de un
+patrón, mide el patrón antes de arreglar la instancia»*. Con la web pública ya sin «próximamente» y el
+siguiente paso del runbook en manos de Daniel, la aplico al revés: **mido patrones que nadie ha
+buscado todavía** sobre las 41 páginas del HTML construido — cabeceras, dimensiones de imagen,
+nombres accesibles, jerarquía de encabezados, `target=_blank` sin `noopener`, el número personal del
+dueño.
+
+**160.1 — Lo que se arregló.**
+· **La Política de Tratamiento de Datos imprimía su título DOS VECES seguidas.** Lo pone
+`LegalLayout` desde `title` y el markdown del kit volvía a ponerlo con su propio `# `. Se ve en
+pantalla, y es precisamente el documento que menos puede parecer descuidado. Las otras tres páginas
+legales no lo tenían: el markdown era el caso raro, por venir copiado tal cual del kit.
+· **El campo del código 2FA en `/seguridad` no tenía nombre accesible** — solo `placeholder`, que
+DESAPARECE al escribir. Es el punto exacto donde alguien pelea con seis dígitos que caducan en 30
+segundos. Mismo arreglo en el ejemplo del styleguide, que es de donde se copia.
+· **El héroe de la home escondía sus tres banners inactivos solo con `opacity: 0`**, que los esconde
+de los OJOS y de nadie más: seguían en el árbol de accesibilidad, así que un lector de pantalla leía
+los CUATRO titulares seguidos. `pointer-events: none` tampoco ayuda — bloquea el ratón, no el
+tabulador. Ahora `visibility` entra en la transición con retardo de 0.9s al ocultar: el fundido se ve
+igual y solo queda uno en el árbol.
+· **Un comentario que mentía**: la página de la política afirmaba que la matrícula de arrendador
+seguía pendiente. Es la 6636 desde julio y está en la tabla de su §1 — el caducado era el comentario.
+
+**160.2 — Lo que NO era defecto, y verificarlo fue la mitad del trabajo.** «189 imágenes sin
+`width`/`height`» sonaba a CLS de manual. No lo es: las 189 salen de **3 componentes** y todas viven
+en contenedores que **ya reservan el sitio** (`position:absolute; inset:0`, o altura fija de 200/222
+px). Añadir dimensiones no movería un píxel. *Un hallazgo que se disuelve al mirar el mecanismo no era
+un hallazgo: era una regla mal formulada* — «imagen sin dimensiones» sin la condición «y en flujo».
+Igual con los h1 múltiples de `/`, `/gestion` y `/ingresar`: vistas mutuamente excluyentes, una
+visible cada vez.
+
+**160.3 — El barrido acusó a tres inocentes antes de servir.** Los `<img src alt>` y los
+`<a href="#"></a>` de `/comprar`, `/arrendar` y `/favoritos` son el **esqueleto de la tarjeta dentro
+de un `<template>`**, que el JS clona y rellena. Es la trampa 1 de `caza-bugs` §4g, y confirma su
+regla: **corrige los falsos positivos ANTES de encender el gate**, porque uno que acusa a un inocente
+se desactiva solo en la cabeza de quien lo lee.
+
+**160.4 — La sonda nueva, y el comentario que la dejó ciega.** `verify:controles` gana una segunda
+sonda: campos sin nombre accesible. Su **primera mordida salió VERDE con el defecto delante**, y la
+causa merece quedar escrita: el comentario que yo mismo había puesto encima del campo —explicando por
+qué usaba `aria-label` en vez de una etiqueta— **contenía el nombre de la etiqueta con sus signos de
+menor y mayor**, y la comprobación de «¿hay una etiqueta que lo envuelva?» se lo tragó. Es la regla 1
+de la cabecera de ese gate («el CSS no es un manejador») con otro disfraz: *no leas partes del archivo
+que no pueden ser lo que buscas*. Ahora se quitan comentarios, `<script>` y `<style>` antes de
+analizar. Mordida probada después en las dos direcciones: rojo con exit 1 nombrando
+`/seguridad/ → seg-codigo`, verde al devolver el `aria-label`.
+
+**160.5 — Y al reescribir ese comentario, rompió el build.** Lo pasé a sintaxis de Astro para que no
+viajara al navegador, y la nota llevaba dentro el token que cierra un comentario de bloque: `Unexpected
+token`, `seguridad.astro:133`. **Dos veces seguidas el CONTENIDO de un comentario averió aquello que
+documentaba** — primero el gate, luego el compilador. *Un comentario no es terreno neutral: lo lee el
+compilador, lo leen los gates, y en HTML lo lee el navegador.* De paso, medido: **229 comentarios HTML
+viajan hoy al cliente** en el portal; casi todos inocuos («Marca», «Contacto»), pero el mecanismo es el
+mismo.
+
+**160.6 — Dos reincidencias mías, y la que importa.** (a) El heredoc volvió a convertir un `\b` en un
+**byte 0x08 invisible**, cinco llamadas persiguiendo un fantasma en el barrido — y otra vez media hora
+después, **escribiendo la lección que lo describe**. [[L-46]] caso (b) ya lo documentaba con precisión
+quirúrgica. No falló la lección: falló su DISPARADOR, archivado bajo *«generas un archivo con
+heredoc»* cuando yo parcheaba una línea. Nace **[[M-24]]**: *el disparador de una lección se redacta
+como su condición mínima detectable, no como la actividad en que apareció*; y al reincidir, se audita
+primero el disparador. (b) Medí transiciones en un panel de navegador OCULTO, donde
+`requestAnimationFrame` va frenado: mis lecturas «congeladas» eran del entorno, no de la página. Se
+rehízo la medición **desactivando las transiciones** y recorriendo las 4 posiciones — determinista y
+sin depender del tiempo.
+
+**160.7 — Verificación.** Los 7 gates en verde con `npm run verify`, 583 tests unitarios, el DOM del
+servidor de desarrollo comprobado a mano y el título de la política impreso **una sola vez**.
+
+**160.8 — Archivos.** `portal/src/pages/index.astro` · `seguridad.astro` · `design-system.astro` ·
+`legal/politica-tratamiento-datos.astro` · `src/content/legal/politica-tratamiento-datos.md` ·
+`portal/scripts/verify-controles.mjs` (sonda 2) · `docs/36` ([[L-46]] regla 1 afilada) · `docs/33`
+([[M-24]]). Commits `ae855a9` y `a6ba910`.

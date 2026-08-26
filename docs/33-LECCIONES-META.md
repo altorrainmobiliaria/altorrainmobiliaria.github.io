@@ -28,36 +28,15 @@
 **Regla**: un gate no está terminado cuando compila, sino cuando lo has visto **(a)** disparar restituyendo el defecto vivo que lo motivó, **(b)** callar con el texto correcto y **(c)** no acusar a un caso legítimo vecino. **Corolario**: al cambiar una doctrina, revisa qué gate la vigilaba.
 
 ### M-07 — Un gate del kernel solo protege donde su DISPARADOR está cableado *(2026-08-01, ADR §81)*
-**Patrón**: subí el candado de boot al kernel como bloqueante «×4» y fui a verificar la frase (§3.3).
-Tres repos tenían `core.hooksPath=githooks`; **`insemastereo` no tenía `pre-commit` en absoluto**. El
-kernel estaba byte-idéntico en los cuatro ([[M-03]] cumplida), pero un gate compartido tiene **DOS
-mitades**: el **código** y el **CABLEADO** (`core.hooksPath` + `githooks/pre-commit` +
-`.claude/settings.json`). El linter validaba la primera y nunca la segunda: ese repo commiteaba sin que
-nada lo revisara y todas las corridas imprimían ✅. **Su fallo es por AUSENCIA** — no hay línea mala que
-leer, hay una llamada que nadie hace; variante silenciosa del ✅ decorativo de [[M-06]].
-**Regla**: «está en el kernel» ≠ «está activo». Verifica el DISPARADOR **repo por repo** en el mismo
-cambio y mecanízalo (el **#25** lee `.git/config` y exige un `pre-commit` que invoque a `brain-check`).
-Todo automatismo tiene un punto de enganche, y el enganche también necesita su gate.
+**Patrón**: subí el candado de boot al kernel como bloqueante «×4» y fui a verificar la frase (§3.3). Tres repos tenían `core.hooksPath=githooks`; **`insemastereo` no tenía `pre-commit` en absoluto**. El kernel estaba byte-idéntico en los cuatro ([[M-03]] cumplida), pero un gate compartido tiene **DOS mitades**: el **código** y el **CABLEADO** (`core.hooksPath` + `githooks/pre-commit` + `.claude/settings.json`). El linter validaba la primera y nunca la segunda: ese repo commiteaba sin que nada lo revisara, imprimiendo ✅ en cada corrida. **Su fallo es por AUSENCIA** — no hay línea mala que leer, hay una llamada que nadie hace; variante silenciosa del ✅ decorativo de [[M-06]].
+**Regla**: «está en el kernel» ≠ «está activo». Verifica el DISPARADOR **repo por repo** en el mismo cambio y mecanízalo (el **#25** lee `.git/config` y exige un `pre-commit` que invoque a `brain-check`). Todo automatismo tiene un punto de enganche, y el enganche también necesita su gate.
 
-**⚠️ Forma 2 — el gate que le pregunta al VIGILADO si debe vigilarlo** *(2026-08-03, ADR §85, U-13)*. El
-canario #24 caza que el hook `SessionStart` desaparezca, y decidía si aplicaba leyendo **el propio `.claude/settings.json`**: borras el hook y el gate contesta *amablemente* «no aplica en este repo». **Falla ABIERTO ante justo la regresión que existe para cazar**, y su silencio es idéntico al de un repo donde nunca aplicó. **Regla**: la condición de aplicabilidad de un gate NO vive dentro de su objeto vigilado — sube a una declaración aparte y auditable (`harnessCanary` en el manifest, como `bootCharsTarget` en el #15), de modo que apagarla sea explícito **y borrarla también avise** (`REQUIRED_KEYS`). Test de bolsillo: *si el atacante es la ausencia de X, ¿mi gate le pregunta a X?*
+**⚠️ Forma 2 — el gate que le pregunta al VIGILADO si debe vigilarlo** *(2026-08-03, ADR §85, U-13)*. El canario #24 caza que el hook `SessionStart` desaparezca, y decidía si aplicaba leyendo **el propio `.claude/settings.json`**: borras el hook y contesta *amablemente* «no aplica aquí». **Falla ABIERTO ante justo la regresión que existe para cazar. Regla**: la condición de aplicabilidad de un gate NO vive dentro de su objeto vigilado — sube a una declaración aparte y auditable (`harnessCanary` en el manifest), de modo que apagarla sea explícito **y borrarla también avise** (`REQUIRED_KEYS`). Test de bolsillo: *si el atacante es la ausencia de X, ¿mi gate le pregunta a X?*
 
 ### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega *(auditoría #6, 2026-08-01/02, ADR §83)*
-**Patrón**: lancé la auditoría Nivel-2 #6 como workflow en segundo plano y **falló dos veces, de dos
-maneras que desde fuera se ven IGUAL**. (1) **Muerte**: el workflow vive DENTRO del proceso anfitrión; al
-salir éste, sus agentes mueren — avisó. (2) **Cuelgue**: un agente no devolvió NUNCA (37 h), el orquestador
-siguió esperándolo y **nada progresó en 25 h**. Las dos señales disponibles se contradicen y **cada una
-miente por separado**: el panel decía «En ejecución, 86 agentes» (cierto: vive) y el disco «última escritura
-ayer 13:03» (cierto: no avanza). Leí solo el disco y lo llamé muerto; el panel solo, y lo habría llamado
-sano. **Coste de no cruzarlas: 10,9M tokens** ardiendo en un agente colgado.
-**Lo que salvó el trabajo** fue algo que yo no diseñé: el `journal.jsonl` persiste **el payload completo de
-cada agente en cuanto responde**. Las sondas y los escépticos —lo caro— estaban intactos; lo único perdido
-fue el sintetizador, que es lo barato. Reconstruí los 109 hallazgos y los 136 veredictos leyendo el journal.
-**Reglas**: (1) **el paso que consolida no va en el proceso frágil** — si N agentes producen y uno
-sintetiza, sintetiza TÚ con lo que quedó en disco; (2) **«¿vive?» y «¿avanza?» son dos preguntas y hacen
-falta las dos**: el contador responde la primera, el reloj de las escrituras la segunda; vivo-y-sin-avanzar
-es un cuelgue y exige matarlo, no esperarlo. Ponle **techo de tiempo por agente**; (3) antes de relanzar,
-pregunta si los datos ya están en disco — relanzar habría re-pagado 7 h de cómputo por lo que ya tenía. **Corolario**: un contador que no distingue "trabajando" de "muerto a media faena" es un ✅ decorativo con otra ropa ([[M-06]]).
+**Patrón**: lancé la auditoría Nivel-2 #6 como workflow en segundo plano y **falló dos veces, de dos maneras que desde fuera se ven IGUAL**. (1) **Muerte**: el workflow vive DENTRO del proceso anfitrión; al salir éste, sus agentes mueren — avisó. (2) **Cuelgue**: un agente no devolvió NUNCA (37 h) y **nada progresó en 25 h**. Las dos señales disponibles se contradicen y **cada una miente por separado**: el panel decía «En ejecución, 86 agentes» (cierto: vive) y el disco «última escritura ayer 13:03» (cierto: no avanza). Leí solo el disco y lo llamé muerto; el panel solo, y lo habría llamado sano. **Coste de no cruzarlas: 10,9M tokens** ardiendo en un agente colgado.
+**Lo que salvó el trabajo** fue algo que yo no diseñé: el `journal.jsonl` persiste **el payload de cada agente en cuanto responde**. Las sondas y los escépticos —lo caro— estaban intactos; lo perdido fue el sintetizador, que es lo barato. Reconstruí los 109 hallazgos y los 136 veredictos leyendo el journal.
+**Reglas**: (1) **el paso que consolida no va en el proceso frágil** — si N agentes producen y uno sintetiza, sintetiza TÚ con lo que quedó en disco; (2) **«¿vive?» y «¿avanza?» son dos preguntas y hacen falta las dos**: el contador responde la primera, el reloj de las escrituras la segunda; vivo-y-sin-avanzar es un cuelgue y exige matarlo, no esperarlo — ponle **techo de tiempo por agente**; (3) antes de relanzar, pregunta si los datos ya están en disco. **Corolario**: un contador que no distingue «trabajando» de «muerto a media faena» es un ✅ decorativo con otra ropa ([[M-06]]).
 
 ### M-09 — El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es frecuencia × costo de omisión *(2026-08-03, ADR §84)*
 **Patrón**: el router llegó al **99,8% del boot** y el diagnóstico escrito en `10` era *"los recortes de
@@ -90,3 +69,7 @@ Una lección escrita y un pendiente que sigue diciendo lo de antes conviven sin 
 
 ### M-23 — Un paso de procedimiento que nadie ha ejecutado no es documentación: es una HIPÓTESIS *(auditoría #10, 2026-08-25, ADR §140 · §145 · reincidencia ×3 de N9-02)*
 El runbook del cutover ha fallado **cuatro veces por lo mismo**: un botón que prometía y no existía (§126), un comando que no funcionaba desde el día que se escribió (§140.1), un paso 🤖 imposible para 🤖 (§140.5) y un mapa de 301 que **jamás se ejecutó** (§145). Los cuatro se descubrieron **ENSAYANDO**, ninguno leyendo — y ninguno lo puede cazar un gate: no son rutas ni tipos, son **promesas**. El agravante de §145: el código era correcto y las pruebas unitarias verdes; lo que faltaba es que **alguien llamara a la función**. *Una prueba unitaria demuestra que la función responde bien, no que alguien la use.* **Regla**: todo paso de un procedimiento marcado como automático lleva su `ensayado: <fecha>`, y se ensaya ANTES del día D — porque un runbook se ejecuta cuando el DNS ya se movió, que es el único paso que tarda horas en revertirse. Corolario de método: **si mides sin reconstruir, no estás midiendo tu cambio.**
+
+### M-24 — Una lección CORRECTA archivada bajo el disparador equivocado no dispara *(§160 · reincidencia de [[L-46]] caso b)*
+[[L-46]] describe el fallo con precisión quirúrgica y aun así **reincidí dos veces el mismo día** — la segunda, escribiendo *esta misma lección*. La lección no falló: falló su ENTRADA. Estaba archivada bajo *«generas un archivo con heredoc»* y yo parcheaba **una línea**, que no se siente como generar nada: el disparador describía la ESCENA del descubrimiento, no la CONDICIÓN que lo causa.
+**Regla**: el disparador se redacta como la **condición mínima detectable** (*«la carga lleva un backslash»*), nunca como la actividad en que apareció. Si solo lo reconoce quien ya recuerda el caso, es un recuerdo, no un reflejo. **Al reincidir en una lección existente, audita primero su disparador**: si tuviste que releerla para reconocerte, el defecto está ahí y no en tu atención.

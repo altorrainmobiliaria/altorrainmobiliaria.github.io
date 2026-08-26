@@ -196,6 +196,7 @@ guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero 
 ### M-11 — Escribir la lección NO la aplica: si el PENDIENTE no se re-etiqueta, el cerebro la ignora otra vez
 ### M-23 — Un paso de procedimiento que nadie ha ejecutado no es documentación: es una HIPÓTESIS, y se comprueba el peor día *(auditoría #10, §140 · §145)*
 ### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total
+### M-24 — Una lección CORRECTA archivada bajo el disparador equivocado no dispara: se redacta por su condición mínima detectable, no por la escena en que se descubrió *(§160)*
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > 🧩 **Mudadas a `60-WORKFLOWS §Gobernanza`** el 2026-07-28 (ADR §68): hablan de CÓMO se conduce la
