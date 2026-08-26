@@ -183,6 +183,36 @@ check(
  * Se comprueban las DOS puntas (CI y atajo local) porque fallaron por puntas distintas: `typecheck`
  * sí estaba en el CI y faltaba en el atajo; `test` faltaba en los dos.
  */
+/*
+ * ── SONDA: el CHECKER de tipos existe en el LOCKFILE (§175) ────────────────────────────────────
+ *
+ * QUÉ CAZA. Que `npm run typecheck` sea **decorativo**. `astro check` sin `@astrojs/check` instalado
+ * NO falla: imprime «npm i @astrojs/check typescript — Continue?» y espera respuesta. En un CI sin
+ * terminal esa pregunta se queda sin contestar y el proceso termina con **código 0**. El paso sale
+ * ✅ y no ha mirado ni un archivo.
+ *
+ * 🔴 POR QUÉ HACE FALTA. Pasó: `@astrojs/check` estaba en el `node_modules` de la RAÍZ del repo —no
+ * en el de `portal/`— así que en local Node lo encontraba subiendo un nivel y el gate funcionaba de
+ * verdad; en el CI, que instala solo dentro de `portal/`, no existía. Cuatro corridas en verde sobre
+ * un archivo con 26 errores de tipos, y el deploy salió. Medido en un worktree con `npm ci` limpio:
+ * antes exit 0 sin mirar; después exit 1 con los 26. **Una dependencia que solo existe por la
+ * disposición de carpetas del que programa no existe.**
+ *
+ * ⚠️ El `typescript` del lockfile tiene que estar dentro del peer de `@astrojs/check` (hoy ^5||^6;
+ * Astro 7 pinea ^6.0.3). Si no, el checker LANZA — ruidoso, y eso está bien: lo que no se puede
+ * tolerar es el silencio.
+ */
+const lock = JSON.parse(readFileSync(resolve(root, 'package-lock.json'), 'utf8'));
+const enLock = (n) => Boolean(lock.packages?.[`node_modules/${n}`]);
+const faltan = ['@astrojs/check', 'typescript'].filter((n) => !enLock(n));
+check(
+  'el checker de tipos está en el LOCKFILE (sin él, `astro check` sale verde sin mirar)',
+  faltan.length === 0,
+  faltan.length
+    ? `ausente(s) del lockfile: ${faltan.join(', ')} — \`npm ci\` no los instala y el gate se apaga EN SILENCIO`
+    : '',
+);
+
 for (const s of ['typecheck', 'test']) {
   check(
     `\`npm run ${s}\` corre en el CI y en \`npm run verify\``,
