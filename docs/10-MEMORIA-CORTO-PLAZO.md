@@ -65,7 +65,7 @@
 > 📬 **LEADS**: el aviso sale por **Resend** desde el portal, no por el Gmail caído (§188-§192).
 > ⏭ Nurturing **apagado** (§192: sus plantillas enlazan al sitio retirado).
 >
-> ⏭️ **La evidencia postal NO tiene interfaz** (§204): sin fecha de IMPOSICIÓN el preaviso puede ser ineficaz y el contrato se prorroga un año. Encargo escrito. *El control de PH ya estaba HECHO.*
+> ⏭ **DOS OBLIGACIONES LEGALES SIN PUERTA** (§222): `preaviso` (Ley 820 — sin fecha de IMPOSICIÓN el contrato se prorroga un año) y `certificacion` (D.1625) son módulos completos **sin un solo consumidor**; lo que los mantenía vivos era su propio test. Encargo escrito → `specs/ENCARGO-PUERTAS-QUE-FALTAN.md`. ⏭️ Falta **mockup** (decisión de Daniel) y un gate de huérfanos.
 >
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos
 > que solo vio la consola del dueño (§133-§136). Si un gate pasa, pregunta **qué abre** ([[L-52]]) —y **cuántos**

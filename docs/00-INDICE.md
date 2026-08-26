@@ -132,6 +132,7 @@
 | §219 | 🧬 **Kernel v1.16.0**: los gates de frescura publican su COBERTURA (K-01+K-04 CERRADOS) — y se destapa que en INSEMA era **0/2**, inerte en un repo entero. El canario deja de acusar a la distribución: medido, no apagado. | 9329 |
 | §220 | 🔗 **K-05 CERRADO** (#7c): el gate validaba las anclas que EXISTEN y nunca la que FALTA. Patrón medido en tres pasadas (`panel de` daba 90% de falsos). Deuda congelada en 8; en cars destapa **15**. | 9394 |
 | §221 | 📏 **TODO-23 CERRADO**: el #27 gradúa la resolución (119 de 123 «perdonadas» eran sufijo ÚNICO — alarmaba sin informar) y el #16/#12 pasan a COMMITS: un sello de 7d llevaba **327 commits** detrás. | 9455 |
+| §222 | 🚪 **Dos obligaciones legales en código que NADIE puede usar**: `preaviso` (Ley 820, prórroga de un año) y `certificacion` (D.1625) sin un solo consumidor. Lo que los mantenía vivos era su propio test. Encargo escrito. | 9512 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

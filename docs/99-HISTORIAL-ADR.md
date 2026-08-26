@@ -9508,3 +9508,61 @@ Kernel **v1.19.0** repartido a los cuatro repos, íntegro == canónico en todos.
    commits, un umbral en días mide el calendario del observador, no la realidad observada. Y cuando
    la marca no tiene la resolución de esa unidad —un sello con fecha, sin commit—, **redondea hacia
    el lado que no exagera**.
+
+## 222. ADR-222 — Dos obligaciones legales escritas en código que nadie puede usar
+
+**Contexto.** El `10` llevaba anotado *«la evidencia postal NO tiene interfaz (§204)»*. Al ir a
+cerrarlo, la instancia resultó ser un **patrón**, y el censo lo midió.
+
+### 222.1 — El censo: 28 módulos de dominio, 25 con consumidor, 3 sin ninguno
+Barrido de `portal/src/lib/domain/*.ts` contra **170 ficheros fuente** (`portal/src`,
+`portal/functions/src`, `portal/scripts`), excluyendo el propio módulo y su test **por ruta completa**.
+Resultado: **`preaviso`, `certificacion` y el barrel `index`** no los importa nadie.
+🎯 **Y lo que los mantenía con aspecto de vivos era su propio test.** `typecheck` pasa, `test` pasa,
+`verify:simbolos` pasa: la suite valida el módulo **contra sí mismo**, y ningún gate de este repo
+pregunta *«¿quién lo usa?»* — cars tiene un `deadcode:check`; el portal no.
+
+### 222.2 — Y no son módulos cualquiera: son dos OBLIGACIONES con consecuencia
+- **`preaviso.ts` (122 líneas + 110 de test)** — arts. 22 num. 7 y 24 de la **Ley 820**: el aviso
+  debe ser escrito **y** viajar por servicio postal autorizado. Su propia cabecera lo dice: *«un
+  preaviso sin evidencia postal no es un preaviso»*. **Nada en el producto permite registrar el
+  operador, la guía ni —sobre todo— la fecha de IMPOSICIÓN**, que es la que decide. Consecuencia de
+  fallar: **el contrato se prorroga un año**.
+  ➕ Agravante medido: `TIPOS_DOCUMENTO` tiene **14 tipos y ninguno es la constancia postal**, así que
+  ni el escaneo tendría dónde ir salvo como `otro`.
+- **`certificacion.ts` (161 + 174)** — **D.1625/2016 art. 1.2.4.11**: el mandante declara sus
+  ingresos *«según la información que le suministre el mandatario»*. Entregarla es obligación de
+  ALTORRA y **no hay por dónde**. El mockup `ALTORRA Liquidacion.dc.html` existe y está aprobado,
+  pero cubre la liquidación **MENSUAL**: la certificación **anual** no aparece en él, y la página
+  `/liquidacion` tampoco existe aún.
+- **`index.ts` (8 líneas)** — barrel que instruye *«Importar desde `~/lib/domain`»* y que **nadie
+  sigue**: los 25 vivos se citan por ruta completa. Una regla que nadie aplica engaña al siguiente.
+
+### 222.3 — Lo que se entrega hoy, y por qué no es la pantalla
+**No se construye UI**: rige *nunca UI sin mockup aprobado*, y aquí además hay decisiones de negocio
+reales (dónde vive el registro, quién puede escribirlo, si la certificación es pantalla o PDF).
+Lo que sí es mío y estaba sin hacer es el **encargo escrito** → `specs/ENCARGO-PUERTAS-QUE-FALTAN.md`:
+campos con su porqué, la copia exacta de los dos desenlaces (*«termina el …»* vs **«NO termina: se
+prorroga un año»**), el tipo de documento que falta, y las preguntas que decide Daniel.
+📌 **Y el tipo `constancia-postal` va CON la pantalla, no antes** — añadirlo hoy sería sumar más
+código sin consumidor, que es exactamente el defecto que este ADR documenta. Misma regla que §215.4
+(el gate va con el arreglo) y §220.3 (congelar, no falsificar).
+
+### 222.4 — Tres correcciones a mi propia sonda, y las tres del mismo tipo
+La primera versión del censo dijo **5 huérfanos** y era mentira dos veces:
+1. Metí `'lib'` en la lista de carpetas a saltar —para evitar el compilado `functions/lib`— y con ello
+   **excluí `portal/src/lib` entera**: escaneaba 94 ficheros en vez de 170.
+2. Excluía «el módulo mismo» **por nombre de fichero**, así que `functions/src/pagos-webhook.ts`
+   —que sí lo importa— desaparecía por llamarse igual que el módulo de dominio.
+🎯 Las dos son **coincidencia por NOMBRE donde hacía falta RUTA** — literalmente el defecto que
+acababa de arreglar en el chequeo #27 del kernel (§221.1), cometido en mi propia sonda una hora
+después. Y la tercera: la sonda no publicaba cuántos ficheros había abierto, así que el primer
+resultado (94) no se distinguía del correcto (170) más que por sospecha.
+
+### 222.5 — Doctrina
+**Una prueba mantiene vivo lo que ya está muerto.** Un módulo con test propio y cero consumidores pasa
+`typecheck`, `test` y los gates de símbolos: la suite lo valida **contra sí mismo**, y el veredicto
+verde es idéntico al de un módulo que el producto usa cada día. Por eso *«¿quién lo importa, aparte de
+su test?»* es una pregunta que ningún gate hace por defecto y que hay que hacer a mano — o mecanizar.
+**Corolario caro**: cuando el módulo huérfano implementa una **obligación legal**, el código no es
+deuda técnica: es una obligación que la empresa cree cumplida porque «está programada».
