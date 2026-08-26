@@ -11,7 +11,8 @@
   "caps": {
     "CLAUDE.md": {
       "lines": 205,
-      "chars": 25000
+      "chars": 19000,
+      "_comment": "BAJADO de 25000 a 19000 el 2026-08-26 (auditoria Nivel-2 #11, ADR 164). MEDIDO, no estimado: el router es el 59.4% del BOOT (18428c de 31031) y su cap de 25000 no disparaba NUNCA, porque el techo que aprieta es `bootCharsTarget` (31500), no el suyo. Consecuencia real y repetida: cada regla nueva del router se pagaba podando el `10` —que usa el 54% de SU cap— y el impuesto lo pagaba la pizarra del WIP, que es justo lo que mas se necesita al arrancar. Con 19000 el one-in-one-out de §G.5 aplica DONDE se consume: si entra una regla al router, sale otra DEL ROUTER. Margen deliberado de ~570c: que muerda pronto, no que bloquee de golpe. Las dos auditorias previas prescribieron «shard del 10» y estaba mal apuntado (§164)."
     },
     "docs/05-ESTADO-GLOBAL.md": {
       "lines": 22,
@@ -178,12 +179,12 @@
     }
   ],
   "deepAudit": {
-    "last": "2026-08-25",
-    "coveredHeaderCount": 145,
+    "last": "2026-08-26",
+    "coveredHeaderCount": 163,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "tableFile": "2026-08-25-auditoria-cerebro-nivel2-10-inmobiliaria.md",
-    "_que": "Nivel-2 #10 (ADR 146) — PARCIAL y declarada: las sondas 3/4/5/7 exigen subagentes y el dueno dejo instruccion de no usarlos, asi que se corrieron las de verificacion DIRECTA (0,1,2,6). Rasgo de la edicion: los hallazgos NO salieron de sondear el cerebro sino de EJECUTAR EL RUNBOOK POR ADELANTADO — hacer el paso 5.5 antes de tiempo destapo que el mapa de 301 llevaba desde siempre sin ejecutarse (37 de 65 muertos incluso tras el primer arreglo). 6 hallazgos, 4 cerrados el mismo dia. DOS REINCIDENTES de la #9: N9-02 (el runbook promete lo que nadie ha ensayado, ×4 esta vez) y N9-05 (boot cronico al 99-100%). Previa #9 = 127 headers (2026-08-24)."
+    "tableFile": "2026-08-26-auditoria-cerebro-nivel2-11-inmobiliaria.md",
+    "_que": "Nivel-2 #11 (ADR 164) — PARCIAL y declarada: 3, 4 y 7 exigen subagentes y el dueno dejo instruccion de no usarlos. NOVEDAD: la sonda 5 (MEMORY.md) se corrio POR PRIMERA VEZ; llevaba dos ediciones marcada PENDIENTE y nunca necesito subagentes — un pendiente heredado se hereda sin volver a preguntarse si sigue siendo cierto. Disparo NO voluntario: el linter bloqueo un commit. 6 hallazgos, 5 cerrados el mismo dia. Reincidentes de la #10: N10-02 (boot cronico, x3) y N10-04 (gates a medias, x2). El hallazgo mayor es una CORRECCION DE DIAGNOSTICO: las dos auditorias previas prescribieron «shard del 10» y estaba mal apuntado — el `10` usa el 54% de su cap y el router es el 59% del boot con un techo que no disparaba nunca, asi que el impuesto del one-in-one-out lo pagaba siempre la pizarra del WIP. Cap del router bajado 25000 -> 19000. Previa #10 = 145 headers (2026-08-25)."
   },
   "noCap": {
     "docs/99-HISTORIAL-ADR.md": "Largo Plazo: NUNCA se lee entero, solo offset/limit vía el índice (§0). Un cap aquí no significaría nada.",

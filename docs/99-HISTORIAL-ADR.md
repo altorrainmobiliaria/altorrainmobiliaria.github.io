@@ -6234,3 +6234,104 @@ la moraleja ya está en §160.2 y aquí solo se confirma.
 **162.7 — Archivos.** `portal/src/pages/sitemap.xml.ts` (`/nosotros`) · `404.astro` ·
 `favoritos.astro` · `ingresar.astro` (`noindex`) · `portal/scripts/verify-build.mjs` (la sonda).
 Verificado: 7 gates en verde, 591 tests. Commits `6d5c987` y el anterior.
+
+## 163. ADR — El cutover podía publicar 38 enlaces a un inmueble que no existe ⟦OPUS-5⟧ (2026-08-26)
+
+**163.0 — Lo que hay hoy, y por qué está bien hoy.** Las tarjetas de la home, del SERP y la ficha
+pintan una propiedad **inventada** —con su precio, su barrio y sus fotos— porque el catálogo real
+llega con el inventario (fase 4 del runbook, TODO-22). Medido: **38 enlaces** desde `/`, `/comprar` y
+`/arrendar` apuntan a `/ficha`, el andamio de muestra. Mientras el sitio es staging y va `noindex`,
+eso es un andamio legítimo y aprobado.
+
+**163.1 — Y por qué deja de estarlo el día del cutover.** Ese día el mismo HTML pasa a ser público e
+indexable. Una inmobiliaria cuyo eslogan es **«Seguridad, Legalidad y Confianza»** publicando fichas
+de inmuebles que no existen no es un detalle de QA: es la contradicción exacta de lo que vende. Y no
+hay ningún momento en que alguien lo *note*, porque —y esto es lo importante— **se ve perfecto**.
+
+**163.2 — El interruptor existía; el ruido, no.** `PUBLIC_CATALOGO_SOURCE` ya estaba cableado al CI
+desde la variable de repositorio `PORTAL_CATALOGO_SOURCE`, con `demo` por defecto, y su comentario en
+`portal-ci.yml` ya decía por qué vive ahí: *«si vive solo en la cabeza de quien despliega, el día del
+cutover se olvida»*. Faltaba la mitad que **hace ruido cuando se olvida**. Es la misma estructura que
+§162: el riesgo entendido y escrito, sin mecanismo detrás.
+
+**163.3 — Hermano del candado #6.** El de indexabilidad caza que un build de producción salga con
+`noindex`; éste, que salga con el catálogo de muestra. **Los dos fallan igual de callados y los dos
+se ven perfectos para un humano** — por eso los dos son gates y no pasos de checklist. La skill
+`search-console-setup-y-diagnostico` llama al primero «el bug clásico»; éste es su gemelo comercial.
+
+**163.4 — El runbook ya lo ordenaba, y eso no basta.** Fase 4 (catálogo real) antes de fase 5 (DNS).
+Pero *un orden escrito en un documento no es un orden que alguien tenga que cumplir* — [[M-23]]: un
+paso de procedimiento que nadie ha ejecutado es una hipótesis. Ahora el orden es mecánico, y la fase 5
+gana el paso **5.1b** que nombra la variable y advierte de que **no se hace antes que la fase 4**.
+
+**163.5 — Mordida probada en los TRES estados**: producción+demo → rojo con el motivo escrito;
+producción+live → verde; staging+demo → nota informativa y verde, que es el estado normal de hoy. De
+propina, el build de producción de prueba demostró la cadena entera de indexabilidad
+(`noindex-en-home=false`, robots abierto, sitemap declarado): un ensayo del cutover en miniatura.
+
+**163.6 — Lo que NO se hizo, con su razón.** No se le pone a `/ficha` un cartel de «ejemplo». Sería
+tocar una pantalla con mockup aprobado para arreglar un problema que solo existe *después* del
+cutover, y que el gate ya impide que llegue. Si algún día el sitio publica con datos de muestra a
+propósito, ese cartel vuelve a la mesa.
+
+**163.7 — Archivos.** `portal/scripts/verify-build.mjs` (la sonda) · `specs/CUTOVER-RUNBOOK.md`
+(paso 5.1b + el aviso de fase 5, ahora con los DOS errores). Commit `52110e5`.
+
+## 164. ADR — Auditoría Nivel-2 #11: la receta del boot llevaba dos ediciones mal apuntada ⟦OPUS-5⟧ (2026-08-26)
+
+> **Deliberación**: `../brain-private/altorrainmobiliaria/research-archive/2026-08-26-auditoria-cerebro-nivel2-11-inmobiliaria.md`
+
+**164.0 — Cómo se disparó, que es un dato.** No fue voluntaria: **el linter bloqueó un commit**
+(«gracia agotada, 18 ADRs nuevos»). El gate de auto-vigilancia hizo exactamente su trabajo, incluido
+el detalle de que no se puede negociar con él — `--no-verify` está prohibido por doctrina. *Un
+recordatorio que solo avisa se ignora; uno que bloquea, se atiende.*
+
+**164.1 — El hallazgo mayor es una CORRECCIÓN DE DIAGNÓSTICO, no un defecto nuevo.** Las auditorías
+#9 y #10 declararon el boot crónico al 99-100 % y prescribieron **«shard del `10`»**. Medido hoy, la
+receta estaba mal apuntada:
+
+| Nodo del boot | Tamaño | % del BOOT | Uso de su propio cap |
+|---|---|---|---|
+| `CLAUDE.md` | 18 428c | **59,4 %** | 74 % (cap 25 000) |
+| `docs/10` | 8 626c | 27,8 % | **54 %** (cap 16 000) |
+| `docs/05` | 3 977c | 12,8 % | 99 % (cap 4 000) |
+
+La suma de los caps individuales es **45 000** contra un objetivo de boot de **31 500**: por eso el
+techo que aprieta no es el de ninguna neurona, es el agregado. Y como el cap del router (25 000)
+**nunca disparaba**, cada regla nueva del router se pagaba podando… el `10`, que es el nodo con más
+holgura y, a la vez, **la pizarra del WIP — justo lo que más se necesita al arrancar una sesión**.
+Hoy mismo, en vivo: router intacto, `10` −1 170c en tres podas.
+
+**164.2 — El arreglo, en la palanca correcta.** Cap de `CLAUDE.md` bajado de 25 000 a **19 000**, con
+~545c de margen deliberado (que muerda pronto, no que bloquee de golpe). Así el one-in-one-out de
+§G.5 aplica **donde se consume**: si entra una regla al router, sale otra DEL ROUTER. *Un cap que
+nunca dispara no es un techo: es decoración con un número.* Es [[M-05]] visto del revés — allí el
+pecado era subir el techo para escapar del aviso; aquí, tener uno tan alto que el aviso nunca llega.
+
+**164.3 — La sonda 5 se corrió por primera vez, y llevaba dos ediciones marcada «PENDIENTE».** No
+necesitaba subagentes: leer `MEMORY.md` y cruzarlo con el cerebro es lectura directa. *Un pendiente
+heredado se hereda también sin volver a preguntarse si sigue siendo cierto.* Encontró que
+`CLAUDE.md` §2 afirmaba «Fable 5 planifica/audita, Opus 5 implementa» — un reparto que el dueño
+**derogó el 2026-08-19** y que los datos desmienten: **243 de 243 commits del último mes son
+[OPUS-5]**, cero Fable. Estaba en el BOOT, leído en cada sesión. Corregido (−33c de propina).
+
+**164.4 — Dos reincidencias respecto de la #10.** (a) El boot crónico, ×3 → resuelto arriba. (b)
+«Gates que corrían sin mirar donde hacía falta», ×2 hoy: el hueco entre `verify:enlaces` y
+`verify:controles` (§159) y la sonda cegada por un comentario (§160). Ambas cerradas con sondas
+nuevas y mordida probada en las dos direcciones.
+
+**164.5 — El patrón que une dos hallazgos de hoy, y que merece nombre.** `sitemap.xml.ts` predijo su
+propia avería en un comentario (§162) y `portal-ci.yml` explicó por qué el interruptor del catálogo
+vive ahí… sin que nadie hiciera ruido al olvidarlo (§163). En los dos casos **el riesgo estaba
+entendido y ESCRITO, y faltaba el mecanismo**. Es la familia de [[M-06]] (el ✅ decorativo) y de la
+exclusión mal razonada de §159.5: *un comentario que nombra un riesgo no lo mitiga, lo documenta.*
+
+**164.6 — Lo que quedó PENDIENTE, declarado.** Sondas 3 (retrieval-drill), 4 (fidelidad de la
+deliberación) y 7 (voz adversarial): exigen subagentes y el dueño dejó instrucción de no usarlos. Es
+la tercera edición consecutiva en ese modo. *Una auditoría parcial y honesta vale más que una
+completa fingida* — pero tres seguidas dicen que esas tres sondas necesitan una versión que se pueda
+correr sin subagentes, o dejarán de existir de hecho aunque sigan en la skill.
+
+**164.7 — Cierre.** 6 hallazgos, **5 cerrados el mismo día**. GC pareado, con la cifra sin adornar: boot **31 136c** al cerrar contra 31 134c al empezar — **+2c**, no ≤ 0, y no se redondea a que lo sea. *Perseguir tres caracteres para que la regla cuadre sería el impuesto que este informe acaba de diagnosticar.*
+`deepAudit` = 2026-08-26 / 163 headers. Tabla completa en la bóveda (enlace arriba), con su fila en
+el README.
