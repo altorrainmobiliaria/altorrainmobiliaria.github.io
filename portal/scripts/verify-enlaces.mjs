@@ -18,13 +18,18 @@
  * adivinar: cada `<a href>` ya está resuelto, los comentarios no existen y los arrays ya se pintaron.
  * *Cuando el fuente obliga a adivinar, mira el artefacto* — la misma lección que [[L-50]].
  *
- * ALCANCE. Enlaces internos absolutos (`/algo`). Externos, `mailto:`, `tel:` y `#ancla` quedan fuera:
- * comprobarlos exige red, y un gate que necesita internet deja de correr el día que el CI tiene un
- * mal minuto.
+ * ALCANCE. Enlaces internos: las rutas absolutas (`/algo`) en la sonda 1 y los destinos con ancla
+ * (`#algo`, `/ruta#algo`) en la sonda 3. Externos, `mailto:` y `tel:` quedan fuera: comprobarlos
+ * exige red, y un gate que necesita internet deja de correr el día que el CI tiene un mal minuto.
+ *
+ * ⚠️ Esa última frase decía también «y `#ancla`», y era un error de razonamiento que costó caro
+ * (§159): el destino de un ancla está DENTRO del mismo HTML que este gate ya tiene abierto. La
+ * excusa de la red valía para los enlaces externos y se extendió al ancla sin volver a mirarla. Lo
+ * que se coló por ese hueco fueron siete destinos muertos en el menú de las 74 páginas.
  */
 
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { join, relative, sep } from 'node:path';
 
 const RAIZ = new URL('..', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
 const SRC = join(RAIZ, 'src');
@@ -180,3 +185,88 @@ if (existsSync(fuenteRed)) {
   }
   console.log(`✅ verify:enlaces — las ${viejas.length} URLs del sitio viejo están cubiertas por el mapa de 301.`);
 }
+
+/*
+ * ── Sonda 3: ANCLAS QUE NO ATERRIZAN EN NINGÚN SITIO (§159) ─────────────────────────────────────
+ *
+ * QUÉ CAZA. Un `href="#seccion"` cuyo `id` no existe en la página de destino. El navegador no
+ * protesta: se queda exactamente donde está. Para quien lo pulsa no es un error, es «esta web no
+ * responde» — y es peor que un 404, porque un 404 al menos se ve.
+ *
+ * LO QUE COSTÓ. Dos anclas fantasma vivían en el HEADER y el PIE, o sea en las 74 páginas a la vez:
+ *   · `#nosotros` — el enlace «Nosotros», sin destino desde que existe el portal. Los mockups lo
+ *     dibujaban como `href="#"`, así que la dirección nunca llegó a decidirse.
+ *   · `#servicios` — SEIS entradas del menú principal, la navegación más usada del sitio.
+ * Ninguna de las dos la vio la sonda 1 (solo mira rutas `/algo`) ni `verify:controles` (solo caza el
+ * `href="#"` literal, la firma del enlace que quería ser botón). Cada gate miraba su mitad y el
+ * agujero estaba justo en la juntura.
+ *
+ * ALCANCE. Comprueba anclas de la MISMA página (`#x`) y de otra prerenderizada (`/ruta#x`). Si el
+ * destino es una ruta SSR no hay HTML que abrir, así que no se juzga: un gate que adivina miente.
+ */
+const idsCache = new Map();
+const idsDe = (archivo) => {
+  if (!idsCache.has(archivo)) {
+    const html = readFileSync(archivo, 'utf8');
+    const ids = new Set();
+    for (const m of html.matchAll(/\b(?:id|name)="([^"]+)"/g)) ids.add(m[1]);
+    idsCache.set(archivo, ids);
+  }
+  return idsCache.get(archivo);
+};
+
+/** Ruta de navegación → archivo prerenderizado, o `null` si esa página se sirve en el servidor. */
+const archivoDe = (ruta) => {
+  const limpio = (ruta.replace(/\/$/, '') || '/');
+  const cand = limpio === '/' ? join(DIST, 'index.html') : join(DIST, limpio, 'index.html');
+  if (existsSync(cand)) return cand;
+  const suelto = join(DIST, limpio);
+  return existsSync(suelto) && suelto.endsWith('.html') ? suelto : null;
+};
+
+/*
+ * Se agrupa POR ANCLA, no por página. Header y pie viven en las 74 páginas: un solo `#ancla` roto
+ * ahí produce 74 filas idénticas y el informe deja de leerse justo cuando más hay que leerlo.
+ */
+const sinDestino = new Map(); // "#ancla" o "/ruta#ancla" → { enlaces, paginas:Set }
+let anclas = 0;
+let sinJuzgar = 0;
+
+for (const f of archivos(DIST)) {
+  if (!f.endsWith('.html')) continue;
+  const pagina = '/' + relative(DIST, f).split(sep).join('/').replace(/index\.html$/, '');
+  for (const m of readFileSync(f, 'utf8').matchAll(/<a\b[^>]*\bhref="([^"]*#[^"]+)"/g)) {
+    const href = m[1];
+    if (/^(https?:|mailto:|tel:)/.test(href)) continue;
+    const [ruta, ancla] = [href.slice(0, href.indexOf('#')), href.slice(href.indexOf('#') + 1)];
+    const destino = ruta === '' ? f : archivoDe(ruta.split('?')[0]);
+    if (!destino) { sinJuzgar++; continue; } // ruta SSR: sin HTML, sin veredicto
+    anclas++;
+    if (idsDe(destino).has(ancla)) continue;
+    const clave = ruta + '#' + ancla;
+    if (!sinDestino.has(clave)) sinDestino.set(clave, { enlaces: 0, paginas: new Set() });
+    const caso = sinDestino.get(clave);
+    caso.enlaces++;
+    caso.paginas.add(pagina);
+  }
+}
+
+if (sinDestino.size) {
+  console.error('');
+  console.error('❌ verify:enlaces — anclas que no aterrizan en ningún sitio:');
+  console.error('');
+  for (const [clave, c] of [...sinDestino].sort((a, b) => b[1].enlaces - a[1].enlaces)) {
+    const donde = [...c.paginas].sort();
+    const muestra = donde.slice(0, 3).join(', ') + (donde.length > 3 ? `, +${donde.length - 3} más` : '');
+    console.error(`   ${clave}  —  ${c.enlaces} enlace(s) en ${donde.length} página(s): ${muestra}`);
+  }
+  console.error('');
+  console.error('   El navegador no protesta: se queda donde está. Quien lo pulsa no ve un error,');
+  console.error('   ve una web que no responde. Pasó en el header y el pie —las 74 páginas (§159).');
+  process.exit(1);
+}
+
+console.log(
+  `✅ verify:enlaces — ${anclas} ancla(s) interna(s) aterrizan en un id real` +
+  (sinJuzgar ? ` (${sinJuzgar} hacia rutas SSR: sin HTML que abrir, no se juzgan).` : '.'),
+);
