@@ -27,13 +27,13 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-17 · 21** | **Ola 0 restos** (E2E "tras cache" · obra AEO) · **lote-dueño**: RNT, dirección COMERCIAL, abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ | gate=obra/cutover |
-| **TODO-CEREBRO** | 🧠 **Mantenimiento** (sin pausa desde 20-ago). **TODO-23** kernel: K-01/02/04/05/09 + de §143: el #27 debe resolver el nombre contra la CARPETA del nodo (hoy perdona 92 basename) y los umbrales del #16 ir en COMMITS. **K-10 (§152)**: dos lecciones con el MISMO `L-NN` en nodos distintos no las caza nadie. **TODO-24** ssotFact de paleta + cache EN EL CUTOVER · **TODO-28** #7 sello >90d · **TODO-32(b)** [[M-09]] a los hermanos. 🔴 **BOOT crónico: la receta estaba MAL APUNTADA** (§164). No era «shard del `10`»: el router es el **59% del boot** y su techo no disparaba, así que podaba la pizarra. Cap del router → 19k. | 🔄 | §84·§143·§146 |
+| **TODO-CEREBRO** | 🧠 **Mantenimiento** (sin pausa desde 20-ago). **TODO-23** kernel: K-01/02/04/05/09 + de §143: el #27 debe resolver el nombre contra la CARPETA del nodo (hoy perdona 92 basename) y los umbrales del #16 ir en COMMITS. **K-10 (§152)**: dos lecciones con el MISMO `L-NN` en nodos distintos no las caza nadie. **TODO-24** ssotFact de paleta + cache EN EL CUTOVER · **TODO-28** #7 sello >90d · **TODO-32(b)** [[M-09]] a los hermanos. | 🔄 | §84·§143·§146 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-30 · 22** | 🗺️ **MapLibre COMPLETO (§55)** — falta solo la vista en foreground, la confirma Daniel ([[L-39]]) · 🏠 **CATÁLOGO con ficha (§97)**: datos reales = fases 3-4 del runbook, luego fichas al sitemap. | 🟢 | §55.9 · §102 |
 | **TODO-46** | 📅 **GESTIÓN v1 (ítem 13) — COMPLETA en código**, puertas desplegadas y probadas; bóveda de documentos legible con su índice en producción → §112-§118, §140-§142, §148. ⏭️ Falta **aprobar el mockup** y **ESTRENARLA con datos reales** (runbook 1.5-1.6): es lo único que puede verificar el render en vivo. | 🟢 | §148 |
 | **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR** → §129-§138. ⏭️ **Daniel**: inscribir su 2FA (clave manual; el QR se aplazó, §137.5) · verificar su correo. ⏭️ **Mío, DESPUÉS de que él se inscriba**: exigirlo en las Rules —antes NO, expulsa a todos— · el QR verificable · **puerta única** (mockup APROBADO) ⚠️ con la desviación obligada del paso 2, que enumeraría cuentas de staff (§137.6). 🚫 anti-bot aplazado (§132.5). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL — PUBLICADO (§147).** 5 artículos con la norma .gov.co citada; «Guías de zona» estrenada con un HUB que enlaza las 13 landings. Mockup **APROBADO**. ⏭️ Falta: «Mercado» sigue vacía (sin dato verificado que citar) · RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
-| **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **RAIL DE PAGO: dominio COMPLETO** (§166-§170, §176) — liquidación, certificación, mandato y el webhook (plan + ejecutor). ⏭️ Falta NO-código: el endpoint no se registra hasta que exista `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. Mío: prueba de la TRANSACCIÓN en emulador. | 🔵 mío | §176·§165 |
+| **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **RAIL DE PAGO COMPLETO y probado contra el emulador** (§166-§170, §176-§177, §185-§187): liquidación, certificación, mandato, preaviso y el webhook. ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -47,29 +47,35 @@
 > al FINAL, por decisión suya**. **Opus 5 para TODO**, esfuerzo Max, agentes y workflows LIBRES bajo tu
 > juicio (levantó ese límite el 20-ago).
 >
-> **🌊 OLA 1 = 13/13 EN CÓDIGO** (§138). Censo → `21`. **Pero «13/13» NO es «cerrada»**: ninguno de
-> esos caminos ha escrito aún en Firestore real y la base está VACÍA (medido). El cutover NO se
-> improvisa → **`specs/CUTOVER-RUNBOOK.md`** manda (§102), ya corregido (§140).
-> **En orden**: (1) **estrenar los caminos** (runbook 1.4-1.8) · (2) **inventario** (TODO-22) ·
-> (3) **Resend** · (4) **DNS/cutover**. Aparte: **TODO-30**, que lo confirma Daniel ([[L-39]]).
-> **OLA 2**: el «gate del abogado» NO EXISTE — el abogado soy yo (Daniel, 26-ago). Detalle en TODO-49
-> y §165 ([[L-40]] ya cobró 3 veces, [[M-11]]).
+> **🌊 OLA 1 = 13/13 EN CÓDIGO** (§138; censo → `21`) **pero NO cerrada**: ningún camino ha escrito
+> aún en Firestore real y la base está VACÍA (medido). Manda **`specs/CUTOVER-RUNBOOK.md`** (§102,
+> §140): estrenar los caminos (1.4-1.8) → inventario → cutover. El resto, en PELOTAS.
+> **OLA 2**: el «gate del abogado» NO EXISTE — el abogado soy yo (Daniel, 26-ago) → TODO-49, §165.
 >
-> 🏁 **La web pública ya no tiene ni un «próximamente»** (26-ago, §158-§159; el menú muerto y sus 468
-> enlaces los caza ya la sonda 3 de `verify:enlaces`). Verifícalo con un grep, no con esta línea.
+> 🎭 **UN ✅ NO PRUEBA QUE MIRARA** (§174-§177): el CI no corría `test`, su `typecheck` salía verde
+> **sin checker**, `functions/` no se chequeaba y 141 pruebas de emulador estaban fuera. Los cuatro
+> cableados, con sonda del **lockfile** — los prerrequisitos de los gates no se declaraban (3 veces en
+> un día). **El CI nunca estuvo rojo**: lo afirmé sin mirar (§3.3). Ahora: 8 gates, ~1065 pruebas.
 >
-> 🎭 **UN ✅ NO PRUEBA QUE MIRARA** (§174-§175): el CI no corría `test` y su `typecheck` salía verde
-> **sin checker** (`astro check` sin el suyo PREGUNTA, y sin terminal eso es exit 0). Ya
-> arreglado, con sonda. **El CI nunca estuvo rojo**: lo afirmé sin mirar (§3.3).
-> Y **alojamiento lleva DOS gates**: RNT + reglamento de PH que autorice EXPRESAMENTE (el silencio no
-> vale). ⏭️ El control nuevo del alta **no tiene mockup**: al repaso de Daniel.
+> 🧹 **BARRIDOS que valieron** (§178-§179): gemelos (mismo nombre, 2 módulos) → `verify:simbolos` con
+> deuda congelada · espejos de `firestore.rules` → sonda en `verify:data` **que falla si no puede
+> LEER**. Y **alojamiento lleva DOS gates**: RNT + PH que autorice EXPRESAMENTE.
+>
+> 💸 **OLA 2 — el carril de pago está COMPLETO en dominio** (§176-§177, §185-§187): webhook (plan +
+> ejecutor + atomicidad probada), mandato, liquidación, certificación y **preaviso** (un preaviso sin
+> evidencia postal NO es un preaviso: manda la fecha de IMPOSICIÓN). Falta solo `WOMPI_EVENTS_SECRET`.
+>
+> 📬 **LEADS — el camino roto está sustituido** (§188-§192): el aviso sale por **Resend** desde el
+> portal, no por el Gmail caído; el puntaje ya **no castiga por campos que el formulario nunca pide**;
+> y está probado contra el emulador que **el puntaje se guarda siempre y la marca «avisado» solo si el
+> correo salió**. ⏭️ El nurturing sigue apagado: 3 bloqueos revisados en §192 (uno cayó, uno nuevo —
+> sus plantillas enlazan al sitio retirado).
+>
+> ⏭️ **Sin mockup, y por eso sin hacer**: el control de PH en el alta, la pantalla de evidencia postal.
 >
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos
-> que solo vio la consola del dueño (§133-§136): pesa a favor de retirarlo pronto en el cutover. El
-> portal sí: **7 gates** (1043 enlaces, 341 anclas y los 65 redirects) + [[L-33]] y [[L-41]] entre los
-> gotchas que YA cobraron. Si un gate pasa, pregúntate **qué archivos abre** ([[L-52]]); y córrelos con
-> **`npm run verify`**, no de memoria (§157).
-
+> que solo vio la consola del dueño (§133-§136): pesa a favor de retirarlo pronto. Si un gate pasa,
+> pregúntate **qué archivos abre** ([[L-52]]); y córrelos con **`npm run verify`**, no de memoria.
 
 
 > **▶ BERSAGLIO** — estado vivo en su nodo dueño: `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`.
