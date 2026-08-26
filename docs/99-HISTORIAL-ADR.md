@@ -7110,3 +7110,64 @@ callado hasta que alguien lo abra a mano.
 **177.7 — Lo que sigue declarado y NO hecho.** El endpoint del webhook **sigue sin registrarse** en
 `index.ts` (§176.7): necesita `WOMPI_EVENTS_SECRET`, y un secreto inexistente bloquea el despliegue
 del codebase entero (§140). Eso no lo destraba una prueba: lo destraba una cuenta de Daniel.
+
+## 178. ADR-178 — Barrido de GEMELOS: el comentario que prometía ser el único dueño y no lo era
+
+**178.0 — De dónde salió.** §176 encontró por casualidad dos `ESTADOS_MANDATO` con el mismo nombre y
+miembros distintos, y §177 encontró un fixture desincronizado de su gemelo. Dos hallazgos de la misma
+forma en dos vueltas seguidas es una invitación a dejar de encontrarlos por suerte. Se barrió lo que
+**sí es mecanizable**: símbolos exportados con el mismo nombre desde módulos distintos. De **496**
+exportados salieron **11 colisiones**; nueve legítimas, dos no.
+
+**178.1 — El hallazgo con dinero dentro.** `IVA = 0.19` estaba declarado en `agenda.ts` **y** en
+`liquidacion.ts`. Los dos valores coincidían, así que no había ningún fallo — había el **mecanismo**
+para tenerlo: el día que cambie la tarifa, alguien edita la copia que encuentra y la otra sigue
+facturando al 19 % sin decir nada, en los dos módulos que calculan lo que se le cobra al arrendatario
+y lo que se le gira al propietario.
+🔴 **Y lo que lo hacía peor que una duplicación normal**: `liquidacion.ts` documentaba su `IVA` con
+*«si cambia la tarifa, cambia aquí y solo aquí»*. El comentario era **falso**, y por serlo era
+**activamente dañino**: quien lo leyera cerraría la búsqueda justo antes de encontrar la otra copia.
+*Un comentario que promete unicidad es una promesa que alguien va a cumplir a medias.* Pariente
+directo de [[M-25]]: no es que faltara la regla, es que la regla afirmaba un hecho que no comprobaba
+nadie.
+
+**178.2 — Y la duplicación silenciosa de al lado.** **Tres** `COP_FMT` idénticos (`ficha`, `alertas`,
+`liquidacion`) y **dos** `pesos()` con el mismo cuerpo. Se compararon uno a uno **antes** de tocar
+nada —los tres con la misma configuración, sin decimales— así que tampoco había inconsistencia viva.
+Todo se muda a `domain/dinero.ts`, que pasa a ser el dueño único de las primitivas de plata.
+
+**178.3 — El gemelo que NO era deriva, y era el más traicionero.** Dos `etiquetaTipo`, y devolvían
+cosas distintas **a propósito**: `ficha.ts` en SINGULAR («Tipo: Apartamento», rotula un inmueble) y
+`alertas.ts` en PLURAL («Apartamentos, Casas en Bocagrande», resume criterios). La diferencia es
+correcta; el **nombre común** era la trampa. Importar el equivocado no rompe nada: pinta
+«Tipo: Apartamentos», que **se lee casi bien** — y que un texto quede casi bien es lo peor que le
+puede pasar, porque nadie lo reporta. Renombrados a `etiquetaTipoSingular` / `etiquetaTipoPlural`:
+en vez de un comentario que avisa, un nombre que lo hace imposible.
+
+**178.4 — El gate, con deuda congelada.** Nace `verify:simbolos` (8.º). **Ningún otro gate puede ver
+esto**: las dos declaraciones son legítimas por separado — no hay ruta rota, ni tipo incompatible, ni
+prueba que falle, ni queja de `tsc`, porque no hay conflicto: hay dos módulos. El único indicio es
+que dos cosas se llamen igual, y eso solo se ve mirando el conjunto. Los 8 gemelos que hoy son
+legítimos van declarados **con su motivo**, y el gate falla si aparece uno nuevo — el patrón de deuda
+congelada que el linter del cerebro ya usa con las filas del índice.
+El gate también ordena el riesgo, que no todos los gemelos pesan igual: (1) mismo tipo y **valor**
+distinto → compila y cambia el comportamiento en silencio; (2) mismo tipo y **salida** distinta →
+texto casi bien; (3) tipos distintos → lo caza el compilador, molesto pero inofensivo.
+
+**178.5 — Lo declarado y NO resuelto.** `TOPE_BYTES` sigue duplicado: **10 MB** (escaneo de
+expediente) frente a **3 MB** (imagen de inmueble). Es la clase 1, la peligrosa. Se deja porque tiene
+unos diez consumidores y cada uno importa por ruta explícita, así que la probabilidad de cruzarlos es
+baja; queda anotado **en el propio gate**, con el arreglo que tocaría hacer
+(`TOPE_BYTES_DOCUMENTO` / `TOPE_BYTES_IMAGEN`) el día que se toque esa zona. Declararlo con su motivo
+es la tercera salida de [[M-25]] — ni gate ni silencio: un [HONOR] que además se cuenta.
+
+**178.6 — Verificación.** Mordida en las dos direcciones: se reintrodujo el `IVA` duplicado y el gate
+se puso rojo **nombrando los dos módulos**; restaurado, verde. **1021 pruebas** (872 + 149),
+`typecheck` de los dos codebases en 0, los 8 gates. El rescán bajó de 11 colisiones a 8.
+
+**178.7 — Un error mío, por si sirve.** Para deshacer la sonda usé `git checkout <archivo>`, y eso
+descartó **todo** lo no commiteado de ese archivo, no solo la sonda: perdí la consolidación que
+acababa de hacer en `agenda.ts` y tuve que rehacerla. En los demás mordiscos del día usé copia de
+respaldo (`cp` antes, `cp` después), que es lo correcto. **Regla**: el paso de restauración de una
+mordida es una COPIA, nunca un revert del control de versiones, mientras el archivo tenga trabajo sin
+commitear. Un revert no distingue tu sonda de tu trabajo.

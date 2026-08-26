@@ -298,6 +298,10 @@ preguntas inversas, que son las que descubren:
   `typecheck` estaba en el CI y faltaba en el atajo; `test` faltaba en los dos.
 - El comando que dice «verificar» debe correr **lo mismo que corre el CI**. Si corre menos, no
   verifica: informa. Y se confía en él exactamente igual.
+- ⚠️ **El paso de RESTAURACION de una mordida es una COPIA, nunca un revert del control de versiones.**
+  Si el archivo tiene trabajo sin commitear, un `git checkout <archivo>` no distingue tu sonda de tu
+  trabajo: se lleva las dos. Copia antes, copia despues. Me costo rehacer una consolidacion entera.
+
 - Al escribir un archivo NUEVO, no des por hecho que los gates lo cubren: pregúntate cuál de ellos
   **abre este archivo**. Un archivo nuevo es donde más fácil entra lo que ningún gate mira.
 
@@ -338,6 +342,48 @@ verde en local», sino **verde en CI porque el gate se apagó**.
 **Y una regla de método, que es de donde salió todo esto**: una corrida de CI en verde **no es
 evidencia de que el gate mirara**. Si vas a afirmar el estado de un despliegue, ábrelo y míralo — la
 deducción «mi gate falla en local, luego el CI está rojo» puede ser exactamente al revés.
+
+## 4k. 👯 GEMELOS — el mismo nombre en dos sitios, y ningún gate puede verlo
+
+Un defecto que **no produce ningún síntoma** hasta que alguien importa el equivocado: dos símbolos
+exportados con el **mismo nombre** desde módulos distintos. No hay ruta rota, ni tipo incompatible, ni
+prueba que falle, ni queja del compilador — porque no hay conflicto: hay dos módulos, y cada
+declaración es perfectamente legítima por separado. El único indicio es que dos cosas se llamen igual,
+y eso solo se ve **mirando el conjunto**, nunca leyendo un archivo.
+
+**Es barato de barrer y conviene hacerlo de vez en cuando**, no esperar a tropezarlo: extrae los
+nombres exportados de todo el proyecto y busca los que aparezcan en más de un módulo. En un barrido
+real, de 496 exportados salieron 11 colisiones: nueve inofensivas y **dos que no** — una constante de
+IVA duplicada y dos funciones de etiqueta que devolvían singular y plural.
+
+**Ordena los hallazgos por daño, que no todos pesan igual:**
+1. **Mismo tipo, VALOR distinto** — lo peor. Importar el equivocado **compila** y cambia el
+   comportamiento en silencio (dos topes de subida: 10 MB y 3 MB).
+2. **Mismo tipo, SALIDA distinta** — texto «casi bien». «Tipo: Apartamentos» en vez de
+   «Tipo: Apartamento» se lee casi correcto, así que **nadie lo reporta nunca**.
+3. **Tipos distintos** — lo caza el compilador. Molesto, no peligroso.
+
+**Y el subtipo más traicionero: el valor duplicado que HOY coincide.** No hay nada que arreglar y por
+eso se deja — pero lo que existe es el mecanismo para romperlo: el día que ese número cambie, alguien
+edita la copia que encuentra y la otra sigue con el valor viejo. **Compruébalo antes de decidir**: si
+las copias coinciden, es deuda; si difieren, es un bug vivo y ya está corriendo.
+
+**🔴 Y desconfía especialmente del comentario que promete unicidad.** El caso real llevaba escrito
+*«si cambia la tarifa, cambia aquí y solo aquí»*… al lado de una de las DOS copias. Un comentario así
+no solo es falso: es **activamente dañino**, porque quien lo lee cierra la búsqueda justo antes de
+encontrar la otra. Si vas a escribir «el único sitio donde vive X», compruébalo primero — o no lo
+escribas.
+
+**Cómo se arregla, en orden de preferencia:**
+- **Un dueño y el resto DERIVA** (importar, o `Exclude`/`Pick` sobre el tipo del dueño). Si el dueño
+  cambia, los derivados se enteran o dejan de compilar.
+- **Renombrar para que el nombre diga en qué se diferencian** cuando la diferencia es deliberada
+  (`etiquetaTipoSingular` / `etiquetaTipoPlural`). Mejor que un comentario que avisa: un nombre que lo
+  hace imposible.
+- **Declararlo con su motivo** si de verdad es inofensivo, y que el motivo explique por qué importar
+  el equivocado no puede hacer daño en silencio. Declarado y contado ≠ ignorado.
+- Y deja el barrido como **gate con deuda congelada**: los legítimos declarados, y falla solo si
+  aparece uno nuevo.
 
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
