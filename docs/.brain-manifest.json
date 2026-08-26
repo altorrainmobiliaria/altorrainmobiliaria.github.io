@@ -121,6 +121,11 @@
       "chars": 10061,
       "lines": 63,
       "_comment": "Cuarto shard de RANGO del indice (ADR 156): §91-§120, la Ola 1 del portal. Cap MEDIDO sobre el real (7453c / 47L) + 35%, con lines DERIVADO de la densidad real (~159 c/linea) para que ambos ejes aprieten en el mismo punto (_caps_que). Es un shard CERRADO por diseno: nadie escribe ADRs nuevos de ese rango. Si el 00 vivo vuelve a apretar, el siguiente rango es 00e, NO subir techos."
+    },
+    "docs/37-META-FUNDACIONALES.md": {
+      "lines": 90,
+      "chars": 15938,
+      "_comment": "Shard de 33 el 2026-08-26 (ADR 173): 33 revento su tope al entrar M-25 y podarlo a trocitos era el impuesto que §164 diagnostico. Se parte por ERAS, como los shards del indice: aqui las FUNDACIONALES M-01..M-11 (julio-agosto 2026), en 33 las vivas. Cap MEDIDO sobre el real (13282c) + 20%, no a ojo (M-05). Este nodo NO deberia crecer: si crece, es que alguien esta anadiendo lecciones nuevas al sitio equivocado."
     }
   },
   "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",

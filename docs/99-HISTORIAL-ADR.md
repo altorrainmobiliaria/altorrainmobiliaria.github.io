@@ -6769,3 +6769,52 @@ peor que ninguna, porque alguien confía en ella.*
 **172.9 — Archivos.** `portal/src/lib/domain/calendario-co.ts` (+ `.test.ts`, 39 pruebas) ·
 `mandato.ts` y su test (margen retirado) · `functions/index.js` · `portal/functions/src/index.ts`.
 848 tests, 7 gates en verde. **Fuente**: [Ley 2300 de 2023](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=213990).
+
+## 173. ADR — «Tu avalúo» en nuestro propio panel, y la meta-lección que ya iba por cuatro ⟦OPUS-5⟧ (2026-08-26)
+
+**173.0 — El barrido.** Tras §172 me quedó una pregunta más incómoda que el hallazgo: *¿qué OTRAS
+reglas del cerebro están escritas sin nadie que las haga cumplir?* Barrí las reglas duras de
+`42-LEGAL` que son comprobables sobre el HTML servido. **Dos salieron limpias y bien vigiladas**: la
+matrícula de arrendador aparece en las 41 páginas (Ley 820 art. 31) y el número personal del dueño no
+aparece en ninguna. La mayoría de las «alarmas» de depósito y avalúo eran usos LEGÍTIMOS —citar la
+ley, explicar por qué no usamos la palabra—, que es exactamente lo que un gate ingenuo rompería.
+
+**173.1 — Y una era real.** El panel decía **«Tu avalúo fue actualizado por M. Restrepo»** en sus
+avisos. Es dato demo e interno, pero era **el único sitio del producto donde la palabra aparece sin
+descargo**, y normaliza hacia dentro justo lo que no se dice hacia fuera. En Colombia el avalúo es
+actividad regulada: lo firma quien está inscrito en el RAA (Ley 1673), y por eso §105 retiró
+«Avalúos» del menú y el producto se llama **Rango ALTORRA**. Corregido. Y con él, un comentario
+caducado del endpoint de leads que citaba un texto de formulario que ya no existe — *un comentario
+obsoleto sobre la palabra prohibida es por donde vuelve a colarse*.
+
+**173.2 — La prohibición estaba escrita en CUATRO sitios.** Gate B13 de `42-LEGAL`, `redirects.ts`,
+`/nosotros` y `/publicar`. Cuatro. Y el panel la incumplía igual, porque **ninguno de los cuatro era
+un mecanismo**.
+
+**173.3 — 🪧 Nace [[M-25]], y el patrón ya iba por cuatro EN UN SOLO DÍA.** §162 (el sitemap explicaba
+en un comentario que «el olvido más común es no meter la URL al sitemap»… y dejó `/nosotros` fuera) ·
+§163 (el interruptor del catálogo, cableado y sin quien hiciera ruido al olvidarlo) · §172 (la ventana
+horaria de la Ley 2300, escrita con sus horas exactas mientras dos crons la violaban) · y ésta.
+**Por qué engaña**: escribir la regla da la misma sensación de cierre que aplicarla, y esa sensación
+apaga la pregunta siguiente. *Cuanto mejor escrita, más engaña: un comentario que nombra el fallo
+exacto parece un fallo resuelto.* **La regla**: la misma tarea que escribe una regla decide su
+mecanismo o **declara que no lo tiene** — gate, `[HONOR]` explícito, o imposible por diseño.
+**Test de bolsillo**: *si mañana alguien la incumple, ¿qué se pone rojo?* Si es «nada», es una nota.
+
+**173.4 — La sonda no prohíbe la palabra, y ahí está todo el diseño.** Caza **reclamarla como
+propia** («tu avalúo», «nuestro avalúo», «avalúo ALTORRA», «avalúo gratis») y deja pasar hablar DEL
+avalúo. Un gate que prohibiera el término obligaría a borrar precisamente el artículo del Journal que
+explica por qué no lo usamos. **Mordida probada en las dos direcciones** —aquí importa el doble
+porque el riesgo era el falso positivo—: con la frase de vuelta, rojo nombrando archivo y línea; sin
+ella, verde, y los cuatro usos legítimos intactos.
+
+**173.5 — Y por fin el SHARD, que ya iba por la tercera recomendación.** M-25 reventó el tope de `33`,
+y podarlo a trocitos era exactamente el impuesto que §164 diagnosticó. Se parte por **eras**, como los
+shards del índice: `37-META-FUNDACIONALES` se queda con M-01..M-11 y `33` con las vivas. **Costó ~25
+caracteres de boot**, no una fila nueva, porque la fila de «hojas hijas de `30`» ya existía — *sharding
+es barato cuando la familia ya tiene sitio en el router; caro cuando hay que abrirle uno*. El cap del
+nodo nuevo va **medido sobre el real +20 %**, no a ojo ([[M-05]]).
+
+**173.6 — Archivos.** `portal/src/pages/gestion.astro` · `api/solicitud.ts` ·
+`portal/scripts/verify-claims.mjs` (sonda 2) · `docs/33` y `docs/37` (shard) · `docs/30` · `CLAUDE.md`
+· el manifest. 848 tests, 7 gates en verde (22 chequeos).

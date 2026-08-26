@@ -4,7 +4,8 @@
 > Formato `### L-NN — <título>` (disparador + causa + fix). Varias son **heredadas de Altorra Cars** (mismo patrón
 > arquitectónico) — destiladas de `_legacy/AVANCES.md §"ERRORES CONOCIDOS"`.
 > 🧩 **Hojas hijas**: `31-VERIFICACION-UI.md` — L-22/L-26/L-28 COMPLETAS (verificación de UI: panel congelado ·
-> Chrome · computed vs transition) · `32-LECCIONES-DOCUMENTALES.md` — rama **legal/documental** (`LD-NN`:
+> Chrome · computed vs transition) · `37-META-FUNDACIONALES.md` — el detalle de **M-01..M-11** (shard del 26-ago; las vivas siguen en `33`) ·
+> `32-LECCIONES-DOCUMENTALES.md` — rama **legal/documental** (`LD-NN`:
 > contratos, manual, formatos, auditorías de entregables).
 > ⚠️ **Aquí solo va lo TÉCNICO.** Las viejas `L-31..L-34` "del kit" se mudaron a `32` como **LD-01..LD-04**
 > el 2026-07-28 porque **colisionaban** con las L-31..L-34 de esta hoja (ADR §68 · [[M-04]]). Un ADR anterior
@@ -197,6 +198,7 @@ guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero 
 ### M-23 — Un paso de procedimiento que nadie ha ejecutado no es documentación: es una HIPÓTESIS, y se comprueba el peor día *(auditoría #10, §140 · §145)*
 ### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total
 ### M-24 — Una lección CORRECTA archivada bajo el disparador equivocado no dispara: se redacta por su condición mínima detectable, no por la escena en que se descubrió *(§160)*
+### M-25 — Una regla ESCRITA da la sensación de estar APLICADA: si nadie la vigila, es una nota, no una regla — y cuanto mejor escrita, más engaña *(4× el 26-ago: §162, §163, §172, §173)*
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > 🧩 **Mudadas a `60-WORKFLOWS §Gobernanza`** el 2026-07-28 (ADR §68): hablan de CÓMO se conduce la
