@@ -9566,3 +9566,50 @@ verde es idéntico al de un módulo que el producto usa cada día. Por eso *«¿
 su test?»* es una pregunta que ningún gate hace por defecto y que hay que hacer a mano — o mecanizar.
 **Corolario caro**: cuando el módulo huérfano implementa una **obligación legal**, el código no es
 deuda técnica: es una obligación que la empresa cree cumplida porque «está programada».
+
+## 223. ADR-223 — `verify:huerfanos`: la pregunta que ningún gate hacía
+
+**Contexto.** §222 midió que dos obligaciones legales vivían en módulos que nadie importa, y que lo
+que los mantenía con aspecto de vivos era **su propio test**. Un hallazgo que no se mecaniza vuelve;
+esto lo mecaniza.
+
+### 223.1 — El alcance se MIDIÓ, no se supuso
+La tentación era ceñirlo a `domain/`, que es donde estaba el hallazgo. Medido antes de decidir:
+**44 módulos bajo `src/lib`** (contra 28 en `domain`), y los huérfanos siguen siendo **los mismos 3**.
+El alcance ancho cuesta lo mismo hoy y cubre `data/`, `auth/`, `seo/` y `config/` mañana. *Un alcance
+elegido por dónde apareció el bicho es una lista escrita de memoria con otro nombre.*
+
+### 223.2 — Resuelve por RUTA, y eso es la lección incrustada
+Los imports **se resuelven al fichero real** (relativo → `.ts` → `/index.ts`), no se comparan por
+nombre. No es elegancia: es que medir por nombre me dio resultados falsos **dos veces seguidas** el
+mismo día (§222.4) y el kernel arrastraba el mismo defecto hasta §221.1. El módulo y su prueba se
+excluyen **por ruta completa**, que es justo lo que impedía ver a `functions/src/pagos-webhook.ts`
+como consumidor del módulo de dominio homónimo.
+Y el ✅ **publica su denominador** —*«44 módulos contra 171 ficheros fuente»*—: sin él, «41 con
+consumidor» no se distingue de «no abrí nada» ([[M-27]]).
+
+### 223.3 — Deuda congelada, con motivo y con SALIDA
+Los 3 huérfanos de hoy están declarados en el propio script, cada uno con su norma, su encargo y qué
+lo desbloquea. **Uno nuevo rompe el CI.** Y hay tercera rama: si un declarado gana consumidor, el gate
+lo dice para que se pode — *la deuda declarada también se recorta, o el trinquete se afloja solo*.
+
+### 223.4 — Las TRES ramas mordidas, y la tercera costó dos intentos
+`module nuevo sin consumidor` → **exit 1** · `declarado gana consumidor` → info + exit 0 ·
+`estado estable` → verde con su denominador.
+📌 El primer intento de morder la tercera **no la aisló**: el fichero de prueba que importaba
+`preaviso` era él mismo huérfano, así que el gate lo acusó a él y tapó el mensaje que yo quería ver.
+Hubo que hacer que un módulo **ya consumido** importara `preaviso`. *Una prueba que no aísla la rama
+mide otra cosa y parece que mide la tuya.*
+
+### 223.5 — Cableado en LOS DOS sitios (L-56)
+Añadido a la cadena de `npm run verify` **y** como paso propio del `portal-ci.yml`. No es redundancia:
+**este CI enumera los pasos uno a uno** en vez de invocar `verify`, así que meterlo solo en la cadena
+lo habría dejado sin correr en CI — que es literalmente [[L-56]], *un gate puede existir y no
+correrlo nadie*. Suite completa **verde** con el gate dentro.
+
+### 223.6 — Doctrina
+**Un gate nuevo hereda los errores de la medición que lo justificó, salvo que se incrusten sus
+correcciones.** Este script lleva escritas, en su cabecera y en su código, las tres formas en que mi
+propio censo se equivocó — alcance por nombre de carpeta, exclusión por basename, y falta de
+denominador. Un hallazgo se mecaniza bien cuando el mecanismo **no puede repetir el camino por el que
+casi no se encuentra**.

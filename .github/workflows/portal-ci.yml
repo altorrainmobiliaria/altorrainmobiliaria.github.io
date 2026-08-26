@@ -107,6 +107,12 @@ jobs:
       # 🛡️ GEMELOS (§178): el mismo nombre exportado desde modulos distintos. Ningun otro gate puede
       # verlo —las dos declaraciones son legitimas por separado— y ya costo dos hallazgos: dos
       # `ESTADOS_MANDATO` con miembros distintos y dos `etiquetaTipo` que devolvian singular y plural.
+      # 🛡️ HUERFANOS (§222): un modulo con prueba propia y CERO consumidores pasa typecheck, test y
+      # verify:simbolos — la suite lo valida contra si mismo. Costo dos obligaciones legales escritas
+      # en codigo que nadie podia usar: la evidencia postal del preaviso (Ley 820) y la certificacion
+      # al propietario (D.1625). Deuda de 3 congelada con su motivo; una nueva rompe.
+      - name: Modulos que nadie importa
+        run: npm run verify:huerfanos
       - name: Simbolos exportados por duplicado
         run: npm run verify:simbolos
       # 🛡️ Un boton que nadie escucha no falla: se pulsa y no pasa nada. Desde fuera es
