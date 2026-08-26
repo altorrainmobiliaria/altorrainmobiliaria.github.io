@@ -101,7 +101,7 @@ justo después de autenticar bien.
 | Paso | Quién | Qué |
 |---|---|---|
 | 3.1 | 🧑 | Verificar el dominio en Resend y entregar la clave (gate 0.2) |
-| 3.2 | 🤖 | `firebase functions:secrets:set RESEND_API_KEY` |
+| 3.2 | 🧑 | **REASIGNADO (§210)** — `firebase functions:secrets:set RESEND_API_KEY`. Venía marcado 🤖 y **es una credencial**: el comando PIDE el valor de la clave por pantalla, y Claude no teclea ni recibe claves de nadie. Es un comando y usted es quien tiene la clave. Si la CLI no está en su máquina, también se puede desde la consola de Google Cloud → Secret Manager → `RESEND_API_KEY` → nueva versión. Claude sigue en el 3.3. |
 | 3.3 | 🤖 | `firebase deploy --only functions:portal:catalogoBarrido,functions:portal:alertasDigest --project altorra-inmobiliaria-345c6` — **desde la RAÍZ**. ✅ **Ya salieron `catalogoOnPropiedadWrite` y `catalogoRepublicar`** el 25-ago (§144): no son programadas, así que no comprometían nada — el índice del catálogo ya se reconstruye SOLO en cuanto se escriba la primera propiedad, que es lo que necesita el paso 1.5. Aquí quedan **solo las dos programadas**, que sí consumen 2 de los 3 jobs gratuitos de Scheduler. ⚠️ El comando que había aquí (`--config portal/firebase/firebase.json`) **fallaba siempre** (§140): esa config declaraba `source: '../functions'`, que se sale del directorio del proyecto. Ya no existe ese bloque; el codebase `portal` vive en el `firebase.json` de la raíz. Las cinco de GESTIÓN ya están fuera desde el 25-ago, así que aquí solo quedan estas cuatro. |
 
 Esto despliega el rebuild del catálogo (`catalogoOnPropiedadWrite`, `catalogoBarrido`,
@@ -138,10 +138,10 @@ verdad cuando haya catálogo y una alerta con novedades.
 | Paso | Quién | Qué |
 |---|---|---|
 | 4.1 | 🧑 | Cargar las primeras propiedades **desde el panel del portal** (TODO-44). ⛔ **La opción «entregárselas a Claude para sembrarlas» se RETIRA** (§209) y por dos motivos, cada uno suficiente: (a) sembrar exige un **service account**, una credencial del dueño que Claude no debe manejar (§124) — el paso estaba asignado a quien no puede hacerlo, como ya pasó con el 1.4 (§140); (b) el único script que existe, `scripts/upload-to-firestore.mjs`, escribe el **modelo LEGACY**, así que su salida **desaparece del catálogo sin dar error** (§103). Ya lleva el aviso en su cabecera. Lo que Claude SÍ puede: preparar los datos y el script; **ejecutarlo con credenciales es del dueño**. |
-| 4.2 | 🤖 | Comprobar que `indices/catalogo-*` se pobló (lo escribe la Function de la fase 3) |
 | 4.3 | 🧑 | Poner la variable de repositorio **`PORTAL_CATALOGO_SOURCE = live`** |
 | 4.4 | 🧑 | Poner **`PORTAL_MEDIA_BASE`** con la URL pública del bucket R2 |
 | 4.5 | 🤖 | Empujar cualquier cambio a `main` para que el CI reconstruya con esas variables |
+| 4.6 | 🤖 | **Comprobar el catálogo en el worker de staging** — era el paso 4.2 y estaba **antes**, cuando aún no había forma de verlo (§210): la CLI de Firebase **no tiene comando de lectura** de documentos y `functions:log` deniega el acceso. Después del 4.3-4.5 el sitio SÍ lo enseña, y así se verifica más: que el índice se pobló **y** que la ficha renderiza. |
 
 **Verificación**: el SERP de `/comprar` muestra los inmuebles REALES, y una ficha abre por su URL
 `/inmueble/<slug>`. Si las fotos salen rotas, es 4.4 (§97.7). **Si el SERP sale vacío**, mira
@@ -164,7 +164,7 @@ esa variable no se declaraba en NINGÚN sitio del repo (§91 la cazó, §102 la 
 |---|---|---|
 | 5.1 | 🧑 | Poner la variable de repositorio **`PORTAL_SITE_ENV = production`** |
 | 5.1b | 🧑 | Y **`PORTAL_CATALOGO_SOURCE = live`**. ⚠️ Sin ella el sitio sale con el catálogo de MUESTRA: 38 enlaces desde la home, `/comprar` y `/arrendar` hacia un inmueble que **no existe**, con su precio y su barrio. Se ve PERFECTO para un humano, igual que el fallo del 5.1. Lo bloquea la sonda del catálogo en `verify:build` (§163) — pero solo si la fase 4 ya dejó inventario real: **este paso NO se hace antes que la fase 4** |
-| 5.2 | 🤖 | Empujar a `main` y comprobar que el CI queda VERDE. Si `verify:build` falla, es el candado #6 haciendo su trabajo: **no se sigue** |
+| 5.2 | 🤖 | Empujar a `main` y comprobar que el CI queda VERDE. Si `verify:build` falla, es el candado #6 haciendo su trabajo: **no se sigue**. ⚠️ **Por qué medio** (§210): no hay `gh` en la máquina, así que el CI no se consulta por su insignia — se comprueba el **resultado desplegado** (el worker sirve el cambio y `deploy-info.json` bumpeado). Un verde que no se puede leer no es evidencia; el artefacto servido sí. |
 | 5.3 | 🧑 | Mover el DNS de `altorrainmobiliaria.co` de Hostinger a Cloudflare |
 | 5.4 | 🤖 | `curl -s https://altorrainmobiliaria.co \| grep -i noindex` → **vacío**, y `/robots.txt` sin `Disallow: /` |
 | 5.5 | 🤖 | Comprobar los 301 del sitio viejo — **los 65, uno por uno**, no una muestra (`scripts` del ensayo). `ensayado: 2026-08-25` sobre el worker de staging: 64/65 + `/index.html` 200 con canonical a `/`, que es consolidación correcta |

@@ -8771,3 +8771,48 @@ transacción — no re-implementa el modelo, que es justo el error que cometió 
 `scripts/upload-to-firestore.mjs` (aviso) · `specs/CUTOVER-RUNBOOK.md` (paso 4.1). **INTACTO**: la
 lógica del script — no se toca ni se borra; sigue sirviendo para lo que se escribió, que es el modelo
 legacy. Lo que faltaba no era código: era **decir en voz alta para qué NO sirve**.
+
+## 210. ADR-210 — Censo de los 30 pasos del cutover: cinco estaban asignados a quien no puede hacerlos
+
+**Contexto.** §140 corrigió el paso 1.4 porque estaba marcado 🤖 y era imposible para 🤖. §209 acaba de
+corregir el 4.1 por lo mismo. **Dos casos no son casualidad: son un patrón sin censar.** Esta vuelta
+enumera los **30 pasos** del runbook y comprueba, uno a uno, si quien los tiene asignado puede
+ejecutarlos de verdad.
+
+### 210.1 — Resultado: 5 de 30
+| paso | decía | por qué NO |
+|---|---|---|
+| 1.4 | 🤖 | ✅ ya corregido en §140 (exige un ID token con claim `admin`) |
+| 4.1 | «o a Claude» | ✅ ya corregido en §209 (service account + modelo legacy) |
+| **3.2** | 🤖 | **`functions:secrets:set` PIDE el valor por pantalla**: es teclear la clave de Resend. Claude no teclea ni recibe credenciales de nadie |
+| **4.2** | 🤖 | *«comprobar que `indices/catalogo-*` se pobló»* — **no hay forma**: la CLI de Firebase **carece de comando de lectura** de documentos, y `functions:log` **deniega el acceso** (probado) |
+| **5.2** | 🤖 | *«comprobar que el CI queda VERDE»* — **no hay `gh` en esta máquina** (probado en bash y PowerShell) |
+
+Verificado también lo que **sí** puedo, en vez de suponerlo: el 2.1 nombra la cuenta
+`altorrainmobiliaria@gmail.com` y **es exactamente con la que estoy autenticado**.
+
+### 210.2 — Cómo se corrigió cada uno (y por qué no todos igual)
+- **3.2 → 🧑**: es un comando y **el dueño es quien tiene la clave**. Se le añade la alternativa por
+  consola web, por si no tiene la CLI. Claude sigue en el 3.3, que sí es suyo.
+- **4.2 → se MUEVE, no se reasigna** (pasa a **4.6**). El problema no era de permisos sino de **orden**:
+  antes del 4.3 no existe ninguna superficie donde ese índice sea observable. Después del 4.3-4.5 el
+  sitio lo enseña — y entonces el paso verifica **más** que antes: que el índice se pobló **y** que la
+  ficha renderiza. *Un paso imposible a veces no está mal asignado: está mal colocado.*
+- **5.2 → se le añade el MEDIO**. La orden era correcta y el método imposible. Ahora dice que el CI no
+  se consulta por su insignia sino por el **resultado desplegado**. 🎯 **Un verde que no se puede leer
+  no es evidencia; el artefacto servido sí** — que es [[L-51]] aplicada al CI en vez de a un deploy.
+
+### 210.3 — 🎯 Lo que enseña el censo
+Un runbook se escribe **hacia adelante**, imaginando la ejecución; y al imaginarla, quien escribe
+reparte el trabajo por **quién debería** hacerlo, no por **quién puede**. Los dos casos previos se
+encontraron **chocando** contra ellos —alguien llegó al paso y no pudo—, que es la forma cara de
+encontrarlos: en mitad de un cutover, con el reloj corriendo.
+> **Un paso asignado a quien no puede ejecutarlo no falla: se detiene.** No hay error, no hay rojo, no
+> hay traza. Solo un documento que se para, y una persona delante preguntándose si el error es suyo.
+> Por eso el censo hay que hacerlo **antes**, y por eso la pregunta correcta no es *«¿está bien
+> escrito el paso?»* sino **«¿tiene quien lo tiene asignado la capacidad de hacerlo, hoy, con lo que
+> hay en su máquina?»**.
+
+### 210.4 — Archivos
+`specs/CUTOVER-RUNBOOK.md`: 3.2 reasignado · 4.2 movido a 4.6 con su motivo · 5.2 con su medio.
+Quedan **8 pasos 🤖**, los ocho verificados como ejecutables. **INTACTO**: todo el código.
