@@ -26,29 +26,14 @@
  */
 
 import type { COP } from './shared';
+import { IVA } from './dinero';
 
 /**
  * Tarifa sellada de administración de vivienda: **10 % + IVA sobre el cargo mensual integral**
  * (`docs/43-OPERACION`, tarifario 2026; publicada en `/precios`). Es el DEFAULT: cada contrato puede
  * pactar la suya en `honorariosPct`, y entonces manda la del contrato.
  */
-const COP_FMT = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 });
-
-/**
- * Pesos, a secas. SIN «al mes» ni «por noche».
- *
- * Existe aparte de `formatoPrecio` (que exige una operación y le pega el sufijo) porque en un
- * comprobante las cifras NO son precios de nada: son un cobro, unos honorarios y una retención. Un
- * «$300.000 al mes» en la línea del IVA diría algo que no es cierto.
- */
-export function pesos(v: COP): string {
-  return COP_FMT.format(v);
-}
-
 export const HONORARIOS_ADMIN_VIVIENDA = 0.1;
-
-/** IVA general colombiano. Parámetro, no verdad eterna: si cambia la tarifa, cambia aquí y solo aquí. */
-export const IVA = 0.19;
 
 /**
  * Retención en la fuente por arrendamiento de bien inmueble. **Solo aplica si quien paga es agente de

@@ -24,8 +24,9 @@
     "seed:preview": "node ./firebase/seed/generar-propiedades.mjs --print",
     "cf-types": "wrangler types",
     "_verify_por_que_typecheck_y_test": "Estaban FUERA y `verify` se leia como «todo verde». El 26-ago un archivo nuevo (`gestion-liquidacion`) entro a main con 26 errores de tipos: `verify` paso, y el unico que los veia era CI, que corre `typecheck` aparte. Un comando que dice verificar y no corre lo que corre CI no verifica: informa. Van PRIMERO porque son los que fallan por construccion, antes de gastar un build.",
-    "verify": "npm run typecheck && npm run typecheck:functions && npm run test && npm run test:rules && npm run verify:build && npm run verify:claims && npm run verify:controles && npm run verify:css && npm run verify:data && npm run verify:enlaces && npm run verify:tokens",
-    "typecheck:functions": "npm --prefix functions run typecheck"
+    "verify": "npm run typecheck && npm run typecheck:functions && npm run test && npm run test:rules && npm run verify:build && npm run verify:claims && npm run verify:controles && npm run verify:css && npm run verify:data && npm run verify:enlaces && npm run verify:simbolos && npm run verify:tokens",
+    "typecheck:functions": "npm --prefix functions run typecheck",
+    "verify:simbolos": "node ./scripts/verify-simbolos.mjs"
   },
   "engines": {
     "node": ">=20"

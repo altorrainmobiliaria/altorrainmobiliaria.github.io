@@ -27,7 +27,7 @@ import { LEGAL, TEXTO_AUTORIZACION, RUTA_AVISO } from '../lib/config/legal';
 import { ZONAS } from '../lib/content/zonas';
 import { CACHE_CONTROL_PRIVATE } from '../lib/data/cache';
 import {
-  etiquetaTipo,
+  etiquetaTipoPlural,
   normalizarCriterios,
   operacionARuta,
   resumenCriterios,
@@ -119,7 +119,7 @@ const jsonLd = {
                   <select class="alt-input" id="al-tipo" name="tipos">
                     <option value="">Cualquiera</option>
                     {TIPOS_UI.map((t) => (
-                      <option value={t} selected={criterios.tipos.includes(t)}>{etiquetaTipo(t)}</option>
+                      <option value={t} selected={criterios.tipos.includes(t)}>{etiquetaTipoPlural(t)}</option>
                     ))}
                   </select>
                 </div>

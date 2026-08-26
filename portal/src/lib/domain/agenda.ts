@@ -12,6 +12,7 @@
  */
 
 import type { COP, ISODate } from './shared';
+import { IVA } from './dinero';
 import type { Contrato, EstadoPago, Novedad, Pago, TipoPago } from './gestion';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -277,8 +278,6 @@ export function accionDeMora(tier: number): string {
 // LO QUE SE ESPERA COBRAR Y PAGAR (§115) — las cifras salen del CONTRATO, no del teclado
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** IVA colombiano sobre servicios. Los honorarios de administración inmobiliaria lo causan. */
-export const IVA = 0.19;
 
 /**
  * El id de un pago es DETERMINISTA: `<contrato>_<periodo>_<tipo>` (OD6).

@@ -29,11 +29,11 @@ import type { Contrato } from '../lib/domain/gestion';
 import {
   explicarProblema,
   liquidarPeriodo,
-  pesos,
   problemasDeLiquidacion,
   type EntradaLiquidacion,
   type Liquidacion,
 } from '../lib/domain/liquidacion';
+import { pesos } from '../lib/domain/dinero';
 
 const TOPE = 50;
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T | null;

@@ -17,6 +17,7 @@
  */
 
 import type { COP, ISODate, Operacion, TipoInmueble } from './shared';
+import { pesos } from './dinero';
 import { OPERACIONES, TIPOS_INMUEBLE } from './shared';
 import type { CatalogoResumen } from './catalogo';
 import type { PruebaConsentimiento } from '../config/legal';
@@ -150,7 +151,7 @@ export function etiquetaOperacion(op: Operacion): string {
 }
 
 /** Tipo del dominio a cómo lo dice una persona. */
-export function etiquetaTipo(t: TipoInmueble): string {
+export function etiquetaTipoPlural(t: TipoInmueble): string {
   const m: Record<TipoInmueble, string> = {
     apartamento: 'Apartamentos',
     casa: 'Casas',
@@ -273,14 +274,9 @@ export function seleccionarNovedades(
 // TEXTO — lo que ve una persona (voz ALTORRA: directo, sin adornos, sin promesas)
 // ─────────────────────────────────────────────────────────────────────────────
 
-const COP_FMT = new Intl.NumberFormat('es-CO', {
-  style: 'currency',
-  currency: 'COP',
-  maximumFractionDigits: 0,
-});
 
 export function formatoPrecio(v: COP, op: Operacion): string {
-  const base = COP_FMT.format(v);
+  const base = pesos(v);
   if (op === 'arriendo') return `${base} al mes`;
   if (op === 'alojamiento') return `${base} por noche`;
   return base;
@@ -289,16 +285,16 @@ export function formatoPrecio(v: COP, op: Operacion): string {
 /** Resumen legible de los criterios. Se muestra al confirmar y encabeza cada correo. */
 export function resumenCriterios(c: CriteriosAlerta): string {
   const partes: string[] = [];
-  partes.push(c.tipos.length ? c.tipos.map(etiquetaTipo).join(', ') : 'Inmuebles');
+  partes.push(c.tipos.length ? c.tipos.map(etiquetaTipoPlural).join(', ') : 'Inmuebles');
   partes.push(etiquetaOperacion(c.operacion));
   partes.push(c.zonas.length ? `en ${c.zonas.join(', ')}` : 'en Cartagena');
   if (c.habMin != null) partes.push(`desde ${c.habMin} habitaciones`);
   if (c.precioMin != null && c.precioMax != null) {
-    partes.push(`entre ${COP_FMT.format(c.precioMin)} y ${COP_FMT.format(c.precioMax)}`);
+    partes.push(`entre ${pesos(c.precioMin)} y ${pesos(c.precioMax)}`);
   } else if (c.precioMax != null) {
-    partes.push(`hasta ${COP_FMT.format(c.precioMax)}`);
+    partes.push(`hasta ${pesos(c.precioMax)}`);
   } else if (c.precioMin != null) {
-    partes.push(`desde ${COP_FMT.format(c.precioMin)}`);
+    partes.push(`desde ${pesos(c.precioMin)}`);
   }
   return partes.join(' ');
 }

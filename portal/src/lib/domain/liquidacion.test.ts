@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
   HONORARIOS_ADMIN_VIVIENDA,
-  IVA,
   RETEFUENTE_ARRENDAMIENTO,
   RETEFUENTE_HONORARIOS_PJ,
   explicarProblema,
   liquidarPeriodo,
   problemasDeLiquidacion,
 } from './liquidacion';
+import { IVA } from './dinero';
 
 describe('liquidarPeriodo — el caso normal de este negocio', () => {
   /* Vivienda, arrendatario persona natural, cuota de PH cobrada aparte. */

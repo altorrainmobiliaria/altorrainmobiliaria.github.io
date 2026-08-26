@@ -25,6 +25,7 @@
  */
 
 import type { COP, ISODate, Operacion, TipoInmueble } from './shared';
+import { pesos } from './dinero';
 import type { Propiedad } from './propiedades';
 import type { CatalogoResumen } from './catalogo';
 import { operacionAShard } from './catalogo';
@@ -34,13 +35,6 @@ import { operacionAShard } from './catalogo';
 // ─────────────────────────────────────────────────────────────────────────────
 
 const NF = new Intl.NumberFormat('es-CO');
-const COP_FMT = new Intl.NumberFormat('es-CO', {
-  style: 'currency',
-  currency: 'COP',
-  maximumFractionDigits: 0,
-});
-
-export const pesos = (v: COP): string => COP_FMT.format(v);
 
 /** Sufijo del precio según la operación. Pintar un canon mensual sin «/mes» lo convierte en otra cosa. */
 export const sufijoPrecio = (op: Operacion): string =>
@@ -55,6 +49,12 @@ export const rutaOperacion = (op: Operacion): string =>
 export const etiquetaOperacionRuta = (op: Operacion): string =>
   op === 'venta' ? 'Comprar' : op === 'arriendo' ? 'Arrendar' : 'Estancias';
 
+/*
+ * SINGULAR, y el nombre lo dice. Su gemelo de `alertas.ts` devuelve el PLURAL («Apartamentos») porque
+ * resume criterios de una alerta, mientras que este rotula la ficha de UN inmueble («Tipo: Apartamento»).
+ * Los dos se llamaban `etiquetaTipo` (§178): importar el equivocado no rompía nada — pintaba
+ * «Tipo: Apartamentos», que se lee casi bien, que es lo peor que puede pasar con un texto.
+ */
 const TIPO_LABEL: Record<TipoInmueble, string> = {
   apartamento: 'Apartamento',
   casa: 'Casa',
@@ -69,7 +69,7 @@ const TIPO_LABEL: Record<TipoInmueble, string> = {
   edificio: 'Edificio',
   otro: 'Inmueble',
 };
-export const etiquetaTipo = (t: TipoInmueble): string => TIPO_LABEL[t] ?? 'Inmueble';
+export const etiquetaTipoSingular = (t: TipoInmueble): string => TIPO_LABEL[t] ?? 'Inmueble';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PRECIO — el bloque donde una etiqueta equivocada cambia el significado del número
@@ -172,7 +172,7 @@ export function specsVisibles(p: Propiedad): SpecVisible[] {
 export function fichaTecnica(p: Propiedad): Array<[string, string]> {
   const s = p.specs ?? {};
   const filas: Array<[string, string]> = [];
-  filas.push(['Tipo', etiquetaTipo(p.tipo)]);
+  filas.push(['Tipo', etiquetaTipoSingular(p.tipo)]);
   if (s.piso != null) filas.push(['Piso', String(s.piso)]);
   if (s.areaPrivadaM2 != null) filas.push(['Área privada', `${NF.format(s.areaPrivadaM2)} m²`]);
   if (s.areaConstruidaM2 != null) filas.push(['Área construida', `${NF.format(s.areaConstruidaM2)} m²`]);
@@ -432,7 +432,7 @@ export function descripcionSeo(p: Propiedad): string {
   // «Apartamento arriendo en Manga» no lo escribiría una persona. `etiquetaOperacion` da la forma
   // correcta («en arriendo», «en venta», «por días») y de paso la description deja de sonar a plantilla.
   const comoSeDice = p.operacion === 'venta' ? 'en venta' : p.operacion === 'arriendo' ? 'en arriendo' : 'por días';
-  const hechos = `${etiquetaTipo(p.tipo)} ${comoSeDice} en ${ubicacionPublica(p)}.`;
+  const hechos = `${etiquetaTipoSingular(p.tipo)} ${comoSeDice} en ${ubicacionPublica(p)}.`;
   const texto = base.length >= 80 ? base : `${hechos} ${base}`.trim();
   return texto.length > 158 ? `${texto.slice(0, 155).trimEnd()}…` : texto;
 }

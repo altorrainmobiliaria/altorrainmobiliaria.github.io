@@ -104,6 +104,11 @@ jobs:
       # declarada «réplica fiel del mockup». Solo se ve midiendo en el navegador — o con este gate.
       - name: Variables CSS que existen de verdad
         run: npm run verify:tokens
+      # 🛡️ GEMELOS (§178): el mismo nombre exportado desde modulos distintos. Ningun otro gate puede
+      # verlo —las dos declaraciones son legitimas por separado— y ya costo dos hallazgos: dos
+      # `ESTADOS_MANDATO` con miembros distintos y dos `etiquetaTipo` que devolvian singular y plural.
+      - name: Simbolos exportados por duplicado
+        run: npm run verify:simbolos
       # 🛡️ Un boton que nadie escucha no falla: se pulsa y no pasa nada. Desde fuera es
       # indistinguible de un panel roto (§126, y cuatro mas en el panel de gestion en una tarde).
       - name: Controles que de verdad hacen algo
