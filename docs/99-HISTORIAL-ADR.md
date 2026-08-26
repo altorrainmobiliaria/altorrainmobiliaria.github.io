@@ -5856,3 +5856,85 @@ un sitio con usuarios.
 
 **154.7 — Archivos.** `portal/src/pages/ingresar.astro` · `functions/index.js` (`cuenta-creada` en
 `ACCIONES_VALIDAS`, desplegado).
+
+## 155. ADR — «Mi perfil»: una página pública que habla con Firebase sin cargar Firebase ⟦OPUS-5⟧ (2026-08-25)
+
+**155.0 — Quién abre esta pantalla.** Alguien **nervioso**: está buscando dónde vivir, ya le pidieron
+papeles en tres sitios y en dos le pidieron codeudor. Todo lo que lea aquí tiene que quitarle miedo —
+y la forma de quitarlo no es un texto amable, es decirle **qué falta, qué sirve como soporte y cuánto
+tarda**. Esa frase gobierna cada decisión de la página.
+
+**155.1 — Cuatro decisiones que no son de pintar.**
+· **Cada requisito dice QUÉ SIRVE, antes de que suba lo que no era.** «Soporte de ingresos» no
+significa nada; «los últimos tres desprendibles, o extractos de tres meses si eres independiente» sí.
+*Casi todo el reproceso de una revisión documental nace de una etiqueta vaga.*
+· **«Es mi primer arriendo» es una casilla, no una excusa.** Al marcarla deja de pedirse la
+referencia del arrendador anterior — quien nunca ha arrendado no puede tenerla, y exigírsela es
+cerrarle la puerta por ser joven.
+· **El estado dice cuánto falta, no cómo se llama.** «Enviado a revisión» no informa; «te
+respondemos antes de 24 horas hábiles» sí. Y si volvió con observaciones, lo primero que se lee es
+**lo que falta**, no la palabra «observaciones».
+· **Se dice en pantalla que no cuesta nada.** En el mercado sí cobran el mal llamado «estudio de
+documentos»; decirlo aquí cumple el art. 16 de la Ley 820 y es, de paso, el argumento comercial más
+corto que existe.
+
+**155.2 — 🔴 Sin un gramo de SDK de Firebase, y no es purismo.** Es una página **pública**: meterle
+el SDK de Firestore o el de Storage la engorda para todo el que pase por ella, y el gate
+`verify:data` lo prohíbe con razón. Todo va por `fetch`:
+· el perfil se **lee por REST con el ID token** —la lectura la reservan las Rules al titular, así que
+la `apiKey` sola devuelve 403—;
+· el archivo se **sube por REST de Storage**, a la ruta EXACTA que acuñó el servidor;
+· lo que escribe estado pasa por las callables, porque `perfiles` nace con `allow write: if false`.
+`verify:data` lo confirma sobre 103 archivos: cero SDK. Para esto `firestore-rest` gana `idToken`,
+que es una capacidad **reutilizable**: *leer lo MÍO con mi sesión, sin SDK*.
+
+**155.3 — Un bug propio, cazado antes de que llegara a nadie.** El script escribía el texto de las
+observaciones sobre el **contenedor**, no sobre su párrafo: habría borrado el rótulo «Falta una cosa»
+y la explicación de qué hacer — justo lo único que esa persona necesita leer. Solo se ve con un
+perfil en ese estado, que sin sesión no se puede alcanzar; se encontró releyendo el diff contra el
+markup, no ejecutando.
+
+**155.4 — Y es ALCANZABLE.** Enlace en el footer, columna Servicios. *Una página que existe y a la
+que no se llega es la versión silenciosa del botón fantasma* (§126). `noindex`, porque es una
+pantalla de cuenta: que Google la indexe solo consigue que aparezca una URL que a un anónimo le dice
+«entra primero».
+
+**155.5 — Verificado, y lo que no.** Estado anónimo correcto, el enlace de ingreso lleva su `volver`,
+`noindex` puesto, 938 enlaces internos que resuelven, 583 pruebas y los 7 gates. **Lo que NO se
+probó**: el camino feliz completo —crear cuenta, subir un archivo real, enviar— porque exige crear
+una cuenta de verdad, y eso no se hace desde aquí. Queda para el estreno con el dueño.
+
+**155.6 — Archivos.** `portal/src/pages/mi-perfil.astro` · `portal/src/scripts/mi-perfil.ts` ·
+`portal/src/lib/data/firestore-rest.ts` (`idToken`) · `portal/src/components/Footer.astro` ·
+`portal/design/mockups/ALTORRA Mi perfil.dc.html`.
+
+## 156. ADR — El cuarto shard del índice: comprimir no era la respuesta ⟦OPUS-5⟧ (2026-08-25)
+
+**156.0 — El síntoma, repetido.** El índice vivo rozó su tope **cuatro veces en un mismo día**, y las
+cuatro se pagó comprimiendo filas — filas que estaban bien escritas y que perdieron matiz para caber.
+Al cuarto aviso el patrón era la respuesta: *comprimir es lo correcto cuando sobra grasa; cuando lo
+que sobra es historia cerrada, la respuesta es MUDARLA.*
+
+**156.1 — Qué se mueve, y por qué ese rango.** Las **30 filas de §91-§120** van a
+`docs/00d-INDICE-PORTAL.md`: es el tramo en que el portal pasó de existir a estar completo —SERP,
+ficha, alertas, precios, el ruleset fusionado, los leads, la subida a R2, el runbook del cutover—. Es
+un shard **cerrado por diseño**: nadie va a escribir ADRs nuevos de ese rango, así que no crece.
+Sigue la misma convención de §85 / §100 / §116, que ya se probó tres veces.
+
+**156.2 — Lo que NO pasa al mover.** El kernel descubre a las hermanas por PATRÓN
+(`00[a-z]?-INDICE*.md`) y trata a las cinco como UN índice: los chequeos de desync, de ADRs indexados
+y de consolidado leen todas. Mover una fila **no la saca del cerebro** — y decirlo aquí importa
+porque la duda razonable al ver un índice partido es exactamente esa.
+
+**156.3 — Dos gates lo empujaron a estar bien conectado, y menos mal.** Al nacer, el shard salió
+**huérfano de 2º orden**: existía y ningún nodo de ruteo llegaba a él. Y salió **sin cap declarado**,
+o sea creciendo sin que ningún gate lo mirara. Los dos avisos son del propio linter, y los dos se
+cerraron: fila-puntero desde el índice vivo, mención en el router, y cap **medido** sobre el real con
+el eje de líneas derivado de la densidad para que ambos aprieten en el mismo punto ([[M-06]]).
+
+**156.4 — Números.** `00-INDICE` pasa de **24162c a 17965c** (bajo un tope de 24000, con margen real
+por primera vez en el día) y `00d` nace con 7481c sobre 10061. El boot no se mueve: el índice no es
+always-on.
+
+**156.5 — Archivos.** `docs/00d-INDICE-PORTAL.md` (nuevo) · `docs/00-INDICE.md` ·
+`docs/.brain-manifest.json` · `CLAUDE.md` §0.

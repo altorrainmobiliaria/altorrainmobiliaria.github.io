@@ -38,7 +38,7 @@ Auto-cargas SOLO `CLAUDE.md` + `05` + `10` (§G.1); el resto se lee on-demand. E
 | 🧪 **Procedimental** | `docs/30-LECCIONES.md` | ❌ | Gotchas y recetas ya pagados (`L-NN`). |
 | 🧩 **Hojas hijas de `30`** | `docs/31-VERIFICACION-UI.md` · `docs/32-LECCIONES-DOCUMENTALES.md` · `docs/33-LECCIONES-META.md` · `docs/34-DOCTRINA-CODIGO.md` · `docs/35-LECCIONES-PLATAFORMA.md` · `docs/36-LECCIONES-UTILLAJE.md` | ❌ | El nombre dice el tema; lo que NO dice: `32`=`LD-NN` · `33`=`M-NN` (dónde falló el cerebro) · `36`= cuando miente la HERRAMIENTA, no el código. |
 | 🔁 **Workflows** | `docs/60-WORKFLOWS.md` | ❌ | Catálogo W-01..W-11; **W-11 = SSoT del flujo fuerte**. |
-| 🗂️ **Índice sináptico** | `docs/00-INDICE.md` (+ shards `00a`·`00b`·`00c`) | ❌ | Mapa §→línea de `99` + capa semántica síntoma→neurona. Los shards guardan §01-§20, §21-§60 y §66-§90; el kernel los lee como UNO. |
+| 🗂️ **Índice sináptico** | `docs/00-INDICE.md` (+ shards `00a`·`00b`·`00c`·`00d`) | ❌ | Mapa §→línea de `99` + capa semántica síntoma→neurona. Los shards guardan §01-§20, §21-§60, §66-§90 y §91-§120; el kernel los lee como UNO. |
 | 📚 **Largo Plazo** | `docs/99-HISTORIAL-ADR.md` | ❌ | El "por qué" de cada decisión (ADRs). NUNCA completo — offset/limit. |
 | 🎯 **Lóbulos de Dominio** | `docs/40-LOBULOS-DOMINIO.md` | ❌ | Registry de dominios; los hijos (`41-MERCADO`…) nacen con contenido REAL. |
 | 🔐 **Config / Infra** | `docs/50-CONFIG-INFRA.md` | ❌ | Project ID, IAM, comandos de deploy, workflows de CI. Los secretos reales viven gitignored. |

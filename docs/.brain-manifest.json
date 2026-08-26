@@ -115,6 +115,11 @@
       "chars": 9000,
       "lines": 40,
       "_comment": "Nacio el 2026-08-25 en el shard de 21 (ADR 149): absorbe el BACK-OFFICE (panel y sus 4 vistas, boveda de documentos y su bitacora, contratos, callable), que es el lado que crece con cada pieza de la operacion. Cap MEDIDO sobre el real (3160c / 14L) con margen amplio a proposito: este nodo esta hecho para crecer, y el que no debia crecer mas era 21. lines DERIVADO de la densidad real (~226 c/linea): 9000/226 = 40, para que ambos ejes aprieten a la vez (_caps_que). Si algun dia aprieta, la frontera siguiente es GESTION v1 (contratos/pagos/novedades) vs. BOVEDA de documentos, NO subir el techo."
+    },
+    "docs/00d-INDICE-PORTAL.md": {
+      "chars": 10061,
+      "lines": 63,
+      "_comment": "Cuarto shard de RANGO del indice (ADR 156): §91-§120, la Ola 1 del portal. Cap MEDIDO sobre el real (7453c / 47L) + 35%, con lines DERIVADO de la densidad real (~159 c/linea) para que ambos ejes aprieten en el mismo punto (_caps_que). Es un shard CERRADO por diseno: nadie escribe ADRs nuevos de ese rango. Si el 00 vivo vuelve a apretar, el siguiente rango es 00e, NO subir techos."
     }
   },
   "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",
@@ -195,7 +200,7 @@
     "specs/R5-PROMPT-GEMINI-STACK.md"
   ],
   "workAllowlistRazon": "Investigación R0-R5 de julio-2026 ya DESTILADA a sus neuronas (schema y stack -> 20 · operación -> 43 · mercado -> 41): son la materia prima, no trabajo pendiente. Se conservan como evidencia de procedencia. Si alguna vuelve a definir trabajo POR HACER, sáquela de aquí y cítela desde su nodo dueño.",
-  "indexRowOverLimitBaseline": 47,
+  "indexRowOverLimitBaseline": 46,
   "_indexRowOverLimitBaseline_que": "Deuda CONGELADA de filas §NN del indice por encima de 260c (objetivo 200c), medida el 2026-08-22 con 119 ADRs. TRINQUETE (#26, ADR 120): una fila gorda NUEVA supera este numero y BLOQUEA el commit; la deuda vieja no bloquea a nadie. Solo puede BAJAR — subirlo para dejar de ver el aviso es exactamente lo que M-05 prohibe. Al acortar filas viejas, bajalo al numero real.",
   "countableFacts": [
     {
