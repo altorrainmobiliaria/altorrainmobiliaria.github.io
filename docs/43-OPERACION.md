@@ -191,7 +191,7 @@ contenido mínimo del contrato = §3 de la L.820 (no §11) · paz y salvo predia
 prueba del contrato de hospedaje (L.2068 §21-22).
 **❓ Agenda abogado (no verificado en fuente oficial):** ~~régimen de intereses sobre cánones~~ (RESUELTA → §181: sobre el CANON, 6 % y con el rubro en
 riesgo por CC 1617 regla 4a, ya acotado por diseño; y la «divergencia» del kit no lo era — mandato COMERCIAL
-1,5×IBC vs vivienda CIVIL 6 %, dos regímenes distintos) · taxatividad de causales de terminación · tarifa registro Bolívar +
+1,5×IBC vs vivienda CIVIL 6 %, dos regímenes distintos) · ~~taxatividad de causales de terminación~~ (RESUELTA → §184: la ley **NO dice «solamente»** y no hay cláusula de irrenunciabilidad, o sea el texto no la cierra; **aun así NO se amplía la lista** por costes asimétricos → [[LD-09]]. Sí se pacta el PROCEDIMIENTO) · tarifa registro Bolívar +
 estampillas · ~~aplicación de L.1480 al arriendo de vivienda~~ (RESUELTA → §183: **régimen especial manda, la 1480 es SUPLETORIA** —art. 2 literal— luego Ley 820 primero; y NO se publica página de retracto para el arriendo. ⚠️ NO cierra la de RESERVAS, que es otra) · ~~frecuencia de Ley 2300~~ (RESUELTA → §172: aplica a la prospección
 comercial, no solo a la cobranza, y ya hay calendario y guardias en el código) · valor UVB 2026 · ~~reglamento PH silente vs autorización expresa~~ (RESUELTA → §174: **el silencio NO autoriza**; hace falta permiso EXPRESO —D.1074/2015 art. 2.2.4.1.2.2 num. 8, L.675/2001 art. 18.1— instrumentado como DECLARACIÓN fechada del prestador, ya bloqueante en el alta y en `publicable()`. ⚠️ La respuesta llevaba **un mes** verificada en `specs/R3-LEGAL-COLOMBIA` §GATE 5 mientras esta lista seguía preguntándola: antes de agendar algo aquí, búscalo en `specs/R3`).
 

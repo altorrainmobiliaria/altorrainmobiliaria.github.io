@@ -7426,3 +7426,55 @@ del «gate del abogado» que **§165 ya posee entera**, así que se compacta a u
 queda en 19979/20000. *Un nodo al 100 % no admite una regla nueva sin decidir cuál se va.*
 
 **Fuente**: [Ley 1480 de 2011 — Gestor Normativo, Función Pública](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=44306)
+
+## 184. ADR-184 — Taxatividad de las causales: la ley no dice «solamente», y la respuesta sigue siendo no
+
+**184.0 — Mismo orden de trabajo, y esta vez el resultado fue NEGATIVO.** (1) Exposición viva: el
+producto **no modela causales de terminación en ningún sitio** — `agenda.ts` y `gestion.astro`
+mencionan «terminación» pero no hay enum ni campo de causal. Cero exposición en código; muerde en la
+**plantilla de contrato** (kit, en pausa) y en el futuro módulo de terminación. (2) ¿Ya investigado?
+`R3` verificó la Ley 820 entera y dejó abierta **otra** pregunta sobre terminación —si el preaviso «por
+servicio postal autorizado» admite equivalente electrónico (arts. 22.7 y 24)— pero no ésta. (3) Fuente.
+
+**184.1 — Lo que dice la ley, verificado literal.** Los dos artículos abren su lista igual:
+> Art. 22: *«Son causales para que el arrendador pueda pedir unilateralmente la terminación del
+> contrato, las siguientes:»* · Art. 24, idéntico para el arrendatario.
+
+**Sin «solamente» ni «únicamente».** Y buscando expresamente una cláusula general de irrenunciabilidad
+de los derechos del arrendatario —o una que fulmine con ineficacia las estipulaciones que los
+desconozcan— **no aparece ninguna** en la Ley 820. La ley prohíbe **explícitamente** cuando quiere
+(art. 16, los depósitos), y aquí no lo hizo.
+
+**184.2 — Conclusión honesta: el texto NO cierra la pregunta.** Quien quiera sostener que la lista es
+abierta tiene por dónde, y decir lo contrario sería fabricar una certeza. *Un dictamen que inventa
+firmeza donde la norma calla es peor que uno que reconoce el margen*, porque el que lo lea dejará de
+mirar. Se registra el hallazgo NEGATIVO tal cual.
+
+**184.3 — Y aun así, la decisión operativa es NO ampliar.** No por certeza jurídica sino por **costes
+asimétricos**, que es un criterio distinto y hay que decirlo:
+· **Ganancia de añadir una causal a favor del arrendador: poca.** Las causales legales ya cubren el
+  incumplimiento del arrendatario, que es el grueso de los casos reales; lo que una cláusula extra
+  añade son supuestos de borde.
+· **Pérdida si un juez la anula: mucha.** Se cae la terminación **en el peor momento posible**, con el
+  inmueble ocupado y el proceso en marcha.
+*Ganar poco al acertar y perder mucho al fallar es la forma de una apuesta que no se toma.* Y hay un
+segundo argumento, que además enlaza con §183: la Ley 820 **no tiene régimen de cláusulas abusivas**,
+y por el art. 2 de la Ley 1480 ese vacío lo llena el Estatuto del Consumidor supletoriamente. ⚠️ Los
+arts. 42-43 de la 1480 **no se verificaron en fuente esta vuelta**, así que ese segundo argumento se
+deja apuntado y **no se apoya nada en él**: la decisión se sostiene sola con el primero.
+
+**184.4 — Lo que SÍ se puede pactar, y es donde está el valor real.** El **procedimiento**: cómo se
+prueba el hecho, cómo y a dónde se notifica, qué plazos internos corren, qué evidencia se conserva.
+*Regular el CÓMO no es crear el QUÉ.* Ahí sí conviene ser exhaustivo, y además es lo que el futuro
+módulo de terminación necesita para funcionar — mucho más que una lista de causales inventadas.
+
+**184.5 — Queda escrito como lección de redacción, no solo como dictamen.** Nace **LD-09**: ante una
+ley protectora que enumera, distingue **ampliar la lista** (no) de **detallar el trámite** (sí). Se
+archiva en `32` y no en `42-LEGAL` a propósito — es una regla para REDACTAR documentos, y quien la
+necesita está escribiendo una cláusula, no consultando el marco legal.
+
+**184.6 — GC pareado.** LD-09 entró comprimida y el razonamiento largo se quedó aquí: `32` cierra en
+15938/16000. Y sigue abierta, sin tocar, la pregunta hermana de `R3`: si el preaviso por servicio
+postal autorizado admite equivalente electrónico. Es otra pregunta y merece su propia vuelta.
+
+**Fuente**: [Ley 820 de 2003 — Gestor Normativo, Función Pública](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=8738)
