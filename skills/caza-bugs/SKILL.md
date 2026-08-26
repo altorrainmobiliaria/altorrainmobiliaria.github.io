@@ -385,6 +385,39 @@ escribas.
 - Y deja el barrido como **gate con deuda congelada**: los legítimos declarados, y falla solo si
   aparece uno nuevo.
 
+## 4l. 🪞 ESPEJOS entre lenguajes — la regla escrita dos veces en dos idiomas
+
+El gemelo de §4k, pero peor: la misma lista escrita en **dos lenguajes distintos**. Reglas de seguridad
+de la base de datos y su predicado equivalente en el código; un enum de la API y su copia en el
+cliente; un esquema de validación y el tipo que lo acompaña; una lista de permisos en un YAML y la del
+middleware. Ni el compilador ni un barrido de símbolos pueden ayudar: **no son el mismo idioma**, así
+que nada los relaciona salvo la intención de quien los escribió.
+
+**El indicio está escrito en el propio código, y es la palabra «espeja».** Busca los comentarios que
+dicen *«espeja X»*, *«el mismo que Y»*, *«tiene que coincidir con»*. Cada uno es una promesa de
+sincronía **sin nada que la sostenga**. En un barrido real había tres, y los tres coincidían — no
+había bug, había el mecanismo para tenerlo.
+
+**🔴 Y sospecha del NOMBRE que promete la verificación.** El caso que más me gustó: una prueba llamada
+*«los roles espejan a las Rules»* que **no abría el archivo de reglas ni una vez** — comprobaba que las
+funciones hacen lo que la propia prueba espera, una tautología con buen nombre. Es la especie del
+comentario que promete unicidad (§4k): un nombre que promete algo apaga la pregunta de si alguien lo
+hace. **Ante un test o una función cuyo nombre afirme una correspondencia, ábrelo y comprueba que
+lee las DOS fuentes.** Si solo lee una, el nombre está mintiendo, y arreglarlo es tan valioso como
+añadir la comprobación: quitar una promesa falsa devuelve la pregunta.
+
+**Por qué el daño es de los que no avisan.** Las dos direcciones fallan calladas: si el código es más
+permisivo que la frontera real, se publican cosas que el servidor luego niega (enlaces a un 404); si
+es más restrictivo, hay datos válidos que nadie muestra — invisibles, sin un solo error. Y cuando lo
+que diverge son **permisos**, el fallo silencioso es de seguridad.
+
+**Cómo se comprueba, barato**: extrae la lista de cada lado con una expresión regular y compara los
+conjuntos. Es frágil, y no importa **si falla del lado correcto**:
+🔒 **si la extracción no encuentra nada, PONTE EN ROJO, nunca en verde.** Un comparador que no
+encontró nada que comparar y dice ✅ es el peor de los gates que mienten, y aquí es el que vigila los
+permisos. Pruébalo en **tres** direcciones, no dos: cambia el lado A, cambia el lado B, y **rompe la
+extracción** — esa tercera es la que distingue un comparador de un adorno.
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.

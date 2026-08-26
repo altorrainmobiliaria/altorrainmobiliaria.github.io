@@ -7171,3 +7171,52 @@ acababa de hacer en `agenda.ts` y tuve que rehacerla. En los demás mordiscos de
 respaldo (`cp` antes, `cp` después), que es lo correcto. **Regla**: el paso de restauración de una
 mordida es una COPIA, nunca un revert del control de versiones, mientras el archivo tenga trabajo sin
 commitear. Un revert no distingue tu sonda de tu trabajo.
+
+## 179. ADR-179 — Tres «espeja las Rules» que nadie comprobaba, y una prueba que prometía hacerlo
+
+**179.0 — De dónde salió.** §178 barrió los gemelos DENTRO del código. Queda la otra mitad, y es peor:
+listas escritas dos veces en **lenguajes distintos** — una en `firestore.rules`, otra en TypeScript —
+donde ni el compilador ni el barrido de símbolos pueden ayudar, porque no son el mismo idioma.
+
+**179.1 — Lo que había.** Tres sitios dicen literalmente *«espeja las Rules»*: `ESTADOS_PUBLICADOS`
+en `catalogo.ts`, y `esStaff()` / `esEditorOMas()` en `verificar-id-token.ts`. **Ninguno lo
+comprobaba.** Y el detalle que lo vuelve un ADR y no una tarea: existía un bloque de pruebas llamado
+**«los roles espejan a las Rules»** que **no abre el archivo de Rules ni una vez** — comprueba que las
+funciones de TypeScript hacen lo que esa misma prueba espera, que es una tautología con buen nombre.
+Es la especie exacta del comentario de §178 (*«cambia aquí y solo aquí»*): **un NOMBRE que promete una
+verificación que no ocurre**, y que por prometerla apaga la pregunta de si alguien la hace.
+
+**179.2 — Se comprobaron a mano antes de automatizar, y CUADRAN.** `estado in ['disponible',
+'reservado', 'cerrado']` ↔ `ESTADOS_PUBLICADOS`; `rol() in ['super_admin', 'editor']` ↔ las dos
+comparaciones del TS; `token.admin == true` ↔ `t.admin === true`. **No había ningún bug** — había dos
+listas duplicadas en idiomas distintos sin nadie mirando si seguían iguales. Se dice porque el
+hallazgo honesto de esta vuelta es un mecanismo ausente, no una avería.
+
+**179.3 — Por qué importa que coincidan.** Las Rules son la **frontera real** (lo que el servidor
+permite) y el TypeScript decide **qué se pinta**. Si divergen, el fallo va en una de dos direcciones y
+ninguna avisa: (a) el índice publica fichas que las Rules niegan → tarjetas con foto y precio que
+llevan a un 404; (b) hay inmuebles publicables que nadie indexa → inventario invisible, que es peor
+porque no produce ni un error. Y en el caso de los roles, lo que diverge son **permisos**.
+
+**179.4 — La sonda, y su decisión de diseño.** Entra en `verify:data` —que ya es el gate de
+invariantes de Firestore— y compara las listas del `.rules` con las del código.
+🔒 **Falla si no puede LEER.** Si un patrón deja de encontrar su lista, se pone ROJA en vez de pasar.
+Un comparador que no encuentra nada que comparar y dice ✅ es precisamente el gate que miente
+([[L-52]]), y aquí eso pesa más de lo normal: lo que compara son permisos. Se probó **en tres
+direcciones**: cambiar el TS → rojo nombrando ambas listas; cambiar el `.rules` → rojo; renombrar la
+constante para romper la extracción → rojo diciendo qué no pudo leer.
+Y el bloque de pruebas mal llamado pasa a decir lo que hace de verdad, con la nota de dónde vive
+ahora el espejo. Quitar una promesa falsa vale tanto como añadir una comprobación.
+
+**179.5 — Y una recaída mía que corrige una regla mal arreglada.** El mensaje de este mismo commit
+perdió dos identificadores: el shell se comió lo que iba entre acentos graves. Es [[L-46]] por
+**quinta vez hoy**, y lo interesante es que la vuelta anterior yo había reescrito esa regla como
+criterio mecánico —*«insertar en un ancla es de la herramienta de edición; el intérprete solo para
+iterar»*— y aun así fallé. El criterio era correcto y **no cubría el caso**: un mensaje de commit no
+es ninguna de las dos ramas que enumeré, es una tercera forma —texto que viaja como **argumento de un
+comando**—. **Regla nueva, sin ramas**: *el texto nunca viaja como argumento de shell*; a un archivo
+con la herramienta de edición, a un comando por REFERENCIA (`-F fichero`, jamás `-m`). *Un criterio
+mecánico que enumera casos falla en el caso que no enumeraste.* El disparador de la recaída fue
+pensar «este mensaje es corto, no pasa nada» — justo el juicio que la regla existe para no tener que
+hacer. El commit queda con los huecos: reescribir historia empujada cuesta más de lo que arregla, y
+la sustancia está aquí.
