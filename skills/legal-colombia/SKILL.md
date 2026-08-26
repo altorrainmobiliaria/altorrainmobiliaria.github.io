@@ -157,6 +157,67 @@ alcanzable —enlazada desde un menú, indexable, compartible— dejan de ser *p
 - Aplica igual a `sameAs`, a `aggregateRating` en el JSON-LD y a los logos de «confían en nosotros».
   El buscador los trata como afirmaciones, y las penaliza cuando no las respalda nada.
 
+## 🧮 DOS unidades de cuenta, y usar la equivocada es un error de fondo
+
+Colombia indexa sus cifras legales a unidades, no a pesos — y desde 2023 hay **dos**. Confundirlas no
+produce un número «un poco distinto»: produce uno que no corresponde a la norma que estás citando.
+
+| Unidad | Para qué | Quién la fija |
+|---|---|---|
+| **UVT** — Unidad de Valor Tributario | **Tributario, aduanero y cambiario**, y solo eso | DIAN, resolución anual |
+| **UVB** — Unidad de Valor Básico | **Todo lo demás**: multas, sanciones, umbrales de vigilancia, clasificación de empresas, requisitos de operación | **MinHacienda** (no DIAN), resolución anual |
+
+La **UVB** la creó el **art. 313 de la Ley 2294/2023** (PND), reemplazando el art. 49 de la Ley
+1955/2019, y se ajusta por **IPC sin alimentos ni regulados** (DANE) — no por el salario mínimo. Ése
+es su propósito: **desindexar del SMMLV** para que subir el mínimo no dispare automáticamente multas y
+tasas. ⚠️ Por eso una norma vieja expresada en SMMLV puede haber sido **reexpresada en UVB** sin que
+cambie nada más: si el umbral que citas está en salarios mínimos, comprueba que no lo hayan migrado.
+
+**Verificación barata de un valor anual**: multiplica el del año anterior por el IPC del año y mira si
+te da. Si el trío (valor previo, IPC, valor nuevo) es mutuamente consistente, tienes una corroboración
+que un número inventado no supera.
+
+## 🏛️ Impuestos DEPARTAMENTALES: la ordenanza manda, pero la ley nacional le pone banda
+
+Las asambleas fijan la tarifa, así que **cambia por departamento** y hay que leer su ordenanza. Pero
+—y esto salva muchas horas— la ley nacional acota el rango, así que **siempre puedes dar una cota
+verificada aunque no consigas la ordenanza vigente**:
+
+- **Impuesto de registro** (Ley 223/1995 art. 230): actos **con cuantía** en Oficina de Registro de
+  Instrumentos Públicos **entre 0,5 % y 1 %**; en Cámara de Comercio **entre 0,3 % y 0,7 %**; **sin
+  cuantía**, un número de salarios mínimos diarios. Si la ordenanza que leíste dice **1 %**, está en el
+  techo legal: cualquier versión posterior será igual o menor.
+- **Base gravable de inmuebles**: el valor del documento, y **nunca inferior al avalúo catastral**
+  (o autoavalúo / remate / adjudicación). No se «ajusta» a la baja.
+- **Quién paga**: los sujetos pasivos **por partes iguales, salvo manifestación expresa en contrario**.
+  Ese *«salvo pacto»* es la puerta — pero hay que **escribirlo**, porque el default es mitades.
+- **Sin recibo de pago no hay registro.** Es un bloqueo de cronograma, no un trámite posterior.
+- **Un acto que va a ORIP y a Cámara de Comercio genera el impuesto SOLO en la ORIP.** Y un documento
+  con varios actos se liquida **acto por acto**.
+
+**🔴 Estampillas: no asumas que solo gravan contratos con el Estado.** La mayoría sí (obra,
+interventoría, suministro con el departamento), pero **algunas gravan la boleta de registro** de actos
+entre particulares — y ésa se suma al impuesto de registro sobre la misma base. **Lee el hecho
+generador de CADA estampilla del estatuto, una por una**: es la diferencia entre estimar el 1 % y el
+2 %. Y ojo a los **escalones**: una tarifa por tramos (p. ej. 0,5 % hasta N salarios y 1 % por encima)
+crea un acantilado donde un peso de más cuesta cientos de miles. Se **informa**, no se elude: declarar
+por debajo del precio real es fraude, y además la base no puede bajar del avalúo catastral.
+
+## 🕵️ Vigilancia: antes de repetir un «no somos sujeto obligado», comprueba que la norma siga viva
+
+Los regímenes de la Superintendencia de Sociedades **se reescriben**. La **CE 100-000020 (2-jul-2026)**
+unificó **SAGRILAFT** (antiguo Cap. X) y **PTEE** (Cap. XIII) en un **Capítulo IX** único, y reexpresó
+los umbrales **en UVB**, con transición hasta el **31-may-2027**. Un «no estamos obligados» sustentado
+en la circular derogada no vale, aunque la conclusión siga siendo cierta.
+
+**Cómo se comprueba bien**: (1) los umbrales se miden sobre **ingresos totales O activos totales al
+31 de diciembre del año inmediatamente anterior** — no sobre el año corriente; (2) hay varios
+regímenes y el que ata es **el más bajo**, así que discusiones sobre en qué sector clasificas suelen
+ser irrelevantes si el piso general es menor; (3) es **aritmética, no doctrina**: se **recalcula cada
+año**, y en una empresa que crece el margen se estrecha por arriba; (4) si el grupo opera con **más de
+un NIT**, cada sociedad se evalúa por separado.
+
+
 ## Cuándo NO usar esta skill
 
 - El usuario pide explícitamente un asunto legal de **otro país** (ahí sí los plugins extranjeros aplican).
