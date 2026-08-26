@@ -130,6 +130,7 @@
 | §217 | ⚰️ **Retirar de PRODUCCION no es retirar**: la maquinaria SEO legacy fuera (30→28 CF) y con ella onNewSolicitud, que llevaba meses borrada de Firebase y VIVA en el archivo. La instruccion que la resucitaba estaba en su cabecera. | 9205 |
 | §218 | 🔬 **Auditoría N2 #14**: 10 hallazgos, **5 reincidentes** y un solo hilo — arreglos correctos con el ALCANCE enumerado a mano (§180 arregló `50` y no `20`). Y el defecto apareció DENTRO del ADR que lo denuncia. | 9277 |
 | §219 | 🧬 **Kernel v1.16.0**: los gates de frescura publican su COBERTURA (K-01+K-04 CERRADOS) — y se destapa que en INSEMA era **0/2**, inerte en un repo entero. El canario deja de acusar a la distribución: medido, no apagado. | 9329 |
+| §220 | 🔗 **K-05 CERRADO** (#7c): el gate validaba las anclas que EXISTEN y nunca la que FALTA. Patrón medido en tres pasadas (`panel de` daba 90% de falsos). Deuda congelada en 8; en cars destapa **15**. | 9394 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

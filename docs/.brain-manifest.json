@@ -258,5 +258,7 @@
     }
   ],
   "x-claimsVerificados": [],
-  "_x-claimsVerificados_que": "Cifras que SI se pueden publicar porque alguien las respalda, para el gate `verify:claims` (ADR 123). Cada entrada lleva su fuente. Vacio a proposito hoy: las que habia en la home y en estancias eran inventadas y se retiraron. Declarar una cifra aqui es firmarla — si nadie quiere firmarla, no deberia estar publicada."
+  "_x-claimsVerificados_que": "Cifras que SI se pueden publicar porque alguien las respalda, para el gate `verify:claims` (ADR 123). Cada entrada lleva su fuente. Vacio a proposito hoy: las que habia en la home y en estancias eran inventadas y se retiraron. Declarar una cifra aqui es firmarla — si nadie quiere firmarla, no deberia estar publicada.",
+  "delibAnchorBaseline": 8,
+  "_delibAnchorBaseline_que": "K-05 (#7c, ADR 220): 8 ADRs de julio-2026 declaran comite/consejo externo sin enlazar su crudo — de antes de que existiera la disciplina del archiveDir. Congelados: solo puede BAJAR. Una novena bloquea el commit."
 }

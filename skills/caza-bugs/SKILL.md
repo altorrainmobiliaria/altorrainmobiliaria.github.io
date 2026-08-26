@@ -343,6 +343,27 @@ verde en local», sino **verde en CI porque el gate se apagó**.
 evidencia de que el gate mirara**. Si vas a afirmar el estado de un despliegue, ábrelo y míralo — la
 deducción «mi gate falla en local, luego el CI está rojo» puede ser exactamente al revés.
 
+### 4j-ter. Las DOS direcciones de una regla «X debe llevar Y» — y por qué siempre falta la misma
+
+Toda regla de la forma *«cada X debe llevar su Y»* necesita **dos barridos distintos**, y casi nadie
+escribe el segundo porque el primero **ya da un ✅ que se ve idéntico**.
+
+- **Dirección A — «¿los Y resuelven?»**: recorre los Y existentes y comprueba que apunten a algo real
+  (enlaces que no rompen, referencias que existen, ficheros indexados). Es fácil: hay por dónde
+  empezar a recorrer, porque los objetos están ahí.
+- **Dirección B — «¿todo X TIENE un Y?»**: recorre las **afirmaciones** y pregunta por su objeto. Es
+  la que caza el caso grave — el que no enlaza nada—, y es la que falta, porque **lo ausente no
+  aparece en ninguna lista que puedas iterar**.
+- 🎯 **Señal para reconocerlo en un gate propio**: si tu bucle empieza por `for (cada Y encontrado)`,
+  solo tienes A. El caso peor —cero Y— nunca entra en ese bucle y por tanto no puede fallar.
+- **Al escribir B, MIDE el patrón contra tu propio corpus antes de confiar en él**, y **lee los casos
+  marcados uno a uno**. Un patrón que suena razonable puede ser inservible en tu idioma: *«panel de»*
+  como señal de deliberación casaba con *«el panel de gestión»* y daba ~90 % de falsos positivos.
+  Cuenta también con las **NEGACIONES** (*«sin comité ni consejo externo»*), que dicen lo contrario de
+  lo que buscas, y con los objetos citados **en otro formato** (un nombre suelto en vez de una ruta).
+- **Y si B destapa deuda vieja, congélala en vez de falsificarla**: un baseline declarado que solo
+  puede BAJAR protege de aquí en adelante; reescribir el pasado para que cuadre destruye el registro.
+
 ## 4k. 👯 GEMELOS — el mismo nombre en dos sitios, y ningún gate puede verlo
 
 Un defecto que **no produce ningún síntoma** hasta que alguien importa el equivocado: dos símbolos

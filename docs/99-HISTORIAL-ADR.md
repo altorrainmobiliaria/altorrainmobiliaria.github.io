@@ -9390,3 +9390,64 @@ como limpio ni como sucio. Por eso la cobertura va en la MISMA línea que el ver
 Y para los gates que **infieren una causa de una correlación** (*«hubo commits ⇒ trabajaste aquí»*):
 la premisa se escribe al lado del código, porque **caduca cuando cambias de costumbres, no cuando
 cambias de código** — y entonces no hay diff que la delate.
+
+## 220. ADR-220 — K-05: el gate podía ver las anclas que existen, nunca la que falta
+
+**Contexto.** Último hueco de kernel que §208 dejó medido: *«el #7 valida **ancla→fichero** (que
+resuelva) y **crudo→README** (que esté indexado); **nunca afirmación→ancla**»*. Con §219 cerrando
+K-01+K-04, éste era el que quedaba.
+
+### 220.1 — Por qué era estructural, no un olvido
+El #7 recorre **lo que hay**: cada crudo del `archiveDir` debe tener fila en su README, y cada
+referencia `research-archive/…` debe resolver. Los dos barridos parten de un objeto **existente**.
+🎯 **Un ADR que declara haber corrido un comité ×3 y no enlaza nada no tiene ancla que validar, así
+que no aparece en ninguno de los dos.** No es un fallo del código: es que faltaba **la otra pregunta**
+—*«¿toda afirmación TIENE una?»*—, y tener una dirección se siente exactamente igual que tener las dos.
+Sin ella, el reflejo de captura de §G.4 seguía siendo **[HONOR] puro**: nada podía comprobarlo.
+
+### 220.2 — El patrón se MIDIÓ, y hicieron falta tres pasadas
+- **1.ª** — incluí `panel de …` entre las señales de deliberación. En castellano eso casa con *«el
+  panel de gestión»*, *«el panel del portal»*, *«un panel de navegador»*: **36 marcados, ~90 % falsos
+  positivos**. Habría sido un gate inservible desde el primer día.
+- **2.ª** — patrón ceñido a deliberación EJECUTADA (`comité ×N`, `comité de expertos`, `consejo
+  externo`, `subagentes`, `workflow de N agentes`): 26 menciones, 14 sin ancla. Pero al **leerlas**:
+  cinco eran **NEGACIONES** —*«Sin comité ×3 ni consejo externo: Daniel dejó instrucción de no lanzar
+  agentes»*—, que declaran justo lo contrario de una deuda; y §40 **sí nombraba su crudo**, sólo que
+  como nombre suelto entre comillas, sin la ruta.
+- **3.ª** — con exclusión de negaciones y anclas resueltas contra el **inventario real** del
+  `archiveDir`: **21 deliberaciones ejecutadas · 13 con ancla · 8 huérfanas**, todas de julio, de
+  antes de que existiera la disciplina del archivo.
+🎯 **Las tres correcciones salieron de LEER los casos marcados, no de pensar más fuerte.** Un patrón
+que no se contrasta contra su propio corpus es una hipótesis con sintaxis de regex.
+
+### 220.3 — Trinquete, no limpieza retroactiva
+`delibAnchorBaseline: 8` en el manifest, con el mismo contrato que el #26: **solo puede BAJAR**. Las
+ocho quedan congeladas y declaradas; **la novena bloquea el commit**. Reescribir ocho ADRs de julio
+para inventarles un crudo que nunca existió sería falsificar el archivo — lo que se protege es de aquí
+en adelante.
+
+### 220.4 — Y se comprobó que MUERDE (L-46 #5)
+Novena sintética añadida al historial → **`⚠️ … por encima de la deuda congelada (8): ahora 9`**;
+restaurado → vuelve a informativo; `git status` limpio. Un gate recién escrito que pasa en verde no
+está probado, está *sin* probar.
+
+### 220.5 — Reparto a la flota, y lo que destapó
+Seguro por diseño: **sin `delibAnchorBaseline` declarado el chequeo es informativo**, así que ningún
+repo hermano se rompe al recibirlo. Primera corrida: **cars = 15 deliberaciones declaradas sin crudo
+enlazado**, insema = 1, bersaglio = 0. 🎯 **Quince deliberaciones caras cuyo rastro nadie podía echar
+en falta**, porque el defecto era invisible por construcción.
+
+### 220.6 — Estado del ledger (con precisión)
+**K-05 ✅ cerrado.** Con él, los cinco huecos K nombrados en §207-§208 están cerrados (K-01, K-02,
+K-04, K-05, K-09) más K-11. ⚠️ **Pero TODO-23 NO queda cerrado**: siguen abiertos los dos ítems de
+§143 — que el **#27** resuelva el nombre contra la **carpeta** del nodo (hoy acepta la mayoría por
+basename) y que los umbrales del **#16** vayan en COMMITS, no en días.
+
+### 220.7 — Doctrina
+**Un gate solo puede validar lo que puede enumerar.** Cuando el objeto de la regla es *«esto debe
+existir»*, el barrido que recorre los objetos existentes **jamás** lo comprueba: hay que recorrer las
+AFIRMACIONES y preguntar por su objeto. Son dos gates distintos, y el peligro es que **tener uno se
+siente como tener los dos** — el ✅ es idéntico.
+Corolario práctico: por cada regla del tipo *«X debe llevar Y»*, escribe las dos direcciones o declara
+por escrito cuál falta. La que falta es siempre la de *«¿existe?»*, porque es la que no tiene por
+dónde empezar a recorrer.
