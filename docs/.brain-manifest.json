@@ -205,11 +205,11 @@
   ],
   "deepAudit": {
     "last": "2026-08-26",
-    "coveredHeaderCount": 181,
+    "coveredHeaderCount": 199,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "tableFile": "2026-08-26-auditoria-cerebro-nivel2-12-inmobiliaria.md",
-    "_que": "Nivel-2 #12 (ADR 182) - PARCIAL y declarada: solo la sonda 3 (retrieval-drill) exige subagente y la sesion lo prohibe. Se aplico la leccion de la #11: las sondas 4 y 7 venian marcadas PENDIENTE por costumbre y NO necesitaban subagentes - la 4 resulto N/A (sin deliberacion nueva) y la 7 se corrio como autocritica declarando que le falta independencia. 7 hallazgos: 4 cerrados, 3 abiertos (N12-01 afirmacion medida sin sello y ya no re-medible; N12-04 boot cronico x4 - la causa estructural es que los topes suman 39000 contra un presupuesto de 31500; N12-07 los sellos verificado-vivo solo se vigilan a 90 dias, laxo para un tablero de cada sesion). REINCIDENTES: gates a medias (x5, tres en una noche) y promesa sin mecanismo. Variante NUEVA: no solo el comentario que promete - el NOMBRE que promete una verificacion que no ocurre. Previa #11 = 163 headers el mismo dia."
+    "tableFile": "2026-08-26-auditoria-cerebro-nivel2-13-inmobiliaria.md",
+    "_que": "Nivel-2 #13 (ADR 200) - PARCIAL y declarada: solo la sonda 3 (retrieval-drill) exige subagente y la sesion lo prohibe. SEGUNDA del mismo dia porque el dia produjo 18 ADRs. 8 hallazgos: 5 cerrados en el turno, 3 abiertos (N13-05 boot al 99.4 - la causa sigue pero YA NO ENGANA: el linter publica el tope REAL desde §193; N13-06 L-46 novena vez, [HONOR] irreducible; N13-08 la base VACIA no es comprobable ni desde el repo ni desde el sitio hasta el cutover). REINCIDENTES: gates a medias (x6, un dia despues de declararse x5) y promesa sin mecanismo. NUEVO Y NOTABLE: 2 de los 8 hallazgos los CAUSE yo en esta misma sesion (desplegar un trigger sin mirar quien mas escucha; una sonda propia que reportaba 94 por ciento de falso rojo). La sonda mas rentable no fue mirar el cerebro sino la PRODUCCION. Previa #12 = 181 headers el mismo dia."
   },
   "noCap": {
     "docs/99-HISTORIAL-ADR.md": "Largo Plazo: NUNCA se lee entero, solo offset/limit vía el índice (§0). Un cap aquí no significaría nada.",

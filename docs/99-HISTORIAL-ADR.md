@@ -8232,3 +8232,107 @@ menor y no justifica un comando destructivo a ciegas.
 **Cinco casillas medidas de ocho, y tres declaradas como no medibles.** Ese es el resultado honesto —
 y es más útil que un «todo en orden», porque dice **dónde** el proyecto depende de la memoria de
 alguien en vez de una comprobación: en las reglas, y en saber qué secretos sobran.
+
+## 199. ADR-199 — Desplegué un trigger sobre una colección que ya tenía otro, y los dos escribían el mismo campo
+
+**Cita de mí mismo, media hora antes**: *«desplegada `portal:avisoLeadNuevo` … sin desplegar, un lead
+no dejaba NADA»* (§197). Era verdad y estaba incompleta: la colección **ya tenía dueño**.
+
+### 199.1 — Causa raíz (mía, y evitable)
+`onNewSolicitud` (codebase legacy) es un `onDocumentCreated` sobre **`solicitudes/{id}`** — la misma
+colección y el mismo evento que `avisoLeadNuevo`. Y no solo mandaba correo: **calculaba y escribía
+`leadScore` y `leadTier`** con `calculateLeadScore()`, el algoritmo que **§190 retiró** por penalizar
+campos que el formulario nunca pide. Con las dos desplegadas, cada lead recibía **dos escrituras de
+los mismos campos con algoritmos distintos**: gana la que termine última. **El puntaje de un lead
+pasaba a ser no determinista.**
+**Por qué no lo vi**: comprobé que la función era segura *por dentro* —secreto, `retry:false`,
+degradación— y no comprobé el **vecindario**: quién más escucha ese evento. Es exactamente lo que la
+skill `caza-bugs` llama *rozar* un subsistema, y la tenía delante.
+
+### 199.2 — Decisión: retirar la legacy, no la nueva
+No es un empate. `onNewSolicitud` (a) envía por el **SMTP de Gmail roto** —el motivo por el que nació
+§188—, (b) usa el algoritmo **ya sustituido**, y (c) inicializa el estado de `nurturing`, de una
+función **apagada y con bloqueos** (§192, §198). Comprobado antes de tocar nada: **`admin.html` no lee
+`leadScore`, ni `leadTier`, ni `nurturing`** — cero dependencias del panel legacy.
+`functions:delete onNewSolicitud --force`. **Reversible**: el código sigue en `functions/index.js` y
+vuelve con un deploy.
+
+### 199.3 — Verificación
+Contra la API, no contra el «Successful delete»: **30 desplegadas**, legacy **12/15**, y
+`onNewSolicitud` aparece ya en la lista de no desplegadas. Cero huérfanas.
+
+### 199.4 — Efecto colateral que se declara, no se esconde
+Retirarla **también mata la inicialización del estado `nurturing`** en los leads nuevos. Es el
+**6.º prerrequisito** de encender el nurturing, junto al índice del §198: además de desplegar la
+función y su índice, habría que **sembrar `nurturing` en los leads** (o hacer que el relevo lo
+inicialice). Se apunta aquí porque §192 y §198 llevan la cuenta y esta es nueva.
+
+### 199.5 — El runbook mandaba esperar un correo imposible
+El paso **1.8** decía *«debe llegarte el correo de `onNewSolicitud` con las fechas dentro»* — y lleva
+roto desde §188, no desde hoy: ese camino ya iba por el Gmail caído. Un paso así no es solo inútil:
+**enseña a diagnosticar mal**, porque su pista («si llega sin fechas, mira `datosExtra.descripcion`»)
+apunta a un sitio donde no está el fallo. Reescrito: lo que hay que ver es el **puntaje escrito**, y
+si tras configurar Resend el correo tampoco llega, mirar **`avisoEnviadoEl`** — vacío significa envío
+fallido con puntaje guardado, que es la asimetría deliberada de §191.
+
+### 199.6 — Archivos
+`docs/05-ESTADO-GLOBAL.md` (legacy 13→**12**, y «las **3** legacy fuera a propósito») ·
+`specs/CUTOVER-RUNBOOK.md` (paso 1.8). **INTACTO**: `functions/index.js` — la función **no se borra
+del repo**, solo deja de estar desplegada.
+
+### 199.7 — 🎯 Doctrina
+Generaliza el reflejo de *rozar*: **antes de desplegar un trigger, pregunta quién más escucha ese
+evento y qué campos escribe cada uno.** Un trigger nuevo no se evalúa solo por lo que hace bien: se
+evalúa por **con quién comparte la colección**. Y el síntoma es de los caros — dos escritores del mismo
+campo no fallan, **discrepan a veces**, que es peor. → [[L-60]].
+Corolario del §197: el mismo comando `functions:list` que sirve para ver **qué falta** sirve para ver
+**quién ya está** — y esa segunda pregunta es la que no hice.
+
+## 200. ADR-200 — Auditoría Nivel-2 #13: la sonda más rentable no fue mirar el cerebro, fue mirar producción
+
+**Deliberación:** tabla completa de 8 hallazgos y las 8 sondas →
+`../brain-private/altorrainmobiliaria/research-archive/2026-08-26-auditoria-cerebro-nivel2-13-inmobiliaria.md`
+
+**Disparador**: el linter **bloqueó un commit** por *«18 ADRs nuevos (≥ 12)»*. Es la **segunda del
+mismo día** — la #12 corrió a 181 headers y ésta a 199 — y no porque el umbral esté mal calibrado,
+sino porque el día produjo 18 ADRs. El gate hizo exactamente su trabajo.
+
+### 200.1 — El resultado en una frase
+**8 hallazgos: 5 cerrados en el turno, 3 abiertos.** Y el dato que ordena todo lo demás: **2 de los 8
+los causé yo, hoy, en esta misma sesión** — desplegar un trigger sin mirar quién más escuchaba la
+colección (§199) y escribir una sonda que reportaba **94 % de falso rojo** (§198.1). Ninguno de los
+dos lo habría visto releyendo el cerebro; los dos salieron de **preguntarle a producción**.
+
+### 200.2 — Lo que cambió de naturaleza (y por qué importa)
+La #12 dejó el boot como reincidente ×4 con una causa estructural: **los topes de los nodos always-on
+suman 39000 sobre un presupuesto de 31500**. Sigue siendo verdad. Pero desde §193 **el linter publica
+el TOPE REAL de cada uno**, así que dejó de ser un defecto oculto para ser una **restricción declarada
+en cada corrida**. *Una restricción que se anuncia no es la misma deuda que una que engaña*, aunque el
+número no se mueva. Queda **abierta como economía y cerrada como engaño**.
+
+### 200.3 — Las reincidentes, y cuál duele
+- **Gates a medias: ×6**, y volvió **un día después** de declararse ×5 (§195). Es la familia más cara
+  y la más rápida en regresar.
+- **Promesa sin mecanismo** ([[M-25]]): dos más — el router enumerando rangos que caducan (§196) y el
+  runbook mandando esperar un correo imposible (§199.5).
+- **[[L-46]]: novena vez.** Sin daño, y [HONOR] declarado desde la octava.
+- **Y una que NO reincidió**: la #12 enseñó que dos preguntas legales ya estaban contestadas en
+  `specs/R3` semanas antes. Esta vuelta **busqué ahí primero** (§194). Tasa de re-investigación: **0**.
+
+### 200.4 — Variante nueva que merece nombre: el falso ROJO
+Todo el vocabulario del cerebro sobre gates que mienten trata del **verde inmerecido**. Esta vuelta
+apareció el reverso: mi comparación de índices reportó **94 % de discrepancia** y la culpa era de la
+sonda (incluía el `__name__` que Firestore **añade** al desplegar). Un rojo se investiga… **salvo
+cuando parece catastrófico, porque entonces se cree**. Recogido como regla 4 de [[L-59]].
+
+### 200.5 — Cierre del protocolo
+GC pareado: boot **31482 → 31301** (Δ **−181**, ≤ 0 ✅) podando el relato de dos barridos ya cerrados
+del `10` y dejando su regla operativa. `deepAudit` actualizado a **#13 / 199 headers** — que es lo que
+apaga el nudge y lo que hace al disparador auto-vigilado. **Sonda 3 (retrieval-drill) PENDIENTE**:
+exige un subagente frío y la sesión los prohíbe; se declara, no se finge.
+
+### 200.6 — Propuesta para la #14
+Añadir a la skill una sonda fija: **un par «declarado ↔ desplegado» medido contra su API**. Esta
+auditoría lo descubrió por accidente y fue lo más rentable que hizo. Y su corolario honesto: cuando no
+exista forma de LEER el lado desplegado —las reglas de Firestore, los secretos huérfanos— eso **no es
+una casilla verde ni roja: es una casilla que no existe**, y se dice.

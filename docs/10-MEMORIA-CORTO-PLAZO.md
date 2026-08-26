@@ -57,9 +57,7 @@
 > cableados, con sonda del **lockfile** — los prerrequisitos de los gates no se declaraban (3 veces en
 > un día). **El CI nunca estuvo rojo**: lo afirmé sin mirar (§3.3). Ahora: 8 gates, ~1065 pruebas.
 >
-> 🧹 **BARRIDOS que valieron** (§178-§179): gemelos (mismo nombre, 2 módulos) → `verify:simbolos` con
-> deuda congelada · espejos de `firestore.rules` → sonda en `verify:data` **que falla si no puede
-> LEER**. Y **alojamiento lleva DOS gates**: RNT + PH que autorice EXPRESAMENTE.
+> 🏨 **Alojamiento lleva DOS gates**: RNT + reglamento de PH que autorice EXPRESAMENTE (§178-§179).
 >
 > 💸 **OLA 2 — el carril de pago está COMPLETO en dominio** (§176-§177, §185-§187): webhook (plan +
 > ejecutor + atomicidad probada), mandato, liquidación, certificación y **preaviso** (un preaviso sin
