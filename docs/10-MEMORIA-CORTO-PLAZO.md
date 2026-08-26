@@ -33,7 +33,7 @@
 | **TODO-46** | 📅 **GESTIÓN v1 (ítem 13) — COMPLETA en código**, puertas desplegadas y probadas; bóveda de documentos legible con su índice en producción → §112-§118, §140-§142, §148. ⏭️ Falta **aprobar el mockup** y **ESTRENARLA con datos reales** (runbook 1.5-1.6): es lo único que puede verificar el render en vivo. | 🟢 | §148 |
 | **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR** → §129-§138. ⏭️ **Daniel**: inscribir su 2FA (clave manual; el QR se aplazó, §137.5) · verificar su correo. ⏭️ **Mío, DESPUÉS de que él se inscriba**: exigirlo en las Rules —antes NO, expulsa a todos— · el QR verificable · **puerta única** (mockup APROBADO) ⚠️ con la desviación obligada del paso 2, que enumeraría cuentas de staff (§137.6). 🚫 anti-bot aplazado (§132.5). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL — PUBLICADO (§147).** 5 artículos con la norma .gov.co citada; «Guías de zona» estrenada con un HUB que enlaza las 13 landings. Mockup **APROBADO**. ⏭️ Falta: «Mercado» sigue vacía (sin dato verificado que citar) · RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
-| **TODO-49** | 🏷️ **OLA 2 — arrancada por lo que NO gatea el abogado** ([[L-40]]). Pipeline de compraventa y **perfil de inquilino COMPLETO por los dos lados** (titular y revisión) → §151-§153, §155. ⏭️ Después: panel de leads del aliado. 🚫 El rail de pago Wompi SÍ lo gatea el abogado (B2/B9). | 🔵 mío | §151 |
+| **TODO-49** | 🏷️ **OLA 2**. Pipeline de compraventa y **perfil de inquilino COMPLETO por los dos lados** → §151-§153, §155. ⏭️ **Rail de pago DESBLOQUEADO en lo legal** (§165): el dominio del mandato de recaudo se puede construir y probar YA; lo que falta son cuentas de Daniel (Wompi, RNT, DIAN). Después: panel de leads del aliado. | 🔵 mío | §151·§165 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -52,7 +52,8 @@
 > improvisa → **`specs/CUTOVER-RUNBOOK.md`** manda (§102), ya corregido (§140). Suelto: «Avalúo» (§94.6).
 > **En orden**: (1) **estrenar los caminos** (runbook 1.4-1.8) · (2) **inventario** (TODO-22) ·
 > (3) **Resend** · (4) **DNS/cutover**. Aparte: **TODO-30**, que lo confirma Daniel ([[L-39]]).
-> **OLA 2**: el abogado gatea el RAIL DE PAGO, **no toda la ola** ([[L-40]] ya cobró 3 veces, [[M-11]]).
+> **OLA 2**: el «gate del abogado» NO EXISTE — el abogado soy yo (Daniel, 26-ago). Detalle en TODO-49
+> y §165 ([[L-40]] ya cobró 3 veces, [[M-11]]).
 >
 > 🏁 **LA WEB PÚBLICA YA NO TIENE NI UN «PRÓXIMAMENTE»** (26-ago, §158-§159): cayeron `/invertir`,
 > `/nosotros` (que ni existía: era un ancla fantasma en las 74 páginas) y `/aliados`. Compruébalo con
@@ -83,7 +84,7 @@
 > **(12) 💳 ¿«Crédito de Vivienda» y «Pagos en Línea» son servicios REALES?** Estaban en el menú
 > apuntando a un ancla que no existe, y las retiré (§159.4): del primero no hay ni página ni servicio
 > verificable —y prometer crédito es de lo más delicado que se puede poner—, y el segundo es el carril
-> de Wompi, que sigue tras el gate del abogado. Si alguno SÍ se presta, dilo y se le hace su página.
+> de Wompi, que espera TU cuenta de comercio (§165 despejó lo legal). Si alguno SÍ se presta, dilo.
 > **(9) 📣 PAUTA — al final por decisión tuya; aplazarla es SEGURO**: la campaña de humo solo muerde el
 > día que recargues saldo ([[D-15]]). **Antes de recargar**: sesión de Meta de Altorra ([[D-16c]]) +
 > filtro `Entrega=Activo` con rango Máximo ([[D-15b]] — «Anuncios activos» esconde los zombies).

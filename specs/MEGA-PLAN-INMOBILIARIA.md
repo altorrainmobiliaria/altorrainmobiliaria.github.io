@@ -126,7 +126,17 @@ Superficies (todas con mockup D2 aprobado):
 12. **Leads**: colección `solicitudes` + scoring server-side (destilado R0) + notificación email/WhatsApp al admin.
 13. **GESTIÓN v1** (módulo §3b): expedientes + contratos con fechas/renovaciones + calendario de recordatorios + novedades/tickets + registro de pagos con mora. Es la herramienta DIARIA del dueño — su feedback en vivo es el mejor QA del portal entero.
 
-### 🌊 OLA 2 — Dinero + arriendo digital (post-gate abogado B2/B9 + tarifas selladas)
+### 🌊 OLA 2 — Dinero + arriendo digital
+> ⚖️ **El «gate del abogado» se cerró solo el 2026-08-26**: Daniel recordó que *«mi abogado eres tú»*, así
+> que B2/B9 no eran una espera sino trabajo mío. **Dictamen del recaudo TOMADO** (§165 · `42-LEGAL`): no
+> es captación masiva bajo `D.1068/2015 art. 2.18.2.1`, con **3 condiciones de diseño vinculantes** (el
+> dinero no reposa en cuenta de ALTORRA · el mandato dice recaudo-y-giro, nunca «libre administración» ·
+> cero oferta a innominados). ⚠️ Lectura literal de la norma, **no revisada por un tercero**: antes de
+> ENCENDER el cobro conviene pagar una revisión humana.
+>
+> **Lo que queda NO es legal, son CUENTAS DE DANIEL** — comercio Wompi, RNT propio y facturación DIAN
+> habilitada. Ninguna la puede abrir Claude: son credenciales financieras suyas. El DOMINIO del mandato
+> (estados, giro, reversión art. 51, webhook idempotente) sí se puede construir y probar desde ya.
 0. **GESTIÓN v2** (§3b): cobro de canon en plataforma + payout con honorarios + liquidaciones corta estancia + pipeline de venta con documentos.
 1. **Booking con pago protegido Wompi** (diseño (a) del ADR §16: mandato + estados retenido/liberado/reversado + webhook idempotente + reversión art. 51). Skills `wompi-*` + `auditoria-financiera` (L-12: método ANTES de construir).
 2. **Portal de aliados self-service** (op.11): precios públicos (ancla Proppit $200-300K/mes — nosotros por valor), panel de leads con trazabilidad (el listón de Fincaraíz OV es bajísimo), suscripción Wompi.

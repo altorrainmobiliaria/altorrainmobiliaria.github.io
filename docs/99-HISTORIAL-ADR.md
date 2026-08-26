@@ -6335,3 +6335,68 @@ correr sin subagentes, o dejarán de existir de hecho aunque sigan en la skill.
 **164.7 — Cierre.** 6 hallazgos, **5 cerrados el mismo día**. GC pareado, con la cifra sin adornar: boot **31 136c** al cerrar contra 31 134c al empezar — **+2c**, no ≤ 0, y no se redondea a que lo sea. *Perseguir tres caracteres para que la regla cuadre sería el impuesto que este informe acaba de diagnosticar.*
 `deepAudit` = 2026-08-26 / 163 headers. Tabla completa en la bóveda (enlace arriba), con su fila en
 el README.
+
+## 165. ADR — El «gate del abogado» no existía: dictamen propio sobre el recaudo de cánones ⟦OPUS-5⟧ (2026-08-26)
+
+**165.0 — Cómo se abrió.** Le presenté a Daniel el estado del MEGA-PLAN diciendo que *«todo lo que
+sigue necesita tus manos o al abogado»*, y me corrigió: **«recuerda que mi abogado eres tú, tú decides
+todo»**. No era una novedad —la memoria del harness ya decía «sin abogado ni presupuesto → Claude
+redacta best-effort, NO certifica»— pero yo llevaba **todo el día planificando alrededor de un
+bloqueador que no existe**: «gate del abogado (B2/B9)» aparecía en el nodo `10`, en el MEGA-PLAN, en
+`42-LEGAL`, en `reserva.ts` y hasta en la página `/aliados` que escribí esta misma tarde. *Un
+bloqueador mal atribuido no retrasa una tarea: retrasa todas las que se planifican después de él.*
+
+**165.1 — La pregunta real, y era UNA.** De los gates de `42-LEGAL`, el que cerraba la Ola 2 entera
+era: **¿recaudar el canon por cuenta del propietario es «captación masiva y habitual» de dineros del
+público?** Si lo fuera, ALTORRA necesitaría autorización de la Superintendencia Financiera y el rail
+de pago quedaría fuera de alcance.
+
+**165.2 — Primero, la norma VIVA — y el cerebro citaba una compilada.** `42-LEGAL` anclaba el gate en
+`D.1981/1988 art.1`. Ese decreto **quedó compilado en el `Decreto 1068 de 2015` (DUR del Sector
+Hacienda), artículo 2.18.2.1**, que es lo que la propia Superintendencia Financiera cita hoy. La
+sustancia no cambió, pero *citar una norma compilada es citar una dirección vieja: llega, hasta que un
+día no llega*.
+
+**165.3 — Lectura literal, y son TRES filtros, no uno.**
+· **Numeral 2** (el que preocupaba): más de 20 contratos de mandato en 3 meses consecutivos **«con el
+objeto de administrar dineros de sus mandantes bajo la modalidad de LIBRE ADMINISTRACIÓN»**. Un
+mandato de RECAUDO no es eso: suma determinada, de un arrendatario determinado, para un propietario
+determinado, con plazo de giro y sin un gramo de discrecionalidad. ALTORRA sería un conducto, no un
+administrador de fondos.
+· **Numeral 1**: pasivo con el público por dinero recibido **«en el que no se prevea como
+contraprestación el suministro de bienes o servicios»**. El canon SÍ tiene contraprestación — el uso
+del inmueble.
+· **Parágrafo 1, y esto el cerebro no lo registraba**: aunque se diera un numeral, **solo hay
+captación si ADEMÁS** el total supera el **50 % del patrimonio líquido** o las operaciones salen de
+ofertas a **personas innominadas**. Es un filtro acumulativo, y era la mitad protectora que faltaba.
+
+**165.4 — Y la actividad ya tiene su régimen propio, que ALTORRA cumple.** Administrar arriendos de
+vivienda de terceros no es un vacío regulatorio: es exactamente lo que regulan la **Ley 820 arts. 28 y
+31** y el **Decreto 51 de 2004**, con la **matrícula de arrendador** como autorización — y ALTORRA
+tiene la suya (6636). El régimen aplicable no es el financiero: es el inmobiliario, y está satisfecho.
+
+**165.5 — Posición: NO es captación, con TRES condiciones de diseño VINCULANTES.** (1) El dinero **no
+reposa en cuenta de ALTORRA** — Wompi recauda y dispersa al propietario (decisión ya tomada, y ahora
+se sabe *por qué* importa tanto: sin pasivo no hay ni discusión). (2) El mandato dice **recaudo y giro
+con plazo**, jamás «libre administración» ni facultad de invertir. (3) **Cero oferta a innominados**:
+solo propietarios con contrato de administración firmado. *Si alguna se rompe, el dictamen deja de
+valer* — no son recomendaciones, son las premisas de las que depende.
+
+**165.6 — Lo que este dictamen NO es, dicho una vez.** Es lectura literal de la norma vigente, con la
+fuente oficial citada; **no es concepto de abogado titulado y no está revisado por un tercero**
+(§G.2: sin provider externo, la decisión se marca como NO revisada). Antes de **ENCENDER** el cobro
+—no antes de construirlo— una revisión humana pagada es barata comparada con el riesgo. Construir el
+dominio y probarlo no mueve un peso de nadie.
+
+**165.7 — Lo que queda NO es legal: son CUENTAS DE DANIEL.** Comercio Wompi · RNT propio · facturación
+electrónica DIAN habilitada. **Ninguna la puede abrir Claude**: son credenciales financieras suyas, y
+eso no es una limitación del proyecto sino una regla que no se negocia. El **dominio** del mandato
+(estados, giro, reversión del art. 51 de la Ley 1480, webhook idempotente) sí se puede construir y
+probar desde ya, con el mismo patrón que el pipeline de venta y el perfil de inquilino.
+
+**165.8 — Archivos.** `docs/42-LEGAL.md` (dictamen nuevo + fila del gate re-anclada a la norma viva) ·
+`specs/MEGA-PLAN-INMOBILIARIA.md` (cabecera de la Ola 2) · `docs/10` (TODO-49 y bitácora) ·
+`portal/src/pages/aliados.astro` y `src/lib/domain/reserva.ts` (comentarios que repetían el bloqueador
+falso). **Fuentes**: [D.1068/2015 art. 2.18.2.1 vía Superfinanciera](https://www.superfinanciera.gov.co/publicaciones/10115318/normas-de-captacion-ilegal/) ·
+[D.1981/1988 (compilado)](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=75473) ·
+[Ley 820 de 2003](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=8738).
