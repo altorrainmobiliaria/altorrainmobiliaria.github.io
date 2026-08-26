@@ -9325,3 +9325,68 @@ Ejecútalo ahí mismo, aunque creas saber el resultado.**
 Tabla → bóveda (+ fila en su README) · síntesis → este ADR + fila en `00` · `deepAudit` → `last`
 2026-08-26, `coveredHeaderCount` **218** · hallazgos abiertos → `10` · **GC pareado**: el boot cierra
 en delta ≤ 0 (era 31499/31500, y lo que entra se paga podando en el mismo turno).
+
+## 219. ADR-219 — Kernel v1.16.0: los gates de frescura publican su COBERTURA, y el canario deja de acusar a la distribución
+
+**Contexto.** §208.3 dejó el arreglo de **K-01+K-04** *«especificado, no hecho»*, y con una razón buena:
+era un cambio del kernel **compartido por cuatro repos** al final de una jornada larga. La auditoría #14
+lo volvió a marcar (§218) y hoy sí toca. Se aprovecha el mismo bump para **§216.9**, el canario que me
+bloqueó un commit con una premisa que yo mismo había roto.
+
+### 219.1 — El arreglo NO es teclear una fecha: es publicar la cobertura
+El chequeo **#12** tomaba la fecha **más vieja** de los dos nodos always-on y, al que no aportaba
+ninguna, **lo saltaba en silencio**. El **#16** hacía lo mismo con los marcadores `verificado-vivo`.
+El `10` —la pizarra del WIP, el nodo que más rápido caduca— no usa ninguno de los formatos, así que
+llevaba un año fuera de los dos sin que nada lo dijera.
+Sellarle una fecha habría sido **jugar con el gate**, que es literalmente lo que K-04 denunciaba. Ahora
+ambos chequeos **imprimen su cobertura**: *«1/2 nodo(s) aportan fecha legible; NO la aportan → …»*.
+Es [[M-27]] mecanizada por tercera vez: **un ✅ que no dice cuántos miró no distingue «limpio» de
+«no lo abrí»**.
+📌 Precisión que evita el alarmismo: el `10` **no está sin vigilancia** — lo contrasta el heartbeat
+contra git real y el handoff lo declara ganador (*«si contradice a `docs/10`, ÉSTA es la verdad»*,
+M-01). Lo que faltaba no era el guardián: era **poder ver que este guardián concreto no lo cubría**.
+
+### 219.2 — Y al repartirlo, el rendimiento inmediato en la flota
+Con el gate publicando cobertura, la primera corrida en los cuatro repos deja a la vista lo que
+llevaba años invisible: inmobiliaria **1/2** (fecha) y **1/2** (marcadores) · cars **1/2** ·
+🎯 **INSEMA `0/2`: NINGUNO de sus dos nodos always-on aporta fecha legible.** El gate de frescura
+llevaba **inerte en un repositorio entero**, pasando en verde por no tener nada que comparar.
+
+### 219.3 — El canario: no se apaga, se MIDE (§216.9)
+La premisa era *«hubo commits ⇒ alguien trabajó AQUÍ en sesión»*, y la rompió una práctica que adopté
+**después** de escribir el gate: la distribución del kernel, que commitea en un repo hermano desde la
+sesión de otro. En un repo congelado eso deja al canario gritando para siempre y **bloqueando cada
+commit** — y `BOOT_CANARY_SKIP=1` es ceguera permanente a cambio de un commit.
+El reflog lleva el mensaje de cada entrada, así que el gate ahora **pregunta si todo lo posterior al
+marker fue distribución de kernel**; si lo fue, no es trabajo aquí y baja a informativo.
+⚠️ **Y la primera versión del predicado la escribí de memoria**: casaba solo con `chore(kernel)` — y
+dejó fuera **justo al repo que más lo necesitaba**. Medido sobre los cuatro hermanos: **15 commits de
+distribución, tres prefijos distintos** (`chore(kernel)`, `chore(cerebro)`, `docs(cerebro)`) y **una
+sola palabra en común**. El predicado pasó a ser esa palabra. *Segunda vez hoy que enumero de memoria
+teniendo la medición a un comando* ([[M-28]] · §216.10).
+
+### 219.4 — Y el heredoc rompió el kernel canónico (L-46, decimotercera)
+El primer parche murió a medio escribir: el heredoc **colapsó `\\` a `\`**, así que Python interpretó
+`\n` como salto real y dejó un literal partido — `brain-check.mjs` **inválido**. Restaurado con
+`git checkout --` en el acto.
+🎯 **Afinado de L-46 #5**: la regla decía *«escribe el script a un ARCHIVO»*. Insuficiente — **crear
+ese archivo con `cat <<EOF` sigue pasando por el shell**. Lo que corta la familia es escribirlo con la
+**herramienta de escritura**, que no atraviesa el intérprete; y construir las contrabarras con
+`chr(92)` en vez de escribirlas. Con eso el segundo intento salió a la primera.
+
+### 219.5 — Verificación (los tres caminos, no solo el feliz)
+`node --check` en el canónico y tras cada `brain:pull` · **bite-test del predicado contra un reflog
+REAL**: ventana con trabajo de verdad → `soloKernel=false` (sigue avisando) · ventana solo-kernel →
+`true` (baja a info) · **ventana vacía → `false`**, que es la guarda que importa porque `[].every()`
+devuelve `true` y convertiría *«sin actividad»* en *«solo kernel»*.
+Repartido a los **cuatro** repos (`brain:pull`, v1.16.0 íntegro == canónico en los cuatro).
+✅ **Y el aviso que queda en INSEMA es un VERDADERO positivo**: 19 commits de trabajo real después de
+su último arranque, no distribución. El gate distingue los dos casos, que era el objetivo.
+
+### 219.6 — Doctrina
+**Un gate que no publica su cobertura no está midiendo: está opinando.** El caso límite no es el
+hallazgo que reporta mal — es el nodo que **no entra en el barrido** y por tanto no puede aparecer ni
+como limpio ni como sucio. Por eso la cobertura va en la MISMA línea que el veredicto.
+Y para los gates que **infieren una causa de una correlación** (*«hubo commits ⇒ trabajaste aquí»*):
+la premisa se escribe al lado del código, porque **caduca cuando cambias de costumbres, no cuando
+cambias de código** — y entonces no hay diff que la delate.

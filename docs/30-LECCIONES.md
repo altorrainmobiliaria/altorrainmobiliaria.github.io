@@ -201,6 +201,8 @@ guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero 
 ### M-25 — Una regla ESCRITA da la sensación de estar APLICADA: si nadie la vigila, es una nota, no una regla — y cuanto mejor escrita, más engaña *(4× el 26-ago: §162, §163, §172, §173)*
 ### M-26 — Un nodo que se consulta CUANDO ALGO FALLA no puede evitar el fallo: la lección estaba bien escrita y en su sitio, pero el router solo llevaba a ella DESPUÉS *(§174)*
 ### M-27 — Una sonda ad-hoc debe imprimir su COBERTURA, no solo su resultado: «no encontré nada» es indistinguible de «no miré en ningún sitio» *(§202)*
+### M-28 — Un remedio colocado DESPUÉS del punto de no retorno no protege de nada, y encima tranquiliza: si vuelves a caer teniendo la lección delante, el defecto es de su REDACCIÓN *(§216.8 · detalle en `33`)*
+### M-29 — Un gate que infiere una CAUSA de una CORRELACIÓN debe escribir su premisa al lado: caduca cuando cambias de COSTUMBRES, no de código, y entonces no hay diff que la delate *(§216.9 · detalle en `33`)*
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > 🧩 **Mudadas a `60-WORKFLOWS §Gobernanza`** el 2026-07-28 (ADR §68): hablan de CÓMO se conduce la
