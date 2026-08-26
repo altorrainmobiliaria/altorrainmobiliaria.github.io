@@ -8634,3 +8634,52 @@ que nadie tenga que acordarse.
 `docs/10` (TODO-28 cerrado · cifra del #27 retirada) · bóveda: corrección en la tabla de la #13 ·
 `skills/auditoria-cerebro` en sus **dos copias**. **INTACTO**: el kernel — no había nada que arreglar
 en él, que es justamente el hallazgo.
+
+## 207. ADR-207 — El pendiente que avisaba de colisiones de identificador ERA una colisión de identificador
+
+**Contexto.** Cuarta vuelta de la auditoría de pendientes abiertos (§204-§206). Le tocaba a los
+`K-01/02/04/05/09` del ledger de `TODO-CEREBRO`, que el `10` solo nombra por código — su texto vive en
+la tabla de la auditoría Nivel-2 del 12-jul, en la bóveda.
+
+### 207.1 — 🎯 El hallazgo: hay DOS K-10, y no se parecen en nada
+- **K-10 de la auditoría (12-jul)**: *«el único `ssotFact` (cache PWA) guarda el `service-worker.js`
+  LEGACY en retiro; el portal no tiene SW → gate verde sobre superficie moribunda»*. Es el que cita
+  el historial (`99:666`, junto a [[L-24]]).
+- **K-10 del ledger**: *«dos lecciones con el MISMO `L-NN` en nodos distintos no las caza nadie»*,
+  atribuido a **§152**. Verificado: **§152 es el perfil de inquilino y no menciona K-10 en ninguna
+  parte.** Ni el código estaba libre ni la cita era correcta.
+**El pendiente que advertía de colisiones de identificador era, él mismo, una colisión de
+identificador** — y llevaba semanas en el nodo que se lee en cada arranque sin que nadie lo notara.
+*La preocupación era legítima; lo que nadie comprobó es que ya se había materializado, y en la serie
+de al lado.* El §205 lo cerró midiendo lo que su TEXTO describía (colisiones `L-NN`: cero, por dos
+claves). Esa medición sigue valiendo; lo que se corrige aquí es la ETIQUETA.
+
+### 207.2 — Y dos premisas más que habían caducado
+- **K-02** decía que el candado del boot *«imprime ✅ cuando 31978c > 31500c»*. **Arreglado**: esta
+  misma sesión lo vi imprimir `⚠️ BOOT always-on = 32260c > objetivo` y **bloquear el commit**.
+- **TODO-24** pedía *«`ssotFact` de paleta + cache EN EL CUTOVER»*. La primera mitad **ya está hecha**:
+  el manifest tiene `#062743|#D4AF37|#BFC3C9` con dueño `CLAUDE.md`. Y eso además **falsifica la
+  premisa del K-10 real** — ya no hay «un único ssotFact», hay dos. Queda solo la mitad del cache, que
+  es correcto dejar hasta el cutover porque el portal aún no tiene SW (verificado: `portal/public` sin
+  service worker).
+
+### 207.3 — El patrón, que es lo que importa
+Cuatro vueltas seguidas auditando pendientes abiertos, **cuatro veces el texto escrito no describía la
+realidad** — §204 una pantalla ya construida · §205 un riesgo inexistente · §206 un umbral que era un
+tercio del declarado y en otro chequeo · §207 un código duplicado y una mitad ya hecha.
+🎯 **Y la deriva tiene una dirección: todas exageran lo que falta, ninguna lo subestima.** No es
+casualidad — un pendiente se escribe una vez, en el momento de más ignorancia sobre el asunto, y a
+partir de ahí solo se relee. **Un ledger no envejece hacia la mentira al azar: envejece hacia parecer
+más trabajo del que hay.** Eso hace daño dos veces: desanima, y esconde lo que sí queda entre lo que
+ya no.
+
+### 207.4 — Lo corregido
+`docs/10`: la entrada del ledger renombrada a **K-11** con la cita corregida y marcada cerrada por
+§205 (el código `K-10` se devuelve a su dueño de julio) · **TODO-24** con su mitad de paleta tachada ·
+**K-02** retirado por resuelto. **INTACTO**: la tabla de la bóveda del 12-jul — es un registro
+histórico de lo que se encontró aquel día y no se reescribe; quien la lea llegará aquí por el índice.
+
+### 207.5 — Lo que NO se midió, dicho como tal
+**K-01, K-04, K-05 y K-09 siguen sin medir.** Requieren leer el kernel chequeo por chequeo y esta
+vuelta no daba para eso sin hacerlo mal. Se declaran pendientes **de medición**, no de arreglo — que
+es una distinción que este ADR justifica: hasta que no se miden, no se sabe cuál de las dos cosas son.
