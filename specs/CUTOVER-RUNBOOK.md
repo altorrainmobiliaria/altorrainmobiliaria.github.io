@@ -166,7 +166,17 @@ día del DNS sí.
 $6.2M/mes`**, una cifra financiera de un producto que **se retiró del menú por no tener nada detrás**
 (§159.4): se quitó el enlace y **se dejó el número**. Corrige de paso el §213, que daba la home por
 cubierta por el candado — no lo está.
-⇒ **Antes del 5.3, y para AMBAS páginas, una de tres**: poner el RNT (pelota de Daniel), retirar el precio y
+⛔ **CUARTO ERROR, y el peor de todos (§215).** El **hero de la home** publica **`+12%` valorización
+anual** y **`8–11%` ROI en USD** —mediciones de mercado **sin fuente**—, y **`/publicar`** anuncia
+**`+1.200` inmuebles cerrados**, **`38 días` promedio de venta** y **`98%` clientes satisfechos**, que
+son **estadísticas inventadas** en la página donde un propietario decide confiarnos su inmueble. Los
+otros tres errores son datos de MUESTRA; éste es una **promesa de rentabilidad** y una **reputación
+fabricada** (Ley 1480 arts. 29-30). Agravante doble: `/nosotros` promete por escrito **no publicar esos
+números**, y el comentario de §123 dentro de `index.astro` explica —cinco líneas más arriba del hero—
+por qué una medición sin fuente no se publica. ⚠️ **`verify:claims` NO los caza**: sus patrones buscan
+reseñas y distinciones, no porcentajes de rentabilidad ni conteos de negocio. **Bloquea el 5.3.**
+
+⇒ **Antes del 5.3, y para las CUATRO, una de tres**: poner el RNT (pelota de Daniel), retirar el precio y
 el formulario de esa página, o dejarla fuera del dominio. **Es decisión suya, y bloquea el 5.3.**
 
 ⚠️ **Los DOS errores que este runbook existe para evitar** — los dos se ven perfectos para un humano.

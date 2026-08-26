@@ -125,6 +125,7 @@
 | §212 | 🛑 **Una orden de «no publicar» que el sitio contradecia — y la orden era la equivocada**: los numeros estaban bien puestos. Auditar el cumplimiento puede acabar corrigiendo la REGLA. | 8862 |
 | §213 | ⛔ **Estancias anuncia con PRECIO y sin RNT**, y la pagina es ESTATICA: el candado del catalogo no la vacia porque el aviso enumeraba otras. Y el propio sitio explica esa regla en otra pagina. BLOQUEA el DNS. | 8930 |
 | §214 | 🏠 **La HOME tambien es estatica**: anuncia precio por noche sin RNT y una cifra de CREDITO de un servicio retirado por no existir. Se quito el enlace y se dejo el numero. El candado no la obedece. | 8976 |
+| §215 | 🚨 **ROI en el hero y estadisticas inventadas en /publicar** — 1.200 inmuebles, 98 por ciento satisfechos. El gate contra la prueba social fabricada pasa VERDE sobre la del propio sitio. Lo mas grave del dia. | 9031 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

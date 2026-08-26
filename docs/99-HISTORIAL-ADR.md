@@ -9027,3 +9027,64 @@ Dos veces seguidas: **la superficie que el candado no cubre es la que nadie enum
 apareció solo porque, tras el primer caso, pregunté *«¿cuántas más?»* en vez de arreglar aquella y
 seguir. 🎯 **Un hallazgo que no se convierte en censo deja sus hermanos donde estaban** — y aquí el
 hermano era la página de inicio.
+
+## 215. ADR-215 — Cifras de rentabilidad en el hero y estadísticas inventadas en `/publicar`: lo más grave de la revisión
+
+**Contexto.** Censo de afirmaciones sobre **las 36 URLs anunciadas en el sitemap**, con patrones de
+rentabilidad, porcentaje, superlativo, conteo de negocio, promesa y crédito. Once páginas dieron
+coincidencia; **nueve son falsos positivos** —páginas que NIEGAN la afirmación (`/nosotros`: *«no
+publicamos rentabilidades»*; `/terminos`: *«no constituye garantía de rentabilidad»*) o citas de norma
+con porcentaje (1 % del valor comercial, 100 % del IPC)—. **Dos son reales, y las dos son graves.**
+
+### 215.1 — El HERO de la home publica rentabilidades sin fuente
+Primera pantalla del sitio, bloque `B1 · Inversión`: **`+12%` valorización anual · `8–11%` ROI en USD ·
+`3` zonas premium**. Son **mediciones de mercado sin fuente**, escritas a mano.
+🎯 **Y el propio archivo explica, cinco líneas más arriba, por qué eso no se hace.** El comentario de
+§123 analiza tres cifras del mockup y retira una con este argumento textual: *«una MEDICIÓN de mercado
+sin fuente. Puede que sea cierta; da igual: publicarla sin de dónde sale la convierte en NUESTRA
+afirmación, y quien compre por ese número nos la reclamará a nosotros»*.
+**§123 limpió un bloque y no miró el hero.** La doctrina está escrita en el mismo fichero que la
+incumple — no es que nadie lo supiera: es que el arreglo enumeró un alcance y lo de fuera sobrevivió.
+
+### 215.2 — `/publicar` inventa tres estadísticas de negocio
+En la página donde un **propietario decide si confiarnos su inmueble**: **`+1.200` inmuebles cerrados ·
+`38 días` promedio de venta · `98%` clientes satisfechos**. Escritas a mano (`publicar.astro:15-17`).
+**ALTORRA no ha cerrado 1.200 inmuebles ni tiene medición de satisfacción.** Y `/nosotros` promete
+justo lo contrario, con estas palabras: *«Cuántos inmuebles hemos vendido… todavía no tenemos esos
+números publicados de forma que usted pueda comprobarlos, y ponerlos aquí sin eso sería pedirle que nos
+crea»*. **El sitio promete en una página no publicar esos números y publica tres en otra.**
+Es **prueba social fabricada** en el sentido estricto del Estatuto del Consumidor (Ley 1480 arts.
+29-30), y en el punto de máxima conversión.
+
+### 215.3 — Y el gate que existe PARA ESTO no las ve
+`verify:claims` nació (§123) para impedir exactamente prueba social fabricada. Sus patrones cazan
+*«N reseñas»*, *«rating: 4.9»* y distinciones (*«superanfitrión»*, *«líder del mercado»*). **Ninguno
+casa con `98% clientes satisfechos`, `+1.200 inmuebles cerrados` ni `+12% valorización anual`.** Y
+`x-claimsVerificados` está **vacío** (el gate lo dice: *«0 declaradas como verificada»*), así que
+tampoco hay respaldo declarado. 🎯 **El gate contra la prueba social fabricada pasa en verde sobre la
+prueba social fabricada del propio sitio** — la versión más pura del defecto que este historial lleva
+todo el día catalogando.
+
+### 215.4 — Severidad y decisión
+Como §213-§214: **hoy no hay exposición** —staging `noindex`, dominio en obra—; el riesgo se
+materializa en el paso 5.3. Pero éste es **el peor de los tres**: los otros son datos de muestra; éstos
+son **una promesa de rentabilidad y una reputación inventada**, que son las dos categorías que más
+daño causan y más responsabilidad generan.
+**No se edita.** Quitar tres tarjetas de un hero y una franja de estadísticas **cambia el diseño de dos
+pantallas**, y la regla es *nunca UI sin mockup aprobado*. Además hay decisión de negocio detrás: si
+las cifras tienen fuente, se cita; si no, se sustituyen por lo que sí es verificable — que es
+exactamente lo que §123 hizo con las otras tres.
+**Y la extensión del gate va CON el arreglo, no antes**: añadir hoy los patrones dejaría el repositorio
+en rojo con una salida que exige mockup (misma razón que §208 y §214.4).
+
+### 215.5 — Archivos
+`specs/CUTOVER-RUNBOOK.md`: se añade a los bloqueantes del 5.3. **INTACTO**: `index.astro` y
+`publicar.astro`. **Y el censo completo queda aquí**: 36 URLs barridas, 9 falsos positivos
+identificados uno a uno, 2 hallazgos reales.
+
+### 215.6 — Doctrina
+Tres veces hoy el mismo patrón, y ya no es casualidad: **§213** el candado enumeró páginas y faltó una ·
+**§214** el aviso enumeró tres y solo dos compartían remedio · **§215** el arreglo enumeró tres cifras y
+dejó el hero. 🎯 **Un arreglo que se aplica a una LISTA hereda el error de la lista, y nadie vuelve a
+mirarlo porque el arreglo consta como hecho.** El antídoto no es enumerar mejor: es **derivar la lista
+de una medición** —barrer todas las páginas y ver cuáles casan— en vez de escribirla de memoria.
