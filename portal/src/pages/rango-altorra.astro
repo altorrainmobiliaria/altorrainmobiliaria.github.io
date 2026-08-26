@@ -28,17 +28,14 @@ import Footer from '../components/Footer.astro';
 import { SITE } from '../lib/config/site';
 import { LEGAL, TEXTO_AUTORIZACION, TEXTO_MARKETING, RUTA_AVISO } from '../lib/config/legal';
 import { ZONAS } from '../lib/content/zonas';
+import { migaDe } from '../lib/seo/breadcrumbs';
 
 const TIPOS = ['Apartamento', 'Casa', 'Lote', 'Oficina', 'Local'];
 const base = Astro.site?.origin ?? `https://${SITE.domain}`;
 
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Inicio', item: base },
-    { '@type': 'ListItem', position: 2, name: 'Rango ALTORRA', item: `${base}/rango-altorra` },
-  ],
+  ...migaDe(base, [{ nombre: 'Rango ALTORRA', ruta: '/rango-altorra' }]),
 };
 ---
 

@@ -28,9 +28,20 @@ interface Props {
   vigencia: string;
 }
 const { title, description, version, vigencia } = Astro.props;
+
+/*
+ * MIGA DE PAN, aquí y no en cada documento: las cuatro páginas legales son indexables y ninguna
+ * decía su ruta, así que en Google salían con la URL cruda mientras sus hermanas mostraban
+ * «altorrainmobiliaria.co › Precios» (§161).
+ *
+ * ⚠️ Es PLANA —«Inicio › Términos», no «Inicio › Legal › Términos»— porque **`/legal` no existe
+ * como página**. Un tramo intermedio hacia una URL que nadie construyó es exactamente el ancla
+ * fantasma de §159, con la diferencia de que aquí quien se come el 404 es el buscador.
+ */
+const miga = [{ nombre: title, ruta: Astro.url.pathname }];
 ---
 
-<BaseLayout title={`${title} — ALTORRA Inmobiliaria`} description={description}>
+<BaseLayout title={`${title} — ALTORRA Inmobiliaria`} description={description} miga={miga}>
   <Header active="" />
 
   <main id="main" class="alt-container alt-section legal">

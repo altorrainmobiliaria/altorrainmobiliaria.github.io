@@ -60,7 +60,10 @@ const filterBtns = ['Tipo', 'Precio', 'Habitaciones'];
 const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.label, active: !!p.on }));
 ---
 
-<BaseLayout title={`${op === 'comprar' ? 'Comprar' : 'Arrendar'} en Cartagena — ALTORRA`}>
+<BaseLayout
+  title={`${op === 'comprar' ? 'Comprar' : 'Arrendar'} en Cartagena — ALTORRA`}
+  miga={[{ nombre: op === 'comprar' ? 'Comprar' : 'Arrendar', ruta: `/${op}` }]}
+>
   <Header active={op} />
 
   <main id="main">

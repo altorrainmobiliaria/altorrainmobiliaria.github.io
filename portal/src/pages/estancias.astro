@@ -73,7 +73,10 @@ function datosDeResenas(): Resenas {
 const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
 ---
 
-<BaseLayout title="Casa con piscina y terraza colonial — Estancias ALTORRA">
+<BaseLayout
+  title="Casa con piscina y terraza colonial — Estancias ALTORRA"
+  miga={[{ nombre: 'Corta estancia', ruta: '/estancias' }]}
+>
   <Header active="estancia" />
 
   <main id="main">

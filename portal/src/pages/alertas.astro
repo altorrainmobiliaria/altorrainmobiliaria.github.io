@@ -33,6 +33,7 @@ import {
   resumenCriterios,
 } from '../lib/domain/alertas';
 import { TIPOS_INMUEBLE } from '../lib/domain/shared';
+import { migaDe } from '../lib/seo/breadcrumbs';
 
 // Sin caché: la página refleja el resultado del envío (`?ok=1`, `?error=…`) y no hay nada que ganar
 // cacheando un formulario. Con Workers Caching activo (TODO-41), una respuesta sin esta cabecera SÍ se
@@ -59,11 +60,7 @@ const TIPOS_UI = TIPOS_INMUEBLE.filter((t) => t !== 'otro');
 const base = Astro.site?.origin ?? `https://${SITE.domain}`;
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Inicio', item: base },
-    { '@type': 'ListItem', position: 2, name: 'Alertas', item: `${base}/alertas` },
-  ],
+  ...migaDe(base, [{ nombre: 'Alertas', ruta: '/alertas' }]),
 };
 ---
 

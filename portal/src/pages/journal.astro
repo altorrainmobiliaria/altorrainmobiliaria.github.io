@@ -30,6 +30,7 @@ import {
   fechaLarga,
   tiempoDeLectura,
 } from '../lib/content/journal';
+import { migaDe } from '../lib/seo/breadcrumbs';
 
 const articulos = await getCollection('journal');
 const { destacado, resto } = destacadoYResto(articulos);
@@ -46,13 +47,7 @@ const DESCRIPCION =
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
-    {
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Inicio', item: base },
-        { '@type': 'ListItem', position: 2, name: 'Journal', item: url },
-      ],
-    },
+    migaDe(base, [{ nombre: 'Journal', ruta: '/journal' }]),
     {
       '@type': 'Blog',
       name: 'Journal de ALTORRA',

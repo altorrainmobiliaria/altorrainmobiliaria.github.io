@@ -5,6 +5,7 @@ import '../styles/tokens.css';
 import '../styles/base.css';
 import '../styles/components.css';
 import JsonLdNegocio from '../components/JsonLdNegocio.astro';
+import { migaDe, type Tramo } from '../lib/seo/breadcrumbs';
 
 interface Props {
   title: string;
@@ -21,6 +22,16 @@ interface Props {
    * una se declara canónica de sí misma y Google ve dos páginas con el mismo inmueble.
    */
   canonical?: string;
+  /**
+   * Migas de pan de la página, SIN el «Inicio» (lo pone `migaDe`). Al pasarlas, el layout emite el
+   * `BreadcrumbList` — así una página nueva las gana con una línea en vez de nueve copiadas.
+   *
+   * ⚠️ NO la pasan las páginas que ya construyen su propio `@graph` con más tipos dentro
+   * (`/precios` con su `FAQPage`, `/journal` con su `Blog`, las zonas con su `Place`): ahí la miga
+   * viaja en el mismo grafo que el resto y sacarla sería partir en dos lo que Google lee de una.
+   * Un `BreadcrumbList` por página, venga de donde venga — nunca los dos caminos a la vez.
+   */
+  miga?: Tramo[];
 }
 
 const {
@@ -31,6 +42,7 @@ const {
   noindex = false,
   image,
   canonical: canonicalProp,
+  miga,
 } = Astro.props;
 
 // CANONICAL AUTORREFERENCIAL en TODA página (requisito de `search-console-setup-y-diagnostico` §2).
@@ -39,6 +51,9 @@ const {
 // Siempre sobre el dominio de PRODUCCIÓN (`site` de astro.config), nunca sobre el host del request:
 // en staging el host es *.workers.dev y auto-referenciarlo enseñaría el staging.
 const canonical = new URL(canonicalProp ?? Astro.url.pathname, Astro.site ?? 'https://altorrainmobiliaria.co').href;
+
+/** Origen de PRODUCCIÓN, por la misma razón que el canonical: en staging el host es *.workers.dev. */
+const origen = (Astro.site ?? new URL('https://altorrainmobiliaria.co')).origin;
 
 // Indexable SOLO en build de producción; por defecto (staging *.workers.dev) => noindex (O3/T1).
 // `noindex` fuerza noindex SIEMPRE (páginas internas/admin: /gestion, /design-system).
@@ -97,6 +112,18 @@ const ogImage = new URL(image || '/assets/hero-keys.webp', Astro.site ?? 'https:
         que una se quede sin él. Las páginas que además tienen structured data PROPIO (zonas,
         precios, Rango) emiten su bloque aparte: varios JSON-LD por documento son válidos. */}
     <JsonLdNegocio />
+
+    {/* Miga de pan, si la página la declaró. Sin ella Google enseña la URL cruda en el resultado
+        en vez de la ruta del sitio (§161).
+        ⚠️ `miga.length > 0` y no `miga?.length &&`: con un array VACÍO eso último evalúa a `0`, y
+        un `0` en una expresión de plantilla se PINTA — un cero suelto en mitad del `<head>`. */}
+    {miga && miga.length > 0 && (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify({ '@context': 'https://schema.org', ...migaDe(origen, miga) })}
+        is:inline
+      />
+    )}
   </head>
   <body>
     <slot />
