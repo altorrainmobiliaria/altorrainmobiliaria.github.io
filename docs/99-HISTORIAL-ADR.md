@@ -6648,3 +6648,59 @@ modifica en sitio es un objeto del que nadie puede decir cómo llegó a estar as
 Cloud Function se escribe cuando exista la cuenta de comercio (§165.7), y el dominio ya la espera.
 
 **170.8 — Archivos.** `portal/src/lib/domain/mandato.ts` (+ `.test.ts`). Commit `0ba7452`.
+
+## 171. ADR — La garantía de arriendo: el último gate «sin investigar», y era un papel gratis ⟦OPUS-5⟧ (2026-08-26)
+
+**171.0 — El gate que quedaba.** `42-LEGAL` tenía una fila con un interrogante: *«Garantía de arriendo
+al propietario | Partner asegurador + rol legal definido (**❓ tema sin investigar — gate abogado
+íntegro**) | EOSF / C.Pol. art. 335»*. Era el único gate del nodo que no tenía ni siquiera una
+posición. Con el abogado siendo yo (§165), dejarlo así era dejarlo sin dueño.
+
+**171.1 — Primero medí lo que el portal PROMETE hoy**, antes de opinar sobre lo que podría prometer.
+Barrido de las 41 páginas construidas buscando «garantía / póliza / aseguradora»: **37 menciones y
+ninguna promete una garantía de ALTORRA**. `/terminos` la excluye expresamente («no constituye
+garantía de rentabilidad, de venta ni de arrendamiento»), la Política de Datos ya declara que **el
+estudio de admisión lo hace la aseguradora en su propia calidad de Responsable**, y el panel ofrece
+`Póliza | Codeudor | Depósito (solo comercial)`. *La posición correcta ya estaba construida; lo que
+faltaba era saber por qué era correcta.*
+
+**171.2 — La regla, verificada en fuente oficial.** **Ley 510 de 1999, art. 101**: agencias y agentes
+de seguros **«no pueden ejercer su actividad sin autorización PREVIA de las compañías de seguros que
+pretendan representar»**; la compañía controla su idoneidad, vigila el régimen de inhabilidades y
+**responde solidariamente** por lo que hagan. No las vigila la Superfinanciera — **las autoriza la
+aseguradora**, y ahí está la clave práctica.
+
+**171.3 — Tres conclusiones, en orden de dureza.**
+· ⛔ **Garantía PROPIA, nunca.** Responder con el patrimonio de ALTORRA si el arrendatario no paga es
+actividad aseguradora, y esa exige autorización estatal (C.Pol. art. 335 + EOSF). No es una
+formalidad que se pueda saltar «mientras tanto».
+· ⛔ **Corredor, tampoco**: exige **sociedad anónima con objeto social EXCLUSIVO**, y ALTORRA es una
+S.A.S. inmobiliaria. Esa puerta está cerrada por la forma societaria, no por el trámite.
+· ✅ **Agencia del asegurador, sí** — y es el camino que ya se está andando.
+
+**171.4 — Y la frontera práctica, que es más fina de lo que parece.** **Exigir** que exista una póliza
+no es intermediar. **Gestionar su expedición y/o cobrar por colocarla, SÍ** — y eso es exactamente lo
+que la Política de Datos ya declara que hacemos: *«gestionar el aseguramiento o afianzamiento del
+contrato con aseguradoras/afianzadoras»*. O sea que la actividad **ya existe** y lo que falta es el
+papel que la autoriza.
+
+**171.5 — La acción concreta, y no cuesta dinero.** Pedirle a cada aseguradora con la que se trabaje
+su **carta de autorización como agencia**. La expide ella, es gratis, y **sin ella la actividad es
+irregular aunque todo lo demás esté impecable**. Es el mismo patrón de §163 y §162: el riesgo estaba
+entendido a medias y lo que faltaba era un papel concreto con nombre. *Un gate que dice «pendiente de
+abogado» se posterga; uno que dice «pídele a Seguros X su carta de autorización» se hace.*
+
+**171.6 — Lo que queda ABIERTO, declarado.** No verifiqué el régimen de las **«afianzadoras»** —si
+están vigiladas y bajo qué norma—. Mientras no se verifique, **el respaldo se ofrece con aseguradora,
+no con afianzadora**: es la diferencia entre un respaldo vigilado y uno del que no sabemos nada, y esa
+diferencia la sufre el propietario el día que haya que cobrar. Queda como pregunta viva, no como
+descuido.
+
+**171.7 — Con esto `42-LEGAL` no tiene ningún gate sin posición.** Los que quedan esperan un dato
+(RNT, DIAN) o una cuenta, no un criterio. Y este ADR y §165 se escribieron con la misma disciplina:
+leer la norma, citar la fuente, decir qué NO se verificó, y marcar la decisión como **no revisada por
+un tercero** (§G.2).
+
+**171.8 — Archivos.** `docs/42-LEGAL.md` (dictamen nuevo + la fila del gate, que deja de decir «sin
+investigar»). **Fuentes**: [Ley 510 de 1999](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=9916) ·
+[¿Quiénes son los intermediarios de seguros? — Superfinanciera](https://www.superfinanciera.gov.co/publicaciones/10115518/quienes-son-los-intermediarios-de-seguros/).

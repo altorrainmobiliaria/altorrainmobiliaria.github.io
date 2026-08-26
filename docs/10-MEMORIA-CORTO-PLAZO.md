@@ -82,9 +82,11 @@
 > **(11) ⚖️ ¿avaluador inscrito en el RAA?** Solo de eso depende si se quedan «Avalúos» (menú Gestión) y
 > «Avalúo y fotografía profesional» (Premium). Si no: se quitan esas dos y listo (§105).
 > **(12) 💳 ¿«Crédito de Vivienda» y «Pagos en Línea» son servicios REALES?** Estaban en el menú
-> apuntando a un ancla que no existe, y las retiré (§159.4): del primero no hay ni página ni servicio
-> verificable —y prometer crédito es de lo más delicado que se puede poner—, y el segundo es el carril
-> de Wompi, que espera TU cuenta de comercio (§165 despejó lo legal). Si alguno SÍ se presta, dilo.
+> apuntando a un ancla que no existe, y las retiré (§159.4): del primero no hay página ni servicio
+> verificable, y el segundo es el carril de Wompi, que espera TU cuenta (§165). Si alguno sí, dilo.
+> **(13) 🛡️ CARTA DE AUTORIZACIÓN de la aseguradora** — pídesela a cada aseguradora con la que
+> trabajes. Es gratis y la expide ella. Sin ella, gestionar pólizas de arriendo es intermediación
+> irregular aunque todo lo demás esté bien (§171 · Ley 510/99 art. 101).
 > **(9) 📣 PAUTA — al final por decisión tuya; aplazarla es SEGURO**: la campaña de humo solo muerde el
 > día que recargues saldo ([[D-15]]). **Antes de recargar**: sesión de Meta de Altorra ([[D-16c]]) +
 > filtro `Entrega=Activo` con rango Máximo ([[D-15b]] — «Anuncios activos» esconde los zombies).
