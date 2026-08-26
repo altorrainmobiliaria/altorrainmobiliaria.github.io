@@ -1,13 +1,241 @@
 ---
-/* Enlazada desde el hero de inversión de la home ("Ver oportunidades"). MEGA-PLAN Ola 1.9
-   (Rentímetro turístico) y Ola 3 (loop inversión→renta). Sin mockup aún. */
+/*
+ * INVERTIR (/invertir) — la landing de intención de inversión (Ola 1 ítem 4 · §158).
+ *
+ * 🔴 POR QUÉ ESTA PÁGINA NO PODÍA SEGUIR SIENDO UN «PRÓXIMAMENTE». Es el destino de DOS redirects
+ * del sitio viejo —`/invertir.html` y `/invertir-airbnb-cartagena.html`—, o sea de direcciones con
+ * años de posicionamiento. Mandar tráfico indexado a una pantalla que dice «llega pronto» es el peor
+ * de los mundos: se paga el coste de conservar la URL y se tira el visitante.
+ *
+ * ⚠️ Y LO QUE PROMETÍA EL «PRÓXIMAMENTE» NO SE PUEDE CUMPLIR: decía «rentabilidad estimada por
+ * zona». No existe ese dato verificado, y publicarlo a ojo sería inventar cifras en la página que
+ * más caro cuesta equivocar — la de quien va a poner dinero. Se cambia la promesa y se dice por qué,
+ * en la propia página. Es la misma regla que gobierna `zonas.ts` y el Journal.
+ *
+ * SIN MOCKUP PROPIO, y es deliberado: esta página no estrena ni un componente. Es la estructura de
+ * las landings de zona (§92) —editorial + rasgos + CTA de contacto— que ya tiene mockup aprobado.
+ * Dibujar otro para volver a colocar lo mismo sería teatro; lo NUEVO aquí es el texto.
+ */
 export const prerender = true;
-import ProximamenteLayout from '../layouts/ProximamenteLayout.astro';
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../lib/config/site';
+
+const DESCRIPCION =
+  'Invertir en finca raíz en Cartagena: en qué se diferencia rentar por meses de alquilar por días, qué exige cada modelo y qué revisar antes de firmar la promesa.';
+
+const waTexto = encodeURIComponent(
+  'Hola ALTORRA, quiero invertir en Cartagena y me gustaría hablar con un asesor.',
+);
+
+/**
+ * Los dos modelos, con lo que de verdad los distingue: no «rentabilidad», que no podemos sostener,
+ * sino lo que cada uno EXIGE y a quién le encaja. Eso sí lo sabemos y se puede comprobar.
+ */
+const MODELOS = [
+  {
+    titulo: 'Arriendo por meses',
+    marco: 'Ley 820 de 2003',
+    exige: [
+      'Matrícula de arrendador si se hace de forma habitual o con más de cinco contratos.',
+      'Prohibido pedir depósito al arrendatario; la única garantía en dinero es la de servicios públicos.',
+      'El canon se reajusta una vez al año y hasta el IPC del año anterior.',
+    ],
+    paraQuien:
+      'Para quien busca un ingreso predecible y poca operación diaria. El contrato se renueva solo si nadie da preaviso.',
+    zonas: [
+      ['Marbella', '/zona/marbella'],
+      ['Pie de la Popa', '/zona/pie-de-la-popa'],
+      ['Alto Bosque', '/zona/alto-bosque'],
+      ['Cielo Mar', '/zona/cielo-mar'],
+    ],
+  },
+  {
+    titulo: 'Alquiler por días',
+    marco: 'Ley 300 de 1996 y Decreto 1836 de 2021',
+    exige: [
+      'Registro Nacional de Turismo ANTES de operar, y actualizado cada año.',
+      'Que el reglamento de propiedad horizontal autorice expresamente el uso turístico.',
+      'El número de RNT visible en toda la publicidad, incluidos los anuncios de plataformas.',
+    ],
+    paraQuien:
+      'Para quien acepta una operación con más movimiento —limpieza, atención, temporadas— a cambio de un modelo distinto.',
+    zonas: [
+      ['El Laguito', '/zona/el-laguito'],
+      ['San Diego', '/zona/san-diego'],
+      ['La Boquilla', '/zona/la-boquilla'],
+      ['Barú', '/zona/baru'],
+    ],
+  },
+];
+
+/** Lo que hay que mirar antes de firmar. Todo comprobable; nada de proyecciones. */
+const ANTES_DE_FIRMAR = [
+  {
+    t: 'El certificado de tradición, leído entero',
+    d: 'Hipotecas, limitaciones de dominio, sucesiones sin liquidar. Se pide y se lee ANTES de la promesa, no después: la promesa ya compromete.',
+  },
+  {
+    t: 'El reglamento de la copropiedad',
+    d: 'Si el plan es alquilar por días, esta pregunta va antes que el precio. Se responde leyendo el reglamento, no preguntando en portería.',
+  },
+  {
+    t: 'Quién va a figurar como arrendador o prestador',
+    d: 'Si repite, le aplican la matrícula de arrendador o el RNT. Si delega, pida el número de quien administra — y que sea del municipio del inmueble.',
+  },
+];
+
+const base = Astro.site?.origin ?? `https://${SITE.domain}`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Inicio', item: base },
+        { '@type': 'ListItem', position: 2, name: 'Invertir en Cartagena', item: `${base}/invertir` },
+      ],
+    },
+  ],
+};
 ---
-<ProximamenteLayout
-  title="Invertir en Cartagena"
-  encabezado="Las oportunidades de inversión llegan pronto."
-  texto="Estamos preparando la sección de inversión: proyectos sobre planos, rentabilidad estimada por zona y acompañamiento en todo el proceso. Mientras tanto, cuéntanos qué buscas y un asesor te comparte lo que hay disponible hoy."
-  waTexto="Hola ALTORRA, quisiera información sobre oportunidades de inversión en Cartagena."
-  description="Oportunidades de inversión inmobiliaria en Cartagena con ALTORRA — próximamente."
-/>
+
+<BaseLayout title="Invertir en Cartagena | ALTORRA Inmobiliaria" description={DESCRIPCION}>
+  <Header />
+
+  <main id="contenido">
+    <section class="alt-section inv-hero">
+      <div class="alt-container">
+        <p class="alt-eyebrow">Cartagena de Indias</p>
+        <h1 class="inv-h">Invertir en Cartagena, sabiendo qué exige cada camino.</h1>
+        <p class="inv-lead">{DESCRIPCION}</p>
+        <div class="inv-cta">
+          <a class="alt-btn alt-btn--navy" href="/comprar">Ver inmuebles en venta</a>
+          <a class="alt-btn alt-btn--outline" href={`${SITE.contact.whatsappLink}?text=${waTexto}`} rel="noopener">Hablar con un asesor</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="alt-section">
+      <div class="alt-container">
+        <h2 class="inv-h2">Dos modelos, y no son dos velocidades del mismo</h2>
+        <p class="inv-p">
+          Comprar para rentar por meses y comprar para alquilar por noches son negocios distintos con
+          marcos legales distintos. La decisión conviene tomarla <strong>antes</strong> de comprar,
+          porque hay inmuebles donde uno de los dos, sencillamente, no es legal.
+        </p>
+
+        <div class="inv-grid">
+          {
+            MODELOS.map((m) => (
+              <article class="alt-card alt-card--neu inv-card">
+                <h3 class="inv-card__t">{m.titulo}</h3>
+                <p class="inv-card__marco">{m.marco}</p>
+                <ul class="inv-card__lista">
+                  {m.exige.map((e) => <li>{e}</li>)}
+                </ul>
+                <p class="inv-card__quien">{m.paraQuien}</p>
+                <p class="inv-card__zonas">
+                  Zonas donde tiene sentido:{' '}
+                  {m.zonas.map(([nombre, href], i) => (
+                    <>
+                      {i > 0 && ' · '}
+                      <a href={href}>{nombre}</a>
+                    </>
+                  ))}
+                </p>
+              </article>
+            ))
+          }
+        </div>
+
+        <p class="inv-p inv-p--nota">
+          El detalle de cada marco, con los artículos citados y sus fuentes oficiales, está en el
+          Journal: <a href="/journal/comprar-para-rentar-cartagena">Comprar para rentar en Cartagena</a>.
+        </p>
+      </div>
+    </section>
+
+    <section class="alt-section alt-section--alt">
+      <div class="alt-container">
+        <h2 class="inv-h2">Tres cosas que se revisan antes de firmar</h2>
+        <div class="inv-lista">
+          {
+            ANTES_DE_FIRMAR.map((x) => (
+              <div class="inv-item">
+                <h3 class="inv-item__t">{x.t}</h3>
+                <p class="inv-item__d">{x.d}</p>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    {/* La parte que casi ninguna inmobiliaria escribe, y por eso mismo la escribimos. */}
+    <section class="alt-section">
+      <div class="alt-container inv-honesto">
+        <h2 class="inv-h2">Lo que no vamos a publicar aquí</h2>
+        <p class="inv-p">
+          <strong>Rentabilidades ni proyecciones de ocupación por zona.</strong> Dependen del
+          inmueble, del mes, del estado de la unidad y de cómo se opere; una cifra puesta en una
+          página sería una promesa que nadie puede sostener, y en la página de quien va a poner
+          dinero eso no es un adorno: es un daño.
+        </p>
+        <p class="inv-p">
+          Lo que sí hacemos es mirar su caso con los números que existan de verdad —los del inmueble
+          concreto, no los de un promedio—. Para eso hay que hablar, y por eso esta página termina en
+          una conversación y no en una calculadora.
+        </p>
+        <div class="inv-cta">
+          <a class="alt-btn alt-btn--gold" href={`${SITE.contact.whatsappLink}?text=${waTexto}`} rel="noopener">Hablar con un asesor</a>
+          <a class="alt-btn alt-btn--outline" href="/rango-altorra">Pedir un rango de precio</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="alt-section alt-section--ink">
+      <div class="alt-container inv-turismo">
+        <p class="alt-eyebrow">¿Le interesa la renta turística?</p>
+        <h2 class="inv-h2 inv-h2--ink">La asesoría de inversión turística vive en su propia página.</h2>
+        <p class="inv-p inv-p--ink">Corta estancia, temporadas y operación del alojamiento, con lo que exige el RNT.</p>
+        <a class="alt-btn alt-btn--gold" href="/turismo#inversion">Ver asesoría de inversión turística</a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+</BaseLayout>
+
+<style>
+  .inv-h { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(30px, 5vw, 46px); line-height: 1.05; color: var(--alt-ink); margin: 8px 0 12px; max-width: 16ch; }
+  .inv-lead { font-size: clamp(15px, 1.8vw, 17px); line-height: 1.7; color: var(--alt-text); max-width: 62ch; margin: 0 0 24px; }
+  .inv-cta { display: flex; gap: 12px; flex-wrap: wrap; }
+  .inv-h2 { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(24px, 3vw, 34px); line-height: 1.12; color: var(--alt-ink); margin: 0 0 14px; }
+  .inv-h2--ink { color: var(--alt-on-ink); }
+  .inv-p { font-size: 15.5px; line-height: 1.75; color: var(--alt-text); max-width: 68ch; margin: 0 0 18px; }
+  .inv-p--ink { color: var(--alt-on-ink-muted); }
+  .inv-p--nota { font-size: 14px; }
+  .inv-p a, .inv-card__zonas a { color: var(--alt-link); text-decoration: underline; text-underline-offset: 3px; }
+
+  .inv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; margin: 24px 0 20px; }
+  .inv-card { padding: 26px; display: flex; flex-direction: column; gap: 10px; }
+  .inv-card__t { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 24px; color: var(--alt-ink); margin: 0; }
+  .inv-card__marco { font-size: 11.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.12em; text-transform: uppercase; color: var(--alt-link); margin: 0; }
+  .inv-card__lista { margin: 6px 0 0; padding-left: 20px; font-size: 14.5px; line-height: 1.65; color: var(--alt-text); }
+  .inv-card__lista li { margin-bottom: 8px; }
+  .inv-card__quien { font-size: 14.5px; line-height: 1.7; color: var(--alt-ink); margin: 4px 0 0; }
+  .inv-card__zonas { font-size: 13.5px; line-height: 1.7; color: var(--alt-text-soft); margin: 0; }
+
+  .inv-lista { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; }
+  .inv-item__t { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 20px; line-height: 1.2; color: var(--alt-ink); margin: 0 0 8px; }
+  .inv-item__d { font-size: 14.5px; line-height: 1.7; color: var(--alt-text); margin: 0; }
+
+  .inv-honesto { border-left: 3px solid var(--alt-gold); padding-left: 24px; }
+  .inv-turismo { text-align: center; }
+  .inv-turismo .inv-p { margin-left: auto; margin-right: auto; }
+</style>
