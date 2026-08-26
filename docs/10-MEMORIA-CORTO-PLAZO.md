@@ -74,25 +74,32 @@
 
 > **▶ BERSAGLIO** — estado vivo en su nodo dueño: `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`.
 
-> **⏭️ PELOTAS DE DANIEL** (no las puedo cerrar yo):
-> **(1) 🔴 rotar la contraseña de aplicación de Gmail**: `onNewSolicitud` falla con `535-5.7.8` y es la MISMA Function que avisará los leads del portal nuevo. Lanzar sin rotarla = perderlos sin evidencia, igual que se perdieron los 16 del sitio viejo (exportados antes, `43`).
-> **(3) B-04** — sin contrato con DataCrédito/TransUnion **NO se puede consultar a nadie**: ¿afiliarse, o solo aseguradora?
-> **(4-5)** verificar los **recovery codes** (§72) · Nº de **RNT** + vetar los 6 estándares del `02 §2`.
-> ~~**(7)** tasa de mora del doc 03~~ **RESUELTA, no era tuya** (§181): dos contratos, dos regímenes.
-> **(8)** `/publicar` **no pide correo** (fiel al mockup) ⇒ el propietario llega `[COLD]`: ¿campo o re-pesar?
-> **(10) 📧 RESEND** — dominio verificado + clave (runbook fase 0.2). Sin eso el digest no falla, solo no
-> envía. Gratis, y **no depende del Gmail roto**. ⚠️ El secreto ya existe con centinela (§140).
-> **(11) ⚖️ ¿avaluador inscrito en el RAA?** Solo de eso depende si se quedan «Avalúos» (menú Gestión) y
-> «Avalúo y fotografía profesional» (Premium). Si no: se quitan esas dos y listo (§105).
-> **(12) 💳 ¿«Crédito de Vivienda» y «Pagos en Línea» son servicios REALES?** Estaban en el menú
-> apuntando a un ancla que no existe, y las retiré (§159.4): del primero no hay página ni servicio
-> verificable, y el segundo es el carril de Wompi, que espera TU cuenta (§165). Si alguno sí, dilo.
-> **(13) 🛡️ CARTA DE AUTORIZACIÓN de la aseguradora** — pídesela a cada aseguradora con la que
-> trabajes. Es gratis y la expide ella. Sin ella, gestionar pólizas de arriendo es intermediación
-> irregular aunque todo lo demás esté bien (§171 · Ley 510/99 art. 101).
-> **(9) 📣 PAUTA — al final por decisión tuya; aplazarla es SEGURO**: la campaña de humo solo muerde el
-> día que recargues saldo ([[D-15]]). **Antes de recargar**: sesión de Meta de Altorra ([[D-16c]]) +
-> filtro `Entrega=Activo` con rango Máximo ([[D-15b]] — «Anuncios activos» esconde los zombies).
+> **⏭️ PELOTAS DE DANIEL — ordenadas por lo que DESBLOQUEAN** (§188; antes era una lista plana de 13).
+>
+> **🅰️ Sin esto no se lanza**
+> **(10) 📧 RESEND: dominio + clave** — gratis, ~30 min, **no depende del Gmail roto**, y el secreto ya
+> existe con centinela (§140). Desbloquea el digest de alertas **y, con el cambio de abajo, el aviso de
+> cada lead**. Si solo haces UNA cosa, es ésta.
+> **(1) 🔻 Gmail — YA NO ES TUYA (baja de A a nada)**: los leads del portal dependían de la Function
+> legacy con SMTP roto (`535-5.7.8`). Moverlos a Resend lo mata, y eso lo hago yo (§188). *Dos pelotas
+> se funden en una credencial.* Solo vuelve a ser tuya si quieres conservar el correo legacy.
+>
+> **🅱️ Desbloquean una función concreta (una respuesta corta cada una)**
+> **(4b) Nº de RNT** — sin él NO se puede publicar ni un alojamiento por días: el gate lo bloquea.
+> **(13) 🛡️ Carta de autorización de CADA aseguradora** — gratis, la expide ella. Sin ella gestionar
+> pólizas es intermediación irregular aunque el resto esté impecable (§171 · Ley 510/99 art. 101).
+> **(11) ⚖️ ¿tienes avaluador inscrito en el RAA?** Sí/no. De eso depende si se quedan «Avalúos» y
+> «Avalúo y fotografía profesional» o se retiran (§105).
+> **(12) 💳 ¿«Crédito de Vivienda» y «Pagos en Línea» son servicios REALES?** Los retiré del menú
+> (§159.4). Una frase basta; el segundo es el carril de Wompi y espera TU cuenta igual.
+> **(8) `/publicar` no pide correo** (fiel al mockup) ⇒ el propietario llega `[COLD]`: ¿campo o re-pesar?
+> **(47) 🚪 inscribe tu 2FA** — hasta que lo hagas no puedo exigirlo en las Rules (antes expulsaría a todos).
+>
+> **🅲 No bloquean nada hoy**
+> **(3) B-04 DataCrédito** (solo si quieres screening propio) · **(4a) recovery codes** (§72, higiene,
+> 5 min) · **(9) 📣 PAUTA** — aplazada por ti y **aplazarla es SEGURO**: solo muerde el día que recargues
+> saldo ([[D-15]]); antes de eso, sesión de Meta ([[D-16c]]) + filtro `Entrega=Activo` ([[D-15b]]).
+> ~~(7) tasa de mora~~ **cerrada, no era tuya** (§181) · ~~(2)(5)(6)~~ cerradas antes.
 
 > **⏸️ EN PAUSA, reanudable y sin bloquear nada**: 64 leves del kit (ledger en bóveda) · [[M-09]] a los
 > 3 hermanos (TODO-32b) · backlog B-01..B-05. 🛑 **NO RELANZAR** el comité R3, la auditoría B-03 ni los

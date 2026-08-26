@@ -22,6 +22,7 @@ import { initializeApp, getApps } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { DOC_CONTROL, lineasReporte, rebuildCatalogo } from './catalogo-rebuild';
 import { correrDigest, lineasDigest } from './alertas-digest';
+import { construirTriggerLead } from './lead-aviso';
 
 // Escrituras de GESTION: la UNICA puerta a `contratos` (y pronto expedientes/pagos/novedades),
 // que nacen con `allow write: if false` por decision de §100. Re-exportado para que quede
@@ -193,6 +194,19 @@ export const alertasDigest = onSchedule(
     for (const l of lineasDigest(reporte)) logger.info(l);
   },
 );
+
+/**
+ * AVISO DE LEAD NUEVO (§188) — sustituye al camino roto de la Function legacy.
+ *
+ * El aviso lo mandaba `onNewSolicitud` del legacy por SMTP de Gmail con una contraseña de aplicación
+ * caída: así se perdieron los 16 leads del sitio viejo, sin que nadie se enterara en 126 días. Aquí
+ * sale por Resend, que ya usa el digest — y como el secreto YA EXISTE con centinela, registrar esta
+ * Function no bloquea el despliegue del codebase (§140).
+ *
+ * Sin clave real no falla: registra que no envió y deja el lead guardado igual. Lo que NO hace es
+ * llevar guardia de la Ley 2300 — este correo va a ALTORRA, no a un consumidor (ver el módulo).
+ */
+export const avisoLeadNuevo = construirTriggerLead(REGION, [RESEND_API_KEY], claveResend);
 
 /**
  * "Republicar catálogo" — palanca HUMANA de cero conocimiento técnico para el panel `gestion`

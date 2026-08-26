@@ -7629,3 +7629,61 @@ viendo 8 gemelos, **todos los declarados y ninguno nuevo**: el «3 meses» no ll
 **187.6 — Lo que queda, dicho.** Falta la PANTALLA para capturar la evidencia, y no se hace sin mockup
 (regla dura). El dominio está listo y probado para cuando la haya; mientras tanto, lo que impide el
 error caro —creer que un correo electrónico terminó un contrato— ya está codificado.
+
+## 188. ADR-188 — Las pelotas del dueño, ordenadas — y una que se pudo eliminar en vez de ordenar
+
+**188.0 — El encargo era ordenar, y ordenar reveló otra cosa.** La pizarra tenía **trece pelotas de
+Daniel en una lista plana**, sin decir cuál desbloquea qué. Al ponerles ese criterio —*«¿qué se puede
+hacer el día después de que la cierre?»*— apareció algo que una lista plana esconde: **una de ellas no
+había que ordenarla, había que MATARLA.**
+
+**188.1 — La pelota que ya no es suya.** La (1) era *«rotar la contraseña de aplicación de Gmail»*, y
+llevaba semanas marcada 🔴 porque `onNewSolicitud` —la Function LEGACY que avisa de cada lead— falla
+con `535-5.7.8`. Así se perdieron los 16 leads del sitio viejo: ninguno tenía marca de envío y nadie
+se enteró **en 126 días**. Verificado antes de afirmarlo: el portal escribe el lead y **depende de esa
+Function legacy** para el correo (`/api/solicitud.ts` lo dice en un comentario: *«quien manda el correo
+es…»*), y esa Function usa `nodemailer` con SMTP de Gmail.
+**Pero el portal ya tiene Resend cableado** para el digest. Mover el aviso ahí mata la dependencia de
+una credencial rota — y de paso **funde dos pelotas en una**: Daniel ya no tiene que rotar una clave
+Y configurar Resend; solo configura Resend, que es **gratis, no está roto**, y cuyo secreto **ya
+existe con centinela**, así que registrar la Function nueva **no bloquea el despliegue** (§140).
+
+**188.2 — Y se construyó, no se prometió.** Escribir en la pizarra *«esta pelota te la quito»* sin
+quitarla habría sido exactamente la promesa sin mecanismo que llevo toda la noche cazando. El juicio
+—qué dice el correo— vive en `src/lib/domain/lead-aviso.ts`, puro y con **9 pruebas que corren en
+CI**; la plomería en `functions/src/lead-aviso.ts`.
+
+**188.3 — Tres decisiones del contenido que no son obvias.**
+· **El asunto lleva DELANTE el tier y la operación**, y el nombre al final: se lee en una notificación
+  del móvil, y lo que decide si se abre ahora o luego no es quién es sino qué quiere.
+· **Un lead sin forma de contacto se avisa IGUAL, y con `⚠️ SIN CONTACTO` en el ASUNTO.** Es una señal
+  de que el formulario está mal, y enterarse hoy vale más que un buzón limpio. Si eso solo se viera
+  abriendo el correo, se descubriría tarde y se culparía al formulario del día equivocado.
+· **Texto plano, sin HTML**: es un aviso interno que se lee en diez segundos; el texto plano no se
+  rompe en ningún cliente ni cae en la pestaña de promociones. Y va **todo lo necesario para llamar
+  sin abrir el panel**, porque quien lo recibe suele estar fuera.
+
+**188.4 — La regla que alguien va a querer «arreglar», y sería caro.** Este correo **NO lleva guardia
+de la Ley 2300**. El digest sí (§172), porque va a un CONSUMIDOR y la ley acota el horario del
+contacto comercial. Éste va a ALTORRA, sobre su propio negocio: es una notificación interna.
+Ponerle la ventana horaria retrasaría un lead de las 22:00 hasta las 7:00 — **nueve horas de silencio
+en el único momento en que un lead está caliente**. *Copiar una guardia sin mirar a quién protege es
+cómo una protección se convierte en un daño.* Queda escrito en el módulo, no solo aquí.
+
+**188.5 — Y la marca que faltaba.** Al enviar se escribe `avisoEnviadoEl` en el lead. Los 16 perdidos
+**no tenían esa marca**, y por eso nadie pudo saber que no se habían enviado hasta que fue tarde. Un
+envío sin rastro es indistinguible de un envío que no ocurrió.
+
+**188.6 — Convivencia declarada.** La Function legacy sigue escuchando la MISMA colección. Hoy no
+duplica porque no puede enviar, pero **si alguien arregla esa contraseña sin leer esto, saldrían dos
+correos por lead**. Está escrito en `functions/src/lead-aviso.ts` y no solo en este ADR, porque quien
+arregle la contraseña abrirá ese archivo y no el historial ([[M-26]]).
+
+**188.7 — La lista, ahora.** Tres bloques por poder de desbloqueo: **🅰️ sin esto no se lanza**
+(Resend, y ya nada más) · **🅱️ desbloquean una función concreta** (RNT, carta de la aseguradora,
+avaluador RAA, los dos servicios del menú, el correo de `/publicar`, su 2FA) · **🅲 no bloquean nada
+hoy** (DataCrédito, recovery codes, pauta). De trece sueltas a **una que importa de verdad primero**.
+
+**188.8 — Verificación.** 896 unitarias (+9) y 149 de emulador, `typecheck` de los dos codebases en 0,
+los 8 gates. El chequeo #29 confirma **20 Cloud Functions en el portal == lo que afirma el cerebro**:
+el censo de `05` se actualizó en el MISMO cambio, que es justo lo que ese gate existe para forzar.
