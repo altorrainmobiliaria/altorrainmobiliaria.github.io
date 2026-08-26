@@ -8102,3 +8102,52 @@ retirados) · `CLAUDE.md` (celda del índice) · manifest (cap del shard, declar
 Comprimir vale contra la grasa; **contra la historia cerrada, mudar** (§156, confirmado por quinta
 vez). Y el corolario que añade esta vuelta: cuando mudes, mira si el nodo que ENRUTA describía lo
 mudado **enumerándolo** — esa frase es la que se rompe, y ningún gate la ve.
+
+## 197. ADR-197 — Tres siglas iguales, una función sin desplegar, y la mitad de una cifra que nadie vigila
+
+**Disparador.** Buscando producto sin bloquear, fui a mirar la única cifra del `05` que no cuadraba:
+*«CF portal: 20 en código / 17 desplegadas — las 2 que faltan son las programadas»*. **20 − 17 = 3.**
+
+### 197.1 — Causa raíz (dos, y la segunda explica la primera)
+**(a) La aritmética no cerraba porque faltaba una tercera.** Contrastando contra la API —no contra el
+repo— la tercera era **`avisoLeadNuevo`**, el aviso de leads construido y probado en §188-§191, que
+nunca se desplegó. Código que existe, pasa sus pruebas y **no corre**.
+**(b) Por qué nadie lo desplegó: `CF` significa DOS cosas** en el mismo nodo y a cuatro líneas de
+distancia. La fila de Deploy decía *«el CI auto-despliega el portal en cada push (`CF_DEPLOY_ENABLED`
+ON)»* y la de Estado decía *«CF portal: 20 en código»*. **`CF_DEPLOY_ENABLED` es de CloudFlare** y
+gobierna el Worker; las **Cloud Functions de Firebase van A MANO**. Leídas juntas, las dos frases
+afirman algo falso que ninguna de las dos dice: que las Functions suben solas.
+
+### 197.2 — 🎯 Por qué sobrevivió: media cifra sin dueño
+El chequeo **#29 cuenta el CÓDIGO** y lo hace bien (20, con la nueva incluida). Pero el propio `05`
+declara que **el despliegue no se puede contar desde el repo, «por eso lleva sello»** — y un sello es
+una promesa humana, no una medición. Resultado: la afirmación *«20 en código / 17 desplegadas»* tenía
+**una mitad vigilada por un gate y la otra por la memoria de alguien**, y las dos se leen igual.
+> **Cuando una cifra compara dos mundos y solo uno es contable, la parte no contable envejece sola —
+> y el ✅ de la parte contable la hace parecer verificada entera.** Aquí el delator no fue un gate:
+> fue que **la resta no daba**. Una cifra compuesta que no cuadra consigo misma es la sonda más barata
+> que existe, y es gratis.
+
+### 197.3 — Lo hecho
+Desplegada `portal:avisoLeadNuevo` (deploy Firebase delegado, `CLAUDE.md §2` → `50`). Antes de tocar
+producción se comprobó lo que hacía seguro hacerlo: el secreto `RESEND_API_KEY` **existe con
+centinela** (así que el codebase despliega, §140), el trigger lleva **`retry: false` explícito** (un
+fallo de envío no reintenta ni cuesta) y la asimetría de §191 degrada bien —**el puntaje se guarda
+igual; el correo espera a que Daniel ponga la clave real**—. Sin desplegar, un lead no dejaba NADA.
+
+### 197.4 — Verificación (L-51: la CLI promete, la API verifica)
+No me quedé en el `Deploy complete!` ni en el `exit 0`: **volví a consultar `functions:list`**. Antes
+30 desplegadas y portal 17/20; después **31** y **portal 18/20**, con las 2 restantes siendo
+exactamente las programadas. Y el barrido trae un dato tranquilizador que nadie había medido:
+**cero huérfanas** — no hay ni una función viva que ya no tenga código detrás.
+
+### 197.5 — Archivos
+`docs/05-ESTADO-GLOBAL.md`: cifra a **18/20 con sello «contra la API»**, y la ambigüedad corregida
+**donde nace** —la fila de Deploy ahora dice *WORKER*, marca `CF_DEPLOY_ENABLED` como **CloudFlare** y
+declara que **las Cloud Functions van a mano**—, no donde se notaba. **INTACTO**: todo el código.
+
+### 197.6 — Riesgo residual
+`alertasDigest` y `catalogoBarrido` siguen sin desplegar **a propósito**: son las programadas y el
+free tier de Cloud Scheduler son 3 jobs. Y `avisoLeadNuevo` está vivo pero **muda**: escribirá el
+puntaje y no enviará nada hasta que exista la clave de Resend — que sigue siendo la pelota 🅰️ de
+Daniel. Es el estado correcto, no un fallo, pero conviene que él lo sepa así.
