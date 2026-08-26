@@ -153,6 +153,16 @@ verdad cuando haya catálogo y una alerta con novedades.
 
 ## FASE 5 — Indexable y DNS *(el punto de no retorno)*
 
+⛔ **TERCER ERROR, y es el único con sanción encima (§213 — hallado el 26-ago).** `/estancias` anuncia
+un alojamiento por días **con precio (`$850.000/noche`) y formulario de fechas**, y **sin número de
+RNT** — que la ley exige **visible en TODA la publicidad** de alojamiento turístico. Dos agravantes:
+(1) la página es **ESTÁTICA**: no lee el catálogo, así que **`PORTAL_CATALOGO_SOURCE=live` NO la
+vacía** — el candado que protege a `/comprar` y `/arrendar` no la cubre, porque el aviso de abajo los
+enumeró a ellos y a la home, y ella no estaba en la lista; (2) **el propio sitio explica la regla** en
+`/invertir` (*«RNT visible en toda la publicidad»*). Hoy no hay exposición —staging es `noindex`—; el
+día del DNS sí. ⇒ **Antes del 5.3, una de tres**: poner el RNT (pelota de Daniel), retirar el precio y
+el formulario de esa página, o dejarla fuera del dominio. **Es decisión suya, y bloquea el 5.3.**
+
 ⚠️ **Los DOS errores que este runbook existe para evitar** — los dos se ven perfectos para un humano.
 El segundo es publicar el **catálogo de muestra** en el dominio real (§163, paso 5.1b). El primero:
 el portal indexa **solo** con

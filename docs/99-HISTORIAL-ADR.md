@@ -8926,3 +8926,49 @@ es lo que la regla manda **desde la octava**. Sin daño: se detectó al leer la 
 un backtick») ocurre *mientras* redacto el comando, no cuando decido la herramienta. Está declarada
 [HONOR] irreducible desde §179 y esta undécima **no cambia el diagnóstico, lo confirma**: ningún gate
 puede verlo — la corrupción sucede en la llamada, antes de que exista nada que revisar.
+
+## 213. ADR-213 — `/estancias` anuncia alojamiento por días con precio y sin RNT, y el candado del cutover no la cubre
+
+**Contexto.** Repaso de páginas públicas buscando afirmaciones sin respaldo (§212). Tras `/nosotros`,
+`/invertir` y `/precios` —las tres limpias— tocaban las de riesgo regulatorio: `/estancias` y
+`/turismo`.
+
+### 213.1 — Lo que hay
+`/estancias` anuncia **un alojamiento por días concreto**: nombre, fotos, capacidad, servicios,
+**precio (`$850.000` / noche)**, calculadora de noches y un formulario para **solicitar fechas**.
+**No muestra número de RNT.** ALTORRA no lo tiene todavía — es una de las pelotas de Daniel.
+La ley exige el RNT **visible en toda la publicidad** de alojamiento turístico, y publicitar sin él es
+sancionable. Es la regla que el gate del alta ya aplica a las FICHAS… y que la PÁGINA no cumple.
+
+### 213.2 — 🎯 Los dos agravantes, que es lo que lo hace grave
+1. **La página es ESTÁTICA.** `estancias.astro` tiene **cero** referencias al catálogo, a
+   `CATALOGO_SOURCE` o a `import.meta.env`: el precio está escrito literalmente en tres sitios del
+   archivo. ⇒ **`PORTAL_CATALOGO_SOURCE=live` NO la vacía.** El candado que existe justo para evitar
+   que salga el catálogo de muestra en el dominio real **no la alcanza**, y el aviso de la fase 5
+   enumeraba *«la home, `/comprar` y `/arrendar`»* — `/estancias` no estaba en la lista.
+   Es [[L-56]] otra vez: **un guardián que enumera solo protege a los enumerados, y el que falta es
+   justo el peligroso.**
+2. **El propio sitio explica la regla que incumple.** `/invertir` dice, con esas palabras: *«El número
+   de RNT visible en toda la publicidad, incluidos los anuncios de plataformas»*. Una página enseña la
+   norma y la de al lado la rompe. Para un inspector eso no es un descuido: es prueba de que se conocía.
+
+### 213.3 — Severidad honesta: HOY no, el día del DNS sí
+El worker de staging sale `noindex` y el dominio sirve la página de obra, así que **ahora mismo no hay
+publicidad pública ni exposición**. El riesgo se materializa **exactamente** en el paso 5.3, cuando el
+DNS apunte aquí — y por eso el sitio del hallazgo es la fase 5 del runbook, no una tarea suelta.
+
+### 213.4 — Lo que NO hago, y por qué
+No toco la página. Retirar el precio y el formulario es **rediseñar una pantalla**, y este proyecto
+tiene una regla dura: *nunca UI sin mockup aprobado*. Además hay **tres salidas legítimas** y elegir
+entre ellas es de Daniel, no mía: (a) poner el RNT cuando lo tenga —la que además desbloquea el resto
+del vertical—; (b) retirar precio y formulario de esa página mientras tanto; (c) dejarla fuera del
+dominio en el cutover. **Queda como BLOQUEANTE del paso 5.3**, escrito donde se va a leer.
+
+### 213.5 — Y sube el precio de una pelota que parecía menor
+La lista de Daniel decía del RNT: *«sin él no se puede publicar ni un solo alojamiento por días»*.
+Cierto y **corto**: sin él **la página `/estancias` no puede salir al dominio tal como está**. No es un
+inmueble que falta en un catálogo — es una pantalla completa que hoy anuncia con precio.
+
+### 213.6 — Archivos
+`specs/CUTOVER-RUNBOOK.md`: el aviso de la fase 5 pasa de dos errores a **tres**, con el nuevo primero
+por ser el único con sanción detrás. **INTACTO**: `estancias.astro` — a propósito.
