@@ -1,7 +1,10 @@
 // Endpoint de LEADS del portal (§88). Recibe el formulario público de `/publicar` ("Pide tu valoración
 // gratis" — JAMAS «avalúo», B13) y crea el documento en `solicitudes` — la MISMA colección y el MISMO contrato que escribe el
-// legacy (`js/contact-forms.js`), para que la Cloud Function ya desplegada `onNewSolicitud` lo recoja sin
-// tocar nada: correo al admin + lead scoring + arranque de nurturing.
+// legacy (`js/contact-forms.js`), así que el documento sirve a los dos mundos durante el cutover.
+// ⚠️ Lo que ya NO es cierto (y lo era hasta §188): el correo al admin y el `leadScore` **ya no salen de
+// la Function legacy `onNewSolicitud`**, que enviaba por un SMTP de Gmail roto. Los hace el portal:
+// `functions/src/lead-aviso.ts` (correo por Resend) + `domain/lead-score.ts` (puntaje que no castiga
+// por campos que este formulario nunca pide, §189). El legacy se retira en el cutover.
 //
 // Por qué un endpoint y no el SDK en el navegador:
 //   · CERO peso extra en el cliente (el SDK modular de Firestore son ~100KB; aquí no entra ninguno).
@@ -20,6 +23,7 @@ import { getPublicFirebaseConfig } from '../../lib/data/client';
 import { LEGAL } from '../../lib/config/legal';
 import { ZONAS as ZONAS_LANDING } from '../../lib/content/zonas';
 import { explicarProblemaReserva, problemasDeReserva, resumenReserva } from '../../lib/domain/reserva';
+import { tipoDe } from '../../lib/domain/lead-score';
 
 /** Tope de bytes del cuerpo: un lead legítimo son ~300 bytes. Corta payloads de abuso antes de parsear. */
 const MAX_BODY = 4096;
@@ -45,17 +49,28 @@ const TIPOS_INMUEBLE = ['Apartamento', 'Casa', 'Lote', 'Oficina', 'Local'];
  * mismo, ese censo habría sido imposible.
  */
 const FORMULARIOS: Record<string, { origen: string; operacion: string; tipoLead?: string; volverA?: string }> = {
-  'publicar-propiedad': { origen: 'portal-publicar', operacion: 'avaluo', volverA: '/publicar' },
-  'rango-altorra': { origen: 'portal-rango', operacion: 'rango', volverA: '/publicar' },
-  // §122 — `tipoLead: 'contacto_propiedad'` y no un tipo nuevo A PROPÓSITO: quien manda el correo es
-  // `onNewSolicitud`, del codebase LEGACY, que NO se puede desplegar hasta el cutover. Un tipo que no
-  // conoce cae en `typeScores[...] || 5` y en `tipoLabel[...] || tipo`: el lead valdría 5 puntos en vez
-  // de 25 y el asunto del correo diría «reserva_estancia» en crudo. `contacto_propiedad` ya existe, ya
-  // puntúa alto y ya tiene secuencia. Cuando el portal se lleve los correos, tendrá tipo propio.
+  /*
+   * ✅ CADA FORMULARIO CON SU TIPO PROPIO (§190). Hasta hoy dos mentían: `publicar-propiedad` caía en
+   * el `solicitud_avaluo` por defecto —no viene a pedir avalúo, viene a publicar— y `reserva-estancia`
+   * llevaba `contacto_propiedad` a la fuerza.
+   *
+   * Ese apaño de §122 **nombró sus tres razones**, y las tres murieron: (a) el correo lo mandaba la
+   * Function legacy → ahora lo manda el portal (§188); (b) un tipo desconocido valía 5 puntos en vez
+   * de 25 → el scorer del portal conoce los tres y escribe el último (§189); (c) el asunto habría
+   * dicho «reserva_estancia» en crudo → hoy se arma con la operación y el tier, no con el tipo.
+   * *Un apaño que escribe su propia condición de liberación es un apaño que alguien puede retirar.*
+   */
+  'publicar-propiedad': {
+    origen: 'portal-publicar',
+    operacion: 'avaluo',
+    tipoLead: 'publicar_propiedad',
+    volverA: '/publicar',
+  },
+  'rango-altorra': { origen: 'portal-rango', operacion: 'rango', tipoLead: 'rango_altorra', volverA: '/publicar' },
   'reserva-estancia': {
     origen: 'portal-estancias',
     operacion: 'alojamiento',
-    tipoLead: 'contacto_propiedad',
+    tipoLead: 'reserva_estancia',
     volverA: '/estancias',
   },
 };
@@ -148,7 +163,7 @@ export const POST: APIRoute = async ({ request }) => {
     nombre,
     telefono,
     email: '', // el mockup no pide correo — ver §88: cuesta 10 puntos de lead score
-    tipo: tipoLead ?? 'solicitud_avaluo',
+    tipo: tipoLead ?? tipoDe(origen),
     origen,
     datosExtra: {
       zona,

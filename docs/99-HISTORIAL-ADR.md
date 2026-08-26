@@ -7739,3 +7739,41 @@ que ya no existe es la avería de §178 esperando a que alguien se la crea.
 0, los 8 gates. El puntaje se escribe SIEMPRE en el trigger de §188, aunque el correo falle: el
 puntaje es del lead, no del aviso. ⚠️ Declarado: el scorer legacy sigue escribiendo el suyo; el
 nuestro va después y manda mientras convivan, y el legacy se retira en el cutover.
+
+## 190. ADR-190 — El apaño que escribió su propia condición de liberación
+
+**190.0 — Un apaño bien documentado se puede retirar; uno mal documentado se queda para siempre.**
+En §122, el formulario de estancias tuvo que declarar `tipoLead: 'contacto_propiedad'` en vez de un
+tipo propio. Lo bueno es que quien lo escribió **dejó las tres razones**, no solo el hecho:
+(a) el correo lo mandaba la Function LEGACY, que no se puede desplegar hasta el cutover; (b) un tipo
+que esa Function no conociera caía en `typeScores[...] || 5` — cinco puntos en vez de veinticinco; y
+(c) el asunto del correo habría dicho *«reserva_estancia»* en crudo. Y cerraba con la condición:
+*«cuando el portal se lleve los correos, tendrá tipo propio»*.
+
+**190.1 — Las tres murieron esta noche, y se comprobaron una a una.** (a) el correo lo manda el portal
+desde §188 · (b) el scorer del portal conoce los tres tipos y escribe el último, §189 · (c) el asunto
+se arma con la operación y el tier, nunca con el tipo crudo. Retirado.
+*Un comentario que dice «esto es temporal» sin decir qué lo destraba es un comentario que nadie va a
+poder retirar, porque nadie sabrá cuándo dejó de hacer falta.* Éste sí lo dijo, y por eso hoy sobró.
+
+**190.2 — Y de paso, un segundo tipo que mentía.** `publicar-propiedad` no declaraba tipo, así que
+caía en el `solicitud_avaluo` por defecto: quien entra a **publicar** su inmueble quedaba registrado
+como si viniera a pedir un **avalúo**. No cambiaba el puntaje —los dos valen 15— pero sí de qué habla
+el dato, y un dato que dice otra cosa envenena cualquier análisis que se haga después con él.
+
+**190.3 — El riesgo que el apaño temía, ahora con gate.** El miedo era real: *un tipo que nadie
+registró vale 5 puntos y nadie se entera.* Así que el mapa **origen → tipo** se muda al dominio
+(`TIPO_POR_ORIGEN`, junto a `CAMPOS_POR_ORIGEN`) y hay pruebas que recorren la tabla: todo tipo
+declarado existe en `INTENCION`, y todo origen con campos declarados tiene también su tipo. Olvidarlo
+**rompe el build** en vez de degradar leads en silencio.
+Y `tipoDe()` devuelve `otro` para lo desconocido — que puntúa bajo, pero **explícitamente**: la
+diferencia entre elegir el suelo y caer en él es que la primera se puede auditar.
+
+**190.4 — La cabecera del intake también mentía.** Decía que la Function legacy recoge el documento y
+hace *«correo al admin + lead scoring + arranque de nurturing»*. Dejó de ser cierto anoche, y un
+archivo que describe un diseño que ya no existe es la avería de §178 esperando a que alguien se la
+crea. Corregida en el mismo cambio, diciendo además **qué sigue siendo cierto** (el documento sirve a
+los dos mundos durante el cutover) para no cambiar una mentira por otra.
+
+**190.5 — Verificación.** 910 unitarias (+3) y 149 de emulador, `typecheck` de los dos codebases en 0,
+los 8 gates.

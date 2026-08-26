@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { puntuar, techoAlcanzable, tierDe, type CampoLead } from './lead-score';
+import {
+  CAMPOS_POR_ORIGEN,
+  INTENCION,
+  TIPO_POR_ORIGEN,
+  puntuar,
+  techoAlcanzable,
+  tierDe,
+  tipoDe,
+  type CampoLead,
+} from './lead-score';
 
 /** Lo que `/publicar` PUEDE preguntar hoy: no pide correo (fiel a su mockup). */
 const CAMPOS_PUBLICAR: readonly CampoLead[] = ['nombre', 'telefono', 'mensaje', 'presupuesto'];
@@ -100,5 +109,26 @@ describe('tiers y bordes', () => {
   it('un campo lleno que el formulario no ofrecía se IGNORA (no infla el puntaje)', () => {
     const r = puntuar({ tipo: 'publicar_propiedad', camposOfrecidos: ['nombre'], camposLlenos: ['nombre', 'email', 'cita'] });
     expect(r.relleno).toBe(1); // lleno lo unico que se le ofrecio; lo demas ni suma ni resta
+  });
+});
+
+describe('🔗 cada formulario declara un tipo que la tabla de intencion CONOCE (§190)', () => {
+  it('ningun origen cae en la intencion minima por olvido', () => {
+    // El apaño de §122 existia por miedo a esto: un tipo nuevo que nadie registro vale 5 puntos y
+    // nadie se entera. Con esta prueba, olvidarlo rompe el build en vez de degradar leads en silencio.
+    for (const [origen, tipo] of Object.entries(TIPO_POR_ORIGEN)) {
+      expect(INTENCION[tipo], `${origen} declara «${tipo}», que INTENCION no conoce`).toBeDefined();
+    }
+  });
+
+  it('todo origen con campos declarados tiene tambien su tipo', () => {
+    for (const origen of Object.keys(CAMPOS_POR_ORIGEN)) {
+      expect(TIPO_POR_ORIGEN[origen], `${origen} tiene campos pero no tipo`).toBeDefined();
+    }
+  });
+
+  it('un origen desconocido cae en `otro` de forma explicita, no por accidente', () => {
+    expect(tipoDe('lo-que-sea')).toBe('otro');
+    expect(INTENCION.otro).toBeDefined();
   });
 });

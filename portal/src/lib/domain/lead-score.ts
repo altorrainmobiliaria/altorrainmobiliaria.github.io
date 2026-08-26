@@ -78,6 +78,23 @@ export function camposDe(origen: string): readonly CampoLead[] {
   return CAMPOS_POR_ORIGEN[origen] ?? ['nombre', 'telefono'];
 }
 
+/**
+ * Qué TIPO declara cada formulario. **Vive aquí y no en el intake** (§190) para que el tipo y su
+ * intención tengan un solo dueño: si estuvieran separados, un formulario nuevo podría declarar un
+ * tipo que `INTENCION` no conoce y **caer a 5 puntos sin que nada avise** — que es exactamente lo que
+ * temía el apaño de §122. Hay una prueba que recorre esta tabla contra `INTENCION`.
+ */
+export const TIPO_POR_ORIGEN: Record<string, string> = {
+  'portal-publicar': 'publicar_propiedad',
+  'portal-rango': 'rango_altorra',
+  'portal-estancias': 'reserva_estancia',
+};
+
+/** El tipo de un origen. `otro` si no se conoce: puntúa bajo, pero de forma explícita y no por olvido. */
+export function tipoDe(origen: string): string {
+  return TIPO_POR_ORIGEN[origen] ?? 'otro';
+}
+
 export interface EntradaScore {
   tipo: string;
   /** 🔴 Qué campos OFRECÍA el formulario. Sin esto se puntúa el formulario, no al lead. */
