@@ -153,7 +153,9 @@ verdad cuando haya catálogo y una alerta con novedades.
 
 ## FASE 5 — Indexable y DNS *(el punto de no retorno)*
 
-⚠️ **El error que este runbook existe para evitar**: el portal indexa **solo** con
+⚠️ **Los DOS errores que este runbook existe para evitar** — los dos se ven perfectos para un humano.
+El segundo es publicar el **catálogo de muestra** en el dominio real (§163, paso 5.1b). El primero:
+el portal indexa **solo** con
 `PUBLIC_SITE_ENV=production`; por defecto sale `noindex` + `Disallow: /`. Correcto en staging,
 **catastrófico en el dominio real** — Google desindexa y el sitio se ve perfecto. Hasta el 2026-08-21
 esa variable no se declaraba en NINGÚN sitio del repo (§91 la cazó, §102 la cableó al CI).
@@ -161,6 +163,7 @@ esa variable no se declaraba en NINGÚN sitio del repo (§91 la cazó, §102 la 
 | Paso | Quién | Qué |
 |---|---|---|
 | 5.1 | 🧑 | Poner la variable de repositorio **`PORTAL_SITE_ENV = production`** |
+| 5.1b | 🧑 | Y **`PORTAL_CATALOGO_SOURCE = live`**. ⚠️ Sin ella el sitio sale con el catálogo de MUESTRA: 38 enlaces desde la home, `/comprar` y `/arrendar` hacia un inmueble que **no existe**, con su precio y su barrio. Se ve PERFECTO para un humano, igual que el fallo del 5.1. Lo bloquea la sonda del catálogo en `verify:build` (§163) — pero solo si la fase 4 ya dejó inventario real: **este paso NO se hace antes que la fase 4** |
 | 5.2 | 🤖 | Empujar a `main` y comprobar que el CI queda VERDE. Si `verify:build` falla, es el candado #6 haciendo su trabajo: **no se sigue** |
 | 5.3 | 🧑 | Mover el DNS de `altorrainmobiliaria.co` de Hostinger a Cloudflare |
 | 5.4 | 🤖 | `curl -s https://altorrainmobiliaria.co \| grep -i noindex` → **vacío**, y `/robots.txt` sin `Disallow: /` |

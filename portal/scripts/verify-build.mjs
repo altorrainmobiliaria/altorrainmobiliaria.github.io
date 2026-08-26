@@ -94,6 +94,42 @@ if (ES_PROD) {
 }
 
 /*
+ * ── SONDA: NO SE PUBLICA UN CATÁLOGO INVENTADO (§163) ──────────────────────────────────────────
+ *
+ * QUÉ CAZA. Un build de PRODUCCIÓN con `PUBLIC_CATALOGO_SOURCE` en `demo`. Hoy las tarjetas de la
+ * home, del SERP y la ficha pintan un inmueble que **no existe** —con su precio, su barrio y sus
+ * fotos— porque el catálogo real llega con el inventario (fase 4 del runbook). Mientras el sitio es
+ * staging y va `noindex`, eso es un andamio legítimo. El día del cutover deja de serlo: son 38
+ * enlaces desde la home, `/comprar` y `/arrendar` hacia una propiedad inventada, publicados por una
+ * inmobiliaria cuyo eslogan es «Seguridad, Legalidad y Confianza».
+ *
+ * POR QUÉ HACE FALTA UN GATE Y NO BASTA EL RUNBOOK. Es hermano exacto del candado #6 (indexabilidad)
+ * y falla igual: **un build de producción hecho sin la variable se ve PERFECTO para un humano**. Las
+ * tarjetas salen bonitas, la ficha abre, nada da error. El runbook ordena fase 4 (catálogo real)
+ * antes de fase 5 (DNS), pero un orden escrito en un documento no es un orden que alguien tenga que
+ * cumplir — [[M-23]]: un paso que nadie ha ejecutado es una hipótesis. Esto lo vuelve mecánico.
+ *
+ * FUERA DE PRODUCCIÓN no falla: informa. El staging con datos de muestra es el estado normal de hoy.
+ */
+const FUENTE_CATALOGO = process.env.PUBLIC_CATALOGO_SOURCE ?? 'demo';
+if (ES_PROD) {
+  check(
+    'catálogo REAL en producción (no el de muestra)',
+    FUENTE_CATALOGO === 'live',
+    FUENTE_CATALOGO === 'live'
+      ? 'PUBLIC_CATALOGO_SOURCE=live'
+      : `PUBLIC_CATALOGO_SOURCE=${FUENTE_CATALOGO} — publicarías inmuebles que NO EXISTEN, con precio y barrio. ` +
+        'Fase 4 del runbook (catálogo real) va ANTES de la fase 5 (DNS).',
+  );
+} else if (FUENTE_CATALOGO !== 'live') {
+  console.log(
+    '\nℹ️  Catálogo de MUESTRA (PUBLIC_CATALOGO_SOURCE=demo). Correcto en staging: las tarjetas y la\n' +
+    '   ficha pintan un inmueble que no existe, y por eso van `noindex`. En el cutover se construye\n' +
+    '   con  PUBLIC_CATALOGO_SOURCE=live  o este chequeo pone el build en rojo.\n',
+  );
+}
+
+/*
  * ── META-GATE: ¿algún `verify:*` se quedó sin cablear al CI? (§142) ──────────────────────────────
  *
  * `verify:data` existía desde Ola 0 y NO LO CORRÍA NADIE — ni el CI ni la rutina. Vigila el free-tier
