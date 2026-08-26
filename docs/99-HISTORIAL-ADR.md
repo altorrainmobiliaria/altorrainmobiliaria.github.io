@@ -8590,3 +8590,47 @@ colisiones» sin creérselo.
 ### 205.7 — Archivos
 `docs/10-MEMORIA-CORTO-PLAZO.md`: K-10 retirado del ledger de `TODO-CEREBRO` (libera 85c del
 arranque). **INTACTO**: todo lo demás. Este ADR no cambia nada, cierra algo.
+
+## 206. ADR-206 — Un hallazgo de auditoría sobre frescura que estaba él mismo caducado
+
+**Contexto.** Siguiendo la auditoría de pendientes abiertos (§204, §205), le tocó a **TODO-28** del
+ledger: *«#7 sello >90d»*, que venía del hallazgo **N12-07** de la auditoría #12 — *«los sellos
+`verificado-vivo` solo se vigilan a 90 días (chequeo #7); en un tablero que se lee CADA sesión, 90
+días es laxo»*.
+
+### 206.1 — Estaba mal en las dos cifras que contiene
+- **No es el chequeo #7.** El #7 es la integridad del `archiveDir`. El de los sellos es el **#16**.
+- **No son 90 días: son 30.** `const vlStaleDays = manifest.verifiedLiveStaleDays || 30`, y el
+  manifest no lo sobrescribe. La salida lo dice en cada corrida: *«3 claims vigentes (≤ 30d)»*.
+- **Y nunca fue 90.** `git log -S` sobre el kernel: un solo commit lo introdujo, ya con `|| 30`.
+
+O sea que la premisa del hallazgo —*«90 días es laxo»*— **no describía nada**. No había umbral que
+apretar: ya estaba en el tercio de lo que el hallazgo pedía corregir.
+
+### 206.2 — Y yo lo di por vivo esta mañana
+La sonda 0 de la auditoría **#13** listó *«N12-07 sigue»*. Lo heredé de la #12 **sin medirlo**, en la
+misma auditoría cuyo hallazgo más citado es que un ✅ heredado no prueba nada. 🎯 **Un hallazgo sobre
+frescura que estaba él mismo caducado, arrastrado por el mecanismo que existe para cazar lo caducado.**
+La sonda 0 se llama *«diff vs la auditoría anterior»* y su trabajo es clasificar cada hallazgo previo
+en cerrado / abierto / reincidente. **Nada en ese contrato dice «vuelve a comprobar que el hallazgo
+era cierto»** — y ahí está el hueco: la sonda verifica el ESTADO del hallazgo, no su PREMISA.
+
+### 206.3 — Lo corregido
+`docs/10`: **TODO-28 cerrado** (con el porqué, para que no vuelva) y, de paso, el ítem del chequeo #27
+decía *«perdona 92 basename»* cuando hoy son **89** — se retira la cifra en vez de actualizarla, que
+es la regla de §196: un número que envejece solo no se escribe en el nodo que se lee siempre.
+**Bóveda**: la tabla de la #13 lleva una **corrección apendada** —no reescrita— que retira N12-07.
+*Un hallazgo falso se RETIRA, no se cierra*: cerrar afirma que hubo algo que arreglar.
+
+### 206.4 — 🎯 La regla que le falta a la sonda 0
+> **Al heredar un hallazgo abierto, re-verifica su PREMISA, no solo su estado.** Un hallazgo abierto
+> es una afirmación sin sello igual que cualquier otra, y arrastrarlo entre auditorías le da la
+> autoridad de un hecho comprobado sin que nadie lo haya comprobado nunca. **Cuantas más auditorías
+> sobreviva, más cierto parece y menos lo es.**
+Va a la skill `auditoria-cerebro` como parte del contrato de la sonda 0, que es donde se aplicará sin
+que nadie tenga que acordarse.
+
+### 206.5 — Archivos
+`docs/10` (TODO-28 cerrado · cifra del #27 retirada) · bóveda: corrección en la tabla de la #13 ·
+`skills/auditoria-cerebro` en sus **dos copias**. **INTACTO**: el kernel — no había nada que arreglar
+en él, que es justamente el hallazgo.
