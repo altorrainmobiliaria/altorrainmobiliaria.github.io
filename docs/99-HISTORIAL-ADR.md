@@ -7220,3 +7220,56 @@ mecánico que enumera casos falla en el caso que no enumeraste.* El disparador d
 pensar «este mensaje es corto, no pasa nada» — justo el juicio que la regla existe para no tener que
 hacer. El commit queda con los huecos: reescribir historia empujada cuesta más de lo que arregla, y
 la sustancia está aquí.
+
+## 180. ADR-180 — La poda del arranque, y los tres hechos rancios que había debajo
+
+**180.0 — Por qué tocaba.** Cinco vueltas seguidas terminando igual: recortar veinte o treinta
+caracteres del arranque para que cupiera lo nuevo. Eso no es disciplina, es un peaje — y el peaje
+avisa de que el problema está en otro sitio. Se midió antes de cortar: router **18337/19000**
+(el 58 % del arranque), `05` **3957/4000 (99 %)**, `10` **9029/16000**. El nodo apretado no era el
+que yo venía podando.
+
+**180.1 — El nodo de signos vitales había dejado de serlo.** `05` se declara *«tablero, no bitácora,
+tope ~25 líneas»* y estaba al 99 % **en 20 líneas** — o sea, líneas enormes. Una sola tenía **1206
+caracteres**: el 30 % del nodo, con el censo de subsistemas y sus explicaciones. *Un tablero que narra
+deja de ser un tablero*: lo que hay que ver de un vistazo se pierde entre los porqués. Se compactó a
+SEÑALES, y los porqués se mandaron a donde ya viven (el tope de 3 jobs de Scheduler está escrito dos
+veces en `functions/src/index.ts`, que es el mejor sitio posible).
+
+**180.2 — Y tirando del hilo, TRES contradicciones vivas que nadie buscaba.**
+· **`50` decía «Cloud Functions: 7 DESPLEGADAS — verificado 2026-07-10» y `05` decía 13.** Dos nodos
+  del mismo cerebro afirmando cosas distintas del mismo hecho, con el de `50` seis semanas rancio. Es
+  la regla de PROPIEDAD de §G.3 incumplida: el recuento es ESTADO y el estado tiene un dueño, `05`.
+  En `50` quedan los nombres y su porqué, que no caducan.
+· **`50` duplicaba «la mitad SEO» del runbook de cutover, y la copia ya iba por detrás**: le faltaba
+  entero el SEGUNDO error catastrófico que el original añadió en §163 — publicar el catálogo de
+  MUESTRA en el dominio real. La copia se conservaba con un motivo explícito («es la que más caro
+  sale equivocarse»), y ese motivo es justo el que la condena: *una copia rancia del paso más caro es
+  peor que un puntero.*
+· **Esa copia decía «68 URLs» redirigidas** — exactamente la aritmética que `redirects.ts` corrigió
+  el 2026-08-21 tras contarlas contra el disco (§95.6), **porque el descuadre escondía que
+  `/invertir.html` no tenía redirect** y habría dado 404 tras el cutover. El documento seguía
+  propagando el número que ya se sabía malo. Son 65 públicas + 9 exentas = 74, y de esa cuenta manda
+  el código.
+· (Y una cuarta, menor: el censo de «datos vivos» de `50` era del 10-jul. También es estado; lo lleva
+  el `10`.)
+
+**180.3 — Nada se borró a ciegas.** Antes de tocar `05` se comprobó qué de su línea existía en otro
+sitio: el tope de Scheduler, sí (en el código); pero **las dos Functions legacy que se quedan sin
+desplegar A PROPÓSITO** y **la política de clave mínima de 12** vivían SOLO ahí. Se **mudaron a `50`**
+antes de compactar. El límite de guardián de §G.4 dice que los reflejos enriquecen y no borran a la
+ligera; en la práctica eso significa que la comprobación va ANTES del recorte, no después.
+
+**180.4 — Y un gate me cazó a mí.** Al compactar perdí la frase exacta *«CF legacy: N en código»* que
+lee el chequeo #29 del linter — y con ella la distinción entre **en código** y **desplegadas**, que es
+precisamente lo que ese chequeo existe para vigilar (el código se puede contar; el despliegue no, por
+eso lleva sello). El gate **no pasó en silencio**: se declaró 🟠 DEGRADADO diciendo que *«el cerebro
+NO afirma nada que comparar»*. Es el diseño fail-closed que llevo toda la noche defendiendo,
+funcionando contra mí — y es la mejor demostración de por qué [[L-52]] importa: un comparador que no
+encuentra qué comparar tiene que gritar, no encogerse de hombros. **Lección lateral**: comprimir un
+nodo puede romper el gate que lo LEE. Al acortar, comprueba qué patrones dependen de esas palabras.
+
+**180.5 — Resultado.** Arranque **31323 → 31062** y `50` de vuelta dentro de tope (15827/16000). El
+margen sigue siendo estrecho y eso NO se arregla aquí: los topes individuales suman 39000 mientras el
+presupuesto de arranque son 31500, así que un nodo puede estar «dentro de tope» y el arranque estar
+fuera. Queda anotado como lo que es — una calibración pendiente, no una avería.

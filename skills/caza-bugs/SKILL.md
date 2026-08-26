@@ -411,6 +411,16 @@ permisivo que la frontera real, se publican cosas que el servidor luego niega (e
 es más restrictivo, hay datos válidos que nadie muestra — invisibles, sin un solo error. Y cuando lo
 que diverge son **permisos**, el fallo silencioso es de seguridad.
 
+
+**Y el espejo que casi nadie llama espejo: un DOCUMENTO que copia pasos de otro.** Un runbook canónico
+y un resumen suyo en otra página; una guía de despliegue y su version corta en el README. La copia
+siempre envejece, y **la del paso MÁS CARO es la más peligrosa**, porque suele conservarse justo con
+ese argumento («esto es lo que más caro sale equivocarse»). Caso real: la copia iba por detrás y le
+faltaba entero uno de los dos errores catastróficos que el original ya documentaba, y arrastraba un
+recuento que el código había corregido semanas antes — un recuento cuyo descuadre, en su día, había
+delatado un enlace roto. *Una copia rancia del paso más caro es peor que un puntero.* Al encontrarla:
+comprueba qué tiene la copia que NO tenga el original, mueve solo eso, y deja un puntero.
+
 **Cómo se comprueba, barato**: extrae la lista de cada lado con una expresión regular y compara los
 conjuntos. Es frágil, y no importa **si falla del lado correcto**:
 🔒 **si la extracción no encuentra nada, PONTE EN ROJO, nunca en verde.** Un comparador que no

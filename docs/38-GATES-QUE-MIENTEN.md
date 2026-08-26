@@ -24,6 +24,10 @@
 > pruebas). Un número es lo único que distingue «revisado» de «no hice nada». Y **estrénalo
 > rompiéndolo a propósito EN EL ENTORNO DONDE VA A CORRER**, no solo en tu máquina.
 >
+> 📝 **Y al revés: comprimir un nodo APAGA el gate que lo lee** — varios chequeos leen PROSA
+> (`«CF legacy: N en código»`) y acortar la frase les quita lo que buscaban (§180). Se declaró
+> DEGRADADO, no verde. **Al acortar, mira qué patrones dependen de esas palabras.**
+>
 > ⏱️ **Y el detector más barato de todos: el RELOJ.** El paso «Tipos» de este repo tardaba **4 s** en
 > todas y cada una de sus corridas históricas, y **21 s** en la primera con checker de verdad. Cuatro
 > segundos para 160 archivos era la confesión, escrita en la pantalla de cada corrida, y nadie la leyó
