@@ -7581,3 +7581,51 @@ holgados. Contenido del nodo nuevo íntegro (lo escribió un script en FICHERO, 
 justamente la salida que la regla prescribe). `brain:check`: **CEREBRO SANO**, con la hija registrada
 en el router Y en su madre. Arranque 31142 — el shard costó ~80c de router y compró aire real donde
 apretaba.
+
+## 187. ADR-187 — El campo que faltaba: un preaviso sin evidencia postal no es un preaviso
+
+**187.0 — Cerrando el lazo de un dictamen con código.** §185 concluyó que el producto **no debe ENVIAR
+el preaviso, debe INSTRUMENTARLO**, y nombró el campo que faltaba: la evidencia del envío postal. Esta
+vuelta lo construye. Es el mejor uso de un dictamen — que termine en algo que corre, no en un párrafo.
+
+**187.1 — El invariante, y por qué justifica un módulo entero.** *Un preaviso sin evidencia postal no
+es un preaviso: es una intención.* Y la diferencia no es formal — si no surte efecto, **el contrato se
+prorroga otro año**, y nadie se entera hasta que el propietario quiere disponer del inmueble y no
+puede. Por eso `efecto()` devuelve `'termina' | 'se-prorroga'` y **no un booleano**: la segunda
+consecuencia hay que poder decirla con todas las letras, y un `false` la habría dejado sin nombre.
+
+**187.2 — La trampa de fechas que el módulo existe para cerrar.** **Cuenta la fecha de IMPOSICIÓN**
+—cuándo se entregó al operador— y no la de redacción ni la de entrega. Lo que se firma un lunes y se
+lleva al correo el viernes, para la ley se avisó el viernes. Es el error de bolsillo del negocio
+(*«pero si ya lo tenía escrito»*) y cuesta un año de prórroga. Hay dos pruebas dedicadas y se
+**mordieron**: cambiando `impuestoEl` por `redactadoEl` en el predicado, se ponen rojas las dos.
+
+**187.3 — Y de paso, un gemelo cazado ANTES de nacer.** El «3 meses» de la Ley 820 **no existía como
+constante**: `agenda.ts` solo tenía `MESES_AVISO_RENOVACION = 4`, que es el aviso interno con un mes
+de margen. Escribir un `3` en el módulo nuevo habría creado exactamente el par de §178 —dos números
+con significados distintos, uno de los cuales alguien arregla algún día—. En su lugar: el plazo legal
+se declara **una vez** en `agenda.ts` y **la alerta DERIVA de él** (`MESES_PREAVISO_LEY_820 + 1`).
+Hay una prueba que lo fija. Si mañana cambia el plazo, la alerta lo sigue sola.
+*Nota de diseño*: el dueño quedó en `agenda.ts` y no en `preaviso.ts` —que semánticamente encajaría
+mejor— porque `preaviso` necesita `sumarMeses` de `agenda`, y ponerlo al revés creaba un ciclo. Se
+prefirió una dirección de import limpia a una taxonomía bonita, y queda dicho para que nadie lo
+"arregle" sin ver el ciclo.
+
+**187.4 — [[L-46]] por SÉPTIMA vez, en la MISMA vuelta en que documenté la sexta.** Y por eso ésta
+vale más que las anteriores: la regla estaba recién afilada —*el texto nunca viaja como argumento de
+shell*— y volví a `python3 -c "…"` para **insertar un comentario en un archivo**. Se comió
+`` `agenda.ts` `` y dejó la frase coja otra vez.
+**El fallo ya no es la regla: es su FRONTERA.** «Empalmar texto en un sitio concreto» *se siente*
+programático —hay que buscar el ancla, cortar, pegar— y por eso caía del lado del intérprete, cuando
+es literalmente lo que hace la herramienta de edición. **Línea nueva, que no se siente sino que se
+mira**: *el intérprete MUEVE y TRANSFORMA lo que ya existe; jamás INTRODUCE texto nuevo.* Si en la
+carga hay una frase escrita por mí, va por la herramienta de edición — sin juzgar si la operación
+«parece» de script.
+
+**187.5 — Verificación.** **887 pruebas unitarias** (+15) y 149 de emulador, `typecheck` de los dos
+codebases en 0, los 8 gates verdes — incluido `verify:simbolos`, que con 507 símbolos exportados sigue
+viendo 8 gemelos, **todos los declarados y ninguno nuevo**: el «3 meses» no llegó a ser el noveno.
+
+**187.6 — Lo que queda, dicho.** Falta la PANTALLA para capturar la evidencia, y no se hace sin mockup
+(regla dura). El dominio está listo y probado para cuando la haya; mientras tanto, lo que impide el
+error caro —creer que un correo electrónico terminó un contrato— ya está codificado.

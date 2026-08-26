@@ -95,7 +95,18 @@ export interface Hito {
  * mandar la comunicación. Se avisa a **4** para que quede un mes de margen sobre una fecha que no
  * admite retraso.
  */
-export const MESES_AVISO_RENOVACION = 4;
+/**
+ * Preaviso LEGAL de la Ley 820 para vivienda urbana. Vive aquí, con el resto de las reglas de tiempo
+ * del contrato, y es el **dueño único** del número: `preaviso.ts` lo importa en vez de re-escribirlo.
+ */
+export const MESES_PREAVISO_LEY_820 = 3;
+
+/*
+ * 🔗 Y la alerta DERIVA del plazo legal en vez de ser un 4 escrito a mano (§187): si algún día ese
+ * plazo cambia, esto lo sigue solo. Un número copiado se habría quedado atrás en silencio, que es
+ * exactamente cómo nacen los gemelos que se separan (§178).
+ */
+export const MESES_AVISO_RENOVACION = MESES_PREAVISO_LEY_820 + 1;
 
 /**
  * Día tope para pagarle al propietario. Sale del proceso A1-A5 del propio dueño: el canon entra a

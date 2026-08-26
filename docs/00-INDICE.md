@@ -136,6 +136,7 @@
 | §184 | ⚖️ **Taxatividad de causales**: la Ley 820 NO dice «solamente» ni tiene irrenunciabilidad — el texto no cierra. Aun así no se amplía, por costes asimétricos. Nace [[LD-09]]. | 7430 |
 | §185 | 📮 **El preaviso NO puede ser digital**: la Ley 820 pide escrito **Y** servicio postal; la 527 equivale el escrito, no el CANAL. El producto no lo ENVÍA, lo INSTRUMENTA (evidencia del envío). | 7482 |
 | §186 | 🌿 **Shard de 42-LEGAL → 44-DICTAMENES**: se parte por lo que CRECE, no por lo que pesa. 19998→13776. Y L-46 por 6a vez, ahora con su gravedad real: backticks = EJECUCION. | 7537 |
+| §187 | 📮 **Un preaviso sin evidencia postal no es un preaviso**: modulo nuevo, manda la fecha de IMPOSICION. Gemelo del «3 meses» cazado ANTES de nacer: la alerta DERIVA del plazo legal. | 7585 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |
