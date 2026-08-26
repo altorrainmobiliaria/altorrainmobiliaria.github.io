@@ -70,6 +70,14 @@ jobs:
       # llevaba desde §101 con un error de tipos dentro, en `main`, y ningún gate lo vio.
       - name: Tipos (lo que el build NO comprueba)
         run: npm run typecheck
+      # 🛡️ LAS PRUEBAS NO LAS CORRIA NADIE (§174). 855 pruebas unitarias —el gate del RNT, la
+      # prohibicion del deposito en vivienda, la liquidacion peso por peso, la ventana de la Ley 2300,
+      # la maquina de estados del mandato— y NINGUNA bloqueaba un despliegue: se escribian, se corrian
+      # a mano el dia que se escribian, y despues nada. Es el mismo hallazgo que ya esta escrito dos
+      # veces en este archivo («un gate que nadie invoca no protege nada»), aplicado esta vez a la red
+      # mas grande del proyecto.
+      - name: Pruebas unitarias (donde viven los invariantes legales)
+        run: npm run test
       - name: CSS de runtime alcanzable (§117 — Astro acota y el JS crea nodos sin el atributo)
         run: npm run verify:css
       # 🛡️ Una `var(--x)` que nadie declaró NO es un error: el navegador descarta la propiedad y sigue.

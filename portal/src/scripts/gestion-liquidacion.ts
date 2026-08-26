@@ -25,11 +25,11 @@
  */
 
 import { cargarAuth } from './auth';
-import { formatoPrecio } from '../lib/domain/alertas';
 import type { Contrato } from '../lib/domain/gestion';
 import {
   explicarProblema,
   liquidarPeriodo,
+  pesos,
   problemasDeLiquidacion,
   type EntradaLiquidacion,
   type Liquidacion,
@@ -45,12 +45,26 @@ const el = (tag: string, clase?: string, texto?: string): HTMLElement => {
   return n;
 };
 
+/**
+ * Cuelga nodos de un padre. `appendChild` y **NO** `append`.
+ *
+ * Los tipos de Cloudflare Workers fusionan su `Element.append(string)` (el del HTMLRewriter) con el
+ * `Element` del DOM, y al hacerlo la sobrecarga que acepta nodos DEJA DE EXISTIR: `p.append(unNodo)`
+ * no compila y el error habla de `Response | ReadableStream`, que no se parece en nada a la causa
+ * ([[L-36]]). Ya estaba documentado en `gestion-inmuebles` y en `serp-catalogo` — en un comentario
+ * junto a cada llamada, que es justo donde no lo lee quien escribe un archivo NUEVO. Aquí se
+ * centraliza en una función para que la siguiente pantalla no lo vuelva a descubrir.
+ */
+const mete = (padre: Node, ...hijos: Node[]): void => {
+  for (const h of hijos) padre.appendChild(h);
+};
+
 const aviso = (t: string): HTMLElement => el('p', 'gx-liq__msg', t);
 
 /** Texto con una parte en negrita, sin tocar `innerHTML`. */
 const conNegrita = (clase: string, fuerte: string, resto: string): HTMLElement => {
   const p = el('span', clase);
-  p.append(el('strong', undefined, fuerte), document.createTextNode(resto));
+  mete(p, el('strong', undefined, fuerte), document.createTextNode(resto));
   return p;
 };
 
@@ -90,8 +104,8 @@ function entradaDe(c: Contrato, retiene: boolean): EntradaLiquidacion {
 function fila(concepto: string, destino: HTMLElement, monto: number, apagada = false): HTMLElement {
   const f = el('div', `gx-liq__fila${apagada ? ' gx-liq__fila--nula' : ''}`);
   const izq = el('div');
-  izq.append(el('span', 'gx-liq__concepto', concepto), destino);
-  f.append(izq, el('span', 'gx-liq__monto', formatoPrecio(monto)));
+  mete(izq, el('span', 'gx-liq__concepto', concepto), destino);
+  mete(f, izq, el('span', 'gx-liq__monto', pesos(monto)));
   return f;
 }
 
@@ -103,18 +117,18 @@ function pintarComprobante(c: Contrato, l: Liquidacion, retiene: boolean): Docum
 
   const top = el('div', 'gx-liq__top');
   const ti = el('div');
-  ti.append(el('p', 'gx-liq__top-t', 'Se le cobra al arrendatario'));
+  mete(ti, el('p', 'gx-liq__top-t', 'Se le cobra al arrendatario'));
   const detalle = c.adminIncluidaEnCanon
-    ? `Canon ${formatoPrecio(c.canon ?? 0)}, con la cuota de administración incluida`
-    : `Canon ${formatoPrecio(c.canon ?? 0)}${c.administracion ? ` + administración ${formatoPrecio(c.administracion)}` : ''}`;
-  ti.append(el('p', 'gx-liq__top-d', detalle));
-  top.append(ti, el('p', 'gx-liq__top-n', formatoPrecio(l.cobroAlArrendatario)));
-  frag.append(top);
+    ? `Canon ${pesos(c.canon ?? 0)}, con la cuota de administración incluida`
+    : `Canon ${pesos(c.canon ?? 0)}${c.administracion ? ` + administración ${pesos(c.administracion)}` : ''}`;
+  mete(ti, el('p', 'gx-liq__top-d', detalle));
+  mete(top, ti, el('p', 'gx-liq__top-n', pesos(l.cobroAlArrendatario)));
+  mete(frag, top);
 
-  frag.append(el('p', 'gx-liq__eyebrow', 'A DÓNDE VA'));
+  mete(frag, el('p', 'gx-liq__eyebrow', 'A DÓNDE VA'));
 
   if (l.giroAPH > 0) {
-    frag.append(
+    mete(frag, 
       fila(
         'Cuota de administración',
         destino('a la copropiedad. No es ingreso de ALTORRA ni del propietario.'),
@@ -124,16 +138,16 @@ function pintarComprobante(c: Contrato, l: Liquidacion, retiene: boolean): Docum
   }
 
   const pct = Math.round((c.honorariosPct ?? 0.1) * 1000) / 10;
-  frag.append(
+  mete(frag, 
     fila(
       `Honorarios de administración · ${pct} %`,
-      destino(`a ALTORRA. Sobre el cargo mensual integral (${formatoPrecio(l.baseHonorarios)}).`),
+      destino(`a ALTORRA. Sobre el cargo mensual integral (${pesos(l.baseHonorarios)}).`),
       l.honorarios,
     ),
   );
 
   if (l.ivaHonorarios > 0) {
-    frag.append(
+    mete(frag, 
       fila('IVA sobre los honorarios · 19 %', destino('a la DIAN. Lo factura ALTORRA y lo declara.'), l.ivaHonorarios),
     );
   }
@@ -141,14 +155,14 @@ function pintarComprobante(c: Contrato, l: Liquidacion, retiene: boolean): Docum
   // 🔊 La línea que no se calla, aplique o no.
   if (retiene) {
     const d = el('span', 'gx-liq__destino');
-    d.append(
+    mete(d, 
       document.createTextNode('→ a la DIAN, '),
       el('strong', undefined, 'por cuenta del propietario'),
       document.createTextNode('. Se le entrega su certificado.'),
     );
-    frag.append(fila('Retención en la fuente sobre el canon · 3,5 %', d, l.retencionCanon));
+    mete(frag, fila('Retención en la fuente sobre el canon · 3,5 %', d, l.retencionCanon));
   } else {
-    frag.append(
+    mete(frag, 
       fila(
         'Retención en la fuente sobre el canon · 3,5 %',
         conNegrita(
@@ -164,10 +178,10 @@ function pintarComprobante(c: Contrato, l: Liquidacion, retiene: boolean): Docum
 
   const giro = el('div', 'gx-liq__giro');
   const gi = el('div');
-  gi.append(el('p', 'gx-liq__giro-t', 'Se le gira al propietario'));
-  gi.append(el('p', 'gx-liq__giro-d', c.partes?.propietario?.nombre ?? 'Propietario del contrato'));
-  giro.append(gi, el('p', 'gx-liq__giro-n', formatoPrecio(l.giroAlPropietario)));
-  frag.append(giro);
+  mete(gi, el('p', 'gx-liq__giro-t', 'Se le gira al propietario'));
+  mete(gi, el('p', 'gx-liq__giro-d', c.partes?.propietario?.nombre ?? 'Propietario del contrato'));
+  mete(giro, gi, el('p', 'gx-liq__giro-n', pesos(l.giroAlPropietario)));
+  mete(frag, giro);
 
   /*
    * 🧮 EL CUADRE, A LA VISTA. El dominio lo garantiza calculando el giro por diferencia (§166.3), pero
@@ -177,27 +191,31 @@ function pintarComprobante(c: Contrato, l: Liquidacion, retiene: boolean): Docum
   const suma = l.giroAlPropietario + l.giroAPH + l.honorarios + l.ivaHonorarios + l.retencionCanon;
   const ok = suma === l.cobroAlArrendatario;
   const cuadre = el('p', `gx-liq__cuadre${ok ? '' : ' gx-liq__cuadre--mal'}`);
-  cuadre.append(
+  mete(cuadre, 
     ok
       ? conNegrita(
           '',
           'Cuadra: ',
-          `las salidas suman ${formatoPrecio(suma)}, exactamente lo cobrado. Ni un peso sin destino.`,
+          `las salidas suman ${pesos(suma)}, exactamente lo cobrado. Ni un peso sin destino.`,
         )
       : conNegrita(
           '',
           'NO cuadra: ',
-          `las salidas suman ${formatoPrecio(suma)} y lo cobrado es ${formatoPrecio(l.cobroAlArrendatario)}. No gires hasta revisarlo.`,
+          `las salidas suman ${pesos(suma)} y lo cobrado es ${pesos(l.cobroAlArrendatario)}. No gires hasta revisarlo.`,
         ),
   );
-  frag.append(cuadre);
+  mete(frag, cuadre);
 
   return frag;
 }
 
 /** Recalcula y repinta con lo que hay seleccionado. Sin red: los contratos ya están en memoria. */
 function recalcular(): void {
-  const sel = $<HTMLSelectElement>('gx-liq-contrato');
+  // `HTMLSelectElement` NO satisface el `HTMLElement` fusionado con los tipos de Workers: su
+  // `remove()` devuelve `void` y el del `Element` del HTMLRewriter devuelve `Element`, así que la
+  // restricción genérica los declara incompatibles ([[L-36]] otra vez, por otra puerta). Los demás
+  // paneles no lo pisaron porque solo usan `HTMLInputElement`, que sí encaja.
+  const sel = $('gx-liq-contrato') as unknown as HTMLSelectElement | null;
   const cuerpo = $('gx-liq-cuerpo');
   const chk = $<HTMLInputElement>('gx-liq-retiene');
   if (!sel || !cuerpo) return;
@@ -213,8 +231,8 @@ function recalcular(): void {
   if (problemas.length) {
     // Se dice QUÉ falta, no «error»: un contrato sin canon no es un fallo del sistema.
     const caja = el('div', 'gx-liq__problemas');
-    caja.append(el('p', 'gx-liq__problemas-t', 'Este contrato todavía no se puede liquidar'));
-    for (const p of problemas) caja.append(el('p', 'gx-liq__problemas-d', explicarProblema(p)));
+    mete(caja, el('p', 'gx-liq__problemas-t', 'Este contrato todavía no se puede liquidar'));
+    for (const p of problemas) mete(caja, el('p', 'gx-liq__problemas-d', explicarProblema(p)));
     cuerpo.replaceChildren(caja);
     return;
   }
@@ -224,7 +242,11 @@ function recalcular(): void {
 
 /** Monta la vista: carga los contratos y deja el primero calculado. */
 export async function montarLiquidacion(): Promise<void> {
-  const sel = $<HTMLSelectElement>('gx-liq-contrato');
+  // `HTMLSelectElement` NO satisface el `HTMLElement` fusionado con los tipos de Workers: su
+  // `remove()` devuelve `void` y el del `Element` del HTMLRewriter devuelve `Element`, así que la
+  // restricción genérica los declara incompatibles ([[L-36]] otra vez, por otra puerta). Los demás
+  // paneles no lo pisaron porque solo usan `HTMLInputElement`, que sí encaja.
+  const sel = $('gx-liq-contrato') as unknown as HTMLSelectElement | null;
   const cuerpo = $('gx-liq-cuerpo');
   if (!sel || !cuerpo) return;
 
@@ -256,7 +278,7 @@ export async function montarLiquidacion(): Promise<void> {
       ...cargados.map((c) => {
         const o = document.createElement('option');
         o.value = c.id;
-        o.textContent = `${c.id}${c.canon ? ` · ${formatoPrecio(c.canon)}` : ''}`;
+        o.textContent = `${c.id}${c.canon ? ` · ${pesos(c.canon)}` : ''}`;
         return o;
       }),
     );

@@ -171,6 +171,30 @@ check(
     : `${gates.length} gates en un solo comando`,
 );
 
+/*
+ * Y LOS DOS QUE NO SE LLAMAN `verify:*` (§174).
+ *
+ * Los dos candados de arriba filtran por el prefijo `verify:`, así que `typecheck` y `test` les eran
+ * INVISIBLES — la mitad no cubierta de un gate que se leía como cobertura total ([[M-10]]). El precio
+ * fue doble: `npm run verify` daba verde con 26 errores de tipos en `main`, y las 855 pruebas
+ * unitarias —donde viven el gate del RNT, la prohibición del depósito en vivienda y la ventana de la
+ * Ley 2300— no las corría NADIE en el CI. La red más grande del proyecto no estaba enchufada.
+ *
+ * Se comprueban las DOS puntas (CI y atajo local) porque fallaron por puntas distintas: `typecheck`
+ * sí estaba en el CI y faltaba en el atajo; `test` faltaba en los dos.
+ */
+for (const s of ['typecheck', 'test']) {
+  check(
+    `\`npm run ${s}\` corre en el CI y en \`npm run verify\``,
+    ci.includes(`npm run ${s}`) && agregado.includes(`npm run ${s}`),
+    !ci.includes(`npm run ${s}`)
+      ? `no está en portal-ci.yml — lo que no corre en CI no bloquea un despliegue`
+      : !agregado.includes(`npm run ${s}`)
+        ? `no está en \`npm run verify\` — el atajo diría «verde» sin haberlo mirado`
+        : '',
+  );
+}
+
 
 /*
  * ── SONDA: o dices `noindex`, o estás en el SITEMAP (§162) ─────────────────────────────────────
