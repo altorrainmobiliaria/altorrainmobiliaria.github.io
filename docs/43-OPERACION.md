@@ -57,14 +57,14 @@ operativo y escalable»*). **Exportados ANTES** a copia local fuera de git (dato
 Daniel con `firestore:delete --recursive` (Claude no ejecuta destrucción de datos reales) y **verificado
 vía REST: la colección quedó en 0 documentos** (`verificado-vivo: 2026-08-20`).
 
-## 🔴 LO QUE EL BORRADO **NO** ARREGLÓ — sigue vivo y muerde al portal nuevo
+## ✅ EL RIESGO DEL GMAIL, CERRADO (era «lo que el borrado no arregló»)
 
-`onNewSolicitud` falla con **`535-5.7.8 Username and Password not accepted`**: las credenciales de Gmail
-(`EMAIL_USER`/`EMAIL_PASS`) no sirven. **Es la misma Function que avisará los leads del portal nuevo.** Si
-se lanza sin rotar la contraseña de aplicación (pelota de Daniel), los leads nuevos se pierden EXACTAMENTE
-igual que los 16 — solo que esta vez sin evidencia de que pasó. Sospecha sin verificar: el doc tampoco
-recibía `leadScore`/`nurturing` aunque el repo los escribe antes del envío ⇒ la Function desplegada podría
-no ser la del repo.
+**Esta sección advertía de un peligro que ya no existe, y hay que decirlo así porque contradecía lo que
+Daniel tiene por escrito.** Decía que `onNewSolicitud` —la Function que avisaba los leads— fallaba con
+`535-5.7.8` por credenciales de Gmail muertas, y que lanzar sin rotar esa contraseña perdería los leads
+nuevos igual que los 16. **Ya no**: el aviso lo hace `avisoLeadNuevo` por **Resend** (§188-§192) y la
+Function vieja está **RETIRADA** (§199). ⇒ **rotar la contraseña de Gmail dejó de ser pelota de Daniel.**
+Lo que sí queda es la clave de Resend, que es otra cosa y está en su lista.
 ⚠️ Al retomar contacto comercial, **Ley 2300/2023**: L-V 7:00-19:00 · Sáb 8:00-15:00 → `42-LEGAL`.
 ## Cómo opera HOY (probado con papeles reales, no manual)
 

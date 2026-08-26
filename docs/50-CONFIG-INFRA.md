@@ -45,8 +45,8 @@
 
 ## Cloud Functions del LEGACY — QUÉ es cada una (el censo VIVO lo lleva `05`)
 ⚠️ Decía «7 DESPLEGADAS» mientras `05` decía 13: dos nodos contradiciéndose, y éste llevaba seis
-semanas rancio (§180). El recuento tiene un dueño, `05`; aquí solo los nombres, que no caducan.
-`onNewSolicitud` (email admin + lead scoring) · `onSolicitudStatusChanged` (email cliente) · `onPropertyChange`
+semanas rancio (§180). El recuento tiene un dueño, `05`; aquí solo los nombres. ⚠️ **Y los nombres TAMBIÉN caducan** (§211): esta línea afirmaba que no, y el 26-ago `onNewSolicitud` se retiró (§199).
+⚰️ ~~`onNewSolicitud`~~ (RETIRADA §199) · `onSolicitudStatusChanged` (email cliente) · `onPropertyChange`
 (regen SEO debounce 5min) · `triggerSeoRegeneration` (HTTPS callable super_admin) · `createManagedUserV2`
 · `deleteManagedUserV2` · `updateUserRoleV2`. Siguen vivas sin sitio que las use (modo obra) — su
 apagado se decide con el MEGA-PLAN.

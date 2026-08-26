@@ -121,6 +121,7 @@
 | §208 | 📏 **Los cuatro K medidos**: la pizarra del WIP esta fuera de los DOS mecanismos de frescura — dos fichas que eran un solo agujero grave. 9 pendientes medidos, solo un tercio describia la realidad. | 8687 |
 | §209 | 🌱 **Sembrar el catalogo: paso imposible y herramienta equivocada**. Exigia una credencial que no debo manejar, y el unico script escribe el modelo legacy — corre con exito y el catalogo queda vacio. Sin un solo aviso. | 8731 |
 | §210 | 🧮 **Censo de los 30 pasos del cutover: 5 asignados a quien no puede**. Uno se reasigna, otro se MUEVE (no estaba mal asignado sino mal colocado) y otro necesitaba su MEDIO. Un paso imposible no falla: se detiene. | 8775 |
+| §211 | ⚰️ **Retire una Function y tres nodos siguieron diciendo que vive** — uno de ellos contradecia el brief de Daniel. Al retirar algo la pregunta no es «que documente» sino «quien lo menciona». | 8820 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

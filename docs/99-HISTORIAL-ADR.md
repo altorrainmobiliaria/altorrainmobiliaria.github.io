@@ -8816,3 +8816,45 @@ encontrarlos: en mitad de un cutover, con el reloj corriendo.
 ### 210.4 — Archivos
 `specs/CUTOVER-RUNBOOK.md`: 3.2 reasignado · 4.2 movido a 4.6 con su motivo · 5.2 con su medio.
 Quedan **8 pasos 🤖**, los ocho verificados como ejecutables. **INTACTO**: todo el código.
+
+## 211. ADR-211 — Retiré una Function y dejé tres nodos afirmando que sigue viva (uno de ellos a Daniel)
+
+**Contexto.** Siguiendo la pregunta que abrió §210 —*¿qué invalidó hoy lo que yo mismo hice?*— toca el
+retiro de `onNewSolicitud` (§199). La doctrina del propio cerebro (§G.4, «Frescura») dice que al
+eliminar un componente se actualiza el mapa **en el MISMO cambio**. No lo hice.
+
+### 211.1 — Los tres sitios que quedaron mintiendo
+1. **`20-MEMORIA-ESPACIAL`** la listaba entre las *«DESPLEGADAS (7)»*. Falso en la pertenencia **y** en
+   el recuento. Corregido, y de paso **se le quita el número**: el recuento tiene dueño (`05`, §180) y
+   duplicarlo aquí es la regla de propiedad rota otra vez.
+2. **`50-CONFIG-INFRA`** repetía los nombres bajo una nota que decía, literalmente: *«El recuento tiene
+   un dueño, `05`; aquí solo los nombres, **que no caducan**»*. 🎯 **Los nombres acaban de caducar.**
+   §180 arregló un recuento rancio conservando los nombres **sobre la premisa de que un nombre no
+   envejece** — y envejece en cuanto algo se retira. *Un arreglo que descansa en «esto no cambia nunca»
+   hereda una fecha de caducidad que nadie apunta.*
+3. **`43-OPERACION`** tenía una sección entera —*«🔴 LO QUE EL BORRADO NO ARREGLÓ: sigue vivo y muerde
+   al portal nuevo»*— avisando de que `onNewSolicitud` falla por credenciales de Gmail y que **lanzar
+   sin rotar esa contraseña perdería los leads**. Eso dejó de ser cierto con §188-§192, y del todo con
+   §199.
+
+### 211.2 — 🔴 Y el tercero contradecía lo que Daniel tiene en la mano
+El brief que le entregué hace una hora dice, en «puede dejarlo quieto»: *«El Gmail roto ya no es
+problema suyo»*. El nodo operativo decía lo contrario: que rotar esa contraseña seguía siendo pelota
+suya y que sin ella se pierden los leads. **Dos documentos del mismo proyecto dándole instrucciones
+opuestas sobre una tarea concreta.** El brief tenía razón; el nodo llevaba horas rancio. Corregido en
+la dirección correcta y **diciendo que era un aviso retirado**, no borrándolo en silencio: quien
+recuerde la advertencia merece leer por qué ya no aplica.
+
+### 211.3 — Lo que enseña, y por qué no es un descuido aislado
+Ayer habría dicho que actualicé todo lo que tocaba: corregí el `05`, el runbook y el ledger en el
+mismo turno del retiro. Lo que **no** hice fue **buscar quién más lo nombraba** — un `grep` de doce
+segundos. 🎯 **Al retirar algo, la pregunta no es «¿qué documenté?» sino «¿quién lo menciona?»**, y son
+preguntas distintas: la primera recorre lo que tienes en la cabeza, la segunda recorre el repositorio.
+Es exactamente [[L-60]] («¿quién más escucha ese evento?») aplicada a la documentación en vez de al
+código — la misma forma, otro sustrato.
+
+### 211.4 — Archivos
+`docs/20-MEMORIA-ESPACIAL.md` (lista + recuento retirado) · `docs/50-CONFIG-INFRA.md` (nombre tachado +
+la premisa corregida) · `docs/43-OPERACION.md` (sección invertida: de riesgo abierto a riesgo cerrado).
+**INTACTO**: `35-LECCIONES-PLATAFORMA`, que la menciona dentro de una lección sobre un fallo de deploy
+pasado — ahí es **historia**, y la historia no se actualiza.
