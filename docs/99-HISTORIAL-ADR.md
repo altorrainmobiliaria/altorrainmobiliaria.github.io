@@ -8538,3 +8538,55 @@ Fui a escribir un encargo para dos pendientes y, mirando el código primero, uno
 🎯 **Una lista de pendientes envejece en la dirección que nadie comprueba: hacia arriba.** Se revisa lo
 que se cierra —eso se tacha— y no lo que sigue abierto, porque «sigue abierto» no pide evidencia. Los
 pendientes viejos merecen la misma pregunta que las afirmaciones viejas: *¿esto sigue siendo cierto?*
+
+## 205. ADR-205 — K-10 se cierra midiendo: el riesgo no existe y su gate cuesta más de lo que protege
+
+**Contexto.** Aplicando §204 —*los pendientes abiertos merecen la misma pregunta que las afirmaciones
+viejas*— le tocó el turno a **K-10** del ledger de `TODO-CEREBRO`: *«dos lecciones con el MISMO `L-NN`
+en nodos distintos no las caza nadie»* (§152). Llevaba semanas abierto sin que nadie lo midiera.
+
+### 205.1 — La medición
+**76 identificadores** definidos entre `L-NN` y `M-NN`, sobre **33 ficheros** de `docs/`. Se buscó la
+colisión con **dos claves independientes**:
+| clave | falsos positivos | colisiones reales |
+|---|---|---|
+| **título de la definición** | **9** | 0 |
+| **referencia al ADR (`§NN`)** | **2** | 0 |
+**Cero colisiones reales por ambas vías.** Los 9 de la primera son la misma lección **reformulada**
+entre el stub y el cuerpo (`L-51` difiere solo en el tipo de comillas). Los 2 de la segunda son
+lecciones cuyo **cuerpo cita más ADRs que el stub** porque acumuló reincidencias — que es exactamente
+lo que debe pasar.
+
+### 205.2 — Por qué el gate no se puede escribir barato
+Ninguna de las dos claves sirve: la del título **no distingue una reformulación de una lección
+distinta**, y la del ADR **no aplica a 51 de las 76** definiciones, que no citan ninguno. Una tercera
+—comparar cuerpos— es cara y frágil. *Un gate cuya señal es 9 falsos positivos sobre 0 verdaderos no
+se ignora: se apaga en una semana*, que es la lección del canario.
+
+### 205.3 — Y por qué el riesgo no se materializa
+No es suerte, es estructura: los `L-NN` los asigna **un solo autor** que mira el máximo antes de
+numerar. La colisión aparecería si dos sesiones numeraran **a la vez**, y aquí eso no ocurre. K-10
+protegía contra un modo de fallo que la forma de trabajo ya excluye.
+
+### 205.4 — Decisión
+**K-10 se CIERRA**, y se cierra **con su medición escrita** para que nadie lo reabra por corazonada.
+Si algún día el cerebro se edita en paralelo —varias sesiones, varios repos escribiendo lecciones a la
+vez—, el riesgo vuelve y este ADR dice exactamente qué medir y por qué las dos claves obvias fallan.
+
+### 205.5 — 🎯 Lo que enseña sobre los pendientes
+Un pendiente puede ser falso de **dos** maneras: porque ya se hizo (§204) o porque **el problema que
+describe no existe**. La segunda es más difícil de ver, porque un pendiente sin medir no parece
+equivocado — parece *pendiente*. **Cerrar un pendiente midiendo es tan valioso como resolverlo**, y
+más barato: aquí costó dos scripts y liberó una entrada del ledger que llevaba semanas ocupando
+espacio en el nodo que se lee en cada arranque.
+> Y una regla nueva para el ledger: **todo pendiente que afirma un RIESGO debe decir cómo se mediría.**
+> Sin eso no es una tarea, es una preocupación — y las preocupaciones no se cierran nunca.
+
+### 205.6 — Nota de método
+Las dos sondas de este ADR **imprimieron su cobertura** («33 ficheros leídos») antes que su resultado.
+Es [[M-27]], escrita hace dos horas, aplicada a la primera ocasión — y la que permitió leer «9
+colisiones» sin creérselo.
+
+### 205.7 — Archivos
+`docs/10-MEMORIA-CORTO-PLAZO.md`: K-10 retirado del ledger de `TODO-CEREBRO` (libera 85c del
+arranque). **INTACTO**: todo lo demás. Este ADR no cambia nada, cierra algo.
