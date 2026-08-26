@@ -6983,3 +6983,76 @@ en rojo en CI no está probado: está estrenado a medias.
 porque los otros tres fallaban *hacia el silencio* y este falla **hacia el ✅**: no es que nadie
 mirara, es que algo dijo «mirado» sin mirar. En orden de maldad: no tener gate < tener uno que nadie
 invoca < tener uno que **afirma haber pasado**.
+
+## 176. ADR-176 — El webhook de Wompi: un evento tardío no camina el mandato hacia atrás
+
+**176.0 — De dónde salió.** TODO-49 declaraba el rail de pago **desbloqueado en lo legal** (§165) y
+pendiente solo de cuentas de Daniel. El dominio ya tenía las piezas —`wompi-evento` juzga el evento,
+`mandato` gobierna las transiciones, `liquidacion` y `certificacion` cuentan el dinero— y faltaba la
+que las une: dado un evento y el mandato **como está hoy**, qué hay que escribir.
+
+**176.1 — Lo que apareció ANTES de escribir una línea.** El reflejo de mirar las fronteras del
+subsistema que voy a tocar (`caza-bugs`) encontró que **`ESTADOS_MANDATO` estaba declarado DOS
+veces**: exportado con el MISMO nombre desde dos módulos de la misma carpeta y con miembros
+**distintos** — cuatro en `wompi-evento.ts`, cinco en `mandato.ts` (le faltaba `liberado`). Nadie los
+consumía todavía, así que nada fallaba y ningún gate podía verlo: no es una ruta rota ni un tipo
+incompatible, son dos símbolos legítimos que se llaman igual. *El primer consumidor iba a ser
+justamente el webhook, que importa de los dos.* Un `switch` exhaustivo escrito contra la versión
+corta se habría comido `liberado` sin una queja del compilador.
+**Arreglo**: `mandato.ts` es el dueño y `wompi-evento.ts` **deriva**:
+`type EstadoDesdeWompi = Exclude<EstadoMandato, 'liberado'>`. La exclusión no es una lista más corta:
+es el invariante de §165 escrito en el tipo —liberar es decisión NUESTRA, jamás la consecuencia de un
+webhook— y si mañana `mandato.ts` gana un estado, éste lo hereda y el `switch` deja de compilar.
+
+**176.2 — La decisión de diseño que evita el peor fallo del carril.** El webhook **no escribe el
+estado**: mapea el evento a una **transición** (`transicionDesdeWompi`) y llama a `mover()`. La
+diferencia parece de estilo y no lo es. Wompi reintenta hasta 3 veces en 24 h y sus eventos llegan
+**desordenados**: un `PENDING` puede aterrizar DESPUÉS de que el dinero se giró al propietario.
+Escribiendo el estado directamente, ese evento dejaría el mandato en `esperando` — es decir,
+**borraría del sistema que la plata ya salió**. Pasando por la máquina, choca contra `PERMITIDAS` y se
+rechaza solo. Y ese rechazo **no es un error**: es el sistema funcionando, así que se anota y se
+responde 200. Reintentarlo daría el mismo resultado tres veces.
+
+**176.3 — La única salida con 500, y por qué NO anota.** Si llega un evento auténtico cuya
+`reference` no corresponde a ningún mandato, se responde **500 sin anotar la clave**. Va contra la
+regla general del carril (§169: a Wompi casi siempre 200) y tiene dos motivos encadenados: (a) el
+mandato puede no existir *todavía* porque el documento se está escribiendo en ese instante, y
+descartar el evento perdería un pago real — un 500 gasta un reintento y lo recupera; (b) y sobre
+todo, **si además se anotara la clave, el reintento llegaría y se descartaría como duplicado**, que es
+exactamente el pago perdido que se quería evitar. *Anotar junto a un 500 es la combinación que no
+puede darse nunca*, y por eso existe `planCoherente()`, que lo afirma — y una prueba lo recorre sobre
+los 13 caminos posibles, no sobre el que se me ocurrió.
+
+**176.4 — Dónde vive cada cosa, y por qué importa hoy más que ayer.** El JUICIO entero va en
+`src/lib/domain/pagos-webhook.ts`: puro, sin Firestore, **15 pruebas que sí corren en CI**. La
+plomería va en `functions/src/pagos-webhook.ts`, que solo abre la transacción. La división es la de
+siempre en este proyecto, pero §175 le añadió una razón nueva: las pruebas de `firebase/tests/`
+necesitan el emulador y **no corren en CI**, así que lógica de un carril de dinero probada solo ahí
+es lógica sin red. **La transacción es el punto**: anotar la clave y mover el mandato son atómicos, y
+la idempotencia se re-comprueba DENTRO — la lectura de fuera es una optimización, la de dentro es la
+garantía. Si se anotara primero y el movimiento fallara, el reintento se descartaría como duplicado:
+un pago aprobado que nunca se acredita, **sin un solo error en los logs**.
+
+**176.5 — El hallazgo de rebote: las Functions no tenían gate de tipos.** Al escribir el primer
+archivo nuevo en `functions/src/` pregunté qué gate lo abre ([[L-52]]). Ninguno: el `tsconfig` del
+portal **excluye `functions/`**, así que `astro check` no las mira, y solo entraban de refilón las que
+importa `firebase/tests/` — cuyas pruebas tampoco corren en CI. **Nueve Functions desplegadas** —las
+cinco puertas de escritura de GESTIÓN, la bóveda de documentos, el pipeline de venta, el perfil de
+inquilino, el digest— **sin comprobación de tipos en ningún punto del pipeline**. Comprobado con un
+error deliberado: pasaba en verde. Arreglado con `typecheck:functions` (`tsc --noEmit`) en `verify` y
+en el CI, y el meta-gate del cableado ahora vigila los tres. Es el cuarto pariente de la familia hoy
+([[M-25]] · [[L-56]] · [[L-57]] · éste), y la diferencia está en de dónde viene el silencio: en §175
+el checker no estaba instalado; aquí está instalado y mirando otra carpeta.
+
+**176.6 — No-regresión y verificación.** Cambio **aditivo**: no se renombró ni se movió nada que
+tuviera consumidores (el `ESTADOS_MANDATO` retirado no tenía ninguno, medido con grep antes de
+tocarlo). **872 pruebas** (+17). `typecheck` y `typecheck:functions` en 0. Los 7 gates verdes. Tres
+mordidas en las dos direcciones: el invariante `anotar+500` (se activó → 2 rojas; restaurado → verde),
+la derivación del enum (se devolvió `liberado` → 2 rojas), y el gate de Functions (`error TS2322`).
+
+**176.7 — Lo que queda declarado y NO hecho.** (a) El webhook **no está registrado en `index.ts`**, a
+propósito: necesita `defineSecret('WOMPI_EVENTS_SECRET')` y §140 enseñó que un secreto inexistente
+**bloquea el despliegue del codebase entero**, incluidas las nueve Functions que no tienen nada que
+ver. El secreto solo lo puede crear Daniel; el alta son cinco líneas el día que exista. (b) Falta la
+prueba de la TRANSACCIÓN contra el emulador (`firebase/tests/`), que es lo único que puede demostrar
+la atomicidad real. (c) `test:rules` sigue fuera del CI porque necesita Java: declarado, no resuelto.

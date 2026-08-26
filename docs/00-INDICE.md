@@ -125,6 +125,7 @@
 | §173 | 🪧 **Una regla escrita da la sensación de estar APLICADA** (M-25, 4× en un día). El panel decía «Tu avalúo» con la prohibición en CUATRO sitios. Sonda nueva + shard de `33` → `37`, que ya iba por la tercera recomendación. | 6773 |
 | §174 | 🏠 **El reglamento de PH que CALLA no autoriza** (D.1074 · L.675 18.1): gate de 3 estados. Y **855 pruebas que el CI no corría**. Nace [[M-26]]. ⚠️ §174.3 tenía un dato FALSO → §175. | 6822 |
 | §175 | 🎭 **El gate que PREGUNTA en vez de fallar**: `astro check` sin `@astrojs/check` sale **exit 0**. Un día de «Tipos ✅» sin mirar nada, y el CI **nunca estuvo rojo**. Nace [[L-57]]. | 6930 |
+| §176 | 💸 **Webhook de Wompi**: mapea a TRANSICIÓN, no a estado — un evento tardío pisaría un mandato ya girado. `anotar`+500 nunca juntos. Enum duplicado → `Exclude`. Y las 9 Functions sin gate de tipos. | 6987 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |
