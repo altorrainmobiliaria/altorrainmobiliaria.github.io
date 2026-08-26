@@ -9188,3 +9188,16 @@ escribí, y la rompió una práctica que adopté después — yo mismo.
 --boot-echo`), que es literalmente el hook que faltó; NO usé `BOOT_CANARY_SKIP=1`, que lo apagaría para
 siempre. **Pendiente de kernel** (no hoy: sería el 2.º bump del día sobre un kernel compartido): que #24
 excluya los commits de distribución de kernel antes de acusar a los hooks.
+
+### 216.10 — Y las «hermanas» las enumeré de memoria: eran TRES
+Escribí 216.1-216.7 hablando de *«las hermanas»* — cars y bersaglio — **sin volver a mirar la carpeta que
+las contiene**, la misma que había listado al empezar el turno y que muestra también
+**`insemastereo.github.io`**. 🎯 **El ADR que denuncia listas escritas de memoria enumeró su universo de
+memoria**, con la medición a un comando de distancia y ya hecha.
+**Medida antes de cerrar**: INSEMA, **9 páginas públicas rastreadas, cero coincidencias**. Limpia.
+**Censo total corregido: 180 páginas públicas en TRES repositorios hermanos** (129 cars · 42 bersaglio ·
+9 insema); hallazgos, solo en cars.
+**Lo que esto enseña, y no es lo obvio**: el defecto no se cura sabiéndolo — llevaba el día entero
+escribiéndolo y caí dentro del propio texto que lo denuncia. Se cura **con el hábito mecánico**: cuando
+escribas un plural que delimita un universo (*«las hermanas», «las páginas», «los callsites»*),
+**ese plural es un comando pendiente, no un hecho**. Ejecútalo ahí mismo, aunque creas saber el resultado.
