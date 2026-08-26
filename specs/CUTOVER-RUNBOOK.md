@@ -160,7 +160,13 @@ RNT** — que la ley exige **visible en TODA la publicidad** de alojamiento tur�
 vacía** — el candado que protege a `/comprar` y `/arrendar` no la cubre, porque el aviso de abajo los
 enumeró a ellos y a la home, y ella no estaba en la lista; (2) **el propio sitio explica la regla** en
 `/invertir` (*«RNT visible en toda la publicidad»*). Hoy no hay exposición —staging es `noindex`—; el
-día del DNS sí. ⇒ **Antes del 5.3, una de tres**: poner el RNT (pelota de Daniel), retirar el precio y
+día del DNS sí.
+⚠️ **Y no es solo esa página (§214)**: la **HOME** también es estática —sus tarjetas son literales en
+`index.astro`— y muestra **`$1.150.000 / noche`** (mismo problema de RNT) y **`o crédito desde
+$6.2M/mes`**, una cifra financiera de un producto que **se retiró del menú por no tener nada detrás**
+(§159.4): se quitó el enlace y **se dejó el número**. Corrige de paso el §213, que daba la home por
+cubierta por el candado — no lo está.
+⇒ **Antes del 5.3, y para AMBAS páginas, una de tres**: poner el RNT (pelota de Daniel), retirar el precio y
 el formulario de esa página, o dejarla fuera del dominio. **Es decisión suya, y bloquea el 5.3.**
 
 ⚠️ **Los DOS errores que este runbook existe para evitar** — los dos se ven perfectos para un humano.
@@ -173,7 +179,7 @@ esa variable no se declaraba en NINGÚN sitio del repo (§91 la cazó, §102 la 
 | Paso | Quién | Qué |
 |---|---|---|
 | 5.1 | 🧑 | Poner la variable de repositorio **`PORTAL_SITE_ENV = production`** |
-| 5.1b | 🧑 | Y **`PORTAL_CATALOGO_SOURCE = live`**. ⚠️ Sin ella el sitio sale con el catálogo de MUESTRA: 38 enlaces desde la home, `/comprar` y `/arrendar` hacia un inmueble que **no existe**, con su precio y su barrio. Se ve PERFECTO para un humano, igual que el fallo del 5.1. Lo bloquea la sonda del catálogo en `verify:build` (§163) — pero solo si la fase 4 ya dejó inventario real: **este paso NO se hace antes que la fase 4** |
+| 5.1b | 🧑 | Y **`PORTAL_CATALOGO_SOURCE = live`**. ⚠️ Sin ella `/comprar` y `/arrendar` salen con el catálogo de MUESTRA hacia un inmueble que **no existe**. ⛔ **La HOME no obedece esta variable** (§214): es estática y sus tarjetas siguen ahí aunque la pongas — se arregla aparte, con su precio y su barrio. Se ve PERFECTO para un humano, igual que el fallo del 5.1. Lo bloquea la sonda del catálogo en `verify:build` (§163) — pero solo si la fase 4 ya dejó inventario real: **este paso NO se hace antes que la fase 4** |
 | 5.2 | 🤖 | Empujar a `main` y comprobar que el CI queda VERDE. Si `verify:build` falla, es el candado #6 haciendo su trabajo: **no se sigue**. ⚠️ **Por qué medio** (§210): no hay `gh` en la máquina, así que el CI no se consulta por su insignia — se comprueba el **resultado desplegado** (el worker sirve el cambio y `deploy-info.json` bumpeado). Un verde que no se puede leer no es evidencia; el artefacto servido sí. |
 | 5.3 | 🧑 | Mover el DNS de `altorrainmobiliaria.co` de Hostinger a Cloudflare |
 | 5.4 | 🤖 | `curl -s https://altorrainmobiliaria.co \| grep -i noindex` → **vacío**, y `/robots.txt` sin `Disallow: /` |

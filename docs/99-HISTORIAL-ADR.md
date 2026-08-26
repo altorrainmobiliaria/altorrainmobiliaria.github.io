@@ -8972,3 +8972,58 @@ inmueble que falta en un catálogo — es una pantalla completa que hoy anuncia 
 ### 213.6 — Archivos
 `specs/CUTOVER-RUNBOOK.md`: el aviso de la fase 5 pasa de dos errores a **tres**, con el nuevo primero
 por ser el único con sanción detrás. **INTACTO**: `estancias.astro` — a propósito.
+
+## 214. ADR-214 — La home también es estática, y anuncia un crédito de un servicio que se retiró por no existir
+
+**Contexto.** §213 encontró que `/estancias` anuncia con precio, sin RNT, y que el candado del catálogo
+no la cubre porque es estática. La pregunta natural —y la que faltaba— es **cuántas páginas más
+muestran un precio sin depender del catálogo**. Se barrieron **las 41 páginas construidas**.
+
+### 214.1 — El censo
+| página | precios | ¿la vacía `PORTAL_CATALOGO_SOURCE`? |
+|---|---|---|
+| `/comprar` · `/arrendar` | 9 | ✅ **sí** — leen el catálogo |
+| **`/`** (home) | **25** | 🔴 **NO — estática** |
+| `/estancias` | 6 | 🔴 NO (§213) |
+| `/design-system` | 4 | 🔴 no, pero **fuera del sitemap** y sin enlazar |
+| `/gestion` | 16 | tras autenticación, fuera del sitemap |
+| el artículo de costos | 15 | son ejemplos didácticos, etiquetados |
+
+### 214.2 — 🔴 La home: tres cosas, no una
+Las tarjetas son **literales escritos en `index.astro`**, no datos del catálogo:
+1. **`price: '$1.150.000 / noche'`** — publicidad de alojamiento por días **sin RNT**, igual que §213 y
+   en la **puerta de entrada** del sitio.
+2. **`note: 'o crédito desde $6.2M/mes'`** — una **cifra financiera concreta** para un producto que…
+   **se retiró del menú por no tener nada detrás** (§159.4), y que sigue siendo una pregunta abierta
+   para Daniel (*«¿«Crédito de Vivienda» y «Pagos en Línea» son servicios REALES?»*). 🎯 **Se quitó el
+   enlace y se dejó el número.** Quitar la puerta no es quitar la promesa.
+3. **`href: '/ficha'`** hacia un inmueble de muestra, y precios de venta (`$1.450.000.000`).
+
+### 214.3 — El aviso del runbook estaba incompleto, y de la misma manera
+La fase 5 advierte: *«Sin ella el sitio sale con el catálogo de MUESTRA: 38 enlaces desde **la home**,
+`/comprar` y `/arrendar` hacia un inmueble que no existe»*. Poner la variable arregla `/comprar` y
+`/arrendar` — **y no toca la home**, porque la home no lee el catálogo. El aviso mete a las tres en la
+misma frase y solo dos comparten el remedio. *Un remedio enunciado sobre una lista mal formada protege
+menos de lo que promete, y encima tranquiliza.*
+
+### 214.4 — Y el gate no puede cazarlo hoy
+`verify:claims` busca **prueba social fabricada** (reseñas, notas, distinciones). Una **cifra de
+crédito** no encaja en ninguno de sus patrones, así que pasa en verde. Añadirle un patrón de
+financiación es barato **y hay que hacerlo A LA VEZ que se arregla la página**: un gate nuevo que falle
+de inmediato, con un arreglo que exige mockup, dejaría el repositorio en rojo sin salida. Queda
+especificado, no ejecutado — misma razón que §208.
+
+### 214.5 — Lo que NO hago
+No toco `index.astro`. Es la pantalla más diseñada del sitio y la regla dura es **nunca UI sin mockup
+aprobado**. Y las decisiones son de Daniel: si el crédito existe, la cifra necesita respaldo; si no
+existe, la línea se va. Igual con la tarjeta de estancia y su precio por noche.
+
+### 214.6 — Archivos
+`specs/CUTOVER-RUNBOOK.md`: el tercer error de la fase 5 (§213) se amplía a **la home**, y el aviso de
+la variable se corrige para que no prometa una cobertura que no tiene. **INTACTO**: `index.astro`.
+
+### 214.7 — Doctrina
+Dos veces seguidas: **la superficie que el candado no cubre es la que nadie enumeró**. Y la segunda
+apareció solo porque, tras el primer caso, pregunté *«¿cuántas más?»* en vez de arreglar aquella y
+seguir. 🎯 **Un hallazgo que no se convierte en censo deja sus hermanos donde estaban** — y aquí el
+hermano era la página de inicio.
