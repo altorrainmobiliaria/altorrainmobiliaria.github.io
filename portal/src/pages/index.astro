@@ -942,8 +942,14 @@ const maneras = [
   .home-hero { position: relative; background: var(--alt-surface-neu); padding-bottom: clamp(40px, 6vw, 72px); }
   .home-hero__car { position: relative; overflow: hidden; height: clamp(548px, 60vh, 580px); }
 
-  .hbn { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 0.9s ease; background: #fff; }
-  .hbn[data-active='1'] { opacity: 1; pointer-events: auto; }
+  /* 🔴 `visibility`, y no solo `opacity` (§160). `opacity: 0` esconde el banner de los OJOS y de
+     nadie más: el nodo sigue en el árbol de accesibilidad, así que un lector de pantalla leía los
+     CUATRO titulares del héroe uno detrás de otro —incluidos los tres que no se ven— y `h1` los
+     cuatro. `pointer-events: none` tampoco ayuda: bloquea el ratón, no el tabulador.
+     `visibility: hidden` sí saca el subárbol del árbol de accesibilidad y del orden de foco. El
+     retardo de 0.9s al ocultar deja que la opacidad termine su transición: el fundido se ve igual. */
+  .hbn { position: absolute; inset: 0; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.9s ease, visibility 0s linear 0.9s; background: #fff; }
+  .hbn[data-active='1'] { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 0.9s ease, visibility 0s linear 0s; }
   .hbn--split { background: var(--alt-surface-neu); }
   .hbn__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .hbn[data-active='1'] .hbn__img { animation: hkenburns 9s ease-out both; }

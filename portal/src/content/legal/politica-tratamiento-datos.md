@@ -1,6 +1,3 @@
-# POLÍTICA DE TRATAMIENTO DE DATOS PERSONALES
-
-
 ## 1. Identificación del Responsable del Tratamiento
 
 | Campo | Dato |

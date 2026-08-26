@@ -124,7 +124,15 @@ import Footer from '../components/Footer.astro';
                 <h3 class="seg__pt">2 · Escribe el código que te muestra</h3>
                 <p class="seg__p">Seis dígitos. Cambian cada 30 segundos: escribe el que ves ahora.</p>
                 <div class="seg__codigo">
-                  <input class="alt-input seg__input-codigo" id="seg-codigo" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="000000" />
+                  {/* `aria-label` y no `placeholder`: el placeholder DESAPARECE al escribir, así
+                      que quien usa lector de pantalla y vuelve al campo ya no oye qué le pedía. Una
+                      etiqueta visible sobraría —el h3 de arriba ya lo dice— pero el nombre accesible
+                      tiene que existir igual.
+                      ⚠️ Y va en comentario de Astro, no de HTML: el de HTML VIAJA al navegador, y
+                      la primera versión de esta nota nombraba la etiqueta con sus signos de menor y
+                      mayor — eso bastó para que la sonda de nombres accesibles pasara en verde con
+                      el defecto delante. Un comentario tampoco es terreno neutral (§160). */}
+                  <input class="alt-input seg__input-codigo" id="seg-codigo" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="000000" aria-label="Código de seis dígitos de tu aplicación de autenticación" />
                   <button class="alt-btn alt-btn--gold" type="button" id="seg-confirmar">Activar</button>
                 </div>
               </li>
