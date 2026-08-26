@@ -338,7 +338,9 @@ describe('gates de publicacion', () => {
   it('un alojamiento SIN RNT no se publica (la ley no lo deja, aunque el tipo si)', () => {
     const sinRnt = prop({ operacion: 'alojamiento', precio: { moneda: 'COP', precioNoche: 400_000 } });
     expect(publicable(sinRnt)).toBe(false);
-    expect(publicable(prop({ ...sinRnt, rnt: 'RNT-100001' }))).toBe(true);
+    // Con RNT pero sin lo de la copropiedad SIGUE sin publicarse: son dos gates, no uno.
+    expect(publicable(prop({ ...sinRnt, rnt: 'RNT-100001' }))).toBe(false);
+    expect(publicable(prop({ ...sinRnt, rnt: 'RNT-100001', autorizacionPH: { situacion: 'autoriza-expreso' as const, declaradaEn: '2026-08-26T00:00:00Z' } }))).toBe(true);
   });
 
   it('venta y arriendo no dependen del RNT', () => {

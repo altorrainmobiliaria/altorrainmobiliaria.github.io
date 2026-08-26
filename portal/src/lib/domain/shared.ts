@@ -26,6 +26,24 @@ export type Operacion = (typeof OPERACIONES)[number];
 export const VERTICALES = ['vivienda', 'comercial', 'turistico'] as const;
 export type Vertical = (typeof VERTICALES)[number];
 
+/**
+ * Situación del inmueble frente al reglamento de PROPIEDAD HORIZONTAL, para uso turístico.
+ *
+ * 🔴 EL SILENCIO NO AUTORIZA, y por eso este tipo tiene tres valores y no dos. Para prestar
+ * alojamiento turístico en un inmueble sometido a PH, el reglamento debe permitirlo **previamente y
+ * de manera expresa** (D.1074/2015 art. 2.2.4.1.2.2 num. 8 — el prestador lo DECLARA al inscribir el
+ * RNT; requisito confirmado por el Consejo de Estado al negar su nulidad). La destinación de las
+ * unidades privadas la manda el reglamento (Ley 675/2001 art. 18 num. 1) y la copropiedad puede
+ * sancionar el incumplimiento (art. 59).
+ *
+ * Un reglamento que CALLA cae en `sin-autorizacion`, igual que el que prohíbe: son distintos para el
+ * propietario —el silencio se puede convertir en permiso llevándolo a votación de la asamblea— pero
+ * idénticos para nosotros HOY, que es lo único que este campo decide. Modelarlo con un booleano
+ * dejaría el silencio del lado del «sí» por omisión, que es justo el error que se quiere impedir.
+ */
+export const SITUACIONES_PH = ['no-aplica', 'autoriza-expreso', 'sin-autorizacion'] as const;
+export type SituacionPH = (typeof SITUACIONES_PH)[number];
+
 /** Tipo de inmueble. Valores PRO; confirmar contra el Excel del dueño (`ALTORRA_Excel_Desplegables_OK.xlsx`). */
 export const TIPOS_INMUEBLE = [
   'apartamento', 'casa', 'apartaestudio', 'local', 'oficina',

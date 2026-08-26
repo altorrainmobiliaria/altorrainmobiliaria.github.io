@@ -57,7 +57,7 @@ const val = (id: string) => ($(id) as HTMLInputElement | null)?.value ?? '';
 /** Lo que hay ahora mismo en el formulario, tal cual, sin interpretar. */
 function leerEntrada(): EntradaAlta {
   const campos = [
-    'operacion', 'tipo', 'vertical', 'titulo', 'descripcion', 'ciudad', 'barrio', 'rnt',
+    'operacion', 'tipo', 'vertical', 'titulo', 'descripcion', 'ciudad', 'barrio', 'rnt', 'situacionPH',
     'lat', 'lng', 'valorVenta', 'canon', 'administracion', 'precioNoche',
     'habitaciones', 'banos', 'areaConstruidaM2', 'estrato', 'parqueaderos', 'piso',
   ] as const;

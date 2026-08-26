@@ -102,7 +102,13 @@ describe('construirIndices — rebuild TOTAL idempotente (§54.4 cond.1)', () =>
         prop({ id: 'A1', operacion: 'arriendo', precio: { moneda: 'COP', canon: 3_000_000 } }),
         // `rnt` no es adorno: desde §104 un alojamiento sin él NO entra al índice (gate B3). Este
         // fixture lo daba por bueno, o sea que la prueba de sharding modelaba un anuncio ilegal.
-        prop({ id: 'D1', operacion: 'alojamiento', rnt: 'RNT-100001', precio: { moneda: 'COP', precioNoche: 400_000 } }),
+        prop({
+          id: 'D1',
+          operacion: 'alojamiento',
+          rnt: 'RNT-100001',
+          autorizacionPH: { situacion: 'autoriza-expreso' as const, declaradaEn: '2026-08-26T00:00:00Z' },
+          precio: { moneda: 'COP', precioNoche: 400_000 },
+        }),
         prop({ id: 'OCULTA', estado: 'borrador' }),
         prop({ id: 'INACTIVA', estado: 'inactivo' }),
       ],
@@ -214,8 +220,33 @@ describe('🔴 gate LEGAL del RNT en el LISTADO, no solo en la ficha (§104)', (
     expect('omitida' in r && r.omitida.motivo).toBe('sin-rnt');
   });
 
-  it('con RNT entra con normalidad', () => {
-    expect('resumen' in propiedadAResumen(aloj({ rnt: 'RNT-100001' }))).toBe(true);
+  it('con RNT y con el reglamento de PH en regla, entra con normalidad', () => {
+    expect('resumen' in propiedadAResumen(aloj({ rnt: 'RNT-100001', autorizacionPH: { situacion: 'autoriza-expreso' as const, declaradaEn: '2026-08-26T00:00:00Z' } }))).toBe(true);
+  });
+
+  it('🔴 con RNT pero SIN declarar la PH tampoco entra, y el motivo lo dice (§174)', () => {
+    // El motivo importa tanto como el bloqueo: cuando los dos gates compartian el codigo
+    // `sin-rnt`, a quien le faltaba el permiso de la copropiedad se le mandaba a buscar el RNT
+    // que ya tenia.
+    const r = propiedadAResumen(aloj({ rnt: 'RNT-100001' }));
+    expect('omitida' in r && r.omitida.motivo).toBe('sin-autorizacion-ph');
+  });
+
+  it('🔴 el reglamento que CALLA se trata como el que prohibe', () => {
+    const silente = aloj({
+      rnt: 'RNT-100001',
+      autorizacionPH: { situacion: 'sin-autorizacion' as const, declaradaEn: '2026-08-26T00:00:00Z' },
+    });
+    const r = propiedadAResumen(silente);
+    expect('omitida' in r && r.omitida.motivo).toBe('sin-autorizacion-ph');
+  });
+
+  it('fuera de propiedad horizontal no hay nada que autorizar', () => {
+    const casa = aloj({
+      rnt: 'RNT-100001',
+      autorizacionPH: { situacion: 'no-aplica' as const, declaradaEn: '2026-08-26T00:00:00Z' },
+    });
+    expect('resumen' in propiedadAResumen(casa)).toBe(true);
   });
 
   it('un RNT en blanco NO cuenta como RNT (fail-closed)', () => {

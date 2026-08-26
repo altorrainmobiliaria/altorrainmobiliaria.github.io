@@ -11,16 +11,18 @@
 
 import { claveValida } from '../media-subida';
 import { problemasParaPublicar, type ProblemaPublicacion } from './catalogo';
-import type { Amenidades, Precio, SpecsInmueble } from './propiedades';
+import type { Amenidades, AutorizacionPH, Precio, SpecsInmueble } from './propiedades';
 import type { Propiedad } from './propiedades';
 import {
   ESTADOS_PROPIEDAD,
   OPERACIONES,
+  SITUACIONES_PH,
   TIPOS_INMUEBLE,
   VERTICALES,
   type Geo,
   type EstadoPropiedad,
   type Operacion,
+  type SituacionPH,
   type TipoInmueble,
   type Vertical,
 } from './shared';
@@ -139,6 +141,10 @@ export interface EntradaAlta {
   lat?: string | number;
   lng?: string | number;
   rnt?: string;
+  /** Situación frente al reglamento de PH. Solo se exige en `alojamiento`. Ver `SITUACIONES_PH`. */
+  situacionPH?: string;
+  /** Quién declara (uid del operador), cuando la sesión lo sabe. */
+  declaradaPor?: string;
   /** Precio: solo se usa el que corresponde a la operación. */
   valorVenta?: string | number;
   canon?: string | number;
@@ -263,6 +269,26 @@ export function construirPropiedad(entrada: EntradaAlta, ctx: ContextoAlta): Res
     err('rnt', 'Un alojamiento turístico necesita su número de RNT para poder anunciarse (obligación legal).');
   }
 
+  // La OTRA mitad del gate B3. Se pide junto al RNT porque son la misma decisión: si el inmueble
+  // puede prestar alojamiento turístico o no. `/invertir` lleva meses diciéndole al comprador que
+  // «el reglamento debe autorizarlo expresamente» y este formulario no lo preguntaba (§174).
+  const situacionPH = txt(entrada.situacionPH) as SituacionPH;
+  if (operacion === 'alojamiento') {
+    if (!situacionPH) {
+      err('situacionPH', 'Falta decir qué dice el reglamento de la copropiedad sobre el alquiler por días.');
+    } else if (!(SITUACIONES_PH as readonly string[]).includes(situacionPH)) {
+      err('situacionPH', 'Situación de propiedad horizontal no válida.');
+    } else if (situacionPH === 'sin-autorizacion') {
+      // NO es un dato que falte: es la respuesta, y la respuesta es que no se puede anunciar. Se
+      // bloquea aquí y no solo en `publicable()` para que nadie lo guarde creyendo que ya está.
+      err(
+        'situacionPH',
+        'Si el reglamento no autoriza EXPRESAMENTE el alquiler por días, el inmueble no se puede anunciar por días. ' +
+          'El silencio del reglamento no vale como permiso; el camino es llevarlo a votación de la asamblea.',
+      );
+    }
+  }
+
   const precio = precioDeEntrada(operacion, entrada, err);
 
   const imagenes = (entrada.imagenes ?? []).map((i) => txt(i)).filter(Boolean);
@@ -327,6 +353,12 @@ export function construirPropiedad(entrada: EntradaAlta, ctx: ContextoAlta): Res
     imagenPortada: imagenes[0],
   };
   if (rnt) propiedad.rnt = rnt;
+  if (operacion === 'alojamiento') {
+    const declaracion: AutorizacionPH = { situacion: situacionPH, declaradaEn: iso };
+    const quien = txt(entrada.declaradaPor);
+    if (quien) declaracion.declaradaPor = quien;
+    propiedad.autorizacionPH = declaracion;
+  }
 
   return { ok: true, propiedad };
 }
@@ -374,6 +406,13 @@ export interface BaseEdicion {
   createdAt: string;
   /** El `_version` que se leyó al abrir. Es el testigo del control de concurrencia. */
   version: number;
+  /**
+   * La declaración de PH que YA tenía. Se conserva para no rejuvenecer su fecha: `declaradaEn` vale
+   * como evidencia precisamente por decir CUÁNDO se afirmó, y corregir una errata del título no es
+   * volver a afirmarlo. Si el operador CAMBIA la situación, entonces sí es una declaración nueva y
+   * la fecha se renueva.
+   */
+  autorizacionPH?: AutorizacionPH;
 }
 
 /**
@@ -391,15 +430,18 @@ export interface BaseEdicion {
 export function construirEdicion(entrada: EntradaAlta, base: BaseEdicion, ahora: Date): ResultadoAlta {
   const r = construirPropiedad(entrada, { codigo: base.id, ahora });
   if (!r.ok) return r;
-  return {
-    ok: true,
-    propiedad: {
-      ...r.propiedad,
-      slug: base.slug || r.propiedad.slug,
-      createdAt: base.createdAt || r.propiedad.createdAt,
-      _version: base.version + 1,
-    },
+  const propiedad: Propiedad = {
+    ...r.propiedad,
+    slug: base.slug || r.propiedad.slug,
+    createdAt: base.createdAt || r.propiedad.createdAt,
+    _version: base.version + 1,
   };
+  // Misma situación declarada que antes ⇒ misma declaración, misma fecha. Solo cambia si cambió.
+  const previa = base.autorizacionPH;
+  if (previa && propiedad.autorizacionPH && previa.situacion === propiedad.autorizacionPH.situacion) {
+    propiedad.autorizacionPH = { ...propiedad.autorizacionPH, ...previa };
+  }
+  return { ok: true, propiedad };
 }
 
 /** Lo que se guarda al abrir el formulario para poder editar sin inventar nada. */
@@ -409,6 +451,7 @@ export function baseDe(p: Propiedad): BaseEdicion {
     slug: p.slug ?? '',
     createdAt: p.createdAt,
     version: typeof p._version === 'number' ? p._version : 0,
+    ...(p.autorizacionPH ? { autorizacionPH: p.autorizacionPH } : {}),
   };
 }
 
@@ -434,6 +477,9 @@ export function entradaDe(p: Propiedad): EntradaAlta {
     lat: n(p.geo?.lat),
     lng: n(p.geo?.lng),
     rnt: p.rnt ?? '',
+    // Sin esta línea, editar el precio de un alojamiento borraba la declaración de PH y el guardado
+    // fallaba pidiendo un dato que el inmueble YA tenía.
+    situacionPH: p.autorizacionPH?.situacion ?? '',
     valorVenta: n(p.precio?.valorVenta),
     canon: n(p.precio?.canon),
     administracion: n(p.precio?.administracion),

@@ -1,5 +1,6 @@
 import type {
   ISODate, COP, Versioned, Auditable, Operacion, Vertical, TipoInmueble, EstadoPropiedad, Geo,
+  SituacionPH,
 } from './shared';
 
 /** Precio con DOBLE-PRECIO en arriendo (canon + administración) — diferenciador de transparencia (R1). */
@@ -62,6 +63,11 @@ export interface Propiedad extends Versioned, Auditable {
   priceHistory?: PriceHistoryEntry[];
   /** RNT — OBLIGATORIO y bloqueante cuando `operacion==='alojamiento'` (gate B3). */
   rnt?: string;
+  /**
+   * La OTRA mitad del gate B3: autorización del reglamento de PH para el uso turístico.
+   * Bloqueante en `alojamiento` igual que el RNT. Ausente = sin declarar = no se publica.
+   */
+  autorizacionPH?: AutorizacionPH;
   /** Multimedia: SIEMPRE URLs de R2 (derivados WebP fijos). NUNCA servir originales. */
   imagenes: string[];
   imagenPortada?: string;
@@ -133,17 +139,65 @@ export function portadaDe(p: Pick<Propiedad, 'imagenPortada' | 'imagenes'>): str
  * no puede importar de `ficha.ts` sin crear un ciclo. El modelo es el dueño de sus invariantes.
  */
 /**
- * ¿Se puede PUBLICAR esta ficha?
+ * Declaración sobre el reglamento de propiedad horizontal. La hace el OPERADOR al dar de alta, y
+ * queda fechada: sin fecha no hay declaración que oponer el día que alguien pregunte.
  *
- * Hoy hay un solo caso que la bloquea, y es legal, no de datos: **alojamiento turístico sin RNT**.
- * El Registro Nacional de Turismo es obligatorio para prestar servicios de hospedaje y anunciarse sin
- * él expone a cierre inmediato del establecimiento (verificación legal de `43 §Marco legal`, gate B3).
- * El tipo lo deja opcional porque el modelo es permisivo; la ley no lo es.
+ * ⚖️ POR QUÉ DECLARAR Y NO VERIFICAR. La norma pone la declaración en cabeza del PRESTADOR
+ * (D.1074/2015 art. 2.2.4.1.2.2 num. 8), y no existe norma que obligue al portal a leerse cada
+ * reglamento. Exigir copia de todos sería inventarnos un deber que la ley no impone y frenar el
+ * inventario entero por una cautela que nadie pidió. Pero la declaración se GUARDA, porque el riesgo
+ * que sí nos toca es el de publicidad engañosa (Ley 1480/2011) y en Cartagena la restitución de
+ * destinación en el Centro Histórico no es teórica.
+ */
+export interface AutorizacionPH {
+  situacion: SituacionPH;
+  /** Instante ISO de la declaración. Es la evidencia; por eso no es opcional. */
+  declaradaEn: ISODate;
+  /** Quién declaró (uid del operador), cuando la sesión lo sabe. */
+  declaradaPor?: string;
+  /**
+   * Clave R2 del reglamento o del acta de asamblea, cuando se adjunte.
+   * Hoy NADIE la exige y el gate no la mira: el campo existe porque el proyecto de decreto de 2026
+   * pasaría de DECLARAR a PROBAR, y ese día el cambio es llenar un campo, no migrar un modelo.
+   */
+  documento?: string;
+}
+
+/** El motivo LEGAL por el que una ficha no se puede publicar, o `null` si no hay ninguno. */
+export type MotivoLegal = 'sin-rnt' | 'sin-autorizacion-ph';
+
+/**
+ * ¿Qué le impide LEGALMENTE publicarse a esta ficha?
+ *
+ * Los dos motivos son del alojamiento turístico y son ACUMULATIVOS en la ley, pero se devuelve solo
+ * el primero porque el operador arregla de uno en uno y cada uno manda a buscar un papel distinto.
+ * Devolver el motivo en vez de un booleano es lo que permite que el mensaje diga la verdad: cuando
+ * los dos gates compartían el código `sin-rnt`, a quien le faltaba el permiso de la copropiedad se le
+ * mandaba a buscar el RNT que ya tenía.
+ *
+ * (1) **Sin RNT**: el Registro Nacional de Turismo es obligatorio para prestar hospedaje, y
+ *     anunciarse sin él expone a cierre inmediato (`43 §Marco legal`, gate B3).
+ * (2) **Sin autorización de PH**: el reglamento debe autorizar el uso turístico de forma EXPRESA;
+ *     el silencio no sirve (ver `SITUACIONES_PH`). Publicar una unidad de un edificio que no lo
+ *     permite expone al propietario a las sanciones del art. 59 de la Ley 675 y a nosotros a haberlo
+ *     anunciado sabiendo que no se podía.
  *
  * Fail-closed A PROPÓSITO: ante la duda no se publica. Una propiedad que desaparece del portal es un
  * problema de datos que alguien arregla en una tarde; una multa por publicidad ilegal, no.
  */
+export function motivoLegalNoPublicable(p: Propiedad): MotivoLegal | null {
+  if (p.operacion !== 'alojamiento') return null;
+  if (!p.rnt?.trim()) return 'sin-rnt';
+  if (p.autorizacionPH?.situacion !== 'no-aplica' && p.autorizacionPH?.situacion !== 'autoriza-expreso') {
+    return 'sin-autorizacion-ph';
+  }
+  return null;
+}
+
+/**
+ * ¿Se puede PUBLICAR esta ficha? Azúcar sobre `motivoLegalNoPublicable` para los lectores a los que
+ * les basta el sí/no (la ficha, que solo decide entre 200 y 404).
+ */
 export function publicable(p: Propiedad): boolean {
-  if (p.operacion === 'alojamiento' && !p.rnt?.trim()) return false;
-  return true;
+  return motivoLegalNoPublicable(p) === null;
 }

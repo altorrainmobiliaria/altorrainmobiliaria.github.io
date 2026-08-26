@@ -911,6 +911,19 @@ const init = DATA.admin;
               <input class="alt-input" id="a-rnt" name="rnt" type="text" placeholder="RNT-000000" />
               <p class="gx-hint">Obligatorio por ley para anunciar hospedaje.</p>
             </div>
+            <div data-solo="alojamiento" hidden>
+              <label class="alt-label" for="a-situacionPH">Reglamento de la copropiedad</label>
+              <select class="alt-input" id="a-situacionPH" name="situacionPH">
+                <option value="">Elige una opción</option>
+                <option value="autoriza-expreso">Autoriza expresamente el alquiler por días</option>
+                <option value="sin-autorizacion">No lo autoriza, o no dice nada</option>
+                <option value="no-aplica">El inmueble no está en propiedad horizontal</option>
+              </select>
+              <p class="gx-hint">
+                Si el reglamento calla, NO autoriza: la ley pide permiso expreso. Se puede llevar a votación de la
+                asamblea.
+              </p>
+            </div>
           </div>
           <div class="gx-fgrid">
             <div><label class="alt-label" for="a-lat">Latitud</label><input class="alt-input" id="a-lat" name="lat" type="text" placeholder="10.399" /></div>

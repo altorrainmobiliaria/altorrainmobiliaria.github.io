@@ -192,8 +192,50 @@ describe('🔴 construirPropiedad — lo que NO deja guardar', () => {
 
   it('un alojamiento SIN RNT no se guarda: es obligación legal, no un dato de más', () => {
     expect(errores({ operacion: 'alojamiento', valorVenta: '', precioNoche: '350000' })).toContain('rnt');
-    const conRnt = construir({ operacion: 'alojamiento', valorVenta: '', precioNoche: '350000', rnt: 'RNT-100001' });
+    const conRnt = construir({
+      operacion: 'alojamiento',
+      valorVenta: '',
+      precioNoche: '350000',
+      rnt: 'RNT-100001',
+      situacionPH: 'autoriza-expreso',
+    });
     expect(conRnt.ok).toBe(true);
+  });
+
+  it('un alojamiento sin declarar el reglamento de PH tampoco se guarda', () => {
+    const base = { operacion: 'alojamiento', valorVenta: '', precioNoche: '350000', rnt: 'RNT-100001' };
+    expect(errores(base)).toContain('situacionPH');
+  });
+
+  it('🔴 el SILENCIO del reglamento no vale como permiso: se bloquea igual que la prohibicion', () => {
+    const base = { operacion: 'alojamiento', valorVenta: '', precioNoche: '350000', rnt: 'RNT-100001' };
+    expect(errores({ ...base, situacionPH: 'sin-autorizacion' })).toContain('situacionPH');
+    // Y el mensaje tiene que decir POR QUE, no solo que falta un campo.
+    const r = construir({ ...base, situacionPH: 'sin-autorizacion' });
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    const m = r.errores.find((e) => e.campo === 'situacionPH');
+    expect(m?.mensaje).toMatch(/asamblea/i);
+  });
+
+  it('una casa que NO esta en propiedad horizontal se publica sin mas', () => {
+    const r = construir({
+      operacion: 'alojamiento',
+      valorVenta: '',
+      precioNoche: '350000',
+      rnt: 'RNT-100001',
+      situacionPH: 'no-aplica',
+    });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.propiedad.autorizacionPH?.situacion).toBe('no-aplica');
+    // La fecha es la EVIDENCIA: sin ella la declaracion no sirve de nada.
+    expect(r.propiedad.autorizacionPH?.declaradaEn).toBe(AHORA.toISOString());
+  });
+
+  it('venta y arriendo NO piden nada de propiedad horizontal', () => {
+    expect(errores({})).not.toContain('situacionPH');
+    expect(errores({ operacion: 'arriendo', valorVenta: '', canon: '4500000' })).not.toContain('situacionPH');
   });
 
   it('exige el precio QUE CORRESPONDE a la operación', () => {
@@ -236,7 +278,10 @@ describe('🎯 EL CONTRATO con el lector — la defensa contra §103', () => {
     const casos: Array<[Partial<EntradaAlta>, 'venta' | 'arriendo' | 'dias']> = [
       [{}, 'venta'],
       [{ operacion: 'arriendo', valorVenta: '', canon: '4500000' }, 'arriendo'],
-      [{ operacion: 'alojamiento', valorVenta: '', precioNoche: '350000', rnt: 'RNT-100001' }, 'dias'],
+      [
+        { operacion: 'alojamiento', valorVenta: '', precioNoche: '350000', rnt: 'RNT-100001', situacionPH: 'autoriza-expreso' },
+        'dias',
+      ],
     ];
     for (const [over, shard] of casos) {
       const r = construir({ ...over, estado: 'disponible' });

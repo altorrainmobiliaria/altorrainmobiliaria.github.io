@@ -6,8 +6,8 @@
 
 import { OPERACIONES } from './shared';
 import type { ISODate, COP, Operacion, TipoInmueble, EstadoPropiedad } from './shared';
-import { portadaDe, publicable } from './propiedades';
-import type { Propiedad } from './propiedades';
+import { portadaDe, motivoLegalNoPublicable } from './propiedades';
+import type { MotivoLegal, Propiedad } from './propiedades';
 
 /** Shards del índice por operación (doc `indices/catalogo-{shard}`). Sharding desde el día 1 (§54.4): el
  *  límite de 1 MiB por doc coincide con el tripwire de búsqueda (~2K listings) → el mecanismo expira donde debe. */
@@ -89,7 +89,7 @@ export function precioDisplay(p: Pick<Propiedad, 'operacion' | 'precio'>): COP |
 /** Motivo por el que una propiedad PUBLICADA no pudo entrar al índice (se REPORTA, no se oculta en silencio). */
 export interface OmitidaCatalogo {
   id: string;
-  motivo: 'sin-precio' | 'sin-imagen' | 'sin-titulo' | 'esquema-legacy' | 'sin-rnt';
+  motivo: 'sin-precio' | 'sin-imagen' | 'sin-titulo' | 'esquema-legacy' | MotivoLegal;
 }
 
 /**
@@ -133,7 +133,10 @@ export function motivosDeOmision(p: Propiedad): OmitidaCatalogo['motivo'][] {
   // sin RNT, pero el índice no lo llamaba: la card habría salido en /estancias con foto y precio —
   // que es EXACTAMENTE la publicidad de hospedaje sin registro que el gate B3 existe para impedir— y
   // encima enlazando a una ficha que devuelve 404. El mismo guardián en TODOS los lectores ([[L-45]]).
-  if (!publicable(p)) out.push('sin-rnt');
+  // Se pregunta por el MOTIVO, no por el sí/no: son dos papeles distintos y el operador tiene que
+  // saber cuál le falta.
+  const legal = motivoLegalNoPublicable(p);
+  if (legal) out.push(legal);
   if (precioDisplay(p) == null) out.push('sin-precio');
   if (!portadaDe(p)) out.push('sin-imagen');
   return out;
@@ -220,6 +223,8 @@ export function explicarProblema(m: ProblemaPublicacion): string {
       return 'Este documento tiene el formato del panel antiguo. Hay que volver a capturarlo desde aquí.';
     case 'sin-rnt':
       return 'Un alojamiento turístico necesita su número de RNT para poder anunciarse. Es obligación legal, no un dato de más.';
+    case 'sin-autorizacion-ph':
+      return 'Falta declarar que el reglamento de la copropiedad autoriza EXPRESAMENTE el alquiler por días. Que el reglamento no lo prohíba no basta: si calla, no autoriza. Si el inmueble no está en propiedad horizontal, márcalo como tal.';
     case 'sin-precio':
       return 'Falta el precio de la operación elegida (venta, canon de arriendo o precio por noche).';
     case 'sin-imagen':
