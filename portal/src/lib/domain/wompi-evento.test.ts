@@ -10,6 +10,8 @@ import {
   valorEnRuta,
   type EventoWompi,
 } from './wompi-evento';
+import { ESTADOS_MANDATO } from './mandato';
+import { ESTADOS_WOMPI } from './wompi-evento';
 
 const SECRETO = 'prod_events_XXXXXXXX';
 
@@ -180,5 +182,25 @@ describe('explicarVeredicto', () => {
       expect(explicarVeredicto(v).length).toBeGreaterThan(20);
     }
     expect(explicarVeredicto('vaya-usted-a-saber' as never).length).toBeGreaterThan(10);
+  });
+});
+
+describe('🔗 el estado del mandato se DERIVA de `mandato.ts`, no se copia (§176)', () => {
+  it('todo lo que puede salir de un webhook es un estado REAL del mandato', () => {
+    // Antes habia dos `ESTADOS_MANDATO` exportados con el mismo nombre desde modulos distintos y con
+    // miembros distintos (4 aqui, 5 alla). Nadie los consumia todavia, asi que nada fallaba; el dia
+    // que el webhook los importara los dos, habria elegido uno al azar segun el import.
+    for (const w of ESTADOS_WOMPI) {
+      expect(ESTADOS_MANDATO).toContain(estadoDelMandato(w));
+    }
+    expect(ESTADOS_MANDATO).toContain(estadoDelMandato('LO_QUE_SEA'));
+  });
+
+  it('🔴 un webhook NUNCA puede producir `liberado` — es una decision nuestra, no un evento', () => {
+    // El invariante de §165 escrito como prueba: que el pago se apruebe solo dice que el dinero salio
+    // del arrendatario. Girarlo al propietario tiene sus propias condiciones.
+    for (const w of [...ESTADOS_WOMPI, 'CUALQUIER_COSA']) {
+      expect(estadoDelMandato(w)).not.toBe('liberado');
+    }
   });
 });

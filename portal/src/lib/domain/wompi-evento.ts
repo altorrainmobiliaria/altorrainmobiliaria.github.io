@@ -30,13 +30,28 @@
  * La comparación en tiempo constante también vive aquí, porque es lógica y no criptografía.
  */
 
+import type { EstadoMandato, Transicion } from './mandato';
+
 /** Estados de transacción que emite Wompi. */
 export const ESTADOS_WOMPI = ['PENDING', 'APPROVED', 'DECLINED', 'VOIDED', 'ERROR'] as const;
 export type EstadoWompi = (typeof ESTADOS_WOMPI)[number];
 
-/** Lo que el evento significa para el mandato (diseño (a) del ADR §16). */
-export const ESTADOS_MANDATO = ['esperando', 'retenido', 'reversado', 'fallido'] as const;
-export type EstadoMandato = (typeof ESTADOS_MANDATO)[number];
+/**
+ * Lo que un evento de Wompi PUEDE significar para el mandato.
+ *
+ * 🔴 Se deriva del enum de `mandato.ts` con `Exclude`, y NO se vuelve a escribir la lista. Antes eran
+ * dos constantes `ESTADOS_MANDATO` exportadas con el MISMO nombre desde dos módulos de esta misma
+ * carpeta, con miembros DISTINTOS: aquí cuatro, allá cinco. Cualquiera que importara `EstadoMandato`
+ * recibía una u otra según el módulo, y un `switch` exhaustivo escrito contra esta se habría comido
+ * `liberado` sin que el compilador dijera nada. Nadie las consumía todavía — se arregló el día que
+ * apareció el primer consumidor, que es el momento barato (§176).
+ *
+ * Que `liberado` NO esté es el invariante de §165 escrito en el tipo: liberar el dinero al
+ * propietario es una decisión NUESTRA con sus condiciones, jamás la consecuencia de un webhook.
+ * Si mañana `mandato.ts` gana un estado nuevo, este tipo lo hereda y el `switch` de abajo deja de
+ * compilar — que es exactamente lo que debe pasar.
+ */
+export type EstadoDesdeWompi = Exclude<EstadoMandato, 'liberado'>;
 
 export interface EventoWompi {
   /** `id` del EVENTO. Es la clave idempotente buena; puede faltar en payloads viejos. */
@@ -128,7 +143,7 @@ export function claveIdempotente(evento: EventoWompi): string | null {
  * y no la consecuencia automática de un webhook. Confundir las dos cosas es cómo se gira dinero que
  * después hay que devolver.
  */
-export function estadoDelMandato(estado: string): EstadoMandato {
+export function estadoDelMandato(estado: string): EstadoDesdeWompi {
   switch (estado) {
     case 'APPROVED':
       return 'retenido';
@@ -141,6 +156,44 @@ export function estadoDelMandato(estado: string): EstadoMandato {
       return 'fallido';
     default:
       return 'esperando';
+  }
+}
+
+/**
+ * La REFERENCIA que nosotros pusimos al crear el cobro — es lo que dice a qué mandato aplica.
+ *
+ * Se lee de `transaction.reference` y se exige no vacía: sin ella el evento puede ser perfectamente
+ * auténtico y aun así no significar nada, porque no hay forma de saber de quién es ese dinero.
+ */
+export function referenciaDelEvento(evento: EventoWompi): string | null {
+  const ref = evento.data?.transaction?.['reference'];
+  return typeof ref === 'string' && ref.trim() ? ref.trim() : null;
+}
+
+/**
+ * Qué TRANSICIÓN intentar sobre el mandato. `null` = el evento no pide mover nada.
+ *
+ * 🔴 ESTA es la que usa el webhook para escribir, y NO `estadoDelMandato` — que dice qué *significa*
+ * el evento y sirve para telemetría y mensajes, pero **escribir ese estado directamente en el
+ * documento se salta la máquina** de `mandato.ts`. La diferencia no es de estilo: un evento tardío
+ * de Wompi (llegan desordenados y se reintentan hasta 3 veces en 24 h) podría pisar un mandato ya
+ * `liberado` y dejarlo en `esperando`, o sea, borrar del sistema que el dinero YA SALIÓ hacia el
+ * propietario. Pasando por `mover()`, ese mismo evento choca contra `PERMITIDAS` y se rechaza solo.
+ *
+ * `PENDING` devuelve `null` a propósito: no hay transición «volver a esperando». Un mandato nace
+ * `esperando`, así que el evento no aporta nada — y si el mandato ya avanzó, menos todavía.
+ */
+export function transicionDesdeWompi(estado: string): Transicion | null {
+  switch (estado) {
+    case 'APPROVED':
+      return 'aprobar';
+    case 'VOIDED':
+      return 'reversar';
+    case 'DECLINED':
+    case 'ERROR':
+      return 'fallar';
+    default:
+      return null;
   }
 }
 
