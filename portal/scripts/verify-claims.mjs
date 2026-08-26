@@ -115,3 +115,47 @@ if (hallazgos.length) {
 }
 
 console.log(`✅ verify:claims — ninguna cifra sin respaldo en las páginas públicas (${APROBADAS.size} declarada(s) como verificada).`);
+/*
+ * ── SONDA 2: LA PALABRA PROHIBIDA, RECLAMADA COMO NUESTRA (§173) ───────────────────────────────
+ *
+ * QUÉ CAZA. Llamar **«avalúo»** a nuestra estimación. En Colombia el avalúo es actividad REGULADA:
+ * lo firma quien está inscrito en el Registro Abierto de Avaluadores (Ley 1673 de 2013), y usar la
+ * palabra sin serlo no es una imprecisión de marketing — es atribuirse una calidad que no se tiene.
+ * Por eso §105 retiró «Avalúos» del menú y nuestro producto se llama **Rango ALTORRA**.
+ *
+ * 🔴 POR QUÉ HACE FALTA LA SONDA, si la regla ya estaba escrita. Estaba en CUATRO sitios —el gate B13
+ * de `42-LEGAL`, `redirects.ts`, `/nosotros` y `/publicar`— y el panel decía igualmente *«Tu avalúo
+ * fue actualizado»* en sus avisos. Nadie lo vigilaba. Es el mismo patrón de §162, §163 y §172, cuatro
+ * veces en un solo día: **una regla escrita da la sensación de estar aplicada**.
+ *
+ * ⚠️ NO PROHÍBE LA PALABRA, y esa distinción es todo el diseño. Hablar del avalúo —explicar qué es,
+ * citar el art. 18 de la Ley 820, o decir que nosotros NO lo hacemos— es correcto y necesario: el
+ * Journal tiene un artículo entero dedicado a eso. Lo que se caza es **reclamarlo como propio**: «tu
+ * avalúo», «nuestro avalúo», «avalúo ALTORRA», «avalúo gratis». Un gate que prohibiera la palabra
+ * obligaría a borrar precisamente el artículo que explica por qué no la usamos.
+ */
+const RECLAMO_AVALUO = /(?:\b(?:tu|su|nuestro|nuestra|mi)\s+aval[uú]os?\b|\baval[uú]os?\s+(?:ALTORRA|gratis)\b)/gi;
+
+const reclamos = [];
+for (const f of [...astro(join(SRC, 'pages')), ...astro(join(SRC, 'components'))]) {
+  const texto = soloTextoVisible(readFileSync(f, 'utf8'));
+  for (const m of texto.matchAll(RECLAMO_AVALUO)) {
+    const antes = texto.slice(Math.max(0, m.index - 80), m.index);
+    // Entre « » se está CITANDO lo que no se debe decir, para criticarlo.
+    if (/«[^»]*$/.test(antes)) continue;
+    reclamos.push({
+      f: relative(RAIZ, f),
+      linea: texto.slice(0, m.index).split('\n').length,
+      frase: m[0].replace(/\s+/g, ' ').trim(),
+    });
+  }
+}
+
+if (reclamos.length) {
+  console.error('❌ verify:claims — «avalúo» reclamado como servicio PROPIO (Ley 1673, gate B13):\n');
+  for (const r of reclamos) console.error(`   ${r.f}:${r.linea}  «${r.frase}»`);
+  console.error('\n   El avalúo lo firma quien está inscrito en el RAA. Lo nuestro se llama Rango ALTORRA.');
+  console.error('   Hablar DEL avalúo está bien; reclamarlo como propio, no (§173).');
+  process.exit(1);
+}
+console.log('✅ verify:claims — nadie reclama un «avalúo» como servicio propio (Ley 1673).');
