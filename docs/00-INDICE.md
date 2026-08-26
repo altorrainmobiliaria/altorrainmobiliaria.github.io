@@ -111,6 +111,7 @@
 | §159 | 👻 **Dos anclas fantasma en las 74 páginas** (`#nosotros`, `#servicios`: 468 enlaces muertos en el menú). El hueco vivía en la JUNTURA de dos gates. Nacen `/nosotros` y `/aliados`. | 6000 |
 | §160 | 🔬 **Barrido agregado del build**: 4 defectos (título legal DUPLICADO, 2FA sin nombre accesible, el héroe leyendo sus 4 titulares) y **2 falsos hallazgos verificados**. Un comentario mío cegó a su propio gate. | 6071 |
 | §161 | 🍞 **Migas de pan: 8 copias del mismo bloque y 10 páginas públicas sin ninguna** (las 4 legales incluidas). Helper puro + prop `miga` en `BaseLayout`. Migración con FOTO PREVIA: 23 idénticas byte a byte, 0 cambiadas. | 6147 |
+| §162 | 🗺️ **`/nosotros` no estaba en el sitemap** — y el archivo había PREDICHO ese olvido en su propio comentario. Regla nueva: o `noindex`, o anunciada, en los dos sentidos. La sonda mira el FUENTE, y ahí está el porqué. | 6189 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

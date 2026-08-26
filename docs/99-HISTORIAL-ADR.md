@@ -6185,3 +6185,52 @@ anotado: si vuelve a haber tres páginas sin miga, entonces sí (§G.5, anti-eng
 **161.6 — Archivos.** `portal/src/lib/seo/breadcrumbs.ts` (+ `.test.ts`, 8 pruebas) ·
 `layouts/BaseLayout.astro` (prop `miga`) · `layouts/LegalLayout.astro` · y 13 páginas.
 Verificado: 7 gates en verde, 591 tests. Commit `0d27eca`.
+
+## 162. ADR — El sitemap predijo su propia avería en un comentario, y la avería llegó igual ⟦OPUS-5⟧ (2026-08-26)
+
+**162.0 — El defecto.** `/nosotros` nació el 26-ago (§159), se enlazó desde el header y el pie de las
+74 páginas… y **quedó fuera de `sitemap.xml`**. No rompe nada, no sale en ninguna consola y no lo veía
+ningún gate: simplemente Google tarda semanas en descubrir la página, o no la descubre.
+
+**162.1 — Lo que lo hace instructivo.** `sitemap.xml.ts` **había escrito el diagnóstico**. Su propio
+comentario explica que las zonas y los artículos del Journal se DERIVAN de sus fuentes *«porque el
+olvido más común al añadir contenido es no meterlo al sitemap»*. Entendido el riesgo, nombrado por
+escrito… y la lista de páginas fijas siguió siendo manual, que es por donde entró el olvido.
+*Un comentario que nombra un riesgo no lo mitiga: lo documenta.* Es primo de [[M-06]] (el ✅
+decorativo) y de §159.5 (la exclusión mal razonada): las tres son formas de que la prosa sustituya al
+mecanismo.
+
+**162.2 — Y al medirlo salió el hueco de al lado.** `/favoritos`, `/ingresar` y `/404` **no declaraban
+`noindex` NI estaban en el sitemap**. El sitemap los excluía con su razón escrita («utilidades sin
+contenido indexable»), pero **esa exclusión no vale nada**: Google no llega por el sitemap, llega por
+los ENLACES — y el header enlaza a `/ingresar` desde todas las páginas. Una pantalla de acceso en los
+resultados no le sirve a nadie. Las tres lo declaran ya. *Un sitemap no es una lista de permisos: es
+una lista de sugerencias; lo que prohíbe es el `noindex`.*
+
+**162.3 — La regla, como equivalencia en los DOS sentidos.** Una página que **no** declara `noindex`
+**debe** estar anunciada; una que **sí** lo declara **no puede** estarlo. Sin la segunda mitad, la
+primera se satisface metiéndolo todo — panel interno incluido.
+
+**162.4 — La sonda mira el FUENTE, y es la excepción a la regla de la casa.** El resto de gates de
+este portal miran el artefacto construido, por [[L-50]] y §145 («cuando el fuente obliga a adivinar,
+mira el artefacto»). Aquí es al revés y hay que decir por qué: en un build de staging **TODAS** las
+páginas llevan `noindex` —es lo que protege al staging (§90)—, así que el HTML construido no puede
+distinguir «interna» de «pública» y el gate pasaría siempre, en verde y vacío. *La regla no es «mira
+siempre el artefacto», es «mira donde esté la verdad»; aquí la verdad la declara el fuente.*
+
+**162.5 — Mordida probada en las dos mitades**, contra el artefacto real: con el `dist` anterior salió
+rojo con exit 1 nombrando `/nosotros`; añadiendo `/gestion` (que es `noindex`) al sitemap, rojo
+nombrándolo a él; con el código corregido, verde con **35 URLs** anunciadas.
+
+**162.6 — Lo que este barrido NO encontró, y también cuenta.** Voz de marca: cero «Altorra» en
+minúscula, cero rastro del número personal del dueño. Peso: la home son 135 KB de HTML pero **19,6 KB
+en el cable** — comprimida, no es un problema. Desbordamiento horizontal a 375 px en 14 páginas: cero,
+y la medición se validó comprobando que el CSS de verdad se había aplicado antes de creerse el
+resultado. JSON-LD: las 41 páginas lo tienen, ninguno mal formado, ninguna URL relativa. **De los tres
+«hallazgos» del barrido de texto, dos eran artefactos de mi propio limpiado de etiquetas.** Tercera
+vez en el día que una regla mal formulada produce un hallazgo que se disuelve al mirar el mecanismo:
+la moraleja ya está en §160.2 y aquí solo se confirma.
+
+**162.7 — Archivos.** `portal/src/pages/sitemap.xml.ts` (`/nosotros`) · `404.astro` ·
+`favoritos.astro` · `ingresar.astro` (`noindex`) · `portal/scripts/verify-build.mjs` (la sonda).
+Verificado: 7 gates en verde, 591 tests. Commits `6d5c987` y el anterior.
