@@ -8683,3 +8683,47 @@ histórico de lo que se encontró aquel día y no se reescribe; quien la lea lle
 **K-01, K-04, K-05 y K-09 siguen sin medir.** Requieren leer el kernel chequeo por chequeo y esta
 vuelta no daba para eso sin hacerlo mal. Se declaran pendientes **de medición**, no de arreglo — que
 es una distinción que este ADR justifica: hasta que no se miden, no se sabe cuál de las dos cosas son.
+
+## 208. ADR-208 — Los cuatro K medidos: tres abiertos, uno cerrado, y dos que eran el mismo agujero
+
+**Contexto.** §207 dejó K-01, K-04, K-05 y K-09 declarados *«pendientes de MEDICIÓN, no de arreglo»*.
+Esta vuelta los mide, que es lo que faltaba para saber cuál de las dos cosas eran.
+
+### 208.1 — El resultado
+| | veredicto | evidencia medida |
+|---|---|---|
+| **K-01** | 🔴 abierto, **peor de lo descrito** | 3 marcadores `verificado-vivo`, **los tres en `05`**; el `10` tiene **cero** |
+| **K-04** | 🔴 abierto, confirmado | la regex del gate acepta *«última actualización / (al / actualizado»*; el `10` no usa ninguna → aporta **0 fechas** |
+| **K-05** | 🔴 abierto, confirmado | el #7 valida **ancla→fichero** (que resuelva) y **crudo→README** (que esté indexado); **nunca afirmación→ancla** |
+| **K-09** | 🟢 **efectivamente cerrado** | quedan **3** anclas `§Seccion` en el boot (`20 §Blaze` ×2, `43 §Matrícula`) y **todas resuelven** |
+
+### 208.2 — 🎯 K-01 y K-04 no son dos huecos: son el mismo, por dos lados
+El cerebro tiene **dos** mecanismos de frescura —la **fecha** sellada (#12) y el marcador
+**`verificado-vivo`** (#16)— y **el `10` está fuera de los dos**: ni aporta fecha que el gate reconozca
+ni lleva un solo marcador. Los dos hallazgos de julio describían el mismo agujero desde extremos
+distintos y por eso llevaban un año pareciendo dos tareas medianas en vez de una grave.
+**Y es el peor sitio posible para tenerlo**: el `10` es la **pizarra del WIP**, el nodo que cambia cada
+día y por tanto el que más rápido caduca. Los mecanismos de frescura vigilan al nodo estable y dejan
+libre al volátil. *Un guardián que cubre lo que no se mueve no es medio guardián: es ninguno, porque
+el riesgo está entero en lo que sí se mueve.*
+
+### 208.3 — Por qué NO se arregla en esta vuelta
+El arreglo correcto **no** es teclearle una fecha al `10` —eso es jugar con el gate, que es literalmente
+lo que K-04 denunciaba («valida FECHA tecleada, jugable»)—. Es que **el chequeo publique qué nodos
+aportaron fecha y cuáles no**, con lo que un nodo cayéndose en silencio se ve. Es [[M-27]] mecanizada,
+y sería la tercera vez hoy que el mismo principio arregla un gate distinto.
+Pero es un cambio del **kernel canónico**, que se reparte a tres repos, y ya hubo uno hoy (v1.15.0).
+Se deja **especificado y medido**, no ejecutado: el riesgo no es urgente —el `10` se ha reescrito
+docenas de veces esta sesión— y un cambio compartido al final de una jornada larga es exactamente
+cuando se cometen los errores que este historial documenta.
+
+### 208.4 — El patrón que cierra la serie §204-§208
+Cinco vueltas, **nueve pendientes medidos**: 3 ya estaban hechos, 2 eran falsos, 1 estaba mal
+etiquetado, 3 siguen abiertos de verdad. 🎯 **Solo un tercio de un ledger sin auditar describía la
+realidad.** Y de los tres que sobreviven, dos resultaron ser **el mismo problema partido en dos
+fichas** — que es la otra forma en que un ledger miente: no exagerando el total, sino **escondiendo la
+gravedad al repartirla**.
+
+### 208.5 — Archivos
+`docs/10`: los cuatro K con su veredicto medido; K-09 retirado. **INTACTO**: el kernel — a propósito,
+y con el arreglo escrito para quien lo tome con la cabeza fresca.
