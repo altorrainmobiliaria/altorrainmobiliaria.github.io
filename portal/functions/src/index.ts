@@ -87,7 +87,7 @@ const claveResend = (): string => {
 const REGION = 'us-central1';
 
 /**
- * COALESCENCIA de ráfagas (mejora deliberada sobre el debounce del legacy `onPropertyChange`, §58.2):
+ * COALESCENCIA de ráfagas (mejora deliberada sobre el debounce del legacy `onPropertyChange`, §58.2 — retirado en §217):
  * el debounce clásico DESCARTA la última edición si nadie más edita después. Aquí una edición dentro de
  * la ventana no se pierde: marca `pending` y el barrido (cada 5 min) la ejecuta. Resultado: edición
  * normal = instantánea; import masivo = 1 rebuild por ventana + 1 de cola; NADA queda sin reflejar.

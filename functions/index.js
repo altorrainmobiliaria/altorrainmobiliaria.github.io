@@ -3,14 +3,8 @@
  * Cloud Functions (Node 20, us-central1)
  *
  * FUNCIONES:
- *   onNewSolicitud           → Firestore create solicitudes/{id}
- *                              Envía email al admin con los datos del lead
  *   onSolicitudStatusChanged → Firestore update solicitudes/{id}
  *                              Envía email al cliente cuando el estado cambia
- *   onPropertyChange         → Firestore write propiedades/{id}
- *                              Dispara GitHub Actions para regenerar SEO (debounce 5 min)
- *   triggerSeoRegeneration   → HTTPS callable (solo super_admin)
- *                              Fuerza regeneración SEO manualmente desde el admin
  *   createManagedUserV2      → HTTPS callable (solo super_admin)
  *                              Crea usuario Firebase Auth + documento en /usuarios
  *   deleteManagedUserV2      → HTTPS callable (solo super_admin)
@@ -21,11 +15,19 @@
  * SECRETS (configurar con: firebase functions:secrets:set SECRET_NAME):
  *   EMAIL_USER   → cuenta Gmail remitente (ej. notificaciones@altorrainmobiliaria.co)
  *   EMAIL_PASS   → app password de Gmail (16 caracteres, sin espacios)
- *   GITHUB_PAT   → Personal Access Token con permiso repo + workflow
  *
- * DEPLOY:
- *   cd functions && npm install
- *   firebase deploy --only functions
+ * ⚠️ DEPLOY — NO despliegues este codebase ENTERO (26-ago-2026, §217):
+ *   `firebase deploy --only functions` alcanza a los DOS codebases (`default` y `portal`) y
+ *   CREARÍA funciones que hoy NO están desplegadas a propósito:
+ *     · aquí:   processNurturingEmails, sendNewsletter — nurturing APAGADO (§192: sus plantillas
+ *               enlazan al sitio retirado, y el SMTP de Gmail sigue caído con 535-5.7.8).
+ *     · portal: catalogoBarrido, alertasDigest — programadas; alertasDigest espera la clave de
+ *               Resend, y entre las dos consumen 2 de los 3 jobs gratuitos de Cloud Scheduler.
+ *   Despliega SIEMPRE por nombre:  firebase deploy --only functions:default:<nombre>
+ *   Y para RETIRAR una función, quítala del CÓDIGO **y** de producción:
+ *     firebase functions:delete <nombre> --region us-central1
+ *   Borrarla solo de producción la deja a un deploy de volver — le pasó a `onNewSolicitud`,
+ *   que estuvo meses retirada en Firebase y viva en este archivo (§217).
  *
  * EMULADOR LOCAL:
  *   firebase emulators:start --only functions,firestore
@@ -33,7 +35,7 @@
 
 'use strict';
 
-const { onDocumentCreated, onDocumentUpdated, onDocumentWritten }
+const { onDocumentUpdated, onDocumentWritten }
   = require('firebase-functions/v2/firestore');
 const { onCall, HttpsError } = require('firebase-functions/v2/https');
 const { onSchedule }         = require('firebase-functions/v2/scheduler');
@@ -42,7 +44,6 @@ const { initializeApp }      = require('firebase-admin/app');
 const { getFirestore, FieldValue, Timestamp } = require('firebase-admin/firestore');
 const { getAuth }            = require('firebase-admin/auth');
 const nodemailer             = require('nodemailer');
-const https                  = require('https');
 // Aleatoriedad CRIPTOGRÁFICA para la credencial inicial (§131). `Math.random()` no sirve aquí: es
 // predecible, y una contraseña inicial predecible es una puerta abierta hasta que alguien la cambie.
 const { randomBytes }        = require('crypto');
@@ -54,15 +55,11 @@ const auth = getAuth();
 // ── Secrets ────────────────────────────────────────────────────────────────
 const EMAIL_USER = defineSecret('EMAIL_USER');
 const EMAIL_PASS = defineSecret('EMAIL_PASS');
-const GITHUB_PAT = defineSecret('GITHUB_PAT');
 
 // ── Constantes ─────────────────────────────────────────────────────────────
 const REGION       = 'us-central1';
 const ADMIN_EMAIL  = 'info@altorrainmobiliaria.co';
 const SITE_NAME    = 'Altorra Inmobiliaria';
-const GITHUB_OWNER = 'altorrainmobiliaria';
-const GITHUB_REPO  = 'altorrainmobiliaria.github.io';
-const SEO_EVENT    = 'property-changed';
 
 // ── Helper: crear transporter de Nodemailer ───────────────────────────────
 function createTransporter(user, pass) {
@@ -87,103 +84,9 @@ async function requireSuperAdmin(uid) {
   }
 }
 
-// ── Helper: disparar GitHub Actions repository_dispatch ──────────────────
-function triggerGitHubActions(pat, eventType = SEO_EVENT) {
-  return new Promise((resolve, reject) => {
-    const body = JSON.stringify({ event_type: eventType });
-    const options = {
-      hostname: 'api.github.com',
-      path:     `/repos/${GITHUB_OWNER}/${GITHUB_REPO}/dispatches`,
-      method:   'POST',
-      headers:  {
-        'Accept':        'application/vnd.github+json',
-        'Authorization': `Bearer ${pat}`,
-        'Content-Type':  'application/json',
-        'Content-Length': Buffer.byteLength(body),
-        'User-Agent':    SITE_NAME,
-      },
-    };
-    const req = https.request(options, (res) => {
-      if (res.statusCode === 204) return resolve(true);
-      reject(new Error('GitHub API status: ' + res.statusCode));
-    });
-    req.on('error', reject);
-    req.write(body);
-    req.end();
-  });
-}
-
-// ── Debounce para onPropertyChange (evitar disparos repetidos) ───────────
-// Guarda un timestamp en system/seoDebounce; solo dispara si pasaron 5 min
-const SEO_DEBOUNCE_MS = 5 * 60 * 1000;
-
-async function shouldTriggerSeo() {
-  try {
-    const ref  = db.collection('system').doc('seoDebounce');
-    const snap = await ref.get();
-    const last = snap.exists ? snap.data().lastTriggered?.toMillis() : 0;
-    if (Date.now() - (last || 0) < SEO_DEBOUNCE_MS) return false;
-    await ref.set({ lastTriggered: FieldValue.serverTimestamp() });
-    return true;
-  } catch (_) { return true; }
-}
-
-// ── Helper: lead scoring automático ─────────────────────────────────────
-function calculateLeadScore(data) {
-  let score = 0;
-  const extra = data.datosExtra || {};
-
-  // Type of inquiry (higher intent = higher score)
-  const typeScores = {
-    agenda_visita:       30,
-    contacto_propiedad:  25,
-    solicitud_credito:   20,
-    publicar_propiedad:  15,
-    solicitud_avaluo:    15,
-    solicitud_juridica:  10,
-    solicitud_contable:  10,
-    otro:                 5,
-  };
-  score += typeScores[data.tipo] || 5;
-
-  // Completeness of contact data
-  if (data.nombre)   score += 5;
-  if (data.email)    score += 10;
-  if (data.telefono) score += 10;
-
-  // Has a specific property (higher intent)
-  if (extra.propiedadId) score += 10;
-
-  // High-value property (price > 1B COP)
-  if (extra.precioAproximado > 1_000_000_000) score += 10;
-  else if (extra.precioAproximado > 500_000_000) score += 5;
-
-  // Message length (effort = interest)
-  const msg = extra.mensaje || '';
-  if (msg.length > 100) score += 5;
-  else if (msg.length > 30) score += 2;
-
-  // Scheduling a visit with specific date = high intent
-  if (data.requiereCita && extra.fecha) score += 10;
-
-  // Business hours bonus (Mon-Fri 8am-6pm Colombia = UTC-5)
-  const now = new Date();
-  const colombiaHour = (now.getUTCHours() - 5 + 24) % 24;
-  const day = now.getUTCDay();
-  if (day >= 1 && day <= 5 && colombiaHour >= 8 && colombiaHour <= 18) score += 5;
-
-  // Classify: hot (70+), warm (40-69), cold (<40)
-  let tier;
-  if (score >= 70) tier = 'hot';
-  else if (score >= 40) tier = 'warm';
-  else tier = 'cold';
-
-  return { score, tier };
-}
-
 // ── Nurturing email sequences ──────────────────────────────────────────
 // Each sequence: array of { dayOffset, subject, bodyFn(data, extra) }
-// Step 0 = day of creation (handled by onNewSolicitud), steps 1+ = follow-ups
+// Step 0 = day of creation (lo envia el portal via Resend, no este codebase), steps 1+ = follow-ups
 
 const SITE_URL = 'https://altorrainmobiliaria.co';
 
@@ -400,103 +303,7 @@ function getNurturingSequence(tipo) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// 1. onNewSolicitud — Email al admin cuando llega un lead nuevo
-// ══════════════════════════════════════════════════════════════════════════
-exports.onNewSolicitud = onDocumentCreated(
-  { document: 'solicitudes/{solicitudId}', region: REGION, secrets: [EMAIL_USER, EMAIL_PASS] },
-  async (event) => {
-    const data = event.data.data();
-
-    // Idempotencia: no enviar si ya se envió
-    if (data.emailSent) return;
-
-    // Lead scoring
-    const { score, tier } = calculateLeadScore(data);
-
-    // Initialize nurturing sequence (follow-up emails over days)
-    const sequence = getNurturingSequence(data.tipo);
-    const firstStep = sequence[0];
-    const nextAt = new Date(Date.now() + firstStep.dayOffset * 86400000);
-    await event.data.ref.update({
-      leadScore: score,
-      leadTier: tier,
-      nurturing: {
-        step:         0,
-        completed:    false,
-        unsubscribed: false,
-        nextEmailAt:  Timestamp.fromDate(nextAt),
-        sequenceType: data.tipo || '_default',
-        totalSteps:   sequence.length,
-      },
-    });
-
-    const extra   = data.datosExtra || {};
-    const tipo    = data.tipo || 'contacto';
-    const tipoLabel = {
-      contacto_propiedad:  'Contacto sobre propiedad',
-      publicar_propiedad:  'Solicitud para publicar',
-      solicitud_avaluo:    'Solicitud de avalúo',
-      solicitud_juridica:  'Consulta jurídica',
-      solicitud_contable:  'Consulta contable',
-      otro:                'Otro',
-    }[tipo] || tipo;
-
-    const html = `
-      <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
-        <div style="background:#d4af37;padding:20px;border-radius:8px 8px 0 0">
-          <h1 style="color:#000;margin:0;font-size:1.4rem">${SITE_NAME}</h1>
-          <p style="color:#000;margin:4px 0 0;font-size:.9rem">Nuevo lead recibido</p>
-        </div>
-        <div style="background:#fff;border:1px solid #e5e7eb;border-top:0;padding:24px;border-radius:0 0 8px 8px">
-          <h2 style="margin:0 0 16px;font-size:1.1rem;color:#111">${tipoLabel}</h2>
-          <table style="width:100%;border-collapse:collapse;font-size:.95rem">
-            <tr><td style="padding:8px;border-bottom:1px solid #f3f4f6;color:#6b7280;width:140px">Nombre</td>
-                <td style="padding:8px;border-bottom:1px solid #f3f4f6"><strong>${data.nombre || '—'}</strong></td></tr>
-            <tr><td style="padding:8px;border-bottom:1px solid #f3f4f6;color:#6b7280">Teléfono</td>
-                <td style="padding:8px;border-bottom:1px solid #f3f4f6"><a href="tel:${data.telefono}">${data.telefono || '—'}</a></td></tr>
-            <tr><td style="padding:8px;border-bottom:1px solid #f3f4f6;color:#6b7280">Email</td>
-                <td style="padding:8px;border-bottom:1px solid #f3f4f6"><a href="mailto:${data.email}">${data.email || '—'}</a></td></tr>
-            ${extra.propiedadTitulo ? `
-            <tr><td style="padding:8px;border-bottom:1px solid #f3f4f6;color:#6b7280">Propiedad</td>
-                <td style="padding:8px;border-bottom:1px solid #f3f4f6">${extra.propiedadTitulo} (ID: ${extra.propiedadId || '—'})</td></tr>` : ''}
-            ${extra.mensaje ? `
-            <tr><td style="padding:8px;border-bottom:1px solid #f3f4f6;color:#6b7280">Mensaje</td>
-                <td style="padding:8px;border-bottom:1px solid #f3f4f6">${extra.mensaje}</td></tr>` : ''}
-            ${extra.tipoInmueble ? `
-            <tr><td style="padding:8px;border-bottom:1px solid #f3f4f6;color:#6b7280">Inmueble</td>
-                <td style="padding:8px;border-bottom:1px solid #f3f4f6">${extra.tipoInmueble} en ${extra.ciudad || '—'}</td></tr>
-            <tr><td style="padding:8px;border-bottom:1px solid #f3f4f6;color:#6b7280">Precio est.</td>
-                <td style="padding:8px;border-bottom:1px solid #f3f4f6">${formatCOP(extra.precioAproximado) || '—'}</td></tr>` : ''}
-            <tr><td style="padding:8px;color:#6b7280">Origen</td>
-                <td style="padding:8px">${data.origen || '—'}</td></tr>
-          </table>
-          <div style="margin-top:20px;padding:12px;background:${tier === 'hot' ? '#fef2f2' : tier === 'warm' ? '#fffbeb' : '#f9fafb'};border-radius:6px;font-size:.85rem;border-left:4px solid ${tier === 'hot' ? '#ef4444' : tier === 'warm' ? '#f59e0b' : '#9ca3af'}">
-            <strong style="color:${tier === 'hot' ? '#dc2626' : tier === 'warm' ? '#d97706' : '#6b7280'}">
-              ${tier === 'hot' ? '🔥 HOT' : tier === 'warm' ? '🟡 WARM' : '🔵 COLD'} — Score: ${score}/100
-            </strong>
-            <span style="color:#6b7280;margin-left:8px">ID: ${event.params.solicitudId}</span>
-          </div>
-        </div>
-      </div>`;
-
-    try {
-      const transporter = createTransporter(EMAIL_USER.value(), EMAIL_PASS.value());
-      await transporter.sendMail({
-        from:    `"${SITE_NAME}" <${EMAIL_USER.value()}>`,
-        to:      ADMIN_EMAIL,
-        subject: `[${tier.toUpperCase()}] ${tipoLabel} — ${data.nombre || 'Sin nombre'}`,
-        html,
-      });
-      // Marcar como enviado (idempotencia)
-      await event.data.ref.update({ emailSent: true, emailSentAt: FieldValue.serverTimestamp() });
-    } catch (err) {
-      console.error('[onNewSolicitud] Error enviando email:', err.message);
-    }
-  }
-);
-
-// ══════════════════════════════════════════════════════════════════════════
-// 2. onSolicitudStatusChanged — Email al cliente cuando el admin actualiza estado
+// 1. onSolicitudStatusChanged — Email al cliente cuando el admin actualiza estado
 // ══════════════════════════════════════════════════════════════════════════
 exports.onSolicitudStatusChanged = onDocumentUpdated(
   { document: 'solicitudes/{solicitudId}', region: REGION, secrets: [EMAIL_USER, EMAIL_PASS] },
@@ -547,45 +354,7 @@ exports.onSolicitudStatusChanged = onDocumentUpdated(
 );
 
 // ══════════════════════════════════════════════════════════════════════════
-// 3. onPropertyChange — Dispara GitHub Actions para regenerar SEO
-// ══════════════════════════════════════════════════════════════════════════
-exports.onPropertyChange = onDocumentWritten(
-  { document: 'propiedades/{propId}', region: REGION, secrets: [GITHUB_PAT] },
-  async () => {
-    const ok = await shouldTriggerSeo();
-    if (!ok) {
-      console.log('[onPropertyChange] Debounce activo — SEO omitido');
-      return;
-    }
-    try {
-      await triggerGitHubActions(GITHUB_PAT.value());
-      console.log('[onPropertyChange] GitHub Actions disparado ✅');
-    } catch (err) {
-      console.error('[onPropertyChange] Error disparando GitHub Actions:', err.message);
-    }
-  }
-);
-
-// ══════════════════════════════════════════════════════════════════════════
-// 4. triggerSeoRegeneration — Forzar regeneración SEO desde el admin
-// ══════════════════════════════════════════════════════════════════════════
-exports.triggerSeoRegeneration = onCall(
-  { region: REGION, secrets: [GITHUB_PAT] },
-  async (request) => {
-    await requireSuperAdmin(request.auth?.uid);
-    try {
-      await triggerGitHubActions(GITHUB_PAT.value());
-      // Resetear debounce para que la próxima edición también dispare
-      await db.collection('system').doc('seoDebounce').delete();
-      return { success: true, message: 'GitHub Actions disparado correctamente.' };
-    } catch (err) {
-      throw new HttpsError('internal', 'Error disparando GitHub Actions: ' + err.message);
-    }
-  }
-);
-
-// ══════════════════════════════════════════════════════════════════════════
-// 5. createManagedUserV2 — Crear usuario admin con rol
+// 2. createManagedUserV2 — Crear usuario admin con rol
 // ══════════════════════════════════════════════════════════════════════════
 exports.createManagedUserV2 = onCall(
   { region: REGION },
@@ -645,7 +414,7 @@ exports.createManagedUserV2 = onCall(
 );
 
 // ══════════════════════════════════════════════════════════════════════════
-// 6. deleteManagedUserV2 — Eliminar usuario admin
+// 3. deleteManagedUserV2 — Eliminar usuario admin
 // ══════════════════════════════════════════════════════════════════════════
 exports.deleteManagedUserV2 = onCall(
   { region: REGION },
@@ -721,7 +490,7 @@ exports.suspenderUsuarioV2 = onCall({ region: REGION }, async (request) => {
 });
 
 // ══════════════════════════════════════════════════════════════════════════
-// 7. updateUserRoleV2 — Cambiar el rol de un usuario admin
+// 4. updateUserRoleV2 — Cambiar el rol de un usuario admin
 // ══════════════════════════════════════════════════════════════════════════
 exports.updateUserRoleV2 = onCall(
   { region: REGION },
@@ -760,7 +529,7 @@ exports.updateUserRoleV2 = onCall(
 );
 
 // ══════════════════════════════════════════════════════════════════════════
-// 8. processNurturingEmails — seguimiento comercial a leads.
+// 5. processNurturingEmails — seguimiento comercial a leads.
 //
 // 🔴 EL HORARIO ERA ILEGAL, y no de una forma discutible (§172). Corría `every 6 hours`, que en UTC
 //    dispara a las 00/06/12/18 — o sea, en hora de Colombia, **a la 1 de la madrugada** y también los
@@ -794,6 +563,7 @@ exports.updateUserRoleV2 = onCall(
 //    ⇒ Conclusión: mover el nurturing al portal resuelve (1), (2) y (3) de una vez. Portarlo tal cual
 //      aquí no resuelve ninguna, y **reescribir las plantillas en el legacy sería trabajo tirado**.
 // ══════════════════════════════════════════════════════════════════════════
+// ⛔ NO DESPLEGADA (a propósito) — ver la advertencia de DEPLOY en la cabecera (§217).
 exports.processNurturingEmails = onSchedule(
   {
     // 9:00 y 15:00, de lunes a viernes, hora de Colombia: dentro de la ventana con margen sobrado.
@@ -875,9 +645,10 @@ exports.processNurturingEmails = onSchedule(
 );
 
 // ══════════════════════════════════════════════════════════════════════════
-// 9. sendNewsletter — Send newsletter to all active subscribers
+// 6. sendNewsletter — Send newsletter to all active subscribers
 //    Callable by super_admin from admin panel
 // ══════════════════════════════════════════════════════════════════════════
+// ⛔ NO DESPLEGADA (a propósito) — ver la advertencia de DEPLOY en la cabecera (§217).
 exports.sendNewsletter = onCall(
   { region: REGION, secrets: [EMAIL_USER, EMAIL_PASS] },
   async (request) => {
@@ -955,7 +726,7 @@ exports.sendNewsletter = onCall(
 );
 
 // ══════════════════════════════════════════════════════════════════════════
-// 10. CLAIMS DE STAFF — el documento manda, el token es su espejo
+// 7. CLAIMS DE STAFF — el documento manda, el token es su espejo
 //
 // EL PROBLEMA QUE RESUELVE (ADR §99): las reglas del PORTAL definen su gate de staff como
 // `request.auth.token.admin == true` —un custom claim— tanto en Firestore
@@ -1104,7 +875,7 @@ exports.sincronizarClaimsV2 = onCall({ region: REGION }, async (request) => {
 
 
 // ══════════════════════════════════════════════════════════════════════════
-// 12. registrarEvento — la BITÁCORA de acceso y de cambios (§130)
+// 8. registrarEvento — la BITÁCORA de acceso y de cambios (§130)
 // ══════════════════════════════════════════════════════════════════════════
 /*
  * `auditLog` llevaba desde siempre declarada en las Security Rules —con permisos, con la regla de
@@ -1190,7 +961,7 @@ exports.registrarEvento = onCall({ region: REGION }, async (request) => {
 });
 
 // ══════════════════════════════════════════════════════════════════════════
-// 13. cerrarMisSesiones — la única forma real de cerrar sesión en OTRO dispositivo
+// 9. cerrarMisSesiones — la única forma real de cerrar sesión en OTRO dispositivo
 // ══════════════════════════════════════════════════════════════════════════
 /*
  * QUÉ RESUELVE. Hasta hoy, si a alguien le robaban el computador con el panel abierto, no había
@@ -1220,7 +991,7 @@ exports.cerrarMisSesiones = onCall({ region: REGION }, async (request) => {
 });
 
 // ══════════════════════════════════════════════════════════════════════════
-// 14. retirarSegundoFactorDe — el rescate cuando alguien pierde el teléfono
+// 10. retirarSegundoFactorDe — el rescate cuando alguien pierde el teléfono
 // ══════════════════════════════════════════════════════════════════════════
 /*
  * POR QUÉ EXISTE. Un segundo factor bien hecho no tiene puerta trasera: quien pierde el teléfono no

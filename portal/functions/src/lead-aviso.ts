@@ -12,10 +12,10 @@
  * su secreto creado con centinela (§140) — así que registrar esta Function **no bloquea el despliegue
  * del codebase**, que es el error que §140 documenta.
  *
- * ⚠️ CONVIVENCIA CON LA LEGACY: `onNewSolicitud` sigue existiendo y escucha la MISMA colección. Hoy no
- * duplica nada porque no puede enviar (su SMTP falla), pero si alguien arregla esa contraseña sin leer
- * esto, saldrían DOS correos por lead. Al retirar el legacy en el cutover, esta se queda sola. Está
- * escrito aquí y no solo en un ADR porque el que arregle la contraseña abrirá este archivo, no el ADR.
+ * ✅ LA LEGACY YA NO EXISTE (26-ago-2026, §217). Esta nota avisaba de que `onNewSolicitud` escuchaba
+ * la MISMA colección y que arreglar su contraseña de Gmail habría mandado DOS correos por lead. Se
+ * retiró del código **y** de producción, así que el peligro está cerrado y esta Function se queda sola.
+ * Se deja escrito —en vez de borrarlo— porque quien encuentre el SMTP roto buscará quién lo usaba.
  */
 
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
