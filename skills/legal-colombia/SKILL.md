@@ -218,6 +218,32 @@ año**, y en una empresa que crece el margen se estrecha por arriba; (4) si el g
 un NIT**, cada sociedad se evalúa por separado.
 
 
+## 🔌 Qué fuentes oficiales se pueden LEER de verdad (mapa medido, no teórico)
+
+La regla dice «norma en fuente oficial `.gov.co`». En la práctica **la mitad de esas fuentes no se
+deja leer por herramienta**, y descubrirlo cuesta media hora cada vez. Este mapa se midió el
+2026-08-26 intentando verificar un solo artículo del Código Civil.
+
+| Fuente | ¿Se lee? | Cómo |
+|---|---|---|
+| **`funcionpublica.gov.co/eva/gestornormativo/norma.php?i=NNNN`** | ✅ **la mejor** | HTML plano. Leyes completas. Empieza SIEMPRE por aquí |
+| Gacetas y PDF de **asambleas departamentales** | ✅ suele ir | PDF **con capa de texto**: descárgalo y extráelo (`pypdf`), no lo leas por el navegador |
+| **`minhacienda.gov.co`** (resoluciones) | ⚠️ existe pero **escaneado** | El documento es real; el texto NO se puede extraer. Sirve para probar que la norma existe, no para citarla literal |
+| **`igac.gov.co`** (PDF de códigos) | ❌ escaneado | 283 páginas de imagen, cero capa de texto |
+| **`alcaldiabogota.gov.co/sisjur`** | ⚠️ trunca | Documento correcto, pero de un código largo solo devuelve el principio: sirve para el Libro I, no para el 756 |
+| **`secretariasenado.gov.co`** | ❌ hoy no | Conexión rechazada |
+| **`suin-juriscol.gov.co`** | ❌ hoy no | La conexión se cae |
+| `cijuf.org.co` · `ambitojuridico.com` | ❌ | 403 |
+| Bufetes y publicaciones especializadas | ✅ útil **como corroboración** | Nunca como cita única: son secundarias |
+
+**Cómo usar esto sin bajar el listón.** El orden que funciona: (1) Gestor Normativo de Función
+Pública; (2) el PDF oficial **si tiene capa de texto**; (3) dos fuentes secundarias independientes que
+**coincidan en la cifra o el texto**. 🎯 **Y si ninguna deja leer la norma, la salida honesta es NO
+publicar la afirmación** — no citar una URL que no abriste. Un artículo cuya premisa dice «cada
+afirmación con su norma citada» y cita una norma que nadie leyó destruye exactamente lo que promete.
+**«No pude verificarlo» es un resultado**, y se dice.
+
+
 ## Cuándo NO usar esta skill
 
 - El usuario pide explícitamente un asunto legal de **otro país** (ahí sí los plugins extranjeros aplican).
