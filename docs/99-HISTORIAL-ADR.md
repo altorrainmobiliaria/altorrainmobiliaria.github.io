@@ -6501,3 +6501,49 @@ la fase 4 del runbook.
 `src/scripts/gestion-liquidacion.ts` (nuevo) · `src/pages/gestion.astro` (vista, menú, estilos) ·
 `src/scripts/gestion-alta-ui.ts` (enrutado) · `scripts/verify-css-runtime.mjs` (extracción ensanchada).
 Commits `0b274f8` y el anterior. ⏭️ El mockup queda **pendiente del visto bueno de Daniel**.
+
+## 168. ADR — La certificación al propietario, y una fórmula jurídica que no aparecía en la norma ⟦OPUS-5⟧ (2026-08-26)
+
+**168.0 — La pieza.** De las cuatro formalidades del esquema canon-neto bajo mandato —facturar el
+canon por cuenta del mandante · facturar la comisión con IVA · **certificación al propietario** ·
+contabilidad separada— esta era la única sin código. Es lo que el propietario necesita para declarar.
+Función pura sobre las liquidaciones de §166, 23 pruebas.
+
+**168.1 — Base verificada, leída del texto y no de una nota** (`D.1625/2016 art. 1.2.4.11`): el
+mandatario practica las retenciones *«teniendo en cuenta para el efecto la calidad del mandante»*;
+debe *«identificar en su contabilidad los ingresos recibidos para el mandante y los pagos y
+retenciones efectuadas por cuenta de este»*; y el mandante declara esos ingresos *«según la
+información que le suministre el mandatario»* — de ahí sale la obligación de entregársela, que es
+exactamente lo que produce este módulo.
+
+**168.2 — 🔴 Y lo que NO pude verificar, que es el hallazgo.** La nota de `43-OPERACION` daba por
+sentado que la certificación va **«bajo la gravedad del juramento»**. Busqué el artículo en fuente
+oficial y **ese inciso no aparece** en lo que pude leer. Puede estar en una parte del decreto que no
+alcancé — pero *una fórmula jurídica que no se ha leído no se escribe en un documento que firma la
+empresa*: es precisamente el tipo de frase que alguien cita después como si fuera nuestra. El
+certificado sale sin ella; si aparece verificada, se añade. La nota del kit queda **corregida en el
+sitio**, con lo que sí se leyó y lo que no. (§3.3 aplicada a una fuente propia, que es donde más
+cuesta: contradecir el kit se siente como desconfiar del trabajo anterior, y es justo lo contrario.)
+
+**168.3 — La decisión que más pesa, y es de dinero ajeno.** El ingreso del propietario es **el
+CANON**, no lo cobrado al arrendatario. La cuota de la copropiedad **nunca fue suya**: pasó por
+nosotros camino de la PH. Meterla en «ingresos recibidos» le inflaría el **ingreso declarado** con
+dinero que no recibió — y eso se paga en impuestos, de su bolsillo, por un error nuestro en un
+documento que él no puede auditar. Probado: al inflarlo, caen 6 de las 23 pruebas.
+
+**168.4 — El problema que hace daño en silencio: el MES REPETIDO.** Certificar dos veces el mismo
+período duplica un ingreso en la declaración de otra persona, **y el documento parece perfecto**. Es
+el único problema de la lista que produce un certificado creíble y dañino, así que tiene su propia
+comprobación y su propio mensaje. Además `mesesFaltantes()` obliga a que un año con huecos lo DIGA:
+quien recibe un certificado asume que cubre el período completo, y esa suposición es razonable.
+
+**168.5 — No confía en el orden de entrada.** Un certificado cuyo «desde» sale de `meses[0]` miente
+en cuanto alguien pasa los meses al revés, **y nadie lo notaría**: las dos fechas seguirían pareciendo
+fechas. Se ordena por período dentro de la función.
+
+**168.6 — Verificación.** 749 tests (23 nuevos), 7 gates en verde. Mordidas probadas en las dos
+protecciones clave. Sin pantalla todavía: el certificado se emite cuando haya meses reales que
+certificar, y eso es de la fase 4 del runbook.
+
+**168.7 — Archivos.** `portal/src/lib/domain/certificacion.ts` (+ `.test.ts`) · `docs/43-OPERACION.md`
+(la nota corregida). Commit `0144955`.

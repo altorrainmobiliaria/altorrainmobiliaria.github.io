@@ -168,7 +168,12 @@ Fontur 2,5‰ SIN umbral desde L.2068; SIRE obligatorio con extranjeros — mult
 de 5 días del art. 47 SÍ aplica a reservas a distancia).
 **LEGALES confirmadas:** esquema mandato canon-neto CON 4 formalidades (facturar el canon por cuenta del
 mandante · facturar la comisión con IVA · certificación al propietario · contabilidad separada — D.1625
-§1.6.1.4.9 y §1.2.4.11) · migración de contratos por CESIÓN (C.Co 887 ss.) CON aceptación del propietario
+§1.6.1.4.9 y §1.2.4.11). ⚠️ **Del §1.2.4.11 se leyó el texto en fuente oficial el 26-ago (§168)**: dice
+que el mandatario practica las retenciones «teniendo en cuenta la calidad del mandante», que debe
+«identificar en su contabilidad los ingresos recibidos para el mandante y los pagos y retenciones
+efectuadas por cuenta de este», y que el mandante declara «según la información que le suministre el
+mandatario». **NO se encontró** el «bajo la gravedad del juramento» que esta nota daba por hecho: hasta
+verlo, esa fórmula NO va en el certificado · migración de contratos por CESIÓN (C.Co 887 ss.) CON aceptación del propietario
 (intuitu personae) + notificación escrita al arrendatario — o refirma, que con 1-2 contratos es lo simple ·
 codeudor/póliza/pagaré-con-carta-de-instrucciones en vivienda (C.Co 622) · comisión solo al registro
 verificado (más garantista que C.Co 1341) · prohibir subarriendo turístico al arrendatario (§17 default).
