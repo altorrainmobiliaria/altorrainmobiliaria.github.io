@@ -8438,3 +8438,45 @@ redactada para los **gates**, y yo la leía como una regla de gates. No lo es �
 ### 202.5 — Archivos
 `docs/33-LECCIONES-META.md` (M-27) · `docs/30-LECCIONES.md` (stub). **INTACTO**: todo el código y todo
 lo desplegado. Esta vuelta no tocó producción, a propósito.
+
+## 203. ADR-203 — Los pendientes de Daniel, sacados del lenguaje del sistema y puestos en el suyo
+
+**Contexto.** Tras cerrar la agenda legal, desplegar lo que faltaba y auditar el cerebro, la
+conclusión honesta era que **todo lo que queda depende de Daniel**. Y sus pendientes vivían
+repartidos entre las PELOTAS de `10` y las fases del `CUTOVER-RUNBOOK` — dos documentos escritos para
+mí, no para él: con `§`, nombres de Functions y motes internos.
+
+### 203.1 — Qué se entregó
+Una página publicada como artifact —**«Qué falta para lanzar»**— con cuatro bloques: (1) **la primera
+cosa**, Resend, con coste, tiempo y lo que desbloquea; (2) **la ruta**, cinco tramos en orden y
+marcando cuál es suyo y cuál mío; (3) **seis respuestas cortas**, cada una un dato que ya tiene o una
+decisión de una frase; (4) **lo que puede dejar quieto**, con el porqué, para que lo suelte sin dudar.
+URL en la memoria del harness → [[brief-lanzamiento-artifact]], **con la instrucción de ACTUALIZARLO en
+vez de publicar otro**: dos páginas que dicen cosas distintas son peores que ninguna.
+
+### 203.2 — La frase que justifica el trabajo
+*«El sistema ya puntúa y guarda cada interesado, pero no le avisa a usted.»* Es cierta desde el §197 y
+estaba **implícita** en tres nodos distintos; ninguno la decía así. Un dueño que lee «RESEND: dominio
++ clave — gratis, ~30 min» no siente lo mismo que uno que lee «alguien puede entrar hoy y usted no
+enterarse». **El dato era el mismo; lo que faltaba era el coste dicho en su moneda.**
+
+### 203.3 — Dos decisiones de diseño que salieron de las REGLAS, no del gusto
+1. **Sin rojo.** La identidad prohíbe verde y rojo; los estados van con navy, oro e ícono. Eso obligó a
+   resolver el aviso más grave —*no cargue inmuebles en el panel viejo: desaparecen sin dar error*—
+   con **navy sólido y una barra de oro**. Quedó mejor que el rojo reflejo: no parece una alerta de
+   sistema, parece la advertencia de un asesor. *Una restricción de marca bien puesta empuja hacia una
+   solución más adecuada, no solo hacia una distinta.*
+2. **La ruta va numerada; las preguntas NO.** Numerar afirma *«esto tiene un orden y saltárselo rompe
+   algo»* — verdad en la ruta, cuyo último paso es irreversible. Las seis preguntas son un conjunto:
+   numerarlas habría mentido sobre eso (§G: la estructura codifica algo cierto, no decora).
+
+### 203.4 — Verificación
+Antes de publicar se comprobó la afirmación que la página hace sobre el estado: **`npm run verify`
+completo, 29 comprobaciones en verde y cero fallos**. Y tras publicar, se releyó el HTML servido: los
+cuatro bloques presentes, sin marcado roto ni duplicados. *Un documento que afirma «todo en verde» hay
+que correrlo, no recordarlo* — más aún cuando se le entrega al dueño.
+
+### 203.5 — Archivos
+**NUEVO**: memoria `brief-lanzamiento-artifact` + su puntero en el índice del harness. **INTACTO**:
+todo el repositorio — la página se deriva de `10` y del runbook, que siguen siendo los dueños del
+dato; la página es una VISTA, y por eso no se duplicó nada en el cerebro.
