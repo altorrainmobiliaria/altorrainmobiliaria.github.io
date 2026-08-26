@@ -1097,6 +1097,11 @@ const ACCIONES_VALIDAS = new Set([
   // nómina— y quien los abre es quien los revisa. Mismo criterio que la bóveda: si algún día
   // alguien pregunta quién vio la cédula de un aspirante, o hay respuesta o no la hay.
   'perfil-abierto', 'perfil-dictaminado',
+  // ALTA DE CUENTA (§154). No es telemetría: es la PRUEBA de la autorización de habeas data. La
+  // Ley 1581 (art. 9) y el Decreto 1377 (art. 5) piden que el responsable CONSERVE prueba de que
+  // el titular autorizó, y esta entrada la trae completa y escrita por el servidor: uid verificado,
+  // correo, IP, navegador y fecha. Una casilla marcada en un formulario, sin esto, no prueba nada.
+  'cuenta-creada',
 ]);
 
 exports.registrarEvento = onCall({ region: REGION }, async (request) => {

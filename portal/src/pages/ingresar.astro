@@ -77,6 +77,40 @@ const ojo =
         </form>
 
         <p class="ing__alt">¿Aún no tienes cuenta? <button class="ing__link" type="button" id="ing-crear">Crear cuenta</button></p>
+      </div>
+
+      <div class="ing__card alt-card alt-card--neu" id="ing-alta" hidden>
+        <div class="ing__intro">
+          <h1 class="ing__h">Crea tu cuenta</h1>
+          <p class="ing__p">Para guardar favoritos, seguir tus solicitudes y preparar tu perfil de arrendatario una sola vez.</p>
+        </div>
+
+        <div class="ing__error" id="ing-alta-error" hidden role="alert">
+          <strong id="ing-alta-error-h">No pudimos crear la cuenta</strong>
+          <span id="ing-alta-error-p">Revisa los datos e inténtalo de nuevo.</span>
+        </div>
+
+        <form class="ing__form" id="ing-alta-form" novalidate>
+          <div class="ing__group">
+            <label class="alt-label" for="ing-alta-mail">Correo electrónico</label>
+            <input class="alt-input" id="ing-alta-mail" name="email" type="email" autocomplete="email" placeholder="nombre@correo.com" required />
+          </div>
+
+          <div class="ing__group">
+            <label class="alt-label" for="ing-alta-pass">Contraseña</label>
+            <input class="alt-input" id="ing-alta-pass" name="new-password" type="password" autocomplete="new-password" placeholder="••••••••••••" required />
+            <p class="ing__hint">Mínimo 12 caracteres. Una frase que recuerdes vale más que símbolos raros: <em>mi casa en manga 1998</em>.</p>
+          </div>
+
+          <label class="ing__check ing__check--legal">
+            <input type="checkbox" id="ing-alta-habeas" />
+            <span>Autorizo a ALTORRA Inmobiliaria a tratar mis datos personales conforme a su <a href="/legal/politica-tratamiento-datos" target="_blank" rel="noopener">Política de Tratamiento de Datos</a>.</span>
+          </label>
+
+          <button class="alt-btn alt-btn--gold ing__submit" type="submit" id="ing-alta-submit">Crear cuenta</button>
+        </form>
+
+        <p class="ing__alt">¿Ya tienes cuenta? <button class="ing__link" type="button" id="ing-volver-login">Ingresar</button></p>
 
         <p class="ing__legal">
           Al continuar aceptas nuestros Términos y la <a href="/legal/politica-tratamiento-datos">Política de Tratamiento de Datos</a> de ALTORRA Inmobiliaria.
@@ -165,6 +199,13 @@ const ojo =
 
   .ing__row { display: flex; align-items: center; justify-content: space-between; gap: var(--alt-space-3); flex-wrap: wrap; font-size: var(--alt-fs-sm); }
   .ing__check { display: inline-flex; align-items: center; gap: 8px; color: var(--alt-text-soft); cursor: pointer; }
+  /* La casilla legal se alinea ARRIBA y el texto respira: es un párrafo que hay que leer, no una
+     opción que se marca de pasada. Y NO viene marcada de fábrica (Ley 1581 art. 9: autorización
+     previa y EXPRESA — una casilla pre-marcada no es ninguna de las dos cosas). */
+  .ing__check--legal { align-items: flex-start; gap: 10px; line-height: 1.6; font-size: 13.5px; text-align: left; }
+  .ing__check--legal input { margin-top: 3px; flex: none; }
+  .ing__check--legal a { color: var(--alt-link); text-decoration: underline; text-underline-offset: 2px; }
+  .ing__hint { margin: 6px 0 0; font-size: 12.5px; line-height: 1.6; color: var(--alt-text-soft); }
 
   .ing__link { border: 0; background: none; padding: 0; font: inherit; color: var(--alt-ink); font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
   .ing__link:hover { color: var(--alt-gold); }
@@ -198,6 +239,7 @@ const ojo =
 
 <script>
   import { cargarAuth } from '../scripts/auth';
+  import { llamarCallable } from '../scripts/callable';
   import {
     completarConCodigo,
     explicarSegundoFactor,
@@ -438,13 +480,105 @@ const ojo =
     }
   });
 
-  /* Crear cuenta sigue cerrado por DECISIÓN del dueño, no por el gate legal: la Política de
-     Tratamiento de Datos ya está publicada (ADR §90). Decirlo es más honesto que un formulario
-     prematuro. La conducta del botón NO cambia hasta que Daniel dé el visto bueno. */
-  document.getElementById('ing-crear')?.addEventListener('click', () => {
-    avisar(
-      'Las cuentas abren muy pronto',
-      'Mientras tanto no necesitas cuenta: tus favoritos se guardan en este navegador y puedes escribirnos por WhatsApp al +57 300 243 9810.',
-    );
+  /* ── ALTA DE CUENTA (§154) ──────────────────────────────────────────────────────────────────
+   * ABIERTA por decisión del dueño el 2026-08-25. Llevaba cerrada desde §90 esperando su visto
+   * bueno, no por el gate legal — la Política de Tratamiento de Datos está publicada desde el 20 de
+   * agosto.
+   *
+   * ⚠️ RIESGO ACEPTADO A CONCIENCIA: el anti-bot está aplazado (§132.5), así que cualquiera con un
+   * correo puede tener SESIÓN. Lo que NO puede tener es permisos: el claim `admin` lo pone un
+   * trigger desde `usuarios/{uid}` (§99) y ninguna cuenta nueva lo trae. Una sesión sin claim no
+   * abre nada del panel ni lee un dato ajeno — eso lo sostienen las Rules, no esta pantalla.
+   *
+   * ⚖️ Y LA CASILLA NO ES DECORACIÓN. La Ley 1581 (art. 9) exige autorización PREVIA y expresa, y el
+   * Decreto 1377 (art. 5) exige CONSERVAR prueba de ella. Por eso: no viene marcada de fábrica, sin
+   * ella no se crea la cuenta, y al crearse se registra la prueba en el servidor —uid verificado,
+   * correo, IP, navegador y fecha— con `registrarEvento`. Una casilla marcada sin ese registro no
+   * prueba nada el día que alguien la reclame.
+   */
+  const alta = document.getElementById('ing-alta');
+  const altaForm = document.getElementById('ing-alta-form') as HTMLFormElement | null;
+
+  // `paso1` ya está declarado arriba (lo usa el paso del segundo factor): se REUTILIZA. Declararlo
+  // otra vez compila en el navegador y revienta el typecheck, que es el que tiene razón.
+  const verAlta = (si: boolean) => {
+    if (paso1) paso1.hidden = si;
+    if (alta) alta.hidden = !si;
+    limpiarAviso();
+    window.scrollTo({ top: 0 });
+  };
+
+  document.getElementById('ing-crear')?.addEventListener('click', () => verAlta(true));
+  document.getElementById('ing-volver-login')?.addEventListener('click', () => verAlta(false));
+
+  function avisarAlta(titulo: string, detalle: string): void {
+    const caja = document.getElementById('ing-alta-error');
+    const h = document.getElementById('ing-alta-error-h');
+    const p = document.getElementById('ing-alta-error-p');
+    if (h) h.textContent = titulo;
+    if (p) p.textContent = detalle;
+    caja?.removeAttribute('hidden');
+  }
+
+  altaForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    document.getElementById('ing-alta-error')?.setAttribute('hidden', '');
+
+    const correo = (document.getElementById('ing-alta-mail') as HTMLInputElement | null)?.value.trim() || '';
+    const clave = (document.getElementById('ing-alta-pass') as HTMLInputElement | null)?.value || '';
+    const autoriza = (document.getElementById('ing-alta-habeas') as HTMLInputElement | null)?.checked ?? false;
+
+    if (!correo || !clave) {
+      avisarAlta('Faltan datos', 'Escribe tu correo y una contraseña para continuar.');
+      return;
+    }
+    // El mínimo real lo impone Identity Platform (12). Se comprueba ANTES de llamar para no
+    // devolver un error de plataforma que no explica nada.
+    if (clave.length < 12) {
+      avisarAlta('La contraseña es muy corta', 'Necesita al menos 12 caracteres. Una frase que recuerdes funciona mejor que símbolos raros.');
+      return;
+    }
+    if (!autoriza) {
+      avisarAlta(
+        'Falta tu autorización',
+        'Sin tu autorización expresa no podemos tratar tus datos (Ley 1581, art. 9). Puedes leer la Política antes de marcarla.',
+      );
+      return;
+    }
+
+    const boton = document.getElementById('ing-alta-submit') as HTMLButtonElement | null;
+    if (boton) {
+      boton.disabled = true;
+      boton.textContent = 'Creando…';
+    }
+
+    try {
+      const { a, m } = await auth();
+      await m.createUserWithEmailAndPassword(a, correo, clave);
+
+      /*
+       * La verificación del correo se pide SIEMPRE y de inmediato. Es lo más barato que frena el
+       * registro basura mientras no exista el anti-bot, y de paso confirma que el correo por el que
+       * le vamos a escribir es suyo. No se bloquea la sesión por ella: se le dice.
+       */
+      if (a.currentUser) void m.sendEmailVerification(a.currentUser);
+
+      // La PRUEBA de la autorización, escrita por el servidor. Va sin esperar: si fallara, la
+      // persona ya tiene su cuenta y el reintento es nuestro problema, no suyo.
+      void llamarCallable('registrarEvento', {
+        accion: 'cuenta-creada',
+        origen: 'portal-ingresar',
+        detalle: 'Autorizó la Política de Tratamiento de Datos al crear la cuenta (Ley 1581 art. 9).',
+      });
+
+      irADestino();
+    } catch (err) {
+      const [t, d] = explicar((err as { code?: string })?.code || '');
+      avisarAlta(t, d);
+      if (boton) {
+        boton.disabled = false;
+        boton.textContent = 'Crear cuenta';
+      }
+    }
   });
 </script>
