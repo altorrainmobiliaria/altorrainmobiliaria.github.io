@@ -33,7 +33,7 @@
 | **TODO-46** | 📅 **GESTIÓN v1 (ítem 13) — COMPLETA en código.** Expedientes, contratos, pagos, novedades (§112-§118) con sus 5 puertas desplegadas y PROBADAS contra el emulador (§140-§141) · **bóveda de documentos** construida, desplegada y ya **LEGIBLE**: quién abrió cada documento, con su índice en producción (§142, §148). ⏭️ Falta **aprobar el mockup** y **ESTRENARLA con datos reales** (runbook 1.5-1.6), que es lo único que puede verificar el render en vivo. | 🟢 | §148 |
 | **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR. Detalle → §129-§138.** Identity Platform ACTIVO · reglas fase 2 EN VIVO · resolver del código en las DOS puertas · `/seguridad` para inscribirlo · `cerrarMisSesiones` y `retirarSegundoFactorDe` verificadas. ⏭️ **Daniel**: inscribir su 2FA (clave manual; el QR se aplazó, §137.5) · verificar su correo. ⏭️ **Mío, DESPUÉS de que él se inscriba**: exigirlo en las Rules — antes NO, expulsa a todos · el QR verificable · **puerta única (mockup APROBADO)** ⚠️ con desviación obligada: el paso 2 del dibujo distingue cliente de equipo y eso ENUMERA cuentas de staff — se construye idéntico para todos. 🚫 anti-bot aplazado (§132.5). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL — PUBLICADO (§147).** 5 artículos con la norma .gov.co citada; «Guías de zona» estrenada con un HUB que enlaza las 13 landings. Mockup **APROBADO**. ⏭️ Falta: «Mercado» sigue vacía (sin dato verificado que citar) · RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
-| **TODO-49** | 🏷️ **OLA 2 — arrancada por lo que NO gatea el abogado** ([[L-40]]). **Pipeline de compraventa COMPLETO** (§151): dominio, puerta desplegada y verificada en producción, y pantalla. **Perfil de inquilino 1→N**: dominio y las 5 puertas DESPLEGADAS (§152). Y la **pantalla de REVISIÓN** (§153), que el equipo sí puede usar hoy. ⏭️ Falta la del TITULAR — ya DESBLOQUEADA: «Crear cuenta» abrió el 25-ago (§154). ⏭️ Después: panel de leads del aliado. 🚫 El rail de pago Wompi SÍ lo gatea el abogado (B2/B9). | 🔵 mío | §151 |
+| **TODO-49** | 🏷️ **OLA 2 — arrancada por lo que NO gatea el abogado** ([[L-40]]). **Pipeline de compraventa COMPLETO** (§151): dominio, puerta desplegada y verificada en producción, y pantalla. **Perfil de inquilino 1→N**: dominio y las 5 puertas DESPLEGADAS (§152). Y la **pantalla de REVISIÓN** (§153), que el equipo sí puede usar hoy. Y la del TITULAR (`/mi-perfil`, §155), que habla con Firebase SIN cargar Firebase. **El perfil está COMPLETO por los dos lados.** ⏭️ Después: panel de leads del aliado. 🚫 El rail de pago Wompi SÍ lo gatea el abogado (B2/B9). | 🔵 mío | §151 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -57,7 +57,7 @@
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos
 > que solo vio la consola del dueño (§133-§136): pesa a favor de retirarlo pronto en el cutover. El
 > portal sí la tiene: **7 gates** y barrido en vivo (885 enlaces + los 65 redirects, §150). Si un gate
-> pasa, pregúntate **qué archivos abre** ([[L-52]]).
+> pasa, pregúntate **qué archivos abre** ([[L-52]]). Y córrelos con **`npm run verify`**, no de memoria (§157).
 >
 > ⚠️ **Antes de tocar código, lee `34-DOCTRINA-CODIGO`** (trigger 🖥️) y, si el síntoma te suena, `30`:
 > [[L-33]] (`locals.runtime.env` removido en Astro v6) YA cobró dos veces, y [[L-41]] (cabeceras

@@ -5938,3 +5938,34 @@ always-on.
 
 **156.5 — Archivos.** `docs/00d-INDICE-PORTAL.md` (nuevo) · `docs/00-INDICE.md` ·
 `docs/.brain-manifest.json` · `CLAUDE.md` §0.
+
+## 157. ADR — Corrí cinco gates de siete y escribí «los 7 en verde» ⟦OPUS-5⟧ (2026-08-25)
+
+**157.0 — Lo que pasó, sin adornos.** El CI se puso rojo en `verify:css` sobre `/mi-perfil`, y tenía
+razón: las filas de requisitos las crea el JavaScript, Astro compila `.x` a `.x[data-astro-cid-…]`, y
+un nodo hecho con `createElement` no lleva ese atributo — la regla acotada no lo alcanza nunca. Es el
+§117 de siempre: **el CSS que no llega no rompe, deja sin pintar**. Arreglado con `:global()` en las
+cinco clases de runtime, y probado en los dos sentidos.
+
+**157.1 — Pero el fallo de fondo no era el CSS: era mío.** Corrí **cinco** de los siete gates y
+escribí en varios mensajes de commit «los 7 gates en verde». No era cierto. Faltaban `verify:css` y
+`verify:claims`, y faltaron por una razón muy poco heroica: **en local hay que acordarse de siete
+nombres**. *Una afirmación de cobertura que sale de la memoria no es una verificación, es una
+impresión.*
+
+**157.2 — El arreglo no es acordarse mejor.** `npm run verify` corre los siete de una. Y para que el
+atajo no envejezca —que es exactamente cómo mueren los atajos, en silencio y mientras todos confían
+en él— `verify:build` gana un segundo candado que comprueba **nombre a nombre** que los contenga
+todos. Probado quitando `verify:css` del atajo: se pone rojo nombrándolo.
+
+**157.3 — Por qué hacían falta DOS candados.** El primero (§142) comprueba que el CI invoque cada
+gate, y es bueno, pero **llega tarde**: el CI corre después de empujar, así que el commit ya está
+escrito con su afirmación falsa dentro. El segundo llega antes de empujar. Uno vigila la tubería; el
+otro, la costumbre.
+
+**157.4 — Es reincidencia de [[L-56]], por el otro lado.** Aquella decía «un gate puede existir y no
+correrlo NADIE — ni el CI ni tú». Se arregló la mitad del CI y quedó viva la mitad humana. La lección
+se amplía en vez de duplicarse: es la misma, vista desde el otro extremo.
+
+**157.5 — Archivos.** `portal/src/pages/mi-perfil.astro` (`:global()`) · `portal/package.json`
+(`verify`) · `portal/scripts/verify-build.mjs` (el candado nuevo) · `docs/36` ([[L-56]] ampliada).
