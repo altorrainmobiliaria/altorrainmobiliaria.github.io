@@ -30,9 +30,9 @@
 | **TODO-CEREBRO** | 🧠 **Mantenimiento** (sin pausa desde 20-ago). **TODO-23** kernel: K-01+K-04 (mismo hueco) y K-05 ABIERTOS; K-02/K-09 ✅ (§208) + de §143: el #27 debe resolver el nombre contra la CARPETA del nodo (hoy acepta la mayoría por basename) y los umbrales del #16 ir en COMMITS. K-11 (era «K-10»: código ocupado y mal citado) ✅ CERRADO (§205·§207). **TODO-24** ~~ssotFact de paleta~~ ✅ hecho; queda el cache EN EL CUTOVER · ~~**TODO-28** sellos~~ ✅ CERRADO (§206: era el #16, y ya son 30d, no 90) · **TODO-32(b)** [[M-09]] a los hermanos. | 🔄 | §84·§143·§146 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-30 · 22** | 🗺️ **MapLibre COMPLETO (§55)** — falta solo la vista en foreground, la confirma Daniel ([[L-39]]) · 🏠 **CATÁLOGO con ficha (§97)**: datos reales = fases 3-4 del runbook, luego fichas al sitemap. | 🟢 | §55.9 · §102 |
-| **TODO-46** | 📅 **GESTIÓN v1 (ítem 13) — COMPLETA en código**, puertas desplegadas y probadas; bóveda de documentos legible con su índice en producción → §112-§118, §140-§142, §148. ⏭️ Falta **aprobar el mockup** y **ESTRENARLA con datos reales** (runbook 1.5-1.6): es lo único que puede verificar el render en vivo. | 🟢 | §148 |
-| **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR** → §129-§138. ⏭️ **Daniel**: inscribir su 2FA (clave manual; el QR se aplazó, §137.5) · verificar su correo. ⏭️ **Mío, DESPUÉS de que él se inscriba**: exigirlo en las Rules —antes NO, expulsa a todos— · el QR verificable · **puerta única** (mockup APROBADO) ⚠️ con la desviación obligada del paso 2, que enumeraría cuentas de staff (§137.6). 🚫 anti-bot aplazado (§132.5). | 🟢 Daniel | §137 |
-| **TODO-48** | 📰 **JOURNAL — PUBLICADO (§147).** 5 artículos con la norma .gov.co citada; «Guías de zona» estrenada con un HUB que enlaza las 13 landings. Mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC (Mercado ya estrenó, §195). | 🟢 | §147 |
+| **TODO-46** | 📅 **GESTIÓN v1 COMPLETA** y desplegada → §112-§118, §140-§142, §148. ⏭️ Falta **aprobar el mockup** y **ESTRENARLA con datos reales** (runbook 1.5-1.6): es lo único que verifica el render en vivo. | 🟢 | §148 |
+| **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR** → §129-§138. ⏭️ **Daniel**: inscribir su 2FA (clave manual; el QR se aplazó, §137.5) · verificar su correo. ⏭️ **Mío, DESPUÉS de que él se inscriba**: exigirlo en las Rules —antes NO, expulsa a todos— · el QR verificable · **puerta única** (mockup APROBADO, con la desviación del paso 2 → §137.6). | 🟢 Daniel | §137 |
+| **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **RAIL DE PAGO COMPLETO y probado contra el emulador** (§166-§170, §176-§177, §185-§187): liquidación, certificación, mandato, preaviso y el webhook. ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
@@ -52,16 +52,19 @@
 > §140): estrenar los caminos (1.4-1.8) → inventario → cutover. El resto, en PELOTAS.
 > **OLA 2**: el «gate del abogado» NO EXISTE — el abogado soy yo (Daniel, 26-ago) → TODO-49, §165. **Agenda legal a CERO** (§194).
 >
-> 🎭 **UN ✅ NO PRUEBA QUE MIRARA** (§174-§177): el CI no corría `test`, su `typecheck` salía verde
-> **sin checker**, `functions/` no se chequeaba y 141 pruebas de emulador estaban fuera. Los cuatro
-> cableados, con sonda del **lockfile** — los prerrequisitos de los gates no se declaraban (3 veces en
-> un día). **El CI nunca estuvo rojo**: lo afirmé sin mirar (§3.3). Ahora: 8 gates, ~1065 pruebas.
+> 🎭 **UN ✅ NO PRUEBA QUE MIRARA** (§174-§177, §195): 8 gates y ~1065 pruebas, cableados **después**
+> de encontrarlos verdes sin mirar nada — el último, `verify:claims`, no abría el journal, que es donde
+> más se afirma. **El CI nunca estuvo rojo**: lo afirmé sin mirar (§3.3).
+>
+> 🔍 **26-ago — se auditó lo que nadie audita.** De **9 pendientes** medidos, **solo un tercio
+> describía la realidad**: 3 ya hechos, 2 falsos, 1 mal etiquetado (§204-§208). ⚠️ **ESTE nodo está
+> FUERA de los dos mecanismos de frescura** —ni fecha que el gate lea, ni marcador `verificado-vivo`—
+> y el arreglo está **especificado, no hecho** (§208). El runbook tenía **5 de 30 pasos asignados a
+> quien no puede ejecutarlos** (§210). 📄 Daniel tiene su brief (memoria `brief-lanzamiento-artifact`):
+> **si cambias el reparto 🤖/🧑 o las PELOTAS, ábrelo en el MISMO turno** — vive fuera del repo y
+> ningún gate lo ve envejecer (§211).
 >
 > 🏨 **Alojamiento lleva DOS gates**: RNT + reglamento de PH que autorice EXPRESAMENTE (§178-§179).
->
-> 💸 **OLA 2 — el carril de pago está COMPLETO en dominio** (§176-§177, §185-§187): webhook (plan +
-> ejecutor + atomicidad probada), mandato, liquidación, certificación y **preaviso** (un preaviso sin
-> evidencia postal NO es un preaviso: manda la fecha de IMPOSICIÓN). Falta solo `WOMPI_EVENTS_SECRET`.
 >
 > 📬 **LEADS — el camino roto está sustituido** (§188-§192): el aviso sale por **Resend** desde el
 > portal, no por el Gmail caído; el puntaje ya **no castiga por campos que el formulario nunca pide**;
