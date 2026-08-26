@@ -329,6 +329,12 @@ verde en local», sino **verde en CI porque el gate se apagó**.
 - El prerrequisito también puede estar presente y ser **incompatible** (versión fuera del peer). Eso
   al menos lanza, y por eso es menos grave: el silencio es el enemigo, no el error.
 
+- ⏱️ **El detector más barato: el RELOJ.** Compara cuánto TARDA el paso en CI. Un gate que revisa
+  cientos de archivos en 4 segundos no está optimizado: no está haciendo nada. En el caso real, el
+  paso «Tipos» tardó 4 s en todas sus corridas históricas y 21 s en la primera con checker de verdad
+  — la confesión estaba impresa en cada corrida, en verde, y por eso nadie la leyó. La duración por
+  paso suele darla la API de CI sin credenciales; compárala contra el día que sabías que funcionaba.
+
 **Y una regla de método, que es de donde salió todo esto**: una corrida de CI en verde **no es
 evidencia de que el gate mirara**. Si vas a afirmar el estado de un despliegue, ábrelo y míralo — la
 deducción «mi gate falla en local, luego el CI está rojo» puede ser exactamente al revés.

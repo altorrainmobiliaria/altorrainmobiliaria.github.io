@@ -16,6 +16,13 @@
 > **Prueba de bolsillo para cualquier gate**: *que imprima CUÁNTO miró* (archivos, enlaces,
 > pruebas). Un número es lo único que distingue «revisado» de «no hice nada». Y **estrénalo
 > rompiéndolo a propósito EN EL ENTORNO DONDE VA A CORRER**, no solo en tu máquina.
+>
+> ⏱️ **Y el detector más barato de todos: el RELOJ.** El paso «Tipos» de este repo tardaba **4 s** en
+> todas y cada una de sus corridas históricas, y **21 s** en la primera con checker de verdad. Cuatro
+> segundos para 160 archivos era la confesión, escrita en la pantalla de cada corrida, y nadie la leyó
+> porque estaba en verde. **Un gate sospechosamente RÁPIDO no está optimizado: está sin hacer nada.**
+> La duración por paso la da la API de Actions sin credenciales, y compararla contra la del día que
+> sabías que funcionaba cuesta un comando.
 
 ---
 
