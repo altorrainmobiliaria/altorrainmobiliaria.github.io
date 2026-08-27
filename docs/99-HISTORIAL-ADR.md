@@ -9894,3 +9894,33 @@ delante. Resultado medido tras reconstruir: **títulos largos 8 → 1 · descrip
 y la razón queda de adorno.** El comentario decía 160 y el tope decía 300: durante siete artículos
 mandó el 300, y el comentario sirvió para que nadie mirara. Si escribes el límite en prosa, **escríbelo
 también en el validador** — o borra la prosa, que es más honesto que un número que no obliga.
+
+### 228.6 — Y las 191 imágenes eran una FALSA ALARMA: medí el atributo, no el defecto
+§228.4 las dejó *«medidas, no arregladas»*, como deuda real pendiente de alguien con el navegador
+delante. Fui con el navegador. **No hay deuda.**
+- **Estructural**: en las páginas medidas, de las imágenes sin `width`/`height` **NINGUNA carece de
+  espacio reservado** — el CSS las dimensiona en todos los casos, y no de una sola forma:
+  `object-fit: cover` dentro de un contenedor con tamaño (`.alt-lucard__img`, `.alt-staycard__img`),
+  `position: absolute; inset: 0` fuera del flujo (`.hbn__img`, `.home-pdia__media img`), o píxeles
+  fijos (`.home-map__mini img`, 58×58). Comprobado sobre los **estilos computados en vivo**, no
+  leyendo CSS.
+- **De comportamiento**: `PerformanceObserver` con `buffered: true` → **cero entradas de
+  desplazamiento, CLS = 0** en `/`, `/comprar` y `/estancias`.
+
+🎯 **El defecto era de mi sonda, no del sitio: conté la ausencia de un ATRIBUTO y lo reporté como
+presencia de un PROBLEMA.** `width`/`height` sirven para que el navegador reserve el hueco *antes* de
+cargar; si el CSS ya lo reserva, el atributo no aporta nada y su ausencia no cuesta nada. Un
+inventario de marcadores no es un inventario de daños.
+
+⚠️ **Y por poco lo cierro con un cero vacío.** Mi primera medición usó
+`performance.getEntriesByType('layout-shift')`, que está **obsoleta**: la consola lo avisó
+—*«Deprecated API for given entry type»*— y ese aviso era de mi propia sonda. Un `CLS: 0` de una API
+que puede devolver el búfer vacío es **exactamente el gate que compara contra nada** que llevo el día
+persiguiendo, cometido por tercera vez en mi propio instrumental. Se repitió comprobando primero
+`PerformanceObserver.supportedEntryTypes` y observando con `buffered: true`.
+📌 **Caveat declarado**: medido contra el servidor de desarrollo, con caché caliente. La conclusión
+se apoya sobre todo en la evidencia ESTRUCTURAL, que no depende de la carga.
+
+**Doctrina**: antes de reportar un defecto por la ausencia de una marca, **mide el efecto que esa
+marca previene**. Y cuando midas, comprueba que el instrumento esté midiendo: un cero de una API
+obsoleta y un cero real se escriben igual.
