@@ -10849,3 +10849,43 @@ el fallo: imagen sin `alt` bloquea · campo sin etiqueta bloquea · los dos dent
 ### 248.5 — Archivos
 `portal/scripts/verify-build.mjs` · `docs/38-GATES-QUE-MIENTEN.md`. **INTACTO**: todo el marcado del
 sitio — no había nada que arreglar, y la parte útil del turno fue **no** "arreglar" los 28 falsos.
+
+## 249. ADR-249 — La vista previa al compartir, que es por donde llegan los clientes
+
+### 249.1 — Por qué esto no es cosmético en ESTE negocio
+Los clientes de ALTORRA llegan por WhatsApp. Lo que se ve al compartir un enlace **es** el anuncio.
+Medido sobre las 45 páginas: las etiquetas `og` están **completas en todas** —título, descripción,
+imagen, url, tipo y `twitter:card`, cero faltantes— y las **7 imágenes existen**. Pero *estar no es
+funcionar*.
+
+### 249.2 — Contra la documentación de Meta, leída y no recordada
+Su página de webmasters dice mínimo **200×200**, *«at least 1200 x 630 pixels for the best display»* y
+máximo **8 MB**. Medidas las 7 leyendo la cabecera del fichero: dos están bien (2000×1116) y **cuatro
+son VERTICALES (896×1200)**. Superan el mínimo, así que la tarjeta sale — pero **recortada**, porque
+la tarjeta de enlace es horizontal. 🎯 Y las usan **seis artículos del journal**: justo las páginas que
+existen para que se compartan.
+
+### 249.3 — Lo que NO hice, y por qué
+Esa imagen es la **portada visible** del artículo, y las únicas horizontales del sitio son los tres
+héroes — con lo que **todos los artículos compartirían la misma vista previa**. *Distintiva pero
+recortada, o bien encuadrada pero genérica*: es un intercambio real, no un error, y cambia cómo se ve
+su contenido. **Es decisión del dueño**, y está en su brief como un sí/no.
+Lo mío sí: **impedir que crezca**. Las seis quedan CONGELADAS con su motivo y **una séptima bloquea**.
+
+### 249.4 — ⚠️ Y lo que la sonda declara NO saber
+Las 7 imágenes son `.webp` y la documentación de Meta **no dice nada de formatos**. Así que no se
+afirma ni que WhatsApp lo muestre ni que no: queda escrito en la cabecera del gate como **sin
+comprobar** (§3.3), y en el brief como algo que Daniel resuelve en dos minutos mandándose un enlace a
+sí mismo. *Preferir «no lo sé» a suponerlo es lo que separa este gate de los que mienten.*
+
+### 249.5 — Verificación, con la negativa que de verdad prueba
+Tres inyecciones: `og:image` inexistente **bloquea** · página nueva con imagen vertical **bloquea** ·
+y —la negativa real— **sacar un artículo de la lista congelada hace bloquear a ESE**, lo que demuestra
+que la congelación es lo que los deja pasar y no que el check esté muerto. La primera versión de esa
+prueba solo repitió el estado limpio y no probaba nada: se rehízo aplicando [[L-64]] regla (5), escrita
+media hora antes.
+`verify` **exit 0, 41 comprobaciones** (era 40).
+
+### 249.6 — Archivos
+`portal/scripts/verify-build.mjs` · brief de lanzamiento (artifact). **INTACTAS**: las seis portadas
+—son contenido del dueño— y `BaseLayout.astro`, que ya componía bien las etiquetas.
