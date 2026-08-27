@@ -55,14 +55,12 @@
 >
 > 🎭 **UN ✅ NO PRUEBA QUE MIRARA** — la familia entera, con sus siete formas, en `38-GATES-QUE-MIENTEN`.
 >
-> 🗓️ **última actualización: 2026-08-27** — §208 cerrado por el otro lado: el linter **publica la
-> COBERTURA** y nombra al nodo que falta (ése era el arreglo de §208.3, no teclear la fecha). Curada
-> la ceguera, esta fecha SÍ alimenta al #12. ⚠️ El #16 sigue destapado aquí **a propósito**: poner
+> 🗓️ **última actualización: 2026-08-27** (alimenta al #12; el arreglo de la ceguera → §208).
+> ⚠️ El #16 sigue destapado aquí **a propósito**: poner
 > `verificado-vivo` a la pizarra afirmaría que verifiqué cada pendiente contra la realidad, y es falso. 📄 Brief de Daniel (memoria `brief-lanzamiento-artifact`): **si
 > cambias el reparto 🤖/🧑 o las PELOTAS, ábrelo en el MISMO turno** — ningún gate lo ve envejecer (§211).
 >
-> 🏨 **Alojamiento: RNT + PH, ya MECANIZADOS** (§234) — las Rules impiden crearlo sin ellos y el
-> build se bloquea si el sitio público anuncia por días sin RNT (hoy lo harían **2** páginas).
+> 🏨 Alojamiento: RNT + PH los BLOQUEAN las Rules y el build (§234·§238) — no se describe aquí.
 >
 > 📬 **CORREO**: lead nuevo (§188) **y** aviso de estado al cliente (§235) salen por Resend. La
 > legacy queda marcada, y su retirada va EMPAREJADA con desplegar la nueva. Nurturing apagado (§192).
