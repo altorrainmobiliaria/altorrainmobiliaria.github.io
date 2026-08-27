@@ -10075,3 +10075,58 @@ comando que lo produce viven en la misma tubería, el reporte hereda los fallos 
 ### 231.7 — Doctrina
 [[L-62]] nueva. [[L-46]] deja de afirmar que es incazable. Verificado con `npm --prefix portal run
 verify` en verde, **exit 0, 30 comprobaciones**. Cache: N/A (el portal no tiene SW).
+
+## 232. ADR-232 — Las páginas que venden compartían la misma descripción, y el arreglo de §228 solo había tocado el journal
+
+**Contexto.** Antes del cutover, lo que decide si un cliente entra no es la página: es cómo se ve en
+el buscador. §228 arregló títulos y descripciones **del journal**, y ahí se quedó.
+
+### 232.1 — Lo medido, sobre las 43 páginas construidas
+**NUEVE compartían la misma meta description** —y entre ellas `/comprar`, `/arrendar`, `/publicar` y
+`/turismo`, o sea las comerciales—. Tres títulos pasaban de los ~60 caracteres que Google muestra y
+tres descripciones de los ~155. 🎯 **Nada de esto rompe nada**: la página carga impecable y el
+resultado de búsqueda sale cortado, o con un resumen que Google se inventa porque el nuestro no
+distingue una página de otra. Es la familia de §218 —*el arreglo con el alcance enumerado a mano*—
+en su versión más cara: §228 hizo bien lo que tocó y dejó registrado que estaba hecho.
+
+### 232.2 — Lo que NO se prometió pesa tanto como lo escrito
+Iba a redactar *«filtra por zona, tipo y precio»* para `/comprar`. Al mirar los controles REALES de
+la página construida: **una búsqueda por ubicación y un selector de orden**, nada más. Habría sido
+publicidad de una función inexistente (Ley 1480 arts. 29-30) escrita por el mismo que mantiene el
+gate que la persigue. *Describir un producto de memoria es inventarlo.*
+Y `/estancias` **se queda con la descripción genérica A PROPÓSITO**: anuncia alojamiento por días y
+el RNT no está (§178-§179); escribirle mejor publicidad **amplía la superficie de anuncio** justo en
+lo que hoy es el bloqueo legal. Queda declarado en el gate, con su motivo, no omitido.
+
+### 232.3 — Los títulos, y por qué dos no se podían acortar
+San Diego era el único de los **trece** títulos de zona que se pasaba — y se comprobaron los trece,
+no solo el que salió en el informe. Las dos páginas legales llevaban el **nombre oficial del
+documento** como `title`, que en `LegalLayout` alimenta ADEMÁS el `h1` y la miga: acortarlo habría
+sido **renombrar el documento**. De ahí un `tituloSeo` aparte, mismo patrón que §228 usó en el
+journal. El `h1` conserva su nombre entero.
+
+### 232.4 — El trinquete: `verify:seo`
+Décimo gate, cableado a `npm run verify` **y** al CI —dos sitios distintos, y el meta-gate comprueba
+los dos (§174)—. Juzga **solo lo anunciado en el sitemap**: exigirle copy comercial al panel o al
+design system sería ruido, y el ruido es como se aprende a ignorar un gate. Imprime su denominador
+(36 de 37 anunciadas, sobre 43 construidas) y **dice en voz alta la que no pudo juzgar**: `/alertas`
+es SSR y no deja HTML que abrir, así que no hereda el ✅ de las demás ([[L-59]] regla 1). Probado
+viéndolo fallar con un título largo y con una descripción duplicada inyectados.
+
+### 232.5 — Y una cifra congelada que salió al paso
+`21-MAPA-PORTAL` decía *«mapa de 68 URLs del sitio viejo»* cuando `verify:enlaces` mide **74**. El
+propio `redirects.ts` documenta que la aritmética «68 públicas + 6 técnicas» que no cerraba fue lo
+que delató un redirect ausente — o sea que el código se corrigió y **el mapa se quedó en el número
+viejo** (§180 otra vez). No se corrigió a 74: se **retiró la cifra** y el nodo apunta al gate que la
+calcula. *Un número copiado de lo que otro calcula tiene fecha de caducidad; un puntero, no.*
+
+### 232.6 — Archivos
+`portal/scripts/verify-seo.mjs` (nuevo) · `package.json` · `.github/workflows/portal-ci.yml` ·
+`layouts/LegalLayout.astro` · `lib/content/zonas.ts` · `pages/[operacion].astro` · `publicar` ·
+`turismo` · `aliados` · `invertir` · `journal` · `habeas-data` · `legal/politica-tratamiento-datos`.
+`docs/21-MAPA-PORTAL`. **INTACTO** a propósito: la descripción de `/estancias`.
+
+### 232.7 — Doctrina
+Verificado con `npm --prefix portal run verify`: **exit 0, 10 gates cableados**. Cache: N/A.
+🎯 Lo transferible: *cuando arregles una clase de defecto, la lista de sitios donde aplica se DERIVA
+de una medición sobre el artefacto servido — nunca de los que recuerdas haber tocado.*

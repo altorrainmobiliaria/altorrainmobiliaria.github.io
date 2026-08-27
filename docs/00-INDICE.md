@@ -102,6 +102,7 @@
 | §229 | 🗂️ **Sexto shard** (§161-§200 → 00f): el kernel reventó su tope y baja de 25687 a 16180c. Y **cinco filas (§61-§65) llevaban meses en una GRIETA entre particiones** que nadie mira. | 9942 |
 | §230 | 🎭 **Un `Set` ocultaba lecciones DUPLICADAS**: dos reclamaban `L-60` y el enlace no estaba roto, MENTÍA. Kernel v1.20.0 + la versión del kernel tenía dos dueños. §208 cerrado. | 9964 |
 | §231 | 🔍 **Barrido de semántica en las 43 páginas**: 1 señal real (`#contacto` duplicado en /turismo, un enlace que MIENTE) y 4 falsas de mi sonda. + el nivel de encabezado es de la PÁGINA, no de la card. + hook que caza el hueco del shell. | 10022 |
+| §232 | 🔎 **9 páginas compartían meta description**, entre ellas las 4 que venden: §228 arregló esto y solo en el journal. + `verify:seo` (10º gate) + `tituloSeo` legal + la cifra de redirects del 21 estaba congelada en 68 contra 74. | 10079 |
 
 ---
 
