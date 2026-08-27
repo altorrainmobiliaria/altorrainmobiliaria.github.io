@@ -67,8 +67,6 @@
 > 📬 **CORREO**: lead nuevo (§188) **y** aviso de estado al cliente (§235) salen por Resend. La
 > legacy queda marcada, y su retirada va EMPAREJADA con desplegar la nueva. Nurturing apagado (§192).
 >
-> ✅ **LAS DOS PUERTAS LEGALES, CONSTRUIDAS** (§233): preaviso (callable + pantalla, 13 pruebas contra el emulador) y certificación anual. `verify:huerfanos` pasa de 3 huérfanos declarados a **0**. Al probarlas salió un fallo VIVO de dinero ([[L-63]]). ⏭️ **Daniel**: mirar los 2 mockups y ESTRENARLAS.
->
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos
 > que solo vio la consola del dueño (§133-§136). Si un gate pasa, pregunta **qué abre** ([[L-52]]) —y **cuántos**
 > (§219)—; córrelos con **`npm --prefix portal run verify`**, no de memoria.
@@ -77,7 +75,7 @@
 > 🔬 **Auditoría N2 #15** (§237): de la #14, **cinco cerradas y dos reinciden**. 🎯 El hilo cambió: la
 > familia «promesa sin mecanismo» **se cerró tres veces esta noche** (RNT al build, fuentes del Journal,
 > unidad de honorarios) — el remedio que funciona es *convertir la promesa en un gate*, no repetirla.
-> ⏭ **Abiertos**: boot al 100 % (×7) · cifras del 5.3, esperan tu sí/no (`specs/PROPUESTA-CIFRAS-CUTOVER.md`)
+> ⏭ **Abiertos**: saturación del cerebro → **TODO-50** · cifras del 5.3, esperan tu sí/no (`specs/PROPUESTA-CIFRAS-CUTOVER.md`)
 > · identificador inventado ×5 ([[M-30]]). 🎯 **Un identificador que no acabas de leer es inventado.**
 
 > 🔀 **Hermanas** (§216): cifras sin fuente en Cars → LEGAL-08/09 de su `42-LEGAL`. Bersaglio, en su
