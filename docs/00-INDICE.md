@@ -112,7 +112,7 @@
 | §239 | 🔴 **La agenda anunciaba «se renueva» en contratos que ya tenían preaviso** — fallo que abrió el 233 tres horas antes: añadir un hecho al modelo no es aditivo para quien ya decidía sin él. + el gate de habeas data (Ley 1581). | 10433 |
 | §240 | 🎭 **Tres verdades sobre lo mismo**: el FAQPage de `/precios` copiaba las tarifas a mano · el gate del RNT, corrido en producción por 1.ª vez, bloquea: 2 páginas (+1 bloqueador nuevo) · y mi hallazgo apuntaba al nodo que acababa de tocar. | 10468 |
 | §241 | 🧭 **Lo que decide qué ve el dueño arriba no tenía prueba** (dos `urgencia()` puras, 13 tests) · y **«el móvil personal JAMÁS se publica» no tenía mecanismo**: censo de 45 páginas (cero fugas) y gate que lee el permitido de `site.ts`. | 10513 |
-| §242 | 🚧 **El styleguide de desarrollo iba a servirse en el dominio del cliente**: la promesa de excluirlo vivía en la cabecera del propio fichero. Ahora redirige (28,5 KB→284 b) + sonda de respaldo. Salió de cuadrar 45 páginas con 39 del sitemap. | 10562 |
+| §242 | 🚧 **El styleguide de desarrollo iba a servirse en el dominio del cliente**: la promesa de excluirlo vivía en la cabecera del propio fichero. Ahora redirige (28,5 KB→284 b) + sonda. Salió de cuadrar 45 páginas con 39 del sitemap. | 10562 |
 | §243 | 🔗 **Comprobar anclas no es comprobar rutas**: gate nuevo de enlaces internos (0 rotos de 184 destinos, SSR derivadas de `prerender=false`). Y contar valió más que el gate: **38 enlaces a `/ficha`**. | 10605 |
 | §244 | 🩺 **Cuatro comprobaciones en vivo, cero defectos** (`/ficha` y `/alertas` 200 · zstd: portada 19,6 KB · estado cero en las 11 pantallas) → y la poda que salieron: **lo que ya bloquea un gate no se afirma en un nodo always-on**. | 10645 |
 | §245 | 🧑‍🤝‍🧑 **Hermanos**: Cars e INSEMA tenían el gate de fiabilidad DEGRADADO (0 marcadores = no comparaba nada) → sellados contra sus sitios vivos. Y Cars ordenaba un protocolo de modelo **derogado** y un `sync` inexistente. | 10686 |
@@ -121,6 +121,7 @@
 | §248 | ♿ **303 imágenes y 122 campos sin un fallo** — y 28 falsos positivos que eran de mi sonda (plantillas, `<label>` que envuelve, input oculto). Nace la **prueba NEGATIVA** de toda exclusión. | 10820 |
 | §249 | 📲 **La vista previa al compartir** (los clientes llegan por WhatsApp): etiquetas completas en las 45, pero **4 imágenes VERTICALES** en 6 artículos del journal. Congeladas + gate; el cambio es decisión del dueño. | 10853 |
 | §250 | 🚨 **El móvil PERSONAL estaba publicado en el dominio** (JSON-LD del legacy) mientras mi gate decía «cero fugas»: su denominador excluía el sitio del problema. Lo halló la sonda adversarial de la 1.ª auditoría COMPLETA. | 10893 |
+| §251 | 🙈 **Cruzar el 100 % te volvía INVISIBLE** en la alarma de saturación: un nodo al 95 % salía y uno al 105 % no. Kernel v1.21.0 ×4. + mi instrumento medía sin el CRLF que el gate sí cuenta. | 10954 |
 
 ---
 

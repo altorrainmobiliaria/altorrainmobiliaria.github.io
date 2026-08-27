@@ -30,7 +30,7 @@
 //       (el ✅ INMERECIDO, §120) · (26) trinquete de filas gordas del índice
 //       + 7b) bóveda: commits ≠ origin vía fs [warn]
 // ===========================================================
-const KERNEL_VERSION = '1.20.0';
+const KERNEL_VERSION = '1.21.0';
 import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -219,7 +219,11 @@ for (const [rel, cap] of Object.entries(CAPS)) {
   }
   if (over) warn(`${rel}: ${tag} → SHARD/poda (excede tope)`);
   else if (nudge) say(`  ↗  ${rel}: ${tag} (leve exceso — destilar)`);
-  else { ok(`${rel}: ${tag}`); okCaps++; if (near) preShard.push(rel); }
+  else { ok(`${rel}: ${tag}`); okCaps++; }
+  // (N16-04, auditoria #16) preShard se llenaba SOLO en la rama else: cruzar el 100% te hacia
+  // DESAPARECER del resumen de saturacion mientras uno al 95% si salia — el gate escondia justo
+  // los peores. Ahora entra todo nodo >=90%, marcado con su estado real.
+  if (near || nudge || over) preShard.push(over ? `${rel} ‼️>110%` : nudge ? `${rel} ⚠️>100%` : rel);
 }
 if (BOOT && okCaps) say(`  ✅ ${okCaps}/${capCount} neuronas dentro de tope`);
 if (preShard.length) info(`pre-shard: ${preShard.length} neurona(s) ≥90% de su cap (${preShard.join(', ')}) — planear shard/GC ANTES de reventar`);

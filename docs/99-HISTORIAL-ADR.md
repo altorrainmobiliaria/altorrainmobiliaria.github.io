@@ -10950,3 +10950,38 @@ la versión vieja, los dos siguientes ya dan personal 0 / eslogan oficial 1.
 `CLAUDE.md` · `docs/60-WORKFLOWS.md` · `.brain-manifest.json` · skill `sinapsis-cerebros` ·
 bóveda: auditoría #16. **INTACTO**: `backups/` — comprobado que da **404** en producción, así que los
 13 teléfonos y 15 correos de clientes que contiene NO están publicados.
+
+## 251. ADR-251 — Cruzar el 100 % te volvía INVISIBLE en la alarma creada para eso
+
+### 251.1 — El fallo, en el kernel que audita los cuatro cerebros
+`brain-check` clasifica cada neurona en tres ramas: `over` (>110 %, **bloquea**), `nudge` (100-110 %,
+una flechita entre treinta líneas) y el resto. Pero la lista-resumen `pre-shard: N neurona(s) ≥90 %`
+**solo se alimentaba en la rama del resto**. Consecuencia exacta: **un nodo al 95 % salía en el
+resumen y uno al 105 % desaparecía de él**. El nodo que llegó a bloquear una lección (§242) ya no
+aparecía en la alarma que existe justo para eso.
+🎯 *Cruzar el límite te volvía menos visible que acercarte* — la forma más silenciosa de un gate que
+miente, porque su salida es correcta y solo la agregación engaña.
+
+### 251.2 — Arreglado y verificado donde se ve
+`preShard` recoge ahora `near || nudge || over`, y cada uno entra **marcado con su estado**
+(`⚠️>100%`, `‼️>110%`). Kernel **v1.20.0 → v1.21.0**, repartido con `brain:pull` a los cuatro repos.
+La prueba no se hizo aquí sino **en Bersaglio**, que tiene tres nodos por encima del 100 %: antes no
+salía ninguno en el resumen; ahora salen los tres con su marca. *Un arreglo se prueba donde el defecto
+vive, no donde es cómodo.* → [[N16-04]] de la auditoría #16.
+
+### 251.3 — Y de paso, mi propio instrumento estaba desalineado
+Al recontar filas gordas del índice yo daba **46** y el linter **47**. La diferencia: mis `assert`
+median en Python (≤260) y el linter mide en **JS leyendo el fichero con CRLF**, así que cada línea
+vale **uno más** por su `\r`. Una fila de 260 se volvía **261** y cruzaba el trinquete *después* de que
+mi comprobación dijera que iba bien. Acortada §242 (261→249).
+🎯 **Mide con el instrumento del GATE, no con uno equivalente**: la unidad, el conjunto de ficheros y
+el fin de línea son parte de la medida. → [[L-66]], que se generaliza: *dos herramientas con el mismo
+nombre no miden ni apuntan a lo mismo* (antes solo hablaba de `/tmp`).
+
+### 251.4 — Verificación
+`brain:check` SANO en los cuatro · kernel v1.21.0 íntegro == canónico · filas gordas de vuelta a la
+deuda congelada (46) · **87 refs** resuelven.
+
+### 251.5 — Archivos
+`../brain-private/kernel/brain-check.mjs` + `VERSION` (y su reparto ×4) · `docs/00-INDICE.md` ·
+`docs/36-LECCIONES-UTILLAJE.md` · `docs/30-LECCIONES.md`.
