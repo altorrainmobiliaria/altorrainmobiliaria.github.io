@@ -515,6 +515,84 @@ checks.push({
       : 'se activa con PUBLIC_SITE_ENV=production',
 });
 
+/*
+ * ── SONDA: NINGUN ENLACE INTERNO APUNTA A UNA RUTA QUE NO EXISTE (§243) ──────────────────────
+ *
+ * EL DEFECTO QUE CAZA. `verify:enlaces` comprueba las ANCLAS (`#id`) y este comprueba las RUTAS,
+ * que es otra cosa: un `href="/ficha"` cuyo destino se renombra no rompe nada al construir —el
+ * build pasa, la pagina se pinta, el enlace se ve igual— y empieza a dar 404 a los visitantes.
+ * En un sitio estatico no hay ningun momento en que eso falle solo. Medido hoy: **38** enlaces
+ * apuntan a `/ficha`, o sea que si esa ruta se mueve muere el boton principal del sitio.
+ *
+ * COMO EVITA EL FALSO POSITIVO. Las paginas SSR no viven en `dist/client` —las compone el worker—
+ * asi que se veian como rotas. La lista de rutas SSR NO se escribe aqui: se DERIVA leyendo que
+ * `.astro` de `src/pages` declara `prerender = false`. Si manana una pagina pasa a SSR, el gate se
+ * entera solo; y si la lectura no encuentra ninguna, **revienta** en vez de dar verde, porque una
+ * lista vacia haria que todo enlace SSR se marcara roto o —peor— que un cambio en el formato la
+ * dejara sin excluir nada sin que nadie lo note ([[L-65]] regla 5).
+ *
+ * Medido antes de cablearlo: 45 paginas, 2 rutas sin resolver y las 2 SSR legitimas → deuda CERO.
+ */
+const paginasFuente = readdirSync(resolve(root, 'src/pages'), { withFileTypes: true })
+  .filter((d) => d.isFile() && d.name.endsWith('.astro'))
+  .map((d) => d.name);
+if (!paginasFuente.length) {
+  console.error('\n❌ verify:build — no encontre paginas en src/pages: la sonda de enlaces internos');
+  console.error('   se quedaria sin saber cuales son SSR y marcaria rotas las que si existen.');
+  process.exit(1);
+}
+const RUTAS_SSR = new Set(
+  paginasFuente
+    .filter((n) => /export const prerender = false/.test(readFileSync(resolve(root, 'src/pages', n), 'utf8')))
+    .map((n) => '/' + n.replace(/\.astro$/, '').replace(/^index$/, '')),
+);
+
+/*
+ * ⚠️ TODO lo servido, no solo el HTML. La primera version construyo este conjunto con
+ * `htmlServido()` y marco roto `/favicon.svg`, que existe: un enlace puede apuntar a un SVG, un
+ * PDF o una imagen igual que a una pagina. Un gate que nace gritando en falso se ignora en una
+ * semana, asi que el falso positivo se arregla ANTES de cablearlo, no despues (§238).
+ */
+function todoServido(dir, acc = []) {
+  if (!existsSync(dir)) return acc;
+  for (const n of readdirSync(dir)) {
+    const p = resolve(dir, n);
+    if (statSync(p).isDirectory()) todoServido(p, acc);
+    else acc.push(p);
+  }
+  return acc;
+}
+const servidas = new Set();
+for (const f of todoServido(resolve(root, 'dist/client'))) {
+  const rel = '/' + relative(resolve(root, 'dist/client'), f).split(sep).join('/');
+  servidas.add(rel);
+  if (rel.endsWith('/index.html')) {
+    const dir = rel.slice(0, -'index.html'.length);
+    servidas.add(dir);
+    servidas.add(dir.replace(/\/$/, '') || '/');
+  }
+}
+const rutasRotas = new Map();
+for (const f of htmlServido(resolve(root, 'dist/client'))) {
+  const html = readFileSync(f, 'utf8');
+  const origen = relative(resolve(root, 'dist/client'), f).split(sep).join('/');
+  for (const m of html.matchAll(/href="(\/[^"#?]*)/g)) {
+    const ruta = m[1];
+    if (ruta.startsWith('/_astro/') || ruta.startsWith('/_blob') || RUTAS_SSR.has(ruta)) continue;
+    const candidatas = [ruta, ruta + '/', ruta.replace(/\/$/, ''), ruta.replace(/\/$/, '') + '/index.html'];
+    if (candidatas.some((c) => servidas.has(c))) continue;
+    if (!rutasRotas.has(ruta)) rutasRotas.set(ruta, new Set());
+    rutasRotas.get(ruta).add(origen);
+  }
+}
+checks.push({
+  name: 'ningun enlace interno apunta a una ruta que no existe',
+  ok: rutasRotas.size === 0,
+  detail: rutasRotas.size
+    ? [...rutasRotas].slice(0, 4).map(([r, d]) => `${r} (desde ${[...d][0]})`).join(' · ')
+    : `${servidas.size} destino(s) servidos + ${RUTAS_SSR.size} ruta(s) SSR derivadas de prerender=false`,
+});
+
 let failed = 0;
 for (const c of checks) {
   console.log(`${c.ok ? '✅' : '❌'} ${c.name}${c.detail ? ` — ${c.detail}` : ''}`);
