@@ -115,6 +115,7 @@
 | §242 | 🚧 **El styleguide de desarrollo iba a servirse en el dominio del cliente**: la promesa de excluirlo vivía en la cabecera del propio fichero. Ahora redirige (28,5 KB→284 b) + sonda de respaldo. Salió de cuadrar 45 páginas con 39 del sitemap. | 10562 |
 | §243 | 🔗 **Comprobar anclas no es comprobar rutas**: gate nuevo de enlaces internos (0 rotos de 184 destinos, SSR derivadas de `prerender=false`). Y contar valió más que el gate: **38 enlaces a `/ficha`**. | 10605 |
 | §244 | 🩺 **Cuatro comprobaciones en vivo, cero defectos** (`/ficha` y `/alertas` 200 · zstd: portada 19,6 KB · estado cero en las 11 pantallas) → y la poda que salieron: **lo que ya bloquea un gate no se afirma en un nodo always-on**. | 10645 |
+| §245 | 🧑‍🤝‍🧑 **Hermanos**: Cars e INSEMA tenían el gate de fiabilidad DEGRADADO (0 marcadores = no comparaba nada) → sellados contra sus sitios vivos. Y Cars ordenaba un protocolo de modelo **derogado** y un `sync` inexistente. | 10686 |
 
 ---
 

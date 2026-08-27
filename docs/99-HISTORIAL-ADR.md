@@ -10682,3 +10682,52 @@ información · sello `verificado-vivo` del portal al **2026-08-27** con evidenc
 `docs/05-ESTADO-GLOBAL.md` · `docs/33-LECCIONES-META.md` · `docs/30-LECCIONES.md`.
 **INTACTO**: todo el código — este turno no encontró nada que arreglar, y decirlo así es parte del
 resultado.
+
+## 245. ADR-245 — Dos hermanos con un gate que no comparaba nada, y uno que ordenaba una regla muerta
+
+### 245.1 — El mismo ✅ vacío en Cars y en INSEMA
+`brain:check` marcaba **[DEGRADADO]** la comprobación de fiabilidad en los dos: **cero marcadores
+`verificado-vivo:`** en los nodos escaneados, o sea un check que no comparaba con nada. El linter es
+honesto al marcarlo 🟠 en vez de verde — pero llevaba meses así. Los dos SÍ afirmaban realidad externa,
+solo que sin el marcador que el gate sabe leer.
+
+### 245.2 — Verificado contra los sitios VIVOS, no contra el repo
+**INSEMA**: 200 · H1 «La radio que enciende el cambio» · INSEMA/ECOVOCES/Ondas Verdes presentes · la
+caché `w11-2` presente en el HTML servido · `/ecovoces-ia.html` 200. Todo lo que el cerebro afirmaba
+era cierto; solo faltaba que el gate pudiera comprobarlo. **Cars**: 200 y título correcto — y el sello
+dice **expresamente** que cubre *solo la web*, porque functions y Rules necesitan credenciales y
+sellarlas sería afirmar lo que no he mirado.
+🔒 Ninguno de los dos sitios se tocó: INSEMA está en PAUSA por decisión del dueño y Cars por el pivote.
+
+### 245.3 — 🔴 Cars ordenaba un protocolo DEROGADO
+Su `05` mandaba *«impl = Opus 4.8; revisión Fable 5»* y el protocolo §300 de ofrecer auditoría cuando
+el dueño dijera «Fable 5 activo». La norma desde el **19/08 es OPUS 5 para TODO**. Un repo hermano que
+carga una regla muerta hace que el próximo «yo» **la lea y la obedezca** — y ningún gate mira eso.
+Corregido; los tags históricos no se reescriben.
+
+### 245.4 — Y afirmaba un `sync` que no existía
+*«dev==main sync 23/07»*: medido tras `fetch`, main iba **+24** (todos del bot de vehículos) y dev
+**+10** (solo `docs/`+`scripts/`). ⚠️ El `main` **local** iba 24 commits por detrás del remoto, así que
+comparar sin `fetch` habría dado un número inventado (§3.3). Merge `dev`→`main` ejecutado —limpio, diez
+ficheros, ninguno del sitio— por la delegación explícita de ese repo.
+
+### 245.5 — 🎯 Y escribí un número que caducó en diez minutos
+Puse «dev +10» en el tablero **y acto seguido mergeé esos diez**. Un número describe una foto; lo que
+dura es el mecanismo: *«main recibe del bot y no vuelve a dev; dev se mergea hacia adelante»*. →
+[[M-32]] regla (5). También cerrado **TODO-44** de Cars («resta adoptar `verificado-vivo`»): medido, los
+**cuatro** repos tienen marcador.
+
+### 245.6 — Lo que NO se hizo, a propósito
+**No se re-selló la fecha** del `05` de Cars: verifiqué tres de los muchos hechos que afirma, y poner
+la de hoy diría que revisé todo. *Un sello viejo que dice «viejo» está funcionando bien.* Queda un
+«leve exceso» de ~190c en ese nodo, dicho aquí en vez de callado.
+
+### 245.7 — Verificación
+Cars: `brain:check` SANO · `dev` == `main` == `origin` · gate de fiabilidad ✅ 1 claim vigente.
+INSEMA: SANO · boot 27956/28000 estable en dos corridas · rama `cerebro/sello-verificado-vivo`
+**publicada para que el dueño mergee** (su regla, distinta de la de Altorra).
+
+### 245.8 — Archivos
+`altorracars.github.io/docs/05-ESTADO-GLOBAL.md` · `insemastereo.github.io/docs/05-ESTADO-GLOBAL.md` ·
+`docs/33-LECCIONES-META.md` (M-32 regla 5). **INTACTO**: el código y el contenido publicado de ambos
+hermanos.
