@@ -10351,6 +10351,11 @@ test que pasa.* Verify completo **exit 0**, 32 comprobaciones.
 **bloqueaba los commits**. PARCIAL y declarada: las sondas 3, 4 y 7 exigen subagentes y esta sesión no
 los tiene autorizados — se marcan `[PENDIENTE]`, no se fingen.
 
+> ⚠️ **RE-MEDIDO (N16-05, 27-ago)**: la cifra de este ADR —«12→14, ninguna ha reventado, la pendiente es la
+> señal»— **quedó desmentida por su propia re-medición**: son **13 de 31** nodos al ≥90 %, **tres pegados al
+> 100 %**, y `30-LECCIONES` llegó a estar **bloqueado** (240/240 líneas). La historia no se reescribe, pero
+> *vigilar* y *decidir* son decisiones distintas y aquí tocaba la segunda → §240.3 · `TODO-50` · N15-07.
+
 ### 237.1 — El resultado
 De los ocho hallazgos accionables de la #14: **cinco cerrados con evidencia**, **dos reinciden** (boot
 al 100 % ×7 · la herramienta que muerde) y uno se cerró por el lado bueno. Dos hallazgos nuevos.
@@ -10985,3 +10990,43 @@ deuda congelada (46) · **87 refs** resuelven.
 ### 251.5 — Archivos
 `../brain-private/kernel/brain-check.mjs` + `VERSION` (y su reparto ×4) · `docs/00-INDICE.md` ·
 `docs/36-LECCIONES-UTILLAJE.md` · `docs/30-LECCIONES.md`.
+
+## 252. ADR-252 — Tres nodos que se contradecían con su propia re-medición
+
+### 252.1 — El manifest ordenaba el callejón que la bóveda ya había refutado
+El `_comment` **vigente** de `30-LECCIONES` decía dos cosas y las dos eran falsas: *«el eje VIVO es
+chars, y está al 92 %»* —medido hoy, **98 % en chars y 99 % en líneas**, o sea manda el eje de
+LÍNEAS— y *«el próximo shard NO es opcional… NO subir de 40000»*, que es **exactamente el callejón
+refutado en N15-07d**: el check #5 exige un header `### L-NN` por ID en ese fichero, así que la lista
+de punteros **ES la tabla de resolución** y su coste por lección es irreducible. Mover cuerpos a
+shards no alivia las líneas. 🎯 *Una instrucción vigente que ordena lo ya descartado es peor que no
+tener instrucción: la primera se obedece.*
+
+### 252.2 — `TODO-50` heredaba dos prohibiciones y **cero puertas** — y una prohibición era falsa
+Decía «**subir techos no es la salida**». Pero subir el cap **es** una de las tres salidas vivas, y se
+ejerció ese mismo día en `36` tras podar primero (§246). La fila prohibía y se contradecía a la vez.
+Ahora lleva **las tres puertas** —cap a sabiendas · shardar la tabla de resolución · kernel multi-ID—
+con su porqué en la bóveda, y conserva la única prohibición que sí se sostiene: *no partir el nodo que
+tengas delante*.
+
+### 252.3 — §237 quedó desmentido por su propia re-medición
+Afirma «12→14, ninguna ha reventado, **la pendiente es la señal**»; la re-medición dio **13 de 31**,
+**tres al 100 %** y `30` **bloqueado**. *Vigilar* y *decidir* son decisiones distintas y aquí tocaba la
+segunda. **La historia no se reescribe**: se le añadió un puntero hacia adelante (§240.3 · `TODO-50`),
+que es la forma de corregir un ADR sin falsificarlo.
+
+### 252.4 — Y el arreglo rompió el índice, que es la buena noticia
+Insertar seis líneas en mitad de `99` **desplazó la línea de los 14 ADRs posteriores**, y el índice las
+guarda. El **gate #3 lo cazó en la corrida siguiente** y las 14 filas se re-sincronizaron recalculando
+desde los headers reales, no aplicando un desplazamiento supuesto.
+🎯 *No hace falta doctrina nueva para esto: el mecanismo ya existía y funcionó* — que es justo lo que
+[[M-32]] dice. ⚠️ Ojo con `brain:index`: **genera un fichero sombra, no arregla el índice**; su nombre
+promete más de lo que hace.
+
+### 252.5 — Verificación
+`brain:check` SANO · **251 entradas del índice apuntan a headers válidos** (las 14 corregidas) · boot
+31270c dentro de presupuesto.
+
+### 252.6 — Archivos
+`docs/.brain-manifest.json` · `docs/10-MEMORIA-CORTO-PLAZO.md` · `docs/99-HISTORIAL-ADR.md` ·
+`docs/00-INDICE.md`. **INTACTO**: el texto original de §237 — solo se le añadió el aviso.

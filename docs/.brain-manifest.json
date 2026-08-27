@@ -29,7 +29,7 @@
     "docs/30-LECCIONES.md": {
       "lines": 240,
       "chars": 40000,
-      "_comment": "lines MEDIDO, no subido para escapar de un aviso (M-05). Densidad real de este fichero = 173 c/linea (36900c / 213L); con lines=180 el eje de lineas disparaba al 78% del eje de chars, o sea gritaba contra un fichero sano — el mismo fallo de calibracion que documenta 00a (_caps_que: los dos ejes deben apretar en el mismo punto). 40000/173 = 231. El eje VIVO de esta neurona es chars, y esta al 92%: el proximo shard de 30 NO es opcional. Cuando toque, el grupo con frontera limpia son los guardarrailes de diseno o el rango L-22..L-35, NO subir de 40000."
+      "_comment": "lines MEDIDO, no subido para escapar de un aviso (M-05). Densidad real 173 c/linea; los dos ejes deben apretar en el mismo punto (_caps_que de 00a). RE-MEDIDO 2026-08-27 (N16-03): este comentario decia \"el eje VIVO es chars, al 92%\" y ya NO es cierto — hoy son 39201c/40000 (98%) y 239L/240 (99%), o sea manda el eje de LINEAS. Y ordenaba \"el proximo shard NO es opcional... NO subir de 40000\": ese callejon quedo REFUTADO en N15-07d de la boveda. Motivo: el check #5 exige un header \"### L-NN\" por ID EN ESTE fichero, asi que la lista de punteros ES la tabla de resolucion y su coste por leccion es IRREDUCIBLE; mover cuerpos a shards no alivia las lineas. Las tres salidas VIVAS: (a) subir el cap de lineas a sabiendas, (b) shardar la tabla de resolucion como se hizo con 00-INDICE, (c) ensenar al kernel a leer headers multi-ID. NO decidir aqui: TODO-50."
     },
     "docs/00a-INDICE-HISTORICO.md": {
       "lines": 48,
