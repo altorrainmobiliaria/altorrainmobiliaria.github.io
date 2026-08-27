@@ -593,6 +593,59 @@ checks.push({
     : `${servidas.size} destino(s) servidos + ${RUTAS_SSR.size} ruta(s) SSR derivadas de prerender=false`,
 });
 
+/*
+ * ── SONDA: UN SOLO <h1> POR PAGINA ANUNCIADA, Y SIN SALTOS DE NIVEL (§247) ───────────────────
+ *
+ * EL DEFECTO QUE CAZA. La PORTADA tenia **cuatro** `<h1>`, todos visibles: no es un carrusel, son
+ * cuatro banners a pantalla completa apilados —uno por linea de negocio— y cada uno traia el suyo.
+ * Google veia cuatro titulos principales en la pagina mas importante del sitio, y un lector de
+ * pantalla anunciaba cuatro niveles 1. No rompe nada, no sale en consola, y se ve perfecto.
+ *
+ * POR QUE SOLO LAS ANUNCIADAS. `/gestion` tiene NUEVE `<h1>` y `/ingresar` dos, y los dos estan
+ * BIEN: son paneles que se muestran de uno en uno, asi que en cada momento hay exactamente uno
+ * visible. Un gate que contara `<h1>` a secas los marcaria en falso — y modelar visibilidad de
+ * ancestros es justo donde estas sondas se equivocan. La regla limpia sale sola: se juzgan las
+ * paginas que el SITEMAP anuncia, que son las publicas e indexables, donde ese patron no existe.
+ *
+ * Medido antes de cablearlo: 38 paginas anunciadas con HTML, **cero** problemas tras arreglar la
+ * portada (4 h1 → 1 h1 + 3 h2; el CSS es todo por clase, asi que el cambio es invisible).
+ */
+const smPath = ['sitemap.xml', 'sitemap-index.xml', 'sitemap-0.xml']
+  .map((n) => resolve(root, 'dist/client', n))
+  .find((p) => existsSync(p));
+if (!smPath) {
+  console.error('\n❌ verify:build — no encontre el sitemap en dist/client.');
+  console.error('   La sonda de encabezados saca de ahi que paginas son publicas; sin el juzgaria');
+  console.error('   CERO paginas y saldria en verde sin mirar nada.');
+  process.exit(1);
+}
+const rutasSitemap = [...readFileSync(smPath, 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)]
+  .map((m) => m[1].replace(/^https?:\/\/[^/]+/, ''));
+
+const encabezadosMal = [];
+let juzgadas = 0;
+for (const ruta of rutasSitemap) {
+  const limpia = ruta.replace(/^\/+|\/+$/g, '');
+  const f = resolve(root, 'dist/client', limpia ? `${limpia}/index.html` : 'index.html');
+  if (!existsSync(f)) continue; // SSR: la compone el worker, no hay HTML que abrir
+  juzgadas += 1;
+  const html = readFileSync(f, 'utf8')
+    .replace(/<template\b[^>]*>[\s\S]*?<\/template>/gi, '')
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
+  const niveles = [...html.matchAll(/<h([1-6])\b/gi)].map((m) => Number(m[1]));
+  const unos = niveles.filter((n) => n === 1).length;
+  const salto = niveles.slice(1).find((n, i) => n > niveles[i] + 1);
+  if (unos !== 1) encabezadosMal.push(`${ruta} tiene ${unos} <h1>`);
+  else if (salto) encabezadosMal.push(`${ruta} salta a h${salto}`);
+}
+checks.push({
+  name: 'un solo <h1> por pagina anunciada, y sin saltos de nivel',
+  ok: encabezadosMal.length === 0,
+  detail: encabezadosMal.length
+    ? `${encabezadosMal.length}: ${encabezadosMal.slice(0, 4).join(' · ')}`
+    : `${juzgadas} pagina(s) del sitemap con HTML (de ${rutasSitemap.length} anunciadas; el resto es SSR)`,
+});
+
 let failed = 0;
 for (const c of checks) {
   console.log(`${c.ok ? '✅' : '❌'} ${c.name}${c.detail ? ` — ${c.detail}` : ''}`);
