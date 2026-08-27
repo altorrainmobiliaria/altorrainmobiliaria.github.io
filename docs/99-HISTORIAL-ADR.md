@@ -10601,3 +10601,43 @@ staging emite el styleguide (28632 b), producción emite el redirect (284 b).
 ### 242.6 — Archivos
 `portal/src/pages/design-system.astro` · `portal/scripts/verify-build.mjs`. **INTACTOS**: el sitemap
 —las seis exclusiones restantes son correctas y ahora están justificadas una por una— y `/seguridad`.
+
+## 243. ADR-243 — Comprobar anclas no es comprobar rutas, y contar para el gate valió más que el gate
+
+### 243.1 — Dos comprobaciones que suenan igual y no lo son
+`verify:enlaces` valida las **anclas** (`#id`); nadie validaba las **rutas**. Un `href` cuyo destino se
+renombra **no rompe nada al construir** —el build pasa, la página se pinta, el enlace se ve igual— y
+empieza a dar 404 a los visitantes. En un sitio estático no existe ningún momento en que eso falle
+solo. Medido: 45 páginas, **184 destinos servidos**, 2 rutas sin resolver — y las dos son `/ficha` y
+`/alertas`, las únicas SSR del sitio, que compone el worker. **Deuda real: cero.**
+
+### 243.2 — 🎯 Lo que de verdad salió de contar
+**38 enlaces apuntan a `/ficha`** desde la portada, `/comprar` y `/arrendar`. Nadie había puesto
+número a eso: mover esa ruta mata el botón principal del sitio sin un solo error. *No hacía falta un
+hallazgo para verlo; hacía falta contar.* → [[M-31]] regla (5).
+
+### 243.3 — La exclusión se DERIVA, no se escribe
+Las rutas SSR salen de leer qué `.astro` declara `prerender = false`, así que si mañana una página
+cambia de modo el gate se entera solo. Probado que la derivación está viva: al quitarle esa línea a
+`ficha.astro`, el gate marca sus 38 enlaces. Y si `src/pages` no se puede leer, **sale con exit 1** en
+vez de dar verde — [[L-65]] regla (5).
+
+### 243.4 — Y un falso positivo mío, corregido ANTES de cablear
+La primera versión construyó los destinos con el recorrido que **solo devuelve `.html`** y marcó roto
+`/favicon.svg`, que existe: un enlace puede apuntar a un SVG o un PDF igual que a una página. *Un gate
+que nace gritando en falso se ignora en una semana*, así que el falso positivo se arregla antes de
+cablearlo, no después (§238).
+
+### 243.5 — De paso, dos números del cerebro auditados
+El `05` decía «66 redirects» y «65 redirects» y **no se contradecía**: son los stubs del modo obra
+(53 raíz · 7 `blog/` · 6 `p/`) y el mapa del portal (12 zonas + 53 manuales). Costó seis
+comprobaciones averiguarlo, así que ahora cada cifra lleva su desglose al lado. Y el censo de páginas
+del `21` —«28 `.astro` + 11 endpoints»— se verificó **exacto**.
+
+### 243.6 — Verificación
+`verify` **exit 0, 38 comprobaciones** (era 37) · `typecheck` 0 errores · probado con **dos** defectos
+inyectados, comprobando cada inyección antes de creer el fallo.
+
+### 243.7 — Archivos
+`portal/scripts/verify-build.mjs` · `docs/05-ESTADO-GLOBAL.md` · `docs/33-LECCIONES-META.md`.
+**INTACTO**: `verify-enlaces.mjs` — sigue siendo el dueño de las anclas; esto es otra pregunta.
