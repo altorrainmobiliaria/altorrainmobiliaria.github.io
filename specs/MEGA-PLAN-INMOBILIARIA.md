@@ -142,10 +142,13 @@ Superficies (todas con mockup D2 aprobado):
 2. **Portal de aliados self-service** (op.11): precios públicos (ancla Proppit $200-300K/mes — nosotros por valor), panel de leads con trazabilidad (el listón de Fincaraíz OV es bajísimo), suscripción Wompi.
 3. ✅ **Perfil de inquilino reutilizable 1→N — Fase 0 HECHA el 2026-08-25** (§152 dominio y las 5
    puertas · §153 la revisión, ordenada por espera). 🚫 SIN central de riesgo: sin contrato con
-   DataCrédito es ilegal (B-04), así que verifica DOCUMENTOS, no solvencia. ⏭️ Falta la pantalla del
-   TITULAR. ✅ **Su dependencia ya está SATISFECHA** (§225): «Crear cuenta» en `/ingresar` está
-   **abierta y funcional** desde antes de hoy — lo que seguía cerrado era un comentario del código
-   que lo afirmaba. Con cuentas ya hay quien suba: la pantalla del titular es construible.
+   DataCrédito es ilegal (B-04), así que verifica DOCUMENTOS, no solvencia. ✅ **LAS DOS PANTALLAS ESTÁN
+   CONSTRUIDAS** (§225.6, medido el 26-ago): la del **equipo** en §153 y la del **TITULAR** en §155
+   —`/mi-perfil`, cableada, con sus cuatro callables desplegadas—, el mismo día. Esta línea decía
+   *«falta la pantalla del TITULAR, y depende de abrir Crear cuenta»* y **las dos mitades eran
+   falsas**: la pantalla existe y «Crear cuenta» nunca estuvo cerrada (§225.1). ⏭️ **Lo único que
+   queda es el ENSAYO end-to-end** —crear una cuenta real, subir un archivo, enviar— y ése no lo
+   puede hacer Claude: es del dueño (§155.5).
 4. Monetización particulares (destacados) — SOLO cuando haya liquidez de tráfico.
 5. WhatsApp Business API (plantillas) si el volumen lo pide.
 

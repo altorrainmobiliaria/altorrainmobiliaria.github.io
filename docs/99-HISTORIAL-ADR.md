@@ -9734,3 +9734,22 @@ construible desde ya.
 un pendiente cita una dependencia, la dependencia se vuelve a medir antes de heredarla: el coste de
 no hacerlo no es un error visible, es **trabajo detenido por una razón que caducó** — la forma más
 cara de deuda, porque no falla nada y por eso nadie la revisa.
+
+### 225.6 — Y la línea entera del plan era falsa, no solo su dependencia
+Corregí arriba que «Crear cuenta» no estaba cerrada, y escribí que *«la pantalla del titular es
+construible desde ya»*. **También falso.** Medido después: `/mi-perfil` **está construida, cableada
+(`montarMiPerfil()`), servida, y sus cuatro callables desplegadas** (`guardarPerfil`,
+`prepararSoporte`, `confirmarSoporte`, `enviarPerfil`). Es §155 — escrito **el mismo día** que §153,
+que es el ADR donde nació la frase «la del titular exige que se abra Crear cuenta».
+🎯 O sea: la línea del `MEGA-PLAN` tenía **las dos mitades caducadas** —la dependencia y el
+entregable—, y **caducaron el mismo día en que se escribieron**. El plan describía un bloqueo que
+duró horas y lleva desde entonces reteniendo un trabajo ya hecho.
+⚠️ **Y yo repetí el defecto al corregirlo**: arreglé la mitad que había medido (la dependencia) y
+heredé la otra sin comprobarla. Es la forma del día —*el arreglo que enumera*— cometida dentro de la
+corrección de un arreglo que enumeraba.
+**Lo que queda de verdad**: el **ensayo end-to-end** (crear cuenta real, subir un archivo, enviar),
+que §155.5 ya dejaba anotado y que **no lo puede hacer Claude** —exige crear una cuenta real—: es del
+dueño. Un pendiente honesto, en vez de dos falsos.
+**Doctrina**: cuando un pendiente cita **causa y efecto** («falta X porque falta Y»), hay que medir
+**los dos**. Comprobar solo la causa y heredar el efecto deja el pendiente vivo con la mitad de la
+mentira intacta — y encima con aspecto de recién verificado.
