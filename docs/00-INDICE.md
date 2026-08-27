@@ -100,6 +100,7 @@
 | §227 | 🗳️ **Una decisión sin opciones escritas no es una decisión: es una tarea.** Las cinco cifras del 5.3 ya tienen reemplazo redactado con su fuente, conservando la forma del bloque. Falta el sí/no. | 9811 |
 | §228 | 🔍 **Los 8 títulos del Journal salían CORTADOS** (103-108 chars) y 7 descripciones de hasta 297. El esquema decía «Google trunca cerca de 160» **al lado de** `max(300)`. Separadas las dos superficies: 8→1 y 7→0. | 9852 |
 | §229 | 🗂️ **Sexto shard** (§161-§200 → 00f): el kernel reventó su tope y baja de 25687 a 16180c. Y **cinco filas (§61-§65) llevaban meses en una GRIETA entre particiones** que nadie mira. | 9942 |
+| §230 | 🎭 **Un `Set` ocultaba lecciones DUPLICADAS**: dos reclamaban `L-60` y el enlace no estaba roto, MENTÍA. Kernel v1.20.0 + la versión del kernel tenía dos dueños. §208 cerrado. | 9964 |
 
 ---
 

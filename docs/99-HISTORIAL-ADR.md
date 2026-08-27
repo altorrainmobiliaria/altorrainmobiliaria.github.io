@@ -9960,3 +9960,61 @@ anterior.
 real** (171 c/línea) para que los dos ejes aprieten en el mismo punto — el criterio de §85, que existe
 porque un cap con los ejes descuadrados dispara el equivocado. Es un shard **cerrado por diseño**: si
 el `00` vivo vuelve a apretar, el siguiente rango es `00g`, no subir este techo.
+
+## 230. ADR-230 — Un `Set` ocultaba lecciones duplicadas, y la versión del kernel tenía dos dueños
+
+**Contexto.** Iba a podar `30-LECCIONES` de bersaglio (hallazgo B-04 de la auditoría N2 del 26-ago).
+La medición previa —contar antes de decidir— destapó dos cosas peores, y el B-04 sigue abierto.
+
+### 230.1 — Causa raíz
+**(a) IDs de lección colisionados.** Dos lecciones distintas reclamaban `L-60` en el MISMO fichero, así
+que `[[L-60]]` resolvía a la primera que apareciera. El enlace no estaba roto: **estaba mintiendo**, que
+es un grado peor porque un roto se ve. Ningún gate lo veía porque el chequeo de refs guardaba las
+definiciones en un `Set`, que **colapsa el duplicado**: el contador decía «96 definidas» sobre 97
+encabezados. 🎯 *La estructura elegida para deduplicar es la que vuelve invisible la duplicación* — un
+contador no puede delatar lo que su propio tipo de dato ya borró. Familia de [[L-58]].
+**(b) La versión del kernel tenía DOS dueños**: el fichero `VERSION` y la constante `KERNEL_VERSION`.
+`pull.mjs` ya pedía en un comentario bumpear ambos «en el mismo commit»: **regla [HONOR] sin gate**, e
+incumplida dentro de la misma hora — los cuatro repos anunciaban v1.19.0 corriendo v1.20.0. El **hash**
+del mismo sidecar sí estaba bien: *lo derivado sobrevive al cambio, lo copiado se desincroniza.*
+
+### 230.2 — Solución estructural
+Kernel canónico **v1.20.0** (repartido a los 4 repos): el chequeo cuenta sobre un **ARRAY** y **por
+fichero** —madre-puntero + hija-cuerpo comparten ID por diseño (§G.5), el choque real es el
+intra-fichero— y barre `docs/*.md` para cubrir a las hijas **sin lista a mano**: la lista se DERIVA.
+`\d{2}` → `\d{2,}` (bersaglio ya va por su lección 87; a 13 de que el gate dejara de verlas). Y `pull.mjs`
+deriva la versión de `brain-check.mjs` —el fichero que de verdad se reparte, luego el dueño— y **ABORTA**
+si `VERSION` discrepa: la regla de honor se convirtió en gate (§G.3, admisión anti-teatro).
+
+### 230.3 — No-regresión
+Ningún ID vivo cambió de significado. En bersaglio se movió el okupa (FACETA §184, **cero citas**) y se
+respetó el `L-60` que citan índice, ADR y skill. En cars, `L-53` no era ambiguo (todas las citas dicen
+«port de módulo»); `L-54` **sí** lo era —4 citas CSS contra 3 de render— así que se separó y se
+**refrescaron sus 3 punteros** (§G.4 Frescura lo exige; no es reescribir historia). Los 4 repos en verde.
+
+### 230.4 — Verificación
+El gate se probó **viéndolo FALLAR** con el duplicado real antes de fiarse de su verde (§38: un gate que
+nunca se vio disparar es un ✅ sin auditar). Igual el de `pull.mjs`, desincronizando a propósito. Y se
+estrenó cazando **dos colisiones en cars que el ojo no vio** — la diferencia entre enumerar a mano y
+derivar de una medición, que es el hilo de §218.
+
+### 230.5 — Anti-patterns evitados
+NO se tocó el kernel local de ningún repo (§51: eso es fork); se editó el canónico y se repartió. NO se
+renumeró el lado más citado. NO se subió el techo de `38` para esquivar la poda: primero se destilaron
+~490c y luego se **RE-MIDIÓ** con la fórmula que el propio manifest documenta (real +25%, [[M-05]]).
+**Mi propio censo inicial contó PUNTEROS como definiciones** y reportó 60 duplicados falsos en
+inmobiliaria; solo verificar antes de afirmar (§3.3) evitó reportar una crisis inexistente.
+
+### 230.6 — Archivos
+`brain-private/kernel/`: `brain-check.mjs` (v1.20.0), `pull.mjs`, `VERSION`. `bersaglio/docs/30`.
+`cars/docs/30` · `99` · `00-INDICE`. `docs/38-GATES-QUE-MIENTEN` + `.brain-manifest.json` (cap re-medido).
+`docs/10` + `CLAUDE.md`. **INTACTOS**: los `scripts/brain-*.mjs` de cada repo salvo por el reparto.
+
+### 230.7 — Doctrina + de propina, §208 CERRADO
+[[L-58]] gana su 2ª aparición y [[L-56]] su 4ª reincidencia (bersaglio: 45 pruebas y el CI sin correr
+ninguna) — *el kernel reparte código, no costumbres*. Y se cerró **§208** por el lado correcto: su
+arreglo era que **el chequeo publicara la COBERTURA** de los dos mecanismos de frescura, no teclearle
+una fecha al `10`. Publicada la cobertura, la fecha ya no es teatro sino alimento del #12, así que el
+`10` la lleva y el gate va **2/2**. El #16 se deja destapado **a propósito**: poner `verificado-vivo` a
+la pizarra afirmaría haber verificado cada pendiente contra la realidad, y sería falso. El impuesto de
+esos caracteres se pagó en el ROUTER (§G.5), no en la pizarra. Cache: N/A. **B-04 sigue abierto.**

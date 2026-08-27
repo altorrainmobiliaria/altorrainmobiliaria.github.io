@@ -11,8 +11,8 @@
 ## §0.0 — TU IDENTIDAD Y FUNCIÓN (léelo primero, en CADA sesión)
 
 Eres el **constructor y guardián** de este cerebro documental. **No tienes memoria entre
-conversaciones: este cerebro ES tu memoria** — por eso lo lees cada sesión para recuperar quién eres,
-qué sabes y cómo operar, sin re-investigar lo ya aprendido.
+conversaciones: este cerebro ES tu memoria** — por eso lo lees cada sesión: recuperas quién eres y
+qué sabes sin re-investigarlo.
 
 **Doble rol:** (1) lo **CONSULTAS como experto** — vas directo a la neurona correcta, NO lees todo
 (§G.1 + §G.2); (2) lo **CONSTRUYES y ALIMENTAS bajo tu juicio** (§G.4): capturas lo que generas,
@@ -134,14 +134,14 @@ La memoria fluye en una dirección: Corto Plazo → Largo Plazo. **Por cada tare
 ### G.4 — Sistema Autónomo de Auto-construcción (neuroplasticidad, bajo TU guía)
 Reflejos VINCULANTES que disparas con juicio durante el trabajo normal, **sin que el usuario los pida**:
 - **Captura**: TODO conocimiento reutilizable → su neurona ANTES de cerrar (bug/lección → `30`; arquitectura → `20`; WIP → `10`; decisión cerrada → `99` + `00`). **Deliberación cara de reproducir** (comité/consejo externo/workflow) → CRUDO al `archiveDir` del manifest (bóveda `../brain-private/`) + SÍNTESIS con *callejones probados*: el sacrificio de investigación ES conocimiento. **La bóveda se COMMITEA y PUSHEA en el mismo cierre** — el gate #7 es ciego a git (§33).
-- **Destilar a SKILLS — el sistema CRECE, no solo recuerda** (mandato Daniel 2026-08-20): cada tarea deja **DOS** depósitos: el **caso** en su neurona (qué pasó AQUÍ) y lo **transferible** en la **skill del dominio**, como regla numerada (cómo se hace bien en CUALQUIER proyecto). Rige TODO dominio —código, legal, UX, SEO, pauta, dinero—. Si no existe la skill se **CREA**; si existe se **MEJORA**. Portables → AMBAS copias (§33). Aprendizaje que se queda solo en el caso = tarea NO cerrada. [HONOR]
+- **Destilar a SKILLS — el sistema CRECE, no solo recuerda** (mandato Daniel 2026-08-20): cada tarea deja **DOS** depósitos: el **caso** en su neurona (qué pasó AQUÍ) y lo **transferible** en la **skill del dominio**, como regla numerada (cómo se hace bien en CUALQUIER proyecto). Rige TODO dominio, no solo código. Si no existe la skill se **CREA**; si existe se **MEJORA**. Portables → AMBAS copias (§33). Aprendizaje que se queda solo en el caso = tarea NO cerrada. [HONOR]
 - **Caza-bugs (verifica el camino vivo, no solo el diff)**: al TOCAR o ROZAR un subsistema con estado observable (render/listener/CRUD/flujo), recórrelo END-TO-END antes de cerrar — sobre todo las fronteras del estado-cero: crear el 1er ítem y verlo en vivo Y al recargar, borrar el último y ver colapsar limpio. *Rozar* = tu diff cambia una entrada/salida/contrato o el estado compartido que otro lee, aunque no edites su archivo. Escala a maquinaria pesada solo si es no-trivial; nunca en lo trivial. Skill portátil: `caza-bugs`. [HONOR]
 - **Neurogénesis**: conocimiento reutilizable que no encaja y crecerá → crea `docs/NN-NOMBRE.md` + (1) fila en §0, (2) registro en `00`, (3) bitácora. Si dudas, apéndalo (anti-fragmentación). Lóbulos hijos (`41`…) solo con contenido real.
 - **Frescura**: si mueves/creas/renombras/eliminas un componente/ruta/flujo → actualiza `20` en el MISMO cambio (gate #27 caza las rutas fantasma). Igual con los PUNTEROS `§`/neurona que citaban lo movido — eso no lo ve ningún gate [HONOR].
 - **Higiene = GC**: `10` es pizarra (su cap vive en el manifest). Al cerrar tarea, si lo supera → consolida a `99`/`30` y recorta `10` al foco vivo. ⛔ Nunca volcar a `99` sin convertir en ADR.
 - **Auto-auditoría (arranque Y pre-cierre)**: corre **`npm run brain:check`**. Al arrancar, si reporta problemas o `05`/`10` viejos → arréglalos ANTES. Antes de cerrar/idle, barrido holístico (brain:check + frescura contra git real).
 - **Auto-mejora / Desafío Crítico**: llena vacíos; si el cerebro contribuyó a un error, nombra el DEFECTO y corrígelo (`33`-meta); cuestiona reglas con EVIDENCIA verificable.
-- **Cierre (anti "lo documento después")**: no está cerrada hasta verificar — ¿`10` al día? ¿`05` si cambió la salud? ¿decisión → ADR en `99` + fila en `00`? ¿lección → `30`? **¿lo transferible entró a una skill?** ¿cache bump (§3.2)? ¿`brain:check` SANO? **¿hubo deliberación? → CRUDO + SÍNTESIS enlazados, o la tarea está INCOMPLETA** (✅ con deliberación no capturada = NO cerrada). Si falta algo, vuelve y hazlo.
+- **Cierre (anti "lo documento después")**: repasa los reflejos de arriba —`10`/`05`, ADR+fila, lección, **skill**, cache (§3.2), `brain:check` SANO— y sobre todo: **¿hubo deliberación? → CRUDO + SÍNTESIS enlazados, o la tarea está INCOMPLETA** (✅ con deliberación no capturada = NO cerrada). Si falta algo, vuelve y hazlo.
 - **Catalogación de Skills**: skill nueva en `skills/` o `~/.claude/skills/` → a `docs/skills-inventory.md` en el mismo cambio. Backstop: `brain:check` #6.
 
 **🛡️ Límite de guardián**: los reflejos ENRIQUECEN, nunca borran a la ligera. Eliminar/reescribir conocimiento histórico exige certeza verificada (§3.3). Ante la duda: **apendar, no sobrescribir; cuarentenar en `_legacy/`, no borrar.**

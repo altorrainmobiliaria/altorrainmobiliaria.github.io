@@ -55,9 +55,10 @@
 > 🎭 **UN ✅ NO PRUEBA QUE MIRARA** (§174-§177, §195): 8 gates cableados **tras** hallarlos verdes
 > sin mirar nada; `verify:claims` no abría el journal. **El CI nunca estuvo rojo**: lo afirmé sin mirar.
 >
-> ⚠️ **ESTE nodo está FUERA de los dos mecanismos de frescura** —ni fecha que el gate lea, ni marcador
-> `verificado-vivo`— y el arreglo está **especificado, no hecho** (§208; de ahí que un tercio de los
-> pendientes mintiera, §204-§210). 📄 Brief de Daniel (memoria `brief-lanzamiento-artifact`): **si
+> 🗓️ **última actualización: 2026-08-26** — §208 cerrado por el otro lado: el linter **publica la
+> COBERTURA** y nombra al nodo que falta (ése era el arreglo de §208.3, no teclear la fecha). Curada
+> la ceguera, esta fecha SÍ alimenta al #12. ⚠️ El #16 sigue destapado aquí **a propósito**: poner
+> `verificado-vivo` a la pizarra afirmaría que verifiqué cada pendiente contra la realidad, y es falso. 📄 Brief de Daniel (memoria `brief-lanzamiento-artifact`): **si
 > cambias el reparto 🤖/🧑 o las PELOTAS, ábrelo en el MISMO turno** — ningún gate lo ve envejecer (§211).
 >
 > 🏨 **Alojamiento lleva DOS gates**: RNT + reglamento de PH que autorice EXPRESAMENTE (§178-§179).
