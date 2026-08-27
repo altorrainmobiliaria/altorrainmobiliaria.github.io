@@ -88,7 +88,7 @@ export const ZONAS: Zona[] = [
   {
     slug: 'san-diego',
     nombre: 'San Diego',
-    titulo: 'Inmuebles en San Diego, Centro Histórico de Cartagena',
+    titulo: 'Inmuebles en San Diego, Centro Histórico',
     descripcion:
       'San Diego, dentro de la muralla: casas coloniales, plazas y balcones. Lo que debes saber sobre comprar patrimonio en Cartagena.',
     cuerpo:

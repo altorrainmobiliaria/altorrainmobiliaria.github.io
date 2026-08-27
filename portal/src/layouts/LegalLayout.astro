@@ -23,11 +23,18 @@ import { SITE } from '../lib/config/site';
 
 interface Props {
   title: string;
+  /*
+   * Titulo SOLO para la pestaña y el buscador. Existe porque `title` alimenta ADEMAS el `h1`
+   * y la miga, y en un documento legal ese texto es su NOMBRE OFICIAL: acortarlo para que
+   * quepa en Google seria renombrar el documento. Con esto el `h1` conserva su nombre entero
+   * y el `<title>` cabe en los ~60 caracteres que Google muestra. Aditivo: sin el, nada cambia.
+   */
+  tituloSeo?: string;
   description?: string;
   version: string;
   vigencia: string;
 }
-const { title, description, version, vigencia } = Astro.props;
+const { title, tituloSeo, description, version, vigencia } = Astro.props;
 
 /*
  * MIGA DE PAN, aquí y no en cada documento: las cuatro páginas legales son indexables y ninguna
@@ -41,7 +48,7 @@ const { title, description, version, vigencia } = Astro.props;
 const miga = [{ nombre: title, ruta: Astro.url.pathname }];
 ---
 
-<BaseLayout title={`${title} — ALTORRA Inmobiliaria`} description={description} miga={miga}>
+<BaseLayout title={tituloSeo ?? `${title} — ALTORRA Inmobiliaria`} description={description} miga={miga}>
   <Header active="" />
 
   <main id="main" class="alt-container alt-section legal">

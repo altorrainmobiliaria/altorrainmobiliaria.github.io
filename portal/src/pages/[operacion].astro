@@ -62,6 +62,9 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
 
 <BaseLayout
   title={`${op === 'comprar' ? 'Comprar' : 'Arrendar'} en Cartagena — ALTORRA`}
+  description={op === 'comprar'
+    ? 'Inmuebles en venta en Cartagena de Indias: busca por ubicación, compara y agenda tu visita. Acompañamiento legal de ALTORRA Inmobiliaria.'
+    : 'Inmuebles en arriendo en Cartagena de Indias: busca por ubicación y encuentra tu próximo hogar, con contrato y respaldo legal de ALTORRA.'}
   miga={[{ nombre: op === 'comprar' ? 'Comprar' : 'Arrendar', ruta: `/${op}` }]}
 >
   <Header active={op} />

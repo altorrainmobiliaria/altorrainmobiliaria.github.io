@@ -138,6 +138,11 @@ jobs:
       # Dos versiones que leian el codigo fuente pasaron en verde con un enlace roto delante.
       - name: Enlaces internos que resuelven de verdad (§89)
         run: npm run verify:enlaces
+      # 🛡️ DESPUES del build por la misma razon: el <title> lo compone el layout, asi que en la
+      # FUENTE no existe todavia. Juzga SOLO lo anunciado en el sitemap — el panel y el design
+      # system no los indexa nadie y exigirles copy comercial seria ruido.
+      - name: Titulo y descripcion de lo que Google vera (§232)
+        run: npm run verify:seo
 
   deploy-staging:
     name: Deploy a Cloudflare Workers (staging)
