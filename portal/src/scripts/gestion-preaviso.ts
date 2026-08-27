@@ -21,6 +21,7 @@
  */
 
 import { fechaLimite } from '../lib/domain/preaviso';
+import { fechaEnLetras } from '../lib/domain/meses-es';
 import type { Contrato } from '../lib/domain/gestion';
 import { llamarCallable } from './callable';
 
@@ -30,18 +31,9 @@ const val = (id: string) => ($(id) as HTMLInputElement | null)?.value.trim() ?? 
 /** Los contratos que la vista de contratos ya cargó. Se guardan para leer su `vigenciaFin`. */
 let CONTRATOS: Contrato[] = [];
 
-const MESES = [
-  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
-];
 
-/** `2027-06-30` → «30 de junio de 2027». Sin `Date`: construirla aquí abre un desfase de huso. */
-export function enLetras(iso: string): string {
-  const m = (iso ?? '').slice(0, 10).match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!m) return '—';
-  const mes = MESES[Number(m[2]) - 1];
-  return mes ? `${Number(m[3])} de ${mes} de ${m[1]}` : '—';
-}
+/** `2027-06-30` → «30 de junio de 2027». El formato vive en `domain/meses-es.ts`, su dueño único. */
+export const enLetras = fechaEnLetras;
 
 /**
  * Qué contratos admiten preaviso. Uno `terminado` no: no hay nada que preavisar, y ofrecerlo sería

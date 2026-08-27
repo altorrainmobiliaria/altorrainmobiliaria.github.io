@@ -35,11 +35,6 @@ const raiz = resolve(import.meta.dirname, '..');
  * ⚠️ Añadir aquí es una decisión que se explica, no un trámite para que el CI calle.
  */
 const ACEPTADOS = new Map([
-  [
-    'src/lib/domain/certificacion.ts',
-    'D.1625/2016 art. 1.2.4.11: DECIDIDO que es pantalla imprimible de /gestion, no una tubería de ' +
-      'PDF. Mockup YA ESCRITO (ALTORRA Certificacion.dc.html, 26-ago); espera aprobación (§222).',
-  ],
 ]);
 
 /** Fuentes que pueden ser CONSUMIDORAS. `functions/lib` es el compilado: no cuenta como uso. */

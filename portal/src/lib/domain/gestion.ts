@@ -61,7 +61,17 @@ export interface Contrato extends Versioned, Auditable {
   /** Si va dentro del canon, no se suma aparte al cobrarle al arrendatario. */
   adminIncluidaEnCanon?: boolean;
   diaPago?: number; // 1..28
-  honorariosPct?: number; // administración
+  /**
+   * Honorarios de administración en **PORCENTAJE, 0-100** — `10` significa 10 %, no 1000 %.
+   *
+   * ⚠️ La unidad se declara aquí porque los dos extremos de este campo la entendieron distinto y
+   * costaba dinero: el formulario pide «Honorarios %» con marcador `10`, este validador acepta
+   * hasta 100, y `liquidacion.ts` espera una **fracción** (rechaza cualquier cosa > 0.5, y su
+   * propio comentario llama a esto «el error de dedo que más caro sale aquí»). Resultado: un
+   * contrato normal del 10 % no se podía liquidar. La conversión ocurre UNA vez, al construir la
+   * `EntradaLiquidacion`, y en ningún otro sitio.
+   */
+  honorariosPct?: number;
   ivaSobreHonorarios?: boolean;
   vigenciaInicio: ISODate;
   vigenciaFin: ISODate; // alerta de renovación a 4 meses (preaviso legal 3 — Ley 820), derivada de aquí

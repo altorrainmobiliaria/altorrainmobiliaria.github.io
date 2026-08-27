@@ -761,6 +761,40 @@ const init = DATA.admin;
       <div class="gx-liq__nota">
         <p><strong>Esta pantalla calcula y muestra; no mueve dinero.</strong> El giro se hace por fuera mientras no est&#233; la cuenta de comercio, y las tres condiciones del dictamen (&#167;165) siguen mandando: el dinero no reposa en cuenta de ALTORRA, el mandato dice recaudo y giro, y no se le ofrece a nadie sin contrato firmado.</p>
       </div>
+
+      <!--
+        CERTIFICACION ANUAL AL PROPIETARIO (§168 · ADR 233). Mockup:
+        `design/mockups/ALTORRA Certificacion.dc.html`. NO es la pantalla de arriba: aquella calcula
+        el MES y esta suma el ANO, y responden preguntas distintas — «cuanto le giro este mes» frente
+        a «que declara usted». El D.1625/2016 art. 1.2.4.11 dice que el mandante declara sus ingresos
+        «segun la informacion que le suministre el mandatario»: este papel ES esa informacion, y se
+        lo entrega a su contador.
+      -->
+      <div class="gx-panel">
+        <div class="gx-panel__head"><h2>Certificaci&#243;n anual al propietario</h2><span class="gx-psub" id="gx-cf-cobertura"></span></div>
+
+        <p class="gx-psub gx-pad-x">
+          Lo que ALTORRA recibi&#243; y pag&#243; por cuenta del propietario durante el a&#241;o. Se imprime desde
+          aqu&#237;; por eso dice tambi&#233;n lo que <em>no</em> incluye.
+        </p>
+
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="gx-cf-contrato">Contrato</label><select class="alt-input" id="gx-cf-contrato"></select></div>
+          <div><label class="alt-label" for="gx-cf-ano">A&#241;o gravable</label><select class="alt-input" id="gx-cf-ano"></select></div>
+          <div><label class="alt-label" for="gx-cf-nit">NIT o c&#233;dula del propietario</label><input class="alt-input" id="gx-cf-nit" type="text" placeholder="1.047.xxx.xxx" /></div>
+        </div>
+        <p class="gx-hint">
+          Sin el documento del propietario el certificado <strong>no le sirve para declarar</strong>.
+          Si el contrato ya lo tiene guardado, sale relleno.
+        </p>
+
+        <div class="gx-pad-x">
+          <button class="alt-btn alt-btn--navy" type="button" id="gx-cf-armar">Armar certificaci&#243;n</button>
+          <button class="alt-btn alt-btn--outline" type="button" id="gx-cf-imprimir" hidden>Imprimir</button>
+        </div>
+
+        <div id="gx-cf-salida"></div>
+      </div>
      </div>
 
      <div id="gx-vista-perfiles" hidden>
@@ -1473,6 +1507,20 @@ const init = DATA.admin;
   /* ═══ LIQUIDACIÓN (§167) — el comprobante del mes ═══
      `is:global` como el resto del panel (§117): estas clases las crea el JS con `createElement`, y una
      regla acotada por Astro no alcanza a un nodo sin el atributo `data-astro-cid-*`. */
+  /* CERTIFICACION ANUAL (ADR 233). Sobria a proposito: este bloque se IMPRIME y se entrega a un
+     contador, asi que se lee mejor con jerarquia tipografica que con color. Paleta de marca. */
+  .gx-cf__certifica { font-size: 14px; line-height: 1.75; color: var(--alt-text-soft, #5B6572); padding: 4px 20px 16px; max-width: 72ch; }
+  .gx-cf__fila { display: flex; justify-content: space-between; gap: 16px; padding: 12px 20px; border-bottom: 1px solid #F4F7F9; }
+  .gx-cf__concepto { display: block; font-size: 14.5px; font-weight: 500; color: var(--gx-navy, #062743); }
+  .gx-cf__detalle { display: block; font-size: 12.5px; line-height: 1.6; color: var(--alt-text-soft, #8A94A0); margin-top: 2px; max-width: 60ch; }
+  .gx-cf__monto { font-size: 15px; color: var(--gx-navy, #062743); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .gx-cf__monto--off { color: var(--alt-text-soft, #8A94A0); }
+  .gx-cf__total { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin: 16px 20px 4px; padding: 18px 20px; background: var(--gx-navy, #062743); border-radius: 14px; color: #fff; }
+  .gx-cf__total strong { font-family: var(--alt-font-display, serif); font-size: 26px; color: var(--alt-gold, #d4af37); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  @media print {
+    /* Al imprimir solo importa el certificado: los mandos y el resto del panel estorban. */
+    .gx-fgrid, .gx-hint, .alt-btn, .gx-head, .gx-nav, .gx-liq__barra { display: none !important; }
+  }
   .gx-liq__barra { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; padding: 18px 20px; margin-bottom: 16px; }
   .gx-liq__campo { flex: 1 1 300px; display: block; }
   .gx-liq__campo > span { display: block; font-size: 12px; font-weight: 600; color: var(--gx-navy, #062743); margin-bottom: 6px; }

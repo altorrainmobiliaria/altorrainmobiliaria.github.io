@@ -25,6 +25,8 @@
  */
 
 /** Acciones de `auditLog` que tienen que ver con un documento de la bóveda. */
+import { MESES_ES } from './meses-es';
+
 export const ACCIONES_DOCUMENTO = ['documento-abierto', 'documento-retirado'] as const;
 export type AccionDocumento = (typeof ACCIONES_DOCUMENTO)[number];
 
@@ -126,10 +128,6 @@ export const VERBO: Record<AccionDocumento, string> = {
  * bitácora que dice horas distintas según el equipo desde el que se mira no sirve para lo que sirve
  * una bitácora.
  */
-const MESES = [
-  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
-];
 const DESFASE_COLOMBIA_MIN = -5 * 60;
 
 export function cuandoEs(fecha: Date | null): string {
@@ -139,7 +137,7 @@ export function cuandoEs(fecha: Date | null): string {
   const h12 = h24 % 12 === 0 ? 12 : h24 % 12;
   const mm = String(local.getUTCMinutes()).padStart(2, '0');
   const meridiano = h24 < 12 ? 'a. m.' : 'p. m.';
-  return `${local.getUTCDate()} de ${MESES[local.getUTCMonth()]} de ${local.getUTCFullYear()}, ${h12}:${mm} ${meridiano}`;
+  return `${local.getUTCDate()} de ${MESES_ES[local.getUTCMonth()]} de ${local.getUTCFullYear()}, ${h12}:${mm} ${meridiano}`;
 }
 
 /**

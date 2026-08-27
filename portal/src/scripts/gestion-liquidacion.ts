@@ -25,7 +25,8 @@
  */
 
 import { cargarAuth } from './auth';
-import type { Contrato } from '../lib/domain/gestion';
+import type { Contrato, Pago } from '../lib/domain/gestion';
+import { montarCertificacion } from './gestion-certificacion';
 import {
   explicarProblema,
   liquidarPeriodo,
@@ -89,12 +90,17 @@ let cargados: Contrato[] = [];
  * 3,5 % que nadie le practicó (§166.1). Cuando el dato exista en el contrato se leerá de ahí; mientras
  * tanto, la casilla lo deja explícito y quien la marca sabe por qué.
  */
-function entradaDe(c: Contrato, retiene: boolean): EntradaLiquidacion {
+export function entradaDeLiquidacion(c: Contrato, retiene: boolean): EntradaLiquidacion {
   return {
     canon: c.canon ?? 0,
     administracionPH: c.administracion,
     adminIncluidaEnCanon: c.adminIncluidaEnCanon,
-    honorariosPct: c.honorariosPct,
+    /*
+     * PORCENTAJE → FRACCIÓN, y este es el ÚNICO sitio donde ocurre. El contrato guarda lo que
+     * tecleó una persona (10 = 10 %); el dominio calcula con 0.10. Antes se pasaba tal cual y la
+     * liquidación de cualquier contrato del 10 % salía «fuera de rango».
+     */
+    honorariosPct: c.honorariosPct === undefined ? undefined : c.honorariosPct / 100,
     ivaSobreHonorarios: c.ivaSobreHonorarios,
     arrendatarioEsAgenteRetencion: retiene,
   };
@@ -226,7 +232,7 @@ function recalcular(): void {
     return;
   }
 
-  const entrada = entradaDe(c, chk?.checked ?? false);
+  const entrada = entradaDeLiquidacion(c, chk?.checked ?? false);
   const problemas = problemasDeLiquidacion(entrada);
   if (problemas.length) {
     // Se dice QUÉ falta, no «error»: un contrato sin canon no es un fallo del sistema.
@@ -283,6 +289,17 @@ export async function montarLiquidacion(): Promise<void> {
       }),
     );
     sel.addEventListener('change', recalcular);
+
+    /*
+     * Los PAGOS, para la certificacion anual de abajo. Se leen aqui y no alli porque es la misma
+     * pantalla y la misma sesion: dos lecturas de la misma coleccion en el mismo montaje serian dos
+     * facturas del free-tier por el mismo dato. Los periodos del certificado salen de los giros
+     * REALES, no de recorrer doce meses del calendario.
+     */
+    const qp = mod.query(mod.collection(db, 'pagos'), mod.limit(TOPE * 12));
+    const snapPagos = await mod.getDocs(qp);
+    const pagos = snapPagos.docs.map((d) => ({ ...(d.data() as object), id: d.id }) as Pago);
+    montarCertificacion(cargados, pagos);
     $('gx-liq-retiene')?.addEventListener('change', recalcular);
     recalcular();
   } catch (e) {
