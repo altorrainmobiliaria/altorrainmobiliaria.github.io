@@ -8,9 +8,15 @@
  * que el legacy). El proveedor de correo/contraseña está verificado activo; el de Google puede no
  * estarlo y ese caso se trata explícitamente en vez de reventar con un error críptico.
  *
- * ⚠️ CREAR CUENTA sigue cerrado, pero YA NO por la política: la Política de Tratamiento de Datos
- * está PUBLICADA y LIVE desde el 2026-08-20 (ADR §90, verificada con curl 200) y el gate de Ley 1581
- * art. 9 quedó LEVANTADO. Lo que falta es el visto bueno del dueño. El botón lo dice en vez de fingir.
+ * ✅ CREAR CUENTA está ABIERTO y funcional (§225). Este comentario decía «sigue cerrado … falta el
+ * visto bueno del dueño. El botón lo dice en vez de fingir», y llevaba tiempo siendo falso: el botón
+ * abre el formulario, el formulario llama a `createUserWithEmailAndPassword` y no hay candado en
+ * ninguna parte. Un comentario que afirma un candado inexistente es peor que no tenerlo — quien lo
+ * lea cerrará la búsqueda justo antes de comprobarlo.
+ * Lo que SÍ protege está abajo y es real: 12 caracteres mínimos, autorización expresa de la Política
+ * (Ley 1581 art. 9) sin la cual no se crea la cuenta, prueba de esa autorización escrita por el
+ * servidor con `registrarEvento`, y verificación de correo enviada de inmediato — que es, dicho en
+ * el propio código, «lo más barato que frena el registro basura mientras no exista el anti-bot».
  */
 export const prerender = true;
 

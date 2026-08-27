@@ -135,6 +135,7 @@
 | §222 | 🚪 **Dos obligaciones legales en código que NADIE puede usar**: `preaviso` (Ley 820, prórroga de un año) y `certificacion` (D.1625) sin un solo consumidor. Lo que los mantenía vivos era su propio test. Encargo escrito. | 9512 |
 | §223 | 🛡️ **`verify:huerfanos`**: mecaniza el 222 — resuelve por RUTA (no por nombre, que fallo 2 veces), publica su denominador, congela la deuda de 3 y se cablea en verify Y en el CI (L-56). | 9575 |
 | §224 | 🔎 **verify:claims miraba la superficie equivocada**: en la FUENTE la cifra y su etiqueta viven en campos distintos, en el HTML estan juntas. Ahora barre las dos. 15 de 24 hallazgos eran un patron que ya gano. | 9622 |
+| §225 | 🔓 **Un candado que solo existía en su comentario**: «CREAR CUENTA sigue cerrado» era falso —el botón abre, el form crea—. La Ola 2 retenía la pantalla del titular contra una dependencia ya satisfecha. | 9698 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

@@ -9694,3 +9694,43 @@ solo el build los junta — igual que solo el navegador los junta para el lector
    ejecutó `verify:claims`, falló, y dejó el hueco vacío: *«Desde §224  SÍ los ve»*. La regla dice
    escribir el script con la herramienta de ficheros **sin juzgar si el texto es corto** — y lo juzgué
    corto. *El juicio es justo lo que falla*, que es la frase que la propia lección lleva escrita.
+
+## 225. ADR-225 — Un candado que solo existía en su comentario, y una ola que llevaba desbloqueada sin saberlo
+
+**Contexto.** Buscando trabajo de producto que no dependiera de Daniel fui a la fuente que manda
+(`MEGA-PLAN`, gate #28 del router). La Ola 2 dice del perfil de inquilino: *«Falta la pantalla del
+TITULAR, y depende de abrir «Crear cuenta» en `/ingresar` — sin cuentas no hay quien suba nada»*.
+
+### 225.1 — El candado no existe
+La cabecera de `ingresar.astro` afirmaba: *«CREAR CUENTA sigue cerrado … Lo que falta es el visto
+bueno del dueño. **El botón lo dice en vez de fingir**»*. Verificado línea a línea:
+`#ing-crear` → `verAlta(true)`, que **solo muestra el formulario**; el formulario llama a
+`createUserWithEmailAndPassword`; y en el HTML **servido** el botón no está `disabled`, no hay
+«próximamente» ni aviso alguno. **No hay candado en ninguna parte.**
+🎯 Y la frase que lo remata —*«el botón lo dice en vez de fingir»*— describe un comportamiento que el
+botón no tiene. **Un comentario que afirma una protección inexistente es peor que no tener el
+comentario**: quien lo lea cierra la búsqueda justo antes de comprobarlo. Misma forma que el `IVA`
+de §178, cuyo comentario prometía unicidad mientras existía una segunda copia.
+
+### 225.2 — Lo que SÍ protege, y es real
+No es un agujero: el alta exige **12 caracteres** mínimos, **autorización expresa** de la Política
+(Ley 1581 art. 9) sin la cual no se crea la cuenta, deja **prueba en el servidor** de esa autorización
+(`registrarEvento`, con uid, correo, IP y fecha, como pide el D.1377 art. 5) y **envía verificación de
+correo de inmediato** — que el propio código llama *«lo más barato que frena el registro basura
+mientras no exista el anti-bot»*. Lo declarado y ausente es el **anti-bot**; eso sigue siendo cierto.
+
+### 225.3 — La consecuencia que importa: la Ola 2 estaba esperando a nada
+El `MEGA-PLAN` bloqueaba la **pantalla del titular** del perfil de inquilino contra una dependencia
+que ya estaba satisfecha. 🎯 **Un pendiente puede sobrevivir a su propia causa**, y entonces no
+protege un orden: **retiene trabajo**. Actualizado en el plan; la pantalla del titular es
+construible desde ya.
+
+### 225.4 — Archivos
+`portal/src/pages/ingresar.astro` (SOLO el comentario de cabecera; cero cambios de comportamiento,
+`typecheck` 0 errores) · `specs/MEGA-PLAN-INMOBILIARIA.md`. **INTACTO**: el flujo de alta.
+
+### 225.5 — Doctrina
+**Un candado se comprueba en el código y en lo SERVIDO, nunca en la prosa que lo anuncia.** Y cuando
+un pendiente cita una dependencia, la dependencia se vuelve a medir antes de heredarla: el coste de
+no hacerlo no es un error visible, es **trabajo detenido por una razón que caducó** — la forma más
+cara de deuda, porque no falla nada y por eso nadie la revisa.

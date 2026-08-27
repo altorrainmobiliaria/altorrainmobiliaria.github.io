@@ -143,7 +143,9 @@ Superficies (todas con mockup D2 aprobado):
 3. ✅ **Perfil de inquilino reutilizable 1→N — Fase 0 HECHA el 2026-08-25** (§152 dominio y las 5
    puertas · §153 la revisión, ordenada por espera). 🚫 SIN central de riesgo: sin contrato con
    DataCrédito es ilegal (B-04), así que verifica DOCUMENTOS, no solvencia. ⏭️ Falta la pantalla del
-   TITULAR, y depende de abrir «Crear cuenta» en `/ingresar` — sin cuentas no hay quien suba nada.
+   TITULAR. ✅ **Su dependencia ya está SATISFECHA** (§225): «Crear cuenta» en `/ingresar` está
+   **abierta y funcional** desde antes de hoy — lo que seguía cerrado era un comentario del código
+   que lo afirmaba. Con cuentas ya hay quien suba: la pantalla del titular es construible.
 4. Monetización particulares (destacados) — SOLO cuando haya liquidez de tráfico.
 5. WhatsApp Business API (plantillas) si el volumen lo pide.
 
