@@ -205,3 +205,108 @@ if (existsSync(DIST)) {
 } else {
   console.log('ℹ️  verify:controles — sin `dist/`, la sonda de nombres accesibles no corre (el CI siempre lo tiene).');
 }
+
+/*
+ * ── SONDA: NINGÚN FORMULARIO RECOGE DATOS PERSONALES SIN AUTORIZACIÓN (§239) ─────────
+ *
+ * QUÉ EXIGE LA LEY. La Ley 1581 de 2012 pide autorización **previa, expresa e informada** del
+ * titular para tratar sus datos, y el Decreto 1377 de 2013 art. 5 aclara que el silencio no es
+ * autorización: tiene que haber una conducta inequívoca. En un formulario web eso es una **casilla
+ * que el usuario marca**, no una frase en letra pequeña.
+ *
+ * POR QUÉ UN GATE. Hoy los cuatro formularios que recogen datos la tienen —medido sobre las 45
+ * páginas construidas—, así que este trinquete parte de CERO deuda. Pero un formulario nuevo se
+ * añade en diez minutos y la casilla se olvida en cinco: nada en el build lo notaría, la página
+ * funcionaría perfecta, y la sanción de la SIC llega meses después. Es la misma decisión que el
+ * gate del RNT (§234): una obligación legal que solo sostiene la memoria de alguien no está
+ * sostenida.
+ *
+ * QUÉ EXIGE, y son las tres mitades de una autorización válida:
+ *   · una **casilla** (conducta inequívoca, no el silencio),
+ *   · un **texto** que diga que autoriza el tratamiento (informada),
+ *   · un **enlace a la política** (para que «informada» signifique algo).
+ *
+ * LO QUE NO JUZGA: un formulario que solo AUTENTICA. Iniciar sesión no recoge datos nuevos para
+ * tratar — la autorización se dio al crear la cuenta—, y exigírsela sería ruido, que es como se
+ * aprende a ignorar un gate.
+ */
+if (existsSync(DIST)) {
+  const PERSONAL = /type="(email|tel)"|(?:name|id)="[^"]*(nombre|email|telefono|whatsapp|celular|cedula)/i;
+  const SOLO_LOGIN = /id="[^"]*(login|ingreso|signin)|data-form="login"/i;
+  const sinAutorizacion = [];
+  let formularios = 0;
+
+  for (const f of archivos(DIST, '.html')) {
+    const html = readFileSync(f, 'utf8');
+    for (const m of html.matchAll(/<form[^>]*>[\s\S]*?<\/form>/gi)) {
+      const form = m[0];
+      if (!PERSONAL.test(form)) continue;
+      // Un formulario de SOLO contraseña es autenticación, no captación.
+      const soloAcceso = /type="password"/i.test(form) && !/type="tel"/i.test(form);
+      if (soloAcceso && !/autoriz|habeas/i.test(form)) continue;
+      if (SOLO_LOGIN.test(form)) continue;
+      formularios += 1;
+
+      /*
+       * 🔴 LA CASILLA TIENE QUE SER LA DE LA AUTORIZACIÓN, no una cualquiera. La primera versión
+       * de esta sonda preguntaba «¿hay un checkbox?» y salió VERDE con el defecto delante: el
+       * formulario de `/publicar` tiene dos —`autorizacion` y `marketing`—, así que al quitar la
+       * de la autorización seguía viendo la otra. Medir el marcador en vez de la cosa, dentro del
+       * gate escrito para cazar justo eso ([[L-62]]).
+       *
+       * Se comprueba por PROXIMIDAD: el texto que acompaña a cada casilla —su etiqueta— tiene que
+       * hablar de la autorización. Un `name="autorizacion"` también vale, pero no se exige: el
+       * nombre del campo es nuestro, y lo que la ley mira es lo que LEE el titular.
+       */
+      const casillas = [...form.matchAll(/<input[^>]*type="checkbox"[^>]*>/gi)];
+      const casilla = casillas.some((c) => {
+        /*
+         * Se miran el `name` Y el `id`, no "el primero de los dos". La version con
+         * `(?:name|id)` casaba solo el que apareciera antes: en `/estancias` eso era
+         * `id="est-auth"`, que no dice "autoriz", y nunca llegaba a ver `name="autorizacion"`.
+         * Un patron alternado lee UNA alternativa, no las dos.
+         */
+        const attrs = [c[0].match(/name="([^"]*)"/i)?.[1], c[0].match(/id="([^"]*)"/i)?.[1]];
+        if (attrs.some((a) => a && /autoriz|habeas|auth/i.test(a))) return true;
+        /*
+         * Sin nombre revelador, se mira SU etiqueta, no una ventana de texto. La versión con
+         * ventana de 600 caracteres seguía en verde tras quitar la casilla de la autorización:
+         * la de `marketing` está justo al lado y alcanzaba el mismo texto. *Una comprobación por
+         * cercanía no distingue dos cosas que están cerca* — que es todo el problema.
+         */
+        const etiqueta = form.slice(Math.max(0, c.index - 400), c.index + 400)
+          .match(/<label[^>]*>[\s\S]*?<\/label>/i);
+        if (!etiqueta || !etiqueta[0].includes(c[0])) return false;
+        return /autoriz|habeas|tratamiento de (mis )?datos/i.test(etiqueta[0].replace(/<[^>]+>/g, ' '));
+      });
+      const texto = /autoriz|habeas|tratamiento de (mis )?datos/i.test(form);
+      const enlace = /href="[^"]*(privacidad|politica-tratamiento-datos|habeas-data)/i.test(form);
+      if (casilla && texto && enlace) continue;
+
+      const falta = [
+        !casilla && 'una casilla que hable de la autorización',
+        !texto && 'texto',
+        !enlace && 'enlace a la política',
+      ]
+        .filter(Boolean)
+        .join(' + ');
+      sinAutorizacion.push(`${relative(DIST, f).replace(/\\/g, '/')} — le falta: ${falta}`);
+    }
+  }
+
+  if (sinAutorizacion.length) {
+    console.error('');
+    console.error('❌ verify:controles — formulario(s) que recogen datos personales SIN autorización válida:');
+    console.error('');
+    for (const x of sinAutorizacion) console.error(`   ${x}`);
+    console.error('');
+    console.error('   Ley 1581 de 2012 + D.1377/2013 art. 5: la autorización es previa, EXPRESA e informada,');
+    console.error('   y el silencio no vale. Hacen falta las tres: la casilla, el texto y el enlace.');
+    process.exit(1);
+  }
+
+  console.log(
+    `✅ verify:controles — ${formularios} formulario(s) con datos personales: los ${formularios} piden ` +
+      'autorización expresa con su enlace a la política (Ley 1581).',
+  );
+}
