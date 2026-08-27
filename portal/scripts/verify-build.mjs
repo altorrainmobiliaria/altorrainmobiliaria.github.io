@@ -376,6 +376,52 @@ checks.push({
       : 'se activa con PUBLIC_SITE_ENV=production',
 });
 
+/*
+ * ── SONDA: NINGUNA IMAGEN PESADA EN LA RUTA CRÍTICA (§238) ──────────────────────────
+ *
+ * QUÉ CAZA. Una imagen de más de 20 KB que el navegador descarga ANTES del primer pintado sin ser
+ * la que el visitante está esperando: sin `loading`, sin `srcset` que le deje elegir una variante
+ * pequeña, y sin declararse como la LCP.
+ *
+ * POR QUÉ. La portada arrastraba dos miniaturas DECORATIVAS del mapa —329 KB y 109 KB, con `alt=""`
+ * las dos y muy por debajo del pliegue— en la ruta crítica. No rompe nada y no sale en ninguna
+ * consola: simplemente el sitio tarda más en un móvil con datos, que es como lo abre media
+ * Cartagena. 438 KB para dos recuadros de adorno.
+ *
+ * LAS TRES EXCEPCIONES son las tres formas legítimas de estar ahí, y cada una dice algo distinto:
+ *   · `fetchpriority="high"` — ES la LCP y la queremos cuanto antes (bajarla a perezosa EMPEORA).
+ *   · `srcset` — el navegador elige una variante pequeña; el `src` grande es solo el respaldo.
+ *     ⚠️ Sin esta excepción el gate reportaba **87 falsos**, incluido el logo en cada página.
+ *   · `loading` — ya está fuera de la ruta crítica por decisión explícita.
+ *
+ * Se mira el HTML SERVIDO y no el fuente: lo que cuenta es lo que recibe el navegador.
+ */
+const TOPE_KB = 20;
+const pesadas = [];
+for (const f of htmlServido(resolve(root, 'dist/client'))) {
+  const html = readFileSync(f, 'utf8').replace(/<template\b[^>]*>[\s\S]*?<\/template>/gi, '');
+  for (const etiqueta of html.match(/<img[^>]*>/g) ?? []) {
+    if (/loading=|srcset=|fetchpriority="high"/.test(etiqueta)) continue;
+    const src = etiqueta.match(/src="(\/[^"]+)"/);
+    if (!src) continue;
+    const asset = resolve(root, 'dist/client', src[1].slice(1));
+    if (!existsSync(asset)) continue;
+    const kb = statSync(asset).size / 1024;
+    if (kb > TOPE_KB) {
+      pesadas.push(
+        `${relative(resolve(root, 'dist/client'), f).replace(/\\/g, '/')} → ${Math.round(kb)} KB ${src[1]}`,
+      );
+    }
+  }
+}
+checks.push({
+  name: `ninguna imagen >${TOPE_KB} KB en la ruta critica (sin loading, sin srcset, sin ser la LCP)`,
+  ok: pesadas.length === 0,
+  detail: pesadas.length
+    ? `${pesadas.length}: ${pesadas.slice(0, 4).join(' · ')}`
+    : 'comprobado sobre el HTML servido de todas las paginas',
+});
+
 let failed = 0;
 for (const c of checks) {
   console.log(`${c.ok ? '✅' : '❌'} ${c.name}${c.detail ? ` — ${c.detail}` : ''}`);
