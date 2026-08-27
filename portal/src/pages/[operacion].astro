@@ -113,7 +113,7 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
       <div class="serp-list">
         <div class="serp-grid">
           {/* Las primeras 4 cards se enlazan con los 4 pins del mapa (hover-pin, §32.22) */}
-          {results.map((p, i) => <PropertyCard {...p} pin={i < pins.length ? String(i) : undefined} />)}
+          {results.map((p, i) => <PropertyCard {...p} nivel={2} pin={i < pins.length ? String(i) : undefined} />)}
         </div>
 
         {/* MOLDE de card para la isla del catálogo REAL: lo renderiza el MISMO `PropertyCard`, así el
@@ -121,6 +121,7 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
             opcionales; la isla elimina las que no apliquen. No se muestra ni se indexa (<template>). */}
         <template id="tpl-pcard">
           <PropertyCard
+            nivel={2}
             img="" alt="" badge="En venta" zona="" beds={0} baths={0} area="0 m²"
             title="" price="" priceLabel="Desde" priceSuffix="/mes" href="#"
           />

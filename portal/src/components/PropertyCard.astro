@@ -21,8 +21,18 @@ interface Props {
   /** Id del DOCUMENTO del inmueble. Lo usa favoritos como clave estable: el slug y la URL pueden
    *  cambiar, el id no. Aditivo: sin él la card se comporta exactamente como antes. */
   inmId?: string;
+  /*
+   * Nivel del encabezado del titulo. Por defecto 3, que es lo CORRECTO donde la card cuelga de una
+   * seccion con su `h2` (portada: «Destacadas», «Cerca de ti»…). En /comprar y /arrendar no hay
+   * seccion intermedia —la card es hija directa del `h1` de la pagina— y un `h3` ahi anuncia a un
+   * lector de pantalla una seccion que no existe. Es propiedad de la PAGINA, no de la card: la misma
+   * card es h3 en un sitio y h2 en otro sin dejar de estar bien. Aditivo: sin el prop, nada cambia.
+   */
+  nivel?: 2 | 3;
 }
-const { img, alt, badge, zona, beds, baths, area, title, price, priceLabel, priceSuffix, href, pin, inmId } = Astro.props;
+const { img, alt, badge, zona, beds, baths, area, title, price, priceLabel, priceSuffix, href, pin, inmId, nivel = 3 } = Astro.props;
+/** Etiqueta dinamica: en mayuscula porque Astro trata las minusculas como etiqueta HTML literal. */
+const Titulo = `h${nivel}` as 'h2' | 'h3';
 
 const specIcon = {
   bed: '<path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7"/><path d="M3 15h18"/><path d="M7 11V9h4v2"/><path d="M13 11V9h4v2"/>',
@@ -48,7 +58,7 @@ const specIcon = {
         {area && <span data-spec="area"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={specIcon.area}></svg>{area}</span>}
       </div>
     </div>
-    <h3 class="alt-pcard__title"><a href={href}>{title}</a></h3>
+    <Titulo class="alt-pcard__title"><a href={href}>{title}</a></Titulo>
     <div class="alt-pcard__foot">
       <span class="alt-pcard__price">
         {priceLabel && <span class="alt-pcard__price-lbl">{priceLabel}</span>}{price}{priceSuffix && <span class="alt-pcard__price-sfx">{priceSuffix}</span>}
