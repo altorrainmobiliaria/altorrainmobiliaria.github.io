@@ -12,9 +12,9 @@ fuentes:
   - titulo: 'Ley 223 de 1995 — impuesto de registro: sujetos pasivos, base gravable y tarifas'
     entidad: 'Función Pública · Gestor Normativo'
     url: 'https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=6968'
-  - titulo: 'Estatuto Tributario del Departamento de Bolívar — impuesto de registro y estampilla pro-desarrollo'
-    entidad: 'Asamblea Departamental de Bolívar'
-    url: 'https://www.asambleadebolivar.gov.co/wp-content/uploads/2024/12/Proyecto-de-Ordenanza-Estatuto-Tributario-SRVo-2-2-1-2.pdf'
+  - titulo: 'Normatividad de la Gobernación de Bolívar — ordenanzas del estatuto tributario departamental'
+    entidad: 'Gobernación de Bolívar'
+    url: 'https://www.bolivar.gov.co/web/seccion/normatividad/'
 ---
 
 Una negociación se cierra sobre un número: el precio. Pero para que el inmueble quede a nombre del comprador hay que registrar la escritura, y registrar cuesta.

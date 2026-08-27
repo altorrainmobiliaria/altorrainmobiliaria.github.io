@@ -293,3 +293,96 @@ if (reclamos.length) {
   process.exit(1);
 }
 console.log('✅ verify:claims — nadie reclama un «avalúo» como servicio propio (Ley 1673).');
+
+/*
+ * ── SONDA: NINGUNA FUENTE DEL JOURNAL SIN VERIFICAR (§236) ──────────────────────────
+ *
+ * QUÉ CAZA. Una URL de norma en el frontmatter `fuentes:` que nadie ha comprobado que exista.
+ *
+ * POR QUÉ HACE FALTA. El 27-ago se escribió un artículo citando «Ley 1369 de 2009» con el
+ * identificador `norma.php?i=38337` — **inventado**. La página responde «la norma puede que ya no
+ * esté disponible o se ha utilizado un enlace erróneo». Nada lo habría detectado: el build pasa, el
+ * esquema solo exige que sea una URL bien formada, y el artículo se ve impecable. Publicar una
+ * fuente rota en un texto legal, en un sitio cuyo eslogan es «Seguridad, Legalidad y Confianza», es
+ * el peor sitio posible para este descuido. Es [[M-30]] —el identificador escrito de memoria— en su
+ * forma más cara.
+ *
+ * POR QUÉ UNA LISTA Y NO UNA PETICIÓN DE RED. Un gate que llama a `.gov.co` falla el día que el CI
+ * no tiene salida, o que el portal del Estado está caído — y un gate que falla por motivos ajenos
+ * enseña a ignorarlo. La lista convierte «lo comprobé una vez» en algo que el repo RECUERDA: para
+ * añadir una fuente hay que abrirla, y añadirla aquí es la constancia de haberlo hecho.
+ */
+const VERIFICADAS = new Map([
+  ['https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=8738', 'Ley 820 de 2003 — arrendamiento de vivienda urbana'],
+  ['https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=4276', 'Ley 527 de 1999 — mensajes de datos y firma digital'],
+  ['https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=11254', 'Decreto 51 de 2004 — reglamenta la Ley 820 (matrícula e intermediación)'],
+  ['https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=77216', 'Decreto 1077 de 2015 — DUR del sector Vivienda, Ciudad y Territorio'],
+  ['https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=10482', 'Decreto 3130 de 2003 — reglamenta el art. 15 de la Ley 820 (garantías)'],
+  ['https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=6968', 'Ley 223 de 1995 — racionalización tributaria; impuesto de registro'],
+  ['https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49731', 'Ley 1579 de 2012 — Estatuto de Registro de Instrumentos Públicos'],
+  ['https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=53881', 'Ley 1673 de 2013 — actividad del avaluador y el RAA'],
+  ['https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=172558', 'Ley 2068 de 2020 — modifica la Ley General de Turismo'],
+  ['https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=175266', 'Decreto 1836 de 2021 — RNT y plataformas de servicios turísticos'],
+  [
+    'https://www.corteconstitucional.gov.co/relatoria/2015/c-385-15.htm',
+    'Sentencia C-385/15 — actividad avaluadora y reserva de ley estatutaria',
+  ],
+  [
+    'https://normograma.dian.gov.co/dian/compilacion/docs/ley_0300_1996.htm',
+    'Ley 300 de 1996 — Ley General de Turismo',
+  ],
+  [
+    'https://www.bolivar.gov.co/web/seccion/normatividad/',
+    'Normatividad de la Gobernación de Bolívar — donde vive la ordenanza tributaria vigente',
+  ],
+]);
+
+/*
+ * Lo que NO se pudo comprobar, dicho en voz alta. Una fuente aquí NO bloquea —el enlace puede estar
+ * perfecto y el problema ser del otro lado— pero tampoco hereda el ✅ de las demás: el gate imprime
+ * cuántas hay. Es la regla 1 de [[L-59]]: si un lado no se puede LEER, ese par no es verificable, y
+ * callarlo es lo que convierte un ✅ en una afirmación falsa.
+ */
+const NO_COMPROBABLES = new Map([
+  [
+    'https://www.secretariasenado.gov.co/senado/basedoc/codigo_comercio_pr041.html',
+    'el host rechazó la conexión (ECONNREFUSED) el 2026-08-27; reintentar',
+  ],
+]);
+
+const sinVerificar = [];
+const pendientes = [];
+let fuentesVistas = 0;
+for (const f of contenido()) {
+  const texto = readFileSync(f, 'utf8');
+  const fm = texto.split('---')[1] ?? '';
+  for (const m of fm.matchAll(/^\s*url:\s*'([^']+)'/gm)) {
+    fuentesVistas += 1;
+    if (VERIFICADAS.has(m[1])) continue;
+    if (NO_COMPROBABLES.has(m[1])) {
+      pendientes.push(`${m[1]} — ${NO_COMPROBABLES.get(m[1])}`);
+      continue;
+    }
+    sinVerificar.push(`${relative(RAIZ, f)} → ${m[1]}`);
+  }
+}
+
+if (sinVerificar.length) {
+  console.error('');
+  console.error('❌ verify:claims — fuente(s) del Journal que nadie ha comprobado que existan:');
+  console.error('');
+  for (const x of sinVerificar) console.error(`   ${x}`);
+  console.error('');
+  console.error('   Ábrela. Si la norma es la que dices, añádela a VERIFICADAS con su nombre; si no,');
+  console.error('   corrige el enlace o retira la fuente. Un identificador de norma escrito de');
+  console.error('   memoria es un identificador inventado (M-30), y aquí se publica como fuente.');
+  process.exit(1);
+}
+
+console.log(
+  `✅ verify:claims — ${fuentesVistas} fuente(s) citadas en ${contenido().length} artículo(s), ` +
+    `contra ${VERIFICADAS.size} URL(s) abiertas y confirmadas una por una.`,
+);
+for (const p of new Set(pendientes)) {
+  console.log(`ℹ️  verify:claims — fuente NO comprobada: ${p}`);
+}
