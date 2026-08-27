@@ -81,8 +81,13 @@ típico y el que invalida el documento.
    está aprobado, pero cubre la liquidación **MENSUAL** (canon, honorarios, IVA, retención): no
    menciona la certificación **anual**. Son dos cosas distintas y hoy solo una tiene diseño.
 2. **¿Cuándo se emite?** Una vez al año (para la declaración) o a demanda del propietario.
-3. ⚠️ La página `/liquidacion` **no existe todavía** aunque su mockup sí. Si se construye, este
-   encargo debería ir en el mismo lote: comparten datos y destinatario.
+3. ✅ **CORRECCIÓN (mismo día).** Escribí antes que la página no existía: **existe y está viva**, como
+   la sección **Liquidación** de `/gestion` (`gestion-liquidacion.ts`, montada desde `gestion-alta-ui.ts`),
+   con la copia del mockup palabra por palabra. Lo deduje de que no hubiera un `liquidacion.astro` —
+   inferir la ausencia de una PANTALLA de la ausencia de un FICHERO de página. Lo que sigue siendo
+   cierto y es lo que importa: esa pantalla calcula el mes, **no la certificación anual**, y el mockup
+   aprobado tampoco la contempla. 🎯 Y eso mejora el encargo: la certificación **tiene casa** — va como
+   una sección más de `/gestion`, junto a Liquidación, que es donde el dato ya vive.
 
 ---
 

@@ -173,8 +173,9 @@ son **estadísticas inventadas** en la página donde un propietario decide confi
 otros tres errores son datos de MUESTRA; éste es una **promesa de rentabilidad** y una **reputación
 fabricada** (Ley 1480 arts. 29-30). Agravante doble: `/nosotros` promete por escrito **no publicar esos
 números**, y el comentario de §123 dentro de `index.astro` explica —cinco líneas más arriba del hero—
-por qué una medición sin fuente no se publica. ⚠️ **`verify:claims` NO los caza**: sus patrones buscan
-reseñas y distinciones, no porcentajes de rentabilidad ni conteos de negocio. **Bloquea el 5.3.**
+por qué una medición sin fuente no se publica. ✅ **Desde §224 `verify:claims` SÍ los ve** —barre también el
+HTML servido— y los lleva **congelados con su motivo**: no bloquean el CI, pero salen impresos en cada
+corrida y **una cifra NUEVA sí rompe**. Siguen bloqueando el 5.3: el gate los hace visibles, no los arregla.
 
 ⇒ **Antes del 5.3, y para las CUATRO, una de tres**: poner el RNT (pelota de Daniel), retirar el precio y
 el formulario de esa página, o dejarla fuera del dominio. **Es decisión suya, y bloquea el 5.3.**

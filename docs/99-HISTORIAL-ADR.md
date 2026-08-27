@@ -9533,8 +9533,13 @@ pregunta *«¿quién lo usa?»* — cars tiene un `deadcode:check`; el portal no
 - **`certificacion.ts` (161 + 174)** — **D.1625/2016 art. 1.2.4.11**: el mandante declara sus
   ingresos *«según la información que le suministre el mandatario»*. Entregarla es obligación de
   ALTORRA y **no hay por dónde**. El mockup `ALTORRA Liquidacion.dc.html` existe y está aprobado,
-  pero cubre la liquidación **MENSUAL**: la certificación **anual** no aparece en él, y la página
-  `/liquidacion` tampoco existe aún.
+  pero cubre la liquidación **MENSUAL**: la certificación **anual** no aparece en él.
+  ⚠️ **CORRECCIÓN del mismo día (§224.8)**: escribí aquí que «la página `/liquidacion` tampoco existe» y es
+  **falso** — existe y está viva como *sección* de `/gestion` (`gestion-liquidacion.ts`, montada desde
+  `gestion-alta-ui.ts`), con la copia del mockup palabra por palabra. Lo deduje de que no hubiera un
+  `liquidacion.astro` en `src/pages/`: **inferí la ausencia de una PANTALLA de la ausencia de un FICHERO**
+  de página — la misma familia de «superficie equivocada» que §224. Lo que sí se sostiene, y es lo que
+  importaba: esa pantalla calcula el MES, no la certificación anual, y el mockup tampoco la contempla.
 - **`index.ts` (8 líneas)** — barrel que instruye *«Importar desde `~/lib/domain`»* y que **nadie
   sigue**: los 25 vivos se citan por ruta completa. Una regla que nadie aplica engaña al siguiente.
 
@@ -9674,3 +9679,18 @@ superficie equivocada».** Añadir patrones es barato y se siente productivo; po
 comprobar si el objeto siquiera está en lo que el gate abre. Aquí el patrón correcto llevaba meses
 escrito y no encontraba nada, porque en la fuente el número y su significado **están separados**, y
 solo el build los junta — igual que solo el navegador los junta para el lector.
+
+### 224.8 — Dos errores míos del mismo turno, y los dos son «superficie equivocada»
+1. **Afirmé en §222 que la página `/liquidacion` no existía.** Es falso: existe y está **viva** como
+   sección de `/gestion` —`gestion-liquidacion.ts`, montada desde `gestion-alta-ui.ts`—, con la copia
+   del mockup palabra por palabra. Lo deduje de listar `src/pages/*.astro` y no ver un
+   `liquidacion.astro`. 🎯 **Inferí la ausencia de una PANTALLA de la ausencia de un FICHERO de
+   página**, sin comprobar si vivía como sección — el defecto de este mismo ADR aplicado a mí, media
+   hora después de escribirlo. Corregido en §222 y en el encargo **sin borrar lo escrito**: la
+   corrección se ve.
+   ✅ Y **mejora** el encargo: la certificación anual ya no necesita «decidir dónde va» — tiene casa
+   natural, una sección más de `/gestion` junto a Liquidación, que es donde el dato ya vive.
+2. **L-46, decimocuarta.** Al corregir el runbook usé `python3 -c "…"` con acentos graves dentro; bash
+   ejecutó `verify:claims`, falló, y dejó el hueco vacío: *«Desde §224  SÍ los ve»*. La regla dice
+   escribir el script con la herramienta de ficheros **sin juzgar si el texto es corto** — y lo juzgué
+   corto. *El juicio es justo lo que falla*, que es la frase que la propia lección lleva escrita.
