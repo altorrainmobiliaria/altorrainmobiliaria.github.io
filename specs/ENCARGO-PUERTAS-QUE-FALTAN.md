@@ -1,4 +1,9 @@
-# 🚪 ENCARGO — Las dos puertas que faltan (§222)
+# 🚪 ENCARGO — Las dos puertas que faltan (§222) · ✅ **CONSTRUIDAS el 2026-08-27 (§233)**
+
+> ✅ **CERRADO.** Las dos tienen puerta y pantalla, y `verify:huerfanos` baja de 3 huérfanos
+> declarados a **cero**. Lo que queda es de Daniel: mirar los mockups y estrenarlas con datos
+> reales. Y al probarlas apareció un fallo vivo en el camino del dinero — un contrato del 10 %
+> no se podía liquidar — que este encargo no buscaba y era más urgente que él ([[L-63]], §233.3).
 
 > **Qué es esto.** Dos módulos de dominio del portal están **completos, tipados y con pruebas**, y
 > **nadie los llama**: no existe pantalla, formulario ni flujo que permita usarlos. Cada uno

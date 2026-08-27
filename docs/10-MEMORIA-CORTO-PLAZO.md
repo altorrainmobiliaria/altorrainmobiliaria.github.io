@@ -66,7 +66,7 @@
 > 📬 **LEADS**: el aviso sale por **Resend** desde el portal, no por el Gmail caído (§188-§192).
 > ⏭ Nurturing **apagado** (§192: sus plantillas enlazan al sitio retirado).
 >
-> ⏭ **DOS OBLIGACIONES LEGALES SIN PUERTA** (§222): `preaviso` (Ley 820 — sin fecha de IMPOSICIÓN el contrato se prorroga un año) y `certificacion` (D.1625). **Mockups escritos + 6 decisiones tomadas** (26-ago) → `specs/ENCARGO-PUERTAS-QUE-FALTAN.md`; ⏭️ **Daniel: aprobarlos**. El barrel muerto, retirado.
+> ✅ **LAS DOS PUERTAS LEGALES, CONSTRUIDAS** (§233): preaviso (callable + pantalla, 13 pruebas contra el emulador) y certificación anual. `verify:huerfanos` pasa de 3 huérfanos declarados a **0**. Al probarlas salió un fallo VIVO de dinero ([[L-63]]). ⏭️ **Daniel**: mirar los 2 mockups y ESTRENARLAS.
 >
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos
 > que solo vio la consola del dueño (§133-§136). Si un gate pasa, pregunta **qué abre** ([[L-52]]) —y **cuántos**

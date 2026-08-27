@@ -145,6 +145,7 @@ diciendo a alguien que no podrá preguntarte.
 
 ### L-28 — 🎭 `getComputedStyle` MIENTE en toda propiedad con `transition` (invierte L-22) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
 ### L-62 — 🔍 Sonda de semántica que mira el elemento y no su ANCESTRO: 4 de 5 señales falsas (`<template>`, `hidden`, atributo desnudo) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
+### L-63 — 💸 Dos validadores CORRECTOS del mismo campo y ninguno comprueba que hablen de la misma UNIDAD (un contrato del 10 % no se podía liquidar) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
 
 ### L-26 — 🖥️ Panel integrado = renderer CONGELADO (rAF 0 frames) · juicio visual SIEMPRE por Chrome → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá, incl. corrección capital + variante resize)
 

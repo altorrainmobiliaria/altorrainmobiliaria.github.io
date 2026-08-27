@@ -10130,3 +10130,70 @@ calcula. *Un número copiado de lo que otro calcula tiene fecha de caducidad; un
 Verificado con `npm --prefix portal run verify`: **exit 0, 10 gates cableados**. Cache: N/A.
 🎯 Lo transferible: *cuando arregles una clase de defecto, la lista de sitios donde aplica se DERIVA
 de una medición sobre el artefacto servido — nunca de los que recuerdas haber tocado.*
+
+## 233. ADR-233 — Las dos puertas que faltaban, y el fallo de dinero que apareció al probarlas
+
+**Contexto.** §222 midió que **3 de 28 módulos de dominio no tenían un solo consumidor**, y dos de
+ellos materializaban obligaciones legales: `preaviso` (Ley 820) y `certificacion` (D.1625/2016).
+Daniel, 27-ago: *«sigue ejecutando sin parar»*. Se construyeron las dos.
+
+### 233.1 — Preaviso: el estado se DERIVA, no se teclea
+Callable `registrarPreaviso` —`contratos` nace con `allow write: if false` (§100)— con tres reglas
+que **solo un servidor puede sostener**: (a) `estado: 'preaviso'` lo pone él y **únicamente cuando
+`efecto() === 'termina'`**; un contrato marcado «preaviso» que en realidad se prorrogó es una casilla
+que miente en el dato del que depende disponer del inmueble. (b) 🎯 **Un preaviso TARDÍO se guarda
+igual**: no es un formulario mal llenado, *pasó*, y esa evidencia es lo que explicará por qué el
+contrato sigue vivo — lo que FALTA (sin guía, sin operador, sin fecha) sí se rechaza, porque ahí no
+hay acto que archivar. (c) `vigenciaFin` sale del CONTRATO, nunca del cuerpo: aceptarlo del navegador
+sería regalarse tres meses tecleando otra fecha. El veredicto se **congela** al registrar: corregir
+la vigencia mañana no reescribe un acto ya ocurrido. **13 pruebas contra el emulador.**
+
+### 233.2 — Certificación: los meses salen de los GIROS, y la pantalla se contrasta a sí misma
+Los períodos se leen de `pagos`, no de recorrer doce meses: un mandato puede empezar en marzo, y un
+certificado que dice «enero a diciembre» sumando nueve es un papel que **parece correcto y hace
+daño**. El desglose por mes no está guardado —solo el monto girado—, así que se recalcula con las
+condiciones del contrato, y eso miente si el canon subió por IPC a mitad de año. En vez de callarlo,
+**cada mes se compara contra el giro registrado y los que no cuadran se dicen con su diferencia**.
+Se imprime desde el navegador (no una tubería de PDF) y **sin la fórmula «bajo la gravedad del
+juramento»**, que sigue sin poder verificarse en el texto del artículo (§3.3).
+
+### 233.3 — 🔴 El fallo de dinero que destapó la prueba
+El giro calculado dio **−25.370.000**. No era la prueba: los dos extremos de `honorariosPct` no se
+ponían de acuerdo en la unidad. El formulario pide *«Honorarios %»* con marcador **10** y se guarda
+tal cual; `problemasDeContrato` acepta hasta **100**; `liquidacion.ts` calcula con una **fracción** y
+rechaza todo lo mayor que **0.5**. Resultado: **un contrato normal del 10 % no se podía liquidar** —
+la pantalla decía «honorarios fuera de rango», y eso muerde en el **paso 1.6 del runbook**, que es
+literalmente el primer contrato real del dueño.
+🎯 **Nadie lo veía porque cada lado, POR SEPARADO, era correcto**: el contrato validaba bien SU
+unidad y la liquidación la SUYA. *Dos validadores correctos del mismo campo, y ninguno comprobaba que
+hablaran de lo mismo.* Y lo más elocuente: `liquidacion.ts` **nombra este error de dedo** en un
+comentario —*«un porcentaje escrito como 10 en vez de 0.10, el que más caro sale aquí»*— y se protege
+de él, mientras el validador del contrato lo aceptaba. Arreglado declarando la unidad **en el modelo**
+y convirtiendo **una vez, en su frontera**. → [[L-63]].
+
+### 233.4 — No-regresión y verificación
+La prueba de regresión compara contra las cifras del **mockup APROBADO** de liquidación, no contra la
+aritmética del dominio: *una prueba que recalcula lo que prueba no prueba nada*. `verify:huerfanos`
+pasa de **3 huérfanos declarados a CERO**: los 43 módulos de `src/lib` tienen consumidor real. Verify
+completo **exit 0** — 40 ficheros de prueba, 10 gates, meta-gate confirmando el cableado al CI.
+
+### 233.5 — Lo que cazaron los gates y no yo
+`verify:simbolos` vio que mi `entradaDe` era **gemelo** de otro en `alta-propiedad` (renombrado a
+`entradaDeLiquidacion`, que dice QUÉ construye) — y al mirarlo aparecieron **cuatro copias idénticas**
+de los nombres de los meses, ahora con dueño único en `domain/meses-es.ts`. Y al construir la primera
+pantalla **me inventé un dialecto de clases CSS** (`.gx-f`, `.gx-pv`, `.gx-btn`) que no existe en el
+panel; rehecha con su vocabulario real. *Inventarse un dialecto para una pantalla nueva es como nace
+la divergencia que luego cuesta un rediseño.*
+
+### 233.6 — Archivos
+NUEVOS: `functions/src/preaviso-escritura.ts` · `firebase/tests/preaviso-escritura.test.ts` ·
+`scripts/gestion-preaviso.ts`(+test) · `scripts/gestion-certificacion.ts`(+test) ·
+`scripts/gestion-liquidacion.test.ts` · `lib/domain/meses-es.ts`.
+TOCADOS: `functions/src/index.ts` · `lib/domain/gestion.ts` · `lib/domain/bitacora.ts` ·
+`scripts/gestion-contratos.ts` · `scripts/gestion-liquidacion.ts` · `pages/gestion.astro` ·
+`scripts/verify-huerfanos.mjs`.
+
+### 233.7 — Doctrina + pendiente
+[[L-63]] nueva. Cache: N/A. ⏭️ **Las dos pantallas siguen sin ESTRENARSE contra datos reales** —
+como todo el runbook, eso es del dueño— y el mockup sigue esperando su visto bueno: se construyó bajo
+la delegación explícita de *«decide tú, no pares»*, no bajo una aprobación.
