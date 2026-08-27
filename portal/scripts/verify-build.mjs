@@ -646,6 +646,61 @@ checks.push({
     : `${juzgadas} pagina(s) del sitemap con HTML (de ${rutasSitemap.length} anunciadas; el resto es SSR)`,
 });
 
+/*
+ * ── SONDA: TODA IMAGEN CON `alt`, TODO CAMPO CON NOMBRE ACCESIBLE (§248) ─────────────────────
+ *
+ * EL DEFECTO QUE CAZA. Una tarjeta nueva sin `alt` o un campo nuevo sin etiqueta no rompen nada:
+ * el build pasa, la pagina se pinta igual, y lo unico que ocurre es que quien navega con lector de
+ * pantalla deja de saber que hay ahi. Es la clase de regresion que entra con cada formulario nuevo
+ * y que nadie ve, porque quien la introduce no usa lector de pantalla.
+ *
+ * 🔴 LOS TRES FALSOS POSITIVOS QUE HUBO QUE QUITAR ANTES DE CABLEARLO (§248.2). Mi primera version
+ * reporto 3 imagenes sin `alt` y 25 campos sin etiqueta. Los 28 eran MIOS:
+ *   (a) las 3 imagenes viven dentro de un `<template>`: son marcadores que rellena el JS, con
+ *       `src` y `alt` SIN valor a proposito. El navegador no pinta eso.
+ *   (b) 24 campos van ENVUELTOS en su `<label>` — asociacion implicita, valida y que los lectores
+ *       de pantalla entienden. Buscar solo `for="id"` los marcaba a todos.
+ *   (c) el que quedaba es un `<input type="file" hidden>` que dispara un boton visible: al estar
+ *       oculto no entra en el arbol de accesibilidad y su nombre lo pone el boton.
+ * *Una sonda que no modela la estructura real de la pagina mide otra cosa y lo dice con aplomo.*
+ *
+ * Medido tras corregirla: **303 imagenes pintadas y 124 campos**, CERO sin nombre. Deuda cero.
+ */
+const sinAlt = [];
+const sinNombreAccesible = [];
+let imagenesVistas = 0;
+let camposVistos = 0;
+for (const f of htmlServido(resolve(root, 'dist/client'))) {
+  const pagina = relative(resolve(root, 'dist/client'), f).split(sep).join('/');
+  const pintado = readFileSync(f, 'utf8')
+    .replace(/<template\b[^>]*>[\s\S]*?<\/template>/gi, ' ')
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
+  for (const m of pintado.matchAll(/<img\b([^>]*)>/gi)) {
+    imagenesVistas += 1;
+    if (!/\balt\s*=/i.test(m[1])) sinAlt.push(`${pagina}: <img ${m[1].trim().slice(0, 40)}>`);
+  }
+  const envolturas = [...pintado.matchAll(/<label\b[\s\S]*?<\/label>/gi)].map((m) => [m.index, m.index + m[0].length]);
+  for (const m of pintado.matchAll(/<(input|select|textarea)\b([^>]*)>/gi)) {
+    const attrs = m[2];
+    // `hidden` y los botones no piden un dato ni entran en el arbol de accesibilidad.
+    if (/\bhidden\b/i.test(attrs) || /type\s*=\s*["']?(hidden|submit|button|image|reset)/i.test(attrs)) continue;
+    camposVistos += 1;
+    if (/aria-label\s*=|aria-labelledby\s*=/i.test(attrs)) continue;
+    if (envolturas.some(([a, b]) => m.index >= a && m.index < b)) continue;
+    const id = attrs.match(/\bid\s*=\s*["']([^"']+)/i);
+    if (id && pintado.includes(`for="${id[1]}"`)) continue;
+    sinNombreAccesible.push(`${pagina}: <${m[1]} ${attrs.trim().slice(0, 40)}>`);
+  }
+}
+const faltas = [...sinAlt, ...sinNombreAccesible];
+checks.push({
+  name: 'toda imagen con alt y todo campo con nombre accesible',
+  ok: faltas.length === 0,
+  detail: faltas.length
+    ? `${faltas.length}: ${faltas.slice(0, 3).join(' · ')}`
+    : `${imagenesVistas} imagen(es) y ${camposVistos} campo(s) PINTADOS (fuera: <template>, y los input hidden, que no entran al arbol)`,
+});
+
 let failed = 0;
 for (const c of checks) {
   console.log(`${c.ok ? '✅' : '❌'} ${c.name}${c.detail ? ` — ${c.detail}` : ''}`);
