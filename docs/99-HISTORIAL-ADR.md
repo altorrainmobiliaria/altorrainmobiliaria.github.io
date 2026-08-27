@@ -10509,3 +10509,52 @@ tres TODO cerrados que ya vivían en el `99`).
 ### 240.6 — Archivos
 `portal/src/pages/precios.astro` · `specs/CUTOVER-RUNBOOK.md` · `docs/05` · `10` · `30` · `33` · `38` ·
 `.brain-manifest.json` · skill `auditoria-cerebro`.
+
+## 241. ADR-241 — Lo que decide qué ve el dueño arriba no tenía prueba, y la regla más absoluta no tenía mecanismo
+
+### 241.1 — El orden de dos colas del panel, sin una sola prueba
+La lista no salió de recordar qué faltaba probar: salió de preguntarle al **sistema de ficheros** qué
+módulos de pantalla no tienen hermano `.test.ts`. **Doce de veinte.** La mayoría es pegamento de DOM,
+donde un test no prueba nada — pero dos llevaban una función **pura** llamada `urgencia()`, una en
+ventas y otra en perfiles, y las dos declaran **en su propio comentario** que son *«la decisión de
+producto entera»*: el ORDEN en que el dueño ve su cola al abrir la pantalla.
+🎯 Es la clase de [[M-31]] aplicada al código: *elegir por medición, no por lo que uno recuerda*. Y la
+clase de fallo de §239 — no rompe nada, no sale en consola, y el dato equivocado es el que se lee a
+diario.
+
+### 241.2 — Las dos estaban BIEN, y una tenía una sutileza que merecía quedar fijada
+Verifiqué la lógica **leyendo los enums**, no suponiéndolos ([[M-30]]). `registro` es la ÚLTIMA etapa
+de una venta, así que la regla del fondo (`return -1`) podría tragarse una venta **registrada a la que
+le falta su matrícula inmobiliaria** — un expediente incompleto escondido debajo de todo. No pasa,
+porque el aviso la rescata antes; pero eso depende del ORDEN de los `if`. **13 pruebas**, y probadas
+rompiendo las dos funciones a propósito: el defecto de ventas tumba **exactamente** la prueba del
+folio, ni una más.
+
+### 241.3 — 🔴 «El personal JAMÁS se publica» no tenía nada detrás
+Censo sobre las **45 páginas construidas**: el número público sale **266** veces, el correo oficial
+**161**, y el `323…` personal **CERO**. Limpio — pero lo limpiaba el cuidado de quien editaba. Un
+móvil personal en una web inmobiliaria **no se corrige luego**: lo copian los agregadores, queda en la
+caché de Google y acaba llegando por WhatsApp a desconocidos. Familia «promesa sin mecanismo»,
+cerrada como las tres de §238: **la promesa se vuelve un gate que bloquea**.
+Lo permitido lo **LEE de `site.ts`**, su dueño — sin segunda copia, así que sigue solo al número si
+cambia. Y si no consigue leerlo **sale con exit 1 en vez de pasar**: un gate sin referencia da el
+mismo verde que uno que no encuentra nada. Medido ANTES de cablearlo (cero fugas) para que no naciera
+gritando, y probado con sus **tres** defectos: móvil ajeno, un `wa.me` con un `323…`, y la lectura
+rota.
+
+### 241.4 — Y L-46 volvió a morder, con un chivato que casi me salto
+El heredoc se comió un nivel de barras invertidas **pese a ir entrecomillado**, y un `\n` acabó siendo
+un salto de línea real dentro de una cadena JS. [[L-46]] ya cubre ese caso, pero hoy apareció una
+señal **anterior** al `SyntaxError`: el intérprete que GENERA el fichero avisó de que las barras ya no
+estaban —`SyntaxWarning: "\s" is an invalid escape sequence`— en una corrida que por lo demás decía
+OK. 🎯 *Un aviso que no entiendes es un dato, no ruido.* No se apendó a `36-LECCIONES-UTILLAJE` porque
+ese nodo tiene **1 carácter libre**: queda aquí hasta que tenga su decisión de techo (`TODO-50`).
+
+### 241.5 — Verificación
+`verify` **exit 0, 36 comprobaciones** (era 35) · `typecheck` 0 errores · **954 pruebas** en 42
+ficheros verdes antes de sumar las 13 nuevas · `brain:check` SANO.
+
+### 241.6 — Archivos
+`portal/src/scripts/gestion-ventas.test.ts` (nuevo) · `gestion-perfiles.test.ts` (nuevo) ·
+`portal/scripts/verify-build.mjs`. **INTACTOS**: las dos funciones `urgencia()` —se probaron, no se
+tocaron— y `site.ts`.

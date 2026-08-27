@@ -111,6 +111,7 @@
 | §238 | ⚡ **548 KB fuera de la ruta crítica** (2 miniaturas decorativas de la portada; en /estancias el arreglo era el OPUESTO) + el gate de habeas data, que tardó **tres intentos** en morder y las tres versiones pasaban la lectura. | 10394 |
 | §239 | 🔴 **La agenda anunciaba «se renueva» en contratos que ya tenían preaviso** — fallo que abrió el 233 tres horas antes: añadir un hecho al modelo no es aditivo para quien ya decidía sin él. + el gate de habeas data (Ley 1581). | 10433 |
 | §240 | 🎭 **Tres verdades sobre lo mismo**: el FAQPage de `/precios` copiaba las tarifas a mano · el gate del RNT, corrido en producción por 1.ª vez, bloquea: 2 páginas (+1 bloqueador nuevo) · y mi hallazgo apuntaba al nodo que acababa de tocar. | 10468 |
+| §241 | 🧭 **Lo que decide qué ve el dueño arriba no tenía prueba** (dos `urgencia()` puras, 13 tests) · y **«el móvil personal JAMÁS se publica» no tenía mecanismo**: censo de 45 páginas (cero fugas) y gate que lee el permitido de `site.ts`. | 10513 |
 
 ---
 
