@@ -10018,3 +10018,60 @@ una fecha al `10`. Publicada la cobertura, la fecha ya no es teatro sino aliment
 `10` la lleva y el gate va **2/2**. El #16 se deja destapado **a propósito**: poner `verificado-vivo` a
 la pizarra afirmaría haber verificado cada pendiente contra la realidad, y sería falso. El impuesto de
 esos caracteres se pagó en el ROUTER (§G.5), no en la pizarra. Cache: N/A. **B-04 sigue abierto.**
+
+## 231. ADR-231 — Un barrido de semántica: una señal real, cuatro falsas mías, y el hueco que el shell dejó en un commit
+
+**Contexto.** El heartbeat marcaba **51 % de commits solo-cerebro** contra una bandera del 30 %, así
+que este turno fue a PRODUCTO. Los gates ya comprueban que los controles tengan nombre y que los
+enlaces resuelvan; nadie miraba la **semántica de las 43 páginas construidas**.
+
+### 231.1 — Lo que encontró, y lo que resultó ser ruido mío
+Cinco tipos de señal. **Una real**; **cuatro falsas y todas de mi sonda** — detalle y regla portable
+en [[L-62]] (shard `31`). Lo real: **`/turismo` tenía DOS elementos con `id="contacto"`** —el pie
+compartido y una sección propia— con **7 enlaces** apuntando ahí. Aterrizaban en la sección *solo
+porque va antes en el documento*: funcionaba por accidente del orden del marcado.
+Y de propina, el pie enseñaba la ciudad con icono de chincheta dentro de un **enlace al propio pie**,
+en 41 páginas: parecía pulsable y no hacía nada.
+
+### 231.2 — Por qué ningún gate lo veía, y es la MISMA causa del §230
+`verify:enlaces` guardaba los ids en un **`Set`**, igual que el chequeo de refs del kernel esa misma
+mañana. Comprobaba **EXISTENCIA** y se leía como si comprobara **DESTINO**. 🎯 *Un ancla duplicada no
+es un enlace roto —que se ve— sino un enlace que MIENTE.* Ahora cuenta sobre un `Map` y **bloquea**
+las ambiguas; se probó viéndolo fallar con el duplicado reinyectado en el HTML construido.
+
+### 231.3 — Los encabezados: el instinto correcto habría sido el arreglo equivocado
+`/comprar` y `/arrendar` saltaban de `h1` a `h3`. El impulso era subir `PropertyCard` a `h2` — y al
+**medir dónde se usa**, en la portada las cards cuelgan de secciones con su propio `h2` y ahí `h3` es
+exactamente lo correcto. 🎯 **El nivel del encabezado no es propiedad de la card: es de la página que
+la coloca.** De ahí el prop `nivel` (por defecto 3, aditivo). Cubre también las cards que se pintan al
+filtrar, porque el molde del `<template>` monta el mismo componente. Invisible: la clase lleva su
+propio `font-size` y el JS selecciona por clase, no por elemento.
+
+### 231.4 — Y el hueco que el shell dejó en un commit
+`git commit -m` con acentos graves **se comió la palabra `Set`** — dentro del commit que documentaba
+el punto ciego del Set. Reincidencia **diecisiete** de [[L-46]] en un día, con la regla ya bien
+escrita. Se le puso mecanismo: `githooks/commit-msg` detecta la **firma** del daño (el espacio de más
+que deja la palabra comida). 🎯 L-46 afirmaba que *«ningún gate puede cazarlo»*: cierto para
+**prevenirlo**, falso para **detectarlo** — *un criterio que enumera causas falla en la que no
+enumeraste; el DAÑO, en cambio, deja firma.* Medido: 1 señal en el daño real, 0 falsos en 12 commits
+sanos. Su primera acción en producción fue **rechazar el commit que lo introducía**, porque el
+borrador citaba el patrón; no se le puso escotilla —una excepción documental acaba siendo la norma—.
+
+### 231.5 — Anti-patterns evitados
+NO se reportó ninguna de las cuatro señales falsas: se verificaron ANTES (§3.3), y una de ellas
+—`visibility:hidden` sí oculta al árbol de accesibilidad, `opacity:0` no— habría sido un arreglo
+dañino. NO se cambió `PropertyCard` en bloque. NO se hizo `--amend` + force-push sobre el commit
+mutilado ya empujado: el código está bien y eso se pide, no se decide solo.
+⚠️ **Dos veces mi propio comando compuesto mintió**: un `✅ empujado` impreso tras un commit
+RECHAZADO (el `set -e` no cortó), y un `verify` que reportó *0 gates verdes* cuando en realidad había
+salido con **exit 127**. Ambos cazados mirando el estado real después. *Cuando el reporte y el
+comando que lo produce viven en la misma tubería, el reporte hereda los fallos de la tubería.*
+
+### 231.6 — Archivos
+`portal/src/components/Footer.astro` · `pages/turismo.astro` · `components/PropertyCard.astro` ·
+`pages/[operacion].astro` · `scripts/verify-enlaces.mjs` · `githooks/commit-msg` (nuevo) ·
+`docs/31-VERIFICACION-UI` (L-62) + puntero en `30` · `docs/36-LECCIONES-UTILLAJE` (L-46 corregida).
+
+### 231.7 — Doctrina
+[[L-62]] nueva. [[L-46]] deja de afirmar que es incazable. Verificado con `npm --prefix portal run
+verify` en verde, **exit 0, 30 comprobaciones**. Cache: N/A (el portal no tiene SW).

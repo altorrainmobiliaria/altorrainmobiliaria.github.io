@@ -101,6 +101,7 @@
 | §228 | 🔍 **Los 8 títulos del Journal salían CORTADOS** (103-108 chars) y 7 descripciones de hasta 297. El esquema decía «Google trunca cerca de 160» **al lado de** `max(300)`. Separadas las dos superficies: 8→1 y 7→0. | 9852 |
 | §229 | 🗂️ **Sexto shard** (§161-§200 → 00f): el kernel reventó su tope y baja de 25687 a 16180c. Y **cinco filas (§61-§65) llevaban meses en una GRIETA entre particiones** que nadie mira. | 9942 |
 | §230 | 🎭 **Un `Set` ocultaba lecciones DUPLICADAS**: dos reclamaban `L-60` y el enlace no estaba roto, MENTÍA. Kernel v1.20.0 + la versión del kernel tenía dos dueños. §208 cerrado. | 9964 |
+| §231 | 🔍 **Barrido de semántica en las 43 páginas**: 1 señal real (`#contacto` duplicado en /turismo, un enlace que MIENTE) y 4 falsas de mi sonda. + el nivel de encabezado es de la PÁGINA, no de la card. + hook que caza el hueco del shell. | 10022 |
 
 ---
 

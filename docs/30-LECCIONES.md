@@ -144,6 +144,7 @@ diciendo a alguien que no podrá preguntarte.
 **Disparador**: tras reconstruir 5 páginas "fieles a los mockups" y verificarlas (build + paleta + computed styles + **screenshot en Chrome**), declaré fidelidad lograda. Una re-auditoría adversarial (6 auditores + refutador `effort:high`, contra los `.dc.html`) devolvió **5 DIVERGENTES · 48 hallazgos**, y **3 de los 6 ALTA los había introducido YO mientras "corregía infidelidades"** — incluida una **cifra de rentabilidad "+18%" fabricada** en la web de una inmobiliaria real. **Causa**: **5 secciones tenían contenido inventado** (propiedades demo, zonas, amenities, tarjetas, una cifra) y **ninguna se veía rota — se veía BIEN**: relleno plausible donde el diseño no decía nada. **Ninguna capa de verificación técnica lo detecta**, ni siquiera el ojo: el build compila, la paleta cumple, los estilos aplican, y el screenshot muestra algo coherente. El screenshot ve *lo que el usuario ve*, pero **NO ve lo que el usuario no puede saber que falta o sobra**. **La única prueba** para "¿esto lo dijo el diseño, o me lo inventé?" es el **diff contra la fuente**, y para que sea fiable, hecho por un **agente ADVERSARIAL** apuntado al propio trabajo (uno mismo, recién salido de construirlo, está sesgado a confirmarlo). **Reglas**: (1) al reconstruir desde una fuente (mockup/spec/doc), la fidelidad NO se declara con chequeos internos — se declara con un **diff sección-por-sección, contando contra la fuente**; (2) **inventar > omitir en gravedad**: una omisión se nota como hueco; una invención se disfraza de contenido legítimo y puede ser un claim falso (cifra, dato, promesa) → riesgo legal/comercial, no cosmético; (3) **el que construye no es el que audita**: dispara un verificador adversarial (`comite-expertos`/workflow) ANTES de decir "listo"; (4) generaliza §24-29 y L-24: aquella auditoría revisó COLOR, esta reveló que ni "estructura + ojo" basta — falta **procedencia del contenido**.
 
 ### L-28 — 🎭 `getComputedStyle` MIENTE en toda propiedad con `transition` (invierte L-22) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
+### L-62 — 🔍 Sonda de semántica que mira el elemento y no su ANCESTRO: 4 de 5 señales falsas (`<template>`, `hidden`, atributo desnudo) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
 
 ### L-26 — 🖥️ Panel integrado = renderer CONGELADO (rAF 0 frames) · juicio visual SIEMPRE por Chrome → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá, incl. corrección capital + variante resize)
 
@@ -179,7 +180,6 @@ guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero 
 - **Formularios** → Firestore `solicitudes` + Cloud Function email. ⚰️ El gap J2 (FormSubmit residual) era del sitio viejo RETIRADO (§15 obsoletó TODO-01..08) → `_legacy/LECCIONES-SITIO-VIEJO.md`.
 
 ---
-
 
 ### L-38 — 🖼️ `srcset` puede EMPEORAR el peso cuando la MISMA foto sirve a huecos de tamaños dispares *(2026-08-20, portal)*
 
