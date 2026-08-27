@@ -1,14 +1,10 @@
 # 🖥️ 34 — DOCTRINA DE CÓDIGO (hoja hija de `30-LECCIONES`)
 
-> **Trigger 🖥️: LÉEME ANTES de escribir o editar código** (CSS/JS/HTML/Astro). El router
-> (`CLAUDE.md §3.2`) conserva SOLO las reglas cuyo incumplimiento **cuesta dinero o es irreversible**;
-> el resto —stack real, performance, CSS del legacy, observadores— vive aquí. [HONOR: no hay gate que
-> compruebe que me leíste; el gate #27 solo caza las rutas fantasma que cite.]
+> **Trigger 🖥️: LÉEME ANTES de escribir o editar código** (CSS/JS/HTML/Astro). El router se queda
+> con lo que **cuesta dinero o es irreversible**; el resto vive aquí. [HONOR: ningún gate comprueba
+> que me leíste — el #27 solo caza las rutas fantasma que cite.]
 >
-> **DÓNDE vive cada archivo → `20-MEMORIA-ESPACIAL`** (dueño del inventario) · **por qué se decidió →
-> `99` vía `00`** · **gotchas ya pagados → `30`**.
-> Nació el 2026-08-03 en la poda del router (ADR §84): nada de esto se inventó aquí — todo venía de
-> `CLAUDE.md §3.1/§3.2/§3.5`, que se auto-cargaban en CADA sesión aunque casi nunca se tocara código.
+> **DÓNDE vive cada archivo → `20-MEMORIA-ESPACIAL`** · **por qué se decidió → `99` vía `00`** · **gotchas ya pagados → `30`**.
 
 ---
 
@@ -59,7 +55,7 @@
 
 ## §CSS del PORTAL — el acotado de Astro y los nodos de runtime (§117)
 
-**Antes de escribir un `<style>` en una página que renderice contenido por JS, lee esto.** Astro
+**En una página que pinte contenido por JS:** Astro
 compila `.fila` a `.fila[data-astro-cid-XXXX]` y le pone el atributo a los elementos **de la
 plantilla**. Un nodo hecho con `document.createElement` NO lo lleva → la regla no le aplica **jamás**,
 sin error, sin warning y con el build verde. Costó 4 ADRs de tablas despintadas.

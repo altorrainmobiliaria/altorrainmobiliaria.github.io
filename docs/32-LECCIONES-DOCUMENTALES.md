@@ -18,10 +18,7 @@
 | *(nueva)* | **LD-05** | Auditar el kit contra el kit no basta: el documento madre está fuera |
 
 > ⚠️ Las `L-31`..`L-34` **que siguen en `30`** son otras cosas (pieza de humo · Ads Manager multi-marca ·
-> `cloudflare:workers` · Range en Workers Static Assets). Si un ADR viejo dice "L-33" y habla del kit, quiere
-> decir **LD-03**.
-
----
+> `cloudflare:workers` · Range en Workers Static Assets). Si un ADR viejo dice «L-33» y habla del kit, es **LD-03**.
 
 ## Lecciones (LD-NN)
 
