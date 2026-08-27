@@ -147,7 +147,6 @@ diciendo a alguien que no podrá preguntarte.
 ### L-63 — 💸 Dos validadores CORRECTOS del mismo campo y ninguno comprueba que hablen de la misma UNIDAD (un contrato del 10 % no se podía liquidar) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
 ### L-64 — 🪤 Un gate NUEVO se queda en verde de TRES formas (contar el marcador · medir por cercanía · leer una alternativa como si fueran dos) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
 ### L-26 — 🖥️ Panel integrado = renderer CONGELADO (rAF 0 frames) · juicio visual SIEMPRE por Chrome → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá, incl. corrección capital + variante resize)
-
 ### L-24 — Verificar un build contra el MOCKUP por ESTRUCTURA (checklist de secciones), no solo por color *(Ola 1, ADR §32; el dueño cazó lo que la verificación no)*
 **Disparador**: las páginas §24-§29 se dieron por "completas" verificando 0 off-palette + 0 errores; pero DIFERÍAN mucho del `.dc.html` (secciones enteras faltantes, layouts distintos, interactividad perdida). Daniel lo notó, no el cerebro. **Causa**: "verificado en vivo" = colores correctos, NO = fiel al diseño aprobado; el mockup (SSoT visual) nunca se usó como checklist de completitud. **Regla**: al construir desde un mockup, extraer la lista ORDENADA de secciones del mockup y confirmar 1:1 en el build (secciones + layout + interactividad), ADEMÁS del barrido de color (L-22). El workflow `auditoria-fidelidad-mockups` (diff build↔mockup) lo automatiza. Aplica a toda página mockup-backed.
 
@@ -204,6 +203,7 @@ guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero 
 ### M-28 — Un remedio colocado DESPUÉS del punto de no retorno no protege de nada, y encima tranquiliza: si vuelves a caer teniendo la lección delante, el defecto es de su REDACCIÓN *(§216.8 · detalle en `33`)*
 ### M-29 — Un gate que infiere una CAUSA de una CORRELACIÓN debe escribir su premisa al lado: caduca cuando cambias de COSTUMBRES, no de código, y entonces no hay diff que la delate *(§216.9 · detalle en `33`)*
 ### M-30 — Identificador INVENTADO ×4 en una noche (constante, helper, enum de una regla de seguridad, estado): escribir de memoria en vez de leer → 🧩 **shard `33-LECCIONES-META.md`**
+### M-31 — 🎯 Un hallazgo que escribí YO apuntaba al nodo que acababa de TOCAR, no al que peor estaba: un remedio sin denominador es una corazonada con formato de tabla → 🧩 **shard `33-LECCIONES-META.md`**
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > 🧩 **Mudadas a `60-WORKFLOWS §Gobernanza`** el 2026-07-28 (ADR §68): hablan de CÓMO se conduce la
@@ -229,7 +229,6 @@ siendo el índice de todas y una cita `[[L-NN]]` resuelva sin salir de aquí (§
 ### L-58 — 🎭 Un gate puede imprimir un número CIERTO de una comparación que no significa nada: un porcentaje sin su denominador auditado es decoración *(§193)*
 ### L-59 — 📋 Enumera los pares «declarado ↔ desplegado» y compáralos uno a uno: lo que no se puede LEER no es un par verificable, es un sello *(§198)*
 ### L-60 — 🔀 Antes de desplegar un trigger, mira quién MÁS escucha ese evento: dos escritores del mismo campo no fallan, discrepan a veces *(§199)*
-
 ### L-61 — 🔐 Comprobar que las REGLAS están desplegadas, desde fuera y sin credenciales *(26-ago; las reglas → §132·§137)*
 Leer las reglas desplegadas no es trivial; **comprobar su EFECTO sí**, y vale más: mide lo que hace el
 sistema, no lo que dice su texto. Con la `apiKey` pública (lo es por diseño), un `curl` anónimo a `firestore.googleapis.com/v1/projects/<proj>/databases/(default)/documents/<col>?key=` y a `firebasestorage.googleapis.com/v0/b/<bucket>/o`.

@@ -27,13 +27,14 @@
 | ID | Item | Estado | Nota |
 |---|---|---|---|
 | **TODO-17 · 21** | **Ola 0 restos** (E2E "tras cache" · obra AEO) · **lote-dueño**: RNT, dirección COMERCIAL, abogado (`specs/BRIEF-ABOGADO-2026-07-10.md`). | ⏸️ | gate=obra/cutover |
-| **TODO-CEREBRO** | 🧠 **Mantenimiento** (sin pausa desde 20-ago). ~~**TODO-23** kernel~~ ✅ **CERRADO** (§221: K-01·K-02·K-04·K-05·K-09·K-11 + #27 y #16 de §143). **TODO-24** ~~ssotFact de paleta~~ ✅ hecho; queda el cache EN EL CUTOVER · ~~**TODO-28** sellos~~ ✅ CERRADO (§206: era el #16, y ya son 30d, no 90) · **TODO-32(b)** [[M-09]] a los hermanos. | 🔄 | §84·§143·§146 |
+| **TODO-CEREBRO** | 🧠 **Mantenimiento** (sin pausa desde 20-ago). **TODO-24**: queda el cache EN EL CUTOVER · **TODO-32(b)** [[M-09]] a los hermanos. (Cerrados: TODO-23 → §221 · TODO-28 → §206.) | 🔄 | §84·§143·§146 |
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-30 · 22** | 🗺️ **MapLibre COMPLETO (§55)** — falta solo la vista en foreground, la confirma Daniel ([[L-39]]) · 🏠 **CATÁLOGO con ficha (§97)**: datos reales = fases 3-4 del runbook, luego fichas al sitemap. | 🟢 | §55.9 · §102 |
 | **TODO-46** | 📅 **GESTIÓN v1 COMPLETA** y desplegada → §112-§118, §140-§142, §148. ⏭️ Falta **aprobar el mockup** y **ESTRENARLA con datos reales** (runbook 1.5-1.6): es lo único que verifica el render en vivo. | 🟢 | §148 |
 | **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR** → §129-§138. ⏭️ **Daniel**: inscribir su 2FA (clave manual; el QR se aplazó, §137.5) · verificar su correo. ⏭️ **Mío, DESPUÉS de que él se inscriba**: exigirlo en las Rules —antes NO, expulsa a todos— · el QR verificable · **puerta única** (mockup APROBADO, con la desviación del paso 2 → §137.6). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **RAIL DE PAGO COMPLETO y probado contra el emulador** (§166-§170, §176-§177, §185-§187): liquidación, certificación, mandato, preaviso y el webhook. ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
+| **TODO-50** | 🧱 **CEREBRO LLENO**: 13/31 nodos al ≥90 %, `30` tocó 240/240 líneas. Subir techos no es la salida (4 veces en 60 commits) → decisión estructural + comité. ⛔ NO partir el nodo que se tenga delante (N15-07b). | 🟡 mío | N15-07 en la bóveda |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---

@@ -12,7 +12,7 @@
 | **Portal (staging)** | ✅ **OLA 1 — 13/13 y VIVA EN STAGING** `verificado-vivo: 2026-08-26` (curl al worker: `/nosotros`, `/aliados`, `/invertir`, `/journal` y `/` → 200, y el menú ya sin el ancla fantasma `#servicios`): **cero «próximamente» en `src/pages/`** (§158-§159) · 65 redirects servidos, `noindex`, sin el 307 a la barra (§150) · cero cifras inventadas. Censo → `21`+`22`. Resta: GATES DEL DUEÑO en el orden del `10`. |
 
 ## ⚠️ Flags de riesgo activos
-- ✅ **Matrícula de Arrendador `6636` — PUBLICADA** (Resolución 6636, 23-jul-2026). **Gate de Ley 820 art. 31 LEVANTADO**: está en el footer y en la Política; la pauta de arriendo ya no la espera. ⚠️ Falta la **dirección COMERCIAL** y verificar en CC la matrícula del establecimiento; RNT declarado, SIN verificar. Todo el detalle → `43 §Matrícula`.
+- ⚠️ Falta la **dirección COMERCIAL** y verificar en CC la matrícula del establecimiento; **RNT declarado, SIN verificar** (bloquea el BUILD, §238). La matrícula de arrendador `6636` está PUBLICADA y su gate (Ley 820 art. 31) LEVANTADO — **no volver a pedirla**. Detalle → `43 §Matrícula`.
 - 🔥 **Firebase BLAZE activo** ✅ (restaurado 2026-07-12 tras aviso de Google; sin costo — portal usa datos DEMO en Cloudflare aún).
 - 📣 **HUMO cerrada ✅ · ⚠️ apagado de la campaña SIN VERIFICAR** (§90 → pelota 9 del `10`): la campaña solo gasta si se recarga saldo. Cifras → `pauta-captacion` §10. Campaña REAL gateada por el cierre de obra.
 
