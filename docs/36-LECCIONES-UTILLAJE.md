@@ -42,11 +42,9 @@ Trunca **al abrir**: lo que falle luego —la lectura, el `encode`, el disco— 
 
 
 > 🎭 **Los gates que MIENTEN — [[L-48]] · [[L-52]] · [[L-56]] · [[L-57]] · [[L-58]] — viven COMPLETOS en
-> `38-GATES-QUE-MIENTEN.md`** (shard del 26-ago: la familia creció 3× en un día). Aquí quedan los
-> titulares, que es lo que hace falta para reconocer el síntoma.
+> `38-GATES-QUE-MIENTEN.md`** (shard del 26-ago: la familia creció 3× en un día). Sus titulares NO se
+> repiten aquí: `30` ya los lleva, y mejores (§242).
 
-### L-58 — 🎭 Un gate puede imprimir un número CIERTO de una comparación que no significa nada *(§193)*
-### L-57 — 🎭 Una herramienta a la que le falta su prerrequisito puede **PREGUNTAR en vez de fallar** — y sin terminal, «no contestar» sale con código 0 *(§175)*
-### L-56 — 🧰 Un gate puede existir y NO CORRERLO NADIE — ni el CI ni tú *(§142)*
-### L-52 — 🧰 Un gate puede correr en VERDE sobre archivos que **nunca abre** *(§138)*
-### L-48 — 🧪 Un prerrequisito GENERADO y gitignored hace que el gate pase en local y falle en CI *(§125)*
+### L-66 — 🪤 `/tmp` en Git Bash y `/tmp` en el Python de Windows son sitios DISTINTOS *(§242)*
+**Disparador**: respaldo hecho con `cp … /tmp/x.bak` desde el shell y restaurado desde Python con un `copy` condicionado a `os.path.exists('/tmp/x.bak')`. El Python NATIVO lee `/tmp` como `C:/tmp`: el `exists` dio **falso en silencio**, el restaurado no ocurrió y el bloque de prueba anterior se quedó debajo del bueno — dos guardias donde iba una.
+**Reglas**: (1) 🎯 Temporal que escribe UNA herramienta y lee OTRA → **scratchpad de la sesión**, nunca `/tmp`. (2) Un `if exists(): restaurar()` **sin rama que grite** vuelve una ruta mala un no-op MUDO: o hay `assert`, o no hay comprobación. (3) Lo cacé porque el `assert` del ancla habla; con un `sed` mudo me habría creído un ✅ que no probaba nada ([[L-64]]).

@@ -109,8 +109,8 @@
     },
     "docs/36-LECCIONES-UTILLAJE.md": {
       "lines": 90,
-      "chars": 11502,
-      "_comment": "Hoja hija de 30 (ADR 125). Cap MEDIDO sobre el real (8520c / 66L, densidad 129): chars = real+35%, lines = ceil(cap/densidad) para que el eje de lineas sea GUARDA y no un segundo techo. Familia que crece rapido — al llenarse, destilar; NO subir el techo (M-05)."
+      "chars": 14680,
+      "_comment": "Hoja hija de 30 (ADR 125). Cap MEDIDO sobre el real (8520c / 66L, densidad 129): chars = real+35%, lines = ceil(cap/densidad) para que el eje de lineas sea GUARDA y no un segundo techo. Familia que crece rapido — al llenarse, destilar; NO subir el techo (M-05). · PRIMERA subida de este nodo (2026-08-27): %dc/%dL → %dc/%dL. Precedida de GC REAL, no de rendicion: se retiro la TERCERA copia de los cinco titulares de los gates que mienten (el 30 ya los lleva, y mejores) y aun asi no cabia L-66. El nodo crecio porque crecio el CONOCIMIENTO — N15-07e lo nombro como el que ya estaba costando lecciones: dos en dos turnos se quedaron sin sitio. Aqui subir el techo SI es la respuesta; lo que M-05 prohibe es subirlo EN VEZ de podar, y se podo primero."
     },
     "docs/22-MAPA-GESTION.md": {
       "chars": 9000,
