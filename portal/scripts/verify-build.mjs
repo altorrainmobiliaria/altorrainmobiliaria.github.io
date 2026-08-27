@@ -3,7 +3,7 @@
 // sellado R2/R3 ("rendering mal cableado", specs/R5-STACK). Corre en CI tras
 // `astro build` (job `build` de portal-ci.yml). Falla ruidosamente (exit 1).
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { relative, resolve } from 'node:path';
+import { relative, resolve, sep } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const checks = [];
@@ -420,6 +420,65 @@ checks.push({
   detail: pesadas.length
     ? `${pesadas.length}: ${pesadas.slice(0, 4).join(' · ')}`
     : 'comprobado sobre el HTML servido de todas las paginas',
+});
+
+/*
+ * ── SONDA: NINGUN CONTACTO QUE NO SEA EL DEL NEGOCIO (§241) ──────────────────────────────────
+ *
+ * EL DEFECTO QUE CAZA. El cerebro lleva escrito desde el principio que el movil PERSONAL del dueno
+ * (un 323...) no se publica JAMAS, y que el publico es uno solo. Hasta hoy eso lo protegia el
+ * cuidado de quien editaba: nada lo comprobaba. Y un numero personal en una web inmobiliaria no se
+ * "corrige luego" — lo copian los agregadores, queda en la cache de Google y acaba llegando por
+ * WhatsApp a desconocidos. Es la familia "promesa sin mecanismo", cerrada aqui de la unica forma
+ * que ha funcionado en este proyecto: convirtiendo la promesa en un gate que bloquea.
+ *
+ * DE DONDE SALE LO PERMITIDO. De `src/lib/config/site.ts`, que es su dueno — NO se copia aqui. Si
+ * manana cambia el numero del negocio, el gate lo sigue solo. Y si no consigue leerlo **revienta**
+ * en vez de pasar: un gate que se queda sin referencia da el mismo verde que uno que no encuentra
+ * nada, y ese es justo el fallo que [[L-64]] enumera.
+ *
+ * POR QUE NO GRITA EN FALSO. Se ignoran los `placeholder`, que son ejemplos DENTRO de un campo
+ * vacio y nadie lee como contacto — hay cinco en el sitio y los cinco son legitimos. Medido ANTES
+ * de cablearlo: 45 paginas, CERO fugas. La deuda arranca en cero, asi que este trinquete solo
+ * puede proteger hacia adelante.
+ */
+const sitio = readFileSync(resolve(root, 'src/lib/config/site.ts'), 'utf8');
+const waDeclarado = sitio.match(/whatsapp:\s*'([^']+)'/);
+const mailDeclarado = sitio.match(/email:\s*'([^']+)'/);
+if (!waDeclarado || !mailDeclarado) {
+  console.error('\n❌ verify:build — no pude leer el contacto en src/lib/config/site.ts.');
+  console.error('   Sin esa referencia la sonda de contacto pasaria en VERDE sin comparar con nada,');
+  console.error('   que es exactamente lo que un gate no debe hacer. Arregla el fichero o la lectura.');
+  process.exit(1);
+}
+const diezDigitos = (t) => t.replace(/[^0-9]/g, '').slice(-10);
+const TEL_DEL_NEGOCIO = new Set([diezDigitos(waDeclarado[1])]);
+const MAIL_DEL_NEGOCIO = mailDeclarado[1].toLowerCase();
+const MOVIL_CO = /(?:\+?57)?[\s.-]?3\d{2}[\s.-]?\d{3}[\s.-]?\d{4}/g;
+const CORREO_CUALQUIERA = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+
+const fugas = [];
+for (const f of htmlServido(resolve(root, 'dist/client'))) {
+  const html = readFileSync(f, 'utf8');
+  const limpio = html
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/placeholder="[^"]*"/gi, ' ');
+  const pagina = relative(resolve(root, 'dist/client'), f).split(sep).join('/');
+  for (const m of limpio.matchAll(MOVIL_CO)) {
+    if (!TEL_DEL_NEGOCIO.has(diezDigitos(m[0]))) fugas.push(`${pagina} → tel ${diezDigitos(m[0])}`);
+  }
+  for (const m of limpio.matchAll(CORREO_CUALQUIERA)) {
+    const c = m[0].toLowerCase();
+    if (c !== MAIL_DEL_NEGOCIO && !c.endsWith('@altorrainmobiliaria.co')) fugas.push(`${pagina} → ${c}`);
+  }
+}
+const fugasUnicas = [...new Set(fugas)];
+checks.push({
+  name: 'ningun telefono ni correo publicado que no sea el del negocio',
+  ok: fugasUnicas.length === 0,
+  detail: fugasUnicas.length
+    ? `${fugasUnicas.length}: ${fugasUnicas.slice(0, 5).join(' · ')} — el movil PERSONAL del dueno no se publica JAMAS`
+    : `contra ${waDeclarado[1]} y ${MAIL_DEL_NEGOCIO}, leidos de site.ts; los placeholder no cuentan`,
 });
 
 let failed = 0;
