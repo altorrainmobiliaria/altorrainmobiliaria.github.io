@@ -10464,3 +10464,48 @@ mitad de lo que había que comprobar. Verify completo **exit 0**, 35 comprobacio
 
 ### 239.6 — Archivos
 `portal/src/lib/domain/agenda.ts`(+test) · `portal/scripts/verify-controles.mjs`.
+
+## 240. ADR-240 — Tres verdades sobre lo mismo, y la que se leía era la falsa
+
+### 240.1 — El resultado enriquecido reescribía a mano las tarifas
+`/precios` ya hacía lo correcto en la prosa —las cifras viven en `lib/content/tarifas.ts`— pero las
+**cuatro respuestas del FAQPage** eran copias LITERALES. Cambiar una tarifa habría actualizado la
+tarjeta y dejado el JSON-LD anunciando la vieja **en el resultado de Google**, que es publicidad
+(Ley 1480 arts. 29-30); Google además exige que el contenido de un FAQPage esté VISIBLE en la página,
+y una respuesta parafraseada a mano se aleja de la visible con cada edición. Ahora las cuatro se
+derivan y el texto del resultado coincide **palabra por palabra** con el que lee una persona.
+🎯 La página es `prerender`, así que el `throw` corre en el BUILD: **un gate sin escribir un script**.
+Probado inyectando los dos defectos que cubre —id inexistente y tarifa sin cifra decidida— y
+comprobando ANTES que cada inyección casó ([[L-64]]). Censo: de los 11 ficheros con JSON-LD, este era
+el único con FAQPage o precio.
+
+### 240.2 — 🔴 Corrí el gate del RNT en producción por primera vez, y el cerebro lo describía mal
+El `05` decía que el RNT **«bloquea el BUILD»** mientras el build pasaba todos los días. La sonda solo
+corre con `PUBLIC_SITE_ENV=production`; en staging imprime ✅ con el detalle «se activa con…»
+—honesto, **lo dice en el nombre del check**— pero ese verde era lo único que se había visto nunca.
+Corrida de verdad: **bloquea**, y nombra **dos** páginas (`/` y `/estancias`), no las «cuatro» del
+runbook (eran los cuatro ERRORES). Y sacó un **segundo bloqueador** que yo no tenía en la cabeza:
+`PUBLIC_CATALOGO_SOURCE=demo` publicaría inmuebles que no existen. → [[L-65]] y el comando en el
+runbook, con su punto ciego declarado (no juzga SSR).
+
+### 240.3 — 🔬 El hallazgo que escribí YO apuntaba al nodo equivocado
+Iba a partir `38-GATES-QUE-MIENTEN` porque le había subido el techo dos veces en 24 h. Medido: está al
+**79 %** y ni entra en el top-12. Lo elegí porque era **el que acababa de tocar**. Lo que la medición
+sí encontró: **13 de 31 nodos al ≥90 %** y `30-LECCIONES` en **240/240 líneas**, bloqueado. → [[M-31]],
+`TODO-50`, y N15-07b/c/d en la bóveda. La primera pasada de esa medición se comió commits por `cp1252`
+y reportó un «2» con aplomo: **no me la creí, y por eso salió el número real**.
+
+### 240.4 — Y una optimización mía que el linter tumbó en el acto
+Fusioné los tres punteros del mismo shard en `30` para ahorrar líneas → *«refs COLGANTES: L-64, L-65»*.
+Esa lista **ES la tabla de resolución de IDs** (check #5), no un índice de cortesía. Revertido; la
+holgura salió de reflujo de 3 líneas envueltas (240→237). *Lo que parece adorno suele estar sujetando
+algo — el linter lo sabía y yo no.*
+
+### 240.5 — Verificación
+`verify` completo **exit 0, 35 comprobaciones** · `brain:check` SANO, **85 refs resuelven** · boot
+31401→31214c dentro de presupuesto tras GC honesto (un ✅ resuelto que seguía en «riesgos ACTIVOS» y
+tres TODO cerrados que ya vivían en el `99`).
+
+### 240.6 — Archivos
+`portal/src/pages/precios.astro` · `specs/CUTOVER-RUNBOOK.md` · `docs/05` · `10` · `30` · `33` · `38` ·
+`.brain-manifest.json` · skill `auditoria-cerebro`.

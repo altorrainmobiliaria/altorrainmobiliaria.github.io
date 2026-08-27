@@ -110,6 +110,7 @@
 | §237 | 🔬 **Auditoría N2 #15**: «promesa sin mecanismo» llevaba 7 auditorías y se cerró TRES veces en una noche — siempre convirtiéndola en un gate que bloquea. Contrapeso: 5 identificadores inventados. GC pareado −73c. | 10346 |
 | §238 | ⚡ **548 KB fuera de la ruta crítica** (2 miniaturas decorativas de la portada; en /estancias el arreglo era el OPUESTO) + el gate de habeas data, que tardó **tres intentos** en morder y las tres versiones pasaban la lectura. | 10394 |
 | §239 | 🔴 **La agenda anunciaba «se renueva» en contratos que ya tenían preaviso** — fallo que abrió el 233 tres horas antes: añadir un hecho al modelo no es aditivo para quien ya decidía sin él. + el gate de habeas data (Ley 1581). | 10433 |
+| §240 | 🎭 **Tres verdades sobre lo mismo**: el FAQPage de `/precios` copiaba las tarifas a mano · el gate del RNT, corrido en producción por 1.ª vez, bloquea: 2 páginas (+1 bloqueador nuevo) · y mi hallazgo apuntaba al nodo que acababa de tocar. | 10468 |
 
 ---
 
