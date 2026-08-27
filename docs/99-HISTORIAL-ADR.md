@@ -10558,3 +10558,46 @@ ficheros verdes antes de sumar las 13 nuevas · `brain:check` SANO.
 `portal/src/scripts/gestion-ventas.test.ts` (nuevo) · `gestion-perfiles.test.ts` (nuevo) ·
 `portal/scripts/verify-build.mjs`. **INTACTOS**: las dos funciones `urgencia()` —se probaron, no se
 tocaron— y `site.ts`.
+
+## 242. ADR-242 — La promesa vivía dentro del código que debía cumplirla
+
+### 242.1 — Un número suelto que nadie había justificado
+El sitio construye **45 páginas** y el sitemap anuncia **39**. Nadie había abierto esas seis. De las
+siete que quedan fuera, cinco son obvias (404, panel, login, favoritos, mi-perfil) y `/seguridad`
+resultó ser *«Mi seguridad»* —el 2FA del propio usuario, privada, `noindex`, enlazada solo desde el
+panel—, bien excluida. La séptima no.
+
+### 242.2 — 🔴 El styleguide de desarrollo iba a servirse en el dominio del cliente
+`/design-system` es la referencia viva del D1, y la promesa de no publicarlo estaba escrita **en su
+propia cabecera**: *«excluir esta ruta del build de producción antes del cutover (TODO Ola 1)»*. Ola 1
+se cerró hace días y la ruta seguía construyéndose. 🎯 **Quinta aparición de «promesa sin mecanismo»**
+en el proyecto, y la más instructiva: la promesa vivía **dentro del código que debía cumplirla**, que
+es el sitio donde más convincente parece y menos obliga.
+
+### 242.3 — Lo que se hizo, y lo que la primera versión hacía peor
+En producción la ruta **redirige a la home** (301, `noindex`, canónico): el HTML pasa de **28,5 KB a
+284 bytes**. La primera versión que probé devolvía `404` y **Astro emitía el fichero igual, vacío** —un
+200 en blanco, peor que un redirect—; se vio midiendo, no razonando. Con su **respaldo**: una sonda que
+en producción falla si el styleguide reaparece entero, midiendo por **CONTENIDO** (¿siguen las muestras
+de color?) y no por tamaño, porque un umbral de KB se ajusta solo cuando molesta. Probada quitando la
+guardia: **28552 bytes** y el mensaje nombra *qué* se rompió. En staging el styleguide sigue entero,
+que es donde debe estar. → [[L-65]] regla (5).
+
+### 242.4 — 🪤 Y una trampa nueva del entorno: dos `/tmp` distintos
+Mi primer intento de inyección **NO casó** —el ancla contaba 2 guardias en vez de 1— porque un
+restaurado condicionado a `os.path.exists('/tmp/…')` **nunca ocurrió**: `/tmp` en Git Bash y `/tmp` en
+el Python NATIVO de Windows son sitios distintos, así que el `exists` dio falso **en silencio** y el
+bloque de prueba se quedó debajo del bueno. Lo cacé porque el `assert` habla; con un `sed` silencioso
+me habría creído un ✅ que no probaba nada — el corolario de [[L-64]] en estado puro. **Regla: los
+respaldos de una inyección van al scratchpad de la sesión, nunca a `/tmp`.**
+⚠️ No se apendó a `36-LECCIONES-UTILLAJE` porque ese nodo está a **1 carácter** de su tope. Es la
+**segunda** lección en dos turnos que se queda sin sitio (la otra, §241.4): eso ya no es anécdota, es
+el coste medible de `TODO-50`, y así queda anotado en N15-07.
+
+### 242.5 — Verificación
+`verify` **exit 0, 37 comprobaciones** (era 36) · `typecheck` 0 errores · **954 pruebas** verdes ·
+staging emite el styleguide (28632 b), producción emite el redirect (284 b).
+
+### 242.6 — Archivos
+`portal/src/pages/design-system.astro` · `portal/scripts/verify-build.mjs`. **INTACTOS**: el sitemap
+—las seis exclusiones restantes son correctas y ahora están justificadas una por una— y `/seguridad`.

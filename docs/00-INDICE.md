@@ -112,6 +112,7 @@
 | §239 | 🔴 **La agenda anunciaba «se renueva» en contratos que ya tenían preaviso** — fallo que abrió el 233 tres horas antes: añadir un hecho al modelo no es aditivo para quien ya decidía sin él. + el gate de habeas data (Ley 1581). | 10433 |
 | §240 | 🎭 **Tres verdades sobre lo mismo**: el FAQPage de `/precios` copiaba las tarifas a mano · el gate del RNT, corrido en producción por 1.ª vez, bloquea: 2 páginas (+1 bloqueador nuevo) · y mi hallazgo apuntaba al nodo que acababa de tocar. | 10468 |
 | §241 | 🧭 **Lo que decide qué ve el dueño arriba no tenía prueba** (dos `urgencia()` puras, 13 tests) · y **«el móvil personal JAMÁS se publica» no tenía mecanismo**: censo de 45 páginas (cero fugas) y gate que lee el permitido de `site.ts`. | 10513 |
+| §242 | 🚧 **El styleguide de desarrollo iba a servirse en el dominio del cliente**: la promesa de excluirlo vivía en la cabecera del propio fichero. Ahora redirige (28,5 KB→284 b) + sonda de respaldo. Salió de cuadrar 45 páginas con 39 del sitemap. | 10562 |
 
 ---
 
