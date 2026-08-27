@@ -10197,3 +10197,52 @@ TOCADOS: `functions/src/index.ts` · `lib/domain/gestion.ts` · `lib/domain/bita
 [[L-63]] nueva. Cache: N/A. ⏭️ **Las dos pantallas siguen sin ESTRENARSE contra datos reales** —
 como todo el runbook, eso es del dueño— y el mockup sigue esperando su visto bueno: se construyó bajo
 la delegación explícita de *«decide tú, no pares»*, no bajo una aprobación.
+
+## 234. ADR-234 — El gate legal del alojamiento vivía en el formulario, y el censo que lo encontró
+
+**Contexto.** §233 dejó una lección caliente ([[L-63]]): *una regla escrita en el dominio y una
+frontera que no la aplica*. Ese mismo día apareció un segundo caso, y en vez de seguir encontrándolos
+de uno en uno se **enumeró el universo**.
+
+### 234.1 — El hueco
+El MEGA-PLAN promete *«campo RNT BLOQUEANTE en el alta de alojamiento + declaración PH»*, y lo era —
+en `alta-propiedad.ts`. Pero `propiedades` se escribe **DIRECTO desde el navegador** y las Rules solo
+comprobaban rol y `_version`. 🎯 **Una obligación legal que solo sostiene un formulario deja de
+existir el día que alguien cambia el formulario.** Lo que se juega: anunciar por días un inmueble que
+el reglamento de PH no autoriza, o sin el RNT que la ley exige en toda publicidad de alojamiento
+(§178-§179).
+
+### 234.2 — El arreglo, y por qué también en UPDATE
+`gateAlojamiento()` exige las **dos** mitades. Va en `create` **y** en `update`: pasar un inmueble a
+`alojamiento` después de crearlo tendría exactamente el mismo efecto, y era la puerta de atrás obvia.
+Solo muerde en `alojamiento` — exigir RNT a una venta convertiría la obligación de un caso en un
+requisito inventado para todos. **7 pruebas**, entre ellas que **ni el `super_admin` se lo salta**: la
+ley no distingue por rol. Y queda cableado al gate de espejos: son **3** y se comparan de verdad,
+probado desincronizándolo a propósito.
+
+### 234.3 — 🔴 Dos cosas me cazaron, y ninguna fui yo
+(a) **Iba a meter valores INVENTADOS en una regla de seguridad**: escribí `autoriza-expresamente` y
+`silencio-reglamento` de memoria cuando los reales son `no-aplica`, `autoriza-expreso` y
+`sin-autorizacion`. Habría **bloqueado todo alojamiento**. Lo vi al ir a comprobar la lista, no al
+escribirla. *Un enum recordado es un enum inventado.*
+(b) **Una prueba de concurrencia que ya existía tumbó mi primera versión**: crea una propiedad sin
+campo `operacion`, y en las Rules **leer un campo AUSENTE hace fallar la condición entera**, así que
+mi regla denegaba cualquier propiedad sin ese campo. Corregido con `.get()` y defecto. *La suite
+vieja protegiendo del cambio nuevo* — que es para lo que existe.
+
+### 234.4 — El censo: enumerar el universo en vez de tropezarse con él
+**18 colecciones** en las Rules. **5 son SERVER-ONLY** (`auditLog`, `captaciones`, `disponibilidad`,
+`perfiles`, `ventas`): su única puerta es una callable. De las que el cliente escribe, tres ya validan
+campos (`alertas`, `bajasAlertas`, `solicitudes`) y el resto son de staff con consecuencia acotada —
+`config` solo lo toca el `super_admin`. 🎯 **El único hueco con consecuencia LEGAL era el del
+alojamiento**, y queda cerrado. *La diferencia entre este resultado y los dos anteriores no es
+suerte: los dos primeros aparecieron al tropezar, éste al medir.*
+
+### 234.5 — Verificación y alcance
+Verify completo **exit 0**: 937 pruebas de unidad + 175 de reglas, 31 comprobaciones.
+⚠️ **Las Rules NO se desplegaron**: el ruleset es la **fase 2 del CUTOVER-RUNBOOK** y esa secuencia la
+ordena el dueño. El cambio está en `main`, probado, esperando su fase.
+
+### 234.6 — Archivos
+`portal/firebase/firestore.rules` · `portal/firebase/tests/rules.test.ts` ·
+`portal/scripts/verify-data-invariants.mjs`.
