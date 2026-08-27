@@ -1,6 +1,8 @@
 ---
 titulo: 'Comprar para rentar en Cartagena: qué cambia entre arrendar por meses y alquilar por días'
 resumen: 'Son dos negocios distintos y dos marcos legales distintos, aunque el apartamento sea el mismo. Qué le exige cada uno, qué zonas de Cartagena se prestan a cada modelo y las tres preguntas que conviene resolver antes de firmar la promesa.'
+tituloSeo: 'Arrendar por meses o por días en Cartagena: qué cambia'
+resumenSeo: 'Son dos negocios y dos marcos legales distintos con el mismo apartamento. Qué exige cada uno y las tres preguntas a resolver antes de firmar.'
 categoria: 'guias-de-zona'
 fecha: 2026-08-25
 portada: '/assets/chalet-dusk.webp'

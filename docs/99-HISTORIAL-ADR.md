@@ -9848,3 +9848,49 @@ criterio —estaba escrito desde §123— ni el dato —estaba en el código y e
 alguien juntara las dos cosas en una frase que se pueda aprobar.
 **Corolario**: antes de escribir «decide X» en un ledger, comprueba si puedes dejar la decisión hecha
 en dos opciones. Si puedes, el pendiente no era del dueño.
+
+## 228. ADR-228 — Los ocho títulos del Journal salían cortados, y el límite estaba escrito al lado del tope que lo permitía
+
+**Contexto.** El costo-cerebro del mes marca **50 % 🔴** (bandera en 30 %): más de la mitad de los
+commits son solo-cerebro. Esa bandera me señala a mí, no al código, y la respuesta honesta no es otra
+doctrina: es medir el producto. Barrido de las **37 URLs del sitemap** buscando defectos que ningún
+gate cubre — canónicos, descripciones, `og:`, JSON-LD, longitudes y dimensiones de imagen.
+
+### 228.1 — Lo que estaba bien, dicho para que se distinga de lo no mirado
+**36 páginas leídas** (la 37.ª, `/alertas`, es SSR a propósito: lee el query string, así que no tiene
+fichero estático — falso positivo verificado, no defecto). **Cero** sin canónico, **cero** sin
+descripción, **cero** sin `og:title`, **cero** JSON-LD roto. La base estaba sana.
+
+### 228.2 — Y lo que no: los ocho títulos y las siete descripciones del Journal
+El `<title>` se componía como `` `${titulo} | Journal ALTORRA` ``, y los títulos **editoriales** miden
+85-90 caracteres: los artículos salían con **103-108**, cortados a media frase en el resultado de
+búsqueda. Las descripciones, entre **236 y 297**, cortadas igual.
+🎯 **Y el límite estaba escrito, al lado del tope que lo contradice.** El esquema decía, literal:
+*«Bajada de la tarjeta y `<meta name="description">`. **Google trunca cerca de 160**»* — y a
+continuación `z.string().max(300)`. Una regla documentada junto a una restricción que permite el
+doble es una nota, no un límite. Es la forma del día, en el sitio donde el proyecto **sí** sabe
+convertir reglas en gates (el propio archivo presume de que «un artículo sin fuentes ROMPE EL BUILD»).
+
+### 228.3 — El arreglo NO es acortar el H1
+Ahí el título largo **informa**, y es la voz del Journal. Lo que había era **una superficie usada para
+dos públicos**: el lector que ya entró y el que decide si entra. Se separan con dos campos opcionales
+y acotados **donde corta el buscador**: `tituloSeo` (≤60) y `resumenSeo` (≤155), con respaldo al valor
+editorial si no están. El esquema —que aquí es un gate— los hace inviolables.
+Redactados los siete: títulos de **49-59** y descripciones de **138-146**, con la palabra clave
+delante. Resultado medido tras reconstruir: **títulos largos 8 → 1 · descripciones largas 7 → 0**.
+
+### 228.4 — Dos cosas que decidí NO tocar, y por qué
+- **`/legal/politica-tratamiento-datos` (66 caracteres)**: uno por encima de un umbral **aproximado**,
+  y ese mismo texto es el **H1 de un documento legal**. Cambiarlo por un carácter altera el título
+  visible de una política. Se queda.
+- **191 `<img>` sin `width`/`height`** (desplazamiento de contenido al cargar). Medido, no arreglado:
+  el CSS ya reserva espacio en buena parte (`object-fit: cover` ×29, `aspect-ratio` ×5), poner
+  dimensiones exige leer el tamaño **real** de cada asset, y hacerlo mal mueve el diseño. *Un arreglo
+  masivo que no puedo verificar visualmente no es un arreglo: es una apuesta.* Queda medido para
+  quien lo tome con el navegador delante.
+
+### 228.5 — Doctrina
+**Cuando una restricción y su razón conviven en el mismo archivo y no coinciden, gana la restricción
+y la razón queda de adorno.** El comentario decía 160 y el tope decía 300: durante siete artículos
+mandó el 300, y el comentario sirvió para que nadie mirara. Si escribes el límite en prosa, **escríbelo
+también en el validador** — o borra la prosa, que es más honesto que un número que no obliga.

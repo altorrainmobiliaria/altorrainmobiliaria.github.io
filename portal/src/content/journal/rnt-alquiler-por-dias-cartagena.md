@@ -1,6 +1,8 @@
 ---
 titulo: 'Alquilar por días en Cartagena: el RNT y el permiso de la copropiedad'
 resumen: 'Alquilar un apartamento por noches no es solo publicarlo. Hace falta el Registro Nacional de Turismo antes de operar, el número debe salir en la publicidad y, si el inmueble está en propiedad horizontal, el reglamento tiene que autorizar ese uso. Qué exige la ley y qué arriesga quien no cumple.'
+tituloSeo: 'Alquiler por días en Cartagena: RNT y permiso de la PH'
+resumenSeo: 'Antes de operar hace falta el Registro Nacional de Turismo, el número debe salir en la publicidad y el reglamento de PH debe autorizar ese uso.'
 categoria: 'corta-estancia'
 fecha: 2026-08-25
 portada: '/assets/hero-estancia.webp'

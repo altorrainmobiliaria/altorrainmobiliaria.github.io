@@ -1,6 +1,8 @@
 ---
 titulo: 'Por qué no le decimos «avalúo» a nuestra estimación de precio'
 resumen: 'En Colombia el avalúo es actividad regulada: lo firma una persona inscrita en el Registro Abierto de Avaluadores. Una inmobiliaria que ofrece «avalúos gratis» usa mal la palabra. Qué dice la Ley 1673 de 2013, cuándo necesita un avalúo de verdad y qué es entonces lo que nosotros damos.'
+tituloSeo: 'Por qué no llamamos «avalúo» a nuestra estimación'
+resumenSeo: 'En Colombia el avalúo lo firma quien está inscrito en el RAA. Qué dice la Ley 1673, cuándo necesita uno de verdad y qué le damos nosotros.'
 categoria: 'ley-y-contratos'
 fecha: 2026-08-25
 portada: '/assets/villa-modern.webp'

@@ -68,7 +68,7 @@ const jsonLd = {
     {
       '@type': 'BlogPosting',
       headline: d.titulo,
-      description: d.resumen,
+      description: d.resumenSeo ?? d.resumen,
       abstract: d.enCorto,
       articleSection: ETIQUETA[d.categoria],
       inLanguage: 'es-CO',
@@ -91,8 +91,8 @@ const jsonLd = {
 ---
 
 <BaseLayout
-  title={`${d.titulo} | Journal ALTORRA`}
-  description={d.resumen}
+  title={d.tituloSeo ?? `${d.titulo} | Journal ALTORRA`}
+  description={d.resumenSeo ?? d.resumen}
   image={d.portada}
   canonical={`/journal/${articulo.id}`}
 >

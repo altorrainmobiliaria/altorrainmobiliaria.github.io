@@ -1,6 +1,8 @@
 ---
 titulo: 'El depósito está prohibido: qué sí pueden pedirle como garantía en un arriendo de vivienda'
 resumen: 'Pedir un mes de depósito para arrendar vivienda en Colombia es ilegal, y llamarlo de otra manera tampoco lo arregla. Le explicamos qué dice el artículo 16 de la Ley 820, cuál es la única garantía en dinero que sí está permitida y cómo se calcula su tope.'
+tituloSeo: 'El depósito en arriendo está prohibido: qué sí pueden pedir'
+resumenSeo: 'Pedir depósito para arrendar vivienda es ilegal en Colombia y renombrarlo no lo arregla. Qué dice el art. 16 de la Ley 820 y qué garantía sí vale.'
 categoria: 'ley-y-contratos'
 fecha: 2026-08-25
 portada: '/assets/hero-keys.webp'

@@ -1,6 +1,8 @@
 ---
 titulo: 'Firmar la escritura no es el final: lo que pasa mientras el inmueble no está registrado'
 resumen: 'Entre la firma en la notaría y la inscripción en el registro hay una ventana en la que su escritura no produce efectos frente a terceros. Qué puede pasar en ese lapso, por qué la ley lo dispone así y qué hacer para que dure lo menos posible.'
+tituloSeo: 'Firmar la escritura no basta: hay que registrarla'
+resumenSeo: 'Entre la notaría y el registro hay una ventana en la que su escritura no produce efectos frente a terceros. Qué puede pasar y cómo acortarla.'
 categoria: 'ley-y-contratos'
 fecha: 2026-08-26
 portada: '/assets/estate-golden.webp'

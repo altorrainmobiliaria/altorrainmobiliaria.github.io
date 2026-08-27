@@ -138,6 +138,7 @@
 | §225 | 🔓 **Un candado que solo existía en su comentario**: «CREAR CUENTA sigue cerrado» era falso —el botón abre, el form crea—. La Ola 2 retenía la pantalla del titular contra una dependencia ya satisfecha. | 9698 |
 | §226 | 🚧 **Gates vigilando el VACÍO en 3 de 4 repos**: el kernel ya tenía la solución (`ownerRegex`) y **reparte código, no configuración**. Un ssotFact sobre una FASE se apaga solo al terminar la fase. | 9757 |
 | §227 | 🗳️ **Una decisión sin opciones escritas no es una decisión: es una tarea.** Las cinco cifras del 5.3 ya tienen reemplazo redactado con su fuente, conservando la forma del bloque. Falta el sí/no. | 9811 |
+| §228 | 🔍 **Los 8 títulos del Journal salían CORTADOS** (103-108 chars) y 7 descripciones de hasta 297. El esquema decía «Google trunca cerca de 160» **al lado de** `max(300)`. Separadas las dos superficies: 8→1 y 7→0. | 9852 |
 | §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
 | §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
 | §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |

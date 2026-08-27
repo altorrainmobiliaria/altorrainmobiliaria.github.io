@@ -1,6 +1,8 @@
 ---
 titulo: 'Lo que cuesta cerrar, además del precio: los impuestos de una compraventa en Cartagena'
 resumen: 'Sobre el precio pactado hay dos tributos departamentales que se pagan para poder registrar la escritura, y por defecto los pagan comprador y vendedor por mitades. Cuánto suman en Bolívar, dónde está el escalón que hace saltar la cuenta y qué hay que acordar por escrito antes de firmar.'
+tituloSeo: 'Impuestos de una compraventa en Cartagena: cuánto cuestan'
+resumenSeo: 'Dos tributos departamentales se pagan para registrar la escritura, por mitades salvo pacto. Cuánto suman en Bolívar y dónde salta la cuenta.'
 categoria: 'mercado'
 fecha: 2026-08-26
 portada: '/assets/villa-pool.webp'

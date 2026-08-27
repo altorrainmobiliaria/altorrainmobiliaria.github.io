@@ -26,9 +26,29 @@ import { CATEGORIAS } from './lib/content/journal';
 const journal = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/journal' }),
   schema: z.object({
+    /** El H1 y la tarjeta: editorial, puede ser largo y explicativo. NO va al `<title>`. */
     titulo: z.string().max(110),
-    /** Bajada de la tarjeta y `<meta name="description">`. Google trunca cerca de 160. */
+    /**
+     * El `<title>` de la pestaña y del resultado de búsqueda. Opcional; sin él se usa el editorial.
+     *
+     * 🔴 POR QUÉ EXISTE (§228). El `<title>` era `${titulo} | Journal ALTORRA`, y los títulos
+     * editoriales miden 85-90 caracteres: los ocho artículos salían con **103-108**, así que Google
+     * los corta a media frase. El arreglo NO es acortar el H1 —ahí el título largo INFORMA— sino
+     * separar las dos superficies: una habla con el lector que ya entró, la otra con el que decide
+     * si entra. El tope está donde corta el buscador, no donde nos parezca.
+     */
+    tituloSeo: z.string().max(60).optional(),
+    /** Bajada de la tarjeta: editorial. Google trunca cerca de 160, pero aquí cabe más a propósito. */
     resumen: z.string().max(300),
+    /**
+     * La `<meta name="description">`. Opcional; sin ella se usa el resumen editorial.
+     *
+     * El comentario del `resumen` ya decía «Google trunca cerca de 160» **y el tope era 300**: la
+     * regla vivía escrita al lado de la restricción que la contradice, y siete artículos publicaron
+     * descripciones de 236-297 que salen cortadas a mitad. Un límite que se documenta y no se aplica
+     * es una nota, no un límite (§228).
+     */
+    resumenSeo: z.string().max(155).optional(),
     categoria: z.enum(CATEGORIAS),
     /** Fecha REAL de publicación. La usa el orden del índice y el JSON-LD. */
     fecha: z.coerce.date(),

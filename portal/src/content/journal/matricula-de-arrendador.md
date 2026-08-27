@@ -1,6 +1,8 @@
 ---
 titulo: 'La matrícula de arrendador: qué es, quién la necesita y por qué debe estar a la vista'
 resumen: 'En Colombia, quien vive de arrendar o de intermediar arriendos de vivienda tiene que estar matriculado ante la alcaldía de su municipio — y anunciarse sin ese número es sancionable. Qué exige la Ley 820 de 2003, dónde debe aparecer el número y cómo comprobar el de cualquiera. Incluido el nuestro.'
+tituloSeo: 'Matrícula de arrendador: qué es y quién la necesita'
+resumenSeo: 'Quien vive de arrendar vivienda debe matricularse ante la alcaldía, y anunciarse sin ese número es sancionable. Cómo comprobar el de cualquiera.'
 categoria: 'ley-y-contratos'
 fecha: 2026-08-25
 portada: '/assets/estate-golden.webp'
