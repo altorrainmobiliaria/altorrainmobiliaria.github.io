@@ -45,6 +45,11 @@ export { confirmarDocumento, prepararDocumento, retirarDocumento } from './docum
 // formulario se acuerde de aplicarlos.
 export { crearVenta, moverVenta } from './venta-escritura';
 
+// PREAVISO DE TERMINACION (Ola 2, ADR 233). Puerta unica: el estado `preaviso` del contrato lo
+// DERIVA el servidor del veredicto de la evidencia postal, nunca lo teclea el formulario. Un
+// preaviso impuesto tarde se archiva igual y el contrato NO cambia de estado: se prorroga.
+export { registrarPreaviso } from './preaviso-escritura';
+
 // PERFIL DE INQUILINO 1→N (Ola 2, §152). Es el ÚNICO sitio del sistema donde escribe alguien de
 // FUERA del equipo, así que el `uid` sale del token y jamás del cuerpo de la llamada.
 export {

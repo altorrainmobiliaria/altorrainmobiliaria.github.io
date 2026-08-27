@@ -29,8 +29,15 @@ const cuerpo = bruto
   .join('\n')
   .split('\ndiff --git ')[0];
 
+/*
+ * La puntuación tiene que CERRAR —le sigue espacio, salto o fin de mensaje—. Sin esa condición el
+ * patrón caza `.gx-pv, .gx-btn`, donde el punto ABRE un selector CSS y no cierra nada: pasó en el
+ * segundo uso del hook, y un gate que grita en falso enseña a saltárselo, que es peor que no
+ * tenerlo. Es un estrechamiento con criterio, no una escotilla: la palabra comida siempre deja su
+ * espacio pegado a una puntuación que cierra.
+ */
 const SEÑALES = [
-  [/[^\s\n] +[,.;:)\]]/g, 'espacio antes de puntuación'],
+  [/[^\s\n] +[,.;:)\]](?=\s|$)/g, 'espacio antes de puntuación'],
   [/\S {2,}\S/g, 'espacio doble entre palabras'],
   [/\S +\n/g, 'espacio al final de una línea'],
 ];

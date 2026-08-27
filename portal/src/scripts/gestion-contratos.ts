@@ -18,6 +18,7 @@ import { accionDeMora, agenda, estadoDePago, type Hito, type Urgencia } from '..
 import { explicarProblemaContrato, problemasDeContrato, type Contrato, type Pago } from '../lib/domain/gestion';
 import { formatoPrecio } from '../lib/domain/alertas';
 import { FIREBASE_PUBLICO } from '../lib/config/firebase-publico';
+import { montarPreaviso } from './gestion-preaviso';
 
 const TOPE = 50;
 /** Ventana de la agenda. Cuatro meses cubre el aviso de renovación, que es el hito más lejano. */
@@ -163,6 +164,10 @@ export async function montarContratos(): Promise<void> {
       ...(hitos.length ? hitos.map((h) => pintarHito(h, (h.contratoId && nombres.get(h.contratoId)) || '')) : [mensaje('Nada vence en los próximos meses.')]),
     );
     cuerpoLista.replaceChildren(...contratos.map(pintarContrato));
+
+    // El preaviso vive en esta misma vista y necesita los MISMOS contratos: su fecha limite sale de
+    // `vigenciaFin`, asi que separarlos permitiria un preaviso cuyo plazo nadie puede calcular.
+    montarPreaviso(contratos);
 
     if (resumen) {
       const urgentes = hitos.filter((h) => tonoDeUrgencia(h.urgencia) === 'gold').length;

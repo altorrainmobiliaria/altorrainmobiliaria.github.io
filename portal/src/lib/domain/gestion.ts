@@ -71,6 +71,33 @@ export interface Contrato extends Versioned, Auditable {
    *  contrato valida `garantia` contra `vertical` (rechaza cualquier depósito si vertical === 'vivienda'). */
   garantia?: { tipo: TipoGarantia; detalle?: string };
   docs?: string[]; // adjuntos en Storage privado (B5)
+  /**
+   * El preaviso de terminación, con su evidencia postal (§187 · `domain/preaviso.ts`).
+   *
+   * ⚠️ VIVE AQUÍ, en el contrato, y no en una colección aparte, porque su efecto depende de
+   * `vigenciaFin`: separarlos permitiría que existiera un preaviso cuya fecha límite nadie puede
+   * calcular. Y por eso mismo `estado: 'preaviso'` NO se teclea: lo pone el servidor **solo cuando
+   * la evidencia surte efecto**. Un preaviso impuesto tarde se guarda igual —pasó— pero el contrato
+   * sigue `vigente` y se prorroga, que es lo que de verdad ocurrió.
+   */
+  preaviso?: PreavisoRegistrado;
+}
+
+/** Lo que queda archivado cuando alguien registra un preaviso, con quién y cuándo lo hizo. */
+export interface PreavisoRegistrado {
+  quien: 'arrendador' | 'arrendatario';
+  redactadoEl: ISODate;
+  operador: string;
+  guia: string;
+  /** La fecha que DECIDE: cuándo se entregó al operador postal, no cuándo se redactó. */
+  impuestoEl: ISODate;
+  entregadoEl?: ISODate;
+  /** Veredicto calculado por el servidor al registrar, congelado para no recalcularlo distinto. */
+  efecto: 'termina' | 'se-prorroga';
+  /** Id del documento de la bóveda con el escaneo de la constancia, si ya se subió. */
+  constanciaDocId?: string;
+  registradoEn: ISODate;
+  registradoPor: string;
 }
 
 /** `pagos` — un doc por período × contrato × tipo (OD6). docId determinista incluye `tipo`. Mora en `config/gestion`. */

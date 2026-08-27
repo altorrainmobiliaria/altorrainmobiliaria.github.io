@@ -36,12 +36,6 @@ const raiz = resolve(import.meta.dirname, '..');
  */
 const ACEPTADOS = new Map([
   [
-    'src/lib/domain/preaviso.ts',
-    'Ley 820 arts. 22.7 y 24: falta la pantalla que registre operador, guía y fecha de IMPOSICIÓN. ' +
-      'Mockup YA ESCRITO (design/mockups/ALTORRA Preaviso.dc.html, 26-ago); espera la aprobación ' +
-      'de Daniel para construirse — nunca UI sin mockup aprobado (§222).',
-  ],
-  [
     'src/lib/domain/certificacion.ts',
     'D.1625/2016 art. 1.2.4.11: DECIDIDO que es pantalla imprimible de /gestion, no una tubería de ' +
       'PDF. Mockup YA ESCRITO (ALTORRA Certificacion.dc.html, 26-ago); espera aprobación (§222).',

@@ -532,6 +532,54 @@ const init = DATA.admin;
         </div>
       </div>
 
+      <!--
+        PREAVISO DE TERMINACION (§187 · ADR 233). Mockup: `design/mockups/ALTORRA Preaviso.dc.html`.
+        La FECHA LIMITE va ARRIBA a proposito: es la unica parte de esta pantalla que puede EVITAR el
+        dano; junto al veredicto seria un diagnostico post mortem. Y no hay boton de ENVIAR ni lo
+        habra: un correo electronico no es servicio postal autorizado (§185), y una pantalla que
+        parezca enviarlo haria que alguien creyera que ya aviso.
+      -->
+      <div class="gx-panel">
+        <div class="gx-panel__head"><h2>Preaviso de terminaci&#243;n</h2><span class="gx-psub" id="gx-pv-limite"></span></div>
+
+        <p class="gx-psub gx-pad-x">
+          La ley pide que el aviso sea escrito <em>y</em> viaje por servicio postal autorizado. El env&#237;o
+          se hace fuera de aqu&#237;; esto guarda la prueba de que se hizo y dice si lleg&#243; a tiempo.
+        </p>
+
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="gx-pv-contrato">Contrato</label><select class="alt-input" id="gx-pv-contrato"></select></div>
+          <div><label class="alt-label" for="gx-pv-quien">Qui&#233;n da el preaviso</label><select class="alt-input" id="gx-pv-quien"><option value="arrendador">El arrendador (el propietario)</option><option value="arrendatario">El arrendatario (el inquilino)</option></select></div>
+          <div><label class="alt-label" for="gx-pv-redactado">Fecha de redacci&#243;n</label><input class="alt-input" id="gx-pv-redactado" type="date" /></div>
+        </div>
+        <p class="gx-hint">La fecha de redacci&#243;n queda registrada, pero <strong>no es la que cuenta</strong>.</p>
+
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="gx-pv-operador">Operador postal</label><input class="alt-input" id="gx-pv-operador" type="text" placeholder="Servientrega, 4-72&#8230;" /></div>
+          <div><label class="alt-label" for="gx-pv-guia">N&#250;mero de gu&#237;a</label><input class="alt-input" id="gx-pv-guia" type="text" placeholder="1099887766" /></div>
+          <div><label class="alt-label" for="gx-pv-entregado">Entrega al destinatario &#183; opcional</label><input class="alt-input" id="gx-pv-entregado" type="date" /></div>
+        </div>
+        <p class="gx-hint">
+          El operador tiene que estar <strong>habilitado</strong>: lo que aporta el canal es que un
+          tercero autorizado certifique la entrega. La fecha de entrega no mueve el plazo; refuerza la prueba.
+        </p>
+
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="gx-pv-impuesto">Fecha de imposici&#243;n &#183; la que decide</label><input class="alt-input" id="gx-pv-impuesto" type="date" /></div>
+        </div>
+        <p class="gx-hint">
+          El d&#237;a en que se <strong>entreg&#243; al operador</strong>. Si se redact&#243; el lunes y se llev&#243; a la
+          oficina el viernes, para la ley se avis&#243; el viernes: de este dato depende que el contrato
+          termine o se prorrogue otro a&#241;o.
+        </p>
+
+        <div class="gx-pad-x">
+          <button class="alt-btn alt-btn--navy" type="button" id="gx-pv-guardar">Registrar evidencia</button>
+        </div>
+
+        <div class="gx-aviso" id="gx-pv-veredicto" hidden></div>
+      </div>
+
       <div class="gx-panel gx-table">
         <div class="gx-panel__head"><h2>Cartera</h2><span class="gx-psub" id="gx-pg-resumen"></span></div>
         <div class="gx-scrollx">
