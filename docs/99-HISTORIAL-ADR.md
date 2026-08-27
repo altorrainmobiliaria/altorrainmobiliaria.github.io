@@ -9753,3 +9753,57 @@ dueño. Un pendiente honesto, en vez de dos falsos.
 **Doctrina**: cuando un pendiente cita **causa y efecto** («falta X porque falta Y»), hay que medir
 **los dos**. Comprobar solo la causa y heredar el efecto deja el pendiente vivo con la mitad de la
 mentira intacta — y encima con aspecto de recién verificado.
+
+## 226. ADR-226 — Gates que vigilaban el vacío en tres de los cuatro repos, y un kernel que reparte código pero no configuración
+
+**Contexto.** Al congelar la deuda de deliberación en las hermanas apareció, de refilón, algo mayor:
+el chequeo **#8 (SSoT)** salía **DEGRADADO** —*«el dueño ya NO contiene el hecho»*— en **cars,
+bersaglio e insema**. Un `ssotFact` cuyo dueño perdió el hecho no vigila nada: no hay qué duplicar, y
+el gate «aprueba» comparando contra el vacío. Es la familia de §120, el ✅ inmerecido.
+
+### 226.1 — El kernel ya lo tenía resuelto, y la solución nunca llegó
+El stamp guarda `{"version": "1.19.0"}` y la regex busca la **prosa** «kernel v1.19.0» —la forma que
+no debe duplicarse por los nodos—. El kernel previó exactamente ese desajuste con el campo opcional
+**`ownerRegex`**, y **lo dice en su propio comentario**, citando este caso con nombre y apellido.
+🎯 **Inmobiliaria lo declaraba; ninguna hermana.** Y ahí está lo transferible: **el kernel reparte
+CÓDIGO, no CONFIGURACIÓN.** `brain:pull` sincroniza cinco ficheros y deja intacto el manifest de cada
+repo — que es donde vive la mitad que hace falta para que el gate funcione. Una capacidad nueva del
+kernel puede existir durante semanas y **no alcanzar al repo que la necesita**, porque la adopción es
+manual y nadie la reclama.
+
+### 226.2 — Cars: dos hechos más, cada uno roto a su manera
+- **La versión de caché** declaraba dueño `docs/05`, y el `05` **dejó de contenerla** cuando los
+  valores se mudaron al sidecar del heartbeat. El hecho vive en `service-worker.js`; la declaración se
+  quedó apuntando al sitio de antes. *Al mover un dato hay que mover también quien dice dónde vive.*
+- **«esperando site key»** (App Check) vigilaba un **estado TRANSITORIO**, y el estado avanzó: hoy
+  corre en modo monitor. 🎯 **Un `ssotFact` sobre una FASE se degrada solo el día que la fase termina**,
+  y a partir de ahí el gate no compara nada mientras el resumen sigue diciendo que vigila. Un hecho
+  SSoT tiene que ser **durable** —*dónde vive un dato*—, no *en qué punto estamos*. Retirado con su
+  motivo a `_ssotFactsRetirados`, no borrado.
+
+### 226.3 — Un susto verificado antes de darlo
+Comprobando cars me encontré con que **`altorracars.co` no resuelve** (NXDOMAIN, confirmado contra el
+DNS público de Google, con `altorrainmobiliaria.co` de control resolviendo a las IP de GitHub Pages).
+Antes de reportar un dominio caído, lo rastreé: **la cadena aparece SOLO en un documento, como
+sugerencia de compra** (*«Comprar dominio (ej: `altorracars.co`)»*). No hay `CNAME` en el repo, el
+cerebro de cars no lo reclama en ningún nodo y el sitio vivo —`altorracars.github.io`, **HTTP 200**—
+solo se nombra a sí mismo. **No hay defecto**: cars nunca tuvo dominio propio.
+📌 Se deja escrito porque un hallazgo exonerado también es información: la próxima vez que alguien vea
+ese dominio en un doc, esto le ahorra el susto.
+
+### 226.4 — Lo que se arregló y lo que NO
+✅ **cars** (3 facts: dueño corregido, fase retirada, `ownerRegex` copiado del manifest que ya
+funciona en vez de re-teclearlo) e **insema** (1). Cars pasa de **5 gates degradados a 1**.
+⛔ **bersaglio NO**: su pre-commit bloqueó, y con razón — su **auditoría Nivel-2 lleva 40 días
+vencida** (umbral 30). El arreglo es de una línea y la deuda que lo bloquea es de otro orden, así que
+**se revirtió en vez de forzarlo**: el gate está haciendo exactamente lo que existe para hacer.
+Queda anotado, no burlado.
+
+### 226.5 — Doctrina
+1. **Un gate DEGRADADO es un gate apagado que todavía sale en la lista.** Tres repos llevaban semanas
+   así y el resumen decía «estructura íntegra». Por eso `degrade()` existe — pero solo sirve si
+   alguien lee la línea naranja, y nadie la lee mientras el veredicto final no la recoja.
+2. **Cuando el kernel gana una capacidad para arreglar un caso, hay que ir a mirar el mismo caso en
+   los demás repos.** La distribución mueve el código; la adopción es manual y silenciosa.
+3. **Un hecho SSoT se declara sobre lo DURABLE, nunca sobre una fase.** «Dónde vive la versión de
+   caché» sobrevive; «estamos esperando la site key» caduca — y al caducar, apaga su propio gate.
