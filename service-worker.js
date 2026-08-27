@@ -6,7 +6,7 @@
    la página de mantenimiento fresca. Sin handler de fetch → todo va a red.
    =========================================== */
 
-const CACHE_NAME = 'altorra-pwa-v5'; // kill-switch (v4 = último shell del sitio viejo)
+const CACHE_NAME = 'altorra-pwa-v6'; // kill-switch (v4 = último shell del sitio viejo)
 
 self.addEventListener('install', () => {
   self.skipWaiting();

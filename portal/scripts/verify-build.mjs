@@ -423,24 +423,33 @@ checks.push({
 });
 
 /*
- * ── SONDA: NINGUN CONTACTO QUE NO SEA EL DEL NEGOCIO (§241) ──────────────────────────────────
+ * ── SONDA: NINGUN CONTACTO QUE NO SEA EL DEL NEGOCIO (§241 · CORREGIDA en §250) ──────────────
  *
- * EL DEFECTO QUE CAZA. El cerebro lleva escrito desde el principio que el movil PERSONAL del dueno
- * (un 323...) no se publica JAMAS, y que el publico es uno solo. Hasta hoy eso lo protegia el
- * cuidado de quien editaba: nada lo comprobaba. Y un numero personal en una web inmobiliaria no se
- * "corrige luego" — lo copian los agregadores, queda en la cache de Google y acaba llegando por
- * WhatsApp a desconocidos. Es la familia "promesa sin mecanismo", cerrada aqui de la unica forma
- * que ha funcionado en este proyecto: convirtiendo la promesa en un gate que bloquea.
+ * EL DEFECTO QUE CAZA. El movil PERSONAL del dueno no se publica JAMAS. Un numero personal en una
+ * web inmobiliaria no se "corrige luego": lo copian los agregadores, queda en la cache de Google y
+ * acaba llegando por WhatsApp a desconocidos.
  *
- * DE DONDE SALE LO PERMITIDO. De `src/lib/config/site.ts`, que es su dueno — NO se copia aqui. Si
- * manana cambia el numero del negocio, el gate lo sigue solo. Y si no consigue leerlo **revienta**
- * en vez de pasar: un gate que se queda sin referencia da el mismo verde que uno que no encuentra
- * nada, y ese es justo el fallo que [[L-64]] enumera.
+ * 🔴 ESTA SONDA MINTIO, Y ASI SE ENCONTRO (§250). Su primera version dijo «45 paginas, CERO fugas»
+ * mientras el movil personal ESTABA PUBLICADO en `https://altorrainmobiliaria.co/scripts.js`, dentro
+ * del JSON-LD `RealEstateAgent` del legacy. Dos agujeros, los dos en el DENOMINADOR:
+ *   (a) **miraba el sitio equivocado**: solo `portal/dist/client`, cuando lo que el dominio sirve HOY
+ *       es el LEGACY de la raiz del repo. Un gate cuyo conjunto excluye el sitio donde vive el
+ *       problema da un verde aritmeticamente cierto y semanticamente vacio;
+ *   (b) **borraba `<script>` antes de mirar**, y el JSON-LD vive justo ahi — que es la superficie que
+ *       leen Google y los agregadores. Quitarla era quitar el unico sitio donde el dato importaba.
+ * 🎯 Lo encontro una sonda ADVERSARIAL preguntando «¿que pasaria por todos los gates sin despeinarse?».
  *
- * POR QUE NO GRITA EN FALSO. Se ignoran los `placeholder`, que son ejemplos DENTRO de un campo
- * vacio y nadie lee como contacto — hay cinco en el sitio y los cinco son legitimos. Medido ANTES
- * de cablearlo: 45 paginas, CERO fugas. La deuda arranca en cero, asi que este trinquete solo
- * puede proteger hacia adelante.
+ * DE DONDE SALE LO PERMITIDO. De `src/lib/config/site.ts`, su dueno — NO se copia aqui. Si no
+ * consigue leerlo **revienta** en vez de pasar ([[L-65]] regla 5).
+ *
+ * EXCLUSIONES, cada una medida y con motivo (§250.3):
+ *   · `portal/design/` (mockups) y `skills/` (utillaje): datos FICTICIOS (`@demo.com`). Que el dominio
+ *     los sirva —4,7 MB de skills, 15 MB de mockups— es OTRO problema y tiene su propia ficha; meterlos
+ *     aqui llenaria el gate de ruido ajeno, que es como se aprende a ignorarlo.
+ *   · `_legacy/`, `backups/`, `node_modules/`, `.git/` — no los sirve el dominio (`backups/` da 404).
+ *   · Direcciones de EJEMPLO de las traducciones: son marcadores de un campo, no contactos.
+ *   · El movil exige separador, prefijo `+57` o contexto `tel:`/`wa.me`: sin eso, constantes de una
+ *     funcion hash del bundle del mapa (`3266489909`) se leian como telefonos.
  */
 const sitio = readFileSync(resolve(root, 'src/lib/config/site.ts'), 'utf8');
 const waDeclarado = sitio.match(/whatsapp:\s*'([^']+)'/);
@@ -448,28 +457,51 @@ const mailDeclarado = sitio.match(/email:\s*'([^']+)'/);
 if (!waDeclarado || !mailDeclarado) {
   console.error('\n❌ verify:build — no pude leer el contacto en src/lib/config/site.ts.');
   console.error('   Sin esa referencia la sonda de contacto pasaria en VERDE sin comparar con nada,');
-  console.error('   que es exactamente lo que un gate no debe hacer. Arregla el fichero o la lectura.');
+  console.error('   que es exactamente lo que un gate no debe hacer.');
   process.exit(1);
 }
 const diezDigitos = (t) => t.replace(/[^0-9]/g, '').slice(-10);
 const TEL_DEL_NEGOCIO = new Set([diezDigitos(waDeclarado[1])]);
 const MAIL_DEL_NEGOCIO = mailDeclarado[1].toLowerCase();
-const MOVIL_CO = /(?:\+?57)?[\s.-]?3\d{2}[\s.-]?\d{3}[\s.-]?\d{4}/g;
+/** Marcadores de campo en las traducciones del legacy: no son contactos de nadie. */
+const CORREOS_DE_EJEMPLO = new Set(['tu@correo.com', 'your@email.com', 'nombre@correo.com']);
+/** Exige separador, prefijo de pais o contexto de telefono: si no, casan constantes numericas. */
+const MOVIL_CO = /(?:\+57[\s.-]?|tel:|wa\.me\/57|\b)3\d{2}[\s.-]\d{3}[\s.-]?\d{4}|\+?573\d{9}/g;
 const CORREO_CUALQUIERA = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+const FUERA = /(^|[\\/])(node_modules|\.git|_legacy|backups|design|dist|skills)([\\/]|$)/;
+
+/** TODO lo que el dominio sirve: el legacy de la raiz Y el portal construido. */
+function servidoPorElDominio(dir, acc = []) {
+  if (!existsSync(dir)) return acc;
+  for (const n of readdirSync(dir)) {
+    const p = resolve(dir, n);
+    if (FUERA.test(p)) continue;
+    if (statSync(p).isDirectory()) servidoPorElDominio(p, acc);
+    else if (/\.(html|js|json|webmanifest|xml)$/i.test(n)) acc.push(p);
+  }
+  return acc;
+}
+const RAIZ_REPO = resolve(root, '..');
+const superficie = [
+  ...servidoPorElDominio(RAIZ_REPO).filter((p) => !p.startsWith(resolve(root) + sep)),
+  ...servidoPorElDominio(resolve(root, 'dist/client')),
+];
 
 const fugas = [];
-for (const f of htmlServido(resolve(root, 'dist/client'))) {
-  const html = readFileSync(f, 'utf8');
-  const limpio = html
-    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+for (const f of superficie) {
+  // NO se quita <script>: el JSON-LD vive ahi y es lo que leen Google y los agregadores.
+  const limpio = readFileSync(f, 'utf8')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
     .replace(/placeholder="[^"]*"/gi, ' ');
-  const pagina = relative(resolve(root, 'dist/client'), f).split(sep).join('/');
+  const donde = relative(RAIZ_REPO, f).split(sep).join('/');
   for (const m of limpio.matchAll(MOVIL_CO)) {
-    if (!TEL_DEL_NEGOCIO.has(diezDigitos(m[0]))) fugas.push(`${pagina} → tel ${diezDigitos(m[0])}`);
+    if (!TEL_DEL_NEGOCIO.has(diezDigitos(m[0]))) fugas.push(`${donde} → tel ${diezDigitos(m[0])}`);
   }
   for (const m of limpio.matchAll(CORREO_CUALQUIERA)) {
     const c = m[0].toLowerCase();
-    if (c !== MAIL_DEL_NEGOCIO && !c.endsWith('@altorrainmobiliaria.co')) fugas.push(`${pagina} → ${c}`);
+    if (c === MAIL_DEL_NEGOCIO || c.endsWith('@altorrainmobiliaria.co')) continue;
+    if (CORREOS_DE_EJEMPLO.has(c) || c.endsWith('.gserviceaccount.com')) continue;
+    fugas.push(`${donde} → ${c}`);
   }
 }
 const fugasUnicas = [...new Set(fugas)];
@@ -478,7 +510,7 @@ checks.push({
   ok: fugasUnicas.length === 0,
   detail: fugasUnicas.length
     ? `${fugasUnicas.length}: ${fugasUnicas.slice(0, 5).join(' · ')} — el movil PERSONAL del dueno no se publica JAMAS`
-    : `contra ${waDeclarado[1]} y ${MAIL_DEL_NEGOCIO}, leidos de site.ts; los placeholder no cuentan`,
+    : `${superficie.length} fichero(s) SERVIDOS por el dominio (legacy + portal), con el JSON-LD DENTRO; contra ${waDeclarado[1]} y ${MAIL_DEL_NEGOCIO}`,
 });
 
 /*
