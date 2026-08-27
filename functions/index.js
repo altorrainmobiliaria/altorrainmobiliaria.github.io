@@ -304,6 +304,18 @@ function getNurturingSequence(tipo) {
 
 // ══════════════════════════════════════════════════════════════════════════
 // 1. onSolicitudStatusChanged — Email al cliente cuando el admin actualiza estado
+//
+// ⛔ REEMPLAZADA (27-ago, ADR 235) por `avisoEstadoSolicitud` del codebase PORTAL, que manda por
+//    Resend, tiene tipos y 13 pruebas. Esta lleva meses mandando por el Gmail roto (535-5.7.8):
+//    captura el error, lo escribe en un log que nadie abre, y quien movio el estado cree que el
+//    cliente fue avisado.
+//
+// ⚠️ SIGUE DESPLEGADA a proposito, y la retirada va EMPAREJADA con el despliegue de la nueva:
+//    mientras la clave de Resend siga con su centinela ninguna de las dos envia nada, asi que
+//    borrar esta hoy no arregla nada y deja un hueco si la otra tarda. Los dos pasos van juntos:
+//      firebase deploy --only functions:portal:avisoEstadoSolicitud
+//      firebase functions:delete onSolicitudStatusChanged
+//    Hacer solo el primero deja DOS triggers sobre `solicitudes`; solo el segundo, ninguno.
 // ══════════════════════════════════════════════════════════════════════════
 exports.onSolicitudStatusChanged = onDocumentUpdated(
   { document: 'solicitudes/{solicitudId}', region: REGION, secrets: [EMAIL_USER, EMAIL_PASS] },

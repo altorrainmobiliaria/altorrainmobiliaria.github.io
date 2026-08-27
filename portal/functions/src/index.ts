@@ -12,7 +12,7 @@
 //    ⚠️ El comando con `--config portal/firebase/firebase.json` que habia aqui NO FUNCIONA y nunca
 //    funciono (§140): `source: '../functions'` se sale del directorio del proyecto.
 
-import { onDocumentWritten } from 'firebase-functions/v2/firestore';
+import { onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { motivoNoContacto, explicarNoContacto } from '../../src/lib/domain/calendario-co';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
@@ -23,6 +23,7 @@ import { getFirestore } from 'firebase-admin/firestore';
 import { DOC_CONTROL, lineasReporte, rebuildCatalogo } from './catalogo-rebuild';
 import { correrDigest, lineasDigest } from './alertas-digest';
 import { construirTriggerLead } from './lead-aviso';
+import { construirTriggerEstado } from './solicitud-estado';
 
 // Escrituras de GESTION: la UNICA puerta a `contratos` (y pronto expedientes/pagos/novedades),
 // que nacen con `allow write: if false` por decision de §100. Re-exportado para que quede
@@ -212,6 +213,20 @@ export const alertasDigest = onSchedule(
  * llevar guardia de la Ley 2300 — este correo va a ALTORRA, no a un consumidor (ver el módulo).
  */
 export const avisoLeadNuevo = construirTriggerLead(REGION, [RESEND_API_KEY], claveResend);
+
+/*
+ * AVISO AL CLIENTE cuando cambia el estado de su solicitud (ADR 235). Reemplaza a la legacy
+ * `onSolicitudStatusChanged`, que lleva meses mandando por el Gmail roto: captura el error, lo
+ * escribe en un log que nadie abre, y quien movio el estado cree que el cliente fue avisado.
+ * Aqui va por Resend, con tipos y con pruebas.
+ */
+export const avisoEstadoSolicitud = construirTriggerEstado(
+  REGION,
+  [RESEND_API_KEY],
+  claveResend,
+  onDocumentUpdated,
+  { info: (m) => logger.info(m), error: (m) => logger.error(m) },
+);
 
 /**
  * "Republicar catálogo" — palanca HUMANA de cero conocimiento técnico para el panel `gestion`
