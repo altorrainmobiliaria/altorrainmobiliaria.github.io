@@ -308,6 +308,74 @@ if (existsSync(sitemapPath)) {
   console.log('ℹ️  sin `dist/client/sitemap.xml`: la sonda del sitemap no corre (el CI siempre lo tiene).');
 }
 
+/*
+ * ── SONDA: NO SE ANUNCIA ALOJAMIENTO SIN RNT (§234) ─────────────────────────────────
+ *
+ * QUÉ CAZA. Un build de PRODUCCIÓN en el que una página anuncia hospedaje por días —precio y
+ * formulario de reserva— sin el número de RNT a la vista. La Ley 300/1996 y su reglamento exigen
+ * ese número en TODA publicidad de alojamiento turístico; sin él, la publicidad es irregular por
+ * mucho que el inmueble exista y el precio sea correcto.
+ *
+ * POR QUÉ UN GATE Y NO UNA NOTA EN EL RUNBOOK. Hoy `/estancias` publica «$850.000 / noche» con su
+ * formulario y sin RNT, y lo único que lo protege es que staging va `noindex`. Eso está escrito en
+ * el brief del dueño como una pelota suya… y una pelota es una promesa, no un mecanismo: el día del
+ * cutover la página se ve **perfecta** para un humano. Hermana exacta de las sondas #6
+ * (indexabilidad) y del catálogo demo: las tres fallan igual, en silencio y con buen aspecto.
+ *
+ * 🎯 Y ES EL COMPLEMENTO DEL GATE DE LAS RULES (§234): allí se impide CREAR un alojamiento sin RNT;
+ * aquí se impide PUBLICARLO. Un inmueble creado antes del gate, o una página escrita a mano, no
+ * pasan por aquella puerta — pero sí por ésta, que mira el artefacto SERVIDO.
+ *
+ * NO muerde en staging, y es deliberado: mientras el sitio no es público la página con precio es un
+ * andamio legítimo, igual que el catálogo demo. El día que se compile con `PUBLIC_SITE_ENV=production`
+ * hay que tener el RNT o retirar el anuncio, que es exactamente la decisión que el gate fuerza.
+ */
+const SENAL_PRECIO = /\$\s?\d[\d.,]*\s*(?:\/|por\s)\s*noche/i;
+const SENAL_RESERVA = /Solicitar estas fechas|Enviar solicitud|<form/i;
+
+/** Recorre el HTML SERVIDO. No existia un helper para esto: `astroPages` mira el fuente. */
+function htmlServido(dir, acc = []) {
+  if (!existsSync(dir)) return acc;
+  for (const n of readdirSync(dir)) {
+    const p = resolve(dir, n);
+    if (statSync(p).isDirectory()) htmlServido(p, acc);
+    else if (n.endsWith('.html')) acc.push(p);
+  }
+  return acc;
+}
+
+const sinRnt = [];
+if (ES_PROD) {
+  for (const f of htmlServido(resolve(root, 'dist/client'))) {
+    const html = readFileSync(f, 'utf8');
+    /*
+     * Se compara sobre el TEXTO, no sobre el marcado. La primera version buscaba el patron en el
+     * HTML crudo y se le escapaba `/estancias`, donde el precio y «/ noche» viven en elementos
+     * distintos: cazaba la portada y NO la pagina que el brief senalaba. Medir el marcado cuando
+     * lo que importa es lo que LEE una persona ([[L-62]]).
+     */
+    const cuerpo = html
+      .replace(/<template\b[^>]*>[\s\S]*?<\/template>/gi, '')
+      .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
+    const texto = cuerpo.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
+    if (!SENAL_PRECIO.test(texto) || !SENAL_RESERVA.test(cuerpo)) continue;
+    // El RNT puede escribirse de varias formas; se acepta cualquiera con su número al lado.
+    if (/\bRNT\b[^.]{0,40}\d/i.test(texto)) continue;
+    sinRnt.push(relative(resolve(root, 'dist/client'), f).replace(/\\/g, '/'));
+  }
+}
+checks.push({
+  name: ES_PROD
+    ? 'ninguna pagina anuncia alojamiento por dias sin su RNT (Ley 300/1996)'
+    : 'RNT en publicidad de alojamiento — no se juzga en staging (build no indexable)',
+  ok: sinRnt.length === 0,
+  detail: sinRnt.length
+    ? `${sinRnt.length} pagina(s) con precio por noche y formulario, sin RNT: ${sinRnt.join(', ')}`
+    : ES_PROD
+      ? 'comprobado sobre el HTML servido'
+      : 'se activa con PUBLIC_SITE_ENV=production',
+});
+
 let failed = 0;
 for (const c of checks) {
   console.log(`${c.ok ? '✅' : '❌'} ${c.name}${c.detail ? ` — ${c.detail}` : ''}`);
