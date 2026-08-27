@@ -208,8 +208,16 @@ const idsCache = new Map();
 const idsDe = (archivo) => {
   if (!idsCache.has(archivo)) {
     const html = readFileSync(archivo, 'utf8');
-    const ids = new Set();
-    for (const m of html.matchAll(/\b(?:id|name)="([^"]+)"/g)) ids.add(m[1]);
+    /*
+     * Map con CUENTA, no Set. El Set colapsa el duplicado, asi que este gate podia decir
+     * «aterriza en un id real» sobre un ancla AMBIGUA —dos elementos con el mismo id— y el
+     * navegador se queda con el primero por orden del documento. Comprobaba EXISTENCIA y se
+     * leia como si comprobara DESTINO. Mismo punto ciego, mismo dia, que el `Set` de los IDs
+     * de leccion en el kernel (ADR §230): la estructura que deduplica vuelve invisible la
+     * duplicacion. Encontrado en /turismo: `#contacto` era el pie Y una seccion de la pagina.
+     */
+    const ids = new Map();
+    for (const m of html.matchAll(/\b(?:id|name)="([^"]+)"/g)) ids.set(m[1], (ids.get(m[1]) ?? 0) + 1);
     idsCache.set(archivo, ids);
   }
   return idsCache.get(archivo);
@@ -229,6 +237,8 @@ const archivoDe = (ruta) => {
  * ahí produce 74 filas idénticas y el informe deja de leerse justo cuando más hay que leerlo.
  */
 const sinDestino = new Map(); // "#ancla" o "/ruta#ancla" → { enlaces, paginas:Set }
+/** Anclas que SI existen pero DOS veces: el navegador elige la primera y nadie lo dijo. */
+const ambiguas = new Map(); // clave → { veces, paginas:Set }
 let anclas = 0;
 let sinJuzgar = 0;
 
@@ -242,7 +252,15 @@ for (const f of archivos(DIST)) {
     const destino = ruta === '' ? f : archivoDe(ruta.split('?')[0]);
     if (!destino) { sinJuzgar++; continue; } // ruta SSR: sin HTML, sin veredicto
     anclas++;
-    if (idsDe(destino).has(ancla)) continue;
+    const cuantos = idsDe(destino).get(ancla);
+    if (cuantos) {
+      if (cuantos > 1) {
+        const k = ruta + '#' + ancla;
+        if (!ambiguas.has(k)) ambiguas.set(k, { veces: cuantos, paginas: new Set() });
+        ambiguas.get(k).paginas.add(pagina);
+      }
+      continue;
+    }
     const clave = ruta + '#' + ancla;
     if (!sinDestino.has(clave)) sinDestino.set(clave, { enlaces: 0, paginas: new Set() });
     const caso = sinDestino.get(clave);
@@ -266,7 +284,22 @@ if (sinDestino.size) {
   process.exit(1);
 }
 
+if (ambiguas.size) {
+  console.error('');
+  console.error('❌ verify:enlaces — anclas AMBIGUAS: el id existe mas de una vez en la pagina destino.');
+  console.error('');
+  for (const [clave, c] of [...ambiguas].sort((a, b) => b[1].veces - a[1].veces)) {
+    const donde = [...c.paginas].sort();
+    console.error(`   ${clave}  —  el id aparece ${c.veces} veces; enlazado desde ${donde.length} pagina(s): ${donde.slice(0, 3).join(', ')}`);
+  }
+  console.error('');
+  console.error('   No es un enlace roto, es un enlace que MIENTE: el navegador se queda con el primero');
+  console.error('   por orden del documento, asi que funciona por accidente y cambia si alguien mueve');
+  console.error('   el marcado. Dale un id propio al que no sea el compartido.');
+  process.exit(1);
+}
+
 console.log(
-  `✅ verify:enlaces — ${anclas} ancla(s) interna(s) aterrizan en un id real` +
+  `✅ verify:enlaces — ${anclas} ancla(s) interna(s) aterrizan en un id real y UNICO` +
   (sinJuzgar ? ` (${sinJuzgar} hacia rutas SSR: sin HTML que abrir, no se juzgan).` : '.'),
 );
