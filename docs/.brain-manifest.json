@@ -110,7 +110,7 @@
     "docs/36-LECCIONES-UTILLAJE.md": {
       "lines": 90,
       "chars": 14680,
-      "_comment": "Hoja hija de 30 (ADR 125). Cap MEDIDO sobre el real (8520c / 66L, densidad 129): chars = real+35%, lines = ceil(cap/densidad) para que el eje de lineas sea GUARDA y no un segundo techo. Familia que crece rapido — al llenarse, destilar; NO subir el techo (M-05). · PRIMERA subida de este nodo (2026-08-27): %dc/%dL → %dc/%dL. Precedida de GC REAL, no de rendicion: se retiro la TERCERA copia de los cinco titulares de los gates que mienten (el 30 ya los lleva, y mejores) y aun asi no cabia L-66. El nodo crecio porque crecio el CONOCIMIENTO — N15-07e lo nombro como el que ya estaba costando lecciones: dos en dos turnos se quedaron sin sitio. Aqui subir el techo SI es la respuesta; lo que M-05 prohibe es subirlo EN VEZ de podar, y se podo primero."
+      "_comment": "Hoja hija de 30 (ADR 125). Cap MEDIDO sobre el real (8520c / 66L, densidad 129): chars = real+35%, lines = ceil(cap/densidad) para que el eje de lineas sea GUARDA y no un segundo techo. Familia que crece rapido — al llenarse, destilar; NO subir el techo (M-05). · PRIMERA subida de este nodo (2026-08-27): 11502c/90L → 14680c/90L (real entonces: 11743c/51L). Precedida de GC REAL, no de rendicion: se retiro la TERCERA copia de los cinco titulares de los gates que mienten (el 30 ya los lleva, y mejores) y aun asi no cabia L-66. El nodo crecio porque crecio el CONOCIMIENTO — N15-07e lo nombro como el que ya estaba costando lecciones: dos en dos turnos se quedaron sin sitio. Aqui subir el techo SI es la respuesta; lo que M-05 prohibe es subirlo EN VEZ de podar, y se podo primero."
     },
     "docs/22-MAPA-GESTION.md": {
       "chars": 9000,
@@ -210,7 +210,7 @@
   ],
   "deepAudit": {
     "last": "2026-08-27",
-    "coveredHeaderCount": 237,
+    "coveredHeaderCount": 250,
     "maxAdrGap": 12,
     "maxDays": 30,
     "tableFile": "2026-08-27-auditoria-cerebro-nivel2-15-inmobiliaria.md",
@@ -218,8 +218,7 @@
   },
   "noCap": {
     "docs/99-HISTORIAL-ADR.md": "Largo Plazo: NUNCA se lee entero, solo offset/limit vía el índice (§0). Un cap aquí no significaría nada.",
-    "docs/skills-inventory.md": "Registro 1:1 con las carpetas de skills/ — su tamaño lo fija el inventario real, no una decisión editorial. Lo vigila el gate #6.",
-    "docs/00-INDICE.md.bak": "Artefacto residual, no neurona."
+    "docs/skills-inventory.md": "Registro 1:1 con las carpetas de skills/ — su tamaño lo fija el inventario real, no una decisión editorial. Lo vigila el gate #6."
   },
   "_caps_que": "Topes por-repo. Cada neurona tiene cap MEDIDO (tamaño real + ~35% de holgura) o entrada en noCap CON RAZON — nunca por omision (chequeo #23, ADR §74). Los caps NO se inventan: §74.3 documenta como una cifra a ojo creo un gate bloqueante falso. Los dos ejes se derivan uno del otro: lines = chars/densidad-real, para que ambos aprieten en el mismo punto. Un par incoherente hace que el eje equivocado dispare primero (hallazgo N2-13 de la auditoria de insemastereo). · 2026-08-22 (ADR 120, TODO-45f): los `lines` se RECALCULARON todos con esta misma regla (chars/densidad-real). Estaban puestos a ojo y en 10 neuronas el eje de LINEAS disparaba antes que el de chars — el `30` llego a 229/231 con 1.700 chars libres. Recalibrar NO es subir un techo (M-05): el eje que DECIDE sigue siendo chars, que no se toco; lines es su guarda derivada, y en 5 de las 10 el numero BAJO. Al reescribir mucho una neurona, recalcular. · El redondeo es HACIA ARRIBA a proposito: derivar `lines` de la densidad ACTUAL crea un lazo —cada edicion cambia la densidad y con ella el techo, que es justo la clase de techo movil que M-05 prohibe—. Con techo hacia abajo el eje de lineas dispara UN paso antes que el de chars y el aviso que sale es el equivocado. Hacia arriba, `lines` queda como GUARDA (caza el nodo que se llena de lineas cortas) y quien DECIDE es siempre chars.",
   "workDirs": [

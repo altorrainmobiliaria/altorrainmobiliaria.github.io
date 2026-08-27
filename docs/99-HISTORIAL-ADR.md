@@ -10889,3 +10889,64 @@ media hora antes.
 ### 249.6 — Archivos
 `portal/scripts/verify-build.mjs` · brief de lanzamiento (artifact). **INTACTAS**: las seis portadas
 —son contenido del dueño— y `BaseLayout.astro`, que ya componía bien las etiquetas.
+
+## 250. ADR-250 — El móvil personal estaba publicado, y mi gate decía «cero fugas»
+
+### 250.1 — 🚨 El hecho, verificado contra el dominio antes de tocar nada
+`https://altorrainmobiliaria.co/scripts.js` devolvía **200** y contenía **+573235016747** —el móvil
+PERSONAL del dueño— dentro del JSON-LD `RealEstateAgent` del legacy. Es decir, en la superficie que
+leen Google y los agregadores, que es la peor de todas porque **se copia sola**. La regla que violaba
+es de las que el cerebro llama absolutas.
+Y esa misma mañana yo había escrito «45 páginas, **CERO fugas**» (§241). Era cierto y estaba vacío.
+
+### 250.2 — Los dos agujeros estaban en el DENOMINADOR, no en la lógica
+**(a) Miraba el sitio equivocado**: solo `portal/dist/client`, cuando lo que el dominio sirve HOY es
+el **legacy de la raíz**. **(b) Borraba `<script>` antes de mirar**, y el JSON-LD vive justo ahí —
+quitarlo era quitar el único sitio donde el dato importaba.
+🎯 *Un gate cuyo conjunto excluye el lugar donde vive el problema da un verde aritméticamente cierto y
+semánticamente vacío.* Es la lección que llevaba **todo el día escribiendo**, aplicada a mi propio
+trabajo de ocho horas antes. Ahora barre **128 ficheros servidos** (legacy + portal) con el JSON-LD
+dentro, y su denominador lo dice en voz alta.
+
+### 250.3 — Cómo apareció: la sonda que llevaba auditorías sin correr
+Lo encontró la **lente adversarial** de la auditoría #16 preguntando lo único que yo no me había
+preguntado: *«¿qué pasaría por todos los gates sin despeinarse?»*. Las sondas 3, 4 y 7 exigen
+subagentes y se venían heredando como `[PENDIENTE]`; esta es la **primera auditoría completa**. Las
+cuatro sondas directas salieron limpias esa misma mañana. **Correrlas era la diferencia.**
+
+### 250.4 — Lo que salió de paso, en el mismo bloque
+El JSON-LD publicaba el **eslogan DEROGADO** («Gestión integral en soluciones inmobiliarias»).
+`site.ts` ya lo tenía corregido con un *«no reintroducirlo»* escrito al lado: **el portal se arregló y
+el legacy no**, y el legacy es el que está publicado. Restituido. Bump de caché a mano v5→v6 (§3.2).
+
+### 250.5 — Y lo que decidí NO hacer
+El dominio sirve **el repositorio entero** (15 MB de mockups, 4,7 MB de `skills/`, el cerebro, el
+código). ⚠️ **Severidad acotada tras verificar la premisa**: el repo es **público por diseño**, así que
+es una segunda puerta al mismo cuarto, no una fuga nueva. Y en `50-CONFIG-INFRA` hay **13 direcciones
+@gmail** — con **cero secretos literales, cero códigos de respaldo y cero rutas a service-account**:
+la regla de no comitear secretos se sostiene. Redactarlas o no es **decisión del dueño**, porque saber
+qué cuenta administra qué *es* el propósito de ese runbook.
+
+### 250.6 — El lote de arreglos confirmados del mismo turno
+**N16-08** 🔴 la única lista de políticas de rama de la flota **invertía el único «sí» y omitía el
+único «no»** (decía que en Bersaglio mergea el dueño —falso— y no mencionaba a INSEMA, el único donde
+Claude NO debe mergear): reescrita con los cuatro, verificados repo por repo. **N16-12** el RNT citaba
+§238, que no lo menciona ni una vez → §240. **N16-24** puntero colgante `(§4)`, que no existe desde el
+ADR 109.3. **N16-25** `deep-research`, skill fantasma nombrada dos veces en W-08. **N16-26** un `noCap`
+de un fichero que nunca existió. **N16-27** los `printf` sin sustituir del único registro de subida de
+techo.
+
+### 250.7 — Verificación
+Probado **reinyectando el defecto REAL**, no uno inventado: con el número de vuelta en `scripts.js` el
+gate lo caza y lo nombra. Y comprobado **en el dominio vivo** tras el deploy: primer intento aún servía
+la versión vieja, los dos siguientes ya dan personal 0 / eslogan oficial 1.
+`verify` **exit 0, 41 comprobaciones** · `brain:check` SANO.
+
+**Deliberación:** las 28 filas con su evidencia, las 5 preguntas frías con su ruta y las 2 lentes adversariales →
+`../brain-private/altorrainmobiliaria/research-archive/2026-08-27-auditoria-cerebro-nivel2-16-inmobiliaria.md`
+
+### 250.8 — Archivos
+`scripts.js` · `service-worker.js` · `portal/scripts/verify-build.mjs` · `docs/05` · `docs/10` ·
+`CLAUDE.md` · `docs/60-WORKFLOWS.md` · `.brain-manifest.json` · skill `sinapsis-cerebros` ·
+bóveda: auditoría #16. **INTACTO**: `backups/` — comprobado que da **404** en producción, así que los
+13 teléfonos y 15 correos de clientes que contiene NO están publicados.

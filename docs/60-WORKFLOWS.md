@@ -23,7 +23,7 @@
 | **W-05** | **Testing de Cloud Functions (puro + integración)** | Antes de desplegar una CF | Bugs de lógica + glue del trigger | Separar **lógica pura** (test sin emulador) + **integración** (emulador real) |
 | **W-06** | **Análisis crítico multi-agente (fan-out → síntesis)** | Decisión que cruza varios temas independientes | Puntos ciegos, hechos no verificados, opciones no consideradas | N agentes ACOTADOS por sub-tema → sintetizar (cars-L-50: inline+schema, sin tools, in-cwd) |
 | **W-07** | **Comité de expertos ×3** | Mejorar cualquier entregable importante | Debilidades, errores, falta de profundidad | Skill `comite-expertos` |
-| **W-08** | **Investigación profunda (grounded)** | Antes de afirmar hechos externos (legal, normativo, mercado) | Datos inventados o desactualizados | Skills `deep-research`/`legal-colombia` (fuentes primarias) + marcar lo no verificado `[a verificar]` |
+| **W-08** | **Investigación profunda (grounded)** | Antes de afirmar hechos externos (legal, normativo, mercado) | Datos inventados o desactualizados | Skills `deep-research` ⚠️(NO existe en `skills/`: nombre heredado, §250)/`legal-colombia` (fuentes primarias) + marcar lo no verificado `[a verificar]` |
 | **W-09** | **brain:check (linter del cerebro)** | Al arrancar/cerrar sesión o tras tocar el cerebro | Huérfanas, caps, índice desync, refs colgantes | `npm run brain:check` (`§G.4`) |
 | **W-10** | **Caza-bugs: verificación del camino vivo end-to-end** | Al **TOCAR o ROZAR** un subsistema con estado observable (render · `onSnapshot` · CRUD · flujo) | Bugs que solo emergen en el camino COMPLETO desde estado-cero (sección no montada, lista vacía, 1er/último ítem) | Recorre las 2 fronteras del estado-cero (crear 1er ítem→¿aparece en vivo Y tras recarga? / borrar el último→¿colapsa limpio?); escala SOLO si no-trivial. Skill `caza-bugs` |
 | **W-11** | **🛡️ FLUJO FUERTE COMPLETO (SSoT del flujo del dueño)** | Decisión Fuerte (`15 §2`) **o** Diseño/UI no trivial | Que el flujo se aplique **A MEDIAS** (faltó mockup / prompt de consejo / prompt de Chrome / plugins) — falla reportada por Daniel 2026-06-25 | Checklist CERRADO de 10 capas (↓). **Regla dura: cuando dispara, COMPLETO o NO se aplicó.** 3 artefactos visibles obligatorios. Skill `proceso-decision-fuerte` |
@@ -45,7 +45,7 @@
 4. **PLUGINS / MOCKUP** (la capa que faltaba) — según el tipo:
    • **SISTEMA VIVO → MCP del backend** (p.ej. firebase MCP: `firestore_query_collection`, `functions_get_logs`): leer datos/logs REALES, no inferir del código.
    • **DISEÑO/UI → MOCKUP** vía plugin de diseño: `visualize`/`show_widget` (rápido, inline) · Stitch/Canva/Figma. "Muéstrame cómo debe quedar" → yo **verifico/delibero** (no acato).
-   • **RESEARCH/EVIDENCIA → `deep-research`** + firecrawl/exa.
+   • **RESEARCH/EVIDENCIA → `deep-research` ⚠️(NO existe en `skills/`: nombre heredado, §250)** + firecrawl/exa.
 5. **COMITÉ ×3 ACOTADO** (`comite-expertos`, agentes inline+schema, sin tools) — ≥1 escéptico + ≥1 ejecutor (cars-L-50).
 6. **CONSEJO EXTERNO** (`docs/15`, Gemini/Antigravity, **read-only**) — prompt autocontenido CRUDO (anti-anclaje). Humano en el medio; verifico cada afirmación (no oráculo).
 7. **VEREDICTO** — yo delibero y decido; criterio de éxito ANTES de codear (`verification-before-completion`).

@@ -12,7 +12,7 @@
 | **Portal (staging)** | ✅ **OLA 1 — 13/13 y VIVA EN STAGING** `verificado-vivo: 2026-08-27` (curl al worker: `/`, `/comprar` y las 2 SSR —`/ficha` y `/alertas`, que NO están en `dist`— → 200 · ruta inventada → 404 · sirve zstd: la portada son 19,6 KB reales): 65 redirects del PORTAL (12 zonas + 53 manuales; otra cosa que los 66 stubs de arriba). ⚙️ Lo que ya bloquea un gate NO se afirma aquí (§158·§150). Censo → `21`+`22`. Resta: GATES DEL DUEÑO en el orden del `10`. |
 
 ## ⚠️ Flags de riesgo activos
-- ⚠️ Falta la **dirección COMERCIAL** y verificar en CC la matrícula del establecimiento; **RNT declarado, SIN verificar**: frena el build de PRODUCCIÓN, no el de staging (§238; corrido de verdad el 27-ago y bloquea, nombrando `/` y `/estancias`). La matrícula de arrendador `6636` está PUBLICADA y su gate (Ley 820 art. 31) LEVANTADO — **no volver a pedirla**. Detalle → `43 §Matrícula`.
+- ⚠️ Falta la **dirección COMERCIAL** y verificar en CC la matrícula del establecimiento; **RNT declarado, SIN verificar**: frena el build de PRODUCCIÓN, no el de staging (§240; corrido el 27-ago: bloquea y nombra `/` y `/estancias`). La matrícula de arrendador `6636` está PUBLICADA y su gate (Ley 820 art. 31) LEVANTADO — **no volver a pedirla**. Detalle → `43 §Matrícula`.
 - 🔥 **Firebase BLAZE activo** ✅ (restaurado 2026-07-12 tras aviso de Google; sin costo — portal usa datos DEMO en Cloudflare aún).
 - 📣 **HUMO cerrada ✅ · ⚠️ apagado de la campaña SIN VERIFICAR** (§90 → pelota 9 del `10`): la campaña solo gasta si se recarga saldo. Cifras → `pauta-captacion` §10. Campaña REAL gateada por el cierre de obra.
 

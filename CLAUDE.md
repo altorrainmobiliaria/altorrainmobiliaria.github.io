@@ -70,7 +70,7 @@ NUNCA leas `docs/99-HISTORIAL-ADR.md` completo (40k+ líneas = muerte por contex
 ## §2 — Protocolo de documentación (OBLIGATORIO en cada commit relevante)
 
 - **Dónde**: WIP → `10`. **ADRs nuevos**: al cerrar, se APENDEN al final de `99` + fila en `00` (§G.3). **Este CLAUDE.md**: solo cuando cambia algo always-on (una doctrina, el esquema de nodos, una regla de gobernanza) — nunca historial, pendientes ni cache version.
-- **Formato canónico ADR**: `## NN. ADR-NNN — <título>` + cita del cliente si reportó, y 7 puntos — **.1** causa raíz (RCA §3.3, verificada leyendo código) · **.2** solución estructural · **.3** no-regresión (IDs/funciones/callsites intactos, build OK) · **.4** tests/verificación · **.5** anti-patterns evitados (§3) · **.6** archivos modificados/INTACTOS · **.7** doctrina aplicada + cache bump si aplica (§4).
+- **Formato canónico ADR**: `## NN. ADR-NNN — <título>` + cita del cliente si reportó, y 7 puntos — **.1** causa raíz (RCA §3.3, verificada leyendo código) · **.2** solución estructural · **.3** no-regresión (IDs/funciones/callsites intactos, build OK) · **.4** tests/verificación · **.5** anti-patterns evitados (§3) · **.6** archivos modificados/INTACTOS · **.7** doctrina aplicada + cache bump si aplica (§3.2).
 
 ### Reglas git
 - **Claude ejecuta commit + push + merge + deploy web** (delegación explícita del dueño, ADR §15.7; deploy Firebase también delegado → `50`; **nunca abrir PR sin permiso**). ⚠️ Si el clasificador auto-mode del harness bloquea push/merge, NO burlarlo: deja `main` listo local y pídele al dueño el push o la regla de permiso en `.claude/settings.json`.

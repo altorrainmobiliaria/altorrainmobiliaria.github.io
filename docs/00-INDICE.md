@@ -120,6 +120,7 @@
 | §247 | 🏷️ **La portada tenía CUATRO `<h1>` visibles** (cuatro banners apilados, no un carrusel) → 1 h1 + 3 h2, invisible porque el CSS va por clase. Gate sobre las páginas del **sitemap**: `/gestion` e `/ingresar` NO eran defectos. | 10776 |
 | §248 | ♿ **303 imágenes y 122 campos sin un fallo** — y 28 falsos positivos que eran de mi sonda (plantillas, `<label>` que envuelve, input oculto). Nace la **prueba NEGATIVA** de toda exclusión. | 10820 |
 | §249 | 📲 **La vista previa al compartir** (los clientes llegan por WhatsApp): etiquetas completas en las 45, pero **4 imágenes VERTICALES** en 6 artículos del journal. Congeladas + gate; el cambio es decisión del dueño. | 10853 |
+| §250 | 🚨 **El móvil PERSONAL estaba publicado en el dominio** (JSON-LD del legacy) mientras mi gate decía «cero fugas»: su denominador excluía el sitio del problema. Lo halló la sonda adversarial de la 1.ª auditoría COMPLETA. | 10893 |
 
 ---
 
