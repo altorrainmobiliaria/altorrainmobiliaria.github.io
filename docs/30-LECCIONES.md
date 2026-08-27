@@ -203,6 +203,7 @@ guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero 
 ### M-29 — Un gate que infiere una CAUSA de una CORRELACIÓN debe escribir su premisa al lado: caduca cuando cambias de COSTUMBRES, no de código, y entonces no hay diff que la delate *(§216.9 · detalle en `33`)*
 ### M-30 — Identificador INVENTADO ×4 en una noche (constante, helper, enum de una regla de seguridad, estado): escribir de memoria en vez de leer → 🧩 **shard `33-LECCIONES-META.md`**
 ### M-31 — 🎯 Un hallazgo que escribí YO apuntaba al nodo que acababa de TOCAR, no al que peor estaba: un remedio sin denominador es una corazonada con formato de tabla → 🧩 **shard `33-LECCIONES-META.md`**
+### M-32 — ⚙️ Un hecho que ya BLOQUEA un gate no pertenece a un nodo always-on: se paga en cada arranque y la copia es la que envejece · y **aplica la regla, no la narres** → 🧩 **shard `33-LECCIONES-META.md`**
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > 🧩 **Mudadas a `60-WORKFLOWS §Gobernanza`** el 2026-07-28 (ADR §68): hablan de CÓMO se conduce la

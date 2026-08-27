@@ -10641,3 +10641,44 @@ inyectados, comprobando cada inyección antes de creer el fallo.
 ### 243.7 — Archivos
 `portal/scripts/verify-build.mjs` · `docs/05-ESTADO-GLOBAL.md` · `docs/33-LECCIONES-META.md`.
 **INTACTO**: `verify-enlaces.mjs` — sigue siendo el dueño de las anclas; esto es otra pregunta.
+
+## 244. ADR-244 — Cuatro comprobaciones en vivo sin un solo defecto, y la poda que salió de ellas
+
+### 244.1 — Lo que se verificó contra el worker VIVO, no contra el repo
+§243 dejó una pregunta abierta: **38 enlaces dependen de `/ficha`**, que no es un fichero sino una
+página SSR. Que el modelo de Static Assets caiga al worker cuando no hay asset es cierto **de memoria**,
+y de memoria es como se inventan identificadores ([[M-30]]). Medido con `curl` contra staging:
+`/ficha` **200** · `/alertas` **200** · `/` y `/comprar` 200 · ruta inventada **404** limpio ·
+`/design-system` sirve el styleguide entero, que en staging es lo correcto (§242).
+
+### 244.2 — Y tres más, todas limpias
+**Peso real**: el worker sirve **zstd**, así que la portada son **19,6 KB** transferidos (137 KB en
+crudo) y el resto ~9 KB. **Panel**: un único bundle de 98 KB para las once pantallas — para un
+back-office de escritorio que usan tres personas, partirlo no compensa. **Estado cero** (el reflejo
+caza-bugs): las **once** pantallas tienen texto propio para «no hay nada», y bueno — *«Todavía no hay
+contratos. Cuando registres el primero, aquí sale su liquidación.»*
+🎯 Cuatro verificaciones sin defecto **son trabajo, no tiempo perdido**: convierten «creo que sí» en
+un sello con fecha. Pero su salida no es un cambio, así que la pregunta honesta pasa a ser qué hacer
+con ellas — y la respuesta fue podar.
+
+### 244.3 — ⚙️ La poda: un hecho que ya bloquea un gate no pertenece a un nodo always-on
+El `05` afirmaba «cero «próximamente»», «`noindex`», «sin el 307» y «cero cifras inventadas». Los
+**cuatro** los bloquea ya un gate — comprobado **abriéndolos**, no suponiéndolo. Un nodo always-on
+paga su peso **en cada arranque de cada sesión**, y esas cuatro frases eran una promesa de segunda mano
+sobre algo que el CI no deja pasar. Retiradas, dejando un puntero corto para que nadie las reponga de
+buena fe: **−113c** del presupuesto más escaso del sistema. → [[M-32]].
+
+### 244.4 — Y mi primer intento de podar ENGORDÓ el nodo
+Sustituí las cuatro frases por las cuatro frases **más** la explicación de por qué sobraban: **+53c**.
+*Explicar una poda es lo contrario de podar.* Rehecho aplicando la regla en vez de narrarla. Balance
+del turno en el `05`: **−21c netos habiendo AÑADIDO** la verificación de las dos rutas SSR y el dato
+del zstd.
+
+### 244.5 — Verificación
+`brain:check` SANO · **87 refs** resuelven · boot **31285c**, margen 194→**215c** *tras* añadir
+información · sello `verificado-vivo` del portal al **2026-08-27** con evidencia nueva.
+
+### 244.6 — Archivos
+`docs/05-ESTADO-GLOBAL.md` · `docs/33-LECCIONES-META.md` · `docs/30-LECCIONES.md`.
+**INTACTO**: todo el código — este turno no encontró nada que arreglar, y decirlo así es parte del
+resultado.
