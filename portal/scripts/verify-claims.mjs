@@ -85,8 +85,29 @@ const PATRONES = [
    * es una firma EDITORIAL, y engaña igual. El tiempo de lectura es la señal limpia: solo aparece
    * pegado a un artículo que alguien escribió y midió.
    */
-  { id: 'editorial', re: /\b\d{1,3}\s*min(?:utos)?\s+de\s+lectura\b/gi,
+  /*
+   * ⚠️ `superficie: 'fuente'` — y el motivo es que este patrón ya GANÓ. Nació (§147) cuando la home
+   * mostraba cuatro tarjetas con tiempo de lectura que enlazaban a un «próximamente»; hoy el journal
+   * está publicado y esos artículos existen, así que en el HTML servido un «5 min de lectura» es una
+   * afirmación VERDADERA: 15 de sus 24 coincidencias eran artículos reales. Se queda vigilando la
+   * fuente —donde vive el dato de las tarjetas— y se retira del barrido de lo servido. Un patrón que
+   * grita sobre lo que ya se arregló enseña a ignorar al gate entero.
+   */
+  { id: 'editorial', superficie: 'fuente', re: /\b\d{1,3}\s*min(?:utos)?\s+de\s+lectura\b/gi,
     que: 'un tiempo de lectura afirma que ese artículo existe y está escrito' },
+  /*
+   * §215 encontró en el HERO de la home «8–11% ROI en USD» y en `/publicar` «98% clientes
+   * satisfechos» y «38 días promedio de venta». Ninguno de los patrones de arriba los veía, y no por
+   * falta de imaginación: el de `rendimiento` exige un signo y UN número («+12%»), así que un RANGO
+   * («8–11%») se le escapa; y el de `inventario` exige el número pegado al sustantivo, así que un
+   * porcentaje en medio («98% clientes») lo rompe. Tres formas más, medidas sobre el sitio real.
+   */
+  { id: 'rango-rendimiento', re: /\b\d{1,2}\s*[-–—a]\s*\d{1,2}\s?%\s*(?:de\s+)?(?:valorizaci|rentabilid|retorno|roi)/gi,
+    que: 'un RANGO de rentabilidad es una medición de mercado, y sin fuente pasa a ser nuestra' },
+  { id: 'porcentaje-negocio', re: /\b\d{1,3}(?:[.,]\d)?\s?%\s*(?:de\s+)?(?:clientes|propietarios|inquilinos|usuarios)\s+(?:satisfech|content|recomend)/gi,
+    que: 'un porcentaje de satisfacción afirma que existe una medición detrás' },
+  { id: 'promedio', re: /\b\d{1,4}\s*(?:d[ií]as?|horas?|meses?|semanas?)\s+(?:de\s+)?promedio|promedio\s+(?:de\s+\w+\s+)?(?:en\s+)?\d{1,4}\s*(?:d[ií]as?|horas?|meses?)/gi,
+    que: 'un promedio afirma que se midieron muchos casos — o es una promesa disfrazada de dato' },
 ];
 
 let manifest = {};
@@ -100,7 +121,69 @@ if (existsSync(mp)) {
 }
 // `x-`: prefijo del kernel v1.14.0 para la config de gates propios de un repo. Sin él, el gate
 // #15 del manifest marca la clave como desconocida — y tiene razón: no es suya.
+/*
+ * DEUDA CONGELADA, con el contrato de siempre: solo puede BAJAR y una cifra NUEVA rompe el CI.
+ * Estas cuatro las encontró §215 a mano en el sitio construido y **no se pueden quitar desde aquí**:
+ * salen de un mockup aprobado, y retirarlas cambia el diseño de dos pantallas. La decisión es de
+ * Daniel (citar la fuente, o sustituirlas por lo verificable) y está en su brief. Congelarlas es lo
+ * que permite que el gate exista HOY en vez de esperar al arreglo: sin esto, añadir los patrones
+ * dejaba el repositorio en rojo con una salida que exige mockup.
+ */
+const DEUDA_DECLARADA = [
+  // — Las dos del HERO de la home (§215.1). Sin fuente citable; quitarlas cambia el diseño de la
+  //   primera pantalla, así que la decisión (citar o sustituir) es del dueño y está en su brief.
+  ['+12% valorizaci', 'hero de la home: medición de mercado sin fuente — §215.1, decide el dueño'],
+  ['8–11% ROI', 'hero de la home: rango de rentabilidad sin fuente — §215.1, decide el dueño'],
+  // — Las tres de `/publicar` (§215.2), en la página donde un propietario decide confiarnos su
+  //   inmueble. ALTORRA no ha cerrado 1.200 inmuebles ni tiene medición de satisfacción.
+  ['200 inmuebles', '/publicar: «+1.200 inmuebles cerrados», estadística inventada — §215.2'],
+  ['38 días promedio', '/publicar: promedio de venta sin medición detrás — §215.2'],
+  ['98% clientes satisfech', '/publicar: satisfacción inventada — §215.2, y /nosotros promete lo contrario'],
+  // — Datos de MUESTRA del catálogo vacío. No son afirmaciones fabricadas a mano: son el relleno
+  //   que el paso 5.3 del cutover retira cuando entre el inventario real (§213-§214, callejón «los
+  //   datos del portal son DEMO»). Se congelan aquí para que el gate pueda existir antes del cutover.
+  ['128 propiedades', 'home: conteo de muestra; el catálogo está vacío — sale en el cutover'],
+  ['312 inmuebles', 'home (mapa): conteo de muestra — sale en el cutover'],
+  ['48 Inmuebles', '/gestion: panel tras autenticación con datos de muestra — sale en el cutover'],
+];
+const DEUDA = new Map(DEUDA_DECLARADA);
+
 const APROBADAS = new Set((manifest['x-claimsVerificados'] || []).map((c) => (typeof c === 'string' ? c : c.cifra)));
+
+/*
+ * ── LA SUPERFICIE SERVIDA, no solo la fuente (§224) ────────────────────────────────────────────
+ *
+ * §215 encontró a mano, en el sitio construido, cuatro cifras que ESTE gate daba por limpias. La
+ * causa no era el patrón: era la superficie. En la fuente, una cifra y su etiqueta viven en campos
+ * DISTINTOS de un objeto —`{ n: '+1.200', l: 'inmuebles cerrados' }`— así que ningún patrón que
+ * exija el número pegado al sustantivo puede verlas. En el HTML servido están juntas, porque es
+ * justo así como las lee el visitante.
+ *
+ * 🎯 Un gate sobre la fuente comprueba lo que escribimos; el daño lo hace lo que se SIRVE. Se barren
+ * las dos: la fuente caza lo que aún no se ha construido, el HTML caza lo que el build compone.
+ * Si no hay build, se dice en voz alta — un barrido que no ocurre no puede pasar en silencio.
+ */
+function htmlServido(dir, acc = []) {
+  if (!existsSync(dir)) return acc;
+  for (const n of readdirSync(dir)) {
+    const p = join(dir, n);
+    if (statSync(p).isDirectory()) htmlServido(p, acc);
+    else if (p.endsWith('.html')) acc.push(p);
+  }
+  return acc;
+}
+const DIST = join(RAIZ, 'dist', 'client');
+const SERVIDOS = htmlServido(DIST);
+
+function textoDeHtml(src) {
+  return src
+    .replace(/<script[\s\S]*?<\/script>/g, ' ')
+    .replace(/<style[\s\S]*?<\/style>/g, ' ')
+    .replace(/<svg[\s\S]*?<\/svg>/g, ' ')
+    .replace(/<!--[\s\S]*?-->/g, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ');
+}
 
 const hallazgos = [];
 const ESCANEADOS = [...astro(join(SRC, 'pages')), ...astro(join(SRC, 'components')), ...contenido()];
@@ -112,6 +195,37 @@ for (const f of ESCANEADOS) {
       if (APROBADAS.has(cifra)) continue;
       const linea = texto.slice(0, m.index).split('\n').length;
       hallazgos.push({ f: relative(RAIZ, f), linea, cifra, tipo: p.id, que: p.que });
+    }
+  }
+}
+
+/*
+ * ⚠️ UN `dist/` RANCIO ES PEOR QUE NO TENERLO. `verify:build` no construye: inspecciona. Así que en
+ * la cadena local este barrido podía correr sobre HTML de hace tres commits y dar VERDE — un ✅ sobre
+ * una superficie que ya no existe, que es exactamente la clase de mentira que este gate persigue.
+ * Se compara la fecha del fuente más nuevo contra la del HTML más nuevo: si el fuente va por delante,
+ * se ROMPE en vez de tranquilizar. En CI no salta nunca, porque allí el build va justo antes.
+ */
+const masNuevo = (fs) => fs.reduce((max, f) => Math.max(max, statSync(f).mtimeMs), 0);
+if (SERVIDOS.length) {
+  const fuenteMs = masNuevo(ESCANEADOS);
+  const servidoMs = masNuevo(SERVIDOS);
+  if (fuenteMs > servidoMs) {
+    const horas = ((fuenteMs - servidoMs) / 3.6e6).toFixed(1);
+    console.error(`❌ verify:claims — el HTML de \`dist/\` es más VIEJO que la fuente (${horas} h de desfase).`);
+    console.error('   Barrer un build rancio da un ✅ sobre una superficie que ya no existe.');
+    console.error('   Corre `npm run build` y repite. (En CI no pasa: el build va justo antes.)');
+    process.exit(1);
+  }
+}
+
+for (const f of SERVIDOS) {
+  const texto = textoDeHtml(readFileSync(f, 'utf8'));
+  for (const p of PATRONES.filter((x) => x.superficie !== 'fuente')) {
+    for (const m of texto.matchAll(p.re)) {
+      const cifra = m[0].replace(/\s+/g, ' ').trim();
+      if (APROBADAS.has(cifra) || DEUDA.has(cifra)) continue;
+      hallazgos.push({ f: relative(RAIZ, f), linea: 0, cifra, tipo: p.id, que: p.que });
     }
   }
 }
@@ -131,8 +245,9 @@ if (hallazgos.length) {
 // El número de archivos NO es decoración: es lo único que distingue «lo revisé» de «no hice nada»
 // (§195 — este gate estuvo verde sin abrir el journal, y el ✅ se veía idéntico).
 console.log(
-  `✅ verify:claims — ${ESCANEADOS.length} archivo(s) leídos (páginas, componentes y contenido): ` +
-    `ninguna cifra sin respaldo (${APROBADAS.size} declarada(s) como verificada).`,
+  `✅ verify:claims — ${ESCANEADOS.length} archivo(s) de fuente + ${SERVIDOS.length} de HTML SERVIDO: ` +
+    `ninguna cifra nueva sin respaldo (${APROBADAS.size} verificada(s), ${DEUDA.size} congelada(s) con motivo).` +
+    (SERVIDOS.length ? '' : ' ⚠️ SIN build: el barrido de lo servido NO corrió (corre `verify:build` antes).'),
 );
 /*
  * ── SONDA 2: LA PALABRA PROHIBIDA, RECLAMADA COMO NUESTRA (§173) ───────────────────────────────

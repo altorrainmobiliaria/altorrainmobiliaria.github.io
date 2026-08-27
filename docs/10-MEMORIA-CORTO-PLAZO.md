@@ -73,7 +73,7 @@
 
 
 > 🔬 **Auditoría N2 #14** (§218): 5 de 10 REINCIDENTES, un hilo — *arreglos correctos con el alcance
-> enumerado a mano*. ⏭ **Abiertos**: patrones de `verify:claims` (van CON el arreglo de las páginas) ·
+> enumerado a mano*. ⏭ **Abiertos**: ~~patrones de `verify:claims`~~ ✅ (§224: barre también el HTML SERVIDO; 8 congeladas) ·
 > boot al 100 % · «promesa sin mecanismo». 🎯 **Un plural que delimita un universo es un COMANDO.**
 
 > 🔀 **26-ago — el censo saltó a las HERMANAS** (§216, vivas): Bersaglio e INSEMA **LIMPIAS**. **Cars**:

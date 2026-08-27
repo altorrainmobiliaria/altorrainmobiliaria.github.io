@@ -119,8 +119,6 @@ jobs:
       # indistinguible de un panel roto (§126, y cuatro mas en el panel de gestion en una tarde).
       - name: Controles que de verdad hacen algo
         run: npm run verify:controles
-      - name: Cifras sin respaldo en paginas publicas (§123 — Ley 1480, cero-demo)
-        run: npm run verify:claims
       # 🛡️ EXISTIA Y NO LO CORRIA NADIE (§142): ni el CI ni la rutina. Vigila el free-tier —cero SDK de
       # Firestore en el portal, cero onSnapshot, cero lista/query sin acotar— y lo puse en rojo yo
       # mismo dos veces el mismo dia sin enterarme. Un gate que nadie invoca no protege nada.
@@ -129,6 +127,13 @@ jobs:
       - run: npm run build
       - name: Verificar render híbrido (mitigación R2/R3)
         run: npm run verify:build
+      # 🛡️ DESPUES del build, y por el mismo motivo que `verify:enlaces` (§224): en la FUENTE una
+      # cifra y su etiqueta viven en campos distintos de un objeto —{ n: '+1.200', l: 'inmuebles
+      # cerrados' }— asi que ningun patron que exija el numero pegado al sustantivo puede verlas. En
+      # el HTML servido estan juntas, que es como las lee el visitante. Corriendo antes del build,
+      # este gate solo miraba la mitad que no hace dano.
+      - name: Cifras sin respaldo en paginas publicas (§123 · §224 — Ley 1480, cero-demo)
+        run: npm run verify:claims
       # 🛡️ DESPUES del build a proposito: mira el HTML SERVIDO, donde los enlaces ya estan resueltos.
       # Dos versiones que leian el codigo fuente pasaron en verde con un enlace roto delante.
       - name: Enlaces internos que resuelven de verdad (§89)

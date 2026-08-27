@@ -9613,3 +9613,64 @@ correcciones.** Este script lleva escritas, en su cabecera y en su código, las 
 propio censo se equivocó — alcance por nombre de carpeta, exclusión por basename, y falta de
 denominador. Un hallazgo se mecaniza bien cuando el mecanismo **no puede repetir el camino por el que
 casi no se encuentra**.
+
+## 224. ADR-224 — El gate de cifras miraba la mitad que no hace daño
+
+**Contexto.** §215 dejó anotado que `verify:claims` *«no caza»* el ROI del hero ni las estadísticas de
+`/publicar`, y que extenderlo debía esperar al arreglo de las páginas. Con el trinquete de deuda
+congelada probado dos veces hoy (§220, §223), ya no hace falta esperar: el gate puede existir **hoy**,
+en verde, y bloquear lo nuevo.
+
+### 224.1 — Y la causa no era el patrón: era la SUPERFICIE
+§215 dijo *«sus patrones buscan reseñas y distinciones, no conteos de negocio»*. **Medido, eso era
+falso**: el patrón `inventario` (`\d{2,}\s*inmuebles`) sí casa con «1.200 inmuebles». Lo que pasa es
+otra cosa —y es estructural—: en la FUENTE, la cifra y su etiqueta viven en **campos distintos de un
+objeto**, `{ n: '+1.200', l: 'inmuebles cerrados' }`, así que entre el número y el sustantivo hay un
+`', l: '`. **Ningún patrón que exija adyacencia puede verlas.** En el HTML servido están juntas,
+porque es exactamente así como las lee el visitante.
+🎯 **Un gate sobre la fuente comprueba lo que escribimos; el daño lo hace lo que se SIRVE.** Ahora
+barre las dos superficies: 48 ficheros de fuente **+ 43 de HTML construido**.
+
+### 224.2 — Tres patrones más, medidos, no imaginados
+El de `rendimiento` exigía signo y **un** número (`+12%`), así que un **rango** (`8–11% ROI`) se le
+escapaba; el de `inventario` exigía el número pegado al sustantivo, así que un porcentaje en medio
+(`98% clientes satisfechos`) lo rompía. Se añaden `rango-rendimiento`, `porcentaje-negocio` y
+`promedio` — las tres formas que el sitio real usa.
+
+### 224.3 — Y un patrón que ya GANÓ: se retira de la superficie que curó
+El barrido del HTML dio **24 hallazgos, y 15 eran falsos positivos**: todos `editorial`
+(«5 min de lectura»). Ese patrón nació (§147) cuando la home mostraba tarjetas con tiempo de lectura
+que enlazaban a un «próximamente»; **hoy el journal está publicado y esos artículos existen**, así
+que en lo servido su afirmación es VERDADERA. Se queda vigilando la fuente —donde vive el dato de las
+tarjetas— y se retira del barrido de lo servido.
+*Un patrón que grita sobre lo que ya se arregló enseña a ignorar al gate entero*, y ése es el modo en
+que un gate muere sin que nadie lo apague.
+
+### 224.4 — La deuda: 8 congeladas, cada una con su motivo y su salida
+Las **cinco de §215** (las dos del hero, las tres de `/publicar`) más **tres conteos de MUESTRA**
+—`128 propiedades` y `312 inmuebles` en la home, `48 Inmuebles` en el panel— que no son invención
+sino el relleno que el paso 5.3 del cutover retira. Congelar es lo que permite que el gate exista
+**antes** del arreglo en vez de dejar el repositorio en rojo con una salida que exige mockup.
+
+### 224.5 — Dos cosas que habrían dejado el gate en verde sobre nada
+1. **El CI corría `verify:claims` ANTES del build** (paso 123 contra 129), así que el barrido nuevo
+   no habría ocurrido allí: habría anunciado *«SIN build»* y pasado. Movido detrás de `verify:build`,
+   junto a `verify:enlaces`, que ya estaba después por la misma razón.
+2. **`verify:build` no construye: inspecciona.** En la cadena local, el barrido podía correr sobre
+   HTML de hace tres commits y dar verde — **un ✅ sobre una superficie que ya no existe**. Ahora el
+   gate compara la fecha del fuente más nuevo contra la del HTML más nuevo y **rompe** si el fuente va
+   por delante; y `npm run verify` construye antes de mirar. Se probó: con la fuente tocada, exit 1;
+   tras `build`, verde.
+
+### 224.6 — Mordido en las dos superficies
+Cifra nueva inyectada en el HTML servido → **3 patrones la cazan** (`rendimiento`,
+`rango-rendimiento`, `porcentaje-negocio`). Cifra nueva en la fuente → `reseñas` la caza con su
+`archivo:línea`. Restaurado en ambos casos, `git status` limpio. Suite completa verde con el gate
+dentro, y el meta-gate confirma **9 gates cableados al CI**.
+
+### 224.7 — Doctrina
+**Cuando un gate no ve algo, la primera hipótesis no debe ser «falta un patrón» sino «mira la
+superficie equivocada».** Añadir patrones es barato y se siente productivo; por eso se hace antes de
+comprobar si el objeto siquiera está en lo que el gate abre. Aquí el patrón correcto llevaba meses
+escrito y no encontraba nada, porque en la fuente el número y su significado **están separados**, y
+solo el build los junta — igual que solo el navegador los junta para el lector.
