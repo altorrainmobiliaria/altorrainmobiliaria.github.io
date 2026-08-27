@@ -9924,3 +9924,17 @@ se apoya sobre todo en la evidencia ESTRUCTURAL, que no depende de la carga.
 **Doctrina**: antes de reportar un defecto por la ausencia de una marca, **mide el efecto que esa
 marca previene**. Y cuando midas, comprueba que el instrumento esté midiendo: un cero de una API
 obsoleta y un cero real se escriben igual.
+
+### 228.7 — Dos comprobaciones más con el navegador, las dos LIMPIAS (y por qué se escriben)
+Aprovechando la sesión abierta, dos cosas que ningún gate cubre y que solo se ven en el navegador:
+- **Desbordamiento horizontal en móvil**: **10 páginas** (`/`, `/comprar`, `/arrendar`,
+  `/estancias`, `/invertir`, `/publicar`, `/journal`, `/nosotros`, `/aliados`, `/precios`) a 375 px →
+  `scrollWidth` exactamente **375 en todas**, cero culpables. ⚠️ Y verificado que el instrumento
+  medía: **10 hojas de estilo cargadas** en el marco de prueba y `--alt-ink` resolviendo a `#062743`
+  — sin eso habría estado midiendo HTML sin estilos, que no desborda nunca.
+- **Foco de teclado**: **7 reglas** de `:focus`/`:focus-visible`, incluidas la global, la variante
+  sobre fondo oscuro (`.alt-on-ink`), `:focus:not(:focus-visible)` —el patrón correcto para no
+  molestar a quien usa ratón—, el enlace de salto y `:focus-within` en los campos. Solo 2 reglas
+  quitan `outline` fuera de contexto de foco.
+📌 **Se escriben aunque no encontraran nada**, y por la misma razón que el denominador de los gates:
+*«limpio» y «no lo miré» se ven idénticos si no queda constancia de qué se miró.*
