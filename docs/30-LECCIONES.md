@@ -229,7 +229,7 @@ siendo el índice de todas y una cita `[[L-NN]]` resuelva sin salir de aquí (§
 ### L-59 — 📋 Enumera los pares «declarado ↔ desplegado» y compáralos uno a uno: lo que no se puede LEER no es un par verificable, es un sello *(§198)*
 ### L-60 — 🔀 Antes de desplegar un trigger, mira quién MÁS escucha ese evento: dos escritores del mismo campo no fallan, discrepan a veces *(§199)*
 
-### L-61 — 🔐 Comprobar que las REGLAS están desplegadas, desde fuera y sin credenciales *(§230)*
+### L-61 — 🔐 Comprobar que las REGLAS están desplegadas, desde fuera y sin credenciales *(26-ago; las reglas → §132·§137)*
 Leer las reglas desplegadas no es trivial; **comprobar su EFECTO sí**, y vale más: mide lo que hace el
 sistema, no lo que dice su texto. Con la `apiKey` pública (lo es por diseño), un `curl` anónimo a `firestore.googleapis.com/v1/projects/<proj>/databases/(default)/documents/<col>?key=` y a `firebasestorage.googleapis.com/v0/b/<bucket>/o`.
 **Lo que confirma que mandan las reglas es el MENSAJE, no el 403**: Firestore dice *«Missing or insufficient
