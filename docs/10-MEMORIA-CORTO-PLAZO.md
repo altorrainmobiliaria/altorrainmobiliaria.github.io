@@ -65,7 +65,7 @@
 > 📬 **LEADS**: el aviso sale por **Resend** desde el portal, no por el Gmail caído (§188-§192).
 > ⏭ Nurturing **apagado** (§192: sus plantillas enlazan al sitio retirado).
 >
-> ⏭ **DOS OBLIGACIONES LEGALES SIN PUERTA** (§222): `preaviso` (Ley 820 — sin fecha de IMPOSICIÓN el contrato se prorroga un año) y `certificacion` (D.1625) son módulos completos **sin un solo consumidor**; lo que los mantenía vivos era su propio test. Encargo escrito → `specs/ENCARGO-PUERTAS-QUE-FALTAN.md`. ⏭️ Falta el **mockup** (decisión de Daniel); el gate `verify:huerfanos` ya los vigila (§223).
+> ⏭ **DOS OBLIGACIONES LEGALES SIN PUERTA** (§222): `preaviso` (Ley 820 — sin fecha de IMPOSICIÓN el contrato se prorroga un año) y `certificacion` (D.1625), módulos completos **sin un solo consumidor**. Encargo → `specs/ENCARGO-PUERTAS-QUE-FALTAN.md`; falta el **mockup**. Los vigila `verify:huerfanos` (§223).
 >
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos
 > que solo vio la consola del dueño (§133-§136). Si un gate pasa, pregunta **qué abre** ([[L-52]]) —y **cuántos**
@@ -73,7 +73,8 @@
 
 
 > 🔬 **Auditoría N2 #14** (§218): 5 de 10 REINCIDENTES, un hilo — *arreglos correctos con el alcance
-> enumerado a mano*. ⏭ **Abiertos**: ~~patrones de `verify:claims`~~ ✅ (§224: barre también el HTML SERVIDO; 8 congeladas) ·
+> enumerado a mano*. ⏭ **Abiertos**: ~~patrones de `verify:claims`~~ ✅ (§224) · **cifras del 5.3: reemplazo REDACTADO** en
+> `specs/PROPUESTA-CIFRAS-CUTOVER.md` (§227) — falta el sí/no de Daniel ·
 > boot al 100 % · «promesa sin mecanismo». 🎯 **Un plural que delimita un universo es un COMANDO.**
 
 > 🔀 **26-ago — el censo saltó a las HERMANAS** (§216, vivas): Bersaglio e INSEMA **LIMPIAS**. **Cars**:

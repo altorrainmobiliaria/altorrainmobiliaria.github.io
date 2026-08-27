@@ -9807,3 +9807,44 @@ Queda anotado, no burlado.
    los demás repos.** La distribución mueve el código; la adopción es manual y silenciosa.
 3. **Un hecho SSoT se declara sobre lo DURABLE, nunca sobre una fase.** «Dónde vive la versión de
    caché» sobrevive; «estamos esperando la site key» caduca — y al caducar, apaga su propio gate.
+
+## 227. ADR-227 — Una decisión sin opciones escritas no es una decisión: es una tarea
+
+**Contexto.** §215 dejó cinco cifras bloqueando el paso 5.3 *«a decisión del dueño»*, y ahí llevaban
+desde entonces. Al releerlo, el problema no era la decisión: era **cómo estaba planteada**. Pedirle a
+Daniel *«decide si citas la fuente o sustituyes por lo verificable»* le traslada el trabajo entero —
+buscar qué poner, comprobar que sea cierto, cuidar que quepa en el bloque. Eso no es una pelota suya:
+es **mi trabajo disfrazado de gate del dueño**.
+
+### 227.1 — El criterio no había que inventarlo: ya estaba aplicado y aprobado (§123)
+Cuando el mockup del bloque «Invertir» trajo tres cifras, §123 las clasificó: la **medición sin
+fuente** salió, el **hecho falso y comprobable** salió, y el que era un **compromiso disfrazado de
+promedio** se reescribió como promesa —*«dicho como promesa es verdad y además obliga»*—. Quedaron
+**dos tarjetas, no tres**.
+🎯 Ahí están las dos reglas que gobiernan la propuesta: **se publica el compromiso etiquetado como tal
+y el hecho que el visitante puede comprobar solo**; y **si sobreviven dos, se publican dos** — un
+hueco es más honesto que un relleno.
+
+### 227.2 — Lo redactado
+`specs/PROPUESTA-CIFRAS-CUTOVER.md`: para el **hero** tres opciones (A: las dos que §123 ya aprobó —
+`6636 · matrícula` y `5 min · nos comprometemos a responder`; B: mantener tres con un **conteo**
+derivado del catálogo real, que o es verdad o se ve que no; C: dejar la cifra **con su fuente visible**
+si Daniel tiene un estudio citable). Para **`/publicar`**, tres verificables con la misma forma —
+`6636`, `5 min` y **`10% · de honorarios de administración`**.
+📌 El `10%` no es una estimación: es la **tarifa sellada** del producto (`HONORARIOS_ADMIN_VIVIENDA =
+0.1`, verificado en el código) y aparece en la liquidación que el propietario recibe cada mes.
+**Publicar el precio propio es la prueba social más fuerte que hay** en un mercado donde nadie lo
+dice: se puede comparar, y —a diferencia de «98% satisfechos»— **no se puede desmentir**.
+
+### 227.3 — Por qué esto NO es «UI sin mockup»
+Los tres bloques son `<b>cifra</b><span>etiqueta</span>`. **La forma no cambia**: cambia el contenido.
+No hay rediseño, no hace falta mockup nuevo, y §123 ya hizo exactamente esta sustitución en el bloque
+de al lado. Lo único que falta es el **sí o no**.
+
+### 227.4 — Doctrina
+**Un «lo decide el dueño» sin opciones redactadas es trabajo mío que se quedó sin hacer.** La prueba
+está en el reloj: esas cinco cifras llevaban días bloqueando el cutover, y lo que faltaba no era el
+criterio —estaba escrito desde §123— ni el dato —estaba en el código y en la Resolución—, sino que
+alguien juntara las dos cosas en una frase que se pueda aprobar.
+**Corolario**: antes de escribir «decide X» en un ledger, comprueba si puedes dejar la decisión hecha
+en dos opciones. Si puedes, el pendiente no era del dueño.
