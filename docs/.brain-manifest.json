@@ -128,9 +128,9 @@
       "_comment": "Shard de 33 el 2026-08-26 (ADR 173): 33 revento su tope al entrar M-25 y podarlo a trocitos era el impuesto que §164 diagnostico. Se parte por ERAS, como los shards del indice: aqui las FUNDACIONALES M-01..M-11 (julio-agosto 2026), en 33 las vivas. Cap MEDIDO sobre el real (13282c) + 20%, no a ojo (M-05). Este nodo NO deberia crecer: si crece, es que alguien esta anadiendo lecciones nuevas al sitio equivocado."
     },
     "docs/38-GATES-QUE-MIENTEN.md": {
-      "lines": 66,
-      "chars": 8990,
-      "_comment": "Shard de 36 el 2026-08-26 (ADR 175): la familia de 'gates que mienten' (L-48, L-52, L-56, L-57) crecio TRES veces en un solo dia y reventaba el tope de 36. Se parte por TEMA, no por era: aqui las cuatro completas + la escalera de gravedad que las ordena; en 36 quedan los titulares. Cap MEDIDO sobre el real (7192c / 53L) + 25%, no a ojo (M-05). ESTE nodo SI deberia crecer: cada vez que un ✅ resulte no significar lo que parece, su leccion viene aqui."
+      "lines": 75,
+      "chars": 11270,
+      "_comment": "Shard de 36 el 2026-08-26 (ADR 175): la familia de 'gates que mienten' (L-48, L-52, L-56, L-57) crecio TRES veces en un solo dia y reventaba el tope de 36. Se parte por TEMA, no por era: aqui las cuatro completas + la escalera de gravedad que las ordena; en 36 quedan los titulares. Cap MEDIDO sobre el real (7192c / 53L) + 25%, no a ojo (M-05). ESTE nodo SI deberia crecer: cada vez que un ✅ resulte no significar lo que parece, su leccion viene aqui. · RE-MEDIDO 2026-08-26: 8990c/66L -> 11270c/75L, misma formula (real +25%). Lo llenaron la 4a reincidencia de L-56 (bersaglio: 45 test:* y el CI sin correr ninguno) y la 2a aparicion de L-58 (un Set ocultando IDs duplicados). Antes se destilaron ~490c de las cuatro lecciones; el resto es conocimiento NUEVO, que es justo para lo que este nodo existe. No toca el arranque: 38 no es always-on."
     },
     "docs/44-DICTAMENES.md": {
       "lines": 40,
