@@ -8,8 +8,7 @@
 > `32-LECCIONES-DOCUMENTALES.md` — rama **legal/documental** (`LD-NN`:
 > contratos, manual, formatos, auditorías de entregables).
 > ⚠️ **Aquí solo va lo TÉCNICO.** Las viejas `L-31..L-34` "del kit" se mudaron a `32` como **LD-01..LD-04**
-> el 2026-07-28 porque **colisionaban** con las L-31..L-34 de esta hoja (ADR §68 · [[M-04]]). Un ADR anterior
-> que diga "L-33" hablando del kit se refiere a **LD-03**.
+> el 2026-07-28 porque **colisionaban** con las L-31..L-34 de esta hoja (ADR §68 · [[M-04]]). Un ADR anterior que diga "L-33" hablando del kit se refiere a **LD-03**.
 
 ---
 
@@ -109,8 +108,7 @@ número. Sin cifra en pantalla, los rangos **no eran prerrequisito** — la pág
 misma noche, y encima es captación de propietarios, que era la necesidad más urgente del negocio.
 **Regla**: antes de aceptar una etiqueta de bloqueo heredada, relee la definición del ítem y pregunta *qué
 parte exacta* toca el gate. Un gate sobre el 20% del alcance congela el 100% solo si nadie lo mira.
-**Corolario**: al ESCRIBIR un pendiente bloqueado, anota qué queda hacible sin el gate — se lo estás
-diciendo a alguien que no podrá preguntarte.
+**Corolario**: al ESCRIBIR un pendiente bloqueado, anota qué queda hacible sin el gate — se lo estás diciendo a alguien que no podrá preguntarte.
 
 ### L-39 — 🕵️ `document.visibilityState:"hidden"` congela el `rAF` → un mapa que NO carga por eso PARECE un bug de librería, con evidencia falsa incluida *(2026-08-20, TODO-30)*
 
@@ -146,6 +144,7 @@ diciendo a alguien que no podrá preguntarte.
 ### L-62 — 🔍 Sonda de semántica que mira el elemento y no su ANCESTRO: 4 de 5 señales falsas (`<template>`, `hidden`, atributo desnudo) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
 ### L-63 — 💸 Dos validadores CORRECTOS del mismo campo y ninguno comprueba que hablen de la misma UNIDAD (un contrato del 10 % no se podía liquidar) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
 ### L-64 — 🪤 Un gate NUEVO se queda en verde de TRES formas (contar el marcador · medir por cercanía · leer una alternativa como si fueran dos) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
+### L-65 — 🌗 Un gate con **exención de entorno** da un verde que nadie ha visto fallar JAMÁS (el RNT «bloqueaba el build» mientras el build pasaba a diario) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
 ### L-26 — 🖥️ Panel integrado = renderer CONGELADO (rAF 0 frames) · juicio visual SIEMPRE por Chrome → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá, incl. corrección capital + variante resize)
 ### L-24 — Verificar un build contra el MOCKUP por ESTRUCTURA (checklist de secciones), no solo por color *(Ola 1, ADR §32; el dueño cazó lo que la verificación no)*
 **Disparador**: las páginas §24-§29 se dieron por "completas" verificando 0 off-palette + 0 errores; pero DIFERÍAN mucho del `.dc.html` (secciones enteras faltantes, layouts distintos, interactividad perdida). Daniel lo notó, no el cerebro. **Causa**: "verificado en vivo" = colores correctos, NO = fiel al diseño aprobado; el mockup (SSoT visual) nunca se usó como checklist de completitud. **Regla**: al construir desde un mockup, extraer la lista ORDENADA de secciones del mockup y confirmar 1:1 en el build (secciones + layout + interactividad), ADEMÁS del barrido de color (L-22). El workflow `auditoria-fidelidad-mockups` (diff build↔mockup) lo automatiza. Aplica a toda página mockup-backed.
@@ -207,8 +206,7 @@ guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero 
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > 🧩 **Mudadas a `60-WORKFLOWS §Gobernanza`** el 2026-07-28 (ADR §68): hablan de CÓMO se conduce la
-> maquinaria (Chrome live · comité/workflow acotado · asesor externo), que es el dominio de `60`, no una
-> lección de bug. Vinculantes igual.
+> maquinaria (Chrome live · comité/workflow acotado · asesor externo), que es el dominio de `60`, no una lección de bug. Vinculantes igual.
 
 ### 🧰 Utillaje → `docs/36-LECCIONES-UTILLAJE.md`
 Las lecciones donde miente la HERRAMIENTA y no el código (shell, intérprete, `grep`, CI, orquestador,

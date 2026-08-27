@@ -180,8 +180,23 @@ corrida y **una cifra NUEVA sí rompe**. Siguen bloqueando el 5.3: el gate los h
 bloque (sin cambio de diseño ni mockup nuevo) → `specs/PROPUESTA-CIFRAS-CUTOVER.md`. La decisión
 de Daniel pasa a ser **sí o no**, no «piensa qué poner».
 
-⇒ **Antes del 5.3, y para las CUATRO, una de tres**: poner el RNT (pelota de Daniel), retirar el precio y
-el formulario de esa página, o dejarla fuera del dominio. **Es decisión suya, y bloquea el 5.3.**
+⇒ **Antes del 5.3, una de tres**: poner el RNT (pelota de Daniel), retirar el precio y el formulario de
+esa página, o dejarla fuera del dominio. **Es decisión suya, y bloquea el 5.3.**
+
+✅ **Y ya no hay que buscarlas a mano (27-ago).** La sonda del RNT se **corrió de verdad en modo
+producción** por primera vez —hasta ahora solo se había visto su verde de staging, que significa «no
+miré»— y **bloquea**, nombrando exactamente **DOS**: `/` y `/estancias`. (Antes esta línea decía
+«las CUATRO»; eran los cuatro ERRORES de arriba, no cuatro páginas.) El comando, para verlo tú mismo:
+
+```bash
+cd portal && PUBLIC_SITE_ENV=production npm run build && PUBLIC_SITE_ENV=production node ./scripts/verify-build.mjs
+```
+
+Devuelve los bloqueadores del 5.3 **medidos, no recordados** — el 27-ago salían dos: el RNT y
+`PUBLIC_CATALOGO_SOURCE=demo` (paso 5.1b). ⚠️ **Punto ciego declarado**: solo abre el HTML de
+`dist/client`, así que **no juzga las páginas SSR** — hoy una, `/alertas`, que no anuncia noches.
+Descartó bien `/gestion`, que dice «Precio por noche» como etiqueta de un campo del panel, no como
+anuncio: la sonda exige `$NNN / noche` **y** formulario.
 
 ⚠️ **Los DOS errores que este runbook existe para evitar** — los dos se ven perfectos para un humano.
 El segundo es publicar el **catálogo de muestra** en el dominio real (§163, paso 5.1b). El primero:
