@@ -172,6 +172,22 @@ compara(
   'esEditorOMas',
 );
 
+/*
+ * 3. El gate legal del alojamiento (§233). Las Rules listan las situaciones de PH que PERMITEN
+ *    anunciar por días; el dominio lista TODAS las posibles y rechaza `sin-autorizacion`. Así que
+ *    no se comparan tal cual: se compara el conjunto de las Rules contra el del dominio MENOS la
+ *    que el dominio rechaza. Si mañana alguien añade una situación nueva al dominio y no la decide
+ *    en las Rules, esto se pone rojo — que es justo el día en que hay que decidirla.
+ */
+const altaTs = readFileSync(resolve(srcDir, 'lib/domain/shared.ts'), 'utf8');
+const todasPH = listaDe(altaTs, /SITUACIONES_PH[^=]*=\s*(\[[^\]]+\])/);
+compara(
+  'situaciones de PH que permiten alojamiento',
+  listaDe(rules, /get\('situacionPH', ''\) in (\[[^\]]+\])/),
+  todasPH ? todasPH.filter((x) => x !== 'sin-autorizacion') : null,
+  "situacionPH in [...] / SITUACIONES_PH menos 'sin-autorizacion'",
+);
+
 if (espejos.length) {
   console.error('❌ verify:data — ESPEJOS de `firestore.rules` que no cuadran:\n');
   for (const e of espejos) console.error(`   ${e.nombre}: ${e.error}`);
@@ -179,4 +195,4 @@ if (espejos.length) {
   console.error('   publican fichas que las Rules niegan, o hay inventario que nadie indexa (§179).');
   process.exit(1);
 }
-console.log('✅ verify:data — los 2 espejos de `firestore.rules` (estados públicos · roles) cuadran con el código.');
+console.log('✅ verify:data — los 3 espejos de `firestore.rules` (estados públicos · roles · PH del alojamiento) cuadran con el código.');

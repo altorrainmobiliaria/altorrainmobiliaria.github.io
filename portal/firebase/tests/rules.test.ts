@@ -457,3 +457,92 @@ describe('el staff conserva sus propias fichas (el escape que evita perder el ca
     await assertFails(getDocs(collection(anon(), 'propiedades')));
   });
 });
+
+/*
+ * EL GATE LEGAL DEL ALOJAMIENTO, en la FRONTERA (§233).
+ *
+ * `alta-propiedad.ts` ya exigía el RNT y la situación de PH, pero `propiedades` se escribe DIRECTO
+ * desde el navegador y las Rules solo miraban rol y `_version`: la obligación legal la sostenía
+ * únicamente un formulario. Un gate legal que vive en el formulario deja de existir el día que
+ * alguien cambia el formulario — y aquí lo que se juega es anunciar por días un inmueble que no
+ * puede, o sin el RNT que la ley exige en toda publicidad de alojamiento.
+ *
+ * Estas pruebas son del PAR, no de ninguno de los dos lados: comprueban que la frontera aplique la
+ * misma regla que el dominio, que es exactamente la prueba que faltaba en el caso de
+ * `honorariosPct` ([[L-63]]).
+ */
+describe('alojamiento — el RNT y el reglamento de PH se exigen en las REGLAS, no solo en el formulario', () => {
+  beforeEach(seed);
+
+  const alojamiento = (extra: Record<string, unknown>) => ({
+    _version: 1,
+    estado: 'borrador',
+    titulo: 'Casa con piscina',
+    operacion: 'alojamiento',
+    ...extra,
+  });
+
+  it('🔴 editor crea alojamiento SIN RNT → DENEGADO', async () => {
+    await assertFails(
+      setDoc(doc(editor(), 'propiedades/INM-ALO-1'), alojamiento({ situacionPH: 'autoriza-expreso' })),
+    );
+  });
+
+  it('🔴 ni siquiera el super_admin puede: la ley no distingue por rol', async () => {
+    await assertFails(
+      setDoc(doc(superAdmin(), 'propiedades/INM-ALO-2'), alojamiento({ situacionPH: 'autoriza-expreso' })),
+    );
+  });
+
+  it('🔴 con RNT pero con el reglamento SIN AUTORIZAR → DENEGADO', async () => {
+    await assertFails(
+      setDoc(
+        doc(editor(), 'propiedades/INM-ALO-3'),
+        alojamiento({ rnt: '12345', situacionPH: 'sin-autorizacion' }),
+      ),
+    );
+  });
+
+  it('🔴 con RNT pero sin decir NADA del reglamento → DENEGADO (el silencio no es un sí)', async () => {
+    await assertFails(setDoc(doc(editor(), 'propiedades/INM-ALO-4'), alojamiento({ rnt: '12345' })));
+  });
+
+  it('✅ con RNT y reglamento que autoriza → permitido', async () => {
+    await assertSucceeds(
+      setDoc(
+        doc(editor(), 'propiedades/INM-ALO-5'),
+        alojamiento({ rnt: '12345', situacionPH: 'autoriza-expreso' }),
+      ),
+    );
+  });
+
+  it('✅ una VENTA no necesita RNT: exigírselo sería un requisito inventado', async () => {
+    await assertSucceeds(
+      setDoc(doc(editor(), 'propiedades/INM-VTA-1'), {
+        _version: 1,
+        estado: 'borrador',
+        titulo: 'Apto en venta',
+        operacion: 'venta',
+      }),
+    );
+  });
+
+  it('🔴 la puerta de atrás: pasar a alojamiento en un UPDATE tampoco cuela', async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'propiedades/INM-VTA-2'), {
+        _version: 1,
+        estado: 'borrador',
+        titulo: 'Apto en venta',
+        operacion: 'venta',
+      });
+    });
+    await assertFails(
+      setDoc(doc(editor(), 'propiedades/INM-VTA-2'), {
+        _version: 2,
+        estado: 'borrador',
+        titulo: 'Apto en venta',
+        operacion: 'alojamiento',
+      }),
+    );
+  });
+});

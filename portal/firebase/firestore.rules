@@ -58,6 +58,32 @@ service cloud.firestore {
       return resource.data.estado in ['disponible', 'reservado', 'cerrado'];
     }
 
+    /*
+     * GATE LEGAL DEL ALOJAMIENTO — las DOS mitades, aquí y no solo en el formulario (§233).
+     *
+     * `alta-propiedad.ts` ya exige el RNT y la situación de PH, pero `propiedades` se escribe
+     * DIRECTO desde el navegador: hasta hoy la frontera real solo comprobaba rol y `_version`, así
+     * que la obligación legal la sostenía únicamente un formulario — y un gate legal que vive en el
+     * formulario deja de existir el día que alguien cambia el formulario. Es el mismo patrón que
+     * costó el fallo de `honorariosPct` ([[L-63]]): la regla escrita en un lado y la frontera en otro.
+     *
+     * Solo muerde en `alojamiento`. Una venta o un arriendo no necesitan RNT, y exigírselo
+     * convertiría una obligación de un caso en un requisito inventado para todos.
+     *
+     * `sin-autorizacion` se rechaza aquí igual que en el dominio: no es un dato que falte, es la
+     * RESPUESTA — y la respuesta es que ese inmueble no se puede anunciar por días.
+     * Espeja `SITUACIONES_PH` de `domain/alta-propiedad.ts`.
+     */
+    function gateAlojamiento() {
+      // `.get()` con defecto y no acceso directo: en las Rules, leer un campo AUSENTE hace fallar la
+      // condicion entera, asi que la version directa denegaba cualquier propiedad sin `operacion` —
+      // lo caza una prueba de concurrencia que crea una con solo `estado` y `_version`.
+      return request.resource.data.get('operacion', '') != 'alojamiento'
+          || (request.resource.data.get('rnt', '') is string
+              && request.resource.data.get('rnt', '').size() > 0
+              && request.resource.data.get('situacionPH', '') in ['no-aplica', 'autoriza-expreso']);
+    }
+
     // ── PROPIEDADES ─────────────────────────────────────────────────────────────────────────────
     // FUSIÓN CON CRITERIO: el legacy tenía `allow read: if true`, o sea que CUALQUIERA podía leer un
     // BORRADOR — un inmueble sin aprobar, con su precio y sus notas. Se adopta la whitelist del portal,
@@ -67,8 +93,10 @@ service cloud.firestore {
       allow get: if esStaff() || estadoPublicado();
       // LIST denegado al público: la SERP se sirve del índice denormalizado, no de queries (free-tier).
       allow list: if esStaff();
-      allow create: if esSuperAdmin() || (esEditorOMas() && versionCreacionValida());
-      allow update: if esSuperAdmin() || (esEditorOMas() && versionValida());
+      allow create: if (esSuperAdmin() || (esEditorOMas() && versionCreacionValida())) && gateAlojamiento();
+      // El gate también en UPDATE: pasar un inmueble a `alojamiento` después de crearlo tendría
+      // exactamente el mismo efecto que crearlo así, y sería la puerta de atrás obvia.
+      allow update: if (esSuperAdmin() || (esEditorOMas() && versionValida())) && gateAlojamiento();
       allow delete: if esSuperAdmin();
 
       // Historial de cambios — INMUTABLE, y desde §130 también SERVER-ONLY: `create: if esEditorOMas()`
