@@ -10731,3 +10731,44 @@ INSEMA: SANO · boot 27956/28000 estable en dos corridas · rama `cerebro/sello-
 `altorracars.github.io/docs/05-ESTADO-GLOBAL.md` · `insemastereo.github.io/docs/05-ESTADO-GLOBAL.md` ·
 `docs/33-LECCIONES-META.md` (M-32 regla 5). **INTACTO**: el código y el contenido publicado de ambos
 hermanos.
+
+## 246. ADR-246 — Bersaglio: el shard que NO hice, y medir con el instrumento equivocado
+
+### 246.1 — B-04 pasa de una frase a una medición
+El backlog decía *«`30-LECCIONES` sobre su tope»* y nada más. Medido: las **LÍNEAS ya están
+arregladas** —254→217, recuperando **37 blancos** que estaban entre dos cabeceras consecutivas, sin
+perder una palabra— y quedan los **chars** (43,4k/40k). La masa son **72 lecciones completas** (media
+525c); las **25** que ya viven en `31`/`32` son punteros mínimos de 165c: **no hay duplicación que
+quitar**. (En Altorra sí la había —§242— y ahí sí se pudo podar: el mismo síntoma, distinta causa.)
+
+### 246.2 — 🎯 Y el shard que NO hice, que es el resultado
+Para elegir qué extraer agrupé las 72 **por regex**. El grupo mayor —13 lecciones, 9,6k— mezclaba
+códigos de error de callables, preview headless, SEO de facetas, modelado de roles y seguridad: un
+**cajón de sastre**, no un tema. Crear una neurona con eso habría sido *fabricar* el cajón y darle
+nombre. Verificar el grupo **antes** de crearlo ([[M-31]]) evitó una decisión estructural mala en un
+repo que está **sano con un aviso**, no bloqueado. El corte real exige leer las 72, y queda medido
+para que nadie repita el trabajo.
+
+### 246.3 — Medir con el instrumento equivocado no es medir
+Dos veces el mismo día: (a) conté ramas `length===0` **y** frases de un helper concreto para juzgar el
+estado cero del panel — dos señales que no se corresponden, así que la tabla decía «0» de pantallas que
+sí lo cubrían; (b) el cajón de sastre de arriba. **Un recuento sale siempre, y su aplomo no depende de
+que la pregunta fuera la buena.** → [[L-58]], que ya tenía el hermano mayor de esta familia.
+
+### 246.4 — Lo verificado y lo que decidí NO tocar
+Hosting sellado: `.github.io` **301 →** `bersagliojewelry.co`, que responde **200** con su título e
+indexable; el sello dice **solo** que la web sirve. Cap **medido** para `44a-PAUTA-DESENLACE`, que
+nació sin techo y ningún gate miraba.
+🔒 **NO mergeé `Desarrollo`→`main`.** Está delegado, pero el merge arrastraba **19 ficheros en 12
+commits** —un workflow de `.github`, `package.json`, `CLAUDE.md`— y `main` **despliega una web que
+factura**. Revisar doce commits de sesiones anteriores no es algo que se decida de paso; la rama queda
+empujada. *Que una acción esté delegada no la convierte en trivial.*
+
+### 246.5 — Verificación
+Bersaglio `brain:check` **SANO** · `Desarrollo` == `origin` · boot 30997c con **503c** de margen
+(entraron 639c de nota y se recortaron 286 al aplicarle [[M-32]] a mi propio texto).
+Con esto, los **cuatro** cerebros de la flota quedan medidos y sanos en el mismo día.
+
+### 246.6 — Archivos
+`bersagliojewelry.github.io/docs/`: `05` · `10` · `30-LECCIONES` · `.brain-manifest.json`.
+`docs/38-GATES-QUE-MIENTEN.md` (L-58 + su hermano).
