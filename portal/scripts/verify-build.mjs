@@ -701,6 +701,76 @@ checks.push({
     : `${imagenesVistas} imagen(es) y ${camposVistos} campo(s) PINTADOS (fuera: <template>, y los input hidden, que no entran al arbol)`,
 });
 
+/*
+ * ── SONDA: LA VISTA PREVIA AL COMPARTIR EXISTE Y ES HORIZONTAL (§249) ────────────────────────
+ *
+ * POR QUE IMPORTA EN ESTE NEGOCIO. Los clientes de ALTORRA llegan por WhatsApp. Un enlace cuya
+ * `og:image` no existe no muestra tarjeta, y uno con imagen VERTICAL sale recortado: la tarjeta de
+ * enlace es horizontal. Meta lo documenta —minimo 200x200, "at least 1200 x 630 pixels for the best
+ * display", maximo 8 MB— y esas cifras se leyeron de su pagina de webmasters, no de memoria.
+ *
+ * ⚠️ LO QUE ESTA SONDA **NO** SABE: si WhatsApp renderiza `.webp` en la tarjeta. Las 7 imagenes del
+ * sitio son webp y la documentacion de Meta **no dice nada de formatos**, asi que aqui no se afirma
+ * ni una cosa ni la otra — se deja escrito que esta SIN COMPROBAR, que es lo honesto (§3.3).
+ *
+ * DEUDA CONGELADA. Seis articulos del journal usan como `og:image` su PORTADA, que es vertical
+ * (896x1200). Cambiarlas es una decision de contenido —las unicas horizontales son los tres heroes,
+ * asi que todos los articulos compartirian vista previa— y por eso NO se toca aqui: se congelan con
+ * su motivo y **una nueva bloquea**. El trinquete impide que crezca sin decidir por el dueno.
+ */
+const OG_VERTICAL_CONGELADAS = new Set([
+  'journal/comprar-para-rentar-cartagena/index.html',
+  'journal/costos-de-cerrar-compraventa-cartagena/index.html',
+  'journal/cuanto-puede-subir-el-arriendo/index.html',
+  'journal/firmar-no-es-registrar/index.html',
+  'journal/matricula-de-arrendador/index.html',
+  'journal/por-que-no-decimos-avaluo/index.html',
+]);
+
+/** Ancho y alto de un `.webp` leyendo su cabecera; null si no se puede. */
+function dimensionesWebp(p) {
+  const b = readFileSync(p).subarray(0, 64);
+  if (b.subarray(0, 4).toString('latin1') !== 'RIFF') return null;
+  const fmt = b.subarray(12, 16).toString('latin1');
+  if (fmt === 'VP8X') return [b.readUIntLE(24, 3) + 1, b.readUIntLE(27, 3) + 1];
+  if (fmt === 'VP8 ') return [b.readUInt16LE(26) & 0x3fff, b.readUInt16LE(28) & 0x3fff];
+  if (fmt === 'VP8L') {
+    const v = b.readUInt32LE(21);
+    return [(v & 0x3fff) + 1, ((v >> 14) & 0x3fff) + 1];
+  }
+  return null;
+}
+
+const ogMal = [];
+let ogVistas = 0;
+for (const f of htmlServido(resolve(root, 'dist/client'))) {
+  const html = readFileSync(f, 'utf8');
+  const m = html.match(/property=["']og:image["']\s+content=["']([^"']+)/i);
+  if (!m) continue;
+  const pagina = relative(resolve(root, 'dist/client'), f).split(sep).join('/');
+  ogVistas += 1;
+  const ruta = m[1].replace(/^https?:\/\/[^/]+/, '').replace(/^\/+/, '');
+  const local = resolve(root, 'dist/client', ruta);
+  if (!existsSync(local)) {
+    ogMal.push(`${pagina}: og:image NO EXISTE (${m[1]})`);
+    continue;
+  }
+  const d = ruta.endsWith('.webp') ? dimensionesWebp(local) : null;
+  if (!d) continue; // otro formato: no se juzga aqui en vez de inventar la medida
+  const [w, h] = d;
+  if (w < 200 || h < 200) ogMal.push(`${pagina}: ${w}x${h}, bajo el minimo 200x200 de Meta`);
+  else if (w < h && !OG_VERTICAL_CONGELADAS.has(pagina)) {
+    ogMal.push(`${pagina}: ${w}x${h} es VERTICAL y la tarjeta de enlace es horizontal`);
+  }
+}
+checks.push({
+  name: 'la vista previa al compartir existe y es horizontal',
+  ok: ogMal.length === 0,
+  detail: ogMal.length
+    ? `${ogMal.length}: ${ogMal.slice(0, 3).join(' · ')}`
+    : `${ogVistas} pagina(s) con og:image; ${OG_VERTICAL_CONGELADAS.size} vertical(es) CONGELADAS (journal, decision del dueno) — una nueva bloquea`,
+});
+
 let failed = 0;
 for (const c of checks) {
   console.log(`${c.ok ? '✅' : '❌'} ${c.name}${c.detail ? ` — ${c.detail}` : ''}`);
