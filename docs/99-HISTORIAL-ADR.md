@@ -10246,3 +10246,49 @@ ordena el dueño. El cambio está en `main`, probado, esperando su fase.
 ### 234.6 — Archivos
 `portal/firebase/firestore.rules` · `portal/firebase/tests/rules.test.ts` ·
 `portal/scripts/verify-data-invariants.mjs`.
+
+## 235. ADR-235 — El aviso al cliente salía por el Gmail roto, y el identificador que me inventé por cuarta vez
+
+**Contexto.** §188 decidió que **todo el correo sale por Resend** y movió el aviso del lead NUEVO.
+El aviso al CLIENTE cuando cambia el estado de su solicitud se quedó atrás: la legacy
+`onSolicitudStatusChanged` lleva meses mandando por SMTP con la contraseña de aplicación caducada
+(`535-5.7.8`), **captura el error y lo escribe en un log que nadie abre**. Cada cambio de estado
+falla en silencio y quien lo movió cree que el cliente fue avisado.
+
+### 235.1 — Dónde se construye, y por qué no arreglando la legacy
+En el codebase **PORTAL**. El legacy no tiene tipos, ni pruebas, ni build (`10`): un arreglo allí no
+lo protege nada. Aquí hereda las tres cosas y el emisor que ya funciona.
+
+### 235.2 — Tres decisiones de PRODUCTO, no de plumbing
+(a) **No avisa de cualquier cambio**: solo `contactado`, `visita_agendada` y `cerrado`. Los estados
+internos no son novedad para nadie de fuera, y `descartado` tampoco — *cerrarle la puerta a alguien
+no se hace por correo automático*. 🎯 Avisar de todo enseña a ignorar nuestros correos, y entonces el
+que importa llega el día que ya nadie los abre.
+(b) **No lanza nunca.** El estado YA está guardado cuando el trigger corre: si el correo falla y la
+función lanza, Firestore reintenta y el cliente recibe **tres copias**. Un aviso perdido se recupera
+con una llamada; tres copias no se deshacen.
+(c) **El motivo que registra es el REAL**: primero lo que hace que no haya nada que avisar, después
+lo que impide avisar. Al revés, un cambio que ni había que avisar se archivaría como «falta la clave».
+
+### 235.3 — 🔴 El identificador inventado, por CUARTA vez en una noche
+Escribí un estado `en_gestion` que no existe en `ESTADOS_SOLICITUD`. Con claves `string` el mapa lo
+habría aceptado y **el aviso simplemente no habría salido nunca, sin que nada fallara**. Ahora va
+`Partial<Record<EstadoSolicitud, …>>`, así que el compilador lo rechaza — probado reintroduciéndolo.
+Los otros tres de la misma noche y el patrón que comparten → [[M-30]]. *La gravedad no la fija el
+error sino dónde cae: el mismo descuido fue ruido en un script y habría bloqueado TODO alojamiento
+dentro de una regla de seguridad (§234.3).*
+
+### 235.4 — La retirada va EMPAREJADA, y por eso no se hizo hoy
+La legacy queda **marcada, no borrada**. Mientras la clave de Resend siga con su centinela **ninguna
+de las dos envía nada**, así que borrarla hoy no arregla nada y deja un hueco si la nueva tarda. Los
+dos comandos están escritos juntos en `functions/index.js`: desplegar la nueva **y** borrar la vieja.
+Hacer solo lo primero deja DOS triggers sobre `solicitudes`; solo lo segundo, ninguno.
+
+### 235.5 — Verificación
+13 pruebas nuevas (12 ficheros, 188 en la suite del emulador). Verify completo **exit 0**: 937
+pruebas de unidad, 32 comprobaciones. El gate de cifras cazó al vuelo que el `05` decía 21 Cloud
+Functions cuando ya son 22.
+
+### 235.6 — Archivos
+NUEVOS: `portal/functions/src/solicitud-estado.ts` · `portal/firebase/tests/solicitud-estado.test.ts`.
+TOCADOS: `portal/functions/src/index.ts` · `functions/index.js` (la marca) · `docs/05`.

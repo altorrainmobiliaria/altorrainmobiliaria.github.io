@@ -105,6 +105,7 @@
 | §232 | 🔎 **9 páginas compartían meta description**, entre ellas las 4 que venden: §228 arregló esto y solo en el journal. + `verify:seo` (10º gate) + `tituloSeo` legal + la cifra de redirects del 21 estaba congelada en 68 contra 74. | 10079 |
 | §233 | 🚪 **Las DOS puertas del 222, construidas** (preaviso + certificación): huérfanos 3→0. Y al probarlas salió un fallo VIVO: un contrato del 10 % no se podía liquidar porque los dos extremos de `honorariosPct` usaban unidades distintas. | 10134 |
 | §234 | ⚖️ **El gate legal del alojamiento vivía en el FORMULARIO**: las Rules solo miraban rol y version, asi que RNT y reglamento de PH los sostenia una pantalla. Ahora en la frontera, tambien en UPDATE. + censo de las 18 colecciones. | 10201 |
+| §235 | 📬 **El aviso al CLIENTE salía por el Gmail roto** desde hace meses, fallando en silencio: movido a Resend con tipos y 13 pruebas. Solo avisa de 3 estados. + el 4º identificador inventado de la noche, ahora rechazado por el tipo. | 10250 |
 
 ---
 
