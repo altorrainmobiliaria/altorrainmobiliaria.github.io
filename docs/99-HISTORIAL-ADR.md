@@ -10772,3 +10772,47 @@ Con esto, los **cuatro** cerebros de la flota quedan medidos y sanos en el mismo
 ### 246.6 — Archivos
 `bersagliojewelry.github.io/docs/`: `05` · `10` · `30-LECCIONES` · `.brain-manifest.json`.
 `docs/38-GATES-QUE-MIENTEN.md` (L-58 + su hermano).
+
+## 247. ADR-247 — La portada tenía cuatro `<h1>` visibles, y los otros dos casos no eran defectos
+
+### 247.1 — Cuatro títulos principales en la página más importante
+No son un carrusel: son **cuatro banners a pantalla completa apilados** —uno por línea de negocio— y
+los cuatro se ven al bajar. Google veía cuatro `<h1>` en la portada y un lector de pantalla anunciaba
+cuatro niveles 1. 🎯 *No rompía nada, no salía en consola y se veía perfecto*: la misma familia de
+§239 y §242. El primero se queda como `h1` y los otros tres pasan a `h2`, que es lo que el resto del
+documento ya usa para sus secciones. Queda **1 h1 / 19 h2 / 19 h3**, sin un salto de nivel.
+
+### 247.2 — Por qué el cambio es INVISIBLE, y cómo se comprobó
+El CSS del hero apunta **solo a la clase** (`.hbn__h`, `.hbn__panel .hbn__h`, `.hbn__glass .hbn__h`):
+ningún selector toca el elemento, así que subir el nivel no mueve un píxel. No es una lectura confiada
+—el script lo verifica con un `assert` que busca cualquier regla con `h1` **antes de escribir**. Por
+eso esto es semántica, no rediseño, y la regla del mockup no está implicada.
+
+### 247.3 — 🎯 Y los otros dos casos NO eran defectos
+`/gestion` tiene **nueve** `<h1>` y `/ingresar` **dos**, y los dos están bien: son paneles que se
+muestran de uno en uno, así que en cada momento hay exactamente uno visible. **Un gate que contara
+`<h1>` a secas los habría marcado en falso**, y modelar visibilidad de ancestros es justo donde estas
+sondas se equivocan (`hidden` sí saca del árbol de accesibilidad, `opacity:0` no). La regla limpia
+salió sola: **se juzgan las páginas que el SITEMAP anuncia** —las públicas e indexables—, donde ese
+patrón no existe. *Elegir bien el conjunto es la mitad del gate.*
+
+### 247.4 — El gate
+Deuda **cero** tras el arreglo: 38 páginas anunciadas con HTML, ninguna con problema. Probado con
+**tres** defectos inyectados —un `h1` de más, un salto `h1→h4`, y quitar el sitemap, que sale con
+**exit 1** en vez de juzgar cero páginas en verde ([[L-65]] regla 5)—, comprobando cada inyección
+antes de creer el fallo.
+
+### 247.5 — De paso, boot desatascado con M-32
+Dos podas **derivadas, no a ojo**: busqué narrativa del `10` que citara un ADR ya escrito. La del §208
+contaba *cómo* se arregló la ceguera del linter (eso lo posee el ADR) y la del alojamiento describía
+lo que las Rules y el build ya **bloquean**. Conservado lo que ningún gate vigila. Boot 31285 →
+**31041c**; margen 215 → **459c**.
+
+### 247.6 — Verificación
+`verify` **exit 0, 39 comprobaciones** (era 38) · `typecheck` 0 errores · **954 pruebas** verdes ·
+`brain:check` SANO.
+
+### 247.7 — Archivos
+`portal/src/pages/index.astro` · `portal/scripts/verify-build.mjs` · `docs/10-MEMORIA-CORTO-PLAZO.md`.
+**INTACTOS**: el CSS del hero —no hizo falta tocarlo, que es la prueba de que el cambio es
+invisible— y `/gestion` e `/ingresar`, que estaban bien.

@@ -117,6 +117,7 @@
 | §244 | 🩺 **Cuatro comprobaciones en vivo, cero defectos** (`/ficha` y `/alertas` 200 · zstd: portada 19,6 KB · estado cero en las 11 pantallas) → y la poda que salieron: **lo que ya bloquea un gate no se afirma en un nodo always-on**. | 10645 |
 | §245 | 🧑‍🤝‍🧑 **Hermanos**: Cars e INSEMA tenían el gate de fiabilidad DEGRADADO (0 marcadores = no comparaba nada) → sellados contra sus sitios vivos. Y Cars ordenaba un protocolo de modelo **derogado** y un `sync` inexistente. | 10686 |
 | §246 | 💎 **Bersaglio: el shard que NO hice** — agrupar por regex dio un cajón de sastre, no un tema. B-04 pasa de frase a medición (líneas ya arregladas). Y **medir con el instrumento equivocado no es medir**. | 10735 |
+| §247 | 🏷️ **La portada tenía CUATRO `<h1>` visibles** (cuatro banners apilados, no un carrusel) → 1 h1 + 3 h2, invisible porque el CSS va por clase. Gate sobre las páginas del **sitemap**: `/gestion` e `/ingresar` NO eran defectos. | 10776 |
 
 ---
 
