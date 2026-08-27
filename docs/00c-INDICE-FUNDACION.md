@@ -1,4 +1,4 @@
-# 🗂️ 00c — ÍNDICE DE FUNDACIÓN (§66-§90 · kit legal, operación y cierre de Ola 1)
+# 🗂️ 00c — ÍNDICE DE FUNDACIÓN (§61-§90 · kit legal, operación y cierre de Ola 1)
 
 > **Tercer shard de rango de `00-INDICE`** (ADR §116). El kernel descubre las hermanas por PATRÓN
 > (`00[a-z]?-INDICE*.md`) y trata a las cuatro como UN índice: los chequeos #3 (desync), #5a (ADRs
@@ -42,3 +42,8 @@
 | §84 | **PODA REAL del router (TODO-32b): boot 31.4k→28.4k sin subir el techo.** Nace `34-DOCTRINA-CODIGO` (perf/observadores/stack/CSS legacy salen del always-on) · `§0` deja de duplicar los triggers de `§G.2` · 3 cifras copiadas del manifest, cortadas. Criterio → [[M-09]]. | 1965 |
 | §82 | **TODO-35 CERRADO: el kit de firma estrena sus 6 gates cruzados** (cifras vs doc 02 · remisiones a docs RETIRADOS · identidad/canales · anclas de la figura del ARRENDADOR). Cierra el crítico N5-05. Las 2 excepciones que solo salen probando: la cita que DEROGA y la cifra AJENA ([[LD-07]]). Cazó 2 remisiones vivas al doc 13 RETIRADO. Nuevo `-SoloGates`. | 1792 |
 | §81 | **TODO-36 CERRADO: trinquete de boot ×4, candado AL KERNEL v1.8.0.** bersaglio y insema podados **sin subir un techo** ([[M-05]]). `boot-gate.mjs` borrado (one-in-one-out) → chequeos #2 y #24. Hallazgo: **insema no tenía pre-commit** → nace el #25 y [[M-07]]. | 1741 |
+| §61 | ⭐ **PIVOTE DE MISIÓN: Fundación Operativa (TODO-34)** — armar la inmobiliaria con datos reales (Claude = abogado + empleados · cerebro dual). Corpus: 83 docs + operación VIVA. Plan F1-F4. | 965 |
+| §62 | **TODO-34 F1 ✅: triaje del corpus (143, 9 lectores) → nace `43-OPERACION`**: doble NIT · matrícula sin resolución · gerente sin mayoría · KYC→FONPRECON · tarifario inexistente. | 975 |
+| §63 | **TODO-34 F2 ✅: verificación legal 6 frentes .gov.co + Gemini integrado**. RUB vencido→YA · CE SAGRILAFT derogada 02-jul-26 · 5 prácticas ILEGALES · canon-neto legal (4 formalidades de mandato) · §63.8 cero contratos vigentes → F4 reordenado. | 985 |
+| §64 | **TODO-34 F4-w1 ✅: KIT FUNDACIONAL 14 docs + Word + `00-LEEME`** (10 redactores + 5 auditores → 37 fixes aplicados). Patrón redactor→auditor-adversarial→aplicador PROBADO. | 996 |
+| §65 | **TODO-34 F4-w2 ✅: MANUAL MAESTRO (10 caps) + mercado → sistema documental 00-23 COMPLETO**. Tarifas comerciales adoptadas-vetables con costumbre certificada · FE gratuita DIAN soporta mandato nativo · prompt consejo externo del manual listo. | 1006 |

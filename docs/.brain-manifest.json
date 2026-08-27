@@ -146,6 +146,11 @@
       "lines": 60,
       "chars": 10599,
       "_comment": "Shard de rango CERRADO (ADR 196): §121-§160 no crecen. El cap deja 15 por ciento por si alguna fila se reescribe, no para admitir filas nuevas — esas van al 00 vivo."
+    },
+    "docs/00f-INDICE-VERDAD.md": {
+      "chars": 13180,
+      "lines": 76,
+      "_comment": "Sexto shard de rango CERRADO (ADR 229): 161-200 no crecen. Cap MEDIDO sobre el real (9763c / 57L, densidad 171 c/linea): chars = real+35 por ciento, lines = cap_chars/densidad, para que los DOS ejes aprieten en el mismo punto. Si el 00 vivo vuelve a apretar, el siguiente rango es 00g, NO subir este techo."
     }
   },
   "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",

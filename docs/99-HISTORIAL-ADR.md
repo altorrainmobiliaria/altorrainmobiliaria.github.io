@@ -9938,3 +9938,25 @@ Aprovechando la sesión abierta, dos cosas que ningún gate cubre y que solo se 
   quitan `outline` fuera de contexto de foco.
 📌 **Se escriben aunque no encontraran nada**, y por la misma razón que el denominador de los gates:
 *«limpio» y «no lo miré» se ven idénticos si no queda constancia de qué se miró.*
+
+## 229. ADR-229 — Sexto shard del índice, y cinco filas que llevaban meses sin era
+
+**Disparador mecánico**: el índice kernel reventó su tope (**25687c / 24000**) con las filas de hoy.
+Se extrae el rango **§161-§200** —40 filas, 8656c— a `docs/00f-INDICE-VERDAD.md`, siguiendo el
+criterio de los cinco anteriores: **el corte es por hilo, no por aritmética**. Ése es el tramo en que
+dejó de bastar con que algo estuviera hecho y empezó a exigirse que estuviera **medido**: los ocho
+gates cableados tras encontrarlos verdes sin mirar nada, los gemelos que ningún compilador podía ver,
+el censo de Functions que contradecía al `05`, el dictamen del recaudo, el preaviso que no puede ser
+digital y el rail de pago probado contra el emulador. Kernel: **25687 → 16180c**, sitio para ~40 ADRs.
+
+**Y de paso, cinco huérfanas.** §61-§65 seguían en el kernel sin pertenecer a ningún shard: `00b`
+cubre §21-§60 y `00c` arrancaba en §66, así que **caían en una grieta de cinco entre dos particiones**
+—nadie las movió cuando nació `00c` y nadie lo notó porque el índice se lee entero—. Van a `00c`, que
+pasa a declarar §61-§90. 🎯 **Una partición por rangos deja grietas en las junturas, y las junturas no
+las mira nadie**: el que parte comprueba lo que se lleva, no lo que queda entre lo que se llevó y lo
+anterior.
+
+**Cap del shard nuevo, medido**: 9763c reales → 13180c (+35 %) y las líneas **derivadas de la densidad
+real** (171 c/línea) para que los dos ejes aprieten en el mismo punto — el criterio de §85, que existe
+porque un cap con los ejes descuadrados dispara el equivocado. Es un shard **cerrado por diseño**: si
+el `00` vivo vuelve a apretar, el siguiente rango es `00g`, no subir este techo.
