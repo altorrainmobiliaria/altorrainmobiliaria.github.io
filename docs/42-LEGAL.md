@@ -76,6 +76,20 @@
    negarse sin consecuencias (Ley 1581 arts. 5-6; sanción art. 23 = cierre definitivo de la operación). Es la regla
    dura #7 de este lóbulo aplicada al papel, no solo al portal.
 
+## 📜 La AUDITORÍA DE CONTRATOS — dónde vive y por qué no está aquí
+
+> 🔐 **8 documentos, 224 KB**: `DECISIONES-VIGENTES` (las posiciones legales en vigor) · `03-ADMINISTRACIÓN` ·
+> `04-ARRENDAMIENTO` · `ESTATUTOS-V5` · `POLIZA` · `CONTEXTO-LEGAL` · `02-ESTÁNDARES` · `BRIEF`.
+> **NO están en este repo a propósito**: contienen copias íntegras de contratos reales y este repositorio es
+> **público** (§99.1135 · [[L-15]] de cars). Se trabajan en `.auditoria-contratos/`, que está gitignored.
+>
+> 🗄️ **Su copia durable vive en la bóveda PRIVADA** (verificado 404 sin autenticar):
+> `../brain-private/altorrainmobiliaria/expediente-legal/auditoria-contratos/`.
+> Hasta el 27-ago solo existían en un disco: **sin respaldo y sin ruta desde ningún nodo vivo** — se
+> mencionaban únicamente dentro del `99`, que está prohibido leer entero, así que nadie llegaba (N16-07).
+> ⚠️ Si trabajas sobre ellos, **vuelve a copiarlos a la bóveda en el mismo cierre**: el gate #7 es ciego a
+> ficheros ignorados y no te va a avisar.
+
 ## 📜 Dictámenes propios → viven en `44-DICTAMENES.md`
 
 Se mudaron el 2026-08-26 (§186): eran la sección más grande de este nodo y la **única que crece
