@@ -481,6 +481,40 @@ checks.push({
     : `contra ${waDeclarado[1]} y ${MAIL_DEL_NEGOCIO}, leidos de site.ts; los placeholder no cuentan`,
 });
 
+/*
+ * ── SONDA: EL STYLEGUIDE DE DESARROLLO NO VIAJA A PRODUCCION (§242) ──────────────────────────
+ *
+ * `design-system.astro` redirige a la home cuando PUBLIC_SITE_ENV=production, asi que su HTML
+ * queda en un redirect de ~284 bytes. Esta sonda es el RESPALDO de ese mecanismo: si manana
+ * alguien renombra la variable, mueve la ruta o quita la guardia, el styleguide volveria a
+ * emitirse entero y nadie se enteraria — un mecanismo que deja de funcionar en silencio es lo
+ * mismo que no tenerlo. Se mide por CONTENIDO (¿siguen ahi las muestras de color?) y no por
+ * tamano, porque un umbral de KB se ajusta solo cuando molesta.
+ *
+ * Como la guardia depende del entorno, esto solo se juzga en produccion — y su nombre lo dice,
+ * para que el verde de staging no se lea como «comprobado» ([[L-65]]).
+ */
+const styleguideEnProd = [];
+if (ES_PROD) {
+  const f = resolve(root, 'dist/client/design-system/index.html');
+  if (existsSync(f)) {
+    const html = readFileSync(f, 'utf8');
+    // El redirect legitimo no menciona los tokens; el styleguide los enumera uno por uno.
+    if (/--alt-navy|Design System D1/.test(html)) styleguideEnProd.push(`${html.length} bytes`);
+  }
+}
+checks.push({
+  name: ES_PROD
+    ? 'el styleguide de desarrollo NO viaja a produccion'
+    : 'styleguide fuera de produccion — no se juzga en staging (ahi debe estar)',
+  ok: styleguideEnProd.length === 0,
+  detail: styleguideEnProd.length
+    ? `/design-system se emitio ENTERO (${styleguideEnProd[0]}): la guardia de design-system.astro dejo de funcionar`
+    : ES_PROD
+      ? 'comprobado sobre el HTML servido'
+      : 'se activa con PUBLIC_SITE_ENV=production',
+});
+
 let failed = 0;
 for (const c of checks) {
   console.log(`${c.ok ? '✅' : '❌'} ${c.name}${c.detail ? ` — ${c.detail}` : ''}`);

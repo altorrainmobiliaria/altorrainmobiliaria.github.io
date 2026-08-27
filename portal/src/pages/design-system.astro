@@ -2,10 +2,25 @@
 /*
  * PÁGINA DE DESARROLLO — Styleguide / referencia viva del design system D1.
  * NO es UI de producción: verifica tokens + primitivas y sirve de referencia al
- * construir home → SERP → ficha. noindex en staging (BaseLayout). Gate de prod:
- * excluir esta ruta del build de producción antes del cutover (TODO Ola 1).
+ * construir home → SERP → ficha. `noindex` en staging (BaseLayout).
+ *
+ * 🔴 AQUÍ VIVÍA UNA PROMESA SIN MECANISMO (§242). Esta cabecera decía «excluir esta ruta del build
+ * de producción antes del cutover (TODO Ola 1)». Ola 1 se cerró y la ruta seguía construyéndose:
+ * material de DESARROLLO iba a servirse en el dominio del cliente el día del DNS, y lo único que
+ * lo impedía era que alguien se acordara. Es la quinta vez que aparece esta familia en el proyecto
+ * y la cura ya está probada: convertir la promesa en algo que ocurre solo.
+ *
+ * Ahora en producción la ruta REDIRIGE a la home (301, `noindex`, canónico): el styleguide no se
+ * emite —el HTML pasa de 28,5 KB a 284 bytes— y quien caiga por un enlace viejo aterriza en un
+ * sitio con sentido en vez de una página en blanco. Lo respalda una sonda de `verify:build` que
+ * FALLA si el styleguide reaparece en un build de producción, porque un mecanismo que deja de
+ * funcionar en silencio es lo mismo que no tenerlo ([[L-65]]).
  */
 export const prerender = true;
+
+if (import.meta.env.PUBLIC_SITE_ENV === 'production') {
+  return Astro.redirect('/', 301);
+}
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const arrow = '<path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
