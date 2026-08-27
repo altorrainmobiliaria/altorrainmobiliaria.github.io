@@ -1,0 +1,60 @@
+#!/usr/bin/env node
+/*
+ * 🪤 CAZA-HUECOS — detecta el mensaje de commit que el SHELL ya mutiló.
+ *
+ * POR QUÉ EXISTE. `git commit -m "…un `Set`, que colapsa…"` no falla: bash intenta EJECUTAR lo que
+ * va entre acentos graves dentro de comillas dobles, no encuentra el comando, y lo sustituye por
+ * **cadena vacía**. El commit sale con ÉXITO y con un hueco donde iba la palabra. El 2026-08-26 se
+ * comió, entre otras, la palabra `Set` — dentro del commit que documentaba el punto ciego del Set.
+ *
+ * QUÉ REFUTA. [[L-46]] declaraba: *«ningún gate puede cazarlo: la corrupción ocurre en la llamada,
+ * antes de que el hook vea nada»*. Es cierto para PREVENIRLO y falso para DETECTARLO. La palabra
+ * comida no desaparece sin rastro: deja siempre un espacio de más donde estaba, y ese espacio queda
+ * pegado a la puntuación siguiente (`un , que`), duplicado entre palabras, o al final de la línea.
+ * Medido contra el daño real y contra los 12 commits sanos anteriores: **1 señal / 0 falsos**.
+ *
+ * NO reemplaza la regla —el texto viaja a un fichero y se pasa con `git commit -F`— porque este hook
+ * llega DESPUÉS del daño. Lo que hace es que el daño no se publique en silencio, que es lo que pasó
+ * las diecisiete veces anteriores.
+ */
+import { readFileSync } from 'node:fs';
+
+const ruta = process.argv[2];
+const bruto = readFileSync(ruta, 'utf8');
+
+// Los comentarios de git (`#`) y el diff de `--verbose` no son del autor: no se juzgan.
+const cuerpo = bruto
+  .split('\n')
+  .filter((l) => !l.startsWith('#'))
+  .join('\n')
+  .split('\ndiff --git ')[0];
+
+const SEÑALES = [
+  [/[^\s\n] +[,.;:)\]]/g, 'espacio antes de puntuación'],
+  [/\S {2,}\S/g, 'espacio doble entre palabras'],
+  [/\S +\n/g, 'espacio al final de una línea'],
+];
+
+const hallado = [];
+for (const [pat, nombre] of SEÑALES) {
+  for (const m of cuerpo.matchAll(pat)) {
+    hallado.push(`${nombre}: «${m[0].replace(/\n/g, '\\n')}»`);
+  }
+}
+
+if (hallado.length) {
+  console.error('');
+  console.error('❌ commit-msg — el mensaje tiene la FIRMA de una palabra comida por el shell:');
+  console.error('');
+  for (const h of hallado.slice(0, 8)) console.error(`   · ${h}`);
+  if (hallado.length > 8) console.error(`   … y ${hallado.length - 8} más`);
+  console.error('');
+  console.error('   Un identificador entre acentos graves dentro de comillas dobles bash lo EJECUTA,');
+  console.error('   falla, y lo sustituye por nada. El commit sale bien y con un hueco (L-46).');
+  console.error('');
+  console.error('   Arreglo: escribe el mensaje a un fichero y usa  git commit -F <fichero>');
+  console.error('   Si el espacio de más es intencionado, corrígelo igual: aquí no hay excepción');
+  console.error('   que valga la pena defender.');
+  console.error('');
+  process.exit(1);
+}
