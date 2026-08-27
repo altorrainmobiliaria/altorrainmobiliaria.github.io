@@ -10429,3 +10429,38 @@ Verify completo **exit 0**, 35 comprobaciones.
 ### 238.6 — Archivos
 `portal/src/pages/index.astro` · `estancias.astro` · `portal/scripts/verify-build.mjs` ·
 `portal/scripts/verify-controles.mjs`.
+
+## 239. ADR-239 — La agenda anunciaba renovación en contratos que ya tenían preaviso, y el gate de habeas data
+
+### 239.1 — 🔴 El fallo lo abrí yo, tres horas antes
+§233 hizo que un contrato pudiera SABER que va a terminar. Pero `agenda()` seguía calculando sus
+hitos **solo desde `vigenciaFin`**, así que un contrato con preaviso válido anunciaba en el panel
+*«Se renueva automáticamente»* — **exactamente lo contrario de lo que iba a pasar**.
+🎯 Dos verdades sobre el mismo contrato, y la que se lee a diario era la falsa. Es la peor forma de
+esta familia: no falla nada, no hay error en consola, y el dueño planifica el año con el dato
+equivocado. *Añadir un hecho nuevo al modelo no es aditivo para quien ya decidía sin él.*
+
+### 239.2 — Lo que dice ahora, y lo que dejó de decir
+La agenda lee el preaviso **ARCHIVADO** —no lo recalcula: el veredicto lo congeló el servidor al
+registrarlo— y cubre los tres casos: **válido** → «Termina el contrato: hay preaviso», con operador,
+guía y fecha de imposición, y **deja de pedir «Decidir renovación»** porque ya se decidió;
+**tardío** → «Volver a avisar: el preaviso llegó tarde», y el hito de renovación explica que se
+renueva igual porque no surtió efecto; **sin preaviso** → como siempre.
+
+### 239.3 — El censo de a quién más le rozó
+Seis módulos leen `vigenciaFin`, el estado del contrato o la renovación. **Uno solo necesitaba el
+cambio**, y de los otros cinco se puede decir por qué no: `gestion.ts` solo valida fechas, la lista
+del panel pinta el estado DERIVADO (que el servidor ya pone bien), y los tres del preaviso son la
+fuente. *La lista no salió de recordar quién usa el contrato: salió de buscarlo.*
+
+### 239.4 — Habeas data: el trinquete y sus tres intentos
+En el mismo turno, `verify:controles` pasó a exigir autorización **expresa** (Ley 1581 · D.1377/2013
+art. 5) en todo formulario que recoja datos personales. Partía de **cero deuda** —los 4 la tenían— y
+el gate tardó **tres intentos** en morder; las tres versiones pasaban la lectura → [[L-64]] y §238.
+
+### 239.5 — Verificación
+**4 pruebas nuevas**, una por caso, y las **35** que ya existían siguen verdes — que era la otra
+mitad de lo que había que comprobar. Verify completo **exit 0**, 35 comprobaciones.
+
+### 239.6 — Archivos
+`portal/src/lib/domain/agenda.ts`(+test) · `portal/scripts/verify-controles.mjs`.

@@ -109,6 +109,7 @@
 | §236 | ⚖️ **Publiqué una fuente legal INVENTADA** (norma que no existe) y el gate que salió de ahí encontró otras diez sin comprobar — una era un BORRADOR citado como norma vigente para una tarifa. 13 abiertas una por una. + artículo del preaviso. | 10296 |
 | §237 | 🔬 **Auditoría N2 #15**: «promesa sin mecanismo» llevaba 7 auditorías y se cerró TRES veces en una noche — siempre convirtiéndola en un gate que bloquea. Contrapeso: 5 identificadores inventados. GC pareado −73c. | 10346 |
 | §238 | ⚡ **548 KB fuera de la ruta crítica** (2 miniaturas decorativas de la portada; en /estancias el arreglo era el OPUESTO) + el gate de habeas data, que tardó **tres intentos** en morder y las tres versiones pasaban la lectura. | 10394 |
+| §239 | 🔴 **La agenda anunciaba «se renueva» en contratos que ya tenían preaviso** — fallo que abrió el 233 tres horas antes: añadir un hecho al modelo no es aditivo para quien ya decidía sin él. + el gate de habeas data (Ley 1581). | 10433 |
 
 ---
 
