@@ -25,6 +25,36 @@ import { migaDe } from '../lib/seo/breadcrumbs';
 const base = Astro.site?.origin ?? `https://${SITE.domain}`;
 const waTexto = encodeURIComponent('Hola ALTORRA, quiero saber qué tarifa aplica a mi caso.');
 
+/*
+ * EL RESULTADO ENRIQUECIDO SE DERIVA, NO SE REESCRIBE (§240).
+ *
+ * La prosa visible ya leía de `tarifas.ts`, pero las respuestas del FAQPage eran copias LITERALES
+ * («3%…», «10% más IVA…»). Cambiar una tarifa habría actualizado la tarjeta y dejado el JSON-LD
+ * anunciando la vieja — y el JSON-LD es lo que Google enseña en el resultado, o sea PUBLICIDAD
+ * (Ley 1480 arts. 29-30). Google además exige que el contenido de un FAQPage esté visible en la
+ * página; una respuesta parafraseada a mano se aleja de la visible con cada edición.
+ */
+const tarifaDe = (id: string) => {
+  const t = TARIFAS.find((x) => x.id === id);
+  // Revienta el BUILD, no el navegador: la página es `prerender`, así que esto es un gate gratis.
+  if (!t) throw new Error(`precios: el FAQPage cita la tarifa '${id}' y no existe en TARIFAS.`);
+  if (t.cifra === null) {
+    throw new Error(
+      `precios: la tarifa '${id}' NO tiene cifra decidida y el FAQPage la anuncia como si la tuviera. ` +
+        // Sin tildes ni guiones largos: este texto viaja en una cabecera HTTP y Astro avisa
+        // de los bytes no-ASCII con un parrafo que tapa el error de verdad.
+        'Retira la pregunta o decide la cifra. Un rango inventado para no dejar el hueco es peor.',
+    );
+  }
+  return t;
+};
+
+/** Mismo orden que la tarjeta visible: cifra, base, nota y quién paga. */
+const respuestaTarifa = (id: string) => {
+  const t = tarifaDe(id);
+  return [`${t.cifra} ${t.base}.`, t.nota, `Quién paga: ${t.paga}`].filter(Boolean).join(' ');
+};
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -37,22 +67,22 @@ const jsonLd = {
         {
           '@type': 'Question',
           name: '¿Cuánto cobra ALTORRA por vender mi inmueble?',
-          acceptedAnswer: { '@type': 'Answer', text: '3% sobre el valor final de la venta, facturado con IVA. Se causa cuando la venta queda registrada.' },
+          acceptedAnswer: { '@type': 'Answer', text: respuestaTarifa('venta') },
         },
         {
           '@type': 'Question',
           name: '¿Cuánto cuesta la administración de un arriendo de vivienda?',
-          acceptedAnswer: { '@type': 'Answer', text: '10% más IVA sobre el cargo mensual integral, que es el canon más la cuota de administración cuando aplique. Lo paga el propietario y se descuenta de cada giro.' },
+          acceptedAnswer: { '@type': 'Answer', text: respuestaTarifa('administracion') },
         },
         {
           '@type': 'Question',
           name: '¿El arrendatario paga comisión?',
-          acceptedAnswer: { '@type': 'Answer', text: 'No. La Ley 820 de 2003 prohíbe cobrar depósitos o cauciones al arrendatario de vivienda. Los honorarios los paga el propietario.' },
+          acceptedAnswer: { '@type': 'Answer', text: `No. ${NADA_AL_ARRENDATARIO.cuerpo}` },
         },
         {
           '@type': 'Question',
           name: '¿Cuesta algo publicar mi propiedad?',
-          acceptedAnswer: { '@type': 'Answer', text: 'No. Publicar es gratis y la publicación no vence.' },
+          acceptedAnswer: { '@type': 'Answer', text: `No. ${SIN_LETRA_PEQUENA[0]}` },
         },
       ],
     },
