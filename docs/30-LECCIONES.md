@@ -228,3 +228,11 @@ siendo el índice de todas y una cita `[[L-NN]]` resuelva sin salir de aquí (§
 ### L-58 — 🎭 Un gate puede imprimir un número CIERTO de una comparación que no significa nada: un porcentaje sin su denominador auditado es decoración *(§193)*
 ### L-59 — 📋 Enumera los pares «declarado ↔ desplegado» y compáralos uno a uno: lo que no se puede LEER no es un par verificable, es un sello *(§198)*
 ### L-60 — 🔀 Antes de desplegar un trigger, mira quién MÁS escucha ese evento: dos escritores del mismo campo no fallan, discrepan a veces *(§199)*
+
+### L-61 — 🔐 Comprobar que las REGLAS están desplegadas, desde fuera y sin credenciales *(§230)*
+Leer las reglas desplegadas no es trivial; **comprobar su EFECTO sí**, y vale más: mide lo que hace el
+sistema, no lo que dice su texto. Con la `apiKey` pública (lo es por diseño), un `curl` anónimo a `firestore.googleapis.com/v1/projects/<proj>/databases/(default)/documents/<col>?key=` y a `firebasestorage.googleapis.com/v0/b/<bucket>/o`.
+**Lo que confirma que mandan las reglas es el MENSAJE, no el 403**: Firestore dice *«Missing or insufficient
+permissions» · PERMISSION_DENIED* y Storage *«Permission denied.»*; una clave restringida o una API apagada
+dan otro texto, y una base **sin reglas desplegadas devuelve 200 con documentos**. 🎯 Sirve para re-sellar un
+`verificado-vivo` que el gate marcó **en vez de re-sellarlo a ciegas**, que es el vicio que ese marcador caza.
