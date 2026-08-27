@@ -118,6 +118,7 @@
 | §245 | 🧑‍🤝‍🧑 **Hermanos**: Cars e INSEMA tenían el gate de fiabilidad DEGRADADO (0 marcadores = no comparaba nada) → sellados contra sus sitios vivos. Y Cars ordenaba un protocolo de modelo **derogado** y un `sync` inexistente. | 10686 |
 | §246 | 💎 **Bersaglio: el shard que NO hice** — agrupar por regex dio un cajón de sastre, no un tema. B-04 pasa de frase a medición (líneas ya arregladas). Y **medir con el instrumento equivocado no es medir**. | 10735 |
 | §247 | 🏷️ **La portada tenía CUATRO `<h1>` visibles** (cuatro banners apilados, no un carrusel) → 1 h1 + 3 h2, invisible porque el CSS va por clase. Gate sobre las páginas del **sitemap**: `/gestion` e `/ingresar` NO eran defectos. | 10776 |
+| §248 | ♿ **303 imágenes y 122 campos sin un fallo** — y 28 falsos positivos que eran de mi sonda (plantillas, `<label>` que envuelve, input oculto). Nace la **prueba NEGATIVA** de toda exclusión. | 10820 |
 
 ---
 

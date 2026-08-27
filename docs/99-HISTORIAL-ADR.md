@@ -10816,3 +10816,36 @@ lo que las Rules y el build ya **bloquean**. Conservado lo que ningún gate vigi
 `portal/src/pages/index.astro` · `portal/scripts/verify-build.mjs` · `docs/10-MEMORIA-CORTO-PLAZO.md`.
 **INTACTOS**: el CSS del hero —no hizo falta tocarlo, que es la prueba de que el cambio es
 invisible— y `/gestion` e `/ingresar`, que estaban bien.
+
+## 248. ADR-248 — 303 imágenes y 122 campos sin un fallo, y 28 falsos positivos que eran míos
+
+### 248.1 — Lo medido
+Toda imagen con `alt` y todo campo con nombre accesible: **303 imágenes pintadas y 122 campos, CERO
+sin nombre**. Es una regresión que entra con cada formulario nuevo y que **no ve quien la introduce**,
+porque no navega con lector de pantalla. Deuda cero → gate.
+
+### 248.2 — 🔴 Pero mi primera versión reportó 28 fallos, y los 28 eran míos
+(a) **3 imágenes** viven dentro de un `<template>`: marcadores que rellena el JS, con `src` y `alt`
+**sin valor a propósito** — el navegador no pinta eso. (b) **24 campos** van **ENVUELTOS** en su
+`<label>`: asociación implícita, válida y que los lectores entienden; buscar solo `for="id"` los
+marcaba a todos. (c) el último es un `<input type="file" hidden>` que dispara un botón visible: al
+estar oculto **no entra en el árbol de accesibilidad** y su nombre lo pone el botón.
+🎯 *Una sonda que no modela la estructura real de la página mide otra cosa, y lo dice con el mismo
+aplomo.* **Tercera vez en el día** —con el estado cero del panel y el cajón de sastre de Bersaglio
+(§246)—, y la tercera cazada por verificar antes de creer el resultado.
+
+### 248.3 — La técnica que sale de aquí: la prueba NEGATIVA
+Probar que el gate bloquea es la mitad. La otra: inyectar el **mismo** defecto **dentro** de lo
+excluido y comprobar que **no** bloquea **y que el denominador no se mueve** (303/122, idénticos).
+Sin eso no se distingue *«la exclusión funciona»* de *«se está tragando contenido real»* — y una
+exclusión demasiado ancha convierte el gate en decoración sin cambiar el aspecto de su ✅. → [[L-64]]
+regla (5).
+
+### 248.4 — Verificación
+`verify` **exit 0, 40 comprobaciones** (era 39) · tres inyecciones, cada una comprobada antes de creer
+el fallo: imagen sin `alt` bloquea · campo sin etiqueta bloquea · los dos dentro de un `<template>`
+**no** bloquean.
+
+### 248.5 — Archivos
+`portal/scripts/verify-build.mjs` · `docs/38-GATES-QUE-MIENTEN.md`. **INTACTO**: todo el marcado del
+sitio — no había nada que arreglar, y la parte útil del turno fue **no** "arreglar" los 28 falsos.
