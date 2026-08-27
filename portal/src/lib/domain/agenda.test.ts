@@ -279,3 +279,52 @@ describe('cifras de un pago (§115) — salen del CONTRATO, no del teclado', () 
     expect(periodoDe('')).toBe('');
   });
 });
+
+/*
+ * LA AGENDA MIRA SI YA SE AVISÓ (§239).
+ *
+ * Estos dos hitos salían SOLO de `vigenciaFin`, y desde que el preaviso se puede registrar (§233)
+ * eso los volvió capaces de decir lo contrario de lo que va a pasar: un contrato con preaviso válido
+ * seguía anunciando «Se renueva automáticamente». Dos verdades sobre el mismo contrato, y la que se
+ * lee a diario era la falsa.
+ */
+describe('preaviso registrado — la agenda deja de contradecir al expediente', () => {
+  const conPreaviso = (efecto: 'termina' | 'se-prorroga', impuestoEl: string) =>
+    contrato({
+      preaviso: {
+        quien: 'arrendador',
+        redactadoEl: '2026-07-20',
+        operador: 'Servientrega',
+        guia: '1099887766',
+        impuestoEl,
+        efecto,
+        registradoEn: '2026-07-25T10:00:00Z',
+        registradoPor: 'daniel-uid',
+      },
+    } as Partial<Contrato>);
+
+  it('🔴 con preaviso VÁLIDO ya no dice que se renueva: dice que termina', () => {
+    const h = agenda([conPreaviso('termina', '2026-07-25')], '2026-10-20', 400);
+    const renov = h.find((x) => x.tipo === 'renovacion');
+    expect(renov?.titulo).toContain('Termina');
+    expect(renov?.detalle).toContain('2026-07-25');
+    expect(renov?.detalle).toContain('Servientrega');
+  });
+
+  it('con preaviso válido deja de pedir «Decidir renovación»: ya se decidió', () => {
+    const h = agenda([conPreaviso('termina', '2026-07-25')], '2026-07-26', 400);
+    expect(h.some((x) => x.tipo === 'preaviso')).toBe(false);
+  });
+
+  it('🔴 con preaviso TARDÍO avisa de volver a hacerlo, y dice que se renueva igual', () => {
+    const h = agenda([conPreaviso('se-prorroga', '2026-08-20')], '2026-08-21', 400);
+    expect(h.find((x) => x.tipo === 'preaviso')?.titulo).toContain('llegó tarde');
+    expect(h.find((x) => x.tipo === 'renovacion')?.detalle).toContain('no surtió efecto');
+  });
+
+  it('sin preaviso registrado se comporta como siempre: pide decidir', () => {
+    const h = agenda([contrato()], '2026-07-26', 400);
+    expect(h.find((x) => x.tipo === 'preaviso')?.titulo).toBe('Decidir renovación');
+    expect(h.find((x) => x.tipo === 'renovacion')?.titulo).toBe('Se renueva automáticamente');
+  });
+});

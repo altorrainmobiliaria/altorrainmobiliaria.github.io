@@ -169,22 +169,45 @@ export function hitosDeContrato(c: Contrato, hoy: string): Hito[] {
    * constancia de entrega). Regular el CÓMO es donde está el valor — ver [[LD-09]].
    */
   if (c.vigenciaFin) {
+    /*
+     * 🔴 LA AGENDA MIRA SI YA SE AVISÓ (§239). Hasta que el preaviso se pudo registrar (§233), estos
+     * dos hitos salían SOLO de `vigenciaFin` — y entonces un contrato con preaviso válido seguía
+     * diciéndole al dueño «Decidir renovación» y, peor, «Se renueva automáticamente»: exactamente lo
+     * contrario de lo que iba a pasar. Dos verdades sobre el mismo contrato, y la que se lee a diario
+     * era la falsa.
+     *
+     * El veredicto se lee del preaviso ARCHIVADO, no se recalcula: lo congeló el servidor al
+     * registrarlo, y un acto ya ocurrido no cambia porque hoy se corrija una fecha.
+     */
+    const preaviso = c.preaviso;
+    const termina = preaviso?.efecto === 'termina';
+    const seProrroga = preaviso?.efecto === 'se-prorroga';
+
     const aviso = sumarMeses(c.vigenciaFin, -MESES_AVISO_RENOVACION);
-    out.push(hito({
+    // Si ya se decidió y el aviso surtió efecto, recordar «decide» es ruido sobre algo hecho.
+    if (!termina) out.push(hito({
       ...comun,
       tipo: 'preaviso',
       fecha: aviso,
-      titulo: 'Decidir renovación',
+      titulo: seProrroga ? 'Volver a avisar: el preaviso llegó tarde' : 'Decidir renovación',
       detalle: `El preaviso legal es de 3 meses (Ley 820) y el contrato termina el ${c.vigenciaFin.slice(0, 10)}. Este aviso llega con un mes de margen.`,
     }, hoy));
     out.push(hito({
       ...comun,
       tipo: 'renovacion',
       fecha: c.vigenciaFin.slice(0, 10),
-      titulo: c.renovacionAutomatica ? 'Se renueva automáticamente' : 'Termina el contrato',
-      detalle: c.renovacionAutomatica
-        ? 'Salvo que alguna de las partes avise a tiempo.'
-        : 'No tiene renovación automática: si no se firma otro, termina.',
+      titulo: termina
+        ? 'Termina el contrato: hay preaviso'
+        : c.renovacionAutomatica
+          ? 'Se renueva automáticamente'
+          : 'Termina el contrato',
+      detalle: termina
+        ? `Se impuso el preaviso el ${preaviso!.impuestoEl} por ${preaviso!.operador} (guía ${preaviso!.guia}), a tiempo. El contrato NO se renueva.`
+        : seProrroga
+          ? `Se renueva igual: el preaviso se impuso el ${preaviso!.impuestoEl}, después del límite, así que no surtió efecto (Ley 820).`
+          : c.renovacionAutomatica
+            ? 'Salvo que alguna de las partes avise a tiempo.'
+            : 'No tiene renovación automática: si no se firma otro, termina.',
     }, hoy));
   }
 
