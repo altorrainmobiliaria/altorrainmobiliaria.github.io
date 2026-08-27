@@ -10292,3 +10292,101 @@ Functions cuando ya son 22.
 ### 235.6 — Archivos
 NUEVOS: `portal/functions/src/solicitud-estado.ts` · `portal/firebase/tests/solicitud-estado.test.ts`.
 TOCADOS: `portal/functions/src/index.ts` · `functions/index.js` (la marca) · `docs/05`.
+
+## 236. ADR-236 — Publiqué una fuente legal inventada, y el gate que salió de ahí encontró otras diez
+
+**Contexto.** Ola 1 está completa en código y el runbook depende del dueño, así que este turno fue a
+**contenido**: el Journal tenía 7 artículos y cuatro de ellos en la misma categoría.
+
+### 236.1 — El artículo
+*«Avisar por WhatsApp que no renueva no termina el contrato»*: las dos exigencias del art. 22.7 de la
+Ley 820 —escrito **y** por servicio postal autorizado—, por qué la Ley 527 da equivalente funcional
+del **escrito** y de la **firma** pero **no de un canal de entrega**, y la trampa que de verdad
+muerde: el plazo cuenta desde la **imposición**, no desde la fecha de la carta. Equivocarse ahí cuesta
+un año de prórroga, y *nadie se entera ese día*. Sitemap 37 → 38 URLs.
+
+### 236.2 — 🔴 Me pillé inventando una fuente
+Cité *«Ley 1369 de 2009»* con el identificador `norma.php?i=38337`, escrito de memoria. La página
+responde que **la norma no existe o el enlace es erróneo**. Nada lo habría detectado: el build pasa,
+el esquema solo exige que sea una URL bien formada, y el artículo se ve impecable. 🎯 **Publicar una
+fuente rota en un texto legal, en un sitio cuyo eslogan es «Seguridad, Legalidad y Confianza», es el
+peor sitio posible para este descuido** — [[M-30]] en su forma más cara. Se retiró: *no se cita lo
+que no se puede comprobar.*
+
+### 236.3 — El trinquete, y por qué es una LISTA y no una petición de red
+`verify:claims` exige ahora que toda fuente del Journal esté en una lista de URLs **abiertas y
+confirmadas**. Un gate que llama a `.gov.co` fallaría el día que el CI no tenga salida o el portal del
+Estado esté caído, *y un gate que falla por motivos ajenos enseña a ignorarlo*. La lista convierte
+«lo comprobé una vez» en algo que el repo RECUERDA: añadir una fuente obliga a abrirla.
+
+### 236.4 — Al estrenarlo, diez fuentes ya publicadas sin comprobar
+Se abrieron **una por una**. Trece quedan confirmadas con lo que resultaron ser. Una —el Código de
+Comercio en `secretariasenado`— **no se pudo leer** (`ECONNREFUSED`) y queda declarada como tal: no
+bloquea, pero **tampoco hereda el ✅**, y el gate la nombra en cada corrida ([[L-59]] regla 1).
+
+### 236.5 — 🔴 Y una de las diez era un hallazgo legal
+`costos-de-cerrar-compraventa-cartagena` citaba como *«Estatuto Tributario del Departamento de
+Bolívar»* un PDF cuyo propio nombre dice **«Proyecto de Ordenanza»** — un BORRADOR, sosteniendo una
+tarifa que un comprador usa para presupuestar una operación real. 🎯 *Un borrador citado como norma
+vigente pasa todos los gates: la URL resuelve, el PDF existe, la cifra tiene «fuente».* Sustituida por
+la sección de normatividad **oficial** de la Gobernación, que es donde vive la ordenanza vigente y
+donde el lector puede confirmarla — las tarifas departamentales cambian por ordenanza.
+
+### 236.6 — Verificación
+Probado viéndolo **bloquear** con una fuente inventada y volver a verde al quitarla. ⚠️ La primera
+prueba no midió nada: el guardián de build rancio corta antes, así que hubo que refrescar `dist`
+para llegar a la sonda. *Un test que no llega a lo que quiere probar da el mismo silencio que un
+test que pasa.* Verify completo **exit 0**, 32 comprobaciones.
+
+### 236.7 — Archivos
+`portal/src/content/journal/preaviso-no-vale-por-correo.md` (nuevo) ·
+`portal/src/content/journal/costos-de-cerrar-compraventa-cartagena.md` ·
+`portal/scripts/verify-claims.mjs`.
+
+## 237. ADR-237 — Auditoría N2 #15: la familia más reincidente por fin se cerró, y cinco identificadores inventados
+
+**Deliberación**: `../brain-private/altorrainmobiliaria/research-archive/2026-08-27-auditoria-cerebro-nivel2-15-inmobiliaria.md`
+
+**Disparador**: el linter la exigía con la **gracia agotada** (18 ADRs nuevos sobre un máximo de 12) y
+**bloqueaba los commits**. PARCIAL y declarada: las sondas 3, 4 y 7 exigen subagentes y esta sesión no
+los tiene autorizados — se marcan `[PENDIENTE]`, no se fingen.
+
+### 237.1 — El resultado
+De los ocho hallazgos accionables de la #14: **cinco cerrados con evidencia**, **dos reinciden** (boot
+al 100 % ×7 · la herramienta que muerde) y uno se cerró por el lado bueno. Dos hallazgos nuevos.
+
+### 237.2 — 🎯 El hilo: el remedio de la familia más reincidente por fin funcionó
+*«Promesa sin mecanismo»* llevaba **siete auditorías** reapareciendo. En una sola noche se cerró
+**tres veces**, y siempre de la misma forma: **convirtiendo la promesa en un gate que bloquea**. El
+RNT dejó de ser una pelota del dueño y pasó a bloquear el build (§234); las fuentes legales dejaron
+de depender de mi memoria y pasaron a una lista que hay que abrir para ampliar (§236); la unidad de
+los honorarios dejó de estar insinuada en un nombre y pasó a declararse en el modelo (§233).
+*Repetir la promesa nunca funcionó; convertirla en algo que muerde, sí.*
+
+### 237.3 — El contrapeso: cinco identificadores inventados en una noche
+`RAIZ` · `htmlDeCliente()` · un valor de enum **dentro de una regla de seguridad** (habría bloqueado
+TODO alojamiento) · un estado de solicitud inexistente · y **una fuente legal PUBLICADA que no
+existe**. → [[M-30]]. De los cinco, **dos ya no pueden repetirse** —el tipo los rechaza, el gate los
+bloquea—; los otros tres siguen dependiendo de que yo lea antes de escribir. 🎯 *La gravedad no la
+fija el error sino dónde cae.*
+
+### 237.4 — N15-01: la copia con permiso
+`20-MEMORIA-ESPACIAL:19` decía *«el RECUENTO tiene dueño y es `05`»* **y copiaba los números en la
+misma frase** — afirmaba «portal 20/18» cuando el dueño ya iba por 22/19. 🎯 **Declarar el dueño y
+copiar el dato igual no es medio SSoT: es la copia con una nota que la hace parecer legítima.** Se
+retiró la cifra; queda el puntero. Reincidente de N14-01, familia §180.
+Y su premisa se **re-verificó**, no se heredó: resultó peor de lo que decía la ficha.
+
+### 237.5 — Lo que se sostuvo
+Rama `main` a cero con origin · el sitio responde **200** · y las Rules desplegadas **niegan** la
+lectura anónima de `solicitudes`, comprobado desde fuera y sin credenciales ([[L-61]]). Las 9
+memorias del harness no contradicen ningún nodo (sonda 5).
+
+### 237.6 — Nuevo y abierto
+**N15-07**: las neuronas al **≥90 % de su cap subieron de 12 a 14 en una noche**. Ninguna reventó,
+pero la pendiente es la señal — dos nodos entraron en zona de shard sin que nadie lo decidiera.
+
+### 237.7 — Cierre
+**GC pareado CUMPLIDO**: el boot bajó de **31492 a 31419** (−73 chars), así que la auditoría no
+engordó el arranque. Se podó la narración de §174 (su familia entera vive en `38`), el censo de las
+hermanas (tiene su ADR) y la ficha de la #14 (la sustituye ésta). `deepAudit` actualizado.

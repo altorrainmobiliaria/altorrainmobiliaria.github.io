@@ -106,6 +106,8 @@
 | §233 | 🚪 **Las DOS puertas del 222, construidas** (preaviso + certificación): huérfanos 3→0. Y al probarlas salió un fallo VIVO: un contrato del 10 % no se podía liquidar porque los dos extremos de `honorariosPct` usaban unidades distintas. | 10134 |
 | §234 | ⚖️ **El gate legal del alojamiento vivía en el FORMULARIO**: las Rules solo miraban rol y version, asi que RNT y reglamento de PH los sostenia una pantalla. Ahora en la frontera, tambien en UPDATE. + censo de las 18 colecciones. | 10201 |
 | §235 | 📬 **El aviso al CLIENTE salía por el Gmail roto** desde hace meses, fallando en silencio: movido a Resend con tipos y 13 pruebas. Solo avisa de 3 estados. + el 4º identificador inventado de la noche, ahora rechazado por el tipo. | 10250 |
+| §236 | ⚖️ **Publiqué una fuente legal INVENTADA** (norma que no existe) y el gate que salió de ahí encontró otras diez sin comprobar — una era un BORRADOR citado como norma vigente para una tarifa. 13 abiertas una por una. + artículo del preaviso. | 10296 |
+| §237 | 🔬 **Auditoría N2 #15**: «promesa sin mecanismo» llevaba 7 auditorías y se cerró TRES veces en una noche — siempre convirtiéndola en un gate que bloquea. Contrapeso: 5 identificadores inventados. GC pareado −73c. | 10346 |
 
 ---
 

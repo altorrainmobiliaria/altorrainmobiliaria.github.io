@@ -52,19 +52,19 @@
 > §140): estrenar los caminos (1.4-1.8) → inventario → cutover. El resto, en PELOTAS.
 > **OLA 2**: el «gate del abogado» NO EXISTE — el abogado soy yo (Daniel, 26-ago) → TODO-49, §165. **Agenda legal a CERO** (§194).
 >
-> 🎭 **UN ✅ NO PRUEBA QUE MIRARA** (§174-§177, §195): 8 gates cableados **tras** hallarlos verdes
-> sin mirar nada; `verify:claims` no abría el journal. **El CI nunca estuvo rojo**: lo afirmé sin mirar.
+> 🎭 **UN ✅ NO PRUEBA QUE MIRARA** — la familia entera, con sus siete formas, en `38-GATES-QUE-MIENTEN`.
 >
-> 🗓️ **última actualización: 2026-08-26** — §208 cerrado por el otro lado: el linter **publica la
+> 🗓️ **última actualización: 2026-08-27** — §208 cerrado por el otro lado: el linter **publica la
 > COBERTURA** y nombra al nodo que falta (ése era el arreglo de §208.3, no teclear la fecha). Curada
 > la ceguera, esta fecha SÍ alimenta al #12. ⚠️ El #16 sigue destapado aquí **a propósito**: poner
 > `verificado-vivo` a la pizarra afirmaría que verifiqué cada pendiente contra la realidad, y es falso. 📄 Brief de Daniel (memoria `brief-lanzamiento-artifact`): **si
 > cambias el reparto 🤖/🧑 o las PELOTAS, ábrelo en el MISMO turno** — ningún gate lo ve envejecer (§211).
 >
-> 🏨 **Alojamiento lleva DOS gates**: RNT + reglamento de PH que autorice EXPRESAMENTE (§178-§179).
+> 🏨 **Alojamiento: RNT + PH, ya MECANIZADOS** (§234) — las Rules impiden crearlo sin ellos y el
+> build se bloquea si el sitio público anuncia por días sin RNT (hoy lo harían **2** páginas).
 >
-> 📬 **LEADS**: el aviso sale por **Resend** desde el portal, no por el Gmail caído (§188-§192).
-> ⏭ Nurturing **apagado** (§192: sus plantillas enlazan al sitio retirado).
+> 📬 **CORREO**: lead nuevo (§188) **y** aviso de estado al cliente (§235) salen por Resend. La
+> legacy queda marcada, y su retirada va EMPAREJADA con desplegar la nueva. Nurturing apagado (§192).
 >
 > ✅ **LAS DOS PUERTAS LEGALES, CONSTRUIDAS** (§233): preaviso (callable + pantalla, 13 pruebas contra el emulador) y certificación anual. `verify:huerfanos` pasa de 3 huérfanos declarados a **0**. Al probarlas salió un fallo VIVO de dinero ([[L-63]]). ⏭️ **Daniel**: mirar los 2 mockups y ESTRENARLAS.
 >
@@ -73,15 +73,14 @@
 > (§219)—; córrelos con **`npm --prefix portal run verify`**, no de memoria.
 
 
-> 🔬 **Auditoría N2 #14** (§218): 5 de 10 REINCIDENTES, un hilo — *arreglos correctos con el alcance
-> enumerado a mano*. ⏭ **Abiertos**: ~~patrones de `verify:claims`~~ ✅ (§224) · **cifras del 5.3: reemplazo REDACTADO** en
-> `specs/PROPUESTA-CIFRAS-CUTOVER.md` (§227) — falta el sí/no de Daniel ·
-> boot al 100 % · «promesa sin mecanismo». 🎯 **Un plural que delimita un universo es un COMANDO.**
+> 🔬 **Auditoría N2 #15** (§237): de la #14, **cinco cerradas y dos reinciden**. 🎯 El hilo cambió: la
+> familia «promesa sin mecanismo» **se cerró tres veces esta noche** (RNT al build, fuentes del Journal,
+> unidad de honorarios) — el remedio que funciona es *convertir la promesa en un gate*, no repetirla.
+> ⏭ **Abiertos**: boot al 100 % (×7) · cifras del 5.3, esperan tu sí/no (`specs/PROPUESTA-CIFRAS-CUTOVER.md`)
+> · identificador inventado ×5 ([[M-30]]). 🎯 **Un identificador que no acabas de leer es inventado.**
 
-> 🔀 **26-ago — el censo saltó a las HERMANAS** (§216, vivas): Bersaglio e INSEMA **LIMPIAS**. **Cars**:
-> `4.9 · 247 reseñas` sin fuente en el pie de **65 páginas** + stats que su spec dejó «a confirmar» en mayo
-> ⇒ **LEGAL-08/09** en su `42-LEGAL` (push a su `dev`; no a `main`).
-> **▶ BERSAGLIO** — estado vivo en su nodo dueño: `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`.
+> 🔀 **Hermanas** (§216): cifras sin fuente en Cars → LEGAL-08/09 de su `42-LEGAL`. Bersaglio, en su
+> nodo dueño: `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`.
 
 > **⏭️ PELOTAS DE DANIEL — ordenadas por lo que DESBLOQUEAN** (§188; antes era una lista plana de 13).
 >

@@ -209,12 +209,12 @@
     }
   ],
   "deepAudit": {
-    "last": "2026-08-26",
-    "coveredHeaderCount": 218,
+    "last": "2026-08-27",
+    "coveredHeaderCount": 237,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "tableFile": "2026-08-26-auditoria-cerebro-nivel2-14-inmobiliaria.md",
-    "_que": "Nivel-2 #14 (ADR 218) - PARCIAL y declarada: sondas 3 y 7 exigen subagente y la sesion prohibe el AgentTool. TERCERA del mismo dia: el dia produjo 36 ADRs (181->217). 10 hallazgos, 5 REINCIDENTES y un hilo unico: un arreglo correcto con el ALCANCE ENUMERADO A MANO (180 corrigio 50 y no 20; la #13 retiro de produccion y no del codigo; N13-01 amplio los archivos y no los patrones). NUEVO y el que mas pesa: N14-06, el defecto aparecio DENTRO del ADR que lo denuncia (216 enumero dos hermanas siendo tres) el mismo dia y con la medicion ya hecha - saber un defecto no protege de el, solo protege el habito mecanico. Abiertos: N14-03 (patrones de verify:claims, espera mockup), N14-04 (boot al 100 por ciento), N14-07 (promesa sin mecanismo, la familia mas reincidente). Previa #13 = 199 headers."
+    "tableFile": "2026-08-27-auditoria-cerebro-nivel2-15-inmobiliaria.md",
+    "_que": "Nivel-2 #15 (ADR 237) - PARCIAL y declarada: sondas 3, 4 y 7 exigen subagente y la sesion no los tiene autorizados. Disparada con la gracia AGOTADA (18 ADRs) y bloqueando commits. De la #14: cinco cerradas, dos reinciden (boot al 100 por ciento x7, la herramienta). HILO: la familia \"promesa sin mecanismo\" llevaba SIETE auditorias reapareciendo y se cerro TRES veces en una noche, siempre igual - convirtiendo la promesa en un gate que bloquea (RNT al build 234, fuentes del Journal 236, unidad de honorarios 233). CONTRAPESO N15-03: cinco identificadores INVENTADOS en la misma noche, uno publicado como fuente legal (M-30); dos ya no pueden repetirse porque el tipo o el gate los rechazan. N15-01 reincidente: el 20 declaraba el dueno del recuento Y copiaba el numero en la misma frase. NUEVO abierto N15-07: neuronas al 90 por ciento de su cap subieron de 12 a 14 en una noche. GC pareado cumplido: boot 31492 -> 31419. Previa #14 = 218 headers."
   },
   "noCap": {
     "docs/99-HISTORIAL-ADR.md": "Largo Plazo: NUNCA se lee entero, solo offset/limit vía el índice (§0). Un cap aquí no significaría nada.",
