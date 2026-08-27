@@ -43,7 +43,6 @@
 ### L-53 — 🔐 Firebase MFA (TOTP): pide el código DESPUÉS de la contraseña, `enroll()` revoca las demás sesiones, y NO existen códigos de respaldo
 ### L-54 — 🌩️ Los tipos de Cloudflare Workers PISAN el DOM: `Element.append` deja de ser la del navegador (usa `appendChild`)
 ### L-55 — 🧬 Varias copias del MISMO SDK = varios registros: `app/no-app` con la app ya inicializada, y el error no nombra versiones
-
 ### L-44 — 🔐 Un ruleset se REEMPLAZA, no se fusiona: dos archivos con el mismo nombre son una trampa silenciosa *(2026-08-21, ADR §100)*
 **Disparador**: dos ficheros `firestore.rules` en un mismo repo —uno en la raíz y otro en la carpeta de un
 subproyecto— cada uno con su `firebase.json`. **Causa**: Firestore y Storage guardan UN ruleset por
@@ -146,6 +145,7 @@ diciendo a alguien que no podrá preguntarte.
 ### L-28 — 🎭 `getComputedStyle` MIENTE en toda propiedad con `transition` (invierte L-22) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
 ### L-62 — 🔍 Sonda de semántica que mira el elemento y no su ANCESTRO: 4 de 5 señales falsas (`<template>`, `hidden`, atributo desnudo) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
 ### L-63 — 💸 Dos validadores CORRECTOS del mismo campo y ninguno comprueba que hablen de la misma UNIDAD (un contrato del 10 % no se podía liquidar) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
+### L-64 — 🪤 Un gate NUEVO se queda en verde de TRES formas (contar el marcador · medir por cercanía · leer una alternativa como si fueran dos) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
 ### L-26 — 🖥️ Panel integrado = renderer CONGELADO (rAF 0 frames) · juicio visual SIEMPRE por Chrome → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá, incl. corrección capital + variante resize)
 
 ### L-24 — Verificar un build contra el MOCKUP por ESTRUCTURA (checklist de secciones), no solo por color *(Ola 1, ADR §32; el dueño cazó lo que la verificación no)*

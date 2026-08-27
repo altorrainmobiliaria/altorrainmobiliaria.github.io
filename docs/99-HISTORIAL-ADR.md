@@ -10390,3 +10390,42 @@ pero la pendiente es la señal — dos nodos entraron en zona de shard sin que n
 **GC pareado CUMPLIDO**: el boot bajó de **31492 a 31419** (−73 chars), así que la auditoría no
 engordó el arranque. Se podó la narración de §174 (su familia entera vive en `38`), el censo de las
 hermanas (tiene su ADR) y la ficha de la #14 (la sustituye ésta). `deepAudit` actualizado.
+
+## 238. ADR-238 — 548 KB fuera de la ruta crítica, y el gate de habeas data que tardó tres intentos en morder
+
+### 238.1 — El peso que nadie miraba
+La portada descargaba **dos miniaturas DECORATIVAS del mapa** —329 KB y 109 KB, con `alt=""` las dos y
+muy por debajo del pliegue— **antes del primer pintado**: 438 KB de datos móviles para dos recuadros
+de adorno. En `/estancias` el caso era **el contrario**: su imagen principal está encima del pliegue y
+es la candidata a LCP, así que cargarla perezosa la habría EMPEORADO; lo que le faltaba era
+declararse con `fetchpriority`. 🎯 *Mismo síntoma en el informe, dos arreglos opuestos: hay que mirar
+dónde vive cada imagen antes de tocarla.* Ruta crítica: **548 KB → 0**, con su gate (§238.3).
+
+### 238.2 — Y mi primera medición reportó 87 falsos
+Contaba el logo dos veces por página. Era mentira: usa `srcset` con `sizes`, así que el navegador baja
+la variante de 8 KB y los 33 KB que yo medía son solo el `src` de respaldo. Al excluir lo que tiene
+`srcset` quedaban **tres imágenes reales en dos páginas**. *Sin esa excepción el gate habría nacido
+gritando en falso, que es como se aprende a ignorarlo.*
+
+### 238.3 — Habeas data: el trinquete parte de cero deuda
+La Ley 1581 pide autorización **previa, expresa e informada**, y el D.1377/2013 art. 5 aclara que el
+silencio no vale. Medido sobre las 45 páginas: los **4** formularios que recogen datos ya la tienen
+(casilla + texto + enlace) y **cero** campos personales viven fuera de un `<form>`. El de iniciar
+sesión no la lleva, y está bien: autentica, no capta. Con la deuda en cero, el gate solo puede
+proteger hacia adelante.
+
+### 238.4 — 🔴 El gate tardó TRES intentos, y cada uno enseñó algo
+Contó el marcador · midió por cercanía · leyó una alternativa como si fueran dos. Las tres versiones
+**pasaban la lectura** y ninguna pasaba el defecto. → [[L-64]].
+🎯 Y el corolario que más se repitió esta noche: **dos pruebas salieron verdes sobre una regresión que
+nunca llegó a inyectarse**, porque el patrón de inyección no encontró su ancla. *Un test que no llega
+a lo que quiere probar da el mismo silencio que un test que pasa.*
+
+### 238.5 — Verificación
+Probado inyectando el defecto en **los cuatro** formularios, uno por uno: bloquea en los cuatro y
+vuelve a verde al restaurar. El tercer fallo del gate solo apareció al probar el segundo formulario.
+Verify completo **exit 0**, 35 comprobaciones.
+
+### 238.6 — Archivos
+`portal/src/pages/index.astro` · `estancias.astro` · `portal/scripts/verify-build.mjs` ·
+`portal/scripts/verify-controles.mjs`.

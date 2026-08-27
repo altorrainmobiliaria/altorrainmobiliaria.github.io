@@ -108,6 +108,7 @@
 | §235 | 📬 **El aviso al CLIENTE salía por el Gmail roto** desde hace meses, fallando en silencio: movido a Resend con tipos y 13 pruebas. Solo avisa de 3 estados. + el 4º identificador inventado de la noche, ahora rechazado por el tipo. | 10250 |
 | §236 | ⚖️ **Publiqué una fuente legal INVENTADA** (norma que no existe) y el gate que salió de ahí encontró otras diez sin comprobar — una era un BORRADOR citado como norma vigente para una tarifa. 13 abiertas una por una. + artículo del preaviso. | 10296 |
 | §237 | 🔬 **Auditoría N2 #15**: «promesa sin mecanismo» llevaba 7 auditorías y se cerró TRES veces en una noche — siempre convirtiéndola en un gate que bloquea. Contrapeso: 5 identificadores inventados. GC pareado −73c. | 10346 |
+| §238 | ⚡ **548 KB fuera de la ruta crítica** (2 miniaturas decorativas de la portada; en /estancias el arreglo era el OPUESTO) + el gate de habeas data, que tardó **tres intentos** en morder y las tres versiones pasaban la lectura. | 10394 |
 
 ---
 
