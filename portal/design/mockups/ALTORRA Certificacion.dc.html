@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#E6EDF2; font-family:'Hanken Grotesk',sans-serif; -webkit-font-smoothing:antialiased; }
+</style>
+</helmet>
+
+<!--
+  ══════════════════════════════════════════════
+  ALTORRA · CERTIFICACIÓN ANUAL AL PROPIETARIO — la puerta que le faltaba a `domain/certificacion.ts`
+  (§168 · §222 · encargo `specs/ENCARGO-PUERTAS-QUE-FALTAN.md`)
+
+  LA IDEA CENTRAL, en una frase: **esto no es un informe nuestro, es un insumo de la declaración de
+  OTRA persona.** El D.1625/2016 art. 1.2.4.11 dice que el mandante declara esos ingresos «según la
+  información que le suministre el mandatario»: entregársela es obligación de ALTORRA, y el papel
+  que sale de aquí se lo va a pasar a su contador. Todo lo demás se deduce de eso.
+
+  POR QUÉ NO ES LA MISMA PANTALLA QUE LIQUIDACIÓN. La sección Liquidación de `/gestion` calcula **el
+  mes** y está aprobada. Ésta suma **el año** y responde a otra pregunta: no «¿cuánto le giro este
+  mes?» sino «¿qué declara usted?». Comparten el dominio (`certificar()` suma liquidaciones) y no
+  comparten propósito.
+
+  CINCO DECISIONES QUE NO SON DE PINTAR:
+
+  1. 🧾 **EL INGRESO DEL PROPIETARIO NO ES LO QUE SE LE COBRÓ AL ARRENDATARIO, Y HAY QUE DECIRLO.**
+     El dominio ya lo resuelve (`cobroAlArrendatario − giroAPH`): la cuota de administración nunca
+     fue suya, pasó por nosotros camino de la copropiedad. Pero si el certificado solo enseña una
+     cifra, el contador de enfrente no sabe que ya se descontó, y la pregunta vuelve. Peor: si
+     alguien suma la cuota al ingreso, le infla la base y **se paga en impuestos**. Va con su línea
+     propia y su explicación.
+
+  2. 🕳️ **LOS MESES QUE FALTAN SE ENSEÑAN, NO SE OMITEN.** `mesesFaltantes()` existe porque un año
+     con huecos no es necesariamente un error —el contrato pudo empezar en marzo— pero **quien
+     recibe el papel va a asumir que cubre el año entero**. Un certificado que dice «enero a
+     diciembre» y solo suma nueve meses es un documento que parece correcto y hace daño. Se listan
+     los meses ausentes con todas las letras, arriba, antes del total.
+
+  3. 🚫 **EL BOTÓN DE EMITIR NO EXISTE MIENTRAS HAYA UN MES REPETIDO.** De los seis problemas que
+     devuelve `problemasDeCertificacion()`, `periodos-repetidos` es el único que produce un documento
+     impecable a la vista y **le duplica un ingreso en la declaración a otra persona**. Los otros
+     cinco se ven; ése no. Por eso bloquea, y no solo avisa.
+
+  4. 🖨️ **ES UNA PANTALLA QUE SE IMPRIME, NO UN GENERADOR DE PDF.** Sección de `/gestion` junto a
+     Liquidación —que es donde el dato ya vive— con una vista de impresión. Montar una tubería de
+     PDF sería código nuevo, con su plantilla y su almacenamiento, para un documento que el navegador
+     ya sabe producir. Sumar maquinaria sin necesidad es justo lo que este encargo denuncia.
+
+  5. ⚖️ **NO LLEVA LA FÓRMULA «BAJO LA GRAVEDAD DEL JURAMENTO».** La nota del kit la daba por buena;
+     al buscar el texto del artículo en fuente oficial ese inciso no aparece en lo que se pudo leer.
+     Una fórmula jurídica que no se ha verificado no se imprime en un papel que firma la empresa
+     (§3.3). Si aparece confirmada, se añade — y hasta entonces su ausencia es deliberada, no un
+     olvido.
+
+  CUÁNDO SE EMITE: una vez al año para la declaración, **y a demanda** cuando el propietario la pida
+  —el dominio recibe los meses que se le den, así que lo segundo sale gratis y evita una llamada.
+
+  Colores: navy #062743 · dorado #d4af37 · plata #BFC3C9 · fondo blanco. Sin negro, sin verde ni rojo
+  de estado (un mes que falta no es una alarma; es un hecho que hay que leer).
+  ══════════════════════════════════════════════
+-->
+
+<div style="max-width:980px;margin:0 auto;padding:40px 24px 72px;">
+
+  <!-- ═══ Cabecera ═══ -->
+  <div style="margin-bottom:26px;">
+    <p style="margin:0 0 6px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A94A0;font-weight:600;">Gestión · Mandato</p>
+    <h1 style="margin:0 0 8px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:38px;line-height:1.1;color:#062743;">Certificación al propietario</h1>
+    <p style="margin:0;font-size:14.5px;line-height:1.7;color:#5B6572;max-width:64ch;">
+      Lo que ALTORRA recibió y pagó por cuenta del propietario durante el año. Es el papel que él le
+      entrega a su contador: por eso dice también lo que <em>no</em> incluye.
+    </p>
+  </div>
+
+  <!-- ═══ Selector ═══ -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;background:#fff;border-radius:16px;padding:18px 20px;box-shadow:0 1px 3px rgba(6,39,67,.06);margin-bottom:22px;">
+    <label style="flex:1 1 260px;">
+      <span style="display:block;font-size:12px;font-weight:600;color:#062743;margin-bottom:6px;">Propietario</span>
+      <select style="width:100%;padding:11px 12px;border:1px solid #DDE4EA;border-radius:10px;font:inherit;font-size:14px;color:#062743;background:#fff;">
+        <option>Daniel Romero · CC 1.047.xxx.xxx</option>
+        <option>Inversiones Milán S.A.S. · NIT 901.xxx.xxx-4</option>
+      </select>
+    </label>
+    <label style="flex:0 1 150px;">
+      <span style="display:block;font-size:12px;font-weight:600;color:#062743;margin-bottom:6px;">Año gravable</span>
+      <select style="width:100%;padding:11px 12px;border:1px solid #DDE4EA;border-radius:10px;font:inherit;font-size:14px;color:#062743;background:#fff;">
+        <option>2026</option>
+        <option>2025</option>
+      </select>
+    </label>
+    <button style="padding:11px 22px;border:0;border-radius:10px;background:#d4af37;color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;">Armar certificación</button>
+  </div>
+
+  <!-- ═══ 🕳️ LOS MESES QUE FALTAN — arriba, antes del total ═══ -->
+  <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;background:#062743;border-radius:16px;padding:22px 26px;margin-bottom:22px;">
+    <div style="flex:1 1 260px;">
+      <p style="margin:0 0 4px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#BFC3C9;font-weight:600;">Cubre</p>
+      <p style="margin:0;font-family:'Cormorant Garamond',serif;font-size:29px;font-weight:600;color:#d4af37;line-height:1.15;">Marzo a diciembre · 10 meses</p>
+    </div>
+    <p style="flex:1 1 330px;margin:0;font-size:13.5px;line-height:1.75;color:#BFC3C9;">
+      <strong style="color:#fff;">Faltan enero y febrero</strong> porque el mandato empezó el 1 de
+      marzo. No es un hueco: es el año real del contrato. El certificado lo dice para que nadie
+      asuma que cubre los doce meses.
+    </p>
+  </div>
+
+  <!-- ═══ El certificado ═══ -->
+  <div style="background:#fff;border-radius:18px;padding:30px 32px;box-shadow:0 1px 3px rgba(6,39,67,.06);">
+
+    <div style="padding-bottom:20px;border-bottom:1px solid #EDF1F5;margin-bottom:4px;">
+      <p style="margin:0 0 8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A94A0;font-weight:600;">Certifica</p>
+      <p style="margin:0;font-size:14.5px;line-height:1.8;color:#5B6572;max-width:70ch;">
+        <strong style="color:#062743;">ALTORRA Inmobiliaria</strong> · NIT 901.xxx.xxx-1, en calidad
+        de mandatario, hace constar los ingresos recibidos y los pagos y retenciones efectuados por
+        cuenta de <strong style="color:#062743;">Daniel Romero</strong> · CC 1.047.xxx.xxx, entre
+        marzo y diciembre de 2026, en desarrollo del contrato de mandato para la administración del
+        inmueble Apto 502, Torre Milán — Bocagrande.
+      </p>
+    </div>
+
+    <!-- 🧾 EL INGRESO, con lo que NO es -->
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:18px 0;border-bottom:1px solid #F4F7F9;">
+      <div>
+        <span style="font-size:15.5px;color:#062743;font-weight:600;">Ingresos recibidos por su cuenta</span>
+        <span style="display:block;font-size:12.5px;line-height:1.65;color:#8A94A0;margin-top:3px;max-width:56ch;">Solo el canon. <strong style="color:#062743;">No incluye la cuota de administración</strong>: ésa nunca fue ingreso suyo, pasó por nosotros camino de la copropiedad. Sumarla le inflaría la base gravable.</span>
+      </div>
+      <span style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:#062743;white-space:nowrap;">$20.000.000</span>
+    </div>
+
+    <p style="margin:22px 0 10px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A94A0;font-weight:600;">Pagos efectuados por su cuenta</p>
+
+    <div style="display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid #F4F7F9;">
+      <div><span style="font-size:14.5px;color:#062743;font-weight:500;">Cuota de copropiedad</span>
+        <span style="display:block;font-size:12.5px;color:#8A94A0;margin-top:2px;">→ a la administración del edificio.</span></div>
+      <span style="font-size:15px;color:#062743;white-space:nowrap;">$3.000.000</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid #F4F7F9;">
+      <div><span style="font-size:14.5px;color:#062743;font-weight:500;">Honorarios de administración</span>
+        <span style="display:block;font-size:12.5px;color:#8A94A0;margin-top:2px;">→ a ALTORRA. Es gasto deducible del inmueble.</span></div>
+      <span style="font-size:15px;color:#062743;white-space:nowrap;">$2.300.000</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid #F4F7F9;">
+      <div><span style="font-size:14.5px;color:#062743;font-weight:500;">IVA sobre los honorarios</span>
+        <span style="display:block;font-size:12.5px;color:#8A94A0;margin-top:2px;">→ a la DIAN, facturado por ALTORRA.</span></div>
+      <span style="font-size:15px;color:#062743;white-space:nowrap;">$437.000</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid #F4F7F9;background:#FBFCFD;margin:0 -12px;padding-left:12px;padding-right:12px;border-radius:8px;">
+      <div><span style="font-size:14.5px;color:#5B6572;font-weight:500;">Retenciones practicadas y giradas</span>
+        <span style="display:block;font-size:12.5px;color:#8A94A0;margin-top:2px;"><strong style="color:#062743;">Ninguna este año</strong>: el arrendatario no es agente de retención, así que no hubo qué practicar.</span></div>
+      <span style="font-size:15px;color:#8A94A0;white-space:nowrap;">$0</span>
+    </div>
+
+    <!-- El número -->
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:20px;padding:20px 22px;background:#062743;border-radius:14px;">
+      <div>
+        <p style="margin:0;font-size:15px;font-weight:600;color:#fff;">Neto girado al propietario</p>
+        <p style="margin:4px 0 0;font-size:12.5px;color:#BFC3C9;">Suma de los 10 giros mensuales del período certificado</p>
+      </div>
+      <p style="margin:0;font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:#d4af37;white-space:nowrap;">$17.263.000</p>
+    </div>
+
+    <p style="margin:16px 0 0;padding-top:14px;border-top:1px dashed #DDE4EA;font-size:12.5px;line-height:1.7;color:#8A94A0;">
+      <strong style="color:#062743;">Cuadra:</strong> $17.263.000 + $3.000.000 + $2.300.000 +
+      $437.000 + $0 = <strong style="color:#062743;">$23.000.000</strong>, exactamente lo cobrado en
+      los diez meses. Los totales son la suma de las liquidaciones mensuales, no un cálculo aparte.
+    </p>
+  </div>
+
+  <!-- ═══ 🚫 El caso que bloquea ═══ -->
+  <div style="margin-top:14px;background:#F4F7F9;border:1px solid #DDE4EA;border-radius:18px;padding:22px 26px;">
+    <p style="margin:0 0 8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A94A0;font-weight:600;">Así se ve cuando no se puede emitir</p>
+    <p style="margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:600;color:#062743;line-height:1.3;">
+      Hay un mes repetido: septiembre aparece dos veces.
+    </p>
+    <p style="margin:0;font-size:13.5px;line-height:1.75;color:#5B6572;max-width:66ch;">
+      Certificarlo así le duplicaría el ingreso de ese mes en la declaración. Es el único problema de
+      la lista que produce un papel <strong style="color:#062743;">de aspecto impecable</strong> y que
+      hace daño, así que el botón de emitir no se habilita hasta corregirlo — los demás avisan, éste
+      bloquea.
+    </p>
+  </div>
+
+  <!-- ═══ Emitir ═══ -->
+  <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+    <button style="padding:12px 26px;border:0;border-radius:10px;background:#d4af37;color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;">Imprimir certificación</button>
+    <p style="margin:0;font-size:13px;line-height:1.7;color:#5B6572;max-width:56ch;">
+      Se imprime desde el navegador y queda archivada en el expediente. Una vez al año para la
+      declaración, y cuando el propietario la pida.
+    </p>
+  </div>
+
+  <!-- ═══ Lo que este papel NO dice ═══ -->
+  <div style="margin-top:20px;border-left:3px solid #d4af37;padding:16px 20px;background:#fff;border-radius:0 14px 14px 0;">
+    <p style="margin:0;font-size:13.5px;line-height:1.75;color:#5B6572;">
+      <strong style="color:#062743;">No lleva la fórmula «bajo la gravedad del juramento».</strong>
+      La nota del kit la daba por obligatoria, pero al leer el D.1625/2016 art. 1.2.4.11 en fuente
+      oficial ese inciso no aparece. Una fórmula jurídica que no se ha verificado no se imprime en un
+      papel que firma la empresa; si aparece confirmada, se añade. Su ausencia es una decisión, no un
+      olvido.
+    </p>
+  </div>
+
+</div>
+
+</x-dc>
+</body>
+</html>

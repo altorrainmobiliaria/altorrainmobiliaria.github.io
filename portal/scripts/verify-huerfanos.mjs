@@ -38,17 +38,13 @@ const ACEPTADOS = new Map([
   [
     'src/lib/domain/preaviso.ts',
     'Ley 820 arts. 22.7 y 24: falta la pantalla que registre operador, guía y fecha de IMPOSICIÓN. ' +
-      'Encargo escrito en specs/ENCARGO-PUERTAS-QUE-FALTAN.md; bloquea el mockup (§222).',
+      'Mockup YA ESCRITO (design/mockups/ALTORRA Preaviso.dc.html, 26-ago); espera la aprobación ' +
+      'de Daniel para construirse — nunca UI sin mockup aprobado (§222).',
   ],
   [
     'src/lib/domain/certificacion.ts',
-    'D.1625/2016 art. 1.2.4.11: falta decidir si la certificación anual es pantalla o PDF. ' +
-      'El mockup de Liquidación cubre la MENSUAL, no ésta. Mismo encargo (§222).',
-  ],
-  [
-    'src/lib/domain/index.ts',
-    'Barrel que instruye «importar desde ~/lib/domain» y que nadie sigue: los 25 módulos vivos se ' +
-      'citan por ruta. O se adopta la convención o se retira el fichero (§222.2).',
+    'D.1625/2016 art. 1.2.4.11: DECIDIDO que es pantalla imprimible de /gestion, no una tubería de ' +
+      'PDF. Mockup YA ESCRITO (ALTORRA Certificacion.dc.html, 26-ago); espera aprobación (§222).',
   ],
 ]);
 
@@ -114,8 +110,18 @@ if (nuevos.length) {
   process.exit(1);
 }
 
+/*
+ * Un ACEPTADO deja de ser huérfano por DOS caminos —ganó consumidor, o el fichero ya no está— y
+ * decir «ya tiene consumidor» sobre uno borrado es una afirmación falsa dicha por un ✅. Se
+ * distinguen mirando el disco, que es la única fuente que sabe cuál de los dos fue.
+ */
 for (const h of resueltos) {
-  console.log(`ℹ️  verify:huerfanos — «${h}» ya tiene consumidor: quítalo de ACEPTADOS (la deuda declarada también se poda).`);
+  const sigue = existsSync(join(raiz, h));
+  console.log(
+    sigue
+      ? `ℹ️  verify:huerfanos — «${h}» ya tiene consumidor: quítalo de ACEPTADOS (la deuda declarada también se poda).`
+      : `ℹ️  verify:huerfanos — «${h}» ya NO existe: quítalo de ACEPTADOS. No ganó consumidor, se retiró.`,
+  );
 }
 
 console.log(

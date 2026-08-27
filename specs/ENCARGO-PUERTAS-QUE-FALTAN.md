@@ -53,11 +53,19 @@ lleva al operador el viernes, para la ley se avisó **el viernes**.
   Hay que añadir **`constancia-postal`** — pero *con* la pantalla, para no sumar más código sin
   consumidor, que es justo el defecto que este encargo documenta.
 
-### ❓ Lo que decide Daniel
-1. **¿Dónde vive?** Propuesta: dentro del expediente en `/gestion`, junto a los documentos — es donde
-   ya está el contrato y su vigencia. Alternativa: paso propio en el ciclo `activo → preaviso →
-   finalizado`, que ya existe como estado.
-2. **¿Quién puede registrarla?** Los mismos roles que escriben en la bóveda, o solo `super_admin`.
+### ✅ DECIDIDO (26-ago) — Daniel delegó; queda su veto al aprobar el mockup
+1. **Dónde vive**: sección del expediente en `/gestion`, junto a los documentos. Ahí ya están el
+   contrato y su vigencia, que es de donde sale la fecha límite.
+2. **Y el estado se DERIVA, no se teclea**: pasar a `preaviso` en el ciclo `activo → preaviso →
+   finalizado` será **consecuencia** de registrar una evidencia válida, no una casilla aparte. Un
+   contrato marcado «preaviso» sin constancia detrás es exactamente el fallo que este módulo existe
+   para impedir — y sería invisible. *Lo derivado sobrevive; lo declarado se desincroniza.*
+3. **Quién puede**: los mismos roles que escriben en la bóveda. La constancia **es** un documento de
+   la bóveda; separar los permisos abriría una puerta donde se puede guardar la prueba sin registrar
+   su efecto, o al revés.
+
+📐 **Mockup escrito**: `portal/design/mockups/ALTORRA Preaviso.dc.html` — ⏭️ **falta que Daniel lo
+apruebe** (nunca UI sin mockup aprobado).
 
 ---
 
@@ -76,11 +84,18 @@ Sin ella, el propietario **no puede declarar bien** lo que ALTORRA recibió y re
 `mesesFaltantes()` dicen qué le falta — incluido **qué meses del año no están**, que es el error
 típico y el que invalida el documento.
 
-### ❓ Lo que decide Daniel
-1. **¿Es una pantalla o un PDF descargable?** El mockup **`ALTORRA Liquidacion.dc.html`** existe y
-   está aprobado, pero cubre la liquidación **MENSUAL** (canon, honorarios, IVA, retención): no
-   menciona la certificación **anual**. Son dos cosas distintas y hoy solo una tiene diseño.
-2. **¿Cuándo se emite?** Una vez al año (para la declaración) o a demanda del propietario.
+### ✅ DECIDIDO (26-ago) — Daniel delegó; queda su veto al aprobar el mockup
+1. **Pantalla que se imprime**, sección de `/gestion` junto a Liquidación — no una tubería de PDF.
+   Montarla sería plantilla + almacenamiento + su gate, código nuevo para un documento que el
+   navegador ya sabe producir. Sumar maquinaria sin necesidad es el defecto que este encargo denuncia.
+2. **Anual y a demanda**: la obligación es anual (para la declaración), pero `certificar()` recibe los
+   meses que se le den, así que lo segundo sale gratis y evita una llamada.
+3. **Sin la fórmula «bajo la gravedad del juramento»**: el módulo ya dejó dicho que ese inciso no
+   aparece en el texto que se pudo leer del art. 1.2.4.11, y una fórmula jurídica sin verificar no se
+   imprime en un papel que firma la empresa (§3.3). Su ausencia es una decisión, no un olvido.
+
+📐 **Mockup escrito**: `portal/design/mockups/ALTORRA Certificacion.dc.html` — ⏭️ **falta que Daniel lo
+apruebe**.
 3. ✅ **CORRECCIÓN (mismo día).** Escribí antes que la página no existía: **existe y está viva**, como
    la sección **Liquidación** de `/gestion` (`gestion-liquidacion.ts`, montada desde `gestion-alta-ui.ts`),
    con la copia del mockup palabra por palabra. Lo deduje de que no hubiera un `liquidacion.astro` —
@@ -93,10 +108,13 @@ típico y el que invalida el documento.
 
 ## 3️⃣ El barrel muerto — `portal/src/lib/domain/index.ts`
 
-Ocho líneas que dicen *«Importar desde `~/lib/domain`»* y **nadie importa así**: los 25 módulos vivos
-se citan por su ruta completa. O se adopta la convención o se retira el fichero; mantener una
-instrucción que nadie sigue es peor que no tenerla, porque el siguiente que la lea creerá que hay una
-regla.
+✅ **RETIRADO el 26-ago.** Ocho líneas que decían *«Importar desde `~/lib/domain`»* y que nadie
+seguía. Y al ir a retirarlo apareció el argumento que faltaba: **el barrel solo re-exportaba 6 de los
+28 módulos**. O sea que quien hubiera obedecido la instrucción habría encontrado seis y concluido que
+los otros veintidós no existen — no era un fichero muerto, era un **mapa incompleto con aspecto de
+completo**, que es peor. `verify:huerfanos` baja de 3 huérfanos declarados a 2, y su mensaje de
+«resuelto» se arregló de paso: decía *«ya tiene consumidor»* también cuando el fichero simplemente
+había desaparecido, que es una afirmación falsa dicha por un ✅.
 
 ---
 
