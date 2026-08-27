@@ -11030,3 +11030,37 @@ promete más de lo que hace.
 ### 252.6 — Archivos
 `docs/.brain-manifest.json` · `docs/10-MEMORIA-CORTO-PLAZO.md` · `docs/99-HISTORIAL-ADR.md` ·
 `docs/00-INDICE.md`. **INTACTO**: el texto original de §237 — solo se le añadió el aviso.
+
+## 253. ADR-253 — El auditor de los cuatro cerebros existía en tres versiones distintas
+
+### 253.1 — Lo que había, medido
+`auditoria-cerebro` es una skill **portable**: por diseño vive en `~/.claude/skills/` (la que se
+carga) **y** en `skills/` de cada repo (§33). Medidas las cinco copias: la cargada **6842 b** con
+[[M-31]] y §206; la de este repo **5808 b**, solo §206; y las de **cars, bersaglio e insema, 4967 b
+idénticas, sin ninguna de las dos**.
+🎯 Es decir: **tres cerebros auditaban con el auditor al que le faltaban justo las lecciones que
+existen porque se audita** — *re-verifica la premisa, no solo el estado* (§206) y *mide el objeto del
+remedio, no lo recuerdes* (M-31). Las dos nacieron de auditorías y ninguna había llegado a los
+hermanos.
+
+### 253.2 — Propagación, con la comprobación que la hace segura
+Antes de copiar: `diff` de cada copia contra la cargada → **ninguna aportaba una sola línea propia**;
+todas eran subconjuntos. Con eso la propagación no puede perder nada, y ese es el «protocolo
+anti-copy-ciego» hecho de verdad y no invocado. Las cuatro quedan idénticas byte a byte.
+
+### 253.3 — El gate 6b, y por qué este sí y el anterior no
+El **6a compara NOMBRES de carpeta** contra el inventario y por eso no vio nada durante semanas.
+⚠️ Un `6b` distinto ya se había **retirado en v1.3** por ruido puro (G-11: cero señal en tres
+auditorías), así que antes de escribir este medí cuántas skills discreparían hoy: **36 en ambos
+sitios, las 36 idénticas → deuda CERO**, y habría cazado el caso real. *Esa medición previa es la
+diferencia entre un gate y una molestia.*
+Probado derivando la copia a propósito —quitándole M-31, que es literalmente como estaba hace una
+hora—: la nombra con los dos tamaños. Kernel **v1.21.0 → v1.22.0**, repartido a los cuatro.
+
+### 253.4 — Verificación
+`brain:check` SANO en los cuatro · `✅ 36 skill(s) portables coinciden byte a byte con la que se
+carga` · el defecto inyectado se reporta y desaparece al restaurar.
+
+### 253.5 — Archivos
+`../brain-private/kernel/brain-check.mjs` + `VERSION` (reparto ×4) ·
+`skills/auditoria-cerebro/SKILL.md` en los **cuatro** repos.

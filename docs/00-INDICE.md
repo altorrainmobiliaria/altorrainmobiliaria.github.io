@@ -123,6 +123,7 @@
 | §250 | 🚨 **El móvil PERSONAL estaba publicado en el dominio** (JSON-LD del legacy) mientras mi gate decía «cero fugas»: su denominador excluía el sitio del problema. Lo halló la sonda adversarial de la 1.ª auditoría COMPLETA. | 10898 |
 | §251 | 🙈 **Cruzar el 100 % te volvía INVISIBLE** en la alarma de saturación: un nodo al 95 % salía y uno al 105 % no. Kernel v1.21.0 ×4. + mi instrumento medía sin el CRLF que el gate sí cuenta. | 10959 |
 | §252 | 🪞 **Tres nodos contradecían su propia re-medición**: el manifest ordenaba un callejón refutado, `TODO-50` tenía dos prohibiciones (una falsa) y cero puertas, y §237 quedó desmentido. | 10994 |
+| §253 | 🧬 **El auditor existía en TRES versiones**: tres cerebros auditaban sin las dos lecciones nacidas de auditar. Propagado + gate 6b, que compara CONTENIDO (el 6a solo miraba nombres). | 11034 |
 
 ---
 

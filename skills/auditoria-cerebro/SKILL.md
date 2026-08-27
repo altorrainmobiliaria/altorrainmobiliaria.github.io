@@ -27,6 +27,17 @@ Para cada hallazgo previo: ¿cerrado con evidencia, abierto-tracked, o REINCIDEN
 > sobreviva, más cierto parece y menos lo es.** Si su premisa cita una cifra, un nombre de chequeo o
 > un fichero, ábrelo. Y cuando resulte falso, **se RETIRA, no se cierra**: cerrar afirma que hubo algo
 > que arreglar.
+>
+> ⚠️ **Y re-verifica el OBJETO del remedio, no solo la premisa** (M-31, 27-ago-2026). Un hallazgo que
+> propone actuar sobre algo concreto —*«hay que partir el nodo X»*, *«hay que arreglar el gate Y»*—
+> hereda el foco del turno que lo escribió. Caso real: la auditoría anterior cerró diciendo que tocaba
+> partir el nodo cuyo techo se había subido dos veces esa noche; medido al día siguiente, ese nodo
+> estaba al **79 %** y ni entraba en el top-12 de saturación, mientras otro llevaba días **clavado en su
+> cap de líneas**, bloqueado. No se eligió el peor: se eligió **el que estaba entre las manos**.
+> 🎯 **Todo hallazgo que nombre un objeto declara la medición que lo eligió — con su denominador — o no
+> lo eligió nadie.** Un remedio sin denominador es una corazonada con formato de tabla, y sobrevive
+> auditorías porque nadie vuelve a preguntarse *por qué ESE*. Sospecha sobre todo del hallazgo escrito
+> **al final** de una sesión larga: es cuando el foco pesa más y medir cuesta más.
 
 ### Sonda 1 — Fidelidad de estado (la clase "App-Check ×3 estados")
 Toma 3-5 hechos de estado declarados en los nodos always-on (05/10): versión desplegada, qué está
