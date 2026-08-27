@@ -36,6 +36,13 @@ export const TIPOS_DOCUMENTO = [
   'estudio-titulos',
   'promesa-compraventa',
   'escritura-publica',
+  /*
+   * La constancia del operador postal del preaviso (§233). NO entra en `EXIGIDOS`: solo existe si
+   * hubo preaviso, y pedirsela a todos los expedientes convertiria un hecho ocasional en un hueco
+   * permanente. Pero SI tiene nombre propio: sin el, el escaneo iria como `otro` y perderia su
+   * identidad justo en el documento que el dia del pleito hay que encontrar rapido.
+   */
+  'constancia-postal',
   'otro',
 ] as const;
 export type TipoDocumento = (typeof TIPOS_DOCUMENTO)[number];
@@ -55,6 +62,7 @@ export const NOMBRE_DOCUMENTO: Record<TipoDocumento, string> = {
   'estudio-titulos': 'Estudio de títulos',
   'promesa-compraventa': 'Promesa de compraventa',
   'escritura-publica': 'Escritura pública',
+  'constancia-postal': 'Constancia del operador postal',
   otro: 'Otro documento',
 };
 
