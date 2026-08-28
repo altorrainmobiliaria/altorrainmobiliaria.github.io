@@ -1,6 +1,10 @@
 ---
 /*
- * 404 — página no encontrada / sección en construcción (Ola 1).
+ * 404 — página no encontrada.
+ *
+ * El h1 decía «Esta sección aún está en construcción», cierto en Ola 1 y ENGAÑOSO ahora: a quien teclea mal
+ * una URL se le prometía una sección futura que ya existe. El titular dice el hecho; el matiz de obra
+ * se queda en el cuerpo, que sigue siendo verdad mientras haya rutas sin abrir.
  * Con Header/Footer compartidos para que las rutas de la nav aún no construidas
  * (estancias/invertir/publicar/turismo/aliados/gestion/journal…) no rompan la experiencia.
  */
@@ -17,7 +21,7 @@ import Footer from '../components/Footer.astro';
   <main id="main" class="nf">
     <div class="alt-container nf__in">
       <p class="alt-eyebrow">Error 404</p>
-      <h1 class="nf__h">Esta sección aún está en construcción.</h1>
+      <h1 class="nf__h">No encontramos esta página.</h1>
       <p class="nf__p">La página que buscas no existe o todavía no la hemos abierto al público. Mientras tanto, explora nuestras propiedades o escríbenos y con gusto te ayudamos.</p>
       <hr class="alt-divider alt-divider--center nf__div" />
       <div class="nf__cta">
