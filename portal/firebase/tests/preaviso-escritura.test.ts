@@ -65,9 +65,16 @@ async function sembrarContrato(extra: Partial<Contrato> = {}): Promise<void> {
   });
 }
 
+/*
+ * ⚠️ Avisa el ARRENDATARIO a propósito (§263). Antes decía `arrendador`, y con eso estas pruebas
+ * afirmaban contra el emulador que un aviso postal del propietario TERMINA el contrato — el mismo
+ * error legal que tenía el artículo del Journal. La Ley 820 solo le da esa puerta al inquilino
+ * (art. 24); el arrendador necesita además la indemnización del art. 22 num. 7 o la causal con
+ * caución del num. 8. El caso del arrendador tiene su propio bloque al final.
+ */
 const EVIDENCIA_A_TIEMPO = {
   contratoId: CONTRATO_ID,
-  quien: 'arrendador',
+  quien: 'arrendatario',
   redactadoEl: '2027-06-14',
   operador: 'Servientrega',
   guia: '1099887766',
@@ -188,6 +195,30 @@ describe('lo que falta se rechaza; lo que llegó tarde no', () => {
     await sembrarContrato();
     const e = await falla(() => registrarPreaviso.run(pedir({ ...EVIDENCIA_A_TIEMPO, quien: 'portero' })));
     expect(e.code).toContain('invalid-argument');
+  });
+});
+
+describe('\U0001F534 el aviso del ARRENDADOR no mueve el contrato (§263)', () => {
+  /*
+   * El servidor deriva el estado del veredicto: `if (veredicto === 'termina') estado = 'preaviso'`.
+   * Con el aviso del arrendador el veredicto ya no es `termina`, así que el contrato NO se marca —
+   * y eso es lo correcto: la restitución no procede solo con la carta. Se comprueba contra el
+   * emulador porque es el único sitio donde se ve lo que queda ESCRITO en Firestore.
+   */
+  it('registra la evidencia pero NO marca el contrato como terminado', async () => {
+    await sembrarContrato();
+    const r = (await registrarPreaviso.run(
+      pedir({ ...EVIDENCIA_A_TIEMPO, quien: 'arrendador' }, EDITOR),
+    )) as { efecto: string; estadoContrato: string };
+
+    expect(r.efecto).toBe('falta-titulo-del-arrendador');
+
+    const doc = (await db.doc(`contratos/${CONTRATO_ID}`).get()).data() as Contrato;
+    // La constancia SÍ queda archivada: el acto ocurrió y su prueba es lo que importa guardar.
+    expect(doc.preaviso?.guia).toBe('1099887766');
+    expect(doc.preaviso?.efecto).toBe('falta-titulo-del-arrendador');
+    // Pero el contrato sigue como estaba.
+    expect(doc.estado).not.toBe('preaviso');
   });
 });
 
