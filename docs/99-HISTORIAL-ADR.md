@@ -11528,3 +11528,71 @@ a `\d{2,}` para que un ordinal maquetado («04 Estancias») deje de contar como 
 **INTACTO**: `registrarEvento` queda escrita y **sin desplegar** (Functions van a mano, §197), y la
 casilla de autorización que falta en `/mi-perfil` NO se añade — es un control visible y eso va con
 mockup del dueño (paso 5.1b del runbook).
+
+## 264. ADR-264 — Tocar el buscador en el móvil ampliaba la página, y el arreglo se compilaba y perdía en silencio
+
+Barrido de accesibilidad móvil sobre el portal construido. Nueve campos por debajo de 16 px entre la
+home, `/comprar` y `/estancias`. No es una preferencia tipográfica: **Safari en iOS amplía la página
+al enfocar cualquier campo cuya letra mida menos de 16 px, y no deshace ese zoom al salir.** Quien
+tocaba «¿En qué zona quieres comprar?» se quedaba con la página ampliada, el formulario fuera de
+pantalla, y tenía que pellizcar para volver — arrastrando una página ampliada hasta el botón de
+enviar. En un portal donde el buscador del hero ES la puerta de entrada, eso es la primera
+interacción de la visita.
+
+### 264.1 — Causa raíz
+Dos causas apiladas, y la de arriba escondió a la de abajo durante dos intentos.
+
+La **de producto**: los campos heredaban `--alt-fs-sm` (14 px) del sistema de diseño sellado, que se
+decidió mirando el escritorio. Nadie había medido el umbral de iOS.
+
+La **de método**, que es la que cuesta: la override que escribí *sí* se compilaba y *sí* se servía,
+correctamente acotada, y **no aplicaba**. `@media` **no aporta especificidad**. Mi regla pesaba
+exactamente lo mismo que la que debía vencer —Astro acota AMBOS lados con el mismo
+`[data-astro-cid-…]`, así que el empate no es accidente sino la norma— y entre iguales decide el
+ORDEN DE APARICIÓN. Yo la había puesto al PRINCIPIO del bloque `<style>`, y sus rivales vivían en las
+líneas 1115 y 1300. Encima, la mitad del selector apuntaba a `.home-cerca`, una clase que no existe:
+lo real es `.home-cerca__field`.
+
+### 264.2 — Solución estructural
+Subir los campos a `--alt-fs-body` (16 px) **solo bajo 900 px**, en tres sitios y por el mismo
+motivo: la regla general en `components.css`, y una override por página en `index.astro` y
+`[operacion].astro` —donde el acotado de Astro obliga a pelear en su terreno— colocada **al final**
+del bloque, con el comentario que explica que ese sitio no es decorativo.
+
+**NO se usa `maximum-scale=1`.** Es la solución que sale primero en cualquier búsqueda y apaga el
+zoom para todo el mundo, incluida la gente que lo necesita para leer. Se arregla el tamaño, no se
+quita la lupa. Y 16 px es exactamente un token que ya existía: cero literales nuevos en un sistema
+sellado.
+
+### 264.3 — No-regresión
+El escritorio queda idéntico, y no de palabra: medido campo por campo a 1280 px antes y después
+—15,5 / 15,5 / 14,5 en la home y 15 / 13,5 en `/comprar`, los valores originales—. Ningún ID, clase
+ni función cambia de nombre; el cambio es aditivo y vive entero dentro de una consulta de medio.
+
+### 264.4 — Verificación
+Medido en el navegador a 375 px, no deducido del código: **0 campos bajo 16 px** en `/`, `/comprar`,
+`/arrendar`, `/estancias`, `/publicar`, `/ingresar` y `/alertas`. `npm run verify` COMPLETO en verde
+—typecheck del portal y de Functions, 986 unitarias, **190 contra el emulador**, build y los 10
+gates—, que es el denominador entero y no los 10 gates a secas (§263.6).
+
+### 264.5 — Anti-patterns evitados
+`maximum-scale=1` (rompe el zoom a quien lo necesita). Literal `16px` en vez del token. Bajar el
+punto de ruptura a `hover: none` (dejaría fuera las tablets con teclado). Y el que más cerca estuve
+de cometer: **subir la especificidad con `!important`** en vez de entender por qué perdía — habría
+funcionado, y habría dejado el diagnóstico sin hacer y una deuda en un sistema sellado.
+
+### 264.6 — Archivos
+Modificados: `portal/src/styles/components.css`, `portal/src/pages/index.astro`,
+`portal/src/pages/[operacion].astro`, `portal/src/pages/estancias.astro`.
+**INTACTOS**: `tokens.css` (el sistema sellado no se toca — se usa un token que ya estaba) y el
+`<meta viewport>` de `BaseLayout`.
+
+### 264.7 — Doctrina aplicada
+§3.3 (verifica, no asumas): el veredicto sale de medir el nodo vivo, no de leer el CSS. Y una
+corrección a mi propio método, que es lo que se lleva la lección: **busqué en el CSS construido
+`max-width: 900px`, no lo encontré, y concluí «no se compiló» — cuando el minificador lo había
+reescrito como `(width<=900px)` y la regla llevaba ahí desde el primer intento.** Es la misma familia
+de §259 y §263: *un patrón que conoce UNA sola de las formas en que algo se escribe cuenta de menos*,
+aplicada ahora a mí buscando en un artefacto con la sintaxis del fuente. Depositado en [[L-68]]
+(`31-VERIFICACION-UI`) y destilado como reglas 7 y 8 de la skill portable `validacion-live-chrome`,
+en sus dos copias.

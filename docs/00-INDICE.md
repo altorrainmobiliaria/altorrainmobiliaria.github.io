@@ -100,6 +100,7 @@
 | §261 | 🛡️ **Un gate número 11, y su única aplicación era `.git/config`** (que no se clona): el del panel LEGACY, sin tests ni tipos · cableado al CI y probado en negativo · son DOS catálogos, y ahora lo dice. | 11364 |
 | §262 | 🚨 **«Nunca commitear secrets» era doctrina SIN mecanismo**, y su único escáner llevaba roto en Windows sin que nadie lo invocara · gate de 10 patrones sobre 903 ficheros, 2 negativas · el validador viejo, a cuarentena. | 11396 |
 | §263 | 💰 **Barrido del PRODUCTO: 12 fallos, la mitad en papeles que firma el cliente** — «1000 %», NIT inventado, certificado descuadrado, contratos mezclados · el panel afirmaba una terminación que la ley no da · 5 suites fijaban el error. | 11437 |
+| §264 | 📱 **iOS ampliaba la página al tocar el buscador** — campos bajo 16 px · el arreglo compilaba y PERDÍA: `@media` no da especificidad, el empate lo decide el orden. | 11532 |
 
 ---
 

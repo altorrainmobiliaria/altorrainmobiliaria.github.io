@@ -62,23 +62,24 @@
 >
 > 🏨 Alojamiento: RNT + PH los BLOQUEAN las Rules (§234) y el build (§240) — no se describe aquí.
 >
-> 📬 **CORREO**: lead nuevo (§188) **y** aviso de estado al cliente (§235) salen por Resend. La
-> legacy queda marcada, y su retirada va EMPAREJADA con desplegar la nueva. Nurturing apagado (§192).
+> 📬 **CORREO** → Resend: lead nuevo (§188) y aviso de estado (§235). La legacy se retira EMPAREJADA con el despliegue. Nurturing apagado (§192).
 >
-> 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y se le cazaron 4 fallos
-> que solo vio la consola del dueño (§133-§136). Si un gate pasa, pregunta **qué abre** ([[L-52]]) —y **cuántos**
-> (§219)— con **`npm --prefix portal run verify`**, que **NO son solo los 10 gates**: incluye `test:rules` (emulador). Correr los gates y cantar «verde» dejó el CI rojo 3 corridas (§263).
-
+> 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
+> Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates — incluye `test:rules` (emulador).
 
 > 🎯 **AQUÍ VOY (28-ago)** — barrido de **PRODUCTO** (no del cerebro): 61 hallazgos, 43 juzgados;
-> crudo en la bóveda (`2026-08-28-barrido-producto-*.json`). **12 arreglados** → §263.
-> ⏭ **SIGUEN ~14, por gravedad**: filtros del SERP que no filtran · buscador del hero que tira sus
-> parámetros · el panel abre con 48 inmuebles y $4.850M inventados · la tabla del Journal pierde la
-> columna del total · dos artículos se contradicen sobre la matrícula.
+> crudo en la bóveda (`2026-08-28-barrido-producto-*.json`). **12 arreglados → §263**, y desde
+> entonces **6 más, todos medidos en el navegador**: cabecera móvil · tabla del Journal · KPIs
+> inventados del panel · los dos artículos que se contradecían sobre la matrícula · orden del SERP ·
+> **zoom de iOS al enfocar un campo (§264)**.
+> ⏭ **SIGUEN ~8, por gravedad**: (a) los filtros del SERP no filtran — gate=TODO-22, pide diseño;
+> (b) el buscador del hero manda `zona`/`tipo` a `/comprar` y hay que comprobar si alguien los lee;
+> (c) la tabla de pipeline y el hilo de actividad del panel siguen siendo de mentira — **gate=mockup
+> de Daniel**, no se tocan sin él; (d) **18 hallazgos nunca se juzgaron** (el workflow murió con la
+> sesión): están en el JSON de la bóveda, no se han perdido.
 
-> 🔬 **Auditorías #15 y #16: cerradas** (§237 · §250 · §256 · §258 — 32 hallazgos: 22 cerrados,
-> 6 retirados). 🎯 Lo que enseñó la #16 no fue un hallazgo sino el método: **3 de 13 abiertos
-> eran FALSOS** e invocaban una regla sin abrir el gate que la implementa ([[M-33]]).
+> 🔬 **Auditorías #15 y #16: cerradas** (§237 · §250 §256 · §258 — 32 hallazgos: 22 cerrados, 6
+> retirados). Su método, que es lo que quedó vivo: [[M-33]].
 > ⏭ **Vivo, y es TUYO**: las cinco cifras del 5.3 (`specs/PROPUESTA-CIFRAS-CUTOVER.md`) · qué
 > carpetas dejan de servirse en el dominio (N16-29) · los 13 correos del `50` (N16-30).
 
@@ -110,7 +111,6 @@
 > **(3) B-04 DataCrédito** (solo si quieres screening propio) · **(4a) recovery codes** (§72, higiene,
 > 5 min) · **(9) 📣 PAUTA** — aplazada por ti y **aplazarla es SEGURO**: solo muerde el día que recargues
 > saldo ([[D-15]]); antes de eso, sesión de Meta ([[D-16c]]) + filtro `Entrega=Activo` ([[D-15b]]).
-> ~~(7) tasa de mora~~ **cerrada, no era tuya** (§181) · ~~(2)(5)(6)~~ cerradas antes.
 
 > **⏸️ EN PAUSA, reanudable y sin bloquear nada**: 64 leves del kit (ledger en bóveda) · [[M-09]] a los
 > 3 hermanos (TODO-32b) · backlog B-01..B-05. 🛑 **NO RELANZAR** el comité R3, la auditoría B-03 ni los

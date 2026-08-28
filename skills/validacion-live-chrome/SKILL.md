@@ -167,6 +167,25 @@ poblaciones distintas de nodos y pueden tener estilos distintos sin que nada avi
    altos.every(h => h > 0)`) y devuelve «SIN MEDIR» si no. Comprueba también que la cadena de padres
    hasta `body` está visible, no solo que el elemento existe.
 
+7. **Cuando tu arreglo de CSS «no hace nada», la primera pregunta es ¿GANA?, no ¿ESTÁ?** Una regla
+   puede compilarse, servirse y perder en silencio. Tres trampas, por frecuencia: (a) `@media` **no
+   aporta especificidad** — empata con la regla que quiere vencer, y entre iguales decide el ORDEN DE
+   APARICIÓN, así que las overrides van al FINAL del bloque; los frameworks que acotan por atributo
+   (Astro `[data-astro-cid-…]`, Vue `[data-v-…]`) suben los DOS lados por igual, con lo que el empate
+   es la norma y no la excepción. (b) No concluyas «no se compiló» de un `grep` del BUILD hecho con la
+   sintaxis del FUENTE: los minificadores reescriben (`max-width: 900px` → `width<=900px`), y ese
+   vacío se lee como ausencia cuando la regla llevaba ahí desde el principio. Busca lo que el
+   compilador no puede reescribir —el nombre de clase— o pregúntale al CSSOM vivo. (c) Los selectores
+   se sacan de la cadena del DOM **medida**, no de tu memoria del marcado. Las tres se zanjan de una
+   vez recorriendo `document.styleSheets` y listando qué reglas casan con el nodo y en qué orden.
+
+8. **Un campo por debajo de 16 px es un fallo medible en móvil, no una preferencia tipográfica.**
+   Safari en iOS amplía la página al enfocar cualquier campo con letra menor y **no deshace ese zoom**
+   al salir: quien toca el buscador se queda con la página ampliada. Cabe en una línea de todo barrido
+   móvil: `[...document.querySelectorAll('input,select,textarea')].filter(x =>
+   parseFloat(getComputedStyle(x).fontSize) < 16)`. Y el arreglo **nunca** es `maximum-scale=1`: eso
+   apaga la lupa a quien la necesita para leer. Se arregla el tamaño, no se quita el zoom.
+
 ## 6. Conexiones (doble vía)
 - **Hacia mí** (qué recorrer / cómo cerrar): `caza-bugs` · `verification-before-completion` · `anti-codigo-muerto` (que lo nuevo no dejó lo viejo roto EN VIVO).
 - **Soy el gate empírico DE**: `proceso-decision-fuerte` **paso 7** (pruebas de estado en un navegador REAL cierran la decisión).

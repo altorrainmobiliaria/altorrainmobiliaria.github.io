@@ -141,6 +141,7 @@ parte exacta* toca el gate. Un gate sobre el 20% del alcance congela el 100% sol
 
 ### L-28 — 🎭 `getComputedStyle` MIENTE en toda propiedad con `transition` (invierte L-22) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
 ### L-62 — 🔍 Sonda de semántica que mira el elemento y no su ANCESTRO: 4 de 5 señales falsas (`<template>`, `hidden`, atributo desnudo) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
+### L-68 — 🎭 Una override que COMPILA y se SIRVE puede perder en silencio: `@media` NO aporta especificidad → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
 ### L-63 — 💸 Dos validadores CORRECTOS del mismo campo y ninguno comprueba que hablen de la misma UNIDAD (un contrato del 10 % no se podía liquidar) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
 ### L-64 — 🪤 Un gate NUEVO se queda en verde de TRES formas (contar el marcador · medir por cercanía · leer una alternativa como si fueran dos) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
 ### L-65 — 🌗 Un gate con **exención de entorno** da un verde que nadie ha visto fallar JAMÁS (el RNT «bloqueaba el build» mientras el build pasaba a diario) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
@@ -152,7 +153,6 @@ parte exacta* toca el gate. Un gate sobre el 20% del alcance congela el 100% sol
 **Disparador**: añadí `astro-icon` + `@iconify-json/*` para íconos pro; el dev server (miniflare/workerd) tiró `module is not defined` (la integración usa CJS/virtual-module que workerd no soporta). **Fix**: NO usar la integración. Extraer los paths oficiales del set iconify una vez (`require('@iconify-json/lucide/icons.json').icons[name].body`) y embeberlos inline como `<svg viewBox="0 0 24 24" set:html={body}>`. Lucide trae `stroke="currentColor"`, Simple Icons `fill="currentColor"` en el body → heredan la paleta. Mismo arte, sin dependencia de build/runtime. Desinstalar los 3 paquetes tras extraer.
 
 ### L-22 — 🖥️ Verificar UI por computed styles vs captura (el panel desincroniza/timeout el screenshot) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
-
 ---
 
 ### L-45 — 🔀 Dos escritores, una colección, dos modelos: el `as T` a ciegas convierte «datos viejos» en «catálogo vacío sin errores» *(2026-08-21, ADR §103)*
