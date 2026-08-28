@@ -9,6 +9,35 @@ import {
 } from './liquidacion';
 import { IVA } from './dinero';
 
+describe('la tarifa que se IMPRIME sale del dominio, no se re-deriva (§263)', () => {
+  /*
+   * El comprobante del propietario decia «Honorarios de administracion · 1000 %». El importe estaba
+   * bien; mentia el numero impreso. La causa: `Contrato.honorariosPct` se guarda como PORCENTAJE (10)
+   * y la pantalla lo trataba como FRACCION al pintarlo, mientras la llamada al dominio si dividia
+   * entre 100. Dos caminos para la misma cifra, y solo uno correcto.
+   */
+  it('devuelve la fraccion que aplico, para que nadie tenga que recalcularla', () => {
+    const l = liquidarPeriodo({ canon: 2_000_000, administracionPH: 300_000 });
+    expect(l.honorariosPctAplicado).toBe(0.1);
+    // Lo que la pantalla imprime a partir de eso: «10 %», nunca «1000 %».
+    expect(Math.round(l.honorariosPctAplicado * 1000) / 10).toBe(10);
+  });
+
+  it('respeta la tarifa pactada del contrato, y la devuelve tal cual', () => {
+    const l = liquidarPeriodo({ canon: 2_000_000, administracionPH: 300_000, honorariosPct: 0.08 });
+    expect(l.honorariosPctAplicado).toBe(0.08);
+    expect(Math.round(l.honorariosPctAplicado * 1000) / 10).toBe(8);
+    // Y el importe sigue cuadrando con ESA tarifa: 8 % de 2.300.000.
+    expect(l.honorarios).toBe(184_000);
+  });
+
+  it('un porcentaje colado como si fuera fraccion es un PROBLEMA, no un cobro de 10x', () => {
+    /* La guardia del dominio: 10 (porcentaje) nunca puede pasar por tarifa. */
+    const problemas = problemasDeLiquidacion({ canon: 2_000_000, administracionPH: 0, honorariosPct: 10 });
+    expect(problemas.length).toBeGreaterThan(0);
+  });
+});
+
 describe('liquidarPeriodo — el caso normal de este negocio', () => {
   /* Vivienda, arrendatario persona natural, cuota de PH cobrada aparte. */
   const base = { canon: 2_000_000, administracionPH: 300_000 };
@@ -113,11 +142,21 @@ describe('🔒 EL INVARIANTE: lo que entra es exactamente lo que sale', () => {
     }
   }
 
-  it('todas las cifras son enteros: en COP no hay centavos', () => {
+  it('todas las cifras de DINERO son enteros: en COP no hay centavos', () => {
     const l = liquidarPeriodo({ canon: 1_333_333, administracionPH: 77_777, honorariosPct: 0.075 });
-    for (const [k, v] of Object.entries(l)) {
+    /*
+     * `honorariosPctAplicado` NO es dinero: es la tarifa, y una tarifa con decimales es lo normal
+     * (7,5 %). Se excluye NOMBRÁNDOLA, no relajando el invariante: el dia que se añada otro campo de
+     * pesos, este test lo sigue exigiendo entero. La lista es la excepción, no la regla.
+     */
+    const NO_ES_DINERO = new Set(['honorariosPctAplicado']);
+    const revisados = Object.entries(l).filter(([k]) => !NO_ES_DINERO.has(k));
+    expect(revisados.length).toBeGreaterThanOrEqual(8); // si el objeto encoge, el test lo dice
+    for (const [k, v] of revisados) {
       expect(Number.isInteger(v), `${k} = ${v}`).toBe(true);
     }
+    // Y la tarifa, por su parte, tiene que ser la que se pidió.
+    expect(l.honorariosPctAplicado).toBe(0.075);
   });
 });
 

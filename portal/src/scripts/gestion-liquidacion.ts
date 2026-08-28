@@ -143,7 +143,14 @@ function pintarComprobante(c: Contrato, l: Liquidacion, retiene: boolean): Docum
     );
   }
 
-  const pct = Math.round((c.honorariosPct ?? 0.1) * 1000) / 10;
+  /*
+   * 🔴 Aqui se imprimia «1000 %». `Contrato.honorariosPct` se guarda como PORCENTAJE (10) —lo
+   * validan `gestion.ts` con `> 100` y `agenda.ts` dividiendo entre 100— y esta linea lo trataba
+   * como FRACCION. El importe estaba bien, porque la llamada al dominio si divide entre 100; solo
+   * mentia el numero impreso, que es el que lee el propietario en su comprobante. Ahora la tarifa
+   * la DEVUELVE el dominio ya aplicada, y no hay dos caminos que puedan discrepar (§263).
+   */
+  const pct = Math.round(l.honorariosPctAplicado * 1000) / 10;
   mete(frag, 
     fila(
       `Honorarios de administración · ${pct} %`,

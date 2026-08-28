@@ -78,6 +78,14 @@ export interface Liquidacion {
   giroAlPropietario: COP;
   /** Lo que le queda a ALTORRA después de la retención sobre su comisión (sin contar el IVA, que es de la DIAN). */
   netoAltorra: COP;
+  /**
+   * La tarifa de honorarios REALMENTE aplicada, como FRACCIÓN (0.1 = 10 %). La devuelve el dominio
+   * para que quien la imprima no tenga que re-derivarla: el comprobante decía «1000 %» porque la
+   * pantalla la recalculaba desde el contrato —donde se guarda como PORCENTAJE— mientras el importe
+   * venía de aquí, ya convertido (§263). Misma medicina que `TARIFA_IVA` en §257: la cifra impresa
+   * y la calculada salen del mismo sitio, o divergen.
+   */
+  honorariosPctAplicado: number;
 }
 
 /** Al peso. En COP no hay centavos en la práctica, y arrastrar decimales es como se pierde un peso. */
@@ -138,6 +146,7 @@ export function liquidarPeriodo(e: EntradaLiquidacion): Liquidacion {
     giroAPH,
     giroAlPropietario,
     netoAltorra: honorarios - retencionHonorarios,
+    honorariosPctAplicado: pct,
   };
 }
 
