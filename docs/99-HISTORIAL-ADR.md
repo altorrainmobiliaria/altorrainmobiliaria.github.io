@@ -11266,3 +11266,62 @@ repos NO entra al router. **Impuesto one-in-one-out pagado**: entran 94c, sale u
 **22 cerrados · 6 retirados · 4 abiertos** de 32. De los 4 que quedan, **dos son decisión de Daniel**
 (qué carpetas del repo dejan de servirse en el dominio, y los 13 correos del `50`) y por eso no las
 toco: la recomendación va con evidencia, la decisión es suya.
+
+## 259. ADR-259 — Un 301 puede aterrizar en un 404, y el gate seguía en verde
+
+### 259.1 — La mitad del camino que nadie recorría
+`verify:enlaces` comprobaba que ninguna URL del sitio viejo se quedara **sin regla** de 301. Su ✅
+decía *«las 74 están cubiertas»* — cierto, y **mudo sobre si esa cobertura lleva a alguna parte**.
+Nadie comprobaba el otro extremo. Alguien renombra `/invertir` o mueve `zona/[slug].astro` y 6 o 12
+redirects se vuelven **301 hacia un 404**: para Google es peor que no redirigir —sigue el salto, no
+encuentra nada, y tira la posición de la página vieja **y** la del destino—. No hay error en consola
+ni falla el build, y el único momento en que se miraría era el paso **5.5 del runbook**: con el DNS
+ya movido, en el punto de no retorno. Ahora corre en CI en cada push, y 5.5 pasó de trabajo a lectura.
+
+### 259.2 — 🔁 Volví a parsear donde tenía que ejecutar, dos veces en la misma hora
+Midiendo esto a mano conté **53 redirects donde hay 65**, y dos hallazgos que reporté eran míos:
+«tres colisiones de ruta» (había normalizado los slugs quitándoles el `.html`, que es justo lo que
+las URLs viejas SÍ llevan) y «14 stubs sin regla» (los doce de barrio no son literales: los genera un
+`.map()` sobre `ZONAS`, y mi patrón solo veía `{ de: …, a: … }`). El número real lo obtuve como
+debía: **importando el módulo y leyendo lo que exporta**. 🎯 *Es §255 otra vez —leer lo que un
+programa dice de sí mismo no es ejecutarlo— y esta vez el instrumento no fallaba por mirar poco,
+sino por conocer **una sola de las formas** en que el dato se escribe.* Lo que no ve un patrón así
+es siempre lo derivado, que es precisamente lo que nadie revisa a mano.
+
+### 259.3 — Por eso la sonda se vigila a sí misma
+Los destinos vienen de dos sitios. Si el patrón de los literales se rompiera, `zonas.ts` seguiría
+aportando 12 y el gate **pasaría en verde comprobando 12 de 28** — el fallo que este gate existe para
+impedir, dentro del gate. Las dos mitades se cuentan por separado y una en cero es un fallo con su
+cifra escrita. **Ambas sondas probadas EN NEGATIVO** ([[L-64]] regla 5): con `/invertir` renombrado
+nombra el destino roto; con el patrón mutilado dice *«0 · 12»* y se niega a pasar.
+
+### 259.4 — Y el comentario que prometía de más
+`redirects.ts` afirmaba que era *«IMPOSIBLE (…) un 301 apuntando a una landing que nadie
+construyó»*. Media verdad: la derivación garantiza el 1:1 con el censo de zonas, pero **no** que la
+landing se construya, y **no dice nada de los ~53 redirects manuales**, cuyos destinos son cadenas a
+mano. Quien lo leyera cerraría la búsqueda justo antes de mirar lo que sí podía romperse — la misma
+clase que el `IVA` de §257, y corregido igual: **en el sitio donde estaba escrito**.
+
+### 259.5 — Verificación
+28 destinos existen (16 manuales + 12 derivados) · 74 URLs viejas cubiertas · 964 pruebas ·
+typecheck limpio · build OK · **los 10 gates en verde**. Lo bueno de la medición: el subsistema de
+redirects estaba **mejor de lo que asumí** — los 65 correctos, `NO_REDIRIGIR` con sus nueve
+excepciones razonadas. El eslabón débil era mi instrumento, no el sistema.
+
+### 259.6 — Y el instrumento del propio linter medía saltos de línea como conocimiento
+Al cerrar esto, el gate ordenó **«PODA: exceso 122c»** sobre un boot que estaba **por debajo** del
+objetivo. Medido: `CLAUDE.md` tenía **150** finales CRLF y el `10` otros **117** — git los convierte
+al hacer checkout, así que un fichero recién commiteado gana un byte por línea **sin cambiar un solo
+carácter**. Eran **267 chars fantasma** en el número más consecuente de este cerebro, el que decide
+qué conocimiento merece estar siempre cargado. Y `05`, que lo genera el heartbeat, tenía CERO: el
+presupuesto **bailaba según qué fichero hubiera tocado git el último**.
+
+🎯 Lo revelador: **el kernel ya lo sabía**. El gate #1 hace ese mismo `replace(/\r\n/g,'\n')` desde
+hace versiones… **en su línea y solo en la suya**, dejando los otros **55** usos del lector midiendo
+retornos como contenido. *Un arreglo puesto en el sitio donde dolió, en vez de en el instrumento,
+deja el fallo vivo en todos los demás* — y [[L-66]] llevaba meses documentándolo como un gotcha que
+había que sortear a mano en vez de como un defecto que había que arreglar. Normalizado en `read()`
+(**v1.25.0**): solo puede RELAJAR —ninguna medida crece— así que no bloquea a nadie. Verificado
+repartiéndolo: **los cuatro cerebros SANOS**, y el boot de inmobiliaria pasa a 31.355c, exactamente
+la cifra que da contar el contenido a mano. La regla 4 de L-66 queda marcada como resuelta en la
+raíz: dejar el aviso vivo sería publicar una instrucción falsa sobre la herramienta (§255).

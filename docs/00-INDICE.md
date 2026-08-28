@@ -95,6 +95,7 @@
 | §256 | 🎭 **Re-verifiqué los 13 abiertos: TRES nunca fueron ciertos** ([[M-33]]) · orden RUB falsa en la guía del dueño · frescura ciega a los lóbulos (2→6) · constante muerta ([[L-67]]) | 11153 |
 | §257 | 💰 **Tres formatos de precio; el del dueño incumplía el mockup** por un espacio INVISIBLE (48 precios, 5 mockups) · puerta única · 10 pruebas + gate probado en NEGATIVO | 11206 |
 | §258 | 🛡️ **El catálogo de gates ya tiene dueño, y APUNTA en vez de copiar** (10, contados y probados en negativo) · las reglas git del router son de ESTE repo · auditoría #16: 22 cerrados, 6 retirados, 4 abiertos. | 11241 |
+| §259 | 🔁 **Un 301 puede aterrizar en un 404 y el gate seguía verde**: cubría que la URL vieja tuviera regla, no que la regla llevara a algo · volví a parsear donde debía ejecutar (53 vs 65) · la sonda se vigila a sí misma. | 11270 |
 
 ---
 
