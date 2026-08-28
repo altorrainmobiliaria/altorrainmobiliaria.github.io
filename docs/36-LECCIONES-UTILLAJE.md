@@ -11,6 +11,14 @@
 >
 > **Y crecen rápido.** Por eso salen de `30` antes de que lo revienten, no después.
 
+### L-67 — 🎭 Bumpear una constante que **no lee nadie**, y anotarlo como protección *(§256)*
+
+La doctrina *always-on* ordenó durante meses: «bumpea `CACHE_NAME` al cambiar el shell». **Medido el 28-ago: esa constante se declara en `service-worker.js:9` y no la lee NADIE** — ni el propio SW, cuyo `activate` enumera `caches.keys()` y las borra TODAS. Sus únicos consumidores son el gate #4, que la imprime, y `scripts/fix-i18n-macro.mjs`, que la incrementa. **Por eso no se borra la constante**: quitarla rompe a los dos.
+
+El navegador reinstala un SW comparando **los bytes del fichero entero**, no una constante concreta. Así que el bump que hice ese día (v5→v6) no protegió nada que el resto del diff no hiciera ya, y sin embargo lo registré como si sí. 🎯 *Un ritual que no puedes ver fallar se siente exactamente igual que uno que funciona* — es la familia de `38-GATES-QUE-MIENTEN`, esta vez ejecutándola yo.
+
+Lo que SÍ sigue vivo, y por lo que el fichero no se toca: ese SW es un **kill-switch de un solo tiro** — borra todos los cachés, `unregister()` y recarga las pestañas— para el visitante que registró el SW viejo antes del 10-jul-2026 y aún no ha vuelto. Dispara con cualquier cambio de bytes y **solo una vez por navegador**: después se ha desregistrado y no vuelve. Ninguna página servida registra ya el SW (`scripts.js:524` lo hace, pero **ningún HTML carga `scripts.js`** — comprobado).
+
 ### L-25 — Un bug que vive en UNA rama del fan-out SESGA el resultado, y el parcial tranquiliza *(ADR §32.9)*
 **Disparador**: en `pipeline()` de Workflow, las etapas ≥2 reciben `(prevResult, originalItem, index)` — capturar el ítem por closure da `s is not defined`. Tumbó 4 de 14, **y no 4 cualesquiera**: justo los del veredicto caro. 🎯 **Sobrevivió el 100 % de lo barato y murió el 100 % de lo caro**, así que un «10/14 ✅» habría sido una conclusión falsa **y tranquilizadora**. **Reglas**: en etapas ≥2 el ítem sale del 2º parámetro, nunca del closure; y **lee el bloque `<failures>`** — un workflow dice «completed» aunque haya perdido ítems. Ante un parcial, pregunta **QUÉ** faltó antes que cuántos.
 ### L-27 — Un `grep` te da la HOJA, no la RAMA: nunca asumas la forma del dato sin leer el padre *(ADR §32.14; §3.3 incumplida por mí mismo)*

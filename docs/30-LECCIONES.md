@@ -5,8 +5,7 @@
 > arquitectónico) — destiladas de `_legacy/AVANCES.md §"ERRORES CONOCIDOS"`.
 > 🧩 **Hojas hijas**: `31-VERIFICACION-UI.md` — L-22/L-26/L-28 COMPLETAS (verificación de UI: panel congelado ·
 > Chrome · computed vs transition) · `37-META-FUNDACIONALES.md` — el detalle de **M-01..M-11** (shard del 26-ago; las vivas siguen en `33`) ·
-> `32-LECCIONES-DOCUMENTALES.md` — rama **legal/documental** (`LD-NN`:
-> contratos, manual, formatos, auditorías de entregables).
+> `32-LECCIONES-DOCUMENTALES.md` — rama **legal/documental** (`LD-NN`: contratos, manual, formatos).
 > ⚠️ **Aquí solo va lo TÉCNICO.** Las viejas `L-31..L-34` "del kit" se mudaron a `32` como **LD-01..LD-04**
 > el 2026-07-28 porque **colisionaban** con las L-31..L-34 de esta hoja (ADR §68 · [[M-04]]). Un ADR anterior que diga "L-33" hablando del kit se refiere a **LD-03**.
 
@@ -219,6 +218,8 @@ siendo el índice de todas y una cita `[[L-NN]]` resuelva sin salir de aquí (§
 ### L-37 — 🎨 Los enlaces de Claude Design CADUCAN al re-guardar: el mockup se trae por MCP, no por URL *(2026-08-19, ADR §89)*
 ### L-46 — El shell (y el lenguaje que lo llama) SE COMEN texto y nada falla: comillas simples o por ARCHIVO
 ### L-66 — 🪤 Dos herramientas con el MISMO nombre no miden ni apuntan a lo mismo: `/tmp` cambia de sitio · y una fila de 260c es 261 para el gate, que lee con CRLF → 🧩 **shard `36-LECCIONES-UTILLAJE.md`**
+### M-33 — 🎭 Un hallazgo abierto que invoca una regla del cerebro **sin abrir el gate que la ejecuta** es una opinión — 3 de 13 eran FALSOS → 🧩 **shard `37-META-FUNDACIONALES.md`**
+### L-67 — 🎭 Bumpear una constante que **no lee nadie** (el `CACHE_NAME` del SW), y anotarlo como protección → 🧩 **shard `36-LECCIONES-UTILLAJE.md`**
 ### L-47 — 🐍 `open(p,'w').write(open(p).read()+X)` **borra el archivo**: el truncado ocurre antes de la lectura *(§118)*
 ### L-48 — 🧪 Un prerrequisito GENERADO y gitignored hace que el gate pase en local y falle en CI *(§125)*
 ### L-50 — Astro: `:global()` dentro de un `<style is:global>` NO se resuelve — sale literal y el navegador DESCARTA la regla entera, en silencio *(§130)*

@@ -13,6 +13,18 @@
 
 ---
 
+### M-33 — 🎭 Un hallazgo abierto que **invoca una regla del cerebro sin abrir el gate que la ejecuta** es una opinión *(§256)*
+
+Re-verifiqué los 13 hallazgos abiertos de la auditoría #16 antes de tocarlos, y **tres eran FALSOS**: no «ya arreglados», sino **nunca ciertos**. Los tres fallaban por lo MISMO — apelaban a una regla del cerebro (SSoT, formato canónico de ADR, ruteo) sin abrir el linter ni el manifest que la implementa:
+
+- El del teléfono «triplicado contra su propia regla de SSoT»: el único mecanismo SSoT es el gate #8, que solo vigila los hechos declarados en `ssotFacts`, y el teléfono no está entre ellos. Además la cifra fallaba por **28×** (87 ocurrencias en 47 ficheros, no 3) y citaba mal el ADR que invocaba. «Arreglarlo» habría puesto `brain:check` en rojo permanente contra cuatro políticas legales que por Ley 1581 **deben** llevar el contacto.
+- El del «formato ADR abandonado desde el 192»: enfrentaba dos cosas que no son excluyentes — el router prescribe siete ROLES y nunca fijó nivel de encabezado.
+- El del ruteo: era falso **el día que se escribió**; el dato vivía ya en cinco ficheros, uno de ellos auto-cargado en el arranque.
+
+🎯 **Un hallazgo abierto es una afirmación sin sello como cualquier otra, y cuantas más auditorías sobreviva, más cierto parece y menos lo es.** Suena a disciplina, se apoya en un ADR real y su cifra pequeña parece cuidadosa — por eso nadie lo abre. Y un falso se **RETIRA, no se cierra**: cerrar afirma que hubo algo que arreglar.
+
+Regla que hereda la skill de auditoría: *todo hallazgo que apele a una regla del cerebro debe citar la línea del linter o del manifest que la ejecuta; si no existe esa línea, el hallazgo es una opinión.* Emparejada con [[M-31]] (deriva la lista de una medición, no de la memoria).
+
 ### M-01 — El tablero `05` se rezaga si el CIERRE no lo re-fresca en el MISMO commit *(auditoría §30, reincidencia de §12)*
 **Patrón (reincidente ×2)**: el commit de cierre consolida `10` y los ADRs, y `05` se queda con el estado de la ola ANTERIOR — contradiciendo a `10` sin que nada falle. Ningún gate cruza `05`↔`10`↔git, y la frescura valida una fecha TECLEADA, o sea jugable. **Regla**: todo commit que cierra ola o hito toca `05` en el mismo cambio que `10`; re-sella la fecha, reconcilia §Sub-sistemas y pon `verificado-vivo:` en los claims LIVE (eso sí activa el gate #16). **Corolario**: `10`/`05` NUNCA citan su «último commit `<SHA>`» — el commit de cierre nace DESPUÉS de escribir el nodo.
 

@@ -7,9 +7,9 @@
 
 ---
 
-> 🧩 **M-01..M-11 viven en `docs/37-META-FUNDACIONALES.md`** (shard del 2026-08-26): son las
-> fundacionales, y ahí están COMPLETAS. Aquí quedan las VIVAS (hoy, M-23 en adelante). El stub con
-> el título sigue en `30`, que es donde se busca.
+> 🧩 Reparto con `docs/37-META-FUNDACIONALES.md`: **semántico, no por rango** — allí las
+> **fundacionales** (dónde falló el cerebro), aquí las **vivas**. En `37`: **M-01..M-11** + **M-33**.
+> El stub del título sigue en `30`, que es donde se busca.
 
 ---
 

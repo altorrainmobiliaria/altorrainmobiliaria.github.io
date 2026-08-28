@@ -11149,3 +11149,91 @@ tocar una página pública. Y registrados los **ocho** nodos: **cero sin nombrar
 ### 255.5 — Archivos
 `CLAUDE.md` · `docs/05-ESTADO-GLOBAL.md` · `docs/00-INDICE.md` · `docs/99-HISTORIAL-ADR.md` (§252.4
 corregido en su sitio). **INTACTO**: el texto del ADR anterior que YO contradije — tenía razón.
+
+## 256. ADR-256 — Re-verifiqué los 13 hallazgos abiertos, y TRES nunca fueron ciertos
+
+**Deliberación:** 14 agentes en paralelo, uno por hallazgo + síntesis. Crudo y tabla → bóveda,
+`research-archive/2026-08-27-auditoria-cerebro-nivel2-16-inmobiliaria.md`.
+
+### 256.1 — 🔴 El hallazgo abierto es una afirmación sin sello, y nadie la comprueba
+La sonda 0 pregunta *«¿sigue abierto?»* y **nunca** *«¿fue cierto?»*. Medidos los 13: **3 FALSOS**
+(no «ya arreglados» — **nunca ciertos**) + 1 caducado. Los tres fallan igual: **invocan una regla del
+cerebro sin abrir el gate que la ejecuta**. El peor decía que el teléfono público violaba el SSoT —
+pero el único mecanismo SSoT es el gate #8, que solo vigila lo declarado en `ssotFacts`, y el teléfono
+no está ahí; su cifra fallaba **×28** (87 ocurrencias en 47 ficheros, no 3) y «arreglarlo» habría
+puesto `brain:check` en rojo permanente contra cuatro políticas legales que por Ley 1581 **deben**
+llevar el contacto. 🎯 *Cuantas más auditorías sobrevive un hallazgo, más cierto parece y menos lo
+es.* → **[[M-33]]**; un falso se **RETIRA**, no se cierra. Regla heredada por la skill: quien apele a
+una regla del cerebro cita la línea del linter que la implementa, o es una opinión.
+
+### 256.2 — Una orden legal FALSA en el documento que el dueño tiene en la mano
+`43-OPERACION` mandaba *«RUB → reportar YA (sanción E.T. 658-3)»* once líneas antes de decir que
+Daniel lo reportó el 07-25. **34 días y 8 commits** sin reconciliar, y el imperativo se había
+propagado al `00c` y a la **guía de la bóveda que Daniel usa**. Corregido en los tres, conservando el
+dato legal —el plazo REVIVE si se traspasan acciones— y **sin cerrar** lo que sigue pendiente de
+verdad: archivar el acuse (comprobado, no está).
+
+### 256.3 — Y su causa: el gate de frescura no miraba donde caducan los hechos
+El check #16 escaneaba **2** ficheros (`05`, `10`). Los cuatro lóbulos que afirman sobre el MUNDO
+—SMLMV, UVB, retención, tarifas de registro— quedaban ENTEROS fuera; por eso el RUB pudo derivar.
+`verifiedLiveScan` pasa a **6**. En su primera corrida cazó algo invisible hasta hoy: un sello de 8
+días con **370 commits** encima. Y al re-verificarlo salió lo de verdad interesante — **no es
+re-verificable por mí** (las Rules deniegan lectura anónima, 403), así que era un aviso sin salida:
+nadie podía apagarlo y todos acabarían ignorándolo. Reformulado como el **hecho histórico** que es.
+
+### 256.4 — 🎭 El cinturón fantasma: bumpeé una constante que no lee nadie
+`CACHE_NAME` se declara en `service-worker.js:9` y **no la lee NADIE** — ni el propio SW, cuyo
+`activate` enumera `caches.keys()` y las borra todas. El navegador reinstala comparando **los bytes
+del fichero**, no esa constante: **el bump v5→v6 que hice esta misma sesión no protegió nada**, y lo
+anoté como si sí. La regla salió del router (−296c always-on); la verdad y el porqué de NO borrar la
+constante (la parsean el gate #4 y `fix-i18n-macro`) → **[[L-67]]**. Vivo de verdad: el SW es un
+kill-switch **de un solo tiro** que se auto-desregistra, para el visitante anterior al 10-jul.
+Y su gemelo, `system/meta.lastModified`: el panel lo escribe en cada guardado «para que el
+`onSnapshot` de `cache-manager.js` invalide las pestañas» — y **ningún HTML carga ese fichero**. Los
+tres mensajes de consola dejan de afirmar un efecto medido como inexistente. *(El hallazgo citaba
+`js/core/cache-manager.js`, ruta que no existe: [[M-30]] otra vez.)*
+
+### 256.5 — Lo demás, y la verificación
+404: el h1 decía «Esta sección aún está en construcción» con **44 páginas** ya construidas — a quien
+teclea mal una URL se le prometía una sección futura que ya existe. · `site.ts`, SSoT del contacto
+público vigilado por un gate, no lo conocía el mapa del portal: registrado en `21`.
+**Verificación**: `brain:check` SANO · `43` destilado de 20.056c a 19.222c **sin perder conocimiento**
+(comprobado uno a uno que los punteros §174/§183/§184/§194 entregan las citas legales ANTES de quitar
+la copia) · boot 31.137c, margen 297→363c · `astro check` 0 errores.
+**INTACTO**: `service-worker.js` y la constante `CACHE_NAME`; `touchSystemMeta()` (el panel legacy no
+tiene red y aquí NO se cambia comportamiento, solo se deja de mentir).
+
+## 257. ADR-257 — El precio se escribía de tres formas, y la que incumplía el mockup era la del dueño
+
+### 257.1 — Un carácter invisible, y por eso sobrevivió
+`Intl` inserta un **espacio duro U+00A0** entre el símbolo y la cifra. Los mockups APROBADOS lo
+escriben PEGADO: **48 precios en cinco pantallas** (Ficha · Resultados · Gestión · Liquidación ·
+Certificación) y **ninguno** con espacio. `$ 300.000` y `$300.000` se ven idénticos en un diff, a ojo
+y en una captura — ningún gate distingue un NBSP de un espacio. 🎯 *Una desviación de fidelidad que
+no se puede VER es la que más dura.*
+
+### 257.2 — Iba a estrenarse el día del cutover, en la misma pantalla
+La ficha pinta su precio principal con `pesos()` (con espacio) y las tarjetas de «similares», doce
+líneas más abajo del mismo componente, formateaban **por su cuenta** (sin espacio y **sin topar
+decimales**: un precio con céntimos salía `$2.500.000,5`). No se notaba porque el catálogo va en demo
+y la ficha es SSR: el día que entre inventario real, dos formatos en una pantalla.
+
+### 257.3 — Una puerta, y la etiqueta que se calculaba sola
+Los tres caminos pasan por `pesos()`; el pin compacto del mapa (`$1.450M`) NO, que no es moneda.
+Y `TARIFA_IVA` se deriva de `IVA`: el comprobante imprimía «· 19 %» **a pelo** mientras el importe
+salía de la constante — al subir la tarifa habría dicho una cosa y cobrado otra, y un `grep 0.19` no
+encuentra un literal escrito con letras. Es la promesa rota que hizo nacer `dinero.ts`, reaparecida.
+
+### 257.4 — La red, y lo que `verify:simbolos` NO puede ver
+`dinero.ts` era el módulo de plata más usado del panel y de la ficha **sin una sola prueba**. 10
+nuevas: formato del mockup, céntimos, redondeo alejándose del cero, negativos, y un **ratchet de
+entorno** (un Node con ICU capado cae a `en-US` sin avisar y todo comprobante pasa a `$2,500,000.00`).
+La última cierra el flanco ciego: el gate de gemelos caza símbolos **exportados**, pero el duplicado
+que originó el módulo era `COP_FMT`, **privado** — tres módulos lo declararon y nada podía enterarse.
+Ahora nadie más construye un `Intl` con `currency`. **Probado en NEGATIVO**: con un formateador
+intruso el gate falla y nombra el fichero ([[L-64]] regla 5).
+
+### 257.5 — Verificación y archivos
+964 pruebas · typecheck limpio · build OK · 7 gates verdes. `dinero.ts` · `dinero.test.ts` (nuevo) ·
+`FichaInmueble.astro` · `serp-catalogo.ts` · `gestion-liquidacion.ts`. **INTACTO**: `precioPin` y el
+`NF` de `ficha.ts`, que formatea **metros²**, no dinero — se comprobó antes de tocarlo.

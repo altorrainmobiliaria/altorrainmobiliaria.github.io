@@ -54,7 +54,8 @@ tenía `emailSent`**: nadie recibió aviso jamás. Esperaron entre 42 y 126 día
 operativo y escalable»*). **Exportados ANTES** a copia local fuera de git (datos personales):
 `backups/solicitudes-EXPORT-2026-08-20.json` + `backups/HOJA-LLAMADAS-14-leads.md`. Borrado ejecutado por
 Daniel con `firestore:delete --recursive` (Claude no ejecuta destrucción de datos reales) y **verificado
-vía REST: la colección quedó en 0 documentos** (`verificado-vivo: 2026-08-20`).
+vía REST: la colección quedó en 0 documentos** (el 20-ago-2026 — hecho
+HISTÓRICO, no claim vivo: sin credenciales las Rules deniegan releerlo, 403 el 28-ago).
 
 ## ✅ EL RIESGO DEL GMAIL, CERRADO (era «lo que el borrado no arregló»)
 
@@ -186,11 +187,16 @@ comisiones a PJ: 11% · retefuente canon: 3,5% y la practica el MANDATARIO · pr
 §89) y la autenticación NO es de validez · el dominio se transfiere con la INSCRIPCIÓN en ORIP (CC 756) ·
 contenido mínimo del contrato = §3 de la L.820 (no §11) · paz y salvo predial obligatorio para escriturar
 (L.14/83 §27); el de PH no es bloqueante (constancia + solidaridad, L.675 §29) · RNBD: NO obligada
-(<100.000 UVT de activos, D.90/2018) · **RUB: 2 meses desde el RUT ⇒ venció ~jul-2026 → reportar YA**
-(sanción E.T. 658-3) · EEFF certificados por RL + contador (L.222 §37) · TRA/registro de huéspedes =
+(<100.000 UVT de activos, D.90/2018) · **RUB**: 2 meses desde el RUT (E.T. 658-3) — ✅ reportado 07-25 (§65.1), falta el acuse; REVIVE si se traspasan acciones · EEFF certificados por RL + contador (L.222 §37) · TRA/registro de huéspedes =
 prueba del contrato de hospedaje (L.2068 §21-22).
-**❓ Agenda abogado (no verificado en fuente oficial):** ~~régimen de intereses sobre cánones~~ (RESUELTA → §181; el dictamen completo, en `44`) · ~~taxatividad de causales de terminación~~ (RESUELTA → §184: la ley **NO dice «solamente»** y no hay cláusula de irrenunciabilidad, o sea el texto no la cierra; **aun así NO se amplía la lista** por costes asimétricos → [[LD-09]]. Sí se pacta el PROCEDIMIENTO) · ~~tarifa registro Bolívar + estampillas~~ (RESUELTA → §194: **1 % + 0,5-1 %** y por MITADES salvo pacto; tabla, techo legal y acantilado → `45`) · ~~aplicación de L.1480 al arriendo de vivienda~~ (RESUELTA → §183: **régimen especial manda, la 1480 es SUPLETORIA** —art. 2 literal— luego Ley 820 primero; y NO se publica página de retracto para el arriendo. ⚠️ NO cierra la de RESERVAS, que es otra) · ~~frecuencia de Ley 2300~~ (RESUELTA → §172: aplica a la prospección
-comercial, no solo a la cobranza, y ya hay calendario y guardias en el código) · ~~valor UVB 2026~~ (RESUELTA → §194 y dictamen en `44`: **$12.110**, Res. 3488/2025 de MinHacienda; sirvió para RECOMPROBAR el «no obligada» de SAGRILAFT contra la circular NUEVA) · ~~reglamento PH silente vs autorización expresa~~ (RESUELTA → §174: **el silencio NO autoriza**; hace falta permiso EXPRESO —D.1074/2015 art. 2.2.4.1.2.2 num. 8, L.675/2001 art. 18.1— instrumentado como DECLARACIÓN fechada del prestador, ya bloqueante en el alta y en `publicable()`. ⚠️ La respuesta llevaba **un mes** verificada en `specs/R3-LEGAL-COLOMBIA` §GATE 5 mientras esta lista seguía preguntándola: antes de agendar algo aquí, búscalo en `specs/R3`).
+**❓ Agenda abogado — las SIETE, RESUELTAS** (cada respuesta vive en su ADR; aquí solo lo que no
+está allí): intereses sobre cánones §181 · taxatividad de causales §184 — el texto **no** la cierra
+y **aun así NO se amplía la lista** por costes asimétricos ([[LD-09]]); sí se pacta el PROCEDIMIENTO ·
+tarifa registro Bolivar + estampillas §194 (tabla y acantilado → `45`) · L.1480 al arriendo §183
+⚠️ **NO cierra la de RESERVAS, que es otra** · frecuencia L.2300 §172 · valor UVB 2026 §194 (+`44`) ·
+reglamento PH silente §174 — el silencio NO autoriza, ya bloqueante en el alta y en `publicable()`.
+🎯 **La de PH llevó un MES resuelta en `specs/R3-LEGAL-COLOMBIA` §GATE 5 mientras esta lista seguía
+preguntándola**: antes de agendar nada aquí, búscalo en `specs/R3`.
 
 ## Estado del arco TODO-34
 
