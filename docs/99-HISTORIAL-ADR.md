@@ -11529,70 +11529,114 @@ a `\d{2,}` para que un ordinal maquetado («04 Estancias») deje de contar como 
 casilla de autorización que falta en `/mi-perfil` NO se añade — es un control visible y eso va con
 mockup del dueño (paso 5.1b del runbook).
 
-## 264. ADR-264 — Tocar el buscador en el móvil ampliaba la página, y el arreglo se compilaba y perdía en silencio
+## 264. ADR-264 — Segunda tanda del barrido: seis cosas que la pantalla afirmaba y no eran ciertas
 
-Barrido de accesibilidad móvil sobre el portal construido. Nueve campos por debajo de 16 px entre la
-home, `/comprar` y `/estancias`. No es una preferencia tipográfica: **Safari en iOS amplía la página
-al enfocar cualquier campo cuya letra mida menos de 16 px, y no deshace ese zoom al salir.** Quien
-tocaba «¿En qué zona quieres comprar?» se quedaba con la página ampliada, el formulario fuera de
-pantalla, y tenía que pellizcar para volver — arrastrando una página ampliada hasta el botón de
-enviar. En un portal donde el buscador del hero ES la puerta de entrada, eso es la primera
-interacción de la visita.
+Continuación de §263 con los mismos 61 hallazgos. Seis arreglos, y un hilo que no vi hasta tenerlos
+juntos: **ninguno es un error de cálculo — son afirmaciones**. Un tablero que afirma un negocio, un
+desplegable que afirma que ordena, una tabla que afirma estar completa, una cabecera que afirma no
+tener puerta de entrada, un campo que afirma una fecha que no se lee entera, una página que se
+amplía y afirma que así se queda. Y cinco de los seis solo se ven **en un teléfono**, que es por
+donde llega la mayoría de quien busca vivienda en Cartagena.
 
-### 264.1 — Causa raíz
-Dos causas apiladas, y la de arriba escondió a la de abajo durante dos intentos.
-
-La **de producto**: los campos heredaban `--alt-fs-sm` (14 px) del sistema de diseño sellado, que se
-decidió mirando el escritorio. Nadie había medido el umbral de iOS.
-
-La **de método**, que es la que cuesta: la override que escribí *sí* se compilaba y *sí* se servía,
-correctamente acotada, y **no aplicaba**. `@media` **no aporta especificidad**. Mi regla pesaba
-exactamente lo mismo que la que debía vencer —Astro acota AMBOS lados con el mismo
-`[data-astro-cid-…]`, así que el empate no es accidente sino la norma— y entre iguales decide el
-ORDEN DE APARICIÓN. Yo la había puesto al PRINCIPIO del bloque `<style>`, y sus rivales vivían en las
-líneas 1115 y 1300. Encima, la mitad del selector apuntaba a `.home-cerca`, una clase que no existe:
-lo real es `.home-cerca__field`.
+### 264.1 — Los seis, y su causa raíz
+1. **El tablero del dueño abría con un negocio que no existe.** Cuatro KPIs, un pipeline de seis
+   clientes con nombre y un feed con hora («hace 12 min · Cierre confirmado · Casa Crespo por
+   $760M»). Todo réplica del mockup; **nada se sustituía con datos reales salvo el KPI de leads**.
+   Día uno, con la base vacía, el dueño lee «Ventas del mes: $4.850M». 🎯 Una cifra de dinero es la
+   que más engaña: «Thomas Shelby» en una tabla se reconoce como relleno de un vistazo, `$4.850M`
+   parece un dato. Y el daño no es solo el día uno: mientras convivan cifras reales e inventadas en
+   la MISMA fila de tarjetas, ninguna se puede creer sin comprobarla aparte — que es exactamente lo
+   que un tablero existe para evitar.
+2. **El «Ordenar por» del SERP llevaba desde el principio sin ordenar.** El `<select>` está en la
+   página con sus cuatro opciones escritas y **no tenía ni un manejador**. Un control que responde al
+   clic y no cambia nada es PEOR que no tenerlo: le enseña al visitante que la web está rota, y se lo
+   enseña justo en la página donde estaba comparando propiedades.
+3. **La tabla de impuestos perdía su última columna y no había forma de alcanzarla.** 479 px de tabla
+   en un contenedor de 341 (medido a 375 px): desborda 138. El contenedor no tenía scroll y el `body`
+   lleva `overflow-x: hidden`, así que lo que sobraba quedaba **recortado Y fuera de alcance** — ni se
+   veía ni se podía arrastrar hasta ello. Lo que se perdía era «Por cada parte»: el número por el que
+   alguien abre un artículo titulado «cuánto cuestan».
+4. **En un teléfono no había NINGÚN enlace a «Ingresar».** La regla de la cabecera ocultaba
+   `.alt-hdr__login` y `.alt-hdr__pub` **por clase** bajo 1300 px, y el cajón móvil usa las MISMAS
+   clases: desaparecían también sus copias del cajón. No se veía venir leyendo el código — doce líneas
+   más arriba hay una regla que da estilo propio a esos enlaces DENTRO del cajón, o sea que estaban
+   pensados para verse ahí y otra regla los apagaba.
+5. **El campo «Salida» salía cortado en el formulario de reserva.** Una celda de grid se niega por
+   defecto a encoger por debajo del ancho intrínseco de su contenido: las dos columnas `1fr 1fr` de
+   las fechas sumaban 315 px dentro de una caja de 291, y la caja recortaba los 24 px que sobraban con
+   su `overflow: hidden`. El huésped veía la entrada entera y la salida a medias.
+6. **Tocar el buscador ampliaba la página y no se deshacía.** Safari en iOS amplía al enfocar
+   cualquier campo cuya letra mida menos de 16 px y **no deshace ese zoom al salir**. Nueve campos por
+   debajo del umbral entre la home, `/comprar` y `/estancias`: quien tocaba «¿En qué zona quieres
+   comprar?» se quedaba con la página ampliada y el formulario fuera de pantalla. Los campos heredaban
+   `--alt-fs-sm` (14 px) del sistema sellado, decidido mirando el escritorio; nadie había medido el
+   umbral de iOS.
 
 ### 264.2 — Solución estructural
-Subir los campos a `--alt-fs-body` (16 px) **solo bajo 900 px**, en tres sitios y por el mismo
-motivo: la regla general en `components.css`, y una override por página en `index.astro` y
-`[operacion].astro` —donde el acotado de Astro obliga a pelear en su terreno— colocada **al final**
-del bloque, con el comentario que explica que ese sitio no es decorativo.
+(1) **Lo que se puede contar se cuenta; lo que no, SE DICE.** No se inventa un cero —«0 ventas»
+afirmaría que se midió— sino que la tarjeta declara que ese dato aún no se mide, y los KPIs falsos se
+neutralizan ANTES de consultar, no después. (2) El orden se cablea sin tocar el marcado aprobado, con
+los campos que el catálogo ya trae; **pintar y ordenar se separan** para poder repintar, y
+`altorra:catalogo-pintado` se despacha TAMBIÉN en cada reorden. (3) `display:block; overflow-x:auto`
+en las tablas del journal. (4) El ocultado se acota a la barra de escritorio (`.alt-hdr__actions > …`),
+que es lo único que sobra en pantalla estrecha. (5) `min-width: 0` en la celda: una propiedad, sin
+tocar la maquetación. (6) Los campos a `--alt-fs-body` (16 px) **solo bajo 900 px**.
 
-**NO se usa `maximum-scale=1`.** Es la solución que sale primero en cualquier búsqueda y apaga el
+⚠️ Para (6) **NO se usa `maximum-scale=1`**: es lo primero que sale en cualquier búsqueda y apaga el
 zoom para todo el mundo, incluida la gente que lo necesita para leer. Se arregla el tamaño, no se
 quita la lupa. Y 16 px es exactamente un token que ya existía: cero literales nuevos en un sistema
 sellado.
 
 ### 264.3 — No-regresión
-El escritorio queda idéntico, y no de palabra: medido campo por campo a 1280 px antes y después
-—15,5 / 15,5 / 14,5 en la home y 15 / 13,5 en `/comprar`, los valores originales—. Ningún ID, clase
-ni función cambia de nombre; el cambio es aditivo y vive entero dentro de una consulta de medio.
+El escritorio queda idéntico y no de palabra: medido campo por campo a 1280 px antes y después
+—15,5 / 15,5 / 14,5 en la home y 15 / 13,5 en `/comprar`, los valores originales—. Ningún ID, clase ni
+función exportada cambia de nombre; los cambios son aditivos. El marcado aprobado del SERP no se toca:
+el orden se cablea sobre el `<select>` que ya estaba.
 
 ### 264.4 — Verificación
-Medido en el navegador a 375 px, no deducido del código: **0 campos bajo 16 px** en `/`, `/comprar`,
-`/arrendar`, `/estancias`, `/publicar`, `/ingresar` y `/alertas`. `npm run verify` COMPLETO en verde
-—typecheck del portal y de Functions, 986 unitarias, **190 contra el emulador**, build y los 10
+Medido en el navegador, no deducido del código. **0 campos bajo 16 px** en `/`, `/comprar`,
+`/arrendar`, `/estancias`, `/publicar`, `/ingresar` y `/alertas`. Desbordamiento de la caja de fechas:
+24 px → 0, con los dos campos DENTRO del borde. Enlace a `/ingresar` presente a 375 px. Tabla del
+journal: desplazable dentro de sí misma, sin desbordar el `body`. Y **`npm run verify` COMPLETO** en
+verde —typecheck del portal y de Functions, 986 unitarias, **190 contra el emulador**, build y los 10
 gates—, que es el denominador entero y no los 10 gates a secas (§263.6).
 
 ### 264.5 — Anti-patterns evitados
-`maximum-scale=1` (rompe el zoom a quien lo necesita). Literal `16px` en vez del token. Bajar el
-punto de ruptura a `hover: none` (dejaría fuera las tablets con teclado). Y el que más cerca estuve
-de cometer: **subir la especificidad con `!important`** en vez de entender por qué perdía — habría
+`maximum-scale=1`. Literal `16px` en vez del token. Un «0» inventado en el tablero, que afirmaría una
+medición. Reescribir el marcado del SERP para poder ordenarlo. Y el que más cerca estuve de cometer:
+**subir la especificidad con `!important`** en vez de entender por qué la regla perdía — habría
 funcionado, y habría dejado el diagnóstico sin hacer y una deuda en un sistema sellado.
 
 ### 264.6 — Archivos
-Modificados: `portal/src/styles/components.css`, `portal/src/pages/index.astro`,
-`portal/src/pages/[operacion].astro`, `portal/src/pages/estancias.astro`.
+`portal/src/styles/components.css` · `portal/src/pages/index.astro` ·
+`portal/src/pages/[operacion].astro` · `portal/src/pages/estancias.astro` ·
+`portal/src/components/Header.astro` · `portal/src/scripts/serp-catalogo.ts` (+ su test) ·
+`portal/src/scripts/gestion-panel.ts` · `portal/src/scripts/gestion-alta-ui.ts`.
 **INTACTOS**: `tokens.css` (el sistema sellado no se toca — se usa un token que ya estaba) y el
 `<meta viewport>` de `BaseLayout`.
 
-### 264.7 — Doctrina aplicada
-§3.3 (verifica, no asumas): el veredicto sale de medir el nodo vivo, no de leer el CSS. Y una
-corrección a mi propio método, que es lo que se lleva la lección: **busqué en el CSS construido
-`max-width: 900px`, no lo encontré, y concluí «no se compiló» — cuando el minificador lo había
-reescrito como `(width<=900px)` y la regla llevaba ahí desde el primer intento.** Es la misma familia
-de §259 y §263: *un patrón que conoce UNA sola de las formas en que algo se escribe cuenta de menos*,
-aplicada ahora a mí buscando en un artefacto con la sintaxis del fuente. Depositado en [[L-68]]
-(`31-VERIFICACION-UI`) y destilado como reglas 7 y 8 de la skill portable `validacion-live-chrome`,
-en sus dos copias.
+### 264.7 — Doctrina aplicada, y una corrección a mi método
+§3.3 (verifica, no asumas): los seis veredictos salen de medir el nodo vivo, no de leer el CSS. Y lo
+que se lleva la lección, que es un fallo mío en dos capas:
+
+**(a) La override que compilaba, se servía y PERDÍA.** El arreglo del zoom estuvo dos intentos sin
+aplicar estando presente y bien acotado. `@media` **no aporta especificidad**: mi regla pesaba
+exactamente lo mismo que la que debía vencer —Astro acota AMBOS lados con el mismo
+`[data-astro-cid-…]`, así que el empate es la norma y no la excepción— y entre iguales decide el ORDEN
+DE APARICIÓN. La había puesto al PRINCIPIO del bloque y sus rivales vivían 165 líneas más abajo.
+Encima, medio selector apuntaba a `.home-cerca`, una clase que no existe (`.home-cerca__field`).
+
+**(b) Busqué en el artefacto con la sintaxis del fuente.** Busqué `max-width: 900px` en el CSS
+CONSTRUIDO, no lo encontré, y leí «no se compiló» — cuando el minificador lo había reescrito como
+`(width<=900px)` y la regla llevaba ahí desde el primer intento. Misma familia que §259 y §263: *un
+patrón que conoce UNA sola de las formas en que algo se escribe cuenta de menos*, ahora aplicada a mí.
+
+**(c) Y una tercera, que es la razón de que este ADR cubra seis y no uno.** Los seis arreglos citan
+`(§264)` en sus comentarios: eran referencias adelantadas a «el próximo ADR». Escribí §264 cubriendo
+SOLO el zoom, y con eso cinco punteros pasaron a mandar al lector a un ADR que no es el suyo. 🎯 *Una
+referencia adelantada es una promesa, y el ADR la cumple o la rompe en silencio* — ningún gate mira
+dentro de un comentario. Se cumple agrupando la tanda, que además es lo que ya hizo §263 con las doce
+primeras.
+
+Depositado en [[L-68]] (`31-VERIFICACION-UI`) y destilado como reglas 7 y 8 de la skill portable
+`validacion-live-chrome`, en sus dos copias.

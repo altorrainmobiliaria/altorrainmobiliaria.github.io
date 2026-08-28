@@ -68,10 +68,10 @@
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates — incluye `test:rules` (emulador).
 
 > 🎯 **AQUÍ VOY (28-ago)** — barrido de **PRODUCTO** (no del cerebro): 61 hallazgos, 43 juzgados;
-> crudo en la bóveda (`2026-08-28-barrido-producto-*.json`). **12 arreglados → §263**, y desde
-> entonces **6 más, todos medidos en el navegador**: cabecera móvil · tabla del Journal · KPIs
-> inventados del panel · los dos artículos que se contradecían sobre la matrícula · orden del SERP ·
-> **zoom de iOS al enfocar un campo (§264)**.
+> crudo en la bóveda (`2026-08-28-barrido-producto-*.json`). **12 → §263**, y desde entonces **6 más,
+> medidos en el navegador**: cabecera móvil · tabla del Journal · KPIs inventados del panel · orden
+> del SERP · **zoom de iOS** → las cinco de código en **§264**; la contradicción sobre la matrícula
+> era contenido.
 > ⏭ **SIGUEN ~8, por gravedad**: (a) los filtros del SERP no filtran — gate=TODO-22, pide diseño;
 > (b) el buscador del hero manda `zona`/`tipo` a `/comprar` y hay que comprobar si alguien los lee;
 > (c) la tabla de pipeline y el hilo de actividad del panel siguen siendo de mentira — **gate=mockup
