@@ -938,6 +938,7 @@ const maneras = [
 </BaseLayout>
 
 <style>
+
   /* ===== HERO — carrusel de 4 banners + buscador superpuesto ===== */
   .home-hero { position: relative; background: var(--alt-surface-neu); padding-bottom: clamp(40px, 6vw, 72px); }
   .home-hero__car { position: relative; overflow: hidden; height: clamp(548px, 60vh, 580px); }
@@ -1635,6 +1636,30 @@ const maneras = [
     .home-arr__aside { border-left: 0; border-top: 1px solid var(--alt-hairline); flex-basis: 100%; }
     .home-arr__row:hover { transform: none; }
   }
+
+  /*
+   * CAMPOS A 16 px EN MÓVIL — y no es una preferencia tipográfica (§264).
+   *
+   * Safari en iOS hace zoom automático al enfocar cualquier campo por debajo de 16 px y **no
+   * deshace ese zoom al salir**: quien toca el buscador se queda con la página ampliada y tiene
+   * que pellizcar para volver. Medido en el navegador a 375 px: el buscador del hero se quedaba en 15,5 px y el de «cerca de ti» en 14,5.
+   *
+   * ⚠️ Va AL FINAL del bloque a propósito. `@media` **no añade especificidad**: esta regla pesa
+   * exactamente lo mismo que la que debe vencer (Astro acota AMBAS con el mismo
+   * `[data-astro-cid-…]`), así que entre iguales decide el ORDEN DE APARICIÓN. Puesta arriba —
+   * como estaba en el primer intento— se compila, se sirve, y pierde en silencio.
+   *
+   * Tampoco se usa `maximum-scale=1`: eso apagaría el zoom para todo el mundo, incluida la
+   * gente que lo necesita para leer. Se arregla el tamaño, no se quita la lupa.
+   */
+  @media (max-width: 900px) {
+    .home-search__field input,
+    .home-search__field select,
+    .home-cerca__field input {
+      font-size: var(--alt-fs-body);
+    }
+  }
+
 </style>
 
 <script>

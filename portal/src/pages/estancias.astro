@@ -289,6 +289,15 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
   .est-book__dates label:first-child { border-right: 1px solid var(--alt-hairline); }
   .est-book__dates span, .est-book__glbl { display: block; font-size: 10px; font-weight: var(--alt-fw-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text); margin-bottom: 3px; }
   .est-book__dates input { border: none; outline: none; font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); width: 100%; background: transparent; padding: 0; font-family: var(--alt-font-body); }
+  /*
+   * Las fechas a 16 px en movil, por el zoom de iOS (§264). La regla general vive en
+   * `components.css`, pero estos dos campos los estila ESTE fichero, y el acotado que Astro le pone
+   * gana en especificidad: la override tiene que estar junto a la regla que debe vencer, no pelear
+   * desde fuera. Medido: con la global sola, 2 de los 4 campos de la pagina seguian en 14.
+   */
+  @media (max-width: 900px) {
+    .est-book__dates input { font-size: var(--alt-fs-body); }
+  }
   .est-book__guests { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; }
   .est-book__guests > div:first-child span:last-child { font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
   .est-book__stepper { display: flex; align-items: center; gap: 12px; }

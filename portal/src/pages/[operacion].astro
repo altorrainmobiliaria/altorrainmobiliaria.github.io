@@ -168,6 +168,7 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
 </BaseLayout>
 
 <style>
+
   /* Barra de filtros */
   .serp-filter { position: sticky; top: 0; z-index: var(--alt-z-sticky); border-bottom: 1px solid var(--alt-hairline); transition: box-shadow var(--alt-dur-slow, 0.4s) var(--alt-ease); }
   .serp-filter__in { max-width: 1440px; margin-inline: auto; padding: 14px clamp(16px, 4vw, 48px); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -238,6 +239,29 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
     .serp-aside { position: static; width: 100%; order: -1; }
     .serp-map { height: 320px; min-height: 0; }
   }
+
+  /*
+   * CAMPOS A 16 px EN MÓVIL — y no es una preferencia tipográfica (§264).
+   *
+   * Safari en iOS hace zoom automático al enfocar cualquier campo por debajo de 16 px y **no
+   * deshace ese zoom al salir**: quien toca el buscador se queda con la página ampliada y tiene
+   * que pellizcar para volver. Medido en el navegador a 375 px: la caja de búsqueda se quedaba en 15 px y el desplegable de orden en 13,5.
+   *
+   * ⚠️ Va AL FINAL del bloque a propósito. `@media` **no añade especificidad**: esta regla pesa
+   * exactamente lo mismo que la que debe vencer (Astro acota AMBAS con el mismo
+   * `[data-astro-cid-…]`), así que entre iguales decide el ORDEN DE APARICIÓN. Puesta arriba —
+   * como estaba en el primer intento— se compila, se sirve, y pierde en silencio.
+   *
+   * Tampoco se usa `maximum-scale=1`: eso apagaría el zoom para todo el mundo, incluida la
+   * gente que lo necesita para leer. Se arregla el tamaño, no se quita la lupa.
+   */
+  @media (max-width: 900px) {
+    .serp-search input,
+    .serp-sort select {
+      font-size: var(--alt-fs-body);
+    }
+  }
+
 </style>
 
 <script>

@@ -458,6 +458,30 @@
   color: var(--alt-text-strong);
   transition: border-color var(--alt-dur) var(--alt-ease);
 }
+
+/*
+ * EN MÓVIL, LOS CAMPOS A 16 px — y no es una preferencia tipográfica (§264).
+ *
+ * Safari en iOS **hace zoom automático** al enfocar cualquier campo cuya letra mida menos de 16 px,
+ * y **no deshace ese zoom al salir**. Con los campos a 14 (`--alt-fs-sm`), tocar «Nombre» amplía la
+ * página de golpe, el formulario se sale de pantalla, y el visitante tiene que pellizcar para volver
+ * — arrastrando una página ampliada hasta el botón de enviar. Medido: los 4 campos de `/estancias`
+ * estaban por debajo del umbral.
+ *
+ * ⚠️ La otra salida —`maximum-scale=1` en el viewport— **no se usa**: apaga el zoom para todo el
+ * mundo, incluida la gente que lo necesita para leer. Se arregla el tamaño, no se quita la lupa.
+ *
+ * 16 px es exactamente `--alt-fs-body`: el token que ya existe, no un literal nuevo. Y solo bajo el
+ * punto de ruptura — en escritorio el diseño sellado se queda como está.
+ */
+@media (max-width: 900px) {
+  .alt-input,
+  .alt-select,
+  .serp-search input,
+  .est-book__dates input {
+    font-size: var(--alt-fs-body);
+  }
+}
 .alt-input:focus,
 .alt-select:focus {
   border-color: var(--alt-gold);
