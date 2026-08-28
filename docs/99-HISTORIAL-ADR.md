@@ -11020,8 +11020,13 @@ Insertar seis líneas en mitad de `99` **desplazó la línea de los 14 ADRs post
 guarda. El **gate #3 lo cazó en la corrida siguiente** y las 14 filas se re-sincronizaron recalculando
 desde los headers reales, no aplicando un desplazamiento supuesto.
 🎯 *No hace falta doctrina nueva para esto: el mecanismo ya existía y funcionó* — que es justo lo que
-[[M-32]] dice. ⚠️ Ojo con `brain:index`: **genera un fichero sombra, no arregla el índice**; su nombre
-promete más de lo que hace.
+[[M-32]] dice. ⚠️ **CORRECCIÓN el mismo día (§255)**: aquí escribí que `brain:index` «genera un fichero
+sombra, no arregla el índice». **Es FALSO, y lo comprobé EJECUTÁNDOLO**: desincronicé una fila a propósito,
+lo corrí, y reportó «1 líneas reconciliadas» dejando el check en verde. Lo escribí leyendo el comentario de
+cabecera del kernel, que describe la etapa SHADOW **original**: la herramienta evolucionó y el comentario no.
+🎯 Peor: **el cerebro ya lo sabía** —§(el ADR de la asimetría) dice «`brain:index` reescribe SOLO el `00`
+vivo»— así que no solo no ejecuté, sino que contradije lo ya verificado. *Leer lo que un programa dice de sí
+mismo no es ejecutarlo*, y este error habría mandado al siguiente a resincronizar a mano, como hice yo.
 
 ### 252.5 — Verificación
 `brain:check` SANO · **251 entradas del índice apuntan a headers válidos** (las 14 corregidas) · boot
@@ -11106,3 +11111,41 @@ N16-14 sigue abierto.
 ### 254.6 — Archivos
 `docs/42-LEGAL.md` · `docs/45-COSTOS-TRANSACCION.md` · bóveda `expediente-legal/auditoria-contratos/`
 (8 ficheros). **INTACTO**: `.gitignore` — que estén ignorados es la decisión correcta y se mantiene.
+
+## 255. ADR-255 — El cerebro no enrutaba, y yo publiqué una instrucción falsa sobre su propia herramienta
+
+### 255.1 — «Sitio viejo RETIRADO» era el sustrato de la fuga
+Esa línea **always-on** decía que del sitio viejo solo quedaban `admin.html` y el portal. Medido: el
+dominio sirve **~3 MB** del legacy —`multimedia` 702 KB · `og` 682 KB · `js` 606 KB en 36 ficheros ·
+**77 ficheros en la raíz**—. Lo retirado son las **PÁGINAS**, no los ficheros. 🎯 *Esa media verdad,
+leída en cada arranque, es por lo que los 41 gates apuntaban solo a `portal/` y ninguno miraba donde
+vivía el móvil personal (§250).* Corregida en el router y en el `05`, sin gastar margen de más.
+
+### 255.2 — 🔴 Y publiqué una instrucción FALSA sobre `brain:index`
+En §252.4 escribí que «genera un fichero sombra, **no** arregla el índice». **Es falso.** Lo comprobé
+como debí hacerlo la primera vez —**ejecutándolo**—: desincronicé una fila a propósito, lo corrí, y
+reportó *«1 líneas reconciliadas»* dejando el check en verde. Lo había escrito leyendo el **comentario
+de cabecera del kernel**, que describe la etapa SHADOW original: la herramienta evolucionó y el
+comentario no.
+Peor: **el cerebro ya lo sabía** —un ADR anterior verificó que «`brain:index` reescribe SOLO el `00`
+vivo»—, así que no solo no ejecuté: **contradije lo ya verificado**. Corregido **en el sitio donde se
+publicó**, que es donde hace daño; y el error me costó resincronizar 14 filas a mano que la
+herramienta arregla sola. 🎯 *Leer lo que un programa dice de sí mismo no es ejecutarlo.*
+
+### 255.3 — Lo que la prueba EN FRÍO demostró: el índice no enruta, se escanea
+De las **cinco** preguntas canónicas, **cuatro** no tenían fila en la capa «síntoma → neurona»; los
+cinco agentes llegaron **escaneando el índice entero**, no enrutando. Y el registro de neuronas
+**omitía ocho nodos** —entre ellos `44-DICTAMENES` y `45-COSTOS`, que no aparecían ni una vez—.
+*Un nodo que el registro no nombra existe, pero nadie lo alcanza.*
+Añadidas las **cinco filas** que faltaban, escritas con las preguntas reales y no inventadas: el gate
+verde que dicen que bloquea · si un dato de contacto se puede publicar · un fichero generado que
+llega corrupto sin fallar · si se puede mergear a `main` en cada hermano · qué prohíbe y qué frena
+tocar una página pública. Y registrados los **ocho** nodos: **cero sin nombrar**.
+
+### 255.4 — Verificación
+`brain:check` SANO · 254 entradas del índice contra headers válidos · `brain:index` reconcilió solo
+(2 líneas) · cero nodos fuera del registro · boot 31203c dentro de presupuesto.
+
+### 255.5 — Archivos
+`CLAUDE.md` · `docs/05-ESTADO-GLOBAL.md` · `docs/00-INDICE.md` · `docs/99-HISTORIAL-ADR.md` (§252.4
+corregido en su sitio). **INTACTO**: el texto del ADR anterior que YO contradije — tenía razón.
