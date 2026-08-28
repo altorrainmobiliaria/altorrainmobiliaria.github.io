@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { liquidarPeriodo } from './liquidacion';
 import {
   accionDeMora,
   cifrasDePago,
@@ -248,16 +249,37 @@ describe('cifras de un pago (§115) — salen del CONTRATO, no del teclado', () 
     expect(honorariosDe(c({ ivaSobreHonorarios: true }))).toBe(297_500);
   });
 
-  it('sin porcentaje pactado no hay honorarios que cobrar', () => {
+  it('sin porcentaje pactado se aplica la TARIFA PUBLICADA, no cero (§263)', () => {
+    /*
+     * Antes esto esperaba `null`: «sin pct pactado, no hay honorarios». Pero la pantalla que ve el
+     * propietario nunca lo hizo así — `liquidarPeriodo` cae en `HONORARIOS_ADMIN_VIVIENDA`, que es la
+     * tarifa sellada del 10 % publicada en `/precios`. O sea que el panel ya cobraba el 10 % y la
+     * agenda esperaba 0: dos respuestas para la misma pregunta. Unificado en el dominio del dinero,
+     * la agenda dice lo mismo que el comprobante.
+     */
+    expect(cifrasDePago(c({ honorariosPct: undefined }), '2026-08', 'honorarios')?.montoEsperado)
+      .toBe(cifrasDePago(c({ honorariosPct: 10 }), '2026-08', 'honorarios')?.montoEsperado);
+    // `honorariosDe` se conserva para quien la use suelta, y ahí sí «sin pct» es 0.
     expect(honorariosDe(c({ honorariosPct: undefined }))).toBe(0);
-    expect(cifrasDePago(c({ honorariosPct: undefined }), '2026-08', 'honorarios')).toBeNull();
   });
 
-  it('🎯 el propietario recibe canon − honorarios, y la administración NO es suya', () => {
-    // La administración es de la copropiedad; meterla en el giro sería pagarle al propietario un
-    // dinero que tiene que salir hacia otro sitio.
+  it('🎯 el giro es EXACTAMENTE el del comprobante del propietario (§263)', () => {
+    /*
+     * 🔴 Aquí vivía el descuadre. Esperaba `2.500.000 − 297.500 = 2.202.500`, que sale de cobrar
+     * los honorarios sobre el CANON SOLO. La tarifa sellada dice «sobre el cargo mensual integral
+     * (canon más cuota de administración)», que es lo que hace `liquidarPeriodo`:
+     *   base 2.800.000 → honorarios 280.000 + IVA 53.200
+     *   giro = 2.800.000 − 300.000 (a la PH) − 280.000 − 53.200 = 2.166.800
+     * La Cloud Function guardaba 2.202.500 como esperado y la pantalla mostraba 2.166.800: alguien
+     * iba a girar uno y a discutir el otro cada mes.
+     *
+     * Y la administración sigue SIN ser suya — sale descontada, que es lo que decía el título viejo.
+     */
     const r = cifrasDePago(c({ ivaSobreHonorarios: true }), '2026-08', 'payout_propietario');
-    expect(r?.montoEsperado).toBe(2_500_000 - 297_500);
+    expect(r?.montoEsperado).toBe(2_166_800);
+    // Y lo importante: la MISMA cifra que el comprobante, no una parecida.
+    const l = liquidarPeriodo({ canon: 2_500_000, administracionPH: 300_000, honorariosPct: 0.1 });
+    expect(r?.montoEsperado).toBe(l.giroAlPropietario);
   });
 
   it('el giro al propietario vence el día 10, no el día de pago del canon', () => {

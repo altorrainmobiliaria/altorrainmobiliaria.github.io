@@ -14,6 +14,22 @@
 import type { COP, ISODate } from './shared';
 import { IVA } from './dinero';
 import type { Contrato, EstadoPago, Novedad, Pago, TipoPago } from './gestion';
+/*
+ * 🔴 La cuenta del mes tiene UN dueño, y es `liquidarPeriodo` (§263). Este fichero tenía su
+ * propia fórmula y daba OTRO número para lo mismo: con canon 2.000.000 y cuota de PH 300.000 al
+ * 10 %, la Cloud Function guardaba $1.762.000 como esperado y la pantalla de liquidación mostraba
+ * $1.726.300. Alguien iba a girar uno y a discutir el otro cada mes, y en diciembre el certificado
+ * anual habría acusado al propietario de haber recibido lo que no recibió.
+ *
+ * Las dos diferencias, y las dos a favor de `liquidacion.ts`: (1) la base de los honorarios es el
+ * **cargo mensual integral** —canon + cuota cuando se cobra aparte— y no el canon solo, que es lo
+ * que dice la tarifa sellada; (2) el giro descuenta la cuota de la copropiedad, que no es del
+ * propietario. `agenda.ts` no hacía ninguna de las dos.
+ *
+ * ⚠️ `honorariosPct` se guarda como PORCENTAJE (10) y `liquidarPeriodo` lo quiere como FRACCIÓN
+ * (0.1). La conversión va aquí, una sola vez — es la misma trampa que imprimía «1000 %».
+ */
+import { liquidarPeriodo } from './liquidacion';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FECHAS — aritmética en UTC, sin librerías
@@ -379,6 +395,24 @@ export function honorariosDe(c: Pick<Contrato, 'canon' | 'honorariosPct' | 'ivaS
 }
 
 /**
+ * La liquidación del mes de un contrato, calculada por su dueño único (§263).
+ *
+ * Devuelve `null` si el contrato todavía no tiene canon: sin él no hay cuenta que hacer, y lo que
+ * corresponde es no prometer una cifra, no inventar un cero.
+ */
+function liquidacionDe(c: Contrato) {
+  if (!c.canon) return null;
+  return liquidarPeriodo({
+    canon: c.canon,
+    administracionPH: c.administracion ?? 0,
+    ...(c.adminIncluidaEnCanon ? { adminIncluidaEnCanon: true } : {}),
+    // PORCENTAJE → FRACCIÓN. Sin esta división, un contrato al 10 % cobraría diez veces.
+    ...(c.honorariosPct != null ? { honorariosPct: c.honorariosPct / 100 } : {}),
+    ...(c.ivaSobreHonorarios != null ? { ivaSobreHonorarios: c.ivaSobreHonorarios } : {}),
+  });
+}
+
+/**
  * Qué se espera de un pago concreto, derivado del contrato.
  *
  * Se DERIVA a propósito: si el operador tecleara el monto esperado, un dedo torcido convertiría un
@@ -401,17 +435,23 @@ export function cifrasDePago(c: Contrato, periodo: string, tipo: TipoPago): Cifr
   }
 
   if (tipo === 'honorarios') {
-    const h = honorariosDe(c);
+    // Misma fuente que el payout: honorarios + su IVA, sobre el cargo mensual integral.
+    const l = liquidacionDe(c);
+    if (!l) return null;
+    const h = alPeso(l.honorarios + l.ivaHonorarios);
     return h ? { montoEsperado: h, fechaVencimiento } : null;
   }
 
   if (tipo === 'payout_propietario') {
-    if (!canon) return null;
-    // El propietario recibe el canon MENOS los honorarios (con su IVA). La administración no entra:
-    // no es suya, es de la copropiedad. Y el giro va antes del día 10, no el día de pago del canon.
-    const neto = canon - honorariosDe(c);
+    const l = liquidacionDe(c);
+    if (!l) return null;
+    /*
+     * Se lee de `liquidarPeriodo` y NO se recalcula aquí: es exactamente la cifra que el propietario
+     * ve en su comprobante. La cuota de la copropiedad ya sale descontada ahí —no es suya— y el giro
+     * va antes del día 10, no el día en que paga el arrendatario.
+     */
     return {
-      montoEsperado: alPeso(Math.max(0, neto)),
+      montoEsperado: alPeso(Math.max(0, l.giroAlPropietario)),
       fechaVencimiento: `${periodo}-${String(DIA_TOPE_PAYOUT).padStart(2, '0')}`,
     };
   }
