@@ -164,6 +164,8 @@ ALTORRA usa proveedores tecnológicos, algunos de los cuales almacenan o procesa
 | Proveedor | Servicio | Ubicación |
 |---|---|---|
 | Google LLC (Firebase: Firestore, Authentication, Storage; Google Analytics) | Infraestructura del sitio/portal, autenticación, almacenamiento y analítica | EE. UU. |
+| Cloudflare, Inc. | Servidor del portal y red de entrega: **toda** petición al sitio pasa por su infraestructura, y su almacenamiento de objetos (R2) guarda las fotos de los inmuebles y los documentos que usted nos entrega | EE. UU. y red global |
+| Resend, Inc. | Envío de los correos transaccionales (aviso de un contacto nuevo y aviso del estado de su solicitud), que incluyen su nombre y sus datos de contacto | EE. UU. |
 | Meta Platforms, Inc. (WhatsApp Business) | Canal de mensajería con clientes | EE. UU. |
 | Siigo | Facturación electrónica | Colombia |
 
