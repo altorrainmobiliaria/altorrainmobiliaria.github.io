@@ -153,6 +153,20 @@ async function registrar(): Promise<void> {
         'La constancia queda archivada y el contrato pasa a «preaviso» por sí solo: ese estado es ' +
           'consecuencia de esta evidencia, no una casilla aparte.',
       );
+    } else if (datos.efecto === 'falta-titulo-del-arrendador') {
+      /*
+       * 🔴 Este caso caía antes en el «se prorroga un año» de abajo, y eso es FALSO: el aviso está
+       * bien puesto y a tiempo, el plazo corrió. Lo que falta es el título con el que el arrendador
+       * puede exigir la restitución. Decirle «se prorroga» lo mandaría a volver a avisar —a repetir
+       * lo único que hizo bien— en vez de a hacer lo que le falta.
+       */
+      decir(
+        'La constancia queda archivada, pero esto todavía NO recupera el inmueble.',
+        'Avisar bien es la mitad: cuando quien avisa es el arrendador, la Ley 820 pide además pagar ' +
+          'tres meses de arriendo si se termina durante las prórrogas (art. 22 num. 7), o invocar una ' +
+          'causal —ocuparlo, demolerlo o entregarlo vendido— y constituir caución de seis meses para ' +
+          'terminar al vencimiento (num. 8). El arrendatario, en cambio, sí termina solo con el aviso.',
+      );
     } else {
       // Se dice ENTERO. No es un error que se arregle cambiando una fecha: es lo que pasó.
       decir(

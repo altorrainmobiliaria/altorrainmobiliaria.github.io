@@ -222,6 +222,30 @@ describe('\U0001F534 el aviso del ARRENDADOR no mueve el contrato (§263)', () =
   });
 });
 
+describe('🔴 una evidencia archivada NO se pisa (§263)', () => {
+  /*
+   * El servidor escribía `preaviso: registrado` con `merge: true` —que reemplaza el objeto
+   * entero— y sin mirar si ya había uno. El segundo registro se llevaba por delante el operador,
+   * la guía, la fecha de imposición y el veredicto congelado del primero, sin dejar historial.
+   * Y la pantalla INVITABA a repetirlo: tras el éxito no refrescaba nada visible, así que el
+   * operador dudaba de si se había guardado y volvía a pulsar. Lo que se destruía es la ÚNICA
+   * prueba de que el aviso viajó por servicio autorizado.
+   */
+  it('el segundo registro se rechaza, y la constancia del primero sigue intacta', async () => {
+    await sembrarContrato();
+    await registrarPreaviso.run(pedir(EVIDENCIA_A_TIEMPO, EDITOR));
+
+    const e = await falla(() =>
+      registrarPreaviso.run(pedir({ ...EVIDENCIA_A_TIEMPO, guia: 'OTRA-GUIA-999' }, EDITOR)),
+    );
+    expect(e.code).toContain('failed-precondition');
+    expect(e.message).toMatch(/YA tiene un preaviso archivado/i);
+
+    const doc = (await db.doc(`contratos/${CONTRATO_ID}`).get()).data() as Contrato;
+    expect(doc.preaviso?.guia).toBe('1099887766');
+  });
+});
+
 describe('el plazo sale del CONTRATO, no de quien llama', () => {
   it('mandar otra `vigenciaFin` en el cuerpo no regala tres meses', async () => {
     await sembrarContrato();

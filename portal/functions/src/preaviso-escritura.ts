@@ -103,6 +103,32 @@ export const registrarPreaviso = onCall({ region: REGION }, async (req) => {
     );
   }
 
+  /*
+   * 🔴 UNA EVIDENCIA ARCHIVADA NO SE PISA (§263). Esto escribía `preaviso: registrado` con
+   * `merge: true` — que fusiona al nivel de arriba, o sea REEMPLAZA el objeto entero— y sin mirar si
+   * ya había uno. El segundo registro se llevaba por delante el operador, la guía, la fecha de
+   * imposición y el veredicto CONGELADO del primero, sin dejar historial.
+   *
+   * Y no era un caso raro: la pantalla INVITABA a repetirlo. Tras el éxito no refrescaba nada
+   * visible, así que el operador dudaba de si se había guardado y volvía a pulsar. Lo que se
+   * destruía es la constancia postal — la ÚNICA prueba de que el aviso viajó por servicio autorizado
+   * (Ley 820 arts. 22.7 y 24), y el dato del que depende todo el cálculo del plazo.
+   *
+   * Se rechaza en vez de versionar: guardar dos evidencias exigiría decidir cuál manda, y esa
+   * decisión no es del servidor. Si de verdad hay que corregirla, que sea un acto explícito.
+   */
+  const yaHay = (contrato as { preaviso?: { operador?: string; guia?: string; impuestoEl?: string } }).preaviso;
+  if (yaHay) {
+    throw new HttpsError(
+      'failed-precondition',
+      `Este contrato YA tiene un preaviso archivado (${yaHay.operador ?? 'operador sin registrar'}, ` +
+        `guía ${yaHay.guia ?? 'sin registrar'}, impuesto el ${yaHay.impuestoEl ?? 'sin fecha'}). ` +
+        'No se sobrescribe: esa constancia es la prueba de que el aviso viajó, y borrarla dejaría el ' +
+        'contrato sin nada que la sustituya.',
+      { operador: yaHay.operador, guia: yaHay.guia, impuestoEl: yaHay.impuestoEl },
+    );
+  }
+
   const quien = texto(d.quien) as QuienPreavisa;
   if (!QUIENES_PREAVISAN.includes(quien)) {
     throw new HttpsError('invalid-argument', 'Hay que decir quién da el preaviso: arrendador o arrendatario.');
