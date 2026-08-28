@@ -98,6 +98,7 @@
 | §259 | 🔁 **Un 301 puede aterrizar en un 404 y el gate seguía verde**: cubría que la URL vieja tuviera regla, no que la regla llevara a algo · volví a parsear donde debía ejecutar (53 vs 65) · la sonda se vigila a sí misma. | 11270 |
 | §260 | 📏 **Corrí el gate en producción de verdad: de 23 fallan DOS, y ninguna es código** (catálogo demo + RNT) · el 5.4 comprobaba tras el punto de no retorno lo que el 5.2 ya sabe · 44 páginas, 6 `noindex` y las 6 internas. | 11329 |
 | §261 | 🛡️ **Un gate número 11, y su única aplicación era `.git/config`** (que no se clona): el del panel LEGACY, sin tests ni tipos · cableado al CI y probado en negativo · son DOS catálogos, y ahora lo dice. | 11364 |
+| §262 | 🚨 **«Nunca commitear secrets» era doctrina SIN mecanismo**, y su único escáner llevaba roto en Windows sin que nadie lo invocara · gate de 10 patrones sobre 903 ficheros, 2 negativas · el validador viejo, a cuarentena. | 11396 |
 
 ---
 

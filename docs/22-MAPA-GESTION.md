@@ -5,7 +5,7 @@
 > frontera es limpia —sitio público vs. back-office— y este lado es el que crece con cada pieza de
 > la operación, así que aquí tiene sitio para crecer sin empujar al mapa del portal.
 >
-> 🛡️ **El gate del panel LEGACY, que no está en el catálogo del portal** (§261): `scripts/verify-contratos-legacy.mjs` vigila que, al cambiar lo que DEVUELVE una función de `js/`, no quede un callsite leyendo la forma vieja — el fallo que echó al dueño de su propio panel (§136). Vive en la RAÍZ, no en `portal/package.json`, así que el `countableFact` `gates-portal` **no lo cuenta y no debe**: son dos catálogos, no uno. Desde el 28-ago corre también en `portal-ci.yml`; antes su única aplicación era `core.hooksPath`, que vive en `.git/config` y **no se clona**.
+> 🛡️ **Los DOS gates de la RAÍZ, que no están en el catálogo del portal** (§261 · §262) — `npm test` corre ambos. (1) `scripts/verify-secretos.mjs`: 10 patrones de credencial sobre todo el repo, que es **público**. (2) `scripts/verify-contratos-legacy.mjs` vigila que, al cambiar lo que DEVUELVE una función de `js/`, no quede un callsite leyendo la forma vieja — el fallo que echó al dueño de su propio panel (§136). Vive en la RAÍZ, no en `portal/package.json`, así que el `countableFact` `gates-portal` **no lo cuenta y no debe**: son dos catálogos, no uno. Desde el 28-ago corre también en `portal-ci.yml`; antes su única aplicación era `core.hooksPath`, que vive en `.git/config` y **no se clona**.
 >
 > Lo de FUERA sigue en `21`: páginas públicas, design system, SEO, catálogo, zonas, ficha.
 

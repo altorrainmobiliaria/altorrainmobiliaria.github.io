@@ -11392,3 +11392,44 @@ del back-office) con esa frase escrita, porque el próximo que compare «10 gate
 `ls scripts/` va a encontrar la diferencia y merece saber que es deliberada, no un olvido. La otra
 mitad del cableado —que el hook exista y esté enchufado— ya la vigila el gate #25 del kernel, que
 nació de este mismo defecto en otro repo ([[M-03]]).
+
+## 262. ADR-262 — «Nunca commitear secrets» era doctrina sin mecanismo, y su único escáner estaba roto
+
+### 262.1 — Un guion roto, y además no llamado
+Tirando del hilo de §261 —gates que nadie invoca— corrí el `npm test` de la raíz. **Reventaba en la
+primera llamada**: `URL.pathname` devuelve `/C:/…` y `join()` lo vuelve `C:\C:\…`, `ENOENT`. Llevaba
+así vaya usted a saber cuánto, y nadie lo notó porque **ningún CI ni ningún hook lo invocaba**. Es
+[[L-56]] al cuadrado: un gate que no corre, y que además ya no funcionaba si corría. La corrección
+—una línea— ya existía en `verify-contratos-legacy.mjs`; allí faltaba.
+
+### 262.2 — Al arreglarlo resultó que su modelo del sitio ya no existía
+Apuntado al árbol entero daba **4945 «errores»**: su comprobador de enlaces asume un sitio PLANO
+(`/comprar` → `comprar.html`) y estaba mirando el build de Astro. Acotado al legacy bajó a **193
+errores y 64 avisos, y TODOS falsos**: exigía `og:title`/`og:description`/`meta description` a los 63
+**stubs de redirección** —que redirigen en 0 segundos— y `<title>`/`lang` a dos **fragmentos** de
+HTML. 🎯 *Un guion que grita 257 veces sin razón no lo lee nadie: es ruido con forma de gate.* Va a
+**cuarentena**, no a la papelera (límite de guardián), con el mapa escrito de dónde vive ahora cada
+comprobación suya que sí servía.
+
+### 262.3 — Lo único que hacía y nadie más hacía, ampliado a gate de verdad
+Su escáner de secretos: **3 patrones sobre HTML y `js/`**. Este repo es **PÚBLICO** —el dominio sirve
+el árbol entero y GitHub lo indexa—, así que una credencial subida está cosechada antes de que nadie
+la note, y borrarla después **no la invalida ni la saca del historial**. `verify:secretos`: **10
+patrones sobre los 903 ficheros de texto del repo**, elegidos por lo que este proyecto va a tener en
+las manos (Wompi y Resend entran en Ola 2; el despliegue usa cuentas de servicio de Google), no
+copiados de una lista genérica. **Medido hoy: cero coincidencias** — la disciplina había aguantado
+sin red durante todo el proyecto.
+⚠️ Y NO busca la `apiKey` de Firebase, que es **pública por diseño**: un gate que grita por lo
+correcto se desactiva solo en la cabeza de quien lo lee, y entonces deja de proteger también lo demás.
+
+### 262.4 — Dos pruebas negativas, porque tiene dos formas de fallar
+Con una clave de Resend falsa plantada, **falla nombrando fichero, línea y qué tipo de credencial
+es**. Y rompiéndole la resolución de la raíz, **se niega a dar verde con 18 ficheros** diciendo «no
+miré» — el anti-vacío, porque un ✅ sobre cero ficheros es la forma de mentir que más veces ha cazado
+este cerebro ([[L-64]] regla 5 · [[L-52]]).
+
+### 262.5 — Verificación
+`node --check` OK · gate verde sobre 903 ficheros · las dos negativas disparan · YAML del CI válido ·
+`npm test` de la raíz corre ahora **los dos gates de la raíz** (secretos + contratos) en vez de un
+guion roto. Cableado al hook **y** al CI, antes del `npm ci` porque no necesita dependencias.
+**INTACTO**: `verify:enlaces`, `verify:seo` y `verify:build`, que ya cubrían el resto.
