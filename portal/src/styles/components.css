@@ -1052,6 +1052,45 @@
 }
 
 /* Cuerpo del markdown */
+/*
+ * TABLAS DEL JOURNAL — que no pierdan columnas en un teléfono (§264).
+ *
+ * 🔴 Medido a 375 px en la tabla de impuestos de compraventa: **479 px de tabla en un contenedor de
+ * 341** — desborda 138 px. El contenedor no tenía scroll y el `body` lleva `overflow-x: hidden`, así
+ * que lo que sobraba quedaba RECORTADO Y FUERA DE ALCANCE: no se veía y no se podía arrastrar hasta
+ * ello. Lo que se perdía era la última columna — «Por cada parte»—, o sea justo el número por el que
+ * alguien abre un artículo titulado «cuánto cuestan».
+ *
+ * 🎯 El arreglo YA EXISTA en este repositorio, en `LegalLayout`, con su comentario escrito
+ * («deben poder desplazarse en móvil sin romper la página»). Lo que faltaba era aplicarlo aquí: el
+ * mismo remedio puesto en un sitio y no en el otro, que es la familia que más veces ha aparecido.
+ *
+ * `display: block` es lo que le permite desbordar dentro de SÍ MISMA en vez de empujar la página;
+ * sin él, `overflow-x` sobre una `<table>` no hace nada.
+ */
+.jrn-cuerpo table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 0 0 20px;
+  font-size: 15px;
+}
+.jrn-cuerpo th,
+.jrn-cuerpo td {
+  border: 1px solid var(--alt-hairline, #e3e8ee);
+  padding: 9px 12px;
+  text-align: left;
+  vertical-align: top;
+  /* Las cifras no se parten a mitad: una tabla de dinero ilegible no es una tabla. */
+  white-space: nowrap;
+}
+.jrn-cuerpo th {
+  background: var(--alt-mist, #f2f6f9);
+  color: var(--alt-navy);
+  font-weight: var(--alt-fw-semibold, 600);
+}
+
 .jrn-cuerpo {
   font-size: 16.5px;
   line-height: 1.85;
