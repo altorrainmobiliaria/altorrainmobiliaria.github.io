@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/validate-site.mjs",
+    "test": "node scripts/verify-secretos.mjs && node scripts/verify-contratos-legacy.mjs",
     "generate": "node scripts/generate-properties.mjs",
     "upload": "node scripts/upload-to-firestore.mjs",
     "migrate-images": "node scripts/migrate-images-to-storage.mjs",
@@ -14,7 +14,8 @@
     "brain:diff": "node scripts/brain-diff.mjs",
     "brain:index": "node scripts/brain-index.mjs",
     "brain:pull": "node ../brain-private/kernel/pull.mjs",
-    "brain:archive": "node scripts/brain-archive.mjs"
+    "brain:archive": "node scripts/brain-archive.mjs",
+    "verify:secretos": "node scripts/verify-secretos.mjs"
   },
   "dependencies": {
     "firebase": "^12.9.0"

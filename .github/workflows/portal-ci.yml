@@ -63,6 +63,12 @@ jobs:
       # de que protege al panel LEGACY, el único subsistema sin tests, sin tipos y sin build.
       # Lo que caza costó dos horas y dejó al dueño FUERA de su propio panel (§136). No necesita
       # dependencias, así que va antes del `npm ci`: falla en segundos si tiene que fallar.
+      # 🚨 Repo PÚBLICO: una credencial commiteada está cosechada antes de que nadie la note,
+      # y borrarla después no la invalida ni la saca del historial. «NUNCA commitear secrets» era
+      # doctrina sin mecanismo hasta §262. Sin dependencias: va antes del `npm ci`.
+      - name: Credenciales en un repo público (la doctrina, hecha gate)
+        working-directory: .
+        run: node scripts/verify-secretos.mjs
       - name: Contratos de retorno del panel legacy (su hook no viaja en el clon)
         working-directory: .
         run: node scripts/verify-contratos-legacy.mjs

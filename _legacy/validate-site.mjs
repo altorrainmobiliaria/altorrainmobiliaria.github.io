@@ -1,8 +1,35 @@
+/*
+ * ⚰️ CUARENTENA (2026-08-28, §262) — NO se ejecuta. Se conserva por si alguna de sus comprobaciones
+ * hace falta otra vez; se retira porque su MODELO del sitio dejó de existir, no porque estuviera mal
+ * escrito.
+ *
+ * Estaba ROTO en Windows desde vaya usted a saber cuándo (`URL.pathname` → `C:\C:\…`, ENOENT en la
+ * primera llamada) y nadie lo notó porque su `npm test` no lo invocaba ningún CI ni ningún hook.
+ * Arreglada la ruta y acotado al legacy, seguía dando **193 errores y 64 avisos, todos falsos**:
+ * exigía `og:title`, `og:description` y `meta description` a los 63 stubs de redirección —que
+ * redirigen en 0 segundos— y `<title>`/`lang` a dos FRAGMENTOS de HTML que por definición no los
+ * llevan. Un guion que grita 257 veces sin razón no lo lee nadie: es ruido con forma de gate.
+ *
+ * DÓNDE VIVE AHORA CADA COSA QUE SÍ SERVÍA:
+ *   · escaneo de secretos  → `scripts/verify-secretos.mjs` (10 patrones sobre TODO el repo, no 3
+ *     sobre HTML y `js/`; probado en negativo y cableado al CI y al hook)
+ *   · enlaces internos     → `portal/scripts/verify-enlaces.mjs` (entiende rutas SSR y el mapa de 301)
+ *   · meta y estructura    → `verify:seo` y `verify:build`
+ *   · frescura de deploy-info.json → nada, a propósito: §261 midió que su consumidor está muerto.
+ */
+
 #!/usr/bin/env node
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
-const ROOT = new URL('..', import.meta.url).pathname.replace(/\/$/, '');
+/*
+ * ⚠️ El `.replace` de la letra de unidad NO es opcional en Windows (§262). `URL.pathname` devuelve
+ * `/C:/Users/…`, y `join()` lo convierte en `C:\C:\Users\…`: `ENOENT` en la PRIMERA llamada, así que
+ * este archivo llevaba **sin poder ejecutarse** el tiempo que llevara ahí. Nadie lo notó porque
+ * `npm test` de la raíz no lo invoca ningún CI ni ningún hook — un guion roto y además no llamado.
+ * `scripts/verify-contratos-legacy.mjs` ya traía esta misma corrección; aquí faltaba.
+ */
+const ROOT = new URL('..', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1').replace(/\/$/, '');
 const BASE = 'https://altorrainmobiliaria.co';
 let errors = 0;
 let warnings = 0;
@@ -11,9 +38,23 @@ function fail(file, msg) { console.error(`  ✗ ${file}: ${msg}`); errors++; }
 function warn(file, msg) { console.warn(`  ⚠ ${file}: ${msg}`); warnings++; }
 function pass(msg) { console.log(`  ✓ ${msg}`); }
 
+/*
+ * ALCANCE: el LEGACY, y solo el legacy (§262).
+ *
+ * Este validador es anterior al portal y su comprobador de enlaces asume un sitio PLANO —resuelve
+ * `/comprar` como `comprar.html`—. Apuntado contra el build de Astro daba **4945 «errores»**, todos
+ * falsos, y un guion que grita 4945 veces no lo lee nadie: es ruido con forma de gate.
+ *
+ * Del portal ya se ocupan gates correctos y cableados al CI (`verify:enlaces` para los enlaces,
+ * `verify:seo` y `verify:build` para meta y estructura). Lo que NO tenía casi nada es justo lo que
+ * este archivo sabe mirar: los ficheros del sitio viejo que **el dominio sigue sirviendo** —donde
+ * vivió la fuga del móvil personal (§250)—. Se le devuelve ese alcance en vez de jubilarlo.
+ */
+const FUERA = new Set(['node_modules', 'functions', 'portal', '_legacy', 'backups', 'design', 'skills', 'docs', 'specs', 'tests']);
+
 function findHtml(dir, results = []) {
   for (const entry of readdirSync(dir)) {
-    if (entry.startsWith('.') || entry === 'node_modules' || entry === 'functions') continue;
+    if (entry.startsWith('.') || FUERA.has(entry)) continue;
     const full = join(dir, entry);
     if (statSync(full).isDirectory()) { findHtml(full, results); continue; }
     if (entry.endsWith('.html') && !entry.startsWith('_')) results.push(full);

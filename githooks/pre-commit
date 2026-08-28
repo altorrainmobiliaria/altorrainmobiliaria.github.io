@@ -19,6 +19,7 @@ staged=$(git diff --cached --name-only)
 # migrar dejó al dueño fuera de su propio panel.
 if echo "$staged" | grep -qE '^js/'; then
   if command -v node >/dev/null 2>&1; then
+    node scripts/verify-secretos.mjs || exit 1
     node scripts/verify-contratos-legacy.mjs || {
       echo ""
       echo "❌ COMMIT BLOQUEADO: hay un callsite con el contrato viejo (arriba, con su línea)."
