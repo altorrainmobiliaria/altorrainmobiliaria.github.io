@@ -100,9 +100,39 @@ export function problemasDePreaviso(p: Preaviso, vigenciaFin: ISODate): Problema
  * `se-prorroga` no es «falló»: es que el contrato sigue vivo otro periodo, y quien lo lea tiene que
  * entender eso y no un error técnico. Un booleano habría dejado esa consecuencia sin nombre.
  */
-export function efecto(p: Preaviso, vigenciaFin: ISODate): 'termina' | 'se-prorroga' {
-  return problemasDePreaviso(p, vigenciaFin).length === 0 ? 'termina' : 'se-prorroga';
+export function efecto(
+  p: Preaviso,
+  vigenciaFin: ISODate,
+): 'termina' | 'se-prorroga' | 'falta-titulo-del-arrendador' {
+  if (problemasDePreaviso(p, vigenciaFin).length) return 'se-prorroga';
+  /*
+   * 🔴 EL CANAL NO ES EL DERECHO (§263). Esto devolvía «termina» en cuanto la constancia postal
+   * estaba completa y a tiempo — para CUALQUIERA de las dos partes. Y no es simétrico:
+   *
+   *  · el ARRENDATARIO sí termina en el vencimiento con solo avisar, sin causal y sin pagar
+   *    (Ley 820 art. 24);
+   *  · el ARRENDADOR no tiene esa puerta. El art. 22 num. 7 le sirve **durante las prórrogas** y le
+   *    exige **pagar tres meses de arriendo**; para terminar **al vencimiento** necesita el num. 8:
+   *    causal especial (ocuparlo, demolerlo, venderlo) **y una caución de seis meses**.
+   *
+   * El dato para distinguirlos —`p.quien`— llevaba aquí desde el principio y nadie lo miraba, así
+   * que el panel le confirmaba POR ESCRITO al propietario que su contrato terminaba. Llegaba la
+   * fecha, el inquilino no se iba, y quien se lo había asegurado era ALTORRA.
+   *
+   * Este tercer estado NO dice «se prorroga» —el aviso es válido y el reloj corrió— sino que falta
+   * el título con el que el arrendador puede exigir la restitución. Es una diferencia que el
+   * propietario tiene que poder leer.
+   */
+  return p.quien === 'arrendador' ? 'falta-titulo-del-arrendador' : 'termina';
 }
+
+/** Lo que le falta al arrendador, dicho para quien lo va a leer y no para quien lo programó. */
+export const TITULO_DEL_ARRENDADOR =
+  'El aviso está bien puesto y a tiempo, pero por sí solo NO termina el contrato cuando quien avisa ' +
+  'es el arrendador: la Ley 820 le pide además pagar tres meses de arriendo si termina durante las ' +
+  'prórrogas (art. 22 num. 7), o invocar una causal especial —ocuparlo, demolerlo o entregarlo ' +
+  'vendido— y constituir una caución de seis meses para terminar al vencimiento (num. 8). El ' +
+  'arrendatario, en cambio, sí puede irse solo con el aviso (art. 24).';
 
 /** El problema, dicho para quien está mirando la pantalla y tiene que hacer algo hoy. */
 export function explicarProblemaPreaviso(m: ProblemaPreaviso): string {

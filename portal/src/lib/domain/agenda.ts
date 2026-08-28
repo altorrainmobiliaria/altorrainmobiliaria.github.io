@@ -182,6 +182,13 @@ export function hitosDeContrato(c: Contrato, hoy: string): Hito[] {
     const preaviso = c.preaviso;
     const termina = preaviso?.efecto === 'termina';
     const seProrroga = preaviso?.efecto === 'se-prorroga';
+    /*
+     * El aviso del ARRENDADOR está bien puesto pero no basta por sí solo (§263). No se puede tratar
+     * como «termina» —sería la mentira que se está arreglando— ni como «se prorroga» —el aviso NO
+     * llegó tarde, y decirle que vuelva a avisar sería mandarlo a repetir lo que ya hizo bien—.
+     * Lo que le falta es el título, y eso es lo que la agenda tiene que recordarle.
+     */
+    const faltaTitulo = preaviso?.efecto === 'falta-titulo-del-arrendador';
 
     const aviso = sumarMeses(c.vigenciaFin, -MESES_AVISO_RENOVACION);
     // Si ya se decidió y el aviso surtió efecto, recordar «decide» es ruido sobre algo hecho.
@@ -189,7 +196,11 @@ export function hitosDeContrato(c: Contrato, hoy: string): Hito[] {
       ...comun,
       tipo: 'preaviso',
       fecha: aviso,
-      titulo: seProrroga ? 'Volver a avisar: el preaviso llegó tarde' : 'Decidir renovación',
+      titulo: faltaTitulo
+        ? 'Preaviso puesto: falta la indemnización o la causal para poder restituir'
+        : seProrroga
+          ? 'Volver a avisar: el preaviso llegó tarde'
+          : 'Decidir renovación',
       detalle: `El preaviso legal es de 3 meses (Ley 820) y el contrato termina el ${c.vigenciaFin.slice(0, 10)}. Este aviso llega con un mes de margen.`,
     }, hoy));
     out.push(hito({

@@ -8,7 +8,7 @@ fecha: 2026-08-27
 portada: '/assets/hero-invierte.webp'
 portadaAlt: 'Edificio residencial en Cartagena visto desde la calle al atardecer'
 destacado: true
-enCorto: 'Para que un arriendo de vivienda urbana termine en su fecha de vencimiento, el aviso debe ser escrito, llegar con al menos tres meses de antelación y viajar por el servicio postal autorizado. Lo dicen los artículos 22 numeral 7 y 24 de la Ley 820 de 2003. La fecha que cuenta es la de imposición —cuando usted lo entrega al operador postal—, no la de la carta. Si el aviso llega tarde o por un canal distinto, el contrato se prorroga.'
+enCorto: 'Todo aviso de terminación debe ser escrito, llegar con al menos tres meses de antelación y viajar por el servicio postal autorizado; la fecha que cuenta es la de IMPOSICIÓN, no la de la carta. Pero el canal es solo la mitad: el ARRENDATARIO puede irse al vencimiento sin causal ni pago (Ley 820 art. 24), mientras que el ARRENDADOR no tiene esa puerta — el art. 22 num. 7 le sirve durante las prórrogas y le exige pagar tres meses de arriendo, y el num. 8 exige causal especial y una caución de seis meses. Si el aviso llega tarde o por un canal distinto, el contrato se prorroga.'
 fuentes:
   - titulo: 'Ley 820 de 2003 — régimen de arrendamiento de vivienda urbana (arts. 22, 24 y 6)'
     entidad: 'Función Pública · Gestor Normativo'
@@ -24,7 +24,14 @@ El problema no es el contenido del aviso. Es que la ley no lo mira solo por lo q
 
 ## Las dos exigencias que casi nadie cumple a la vez
 
-El artículo 22 de la Ley 820 de 2003 enumera las causales por las que el arrendador puede terminar un contrato de vivienda urbana. La del numeral 7 es la que se usa cuando simplemente no se quiere renovar al vencimiento, y viene con condiciones: aviso **escrito**, con **no menos de tres meses** de antelación, y **a través del servicio postal autorizado**. El artículo 24 repite la misma fórmula para el arrendatario que quiere irse.
+El artículo 22 de la Ley 820 de 2003 enumera las causales por las que el arrendador puede terminar un contrato de vivienda urbana, y **las tres exigencias de forma son siempre las mismas**: aviso **escrito**, con **no menos de tres meses** de antelación, y **a través del servicio postal autorizado**.
+
+⚠️ **Pero el propietario y el inquilino no tienen la misma puerta, y conviene decirlo claro porque es donde se pierde el año.**
+
+- **El arrendatario** sí puede terminar en la fecha de vencimiento **sin causal y sin pagar nada**, con esos tres meses de aviso postal (art. 24).
+- **El arrendador no tiene ese derecho.** El **numeral 7** del art. 22 le permite terminar **durante las prórrogas** —no al vencimiento del término inicial— y, además del aviso, le exige **pagar una indemnización equivalente a tres meses de arriendo**. Para terminar **al vencimiento** tiene que ir por el **numeral 8**, que pide una **causal especial** —ocuparlo él mismo, demolerlo o entregarlo vendido— y **constituir una caución de seis meses**; la terminación por su sola voluntad solo aparece tras **cuatro años** de ejecución y con indemnización.
+
+Dicho en corto: si usted es el propietario, **el aviso perfecto no basta**. Sin la indemnización del num. 7 o sin la causal y la caución del num. 8, la restitución no procede aunque la carta haya viajado por 4-72 con seis meses de antelación.
 
 Son dos exigencias distintas y hay que cumplir las dos:
 
@@ -77,6 +84,8 @@ Esa segunda frase es la que nos importa que exista. Un sistema que solo sabe dec
 
 ## Lo que conviene recordar
 
-Terminar un arriendo de vivienda al vencimiento no es difícil, pero tiene tres condiciones que se cumplen juntas o no se cumplen: **escrito**, **tres meses antes**, **por servicio postal autorizado** — y el reloj arranca el día de la imposición.
+El **canal** tiene tres condiciones que se cumplen juntas o no se cumplen: **escrito**, **tres meses antes**, **por servicio postal autorizado** — y el reloj arranca el día de la imposición. Eso vale para todos.
+
+Y luego está el **derecho**, que no es el mismo para los dos. El inquilino se va al vencimiento sin dar explicaciones; el propietario necesita, además del aviso, **o la indemnización de tres meses** (num. 7, durante las prórrogas) **o la causal especial con su caución de seis meses** (num. 8, al vencimiento). Un aviso impecable sin ninguna de las dos cosas **no recupera el inmueble**.
 
 Si tiene dudas sobre una fecha concreta, es mejor preguntarlas ahora que descubrirlas en septiembre. Escríbanos y lo revisamos con usted.

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  TITULO_DEL_ARRENDADOR,
   efecto,
   explicarProblemaPreaviso,
   fechaLimite,
@@ -10,12 +11,57 @@ import { MESES_AVISO_RENOVACION, MESES_PREAVISO_LEY_820 } from './agenda';
 
 const FIN = '2026-12-31';
 
+/*
+ * ⚠️ El fixture avisa como ARRENDATARIO a propósito (§263). Antes decía `arrendador`, y con eso
+ * estas pruebas afirmaban que el aviso postal del propietario TERMINA el contrato — que es
+ * justamente el error legal que costó el artículo del Journal y el texto del panel. Quien puede
+ * terminar en el vencimiento con solo avisar es el inquilino (Ley 820 art. 24). La asimetría tiene
+ * su propio bloque abajo.
+ */
 const preaviso = (over: Partial<Preaviso> = {}): Preaviso => ({
   contratoId: 'CTR-1',
-  quien: 'arrendador',
+  quien: 'arrendatario',
   redactadoEl: '2026-09-01',
   evidencia: { operador: '4-72', guia: 'YG123456789CO', impuestoEl: '2026-09-01' },
   ...over,
+});
+
+describe('🔴 el CANAL no es el DERECHO: arrendador y arrendatario no son simétricos (§263)', () => {
+  /*
+   * `efecto()` devolvía «termina» en cuanto la constancia postal estaba completa y a tiempo, para
+   * CUALQUIERA de los dos. El dato para distinguirlos —`quien`— llevaba en el modelo desde el
+   * principio y nadie lo miraba, así que el panel le confirmaba POR ESCRITO al propietario que su
+   * contrato terminaba. Llegaba la fecha, el inquilino no se iba, y quien se lo había asegurado
+   * era ALTORRA. Verificado en el texto oficial de la Ley 820 (Función Pública, gestor normativo).
+   */
+  const conEvidenciaPerfecta = (quien: 'arrendador' | 'arrendatario'): Preaviso => ({
+    contratoId: 'CTR-1',
+    quien,
+    redactadoEl: '2026-09-01',
+    evidencia: { operador: '4-72', guia: 'YG123456789CO', impuestoEl: '2026-09-01' },
+  });
+
+  it('el ARRENDATARIO sí termina en el vencimiento con solo avisar (art. 24)', () => {
+    expect(efecto(conEvidenciaPerfecta('arrendatario'), FIN)).toBe('termina');
+  });
+
+  it('el ARRENDADOR no: le falta el título aunque el aviso sea impecable', () => {
+    expect(efecto(conEvidenciaPerfecta('arrendador'), FIN)).toBe('falta-titulo-del-arrendador');
+  });
+
+  it('y NO se le dice «se prorroga»: el aviso no llegó tarde, le falta otra cosa', () => {
+    expect(efecto(conEvidenciaPerfecta('arrendador'), FIN)).not.toBe('se-prorroga');
+  });
+
+  it('si el aviso del arrendador llega TARDE, manda el retraso: se prorroga', () => {
+    const tarde = { ...conEvidenciaPerfecta('arrendador'), evidencia: { operador: '4-72', guia: 'X', impuestoEl: '2026-11-01' } };
+    expect(efecto(tarde, FIN)).toBe('se-prorroga');
+  });
+
+  it('el texto que lo explica nombra las DOS salidas de la ley', () => {
+    expect(TITULO_DEL_ARRENDADOR).toMatch(/tres meses de arriendo/i);
+    expect(TITULO_DEL_ARRENDADOR).toMatch(/caución de seis meses/i);
+  });
 });
 
 describe('fechaLimite — tres meses antes del vencimiento', () => {

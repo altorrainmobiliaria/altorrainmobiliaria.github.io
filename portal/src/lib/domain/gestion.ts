@@ -103,7 +103,12 @@ export interface PreavisoRegistrado {
   impuestoEl: ISODate;
   entregadoEl?: ISODate;
   /** Veredicto calculado por el servidor al registrar, congelado para no recalcularlo distinto. */
-  efecto: 'termina' | 'se-prorroga';
+  /**
+   * `falta-titulo-del-arrendador` (§263): el aviso es VÁLIDO y llegó a tiempo, pero cuando quien
+   * avisa es el arrendador eso por sí solo no termina el contrato — le falta la indemnización de
+   * tres meses (art. 22 num. 7) o la causal especial con caución de seis (num. 8).
+   */
+  efecto: 'termina' | 'se-prorroga' | 'falta-titulo-del-arrendador';
   /** Id del documento de la bóveda con el escaneo de la constancia, si ya se subió. */
   constanciaDocId?: string;
   registradoEn: ISODate;

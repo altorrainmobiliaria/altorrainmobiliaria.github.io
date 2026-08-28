@@ -50,9 +50,16 @@ export function textoLimite(c: Contrato | undefined): string {
   const fin = (c.vigenciaFin ?? '').slice(0, 10);
   if (!fin) return '';
   if (c.preaviso) {
-    return c.preaviso.efecto === 'termina'
-      ? `Ya tiene preaviso: termina el ${enLetras(fin)}.`
-      : 'Ya tiene un preaviso que llegó tarde: el contrato se prorroga.';
+    if (c.preaviso.efecto === 'termina') return `Ya tiene preaviso: termina el ${enLetras(fin)}.`;
+    /*
+     * 🔴 Esto le decía «termina el X» al propietario con solo la constancia postal (§263). Llegaba
+     * la fecha, el inquilino no se iba, y quien se lo había asegurado POR ESCRITO era ALTORRA.
+     */
+    if (c.preaviso.efecto === 'falta-titulo-del-arrendador') {
+      return `Preaviso puesto y a tiempo, pero NO basta para restituir el ${enLetras(fin)}: falta pagar ` +
+        'los tres meses (art. 22 num. 7, durante prórrogas) o invocar la causal con caución de seis (num. 8).';
+    }
+    return 'Ya tiene un preaviso que llegó tarde: el contrato se prorroga.';
   }
   return `Vence el ${enLetras(fin)} · último día para imponer: ${enLetras(fechaLimite(fin))}`;
 }
