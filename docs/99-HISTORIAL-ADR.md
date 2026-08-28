@@ -11325,3 +11325,38 @@ había que sortear a mano en vez de como un defecto que había que arreglar. Nor
 repartiéndolo: **los cuatro cerebros SANOS**, y el boot de inmobiliaria pasa a 31.355c, exactamente
 la cifra que da contar el contenido a mano. La regla 4 de L-66 queda marcada como resuelta en la
 raíz: dejar el aviso vivo sería publicar una instrucción falsa sobre la herramienta (§255).
+
+## 260. ADR-260 — Corrí el gate en producción de verdad: fallan DOS cosas, y ninguna es código
+
+### 260.1 — La lista de salida, medida en vez de estimada
+El runbook describía la fase 5 con cuatro errores enumerados y párrafos de contexto, pero **nadie
+había construido el artefacto de producción y mirado qué queda realmente en rojo**. Hecho:
+`PUBLIC_SITE_ENV=production` + `verify:build`. De sus **23 comprobaciones fallan DOS**, y las dos son
+del dueño: (1) `PUBLIC_CATALOGO_SOURCE=demo` —publicaría inmuebles que no existen, con precio y
+barrio— y (2) el **RNT** en `/` y `/estancias`. Verde todo lo demás: el móvil personal (128 ficheros
+servidos, con el legacy dentro), enlaces internos, un solo `h1`, accesibilidad, vista previa al
+compartir, el styleguide que no viaja, y el cableado de los 10 gates al CI. 🎯 *Lo que falta para
+lanzar no es código, y ahora eso es una medición y no una impresión.*
+
+### 260.2 — El paso 5.4 comprobaba DESPUÉS del punto de no retorno lo que un gate ya sabía antes
+`5.4` mandaba hacer `curl … | grep noindex` **después** del 5.3, o sea con el DNS ya movido. Si el
+build hubiera salido `noindex`, Google no indexa nada y el fallo aparece cuando ya no hay marcha
+atrás. Pero `verify:build` lo comprueba en el **5.2**, que corre ANTES: *sin noindex residual, robots
+abierto, sitemap declarado*. Censo del artefacto de producción: **44 páginas, 6 con `noindex`**
+—`/gestion` · `/seguridad` · `/design-system` · `/ingresar` · `/mi-perfil` · `/favoritos`— **las seis
+internas y ninguna anunciada en el sitemap**. El paso queda como confirmación en vivo que ya no puede
+sorprender. Es el mismo movimiento que §259 hizo con el 5.5: *sacar la comprobación de detrás del
+punto de no retorno*, que es donde no sirve de nada.
+
+### 260.3 — Lo que la medición dejó como duda honesta, no como hallazgo
+Tres de las seis internas (`/gestion`, `/seguridad`, `/design-system`) llevan `noindex` **y** están en
+`Disallow` del `robots.txt`. Esa combinación es discutible —si prohíbes rastrear, el buscador no llega
+a LEER el `noindex`, así que la URL puede aparecer igual, desnuda— y la alternativa (permitir rastreo
++ `noindex`) indexa mejor la ausencia pero expone la ruta. Para un panel interno el daño de una URL
+desnuda es bajo y el `Disallow` es la señal más fuerte. **No se toca**: es una preferencia, no un
+defecto, y cambiarla sin decirlo sería colar una decisión de SEO dentro de una tarea de verificación.
+
+### 260.4 — Verificación
+Build de producción OK · `verify:build` 21/23 · `verify:claims` en producción: 0 cifras nuevas sin
+respaldo, 8 congeladas con motivo, 21 fuentes citadas contra 13 URLs abiertas una por una. Artefacto
+de staging **restaurado** al terminar. **INTACTO**: `robots.txt` y la combinación de §260.3.
