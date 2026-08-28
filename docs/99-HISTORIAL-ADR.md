@@ -11064,3 +11064,45 @@ carga` · el defecto inyectado se reporta y desaparece al restaurar.
 ### 253.5 — Archivos
 `../brain-private/kernel/brain-check.mjs` + `VERSION` (reparto ×4) ·
 `skills/auditoria-cerebro/SKILL.md` en los **cuatro** repos.
+
+## 254. ADR-254 — El conocimiento jurídico vivía en un disco, y una cifra de cliente sin sello
+
+### 254.1 — 212 KB de derecho propio, sin respaldo y sin ruta
+`.auditoria-contratos/` guarda las **decisiones legales vigentes**, los dos contratos auditados, los
+estatutos y la póliza. Estaba **gitignored —correctamente**, porque son copias íntegras de contratos
+reales y este repo es **público** ([[L-15]] de cars)— pero también **sin copia de seguridad** y **sin
+ruta desde ningún nodo vivo**: se mencionaba solo dentro del `99`, que está prohibido leer entero.
+Nadie llegaba.
+Ahora su copia durable vive en la **bóveda privada** (comprobado: **404 sin autenticar**) y `42-LEGAL`
+dice qué son, **por qué no están aquí** y dónde buscarlas. ⚠️ Con el aviso que hace falta: el gate #7
+**es ciego a ficheros ignorados** y no te va a recordar re-copiarlos.
+
+### 254.2 — La cifra que gobierna la tabla que ve un cliente, verificada contra el decreto
+`45-COSTOS-TRANSACCION` sostiene el **acantilado de los 135 SMLMV = `$236.372.175`**, donde un peso de
+más cambia la estampilla de 0,5 % a 1 % —**~$1,18 millones**— en una escritura real. Verificado **en la
+fuente**: SMLMV 2026 = **$1.750.905**, **Decreto 0159 del 19-feb-2026**, +23 % sobre 2025. **La cifra
+del cerebro es correcta**, y el nodo ya sabía lo más importante: ese decreto es **TRANSITORIO**.
+Lo que faltaba era el **sello**. Ahora lleva `verificado-vivo` con su decreto, y el aviso de caducidad
+está **junto a la cifra** y no cincuenta líneas más abajo: rige *hasta que el Consejo de Estado falle*
+el proceso de nulidad, o sea que **puede cambiar sin esperar a enero**.
+
+### 254.3 — ⛔ Y un hallazgo RETIRADO, que no es lo mismo que cerrado
+La auditoría afirmaba que *«el 404 del dominio no es un 404»*. Medido: devuelve **HTTP 404** —que es lo
+que respeta Google— y solo el **cuerpo** redirige a la home, coherente con el modo obra, donde los 66
+stubs hacen exactamente eso. Y el portal **ya tiene su 404 real** para después del cutover: título
+propio, `h1` y 101 enlaces. *Cerrarlo afirmaría que había algo que arreglar.*
+🎯 De paso salió uno nuevo que **no toco**: el `h1` de ese 404 dice «Esta sección aún está en
+construcción», cierto en Ola 1 y engañoso tras el cutover. Es **copia visible** → decisión del dueño.
+
+### 254.4 — Lo que sigue sin mecanismo
+`42`, `43` y `44` afirman sobre el **mundo** (retención, UVB, tarifas, dictámenes) y el check #16 solo
+escanea `05` y `10`: quedan **enteros** fuera de su alcance. El sello de §254.2 es hoy [HONOR] →
+N16-14 sigue abierto.
+
+### 254.5 — Verificación
+`brain:check` SANO · bóveda con HEAD == origin · SMLMV contrastado con el Decreto 0159 de 2026
+(fuente oficial, no memoria).
+
+### 254.6 — Archivos
+`docs/42-LEGAL.md` · `docs/45-COSTOS-TRANSACCION.md` · bóveda `expediente-legal/auditoria-contratos/`
+(8 ficheros). **INTACTO**: `.gitignore` — que estén ignorados es la decisión correcta y se mantiene.

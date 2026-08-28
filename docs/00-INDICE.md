@@ -124,6 +124,7 @@
 | §251 | 🙈 **Cruzar el 100 % te volvía INVISIBLE** en la alarma de saturación: un nodo al 95 % salía y uno al 105 % no. Kernel v1.21.0 ×4. + mi instrumento medía sin el CRLF que el gate sí cuenta. | 10959 |
 | §252 | 🪞 **Tres nodos contradecían su propia re-medición**: el manifest ordenaba un callejón refutado, `TODO-50` tenía dos prohibiciones (una falsa) y cero puertas, y §237 quedó desmentido. | 10994 |
 | §253 | 🧬 **El auditor existía en TRES versiones**: tres cerebros auditaban sin las dos lecciones nacidas de auditar. Propagado + gate 6b, que compara CONTENIDO (el 6a solo miraba nombres). | 11034 |
+| §254 | ⚖️ **212 KB de derecho propio sin respaldo ni ruta** → bóveda privada + ruta desde `42`. Y el acantilado de los 135 SMLMV **verificado contra el Decreto 0159/2026**. + un hallazgo RETIRADO. | 11068 |
 
 ---
 

@@ -24,7 +24,7 @@ inmuebles NO puede ser inferior al avalúo catastral** (o autoavalúo / valor de
 | Acto SIN cuantía en ORIP o Cámara de Comercio | **4 SMDLV** | Nombramientos, escrituras aclaratorias, reformas sin cesión ni aumento de capital |
 | Con cuantía en **Cámara de Comercio** | **0,7 %** general · **0,3 %** si implica constitución y/o prima en colocación | Banda legal: 0,3 %–0,7 % |
 
-**⛰️ EL ACANTILADO — 135 SMLMV = `$236.372.175` en 2026.** Un peso por encima y la estampilla pasa de
+**⛰️ EL ACANTILADO — 135 SMLMV = `$236.372.175` en 2026** (`verificado-vivo: 2026-08-28`: SMLMV = $1.750.905, **D. 0159 del 19-feb-2026**, +23 % sobre 2025 — leído del decreto, no de memoria). Un peso por encima y la estampilla pasa de
 0,5 % a 1 %: el salto es de **~$1,18 millones** por un solo peso de diferencia. En una negociación
 cerca de esa línea, el escalón pesa más que muchas concesiones de precio. ⚠️ Pero **no se «baja» el
 valor para esquivarlo**: la base no puede ir por debajo del avalúo catastral, y declarar menos del
@@ -73,7 +73,7 @@ cerrar» sería subestimarlo.
    nacional permite**, así que cualquier versión final sería igual o MENOR. El régimen anterior
    (Ord. 11/2000, mod. 11/2006 y 17/2011) cobraba la estampilla por tramos de 3×1000 / 4×1000 / 5×1000
    sobre $5M y $10M — también por debajo del 1 %. **El 2 % combinado es un techo, no una estimación.**
-3. **El SMLMV 2026 (`$1.750.905`) viene de un decreto TRANSITORIO** (D. 0159 de 2026), tras la
+3. **El SMLMV 2026 (`$1.750.905`) viene de un decreto TRANSITORIO** (D. 0159 de 2026, `verificado-vivo: 2026-08-28`) que rige **hasta que el Consejo de Estado falle** el proceso de nulidad 11001-03-25-000-2026-00004-00 — o sea que esta cifra puede cambiar **sin esperar a enero**. Tras la
    suspensión provisional del D. 1469/2025 por el Consejo de Estado. Si el pulso jurídico cambia el
    salario, **el umbral de los 135 SMLMV se mueve** — recalcúlese antes de usarlo en una minuta.
 4. **No es concepto de abogado titulado** (§G.2, sin revisión de tercero): lectura literal de las
