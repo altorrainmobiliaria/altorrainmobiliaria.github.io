@@ -10,6 +10,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { TARIFAS } from '../lib/content/tarifas';
 
 const stats = [
   { n: '+1.200', l: 'inmuebles cerrados' },
@@ -20,16 +21,56 @@ const pasos = [
   { n: '01', t: 'Cuéntanos', d: 'Compártenos los datos de tu inmueble en dos minutos con el formulario.' },
   { n: '02', t: 'Valoración experta', d: 'Un asesor visita, fotografía y define el precio justo con datos de mercado.' },
   { n: '03', t: 'Publicamos', d: 'Tu propiedad en el portal, redes y nuestra red privada de compradores.' },
-  { n: '04', t: 'Cerramos', d: 'Acompañamiento legal y financiero hasta la firma de la escritura.' },
+  { n: '04', t: 'Cerramos', d: 'Coordinamos documentos, notaría y banco hasta la firma de la escritura.' },
 ];
 // ⚖️ Aquí decía «Avalúo y fotografía profesional». El «Avalúo» se RETIRÓ el 2026-08-22 (§105):
 // Daniel confirmó que NO hay avaluador inscrito en el RAA detrás, y sin él ofrecerlo es reclamar una
 // actividad regulada (Ley 1673). La fotografía profesional SÍ es real, así que esa se queda: lo que
 // sobraba era la palabra, no el servicio.
+/*
+ * 🔴 Estas dos cadenas SE DERIVAN de `TARIFAS` (§263). Antes se escribían a mano aquí y decían dos
+ * cosas falsas en la página donde el propietario DECIDE:
+ *
+ *  · «Solo pagas cuando tu propiedad se vende» — pero esta misma página capta ARRIENDOS (su propio
+ *    h1 dice «Vende o arrienda», y el menú enlaza «Administración y Arriendo» aquí). La
+ *    administración de arriendo se cobra sobre CADA GIRO MENSUAL, no al vender. El agravante es el
+ *    rótulo de al lado: «sin costos ocultos» es lo que convierte una omisión en una promesa.
+ *  · «3%» a secas, mientras `/precios` dice que esa comisión se factura CON IVA. 3 % y 3,57 % no son
+ *    el mismo número: sobre una venta de $500.000.000 son $2.850.000 que nadie vio aquí.
+ *
+ * Derivarlas mata la divergencia de raíz — es lo que ya se hizo con el FAQPage de `/precios`.
+ */
+const tarifaDe = (id: string): { cifra: string; nota?: string } => {
+  const t = TARIFAS.find((x) => x.id === id);
+  if (!t) throw new Error(`publicar: cita la tarifa '${id}' y no existe en TARIFAS.`);
+  /*
+   * Una tarifa SIN cifra (las «a convenir») no se puede anunciar como precio: preferimos romper el
+   * build a imprimir «undefined %» en la pagina donde el propietario decide. Mensaje en ASCII: viaja
+   * en una cabecera HTTP cuando el fallo ocurre en SSR.
+   */
+  if (t.cifra === null) throw new Error(`publicar: la tarifa '${id}' no tiene cifra y se esta anunciando como precio.`);
+  return { cifra: t.cifra, nota: t.nota };
+};
+const conIva = (t: { cifra: string; nota?: string }) =>
+  t.cifra.includes('IVA') || !/factura con IVA/i.test(t.nota ?? '') ? t.cifra : `${t.cifra} + IVA`;
+
+const PRECIO_VENTA = conIva(tarifaDe('venta'));
+const SUBTITULO_PLANES =
+  `Sin costos ocultos: la comisión de venta (${PRECIO_VENTA}) se causa al registro, ` +
+  `y la administración de arriendo (${tarifaDe('administracion').cifra}) se descuenta de cada giro mensual.`;
+
+/*
+ * ⚠️ AQUI NO SE PROMETE UN ABOGADO (§263). La pagina ofrecia «Abogado dedicado» en el plan mas caro,
+ * «Acompañamiento legal» en el de 3 % y «todo el proceso juridico acompañado» en la franja de
+ * beneficios — y `docs/42-LEGAL` dice que ALTORRA **no presta asesoria juridica**. El propietario
+ * elegia el plan contando con un abogado que no existe, y lo descubria en el estudio de titulos:
+ * justo el momento de menos margen, y en el que un error legal se vuelve caro.
+ * Lo que queda escrito es lo que SI se hace: revisar documentos y coordinar notaria y titulos.
+ */
 const planes = [
   { tier: 'Publicación', price: 'Gratis', sub: 'Publica y recibe contactos por tu cuenta.', perks: ['Ficha en el portal ALTORRA', 'Hasta 10 fotos', 'Contactos directos'], cta: 'Empezar gratis', featured: false },
-  { tier: 'Gestión Premium', price: '3%', unit: 'al vender', sub: 'Nosotros gestionamos todo el proceso.', perks: ['Todo lo de Publicación', 'Fotografía profesional', 'Visitas y negociación gestionadas', 'Acompañamiento legal'], cta: 'Pedir valoración', featured: true },
-  { tier: 'Concierge Élite', price: 'A medida', sub: 'Para propiedades de alto valor y exclusividad.', perks: ['Todo lo de Premium', 'Video y tour 3D', 'Marketing internacional', 'Abogado dedicado'], cta: 'Hablar con un asesor', featured: false },
+  { tier: 'Gestión Premium', price: PRECIO_VENTA, unit: 'al vender', sub: 'Nosotros gestionamos todo el proceso.', perks: ['Todo lo de Publicación', 'Fotografía profesional', 'Visitas y negociación gestionadas', 'Documentos y notaría coordinados'], cta: 'Pedir valoración', featured: true },
+  { tier: 'Concierge Élite', price: 'A medida', sub: 'Para propiedades de alto valor y exclusividad.', perks: ['Todo lo de Premium', 'Video y tour 3D', 'Marketing internacional', 'Estudio de titulos con abogado aliado'], cta: 'Hablar con un asesor', featured: false },
 ];
 const check = '<path d="M20 6L9 17l-5-5"/>';
 
@@ -38,7 +79,7 @@ const check = '<path d="M20 6L9 17l-5-5"/>';
 const beneficios = [
   { i: '<circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>', t: 'Máxima exposición', d: 'Portal, redes y una red privada de compradores nacionales e internacionales.' },
   { i: '<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>', t: 'Precio justo', d: 'Basado en datos reales del mercado de Cartagena, no en corazonadas.' },
-  { i: '<path d="M12 3l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V6z"/><path d="M9 12l2 2 4-4"/>', t: 'Respaldo legal', d: 'Revisión de documentos, escritura y todo el proceso jurídico acompañado.' },
+  { i: '<path d="M12 3l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V6z"/><path d="M9 12l2 2 4-4"/>', t: 'Documentos en regla', d: 'Revisamos tus documentos y coordinamos el estudio de títulos con un abogado aliado.' },
   { i: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>', t: 'Seguridad total', d: 'Compradores verificados y pagos protegidos en cada etapa de la operación.' },
 ];
 ---
@@ -139,7 +180,7 @@ const beneficios = [
         <div class="pub-center">
           <p class="alt-eyebrow">Planes</p>
           <h2>Elige cómo quieres vender</h2>
-          <p class="pub-plans__sub">Sin costos ocultos. Solo pagas cuando tu propiedad se vende.</p>
+          <p class="pub-plans__sub">{SUBTITULO_PLANES}</p>
         </div>
         <div class="pub-plans">
           {planes.map((pl) => (
