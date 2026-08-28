@@ -72,8 +72,25 @@ const PATRONES = [
     que: 'un conteo de reseñas afirma que ese número de personas opinó' },
   { id: 'nota', re: /\b(?:rating|nota|puntuacion|puntuación)\s*[:=]\s*['"`]?[0-5][.,]\d/gi,
     que: 'una nota media afirma que existen calificaciones detrás' },
-  { id: 'inventario', re: /\b\d{2,}\+?\s*(?:propiedades|inmuebles|clientes|familias|operaciones|aliados)\b/gi,
+  { id: 'inventario', re: /\b[1-9]\d+\+?\s*(?:propiedades|inmuebles|arriendos|arrendamientos|estancias|alojamientos|clientes|familias|operaciones|aliados)\b/gi,
     que: 'un conteo de inventario o de clientes es comprobable — y hoy no cuadra' },
+  /*
+   * ⚠️ EL MISMO CONTEO, ESCRITO AL REVÉS (§263). El patrón de arriba exige el número ANTES del
+   * sustantivo («128 propiedades»), y la home lo escribe después: «Ver arriendos <b>83</b>». Ese 83
+   * llevaba ahí sin que nadie lo congelara ni lo viera, al lado de dos hermanos que SÍ están en la
+   * lista congelada — o sea que el gate daba por cubierta una familia que cubría a medias.
+   * 🎯 Un patrón que solo conoce UNA de las formas en que algo se escribe cuenta de menos, y lo
+   * que no ve es justo lo que nadie revisa a mano.
+   */
+  /*
+   * 📏 `[1-9]\d+` y no `\d{2,}`: el segundo casaba «04 Estancias» —el rótulo del paso 4 del
+   * «cómo funciona»— como si fuera un inventario. Un conteo no se escribe con cero a la izquierda;
+   * un ordinal maquetado, casi siempre sí. Sin esta distinción el gate gritaba sobre algo correcto,
+   * y un gate que grita sobre lo correcto enseña a ignorarlo entero.
+   */
+  { id: 'inventario-invertido',
+    re: /\b(?:propiedades|inmuebles|arriendos|arrendamientos|estancias|alojamientos|aliados)\s+[1-9]\d+\+?\b/gi,
+    que: 'un conteo de inventario escrito DESPUÉS del sustantivo afirma exactamente lo mismo' },
   { id: 'rendimiento', re: /[+-]\s?\d{1,2}(?:[.,]\d)?\s?%\s*(?:de\s+)?(?:valorizaci|rentabilid|retorno|roi)/gi,
     que: 'una cifra de mercado sin fuente pasa a ser NUESTRA afirmación' },
   { id: 'distinción', re: /\b(?:superanfitri[oó]n|favorito entre hu[eé]spedes|l[ií]der del mercado|n[uú]mero 1)\b/gi,
@@ -144,6 +161,8 @@ const DEUDA_DECLARADA = [
   //   datos del portal son DEMO»). Se congelan aquí para que el gate pueda existir antes del cutover.
   ['128 propiedades', 'home: conteo de muestra; el catálogo está vacío — sale en el cutover'],
   ['312 inmuebles', 'home (mapa): conteo de muestra — sale en el cutover'],
+  // El tercero de la familia, y el que el patrón no veía por estar escrito al revés (§263).
+  ['arriendos 83', 'home: conteo de muestra del enlace a /arrendar — sale en el cutover, con sus dos hermanos'],
   ['48 Inmuebles', '/gestion: panel tras autenticación con datos de muestra — sale en el cutover'],
 ];
 const DEUDA = new Map(DEUDA_DECLARADA);
