@@ -326,7 +326,15 @@ const nav = [
   .alt-hdr__drawer-cta .alt-hdr__pub, .alt-hdr__drawer-cta .alt-hdr__login { padding: 14px; border-radius: var(--alt-r-sm); font-size: 14px; justify-content: center; }
 
   @media (max-width: 1299px) {
-    .alt-hdr__nav, .alt-hdr__login, .alt-hdr__pub { display: none; }
+    /*
+     * 🔴 Este `display:none` era GLOBAL por clase, y el cajón usa las MISMAS clases (§264). Así que
+     * en cualquier teléfono o tablet desaparecían también las copias del cajón: **no quedaba ni un
+     * enlace a «Ingresar» en toda la cabecera**, en el dispositivo por el que llega la mayoría de
+     * los clientes de una inmobiliaria en Cartagena. Y no se veía venir: la regla `.alt-hdr__drawer-cta
+     * .alt-hdr__login` de arriba les da estilo propio — o sea que estaban PENSADOS para verse ahí.
+     * Se acota a la barra de escritorio, que es lo único que sobra en pantalla estrecha.
+     */
+    .alt-hdr__nav, .alt-hdr__actions > .alt-hdr__login, .alt-hdr__actions > .alt-hdr__pub { display: none; }
     .alt-hdr__burger { display: inline-flex; }
     .alt-hdr__bar-in { height: 66px; }
     .alt-hdr__actions { margin-left: auto; }
