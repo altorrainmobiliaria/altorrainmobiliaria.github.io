@@ -31,17 +31,35 @@ const SIN_MEDIR = '—';
 
 type Kpi = { el: HTMLElement; etiqueta: string };
 
-function kpisDelPanelVisible(): Kpi[] {
-  /*
-   * Solo el juego de tarjetas del rol ACTIVO: los otros dos están `hidden`, y escribirles cifras
-   * reales dejaría datos del negocio en un nodo que otro rol puede llegar a ver al cambiar de vista.
-   */
-  const set = document.querySelector<HTMLElement>('.gx-kpi-set:not([hidden])');
-  if (!set) return [];
-  return [...set.querySelectorAll<HTMLElement>('.gx-kpi')].map((el) => ({
+const leer = (set: HTMLElement): Kpi[] =>
+  [...set.querySelectorAll<HTMLElement>('.gx-kpi')].map((el) => ({
     el,
     etiqueta: (el.querySelector('.gx-kpi__lbl')?.textContent ?? '').toLowerCase(),
   }));
+
+/**
+ * Las tarjetas del rol ACTIVO — las únicas donde se pueden ESCRIBIR cifras reales: los otros dos
+ * juegos están `hidden` y llenarlos dejaría datos del negocio en un nodo que otro rol puede
+ * destapar al cambiar de pestaña.
+ */
+function kpisDelPanelVisible(): Kpi[] {
+  const set = document.querySelector<HTMLElement>('.gx-kpi-set:not([hidden])');
+  return set ? leer(set) : [];
+}
+
+/**
+ * TODAS las tarjetas de rol, incluidas las ocultas — para BORRAR, que no es lo mismo que escribir.
+ *
+ * 🔴 Aquí estuvo el agujero de mi propio arreglo (§266). Neutralicé solo el juego visible con un
+ * razonamiento correcto —no escribir cifras reales en nodos que otro rol puede ver— pero lo apliqué
+ * a las dos operaciones a la vez, y **borrar no es escribir**: dejó intactas las cifras INVENTADAS
+ * de los otros dos juegos, a un clic de la pestaña. «Ventas del mes: $4.850M» seguía viva.
+ *
+ * 🎯 Se separan las dos operaciones: se borra en TODAS, se escribe solo en la activa. Un juego
+ * oculto con «—» no filtra nada y no miente; con la cifra del mockup, miente en cuanto lo destapas.
+ */
+function kpisDeTodosLosRoles(): Kpi[] {
+  return [...document.querySelectorAll<HTMLElement>('.gx-kpi-set[data-set]')].flatMap(leer);
 }
 
 /** Escribe un valor real y retira la tendencia, que en el mockup es inventada. */
@@ -71,12 +89,14 @@ export async function montarTablero(): Promise<void> {
    * Se neutralizan ANTES de consultar: si la red tarda o falla, lo que queda en pantalla es «—» y no
    * el número del mockup. El orden importa — al revés, un fallo dejaría la mentira intacta.
    */
+  // Se BORRA en los tres juegos de rol, no solo en el que se ve: cambiar de pestaña no puede
+  // resucitar una cifra del mockup (§266).
+  for (const k of kpisDeTodosLosRoles()) {
+    ponerValor(k, SIN_MEDIR, /visita/.test(k.etiqueta) ? 'Visitas · aún no se registran' : undefined);
+  }
+
   const inmuebles = buscar(/inmueble/);
-  const visitas = buscar(/visita/);
   const ventas = buscar(/venta/);
-  if (inmuebles) ponerValor(inmuebles, SIN_MEDIR);
-  if (visitas) ponerValor(visitas, SIN_MEDIR, 'Visitas · aún no se registran');
-  if (ventas) ponerValor(ventas, SIN_MEDIR);
 
   try {
     const { app } = await cargarAuth();
