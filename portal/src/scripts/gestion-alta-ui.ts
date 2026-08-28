@@ -26,6 +26,7 @@ import { montarAltaContrato, montarContratos, montarPagos, montarRegistroPago } 
 import { montarDocumentos, montarFormularioDocumento } from './gestion-documentos';
 import { montarFormularioVenta, montarVentas } from './gestion-ventas';
 import { montarPanelPerfiles, montarPerfiles } from './gestion-perfiles';
+import { montarTablero } from './gestion-panel';
 import { montarExpedientes, montarFormularios, montarNovedades } from './gestion-novedades';
 import type { Propiedad } from '../lib/domain/propiedades';
 
@@ -427,6 +428,8 @@ export function montarAlta(): void {
   montarAltaContrato();
   montarFormularioDocumento();
   montarFormularioVenta();
+  // El tablero: que las cifras del mockup dejen de afirmar un negocio que no existe (§264).
+  void montarTablero();
   montarPanelPerfiles();
   montarRegistroPago();
   montarFormularios();
