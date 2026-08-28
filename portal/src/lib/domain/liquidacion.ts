@@ -86,6 +86,13 @@ export interface Liquidacion {
    * y la calculada salen del mismo sitio, o divergen.
    */
   honorariosPctAplicado: number;
+  /**
+   * El canon del período, y si la cuota de copropiedad viajaba DENTRO de él. Lo devuelve el dominio
+   * porque la certificación anual los necesita y no puede deducirlos: los dos casos son
+   * **fiscalmente distintos** y `cobroAlArrendatario` solos no los distingue (§263).
+   */
+  canon: COP;
+  phIncluidaEnCanon: boolean;
 }
 
 /** Al peso. En COP no hay centavos en la práctica, y arrastrar decimales es como se pierde un peso. */
@@ -147,6 +154,8 @@ export function liquidarPeriodo(e: EntradaLiquidacion): Liquidacion {
     giroAlPropietario,
     netoAltorra: honorarios - retencionHonorarios,
     honorariosPctAplicado: pct,
+    canon,
+    phIncluidaEnCanon: !!e.adminIncluidaEnCanon && ph > 0,
   };
 }
 

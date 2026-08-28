@@ -150,7 +150,9 @@ describe('🔒 EL INVARIANTE: lo que entra es exactamente lo que sale', () => {
      * pesos, este test lo sigue exigiendo entero. La lista es la excepción, no la regla.
      */
     const NO_ES_DINERO = new Set(['honorariosPctAplicado']);
-    const revisados = Object.entries(l).filter(([k]) => !NO_ES_DINERO.has(k));
+    const revisados = Object.entries(l).filter(
+      ([k, v]) => typeof v === 'number' && !NO_ES_DINERO.has(k),
+    );
     expect(revisados.length).toBeGreaterThanOrEqual(8); // si el objeto encoge, el test lo dice
     for (const [k, v] of revisados) {
       expect(Number.isInteger(v), `${k} = ${v}`).toBe(true);

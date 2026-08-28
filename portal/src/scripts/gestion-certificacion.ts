@@ -37,6 +37,7 @@ import {
 } from '../lib/domain/certificacion';
 import { liquidarPeriodo, type Liquidacion } from '../lib/domain/liquidacion';
 import { pesos } from '../lib/domain/dinero';
+import { SITE } from '../lib/config/site';
 import { mesDePeriodo } from '../lib/domain/meses-es';
 import type { Contrato, Pago } from '../lib/domain/gestion';
 
@@ -216,7 +217,7 @@ function armar(): void {
 
   const { meses, descuadres } = mesesDesdePagos(contrato, PAGOS, anio);
   const cert = certificar(
-    { nombre: 'ALTORRA Inmobiliaria', documento: '901.xxx.xxx-1' },
+    { nombre: SITE.legalName, documento: SITE.nit },
     {
       nombre: contrato.partes?.propietario?.nombre ?? '',
       documento: val('gx-cf-nit') || (contrato.partes?.propietario?.documento ?? ''),

@@ -18,6 +18,77 @@ const anio = (canon: number, ph = 0, extra: Record<string, unknown> = {}): MesCe
     liquidacion: liquidarPeriodo({ canon, administracionPH: ph, ...extra }),
   }));
 
+describe('🔒 EL INVARIANTE DEL PAPEL: ingresos − pagos − retenciones = lo girado (§263)', () => {
+  /*
+   * El certificado se le entrega al contador del propietario para declarar renta. Si sus cifras no
+   * cuadran entre si, o lo devuelve —y con el se va la confianza en toda la cuenta— o lo usa tal
+   * cual y declara mal. Faltaba esta prueba, y por eso la cuota de copropiedad pudo restarse DOS
+   * veces durante meses: cada cifra por separado parecia razonable.
+   *
+   * Se comprueba en los DOS casos fiscales, que es donde estaba escondido el defecto.
+   */
+  const cuadra = (c: ReturnType<typeof certificar>) =>
+    c.ingresosRecibidos - c.pagosPorSuCuenta - c.retencionesPracticadas;
+
+  it('cuadra con la cuota de copropiedad cobrada APARTE', () => {
+    const c = certificar(ALTORRA, DUENO, anio(2_000_000, 300_000));
+    expect(cuadra(c)).toBe(c.netoGirado);
+    // Y la cuota que nunca fue suya no aparece como pago suyo.
+    expect(c.detallePagos.cuotaCopropiedad).toBe(0);
+    expect(c.ingresosRecibidos).toBe(12 * 2_000_000);
+  });
+
+  it('cuadra con la cuota DENTRO del canon, y entonces si es un pago suyo', () => {
+    const c = certificar(ALTORRA, DUENO, anio(2_300_000, 300_000, { adminIncluidaEnCanon: true }));
+    expect(cuadra(c)).toBe(c.netoGirado);
+    expect(c.detallePagos.cuotaCopropiedad).toBe(12 * 300_000);
+    expect(c.ingresosRecibidos).toBe(12 * 2_300_000);
+  });
+
+  it('cuadra tambien cuando el arrendatario RETIENE', () => {
+    const c = certificar(ALTORRA, DUENO, anio(2_000_000, 300_000, { arrendatarioEsAgenteRetencion: true }));
+    expect(cuadra(c)).toBe(c.netoGirado);
+    expect(c.retencionesPracticadas).toBeGreaterThan(0);
+  });
+
+  it('y sin cuota de copropiedad, que es el caso mas comun', () => {
+    const c = certificar(ALTORRA, DUENO, anio(1_500_000));
+    expect(cuadra(c)).toBe(c.netoGirado);
+    expect(c.ingresosRecibidos).toBe(12 * 1_500_000);
+  });
+});
+
+describe('un documento de RELLENO no puede llegar al papel (§263)', () => {
+  /*
+   * El certificado salio meses con `901.xxx.xxx-1` cableado como NIT de ALTORRA, y la validacion
+   * lo dejaba pasar porque solo miraba que NO estuviera vacio. Es el papel que el propietario le
+   * lleva a su contador: la frase impresa dice «hace constar».
+   */
+  const base = () => certificar(
+    { nombre: 'ALTORRA COMPANY S.A.S.', documento: '902063965-4' },
+    { nombre: 'Ana Perez', documento: '1.047.123.456' },
+    [{ periodo: '2026-01', liquidacion: liquidarPeriodo({ canon: 2_000_000, administracionPH: 300_000 }) }],
+  );
+
+  it('con los datos reales no protesta', () => {
+    expect(problemasDeCertificacion(base())).not.toContain('mandatario-documento-relleno');
+  });
+
+  it('caza el marcador de posicion que estuvo meses impreso', () => {
+    const c = { ...base(), mandatario: { nombre: 'ALTORRA Inmobiliaria', documento: '901.xxx.xxx-1' } };
+    expect(problemasDeCertificacion(c)).toContain('mandatario-documento-relleno');
+  });
+
+  it('y tambien un relleno en el documento del PROPIETARIO', () => {
+    const c = { ...base(), mandante: { nombre: 'Ana Perez', documento: 'CC pendiente' } };
+    expect(problemasDeCertificacion(c)).toContain('mandante-documento-relleno');
+  });
+
+  it('lo explica con palabras, no con un codigo', () => {
+    expect(explicarProblemaCertificacion('mandatario-documento-relleno')).toMatch(/marcador de posici/i);
+  });
+});
+
 describe('certificar — el año completo', () => {
   const c = certificar(ALTORRA, DUENO, anio(2_000_000, 300_000));
 
@@ -30,7 +101,12 @@ describe('certificar — el año completo', () => {
   it('🔴 el ingreso del propietario NO incluye la cuota de la copropiedad', () => {
     // Ese dinero nunca fue suyo: pasó camino de la PH. Incluirlo le inflaría el ingreso declarado.
     expect(c.ingresosRecibidos).toBe(2_000_000 * 12);
-    expect(c.detallePagos.cuotaCopropiedad).toBe(300_000 * 12);
+    /*
+     * …y por lo mismo TAMPOCO es un pago hecho por su cuenta: es dinero de paso. Restarlo del
+     * ingreso Y listarlo como pago suyo lo descontaba DOS VECES, y el papel dejaba de cuadrar
+     * (§263). Cuando la cuota va DENTRO del canon el caso es el contrario, y está abajo.
+     */
+    expect(c.detallePagos.cuotaCopropiedad).toBe(0);
   });
 
   it('desglosa los pagos hechos por su cuenta, no solo el total', () => {
@@ -58,14 +134,22 @@ describe('🔒 EL INVARIANTE: el certificado cuadra con las liquidaciones que lo
     ['honorarios pactados al 7,5 %', anio(1_777_777, 123_456, { honorariosPct: 0.075 })],
   ];
 
+  /*
+   * ⚠️ Este bloque comprobaba `neto + pagos + retenciones === lo cobrado` — cierto, y por eso pasaba
+   * en verde mientras la cuota de copropiedad se restaba DOS VECES (§263). Es el invariante del
+   * FLUJO DE DINERO, no el del papel: quien lee el certificado hace `ingresos − pagos − retenciones`
+   * y espera el neto girado, y ESA relación no la comprobaba nadie. La segunda línea era aún peor:
+   * repetía la fórmula de la implementación, así que no podía discrepar de ella jamás.
+   * 🎯 Un invariante que no es el que hace el LECTOR no protege al lector.
+   */
   for (const [nombre, meses] of casos) {
     it(`cuadra con ${nombre}`, () => {
       const c = certificar(ALTORRA, DUENO, meses);
-      // Todo lo cobrado en el año tiene que estar en alguna de las cuatro bolsas del certificado.
-      const cobrado = meses.reduce((t, m) => t + m.liquidacion.cobroAlArrendatario, 0);
-      expect(c.netoGirado + c.pagosPorSuCuenta + c.retencionesPracticadas).toBe(cobrado);
-      // Y el ingreso del propietario es lo cobrado menos lo que era de la copropiedad.
-      expect(c.ingresosRecibidos).toBe(cobrado - c.detallePagos.cuotaCopropiedad);
+      // El invariante DEL PAPEL: es la resta que hace el contador del propietario.
+      expect(c.ingresosRecibidos - c.pagosPorSuCuenta - c.retencionesPracticadas).toBe(c.netoGirado);
+      // Y el ingreso declarado es el canon del año: ni más (le costaría impuestos) ni menos.
+      const canon = meses.reduce((t, m) => t + m.liquidacion.canon, 0);
+      expect(c.ingresosRecibidos).toBe(canon);
     });
   }
 

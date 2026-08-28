@@ -86,14 +86,25 @@ export function certificar(mandatario: Parte, mandante: Parte, meses: MesCertifi
     desde: periodos[0] ?? '',
     hasta: periodos[periodos.length - 1] ?? '',
     /*
-     * El ingreso del propietario es el CANON, no lo que se le cobró al arrendatario: la cuota de la
-     * copropiedad nunca fue suya — pasó por nosotros camino de la PH. Meterla aquí le inflaría el
-     * ingreso declarado con un dinero que no recibió, y eso se paga en impuestos.
+     * El ingreso del propietario es el CANON. La cuota de copropiedad cobrada APARTE nunca fue suya:
+     * pasó por nosotros camino de la PH, y meterla aquí le inflaría el ingreso declarado con un
+     * dinero que no recibió.
+     *
+     * 🔴 Pero la versión anterior la restaba DOS VECES (§263): la quitaba del ingreso **y** la
+     * volvía a listar como pago hecho por su cuenta. El papel no cuadraba consigo mismo —
+     * `ingresos − pagos − retenciones` daba exactamente una cuota MENOS que el neto girado—, y es el
+     * papel que el propietario le lleva a su contador para declarar renta.
+     *
+     * Y al arreglarlo aparece lo que el defecto tapaba: **los dos casos son fiscalmente distintos**.
+     * Si la cuota se cobra APARTE, no es ingreso suyo ni pago suyo: es dinero de paso. Si va DENTRO
+     * del canon, el canon entero sí es su ingreso y pagar la PH sí es un pago hecho por su cuenta
+     * (y un gasto que puede deducir). Por eso el dominio devuelve `canon` y `phIncluidaEnCanon`:
+     * deducirlo desde `cobroAlArrendatario` es imposible sin esa bandera.
      */
-    ingresosRecibidos: sum((l) => l.cobroAlArrendatario - l.giroAPH),
-    pagosPorSuCuenta: sum((l) => l.giroAPH + l.honorarios + l.ivaHonorarios),
+    ingresosRecibidos: sum((l) => l.canon),
+    pagosPorSuCuenta: sum((l) => (l.phIncluidaEnCanon ? l.giroAPH : 0) + l.honorarios + l.ivaHonorarios),
     detallePagos: {
-      cuotaCopropiedad: sum((l) => l.giroAPH),
+      cuotaCopropiedad: sum((l) => (l.phIncluidaEnCanon ? l.giroAPH : 0)),
       honorarios: sum((l) => l.honorarios),
       ivaHonorarios: sum((l) => l.ivaHonorarios),
     },
@@ -115,6 +126,17 @@ export function problemasDeCertificacion(c: Certificacion): string[] {
   if (!c.meses) p.push('sin-periodos');
   if (!c.mandante.documento.trim()) p.push('mandante-sin-documento');
   if (!c.mandatario.documento.trim()) p.push('mandatario-sin-documento');
+  /*
+   * 🔴 Comprobar que el documento NO ESTE VACIO daba falsa seguridad: el certificado salio
+   * meses con `901.xxx.xxx-1` cableado, un marcador de posicion que pasaba la validacion sin
+   * pestanear (§263). Y no es un informe interno: la frase impresa dice «hace constar», y el
+   * D.1625/2016 art. 1.2.4.11 hace que el propietario declare SEGUN lo que el mandatario le
+   * certifique. Un documento de identificacion colombiano son digitos con puntos, guiones o
+   * espacios: cualquier LETRA delata un relleno.
+   */
+  const conLetras = (d: string) => /[a-zA-Z]/.test(d);
+  if (c.mandante.documento.trim() && conLetras(c.mandante.documento)) p.push('mandante-documento-relleno');
+  if (c.mandatario.documento.trim() && conLetras(c.mandatario.documento)) p.push('mandatario-documento-relleno');
   if (c.periodos.some((x) => !PERIODO.test(x))) p.push('periodo-invalido');
   if (new Set(c.periodos).size !== c.periodos.length) p.push('periodos-repetidos');
   if (c.netoGirado < 0) p.push('neto-negativo');
@@ -130,6 +152,10 @@ export function explicarProblemaCertificacion(codigo: string): string {
       return 'Falta el NIT o la cédula del propietario. Sin ese dato el certificado no le sirve para declarar.';
     case 'mandatario-sin-documento':
       return 'Falta el NIT de ALTORRA en el certificado.';
+    case 'mandante-documento-relleno':
+      return 'El documento del propietario lleva letras: parece un relleno, no una cédula o un NIT reales.';
+    case 'mandatario-documento-relleno':
+      return 'El NIT de ALTORRA lleva letras: es un marcador de posición, y este papel se entrega para declarar renta.';
     case 'periodo-invalido':
       return 'Hay un período que no tiene la forma AAAA-MM con un mes entre 01 y 12.';
     case 'periodos-repetidos':
