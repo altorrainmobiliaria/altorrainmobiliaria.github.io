@@ -51,6 +51,10 @@ export { crearVenta, moverVenta } from './venta-escritura';
 // preaviso impuesto tarde se archiva igual y el contrato NO cambia de estado: se prorroga.
 export { registrarPreaviso } from './preaviso-escritura';
 
+// La bitacora que el ruleset ya daba por hecha y nadie habia escrito (§263): cinco llamadas del
+// portal apuntaban a `registrarEvento`, incluida la prueba del consentimiento de habeas data.
+export { registrarEvento } from './auditoria';
+
 // PERFIL DE INQUILINO 1→N (Ola 2, §152). Es el ÚNICO sitio del sistema donde escribe alguien de
 // FUERA del equipo, así que el `uid` sale del token y jamás del cuerpo de la llamada.
 export {
