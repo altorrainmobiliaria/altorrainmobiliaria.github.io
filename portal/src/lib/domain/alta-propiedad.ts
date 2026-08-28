@@ -13,6 +13,7 @@ import { claveValida } from '../media-subida';
 import { problemasParaPublicar, type ProblemaPublicacion } from './catalogo';
 import type { Amenidades, AutorizacionPH, Precio, SpecsInmueble } from './propiedades';
 import type { Propiedad } from './propiedades';
+import { reparosParaSellar } from './verificacion';
 import {
   ESTADOS_PROPIEDAD,
   OPERACIONES,
@@ -407,6 +408,13 @@ export interface BaseEdicion {
   /** El `_version` que se leyó al abrir. Es el testigo del control de concurrencia. */
   version: number;
   /**
+   * El sello «Verificado por ALTORRA» que YA tenía. No viaja en el formulario —se pone aparte, con
+   * `merge: true`— y la edición reemplaza el documento entero, así que sin esto desaparecía en
+   * silencio en cada guardado (§263).
+   */
+  verificadoAltorra?: true;
+  verificadoEn?: string;
+  /**
    * La declaración de PH que YA tenía. Se conserva para no rejuvenecer su fecha: `declaradaEn` vale
    * como evidencia precisamente por decir CUÁNDO se afirmó, y corregir una errata del título no es
    * volver a afirmarlo. Si el operador CAMBIA la situación, entonces sí es una declaración nueva y
@@ -441,6 +449,22 @@ export function construirEdicion(entrada: EntradaAlta, base: BaseEdicion, ahora:
   if (previa && propiedad.autorizacionPH && previa.situacion === propiedad.autorizacionPH.situacion) {
     propiedad.autorizacionPH = { ...propiedad.autorizacionPH, ...previa };
   }
+
+  /*
+   * 🔴 EL SELLO SOBREVIVÍA A NADA (§263). `guardarEdicion` escribe el documento COMPLETO —`tx.set`
+   * sin `merge`— y el sello se pone por separado con `merge: true`, así que no venía del formulario
+   * y desaparecía en cada edición. En SILENCIO: nadie lo veía irse, y la insignia «Verificado por
+   * ALTORRA» simplemente dejaba de salir en la ficha.
+   *
+   * Se conserva, pero NO a ciegas: solo mientras el inmueble editado siga cumpliendo lo que el
+   * sello exigía (publicable, fotos suficientes, área). Si la edición se lleva por delante uno de
+   * esos requisitos, el sello cae — que es lo correcto: certificaba justo eso. Así el sello no
+   * miente ni se pierde por accidente.
+   */
+  if (base.verificadoAltorra && reparosParaSellar(propiedad).length === 0) {
+    propiedad.verificadoAltorra = true;
+    if (base.verificadoEn) propiedad.verificadoEn = base.verificadoEn;
+  }
   return { ok: true, propiedad };
 }
 
@@ -452,6 +476,7 @@ export function baseDe(p: Propiedad): BaseEdicion {
     createdAt: p.createdAt,
     version: typeof p._version === 'number' ? p._version : 0,
     ...(p.autorizacionPH ? { autorizacionPH: p.autorizacionPH } : {}),
+    ...(p.verificadoAltorra ? { verificadoAltorra: true as const, verificadoEn: p.verificadoEn } : {}),
   };
 }
 

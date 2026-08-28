@@ -43,6 +43,54 @@ function entrada(over: Partial<EntradaAlta> = {}): EntradaAlta {
 const construir = (over: Partial<EntradaAlta> = {}) =>
   construirPropiedad(entrada(over), { codigo: CODIGO, ahora: AHORA });
 
+describe('🔴 editar NO se lleva por delante el sello «Verificado» (§263)', () => {
+  /*
+   * `guardarEdicion` escribe el documento COMPLETO (`tx.set` sin `merge`) y el sello se pone por
+   * separado con `merge: true`: no viaja en el formulario, asi que desaparecia en cada edicion, en
+   * SILENCIO. Nadie lo veia irse; la insignia dejaba de salir en la ficha y ya esta.
+   */
+  const conFotos = (n: number) => Array.from({ length: n }, (_, i) => `props/${CODIGO}/${i + 1}.webp`);
+
+  const completa = (): EntradaAlta => entrada({ imagenes: conFotos(5), areaConstruidaM2: '80' });
+
+  it('lo conserva cuando el inmueble editado SIGUE mereciendolo', () => {
+    const r = construirEdicion(
+      completa(),
+      { id: CODIGO, slug: 'apto-1', createdAt: '2026-01-01T00:00:00.000Z', version: 3,
+        verificadoAltorra: true, verificadoEn: '2026-02-02T00:00:00.000Z' },
+      new Date('2026-08-28T00:00:00.000Z'),
+    );
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.propiedad.verificadoAltorra).toBe(true);
+    // Y NO rejuvenece la fecha: certifica cuando se verifico, no cuando se edito.
+    expect(r.propiedad.verificadoEn).toBe('2026-02-02T00:00:00.000Z');
+  });
+
+  it('lo DEJA CAER si la edicion se lleva lo que el sello exigia', () => {
+    const sinFotos = { ...completa(), imagenes: conFotos(1) };
+    const r = construirEdicion(
+      sinFotos,
+      { id: CODIGO, slug: 'apto-1', createdAt: '2026-01-01T00:00:00.000Z', version: 3,
+        verificadoAltorra: true, verificadoEn: '2026-02-02T00:00:00.000Z' },
+      new Date('2026-08-28T00:00:00.000Z'),
+    );
+    if (!r.ok) return; // si ni siquiera construye, tampoco hay sello que conservar
+    expect(r.propiedad.verificadoAltorra).toBeUndefined();
+  });
+
+  it('no se inventa un sello que nunca existio', () => {
+    const r = construirEdicion(
+      completa(),
+      { id: CODIGO, slug: 'apto-1', createdAt: '2026-01-01T00:00:00.000Z', version: 3 },
+      new Date('2026-08-28T00:00:00.000Z'),
+    );
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.propiedad.verificadoAltorra).toBeUndefined();
+  });
+});
+
 describe('claveContador — el contador es MENSUAL, como el código', () => {
   it('deriva la clave del año-mes en UTC', () => {
     expect(claveContador(new Date('2026-08-22T10:00:00Z'))).toBe('INM-202608');

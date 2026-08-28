@@ -107,6 +107,36 @@ describe('🔍 el contraste contra lo que de verdad se giró', () => {
   });
 });
 
+describe('🔴 el certificado NO mezcla contratos (§263)', () => {
+  /*
+   * Filtraba por tipo y por año, nunca por `contratoId` — que el modelo guarda en cada pago desde
+   * el principio. Con dos contratos, a la propietaria del A se le entregaba un papel firmado que
+   * declara como INGRESO SUYO el dinero girado al propietario del B. Muerde el segundo día.
+   */
+  const contrato = { id: 'CTO-A', canon: 2_000_000, administracionPH: 300_000 } as never;
+  const pagos = [
+    { id: 'p1', contratoId: 'CTO-A', tipo: 'payout_propietario', periodo: '2026-01', montoRecibido: 1_726_300 },
+    { id: 'p2', contratoId: 'CTO-B', tipo: 'payout_propietario', periodo: '2026-02', montoRecibido: 9_999_999 },
+    { id: 'p3', contratoId: 'CTO-A', tipo: 'payout_propietario', periodo: '2026-03', montoRecibido: 1_726_300 },
+  ] as never[];
+
+  it('certifica SOLO los meses de su contrato', () => {
+    const { meses } = mesesDesdePagos(contrato, pagos, '2026');
+    expect(meses.map((m) => m.periodo)).toEqual(['2026-01', '2026-03']);
+  });
+
+  it('el mes del OTRO contrato no entra ni por el año', () => {
+    const { meses } = mesesDesdePagos(contrato, pagos, '2026');
+    expect(meses.map((m) => m.periodo)).not.toContain('2026-02');
+  });
+
+  it('los años ofrecidos son los de ESE contrato, no los de todos', () => {
+    const conB = [...pagos, { id: 'p4', contratoId: 'CTO-B', tipo: 'payout_propietario', periodo: '2024-05' }] as never[];
+    expect(aniosConPagos(conB, 'CTO-A')).toEqual(['2026']);
+    expect(aniosConPagos(conB, 'CTO-B')).toEqual(['2026', '2024']);
+  });
+});
+
 describe('aniosConPagos', () => {
   it('ofrece solo los años que tienen giros, y el más reciente primero', () => {
     const pagos = [pago('2025-11'), pago('2026-03'), pago('2026-04')];

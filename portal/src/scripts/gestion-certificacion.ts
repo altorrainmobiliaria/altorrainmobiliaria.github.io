@@ -77,8 +77,20 @@ export function mesesDesdePagos(
     arrendatarioEsAgenteRetencion: false,
   });
 
+  /*
+   * 🔴 `p.contratoId === contrato.id` NO es opcional (§263). Sin él, esto filtraba por tipo y por
+   * año y metía en el certificado los giros de TODOS los contratos: a la propietaria del contrato A
+   * se le entregaba un papel firmado que declara como INGRESO SUYO el dinero girado al propietario
+   * del contrato B. Y con dos contratos del mismo mes, además, se disparaba `periodos-repetidos`.
+   * Muerde el segundo día: el modelo ya guarda `contratoId` en cada pago desde el principio.
+   */
   const delAnio = pagos
-    .filter((p) => p.tipo === 'payout_propietario' && (p.periodo ?? '').startsWith(`${anio}-`))
+    .filter(
+      (p) =>
+        p.tipo === 'payout_propietario' &&
+        p.contratoId === contrato.id &&
+        (p.periodo ?? '').startsWith(`${anio}-`),
+    )
     .sort((a, b) => a.periodo.localeCompare(b.periodo));
 
   const meses: MesCertificado[] = delAnio.map((p) => ({ periodo: p.periodo, liquidacion }));
@@ -198,9 +210,16 @@ let CONTRATOS: Contrato[] = [];
 let PAGOS: Pago[] = [];
 
 /** Los años que de verdad tienen giros. Ofrecer 2019 cuando no hay nada es ruido. */
-export function aniosConPagos(pagos: Pago[]): string[] {
+export function aniosConPagos(pagos: Pago[], contratoId?: string): string[] {
+  /*
+   * El `contratoId` llega opcional por compatibilidad, pero la pantalla SIEMPRE lo pasa: sin él
+   * ofrecía años en los que este contrato no tuvo un solo giro, y elegir uno producía un
+   * certificado vacío sin decir por qué (§263).
+   */
   const set = new Set(
-    pagos.filter((p) => p.tipo === 'payout_propietario').map((p) => (p.periodo ?? '').slice(0, 4)),
+    pagos
+      .filter((p) => p.tipo === 'payout_propietario' && (!contratoId || p.contratoId === contratoId))
+      .map((p) => (p.periodo ?? '').slice(0, 4)),
   );
   return [...set].filter(Boolean).sort().reverse();
 }
@@ -274,23 +293,32 @@ export function montarCertificacion(contratos: Contrato[], pagos: Pago[]): void 
     selC.appendChild(o);
   }
 
-  selA.textContent = '';
-  const anios = aniosConPagos(pagos);
-  if (!anios.length) {
-    const o = document.createElement('option');
-    o.value = '';
-    o.textContent = 'Todavía no hay giros registrados';
-    selA.appendChild(o);
-    selA.disabled = true;
-  } else {
-    selA.disabled = false;
-    for (const a of anios) {
+  /*
+   * Los años dependen del contrato ELEGIDO desde §263, así que se repintan al cambiarlo. Antes la
+   * lista era global y daba igual: ahora, sin este oyente, al pasar del contrato A al B se
+   * quedarían en pantalla los años del A — un desplegable que miente sobre lo que hay.
+   */
+  const pintarAnios = () => {
+    selA.textContent = '';
+    const anios = aniosConPagos(pagos, selC.value || undefined);
+    if (!anios.length) {
       const o = document.createElement('option');
-      o.value = a;
-      o.textContent = a;
+      o.value = '';
+      o.textContent = 'Este contrato todavía no tiene giros registrados';
       selA.appendChild(o);
+      selA.disabled = true;
+    } else {
+      selA.disabled = false;
+      for (const a of anios) {
+        const o = document.createElement('option');
+        o.value = a;
+        o.textContent = a;
+        selA.appendChild(o);
+      }
     }
-  }
+  };
+  pintarAnios();
+  selC.addEventListener('change', pintarAnios);
 
   $('gx-cf-armar')?.addEventListener('click', armar);
   $('gx-cf-imprimir')?.addEventListener('click', () => window.print());
