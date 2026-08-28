@@ -67,16 +67,16 @@
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates — incluye `test:rules` (emulador).
 
-> 🎯 **AQUÍ VOY (28-ago)** — barrido de **PRODUCTO** (no del cerebro): 61 hallazgos, 43 juzgados;
-> crudo en la bóveda (`2026-08-28-barrido-producto-*.json`). **12 → §263**, y desde entonces **6 más,
-> medidos en el navegador**: cabecera móvil · tabla del Journal · KPIs inventados del panel · orden
-> del SERP · **zoom de iOS** → las cinco de código en **§264**; la contradicción sobre la matrícula
-> era contenido.
-> ⏭ **SIGUEN ~8, por gravedad**: (a) los filtros del SERP no filtran — gate=TODO-22, pide diseño;
-> (b) el buscador del hero manda `zona`/`tipo` a `/comprar` y hay que comprobar si alguien los lee;
-> (c) la tabla de pipeline y el hilo de actividad del panel siguen siendo de mentira — **gate=mockup
-> de Daniel**, no se tocan sin él; (d) **18 hallazgos nunca se juzgaron** (el workflow murió con la
-> sesión): están en el JSON de la bóveda, no se han perdido.
+> 🎯 **AQUÍ VOY (28-ago)** — barrido de **PRODUCTO**: 61 hallazgos, 43 juzgados; crudo en la bóveda
+> (`2026-08-28-barrido-producto-*.json`). **12 → §263** · **5 de código → §264** (móvil: cabecera,
+> tabla, KPIs del panel, orden del SERP, zoom de iOS) · **4 → §265**: el hero mandaba
+> `zona`/`tipo` y NADIE los leía, ofrecía «Penthouse» —que el dominio no puede guardar— y el menú
+> tenía 20 enlaces con 2 destinos. La matrícula era contenido, no código.
+> ⏭ **SIGUEN ~7**: (a) los filtros del SERP no filtran — gate=TODO-22, pide diseño; (b) el pipeline
+> y el feed del panel son de mentira — **gate=mockup de Daniel**; (c) **18 sin juzgar** (el workflow
+> murió con la sesión), en el JSON de la bóveda.
+> 🅱️ **Tres decisiones SUYAS nuevas (§265.8)**: ¿fuera «Penthouse» del selector? ¿lista pública
+> de tipos: 6 (hero) u 11 (`/alertas`)? ¿«nuevo/usado» entra al índice o sale del menú?
 
 > 🔬 **Auditorías #15 y #16: cerradas** (§237 · §250 §256 · §258 — 32 hallazgos: 22 cerrados, 6
 > retirados). Su método, que es lo que quedó vivo: [[M-33]].

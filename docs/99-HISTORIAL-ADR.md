@@ -11640,3 +11640,114 @@ primeras.
 
 Depositado en [[L-68]] (`31-VERIFICACION-UI`) y destilado como reglas 7 y 8 de la skill portable
 `validacion-live-chrome`, en sus dos copias.
+
+## 265. ADR-265 — La puerta de entrada hablaba un vocabulario que el sistema no tiene
+
+El buscador del hero es lo primero que toca quien llega al portal, y manda `zona` y `tipo` por GET a
+`/comprar` desde que la página existe. **Nadie los leía.** Medido en el navegador: se busca
+«Bocagrande / Casa», se pulsa el botón, y se aterriza en una página titulada «Propiedades en
+Cartagena de Indias» con la caja de búsqueda rellenada con otra cosa. La primera interacción del
+visitante con el sitio era la que se descartaba en silencio.
+
+Tirando de ese hilo salieron tres más, y no son cuatro bugs: son **uno con cuatro caras**.
+
+### 265.1 — Los cuatro, y la raíz común
+1. **La intención no viajaba.** Ni la página ni la isla del catálogo leían la query. El formulario
+   funcionaba, la URL se componía bien, y al otro lado no había nadie.
+2. **El `<select>` ofrecía «Penthouse», que `TIPOS_INMUEBLE` no contiene.** Ninguna propiedad puede
+   guardarse jamás con ese tipo, así que esa opción no podía devolver un solo resultado — nunca. Y al
+   revés, omitía cinco tipos que sí existen (apartaestudio, oficina, bodega, consultorio, edificio)
+   que `/alertas` sí deja elegir: **se podía crear una ALERTA de bodega y no se podía BUSCAR una.**
+3. **El megamenú tenía VEINTE enlaces y DOS destinos.** «Apartamentos», «Casas», «Locales», «Lotes»,
+   «Fincas», las seis zonas de arriendo y la destacada apuntaban todas a `/comprar` o `/arrendar` a
+   secas. Elegir en el menú principal del sitio no cambiaba nada — la versión grande del «Ordenar
+   por» que no ordenaba (§264).
+4. **La caja de búsqueda de la página de búsqueda no buscaba.** Era un `<input>` suelto: sin
+   `<form>`, sin nombre y sin nadie escuchando.
+
+🎯 **La raíz es una sola: dos listas escritas a mano para la misma cosa.** El dominio tiene su
+`TIPOS_INMUEBLE`; la web pública tenía la suya, en el hero y en la cabecera. Cada una era correcta
+por su cuenta — no hay error hasta que las comparas, y **nada las comparaba**. Es el patrón de
+[[L-66]] (gemelos) en su forma más difícil de ver: no comparten nombre, comparten CONCEPTO.
+
+### 265.2 — Solución estructural
+**Un solo vocabulario.** `tipoCanonico()` en `domain/shared.ts` traduce etiqueta, plural o sinónimo
+comercial a tipo canónico. La tabla es **explícita a propósito**: singularizar quitando la «s»
+acierta con «Casas» y falla con «Locales» → «locale», y falla EN SILENCIO devolviendo cero. Una tabla
+que no cubre un caso se ve en su test; un stemming que no lo cubre se ve cuando un cliente no
+encuentra nada.
+
+**La intención viaja y se DERIVA, no se escribe al lado.** El hero emite el valor canónico sin
+cambiar una sola etiqueta visible. Los enlaces del menú calculan su destino a partir de su propia
+etiqueta, así que no pueden volver a desincronizarse: si alguien añade una etiqueta sin puente,
+`tipoCanonico` devuelve `null` y el enlace se queda sin filtro de forma visible.
+
+**El SERP consume.** Lee, filtra, refleja lo buscado en la caja y en el titular, y **distingue los
+dos ceros**: «aún no hay inventario» y «no hay nada de lo que pediste» no son el mismo cero, y
+decirlos igual deja al visitante sin saber si esperar o cambiar la búsqueda. La caja es un
+`<form method="get">` con botón de envío real —oculto a la vista— así que busca aunque el JS no
+cargue, y quien navega con teclado gana un control que puede activar.
+
+### 265.3 — No-regresión
+**Ni una etiqueta visible cambia.** El `<select>` enseña las mismas seis palabras; el menú, las
+mismas veinte. Lo que cambia es lo que emiten. El `<div class="serp-search">` pasa a `<form>` con el
+MISMO `class`: medido, sigue en `display:flex`, `margin 0`, gap 11 px y 52 px de alto. Cero desborde
+lateral a 1280 px. Ningún símbolo exportado se renombra; todo es aditivo.
+
+### 265.4 — Verificación
+🎯 **Ejercitando el camino LIVE, no solo con tests** — y esa distinción es la lección (§265.7). Con
+el fixture de 4 inmuebles: sin query → 4 · `?zona=Bocagrande` → 1 y «**1 Propiedad** en Bocagrande» ·
+`?tipo=casa` → 2 (Manga, Crespo) · `?zona=Manga&tipo=local` → 0 **con su mensaje propio** · enviar el
+formulario con otra zona → `?zona=Crespo&tipo=casa`, conservando el tipo en el campo oculto. El menú
+pasa de 2 destinos a 18 distintos, con la codificación correcta (`Centro%20Hist%C3%B3rico`).
+`npm run verify` COMPLETO en verde con el emulador: **1012 pruebas** (26 nuevas) y los 10 gates;
+`verify:enlaces` resuelve ahora 1781 enlaces internos (antes 1141) y todos aterrizan.
+
+### 265.5 — Anti-patterns evitados
+Singularizar por regla en vez de por tabla. Un `'otro'` por defecto en `tipoCanonico` — un valor que
+parece dato; devuelve `null`, que es visible. Rediseñar el selector para «arreglar» el Penthouse:
+eso es UI y lleva el gate del dueño. Fingir `?estado=nuevo` en el menú para que ninguna columna se
+quedara sin filtro — habría sido prometer un filtro que nadie aplica, el fallo que este cambio vino a
+quitar. Y **escribir el filtro también para el modo demo**: `verify:build` ya bloquea un build de
+producción con la fuente en `demo`, así que sería código que no puede correr en producción sobre
+datos que no puede ver nadie.
+
+### 265.6 — Archivos
+`portal/src/lib/domain/shared.ts` (+ `shared.test.ts`, nuevo) · `portal/src/components/Header.astro` ·
+`portal/src/pages/index.astro` · `portal/src/pages/[operacion].astro` ·
+`portal/src/scripts/serp-catalogo.ts` (+ su test) · `portal/scripts/fixture-catalogo.mjs` (nuevo) ·
+`portal/package.json` (`catalogo:live` / `catalogo:demo`).
+**INTACTOS**: `tokens.css` y el marcado aprobado del SERP (el orden y la búsqueda se cablean sobre
+él, no lo reescriben).
+
+### 265.7 — Doctrina aplicada, y el peldaño 8
+§3.3 en su forma más literal: el diagnóstico salió de **abrir la página con la URL puesta**, no de
+leer el formulario y suponer.
+
+🔴 **Y lo que se lleva la lección: 26 pruebas verdes sobre una función que la página no llamaba.**
+`bootCatalogo()` empieza con `if (FUENTE !== 'live') return;` y la fuente por defecto es `demo`: en
+todo el desarrollo, la isla del catálogo **está apagada**. El ✅ era cierto y no probaba nada — su
+denominador excluía justo el sitio donde vivía el problema. Y lo traicionero es que se parece a que
+funciona: sin error en consola y con datos de muestra en pantalla, «no cambió nada» y «no se ejecutó»
+son indistinguibles a ojo. Es el **peldaño 8** de la escalera de `38-GATES-QUE-MIENTEN`, y el
+antídoto queda como herramienta y no como buena intención: `npm run catalogo:live` / `:demo`, con el
+porqué escrito en su cabecera — *si encender el camino cuesta inventar un fixture cada vez, no lo
+hará nadie, ni tú la próxima vez*.
+
+⚠️ **Dos veces me dio un veredicto una medición imposible**, la misma sesión y ya con la regla
+escrita: leí «desborde de 316 px» cuando el panel estaba oculto y el viewport medía CERO, y concluí
+«el Enter no envía el formulario» cuando **cero eventos de teclado llegaban a la página**. Las dos se
+cazaron preguntando si la medida podía existir. *Saber el defecto no protege de él; solo protege el
+hábito mecánico de comprobar que hay algo que medir.*
+
+Destilado en la skill portable `caza-bugs` (sus dos copias): familia **4o** «el camino que recorres
+está APAGADO» y regla 4 de **4k** «el mismo CONCEPTO enumerado dos veces, con miembros distintos».
+
+### 265.8 — Lo que NO decido yo (va al dueño)
+- **«Penthouse»** hoy se ENSANCHA a apartamento: quien lo elija verá apartamentos. Es mejor que cero
+  y es reversible, pero no es una equivalencia. O se retira la etiqueta del selector, o el catálogo
+  gana un distintivo propio. Hoy no se puede distinguir con los campos que hay.
+- **El hero ofrece 6 tipos y `/alertas` 11.** Cuál es la lista pública es decisión de negocio.
+- **«Compra nuevo / usado»** se queda sin filtro a propósito: no es un campo del índice del catálogo
+  (`antiguedadAnios` vive en la propiedad y no viaja al índice). O el índice gana el campo, o la
+  columna se retira — y retirarla es UI, con su gate.

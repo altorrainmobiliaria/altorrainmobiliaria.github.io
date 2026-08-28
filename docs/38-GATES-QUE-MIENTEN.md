@@ -1,9 +1,7 @@
 # 🎭 38 — GATES QUE MIENTEN (hoja hija de `36-LECCIONES-UTILLAJE`)
 
-> **Por qué existe esta hoja.** Un gate roto AVISA; un gate que miente no. Esta familia nació
-> dispersa y creció tres veces en un solo día (2026-08-26), así que se le da casa propia: son las
-> lecciones de cuando el ✅ **no significa lo que parece**. El stub con el título sigue en `36`,
-> que es donde se busca; el detalle completo vive aquí.
+> **Por qué existe.** Un gate roto AVISA; un gate que miente no. Aquí viven las lecciones de cuando
+> el ✅ **no significa lo que parece**; el stub con el título sigue en `36`, que es donde se busca.
 >
 > **La escalera, de menos a más grave** — y cada peldaño se detecta distinto:
 > 1. **No hay gate.** Al menos nadie se confía.
@@ -12,12 +10,14 @@
 > 4. **Corre en un sitio y no en otro** ([[L-48]]) — prerrequisito generado y gitignored.
 > 5. **Afirma haber pasado sin mirar nada** ([[L-57]]) — le falta su prerrequisito y en vez de
 >    fallar PREGUNTA; sin terminal, no contestar sale con código 0.
-> 6. **Está FUERA del CI por un motivo que CADUCÓ** (§177) — 141 pruebas excluidas «porque necesitan
->    Java»; medido, eran 24 s, y una llevaba meses rota en la rama principal. **Un motivo para no
->    correr un gate caduca, y nadie lo mira si no se vuelve a medir.** Al tocar un fixture, búscale
->    los gemelos: el que corre en el gate se arregla solo; el que no, calla.
+> 6. **FUERA del CI por un motivo que CADUCÓ** (§177) — 141 pruebas excluidas «porque necesitan
+>    Java»; medido eran 24 s y una llevaba meses rota en main. **Un motivo para no correr un gate
+>    caduca, y nadie lo mira si no se vuelve a medir.**
 > 7. **Corre, mira el archivo, imprime un número CIERTO… de una comparación que no significa nada**
 >    ([[L-58]]) — el peldaño más insidioso, porque no hay nada roto que encontrar.
+> 8. **Verde sobre código que la configuración por defecto APAGA** (§265) — 26 pruebas del filtro del
+>    SERP en verde mientras `bootCatalogo()` salía en su PRIMERA línea (`FUENTE !== 'live'`): la
+>    prueba pasaba y la función no se llamaba. Enciéndelo: `npm run catalogo:live`.
 >
 > **Prueba de bolsillo para cualquier gate**: *que imprima CUÁNTO miró* (archivos, enlaces,
 > pruebas). Un número es lo único que distingue «revisado» de «no hice nada». Y **estrénalo

@@ -383,6 +383,17 @@ IVA duplicada y dos funciones de etiqueta que devolvían singular y plural.
 2. **Mismo tipo, SALIDA distinta** — texto «casi bien». «Tipo: Apartamentos» en vez de
    «Tipo: Apartamento» se lee casi correcto, así que **nadie lo reporta nunca**.
 3. **Tipos distintos** — lo caza el compilador. Molesto, no peligroso.
+4. **🔴 El mismo CONCEPTO enumerado dos veces, con miembros distintos** — el gemelo que no comparte
+   nombre y por eso no lo busca nadie. Caso real: la lista de tipos de inmueble del dominio tenía
+   doce valores; el desplegable de la portada tenía otros seis, escritos a mano. Ofrecía uno que el
+   dominio **no puede guardar jamás** (así que esa opción no podía devolver un resultado nunca) y
+   omitía cinco que sí existen — que otra página del mismo sitio sí dejaba elegir. Nadie lo vio
+   porque **cada lista era correcta por su cuenta**: no hay error hasta que las comparas.
+   *Antídoto*: (a) la prueba que compara **lo que la interfaz ENSEÑA con lo que el sistema ACEPTA**
+   —copiar las etiquetas reales al test y exigir que todas resuelvan—; y (b) donde se pueda,
+   **derivar** una de la otra (el enlace del menú calcula su destino a partir de su etiqueta) para
+   que no puedan volver a separarse. Un puente explícito se ve fallar en su test; un puente
+   implícito falla devolviendo CERO, que no se distingue de «no hay nada».
 
 **Y el subtipo más traicionero: el valor duplicado que HOY coincide.** No hay nada que arreglar y por
 eso se deja — pero lo que existe es el mecanismo para romperlo: el día que ese número cambie, alguien
@@ -556,6 +567,37 @@ segundo, sin pensarla: barres *lo que tienes a mano*, que casi nunca es *lo que 
 - **Reporta también lo EXONERADO, con su motivo.** El candidato a peor hallazgo que resulta estar bien
   protegido es información de primera: te dice que tu intuición de riesgo apunta a la página que
   *parece* peligrosa, y que lo desprotegido está donde nadie clasificó nada como afirmación.
+
+## 4o. 🔌 El camino que recorres está APAGADO — y por eso «no falla»
+
+Recorrer el camino vivo no sirve de nada si el entorno donde lo recorres tiene ese camino
+desactivado. Y la forma más común de desactivarlo no es un fallo: es **el valor por defecto de una
+bandera**.
+
+**Caso real.** Una isla de catálogo empieza con `if (FUENTE !== 'live') return;` y la fuente por
+defecto es `demo`. En todo el entorno de desarrollo, esa isla entera **no se ejecuta**. Se
+escribieron 26 pruebas unitarias del filtro nuevo, todas verdes, sobre una función que la página no
+llamaba ni una vez. El ✅ era cierto y no probaba nada: su denominador excluía justo el sitio donde
+vivía el problema.
+
+**Lo traicionero es que se parece a que funciona.** No hay error en consola, no hay excepción, no
+hay pantalla rota: hay una página que se comporta *como antes*, que es exactamente lo que esperarías
+si tu cambio aún no estuviera hecho. Con datos de muestra en pantalla, «no cambió nada» y «no se
+ejecutó» son indistinguibles a ojo.
+
+**Qué hacer, en este orden:**
+1. **Antes de creerte un verde, localiza los apagados.** `grep` por retornos tempranos en el arranque
+   del módulo (`if (!X) return`, `if (FUENTE !== …) return`, `?? 'demo'`) y por las banderas que los
+   gobiernan. Un `return` en la primera línea de un boot es un interruptor, no una guarda.
+2. **Enciéndelo con un fixture y deja el interruptor A MANO.** Si encender el camino cuesta inventar
+   un fixture cada vez, no lo hará nadie —ni tú la próxima vez—: conviértelo en un comando
+   (`npm run <algo>:live` / `--off`) y escribe en su cabecera POR QUÉ existe.
+3. **Verifica con el camino encendido y dilo así.** «26 pruebas en verde» y «lo ejercité con 4 datos
+   y estos cinco casos dieron esto» no son la misma afirmación; solo la segunda cubre el arranque,
+   el fetch, el pintado y el estado vacío.
+4. **Y comprueba las dos direcciones de la bandera.** Que producción no pueda salir con el valor de
+   desarrollo (aquí lo bloquea un gate del build) *y* que desarrollo pueda ponerse en el de
+   producción. Una bandera que solo se puede mover en un sentido deja la mitad del código sin mirar.
 
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
