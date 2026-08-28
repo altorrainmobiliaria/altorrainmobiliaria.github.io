@@ -57,6 +57,15 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: portal/package-lock.json
+      # 🛡️ El ÚNICO gate de la RAÍZ, y hasta hoy su única aplicación era el hook de pre-commit
+      # — o sea `core.hooksPath`, que vive en `.git/config` y **no se clona** (§261). Un clon nuevo,
+      # otra máquina o un `--no-verify` y deja de correr sin decirlo: es [[L-56]] con el agravante
+      # de que protege al panel LEGACY, el único subsistema sin tests, sin tipos y sin build.
+      # Lo que caza costó dos horas y dejó al dueño FUERA de su propio panel (§136). No necesita
+      # dependencias, así que va antes del `npm ci`: falla en segundos si tiene que fallar.
+      - name: Contratos de retorno del panel legacy (su hook no viaja en el clon)
+        working-directory: .
+        run: node scripts/verify-contratos-legacy.mjs
       - run: npm ci
       # 🛡️ Las pruebas de `firebase/tests/` importan `functions/src/*`, y ESE paquete tiene sus propias
       # dependencias (`firebase-functions`, `firebase-admin`) que `npm ci` de `portal` no instala.
