@@ -34,8 +34,15 @@ export interface Redirect {
 
 /**
  * Barrios → su landing `/zona/<slug>` (ADR §92). Se DERIVAN de `ZONAS`, que es el nodo dueño del
- * censo de zonas: así es IMPOSIBLE que exista una landing sin su 301, o un 301 apuntando a una
- * landing que nadie construyó. Al añadir una zona en `zonas.ts`, su redirect aparece solo.
+ * censo de zonas: al añadir una zona en `zonas.ts`, su redirect aparece solo.
+ *
+ * ⚠️ **Aquí decía «así es IMPOSIBLE (…) un 301 apuntando a una landing que nadie construyó». Era
+ * media verdad, y por serlo hacía daño** (§259): la derivación garantiza el 1:1 entre el censo de
+ * zonas y sus reglas, pero NO que `/zona/<slug>` llegue a construirse — y no dice absolutamente
+ * nada de los ~53 redirects MANUALES de abajo, cuyos destinos son cadenas escritas a mano. Quien
+ * leyera esa frase cerraría la búsqueda justo antes de mirar lo que sí podía romperse.
+ * Ahora lo comprueba un gate de verdad: la sonda 2b de `verify-enlaces.mjs` exige que **los 28
+ * destinos existan en el build**, y falla nombrando el que no.
  *
  * Excepción `baru`: en el sitio viejo su URL era `/propiedades-baru.html`, no `/baru.html`, así que
  * su entrada va abajo a mano. Las demás siguen el patrón `/<slug>.html`.

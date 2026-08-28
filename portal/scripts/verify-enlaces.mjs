@@ -187,6 +187,70 @@ if (existsSync(fuenteRed)) {
 }
 
 /*
+ * ── Sonda 2b: ¿EL 301 ATERRIZA EN ALGO? (§259) ──────────────────────────────────────────
+ *
+ * LA OTRA MITAD DEL CAMINO. La sonda de arriba comprueba que ninguna URL vieja se quede SIN regla.
+ * No comprueba —ni puede— que la regla lleve a alguna parte. Su ✅ dice «las 66 están cubiertas» y
+ * es cierto: cubiertas por un 301 que puede estar apuntando a un 404 desde hace semanas.
+ *
+ * EL DEFECTO QUE CAZA. Alguien renombra `/invertir` o mueve `zona/[slug].astro`, y de golpe seis o
+ * doce redirects se convierten en **301 hacia un 404**. Para Google es peor que no redirigir: sigue
+ * el salto, encuentra nada, y tira la posición de la página vieja Y la del destino. No hay error en
+ * consola, el build pasa, y el único momento en que se miraría es el paso 5.5 del runbook — en el
+ * PUNTO DE NO RETORNO, con el DNS ya movido.
+ *
+ * POR QUÉ EL COMENTARIO DE `redirects.ts` NO BASTABA. Prometia que era «IMPOSIBLE (…) un 301
+ * apuntando a una landing que nadie construyó». Es media verdad: la derivación desde `ZONAS`
+ * garantiza el 1:1 entre el censo de zonas y sus reglas, pero **no** que `/zona/<slug>` llegue a
+ * construirse, y no dice absolutamente nada de los ~53 redirects MANUALES, cuyos destinos son
+ * cadenas escritas a mano. Una promesa que nada comprueba envejece sola — y ésta prometia de más.
+ *
+ * ⚠️ LOS DESTINOS SE DERIVAN COMO LAS FUENTES, y no de otra forma. Al medir esto a mano fallé DOS
+ * veces con un `grep` de `{ de: '…', a: '…' }`: los doce redirects de barrio no son literales, los
+ * genera un `.map()` sobre `ZONAS`. Un patrón que solo ve una de las dos formas cuenta 53 donde hay
+ * 65 — y las que no ve son justo las que nadie revisa ([[M-33]]).
+ */
+if (existsSync(fuenteRed)) {
+  const red = readFileSync(fuenteRed, 'utf8');
+  const literales = [...red.matchAll(/a:\s*'([^']+)'/g)].map((m) => m[1]);
+  const destinos = new Set(literales);
+  // Los de barrio los genera `.map()` sobre ZONAS: se derivan igual que arriba, no se parsean.
+  const zonasSrc = join(RAIZ, 'src/lib/content/zonas.ts');
+  let barrios = 0;
+  if (existsSync(zonasSrc)) {
+    for (const m of readFileSync(zonasSrc, 'utf8').matchAll(/slug: '([a-z-]+)'/g)) {
+      if (m[1] !== 'baru') { destinos.add(`/zona/${m[1]}`); barrios++; }
+    }
+  }
+  /*
+   * Si esto se queda en cero, el gate estaría dando un ✅ por CERO comparaciones — la forma de
+   * mentir que más veces ha cazado este cerebro. Con el mapa presente tiene que haber destinos.
+   */
+  if (!literales.length || !barrios) {
+    console.error('');
+    console.error('❌ verify:enlaces — la sonda dejó de VER media lista y habría pasado en verde:');
+    console.error(`   destinos literales en redirects.ts: ${literales.length} · derivados de zonas.ts: ${barrios}`);
+    console.error('   Con una mitad en CERO la otra la tapa y el ✅ saldría igual, comprobando un tercio');
+    console.error('   del mapa. Arregla el patrón de la sonda; no bajes el listón.');
+    process.exit(1);
+  }
+
+  const alVacio = [...destinos].filter((d) => !existe(d)).sort();
+  if (alVacio.length) {
+    console.error('');
+    console.error('❌ verify:enlaces — 301 que aterrizan en NADA:');
+    console.error('');
+    for (const d of alVacio) console.error(`   → ${d}`);
+    console.error('');
+    console.error('   Un 301 hacia un 404 es peor que no redirigir: Google sigue el salto, no');
+    console.error('   encuentra nada, y pierde la posición de la página vieja Y la del destino.');
+    console.error('   O construyes el destino, o cambias el `a:` en `redirects.ts` por uno que exista.');
+    process.exit(1);
+  }
+  console.log(`✅ verify:enlaces — los ${destinos.size} destinos del mapa de 301 existen (ninguno cae en un 404).`);
+}
+
+/*
  * ── Sonda 3: ANCLAS QUE NO ATERRIZAN EN NINGÚN SITIO (§159) ─────────────────────────────────────
  *
  * QUÉ CAZA. Un `href="#seccion"` cuyo `id` no existe en la página de destino. El navegador no
