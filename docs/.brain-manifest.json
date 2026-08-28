@@ -170,7 +170,7 @@
     "scripts/session-handoff.mjs",
     "scripts/brain-archive.mjs"
   ],
-  "lastOffsiteBackup": "2026-07-23",
+  "lastOffsiteBackup": "2026-08-28",
   "orphanAllowlist": [
     ".handoff-auto.md",
     ".estado-auto.md"
