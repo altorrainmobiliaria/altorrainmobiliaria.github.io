@@ -31,11 +31,11 @@
 | **TODO-29** | 📣 **PAUTA Altorra**: humo cerrada (estado → flag 📣 de `05`). Resta calibrar la campaña REAL. | ⏸️ gate obra | `pauta-captacion` §10 |
 | **TODO-30 · 22** | 🗺️ **MapLibre COMPLETO (§55)** — falta solo la vista en foreground, la confirma Daniel ([[L-39]]) · 🏠 **CATÁLOGO con ficha (§97)**: datos reales = fases 3-4 del runbook, luego fichas al sitemap. | 🟢 | §55.9 · §102 |
 | **TODO-46** | 📅 **GESTIÓN v1 COMPLETA** y desplegada → §112-§118, §140-§142, §148. ⏭️ Falta **aprobar el mockup** y **ESTRENARLA con datos reales** (runbook 1.5-1.6): es lo único que verifica el render en vivo. | 🟢 | §148 |
-| **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR** → §129-§138. ⏭️ **Daniel**: inscribir su 2FA (clave manual; el QR se aplazó, §137.5) · verificar su correo. ⏭️ **Mío, DESPUÉS de que él se inscriba**: exigirlo en las Rules —antes NO, expulsa a todos— · el QR verificable · **puerta única** (mockup APROBADO, con la desviación del paso 2 → §137.6). | 🟢 Daniel | §137 |
+| **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR** → §129-§138. ⏭ **Daniel**: inscribir su 2FA (clave manual, §137.5) y verificar su correo. ⏭ **Mío, DESPUÉS**: exigirlo en las Rules —antes NO, expulsa a todos—, el QR verificable y la puerta única (§137.6). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **rail de pago completo, probado contra el emulador** (§166-§187). ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
-| **TODO-50** | 🧱 **CEREBRO LLENO**: 16/33 nodos al ≥90 %, boot al 98,9 % (357c). ✅ **Salida «shardar» TOMADA** (§256): séptimo shard `00g` → el índice vivo de 100,7 % a 63 %. Quedan las otras dos (cap a sabiendas · kernel multi-ID) y aprietan `30` (240/240 L), `34`, `38`, `44`. ⛔ NO partir el nodo que se tenga delante (N15-07b). | 🟡 mío | N15-07 en la bóveda |
-| **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
+| **TODO-50** | 🧱 **CEREBRO LLENO**: 16/33 nodos al ≥90 %, boot rozando el techo. ✅ Salida «shardar» TOMADA (§256: shard `00g`). Quedan las otras dos y aprietan `30` (240/240 L), `34`, `38`, `44`. ⛔ NO partir el nodo que se tenga delante. | 🟡 mío | N15-07 en la bóveda |
+| **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea. | ⏸️ 28/92 | §87 · `43` |
 
 ---
 
@@ -70,15 +70,17 @@
 > (§219)— con **`npm --prefix portal run verify`**, que **NO son solo los 10 gates**: incluye `test:rules` (emulador). Correr los gates y cantar «verde» dejó el CI rojo 3 corridas (§263).
 
 
-> 🔬 **Auditoría N2 #16** (§250 · §256 · §258): **22 cerrados · 6 retirados · 4 abiertos** de 32.
-> 🎯 Lo más caro que enseñó no fue un hallazgo sino el método: **3 de 13 abiertos eran FALSOS**
-> —nunca ciertos— y los 3 invocaban una regla del cerebro sin abrir el gate que la implementa
-> ([[M-33]]). ⏭ **Los 4 abiertos: DOS son tuyos, Daniel** — qué carpetas dejan de servirse en el
-> dominio (N16-29) y los 13 correos del `50` (N16-30); van con evidencia, la decisión es tuya.
+> 🎯 **AQUÍ VOY (28-ago)** — barrido de **PRODUCTO** (no del cerebro): 61 hallazgos, 43 juzgados;
+> crudo en la bóveda (`2026-08-28-barrido-producto-*.json`). **12 arreglados** → §263.
+> ⏭ **SIGUEN ~14, por gravedad**: filtros del SERP que no filtran · buscador del hero que tira sus
+> parámetros · el panel abre con 48 inmuebles y $4.850M inventados · la tabla del Journal pierde la
+> columna del total · dos artículos se contradicen sobre la matrícula.
 
-> 🔬 **#15** (§237): cerrada. Su hilo —*convertir la promesa en un gate, no repetirla*— sigue
-> siendo el remedio que funciona. ⏭ Vivo de ella: **las cinco cifras del 5.3 esperan tu sí/no**
-> (`specs/PROPUESTA-CIFRAS-CUTOVER.md`).
+> 🔬 **Auditorías #15 y #16: cerradas** (§237 · §250 · §256 · §258 — 32 hallazgos: 22 cerrados,
+> 6 retirados). 🎯 Lo que enseñó la #16 no fue un hallazgo sino el método: **3 de 13 abiertos
+> eran FALSOS** e invocaban una regla sin abrir el gate que la implementa ([[M-33]]).
+> ⏭ **Vivo, y es TUYO**: las cinco cifras del 5.3 (`specs/PROPUESTA-CIFRAS-CUTOVER.md`) · qué
+> carpetas dejan de servirse en el dominio (N16-29) · los 13 correos del `50` (N16-30).
 
 > 🔀 **Hermanas** (§216): cifras sin fuente en Cars → LEGAL-08/09 de su `42-LEGAL`. Bersaglio, en su
 > nodo dueño: `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`.
