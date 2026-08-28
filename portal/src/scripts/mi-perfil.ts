@@ -252,9 +252,20 @@ export async function montarMiPerfil(): Promise<void> {
       nombre: perfil?.nombre || auth.currentUser?.displayName || auth.currentUser?.email || '',
       email: auth.currentUser?.email ?? '',
       primerArriendo: marcado,
-      // Se conserva lo que ya autorizó: `guardarPerfil` reescribe el documento, y mandar `false`
-      // aquí borraría un consentimiento que la persona ya dio.
-      autorizaTratamiento: perfil?.autorizaTratamiento ?? true,
+      /*
+       * Se CONSERVA lo que ya autorizó —`guardarPerfil` reescribe el documento, y mandar `false`
+       * borraría un consentimiento real— pero el defecto por defecto era `true` (§263): si no había
+       * nada guardado, esto AFIRMABA que la persona autorizó sin habérselo preguntado nunca.
+       *
+       * Y no había dónde preguntárselo: `autorizaTratamiento` no se otorga en ninguna pantalla —este
+       * era el único sitio del portal donde nacía—. Fabricar el consentimiento es exactamente lo que
+       * la Ley 1581 art. 9 no permite: hay que poder DEMOSTRAR que se otorgó.
+       *
+       * ⏭️ Falta la casilla en esta pantalla. El patrón existe ya en `/alertas` y `/estancias`, pero
+       * añadir un control visible es UI y va con mockup del dueño. Mientras tanto, el perfil no se
+       * podrá ENVIAR (guardar sí) y dirá con todas las letras qué le falta — que es la verdad.
+       */
+      autorizaTratamiento: perfil?.autorizaTratamiento ?? false,
     });
     if (!r.ok) {
       avisar(r.mensaje);
