@@ -51,6 +51,56 @@ export const TIPOS_INMUEBLE = [
 ] as const;
 export type TipoInmueble = (typeof TIPOS_INMUEBLE)[number];
 
+/**
+ * UN SOLO VOCABULARIO DE TIPO — la puerta de entrada nombraba cosas que el sistema no tiene (§265).
+ *
+ * 🔴 El desplegable del hero ofrecía **«Penthouse»**, y `TIPOS_INMUEBLE` no lo contiene: ninguna
+ * propiedad puede guardarse jamás con ese tipo, así que esa opción no podía devolver un solo
+ * resultado — nunca. Y al revés, omitía cinco tipos que sí existen (apartaestudio, oficina, bodega,
+ * consultorio, edificio) que `/alertas` sí deja elegir: se podía crear una ALERTA de bodega y no se
+ * podía BUSCAR una. Dos listas escritas a mano para la misma cosa, que es como se desincronizan.
+ *
+ * Esta tabla es el único puente. Es **explícita a propósito**: la alternativa —quitar la «s» final
+ * para singularizar— acierta con «Casas» y falla con «Locales» → «locale», que no existe, y falla
+ * EN SILENCIO devolviendo cero resultados. Una tabla que no cubre un caso se ve en su test; un
+ * stemming que no lo cubre se ve cuando un cliente no encuentra nada.
+ *
+ * ⚠️ «penthouse» → `apartamento` es un ENSANCHAMIENTO deliberado, no una equivalencia: en la
+ * taxonomía un penthouse es un apartamento, así que quien lo elija verá apartamentos. Es mejor que
+ * cero, y es reversible. **Decisión pendiente del dueño**: o se retira la etiqueta del selector, o
+ * el catálogo gana un distintivo propio. Hoy no se puede distinguir con los campos que hay.
+ */
+const ALIAS_TIPO: Readonly<Record<string, TipoInmueble>> = {
+  apartamento: 'apartamento', apartamentos: 'apartamento', apto: 'apartamento', aptos: 'apartamento',
+  penthouse: 'apartamento', penthouses: 'apartamento',
+  casa: 'casa', casas: 'casa',
+  apartaestudio: 'apartaestudio', apartaestudios: 'apartaestudio',
+  local: 'local', locales: 'local',
+  oficina: 'oficina', oficinas: 'oficina',
+  bodega: 'bodega', bodegas: 'bodega',
+  lote: 'lote', lotes: 'lote',
+  finca: 'finca', fincas: 'finca',
+  casa_lote: 'casa_lote', 'casa lote': 'casa_lote', 'casas lote': 'casa_lote',
+  consultorio: 'consultorio', consultorios: 'consultorio',
+  edificio: 'edificio', edificios: 'edificio',
+  otro: 'otro', otros: 'otro',
+};
+
+/**
+ * Traduce a tipo canónico lo que ESCRIBE la interfaz (una etiqueta, un plural, un sinónimo comercial)
+ * o lo que llega por la URL. Devuelve `null` cuando no reconoce: quien llama decide qué hacer con lo
+ * desconocido, y `null` es visible — un `'otro'` por defecto se colaría como si fuera un dato.
+ */
+export function tipoCanonico(v: string): TipoInmueble | null {
+  const k = v
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, ' ');
+  return ALIAS_TIPO[k] ?? null;
+}
+
 /** Estado de publicación en el catálogo. */
 export const ESTADOS_PROPIEDAD = [
   'borrador', 'en_verificacion', 'disponible', 'reservado', 'inactivo', 'cerrado',

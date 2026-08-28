@@ -73,10 +73,32 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
     <!-- Barra de filtros (glass sticky) -->
     <div class="serp-filter alt-nav-glass">
       <div class="serp-filter__in">
-        <div class="serp-search">
+        {/*
+          🔴 Esto era un `<div>` con un `<input>` suelto: sin formulario y sin nadie escuchando (§265).
+          Se podía escribir una zona y pulsar Enter, y NO PASABA NADA — en la caja de búsqueda de la
+          página de búsqueda. Ahora que la caja muestra lo que el visitante pidió, dejarla inerte
+          sería peor todavía: enseñaría que escribir ahí no sirve.
+
+          Es un `<form method="get">` y no un manejador de JS a propósito: así busca aunque el JS no
+          cargue, y la URL resultante es la MISMA que produce el buscador del hero — un solo formato
+          de búsqueda para todo el sitio. El `class` no cambia, así que el aspecto tampoco.
+
+          El `tipo` viaja en un campo oculto que rellena la isla desde la URL: la página es
+          prerenderizada y en el build NO existe todavía ninguna URL que leer. Sin JS se pierde el
+          tipo y se busca solo por zona — degradación aceptable, y nunca un filtro fingido.
+        */}
+        <form class="serp-search" method="get" role="search">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
-          <input value="Cartagena de Indias" aria-label="Ubicación" />
-        </div>
+          <input name="zona" value="Cartagena de Indias" aria-label="Ubicación" />
+          <input type="hidden" name="tipo" data-serp-tipo value="" />
+          {/* Botón de envío REAL, oculto a la vista (§265). Sin él el formulario dependía del envío
+              IMPLÍCITO —el Enter del navegador— y comprobado en el navegador NO se disparaba, mientras
+              que `requestSubmit()` sí: o sea que el formulario estaba bien y el disparador no. Con un
+              `type="submit"` presente el envío deja de depender de esa regla del estándar, y de paso
+              quien navega con teclado o lector de pantalla gana un control que puede activar. El
+              diseño aprobado no cambia: no ocupa un píxel. */}
+          <button class="serp-search__go alt-visually-hidden" type="submit">Buscar</button>
+        </form>
         {filterBtns.map((f) => (
           <button class="serp-fbtn" type="button" data-filter aria-pressed="false">{f}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
         ))}
@@ -98,7 +120,7 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
             —o desactivado— leía una cifra de inventario que no existe (§123). Ahora nace vacío
             y con su propio elemento: el selector anterior era «el primer nodo de texto», que
             se rompe en cuanto alguien añade un espacio delante. */}
-        <h1 class="serp-h1" data-serp-count><span data-serp-n></span>Propiedades <span>en Cartagena de Indias</span></h1>
+        <h1 class="serp-h1" data-serp-count><span data-serp-n></span><span data-serp-sust>Propiedades</span> <span data-serp-zona>en Cartagena de Indias</span></h1>
       </div>
       <div class="serp-sort">
         <label for="serp-order">Ordenar por</label>
@@ -187,7 +209,16 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
   /* Cabecera de resultados */
   .serp-head { max-width: 1440px; margin-inline: auto; padding: 26px clamp(16px, 4vw, 48px) 8px; display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
   .serp-h1 { margin-top: 8px; font-size: clamp(28px, 3.6vw, 40px); line-height: 1; }
-  .serp-h1 span { color: var(--alt-text); font-size: 0.62em; font-family: var(--alt-font-body); font-weight: var(--alt-fw-medium); letter-spacing: 0; }
+  /*
+   * 🔴 Esta regla era `.serp-h1 span` — POSICIONAL: alcanzaba a CUALQUIER span del titular (§265).
+   * Cuando §123 envolvió el contador en un `<span>` para poder escribirlo, el número heredó de
+   * rebote la tipografía del «en Cartagena…» y quedó en 17,4 px de cuerpo dentro de un titular de
+   * 28 px de display. Medido, no supuesto. El comentario de `serp-catalogo.ts` ya AVISABA de que
+   * envolverlo «rompería la tipografía sellada»; el aviso se quedó escrito y el span se puso igual.
+   * Acotada al nodo que de verdad quiere el estilo, el contador vuelve a la tipografía del titular
+   * — que es la que el diseño sellado le daba antes de §123.
+   */
+  .serp-h1 [data-serp-zona] { color: var(--alt-text); font-size: 0.62em; font-family: var(--alt-font-body); font-weight: var(--alt-fw-medium); letter-spacing: 0; }
   .serp-sort { display: flex; align-items: center; gap: 10px; }
   .serp-sort label { font-size: 13px; color: var(--alt-text); font-weight: var(--alt-fw-medium); }
   .serp-sort select { border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-chip, 10px); padding: 10px 14px; font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); background: var(--alt-white); cursor: pointer; outline: none; }
@@ -319,5 +350,9 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
 
   // 6. CATÁLOGO REAL (§59). Con `PUBLIC_CATALOGO_SOURCE=demo` (default) es un NO-OP: el SERP sigue
   //    en demo. En `live` reemplaza cards y pines con el inventario real. Cutover = flip de flag.
-  import('../scripts/serp-catalogo').then((m) => m.bootCatalogo());
+  import('../scripts/serp-catalogo').then((m) => {
+    // El buscador va SIEMPRE (también en demo): navegar no depende de que el inventario sea real.
+    m.bootBuscador();
+    return m.bootCatalogo();
+  });
 </script>

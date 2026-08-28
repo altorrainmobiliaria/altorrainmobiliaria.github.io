@@ -349,13 +349,17 @@ const maneras = [
               <label>
                 <span class="home-search__lbl">Tipo</span>
                 <select name="tipo">
+                  {/* El `value` es el tipo CANÓNICO del dominio; la etiqueta visible no cambia (§265).
+                      Sin él, el formulario mandaba «Penthouse» —un tipo que `TIPOS_INMUEBLE` no tiene— y
+                      «Casa» con mayúscula, que tampoco casa con `casa`. El puente y su test viven en
+                      `domain/shared.ts`; aquí solo se emite lo que el sistema sabe leer. */}
                   <option value="">Todos</option>
-                  <option>Apartamento</option>
-                  <option>Casa</option>
-                  <option>Penthouse</option>
-                  <option>Local</option>
-                  <option>Lote</option>
-                  <option>Finca</option>
+                  <option value="apartamento">Apartamento</option>
+                  <option value="casa">Casa</option>
+                  <option value="apartamento">Penthouse</option>
+                  <option value="local">Local</option>
+                  <option value="lote">Lote</option>
+                  <option value="finca">Finca</option>
                 </select>
               </label>
             </div>

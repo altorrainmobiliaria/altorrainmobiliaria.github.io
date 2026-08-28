@@ -12,7 +12,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { ordenarCatalogo } from './serp-catalogo';
+import { busquedaDeUrl, coincideBusqueda, filtrarCatalogo, ordenarCatalogo } from './serp-catalogo';
 
 type Item = Parameters<typeof ordenarCatalogo>[0][number];
 
@@ -88,5 +88,75 @@ describe('🔗 el texto de las opciones es el CONTRATO, y vive en el .astro', ()
     for (const o of opciones.filter((x) => x !== 'Relevancia')) {
       expect(ordenarCatalogo(LISTA, o).map((x) => x.id), o).not.toEqual(base);
     }
+  });
+});
+
+/*
+ * LA BÚSQUEDA DEL HERO — la intención que se tiraba a la basura (§265).
+ *
+ * El formulario del hero manda `zona` y `tipo` por GET a `/comprar` desde que la página existe, y
+ * no había una sola línea que los leyera. Estas pruebas fijan las DOS trampas que lo harían fallar
+ * en silencio, que es la forma peligrosa: un filtro roto no da error, da cero resultados — y cero
+ * resultados no se distingue de «no hay nada en esa zona».
+ */
+const enZona = (id: string, sector: string, tipo: string): Item =>
+  ({ ...item(id, 500_000_000, '2026-01-01'), sector, tipo }) as Item;
+
+const CIUDAD: Item[] = [
+  enZona('penth', 'Bocagrande', 'apartamento'),
+  enZona('casona', 'Manga', 'casa'),
+  enZona('local', 'Centro Histórico', 'local'),
+];
+
+describe('busquedaDeUrl — lo que el hero manda', () => {
+  it('lee zona y tipo, y limpia los espacios que trae una URL', () => {
+    expect(busquedaDeUrl('?zona=%20Bocagrande%20&tipo=casa')).toEqual({ zona: 'Bocagrande', tipo: 'casa' });
+  });
+
+  it('sin parámetros no inventa criterio (y entonces no se filtra nada)', () => {
+    expect(busquedaDeUrl('')).toEqual({ zona: '', tipo: '' });
+    expect(filtrarCatalogo(CIUDAD, busquedaDeUrl(''))).toHaveLength(3);
+  });
+});
+
+describe('coincideBusqueda — las dos trampas del cero silencioso', () => {
+  it('🔴 TRAMPA 1 · el tipo llega como lo manda el formulario, no como lo guarda el catálogo', () => {
+    // El <select> mandaba «Casa» con mayúscula. Comparar crudo daría CERO y parecería «no hay casas».
+    expect(coincideBusqueda({ sector: 'Manga', tipo: 'casa' }, { zona: '', tipo: 'Casa' })).toBe(true);
+    expect(coincideBusqueda({ sector: 'Manga', tipo: 'casa' }, { zona: '', tipo: 'Penthouse' })).toBe(false);
+  });
+
+  it('🔴 TRAMPA 2 · «Penthouse» no existe en el dominio: se ensancha a apartamento', () => {
+    expect(coincideBusqueda({ sector: 'Bocagrande', tipo: 'apartamento' }, { zona: '', tipo: 'Penthouse' })).toBe(true);
+  });
+
+  it('la zona es texto libre: casa en las dos direcciones', () => {
+    const it = { sector: 'Bocagrande', tipo: 'apartamento' };
+    expect(coincideBusqueda(it, { zona: 'bocagrande', tipo: '' })).toBe(true);   // exacto, sin mayúsculas
+    expect(coincideBusqueda(it, { zona: 'boca', tipo: '' })).toBe(true);          // el sector CONTIENE
+    expect(coincideBusqueda(it, { zona: 'casa en Bocagrande', tipo: '' })).toBe(true); // la frase CONTIENE
+    expect(coincideBusqueda(it, { zona: 'Manga', tipo: '' })).toBe(false);
+  });
+
+  it('las tildes no deciden: «Centro Historico» encuentra «Centro Histórico»', () => {
+    expect(coincideBusqueda({ sector: 'Centro Histórico', tipo: 'local' }, { zona: 'centro historico', tipo: '' })).toBe(true);
+  });
+
+  it('una letra suelta no empareja con todo (el lado corto exige 3 caracteres)', () => {
+    expect(coincideBusqueda({ sector: 'Manga', tipo: 'casa' }, { zona: 'a', tipo: '' })).toBe(false);
+  });
+
+  it('los dos criterios se exigen A LA VEZ, no uno u otro', () => {
+    expect(filtrarCatalogo(CIUDAD, { zona: 'Manga', tipo: 'casa' }).map((x) => x.id)).toEqual(['casona']);
+    expect(filtrarCatalogo(CIUDAD, { zona: 'Manga', tipo: 'local' })).toEqual([]);
+  });
+});
+
+describe('filtrarCatalogo — no muta, porque «Relevancia» tiene que poder volver', () => {
+  it('devuelve una lista nueva y deja la original intacta', () => {
+    const copia = [...CIUDAD];
+    const r = filtrarCatalogo(CIUDAD, { zona: 'Manga', tipo: '' });
+    expect(r).not.toBe(CIUDAD);
+    expect(CIUDAD).toEqual(copia);
   });
 });

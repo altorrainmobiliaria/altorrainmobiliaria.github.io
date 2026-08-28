@@ -13,6 +13,7 @@ import { setMarkers, type PinData } from './altorra-map';
 // resolvía distinto según la ruta desde la que se pintara. Dos copias, dos comportamientos.
 import { urlMedia } from '../lib/media';
 import { pesos } from '../lib/domain/dinero';
+import { tipoCanonico } from '../lib/domain/shared';
 
 type Operacion = 'venta' | 'arriendo' | 'alojamiento';
 
@@ -172,6 +173,89 @@ export function ordenarCatalogo(items: readonly CatalogoItem[], textoOpcion: str
   return copia;
 }
 
+export interface Busqueda {
+  /** Texto libre: el visitante escribe una zona, no elige de una lista. */
+  zona: string;
+  /** Tipo canónico del dominio (`TIPOS_INMUEBLE`), no la etiqueta comercial. */
+  tipo: string;
+}
+
+/**
+ * LEE LA INTENCIÓN DEL VISITANTE — que hasta ahora se tiraba a la basura (§265).
+ *
+ * 🔴 El buscador del hero manda `zona` y `tipo` por GET a `/comprar`, y **nadie los leía**: ni la
+ * página ni esta isla. Medido en el navegador: se busca «Bocagrande / Casa» y se aterriza en una
+ * página titulada «Propiedades en Cartagena de Indias» con la caja rellenada con OTRA cosa. La
+ * primera interacción del visitante con el sitio —el buscador del hero es la puerta de entrada— era
+ * la que se descartaba en silencio.
+ */
+export function busquedaDeUrl(search: string): Busqueda {
+  const q = new URLSearchParams(search);
+  return { zona: (q.get('zona') ?? '').trim(), tipo: (q.get('tipo') ?? '').trim() };
+}
+
+/** Compara sin tildes ni mayúsculas: lo que llega por una URL viene como venga. */
+const norm = (v: string): string =>
+  v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
+/**
+ * ¿Este inmueble responde a lo que se buscó?
+ *
+ * El TIPO se compara ya canonizado por las DOS partes: lo que llega por la URL y lo que guarda el
+ * catálogo. Comparar las cadenas crudas haría que «Casa» (con mayúscula, como lo manda el
+ * formulario) no casara con `casa` — y el fallo sería CERO RESULTADOS, que no se distingue de «no
+ * hay nada en esa zona».
+ *
+ * La ZONA se acepta **en las dos direcciones** porque es texto libre: «bocagrande» encuentra el
+ * sector «Bocagrande» (contiene), y «casa en bocagrande» también (contenido). Se exige ≥3 caracteres
+ * al lado corto para que una letra suelta no lo empareje con todo.
+ */
+export function coincideBusqueda(it: { sector: string; tipo: string }, b: Busqueda): boolean {
+  if (b.tipo) {
+    const buscado = tipoCanonico(b.tipo);
+    if (!buscado || tipoCanonico(it.tipo ?? '') !== buscado) return false;
+  }
+  if (b.zona) {
+    const z = norm(b.zona);
+    const sec = norm(it.sector ?? '');
+    if (!z || !sec) return false;
+    const encaja = (z.length >= 3 && sec.includes(z)) || (sec.length >= 3 && z.includes(sec));
+    if (!encaja) return false;
+  }
+  return true;
+}
+
+/** NUNCA muta la lista que recibe: el orden que entrega el servidor es «Relevancia» y hay que poder volver. */
+export function filtrarCatalogo(items: readonly CatalogoItem[], b: Busqueda): CatalogoItem[] {
+  if (!b.zona && !b.tipo) return [...items];
+  return items.filter((it) => coincideBusqueda(it, b));
+}
+
+/**
+ * Escribe en la página LO QUE SE BUSCÓ. La caja y el H1 traían «Cartagena de Indias» escrito a mano
+ * en el HTML: mostraban siempre lo mismo dijera lo que dijera la URL. Se marcan con `data-` en vez
+ * de por posición — «el último span» se rompe en cuanto alguien añade uno (§123).
+ */
+export function reflejarBusqueda(b: Busqueda): void {
+  if (!b.zona) return;
+  const caja = document.querySelector<HTMLInputElement>('.serp-search input[name="zona"]');
+  if (caja) caja.value = b.zona;
+  const zona = document.querySelector<HTMLElement>('[data-serp-zona]');
+  if (zona) zona.textContent = `en ${b.zona}`;
+}
+
+/**
+ * Deja la caja de búsqueda lista para volver a buscar SIN perder el tipo elegido.
+ *
+ * Corre en los DOS modos —a diferencia de `bootCatalogo`, que en demo no toca nada— porque navegar
+ * no depende del inventario: la caja tiene que funcionar aunque las tarjetas sean de muestra. Lo
+ * único que hace es copiar el `tipo` de la URL al campo oculto; el envío lo hace el `<form>` solo.
+ */
+export function bootBuscador(): void {
+  const oculto = document.querySelector<HTMLInputElement>('[data-serp-tipo]');
+  if (oculto) oculto.value = busquedaDeUrl(location.search).tipo;
+}
+
 export async function bootCatalogo(): Promise<void> {
   if (FUENTE !== 'live') return; // modo DEMO: no tocar nada
 
@@ -202,17 +286,40 @@ export async function bootCatalogo(): Promise<void> {
     return;
   }
 
-  // Contador honesto (el shell trae un número de demo). Se escribe SOLO el nodo de texto inicial del
-  // h1: envolverlo en un <span> heredaría el estilo de `.serp-h1 span` (el "en Cartagena…") y rompería
-  // la tipografía sellada (§3.2).
-  // Elemento propio y no «el primer nodo de texto con contenido»: aquel dependía de que el HTML
-  // empezara por el número, así que un espacio de más delante lo dejaba sin rellenar en silencio
-  // — y lo que quedaba en pantalla era el conteo inventado del build (§123).
-  const nodoNum = document.querySelector<HTMLElement>('[data-serp-n]');
-  if (nodoNum) nodoNum.textContent = `${items.length} `;
+  // Contador honesto (el shell trae un número de demo). Va en su PROPIO elemento y no en «el primer
+  // nodo de texto con contenido»: aquel dependía de que el HTML empezara por el número, así que un
+  // espacio de más delante lo dejaba sin rellenar en silencio — y lo que quedaba en pantalla era el
+  // conteo inventado del build (§123).
+  //
+  // ⚠️ Aquí vivía un aviso de que envolverlo en un `<span>` rompería la tipografía sellada. Era
+  // cierto, se envolvió igual, y el número llevaba desde entonces en la tipografía del cuerpo. Ya
+  // no aplica: el estilo pequeño se acotó a `[data-serp-zona]` en vez de a «todo span» (§265).
+  // La intención del visitante se aplica ANTES de contar: un contador que cuenta el catálogo entero
+  // mientras la lista enseña un subconjunto es la misma clase de mentira que el «128» inventado.
+  const busqueda = busquedaDeUrl(location.search);
+  reflejarBusqueda(busqueda);
+  const hayBusqueda = Boolean(busqueda.zona || busqueda.tipo);
+  const visibles = filtrarCatalogo(items, busqueda);
 
-  if (items.length === 0) {
-    mensaje(grid, 'Aún no hay propiedades publicadas', 'Muy pronto encontrarás aquí nuestro inventario.');
+  const nodoNum = document.querySelector<HTMLElement>('[data-serp-n]');
+  if (nodoNum) nodoNum.textContent = `${visibles.length} `;
+  // «1 Propiedades» es lo que se lee en cuanto una búsqueda deja un solo resultado — y una búsqueda
+  // por zona los deja a menudo. El sustantivo tiene su nodo justamente para poder concordar.
+  const nodoSust = document.querySelector<HTMLElement>('[data-serp-sust]');
+  if (nodoSust) nodoSust.textContent = visibles.length === 1 ? 'Propiedad' : 'Propiedades';
+
+  if (visibles.length === 0) {
+    // Los dos ceros NO son el mismo cero, y decirlos igual deja al visitante sin saber qué hacer:
+    // «no hay inventario» se espera, «no hay NADA DE LO QUE PEDISTE» se corrige cambiando la búsqueda.
+    if (hayBusqueda) {
+      mensaje(
+        grid,
+        'No encontramos inmuebles con esa búsqueda',
+        'Prueba con otra zona o quita el filtro de tipo para ver todo el inventario.',
+      );
+    } else {
+      mensaje(grid, 'Aún no hay propiedades publicadas', 'Muy pronto encontrarás aquí nuestro inventario.');
+    }
     setMarkersSeguro(raiz, []);
     return;
   }
@@ -260,7 +367,7 @@ export async function bootCatalogo(): Promise<void> {
     setMarkersSeguro(raiz, pines);
   };
 
-  pintar(items);
+  pintar(visibles);
 
   /*
    * El criterio se lee del TEXTO de la opción, que es lo único que el HTML declara — no llevan
@@ -270,7 +377,8 @@ export async function bootCatalogo(): Promise<void> {
   const orden = document.getElementById('serp-order') as HTMLSelectElement | null;
   if (orden) {
     orden.addEventListener('change', () => {
-      pintar(ordenarCatalogo(items, orden.selectedOptions[0]?.textContent ?? ''));
+      // Se reordena lo VISIBLE: ordenar el catálogo entero repintaría lo que la búsqueda excluyó.
+      pintar(ordenarCatalogo(visibles, orden.selectedOptions[0]?.textContent ?? ''));
     });
   }
 }

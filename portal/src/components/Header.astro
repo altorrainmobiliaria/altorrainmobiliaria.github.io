@@ -11,6 +11,7 @@ import { srcsetDe, SIZES } from '../lib/img';
  * Props: active = clave del ítem de nav actual.
  */
 import { SITE } from '../lib/config/site';
+import { tipoCanonico } from '../lib/domain/shared';
 
 interface Props {
   active?: string;
@@ -34,20 +35,45 @@ const icon: Record<string, string> = {
 // Íconos de los paneles "rich" → clave del set.
 const richIcon: Record<string, string> = { check: 'badgeCheck', edit: 'squarePen', home: 'building2', chart: 'trendingUp' };
 
+/*
+ * EL MEGAMENÚ TENÍA 20 ENLACES Y DOS DESTINOS (§265). «Apartamentos», «Casas», «Penthouse»,
+ * «Locales», «Lotes», «Fincas» y las seis zonas de arriendo apuntaban TODAS a `/comprar` o
+ * `/arrendar` a secas: seis etiquetas distintas y la misma página. Un menú de navegación en el que
+ * elegir no cambia nada es la versión grande del «Ordenar por» que no ordenaba (§264).
+ *
+ * El destino se DERIVA de la etiqueta en vez de escribirse al lado: así el menú no puede volver a
+ * desincronizarse del vocabulario del dominio — si alguien añade una etiqueta sin puente,
+ * `tipoCanonico` devuelve `null` y el enlace se queda sin filtro de forma VISIBLE, no en silencio.
+ */
+const porTipo = (ruta: string, etiquetas: readonly string[]): [string, string][] =>
+  etiquetas.map((e) => {
+    const t = tipoCanonico(e);
+    return [e, t ? `${ruta}?tipo=${t}` : ruta];
+  });
+
+/** Las zonas son texto libre (el catálogo las guarda en `sector`): se codifican para la URL. */
+const porZona = (ruta: string, zonas: readonly string[]): [string, string][] =>
+  zonas.map((z) => [z, `${ruta}?zona=${encodeURIComponent(z)}`]);
+
 const nav = [
   {
     key: 'comprar', label: 'Comprar', href: '/comprar', type: 'mega',
     cols: [
+      // ⚠️ «Por estado» es la ÚNICA columna que se queda sin intención, y a propósito: nuevo/usado
+      // no es un campo del índice del catálogo. `antiguedadAnios` existe en la propiedad pero NO
+      // viaja al índice, así que el SERP no puede filtrar por él hoy. Inventar `?estado=nuevo`
+      // sería prometer un filtro que nadie aplica — el fallo que este cambio vino a quitar.
+      // PENDIENTE DEL DUEÑO: o el índice gana el campo, o la columna se retira (es UI, lleva su gate).
       { title: 'Por estado', links: [['Compra nuevo', '/comprar'], ['Compra usado', '/comprar']] },
-      { title: 'Por tipo', links: [['Apartamentos', '/comprar'], ['Casas', '/comprar'], ['Penthouse', '/comprar'], ['Locales', '/comprar'], ['Lotes', '/comprar'], ['Fincas', '/comprar']] },
+      { title: 'Por tipo', links: porTipo('/comprar', ['Apartamentos', 'Casas', 'Penthouse', 'Locales', 'Lotes', 'Fincas']) },
     ],
-    featured: { img: '/assets/estate-golden.webp', eyebrow: 'Destacada', title: 'Penthouse en Bocagrande', href: '/comprar' },
+    featured: { img: '/assets/estate-golden.webp', eyebrow: 'Destacada', title: 'Penthouse en Bocagrande', href: '/comprar?zona=Bocagrande' },
   },
   {
     key: 'arrendar', label: 'Arrendar', href: '/arrendar', type: 'mega',
     cols: [
-      { title: 'Por zona', links: [['Zona Norte', '/arrendar'], ['Centro Histórico', '/arrendar'], ['Bocagrande', '/arrendar'], ['Castillogrande', '/arrendar'], ['Manga', '/arrendar'], ['Getsemaní', '/arrendar']] },
-      { title: 'Por tipo', links: [['Apartamentos', '/arrendar'], ['Casas', '/arrendar'], ['Penthouse', '/arrendar'], ['Locales', '/arrendar'], ['Fincas', '/arrendar']] },
+      { title: 'Por zona', links: porZona('/arrendar', ['Zona Norte', 'Centro Histórico', 'Bocagrande', 'Castillogrande', 'Manga', 'Getsemaní']) },
+      { title: 'Por tipo', links: porTipo('/arrendar', ['Apartamentos', 'Casas', 'Penthouse', 'Locales', 'Fincas']) },
     ],
   },
   {
