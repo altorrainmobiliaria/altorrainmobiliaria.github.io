@@ -11237,3 +11237,32 @@ intruso el gate falla y nombra el fichero ([[L-64]] regla 5).
 964 pruebas · typecheck limpio · build OK · 7 gates verdes. `dinero.ts` · `dinero.test.ts` (nuevo) ·
 `FichaInmueble.astro` · `serp-catalogo.ts` · `gestion-liquidacion.ts`. **INTACTO**: `precioPin` y el
 `NF` de `ficha.ts`, que formatea **metros²**, no dinero — se comprobó antes de tocarlo.
+
+## 258. ADR-258 — El catálogo de gates ya tiene dueño, y el dueño APUNTA en vez de copiar
+
+### 258.1 — El gate que vigila el diseño SELLADO no se nombraba en ningún nodo vivo
+`verify:tokens` —el que impide tocar el design system— solo aparecía en `99`, que está **prohibido
+leer entero**. Ningún nodo era dueño del catálogo. Ahora lo es `21-MAPA-PORTAL`, y **no copia los
+nombres a propósito** ([[M-32]]): la lista vive en `portal/package.json` (claves `verify:*`) y en
+`portal-ci.yml`, que ya son su propio SSoT — una lista pegada a mano solo añade una copia que
+envejece. Censo del 28-ago: **10 gates, los 10 en CI y los 10 en el agregado `npm run verify`**, o
+sea ninguno de los que existen sin que nadie los invoque ([[L-56]]).
+
+### 258.2 — Y la cifra no puede derivar en silencio
+`countableFact` `gates-portal`: cuenta las claves `verify:*` del `package.json` y las compara con lo
+que afirma el nodo. **Probado en NEGATIVO** ([[L-64]] regla 5): con un gate #11 inyectado, el linter
+falla con *«dice 10 pero hay 11»* y nombra el fichero donde contarlos. Es el mismo mecanismo que
+cazó las Cloud Functions, aplicado a los gates: *el cerebro ya no puede afirmar un número que nadie
+recuenta.*
+
+### 258.3 — Las reglas git del router son de ESTE repo, y no lo decían
+`§2` enunciaba «Claude ejecuta commit + push + merge» sin avisar de que los hermanos difieren —y en
+**INSEMA mergea el dueño**—. El riesgo no es olvidar la regla: es **generalizar ésta** y mergear
+donde él dijo que no. Media línea, apuntando a la skill `sinapsis-cerebros`; la tabla de los cuatro
+repos NO entra al router. **Impuesto one-in-one-out pagado**: entran 94c, sale un párrafo de §G.5 de
+88c que describía lo que el gate #8 ya obliga ([[M-32]]).
+
+### 258.4 — Estado de la auditoría #16
+**22 cerrados · 6 retirados · 4 abiertos** de 32. De los 4 que quedan, **dos son decisión de Daniel**
+(qué carpetas del repo dejan de servirse en el dominio, y los 13 correos del `50`) y por eso no las
+toco: la recomendación va con evidencia, la decisión es suya.

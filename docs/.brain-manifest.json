@@ -264,6 +264,19 @@
         "docs/05-ESTADO-GLOBAL.md"
       ],
       "_que": "Las del portal no estaban contadas en ningun nodo: crecieron de 4 a 9 entre ADR 113 y 118 sin que el cerebro se enterara."
+    },
+    {
+      "id": "gates-portal",
+      "label": "gates verify:* del portal",
+      "countFile": "portal/package.json",
+      "countPatterns": [
+        "\"(verify:[a-z-]+)\":"
+      ],
+      "claimRegex": "gates del portal: (\\d+) en `package.json`",
+      "claimScan": [
+        "docs/21-MAPA-PORTAL.md"
+      ],
+      "_que": "N16-15: ningun nodo era dueno del catalogo de gates; verify:tokens —el que vigila el diseno SELLADO— solo se nombraba en el 99, que esta PROHIBIDO leer entero. El dueno apunta al SSoT en vez de copiar los nombres (M-32), y esto impide que la cifra derive."
     }
   ],
   "x-claimsVerificados": [],

@@ -34,7 +34,7 @@
 | **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR** → §129-§138. ⏭️ **Daniel**: inscribir su 2FA (clave manual; el QR se aplazó, §137.5) · verificar su correo. ⏭️ **Mío, DESPUÉS de que él se inscriba**: exigirlo en las Rules —antes NO, expulsa a todos— · el QR verificable · **puerta única** (mockup APROBADO, con la desviación del paso 2 → §137.6). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **RAIL DE PAGO COMPLETO y probado contra el emulador** (§166-§170, §176-§177, §185-§187): liquidación, certificación, mandato, preaviso y el webhook. ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
-| **TODO-50** | 🧱 **CEREBRO LLENO**: 13/31 nodos al ≥90 %, `30` tocó 240/240 líneas. 🚪 **3 salidas vivas**: cap a sabiendas · shardar la tabla de resolución · kernel multi-ID (su porqué, y por qué ninguna es «mover cuerpos», en N15-07d). ⛔ NO partir el nodo que se tenga delante (N15-07b). | 🟡 mío | N15-07 en la bóveda |
+| **TODO-50** | 🧱 **CEREBRO LLENO**: 16/33 nodos al ≥90 %, boot al 98,9 % (357c). ✅ **Salida «shardar» TOMADA** (§256): séptimo shard `00g` → el índice vivo de 100,7 % a 63 %. Quedan las otras dos (cap a sabiendas · kernel multi-ID) y aprietan `30` (240/240 L), `34`, `38`, `44`. ⛔ NO partir el nodo que se tenga delante (N15-07b). | 🟡 mío | N15-07 en la bóveda |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea: el kit no se firma hasta el cierre de obra. Ledger → bóveda. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -70,11 +70,15 @@
 > (§219)—; córrelos con **`npm --prefix portal run verify`**, no de memoria.
 
 
-> 🔬 **Auditoría N2 #15** (§237): de la #14, **cinco cerradas y dos reinciden**. 🎯 El hilo cambió: la
-> familia «promesa sin mecanismo» **se cerró tres veces esta noche** (RNT al build, fuentes del Journal,
-> unidad de honorarios) — el remedio que funciona es *convertir la promesa en un gate*, no repetirla.
-> ⏭ **Abiertos**: saturación del cerebro → **TODO-50** · cifras del 5.3, esperan tu sí/no (`specs/PROPUESTA-CIFRAS-CUTOVER.md`)
-> · identificador inventado ×5 ([[M-30]]). 🎯 **Un identificador que no acabas de leer es inventado.**
+> 🔬 **Auditoría N2 #16** (§250 · §256 · §258): **22 cerrados · 6 retirados · 4 abiertos** de 32.
+> 🎯 Lo más caro que enseñó no fue un hallazgo sino el método: **3 de 13 abiertos eran FALSOS**
+> —nunca ciertos— y los 3 invocaban una regla del cerebro sin abrir el gate que la implementa
+> ([[M-33]]). ⏭ **Los 4 abiertos: DOS son tuyos, Daniel** — qué carpetas dejan de servirse en el
+> dominio (N16-29) y los 13 correos del `50` (N16-30); van con evidencia, la decisión es tuya.
+
+> 🔬 **#15** (§237): cerrada. Su hilo —*convertir la promesa en un gate, no repetirla*— sigue
+> siendo el remedio que funciona. ⏭ Vivo de ella: **las cinco cifras del 5.3 esperan tu sí/no**
+> (`specs/PROPUESTA-CIFRAS-CUTOVER.md`).
 
 > 🔀 **Hermanas** (§216): cifras sin fuente en Cars → LEGAL-08/09 de su `42-LEGAL`. Bersaglio, en su
 > nodo dueño: `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`.
