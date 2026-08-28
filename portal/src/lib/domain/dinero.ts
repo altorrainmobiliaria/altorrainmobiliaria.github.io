@@ -31,9 +31,23 @@ const COP_FMT = new Intl.NumberFormat('es-CO', {
   maximumFractionDigits: 0,
 });
 
-/** Pesos, a secas. Sin sufijos: quien necesite «al mes» o «por noche» se lo añade (`sufijoPrecio`). */
+/**
+ * Pesos, a secas. Sin sufijos: quien necesite «al mes» o «por noche» se lo añade (`sufijoPrecio`).
+ *
+ * 🔴 El `replace` NO es cosmético. `Intl` inserta un **espacio duro (U+00A0)** entre el símbolo y la
+ * cifra —`$ 2.500.000`— y los mockups APROBADOS escriben el precio PEGADO: 48 precios en cinco
+ * pantallas (Ficha · Resultados · Gestión · Liquidación · Certificación), ninguno con espacio. Es la
+ * peor clase de desviación de fidelidad: el carácter es invisible, se ve idéntico en un diff y en una
+ * revisión a ojo, y ningún gate lo distingue de un espacio normal.
+ *
+ * Sobrevivió porque el único sitio donde se NOTA es la ficha con datos reales, que aún no se estrena:
+ * ahí el precio principal (por aquí) y las tarjetas de «similares» (que formateaban por su cuenta)
+ * iban a salir con dos formatos distintos en la misma pantalla, el día del cutover.
+ */
 export function pesos(v: COP): string {
-  return COP_FMT.format(v);
+  // `\u00a0` escrito como ESCAPE, no como caracter: un NBSP literal en la regex es invisible
+  // en el diff y nadie lo puede revisar. Justo la clase de cosa que causo este fallo.
+  return COP_FMT.format(v).replace(/\u00a0/g, '');
 }
 
 /**
@@ -44,3 +58,12 @@ export function pesos(v: COP): string {
  * (`agenda.ts`, `liquidacion.ts`); aquí solo vive la tarifa.
  */
 export const IVA = 0.19;
+
+/**
+ * La tarifa ESCRITA, derivada del numero. Existe porque el comprobante de liquidacion la
+ * imprimia a pelo (`'IVA sobre los honorarios · 19 %'`): el importe salia de `IVA` pero el
+ * porcentaje impreso no, asi que el dia que suba la tarifa el cliente recibiria un recibo que
+ * dice 19 % sobre una cifra calculada al tipo nuevo. Y un `grep 0.19` no encuentra esa linea
+ * JAMAS. Es la promesa rota que hizo nacer este modulo, reaparecida en forma de texto.
+ */
+export const TARIFA_IVA = `${Math.round(IVA * 100)} %`;

@@ -12,6 +12,7 @@ import { setMarkers, type PinData } from './altorra-map';
 // esa copia devolvía la clave RELATIVA cuando no hay base configurada, así que la misma foto
 // resolvía distinto según la ruta desde la que se pintara. Dos copias, dos comportamientos.
 import { urlMedia } from '../lib/media';
+import { pesos } from '../lib/domain/dinero';
 
 type Operacion = 'venta' | 'arriendo' | 'alojamiento';
 
@@ -42,8 +43,8 @@ const etiquetaBadge = (op: Operacion): string =>
 
 const sufijoPrecio = (op: Operacion): string => (op === 'arriendo' ? '/mes' : op === 'alojamiento' ? '/noche' : '');
 
-/** Precio completo de la card: "$1.450.000.000". */
-const precioCard = (v: number): string => `$${nf.format(v)}`;
+/** Precio completo de la card: "$1.450.000.000". Por la puerta unica (dinero.ts), no a mano. */
+const precioCard = (v: number): string => pesos(v);
 
 /** Precio COMPACTO del pin del mapa: "$1.450M" · "$8,5M/mes" · "$400K/noche". */
 function precioPin(v: number, op: Operacion): string {

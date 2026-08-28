@@ -34,7 +34,7 @@ import {
   type EntradaLiquidacion,
   type Liquidacion,
 } from '../lib/domain/liquidacion';
-import { pesos } from '../lib/domain/dinero';
+import { pesos, TARIFA_IVA } from '../lib/domain/dinero';
 
 const TOPE = 50;
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T | null;
@@ -154,7 +154,7 @@ function pintarComprobante(c: Contrato, l: Liquidacion, retiene: boolean): Docum
 
   if (l.ivaHonorarios > 0) {
     mete(frag, 
-      fila('IVA sobre los honorarios · 19 %', destino('a la DIAN. Lo factura ALTORRA y lo declara.'), l.ivaHonorarios),
+      fila(`IVA sobre los honorarios · ${TARIFA_IVA}`, destino('a la DIAN. Lo factura ALTORRA y lo declara.'), l.ivaHonorarios),
     );
   }
 

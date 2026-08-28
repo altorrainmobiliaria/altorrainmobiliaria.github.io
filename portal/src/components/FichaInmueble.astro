@@ -46,6 +46,7 @@ import {
   sufijoPrecio,
   ubicacionPublica,
 } from '../lib/domain/ficha';
+import { pesos } from '../lib/domain/dinero';
 
 interface Props {
   p: Propiedad;
@@ -383,7 +384,7 @@ const ICO_WA =
               baths={s.ban}
               area={s.area != null ? `${s.area} m²` : undefined}
               title={s.titulo}
-              price={`$${new Intl.NumberFormat('es-CO').format(s.precio)}`}
+              price={pesos(s.precio)}
               priceSuffix={sufijoPrecio(s.operacion).trim()}
               href={rutaFicha(s)}
             />
