@@ -36,7 +36,9 @@ Para el propietario esto significa tres cosas concretas: no puede pedir un mes d
 
 <div class="jrn-practica">
 
-La contrapartida es la que hace atractivo el modelo: un contrato de doce meses que se **renueva automáticamente** si nadie da preaviso, un ingreso predecible y una operación de bajo roce. Y si el inmueble se entrega en administración, esas obligaciones —incluida la matrícula— las asume quien administra.
+La contrapartida es la que hace atractivo el modelo: un contrato de doce meses que se **renueva automáticamente** si nadie da preaviso, un ingreso predecible y una operación de bajo roce. Y si el inmueble se entrega en administración, quien administra asume la **gestión**: el recaudo, el giro, las novedades y el trato con el arrendatario.
+
+⚠️ **Lo que NO se traslada es la matrícula de arrendador.** Es un error caro y muy extendido. Esa obligación se pega a **la actividad de cada quien**, no al inmueble ni al contrato: la Ley 820 obliga a matricularse a quien arrienda vivienda urbana como actividad principal, a quien hace intermediación, y al **propietario con más de cinco contratos** —además de presumirla en quien aparezca arrendando más de diez inmuebles en un municipio (art. 28)—. Si usted cruza uno de esos umbrales, **sigue obligado aunque su administrador también lo esté**, y la multa llega hasta **cien salarios mínimos** (art. 34). Firmar un contrato de administración no le exime; lo que hace es añadir un obligado, no sustituirlo. Con un solo apartamento arrendado no hay obligación para usted, y ahí la de su administrador es la única que importa — [cómo funciona la matrícula, y por qué conviene pedirla antes de firmar](/journal/matricula-de-arrendador).
 
 </div>
 
