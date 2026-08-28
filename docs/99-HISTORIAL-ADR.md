@@ -11360,3 +11360,35 @@ defecto, y cambiarla sin decirlo sería colar una decisión de SEO dentro de una
 Build de producción OK · `verify:build` 21/23 · `verify:claims` en producción: 0 cifras nuevas sin
 respaldo, 8 congeladas con motivo, 21 fuentes citadas contra 13 URLs abiertas una por una. Artefacto
 de staging **restaurado** al terminar. **INTACTO**: `robots.txt` y la combinación de §260.3.
+
+## 261. ADR-261 — Había un gate número 11, y su única aplicación era un fichero que no se clona
+
+### 261.1 — Lo encontré porque pasó por delante, no porque lo buscara
+Ayer di dueño al catálogo de gates (§258) y lo acoté a *«los del portal»*: **10, contados desde
+`portal/package.json`**. Hoy, mirando la salida de un commit cualquiera, pasó un
+`✅ verify:contratos` que no estaba entre esos diez. Es `scripts/verify-contratos-legacy.mjs`, vive
+en la RAÍZ, y **su única aplicación era el hook de pre-commit** — es decir `core.hooksPath`, que vive
+en `.git/config` y **no se clona**. Un clon nuevo, otra máquina o un `--no-verify` y deja de correr
+sin decirlo: [[L-56]] en vivo. 🎯 *Un catálogo acotado no es un catálogo incompleto —lo que estaba
+mal era creer que ese acotado cubría el repo.*
+
+### 261.2 — Y era justo el gate que menos podía faltar
+Protege el **panel LEGACY**: el único subsistema sin tests, sin tipos y sin build, donde no hay nada
+más que pueda ver el fallo. Lo que caza costó dos horas y **dejó al dueño fuera de su propio panel**
+(§136): `loadUserProfile()` pasó a devolver `{ ok, perfil }`, se migró un callsite y no el otro, que
+evaluaba `!profile.activo` sobre el envoltorio — `undefined` → `true` → `signOut()`, con siete
+«permission denied» en cascada que parecían el problema y eran la consecuencia.
+
+### 261.3 — Cableado al CI, y probado en negativo
+Corre ahora en `portal-ci.yml` **antes del `npm ci`**, porque no necesita dependencias: si tiene que
+fallar, falla en segundos. El `checkout` ya trae el repo entero, así que basta `working-directory: .`.
+**Probado en NEGATIVO** ([[L-64]] regla 5): inyectando un callsite que lee `.activo` sobre el
+envoltorio, falla nombrando fichero, línea y variable; restaurado, vuelve a verde.
+
+### 261.4 — Y el denominador se deja explícito, que es la mitad del arreglo
+El `countableFact` `gates-portal` cuenta **10** y **no cuenta éste — y hace bien**: son **dos
+catálogos**, el de la raíz y el del portal, no uno. Registrado en `22-MAPA-GESTION` (el nodo dueño
+del back-office) con esa frase escrita, porque el próximo que compare «10 gates» contra
+`ls scripts/` va a encontrar la diferencia y merece saber que es deliberada, no un olvido. La otra
+mitad del cableado —que el hook exista y esté enchufado— ya la vigila el gate #25 del kernel, que
+nació de este mismo defecto en otro repo ([[M-03]]).

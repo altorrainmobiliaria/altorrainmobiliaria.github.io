@@ -5,6 +5,8 @@
 > frontera es limpia —sitio público vs. back-office— y este lado es el que crece con cada pieza de
 > la operación, así que aquí tiene sitio para crecer sin empujar al mapa del portal.
 >
+> 🛡️ **El gate del panel LEGACY, que no está en el catálogo del portal** (§261): `scripts/verify-contratos-legacy.mjs` vigila que, al cambiar lo que DEVUELVE una función de `js/`, no quede un callsite leyendo la forma vieja — el fallo que echó al dueño de su propio panel (§136). Vive en la RAÍZ, no en `portal/package.json`, así que el `countableFact` `gates-portal` **no lo cuenta y no debe**: son dos catálogos, no uno. Desde el 28-ago corre también en `portal-ci.yml`; antes su única aplicación era `core.hooksPath`, que vive en `.git/config` y **no se clona**.
+>
 > Lo de FUERA sigue en `21`: páginas públicas, design system, SEO, catálogo, zonas, ficha.
 
 - **BITÁCORA de la bóveda** (§148): `lib/domain/bitacora.ts` = dominio puro (limpia lo que sale de `auditLog`, hora de Colombia a mano, tope 25 y aviso de corte); la consulta y el panel plegable, en `scripts/gestion-documentos.ts`. ⚠️ **Solo la ve el super_admin** —las Rules la reservan porque lleva IP de terceros (§130)— y necesita el índice compuesto `auditLog` (`objetivo`+`creadoEn`), YA en producción. La consulta se probó en el emulador aparte del `get`: en Firestore son permisos DISTINTOS.
