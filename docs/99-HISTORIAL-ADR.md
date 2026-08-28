@@ -11433,3 +11433,98 @@ este cerebro ([[L-64]] regla 5 · [[L-52]]).
 `npm test` de la raíz corre ahora **los dos gates de la raíz** (secretos + contratos) en vez de un
 guion roto. Cableado al hook **y** al CI, antes del `npm ci` porque no necesita dependencias.
 **INTACTO**: `verify:enlaces`, `verify:seo` y `verify:build`, que ya cubrían el resto.
+
+## 263. ADR-263 — Barrido adversarial del PRODUCTO: doce fallos, y la mitad en papeles que firma el cliente
+
+**Deliberación:** 8 frentes en paralelo + un refutador por hallazgo. Crudo y tabla → bóveda,
+`research-archive/2026-08-28-barrido-producto-prelanzamiento.json`.
+
+### 263.0 — Por qué este barrido y no otra auditoría del cerebro
+La bandera de costo llevaba semanas en **48 % contra una meta del 30 %**: casi todo el trabajo del
+mes era mantenimiento del cerebro. Así que el objeto de estudio cambió — **el producto**, no la
+memoria. Ocho recorridos reales (inquilino · propietario · dinero · panel · textos legales · journal
+· móvil · el día uno con la base vacía), cada hallazgo atacado después por un refutador cuyo encargo
+era **tumbarlo**, no confirmarlo. **61 hallazgos · 43 con veredicto** (37 REAL · 5 REFUTADO · 1
+dudoso) · 26 de gravedad alta.
+⚠️ **El flujo MURIÓ al agotarse el límite de sesión** y la síntesis nunca corrió. No se perdió nada
+porque el journal guarda el payload de cada agente terminado: se rescató y se archivó CRUDO antes de
+tocar una línea. *Un resultado que solo vive en una sesión abierta no es un resultado.*
+
+### 263.1 — 💰 Lo más caro estaba en los papeles que el cliente se lleva
+Cinco fallos de dinero, y ninguno rompía nada: compilaban, renderizaban y se veían bien.
+- El comprobante mensual imprimía **«Honorarios de administración · 1000 %»**. El contrato guarda la
+  tarifa como PORCENTAJE y la pantalla la pintaba como FRACCIÓN. El importe estaba bien: mentía el
+  número impreso, que es el que lee el propietario.
+- El certificado de renta llevaba un **NIT INVENTADO** (`901.xxx.xxx-1`) en la frase que dice «hace
+  constar» — y con la forma del NIT de la sociedad ANTERIOR. La validación solo miraba que el campo
+  no estuviera vacío: falsa seguridad pura.
+- Ese certificado **no cuadraba consigo mismo**: la cuota de copropiedad se restaba DOS VECES.
+  Al arreglarlo apareció lo que el defecto tapaba — **los dos casos son fiscalmente distintos y el
+  código los trataba igual**: cobrada aparte es dinero de paso; dentro del canon es ingreso suyo y
+  gasto deducible.
+- **Mezclaba contratos**: filtraba por tipo y por año y NUNCA por `contratoId`, que el modelo guarda
+  en cada pago desde el principio. Con dos contratos, a una propietaria se le declaraba como ingreso
+  suyo el giro de otro.
+- **Dos fórmulas para el mismo giro**: la Cloud Function esperaba `$2.202.500` y la pantalla mostraba
+  `$2.166.800`. Alguien iba a girar uno y a discutir el otro cada mes.
+🎯 El patrón común: **la cifra impresa y la calculada salían de sitios distintos.** El remedio es
+siempre el mismo — que el dominio DEVUELVA lo que aplicó, y la pantalla solo lo imprima.
+
+### 263.2 — ⚖️ Le decíamos al propietario, por escrito, que su contrato terminaba
+Verificado en la fuente oficial (Ley 820/2003, Función Pública), no de memoria: el **art. 22 num. 7**
+permite terminar **durante las prórrogas** pagando **tres meses de arriendo**; para terminar **al
+vencimiento** hace falta el **num. 8** —causal especial y **caución de seis meses**—; y el **art. 24**
+es el del ARRENDATARIO, que sí se va al vencimiento sin causal ni pago.
+El artículo del Journal decía que el numeral 7 «es la que se usa cuando simplemente no se quiere
+renovar al vencimiento», **omitía la indemnización entera** y citaba el art. 24 como si diera el mismo
+derecho al propietario: **le atribuía al arrendador el derecho del inquilino**. Y el producto lo
+confirmaba: `efecto()` devolvía «termina» con solo la constancia postal, **para cualquiera de los
+dos**. El dato que los distingue —`quien`— llevaba en el modelo desde el principio y nadie lo miraba.
+Tercer estado `falta-titulo-del-arrendador`, propagado a sus tres consumidores.
+Y **registrar el preaviso dos veces PISABA la constancia postal** —la única prueba de que el aviso
+viajó— porque el servidor no miraba si ya había una. La pantalla, además, invitaba a repetirlo.
+
+### 263.3 — 🔒 Habeas data: dos cosas que el sistema daba por hechas
+`registrarEvento` se llamaba desde **cinco sitios** y **no existía**; las cinco llamadas con `void`,
+así que el fallo era MUDO. Entre ellas, la prueba del consentimiento al crear cuenta (Ley 1581 art.
+9). **El propio ruleset ya la daba por escrita**: la regla de `auditLog` dice que esa colección «la
+escribe SOLO `registrarEvento`». Diseñada, documentada y sin escribir.
+Y el perfil de arrendatario **daba por otorgado** el consentimiento (`?? true`) sin habérselo
+preguntado a nadie — era el único sitio del portal donde ese dato nacía. Y la Política declaraba
+**tres** encargados bajo la palabra «únicamente» cuando hay **cinco**: faltaban Cloudflare (todo el
+portal corre ahí; R2 guarda fotos y documentos) y Resend (sus correos llevan nombre y contacto).
+
+### 263.4 — 📣 Y tres promesas en la página donde el propietario DECIDE
+`/publicar` decía «solo pagas cuando tu propiedad se vende» — y esa misma página capta ARRIENDOS (su
+h1 dice «Vende o arrienda»). Decía «3 %» donde `/precios` dice que se factura con IVA: 3 % y 3,57 %
+no son el mismo número. Y ofrecía **«Abogado dedicado»** cuando `42-LEGAL` dice que ALTORRA no presta
+asesoría jurídica. Las cifras se DERIVAN ahora de `TARIFAS`; lo del abogado se sustituye por lo que
+sí se hace. Además, imprimir el certificado de un propietario **imprimía el comprobante de otro**
+encima: el dato de una persona dentro del documento de otra, por tres líneas de CSS.
+
+### 263.5 — 🎯 Lo que enseñaron los tests: fijaban los errores
+Cinco suites tuvieron que corregirse porque **codificaban el defecto**, no lo cazaban: el fixture del
+preaviso avisaba como «arrendador» y afirmaba que eso termina el contrato (en las unitarias **y**
+contra el emulador); la agenda esperaba `2.202.500`; y el certificado tenía un bloque llamado
+**«EL INVARIANTE»** que estaba en verde con la doble resta dentro — comprobaba `neto + pagos +
+retenciones = lo cobrado`, cierto, pero es el invariante del FLUJO DE DINERO, mientras que quien lee
+el papel hace `ingresos − pagos − retenciones` y espera el neto. Esa relación no la comprobaba nadie,
+y su segunda línea repetía la fórmula de la implementación. *Un invariante que no es el que hace el
+LECTOR no protege al lector.*
+
+### 263.6 — Y dos defectos que puse yo, cazados antes de que salieran
+(1) La pantalla del preaviso trataba todo lo que no fuera «termina» como «se prorroga un año», así
+que mi tercer estado salía diciendo lo contrario de lo que pasa — cazado recorriendo el camino vivo,
+no por un test. (2) Y el CI estuvo **TRES corridas en rojo** mientras yo firmaba commits diciendo
+«10 gates verdes»: era cierto y era incompleto, porque `npm run verify` incluye además `test:rules`
+(emulador) y yo no lo corría. 🎯 *Un «verde» que no nombra su denominador es la misma familia que
+este barrido vino a cazar, aplicada a mí.* El aviso quedó en el `10`, donde se lee antes de commitear.
+
+### 263.7 — Verificación y estado
+986 pruebas unitarias · **190 contra el emulador** · typecheck del portal y de Functions · build ·
+los 10 gates · CI verde. Un gate ampliado de paso: el patrón de conteos de inventario solo conocía
+UNA de las dos formas de escribirlo (`128 propiedades` sí, `arriendos 83` no) y `[1-9]\d+` sustituye
+a `\d{2,}` para que un ordinal maquetado («04 Estancias») deje de contar como inventario.
+**INTACTO**: `registrarEvento` queda escrita y **sin desplegar** (Functions van a mano, §197), y la
+casilla de autorización que falta en `/mi-perfil` NO se añade — es un control visible y eso va con
+mockup del dueño (paso 5.1b del runbook).
