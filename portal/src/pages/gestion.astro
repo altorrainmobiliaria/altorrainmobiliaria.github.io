@@ -1518,8 +1518,20 @@ const init = DATA.admin;
   .gx-cf__total { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin: 16px 20px 4px; padding: 18px 20px; background: var(--gx-navy, #062743); border-radius: 14px; color: #fff; }
   .gx-cf__total strong { font-family: var(--alt-font-display, serif); font-size: 26px; color: var(--alt-gold, #d4af37); white-space: nowrap; font-variant-numeric: tabular-nums; }
   @media print {
-    /* Al imprimir solo importa el certificado: los mandos y el resto del panel estorban. */
+    /*
+     * Al imprimir solo importa el certificado: los mandos y el resto del panel estorban.
+     *
+     * 🔴 Y ese «resto del panel» incluía algo peor que ruido (§263): el comprobante MENSUAL
+     * (`.gx-liq`) vive en el MISMO contenedor que la certificación anual, y la regla no lo ocultaba.
+     * El único botón de imprimir es el del certificado, así que el recorrido normal —entrar en
+     * Liquidación (se pinta el comprobante del contrato #1), bajar a Certificación, elegir el #7 e
+     * imprimir— producía un papel que empieza con el NOMBRE, EL CANON Y LAS CIFRAS DEL PROPIETARIO
+     * #1 y sigue con el certificado del #7. Ese papel se le entrega al contador del #7.
+     *
+     * No es solo estética: es el dato de una persona en el documento de otra.
+     */
     .gx-fgrid, .gx-hint, .alt-btn, .gx-head, .gx-nav, .gx-liq__barra { display: none !important; }
+    .gx-liq, .gx-liq__nota { display: none !important; }
   }
   .gx-liq__barra { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; padding: 18px 20px; margin-bottom: 16px; }
   .gx-liq__campo { flex: 1 1 300px; display: block; }
