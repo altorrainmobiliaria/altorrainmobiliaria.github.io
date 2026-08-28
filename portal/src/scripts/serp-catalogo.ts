@@ -153,6 +153,25 @@ function mensaje(grid: HTMLElement, titulo: string, detalle: string): void {
   grid.appendChild(box);
 }
 
+/**
+ * Ordena el catálogo según la opción elegida en «Ordenar por» (§264).
+ *
+ * ⚠️ El criterio se lee del TEXTO de la opción, que es lo único que el HTML declara — sus `<option>`
+ * no llevan `value`, y añadirlos sería tocar el marcado aprobado. Se compara en minúsculas y por la
+ * parte distintiva de cada frase, para que una tilde o una mayúscula no lo rompa en silencio.
+ *
+ * NUNCA muta la lista que recibe: «Relevancia» es el orden en que lo entrega el servidor, y perderlo
+ * haría que esa opción dejara de poder volver.
+ */
+export function ordenarCatalogo(items: readonly CatalogoItem[], textoOpcion: string): CatalogoItem[] {
+  const t = textoOpcion.toLowerCase();
+  const copia = [...items];
+  if (t.includes('menor a mayor')) return copia.sort((a, b) => a.precio - b.precio);
+  if (t.includes('mayor a menor')) return copia.sort((a, b) => b.precio - a.precio);
+  if (t.includes('reciente')) return copia.sort((a, b) => (b.pub ?? '').localeCompare(a.pub ?? ''));
+  return copia;
+}
+
 export async function bootCatalogo(): Promise<void> {
   if (FUENTE !== 'live') return; // modo DEMO: no tocar nada
 
@@ -198,37 +217,62 @@ export async function bootCatalogo(): Promise<void> {
     return;
   }
 
-  // Una card defectuosa NO puede tumbar el listado entero (lección de este mismo desarrollo: una
-  // excepción a mitad del bucle dejaba la página con los datos del demo y sin señal visible).
-  const frag = document.createDocumentFragment();
-  let fallidas = 0;
-  items.forEach((it, i) => {
-    try {
-      const card = construirCard(tpl, it, i);
-      if (card) frag.appendChild(card);
-      else fallidas++;
-    } catch {
-      fallidas++;
+  /*
+   * PINTAR y ORDENAR se separan porque el `<select>` de «Ordenar por» tiene que repintar (§264).
+   * Ese control lleva desde el principio en la página con sus cuatro opciones escritas y **no hacía
+   * nada**: se podía elegir «Precio: menor a mayor» y la lista se quedaba igual. Un control que
+   * responde al clic y no cambia nada es peor que no tenerlo — enseña que la web está rota.
+   */
+  const pintar = (lista: CatalogoItem[]): void => {
+    // Una card defectuosa NO puede tumbar el listado entero (lección de este mismo desarrollo: una
+    // excepción a mitad del bucle dejaba la página con los datos del demo y sin señal visible).
+    const frag = document.createDocumentFragment();
+    let fallidas = 0;
+    lista.forEach((it, i) => {
+      try {
+        const card = construirCard(tpl, it, i);
+        if (card) frag.appendChild(card);
+        else fallidas++;
+      } catch {
+        fallidas++;
+      }
+    });
+    if (fallidas) console.warn(`[catalogo] ${fallidas} card(s) no se pudieron construir`);
+    if (!frag.childNodes.length) {
+      mensaje(grid, 'No pudimos mostrar el catálogo', 'Estamos trabajando en ello.');
+      setMarkersSeguro(raiz, []);
+      return;
     }
-  });
-  if (fallidas) console.warn(`[catalogo] ${fallidas} card(s) no se pudieron construir`);
-  if (!frag.childNodes.length) {
-    mensaje(grid, 'No pudimos mostrar el catálogo', 'Estamos trabajando en ello.');
-    setMarkersSeguro(raiz, []);
-    return;
-  }
-  grid.replaceChildren(frag);
-  // AVISO de que hay cards nuevas en el DOM. `BaseLayout` escucha este evento para re-cablear los
-  // corazones de favoritos, y nadie lo despachaba: en `live`, TODAS las cards del SERP salían con el
-  // corazón muerto — se pintaba, se podía pulsar y no guardaba nada, sin un error en consola.
-  document.dispatchEvent(new CustomEvent('altorra:catalogo-pintado'));
+    grid.replaceChildren(frag);
+    // AVISO de que hay cards nuevas en el DOM. `BaseLayout` escucha este evento para re-cablear los
+    // corazones de favoritos, y nadie lo despachaba: en `live`, TODAS las cards del SERP salían con el
+    // corazón muerto — se pintaba, se podía pulsar y no guardaba nada, sin un error en consola.
+    // ⚠️ Va también en cada REORDEN: las cards son nuevas, y sin esto los corazones morirían al
+    // cambiar el orden — exactamente el mismo fallo, un año después.
+    document.dispatchEvent(new CustomEvent('altorra:catalogo-pintado'));
 
-  // Pines del mapa: SOLO los que tienen coordenadas (card sí, pin no — contrato del §57).
-  const pines: PinData[] = items
-    .map((it, i) => ({ it, i }))
-    .filter(({ it }) => it.coords != null)
-    .map(({ it, i }) => ({ i, lat: it.coords!.lat, lng: it.coords!.lng, label: precioPin(it.precio, it.operacion) }));
-  setMarkersSeguro(raiz, pines);
+    // Pines del mapa: SOLO los que tienen coordenadas (card sí, pin no — contrato del §57).
+    // El índice sale de ESTA lista, no de la original: es lo que empareja cada pin con su card.
+    const pines: PinData[] = lista
+      .map((it, i) => ({ it, i }))
+      .filter(({ it }) => it.coords != null)
+      .map(({ it, i }) => ({ i, lat: it.coords!.lat, lng: it.coords!.lng, label: precioPin(it.precio, it.operacion) }));
+    setMarkersSeguro(raiz, pines);
+  };
+
+  pintar(items);
+
+  /*
+   * El criterio se lee del TEXTO de la opción, que es lo único que el HTML declara — no llevan
+   * `value`, y añadirlos sería tocar el marcado aprobado. Se compara en minúsculas y por su parte
+   * distintiva, para que una tilde o un cambio de mayúscula no lo rompa en silencio.
+   */
+  const orden = document.getElementById('serp-order') as HTMLSelectElement | null;
+  if (orden) {
+    orden.addEventListener('change', () => {
+      pintar(ordenarCatalogo(items, orden.selectedOptions[0]?.textContent ?? ''));
+    });
+  }
 }
 
 /** El mapa puede no haber montado (WebGL ausente): nunca romper el listado por eso. */
