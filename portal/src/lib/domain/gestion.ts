@@ -53,6 +53,21 @@ export interface Contrato extends Versioned, Auditable {
   partes: { propietario?: ParteContrato; arrendatario?: ParteContrato; codeudor?: ParteContrato };
   canon?: COP;
   /**
+   * Desde cuándo rige el canon ACTUAL — y no es lo mismo que la firma (§267).
+   *
+   * 🔴 La agenda colgaba el aniversario del incremento de `vigenciaInicio`, y el artículo del
+   * Journal dice —bien— que «el reloj de los doce meses cuenta desde el último cambio de canon, no
+   * desde la firma». Con un solo campo `canon` y sin fecha, el código NO PODÍA hacer otra cosa: la
+   * información no existía en el modelo. Coinciden mientras el canon solo suba en el aniversario;
+   * en cuanto hay una renegociación a mitad de vigencia, el aviso llega con meses de error — y lo
+   * que se calcula mal es un PLAZO LEGAL (Ley 820 art. 20: una vez cada doce meses).
+   *
+   * Opcional a propósito: los contratos que ya existen no lo traen, y sin él se sigue anclando en la
+   * firma, que es exactamente lo que se hacía. El cambio es aditivo; lo que aporta es la POSIBILIDAD
+   * de decir la verdad cuando el canon cambió en otra fecha.
+   */
+  canonDesde?: ISODate;
+  /**
    * Administración PACTADA en el contrato. Distinta de `Precio.administracion` del inmueble, que es la
    * cifra del ANUNCIO: aquí está la que de verdad se firmó, y es la que se cobra y se concilia.
    * Va SEPARADA del canon por doctrina (nada de cuotas escondidas) aunque se cobren juntos.

@@ -167,21 +167,46 @@ const jsonLd = {
             </p>
           </section>
 
-          <section class="jrn-cta">
-            <h2>¿Va a entregar su inmueble en administración?</h2>
-            <p>
-              ALTORRA tiene Matrícula de Arrendador {SITE.matriculaArrendador} vigente en Cartagena,
-              y el número está en el pie de cada página de este sitio.
-            </p>
-            <div class="jrn-cta__botones">
-              <a class="alt-btn alt-btn--gold" href="/publicar">Entregar mi inmueble</a>
-              <a
-                class="alt-btn alt-btn--outline"
-                href={`${SITE.contact.whatsappLink}?text=${waTexto}`}
-                rel="noopener">Escribirnos</a
-              >
-            </div>
-          </section>
+          {/*
+            La llamada sigue al PÚBLICO del artículo (§267). Misma estructura —titular, párrafo y dos
+            botones—; lo que cambia es a quién se le habla. La credencial se cita en los dos casos,
+            pero significa cosas distintas: al propietario le dice que puede confiarnos su inmueble;
+            al inquilino, que quien le está respondiendo está registrado y responde por lo que dice.
+          */}
+          {d.publico === 'arrendatario' ? (
+            <section class="jrn-cta">
+              <h2>¿Le están cobrando algo que la ley no permite?</h2>
+              <p>
+                Cuéntenos su caso y lo revisamos con usted. <strong>No hace falta que el inmueble sea
+                nuestro.</strong> ALTORRA tiene Matrícula de Arrendador {SITE.matriculaArrendador}
+                vigente en Cartagena, y el número está en el pie de cada página de este sitio.
+              </p>
+              <div class="jrn-cta__botones">
+                <a
+                  class="alt-btn alt-btn--gold"
+                  href={`${SITE.contact.whatsappLink}?text=${waTexto}`}
+                  rel="noopener">Escribirnos por WhatsApp</a
+                >
+                <a class="alt-btn alt-btn--outline" href="/arrendar">Ver inmuebles en arriendo</a>
+              </div>
+            </section>
+          ) : (
+            <section class="jrn-cta">
+              <h2>¿Va a entregar su inmueble en administración?</h2>
+              <p>
+                ALTORRA tiene Matrícula de Arrendador {SITE.matriculaArrendador} vigente en Cartagena,
+                y el número está en el pie de cada página de este sitio.
+              </p>
+              <div class="jrn-cta__botones">
+                <a class="alt-btn alt-btn--gold" href="/publicar">Entregar mi inmueble</a>
+                <a
+                  class="alt-btn alt-btn--outline"
+                  href={`${SITE.contact.whatsappLink}?text=${waTexto}`}
+                  rel="noopener">Escribirnos</a
+                >
+              </div>
+            </section>
+          )}
 
           {
             otros.length > 0 && (

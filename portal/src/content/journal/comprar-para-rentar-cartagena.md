@@ -76,7 +76,7 @@ Zonas donde la corta estancia es parte del paisaje del negocio:
 
 Cuál de los dos modelos «rinde más». No publicamos rentabilidades ni proyecciones de ocupación: dependen del inmueble, del mes, del estado de la unidad y de cómo se opere, y una cifra puesta aquí sería una promesa que nadie puede sostener. Lo que sí podemos es mirar su caso concreto con los números que existan de verdad — los suyos, no los de un promedio.
 
-Si ya sabe qué zona le interesa, cada una tiene su página con lo que sí se puede afirmar: [ver las zonas de Cartagena](/comprar).
+Si ya sabe qué zona le interesa, cada una tiene su página con lo que sí se puede afirmar: [ver las zonas de Cartagena](/invertir).
 
 ---
 

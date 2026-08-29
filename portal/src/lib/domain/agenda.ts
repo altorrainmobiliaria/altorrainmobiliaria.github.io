@@ -238,17 +238,27 @@ export function hitosDeContrato(c: Contrato, hoy: string): Hito[] {
     }, hoy));
   }
 
-  // 4. El incremento anual, en el aniversario del inicio.
+  // 4. El incremento anual, doce meses después del ÚLTIMO CAMBIO DE CANON (§267).
+  //
+  // Ley 820 art. 20: el canon se reajusta una vez cada doce meses. Ese reloj arranca en el último
+  // cambio de precio, no en la firma — y son la misma fecha solo mientras el canon suba únicamente
+  // en el aniversario. Con una renegociación a mitad de vigencia dejan de serlo, y el aviso llegaría
+  // con meses de error sobre un plazo legal.
   if (c.incrementoIPC && c.vigenciaInicio) {
-    const inicio = c.vigenciaInicio.slice(0, 10);
-    let aniversario = sumarMeses(inicio, 12);
+    const desde = (c.canonDesde ?? c.vigenciaInicio).slice(0, 10);
+    let aniversario = sumarMeses(desde, 12);
     // Contratos renovados varias veces: se avanza hasta el primer aniversario que no haya pasado.
     let vueltas = 0;
     while (aniversario < hoy && vueltas < 40) {
       aniversario = sumarMeses(aniversario, 12);
       vueltas++;
     }
-    out.push(hito({ ...comun, tipo: 'ipc', fecha: aniversario, titulo: 'Incremento anual (IPC)', detalle: 'Aniversario del contrato: toca actualizar el canon.' }, hoy));
+    // El detalle NOMBRA su ancla: si el aviso sorprende, el operador ve de qué fecha cuelga sin
+    // tener que abrir el contrato — y si el ancla está mal, se ve que está mal.
+    const detalle = c.canonDesde
+      ? `Doce meses desde el último cambio de canon (${desde}): toca actualizar.`
+      : 'Aniversario del contrato: toca actualizar el canon.';
+    out.push(hito({ ...comun, tipo: 'ipc', fecha: aniversario, titulo: 'Incremento anual (IPC)', detalle }, hoy));
   }
 
   return out;

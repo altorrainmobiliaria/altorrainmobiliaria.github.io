@@ -116,6 +116,32 @@ describe('hitos de un contrato', () => {
     expect(tipos(contrato({ incrementoIPC: false }))).not.toContain('ipc');
   });
 
+  /*
+   * EL RELOJ DE LOS DOCE MESES ARRANCA EN EL ÚLTIMO CAMBIO DE CANON, NO EN LA FIRMA (§267).
+   *
+   * Ley 820 art. 20: el canon se reajusta una vez cada doce meses. La agenda lo colgaba de
+   * `vigenciaInicio` y no podía hacer otra cosa —el modelo no guardaba la fecha del cambio—, así que
+   * un contrato renegociado a mitad de vigencia recibía el aviso con meses de error sobre un PLAZO
+   * LEGAL. Las dos direcciones se prueban: con la fecha, manda ella; sin ella, nada cambia.
+   */
+  it('con `canonDesde`, el aniversario cuelga del ÚLTIMO CAMBIO de canon', () => {
+    const h = hitosDeContrato(
+      contrato({ incrementoIPC: true, vigenciaInicio: '2023-03-15', canonDesde: '2025-11-01' }),
+      HOY,
+    ).find((x) => x.tipo === 'ipc');
+    // Doce meses desde el 1-nov-2025, no desde el 15-mar (que habría dado 2027-03-15).
+    expect(h?.fecha).toBe('2026-11-01');
+    expect(h?.detalle).toContain('2025-11-01');
+  });
+
+  it('SIN `canonDesde` no cambia nada: sigue anclando en la firma', () => {
+    // La regresión que este cambio no puede introducir: todos los contratos de hoy están así.
+    const h = hitosDeContrato(contrato({ incrementoIPC: true, vigenciaInicio: '2023-03-15' }), HOY)
+      .find((x) => x.tipo === 'ipc');
+    expect(h?.fecha).toBe('2027-03-15');
+    expect(h?.detalle).toBe('Aniversario del contrato: toca actualizar el canon.');
+  });
+
   it('un contrato de administración no genera cobro de canon', () => {
     expect(tipos(contrato({ tipo: 'administracion' }))).not.toContain('canon');
   });

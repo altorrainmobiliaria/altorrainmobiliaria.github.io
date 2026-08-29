@@ -63,13 +63,19 @@ Lo que **no** se puede hacer es esquivarlo declarando menos de lo que se pagó. 
 
 Sumando los dos conceptos sobre el valor del inmueble:
 
-| Valor del inmueble | Impuesto de registro | Estampilla | Total departamental | Por cada parte |
+| Valor del inmueble | Impuesto de registro | Estampilla | Total departamental | Mitad del IMPUESTO |
 |---|---|---|---|---|
-| $150.000.000 | $1.500.000 | $750.000 | **$2.250.000** | $1.125.000 |
-| $300.000.000 | $3.000.000 | $3.000.000 | **$6.000.000** | $3.000.000 |
-| $600.000.000 | $6.000.000 | $6.000.000 | **$12.000.000** | $6.000.000 |
+| $150.000.000 | $1.500.000 | $750.000 | **$2.250.000** | $750.000 |
+| $300.000.000 | $3.000.000 | $3.000.000 | **$6.000.000** | $1.500.000 |
+| $600.000.000 | $6.000.000 | $6.000.000 | **$12.000.000** | $3.000.000 |
 
 Entre **1,5 % y 2 %** del valor, según de qué lado del escalón caiga el inmueble.
+
+⚠️ **La última columna reparte el impuesto, no el total — y la diferencia importa.** La regla del
+«mitad y mitad» que se explica abajo es del **impuesto de registro**, porque así lo dice la ley que
+lo crea. La **estampilla es otro tributo**: la fija una ordenanza del departamento, y quién la asume
+sale de esa ordenanza y de lo que las partes pacten, no de la norma nacional. Sumar los dos y
+dividir por dos da una cifra cómoda y una afirmación que ninguna norma citada aquí sostiene.
 
 ## Quién paga: la regla no es la que se repite
 
@@ -83,7 +89,7 @@ Entre **1,5 % y 2 %** del valor, según de qué lado del escalón caiga el inmue
 
 Dos cosas se siguen de ahí, y las dos son prácticas:
 
-1. **Si no se pacta nada, se paga mitad y mitad.** Quien dé por hecho lo contrario va a discutirlo el día de la firma.
+1. **Si no se pacta nada, el IMPUESTO DE REGISTRO se paga mitad y mitad.** Quien dé por hecho lo contrario va a discutirlo el día de la firma. Ojo con el alcance: esta regla es de la ley que crea *ese* impuesto, y no se extiende sola a la estampilla ni a lo notarial.
 2. **Se puede pactar distinto — pero hay que escribirlo.** La ley abre esa puerta con la expresión «salvo manifestación expresa». Una manifestación expresa es una cláusula, no una conversación. Si el acuerdo es que una parte asume el total, tiene que quedar en la promesa de compraventa.
 
 Hay además un requisito que puede frenar un cierre si nadie lo previó: **sin el recibo de pago no se hace el registro**. No es un trámite posterior a la inscripción; es condición para que la inscripción ocurra.

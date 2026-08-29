@@ -49,6 +49,20 @@ const journal = defineCollection({
      * es una nota, no un límite (§228).
      */
     resumenSeo: z.string().max(155).optional(),
+    /**
+     * A QUIÉN LE HABLA EL ARTÍCULO — y por tanto qué se le ofrece al final (§267).
+     *
+     * 🔴 La plantilla cerraba los NUEVE artículos con la misma llamada: «¿Va a entregar su inmueble
+     * en administración?» → «Entregar mi inmueble». En los dos escritos para el INQUILINO eso es
+     * absurdo y además contradice el propio texto: acaba de leer que su arrendador no puede cobrarle
+     * depósito, o que su aumento se pasó del tope, y se le pide que entregue un inmueble que no
+     * tiene. El cuerpo del artículo le prometía otra cosa —«lo revisamos con usted, no hace falta que
+     * sea un inmueble nuestro»— y el pie le ofrecía lo contrario.
+     *
+     * Con `default`: los siete artículos existentes no cambian ni un byte, y solo se marca lo que es
+     * distinto. Un campo que hay que poner en todos para arreglar dos se pone mal en alguno.
+     */
+    publico: z.enum(['propietario', 'arrendatario']).default('propietario'),
     categoria: z.enum(CATEGORIAS),
     /** Fecha REAL de publicación. La usa el orden del índice y el JSON-LD. */
     fecha: z.coerce.date(),

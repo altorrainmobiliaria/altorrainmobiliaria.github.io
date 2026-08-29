@@ -3,6 +3,7 @@ titulo: 'Cuánto puede subirle el arriendo cada año, y cuál es el techo del ca
 resumen: 'La ley pone dos límites al precio de un arriendo de vivienda: uno al canon inicial y otro a cuánto puede subir. El reajuste no puede pasar del IPC del año anterior y solo cabe una vez cada doce meses. Qué dice exactamente la Ley 820, cómo se calcula y qué hacer si le suben de más.'
 tituloSeo: 'Cuánto puede subir el arriendo cada año en Colombia'
 resumenSeo: 'El reajuste anual no puede superar el IPC del año anterior y solo cabe cada 12 meses. Cómo se calcula y qué hacer si le suben de más.'
+publico: arrendatario
 categoria: 'mercado'
 fecha: 2026-08-27
 portada: '/assets/villa-modern.webp'
@@ -57,12 +58,12 @@ Y si es usted quien arrienda: aplicar el tope correcto no es solo cumplir la ley
 
 ## Cómo lo manejamos nosotros
 
-En los contratos que administramos, el reajuste no es una decisión que alguien recuerde en su momento: va anotado en el contrato desde el principio, con su fecha, y la agenda del panel lo avisa antes de que llegue. La cifra sale del IPC publicado, no de un número redondo.
+En los contratos que administramos, el reajuste no es una decisión que alguien recuerde en su momento: queda pactado desde el principio y **la agenda del panel avisa antes de que llegue la fecha**, contada desde el último cambio de canon.
 
-Es un detalle pequeño y explica bastante de por qué la mayoría de nuestras renovaciones no tienen discusión: cuando el aumento llega calculado y con su fuente, no hay nada que negociar.
+La cifra la tomamos del **IPC que publica el DANE**, no de un número redondo, y se la enviamos con la fuente para que pueda comprobarla. Es un detalle pequeño y explica bastante de por qué la mayoría de nuestras renovaciones no tienen discusión: un aumento que se puede verificar no se negocia, se lee.
 
 ## Lo que conviene recordar
 
 Dos límites, dos artículos. El **20** dice cuánto puede subir: una vez cada doce meses y hasta el IPC del año anterior. El **18** dice cuánto puede costar de entrada: máximo el 1 % del valor comercial, con el valor comercial topado a dos veces el avalúo catastral.
 
-Si su aumento de este año no le cuadra, escríbanos con la fecha de inicio del contrato y el canon actual, y lo revisamos con usted. No hace falta que sea un inmueble nuestro.
+Si su aumento de este año no le cuadra, [escríbanos por WhatsApp](https://wa.me/573002439810) con la fecha de inicio del contrato y el canon actual, y lo revisamos con usted. No hace falta que sea un inmueble nuestro.
