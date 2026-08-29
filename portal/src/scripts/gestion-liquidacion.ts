@@ -82,6 +82,8 @@ async function cargarFirestore() {
 
 /** Contratos cargados, para no volver a la red al cambiar de contrato en el desplegable. */
 let cargados: Contrato[] = [];
+/** Que el oyente se registre UNA vez: esta vista se monta más de una vez. */
+let oyendoCambios = false;
 
 /**
  * De un contrato a la entrada del cálculo. Aquí se decide qué banderas van, y la más delicada es la
@@ -255,6 +257,22 @@ function recalcular(): void {
 
 /** Monta la vista: carga los contratos y deja el primero calculado. */
 export async function montarLiquidacion(): Promise<void> {
+  /*
+   * La copia local se TIRA cuando cambian los contratos (§266). Sin esto, `cargados` conservaba la
+   * lista de la PRIMERA visita: se registraba un contrato nuevo, se volvía aquí, y el selector seguía
+   * con los de antes — sin error, sin señal, solo un contrato que no aparecía.
+   *
+   * ⚠️ Va DENTRO de la función y no en el cuerpo del módulo, donde lo puse primero. Un efecto
+   * secundario a nivel de módulo convierte «importar» en «ejecutar en un navegador», y tumbó la
+   * prueba de la función PURA de este mismo fichero — que no tiene nada que ver con el DOM. Aquí no
+   * se pierde nada: la copia que hay que invalidar solo EXISTE después de que esto haya corrido una
+   * vez, así que no hay ningún aviso que se pueda perder por llegar antes.
+   */
+  if (!oyendoCambios) {
+    oyendoCambios = true;
+    document.addEventListener('altorra:contratos-cambiaron', () => { cargados = []; });
+  }
+
   // `HTMLSelectElement` NO satisface el `HTMLElement` fusionado con los tipos de Workers: su
   // `remove()` devuelve `void` y el del `Element` del HTMLRewriter devuelve `Element`, así que la
   // restricción genérica los declara incompatibles ([[L-36]] otra vez, por otra puerta). Los demás
@@ -284,8 +302,20 @@ export async function montarLiquidacion(): Promise<void> {
       cuerpo.replaceChildren(
         aviso('Todavía no hay contratos. Cuando registres el primero, aquí sale su liquidación.'),
       );
+      /*
+       * 🔴 El cuerpo decía la verdad y el DESPLEGABLE de encima seguía en «Cargando…» — para siempre,
+       * porque solo se rellena cuando hay algo con lo que rellenarlo (§266). Dos avisos contradictorios
+       * a dos centímetros: uno dice «no hay nada» y el otro «espera». El de arriba es el que se cree,
+       * porque «cargando» promete que aún puede pasar algo.
+       */
+      const vacio = document.createElement('option');
+      vacio.textContent = 'Sin contratos todavía';
+      vacio.value = '';
+      sel.replaceChildren(vacio);
+      sel.disabled = true;
       return;
     }
+    sel.disabled = false;
 
     sel.replaceChildren(
       ...cargados.map((c) => {

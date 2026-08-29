@@ -150,6 +150,13 @@ export async function montarContratos(): Promise<void> {
     if (snap.empty) {
       cuerpoAgenda.replaceChildren(mensaje('Todavía no hay contratos registrados. Usa «+ Nuevo contrato».'));
       if (resumen) resumen.textContent = '';
+      /*
+       * 🔴 Aquí se volvía sin montar el preaviso (§266). El DÍA UNO —que es el único día que el dueño
+       * vive con la base vacía— su formulario se quedaba con el desplegable del build y el botón
+       * «Registrar evidencia» SIN un solo listener: un formulario entero, de aspecto normal, que no
+       * hacía nada al pulsarlo. Se monta con la lista vacía, que es lo que sabe decir que está vacía.
+       */
+      montarPreaviso([]);
       return;
     }
 
@@ -454,6 +461,9 @@ export function montarAltaContrato(): void {
       if (caja) caja.textContent = `Contrato ${r.id} guardado.`;
       form.reset();
       void montarContratos();
+      // La Liquidación se guarda su propia copia de los contratos: sin este aviso seguiría con la
+      // lista de la PRIMERA visita y el contrato recién creado no aparecería en su selector (§266).
+      document.dispatchEvent(new CustomEvent('altorra:contratos-cambiaron'));
     } else if (r.mensajes?.length) {
       pintarProblemas(r.mensajes);
     } else if (caja) {

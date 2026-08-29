@@ -94,15 +94,23 @@ export function montarPreaviso(contratos: Contrato[]): void {
 
   sel.textContent = '';
   const abiertos = preavisables(contratos);
+  const boton = $('gx-pv-guardar') as HTMLButtonElement | null;
   if (!abiertos.length) {
     const o = document.createElement('option');
     o.textContent = 'No hay contratos a los que preavisar';
     o.value = '';
     sel.appendChild(o);
     sel.disabled = true;
+    /*
+     * 🔴 Aquí se volvía dejando el botón vivo y sin escucha (§266): el desplegable decía la verdad y
+     * el botón de al lado invitaba a pulsarlo para nada. Un control que responde al clic y no hace
+     * nada enseña que el sistema está roto — la misma familia que el «Ordenar por» de §264.
+     */
+    if (boton) boton.disabled = true;
     return;
   }
   sel.disabled = false;
+  if (boton) boton.disabled = false;
   for (const c of abiertos) {
     const o = document.createElement('option');
     o.value = c.id;
