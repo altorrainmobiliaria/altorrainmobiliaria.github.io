@@ -11847,3 +11847,77 @@ sonaba lo bastante bien como para no volver a mirarla.*
 ⚠️ **Y [[L-46]] otra vez, la octava**: un `node -e` con backticks dentro de comillas del shell se
 comió el patrón y falló con `No such file or directory`. La lección dice usar la herramienta de
 escritura para cualquier carga con backslashes o backticks. La sé, la escribí, y la volví a saltar.
+
+## 267. ADR-267 — El Journal afirmaba de más: una norma estirada, un cálculo que no existe y una llamada al público equivocado
+
+Cuarta y última tanda del barrido (§263 · §264 · §265 · §266), toda en el contenido publicado. Cuatro
+correcciones y **un hallazgo retirado**, que también cuenta.
+
+### 267.1 — La norma estirada: la estampilla no la reparte la ley que se cita
+La tabla de costos de compraventa traía una columna «Por cada parte» que era **la mitad del TOTAL**
+(impuesto de registro + estampilla). La única norma que el artículo invoca —Ley 223 de 1995, *«los
+sujetos pasivos pagarán el impuesto por partes iguales, salvo manifestación expresa»*— gobierna **un
+solo tributo**: el impuesto de registro. La estampilla es otro, creado por ordenanza departamental, y
+quién la asume sale de esa ordenanza y del pacto.
+
+Busqué la ordenanza de Bolívar y **no la encontré publicada**, así que no la cito: el gate
+`verify:claims` existe precisamente para que una cifra o una fuente no se inventen. La columna pasa a
+repartir lo que la ley reparte —«Mitad del IMPUESTO»— y el artículo dice, donde antes callaba, dónde
+acaba el alcance de su propia cita.
+
+🎯 **Una regla correcta aplicada a una base más ancha que la suya deja de ser correcta — y la cifra
+que sale no se ve mal, se ve cómoda.** Ese es el peligro: nadie revisa un número que cuadra.
+
+### 267.2 — El cálculo que no existe, y el plazo legal que salió de ahí
+El artículo del reajuste prometía que «la cifra sale del IPC publicado» y que el aumento «llega
+calculado». **No existe**: el hito de la agenda no lleva porcentaje ni canon nuevo, y
+`incrementoIPCTope` está declarado en `config.ts` y **no lo lee nadie**. El texto ahora afirma lo que
+sí hacemos —avisar con la fecha y tomar la cifra del IPC del DANE, con su fuente— sin prometer una
+automatización. Y el «escríbanos» del cierre, que era texto suelto, es un enlace.
+
+🔴 **Y tirando de ahí salió un defecto real.** La agenda colgaba el aniversario del incremento de
+`vigenciaInicio` —la FIRMA— mientras el propio artículo dice, con razón, que *«el reloj de los doce
+meses cuenta desde el último cambio de canon, no desde la firma»*. El código no podía hacer otra cosa:
+el modelo guardaba un único `canon` **sin la fecha desde la que rige**. Coinciden mientras el canon
+solo suba en el aniversario; con una renegociación a mitad de vigencia dejan de coincidir, y lo que se
+avisa con meses de error es un **plazo legal** (Ley 820 art. 20). Se añade `canonDesde?: ISODate`
+—opcional, así que ningún contrato existente cambia de comportamiento— y el hito **nombra su ancla**
+en el detalle: si el aviso sorprende, el operador ve de qué fecha cuelga sin abrir el contrato.
+
+### 267.3 — La llamada al público equivocado
+La plantilla del Journal cerraba **los nueve artículos** con la misma llamada: «¿Va a entregar su
+inmueble en administración?» → «Entregar mi inmueble». En los dos escritos para el INQUILINO eso es
+absurdo y además **contradice el propio texto**: acaba de leer que su arrendador no puede cobrarle
+depósito, o que su aumento se pasó del tope, y el pie le pide que entregue un inmueble que no tiene —
+cuando el cuerpo le había prometido *«lo revisamos con usted, no hace falta que sea un inmueble
+nuestro»*. Campo `publico` en el esquema **con `default`**, de modo que los siete restantes no cambian
+ni un byte: *un campo que hay que poner en todos para arreglar dos se pone mal en alguno.*
+
+### 267.4 — Y el enlace que llevaba al sitio sin lo prometido
+«Ver las zonas de Cartagena» apuntaba a `/comprar`, que enlaza **cero** zonas. El hub real es
+`/invertir`, con ocho. Una línea.
+
+### 267.5 — RETIRADO, no cerrado
+La segunda mitad de ese mismo hallazgo afirmaba que **5 de las 13 páginas de zona eran inalcanzables**
+fuera del artículo. Es **falso, y lo medí**: cada página de zona enlaza a las trece, y las cinco están
+en el sitemap. Se retira. *Cerrarlo afirmaría que hubo algo que arreglar* — y la sonda 0 de la
+auditoría ya enseña que un hallazgo heredado dice dos cosas y solo se comprueba una.
+
+### 267.6 — Verificación
+En el BUILD, no en el código: **7 artículos conservan la llamada del propietario y 2 la del
+inquilino**. Las dos direcciones del ancla del IPC probadas —con `canonDesde` manda ella; sin él sigue
+anclando en la firma, que es la regresión que si no habría metido—. `npm run verify` completo en verde
+(salida 0): **1014 unitarias** + 190 contra el emulador + los 10 gates.
+
+### 267.7 — Archivos y doctrina
+`portal/src/content/journal/{costos-de-cerrar-compraventa-cartagena,comprar-para-rentar-cartagena,cuanto-puede-subir-el-arriendo,deposito-prohibido-garantias-arriendo}.md` ·
+`portal/src/content.config.ts` · `portal/src/pages/journal/[slug].astro` ·
+`portal/src/lib/domain/{gestion,agenda}.ts` (+ test) · `docs/45-COSTOS-TRANSACCION.md`.
+
+«Mi abogado eres tú» (Daniel): la posición legal la tomo yo, leyendo la fuente. Aquí eso significó
+sobre todo **no citar lo que no encontré**. Destilado en la skill portable `legal-colombia` (sus dos
+copias), en la sección de impuestos departamentales, que era donde vivía la trampa: la regla de
+mitades estaba en una lista que también habla de estampillas, **sin decir que no las alcanza**.
+
+⚠️ **Pendiente del dueño**: la llamada para inquilinos es copia NUEVA («¿Le están cobrando algo que la
+ley no permite?» → WhatsApp + ver arriendos). Misma estructura, otras palabras.

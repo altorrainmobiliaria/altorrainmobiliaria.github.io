@@ -32,19 +32,24 @@ precio real es fraude — se informa el escalón, no se elude.
 
 ### Cuánto suma, en la práctica (base = valor declarado, ≥ avalúo catastral)
 
-| Valor del inmueble | Registro (1 %) | Estampilla | **Total departamental** | **Por cada parte** |
+| Valor del inmueble | Registro (1 %) | Estampilla | **Total departamental** | **Mitad del IMPUESTO** |
 |---|---|---|---|---|
-| `$150.000.000` | `$1.500.000` | `$750.000` (0,5 %) | **`$2.250.000`** (1,5 %) | `$1.125.000` |
-| `$236.372.175` (el umbral) | `$2.363.721` | `$1.181.860` (0,5 %) | **`$3.545.582`** (1,5 %) | `$1.772.791` |
-| `$300.000.000` | `$3.000.000` | `$3.000.000` (1 %) | **`$6.000.000`** (2 %) | `$3.000.000` |
-| `$600.000.000` | `$6.000.000` | `$6.000.000` (1 %) | **`$12.000.000`** (2 %) | `$6.000.000` |
+| `$150.000.000` | `$1.500.000` | `$750.000` (0,5 %) | **`$2.250.000`** (1,5 %) | `$750.000` |
+| `$236.372.175` (el umbral) | `$2.363.721` | `$1.181.860` (0,5 %) | **`$3.545.582`** (1,5 %) | `$1.181.860` |
+| `$300.000.000` | `$3.000.000` | `$3.000.000` (1 %) | **`$6.000.000`** (2 %) | `$1.500.000` |
+| `$600.000.000` | `$6.000.000` | `$6.000.000` (1 %) | **`$12.000.000`** (2 %) | `$3.000.000` |
 
 ## 🧾 Reglas de liquidación que cambian la conversación con el cliente
 
-- **QUIÉN PAGA: por PARTES IGUALES, salvo pacto expreso en contrario.** El estatuto lo dice de los
-  sujetos pasivos (*«pagarán el impuesto por partes iguales, salvo manifestación expresa de los mismos
-  en otro sentido»*). Es el mismo default de mitades del C.C. 1862 que ya registra `43`, aplicado al
-  tributo. ⇒ *«el comprador paga los gastos»* **no es la ley**: es un pacto, y hay que escribirlo.
+- **QUIÉN PAGA EL IMPUESTO: por PARTES IGUALES, salvo pacto expreso en contrario.** El estatuto lo
+  dice de los sujetos pasivos (*«pagarán el impuesto por partes iguales, salvo manifestación expresa
+  de los mismos en otro sentido»*). Es el mismo default de mitades del C.C. 1862 que ya registra
+  `43`. ⇒ *«el comprador paga los gastos»* **no es la ley**: es un pacto, y hay que escribirlo.
+- ⚠️ **Y ese default NO alcanza a la estampilla** (§267). La columna de arriba repartía a medias el
+  TOTAL, pero la norma que lo autoriza gobierna **un solo tributo**: el impuesto de registro. La
+  estampilla es otro, creado por ordenanza departamental, y quién la asume sale de esa ordenanza y
+  del pacto — no de la ley nacional. 🎯 *Una regla correcta aplicada a una base más ancha que la suya
+  deja de ser correcta, y la cifra resultante no se ve mal: se ve cómoda.*
 - **Sin recibo no hay registro.** No puede efectuarse la inscripción si la solicitud no viene con la
   constancia de pago. Es un bloqueo duro del cronograma de cierre, no un trámite posterior.
 - **Un acto, un impuesto.** Si el mismo negocio debe registrarse en ORIP *y* en Cámara de Comercio, el

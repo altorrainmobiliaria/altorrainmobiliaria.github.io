@@ -213,6 +213,13 @@ verificada aunque no consigas la ordenanza vigente**:
   (o autoavalúo / remate / adjudicación). No se «ajusta» a la baja.
 - **Quién paga**: los sujetos pasivos **por partes iguales, salvo manifestación expresa en contrario**.
   Ese *«salvo pacto»* es la puerta — pero hay que **escribirlo**, porque el default es mitades.
+  🔴 **Y ese default es DE ESE IMPUESTO, no de la factura.** Es la trampa de esta lista entera: la
+  regla de mitades sale de la ley que crea el impuesto de registro, así que **no alcanza a la
+  estampilla** —otro tributo, de otra norma— ni a lo notarial. Caso real: una tabla publicada sumaba
+  los dos tributos y partía el TOTAL por dos, citando como respaldo una norma que gobierna uno solo.
+  🎯 **Una regla correcta aplicada a una base más ancha que la suya deja de ser correcta — y la cifra
+  que sale no se ve mal, se ve cómoda.** Antes de repartir, pregunta de qué tributo habla la norma que
+  vas a citar; si no encuentras la que reparte el otro, **dilo** en vez de extender la que tienes.
 - **Sin recibo de pago no hay registro.** Es un bloqueo de cronograma, no un trámite posterior.
 - **Un acto que va a ORIP y a Cámara de Comercio genera el impuesto SOLO en la ORIP.** Y un documento
   con varios actos se liquida **acto por acto**.

@@ -67,16 +67,14 @@
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates — incluye `test:rules` (emulador).
 
-> 🎯 **AQUÍ VOY (28-ago)** — barrido de **PRODUCTO**: 61 hallazgos; crudo en la bóveda
-> (`2026-08-28-barrido-producto-*.json`). **27 arreglados**: 12→§263 · 5→§264 (móvil + zoom iOS) ·
-> 4→§265 (el hero mandaba `zona`/`tipo` y nadie los leía; «Penthouse» no existe en el dominio; 20
-> enlaces, 2 destinos) · 6→§266 (saludaba a una persona inventada; $186M y $1.400M vivos en los
-> roles ocultos; el día uno medio panel muerto).
-> ⏭ **QUEDAN 5, todo CONTENIDO** (los 18 «sin juzgar» ya se juzgaron): «Ver las zonas» lleva a un
-> catálogo sin zonas · un IPC que no existe · la estampilla a medias sin norma · dos artículos para
-> inquilinos que acaban pidiendo administración. ⚠️ El header que taparía el buscador de
-> /comprar al subir NO es medible en el panel integrado ([[L-26]]): pide Chrome real.
-> ⛔ **Con gate**: filtros del SERP (TODO-22) · pipeline y feed del panel (mockup de Daniel).
+> 🎯 **BARRIDO DE PRODUCTO: AGOTADO por mi parte** (28-ago). 61 hallazgos, crudo en la bóveda
+> (`2026-08-28-barrido-producto-*.json`). **32 arreglados** → §263 (12) · §264 (5, móvil + zoom iOS) ·
+> §265 (4: el hero mandaba `zona`/`tipo` y nadie los leía; «Penthouse» no existe en el dominio; 20
+> enlaces, 2 destinos) · §266 (6: saludaba a una persona inventada; $186M y $1.400M vivos en los
+> roles ocultos; el día uno medio panel muerto) · §267 (5: el Journal afirmaba de más). **1 RETIRADO**
+> por premisa falsa (§267.5). Lo que queda NO lo puedo cerrar yo:
+> ⚠️ el header que taparía el buscador de /comprar al subir — NO medible en el panel integrado
+> ([[L-26]]): pide Chrome real. ⛔ filtros del SERP (TODO-22) · pipeline y feed del panel (mockup).
 > 🅱️ **Tres decisiones SUYAS (§265.8)**: ¿fuera «Penthouse»? ¿lista pública
 > de tipos: 6 (hero) u 11 (`/alertas`)? ¿«nuevo/usado» entra al índice o sale del menú?
 
