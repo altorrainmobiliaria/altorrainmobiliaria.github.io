@@ -11921,3 +11921,69 @@ mitades estaba en una lista que también habla de estampillas, **sin decir que n
 
 ⚠️ **Pendiente del dueño**: la llamada para inquilinos es copia NUEVA («¿Le están cobrando algo que la
 ley no permite?» → WhatsApp + ver arriendos). Misma estructura, otras palabras.
+
+## 268. ADR-268 — Auditoría #17: el paso que calla al gate y el paso que deja rastro no son el mismo
+
+Deliberación: `2026-08-28-auditoria-cerebro-nivel2-17-inmobiliaria.md` (bóveda).
+
+**PARCIAL y declarada.** Las sondas 3 (retrieval-drill), 4 (fidelidad de la deliberación) y 7 (voz
+adversarial) exigen subagentes y esta sesión no los tiene autorizados: se marcan pendientes en vez de
+fingirse. ⚠️ Y con eso dicho, **«6 hallazgos» no es comparable con los 33 de la #16**: aquella corrió
+nueve agentes, y sus dos golpes más duros —el móvil personal servido en el dominio, y el gate que
+borraba `<script>` antes de mirar— salieron justo de las sondas que aquí faltan. *Una auditoría
+parcial honesta vale más que una completa fingida, pero no vale lo mismo.*
+
+### 268.1 — El hallazgo, y es del propio lazo (N17-01)
+El protocolo de cierre de esta skill tiene un paso 4: actualizar `deepAudit` en el manifest. La #16 lo
+cumplió **a medias**: puso `last` y `coveredHeaderCount` —los dos campos que **apagan el nudge del
+linter**— y dejó `tableFile` y `_que` describiendo la **#15**, que son los que la **sonda 0
+necesita para diffear**. Resultado: el gate se calló, la memoria del cierre quedó apuntando dos
+auditorías atrás, y la sonda 0 de HOY iba a comparar contra la tabla equivocada.
+
+🎯 **Un protocolo cuyo primer paso es visible y cuyo segundo no, se cumple a medias sin que nadie lo
+vea.** No es olvido: es que la mitad que se nota se hizo y la que no se nota, no. Los cuatro campos
+se actualizan ahora juntos.
+
+### 268.2 — Sonda 0: las dos abiertas siguen ciertas, y dicen más juntas
+La skill obliga a re-verificar la **premisa** de un hallazgo heredado, no solo su estado. Las dos que
+la #16 dejó abiertas se midieron hoy contra el dominio vivo y **las dos se sostienen**: el dominio
+sirve el repositorio entero (`CLAUDE.md`, `skills/…`, `portal/…` → 200) y `50-CONFIG-INFRA` publica 13
+direcciones @gmail.
+
+**Compuesto que ninguna decía sola**: no están «en un repo público» — se sirven **desde el dominio de
+la empresa**, igual que `99-HISTORIAL-ADR.md`, que son **1,06 MB** de historial de decisiones
+descargables. ⚖️ Y aun así **no se re-escala**: la acotación de la #16 era correcta —es la misma
+puerta, no una fuga nueva— y al cutover el dominio deja de ser GitHub Pages, así que se resuelve solo.
+*Medir de nuevo una premisa puede cambiar cómo se cuenta sin cambiar lo que hay que hacer.*
+
+### 268.3 — Sonda 5: la memoria del harness se contradecía consigo misma
+Su índice decía «matrícula **ya PUBLICADA** (Resolución 6636), en el footer desde el 20-ago» y el
+cuerpo del mismo recuerdo decía «se entregan al cierre de obra; van como **campo a llenar**». El
+código tiene `matriculaArrendador: '6636'` desde hace semanas: **el cuerpo llevaba semanas siendo
+falso mientras su propio índice decía lo contrario**, y quien leyera el fichero elegiría cuál creer.
+
+Y la frase que quedaba tenía un segundo filo: **6636 aparece 3 veces en el pie CONSTRUIDO y 0 en el
+dominio**, porque el portal aún no está ahí. Decirle a Daniel «su matrícula ya está pública» sería
+falso ante cualquier visitante. Corregido: matrícula RESUELTA y en el código · RNT sin número y con su
+gate. *Dejaron de compartir estado, así que dejan de compartir frase.*
+
+### 268.4 — Sonda 1: las reglas DISCRIMINAN, y la base vacía gana segunda fuente
+Barrido a Firestore **sin credenciales**: 403 `PERMISSION_DENIED` en `contratos`, `expedientes`,
+`usuarios` **y en `indices/_control`** —que por diseño está fuera de la allow-list—, y **404
+`NOT_FOUND`** en los índices públicos del catálogo. 🎯 Ese 404 es la prueba fina: significa que las
+reglas los **PERMITEN** y los documentos **no existen todavía**. «Todo denegado» también lo daría una
+regla que niega todo; lo que demuestra que las desplegadas son las que se diseñaron es que
+**distinguen**. De paso, el «la base está VACÍA (medido)» del `10` gana una fuente **independiente del
+repositorio**, y `05` queda re-sellado con el método escrito dentro del sello.
+
+### 268.5 — Sonda 6: el muro se pagó cuatro veces en una sesión (N17-04, abierto)
+El boot chocó con su techo en §264, §265, §266 y §267 — cuatro veces en un turno, siempre pagado con
+GC honesta y siempre por lo mismo. Y `30-LECCIONES` sigue clavada en **240/240 líneas**: [[L-68]] tuvo
+que pagarse **quitando un separador en blanco**, que es lo más parecido a no tener sitio. No es una
+incidencia: es el estado permanente. Sigue en **TODO-50**, y esta auditoría lo deja medido en vez de
+mencionado.
+
+### 268.6 — GC pareado y estado
+Boot antes de la auditoría: **31444c**. Después: **31439c**, delta **−5c** — la línea que este cierre
+añade al `10` se paga dentro del propio `10`. `brain:check`: **CEREBRO SANO**, 89 crudos indexados, `deepAudit` al
+día con los cuatro campos.

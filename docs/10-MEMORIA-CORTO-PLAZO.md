@@ -43,10 +43,9 @@
 
 > ### 🏗️ ARRANQUE EN FRÍO — lee esto y ya sabes dónde estás (21-ago)
 >
-> **Frente activo: TERMINAR EL MEGA-PLAN** (web + sistema). Daniel el 21-ago: *«las campañas al final,
-> nos interesa terminar la página web y el sistema, todo el mega plan»*; **Meta ads y el Gmail roto van
-> al FINAL, por decisión suya**. **Opus 5 para TODO**, esfuerzo Max, agentes y workflows LIBRES bajo tu
-> juicio (levantó ese límite el 20-ago).
+> **Frente activo: TERMINAR EL MEGA-PLAN.** Daniel (21-ago): *«las campañas al final, nos interesa
+> terminar la página web y el sistema, todo el mega plan»* — Meta ads y el Gmail roto, al FINAL.
+> **Opus 5 para TODO**, esfuerzo Max, agentes y workflows LIBRES bajo tu juicio (20-ago).
 >
 > **🌊 OLA 1 = 13/13 EN CÓDIGO** (§138; censo → `21`) **pero NO cerrada**: ningún camino ha escrito
 > aún en Firestore real y la base está VACÍA (medido). Manda **`specs/CUTOVER-RUNBOOK.md`** (§102,
@@ -55,17 +54,17 @@
 >
 > 🎭 **UN ✅ NO PRUEBA QUE MIRARA** — la familia entera, con sus ocho formas, en `38-GATES-QUE-MIENTEN`.
 >
-> 🗓️ **última actualización: 2026-08-28** (alimenta al #12; el arreglo de la ceguera → §208).
-> ⚠️ El #16 sigue destapado aquí **a propósito**: poner
-> `verificado-vivo` a la pizarra afirmaría que verifiqué cada pendiente contra la realidad, y es falso. 📄 Brief de Daniel (memoria `brief-lanzamiento-artifact`): **si
-> cambias el reparto 🤖/🧑 o las PELOTAS, ábrelo en el MISMO turno** — ningún gate lo ve envejecer (§211).
+> 🗓️ **última actualización: 2026-08-28.** Esta pizarra NO lleva `verificado-vivo` **a propósito**:
+> afirmaría que verifiqué cada pendiente contra la realidad, y es falso. 📄 Brief de Daniel (memoria
+> `brief-lanzamiento-artifact`): si cambias el reparto 🤖/🧑 o las PELOTAS, **ábrelo en el MISMO
+> turno** — ningún gate lo ve envejecer (§211).
 >
 > 🏨 Alojamiento: RNT + PH los BLOQUEAN las Rules (§234) y el build (§240) — no se describe aquí.
 >
 > 📬 **CORREO** → Resend: lead nuevo (§188) y aviso de estado (§235). La legacy se retira EMPAREJADA con el despliegue. Nurturing apagado (§192).
 >
-> 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
-> Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates — incluye `test:rules` (emulador).
+> 🔻 **El panel LEGACY no tiene red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
+> Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates.
 
 > 🎯 **BARRIDO DE PRODUCTO: AGOTADO por mi parte** (28-ago). 61 hallazgos, crudo en la bóveda
 > (`2026-08-28-barrido-producto-*.json`). **32 arreglados** → §263 (12) · §264 (5, móvil + zoom iOS) ·
@@ -78,11 +77,13 @@
 > 🅱️ **Tres decisiones SUYAS (§265.8)**: ¿fuera «Penthouse»? ¿lista pública
 > de tipos: 6 (hero) u 11 (`/alertas`)? ¿«nuevo/usado» entra al índice o sale del menú?
 
+> 🔬 **Auditoría #17 (§268)** — parcial: sondas 3/4/7 piden subagentes. Las 2 abiertas de la #16
+> re-verificadas: **premisas siguen ciertas**. ⚠️ N17-04 abierto → **TODO-50**: el boot chocó CUATRO
+> veces en esta sesión y `30` sigue en 240/240 líneas.
 > ⏭ **Vivo, y es TUYO**: las cinco cifras del 5.3 (`specs/PROPUESTA-CIFRAS-CUTOVER.md`) · qué
 > carpetas dejan de servirse en el dominio (N16-29) · los 13 correos del `50` (N16-30).
 
-> 🔀 **Hermanas** (§216): cifras sin fuente en Cars → LEGAL-08/09 de su `42-LEGAL`. Bersaglio, en su
-> nodo dueño: `../bersagliojewelry.github.io/docs/44-PAUTA-META.md`.
+> 🔀 **Hermanas** (§216): Cars → LEGAL-08/09 de su `42-LEGAL` · Bersaglio → su `44-PAUTA-META.md`.
 
 > **⏭️ PELOTAS DE DANIEL — ordenadas por lo que DESBLOQUEAN** (§188; antes era una lista plana de 13).
 >

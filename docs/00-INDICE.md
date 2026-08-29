@@ -104,6 +104,7 @@
 | §265 | 🚪 **La puerta de entrada hablaba un vocabulario que el sistema no tiene** — el hero mandaba zona/tipo y nadie los leía · ofrecía «Penthouse», que el dominio no puede guardar · 20 enlaces del menú, 2 destinos. | 11644 |
 | §266 | 🪪 **El panel: quién eres, qué cifras enseña y el día uno** — saludaba a una persona inventada y las pestañas borraban tu identidad · quedaban $186M y $1.400M en los roles ocultos · con la base vacía medio panel estaba muerto. | 11755 |
 | §267 | ⚖️ **El Journal afirmaba de más** — la ley que reparte el impuesto NO reparte la estampilla · prometía un cálculo de IPC inexistente, y la agenda anclaba en la firma · la llamada del propietario en los artículos de inquilinos. | 11851 |
+| §268 | 🔬 **Auditoría #17 (parcial): el paso que calla al gate y el que deja rastro no son el mismo** — la #16 puso los 2 campos que apagan el nudge y no los 2 que la sonda 0 necesita. | 11925 |
 
 ---
 

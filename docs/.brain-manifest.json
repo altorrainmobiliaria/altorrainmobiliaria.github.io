@@ -214,12 +214,12 @@
     }
   ],
   "deepAudit": {
-    "last": "2026-08-27",
-    "coveredHeaderCount": 250,
+    "last": "2026-08-28",
+    "coveredHeaderCount": 267,
     "maxAdrGap": 12,
     "maxDays": 30,
-    "tableFile": "2026-08-27-auditoria-cerebro-nivel2-15-inmobiliaria.md",
-    "_que": "Nivel-2 #15 (ADR 237) - PARCIAL y declarada: sondas 3, 4 y 7 exigen subagente y la sesion no los tiene autorizados. Disparada con la gracia AGOTADA (18 ADRs) y bloqueando commits. De la #14: cinco cerradas, dos reinciden (boot al 100 por ciento x7, la herramienta). HILO: la familia \"promesa sin mecanismo\" llevaba SIETE auditorias reapareciendo y se cerro TRES veces en una noche, siempre igual - convirtiendo la promesa en un gate que bloquea (RNT al build 234, fuentes del Journal 236, unidad de honorarios 233). CONTRAPESO N15-03: cinco identificadores INVENTADOS en la misma noche, uno publicado como fuente legal (M-30); dos ya no pueden repetirse porque el tipo o el gate los rechazan. N15-01 reincidente: el 20 declaraba el dueno del recuento Y copiaba el numero en la misma frase. NUEVO abierto N15-07: neuronas al 90 por ciento de su cap subieron de 12 a 14 en una noche. GC pareado cumplido: boot 31492 -> 31419. Previa #14 = 218 headers."
+    "tableFile": "2026-08-28-auditoria-cerebro-nivel2-17-inmobiliaria.md",
+    "_que": "Nivel-2 #17 (ADR 268) - PARCIAL y declarada: sondas 3, 4 y 7 exigen subagentes y la sesion no los tiene autorizados. EL HALLAZGO ES DEL PROPIO LAZO (N17-01): la #16 actualizo `last` y `coveredHeaderCount` -lo que calla al linter- y NO `tableFile` ni `_que` -lo que la sonda 0 necesita para diffear-, asi que este cierre casi compara contra la tabla de la #15. Un protocolo cuyo primer paso es visible y cuyo segundo no, se cumple a medias sin que nadie lo vea. Sonda 0: las 2 abiertas de la #16 (N16-29 dominio sirve el repo, N16-30 trece @gmail) re-verificadas en su PREMISA: SIGUEN CIERTAS, y compuesto nuevo -se sirven desde el DOMINIO propio, igual que 1,06 MB de historial-, pero la severidad acotada de la #16 se sostiene y al cutover se resuelve solo. Sonda 5: la memoria del harness se contradecia consigo misma sobre la matricula (indice: publicada 6636; cuerpo: campo a llenar) y 6636 sale 3 veces en el pie CONSTRUIDO y 0 en el dominio. Sonda 1: reglas desplegadas DISCRIMINAN (403 en negocio y en el doc de control, 404 en los indices publicos) => base vacia confirmada por via independiente del repo. Sonda 6 / N17-04 abierto: el muro del boot se pago CUATRO veces en una sola sesion y `30` sigue clavada en 240/240 lineas => TODO-50. Previa #16 = 250 headers."
   },
   "noCap": {
     "docs/99-HISTORIAL-ADR.md": "Largo Plazo: NUNCA se lee entero, solo offset/limit vía el índice (§0). Un cap aquí no significaría nada.",
