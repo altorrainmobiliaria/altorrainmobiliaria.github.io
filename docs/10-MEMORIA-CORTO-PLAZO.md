@@ -72,10 +72,10 @@
 > 4→§265 (el hero mandaba `zona`/`tipo` y nadie los leía; «Penthouse» no existe en el dominio; 20
 > enlaces, 2 destinos) · 6→§266 (saludaba a una persona inventada; $186M y $1.400M vivos en los
 > roles ocultos; el día uno medio panel muerto).
-> ⏭ **QUEDAN 6** (contenido o móvil; los 18 «sin juzgar» ya se juzgaron): el buscador de
-> /comprar lo tapa el header al subir el dedo · menú móvil a 35px y 6px de separación · «Ver las
-> zonas» lleva a un catálogo sin zonas · un IPC que no existe · la estampilla repartida a
-> medias sin norma · dos artículos para inquilinos que acaban pidiendo administración.
+> ⏭ **QUEDAN 5, todo CONTENIDO** (los 18 «sin juzgar» ya se juzgaron): «Ver las zonas» lleva a un
+> catálogo sin zonas · un IPC que no existe · la estampilla a medias sin norma · dos artículos para
+> inquilinos que acaban pidiendo administración. ⚠️ El header que taparía el buscador de
+> /comprar al subir NO es medible en el panel integrado ([[L-26]]): pide Chrome real.
 > ⛔ **Con gate**: filtros del SERP (TODO-22) · pipeline y feed del panel (mockup de Daniel).
 > 🅱️ **Tres decisiones SUYAS (§265.8)**: ¿fuera «Penthouse»? ¿lista pública
 > de tipos: 6 (hero) u 11 (`/alertas`)? ¿«nuevo/usado» entra al índice o sale del menú?
