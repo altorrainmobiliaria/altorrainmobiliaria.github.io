@@ -346,7 +346,30 @@ const nav = [
   .alt-hdr__det summary svg { width: 18px; height: 18px; color: var(--alt-text-muted); transition: transform var(--alt-dur) var(--alt-ease); }
   .alt-hdr__det[open] summary svg { transform: rotate(180deg); }
   .alt-hdr__det-links { padding: 2px 6px 12px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
-  .alt-hdr__det-links a { color: var(--alt-text); font-size: 14px; padding: 6px 0; text-decoration: none; }
+  /*
+   * 🔴 EL MENÚ DEL TELÉFONO NO CUMPLÍA EL MÍNIMO TÁCTIL QUE ESTE PROYECTO DECLARA (§267).
+   *
+   * Medido a 375 px con el cajón abierto: **35 de sus 39 enlaces medían 35 px de alto**, con 6 px
+   * entre filas — y `tokens.css` declara `--alt-tap-min: 44px` con su motivo escrito al lado
+   * («área táctil mínima, HIG 2.5.5»). O sea que la regla existía, estaba nombrada, y la navegación
+   * principal del dispositivo por el que llega la mayoría de los clientes no la cumplía.
+   *
+   * 35 px de alto con 6 px de separación es la receta del toque equivocado: se pulsa «Casas» y se
+   * abre «Apartamentos». Y el que se equivoca no piensa «fallé yo», piensa que la web está rota.
+   *
+   * El texto NO cambia de tamaño: crece la CAJA. `min-height` + centrado vertical dan los 44 px sin
+   * tocar la tipografía sellada, y el token se usa en vez de un literal — si el mínimo cambia algún
+   * día, cambia aquí solo. La rejilla es de dos columnas, así que el cajón crece por FILA, no por
+   * enlace.
+   */
+  .alt-hdr__det-links a {
+    color: var(--alt-text);
+    font-size: 14px;
+    text-decoration: none;
+    min-height: var(--alt-tap-min);
+    display: flex;
+    align-items: center;
+  }
   .alt-hdr__det-flat { display: block; padding: 13px 6px; font-size: 16px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); text-decoration: none; border-bottom: 1px solid var(--alt-hairline); }
   .alt-hdr__drawer-cta { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
   .alt-hdr__drawer-cta .alt-hdr__pub, .alt-hdr__drawer-cta .alt-hdr__login { padding: 14px; border-radius: var(--alt-r-sm); font-size: 14px; justify-content: center; }
