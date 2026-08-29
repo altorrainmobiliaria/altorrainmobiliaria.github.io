@@ -102,6 +102,7 @@
 | §263 | 💰 **Barrido del PRODUCTO: 12 fallos, la mitad en papeles que firma el cliente** — «1000 %», NIT inventado, certificado descuadrado, contratos mezclados · el panel afirmaba una terminación que la ley no da · 5 suites fijaban el error. | 11437 |
 | §264 | 📱 **Segunda tanda del barrido: seis cosas que la pantalla AFIRMABA** — tablero con un negocio inventado · «Ordenar por» que no ordenaba · tabla que perdía una columna · sin «Ingresar» en móvil · zoom de iOS. | 11532 |
 | §265 | 🚪 **La puerta de entrada hablaba un vocabulario que el sistema no tiene** — el hero mandaba zona/tipo y nadie los leía · ofrecía «Penthouse», que el dominio no puede guardar · 20 enlaces del menú, 2 destinos. | 11644 |
+| §266 | 🪪 **El panel: quién eres, qué cifras enseña y el día uno** — saludaba a una persona inventada y las pestañas borraban tu identidad · quedaban $186M y $1.400M en los roles ocultos · con la base vacía medio panel estaba muerto. | 11755 |
 
 ---
 

@@ -53,9 +53,9 @@
 > §140): estrenar los caminos (1.4-1.8) → inventario → cutover. El resto, en PELOTAS.
 > **OLA 2**: el «gate del abogado» NO EXISTE — el abogado soy yo (Daniel, 26-ago) → TODO-49, §165. **Agenda legal a CERO** (§194).
 >
-> 🎭 **UN ✅ NO PRUEBA QUE MIRARA** — la familia entera, con sus siete formas, en `38-GATES-QUE-MIENTEN`.
+> 🎭 **UN ✅ NO PRUEBA QUE MIRARA** — la familia entera, con sus ocho formas, en `38-GATES-QUE-MIENTEN`.
 >
-> 🗓️ **última actualización: 2026-08-27** (alimenta al #12; el arreglo de la ceguera → §208).
+> 🗓️ **última actualización: 2026-08-28** (alimenta al #12; el arreglo de la ceguera → §208).
 > ⚠️ El #16 sigue destapado aquí **a propósito**: poner
 > `verificado-vivo` a la pizarra afirmaría que verifiqué cada pendiente contra la realidad, y es falso. 📄 Brief de Daniel (memoria `brief-lanzamiento-artifact`): **si
 > cambias el reparto 🤖/🧑 o las PELOTAS, ábrelo en el MISMO turno** — ningún gate lo ve envejecer (§211).
@@ -67,19 +67,19 @@
 > 🔻 **El panel LEGACY no tiene NINGUNA red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates — incluye `test:rules` (emulador).
 
-> 🎯 **AQUÍ VOY (28-ago)** — barrido de **PRODUCTO**: 61 hallazgos, 43 juzgados; crudo en la bóveda
-> (`2026-08-28-barrido-producto-*.json`). **12 → §263** · **5 de código → §264** (móvil: cabecera,
-> tabla, KPIs del panel, orden del SERP, zoom de iOS) · **4 → §265**: el hero mandaba
-> `zona`/`tipo` y NADIE los leía, ofrecía «Penthouse» —que el dominio no puede guardar— y el menú
-> tenía 20 enlaces con 2 destinos. La matrícula era contenido, no código.
-> ⏭ **SIGUEN ~7**: (a) los filtros del SERP no filtran — gate=TODO-22, pide diseño; (b) el pipeline
-> y el feed del panel son de mentira — **gate=mockup de Daniel**; (c) **18 sin juzgar** (el workflow
-> murió con la sesión), en el JSON de la bóveda.
-> 🅱️ **Tres decisiones SUYAS nuevas (§265.8)**: ¿fuera «Penthouse» del selector? ¿lista pública
+> 🎯 **AQUÍ VOY (28-ago)** — barrido de **PRODUCTO**: 61 hallazgos; crudo en la bóveda
+> (`2026-08-28-barrido-producto-*.json`). **27 arreglados**: 12→§263 · 5→§264 (móvil + zoom iOS) ·
+> 4→§265 (el hero mandaba `zona`/`tipo` y nadie los leía; «Penthouse» no existe en el dominio; 20
+> enlaces, 2 destinos) · 6→§266 (saludaba a una persona inventada; $186M y $1.400M vivos en los
+> roles ocultos; el día uno medio panel muerto).
+> ⏭ **QUEDAN 6** (contenido o móvil; los 18 «sin juzgar» ya se juzgaron): el buscador de
+> /comprar lo tapa el header al subir el dedo · menú móvil a 35px y 6px de separación · «Ver las
+> zonas» lleva a un catálogo sin zonas · un IPC que no existe · la estampilla repartida a
+> medias sin norma · dos artículos para inquilinos que acaban pidiendo administración.
+> ⛔ **Con gate**: filtros del SERP (TODO-22) · pipeline y feed del panel (mockup de Daniel).
+> 🅱️ **Tres decisiones SUYAS (§265.8)**: ¿fuera «Penthouse»? ¿lista pública
 > de tipos: 6 (hero) u 11 (`/alertas`)? ¿«nuevo/usado» entra al índice o sale del menú?
 
-> 🔬 **Auditorías #15 y #16: cerradas** (§237 · §250 §256 · §258 — 32 hallazgos: 22 cerrados, 6
-> retirados). Su método, que es lo que quedó vivo: [[M-33]].
 > ⏭ **Vivo, y es TUYO**: las cinco cifras del 5.3 (`specs/PROPUESTA-CIFRAS-CUTOVER.md`) · qué
 > carpetas dejan de servirse en el dominio (N16-29) · los 13 correos del `50` (N16-30).
 

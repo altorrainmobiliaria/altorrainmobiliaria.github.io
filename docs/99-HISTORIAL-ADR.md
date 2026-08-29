@@ -11751,3 +11751,99 @@ está APAGADO» y regla 4 de **4k** «el mismo CONCEPTO enumerado dos veces, con
 - **«Compra nuevo / usado»** se queda sin filtro a propósito: no es un campo del índice del catálogo
   (`antiguedadAnios` vive en la propiedad y no viaja al índice). O el índice gana el campo, o la
   columna se retira — y retirarla es UI, con su gate.
+
+## 266. ADR-266 — El panel del dueño: quién eres, qué ves, y el día que la base está vacía
+
+Tercera tanda del barrido (§263 · §264 · §265), toda dentro de `/gestion`. Siete arreglos que se
+agrupan en tres preguntas que el panel contestaba mal: **quién eres**, **qué cifras enseña** y **qué
+hace el día uno**.
+
+### 266.1 — Quién eres: el panel saludaba a una persona que no existe
+`gx-greeting` sale del build como «Buenos días, Alejandro» y **nadie lo sustituía jamás**: cualquiera
+que entrara era recibido con el nombre de una persona inventada, sin hacer un solo clic. Y al pulsar
+cualquier pestaña de rol, `show(role)` escribía además `gx-user`, `gx-user-role` y `gx-avatar` con
+'Alejandro C. / Administrador', 'Julián Peña / Aliado' o 'María Elena V. / Propietaria' — **pisando
+el nombre, el rol y el correo** (que viajaba en el `title`) que `aplicarRol()` acababa de leer de la
+sesión real. Y `aplicarRol()` corre UNA vez, al resolver la sesión: nada lo devolvía.
+
+🎯 **La causa no es un descuido, es un solapamiento**: la identidad y la vista compartían los mismos
+nodos. Dos cosas distintas escribiendo en el mismo sitio, y ganaba la última — que era siempre el
+mockup, porque corría con cada clic mientras la real corría una sola vez. *La identidad la pone la
+SESIÓN; las pestañas cambian la VISTA, no la persona.*
+
+### 266.2 — Qué cifras enseña: el agujero de mi propio arreglo de §264
+En §264 neutralicé los KPIs inventados del tablero. Lo hice **solo sobre el juego visible**, con un
+razonamiento correcto —no escribir cifras reales en nodos ocultos que otro rol puede destapar— pero
+aplicado a las dos operaciones a la vez. **Y borrar no es escribir.** Medido sobre el HTML servido de
+`/gestion`: tres juegos de tarjetas, cuatro cada uno, y cada uno con su dinero — admin `$4.850M` (ese
+sí lo quité), aliado **`$186M`** y propietario **`$1.400M`**, intactos y a un clic de pestaña.
+
+Se separan las dos operaciones: **se borra en los tres, se escribe solo en el activo**. La razón
+original queda entera —ningún dato del negocio cae en un nodo oculto— y la mentira desaparece de
+todos. Un juego oculto con «—» no filtra nada y no miente; con la cifra del mockup, miente en cuanto
+lo destapas.
+
+### 266.3 — El día uno: con la base vacía, medio panel estaba muerto y no lo decía
+El único día que el dueño abre el panel con cero contratos es el primero, y es justo el que nadie
+prueba: en cuanto registras uno, no vuelves a verlo nunca.
+1. **El preaviso ni se montaba.** `montarContratos()` hacía `if (snap.empty) { …; return; }` ANTES de
+   llamar a `montarPreaviso()`. Un formulario entero, de aspecto normal, con el desplegable vacío y
+   «Registrar evidencia» **sin un solo listener**.
+2. **Y aun montándose, el botón se quedaba vivo.** `montarPreaviso` volvía en el caso vacío después
+   de avisar en el desplegable y ANTES de cablear el botón: el desplegable decía la verdad y el botón
+   de al lado invitaba a pulsarlo para nada.
+3. **Dos avisos contradictorios a dos centímetros.** En Liquidación el cuerpo decía «Todavía no hay
+   contratos» mientras el desplegable de encima seguía en «Cargando…» **para siempre**. Se cree el de
+   arriba: *«cargando» promete que aún puede pasar algo.*
+4. **Y la lista de la primera visita.** Liquidación guarda su copia y volvía temprano si la tenía: se
+   registraba el segundo contrato, se volvía, y el selector seguía con los de antes — sin error, sin
+   señal, solo un contrato que no aparecía. Se invalida con `altorra:contratos-cambiaron`, la
+   convención de eventos que el panel ya usaba (`altorra:editar-inmueble`).
+
+### 266.4 — Verificación
+🎯 **Llamando a la función REAL contra el marcado REAL**, que es lo que aquí costaba: el panel
+redirige a `/ingresar` sin sesión y **las credenciales no las manejo yo**. Me serví el HTML de
+`/gestion` por `fetch`, lo monté en el documento e importé el módulo por su ruta fuente —Vite los
+sirve en desarrollo—. Estado de partida reproducido: desplegable VACÍO y botón habilitado. Con
+`montarPreaviso([])`: «No hay contratos a los que preavisar», desplegable **y** botón deshabilitados.
+Y la dirección contraria, que es la regresión que si no habría metido: con un contrato preavisable,
+los dos vuelven a estar vivos y el desplegable lo lista.
+
+Para los KPIs, el mismo HTML servido: el selector nuevo alcanza **las 12 tarjetas** de los tres roles;
+tras neutralizar, 12 tendencias inventadas retiradas y **cero cifras de dinero en pie**.
+
+⚠️ **Lo que NO pude ejercitar en vivo, dicho en vez de supuesto**: el saludo y la no-sobrescritura de
+identidad necesitan una sesión real. Verificados estáticamente (`s.user`, `s.avatar` y `s.greeting`
+ya no se referencian) y por typecheck, no en pantalla. `npm run verify` completo en verde con el
+emulador: 1012 pruebas, 45 suites.
+
+### 266.5 — Anti-patterns evitados
+Un «0» en las tarjetas del día uno: afirmaría que se midió. Esconder el formulario de preaviso cuando
+no hay contratos —desaparecer un control no explica nada; deshabilitarlo con su motivo, sí—.
+Refrescar la copia de Liquidación con un temporizador en vez de con un evento. Y **añadir `jsdom`**
+para poder probar esto: cambiar la infraestructura de pruebas es más grande que el arreglo, y había
+una forma de ejercitar la función de verdad sin tocarla.
+
+### 266.6 — Archivos
+`portal/src/pages/gestion.astro` · `portal/src/scripts/gestion-panel.ts` ·
+`portal/src/scripts/gestion-contratos.ts` · `portal/src/scripts/gestion-preaviso.ts` ·
+`portal/src/scripts/gestion-liquidacion.ts`.
+**INTACTOS**: la tabla de pipeline y el hilo de «Actividad reciente» siguen siendo del mockup —eso es
+UI y lleva el gate del dueño— y ninguna Cloud Function se toca.
+
+### 266.7 — Doctrina aplicada, y lo que enseñó el gate
+§3.3 y `caza-bugs`: los dos veredictos del preaviso salieron de EJECUTAR la función en ambas
+direcciones, no de leerla.
+
+🔴 **Y una corrección mía que cazó el gate, no yo.** El primer intento del punto 4 puso el
+`addEventListener` en el **cuerpo del módulo**, y la suite se cayó: `document is not defined`. Un
+efecto secundario a nivel de módulo **convierte «importar» en «ejecutar en un navegador»**, y dejó
+sin poder probarse la función PURA de ese mismo fichero — que no tiene nada que ver con el DOM. Peor:
+mi comentario justificaba esa posición («que el aviso cuente aunque mires otra pestaña») y **la
+justificación era falsa**: la copia que hay que invalidar solo EXISTE después de que la vista se haya
+montado una vez, así que dentro no se pierde ni un aviso. *Escribí la razón antes de comprobarla, y
+sonaba lo bastante bien como para no volver a mirarla.*
+
+⚠️ **Y [[L-46]] otra vez, la octava**: un `node -e` con backticks dentro de comillas del shell se
+comió el patrón y falló con `No such file or directory`. La lección dice usar la herramienta de
+escritura para cualquier carga con backslashes o backticks. La sé, la escribí, y la volví a saltar.
