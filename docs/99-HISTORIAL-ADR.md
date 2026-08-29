@@ -12101,3 +12101,32 @@ techo NO es cerrar, y esa regla existe precisamente porque subirlo es lo que ape
 **Queda MEDIDO y abierto**, que es más de lo que estaba esta mañana: hasta hoy «cerebro lleno» no
 distinguía entre `30` y el boot, ni entre grasa y estructura.
 
+### 269.8 — La palanca SÍ existía, y la encontró una lección que llevaba semanas esperando
+§269.7 se cerró con «o raspar o revisar el techo». Estaba **incompleto**, y lo destapó [[M-09]] —una
+meta-lección de §84 que el `10` tenía pendiente de propagar a los repos hermanos— al releerla por otro
+motivo:
+
+> *El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es **frecuencia ×
+> costo de omisión**.*
+
+🎯 **Yo había buscado una SECCIÓN que mover; M-09 pregunta qué CONTENIDO ya no se gana su sitio.** Son
+preguntas distintas y dan respuestas distintas. Aplicada al router, la respuesta no fue una sección:
+fue un **hecho duplicado entre dos nodos que se auto-cargan LOS DOS**. `CLAUDE.md §1` decía «del sitio
+viejo se retiraron las PÁGINAS, no los ficheros: el dominio aún sirve ~3 MB…» y `05` ya dice «páginas
+viejas ⛔ RETIRADAS (sus ficheros NO: §250)». Lo que el dominio sirve **es estado**, y el nodo de
+estado es `05`. El router se queda con lo suyo —el ruteo a `34`, `20` y `05`— y suelta el hecho.
+
+**282c → 190c en una línea. Boot: 31479 → 31387, de 21c de margen a 113c.** Cinco veces más holgura
+que todo el raspado del día junto.
+
+⚠️ **Y por qué ningún gate lo vio**: el chequeo de SSoT vigila **tres hechos declarados** en el
+manifest —el nombre de caché del SW, los hex de marca, la versión del kernel—. La duplicación entre
+always-on es invisible por construcción, no por descuido: nadie declaró ese hecho.
+
+*Una lección aplicada tarde no es una lección aprendida.* M-09 nació en §84 resolviendo exactamente
+este problema —el router al 99,8 % por doctrina que gobernaba un sitio retirado— y llevaba semanas en
+el `10` como «propagar a los hermanos» mientras el problema que resuelve seguía vivo **en casa**.
+Corolario que sí se puede mecanizar: **cuando el boot apriete, lo primero no es buscar qué mover, es
+cruzar los tres always-on entre sí buscando el mismo hecho dicho dos veces.**
+
+
