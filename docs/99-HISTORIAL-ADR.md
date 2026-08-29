@@ -12048,3 +12048,21 @@ nombre.
 **TODO-50 se queda abierto**, con la mitad hecha y la otra mitad NOMBRADA en vez de agrupada bajo un
 «cerebro lleno» que escondía dos cosas distintas. *Un pendiente que mezcla dos problemas se cierra a
 medias y parece cerrado del todo.*
+
+### 269.6 — Y el peaje casi lo pago con la cobertura de un gate
+🔴 Los 45c salieron de quitar el prefijo `docs/` a las nueve hojas de esa fila. Verifiqué que el gate
+de **rutas fantasma** las seguía resolviendo por sufijo único —y las resolvía—, di el ahorro por bueno
+y commiteé. Lo que no miré fue **otro** gate: el que comprueba que las hojas citadas en `CLAUDE.md`
+existen leía `docs/([\w-]+\.md)` y pasó de **20 hojas a 13**. Siguió en **verde**, porque las 13 que
+le quedaban existían.
+
+🎯 **Recorté para caber en un presupuesto y le quité siete elementos al denominador de un gate, que no
+protestó.** Es exactamente la familia de `38-GATES-QUE-MIENTEN` —su intro ya avisa de que *comprimir
+un nodo APAGA el gate que lo lee*— cometida por mí veinte minutos después de escribir un ADR sobre
+verificar antes de creer. Y con un matiz que aquel aviso no tenía: **no fue prosa, fue una RUTA**. El
+patrón no buscaba una palabra bonita, buscaba un prefijo de path.
+
+Revertido: el prefijo vuelve (cobertura **21**, una más por la hoja nueva) y los 36c se pagan en prosa
+que **ningún patrón del linter lee** — comprobado abriendo el kernel y listando lo que extrae de
+`CLAUDE.md`: la sección de cache, `docs/…\.md`, y el nombre de cada neurona. *Antes de acortar un
+nodo que alimenta gates, lee QUÉ extraen de él; el verde de después no te lo va a decir.*
