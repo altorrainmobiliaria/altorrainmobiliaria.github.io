@@ -12066,3 +12066,38 @@ Revertido: el prefijo vuelve (cobertura **21**, una más por la hoja nueva) y lo
 que **ningún patrón del linter lee** — comprobado abriendo el kernel y listando lo que extrae de
 `CLAUDE.md`: la sección de cache, `docs/…\.md`, y el nombre de cada neurona. *Antes de acortar un
 nodo que alimenta gates, lee QUÉ extraen de él; el verde de después no te lo va a decir.*
+
+### 269.7 — Y la otra mitad, MEDIDA antes de intentarla otra vez
+Para que el próximo intento no empiece a ciegas, el desglose de `CLAUDE.md` por sección:
+
+| c | Sección |
+|---|---|
+| **3536** | §0 — Mapa de nodos (la tabla de enrutamiento) |
+| **3477** | §G.4 — Reflejos de auto-construcción |
+| 1705 | §1 — Identidad y arquitectura |
+| 1546 | §G.2 — Triggers de recuperación |
+| 1028 · 1012 | Reglas git · §3.2 código ABSOLUTAS |
+| el resto | 12 secciones de ≤790c cada una |
+
+🔴 **Los dos pesos pesados son los dos que NO pueden irse**, y por razones distintas: §0 **es** el
+enrutador —sacarlo deja al router sin saber a dónde apuntar— y §G.4 son reflejos que por definición
+disparan **sin que nadie los pida**; moverlos a una hoja leída-por-trigger los convertiría en algo que
+solo se lee cuando ya te acordaste, que es justo lo contrario de un reflejo.
+
+🎯 Y ahí está la razón de que §84 funcionara y esto no: aquella receta —mudar una doctrina y dejarle
+su trigger en §G.2— sirvió con §3.1 y §3.5 porque **aquellas solo aplican al TOCAR CÓDIGO**, o sea que
+tienen un momento identificable en el que hacen falta. *Un trigger solo puede sustituir a una regla
+always-on si existe el instante en que esa regla empieza a importar.* Los reflejos no lo tienen: su
+razón de ser es dispararse cuando NO te acordabas.
+
+También se miró el candidato obvio: el router duplica los datos de contacto que `site.ts` **posee** —
+una duplicación de SSoT real, que ningún gate caza porque los tres hechos declarados en el manifest
+son otros. Pero cambiarla ahorra **31c** a cambio de una consulta cada vez que haya que escribir un
+enlace. No es la palanca.
+
+⚖️ Queda o seguir raspando —cinco veces hoy— o **revisar si el techo de 31500c está bien puesto** para
+lo que el router tiene que llevar. Lo segundo no se decide de paso: §G.5 y [[M-05]] dicen que subir el
+techo NO es cerrar, y esa regla existe precisamente porque subirlo es lo que apetece cuando molesta.
+**Queda MEDIDO y abierto**, que es más de lo que estaba esta mañana: hasta hoy «cerebro lleno» no
+distinguía entre `30` y el boot, ni entre grasa y estructura.
+
