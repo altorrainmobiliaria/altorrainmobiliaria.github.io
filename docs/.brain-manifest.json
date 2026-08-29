@@ -156,6 +156,10 @@
       "chars": 13716,
       "lines": 76,
       "_comment": "Septimo shard de rango CERRADO (ADR 256): 201-240 no crecen. Cap MEDIDO sobre el real (10160c / 57L, densidad 178 c/linea): chars = real+35 por ciento, lines = cap_chars/densidad, para que los DOS ejes aprieten en el mismo punto. Si el 00 vivo vuelve a apretar, el siguiente rango es 00h, NO subir este techo."
+    },
+    "docs/39-ESCRITO-NO-ES-VIGENTE.md": {
+      "lines": 95,
+      "chars": 9000
     }
   },
   "archiveDir": "../brain-private/altorrainmobiliaria/research-archive",

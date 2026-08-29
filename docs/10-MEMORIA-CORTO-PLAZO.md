@@ -34,7 +34,7 @@
 | **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR** → §129-§138. ⏭ **Daniel**: inscribir su 2FA (clave manual, §137.5) y verificar su correo. ⏭ **Mío, DESPUÉS**: exigirlo en las Rules —antes NO, expulsa a todos—, el QR verificable y la puerta única (§137.6). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **rail de pago completo, probado contra el emulador** (§166-§187). ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
-| **TODO-50** | 🧱 **CEREBRO LLENO**: 16/33 nodos al ≥90 %, boot rozando el techo. ✅ Salida «shardar» TOMADA (§256: shard `00g`). Quedan las otras dos y aprietan `30` (240/240 L), `34`, `38`, `44`. ⛔ NO partir el nodo que se tenga delante. | 🟡 mío | N15-07 en la bóveda |
+| **TODO-50** | 🧱 **CEREBRO LLENO — eran DOS problemas** (§269). ✅ `30`: shard `39` verbatim, 240→**193 L**. 🔴 Queda el **BOOT** (31484/31500): otra cosa, y solo cede moviendo doctrina del router a una hoja con trigger. ⛔ NO partir el nodo que tengas delante. | 🟡 mío | §269 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea. | ⏸️ 28/92 | §87 · `43` |
 
 ---

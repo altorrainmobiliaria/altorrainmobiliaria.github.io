@@ -105,6 +105,7 @@
 | §266 | 🪪 **El panel: quién eres, qué cifras enseña y el día uno** — saludaba a una persona inventada y las pestañas borraban tu identidad · quedaban $186M y $1.400M en los roles ocultos · con la base vacía medio panel estaba muerto. | 11755 |
 | §267 | ⚖️ **El Journal afirmaba de más** — la ley que reparte el impuesto NO reparte la estampilla · prometía un cálculo de IPC inexistente, y la agenda anclaba en la firma · la llamada del propietario en los artículos de inquilinos. | 11851 |
 | §268 | 🔬 **Auditoría #17 (parcial): el paso que calla al gate y el que deja rastro no son el mismo** — la #16 puso los 2 campos que apagan el nudge y no los 2 que la sonda 0 necesita. | 11925 |
+| §269 | 🧱 **TODO-50: `30` estaba llena de CUERPOS, no de lecciones** — 16 entradas se llevaban 103 de 240 líneas · shard `39` (verbatim) la deja en 193 · pero «lleno» eran DOS problemas y el boot sigue. | 11991 |
 
 ---
 
@@ -114,7 +115,7 @@
 
 `CLAUDE.md` (router) · `05-ESTADO-GLOBAL` · `10-MEMORIA-CORTO-PLAZO` · `15-CONSEJO-EXTERNO` ·
 `20-MEMORIA-ESPACIAL` · `30-LECCIONES` (+ hojas `31-VERIFICACION-UI` · `32-LECCIONES-DOCUMENTALES` ·
-`33-LECCIONES-META` · `34-DOCTRINA-CODIGO`) ·
+`33-LECCIONES-META` · `34-DOCTRINA-CODIGO` · `39-ESCRITO-NO-ES-VIGENTE`) ·
 `00-INDICE` (este) · `60-WORKFLOWS` · `99-HISTORIAL-ADR` ·
 `40-LOBULOS-DOMINIO` (+ hijos `41-MERCADO` · `42-LEGAL` · `43-OPERACION`) · `50-CONFIG-INFRA` ·
 `skills-inventory`. Tooling: `scripts/brain-check.mjs` (KERNEL) +

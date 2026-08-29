@@ -11987,3 +11987,64 @@ mencionado.
 Boot antes de la auditoría: **31444c**. Después: **31439c**, delta **−5c** — la línea que este cierre
 añade al `10` se paga dentro del propio `10`. `brain:check`: **CEREBRO SANO**, 89 crudos indexados, `deepAudit` al
 día con los cuatro campos.
+
+## 269. ADR-269 — TODO-50: `30` estaba llena de CUERPOS, no de lecciones — y «lleno» eran dos problemas, no uno
+
+`30-LECCIONES` llevaba en **240/240 líneas**. Hoy [[L-68]] tuvo que pagarse **quitando un separador
+en blanco**, que es lo más parecido a no tener sitio. Y el boot chocó con su techo cuatro veces en la
+misma sesión (§264-§267). TODO-50 los trataba como el mismo muro. **No lo son**, y ver eso fue el
+principio del arreglo.
+
+### 269.1 — Lo que dijo la medida, y no la intuición
+Antes de mover nada, el desglose de las 240 líneas:
+
+| | |
+|---|---|
+| Definiciones `L-`/`M-` | **90** (14 ya eran punteros a shard) |
+| **Líneas de CUERPO** | **110** |
+| Blancos · cabeceras · separadores | 33 · 4 · 3 |
+
+🎯 **La grasa no eran las lecciones: era su TEXTO.** 76 lecciones residentes ocupaban 186 líneas; las
+mismas convertidas en puntero ocuparían 76. Y estaba concentradísimo: **16 de las 90 entradas se
+llevaban 103 de las 240 líneas**, con siete escritas en formato largo —12 líneas de media— frente a
+las ~2 del resto. Un shard temático elegido a ojo habría movido lecciones de dos líneas y no habría
+cambiado nada.
+
+### 269.2 — El tema existía; no hubo que inventarlo para justificar el corte
+Las cinco que se mudan comparten una idea, no un tamaño: **el repositorio no es el sistema**.
+- **L-42** — lo escrito en un comentario no está desplegado.
+- **L-44** — un ruleset se REEMPLAZA, no se fusiona: dos ficheros con el mismo nombre, uno gana.
+- **L-49** — la configuración de la CONSOLA es parte del sistema y no está en el repo: ningún gate la ve.
+- **L-40** — «gateado por el dueño» merece releerse: el gate puede cubrir solo una parte del alcance.
+- **L-61** — cómo comprobar que las reglas están desplegadas, desde fuera y sin credenciales.
+
+Las cuatro primeras son formas de olvidarlo; **L-61 es el método**, y lo usé hoy mismo para re-sellar
+`05` (§268.4). La hoja nueva —`39-ESCRITO-NO-ES-VIGENTE.md`— nace con contenido REAL y ya citado, que
+es la condición de §G.4 para una neurona nueva.
+
+### 269.3 — Movido VERBATIM
+El texto se mudó con un script que **extrae y reinserta**, sin reescribir una frase. No es pereza: un
+shard que resume mientras muda mezcla dos operaciones y **deja al lector confiando en mi resumen de lo
+que ya estaba verificado**. Si algo hay que reescribir, se reescribe después y se ve en su propio diff.
+
+`30`: **240 → 193 líneas** (−47) y 39730 → 34259 chars. `39`: 76 líneas / 7026c, con techo declarado
+(95 L / 9000c — el gate #23 exige que el silencio no sea una decisión). Las cinco **siguen definidas**
+en `30` como punteros: el linter exige que toda ref `[[L-NN]]` resuelva ahí, y sigue resolviendo.
+
+### 269.4 — El impuesto, pagado donde está el peso
+Registrar la hoja tocó `CLAUDE.md`, que está en el boot: +90c sobre un margen de 61. §164 dice que el
+impuesto se paga **en el ROUTER**, no en el WIP. Se pagó ahí mismo: la fila de hijas repetía el prefijo
+`docs/` nueve veces y el gate de rutas resuelve por **sufijo único** —lo verifiqué antes de quitarlo,
+no después—. 45c de pura repetición, cero conocimiento. Boot: **31484c**, bajo el objetivo.
+
+### 269.5 — Y lo que este ADR NO cierra
+🔴 **El shard no tocó el boot, y no podía**: `30` no se auto-carga. Eran dos problemas con el mismo
+nombre.
+- **`30` resuelto**: 47 líneas de holgura ≈ 25 lecciones futuras.
+- **BOOT sigue apretado**: 31484/31500. Lo forman `CLAUDE.md` + `05` + `10`, y ahí la única salida es
+  mover doctrina del router a una hoja con trigger, que es una decisión sobre lo que se lee CADA
+  sesión — más cara y más delicada que mudar cinco lecciones.
+
+**TODO-50 se queda abierto**, con la mitad hecha y la otra mitad NOMBRADA en vez de agrupada bajo un
+«cerebro lleno» que escondía dos cosas distintas. *Un pendiente que mezcla dos problemas se cierra a
+medias y parece cerrado del todo.*
