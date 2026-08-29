@@ -12129,4 +12129,31 @@ el `10` como «propagar a los hermanos» mientras el problema que resuelve segu�
 Corolario que sí se puede mecanizar: **cuando el boot apriete, lo primero no es buscar qué mover, es
 cruzar los tres always-on entre sí buscando el mismo hecho dicho dos veces.**
 
+### 269.9 — Intenté mecanizar el corolario, y la medida dijo que no
+La regla de admisión del proyecto es clara: *toda regla nueva declara su gate del linter o lleva
+**[HONOR]** explícito*. Así que antes de dejar el corolario de §269.8 como buena intención, probé si
+un gate podía sostenerlo: cruzar los tres always-on buscando n-gramas repetidos.
+
+**Lo medí contra el caso REAL que lo motivó**, no contra un ejemplo cómodo:
+
+| | |
+|---|---|
+| `CLAUDE.md` | «del sitio viejo se retiraron las **PÁGINAS**, no los **ficheros**: el dominio aún sirve ~3 MB» |
+| `05` | «**páginas** viejas ⛔ RETIRADAS (sus **ficheros** NO: §250)» |
+
+**Cero n-gramas comunes a n=3, 4, 5, 6 y 8.** Dos palabras compartidas en total: *páginas* y
+*ficheros*. Los dos nodos decían el MISMO hecho con palabras enteramente distintas — que es lo normal
+cuando lo escribe la misma cabeza en dos momentos, y precisamente por eso la duplicación sobrevive:
+nadie la reconoce al releer.
+
+🎯 **Un gate de solapamiento léxico habría pasado en verde sobre el único caso que existe.** Eso no es
+una protección incompleta: es una protección que *añade confianza sin añadir cobertura*, y tiene su
+propia hoja (`38-GATES-QUE-MIENTEN`). Se descarta.
+
+⇒ El corolario queda **[HONOR]**, y con su motivo escrito: *no hay gate porque la duplicación es
+SEMÁNTICA, y lo semántico entre tres textos cortos lo ve una relectura deliberada, no un patrón.* Su
+sitio natural es la sonda 6 de la auditoría Nivel-2 —economía y caps—, que ya se corre a mano y ya
+mira estos tres nodos.
+
+
 
