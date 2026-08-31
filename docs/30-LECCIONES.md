@@ -4,7 +4,8 @@
 > Formato `### L-NN — <título>` (disparador + causa + fix). Varias son **heredadas de Altorra Cars** (mismo patrón
 > arquitectónico) — destiladas de `_legacy/AVANCES.md §"ERRORES CONOCIDOS"`.
 > 🧩 **Hojas hijas**: `31-VERIFICACION-UI.md` — L-22/L-26/L-28 COMPLETAS (verificación de UI: panel congelado ·
-> Chrome · computed vs transition) · `37-META-FUNDACIONALES.md` — el detalle de **M-01..M-11** (shard del 26-ago; las vivas siguen en `33`) ·
+> Chrome · computed vs transition) · `37-META-FUNDACIONALES.md` — el detalle de **M-01..M-10** (shard del 26-ago; las vivas siguen en `33`) ·
+> `33a-LECCION-QUE-NO-DISPARA.md` — **M-11 · M-24..M-26 · M-28**: la lección escrita que no llegó a tiempo (§289) ·
 > `32-LECCIONES-DOCUMENTALES.md` — rama **legal/documental** (`LD-NN`: contratos, manual, formatos).
 > ⚠️ **Aquí solo va lo TÉCNICO.** Las viejas `L-31..L-34` "del kit" se mudaron a `32` como **LD-01..LD-04**
 > el 2026-07-28 porque **colisionaban** con las L-31..L-34 de esta hoja (ADR §68 · [[M-04]]). Un ADR anterior que diga "L-33" hablando del kit se refiere a **LD-03**.
@@ -152,14 +153,14 @@ guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero 
 ### M-07 — Un gate del kernel solo protege donde su DISPARADOR está cableado (el 4º repo no tenía pre-commit)
 ### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega
 ### M-09 — El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es frecuencia × costo de omisión
-### M-11 — Escribir la lección NO la aplica: si el PENDIENTE no se re-etiqueta, el cerebro la ignora otra vez
+### M-11 — Escribir la lección NO la aplica: si el PENDIENTE no se re-etiqueta, el cerebro la ignora otra vez → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`**
 ### M-23 — Un paso de procedimiento que nadie ha ejecutado no es documentación: es una HIPÓTESIS, y se comprueba el peor día *(auditoría #10, §140 · §145)*
 ### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total
-### M-24 — Una lección CORRECTA archivada bajo el disparador equivocado no dispara: se redacta por su condición mínima detectable, no por la escena en que se descubrió *(§160)*
-### M-25 — Una regla ESCRITA da la sensación de estar APLICADA: si nadie la vigila, es una nota, no una regla — y cuanto mejor escrita, más engaña *(4× el 26-ago: §162, §163, §172, §173)*
-### M-26 — Un nodo que se consulta CUANDO ALGO FALLA no puede evitar el fallo: la lección estaba bien escrita y en su sitio, pero el router solo llevaba a ella DESPUÉS *(§174)*
+### M-24 — Una lección CORRECTA archivada bajo el disparador equivocado no dispara: se redacta por su condición mínima detectable, no por la escena en que se descubrió *(§160)* → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`**
+### M-25 — Una regla ESCRITA da la sensación de estar APLICADA: si nadie la vigila, es una nota, no una regla — y cuanto mejor escrita, más engaña *(4× el 26-ago: §162, §163, §172, §173)* → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`**
+### M-26 — Un nodo que se consulta CUANDO ALGO FALLA no puede evitar el fallo: la lección estaba bien escrita y en su sitio, pero el router solo llevaba a ella DESPUÉS *(§174)* → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`**
 ### M-27 — Una sonda ad-hoc debe imprimir su COBERTURA, no solo su resultado: «no encontré nada» es indistinguible de «no miré en ningún sitio» *(§202)*
-### M-28 — Un remedio colocado DESPUÉS del punto de no retorno no protege de nada, y encima tranquiliza: si vuelves a caer teniendo la lección delante, el defecto es de su REDACCIÓN *(§216.8 · detalle en `33`)*
+### M-28 — Un remedio colocado DESPUÉS del punto de no retorno no protege de nada, y encima tranquiliza: si vuelves a caer teniendo la lección delante, el defecto es de su REDACCIÓN *(§216.8)* → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`**
 ### M-29 — Un gate que infiere una CAUSA de una CORRELACIÓN debe escribir su premisa al lado: caduca cuando cambias de COSTUMBRES, no de código, y entonces no hay diff que la delate *(§216.9 · detalle en `33`)*
 ### M-30 — Identificador INVENTADO ×4 en una noche (constante, helper, enum de una regla de seguridad, estado): escribir de memoria en vez de leer → 🧩 **shard `33-LECCIONES-META.md`**
 ### M-31 — 🎯 Un hallazgo que escribí YO apuntaba al nodo que acababa de TOCAR, no al que peor estaba: un remedio sin denominador es una corazonada con formato de tabla → 🧩 **shard `33-LECCIONES-META.md`**

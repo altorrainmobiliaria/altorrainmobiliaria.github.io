@@ -32,6 +32,7 @@
 | Verificar UI (screenshot/computed/scroll/interacción · panel congelado vs Chrome) | hoja `31-VERIFICACION-UI` (L-22/L-26/L-28 completas; lápidas en `30`) |
 | Redactar/corregir/renumerar/retirar un entregable legal u operativo · auditar documentos | hoja `32-LECCIONES-DOCUMENTALES` (familia `LD-NN` completa; antes eran `L-31..L-34` "del kit", ADR §68) |
 | El cerebro me falló COMO MEMORIA (nodo stale, ruteo errado, regla mala) · meta-aprendizajes `M-NN` | hoja `33-LECCIONES-META.md` (stub en `30`, detalle allá) |
+| **Reincidí teniendo la lección delante** · la regla estaba escrita y no me protegió · «¿por qué no disparó?» | hoja `33a-LECCION-QUE-NO-DISPARA.md` — M-11 pendiente · M-24 disparador · M-25 mecanismo · M-26 ruteo · M-28 momento |
 | **Algo societario**: precio de acciones · mayorías · quién manda · pleito entre socios · quién es gerente | 📜 **ESTATUTOS V5 primero** (`Downloads/ALTORRA Company (Legal)/Estatutos/`) — mandan sobre todo el kit. Resumen y qué NO cubren → `99 §70` |
 | **Encender el portal** / cutover / DNS / «¿por qué sale noindex?» / orden de despliegue | 🚀 `specs/CUTOVER-RUNBOOK.md` (SSoT del orden; 6 fases con verificación y vuelta atrás) |
 | **Dar de alta, editar o listar un inmueble** desde el panel · «¿por qué no aparece lo que guardé?» | `99 §108` alta · `§110` listado+columna «¿se ve?» · `§111` edición · mapa en `21` |
@@ -134,7 +135,7 @@
 
 `CLAUDE.md` (router) · `05-ESTADO-GLOBAL` · `10-MEMORIA-CORTO-PLAZO` · `15-CONSEJO-EXTERNO` ·
 `20-MEMORIA-ESPACIAL` · `30-LECCIONES` (+ hojas `31-VERIFICACION-UI` · `32-LECCIONES-DOCUMENTALES` ·
-`33-LECCIONES-META` · `34-DOCTRINA-CODIGO` · `39-ESCRITO-NO-ES-VIGENTE`) ·
+`33-LECCIONES-META` · `33a-LECCION-QUE-NO-DISPARA` · `34-DOCTRINA-CODIGO` · `39-ESCRITO-NO-ES-VIGENTE`) ·
 `00-INDICE` (este) · `60-WORKFLOWS` · `99-HISTORIAL-ADR` ·
 `40-LOBULOS-DOMINIO` (+ hijos `41-MERCADO` · `42-LEGAL` · `43-OPERACION`) · `50-CONFIG-INFRA` ·
 `skills-inventory`. Tooling: `scripts/brain-check.mjs` (KERNEL) +

@@ -1,4 +1,4 @@
-# 🏛️ 37 — META FUNDACIONALES (M-01..M-11) · hoja hermana de `33`
+# 🏛️ 37 — META FUNDACIONALES (M-01..M-10) · hoja hermana de `33`
 
 > **Tercer shard de la familia de lecciones**, y nace por la misma razón que los del índice: `33` rozó
 > su tope y la respuesta correcta a un nodo lleno de historia CERRADA no es comprimir, es mudar
@@ -10,19 +10,19 @@
 >
 > **Por qué se citan igual de a menudo aunque sean viejas**: M-05, M-06 y M-07 son la familia de «cómo
 > miente un gate», y esa se invoca cada vez que se escribe uno. Estar aquí no es estar jubilada.
+>
+> ➡️ **M-11 ya no está aquí**: se mudó a `33a-LECCION-QUE-NO-DISPARA.md` (§289), donde su idea —el
+> pendiente que no se re-etiqueta— es un eslabón de una cadena, y no una fundacional suelta.
 
 ---
 
 ### M-33 — 🎭 Un hallazgo abierto que **invoca una regla del cerebro sin abrir el gate que la ejecuta** es una opinión *(§256)*
-
 Re-verifiqué los 13 hallazgos abiertos de la auditoría #16 antes de tocarlos, y **tres eran FALSOS**: no «ya arreglados», sino **nunca ciertos**. Los tres fallaban por lo MISMO — apelaban a una regla del cerebro (SSoT, formato canónico de ADR, ruteo) sin abrir el linter ni el manifest que la implementa:
-
 - El del teléfono «triplicado contra su propia regla de SSoT»: el único mecanismo SSoT es el gate #8, que solo vigila los hechos declarados en `ssotFacts`, y el teléfono no está entre ellos. Además la cifra fallaba por **28×** (87 ocurrencias en 47 ficheros, no 3) y citaba mal el ADR que invocaba. «Arreglarlo» habría puesto `brain:check` en rojo permanente contra cuatro políticas legales que por Ley 1581 **deben** llevar el contacto.
 - El del «formato ADR abandonado desde el 192»: enfrentaba dos cosas que no son excluyentes — el router prescribe siete ROLES y nunca fijó nivel de encabezado.
 - El del ruteo: era falso **el día que se escribió**; el dato vivía ya en cinco ficheros, uno de ellos auto-cargado en el arranque.
 
 🎯 **Un hallazgo abierto es una afirmación sin sello como cualquier otra, y cuantas más auditorías sobreviva, más cierto parece y menos lo es.** Suena a disciplina, se apoya en un ADR real y su cifra pequeña parece cuidadosa — por eso nadie lo abre. Y un falso se **RETIRA, no se cierra**: cerrar afirma que hubo algo que arreglar.
-
 Regla que hereda la skill de auditoría: *todo hallazgo que apele a una regla del cerebro debe citar la línea del linter o del manifest que la ejecuta; si no existe esa línea, el hallazgo es una opinión.* Emparejada con [[M-31]] (deriva la lista de una medición, no de la memoria).
 
 ### M-01 — El tablero `05` se rezaga si el CIERRE no lo re-fresca en el MISMO commit *(auditoría §30, reincidencia de §12)*
@@ -81,6 +81,3 @@ Cuatro hallazgos de la #7 son **la misma falla**, y ninguno lo cazó un gate por
 (c) **la memoria del harness** no la mira **ningún** gate. Por eso dos hallazgos llegaron reincidentes desde la #6: una capa fuera de alcance no produce hallazgos, produce **silencio**, y el silencio se lee igual que un ✅.
 (d) **#3 desync del índice** valida `00 → 99`, pero un `§NN` suelto en PROSA no lo mira nadie: el `10` arrastraba un `§195` inexistente — un puntero muerto **dentro del boot**.
 **Regla**: al declarar un gate, escribe la **mitad que NO cubre** al lado de la que sí, en su comentario y en la doctrina que lo cita. Un gate sin su complemento declarado no es cobertura parcial: es cobertura **aparente**. Y **toda capa sin gate se declara sin-gate**, o su ausencia de hallazgos se confundirá con salud.
-
-### M-11 — Escribir la lección NO la aplica: si el PENDIENTE no se re-etiqueta, el cerebro la ignora *(2026-08-21, ADR §94.1 · §96.1 · §97.1)*
-Una lección escrita y un pendiente que sigue diciendo lo de antes conviven sin fricción: la próxima sesión lee el pendiente, no la lección. **Cobró TRES veces seguidas.** Regla: al escribir una lección que invalida un pendiente, se re-etiqueta el pendiente **en el mismo commit** — o no se ha aplicado, solo se ha documentado.

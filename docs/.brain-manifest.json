@@ -102,6 +102,12 @@
       "chars": 15000,
       "_comment": "Re-medido el 2026-08-02 (ADR 83) al entrar M-08. Razon M-05-valida: este shard es un REGISTRO que crece ~1.2k por leccion meta; su tamano lo fija cuantas veces el cerebro fallo, no una decision editorial. Cap MEDIDO sobre el real + 30% (74.3), no a ojo. Si crece mas alla de ~15 lecciones, shard por familia (gates / ledger / proceso). | 2026-08-03 (ADR 85): el eje lines se re-DERIVO 110->114. NO es subir un techo (M-05): chars sigue en 15000 y es el que aprieta (98%); 110 lineas asumia 136 c/linea y la densidad REAL medida es 131, asi que el eje equivocado disparaba primero — justo lo que _caps_que prohibe. 15000/131 = 114."
     },
+    "docs/33a-LECCION-QUE-NO-DISPARA.md": {
+      "chars": 9800,
+      "lines": 74,
+      "_comment": "Shard TEMATICO de 33 (+ M-11 de 37) el 2026-08-31 (ADR 289): 33 estaba a 3c de su tope y 37 —la valvula de diseno— a 3 LINEAS, asi que la auditoria #18 no pudo archivar su propia leccion (N18-05). El corte NO se eligio por tamano sino por idea, como en 269.2: M-11 · M-24 · M-25 · M-26 · M-28 son la MISMA averia —la leccion estaba escrita, correcta y en su sitio, y aun asi no protegio— y cada una nombra un eslabon distinto de la cadena (pendiente · disparador · mecanismo · ruteo · momento del remedio). Movidas VERBATIM y verificadas byte a byte contra HEAD. Cap MEDIDO sobre el real (7234c / 54L, densidad 134 c/linea): chars = real+35%, lines = ceil(cap/densidad) redondeado HACIA ARRIBA para que quede de GUARDA y decida chars (_caps_que). ESTE nodo SI debe crecer: la familia reincide. ⚠️ El sufijo `33a` sigue el precedente de `00a`..`00g`, pero OJO: el sub-chequeo de registro DIRECTO del #10 filtra por `^\\d{2}-` y NO ve los sufijos con letra — la reachability si la cubre el BFS. Registrado a mano en CLAUDE.md §0 y en el censo de 00.",
+      "_valvula": "La valvula de 33 es ESTE nodo, no 37. 37 se declara a si mismo archivo CERRADO que no debe crecer, asi que promover alli era una salida que el propio manifest desmentia (§289)."
+    },
     "docs/00c-INDICE-FUNDACION.md": {
       "lines": 60,
       "chars": 11919,
