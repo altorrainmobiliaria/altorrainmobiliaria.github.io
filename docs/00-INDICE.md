@@ -121,6 +121,9 @@
 | §282 | 🚧 **Bloqueado NO es protegido**: el gate del RNT frena /estancias por una razón que no es «la casa no existe». + el menú servía un penthouse fantasma en 45 páginas. ⚠️ Y escalé antes de leer la pantalla entera. | 12891 |
 | §283 | 🧮 **Iba a desplegar a producción por una frase del cerebro sin comprobar** — ya estaba desplegada. Y el TOTAL cuadraba: dos errores que se compensan dejan una suma exacta y una lista falsa. | 12940 |
 | §284 | 🏗️ **OBRA NUEVA — el modelo**: el bloqueo era un campo mal planteado (el precio se DERIVA de las tipologías, no se teclea) + un proyecto existe si tiene LICENCIA DE CONSTRUCCIÓN. | 12977 |
+| §285 | 🔖 **JSON-LD del proyecto: un Offer por tipología** (patrón de La Haus, del crudo de la bóveda). ⛔ NO se usa `AggregateOffer` — su definición es «un producto, varios vendedores» y la nuestra es al revés. | 13032 |
+| §286 | 🧾 **La licencia también en las RULES** — el dominio solo corre en la app; quien escriba por otro camino se lo salta. Gate en create Y update. ⛔ Y la ficha para: falta MOCKUP. | 13076 |
+| §287 | 🔬 **Auditoría #18: el cerebro está LLENO** — 8 neuronas al 100 % y la válvula `33`→`37` bloqueada también. La medición del GC comparaba LF contra CRLF e inventó +140c. Sonda 0-bis: juzgué mal a N17-04, que §269 ya había arreglado. | 13115 |
 
 ---
 

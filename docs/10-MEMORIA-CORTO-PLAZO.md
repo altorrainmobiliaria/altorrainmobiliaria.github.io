@@ -34,7 +34,7 @@
 | **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR** → §129-§138. ⏭ **Daniel**: inscribir su 2FA (clave manual, §137.5) y verificar su correo. ⏭ **Mío, DESPUÉS**: exigirlo en las Rules —antes NO, expulsa a todos—, el QR verificable y la puerta única (§137.6). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **rail de pago completo, probado contra el emulador** (§166-§187). ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
-| **TODO-50** | 🧱 **CEREBRO LLENO — eran DOS problemas** (§269). ✅ `30`: shard `39`, 240→**193 L**. ✅ Boot: **31387** (margen 21c→113c) al soltar un hecho DUPLICADO entre dos always-on, vía [[M-09]] (§269.8). Sigue apretado, pero con método. | 🟡 mío | §269 |
+| **TODO-50** | 🧱 **CEREBRO LLENO** — §269 cerró sus 2 mitades; la **#18 lo re-midió y es peor**: **8 neuronas al 100 %** y la válvula `33`→`37` bloqueada también, así que la auditoría no pudo archivar su propia lección. Techos FIJOS (1 subido de 31) ⇒ capacidad AGOTADA. ⛔ Remedio no improvisado al cierre ([[M-31]]); subir techo prohibido ([[M-05]]). | 🔴 mío | §287 |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -54,7 +54,7 @@
 >
 > 🎭 **UN ✅ NO PRUEBA QUE MIRARA** — la familia entera, con sus ocho formas, en `38-GATES-QUE-MIENTEN`.
 >
-> 🗓️ **última actualización: 2026-08-28.** Esta pizarra NO lleva `verificado-vivo` **a propósito**:
+> 🗓️ **última actualización: 2026-08-31.** Esta pizarra NO lleva `verificado-vivo` **a propósito**:
 > afirmaría que verifiqué cada pendiente contra la realidad, y es falso. 📄 Brief de Daniel (memoria
 > `brief-lanzamiento-artifact`): si cambias el reparto 🤖/🧑 o las PELOTAS, **ábrelo en el MISMO
 > turno** — ningún gate lo ve envejecer (§211).
@@ -70,18 +70,21 @@
 > pueda respaldar, y sus 5 secciones de inventario beben del catálogo real. Daniel decidió las dos
 > que eran suyas (§280 · §281). ⏭ **Falta el flujo que ESCRIBE reseñas** (quién, atado a qué reserva,
 > y la Function que recalcula): hasta entonces «mejor valoradas» dice la verdad — que no hay.
-> 🏗️ **Obra nueva EMPEZADA** (§284): el modelo existe y el bloqueo era un campo mal planteado — el
-> precio se DERIVA de las tipologías. Publicar exige LICENCIA de construcción. ⏭ Falta la vertical:
-> ruta `/proyecto/<slug>`, índice, badge en el listado de venta, JSON-LD multi-Offer, nuevo/usado.
+> 🏗️ **Obra nueva: 3 piezas hechas** — modelo (§284), JSON-LD con un Offer por tipología (§285) y
+> las Rules con el gate de licencia en create Y update (§286). El precio se DERIVA de las
+> tipologías; publicar exige LICENCIA de construcción.
+> ⛔ **La ficha PARA por algo TUYO: no hay mockup de proyecto** (ni uno en `design/mockups/`), y
+> «nunca UI sin mockup» es callejón duro. ⏭ Y falta la proyección al índice (en deliberación).
 
-> 🔬 **Auditoría #17 (§268)** — parcial: sondas 3/4/7 piden subagentes. Las 2 abiertas de la #16
-> re-verificadas: **premisas siguen ciertas**. ⚠️ N17-04 sigue abierto → **TODO-50**.
+> 🔬 **Auditoría #18 (§287)** — cerebro **LLENO** (→ TODO-50). Lección del cierre, y es mía: di por
+> FALSA una premisa que §269 había **arreglado**. Antes de retirar un hallazgo, pregunta si dejó de
+> sostenerse por falso o por **resuelto**.
 > ⏭ **Vivo, y es TUYO**: las cinco cifras del 5.3 (`specs/PROPUESTA-CIFRAS-CUTOVER.md`) · qué
 > carpetas dejan de servirse en el dominio (N16-29) · los 13 correos del `50` (N16-30).
 
 > 🔀 **Hermanas** (§216): Cars → LEGAL-08/09 de su `42-LEGAL` · Bersaglio → su `44-PAUTA-META.md`.
 
-> **⏭️ PELOTAS DE DANIEL — ordenadas por lo que DESBLOQUEAN** (§188; antes era una lista plana de 13).
+> **⏭️ PELOTAS DE DANIEL — ordenadas por lo que DESBLOQUEAN** (§188).
 >
 > **🅰️ Sin esto no se lanza**
 > **(10) 📧 RESEND: dominio + clave** — gratis, ~30 min, **no depende del Gmail roto**, y el secreto ya

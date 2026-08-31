@@ -13028,3 +13028,167 @@ que la prueba de un módulo no cuenta como su consumidor.
 ⏭ **Falta la vertical entera**: la ruta `/proyecto/<slug>`, la proyección al índice con su rango, la
 inyección en el listado de venta con badge, el JSON-LD **multi-`Offer`** (patrón de La Haus, ya
 marcado como copiable en `41-MERCADO`) y el eje de filtro **nuevo/usado** con «Ambos» por defecto.
+
+## 285. ADR-285 — El JSON-LD del proyecto: fui a buscar el patrón en vez de inventarlo, y descarté el que parecía obvio
+
+### 285.1 — El puntero decía una cosa y el dato estaba en otra
+§270 dijo que el patrón multi-`Offer` estaba *«ya marcado como copiable en `41-MERCADO`»*. **No estaba
+ahí**: en ese nodo solo hay una mención de pasada a La Haus en una lista. El detalle vive en el
+**crudo de la bóveda** (`2026-07-10-r1-competencia`), de la investigación de julio con 23 agentes.
+
+⚠️ Otro puntero impreciso, como los de §272.6. La diferencia es que este **sí resolvía a algo**, un
+directorio más allá — y buscarlo costó dos comandos frente a re-derivar el patrón entero.
+
+Lo que había medido, textual: *«Ficha: `RealEstateListing` con ARRAY de Offers (una por tipología)
+cada una con `priceValidUntil` (+1 año), `Accommodation` con `numberOfRooms`,
+`numberOfBathroomsTotal`, `floorSize` (QuantitativeValue m²)… BUG real: `"url":"undefined/pd/medellin/vitral"`»*.
+Es el **único** competidor colombiano con datos estructurados serios; los demás tienen JSON-LD en cero.
+
+### 285.2 — 🎯 Lo que NO se hizo, y es la decisión
+Un proyecto tiene precio «desde/hasta», y schema.org tiene `AggregateOffer`, que **suena** exacto.
+Fui a la especificación y su definición literal es *«cuando un ÚNICO producto está asociado a
+múltiples ofertas — el mismo par de zapatos ofrecido por distintos comerciantes»*.
+
+**Lo nuestro es lo contrario**: un desarrollo con unidades **distintas**. Emitirlo sería markup que no
+significa lo que queremos decir — exactamente por lo que §271 no inventó un `@type: Penthouse` (que
+además devuelve 404). *El rango lo calcula quien lea las ofertas; nosotros no afirmamos una figura
+cuya definición no encaja.*
+
+Estuve a punto de añadirlo **porque sonaba bien**. Lo que lo evitó fue abrir la especificación en vez
+de fiarme del nombre.
+
+### 285.3 — El bug de La Haus, cortado en la puerta
+Su ficha sirve `"url":"undefined/pd/medellin/vitral"` — una variable sin resolver en el SSR. 🎯 *Un
+JSON-LD roto no falla: se INDEXA.* No hay pantalla en blanco ni error en consola; simplemente el
+rastreador se lleva basura. Aquí la URL absoluta entra como parámetro y se **rechaza** si no lo es o
+si contiene «undefined», con su prueba.
+
+Y **un proyecto que no se puede publicar tampoco se afirma en JSON-LD**: un dato estructurado es una
+afirmación legible por máquina, y no vamos a decir en JSON lo que la propia página se niega a
+mostrar. Sin licencia → `null`.
+
+**Ausencias deliberadas**, en la línea de §95.3: sin `streetAddress`, sin `aggregateRating`, y **sin
+`priceValidUntil`** —que La Haus pone a un año—: en preventa los precios suben, y afirmar que un
+«desde» vale doce meses es prometer algo que no controlamos.
+
+---
+
+## 286. ADR-286 — La licencia se exige también en las RULES, porque el dominio solo corre en la app
+
+### 286.1 — La colección no existía en las Rules
+`proyectos` estaba en deny-all por defecto. Ahora tiene su bloque, con el mismo criterio que
+`propiedades`: GET público **solo de lo publicado** —un borrador lleva precios y notas internas—,
+LIST denegado al público porque los listados salen del índice y no de queries (free-tier), y
+escritura de staff con la disciplina de versión.
+
+### 286.2 — 🎯 El mismo gate en dos sitios, a propósito
+§284 ya exige la licencia en el dominio. Pero **el dominio solo corre en la aplicación**: quien
+escriba por otro camino se lo salta. `gateLicencia()` lo hace cumplir siempre.
+
+Es el mismo criterio duplicado que el RNT (§234), y la razón es la misma: §270 encontró **seis
+proyectos inventados servidos** en la portada, uno rozando el nombre de un desarrollo real de
+Cartagena. La licencia de construcción es un **acto administrativo de la curaduría**, público y
+comprobable por número — es lo que separa «este desarrollo existe» de «alguien nos mandó unos
+renders».
+
+Va en **UPDATE además de CREATE**, porque crear un borrador y luego pasarlo a disponible tendría
+exactamente el mismo efecto: es la puerta de atrás obvia, la misma que `gateAlojamiento` cierra para
+el RNT. Tiene su prueba.
+
+⚠️ El helper lee con `.get(campo, defecto)` y no directo: en las Rules, **leer un campo ausente tumba
+la condición entera**, y la versión directa denegaría cualquier proyecto sin `estado`. Es la trampa
+que `gateAlojamiento()` documenta unas líneas más arriba — y que **me mordió hoy mismo** por otro
+lado, en el control positivo de §281.
+
+### 286.3 — Y los controles POSITIVOS
+Ocho pruebas nuevas contra el emulador (193 → **201**). Dos de ellas comprueban que **sí se puede**:
+crear un borrador sin licencia (el gate es para publicar, no para capturar) y crear uno disponible
+con ella. *Sin esas dos, haber roto la escritura entera se habría visto igual de verde que haberla
+cerrado bien.*
+
+### 286.4 — ⛔ Y aquí para la vertical: falta un mockup
+La ruta `/proyecto/<slug>` **no se construye**, y no por falta de modelo: no hay mockup de ficha de
+proyecto en `portal/design/mockups/`, y «nunca UI sin mockup» es callejón duro de este repo. Es un
+bloqueo del DUEÑO, no del código — y decirlo es más útil que construir una pantalla que habrá que
+rehacer.
+
+## 287. ADR-287 — Auditoría de cerebro #18: está LLENO, y la medición que iba a podarlo estaba mal
+
+**Deliberación**: `../brain-private/altorrainmobiliaria/research-archive/2026-08-31-auditoria-cerebro-nivel2-18-inmobiliaria.md`
+(tabla de hallazgos, sonda 0 completa y el denominador de cada cifra).
+
+Disparada por el gate: **19 ADRs nuevos** desde la #17 (§268 → §286), gracia agotada.
+
+### 287.1 — Sonda 0: un hallazgo heredado decía DOS cosas y solo una era verdad
+De las cuatro de la #17: **N17-01** y **N17-02** cerradas con evidencia, **N17-03** sigue abierta
+(el dominio sirve **0** ocurrencias de la matrícula `6636`; se resuelve en el cutover).
+
+**N17-04** decía dos cosas: la del boot **reincide y empeora** (~6 veces hoy); la de `30-LECCIONES`
+está **CERRADA** — §269 la partió creando `39-ESCRITO-NO-ES-VIGENTE` y `30` bajó de 240 a **193**
+líneas antes de esta sesión.
+
+### 287.1-bis — 🔴 Y el error que cometí juzgándola, que vale más que el hallazgo
+Medí `30` = **194/240**, vi que la premisa ya no se sostenía y escribí que **«nunca estuvo
+clavada»**: la di por RETIRADA e invoqué [[M-31]] contra quien la escribió. Estaba **al revés**.
+
+🎯 **Medí el valor de HOY y deduje de él una historia.** El número era correcto, la inferencia falsa.
+La sonda 0 tiene tres veredictos —cerrado, abierto, reincidente— y usé un cuarto («retirado») sin
+hacer la pregunta que los separa: *¿ya no se sostiene porque era falsa, o porque alguien la
+arregló?* Son **opuestos**: uno dice que la auditoría anterior fabricó un problema; el otro, que el
+lazo funcionó. De haberlo dejado escrito quedaba en el archivo, permanente, desincentivando
+exactamente lo que sí funcionó. Lo cacé porque **TODO-50 seguía en `10` con su evidencia**.
+
+### 287.2 — 🎯 La medición que ORDENABA podar estaba mal, y el cerebro ya tenía la lección
+Para el GC pareado comparé `git show` (que devuelve **LF**) contra el disco (**CRLF**) y obtuve
+**+140c de crecimiento**. El delta real es **−10c**: los 140 eran **retornos de carro**. De haberlo
+creído, habría podado conocimiento real para compensar bytes de formato.
+
+Lo que lo hace una lección y no un tropiezo: **el kernel arregló ESTE fallo tres días antes** (§259,
+*«267 chars fantasma en el presupuesto de arranque»*), y lo arregló **bien** — en su lector `read()`,
+no en la línea donde dolió. El kernel quedó inmune. Pero la corrección protege **lo que pasa por el
+instrumento**, y una medición ad-hoc a mitad de sesión **no pasa por él**.
+
+🎯 **Normalizar dentro del instrumento no protege las mediciones que haces A MANO junto al
+instrumento.** Queda redactada **en la tabla de la bóveda** porque su nodo no la admite (287.3), y
+**sin número**: reservar un `M-NN` que no se escribe es justo la colisión de [[M-04]].
+
+Es la misma forma que persiguió toda la sesión §270–§286 en el producto: allí, cifras escritas a mano
+en un sitio que ningún sistema leía; aquí, mediciones escritas a mano al lado de un instrumento que
+ya tenía la corrección puesta. **§281 no arregló el dato: lo hizo imposible de escribir a mano.** Eso
+es lo que le falta al cerebro.
+
+### 287.3 — 🔴 El hallazgo grande: el cerebro está LLENO, y la válvula de alivio también
+Empecé anotando que `00-INDICE` cruzó el 90 %. Al medir **el conjunto** en vez del nodo que tenía
+delante —justamente lo que [[M-31]] obliga— apareció otra cosa: **ocho neuronas al 100 % de su tope**.
+
+`50` (29c de margen) · `34` (43c **y 70/70 líneas**) · `33` (**3c**) · `31` (5c) · `35` (11c) ·
+`38` (12c) · `44` (46c) · `05` (19c).
+
+**El denominador, porque una cifra sin él es una corazonada**: en las **10 últimas revisiones del
+manifest** se subió **un solo tope de 31**. Los techos son fijos; **el contenido creció hasta ellos**.
+No es engorde: es **capacidad agotada**. Y a la vez, el latido mide **costo-cerebro 47 %** (bandera
+en 30 %) con **19 ADRs escritos hoy**: la tasa de escritura está en máximos contra neuronas que ya no
+admiten una línea.
+
+**Y se demostró solo, dos veces, dentro de esta misma auditoría**: la meta-lección obligatoria por
+reincidencia **no cabe en `33`** (3c), y **la salida de diseño tampoco** — promover una
+fundacional a `37` es imposible porque `37` tiene 863c libres pero **3 líneas**. `33` bloqueada por
+caracteres, `37` por líneas: **la válvula está tan llena como el depósito**.
+
+⛔ **Aquí me paro a propósito.** El remedio es sharding/consolidación real sobre la memoria del
+cerebro, y [[M-31]] avisa exactamente de esto: *sospecha del remedio decidido al final de una sesión
+larga*. Subir un techo está prohibido por [[M-05]]. Queda como **TODO con su medición**, no como
+improvisación. El GC de esta auditoría **ya está pagado por otra vía**: delta de boot desde la #17 =
+**−10c**, con finales de línea normalizados.
+
+### 287.4 — Lo demás
+- **Sonda 1** limpia (3/3): el dominio sirve modo obra, local == origin, el endpoint de catálogo
+  responde `ok=true items=0`.
+- **Sonda 2** — el sello de `docs/10` dice **28-ago** y **12 commits lo tocaron hoy**. El gate de
+  frescura mide *días desde el sello*, no *sello contra última edición*: mientras la fecha sea
+  reciente en el calendario, puede mentir sobre su contenido. **ABIERTO**.
+- **Sonda 5** — el brief del dueño no se abrió en toda la sesión pese a ser regla vinculante, con su
+  reparto cambiado de arriba abajo. **Ningún gate vigila un artifact**: vive fuera del repo.
+  **CERRADO en el turno** (republicado, misma URL).
+- **Sondas 3, 4 y 7** corriendo en workflows al cerrar esta entrada; se anexan a la tabla de la
+  bóveda cuando reporten.
