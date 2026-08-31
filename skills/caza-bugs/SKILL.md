@@ -579,6 +579,30 @@ modo que dos frases ciertas, leídas juntas, afirmaban algo falso que ninguna de
 sin arreglar la ambigüedad garantiza la reincidencia: corrige **donde nace**, no donde se nota.
 
 
+**🔒 Y el subtipo más caro: el candado que vigila la CAUSA en vez del EFECTO.** No es que falte el
+gate — es que existe, se escribió para exactamente este problema, y aun así no lo ve. Caso real: un
+candado impedía compilar en producción con el catálogo en modo muestra, y su mensaje de error decía
+literalmente *«publicarías inmuebles que NO EXISTEN, con precio y barrio»*. Vigilaba una **variable
+de entorno**. Las seis secciones de la portada que servían inventario inventado **no leían esa
+variable** —ni el catálogo—, así que con la variable bien puesta el candado daba **verde** y salían
+veinticinco inmuebles que no existen.
+
+🎯 *Un candado sobre la causa declarada solo protege a quien pasa por esa causa. El que quieras
+proteger de verdad se comprueba sobre el EFECTO: lo que sale servido.*
+
+**Dos preguntas que lo destapan en un minuto:**
+1. **«¿Por qué camino tiene que pasar algo para que este gate lo vea?»** Si la respuesta es «por
+   leer tal variable / tal módulo / tal función», entonces todo lo que produzca el mismo efecto por
+   otro camino es invisible para él. Enumera esos otros caminos.
+2. **«¿Puedo escribir el síntoma a mano y ver si el gate falla?»** Es la prueba negativa, y contesta
+   la pregunta anterior sin discutirla. Un gate que no puedes hacer fallar a propósito no sabes qué
+   cubre.
+
+💡 Y cuando lo arregles, la tentación es **añadir un segundo candado**. Casi siempre es peor: dos
+gates para un problema es uno que alguien dejará de mantener. Mejor **meter lo que se escapaba
+dentro del denominador del que ya existe** — colgarlo de la misma variable, del mismo módulo, del
+mismo camino— y así el gate que ya tenías empieza a cubrirlo sin que nadie tenga que acordarse.
+
 ## 4n. 🗺️ El censo que mide la superficie EQUIVOCADA — medir no es lo mismo que medir lo que importa
 
 Convertir un hallazgo en censo es la jugada correcta (deja de arreglar la instancia y pasas a barrer la

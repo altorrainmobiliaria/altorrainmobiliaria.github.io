@@ -12587,3 +12587,70 @@ reales presentes. Los **10 selectores** que usan las funciones nuevas existen en
 errata de selector dejaría el panel mudo sin un solo error en consola, y eso no lo prueba nadie
 porque el panel vive tras la sesión. `npm run verify` salida **0**: **1032 unitarias** (+5) + 190 de
 reglas.
+
+## 276. ADR-276 — La portada habría publicado veinticinco inmuebles que no existen
+
+### 276.1 — Lo que había
+Barriendo el HTML servido contra los mockups —el instrumento correcto, porque **el mockup es la
+fuente de la ficción**— aparecieron **seis conjuntos de inventario inventado en la página principal**:
+- **«Propiedad del día»**: una *sección entera* dedicada a un penthouse de **$3.200.000.000** en
+  Bocagrande, «la última unidad de un edificio icónico», con sus estadísticas.
+- **«Publicadas recientemente»**: siete tiles con badge **«Nuevo»** y `time: 'hace 2 h'` **escrito a
+  mano en el build**.
+- **destacadas · arriendo · estancias · mejor valoradas**, y los **pines con precio** y las dos
+  **minicards** del mapa.
+- Y el **muro de redes** con «1.2k · 48», «3.1k · 78» me gusta: likes inventados que afirman una
+  tracción del negocio que nadie ha medido.
+
+⚠️ Y una clase de mentira propia: **una marca de tiempo escrita en el build**. «hace 2 h» es falsa el
+minuto después de compilar y más falsa cada hora; en producción se habría quedado congelada diciendo
+que algo entró hace dos horas, para siempre.
+
+### 276.2 — Por qué ningún candado lo paraba, existiendo el candado exacto
+`verify:build` #7 se escribió **justo para esto**: bloquea un build de producción con catálogo de
+muestra, y su mensaje dice literalmente *«publicarías inmuebles que NO EXISTEN, con precio y
+barrio»*. Pero vigila la variable `PUBLIC_CATALOGO_SOURCE`, y **ninguna de las seis secciones lee el
+catálogo**.
+
+🎯 *Un candado que vigila la CAUSA declarada —una variable— y no el EFECTO —lo que sale servido—
+solo protege a quien pasa por esa causa.* Con las variables de la fase 5 del cutover puestas, el
+candado habría dado **verde** y la portada habría salido con veinticinco inmuebles inventados.
+
+El arreglo es **meter las secciones DENTRO del denominador** —colgarlas de la misma variable que el
+candado ya vigila— y no añadir un segundo candado que haya que acordarse de mantener.
+
+### 276.3 — Medido en los dos modos
+Mismo comando, dos builds:
+
+| | demo (staging) | live (producción) |
+|---|---|---|
+| precios distintos servidos | **28** | **1** |
+| tarjetas `alt-pcard` | 2 | **0** |
+| estados vacíos honestos | 0 | **6** |
+| «hace N h» | 2 | **0** |
+
+El precio que sobrevive es el «Desde $420k / noche» del hero, que **§123 deliberó** y dejó a
+propósito al quitar el «4.97 · 128 reseñas» inventado de al lado.
+
+`propiedad-dia` se oculta entera y **no** se le pone estado vacío: una «propiedad del día» sin
+propiedad no tiene estado vacío que valga. Verificado que **nadie la enlaza** (0 referencias en
+fuente y en HTML servido) — que es exactamente lo que §270 enseñó a comprobar antes de esconder una
+sección, después de romper 80 anclas en 40 páginas por no hacerlo.
+
+### 276.4 — ⚠️ La consecuencia, dicha en voz alta
+En producción **la portada sale escueta**, porque **no está cableada al catálogo**: ninguna de las
+seis secciones lee el índice real. Eso es **trabajo de producto pendiente**, no un descuido de este
+cambio — antes servía relleno bonito y ahora dice la verdad mientras se cablea. *Una portada honesta
+y escueta es mejor que una que publica inventario que no existe*, y ponerlo en el mismo interruptor
+deja el trabajo pendiente VISIBLE en vez de tapado bajo unas tarjetas que parecían inventario.
+
+### 276.5 — Nota de método: el barrido que encontró esto
+No lo encontró una revisión de diff, sino **comparar el artefacto entregado contra los mockups**: se
+extraen las cadenas distintivas de los 19 `.dc.html` y se busca cuáles se sirven, filtrando a lo que
+*parece dato* (nombre propio, importe, porcentaje, marca de tiempo, dirección, teléfono). Mucho ruido
+legítimo —el mockup ES el diseño y sus rótulos deben sobrevivir— pero la señal aparece sola.
+
+Y el barrido también encontró **dos cosas que ya estaban bien**: los precios del SERP sí los cubre el
+candado #7, y las claims de rentabilidad del hero (`+12%`, `8–11% ROI`) ya están declaradas como
+deuda congelada en `verify:claims`. 🎯 *Confirmar que un gate ya cubre algo es parte del barrido: la
+respuesta correcta ahí es no construir un segundo gate.*
