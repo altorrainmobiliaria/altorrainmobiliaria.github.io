@@ -133,12 +133,15 @@
 
 ## 🗺️ Mapa de neuronas (registro)
 
-> ⚠️ **Completado el 27-ago (N16-09)**: faltaban OCHO — `21-MAPA-PORTAL` · `22-MAPA-GESTION` · `35-LECCIONES-PLATAFORMA` · `36-LECCIONES-UTILLAJE` · `37-META-FUNDACIONALES` · `38-GATES-QUE-MIENTEN` · `44-DICTAMENES` · `45-COSTOS-TRANSACCION`. Un nodo que el registro no nombra existe pero **nadie lo alcanza**.
+> ⚠️ El 27-ago este censo AFIRMÓ estar completo (N16-09) con las OCHO aún fuera: **el aviso era el trabajo** (`39` aplicado al propio registro; §289.7). Entraron de verdad el 31-ago. Un nodo que el registro no nombra existe pero **nadie lo alcanza**.
 
 `CLAUDE.md` (router) · `05-ESTADO-GLOBAL` · `10-MEMORIA-CORTO-PLAZO` · `15-CONSEJO-EXTERNO` ·
-`20-MEMORIA-ESPACIAL` · `30-LECCIONES` (+ hojas `31-VERIFICACION-UI` · `32-LECCIONES-DOCUMENTALES` ·
-`33-LECCIONES-META` · `33a-LECCION-QUE-NO-DISPARA` · `34-DOCTRINA-CODIGO` · `38a-ARMADO-DEL-GATE` · `39-ESCRITO-NO-ES-VIGENTE`) ·
+`20-MEMORIA-ESPACIAL` (+ hijas `21-MAPA-PORTAL` · `22-MAPA-GESTION`) ·
+`30-LECCIONES` (+ hojas `31-VERIFICACION-UI` · `32-LECCIONES-DOCUMENTALES` · `33-LECCIONES-META` ·
+`33a-LECCION-QUE-NO-DISPARA` · `34-DOCTRINA-CODIGO` · `35-LECCIONES-PLATAFORMA` · `36-LECCIONES-UTILLAJE` ·
+`37-META-FUNDACIONALES` · `38-GATES-QUE-MIENTEN` · `38a-ARMADO-DEL-GATE` · `39-ESCRITO-NO-ES-VIGENTE`) ·
 `00-INDICE` (este) · `60-WORKFLOWS` · `99-HISTORIAL-ADR` ·
-`40-LOBULOS-DOMINIO` (+ hijos `41-MERCADO` · `42-LEGAL` · `43-OPERACION`) · `50-CONFIG-INFRA` ·
+`40-LOBULOS-DOMINIO` (+ hijos `41-MERCADO` · `42-LEGAL` (+ hijas `44-DICTAMENES` ·
+`45-COSTOS-TRANSACCION`) · `43-OPERACION`) · `50-CONFIG-INFRA` ·
 `skills-inventory`. Tooling: `scripts/brain-check.mjs` (KERNEL) +
 `docs/.brain-manifest.json` (budgets) + `githooks/pre-commit` + `.claude/settings.json`. Cuarentena: `_legacy/`.
