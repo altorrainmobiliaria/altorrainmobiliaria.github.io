@@ -13,6 +13,7 @@ import RankCard from '../components/RankCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import type { ComponentProps } from 'astro/types';
 import { etiquetaTipo, TIPOS_PUBLICOS } from '../lib/domain/shared';
+import { ETIQUETA_ESTADO_OBRA, puedePublicarseProyecto, type Proyecto } from '../lib/domain/proyectos';
 import { SITE } from '../lib/config/site';
 import { getCollection } from 'astro:content';
 import {
@@ -62,8 +63,32 @@ import {
  */
 const HAY_CATALOGO_REAL = (import.meta.env.PUBLIC_CATALOGO_SOURCE ?? 'demo') === 'live';
 
-const PROYECTOS_REALES: ComponentProps<typeof ProjectCard>[] = [];
-const proyectos = PROYECTOS_REALES;
+/*
+ * OBRA NUEVA en la portada (§284). La lista está vacía porque **no hay ningún proyecto publicado**,
+ * y §270 la dejó así después de encontrar seis inventados servidos aquí — uno de ellos rozando el
+ * nombre de un desarrollo real de Cartagena.
+ *
+ * 🎯 Lo que cambia ahora es el TIPO: ya no es una lista de props de tarjeta que alguien rellena a
+ * mano, sino `Proyecto[]` del dominio, y la tarjeta se DERIVA de él. Así el día que entre el primero
+ * no hay que acordarse de nada: si le falta la licencia o la constructora, `puedePublicarseProyecto`
+ * lo deja fuera, y su badge sale de su estado de obra en vez de escribirse.
+ *
+ * ⛔ El filtro NO es decorativo: es el mismo criterio que el gate `proyecto-sin-respaldo` vigila en
+ * el HTML servido. Aquí se decide qué entra; allí se comprueba que no entró otra cosa.
+ */
+const PROYECTOS_REALES: Proyecto[] = [];
+
+const proyectos: ComponentProps<typeof ProjectCard>[] = PROYECTOS_REALES
+  .filter(puedePublicarseProyecto)
+  .map((p) => ({
+    img: p.imagenPortada ?? p.imagenes[0],
+    alt: `${p.nombre}, proyecto de obra nueva en ${p.geo.barrio}`,
+    name: p.nombre,
+    // El «lugar» es barrio y ciudad, NUNCA la dirección exacta — misma regla que las propiedades.
+    place: `${p.geo.barrio} · ${p.geo.ciudad}`,
+    badge: ETIQUETA_ESTADO_OBRA[p.estadoObra],
+    href: `/proyecto/${p.slug}`,
+  }));
 
 // SELECCIÓN ALTORRA — riel de `RankCard` (mockup #valoradas, L1081-1155). Se llamaba «Mejor
 // valoradas»: un ranking necesita notas, y las que había eran inventadas (§123). La selección
