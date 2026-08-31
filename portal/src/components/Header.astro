@@ -431,7 +431,25 @@ const nav = [
   window.addEventListener('resize', fitWordmark);
 
   // Scroll: sombra al bajar + AUTO-OCULTAR al bajar / revelar al subir (suave, sin reflow).
+  //
+  // 🎯 Y PUBLICA SU ALTURA REAL en `--alt-hdr-h` (§274). Cualquier barra `sticky` de una página
+  // necesita saber cuánto header tiene encima, y hasta ahora no había forma de saberlo: el token
+  // `--alt-header-h: 116px` describe la home (barra de utilidades 50 + barra principal 66) y en el
+  // SERP se miden 67. Una barra que se fiara de ese token se colocaría 49 px demasiado abajo.
+  // Se MIDE en vez de declararse, y vale 0 cuando el header está oculto — así la barra de filtros
+  // sube a ras y baja cuando el header reaparece, en vez de quedarse debajo de él.
+  //
+  // ⚠️ Solo se escribe cuando el estado CAMBIA, no en cada evento de scroll: tocar una propiedad
+  // personalizada del `:root` invalida el estilo de todo el documento, y hacerlo a 60 fps en un
+  // listener de scroll es justo el reflujo que este manejador dice evitar.
   let lastY = window.scrollY;
+  let ocultoPrev: boolean | null = null;
+  const publicarAltura = (): void => {
+    if (!hdr) return;
+    const oculto = hdr.classList.contains('is-hidden');
+    const alto = oculto ? 0 : Math.round(hdr.getBoundingClientRect().height);
+    document.documentElement.style.setProperty('--alt-hdr-h', `${alto}px`);
+  };
   const onScroll = () => {
     const y = window.scrollY;
     hdr?.classList.toggle('is-scrolled', y > 8);
@@ -440,8 +458,12 @@ const nav = [
       if (y > 160 && y > lastY + 4) hdr?.classList.add('is-hidden');
       else if (y < lastY - 4 || y < 120) hdr?.classList.remove('is-hidden');
     }
+    const oculto = hdr?.classList.contains('is-hidden') ?? false;
+    if (oculto !== ocultoPrev) { ocultoPrev = oculto; publicarAltura(); }
     lastY = y;
   };
   window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', publicarAltura);
   onScroll();
+  publicarAltura();
 </script>

@@ -262,7 +262,20 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
 <style>
 
   /* Barra de filtros */
-  .serp-filter { position: sticky; top: 0; z-index: var(--alt-z-sticky); border-bottom: 1px solid var(--alt-hairline); transition: box-shadow var(--alt-dur-slow, 0.4s) var(--alt-ease); }
+  /*
+   * 🔴 Esta barra se pegaba a `top: 0` — DEBAJO de un header que tambien se pega a 0 y tiene mas
+   * `z-index`. Medido en vivo sobre staging: con la barra en reposo, la caja de busqueda quedaba
+   * 90% tapada y los chips de filtro 92%. Y el momento exacto del fallo es el peor: el header se
+   * ESCONDE al bajar (queda visible la barra) y REAPARECE al subir — o sea que se la come justo
+   * cuando el visitante vuelve arriba a cambiar un filtro (§274).
+   *
+   * Se pega debajo de la altura REAL que el header publica en `--alt-hdr-h`, que vale 0 cuando el
+   * header esta oculto: la barra sube a ras y baja sola. ⛔ NO se usa el token `--alt-header-h`,
+   * que son 116 px de la home (utilidades + principal) y aqui dejaria 49 px de hueco.
+   * El respaldo es `0px`: sin JS el header no se esconde ni publica nada, y el comportamiento es
+   * el de antes de este arreglo — no lo empeora, y fingir un numero magico seria peor.
+   */
+  .serp-filter { position: sticky; top: var(--alt-hdr-h, 0px); z-index: var(--alt-z-sticky); border-bottom: 1px solid var(--alt-hairline); transition: top var(--alt-dur-slow, 0.4s) var(--alt-ease), box-shadow var(--alt-dur-slow, 0.4s) var(--alt-ease); }
   .serp-filter__in { max-width: 1440px; margin-inline: auto; padding: 14px clamp(16px, 4vw, 48px); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .serp-search { display: flex; align-items: center; gap: 11px; flex: 1; min-width: 220px; background: var(--alt-white); border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-sm); padding: 11px 16px; }
   .serp-search svg { width: 18px; height: 18px; stroke: var(--alt-gold-raw); flex: none; }
