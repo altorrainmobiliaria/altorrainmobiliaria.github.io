@@ -13196,3 +13196,138 @@ improvisación. El GC de esta auditoría **ya está pagado por otra vía**: delt
   ciego a dotfiles (repo público), y la deliberación más cara del 30-ago (18 agentes) **no tiene
   crudo** — su ancla «crudo en la bóveda» apunta a un fichero que nunca existió, y el gate #7c dio
   verde por vocabulario (N18-12/13). Tabla completa anexada en la bóveda.
+
+## 288. ADR-288 — El predicado que decide si un gate CORRE, y el espejo que leyó la lista del vecino
+
+Cierre de N18-06, N18-07 y N18-10 de la auditoría #18 (§287), más el rojo que §286 dejó abierto en
+`main` sin que nadie lo mirara. Los cuatro tienen **la misma forma, y no es la que este repo
+persigue de costumbre**: los gates estaban escritos, eran correctos y nadie los había roto. Lo que
+fallaba era la maquinaria que decide **cuándo miran y qué miran** — y a esa maquinaria no la
+vigilaba nada. `38-GATES-QUE-MIENTEN` cataloga el ✅ falso; esto es la capa de abajo.
+
+### 288.1 — 🎯 N18-06: el predicado que decide si un gate LLEGA A CORRER es parte del gate
+
+El escáner de credenciales existía, funcionaba y estaba bien escrito. Corría en dos sitios, y los
+dos tenían **predicado**: dentro del bloque `js/` del pre-commit, y en `portal-ci.yml`, detrás del
+filtro `paths: portal/**`. **Medido: 55 de los últimos 100 commits no tocan ninguno de los dos.** En
+un repositorio **PÚBLICO**, más de la mitad de la historia reciente entró sin que nadie mirara si
+traía una cuenta de servicio: un secreto en `functions/`, `scripts/`, `docs/` o la raíz pasaba
+limpio. El gate no falló ni una vez — nunca le tocó opinar.
+
+🎯 **La cobertura de un gate no es lo que el gate comprueba: es lo que comprueba POR lo que su
+predicado deja llegar.** Y todo el instrumental del repo mide lo primero. `brain:check` tiene un
+chequeo para exactamente esta familia —#25, *«un gate que nadie invoca no protege nada»*— y dio
+verde **todo el tiempo, con razón**: el pre-commit SÍ estaba cableado y SÍ invocaba al linter. Lo
+que ningún chequeo abrió jamás fue el `if` de dentro. La pregunta que #25 hace es *¿está conectado?*
+y la que faltaba es *¿bajo qué condición?*.
+
+**Arreglo en las dos mitades, porque una sola no basta**: el barrido sale del predicado `js/` y
+corre en **todo** commit, y nace `.github/workflows/secretos.yml` **sin `paths:`** — todo push y
+todo PR. El hook es la mitad rápida y la que **no se puede confiar**: `core.hooksPath` vive en
+`.git/config`, no se clona (§261, [[L-56]]) y un `--no-verify` lo apaga sin decirlo; CI es la mitad
+que no se salta. De paso, el guard de `node` sube a puerta de entrada del hook: tapaba solo a
+`brain:check`, así que **sin node los gates de arriba se saltaban EN SILENCIO**.
+
+*Se demostró solo, doce minutos después*: el commit `1836ec7` de esta misma sesión tocó únicamente
+`CLAUDE.md`, y en la API de Actions aparece con `secretos` ✅ y **sin ninguna corrida de
+`portal-ci`** — el filtro `portal/**` haciendo exactamente lo que se le acusa de hacer.
+
+### 288.2 — N18-07: barría el DISCO, y el disco no es la superficie de fuga
+
+El mismo escáner recorría el sistema de ficheros saltándose todo lo que empezara por punto
+(`n.startsWith('.')`). Consecuencia: `.claude/` (6 ficheros versionados), `.github/` (3 workflows),
+`docs/.brain-manifest.json` y `scripts/.kernel-version.json` **no se barrían nunca** — once ficheros
+que sí se publican. De regalo, el filtro `env` era **código muerto**: todo `.env*` moría una línea
+antes de llegar a él.
+
+Hoy la lista sale del **índice de git** (`git ls-files -z --cached --others --exclude-standard`), que
+no es una aproximación a la superficie de fuga: **es** la superficie de fuga —lo versionado, más lo
+ya `git add`eado, menos lo ignorado— y un fichero recién staged aparece en el acto, que es justo el
+instante en que el hook tiene que verlo. **Falla CERRADO si git no responde.** Precio medido y
+aceptado: 44 artefactos gitignoreados dejan de mirarse; no pueden commitearse y su FUENTE sí se
+barre.
+
+**Prueba A/B, con secretos falsos sembrados en las dos zonas**: el escáner viejo cazó `functions/`
+y fue **ciego** a `.claude/` (1 de 2); el nuevo cazó los dos, staged y sin stagear. Ficheros de
+prueba borrados sin rastro en git.
+
+### 288.3 — N18-10: el router citaba a un guardián que ya no monta guardia
+
+`CLAUDE.md:90` afirmaba que la constante `CACHE_NAME` «la parsean el gate #4 y `fix-i18n-macro`».
+La primera mitad llevaba **9 días falsa**: el chequeo #4 exige el ancla `## §4 — Cache bump` dentro
+del router, y `5e99cdc` la borró el 22-ago —por muerta, y con razón—, así que el gate se omite
+entero. Lo cierto sobrevive (`fix-i18n-macro.mjs` sí la parsea, y su dueño real es el ssotFact del
+chequeo #8) y la frase se reescribe para afirmar solo eso. **Poda NETA: 230c → 227c**, con el boot
+al 99.9 % — el margen sube de 36c a 39c.
+
+Un aviso que apunta a un guardián retirado es **peor que no decir nada: tranquiliza**. Es
+`39-ESCRITO-NO-ES-VIGENTE` (*escrito ≠ vigente*) aplicado al propio router.
+
+### 288.4 — 🔴 La otra cara: el gate que miente en ROJO, y su arreglo obediente rompía producción
+
+`main` llevaba en rojo desde `57da7ba` (paso «Invariantes de datos»), con este veredicto:
+
+`estados publicados: rules=[agotado,disponible] vs código=[cerrado,disponible,reservado]`
+
+**Los dos espejos estaban bien.** El comparador leía las Rules con
+`rules.match(/resource\.data\.estado in \[…\]/)` — sobre **todo el archivo**, y `String.match` sin
+`/g` devuelve **la primera coincidencia**. Eso funcionó mientras esa frase fue única. §286 añadió
+`proyectoPublicado()` (`firestore.rules:92`) treinta líneas **por encima** de `estadoPublicado()`
+(`firestore.rules:97`), y desde ese commit el gate contrastaba la lista de **PROYECTOS** contra
+`ESTADOS_PUBLICADOS` de **PROPIEDADES** (`domain/catalogo.ts:83`). El orden físico de las líneas del
+archivo había pasado a decidir qué se comparaba con qué.
+
+🎯 **Lo que hace este caso distinto de todo `38`: un gate en rojo no solo se equivoca, viene con una
+instrucción.** El ✅ falso te deja donde estabas; el ❌ falso te **manda a arreglar algo**, y nombra
+al culpable. Aquí nombraba al inocente.
+
+**Y medí a dónde llevaba obedecer.** Había dos arreglos obedientes y solo uno compila: poner
+`['disponible', 'agotado']` en `catalogo.ts` **no pasa el typecheck** —`'agotado'` no pertenece a
+`EstadoPropiedad` (`shared.ts:178`), medido: `ts(2322)`, 1 error—. El otro sí «funciona»: recortar
+`estadoPublicado()` en las Rules a `['disponible', 'agotado']`, que **son texto y no tienen sistema
+de tipos**. Resultado: GET público denegado a toda ficha `reservado` o `cerrado` — 404 en cada
+inmueble reservado y vendido del catálogo vivo. 🎯 **El único arreglo obediente que compilaba era el
+que rompía producción, y compilaba precisamente porque caía del lado sin tipos.** Es §179 leído al
+revés: las Rules son la frontera real, y también la mitad del espejo que nadie puede refutar por ti.
+
+### 288.5 — La solución: al gate se le enseña a VER, no se le declara la excepción (§279)
+
+El gate ofrecía dos salidas cómodas —declarar la excepción, o fijar el patrón en «la SEGUNDA que
+aparezca»—. Las dos habrían dejado el orden de las líneas mandando sobre la semántica. Ahora cada
+lista se **ancla al helper de las Rules que la posee** (`listaDeHelper`), igual que ya hacía el
+espejo de roles con `esEditorOMas`: dos listas con la misma frase no pueden confundirse, y añadir
+una sexta mañana no mueve a ninguna de las otras.
+
+**Y se guardan los DOS espejos que §286 dejó sin vigilar.** La lista de proyectos está escrita
+**tres** veces: `proyectoPublicado()` (GET público), `gateLicencia()` (a qué estados se les exige la
+licencia, en create y update) y `ESTADOS_PUBLICADOS` de `domain/proyectos.ts`. Ninguna de las tres
+se comprobaba. Guardar solo la del camino de lectura habría dejado la de **escritura** divergiendo
+en silencio — que es el mismo agujero, un paso más allá. El gate pasa de 3 espejos a **5**.
+
+### 288.6 — Verificación
+
+- **Prueba negativa 4/4, porque acabo de tocar un gate** (§279.3): perturbada cada una de las tres
+  listas por separado, el gate falla y nombra **solo la suya**, sin contagiar a las vecinas
+  (`proyectoPublicado` → *proyectos · lectura*; `estadoPublicado` → *propiedades*; `gateLicencia` →
+  *proyectos · escritura*); **renombrado** el helper, falla **CERRADO** («no se pudo LEER las
+  Rules») en vez de dar verde. No se debilitó, se afinó.
+- `verify:data` verde (124 archivos · 5 espejos) · `typecheck` **0 errores** (203 ficheros) ·
+  `vitest` **1060 tests / 47 ficheros** en verde · `brain:check` SANO.
+- **`portal/firebase/firestore.rules` NO se tocó** — `git diff` vacío tras las sondas, y por eso
+  `test:rules` (emulador) no aplica.
+
+### 288.7 — Archivos, no-regresión y doctrina
+
+- **Modificados**: `scripts/verify-secretos.mjs` · `githooks/pre-commit` · `.github/workflows/secretos.yml` (nuevo) · `CLAUDE.md:90` (poda) · `portal/scripts/verify-data-invariants.mjs`.
+- **INTACTOS y verificados**: `portal/firebase/firestore.rules`, `domain/catalogo.ts`,
+  `domain/proyectos.ts`, `domain/shared.ts` — **ningún dato ni regla de negocio cambió en este ADR**.
+  Todo el trabajo ocurrió en el instrumental. El gate de `js/` conserva su chequeo de contratos.
+- **Sin cache bump**: no se tocó código servido (§3.2).
+- **Doctrina aplicada**: §279 (enseñar a ver, no declarar la excepción) · §142 (una excepción sin
+  motivo escrito es como muere un gate) · [[L-52]] (fallar cerrado antes que comparar la nada) ·
+  §3.3 (las dos afirmaciones caras de este ADR —los 55/100 y el «solo compila el que rompe»— están
+  **medidas**, no razonadas).
+- **Lo que queda ABIERTO**: la lección transferible de §288.4 —*el ❌ de un gate también se verifica
+  antes de obedecerlo*— **no se destiló a `30`/`38` ni a ninguna skill**: las dos neuronas candidatas
+  están al 99 % de su cap y el boot a 39c del tope (§287.3). Es la deuda de TODO-51, y este ADR es
+  ahora su caso mejor documentado.
