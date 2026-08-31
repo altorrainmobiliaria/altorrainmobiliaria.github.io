@@ -141,6 +141,24 @@ const listaDe = (texto, re) => {
   return items.length ? items.sort() : null;
 };
 
+/**
+ * Igual, pero mirando SOLO dentro del helper de las Rules que se nombra — nunca el archivo entero.
+ *
+ * 🎯 POR QUÉ EXISTE (§288). El espejo de estados leía `resource.data.estado in [...]` suelto sobre
+ * todo el archivo, y `String.match` sin /g devuelve **la primera coincidencia**. Eso funcionó
+ * mientras esa frase fue única. §286 añadió `proyectoPublicado()` —otra lista, de otra colección—
+ * por encima de `estadoPublicado()`, y el comparador empezó a leer la lista de PROYECTOS para
+ * contrastarla contra el dominio de PROPIEDADES: acusó una divergencia que no existía. Los dos
+ * espejos estaban bien; el que no sabía distinguirlos era el gate.
+ *
+ * Y esa es la decisión: **no se le declara una excepción al gate, se le enseña a ver** (§279). Un
+ * patrón anclado al nombre del helper no puede confundir dos listas, y añadir una quinta mañana no
+ * mueve a ninguna de las otras. El precio de la salida cómoda —fijar el patrón «la SEGUNDA que
+ * aparezca»— habría sido que el orden de las líneas del archivo decidiera qué se compara.
+ */
+const listaDeHelper = (helper, re) =>
+  listaDe((rules.match(new RegExp(`function ${helper}\\(\\)[\\s\\S]{0,600}?\\n\\s*}`)) ?? [''])[0], re);
+
 const compara = (nombre, enRules, enCodigo, pista) => {
   if (!enRules || !enCodigo) {
     espejos.push({ nombre, error: `no se pudo LEER ${!enRules ? 'las Rules' : 'el código'} (${pista})` });
@@ -153,13 +171,40 @@ const compara = (nombre, enRules, enCodigo, pista) => {
 
 const catalogoTs = readFileSync(resolve(srcDir, 'lib/domain/catalogo.ts'), 'utf8');
 const tokenTs = readFileSync(resolve(srcDir, 'lib/auth/verificar-id-token.ts'), 'utf8');
+const proyectosTs = readFileSync(resolve(srcDir, 'lib/domain/proyectos.ts'), 'utf8');
 
-// 1. Estados que salen al catálogo público.
+// El dominio escribe la lista de proyectos como `new Set([...])` y la de propiedades como array
+// suelto: el paréntesis opcional es lo único que separa a los dos, no dos regex distintas.
+const RE_ESTADOS_TS = /ESTADOS_PUBLICADOS[^=]*=\s*(?:new Set\()?\s*(\[[^\]]+\])/;
+
+// 1. Estados de PROPIEDAD que salen al catálogo público.
 compara(
-  'estados publicados',
-  listaDe(rules, /resource\.data\.estado in \(?(\[[^\]]+\])/),
-  listaDe(catalogoTs, /ESTADOS_PUBLICADOS[^=]*=\s*(\[[^\]]+\])/),
-  'estado in [...] / ESTADOS_PUBLICADOS',
+  'estados publicados (propiedades)',
+  listaDeHelper('estadoPublicado', /resource\.data\.estado in \(?(\[[^\]]+\])/),
+  listaDe(catalogoTs, RE_ESTADOS_TS),
+  'estadoPublicado() / catalogo.ts ESTADOS_PUBLICADOS',
+);
+
+/*
+ * 1-bis. Estados de PROYECTO de obra nueva (§286), en sus DOS escrituras dentro de las Rules.
+ *
+ * `proyectoPublicado()` decide el GET público y `gateLicencia()` decide, en create y en update, a
+ * qué estados se les exige la licencia de construcción: es **la misma lista escrita tres veces**
+ * —dos en las Rules y una en el dominio— y hasta hoy ninguna de las tres se comprobaba. Se vigilan
+ * las dos: guardar solo la del camino de lectura dejaría la del camino de ESCRITURA divergiendo en
+ * silencio, que es exactamente el agujero por el que entró §288.
+ */
+compara(
+  'estados publicados (proyectos · lectura)',
+  listaDeHelper('proyectoPublicado', /resource\.data\.estado in \(?(\[[^\]]+\])/),
+  listaDe(proyectosTs, RE_ESTADOS_TS),
+  'proyectoPublicado() / proyectos.ts ESTADOS_PUBLICADOS',
+);
+compara(
+  'estados que exigen licencia (proyectos · escritura)',
+  listaDeHelper('gateLicencia', /get\('estado', ''\) in \(?(\[[^\]]+\])/),
+  listaDe(proyectosTs, RE_ESTADOS_TS),
+  'gateLicencia() / proyectos.ts ESTADOS_PUBLICADOS',
 );
 
 // 2. Quién puede escribir contenido. En el TS son dos comparaciones `===`, no una lista.
@@ -195,4 +240,4 @@ if (espejos.length) {
   console.error('   publican fichas que las Rules niegan, o hay inventario que nadie indexa (§179).');
   process.exit(1);
 }
-console.log('✅ verify:data — los 3 espejos de `firestore.rules` (estados públicos · roles · PH del alojamiento) cuadran con el código.');
+console.log('✅ verify:data — los 5 espejos de `firestore.rules` (estados de propiedad · los 2 de proyecto · roles · PH del alojamiento) cuadran con el código.');
