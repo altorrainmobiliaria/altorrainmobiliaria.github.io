@@ -1,0 +1,46 @@
+# 🚦 38a — EL ARMADO DEL GATE: ¿llega siquiera a mirar? (hoja hermana de `38`)
+
+> **Por qué existe esta hoja.** `38-GATES-QUE-MIENTEN` cataloga el gate cuyo VEREDICTO engaña: corrió,
+> miró, y su respuesta no significa lo que parece. Aquí vive **la capa de abajo** —la que §288 nombró al
+> encontrarla—: la maquinaria que decide **si el gate llega a opinar y sobre qué**. Cuando esa falla no
+> hay veredicto que auditar, porque no hubo veredicto.
+>
+> 🎯 **La regla que las une**: *la cobertura de un gate no es lo que comprueba, sino lo que comprueba POR
+> lo que su ARMADO deja llegar* — y todo el instrumental del repo mide lo primero. Cuatro formas de estar
+> desarmado, y ninguna se ve en el ✅:
+> 1. **Nadie lo invoca** ([[L-56]]) — existe en `package.json` y no lo corre ni el CI.
+> 2. **Exento por ENTORNO** ([[L-65]]) — `if (ES_PROD)`: verde que nadie ha visto fallar jamás.
+> 3. **Excluido por su PREDICADO** ([[L-70]]) — `paths:`, un bloque `js/`, un flag: 55 de 100 commits.
+> 4. **Su ANCLA desapareció** ([[L-71]]) — el gate se auto-omite y su omisión no baja el veredicto.
+>
+> 🔀 **La frontera con `38`**: aquí el fallo es **anterior** a cualquier respuesta; allí el gate SÍ
+> respondió y la respuesta miente (en verde o en rojo). Si dudas: pregunta si llegó a abrir un archivo.
+>
+> 🧰 **Prueba de bolsillo del armado**: no preguntes «¿pasa el gate?» sino **«¿bajo qué condición corre,
+> y cuántas veces se cumplió esa condición en los últimos 100 commits?»**. El chequeo #25 del kernel
+> pregunta *¿está conectado?*; la que falta es *¿bajo qué condición?* — y las dos dan verde por separado.
+>
+> El stub `### L-NN` con su título vive en `30`, que es donde se busca y donde el kernel resuelve las
+> refs (chequeo #5). L-56 y L-65 están movidas **verbatim** desde `38` (§289): nada se resumió.
+
+---
+### L-56 — 🧰 Un gate puede existir y NO CORRERLO NADIE — ni el CI ni tú *(§142 · §157 · §174)*
+`verify:data` llevaba meses en `package.json` fuera del CI y de toda rutina: vigilaba algo caro (el free-tier) y era **decorativo**. Lo descubrí porque **lo puse en rojo yo mismo dos veces el mismo día** sin enterarme. **Regla portable**: escribir el gate es la mitad; **cablearlo es la otra**, y la que se olvida. Prima de [[L-52]]: allí corría sin mirar el archivo; aquí ni corría.
+**CUATRO reincidencias** (la 4ª en bersaglio, 26-ago: 45 `test:*` y el CI sin correr ninguno — la lección no cruzó de un cerebro al otro), **y lo que las une**: (a) *§157* — al CI sí, pero en LOCAL hay que acordarse de siete nombres: corrí cinco y escribí «los 7 en verde». El candado del CI llega TARDE, tras empujar. (b) *§174, la peor* — el meta-gate que vigila el cableado **enumeraba por PREFIJO** (`startsWith('verify:')`), así que `typecheck` y `test` le eran INVISIBLES: `npm run verify` daba verde con **26 errores de tipos en `main`** y **855 pruebas que el CI no corría**. 🎯 **El patrón**: cada vez el hueco estaba en la punta que el guardián no enumeraba — y quien incumple la convención es justo a quien hay que vigilar. Enumera contra **lo que el CI ejecuta de verdad**, nombra aparte los que no encajan en el patrón, y comprueba **las dos puntas** (CI y atajo local). *Un atajo que envejece es peor que no tenerlo: se confía en él.*
+
+### L-65 — 🌗 Un gate con **exención de entorno** da un verde que nadie ha visto fallar JAMÁS *(§240)*
+**Disparador**: la sonda del RNT solo corre `if (ES_PROD)`; en staging imprime ✅ con el detalle «se activa con `PUBLIC_SITE_ENV=production`». Honesto —**lo dice en el nombre del check**, que es como se hace bien— pero durante semanas ese ✅ fue lo único que se vio, y el cerebro llegó a afirmar que el RNT «bloquea el BUILD» mientras el build pasaba todos los días. Al correrlo de verdad en producción: bloquea, y nombra **dos** páginas, no las «cuatro» que decía el runbook (eran los cuatro ERRORES, no cuatro páginas).
+**Reglas**: (1) 🎯 **Un gate que solo se ejecuta en un entorno hay que EJECUTARLO en ese entorno al menos una vez** — si no, es código que nadie ha corrido protegiendo el momento más caro. (2) Declarar la exención en el nombre del check es necesario y **no suficiente**: quien lee la corrida entiende que no miró; quien lee el resumen del cerebro, no. (3) Cuando la afirmación de un nodo y el comportamiento observable se contradicen —«bloquea» vs «pasa»—, **la contradicción es el hallazgo**, no un detalle de redacción. (4) Y el premio de correrlo: salieron **dos** bloqueadores del cutover, no uno; el segundo (`PUBLIC_CATALOGO_SOURCE=demo`) no estaba en mi cabeza. (5) 🎯 **Y el hermano del mismo fallo, al escribir el siguiente gate** *(§241)*: si una comprobación **deriva su referencia de otro fichero** —el número permitido, el cap, la lista buena— tiene que **REVENTAR cuando no consiga leerla**, no seguir con un conjunto vacío. Un gate que se queda sin referencia compara contra nada y sale ✅: la forma más silenciosa de todas, porque el verde llega **sin marcadores que contar ni ficheros que abrir**. Se prueba rompiendo la lectura a propósito, igual que el defecto.
+
+### L-70 — 🚦 El predicado que decide si un gate LLEGA A CORRER es parte del gate *(§288.1 · 2ª cara §265)*
+**Disparador (condición mínima)**: un gate corre «solo cuando toca X» — un bloque `js/` en el hook, un `paths:` en el workflow, un `if (FUENTE === 'live')` dentro de lo que se prueba. Basta con que exista la condición; no hace falta que nada falle para sospechar.
+**Caso**: el escáner de credenciales existía, funcionaba y estaba bien escrito. Corría en dos sitios y **los dos tenían predicado** (el bloque `js/` del pre-commit · el filtro `paths: portal/**` de `portal-ci.yml`). **Medido: 55 de los últimos 100 commits no tocan ninguno de los dos** — en un repositorio **PÚBLICO**, más de la mitad de la historia reciente entró sin que nadie mirara si traía una cuenta de servicio. El gate no falló ni una vez: **nunca le tocó opinar**.
+🎯 **Por qué ningún instrumento lo vio**: el chequeo **#25** —*«un gate que nadie invoca no protege nada»*— dio verde **todo el tiempo y con razón**, porque el pre-commit SÍ estaba cableado y SÍ invocaba al linter. Lo que ningún chequeo abrió jamás fue **el `if` de dentro**. #25 pregunta *¿está conectado?*; la pregunta que faltaba es *¿bajo qué condición?*.
+**La misma forma un peldaño más abajo** *(§265)*: 26 pruebas del filtro del SERP en verde mientras `bootCatalogo()` salía en su PRIMERA línea (`FUENTE !== 'live'`). La prueba pasaba y la función **no se llamaba**. Ahí el predicado vivía en el código PROBADO y no en el gate, y el efecto es idéntico — por eso el peldaño 8 de la escalera de `38` remite aquí.
+**Reglas**: (1) 🎯 **lee el predicado ANTES que el cuerpo**, y mídelo contra la historia real (`git log`), no contra la intención con que se escribió. (2) **Arregla en las DOS mitades**: el hook es la mitad rápida y **la que no se puede confiar** —`core.hooksPath` vive en `.git/config`, no se clona ([[L-56]]) y `--no-verify` lo apaga sin decirlo—; CI es la mitad que no se salta, y por eso va **sin `paths:`**. (3) El guard del intérprete es **puerta de entrada del hook**, no de un paso: tapaba solo a `brain:check`, así que sin `node` los gates de arriba se saltaban EN SILENCIO. (4) 🎯 **Un gate cuyo predicado excluye la mitad de los commits no es media protección: es una protección que además tranquiliza.**
+
+### L-71 — 🚦 Un ANCLA que se borra DESARMA su gate en silencio, y nadie mide el armado del conjunto *(§287 N18-09 · reincidencia de §69.7-bis)*
+**Disparador**: un chequeo se auto-omite cuando no encuentra su ancla —un heading, un fichero, una constante— y **anuncia la omisión como información, no como fallo**.
+**Caso**: el chequeo **#4** del kernel exige el ancla `## §4 — Cache bump` dentro de `CLAUDE.md`. El commit `5e99cdc` borró ese heading el 22-ago —por muerto, y con razón— y desde entonces #4 imprime *«sin service-worker o sin §4 — omitido»*, **falso en su primera mitad** (`service-worker.js` existe, 962 B, `CACHE_NAME='altorra-pwa-v6'`). No incrementa `problems` y **desaparece del veredicto `✅ CEREBRO SANO`**: nueve días desarmado sin que nada bajara de verde.
+🎯 **Es reincidencia, y la lección ya estaba escrita**: §69.7-bis documentó *«la poda apagó un gate en el mismo commit que lo condenaba»* y dejó una regla **[HONOR]** que ningún chequeo ejecuta; §109.2 prescribió que *un gate con 0 comparaciones útiles debe DEGRADAR* y ese bloque no llama a `degrade()` ni una vez. Dos reglas correctas, ninguna con mecanismo → [[M-25]].
+**Reglas**: (1) 🎯 **la omisión por falta de ancla se imprime DEGRADADA**, nunca como info: «omitido» y «pasado» tienen que verse **distinto** en el veredicto, o el resumen miente por agregación. (2) Antes de podar cualquier ancla —heading, nombre de sección, ruta, constante—, `grep` en el kernel: **lo que un gate usa de ancla no se distingue de la prosa mirando el nodo** (§269.6). (3) 🎯 **Nadie mide el ARMADO del conjunto**: un resumen honesto dice cuántos chequeos **CORRIERON**, no solo cuántos pasaron — el denominador es la mitad que falta. (4) Y su residuo *always-on*: el router siguió afirmando nueve días que «la parsean el gate #4» (§288.3). **Un aviso que apunta a un guardián retirado tranquiliza más que el silencio.**

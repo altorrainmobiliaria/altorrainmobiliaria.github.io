@@ -49,9 +49,10 @@ Trunca **al abrir**: lo que falle luego —la lectura, el `encode`, el disco— 
 **Y la TERCERA, que se acumula sola** *(§147)*: `encoding="utf-8"` sin `newline=""` **traduce** el salto al del sistema; si el script ADEMÁS lo escribe a mano —porque detectó CRLF—, cada pasada añade otro retorno. Nada falla y el texto se lee bien, pero `git diff` marca el ARCHIVO ENTERO aunque tocaras una línea y el contador del linter **sube** mientras recortas (440 chars que eran CR invisibles). ✅ **La regla única de arriba la desactiva sola**: escribir los BYTES (`'wb'`) no traduce nada. Ante un diff de archivo entero, **cuenta los bytes de control** antes de creérselo.
 
 
-> 🎭 **Los gates que MIENTEN — [[L-48]] · [[L-52]] · [[L-56]] · [[L-57]] · [[L-58]] — viven COMPLETOS en
-> `38-GATES-QUE-MIENTEN.md`** (shard del 26-ago: la familia creció 3× en un día). Sus titulares NO se
-> repiten aquí: `30` ya los lleva, y mejores (§242).
+> 🎭 **Los gates que MIENTEN — [[L-48]] · [[L-52]] · [[L-57]] · [[L-58]] — viven COMPLETOS en
+> `38-GATES-QUE-MIENTEN.md`** (shard del 26-ago: la familia creció 3× en un día), y los que **no llegan
+> a mirar** —[[L-56]] · [[L-65]] · [[L-70]] · [[L-71]]— en `38a-ARMADO-DEL-GATE.md` (§289). Sus
+> titulares NO se repiten aquí: `30` ya los lleva, y mejores (§242).
 
 ### L-66 — 🪤 Dos herramientas con el MISMO nombre no miden ni apuntan a lo mismo *(§242 · §251)*
 **Disparador**: respaldo hecho con `cp … /tmp/x.bak` desde el shell y restaurado desde Python con un `copy` condicionado a `os.path.exists('/tmp/x.bak')`. El Python NATIVO lee `/tmp` como `C:/tmp`: el `exists` dio **falso en silencio**, el restaurado no ocurrió y el bloque de prueba anterior se quedó debajo del bueno — dos guardias donde iba una.

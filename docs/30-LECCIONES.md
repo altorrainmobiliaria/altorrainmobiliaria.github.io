@@ -106,7 +106,9 @@ puesta para el siguiente). Portátil a cualquier runtime que siga el estándar F
 ### L-69 — 🎭 Retirar un dato de UNA pantalla y dejarlo en otra es ESCONDERLO; el comentario que certifica la retirada lo vuelve invisible → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`**
 ### L-63 — 💸 Dos validadores CORRECTOS del mismo campo y ninguno comprueba que hablen de la misma UNIDAD (un contrato del 10 % no se podía liquidar) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
 ### L-64 — 🪤 Un gate NUEVO se queda en verde de TRES formas (contar el marcador · medir por cercanía · leer una alternativa como si fueran dos) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
-### L-65 — 🌗 Un gate con **exención de entorno** da un verde que nadie ha visto fallar JAMÁS (el RNT «bloqueaba el build» mientras el build pasaba a diario) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
+### L-65 — 🌗 Un gate con **exención de entorno** da un verde que nadie ha visto fallar JAMÁS (el RNT «bloqueaba el build» mientras el build pasaba a diario) → 🧩 **shard `38a-ARMADO-DEL-GATE.md`**
+### L-70 — 🚦 El PREDICADO que decide si un gate llega a correr es parte del gate: 55 de 100 commits entraron sin escáner de secretos en un repo público → 🧩 **shard `38a-ARMADO-DEL-GATE.md`**
+### L-71 — 🚦 Un ANCLA borrada DESARMA su gate en silencio (el #4 lleva 9 días omitido y sigue el ✅), y nadie mide cuántos chequeos CORRIERON → 🧩 **shard `38a-ARMADO-DEL-GATE.md`**
 ### L-26 — 🖥️ Panel integrado = renderer CONGELADO (rAF 0 frames) · juicio visual SIEMPRE por Chrome → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá, incl. corrección capital + variante resize)
 ### L-24 — Verificar un build contra el MOCKUP por ESTRUCTURA (checklist de secciones), no solo por color *(Ola 1, ADR §32; el dueño cazó lo que la verificación no)*
 **Disparador**: las páginas §24-§29 se dieron por "completas" verificando 0 off-palette + 0 errores; pero DIFERÍAN mucho del `.dc.html` (secciones enteras faltantes, layouts distintos, interactividad perdida). Daniel lo notó, no el cerebro. **Causa**: "verificado en vivo" = colores correctos, NO = fiel al diseño aprobado; el mockup (SSoT visual) nunca se usó como checklist de completitud. **Regla**: al construir desde un mockup, extraer la lista ORDENADA de secciones del mockup y confirmar 1:1 en el build (secciones + layout + interactividad), ADEMÁS del barrido de color (L-22). El workflow `auditoria-fidelidad-mockups` (diff build↔mockup) lo automatiza. Aplica a toda página mockup-backed.
@@ -187,7 +189,7 @@ siendo el índice de todas y una cita `[[L-NN]]` resuelva sin salir de aquí (§
 ### L-50 — Astro: `:global()` dentro de un `<style is:global>` NO se resuelve — sale literal y el navegador DESCARTA la regla entera, en silencio *(§130)*
 ### L-51 — Un «Deploy complete!» puede no desplegar NADA: si la CLI no nombra el archivo, no hubo archivo *(§134)*
 ### L-52 — 🧰 Un gate puede correr en VERDE sobre archivos que **nunca abre**: `tsc` no lee los `.astro`, y un `var(--x)` inexistente se descarta sin avisar *(§138)*
-### L-56 — 🧰 Un gate puede existir y NO CORRERLO NADIE: escribirlo es la mitad, cablearlo es la otra *(§142)*
+### L-56 — 🧰 Un gate puede existir y NO CORRERLO NADIE: escribirlo es la mitad, cablearlo es la otra *(§142)* → 🧩 **shard `38a-ARMADO-DEL-GATE.md`**
 ### L-57 — 🎭 Una herramienta sin su prerrequisito puede **PREGUNTAR en vez de fallar**, y sin terminal eso sale **exit 0**: el gate afirma haber pasado sin mirar nada *(§175)*
 ### L-58 — 🎭 Un gate puede imprimir un número CIERTO de una comparación que no significa nada: un porcentaje sin su denominador auditado es decoración *(§193)*
 ### L-59 — 📋 Enumera los pares «declarado ↔ desplegado» y compáralos uno a uno: lo que no se puede LEER no es un par verificable, es un sello *(§198)*

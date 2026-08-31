@@ -20,6 +20,7 @@
 | En qué se está trabajando / pendientes (TODO-NN) | `10-MEMORIA-CORTO-PLAZO` |
 | Dónde vive un componente, flujo, **schema Firestore**, blog | `20-MEMORIA-ESPACIAL` |
 | Un bug/síntoma que "te suena", receta, gotcha | `30-LECCIONES` |
+| **El gate estaba bien escrito y nunca opinó** · ¿bajo qué condición corre? · predicado/`paths:`/entorno/ancla borrada | hoja `38a-ARMADO-DEL-GATE.md` — L-56 cableado · L-65 entorno · L-70 predicado · L-71 ancla (§289) |
 | **Un gate sale ✅ pero el cerebro dice que BLOQUEA** · verde que nadie ha visto fallar · exención de entorno | `38-GATES-QUE-MIENTEN` L-65 + `99 §240` — el comando está en `specs/CUTOVER-RUNBOOK.md` |
 | **¿Puedo publicar este dato de contacto?** teléfono/correo público · el móvil PERSONAL del dueño | `99 §241` + §250. SSoT: `portal/src/lib/config/site.ts`; lo vigila un gate de `portal/scripts/verify-build.mjs` |
 | **Genero un fichero y llega CORRUPTO sin que nada falle** · heredoc · barras invertidas comidas · `/tmp` que no es el mismo | `36-LECCIONES-UTILLAJE` L-46 y L-66 |
@@ -135,7 +136,7 @@
 
 `CLAUDE.md` (router) · `05-ESTADO-GLOBAL` · `10-MEMORIA-CORTO-PLAZO` · `15-CONSEJO-EXTERNO` ·
 `20-MEMORIA-ESPACIAL` · `30-LECCIONES` (+ hojas `31-VERIFICACION-UI` · `32-LECCIONES-DOCUMENTALES` ·
-`33-LECCIONES-META` · `33a-LECCION-QUE-NO-DISPARA` · `34-DOCTRINA-CODIGO` · `39-ESCRITO-NO-ES-VIGENTE`) ·
+`33-LECCIONES-META` · `33a-LECCION-QUE-NO-DISPARA` · `34-DOCTRINA-CODIGO` · `38a-ARMADO-DEL-GATE` · `39-ESCRITO-NO-ES-VIGENTE`) ·
 `00-INDICE` (este) · `60-WORKFLOWS` · `99-HISTORIAL-ADR` ·
 `40-LOBULOS-DOMINIO` (+ hijos `41-MERCADO` · `42-LEGAL` · `43-OPERACION`) · `50-CONFIG-INFRA` ·
 `skills-inventory`. Tooling: `scripts/brain-check.mjs` (KERNEL) +
