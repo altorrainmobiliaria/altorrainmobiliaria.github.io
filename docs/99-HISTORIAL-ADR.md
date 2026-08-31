@@ -12395,3 +12395,69 @@ puntero roto creaba un puntero roto. Por eso arriba van descritos y no escritos.
 
 ⚠️ El rótulo del kernel NO se arregla hoy: renombrarlo cuesta bump + `brain:pull` ×4 por un rótulo
 que solo se ve en la salida del linter. Queda escrito DÓNDE está, para no re-descubrirlo.
+
+## 273. ADR-273 — Los filtros del SERP existían de adorno: se encendían y no filtraban nada
+
+### 273.1 — Lo que había
+`/comprar` servía cuatro chips —«Tipo», «Precio», «Habitaciones», «Más filtros»— que se pulsaban,
+cambiaban de color y **no hacían nada**. El manejador que producía ese efecto llevaba escrito en su
+propio comentario *«el filtrado real llega con los datos de Firestore, TODO-22»*: el marcador de lo
+que faltaba **estaba puesto**, y aun así lo que el visitante veía era un control que responde al
+clic. Es el mismo defecto que §265 arregló en la caja de búsqueda de al lado, en la misma barra.
+
+🎯 *Un marcador de trabajo pendiente en el código no cancela lo que la interfaz promete.* El
+comentario lo lee quien mantiene; el chip lo pulsa quien compra.
+
+### 273.2 — La forma, y por qué esta y no un panel de JS
+La barra **entera** pasa a ser el `<form method="get">` y los filtros son **campos suyos**; los
+paneles son `<details>`. Tres consecuencias, y las tres son la razón:
+- la URL es **la misma** que produce el buscador del hero, así que una búsqueda con filtros se pega
+  en un WhatsApp y llega igual, y sobrevive a recargar;
+- **desaparece el fallo clásico de «buscar borra los filtros activos»**, porque no hay dos copias
+  del estado que sincronizar: los filtros SON el formulario;
+- abren y cierran **sin una línea de JS**, y el teclado y los lectores de pantalla ya saben.
+
+Los cuatro quedan REALES —tipo (derivado de `TIPOS_PUBLICOS`, no una cuarta lista a mano tras §271) ·
+precio min/máx · habitaciones mínimas · baños y área mínima—. Dejar el cuarto de adorno al lado de
+tres que funcionan habría sido **peor** que los tres de antes: ahí el visitante ya no sabe cuál de
+los cuatro le miente.
+
+⚠️ Y lo que **NO** hace: filtrar sin JavaScript. La página es `prerender = true`. Escribí «filtra
+SIN JS» en un comentario y era falso; lo cacé releyendo, veinte minutos después. Corregido.
+
+### 273.3 — La decisión que no es obvia: el dato que NO está
+Una ficha **sin** el dato **no pasa** el filtro numérico. Dejar pasar lo desconocido le enseñaría, a
+quien pide 3 habitaciones, inmuebles de los que no sabemos cuántas tienen — y este portal vende
+«Verificado por ALTORRA». 🎯 *Un dato que no está no es un sí.* El precio es inventario oculto, y por
+eso el mensaje de cero resultados dice cómo aflojar la búsqueda.
+
+### 273.4 — Dos bugs que solo aparecen recorriendo el camino VIVO
+1. 🔴 **La caja traía `value="Cartagena de Indias"` escrita en el HTML**, así que *cualquier* envío
+   mandaba esa zona — y ningún sector se llama así (son Bocagrande, Manga, Crespo…). Se elegía «4+
+   habitaciones», la URL llevaba `hab=4` **correctamente**, el chip se encendía… y salían **CERO**.
+   *El filtro funcionaba; lo que sobraba era una zona que el visitante nunca escribió.* Y no era
+   nuevo: pulsar Enter sin tocar la caja ya daba cero desde §265. Arreglado por las dos puntas —la
+   caja pasa a `placeholder` (una sugerencia no se envía) y la CIUDAD se normaliza a «sin zona» **en
+   la frontera**, para que filtro, contador, mensaje y `hayCriterio` queden bien sin conocer el caso.
+2. `hab=-2` se convertía en un filtro de 2 habitaciones que nadie pidió: yo quitaba «todo lo que no
+   fuera dígito» para que un `500.000.000` pegado colara. Lo cazó su propia prueba, recién escrita.
+
+### 273.5 — Y el fixture no podía suspender
+Los cuatro inmuebles de prueba nacieron con `hab: 3, ban: 2, area: 120` **idénticos**. Con eso un
+filtro de habitaciones devuelve siempre los cuatro o siempre ninguno: **habría pasado la prueba en
+vivo estando roto**. 🎯 *Un fixture donde todo vale lo mismo no distingue un filtro que funciona de
+uno que ni mira el dato.* Ahora los valores difieren, y uno de los cuatro **no trae** `hab` a
+propósito, para que la regla de §273.3 se pueda ver fallar.
+
+### 273.6 — Verificación (en un documento RENDERIZADO)
+El primer intento midió con `fetch` sobre una página prerenderizada: el HTML servido es **idéntico**
+para toda consulta, así que aquella prueba no podía fallar. Rehecha cargando cada URL en un `iframe`
+real: sin filtros → 4 · `hab=9` → 0 **con el mensaje de búsqueda y no el de inventario** ·
+`precioMax=800M` → Centro y Crespo · `tipo=casa&precioMax=800M` → solo Crespo (los dos criterios a la
+vez) · `area=300` → solo Manga · `zona=Cartagena+de+Indias` → los 4 · `hab=4` → 2, con el local sin
+el dato fuera. Singular/plural concuerda; cero errores de consola. `npm run verify` salida **0**,
+**1027 pruebas** (7 nuevas).
+
+⚠️ Nota de instrumento: `getBoundingClientRect()` **no** dice si un `<details>` está oculto —Chrome
+usa `content-visibility:hidden`, que conserva la caja y solo se salta el pintado—. El instrumento es
+`checkVisibility()`. Casi apunto un bug que no existía.

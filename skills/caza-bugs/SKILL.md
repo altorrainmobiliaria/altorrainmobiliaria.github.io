@@ -638,6 +638,32 @@ ejecutó» son indistinguibles a ojo.
    desarrollo (aquí lo bloquea un gate del build) *y* que desarrollo pueda ponerse en el de
    producción. Una bandera que solo se puede mover en un sentido deja la mitad del código sin mirar.
 
+## 4p. 🎚️ El FIXTURE que no puede suspender — datos que no discriminan
+
+Recorrer el camino vivo no basta: hay que recorrerlo **con datos capaces de delatar el fallo**. Caso
+real: un fixture de cuatro inmuebles para probar los filtros del buscador, y los cuatro nacieron con
+`hab: 3, ban: 2, area: 120` **idénticos**. Con esos datos, un filtro de habitaciones devuelve
+siempre los cuatro o siempre ninguno — **exactamente lo mismo que devolvería si no mirara el dato**.
+La prueba en vivo se habría pasado en verde con el filtro roto.
+
+🎯 **Un fixture donde todo vale lo mismo no distingue lo que funciona de lo que ni se ejecuta.** Es
+el pariente del §4o (el camino apagado) pero un paso más sutil: allí no corres el código, aquí lo
+corres y su salida es idéntica en los dos mundos, así que la ejecución no te enseña nada.
+
+**Antes de fiarte de una prueba con datos de muestra, pregúntate qué la haría FALLAR** y comprueba
+que ese caso está en el juego:
+1. **Varianza por cada eje que filtras u ordenas.** Si dos ítems empatan en el campo, ese campo no
+   está probado. Un orden por precio con todos los precios iguales pasa siempre.
+2. **Un ítem al que le FALTE el dato**, si tu regla decide algo sobre los ausentes. Es el único que
+   distingue «excluye lo desconocido» de «lo deja pasar», y las dos son defendibles: sin ese ítem no
+   sabes cuál implementaste.
+3. **Un caso que debe dar CERO**, para ver el mensaje de vacío — y que sea el mensaje correcto, que
+   «no hay nada que encaje» y «no hay inventario» se arreglan de formas distintas.
+4. **Un valor en la FRONTERA exacta** (el `>=` contra el `>`): pedir 4 y que exista uno de 4.
+
+💡 Y escríbelo en el propio fixture: el comentario que dice *para qué* está cada valor es lo que
+impide que el siguiente los «normalice» a todos iguales por parecerle más limpio.
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.

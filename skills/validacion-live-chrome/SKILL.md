@@ -186,6 +186,17 @@ poblaciones distintas de nodos y pueden tener estilos distintos sin que nada avi
    parseFloat(getComputedStyle(x).fontSize) < 16)`. Y el arreglo **nunca** es `maximum-scale=1`: eso
    apaga la lupa a quien la necesita para leer. Se arregla el tamaño, no se quita el zoom.
 
+9. **La geometría NO dice si algo está oculto — y eso limita la regla 3.** Un `<details>` cerrado, o
+   cualquier elemento bajo `content-visibility: hidden`, **conserva su caja de layout**: Chrome se
+   salta el pintado, no el tamaño. Medido en vivo, un panel devolvía `getBoundingClientRect().height
+   = 158` **cerrado y abierto por igual**, y estuve a un paso de apuntar un panel que se escapaba —
+   un bug que no existía. El instrumento correcto es **`el.checkVisibility()`**, que dio `false`
+   cerrado y `true` abierto. Regla: la geometría mide **cuánto ocupa**; la visibilidad se pregunta
+   con `checkVisibility()`, y `display`/`visibility` computados tampoco bastan (los dos decían
+   `grid` / `visible` con el panel cerrado). ⚠️ Y `elementFromPoint` devuelve `null` cuando el panel
+   integrado reporta un viewport de 0×0: si vas a usarlo, **imprime `innerWidth` primero** o estarás
+   leyendo un `null` que no significa «no hay nada ahí».
+
 ## 6. Conexiones (doble vía)
 - **Hacia mí** (qué recorrer / cómo cerrar): `caza-bugs` · `verification-before-completion` · `anti-codigo-muerto` (que lo nuevo no dejó lo viejo roto EN VIVO).
 - **Soy el gate empírico DE**: `proceso-decision-fuerte` **paso 7** (pruebas de estado en un navegador REAL cierran la decisión).

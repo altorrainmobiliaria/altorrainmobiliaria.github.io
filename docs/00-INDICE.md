@@ -109,6 +109,7 @@
 | §270 | 🚨 **La portada publicaba SEIS proyectos de obra nueva inventados** —con dirección y «Preventa»— y el gate no los veía porque busca CIFRAS · «Penthouse» no es tipo en ningún líder · una sola lista pública. | 12161 |
 | §271 | 🏝️ **«Penthouse» se DERIVA (piso === pisosTotales), no se declara** — una etiqueta que pone el interesado no la sella nadie · +cabaña +parqueadero (≥2 líderes + real en Cartagena) · el tipo cazó una TERCERA tabla de etiquetas. | 12274 |
 | §272 | 🔏 **DOS sellos de fecha en `05`** (`verificado-vivo:` vs `(al …)`) y re-sellé el que no lee el aviso — el aviso siguió encendido y lo leí como recordatorio nuevo. Kernel v1.26.0: ahora CITA el sello. | 12337 |
+| §273 | 🎛️ **Los 4 chips de filtro del SERP se encendían y NO filtraban** — ahora son campos del `<form get>` con paneles `<details>`. La caja traía la CIUDAD escrita y vaciaba todo resultado. Un fixture con valores IGUALES no puede suspender. | 12399 |
 
 ---
 
