@@ -41,6 +41,27 @@ import {
  * pinta mientras esté vacía. El diseño sobrevive para el día que haya un proyecto firmado; lo
  * que no sobrevive es inventarlo mientras tanto.
  */
+/*
+ * ¿HAY CATÁLOGO REAL? — el interruptor del que cuelga TODO el inventario de esta página (§276).
+ *
+ * 🔴 La portada servía SEIS conjuntos de inmuebles inventados: «Propiedad del día» con un
+ * penthouse de $3.200 millones · «Publicadas recientemente» con siete tiles y un «hace 2 h»
+ * escrito a mano · destacadas · arriendo · estancias · mejor valoradas · y los pines y minicards
+ * del mapa. Unos veinticinco inmuebles con precio, zona y specs. Ninguno existe.
+ *
+ * 🎯 Y el candado que debía impedirlo —`verify:build` #7, que bloquea un build de producción con
+ * catálogo de muestra— NO los veía: vigila `PUBLIC_CATALOGO_SOURCE`, y ninguna de estas secciones
+ * lee el catálogo. Un gate correcto cuyo DENOMINADOR excluye justo donde vive el problema. El
+ * arreglo es meterlas DENTRO del denominador, no añadir un segundo candado que mantener.
+ *
+ * ⚠️ CONSECUENCIA QUE HAY QUE SABER: en un build de producción estas secciones salen VACÍAS,
+ * porque la portada **no está cableada al catálogo** — ni una de las seis lee el índice real. Es
+ * trabajo de producto pendiente, no un descuido de este cambio: antes servía relleno bonito y
+ * ahora dice la verdad mientras se cablea. Una portada honesta y escueta es mejor que una que
+ * publica inventario que no existe.
+ */
+const HAY_CATALOGO_REAL = (import.meta.env.PUBLIC_CATALOGO_SOURCE ?? 'demo') === 'live';
+
 const PROYECTOS_REALES: ComponentProps<typeof ProjectCard>[] = [];
 const proyectos = PROYECTOS_REALES;
 
@@ -106,10 +127,26 @@ const zonas = [
   { t: 'Cabrero', img: '/assets/chalet-dusk.webp' },
 ];
 
-// RECIENTES — mosaico BENTO de 7 tiles con posicionamiento explícito (mockup L991-1079, CSS L183-190).
-// `title` presente ⇒ el precio va en `.mbody` (aparece al hover). Sin `title` ⇒ el precio ES la línea
-// principal y va siempre visible. Es la lógica del mockup, no una invención.
-const recientes = [
+/*
+ * RECIENTES — mosaico BENTO de 7 tiles con posicionamiento explícito (mockup L991-1079, CSS L183-190).
+ * `title` presente ⇒ el precio va en `.mbody` (aparece al hover). Sin `title` ⇒ el precio ES la línea
+ * principal y va siempre visible. Es la lógica del mockup, no una invención.
+ *
+ * 🔴 PERO ERAN SIETE INMUEBLES QUE NO EXISTEN, servidos en la PORTADA bajo «Lo último que entró al
+ * portafolio», con badge «Nuevo», precio de hasta $3.200 millones y un «hace 2 h» escrito a mano
+ * (§276). Dos afirmaciones falsas por tile, y la segunda es de una clase peor: **una marca de tiempo
+ * en el build es mentira el minuto después de compilar, y más mentira cada hora que pasa**. En
+ * producción se habría quedado congelada diciendo que algo entró hace dos horas, para siempre.
+ *
+ * 🎯 Y el candado que ya existe —`verify:build` #7, que impide un build de producción con catálogo
+ * de muestra— NO las cubría: vigila `PUBLIC_CATALOGO_SOURCE`, y esta sección no leía el catálogo.
+ * Un gate correcto cuyo DENOMINADOR excluye justo donde vive el problema.
+ *
+ * El arreglo es hacerlas depender de esa misma variable, o sea METERLAS EN EL DENOMINADOR, en vez de
+ * añadir un segundo candado que habría que acordarse de mantener. En `demo` se ve el diseño; en un
+ * build de producción la lista está vacía y la sección lo dice.
+ */
+const RECIENTES_DE_MUESTRA = [
   { img: '/assets/estate-golden.webp', alt: 'Villa frente al mar en Bocagrande', col: 'span 2', row: 'span 2', size: 'xl', tag: 'Venta · Bocagrande', title: 'Villa frente al mar', price: '$3.200.000.000', time: 'hace 2 h' },
   { img: '/assets/chalet-dusk.webp', alt: 'Casa colonial en el Centro', col: '4', row: 'span 2', size: 'md', tag: 'Estancia · Centro', title: 'Casa colonial', price: '$1.150.000 / noche', time: 'hace 5 h' },
   { img: '/assets/villa-modern.webp', alt: 'Apartaestudio en Manga', col: '3', row: '1', size: 'sm', tag: 'Arriendo · Manga', price: '$1.9M / mes' },
@@ -118,15 +155,26 @@ const recientes = [
   { img: '/assets/villa-pool.webp', alt: 'Penthouse en Castillogrande', col: '3', row: '3', size: 'sm', tag: 'Venta · Castillogrande', price: '$2.4MM' },
   { img: '/assets/hero-estancia.webp', alt: 'Terraza en Bocagrande', col: '4', row: '3', size: 'sm', tag: 'Estancia · Bocagrande', price: '$680k / noche' },
 ];
+const recientes = HAY_CATALOGO_REAL ? [] : RECIENTES_DE_MUESTRA;
 
-// REDES — muro de 6 posts (mockup L1363-1394). `reel` = indicador de video (play) en 1, 3 y 6.
+/*
+ * REDES — muro de 6 posts (mockup L1363-1394). `reel` = indicador de video (play) en 1, 3 y 6.
+ *
+ * 🔴 Traían «1.2k · 48», «3.1k · 78»… (§276). Eran likes y comentarios INVENTADOS del mockup, y no
+ * son un detalle decorativo: son una afirmación sobre la tracción del negocio, servida en la
+ * portada. Nadie ha medido eso, y no hay integración con Instagram que pudiera medirlo.
+ *
+ * Se retiran los números y se queda el muro: el diseño era una rejilla de fotos que lleva a la
+ * cuenta real, y eso sigue siendo verdad. Si algún día se conectan las métricas de verdad, vuelven
+ * con su fuente — pero entonces serán un dato y no un adorno.
+ */
 const posts = [
-  { img: '/assets/estate-golden.webp', likes: '1.2k', comments: '48', reel: true },
-  { img: '/assets/hero-estancia.webp', likes: '2.4k', comments: '91' },
-  { img: '/assets/villa-pool.webp', likes: '876', comments: '33', reel: true },
-  { img: '/assets/chalet-dusk.webp', likes: '1.7k', comments: '62' },
-  { img: '/assets/hero-keys.webp', likes: '945', comments: '27', imgPos: 'center 40%' },
-  { img: '/assets/villa-modern.webp', likes: '3.1k', comments: '78', reel: true },
+  { img: '/assets/estate-golden.webp', reel: true },
+  { img: '/assets/hero-estancia.webp' },
+  { img: '/assets/villa-pool.webp', reel: true },
+  { img: '/assets/chalet-dusk.webp' },
+  { img: '/assets/hero-keys.webp', imgPos: 'center 40%' },
+  { img: '/assets/villa-modern.webp', reel: true },
 ];
 
 // EN VENTA — riel horizontal de `LuCard` (réplica fiel del mockup #venta, L451-564).
@@ -412,38 +460,51 @@ const maneras = [
 
     <!-- PROPIEDAD DEL DÍA — split editorial de UNA sola propiedad (réplica fiel del mockup, L409-449).
          NO sale de PropertyCard: es una propiedad única con 4 contadores; su forma de dato ni siquiera cabe. -->
-    <section id="propiedad-dia" class="home-pdia">
-      <div class="alt-container home-pdia__in">
-        <div class="home-pdia__text">
-          <p class="alt-eyebrow">Propiedad del día</p>
-          <h2 class="home-pdia__h">Penthouse frente al mar, en Bocagrande.</h2>
-          <p class="home-pdia__p">Dos pisos, terraza privada con piscina y vista abierta a la bahía. La última unidad de un edificio icónico.</p>
+    {/*
+      🔴 UNA SECCIÓN ENTERA DE PORTADA anunciando un inmueble que NO EXISTE (§276): «Penthouse
+      frente al mar, en Bocagrande — la última unidad de un edificio icónico», $3.200.000.000, con
+      sus estadísticas. Era el inventario inventado más prominente del sitio, y el candado #7 de
+      `verify:build` no lo veía porque esta sección no lee el catálogo.
 
-          <div class="home-pdia__stats">
-            {pdiaStats.map((s) => (
-              <div class="home-pdia__stat">
-                <span class="home-pdia__n">{s.n}{s.unit && <span class="home-pdia__unit"> {s.unit}</span>}</span>
-                <span class="home-pdia__l">{s.label}</span>
-              </div>
-            ))}
-          </div>
-
-          <div class="home-pdia__buy">
-            <div>
-              <span class="home-pdia__pricelbl">Precio</span>
-              <span class="home-pdia__price">$3.200.000.000</span>
+      Se apaga entera en un build con catálogo real: una «Propiedad del día» sin propiedad no tiene
+      estado vacío que valga — o hay una destacada de verdad, o la sección sobra. ⚠️ Se puede ocultar
+      porque NADA la enlaza; §270 enseñó que esconder una sección enlazada rompe sus anclas, y de eso
+      se encarga `verify:enlaces` si algún día alguien le pone una.
+    */}
+    {!HAY_CATALOGO_REAL && (
+      <section id="propiedad-dia" class="home-pdia">
+        <div class="alt-container home-pdia__in">
+          <div class="home-pdia__text">
+            <p class="alt-eyebrow">Propiedad del día</p>
+            <h2 class="home-pdia__h">Penthouse frente al mar, en Bocagrande.</h2>
+            <p class="home-pdia__p">Dos pisos, terraza privada con piscina y vista abierta a la bahía. La última unidad de un edificio icónico.</p>
+  
+            <div class="home-pdia__stats">
+              {pdiaStats.map((s) => (
+                <div class="home-pdia__stat">
+                  <span class="home-pdia__n">{s.n}{s.unit && <span class="home-pdia__unit"> {s.unit}</span>}</span>
+                  <span class="home-pdia__l">{s.label}</span>
+                </div>
+              ))}
             </div>
-            <a class="alt-btn-sweep" href="/ficha">Ver ficha completa
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            </a>
+  
+            <div class="home-pdia__buy">
+              <div>
+                <span class="home-pdia__pricelbl">Precio</span>
+                <span class="home-pdia__price">$3.200.000.000</span>
+              </div>
+              <a class="alt-btn-sweep" href="/ficha">Ver ficha completa
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </div>
+  
+          <div class="home-pdia__media">
+            <img src="/assets/estate-golden.webp" alt="Penthouse frente al mar en Bocagrande" loading="lazy" decoding="async" />
           </div>
         </div>
-
-        <div class="home-pdia__media">
-          <img src="/assets/estate-golden.webp" alt="Penthouse frente al mar en Bocagrande" loading="lazy" decoding="async" />
-        </div>
-      </div>
-    </section>
+      </section>
+    )}
 
     <!-- EN VENTA — riel horizontal (réplica fiel del mockup #venta) -->
     <!-- `data-railwrap` envuelve encabezado Y riel: en el mockup los botones viven en un
@@ -472,7 +533,8 @@ const maneras = [
         </div>
 
         <div class="alt-rail">
-          {venta.map((p) => <LuCard {...p} />)}
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Estamos preparando la publicación del inventario en venta. Escríbenos por WhatsApp y te contamos qué tenemos hoy.</p>}
+          {(HAY_CATALOGO_REAL ? [] : venta).map((p) => <LuCard {...p} />)}
           <a class="home-railcta" href="/comprar">
             <span class="home-railcta__n">128</span>
             <span class="home-railcta__d">propiedades en venta en toda la ciudad</span>
@@ -497,7 +559,8 @@ const maneras = [
           </a>
         </div>
         <div class="home-pgrid">
-          {destacadas.map((p) => <PropertyCard {...p} />)}
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Todavía no hay destacadas publicadas.</p>}
+          {(HAY_CATALOGO_REAL ? [] : destacadas).map((p) => <PropertyCard {...p} />)}
           <div class="home-ctacard alt-card--ink">
             {/* Decía «128 propiedades», que nadie había contado (§123). La tarjeta invita a ver
                 el catálogo: para eso no hace falta una cifra, y la que había era falsa. */}
@@ -532,7 +595,8 @@ const maneras = [
         </div>
 
         <div class="home-arr__stack" id="arriendo-stack">
-          {arriendo.map((p) => (
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Todavía no hay inmuebles en arriendo publicados.</p>}
+          {(HAY_CATALOGO_REAL ? [] : arriendo).map((p) => (
             <article class="home-arr__row" data-admin={p.admin}>
               <a class="home-arr__media" href={p.href} aria-label={`Ver ${p.title}`}>
                 <img src={p.img} alt={p.alt} loading="lazy" decoding="async" style={p.imgPos ? `object-position:${p.imgPos}` : undefined} />
@@ -600,7 +664,8 @@ const maneras = [
         </div>
 
         <div class="alt-rail">
-          {estancias.map((s) => <StayCard {...s} />)}
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Todavía no hay alojamientos por días publicados.</p>}
+          {(HAY_CATALOGO_REAL ? [] : estancias).map((s) => <StayCard {...s} />)}
         </div>
       </div>
     </section>
@@ -676,14 +741,20 @@ const maneras = [
             <path d="M300 -10 L280 140 L330 320" fill="none" stroke="rgba(235,210,126,.32)" stroke-width="1.2" />
           </svg>
 
-          <span class="home-map__pin" style="top:34%;left:30%">
-            <span class="home-map__halo home-map__halo--gold" aria-hidden="true"></span>
-            <span class="home-map__price home-map__price--gold">$1.450M</span>
-          </span>
-          <span class="home-map__pin" style="top:52%;left:58%">
-            <span class="home-map__halo home-map__halo--white" aria-hidden="true"></span>
-            <span class="home-map__price home-map__price--white">$4.2M/mes</span>
-          </span>
+          {/* Pines CON PRECIO y minicards: son inmuebles, no decoración (§276). Van con el mismo
+              interruptor que el catálogo, así que un build de producción no los sirve. */}
+          {!HAY_CATALOGO_REAL && (
+            <>
+              <span class="home-map__pin" style="top:34%;left:30%">
+                <span class="home-map__halo home-map__halo--gold" aria-hidden="true"></span>
+                <span class="home-map__price home-map__price--gold">$1.450M</span>
+              </span>
+              <span class="home-map__pin" style="top:52%;left:58%">
+                <span class="home-map__halo home-map__halo--white" aria-hidden="true"></span>
+                <span class="home-map__price home-map__price--white">$4.2M/mes</span>
+              </span>
+            </>
+          )}
           <span class="home-map__pin" style="top:64%;left:37%">
             <svg width="26" height="26" viewBox="0 0 24 24" fill="#EBD27E" stroke="#062743" stroke-width="1.4"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.4" fill="#062743" stroke="none"/></svg>
           </span>
@@ -694,21 +765,25 @@ const maneras = [
             <svg width="20" height="20" viewBox="0 0 24 24" fill="rgba(255,255,255,.7)" stroke="#062743" stroke-width="1.4"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.4" fill="#062743" stroke="none"/></svg>
           </span>
 
-          <span class="home-map__mini home-map__mini--bl">
-            <img src="/assets/villa-pool.webp" alt="" loading="lazy" decoding="async" />
-            <span class="home-map__minitxt">
-              <span class="home-map__minitag">Venta · Castillogrande</span>
-              <span class="home-map__minit">Apto vista bahía</span>
-              <span class="home-map__minip">$1.450.000.000</span>
-            </span>
-          </span>
-          <span class="home-map__mini home-map__mini--tr">
-            <img src="/assets/hero-estancia.webp" alt="" loading="lazy" decoding="async" />
-            <span class="home-map__minitxt">
-              <span class="home-map__minitag">Estancia · Bocagrande</span>
-              <span class="home-map__minit">$680.000 / noche</span>
-            </span>
-          </span>
+          {!HAY_CATALOGO_REAL && (
+            <>
+              <span class="home-map__mini home-map__mini--bl">
+                <img src="/assets/villa-pool.webp" alt="" loading="lazy" decoding="async" />
+                <span class="home-map__minitxt">
+                  <span class="home-map__minitag">Venta · Castillogrande</span>
+                  <span class="home-map__minit">Apto vista bahía</span>
+                  <span class="home-map__minip">$1.450.000.000</span>
+                </span>
+              </span>
+              <span class="home-map__mini home-map__mini--tr">
+                <img src="/assets/hero-estancia.webp" alt="" loading="lazy" decoding="async" />
+                <span class="home-map__minitxt">
+                  <span class="home-map__minitag">Estancia · Bocagrande</span>
+                  <span class="home-map__minit">$680.000 / noche</span>
+                </span>
+              </span>
+            </>
+          )}
         </div>
       </div>
     </section>
@@ -725,6 +800,13 @@ const maneras = [
               Ver todas
             </a>
         </div>
+
+        {recientes.length === 0 && (
+          <p class="home-rec__vacio">
+            Estamos preparando la publicación del inventario. Mientras tanto, escríbenos por WhatsApp
+            y te contamos qué tenemos disponible hoy.
+          </p>
+        )}
 
         <div class="home-rec__grid">
           {recientes.map((r) => (
@@ -769,7 +851,8 @@ const maneras = [
         </div>
 
         <div class="alt-rail">
-          {valoradas.map((v) => <RankCard {...v} />)}
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Aún no hay propiedades valoradas por nuestros huéspedes.</p>}
+          {(HAY_CATALOGO_REAL ? [] : valoradas).map((v) => <RankCard {...v} />)}
         </div>
       </div>
     </section>
@@ -958,21 +1041,19 @@ const maneras = [
 
         <div class="home-redes__grid">
           {posts.map((p) => (
-            <a class="home-redes__post" href={SITE.social.instagram} target="_blank" rel="noopener" aria-label={`Ver publicación en Instagram · ${p.likes} me gusta`}>
+            <a class="home-redes__post" href={SITE.social.instagram} target="_blank" rel="noopener" aria-label="Ver el perfil de ALTORRA en Instagram">
               <img src={p.img} alt="" loading="lazy" decoding="async" style={p.imgPos ? `object-position:${p.imgPos}` : undefined} />
               {p.reel && (
                 <span class="home-redes__reel" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
                 </span>
               )}
+              {/* El overlay llevaba los dos contadores inventados y nada más (§276). En su sitio, lo
+                  único que esta tarjeta puede afirmar: que lleva a la cuenta. */}
               <span class="home-redes__ov">
                 <span class="home-redes__stat">
-                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"/></svg>
-                  {p.likes}
-                </span>
-                <span class="home-redes__stat">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>
-                  {p.comments}
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 5.5A4.5 4.5 0 1 0 16.5 12 4.5 4.5 0 0 0 12 7.5zm0 2A2.5 2.5 0 1 1 9.5 12 2.5 2.5 0 0 1 12 9.5zM17.8 6a1.2 1.2 0 1 0 1.2 1.2A1.2 1.2 0 0 0 17.8 6z"/></svg>
+                  Ver en Instagram
                 </span>
               </span>
             </a>
@@ -1455,6 +1536,8 @@ const maneras = [
 
   /* ===== RECIENTES — mosaico BENTO (4 col, posicionamiento explícito por tile) ===== */
   .home-rec { overflow: hidden; }
+  .home-vacio { grid-column: 1 / -1; max-width: 62ch; margin: 0; font-size: 15.5px; line-height: 1.65; color: var(--alt-text); }
+  .home-rec__vacio { max-width: 62ch; margin: 0; font-size: 15.5px; line-height: 1.65; color: var(--alt-text); }
   .home-rec__grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: clamp(148px, 14.5vw, 180px); gap: 14px; }
   .home-rec__tile {
     position: relative; overflow: hidden; border-radius: 18px; text-decoration: none; color: #fff;
