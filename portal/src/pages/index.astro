@@ -558,8 +558,8 @@ const maneras = [
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
-        <div class="home-pgrid">
-          {HAY_CATALOGO_REAL && <p class="home-vacio">Todavía no hay destacadas publicadas.</p>}
+        <div class="home-pgrid" data-home-set="destacadas">
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Cargando destacadas…</p>}
           {(HAY_CATALOGO_REAL ? [] : destacadas).map((p) => <PropertyCard {...p} />)}
           <div class="home-ctacard alt-card--ink">
             {/* Decía «128 propiedades», que nadie había contado (§123). La tarjeta invita a ver
@@ -594,8 +594,8 @@ const maneras = [
           <button class="home-oppill" type="button" data-val="sin" aria-pressed="false">Sin administración</button>
         </div>
 
-        <div class="home-arr__stack" id="arriendo-stack">
-          {HAY_CATALOGO_REAL && <p class="home-vacio">Todavía no hay inmuebles en arriendo publicados.</p>}
+        <div class="home-arr__stack" id="arriendo-stack" data-home-set="arriendo">
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Cargando arriendos…</p>}
           {(HAY_CATALOGO_REAL ? [] : arriendo).map((p) => (
             <article class="home-arr__row" data-admin={p.admin}>
               <a class="home-arr__media" href={p.href} aria-label={`Ver ${p.title}`}>
@@ -787,6 +787,21 @@ const maneras = [
         </div>
       </div>
     </section>
+
+    {/*
+        Plantilla de la tarjeta para la isla del catálogo (§277). Va vacía a propósito: la rellena
+        `construirCard()`, la misma que usa el SERP. Un `<template>` no se pinta ni carga sus
+        imágenes hasta que se clona, así que no cuesta nada estando ahí.
+    */}
+    {HAY_CATALOGO_REAL && (
+      <template id="tpl-home-pcard">
+        <PropertyCard
+          nivel={2}
+          img="" alt="" badge="En venta" zona="" beds={0} baths={0} area="0 m²"
+          title="" price="" priceLabel="Desde" priceSuffix="/mes" href="#"
+        />
+      </template>
+    )}
 
     <!-- RECIENTES — mosaico bento (réplica fiel del mockup #recientes) -->
     <section id="recientes" class="home-band home-band--alt home-rec">
@@ -1536,7 +1551,10 @@ const maneras = [
 
   /* ===== RECIENTES — mosaico BENTO (4 col, posicionamiento explícito por tile) ===== */
   .home-rec { overflow: hidden; }
-  .home-vacio { grid-column: 1 / -1; max-width: 62ch; margin: 0; font-size: 15.5px; line-height: 1.65; color: var(--alt-text); }
+  /* :global porque estos parrafos los crea la ISLA en runtime (§277) y no llevan el atributo
+     data-astro-cid con el que Astro acota sus reglas. Sin esto saldrian sin estilo — y lo caza
+     verify:css, que existe para exactamente esta trampa. */
+  :global(.home-vacio) { grid-column: 1 / -1; max-width: 62ch; margin: 0; font-size: 15.5px; line-height: 1.65; color: var(--alt-text); }
   .home-rec__vacio { max-width: 62ch; margin: 0; font-size: 15.5px; line-height: 1.65; color: var(--alt-text); }
   .home-rec__grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: clamp(148px, 14.5vw, 180px); gap: 14px; }
   .home-rec__tile {
@@ -1794,6 +1812,12 @@ const maneras = [
 </style>
 
 <script>
+  // El catálogo real de la portada (§277). Import dinámico: si no hay catálogo que pintar, el módulo
+  // ni se descarga — la portada es la página más visitada y no debe pagar por lo que no usa.
+  import('../scripts/home-catalogo').then((m) => m.bootHomeCatalogo()).catch(() => {
+    /* sin catálogo la portada se queda con sus estados honestos; nunca con relleno */
+  });
+
   // Cambio de pestaña del buscador → actualiza pill activo, placeholder y destino.
   const tabsEl = document.querySelector('.home-search__tabs');
   const input = document.getElementById('home-hero-field') as HTMLInputElement | null;

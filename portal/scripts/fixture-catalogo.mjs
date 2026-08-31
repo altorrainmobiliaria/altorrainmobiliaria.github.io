@@ -77,3 +77,17 @@ console.log('     /comprar?hab=4                 → 2 (el local NO trae el dato
 console.log('     /comprar?precioMax=800000000   → 2 (Centro y Crespo)');
 console.log('     /comprar?zona=Manga&tipo=local → 0, con el mensaje de «esa búsqueda», no el de «sin inventario»');
 console.log('   Para volver a demo:  node scripts/fixture-catalogo.mjs --off');
+
+/*
+ * ⚠️ LO QUE ESTE FIXTURE **NO** PUEDE PROBAR (§277, y es §273.5 aplicado a si mismo).
+ *
+ * `PUBLIC_CATALOGO_URL` es UNA sola URL para los tres shards, asi que /comprar, /arrendar y
+ * /estancias devuelven exactamente lo mismo. Con eso NO se puede ver fallar el ENRUTADO: una
+ * seccion que pidiera el shard equivocado se veria perfecta, porque el shard equivocado trae los
+ * mismos inmuebles que el correcto.
+ *
+ * 🎯 El enrutado se comprueba por otra via, y es barata: mirar QUE URLs pide la pagina (el panel de
+ * red del navegador). Con el override QUITADO —dejando solo `PUBLIC_CATALOGO_SOURCE=live`— la
+ * portada debe pedir `comprar.json` y `arrendar.json`, una vez cada una y ninguna mas. Asi se
+ * verifico la isla de §277.
+ */
