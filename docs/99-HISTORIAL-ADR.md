@@ -12750,3 +12750,59 @@ Arreglé el «128» del CTA… y había un **segundo «128»** en el «Ver todas
 eje **«instancias»** de §275 (caza-bugs §4q), escrito por mí hace dos horas. Lo cazó medir en el
 **build de producción** en vez de dar por bueno el arreglo: `>128<` → 0, `>83<` → 0, `>312<` → 0.
 `npm run verify` salida **0**: 1032 + 190.
+
+## 279. ADR-279 — Las cinco secciones de la portada, y un gate al que enseñé a ver
+
+### 279.1 — Lo que se cierra
+Lo que §277 empezó: **venta, destacadas, arriendo, estancias y «publicadas recientemente»** se
+pintan del índice real. Cinco secciones con **tres peticiones** —tres de ellas comparten shard— y
+**ninguna a Firestore**.
+
+### 279.2 — Lo que el índice no guarda, no se inventa: se QUITA
+- `LuCard` sabe pintar un lema, unos círculos de color y un número de tipologías. El catálogo no
+  guarda nada de eso, así que **esos nodos ni se emiten**: la tarjeta sale más sobria que en el
+  mockup. 🎯 *Rellenarlos con algo plausible es exactamente como empezó todo esto (§276).*
+- `StayCard` pide un `meta` **obligatorio** que el mockup llenaba con «Vista al mar · 6 huéspedes».
+  No hay aforo ni vistas en el índice: se compone con **zona y tipo**, que sí constan. Inventar un
+  número de huéspedes en un alojamiento sería, además de falso, **la clase de dato con el que
+  alguien reserva**.
+- El **«hace 2 h»** ahora se **calcula** desde `pub` —§276 lo encontró escrito a mano en el build— y
+  el badge **«Nuevo»** solo sale si lo es: menos de 7 días. *Un badge que llevan todos no distingue
+  nada.* Medido en vivo: 3 días → Nuevo · 6 → Nuevo · **11 → no**.
+
+`haceCuanto` se mudó a `lib/domain/tiempo.ts`: vivía en el módulo del **panel**, y hacer que una
+página pública importara de ahí era el acoplamiento que §277 acababa de deshacer por el otro lado.
+
+### 279.3 — 🎯 El gate: arreglar el MECANISMO, no declarar una excepción
+`verify:css` marcó `home-rec__tile` como inalcanzable por el CSS acotado. Antes de llamarlo falso
+positivo —regla §277 / caza-bugs 4r— pregunté **qué tendría que ser verdad para que acertara**: que
+el nodo no llevara el `data-astro-cid` con el que Astro acota sus reglas. **Medido en el HTML
+construido: sí lo lleva.** El nodo viene de un `<template>` renderizado por Astro, que es el patrón
+propio de este proyecto (el SERP lo usa desde §59).
+
+Así que el gate no podía ver algo cierto. Ahora lo ve: reconoce las clases escritas dentro de un
+`<template>` y sus modificadores BEM.
+
+⚠️ **Y esa es la decisión que importa**: el gate ofrecía la salida cómoda —globalizar la regla— y
+otros gates de este repo ofrecen declarar la excepción «con su motivo». Las dos habrían tapado este
+caso **y dejado el falso positivo esperando al siguiente que use el patrón recomendado**. §278 lo
+acababa de decir: *el motivo con el que declaras una excepción decide si gestionas o autorizas.*
+
+**Prueba negativa, porque acabo de tocar un gate**: inyectada una clase acotada que **no** está en
+ninguna plantilla, el gate **falla y la nombra**; restaurada, verde. No se debilitó, se afinó.
+
+### 279.4 — Y el fixture, por segunda vez en el mismo día
+Sus fichas eran **todas de venta**, así que una tarjeta de arriendo o de estancia mal construida se
+habría visto perfecta. Ahora trae una de cada operación (6 fichas, 3 operaciones). Es §273.5 —*un
+fixture donde todo vale lo mismo no puede suspender*— aplicada por segunda vez, a mí, el mismo día
+que la escribí.
+
+### 279.5 — Verificación
+5 secciones pintadas (5 · 2 · 3 · 5 · 6 tarjetas) · `LuCard` sin sus tres adornos · `StayCard` con
+«Tierrabomba · Cabaña» · tile con «hace 3 días» calculado y las ranuras del mosaico en el orden del
+mockup. El SERP sigue vivo tras tocar el módulo compartido: 6 cards. `npm run verify` salida **0**:
+1032 + 190.
+
+⏭ **Queda `valoradas`**, y no es cableado: pide una **calificación** que el índice no guarda. O entra
+al modelo —con quién la escribe y cómo se verifica— o esa sección no puede existir con datos reales.
+Es decisión de producto.

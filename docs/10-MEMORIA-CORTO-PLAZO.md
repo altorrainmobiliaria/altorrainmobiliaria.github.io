@@ -66,14 +66,11 @@
 > 🔻 **El panel LEGACY no tiene red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates.
 
-> 🎯 **AQUÍ VOY (31-ago).** Barrido del portal CERRADO: taxonomía (§271) · los 4 chips de filtro
-> del SERP eran de ADORNO (§273) · el header tapaba el 90% de esa barra al subir a usarla (§274) ·
-> y el panel SERVÍA 6 clientes inventados y saludaba a un tal Alejandro (§275). El feed y las zonas
-> ya salen de leads reales. Del panel no me queda nada; lo que sigue abierto es TUYO (abajo).
-> 🔌 **PORTADA**: servía ~25 inmuebles inventados y en producción habrían salido (§276). Ya no; y
-> **destacadas + arriendo ya beben del catálogo real** (§277, 3 estados verificados). ⏭ Faltan
-> `recientes`, `estancias` y `venta` — mismo patrón, ya hecho. ⛔ `valoradas` NO se puede: pide una
-> calificación que el índice no guarda; o entra al modelo o esa sección no existe con datos reales.
+> 🎯 **AQUÍ VOY (31-ago).** Barrido del portal CERRADO (§271-§279): la web ya no publica nada que no
+> pueda respaldar — ni filtros de adorno, ni clientes inventados en el panel, ni los ~25 inmuebles
+> falsos que la PORTADA habría sacado en producción. Sus 5 secciones beben del catálogo real.
+> ⛔ **`valoradas` es TUYA**: pide una calificación que el índice no guarda. O entra al modelo (quién
+> la escribe, cómo se verifica) o esa sección no puede existir con datos reales.
 > 🏗️ **Obra nueva**: diseñada y metida en el MEGA-PLAN, no en el backlog (§270) — no cabe hoy por
 > una razón MEDIDA: el índice guarda `precio` como UN entero y un proyecto tiene RANGO.
 

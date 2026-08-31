@@ -757,6 +757,22 @@ entre ellos dos funciones con el mismo nombre y **salida distinta** (`' / mes'` 
 *Exportar algo lo somete a gates que antes no lo alcanzaban; si al hacerlo salta un hallazgo viejo,
 es un regalo, no un coste del cambio.*
 
+**Y cuando SÍ es falso positivo, enséñale a ver — no le declares una excepción.** Un gate que se
+equivoca te ofrece siempre la salida cómoda: silenciar esa línea, globalizar esa regla, apuntar la
+excepción «con su motivo». Las tres tapan **tu** caso y dejan el falso positivo esperando al
+siguiente que haga lo mismo — y si lo que hacías era el patrón recomendado del proyecto, el
+siguiente eres tú otra vez.
+
+Caso real: un chequeo daba por inalcanzable una clase que un script asigna. Medido: el nodo venía de
+una plantilla renderizada por el framework, así que llevaba el atributo de acotado y la regla sí le
+alcanzaba. La premisa del gate —«lo que asigna el JS nace sin ese atributo»— era cierta en general y
+falsa para ese patrón. Se le enseñó el patrón; dejó de equivocarse **para todos**.
+
+⚠️ **Y como tocaste un gate, debes la prueba negativa.** Relajar la condición y ver verde no
+demuestra nada: puede que lo hayas dejado ciego. Rompe algo a propósito —una clase que de verdad no
+esté en ninguna plantilla— y comprueba que **falla y lo nombra**; restaura y comprueba el verde. Sin
+esas dos medidas no sabes si afinaste el gate o lo apagaste, y las dos se leen igual desde fuera.
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.

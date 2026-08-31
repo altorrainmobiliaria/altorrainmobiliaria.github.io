@@ -115,6 +115,7 @@
 | §276 | 🏚️ **Un build de producción habría publicado ~25 inmuebles inventados en la PORTADA** — el candado #7 existía para eso y vigilaba una VARIABLE que esas 6 secciones no leen. Ahora cuelgan de ella. | 12591 |
 | §277 | 🔌 **La portada, cableada al catálogo** (destacadas + arriendo, 3 estados verificados). 🎯 Y un gate puede tener razón POR DEBAJO de su mensaje: se quejó de un id y el problema era el ACOPLAMIENTO. | 12658 |
 | §278 | 🧾 **«Sale en el cutover» no es un motivo, es una promesa** — 3 conteos de inventario declarados como deuda y esperando que alguien se acordara. Ahora salen solos. Y una deuda RETIRADA que el gate demostró. | 12713 |
+| §279 | 🧩 **Las 5 secciones de la portada, del catálogo real** — lo que el índice no guarda NO se inventa, se quita. Y a un gate con falso positivo se le ENSEÑA A VER, no se le declara excepción (con prueba negativa). | 12754 |
 
 ---
 
