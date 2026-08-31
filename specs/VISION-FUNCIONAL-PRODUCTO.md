@@ -24,6 +24,14 @@ QuintoAndar / Zillow / Airbnb a Cartagena. Meta declarada del dueño: la web inm
 2. **Administración** de inmuebles (contratos reales ya operando; honorarios ~8-12% mensual) = el módulo GESTIÓN.
 3. **Arriendo tradicional / larga estancia**.
 4. **Arriendo de corta estancia** (turístico, con RNT) — con RESERVA REAL.
+5. **OBRA NUEVA / proyectos de constructora** — aprobada por el dueño el 2026-08-31 (ADR §270).
+   ⚠️ **Modelo comercial DISTINTO a las cuatro de arriba**: aquí el cliente que paga no es el
+   propietario particular sino la **CONSTRUCTORA**, y el inventario no es un inmueble sino un
+   PROYECTO que agrupa tipologías. Verificado contra el mercado: Fincaraíz cobra a las constructoras
+   por su vertical «Proyectos de vivienda» y **prohíbe a los particulares** publicar obra nueva o
+   sobre planos; Metrocuadrado le da un espacio de URL propio (`/proyecto/…` vs `/inmueble/…`).
+   ⇒ No es un filtro de las líneas 1-4: es una quinta línea con su propia venta, su propia ficha y
+   sus propios campos (estado de obra, entrega, constructora, cuota inicial, subsidio, % vendido).
 
 **Secundaria/futura:** tours / turismo inmobiliario (gancho; sin convenio aún; se integra más adelante, no en el MVP).
 
@@ -132,6 +140,11 @@ Digitaliza la operación real del dueño (hoy "en la mente y por WhatsApp"):
 - **Ola 1 (MVP público):** home, búsqueda con mapa, ficha, landings de sectores, corta estancia sin dinero, publica tu propiedad, precios, alertas, Rango/Rentímetro, admin v1, leads y GESTIÓN v1.
 - **Ola 2 (dinero + arriendo digital):** booking con pago protegido Wompi, portal de aliados/brokers self-service, perfil de inquilino reutilizable, GESTIÓN v2 (cobro + payout + pipeline de venta), destacados de particulares.
 - **Ola 3 (expansión):** garantía de arriendo, loop inversión → renta turística, pagos recurrentes de canon, búsqueda Typesense, Índice ALTORRA, portal del propietario y del inquilino.
+- **OBRA NUEVA (vertical propia, §270):** entidad `Proyecto` con tipologías · ruta `/proyecto/…` ·
+  filtro nuevo/usado como EJE ortogonal (no sección de menú) · inyección en el listado de venta con
+  badge · JSON-LD multi-`Offer`, uno por tipología. **Bloqueada por el modelo, no por el calendario**:
+  el índice del catálogo guarda `precio` como UN entero y omite lo que no lo traiga; un proyecto
+  tiene precio en RANGO. Desbloquearla = que el índice admita rango, no esperar a una ola.
 
 ## 11. Visión de crecimiento
 

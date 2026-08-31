@@ -526,6 +526,23 @@ export function jsonLdInmueble(p: Propiedad, urlAbsoluta: string, imagenes: stri
   const esResidencial = tipoSchema(p.tipo) !== 'Place';
   if (esResidencial && p.specs?.habitaciones != null) lugar.numberOfRooms = p.specs.habitaciones;
   if (esResidencial && p.specs?.banos != null) lugar.numberOfBathroomsTotal = p.specs.banos;
+  /*
+   * EL PISO — un dato que ya teníamos y estábamos tirando (§270).
+   *
+   * `floorLevel` es propiedad documentada de `Accommodation`: «the floor level for an Accommodation
+   * in a multi-storey building». El modelo guarda `specs.piso` y la ficha ya lo pinta con su icono;
+   * el JSON-LD lo ignoraba. Emitirlo no cuesta un dato nuevo, solo dejar de desperdiciar el que hay.
+   *
+   * 🎯 Y es la señal HONESTA detrás de «penthouse». Ningún líder del mercado trata «penthouse» como
+   * tipo —Fincaraíz lo modela como el último valor de su filtro «Piso»— y `schema.org/Penthouse`
+   * devuelve 404. Un penthouse ES el último piso: el hecho verificable es el NÚMERO, no la etiqueta
+   * que se pone solo el dueño del ático. Cuando las fichas lleven el piso, el filtro se puede
+   * construir sobre un dato que ALTORRA puede sellar.
+   *
+   * Residencial solo, como sus vecinas: el piso de una bodega no es `Accommodation`.
+   * Text y no número, porque así lo declara schema.org.
+   */
+  if (esResidencial && p.specs?.piso != null) lugar.floorLevel = String(p.specs.piso);
   if (area != null) lugar.floorSize = { '@type': 'QuantitativeValue', value: area, unitCode: 'MTK' };
   // ⛔ SIN `geo`. `Propiedad.geo.lat/lng` es el CENTROIDE APROXIMADO DEL BARRIO, no la posición del
   // inmueble (lo dice el propio modelo, y el mapa lo advierte en pantalla). Declararlo como

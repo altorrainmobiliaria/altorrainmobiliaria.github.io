@@ -288,6 +288,19 @@ describe('jsonLdInmueble', () => {
     expect(d.offers.businessFunction).toContain('#Sell');
   });
 
+  it('emite el PISO cuando lo hay — es el dato honesto detras de «penthouse»', () => {
+    // Un penthouse ES el ultimo piso: el hecho verificable es el numero, no la etiqueta.
+    const d = jsonLdInmueble(prop({ specs: { ...prop().specs, piso: 14 } }), url, []) as any;
+    expect(d.about.floorLevel).toBe('14');
+  });
+
+  it('sin piso NO inventa uno, y en lo comercial no lo emite aunque exista', () => {
+    const sin = jsonLdInmueble(prop(), url, []) as any;
+    expect(sin.about.floorLevel).toBeUndefined();
+    const bodega = jsonLdInmueble(prop({ tipo: 'bodega', specs: { ...prop().specs, piso: 2 } }), url, []) as any;
+    expect(bodega.about['@type']).toBe('Place');
+    expect(bodega.about.floorLevel).toBeUndefined();
+  });
   it('en arriendo NO usa `price` a secas: usa UnitPriceSpecification por MES', () => {
     const d = jsonLdInmueble(prop({ operacion: 'arriendo', precio: { moneda: 'COP', canon: 8_500_000 } }), url, []) as any;
     expect(d.offers.price).toBeUndefined();

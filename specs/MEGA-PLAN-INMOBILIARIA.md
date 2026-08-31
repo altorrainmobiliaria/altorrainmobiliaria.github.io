@@ -153,6 +153,13 @@ Superficies (todas con mockup D2 aprobado):
 5. WhatsApp Business API (plantillas) si el volumen lo pide.
 
 ### 🌊 OLA 3 — Expansión (con el motor girando)
+> 🏗️ **OBRA NUEVA — vertical añadida el 2026-08-31 por decisión del dueño (ADR §270).** No estaba en
+> este plan: sus cuatro líneas eran venta, administración, arriendo largo y corta estancia. Es una
+> QUINTA, con cliente distinto (paga la constructora) y entidad distinta (un proyecto agrupa
+> tipologías; no es un inmueble con una bandera). Diseño ya cerrado y verificado contra los dos
+> líderes del mercado — ver §270.5. **Su bloqueo NO es de calendario**: el índice del catálogo tiene
+> `precio: COP` (un entero) y `propiedadAResumen()` descarta lo que no lo traiga; un proyecto tiene
+> RANGO. Mientras el índice no admita rango, la vertical no cabe aunque sobre tiempo.
 Garantía de arriendo con aseguradora local (B11, QuintoAndar-criollo Fase 1-2) · loop inversión→renta turística (op.14) · pagos recurrentes de canon + payout · tripwire de búsqueda → Typesense Cloud · Índice ALTORRA (data trimestral) · app propietarios.
 
 ## 4 · Protocolo de arranque para OPUS 4.8 (léelo tú, Opus, al asumir)
