@@ -87,7 +87,7 @@ NUNCA leas `docs/99-HISTORIAL-ADR.md` completo (40k+ líneas = muerte por contex
 ### 3.2 Reglas de código ABSOLUTAS (NUNCA romper) · detalle → `docs/34-DOCTRINA-CODIGO.md`
 El router guarda solo lo que **cuesta dinero o es irreversible**. **LEE `34` ANTES de escribir o editar código** [HONOR: sin gate].
 - **NUNCA `onSnapshot()` sobre colecciones completas desde páginas públicas** (solo admin). **NUNCA queries Firestore sin `limit()`** — paginar (default `limit(9)`, 9-20 máx). El free-tier Blaze es sagrado (`20 §Blaze`).
-- **Service Worker**: el del legacy es un **kill-switch de un solo tiro** que se auto-desregistra; bumpear `CACHE_NAME` NO hace nada (nadie lee esa constante) → [[L-67]]. **No la borres**: la parsean el gate #4 y `fix-i18n-macro`.
+- **Service Worker**: el del legacy es un **kill-switch de un solo tiro** que se auto-desregistra; bumpear `CACHE_NAME` NO hace nada (nadie la lee) → [[L-67]]. **No la borres**: la parsean `fix-i18n-macro` y el ssotFact del #8.
 - **Vanilla en el legacy · Astro + islas en el portal** (stack SELLADO, ADR §16): prohibido React/Vue/Angular/Svelte y Tailwind/Bootstrap en AMBOS.
 - NO borrar `CNAME`. NO hardcodear URLs (usar la colección `config` de Firestore o vars CSS). NUNCA renombrar IDs/clases/funciones exportadas sin migración — los cambios son **aditivos**.
 
