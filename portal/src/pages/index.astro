@@ -816,6 +816,12 @@ const maneras = [
           <LuCard img="" alt="" badge="En venta" zona="" title="" specs={['', '', '']} price="" href="#" />
         </template>
 
+        {/* ⚠️ Sin `rating` ni `reviews` sueltos: la isla escribe la nota Y su recuento en un solo
+            texto, porque §281 no permite que viajen separados. */}
+        <template id="tpl-home-rankcard">
+          <RankCard img="" alt="" rank="" rating="" zona="" title="" price="" href="#" />
+        </template>
+
         <template id="tpl-home-staycard">
           <StayCard img="" alt="" title="" meta="" price="" priceUnit="COP noche" href="#" />
         </template>
@@ -900,8 +906,8 @@ const maneras = [
           </div>
         </div>
 
-        <div class="alt-rail">
-          {HAY_CATALOGO_REAL && <p class="home-vacio">Aún no hay propiedades valoradas por nuestros huéspedes.</p>}
+        <div class="alt-rail" data-home-set="valoradas">
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Cargando valoraciones…</p>}
           {(HAY_CATALOGO_REAL ? [] : valoradas).map((v) => <RankCard {...v} />)}
         </div>
       </div>

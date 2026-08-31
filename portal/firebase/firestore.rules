@@ -53,6 +53,22 @@ service cloud.firestore {
     }
     function versionCreacionValida() { return request.resource.data._version == 1; }
 
+    /**
+     * La calificación de huéspedes NO la escribe nadie desde el cliente — tampoco el staff (§281).
+     *
+     * 🎯 Esta es la regla que sostiene todo el diseño. Sin ella, `resenas: {promedio: 5, n: 99}` es
+     * un campo más que un editor puede teclear en el panel, y volveríamos exactamente al problema
+     * que la sección de «mejor valoradas» tenía: una nota que se pone sola. El promedio solo puede
+     * aparecer como resultado de una suma hecha en el servidor, sobre reseñas que existen.
+     *
+     * En CREATE se prohíbe el campo entero; en UPDATE se exige que no CAMBIE, que es distinto de
+     * prohibirlo: una propiedad que ya tiene agregado se sigue pudiendo editar en todo lo demás.
+     */
+    function noTocaResenas() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(['resenas']);
+    }
+    function sinResenasAlCrear() { return !request.resource.data.keys().hasAny(['resenas']); }
+
     /** Estados que salen en el catálogo público. Espeja `ESTADOS_PUBLICADOS` de `domain/catalogo.ts`. */
     function estadoPublicado() {
       return resource.data.estado in ['disponible', 'reservado', 'cerrado'];
@@ -93,10 +109,12 @@ service cloud.firestore {
       allow get: if esStaff() || estadoPublicado();
       // LIST denegado al público: la SERP se sirve del índice denormalizado, no de queries (free-tier).
       allow list: if esStaff();
-      allow create: if (esSuperAdmin() || (esEditorOMas() && versionCreacionValida())) && gateAlojamiento();
+      allow create: if (esSuperAdmin() || (esEditorOMas() && versionCreacionValida()))
+                     && gateAlojamiento() && sinResenasAlCrear();
       // El gate también en UPDATE: pasar un inmueble a `alojamiento` después de crearlo tendría
       // exactamente el mismo efecto que crearlo así, y sería la puerta de atrás obvia.
-      allow update: if (esSuperAdmin() || (esEditorOMas() && versionValida())) && gateAlojamiento();
+      allow update: if (esSuperAdmin() || (esEditorOMas() && versionValida()))
+                     && gateAlojamiento() && noTocaResenas();
       allow delete: if esSuperAdmin();
 
       // Historial de cambios — INMUTABLE, y desde §130 también SERVER-ONLY: `create: if esEditorOMas()`

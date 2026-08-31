@@ -16,28 +16,23 @@
  */
 import { urlMedia } from '../lib/media';
 import { pesos } from '../lib/domain/dinero';
+import type { CatalogoResumen } from '../lib/domain/catalogo';
 // El tipo de operación y la etiqueta del badge tienen DUEÑO en el dominio; aquí había copias a mano
 // (§277). Las cazó `verify:simbolos` al exportarlas: por separado las dos eran legítimas, y por eso
 // no las veía ningún otro gate.
 import { etiquetaBadge } from '../lib/domain/ficha';
 import type { Operacion } from '../lib/domain/shared';
 
-export interface CatalogoItem {
-  id: string;
-  slug: string;
-  titulo: string;
-  operacion: Operacion;
-  tipo: string;
-  precio: number;
-  sector: string;
-  coords: { lat: number; lng: number } | null;
-  hab?: number;
-  ban?: number;
-  area?: number;
-  thumb: string;
-  badges?: string[];
-  pub: string;
-}
+/**
+ * Lo que sirve `api/catalogo/[operacion].json`. **NO es un tipo nuevo**: es exactamente el
+ * `CatalogoResumen` del dominio, que es quien construye ese JSON.
+ *
+ * 🔴 Aquí había una copia A MANO de esa interfaz. Se mantuvieron iguales hasta que el dominio ganó
+ * un campo (la calificación, §281) y la copia no — y lo cazó el COMPILADOR, no una revisión. Es el
+ * gemelo de §271 con otro disfraz: dos declaraciones del mismo concepto, cada una correcta por su
+ * cuenta, y ningún error hasta que las comparas. Ahora hay un dueño y esto es un alias.
+ */
+export type CatalogoItem = CatalogoResumen;
 
 export const FUENTE = (import.meta.env.PUBLIC_CATALOGO_SOURCE as string | undefined) ?? 'demo';
 /** Override de la URL del JSON (pruebas con fixture; en prod = la ruta del Worker). */

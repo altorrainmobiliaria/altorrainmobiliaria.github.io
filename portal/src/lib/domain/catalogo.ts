@@ -5,6 +5,7 @@
 // client-side + pins del mapa (TODO-30) + "similares" de la ficha. Solo-lectura pública.
 
 import { OPERACIONES } from './shared';
+import type { AgregadoResenas } from './resenas';
 import type { ISODate, COP, Operacion, TipoInmueble, EstadoPropiedad } from './shared';
 import { portadaDe, motivoLegalNoPublicable } from './propiedades';
 import type { MotivoLegal, Propiedad } from './propiedades';
@@ -48,6 +49,12 @@ export interface CatalogoResumen {
   thumb: string; // key R2 del thumb (<150KB); el front compone la URL base (NO hardcodear dominio)
   badges?: string[]; // máx 2, opcional
   pub: ISODate; // updatedAt (orden 'recientes' + desempate similares)
+  /**
+   * Calificación agregada (§281) — viaja al índice porque «mejor valoradas» es una sección de la
+   * PORTADA, y abrir una ficha por tarjeta para leer una nota sería pagar el free-tier por adorno.
+   * Ausente = esta propiedad no tiene reseñas suficientes; NO es un cero.
+   */
+  resenas?: AgregadoResenas;
 }
 
 /**

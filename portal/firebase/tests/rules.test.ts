@@ -17,6 +17,7 @@ import {
   orderBy,
   query,
   setDoc,
+  updateDoc,
   where,
 } from 'firebase/firestore';
 
@@ -76,6 +77,42 @@ describe('propiedades — get whitelisteado por estado; list/write denegados', (
   });
   it('anónimo WRITE → DENEGADO (escrituras = Cloud Functions)', async () => {
     await assertFails(setDoc(doc(anon(), 'propiedades/INM-3'), { estado: 'disponible' }));
+  });
+});
+
+describe('propiedades · calificación de huéspedes — SERVER-ONLY, tampoco el staff (§281)', () => {
+  beforeEach(seed);
+
+  // 🎯 Esta es la prueba que sostiene el diseño entero. Si un editor puede escribir `resenas`, la
+  // nota vuelve a ser un número que alguien teclea, que es justo lo que Daniel señaló al decidirlo.
+  it('🔴 editor NO puede crear una propiedad con calificación puesta', async () => {
+    await assertFails(
+      setDoc(doc(editor(), 'propiedades/INM-9'), {
+        _version: 1, estado: 'borrador', titulo: 'Con nota',
+        resenas: { promedio: 5, n: 99, actualizado: '2026-08-31T00:00:00Z' },
+      }),
+    );
+  });
+
+  it('🔴 editor NO puede AÑADIR la calificación a una propiedad existente', async () => {
+    await assertFails(
+      updateDoc(doc(editor(), 'propiedades/INM-1'), {
+        _version: 2,
+        resenas: { promedio: 4.9, n: 40, actualizado: '2026-08-31T00:00:00Z' },
+      }),
+    );
+  });
+
+  it('un update legítimo SIGUE pasando: la guarda nueva no cierra la puerta entera', async () => {
+    // 🎯 El control POSITIVO, que es el que distingue «la regla deniega lo correcto» de «la regla
+    // deniega todo». Sin él, haber roto el update entero se vería igual de verde que haberlo hecho
+    // bien, y las dos denegaciones de arriba pasarían exactamente igual.
+    //
+    // ⚠️ Va con super_admin y no con editor por una razón que NO es de esta regla: el documento
+    // sembrado no trae `_version`, y `versionValida()` lo LEE — en las Rules, leer un campo ausente
+    // tumba la condición entera (lo advierte `gateAlojamiento()` unas líneas más arriba). Así que un
+    // editor no puede actualizar los documentos de esta siembra, y eso es anterior a §281.
+    await assertSucceeds(updateDoc(doc(superAdmin(), 'propiedades/INM-1'), { titulo: 'Otro título' }));
   });
 });
 

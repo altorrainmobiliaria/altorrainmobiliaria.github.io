@@ -2,6 +2,7 @@ import type {
   ISODate, COP, Versioned, Auditable, Operacion, Vertical, TipoInmueble, EstadoPropiedad, Geo,
   SituacionPH,
 } from './shared';
+import type { AgregadoResenas } from './resenas';
 
 /** Precio con DOBLE-PRECIO en arriendo (canon + administración) — diferenciador de transparencia (R1). */
 export interface Precio {
@@ -86,6 +87,14 @@ export interface Propiedad extends Versioned, Auditable {
   imagenPortada?: string;
   featured?: boolean;
   prioridad?: number;
+  /**
+   * Calificación de huéspedes (§281). **La escribe el SERVIDOR** recalculando desde las reseñas;
+   * las Rules niegan la escritura desde el cliente. No existe un campo «nota» que alguien pueda
+   * teclear, y esa ausencia es el diseño: un número que solo aparece como resultado de una suma no
+   * se puede inventar sin inventar también los sumandos. Qué se puede ENSEÑAR lo decide
+   * `notaVisible()` — por debajo de 3 reseñas, nada.
+   */
+  resenas?: AgregadoResenas;
   verificadoAltorra?: boolean; // sello "Verificado por ALTORRA" (op.13)
   verificadoEn?: ISODate;
   ultimaConfirmacion?: ISODate; // frescura: re-confirmar 30-60d → inactivo (nunca borrar)

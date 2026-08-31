@@ -26,6 +26,7 @@
 import { construirCard, FUENTE, URL_OVERRIDE, hrefFicha, precioCard, sufijoCompacto, texto, type CatalogoItem } from './catalogo-card';
 import { etiquetaBadge } from '../lib/domain/ficha';
 import { etiquetaTipo, tipoCanonico } from '../lib/domain/shared';
+import { notaVisible, textoNota } from '../lib/domain/resenas';
 import { haceCuanto } from '../lib/domain/tiempo';
 import { urlMedia } from '../lib/media';
 
@@ -43,12 +44,21 @@ interface Seccion {
   tpl: string;
   /** Tope: estas secciones son un ESCAPARATE, no un listado — el listado es el SERP. */
   cuantas: number;
+  /** Por qué se ordena. `fecha` (lo último que entró) salvo «valoradas», que se ordena por NOTA. */
+  orden?: 'fecha' | 'nota';
   vacio: string;
   pintar: Pintor;
 }
 
 /** Los más recientes primero. `pub` es una fecha ISO, así que ordena bien como texto. */
 const porFecha = (a: CatalogoItem, b: CatalogoItem): number => (b.pub ?? '').localeCompare(a.pub ?? '');
+
+/**
+ * De mayor nota a menor. Lo que NO tiene nota enseñable va al final y `pintarRank` lo descarta —
+ * ordenar por un promedio ausente pondría lo desconocido por delante de lo bueno.
+ */
+const porNota = (a: CatalogoItem, b: CatalogoItem): number =>
+  (notaVisible(b.resenas)?.promedio ?? -1) - (notaVisible(a.resenas)?.promedio ?? -1);
 
 const fechaDe = (it: CatalogoItem): Date | null => {
   const t = Date.parse(it.pub ?? '');
@@ -166,11 +176,36 @@ const pintarTile: Pintor = (tpl, it, i) => {
   return frag;
 };
 
+/**
+ * «Mejor valoradas» — la única sección que puede quedarse vacía teniendo inventario (§281).
+ *
+ * 🎯 Y eso es correcto: pinta solo lo que tiene nota QUE SE PUEDA ENSEÑAR, y `notaVisible()` exige
+ * un mínimo de reseñas. Con inventario recién publicado no habrá ninguna, y la sección lo dirá — que
+ * es exactamente lo contrario de lo que hacía antes, cuando enseñaba cuatro notas inventadas.
+ *
+ * El orden es por NOTA, no por fecha: es lo único que justifica que la sección se llame así.
+ */
+const pintarRank: Pintor = (tpl, it, i) => {
+  const nota = notaVisible(it.resenas);
+  if (!nota) return null; // sin nota enseñable no entra: la sección es de valoradas, no de todas
+  const frag = tpl.content.cloneNode(true) as DocumentFragment;
+  if (!frag.querySelector('.alt-rankcard')) return null;
+  media(frag, it, '.alt-rankcard__media img');
+  texto(frag, '.alt-rankcard__rank', String(i + 1).padStart(2, '0'));
+  texto(frag, '.alt-rankcard__zona', it.sector || null);
+  texto(frag, '.alt-rankcard__t', it.titulo);
+  texto(frag, '.alt-rankcard__price', precioConSufijo(it));
+  // La nota y su recuento van JUNTOS, en un solo texto: es la regla 3 de §281 hecha marcado.
+  texto(frag, '.alt-rankcard__rate', textoNota(nota));
+  return frag;
+};
+
 const SECCIONES: readonly Seccion[] = [
   { set: 'venta', ruta: 'comprar', tpl: '#tpl-home-lucard', cuantas: 5, vacio: 'Todavía no hay propiedades en venta publicadas.', pintar: pintarLu },
   { set: 'destacadas', ruta: 'comprar', tpl: '#tpl-home-pcard', cuantas: 2, vacio: 'Todavía no hay destacadas publicadas.', pintar: construirCard },
   { set: 'arriendo', ruta: 'arrendar', tpl: '#tpl-home-pcard', cuantas: 3, vacio: 'Todavía no hay inmuebles en arriendo publicados.', pintar: construirCard },
   { set: 'estancias', ruta: 'estancias', tpl: '#tpl-home-staycard', cuantas: 5, vacio: 'Todavía no hay alojamientos por días publicados.', pintar: pintarStay },
+  { set: 'valoradas', ruta: 'estancias', tpl: '#tpl-home-rankcard', cuantas: 4, orden: 'nota', vacio: 'Aún no hay propiedades con reseñas suficientes para valorarlas.', pintar: pintarRank },
   { set: 'recientes', ruta: 'comprar', tpl: '#tpl-home-tile', cuantas: RANURAS.length, vacio: 'Estamos preparando la publicación del inventario. Escríbenos por WhatsApp y te contamos qué tenemos disponible hoy.', pintar: pintarTile },
 ];
 
@@ -223,7 +258,8 @@ export async function bootHomeCatalogo(): Promise<void> {
 
     const frag = document.createDocumentFragment();
     let fallidas = 0;
-    [...items].sort(porFecha).slice(0, seccion.cuantas).forEach((it, i) => {
+    const ordenados = seccion.orden === 'nota' ? [...items].sort(porNota) : [...items].sort(porFecha);
+    ordenados.slice(0, seccion.cuantas).forEach((it, i) => {
       try {
         const card = seccion.pintar(tpl, it, i);
         if (card) frag.appendChild(card);
