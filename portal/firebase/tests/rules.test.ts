@@ -40,6 +40,8 @@ async function seed() {
     const db = ctx.firestore();
     await setDoc(doc(db, 'propiedades/INM-1'), { estado: 'disponible', titulo: 'Pub' });
     await setDoc(doc(db, 'propiedades/INM-2'), { estado: 'borrador', titulo: 'Oculta' });
+    await setDoc(doc(db, 'proyectos/PRY-1'), { estado: 'disponible', nombre: 'Torre Pub', licenciaConstruccion: 'LC-1' });
+    await setDoc(doc(db, 'proyectos/PRY-2'), { estado: 'borrador', nombre: 'Torre Oculta' });
     await setDoc(doc(db, 'config/general'), { razonSocial: 'ALTORRA COMPANY S.A.S.' });
     await setDoc(doc(db, 'config/gestion'), { moraDias: [5, 10] });
     await setDoc(doc(db, 'disponibilidad/INM-1_2026-07-15'), { estado: 'libre' });
@@ -113,6 +115,56 @@ describe('propiedades · calificación de huéspedes — SERVER-ONLY, tampoco el
     // tumba la condición entera (lo advierte `gateAlojamiento()` unas líneas más arriba). Así que un
     // editor no puede actualizar los documentos de esta siembra, y eso es anterior a §281.
     await assertSucceeds(updateDoc(doc(superAdmin(), 'propiedades/INM-1'), { titulo: 'Otro título' }));
+  });
+});
+
+describe('proyectos (obra nueva) — publicado se ve, borrador no, y sin LICENCIA no se publica (§286)', () => {
+  beforeEach(seed);
+
+  it('anónimo GET de proyecto publicado → OK', async () => {
+    await assertSucceeds(getDoc(doc(anon(), 'proyectos/PRY-1')));
+  });
+
+  it('anónimo GET de BORRADOR → DENEGADO (lleva precios y notas internas)', async () => {
+    await assertFails(getDoc(doc(anon(), 'proyectos/PRY-2')));
+  });
+
+  it('anónimo LIST → DENEGADO (los listados salen del índice, no de queries)', async () => {
+    await assertFails(getDocs(collection(anon(), 'proyectos')));
+  });
+
+  it('anónimo WRITE → DENEGADO', async () => {
+    await assertFails(setDoc(doc(anon(), 'proyectos/PRY-9'), { estado: 'disponible' }));
+  });
+
+  // 🎯 El gate que importa: la licencia es lo que hace comprobable que el desarrollo existe, y §270
+  // encontró SEIS proyectos inventados servidos en la portada. El dominio ya lo exige; esto lo hace
+  // cumplir SIEMPRE, también para quien escriba por otro camino.
+  it('🔴 editor NO puede crear un proyecto DISPONIBLE sin licencia de construcción', async () => {
+    await assertFails(
+      setDoc(doc(editor(), 'proyectos/PRY-9'), { _version: 1, estado: 'disponible', nombre: 'Fantasma' }),
+    );
+  });
+
+  it('editor SÍ puede crearlo como BORRADOR sin licencia — el gate es para publicar', async () => {
+    await assertSucceeds(
+      setDoc(doc(editor(), 'proyectos/PRY-9'), { _version: 1, estado: 'borrador', nombre: 'En captura' }),
+    );
+  });
+
+  it('editor SÍ puede crearlo disponible CON licencia', async () => {
+    await assertSucceeds(
+      setDoc(doc(editor(), 'proyectos/PRY-9'), {
+        _version: 1, estado: 'disponible', nombre: 'Torre Real', licenciaConstruccion: 'LC-2026-0009',
+      }),
+    );
+  });
+
+  // La puerta de atrás obvia: crearlo como borrador y luego pasarlo a disponible.
+  it('🔴 y NO puede PUBLICARLO después quitándole/omitiendo la licencia', async () => {
+    await assertFails(
+      updateDoc(doc(superAdmin(), 'proyectos/PRY-2'), { estado: 'disponible' }),
+    );
   });
 });
 

@@ -69,6 +69,29 @@ service cloud.firestore {
     }
     function sinResenasAlCrear() { return !request.resource.data.keys().hasAny(['resenas']); }
 
+    /**
+     * 🧾 UN PROYECTO PUBLICADO EXIGE SU LICENCIA DE CONSTRUCCIÓN (§286).
+     *
+     * El dominio ya lo dice —`problemasParaPublicarProyecto` devuelve 'sin-licencia'— pero el dominio
+     * solo corre en la aplicación: quien escriba por otro camino se lo salta. Aquí se cumple SIEMPRE.
+     * Es el mismo criterio dos veces a propósito, como el gate del RNT (§234): la licencia es lo que
+     * hace comprobable que el desarrollo existe, y §270 encontró SEIS proyectos inventados servidos.
+     *
+     * ⚠️ Se lee con `.get(campo, defecto)` y no directo: en las Rules, leer un campo AUSENTE tumba la
+     * condición entera, así que la versión directa denegaría cualquier proyecto sin `estado` — la
+     * misma trampa que `gateAlojamiento()` documenta unas líneas más arriba.
+     */
+    function gateLicencia() {
+      return !(request.resource.data.get('estado', '') in ['disponible', 'agotado'])
+          || (request.resource.data.get('licenciaConstruccion', '') is string
+              && request.resource.data.get('licenciaConstruccion', '').size() > 0);
+    }
+
+    /** Estados de PROYECTO que salen al público. Espeja `ESTADOS_PUBLICADOS` de `domain/proyectos.ts`. */
+    function proyectoPublicado() {
+      return resource.data.estado in ['disponible', 'agotado'];
+    }
+
     /** Estados que salen en el catálogo público. Espeja `ESTADOS_PUBLICADOS` de `domain/catalogo.ts`. */
     function estadoPublicado() {
       return resource.data.estado in ['disponible', 'reservado', 'cerrado'];
@@ -126,6 +149,26 @@ service cloud.firestore {
         allow update: if false;
         allow delete: if esSuperAdmin();
       }
+    }
+
+    /*
+     * ── PROYECTOS DE OBRA NUEVA (§286) ────────────────────────────────────────────────────────
+     *
+     * Mismo criterio que `propiedades`, y por las mismas razones: GET público SOLO de lo publicado
+     * —un borrador lleva precios y notas internas—, LIST denegado al público porque los listados se
+     * sirven del índice denormalizado y no de queries (free-tier), y escritura de staff con la
+     * disciplina de versión.
+     *
+     * Lo que añade: `gateLicencia()`, en CREATE y en UPDATE. En update también, porque pasar un
+     * proyecto a «disponible» después de crearlo tendría exactamente el mismo efecto que crearlo
+     * así — es la puerta de atrás obvia, y es la misma que `gateAlojamiento` cierra para el RNT.
+     */
+    match /proyectos/{proyId} {
+      allow get: if esStaff() || proyectoPublicado();
+      allow list: if esStaff();
+      allow create: if (esSuperAdmin() || (esEditorOMas() && versionCreacionValida())) && gateLicencia();
+      allow update: if (esSuperAdmin() || (esEditorOMas() && versionValida())) && gateLicencia();
+      allow delete: if esSuperAdmin();
     }
 
     // ── ÍNDICE DE CATÁLOGO (portal, §54) ────────────────────────────────────────────────────────
