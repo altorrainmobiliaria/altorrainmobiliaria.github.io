@@ -159,11 +159,18 @@ const DEUDA_DECLARADA = [
   // — Datos de MUESTRA del catálogo vacío. No son afirmaciones fabricadas a mano: son el relleno
   //   que el paso 5.3 del cutover retira cuando entre el inventario real (§213-§214, callejón «los
   //   datos del portal son DEMO»). Se congelan aquí para que el gate pueda existir antes del cutover.
-  ['128 propiedades', 'home: conteo de muestra; el catálogo está vacío — sale en el cutover'],
-  ['312 inmuebles', 'home (mapa): conteo de muestra — sale en el cutover'],
+  // ⚠️ El motivo de estas tres CAMBIÓ (§278). Decía «sale en el cutover», que es una promesa que
+  // alguien tiene que cumplir; §276 mostró lo que valen. Ahora cuelgan de `HAY_CATALOGO_REAL`, así
+  // que salen SOLAS en cualquier build de producción. Siguen declaradas porque el build de STAGING
+  // —el que este gate mira a diario— las sigue sirviendo a propósito: son el diseño de muestra.
+  ['128 propiedades', 'home: conteo de muestra. En producción NO se sirve (cuelga del interruptor, §278)'],
+  ['312 inmuebles', 'home (mapa): conteo de muestra. En producción NO se sirve (§278)'],
   // El tercero de la familia, y el que el patrón no veía por estar escrito al revés (§263).
-  ['arriendos 83', 'home: conteo de muestra del enlace a /arrendar — sale en el cutover, con sus dos hermanos'],
-  ['48 Inmuebles', '/gestion: panel tras autenticación con datos de muestra — sale en el cutover'],
+  ['arriendos 83', 'home: conteo de muestra del enlace a /arrendar. En producción NO se sirve (§278)'],
+  // 🗑️ RETIRADA: «48 Inmuebles» del panel. No se «cerró» —eso afirmaría que hubo algo que arreglar
+  //    hoy— sino que dejó de existir: §275 vació TODOS los KPI del build a «—», y medido en el HTML
+  //    servido los seis valores son «—». Una deuda declarada que ya no corresponde a nada envejece
+  //    peor que la propia deuda: da por vigilado algo que nadie vigila.
 ];
 const DEUDA = new Map(DEUDA_DECLARADA);
 

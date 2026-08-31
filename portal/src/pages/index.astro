@@ -535,9 +535,12 @@ const maneras = [
         <div class="alt-rail">
           {HAY_CATALOGO_REAL && <p class="home-vacio">Estamos preparando la publicación del inventario en venta. Escríbenos por WhatsApp y te contamos qué tenemos hoy.</p>}
           {(HAY_CATALOGO_REAL ? [] : venta).map((p) => <LuCard {...p} />)}
+          {/* El «128» era un conteo de MUESTRA cuya deuda declarada decía «sale en el cutover»,
+              o sea que dependía de que alguien se acordara. §276 enseñó lo que valen esas promesas:
+              ahora sale solo, colgado del mismo interruptor que el resto del inventario (§278). */}
           <a class="home-railcta" href="/comprar">
-            <span class="home-railcta__n">128</span>
-            <span class="home-railcta__d">propiedades en venta en toda la ciudad</span>
+            {!HAY_CATALOGO_REAL && <span class="home-railcta__n">128</span>}
+            <span class="home-railcta__d">Ver las propiedades en venta en toda la ciudad</span>
             <span class="alt-btn alt-btn--on-ink">Ver todas
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </span>
@@ -554,7 +557,7 @@ const maneras = [
             <p class="alt-eyebrow">Selección ALTORRA</p>
             <h2>Destacadas esta semana</h2>
           </div>
-          <a class="home-seelink" href="/comprar">Ver todas <b>128</b>
+          <a class="home-seelink" href="/comprar">Ver todas {!HAY_CATALOGO_REAL && <b>128</b>}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
@@ -582,7 +585,7 @@ const maneras = [
             <p class="alt-eyebrow">En arriendo</p>
             <h2>Arriendos, con o sin administración.</h2>
           </div>
-          <a class="home-seelink" href="/arrendar">Ver arriendos <b>83</b>
+          <a class="home-seelink" href="/arrendar">Ver arriendos {!HAY_CATALOGO_REAL && <b>83</b>}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
@@ -723,7 +726,9 @@ const maneras = [
               <button class="home-oppill" type="button" data-op="estancias" aria-pressed="false">Corta estancia</button>
             </div>
             <div class="home-cerca__foot">
-              <p class="home-cerca__count"><b>312</b> inmuebles en 3&nbsp;km</p>
+              {/* Conteo de muestra del mapa; mismo caso que el «128» (§278). Sin él, la frase
+                  tiene que decir otra cosa: «inmuebles en 3 km» a secas no afirma cuántos. */}
+              <p class="home-cerca__count">{HAY_CATALOGO_REAL ? 'Inmuebles a menos de 3\u00a0km' : null}{!HAY_CATALOGO_REAL && (<><b>312</b> inmuebles en 3&nbsp;km</>)}</p>
               <a class="home-cerca__go" href="/comprar" data-cerca-go>Buscar en el mapa
                 <span class="home-cerca__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
               </a>
