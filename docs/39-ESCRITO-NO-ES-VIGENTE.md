@@ -73,3 +73,10 @@ sistema, no lo que dice su texto. Con la `apiKey` pública (lo es por diseño), 
 permissions» · PERMISSION_DENIED* y Storage *«Permission denied.»*; una clave restringida o una API apagada
 dan otro texto, y una base **sin reglas desplegadas devuelve 200 con documentos**. 🎯 Sirve para re-sellar un
 `verificado-vivo` que el gate marcó **en vez de re-sellarlo a ciegas**, que es el vicio que ese marcador caza.
+
+---
+
+### L-69 — 🎭 Retirar un dato de UNA pantalla y dejarlo en otra no es retirarlo: es ESCONDERLO — y el comentario que certifica la retirada lo vuelve invisible *(§270)*
+**Disparador**: `index.astro:141` lleva escrito *«La 3ª card ("Penthouse frente al mar", $2.100.000.000) estaba INVENTADA: retirada (§32.23)»*. La card seguía **viva** en `[operacion].astro`, servida en `/comprar`, con su precio y su pin de mapa. Se retiró de la home y sobrevivió en el SERP.
+**Por qué sobrevive tanto**: el comentario no solo NO ayuda — **estorba**. Quien audita ve «retirada (§32.23)», lo da por cerrado y no vuelve a buscar; el `grep` que habría encontrado la copia no se llega a escribir. *Una decisión documentada como cumplida deja de auditarse, y ahí es donde una copia puede vivir años.*
+**Reglas**: (1) 🎯 **Retirar un dato es un `grep` GLOBAL, no una edición**: antes de escribir «retirada», busca el valor —el precio, el nombre, el identificador— en TODO el fuente y en el HTML **construido**. Si aparece dos veces, la decisión está a medias. (2) **El comentario se escribe DESPUÉS de que el grep dé cero**, nunca antes: al revés se convierte en un sello que nadie vuelve a levantar. (3) ⚠️ **Sospecha de las familias que se duplican por diseño**: una card de demo vive en la home Y en el listado; una regla vive en el repo Y en producción; un texto vive en el fuente Y en el build. (4) Y si el dato es una AFIRMACIÓN (un precio, un nombre de proyecto, una dirección), su borrado merece un gate — el mismo mecanismo de «declárala con su fuente» que ya usan las cifras (§270.2).

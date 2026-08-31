@@ -66,16 +66,16 @@
 > 🔻 **El panel LEGACY no tiene red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates.
 
-> 🎯 **BARRIDO DE PRODUCTO: AGOTADO por mi parte** (28-ago). 61 hallazgos, crudo en la bóveda
-> (`2026-08-28-barrido-producto-*.json`). **32 arreglados** → §263 (12) · §264 (5, móvil + zoom iOS) ·
-> §265 (4: el hero mandaba `zona`/`tipo` y nadie los leía; «Penthouse» no existe en el dominio; 20
-> enlaces, 2 destinos) · §266 (6: saludaba a una persona inventada; $186M y $1.400M vivos en los
-> roles ocultos; el día uno medio panel muerto) · §267 (5: el Journal afirmaba de más). **1 RETIRADO**
-> por premisa falsa (§267.5). Lo que queda NO lo puedo cerrar yo:
-> ⚠️ el header que taparía el buscador de /comprar al subir — NO medible en el panel integrado
-> ([[L-26]]): pide Chrome real. ⛔ filtros del SERP (TODO-22) · pipeline y feed del panel (mockup).
-> 🅱️ **Tres decisiones SUYAS (§265.8)**: ¿fuera «Penthouse»? ¿lista pública
-> de tipos: 6 (hero) u 11 (`/alertas`)? ¿«nuevo/usado» entra al índice o sale del menú?
+> 🎯 **AQUÍ VOY (31-ago) — obra nueva.** Daniel abrió la vertical de PROYECTOS (§270), que el
+> mega-plan **no contempla**: sus 4 líneas son venta, administración, arriendo largo y corta
+> estancia. Diseño ya decidido y verificado contra los líderes; **no cabe HOY** por una razón
+> medida: el índice tiene `precio: COP` (un entero) y un proyecto tiene RANGO. ⇒ al plan, no al backlog.
+> 🚨 De paso: la portada servía **6 proyectos INVENTADOS** con dirección y «Preventa», y el
+> penthouse de $2.100M que §32.23 daba por retirado seguía vivo en el SERP. Arreglado + gate nuevo.
+> 📦 **Barrido de producto: AGOTADO** (61 hallazgos, 32 arreglados → §263-§267, 1 retirado). Queda
+> lo que no cierro yo: ⚠️ el header sobre el buscador de /comprar (NO medible aquí, [[L-26]]) ·
+> ⛔ filtros del SERP (TODO-22) · pipeline y feed del panel (mockup).
+> ✅ Las tres decisiones de §265.8 **CONTESTADAS** por Daniel el 31-ago e implementadas (§270). ¿«nuevo/usado» entra al índice o sale del menú?
 
 > 🔬 **Auditoría #17 (§268)** — parcial: sondas 3/4/7 piden subagentes. Las 2 abiertas de la #16
 > re-verificadas: **premisas siguen ciertas**. ⚠️ N17-04 abierto → **TODO-50**: el boot chocó CUATRO

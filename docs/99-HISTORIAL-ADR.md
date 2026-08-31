@@ -12157,3 +12157,116 @@ mira estos tres nodos.
 
 
 
+
+## 270. ADR-270 — La portada publicaba seis proyectos inventados, y lo encontró un estudio que fui a hacer por otra cosa
+
+Deliberación: workflow `taxonomia-inmuebles-altorra` (18 agentes, 14 completos, 4 jueces caídos por
+error de API) → crudo en la bóveda. Daniel decidió tres cosas y me pidió resolver la taxonomía
+«como lo hacen los grandes portales». Lo que salió primero no fue la taxonomía.
+
+### 270.1 — El hallazgo: seis ofertas de obra nueva que no existen
+`index.astro` declaraba **MAREA, SERENA, CLAUSTRO 1620, ALTAMAR, BAHÍA NORTE y MURALLA LOFT**, con
+**dirección** («Cra 1 · Bocagrande», «Av. Santander · Marbella», «Calle del Curato · Centro»), dos con
+badge **«Preventa»**, cada uno enlazando a una ficha, bajo el titular **«Obra nueva firmada ALTORRA»**
+y el eyebrow «Visita nuestros proyectos». Verificado en el **HTML construido**, no en el fuente: los
+seis nombres se servían.
+
+🎯 **No es relleno de mockup como «Thomas Shelby»**: un nombre de proyecto + una dirección + un badge
+de preventa **es una oferta**, y afirma más que cualquier conteo — que ese desarrollo existe y que es
+nuestro. Y **«SERENA» roza el nombre de un desarrollo real de Cartagena**: además de publicidad
+engañosa (Ley 1480, arts. 29-30) y de romper la regla cero-demo ([[L-29]]), es riesgo de marca.
+
+Y en el mismo barrido: la card **«Penthouse frente al mar · $2.100.000.000»** que `index.astro:141`
+registra por escrito como *«INVENTADA: retirada (§32.23)»* **seguía viva en `[operacion].astro`**. Se
+retiró de la home y sobrevivió en el SERP. 🎯 *Un dato que se retira de UNA pantalla y no de las demás
+no está retirado: está escondido* — y encima con un comentario que certifica lo contrario.
+
+### 270.2 — Por qué ningún gate lo veía, y el gate nuevo
+`verify:claims` busca **cifras**: conteos de reseñas, notas medias, inventario. Un proyecto inventado
+**no lleva ninguna** — lleva un nombre y una dirección. El gate pasaba en verde sobre la afirmación
+más fuerte de la página porque no había un dígito que casar.
+
+Ahora también mira las fichas de obra nueva **servidas** (`.alt-projcard`) y exige que cada nombre
+esté declarado en `x-proyectosVerificados` del manifest, con su fuente — el mismo mecanismo que ya
+usaban las cifras: *no prohíbe publicar proyectos, obliga a decir de dónde salieron.* **Estrenado
+rompiéndolo**: re-inyecté una tarjeta «SERENA» en el HTML servido y el gate la caza por nombre.
+
+### 270.3 — Mi primer arreglo estuvo mal, y lo cazó otro gate
+Escondí la sección con una guarda `{proyectos.length > 0 && …}`. `verify:enlaces` lo cazó en el acto:
+**80 enlaces de 40 páginas** —la cabecera y el pie de TODO el sitio— aterrizan en `#proyectos`. Un
+ancla sin destino no da error: deja al visitante donde estaba, viendo una web que no responde.
+
+🎯 **Cuando el contenido de una sección desaparece, lo que hay que revisar no es la sección: es quién
+la ENLAZA.** La sección se queda —el ancla tiene que aterrizar— y lo que cambia es qué dice vacía:
+que todavía no publicamos proyectos porque preferimos no anunciar ninguno antes de poder verificarlo,
+y una invitación a las constructoras. Que es a quien hay que hablarle: en Colombia **la obra nueva la
+publica la CONSTRUCTORA**, y Fincaraíz directamente **prohíbe a los particulares** publicar
+«nuevo/planos» (verificado).
+
+### 270.4 — La taxonomía: lo que decidieron los datos
+Contra los dos líderes del mercado colombiano, más los retadores, más cinco portales internacionales,
+más schema.org:
+
+**«Penthouse» NO es un tipo, y ninguno de los dos líderes lo trata como tal.** Fincaraíz lo modela
+como **el último valor del filtro «Piso»** —junto a «Primer piso», «2do al 5to»—, o sea **posición
+vertical en la torre**, no naturaleza del inmueble; Metrocuadrado no lo modela. Y **`schema.org/Penthouse`
+devuelve 404**: inventar ese `@type` sería markup que no significa nada para nadie. La señal honesta es
+`floorLevel`, propiedad documentada de `Accommodation` — y **el portal YA captura el piso** y lo está
+desperdiciando. Un juez añadió el argumento que zanja: *todo propietario de un último piso llama
+penthouse a su apartamento* — una etiqueta autodeclarada choca de frente con el sello «Verificado por
+ALTORRA». Por eso se ata al **piso**, que es verificable.
+
+⇒ Sale del selector y del megamenú. El alias `penthouse → apartamento` **se queda** para que una URL
+vieja no muera: *liberal en lo que recibes, estricto en lo que emites.* Vuelve como filtro el día que
+las fichas lleven su piso.
+
+**UNA sola lista pública.** Había dos escritas a mano —6 en el hero, 11 en `/alertas`— así que se
+podía pedir aviso de una bodega y no se podía buscar una. Ahora `TIPOS_PUBLICOS` deriva del dominio
+menos `otro`: ningún líder expone un «Otro» al público (es un cajón que devuelve cosas heterogéneas),
+pero **el alta del panel SÍ lo conserva**, que es donde sirve — quitárselo al operador lo obliga a
+inventarse un tipo cuando le llega una cabaña.
+
+### 270.5 — «Proyectos»: vertical propia, y por qué HOY no cabe
+Los cinco puntos en que coinciden los líderes no dejan incertidumbre de diseño: **navegación primaria**
+(peer de Venta y Arriendo, no submenú) · **la ficha AGRUPA tipologías** (nunca una unidad por ficha) ·
+**campos que un usado no tiene** (estado de obra, entrega, constructora, sala de ventas, cuota inicial,
+subsidio, % vendido) · **namespace de URL propio** (`/proyecto/…` vs `/inmueble/…`) · **e inyección en
+el listado general de venta con badge**, no escondidos en su silo.
+
+⛔ **Y no se construye hoy, por una razón medida y no por cautela**: nuestro índice tiene
+`precio: COP` —**un entero**— y `propiedadAResumen()` **omite** con motivo `sin-precio` lo que no lo
+traiga. Un proyecto tiene precio **en rango** («Desde… / Hasta…»). **No cabe en el índice actual.**
+
+La granularidad correcta cuando se construya es la de Metrocuadrado —**tipologías nombradas**, 3-6
+filas por proyecto— y no la de Fincaraíz (cada unidad real, 19 filas): con el índice pre-construido y
+la regla de cero datos inventados, «Desde $X» es honesto y un feed de disponibilidad por unidad no
+existe. El JSON-LD ya tiene patrón marcado como copiable en `41-MERCADO`: **un `Offer` por tipología**
+(La Haus), sin su bug de `undefined`.
+
+**«Compra nuevo / usado»** queda validado por el líder —Metrocuadrado lo pone como primer selector de
+su portada, con esas palabras— pero **como EJE DE FILTRO ortogonal, no como sección de menú**, y con
+«Ambos» por defecto: no obligan a elegir bando. Vuelve con la vertical.
+
+⚠️ **Esto abre una LÍNEA DE NEGOCIO que el mega-plan no contempla**: sus cuatro líneas son venta,
+administración, arriendo largo y corta estancia — «obra nueva» no aparece ni una vez. Va al plan, no
+al backlog.
+
+### 270.6 — Y un fallo de método mío
+Lancé 12 agentes **antes** de abrir `41-MERCADO`, el lóbulo que el propio router señala para esto
+(trigger 🔵). El cerebro ya tenía verificado desde julio, con 23 agentes: el vertical B2B de
+Fincaraíz, el `/proyecto/{slug}/{id}` de Metrocuadrado, los tres estados de obra como verticales SEO
+separadas, y el multi-Offer de La Haus marcado como copiable. 🎯 *El enrutamiento correcto era
+índice → lóbulo → y SOLO entonces agentes para el hueco real* —penthouse, schema y el refresco de
+siete semanas—, que sí valía. No es que el estudio sobrara: es que debió ser más pequeño y apuntado.
+
+### 270.7 — Verificación
+`npm run verify` completo en verde (salida 0): **1016 unitarias + 190 contra el emulador** + los 10
+gates. En el HTML construido: cero de los seis nombres, cero «Preventa», cero «Obra nueva firmada»,
+cero rastro del penthouse de $2.100M en `/comprar`, y la sección `#proyectos` **presente** para que
+los 80 enlaces aterricen.
+
+**INTACTOS**: el alta del panel conserva `otro` · el marcado aprobado del SERP · `tokens.css`.
+
+⚠️ **Del dueño**: tres cambios visibles (el hero ofrece 11 tipos en vez de 6 · «Penthouse» ya no
+aparece · la sección de proyectos cambia titular y texto porque el anterior afirmaba desarrollos
+firmados). Y la copia nueva de esa sección es mía.

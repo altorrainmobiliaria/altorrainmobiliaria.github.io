@@ -106,6 +106,7 @@
 | §267 | ⚖️ **El Journal afirmaba de más** — la ley que reparte el impuesto NO reparte la estampilla · prometía un cálculo de IPC inexistente, y la agenda anclaba en la firma · la llamada del propietario en los artículos de inquilinos. | 11851 |
 | §268 | 🔬 **Auditoría #17 (parcial): el paso que calla al gate y el que deja rastro no son el mismo** — la #16 puso los 2 campos que apagan el nudge y no los 2 que la sonda 0 necesita. | 11925 |
 | §269 | 🧱 **TODO-50: `30` estaba llena de CUERPOS, no de lecciones** — 16 entradas se llevaban 103 de 240 líneas · shard `39` (verbatim) la deja en 193 · pero «lleno» eran DOS problemas y el boot sigue. | 11991 |
+| §270 | 🚨 **La portada publicaba SEIS proyectos de obra nueva inventados** —con dirección y «Preventa»— y el gate no los veía porque busca CIFRAS · «Penthouse» no es tipo en ningún líder · una sola lista pública. | 12161 |
 
 ---
 

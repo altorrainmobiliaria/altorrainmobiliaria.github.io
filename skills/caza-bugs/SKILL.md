@@ -34,6 +34,28 @@ Recorre las **dos fronteras** + la carrera de carga:
 Los demás estados (lleno, idempotencia/re-montar) son secundarios; no diluyas el filo en una
 lista de QA genérica.
 
+## 2c. Checklist de lo que QUITAS (borrar también es tocar)
+
+El checklist del estado-cero mira lo que se crea. Un borrado tiene su propia frontera, y se salta con
+la misma facilidad porque «quitar» se siente seguro. Si el diff **retira** contenido, una sección, una
+opción o un dato:
+
+- **¿Quién lo ENLAZA?** Caso real: se ocultó una sección de la portada con una guarda de render y
+  resultó que **80 enlaces de 40 páginas** —la cabecera y el pie de todo el sitio— aterrizaban en su
+  ancla. Un ancla sin destino **no da error**: deja al visitante donde estaba, viendo una web que no
+  responde. 🎯 *Cuando el contenido de una sección desaparece, lo que hay que revisar no es la
+  sección: es quién la enlaza.* Busca el `#ancla`, la ruta y el `id` en TODO el sitio construido, no
+  solo en el fichero que editas.
+- **¿Existe una segunda copia?** Un dato de demo suele vivir en dos pantallas —la portada y el
+  listado—, una regla vive en el repo y en producción, un texto vive en el fuente y en el build.
+  Retirar es un `grep` GLOBAL del VALOR (el precio, el nombre, el identificador), no una edición.
+- **⚠️ Y escribe el comentario de «retirado» DESPUÉS de que el grep dé cero.** Al revés se convierte
+  en un sello que nadie vuelve a levantar: quien audita lee «retirada» y no busca la copia. Caso real:
+  una card inventada de $2.100.000.000 sobrevivió meses en un segundo fichero **debajo de un
+  comentario que certificaba su retirada**.
+- **¿Quedó huérfano lo que la acompañaba?** Flechas de carrusel sin tarjetas, encabezado sin cuerpo,
+  filtro sin opciones, botón sin destino. Lo que rodea al contenido borrado rara vez se borra solo.
+
 ## 2b. Checklist del DINERO (obligatorio si el subsistema mueve plata)
 Nace de un bug REAL (traslado duplicado de $5.6M, 2026-07-09): el camino vivo del dinero tiene
 fronteras propias que el checklist visual no cubre. Si el diff toca caja/pagos/stock/saldos:
