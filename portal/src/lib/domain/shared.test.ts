@@ -10,12 +10,18 @@
  * nueva sin puente, este test cae — que es exactamente lo que no pasó la primera vez.
  */
 import { describe, it, expect } from 'vitest';
-import { TIPOS_INMUEBLE, tipoCanonico, type TipoInmueble } from './shared';
+import { etiquetaTipo, etiquetaTipoPlural, TIPOS_INMUEBLE, TIPOS_PUBLICOS, tipoCanonico, type TipoInmueble } from './shared';
 
-/** Lo que el visitante VE hoy en la web pública, copiado de `index.astro` y `Header.astro`. */
+/**
+ * Lo que el visitante VE hoy, DERIVADO en vez de copiado (§270).
+ *
+ * Antes se transcribía a mano desde `index.astro` — y una lista copiada se desfasa el día que
+ * alguien toca el original, que es el defecto que este fichero nació para cazar. Ahora el selector
+ * del hero también deriva de `TIPOS_PUBLICOS`: la prueba mira LA MISMA fuente que la pantalla.
+ */
 const ETIQUETAS_DE_LA_WEB = [
-  'Apartamento', 'Casa', 'Penthouse', 'Local', 'Lote', 'Finca',
-  'Apartamentos', 'Casas', 'Penthouse', 'Locales', 'Lotes', 'Fincas',
+  ...TIPOS_PUBLICOS.map(etiquetaTipo),
+  ...TIPOS_PUBLICOS.map(etiquetaTipoPlural),
 ];
 
 describe('tipoCanonico — el puente entre lo que la web dice y lo que el sistema guarda', () => {
@@ -33,9 +39,27 @@ describe('tipoCanonico — el puente entre lo que la web dice y lo que el sistem
     for (const t of devueltos) expect(TIPOS_INMUEBLE).toContain(t);
   });
 
-  it('«Penthouse» no es un tipo del dominio: se ENSANCHA a apartamento, y eso queda escrito', () => {
+  it('«Penthouse» YA NO SE OFRECE, pero una URL vieja sigue resolviendo', () => {
+    // Los dos líderes del mercado coinciden en la negativa —ninguno lo hace tipo— y
+    // `schema.org/Penthouse` devuelve 404. Salió del selector (§270).
+    expect(ETIQUETAS_DE_LA_WEB).not.toContain('Penthouse');
     expect((TIPOS_INMUEBLE as readonly string[])).not.toContain('penthouse');
+    // Pero el puente lo sigue aceptando: liberal en lo que recibes, estricto en lo que emites.
     expect(tipoCanonico('Penthouse')).toBe('apartamento');
+  });
+
+  it('la lista PÚBLICA no ofrece «Otro», y es la misma para todo el sitio', () => {
+    // Ningún líder expone un «Otro» al público: es un cajón que devuelve cosas heterogéneas.
+    expect(TIPOS_PUBLICOS).not.toContain('otro');
+    expect(TIPOS_PUBLICOS).toHaveLength(TIPOS_INMUEBLE.length - 1);
+  });
+
+  it('TODO tipo tiene sus dos etiquetas, singular y plural', () => {
+    // Una tabla que no cubre un caso lo dice aquí; una regla lista, no.
+    for (const t of TIPOS_INMUEBLE) {
+      expect(etiquetaTipo(t)).toBeTruthy();
+      expect(etiquetaTipoPlural(t)).toBeTruthy();
+    }
   });
 
   it('no depende de tildes, mayúsculas ni espacios de sobra (llega por URL, y una URL viene sucia)', () => {

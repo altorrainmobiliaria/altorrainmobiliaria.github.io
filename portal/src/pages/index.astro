@@ -11,6 +11,8 @@ import LuCard from '../components/LuCard.astro';
 import StayCard from '../components/StayCard.astro';
 import RankCard from '../components/RankCard.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import type { ComponentProps } from 'astro/types';
+import { etiquetaTipo, TIPOS_PUBLICOS } from '../lib/domain/shared';
 import { SITE } from '../lib/config/site';
 import { getCollection } from 'astro:content';
 import {
@@ -22,14 +24,25 @@ import {
 
 // PROYECTOS — riel de pósters 3/4 (réplica fiel del mockup #proyectos, L1172-1247).
 // titleSize/titleTrack = ajuste óptico por longitud del nombre, tal cual el mockup.
-const proyectos = [
-  { img: '/assets/hero-invierte.webp', alt: 'Proyecto Marea, Bocagrande', name: 'MAREA', place: 'Cra 1 · Bocagrande', titleSize: 'clamp(25px, 2.3vw, 31px)', titleTrack: '0.14em', href: '/ficha' },
-  { img: '/assets/estate-golden.webp', alt: 'Proyecto Serena, Marbella', name: 'SERENA', place: 'Av. Santander · Marbella', badge: 'Preventa', titleSize: 'clamp(25px, 2.3vw, 31px)', titleTrack: '0.14em', href: '/ficha' },
-  { img: '/assets/villa-modern.webp', alt: 'Proyecto Claustro 1620, Centro Histórico', name: 'CLAUSTRO 1620', place: 'Calle del Curato · Centro', titleSize: 'clamp(21px, 2vw, 27px)', titleTrack: '0.12em', href: '/ficha' },
-  { img: '/assets/villa-pool.webp', alt: 'Proyecto Altamar, Castillogrande', name: 'ALTAMAR', place: 'Castillogrande', badge: 'Preventa', titleSize: 'clamp(25px, 2.3vw, 31px)', titleTrack: '0.14em', href: '/ficha' },
-  { img: '/assets/chalet-dusk.webp', alt: 'Proyecto Bahía Norte, La Boquilla', name: 'BAHÍA NORTE', place: 'La Boquilla', titleSize: 'clamp(23px, 2.1vw, 29px)', titleTrack: '0.14em', href: '/ficha' },
-  { img: '/assets/hero-estancia.webp', alt: 'Proyecto Muralla Loft, Getsemaní', name: 'MURALLA LOFT', place: 'Getsemaní', titleSize: 'clamp(22px, 2vw, 28px)', titleTrack: '0.13em', href: '/ficha' },
-];
+/*
+ * 🚨 SEIS PROYECTOS DE OBRA NUEVA, INVENTADOS Y PUBLICADOS (§270).
+ *
+ * Aquí vivían MAREA, SERENA, CLAUSTRO 1620, ALTAMAR, BAHÍA NORTE y MURALLA LOFT — con DIRECCIÓN
+ * («Cra 1 · Bocagrande», «Av. Santander · Marbella», «Calle del Curato · Centro»), dos con badge
+ * **«Preventa»**, y todos enlazando a una ficha. Se servían en la portada bajo el titular «Obra
+ * nueva firmada ALTORRA», que afirma que ALTORRA tiene desarrollos firmados. No tiene ninguno.
+ *
+ * 🎯 No es una card de relleno como «Thomas Shelby»: un nombre de proyecto + una dirección + un
+ * badge de preventa es una OFERTA. Y «SERENA» roza el nombre de un desarrollo que existe de
+ * verdad en Cartagena. Eso es publicidad engañosa (Ley 1480, arts. 29-30) y la regla cero-demo
+ * del proyecto ([[L-29]]) lo prohíbe explícitamente.
+ *
+ * La SECCIÓN se queda —el dueño acaba de abrir la vertical de obra nueva (§270)— pero no se
+ * pinta mientras esté vacía. El diseño sobrevive para el día que haya un proyecto firmado; lo
+ * que no sobrevive es inventarlo mientras tanto.
+ */
+const PROYECTOS_REALES: ComponentProps<typeof ProjectCard>[] = [];
+const proyectos = PROYECTOS_REALES;
 
 // SELECCIÓN ALTORRA — riel de `RankCard` (mockup #valoradas, L1081-1155). Se llamaba «Mejor
 // valoradas»: un ranking necesita notas, y las que había eran inventadas (§123). La selección
@@ -349,17 +362,19 @@ const maneras = [
               <label>
                 <span class="home-search__lbl">Tipo</span>
                 <select name="tipo">
-                  {/* El `value` es el tipo CANÓNICO del dominio; la etiqueta visible no cambia (§265).
-                      Sin él, el formulario mandaba «Penthouse» —un tipo que `TIPOS_INMUEBLE` no tiene— y
-                      «Casa» con mayúscula, que tampoco casa con `casa`. El puente y su test viven en
-                      `domain/shared.ts`; aquí solo se emite lo que el sistema sabe leer. */}
+                  {/*
+                    UNA SOLA LISTA, DERIVADA DEL DOMINIO (§270). Aquí había seis opciones escritas a mano
+                    mientras `/alertas` ofrecía once: se podía pedir aviso de una bodega y no se podía
+                    buscar una. Ahora las dos salen de `TIPOS_PUBLICOS`, así que no pueden separarse.
+
+                    Y sale «Penthouse», que no era un tipo sino una etiqueta: comprobado contra los dos
+                    líderes del mercado, NINGUNO lo trata como tipo —Fincaraíz lo modela como el último
+                    valor del filtro «Piso»— y `schema.org/Penthouse` devuelve 404. Vuelve el día que las
+                    fichas lleven su piso, que es un hecho verificable; una etiqueta que se pone solo el
+                    dueño del último piso no la puede sellar nadie (§270).
+                  */}
                   <option value="">Todos</option>
-                  <option value="apartamento">Apartamento</option>
-                  <option value="casa">Casa</option>
-                  <option value="apartamento">Penthouse</option>
-                  <option value="local">Local</option>
-                  <option value="lote">Lote</option>
-                  <option value="finca">Finca</option>
+                  {TIPOS_PUBLICOS.map((t) => <option value={t}>{etiquetaTipo(t)}</option>)}
                 </select>
               </label>
             </div>
@@ -775,16 +790,41 @@ const maneras = [
       </div>
     </section>
 
-    <!-- PROYECTOS — riel de pósters 3/4, encabezado CENTRADO (réplica fiel del mockup #proyectos) -->
+    {/*
+      ⚠️ ESTA SECCIÓN NO SE PUEDE ESCONDER, aunque esté vacía (§270). Mi primer arreglo la ocultó
+      con una guarda y `verify:enlaces` lo cazó en el acto: **80 enlaces de 40 páginas** —la
+      cabecera y el pie de todo el sitio— aterrizan en `#proyectos`. Un ancla sin destino no da
+      error: deja al visitante donde estaba, viendo una web que no responde.
+      🎯 Cuando el contenido de una sección desaparece, lo que hay que revisar no es la sección: es
+      quién la ENLAZA.
+    */}
     <section id="proyectos" class="home-band home-band--neu home-railsec home-proy">
       <div class="alt-container" data-railwrap>
         <div class="home-proy__head">
-          <p class="alt-eyebrow home-proy__eyebrow">Visita nuestros proyectos</p>
-          <h2 class="home-proy__h">Obra nueva firmada ALTORRA.</h2>
-          <p class="home-proy__p">Desarrollos exclusivos en las mejores zonas de Cartagena — desde lofts dentro de la muralla hasta torres frente al mar. Recórrelos antes que nadie.</p>
-          <a class="home-proy__cta" href="/comprar">Explorar todos</a>
+          {/*
+            La copia decía «Obra nueva firmada ALTORRA» y «Desarrollos exclusivos … recórrelos antes
+            que nadie», con seis proyectos inventados debajo. Afirmaba tener desarrollos firmados.
+            Ahora dice lo que es cierto, y le habla a quien de verdad abre esta vertical: en Colombia
+            la obra nueva la publica la CONSTRUCTORA, no el particular — verificado contra Fincaraíz,
+            que directamente prohíbe a los particulares publicar «nuevo/planos» (§270).
+          */}
+          <p class="alt-eyebrow home-proy__eyebrow">Obra nueva</p>
+          <h2 class="home-proy__h">Proyectos, con la misma verificación que todo lo demás.</h2>
+          {proyectos.length > 0 ? (
+            <>
+              <p class="home-proy__p">Desarrollos en Cartagena, cada uno con su constructora y su estado de obra a la vista.</p>
+              <a class="home-proy__cta" href="/comprar">Explorar todos</a>
+            </>
+          ) : (
+            <p class="home-proy__p home-proy__vacio">
+              Todavía no publicamos proyectos de obra nueva: preferimos no anunciar ninguno antes de
+              poder verificarlo. ¿Es usted constructora y quiere el suyo aquí?
+              <a href={`${SITE.contact.whatsappLink}?text=${encodeURIComponent('Hola ALTORRA, represento una constructora y quiero publicar un proyecto de obra nueva.')}`} rel="noopener">Escríbanos por WhatsApp</a>.
+            </p>
+          )}
         </div>
 
+        {proyectos.length > 0 && (
         <div class="home-proy__navrow">
           <button class="alt-rnav" type="button" data-rail="prev" aria-label="Ver proyectos anteriores">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -794,9 +834,13 @@ const maneras = [
           </button>
         </div>
 
+        )}
+
+        {proyectos.length > 0 && (
         <div class="alt-rail">
           {proyectos.map((p) => <ProjectCard {...p} />)}
         </div>
+        )}
       </div>
     </section>
 

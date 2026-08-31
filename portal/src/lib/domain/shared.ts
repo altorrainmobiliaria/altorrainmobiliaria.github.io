@@ -52,6 +52,53 @@ export const TIPOS_INMUEBLE = [
 export type TipoInmueble = (typeof TIPOS_INMUEBLE)[number];
 
 /**
+ * LA LISTA QUE VE EL VISITANTE — una sola, derivada, y sin `otro` (§270).
+ *
+ * 🔴 Había DOS listas escritas a mano: el buscador de la portada ofrecía seis tipos y `/alertas`
+ * once. Se podía pedir aviso de una bodega y no se podía buscar una. Y el hero ofrecía además
+ * «Penthouse», que no es un tipo — lo que hacía que esa opción no pudiera devolver nada nunca.
+ *
+ * 🎯 Verificado contra los dos líderes del mercado colombiano: Fincaraíz (15 tipos) y Metrocuadrado
+ * (12) exponen una lista PLANA, CERRADA y CORTA de categorías físicas, y **ninguno de los dos ofrece
+ * un «Otro» al público**. Tiene sentido: el tipo es la clave de partición del inventario y alimenta
+ * la URL y la miga de pan. «Otro» es un cajón que devuelve cosas heterogéneas — el mismo pecado que
+ * «Penthouse», al revés. Se queda para la captación interna, donde sí sirve.
+ *
+ * Deriva de `TIPOS_INMUEBLE` a propósito: mientras fueran dos listas separadas, se separaban solas.
+ */
+export const TIPOS_PUBLICOS = TIPOS_INMUEBLE.filter((t) => t !== 'otro');
+
+/**
+ * Cómo se NOMBRA cada tipo en pantalla. Las dos formas viven aquí, junto a la lista que nombran: el
+ * singular lo usa un selector («Apartamento») y el plural, la prosa de una alerta («te avisamos de
+ * Apartamentos en Bocagrande»). Estaban en ficheros distintos y el singular no existía — por eso el
+ * buscador de la portada tenía sus seis etiquetas escritas a mano.
+ *
+ * Tabla explícita y no una transformación: capitalizar y cambiar «_» por espacio funciona para los
+ * once de hoy y falla el día que entre un tipo cuyo nombre no siga esa regla. Una tabla que no cubre
+ * un caso lo dice en su test; una regla lista, no.
+ */
+const ETIQUETA: Readonly<Record<TipoInmueble, { uno: string; varios: string }>> = {
+  apartamento: { uno: 'Apartamento', varios: 'Apartamentos' },
+  casa: { uno: 'Casa', varios: 'Casas' },
+  apartaestudio: { uno: 'Apartaestudio', varios: 'Apartaestudios' },
+  local: { uno: 'Local', varios: 'Locales' },
+  oficina: { uno: 'Oficina', varios: 'Oficinas' },
+  bodega: { uno: 'Bodega', varios: 'Bodegas' },
+  lote: { uno: 'Lote', varios: 'Lotes' },
+  finca: { uno: 'Finca', varios: 'Fincas' },
+  casa_lote: { uno: 'Casa lote', varios: 'Casas lote' },
+  consultorio: { uno: 'Consultorio', varios: 'Consultorios' },
+  edificio: { uno: 'Edificio', varios: 'Edificios' },
+  otro: { uno: 'Otro', varios: 'Inmuebles' },
+};
+
+/** Para un selector: «Apartamento». */
+export const etiquetaTipo = (t: TipoInmueble): string => ETIQUETA[t].uno;
+/** Para la prosa: «te avisamos de Apartamentos en Bocagrande». */
+export const etiquetaTipoPlural = (t: TipoInmueble): string => ETIQUETA[t].varios;
+
+/**
  * UN SOLO VOCABULARIO DE TIPO — la puerta de entrada nombraba cosas que el sistema no tiene (§265).
  *
  * 🔴 El desplegable del hero ofrecía **«Penthouse»**, y `TIPOS_INMUEBLE` no lo contiene: ninguna
@@ -65,10 +112,13 @@ export type TipoInmueble = (typeof TIPOS_INMUEBLE)[number];
  * EN SILENCIO devolviendo cero resultados. Una tabla que no cubre un caso se ve en su test; un
  * stemming que no lo cubre se ve cuando un cliente no encuentra nada.
  *
- * ⚠️ «penthouse» → `apartamento` es un ENSANCHAMIENTO deliberado, no una equivalencia: en la
- * taxonomía un penthouse es un apartamento, así que quien lo elija verá apartamentos. Es mejor que
- * cero, y es reversible. **Decisión pendiente del dueño**: o se retira la etiqueta del selector, o
- * el catálogo gana un distintivo propio. Hoy no se puede distinguir con los campos que hay.
+ * ⚠️ «penthouse» → `apartamento` es un ENSANCHAMIENTO, no una equivalencia, y desde §270 vive SOLO
+ * aquí: la etiqueta salió del selector público. La tabla la sigue aceptando porque **una URL vieja
+ * tiene que seguir resolviendo** —sé liberal con lo que aceptas y estricto con lo que emites— pero
+ * ya no se OFRECE, porque ofrecerla es prometer que el sistema sabe distinguir un penthouse, y hoy no
+ * sabe. Vuelve el día que las fichas lleven su piso: `schema.org/Penthouse` **no existe** (404), así
+ * que la señal honesta es `floorLevel`, que es un hecho verificable y no una etiqueta que se pone
+ * solo el dueño del último piso.
  */
 const ALIAS_TIPO: Readonly<Record<string, TipoInmueble>> = {
   apartamento: 'apartamento', apartamentos: 'apartamento', apto: 'apartamento', aptos: 'apartamento',

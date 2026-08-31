@@ -65,7 +65,7 @@ const nav = [
       // sería prometer un filtro que nadie aplica — el fallo que este cambio vino a quitar.
       // PENDIENTE DEL DUEÑO: o el índice gana el campo, o la columna se retira (es UI, lleva su gate).
       { title: 'Por estado', links: [['Compra nuevo', '/comprar'], ['Compra usado', '/comprar']] },
-      { title: 'Por tipo', links: porTipo('/comprar', ['Apartamentos', 'Casas', 'Penthouse', 'Locales', 'Lotes', 'Fincas']) },
+      { title: 'Por tipo', links: porTipo('/comprar', ['Apartamentos', 'Casas', 'Apartaestudios', 'Locales', 'Lotes', 'Fincas']) },
     ],
     featured: { img: '/assets/estate-golden.webp', eyebrow: 'Destacada', title: 'Penthouse en Bocagrande', href: '/comprar?zona=Bocagrande' },
   },
@@ -73,7 +73,7 @@ const nav = [
     key: 'arrendar', label: 'Arrendar', href: '/arrendar', type: 'mega',
     cols: [
       { title: 'Por zona', links: porZona('/arrendar', ['Zona Norte', 'Centro Histórico', 'Bocagrande', 'Castillogrande', 'Manga', 'Getsemaní']) },
-      { title: 'Por tipo', links: porTipo('/arrendar', ['Apartamentos', 'Casas', 'Penthouse', 'Locales', 'Fincas']) },
+      { title: 'Por tipo', links: porTipo('/arrendar', ['Apartamentos', 'Casas', 'Apartaestudios', 'Locales', 'Oficinas']) },
     ],
   },
   {

@@ -249,6 +249,43 @@ for (const f of SERVIDOS) {
   }
 }
 
+/*
+ * 🚨 PROYECTOS DE OBRA NUEVA SERVIDOS SIN RESPALDO (§270) — el hueco que este gate no veía.
+ *
+ * Los patrones de arriba buscan CIFRAS, y un proyecto inventado no lleva ninguna: lleva un NOMBRE y
+ * una DIRECCIÓN. La portada servía seis —MAREA, SERENA, CLAUSTRO 1620, ALTAMAR, BAHÍA NORTE y
+ * MURALLA LOFT—, dos con badge «Preventa», bajo el titular «Obra nueva firmada ALTORRA». Este gate
+ * pasaba en verde porque no había un solo dígito que casar.
+ *
+ * 🎯 Un nombre de proyecto + una dirección + «Preventa» es una OFERTA, y afirma MÁS que cualquier
+ * conteo: que ese desarrollo existe y que es nuestro. Y uno de los seis rozaba el nombre de un
+ * desarrollo REAL de Cartagena — además de engañoso (Ley 1480, arts. 29-30), riesgo de marca.
+ *
+ * CÓMO SE APRUEBA: igual que una cifra — declarando el proyecto en `x-proyectosVerificados` del
+ * manifest con su fuente. No prohíbe publicar obra nueva; obliga a decir de dónde salió.
+ */
+const PROYECTOS_OK = new Set(
+  (manifest['x-proyectosVerificados'] || []).map((p) => (typeof p === 'string' ? p : p.nombre)),
+);
+for (const f of SERVIDOS) {
+  const html = readFileSync(f, 'utf8');
+  const tarjetas = (html.match(/class="alt-projcard"/g) || []).length;
+  if (!tarjetas) continue;
+  const nombres = [...html.matchAll(/class="alt-projcard__name"[^>]*>([^<]{1,60})</g)].map((m) => m[1].trim());
+  const sinRespaldo = nombres.filter((n) => !PROYECTOS_OK.has(n));
+  // Tarjetas que se sirven pero cuyo nombre no se puede leer cuentan como sin respaldo: un gate que
+  // no puede LEER lo que juzga no debe aprobarlo.
+  if (sinRespaldo.length || !nombres.length) {
+    hallazgos.push({
+      f: relative(RAIZ, f),
+      linea: 0,
+      cifra: sinRespaldo.length ? sinRespaldo.join(' · ') : `${tarjetas} tarjeta(s) de proyecto sin nombre legible`,
+      tipo: 'proyecto-sin-respaldo',
+      que: 'una ficha de obra nueva afirma que ese desarrollo existe y es nuestro',
+    });
+  }
+}
+
 if (hallazgos.length) {
   console.error('❌ verify:claims — cifras que se leen como MEDICIÓN y nadie ha respaldado:\n');
   for (const h of hallazgos) {

@@ -18,7 +18,7 @@
 
 import type { COP, ISODate, Operacion, TipoInmueble } from './shared';
 import { pesos } from './dinero';
-import { OPERACIONES, TIPOS_INMUEBLE } from './shared';
+import { etiquetaTipoPlural, OPERACIONES, TIPOS_INMUEBLE } from './shared';
 import type { CatalogoResumen } from './catalogo';
 import type { PruebaConsentimiento } from '../config/legal';
 
@@ -150,24 +150,6 @@ export function etiquetaOperacion(op: Operacion): string {
   return op === 'venta' ? 'en venta' : op === 'arriendo' ? 'en arriendo' : 'por días';
 }
 
-/** Tipo del dominio a cómo lo dice una persona. */
-export function etiquetaTipoPlural(t: TipoInmueble): string {
-  const m: Record<TipoInmueble, string> = {
-    apartamento: 'Apartamentos',
-    casa: 'Casas',
-    apartaestudio: 'Apartaestudios',
-    local: 'Locales',
-    oficina: 'Oficinas',
-    bodega: 'Bodegas',
-    lote: 'Lotes',
-    finca: 'Fincas',
-    casa_lote: 'Casas lote',
-    consultorio: 'Consultorios',
-    edificio: 'Edificios',
-    otro: 'Inmuebles',
-  };
-  return m[t] ?? 'Inmuebles';
-}
 
 /**
  * Convierte campos crudos (query string de la SERP o `<form>`) en criterios válidos.

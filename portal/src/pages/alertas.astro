@@ -27,12 +27,11 @@ import { LEGAL, TEXTO_AUTORIZACION, RUTA_AVISO } from '../lib/config/legal';
 import { ZONAS } from '../lib/content/zonas';
 import { CACHE_CONTROL_PRIVATE } from '../lib/data/cache';
 import {
-  etiquetaTipoPlural,
   normalizarCriterios,
   operacionARuta,
   resumenCriterios,
 } from '../lib/domain/alertas';
-import { TIPOS_INMUEBLE } from '../lib/domain/shared';
+import { etiquetaTipoPlural, TIPOS_PUBLICOS } from '../lib/domain/shared';
 import { migaDe } from '../lib/seo/breadcrumbs';
 
 // Sin caché: la página refleja el resultado del envío (`?ok=1`, `?error=…`) y no hay nada que ganar
@@ -55,7 +54,7 @@ const MENSAJE_ERROR: Record<string, string> = {
 
 // Solo los tipos que se publican de verdad en un portal residencial y comercial de Cartagena. La lista
 // completa del dominio incluye `otro`, que en un selector no le dice nada a nadie.
-const TIPOS_UI = TIPOS_INMUEBLE.filter((t) => t !== 'otro');
+const TIPOS_UI = TIPOS_PUBLICOS;
 
 const base = Astro.site?.origin ?? `https://${SITE.domain}`;
 const jsonLd = {

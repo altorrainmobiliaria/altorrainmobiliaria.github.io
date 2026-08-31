@@ -23,7 +23,10 @@ export function getStaticPaths() {
   const venta = [
     { img: '/assets/villa-pool.webp', alt: 'Apartamento en Castillogrande', badge: 'En venta', zona: 'Castillogrande', beds: 3, baths: 3, area: '142 m²', title: 'Apartamento con vista a la bahía', price: '$1.450.000.000', href: '/ficha' },
     { img: '/assets/villa-modern.webp', alt: 'Casa en Manga', badge: 'En venta', zona: 'Manga', beds: 4, baths: 3, area: '210 m²', title: 'Casa republicana restaurada', price: '$980.000.000', href: '/ficha' },
-    { img: '/assets/estate-golden.webp', alt: 'Residencia en Bocagrande', badge: 'En venta', zona: 'Bocagrande', beds: 4, baths: 4, area: '260 m²', title: 'Penthouse frente al mar', price: '$2.100.000.000', href: '/ficha' },
+    // 🚨 Aquí estaba «Penthouse frente al mar · $2.100.000.000» — la MISMA card que `index.astro`
+    // registra como «INVENTADA: retirada (§32.23)». Se retiró de la home y SOBREVIVIÓ aquí: la
+    // decisión se tomó una vez y se aplicó en un solo sitio. Con §270, §32.23 se completa.
+    // 🎯 Un dato que se retira de una pantalla y no de las demás no está retirado: está escondido.
     { img: '/assets/chalet-dusk.webp', alt: 'Casa en Crespo', badge: 'En venta', zona: 'Crespo', beds: 3, baths: 2, area: '120 m²', title: 'Casa familiar cerca del mar', price: '$760.000.000', href: '/ficha' },
   ];
   const arriendo = [
