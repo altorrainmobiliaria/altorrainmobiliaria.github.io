@@ -84,8 +84,20 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
     <div class="est-top">
       <div class="est-head">
         <div>
+          {/*
+              El aviso de que este alojamiento es un EJEMPLO ya existía, y está bien redactado — pero
+              vivía al FINAL del panel de reserva, debajo del total (§282). Quien no llegue hasta ahí
+              lee una ficha completa con su precio y su formulario y no sabe que no hay tal casa.
+
+              🎯 *Un descargo que llega después de la decisión no es un descargo: es una nota al pie.*
+              Se duplica aquí arriba, pegado al titular, para que se sepa ANTES de invertir atención.
+              El de abajo se queda: es el que se lee justo antes de pulsar «Solicitar», y ese momento
+              también merece su aviso.
+          */}
           <p class="alt-eyebrow">Centro Histórico · Cartagena</p>
           <h1 class="est-h1">Casa con piscina y terraza colonial</h1>
+          <p class="est-ejemplo"><b>Alojamiento de ejemplo.</b> Todavía no publicamos el inventario de
+            corta estancia — cuéntanos tus fechas y te proponemos lo que tengamos disponible.</p>
         </div>
         <div class="est-head__tags">
           {puntuacion && (
@@ -235,6 +247,9 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
 <style>
   .est-top { max-width: 1300px; margin-inline: auto; padding: 26px clamp(16px, 4vw, 48px) 0; }
   .est-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 18px; }
+  /* El aviso de «ejemplo» junto al titular: legible, sin gritar, y con la franja de color que ya
+     usa el resto del portal para lo informativo. */
+  .est-ejemplo { margin: 10px 0 0; max-width: 62ch; font-size: 14px; line-height: 1.6; color: var(--alt-text); border-left: 3px solid var(--alt-gold); padding-left: 12px; }
   .est-h1 { margin-top: var(--alt-space-2); font-size: clamp(30px, 4.4vw, 48px); line-height: 1.02; }
   .est-head__tags { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
   .est-rating { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }

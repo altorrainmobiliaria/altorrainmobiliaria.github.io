@@ -59,15 +59,30 @@ const nav = [
   {
     key: 'comprar', label: 'Comprar', href: '/comprar', type: 'mega',
     cols: [
-      // ⚠️ «Por estado» es la ÚNICA columna que se queda sin intención, y a propósito: nuevo/usado
-      // no es un campo del índice del catálogo. `antiguedadAnios` existe en la propiedad pero NO
-      // viaja al índice, así que el SERP no puede filtrar por él hoy. Inventar `?estado=nuevo`
-      // sería prometer un filtro que nadie aplica — el fallo que este cambio vino a quitar.
-      // PENDIENTE DEL DUEÑO: o el índice gana el campo, o la columna se retira (es UI, lleva su gate).
-      { title: 'Por estado', links: [['Compra nuevo', '/comprar'], ['Compra usado', '/comprar']] },
+      /*
+       * 🔴 AQUÍ HABÍA UNA COLUMNA «Por estado» con «Compra nuevo» y «Compra usado», y las DOS
+       * llevaban a `/comprar` (§282). Un menú que ofrece dos caminos y lleva al mismo sitio no es
+       * un filtro pendiente: es una promesa rota que el visitante descubre haciendo clic.
+       *
+       * El comentario anterior lo sabía —decía «PENDIENTE DEL DUEÑO: o el índice gana el campo, o la
+       * columna se retira»— y la dejaba puesta mientras tanto. Es el mismo motivo-promesa que §278:
+       * describe quién decidirá, no qué la retira, así que se queda hasta que alguien se acuerde.
+       *
+       * Se retira. Vuelve sola el día que exista la vertical de obra nueva (§270, ya en el
+       * mega-plan): entonces «Compra nuevo» tendrá a dónde llevar, y será un enlace de verdad.
+       */
       { title: 'Por tipo', links: porTipo('/comprar', ['Apartamentos', 'Casas', 'Apartaestudios', 'Locales', 'Lotes', 'Fincas']) },
     ],
-    featured: { img: '/assets/estate-golden.webp', eyebrow: 'Destacada', title: 'Penthouse en Bocagrande', href: '/comprar?zona=Bocagrande' },
+    /*
+     * 🔴 Este tile decía «Destacada · Penthouse en Bocagrande» y se sirve en las 45 páginas (§282).
+     * Con foto y el rótulo «Destacada», en un menú inmobiliario, eso se lee como UNA FICHA — y no
+     * hay tal penthouse: el enlace lleva a una búsqueda por zona, que hoy no devuelve nada.
+     *
+     * 🎯 Los otros dos tiles del menú ya eran editoriales («Vive la ciudad amurallada»), y por eso
+     * no mentían. Este pasa a decir lo que de verdad hace: invitar a ver una ZONA. Mismo diseño,
+     * misma foto, mismo destino — y ninguna afirmación sobre un inmueble que no existe.
+     */
+    featured: { img: '/assets/estate-golden.webp', eyebrow: 'Bocagrande', title: 'El barrio frente al mar', href: '/comprar?zona=Bocagrande' },
   },
   {
     key: 'arrendar', label: 'Arrendar', href: '/arrendar', type: 'mega',
