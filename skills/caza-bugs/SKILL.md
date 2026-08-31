@@ -428,6 +428,12 @@ IVA duplicada y dos funciones de etiqueta que devolvían singular y plural.
    tabla esté completa, así que el día que la unión crezca el compilador enumera las copias
    incompletas él solo. Fue exactamente lo que destapó la tercera — no la destapó una revisión.
 
+   ⚠️ **Segunda instancia, encontrada quince minutos después de escribir esta regla**: `05` llevaba
+   DOS sellos de fecha — `verificado-vivo:` (por afirmación, lo mide un gate) y `(al AAAA-MM-DD)` (del
+   nodo, lo mide otro). Re-verifiqué de verdad, actualicé los primeros, y titulé el commit
+   «re-sellado». El aviso siguió encendido y lo leí al día siguiente como un recordatorio NUEVO.
+   *Un aviso que sobrevive a tu arreglo no es ruido: o el arreglo falló, o mide algo que no tocaste.*
+
 **Y el subtipo más traicionero: el valor duplicado que HOY coincide.** No hay nada que arreglar y por
 eso se deja — pero lo que existe es el mecanismo para romperlo: el día que ese número cambie, alguien
 edita la copia que encuentra y la otra sigue con el valor viejo. **Compruébalo antes de decidir**: si

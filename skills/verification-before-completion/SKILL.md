@@ -48,6 +48,7 @@ Skip any step = lying, not verifying
 | Regression test works | Red-green cycle verified | Test passes once |
 | Agent completed | VCS diff shows changes | Agent reports "success" |
 | Requirements met | Line-by-line checklist | Tests passing |
+| Warning resolved | Re-run it: the warning is GONE | Editing the field you assumed it read |
 
 ## Red Flags - STOP
 
@@ -58,6 +59,7 @@ Skip any step = lying, not verifying
 - Relying on partial verification
 - Thinking "just this once"
 - Tired and wanting work over
+- The same warning fires again after your fix — it is measuring something you did not change
 - **ANY wording implying success without having run verification**
 
 ## Rationalization Prevention

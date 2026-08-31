@@ -108,6 +108,7 @@
 | §269 | 🧱 **TODO-50: `30` estaba llena de CUERPOS, no de lecciones** — 16 entradas se llevaban 103 de 240 líneas · shard `39` (verbatim) la deja en 193 · pero «lleno» eran DOS problemas y el boot sigue. | 11991 |
 | §270 | 🚨 **La portada publicaba SEIS proyectos de obra nueva inventados** —con dirección y «Preventa»— y el gate no los veía porque busca CIFRAS · «Penthouse» no es tipo en ningún líder · una sola lista pública. | 12161 |
 | §271 | 🏝️ **«Penthouse» se DERIVA (piso === pisosTotales), no se declara** — una etiqueta que pone el interesado no la sella nadie · +cabaña +parqueadero (≥2 líderes + real en Cartagena) · el tipo cazó una TERCERA tabla de etiquetas. | 12274 |
+| §272 | 🔏 **DOS sellos de fecha en `05`** (`verificado-vivo:` vs `(al …)`) y re-sellé el que no lee el aviso — el aviso siguió encendido y lo leí como recordatorio nuevo. Kernel v1.26.0: ahora CITA el sello. | 12337 |
 
 ---
 

@@ -12333,3 +12333,65 @@ completo en verde (salida 0): **1020 unitarias + 190 contra el emulador**.
 
 ⚠️ **Del dueño**: el alta gana un campo visible («Pisos del edificio») y el buscador público pasa de
 11 a 13 tipos.
+
+## 272. ADR-272 — Dos sellos de fecha en el mismo nodo, y actualicé el que nadie leía
+
+### 272.1 — Lo que pasó
+Ayer el linter avisó de que `05` llevaba 131 commits sin re-sellar. Hice lo correcto y lo caro:
+**re-verifiqué en vivo** con curl y actualicé los `verificado-vivo:` de las afirmaciones. Titulé el
+commit *«docs(05): re-sellado»* y lo di por cerrado.
+
+El aviso **siguió encendido**. Hoy, en el boot, lo volví a leer — y lo leí como un recordatorio
+NUEVO, no como la prueba de que mi arreglo de ayer no había tocado lo que el aviso mide.
+
+### 272.2 — Por qué: `05` tiene DOS sellos de fecha, con nombres distintos y gates distintos
+| Sello | Dónde | Qué sella | Quién lo mide |
+|---|---|---|---|
+| `verificado-vivo: AAAA-MM-DD` | dentro de una afirmación | **esa** afirmación, contra el sistema vivo | gate #16 (caduca a 30d) |
+| `(al AAAA-MM-DD)` | cabecera de la tabla | **el nodo entero**, revisado | gate #12 (10d / 120 commits) |
+
+Los dos son legítimos y sellan cosas distintas. El defecto es que el aviso decía *«re-verificar vs
+git real y **re-sellar**»* sin nombrar **cuál**, y yo tenía las manos justo en el otro.
+
+🎯 Es otra vez el gemelo de §178 (y de §271) —el mismo CONCEPTO con dos nombres— y apareció **quince minutos
+después** de que escribiera la regla que lo describe. *Un aviso que sobrevive a tu arreglo no es
+ruido: o el arreglo falló, o mide algo que no tocaste.* Lo que apagó mi vigilancia fue el
+razonamiento «esto ya lo atendí ayer», que es exactamente lo que un aviso repetido no puede
+distinguir de «no lo atendiste».
+
+### 272.3 — El arreglo va en el INSTRUMENTO, no en un recordatorio
+Kernel **v1.26.0**: el aviso ahora **cita el sello que leyó** y advierte del gemelo —
+«re-sellar «(al **2026-08-26**» — ESE sello, el del NODO. Los «verificado-vivo:» de dentro son OTRA
+cosa (los mide el #16) y actualizarlos NO apaga este aviso: pasó de verdad (§272)».
+⚠️ Los otros tres repos lo reciben con su `brain:pull`; hasta entonces su gate #0 los marca STALE,
+que es como debe ser.
+
+### 272.4 — Y el re-sellado, esta vez del sello correcto
+No bastaba con teclear la fecha: eso sería jugar con el gate (el propio gate #16 pide re-verificar, no
+re-sellar). Contra el worker de staging, HOY: `/` · `/comprar` · `/estancias` · y las 2 SSR
+(`/ficha`, `/alertas`) → **200**; ruta inventada → **404** (o sea que los 200 DISCRIMINAN);
+**13 tipos servidos** con `cabaña` y `parqueadero` — el CI ya desplegó §271 — y **cero
+`alt-projcard`**: los seis proyectos inventados de §270 no están en el HTML **servido**, no solo en
+el build.
+
+De paso, el nodo pagó su exceso de tope con lo que le sobraba: la historia de la restauración de
+Blaze (que es de `50`) y un puntero al `10` que la línea de arriba ya daba.
+
+### 272.5 — Depósito doble
+El caso, aquí. Lo transferible, en DOS skills por dos síntomas distintos: `caza-bugs` §4k.5 (el
+gemelo con otro nombre) y `verification-before-completion` (fila *«Warning resolved → re-run it:
+the warning is GONE»* + bandera roja para el aviso que se repite).
+
+### 272.6 — Y un tercer puntero roto, de propina — que al escribirlo se rompió otra vez
+
+Al redactar esto cité **dos identificadores de lección**: uno me lo inventé (la de gemelos es §178,
+no una lección numerada) y el otro lo copié del **rótulo del propio kernel**, cuyo gate #16 se
+titula «Fiabilidad (…)» con una M-NN que **no está definida en ningún cerebro de la familia**.
+
+🎯 Y aquí el remate: escribir esa frase **con los identificadores literales bloqueó el commit**. El
+gate #5 busca `[LM]-NN` en todo el texto del cerebro y no puede distinguir **citar** un ID de
+**mencionarlo como ejemplo de ID roto** — la vieja confusión entre uso y mención. Documentar un
+puntero roto creaba un puntero roto. Por eso arriba van descritos y no escritos.
+
+⚠️ El rótulo del kernel NO se arregla hoy: renombrarlo cuesta bump + `brain:pull` ×4 por un rótulo
+que solo se ve en la salida del linter. Queda escrito DÓNDE está, para no re-descubrirlo.
