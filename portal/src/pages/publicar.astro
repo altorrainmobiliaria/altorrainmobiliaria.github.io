@@ -11,11 +11,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { TARIFAS } from '../lib/content/tarifas';
+import { SITE } from '../lib/config/site';
 
+/*
+ * LA FRANJA DEL HERO — credenciales, no estadísticas (§280, decisión de Daniel el 31-ago).
+ *
+ * 🔴 Aquí decía «+1.200 inmuebles cerrados», «38 días promedio de venta» y «98% clientes
+ * satisfechos». Las tres eran del mockup y ninguna existe: ALTORRA no ha cerrado 1.200 inmuebles ni
+ * mide satisfacción. Y estaban **en la página donde un propietario decide entregarnos su inmueble**,
+ * que es donde una cifra falsa hace más daño.
+ *
+ * 🎯 La regla ya estaba escrita en `lib/content/tarifas.ts`, para la página de al lado: *«si algo no
+ * está decidido se dice que no está decidido; un hueco honesto no pierde clientes, una cifra que
+ * después hay que corregir sí»*. Esto es esa regla, una página más allá.
+ *
+ * Lo que las sustituye son tres hechos **comprobables**, y a un propietario cauto le dicen más que
+ * un «98%» que afirma todo el mundo: un número de matrícula que puede verificar, cuándo se le cobra
+ * (y cuándo NO), y que a su inquilino no le cobramos nada porque lo prohíbe la ley.
+ *
+ * ⚠️ Se DERIVAN de sus fuentes —`SITE` y el tarifario sellado— en vez de teclearse. Si la comisión
+ * cambia en `tarifas.ts`, esta franja la sigue sola; escrita a mano habría sido el gemelo de §271
+ * esperando a que alguien actualizara una de las dos.
+ */
+const tarifaVenta = TARIFAS.find((t) => t.id === 'venta');
 const stats = [
-  { n: '+1.200', l: 'inmuebles cerrados' },
-  { n: '38 días', l: 'promedio de venta' },
-  { n: '98%', l: 'clientes satisfechos' },
+  { n: SITE.matriculaArrendador, l: 'matrícula de arrendador' },
+  { n: tarifaVenta?.cifra ?? '—', l: 'y solo cuando se REGISTRA la venta' },
+  { n: '$0', l: 'paga el inquilino (Ley 820)' },
 ];
 const pasos = [
   { n: '01', t: 'Cuéntanos', d: 'Compártenos los datos de tu inmueble en dos minutos con el formulario.' },

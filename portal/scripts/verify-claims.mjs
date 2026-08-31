@@ -151,11 +151,11 @@ const DEUDA_DECLARADA = [
   //   primera pantalla, así que la decisión (citar o sustituir) es del dueño y está en su brief.
   ['+12% valorizaci', 'hero de la home: medición de mercado sin fuente — §215.1, decide el dueño'],
   ['8–11% ROI', 'hero de la home: rango de rentabilidad sin fuente — §215.1, decide el dueño'],
-  // — Las tres de `/publicar` (§215.2), en la página donde un propietario decide confiarnos su
-  //   inmueble. ALTORRA no ha cerrado 1.200 inmuebles ni tiene medición de satisfacción.
-  ['200 inmuebles', '/publicar: «+1.200 inmuebles cerrados», estadística inventada — §215.2'],
-  ['38 días promedio', '/publicar: promedio de venta sin medición detrás — §215.2'],
-  ['98% clientes satisfech', '/publicar: satisfacción inventada — §215.2, y /nosotros promete lo contrario'],
+  // 🗑️ RETIRADAS las tres de `/publicar` (§280). No se «cerraron»: DEJARON DE EXISTIR. Daniel
+  //    decidió el 31-ago sustituirlas por credenciales verificables —matrícula 6636, la comisión
+  //    del tarifario sellado y el $0 del inquilino por Ley 820—, así que ya no hay nada que
+  //    declarar. Y la retirada la demuestra este gate: si alguna siguiera servida, quitar su
+  //    línea lo haría FALLAR.
   // — Datos de MUESTRA del catálogo vacío. No son afirmaciones fabricadas a mano: son el relleno
   //   que el paso 5.3 del cutover retira cuando entre el inventario real (§213-§214, callejón «los
   //   datos del portal son DEMO»). Se congelan aquí para que el gate pueda existir antes del cutover.
