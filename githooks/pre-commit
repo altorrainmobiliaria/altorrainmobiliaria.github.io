@@ -12,33 +12,38 @@
 # ===========================================================
 staged=$(git diff --cached --name-only)
 
+# ── Puerta de node para TODO el hook (auditoría Nivel-2 #6) ──────────────────────────────────────
+# Antes vivía abajo, tapando solo a brain:check, y los gates de arriba se saltaban
+# EN SILENCIO cuando faltaba node. Falla CERRADO y de una vez para todos: un gate
+# que no pudo mirar no puede salir en verde.
+if ! command -v node >/dev/null 2>&1; then
+  echo ""
+  echo "❌ COMMIT BLOQUEADO: 'node' no está en PATH, así que los gates NO pueden correr."
+  echo "   Arregla el PATH, o salta a conciencia: git commit --no-verify"
+  exit 1
+fi
+
+# ── Credenciales en un repo PÚBLICO (§262 · auditoría #18, N18-06) ─────────────────────────────────
+# SIN predicado de rutas, y ESE es el arreglo: este barrido vivía dentro del `if`
+# de `js/` de abajo, así que 55 de los últimos 100 commits NO lo corrían — un SA
+# JSON en `functions/`, `scripts/`, `docs/` o la raíz entraba sin escáner a un repo
+# que GitHub indexa. Un secreto no pide permiso por carpeta; el gate tampoco.
+node scripts/verify-secretos.mjs || exit 1
+
 # ── Contratos del panel LEGACY (§136) ──────────────────────────────────────
 # Va ANTES del corte del cerebro: este gate mira `js/`, no `docs/`, y si se
 # pusiera después no correría nunca en un commit de solo código — que es
 # justamente cuando hace falta. Un cambio de contrato con un callsite sin
 # migrar dejó al dueño fuera de su propio panel.
 if echo "$staged" | grep -qE '^js/'; then
-  if command -v node >/dev/null 2>&1; then
-    node scripts/verify-secretos.mjs || exit 1
-    node scripts/verify-contratos-legacy.mjs || {
-      echo ""
-      echo "❌ COMMIT BLOQUEADO: hay un callsite con el contrato viejo (arriba, con su línea)."
-      exit 1
-    }
-  fi
+  node scripts/verify-contratos-legacy.mjs || {
+    echo ""
+    echo "❌ COMMIT BLOQUEADO: hay un callsite con el contrato viejo (arriba, con su línea)."
+    exit 1
+  }
 fi
 
 echo "$staged" | grep -qE '^(CLAUDE\.md|docs/)' || exit 0   # nada del cerebro staged → no aplica
-
-if ! command -v node >/dev/null 2>&1; then
-  echo ""
-  echo "❌ COMMIT BLOQUEADO: 'node' no está en PATH, así que brain:check NO puede correr."
-  echo "   Antes esto dejaba pasar el commit en SILENCIO mientras el chequeo #25 seguía"
-  echo "   declarando el hook 'cableado': el gate existía y no miraba nada. Falla CERRADO"
-  echo "   a propósito (auditoría Nivel-2 #6)."
-  echo "   Arregla el PATH, o salta a conciencia: git commit --no-verify"
-  exit 1
-fi
 
 echo "🧠 brain:check (pre-commit)…"
 if ! node scripts/brain-check.mjs; then

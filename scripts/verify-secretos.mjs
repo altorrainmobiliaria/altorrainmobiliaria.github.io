@@ -22,13 +22,30 @@
  * en el HTML de cualquier app web y quien protege los datos son las Rules, no ella—. Buscarla daría
  * un rojo permanente contra algo correcto, y un gate que grita por lo correcto se desactiva solo en
  * la cabeza de quien lo lee.
+ *
+ * 🔭 DE DÓNDE SALE LA LISTA (auditoría #18, hallazgo N18-07). La v1 recorría el DISCO y saltaba todo
+ * lo que empezara por punto (`n.startsWith('.')`), lo que dejaba CIEGO al gate sobre `.claude/` (6
+ * ficheros versionados), `.github/` (3 workflows), `docs/.brain-manifest.json` y
+ * `scripts/.kernel-version.json`: once ficheros que SÍ se commitean a un repo público, y ninguno se
+ * miraba. De regalo, el filtro `env` de TEXTO era código muerto — todo `.env*` moría una línea antes.
+ * Hoy la lista sale del ÍNDICE DE GIT (`git ls-files --cached --others --exclude-standard`), que es
+ * exactamente la superficie de fuga: lo versionado + lo ya `git add`eado + lo no ignorado. Un fichero
+ * recién staged aparece en el acto — justo el instante en que el hook tiene que verlo.
+ * El precio, medido y aceptado: se dejan de mirar 44 artefactos gitignoreados (`portal/functions/lib/`
+ * compilado, `worker-configuration.d.ts`). No pueden commitearse, y su FUENTE sí se barre.
  */
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import { join } from 'node:path';
 
 const RAIZ = new URL('..', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1').replace(/\/$/, '');
 
-/** Carpetas fuera del barrido, cada una con su razón. */
+/**
+ * Carpetas fuera del barrido, cada una con su razón. Desde que la lista sale de git, las
+ * gitignoreadas (`node_modules`, `dist`, `.astro`, `.wrangler`, `backups`) ya no aparecen solas y
+ * quedan aquí como cinturón: si alguna se versionara algún día, la exclusión sigue siendo la
+ * decisión escrita. La que SÍ hace trabajo hoy es `_legacy`, que está versionada (13 ficheros).
+ */
 const FUERA = new Set([
   'node_modules', // dependencias: no son nuestras y su volumen ahogaría la señal
   '.git',         // el historial se revisa con otras herramientas, no leyendo objetos
@@ -63,26 +80,42 @@ const PATRONES = [
 
 const TEXTO = /\.(js|mjs|cjs|ts|tsx|astro|json|jsonc|html|md|yml|yaml|txt|env|sh|py|rules)$/i;
 
-function archivos(dir, acc = []) {
-  for (const n of readdirSync(dir)) {
-    if (FUERA.has(n) || n.startsWith('.')) continue;
-    const p = join(dir, n);
-    if (statSync(p).isDirectory()) archivos(p, acc);
-    else if (TEXTO.test(n)) acc.push(p);
+/**
+ * La superficie de fuga, en rutas relativas a la raíz. `-z` (NUL como separador) porque sin él git
+ * ENTRECOMILLA y escapa las rutas con acentos — y este proyecto escribe en español.
+ */
+function archivos() {
+  let salida;
+  try {
+    salida = execFileSync(
+      'git',
+      ['-C', RAIZ, 'ls-files', '-z', '--cached', '--others', '--exclude-standard'],
+      { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 },
+    );
+  } catch (e) {
+    console.error('');
+    console.error('❌ verify:secretos — `git ls-files` no pudo listar el repo:');
+    console.error(`   ${String(e.message).split('\n')[0]}`);
+    console.error('   Falla CERRADO a propósito: sin lista, este gate no mira NADA y su ✅ sería la');
+    console.error('   mentira exacta que vigila el anti-vacío de abajo. Arregla el PATH de git.');
+    process.exit(1);
   }
-  return acc;
+  return salida
+    .split('\0')
+    .filter(Boolean)
+    .filter((rel) => !rel.split('/').some((seg) => FUERA.has(seg)))
+    .filter((rel) => TEXTO.test(rel));
 }
 
 const fallos = [];
 let mirados = 0;
 
-for (const p of archivos(RAIZ)) {
-  const rel = relative(RAIZ, p).replace(/\\/g, '/');
+for (const rel of archivos()) {
   if (EXENTOS.has(rel)) continue;
   mirados++;
   let src;
   try {
-    src = readFileSync(p, 'utf8');
+    src = readFileSync(join(RAIZ, rel), 'utf8');
   } catch {
     continue;
   }
