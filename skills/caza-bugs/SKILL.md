@@ -717,6 +717,29 @@ segundo la pregunta que una revisión de diff no contesta nunca.
 aparecer en lo servido, con su prueba negativa (inyéctalo y comprueba que el gate falla). Un gate
 que mira el fuente no habría visto nada de esto, porque en el fuente el arreglo del runtime *estaba*.
 
+## 4r. 🔎 El gate que tiene razón POR DEBAJO de su mensaje
+
+Un gate te señala un síntoma. El síntoma puede ser un falso positivo **y la queja seguir siendo
+correcta**, porque lo que el gate detectó no siempre es lo que sabe nombrar.
+
+Caso real: un chequeo avisó de que *«esta página busca ids que NO declara»* y nombró el id de un
+control que vive en OTRA página. Leído al pie de la letra era un falso positivo: ese código no corre
+aquí. Pero el gate lo veía porque la página **importaba el módulo entero de esa otra página** —con su
+mapa, su boot y sus selectores— para usar de él una sola función. El id era el síntoma; la causa era
+el **acoplamiento**. Extraer lo común apagó el gate *por la razón correcta*, y de paso la página dejó
+de descargar código que no usa.
+
+🎯 **Antes de declarar falso positivo, pregunta qué tendría que ser verdad para que el gate
+acertara.** Si la respuesta describe algo que efectivamente pasa —«sí, importo ese módulo entero»—,
+el gate acertó y solo se quedó corto al nombrarlo. Silenciarlo entonces es tapar un hallazgo.
+
+**Y el reverso, igual de útil: un refactor cambia lo que los gates PUEDEN ver.** Al extraer un módulo
+y exportar sus piezas, el chequeo de símbolos duplicados destapó **tres gemelos que ya existían** —
+entre ellos dos funciones con el mismo nombre y **salida distinta** (`' / mes'` con espacios contra
+`'/mes'` sin ellos). No los introdujo el refactor: eran privados, y lo privado no lo audita nadie.
+*Exportar algo lo somete a gates que antes no lo alcanzaban; si al hacerlo salta un hallazgo viejo,
+es un regalo, no un coste del cambio.*
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.

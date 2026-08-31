@@ -113,6 +113,7 @@
 | §274 | 📏 **El header tapaba 90% de la barra de filtros — justo al SUBIR a cambiar uno.** Publica su altura MEDIDA en `--alt-hdr-h` (el token decía 116, la realidad 67). ⚠️ Y [[L-26]]+[[L-28]] las re-derivé sin leerlas. | 12465 |
 | §275 | 👥 **El panel SERVÍA 6 clientes inventados, 4 actividades falsas y «92% de demanda»** — §266 arregló el runtime y no el build. Ahora se calculan de los leads ya cargados; gate `persona-de-mockup` con prueba negativa. | 12525 |
 | §276 | 🏚️ **Un build de producción habría publicado ~25 inmuebles inventados en la PORTADA** — el candado #7 existía para eso y vigilaba una VARIABLE que esas 6 secciones no leen. Ahora cuelgan de ella. | 12591 |
+| §277 | 🔌 **La portada, cableada al catálogo** (destacadas + arriendo, 3 estados verificados). 🎯 Y un gate puede tener razón POR DEBAJO de su mensaje: se quejó de un id y el problema era el ACOPLAMIENTO. | 12658 |
 
 ---
 

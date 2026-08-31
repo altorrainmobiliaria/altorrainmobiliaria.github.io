@@ -70,10 +70,10 @@
 > del SERP eran de ADORNO (§273) · el header tapaba el 90% de esa barra al subir a usarla (§274) ·
 > y el panel SERVÍA 6 clientes inventados y saludaba a un tal Alejandro (§275). El feed y las zonas
 > ya salen de leads reales. Del panel no me queda nada; lo que sigue abierto es TUYO (abajo).
-> 🚨 **LA PORTADA no está cableada al catálogo** y servía ~25 inmuebles inventados; en producción
-> habrían salido (§276: el candado #7 vigilaba una variable que esas 6 secciones no leen). Ya no
-> salen — pero AHORA la portada de producción está ESCUETA hasta que se cablee. Es trabajo real,
-> no un descuido: antes había relleno bonito tapándolo.
+> 🔌 **PORTADA**: servía ~25 inmuebles inventados y en producción habrían salido (§276). Ya no; y
+> **destacadas + arriendo ya beben del catálogo real** (§277, 3 estados verificados). ⏭ Faltan
+> `recientes`, `estancias` y `venta` — mismo patrón, ya hecho. ⛔ `valoradas` NO se puede: pide una
+> calificación que el índice no guarda; o entra al modelo o esa sección no existe con datos reales.
 > 🏗️ **Obra nueva**: diseñada y metida en el MEGA-PLAN, no en el backlog (§270) — no cabe hoy por
 > una razón MEDIDA: el índice guarda `precio` como UN entero y un proyecto tiene RANGO.
 

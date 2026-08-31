@@ -12654,3 +12654,58 @@ Y el barrido también encontró **dos cosas que ya estaban bien**: los precios d
 candado #7, y las claims de rentabilidad del hero (`+12%`, `8–11% ROI`) ya están declaradas como
 deuda congelada en `verify:claims`. 🎯 *Confirmar que un gate ya cubre algo es parte del barrido: la
 respuesta correcta ahí es no construir un segundo gate.*
+
+## 277. ADR-277 — La portada, cableada al catálogo; y tres gates que me corrigieron
+
+### 277.1 — Lo que se hizo
+§276 dejó la portada honesta y, al hacerlo, **dejó a la vista lo que el relleno tapaba**: ninguna de
+sus secciones de inventario leía el índice. Se apagaban en producción y no las encendía nadie. Ahora
+**destacadas** y **arriendo** se pintan del catálogo real, y el patrón queda hecho para las demás.
+
+Tres decisiones que no son de pintar:
+- **El marcado no se escribe en JS**: se clona de un `<template>` que renderiza el mismo
+  `PropertyCard.astro`, y lo rellena `construirCard()`, la misma función que usa el SERP.
+- **Un fallo cae hacia el estado honesto, nunca hacia el relleno** — y *«no hay inventario»* y *«no
+  pudimos preguntarlo»* se dicen **distinto**: el segundo se arregla recargando, el primero no.
+  🎯 *Decir «no hay nada» cuando lo que pasó es que no pudiste preguntar es la mentira cómoda.*
+- **Una petición por shard y cero a Firestore**: los sirve el Worker desde su caché de borde. La
+  portada es la página más visitada; si leyera Firestore sería la que se come el free-tier.
+
+### 277.2 — 🎯 La lección: un gate puede tener razón POR DEBAJO de su propio mensaje
+Tres gates me pararon, y el segundo es el interesante.
+
+1. **`verify:css`** — mi isla crea `<p class="home-vacio">` en runtime, y Astro había compilado esa
+   regla acotada con `data-astro-cid`: el párrafo habría salido **sin estilo**. Un fallo que no rompe
+   nada y solo se ve mirando.
+2. **`verify:css` otra vez**, y aquí está lo que aprendí: se quejó de que *«la portada busca ids que
+   la página NO declara»*, señalando `serp-order` —el desplegable de ordenar del SERP—. Leído al pie
+   de la letra, es un falso positivo: ese código nunca corre en la portada. Pero **el gate tenía
+   razón por debajo de su mensaje**: el problema no era el id, era el **acoplamiento**. Importar del
+   SERP arrastraba su módulo entero —mapa, liquidación, boot— para pintar dos tarjetas. Se extrajo
+   lo común a `catalogo-card.ts` y el gate se apagó *por la causa correcta*.
+   *Antes de declarar falso positivo, pregunta qué tendría que ser verdad para que el gate acertara.*
+3. **`verify:simbolos`** — al exportar, aparecieron **tres gemelos que ya existían**: `Operacion`
+   (dueño: `shared.ts`), `etiquetaBadge` (idéntica, dueño: `ficha.ts`) y `sufijoPrecio`, que **no era
+   una copia**: el dominio devuelve `' / mes'` **con** espacios y la isla `'/mes'` sin ellos. Mismo
+   nombre, salida distinta, y las dos se leen bien — el gemelo que nadie reporta nunca. Renombrado a
+   `sufijoCompacto`, que dice en qué se diferencia. ⚠️ *Estaban ahí desde antes; se hicieron visibles
+   al exportarlos. Un refactor no solo mueve código: cambia lo que los gates pueden ver.*
+
+### 277.3 — Verificación, incluida la que el fixture NO puede dar
+Los **tres estados**, en vivo: con datos (fixture) → 2 y 3 tarjetas ordenadas por fecha · sin
+inventario (catálogo real vacío) → «Todavía no hay… publicados» · red caída (fetch stubbeado) → «No
+pudimos cargar esta sección».
+
+Y el **enrutado**, que el fixture **no puede probar** porque devuelve lo mismo para los tres shards
+—§273.5 aplicado a sí mismo—: comprobado mirando la red. Pide `comprar.json` y `arrendar.json`,
+una vez cada una, y ninguna a `estancias.json`, que ninguna sección usa. La limitación queda escrita
+**dentro del propio fixture**, con el método alternativo, para que el siguiente no la descubra otra
+vez.
+
+Tras el refactor, las dos islas siguen vivas: portada 5 cards, SERP 4. `npm run verify` salida **0**:
+1032 + 190.
+
+### 277.4 — Lo que falta, dicho
+Quedan por cablear **recientes**, **estancias** y **venta**. Y **`valoradas` no se puede**: pide una
+calificación que el índice no guarda — o se añade al modelo, o esa sección no puede existir con
+datos reales. Es una decisión de producto, no un pendiente técnico.
