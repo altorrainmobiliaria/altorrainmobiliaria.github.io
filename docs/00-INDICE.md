@@ -48,7 +48,7 @@
 | **Una tabla/lista sale despintada, sin rejilla ni tarjeta** · «el CSS no aplica y no falla nada» | `99 §117` (Astro acota con `data-astro-cid`; los nodos de runtime no lo llevan → `npm run verify:css`) |
 | **PQRS, tickets del inquilino, plazo de 48h** · «¿qué se me está pasando?» | `99 §118` (`estadoDeSla` vive con la mora en `agenda.ts`; no se cierra sin escribir qué se hizo) |
 | **Exportar a CSV/Excel** · «se abre con las columnas corridas» · «¿esto es seguro?» | `99 §119` (RFC 4180 + BOM + anti-fórmula CWE-1236: `src/lib/domain/csv.ts`) |
-| **Reseñas / testimonios / rating en el sitio** · «es solo la maqueta» | `99 §122` (fabricarlos es Ley 1480; secciones dependientes de datos, no borradas) |
+| **Reseñas / testimonios / rating en el sitio** · «es solo la maqueta» · ¿cómo se guarda una calificación que no se pueda inventar? | `99 §122` (fabricarlos es Ley 1480; secciones dependientes de datos, no borradas) + **`§281`** (agregado server-only, mínimo de reseñas, nunca promedio sin recuento) |
 | **«En local pasa y en CI falla»** · el sitio vivo contradice al repo | `99 §125` ([[L-48]]: un prerrequisito GENERADO y gitignored; que lo genere el propio script) |
 | Project ID, cuentas IAM, deploy, secrets | `50-CONFIG-INFRA` |
 | Competencia/mercado inmobiliario, benchmark | `40-LOBULOS` → `41-MERCADO` |
@@ -118,6 +118,7 @@
 | §279 | 🧩 **Las 5 secciones de la portada, del catálogo real** — lo que el índice no guarda NO se inventa, se quita. Y a un gate con falso positivo se le ENSEÑA A VER, no se le declara excepción (con prueba negativa). | 12754 |
 | §280 | 🧾 **Tres cifras inventadas en `/publicar`**, donde un propietario decide confiarte su inmueble. Sustituidas por credenciales verificables (matrícula, 3% al registro, $0 Ley 820) — DERIVADAS, no tecleadas. | 12810 |
 | §281 | ⭐ **La calificación, diseñada para que NO SE PUEDA inventar**: agregado server-only (las Rules lo niegan al staff), nunca promedio sin recuento, y sin mínimo de reseñas no hay nota. | 12844 |
+| §282 | 🚧 **Bloqueado NO es protegido**: el gate del RNT frena /estancias por una razón que no es «la casa no existe». + el menú servía un penthouse fantasma en 45 páginas. ⚠️ Y escalé antes de leer la pantalla entera. | 12891 |
 
 ---
 

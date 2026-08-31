@@ -620,6 +620,28 @@ Una excepción que ya no corresponde a nada es peor que la deuda, porque da por 
 nadie vigila. Si al quitarla el gate sigue verde, la deuda no existía — y eso no se «cierra», se
 RETIRA: cerrar afirmaría que hubo algo que arreglar.
 
+**🚧 Y no confundas BLOQUEADO con PROTEGIDO.** Encuentras algo peligroso, ves que hoy no puede
+salir, y respiras. Pregunta lo siguiente antes de respirar: **¿por qué está bloqueado?** Porque el
+bloqueo se levantará por *su* razón, no por la tuya.
+
+Caso real: una página publicaba una ficha completa —galería, precio, formulario de reserva— de un
+inmueble que no existe. No podía salir a producción… porque un gate legal exigía un número de
+registro turístico que aún no había. Ese gate vigila el **registro**, no que el inmueble exista. El
+día que llegue el número, el gate pasa y sale exactamente lo mismo.
+
+🎯 *Un bloqueo ajeno es un plazo, no una solución.* Si lo que te protege es una condición que
+alguien está trabajando activamente para levantar —una credencial pendiente, un flag de staging, un
+`noindex` temporal— entonces tu problema tiene fecha de salida y no lo sabes.
+
+⚠️ **Y el reverso, que me costó una escalada en falso**: antes de dar algo por roto, **lee la
+pantalla entera**. Escalé ese hallazgo como el más grave de la sesión y resultó que la página ya
+llevaba su descargo —«este alojamiento es un ejemplo»— al final del panel. *Con cinco hallazgos de
+la misma clase encima, el sexto se reconoce antes de comprobarlo: la racha que te hace bueno
+buscando es la misma que te hace rápido concluyendo.*
+
+💡 Lo que sí quedaba: el descargo vivía **debajo** del formulario. *Un descargo que llega después de
+la decisión no es un descargo, es una nota al pie.* Va donde se toma la decisión, no donde termina.
+
 ## 4n. 🗺️ El censo que mide la superficie EQUIVOCADA — medir no es lo mismo que medir lo que importa
 
 Convertir un hallazgo en censo es la jugada correcta (deja de arreglar la instancia y pasas a barrer la

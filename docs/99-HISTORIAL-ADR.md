@@ -12887,3 +12887,52 @@ quede vieja. *Van tres gemelos en esta sesión, y los tres los cazó el tipo, no
 El **flujo que ESCRIBE** las reseñas: quién puede dejar una, atada a qué reserva, y la Function que
 recalcula. Hasta entonces el agregado no existe para nadie y «mejor valoradas» dice que no hay
 valoraciones — **que es la verdad**. `npm run verify` salida **0**: 1041 (+9) + 193 (+3).
+
+## 282. ADR-282 — Bloqueado no es lo mismo que protegido (y yo juzgando antes de leer)
+
+### 282.1 — El segundo barrido, y por qué hacía falta
+El de §276 buscaba `$`, `%`, nombres propios y marcas de tiempo. El «128 propiedades» **se me
+escapó** y lo encontré leyendo, no midiendo. Así que este busca lo que faltaba: un **número suelto
+pegado a un sustantivo** que lo convierte en afirmación sobre el negocio.
+
+🎯 *Cuando una clase de hallazgo se te escapa a la heurística y la encuentras a mano, la corrección
+no es mirar más: es ampliar el instrumento y volver a pasarlo.* Entre el ruido esperable (plazos
+legales de Habeas Data, numeración de secciones) salió lo que sí importaba.
+
+### 282.2 — El menú, servido en las 45 páginas
+- Un tile **«Destacada · Penthouse en Bocagrande»**: con foto y ese rótulo, en un menú inmobiliario,
+  eso **se lee como una ficha**. No hay tal penthouse; el enlace va a una búsqueda por zona que hoy
+  no devuelve nada. Los otros dos tiles del menú ya eran **editoriales** («Vive la ciudad
+  amurallada») y por eso no mentían. Este pasa a decir lo que hace: invitar a ver una **zona**.
+- La columna **«Por estado»** ofrecía «Compra nuevo» y «Compra usado» y **las dos iban a `/comprar`**.
+  Su propio comentario lo sabía —*«PENDIENTE DEL DUEÑO: o el índice gana el campo, o la columna se
+  retira»*— que es el motivo-promesa de §278: dice **quién** decidirá, no **qué** la retira. Se
+  retira; vuelve sola el día que exista la vertical de obra nueva (§270, ya en el plan).
+
+### 282.3 — 🎯 Bloqueado no es protegido
+`/estancias` sirve una ficha completa de una casa que no existe, con galería, precio y **formulario
+de reserva**. Lo que impide que salga hoy es el gate del **RNT** (§234, Ley 300/1996), y su propio
+comentario lo dice: *«lo único que lo protege es que staging va noindex»*.
+
+Pero ese gate vigila el **RNT**, no que la casa exista. *El día que llegue el número, el gate pasa —
+y sale a producción exactamente lo mismo que hoy.* **Que algo esté bloqueado no significa que esté
+protegido: hay que preguntar POR QUÉ está bloqueado, porque el bloqueo se levanta por su propia
+razón y no por la tuya.**
+
+### 282.4 — ⚠️ Y aquí me equivoqué yo
+Escalé ese hallazgo como *«lo más grave de la sesión»*… y al leer hasta el final resultó que **la
+página ya lo dice**: «Este alojamiento es un **ejemplo**: todavía no publicamos el inventario de
+corta estancia». Una sesión anterior tomó esa decisión y la declaró; yo formé el juicio antes de
+terminar de leer la pantalla que estaba juzgando.
+
+🎯 *Con cinco hallazgos de la misma clase encima, el sexto se reconoce antes de comprobarlo. La racha
+que te hace bueno buscando es la misma que te hace rápido concluyendo.* La regla práctica: **antes
+de escalar, lee la pantalla ENTERA** — el descargo suele estar donde no miraste.
+
+Lo que sí quedó: ese aviso vivía **al final** del panel de reserva, debajo del total. *Un descargo
+que llega después de la decisión no es un descargo, es una nota al pie.* Se duplica junto al
+titular; el de abajo se queda, porque el momento de pulsar «Solicitar» también merece el suyo.
+
+### 282.5 — Verificación
+En el build de **producción**: «Penthouse en Bocagrande» → 0 · «Compra nuevo/usado» → 0 · el tile
+editorial presente. `npm run verify` salida **0**: 1041 + 193.
