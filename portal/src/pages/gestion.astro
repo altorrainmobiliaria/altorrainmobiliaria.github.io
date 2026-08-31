@@ -65,76 +65,39 @@ const TREND = '<path d="M6 15l6-6 6 6"/>';
 // --- Datos DEMO por rol (del mockup). `tone` = gold|navy (→ color de paleta AA en CSS). ---
 const DATA = {
   admin: {
-    user: 'Alejandro C.', userRole: 'Administrador', avatar: 'A',
-    greeting: 'Buenos días, Alejandro',
+    user: '—', userRole: '—', avatar: '',
+    greeting: 'Hola',
     subtitle: 'Panel general · toda la operación ALTORRA',
     tableTitle: 'Pipeline de leads',
     kpis: [
-      { label: 'Inmuebles activos', value: '48', trend: '+6' },
-      { label: 'Leads nuevos', value: '127', trend: '+18%' },
-      { label: 'Visitas esta semana', value: '32', trend: '+4' },
-      { label: 'Ventas del mes', value: '$4.850M', trend: '+12%' },
-    ],
-    rows: [
-      { initials: 'VR', client: 'Valentina Ríos', inm: 'Apto Castillogrande', zona: 'Castillogrande', etapa: 'Negociación', tone: 'gold', valor: '$1.450M' },
-      { initials: 'TS', client: 'Thomas Shelby', inm: 'Casa Manga', zona: 'Manga', etapa: 'Nuevo', tone: 'navy', valor: '$980M' },
-      { initials: 'LG', client: 'Laura Gómez', inm: 'Penthouse Bocagrande', zona: 'Bocagrande', etapa: 'En visita', tone: 'gold', valor: '$2.100M' },
-      { initials: 'DF', client: 'Diego Fernández', inm: 'Casa Crespo', zona: 'Crespo', etapa: 'Cierre', tone: 'gold', valor: '$760M' },
-      { initials: 'SM', client: 'Sofía Márquez', inm: 'Lote La Boquilla', zona: 'La Boquilla', etapa: 'Nuevo', tone: 'navy', valor: '$520M' },
-      { initials: 'AM', client: 'Andrés Mejía', inm: 'Local Centro', zona: 'Centro', etapa: 'En visita', tone: 'gold', valor: '$1.100M' },
-    ],
-    activities: [
-      { tone: 'gold', text: 'Nuevo lead · Sofía Márquez interesada en Lote La Boquilla', time: 'hace 12 min' },
-      { tone: 'gold', text: 'Visita agendada · Penthouse Bocagrande', time: 'hace 40 min' },
-      { tone: 'gold', text: 'Cierre confirmado · Casa Crespo por $760M', time: 'hace 2 h' },
-      { tone: 'navy', text: 'Documento cargado · Escritura Apto Castillogrande', time: 'hace 3 h' },
+      { label: 'Inmuebles activos', value: '—' },
+      { label: 'Leads nuevos', value: '—' },
+      { label: 'Visitas esta semana', value: '—' },
+      { label: 'Ventas del mes', value: '—' },
     ],
   },
   aliado: {
-    user: 'Julián Peña', userRole: 'Aliado ALTORRA', avatar: 'J',
-    greeting: 'Hola, Julián',
+    user: '—', userRole: '—', avatar: '',
+    greeting: 'Hola',
     subtitle: 'Tu cartera como aliado · comisiones y leads',
     tableTitle: 'Mis leads asignados',
     kpis: [
-      { label: 'Mis inmuebles', value: '12', trend: '+2' },
-      { label: 'Mis leads', value: '34', trend: '+9' },
-      { label: 'Visitas agendadas', value: '8', trend: '+3' },
-      { label: 'Comisión acumulada', value: '$186M', trend: '+15%' },
-    ],
-    rows: [
-      { initials: 'LG', client: 'Laura Gómez', inm: 'Penthouse Bocagrande', zona: 'Bocagrande', etapa: 'En visita', tone: 'gold', valor: '$2.100M' },
-      { initials: 'AM', client: 'Andrés Mejía', inm: 'Local Centro', zona: 'Centro', etapa: 'Negociación', tone: 'gold', valor: '$1.100M' },
-      { initials: 'CR', client: 'Carla Ruiz', inm: 'Apto Bocagrande', zona: 'Bocagrande', etapa: 'Nuevo', tone: 'navy', valor: '$890M' },
-      { initials: 'PN', client: 'Pedro Nel', inm: 'Oficina Manga', zona: 'Manga', etapa: 'Cierre', tone: 'gold', valor: '$640M' },
-    ],
-    activities: [
-      { tone: 'gold', text: 'Nuevo lead asignado · Carla Ruiz · Apto Bocagrande', time: 'hace 25 min' },
-      { tone: 'gold', text: 'Comisión liquidada · Oficina Manga · $19.2M', time: 'hace 1 h' },
-      { tone: 'gold', text: 'Andrés Mejía pasó a Negociación', time: 'hace 4 h' },
-      { tone: 'navy', text: 'Recordatorio · visita Penthouse mañana 10:00', time: 'ayer' },
+      { label: 'Mis inmuebles', value: '—' },
+      { label: 'Mis leads', value: '—' },
+      { label: 'Visitas agendadas', value: '—' },
+      { label: 'Comisión acumulada', value: '—' },
     ],
   },
   prop: {
-    user: 'María Elena V.', userRole: 'Propietaria', avatar: 'M',
-    greeting: 'Hola, María Elena',
+    user: '—', userRole: '—', avatar: '',
+    greeting: 'Hola',
     subtitle: 'Tu apartamento en Castillogrande · en venta',
     tableTitle: 'Interesados en tu propiedad',
     kpis: [
-      { label: 'Días publicado', value: '12', trend: '+12' },
-      { label: 'Visitas realizadas', value: '14', trend: '+5' },
-      { label: 'Interesados', value: '3', trend: '+2' },
-      { label: 'Mejor oferta', value: '$1.400M', trend: '+3%' },
-    ],
-    rows: [
-      { initials: 'VR', client: 'Valentina Ríos', inm: 'Tu apartamento', zona: 'Castillogrande', etapa: 'Negociación', tone: 'gold', valor: '$1.400M' },
-      { initials: 'FO', client: 'Familia Osorio', inm: 'Tu apartamento', zona: 'Castillogrande', etapa: 'En visita', tone: 'gold', valor: '—' },
-      { initials: 'IB', client: 'Inv. Bahía SAS', inm: 'Tu apartamento', zona: 'Castillogrande', etapa: 'Nuevo', tone: 'navy', valor: '—' },
-    ],
-    activities: [
-      { tone: 'gold', text: 'Valentina Ríos hizo una oferta de $1.400M', time: 'hace 30 min' },
-      { tone: 'gold', text: 'Nueva visita solicitada · Familia Osorio', time: 'hace 2 h' },
-      { tone: 'navy', text: 'Tu Rango ALTORRA fue actualizado por M. Restrepo', time: 'hace 1 día' },
-      { tone: 'gold', text: 'Tu publicación alcanzó 1.240 vistas', time: 'hace 2 días' },
+      { label: 'Días publicado', value: '—' },
+      { label: 'Visitas realizadas', value: '—' },
+      { label: 'Interesados', value: '—' },
+      { label: 'Mejor oferta', value: '—' },
     ],
   },
 };
@@ -174,12 +137,15 @@ const strings = Object.fromEntries(
   Object.entries(DATA).map(([r, d]) => [r, { user: d.user, userRole: d.userRole, avatar: d.avatar, greeting: d.greeting, subtitle: d.subtitle, tableTitle: d.tableTitle }])
 );
 
-const demand = [
-  { zona: 'Bocagrande', pct: 92 },
-  { zona: 'Castillogrande', pct: 85 },
-  { zona: 'Centro Histórico', pct: 78 },
-  { zona: 'Manga', pct: 64 },
-];
+/*
+ * 🔴 Aquí vivían cuatro zonas con su porcentaje —Bocagrande 92%, Castillogrande 85%…— servidas en
+ * el HTML del panel de administración (§275). No salían de ningún sitio: eran del mockup. Y una
+ * cifra inventada en el panel es peor que en el portal público, porque aquí alguien DECIDE con ella.
+ *
+ * 🎯 Y «demanda» tampoco era lo que se podía medir. Lo que ALTORRA tiene es de dónde llegan sus
+ * leads, que no es lo mismo: mide su propia captación, no el mercado. El panel lo dice con ese
+ * nombre —«Zonas más pedidas»— y lo calcula `montarZonas()` sobre los leads que la tabla ya trajo.
+ */
 
 const init = DATA.admin;
 ---
@@ -294,7 +260,7 @@ const init = DATA.admin;
               <div class="gx-kpi">
                 <div class="gx-kpi__top">
                   <span class="gx-kpi__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={KPI_ICONS[i]}></svg></span>
-                  <span class="gx-kpi__trend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" set:html={TREND}></svg>{k.trend}</span>
+                  
                 </div>
                 <div class="gx-kpi__val">{k.value}</div>
                 <div class="gx-kpi__lbl">{k.label}</div>
@@ -323,17 +289,18 @@ const init = DATA.admin;
               <div class="gx-tr gx-tr--head">
                 <span>Cliente</span><span>Inmueble</span><span>Zona</span><span>Etapa</span><span class="gx-r">Valor</span>
               </div>
+              {/*
+                  🔴 Aquí se servían SEIS clientes inventados con su valor —«Valentina Ríos ·
+                  $1.450M»— y el script solo repintaba el juego del admin, así que los otros dos
+                  roles seguían sirviendo ficción a un clic de pestaña (§275).
+
+                  Ya no se dibuja ninguna fila en el build: el marcado de una fila de lead vive en
+                  `pintarFila()`, que es donde vive el dato. Tenerlo también aquí eran dos sitios
+                  dibujando lo mismo y solo uno actualizándose.
+              */}
               {roles.map((role) => (
                 <div class="gx-row-set" data-set={role} hidden={role !== 'admin'}>
-                  {DATA[role as keyof typeof DATA].rows.map((r) => (
-                    <div class="gx-tr">
-                      <div class="gx-cli"><span class="gx-cli__ini">{r.initials}</span><span class="gx-cli__name">{r.client}</span></div>
-                      <span class="gx-muted gx-ell">{r.inm}</span>
-                      <span class="gx-muted">{r.zona}</span>
-                      <span><span class={`gx-pill gx-pill--${r.tone}`}>{r.etapa}</span></span>
-                      <span class="gx-val gx-r">{r.valor}</span>
-                    </div>
-                  ))}
+                  <div class="gx-tr gx-tr--msg"><span class="gx-muted">{role === 'admin' ? 'Cargando leads…' : 'Esta vista todavía no está conectada a datos reales.'}</span></div>
                 </div>
               ))}
             </div>
@@ -345,25 +312,16 @@ const init = DATA.admin;
             <h2>Actividad reciente</h2>
             {roles.map((role) => (
               <div class="gx-act-set" data-set={role} hidden={role !== 'admin'}>
-                {DATA[role as keyof typeof DATA].activities.map((a) => (
-                  <div class="gx-act">
-                    <span class={`gx-dot gx-dot--${a.tone}`}></span>
-                    <div><div class="gx-act__txt">{a.text}</div><div class="gx-act__time">{a.time}</div></div>
-                  </div>
-                ))}
+                <p class="gx-vacio">{role === 'admin' ? 'Cargando actividad…' : 'Esta vista todavía no está conectada a datos reales.'}</p>
               </div>
             ))}
           </div>
 
           <div class="gx-panel gx-pad">
-            <h2>Demanda por zona</h2>
-            <div class="gx-dem">
-              {demand.map((d) => (
-                <div class="gx-dem__row">
-                  <div class="gx-dem__lbl"><span>{d.zona}</span><span>{d.pct}%</span></div>
-                  <div class="gx-dem__track"><span class="gx-dem__fill" style={`width:${d.pct}%`}></span></div>
-                </div>
-              ))}
+            <h2>Zonas más pedidas</h2>
+            <p class="gx-psub" id="gx-zonas-base">Se calcula con los leads recibidos.</p>
+            <div class="gx-dem" id="gx-zonas">
+              <p class="gx-vacio">Cargando zonas…</p>
             </div>
           </div>
         </div>
@@ -1361,6 +1319,7 @@ const init = DATA.admin;
   /* El `h2` de `.gx-panel` computa margen 0 aquí, así que el subtítulo necesita separación POSITIVA.
      El `-10px` que había asumía un margen que no existe y montaba el texto encima del título. */
   .gx-psub { font-size: 12.5px; color: var(--alt-text-soft); margin: 5px 0 18px; }
+  .gx-vacio { margin: 0; padding: 18px 0; font-size: 13.5px; color: var(--alt-text-soft); }
 
   .gx-fgrid {
     display: grid;

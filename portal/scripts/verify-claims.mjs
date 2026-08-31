@@ -286,6 +286,41 @@ for (const f of SERVIDOS) {
   }
 }
 
+/*
+ * ══ PERSONAS DEL MOCKUP EN EL HTML SERVIDO (§275) ═════════════════════════════════════════════
+ *
+ * El panel de gestión servía seis clientes inventados con su valor, cuatro «actividades recientes»
+ * que nunca ocurrieron, cuatro zonas con su porcentaje, y un saludo a «Alejandro» para quien no se
+ * llama Alejandro. Nada de eso salía de ningún dato: era el relleno del mockup, copiado al código.
+ *
+ * 🎯 **Una cifra inventada en el panel es peor que en el portal público**, porque aquí alguien
+ * DECIDE con ella. Y §266 ya había arreglado la mitad —el runtime dejaba de escribirlas— sin tocar
+ * el BUILD, así que seguían servidas y seguían a un clic de pestaña en los roles que el script no
+ * repintaba. *Neutralizar en el runtime no quita del build; el gate mira el build.*
+ *
+ * Se vigilan NOMBRES, no importes: un importe como «$1.450M» es legítimo en una card de demo del
+ * catálogo, y prohibirlo daría falsos positivos justo donde el diseño sí lo pide. Un nombre propio
+ * del mockup no tiene ninguna razón de aparecer en HTML servido.
+ */
+const PERSONAS_DE_MOCKUP = [
+  'Valentina Ríos', 'Thomas Shelby', 'Laura Gómez', 'Diego Fernández', 'Sofía Márquez',
+  'Andrés Mejía', 'Carla Ruiz', 'Pedro Nel', 'Familia Osorio', 'Inv. Bahía SAS',
+  'Alejandro C.', 'Julián Peña', 'María Elena V.',
+];
+for (const f of SERVIDOS) {
+  const html = readFileSync(f, 'utf8');
+  const encontradas = PERSONAS_DE_MOCKUP.filter((n) => html.includes(n));
+  if (encontradas.length) {
+    hallazgos.push({
+      f: relative(RAIZ, f),
+      linea: 0,
+      cifra: encontradas.join(' · '),
+      tipo: 'persona-de-mockup',
+      que: 'una persona inventada del mockup se está sirviendo como si fuera un cliente o un usuario real',
+    });
+  }
+}
+
 if (hallazgos.length) {
   console.error('❌ verify:claims — cifras que se leen como MEDICIÓN y nadie ha respaldado:\n');
   for (const h of hallazgos) {

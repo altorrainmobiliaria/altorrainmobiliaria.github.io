@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { etiquetaOrigen, haceCuanto, iniciales, normalizar, tonoEstado } from './gestion-leads';
+import { etiquetaOrigen, haceCuanto, iniciales, normalizar, tonoEstado, zonasDeLeads } from './gestion-leads';
+import type { Lead } from './gestion-leads';
 
 // Bandeja de leads del panel (ADR §101). Lo que se prueba aquí es la NORMALIZACIÓN, que es donde este
 // proyecto ya se quemó una vez: `createdAt` llega con dos formas distintas según quién lo escribiera
@@ -87,5 +88,36 @@ describe('presentación', () => {
     expect(tonoEstado('')).toBe('gold');
     expect(tonoEstado('contactado')).toBe('navy');
     expect(tonoEstado('cerrado')).toBe('navy');
+  });
+});
+
+describe('zonasDeLeads (§275) — de dónde vienen los leads, contado sobre los que HAY', () => {
+  const lead = (zona: string): Lead =>
+    normalizar('x', { nombre: 'N', datosExtra: { zona } }) as Lead;
+
+  it('cuenta por zona y ordena de mayor a menor', () => {
+    const r = zonasDeLeads([lead('Bocagrande'), lead('Manga'), lead('Bocagrande'), lead('Bocagrande'), lead('Manga')]);
+    expect(r).toEqual([{ zona: 'Bocagrande', n: 3 }, { zona: 'Manga', n: 2 }]);
+  });
+
+  it('🔴 los leads SIN zona se agrupan y se dicen, no se descartan', () => {
+    // Si el formulario dejara de capturar la zona, un reparto que los omite se leería completo y
+    // correcto mientras esconde justo el agujero que hay que arreglar.
+    const r = zonasDeLeads([lead('Manga'), lead(''), lead('   '), lead('')]);
+    expect(r).toEqual([{ zona: 'Sin zona', n: 3 }, { zona: 'Manga', n: 1 }]);
+  });
+
+  it('el empate se rompe por nombre, para que el orden no baile entre cargas', () => {
+    const r = zonasDeLeads([lead('Manga'), lead('Crespo')]);
+    expect(r.map((z) => z.zona)).toEqual(['Crespo', 'Manga']);
+  });
+
+  it('respeta el tope y devuelve las MÁS pedidas, no las primeras que aparecen', () => {
+    const leads = [lead('A'), lead('B'), lead('B'), lead('C'), lead('C'), lead('C'), lead('D'), lead('D'), lead('D'), lead('D'), lead('E')];
+    expect(zonasDeLeads(leads, 2)).toEqual([{ zona: 'D', n: 4 }, { zona: 'C', n: 3 }]);
+  });
+
+  it('sin leads no inventa nada', () => {
+    expect(zonasDeLeads([])).toEqual([]);
   });
 });

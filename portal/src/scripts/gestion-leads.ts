@@ -241,6 +241,140 @@ export function montarVerTodoLeads(): void {
   });
 }
 
+/* ══ LO QUE SE DERIVA DE LOS MISMOS LEADS (§275) ═══════════════════════════════════════════════
+ *
+ * «Actividad reciente» y «Zonas más pedidas» servían datos INVENTADOS del mockup —«Cierre
+ * confirmado · Casa Crespo por $760M», «Bocagrande 92%»— en el panel de administración. Una cifra
+ * falsa aquí es peor que en el portal público: aquí alguien DECIDE con ella.
+ *
+ * 🎯 Y se calculan sobre `cargados`, el snapshot que la tabla ya trajo, no con consultas nuevas.
+ * El free-tier de este proyecto es una restricción de diseño, no una preferencia: dos paneles más
+ * son dos consultas más EN CADA CARGA del panel, todos los días, para responder algo que ya está
+ * en memoria. Lo barato y lo correcto coinciden aquí.
+ */
+
+export interface ZonaConteo {
+  zona: string;
+  n: number;
+}
+
+/**
+ * Cuántos leads ha traído cada zona, de mayor a menor.
+ *
+ * Los que llegan sin zona **se agrupan y se dicen** en vez de descartarse: si el formulario deja de
+ * capturarla, el panel tiene que enseñar ese agujero, no esconderlo bajo un reparto que parece
+ * completo. El desempate por nombre hace el orden determinista — sin él, dos zonas empatadas
+ * cambiarían de sitio entre cargas y la prueba no podría afirmar nada.
+ */
+export function zonasDeLeads(leads: readonly Lead[], tope = 4): ZonaConteo[] {
+  const cuenta = new Map<string, number>();
+  for (const l of leads) {
+    const z = (l.zona || '').trim() || 'Sin zona';
+    cuenta.set(z, (cuenta.get(z) ?? 0) + 1);
+  }
+  return [...cuenta.entries()]
+    .map(([zona, n]) => ({ zona, n }))
+    .sort((a, b) => b.n - a.n || a.zona.localeCompare(b.zona, 'es'))
+    .slice(0, tope);
+}
+
+/** Un párrafo de estado, con la clase que ya usa el panel para lo vacío. */
+function parrafo(texto: string): HTMLParagraphElement {
+  const p = document.createElement('p');
+  p.className = 'gx-vacio';
+  p.textContent = texto;
+  return p;
+}
+
+/**
+ * «Actividad reciente» = los leads más recientes, contados como lo que son.
+ *
+ * ⚠️ Solo se toca el juego del ADMIN. Los otros dos roles llevan, desde el build, un mensaje que
+ * dice que no están conectados — y borrarlo para dejarlos en blanco cambiaría una explicación por
+ * un silencio. (§266 obligaba a barrer TODOS los juegos porque el build servía ficción en los tres;
+ * arreglado el build, esa barrida ya no hace falta: la regla era «que no quede ficción», no «que
+ * el script toque todo».)
+ */
+export function montarActividad(leads: readonly Lead[]): void {
+  const set = document.querySelector<HTMLElement>('.gx-act-set[data-set="admin"]');
+  if (!set) return;
+  if (!leads.length) {
+    set.replaceChildren(parrafo('Todavía no hay actividad que mostrar.'));
+    return;
+  }
+  const frag = document.createDocumentFragment();
+  for (const lead of leads.slice(0, 5)) {
+    const fila = document.createElement('div');
+    fila.className = 'gx-act';
+    const punto = document.createElement('span');
+    punto.className = `gx-dot gx-dot--${tonoEstado(lead.estado)}`;
+    const cuerpo = document.createElement('div');
+    const txt = document.createElement('div');
+    txt.className = 'gx-act__txt';
+    // Se dice el HECHO que consta —llegó un lead— y no una interpretación de su estado. El origen
+    // va porque es lo que decide a quién se le responde primero y cómo.
+    txt.textContent = `${etiquetaOrigen(lead.origen)} · ${lead.nombre}${lead.zona ? ` · ${lead.zona}` : ''}`;
+    const hora = document.createElement('div');
+    hora.className = 'gx-act__time';
+    hora.textContent = haceCuanto(lead.createdAt);
+    cuerpo.appendChild(txt);
+    cuerpo.appendChild(hora);
+    fila.appendChild(punto);
+    fila.appendChild(cuerpo);
+    frag.appendChild(fila);
+  }
+  set.replaceChildren(frag);
+}
+
+/**
+ * «Zonas más pedidas» — la barra es proporcional a la zona LÍDER y la etiqueta lleva el número
+ * absoluto.
+ *
+ * 🎯 Esto no es un porcentaje a propósito. El mockup dibujaba «Bocagrande 92%», que se lee como una
+ * cuota de mercado que ALTORRA no puede medir. Lo que sí consta es cuántos leads propios ha traído
+ * cada zona; con el número al lado, el largo de la barra dice exactamente lo que parece decir.
+ * Y se publica el DENOMINADOR: un reparto sin decir sobre cuántos se calcula deja creer que es
+ * sobre todo el histórico cuando son los últimos que cupieron en la consulta.
+ */
+export function montarZonas(leads: readonly Lead[]): void {
+  const caja = document.getElementById('gx-zonas');
+  const base = document.getElementById('gx-zonas-base');
+  if (!caja) return;
+  const zonas = zonasDeLeads(leads);
+  if (!zonas.length) {
+    caja.replaceChildren(parrafo('Todavía no hay leads de los que sacar zonas.'));
+    if (base) base.textContent = 'Se calcula con los leads recibidos.';
+    return;
+  }
+  if (base) {
+    base.textContent = `De los ${leads.length} lead${leads.length === 1 ? '' : 's'} más recientes.`;
+  }
+  const max = zonas[0].n;
+  const frag = document.createDocumentFragment();
+  for (const z of zonas) {
+    const fila = document.createElement('div');
+    fila.className = 'gx-dem__row';
+    const lbl = document.createElement('div');
+    lbl.className = 'gx-dem__lbl';
+    const nombre = document.createElement('span');
+    nombre.textContent = z.zona;
+    const n = document.createElement('span');
+    n.textContent = `${z.n}`;
+    lbl.appendChild(nombre);
+    lbl.appendChild(n);
+    const pista = document.createElement('div');
+    pista.className = 'gx-dem__track';
+    const relleno = document.createElement('span');
+    relleno.className = 'gx-dem__fill';
+    relleno.style.width = `${Math.round((z.n / max) * 100)}%`;
+    pista.appendChild(relleno);
+    fila.appendChild(lbl);
+    fila.appendChild(pista);
+    frag.appendChild(fila);
+  }
+  caja.replaceChildren(frag);
+}
+
 export async function montarLeads(): Promise<void> {
   const conjunto = document.querySelector<HTMLElement>('.gx-row-set[data-set="admin"]');
   const cabecera = document.querySelector<HTMLElement>('.gx-tr--head');
@@ -278,6 +412,8 @@ export async function montarLeads(): Promise<void> {
       );
       tocoElTope = false;
       actualizarKpi(0, false);
+      montarActividad([]);
+      montarZonas([]);
       return;
     }
 
@@ -287,12 +423,19 @@ export async function montarLeads(): Promise<void> {
     conjunto.replaceChildren(...leads.map(pintarFila));
     tocoElTope = snap.size >= TOPE;
     actualizarKpi(leads.filter((l) => l.estado === 'pendiente').length, tocoElTope);
+    montarActividad(leads);
+    montarZonas(leads);
   } catch (e) {
     // FALLA RUIDOSO y, sobre todo, BORRA lo que hubiera: dejar los leads de muestra a la vista sería
     // que alguien llamara a personas que no existen.
     conjunto.replaceChildren(
       pintarMensaje('No pudimos cargar los leads. Si acabas de recibir permisos, cierra sesión y vuelve a entrar.'),
     );
+    // Los dos paneles derivados cuelgan de estos leads: si no llegaron, tampoco pueden decir nada.
+    // Se vacian con su mensaje en vez de dejarlos girando — un «Cargando…» eterno se lee como que
+    // el dato viene, y aqui ya sabemos que no.
+    montarActividad([]);
+    montarZonas([]);
     console.error('[gestion] leads:', e);
   }
 }
