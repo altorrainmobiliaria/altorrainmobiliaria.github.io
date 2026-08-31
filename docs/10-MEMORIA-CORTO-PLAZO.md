@@ -66,16 +66,12 @@
 > 🔻 **El panel LEGACY no tiene red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates.
 
-> 🎯 **AQUÍ VOY (31-ago).** Daniel contestó las tres decisiones de §265.8 y su taxonomía quedó
-> cerrada en **§271**: +`cabaña` +`parqueadero`, y «penthouse» pasa a **DERIVARSE** de
-> `piso === pisosTotales` — la casilla se descartó porque la pone el interesado y no la sella nadie.
-> ⚠️ El alta gana «Pisos del edificio»; el buscador, 11→13 tipos.
-> 🏗️ **Obra nueva**: vertical abierta y diseñada (§270), al **mega-plan** y no al backlog — no cabe
-> hoy por una razón MEDIDA: el índice guarda `precio` como UN entero y un proyecto tiene RANGO.
-> 📦 **Barrido de producto: AGOTADO** (61 hallazgos, 32 arreglados → §263-§267, 1 retirado). Queda
-> lo que no cierro yo: el pipeline y el feed del panel (mockup). ✅ Los 4 chips de filtro del SERP
-> eran de ADORNO (§273), y el header tapaba 90% de esa barra al subir a usarlos (§274) — este SÍ era
-> medible aquí: bastaba emular viewport y apagar transiciones ([[L-26]] · [[L-28]]).
+> 🎯 **AQUÍ VOY (31-ago).** Barrido del portal CERRADO: taxonomía (§271) · los 4 chips de filtro
+> del SERP eran de ADORNO (§273) · el header tapaba el 90% de esa barra al subir a usarla (§274) ·
+> y el panel SERVÍA 6 clientes inventados y saludaba a un tal Alejandro (§275). El feed y las zonas
+> ya salen de leads reales. Del panel no me queda nada; lo que sigue abierto es TUYO (abajo).
+> 🏗️ **Obra nueva**: diseñada y metida en el MEGA-PLAN, no en el backlog (§270) — no cabe hoy por
+> una razón MEDIDA: el índice guarda `precio` como UN entero y un proyecto tiene RANGO.
 
 > 🔬 **Auditoría #17 (§268)** — parcial: sondas 3/4/7 piden subagentes. Las 2 abiertas de la #16
 > re-verificadas: **premisas siguen ciertas**. ⚠️ N17-04 abierto → **TODO-50**: el boot chocó CUATRO

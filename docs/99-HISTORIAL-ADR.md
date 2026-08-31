@@ -12521,3 +12521,69 @@ está oculto (45 s hasta el timeout). Sin frames no hay callback. Se mide sin es
 Con las transiciones apagadas, los dos estados: header **visible** → var `67px`, barra `top` 67,
 caja **0%** tapada (era 90%), chip **0%** (era 92%) · header **oculto** → var `0px`, barra `top` 0,
 0% y 0%. `npm run verify` salida **0**: 1027 unitarias + 190 de reglas.
+
+## 275. ADR-275 — El panel servía seis clientes que no existen, y saludaba a Alejandro
+
+### 275.1 — Lo que servía el build
+El HTML **servido** del panel de administración traía, escrito en el build:
+- **seis clientes inventados con su valor** — «Valentina Ríos · Negociación · $1.450M»;
+- **cuatro «actividades recientes» que nunca ocurrieron** — «Cierre confirmado · Casa Crespo por $760M»;
+- **cuatro zonas con su porcentaje de «demanda»** — Bocagrande 92%, Castillogrande 85%…;
+- **doce KPIs con su cifra y su flecha de tendencia** — «Ventas del mes $4.850M · +12%»;
+- y un **«Buenos días, Alejandro»** para quien no se llama Alejandro.
+
+Nada de eso salía de ningún dato: era el relleno del mockup, copiado al código.
+
+🎯 **Y aquí pesa más que en el portal público**: en el portal una cifra falsa engaña a un visitante;
+en el panel **alguien DECIDE con ella**.
+
+### 275.2 — La lección: neutralizar en el RUNTIME no quita del BUILD
+§266 ya había arreglado la mitad de esto, y con un razonamiento correcto: el script dejaba de
+escribir cifras del mockup y la identidad la ponía la sesión. Pero **no tocó el build**. Resultado:
+- las cifras seguían **servidas** en el HTML, visibles antes de que hidratara el JS;
+- y seguían **a un clic de pestaña** en los dos roles que el script no repintaba, porque el script
+  solo repintaba el del admin.
+
+🎯 *Cuando arregles «esto no se debería ver», pregunta en qué CAPA se produce — y revisa todas las
+capas que puedan producirlo.* Un arreglo en el runtime tapa lo que el runtime escribe; lo que el
+build ya escribió sigue ahí. Es el mismo error de alcance que §270 («retirar de UNA pantalla y
+dejarlo en otra es esconderlo»), en el otro eje.
+
+### 275.3 — Lo que sí se puede respaldar, se calcula
+- **«Actividad reciente»** = los leads más recientes, dichos como lo que constan (llegó un lead, de
+  tal origen, de tal zona) y no como una interpretación de su estado.
+- **«Demanda por zona» → «Zonas más pedidas»**. El nombre importaba: no medimos el mercado, medimos
+  **nuestra propia captación**. La barra es proporcional a la zona líder y la **etiqueta lleva el
+  número absoluto**, no un porcentaje que se lea como cuota de mercado. Y **publica su
+  denominador** —«de los N leads más recientes»—, que es lo que hacía falta para poder creérselo.
+- **Cero consultas nuevas.** Los dos se calculan sobre el snapshot que la tabla ya trajo. Dos
+  paneles más serían dos lecturas más **en cada carga**, todos los días, para responder algo que ya
+  está en memoria. El free-tier es una restricción de diseño, no una preferencia (§3.6).
+- **Los leads sin zona se agrupan y se DICEN.** Si el formulario dejara de capturarla, un reparto
+  que los omite se leería completo mientras esconde justo el agujero que hay que arreglar.
+- **Los tres caminos** —vacío, éxito y error— alimentan ambos paneles. Con solo el camino feliz, un
+  panel sin leads se quedaría en «Cargando…» para siempre: la peor de las tres respuestas, porque
+  dice que el dato viene cuando ya se sabe que no.
+
+### 275.4 — Gate nuevo, con su prueba negativa
+`persona-de-mockup` en `verify:claims`: **trece nombres propios** del mockup que no pueden aparecer
+en HTML servido. Se vigilan **nombres y no importes** — «$1.450M» es legítimo en una card de demo
+del catálogo, y prohibirlo daría falsos positivos justo donde el diseño sí lo pide. Probado
+inyectando «Valentina Ríos» en el build: **el gate falla y la nombra**; restaurado, verde.
+
+### 275.5 — Dos cosas que estaban ahí y aparecieron al tirar del hilo
+1. **Los `.map()` sobre las listas ya vacías eran código muerto — y además GEMELOS**: `pintarFila()`
+   construye esa misma fila con esas mismas clases. Dos sitios dibujando un lead y solo uno
+   actualizándose es §271 esperando turno. El marcado se queda donde vive el dato.
+2. **`.gx-vacio` no tenía NINGUNA regla CSS**, y la usan `gestion-leads`, `gestion-perfiles` y
+   `gestion-ventas` desde hace tiempo: sus mensajes de vacío salían con el estilo por defecto del
+   navegador dentro de un panel de tipografía sellada. ⚠️ Una clase inventada **no falla en build**,
+   no la caza un gate de paleta y no la ve un `computed style` que nadie va a pedir — es [[L-27]]
+   otra vez, y solo se ve mirando.
+
+### 275.6 — Verificación
+En el HTML **servido**: cero ocurrencias de «Valentina», «Alejandro», «4.850M» y «92%», y los huecos
+reales presentes. Los **10 selectores** que usan las funciones nuevas existen en ese HTML — una
+errata de selector dejaría el panel mudo sin un solo error en consola, y eso no lo prueba nadie
+porque el panel vive tras la sesión. `npm run verify` salida **0**: **1032 unitarias** (+5) + 190 de
+reglas.

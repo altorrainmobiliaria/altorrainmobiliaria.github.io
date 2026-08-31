@@ -111,6 +111,7 @@
 | §272 | 🔏 **DOS sellos de fecha en `05`** (`verificado-vivo:` vs `(al …)`) y re-sellé el que no lee el aviso — el aviso siguió encendido y lo leí como recordatorio nuevo. Kernel v1.26.0: ahora CITA el sello. | 12337 |
 | §273 | 🎛️ **Los 4 chips de filtro del SERP se encendían y NO filtraban** — ahora son campos del `<form get>` con paneles `<details>`. La caja traía la CIUDAD escrita y vaciaba todo resultado. Un fixture con valores IGUALES no puede suspender. | 12399 |
 | §274 | 📏 **El header tapaba 90% de la barra de filtros — justo al SUBIR a cambiar uno.** Publica su altura MEDIDA en `--alt-hdr-h` (el token decía 116, la realidad 67). ⚠️ Y [[L-26]]+[[L-28]] las re-derivé sin leerlas. | 12465 |
+| §275 | 👥 **El panel SERVÍA 6 clientes inventados, 4 actividades falsas y «92% de demanda»** — §266 arregló el runtime y no el build. Ahora se calculan de los leads ya cargados; gate `persona-de-mockup` con prueba negativa. | 12525 |
 
 ---
 

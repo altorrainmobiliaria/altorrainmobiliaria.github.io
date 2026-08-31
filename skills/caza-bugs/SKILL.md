@@ -664,6 +664,35 @@ que ese caso está en el juego:
 💡 Y escríbelo en el propio fixture: el comentario que dice *para qué* está cada valor es lo que
 impide que el siguiente los «normalice» a todos iguales por parecerle más limpio.
 
+## 4q. 🧅 El arreglo que solo alcanza UNA capa — «ya lo quité» contra «ya no se produce»
+
+Cuando arregles *«esto no se debería ver»*, la pregunta no es si desapareció de donde miraste, sino
+**en qué capa se PRODUCE** — y hay que revisar todas las que puedan producirlo.
+
+Caso real: un panel servía cifras inventadas de un mockup. Se arregló *bien*: el script dejó de
+escribirlas y la identidad pasó a venir de la sesión. Meses después seguían **servidas en el HTML**,
+porque el arreglo vivía en el runtime y quien las escribía **también** era el build. Y seguían a un
+clic de pestaña, porque el script solo repintaba una de las tres vistas de rol.
+
+🎯 *Un arreglo en el runtime tapa lo que el runtime escribe. Lo que otra capa ya escribió sigue ahí,
+y encima ahora está tapado — que es peor, porque el síntoma desapareció de la pantalla donde alguien
+lo habría vuelto a ver.*
+
+**Los dos ejes por los que se escapa un arreglo de alcance corto:**
+1. **La capa** — build vs runtime · servidor vs cliente · plantilla vs datos · caché vs origen. Si
+   el dato malo puede nacer en dos sitios, arreglar uno lo deja vivo en el otro.
+2. **Las instancias** — la misma pantalla en otro rol, otro idioma, otra ruta, otro estado. «Lo
+   arreglé en la vista del admin» no dice nada sobre las otras dos que comparten el marcado.
+
+**Cómo comprobarlo, y es barato:** busca el valor literal en el **artefacto que se entrega** (el HTML
+construido, el bundle, la respuesta de la API), no en el código fuente. El código dice lo que
+*quisiste*; el artefacto dice lo que *sale*. Un `grep` de «$4.850M» sobre `dist/` contesta en un
+segundo la pregunta que una revisión de diff no contesta nunca.
+
+💡 Y cuando lo arregles, **el gate va sobre el artefacto**: una lista de valores que no pueden
+aparecer en lo servido, con su prueba negativa (inyéctalo y comprueba que el gate falla). Un gate
+que mira el fuente no habría visto nada de esto, porque en el fuente el arreglo del runtime *estaba*.
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.
