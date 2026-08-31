@@ -35,6 +35,7 @@
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **rail de pago completo, probado contra el emulador** (§166-§187). ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
 | **TODO-50** | 🧱 **CEREBRO LLENO** — §269 cerró sus 2 mitades; la **#18 lo re-midió y es peor**: **8 neuronas al 100 %** y la válvula `33`→`37` bloqueada también, así que la auditoría no pudo archivar su propia lección. Techos FIJOS (1 subido de 31) ⇒ capacidad AGOTADA. ⛔ Remedio no improvisado al cierre ([[M-31]]); subir techo prohibido ([[M-05]]). | 🔴 mío | §287 |
+| **TODO-51** | 🧠⇪ **PROGRAMA CEREBRO MAESTRO** (mandato 31-ago): de 4 cerebros a UNO global, recuerdo MECANIZADO, backup restaurable. Plan → `../brain-private/cerebro-maestro/MEGA-PLAN.md`. **F0 URGENTE**: escáner de secretos ausente en 55/100 commits y ciego a dotfiles (N18-06/07, repo PÚBLICO) — agente Opus en marcha. | 🔴 Fable+Opus | plan |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -66,15 +67,11 @@
 > 🔻 **El panel LEGACY no tiene red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates.
 
-> 🎯 **AQUÍ VOY (31-ago).** Barrido del portal CERRADO (§271-§283): la web ya no publica nada que no
-> pueda respaldar, y sus 5 secciones de inventario beben del catálogo real. Daniel decidió las dos
-> que eran suyas (§280 · §281). ⏭ **Falta el flujo que ESCRIBE reseñas** (quién, atado a qué reserva,
-> y la Function que recalcula): hasta entonces «mejor valoradas» dice la verdad — que no hay.
-> 🏗️ **Obra nueva: 3 piezas hechas** — modelo (§284), JSON-LD con un Offer por tipología (§285) y
-> las Rules con el gate de licencia en create Y update (§286). El precio se DERIVA de las
-> tipologías; publicar exige LICENCIA de construcción.
-> ⛔ **La ficha PARA por algo TUYO: no hay mockup de proyecto** (ni uno en `design/mockups/`), y
-> «nunca UI sin mockup» es callejón duro. ⏭ Y falta la proyección al índice (en deliberación).
+> 🎯 **AQUÍ VOY (31-ago · FABLE 5).** Daniel abrió el **PROGRAMA CEREBRO MAESTRO** → TODO-51; la
+> web pasa a 2º frente. Reparto NUEVO: **Fable planifica · Opus implementa · agentes SIEMPRE Opus**
+> (ventana $100/5h). ⛔ Obra nueva espera TU mockup de ficha; la proyección al índice quedó
+> **DECIDIDA** (crudo en bóveda: doc propio + fusión en el endpoint, 9 pasos) — la aterriza Opus
+> tras el mockup. ⏭ Reseñas: falta el flujo que ESCRIBE (Ola 2).
 
 > 🔬 **Auditoría #18 (§287)** — cerebro **LLENO** (→ TODO-50). Lección del cierre, y es mía: di por
 > FALSA una premisa que §269 había **arreglado**. Antes de retirar un hallazgo, pregunta si dejó de

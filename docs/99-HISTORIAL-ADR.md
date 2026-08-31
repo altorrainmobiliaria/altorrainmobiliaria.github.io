@@ -13190,5 +13190,9 @@ improvisación. El GC de esta auditoría **ya está pagado por otra vía**: delt
 - **Sonda 5** — el brief del dueño no se abrió en toda la sesión pese a ser regla vinculante, con su
   reparto cambiado de arriba abajo. **Ningún gate vigila un artifact**: vive fuera del repo.
   **CERRADO en el turno** (republicado, misma URL).
-- **Sondas 3, 4 y 7** corriendo en workflows al cerrar esta entrada; se anexan a la tabla de la
-  bóveda cuando reporten.
+- **Sondas 3, 4 y 7** reportaron el mismo día (9 agentes Opus): **lectura fría 5/5 por ruteo**,
+  mediana 5 saltos — el lado LECTOR del cerebro funciona, MEDIDO. Y once hallazgos nuevos
+  (N18-06..N18-16), dos de SEGURIDAD: el escáner de secretos no corre en **55 de 100 commits** y es
+  ciego a dotfiles (repo público), y la deliberación más cara del 30-ago (18 agentes) **no tiene
+  crudo** — su ancla «crudo en la bóveda» apunta a un fichero que nunca existió, y el gate #7c dio
+  verde por vocabulario (N18-12/13). Tabla completa anexada en la bóveda.
