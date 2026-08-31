@@ -40,20 +40,28 @@ if (process.argv.includes('--off')) {
   process.exit(0);
 }
 
-/** Cuatro inmuebles en cuatro sectores y tres tipos: suficiente para que un filtro pueda FALLAR. */
-const inmueble = (id, titulo, tipo, sector, precio, lat, lng, pub) => ({
+/**
+ * Cuatro inmuebles en cuatro sectores y tres tipos, y con habitaciones, baños y áreas DISTINTOS:
+ * suficiente para que cualquiera de los filtros pueda FALLAR.
+ *
+ * ⚠️ Nacieron los cuatro con `hab: 3, ban: 2, area: 120` idénticos. Con eso, un filtro de
+ * habitaciones devolvía siempre los cuatro o siempre ninguno — o sea que habría pasado la prueba
+ * en vivo estando roto. Un fixture donde todo vale lo mismo no distingue un filtro que funciona de
+ * uno que no mira el dato: los valores tienen que DIFERIR o no hay nada que medir (§273).
+ */
+const inmueble = (id, titulo, tipo, sector, precio, lat, lng, pub, hab, ban, area) => ({
   id, slug: id, titulo, operacion: 'venta', tipo, precio, sector,
-  coords: { lat, lng }, hab: 3, ban: 2, area: 120,
+  coords: { lat, lng }, hab, ban, area,
   thumb: '/assets/villa-pool.webp', badges: ['En venta'], pub,
 });
 
 const cuerpo = {
   ok: true,
   items: [
-    inmueble('bg1', 'Penthouse frente al mar', 'apartamento', 'Bocagrande', 2_100_000_000, 10.4, -75.55, '2026-01-15'),
-    inmueble('mg1', 'Casa republicana restaurada', 'casa', 'Manga', 980_000_000, 10.41, -75.53, '2026-03-01'),
-    inmueble('ch1', 'Local en el Centro', 'local', 'Centro Histórico', 640_000_000, 10.42, -75.55, '2026-05-10'),
-    inmueble('cr1', 'Casa familiar cerca del mar', 'casa', 'Crespo', 760_000_000, 10.44, -75.51, '2026-08-20'),
+    inmueble('bg1', 'Penthouse frente al mar', 'apartamento', 'Bocagrande', 2_100_000_000, 10.4, -75.55, '2026-01-15', 4, 4, 210),
+    inmueble('mg1', 'Casa republicana restaurada', 'casa', 'Manga', 980_000_000, 10.41, -75.53, '2026-03-01', 5, 3, 320),
+    inmueble('ch1', 'Local en el Centro', 'local', 'Centro Histórico', 640_000_000, 10.42, -75.55, '2026-05-10', undefined, 1, 85),
+    inmueble('cr1', 'Casa familiar cerca del mar', 'casa', 'Crespo', 760_000_000, 10.44, -75.51, '2026-08-20', 3, 2, 140),
   ],
 };
 
@@ -62,8 +70,10 @@ writeFileSync(DESTINO, `PUBLIC_CATALOGO_SOURCE=live\nPUBLIC_CATALOGO_URL="${url}
 
 console.log(`✅ fixture ENCENDIDO — ${cuerpo.items.length} inmuebles en modo live.`);
 console.log('   Reinicia el servidor de desarrollo y prueba, por ejemplo:');
-console.log('     /comprar                      → los 4');
-console.log('     /comprar?zona=Bocagrande      → 1, y el titular en singular');
-console.log('     /comprar?tipo=casa            → 2 (Manga y Crespo)');
+console.log('     /comprar                       → los 4');
+console.log('     /comprar?zona=Bocagrande       → 1, y el titular en singular');
+console.log('     /comprar?tipo=casa             → 2 (Manga y Crespo)');
+console.log('     /comprar?hab=4                 → 2 (el local NO trae el dato: no pasa, §273)');
+console.log('     /comprar?precioMax=800000000   → 2 (Centro y Crespo)');
 console.log('     /comprar?zona=Manga&tipo=local → 0, con el mensaje de «esa búsqueda», no el de «sin inventario»');
 console.log('   Para volver a demo:  node scripts/fixture-catalogo.mjs --off');

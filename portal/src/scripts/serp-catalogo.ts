@@ -13,7 +13,7 @@ import { setMarkers, type PinData } from './altorra-map';
 // resolvía distinto según la ruta desde la que se pintara. Dos copias, dos comportamientos.
 import { urlMedia } from '../lib/media';
 import { pesos } from '../lib/domain/dinero';
-import { tipoCanonico } from '../lib/domain/shared';
+import { etiquetaTipo, tipoCanonico } from '../lib/domain/shared';
 
 type Operacion = 'venta' | 'arriendo' | 'alojamiento';
 
@@ -47,16 +47,26 @@ const sufijoPrecio = (op: Operacion): string => (op === 'arriendo' ? '/mes' : op
 /** Precio completo de la card: "$1.450.000.000". Por la puerta unica (dinero.ts), no a mano. */
 const precioCard = (v: number): string => pesos(v);
 
-/** Precio COMPACTO del pin del mapa: "$1.450M" · "$8,5M/mes" · "$400K/noche". */
-function precioPin(v: number, op: Operacion): string {
-  const suf = sufijoPrecio(op);
-  if (v < 1_000_000) return `$${nf.format(Math.round(v / 1000))}K${suf}`;
+/**
+ * Monto en COP, corto y legible: `$450M`, `$1.200M`, `$850K`.
+ *
+ * ⚠️ Vive SEPARADO de `precioPin` porque §273 lo necesita sin el sufijo de operación (el rótulo de
+ * un chip dice «Hasta $500M», no «Hasta $500M/mes»). Se extrae en vez de copiarse: un TERCER
+ * formateador de precios es justo el gemelo que §271 acaba de pagar.
+ */
+function montoCorto(v: number): string {
+  if (v < 1_000_000) return `$${nf.format(Math.round(v / 1000))}K`;
   const millones = v / 1_000_000;
   const txt =
     millones >= 100
       ? nf.format(Math.round(millones))
       : millones.toLocaleString('es-CO', { maximumFractionDigits: 1 });
-  return `$${txt}M${suf}`;
+  return `$${txt}M`;
+}
+
+/** Precio COMPACTO del pin del mapa: "$1.450M" · "$8,5M/mes" · "$400K/noche". */
+function precioPin(v: number, op: Operacion): string {
+  return `${montoCorto(v)}${sufijoPrecio(op)}`;
 }
 
 /**
@@ -178,25 +188,97 @@ export interface Busqueda {
   zona: string;
   /** Tipo canónico del dominio (`TIPOS_INMUEBLE`), no la etiqueta comercial. */
   tipo: string;
+  /** Precio en COP. `null` a un lado = sin límite por ese lado (§273). */
+  precioMin: number | null;
+  precioMax: number | null;
+  /** MÍNIMOS: en un portal «3 habitaciones» significa «3 o más», nunca «exactamente 3». */
+  habMin: number | null;
+  banMin: number | null;
+  /** Área construida en m². */
+  areaMin: number | null;
 }
 
 /**
- * LEE LA INTENCIÓN DEL VISITANTE — que hasta ahora se tiraba a la basura (§265).
+ * Un número de la URL, o `null`.
+ *
+ * 🎯 Cualquier basura —texto, negativo, vacío, `2..5`— se convierte en `null` y **jamás** en un
+ * filtro de cero. Un `Number('abc')` da `NaN` y una comparación con `NaN` es siempre falsa: el
+ * visitante habría visto CERO RESULTADOS por una URL mal copiada, y cero resultados no se distingue
+ * de «no hay nada en esa zona» (la misma clase de fallo mudo que §265).
+ */
+const numeroDeUrl = (v: string | null): number | null => {
+  if (v == null) return null;
+  const limpio = v.trim();
+  // Solo dígitos y separadores de miles. Quitar «todo lo que no sea dígito» parecía equivalente y NO
+  // lo era: convertía `hab=-2` en un filtro de 2 habitaciones que nadie pidió. Lo cazó su prueba.
+  if (!/^[\d.,\s]+$/.test(limpio)) return null;
+  const n = Number(limpio.replace(/[.,\s]/g, ''));
+  return Number.isFinite(n) && n > 0 ? n : null;
+};
+
+/**
+ * La CIUDAD no es un sector — y por eso no filtra (§273).
+ *
+ * 🔴 Cazado recorriendo el camino vivo: la caja venía con `value="Cartagena de Indias"` escrito a
+ * mano en el HTML, así que CUALQUIER envío del formulario mandaba esa zona. Ningún sector del
+ * catálogo se llama así (son Bocagrande, Manga, Crespo…), de modo que el filtro los excluía todos:
+ * se elegía «4+ habitaciones», la URL llevaba `hab=4` correctamente, el chip se encendía… y salían
+ * CERO resultados. El filtro funcionaba; lo que sobraba era una zona que el visitante nunca escribió.
+ *
+ * Se arregla en las dos puntas: la caja pasa a `placeholder` (una sugerencia no se envía), y aquí
+ * la ciudad se normaliza a «sin zona» — porque alguien SÍ puede escribirla, y en un portal que solo
+ * opera en Cartagena responderle «no encontramos nada» sería absurdo.
+ *
+ * Se normaliza en la FRONTERA y no dentro del filtro: así el contador, el mensaje de cero
+ * resultados y `hayCriterio` quedan bien sin que ninguno tenga que conocer el caso especial.
+ */
+const CIUDAD = ['cartagena', 'cartagena de indias', 'cartagena, bolivar', 'cartagena bolivar'];
+const zonaUtil = (z: string): string => (CIUDAD.includes(norm(z)) ? '' : z);
+
+/**
+ * LEE LA INTENCIÓN DEL VISITANTE — que hasta §265 se tiraba a la basura.
  *
  * 🔴 El buscador del hero manda `zona` y `tipo` por GET a `/comprar`, y **nadie los leía**: ni la
  * página ni esta isla. Medido en el navegador: se busca «Bocagrande / Casa» y se aterriza en una
  * página titulada «Propiedades en Cartagena de Indias» con la caja rellenada con OTRA cosa. La
  * primera interacción del visitante con el sitio —el buscador del hero es la puerta de entrada— era
  * la que se descartaba en silencio.
+ *
+ * 🎯 Y por eso los filtros de §273 viajan también por la URL y no en un estado de JS: una búsqueda
+ * es COMPARTIBLE (se pega en un WhatsApp y llega igual), sobrevive a recargar, y el formulario que
+ * ya existía la envía sin que nadie tenga que sincronizar dos copias de lo mismo.
  */
 export function busquedaDeUrl(search: string): Busqueda {
   const q = new URLSearchParams(search);
-  return { zona: (q.get('zona') ?? '').trim(), tipo: (q.get('tipo') ?? '').trim() };
+  return {
+    zona: zonaUtil((q.get('zona') ?? '').trim()),
+    tipo: (q.get('tipo') ?? '').trim(),
+    precioMin: numeroDeUrl(q.get('precioMin')),
+    precioMax: numeroDeUrl(q.get('precioMax')),
+    habMin: numeroDeUrl(q.get('hab')),
+    banMin: numeroDeUrl(q.get('ban')),
+    areaMin: numeroDeUrl(q.get('area')),
+  };
 }
 
 /** Compara sin tildes ni mayúsculas: lo que llega por una URL viene como venga. */
 const norm = (v: string): string =>
   v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
+/** Lo que el filtro necesita de una ficha. Los numéricos son opcionales: no toda ficha los trae. */
+type Filtrable = { sector: string; tipo: string; precio?: number; hab?: number; ban?: number; area?: number };
+
+/**
+ * ¿Este inmueble está POR ENCIMA del mínimo que se pidió?
+ *
+ * 🎯 La decisión que no es obvia: **si la ficha no trae el dato, NO pasa**. La alternativa —dejar
+ * pasar lo desconocido— enseñaría, a quien pide 3 habitaciones, inmuebles de los que no sabemos
+ * cuántas tienen; y este portal vende «Verificado por ALTORRA». Un dato que no está no es un sí.
+ * El precio del rigor es inventario oculto, y por eso el mensaje de cero resultados dice cómo
+ * aflojar la búsqueda en vez de dejar al visitante en una pantalla vacía.
+ */
+const alMenos = (valor: number | undefined, minimo: number | null): boolean =>
+  minimo == null || (typeof valor === 'number' && valor >= minimo);
 
 /**
  * ¿Este inmueble responde a lo que se buscó?
@@ -209,8 +291,10 @@ const norm = (v: string): string =>
  * La ZONA se acepta **en las dos direcciones** porque es texto libre: «bocagrande» encuentra el
  * sector «Bocagrande» (contiene), y «casa en bocagrande» también (contenido). Se exige ≥3 caracteres
  * al lado corto para que una letra suelta no lo empareje con todo.
+ *
+ * Los NUMÉRICOS (§273) son rangos y mínimos, y se aplican con `alMenos` / comparación directa.
  */
-export function coincideBusqueda(it: { sector: string; tipo: string }, b: Busqueda): boolean {
+export function coincideBusqueda(it: Filtrable, b: Busqueda): boolean {
   if (b.tipo) {
     const buscado = tipoCanonico(b.tipo);
     if (!buscado || tipoCanonico(it.tipo ?? '') !== buscado) return false;
@@ -222,38 +306,98 @@ export function coincideBusqueda(it: { sector: string; tipo: string }, b: Busque
     const encaja = (z.length >= 3 && sec.includes(z)) || (sec.length >= 3 && z.includes(sec));
     if (!encaja) return false;
   }
+  if (b.precioMin != null && !alMenos(it.precio, b.precioMin)) return false;
+  if (b.precioMax != null && !(typeof it.precio === 'number' && it.precio <= b.precioMax)) return false;
+  if (!alMenos(it.hab, b.habMin)) return false;
+  if (!alMenos(it.ban, b.banMin)) return false;
+  if (!alMenos(it.area, b.areaMin)) return false;
   return true;
 }
 
+/**
+ * ¿Pidió algo el visitante? **UNA sola enumeración de los criterios**, y por eso está exportada.
+ *
+ * 🎯 La usan el filtro (para no recorrer la lista sin motivo) y el mensaje de cero resultados (para
+ * saber cuál de los dos ceros contar). Tenerla escrita dos veces es exactamente el gemelo de §271:
+ * el día que entre un filtro nuevo, alguien actualizaría UNA de las dos y la otra seguiría dando una
+ * respuesta correcta por su cuenta. No hay error hasta que las comparas.
+ */
+export const hayCriterio = (b: Busqueda): boolean =>
+  Boolean(b.zona || b.tipo || b.precioMin || b.precioMax || b.habMin || b.banMin || b.areaMin);
+
 /** NUNCA muta la lista que recibe: el orden que entrega el servidor es «Relevancia» y hay que poder volver. */
 export function filtrarCatalogo(items: readonly CatalogoItem[], b: Busqueda): CatalogoItem[] {
-  if (!b.zona && !b.tipo) return [...items];
+  if (!hayCriterio(b)) return [...items];
   return items.filter((it) => coincideBusqueda(it, b));
 }
 
-/**
- * Escribe en la página LO QUE SE BUSCÓ. La caja y el H1 traían «Cartagena de Indias» escrito a mano
- * en el HTML: mostraban siempre lo mismo dijera lo que dijera la URL. Se marcan con `data-` en vez
- * de por posición — «el último span» se rompe en cuanto alguien añade uno (§123).
- */
-export function reflejarBusqueda(b: Busqueda): void {
-  if (!b.zona) return;
-  const caja = document.querySelector<HTMLInputElement>('.serp-search input[name="zona"]');
-  if (caja) caja.value = b.zona;
-  const zona = document.querySelector<HTMLElement>('[data-serp-zona]');
-  if (zona) zona.textContent = `en ${b.zona}`;
+/** Rótulo del chip de precio: «Hasta $500M» · «Desde $200M» · «$200M – $500M» · null si no hay nada. */
+function rotuloPrecio(b: Busqueda): string | null {
+  const { precioMin: min, precioMax: max } = b;
+  if (min != null && max != null) return `${montoCorto(min)} – ${montoCorto(max)}`;
+  if (max != null) return `Hasta ${montoCorto(max)}`;
+  if (min != null) return `Desde ${montoCorto(min)}`;
+  return null;
 }
 
 /**
- * Deja la caja de búsqueda lista para volver a buscar SIN perder el tipo elegido.
+ * Escribe en la página LO QUE SE BUSCÓ: la caja, el titular y **cada control de filtro** (§273).
+ *
+ * La caja y el H1 traían «Cartagena de Indias» escrito a mano en el HTML: mostraban siempre lo mismo
+ * dijera lo que dijera la URL. Se marcan con `data-` en vez de por posición — «el último span» se
+ * rompe en cuanto alguien añade uno (§123).
+ *
+ * 🎯 Los filtros se rellenan por NOMBRE DE CAMPO, no uno a uno: el nombre del control es el mismo
+ * que el parámetro de la URL, así que añadir un filtro nuevo es añadir un `<input>` con su nombre y
+ * su fila en `Busqueda`, sin tocar esta función. Y el rótulo del chip enseña el valor activo porque
+ * un chip encendido que sigue diciendo «Precio» obliga a abrirlo para saber qué se pidió.
+ */
+export function reflejarBusqueda(b: Busqueda): void {
+  if (b.zona) {
+    const caja = document.querySelector<HTMLInputElement>('.serp-search input[name="zona"]');
+    if (caja) caja.value = b.zona;
+    const zona = document.querySelector<HTMLElement>('[data-serp-zona]');
+    if (zona) zona.textContent = `en ${b.zona}`;
+  }
+
+  const valores: Record<string, string> = {
+    tipo: b.tipo,
+    precioMin: b.precioMin?.toString() ?? '',
+    precioMax: b.precioMax?.toString() ?? '',
+    hab: b.habMin?.toString() ?? '',
+    ban: b.banMin?.toString() ?? '',
+    area: b.areaMin?.toString() ?? '',
+  };
+  for (const [nombre, valor] of Object.entries(valores)) {
+    const campo = document.querySelector(`.serp-f [name="${nombre}"]`) as HTMLInputElement | HTMLSelectElement | null;
+    if (campo) campo.value = valor;
+  }
+
+  const rotulos: Record<string, string | null> = {
+    tipo: b.tipo ? etiquetaTipo(tipoCanonico(b.tipo) ?? 'otro') : null,
+    precio: rotuloPrecio(b),
+    hab: b.habMin != null ? `${b.habMin}+ hab` : null,
+    mas: b.banMin != null || b.areaMin != null ? 'Más filtros •' : null,
+  };
+  for (const [clave, rotulo] of Object.entries(rotulos)) {
+    const chip = document.querySelector<HTMLElement>(`.serp-f[data-f="${clave}"]`);
+    if (!chip) continue;
+    const texto = chip.querySelector<HTMLElement>('[data-f-label]');
+    if (texto && rotulo) texto.textContent = rotulo;
+    const summary = chip.querySelector<HTMLElement>('summary');
+    if (summary) summary.toggleAttribute('data-activo', rotulo != null);
+  }
+}
+
+/**
+ * Deja la barra de filtros mostrando lo que se pidió, y lista para volver a pedir.
  *
  * Corre en los DOS modos —a diferencia de `bootCatalogo`, que en demo no toca nada— porque navegar
- * no depende del inventario: la caja tiene que funcionar aunque las tarjetas sean de muestra. Lo
- * único que hace es copiar el `tipo` de la URL al campo oculto; el envío lo hace el `<form>` solo.
+ * no depende del inventario: los controles tienen que reflejar la URL aunque las tarjetas sean de
+ * muestra. El envío lo hace el `<form method="get">` solo; aquí no hay ningún manejador de clic.
  */
 export function bootBuscador(): void {
-  const oculto = document.querySelector<HTMLInputElement>('[data-serp-tipo]');
-  if (oculto) oculto.value = busquedaDeUrl(location.search).tipo;
+  reflejarBusqueda(busquedaDeUrl(location.search));
 }
 
 export async function bootCatalogo(): Promise<void> {
@@ -297,8 +441,7 @@ export async function bootCatalogo(): Promise<void> {
   // La intención del visitante se aplica ANTES de contar: un contador que cuenta el catálogo entero
   // mientras la lista enseña un subconjunto es la misma clase de mentira que el «128» inventado.
   const busqueda = busquedaDeUrl(location.search);
-  reflejarBusqueda(busqueda);
-  const hayBusqueda = Boolean(busqueda.zona || busqueda.tipo);
+  const hayBusqueda = hayCriterio(busqueda);
   const visibles = filtrarCatalogo(items, busqueda);
 
   const nodoNum = document.querySelector<HTMLElement>('[data-serp-n]');
@@ -315,7 +458,7 @@ export async function bootCatalogo(): Promise<void> {
       mensaje(
         grid,
         'No encontramos inmuebles con esa búsqueda',
-        'Prueba con otra zona o quita el filtro de tipo para ver todo el inventario.',
+        'Prueba con otra zona, o afloja los filtros de tipo y precio para ver más inventario.',
       );
     } else {
       mensaje(grid, 'Aún no hay propiedades publicadas', 'Muy pronto encontrarás aquí nuestro inventario.');

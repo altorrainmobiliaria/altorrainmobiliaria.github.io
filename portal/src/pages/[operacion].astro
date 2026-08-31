@@ -11,6 +11,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PropertyCard from '../components/PropertyCard.astro';
+import { TIPOS_PUBLICOS, etiquetaTipo } from '../lib/domain/shared';
 
 export function getStaticPaths() {
   // SPLIT INTENCIONAL del SERP mixto del mockup (§32.22): /comprar + /arrendar.
@@ -57,7 +58,10 @@ export function getStaticPaths() {
 }
 
 const { op, props: results, pins, zones } = Astro.props;
-const filterBtns = ['Tipo', 'Precio', 'Habitaciones'];
+// El galon de cada chip. Va como cadena y no como JSX porque el frontmatter de Astro es TS puro:
+// aqui no se puede escribir marcado, y repetirlo cuatro veces en el cuerpo seria copia-pega.
+const chevron =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
 
 // Marcadores del mapa real (TODO-30): mismo índice `i` que la card → emparejamiento card↔pin.
 const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.label, active: !!p.on }));
@@ -75,43 +79,106 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
   <main id="main">
     <!-- Barra de filtros (glass sticky) -->
     <div class="serp-filter alt-nav-glass">
-      <div class="serp-filter__in">
-        {/*
-          🔴 Esto era un `<div>` con un `<input>` suelto: sin formulario y sin nadie escuchando (§265).
-          Se podía escribir una zona y pulsar Enter, y NO PASABA NADA — en la caja de búsqueda de la
-          página de búsqueda. Ahora que la caja muestra lo que el visitante pidió, dejarla inerte
-          sería peor todavía: enseñaría que escribir ahí no sirve.
+      {/*
+        🔴 Esto era un `<div>` con un `<input>` suelto: sin formulario y sin nadie escuchando (§265).
+        Se podía escribir una zona y pulsar Enter, y NO PASABA NADA — en la caja de búsqueda de la
+        página de búsqueda. Y al lado, TRES chips («Tipo», «Precio», «Habitaciones») que solo se
+        iluminaban: se pulsaban, cambiaban de color y no filtraban nada (§273).
 
-          Es un `<form method="get">` y no un manejador de JS a propósito: así busca aunque el JS no
-          cargue, y la URL resultante es la MISMA que produce el buscador del hero — un solo formato
-          de búsqueda para todo el sitio. El `class` no cambia, así que el aspecto tampoco.
+        Ahora la barra ENTERA es el `<form method="get">`, y los filtros son campos suyos. Tres
+        consecuencias, y las tres son la razón de hacerlo así y no con un panel de JS:
+         · la URL resultante es la MISMA que produce el buscador del hero — un solo formato para
+           todo el sitio, y una búsqueda con filtros se puede COMPARTIR y sobrevive a recargar;
+         · desaparece el fallo clásico de «buscar borra los filtros activos», porque no hay dos
+           copias del estado que sincronizar: los filtros SON el formulario;
+         · los paneles son `<details>`: abren y cierran sin una línea de JS, y el teclado y los
+           lectores de pantalla ya saben manejarlos.
 
-          El `tipo` viaja en un campo oculto que rellena la isla desde la URL: la página es
-          prerenderizada y en el build NO existe todavía ninguna URL que leer. Sin JS se pierde el
-          tipo y se busca solo por zona — degradación aceptable, y nunca un filtro fingido.
-        */}
-        <form class="serp-search" method="get" role="search">
+        ⚠️ Lo que NO hace: filtrar sin JavaScript. Esta página es `prerender = true`, así que sin la
+        isla nadie lee la URL y se ven las cards del build. Aquí decía «filtra SIN JS» y era FALSO
+        — afirmar más de lo que el sistema respalda, escrito de mi puño veinte minutos antes de
+        releerlo. Filtrar en el servidor exigiría SSR en el SERP, que es una decisión de coste por
+        petición y no una nota al pie.
+      */}
+      <form class="serp-filter__in" method="get" role="search">
+        <div class="serp-search">
           <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
-          <input name="zona" value="Cartagena de Indias" aria-label="Ubicación" />
-          <input type="hidden" name="tipo" data-serp-tipo value="" />
-          {/* Botón de envío REAL, oculto a la vista (§265). Sin él el formulario dependía del envío
-              IMPLÍCITO —el Enter del navegador— y comprobado en el navegador NO se disparaba, mientras
-              que `requestSubmit()` sí: o sea que el formulario estaba bien y el disparador no. Con un
-              `type="submit"` presente el envío deja de depender de esa regla del estándar, y de paso
-              quien navega con teclado o lector de pantalla gana un control que puede activar. El
-              diseño aprobado no cambia: no ocupa un píxel. */}
-          <button class="serp-search__go alt-visually-hidden" type="submit">Buscar</button>
-        </form>
-        {filterBtns.map((f) => (
-          <button class="serp-fbtn" type="button" data-filter aria-pressed="false">{f}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-        ))}
-        <button class="serp-fbtn" type="button" data-filter aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg>Más filtros</button>
+          <input name="zona" placeholder="Zona, barrio o ciudad" aria-label="Ubicación" />
+        </div>
+
+        {/* TIPO — las opciones se DERIVAN de `TIPOS_PUBLICOS`; escribirlas a mano aquí sería la
+            cuarta lista del mismo concepto, y la tercera ya costó un ADR (§271). */}
+        <details class="serp-f" data-f="tipo">
+          <summary class="serp-fbtn"><span data-f-label>Tipo</span><Fragment set:html={chevron} /></summary>
+          <div class="serp-f__panel">
+            <label class="serp-f__campo">
+              <span>Tipo de inmueble</span>
+              <select name="tipo">
+                <option value="">Todos</option>
+                {TIPOS_PUBLICOS.map((t) => <option value={t}>{etiquetaTipo(t)}</option>)}
+              </select>
+            </label>
+            <button class="serp-f__go" type="submit">Aplicar</button>
+          </div>
+        </details>
+
+        {/* PRECIO — dos números, no un deslizador: un rango con topes inventados miente sobre el
+            inventario que hay, y hoy no hay ninguno del que sacar el máximo real. */}
+        <details class="serp-f" data-f="precio">
+          <summary class="serp-fbtn"><span data-f-label>Precio</span><Fragment set:html={chevron} /></summary>
+          <div class="serp-f__panel">
+            <label class="serp-f__campo"><span>Desde (COP)</span><input type="number" name="precioMin" min="0" step="1000000" inputmode="numeric" placeholder="Sin mínimo" /></label>
+            <label class="serp-f__campo"><span>Hasta (COP)</span><input type="number" name="precioMax" min="0" step="1000000" inputmode="numeric" placeholder="Sin máximo" /></label>
+            <button class="serp-f__go" type="submit">Aplicar</button>
+          </div>
+        </details>
+
+        {/* HABITACIONES — mínimo, que es lo que significa «3 habitaciones» al buscar casa. */}
+        <details class="serp-f" data-f="hab">
+          <summary class="serp-fbtn"><span data-f-label>Habitaciones</span><Fragment set:html={chevron} /></summary>
+          <div class="serp-f__panel">
+            <label class="serp-f__campo">
+              <span>Mínimo de habitaciones</span>
+              <select name="hab">
+                <option value="">Cualquiera</option>
+                {[1, 2, 3, 4, 5].map((n) => <option value={n}>{n}+</option>)}
+              </select>
+            </label>
+            <button class="serp-f__go" type="submit">Aplicar</button>
+          </div>
+        </details>
+
+        {/* MÁS FILTROS — baños y área. Los dos viajan en el índice del catálogo, así que se pueden
+            respaldar. Un cuarto chip decorativo al lado de tres que funcionan sería peor que los
+            tres de antes: ahí el visitante ya no sabe cuál de los cuatro le miente. */}
+        <details class="serp-f" data-f="mas">
+          <summary class="serp-fbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/></svg><span data-f-label>Más filtros</span></summary>
+          <div class="serp-f__panel">
+            <label class="serp-f__campo">
+              <span>Mínimo de baños</span>
+              <select name="ban">
+                <option value="">Cualquiera</option>
+                {[1, 2, 3, 4].map((n) => <option value={n}>{n}+</option>)}
+              </select>
+            </label>
+            <label class="serp-f__campo"><span>Área mínima (m²)</span><input type="number" name="area" min="0" step="10" inputmode="numeric" placeholder="Sin mínimo" /></label>
+            <button class="serp-f__go" type="submit">Aplicar</button>
+          </div>
+        </details>
+
+        {/* Botón de envío REAL, oculto a la vista (§265). Sin él el formulario dependía del envío
+            IMPLÍCITO —el Enter del navegador— y comprobado en el navegador NO se disparaba, mientras
+            que `requestSubmit()` sí: o sea que el formulario estaba bien y el disparador no. Con un
+            `type="submit"` presente el envío deja de depender de esa regla del estándar, y de paso
+            quien navega con teclado o lector de pantalla gana un control que puede activar. */}
+        <button class="serp-search__go alt-visually-hidden" type="submit">Buscar</button>
+
         {/* «Guardar búsqueda» es del mockup aprobado, pero apuntaba a /favoritos, que guarda INMUEBLES.
             Una búsqueda guardada es otra cosa: su destino real es la alerta (ADR §96, OLA 1 ítem 8).
             La operación viaja como el NOMBRE DE LA RUTA (`comprar`/`arrendar`) porque el normalizador
             de criterios acepta ambos vocabularios; así este enlace no necesita traducir nada. */}
         <a class="serp-save" href={`/alertas?operacion=${op}`}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Guardar búsqueda</a>
-      </div>
+      </form>
     </div>
 
     <!-- Cabecera de resultados -->
@@ -203,8 +270,30 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
   .serp-fbtn { display: inline-flex; align-items: center; gap: 9px; background: var(--alt-white); border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-sm); padding: 12px 16px; font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); cursor: pointer; white-space: nowrap; transition: border-color var(--alt-dur) var(--alt-ease); }
   .serp-fbtn svg { width: 13px; height: 13px; }
   .serp-fbtn:hover { border-color: var(--alt-gold); }
-  /* Filtro activo — el mockup lo hace mutando estilos inline; aquí es estado en CSS (§32.22) */
-  .serp-fbtn[aria-pressed='true'] { border-color: var(--alt-gold); background: var(--alt-mist); color: var(--alt-link); }
+  /*
+   * Filtro ACTIVO — el mockup lo hace mutando estilos inline; aquí es estado en CSS (§32.22).
+   * ⚠️ El atributo pasó de `aria-pressed` a `data-activo` en §273: el chip ya no es un botón de
+   * dos estados sino el `<summary>` de un `<details>`, y `aria-pressed` en un summary no es válido
+   * — su estado abierto/cerrado ya lo anuncia el navegador solo. Lo que este atributo marca es otra
+   * cosa: que el filtro TIENE un valor puesto, que se ve igual esté el panel abierto o cerrado.
+   */
+  .serp-fbtn[data-activo] { border-color: var(--alt-gold); background: var(--alt-mist); color: var(--alt-link); }
+
+  /* Filtros desplegables (§273) — `<details>`, o sea que abren y cierran sin una línea de JS. */
+  .serp-f { position: relative; }
+  .serp-f > summary { list-style: none; }
+  .serp-f > summary::-webkit-details-marker { display: none; }
+  .serp-f[open] > summary { border-color: var(--alt-gold); }
+  .serp-f[open] > summary svg:last-of-type { transform: rotate(180deg); }
+  .serp-f > summary svg:last-of-type { transition: transform var(--alt-dur) var(--alt-ease); }
+  .serp-f__panel { position: absolute; top: calc(100% + 8px); left: 0; min-width: 232px; display: grid; gap: 12px; padding: 16px; background: var(--alt-white); border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-sm); box-shadow: 0 18px 38px -20px rgba(27, 39, 51, 0.42); }
+  .serp-f__campo { display: grid; gap: 6px; font-size: 12.5px; font-weight: var(--alt-fw-medium); color: var(--alt-text); }
+  .serp-f__campo select,
+  .serp-f__campo input { border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-chip, 10px); padding: 10px 12px; font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); background: var(--alt-white); outline: none; }
+  .serp-f__campo select:focus-visible,
+  .serp-f__campo input:focus-visible { border-color: var(--alt-gold); }
+  .serp-f__go { border: 1px solid var(--alt-gold); border-radius: var(--alt-r-chip, 10px); background: var(--alt-gold); color: var(--alt-surface-ink); padding: 10px 14px; font-size: 13px; font-weight: var(--alt-fw-semibold); cursor: pointer; }
+  .serp-f__go:hover { background: var(--alt-white); color: var(--alt-link); }
   .serp-save { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border: 1px solid var(--alt-gold); border-radius: var(--alt-r-sm); color: var(--alt-link); font-weight: var(--alt-fw-semibold); font-size: 13.5px; white-space: nowrap; text-decoration: none; transition: background var(--alt-dur) var(--alt-ease); }
   .serp-save svg { width: 15px; height: 15px; }
   .serp-save:hover { background: var(--alt-mist); }
@@ -303,12 +392,14 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
   // no tenía ni un <script>. Réplica de los 3 handlers del mockup (toggleFilter · toggleFav ·
   // hoverPin/leavePin) con estado en CSS + ARIA, no mutando estilos inline como el mockup.
 
-  // 1. FILTROS — alternan su estado (el filtrado real llega con los datos de Firestore, TODO-22).
-  document.querySelectorAll<HTMLButtonElement>('[data-filter]').forEach((b) => {
-    b.addEventListener('click', () => {
-      b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
-    });
-  });
+  // 1. FILTROS — ya no hay nada que cablear aqui, y esa es la noticia (§273).
+  //    Vivia un manejador que alternaba `aria-pressed` sobre `[data-filter]`: los chips se
+  //    encendian y apagaban y NO FILTRABAN NADA. Su propio comentario decia «el filtrado real
+  //    llega con los datos de Firestore, TODO-22» — o sea que el marcador de lo que faltaba
+  //    estaba puesto, y lo que se veia en pantalla era un control que respondia al clic.
+  //    Ahora los filtros son campos de un `<form method="get">`: filtran de verdad, la URL se
+  //    puede compartir y sobrevive a recargar. El manejador se retira porque ya no
+  //    existe ningun `[data-filter]` al que engancharse.
 
   // 2. FAVORITOS — delegado. preventDefault/stopPropagation: la card entera es un enlace
   //    y sin esto el click en el corazón navegaría a la ficha (el mockup ya lo contempla).
