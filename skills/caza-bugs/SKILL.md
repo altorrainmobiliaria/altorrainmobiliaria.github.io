@@ -773,6 +773,39 @@ demuestra nada: puede que lo hayas dejado ciego. Rompe algo a propósito —una 
 esté en ninguna plantilla— y comprueba que **falla y lo nombra**; restaura y comprueba el verde. Sin
 esas dos medidas no sabes si afinaste el gate o lo apagaste, y las dos se leen igual desde fuera.
 
+## 4s. 🔒 Cuando el dato inventado REAPARECE: deja de buscarlo y hazlo imposible
+
+Hay un momento en el que cazar datos falsos deja de ser lo correcto. Si llevas tres, cuatro, cinco
+hallazgos de la misma clase —cifras de relleno servidas como si fueran medición— el problema ya no
+es que se te escapen: es que **el sistema permite escribirlas**. Seguir barriendo es tratar el
+síntoma de algo que tiene arreglo estructural.
+
+🎯 **La pregunta que cambia el trabajo: ¿quién PUEDE escribir este número?** Si la respuesta incluye
+a alguien con prisa —tú, un editor, el que rellena un panel— entonces el número volverá, y la
+siguiente vez con mejor disfraz.
+
+**Cómo se hace imposible, de más barato a más fuerte:**
+1. **Que no exista el campo suelto.** Guarda un AGREGADO que solo tiene sentido como resultado
+   —promedio *y* recuento, total *y* sumandos—. Un número que nace de una suma no se inventa sin
+   inventar también los sumandos, y eso ya no es un descuido: es una decisión de mentir.
+2. **Que el módulo no ofrezca el atajo.** Si exportas una forma de pedir el promedio sin su
+   recuento, alguien la usará: la regla dura hasta el siguiente que tenga prisa. *No documentes la
+   regla: haz que la API no permita romperla.*
+3. **Que las reglas del almacén lo nieguen — también a los tuyos.** El agujero suele ser el staff,
+   no el anónimo: un panel de administración con permiso de escritura es exactamente donde alguien
+   teclea la cifra bonita. Y **ese permiso ya existía**, así que no lo verás salvo que lo busques.
+4. **Que por debajo de un mínimo NO haya dato.** Un promedio de una observación no es un promedio.
+   El umbral no es rigor estadístico: es lo que impide que una sola reseña amable se convierta en un
+   «5,0» en la portada.
+
+⚠️ **Y al cerrar una regla de escritura, debes el control POSITIVO.** Dos pruebas que comprueban que
+se deniega no distinguen «deniega lo correcto» de «deniega todo»: las dos pasan igual si rompiste el
+camino entero. Añade la que comprueba que una escritura legítima **sigue pasando**.
+
+💡 El efecto secundario es el mejor: si el dato no puede existir sin su respaldo, la pantalla vacía
+deja de ser un fallo que tapar y pasa a ser la verdad. *Y una sección que dice «todavía no hay» es
+infinitamente más barata de mantener que uno que hay que recordar limpiar antes de lanzar.*
+
 ## 5. Escalar (no gastar de más — CITA a los dueños, no redefinas)
 - **N0 — reflejo barato (default, ~90%)**: el checklist §2 + auto-crítica de una pasada. Lo
   trivial se queda aquí; subir "por si acaso" es gastar peor.

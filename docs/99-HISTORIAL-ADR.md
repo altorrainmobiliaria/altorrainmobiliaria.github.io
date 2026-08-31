@@ -12806,3 +12806,84 @@ mockup. El SERP sigue vivo tras tocar el módulo compartido: 6 cards. `npm run v
 ⏭ **Queda `valoradas`**, y no es cableado: pide una **calificación** que el índice no guarda. O entra
 al modelo —con quién la escribe y cómo se verifica— o esa sección no puede existir con datos reales.
 Es decisión de producto.
+
+## 280. ADR-280 — Tres cifras inventadas donde un propietario decide confiarte su inmueble
+
+### 280.1 — Lo que había
+El hero de `/publicar` afirmaba **«+1.200 inmuebles cerrados»**, **«38 días promedio de venta»** y
+**«98% clientes satisfechos»**. Ninguna existe: ALTORRA no ha cerrado 1.200 inmuebles ni mide
+satisfacción. Y estaban **al lado del formulario donde un propietario entrega su inmueble**, que es
+donde una cifra falsa hace más daño que en ningún otro sitio del portal.
+
+Estaban **declaradas** en `verify:claims` con el motivo *«decide el dueño»* — y ese motivo era
+legítimo: la copia de una página de ventas es suya. Así que se le preguntó **con la alternativa ya
+preparada**, en vez de decidirla solo o dejar la mentira. Eligió cambiarlas.
+
+### 280.2 — Lo que las sustituye, y por qué es mejor argumento
+Tres hechos **comprobables**: la **matrícula de arrendador 6636** (real desde el 20-ago, Resolución
+6636), la comisión del tarifario sellado —**3%, y solo cuando la venta se REGISTRA**, no al firmar la
+promesa— y el **$0 que paga el inquilino** porque lo prohíbe la Ley 820.
+
+🎯 A un propietario cauto le dicen más que un «98%» que afirma todo el mundo y nadie se cree. *La
+prueba social inventada es intercambiable; una credencial verificable, no.*
+
+Y **la regla no es mía: ya estaba escrita** en la cabecera de `lib/content/tarifas.ts`, para la
+página de al lado — *«si algo no está decidido se dice que no está decidido; un hueco honesto no
+pierde clientes, una cifra que después hay que corregir sí»*. Esto es esa regla una página más allá.
+
+⚠️ **Derivadas, no tecleadas**: salen de `SITE.matriculaArrendador` y de `TARIFAS`. Si la comisión
+cambia en el tarifario, la franja la sigue sola; escritas a mano habrían sido el gemelo de §271
+esperando a que alguien actualizara una de las dos.
+
+### 280.3 — Deuda retirada, y el gate lo demuestra
+Las tres salen de `DEUDA_DECLARADA` porque **dejaron de existir**. Si alguna siguiera servida, quitar
+su línea haría **fallar** el gate. De 8 congeladas a **5**, en verde.
+
+---
+
+## 281. ADR-281 — La calificación de huéspedes, diseñada para que no se pueda inventar
+
+### 281.1 — La condición, y de quién es
+Daniel eligió añadirla al modelo **con la condición que él mismo puso** al decidirlo: *«si la pone
+ALTORRA sin reseñas reales detrás, volvemos al mismo problema»*. Todo lo que sigue existe para
+cumplir esa condición, no para pintar estrellas.
+
+🎯 **Y ese es el salto de esta sesión**: hasta aquí el trabajo fue *encontrar y quitar* datos
+inventados (§270 · §275 · §276 · §278 · §280). Esto es lo otro — **diseñar para que la mentira sea
+estructuralmente imposible**, en vez de desaconsejarla en un comentario que nadie leerá.
+
+### 281.2 — Las cuatro reglas
+1. 🔒 **No hay un campo «calificación» que alguien pueda teclear.** La propiedad guarda un
+   **agregado** —promedio y recuento— que recalcula el servidor desde documentos de reseña. *Un
+   número que solo puede aparecer como resultado de una suma no se puede inventar sin inventar
+   también los sumandos.*
+2. 🧾 **Una reseña exige una estancia terminada.** Mientras no exista el flujo de reserva **no puede
+   haber** reseñas, no hay agregado, y la sección se queda vacía. **Eso es correcto, no un fallo.**
+3. 🔢 **Nunca un promedio sin su recuento.** El módulo **no exporta** forma de obtener el promedio
+   suelto: si se pudiera pedir, alguien lo pediría, y la regla duraría hasta el siguiente con prisa.
+4. 📉 **Por debajo de 3 reseñas, no hay nota.** Un promedio de una reseña no es un promedio: es una
+   anécdota con decimales — y la más fácil de conseguir de un conocido.
+
+### 281.3 — La regla que sostiene el diseño vive en las RULES
+`allow update` dejaba escribir el documento al **staff**, así que un editor podía teclear
+`resenas: {promedio: 5, n: 99}` desde el panel: **el agujero exacto que Daniel señaló**. Ahora
+`noTocaResenas()` exige que el campo no cambie en update y `sinResenasAlCrear()` lo prohíbe en
+create. Tres pruebas contra el emulador: las dos denegaciones **y un control POSITIVO**.
+
+🎯 *El control positivo es el que distingue «la regla deniega lo correcto» de «la regla deniega
+todo».* Sin él, haber roto el update entero se habría visto igual de verde.
+
+⚠️ Y ese control enseñó algo **anterior** a este cambio: `versionValida()` **lee**
+`resource.data._version`, y en las Rules leer un campo ausente **tumba la condición entera** —lo
+advierte `gateAlojamiento()` unas líneas más arriba—, así que un editor no puede actualizar los
+documentos de la siembra. Queda escrito en la prueba, donde se volverá a leer.
+
+### 281.4 — Y otro gemelo, cazado por el compilador
+`CatalogoItem` de la isla era una **copia a mano** de `CatalogoResumen` del dominio. Iguales hasta
+que el dominio ganó este campo y la copia no. Ahora es un **alias**: un dueño, sin copia que se
+quede vieja. *Van tres gemelos en esta sesión, y los tres los cazó el tipo, no una revisión.*
+
+### 281.5 — Lo que falta, dicho
+El **flujo que ESCRIBE** las reseñas: quién puede dejar una, atada a qué reserva, y la Function que
+recalcula. Hasta entonces el agregado no existe para nadie y «mejor valoradas» dice que no hay
+valoraciones — **que es la verdad**. `npm run verify` salida **0**: 1041 (+9) + 193 (+3).

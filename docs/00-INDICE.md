@@ -116,6 +116,8 @@
 | §277 | 🔌 **La portada, cableada al catálogo** (destacadas + arriendo, 3 estados verificados). 🎯 Y un gate puede tener razón POR DEBAJO de su mensaje: se quejó de un id y el problema era el ACOPLAMIENTO. | 12658 |
 | §278 | 🧾 **«Sale en el cutover» no es un motivo, es una promesa** — 3 conteos de inventario declarados como deuda y esperando que alguien se acordara. Ahora salen solos. Y una deuda RETIRADA que el gate demostró. | 12713 |
 | §279 | 🧩 **Las 5 secciones de la portada, del catálogo real** — lo que el índice no guarda NO se inventa, se quita. Y a un gate con falso positivo se le ENSEÑA A VER, no se le declara excepción (con prueba negativa). | 12754 |
+| §280 | 🧾 **Tres cifras inventadas en `/publicar`**, donde un propietario decide confiarte su inmueble. Sustituidas por credenciales verificables (matrícula, 3% al registro, $0 Ley 820) — DERIVADAS, no tecleadas. | 12810 |
+| §281 | ⭐ **La calificación, diseñada para que NO SE PUEDA inventar**: agregado server-only (las Rules lo niegan al staff), nunca promedio sin recuento, y sin mínimo de reseñas no hay nota. | 12844 |
 
 ---
 
