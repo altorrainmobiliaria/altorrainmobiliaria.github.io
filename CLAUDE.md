@@ -74,7 +74,7 @@ NUNCA leas `docs/99-HISTORIAL-ADR.md` completo (40k+ líneas = muerte por contex
 
 ### Reglas git
 - **Claude ejecuta commit + push + merge + deploy web** — **AQUÍ; en los hermanos NO es igual** (en INSEMA mergea el dueño) → skill `sinapsis-cerebros` · §245. (Delegación explícita, ADR §15.7; deploy Firebase también delegado → `50`; **nunca abrir PR sin permiso**). ⚠️ Si el clasificador auto-mode del harness bloquea push/merge, NO burlarlo: deja `main` listo local y pídele al dueño el push o la regla de permiso en `.claude/settings.json`.
-- `git add` **ESPECÍFICO** (NUNCA `-A`/`.`), commits separados por tipo (código vs cerebro) y en la branch activa, estilo `feat(area): X.Y — desc`, footer `Co-Authored-By: Claude <MODELO> <noreply@anthropic.com>` + tag `MODELO` en el título (**Opus 5 para TODO** desde 2026-08-19; los tags históricos NO se reescriben).
+- `git add` **ESPECÍFICO** (NUNCA `-A`/`.`), commits separados por tipo (código vs cerebro) y en la branch activa, estilo `feat(area): X.Y — desc`, footer `Co-Authored-By: Claude <MODELO> <noreply@anthropic.com>` + tag `MODELO` en el título (**dueño del reparto: C0, el router global** — hoy Fable planifica · Opus implementa; históricos NO se reescriben).
 - NUNCA `--amend`/`--no-verify`/`--no-gpg-sign` sin pedido. NUNCA commitear secrets (SA JSON, `.env`, credenciales) ni `.claude/settings.local.json`.
 - Al cerrar un pendiente, marca su `TODO-NN` ✅ + link al §X. Mantén este CLAUDE.md liviano.
 
