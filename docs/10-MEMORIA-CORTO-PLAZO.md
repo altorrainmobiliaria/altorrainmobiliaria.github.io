@@ -66,16 +66,13 @@
 > 🔻 **El panel LEGACY no tiene red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates.
 
-> 🎯 **AQUÍ VOY (31-ago).** Barrido del portal CERRADO (§271-§279): la web ya no publica nada que no
-> pueda respaldar — ni filtros de adorno, ni clientes inventados en el panel, ni los ~25 inmuebles
-> falsos que la PORTADA habría sacado en producción. Sus 5 secciones beben del catálogo real.
-> ⭐ **Daniel decidió las dos (31-ago)**: `/publicar` cambia sus 3 cifras falsas por credenciales
-> verificables (§280) y la calificación ENTRA al modelo (§281), diseñada para no poder inventarse:
-> agregado que solo escribe el servidor, negado al staff en las Rules, y sin mínimo de reseñas no
-> hay nota. ⏭ **Falta el flujo que ESCRIBE reseñas** (quién, atado a qué reserva, y la Function que
-> recalcula): hasta entonces «mejor valoradas» dice que no hay valoraciones, que es la verdad.
-> 🏗️ **Obra nueva**: diseñada y metida en el MEGA-PLAN, no en el backlog (§270) — no cabe hoy por
-> una razón MEDIDA: el índice guarda `precio` como UN entero y un proyecto tiene RANGO.
+> 🎯 **AQUÍ VOY (31-ago).** Barrido del portal CERRADO (§271-§283): la web ya no publica nada que no
+> pueda respaldar, y sus 5 secciones de inventario beben del catálogo real. Daniel decidió las dos
+> que eran suyas (§280 · §281). ⏭ **Falta el flujo que ESCRIBE reseñas** (quién, atado a qué reserva,
+> y la Function que recalcula): hasta entonces «mejor valoradas» dice la verdad — que no hay.
+> 🏗️ **Obra nueva EMPEZADA** (§284): el modelo existe y el bloqueo era un campo mal planteado — el
+> precio se DERIVA de las tipologías. Publicar exige LICENCIA de construcción. ⏭ Falta la vertical:
+> ruta `/proyecto/<slug>`, índice, badge en el listado de venta, JSON-LD multi-Offer, nuevo/usado.
 
 > 🔬 **Auditoría #17 (§268)** — parcial: sondas 3/4/7 piden subagentes. Las 2 abiertas de la #16
 > re-verificadas: **premisas siguen ciertas**. ⚠️ N17-04 sigue abierto → **TODO-50**.

@@ -120,6 +120,7 @@
 | §281 | ⭐ **La calificación, diseñada para que NO SE PUEDA inventar**: agregado server-only (las Rules lo niegan al staff), nunca promedio sin recuento, y sin mínimo de reseñas no hay nota. | 12844 |
 | §282 | 🚧 **Bloqueado NO es protegido**: el gate del RNT frena /estancias por una razón que no es «la casa no existe». + el menú servía un penthouse fantasma en 45 páginas. ⚠️ Y escalé antes de leer la pantalla entera. | 12891 |
 | §283 | 🧮 **Iba a desplegar a producción por una frase del cerebro sin comprobar** — ya estaba desplegada. Y el TOTAL cuadraba: dos errores que se compensan dejan una suma exacta y una lista falsa. | 12940 |
+| §284 | 🏗️ **OBRA NUEVA — el modelo**: el bloqueo era un campo mal planteado (el precio se DERIVA de las tipologías, no se teclea) + un proyecto existe si tiene LICENCIA DE CONSTRUCCIÓN. | 12977 |
 
 ---
 

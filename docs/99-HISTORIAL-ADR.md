@@ -12973,3 +12973,58 @@ Portal: **23 en código / 20 desplegadas**. Las 3 que faltan —`alertasDigest`,
 ⛔ Y no se despliegan «de paso»: `alertasDigest` y `catalogoBarrido` son **programadas**, y desplegar
 una programada la echa a andar. Es la misma cautela que §140 aplicó al estrechar el `--only` para no
 soltar `processNurturingEmails` con el Gmail roto.
+
+## 284. ADR-284 — Obra nueva: el modelo, y el bloqueo que resultó ser un campo mal planteado
+
+### 284.1 — Por dónde se empieza
+§270 dejó la vertical **diseñada** contra los dos líderes del mercado y sin construir, por una razón
+**medida**: el índice guarda `precio` como **un entero** y `propiedadAResumen()` omite lo que no lo
+traiga; un proyecto tiene precio **en rango**. Se empieza por el modelo porque ahí vivía el bloqueo.
+
+⚠️ Y se empezó **leyendo §270**, no re-investigando. En §274 volví a derivar dos lecciones que el
+cerebro ya tenía; aquí el enrutamiento fue índice → ADR → construir. El diseño estaba completo:
+ficha que **agrupa tipologías**, namespace propio, campos que un usado no tiene, granularidad de
+Metrocuadrado.
+
+### 284.2 — Un proyecto no es un inmueble con campos extra
+Es un **contenedor de tipologías**: «Torre Marea» no se vende, se venden sus apartamentos de 1, 2 y 3
+alcobas. Por eso `Tipologia.desde` se llama así y no `precio`: dentro de una tipología hay unidades
+con precios distintos según piso y vista, y lo que se publica es el de entrada. *Nombrarlo `precio`
+invitaría a leerlo como «cuesta esto».*
+
+### 284.3 — 🎯 El bloqueo era un campo mal planteado
+La salida no era añadir `precioDesde` y `precioHasta` —dos campos que alguien rellena a mano— sino
+**derivar el rango de las tipologías que ya existen**. Un «Desde $450M» que no coincide con ninguna
+tipología pasa a ser **imposible por construcción, no por disciplina**.
+
+Es la regla 1 de `caza-bugs §4s`, escrita esta misma sesión en §281 para la calificación —*que no
+exista el campo suelto: guarda un agregado que solo tiene sentido como resultado*— aplicada al
+precio **sin re-derivarla**. Que la skill sirviera dos horas después, en otro dominio, es la prueba
+de que estaba bien redactada: por su condición y no por su caso.
+
+Y el rango **descarta lo corrupto en vez de arrastrarlo**: un `0` colado pondría «Desde $0» en el
+listado, que es exactamente la clase de cifra que se publica y nadie mira dos veces.
+
+### 284.4 — Un proyecto existe si tiene LICENCIA DE CONSTRUCCIÓN
+No es burocracia: en Colombia la licencia es un **acto administrativo de la curaduría urbana**,
+público y comprobable por número. Es la diferencia entre *«este desarrollo existe»* y *«alguien nos
+mandó unos renders»* — y §270 encontró **seis proyectos inventados servidos** en la portada, uno
+rozando el nombre de un desarrollo real de Cartagena.
+
+Sin licencia, `problemasParaPublicarProyecto()` lo deja fuera. §270 puso el gate que vigila el HTML
+**servido**; este campo es el mismo criterio **en el dato**: aquí se decide qué entra, allí se
+comprueba que no entró otra cosa.
+
+⚠️ Y `porcentajeVendido` **no es un número suelto**. «70% vendido» es una afirmación de **urgencia**
+—de las que persigue la Ley 1480— que ALTORRA no mide: la dice la constructora. O viaja con **quién**
+lo dijo y **cuándo**, o bloquea la publicación. *Un dato de tercero sin procedencia es un rumor con
+formato de dato.*
+
+### 284.5 — Verificación y lo que falta
+`npm run verify` salida **0**: **1054** unitarias (+13) + 193 de reglas. La sección de proyectos de
+la portada pasa a derivarse del modelo — y eso lo **exigió** `verify:huerfanos`, que dice, con razón,
+que la prueba de un módulo no cuenta como su consumidor.
+
+⏭ **Falta la vertical entera**: la ruta `/proyecto/<slug>`, la proyección al índice con su rango, la
+inyección en el listado de venta con badge, el JSON-LD **multi-`Offer`** (patrón de La Haus, ya
+marcado como copiable en `41-MERCADO`) y el eje de filtro **nuevo/usado** con «Ambos» por defecto.
