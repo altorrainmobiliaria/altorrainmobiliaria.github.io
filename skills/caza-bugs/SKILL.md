@@ -642,6 +642,21 @@ buscando es la misma que te hace rápido concluyendo.*
 💡 Lo que sí quedaba: el descargo vivía **debajo** del formulario. *Un descargo que llega después de
 la decisión no es un descargo, es una nota al pie.* Va donde se toma la decisión, no donde termina.
 
+**🧮 Y un agregado que CUADRA no valida sus partes.** Caso real: una nota decía «10 desplegadas + 19
+desplegadas». Medido: 29 desplegadas. El total era exacto — y la lista estaba mal: una que figuraba
+como pendiente ya estaba hecha, y otra que sí faltaba no aparecía. **Dos errores que se compensan
+dejan una suma perfecta.**
+
+🎯 *Comprueba el dato que vas a USAR, no el que es fácil de contar.* Si vas a actuar sobre la lista
+—«¿qué me falta?»— verificar la suma no verifica nada. Es el pariente del denominador: allí el gate
+miraba la variable equivocada, aquí la comprobación miraba el nivel equivocado.
+
+⚠️ **Y el caso agudo: cuando la nota va a disparar algo IRREVERSIBLE.** Estuve a un comando de un
+despliegue a producción porque una nota decía que algo no estaba desplegado; ya lo estaba, desde
+días antes. *La documentación es memoria, no verdad.* Antes de que una frase escrita te haga tocar
+producción —desplegar, borrar, migrar, enviar— mide el estado real. El coste de mirar es un comando;
+el de no mirar, un cambio que ya no puedes retirar.
+
 ## 4n. 🗺️ El censo que mide la superficie EQUIVOCADA — medir no es lo mismo que medir lo que importa
 
 Convertir un hallazgo en censo es la jugada correcta (deja de arreglar la instancia y pasas a barrer la

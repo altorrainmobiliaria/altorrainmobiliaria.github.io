@@ -12936,3 +12936,40 @@ titular; el de abajo se queda, porque el momento de pulsar «Solicitar» tambié
 ### 282.5 — Verificación
 En el build de **producción**: «Penthouse en Bocagrande» → 0 · «Compra nuevo/usado» → 0 · el tile
 editorial presente. `npm run verify` salida **0**: 1041 + 193.
+
+## 283. ADR-283 — Iba a desplegar a producción por una frase del cerebro que no había comprobado
+
+### 283.1 — Lo que iba a hacer
+`registrarEvento` es la Function que guarda la **prueba del consentimiento de habeas data** (Ley 1581
+art. 9). Cinco sitios del portal la llaman con `void llamarCallable(...)`, que **no lanza**: si no
+existe, el fallo es mudo. El `10` y el `05` decían que estaba *«escrita pero NO desplegada»*, así que
+me dispuse a desplegarla — un despliegue a producción, delegado y con precedente en el runbook.
+
+**Estaba desplegada.** `functions:list` la lista. La afirmación llevaba días caducada.
+
+🎯 *El cerebro es memoria, no verdad.* Una afirmación suya que dispara una acción **irreversible** hay
+que comprobarla **antes**, no después de haberla ejecutado. Lo que lo paró fue mirar el estado real
+antes de actuar, que es §3.3 haciendo su trabajo — pero el hábito de mirar tiene que ser exactamente
+ahí, y no un paso más tarde.
+
+### 283.2 — ⚠️ Y el detalle fino: el total CUADRABA
+El `05` decía «CF legacy 10 desplegadas · CF portal 19» = **29**. Medido: **29 desplegadas**. El
+número era correcto.
+
+Lo que estaba mal era la **composición**: `registrarEvento` figuraba entre las que faltaban y sí
+estaba, mientras otra que sí falta no aparecía en la lista. **Dos errores que se compensan dejan un
+total exacto.**
+
+🎯 *Un agregado que cuadra no valida sus partes.* Si el dato que vas a usar es la lista —y aquí lo
+era: «¿qué me falta por desplegar?»— comprobar la suma no comprueba nada. Es el pariente del
+denominador de §276: allí el gate miraba la variable equivocada; aquí la cifra miraba el nivel
+equivocado.
+
+### 283.3 — El estado REAL, medido hoy
+Portal: **23 en código / 20 desplegadas**. Las 3 que faltan —`alertasDigest`, `catalogoBarrido` y
+`avisoEstadoSolicitud`— están **todas detrás del gate de Resend**, en el orden que fija el runbook
+(fase 3). Así que **no había nada que desplegar**: lo que había era una frase que corregir.
+
+⛔ Y no se despliegan «de paso»: `alertasDigest` y `catalogoBarrido` son **programadas**, y desplegar
+una programada la echa a andar. Es la misma cautela que §140 aplicó al estrechar el `--only` para no
+soltar `processNurturingEmails` con el Gmail roto.
