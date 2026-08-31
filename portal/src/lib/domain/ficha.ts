@@ -25,6 +25,7 @@
  */
 
 import type { COP, ISODate, Operacion, TipoInmueble } from './shared';
+import { etiquetaTipo } from './shared';
 import { pesos } from './dinero';
 import type { Propiedad } from './propiedades';
 import type { CatalogoResumen } from './catalogo';
@@ -55,21 +56,14 @@ export const etiquetaOperacionRuta = (op: Operacion): string =>
  * Los dos se llamaban `etiquetaTipo` (§178): importar el equivocado no rompía nada — pintaba
  * «Tipo: Apartamentos», que se lee casi bien, que es lo peor que puede pasar con un texto.
  */
-const TIPO_LABEL: Record<TipoInmueble, string> = {
-  apartamento: 'Apartamento',
-  casa: 'Casa',
-  apartaestudio: 'Apartaestudio',
-  local: 'Local',
-  oficina: 'Oficina',
-  bodega: 'Bodega',
-  lote: 'Lote',
-  finca: 'Finca',
-  casa_lote: 'Casa lote',
-  consultorio: 'Consultorio',
-  edificio: 'Edificio',
-  otro: 'Inmueble',
-};
-export const etiquetaTipoSingular = (t: TipoInmueble): string => TIPO_LABEL[t] ?? 'Inmueble';
+/*
+ * ⚠️ Aquí vivía una TERCERA tabla de etiquetas (§271). Al añadir `cabana` y `parqueadero` el
+ * compilador la delató: faltaban dos claves. Dos tablas para lo mismo se separan solas — y esta ya
+ * había causado el choque de nombres de §178.
+ * Ahora deriva de `shared.ts`, que es donde vive el vocabulario, y conserva su ÚNICO matiz propio:
+ * una ficha rotula «Tipo: Inmueble», no «Tipo: Otro». Añadir un tipo vuelve a tocar UN solo sitio.
+ */
+export const etiquetaTipoSingular = (t: TipoInmueble): string => (t === 'otro' ? 'Inmueble' : etiquetaTipo(t));
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PRECIO — el bloque donde una etiqueta equivocada cambia el significado del número
@@ -480,7 +474,8 @@ export function rutaFicha(p: Pick<Propiedad, 'id' | 'slug'>): string {
 /** Tipo schema.org del inmueble. Lo comercial no tiene subtipo residencial: `Place` es lo honesto. */
 function tipoSchema(t: TipoInmueble): string {
   if (t === 'apartamento' || t === 'apartaestudio') return 'Apartment';
-  if (t === 'casa' || t === 'casa_lote' || t === 'finca') return 'House';
+  // Una cabaña ES vivienda (`House`); un parqueadero NO es `Accommodation` y cae en `Place` (§271).
+  if (t === 'casa' || t === 'casa_lote' || t === 'finca' || t === 'cabana') return 'House';
   return 'Place';
 }
 
@@ -543,6 +538,23 @@ export function jsonLdInmueble(p: Propiedad, urlAbsoluta: string, imagenes: stri
    * Text y no número, porque así lo declara schema.org.
    */
   if (esResidencial && p.specs?.piso != null) lugar.floorLevel = String(p.specs.piso);
+  /*
+   * «PENTHOUSE», DERIVADO Y NO DECLARADO (§271). Solo cuando el piso ES el último del edificio: los
+   * dos números vienen del alta y el asesor los comprueba mirando la torre.
+   *  · `accommodationCategory` es la propiedad cuya definición literal es «categoría de un
+   *    Accommodation siguiendo las convenciones inmobiliarias (RESO)». RESO no lista «Penthouse»,
+   *    pero su campo es abierto y schema.org habla de valores SUGERIDOS, no obligatorios.
+   *  · `additionalType` apunta a Wikidata Q2069469 («penthouse apartment»), un URI ajeno a nuestra
+   *    invención que dice exactamente esto. Para un motor de respuestas vale más que texto libre.
+   *  · ⛔ NUNCA `@type: 'Penthouse'` — devuelve 404 — ni `amenityFeature`, que es para servicios
+   *    («Piscina») y dejaría una clasificación al lado de una amenidad.
+   */
+  const esUltimoPiso = p.specs?.piso != null && p.specs?.pisosTotales != null
+    && p.specs.piso === p.specs.pisosTotales;
+  if (esResidencial && esUltimoPiso) {
+    lugar.accommodationCategory = 'Penthouse';
+    lugar.additionalType = 'https://www.wikidata.org/wiki/Q2069469';
+  }
   if (area != null) lugar.floorSize = { '@type': 'QuantitativeValue', value: area, unitCode: 'MTK' };
   // ⛔ SIN `geo`. `Propiedad.geo.lat/lng` es el CENTROIDE APROXIMADO DEL BARRIO, no la posición del
   // inmueble (lo dice el propio modelo, y el mapa lo advierte en pantalla). Declararlo como

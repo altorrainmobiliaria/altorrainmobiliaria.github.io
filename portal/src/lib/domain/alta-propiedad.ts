@@ -157,6 +157,7 @@ export interface EntradaAlta {
   estrato?: string | number;
   parqueaderos?: string | number;
   piso?: string | number;
+  pisosTotales?: string | number;
   /** CLAVES de R2 devueltas por `/api/media/subir`. Nunca URLs. */
   imagenes?: string[];
   amenidades?: Amenidades;
@@ -332,6 +333,7 @@ export function construirPropiedad(entrada: EntradaAlta, ctx: ContextoAlta): Res
   asignar('estrato', entero(entrada.estrato, 1));
   asignar('parqueaderos', entero(entrada.parqueaderos));
   asignar('piso', entero(entrada.piso, 1));
+  asignar('pisosTotales', entero(entrada.pisosTotales, 1));
 
   const iso = ctx.ahora.toISOString();
   const propiedad: Propiedad = {
@@ -515,6 +517,7 @@ export function entradaDe(p: Propiedad): EntradaAlta {
     estrato: n(p.specs?.estrato),
     parqueaderos: n(p.specs?.parqueaderos),
     piso: n(p.specs?.piso),
+    pisosTotales: n(p.specs?.pisosTotales),
     imagenes: [...(p.imagenes ?? [])],
     amenidades: { ...(p.amenidades ?? {}) },
   };

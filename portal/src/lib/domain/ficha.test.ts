@@ -294,6 +294,23 @@ describe('jsonLdInmueble', () => {
     expect(d.about.floorLevel).toBe('14');
   });
 
+  it('«penthouse» se DERIVA del ultimo piso, nunca se declara', () => {
+    const sp = prop().specs;
+    // 14 de 14: es el ultimo. Los dos numeros los comprueba el asesor mirando la torre.
+    const ph = jsonLdInmueble(prop({ specs: { ...sp, piso: 14, pisosTotales: 14 } }), url, []) as any;
+    expect(ph.about.accommodationCategory).toBe('Penthouse');
+    expect(ph.about.additionalType).toContain('Q2069469');
+  });
+
+  it('14 de 30 NO es penthouse, y saber solo el piso TAMPOCO alcanza', () => {
+    const sp = prop().specs;
+    const medio = jsonLdInmueble(prop({ specs: { ...sp, piso: 14, pisosTotales: 30 } }), url, []) as any;
+    expect(medio.about.accommodationCategory).toBeUndefined();
+    // Sin el total de pisos no se puede SABER si es el ultimo: no se afirma.
+    const solo = jsonLdInmueble(prop({ specs: { ...sp, piso: 14 } }), url, []) as any;
+    expect(solo.about.accommodationCategory).toBeUndefined();
+    expect(solo.about.floorLevel).toBe('14');
+  });
   it('sin piso NO inventa uno, y en lo comercial no lo emite aunque exista', () => {
     const sin = jsonLdInmueble(prop(), url, []) as any;
     expect(sin.about.floorLevel).toBeUndefined();

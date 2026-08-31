@@ -60,7 +60,7 @@ function leerEntrada(): EntradaAlta {
   const campos = [
     'operacion', 'tipo', 'vertical', 'titulo', 'descripcion', 'ciudad', 'barrio', 'rnt', 'situacionPH',
     'lat', 'lng', 'valorVenta', 'canon', 'administracion', 'precioNoche',
-    'habitaciones', 'banos', 'areaConstruidaM2', 'estrato', 'parqueaderos', 'piso',
+    'habitaciones', 'banos', 'areaConstruidaM2', 'estrato', 'parqueaderos', 'piso', 'pisosTotales',
   ] as const;
   const e = Object.fromEntries(campos.map((c) => [c, val(`a-${c}`)])) as unknown as EntradaAlta;
   e.estado = (document.querySelector<HTMLInputElement>('input[name="estado"]:checked')?.value) || 'borrador';

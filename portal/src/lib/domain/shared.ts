@@ -44,10 +44,29 @@ export type Vertical = (typeof VERTICALES)[number];
 export const SITUACIONES_PH = ['no-aplica', 'autoriza-expreso', 'sin-autorizacion'] as const;
 export type SituacionPH = (typeof SITUACIONES_PH)[number];
 
-/** Tipo de inmueble. Valores PRO; confirmar contra el Excel del dueño (`ALTORRA_Excel_Desplegables_OK.xlsx`). */
+/**
+ * Tipo de inmueble. Valores PRO; confirmar contra el Excel del dueño (`ALTORRA_Excel_Desplegables_OK.xlsx`).
+ *
+ * 🏝️ `cabana` y `parqueadero` se añaden en §271 con criterio explícito —aparece en ≥2 líderes del
+ * mercado + es real en Cartagena + ALTORRA lo publicaría—: Fincaraíz y Ciencuadras listan
+ * **Parqueadero**, que en las torres de Bocagrande se vende y se arrienda SUELTO y es una unidad
+ * registral propia; y Fincaraíz lista **Cabaña**, que es lo que hay en Barú, Tierrabomba y La
+ * Boquilla — o sea el inventario natural de la cuarta línea de negocio, la corta estancia.
+ *
+ * ⛔ Se DESCARTARON con el mismo criterio: `habitación` (dos líderes la tienen, pero nuestro modelo
+ * es inmueble completo con RNT, y el arriendo por habitación es otra operación y otro marco legal) y
+ * `casa campestre` (se pisa con `finca` y `casa_lote`: un tipo que el asesor no sabe cuál elegir
+ * hace más daño que uno que falta).
+ *
+ * 🎯 Se hace AHORA porque la base está VACÍA: no hay una sola ficha que migrar. Ampliar la taxonomía
+ * después es re-clasificar inventario a mano.
+ *
+ * La clave va sin tilde y sin ñ como `casa_lote`: viaja en URLs. La etiqueta sí las lleva, y
+ * `tipoCanonico` quita los diacríticos, así que «Cabaña» resuelve sola.
+ */
 export const TIPOS_INMUEBLE = [
-  'apartamento', 'casa', 'apartaestudio', 'local', 'oficina',
-  'bodega', 'lote', 'finca', 'casa_lote', 'consultorio', 'edificio', 'otro',
+  'apartamento', 'casa', 'apartaestudio', 'cabana', 'local', 'oficina',
+  'bodega', 'parqueadero', 'lote', 'finca', 'casa_lote', 'consultorio', 'edificio', 'otro',
 ] as const;
 export type TipoInmueble = (typeof TIPOS_INMUEBLE)[number];
 
@@ -87,6 +106,8 @@ const ETIQUETA: Readonly<Record<TipoInmueble, { uno: string; varios: string }>> 
   bodega: { uno: 'Bodega', varios: 'Bodegas' },
   lote: { uno: 'Lote', varios: 'Lotes' },
   finca: { uno: 'Finca', varios: 'Fincas' },
+  cabana: { uno: 'Cabaña', varios: 'Cabañas' },
+  parqueadero: { uno: 'Parqueadero', varios: 'Parqueaderos' },
   casa_lote: { uno: 'Casa lote', varios: 'Casas lote' },
   consultorio: { uno: 'Consultorio', varios: 'Consultorios' },
   edificio: { uno: 'Edificio', varios: 'Edificios' },
@@ -130,6 +151,8 @@ const ALIAS_TIPO: Readonly<Record<string, TipoInmueble>> = {
   bodega: 'bodega', bodegas: 'bodega',
   lote: 'lote', lotes: 'lote',
   finca: 'finca', fincas: 'finca',
+  cabana: 'cabana', cabanas: 'cabana',
+  parqueadero: 'parqueadero', parqueaderos: 'parqueadero', garaje: 'parqueadero', garajes: 'parqueadero',
   casa_lote: 'casa_lote', 'casa lote': 'casa_lote', 'casas lote': 'casa_lote',
   consultorio: 'consultorio', consultorios: 'consultorio',
   edificio: 'edificio', edificios: 'edificio',

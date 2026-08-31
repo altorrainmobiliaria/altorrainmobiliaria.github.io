@@ -34,6 +34,19 @@ export interface SpecsInmueble {
   tipoParqueadero?: 'cubierto' | 'descubierto' | 'comunal' | 'ninguno';
   cuartoUtil?: boolean; // "depósito/cuarto útil" físico — NO confundir con depósito-garantía (prohibido, OD9)
   piso?: number;
+  /**
+   * Cuántos pisos tiene el EDIFICIO. Es el dato que vuelve verificable la palabra «penthouse» (§271).
+   *
+   * 🎯 Un penthouse es el ÚLTIMO piso — así lo modela Fincaraíz, como el último valor de su filtro
+   * «Piso»— y `schema.org/Penthouse` ni siquiera existe (404). Con `piso` solo no se puede saber:
+   * el 14 es el último en una torre de 14 y no lo es en una de 30. Con los dos números, se DERIVA.
+   *
+   * ⛔ La alternativa era una casilla «¿es penthouse?». Se descartó: todo propietario de un último
+   * piso llama penthouse a su apartamento, y una etiqueta que pone el interesado no la puede sellar
+   * nadie — choca de frente con la promesa «Verificado por ALTORRA». Un número se comprueba mirando
+   * el edificio; un adjetivo, no.
+   */
+  pisosTotales?: number;
   antiguedadAnios?: number;
 }
 
