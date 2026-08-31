@@ -13331,3 +13331,134 @@ en silencio — que es el mismo agujero, un paso más allá. El gate pasa de 3 e
   antes de obedecerlo*— **no se destiló a `30`/`38` ni a ninguna skill**: las dos neuronas candidatas
   están al 99 % de su cap y el boot a 39c del tope (§287.3). Es la deuda de TODO-51, y este ADR es
   ahora su caso mejor documentado.
+
+
+## 289. ADR-289 — La vía de ESCRITURA estaba cerrada: dos hijas nuevas, y las cinco lecciones que esperaban en la puerta
+
+Cierre de **N18-03** y **N18-05** de la auditoría #18 (§287). La #18 midió el cerebro **lleno** —ocho
+neuronas al 100 %— y lo que lo volvió urgente no fue la tabla: fue que **no pudo archivar su propia
+meta-lección**. Este ADR no añade conocimiento sobre el producto; **reabre la puerta por la que entra**.
+
+### 289.1 — La medida antes de mover (método de §269.1)
+
+| nodo | tamaño | eje que APRIETA | margen |
+|---|---|---|---|
+| `33-LECCIONES-META` | 14997/15000c · 78/95L | **chars** | **3c** |
+| `37-META-FUNDACIONALES` | 15075/15938c · 87/90L | **líneas** | **3L** |
+| `38-GATES-QUE-MIENTEN` | 15258/15270c · 74/90L | **chars** | **12c** |
+
+🎯 **Los tres estaban llenos por ejes distintos**, y por eso no existía el remedio único que TODO-50
+buscaba: `33` no podía recibir un carácter más y tenía 17 líneas libres; `37` tenía 863c libres y no
+cabía una línea. Igual que en §269, «lleno» era el mismo nombre para problemas distintos.
+
+### 289.2 — 🎯 El hallazgo: la válvula estaba mal elegida, y el propio manifest lo decía
+
+El diseño para `33` era **promover las fundacionales a `37`**. N18-05 lo midió como «la válvula
+también está llena». **El diagnóstico correcto es que nunca fue una válvula**, y estaba escrito desde
+el 26-ago en el `_comment` de `37`:
+
+> *«Este nodo NO debería crecer: si crece, es que alguien está añadiendo lecciones nuevas al sitio
+> equivocado.»*
+
+🎯 **Un nodo que se declara a sí mismo archivo CERRADO no puede ser la salida de presión de otro.** El
+corte por ERA sirve para congelar historia, no para admitir. La presión de `33` se alivia **por TEMA**,
+y eso quedó escrito en su cabecera para que el próximo no vuelva a buscar la puerta donde no está.
+Es [[M-25]] otra vez —la regla estaba escrita y nadie la cruzó con el diseño que la contradecía—, y por
+eso su familia entera se mudó hoy a una hoja con nombre propio.
+
+### 289.3 — `33a-LECCION-QUE-NO-DISPARA`: el corte lo dio una IDEA, no un tamaño
+
+Cinco meta-lecciones comparten una avería: **la lección estaba escrita, era correcta y estaba en su
+sitio — y aun así no protegió.** Cada una nombra un eslabón distinto de la cadena por donde se pierde:
+
+| | |
+|---|---|
+| [[M-11]] (de `37`) | el **pendiente** sigue diciendo lo de antes, y la próxima sesión lee el pendiente |
+| [[M-24]] | el **disparador** se redactó por la escena, no por su condición mínima detectable |
+| [[M-25]] | la regla no tiene **mecanismo** detrás: escribirla se siente igual que aplicarla |
+| [[M-26]] | el **ruteo** solo lleva a ella DESPUÉS de fallar |
+| [[M-28]] | el **remedio** cae del lado malo del punto de no retorno: tranquiliza sin proteger |
+
+Movidas **VERBATIM** y verificado **byte a byte** contra `HEAD` con un script que extrae y compara los
+bloques, no a ojo (§269.3). `33`: **14997 → 10232c** y 78 → 56 líneas. `37`: **15075 → 14795c** y 87 →
+84 líneas, más 3 líneas en blanco de M-33 normalizadas al estilo del propio fichero —ninguna otra
+lección de `37` las lleva—, sin perder un carácter de texto.
+
+### 289.4 — `38a-ARMADO-DEL-GATE`: el corte lo había declarado un ADR anterior, sin saber nada de capacidad
+
+§288 lo escribió al encontrarlo, ayer, resolviendo otra cosa: *«`38-GATES-QUE-MIENTEN` cataloga el ✅
+falso; **esto es la capa de abajo**»* — la maquinaria que decide si el gate **llega a opinar y sobre
+qué**. 🎯 **Que el tema lo nombrara alguien que no estaba resolviendo un problema de espacio es la
+mejor defensa que hay contra el cajón de sastre** que [[L-58]] documenta (agrupar por regex un nodo
+lleno y llamar «tema» al montón mayor). Y contra [[M-31]]: esta vez el OBJETO no lo eligió el nodo que
+tenía delante, lo eligió la tabla de saturación de la #18 — el mismo `38` cuyo shard se RETIRÓ en
+N15-07b por elegirlo mal.
+
+**La frontera, y cada lección cae de un solo lado**: en `38a` el fallo es **anterior a cualquier
+respuesta** (L-56 nadie lo invoca · L-65 exento por entorno · L-70 excluido por su predicado · L-71 su
+ancla desapareció); en `38` el gate **sí respondió** y su respuesta miente —en verde o en rojo—. La
+prueba de bolsillo: *¿llegó a abrir un archivo?*
+
+**GC pareado, no aparte**: la escalera de `38` tenía dos peldaños que eran ARMADO y no verdes. El 8
+(§265, la prueba en verde sobre código que el flag por defecto apagaba) y el 6 (§177, 141 pruebas
+fuera del CI «porque necesitan Java», medidas en 24 s y una rota en `main`) **cedieron su caso a
+[[L-70]]** y quedaron como punteros. `38`: **15258 → 14777c**, con L-72 dentro.
+
+### 289.5 — Y lo que era el PUNTO: las cinco lecciones, escritas
+
+Abrir sitio sin escribirlas habría sido teatro.
+
+- **[[M-34]]** (`33`) — *normalizar dentro del INSTRUMENTO no protege lo que mides A MANO junto a él.*
+  Estaba redactada entera en la bóveda desde el 30-ago y **sin número porque no cabía**; §287 dijo que
+  se numeraría el día que su nodo tuviera sitio. Hoy lo tuvo. §287 **no se reescribe**: se actualiza la
+  nota de la bóveda, que era la que afirmaba «sin número».
+- **[[M-35]]** (`33`) — *ocho neuronas al 100 %: el cerebro no engordaba, se quedó SIN SITIO.* Lo que
+  la vuelve diagnóstico es el **denominador** —en 10 revisiones del manifest se subió UN tope de 31—,
+  porque sin él la misma tabla se lee como «hay que podar», que es la conclusión contraria. Y es META
+  porque §G.4 manda capturar en la neurona y ese día ocho **habrían rechazado la escritura**.
+- **[[L-70]]** (`38a`) — *el PREDICADO que decide si un gate llega a correr es parte del gate.* 55 de
+  100 commits entraron sin escáner de secretos en un repo PÚBLICO, y el chequeo #25 dio verde **con
+  razón**: pregunta *¿está conectado?*, y la que faltaba es *¿bajo qué condición?*.
+- **[[L-71]]** (`38a`) — *un ANCLA borrada DESARMA su gate en silencio.* Verificado vivo hoy:
+  `service-worker.js` existe (962 B), `grep "Cache bump" CLAUDE.md` → **0**, y el #4 imprime «sin
+  service-worker o sin §4 — omitido» —falso en su primera mitad— sin bajar el `✅ CEREBRO SANO`.
+  Reincidencia de §69.7-bis, cuya regla [HONOR] no ejecuta nadie.
+- **[[L-72]]** (`38`) — *un gate que miente en ROJO viene con una INSTRUCCIÓN.* El ✅ falso te deja
+  donde estabas; el ❌ falso te manda a arreglar algo y **nombra al culpable** — aquí, al inocente. De
+  los dos arreglos obedientes, el único que compilaba dejaba en **404 cada inmueble reservado y
+  vendido**, y compilaba porque caía del lado SIN TIPOS.
+
+### 289.6 — El peaje, pagado en el ROUTER y VERIFICADO contra los gates
+
+Registrar dos hojas cuesta boot (§164: el impuesto se paga donde está el peso). Cuatro podas, todas
+**medidas** y todas duplicados reales entre nodos que se auto-cargan **los dos** —el corolario [HONOR]
+de §269.8: *cuando el boot apriete, lo primero es cruzar los tres always-on buscando el mismo hecho
+dicho dos veces*—:
+
+1. `«legacy (sus ficheros SIGUEN servidos)»` → `05` ya dice *«sus ficheros NO [retirados]: §250»*, y la
+   misma línea del router ya ruteaba *«qué se sirve HOY → `05`»*. Es el residuo de §269.8.
+2. `«Push a main → auto-deploy»` → `05` *«Branch / Deploy: `main` → GH Pages auto al push»*.
+3. `«, rama prod main»` → tercera copia del mismo hecho; además el chequeo #17 lo comprueba cada corrida.
+4. Una ruta larga que **§3.2 ya repite** en el mismo fichero.
+
+🎯 **Y la trampa de §269.6, evitada esta vez midiendo**: la poda 4 quita un `docs/…\.md` del router, que
+es justo lo que alimenta el gate de hojas. Medí su denominador **antes y después**: **23 = 23**, porque
+el Set conserva el fichero mientras quede una mención. Aquel día el número bajó de 20 a 13 y el gate
+siguió verde; esta vez la pregunta se hizo antes. **BOOT: 31451/31500.**
+
+### 289.7 — Lo que este ADR NO cierra (medido, no intuido)
+
+- 🔴 **`38` queda al 97 %** (14777/15270, 493c). Se decidió **no subir su techo** ([[M-05]]): el
+  encargo era abrir la puerta, no ampliar la casa, y un remedio decidido al final de una sesión larga
+  es exactamente lo que [[M-31]] desaconseja. Es el siguiente bocado, no éste.
+- 🔴 **El BOOT sigue en 49c** y `10` no puede crecer. §269.5 y §269.7 ya lo dejaron medido y abierto:
+  las dos secciones pesadas del router (§0 y §G.4) son las dos que **no pueden irse**.
+- 🟠 **16 neuronas ≥90 %**: `50` y `34` (70/70 líneas) siguen clavadas. M-35 nombra el patrón; no lo cura.
+- 🟠 **Un hueco de gate que descubrí registrando**: el sub-chequeo de registro DIRECTO del #10 filtra
+  por `^\d{2}-` y **no ve los sufijos con letra** — `33a` y `38a` le son invisibles, igual que a los
+  `00a`..`00g`, que sobreviven por una detección dedicada. La *reachability* sí la cubre el BFS, y las
+  dos están registradas a mano, pero el gate no lo exigiría. Es [[L-70]] cometido por el kernel: un
+  predicado decidiendo a quién mira.
+- 🟠 **El censo de `00` afirma algo que no es**: su aviso dice que las OCHO hojas que faltaban se
+  completaron el 27-ago, y `35`, `36`, `37`, `38`, `21`, `22`, `44` y `45` **siguen sin aparecer** en la
+  lista que hay debajo. Es `39-ESCRITO-NO-ES-VIGENTE` aplicado a un registro. Fuera de alcance hoy.

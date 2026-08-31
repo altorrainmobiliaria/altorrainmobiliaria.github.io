@@ -127,6 +127,7 @@
 | §286 | 🧾 **La licencia también en las RULES** — el dominio solo corre en la app; quien escriba por otro camino se lo salta. Gate en create Y update. ⛔ Y la ficha para: falta MOCKUP. | 13076 |
 | §287 | 🔬 **Auditoría #18: el cerebro está LLENO** — 8 neuronas al 100 % y la válvula `33`→`37` bloqueada también. La medición del GC comparaba LF contra CRLF e inventó +140c. Sonda 0-bis: juzgué mal a N17-04, que §269 ya había arreglado. | 13115 |
 | §288 | 🚦 **El predicado que decide si un gate CORRE es parte del gate** — el escáner de secretos saltaba 55/100 commits. Reverso: el gate que miente en ROJO; su único arreglo obediente que compilaba rompía producción. | 13200 |
+| §289 | 🧱 **La vía de ESCRITURA estaba cerrada** — 33/37/38 llenos por ejes DISTINTOS. Nacen `33a` (la lección que no dispara) y `38a` (el armado del gate); entran M-34, M-35 y L-70..L-72. | 13336 |
 
 ---
 
