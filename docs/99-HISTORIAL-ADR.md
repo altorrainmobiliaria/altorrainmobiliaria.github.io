@@ -12461,3 +12461,63 @@ el dato fuera. Singular/plural concuerda; cero errores de consola. `npm run veri
 ⚠️ Nota de instrumento: `getBoundingClientRect()` **no** dice si un `<details>` está oculto —Chrome
 usa `content-visibility:hidden`, que conserva la caja y solo se salta el pintado—. El instrumento es
 `checkVisibility()`. Casi apunto un bug que no existía.
+
+## 274. ADR-274 — El header se comía la barra de filtros justo al volver a ellos
+
+### 274.1 — El bug, medido
+La barra de filtros de `/comprar` se pega a `top: 0` **debajo** de un header que también se pega a 0
+y tiene más `z-index` (1000 contra 100). Con la barra en reposo: **la caja de búsqueda 90% tapada y
+los chips 92%**.
+
+🎯 Y el momento del fallo es el peor posible. El header **se esconde al bajar** —así que mientras
+recorres resultados la barra se ve— y **reaparece al subir**: se la come exactamente cuando el
+visitante vuelve arriba a cambiar un filtro. Un fallo que solo existe en el gesto que lo necesita es
+de los que sobreviven a cualquier revisión estática. Y con §273 esa barra acaba de ganar cuatro
+filtros que sí funcionan, así que el estorbo pesa más, no menos.
+
+### 274.2 — El arreglo: medir la altura, no declararla
+El header publica `--alt-hdr-h`, que vale su altura **medida** y **0 cuando está oculto**; la barra
+se pega a `top: var(--alt-hdr-h, 0px)` y sube o baja sola.
+- ⛔ **No** se usó el token `--alt-header-h`: son **116 px** de la home (utilidades 50 + principal
+  66) y aquí se miden **67**. Una barra que se fiara de él quedaría 49 px demasiado abajo — el
+  gemelo de valor que *parece* el correcto porque lleva el nombre correcto.
+- Solo se escribe cuando el estado **cambia**: tocar una custom property del `:root` invalida el
+  estilo de todo el documento, y hacerlo a 60 fps dentro de un listener de scroll es justo el
+  reflujo que ese manejador dice evitar.
+- Respaldo `0px`, y dicho en voz alta: **sin JS no mejora**. Inventar un número mágico de respaldo
+  habría sido peor que admitirlo.
+
+### 274.3 — ⚠️ Y el cerebro YA lo sabía: esto fue un fallo de RECUPERACIÓN, no una lección nueva
+Medí `top: 66.99px` mientras la variable decía `0px`, y el `transform` del header en `-0.008px` en
+vez de `-100%`: **los dos al 0,8% de su recorrido**. Estuve a punto de apuntar un bug que no existía.
+
+Eso es **[[L-26]]** (el panel integrado tiene el renderer congelado, `rAF` = 0 frames) y **[[L-28]]**
+(`getComputedStyle` miente en toda propiedad con `transition`, porque se queda en el valor INICIAL),
+las dos escritas, con su ID, en `31-VERIFICACION-UI`. Las volví a derivar desde cero gastando cuatro
+sondas.
+
+🎯 **Por qué no las recuperé**: el trigger de §G.2 dice *«ANTES de op riesgosa/repetitiva → memoria
+procedimental»*, y abrir el navegador a **medir** no se siente ni riesgoso ni repetitivo. *Un
+disparador redactado sobre el RIESGO no alcanza a los actos que solo son caros en tiempo.* Lo
+transferible no va a una regla más del router —que está al 99%— sino a la skill que se carga sola
+cuando empieza el trabajo de navegador, que es donde el conocimiento llega a tiempo.
+
+Lo que **sí** es nuevo y no estaba en ninguna de las dos:
+1. **`resize_window` devuelve un viewport real** (1280×900 en vez de 0×0). Con `innerWidth: 0` toda
+   geometría es humo y `elementFromPoint` devuelve `null`; con viewport emulado, la geometría vuelve
+   a medir. Este bug estaba anotado como *«no medible aquí, hace falta Chrome real»* y **sí** se
+   pudo medir aquí.
+2. **El scroll del propio panel (`computer{action:'scroll'}`) SÍ desplaza y SÍ dispara los
+   manejadores** —`scrollY` fue 0 → 47 → 809 y el header alternó su clase—, mientras que
+   `scrollTo`/`scrollTop` desde el script de la página se quedaban en 0. La distinción no estaba
+   escrita: no es que el panel no haga scroll, es que no lo hace **desde el script de la página**.
+3. **El antídoto de [[L-28]]**: inyectar `*{transition:none!important}` y leer `getComputedStyle`,
+   que fuerza el recálculo síncrono. La lección decía que el valor miente; no decía cómo cobrárselo.
+
+⚠️ Y un aviso de método: `await requestAnimationFrame(...)` **cuelga** la herramienta cuando el panel
+está oculto (45 s hasta el timeout). Sin frames no hay callback. Se mide sin esperar.
+
+### 274.4 — Verificación
+Con las transiciones apagadas, los dos estados: header **visible** → var `67px`, barra `top` 67,
+caja **0%** tapada (era 90%), chip **0%** (era 92%) · header **oculto** → var `0px`, barra `top` 0,
+0% y 0%. `npm run verify` salida **0**: 1027 unitarias + 190 de reglas.

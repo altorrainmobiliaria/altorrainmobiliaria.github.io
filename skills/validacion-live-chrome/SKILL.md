@@ -197,6 +197,29 @@ poblaciones distintas de nodos y pueden tener estilos distintos sin que nada avi
    integrado reporta un viewport de 0×0: si vas a usarlo, **imprime `innerWidth` primero** o estarás
    leyendo un `null` que no significa «no hay nada ahí».
 
+10. **🧊 En el panel integrado el renderer está CONGELADO — y eso decide QUÉ puedes medir ahí.** No
+    hay frames: no avanzan las transiciones ni las animaciones, `scrollTo`/`scrollTop` **desde el
+    script de la página** no se aplican, y `await requestAnimationFrame(...)` **cuelga la
+    herramienta hasta el timeout** (45 s tirados). Tres antídotos concretos, todos verificados:
+    - **Para medir una propiedad con `transition`**, apágalas y lee: inyecta un
+      `<style>*,*::before,*::after{transition:none!important;animation:none!important}</style>` y
+      luego `getComputedStyle`, que fuerza el recálculo síncrono — sin esperas, que no hay frames que
+      esperar. Sin esto leerás el valor **INICIAL** y creerás que tu regla no aplica. Caso real: la
+      variable del `:root` decía `0px` y el `top` computado decía `66.99px`; el `transform` de otro
+      elemento estaba en `-0.008px` en vez de `-100%`. Los dos al 0,8% de su recorrido — a un paso de
+      apuntar un bug que no existía.
+    - **Para hacer scroll de verdad, usa el scroll DEL PANEL** (`computer{action:'scroll'}`), no el
+      del script: ese sí desplaza y **sí dispara los manejadores** (medido: `scrollY` 0 → 47 → 809, y
+      un header con auto-ocultar alternó su clase). La distinción importa: no es que el panel no
+      haga scroll, es que no lo hace desde `window.scrollTo`.
+    - **Para que la geometría signifique algo, emula un viewport primero** (`resize_window`). Sin
+      eso `innerWidth` puede ser **0**, y entonces `elementFromPoint` devuelve `null` y toda medida
+      relativa al viewport es humo. Con viewport emulado se pueden medir solapes reales — un bug
+      anotado como «no medible aquí, hace falta el Chrome del dueño» se midió aquí.
+    ⚠️ Y el meta-aviso: esto no se descubre, **se consulta**. Si tu cerebro tiene una lección sobre
+    el panel congelado, léela ANTES de abrir el navegador. Un disparador redactado sobre operaciones
+    «riesgosas» no alcanza a medir, que no se siente riesgoso — y ahí se pierden las sondas.
+
 ## 6. Conexiones (doble vía)
 - **Hacia mí** (qué recorrer / cómo cerrar): `caza-bugs` · `verification-before-completion` · `anti-codigo-muerto` (que lo nuevo no dejó lo viejo roto EN VIVO).
 - **Soy el gate empírico DE**: `proceso-decision-fuerte` **paso 7** (pruebas de estado en un navegador REAL cierran la decisión).

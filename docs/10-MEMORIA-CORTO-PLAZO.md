@@ -73,8 +73,9 @@
 > 🏗️ **Obra nueva**: vertical abierta y diseñada (§270), al **mega-plan** y no al backlog — no cabe
 > hoy por una razón MEDIDA: el índice guarda `precio` como UN entero y un proyecto tiene RANGO.
 > 📦 **Barrido de producto: AGOTADO** (61 hallazgos, 32 arreglados → §263-§267, 1 retirado). Queda
-> lo que no cierro yo: ⚠️ el header sobre el buscador de /comprar (NO medible aquí, [[L-26]]) ·
-> pipeline y feed del panel (mockup). ✅ Los 4 chips de filtro del SERP eran de ADORNO: reales en §273.
+> lo que no cierro yo: el pipeline y el feed del panel (mockup). ✅ Los 4 chips de filtro del SERP
+> eran de ADORNO (§273), y el header tapaba 90% de esa barra al subir a usarlos (§274) — este SÍ era
+> medible aquí: bastaba emular viewport y apagar transiciones ([[L-26]] · [[L-28]]).
 
 > 🔬 **Auditoría #17 (§268)** — parcial: sondas 3/4/7 piden subagentes. Las 2 abiertas de la #16
 > re-verificadas: **premisas siguen ciertas**. ⚠️ N17-04 abierto → **TODO-50**: el boot chocó CUATRO
