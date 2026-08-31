@@ -603,6 +603,23 @@ gates para un problema es uno que alguien dejará de mantener. Mejor **meter lo 
 dentro del denominador del que ya existe** — colgarlo de la misma variable, del mismo módulo, del
 mismo camino— y así el gate que ya tenías empieza a cubrirlo sin que nadie tenga que acordarse.
 
+**🧾 Y el motivo con el que declaras una deuda decide si la estás gestionando o autorizando.** Casi
+todo gate serio deja declarar excepciones «con su motivo». El motivo es donde se cuela el problema.
+
+Caso real: tres cifras de inventario falsas se servían en la portada, **declaradas** en el gate con
+el motivo *«conteo de muestra; sale en el cutover»*. El sistema las conocía, las vigilaba, y las
+dejaba pasar porque alguien había prometido quitarlas — en el momento de más presión del proyecto,
+sobre una línea que nadie iba a estar mirando.
+
+🎯 *El motivo debe decir **qué** retira la deuda. Si la respuesta es «alguien se acordará», la
+declaración no está gestionando la deuda: la está autorizando.* Reescríbelo como un mecanismo —
+cuelga la excepción de un interruptor, una variable, un tipo— y entonces el motivo es comprobable.
+
+💡 **Y audita las declaraciones viejas al revés: quita la que creas muerta y mira si el gate falla.**
+Una excepción que ya no corresponde a nada es peor que la deuda, porque da por vigilado algo que
+nadie vigila. Si al quitarla el gate sigue verde, la deuda no existía — y eso no se «cierra», se
+RETIRA: cerrar afirmaría que hubo algo que arreglar.
+
 ## 4n. 🗺️ El censo que mide la superficie EQUIVOCADA — medir no es lo mismo que medir lo que importa
 
 Convertir un hallazgo en censo es la jugada correcta (deja de arreglar la instancia y pasas a barrer la

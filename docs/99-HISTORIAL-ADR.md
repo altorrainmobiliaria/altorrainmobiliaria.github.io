@@ -12709,3 +12709,44 @@ Tras el refactor, las dos islas siguen vivas: portada 5 cards, SERP 4. `npm run 
 Quedan por cablear **recientes**, **estancias** y **venta**. Y **`valoradas` no se puede**: pide una
 calificación que el índice no guarda — o se añade al modelo, o esa sección no puede existir con
 datos reales. Es una decisión de producto, no un pendiente técnico.
+
+## 278. ADR-278 — «Sale en el cutover» no es un motivo: es una promesa
+
+### 278.1 — Lo que había
+La portada afirmaba **«128 propiedades en venta en toda la ciudad»** (dos veces), **«Ver arriendos
+83»** y **«312 inmuebles en 3 km»**, con el catálogo vacío.
+
+No era un descuido: las tres estaban **declaradas** en la deuda de `verify:claims`, y su motivo era
+*«conteo de muestra; sale en el cutover»*. O sea que el sistema las conocía, las vigilaba, y las
+dejaba pasar porque alguien había prometido quitarlas.
+
+### 278.2 — 🎯 La lección: el motivo de una deuda declarada tiene que ser un MECANISMO
+*«Sale en el cutover»* es una promesa que alguien tiene que cumplir, **en el momento de más presión
+del proyecto**, sobre una línea que nadie va a estar mirando. §276 acaba de mostrar exactamente lo
+que valen esas promesas: seis secciones enteras de inventario inventado esperando ese mismo cutover,
+y un candado que habría dado verde mientras salían.
+
+*Cuando declares una deuda, el motivo debe decir **qué la retira**. Si la respuesta es «alguien se
+acordará», la declaración no está gestionando la deuda: la está autorizando.*
+
+Los tres conteos cuelgan ahora de `HAY_CATALOGO_REAL` (el interruptor de §276): **salen solos** en
+cualquier build de producción. Siguen declarados —el build de staging los sirve a propósito, son el
+diseño de muestra— pero su motivo ya no es una promesa, es un mecanismo que se puede comprobar.
+
+⚠️ Y sin el «312» la frase del mapa tenía que decir otra cosa: *«312 inmuebles en 3 km»* sin el
+número no es una frase, es un hueco. Pasa a **«Inmuebles a menos de 3 km»**, que no afirma cuántos.
+
+### 278.3 — Una deuda RETIRADA, y quien lo demuestra es el gate
+`'48 Inmuebles'` del panel ya no existe: §275 vació todos los KPI del build y, medido en el HTML
+servido, los seis valores son «—». Se **retira** en vez de cerrarse — cerrar afirmaría que hubo algo
+que arreglar hoy.
+
+🎯 Y la retirada **la demuestra el propio gate**: si la cifra siguiera ahí, quitar su declaración lo
+haría **fallar**. Pasó de 9 congeladas a 8, en verde. *Una deuda declarada que ya no corresponde a
+nada envejece peor que la deuda: da por vigilado algo que nadie vigila.*
+
+### 278.4 — Y me pilló mi propia lección
+Arreglé el «128» del CTA… y había un **segundo «128»** en el «Ver todas» de la misma página. Es el
+eje **«instancias»** de §275 (caza-bugs §4q), escrito por mí hace dos horas. Lo cazó medir en el
+**build de producción** en vez de dar por bueno el arreglo: `>128<` → 0, `>83<` → 0, `>312<` → 0.
+`npm run verify` salida **0**: 1032 + 190.

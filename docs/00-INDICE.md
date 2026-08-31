@@ -114,6 +114,7 @@
 | §275 | 👥 **El panel SERVÍA 6 clientes inventados, 4 actividades falsas y «92% de demanda»** — §266 arregló el runtime y no el build. Ahora se calculan de los leads ya cargados; gate `persona-de-mockup` con prueba negativa. | 12525 |
 | §276 | 🏚️ **Un build de producción habría publicado ~25 inmuebles inventados en la PORTADA** — el candado #7 existía para eso y vigilaba una VARIABLE que esas 6 secciones no leen. Ahora cuelgan de ella. | 12591 |
 | §277 | 🔌 **La portada, cableada al catálogo** (destacadas + arriendo, 3 estados verificados). 🎯 Y un gate puede tener razón POR DEBAJO de su mensaje: se quejó de un id y el problema era el ACOPLAMIENTO. | 12658 |
+| §278 | 🧾 **«Sale en el cutover» no es un motivo, es una promesa** — 3 conteos de inventario declarados como deuda y esperando que alguien se acordara. Ahora salen solos. Y una deuda RETIRADA que el gate demostró. | 12713 |
 
 ---
 
