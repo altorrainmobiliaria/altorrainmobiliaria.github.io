@@ -69,8 +69,11 @@
 > 🎯 **AQUÍ VOY (31-ago).** Barrido del portal CERRADO (§271-§279): la web ya no publica nada que no
 > pueda respaldar — ni filtros de adorno, ni clientes inventados en el panel, ni los ~25 inmuebles
 > falsos que la PORTADA habría sacado en producción. Sus 5 secciones beben del catálogo real.
-> ⛔ **`valoradas` es TUYA**: pide una calificación que el índice no guarda. O entra al modelo (quién
-> la escribe, cómo se verifica) o esa sección no puede existir con datos reales.
+> ⭐ **Daniel decidió las dos (31-ago)**:  cambia sus 3 cifras falsas por credenciales
+> verificables (§280) y la calificación ENTRA al modelo (§281), diseñada para no poder inventarse:
+> agregado que solo escribe el servidor, negado al staff en las Rules, y sin mínimo de reseñas no
+> hay nota. ⏭ **Falta el flujo que ESCRIBE reseñas** (quién, atado a qué reserva, y la Function que
+> recalcula): hasta entonces «mejor valoradas» dice que no hay valoraciones, que es la verdad.
 > 🏗️ **Obra nueva**: diseñada y metida en el MEGA-PLAN, no en el backlog (§270) — no cabe hoy por
 > una razón MEDIDA: el índice guarda `precio` como UN entero y un proyecto tiene RANGO.
 
