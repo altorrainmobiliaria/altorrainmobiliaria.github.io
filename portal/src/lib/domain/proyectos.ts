@@ -184,3 +184,94 @@ export function explicarProblemaProyecto(m: ProblemaProyecto): string {
       return 'El porcentaje vendido no dice quién lo informó. «70% vendido» es una afirmación de urgencia: o se sabe quién la hizo y cuándo, o no se publica.';
   }
 }
+
+/*
+ * ══ JSON-LD DE UN PROYECTO — un `Offer` por TIPOLOGÍA (§285) ═══════════════════════════════════
+ *
+ * El patrón sale de la investigación de julio (bóveda `2026-07-10-r1-competencia`), donde se midió
+ * lo que hace La Haus: `RealEstateListing` con un **array de Offers, uno por tipología**, cada uno
+ * con `itemOffered: Accommodation` y sus specs. Es el único competidor colombiano con datos
+ * estructurados serios — los demás tienen JSON-LD en cero.
+ *
+ * ⛔ **Y NO se usa `AggregateOffer`**, aunque un «desde/hasta» lo pida a gritos. Su definición
+ * literal es *«cuando un ÚNICO producto está asociado a múltiples ofertas — el mismo par de zapatos
+ * ofrecido por distintos comerciantes»*. Lo nuestro es lo contrario: un desarrollo con unidades
+ * DISTINTAS. Emitirlo sería markup que no significa lo que queremos decir, que es exactamente por lo
+ * que §271 no inventó un `@type: Penthouse`. El rango lo puede calcular quien lea las ofertas.
+ *
+ * 🐛 **El bug de La Haus, evitado a propósito**: su ficha sirve `"url": "undefined/pd/medellin/vitral"`
+ * —una variable sin resolver en el SSR— y eso convierte su dato estructurado en basura para un
+ * rastreador. Aquí la URL absoluta ENTRA COMO PARÁMETRO y si no es absoluta se rechaza: un JSON-LD
+ * roto no falla, se indexa.
+ *
+ * AUSENCIAS DELIBERADAS, en la línea de §95.3 y de `jsonLdInmueble`:
+ *  · sin `streetAddress` — la dirección exacta no va en el documento público.
+ *  · sin `aggregateRating` — no hay reseñas de proyectos, e inventarlas es lo que sanciona la SIC.
+ *  · sin `priceValidUntil` — La Haus pone un año. En preventa los precios suben: afirmar que un
+ *    «desde» vale doce meses es prometer algo que no controlamos.
+ */
+
+/** El vendedor de una obra nueva es la CONSTRUCTORA, no ALTORRA (§270). Se declara como tal. */
+const vendedor = (constructora: string) => ({ '@type': 'Organization', name: constructora });
+
+/**
+ * `RealEstateListing` del proyecto. **Devuelve `null` si el proyecto no se puede publicar**: un dato
+ * estructurado es una afirmación legible por máquina, y no vamos a afirmar en JSON lo que la propia
+ * página se niega a mostrar.
+ */
+export function jsonLdProyecto(
+  p: Proyecto,
+  urlAbsoluta: string,
+  imagenes: readonly string[] = [],
+): Record<string, unknown> | null {
+  if (!puedePublicarseProyecto(p)) return null;
+  // La URL tiene que ser absoluta y estar resuelta. Es el bug de La Haus, y se corta aquí.
+  if (!/^https?:\/\//.test(urlAbsoluta) || urlAbsoluta.includes('undefined')) return null;
+
+  const ofertas = p.tipologias
+    .filter((t) => Number.isFinite(t.desde) && t.desde > 0)
+    .map((t) => {
+      const alojamiento: Record<string, unknown> = {
+        '@type': 'Accommodation',
+        name: t.nombre,
+      };
+      if (Number.isFinite(t.habitaciones)) alojamiento.numberOfRooms = t.habitaciones;
+      if (Number.isFinite(t.banos)) alojamiento.numberOfBathroomsTotal = t.banos;
+      if (Number.isFinite(t.areaM2) && t.areaM2 > 0) {
+        alojamiento.floorSize = { '@type': 'QuantitativeValue', value: t.areaM2, unitCode: 'MTK' };
+      }
+      return {
+        '@type': 'Offer',
+        priceCurrency: 'COP',
+        price: t.desde,
+        // GoodRelations, igual que en la ficha de inmueble: sin esto no se distingue vender de arrendar.
+        businessFunction: 'http://purl.org/goodrelations/v1#Sell',
+        availability: p.estado === 'agotado' ? 'https://schema.org/SoldOut' : 'https://schema.org/InStock',
+        seller: vendedor(p.constructora),
+        itemOffered: alojamiento,
+      };
+    });
+
+  const lugar: Record<string, unknown> = {
+    '@type': 'Place',
+    name: p.nombre,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: p.geo.ciudad,
+      addressCountry: 'CO',
+    },
+  };
+
+  const doc: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateListing',
+    url: urlAbsoluta,
+    name: p.nombre,
+    description: p.descripcion,
+    datePosted: p.publicadoEn ?? p.createdAt,
+    about: lugar,
+    offers: ofertas,
+  };
+  if (imagenes.length) doc.image = [...imagenes];
+  return doc;
+}

@@ -6,6 +6,7 @@ import {
   explicarProblemaProyecto,
   problemasParaPublicarProyecto,
   puedePublicarseProyecto,
+  jsonLdProyecto,
   rangoDePrecios,
   PROBLEMAS_PROYECTO,
   type Proyecto,
@@ -109,5 +110,66 @@ describe('explicarProblemaProyecto — hay texto para TODOS, y lo prueba el tipo
     for (const m of PROBLEMAS_PROYECTO) {
       expect(explicarProblemaProyecto(m).length).toBeGreaterThan(20);
     }
+  });
+});
+
+describe('jsonLdProyecto — un Offer por tipología, y el bug de La Haus cortado en la puerta', () => {
+  const URL = 'https://altorrainmobiliaria.co/proyecto/torre-ejemplo';
+
+  it('emite un Offer por cada tipología con precio, con su Accommodation dentro', () => {
+    const doc = jsonLdProyecto(proyecto(), URL, ['a.webp']);
+    expect(doc).not.toBeNull();
+    const ofertas = (doc as Record<string, unknown>).offers as Array<Record<string, unknown>>;
+    expect(ofertas).toHaveLength(3);
+    expect(ofertas[0]).toMatchObject({
+      '@type': 'Offer',
+      priceCurrency: 'COP',
+      price: 320_000_000,
+      businessFunction: 'http://purl.org/goodrelations/v1#Sell',
+      availability: 'https://schema.org/InStock',
+      seller: { '@type': 'Organization', name: 'Constructora Ejemplo S.A.S.' },
+    });
+    expect(ofertas[0].itemOffered).toMatchObject({
+      '@type': 'Accommodation',
+      name: '1 alcoba',
+      numberOfRooms: 2,
+      numberOfBathroomsTotal: 2,
+      floorSize: { '@type': 'QuantitativeValue', value: 62, unitCode: 'MTK' },
+    });
+  });
+
+  it('🔴 NO emite AggregateOffer — su definición es «un producto, varios vendedores», no la nuestra', () => {
+    const json = JSON.stringify(jsonLdProyecto(proyecto(), URL));
+    expect(json).not.toContain('AggregateOffer');
+    // Y tampoco lo que §95.3 prohíbe en el resto del portal:
+    expect(json).not.toContain('streetAddress');
+    expect(json).not.toContain('aggregateRating');
+    expect(json).not.toContain('priceValidUntil');
+  });
+
+  it('🐛 el bug de La Haus: una URL sin resolver NO se emite', () => {
+    // Su ficha sirve "url":"undefined/pd/medellin/vitral". Un JSON-LD roto no falla: se indexa.
+    expect(jsonLdProyecto(proyecto(), 'undefined/proyecto/torre-ejemplo')).toBeNull();
+    expect(jsonLdProyecto(proyecto(), '/proyecto/torre-ejemplo')).toBeNull();
+    expect(jsonLdProyecto(proyecto(), 'https://x.co/undefined/torre')).toBeNull();
+  });
+
+  it('🔴 un proyecto que NO se puede publicar tampoco se AFIRMA en JSON-LD', () => {
+    // Un dato estructurado es una afirmación legible por máquina. No vamos a decir en JSON lo que la
+    // página se niega a mostrar.
+    expect(jsonLdProyecto(proyecto({ licenciaConstruccion: undefined }), URL)).toBeNull();
+    expect(jsonLdProyecto(proyecto({ estado: 'borrador' }), URL)).toBeNull();
+  });
+
+  it('un proyecto agotado se declara SoldOut, no desaparece', () => {
+    const doc = jsonLdProyecto(proyecto({ estado: 'agotado' }), URL);
+    const ofertas = (doc as Record<string, unknown>).offers as Array<Record<string, unknown>>;
+    expect(ofertas[0].availability).toBe('https://schema.org/SoldOut');
+  });
+
+  it('una tipología sin precio no genera una oferta de cero', () => {
+    const doc = jsonLdProyecto(proyecto({ tipologias: [tipo('a', 300_000_000), tipo('mala', 0)] }), URL);
+    const ofertas = (doc as Record<string, unknown>).offers as Array<Record<string, unknown>>;
+    expect(ofertas).toHaveLength(1);
   });
 });
