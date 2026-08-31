@@ -110,14 +110,44 @@ function alcanzables(pagina) {
   return vistos;
 }
 
+/**
+ * Clases que la página escribe DENTRO de un `<template>` — o sea, sobre nodos que renderiza Astro y
+ * que por tanto SÍ llevan su `data-astro-cid`.
+ *
+ * 🎯 Por qué existe esta función (§279). El gate parte de que una clase asignada por JS cae en un
+ * nodo creado a mano, sin el atributo con el que Astro acota sus reglas. Eso es cierto… salvo con el
+ * patrón que este proyecto usa a propósito: clonar un `<template>` renderizado por un componente y
+ * solo RELLENARLO. Ahí el nodo viene de Astro, lleva el atributo, y la regla acotada le alcanza.
+ * Verificado en el HTML construido: `<a class="home-rec__tile" data-astro-cid-lcdefpme>` contra la
+ * regla `.home-rec__tile[data-astro-cid-lcdefpme]`.
+ *
+ * ⚠️ Se arregla el MECANISMO en vez de declarar una excepción con su motivo (§278): una excepción
+ * habría tapado este caso y el gate habría seguido dando falsos positivos a quien use el patrón —
+ * que es el patrón recomendado. El gate no se debilita: sigue cazando la clase que el JS inventa.
+ */
+function clasesDePlantilla(pagina) {
+  const out = new Set();
+  for (const t of pagina.matchAll(/<template\b[^>]*>([\s\S]*?)<\/template>/g)) {
+    for (const c of t[1].matchAll(/class="([^"{}]+)"/g)) {
+      for (const cls of c[1].split(/\s+/)) if (cls) out.add(cls);
+    }
+  }
+  return out;
+}
+
 const hallazgos = [];
 for (const f of archivos(join(SRC, 'pages'), '.astro')) {
   const pagina = readFileSync(f, 'utf8');
   const acotadas = clasesAcotadas(pagina);
   if (!acotadas.size) continue;
+  // Las que la página escribe en un `<template>` ya vienen con el atributo de Astro: no están rotas.
+  // Se compara por PREFIJO además de por igualdad, porque un modificador BEM (`x--xl`) que el JS
+  // pone sobre un nodo cuya base (`x`) está en la plantilla cae en ese mismo nodo, con su atributo.
+  const dePlantilla = clasesDePlantilla(pagina);
+  const vieneDeAstro = (c) => dePlantilla.has(c) || [...dePlantilla].some((b) => c.startsWith(b + '--'));
   // Solo los scripts que ESTA página carga: una colisión de nombres entre páginas es otro problema.
   for (const nombre of alcanzables(pagina)) {
-    const rotas = [...scripts.get(nombre)].filter((c) => acotadas.has(c)).sort();
+    const rotas = [...scripts.get(nombre)].filter((c) => acotadas.has(c) && !vieneDeAstro(c)).sort();
     if (rotas.length) hallazgos.push({ pagina: relative(RAIZ, f), script: nombre, rotas });
   }
 }

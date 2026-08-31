@@ -21,6 +21,10 @@
 
 import { cargarAuth } from './auth';
 import { aCsv, nombreExport, type Columna } from '../lib/domain/csv';
+// `haceCuanto` se mudó al dominio (§279): la necesita también la portada, y una página pública no
+// debe importar del panel. Se RE-EXPORTA porque su prueba y el resto del panel la piden de aquí.
+export { haceCuanto } from '../lib/domain/tiempo';
+import { haceCuanto } from '../lib/domain/tiempo';
 import { descargarTexto } from './descargar';
 
 /** Tope de la consulta. `limit()` es OBLIGATORIO en este proyecto: una query sin él es una cuota abierta. */
@@ -66,17 +70,6 @@ export function iniciales(nombre: string): string {
   return (a + b).toUpperCase() || '·';
 }
 
-/** «hace 12 min» · «hace 3 h» · «hace 2 días». Una fecha ISO en un panel no la lee nadie. */
-export function haceCuanto(d: Date | null): string {
-  if (!d) return '—';
-  const min = Math.floor((Date.now() - d.getTime()) / 60000);
-  if (min < 1) return 'ahora';
-  if (min < 60) return `hace ${min} min`;
-  const h = Math.floor(min / 60);
-  if (h < 24) return `hace ${h} h`;
-  const dias = Math.floor(h / 24);
-  return dias === 1 ? 'ayer' : `hace ${dias} días`;
-}
 
 /** Etiqueta legible del origen. Lo que guarda el endpoint es una clave, no algo que se enseñe. */
 export function etiquetaOrigen(origen: string): string {

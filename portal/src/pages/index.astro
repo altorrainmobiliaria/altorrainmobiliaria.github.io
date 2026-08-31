@@ -532,8 +532,8 @@ const maneras = [
           </div>
         </div>
 
-        <div class="alt-rail">
-          {HAY_CATALOGO_REAL && <p class="home-vacio">Estamos preparando la publicación del inventario en venta. Escríbenos por WhatsApp y te contamos qué tenemos hoy.</p>}
+        <div class="alt-rail" data-home-set="venta">
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Cargando propiedades en venta…{' '} Escríbenos por WhatsApp y te contamos qué tenemos hoy.</p>}
           {(HAY_CATALOGO_REAL ? [] : venta).map((p) => <LuCard {...p} />)}
           {/* El «128» era un conteo de MUESTRA cuya deuda declarada decía «sale en el cutover»,
               o sea que dependía de que alguien se acordara. §276 enseñó lo que valen esas promesas:
@@ -666,8 +666,8 @@ const maneras = [
           </div>
         </div>
 
-        <div class="alt-rail">
-          {HAY_CATALOGO_REAL && <p class="home-vacio">Todavía no hay alojamientos por días publicados.</p>}
+        <div class="alt-rail" data-home-set="estancias">
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Cargando alojamientos…</p>}
           {(HAY_CATALOGO_REAL ? [] : estancias).map((s) => <StayCard {...s} />)}
         </div>
       </div>
@@ -799,13 +799,43 @@ const maneras = [
         imágenes hasta que se clona, así que no cuesta nada estando ahí.
     */}
     {HAY_CATALOGO_REAL && (
-      <template id="tpl-home-pcard">
-        <PropertyCard
-          nivel={2}
-          img="" alt="" badge="En venta" zona="" beds={0} baths={0} area="0 m²"
-          title="" price="" priceLabel="Desde" priceSuffix="/mes" href="#"
-        />
-      </template>
+      <>
+        <template id="tpl-home-pcard">
+          <PropertyCard
+            nivel={2}
+            img="" alt="" badge="En venta" zona="" beds={0} baths={0} area="0 m²"
+            title="" price="" priceLabel="Desde" priceSuffix="/mes" href="#"
+          />
+        </template>
+
+        {/* ⚠️ A `LuCard` NO se le pasan `tagline`, `swatches`, `tipologias` ni `note`: el catálogo no
+            guarda nada de eso, así que esos nodos ni se emiten y la tarjeta sale más sobria que en
+            el mockup (§279). Rellenarlos con algo plausible es como empezó todo esto. `specs` sí va
+            —con tres huecos— porque el índice trae habitaciones, baños y área. */}
+        <template id="tpl-home-lucard">
+          <LuCard img="" alt="" badge="En venta" zona="" title="" specs={['', '', '']} price="" href="#" />
+        </template>
+
+        <template id="tpl-home-staycard">
+          <StayCard img="" alt="" title="" meta="" price="" priceUnit="COP noche" href="#" />
+        </template>
+
+        {/* El tile del mosaico: mismo marcado que el de muestra, vacío. La ranura de la rejilla
+            (columna, fila, tamaño) la pone la isla, porque es LAYOUT y no dato. */}
+        <template id="tpl-home-tile">
+          <a class="home-rec__tile home-rec__tile--sm" href="#">
+            <img src="" alt="" loading="lazy" decoding="async" />
+            <span class="home-rec__new">Nuevo</span>
+            <span class="home-rec__time"></span>
+            <span class="home-rec__scrim" aria-hidden="true"></span>
+            <span class="home-rec__body">
+              <span class="home-rec__tag"></span>
+              <span class="home-rec__t"></span>
+              <span class="home-rec__price"></span>
+            </span>
+          </a>
+        </template>
+      </>
     )}
 
     <!-- RECIENTES — mosaico bento (réplica fiel del mockup #recientes) -->
@@ -828,7 +858,7 @@ const maneras = [
           </p>
         )}
 
-        <div class="home-rec__grid">
+        <div class="home-rec__grid" data-home-set="recientes">
           {recientes.map((r) => (
             <a class={`home-rec__tile home-rec__tile--${r.size}`} href="/ficha" style={`grid-column:${r.col};grid-row:${r.row}`}>
               <img src={r.img} alt={r.alt} loading="lazy" decoding="async" />

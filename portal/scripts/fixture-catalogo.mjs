@@ -49,8 +49,8 @@ if (process.argv.includes('--off')) {
  * en vivo estando roto. Un fixture donde todo vale lo mismo no distingue un filtro que funciona de
  * uno que no mira el dato: los valores tienen que DIFERIR o no hay nada que medir (§273).
  */
-const inmueble = (id, titulo, tipo, sector, precio, lat, lng, pub, hab, ban, area) => ({
-  id, slug: id, titulo, operacion: 'venta', tipo, precio, sector,
+const inmueble = (id, titulo, tipo, sector, precio, lat, lng, pub, hab, ban, area, operacion = 'venta') => ({
+  id, slug: id, titulo, operacion, tipo, precio, sector,
   coords: { lat, lng }, hab, ban, area,
   thumb: '/assets/villa-pool.webp', badges: ['En venta'], pub,
 });
@@ -62,6 +62,10 @@ const cuerpo = {
     inmueble('mg1', 'Casa republicana restaurada', 'casa', 'Manga', 980_000_000, 10.41, -75.53, '2026-03-01', 5, 3, 320),
     inmueble('ch1', 'Local en el Centro', 'local', 'Centro Histórico', 640_000_000, 10.42, -75.55, '2026-05-10', undefined, 1, 85),
     inmueble('cr1', 'Casa familiar cerca del mar', 'casa', 'Crespo', 760_000_000, 10.44, -75.51, '2026-08-20', 3, 2, 140),
+    // Una de arriendo y una de corta estancia: sin ellas TODAS las fichas eran de venta, y una
+    // tarjeta de arriendo mal construida se habria visto perfecta (§273.5 otra vez, §279).
+    inmueble('bq1', 'Apartamento amoblado en El Laguito', 'apartamento', 'El Laguito', 4_200_000, 10.4, -75.56, '2026-08-25', 2, 2, 78, 'arriendo'),
+    inmueble('tb1', 'Cabana frente al mar en Tierrabomba', 'cabana', 'Tierrabomba', 680_000, 10.36, -75.53, '2026-08-28', 3, 2, 95, 'alojamiento'),
   ],
 };
 
