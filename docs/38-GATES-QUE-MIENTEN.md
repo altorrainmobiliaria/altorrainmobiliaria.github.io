@@ -1,7 +1,7 @@
 # 🎭 38 — GATES QUE MIENTEN (hoja hija de `36-LECCIONES-UTILLAJE`)
 
 > **Por qué existe.** Un gate roto AVISA; un gate que miente no. Aquí viven las lecciones de cuando
-> el ✅ **no significa lo que parece**; el stub con el título sigue en `36`, que es donde se busca.
+> el ✅ **no significa lo que parece**; el stub con el título vive en `30`, que es donde se busca.
 >
 > **La escalera, de menos a más grave** — y cada peldaño se detecta distinto:
 > 1. **No hay gate.** Al menos nadie se confía.
@@ -10,13 +10,17 @@
 > 4. **Corre en un sitio y no en otro** ([[L-48]]) — prerrequisito generado y gitignored.
 > 5. **Afirma haber pasado sin mirar nada** ([[L-57]]) — le falta su prerrequisito y en vez de
 >    fallar PREGUNTA; sin terminal, no contestar sale con código 0.
-> 6. **FUERA del CI por un motivo que CADUCÓ** (§177) — 141 pruebas excluidas «porque necesitan
->    Java»; medido eran 24 s y una llevaba meses rota en main. **Un motivo para no correr un gate
->    caduca, y nadie lo mira si no se vuelve a medir.**
+> 6. **FUERA del CI por un motivo que CADUCÓ** (§177) — el caso se mudó a [[L-70]] en `38a`: es
+>    ARMADO, no un verde. **Un motivo para no correr un gate caduca, y nadie lo re-mide.**
 > 7. **Corre, mira el archivo, imprime un número CIERTO… de una comparación que no significa nada**
 >    ([[L-58]]) — el peldaño más insidioso, porque no hay nada roto que encontrar.
 > 8. **Verde sobre código que la configuración por defecto APAGA** (§265) — el caso completo se mudó a
 >    [[L-70]] en `38a`, porque el predicado vivía en lo PROBADO. Enciéndelo: `npm run catalogo:live`.
+>
+> 🔴 **Y la CARA OPUESTA, que la escalera no ordena porque no es un verde**: el gate que miente en
+> **ROJO** ([[L-72]]). No es un peldaño más — es el eje contrario: el ✅ falso te deja donde estabas,
+> el ❌ falso **te manda a arreglar algo y nombra al culpable**. Verifica la premisa antes que el
+> síntoma, y mide a dónde lleva obedecer antes de obedecer.
 >
 > 🚦 **La capa de ABAJO tiene hoja propia**: `docs/38a-ARMADO-DEL-GATE.md` — el gate que **no llegó a
 > mirar** (no lo invoca nadie [[L-56]] · exento por entorno [[L-65]] · excluido por su predicado
@@ -67,3 +71,9 @@
 ### L-64 — 🪤 Un gate NUEVO se queda en verde de TRES formas, y las tres se ven solo inyectando el defecto *(§238)*
 **Disparador**: el gate de habeas data tardó **tres intentos** en morder, y cada versión parecía correcta al leerla. (1) **Contó el marcador**: *«¿hay un `checkbox`?»*, y el formulario tiene DOS —la autorización y un opt-in—, así que al quitar la buena seguía viendo la otra. (2) **Midió por cercanía**: 600 chars alrededor, y las dos casillas están pegadas — *una comprobación por proximidad no distingue dos cosas que están cerca, que es justo el caso a distinguir*. (3) **Leyó una alternativa como si fueran dos**: `(?:name|id)="…"` casa **la primera que aparezca**, y en una página esa era el `id`, así que nunca llegaba al `name` y tumbaba un formulario correcto.
 **Reglas**: (1) 🎯 **las tres pasaban la lectura y ninguna el defecto**: revisar el código del gate no sustituye a inyectar el fallo. (2) **Inyecta en TODOS los casos que cubre**: el 3.º solo apareció al probar el segundo formulario. (3) ⚠️ Una alternancia `(a|b)` lee UNA; si necesitas ambas, son dos búsquedas. (4) 🎯 **Comprueba que tu INYECCIÓN casó**: dos pruebas de esa noche salieron verdes sobre una regresión que nunca se inyectó porque el patrón no halló su ancla. *Un test que no llega a lo que quiere probar da el mismo silencio que uno que pasa.* (5) 🎯 **Y para toda EXCLUSIÓN, una prueba NEGATIVA** *(§248)*: inyecta el mismo defecto **dentro** de lo excluido y comprueba que **no bloquea y que el denominador no se mueve**. Sin ella no distingues «la exclusión funciona» de «se está tragando contenido real» — y una exclusión demasiado ancha convierte el gate en decoración sin que nadie lo note, porque su verde no cambia de aspecto.
+
+### L-72 — 🔴 La otra cara: un gate que miente en ROJO **viene con una instrucción**, y el único arreglo obediente que compilaba rompía producción *(§288.4)*
+**Disparador**: un gate compara dos espejos —Rules contra código, config contra constante— y su patrón casa **por orden físico de las líneas**, no por el dueño del dato.
+**Caso**: `main` en rojo con *«rules=[agotado,disponible] vs código=[cerrado,disponible,reservado]»*, y **los dos espejos estaban bien**. El comparador leía las Rules con un `String.match` **sin `/g`** sobre TODO el archivo, o sea la **primera** coincidencia: funcionó mientras esa frase fue única, y §286 metió `proyectoPublicado()` treinta líneas por encima de `estadoPublicado()`. Desde ese commit contrastaba **PROYECTOS** contra estados de **PROPIEDADES** — el orden de las líneas decidía qué se comparaba con qué.
+🎯 **Por qué no es un ✅ falso más**: el verde falso te deja donde estabas; **el rojo falso te MANDA a arreglar algo y nombra al culpable** — aquí, al inocente. Y medí a dónde llevaba obedecer: de los dos arreglos obedientes, tocar `catalogo.ts` **no pasa el typecheck** (`ts(2322)`); el que sí «funciona» es recortar `estadoPublicado()` en las **Rules**, que son texto y no tienen tipos → **404 en cada inmueble reservado y vendido del catálogo vivo**. 🎯 *El único arreglo obediente que compilaba era el que rompía producción, y compilaba porque caía del lado SIN TIPOS.*
+**Reglas**: (1) 🎯 **ante un rojo, verifica la PREMISA antes que el síntoma** ([[M-29]]): un ❌ trae el culpable puesto y la prisa lo acepta. (2) Un patrón que empareja espejos se ancla al **DUEÑO** del dato —el helper que lo posee, aquí `listaDeHelper`— nunca a la posición; `String.match` sin `/g` estalla el día que alguien añade una frase parecida más arriba. (3) 🎯 **Mide a dónde lleva el arreglo antes de obedecer**: si un lado tiene tipos y el otro no, «el que compila» puede ser el peligroso — el compilador solo vigila una mitad. (4) Al gate se le enseña a VER: declararle la excepción, o fijar el patrón en «la segunda que aparezca», deja el orden de las líneas mandando sobre la semántica (§279).
