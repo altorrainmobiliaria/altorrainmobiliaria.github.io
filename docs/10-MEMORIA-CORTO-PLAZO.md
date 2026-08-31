@@ -35,7 +35,7 @@
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **rail de pago completo, probado contra el emulador** (§166-§187). ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
 | **TODO-50** | 🧱 **CEREBRO LLENO** — §269 cerró sus 2 mitades; la **#18 lo re-midió y es peor**: **8 neuronas al 100 %** y la válvula `33`→`37` bloqueada también, así que la auditoría no pudo archivar su propia lección. Techos FIJOS (1 subido de 31) ⇒ capacidad AGOTADA. ⛔ Remedio no improvisado al cierre ([[M-31]]); subir techo prohibido ([[M-05]]). | 🔴 mío | §287 |
-| **TODO-51** | 🧠⇪ **PROGRAMA CEREBRO MAESTRO** (mandato 31-ago): de 4 cerebros a UNO global, recuerdo MECANIZADO, backup restaurable. Plan → `../brain-private/cerebro-maestro/MEGA-PLAN.md`. **F0 URGENTE**: escáner de secretos ausente en 55/100 commits y ciego a dotfiles (N18-06/07, repo PÚBLICO) — agente Opus en marcha. | 🔴 Fable+Opus | plan |
+| **TODO-51** | 🧠⇪ **PROGRAMA CEREBRO MAESTRO** (mandato 31-ago): de 4 cerebros a UNO global, recuerdo MECANIZADO, backup restaurable. Plan → `../brain-private/cerebro-maestro/MEGA-PLAN.md`. **F0**: seguridad ✅ · `main` VERDE (§288). **F1 ✅**: router global creado. Sigue: la ESCRITURA (33·37·38). | 🔴 Fable+Opus | plan |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea. | ⏸️ 28/92 | §87 · `43` |
 
 ---
