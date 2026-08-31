@@ -167,6 +167,8 @@ guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero 
 ### M-30 — Identificador INVENTADO ×4 en una noche (constante, helper, enum de una regla de seguridad, estado): escribir de memoria en vez de leer → 🧩 **shard `33-LECCIONES-META.md`**
 ### M-31 — 🎯 Un hallazgo que escribí YO apuntaba al nodo que acababa de TOCAR, no al que peor estaba: un remedio sin denominador es una corazonada con formato de tabla → 🧩 **shard `33-LECCIONES-META.md`**
 ### M-32 — ⚙️ Un hecho que ya BLOQUEA un gate no pertenece a un nodo always-on: se paga en cada arranque y la copia es la que envejece · y **aplica la regla, no la narres** → 🧩 **shard `33-LECCIONES-META.md`**
+### M-34 — 🎯 Normalizar dentro del INSTRUMENTO no protege lo que mides A MANO junto a él: comparé `git show` (LF) contra disco (CRLF) y una cifra falsa casi ordena podar conocimiento real → 🧩 **shard `33-LECCIONES-META.md`**
+### M-35 — 🧱 Ocho neuronas al 100 % a la vez: el cerebro no engordaba, se quedó SIN SITIO — y el reflejo que manda capturar antes de cerrar no tenía dónde escribir → 🧩 **shard `33-LECCIONES-META.md`**
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > 🧩 **Mudadas a `60-WORKFLOWS §Gobernanza`** el 2026-07-28 (ADR §68): hablan de CÓMO se conduce la
