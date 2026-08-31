@@ -417,6 +417,17 @@ IVA duplicada y dos funciones de etiqueta que devolvían singular y plural.
    que no puedan volver a separarse. Un puente explícito se ve fallar en su test; un puente
    implícito falla devolviendo CERO, que no se distingue de «no hay nada».
 
+5. **🔍 Y el método: busca por CONCEPTO, no por identificador.** El gemelo que más tarda en aparecer
+   es el que **se llama distinto**. Caso real: había tres tablas de etiquetas para lo mismo. Busqué
+   `etiquetaTipoPlural`, encontré una copia, la consolidé y di el problema por cerrado — sin
+   preguntarme si el mismo concepto tenía más nombres. La tercera se llamaba `etiquetaTipoSingular`
+   y vivía en otro fichero. *Un `grep` del nombre confirma lo que ya sospechabas; lo que encuentra
+   al tercero es listar los NOMBRES POSIBLES de la cosa antes de buscar* (singular/plural, label/
+   etiqueta/texto/nombre, MAP/TABLA/DICT, el idioma del proyecto y el inglés).
+   💡 Y cuando se pueda, deja que el **tipo** haga de gate: un `Record<Union, T>` obliga a que la
+   tabla esté completa, así que el día que la unión crezca el compilador enumera las copias
+   incompletas él solo. Fue exactamente lo que destapó la tercera — no la destapó una revisión.
+
 **Y el subtipo más traicionero: el valor duplicado que HOY coincide.** No hay nada que arreglar y por
 eso se deja — pero lo que existe es el mecanismo para romperlo: el día que ese número cambie, alguien
 edita la copia que encuentra y la otra sigue con el valor viejo. **Compruébalo antes de decidir**: si

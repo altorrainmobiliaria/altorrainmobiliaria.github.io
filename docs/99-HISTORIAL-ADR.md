@@ -12270,3 +12270,66 @@ los 80 enlaces aterricen.
 ⚠️ **Del dueño**: tres cambios visibles (el hero ofrece 11 tipos en vez de 6 · «Penthouse» ya no
 aparece · la sección de proyectos cambia titular y texto porque el anterior afirmaba desarrollos
 firmados). Y la copia nueva de esa sección es mía.
+
+## 271. ADR-271 — «Penthouse» se deriva, no se declara; y dos tipos que Cartagena tiene y nosotros no
+
+Daniel, 2026-08-31: *«toma tú las decisiones, continua»*. Estas son, con su criterio a la vista para
+que se puedan discutir sin adivinar por qué se tomaron.
+
+### 271.1 — La ventana que no se repite
+La base está **vacía**. Ampliar la taxonomía hoy no tiene **una sola ficha que migrar**; hacerlo
+después es re-clasificar inventario a mano, uno por uno. 🎯 *El momento más barato para arreglar un
+vocabulario es antes de que exista el primer dato que lo usa* — y ese momento se está acabando,
+porque el cutover trae el inventario real.
+
+### 271.2 — Dos tipos entran, dos se quedan fuera, y el criterio es el mismo
+**Aparece en ≥2 líderes del mercado + es real en Cartagena + ALTORRA lo publicaría.**
+
+| | |
+|---|---|
+| ✅ **`parqueadero`** | Fincaraíz y Ciencuadras lo listan. En las torres de Bocagrande se vende y se arrienda **suelto**, y es una **unidad registral propia** con su matrícula. |
+| ✅ **`cabana`** | Fincaraíz lo lista. Es lo que hay en Barú, Tierrabomba y La Boquilla: el inventario natural de la **cuarta línea de negocio**, la corta estancia. |
+| ⛔ `habitación` | La tienen dos líderes, pero nuestro modelo es **inmueble completo con RNT**. El arriendo por habitación es otra operación y otro marco legal. |
+| ⛔ `casa campestre` | Se pisa con `finca` y con `casa_lote`. *Un tipo que el asesor no sabe cuál elegir hace más daño que uno que falta*: el que falta se ve; el ambiguo se rellena mal y nadie lo nota. |
+
+La clave va sin ñ (`cabana`) como `casa_lote`, porque viaja en URLs; la etiqueta sí la lleva, y
+`tipoCanonico` quita los diacríticos, así que «Cabaña» resuelve sola.
+
+### 271.3 — «Penthouse»: el número, no el adjetivo
+Se descartó la casilla «¿es penthouse?», que era la opción cómoda. 🎯 **Todo propietario de un último
+piso llama penthouse a su apartamento**, y una etiqueta que pone el interesado **no la puede sellar
+nadie** — choca de frente con la promesa central del portal, «Verificado por ALTORRA». Un número se
+comprueba mirando el edificio; un adjetivo, no.
+
+Y `piso` solo no alcanzaba: el 14 es el último en una torre de 14 y no lo es en una de 30. Por eso el
+alta pasa a pedir **«Pisos del edificio»** (`specs.pisosTotales`) y penthouse **se deriva**:
+`piso === pisosTotales`. Los dos números los comprueba el asesor en la visita.
+
+En el JSON-LD, solo cuando la derivación da verdadera: `accommodationCategory: 'Penthouse'` —la
+propiedad cuya definición remite literalmente a las convenciones RESO, que son de enumeración
+abierta— más `additionalType` a **Wikidata Q2069469** («penthouse apartment»), un URI ajeno a nuestra
+invención. ⛔ Nunca `@type: 'Penthouse'`, que **devuelve 404**, ni `amenityFeature`, que es para
+servicios y dejaría una clasificación al lado de «Piscina».
+
+### 271.4 — Y el compilador cazó una TERCERA tabla de etiquetas
+Al añadir los dos tipos, `ficha.ts:58` falló por dos claves ausentes: tenía su propio `TIPO_LABEL`,
+además del de `shared.ts` y del que §270 acababa de mover desde `alertas.ts`. **Eran tres**, y §270
+creyó haber dejado una.
+
+🎯 **La causa de que se me escapara**: busqué `etiquetaTipoPlural` y no busqué la SINGULAR. Encontré
+una copia, la consolidé, y di el problema por cerrado sin preguntarme si el mismo concepto tenía más
+nombres. *Al cazar duplicados, la búsqueda hay que hacerla por CONCEPTO y no por identificador — el
+gemelo que más tarda en aparecer es el que se llama distinto.* Ahora `ficha.ts` deriva de `shared` y
+conserva su único matiz propio: una ficha rotula «Tipo: Inmueble», no «Tipo: Otro».
+
+⚠️ Y lo cazó **el tipo**, no yo: `Record<TipoInmueble, string>` obliga a que la tabla esté completa.
+Sin ese tipo, la tercera copia habría sobrevivido y `cabana` habría salido sin etiqueta.
+
+### 271.5 — Verificación
+En el HTML **servido**: el buscador sirve **14 opciones** con `cabana` y `parqueadero` en su sitio, y
+el alta pide los pisos del edificio. Las **tres direcciones** del penthouse probadas: 14 de 14 lo
+afirma · 14 de 30 no · y con solo el piso **tampoco**, porque no se puede saber. `npm run verify`
+completo en verde (salida 0): **1020 unitarias + 190 contra el emulador**.
+
+⚠️ **Del dueño**: el alta gana un campo visible («Pisos del edificio») y el buscador público pasa de
+11 a 13 tipos.

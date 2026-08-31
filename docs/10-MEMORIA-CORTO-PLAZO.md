@@ -66,16 +66,15 @@
 > 🔻 **El panel LEGACY no tiene red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates.
 
-> 🎯 **AQUÍ VOY (31-ago) — obra nueva.** Daniel abrió la vertical de PROYECTOS (§270), que el
-> mega-plan **no contempla**: sus 4 líneas son venta, administración, arriendo largo y corta
-> estancia. Diseño ya decidido y verificado contra los líderes; **no cabe HOY** por una razón
-> medida: el índice tiene `precio: COP` (un entero) y un proyecto tiene RANGO. ⇒ al plan, no al backlog.
-> 🚨 De paso: la portada servía **6 proyectos INVENTADOS** con dirección y «Preventa», y el
-> penthouse de $2.100M que §32.23 daba por retirado seguía vivo en el SERP. Arreglado + gate nuevo.
+> 🎯 **AQUÍ VOY (31-ago).** Daniel contestó las tres decisiones de §265.8 y su taxonomía quedó
+> cerrada en **§271**: +`cabaña` +`parqueadero`, y «penthouse» pasa a **DERIVARSE** de
+> `piso === pisosTotales` — la casilla se descartó porque la pone el interesado y no la sella nadie.
+> ⚠️ El alta gana «Pisos del edificio»; el buscador, 11→13 tipos.
+> 🏗️ **Obra nueva**: vertical abierta y diseñada (§270), al **mega-plan** y no al backlog — no cabe
+> hoy por una razón MEDIDA: el índice guarda `precio` como UN entero y un proyecto tiene RANGO.
 > 📦 **Barrido de producto: AGOTADO** (61 hallazgos, 32 arreglados → §263-§267, 1 retirado). Queda
 > lo que no cierro yo: ⚠️ el header sobre el buscador de /comprar (NO medible aquí, [[L-26]]) ·
 > ⛔ filtros del SERP (TODO-22) · pipeline y feed del panel (mockup).
-> ✅ Las tres decisiones de §265.8 **CONTESTADAS** por Daniel el 31-ago e implementadas (§270). ¿«nuevo/usado» entra al índice o sale del menú?
 
 > 🔬 **Auditoría #17 (§268)** — parcial: sondas 3/4/7 piden subagentes. Las 2 abiertas de la #16
 > re-verificadas: **premisas siguen ciertas**. ⚠️ N17-04 abierto → **TODO-50**: el boot chocó CUATRO
