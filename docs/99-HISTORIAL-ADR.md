@@ -13462,3 +13462,145 @@ siguió verde; esta vez la pregunta se hizo antes. **BOOT: 31451/31500.**
 - 🟠 **El censo de `00` afirma algo que no es**: su aviso dice que las OCHO hojas que faltaban se
   completaron el 27-ago, y `35`, `36`, `37`, `38`, `21`, `22`, `44` y `45` **siguen sin aparecer** en la
   lista que hay debajo. Es `39-ESCRITO-NO-ES-VIGENTE` aplicado a un registro. Fuera de alcance hoy.
+
+## 290. ADR-290 — Kernel v1.27: el gate que no miraba a nueve, y el candado que contaba media casa
+
+Fase **F0-bis** del programa CEREBRO MAESTRO: mandatos **D4** y **D6** del `DICTAMEN-F2.md` (bóveda,
+`cerebro-maestro/`) + el hallazgo #5 del agente que lo auditó. Dos arreglos al **instrumento**, no al
+contenido — y ambos son el mismo defecto visto dos veces: [[L-70]], *el predicado que decide si un
+gate llega a correr es parte del gate*.
+
+### 290.1 — Causa raíz: dos formas de no mirar, las dos en verde
+
+| | qué pasaba | por qué salía ✅ |
+|---|---|---|
+| **#10** (registro directo) | filtraba `/^\d{2}-/`, así que `00a`..`00g`, `33a` y `38a` —**9 nodos**— nunca entraban al bucle | el BFS de arriba **sí** los alcanzaba, así que el gate imprimía «38 docs alcanzables y neuronas registradas» sin haber auditado a nueve de ellas |
+| **#2** (candado de boot) | sumaba **solo** los tres always-on del repo | `31485/31500 ✅` es verdad… sobre la mitad de lo que carga una sesión |
+
+🎯 **§289.7 nombró el primero el mismo día que lo cometió** —«es [[L-70]] cometido por el kernel: un
+predicado decidiendo a quién mira»— y hasta lo dejó escrito **dentro del manifest**, en los `_comment`
+de `33a` y `38a`. Que la avería estuviera diagnosticada, por escrito y en dos sitios, y siguiera viva
+24 h después, es [[M-25]] exacta: escribir la regla se siente igual que aplicarla. Por eso este ADR
+existe: el arreglo estaba redactado, le faltaba el mecanismo.
+
+El segundo no era ignorancia sino **alcance**: el repo no podía contar lo que no vive en el repo. Pero
+callarlo hacía que el número más importante del cerebro —cuánto contexto se gasta antes de trabajar—
+fuera **estructuralmente incompleto**, que es la familia `38-GATES-QUE-MIENTEN` en su versión más
+sutil: no miente el ✅, miente el **denominador**.
+
+### 290.2 — La medición, primero (D6): 31485 no era el boot, era el 73 % del boot
+
+| componente | chars | quién lo puede podar |
+|---|---|---|
+| always-on del repo (`CLAUDE.md` + `05` + `10`) | **31485** | este repo — y por eso es el candado |
+| sidecars del heartbeat (`.estado-auto` + `.handoff-auto`) | **5794** | nadie: se GENERAN |
+| router global `~/.claude/CLAUDE.md` (C0) | **2246** | fuera del repo (F4/F5) |
+| `MEMORY.md` del harness (`~/.claude/projects/<slug>/memory/`) | **3505** | fuera del repo |
+| **BOOT REAL** | **43030** | |
+
+*(Medido el 2026-08-31 con el mismo lector que normaliza CRLF del kernel, §259. Los sidecars se
+regeneran cada sesión: el total oscila unos cientos de chars por ahí, y el techo lleva holgura por eso.)*
+
+### 290.3 — La solución: se AÑADE un número, no se sustituye el que muerde
+
+**#10** pasa a filtrar `/^\d{2}[a-z]?-/` (y `isChildLobe` a `/^4[1-9][a-z]?-/`), con una vía de
+registro nueva: una hija con sufijo puede estar declarada en su **neurona MADRE** (`NN-*.md`) en vez de
+en el router. No es una excepción inventada para que pase: es lo que §G.5 ya pide —*«hojas hijas
+SIEMPRE referenciadas desde su neurona madre»*— y es la misma forma estructural que los lóbulos hijos
+ya tenían contra `40`. Los 7 shards del índice pasan por la madre; `33a` y `38a` por el router.
+
+**#2** gana un **segundo** número: `BOOT REAL = alwaysOn + sidecars + C0 + MEMORY.md`, contra un
+`bootRealTarget` nuevo del manifest. Tres decisiones de diseño, todas deliberadas:
+
+1. **El candado de 31500 NO se toca.** Es la palanca de poda que funciona (§289.6 podó 533c de triple
+   copia *porque mordía*); tocarla por «coherencia» habría cambiado una herramienta que sirve por un
+   número más bonito.
+2. **El slug de `~/.claude/projects/` se DERIVA del cwd** (todo lo no-alfanumérico → `-`) y, si falla,
+   se BUSCA en `projects/` antes de rendirse. El kernel es byte-idéntico ×4 repos: hardcodear el slug
+   de inmobiliaria lo habría roto para los otros tres en silencio. Si no hay fichero, se suma 0 **y se
+   dice** — un 0 callado sería otra vez la ficción que este bloque viene a matar.
+3. **Sin la clave, solo INFORMA.** Los hermanos aún no la han adoptado; un gate nuevo que les bloquea
+   el commit desde el kernel es exactamente el error de `skillDriftBaseline` (v1.23.0), que se midió en
+   un repo y se repartió a cuatro.
+
+🎯 **Por qué esto NO es [[M-05]]** (subir el techo no es cerrar). M-05 prohíbe **relajar el tope que
+aprieta para escapar de su aviso**. Aquí el tope que aprieta —31500 sobre lo que el repo controla—
+queda **intacto, al 100 % y mordiendo**. Lo nuevo es un techo sobre un territorio que hasta hoy **no
+tenía ninguno porque ni se contaba**: pasar de *sin medir* a *medido y techado* es lo contrario de
+relajar. El `_comment` de la clave lo deja escrito para el próximo: **es un TECHO DE CRECIMIENTO, y la
+meta de F3 es BAJARLO.**
+
+`bootRealTarget = 44000` = 43030 medido + 800c de holgura, redondeado al múltiplo de 500 superior
+(fórmula del mandato, no elegida aquí). Y **sin banda de pre-aviso al 97 %**, a diferencia del candado
+de arriba: con esa holgura, el aviso saltaría en la primera corrida y en todas las siguientes — un
+guardián que ladra desde el día uno enseña a ignorarlo (la lección del canario, v1.10.1).
+
+### 290.4 — Verificación (evidencia, no confianza)
+
+```
+  ✅ BOOT always-on = 31485c (~8996 tok) ≤ objetivo 31500c
+  ✅ BOOT REAL = 43030c ≤ techo 44000c (alwaysOn 31485c + sidecars 5794c + C0 2246c + MEMORY.md 3505c)
+  ✅ 38 docs alcanzables y neuronas registradas          →  ✅ CEREBRO SANO
+```
+
+- **Los 9, uno a uno**: el filtro viejo auditaba 26 nodos, el nuevo **35**; los 9 ganados son
+  exactamente `00a`..`00g` (vía madre `00-INDICE.md`), `33a` y `38a` (vía `CLAUDE.md §0`). Comprobado
+  nodo por nodo con el camino que toma cada uno, no por el ✅ agregado.
+- 🎯 **Prueba NEGATIVA, que es la que faltaba en §288**: `docs/77a-PRUEBA-GATE.md` creada al vuelo →
+  `⚠️ neurona 77a-PRUEBA-GATE.md sin registro DIRECTO en su neurona MADRE 77-* (ni en CLAUDE.md §0)`.
+  Bajo el filtro viejo esa línea **no habría existido**. Fichero borrado; `git status` limpio.
+- **`verify-secretos.mjs` de la plantilla**: probado en un repo git desechable — verde con 25 ficheros,
+  ❌ con una cuenta de servicio plantada, ❌ por anti-vacío al bajar de `MIN_BARRIDOS`.
+
+### 290.5 — Anti-patterns evitados
+
+- **No se bajó ni se tocó el candado viejo** para «unificar»: se añadió al lado (§3.6 — el cambio se
+  decide por lo que sobrevive, no por lo que queda simétrico).
+- **No se hardcodeó el slug** de este repo en un kernel que es byte-idéntico ×4 (habría sido L-70 otra
+  vez: un predicado que solo mira donde nació).
+- **No se apagó el aviso**: los `_comment` de `33a`/`38a` que declaraban el hueco se **actualizaron**
+  para decir que está cerrado y con qué. Dejarlos habría sido `39-ESCRITO-NO-ES-VIGENTE` en el propio
+  manifest, y borrarlos sin más habría perdido el rastro.
+- **No se repartió a cars/bersaglio/insema**: cars tiene el kernel divergente entre `main` (v1.24) y
+  `dev` (v1.26) y ese merge no era de este encargo. Jalan v1.27 en sus sesiones.
+
+### 290.6 — Archivos
+
+**Bóveda** (`brain-private`, commit `5d8aba7`): `kernel/brain-check.mjs` (#10 el filtro y la vía madre ·
+#2 el bloque BOOT REAL · `KNOWN_KEYS` + `bootRealTarget` · cabecera) · `kernel/VERSION` → `1.27.0` ·
+espejo del kit sincronizado **byte a byte** · `brain-kit/kernel/githooks/pre-commit` reescrito ·
+`brain-kit/plantillas/scripts/verify-secretos.mjs` **nuevo** · `INSTALACION-FABLE.md`,
+`CLAUDE.template.md`, `99-HISTORIAL-ADR.template.md`, `brain-manifest.template.json`, `README.md`.
+
+**Este repo**: `scripts/*.mjs` + `scripts/.kernel-version.json` (por `brain:pull`) ·
+`docs/.brain-manifest.json` (`bootRealTarget` + los dos `_comment` corregidos) · `99` · `00`.
+
+**INTACTOS y verificado**: `CLAUDE.md`, `docs/05-*`, `docs/10-*` — el boot está a **15c** de su tope y
+un ADR de instrumento no se paga con la pizarra del WIP (§164). El candado `bootCharsTarget` sigue en
+**31500** y el BOOT en **31485**, idénticos a antes de este cambio.
+
+### 290.7 — Y el kit dejaba de nacer ciego (hallazgo #5)
+
+El `pre-commit` que recibe **cada cerebro nuevo** no traía barrido de secretos, y su puerta de node
+decía literalmente *«salto brain:check (commit permitido)»*: sin node, **todos** los gates se saltaban
+en silencio y en verde. Además invocaba `scripts/boot-gate.mjs`, retirado en v1.8.0 — un hook que
+llamaba a un fichero inexistente. 🎯 **Es [[L-70]] por tercera vez en el mismo ADR, y la peor de las
+tres: el predicado no dejaba correr al gate que vigila lo único IRREVERSIBLE** (borrar una credencial
+del archivo no la invalida y el historial de git la conserva para siempre).
+
+Hoy el hook **falla CERRADO** si no hay node y corre `node scripts/verify-secretos.mjs` **sin predicado
+de rutas**, calcado del patrón que §288 arregló aquí. El script entra al kit en `plantillas/scripts/`
+—instance-side, **no** kernel, para que el `diff -rq kernel/scripts ../kernel` del README siga siendo
+una igualdad limpia— con `MIN_BARRIDOS` bajado a 20 y marcado 🔧 para calibrar: el 200 de este repo
+habría bloqueado el primer commit de un cerebro recién nacido. Y se retiraron **6 citas muertas** a
+`boot-gate.mjs`; la que queda lo nombra para decir que está muerto.
+
+### 290.8 — Lo que este ADR NO cierra
+
+- 🔴 **El BOOT sigue a 15c** de su tope (§289.7 lo dejó en 49c; hoy son 15). Sin cambios de este ADR:
+  no se tocó ningún always-on. Sigue siendo el cuello.
+- 🟠 **`bootRealTarget` solo lo declara este repo.** Los otros tres reciben el número **informado**
+  hasta que lo adopten en sus propias sesiones — a propósito, pero es adopción pendiente, no hecha.
+- 🟠 **El techo de 44000 no baja solo.** F3 tiene que morder ahí: el C0 (2246c) y el `MEMORY.md`
+  (3505c) son 5751c que **ningún repo puede podar** desde dentro.
+- 🟠 **El censo de `00`** y las 16 neuronas ≥90 % siguen donde §289.7 los dejó. Fuera de alcance.
