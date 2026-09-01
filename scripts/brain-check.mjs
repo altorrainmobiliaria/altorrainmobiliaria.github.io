@@ -23,6 +23,7 @@
 //   (4) Frescura cache SW↔05 [warn, opcional]           (12) Fechas stale en 05/10 [info, --boot]
 //   (5) Refs cruzadas ADR/L-M/hojas [warn]              (13) Specs: checklist con evidencia RESOLUBLE [warn, --full]
 //       + 5c) cita viva a lección ⚰️ cuarentenada [warn] (14) deepAudit Nivel-2 vencida [info] + tableFile existe [warn]
+//       · v1.29.0 (F2): 5b y 5c IGNORAN refs cualificadas `PREFIJO:ID` — las valida el maestro
 //   (6) Skills↔inventario [warn, --full]                (15) Schema del manifest: clave desconocida [warn]
 //   (7) archiveDir íntegro [warn, --full]               (16) Fiabilidad M-22: `verificado-vivo` stale [info, --full]
 //       (0-canónico, 7, 7b, 14-tableFile) DEGRADAN si la bóveda o el canónico no están clonados
@@ -31,7 +32,7 @@
 //       (el ✅ INMERECIDO, §120) · (26) trinquete de filas gordas del índice
 //       + 7b) bóveda: commits ≠ origin vía fs [warn]
 // ===========================================================
-const KERNEL_VERSION = '1.28.0';
+const KERNEL_VERSION = '1.29.0';
 import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { homedir } from 'os';
 import { join, dirname } from 'path';
@@ -438,7 +439,24 @@ if (!BOOT && existsSync(leccionesPath)) {
   const defined = new Set([...leccionesText.matchAll(/^###\s+([LM]-\d{2,})\b/gm)].map((m) => m[1]));
   const allBrain = [claude, indiceText, existsSync(estadoPath) ? read(estadoPath) : '', leccionesText, histText,
     existsSync(cortoPath) ? read(cortoPath) : '', existsSync(espacialPath) ? read(espacialPath) : ''].join('\n');
-  const referenced = new Set([...allBrain.matchAll(/\b([LM]-\d{2,})\b/g)].map((m) => m[1]));
+  /*
+   * ⚠️ El lookbehind NO es cosmético (v1.29.0 · F2, `ENSAYO-ROLLBACK-F2.md` §4): una cita
+   * CUALIFICADA `[[CARS:L-01]]` no es una ref de ESTE repo — la valida el linter del MAESTRO
+   * (F2-DISEÑO §6), porque `L-01` significa cuatro cosas distintas en los cuatro repos. Con solo
+   * `\b`, el límite casaba DETRÁS de los dos puntos y el gate leía `L-01` a secas. Dos fallos, y
+   * el segundo es peor: con un número AJENO (`BERS:L-84`) inventaba un colgante —ruido visible—;
+   * con un número que TAMBIÉN existe aquí (`CARS:L-01`) lo resolvía en silencio contra OTRA
+   * lección y estampaba ✅. Ese verde no se distingue del verde correcto por su salida
+   * ([[L-74]], `38-GATES-QUE-MIENTEN`).
+   * `{2,}` y no `{4}`: los cuatro prefijos de `origenes.json` (INMO/CARS/BERS/INSE) miden 4, pero
+   * un quinto repo con otra longitud volvería a mentir EN VERDE — que es justo lo que esto cura.
+   * Y el tope se escribe ABIERTO porque MEDIDO no existe: en un lookbehind, `{2,6}` casa igual
+   * contra `MAESTRO:` (le basta el sufijo `ESTRO:`), así que el único límite real es el de abajo
+   * — publicar un `6` que no rechaza nada sería un número que no significa lo que parece ([[L-58]]).
+   * El MISMO guarda se repite abajo en 5c: son dos parsers distintos del mismo ID, y el de 5c
+   * mentía igual (una cita `[[BERS:L-05]]` acusaba a la `L-05` ⚰️ de ESTE repo).
+   */
+  const referenced = new Set([...allBrain.matchAll(/(?<![A-Z]{2,}:)\b([LM]-\d{2,})\b/g)].map((m) => m[1]));
   const dangling = [...referenced].filter((r) => !defined.has(r)).sort();
   if (!referenced.size) info('sin refs L-NN/M-NN aún');
   else if (!dangling.length) ok(`refs L-/M- (${referenced.size} usadas / ${defined.size} def) resuelven en 30`);
@@ -468,7 +486,7 @@ if (!BOOT && existsSync(leccionesPath)) {
   if (quarantined.size) {
     const liveText = [claude, existsSync(estadoPath) ? read(estadoPath) : '',
       existsSync(cortoPath) ? read(cortoPath) : '', existsSync(espacialPath) ? read(espacialPath) : ''].join('\n');
-    const cited = [...quarantined].filter((id) => new RegExp(`\\b${id}\\b`).test(liveText)).sort();
+    const cited = [...quarantined].filter((id) => new RegExp(`(?<![A-Z]{2,}:)\\b${id}\\b`).test(liveText)).sort();
     if (cited.length) warn(`nodo VIVO cita lección ⚰️ cuarentenada: ${cited.join(', ')} → apuntar al reemplazo o retirar la cita`);
     else ok(`${quarantined.size} lección(es) ⚰️ sin citas desde nodos vivos`);
   }
