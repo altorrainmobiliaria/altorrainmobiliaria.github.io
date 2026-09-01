@@ -79,7 +79,7 @@
 | §121-§160 | 🔐 **Era de ACCESO Y CUTOVER** (recuperación de clave, 2FA de punta a punta, las 5 puertas de escritura, la bóveda, lo que nunca se desplegó, el mapa de 301) → shard `docs/00e-INDICE-ACCESO.md`. | → `00e` |
 | §161-§200 | 🔬 **Era de la VERDAD MEDIDA** (los gates que pasaban en verde sin mirar, los gemelos invisibles, el censo de Functions, el dictamen del recaudo y el rail de pago) → shard `docs/00f-INDICE-VERDAD.md`. | → `00f` |
 | §201-§240 | 🧮 **Era del CENSO** (los oyentes, los identificadores, los 30 pasos del cutover, las hermanas — y el ✅ que no prueba que se mirara) → shard `docs/00g-INDICE-CENSO.md`. |
-| §241 | 🧭 **Lo que decide qué ve el dueño arriba no tenía prueba** (dos `urgencia()` puras, 13 tests) · y **«el móvil personal JAMÁS se publica» no tenía mecanismo**: censo de 45 páginas (cero fugas) y gate que lee el permitido de `site.ts`. | 10518 |
+| §241 | 🧭 **Lo que decide qué ve el dueño arriba no tenía prueba** (2 `urgencia()` puras, 13 tests) · y **«el móvil personal JAMÁS se publica» no tenía mecanismo**: censo de 45 páginas (0 fugas) + gate que lee el permitido de `site.ts`. | 10518 |
 | §242 | 🚧 **El styleguide de desarrollo iba a servirse en el dominio del cliente**: la promesa de excluirlo vivía en la cabecera del propio fichero. Ahora redirige (28,5 KB→284 b) + sonda. Salió de cuadrar 45 páginas con 39 del sitemap. | 10567 |
 | §243 | 🔗 **Comprobar anclas no es comprobar rutas**: gate nuevo de enlaces internos (0 rotos de 184 destinos, SSR derivadas de `prerender=false`). Y contar valió más que el gate: **38 enlaces a `/ficha`**. | 10610 |
 | §244 | 🩺 **Cuatro comprobaciones en vivo, cero defectos** (`/ficha` y `/alertas` 200 · zstd: portada 19,6 KB · estado cero en las 11 pantallas) → y la poda que salieron: **lo que ya bloquea un gate no se afirma en un nodo always-on**. | 10650 |
@@ -111,7 +111,7 @@
 | §270 | 🚨 **La portada publicaba SEIS proyectos de obra nueva inventados** —con dirección y «Preventa»— y el gate no los veía porque busca CIFRAS · «Penthouse» no es tipo en ningún líder · una sola lista pública. | 12161 |
 | §271 | 🏝️ **«Penthouse» se DERIVA (piso === pisosTotales), no se declara** — una etiqueta que pone el interesado no la sella nadie · +cabaña +parqueadero (≥2 líderes + real en Cartagena) · el tipo cazó una TERCERA tabla de etiquetas. | 12274 |
 | §272 | 🔏 **DOS sellos de fecha en `05`** (`verificado-vivo:` vs `(al …)`) y re-sellé el que no lee el aviso — el aviso siguió encendido y lo leí como recordatorio nuevo. Kernel v1.26.0: ahora CITA el sello. | 12337 |
-| §273 | 🎛️ **Los 4 chips de filtro del SERP se encendían y NO filtraban** — ahora son campos del `<form get>` con paneles `<details>`. La caja traía la CIUDAD escrita y vaciaba todo resultado. Un fixture con valores IGUALES no puede suspender. | 12399 |
+| §273 | 🎛️ **Los 4 chips de filtro del SERP se encendían y NO filtraban** — ahora son campos del `<form get>`. La caja traía la CIUDAD y vaciaba todo resultado. Un fixture con valores IGUALES no puede suspender. | 12399 |
 | §274 | 📏 **El header tapaba 90% de la barra de filtros — justo al SUBIR a cambiar uno.** Publica su altura MEDIDA en `--alt-hdr-h` (el token decía 116, la realidad 67). ⚠️ Y [[L-26]]+[[L-28]] las re-derivé sin leerlas. | 12465 |
 | §275 | 👥 **El panel SERVÍA 6 clientes inventados, 4 actividades falsas y «92% de demanda»** — §266 arregló el runtime y no el build. Ahora se calculan de los leads ya cargados; gate `persona-de-mockup` con prueba negativa. | 12525 |
 | §276 | 🏚️ **Un build de producción habría publicado ~25 inmuebles inventados en la PORTADA** — el candado #7 existía para eso y vigilaba una VARIABLE que esas 6 secciones no leen. Ahora cuelgan de ella. | 12591 |
@@ -125,13 +125,14 @@
 | §284 | 🏗️ **OBRA NUEVA — el modelo**: el bloqueo era un campo mal planteado (el precio se DERIVA de las tipologías, no se teclea) + un proyecto existe si tiene LICENCIA DE CONSTRUCCIÓN. | 12977 |
 | §285 | 🔖 **JSON-LD del proyecto: un Offer por tipología** (patrón de La Haus, del crudo de la bóveda). ⛔ NO se usa `AggregateOffer` — su definición es «un producto, varios vendedores» y la nuestra es al revés. | 13032 |
 | §286 | 🧾 **La licencia también en las RULES** — el dominio solo corre en la app; quien escriba por otro camino se lo salta. Gate en create Y update. ⛔ Y la ficha para: falta MOCKUP. | 13076 |
-| §287 | 🔬 **Auditoría #18: el cerebro está LLENO** — 8 neuronas al 100 % y la válvula `33`→`37` bloqueada también. La medición del GC comparaba LF contra CRLF e inventó +140c. Sonda 0-bis: juzgué mal a N17-04, que §269 ya había arreglado. | 13115 |
+| §287 | 🔬 **Auditoría #18: el cerebro está LLENO** — 8 neuronas al 100 % y la válvula `33`→`37` bloqueada también. La medición del GC comparaba LF contra CRLF e inventó +140c; y juzgué mal a N17-04, que §269 ya arregló. | 13115 |
 | §288 | 🚦 **El predicado que decide si un gate CORRE es parte del gate** — el escáner de secretos saltaba 55/100 commits. Reverso: el gate que miente en ROJO; su único arreglo obediente que compilaba rompía producción. | 13200 |
 | §289 | 🧱 **La vía de ESCRITURA estaba cerrada** — 33/37/38 llenos por ejes DISTINTOS. Nacen `33a` (la lección que no dispara) y `38a` (el armado del gate); entran M-34, M-35 y L-70..L-72. | 13336 |
 | §290 | 🧮 **Kernel v1.27 · el instrumento medía media casa** — el #10 filtraba `^\d{2}-` y no auditaba 9 nodos con sufijo; el candado daba 31485 de un boot REAL de 43030c. Nace `bootRealTarget`. Y el kit nacía sin escáner de secretos. | 13466 |
-| §291 | 🚩 **El instrumento que mintió 44 días en SILENCIO** — el PreCompact emitía un JSON que el esquema rechaza en la raíz: 0/15 entregas. La orden se muda al canal medido (SessionStart) y nace el TOKEN que solo mata un commit a `10`/`99`. | 13608 |
+| §291 | 🚩 **El instrumento que mintió 44 días en SILENCIO** — el PreCompact emitía un JSON que el esquema rechaza en la raíz: 0/15 entregas. La orden se muda a SessionStart y nace el TOKEN que solo mata un commit a `10`/`99`. | 13608 |
 | §292 | 🎭 **Kernel v1.29 · un `\b` casaba DETRÁS de los dos puntos** — `[[CARS:L-01]]` se leía `L-01` y resolvía contra OTRA lección EN VERDE (y `BERS:L-84` daba colgante falso). Lookbehind en #5b y #5c. Prerequisito del lote 1 de F2. | 13781 |
-| §293 | 🧠 **Nace el CEREBRO MAESTRO y recibe sus 6 primeras lecciones** (F2 lote 1, INMO → `brain-private/maestro/`): esqueleto + linter propio con 3 cerraduras + cuarentena con stub. `35` liberó 2987c. MIGRADO, no sellado. | 13918 |
+| §293 | 🧠 **Nace el CEREBRO MAESTRO con sus 6 primeras lecciones** (F2 lote 1, INMO): esqueleto + linter propio con 3 cerraduras + cuarentena con stub. `35` liberó 2987c. SELLADO. | 13918 |
+| §294 | 🧠 **Lote 4: 20 lecciones de INMO al maestro** — `31` baja del 100 % de su cap al 49 % y `36` al 68 % (−21 776c en 4 nodos). Estrena **D1-bis** (prefijo AMBIENTAL en `migradas/`). D7-ter NO dispara: medido. | 14034 |
 
 ---
 

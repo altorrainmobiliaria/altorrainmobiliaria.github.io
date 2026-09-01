@@ -18,26 +18,26 @@
 > hace falta para reconocer el síntoma. Si te suena, ábrelo allá.
 
 ### L-01 — "Access denied for UID" al login (red lenta ≠ permiso denegado) ⇒ **migrada al maestro**: [[INMO:L-01]]
-### L-02 — RTDB `permission_denied` en presencia
+### L-02 — RTDB `permission_denied` en presencia ⇒ **migrada al maestro**: [[INMO:L-02]]
 ### L-03 — Firestore "Failed to obtain primary lease"
 ### L-04 — ⚗️ FUSIONADA en L-09 (merge:true vs rules/upsert) — regla viva **aquí, en L-09**: `set()` SIN merge para CREAR, `update()` para EDITAR (el puntero apuntaba a `CLAUDE.md §3.5`, que se mudó a `34-DOCTRINA-CODIGO` en la poda §84; el dueño del hecho siempre fue L-09)
 ### L-05 — ⚰️ (sitio viejo retirado §15) Modals inyectados fuera de index → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md`
 ### L-06 — ⚰️ (sitio viejo retirado §15) Invalidación de cache `system/meta`→onSnapshot → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md` (resucitar si el cutover reusa SW/onSnapshot)
 ### L-07 — Primer deploy de Cloud Functions 2nd gen falla por Eventarc ⇒ **migrada al maestro**: [[INMO:L-07]]
 ### L-08 — Reglas Firestore: leer un campo AUSENTE de `resource.data` LANZA (no es null) ⇒ **migrada al maestro**: [[INMO:L-08]]
-### L-09 — Upsert de ingestión: `merge:true` PISA los campos presentes y NO borra los ausentes
+### L-09 — Upsert de ingestión: `merge:true` PISA los campos presentes y NO borra los ausentes ⇒ **migrada al maestro**: [[INMO:L-09]]
 ### L-10 — Un GET público linkeado por WhatsApp/email JAMÁS muta estado ⇒ **migrada al maestro**: [[INMO:L-10]]
-### L-11 — Cloud Functions gen2: tres gotchas de operación que se ven como bugs
-### L-12 — Dinero (arriendos/comisiones/pagos): método ANTES de construir
+### L-11 — Cloud Functions gen2: tres gotchas de operación que se ven como bugs ⇒ **migrada al maestro**: [[INMO:L-11]]
+### L-12 — Dinero (arriendos/comisiones/pagos): método ANTES de construir ⇒ **migrada al maestro**: [[INMO:L-12]]
 ### L-13 — GitHub Pages (deploy-from-branch): sin `.nojekyll` Jekyll construye TODO el repo — y si falla, PRODUCCIÓN SE CONGELA EN SILENCIO ⇒ **migrada al maestro**: [[INMO:L-13]]
 ### L-14 — Stack que evoluciona rápido (Astro/adapter CF): verificar versión y config contra DOCS, no de memoria ⇒ **migrada al maestro**: [[INMO:L-14]]
-### L-15 — Windows: `wrangler dev` deja un `workerd.exe` huérfano que bloquea `dist/` (`EPERM` en el siguiente build)
-### L-16 — Primer deploy a Cloudflare Workers: registrar el subdominio `workers.dev` ANTES (falla en CI no-interactivo)
-### L-17 — Decodificar el REST de Firestore: mapas/arrays VACÍOS y despacho por clave
-### L-18 — Cloudflare: DOS cachés distintas; en `workers.dev` solo sirve **Workers Caching**
-### L-19 — `@astrojs/cloudflare` v14: `locals.runtime` deprecado/sin tipo; `platformProxy` removido
-### L-20 — Firestore Rules: un `get` de doc INEXISTENTE con `resource.data` en la regla → 403, no 404
-### L-21 — Aislar tests que comparten un emulador Firestore: projectId PROPIO por archivo
+### L-15 — Windows: `wrangler dev` deja un `workerd.exe` huérfano que bloquea `dist/` (`EPERM` en el siguiente build) ⇒ **migrada al maestro**: [[INMO:L-15]]
+### L-16 — Primer deploy a Cloudflare Workers: registrar el subdominio `workers.dev` ANTES (falla en CI no-interactivo) ⇒ **migrada al maestro**: [[INMO:L-16]]
+### L-17 — Decodificar el REST de Firestore: mapas/arrays VACÍOS y despacho por clave ⇒ **migrada al maestro**: [[INMO:L-17]]
+### L-18 — Cloudflare: DOS cachés distintas; en `workers.dev` solo sirve **Workers Caching** ⇒ **migrada al maestro**: [[INMO:L-18]]
+### L-19 — `@astrojs/cloudflare` v14: `locals.runtime` deprecado/sin tipo; `platformProxy` removido ⇒ **migrada al maestro**: [[INMO:L-19]]
+### L-20 — Firestore Rules: un `get` de doc INEXISTENTE con `resource.data` en la regla → 403, no 404 ⇒ **migrada al maestro**: [[INMO:L-20]]
+### L-21 — Aislar tests que comparten un emulador Firestore: projectId PROPIO por archivo ⇒ **migrada al maestro**: [[INMO:L-21]]
 ### L-49 — 🎛️ La configuración de la CONSOLA es parte del sistema y NO está en el repo: ningún gate la ve → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`**
 ### L-53 — 🔐 Firebase MFA (TOTP): pide el código DESPUÉS de la contraseña, `enroll()` revoca las demás sesiones, y NO existen códigos de respaldo
 ### L-54 — 🌩️ Los tipos de Cloudflare Workers PISAN el DOM: `Element.append` deja de ser la del navegador (usa `appendChild`)
@@ -97,10 +97,10 @@ puesta para el siguiente). Portátil a cualquier runtime que siga el estándar F
 ### L-30 — ⏳ Las features del SERP MUEREN: toda regla de SEO/rich-results lleva FECHA + FUENTE PRIMARIA y se re-verifica antes de portarse *(ADR §33; verificado en prod bersaglio 2026-07-17)*
 **Disparador**: al portar aprendizajes SEO a las skills se verificó que `FAQPage` **ya no produce rich result** (deprecación TOTAL 2026-05-07, doc oficial de Google; GSC eliminó el informe FAQ) — y nuestras skills + medio internet + el material de entrenamiento pre-2026 seguían vendiendo "añade FAQPage para ganar el acordeón". El mismo corte cazó 2 doctrinas INVERTIDAS en el borrador previo (Offer-sin-price "válido" era FALSO — GSC: 17/17 inválidos; keyword en el nombre del GBP "pesa" era un consejo de SUSPENSIÓN). **Reglas**: (1) una recomendación de posicionamiento es un HECHO CADUCABLE → en skills/documentos va con **fecha de verificación + fuente primaria** (doc de Google > blogs > "siempre se hizo así"); (2) al portar conocimiento SEO entre proyectos, **re-verificar contra la doc oficial HOY**, no copiar; (3) respetar la leyenda de fiabilidad del origen (✅ verificado / ⚠️ corrige / 🚫 peligro / ❓ hipótesis): **lo no medido se porta como HIPÓTESIS, jamás como regla** — una skill que afirma de más es la fuente de verdad de todos los sitios futuros; (4) pariente de L-29: contar contra la fuente aplica también a las FUENTES (el borrador del 07-10 afirmaba cosas que producción desmintió el 07-17).
 
-### L-29 — 🕵️ El contenido INVENTADO se ve BIEN: solo lo caza CONTAR contra la fuente, con un auditor adversarial *(ADR §32.24; el mismo fallo de método de §24-29, ahora en MI trabajo)*
-**Disparador**: tras reconstruir 5 páginas "fieles a los mockups" y verificarlas (build + paleta + computed styles + **screenshot en Chrome**), declaré fidelidad lograda. Una re-auditoría adversarial (6 auditores + refutador `effort:high`, contra los `.dc.html`) devolvió **5 DIVERGENTES · 48 hallazgos**, y **3 de los 6 ALTA los había introducido YO mientras "corregía infidelidades"** — incluida una **cifra de rentabilidad "+18%" fabricada** en la web de una inmobiliaria real. **Causa**: **5 secciones tenían contenido inventado** (propiedades demo, zonas, amenities, tarjetas, una cifra) y **ninguna se veía rota — se veía BIEN**: relleno plausible donde el diseño no decía nada. **Ninguna capa de verificación técnica lo detecta**, ni siquiera el ojo: el build compila, la paleta cumple, los estilos aplican, y el screenshot muestra algo coherente. El screenshot ve *lo que el usuario ve*, pero **NO ve lo que el usuario no puede saber que falta o sobra**. **La única prueba** para "¿esto lo dijo el diseño, o me lo inventé?" es el **diff contra la fuente**, y para que sea fiable, hecho por un **agente ADVERSARIAL** apuntado al propio trabajo (uno mismo, recién salido de construirlo, está sesgado a confirmarlo). **Reglas**: (1) al reconstruir desde una fuente (mockup/spec/doc), la fidelidad NO se declara con chequeos internos — se declara con un **diff sección-por-sección, contando contra la fuente**; (2) **inventar > omitir en gravedad**: una omisión se nota como hueco; una invención se disfraza de contenido legítimo y puede ser un claim falso (cifra, dato, promesa) → riesgo legal/comercial, no cosmético; (3) **el que construye no es el que audita**: dispara un verificador adversarial (`comite-expertos`/workflow) ANTES de decir "listo"; (4) generaliza §24-29 y L-24: aquella auditoría revisó COLOR, esta reveló que ni "estructura + ojo" basta — falta **procedencia del contenido**.
+### L-29 — 🕵️ El contenido INVENTADO se ve BIEN: solo lo caza CONTAR contra la fuente, con un auditor adversarial *(ADR §32.24; el mismo fallo de método de §24-29, ahora en MI trabajo)* ⇒ **migrada al maestro**: [[INMO:L-29]]
+Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
 
-### L-28 — 🎭 `getComputedStyle` MIENTE en toda propiedad con `transition` (invierte L-22) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
+### L-28 — 🎭 `getComputedStyle` MIENTE en toda propiedad con `transition` (invierte L-22) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá) ⇒ **migrada al maestro**: [[INMO:L-28]]
 ### L-62 — 🔍 Sonda de semántica que mira el elemento y no su ANCESTRO: 4 de 5 señales falsas (`<template>`, `hidden`, atributo desnudo) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
 ### L-68 — 🎭 Una override que COMPILA y se SIRVE puede perder en silencio: `@media` NO aporta especificidad → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
 ### L-69 — 🎭 Retirar un dato de UNA pantalla y dejarlo en otra es ESCONDERLO; el comentario que certifica la retirada lo vuelve invisible → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`**
@@ -112,14 +112,14 @@ puesta para el siguiente). Portátil a cualquier runtime que siga el estándar F
 ### L-72 — 🔴 Un gate que miente en ROJO viene con una INSTRUCCIÓN: el espejo emparejaba por orden físico de las líneas y el único arreglo obediente que compilaba dejaba en 404 cada inmueble reservado → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
 ### L-73 — 🕳️ Un hook que emite JSON firma un CONTRATO con el esquema del harness: el PreCompact llevaba 44 días descartado en la raíz — 0/15 entregas, 13 fallos invisibles → 🧩 **shard `38a-ARMADO-DEL-GATE.md`**
 ### L-74 — 🎭 Un `\b` casa DETRÁS de los dos puntos: `[[CARS:L-01]]` se leyó `L-01` y resolvió contra OTRA lección, en VERDE → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
-### L-26 — 🖥️ Panel integrado = renderer CONGELADO (rAF 0 frames) · juicio visual SIEMPRE por Chrome → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá, incl. corrección capital + variante resize)
-### L-24 — Verificar un build contra el MOCKUP por ESTRUCTURA (checklist de secciones), no solo por color *(Ola 1, ADR §32; el dueño cazó lo que la verificación no)*
-**Disparador**: las páginas §24-§29 se dieron por "completas" verificando 0 off-palette + 0 errores; pero DIFERÍAN mucho del `.dc.html` (secciones enteras faltantes, layouts distintos, interactividad perdida). Daniel lo notó, no el cerebro. **Causa**: "verificado en vivo" = colores correctos, NO = fiel al diseño aprobado; el mockup (SSoT visual) nunca se usó como checklist de completitud. **Regla**: al construir desde un mockup, extraer la lista ORDENADA de secciones del mockup y confirmar 1:1 en el build (secciones + layout + interactividad), ADEMÁS del barrido de color (L-22). El workflow `auditoria-fidelidad-mockups` (diff build↔mockup) lo automatiza. Aplica a toda página mockup-backed.
+### L-26 — 🖥️ Panel integrado = renderer CONGELADO (rAF 0 frames) · juicio visual SIEMPRE por Chrome → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá, incl. corrección capital + variante resize) ⇒ **migrada al maestro**: [[INMO:L-26]]
+### L-24 — Verificar un build contra el MOCKUP por ESTRUCTURA (checklist de secciones), no solo por color *(Ola 1, ADR §32; el dueño cazó lo que la verificación no)* ⇒ **migrada al maestro**: [[INMO:L-24]]
+Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
 
-### L-23 — `astro-icon` es INCOMPATIBLE con el runtime Cloudflare Workers (dev): "module is not defined" *(Ola 1 header, ADR §32)*
-**Disparador**: añadí `astro-icon` + `@iconify-json/*` para íconos pro; el dev server (miniflare/workerd) tiró `module is not defined` (la integración usa CJS/virtual-module que workerd no soporta). **Fix**: NO usar la integración. Extraer los paths oficiales del set iconify una vez (`require('@iconify-json/lucide/icons.json').icons[name].body`) y embeberlos inline como `<svg viewBox="0 0 24 24" set:html={body}>`. Lucide trae `stroke="currentColor"`, Simple Icons `fill="currentColor"` en el body → heredan la paleta. Mismo arte, sin dependencia de build/runtime. Desinstalar los 3 paquetes tras extraer.
+### L-23 — `astro-icon` es INCOMPATIBLE con el runtime Cloudflare Workers (dev): "module is not defined" *(Ola 1 header, ADR §32)* ⇒ **migrada al maestro**: [[INMO:L-23]]
+Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
 
-### L-22 — 🖥️ Verificar UI por computed styles vs captura (el panel desincroniza/timeout el screenshot) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
+### L-22 — 🖥️ Verificar UI por computed styles vs captura (el panel desincroniza/timeout el screenshot) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá) ⇒ **migrada al maestro**: [[INMO:L-22]]
 ---
 
 ### L-45 — 🔀 Dos escritores, una colección, dos modelos: el `as T` a ciegas convierte «datos viejos» en «catálogo vacío sin errores» *(2026-08-21, ADR §103)*
@@ -182,10 +182,10 @@ Las lecciones donde miente la HERRAMIENTA y no el código (shell, intérprete, `
 mockups) viven en su hoja. Aquí queda su TÍTULO —igual que con las `M-` de `33`— para que `30` siga
 siendo el índice de todas y una cita `[[L-NN]]` resuelva sin salir de aquí (§125).
 
-### L-25 — En `pipeline()` de Workflow las etapas ≥2 reciben `(prevResult, originalItem, index)`: NO captures el ítem por closure *(ADR §32.9, auditoría de fidelidad de la home)*
-### L-27 — Un `grep` te da la HOJA, no la RAMA: nunca asumas la forma del dato sin leer el padre *(ADR §32.14; §3.3 incumplida por mí mismo)*
+### L-25 — En `pipeline()` de Workflow las etapas ≥2 reciben `(prevResult, originalItem, index)`: NO captures el ítem por closure *(ADR §32.9, auditoría de fidelidad de la home)* ⇒ **migrada al maestro**: [[INMO:L-25]]
+### L-27 — Un `grep` te da la HOJA, no la RAMA: nunca asumas la forma del dato sin leer el padre *(ADR §32.14; §3.3 incumplida por mí mismo)* ⇒ **migrada al maestro**: [[INMO:L-27]]
 ### L-37 — 🎨 Los enlaces de Claude Design CADUCAN al re-guardar: el mockup se trae por MCP, no por URL *(2026-08-19, ADR §89)*
-### L-46 — El shell (y el lenguaje que lo llama) SE COMEN texto y nada falla: comillas simples o por ARCHIVO
+### L-46 — El shell (y el lenguaje que lo llama) SE COMEN texto y nada falla: comillas simples o por ARCHIVO ⇒ **migrada al maestro**: [[INMO:L-46]]
 ### L-66 — 🪤 Dos herramientas con el MISMO nombre no miden ni apuntan a lo mismo: `/tmp` cambia de sitio · y una fila de 260c es 261 para el gate, que lee con CRLF → 🧩 **shard `36-LECCIONES-UTILLAJE.md`**
 ### M-33 — 🎭 Un hallazgo abierto que invoca una regla del cerebro **sin abrir el gate que la ejecuta** es una opinión — 3 de 13 eran FALSOS → 🧩 **shard `37-META-FUNDACIONALES.md`**
 ### L-67 — 🎭 Bumpear una constante que **no lee nadie** (el `CACHE_NAME` del SW), y anotarlo como protección → 🧩 **shard `36-LECCIONES-UTILLAJE.md`**

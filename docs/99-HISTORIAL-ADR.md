@@ -14030,3 +14030,119 @@ opinar) · [[M-06]] · §G.4 (cero pérdida; cuarentenar, no borrar).
    otra escala (7 lecciones definidas frente a 98).
 5. **La procedencia sigue siendo trabajo a mano**: no existe índice mecánico de «qué § pagó esta
    lección». Las seis se rastrearon una por una contra el ADR real (§01 · §11 · §15 · §15.2(b) ×2 · §19).
+
+## 294. ADR-294 — Lote 4 del maestro: veinte de golpe, y el nodo que estaba al 100 % baja al 49 %
+
+> Ola masiva de la F2 (`brain-private/cerebro-maestro/CENSO-MASIVO.md`: 311 piezas clasificadas
+> leyendo cuerpos, 250 a la cola). Este es el **primer lote de la escala nueva** y el primero
+> **mono-repo a propósito**. Los tres anteriores (§293 y los de cars/bersaglio/insema) fueron
+> mudanzas de 5-6 piezas; aquí entran **veinte**.
+
+**294.1 Causa raíz.** El maestro tenía 14 lecciones migradas y una cola de 250: al ritmo de seis por
+lote son cuarenta lotes. Pero el problema no es el ritmo, es **dónde duele**. Medido antes de tocar
+nada: `31-VERIFICACION-UI` estaba a **5 caracteres** de su tope (13995c/14000) y `36-LECCIONES-UTILLAJE`
+a 226c del suyo — dos neuronas que no podían admitir una línea más, llenas de material que **no es de
+este repo**: el renderer congelado de un panel, el `grep` que muestra la hoja y no la rama, el shell
+que se come las contrabarras. Ninguna de las tres habla de inmobiliarias. La saturación no se cura
+podando: se cura sacando de aquí lo que nunca fue de aquí.
+
+**Mono-repo, y no por comodidad**: el estado ABORT (`ENSAYO-ROLLBACK-F2.md`) revierte **el lote
+entero, nunca medio**. Con 20 piezas de cuatro repos, un fallo obligaría a coordinar cuatro
+reversiones sobre cuatro ramas distintas; con 20 de uno solo, el ABORT es un `git revert` en un sitio.
+A esta escala, el alcance del lote **es** el alcance del rollback.
+
+**294.2 Solución estructural.** Cuatro movimientos, en este orden y no en otro:
+
+**(a) Primero se paga el matiz de `L-46`, y por eso va en su propio commit.** Su regla (2) ofrecía el
+delimitador entrecomillado (`<<'EOF'`) como remedio de último recurso **sin decir de qué protege**.
+Medido el 1-sep en el lote 2 del maestro: entrecomillar salva del caso (c) —dólares, backticks,
+comillas, que expande el shell— pero **NO** del colapso de la contrabarra doble, porque ese ocurre en
+la capa que **transporta** el comando, ANTES de que el shell vea el heredoc. Es matiz, no
+contradicción: para escapes sigue mandando su regla (7), el fichero y no el argumento. Se paga
+**antes** de migrar porque el censo del D10.1 congela el cuerpo byte a byte: corregirlo después
+exigiría re-abrir un byte que el propio gate prohíbe tocar. **El cuerpo que migró es el ya corregido**,
+y el censo usa como origen el blob de `origin/main` posterior a esa corrección.
+
+**(b) Las veinte, con las dos superficies de siempre.** `L-02` · `L-09` · `L-11` · `L-12` · `L-15` ·
+`L-16` · `L-17` · `L-18` · `L-19` · `L-20` · `L-21` (cuerpo en `35`) · `L-22` · `L-26` · `L-28`
+(cuerpo en `31`) · `L-25` · `L-27` · `L-46` (cuerpo en `36`) · `L-23` · `L-24` · `L-29` (cuerpo
+DIRECTAMENTE en `30`). En `30` el titular conserva su ID intacto —es la tabla de resolución del
+chequeo #5b— y gana la marca `⇒ migrada al maestro`; en la hoja hija queda el stub; el cuerpo íntegro
+va a `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`, que es de donde el ABORT lo reconstruye. Las tres cuyo
+cuerpo vivía en `30` colapsan las dos superficies en una, como ya se midió en bersaglio.
+`L-12` entra porque el censo la **re-dictaminó a la cola** (`F2-DISENO.md §9`): venía marcada
+«se queda» por el desempate de los ciegos, y los dos clasificadores del censo la leyeron por el
+CUERPO —skills globales e invariantes de dinero, cero contenido de esta casa—. La evidencia de cuerpo
+vence al empate de títulos.
+
+**(c) D1-bis ESTRENADA, con caso real y no por especulación.** El lote 1 declaró esta frontera sin
+dueño y los lotes 2 y 3 midieron cero casos. Aquí hay **tres**: el cuerpo de `L-21` cita `[[L-55]]`
+pelado y el de `L-46` cita `[[M-24]]` y `[[M-06]]`. El censo prohíbe editarlos, así que la regla se
+implementa en el linter de la bóveda: dentro de `maestro/lecciones/migradas/<PREFIJO>/` **el prefijo
+es AMBIENTAL** —la carpeta ES el namespace, como un módulo— y ahí la ambigüedad de cuatro repos que
+el gate existe para matar no puede darse. El #7 los **exime e imprime cuántos exime**; el #6 gana una
+mitad nueva que los **resuelve en ambiente** contra dos destinos, en orden: otra migrada del mismo
+prefijo, o el titular en el `30` de su repo de origen. Lo que no resuelve por ninguna de las dos es
+ROJO igual que cualquier colgante, y si el repo de origen no está en la máquina el chequeo lo
+**declara DEGRADADO**, que no es lo mismo que verde.
+
+**(d) Veinte filas nuevas en el índice por temas**, repartidas leyendo los cuerpos: 10 a
+`plataforma-nube` · 6 a `utillaje-local` · 3 a `doctrina-metodo` · 1 a `web-navegador`. Conteo
+mecánico: 17 antes + 20 = **37**, y 37 es lo que hay.
+
+**294.3 No-regresión.** `brain:check` **CEREBRO SANO**, y el diff completo contra la línea base son
+**tamaños**: `refs L-/M- 98 usadas / 98 def` **sin mover**, porque los veinte titulares de `30` siguen
+donde estaban y v1.29 ignora las citas cualificadas nuevas. Ni un ID renumerado, ni un header tocado,
+ni un cuerpo editado (salvo el matiz de `L-46`, que es su propio commit y su propio sha de origen).
+Colgantes ANTES/DESPUÉS sobre los **cuatro** repos con la lógica del #5b extraída del kernel de cada
+uno: **diff vacío** (INMO 98/98 · CARS 99/99 · BERS 97/97 · INSE 7/7).
+
+**294.4 Verificación (gate D10 mecánico completo; los drills fríos van muestreados y los corre Fable,
+D10-bis).**
+
+| | Resultado |
+|---|---|
+| **(a) Censo sha256** | **20/20 byte-idénticos** módulo la línea de procedencia, DECLARADA, y por **tres vías**: blob de `origin/main` (POSTERIOR a la corrección de `L-46`), fichero del maestro y cuerpo en `_legacy/`. Normalización declarada: CRLF→LF + recorte de saltos finales, en los tres lados. |
+| **(b) `brain:check`** | **SANO**. Pre-shard: **18 → 15** neuronas al ≥90 % — salen `30`, `31` y `36`. |
+| **(c) Colgantes** | diff vacío en los 8 lados (4 repos × antes/después). |
+| **(d) Linter de bóveda** | **10/10 en verde** con la mitad nueva dentro: 19 citas cualificadas + **3 peladas resueltas por ambiente** + 34 migradas con su `> Origen:`. Vistas DISPARAR y retiradas en el mismo turno, con sha del árbol idéntico antes y después: cita ambiental que no resuelve por ninguna vía (ROJO) · ID pelado FUERA del cuerpo migrado, en `indice/` (ROJO: la exención no se derrama) · prefijo cuyo repo no está clonado (DEGRADADO, no verde). |
+| **(e) Descompresión** | **−21 776c en cuatro nodos.** `35-LECCIONES-PLATAFORMA` 19002→**11252c** (−7750, −41 %) · `31-VERIFICACION-UI` 13995→**6861c** (−7134, del **100 %** de su cap al 49 %) · `36-LECCIONES-UTILLAJE` 14662→**9917c** (−4745, del 100 % al 68 %) · `30-LECCIONES` 36482→**34335c** (−2147). |
+
+**294.5 Anti-patterns evitados.**
+1. **No se subió ni un techo** ([[M-05]]). El matiz de `L-46` se escribió para caber en los 226c que
+   `36` tenía libres —quedaron 18—, no al revés. Y el índice del maestro tampoco: ver 294.7.
+2. **No se editó ningún cuerpo migrado** para acallar el gate. La regla se dobló al hecho (D1-bis),
+   no el hecho a la regla: cualificar esas tres citas a mano habría roto la única prueba de que lo
+   migrado es lo mismo que había.
+3. **No se afirmó ningún gate sin verlo disparar** ([[M-06]]): cinco siembras, cinco rojos/degradados
+   observados, todas retiradas con verificación de sha del árbol.
+4. **El script se escribió con la herramienta de ficheros, no con `cat <<EOF`** ([[L-46]] regla 7, y
+   las contrabarras por `chr(92)`): romper `L-46` con el bug de `L-46` mientras se migra `L-46` habría
+   sido la ironía cara.
+5. **El censo no se corrió después de escribir**: la fase de sha corre ANTES, en memoria, y el script
+   aborta sin tocar un byte si una sola de las veinte no cuadra. Un censo que valida lo que ya
+   escribiste no es un gate, es un informe.
+
+**294.6 Archivos.** MODIFICADOS: `docs/36-LECCIONES-UTILLAJE.md` (matiz + 3 stubs) ·
+`docs/35-LECCIONES-PLATAFORMA.md` (11 stubs) · `docs/31-VERIFICACION-UI.md` (3 stubs) ·
+`docs/30-LECCIONES.md` (20 marcas; 3 cuerpos colapsados) · `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`
+(+20 cuerpos) · `docs/99` y `docs/00` (esto). En la bóveda: 20 ficheros nuevos en
+`maestro/lecciones/migradas/INMO/`, 4 de `maestro/indice/`, el `00-INDICE-GLOBAL` y
+`scripts/brain-check-boveda.mjs`. **INTACTOS y verificados**: `CLAUDE.md`, `05`, `10`,
+`docs/.brain-manifest.json`, el kernel `scripts/brain-check.mjs`, y los `30` de los otros tres repos.
+
+**294.7 Doctrina aplicada, y la predicción del mandato que NO se cumplió.** El encargo daba por hecho
+que `maestro/indice/plataforma-nube.md` rebosaría su tope de 4000c con las filas de plataforma y
+mandaba estrenar **D7-ter** (el ruteo sharde recursivo). **Medido: no rebosa.** Con sus 10 filas
+nuevas queda en **3423c/4000 (86 %) y 15 filas** — por debajo del tope, por debajo del aviso del 90 %
+del chequeo #9, y por debajo de las «≈20 filas» que el propio D7-ter fija como el porqué de ese cap.
+No dispara ninguno de sus tres disparadores, así que **no se shardeó**: partir un fichero por ritual
+es el gemelo de subir un techo por costumbre. Y hay un coste medido que lo desaconseja hoy: un
+sub-nivel añade **un salto** a toda la rama de plataforma, y el presupuesto de ruteo del D7 (mediana
+≤5) se midió en el lote 3 **exactamente en 5**. Shardear sin presión de tope compraría un riesgo de
+romper un gate que hoy pasa, a cambio de nada. Lo que sí queda pagado es la **preparación**: se
+verificó —sembrando un sub-tema dos niveles abajo y viéndolo cazado por falta de tope y por exceso—
+que el barrido del #9 **ya baja de nivel** y no hubo que ampliarlo. Cuando D7-ter dispare (proyección:
+el lote 5, que se come los ~577c libres), el instrumento está probado. La decisión de CÓMO partirlo
+—sub-carpeta, que cuesta el salto; o tema hermano, que cuesta una fila en un `00-INDICE-GLOBAL` con
+71c libres— queda **para Fable, con los números delante**.
