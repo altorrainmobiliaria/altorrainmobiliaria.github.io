@@ -129,6 +129,7 @@
 | §288 | 🚦 **El predicado que decide si un gate CORRE es parte del gate** — el escáner de secretos saltaba 55/100 commits. Reverso: el gate que miente en ROJO; su único arreglo obediente que compilaba rompía producción. | 13200 |
 | §289 | 🧱 **La vía de ESCRITURA estaba cerrada** — 33/37/38 llenos por ejes DISTINTOS. Nacen `33a` (la lección que no dispara) y `38a` (el armado del gate); entran M-34, M-35 y L-70..L-72. | 13336 |
 | §290 | 🧮 **Kernel v1.27 · el instrumento medía media casa** — el #10 filtraba `^\d{2}-` y no auditaba 9 nodos con sufijo; el candado daba 31485 de un boot REAL de 43030c. Nace `bootRealTarget`. Y el kit nacía sin escáner de secretos. | 13466 |
+| §291 | 🚩 **El instrumento que mintió 44 días en SILENCIO** — el PreCompact emitía un JSON que el esquema rechaza en la raíz: 0/15 entregas. La orden se muda al canal medido (SessionStart) y nace el TOKEN que solo mata un commit a `10`/`99`. | 13608 |
 
 ---
 

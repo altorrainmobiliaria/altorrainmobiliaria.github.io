@@ -13604,3 +13604,176 @@ habría bloqueado el primer commit de un cerebro recién nacido. Y se retiraron 
 - 🟠 **El techo de 44000 no baja solo.** F3 tiene que morder ahí: el C0 (2246c) y el `MEMORY.md`
   (3505c) son 5751c que **ningún repo puede podar** desde dentro.
 - 🟠 **El censo de `00`** y las 16 neuronas ≥90 % siguen donde §289.7 los dejó. Fuera de alcance.
+
+## 291. ADR-291 — El instrumento que mintió 44 días en silencio: la orden se muda al canal que SÍ entrega
+
+Fase **F0-quater** del programa CEREBRO MAESTRO: mandato **D8(a)** del `DICTAMEN-F2.md` — *«primero se
+mide el CUMPLIMIENTO del PreCompact… el gate de F3 pasa de "los hooks disparan" a "la acción ordenada
+OCURRE"»*. La medición (`cerebro-maestro/2026-08-31-medicion-precompact-d8a.md`, bóveda) devolvió algo
+peor que desobediencia: **la orden nunca se entregó**. Este ADR la revive por el canal medido y le pone
+una métrica falsable. Lección portable: [[L-73]].
+
+### 291.1 — Causa raíz: el hook hablaba un idioma que el harness rechaza EN LA RAÍZ
+
+`scripts/session-handoff.mjs`, modo `--precompact`, emitía por stdout:
+
+```json
+{ "systemMessage": "🧠 PreCompact: foto de sesión escrita…",
+  "hookSpecificOutput": { "hookEventName": "PreCompact", "additionalContext": "ORDEN DEL CEREBRO…" } }
+```
+
+El esquema del harness **no admite `hookSpecificOutput` para `PreCompact`** (sí para `PreToolUse`,
+`UserPromptSubmit`, `PostToolUse`, `PostToolBatch` y `Stop`/`SubagentStop`). La validación falla con
+`(root): Invalid input` y, al fallar en la raíz, **se descarta el objeto ENTERO** — también el
+`systemMessage`, que era válido por su cuenta.
+
+| hecho | medida |
+|---|---|
+| entregas de la orden al modelo | **0 de 15** compactaciones |
+| antigüedad del bloque (nació así en `d7e2578`) | **44 días** (18-jul → 31-ago) |
+| copias byte-idénticas | **5** (inmo · cars · bersaglio · insema · `brain-kit/kernel`) |
+| fallos VISIBLES para el operador | **2 de 15** — solo los `/compact` manuales vuelcan el error al transcript |
+| `"hookEvent":"PreCompact"` / `hook_error` en las 13 automáticas | **0** ocurrencias |
+
+Y el `process.exit(0)` incondicional del `catch` remataba el silencio. 🎯 **El hook corrió las 15 veces,
+escribió su fichero las 15 veces, y no entregó la orden ninguna** — que es exactamente por qué el
+canario #24 daba verde **con razón**: mide que los hooks *disparen*.
+
+### 291.2 — El canal hermano SÍ entrega, y estaba a la vista
+
+En la misma sesión, `SessionStart` —que corre también con `source=compact`, justo DESPUÉS del corte—
+inyecta su stdout **plano** como contexto real: **15/15** attachments `"hookName":"SessionStart:compact"`
+de tipo `hook_success`. Mismo script, misma máquina, mismo modelo. *La diferencia no era el mensaje: era
+el contrato.* Y el sitio es además el bueno por diseño: la orden se da con el contexto **recién vaciado**,
+que es cuando queda margen para obedecerla, en vez de justo antes del corte, cuando ya no queda.
+
+### 291.3 — La solución: un TOKEN con tres puntas, ninguna de ellas un JSON
+
+| punta | quién | qué hace |
+|---|---|---|
+| **nace** | `--precompact` | escribe la foto (eso siempre funcionó) **+** `docs/.consolidacion-pendiente` con `ts` y `head` del corte. **Cero JSON**: stdout plano |
+| **cobra** | `--boot-echo` (`SessionStart`) | si el flag existe, imprime la orden ⛔ **la PRIMERA**, antes del heartbeat — 362c |
+| **muere** | `githooks/pre-commit` | si el staged trae `docs/10-*` o `docs/99-*`, borra el flag y lo dice en una línea |
+| **vigila** | `brain-check` #30 (v1.28.0) | flag con >24 h → ⚠️ **informativo**; su VIDA es la métrica |
+
+Cuatro decisiones deliberadas:
+
+1. **El `--precompact` deja de EMITIR y pasa a DEJAR RASTRO.** No se cambió el JSON por otro JSON
+   «válido» (p. ej. `systemMessage` solo): eso volvería a apostar la entrega a un contrato que no puedo
+   validar aquí. **Cero JSON = cero contrato que violar en silencio** (mandato I-3).
+2. **La orden va la PRIMERA del stdout.** Lo que se lee al final de un volcado de 6k no es una orden:
+   es un pie de página. Y va **acotada a ≤400c** porque cada línea del boot se re-inyecta como contexto.
+3. **El #30 informa y NO bloquea.** Un flag viejo no es un defecto que alguien pueda arreglar editando
+   un fichero: es la evidencia de que la orden se ignoró. Cortarle el commit a quien por fin viene a
+   consolidar castigaría justo el comportamiento que se busca.
+4. **`preTokens` NO se registra, y se dice por qué.** El contrato de `PreCompact` no lo entrega (la
+   medición D8a lo sacó del `compact_boundary` del transcript, que el harness escribe DESPUÉS). Leer
+   stdin a ciegas para buscarlo arriesgaba colgar el hook 15 s por un dato que no está; el identificador
+   del token es el **HEAD del corte**, que es lo que I-2 pedía. *Un campo vacío con nombre bonito sería
+   otra vez `38-GATES-QUE-MIENTEN`.*
+
+🎯 **Por qué esto sí es falsable y el 60 % anterior no**: la métrica vieja («¿commit a `10`/`99` en 30
+min?») daba 60 % con un **placebo de 52 %** y una ventana desplazada **+2 h que daba 80 %** — medía la
+densidad de tráfico del repo, no obediencia. Un token **acumula y se ve**; un disparo no deja rastro.
+
+### 291.4 — Verificación: el ciclo COMPLETO, disparado a mano (M-06)
+
+**[1] El flag NACE** — `node scripts/session-handoff.mjs --precompact`:
+
+```
+🧠 PreCompact: foto en docs/.handoff-auto.md + 🚩 flag de consolidación pendiente (la orden la dará el próximo SessionStart).
+
+$ cat docs/.consolidacion-pendiente          # 305 bytes
+# 🚩 CONSOLIDACIÓN PENDIENTE — la escribió session-handoff --precompact (§291).
+# La orden la da el SIGUIENTE SessionStart; este fichero lo BORRA el pre-commit al commitear docs/10 o docs/99.
+ts=2026-09-01T00:42:52.688Z
+head=c7f5213
+preTokens=n/d (el contrato PreCompact del harness no lo entrega)
+```
+
+**[2] La orden SE INYECTA** — el hook de `SessionStart` corrido como lo corre el harness (cwd = raíz,
+payload JSON de `source:"compact"` por stdin), primeras líneas de su stdout:
+
+```
+⛔ ORDEN DEL CEREBRO — CONSOLIDACIÓN PENDIENTE (hace 0.0h, corte en c7f5213)
+La sesión anterior COMPACTÓ SIN CONSOLIDAR. ANTES de cualquier otra cosa: pon al día docs/10 (foco, avances, callejones) y consolida a docs/99 lo que ya esté cerrado.
+Este flag NO se borra solo: lo borra el pre-commit cuando commitees docs/10 o docs/99 (docs/.consolidacion-pendiente).
+
+# 💓 Estado DERIVABLE (⚙️ GENERADO por heartbeat en cada boot…
+```
+
+**[3] El flag MUERE** — `git add docs/99…` + el `pre-commit` (el mismo que corre `git commit`):
+
+```
+✅ verify:secretos — 886 fichero(s) de texto, 10 patrones: ninguna credencial en el repo público.
+🧠 brain:check (pre-commit)…   →   ✅ CEREBRO SANO (35/35 neuronas dentro de tope · 291 ADRs indexados)
+🚩 consolidación PENDIENTE cerrada — docs/.consolidacion-pendiente borrado por este commit.
+
+$ ls docs/.consolidacion-pendiente
+ls: cannot access 'docs/.consolidacion-pendiente': No such file or directory
+```
+
+**Las dos ramas del #30, ejecutadas las dos** ([[L-65]]: un gate que solo corre en un estado hay que
+correrlo en ese estado):
+
+```
+  ℹ️  consolidación pendiente de hace 0.0h (corte en c7f5213) — se cierra commiteando docs/10 o docs/99.
+  ℹ️  ⚠️ consolidación PENDIENTE desde hace 40h (corte en c7f5213): la orden del SessionStart lleva más de un DÍA sin cumplirse…
+```
+…y `echo $?` = **0** en ambas: informa sin bloquear, como se diseñó.
+
+**Prueba NEGATIVA**: el commit de CÓDIGO de este mismo cambio (`scripts/`, `githooks/`, `.gitignore`)
+**no** cierra el token — el pre-commit sale antes por su filtro `^(CLAUDE\.md|docs/)`. Solo lo mata un
+commit de consolidación, que es la definición.
+
+### 291.5 — Anti-patterns evitados
+
+- **No se tocó `.claude/settings.json`**: verificado leyéndolo — el bloque `SessionStart` no lleva
+  `matcher`, así que ya corre con `source=compact`, y `PreCompact` sigue invocando el mismo script. El
+  arreglo es de *payload*, no de cableado. *(Cambiar el cableado «por si acaso» habría movido la variable
+  que la medición dejó fija.)*
+- **No se cambió un JSON por otro JSON**, ni se «arregló» moviendo la orden a `Stop` con
+  `additionalContext`: el esquema lo admite, sí, pero eso vuelve a apostar a un canal que aquí NO está
+  medido. El único canal con 15/15 en el corpus es `SessionStart`.
+- **No se subió ningún techo** ni se tocó un always-on: el BOOT está a **0c** de su tope y este ADR no le
+  añade un carácter. La orden ⛔ no entra al candado porque no es un fichero del repo: es stdout
+  transitorio, presente solo cuando hay algo pendiente. Se declara aquí para que nadie lo descubra como
+  un hueco de contabilidad (la mitad de §290 fue exactamente eso).
+- **No se repartió a los hermanos** (cars/bersaglio/insema): jalan v1.28 en sus propias sesiones, como
+  manda el patrón de distribución. Repartir un kernel desde la sesión de otro es lo que obligó a la
+  excepción `soloKernel` del canario #24.
+
+### 291.6 — Archivos
+
+**Modificados** — bóveda: `kernel/session-handoff.mjs` (el `--precompact` deja de emitir JSON; el
+`--boot-echo` cobra el token), `kernel/brain-check.mjs` (#30 + `KERNEL_VERSION` 1.28.0), `kernel/VERSION`,
+espejo byte-idéntico en `brain-kit/kernel/scripts/` + `brain-kit/kernel/VERSION`,
+`brain-kit/kernel/githooks/pre-commit`, `brain-kit/INSTALACION-FABLE.md` (los 4 sidecars al `.gitignore`
+de un cerebro nuevo, no solo el `.handoff-auto`). Repo: `scripts/*` (vía `npm run brain:pull`),
+`scripts/.kernel-version.json`, `githooks/pre-commit`, `.gitignore`, `docs/38a`, `docs/30`, `docs/00`.
+
+**INTACTOS y verificados**: `.claude/settings.json` (§291.5) · los tres always-on (`CLAUDE.md`, `05`,
+`10`) · `docs/.brain-manifest.json` · el modo `--end` y el heartbeat, que nunca estuvieron rotos · los
+otros tres repos hermanos.
+
+### 291.7 — Doctrina aplicada
+
+§3.3 (la RCA salió de leer el código y el transcript, no de suponer) · §G.4 captura → [[L-73]] en `38a`,
+que gana su **quinta** forma de estar desarmado: *su SALIDA se descarta* · [[M-06]] (verlo DISPARAR: las
+dos ramas del #30 y el ciclo entero a mano) · [[L-65]] (ejecutar la rama que casi nunca corre) ·
+[[M-05]] (ningún techo subido). Sin cache bump: no se tocó el service worker.
+
+### 291.8 — Lo que este ADR NO cierra
+
+- 🔴 **La hipótesis de saturación sigue INTACTA, no refutada.** Nunca hubo orden que ignorar, así que
+  «Claude la recibe y la incumple por contexto lleno» (M-02) **no se ha podido medir todavía**. El
+  numerador de F3 empieza a existir hoy; el gate de cumplimiento se calcula cuando haya tokens cerrados.
+- 🟠 **Tres repos siguen con el bloque roto**: cars, bersaglio e insema arrastran el JSON inválido hasta
+  que jalen v1.28 en sus propias sesiones. El defecto está confirmado por identidad de código, no por un
+  segundo censo (cars tiene 1 transcripción superviviente y 0 compactaciones).
+- 🟠 **`preTokens` no se registra** (§291.3.4). Si algún día el contrato lo entrega, el sitio ya está.
+- 🟠 **El token no distingue QUÉ se consolidó.** Cualquier commit a `10`/`99` lo cierra, incluso uno que
+  toque otra cosa del fichero. I-2 pedía «un cambio real posterior a ese hash»; esto es la aproximación
+  barata y honesta — el `head=` queda escrito para poder afinarlo sin cambiar el mecanismo.
+- 🟠 **`38a` queda al 99 %** (12224c/12400, 176c de margen). Entra en la deuda de TODO-50 como los otros
+  16 nodos ≥90 %: la lección cabía, la siguiente no.
