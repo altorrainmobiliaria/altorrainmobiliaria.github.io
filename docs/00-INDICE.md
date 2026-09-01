@@ -72,13 +72,13 @@
 
 | § | Tema | Línea |
 |---|---|---|
-| §01-§20 | 🗄️ **Era del sitio viejo (RETIRADO) + arranque del cerebro** — 20 filas movidas al shard `docs/00a-INDICE-HISTORICO.md` (§85). El kernel lee ambos índices como UNO. | → `00a` |
-| §21-§60 | 🏗️ **Era de CONSTRUCCIÓN del greenfield** (scaffold, modelo de datos, design system, las superficies del portal, mapa y catálogo) — 40 filas movidas al shard `docs/00b-INDICE-CONSTRUCCION.md` (§100). El kernel lee los tres índices como UNO. | → `00b` |
-| §66-§90 | 🏛️ **Era de FUNDACIÓN** (kit societario de 24 docs, gates legales, operación real del dueño, auditorías del cerebro y el cierre de OLA 1) — 25 filas movidas al shard `docs/00c-INDICE-FUNDACION.md` (§116). | → `00c` |
-| §91-§120 | 🏗️ **Era de CONSTRUCCIÓN DEL PORTAL** (SERP, ficha, alertas, precios, ruleset fusionado, leads, R2 y el runbook del cutover) — 30 filas movidas al shard `docs/00d-INDICE-PORTAL.md` (§156). | → `00d` |
-| §121-§160 | 🔐 **Era de ACCESO Y CUTOVER** (recuperación de clave, 2FA de punta a punta, las 5 puertas de escritura, la bóveda, los índices y el codebase que nunca se desplegaron, el mapa de 301 y los gates que miraban a otro lado) — 40 filas movidas al shard `docs/00e-INDICE-ACCESO.md` (§196). | → `00e` |
-| §161-§200 | 🔬 **Era de la VERDAD MEDIDA** (los gates que pasaban en verde sin mirar, los gemelos invisibles, el censo de Functions, el dictamen del recaudo y el rail de pago) — 40 filas movidas al shard `docs/00f-INDICE-VERDAD.md` (§229). | → `00f` |
-| §201-§240 | 🧮 **Era del CENSO** (los oyentes, los identificadores, los 30 pasos del cutover, las hermanas — y el ✅ que no prueba que se mirara) — 40 filas movidas al shard `docs/00g-INDICE-CENSO.md`. |
+| §01-§20 | 🗄️ **Era del sitio viejo (RETIRADO) + arranque del cerebro** → shard `docs/00a-INDICE-HISTORICO.md`. | → `00a` |
+| §21-§60 | 🏗️ **Era de CONSTRUCCIÓN del greenfield** (scaffold, modelo de datos, design system, las superficies del portal, mapa y catálogo) → shard `docs/00b-INDICE-CONSTRUCCION.md`. | → `00b` |
+| §66-§90 | 🏛️ **Era de FUNDACIÓN** (kit societario de 24 docs, gates legales, operación real del dueño, auditorías del cerebro y el cierre de OLA 1) → shard `docs/00c-INDICE-FUNDACION.md`. | → `00c` |
+| §91-§120 | 🏗️ **Era de CONSTRUCCIÓN DEL PORTAL** (SERP, ficha, alertas, precios, ruleset fusionado, leads, R2 y el runbook del cutover) → shard `docs/00d-INDICE-PORTAL.md`. | → `00d` |
+| §121-§160 | 🔐 **Era de ACCESO Y CUTOVER** (recuperación de clave, 2FA de punta a punta, las 5 puertas de escritura, la bóveda, lo que nunca se desplegó, el mapa de 301) → shard `docs/00e-INDICE-ACCESO.md`. | → `00e` |
+| §161-§200 | 🔬 **Era de la VERDAD MEDIDA** (los gates que pasaban en verde sin mirar, los gemelos invisibles, el censo de Functions, el dictamen del recaudo y el rail de pago) → shard `docs/00f-INDICE-VERDAD.md`. | → `00f` |
+| §201-§240 | 🧮 **Era del CENSO** (los oyentes, los identificadores, los 30 pasos del cutover, las hermanas — y el ✅ que no prueba que se mirara) → shard `docs/00g-INDICE-CENSO.md`. |
 | §241 | 🧭 **Lo que decide qué ve el dueño arriba no tenía prueba** (dos `urgencia()` puras, 13 tests) · y **«el móvil personal JAMÁS se publica» no tenía mecanismo**: censo de 45 páginas (cero fugas) y gate que lee el permitido de `site.ts`. | 10518 |
 | §242 | 🚧 **El styleguide de desarrollo iba a servirse en el dominio del cliente**: la promesa de excluirlo vivía en la cabecera del propio fichero. Ahora redirige (28,5 KB→284 b) + sonda. Salió de cuadrar 45 páginas con 39 del sitemap. | 10567 |
 | §243 | 🔗 **Comprobar anclas no es comprobar rutas**: gate nuevo de enlaces internos (0 rotos de 184 destinos, SSR derivadas de `prerender=false`). Y contar valió más que el gate: **38 enlaces a `/ficha`**. | 10610 |
@@ -131,6 +131,7 @@
 | §290 | 🧮 **Kernel v1.27 · el instrumento medía media casa** — el #10 filtraba `^\d{2}-` y no auditaba 9 nodos con sufijo; el candado daba 31485 de un boot REAL de 43030c. Nace `bootRealTarget`. Y el kit nacía sin escáner de secretos. | 13466 |
 | §291 | 🚩 **El instrumento que mintió 44 días en SILENCIO** — el PreCompact emitía un JSON que el esquema rechaza en la raíz: 0/15 entregas. La orden se muda al canal medido (SessionStart) y nace el TOKEN que solo mata un commit a `10`/`99`. | 13608 |
 | §292 | 🎭 **Kernel v1.29 · un `\b` casaba DETRÁS de los dos puntos** — `[[CARS:L-01]]` se leía `L-01` y resolvía contra OTRA lección EN VERDE (y `BERS:L-84` daba colgante falso). Lookbehind en #5b y #5c. Prerequisito del lote 1 de F2. | 13781 |
+| §293 | 🧠 **Nace el CEREBRO MAESTRO y recibe sus 6 primeras lecciones** (F2 lote 1, INMO → `brain-private/maestro/`): esqueleto + linter propio con 3 cerraduras + cuarentena con stub. `35` liberó 2987c. MIGRADO, no sellado. | 13918 |
 
 ---
 

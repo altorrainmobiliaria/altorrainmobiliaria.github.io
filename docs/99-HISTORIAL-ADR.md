@@ -13914,3 +13914,119 @@ la bóveda vigila el espejo del kit).
 **Lo que este ADR NO cubre**: el linter del maestro (§6 de F2-DISEÑO) sigue sin existir — el parche
 DELEGA la validación de las citas cualificadas en un dueño que aún no está escrito, así que hoy nadie
 las valida; es deliberado y es del lote 1. Y los hermanos siguen en v1.28.0 hasta que cada uno tire.
+
+## 293. ADR-293 — Nace el CEREBRO MAESTRO: seis lecciones dejan de pertenecer a un solo proyecto
+
+> Lote 1 de la F2 del programa CEREBRO MAESTRO. Diseño VIGENTE: `brain-private/cerebro-maestro/F2-DISENO.md`.
+> Mecanismo: el ENSAYADO en `ENSAYO-ROLLBACK-F2.md` (D9.4), ahora en serio y sobre el repo real.
+> Alcance decidido por Fable y NO ampliado: **solo INMO + el maestro**; CARS, BERS e INSE van en lotes posteriores.
+
+**293.1 Causa raíz.** El conocimiento transferible estaba **encerrado en el proyecto donde se pagó**.
+`L-13` —«sin `.nojekyll` GitHub Pages congela producción en silencio»— no habla de inmobiliaria: habla
+de GitHub Pages, y los cuatro repos despliegan ahí. Mientras viviera solo en `docs/35` de INMO, el
+proyecto 5 volvería a pagarla entera. El síntoma medible del encierro es de este mismo mes: la
+auditoría #18 encontró **8 neuronas al 100 %** y `35-LECCIONES-PLATAFORMA` a **11 caracteres** de su
+tope (21989/22000). Un cerebro que rechaza conocimiento por falta de sitio está mal repartido, no
+lleno: lo que sobra en `35` no es volumen, es material que **no pertenece a ese repo**.
+
+**293.2 Solución estructural.** Tres piezas, en este orden y no en otro:
+
+**(a) El maestro nace con esqueleto real** (§2 del diseño), en `brain-private/maestro/`:
+`ROUTER.md` (2361c, tope propio 2500c) · `00-INDICE-GLOBAL.md` (capa *síntoma → conocimiento*
+escrita a mano, en las palabras de quien busca, no en el título de la lección) ·
+`lecciones/migradas/<PREFIJO>/<ID>.md` · `_inbox/` con su `LEEME`. **Una lección = un fichero**: así
+no hay nodo que saturar ni shard que hacer, y el tope duro vive SOLO donde el tamaño se paga — lo
+que se lee para rutear.
+
+**(b) El linter ANTES que la primera mudanza.** `scripts/brain-check-boveda.mjs` pasa de 5 a 8
+chequeos: **#6** toda cita `[[PREFIJO:ID]]` tiene prefijo real (contra `origenes.json`, dueño único)
+y destino que existe · **#7** bajo `maestro/` el ID pelado está PROHIBIDO (gate D1) · **#8** todo
+fichero de `migradas/` lleva su línea `> Origen:`. No se muda una lección a un sitio sin cerradura:
+nada en la sintaxis de un `.md` impide escribir un ID pelado donde ese número significa cuatro cosas
+distintas — lo único que lo caza es esto.
+
+**(c) La mudanza, con cuarentena.** Seis TRANSFERIBLES validadas a ciegas (§3.2/§8 del diseño):
+`[[INMO:L-08]]` (leer un campo AUSENTE en Rules LANZA) · `[[INMO:L-13]]` (`.nojekyll`) ·
+`[[INMO:L-14]]` (verificar el stack contra DOCS) · `[[INMO:L-07]]` (1er deploy CF gen2 / Eventarc) ·
+`[[INMO:L-10]]` (un GET público linkeado jamás muta estado) · `[[INMO:L-01]]` (red lenta ≠ permiso
+denegado). Las seis tenían el cuerpo en la hoja hija `35` y su titular en `30`, así que la operación
+tiene **dos superficies**: en `30` el titular conserva su ID intacto y gana la marca
+`⇒ migrada al maestro: [[INMO:L-NN]]`; en `35`, donde vivía el cuerpo, queda el stub del §4.2 con el
+puntero a `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`, que es donde el cuerpo íntegro espera un ABORT.
+
+**(d) Las 2 citas cruzadas existentes, cualificadas** (§1.2): `60-WORKFLOWS:65` `cars L-31` →
+`[[CARS:L-31]]`; `skills-inventory:59` `§297 cars` → `CARS §297`. Con el kernel v1.29 ([[L-74]], §292)
+el chequeo #5 las IGNORA: ya no hay colgante falso ni ✅ mentiroso.
+
+**293.3 No-regresión.** `brain:check` **SANO** antes y después; el diff completo de su salida son
+**cuatro líneas, todas de TAMAÑO**. Los 98 IDs siguen definidos y los 98 referenciados siguen
+resolviendo (`98 usadas / 98 def`, idéntico): el titular de `30` es la tabla de resolución del #5b y
+no se ha tocado. Punteros colgantes medidos con la lógica exacta del #5b sobre los **cuatro** repos,
+ANTES y DESPUÉS: **diff vacío** (INMO 98/98 · CARS 99/99 · BERS 97/97 · INSE 7/7, cero colgantes en
+los ocho lados). EOL preservado por fichero (`60-WORKFLOWS.md` es CRLF y el resto LF; escribir el
+salto equivocado marcaría el fichero entero como modificado y falsearía el ABORT).
+
+**293.4 Verificación (gate D10, evidencia pegada en `cerebro-maestro/BITACORA.md`).**
+**(a) Censo con checksums, 6/6 byte-idénticos** módulo la línea de procedencia, que se DECLARA
+imprimiéndola. Normalización declarada: CRLF→LF + recorte de saltos finales, en ambos lados. Y por
+**tres** vías independientes: el original en `git show HEAD:docs/35-…`, el fichero del maestro y el
+cuerpo en `_legacy/` dan el mismo sha256 (p. ej. `L-08` = `1fa936a3…`, el mismo que midió el ensayo).
+**(b)** `brain:check` SANO (arriba). **(c)** colgantes ANTES/DESPUÉS: diff 0. **(d)** linter de bóveda
+**8/8 en verde**, y los tres nuevos **vistos en ROJO** con siembra ([[M-06]]: un gate que nadie ha
+visto fallar no se sabe si dispara) — prefijo desconocido, destino ausente, ID pelado y procedencia
+ausente dispararon los cuatro, se retiraron, y `maestro/` quedó **byte-idéntico** (sha256 fichero a
+fichero) sin rastro en git.
+**(e) Descompresión medida**: `35` pasó de **21989c a 19002c** — **2987c liberados** (13,6 %) y de
+98 a 93 líneas. El nodo que estaba a **11 caracteres** de reventar tiene ahora **2998c** de holgura,
+y **sale de la lista de pre-shard**: las neuronas al ≥90 % bajan de 19 a 18. `30` sube 240c (las seis
+marcas) sobre 40000c. Migrar **descomprime**, y no de rebote: es el segundo producto del programa.
+
+**(f) La fila del índice se financió podando, y el trinquete APRETÓ.** `00-INDICE.md` estaba a **56c**
+de su tope. Hallazgo que obliga a hacer dos cosas y no una: la fila gorda que el #26 encabezaba (§82,
+370c) **no vive en `00-INDICE.md`** sino en el shard `00c` —el #26 cuenta 00+shards como UNO, pero el
+cap es por fichero—, así que podarla aprieta el trinquete y no libera ni un carácter donde duele. Se
+hicieron las dos: §82 **370c → 232c** (sale la historia —el crítico que cerraba, el enunciado de las
+excepciones, el nombre del modificador nuevo—; queda el ruteo: qué cerró, sobre qué cruzaba, el
+hallazgo con el que se reconoce el caso y el puntero a [[LD-07]]); y en `00-INDICE.md` las **7 filas
+de ERA** dejaron de repetir en la columna del medio lo que la tercera ya dice (*«N filas movidas al
+shard `docs/00X-….md` (§NN)»* → *«→ shard `docs/00X-….md`»*; la ruta se conserva porque el #10 la usa
+para alcanzar el shard). Resultado: `00-INDICE.md` **23944c → 23858c** *con* la fila nueva de 235c
+dentro (margen 142c), y las filas gordas del #26 bajan de **46 a 43** → `indexRowOverLimitBaseline`
+bajado a 43, porque un trinquete que no se aprieta cuando se salda deuda deja de ser un trinquete.
+
+**293.5 Anti-patterns evitados.** ⛔ *Renumerar lo migrado* — §1.2: el ID de origen se conserva para
+siempre (hay ~453 wikilinks vivos que lo citan). ⛔ *Borrar el original* — cuarentena, no borrado
+(§G.4): el cuerpo íntegro queda en `_legacy/` y el ABORT lo reconstruye **desde ahí**, no con
+`git checkout` (un checkout restauraría blobs de git y no probaría nada del mecanismo). ⛔ *Un gate
+que sale verde porque dejó de mirar* — los tres chequeos nuevos tienen ANTI-VACÍO explícito, y el #6
+además exige que el maestro se cite a sí mismo. ⛔ *Subir el techo para dejar de ver el aviso*
+([[M-05]]) — la fila nueva del índice se financió **podando**, no ampliando el cap.
+
+**293.6 Archivos.** Bóveda: **+`maestro/`** (`ROUTER.md` · `00-INDICE-GLOBAL.md` · `_inbox/LEEME.md`
+· 6 lecciones en `lecciones/migradas/INMO/`) · `scripts/brain-check-boveda.mjs` (5→8 chequeos) ·
+`cerebro-maestro/BITACORA.md`. Repo: `docs/30-LECCIONES.md` (6 marcas) · `docs/35-LECCIONES-PLATAFORMA.md`
+(6 stubs) · `docs/60-WORKFLOWS.md` · `docs/skills-inventory.md` · `docs/00-INDICE.md` · `docs/00c-INDICE-FUNDACION.md`
+· `docs/.brain-manifest.json` · `docs/99` (este ADR) · **+`_legacy/LECCIONES-MIGRADAS-MAESTRO.md`** y su fila
+en `_legacy/README.md`. **INTACTOS**: todo el código (`portal/`, `functions/`, `js/`, `css/`, HTML), `CLAUDE.md`,
+`05`, `10`, el kernel `scripts/brain-check.mjs` y los otros tres repos.
+
+**293.7 Doctrina + lo que este ADR NO cubre.** F2-DISEÑO §1.2 (identidad cualificada) · §2.1 (una
+lección = un fichero) · §4.2 (stub de cuarentena) · §5 (gate D10) · §3.3 (leer el código del gate,
+no suponerlo: la asimetría de alcance del #6 sale de CONTAR las citas de `cerebro-maestro/`, no de
+opinar) · [[M-06]] · §G.4 (cero pérdida; cuarentenar, no borrar).
+
+**NO cubierto, y hay que decirlo antes de que alguien lea el ✅ como un sello:**
+1. **Los drills §5.3, §5.4 y §5.5 del gate D10 no se han corrido** — ambigüedad, contexto y
+   presupuesto de ruteo exigen **agentes fríos ajenos a la migración**, y quien migra no puede ser su
+   propio agente frío. Los corre Fable. **Hasta entonces el lote 1 está MIGRADO, no SELLADO.**
+2. **El #6 no exige destino bajo `cerebro-maestro/`**, solo prefijo válido — medido: 10 de sus 12
+   citas nombran piezas de lotes 2+, así que exigirles fichero sería un gate que solo se pone verde
+   migrándolo todo de golpe, justo lo contrario de los lotes ≤20 que manda el D9.5.
+3. **Frontera del #7 que llegará en el lote 2**: una lección migrada cuyo cuerpo cite pelado a otra
+   de su repo (`[[INMO:L-21]]` cita `L-55`) chocará con el gate, y el censo de sha prohíbe editar el
+   cuerpo. En el lote 1 no se da —los seis cuerpos citan cero wikilinks, medido— pero necesita
+   decisión: ¿la subcarpeta `migradas/<PREFIJO>/` cualifica por sí misma, o hay exención?
+4. **Solo INMO.** Los stubs de CARS, BERS e INSE siguen sin ejercitarse, y el `30` de INSEMA tiene
+   otra escala (7 lecciones definidas frente a 98).
+5. **La procedencia sigue siendo trabajo a mano**: no existe índice mecánico de «qué § pagó esta
+   lección». Las seis se rastrearon una por una contra el ADR real (§01 · §11 · §15 · §15.2(b) ×2 · §19).

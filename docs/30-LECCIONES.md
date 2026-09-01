@@ -17,20 +17,20 @@
 > 🧩 **`L-01`..`L-21` y `L-49` viven COMPLETAS en `35-LECCIONES-PLATAFORMA.md`** — aquí queda el titular, que es lo que
 > hace falta para reconocer el síntoma. Si te suena, ábrelo allá.
 
-### L-01 — "Access denied for UID" al login (red lenta ≠ permiso denegado)
+### L-01 — "Access denied for UID" al login (red lenta ≠ permiso denegado) ⇒ **migrada al maestro**: [[INMO:L-01]]
 ### L-02 — RTDB `permission_denied` en presencia
 ### L-03 — Firestore "Failed to obtain primary lease"
 ### L-04 — ⚗️ FUSIONADA en L-09 (merge:true vs rules/upsert) — regla viva **aquí, en L-09**: `set()` SIN merge para CREAR, `update()` para EDITAR (el puntero apuntaba a `CLAUDE.md §3.5`, que se mudó a `34-DOCTRINA-CODIGO` en la poda §84; el dueño del hecho siempre fue L-09)
 ### L-05 — ⚰️ (sitio viejo retirado §15) Modals inyectados fuera de index → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md`
 ### L-06 — ⚰️ (sitio viejo retirado §15) Invalidación de cache `system/meta`→onSnapshot → cuarentena `_legacy/LECCIONES-SITIO-VIEJO.md` (resucitar si el cutover reusa SW/onSnapshot)
-### L-07 — Primer deploy de Cloud Functions 2nd gen falla por Eventarc
-### L-08 — Reglas Firestore: leer un campo AUSENTE de `resource.data` LANZA (no es null)
+### L-07 — Primer deploy de Cloud Functions 2nd gen falla por Eventarc ⇒ **migrada al maestro**: [[INMO:L-07]]
+### L-08 — Reglas Firestore: leer un campo AUSENTE de `resource.data` LANZA (no es null) ⇒ **migrada al maestro**: [[INMO:L-08]]
 ### L-09 — Upsert de ingestión: `merge:true` PISA los campos presentes y NO borra los ausentes
-### L-10 — Un GET público linkeado por WhatsApp/email JAMÁS muta estado
+### L-10 — Un GET público linkeado por WhatsApp/email JAMÁS muta estado ⇒ **migrada al maestro**: [[INMO:L-10]]
 ### L-11 — Cloud Functions gen2: tres gotchas de operación que se ven como bugs
 ### L-12 — Dinero (arriendos/comisiones/pagos): método ANTES de construir
-### L-13 — GitHub Pages (deploy-from-branch): sin `.nojekyll` Jekyll construye TODO el repo — y si falla, PRODUCCIÓN SE CONGELA EN SILENCIO
-### L-14 — Stack que evoluciona rápido (Astro/adapter CF): verificar versión y config contra DOCS, no de memoria
+### L-13 — GitHub Pages (deploy-from-branch): sin `.nojekyll` Jekyll construye TODO el repo — y si falla, PRODUCCIÓN SE CONGELA EN SILENCIO ⇒ **migrada al maestro**: [[INMO:L-13]]
+### L-14 — Stack que evoluciona rápido (Astro/adapter CF): verificar versión y config contra DOCS, no de memoria ⇒ **migrada al maestro**: [[INMO:L-14]]
 ### L-15 — Windows: `wrangler dev` deja un `workerd.exe` huérfano que bloquea `dist/` (`EPERM` en el siguiente build)
 ### L-16 — Primer deploy a Cloudflare Workers: registrar el subdominio `workers.dev` ANTES (falla en CI no-interactivo)
 ### L-17 — Decodificar el REST de Firestore: mapas/arrays VACÍOS y despacho por clave
