@@ -1,11 +1,11 @@
 {
-  "version": "1.27.0",
-  "date": "2026-08-31",
+  "version": "1.28.0",
+  "date": "2026-09-01",
   "files": {
-    "brain-check.mjs": "7ee6251c8dc51f21cce9d4d42ce3b5bd98314dd07bf471ce2cf6caebf63e6956",
+    "brain-check.mjs": "08c3ec3971b2cc1dc2ac8db114905bf3c87b20160fdc225782e9f4e8ceae4721",
     "brain-diff.mjs": "3b99d025e23109019d68898ba9c020ef6d98ffccd01bb9aba5357f57ab191e08",
     "brain-index.mjs": "cafcab9e57fd5659ac845917e4ad77449a3303ded65a1adb23ae3c909b518b8d",
-    "session-handoff.mjs": "f3a80e7536a75144b2082c0d0b9f504cda7a0db734018244f7c0e49fe19b62db",
+    "session-handoff.mjs": "f1070c83b85bf1768f37af6f70adcf674e20720b6d718a667ad93538ca90fcab",
     "brain-archive.mjs": "2490c1d354881b6d2e33e78fb80f36c7c26b39f4e01a8ac9f64a5f9e33f2e9f8"
   }
 }

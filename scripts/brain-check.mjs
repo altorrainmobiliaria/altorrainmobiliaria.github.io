@@ -31,7 +31,7 @@
 //       (el ✅ INMERECIDO, §120) · (26) trinquete de filas gordas del índice
 //       + 7b) bóveda: commits ≠ origin vía fs [warn]
 // ===========================================================
-const KERNEL_VERSION = '1.27.0';
+const KERNEL_VERSION = '1.28.0';
 import { readFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { homedir } from 'os';
 import { join, dirname } from 'path';
@@ -1051,6 +1051,31 @@ else {
     else if (ageH > 48)
       info(`canario en reposo: marker de hace ${ageH === Infinity ? "nunca" : Math.round(ageH) + "h"}${soloKernel ? ` — las ${posteriores.length} entrada(s) de git posteriores son SOLO distribución de kernel (no es trabajo en este repo, §216.9)` : trabajandoAqui ? " (mantenido desde otra sesión: el pre-commit sí corre)" : " y sin actividad git posterior"}`);
     else ok(`canario vivo (marker de hace ${Math.round(ageH)}h)`);
+  }
+}
+
+// 30) 🚩 El TOKEN de consolidación: ¿la orden se CUMPLE, o solo se dispara? (v1.28.0 · §291) [--full]
+//     La medición D8a dejó claro que «el hook disparó» es la métrica del gate que miente: PreCompact
+//     llevaba 44 días emitiendo un JSON que el harness rechazaba en la raíz — 0/15 entregas, y 13 de
+//     los 15 fallos sin UNA sola línea visible. Lo que se mide aquí no es el disparo sino la VIDA del
+//     pendiente que dejó: el flag nace en PreCompact, se convierte en orden en el SessionStart y solo
+//     lo mata un commit a docs/10 o docs/99 (pre-commit).
+//     INFORMA y NO bloquea, a propósito: un flag viejo no es un defecto del repo que alguien pueda
+//     arreglar editando un fichero — es la evidencia de que la orden se ignoró, y cortarle el commit
+//     a quien por fin viene a consolidar sería castigar justo el comportamiento que se quiere.
+head('\n30) Token de consolidación pendiente (¿se cumple la orden del PreCompact?):');
+if (BOOT) head('  ⏭️  omitido en --boot (el propio SessionStart ya inyecta la orden, si la hay)');
+else {
+  const flagP = join(DOCS, '.consolidacion-pendiente');
+  if (!existsSync(flagP)) ok('sin consolidación pendiente (nadie compactó sin consolidar)');
+  else {
+    const txt = read(flagP);
+    const ts = (txt.match(/^ts=(.+)$/m) || [])[1];
+    const hd = (txt.match(/^head=(.+)$/m) || [])[1] || '?';
+    const ageH = ts && !isNaN(new Date(ts)) ? (Date.now() - new Date(ts)) / 3.6e6
+                                            : (Date.now() - statSync(flagP).mtimeMs) / 3.6e6;
+    if (ageH > 24) info(`⚠️ consolidación PENDIENTE desde hace ${Math.round(ageH)}h (corte en ${hd}): la orden del SessionStart lleva más de un DÍA sin cumplirse. Pon al día docs/10 y consolida a docs/99 — el flag muere solo al commitearlos. No bloquea a propósito: su VIDA es la métrica (§291).`);
+    else info(`consolidación pendiente de hace ${ageH.toFixed(1)}h (corte en ${hd}) — se cierra commiteando docs/10 o docs/99.`);
   }
 }
 

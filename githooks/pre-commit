@@ -56,4 +56,18 @@ fi
 # 🔒 El candado del boot y el canario 🐤 SUBIERON AL KERNEL en v1.8.0 (ADR §81): hoy son los
 # chequeos #2 y #24 de brain-check.mjs (arriba), bloqueantes en los 4 repos. El antiguo
 # scripts/boot-gate.mjs instance-side se retiró en el mismo cambio (one-in-one-out).
+
+# ── 🚩 El TOKEN de consolidación se CIERRA aquí (§291) ──────────────────────────
+# El hook PreCompact deja `docs/.consolidacion-pendiente` y el SessionStart siguiente
+# lo convierte en una orden ⛔ al arrancar. Esta es la otra punta: si el commit lleva
+# `docs/10-*` o `docs/99-*`, la consolidación OCURRIÓ y el token muere. Va al final
+# a propósito — después de brain:check— porque un gate en rojo aborta el commit y el
+# pendiente tiene que sobrevivirlo.
+# 🎯 Lo que se mide con esto NO es «el hook disparó» (0/15 entregas en 44 días y nadie
+# se enteró) sino un pendiente que SE CIERRA; el chequeo #30 vigila los que envejecen.
+if echo "$staged" | grep -qE '^docs/(10|99)-' && [ -f docs/.consolidacion-pendiente ]; then
+  rm -f docs/.consolidacion-pendiente
+  echo "🚩 consolidación PENDIENTE cerrada — docs/.consolidacion-pendiente borrado por este commit."
+fi
+
 exit 0
