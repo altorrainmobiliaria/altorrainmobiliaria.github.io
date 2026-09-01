@@ -13777,3 +13777,140 @@ dos ramas del #30 y el ciclo entero a mano) · [[L-65]] (ejecutar la rama que ca
   barata y honesta — el `head=` queda escrito para poder afinarlo sin cambiar el mecanismo.
 - 🟠 **`38a` queda al 99 %** (12224c/12400, 176c de margen). Entra en la deuda de TODO-50 como los otros
   16 nodos ≥90 %: la lección cabía, la siguiente no.
+
+## 292. ADR-292 — Kernel v1.29.0: el `\b` que casaba detrás de los dos puntos y resolvía la lección equivocada EN VERDE
+
+Prerequisito que declaró el **ENSAYO-ROLLBACK-F2** (bóveda, D9.4) para poder arrancar el **lote 1** del
+programa CEREBRO MAESTRO: *«v1.29 PRIMERO… el lote 1 no arranca hoy, arranca después de v1.29 — y no
+porque el mecanismo falle, sino porque un paso administrativo de tres líneas del §1.2 haría mentir al
+gate»*. El §1.2 de `F2-DISENO.md` obliga a **cualificar** toda cita cross-repo (`[[INMO:M-25]]`), y el
+§6 encarga al kernel de los repos que las **IGNORE**: quien las valida es el linter del maestro, no el
+repo. Lección portable: [[L-74]].
+
+### 292.1 — Causa raíz (leída en el código, no supuesta)
+
+`kernel/brain-check.mjs` línea 441 de v1.28.0, la que construye la tabla de refs USADAS del chequeo #5b:
+
+```js
+const referenced = new Set([...allBrain.matchAll(/\b([LM]-\d{2,})\b/g)].map((m) => m[1]));
+```
+
+`\b` es un **límite**, no un separador semántico: `:` es carácter no-palabra, así que entre `CARS:` y
+`L-01` **hay** frontera y el gate leía `L-01` a secas. Dos consecuencias, y la segunda es la grave:
+
+| cita cualificada | qué hacía v1.28.0 | gravedad |
+|---|---|---|
+| `[[BERS:L-84]]` — número que NO existe aquí | inventaba un colgante | ⚠️ **ruido**: se ve |
+| `[[CARS:L-01]]` — número que TAMBIÉN existe aquí | lo resolvía contra el `L-01` **de este repo**, que habla de otra cosa, y estampaba ✅ | 🎭 **mentira**: su verde es idéntico al verde correcto |
+
+🎯 **Y `L-01` significa cuatro cosas distintas en los cuatro repos** — que es literalmente el motivo por
+el que el §1.2 inventó el namespacing. Meter eso en producción sería escribir una mentira DENTRO del
+gate que vigila el namespacing, en la semana en que el namespacing se estrena.
+
+**Segundo sitio, que el ensayo no nombró.** El encargo pedía grepear el patrón antes de dar por hecho que
+era una sola línea. Lo era en la 441 — pero el **mismo `\b`** vivía en el 5c (tombstones), esta vez
+dentro de un `new RegExp` construido por ID y aplicado a los nodos VIVOS. Medido aquí: una cita
+`[[BERS:L-05]]` en `10` acusaba a la `L-05` ⚰️ de ESTE repo (escenario E5, abajo). *Un arreglo puesto solo
+donde dolió deja el fallo vivo en el gemelo.*
+
+### 292.2 — Solución estructural
+
+Lookbehind negativo en **los dos** sitios: `(?<![A-Z]{2,}:)` antes del `\b`. Una ref cualificada deja de
+ser una ref de este repo — se delega en el maestro, que es su dueño (F2-DISEÑO §6).
+
+**Por qué `{2,}` y no `{4}` ni `{2,6}`** (la spec del ensayo proponía `^[A-Z]{4}:`): los cuatro prefijos
+de `origenes.json` miden 4 (INMO/CARS/BERS/INSE; `G` es la serie nativa del maestro y nunca antecede a un
+`L-`/`M-`), pero un quinto repo con otra longitud volvería a mentir **en verde**, que es justo lo que
+este parche cura. Y el tope superior se midió y **no existe**: en un lookbehind, `{2,6}` casa igual
+contra `MAESTRO:` porque le basta el sufijo `ESTRO:` (escenario N4). Publicar un `6` que no rechaza nada
+sería un número que no significa lo que parece ([[L-58]]), así que se escribe abierto.
+
+### 292.3 — No regresión
+
+- **97/97 refs** L-/M- intactas durante la prueba de no-regresión (misma cifra que antes del parche);
+  el estado FINAL de este lote es **98/98** — el +1 es la propia [[L-74]], que nace definida y citada.
+  292 ADRs indexados y `brain:check` **CEREBRO SANO**.
+- **Cero refs cualificadas existentes** en los cuatro repos: barrer `docs/` + `CLAUDE.md` de INMO, CARS,
+  BERS e INSE buscando `PREFIJO:ID` devuelve **0 líneas**. El parche no puede cambiar hoy el veredicto de
+  nadie: solo cambia el de mañana.
+- IDs, funciones y callsites intactos; el cambio es **aditivo** (un lookbehind y un comentario).
+- **Prueba negativa de la exclusión** (regla 5 de [[L-64]]): con el parche puesto, un ID pelado inexistente
+  sigue saliendo COLGANTE —solo, o mezclado en la misma línea con una cita cualificada— y el denominador
+  no se mueve. La exclusión no se está tragando refs reales.
+
+### 292.4 — Verificación (los cuatro escenarios del ensayo + el quinto que apareció)
+
+Banco: copia scratch de `docs/` + `CLAUDE.md` + `scripts/` de este repo, inyectando la cita en `10`
+(nodo que el #5 sí escanea) y corriendo el **linter real**, no una reimplementación. La sonda que
+imprime el token extraído **lee el regex del propio kernel** en vez de copiarlo: un instrumento que
+copia el patrón puede mentir igual que el gate ([[M-05]]).
+
+| escenario | v1.28.0 | v1.29.0 |
+|---|---|---|
+| E0 control (nada inyectado) | ✅ 97/97 | ✅ 97/97 |
+| E1 `[[L-08]]` pelado, propio | ✅ 97/97 (resuelve) | ✅ 97/97 (resuelve) |
+| E2 `[[INMO:L-08]]` cualificada, prefijo propio | ✅ 97/97 (la lee `L-08`) | ✅ 97/97 **IGNORADA** |
+| E3 `[[BERS:L-84]]` cualificada, nº ajeno | ⚠️ **COLGANTE inventado** | ✅ 97/97 **IGNORADA** |
+| E4 `[[CARS:L-01]]` cualificada, nº en colisión | ✅ 97/97 — **✅ MENTIROSO** | ✅ 97/97 **IGNORADA** |
+| E5 `[[BERS:L-05]]` cualificada sobre lección ⚰️ | ⚠️ **nodo VIVO cita lección ⚰️: L-05** | ✅ sin citas |
+
+Sonda del token extraído (E4 es el caso que el veredicto del gate **no** distingue):
+
+```
+v1.28.0  /\b([LM]-\d{2,})\b/g            v1.29.0  /(?<![A-Z]{2,}:)\b([LM]-\d{2,})\b/g
+  [[L-08]]      -> L-08                    [[L-08]]      -> L-08
+  [[INMO:L-08]] -> L-08                    [[INMO:L-08]] -> (nada)
+  [[BERS:L-84]] -> el nº ajeno             [[BERS:L-84]] -> (nada)
+  [[CARS:L-01]] -> L-01   <- la mentira    [[CARS:L-01]] -> (nada)
+  [[BERS:L-05]] -> L-05                    [[BERS:L-05]] -> (nada)
+```
+
+🎯 **Verificación en vivo, no de laboratorio**: este mismo ADR escribe `[[BERS:L-84]]` y `[[CARS:L-01]]`
+en `99`, que **sí** entra en el barrido del #5. Bajo v1.28.0 este texto habría puesto el gate en rojo
+por esa cita ajena y habría contado `L-01` como cita local. Que el linter siga sin colgantes con estas
+líneas dentro ES la prueba de que el parche funciona sobre contenido real, no sobre un banco.
+
+🎯 **Y el gate impone algo más, que se descubrió escribiendo esto**: este ADR **no puede escribir ese ID
+ajeno PELADO**. Lo intentó —tres veces, para citar la salida del ⚠️— y el #5 lo cazó al instante, porque
+`99` está dentro de su barrido. *La documentación de un colgante vive DENTRO del gate que lo vigila*, así
+que el número ajeno aparece aquí siempre cualificado. El mismo parche que lo hace decible es el que lo
+obliga a llevar prefijo.
+
+Scratch borrado al cerrar; el repo quedó sin rastro ajeno al lote.
+
+### 292.5 — Anti-patterns evitados
+
+- **Arreglar donde dolió** en vez de en el patrón: se grepeó el kernel entero antes de tocar, y apareció
+  el segundo sitio (5c) que el ensayo no había visto.
+- **Copiar el regex a la sonda**: se extrae del fichero bajo prueba, así que la sonda no puede quedarse
+  midiendo la versión vieja.
+- **Fiarse del veredicto**: E4 da ✅ en las dos versiones; sin la sonda del token, el parche sería
+  indistinguible de no haber hecho nada ([[L-58]], [[L-72]]).
+- **Publicar un número decorativo**: `{2,6}` se midió y se descartó por no rechazar nada.
+- **Green-tuning**: cero severidades tocadas, cero topes subidos ([[M-05]]).
+
+### 292.6 — Archivos
+
+**Modificados** — bóveda: `kernel/brain-check.mjs` (+18/−3), `kernel/VERSION` (1.28.0→1.29.0),
+`brain-kit/kernel/scripts/brain-check.mjs` y `brain-kit/kernel/VERSION` (espejo byte a byte, chequeo #3
+de la bóveda en verde), `cerebro-maestro/BITACORA.md`. Repo: `scripts/brain-check.mjs` +
+`scripts/.kernel-version.json` (vía `npm run brain:pull`), `docs/30-LECCIONES.md`,
+`docs/38-GATES-QUE-MIENTEN.md`, `docs/99-HISTORIAL-ADR.md`, `docs/00-INDICE.md`.
+
+**INTACTOS y verificados**: `CLAUDE.md`, `docs/05-ESTADO-GLOBAL.md` y `docs/10-MEMORIA-CORTO-PLAZO.md`
+(boot ajustado — la orden del encargo era no tocarlos), `docs/.brain-manifest.json` (ningún tope se
+movió), los otros cuatro scripts del kernel, y **los tres repos hermanos**: jalan v1.29.0 en sus propias
+sesiones, como manda el reparto.
+
+### 292.7 — Doctrina aplicada
+
+§3.3 (leer el código antes de afirmar: el defecto se citó por línea y se reprodujo antes de tocarlo) ·
+§3.4 IAP · [[L-46]] (scripts a fichero: cada parche se aplicó con anclas en ficheros de texto y **abortaba
+si el ancla no aparecía exactamente una vez** — dos abortos reales evitaron una edición a ciegas) ·
+[[M-06]] (probar el defecto inyectado, no el código leído) · [[L-64]] regla 5 (toda exclusión con su
+prueba negativa) · §G.4 captura ([[L-74]] en `38`) y reparto (`brain:pull` solo aquí; el chequeo #3 de
+la bóveda vigila el espejo del kit).
+
+**Lo que este ADR NO cubre**: el linter del maestro (§6 de F2-DISEÑO) sigue sin existir — el parche
+DELEGA la validación de las citas cualificadas en un dueño que aún no está escrito, así que hoy nadie
+las valida; es deliberado y es del lote 1. Y los hermanos siguen en v1.28.0 hasta que cada uno tire.
