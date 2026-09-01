@@ -35,7 +35,7 @@
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **rail de pago completo, probado contra el emulador** (§166-§187). ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
 | **TODO-50** | 🧱 **CEREBRO LLENO** — §289 REABRIÓ la vía de escritura: nacen `33a` y `38a`, y las 5 lecciones que esperaban ya están dentro (`33` 89 % · `38` 97 % · `37` con 6 líneas). ⏭ Siguen clavadas `50` · `34` (70/70 L) · `31` · `35` · `44` · `05`, y el BOOT en **49c**. ⛔ Subir techo prohibido ([[M-05]]). | 🟡 mío | §289 |
-| **TODO-51** | 🧠⇪ **PROGRAMA CEREBRO MAESTRO** (mandato 31-ago): de 4 cerebros a UNO global, recuerdo MECANIZADO, backup restaurable. Plan → `../brain-private/cerebro-maestro/MEGA-PLAN.md`. **F0/F1 ✅**. **F2: NO-GO del comité** (12 mandatos → `../brain-private/cerebro-maestro/DICTAMEN-F2.md`); F0-bis casi ✅ (§290; falta D8a) → F0-ter → F4. | 🔴 Fable+Opus | plan |
+| **TODO-51** | 🧠⇪ **PROGRAMA CEREBRO MAESTRO** (mandato 31-ago): de 4 cerebros a UNO global, recuerdo MECANIZADO, backup restaurable. Plan → `../brain-private/cerebro-maestro/MEGA-PLAN.md`. **F0/F1 ✅**. **F2: NO-GO del comité** (12 mandatos → `../brain-private/cerebro-maestro/DICTAMEN-F2.md`); F0-bis ✅ (§290 · D8a: PreCompact 0/15) → F0-ter → F4. | 🔴 Fable+Opus | plan |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea. | ⏸️ 28/92 | §87 · `43` |
 
 ---
