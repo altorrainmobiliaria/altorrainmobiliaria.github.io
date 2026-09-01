@@ -14146,3 +14146,110 @@ que el barrido del #9 **ya baja de nivel** y no hubo que ampliarlo. Cuando D7-te
 el lote 5, que se come los ~577c libres), el instrumento está probado. La decisión de CÓMO partirlo
 —sub-carpeta, que cuesta el salto; o tema hermano, que cuesta una fila en un `00-INDICE-GLOBAL` con
 71c libres— queda **para Fable, con los números delante**.
+
+## 295. ADR-295 — Lote 5 del maestro: veinte más, el índice del maestro se PARTE y el del repo estrena su octavo shard
+
+> Segundo lote de la escala nueva y segundo **mono-repo a propósito** (misma razón que §294: el
+> estado ABORT revierte el lote entero, y veinte piezas de un solo repo caben en un `revert` en un
+> sitio). Cola del `CENSO-MASIVO.md`: quedaban 230; quedan 210.
+
+**295.1 Causa raíz.** Dos muros distintos, y ninguno es «el cerebro engordó»:
+
+**(a) En este repo, dos hojas hijas estaban rozando su tope con material que no es de aquí.**
+Medido antes de tocar nada: `38-GATES-QUE-MIENTEN` a **15218c de 15270** (99,7 %: 52 caracteres) y
+`39-ESCRITO-NO-ES-VIGENTE` a **8606c de 9000** (96 %). Ninguna de las dos habla de inmuebles: hablan
+de gates que dan verde sin mirar y de la distancia entre lo escrito y lo desplegado — la clase de
+conocimiento que el criterio §3.1 del `F2-DISENO` llama TRANSFERIBLE. La saturación no se cura
+podando lo que sí es de aquí: se cura sacando lo que nunca fue de aquí.
+
+**(b) En el maestro, el índice por temas ya no aguantaba una lista.** `maestro/indice/plataforma-nube.md`
+tenía **577c libres** (3423c/4000) con 15 filas, y el lote traía cinco de Firebase y cuatro de nube.
+§294 midió que NO rebosaba y por eso no lo shardeó; §295 mide que **sí** rebosaría, y por eso lo parte.
+
+**295.2 Solución estructural.** Tres movimientos:
+
+**(a) Veinte piezas al maestro**, en el orden EXACTO de la cola del censo:
+`L-30` · `L-32` · `L-33` · `L-34` · `L-35` · `L-36` · `L-38` · `L-39` · `L-41` · `L-43` · `L-45`
+(cuerpo directamente en `30`) · `L-37` · `L-47` · `L-50` · `L-51` (en `36`) · `L-40` · `L-42` · `L-44`
+(en `39`) · `L-48` (en `38`) · `L-49` (en `35`). Mecanismo sellado de §293/§294: fichero propio en
+`maestro/lecciones/migradas/INMO/` con su línea `> Origen:`, titular con marca en `30`, stub en la
+hoja del cuerpo, y el cuerpo íntegro a `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`, que es el punto de
+retorno del ABORT.
+
+**(b) La PARTICIÓN del índice del maestro (decisión de Fable, sellada en la BITÁCORA del lote 4).**
+`plataforma-nube.md` desaparece (`git rm`) y sus 15 filas se reparten **VERBATIM** entre dos temas
+**hermanos PLANOS**: `indice/firebase.md` (Rules, Auth, Firestore/RTDB, Cloud Functions, emulador —
+10 viejas + 5 nuevas) e `indice/nube-despliegue.md` (Cloudflare, hosting/Pages, las CLI y el CI que
+despliegan — 5 viejas + 4 nuevas). **Hermanos y no sub-carpeta** porque el presupuesto de ruteo del
+D7 (mediana de saltos ≤5) se midió en el lote 4 **exactamente en 5**: un nivel más lo rompe, y un
+tema hermano no cuesta ni un salto. El precio que sí cuesta —una fila de tema nueva en un
+`00-INDICE-GLOBAL` con 71c libres— se pagó **podando su prosa redundante con el `ROUTER.md`**: 341c,
+medidos, de los que 329 salieron de una sección («Cómo leer una fila») que era el §1 del router
+reescrito. Los techos NO se movieron. El `00` del maestro queda en **2243c/2500 (89,7 %)**, por
+debajo del aviso del 90 % en el que llevaba desde el lote 3.
+
+**(c) El octavo shard de rango del índice de ESTE repo, `00h-INDICE-PRODUCTO.md`.** El mandato decía
+«financia la fila del §295 podando una fila gorda vieja». **Medido: no había ninguna.** Las 61 filas
+§NN de `00-INDICE.md` estaban TODAS por debajo del umbral de 260c del chequeo #26 (la más larga,
+§263, con 253c); las 43 «gordas» que ese gate reporta viven en los shards, donde podarlas no libera
+un byte del fichero que apretaba. Y el fichero apretaba de verdad: **23968c de 24000** — 32
+caracteres. Con la poda imposible y el techo intocable ([[M-05]]), la salida es la que el propio
+manifest lleva escrita desde `00f` y `00g`: *«si el 00 vivo vuelve a apretar, el siguiente rango es
+00h»*. §241-§280, 40 filas VERBATIM, sustituidas por una fila-puntero. El rango tiene tema propio y
+no es un cajón de sastre ([[M-05]] no aplica, pero §246 sí): es **el barrido del producto** — lo que
+la pantalla AFIRMABA y el sistema no tenía, y su gemelo, los gates puestos que no gateaban.
+
+**295.3 No-regresión.** `brain:check` **CEREBRO SANO** antes y después. El diff contra la línea base
+es **solo tamaños** más los contadores de shard: `refs L-/M- 98 usadas / 98 def` **sin moverse** —los
+veinte titulares siguen en `30`, que es la tabla de resolución del #5b—, `294 ADRs indexados` y
+`294 entradas del índice` intactos antes de escribir esta entrada. **pre-shard 15 → 13**: salen `39`
+(que baja al 48 %) y `00-INDICE` (al 63 %). El BOOT no se movió un carácter (31261c): la única línea
+de `CLAUDE.md` que cambió fue `00a`…`00g` → `00a`…`00h`, que mide lo mismo.
+
+**295.4 Verificación.** Gate D10 del lote, con los drills fríos MUESTREADOS por D10-bis (los corre
+Fable, no quien migra):
+
+| | Resultado |
+|---|---|
+| **(a) Censo sha256** | **20/20 byte-idénticas** módulo la línea de procedencia, y por **tres vías**: blob de `origin/main` · fichero del maestro · bloque del lote 5 en `_legacy/`. Normalización DECLARADA e idéntica en los tres lados: CRLF→LF + recorte de saltos en blanco al inicio y al final. El censo corre **ANTES** de escribir, en memoria, y aborta sin tocar un byte si una sola no cuadra. |
+| **(b) `brain:check` INMO** | **CEREBRO SANO** (§295.3). |
+| **(c) Colgantes ANTES/DESPUÉS ×4** | **diff vacío** en los cuatro repos, con la lógica del #5b extraída del kernel de CADA uno (INMO 98/98 · CARS 99/99 · BERS 97/97 · INSE 7/7; cero colgantes en los ocho lados). |
+| **(d) Linter de bóveda** | **12/12 en verde** (con el #11 calendario y el #12 cartera, nuevos de F6): 60 citas cualificadas (40 → 60) + **5 peladas resueltas por AMBIENTE** (3 → 5: `L-51` cita `[[L-49]]`, que migró en ESTE lote, y `L-48` cita `[[M-06]]`, que resuelve contra el titular de `30`) + 54 migradas con su `> Origen:` + 7 ficheros de ruteo bajo su tope. Avisos: 3 → 2. |
+| **(e) Descompresión** | **−21 755c en cinco nodos**, y por primera vez el que más baja no es el más gordo sino el que estaba más apretado: `39-ESCRITO-NO-ES-VIGENTE` 8606→**4291c** (del 96 % al 48 %) · `38-GATES-QUE-MIENTEN` 15218→**14360c** (del 99,7 % al 94 %: tenía 52c libres, ahora 910) · `30-LECCIONES` 34335→**21415c** (−12 920) · `36-LECCIONES-UTILLAJE` 9917→**7569c** · `35-LECCIONES-PLATAFORMA` 11252→**9938c**. Aparte, el shard `00h` libera **8809c** de `00-INDICE` (23968→15159c). |
+| **(f) Conteo de filas del índice del maestro** | **37 + 20 == 57**, verificado a máquina contra `origin/main`; las 15 filas de `plataforma-nube` están VERBATIM en los dos hermanos (0 perdidas); **0 filas de lección en el `00-INDICE-GLOBAL`**. |
+
+**295.5 Anti-patterns evitados.**
+1. **No se subió ningún techo** ([[M-05]]): ni el del `00-INDICE-GLOBAL` del maestro (se podó prosa
+   redundante), ni el de `00-INDICE.md` (se shardeó, que es lo que el manifest ya ordenaba).
+2. **No se editó un solo cuerpo migrado.** `L-47` viaja con una rareza real —su texto tiene un salto
+   de línea DENTRO de un `` `'\n'` `` entrecomillado, que es literalmente el bug que la lección
+   describe—; el censo de sha lo congela byte a byte y arreglarlo aquí habría destruido la única
+   prueba de que lo migrado es lo mismo que había. Queda anotado para su repo, no para el maestro.
+3. **No se afirmó «no cabía» sin medirlo.** La instrucción de podar una fila gorda se ejecutó como
+   medición primero: al ver que la fila más larga medía 253c y el umbral son 260, la premisa del
+   mandato quedó refutada con un número, no con una impresión ([[M-31]]).
+4. **La procedencia se tomó SIN arqueología** (regla de escala): solo lo que el titular o el cuerpo
+   ya nombran. `L-38` y `L-39` no citan ADR —y un `grep` del índice tampoco las nombra—: su línea
+   `> Origen:` lo dice así, en vez de inventar un §NN plausible.
+5. **Los scripts se escribieron con la herramienta de ficheros, no con `cat <<EOF`** ([[L-46]] regla 7).
+
+**295.6 Archivos.** MODIFICADOS: `docs/30-LECCIONES.md` (20 marcas, 11 cuerpos colapsados y el
+puntero de cabecera, que llevaba desde el lote 4 diciendo que `L-01`..`L-21` «viven COMPLETAS» en un
+sitio donde ya solo hay stubs) · `docs/35` (1 stub) · `docs/36` (4) · `docs/38` (1) · `docs/39` (3 +
+el titular propio de `L-49`) · `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (+20 cuerpos) ·
+`docs/00-INDICE.md` (−40 filas, +1 puntero, +esta) · `docs/.brain-manifest.json` (cap de `00h`) ·
+`CLAUDE.md` (una palabra: `00g`→`00h`) · `docs/99` (esto). NUEVO: `docs/00h-INDICE-PRODUCTO.md`.
+En la bóveda: 20 ficheros en `maestro/lecciones/migradas/INMO/`, `maestro/indice/firebase.md` y
+`nube-despliegue.md` NUEVOS, `plataforma-nube.md` BORRADO, y los otros tres temas + el
+`00-INDICE-GLOBAL`. **INTACTOS y verificados**: `docs/05`, `docs/10`, el kernel
+`scripts/brain-check.mjs`, `scripts/brain-check-boveda.mjs` (el linter no necesitó ni una línea: la
+D1-bis que el lote 4 estrenó absorbió los dos casos nuevos sin tocarse) y los `30` de los otros tres repos.
+
+**295.7 Doctrina aplicada.** El lote 4 dejó escrito que shardear por ritual es el gemelo de subir un
+techo por costumbre, y NO shardeó porque midió que no hacía falta. Este lote hace la operación
+inversa con el mismo criterio: shardea **dos** cosas porque midió que sí hacía falta, y en las dos
+la forma la eligió el número, no la costumbre — el índice del maestro se parte **en plano** porque la
+mediana de saltos está en el borde del gate, y el del repo se parte **por rango** porque es lo que su
+propio manifest lleva ordenado desde `00f`. La lección transferible, que va a la bóveda: *un tope que
+aprieta admite exactamente dos respuestas honestas —partir o destilar—, y cuál de las dos toca lo
+decide dónde duele el tamaño, no cuál es más cómoda.* Sin cache bump (§3.2): no se tocó código servido.

@@ -157,3 +157,182 @@ En CI no-interactivo `wrangler deploy` **sube el Worker, provisiona todo y FALLA
 **Disparador**: generas un archivo con heredoc (`python - <<'PY'`) y el contenido llega CORRUPTO sin que nada falle. **Casos, en orden de crueldad**: (a) los `\n` se vuelven salto REAL en una cadena JS → `SyntaxError`; el caso amable: se ve. (b) 🔴 **`\b` se vuelve un BYTE de retroceso (0x08), invisible**: `/\bis:global\b/` quedó `/‹0x08›is:global‹0x08›/` — **válida, y capaz de no casar NUNCA**. Pasó `node --check` y el gate dijo ✅ *sobre el mismo bug para el que fue escrito* (§130). (c) el shell se traga dólares, backticks y comillas dobles antes de que el intérprete los vea. (d) **el mismo mecanismo mutila un `git commit -m "…"`** *(§112)*: bash sustituye comandos dentro de comillas dobles, así que un identificador entre backticks intenta EJECUTARSE, falla y se sustituye por **cadena vacía** — el commit sale con ÉXITO y con un hueco donde iba la palabra.
 **Reglas**: (1) 🎯 **el disparador es UN `\` O UN `` ` `` EN LA CARGA, no «voy a generar un archivo»**: reincide sobre todo dentro de `python3 -c "…"` y en heredocs, donde bash ejecuta lo que ve y deja el hueco VACÍO. Archivada bajo «generar» no dispara en un parche de una línea ([[M-24]]). Con `\` o `` ` `` → **herramienta de ficheros**; si no, comillas simples en el `-c`. (2) Si no hay remedio: **cadena RAW** (`r'''…'''`) y delimitador entrecomillado (`<<'PY'`, nunca `<<PY`). ⚠️ **Matiz MEDIDO** (1-sep, lote 2 del maestro): entrecomillar salva de (c) —dólares y backticks— pero **NO** del colapso `\\`→`\`: ese ocurre al TRANSPORTAR el comando, antes del shell. Escapes → regla (7). (3) **Mira los BYTES** al terminar (`cat -A`) — `node --check` valida sintaxis, no intención. (4) ⚠️ En `String.replace`, la CADENA de reemplazo interpreta `$&` y `` $` `` (= «todo lo anterior al match»): usa **función** de reemplazo y el texto entra literal. (6) 🔁 **Diecisiete reincidencias en un día, correlacionadas al 100 % con UNA cosa**: pasar el texto como ARGUMENTO (`-m`, `-c`) en vez de por fichero. Tres intentos de afilar la regla fallaron enumerando casos, y siempre quedaba uno fuera. El daño no es cosmético: bash **ejecutó un `.md` como script**. 🔒 **PREVENIRLO, ningún gate** —ocurre en la llamada—, pero **DETECTARLO sí**, y esta lección afirmó lo contrario hasta el 26-ago: la palabra comida deja su espacio pegado a la puntuación (`un , que`), duplicado o al final de línea. Lo caza `githooks/commit-msg` — **1 señal en el daño real, 0 falsos en 12 commits sanos**. Llega DESPUÉS del daño, así que no sustituye la regla: impide que el hueco se publique en silencio. *Un criterio que enumera causas falla en la que no enumeraste; el DAÑO, en cambio, deja firma.*
 **Regla, sin ramas y sin juzgar si el texto «es corto» —el juicio es justo lo que falla—**: 🎯 **el texto NUNCA viaja como argumento de shell.** A un archivo, con la herramienta de edición; a un comando, por REFERENCIA a un archivo (`git commit -F fichero`, nunca `-m`). El intérprete solo para iterar, nunca para introducir texto nuevo. (5) 🎯 **Prueba que el gate MUERDA**: reintroduce el defecto, comprueba que falla, restaura. Un gate recién escrito que pasa en verde no está probado, está *sin* probar — y esa es la diferencia entre un gate y un adorno ([[M-06]], 4ª forma). ⚠️ Y **encadena la RESTAURACIÓN con `;`, nunca con `&&`**: el 26-ago la prueba afirmaba «0 coincidencias» con `grep -c`, que sale con **código 1** cuando no encuentra nada — la cadena se cortó justo antes del `cp` de vuelta y el manifest se quedó modificado, sin que nada avisara. *Si tu aserción de éxito es «cero», tu comando de éxito devuelve error.* (7) 🎯 **El script se escribe con la HERRAMIENTA de ficheros, NO con `cat <<EOF`**: el heredoc también atraviesa el shell y colapsa la contrabarra doble — así dejó inválido el kernel canónico (§219.4). Y las contrabarras que necesite el texto, con `chr(92)`.
+
+---
+
+> Lote 5 · migrado 2026-09-01 · 20 lecciones (INMO) — cuerpos de `30` · `35` · `36` · `38` · `39`.
+
+> Origen: INMO `docs/30-LECCIONES.md` (titular y cuerpo en la MISMA hoja) · pagada en INMO §33 · migrado 2026-09-01 lote 5
+
+### L-30 — ⏳ Las features del SERP MUEREN: toda regla de SEO/rich-results lleva FECHA + FUENTE PRIMARIA y se re-verifica antes de portarse *(ADR §33; verificado en prod bersaglio 2026-07-17)*
+**Disparador**: al portar aprendizajes SEO a las skills se verificó que `FAQPage` **ya no produce rich result** (deprecación TOTAL 2026-05-07, doc oficial de Google; GSC eliminó el informe FAQ) — y nuestras skills + medio internet + el material de entrenamiento pre-2026 seguían vendiendo "añade FAQPage para ganar el acordeón". El mismo corte cazó 2 doctrinas INVERTIDAS en el borrador previo (Offer-sin-price "válido" era FALSO — GSC: 17/17 inválidos; keyword en el nombre del GBP "pesa" era un consejo de SUSPENSIÓN). **Reglas**: (1) una recomendación de posicionamiento es un HECHO CADUCABLE → en skills/documentos va con **fecha de verificación + fuente primaria** (doc de Google > blogs > "siempre se hizo así"); (2) al portar conocimiento SEO entre proyectos, **re-verificar contra la doc oficial HOY**, no copiar; (3) respetar la leyenda de fiabilidad del origen (✅ verificado / ⚠️ corrige / 🚫 peligro / ❓ hipótesis): **lo no medido se porta como HIPÓTESIS, jamás como regla** — una skill que afirma de más es la fuente de verdad de todos los sitios futuros; (4) pariente de L-29: contar contra la fuente aplica también a las FUENTES (el borrador del 07-10 afirmaba cosas que producción desmintió el 07-17).
+
+> Origen: INMO `docs/30-LECCIONES.md` (titular y cuerpo en la MISMA hoja) · pagada en INMO §42 · migrado 2026-09-01 lote 5
+
+### L-32 — 🪤 En Ads Manager multi-marca, los DEFAULTS traen la marca hermana: verificar página/número/identidad ANTES de seguir *(montaje HUMO, ADR §42, 2026-07-18)*
+**Disparador**: al crear el conjunto CTWA, Meta preseleccionó la página **"Altorra Cars Usados"** y su WhatsApp (+57 333 2666647) — el usuario personal de Daniel administra ambas marcas y Ads Manager defaultea a "una página tuya", no a la del negocio dueño de la cuenta. Publicar así habría pauteado inmobiliaria hacia el chat de CARS. **Regla**: en CADA campaña nueva, verificar EXPLÍCITAMENTE página + número + identidad IG contra `activos-meta.md` antes del Siguiente; el número correcto salta SOLO al corregir la página. Bonus del mismo montaje: los radio-clicks de Meta a veces NO registran (verificar con zoom antes de avanzar) y el listbox de edad ignora scroll/teclado sintético (escalera: clic a lo visible → reabrir).
+
+> Origen: INMO `docs/30-LECCIONES.md` (titular y cuerpo en la MISMA hoja) · pagada en INMO §55 · migrado 2026-09-01 lote 5
+
+### L-33 — 🗺️ Astro v6+/@astrojs/cloudflare v14: `Astro.locals.runtime.env` fue REMOVIDO → `import { env } from 'cloudflare:workers'`; y maplibre-gl v6 = named exports (sin default) *(TODO-30, ADR §55, cazado EN VIVO)*
+**Disparador**: una ruta SSR que lee un binding (R2/KV) desde `locals.runtime.env.X` devuelve **500** en runtime (no lo cazan build/tsc/tests — el getter existe pero LANZA). El stack lo dice literal: *"Astro.locals.runtime.env has been removed in Astro v6. Use 'import { env } from \"cloudflare:workers\"' instead."* **Causa**: en @astrojs/cloudflare v14 (Astro 7) los bindings ya NO viven en `locals.runtime.env`; la vía vigente es el **módulo virtual workerd** `cloudflare:workers` (`import { env } from 'cloudflare:workers'` → `env.R2_MEDIA`), externalizado por el CF vite plugin (funciona en `astro dev` y build). **Fix**: importar `env` de `cloudflare:workers`; los tipos salen de `worker-configuration.d.ts` (`npm run cf-types` = `wrangler types`; gitignored por convención). **Gotcha hermano del mismo montaje**: **maplibre-gl v6 dejó de exportar `default`** → `import maplibregl from 'maplibre-gl'` rompe el build (`"default" is not exported`); usar named: `import { Map, Marker, LngLatBounds, addProtocol } from 'maplibre-gl'`. **Regla (pariente de L-14/L-19)**: en este stack que corre rápido, el acceso a bindings y los imports de libs se VERIFICAN contra el stack real (leer el stack del 500, `grep` los exports del `.mjs`), no de memoria; y el reflejo caza-bugs sobre el CAMINO VIVO (fetch a la ruta) cazó el 500 que 4 gates verdes (build/check/verify/tests) no vieron.
+
+> Origen: INMO `docs/30-LECCIONES.md` (titular y cuerpo en la MISMA hoja) · pagada en INMO §55.9 · migrado 2026-09-01 lote 5
+
+### L-34 — 🧊 Cloudflare Workers Static Assets IGNORA el header `Range` (200 + archivo entero) — mata pmtiles y todo lo que lea por rangos; y `astro dev` SÍ honra Range → **paridad dev↔prod FALSA** *(TODO-30, ADR §55.9, cazado en PROD por Daniel)*
+**Disparador**: un `.pmtiles` (o cualquier binario que se lea por HTTP-range: pmtiles, algunos video/PDF viewers) servido como **asset estático** en Cloudflare Workers funciona en `astro dev` pero **NO en staging/prod** — el mapa queda en su fallback, sin error visible. **Causa**: **Cloudflare Static Assets NO soporta range-requests**: un `GET Range: bytes=0-99` devuelve **200 + el archivo COMPLETO** (no 206 + 100 bytes). pmtiles.js pide pedacitos (header→directorio→tiles) y con el archivo entero cada vez, falla/no carga. `astro dev` (workerd+vite) SÍ devuelve 206 → **el bug es INVISIBLE en dev** (paridad dev↔prod rota — como L-14/L-18, verificar en la infra REAL). **Fix**: servir el binario por una **ruta Worker** que lea el asset por el binding `ASSETS` (`env.ASSETS.fetch`) y **troceé el rango** (206 + `Content-Range`), o desde **R2** (`bucket.get({range})` sí honra Range nativo). Cache module-scope del buffer = OK si es inmutable. **Verificación sin poder renderizar**: leer el archivo con la MISMA librería (pmtiles.js: `getHeader()`+`getZxy()`) apuntada a PROD prueba servicio+rangos+archivo end-to-end. **Portátil** a cars/bersaglio y a cualquier binario range-served en CF.
+
+> Origen: INMO `docs/30-LECCIONES.md` (titular y cuerpo en la MISMA hoja) · pagada en INMO §58 · migrado 2026-09-01 lote 5
+
+### L-35 — 🏁 Un rebuild IDEMPOTENTE no basta: dos ejecuciones concurrentes leen snapshots DISTINTOS y la vieja puede aterrizar de última *(catálogo §58; portable a todo derivado/materialized view)*
+**Disparador**: cualquier proceso que reconstruye un agregado (índice, contador, vista materializada, caché denormalizada) desde el estado vivo y lo escribe completo — disparado por eventos (`onWrite`) que pueden solaparse. **Trampa**: "el rebuild es idempotente/determinista, así que las carreras no importan" es **FALSO**. Idempotente = mismo INPUT → mismo output. Pero dos rebuilds concurrentes NO comparten input: A lee el estado en T1, B lee en T2>T1; si A es lento y escribe DESPUÉS de B, el agregado queda con datos VIEJOS y **nada lo delata** (la escritura fue "exitosa", el `_version` subió). Una transacción tampoco lo cubre: protege la atomicidad del doc, no la frescura del snapshot que traes de fuera. **Fix**: sellar cada rebuild con el timestamp de SU snapshot y, dentro de la transacción, **NO escribir si el doc ya tiene un sello MÁS NUEVO** (guarda anti-adelantamiento; el resultado se reporta como "omitido: adelantado", no como éxito silencioso). ISO-8601 UTC compara lexicográfico = cronológico, así que basta un `>`. **Regla hermana**: la query pesada va FUERA de la transacción (leer miles de docs dentro es inviable) — por eso mismo aparece la ventana de carrera que la guarda cierra. **Verificarlo así**: sembrar el doc con un sello FUTURO y comprobar que el rebuild NO lo pisa (test determinista, sin depender de temporización real).
+
+> Origen: INMO `docs/30-LECCIONES.md` (titular y cuerpo en la MISMA hoja) · pagada en INMO §59 · migrado 2026-09-01 lote 5
+
+### L-36 — 🧩 Rellenar un `<template>` clonado: el placeholder VACÍO no crea nodo de texto, y una excepción a mitad deja la UI VIEJA en pantalla — coherente por fuera, mentirosa por dentro *(SERP §59)*
+**Disparador**: patrón "markup con un dueño" (renderizar el componente dentro de un `<template>` y clonarlo en JS para pintar datos dinámicos) — bueno contra la divergencia (L-29), pero con dos trampas. **(1) El molde no tiene lo que no renderizaste**: un prop `price=""` NO emite nodo de texto ⇒ código tipo "busca el nodo de texto y reemplázalo" cae a la rama de inserción; y si ANTES eliminaste el nodo que usas como referencia (`insertBefore(nuevo, sufijoYaEliminado)`) → **`NotFoundError`**. **Fix**: reconstruir el subárbol de forma DETERMINISTA (limpiar nodos de texto, insertar, y ELIMINAR opcionales AL FINAL — nunca usar como referencia algo ya removido); `insertBefore(nodo, null)` = append, así que un opcional ausente no rompe. **(2) 🎯 El fallo parcial es el peligroso**: la excepción ocurrió DESPUÉS de actualizar el contador y quitar "Cargar más", pero ANTES de reemplazar las cards ⇒ la página quedó mostrando **4 cards de DEMO bajo un titular de "3 propiedades"**: sin error visible, sin caja rota, y con datos VIEJOS presentados como nuevos. Ningún gate lo caza (build/tsc/tests pasan; el screenshot "se ve bien"). **Reglas**: (a) en un render por lotes, `try/catch` POR ÍTEM — uno malo no puede tumbar el conjunto; (b) si NADA se pudo construir, mostrar estado de error EXPLÍCITO en vez de dejar lo anterior; (c) ordenar las mutaciones para que el estado visible cambie AL FINAL (o todo o nada); (d) verificar el camino vivo con datos reales y **contar** (3 ítems → 3 cards), no mirar si "se ve bien" (L-29).
+
+> Origen: INMO `docs/36-LECCIONES-UTILLAJE.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §89 · migrado 2026-09-01 lote 5
+
+### L-37 — 🎨 Los enlaces de Claude Design CADUCAN al re-guardar *(§89)*
+El mockup se trae por MCP, nunca por URL guardada: apunta a una versión que deja de existir.
+
+> Origen: INMO `docs/30-LECCIONES.md` (titular y cuerpo en la MISMA hoja) · su titular NO cita ADR (solo «2026-08-20, portal») y un grep del índice no la nombra · migrado 2026-09-01 lote 5
+
+### L-38 — 🖼️ `srcset` puede EMPEORAR el peso cuando la MISMA foto sirve a huecos de tamaños dispares *(2026-08-20, portal)*
+
+**Disparador**: la pizarra pedía «optimizar imágenes del portal a WebP <150KB». Al medir, el diagnóstico era viejo: **ya eran WebP** (10 archivos, 1.4 MB) y no había JPG. Se montó `srcset` en 66 huecos con variantes 480/800/1200w… y **el peso SUBIÓ**: desktop **+63%**, móvil **+21%**. **Causa**: el portal usa **7 fotos demo reutilizadas en 66 huecos** de tamaños muy distintos (un hero de 1265px y una card de 300px comparten archivo) ⇒ el navegador baja **2-3 variantes del MISMO archivo** en vez de una sola, y la fragmentación cuesta más que lo que ahorra el tamaño. **Reglas**: (1) `srcset` gana cuando cada imagen se usa en **1-2 tamaños** (catálogo real, 1 foto por ficha) — con imágenes compartidas hay que MEDIR antes/después y estar dispuesto a NO aplicarlo; (2) lo que gana **siempre y sin fragmentación** son los **logos/íconos** pintados siempre pequeños (el emblema de 248px que se pinta a 30px bajó 33 KB → 8 KB, −76%, en todas las páginas); (3) **recomprimir un WebP ya lossy no da nada** (a ~40 dB PSNR el peso queda igual) y **AVIF desde un WebP lossy pesa MÁS** (518 KB vs 438 KB): la ganancia de formato exige el ORIGINAL sin pérdidas, que no está en el repo; (4) 🎯 **la trampa de medición**: forzar `loading="eager"` para "ver todo cargado" hace que los slides ocultos de un carrusel elijan variantes con anchos equivocados — dio un falso **−78%**. Mide con el layout REAL o calcula la elección de forma determinista (`ancho_css × dpr` → primer candidato ≥ ese valor). Se revirtió todo salvo el emblema; el helper `portal/src/lib/img.ts` conserva el hallazgo y las condiciones para reactivarlo en el cutover.
+
+> Origen: INMO `docs/30-LECCIONES.md` (titular y cuerpo en la MISMA hoja) · su titular NO cita ADR (solo «2026-08-20, TODO-30») y un grep del índice no la nombra · migrado 2026-09-01 lote 5
+
+### L-39 — 🕵️ `document.visibilityState:"hidden"` congela el `rAF` → un mapa que NO carga por eso PARECE un bug de librería, con evidencia falsa incluida *(2026-08-20, TODO-30)*
+
+**Disparador**: el `05` decía «mapa real MapLibre… **falta solo la vista en foreground**» y quise saltarme ese "lo confirma Daniel" auditando el mapa yo mismo por la extensión de Chrome. El mapa mostraba el ESQUEMÁTICO y el contenedor nunca recibía `.is-live` ⇒ **concluí, y llegué a DOCUMENTAR, que «el basemap nunca ha pintado»**. **Era FALSO.** La pestaña estaba `hidden` (la ventana de Chrome no al frente, aunque fuese la única): Chrome congela `requestAnimationFrame`, MapLibre **nunca completa la carga del estilo**, y de ahí en cascada: no pide tiles, no emite `sourcedata`, no va a `.is-live`. **El error que capturé —«There is no tile manager with ID 'protomaps'»— era CONSECUENCIA, no causa.** **Lo que delató la trampa**: probar un estilo **sin ninguna fuente** (solo un `background`) — tampoco cargaba, así que el problema no podía ser pmtiles ni el estilo; y `document.visibilityState` lo confirmó en una línea. **🚫 Callejones (probados y revertidos)**: pmtiles→4.5.0 · maplibre→6.4.1 · maplibre→**5.24.0** · `Protocol().tilev4`. Que el MISMO error saliera en v5 y en v6 fue la primera señal de que la librería no era la culpable — la ignoré una vez. **Reglas**: (1) antes de culpar a una librería, **comprueba `document.visibilityState`/`document.hidden`** en cualquier auditoría de canvas/WebGL/animación automatizada; (2) **bisecciona hacia abajo hasta el caso mínimo** (estilo sin fuentes) antes de tocar dependencias — habría ahorrado 4 intentos; (3) si el mismo síntoma sobrevive a dos versiones mayores distintas, **la hipótesis es errónea**, no la versión; (4) 🎯 **cuando el cerebro dice "esto lo confirma el dueño", hay una razón**: saltárselo produjo un diagnóstico falso con evidencia que PARECÍA sólida. TODO-30 sigue necesitando la mirada de Daniel con la ventana al frente. **Lo que SÍ queda**: el fallback ya no es mudo (§L-39b abajo).
+
+**L-39b · el fallback silencioso**: `map.on('error')` estaba VACÍO a propósito («degradación silenciosa»). Sin él, el diagnóstico anterior habría sido imposible: **un fallback sin telemetría no degrada, OCULTA**. Corregido — grita en DEV, calla en PROD — + sonda `__altorraMap` (solo DEV). Esta parte es válida y quedó en `caza-bugs §4b`.
+
+> Origen: INMO `docs/39-ESCRITO-NO-ES-VIGENTE.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §94 · migrado 2026-09-01 lote 5
+
+### L-40 — 🚪 «Gateado por el dueño» merece releerse: el gate puede estar en UNA PARTE del alcance, no en todo *(2026-08-21, ADR §94)*
+**Disparador**: un ítem lleva meses etiquetado como bloqueado por un dato que solo tiene el dueño, y nadie
+lo vuelve a abrir. **Caso**: el Rango ALTORRA figuraba como «necesita los rangos de 10 barrios de Daniel».
+Al releer su definición decía **contacto-primero**: el visitante deja sus datos y un asesor devuelve el
+número. Sin cifra en pantalla, los rangos **no eran prerrequisito** — la página se construyó entera esa
+misma noche, y encima es captación de propietarios, que era la necesidad más urgente del negocio.
+**Regla**: antes de aceptar una etiqueta de bloqueo heredada, relee la definición del ítem y pregunta *qué
+parte exacta* toca el gate. Un gate sobre el 20% del alcance congela el 100% solo si nadie lo mira.
+**Corolario**: al ESCRIBIR un pendiente bloqueado, anota qué queda hacible sin el gate — se lo estás diciendo a alguien que no podrá preguntarte.
+
+> Origen: INMO `docs/30-LECCIONES.md` (titular y cuerpo en la MISMA hoja) · pagada en INMO §96.6b · migrado 2026-09-01 lote 5
+
+### L-41 — 🧱 Las cabeceras de `Response.redirect()` son INMUTABLES: un middleware que hace `headers.set()` revienta todo redirect *(2026-08-21, ADR §96.6b)*
+**Disparador**: un endpoint que responde con `Response.redirect(...)` devuelve **500** y el error apunta al
+middleware, no al endpoint: «Can't modify immutable headers». **Causa**: la respuesta que fabrica
+`Response.redirect()` (igual que `Response.error()`) nace con `headers.guard = "immutable"`; cualquier
+`set()`/`append()` posterior **lanza**. Un middleware que añade una cabecera a TODA respuesta —el caso
+típico es un `X-Robots-Tag` de staging— alcanza así a todos los endpoints que redirigen. **Dónde muerde de
+verdad**: el fallback SIN JavaScript de los formularios (patrón POST-Redirect-GET), que es el camino que
+nadie prueba en el navegador porque el JS lo tapa; y si la cabecera solo se añade fuera de producción,
+el 500 aparece **únicamente en staging**, o sea justo donde se verifica todo. **Fix**: `try { set() } catch
+{ reconstruir la Response con unas `Headers` nuevas }` — la reconstrucción conserva `status`, `statusText`
+y `body`. **Anti-patrón**: quitar la cabecera del middleware «porque rompe» (pierdes el candado de
+noindex) o dejar de usar `Response.redirect` en los endpoints (arregla el síntoma en uno y deja la trampa
+puesta para el siguiente). Portátil a cualquier runtime que siga el estándar Fetch (Workers, Deno, Node 18+).
+
+> Origen: INMO `docs/39-ESCRITO-NO-ES-VIGENTE.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §97.6 · §98.1 · migrado 2026-09-01 lote 5
+
+### L-42 — 🚧 Lo que está escrito en un COMENTARIO no está desplegado: reglas, config y premisas de arquitectura *(2026-08-21, ADR §97.6 · §98.1)*
+**Disparador**: el código confía en que la base filtrará («las reglas ya no dejan leer los borradores»),
+y las reglas que hacen eso están en el repo, no en producción. **Caso**: la ficha de inmueble no
+comprobaba el estado de publicación porque `firestore.rules` tiene `allow get: if resource.data.estado in
+[...]`. Pero ese archivo NO estaba desplegado —el ruleset vivo era el del sitio viejo, con `allow read: if
+true`— así que un BORRADOR se habría publicado entero, con precio, contacto e indexable. **La distancia
+entre `git` y el proyecto de Firebase no la cubre nadie**: no hay gate que compare el ruleset del repo con
+el vivo, y el comentario del código describía una frontera que en producción no estaba puesta.
+**Reglas**: (1) el invariante que protege un dato se implementa en el CÓDIGO aunque también esté en las
+Rules — defensa en profundidad, no delegación; (2) usa la MISMA lista que ya use otro camino (aquí, la
+whitelist de estados con la que se construye el índice del catálogo) para que no puedan discrepar;
+(3) desconfía de todo comentario que diga «las reglas ya lo impiden» sin decir **desplegadas desde cuándo**.
+Portátil a cualquier backend con reglas declarativas (Firebase, Supabase RLS, políticas de S3).
+**SEGUNDO CASO, el mismo día (§98.1)**: `lib/data/cache.ts` explicaba desde Ola 0 que la caché del edge se sienta DELANTE del Worker y que por eso un acierto cuesta CERO lecturas — y sobre esa premisa se eligieron todos los TTL del portal. La clave `cache` **nunca se puso en `wrangler.jsonc`**: cada `s-maxage` emitido era inerte y cada visita pagaba sus lecturas. **La clase es la misma y es más ancha que la seguridad**: un comentario describe cómo funciona el sistema, no cómo está configurado. **Regla ampliada**: cuando un archivo explique una premisa de arquitectura —una caché, un índice, un trigger, una política— comprueba que exista la CONFIGURACIÓN que la enciende, y déjalo escrito con la fecha. Barato: `grep` de la clave en el archivo de config, o el esquema del propio proveedor. **Y audita ANTES de encender**: con la caché apagada, una ruta sin cabecera no tenía consecuencia; con la caché encendida, una URL con un token dentro se habría guardado en una caché compartida el mismo día.
+
+> Origen: INMO `docs/30-LECCIONES.md` (titular y cuerpo en la MISMA hoja) · pagada en INMO §97.7 · migrado 2026-09-01 lote 5
+
+### L-43 — 🔑 Un identificador ESTABLE no se deriva de la URL: cambia la ruta y se te queda huérfano lo guardado *(2026-08-21, ADR §97.7)*
+**Disparador**: cambias el formato de una URL (de `?id=X` a `/algo/<slug>`) y algo que la gente había
+guardado deja de reconocerse. **Caso**: los favoritos del portal derivaban su clave del `?id=` del enlace
+de la card. Migrar la ficha a `/inmueble/<slug>` habría cambiado la clave de TODAS las cards a la vez:
+corazones apagados sobre inmuebles que la persona sí guardó, sin un error en consola y sin forma de que
+nadie lo notara mirando la pantalla. **Regla**: un id de persistencia sale del DATO (`data-*` puesto por
+quien conoce el registro), nunca de parsear la dirección. La URL es presentación y la presentación cambia;
+el id del documento no. **Corolario**: si ya tienes claves derivadas de URLs viejas, acepta las dos formas
+durante una temporada — pero arregla la fuente, porque aceptar formatos no reconstruye lo que ya se perdió.
+**Y un slug tampoco sirve**: basta corregir una tilde del título para que cambie.
+
+> Origen: INMO `docs/39-ESCRITO-NO-ES-VIGENTE.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §100 · migrado 2026-09-01 lote 5
+
+### L-44 — 🔐 Un ruleset se REEMPLAZA, no se fusiona: dos archivos con el mismo nombre son una trampa silenciosa *(2026-08-21, ADR §100)*
+**Disparador**: dos ficheros `firestore.rules` en un mismo repo —uno en la raíz y otro en la carpeta de un
+subproyecto— cada uno con su `firebase.json`. **Causa**: Firestore y Storage guardan UN ruleset por
+proyecto; el último despliegue **sustituye** al anterior. No hay fusión, no hay aviso, no hay conflicto:
+desplegar desde la carpeta equivocada revierte el trabajo de la otra **en silencio**, y el síntoma
+aparece lejos —en una pantalla que deja de cargar— y sin nada que lo relacione con el despliegue.
+**Y el `deny-all` final del archivo nuevo tumba TODO lo que el viejo declaraba** y él no: colecciones,
+subcolecciones y prefijos de bucket que otra parte del sistema sigue usando.
+**Reglas**: (1) **un proyecto, un ruleset**: si hay dos archivos, fusiónalos y haz que todas las
+configuraciones apunten al mismo — y guarda el anterior como vuelta atrás, no lo borres; (2) antes de
+desplegar un ruleset nuevo, **inventaría contra el CÓDIGO qué colecciones y rutas usa cada consumidor
+vivo**, no contra una lista de memoria: el `grep` de `collection('x')` es la fuente; (3) **un bucket no
+se protege con un candado en la raíz** — `match /{allPaths=**}` con permiso restringido no «añade»
+seguridad, TAPA lo que era público (fotos, adjuntos), así que lo privado va en su propio prefijo;
+(4) escribe el ORDEN de despliegue dentro del propio archivo si depende de otra cosa (aquí, que los
+permisos existieran antes de exigirlos). **Prueba que funcionó**: el emulador con un contexto por rol
+Y un adversario autenticado-sin-permisos; sin ese último, el test más importante no existe.
+
+> Origen: INMO `docs/30-LECCIONES.md` (titular y cuerpo en la MISMA hoja) · pagada en INMO §103 · migrado 2026-09-01 lote 5
+
+### L-45 — 🔀 Dos escritores, una colección, dos modelos: el `as T` a ciegas convierte «datos viejos» en «catálogo vacío sin errores» *(2026-08-21, ADR §103)*
+**Disparador**: un sistema que se está reemplazando y el nuevo comparten el MISMO almacén (aquí, la
+colección `propiedades`), y el viejo sigue siendo el único que sabe escribir. **Causa**: en una base sin
+esquema, el lector nuevo hace `doc.data() as Propiedad` — un cast que el compilador acepta y que NO
+comprueba nada. El documento viejo entra, **pasa los filtros** (el `estado` sí coincidía) y solo revienta
+al leer un campo que en su modelo vive en otro sitio. **Síntoma**: índice vacío, listado sin resultados,
+cero excepciones, cero logs de error. **Y el agravante**: la omisión se atribuye al primer campo que dé
+nulo — aquí «sin precio», cuando el precio SÍ estaba, solo que como entero en vez de objeto; un
+diagnóstico que manda a mirar donde no es. **Reglas**: (a) donde dos escritores comparten un almacén, el
+lector VALIDA la forma en la frontera y no se fía del cast; (b) el desajuste de esquema es un motivo
+PROPIO, nunca se mete en el cubo de un síntoma existente — el motivo es el diagnóstico; (c) detéctalo por
+lo que el modelo cierra (enumeraciones, tipo de un campo), no por heurísticas; (d) el conteo de descartes
+se guarda **por motivo**, no como total: «5 omitidas» no responde ninguna pregunta; (e) aplica el mismo
+guardián a TODOS los lectores del almacén — aquí el índice filtraba, pero la ficha por id se lo saltaba.
+
+> Origen: INMO `docs/36-LECCIONES-UTILLAJE.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §118 · §216.8 · migrado 2026-09-01 lote 5
+
+### L-47 — 🐍 `open(p,'w')` **vacía el archivo al ABRIR**, falle lo que falle después *(§118 · §216.8)*
+Trunca **al abrir**: lo que falle luego —la lectura, el `encode`, el disco— deja el archivo **vacío**, sin error y con el script diciendo «hecho». Así se perdió `99` entero (§118) y así se vació `42-LEGAL` de cars el 26/08 **pese a leer-a-variable y afirmar**: el `assert` estaba del lado equivocado del corte. ⚠️ La regla vieja cubría UN modo de fallo. **Regla única**: valida en memoria (`s.encode('utf-8')`), escribe a `p+'.tmp'` y `os.replace(tmp,p)`. Que `'w'` **nunca** abra el destino.
+**Hermana, en Windows**: insertar con `'
+'` en un archivo **CRLF** pega dos filas en UNA línea; el siguiente script que divida por `
+` las ve como una y al reescribir **borra la otra** (lo cazó `brain:check` #5). Une con el fin de línea DEL ARCHIVO, no el del lenguaje.
+**Y la TERCERA, que se acumula sola** *(§147)*: `encoding="utf-8"` sin `newline=""` **traduce** el salto al del sistema; si el script ADEMÁS lo escribe a mano —porque detectó CRLF—, cada pasada añade otro retorno. Nada falla y el texto se lee bien, pero `git diff` marca el ARCHIVO ENTERO aunque tocaras una línea y el contador del linter **sube** mientras recortas (440 chars que eran CR invisibles). ✅ **La regla única de arriba la desactiva sola**: escribir los BYTES (`'wb'`) no traduce nada. Ante un diff de archivo entero, **cuenta los bytes de control** antes de creérselo.
+
+> Origen: INMO `docs/38-GATES-QUE-MIENTEN.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §125 · migrado 2026-09-01 lote 5
+
+### L-48 — 🧪 Un prerrequisito GENERADO y gitignored hace que el gate pase en local y falle en CI *(§125)*
+`worker-configuration.d.ts` lo produce `wrangler types` y está en `.gitignore`: en la máquina de quien escribió el gate existía; en el checkout limpio del CI, no. Resultado: `typecheck` verde en local y **8 corridas rojas seguidas en CI**, con el deploy saltándose en silencio por `needs: build`. Dos días sin desplegar, y el sitio vivo contradiciendo al repo.
+- **Regla**: si un comando necesita un archivo **generado** y no commiteado, **generarlo es parte del comando**, no del entorno (`"typecheck": "wrangler types && tsc --noEmit"`). Un script que se prepara a sí mismo no diverge entre local y CI. Y **NO lo cures commiteando el generado**: quita el síntoma y abre drift contra su fuente.
+- **Reproduce antes de arreglar** (§3.3): la 1.ª hipótesis era FALSA; el diagnóstico salió de clonar en limpio. Y **al añadir un paso al CI, míralo correr EN CI** antes de cerrar — 4.ª forma de [[M-06]]: un ❌ que nadie lee para la tubería igual que un ✅ falso la deja pasar.
+
+> Origen: INMO `docs/35-LECCIONES-PLATAFORMA.md` (titular en `docs/30-LECCIONES.md`; 2º titular en `docs/39-ESCRITO-NO-ES-VIGENTE.md`) · pagada en INMO §129 · migrado 2026-09-01 lote 5
+
+### L-49 — La configuración de la CONSOLA es parte del sistema y NO está en el repo: ningún gate puede verla *(TODO-47, ADR §129)*
+**Disparador**: un botón impecable en el código que no funciona en producción. **Caso**: «Continuar con Google» en `/ingresar` — código correcto, proveedor cableado, y muerto: `authorizedDomains` del proyecto solo lista `localhost` + los dos dominios de Firebase; **`altorrainmobiliaria.co` no está**. El error cae en el `default` del traductor y muestra un mensaje genérico, así que el fallo es INVISIBLE incluso mirando la pantalla. **Por qué importa más de lo que parece**: dominios autorizados, proveedores habilitados, política de contraseña y protección de enumeración viven en una consola web — `verify:*`, `brain:check` y cualquier revisión de código son CIEGOS a todos ellos (es la clase de §126, el botón fantasma, pero al revés: ahí faltaba el código, aquí falta la config). **Sonda barata y definitiva** (sin credenciales, la apiKey es pública): `GET https://identitytoolkit.googleapis.com/v1/projects?key=<apiKey>` devuelve `authorizedDomains`; y `POST accounts:sendOobCode` con un correo inventado dice si la protección de enumeración está ENCENDIDA (responde éxito) o no (`EMAIL_NOT_FOUND`) — sin enviar ningún correo. **Regla**: antes de dar por buena una integración que depende de la consola, CONSÚLTALA por API y púlsala en vivo; y cuando el traductor de errores caiga en su `default`, REGÍSTRALO, porque ahí es donde van a morir estos fallos. Doctrina portable → skill `acceso-y-autenticacion` B-2/B-3/E-3.
+
+> Origen: INMO `docs/36-LECCIONES-UTILLAJE.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §130 · migrado 2026-09-01 lote 5
+
+### L-50 — Astro: `:global()` dentro de un `<style is:global>` NO se resuelve — sale literal y el navegador DESCARTA la regla *(§130)*
+**Causa**: `:global()` es una función de COMPILACIÓN. Astro la resuelve en los `<style>` **acotados**; en los `is:global` la deja **escrita tal cual**, el navegador no la entiende, y un selector inválido **descarta la regla entera, en silencio**. No lo vio ni el build, ni los gates, ni la consola — solo abrir el `.css` de `dist/`. Familia de §117: el CSS que no llega no rompe, deja sin pintar. Hoy lo caza la sonda 2 de `verify:css`. **Regla portable**: si el mecanismo es de COMPILACIÓN, verifica el **artefacto servido**, no el fuente.
+
+> Origen: INMO `docs/36-LECCIONES-UTILLAJE.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §134 · migrado 2026-09-01 lote 5
+
+### L-51 — Un "Deploy complete!" puede no desplegar NADA: si la CLI no nombra el archivo, no hubo archivo *(§134)*
+**Disparador**: `firebase deploy --only firestore:indexes` responde ✅ y `firestore:indexes` devuelve **0**, con 14 en el archivo. **Causa**: la clave no estaba en el `firebase.json` que usa el deploy. Sin clave no hay nada que desplegar, y la CLI lo llama éxito. **La señal**: el mensaje CAMBIA — sin la clave, `deploying indexes...` y calla; con ella, `deployed indexes in <archivo> successfully`. **Sin nombre de archivo, no se desplegó nada.** **Regla portable**: tras un deploy declarativo, **consulta el estado REAL** (`firestore:indexes`, `functions:list`, un GET) — la salida de una CLI es una promesa, no una verificación ([[L-49]]). **Corolarios** (§133-§134): `allSettled` en vez de `Promise.all`; un `catch` que solo loguea convierte «roto» en «vacío»; y toda clase que CREA el JS se estila en el MISMO cambio.

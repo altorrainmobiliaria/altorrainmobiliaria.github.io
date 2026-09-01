@@ -25,7 +25,7 @@ Lo que SÍ sigue vivo, y por lo que el fichero no se toca: ese SW es un **kill-s
 ⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-27]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
 
 ### L-37 — 🎨 Los enlaces de Claude Design CADUCAN al re-guardar *(§89)*
-El mockup se trae por MCP, nunca por URL guardada: apunta a una versión que deja de existir.
+⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-37]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
 ### L-46 — El shell (y el lenguaje que lo llama) SE COMEN texto y nada falla: comillas simples o por ARCHIVO *(§112 · §130)*
 ⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-46]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
 
@@ -34,17 +34,13 @@ El mockup se trae por MCP, nunca por URL guardada: apunta a una versión que dej
 **Reglas**: (1) 🎯 **si no hay forma de LEER el lado desplegado, ese par NO es verificable**: márcalo como sello y **dilo** — callarlo le hace heredar el ✅ del par vecino (hay `firestore:indexes`; no hay `firestore:rules`). (2) un huérfano **se cuarentena con inventario**, no se borra: puede ser prerrequisito de algo apagado. (3) **no despliegues «por si acaso»** lo que cuesta en cada escritura; decláralo como prerrequisito de ENCENDIDO. (4) ⚠️ **sospecha de tu sonda antes que del proyecto**: si reporta ~100 % de discrepancia, te equivocaste de comparación — la mía metía en la firma el `__name__` que Firestore **añade** al desplegar. Generaliza [[L-51]] hacia ANTES del deploy.
 
 ### L-51 — Un "Deploy complete!" puede no desplegar NADA: si la CLI no nombra el archivo, no hubo archivo *(§134)*
-**Disparador**: `firebase deploy --only firestore:indexes` responde ✅ y `firestore:indexes` devuelve **0**, con 14 en el archivo. **Causa**: la clave no estaba en el `firebase.json` que usa el deploy. Sin clave no hay nada que desplegar, y la CLI lo llama éxito. **La señal**: el mensaje CAMBIA — sin la clave, `deploying indexes...` y calla; con ella, `deployed indexes in <archivo> successfully`. **Sin nombre de archivo, no se desplegó nada.** **Regla portable**: tras un deploy declarativo, **consulta el estado REAL** (`firestore:indexes`, `functions:list`, un GET) — la salida de una CLI es una promesa, no una verificación ([[L-49]]). **Corolarios** (§133-§134): `allSettled` en vez de `Promise.all`; un `catch` que solo loguea convierte «roto» en «vacío»; y toda clase que CREA el JS se estila en el MISMO cambio.
+⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-51]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
 
 ### L-50 — Astro: `:global()` dentro de un `<style is:global>` NO se resuelve — sale literal y el navegador DESCARTA la regla *(§130)*
-**Causa**: `:global()` es una función de COMPILACIÓN. Astro la resuelve en los `<style>` **acotados**; en los `is:global` la deja **escrita tal cual**, el navegador no la entiende, y un selector inválido **descarta la regla entera, en silencio**. No lo vio ni el build, ni los gates, ni la consola — solo abrir el `.css` de `dist/`. Familia de §117: el CSS que no llega no rompe, deja sin pintar. Hoy lo caza la sonda 2 de `verify:css`. **Regla portable**: si el mecanismo es de COMPILACIÓN, verifica el **artefacto servido**, no el fuente.
+⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-50]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
 
 ### L-47 — 🐍 `open(p,'w')` **vacía el archivo al ABRIR**, falle lo que falle después *(§118 · §216.8)*
-Trunca **al abrir**: lo que falle luego —la lectura, el `encode`, el disco— deja el archivo **vacío**, sin error y con el script diciendo «hecho». Así se perdió `99` entero (§118) y así se vació `42-LEGAL` de cars el 26/08 **pese a leer-a-variable y afirmar**: el `assert` estaba del lado equivocado del corte. ⚠️ La regla vieja cubría UN modo de fallo. **Regla única**: valida en memoria (`s.encode('utf-8')`), escribe a `p+'.tmp'` y `os.replace(tmp,p)`. Que `'w'` **nunca** abra el destino.
-**Hermana, en Windows**: insertar con `'
-'` en un archivo **CRLF** pega dos filas en UNA línea; el siguiente script que divida por `
-` las ve como una y al reescribir **borra la otra** (lo cazó `brain:check` #5). Une con el fin de línea DEL ARCHIVO, no el del lenguaje.
-**Y la TERCERA, que se acumula sola** *(§147)*: `encoding="utf-8"` sin `newline=""` **traduce** el salto al del sistema; si el script ADEMÁS lo escribe a mano —porque detectó CRLF—, cada pasada añade otro retorno. Nada falla y el texto se lee bien, pero `git diff` marca el ARCHIVO ENTERO aunque tocaras una línea y el contador del linter **sube** mientras recortas (440 chars que eran CR invisibles). ✅ **La regla única de arriba la desactiva sola**: escribir los BYTES (`'wb'`) no traduce nada. Ante un diff de archivo entero, **cuenta los bytes de control** antes de creérselo.
+⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-47]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
 
 
 > 🎭 **Los gates que MIENTEN — [[L-48]] · [[L-52]] · [[L-57]] · [[L-58]] — viven COMPLETOS en

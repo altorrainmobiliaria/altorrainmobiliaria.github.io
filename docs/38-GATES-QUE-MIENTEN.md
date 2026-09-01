@@ -59,9 +59,7 @@
 **Cómo se caza**: sonda deliberada (`const x: number = 'texto'`) en un archivo del tipo que dudas; si el gate no la ve, no cubre ese tipo. **Regla portable**: no preguntes «¿pasa mi gate?» sino **«¿qué ARCHIVOS abre, y qué vería si el fallo estuviera delante?»**. Un gate que falla ABIERTO —descarta lo que no entiende— es indistinguible de uno que funciona ([[M-06]]).
 
 ### L-48 — 🧪 Un prerrequisito GENERADO y gitignored hace que el gate pase en local y falle en CI *(§125)*
-`worker-configuration.d.ts` lo produce `wrangler types` y está en `.gitignore`: en la máquina de quien escribió el gate existía; en el checkout limpio del CI, no. Resultado: `typecheck` verde en local y **8 corridas rojas seguidas en CI**, con el deploy saltándose en silencio por `needs: build`. Dos días sin desplegar, y el sitio vivo contradiciendo al repo.
-- **Regla**: si un comando necesita un archivo **generado** y no commiteado, **generarlo es parte del comando**, no del entorno (`"typecheck": "wrangler types && tsc --noEmit"`). Un script que se prepara a sí mismo no diverge entre local y CI. Y **NO lo cures commiteando el generado**: quita el síntoma y abre drift contra su fuente.
-- **Reproduce antes de arreglar** (§3.3): la 1.ª hipótesis era FALSA; el diagnóstico salió de clonar en limpio. Y **al añadir un paso al CI, míralo correr EN CI** antes de cerrar — 4.ª forma de [[M-06]]: un ❌ que nadie lee para la tubería igual que un ✅ falso la deja pasar.
+⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-48]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
 
 ### L-63 — 💸 DOS validadores correctos del mismo campo, y ninguno comprueba que hablen de la misma UNIDAD *(§233)*
 **Disparador**: el giro al propietario salía **−25.370.000**, y no era la prueba. `Contrato.honorariosPct` guardaba lo que teclea una persona —el formulario pide *«Honorarios %»* con marcador `10`— y su validador aceptaba hasta **100**; `liquidacion.ts` calcula con una **FRACCIÓN** y rechaza todo lo mayor que **0.5**. Entre los dos extremos no había conversión: **un contrato normal del 10 % no se podía liquidar**, y eso muerde en el primer contrato real del dueño.

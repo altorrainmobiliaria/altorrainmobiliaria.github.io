@@ -166,6 +166,11 @@
       "lines": 76,
       "_comment": "Sexto shard de rango CERRADO (ADR 229): 161-200 no crecen. Cap MEDIDO sobre el real (9763c / 57L, densidad 171 c/linea): chars = real+35 por ciento, lines = cap_chars/densidad, para que los DOS ejes aprieten en el mismo punto. Si el 00 vivo vuelve a apretar, el siguiente rango es 00g, NO subir este techo."
     },
+    "docs/00h-INDICE-PRODUCTO.md": {
+      "chars": 13739,
+      "lines": 79,
+      "_comment": "Octavo shard de rango CERRADO (ADR 295): 241-280 no crecen. Nacio porque el 00 vivo llego a 23968c de 24000 y la fila del 295 no cabia; podar una fila gorda vieja era IMPOSIBLE y esta MEDIDO: ninguna de sus 61 filas pasaba de 253c (las 43 gordas del #26 viven en los shards), asi que la unica salida sin subir el techo (M-05) es la que 00f y 00g ya dejaban escrita. Cap MEDIDO sobre el real (10177c / 58L, densidad 175 c/linea): chars = real+35 por ciento, lines = cap_chars/densidad, para que los DOS ejes aprieten en el mismo punto. Si el 00 vivo vuelve a apretar, el siguiente rango es 00i, NO subir este techo."
+    },
     "docs/00g-INDICE-CENSO.md": {
       "chars": 13716,
       "lines": 76,
