@@ -35,7 +35,7 @@
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **rail de pago completo, probado contra el emulador** (§166-§187). ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
 | **TODO-50** | 🧱 **CEREBRO LLENO** — §289 REABRIÓ la vía de escritura: nacen `33a` y `38a`, y las 5 lecciones que esperaban ya están dentro (`33` 89 % · `38` 97 % · `37` con 6 líneas). ⏭ Siguen clavadas `50` · `34` (70/70 L) · `31` · `35` · `44` · `05`, y el BOOT en **49c**. ⛔ Subir techo prohibido ([[M-05]]). | 🟡 mío | §289 |
-| **TODO-51** | 🧠⇪ **PROGRAMA CEREBRO MAESTRO**. **OLA MASIVA en curso (1-sep)**: lotes 1-7 SELLADOS por fríos — 94 migradas (INMO 46 · CARS 42 · BERS 3 · INSE 3) + 3 G · medianas 5→5→4→3→3 · kernels v1.29 ×4. Lote 8 (CARS→BERS) corriendo; cola ~170; drill completo en el 11º. Registro → `../brain-private/cerebro-maestro/BITACORA.md`. | 🔴 Fable+Opus | plan |
+| **TODO-51** | 🧠⇪ **PROGRAMA CEREBRO MAESTRO**. **OLA MASIVA en curso (1-sep)**: lotes 1-8 SELLADOS por fríos — 114 migradas (INMO 46 · CARS 62 · BERS 3 · INSE 3) + 3 G · medianas 5→5→4→3→3→3 · kernels v1.29 ×4. Lote 9 (CARS→BERS) corriendo; cola ~150; drill completo en el 11º. Registro → `../brain-private/cerebro-maestro/BITACORA.md`. | 🔴 Fable+Opus | plan |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea. | ⏸️ 28/92 | §87 · `43` |
 
 ---
