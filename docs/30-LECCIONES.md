@@ -40,7 +40,7 @@
 ### L-20 — Firestore Rules: un `get` de doc INEXISTENTE con `resource.data` en la regla → 403, no 404 ⇒ **migrada al maestro**: [[INMO:L-20]]
 ### L-21 — Aislar tests que comparten un emulador Firestore: projectId PROPIO por archivo ⇒ **migrada al maestro**: [[INMO:L-21]]
 ### L-49 — 🎛️ La configuración de la CONSOLA es parte del sistema y NO está en el repo: ningún gate la ve → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`** ⇒ **migrada al maestro**: [[INMO:L-49]]
-### L-53 — 🔐 Firebase MFA (TOTP): pide el código DESPUÉS de la contraseña, `enroll()` revoca las demás sesiones, y NO existen códigos de respaldo
+### L-53 — 🔐 Firebase MFA (TOTP): pide el código DESPUÉS de la contraseña, `enroll()` revoca las demás sesiones, y NO existen códigos de respaldo ⇒ **migrada al maestro**: [[INMO:L-53]]
 ### L-54 — 🌩️ Los tipos de Cloudflare Workers PISAN el DOM: `Element.append` deja de ser la del navegador (usa `appendChild`)
 ### L-55 — 🧬 Varias copias del MISMO SDK = varios registros: `app/no-app` con la app ya inicializada, y el error no nombra versiones
 ### L-44 — 🔐 Un ruleset se REEMPLAZA, no se fusiona: dos ficheros con el mismo nombre, uno gana → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`** ⇒ **migrada al maestro**: [[INMO:L-44]]
@@ -159,7 +159,7 @@ siendo el índice de todas y una cita `[[L-NN]]` resuelva sin salir de aquí (§
 ### L-48 — 🧪 Un prerrequisito GENERADO y gitignored hace que el gate pase en local y falle en CI *(§125)* ⇒ **migrada al maestro**: [[INMO:L-48]]
 ### L-50 — Astro: `:global()` dentro de un `<style is:global>` NO se resuelve — sale literal y el navegador DESCARTA la regla entera, en silencio *(§130)* ⇒ **migrada al maestro**: [[INMO:L-50]]
 ### L-51 — Un «Deploy complete!» puede no desplegar NADA: si la CLI no nombra el archivo, no hubo archivo *(§134)* ⇒ **migrada al maestro**: [[INMO:L-51]]
-### L-52 — 🧰 Un gate puede correr en VERDE sobre archivos que **nunca abre**: `tsc` no lee los `.astro`, y un `var(--x)` inexistente se descarta sin avisar *(§138)*
+### L-52 — 🧰 Un gate puede correr en VERDE sobre archivos que **nunca abre**: `tsc` no lee los `.astro`, y un `var(--x)` inexistente se descarta sin avisar *(§138)* ⇒ **migrada al maestro**: [[INMO:L-52]]
 ### L-56 — 🧰 Un gate puede existir y NO CORRERLO NADIE: escribirlo es la mitad, cablearlo es la otra *(§142)* → 🧩 **shard `38a-ARMADO-DEL-GATE.md`**
 ### L-57 — 🎭 Una herramienta sin su prerrequisito puede **PREGUNTAR en vez de fallar**, y sin terminal eso sale **exit 0**: el gate afirma haber pasado sin mirar nada *(§175)*
 ### L-58 — 🎭 Un gate puede imprimir un número CIERTO de una comparación que no significa nada: un porcentaje sin su denominador auditado es decoración *(§193)*

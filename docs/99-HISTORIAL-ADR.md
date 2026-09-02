@@ -14253,3 +14253,81 @@ mediana de saltos está en el borde del gate, y el del repo se parte **por rango
 propio manifest lleva ordenado desde `00f`. La lección transferible, que va a la bóveda: *un tope que
 aprieta admite exactamente dos respuestas honestas —partir o destilar—, y cuál de las dos toca lo
 decide dónde duele el tamaño, no cuál es más cómoda.* Sin cache bump (§3.2): no se tocó código servido.
+
+## 296. ADR-296 — Lote 13 del maestro: bersaglio llega a CERO y la cola de INMO se abre por sus dos gates
+
+> **Lote bi-repo**, el primero desde el §293: 18 piezas de bersaglio (caso completo en `BERS §202`) y
+> las **2 primeras de la cola de INMO**, que llevaba parada desde el §295. Cola del `CENSO-MASIVO.md`
+> para este repo: quedaban 46, quedan **44**. Numeración medida con `grep -n "^## " docs/99-HISTORIAL-ADR.md
+> | tail` ANTES de escribir: el 295 era el último y `296` daba **0 ocurrencias** en el `99` y en los
+> nueve ficheros del índice.
+
+**296.1 Causa raíz.** No hay bug: es la deuda que el §295 dejó declarada. Este repo tiene **46
+transferibles pendientes** (medidas en el lote 11 del programa: `L-52`…`L-74`, `M-01`…`M-11`,
+`M-23`…`M-35`) y ninguna se ha movido en ocho lotes, porque el orden del programa metió antes a cars
+y a bersaglio. El coste de dejarlas: dos hojas hijas siguen guardando conocimiento que **no es de
+aquí** —`38-GATES-QUE-MIENTEN` a 14360c y `35-LECCIONES-PLATAFORMA` a 9938c—, y el lector de
+CUALQUIER otro proyecto no lo alcanza. El lote 13 abre la cola por las dos primeras del censo.
+
+**296.2 Solución estructural.** Las dos piezas, en el orden EXACTO del censo, con el mecanismo
+sellado en §293/§294/§295:
+
+- **`L-52`** (*«un gate puede correr en VERDE sobre archivos que nunca abre»*, §138, cuerpo en `38`)
+  — **TRANSFERIBLE** leyendo el cuerpo: el sujeto son los gates y qué ARCHIVOS abren; `tsc` que no
+  lee los `.astro` y el `var(--x)` que el navegador descarta son las dos instancias, y la sonda
+  deliberada funciona en cualquier stack.
+- **`L-53`** (*Firebase MFA/TOTP: cuatro conductas que sorprenden y una que NO existe*, §137, cuerpo
+  en `35`) — **TRANSFERIBLE**: cinco hechos de la plataforma verificados contra el `.d.ts` del SDK
+  instalado, cero contenido del proyecto. La quinta —que NO hay códigos de respaldo— es la que más
+  vale, porque es una AUSENCIA: prometer en la interfaz algo que la plataforma no emite.
+
+**Retenidas: NINGUNA.** Fichero propio en `maestro/lecciones/migradas/INMO/` con su línea
+`> Origen:`, titular con marca en `30`, stub con puntero en la hoja del cuerpo, y el cuerpo íntegro
+al bloque «Lote 13» de `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`, que es el punto de retorno del ABORT.
+
+**296.3 No-regresión.** Los dos IDs siguen definidos en `30` (que es de donde el kernel los lee), así
+que **`[[L-52]]` y `[[L-53]]` resuelven igual que ayer** — incluida la cita de `[[L-52]]` que vive en
+`docs/10-MEMORIA-CORTO-PLAZO.md` y las dos de las cabeceras de `38`. Colgantes del repo: **98/98**,
+sin moverse. Nada de código tocado. **`CLAUDE.md`, `05` y `10` INTACTOS**, y no por descuido: el
+boot está a **288c** de su objetivo (31212c/31500), así que se midió por `grep` qué citan antes de
+decidir — `10` cita `L-52`, no miente, y no se toca.
+
+**296.4 Tests / verificación.** **(a) Censo con checksums**: **2/2 byte-idénticas** módulo la línea
+`> Origen:`, que se declara, y por **tres vías** — blob **pinneado** a `b86c868` (pre-lote), fichero
+del maestro, y bloque «Lote 13» del `_legacy` —, con la misma normalización en los tres lados
+(CRLF→LF + recorte de saltos) y el **nodo declarado POR PIEZA**. Corrió ANTES de escribir, en
+memoria, con ABORT. Re-corrida desde disco: 2/2, y las **48** de INMO por dos vías: **48/48**.
+**(b) `npm run brain:check`**: **CEREBRO SANO**, refs 98/98, boot 31212c ≤ 31500c, entradas del
+índice 295 → **296**. **(c) Colgantes ANTES/DESPUÉS ×4 repos**: diff VACÍO — INMO 98/98 · BERS 97/97
+· CARS 99/99 · INSE 7/7. **(d) Linter de bóveda**: **12/12 en verde** (244 citas cualificadas, 214
+migradas con procedencia, 22 peladas resueltas por ambiente, 21 ficheros de ruteo bajo su tope).
+**(e) CRLF**: `git diff --numstat` sin un solo diff de fichero-completo (`15/0` · `2/2` · `1/1` ·
+`1/2`) — el detector de [[CARS:L-01]].
+
+**296.5 Anti-patterns evitados.** ⛔ *Clasificar por el título* — los dos cuerpos leídos, y el
+veredicto de 296.2 sale de ahí. ⛔ *Un verificador que localiza el principio y no declara el FINAL* —
+volvió a aparecer en el primer dry-run de este lote (18 de 20 en ROJO con maestro y `_legacy`
+idénticos): el troceador no cortaba en el `> Origen:` del bloque siguiente, y la vía «original»
+cogía el TITULAR del `30` en vez del cuerpo de la hoja hija. Es la cuarta cara del mismo defecto
+(§199/§200/§201 en bersaglio) y otra vez las rojas venían ORDENADAS. Se arregló declarando el final
+y leyendo el nodo que la pieza DECLARA. ⛔ *Tocar un always-on «de paso»* — 296.3. ⛔ *Subir un techo
+para que quepa una fila* — ninguno se movió; las filas nuevas del índice del maestro se pagaron
+apretando la prosa (detalle en `BERS §202.7`). ⛔ *Renumerar o borrar el original* — cuarentena.
+
+**296.6 Archivos.** `docs/30-LECCIONES.md` (2 titulares con marca) · `docs/38-GATES-QUE-MIENTEN.md`
+(cuerpo de `L-52` → stub) · `docs/35-LECCIONES-PLATAFORMA.md` (cuerpo de `L-53` → stub) ·
+`_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (bloque «Lote 13», LF) · `docs/00-INDICE.md` (fila §296) ·
+este ADR. En la bóveda: `maestro/lecciones/migradas/INMO/L-52.md` y `L-53.md`, más las filas de
+índice. **INTACTOS**: todo el código (legacy y portal), `CLAUDE.md`, `docs/05-ESTADO-GLOBAL.md`,
+`docs/10-MEMORIA-CORTO-PLAZO.md`, `scripts/` y las nueve hojas del índice que no eran esta.
+**Descompresión**: `38` **14360 → 13589c** (−771c, −5,4 %) · `35` **9938 → 8853c** (−1085c, −10,9 %)
+· `30` **21415 → 21495c** (+80c: las dos marcas). Neto **−1776c**. Ningún nodo sobre su cap.
+
+**296.7 Doctrina aplicada.** F2-DISEÑO §1.2 + D1-bis (el cuerpo de `L-52` cita `[[M-06]]` pelada: el
+#6b la resuelve por AMBIENTE contra **el titular del `30`** de este repo, porque INMO no tiene
+ninguna `M-` migrada — el segundo de los dos destinos que el gate conoce, y el primero que se ejerce
+desde este repo) · §2.1 · §3.1 sobre CUERPOS · §4.2 · §5 (gate D10) · §9 (D10-bis: a este lote le
+toca MUESTREO) · §G.4 (cuarentenar, no borrar) · §3.3 (cada cifra sale de un comando de este turno).
+**Cache: NO aplica** — cero cambios de código. **NO cubre**: los drills fríos, que **los corre
+Fable**; hasta entonces esto es MIGRADO, no SELLADO. Y **quedan 44** piezas de este repo en la cola
+(lotes 14-15), con la cola total en **51** (INMO 44 · BERS 0 · INSE 7). ⟦OPUS-5⟧

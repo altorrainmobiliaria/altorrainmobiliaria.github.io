@@ -95,6 +95,7 @@
 | §293 | 🧠 **Nace el CEREBRO MAESTRO con sus 6 primeras lecciones** (F2 lote 1, INMO): esqueleto + linter propio con 3 cerraduras + cuarentena con stub. `35` liberó 2987c. SELLADO. | 13918 |
 | §294 | 🧠 **Lote 4: 20 lecciones de INMO al maestro** — `31` baja del 100 % de su cap al 49 % y `36` al 68 % (−21 776c en 4 nodos). Estrena **D1-bis** (prefijo AMBIENTAL en `migradas/`). D7-ter NO dispara: medido. | 14034 |
 | §295 | 🧠 **Lote 5: 20 lecciones más al maestro** — `39` cae del 96 % al 48 % y `38` deja de rozar su tope (−21 755c en 5 nodos). El índice del maestro se PARTE en `firebase` + `nube-despliegue`; nace el shard `00h`. | 14150 |
+| §296 | 🧠 **Lote 13: se abre la cola de INMO y la de bersaglio llega a CERO** — `L-52` (del `38`) y `L-53` (del `35`) mudan su cuerpo a la bóveda. Censo **2/2** ×3 vías; `38` −5,4 %, `35` −10,9 %. Estrena el 2º destino del #6b. Quedan **44**. | 14257 |
 
 ---
 

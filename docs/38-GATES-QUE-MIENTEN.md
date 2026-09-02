@@ -55,8 +55,7 @@
 **Regla portable**: *no tener gate < tener uno que nadie invoca ([[L-56]]) < tener uno que **afirma haber pasado***. Una corrida en verde **no prueba que el gate mirara**.
 
 ### L-52 — 🧰 Un gate puede correr en VERDE sobre archivos que **nunca abre** *(§138)*
-**Disparador**: `npm run typecheck` pasa y crees que el proyecto está chequeado. **Causa**: `tsc` **no lee los `.astro`**, y ahí vive casi toda la lógica de navegador; al cambiarlo por `astro check` salieron **15 errores reales**, uno un componente ENTERO invisible porque una regex en línea rompe su parser. **Prima hermana en CSS**: `var(--x)` sin declarar **no es un error** — el navegador descarta la propiedad y sigue (así el emblema del login estuvo meses sin relieve en una página declarada «réplica fiel»).
-**Cómo se caza**: sonda deliberada (`const x: number = 'texto'`) en un archivo del tipo que dudas; si el gate no la ve, no cubre ese tipo. **Regla portable**: no preguntes «¿pasa mi gate?» sino **«¿qué ARCHIVOS abre, y qué vería si el fallo estuviera delante?»**. Un gate que falla ABIERTO —descarta lo que no entiende— es indistinguible de uno que funciona ([[M-06]]).
+⇒ **Migrada al maestro** (F2 lote 13): [[INMO:L-52]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
 
 ### L-48 — 🧪 Un prerrequisito GENERADO y gitignored hace que el gate pase en local y falle en CI *(§125)*
 ⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-48]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.

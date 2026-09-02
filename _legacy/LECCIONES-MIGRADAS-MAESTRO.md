@@ -336,3 +336,18 @@ Trunca **al abrir**: lo que falle luego —la lectura, el `encode`, el disco— 
 
 ### L-51 — Un "Deploy complete!" puede no desplegar NADA: si la CLI no nombra el archivo, no hubo archivo *(§134)*
 **Disparador**: `firebase deploy --only firestore:indexes` responde ✅ y `firestore:indexes` devuelve **0**, con 14 en el archivo. **Causa**: la clave no estaba en el `firebase.json` que usa el deploy. Sin clave no hay nada que desplegar, y la CLI lo llama éxito. **La señal**: el mensaje CAMBIA — sin la clave, `deploying indexes...` y calla; con ella, `deployed indexes in <archivo> successfully`. **Sin nombre de archivo, no se desplegó nada.** **Regla portable**: tras un deploy declarativo, **consulta el estado REAL** (`firestore:indexes`, `functions:list`, un GET) — la salida de una CLI es una promesa, no una verificación ([[L-49]]). **Corolarios** (§133-§134): `allSettled` en vez de `Promise.all`; un `catch` que solo loguea convierte «roto» en «vacío»; y toda clase que CREA el JS se estila en el MISMO cambio.
+
+---
+
+> Lote 13 · migrado 2026-09-02 · 2 lecciones (INMO) — cuerpos de `38` · `35`.
+
+> Origen: INMO `docs/38-GATES-QUE-MIENTEN.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §138 · migrado 2026-09-02 lote 13
+
+### L-52 — 🧰 Un gate puede correr en VERDE sobre archivos que **nunca abre** *(§138)*
+**Disparador**: `npm run typecheck` pasa y crees que el proyecto está chequeado. **Causa**: `tsc` **no lee los `.astro`**, y ahí vive casi toda la lógica de navegador; al cambiarlo por `astro check` salieron **15 errores reales**, uno un componente ENTERO invisible porque una regex en línea rompe su parser. **Prima hermana en CSS**: `var(--x)` sin declarar **no es un error** — el navegador descarta la propiedad y sigue (así el emblema del login estuvo meses sin relieve en una página declarada «réplica fiel»).
+**Cómo se caza**: sonda deliberada (`const x: number = 'texto'`) en un archivo del tipo que dudas; si el gate no la ve, no cubre ese tipo. **Regla portable**: no preguntes «¿pasa mi gate?» sino **«¿qué ARCHIVOS abre, y qué vería si el fallo estuviera delante?»**. Un gate que falla ABIERTO —descarta lo que no entiende— es indistinguible de uno que funciona ([[M-06]]).
+
+> Origen: INMO `docs/35-LECCIONES-PLATAFORMA.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §137 · migrado 2026-09-02 lote 13
+
+### L-53 — 🔐 Firebase MFA (TOTP): cuatro conductas que sorprenden y una que NO existe *(2026-08-25, §137)*
+Verificadas en el `.d.ts` del SDK instalado, no de memoria. **(1) No avisa antes**: pide el código DESPUÉS de aceptar la contraseña (`auth/multi-factor-auth-required`); quien no atrape ese código responde «credenciales incorrectas» —mentira— y encierra fuera a quien acaba de inscribirse, así que **el resolver va ANTES que la inscripción**. **(2) `enroll()` exige login RECIENTE y REVOCA las demás sesiones**: activar tu 2FA cierra tu panel en los otros dispositivos — decirlo en pantalla convierte un susto en un trámite. **(3) `getMultiFactorResolver` sirve para ingreso Y re-autenticación** (lo dice su firma); importa porque quien ya tiene factor y va a retirarlo también pasa por el reto, y sin eso queda en un callejón. **(4) `revokeRefreshTokens` NO mata el token de acceso vivo** (caduca solo en ≤1h): «cerrar sesiones» corta *en cuanto expire lo que ya tenía*, no *ahora*; inmediato = comprobar `auth_time` en las Rules. **(5) NO hay códigos de respaldo para TOTP** — no existen en la API: el rescate es una SEGUNDA aplicación inscrita, o un admin que vacíe `multiFactor.enrolledFactors` desde el servidor. Prometer en la interfaz algo que la plataforma no emite es peor que no ofrecerlo.
