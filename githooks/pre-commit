@@ -43,6 +43,35 @@ if echo "$staged" | grep -qE '^js/'; then
   }
 fi
 
+# ── 🚨 La ALERTA DEL VIGÍA se cierra AQUÍ, y solo con evidencia (PLAN-CIERRE §5, capa 2) ────────
+# El vigía de la bóveda (tarea diaria de Windows, 07:00) levanta `docs/.vigia-alerta` cuando algo
+# del cerebro sale ROJO sin nadie delante; el SessionStart lo convierte en una orden ⛔ al arrancar.
+# Ésta es la otra punta, y la condición NO es «hubo un commit» sino «el vigía volvió a dar VERDE»:
+# por eso se vuelve a MEDIR aquí en vez de creerse que el commit arregló algo (§G.4: un flag que se
+# cierra por confianza es un gate que miente).
+#
+# · Va ANTES del corte de `docs/` a propósito: una alerta se arregla casi siempre tocando `scripts/`
+#   o la configuración, no `docs/`, y si el cierre viviera abajo la alerta no se cerraría nunca.
+# · Solo corre cuando HAY alerta abierta (medido: ~4 s las cinco piezas locales; cero coste el 99 %
+#   de los días, que es cuando el flag no existe).
+# · `--recheck` NO usa la red: mide con las refs remotas que ya haya y lo dice en el informe.
+# · INFORMA y jamás bloquea: un rojo ajeno al commit que se está haciendo no puede detener el
+#   trabajo, o el primer día se salta con `--no-verify` y con él se salta todo lo demás.
+if [ -f docs/.vigia-alerta ]; then
+  if [ ! -f ../brain-private/scripts/vigia.mjs ]; then
+    echo "⚠️  hay una alerta del vigía abierta y la bóveda NO está clonada al lado: la alerta se queda (no se puede re-medir)."
+  else
+    echo "🚨 alerta del vigía abierta — re-midiendo (node ../brain-private/scripts/vigia.mjs --recheck)…"
+    if vigia_out=$(node ../brain-private/scripts/vigia.mjs --recheck 2>&1); then
+      rm -f docs/.vigia-alerta
+      echo "✅ el vigía volvió a dar VERDE — docs/.vigia-alerta CERRADO por este commit."
+    else
+      echo "$vigia_out" | grep -E '^❌' || true
+      echo "⚠️  el vigía SIGUE en rojo: la alerta se queda abierta (informe: ../brain-private/cerebro-maestro/VIGIA-ULTIMO.md)."
+    fi
+  fi
+fi
+
 echo "$staged" | grep -qE '^(CLAUDE\.md|docs/)' || exit 0   # nada del cerebro staged → no aplica
 
 echo "🧠 brain:check (pre-commit)…"

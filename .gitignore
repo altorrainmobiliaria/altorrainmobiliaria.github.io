@@ -58,4 +58,9 @@ docs/.handoff-auto.md
 docs/.boot-marker
 docs/.estado-auto.md
 docs/.consolidacion-pendiente
+# Alerta del VIGIA de la boveda (PLAN-CIERRE §5): la levanta scripts/vigia.mjs de
+# brain-private cuando algo del cerebro sale rojo sin nadie delante, la COBRA el
+# SessionStart y la borra el pre-commit cuando el vigia vuelve a dar verde. Estado
+# local de ESTA maquina, igual que el flag de consolidacion: no es historia.
+docs/.vigia-alerta
 .playwright-mcp/
