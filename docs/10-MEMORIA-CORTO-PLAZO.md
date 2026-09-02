@@ -35,7 +35,7 @@
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **rail de pago completo, probado contra el emulador** (§166-§187). ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
 | **TODO-50** | 🧱 **CEREBRO LLENO** — la migración al maestro (TODO-51) lo DESCOMPRIMIÓ: `33` 48 % · `38` 35 % · `37` 36 % (medido 2-sep). Siguen ≥90 %: `05` `43` `50` `32` `34` `21` `22` `44` `00e`, y el BOOT a **262c**. ⛔ Subir techo prohibido ([[M-05]]). | 🟡 mío | §289 |
-| **TODO-51** | 🧠⇪ **PROGRAMA CEREBRO MAESTRO** (2-sep): lotes 1-15 SELLADOS (15º con drill COMPLETO 11/11 · 8/8) — 254 migradas + 10 G, 22 temas; serie A 5→…→2. Cola 11 (INMO 4 · INSE 7): lote 16 la CIERRA (corriendo). Luego: consolidación 2 → dominios → F3 → C4/F6-c → C6 → auditoría de cierre. Registro → `../brain-private/cerebro-maestro/BITACORA.md`. | 🔴 Fable+Opus | plan |
+| **TODO-51** | 🧠⇪ **PROGRAMA CEREBRO MAESTRO** (2-sep): **F2 MIGRACIÓN COMPLETA** — 16 lotes sellados por fríos, cola 0 (249/250 + 1 retenida); maestro 264 migradas + 10 G, 23 temas. Sigue: consolidación 2 → dominios → F3 (hooks por cumplimiento) → C4/F6-c (skills) → C6 → auditoría de cierre (D7-quater, `_legacy`, N2 de INMO vencida). Registro → `../brain-private/cerebro-maestro/BITACORA.md`. | 🔴 Fable+Opus | plan |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea. | ⏸️ 28/92 | §87 · `43` |
 
 ---
