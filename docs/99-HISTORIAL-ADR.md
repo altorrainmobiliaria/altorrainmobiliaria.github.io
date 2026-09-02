@@ -14443,3 +14443,126 @@ dos filas que debía MUDAR no se borraron y el `includes()` previo no lo delató
 el contador de caps como único testigo. Es literalmente [[INMO:L-66]] y [[CARS:L-68]], redescubierto
 mientras se migraban. Arreglado normalizando a LF en memoria y devolviendo el EOL de cada fichero al
 escribir.
+
+## 298. ADR-298 — Lote 15 del maestro: las veinte META de INMO, y el router de temas que pagó dos particiones COMPRIMIÉNDOSE
+
+Lote 15 de la F2 (`brain-private/cerebro-maestro/F2-DISENO.md`), monorrepo INMO. Van **20 piezas**
+en el orden exacto de la cola del censo, saltando las que ya vivían en `migradas/INMO/` —la verdad
+de lo migrado es esa carpeta, no el censo, que es una FOTO (G-001)—: **`M-01`..`M-11` y
+`M-23`..`M-31`**. Es el primer lote **enteramente META**: no hablan del portal ni del legacy, sino
+de cómo se opera un cerebro documental y sus gates. **Retenidas: NINGUNA**, tras leer los veinte
+cuerpos. La cola de INMO baja de 24 a **4** (`M-32` · `M-33` · `M-34` · `M-35`, para el lote 16).
+
+**Las CUATRO que rozaron la línea del §3.1, con su veredicto escrito**: `M-01` (nombra `05` y `10`
+por su número — pero esos nodos son del **kernel COMPARTIDO ×4**, no artefactos de este proyecto, y
+la regla «el tablero se refresca en el MISMO commit que lo desactualiza» pasa la SUSTITUCIÓN) ·
+`M-25` (dos de sus cuatro casos son de negocio —la ventana horaria de la Ley 2300 y la prohibición
+de decir «avalúo»— pero el sujeto es *regla escrita sin mecanismo*, y su test de bolsillo no
+necesita traducción) · `M-26` (el caso es el §G.2 de este router y `L-54` — pero §G.2 vive en los
+cuatro repos y el sujeto es el ENRUTAMIENTO reactivo vs preventivo) · `M-30` (uno de los cuatro
+identificadores inventados está dentro de una regla de Firestore de este proyecto — el sujeto es
+«un identificador que no acabas de leer es INVENTADO» y la gravedad-por-ubicación es domain-free).
+
+### 298.0 — El PRE-PASO D7-quater, en commit propio (bóveda `2a21a14`)
+
+El sello del lote 14 dejó el muro medido: **cinco temas del maestro al 99-100 %** y el
+`00-INDICE-GLOBAL` a **2448/2500c**, con este lote (veinte piezas META) apuntando justo a los temas
+llenos. Decisión de Fable, ejecutada aquí, con los **techos QUIETOS** ([[M-05]]) y `ROUTER.md`
+INTACTO:
+
+1. **El router de TEMAS se comprime al mínimo que permite ELEGIR** —nombre + cuatro o cinco
+   palabras—, porque la cabecera de cada tema ya lleva la descripción completa: lo demás era
+   duplicación **por construcción** (G-006). **2448c → 2169c con DOS temas MÁS** (20 → 22): la
+   compresión bruta paga las dos filas nuevas y deja 331c libres. Y se aplicó la regla **sin
+   narrarla** ([[M-32]]): el primer intento añadía 145c explicando la poda dentro del propio
+   router, que es exactamente lo contrario de podar.
+2. **Dos particiones por la junta**, y las dos estaban ya escritas en la cabecera del propio
+   fichero — el test de bolsillo de G-006 pasa limpio en las dos:
+   - `cerebro-y-memoria` (3943c, 99 %) → nace **`leccion-que-no-llega`** («estaba escrita, era
+     correcta y aun así no te protegió»). Bajan **3 filas VERBATIM**; queda a 3320c (83 %).
+   - `gates-que-mienten` (3984c, 100 %) → nace **`gate-en-rojo`** («te bloquea: ¿tiene razón?»).
+     Bajan **5 filas VERBATIM**; queda a 2897c (72 %) y ya solo responde por el VERDE y el cero.
+   Hermanos **PLANOS**; `gates-y-ci` y `gate-desarmado` nombran en su cabecera al cuarto hermano.
+3. Gates del pre-paso: linter de bóveda **12/12** (avisos 14 → 11) · **sha rollup de `migradas/**`
+   IDÉNTICO** (`5be534d3…`: cero cuerpos tocados) · **filas antes 212 == después 212** · **22/22
+   temas con fila en el global**, cero huérfanos.
+
+### 298.1 — Causa raíz: no hay bug; lo que este lote MIDE es qué pasa cuando el corpus MADURA
+
+Esto es una migración, no una corrección. Lo medible es esto: de las veinte piezas, **once entraron
+al índice como SEGUNDO DESTINO de un síntoma que ya estaba** y solo **nueve estrenaron fila**. En
+los lotes 12-14 la proporción era la contraria. La explicación no es que este lote sea peor: es que
+un lote **META** llega a un índice que ya lleva 212 filas sobre el mismo dominio —cómo miente un
+gate, cómo envejece lo escrito—, así que el síntoma casi siempre existe y lo que falta es el
+destino. G-007 regla 1, funcionando a plena carga: *un índice con entradas duplicadas rutea PEOR
+que uno más corto, aunque el contador diga que creció.*
+
+Y la forma del lote se repite: **20 de 20 con el cuerpo en HOJA HIJA** (`37`, `33a`, `33`) y el
+titular en `30`, que es la que más descomprime.
+
+### 298.2 — Solución estructural
+
+Cuerpo íntegro al fichero del maestro (`brain-private/maestro/lecciones/migradas/INMO/<ID>.md`),
+abriendo con su línea `> Origen:` que **declara de qué nodo salió** y en qué ADR se pagó; copia de
+retorno al bloque «Lote 15» de `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md`, que es de donde el ABORT
+reconstruye; y en la hoja hija queda el header intacto + un stub **ya anclado**. En `30`, la marca
+`⇒ **migrada al maestro**: [[INMO:M-NN]]` al final del titular. **Los cuerpos no se editan**: el
+extractor corta por header y el censo prohíbe tocar un byte. `M-07` se lleva con ella su bloque
+«⚠️ Forma 2 — el gate que le pregunta al VIGILADO si debe vigilarlo» (§85), que vivía bajo su
+header: cortar por header lo incluye sin decidir nada.
+
+### 298.3 — No-regresión
+
+`brain:check` **SANO**. `refs L-/M- 98 usadas / 98 def` **sin moverse**: el titular de `30` —que es
+la tabla de resolución del #5b— sigue entero, así que los `[[M-05]]` y `[[M-09]]` que el `10` cita
+**siguen resolviendo** (medido por `grep` este turno: son las dos únicas de las veinte citadas
+desde un always-on). **Always-on INTACTOS**: `CLAUDE.md`, `05` y `10` sin tocar, **boot 31238c ≤
+31500** idéntico antes y después. `30` no gana ni una LÍNEA (169L/240): las veinte marcas se
+apenden al titular que ya existía, y son +795c sobre un cap de 40000.
+
+### 298.4 — Tests / verificación
+
+| | Resultado |
+|---|---|
+| **(a) Censo sha256** | **20/20** idénticas por TRES vías —fichero del maestro, bloque del `_legacy` y blob git PINNEADO (`ea7124b`) del nodo que la propia pieza DECLARA en su `> Origen:`—, corrido **en memoria ANTES** de escribir un byte, y **88/88** el total de INMO re-verificado tras pushear. Normalización declarada: CRLF→LF + recorte de saltos finales, en los tres lados. |
+| **(b) `brain:check` INMO** | **CEREBRO SANO**. El diff completo contra la línea base son los CUATRO tamaños + el contador del índice + el reloj del canario. Boot 31238c INTACTO; índice 297 → 298. |
+| **(c) Colgantes ×4 repos** | **diff VACÍO**: INMO 98/98 · CARS 99/99 · BERS 97/97 · INSE 8/8, cero colgantes en los ocho lados, con el regex EXTRAÍDO del kernel de cada repo. |
+| **(d) Linter de bóveda** | **12/12 en verde**. 254 migradas con `> Origen:` + 10 `G` · 294 citas cualificadas · cero IDs pelados (46 exentas por D1-bis) · 24 ficheros de ruteo, **22 temas**. Inmutabilidad D10.1: `git status` bajo `migradas/` = **0 modificados**, 20 nuevos. |
+| **(e) Ensayo en seco de las filas** | El primer script escribía y comprobaba DESPUÉS: dejó tres ficheros de ruteo por encima de 4000c. Revertido con `git checkout` y rehecho calculando **todo en memoria** antes de tocar disco. El cap no se subió en ninguno ([[M-05]]): se destiló la prosa de tres cabeceras y se apretó el texto de las filas nuevas. |
+
+### 298.5 — Anti-patterns evitados
+
+**No se subió ningún techo** ([[M-05]]) ni se «arregló» el rebose ampliando el cap: se partió por la
+junta y se destiló prosa. **No se editó un solo cuerpo**: el censo por tres vías es lo que lo
+prueba, y no se cree a la memoria. **No se añadió una fila por pieza** ([[G:G-007]]): once fueron
+segundos destinos. **No se narró la poda dentro del fichero podado** ([[M-32]]). **No se tocó el
+always-on** aunque el reflejo pedía refrescarlo (ver 298.7).
+
+### 298.6 — Archivos modificados / INTACTOS
+
+**Modificados**: `docs/37-META-FUNDACIONALES.md` (14795 → 5675c, **−61,6 %**; 84L → 60L) ·
+`docs/33-LECCIONES-META.md` (13292 → 7146c, −46,2 %) · `docs/33a-LECCION-QUE-NO-DISPARA.md`
+(7234 → 3004c, −58,5 %) · `docs/30-LECCIONES.md` (+795c, 0 líneas) ·
+`_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (bloque «Lote 15») · `docs/99` + `docs/00-INDICE.md`.
+**Neto en los nodos: −18 701c.** **`37` SALE de pre-shard** y las neuronas al ≥90 % bajan de **11 a
+10**; `33a` queda **sin un solo cuerpo vivo** y `37` conserva únicamente `M-33`.
+**INTACTOS verificados**: `CLAUDE.md`, `docs/05`, `docs/10` (boot idéntico), `docs/31`, `docs/32`,
+`docs/34`..`docs/36`, `docs/38`, `docs/38a`, `docs/39`, y todo el código.
+
+### 298.7 — Doctrina aplicada · frescura · y lo que NO se tocó
+
+**Frescura (§G.4, no lo ve ningún gate)**: refrescadas las **cuatro cabeceras** que este lote volvió
+falsas — `37` («aquí viven las meta-lecciones fundacionales» ⇒ aquí viven sus stubs, y `M-33`),
+`33a` («el texto está movido verbatim» ⇒ las cinco están migradas), `33` («el detalle completo vive
+aquí» ⇒ solo `M-32`/`M-34`/`M-35`) y `30` (su lista de hojas hijas prometía DETALLE en tres que ya
+solo tienen stub). De regalo, esa lista de `30` seguía diciendo «L-22/L-26/L-28 **COMPLETAS**» en
+`31` **desde el lote 4** —tres lotes mintiendo—: el lote 14 arregló la cabecera DE `31` y no la
+copia que vivía en `30`. Es [[M-34]] leída en documentación: *arreglar el fallo dentro del
+instrumento no protege lo que dice lo mismo al lado.*
+
+**Lo que NO se tocó, medido y declarado**: el `10` (always-on) afirma en `TODO-50` que «`33` 89 % ·
+`38` 97 % · `37` con 6 líneas» y que el BOOT está «en **49c**». Los cuatro datos son **falsos hoy**
+(`33` 48 % · `38` 35 % · `37` 36 % con 30 líneas libres · boot 262c). No se corrige aquí a
+propósito: el boot está a 262c de su techo y el encargo de este lote prohíbe tocar los always-on;
+tocarlos dentro de una migración añadiría riesgo sin necesidad. Queda escrito para que se pague en
+su commit, que además lo ACORTA.

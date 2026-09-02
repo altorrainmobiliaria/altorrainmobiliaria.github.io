@@ -495,3 +495,166 @@ dan otro texto, y una base **sin reglas desplegadas devuelve 200 con documentos*
 
 ### L-74 — 🎭 Un `\b` casa DETRÁS de los dos puntos: `[[CARS:L-01]]` se leyó `L-01` y resolvió contra OTRA lección: ✅ *(§292)*
 **Caso**: el #5 v1.28 resolvía la ref cualificada contra el `L-01` LOCAL. **Reglas**: (1) 🎯 el mismo defecto es RUIDOSO con nº ajeno (`[[BERS:L-84]]` colgante) y MUDO en colisión: arregla la causa, no el que se ve. (2) Mide el TOKEN que extrae el parser: el ✅ no cambia. (3) Grep el PATRÓN: vivía también en 5c.
+
+---
+
+> Lote 15 · migrado 2026-09-02 · 20 lecciones (INMO) — cuerpos de `37` · `33a` · `33`.
+
+> Origen: INMO `docs/37-META-FUNDACIONALES.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §30 (auditoría; reincidencia de §12) · migrado 2026-09-02 lote 15
+
+### M-01 — El tablero `05` se rezaga si el CIERRE no lo re-fresca en el MISMO commit *(auditoría §30, reincidencia de §12)*
+**Patrón (reincidente ×2)**: el commit de cierre consolida `10` y los ADRs, y `05` se queda con el estado de la ola ANTERIOR — contradiciendo a `10` sin que nada falle. Ningún gate cruza `05`↔`10`↔git, y la frescura valida una fecha TECLEADA, o sea jugable. **Regla**: todo commit que cierra ola o hito toca `05` en el mismo cambio que `10`; re-sella la fecha, reconcilia §Sub-sistemas y pon `verificado-vivo:` en los claims LIVE (eso sí activa el gate #16). **Corolario**: `10`/`05` NUNCA citan su «último commit `<SHA>`» — el commit de cierre nace DESPUÉS de escribir el nodo.
+
+> Origen: INMO `docs/37-META-FUNDACIONALES.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §33 (auditoría; 2ª reincidencia de [[INMO:M-01]]) · migrado 2026-09-02 lote 15
+
+### M-02 — La disciplina de cierre NO sobrevive a la saturación de contexto: la consolidación se AUTOMATIZA, no se promete *(auditoría §33, 2ª reincidencia de M-01)*
+**Patrón**: M-01 se escribió, y la clase reincidió igual cinco días después (`05` a 59 commits de `10`), porque la sesión murió por contexto reventado — justo cuando la doctrina pide «consolida antes de cerrar». **Dictamen del comité (unánime)**: el defecto es de DISEÑO, no de disciplina; el sistema exige escribir la memoria AL FINAL, cuando el contexto está más saturado y el modelo menos fiable. Una lección no arregla eso, y M-01 es la prueba. **Regla**: los dolores REINCIDENTES del cerebro se curan con AUTOMATISMOS (hooks de cierre, gates bloqueantes, scripts), nunca con más doctrina always-on — y cada regla nueva del router desplaza una existente.
+
+> Origen: INMO `docs/37-META-FUNDACIONALES.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §49 (auditoría) · migrado 2026-09-02 lote 15
+
+### M-03 — Un recurso COMPARTIDO ×4 no se protege con rituales por-operador: el gate vive EN EL RECURSO *(auditoría §49)*
+**Patrón**: «bóveda sin commitear» se curó con un ritual ampliado en la doctrina… y a menos de 48 h la bóveda estaba sucia otra vez, con crudos de otro repo dentro. El ritual es por-operador, pero `brain-private` es UN recurso compartido ×4: basta que uno cierre sin commitear para que el respaldo falle, y el gate #7 es ciego a git POR DISEÑO. **Regla**: los invariantes de un recurso compartido se protegen con un gate EN el recurso (que mire `git -C <bóveda> status`), no con doctrina replicada en N operadores. **Complemento**: quien ENCUENTRE la bóveda sucia la commitea él mismo — respaldo ajeno también se enriquece.
+
+> Origen: INMO `docs/37-META-FUNDACIONALES.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §68 · migrado 2026-09-02 lote 15
+
+### M-04 — Un ID lo asigna quien escribe, y dos frentes en paralelo colisionan en SILENCIO *(2026-07-28, ADR §68)*
+**Patrón**: `L-31`..`L-34` quedaron asignadas DOS veces cada una — el frente técnico y el legal las tomaron el mismo día sin verse. Nadie sobrescribió a nadie: ambas se apendaron (la doctrina manda enriquecer), así que el archivo quedó consistente A LA VISTA y roto en las referencias, con citas apuntando a sentidos contrarios en seis nodos y dos skills. **Por qué pasó**: el ID se elige leyendo «el número más alto que veo» en un archivo de 350 líneas, con el contexto ya cargado, y ningún gate valida unicidad. **Regla**: cuando una familia de conocimiento crece en un frente propio, dale **namespace y hoja propios** (`LD-NN` en `32`) en vez de estirar una secuencia compartida — el namespace hace la colisión imposible; la disciplina, no. **Corolario**: al reparar citas rotas, deja escrito el mapa viejo→nuevo en la hoja nueva, porque la próxima cita rota la escribirá alguien que no leyó ese commit.
+
+> Origen: INMO `docs/37-META-FUNDACIONALES.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §74 · §75 · migrado 2026-09-02 lote 15
+
+### M-05 — Un techo que se mueve para alcanzarlo no es un techo *(2026-08-01, ADR §74-§75)*
+**Patrón**: en un solo turno estuve DOS veces a punto de subir un límite en vez de cumplirlo. Bastaba subir el `bootCharsTarget` de un hermano para que «los 3 bajo presupuesto» se cumpliera solo; y un script que declaraba caps **subía automáticamente** cualquier tope que el archivo excediera, incluidos 9 deliberados. **Por qué es insidioso**: las dos veces el resultado inmediato es un ✅ y ningún gate se queja. El límite sigue ahí, el linter pasa, y la deriva que el límite frenaba continúa **con la bendición del gate** — peor que no tenerlo, porque ahora hay evidencia falsa de control. **Regla**: **un cap excedido es la señal de DESTILAR, no de subir el techo.** Un límite solo se sube por una razón que NO sea «hoy no lo cumplo» —cambió el alcance, se midió mal, la neurona absorbió otra— y esa razón se escribe.
+
+> Origen: INMO `docs/37-META-FUNDACIONALES.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §75 · §76 · §77 · migrado 2026-09-02 lote 15
+
+### M-06 — Un gate solo existe si lo has visto DISPARAR: tres formas de que mienta, y las tres dan ✅ *(2026-08-01, ADR §75-§77)*
+**Patrón**: un chequeo nuevo hubo que corregirlo TRES veces, cada una descubierta probándolo y ninguna razonándolo. (1) **No disparaba**: buscaba un texto que el comando real no imprime — teatro puro, y habría quedado como ✅ decorativo para siempre. (2) **Acusaba a un inocente**. (3) **Volvió a acusar** en otro repo, a una skill y a un tag de modelo. Y el mismo día otro gate **quedó obsoleto por el propio arreglo que él provocó**: exigía un campo justo cuando lo correcto pasó a ser no declararlo, así que gritaba precisamente en los repos que ya habían hecho lo correcto.
+**Las tres formas de mentir de un gate**, y las tres imprimen verde: **no dispara** cuando debe · **dispara contra un inocente** · **se puede ajustar para que pase** ([[M-05]]).
+**Regla**: un gate no está terminado cuando compila, sino cuando lo has visto **(a)** disparar restituyendo el defecto vivo que lo motivó, **(b)** callar con el texto correcto y **(c)** no acusar a un caso legítimo vecino. **Corolario**: al cambiar una doctrina, revisa qué gate la vigilaba.
+
+> Origen: INMO `docs/37-META-FUNDACIONALES.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §81 · la Forma 2 en §85 (U-13) · migrado 2026-09-02 lote 15
+
+### M-07 — Un gate del kernel solo protege donde su DISPARADOR está cableado *(2026-08-01, ADR §81)*
+**Patrón**: subí el candado de boot al kernel como bloqueante «×4» y fui a verificar la frase (§3.3). Tres repos tenían `core.hooksPath=githooks`; **`insemastereo` no tenía `pre-commit` en absoluto**. El kernel estaba byte-idéntico en los cuatro ([[M-03]] cumplida), pero un gate compartido tiene **DOS mitades**: el **código** y el **CABLEADO** (`core.hooksPath` + `githooks/pre-commit` + `.claude/settings.json`). El linter validaba la primera y nunca la segunda: ese repo commiteaba sin que nada lo revisara, imprimiendo ✅ en cada corrida. **Su fallo es por AUSENCIA** — no hay línea mala que leer, hay una llamada que nadie hace; variante silenciosa del ✅ decorativo de [[M-06]].
+**Regla**: «está en el kernel» ≠ «está activo». Verifica el DISPARADOR **repo por repo** en el mismo cambio y mecanízalo (el **#25** lee `.git/config` y exige un `pre-commit` que invoque a `brain-check`). Todo automatismo tiene un punto de enganche, y el enganche también necesita su gate.
+
+**⚠️ Forma 2 — el gate que le pregunta al VIGILADO si debe vigilarlo** *(2026-08-03, ADR §85, U-13)*. El canario #24 caza que el hook `SessionStart` desaparezca, y decidía si aplicaba leyendo **el propio `.claude/settings.json`**: borras el hook y contesta *amablemente* «no aplica aquí». **Falla ABIERTO ante justo la regresión que existe para cazar. Regla**: la condición de aplicabilidad de un gate NO vive dentro de su objeto vigilado — sube a una declaración aparte y auditable (`harnessCanary` en el manifest), de modo que apagarla sea explícito **y borrarla también avise** (`REQUIRED_KEYS`). Test de bolsillo: *si el atacante es la ausencia de X, ¿mi gate le pregunta a X?*
+
+> Origen: INMO `docs/37-META-FUNDACIONALES.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §83 (auditoría #6) · migrado 2026-09-02 lote 15
+
+### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega *(auditoría #6, 2026-08-01/02, ADR §83)*
+**Patrón**: lancé la auditoría Nivel-2 #6 como workflow en segundo plano y **falló dos veces, de dos maneras que desde fuera se ven IGUAL**. (1) **Muerte**: el workflow vive DENTRO del proceso anfitrión; al salir éste, sus agentes mueren — avisó. (2) **Cuelgue**: un agente no devolvió NUNCA (37 h) y **nada progresó en 25 h**. Las dos señales disponibles se contradicen y **cada una miente por separado**: el panel decía «En ejecución, 86 agentes» (cierto: vive) y el disco «última escritura ayer 13:03» (cierto: no avanza). Leí solo el disco y lo llamé muerto; el panel solo, y lo habría llamado sano. **Coste de no cruzarlas: 10,9M tokens** ardiendo en un agente colgado.
+**Lo que salvó el trabajo** fue algo que yo no diseñé: el `journal.jsonl` persiste **el payload de cada agente en cuanto responde**. Las sondas y los escépticos —lo caro— estaban intactos; lo perdido fue el sintetizador, que es lo barato. Reconstruí los 109 hallazgos y los 136 veredictos leyendo el journal.
+**Reglas**: (1) **el paso que consolida no va en el proceso frágil** — si N agentes producen y uno sintetiza, sintetiza TÚ con lo que quedó en disco; (2) **«¿vive?» y «¿avanza?» son dos preguntas y hacen falta las dos**: el contador responde la primera, el reloj de las escrituras la segunda; vivo-y-sin-avanzar es un cuelgue y exige matarlo, no esperarlo — ponle **techo de tiempo por agente**; (3) antes de relanzar, pregunta si los datos ya están en disco. **Corolario**: un contador que no distingue «trabajando» de «muerto a media faena» es un ✅ decorativo con otra ropa ([[M-06]]).
+
+> Origen: INMO `docs/37-META-FUNDACIONALES.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §84 · migrado 2026-09-02 lote 15
+
+### M-09 — El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es frecuencia × costo de omisión *(2026-08-03, ADR §84)*
+**Patrón**: el router llegó al **99,8% del boot** y el diagnóstico escrito en `10` era *"los recortes de
+urgencia ya no dan más"*. Al medirlo, el problema no era el estilo: **`§3.1`, `§3.5` y el grueso de `§3.2`
+pesaban ~2.2k de 20.4k y gobiernan un sitio RETIRADO**, en un repo cuyo frente vivo es la fundación
+operativa. Se auto-cargaban en CADA sesión para no usarse en casi ninguna.
+**Por qué el cerebro contribuyó**: había gate para el TECHO (#2) y doctrina para no subirlo ([[M-05]]), pero
+**ninguna regla decía qué se gana el derecho a estar siempre cargado**. Con criterio de entrada y sin
+criterio de salida, un always-on solo puede crecer: toda doctrina es importante para alguien, y el que la
+escribe nunca paga su renta.
+**Regla**: lo que se queda en el always-on se decide por **frecuencia de uso × costo de omitirlo**, no por
+importancia. Alto costo aunque sea raro (borrar `CNAME`, una query sin `limit()` contra el free-tier) → se
+queda. Importante pero de uso episódico (cómo animar un CSS) → **hoja hija + puntero + trigger en §G.2**;
+sigue siendo vinculante, deja de cobrar renta en cada arranque.
+**Corolario operativo**: antes de mudar una regla, `grep` para saber si es ÚNICA o copia; **NO renumerar
+secciones citadas** (`§3.3` lo citan 8 neuronas y 2 scripts); y **corregir en el mismo commit el puntero
+que apuntaba a lo movido** — aquí `30` L-04, que mandaba a un `§3.5` ya inexistente. Un puntero roto es una
+regla apagada en silencio.
+
+> Origen: INMO `docs/37-META-FUNDACIONALES.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §90 (auditoría #7) · migrado 2026-09-02 lote 15
+
+### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total *(auditoría #7, 2026-08-20, ADR §90)*
+Cuatro hallazgos de la #7 son **la misma falla**, y ninguno lo cazó un gate porque los cuatro estaban en verde:
+(a) **#27 rutas fantasma** valida `neurona → archivo inexistente`, pero §G.4 promete *«mueves/**creas**/renombras/eliminas → actualiza `20`»*: el verbo **creas** —el más frecuente, porque nace de trabajar rápido— no tiene gate. 7 páginas del portal quedaron sin documentar bajo un ✅.
+(b) **#5 refs `L-`/`M-`** valida que la ref EXISTA, no que sea CORRECTA: `10` citaba `L-34` donde iba `L-39`, y un drill frío confirmó que habría diagnosticado mal. 48/48 «resuelven» ✅.
+(c) **la memoria del harness** no la mira **ningún** gate. Por eso dos hallazgos llegaron reincidentes desde la #6: una capa fuera de alcance no produce hallazgos, produce **silencio**, y el silencio se lee igual que un ✅.
+(d) **#3 desync del índice** valida `00 → 99`, pero un `§NN` suelto en PROSA no lo mira nadie: el `10` arrastraba un `§195` inexistente — un puntero muerto **dentro del boot**.
+**Regla**: al declarar un gate, escribe la **mitad que NO cubre** al lado de la que sí, en su comentario y en la doctrina que lo cita. Un gate sin su complemento declarado no es cobertura parcial: es cobertura **aparente**. Y **toda capa sin gate se declara sin-gate**, o su ausencia de hallazgos se confundirá con salud.
+
+> Origen: INMO `docs/33a-LECCION-QUE-NO-DISPARA.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §94.1 · §96.1 · §97.1 · migrado 2026-09-02 lote 15
+
+### M-11 — Escribir la lección NO la aplica: si el PENDIENTE no se re-etiqueta, el cerebro la ignora *(2026-08-21, ADR §94.1 · §96.1 · §97.1)*
+Una lección escrita y un pendiente que sigue diciendo lo de antes conviven sin fricción: la próxima sesión lee el pendiente, no la lección. **Cobró TRES veces seguidas.** Regla: al escribir una lección que invalida un pendiente, se re-etiqueta el pendiente **en el mismo commit** — o no se ha aplicado, solo se ha documentado.
+
+> Origen: INMO `docs/33-LECCIONES-META.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §140 · §145 (auditoría #10; reincidencia ×3 de N9-02) · migrado 2026-09-02 lote 15
+
+### M-23 — Un paso de procedimiento que nadie ha ejecutado no es documentación: es una HIPÓTESIS *(auditoría #10, 2026-08-25, ADR §140 · §145 · reincidencia ×3 de N9-02)*
+El runbook del cutover ha fallado **cuatro veces por lo mismo**: un botón que prometía y no existía (§126), un comando que no funcionaba desde el día que se escribió (§140.1), un paso 🤖 imposible para 🤖 (§140.5) y un mapa de 301 que **jamás se ejecutó** (§145). Los cuatro se descubrieron **ENSAYANDO**, ninguno leyendo — y ninguno lo puede cazar un gate: no son rutas ni tipos, son **promesas**. El agravante de §145: el código era correcto y las pruebas unitarias verdes; lo que faltaba es que **alguien llamara a la función**. *Una prueba unitaria demuestra que la función responde bien, no que alguien la use.* **Regla**: todo paso de un procedimiento marcado como automático lleva su `ensayado: <fecha>`, y se ensaya ANTES del día D — porque un runbook se ejecuta cuando el DNS ya se movió, que es el único paso que tarda horas en revertirse. Corolario de método: **si mides sin reconstruir, no estás midiendo tu cambio.**
+
+> Origen: INMO `docs/33a-LECCION-QUE-NO-DISPARA.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §160 (reincidencia de [[INMO:L-46]] caso b) · migrado 2026-09-02 lote 15
+
+### M-24 — Una lección CORRECTA archivada bajo el disparador equivocado no dispara *(§160 · reincidencia de [[L-46]] caso b)*
+[[L-46]] describe el fallo con precisión quirúrgica y aun así **reincidí dos veces el mismo día** — la segunda, escribiendo *esta misma lección*. La lección no falló: falló su ENTRADA. Estaba archivada bajo *«generas un archivo con heredoc»* y yo parcheaba **una línea**, que no se siente como generar nada: el disparador describía la ESCENA del descubrimiento, no la CONDICIÓN que lo causa.
+**Regla**: el disparador se redacta como la **condición mínima detectable** (*«la carga lleva un backslash»*), nunca como la actividad en que apareció. Si solo lo reconoce quien ya recuerda el caso, es un recuerdo, no un reflejo. **Al reincidir en una lección existente, audita primero su disparador**: si tuviste que releerla para reconocerte, el defecto está ahí y no en tu atención.
+
+> Origen: INMO `docs/33a-LECCION-QUE-NO-DISPARA.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §162 · §163 · §172 · §173 · migrado 2026-09-02 lote 15
+
+### M-25 — Una regla ESCRITA da la sensación de estar APLICADA *(§162 · §163 · §172 · §173 — cuatro veces el 2026-08-26)*
+Cuatro averías del mismo día, misma forma: **riesgo entendido, escrito, y sin mecanismo detrás.** (a) `sitemap.xml.ts` explicaba en un comentario que «el olvido más común es no meter la URL al sitemap»… y dejó `/nosotros` fuera. (b) `portal-ci.yml` explicaba por qué el interruptor del catálogo vive ahí, y nadie hacía ruido si se olvidaba. (c) `43` tenía escrita la ventana horaria de la Ley 2300 con sus horas exactas mientras **dos crons la incumplían**. (d) La prohibición de decir «avalúo» estaba en **cuatro** sitios y el panel decía «Tu avalúo».
+**Por qué engaña**: escribir la regla da la misma sensación de cierre que aplicarla —se entendió, se dejó constancia, se puede citar— y esa sensación **apaga la pregunta siguiente**. Cuanto mejor escrita, más engaña: un comentario que nombra el fallo exacto parece un fallo resuelto.
+**Regla**: la misma tarea que escribe una regla **decide su mecanismo o declara que no lo tiene**. Tres salidas, y el silencio no es una: un gate · un `[HONOR]` explícito · hacerla imposible por diseño. **Test de bolsillo**: *si mañana alguien la incumple, ¿qué se pone rojo?* Si es «nada», todavía no es una regla: es una nota.
+**Y al detectar un incumplimiento, busca la regla ANTES de escribirla**: las cuatro veces ya estaba, y el hallazgo no era la norma sino su desconexión.
+
+> Origen: INMO `docs/33a-LECCION-QUE-NO-DISPARA.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §174 · migrado 2026-09-02 lote 15
+
+### M-26 — Un nodo que se consulta CUANDO ALGO FALLA no puede evitar el fallo: [[L-54]] estaba escrita, correcta y bien titulada, y aun así la pisé 22 veces en un archivo nuevo *(§174)*
+No es [[M-24]] (el disparador estaba **bien** redactado: *«los tipos de Workers pisan el DOM: usa `appendChild`»*) ni [[M-25]] (no era una nota: era una lección con su caso y su fix). Falló el **ENRUTAMIENTO**. §G.2 tiene dos triggers para código y dicen cosas distintas: el **🖥️ Código** manda leer `34-DOCTRINA-CODIGO` **ANTES de escribir**, y el **🧪 Experiencia** manda a `30-LECCIONES` *«si un síntoma te suena»* — que es **reactivo por construcción**. La regla de Workers vivía solo en la rama reactiva. Siguiendo el router al pie de la letra, quien escribe un archivo nuevo **no se la encuentra jamás**: solo la encuentra quien ya tiene el error en pantalla, y para entonces ya la pisó.
+Agravante: L-54 se había escrito **el día anterior** (§138), y el error que produce **no nombra a Cloudflare** — así que ni el mensaje devuelve al nodo. El coste real fue mayor que las 22 líneas: el archivo entró a `main` en rojo y bloqueó los despliegues del portal hasta el día siguiente.
+**Regla**: al archivar una lección, pregunta **en qué momento hace falta**, no de qué trata. Si hace falta ANTES de teclear —una trampa del stack, un invariante del modelo, una colisión de tipos— su sitio es el nodo que el router abre **antes**, aunque el caso completo viva en el de lecciones; el de lecciones es para RECONOCER un síntoma, no para prevenirlo. **Test de bolsillo**: *¿qué trigger de §G.2 me trae aquí, y llega a tiempo?* Si la única respuesta es «cuando ya falló», está en el nodo equivocado — o le falta una copia en el de antes.
+
+> Origen: INMO `docs/33-LECCIONES-META.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §202 · migrado 2026-09-02 lote 15
+
+### M-27 — Escribí tres sondas de censo sin que ninguna dijera QUÉ había mirado, el mismo día que arreglé un gate por exactamente eso *(§202)*
+**Qué pasó**: por la mañana amplié `verify:claims` porque no abría los artículos del journal, y le pegué un contador —*«47 archivos leídos»*— con este argumento escrito en el commit: *«ese número es lo único que distingue “lo revisé” de “no hice nada”»*. Por la tarde escribí **tres sondas ad-hoc** de censo y **ninguna imprimía cuántos archivos había abierto**. Las tres devolvieron *«0 colecciones escritas por ambos lados»*, y las tres estaban mal: la 1.ª no entendía la API modular, la 2.ª seguía siendo línea a línea —así que era **ciega al código bien factorizado**, donde la referencia se construye en un helper y el verbo cae en otra línea— y **ninguna de las dos abrió `js/`**, que es donde vive medio panel legacy.
+🎯 **La asimetría que lo explica**: esa misma mañana otra sonda mía reportó **94 % de discrepancia** y la comprobé **en el acto**, porque un número catastrófico pide explicación. Estas susurraron *«todo limpio»* tres veces seguidas y solo las cacé porque yo **sabía** que `propiedades` tiene que escribirse. **Un resultado tranquilizador no se audita solo.** Y su forma más peligrosa es el cero: *«no encontré nada»* es indistinguible de *«no miré en ningún sitio»*.
+**Regla**: 🎯 **una sonda ad-hoc debe imprimir su COBERTURA —cuántos archivos, qué directorios— junto al resultado, y con más razón cuando el resultado es cero.** Aplico a mis scripts de una vez el mismo listón que le exijo a un gate del CI; la diferencia entre los dos es que el gate lo vuelve a decir cada día y el script solo tenía una oportunidad. **Y el defecto del cerebro que esto destapa**: [[L-52]] («verde sobre archivos que nunca abre») estaba escrita para los **gates**, y yo la leía como una regla de gates. No lo es: es una regla de **cualquier cosa que enumere**. Corregido su alcance.
+
+> Origen: INMO `docs/33a-LECCION-QUE-NO-DISPARA.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §216.8 · migrado 2026-09-02 lote 15
+
+### M-28 — Una lección mía llevaba meses escrita y su remedio estaba del lado equivocado del corte *(§216.8)*
+**Qué pasó**: L-47 (desde §118) avisa de que `open(p,'w')` destruye el archivo, y prescribe *«lee a una
+variable y **afirma** antes de abrir en `'w'`»*. Hice las dos cosas y **vacié `42-LEGAL` de cars igual**: el
+fallo fue un `UnicodeEncodeError` *durante* el `.write()`, ya truncado. El `assert` cubre leer-tras-truncar;
+no cubre fallar-tras-truncar.
+**El defecto**: la lección estaba redactada como **precaución contra el modo de fallo que la originó**, no
+como principio. Al leerla, reconocí la trampa, apliqué su remedio y me quedé tranquilo — la lección **produjo
+confianza sin producir protección**, que es peor que no tenerla.
+**Cómo se aplica**: al escribir una lección, pregunta *«¿este remedio protege del PELIGRO, o solo del CAMINO
+por el que llegué al peligro?»*. Si el peligro tiene un punto de no retorno (truncar, borrar, publicar,
+enviar), **el remedio va ANTES de ese punto o no es un remedio**. Y si ya existe una lección y vuelves a
+caer, el defecto no es tuyo: **es de su redacción** — reescríbela en principio, no añadas un caso más.
+
+> Origen: INMO `docs/33-LECCIONES-META.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §216.9 · migrado 2026-09-02 lote 15
+
+### M-29 — Un gate de un repo hermano infería una causa de una correlación, y quien rompió la premisa fui yo *(§216.9)*
+**Qué pasó**: el canario de arranque de cars deduce *«los hooks del harness no disparan aquí»* de *«hay
+actividad git reciente y ningún `SessionStart` escribió el marcador»*. Me bloqueó un commit. Sus hooks estaban
+perfectos: la actividad era un commit de **distribución de kernel** que empujé desde la sesión de OTRO repo.
+**El defecto**: la premisa *«commits ⇒ alguien trabajó aquí en sesión»* era cierta cuando escribí el gate, y
+dejó de serlo cuando adopté el kernel compartido entre repos. **Nadie revisó la premisa porque el gate seguía
+pasando** — hasta que un día no.
+**Cómo se aplica**: (1) un gate que infiere una CAUSA de una CORRELACIÓN debe nombrar su premisa por escrito,
+para que se pueda auditar; (2) al adoptar una práctica nueva que cruza repos o entornos, pregunta *«¿qué gate
+supone que esto no pasa?»*; (3) ante un gate que bloquea, **verifica la premisa antes que el síntoma** —y
+prefiere el remedio que la vuelve cierta sobre el interruptor que lo apaga (`SKIP=1` es ceguera permanente
+a cambio de un commit).
+
+> Origen: INMO `docs/33-LECCIONES-META.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §235 · migrado 2026-09-02 lote 15
+
+### M-30 — Me inventé un identificador CUATRO veces en una noche, y las cuatro por escribir de memoria en vez de leer *(§235)*
+**Los cuatro**: `RAIZ` en un gate (la constante se llamaba `raiz`) · `htmlDeCliente()`, un helper que no existía · `'autoriza-expresamente'` y `'silencio-reglamento'` **dentro de una regla de seguridad** (los reales eran otros: habría bloqueado TODO alojamiento) · `'en_gestion'`, un estado de solicitud que no está en `ESTADOS_SOLICITUD`.
+**El patrón**: los cuatro aparecieron al escribir código *sobre* un módulo que ya conocía «de antes» — nunca al leerlo. Y 🎯 **la gravedad no la fija el error sino DÓNDE cae**: el mismo descuido fue ruido en un script de scratch y habría sido un bloqueo total en una regla de Firestore. Los tres primeros los cazó una **aserción o el typecheck**; el cuarto lo habría aceptado un `Record<string, …>` y el aviso simplemente no habría salido nunca, sin fallar nada.
+**Reglas**: (1) 🎯 **un identificador que no acabas de leer es un identificador inventado** — antes de citar una constante, un enum o un helper, ábrelo; el coste es un `grep`. (2) **Deja que el TIPO lo rechace** donde se pueda: `Partial<Record<TipoReal, …>>` en vez de `Record<string, …>` convierte mi defecto en un error de compilación — es el único remedio que no depende de que yo recuerde la regla. (3) **En una regla de seguridad, un enum recordado se lee del fichero, sin excepción**: allí el error no degrada, bloquea. (4) ⚠️ *Que tres de cuatro los cazara una aserción no es suerte: es que las escribí. La cuarta no tenía ninguna.*
+
+> Origen: INMO `docs/33-LECCIONES-META.md` (titular en `docs/30-LECCIONES.md`) · pagada en INMO §240 · su regla (5) en §243 · migrado 2026-09-02 lote 15
+
+### M-31 — 🎯 Un hallazgo que escribí YO apuntaba al nodo que acababa de tocar, no al que peor estaba *(§240)*
+**Disparador**: cerré la auditoría #15 anotando que lo siguiente era **partir `38-GATES-QUE-MIENTEN` por tema**, porque le había subido el techo dos veces en 24 h. Al ir a ejecutarlo, medí: `38` estaba al **79 %** y ni entraba en el top-12 de saturación. Los clavados eran otros siete, y **`30-LECCIONES` estaba en 240/240 LÍNEAS** — literalmente bloqueado, no cabía la lección siguiente. El nodo que marqué era simplemente el que tenía las manos encima.
+**El patrón**: un hallazgo propio hereda el foco del turno que lo escribió. No mentí ni me equivoqué de dato — **el dato que usé fue el único que tenía delante**, y una auditoría que sale de lo que recuerdas reproduce tu último turno, no el estado del sistema.
+**Reglas**: (1) 🎯 **Todo hallazgo que proponga un OBJETO —este nodo, este archivo, este gate— nombra la medición que lo eligió, o no lo eligió nadie.** Un remedio sin denominador es una corazonada con formato de tabla. (2) Al ejecutar un hallazgo heredado, **re-mide su objeto antes de obedecerlo**: la sonda 0 ya re-verifica la premisa, y esto es lo mismo un nivel más abajo. (3) ⚠️ Sospecha en especial del hallazgo que escribiste **al final** de una sesión larga: es cuando el foco pesa más y la medición cuesta más. (4) Cuando el objeto resulte falso, el remedio se **RETIRA** con su evidencia; cerrarlo afirmaría que había algo que arreglar ahí. (5) 🎯 **Y la medición que haces PARA construir un gate suele valer más que el gate** *(§243)*: al contar enlaces internos para saber si había alguno roto —no había ninguno— salió que **38 apuntan a la misma ruta**, o sea que moverla mata el botón principal del sitio. *Nadie había puesto número a esa fragilidad, y no hacía falta un hallazgo para verla: hacía falta contar.* Cuando una sonda salga limpia, mira igualmente su distribución antes de cerrarla.

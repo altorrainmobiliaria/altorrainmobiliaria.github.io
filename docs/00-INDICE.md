@@ -97,6 +97,7 @@
 | §295 | 🧠 **Lote 5: 20 lecciones más al maestro** — `39` cae del 96 % al 48 % y `38` deja de rozar su tope (−21 755c en 5 nodos). El índice del maestro se PARTE en `firebase` + `nube-despliegue`; nace el shard `00h`. | 14150 |
 | §296 | 🧠 **Lote 13: se abre la cola de INMO y la de bersaglio llega a CERO** — `L-52` (del `38`) y `L-53` (del `35`) mudan su cuerpo a la bóveda. Censo **2/2** ×3 vías; `38` −5,4 %, `35` −10,9 %. Estrena el 2º destino del #6b. Quedan **44**. | 14257 |
 | §297 | 🧠 **Lote 14: veinte de INMO y el pre-paso de los 49 punteros** — todas tenían el cuerpo en hoja hija: −25 695c en 7 nodos y `38a` SALE de pre-shard (98 %→27 %). Nace el tema `gate-desarmado` en el maestro. Quedan **24**. | 14335 |
+| §298 | 🧠 **Lote 15: las veinte META de INMO** (`M-01`..`M-11` · `M-23`..`M-31`) — `37` −61,6 % y **SALE de pre-shard**, `33a` sin un cuerpo vivo; −18 701c en 4 nodos. Once entraron como 2º destino del índice, no como fila nueva. Quedan **4**. | 14447 |
 
 ---
 

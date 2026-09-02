@@ -3,10 +3,10 @@
 > Trigger de Experiencia (§G.2): ANTES de una op riesgosa/repetitiva o si un síntoma "te suena". Gotchas + recetas.
 > Formato `### L-NN — <título>` (disparador + causa + fix). Varias son **heredadas de Altorra Cars** (mismo patrón
 > arquitectónico) — destiladas de `_legacy/AVANCES.md §"ERRORES CONOCIDOS"`.
-> 🧩 **Hojas hijas**: `31-VERIFICACION-UI.md` — L-22/L-26/L-28 COMPLETAS (verificación de UI: panel congelado ·
-> Chrome · computed vs transition) · `37-META-FUNDACIONALES.md` — el detalle de **M-01..M-10** (shard del 26-ago; las vivas siguen en `33`) ·
-> `33a-LECCION-QUE-NO-DISPARA.md` — **M-11 · M-24..M-26 · M-28**: la lección escrita que no llegó a tiempo (§289) ·
-> `32-LECCIONES-DOCUMENTALES.md` — rama **legal/documental** (`LD-NN`: contratos, manual, formatos).
+> 🧩 **Hojas hijas** — el cuerpo está MIGRADO al maestro y en ellas queda el ruteo + un stub anclado:
+> `31-VERIFICACION-UI.md` (L-22/L-26/L-28, verificación de UI) · `37-META-FUNDACIONALES.md` (**M-01..M-10**; **M-33**
+> sigue entera allí) · `33a-LECCION-QUE-NO-DISPARA.md` (**M-11 · M-24..M-26 · M-28**, §289) · `33-LECCIONES-META.md`
+> (vivas; conservan cuerpo M-32/M-34/M-35) · `32-LECCIONES-DOCUMENTALES.md` — rama **legal/documental** (`LD-NN`), que NO migra.
 > ⚠️ **Aquí solo va lo TÉCNICO.** Las viejas `L-31..L-34` "del kit" se mudaron a `32` como **LD-01..LD-04**
 > el 2026-07-28 porque **colisionaban** con las L-31..L-34 de esta hoja (ADR §68 · [[M-04]]). Un ADR anterior que diga "L-33" hablando del kit se refiere a **LD-03**.
 
@@ -115,26 +115,26 @@ Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · p
 ### L-38 — 🖼️ `srcset` puede EMPEORAR el peso cuando la MISMA foto sirve a huecos de tamaños dispares *(2026-08-20, portal)* ⇒ **migrada al maestro**: [[INMO:L-38]]
 Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
-### M-01 — El tablero `05` se rezaga cuando la realidad avanza si el CIERRE no lo re-fresca en el mismo commit
-### M-02 — La disciplina de cierre NO sobrevive a la saturación de contexto: la consolidación debe ser AUTOMÁTICA, no prometida
-### M-03 — Un recurso COMPARTIDO ×4 no se protege con rituales POR-OPERADOR: el gate debe vivir EN EL RECURSO
-### M-04 — Un ID lo asigna quien escribe, y dos frentes escribiendo en paralelo colisionan en silencio
-### M-05 — Un techo que se mueve para alcanzarlo no es un techo
-### M-06 — Un gate solo existe si lo has visto DISPARAR: tres formas de que mienta, las tres dan ✅
-### M-07 — Un gate del kernel solo protege donde su DISPARADOR está cableado (el 4º repo no tenía pre-commit)
-### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega
-### M-09 — El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es frecuencia × costo de omisión
-### M-11 — Escribir la lección NO la aplica: si el PENDIENTE no se re-etiqueta, el cerebro la ignora otra vez → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`**
-### M-23 — Un paso de procedimiento que nadie ha ejecutado no es documentación: es una HIPÓTESIS, y se comprueba el peor día *(auditoría #10, §140 · §145)*
-### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total
-### M-24 — Una lección CORRECTA archivada bajo el disparador equivocado no dispara: se redacta por su condición mínima detectable, no por la escena en que se descubrió *(§160)* → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`**
-### M-25 — Una regla ESCRITA da la sensación de estar APLICADA: si nadie la vigila, es una nota, no una regla — y cuanto mejor escrita, más engaña *(4× el 26-ago: §162, §163, §172, §173)* → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`**
-### M-26 — Un nodo que se consulta CUANDO ALGO FALLA no puede evitar el fallo: la lección estaba bien escrita y en su sitio, pero el router solo llevaba a ella DESPUÉS *(§174)* → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`**
-### M-27 — Una sonda ad-hoc debe imprimir su COBERTURA, no solo su resultado: «no encontré nada» es indistinguible de «no miré en ningún sitio» *(§202)*
-### M-28 — Un remedio colocado DESPUÉS del punto de no retorno no protege de nada, y encima tranquiliza: si vuelves a caer teniendo la lección delante, el defecto es de su REDACCIÓN *(§216.8)* → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`**
-### M-29 — Un gate que infiere una CAUSA de una CORRELACIÓN debe escribir su premisa al lado: caduca cuando cambias de COSTUMBRES, no de código, y entonces no hay diff que la delate *(§216.9 · detalle en `33`)*
-### M-30 — Identificador INVENTADO ×4 en una noche (constante, helper, enum de una regla de seguridad, estado): escribir de memoria en vez de leer → 🧩 **shard `33-LECCIONES-META.md`**
-### M-31 — 🎯 Un hallazgo que escribí YO apuntaba al nodo que acababa de TOCAR, no al que peor estaba: un remedio sin denominador es una corazonada con formato de tabla → 🧩 **shard `33-LECCIONES-META.md`**
+### M-01 — El tablero `05` se rezaga cuando la realidad avanza si el CIERRE no lo re-fresca en el mismo commit ⇒ **migrada al maestro**: [[INMO:M-01]]
+### M-02 — La disciplina de cierre NO sobrevive a la saturación de contexto: la consolidación debe ser AUTOMÁTICA, no prometida ⇒ **migrada al maestro**: [[INMO:M-02]]
+### M-03 — Un recurso COMPARTIDO ×4 no se protege con rituales POR-OPERADOR: el gate debe vivir EN EL RECURSO ⇒ **migrada al maestro**: [[INMO:M-03]]
+### M-04 — Un ID lo asigna quien escribe, y dos frentes escribiendo en paralelo colisionan en silencio ⇒ **migrada al maestro**: [[INMO:M-04]]
+### M-05 — Un techo que se mueve para alcanzarlo no es un techo ⇒ **migrada al maestro**: [[INMO:M-05]]
+### M-06 — Un gate solo existe si lo has visto DISPARAR: tres formas de que mienta, las tres dan ✅ ⇒ **migrada al maestro**: [[INMO:M-06]]
+### M-07 — Un gate del kernel solo protege donde su DISPARADOR está cableado (el 4º repo no tenía pre-commit) ⇒ **migrada al maestro**: [[INMO:M-07]]
+### M-08 — El trabajo caro no puede depender de que el proceso sobreviva: escribe el resultado en cuanto llega ⇒ **migrada al maestro**: [[INMO:M-08]]
+### M-09 — El always-on se ganó por importancia y nunca se perdió por desuso: el criterio es frecuencia × costo de omisión ⇒ **migrada al maestro**: [[INMO:M-09]]
+### M-11 — Escribir la lección NO la aplica: si el PENDIENTE no se re-etiqueta, el cerebro la ignora otra vez → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`** ⇒ **migrada al maestro**: [[INMO:M-11]]
+### M-23 — Un paso de procedimiento que nadie ha ejecutado no es documentación: es una HIPÓTESIS, y se comprueba el peor día *(auditoría #10, §140 · §145)* ⇒ **migrada al maestro**: [[INMO:M-23]]
+### M-10 — Un gate cubre UNA DIRECCIÓN; la doctrina promete las DOS — y el ✅ se lee como cobertura total ⇒ **migrada al maestro**: [[INMO:M-10]]
+### M-24 — Una lección CORRECTA archivada bajo el disparador equivocado no dispara: se redacta por su condición mínima detectable, no por la escena en que se descubrió *(§160)* → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`** ⇒ **migrada al maestro**: [[INMO:M-24]]
+### M-25 — Una regla ESCRITA da la sensación de estar APLICADA: si nadie la vigila, es una nota, no una regla — y cuanto mejor escrita, más engaña *(4× el 26-ago: §162, §163, §172, §173)* → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`** ⇒ **migrada al maestro**: [[INMO:M-25]]
+### M-26 — Un nodo que se consulta CUANDO ALGO FALLA no puede evitar el fallo: la lección estaba bien escrita y en su sitio, pero el router solo llevaba a ella DESPUÉS *(§174)* → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`** ⇒ **migrada al maestro**: [[INMO:M-26]]
+### M-27 — Una sonda ad-hoc debe imprimir su COBERTURA, no solo su resultado: «no encontré nada» es indistinguible de «no miré en ningún sitio» *(§202)* ⇒ **migrada al maestro**: [[INMO:M-27]]
+### M-28 — Un remedio colocado DESPUÉS del punto de no retorno no protege de nada, y encima tranquiliza: si vuelves a caer teniendo la lección delante, el defecto es de su REDACCIÓN *(§216.8)* → 🧩 **shard `33a-LECCION-QUE-NO-DISPARA.md`** ⇒ **migrada al maestro**: [[INMO:M-28]]
+### M-29 — Un gate que infiere una CAUSA de una CORRELACIÓN debe escribir su premisa al lado: caduca cuando cambias de COSTUMBRES, no de código, y entonces no hay diff que la delate *(§216.9 · detalle en `33`)* ⇒ **migrada al maestro**: [[INMO:M-29]]
+### M-30 — Identificador INVENTADO ×4 en una noche (constante, helper, enum de una regla de seguridad, estado): escribir de memoria en vez de leer → 🧩 **shard `33-LECCIONES-META.md`** ⇒ **migrada al maestro**: [[INMO:M-30]]
+### M-31 — 🎯 Un hallazgo que escribí YO apuntaba al nodo que acababa de TOCAR, no al que peor estaba: un remedio sin denominador es una corazonada con formato de tabla → 🧩 **shard `33-LECCIONES-META.md`** ⇒ **migrada al maestro**: [[INMO:M-31]]
 ### M-32 — ⚙️ Un hecho que ya BLOQUEA un gate no pertenece a un nodo always-on: se paga en cada arranque y la copia es la que envejece · y **aplica la regla, no la narres** → 🧩 **shard `33-LECCIONES-META.md`**
 ### M-34 — 🎯 Normalizar dentro del INSTRUMENTO no protege lo que mides A MANO junto a él: comparé `git show` (LF) contra disco (CRLF) y una cifra falsa casi ordena podar conocimiento real → 🧩 **shard `33-LECCIONES-META.md`**
 ### M-35 — 🧱 Ocho neuronas al 100 % a la vez: el cerebro no engordaba, se quedó SIN SITIO — y el reflejo que manda capturar antes de cerrar no tenía dónde escribir → 🧩 **shard `33-LECCIONES-META.md`**
