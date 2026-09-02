@@ -4,9 +4,10 @@
 > regla, un comentario, una etiqueta de bloqueo, una casilla de la consola— y lo que la máquina hace
 > de verdad hay un hueco, y ese hueco **no lo ve ningún gate**: los gates leen el repo.
 >
-> Las cinco lecciones de aquí son el mismo error con cinco disfraces, y todas se pagaron. Se les da
-> casa propia porque `30` estaba a 240/240 líneas y estas cinco se llevaban **52 de ellas**
-> (TODO-50 · §269). El texto está movido **verbatim**: nada se resumió al mudarse.
+> Las SEIS lecciones de aquí son el mismo error con seis disfraces, y todas se pagaron. Se les dio
+> casa propia porque `30` estaba a 240/240 líneas y las cinco primeras se llevaban **52 de ellas**
+> (TODO-50 · §269; `L-69` llegó después, §270). ⚠️ **Las seis están MIGRADAS al maestro** (F2, lotes
+> 5 y 14): aquí queda la regla que las une y un stub anclado por lección, no el texto.
 >
 > 🎯 **La regla que las une**: *para saber qué está vigente, mide el EFECTO desde fuera — no leas el
 > texto que lo describe.* [[L-61]] es el método; las otras cuatro, las formas de olvidarlo.
@@ -33,16 +34,9 @@
 ---
 
 ### L-61 — 🔐 Comprobar que las REGLAS están desplegadas, desde fuera y sin credenciales *(26-ago; las reglas → §132·§137)*
-Leer las reglas desplegadas no es trivial; **comprobar su EFECTO sí**, y vale más: mide lo que hace el
-sistema, no lo que dice su texto. Con la `apiKey` pública (lo es por diseño), un `curl` anónimo a `firestore.googleapis.com/v1/projects/<proj>/databases/(default)/documents/<col>?key=` y a `firebasestorage.googleapis.com/v0/b/<bucket>/o`.
-**Lo que confirma que mandan las reglas es el MENSAJE, no el 403**: Firestore dice *«Missing or insufficient
-permissions» · PERMISSION_DENIED* y Storage *«Permission denied.»*; una clave restringida o una API apagada
-dan otro texto, y una base **sin reglas desplegadas devuelve 200 con documentos**. 🎯 Sirve para re-sellar un
-`verificado-vivo` que el gate marcó **en vez de re-sellarlo a ciegas**, que es el vicio que ese marcador caza.
+⇒ **Migrada al maestro** (F2 lote 14): [[INMO:L-61]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ---
 
 ### L-69 — 🎭 Retirar un dato de UNA pantalla y dejarlo en otra no es retirarlo: es ESCONDERLO — y el comentario que certifica la retirada lo vuelve invisible *(§270)*
-**Disparador**: `index.astro:141` lleva escrito *«La 3ª card ("Penthouse frente al mar", $2.100.000.000) estaba INVENTADA: retirada (§32.23)»*. La card seguía **viva** en `[operacion].astro`, servida en `/comprar`, con su precio y su pin de mapa. Se retiró de la home y sobrevivió en el SERP.
-**Por qué sobrevive tanto**: el comentario no solo NO ayuda — **estorba**. Quien audita ve «retirada (§32.23)», lo da por cerrado y no vuelve a buscar; el `grep` que habría encontrado la copia no se llega a escribir. *Una decisión documentada como cumplida deja de auditarse, y ahí es donde una copia puede vivir años.*
-**Reglas**: (1) 🎯 **Retirar un dato es un `grep` GLOBAL, no una edición**: antes de escribir «retirada», busca el valor —el precio, el nombre, el identificador— en TODO el fuente y en el HTML **construido**. Si aparece dos veces, la decisión está a medias. (2) **El comentario se escribe DESPUÉS de que el grep dé cero**, nunca antes: al revés se convierte en un sello que nadie vuelve a levantar. (3) ⚠️ **Sospecha de las familias que se duplican por diseño**: una card de demo vive en la home Y en el listado; una regla vive en el repo Y en producción; un texto vive en el fuente Y en el build. (4) Y si el dato es una AFIRMACIÓN (un precio, un nombre de proyecto, una dirección), su borrado merece un gate — el mismo mecanismo de «declárala con su fuente» que ya usan las cifras (§270.2).
+⇒ **Migrada al maestro** (F2 lote 14): [[INMO:L-69]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).

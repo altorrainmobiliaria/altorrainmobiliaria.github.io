@@ -73,17 +73,16 @@
 ⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-21]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### L-55 — 🧬 Varias copias del MISMO SDK = varios registros, y el error no menciona versiones *(2026-08-25, §141)*
-`firebase-admin` (y cualquier SDK con estado global: instancias, apps, conexiones) guarda su registro **por copia instalada**. En un monorepo con `node_modules` anidados conviven varias —aquí CUATRO: 13.8, 13.8, 13.10 y 14.2— y una prueba que inicializa la app con una copia mientras el código bajo prueba llama a `getFirestore()` con otra falla con **`app/no-app` aunque la app exista**. El mensaje no dice «hay dos copias» ni nombra versiones: parece que olvidaste inicializar. **Cómo se caza**: `find . -maxdepth 4 -type d -name "<paquete>"` y compara versiones. **Fix**: alias/dedupe en la config de pruebas apuntando a la copia del **codebase que corre en producción** — así la prueba ejercita la MISMA versión, no una parecida. **Regla portable**: cuando el test y el código bajo prueba pueden resolver a copias distintas, «el mismo código» es cierto del código y falso del entorno.
+⇒ **Migrada al maestro** (F2 lote 14): [[INMO:L-55]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### L-53 — 🔐 Firebase MFA (TOTP): cuatro conductas que sorprenden y una que NO existe *(2026-08-25, §137)*
 ⇒ **Migrada al maestro** (F2 lote 13): [[INMO:L-53]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### L-54 — 🌩️ Los tipos de Cloudflare Workers PISAN el DOM: `Element.append` deja de ser la del navegador *(2026-08-25, §138)*
-`worker-configuration.d.ts` (lo genera `wrangler types`) declara `Element.append(content: string | ReadableStream | Response)` para HTMLRewriter; como el DOM `HTMLDivElement` hereda de `Element`, esa firma **gana en todo el proyecto** y `nodo.append(hijo)` deja de compilar en código de NAVEGADOR, con un mensaje que no menciona a Cloudflare por ningún lado. **Salida**: `appendChild()`, que HTMLRewriter no define. **Regla portable**: cuando los tipos de un RUNTIME conviven con los del navegador en un mismo `tsconfig`, un error de DOM «imposible» suele ser una colisión de nombres, no un error tuyo.
+⇒ **Migrada al maestro** (F2 lote 14): [[INMO:L-54]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### L-49 — La configuración de la CONSOLA es parte del sistema y NO está en el repo: ningún gate puede verla *(TODO-47, ADR §129)*
 ⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-49]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### L-60 — 🔀 Antes de desplegar un TRIGGER, mira quién más escucha ese evento y qué escribe *(§199)*
-**Disparador**: un trigger sobre una colección que **ya tenía dueño**. Comprobé que el mío era seguro *por dentro* —secreto, `retry:false`, degradación— y no miré el **vecindario**: el viejo escribía **los mismos campos** con un algoritmo ya sustituido. Gana el que termine último.
-🎯 **Dos escritores del mismo campo no FALLAN: discrepan a veces** — ni excepción, ni log rojo, ni test en rojo; solo un valor que unas veces es uno y otras otro. **Reglas**: (1) un trigger no se evalúa por lo que hace bien sino por **con quién comparte la colección** — lista los oyentes ANTES de desplegar ([[L-59]]: `functions:list` dice *quién ya está*, no solo *qué falta*); (2) si hay dos, decide **cuál es el DUEÑO** y retira al otro — «que convivan» parece lo prudente y es lo único que no funciona; (3) al retirar, **enumera lo que hacía ADEMÁS**: aquí inicializaba el estado de otra feature, y matarlo le añadió un prerrequisito. *Una función vieja rara vez hace solo lo que dice su nombre.*
+⇒ **Migrada al maestro** (F2 lote 14): [[INMO:L-60]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).

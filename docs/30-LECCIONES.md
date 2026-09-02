@@ -41,8 +41,8 @@
 ### L-21 — Aislar tests que comparten un emulador Firestore: projectId PROPIO por archivo ⇒ **migrada al maestro**: [[INMO:L-21]]
 ### L-49 — 🎛️ La configuración de la CONSOLA es parte del sistema y NO está en el repo: ningún gate la ve → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`** ⇒ **migrada al maestro**: [[INMO:L-49]]
 ### L-53 — 🔐 Firebase MFA (TOTP): pide el código DESPUÉS de la contraseña, `enroll()` revoca las demás sesiones, y NO existen códigos de respaldo ⇒ **migrada al maestro**: [[INMO:L-53]]
-### L-54 — 🌩️ Los tipos de Cloudflare Workers PISAN el DOM: `Element.append` deja de ser la del navegador (usa `appendChild`)
-### L-55 — 🧬 Varias copias del MISMO SDK = varios registros: `app/no-app` con la app ya inicializada, y el error no nombra versiones
+### L-54 — 🌩️ Los tipos de Cloudflare Workers PISAN el DOM: `Element.append` deja de ser la del navegador (usa `appendChild`) ⇒ **migrada al maestro**: [[INMO:L-54]]
+### L-55 — 🧬 Varias copias del MISMO SDK = varios registros: `app/no-app` con la app ya inicializada, y el error no nombra versiones ⇒ **migrada al maestro**: [[INMO:L-55]]
 ### L-44 — 🔐 Un ruleset se REEMPLAZA, no se fusiona: dos ficheros con el mismo nombre, uno gana → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`** ⇒ **migrada al maestro**: [[INMO:L-44]]
 ### L-43 — 🔑 Un identificador ESTABLE no se deriva de la URL: cambia la ruta y se te queda huérfano lo guardado *(2026-08-21, ADR §97.7)* ⇒ **migrada al maestro**: [[INMO:L-43]]
 Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
@@ -80,17 +80,17 @@ Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · p
 Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### L-28 — 🎭 `getComputedStyle` MIENTE en toda propiedad con `transition` (invierte L-22) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá) ⇒ **migrada al maestro**: [[INMO:L-28]]
-### L-62 — 🔍 Sonda de semántica que mira el elemento y no su ANCESTRO: 4 de 5 señales falsas (`<template>`, `hidden`, atributo desnudo) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
-### L-68 — 🎭 Una override que COMPILA y se SIRVE puede perder en silencio: `@media` NO aporta especificidad → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
-### L-69 — 🎭 Retirar un dato de UNA pantalla y dejarlo en otra es ESCONDERLO; el comentario que certifica la retirada lo vuelve invisible → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`**
-### L-63 — 💸 Dos validadores CORRECTOS del mismo campo y ninguno comprueba que hablen de la misma UNIDAD (un contrato del 10 % no se podía liquidar) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
-### L-64 — 🪤 Un gate NUEVO se queda en verde de TRES formas (contar el marcador · medir por cercanía · leer una alternativa como si fueran dos) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
-### L-65 — 🌗 Un gate con **exención de entorno** da un verde que nadie ha visto fallar JAMÁS (el RNT «bloqueaba el build» mientras el build pasaba a diario) → 🧩 **shard `38a-ARMADO-DEL-GATE.md`**
-### L-70 — 🚦 El PREDICADO que decide si un gate llega a correr es parte del gate: 55 de 100 commits entraron sin escáner de secretos en un repo público → 🧩 **shard `38a-ARMADO-DEL-GATE.md`**
-### L-71 — 🚦 Un ANCLA borrada DESARMA su gate en silencio (el #4 lleva 9 días omitido y sigue el ✅), y nadie mide cuántos chequeos CORRIERON → 🧩 **shard `38a-ARMADO-DEL-GATE.md`**
-### L-72 — 🔴 Un gate que miente en ROJO viene con una INSTRUCCIÓN: el espejo emparejaba por orden físico de las líneas y el único arreglo obediente que compilaba dejaba en 404 cada inmueble reservado → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
-### L-73 — 🕳️ Un hook que emite JSON firma un CONTRATO con el esquema del harness: el PreCompact llevaba 44 días descartado en la raíz — 0/15 entregas, 13 fallos invisibles → 🧩 **shard `38a-ARMADO-DEL-GATE.md`**
-### L-74 — 🎭 Un `\b` casa DETRÁS de los dos puntos: `[[CARS:L-01]]` se leyó `L-01` y resolvió contra OTRA lección, en VERDE → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
+### L-62 — 🔍 Sonda de semántica que mira el elemento y no su ANCESTRO: 4 de 5 señales falsas (`<template>`, `hidden`, atributo desnudo) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá) ⇒ **migrada al maestro**: [[INMO:L-62]]
+### L-68 — 🎭 Una override que COMPILA y se SIRVE puede perder en silencio: `@media` NO aporta especificidad → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá) ⇒ **migrada al maestro**: [[INMO:L-68]]
+### L-69 — 🎭 Retirar un dato de UNA pantalla y dejarlo en otra es ESCONDERLO; el comentario que certifica la retirada lo vuelve invisible → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`** ⇒ **migrada al maestro**: [[INMO:L-69]]
+### L-63 — 💸 Dos validadores CORRECTOS del mismo campo y ninguno comprueba que hablen de la misma UNIDAD (un contrato del 10 % no se podía liquidar) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`** ⇒ **migrada al maestro**: [[INMO:L-63]]
+### L-64 — 🪤 Un gate NUEVO se queda en verde de TRES formas (contar el marcador · medir por cercanía · leer una alternativa como si fueran dos) → 🧩 **shard `38-GATES-QUE-MIENTEN.md`** ⇒ **migrada al maestro**: [[INMO:L-64]]
+### L-65 — 🌗 Un gate con **exención de entorno** da un verde que nadie ha visto fallar JAMÁS (el RNT «bloqueaba el build» mientras el build pasaba a diario) → 🧩 **shard `38a-ARMADO-DEL-GATE.md`** ⇒ **migrada al maestro**: [[INMO:L-65]]
+### L-70 — 🚦 El PREDICADO que decide si un gate llega a correr es parte del gate: 55 de 100 commits entraron sin escáner de secretos en un repo público → 🧩 **shard `38a-ARMADO-DEL-GATE.md`** ⇒ **migrada al maestro**: [[INMO:L-70]]
+### L-71 — 🚦 Un ANCLA borrada DESARMA su gate en silencio (el #4 lleva 9 días omitido y sigue el ✅), y nadie mide cuántos chequeos CORRIERON → 🧩 **shard `38a-ARMADO-DEL-GATE.md`** ⇒ **migrada al maestro**: [[INMO:L-71]]
+### L-72 — 🔴 Un gate que miente en ROJO viene con una INSTRUCCIÓN: el espejo emparejaba por orden físico de las líneas y el único arreglo obediente que compilaba dejaba en 404 cada inmueble reservado → 🧩 **shard `38-GATES-QUE-MIENTEN.md`** ⇒ **migrada al maestro**: [[INMO:L-72]]
+### L-73 — 🕳️ Un hook que emite JSON firma un CONTRATO con el esquema del harness: el PreCompact llevaba 44 días descartado en la raíz — 0/15 entregas, 13 fallos invisibles → 🧩 **shard `38a-ARMADO-DEL-GATE.md`** ⇒ **migrada al maestro**: [[INMO:L-73]]
+### L-74 — 🎭 Un `\b` casa DETRÁS de los dos puntos: `[[CARS:L-01]]` se leyó `L-01` y resolvió contra OTRA lección, en VERDE → 🧩 **shard `38-GATES-QUE-MIENTEN.md`** ⇒ **migrada al maestro**: [[INMO:L-74]]
 ### L-26 — 🖥️ Panel integrado = renderer CONGELADO (rAF 0 frames) · juicio visual SIEMPRE por Chrome → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá, incl. corrección capital + variante resize) ⇒ **migrada al maestro**: [[INMO:L-26]]
 ### L-24 — Verificar un build contra el MOCKUP por ESTRUCTURA (checklist de secciones), no solo por color *(Ola 1, ADR §32; el dueño cazó lo que la verificación no)* ⇒ **migrada al maestro**: [[INMO:L-24]]
 Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
@@ -152,7 +152,7 @@ siendo el índice de todas y una cita `[[L-NN]]` resuelva sin salir de aquí (§
 ### L-27 — Un `grep` te da la HOJA, no la RAMA: nunca asumas la forma del dato sin leer el padre *(ADR §32.14; §3.3 incumplida por mí mismo)* ⇒ **migrada al maestro**: [[INMO:L-27]]
 ### L-37 — 🎨 Los enlaces de Claude Design CADUCAN al re-guardar: el mockup se trae por MCP, no por URL *(2026-08-19, ADR §89)* ⇒ **migrada al maestro**: [[INMO:L-37]]
 ### L-46 — El shell (y el lenguaje que lo llama) SE COMEN texto y nada falla: comillas simples o por ARCHIVO ⇒ **migrada al maestro**: [[INMO:L-46]]
-### L-66 — 🪤 Dos herramientas con el MISMO nombre no miden ni apuntan a lo mismo: `/tmp` cambia de sitio · y una fila de 260c es 261 para el gate, que lee con CRLF → 🧩 **shard `36-LECCIONES-UTILLAJE.md`**
+### L-66 — 🪤 Dos herramientas con el MISMO nombre no miden ni apuntan a lo mismo: `/tmp` cambia de sitio · y una fila de 260c es 261 para el gate, que lee con CRLF → 🧩 **shard `36-LECCIONES-UTILLAJE.md`** ⇒ **migrada al maestro**: [[INMO:L-66]]
 ### M-33 — 🎭 Un hallazgo abierto que invoca una regla del cerebro **sin abrir el gate que la ejecuta** es una opinión — 3 de 13 eran FALSOS → 🧩 **shard `37-META-FUNDACIONALES.md`**
 ### L-67 — 🎭 Bumpear una constante que **no lee nadie** (el `CACHE_NAME` del SW), y anotarlo como protección → 🧩 **shard `36-LECCIONES-UTILLAJE.md`**
 ### L-47 — 🐍 `open(p,'w').write(open(p).read()+X)` **borra el archivo**: el truncado ocurre antes de la lectura *(§118)* ⇒ **migrada al maestro**: [[INMO:L-47]]
@@ -160,9 +160,9 @@ siendo el índice de todas y una cita `[[L-NN]]` resuelva sin salir de aquí (§
 ### L-50 — Astro: `:global()` dentro de un `<style is:global>` NO se resuelve — sale literal y el navegador DESCARTA la regla entera, en silencio *(§130)* ⇒ **migrada al maestro**: [[INMO:L-50]]
 ### L-51 — Un «Deploy complete!» puede no desplegar NADA: si la CLI no nombra el archivo, no hubo archivo *(§134)* ⇒ **migrada al maestro**: [[INMO:L-51]]
 ### L-52 — 🧰 Un gate puede correr en VERDE sobre archivos que **nunca abre**: `tsc` no lee los `.astro`, y un `var(--x)` inexistente se descarta sin avisar *(§138)* ⇒ **migrada al maestro**: [[INMO:L-52]]
-### L-56 — 🧰 Un gate puede existir y NO CORRERLO NADIE: escribirlo es la mitad, cablearlo es la otra *(§142)* → 🧩 **shard `38a-ARMADO-DEL-GATE.md`**
-### L-57 — 🎭 Una herramienta sin su prerrequisito puede **PREGUNTAR en vez de fallar**, y sin terminal eso sale **exit 0**: el gate afirma haber pasado sin mirar nada *(§175)*
-### L-58 — 🎭 Un gate puede imprimir un número CIERTO de una comparación que no significa nada: un porcentaje sin su denominador auditado es decoración *(§193)*
-### L-59 — 📋 Enumera los pares «declarado ↔ desplegado» y compáralos uno a uno: lo que no se puede LEER no es un par verificable, es un sello *(§198)*
-### L-60 — 🔀 Antes de desplegar un trigger, mira quién MÁS escucha ese evento: dos escritores del mismo campo no fallan, discrepan a veces *(§199)*
-### L-61 — 🔐 Comprobar que las REGLAS están desplegadas, desde fuera y sin credenciales → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`**
+### L-56 — 🧰 Un gate puede existir y NO CORRERLO NADIE: escribirlo es la mitad, cablearlo es la otra *(§142)* → 🧩 **shard `38a-ARMADO-DEL-GATE.md`** ⇒ **migrada al maestro**: [[INMO:L-56]]
+### L-57 — 🎭 Una herramienta sin su prerrequisito puede **PREGUNTAR en vez de fallar**, y sin terminal eso sale **exit 0**: el gate afirma haber pasado sin mirar nada *(§175)* ⇒ **migrada al maestro**: [[INMO:L-57]]
+### L-58 — 🎭 Un gate puede imprimir un número CIERTO de una comparación que no significa nada: un porcentaje sin su denominador auditado es decoración *(§193)* ⇒ **migrada al maestro**: [[INMO:L-58]]
+### L-59 — 📋 Enumera los pares «declarado ↔ desplegado» y compáralos uno a uno: lo que no se puede LEER no es un par verificable, es un sello *(§198)* ⇒ **migrada al maestro**: [[INMO:L-59]]
+### L-60 — 🔀 Antes de desplegar un trigger, mira quién MÁS escucha ese evento: dos escritores del mismo campo no fallan, discrepan a veces *(§199)* ⇒ **migrada al maestro**: [[INMO:L-60]]
+### L-61 — 🔐 Comprobar que las REGLAS están desplegadas, desde fuera y sin credenciales → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`** ⇒ **migrada al maestro**: [[INMO:L-61]]

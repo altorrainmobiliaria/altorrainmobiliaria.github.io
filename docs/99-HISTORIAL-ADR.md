@@ -14331,3 +14331,115 @@ toca MUESTREO) · §G.4 (cuarentenar, no borrar) · §3.3 (cada cifra sale de un
 **Cache: NO aplica** — cero cambios de código. **NO cubre**: los drills fríos, que **los corre
 Fable**; hasta entonces esto es MIGRADO, no SELLADO. Y **quedan 44** piezas de este repo en la cola
 (lotes 14-15), con la cola total en **51** (INMO 44 · BERS 0 · INSE 7). ⟦OPUS-5⟧
+
+## 297. ADR-297 — Lote 14 del maestro: las veinte de INMO que vivían en HOJAS HIJAS, y el pre-paso que ancló 49 punteros
+
+Lote 14 de la F2 (`brain-private/cerebro-maestro/F2-DISENO.md`), monorrepo INMO. Van **20 piezas**
+en el orden exacto de la cola del censo, saltando las que ya vivían en `migradas/INMO/` —la verdad
+de lo migrado es esa carpeta, no el censo, que es una FOTO (G-001)—: `L-54`..`L-66` y `L-68`..`L-74`.
+**Retenidas: NINGUNA**, tras leer los veinte cuerpos. La cola de INMO baja de 44 a **24**.
+
+**Las CUATRO que rozaron la línea del §3.1, con su veredicto escrito**: `L-63` (el caso es
+`honorariosPct` y la liquidación de un contrato de arriendo — el sujeto es una UNIDAD implícita
+cruzando módulos, y las cinco reglas pasan la SUSTITUCIÓN intactas) · `L-65` (el caso es el RNT
+colombiano — el sujeto es el gate exento por ENTORNO) · `L-69` (el caso es una card de inmueble
+inventada — el sujeto es que retirar un dato es un `grep` GLOBAL y el comentario va DESPUÉS del
+cero) · `L-72` (el caso son los estados de propiedades del catálogo — el sujeto es un comparador de
+espejos anclado a la POSICIÓN y qué pasa cuando obedeces a un rojo).
+
+### 297.0 — El PRE-PASO, en commit propio (`34eb30e`)
+
+El sello del lote 13 corrigió una premisa mía: el `_legacy` de INMO **vive en la RAÍZ**, no en
+`docs/`. Esa premisa falsa dejó a INMO fuera del anclado del lote 9 (cars `b2ce7fcc`), así que **49
+punteros** decían `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`: leídos desde `docs/3X` —que es de donde
+SIEMPRE se leen— resuelven a `docs/_legacy/`, inexistente. Reescritos con ruta inequívoca
+`/_legacy/…` (raíz del repo): 15 en el `30`, 3 en el `31`, 19 en el `35`, 7 en el `36`, 2 en el
+`38`, 3 en el `39`. **Cero bytes de cuerpo tocados** — censo de las 48 migradas de entonces por
+TRES vías, **48/48 antes y 48/48 después**, con el fichero de censo byte-idéntico entre corridas.
+Queda MEDIDA y sin tocar la deuda hermana: **16 punteros `_legacy/…` sin anclar** en neuronas vivas
+(a `LECCIONES-SITIO-VIEJO`, `MEGA-PLAN`, `AVANCES`, `PLAN-MEJORAS`, `DEPLOY-RUNBOOK`,
+`*.PRE-FUSION`); el `99` no se cuenta, es historia y no se reescribe.
+
+### 297.1 — Causa raíz: el lote que descomprime es el que tenía el cuerpo SEPARADO del titular
+
+No hay bug que arreglar: esto es una migración. Lo que este lote MIDE es la regla del §201 en su
+extremo: **las veinte piezas tienen su cuerpo en una HOJA HIJA** y su titular en `30`, la forma que
+más descomprime. Frente al lote 13 (13 de 20 con hoja hija, −6 211c) y al 12 (6 de 20, −4 568c),
+aquí son **20 de 20** y el neto es **−25 695c en 7 nodos**. Las hijas se vacían y la madre engorda
+800c con las veinte marcas: el coste de que un `[[L-NN]]` siga resolviendo desde `30` (chequeo #5).
+
+### 297.2 — Solución estructural
+
+Cuerpo íntegro al fichero del maestro (`brain-private/maestro/lecciones/migradas/INMO/<ID>.md`),
+abriendo con su línea `> Origen:` que declara **de qué nodo salió** y en qué ADR se pagó; copia de
+retorno al bloque «Lote 14» de `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md`, que es de donde el ABORT
+reconstruye; y en la hoja hija queda el header intacto + un stub **ya anclado**. En `30`, la marca
+`⇒ **migrada al maestro**: [[INMO:L-NN]]` al final del titular. **Los cuerpos no se editan**: el
+extractor corta por header y el censo prohíbe tocar un byte.
+
+**Procedencia sin arqueología, y una que se dice en vez de inventarse**: diecinueve declaran su
+`§NN` en su propio titular. `L-61` **no cita el ADR que la pagó** (solo «26-ago» y las reglas
+§132·§137); su `> Origen:` lo dice así y añade dónde se la ve usada (§237, §268.4) y dónde se
+formalizó como shard (§269). Inventarle un ADR habría sido inventar la procedencia.
+
+### 297.3 — No-regresión
+
+`brain:check` **SANO**, exit 0. `refs L-/M- 98 usadas / 98 def` **sin moverse**: el denominador no
+cambia porque el titular de `30` —que es la tabla de resolución del #5b— sigue entero, y las veinte
+citas cualificadas nuevas las ignora el lookbehind de v1.29 ([[L-74]], §292). **Always-on INTACTOS**:
+`CLAUDE.md`, `05` y `10` sin tocar, **boot 31193c ≤ 31500** idéntico antes y después; se midió por
+`grep` que ninguno de los veinte IDs se cita desde ellos (cero ocurrencias en los tres). El índice
+pasa de 296 a 297 entradas y todas apuntan a headers válidos.
+
+### 297.4 — Tests / verificación
+
+| | Resultado |
+|---|---|
+| **(a) Censo sha256** | **20/20** idénticas por TRES vías —fichero del maestro, bloque del `_legacy` y blob git PINNEADO del nodo de origen—, corrido **en memoria ANTES** de escribir un byte, y **68/68** el total de INMO tras pushear. Cada pieza declara su nodo en su `> Origen:` y el verificador lee ESE, no el primero que se le parezca (arreglo del lote 13). Normalización declarada: CRLF→LF + recorte de saltos finales, en los tres lados. |
+| **(b) `brain:check`** | **CEREBRO SANO**. El diff completo contra la línea base son los SIETE tamaños + el contador del índice + el reloj del canario. |
+| **(c) Colgantes ×4 repos** | **diff VACÍO** antes y después: INMO 98/98 · CARS 99/99 · BERS 97/97 · INSE 7/7, cero colgantes en los ocho lados, con el regex EXTRAÍDO del kernel de cada repo. |
+| **(d) Linter de bóveda** | **12/12 en verde**: 234 migradas con `> Origen:` + 10 `G` · 268 citas cualificadas resueltas · cero IDs pelados · 22 ficheros de ruteo, **20 temas**. |
+| **(e) Descompresión** | **−25 695c en 7 nodos**: `38a` 12224→**3351c** (−72,6 %) · `38` 13623→**5302c** (−61,1 %) · `36` 7688→**4907c** · `31` 6912→**4288c** · `35` 9176→**7093c** · `39` 4342→**2529c** · `30` +800c. **`38a` SALE de pre-shard** (98,6 % → 27,0 %): las neuronas al ≥90 % bajan de **12 a 11**. |
+| **(f) CRLF/LF** | Por convención de CADA fichero, verificado por contador: CRLF en `30` `35` `36` `38` `39` y `00`; LF en `31`, `38a`, `99` y el `_legacy`. Ni un diff de fichero completo. |
+
+### 297.5 — Anti-patterns evitados
+
+1. **Green-tuning del cap**: el ensayo en seco de las filas del maestro dejaba `gates-que-mienten` y
+   `gates-y-ci` **por encima de su tope** y **paró antes de escribir un byte**. Se pagó apretando mi
+   propia prosa y partiendo por la junta — **techos quietos**, ninguna fila ajena podada.
+2. **Aplicar una plantilla a un caso que no la necesita** ([[INMO:L-71]] · G-008 mitad 2): las veinte
+   tienen cuerpo separado, así que el puntero SÍ corresponde. No se inventó ninguno.
+3. **Inventar procedencia** donde el titular no la declara (`L-61`): se dice que falta.
+4. **Ensanchar un commit con candado**: los 16 punteros hermanos se MIDEN y se reportan, no se
+   arreglan de paso.
+
+### 297.6 — Archivos modificados / INTACTOS
+
+**Modificados**: `docs/30-LECCIONES.md` (20 marcas) · `docs/31-VERIFICACION-UI.md` ·
+`docs/35-LECCIONES-PLATAFORMA.md` · `docs/36-LECCIONES-UTILLAJE.md` · `docs/38-GATES-QUE-MIENTEN.md` ·
+`docs/38a-ARMADO-DEL-GATE.md` · `docs/39-ESCRITO-NO-ES-VIGENTE.md` (stubs + cabeceras) ·
+`/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (bloque «Lote 14», LF) · `docs/00-INDICE.md` (fila §297) ·
+`docs/99-HISTORIAL-ADR.md` (este ADR). En la bóveda: 20 ficheros nuevos en
+`maestro/lecciones/migradas/INMO/`, 11 ficheros de ruteo y el tema nuevo `indice/gate-desarmado.md`.
+**INTACTOS**: todo el código (`portal/`, `functions/`, `js/`, `css/`, HTML), `CLAUDE.md`, `05`, `10`,
+`20`, el kernel y el manifest.
+
+### 297.7 — Doctrina aplicada
+
+§G.4 (captura + **frescura**), §G.3 (consolidación), §3.3 (evidencia leída ESTE turno), F2-DISEÑO
+§3.1 con **default de guardián**, y del maestro [[G:G-006]] (partir por la junta), [[G:G-007]] (la
+fila se archiva por el SÍNTOMA) y [[G:G-008]] (puntero anclado). **Sin cache bump**: no se tocó
+código servido.
+
+**Frescura, que no la ve ningún gate** (§G.4): este lote dejó FALSAS cuatro cabeceras y se
+corrigieron en el mismo cambio — el `31` prometía tres IDs «COMPLETOS» aquí (ya migrados desde el
+lote 4), el `36` decía que los gates que mienten «viven COMPLETOS» en `38`/`38a`, y el `38`, el
+`38a` y el `39` anunciaban cuerpos que se acababan de mudar. De paso, el `39` decía «cinco
+lecciones» desde que `L-69` entró en §270: eran seis.
+
+**Y un defecto propio que el dry-run cazó, y es la lección que este lote migra**: mi script de filas
+del índice borraba con `replace(fila + '\n', …)` y `maestro/indice/` mezcla ficheros CRLF y LF. Las
+dos filas que debía MUDAR no se borraron y el `includes()` previo no lo delató: **no-op MUDO**, con
+el contador de caps como único testigo. Es literalmente [[INMO:L-66]] y [[CARS:L-68]], redescubierto
+mientras se migraban. Arreglado normalizando a LF en memoria y devolviendo el EOL de cada fichero al
+escribir.
