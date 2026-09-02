@@ -15,7 +15,7 @@
 ## Lecciones (L-NN)
 
 > 🧩 **`L-01`..`L-21` y `L-49`**: casi todas MIGRADAS al maestro — cuerpo íntegro en
-> `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` y stub en `35-LECCIONES-PLATAFORMA.md`, donde `L-03` sí
+> `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo) y stub en `35-LECCIONES-PLATAFORMA.md`, donde `L-03` sí
 > sigue entera. Aquí queda el titular, que es lo que hace falta para reconocer el síntoma.
 
 ### L-01 — "Access denied for UID" al login (red lenta ≠ permiso denegado) ⇒ **migrada al maestro**: [[INMO:L-01]]
@@ -45,39 +45,39 @@
 ### L-55 — 🧬 Varias copias del MISMO SDK = varios registros: `app/no-app` con la app ya inicializada, y el error no nombra versiones
 ### L-44 — 🔐 Un ruleset se REEMPLAZA, no se fusiona: dos ficheros con el mismo nombre, uno gana → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`** ⇒ **migrada al maestro**: [[INMO:L-44]]
 ### L-43 — 🔑 Un identificador ESTABLE no se deriva de la URL: cambia la ruta y se te queda huérfano lo guardado *(2026-08-21, ADR §97.7)* ⇒ **migrada al maestro**: [[INMO:L-43]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### L-42 — 🚧 Lo escrito en un COMENTARIO no está desplegado: reglas, config y premisas → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`** ⇒ **migrada al maestro**: [[INMO:L-42]]
 ### L-41 — 🧱 Las cabeceras de `Response.redirect()` son INMUTABLES: un middleware que hace `headers.set()` revienta todo redirect *(2026-08-21, ADR §96.6b)* ⇒ **migrada al maestro**: [[INMO:L-41]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### L-40 — 🚪 «Gateado por el dueño» merece releerse: el gate puede cubrir UNA PARTE del alcance → 🧩 **shard `39-ESCRITO-NO-ES-VIGENTE.md`** ⇒ **migrada al maestro**: [[INMO:L-40]]
 ### L-39 — 🕵️ `document.visibilityState:"hidden"` congela el `rAF` → un mapa que NO carga por eso PARECE un bug de librería, con evidencia falsa incluida *(2026-08-20, TODO-30)* ⇒ **migrada al maestro**: [[INMO:L-39]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### L-36 — 🧩 Rellenar un `<template>` clonado: el placeholder VACÍO no crea nodo de texto, y una excepción a mitad deja la UI VIEJA en pantalla — coherente por fuera, mentirosa por dentro *(SERP §59)* ⇒ **migrada al maestro**: [[INMO:L-36]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### L-35 — 🏁 Un rebuild IDEMPOTENTE no basta: dos ejecuciones concurrentes leen snapshots DISTINTOS y la vieja puede aterrizar de última *(catálogo §58; portable a todo derivado/materialized view)* ⇒ **migrada al maestro**: [[INMO:L-35]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### L-34 — 🧊 Cloudflare Workers Static Assets IGNORA el header `Range` (200 + archivo entero) — mata pmtiles y todo lo que lea por rangos; y `astro dev` SÍ honra Range → **paridad dev↔prod FALSA** *(TODO-30, ADR §55.9, cazado en PROD por Daniel)* ⇒ **migrada al maestro**: [[INMO:L-34]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### L-33 — 🗺️ Astro v6+/@astrojs/cloudflare v14: `Astro.locals.runtime.env` fue REMOVIDO → `import { env } from 'cloudflare:workers'`; y maplibre-gl v6 = named exports (sin default) *(TODO-30, ADR §55, cazado EN VIVO)* ⇒ **migrada al maestro**: [[INMO:L-33]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### L-32 — 🪤 En Ads Manager multi-marca, los DEFAULTS traen la marca hermana: verificar página/número/identidad ANTES de seguir *(montaje HUMO, ADR §42, 2026-07-18)* ⇒ **migrada al maestro**: [[INMO:L-32]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### L-31 — 🎯 El proceso creativo es un EMBUDO, no una skill; y la 1ª pasada "correcta" puede violar la voz *(mandato Daniel + pieza de humo, 2026-07-18)*
 **Disparador**: la 1ª pieza de captación salió técnicamente bien pero (a) creé usando solo Brief+voz, sin barrer el backlog TikTok ni la Ads Library (Daniel tuvo que recordármelos: "el proceso debe ser pro, no 1 skill"), y (b) el copy trató de TÚ a un PROPIETARIO cuando el catálogo §3.1 exige USTED (ancla: "Usted descansa, nosotros nos encargamos") y sonó "robot" (comprimido sin calidez). **Reglas**: (1) toda pieza que va a DINERO pasa el **embudo de `pauta-captacion §0b`** (grounding sweep completo → ≥3 candidatos → filtro de voz → comité ×3 lentes → Daniel → métricas→iteración); (2) el REGISTRO se verifica ANTES de escribir (propietario=usted, lead comprador=tú); (3) cumplir reglas duras ≠ tener el alma: el filtro incluye la cadencia gold y leer la pieza EN VOZ ALTA; (4) receta visual sellada: la IA genera solo el FONDO (sin texto); tipografía/logo van por HTML+Playwright.
 
 ### L-30 — ⏳ Las features del SERP MUEREN: toda regla de SEO/rich-results lleva FECHA + FUENTE PRIMARIA y se re-verifica antes de portarse *(ADR §33; verificado en prod bersaglio 2026-07-17)* ⇒ **migrada al maestro**: [[INMO:L-30]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### L-29 — 🕵️ El contenido INVENTADO se ve BIEN: solo lo caza CONTAR contra la fuente, con un auditor adversarial *(ADR §32.24; el mismo fallo de método de §24-29, ahora en MI trabajo)* ⇒ **migrada al maestro**: [[INMO:L-29]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### L-28 — 🎭 `getComputedStyle` MIENTE en toda propiedad con `transition` (invierte L-22) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá) ⇒ **migrada al maestro**: [[INMO:L-28]]
 ### L-62 — 🔍 Sonda de semántica que mira el elemento y no su ANCESTRO: 4 de 5 señales falsas (`<template>`, `hidden`, atributo desnudo) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá)
@@ -93,16 +93,16 @@ Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del
 ### L-74 — 🎭 Un `\b` casa DETRÁS de los dos puntos: `[[CARS:L-01]]` se leyó `L-01` y resolvió contra OTRA lección, en VERDE → 🧩 **shard `38-GATES-QUE-MIENTEN.md`**
 ### L-26 — 🖥️ Panel integrado = renderer CONGELADO (rAF 0 frames) · juicio visual SIEMPRE por Chrome → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá, incl. corrección capital + variante resize) ⇒ **migrada al maestro**: [[INMO:L-26]]
 ### L-24 — Verificar un build contra el MOCKUP por ESTRUCTURA (checklist de secciones), no solo por color *(Ola 1, ADR §32; el dueño cazó lo que la verificación no)* ⇒ **migrada al maestro**: [[INMO:L-24]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### L-23 — `astro-icon` es INCOMPATIBLE con el runtime Cloudflare Workers (dev): "module is not defined" *(Ola 1 header, ADR §32)* ⇒ **migrada al maestro**: [[INMO:L-23]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### L-22 — 🖥️ Verificar UI por computed styles vs captura (el panel desincroniza/timeout el screenshot) → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá) ⇒ **migrada al maestro**: [[INMO:L-22]]
 ---
 
 ### L-45 — 🔀 Dos escritores, una colección, dos modelos: el `as T` a ciegas convierte «datos viejos» en «catálogo vacío sin errores» *(2026-08-21, ADR §103)* ⇒ **migrada al maestro**: [[INMO:L-45]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ## Guardarraíles de diseño (vinculantes)
 - **Carga de propiedades**: SIEMPRE `limit(9)` paginado, NUNCA todo el catálogo (free-tier).
@@ -113,7 +113,7 @@ Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del
 ---
 
 ### L-38 — 🖼️ `srcset` puede EMPEORAR el peso cuando la MISMA foto sirve a huecos de tamaños dispares *(2026-08-20, portal)* ⇒ **migrada al maestro**: [[INMO:L-38]]
-Cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (punto de retorno del ABORT).
+Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).
 
 ### M-01 — El tablero `05` se rezaga cuando la realidad avanza si el CIERRE no lo re-fresca en el mismo commit
 ### M-02 — La disciplina de cierre NO sobrevive a la saturación de contexto: la consolidación debe ser AUTOMÁTICA, no prometida

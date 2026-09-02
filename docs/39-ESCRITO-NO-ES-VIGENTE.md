@@ -14,12 +14,12 @@
 ---
 
 ### L-42 — 🚧 Lo que está escrito en un COMENTARIO no está desplegado: reglas, config y premisas de arquitectura *(2026-08-21, ADR §97.6 · §98.1)*
-⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-42]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-42]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ---
 
 ### L-44 — 🔐 Un ruleset se REEMPLAZA, no se fusiona: dos archivos con el mismo nombre son una trampa silenciosa *(2026-08-21, ADR §100)*
-⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-44]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-44]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ---
 
@@ -28,7 +28,7 @@
 ---
 
 ### L-40 — 🚪 «Gateado por el dueño» merece releerse: el gate puede estar en UNA PARTE del alcance, no en todo *(2026-08-21, ADR §94)*
-⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-40]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-40]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ---
 

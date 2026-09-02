@@ -20,27 +20,27 @@ El navegador reinstala un SW comparando **los bytes del fichero entero**, no una
 Lo que SÍ sigue vivo, y por lo que el fichero no se toca: ese SW es un **kill-switch de un solo tiro** — borra todos los cachés, `unregister()` y recarga las pestañas— para el visitante que registró el SW viejo antes del 10-jul-2026 y aún no ha vuelto. Dispara con cualquier cambio de bytes y **solo una vez por navegador**: después se ha desregistrado y no vuelve. Ninguna página servida registra ya el SW (`scripts.js:524` lo hace, pero **ningún HTML carga `scripts.js`** — comprobado).
 
 ### L-25 — Un bug que vive en UNA rama del fan-out SESGA el resultado, y el parcial tranquiliza *(ADR §32.9)*
-⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-25]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-25]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 ### L-27 — Un `grep` te da la HOJA, no la RAMA: nunca asumas la forma del dato sin leer el padre *(ADR §32.14; §3.3 incumplida por mí mismo)*
-⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-27]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-27]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### L-37 — 🎨 Los enlaces de Claude Design CADUCAN al re-guardar *(§89)*
-⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-37]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-37]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 ### L-46 — El shell (y el lenguaje que lo llama) SE COMEN texto y nada falla: comillas simples o por ARCHIVO *(§112 · §130)*
-⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-46]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-46]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### L-59 — 📋 Enumera los pares «DECLARADO ↔ DESPLEGADO» y compáralos uno a uno; lo que no se puede LEER no es un par *(§197-§198)*
 **Disparador**: una cifra compuesta que no cuadra consigo misma («20 en código / 17 desplegadas», y faltaban 3). **La forma**: lista lo que el repo DECLARA y producción EJECUTA —funciones, índices, reglas, secretos, dominios— y compara cada par **contra su API**; un comando por par. En una pasada salieron una función construida, probada y que **no corría**, y un archivo con nombre y sitio CANÓNICOS que **no despliega nadie** — único hogar de un índice sin el cual otra función habría fallado con `FAILED_PRECONDITION` al encenderla. *Un huérfano que se llama como el bueno es peor que no tenerlo.*
 **Reglas**: (1) 🎯 **si no hay forma de LEER el lado desplegado, ese par NO es verificable**: márcalo como sello y **dilo** — callarlo le hace heredar el ✅ del par vecino (hay `firestore:indexes`; no hay `firestore:rules`). (2) un huérfano **se cuarentena con inventario**, no se borra: puede ser prerrequisito de algo apagado. (3) **no despliegues «por si acaso»** lo que cuesta en cada escritura; decláralo como prerrequisito de ENCENDIDO. (4) ⚠️ **sospecha de tu sonda antes que del proyecto**: si reporta ~100 % de discrepancia, te equivocaste de comparación — la mía metía en la firma el `__name__` que Firestore **añade** al desplegar. Generaliza [[L-51]] hacia ANTES del deploy.
 
 ### L-51 — Un "Deploy complete!" puede no desplegar NADA: si la CLI no nombra el archivo, no hubo archivo *(§134)*
-⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-51]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-51]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### L-50 — Astro: `:global()` dentro de un `<style is:global>` NO se resuelve — sale literal y el navegador DESCARTA la regla *(§130)*
-⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-50]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-50]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### L-47 — 🐍 `open(p,'w')` **vacía el archivo al ABRIR**, falle lo que falle después *(§118 · §216.8)*
-⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-47]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-47]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 
 > 🎭 **Los gates que MIENTEN — [[L-48]] · [[L-52]] · [[L-57]] · [[L-58]] — viven COMPLETOS en

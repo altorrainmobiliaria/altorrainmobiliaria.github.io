@@ -55,10 +55,10 @@
 **Regla portable**: *no tener gate < tener uno que nadie invoca ([[L-56]]) < tener uno que **afirma haber pasado***. Una corrida en verde **no prueba que el gate mirara**.
 
 ### L-52 — 🧰 Un gate puede correr en VERDE sobre archivos que **nunca abre** *(§138)*
-⇒ **Migrada al maestro** (F2 lote 13): [[INMO:L-52]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 13): [[INMO:L-52]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### L-48 — 🧪 Un prerrequisito GENERADO y gitignored hace que el gate pase en local y falle en CI *(§125)*
-⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-48]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 5): [[INMO:L-48]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### L-63 — 💸 DOS validadores correctos del mismo campo, y ninguno comprueba que hablen de la misma UNIDAD *(§233)*
 **Disparador**: el giro al propietario salía **−25.370.000**, y no era la prueba. `Contrato.honorariosPct` guardaba lo que teclea una persona —el formulario pide *«Honorarios %»* con marcador `10`— y su validador aceptaba hasta **100**; `liquidacion.ts` calcula con una **FRACCIÓN** y rechaza todo lo mayor que **0.5**. Entre los dos extremos no había conversión: **un contrato normal del 10 % no se podía liquidar**, y eso muerde en el primer contrato real del dueño.

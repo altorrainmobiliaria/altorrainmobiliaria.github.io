@@ -20,13 +20,13 @@
 ---
 
 ### L-22 — Verificar un diseño/UI entregado por COMPUTED STYLES, no por captura *(Ola 1 · D1, ADR §23)*
-⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-22]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-22]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### L-26 — 🖥️ El panel de navegador tiene el RENDERER CONGELADO (`rAF` = 0 frames): NADA guiado por frames se puede verificar ahí *(ADR §32.10; explica y ENGLOBA L-22)*
-⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-26]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-26]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### L-28 — 🎭 `getComputedStyle` MIENTE en toda propiedad con `transition` (pestaña de fondo ⇒ rAF estrangulado ⇒ el valor se queda en el INICIAL) *(ADR §32.22; INVIERTE la regla de L-22)*
-⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-28]] · cuerpo íntegro en `_legacy/LECCIONES-MIGRADAS-MAESTRO.md`.
+⇒ **Migrada al maestro** (F2 lote 4): [[INMO:L-28]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ## §Guarda de medibilidad — una comparación de ceros no es una comparación (§119)
 
