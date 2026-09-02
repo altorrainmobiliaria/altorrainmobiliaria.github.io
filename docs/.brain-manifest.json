@@ -316,5 +316,11 @@
     "docs/44-DICTAMENES.md",
     "docs/45-COSTOS-TRANSACCION.md"
   ],
-  "_verifiedLiveScan_que": "N16-14: el gate #16 no miró nunca los lóbulos, y son los únicos nodos que afirman sobre el MUNDO (SMLMV, UVB, retención, tarifas de registro) — hechos que caducan solos y sin que nadie los toque. Con 2 ficheros el gate publicaba «COBERTURA 1/2» y sonaba a alcance completo. Ahora son 6 y la ausencia de sello en 42 y 44 SE VE. El gate solo informa: ampliarlo no bloquea a nadie."
+  "_verifiedLiveScan_que": "N16-14: el gate #16 no miró nunca los lóbulos, y son los únicos nodos que afirman sobre el MUNDO (SMLMV, UVB, retención, tarifas de registro) — hechos que caducan solos y sin que nadie los toque. Con 2 ficheros el gate publicaba «COBERTURA 1/2» y sonaba a alcance completo. Ahora son 6 y la ausencia de sello en 42 y 44 SE VE. El gate solo informa: ampliarlo no bloquea a nadie.",
+  "x-promptRouter": {
+    "enabled": false,
+    "maxChars": 600,
+    "exigirFrase": false
+  },
+  "_x-promptRouter_que": "PILOTO de UserPromptSubmit (F3 · D8c del PLAN-CIERRE-DOMINIOS-F3-C6 §2). Lo lee hooks/prompt-router.mjs y NADIE mas: el hook NO esta cableado en .claude/settings.json, y con enabled:false ademas sale en silencio aunque alguien lo invoque. `maxChars` es el tope duro de la inyeccion (600c por el plan). `exigirFrase` elige entre los dos puntos de operacion MEDIDOS sobre 84 prompts reales el 2026-09-02 (crudo: brain-private/altorrainmobiliaria/research-archive/2026-09-02-f3-piloto-precision.md): false = la regla literal del plan (>=2 terminos no triviales) que habla en 14/84 con menos de la mitad de propuestas utiles; true = exige ademas una FRASE de 2 palabras compartida, habla en 3/84 y las 3 aciertan. Cablear o no lo decide Fable con esos numeros, no este repo. Prefijo `x-` por el schema del kernel (#15): es config de un gate PROPIO, no del kernel compartido."
 }
