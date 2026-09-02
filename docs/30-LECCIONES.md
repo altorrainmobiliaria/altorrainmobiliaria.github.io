@@ -4,9 +4,10 @@
 > Formato `### L-NN — <título>` (disparador + causa + fix). Varias son **heredadas de Altorra Cars** (mismo patrón
 > arquitectónico) — destiladas de `_legacy/AVANCES.md §"ERRORES CONOCIDOS"`.
 > 🧩 **Hojas hijas** — el cuerpo está MIGRADO al maestro y en ellas queda el ruteo + un stub anclado:
-> `31-VERIFICACION-UI.md` (L-22/L-26/L-28, verificación de UI) · `37-META-FUNDACIONALES.md` (**M-01..M-10**; **M-33**
-> sigue entera allí) · `33a-LECCION-QUE-NO-DISPARA.md` (**M-11 · M-24..M-26 · M-28**, §289) · `33-LECCIONES-META.md`
-> (vivas; conservan cuerpo M-32/M-34/M-35) · `32-LECCIONES-DOCUMENTALES.md` — rama **legal/documental** (`LD-NN`), que NO migra.
+> `31-VERIFICACION-UI.md` (L-22/L-26/L-28) · `37-META-FUNDACIONALES.md` (**M-01..M-10 · M-33**) ·
+> `33a-LECCION-QUE-NO-DISPARA.md` (**M-11 · M-24..M-26 · M-28**, §289) · `33-LECCIONES-META.md` (**M-23 · M-27 ·
+> M-29..M-32 · M-34 · M-35**). Tras el lote 16 **ninguna de las tres conserva un cuerpo vivo**: son ruteo puro.
+> `32-LECCIONES-DOCUMENTALES.md` — rama **legal/documental** (`LD-NN`), que NO migra.
 > ⚠️ **Aquí solo va lo TÉCNICO.** Las viejas `L-31..L-34` "del kit" se mudaron a `32` como **LD-01..LD-04**
 > el 2026-07-28 porque **colisionaban** con las L-31..L-34 de esta hoja (ADR §68 · [[M-04]]). Un ADR anterior que diga "L-33" hablando del kit se refiere a **LD-03**.
 
@@ -135,9 +136,9 @@ Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · p
 ### M-29 — Un gate que infiere una CAUSA de una CORRELACIÓN debe escribir su premisa al lado: caduca cuando cambias de COSTUMBRES, no de código, y entonces no hay diff que la delate *(§216.9 · detalle en `33`)* ⇒ **migrada al maestro**: [[INMO:M-29]]
 ### M-30 — Identificador INVENTADO ×4 en una noche (constante, helper, enum de una regla de seguridad, estado): escribir de memoria en vez de leer → 🧩 **shard `33-LECCIONES-META.md`** ⇒ **migrada al maestro**: [[INMO:M-30]]
 ### M-31 — 🎯 Un hallazgo que escribí YO apuntaba al nodo que acababa de TOCAR, no al que peor estaba: un remedio sin denominador es una corazonada con formato de tabla → 🧩 **shard `33-LECCIONES-META.md`** ⇒ **migrada al maestro**: [[INMO:M-31]]
-### M-32 — ⚙️ Un hecho que ya BLOQUEA un gate no pertenece a un nodo always-on: se paga en cada arranque y la copia es la que envejece · y **aplica la regla, no la narres** → 🧩 **shard `33-LECCIONES-META.md`**
-### M-34 — 🎯 Normalizar dentro del INSTRUMENTO no protege lo que mides A MANO junto a él: comparé `git show` (LF) contra disco (CRLF) y una cifra falsa casi ordena podar conocimiento real → 🧩 **shard `33-LECCIONES-META.md`**
-### M-35 — 🧱 Ocho neuronas al 100 % a la vez: el cerebro no engordaba, se quedó SIN SITIO — y el reflejo que manda capturar antes de cerrar no tenía dónde escribir → 🧩 **shard `33-LECCIONES-META.md`**
+### M-32 — ⚙️ Un hecho que ya BLOQUEA un gate no pertenece a un nodo always-on: se paga en cada arranque y la copia es la que envejece · y **aplica la regla, no la narres** → 🧩 **shard `33-LECCIONES-META.md`** ⇒ **migrada al maestro**: [[INMO:M-32]]
+### M-34 — 🎯 Normalizar dentro del INSTRUMENTO no protege lo que mides A MANO junto a él: comparé `git show` (LF) contra disco (CRLF) y una cifra falsa casi ordena podar conocimiento real → 🧩 **shard `33-LECCIONES-META.md`** ⇒ **migrada al maestro**: [[INMO:M-34]]
+### M-35 — 🧱 Ocho neuronas al 100 % a la vez: el cerebro no engordaba, se quedó SIN SITIO — y el reflejo que manda capturar antes de cerrar no tenía dónde escribir → 🧩 **shard `33-LECCIONES-META.md`** ⇒ **migrada al maestro**: [[INMO:M-35]]
 
 ## 🧭 Decisiones de gobernanza 2026-06-24 (operador-cars → ×4 cerebros) [HONOR]
 > 🧩 **Mudadas a `60-WORKFLOWS §Gobernanza`** el 2026-07-28 (ADR §68): hablan de CÓMO se conduce la
@@ -153,7 +154,7 @@ siendo el índice de todas y una cita `[[L-NN]]` resuelva sin salir de aquí (§
 ### L-37 — 🎨 Los enlaces de Claude Design CADUCAN al re-guardar: el mockup se trae por MCP, no por URL *(2026-08-19, ADR §89)* ⇒ **migrada al maestro**: [[INMO:L-37]]
 ### L-46 — El shell (y el lenguaje que lo llama) SE COMEN texto y nada falla: comillas simples o por ARCHIVO ⇒ **migrada al maestro**: [[INMO:L-46]]
 ### L-66 — 🪤 Dos herramientas con el MISMO nombre no miden ni apuntan a lo mismo: `/tmp` cambia de sitio · y una fila de 260c es 261 para el gate, que lee con CRLF → 🧩 **shard `36-LECCIONES-UTILLAJE.md`** ⇒ **migrada al maestro**: [[INMO:L-66]]
-### M-33 — 🎭 Un hallazgo abierto que invoca una regla del cerebro **sin abrir el gate que la ejecuta** es una opinión — 3 de 13 eran FALSOS → 🧩 **shard `37-META-FUNDACIONALES.md`**
+### M-33 — 🎭 Un hallazgo abierto que invoca una regla del cerebro **sin abrir el gate que la ejecuta** es una opinión — 3 de 13 eran FALSOS → 🧩 **shard `37-META-FUNDACIONALES.md`** ⇒ **migrada al maestro**: [[INMO:M-33]]
 ### L-67 — 🎭 Bumpear una constante que **no lee nadie** (el `CACHE_NAME` del SW), y anotarlo como protección → 🧩 **shard `36-LECCIONES-UTILLAJE.md`**
 ### L-47 — 🐍 `open(p,'w').write(open(p).read()+X)` **borra el archivo**: el truncado ocurre antes de la lectura *(§118)* ⇒ **migrada al maestro**: [[INMO:L-47]]
 ### L-48 — 🧪 Un prerrequisito GENERADO y gitignored hace que el gate pase en local y falle en CI *(§125)* ⇒ **migrada al maestro**: [[INMO:L-48]]

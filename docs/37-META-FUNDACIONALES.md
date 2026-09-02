@@ -8,8 +8,8 @@
 > **El stub `### M-NN` con su título sigue viviendo en `30`**, que es el único sitio donde buscar: el
 > kernel los lee ahí y el gate #5 valida contra ese archivo. Mover el detalle no las saca del cerebro.
 >
-> ⚠️ **Las DIEZ (M-01..M-10) están MIGRADAS al maestro** (F2 lote 15): aquí queda un stub anclado por
-> lección y la familia que las agrupa —que es el ruteo—, no el texto. **M-33 sigue entera aquí.**
+> ⚠️ **Las ONCE (M-01..M-10 y M-33) están MIGRADAS al maestro** (F2 lotes 15-16): aquí queda un stub
+> anclado por lección y la familia que las agrupa —que es el ruteo—, no el texto. **Cero cuerpos vivos.**
 >
 > **Por qué se citan igual de a menudo aunque sean viejas**: M-05, M-06 y M-07 son la familia de «cómo
 > miente un gate», y esa se invoca cada vez que se escribe uno. Estar aquí no es estar jubilada.
@@ -20,13 +20,7 @@
 ---
 
 ### M-33 — 🎭 Un hallazgo abierto que **invoca una regla del cerebro sin abrir el gate que la ejecuta** es una opinión *(§256)*
-Re-verifiqué los 13 hallazgos abiertos de la auditoría #16 antes de tocarlos, y **tres eran FALSOS**: no «ya arreglados», sino **nunca ciertos**. Los tres fallaban por lo MISMO — apelaban a una regla del cerebro (SSoT, formato canónico de ADR, ruteo) sin abrir el linter ni el manifest que la implementa:
-- El del teléfono «triplicado contra su propia regla de SSoT»: el único mecanismo SSoT es el gate #8, que solo vigila los hechos declarados en `ssotFacts`, y el teléfono no está entre ellos. Además la cifra fallaba por **28×** (87 ocurrencias en 47 ficheros, no 3) y citaba mal el ADR que invocaba. «Arreglarlo» habría puesto `brain:check` en rojo permanente contra cuatro políticas legales que por Ley 1581 **deben** llevar el contacto.
-- El del «formato ADR abandonado desde el 192»: enfrentaba dos cosas que no son excluyentes — el router prescribe siete ROLES y nunca fijó nivel de encabezado.
-- El del ruteo: era falso **el día que se escribió**; el dato vivía ya en cinco ficheros, uno de ellos auto-cargado en el arranque.
-
-🎯 **Un hallazgo abierto es una afirmación sin sello como cualquier otra, y cuantas más auditorías sobreviva, más cierto parece y menos lo es.** Suena a disciplina, se apoya en un ADR real y su cifra pequeña parece cuidadosa — por eso nadie lo abre. Y un falso se **RETIRA, no se cierra**: cerrar afirma que hubo algo que arreglar.
-Regla que hereda la skill de auditoría: *todo hallazgo que apele a una regla del cerebro debe citar la línea del linter o del manifest que la ejecuta; si no existe esa línea, el hallazgo es una opinión.* Emparejada con [[M-31]] (deriva la lista de una medición, no de la memoria).
+⇒ **Migrada al maestro** (F2 lote 16): [[INMO:M-33]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).
 
 ### M-01 — El tablero `05` se rezaga si el CIERRE no lo re-fresca en el MISMO commit *(auditoría §30, reincidencia de §12)*
 ⇒ **Migrada al maestro** (F2 lote 15): [[INMO:M-01]] · cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo).

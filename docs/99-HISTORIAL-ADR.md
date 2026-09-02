@@ -14566,3 +14566,114 @@ instrumento no protege lo que dice lo mismo al lado.*
 propósito: el boot está a 262c de su techo y el encargo de este lote prohíbe tocar los always-on;
 tocarlos dentro de una migración añadiría riesgo sin necesidad. Queda escrito para que se pague en
 su commit, que además lo ACORTA.
+
+## 299. ADR-299 — Lote 16 del maestro: las cuatro últimas de INMO, y la COLA DEL PROGRAMA en CERO
+
+Lote 16 de la F2 (`brain-private/cerebro-maestro/F2-DISENO.md`), **bi-repo**: aquí y en
+insemastereo, que cierra a la vez. De esta casa van **las cuatro últimas de la cola** —`M-32` ·
+`M-33` · `M-34` · `M-35`—, saltando lo que ya vivía en `migradas/INMO/`, que es la verdad de lo
+migrado y no el censo, que es una FOTO. Con ellas **la cola de INMO llega a CERO**: 88 → **92**
+lecciones de este repo en el maestro, y ninguna pendiente. **Retenidas aquí: NINGUNA**, tras leer
+los cuatro cuerpos.
+
+**Las TRES que rozaron la línea del §3.1, con su veredicto escrito** (`M-34` pasa limpia: su
+sujeto es CRLF + `git`, los dos en la lista compartida):
+
+- **`M-32`** — nombra el `05` y dos gates de este proyecto (`verify:claims`, `verify:build`). El
+  `05` es del **kernel COMPARTIDO ×4** y los gates son el CASO; el sujeto es *una promesa que ya
+  bloquea un gate no paga renta en un nodo always-on*, que pasa la SUSTITUCIÓN sin tocar nada.
+- **`M-33`** — dos de sus tres hallazgos falsos son de esta casa (el teléfono contra las políticas
+  de Ley 1581; el formato de ADR desde el §192). Son la EVIDENCIA, no el sujeto: el sujeto es
+  *un hallazgo que apela a una regla del cerebro sin citar el gate que la ejecuta es una opinión*,
+  y su corolario —un falso se RETIRA, no se cierra— no necesita traducción.
+- **`M-35`** — es la más nombrada de las cuatro: su tabla lista OCHO nodos de este repo por su
+  número (`50` `34` `33` `31` `35` `38` `44` `05`). Pero esa tabla es lo que produce el
+  DENOMINADOR —10 revisiones del manifest, UN tope subido—, y sin denominador la misma medición se
+  lee al revés. Las cuatro reglas (mide el CONJUNTO · alivia por TEMA · un reflejo de escritura vale
+  su sitio libre · el techo no se sube) son domain-free.
+
+### 299.1 — Causa raíz: no hay bug. Lo que este lote mide es el ESTADO FINAL de una hoja hija
+
+Esto es una migración, no una corrección. El dato del lote es la forma que deja: **`33` y `37`
+terminan sin un solo cuerpo vivo**. `33` baja de 7146c a **3303c** (−53,8 %) y `37` de 5675c a
+**4164c** (−26,6 %); las dos, más `33a` (que ya lo estaba desde el 15), son ahora **ruteo puro**:
+header + stub anclado. Eso obliga a una pregunta que el programa aún no ha respondido y que este
+ADR deja escrita, no resuelta: *una hoja hija que solo guarda stubs ¿sigue siendo una neurona, o es
+una tabla de redirecciones que podría vivir en `30`?* No se decide hoy —fusionar tres hojas es caro
+de revertir y el criterio es del dueño del cerebro—, pero el número que lo obliga ya existe.
+
+Segundo dato, y es el que rompe la serie: de las cuatro, **ninguna estrenó fila sola** en el índice
+del maestro. `M-33` entró como 2º destino y `M-32`+`M-35` COMPARTEN una fila nueva. Es G-007
+regla 1 a plena carga por segundo lote seguido — el síntoma ya estaba escrito.
+
+### 299.2 — Solución estructural
+
+Idéntica a los lotes 13-15, sin inventar nada: cuerpo íntegro al fichero del maestro
+(`brain-private/maestro/lecciones/migradas/INMO/<ID>.md`) abriendo con su línea `> Origen:` —que
+declara de qué nodo salió y en qué ADR se pagó—; copia de retorno al bloque «Lote 16» de
+`/_legacy/LECCIONES-MIGRADAS-MAESTRO.md`, que es de donde el ABORT reconstruye (no de `git`); en la
+hoja hija queda el header INTACTO + un stub ya anclado; y en `30` la marca `⇒ **migrada al
+maestro**: [[INMO:M-NN]]` al final del titular, que es lo que hace que el #5b siga resolviendo.
+**Los cuerpos no se editan**: el extractor corta por header y el censo prohíbe tocar un byte.
+
+### 299.3 — No-regresión
+
+`brain:check` **SANO**. `refs L-/M- 98 usadas / 98 def` **sin moverse** —el titular de `30`, que es
+la tabla de resolución del #5b, sigue entero—. **Always-on INTACTOS**: `CLAUDE.md`, `05` y `10` sin
+tocar y **boot 31237c ≤ 31500** idéntico antes y después (medido por `grep`: ninguna de las cuatro
+se cita desde un always-on). `30` gana **una** línea (169L → 170L) y 205c: las cuatro marcas más el
+refresco de la lista de hojas hijas. **Colgantes ×4 con diff VACÍO**: INMO 98/98 · CARS 99/99 ·
+BERS 97/97 · INSE 8/8. Y la fila del §299 mide bajo el listón de 260c del #26, así que la **deuda
+congelada sigue en 43**, no en 44.
+
+### 299.4 — Tests / verificación
+
+1. **Censo sha256 10/10 por TRES vías** (las 4 de aquí y las 6 de INSE), corrido **en memoria ANTES**
+   de escribir un byte: fichero del maestro · bloque «Lote 16» del `_legacy` · **blob git PINNEADO**
+   (`51b9021` aquí, `5646f22` en INSE) del nodo que la propia pieza DECLARA en su `> Origen:`.
+   Normalización declarada e igual en las tres: CRLF→LF + recorte de saltos finales. Se parsea por
+   **HEADER**, nunca por `> Origen:` (esa línea se repite entre piezas del mismo ADR — §298).
+2. **Dos rojas, y las dos del INSTRUMENTO** (ver 299.5): el conjunto de terminadores no incluía al
+   hermano del mismo nivel en una lista numerada.
+3. **Linter de bóveda 12/12**: 264 migradas con `> Origen:` + 10 `G` · 307 citas cualificadas · cero
+   IDs pelados (52 exentas por D1-bis, +6 de este lote) · **25 ficheros de ruteo, 23 temas**.
+4. **Ensayo en seco del índice**: el script calcula los 9 ficheros de ruteo en memoria y **se niega a
+   escribir** si alguno pasa su tope. Disparó de verdad dos veces (`doctrina-metodo` a 4029 y a
+   4019 sobre 4000) y las dos se pagaron podando redundancia, no subiendo el techo ([[M-05]]).
+
+### 299.5 — Anti-patterns evitados
+
+`--amend` · `--no-verify` · `git add -A` · editar el CUERPO de una migrada (el censo lo prohíbe) ·
+**subir un techo** para que cupiera una fila · escribir primero y comprobar después (el defecto que
+el lote 15 cazó: aquí el gate de topes corre ANTES) · y **fiarse del terminador que te tocó ver**:
+el verificador cantó 2 rojas falsas en las tres piezas de UNA línea de INSE porque su frontera no
+contaba al siguiente punto numerado de la misma lista. Es la candidata B del lote 15 —*una frontera
+es el CONJUNTO de terminadores, nunca «no es X, es Y»*— **reincidiendo en el lote siguiente**, y va
+al `_inbox` como evidencia de que esa regla necesita gate y no memoria.
+
+### 299.6 — Archivos modificados / INTACTOS
+
+MODIFICADOS: `docs/33-LECCIONES-META.md` (3 stubs + cabecera), `docs/37-META-FUNDACIONALES.md` (1
+stub + cabecera), `docs/30-LECCIONES.md` (4 marcas + lista de hojas hijas), `docs/99` (este ADR),
+`docs/00-INDICE.md` (fila §299), `_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (bloque «Lote 16»).
+INTACTOS y verificados: `CLAUDE.md`, `docs/05`, `docs/10`, `docs/20`, `docs/21`, `docs/22`,
+`docs/31`, `docs/32`, `docs/33a`, `docs/34`..`docs/39`, `docs/40`..`docs/45`, `docs/50`,
+`docs/60`, `scripts/`, `skills/` y **todo el sitio** (legacy y portal). Sin cache bump: no se tocó
+un byte servido.
+
+### 299.7 — Doctrina aplicada · frescura · y lo que NO se tocó
+
+Doctrina: §3.3 (evidencia ESTE turno: los sha salen del blob pinneado, no de la memoria) · §3.4
+(IAP) · §G.4 (captura + bóveda commiteada y pusheada en el mismo cierre) · [[M-05]] (ningún techo
+subido) · [[M-32]] (se aplicó su propia regla 3 al índice del maestro: la poda que pagó la fila de
+`doctrina-metodo` no se narra en el fichero) · [[M-31]] (la partición del tema `cerebro-y-memoria`
+NO la eligió este turno: su junta la midió y la nombró Fable en el sello del lote 15).
+
+**Frescura** (§G.4, no lo ve ningún gate): refrescadas las **tres cabeceras** que este lote volvía
+falsas — `33` («conservan cuerpo M-32/M-34/M-35» ⇒ cero cuerpos vivos), `37` («M-33 sigue entera
+aquí» ⇒ migrada) y la lista de hojas hijas del `30`, que repetía las dos afirmaciones anteriores.
+
+**Lo que NO se tocó, y sigue medido**: el `TODO-50` del `10` con sus cuatro cifras falsas (`33`
+89 % · `38` 97 % · `37` con 6 líneas · boot 49c) — hoy son **`33` al 22 %, `38` al 35 %, `37` con
+36 líneas libres y el boot a 263c—; los **16 punteros `_legacy/…` sin anclar** en neuronas vivas; y
+las **10 neuronas ≥90 %**, que este lote no mueve porque `33` y `37` ya habían salido en el 15.
