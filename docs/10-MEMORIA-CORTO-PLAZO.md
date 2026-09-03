@@ -35,7 +35,7 @@
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **rail de pago completo, probado contra el emulador** (§166-§187). ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
 | **TODO-50** | 🧱 **CEREBRO LLENO** — la migración al maestro (TODO-51) lo DESCOMPRIMIÓ: `33` 48 % · `38` 35 % · `37` 36 % (medido 2-sep). Siguen ≥90 %: `05` `43` `50` `32` `34` `21` `22` `44` `00e`, y el BOOT a **262c**. ⛔ Subir techo prohibido ([[M-05]]). | 🟡 mío | §289 |
-| **TODO-51** | 🧠⇪ **CEREBRO MAESTRO** (2-sep): F2 COMPLETA · 280 piezas · dominio marketing · paquete Chat · skills medidas (C4-1) · piloto F3 DIFERIDO con evidencia. Corriendo: vigía → gates #9/#13/#15 → C4-2/3. Luego C4-4/5 (upstream), auditoría de cierre, encendido guiado, revisión final Fable. Registro → `../brain-private/cerebro-maestro/BITACORA.md`. | 🔴 Fable+Opus | plan |
+| **TODO-51** | 🧠⇪ **CEREBRO MAESTRO**: F2 COMPLETA · 280 piezas · dominios · paquete Chat · F3 DIFERIDO · vigía · gates #9/#13/#15. En curso: C4-2 (canon + kit + gate #14). Siguen: C4-3 frío · canario v1.32 · C4-4/5 upstream · auditoría de cierre · encendido (7 pasos) · revisión final Fable. Registro → `../brain-private/cerebro-maestro/BITACORA.md`. | 🔴 Fable+Opus | plan |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea. | ⏸️ 28/92 | §87 · `43` |
 
 ---
