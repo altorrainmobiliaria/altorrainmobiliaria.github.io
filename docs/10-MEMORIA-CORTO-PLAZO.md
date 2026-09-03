@@ -46,7 +46,7 @@
 >
 > **Frente activo: TERMINAR EL MEGA-PLAN.** Daniel (21-ago): *«las campañas al final, nos interesa
 > terminar la página web y el sistema, todo el mega plan»* — Meta ads y el Gmail roto, al FINAL.
-> **Opus 5 para TODO**, esfuerzo Max, agentes y workflows LIBRES bajo tu juicio (20-ago).
+> (El reparto de modelos NO vive aquí: lo fija el router global C0.)
 >
 > **🌊 OLA 1 = 13/13 EN CÓDIGO** (§138; censo → `21`) **pero NO cerrada**: ningún camino ha escrito
 > aún en Firestore real y la base está VACÍA (medido). Manda **`specs/CUTOVER-RUNBOOK.md`** (§102,
@@ -55,10 +55,9 @@
 >
 > 🎭 **UN ✅ NO PRUEBA QUE MIRARA** — la familia entera, con sus ocho formas, en `38-GATES-QUE-MIENTEN`.
 >
-> 🗓️ **última actualización: 2026-08-31.** Esta pizarra NO lleva `verificado-vivo` **a propósito**:
-> afirmaría que verifiqué cada pendiente contra la realidad, y es falso. 📄 Brief de Daniel (memoria
-> `brief-lanzamiento-artifact`): si cambias el reparto 🤖/🧑 o las PELOTAS, **ábrelo en el MISMO
-> turno** — ningún gate lo ve envejecer (§211).
+> 🗓️ **3-sep.** Sin `verificado-vivo` a propósito: diría que verifiqué cada pendiente, y es falso.
+> 📄 Brief de Daniel (memoria `brief-lanzamiento-artifact`): si cambian reparto 🤖/🧑 o PELOTAS,
+> **ábrelo en el MISMO turno** — ningún gate lo ve envejecer (§211).
 >
 > 🏨 Alojamiento: RNT + PH los BLOQUEAN las Rules (§234) y el build (§240) — no se describe aquí.
 >
@@ -67,16 +66,17 @@
 > 🔻 **El panel LEGACY no tiene red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates.
 
-> 🎯 **AQUÍ VOY (31-ago · FABLE 5).** Daniel abrió el **PROGRAMA CEREBRO MAESTRO** → TODO-51; la
-> web pasa a 2º frente. Reparto NUEVO: **Fable planifica · Opus implementa · agentes SIEMPRE Opus**
-> (ventana $100/5h). ⛔ Obra nueva espera TU mockup de ficha; la proyección al índice quedó
-> **DECIDIDA** (crudo en bóveda: doc propio + fusión en el endpoint, 9 pasos) — la aterriza Opus
-> tras el mockup. ⏭ Reseñas: falta el flujo que ESCRIBE (Ola 2).
+> 🎯 **AQUÍ VOY (3-sep).** El **entorno** paró el trabajo, no el cerebro: Claude Desktop dejó de
+> arrancar (`spawn ENAMETOOLONG`) y mató la **auditoría de cierre** con Medir en 4/5. Lo pagado está
+> RESCATADO y pusheado en la bóveda (4 informes + instrumentos + journal). Causa y aritmética → [[L-86]];
+> plugins podados 190→21 y espejo `claude-user` al día. ⏭ **Reanudar el cierre desde ahí**:
+> sembrar el `--out` con los 4 informes, re-correr SOLO `deudas-medidas` (con depósito intermedio, se
+> colgó a los 5 min) y las fases Comité/Candidatas/Crítico. ⛔ Obra nueva sigue esperando TU mockup de ficha.
 
-> ⏭ **Vivo, y es TUYO**: las cinco cifras del 5.3 (`specs/PROPUESTA-CIFRAS-CUTOVER.md`) · qué
-> carpetas dejan de servirse en el dominio (N16-29) · los 13 correos del `50` (N16-30).
+> ⏭ **Vivo y TUYO**: las 5 cifras del 5.3 (`specs/PROPUESTA-CIFRAS-CUTOVER.md`) · qué carpetas dejan
+> de servirse (N16-29) · los 13 correos del `50` (N16-30).
 
-> 🔀 **Hermanas** (§216): Cars → LEGAL-08/09 de su `42-LEGAL` · Bersaglio → su `44-PAUTA-META.md`.
+> 🔀 **Hermanas** (§216): Cars → LEGAL-08/09 de `42-LEGAL` · Bersaglio → `44-PAUTA-META.md`.
 
 > **⏭️ PELOTAS DE DANIEL — ordenadas por lo que DESBLOQUEAN** (§188).
 >
@@ -97,12 +97,14 @@
 > **(12) 💳 ¿«Crédito de Vivienda» y «Pagos en Línea» son servicios REALES?** Los retiré del menú
 > (§159.4). Una frase basta; el segundo es el carril de Wompi y espera TU cuenta igual.
 > **(8) `/publicar` no pide correo** (fiel al mockup) ⇒ el propietario llega `[COLD]`: ¿campo o re-pesar?
+> **(14) 🔌 apaga conectores en Claude Desktop** — la mitad de la línea de comandos que reventó es
+> TUYA y no la puedo tocar yo: son los plugins sincronizados desde tu cuenta (73, ~187c cada uno). Se
+> apagan en el Desktop o en claude.ai. Yo ya podé mi mitad (190→21). Detalle → [[L-86]].
 > **(47) 🚪 inscribe tu 2FA** — hasta que lo hagas no puedo exigirlo en las Rules (antes expulsaría a todos).
 >
-> **🅲 No bloquean nada hoy**
-> **(3) B-04 DataCrédito** (solo si quieres screening propio) · **(4a) recovery codes** (§72, higiene,
-> 5 min) · **(9) 📣 PAUTA** — aplazada por ti y **aplazarla es SEGURO**: solo muerde el día que recargues
-> saldo ([[D-15]]); antes de eso, sesión de Meta ([[D-16c]]) + filtro `Entrega=Activo` ([[D-15b]]).
+> **🅲 No bloquean nada hoy**: **(3) B-04 DataCrédito** (si quieres screening propio) · **(4a) recovery
+> codes** (§72, 5 min) · **(9) 📣 PAUTA** — aplazarla es SEGURO: solo muerde al recargar saldo ([[D-15]]);
+> antes, sesión de Meta ([[D-16c]]) + filtro `Entrega=Activo` ([[D-15b]]).
 
 > **⏸️ EN PAUSA, reanudable y sin bloquear nada**: 64 leves del kit (ledger en bóveda) · [[M-09]] a los
 > 3 hermanos (TODO-32b) · backlog B-01..B-05. 🛑 **NO RELANZAR** el comité R3, la auditoría B-03 ni los
