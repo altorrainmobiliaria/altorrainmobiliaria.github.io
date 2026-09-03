@@ -296,3 +296,13 @@ Paquete desarrollado por el dueño (Antigravity) para integraciones de pago Womp
 | `wompi_support_agent` | agente | Diagnóstico errores HTTP/transaccionales (401/404/422, DECLINED, webhooks) |
 | `wompi_qa_agent` | agente | Planes de prueba + edge cases (idempotencia, doble-gasto, firma falsa) |
 | `mantenimiento-general` | skill (repo+user, PORTABLE ×4) | EJECUTOR de la resonancia mensual del cerebro (F3 §53): bundle offsite + rotación auditoría Nivel-2 + poda one-in-one-out + kernel ×4; se dispara por el banner/gate #14, jamás por calendario |
+
+## 🆕 Gobernada nº 44 — `attribution`, llegada con el reparto C4-4/C4-5 (2026-09-03)
+
+> **Dueño único: `brain-private/skills/`** (D-C4-1) — no se edita aquí. Vendorizada del repo
+> *marketingskills* de Corey Haines (MIT, ruta `skills/attribution`, tag `v2.11.0`) por
+> `cerebro-maestro/DICTAMEN-C4-SKILLS.md` §9 **D-C4-22**, y declarada en `skillFiles` de los 4 repos.
+
+| Skill | Qué aporta | Disp. |
+|---|---|---|
+| `attribution` 🆕 | Qué canal produjo DE VERDAD la venta cuando la conversión ocurre **fuera del píxel**: los 6 modelos y cómo miente cada uno, los 3 paradigmas (MTA/MMM/incrementalidad), cómo reconciliar paneles que se contradicen (y por qué NUNCA se suman) y la pista first-party. Ataca el techo ya medido de la pauta — la venta se cierra por WhatsApp. **Capa propia**: gate `legal-colombia` (Ley 1581 sobre el Pilar B) + cero cifras inventadas. | ✅ repo+user |
