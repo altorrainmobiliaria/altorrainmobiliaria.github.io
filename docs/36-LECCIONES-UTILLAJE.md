@@ -11,6 +11,8 @@
 >
 > **Y crecen rápido.** Por eso salen de `30` antes de que lo revienten, no después.
 
+> 📊 <!--CIFRA-CEREBRO--> **Chequeos del linter del cerebro: 21** en `scripts/brain-check.mjs` — cifra comparada por el gate #29 (el propio #29 es uno de ellos). Si el kernel gana o pierde un chequeo y este número no se mueve, el commit se para: es la cura de «la herramienta dice N y hay M».
+
 ### L-67 — 🎭 Bumpear una constante que **no lee nadie**, y anotarlo como protección *(§256)*
 
 La doctrina *always-on* ordenó durante meses: «bumpea `CACHE_NAME` al cambiar el shell». **Medido el 28-ago: esa constante se declara en `service-worker.js:9` y no la lee NADIE** — ni el propio SW, cuyo `activate` enumera `caches.keys()` y las borra TODAS. Sus únicos consumidores son el gate #4, que la imprime, y `scripts/fix-i18n-macro.mjs`, que la incrementa. **Por eso no se borra la constante**: quitarla rompe a los dos.

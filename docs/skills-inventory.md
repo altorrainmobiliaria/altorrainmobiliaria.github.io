@@ -8,6 +8,8 @@
 > **Sincronizado al SET CANÓNICO** (cars/bersaglio) el 2026-06-21 por el operador cars. Auditoría base: 2026-06-03.
 > **Re-auditado 2026-07-18** (ADR §33, workflow 4 agentes): conteos reales HOY = **94 carpetas en `skills/` del repo · 35 en `~/.claude/skills/`**; 7 user-level sin catalogar AÑADIDAS abajo; wiring re-verificado.
 
+> 📊 <!--CIFRA-CEREBRO--> **Skills GOBERNADAS que este repo consume: 44** — las declaradas en `skillFiles` de `docs/.brain-manifest.json` y repartidas por `npm run brain:pull` desde el canon de la bóveda. La cuenta la comprueba el gate #29; las ~114 carpetas de `skills/` de abajo son el catálogo histórico, que es OTRA cifra.
+
 ---
 
 ## ⚠️ Verdad del wiring (leer primero — corrige un supuesto común) — re-verificado 2026-07-18

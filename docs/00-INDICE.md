@@ -5,6 +5,8 @@
 > ⚠️ Las líneas son **pistas** (pueden desincronizarse). `npm run brain:check` valida el desync.
 > 🛡️ **`npm run brain:index` AUTO-RECONCILIA la columna Línea** desde los headers de `99` (cura el drift; guardián de cars TODO-32/§14). 🪦 **Tombstone**: `> ⛔ REEMPLAZADO POR §M` bajo un ADR superado = NO lo apliques, ve a §M (el guardián valida que §M exista).
 
+> 📊 <!--CIFRA-CEREBRO--> **ADRs indexados en 99: 299** — la cuenta la comprueba el gate #29 contra los headers `## NN.` de `docs/99-HISTORIAL-ADR.md` en cada commit del cerebro: si añades un ADR y no subes este número, el commit se para.
+
 ---
 
 ## 🧭 Enrutamiento semántico (síntoma/tema → neurona)
