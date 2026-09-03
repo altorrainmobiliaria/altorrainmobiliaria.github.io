@@ -92,6 +92,7 @@ Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · p
 ### L-72 — 🔴 Un gate que miente en ROJO viene con una INSTRUCCIÓN: el espejo emparejaba por orden físico de las líneas y el único arreglo obediente que compilaba dejaba en 404 cada inmueble reservado → 🧩 **shard `38-GATES-QUE-MIENTEN.md`** ⇒ **migrada al maestro**: [[INMO:L-72]]
 ### L-73 — 🕳️ Un hook que emite JSON firma un CONTRATO con el esquema del harness: el PreCompact llevaba 44 días descartado en la raíz — 0/15 entregas, 13 fallos invisibles → 🧩 **shard `38a-ARMADO-DEL-GATE.md`** ⇒ **migrada al maestro**: [[INMO:L-73]]
 ### L-74 — 🎭 Un `\b` casa DETRÁS de los dos puntos: `[[CARS:L-01]]` se leyó `L-01` y resolvió contra OTRA lección, en VERDE → 🧩 **shard `38-GATES-QUE-MIENTEN.md`** ⇒ **migrada al maestro**: [[INMO:L-74]]
+### L-85 — 🤖 Un workflow con `contents: write` es un COMMITTER más: mueve `main` SOLO y tu rama queda atrás sin conflicto y sin aviso → 🧩 **shard `docs/35-LECCIONES-PLATAFORMA.md`**
 ### L-26 — 🖥️ Panel integrado = renderer CONGELADO (rAF 0 frames) · juicio visual SIEMPRE por Chrome → 🧩 **shard `31-VERIFICACION-UI.md`** (completa allá, incl. corrección capital + variante resize) ⇒ **migrada al maestro**: [[INMO:L-26]]
 ### L-24 — Verificar un build contra el MOCKUP por ESTRUCTURA (checklist de secciones), no solo por color *(Ola 1, ADR §32; el dueño cazó lo que la verificación no)* ⇒ **migrada al maestro**: [[INMO:L-24]]
 Cuerpo íntegro en `/_legacy/LECCIONES-MIGRADAS-MAESTRO.md` (raíz del repo · punto de retorno del ABORT).

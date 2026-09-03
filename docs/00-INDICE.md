@@ -24,7 +24,7 @@
 | **Un gate sale ✅ pero el cerebro dice que BLOQUEA** · verde que nadie ha visto fallar · exención de entorno | `38-GATES-QUE-MIENTEN` L-65 + `99 §240` — el comando está en `specs/CUTOVER-RUNBOOK.md` |
 | **¿Puedo publicar este dato de contacto?** teléfono/correo público · el móvil PERSONAL del dueño | `99 §241` + §250. SSoT: `portal/src/lib/config/site.ts`; lo vigila un gate de `portal/scripts/verify-build.mjs` |
 | **Genero un fichero y llega CORRUPTO sin que nada falle** · heredoc · barras invertidas comidas · `/tmp` que no es el mismo | `36-LECCIONES-UTILLAJE` L-46 y L-66 |
-| **¿Puedo mergear a main AQUÍ?** las reglas git de cada repo hermano difieren | `CLAUDE.md §2` (este repo) + skill `sinapsis-cerebros` + `99 §245` — ⚠️ en INSEMA mergea el dueño |
+| **¿Puedo mergear a main AQUÍ?** las reglas git difieren por repo · y `main` avanza SOLO donde hay bot | `CLAUDE.md §2` + skill `sinapsis-cerebros §3.4` + `99 §245` + `30 L-85` |
 | **Voy a tocar una página pública**: qué está prohibido y qué gates me van a frenar | `34-DOCTRINA-CODIGO` + los `portal/scripts/verify-*.mjs` (§247 · §248 · §249) |
 | Mapa (MapLibre/Protomaps/pmtiles/tiles/marcadores/R2 tiles) · binding CF desde ruta SSR | `99 §55` + `30 L-33` (`cloudflare:workers`) + `50 §Tiles` (subir .pmtiles) |
 | **Funciona en dev pero NO en producción** (Cloudflare) · el mapa no carga en prod | `30 L-34` (Workers Static Assets IGNORA `Range`; `astro dev` SÍ lo honra → paridad dev↔prod FALSA) + `99 §55.9` |
