@@ -1,6 +1,9 @@
 ---
 name: pauta-captacion
 description: "ORQUESTADORA de la pauta de captación de propietarios de ALTORRA (Meta primero, Google fase 2). Úsala al planear, montar, encender u optimizar campañas de captación (arriendo/venta/renta corta) — enruta a las skills especialistas y es dueña SOLO de lo que ninguna cubre: el playbook de la primera campaña a escala COP, el setup previo en orden, los gates legales go/no-go y la capa de VIGENCIA (qué feature/benchmark murió, verificado contra doc oficial 2026-07-18). Triggers — 'montar la campaña', 'encender la pauta', 'campaña de captación', 'pauta de propietarios', 'presupuesto de Meta', 'configurar píxel/CAPI', 'cuándo pautamos'. NO es para diagnóstico de campaña viva (meta-ads-diagnostico) ni creación de piezas (ad-creative/marketing-psicologico-conversion)."
+actualizada: 2026-09-02
+reglas: 12
+lecciones: []
 ---
 
 # 📣 Pauta de Captación ALTORRA — orquestadora (Meta → Google)

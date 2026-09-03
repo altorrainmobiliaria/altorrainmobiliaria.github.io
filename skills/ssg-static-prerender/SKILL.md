@@ -1,6 +1,9 @@
 ---
 name: ssg-static-prerender
 description: Hornear HTML estático REAL por ítem en el BUILD para hosting estático (GitHub Pages, etc.) — la base de TODA la visibilidad (SEO·AEO·OG-social). Úsala cuando un sitio sirve fichas/piezas/propiedades desde una BD pero el HTML que llega al bot/LLM está vacío (SPA que hidrata por JS): los crawlers de Google/redes/IA NO ejecutan JS, así que schema/meta/contenido DEBEN existir en el HTML del build. Genera, en GitHub Actions on-push+diario, una página por ítem `status:published` con canonical/title/meta/OG/Twitter/JSON-LD/<noscript>, + sitemap.xml, con guards anti-fail-silent (REQUIRED_ANCHORS, bake-integrity, SSG_SELFTEST, safeJsonLd). Portable por `tenant_config.json` (vertical JewelryStore/AutoDealer/RealEstateAgent, colecciones, templates). Arquitectura HUB IoC: el core = funciones puras; cada tenant orquesta. Triggers — "hornear HTML en el build", "SSG", "prerender estático", "mi schema solo lo ve Googlebot/no aparece en curl", "OG no carga en WhatsApp/redes", "indexar fichas de la BD". Parte del paquete de visibilidad (HUB Altorra). NO uses para SSR dinámico (Next/Nuxt server) ni para una página única estática sin BD.
+actualizada: 2026-09-02
+reglas: 11
+lecciones: []
 ---
 
 # 🏭 SSG Static Prerender — hornear HTML real en el build (la base de la visibilidad)

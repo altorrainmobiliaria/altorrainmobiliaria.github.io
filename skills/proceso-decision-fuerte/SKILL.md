@@ -1,6 +1,9 @@
 ---
 name: proceso-decision-fuerte
 description: Pipeline de validación multi-capa para DECISIONES FUERTES (arquitectura, modelo de datos, seguridad/legal, operaciones irreversibles, cambios multi-subsistema). Orquesta verificación → comité acotado → consejo externo (Gemini) → análisis crítico que VERIFICA cada claim → revalidación → veredicto → implementación verificada por fase. Usar cuando la tarea es cara de revertir y un fallo sería costoso. NO usar para lo trivial/reversible/mecánico (sería derroche y se cuelga, lección cars-L-50).
+actualizada: 2026-09-02
+reglas: 17
+lecciones: []
 ---
 
 # 🛡️ Proceso de Decisión Fuerte — Pipeline de Validación Multi-Capa

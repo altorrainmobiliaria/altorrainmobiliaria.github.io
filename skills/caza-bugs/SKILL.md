@@ -1,6 +1,9 @@
 ---
 name: caza-bugs
 description: Usar al TOCAR o ROZAR un subsistema con estado observable (render, listener/onSnapshot, CRUD, flujo de pasos) — editarlo, refactorizarlo con cambio de comportamiento, o cambiar el estado compartido (doc de base de datos, sessionStorage, caché) que otro flujo lee — ANTES de darlo por bueno. Recorre su CAMINO VIVO end-to-end, en especial las dos fronteras del estado-cero (crear el 1er ítem y verlo aparecer; borrar el último y ver colapsar limpio), no solo el cambio puntual. Encapsula el reflejo barato siempre-on y la escalera de escalado calibrada (revisión adversarial + comité + consejo externo) sin gastar de más en lo trivial. NO es para depurar un fallo ya reproducible (eso es systematic-debugging) ni para el gate de evidencia del claim final (verification-before-completion). Triggers — "verifica que no rompí nada", "probé el cambio pero no el flujo", "edité X y lo di por bueno", "esto se rozó con Y", "antes de cerrar/commitear esta funcionalidad".
+actualizada: 2026-09-02
+reglas: 62
+lecciones: []
 ---
 
 # 🐛 Caza-bugs — recorrer el camino vivo de lo que tocas, no solo tu diff

@@ -1,6 +1,9 @@
 ---
 name: mantenimiento-general
 description: EJECUTOR del mantenimiento mensual del cerebro ×4 (Cerebro v2 F3, ADR §53 inmobiliaria). Se dispara cuando el banner "EN CRISTIANO" del boot dice TOCA (auditoría vencida / backup >35d) o el gate #14 escala a warn — NUNCA por calendario ni memoria humana. Daniel solo dice "haz el mantenimiento mensual". Cubre: bundle offsite + rotación de auditoría Nivel-2 + poda de doctrina + verificación kernel ×4 + métrica de costo.
+actualizada: 2026-09-02
+reglas: 6
+lecciones: []
 ---
 
 # 🔄 Mantenimiento General (resonancia mensual ×4) — EJECUTOR, no disparador

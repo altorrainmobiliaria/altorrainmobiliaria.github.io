@@ -1,6 +1,9 @@
 ---
 name: arquitecto-software
 description: "Piensa como ARQUITECTO DE SOFTWARE ANTES de escribir o corregir código en webs y apps. Aplica en CUALQUIER trabajo de código no trivial: implementar una feature, corregir un bug con consecuencias, refactorizar, diseñar un módulo o un esquema de datos, decidir cómo se conecta / escala / asegura / integra el sistema. Un buen arquitecto no escribe más código: toma mejores decisiones, pensando en el SISTEMA COMPLETO (negocio, escala a miles de usuarios, seguridad por diseño, costo, mantenibilidad, integración), no en una sola función. GATILLOS: 'implementa', 'construye', 'crea', 'corrige', 'arregla', 'refactoriza', 'optimiza', 'agrega una feature/módulo', 'diseña el esquema/la estructura', 'cómo conecto/escalo/aseguro/integro X', cualquier decisión técnica o de arquitectura. Úsala ANTES de tocar código en tareas con consecuencias de diseño. NO para edits triviales (un texto, un color, un typo) ni tareas que no son de código."
+actualizada: 2026-09-02
+reglas: 24
+lecciones: []
 ---
 
 # 🏛️ Arquitecto de Software — decide antes de codear

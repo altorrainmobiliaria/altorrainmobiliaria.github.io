@@ -1,6 +1,9 @@
 ---
 name: acceso-y-autenticacion
 description: Diseñar o auditar el sistema de ingreso de una aplicación — puerta única, segundo factor, sesión, alta y baja de usuarios, bitácora, recuperación. Úsala ANTES de escribir una pantalla de login, cuando alguien dice que el acceso «es muy básico», o cuando haya que decidir entre roles, MFA, passkeys o proveedores sociales. Incluye las trampas que solo se ven probando el sistema, no leyéndolo.
+actualizada: 2026-09-02
+reglas: 24
+lecciones: []
 ---
 
 # 🚪 Acceso y autenticación

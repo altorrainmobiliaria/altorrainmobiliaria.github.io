@@ -1,6 +1,9 @@
 ---
 name: legal-colombia
 description: "Guardrail + método para CUALQUIER tarea legal de un negocio COLOMBIANO (e-commerce, joyería, datos personales). Garantiza que todo lo legal se haga en marco jurídico de COLOMBIA, con investigación profunda en fuentes oficiales (.gov.co), NUNCA con plugins extranjeros. GATILLOS OBLIGATORIOS: redactar/revisar términos y condiciones, política de privacidad / tratamiento de datos / habeas data, aviso de privacidad, política de cookies, política de devoluciones/garantías/retracto, política de envíos, contrato, 'es legal esto', cumplimiento normativo, derecho de retracto, garantía legal, reversión de pago, datos personales, Ley 1581, Ley 1480, SIC, RUCOM, lavado de activos / SARLAFT / SAGRILAFT, UIAF, factura electrónica, IVA, DIAN, registrar base de datos / RNBD. Dispara TAMBIÉN como guardrail si se va a usar un skill/plugin legal extranjero para contenido del sitio o del negocio: DETENTE y usa este marco colombiano. NO disparar para temas legales de OTRO país explícitamente solicitados."
+actualizada: 2026-09-02
+reglas: 6
+lecciones: []
 ---
 
 # ⚖️ Legal Colombia — guardrail + método

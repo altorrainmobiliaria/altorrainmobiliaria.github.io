@@ -1,6 +1,9 @@
 ---
 name: validacion-live-chrome
 description: Usar DESPUÉS de un merge/deploy cuando los cambios YA están EN VIVO y hace falta EVIDENCIA REAL del comportamiento (no localhost, no opinión). Modo DIRECTO = DEFAULT (desde 2026-06-24): YO conduzco la extensión "Claude in Chrome" (mcp__claude-in-chrome__) y entrego el REPORTE con OBSERVABILIDAD real (consola, network, DOM, respuestas literales, transiciones de estado); las credenciales las mete el dueño (Claude NUNCA las maneja). FALLBACK sin extensión conectada: genero un PROMPT autocontenido que el dueño ejecuta y pega aquí. Cubre el hueco de verificación live (doctrina: no hay E2E en localhost — la verificación final es contra producción). Casos: bot logueado vs NO logueado, finalizar/iniciar/recargar conversacion, formularios, flujos con sesion. CRITICO ADVERSARIAL: refuta, no confirma. Complementa caza-bugs. TAMBIÉN decide QUÉ superficie de navegador usar (§0.5): navegador INTEGRADO de Claude Code (`mcp__Claude_Browser__*` — sin las sesiones del dueño; DEFAULT para nuestro dev server, staging público, URLs públicas y descargas de assets públicos) vs EXTENSIÓN Chrome (`mcp__claude-in-chrome__*` — el Chrome REAL logueado del dueño; SOLO cuando el camino exige una credencial/sesión suya). Triggers: "ya se mergeo, valida en vivo", "pruebalo en la web desplegada", "lanzale un prompt a la extension de Chrome", "valida adversarial", "evidencia real post-merge", "observabilidad del sitio live", "¿navegador integrado o extensión?", "abre/descarga/previsualiza en el navegador".
+actualizada: 2026-09-02
+reglas: 26
+lecciones: []
 ---
 
 # 🔭 Validación Live vía extensión "Claude in Chrome" (post-merge)

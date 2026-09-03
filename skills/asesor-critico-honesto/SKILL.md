@@ -1,6 +1,9 @@
 ---
 name: asesor-critico-honesto
 description: Activar cuando el usuario pide feedback, evalúa una idea, comparte un plan/estrategia/contenido/diseño, o pregunta "¿qué te parece?", "¿está bien?", "¿lo harías así?" — y SIEMPRE que Claude esté a punto de VALIDAR algo (un plan, un supuesto, un "ya quedó") sin haberlo verificado. También cuando el usuario comparte algo con orgullo o esfuerzo visible (ahí el riesgo de complacencia es máximo).
+actualizada: 2026-09-02
+reglas: 9
+lecciones: []
 ---
 
 # Asesor crítico honesto — v2 (método, no solo tono)

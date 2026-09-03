@@ -5,6 +5,9 @@ metadata:
   version: 1.0.0
   author: community
   language: es
+actualizada: 2026-09-02
+reglas: 3
+lecciones: []
 ---
 
 # Diagnóstico de Campañas Meta Ads

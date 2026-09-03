@@ -1,6 +1,9 @@
 ---
 name: anti-codigo-muerto
 description: Usar SIEMPRE al estrenar/fix/mejorar código que REEMPLAZA algo viejo — antes de cerrar el cambio. Evita el síndrome Knight Capital (el "8º servidor": $460M en 45 min por código muerto de 10 años que un flag reutilizado revivió). Garantiza que lo nuevo RETIRE lo viejo (no apile): detectar código muerto/huérfano (funciones desplegadas sin source, paths/JS sin referencia, flags reutilizados, deploy incompleto ×N targets), cuarentenarlo (`_legacy/` / revocar IAM — nunca borrar a ciegas) y verificar el camino vivo con el MOTOR ACTUAL (no el planeado). Incluye el gate mecánico `deadcode:check` (hoy existe SOLO en cars — en otro repo créalo cuando haya functions propias) y la política cuarentena>borrado. NO es para depurar un bug (systematic-debugging) ni el gate del claim final (verification-before-completion). Triggers — "estreno código que reemplaza X", "esto deja código viejo", "deploy de functions", "reutilicé un flag", "¿quedó algo viejo molestando?", "una línea mal puesta cuesta millones", "lo que no testeas te quiebra".
+actualizada: 2026-09-02
+reglas: 19
+lecciones: []
 ---
 
 # 🧟 Anti-código-muerto — lo nuevo REEMPLAZA lo viejo, no se apila (anti Knight Capital)

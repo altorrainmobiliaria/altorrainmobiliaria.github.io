@@ -1,6 +1,9 @@
 ---
 name: marketing-psicologico-conversion
 description: Activar cuando el usuario quiera crear guiones de video, piezas gráficas, copywriting para anuncios o estrategia de contenido — en especial piezas de CAPTACIÓN y pauta (Meta/IG/TikTok) de ALTORRA. Aplica psicología de ventas (dolor vs placer), urgencia, ganchos "aburre vs vende", jerarquía visual, sistema de creación de contenido y metáforas visuales stop-scroll. Triggers — "guion de video", "pieza para pautar", "copy del anuncio", "gancho", "idea de contenido", "detener el scroll", "pieza de captación". Usar JUNTO con catalogo-voz-altorra (la voz calibra el dolor) y el §10 (guardarraíles legales de pauta inmobiliaria CO).
+actualizada: 2026-09-02
+reglas: 36
+lecciones: []
 ---
 
 # Psicología de Conversión, Estructura de Contenido y Diseño (Marketing Avanzado)

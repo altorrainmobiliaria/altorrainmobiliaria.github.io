@@ -1,6 +1,9 @@
 ---
 name: search-console-setup-y-diagnostico
 description: Dar de alta Google Search Console (GSC) y diagnosticar por qué un sitio "no sale en Google" — la herramienta gratis que dice qué indexó Google, con qué queries apareces y qué está roto. Úsala al lanzar/auditar la indexación de cualquier sitio del paquete de visibilidad: alta (propiedad Dominio + TXT DNS, fallback HTML/meta), checklist pre-deploy que el SSG ya garantiza (title/desc únicos, canonical autorreferencial, JSON-LD válido, robots con Sitemap:, cero noindex residual), envío de sitemap + URL Inspection en home+2-3 fichas (sembrar), el ÁRBOL de diagnóstico "no aparezco" (site: → URL Inspection → Page Indexing → Manual Actions/Security → latencia), el bucle mensual (Performance: CTR bajo+impresiones altas→reescribir meta; striking distance pos 8-20; Rich Results; CWV), y la API GSC (service account + Action programada) para histórico >16 meses. Regla clave: GSC NO indexa automáticamente vía API; es diagnóstico+envío. Triggers — "no aparezco en Google", "Search Console", "indexación", "enviar sitemap", "por qué no me indexa", "URL Inspection", "cobertura/coverage", "queries de búsqueda", "rich results errores". Lee `tenant_config.json` (baseUrl, gscVerification). Cuenta GSC del dueño = ⛔.
+actualizada: 2026-09-02
+reglas: 12
+lecciones: []
 ---
 
 # 🔎 Search Console — alta + diagnóstico "no salgo en Google"

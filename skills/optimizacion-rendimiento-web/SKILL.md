@@ -6,6 +6,9 @@ metadata:
   author: operador-cars
   version: "1.0.0"
 allowed-tools: Read Write Edit Glob Grep Bash
+actualizada: 2026-09-02
+reglas: 10
+lecciones: []
 ---
 
 # ⚡ Optimización de Rendimiento Web — playbook agéntico, medible y verificado en vivo
