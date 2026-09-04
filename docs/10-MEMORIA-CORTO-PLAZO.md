@@ -35,7 +35,7 @@
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **rail de pago completo, probado contra el emulador** (§166-§187). ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
 | **TODO-50** | 🧱 **CEREBRO LLENO** — la migración al maestro (TODO-51) lo DESCOMPRIMIÓ: `33` 22 % · `38` 35 % · `37` 26 % (re-medido 4-sep, auditoría #19). Siguen ≥90 % **diez**: `CLAUDE.md` `05` `43` `50` `32` `34` `21` `22` `44` `00e`, y el BOOT **al 100 %** (6c). ⛔ Subir techo prohibido ([[M-05]]). | 🟡 mío | §289 |
-| **TODO-51** | 🧠⇪ **CEREBRO MAESTRO — en OBRA, no operativo**. ✅ **F2 y C4 COMPLETOS** (46 skills, 3-sep) · falencias del modelo HECHAS · vigía · paquete Chat · **F3 DIFERIDO con medición** (84 prompts: 41 % útiles / 45 % dañinas ⇒ hook apagado). ✅ **auditoría de cierre SELLADA 4-sep** · ✅ **F7 bloque 1** (kernel ×4 · K3 · B16) · 🚧 N2 INSE, B12-B15, Z1 · **actos de Daniel** (D0-D5) · **revisión final Fable**. **Orden** → `../brain-private/cerebro-maestro/DICTAMEN-ENCENDIDO.md` (+ `BITACORA.md`). | 🔴 Fable+Opus | dictamen |
+| **TODO-51** | 🧠⇪ **CEREBRO MAESTRO — en OBRA, no operativo**. ✅ **F2 y C4 COMPLETOS** (46 skills, 3-sep) · falencias del modelo HECHAS · vigía · paquete Chat · **F3 DIFERIDO con medición** (84 prompts: 41 % útiles / 45 % dañinas ⇒ hook apagado). ✅ **auditoría de cierre SELLADA 4-sep** · ✅ **F7 bloque 1** (kernel ×4 · K3 · B16) · ✅ N2 INSE · 🚧 B12-B15, Z1 · **actos de Daniel** (D0-D5) · **revisión final Fable**. **Orden** → `../brain-private/cerebro-maestro/DICTAMEN-ENCENDIDO.md` (+ `BITACORA.md`). | 🔴 Fable+Opus | dictamen |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -67,7 +67,7 @@
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates.
 
 > 🎯 **AQUÍ VOY** (4-sep, noche). F7 bloque 1 HECHO: kernel nuevo (R-01..R-04 + fix 1.34.1) en los 4 repos
-> y verificado; K3 y el paquete de Chat hechos; BERS en verde. En marcha: N2 de insema. ⏭ Sigue →
+> y verificado; K3 y el paquete de Chat hechos; BERS en verde; N2 de insema ✅ (#2). ⏭ Sigue →
 > **DICTAMEN-ENCENDIDO §9 (última entrada)**: B12-B15 → Z1. Tuyo: D0 (vigía, medido NO instalado) y D5
 > (pegar el paquete). ⛔ Obra nueva sigue esperando TU mockup de ficha.
 
