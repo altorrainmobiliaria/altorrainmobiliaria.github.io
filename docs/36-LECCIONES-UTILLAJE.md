@@ -11,7 +11,7 @@
 >
 > **Y crecen rápido.** Por eso salen de `30` antes de que lo revienten, no después.
 
-> 📊 <!--CIFRA-CEREBRO--> **Chequeos del linter del cerebro: 21** en `scripts/brain-check.mjs` — cifra comparada por el gate #29 (el propio #29 es uno de ellos). Si el kernel gana o pierde un chequeo y este número no se mueve, el commit se para: es la cura de «la herramienta dice N y hay M».
+> 📊 <!--CIFRA-CEREBRO--> **Chequeos del linter del cerebro: 23** en `scripts/brain-check.mjs` — cifra comparada por el gate #29 (el propio #29 es uno de ellos). Si el kernel gana o pierde un chequeo y este número no se mueve, el commit se para: es la cura de «la herramienta dice N y hay M».
 
 ### L-67 — 🎭 Bumpear una constante que **no lee nadie**, y anotarlo como protección *(§256)*
 
