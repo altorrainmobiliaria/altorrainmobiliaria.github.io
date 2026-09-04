@@ -34,7 +34,7 @@
 | **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR** → §129-§138. ⏭ **Daniel**: inscribir su 2FA (clave manual, §137.5) y verificar su correo. ⏭ **Mío, DESPUÉS**: exigirlo en las Rules —antes NO, expulsa a todos—, el QR verificable y la puerta única (§137.6). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **rail de pago completo, probado contra el emulador** (§166-§187). ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
-| **TODO-50** | 🧱 **CEREBRO LLENO** — la migración al maestro (TODO-51) lo DESCOMPRIMIÓ: `33` 48 % · `38` 35 % · `37` 36 % (medido 2-sep). Siguen ≥90 %: `05` `43` `50` `32` `34` `21` `22` `44` `00e`, y el BOOT **al 100 %** (lo dice `brain:check`). ⛔ Subir techo prohibido ([[M-05]]). | 🟡 mío | §289 |
+| **TODO-50** | 🧱 **CEREBRO LLENO** — la migración al maestro (TODO-51) lo DESCOMPRIMIÓ: `33` 22 % · `38` 35 % · `37` 26 % (re-medido 4-sep, auditoría #19). Siguen ≥90 % **diez**: `CLAUDE.md` `05` `43` `50` `32` `34` `21` `22` `44` `00e`, y el BOOT **al 100 %** (6c). ⛔ Subir techo prohibido ([[M-05]]). | 🟡 mío | §289 |
 | **TODO-51** | 🧠⇪ **CEREBRO MAESTRO — en OBRA, no operativo**. ✅ **F2 y C4 COMPLETOS** (46 skills, 3-sep) · falencias del modelo HECHAS · vigía · paquete Chat · **F3 DIFERIDO con medición** (84 prompts: 41 % útiles / 45 % dañinas ⇒ hook apagado). 🚧 **auditoría de cierre 4/12** (tope 2026-09-30) · **5 actos de Daniel** (D0-D5) · **revisión final Fable**. **Orden** → `../brain-private/cerebro-maestro/DICTAMEN-ENCENDIDO.md` (+ `BITACORA.md`). | 🔴 Fable+Opus | dictamen |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea. | ⏸️ 28/92 | §87 · `43` |
 
@@ -66,7 +66,7 @@
 > 🔻 **El panel LEGACY no tiene red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates.
 
-> 🎯 **AQUÍ VOY (4-sep).** El **entorno** paró el trabajo, no el cerebro: Claude Desktop dejó de
+> 🎯 **AQUÍ VOY** (al 2026-09-04). El **entorno** paró el trabajo, no el cerebro: Claude Desktop dejó de
 > arrancar (`spawn ENAMETOOLONG`) y mató la **auditoría de cierre** con Medir en 4/5. Lo pagado está
 > RESCATADO y pusheado en la bóveda (4 informes + instrumentos + journal); causa → [[L-86]]; plugins
 > 190→21 y espejo al día. ⏭ **Cómo se reanuda (B0-B11) lo manda el DICTAMEN-ENCENDIDO §5**, no la
@@ -98,7 +98,7 @@
 > **(12) 💳 ¿«Crédito de Vivienda» y «Pagos en Línea» son servicios REALES?** Los retiré del menú
 > (§159.4). Una frase basta; el segundo es el carril de Wompi y espera TU cuenta igual.
 > **(8) `/publicar` no pide correo** (fiel al mockup) ⇒ el propietario llega `[COLD]`: ¿campo o re-pesar?
-> **(14) 🔌 conectores — ✅ HECHA**: 31 plugins y línea de comandos **6.729c** de 32.767 (medido 4-sep · [[L-86]]).
+> **(14) 🔌 conectores — ✅ HECHA**: **27** plugins de 190 (medido 4-sep · [[L-86]]).
 > **(47) 🚪 inscribe tu 2FA** — hasta que lo hagas no puedo exigirlo en las Rules (antes expulsaría a todos).
 >
 > **🅲 No bloquean nada hoy**: **(3) B-04 DataCrédito** (si quieres screening propio) · **(4a) recovery
