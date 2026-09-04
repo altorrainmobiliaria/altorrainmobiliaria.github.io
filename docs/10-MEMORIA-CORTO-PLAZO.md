@@ -34,8 +34,8 @@
 | **TODO-47** | 🚪 **ACCESO — el 2FA ya se puede USAR** → §129-§138. ⏭ **Daniel**: inscribir su 2FA (clave manual, §137.5) y verificar su correo. ⏭ **Mío, DESPUÉS**: exigirlo en las Rules —antes NO, expulsa a todos—, el QR verificable y la puerta única (§137.6). | 🟢 Daniel | §137 |
 | **TODO-48** | 📰 **JOURNAL publicado** (§147, §195): las 4 categorías estrenadas, cada afirmación con su norma .gov.co citada, mockup **APROBADO**. ⏭️ Falta: RE-ENVIAR el sitemap en GSC. | 🟢 | §147 |
 | **TODO-49** | 🏷️ **OLA 2**. Compraventa + perfil de inquilino → §151-§153, §155. **rail de pago completo, probado contra el emulador** (§166-§187). ⏭️ Lo que falta NO es código: el endpoint espera a `WOMPI_EVENTS_SECRET` (§140) = cuentas de Daniel. | 🟢 Daniel | §176·§165 |
-| **TODO-50** | 🧱 **CEREBRO LLENO** — la migración al maestro (TODO-51) lo DESCOMPRIMIÓ: `33` 48 % · `38` 35 % · `37` 36 % (medido 2-sep). Siguen ≥90 %: `05` `43` `50` `32` `34` `21` `22` `44` `00e`, y el BOOT a **262c**. ⛔ Subir techo prohibido ([[M-05]]). | 🟡 mío | §289 |
-| **TODO-51** | 🧠⇪ **CEREBRO MAESTRO**: F2 COMPLETA · 280 piezas · dominios · paquete Chat · F3 DIFERIDO · vigía · gates #9/#13/#15. En curso: C4-2 (canon + kit + gate #14). Siguen: C4-3 frío · canario v1.32 · C4-4/5 upstream · auditoría de cierre · encendido (7 pasos) · revisión final Fable. Registro → `../brain-private/cerebro-maestro/BITACORA.md`. | 🔴 Fable+Opus | plan |
+| **TODO-50** | 🧱 **CEREBRO LLENO** — la migración al maestro (TODO-51) lo DESCOMPRIMIÓ: `33` 48 % · `38` 35 % · `37` 36 % (medido 2-sep). Siguen ≥90 %: `05` `43` `50` `32` `34` `21` `22` `44` `00e`, y el BOOT **al 100 %** (lo dice `brain:check`). ⛔ Subir techo prohibido ([[M-05]]). | 🟡 mío | §289 |
+| **TODO-51** | 🧠⇪ **CEREBRO MAESTRO — en OBRA, no operativo**. ✅ **F2 y C4 COMPLETOS** (46 skills, 3-sep) · falencias del modelo HECHAS · vigía · paquete Chat · **F3 DIFERIDO con medición** (84 prompts: 41 % útiles / 45 % dañinas ⇒ hook apagado). 🚧 **auditoría de cierre 4/12** (tope 2026-09-30) · **5 actos de Daniel** (D0-D5) · **revisión final Fable**. **Orden** → `../brain-private/cerebro-maestro/DICTAMEN-ENCENDIDO.md` (+ `BITACORA.md`). | 🔴 Fable+Opus | dictamen |
 | **TODO-34** | ⭐ ⏸️ **FUNDACIÓN OPERATIVA — en pausa**. Kit auditado; van **28/92** leves. ⚠️ sin escéptico ⇒ uno por uno, NUNCA en lote (§70.6). No bloquea. | ⏸️ 28/92 | §87 · `43` |
 
 ---
@@ -66,12 +66,11 @@
 > 🔻 **El panel LEGACY no tiene red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates.
 
-> 🎯 **AQUÍ VOY (3-sep).** El **entorno** paró el trabajo, no el cerebro: Claude Desktop dejó de
+> 🎯 **AQUÍ VOY (4-sep).** El **entorno** paró el trabajo, no el cerebro: Claude Desktop dejó de
 > arrancar (`spawn ENAMETOOLONG`) y mató la **auditoría de cierre** con Medir en 4/5. Lo pagado está
-> RESCATADO y pusheado en la bóveda (4 informes + instrumentos + journal). Causa y aritmética → [[L-86]];
-> plugins podados 190→21 y espejo `claude-user` al día. ⏭ **Reanudar el cierre desde ahí**:
-> sembrar el `--out` con los 4 informes, re-correr SOLO `deudas-medidas` (con depósito intermedio, se
-> colgó a los 5 min) y las fases Comité/Candidatas/Crítico. ⛔ Obra nueva sigue esperando TU mockup de ficha.
+> RESCATADO y pusheado en la bóveda (4 informes + instrumentos + journal); causa → [[L-86]]; plugins
+> 190→21 y espejo al día. ⏭ **Cómo se reanuda (B0-B11) lo manda el DICTAMEN-ENCENDIDO §5**, no la
+> memoria. ⛔ Obra nueva sigue esperando TU mockup de ficha.
 
 > ⏭ **Vivo y TUYO**: las 5 cifras del 5.3 (`specs/PROPUESTA-CIFRAS-CUTOVER.md`) · qué carpetas dejan
 > de servirse (N16-29) · los 13 correos del `50` (N16-30).
@@ -81,12 +80,14 @@
 > **⏭️ PELOTAS DE DANIEL — ordenadas por lo que DESBLOQUEAN** (§188).
 >
 > **🅰️ Sin esto no se lanza**
+> **(15) 🛰️ instala la tarea diaria del VIGÍA** — Símbolo del sistema (NO PowerShell), un comando:
+> bóveda `scripts/vigia-instalar.md:28`. **Va PRIMERO de todo** (D0 del DICTAMEN): la revisión final
+> exige DOS días seguidos en verde, y ese reloj de pared no lo acelera ningún agente.
 > **(10) 📧 RESEND: dominio + clave** — gratis, ~30 min, **no depende del Gmail roto**, y el secreto ya
 > existe con centinela (§140). Desbloquea el digest de alertas **y, con el cambio de abajo, el aviso de
-> cada lead**. Si solo haces UNA cosa, es ésta.
-> **(1) 🔻 Gmail — YA NO ES TUYA (baja de A a nada)**: los leads del portal dependían de la Function
-> legacy con SMTP roto (`535-5.7.8`). Moverlos a Resend lo mata, y eso lo hago yo (§188). *Dos pelotas
-> se funden en una credencial.* Solo vuelve a ser tuya si quieres conservar el correo legacy.
+> cada lead**. Si solo haces una del LANZAMIENTO, es ésta.
+> **(1) 🔻 Gmail — YA NO ES TUYA**: sus leads salían de la Function legacy con SMTP roto (`535-5.7.8`);
+> pasan a Resend y eso lo hago yo (§188). Solo vuelve a ti si quieres conservar el correo legacy.
 >
 > **🅱️ Desbloquean una función concreta (una respuesta corta cada una)**
 > **(4b) Nº de RNT** — sin él NO se puede publicar ni un alojamiento por días: el gate lo bloquea.
@@ -97,9 +98,7 @@
 > **(12) 💳 ¿«Crédito de Vivienda» y «Pagos en Línea» son servicios REALES?** Los retiré del menú
 > (§159.4). Una frase basta; el segundo es el carril de Wompi y espera TU cuenta igual.
 > **(8) `/publicar` no pide correo** (fiel al mockup) ⇒ el propietario llega `[COLD]`: ¿campo o re-pesar?
-> **(14) 🔌 apaga conectores en Claude Desktop** — la mitad de la línea de comandos que reventó es
-> TUYA y no la puedo tocar yo: son los plugins sincronizados desde tu cuenta (73, ~187c cada uno). Se
-> apagan en el Desktop o en claude.ai. Yo ya podé mi mitad (190→21). Detalle → [[L-86]].
+> **(14) 🔌 conectores — ✅ HECHA**: 31 plugins y línea de comandos **6.729c** de 32.767 (medido 4-sep · [[L-86]]).
 > **(47) 🚪 inscribe tu 2FA** — hasta que lo hagas no puedo exigirlo en las Rules (antes expulsaría a todos).
 >
 > **🅲 No bloquean nada hoy**: **(3) B-04 DataCrédito** (si quieres screening propio) · **(4a) recovery
