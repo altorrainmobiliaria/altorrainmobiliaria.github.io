@@ -79,9 +79,8 @@
 > **⏭️ PELOTAS DE DANIEL — ordenadas por lo que DESBLOQUEAN** (§188).
 >
 > **🅰️ Sin esto no se lanza**
-> **(15) 🛰️ instala la tarea diaria del VIGÍA** — Símbolo del sistema (NO PowerShell), un comando:
-> bóveda `scripts/vigia-instalar.md:28`. **Va PRIMERO de todo** (D0 del DICTAMEN): la revisión final
-> exige DOS días seguidos en verde, y ese reloj de pared no lo acelera ningún agente.
+> **(15) 🛰️ VIGÍA — ✅ instalado por Claude el 4-sep** (te facultaste): tarea diaria 07:00, corre en batería y
+> recupera la corrida si el PC estaba apagado. Lo que queda es RELOJ: dos días seguidos en verde (Z1, no antes del 7-sep).
 > **(10) 📧 RESEND: dominio + clave** — gratis, ~30 min, **no depende del Gmail roto**, y el secreto ya
 > existe con centinela (§140). Desbloquea el digest de alertas **y, con el cambio de abajo, el aviso de
 > cada lead**. Si solo haces una del LANZAMIENTO, es ésta.
