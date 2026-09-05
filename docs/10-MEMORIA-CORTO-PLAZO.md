@@ -66,10 +66,10 @@
 > 🔻 **El panel LEGACY no tiene red** —ni tipos, ni tests, ni build— y así se le colaron 4 fallos (§133-§136).
 > Si un gate pasa, pregunta **qué abre** ([[L-52]]) y **cuántos** (§219): **`npm --prefix portal run verify`** ≠ los 10 gates.
 
-> 🎯 **AQUÍ VOY** (4-sep, noche). F7 bloque 1 HECHO: kernel nuevo (R-01..R-04 + fix 1.34.1) en los 4 repos
-> y verificado; K3 y el paquete de Chat hechos; BERS en verde; N2 de insema ✅ (#2). ⏭ Sigue →
-> **DICTAMEN-ENCENDIDO §9 (última entrada)**: B12-B15 → Z1. Tuyo: D0 (vigía, medido NO instalado) y D5
-> (pegar el paquete). ⛔ Obra nueva sigue esperando TU mockup de ficha.
+> 🎯 **AQUÍ VOY** (5-sep). F7 bloque 1 HECHO y kernel nuevo (1.34.3) en los 4 repos; K3 · K5 · K6 (B12/B14) ·
+> B13 · B15 (MEGA-PLAN v2) · B16 · N2 insema hechos y verificados; vigía instalado (D0). ⏭ Sigue →
+> **DICTAMEN-ENCENDIDO §9 (última entrada)**: F7 bloque 2 (R-05..R-08, 12-sep) → B17/B18 → Z1 (vigía 2 días
+> verdes). Tuyo: D1 USB · D5 opcional. ⛔ Obra nueva sigue esperando TU mockup de ficha.
 
 > ⏭ **Vivo y TUYO**: las 5 cifras del 5.3 (`specs/PROPUESTA-CIFRAS-CUTOVER.md`) · qué carpetas dejan
 > de servirse (N16-29) · los 13 correos del `50` (N16-30).
