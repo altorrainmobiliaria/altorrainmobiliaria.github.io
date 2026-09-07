@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#E6EDF2; font-family:'Hanken Grotesk',sans-serif; -webkit-font-smoothing:antialiased; }
+</style>
+</helmet>
+
+<!--
+  ══════════════════════════════════════════════
+  ALTORRA · EVIDENCIA POSTAL DEL PREAVISO — la puerta que le faltaba a `domain/preaviso.ts`
+  (§185 · §187 · §222 · encargo `specs/ENCARGO-PUERTAS-QUE-FALTAN.md`)
+
+  LA IDEA CENTRAL, en una frase: **esta pantalla no envía nada — INSTRUMENTA.** §185 dictaminó que la
+  Ley 527 da equivalente funcional del escrito y de la firma, pero **no de un canal de entrega**: los
+  arts. 22.7 y 24 de la Ley 820 exigen que el aviso viaje por servicio postal autorizado, y eso pasa
+  fuera del software. Lo que el software puede hacer —y hoy no hace— es **guardar la prueba de que
+  pasó, y decir si llegó a tiempo**.
+
+  🔴 LO QUE SE JUEGA: un preaviso sin evidencia postal no es un preaviso, es una intención. Y el
+  precio de la diferencia es que **el contrato se prorroga un año entero**, sin que nadie se entere
+  hasta que el propietario quiere disponer del inmueble y no puede.
+
+  CINCO DECISIONES QUE NO SON DE PINTAR:
+
+  1. 📅 **LA FECHA LÍMITE VA ARRIBA DEL FORMULARIO, NO DEBAJO.** Es la única parte de esta pantalla
+     que puede EVITAR el daño; todo lo demás solo lo constata. `fechaLimite()` ya la calcula
+     (vencimiento − 3 meses). Ponerla al final, junto al veredicto, la convertiría en un diagnóstico
+     post mortem: útil para saber que se perdió el año, inútil para no perderlo.
+
+  2. ⏱️ **«IMPUESTO EL» ESTÁ SEPARADO DEL RESTO Y DICE POR QUÉ.** Es el error de bolsillo del
+     negocio: se firma el lunes, se lleva al operador el viernes, y quien rellena el formulario teclea
+     el lunes porque «ese día lo hice». Para la ley se avisó el viernes. Los dos campos de fecha se
+     parecen demasiado como para dejarlos uno al lado del otro sin explicar cuál manda.
+
+  3. 🗣️ **EL VEREDICTO SE DICE CON TODAS LAS LETRAS, Y NO SE PINTA DE ROJO.** El dominio devuelve
+     `'termina' | 'se-prorroga'` en vez de un booleano justamente para que el segundo caso se pueda
+     DECIR. «Se prorroga» no es un error del usuario ni un fallo del sistema: es una consecuencia
+     legal, y el contrato sigue vivo. Pintarla de rojo la convertiría en un bug que alguien intentará
+     «arreglar» cambiando una fecha. Va en navy sobre plata, con la frase entera.
+
+  4. 🚦 **EL ESTADO DEL CONTRATO SE DERIVA DE LA EVIDENCIA, NO SE TECLEA APARTE.** El ciclo
+     `activo → preaviso → finalizado` ya existe. Propongo que pasar a `preaviso` sea **consecuencia**
+     de registrar una evidencia válida, no una casilla independiente: un contrato marcado «preaviso»
+     sin constancia detrás es exactamente el fallo que este módulo existe para impedir, y sería
+     invisible. *Lo derivado sobrevive; lo declarado se desincroniza.*
+
+  5. 📎 **LA CONSTANCIA SE GUARDA COMO DOCUMENTO CON NOMBRE PROPIO.** `TIPOS_DOCUMENTO` tiene 14 tipos
+     y ninguno es la constancia postal: hoy el escaneo iría como `otro` y perdería su identidad justo
+     en el documento que algún día hay que encontrar rápido. Se añade `constancia-postal` **con** esta
+     pantalla, no antes — sumar código sin consumidor es el defecto que este encargo denuncia.
+
+  ⚠️ CONTRA LA TENTACIÓN DE «AYUDAR ENVIANDO»: es tentador poner un botón que genere el PDF y lo mande
+  por correo. No. Un correo electrónico no es servicio postal autorizado, y una pantalla que parezca
+  enviar el preaviso hará que alguien crea que ya avisó. El daño de esa creencia es el año entero.
+
+  DÓNDE VIVE: sección del expediente en `/gestion`, junto a los documentos — donde ya están el
+  contrato y su vigencia. QUIÉN PUEDE: los mismos roles que escriben en la bóveda (la constancia ES un
+  documento de la bóveda; separar los permisos abriría una puerta donde se puede guardar la prueba sin
+  poder registrar su efecto, o al revés).
+
+  Colores: navy #062743 · dorado #d4af37 · plata #BFC3C9 · fondo blanco. Sin negro. Sin verde ni rojo
+  de estado — «se prorroga» no es un error.
+  ══════════════════════════════════════════════
+-->
+
+<div style="max-width:980px;margin:0 auto;padding:40px 24px 72px;">
+
+  <!-- ═══ Cabecera ═══ -->
+  <div style="margin-bottom:26px;">
+    <p style="margin:0 0 6px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A94A0;font-weight:600;">Gestión · Expediente · CAD-0007</p>
+    <h1 style="margin:0 0 8px;font-family:'Cormorant Garamond',serif;font-weight:600;font-size:38px;line-height:1.1;color:#062743;">Evidencia postal del preaviso</h1>
+    <p style="margin:0;font-size:14.5px;line-height:1.7;color:#5B6572;max-width:64ch;">
+      La ley pide que el aviso de terminación sea escrito <em>y</em> viaje por servicio postal
+      autorizado. El envío se hace fuera de aquí; esto guarda la prueba de que se hizo y dice si
+      llegó a tiempo.
+    </p>
+  </div>
+
+  <!-- ═══ 📅 LA FECHA LÍMITE, ANTES DEL FORMULARIO. Es lo único que evita el daño. ═══ -->
+  <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:center;background:#062743;border-radius:16px;padding:22px 26px;margin-bottom:22px;">
+    <div style="flex:1 1 300px;">
+      <p style="margin:0 0 4px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#BFC3C9;font-weight:600;">Último día para imponer</p>
+      <p style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#d4af37;line-height:1.1;">30 de junio de 2027</p>
+    </div>
+    <p style="flex:1 1 320px;margin:0;font-size:13.5px;line-height:1.75;color:#BFC3C9;">
+      El contrato vence el <strong style="color:#fff;">30 de septiembre de 2027</strong> y la Ley 820
+      pide tres meses de antelación. Cuenta el día en que se entrega al operador —no el de
+      redacción—, así que ese es el plazo real para ir a la oficina postal.
+    </p>
+  </div>
+
+  <!-- ═══ El formulario ═══ -->
+  <div style="background:#fff;border-radius:18px;padding:30px 32px;box-shadow:0 1px 3px rgba(6,39,67,.06);">
+
+    <p style="margin:0 0 18px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A94A0;font-weight:600;">Quién avisa y cuándo lo redactó</p>
+
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px;">
+      <label style="flex:1 1 240px;">
+        <span style="display:block;font-size:12px;font-weight:600;color:#062743;margin-bottom:6px;">Quién da el preaviso</span>
+        <select style="width:100%;padding:11px 12px;border:1px solid #DDE4EA;border-radius:10px;font:inherit;font-size:14px;color:#062743;background:#fff;">
+          <option>El arrendador (el propietario)</option>
+          <option>El arrendatario (el inquilino)</option>
+        </select>
+      </label>
+      <label style="flex:1 1 200px;">
+        <span style="display:block;font-size:12px;font-weight:600;color:#062743;margin-bottom:6px;">Fecha de redacción</span>
+        <input type="date" value="2027-06-14" style="width:100%;padding:11px 12px;border:1px solid #DDE4EA;border-radius:10px;font:inherit;font-size:14px;color:#062743;background:#fff;box-sizing:border-box;">
+        <span style="display:block;font-size:12px;color:#8A94A0;margin-top:5px;">Queda registrada, pero no es la que cuenta.</span>
+      </label>
+    </div>
+
+    <!-- La constancia: sin esto no hay preaviso -->
+    <p style="margin:0 0 4px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A94A0;font-weight:600;">La constancia del operador postal</p>
+    <p style="margin:0 0 16px;font-size:13px;line-height:1.7;color:#5B6572;max-width:66ch;">
+      Tiene que ser un operador <strong style="color:#062743;">habilitado</strong> —4-72, Servientrega
+      y demás—, no un mensajero: lo que aporta el canal es que un tercero autorizado certifique la
+      entrega.
+    </p>
+
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px;">
+      <label style="flex:1 1 240px;">
+        <span style="display:block;font-size:12px;font-weight:600;color:#062743;margin-bottom:6px;">Operador postal</span>
+        <input type="text" value="Servientrega" style="width:100%;padding:11px 12px;border:1px solid #DDE4EA;border-radius:10px;font:inherit;font-size:14px;color:#062743;box-sizing:border-box;">
+      </label>
+      <label style="flex:1 1 200px;">
+        <span style="display:block;font-size:12px;font-weight:600;color:#062743;margin-bottom:6px;">Número de guía</span>
+        <input type="text" value="1099887766" style="width:100%;padding:11px 12px;border:1px solid #DDE4EA;border-radius:10px;font:inherit;font-size:14px;color:#062743;box-sizing:border-box;">
+        <span style="display:block;font-size:12px;color:#8A94A0;margin-top:5px;">Con esto se rastrea y se prueba.</span>
+      </label>
+    </div>
+
+    <!-- ⏱️ LA FECHA QUE MANDA — aparte y con su porqué. -->
+    <div style="border-left:3px solid #d4af37;background:#FBFCFD;border-radius:0 12px 12px 0;padding:18px 20px;margin-bottom:18px;">
+      <label style="display:block;max-width:260px;">
+        <span style="display:block;font-size:13px;font-weight:600;color:#062743;margin-bottom:6px;">Fecha de imposición · la que decide</span>
+        <input type="date" value="2027-06-18" style="width:100%;padding:11px 12px;border:1px solid #DDE4EA;border-radius:10px;font:inherit;font-size:14px;color:#062743;background:#fff;box-sizing:border-box;">
+      </label>
+      <p style="margin:12px 0 0;font-size:13px;line-height:1.75;color:#5B6572;max-width:62ch;">
+        El día en que se <strong style="color:#062743;">entregó al operador</strong>. Si se redactó el
+        lunes y se llevó a la oficina el viernes, para la ley se avisó el viernes. Es el dato del que
+        depende que el contrato termine o se prorrogue.
+      </p>
+    </div>
+
+    <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;">
+      <label style="flex:1 1 220px;">
+        <span style="display:block;font-size:12px;font-weight:600;color:#062743;margin-bottom:6px;">Fecha de entrega al destinatario <span style="font-weight:400;color:#8A94A0;">· opcional</span></span>
+        <input type="date" style="width:100%;padding:11px 12px;border:1px solid #DDE4EA;border-radius:10px;font:inherit;font-size:14px;color:#062743;background:#fff;box-sizing:border-box;">
+        <span style="display:block;font-size:12px;color:#8A94A0;margin-top:5px;">No mueve el plazo. Refuerza la prueba.</span>
+      </label>
+      <label style="flex:1 1 240px;">
+        <span style="display:block;font-size:12px;font-weight:600;color:#062743;margin-bottom:6px;">Escaneo de la constancia</span>
+        <div style="padding:11px 12px;border:1px dashed #DDE4EA;border-radius:10px;font-size:13.5px;color:#8A94A0;background:#fff;">Adjuntar · se archiva como <strong style="color:#062743;">constancia postal</strong></div>
+      </label>
+      <button style="padding:11px 24px;border:0;border-radius:10px;background:#d4af37;color:#fff;font:inherit;font-size:14px;font-weight:600;cursor:pointer;">Registrar evidencia</button>
+    </div>
+  </div>
+
+  <!-- ═══ 🗣️ EL VEREDICTO, con todas las letras ═══ -->
+  <div style="margin-top:22px;background:#fff;border-radius:18px;padding:26px 30px;box-shadow:0 1px 3px rgba(6,39,67,.06);">
+    <p style="margin:0 0 12px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A94A0;font-weight:600;">Qué efecto tiene</p>
+    <p style="margin:0 0 6px;font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:600;color:#062743;line-height:1.25;">
+      El contrato termina el 30 de septiembre de 2027.
+    </p>
+    <p style="margin:0;font-size:13.5px;line-height:1.75;color:#5B6572;max-width:66ch;">
+      Se impuso el 18 de junio, doce días antes del límite. La constancia queda en el expediente y el
+      contrato pasa a <strong style="color:#062743;">preaviso</strong> por sí solo: ese estado es
+      consecuencia de esta evidencia, no una casilla aparte.
+    </p>
+  </div>
+
+  <!-- ═══ El otro veredicto, el que hay que poder decir ═══ -->
+  <div style="margin-top:14px;background:#F4F7F9;border:1px solid #DDE4EA;border-radius:18px;padding:24px 28px;">
+    <p style="margin:0 0 8px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8A94A0;font-weight:600;">Así se ve cuando NO surte efecto</p>
+    <p style="margin:0 0 10px;font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:600;color:#062743;line-height:1.25;">
+      El contrato no termina: se prorroga un año.
+    </p>
+    <p style="margin:0 0 12px;font-size:13.5px;line-height:1.75;color:#5B6572;max-width:66ch;">
+      Se impuso el 12 de julio, después del límite del 30 de junio. Los tres meses se cuentan desde
+      que se entrega al operador, así que el aviso llega tarde y el contrato sigue vivo hasta
+      septiembre de 2028.
+    </p>
+    <p style="margin:0;padding-top:12px;border-top:1px dashed #DDE4EA;font-size:13px;line-height:1.75;color:#5B6572;">
+      <strong style="color:#062743;">No es un error que se arregle cambiando la fecha.</strong> Es lo
+      que pasó. La pantalla lo dice entero para que quien lo lea avise al propietario hoy, y no el día
+      que quiera disponer del inmueble.
+    </p>
+  </div>
+
+  <!-- ═══ Lo que esta pantalla NO hace ═══ -->
+  <div style="margin-top:20px;border-left:3px solid #d4af37;padding:16px 20px;background:#fff;border-radius:0 14px 14px 0;">
+    <p style="margin:0;font-size:13.5px;line-height:1.75;color:#5B6572;">
+      <strong style="color:#062743;">Esta pantalla no envía el preaviso.</strong> No hay botón de
+      «enviar» y no lo habrá: un correo electrónico no es servicio postal autorizado (§185), y una
+      pantalla que parezca enviarlo haría que alguien creyera que ya avisó. El envío se hace en la
+      oficina del operador; aquí se guarda lo que ese envío produjo.
+    </p>
+  </div>
+
+</div>
+
+</x-dc>
+</body>
+</html>

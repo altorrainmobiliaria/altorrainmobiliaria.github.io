@@ -1,0 +1,594 @@
+---
+/*
+ * INGRESAR (/ingresar) — réplica de `ALTORRA Ingresar-Favoritos.dc.html`, artboards 1a/1b/1c.
+ * El header ya enlazaba aquí y daba 404 desde que existe el portal (§89).
+ *
+ * Acceso de CLIENTES, no del panel interno. Firebase Auth se carga con `import()` dinámico SOLO al
+ * enviar: la página pesa lo mismo que cualquier otra hasta que alguien decide entrar (mismo patrón
+ * que el legacy). El proveedor de correo/contraseña está verificado activo; el de Google puede no
+ * estarlo y ese caso se trata explícitamente en vez de reventar con un error críptico.
+ *
+ * ✅ CREAR CUENTA está ABIERTO y funcional (§225). Este comentario decía «sigue cerrado … falta el
+ * visto bueno del dueño. El botón lo dice en vez de fingir», y llevaba tiempo siendo falso: el botón
+ * abre el formulario, el formulario llama a `createUserWithEmailAndPassword` y no hay candado en
+ * ninguna parte. Un comentario que afirma un candado inexistente es peor que no tenerlo — quien lo
+ * lea cerrará la búsqueda justo antes de comprobarlo.
+ * Lo que SÍ protege está abajo y es real: 12 caracteres mínimos, autorización expresa de la Política
+ * (Ley 1581 art. 9) sin la cual no se crea la cuenta, prueba de esa autorización escrita por el
+ * servidor con `registrarEvento`, y verificación de correo enviada de inmediato — que es, dicho en
+ * el propio código, «lo más barato que frena el registro basura mientras no exista el anti-bot».
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Footer from '../components/Footer.astro';
+
+const ojo =
+  '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/>';
+---
+
+<BaseLayout
+  title="Ingresar — ALTORRA Inmobiliaria"
+  description="Entra a tu cuenta de ALTORRA Inmobiliaria para guardar favoritos y seguir tus solicitudes."
+  noindex
+>
+  <main id="main" class="ing">
+    <div class="ing__top">
+      <a class="ing__back" href="/">← Volver al portal</a>
+      <p class="ing__asesor">¿Eres asesor? <a href="/gestion">Panel interno</a></p>
+    </div>
+
+    <section class="ing__wrap">
+      <div class="ing__card alt-card alt-card--neu" id="ing-paso1">
+        <a class="ing__brand" href="/" aria-label="ALTORRA Inmobiliaria — ir al inicio">
+          <span class="ing__mark" aria-hidden="true">A</span>
+          <span class="ing__word"><span class="ing__word-a">ALTORRA</span><span class="ing__word-b">INMOBILIARIA</span></span>
+        </a>
+
+        <div class="ing__intro">
+          <h1 class="ing__h">Bienvenido de nuevo</h1>
+          <p class="ing__p">Ingresa para guardar tus favoritos y seguir tus solicitudes.</p>
+        </div>
+
+        <div class="alt-alert alt-alert--warning ing__alert" id="ing-error" hidden role="alert">
+          <strong id="ing-error-h">Credenciales incorrectas</strong>
+          <span id="ing-error-p">Revisa tu correo y contraseña e inténtalo de nuevo.</span>
+        </div>
+
+        <button class="ing__google alt-btn alt-btn--outline" type="button" id="ing-google">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M23.5 12.27c0-.79-.07-1.55-.2-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.64v3h3.87c2.26-2.09 3.56-5.17 3.56-8.88z"/><path fill="currentColor" d="M12 24c3.24 0 5.96-1.08 7.94-2.91l-3.87-3c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09A12 12 0 0 0 12 24z" opacity=".75"/><path fill="currentColor" d="M5.27 14.28a7.2 7.2 0 0 1 0-4.56V6.63H1.29a12 12 0 0 0 0 10.74z" opacity=".5"/><path fill="currentColor" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.43-3.43C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.29 6.63l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z" opacity=".9"/></svg>
+          Continuar con Google
+        </button>
+
+        <div class="ing__sep"><span>o con tu correo</span></div>
+
+        <form class="ing__form" id="ing-form" novalidate>
+          <div class="ing__group">
+            <label class="alt-label" for="ing-mail">Correo electrónico</label>
+            <input class="alt-input" id="ing-mail" name="email" type="email" autocomplete="email" placeholder="nombre@correo.com" required />
+          </div>
+
+          <div class="ing__group">
+            <label class="alt-label" for="ing-pass">Contraseña</label>
+            <span class="ing__pw">
+              <input class="alt-input" id="ing-pass" name="password" type="password" autocomplete="current-password" placeholder="••••••••" required />
+              <button class="ing__eye" type="button" id="ing-eye" aria-label="Mostrar contraseña" aria-pressed="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={ojo}></svg>
+              </button>
+            </span>
+          </div>
+
+          <div class="ing__row">
+            <label class="ing__check"><input type="checkbox" id="ing-recordar" checked /> <span>Recordarme</span></label>
+            <button class="ing__link" type="button" id="ing-olvide">¿Olvidaste tu contraseña?</button>
+          </div>
+
+          <button class="alt-btn alt-btn--gold ing__submit" type="submit" id="ing-submit">Ingresar</button>
+        </form>
+
+        <p class="ing__alt">¿Aún no tienes cuenta? <button class="ing__link" type="button" id="ing-crear">Crear cuenta</button></p>
+      </div>
+
+      <div class="ing__card alt-card alt-card--neu" id="ing-alta" hidden>
+        <div class="ing__intro">
+          <h1 class="ing__h">Crea tu cuenta</h1>
+          <p class="ing__p">Para guardar favoritos, seguir tus solicitudes y preparar tu perfil de arrendatario una sola vez.</p>
+        </div>
+
+        <div class="ing__error" id="ing-alta-error" hidden role="alert">
+          <strong id="ing-alta-error-h">No pudimos crear la cuenta</strong>
+          <span id="ing-alta-error-p">Revisa los datos e inténtalo de nuevo.</span>
+        </div>
+
+        <form class="ing__form" id="ing-alta-form" novalidate>
+          <div class="ing__group">
+            <label class="alt-label" for="ing-alta-mail">Correo electrónico</label>
+            <input class="alt-input" id="ing-alta-mail" name="email" type="email" autocomplete="email" placeholder="nombre@correo.com" required />
+          </div>
+
+          <div class="ing__group">
+            <label class="alt-label" for="ing-alta-pass">Contraseña</label>
+            <input class="alt-input" id="ing-alta-pass" name="new-password" type="password" autocomplete="new-password" placeholder="••••••••••••" required />
+            <p class="ing__hint">Mínimo 12 caracteres. Una frase que recuerdes vale más que símbolos raros: <em>mi casa en manga 1998</em>.</p>
+          </div>
+
+          <label class="ing__check ing__check--legal">
+            <input type="checkbox" id="ing-alta-habeas" />
+            <span>Autorizo a ALTORRA Inmobiliaria a tratar mis datos personales conforme a su <a href="/legal/politica-tratamiento-datos" target="_blank" rel="noopener">Política de Tratamiento de Datos</a>.</span>
+          </label>
+
+          <button class="alt-btn alt-btn--gold ing__submit" type="submit" id="ing-alta-submit">Crear cuenta</button>
+        </form>
+
+        <p class="ing__alt">¿Ya tienes cuenta? <button class="ing__link" type="button" id="ing-volver-login">Ingresar</button></p>
+
+        <p class="ing__legal">
+          Al continuar aceptas nuestros Términos y la <a href="/legal/politica-tratamiento-datos">Política de Tratamiento de Datos</a> de ALTORRA Inmobiliaria.
+        </p>
+      </div>
+
+      {/*
+        PASO 2 — el código de seis dígitos (mockup `ALTORRA Acceso`, artboard 2a).
+        Vive escondido y solo aparece cuando Firebase lo pide. Mientras nadie tenga segundo factor
+        inscrito, este bloque no se muestra jamás: el cambio es INERTE hasta que alguien lo active.
+      */}
+      <div class="ing__card alt-card alt-card--neu ing__card--dos" id="ing-paso2" hidden>
+        <div class="ing__2fa-icono" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.6"></rect><path d="M10.5 18.5h3"></path></svg>
+        </div>
+
+        <div class="ing__intro">
+          <h2 class="ing__h" id="ing-2fa-h">Confirma que eres tú</h2>
+          <p class="ing__p">Abre tu aplicación de autenticación y escribe el código de seis dígitos que aparece para ALTORRA.</p>
+        </div>
+
+        <div class="alt-alert alt-alert--warning ing__alert" id="ing-2fa-error" hidden role="alert">
+          <strong id="ing-2fa-error-h">Ese código no sirvió</strong>
+          <span id="ing-2fa-error-p">Los códigos cambian cada 30 segundos.</span>
+        </div>
+
+        <div class="ing__codigo" role="group" aria-labelledby="ing-2fa-h" id="ing-codigo">
+          <input class="ing__digito" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="Dígito 1 de 6" />
+          <input class="ing__digito" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 2 de 6" />
+          <input class="ing__digito" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 3 de 6" />
+          <input class="ing__digito" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 4 de 6" />
+          <input class="ing__digito" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 5 de 6" />
+          <input class="ing__digito" type="text" inputmode="numeric" maxlength="1" aria-label="Dígito 6 de 6" />
+        </div>
+
+        <button class="alt-btn alt-btn--gold ing__submit" type="button" id="ing-2fa-enviar">Entrar</button>
+
+        <p class="ing__2fa-ayuda">
+          ¿La aplicación no muestra ALTORRA, o perdiste el teléfono? Escríbenos por WhatsApp al
+          <a href="https://wa.me/573002439810" rel="noopener">+57 300 243 9810</a> y te devolvemos el acceso.
+        </p>
+
+        <button class="ing__link ing__2fa-volver" type="button" id="ing-2fa-cancelar">Cancelar y volver</button>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .ing { background: var(--alt-surface-neu); min-height: 100vh; display: flex; flex-direction: column; }
+  .ing__top { display: flex; align-items: center; justify-content: space-between; gap: var(--alt-space-4); padding: var(--alt-space-5) clamp(20px, 5vw, 56px) 0; }
+  .ing__back, .ing__asesor { font-size: var(--alt-fs-sm); color: var(--alt-text-soft); margin: 0; }
+  .ing__asesor a { font-weight: 600; }
+
+  .ing__wrap { flex: 1; display: grid; place-items: center; padding: clamp(24px, 5vw, 56px) 20px clamp(48px, 8vw, 88px); }
+  .ing__card { width: 100%; max-width: 468px; padding: clamp(28px, 4vw, 44px); display: flex; flex-direction: column; gap: var(--alt-space-5); }
+
+  .ing__brand { display: flex; align-items: center; gap: var(--alt-space-3); justify-content: center; }
+  .ing__mark { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--alt-surface); color: var(--alt-gold); font-family: var(--alt-font-display); font-size: 26px; font-weight: 600; box-shadow: var(--alt-nm-up-sm); }
+  .ing__word { display: flex; flex-direction: column; line-height: 1.1; }
+  .ing__word-a { font-family: var(--alt-font-display); font-size: 20px; font-weight: 600; letter-spacing: .06em; color: var(--alt-ink); }
+  .ing__word-b { font-size: 9.5px; font-weight: 600; letter-spacing: .28em; color: var(--alt-silver); }
+
+  .ing__intro { text-align: center; }
+  .ing__h { font-family: var(--alt-font-display); font-size: var(--alt-fs-h2); color: var(--alt-ink); margin: 0; }
+  .ing__p { margin: var(--alt-space-2) 0 0; font-size: var(--alt-fs-sm); color: var(--alt-text-soft); }
+
+  .ing__alert { display: flex; flex-direction: column; gap: 2px; text-align: left; }
+  .ing__alert span { font-size: var(--alt-fs-sm); }
+
+  .ing__google { width: 100%; justify-content: center; gap: 10px; }
+
+  .ing__sep { display: flex; align-items: center; gap: var(--alt-space-3); color: var(--alt-text-soft); font-size: 12.5px; }
+  .ing__sep::before, .ing__sep::after { content: ''; flex: 1; height: 1px; background: var(--alt-hairline); }
+
+  .ing__form { display: flex; flex-direction: column; gap: var(--alt-space-4); }
+  .ing__group { display: flex; flex-direction: column; gap: 7px; }
+  .ing__group .alt-input { width: 100%; }
+  .ing__pw { position: relative; display: block; }
+  .ing__pw .alt-input { width: 100%; padding-right: 44px; }
+  .ing__eye { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 32px; height: 32px; border: 0; background: none; color: var(--alt-text-soft); cursor: pointer; border-radius: 8px; }
+  .ing__eye svg { width: 19px; height: 19px; }
+  .ing__eye:hover { color: var(--alt-gold); }
+
+  .ing__row { display: flex; align-items: center; justify-content: space-between; gap: var(--alt-space-3); flex-wrap: wrap; font-size: var(--alt-fs-sm); }
+  .ing__check { display: inline-flex; align-items: center; gap: 8px; color: var(--alt-text-soft); cursor: pointer; }
+  /* La casilla legal se alinea ARRIBA y el texto respira: es un párrafo que hay que leer, no una
+     opción que se marca de pasada. Y NO viene marcada de fábrica (Ley 1581 art. 9: autorización
+     previa y EXPRESA — una casilla pre-marcada no es ninguna de las dos cosas). */
+  .ing__check--legal { align-items: flex-start; gap: 10px; line-height: 1.6; font-size: 13.5px; text-align: left; }
+  .ing__check--legal input { margin-top: 3px; flex: none; }
+  .ing__check--legal a { color: var(--alt-link); text-decoration: underline; text-underline-offset: 2px; }
+  .ing__hint { margin: 6px 0 0; font-size: 12.5px; line-height: 1.6; color: var(--alt-text-soft); }
+
+  .ing__link { border: 0; background: none; padding: 0; font: inherit; color: var(--alt-ink); font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .ing__link:hover { color: var(--alt-gold); }
+
+  .ing__submit { width: 100%; justify-content: center; }
+
+  /* ── Paso 2 · código de seis dígitos ───────────────────────────────────────────────────────── */
+  .ing__card--dos { align-items: center; text-align: center; }
+  .ing__2fa-icono { display: grid; place-items: center; width: 66px; height: 66px; border-radius: 20px; background: var(--alt-surface); color: var(--alt-gold); box-shadow: var(--alt-nm-up); }
+
+  .ing__codigo { display: flex; gap: 10px; justify-content: center; flex-wrap: nowrap; }
+  .ing__digito {
+    width: 46px; height: 58px; text-align: center;
+    font-family: var(--alt-font-display); font-size: 26px; font-weight: 600; color: var(--alt-ink);
+    border: 1px solid var(--alt-hairline); border-radius: 12px;
+    background: var(--alt-surface); box-shadow: var(--alt-nm-in-sm);
+  }
+  .ing__digito:focus { outline: none; border-color: var(--alt-gold); box-shadow: var(--alt-nm-in-sm), 0 0 0 3px rgba(212, 175, 55, .22); }
+
+  .ing__2fa-ayuda { margin: 0; font-size: 12.5px; line-height: 1.65; color: var(--alt-silver); }
+  .ing__2fa-ayuda a { font-weight: 600; color: var(--alt-text-soft); }
+  .ing__2fa-volver { align-self: center; }
+
+  @media (max-width: 400px) {
+    .ing__codigo { gap: 7px; }
+    .ing__digito { width: 40px; height: 52px; font-size: 22px; }
+  }
+  .ing__alt { margin: 0; text-align: center; font-size: var(--alt-fs-sm); color: var(--alt-text-soft); }
+  .ing__legal { margin: 0; text-align: center; font-size: 12.5px; line-height: 1.6; color: var(--alt-silver); }
+</style>
+
+<script>
+  import { cargarAuth } from '../scripts/auth';
+  import { llamarCallable } from '../scripts/callable';
+  import {
+    completarConCodigo,
+    explicarSegundoFactor,
+    leerReto,
+    pideSegundoFactor,
+    type RetoSegundoFactor,
+  } from '../scripts/mfa';
+  const form = document.getElementById('ing-form') as HTMLFormElement | null;
+  const mail = document.getElementById('ing-mail') as HTMLInputElement | null;
+  const pass = document.getElementById('ing-pass') as HTMLInputElement | null;
+  const eye = document.getElementById('ing-eye');
+  const submit = document.getElementById('ing-submit') as HTMLButtonElement | null;
+  const alerta = document.getElementById('ing-error');
+  const alertaH = document.getElementById('ing-error-h');
+  const alertaP = document.getElementById('ing-error-p');
+
+  function avisar(titulo: string, detalle: string): void {
+    if (alertaH) alertaH.textContent = titulo;
+    if (alertaP) alertaP.textContent = detalle;
+    alerta?.removeAttribute('hidden');
+  }
+  const limpiarAviso = () => alerta?.setAttribute('hidden', '');
+
+  // Mostrar/ocultar contraseña.
+  eye?.addEventListener('click', () => {
+    if (!pass) return;
+    const verLo = pass.type === 'password';
+    pass.type = verLo ? 'text' : 'password';
+    eye.setAttribute('aria-pressed', String(verLo));
+    eye.setAttribute('aria-label', verLo ? 'Ocultar contraseña' : 'Mostrar contraseña');
+  });
+
+  /* Firebase Auth se carga SOLO cuando alguien intenta entrar: la página no paga ese peso por existir.
+     El CARGADOR vive en `scripts/auth.ts`, que es su dueño único — antes esta página traía su propia
+     copia con la config de Firebase escrita a mano, y `/gestion` habría necesitado una tercera. */
+  const auth = async () => {
+    const { auth: a, mod: m } = await cargarAuth();
+    return { a, m };
+  };
+
+  /** Traduce los códigos de Firebase a algo que un propietario entienda. */
+  function explicar(code: string): [string, string] {
+    switch (code) {
+      case 'auth/invalid-credential':
+      case 'auth/wrong-password':
+      case 'auth/user-not-found':
+        return ['Credenciales incorrectas', 'Revisa tu correo y contraseña e inténtalo de nuevo.'];
+      case 'auth/too-many-requests':
+        return ['Demasiados intentos', 'Por seguridad bloqueamos el acceso un momento. Vuelve a intentar en unos minutos.'];
+      case 'auth/network-request-failed':
+        return ['Sin conexión', 'No pudimos contactar el servidor. Revisa tu internet e inténtalo de nuevo.'];
+      case 'auth/operation-not-allowed':
+        return ['Este acceso no está habilitado', 'Escríbenos por WhatsApp y te ayudamos a entrar mientras lo activamos.'];
+      case 'auth/popup-closed-by-user':
+      case 'auth/cancelled-popup-request':
+        return ['Se cerró la ventana', 'No alcanzaste a completar el acceso con Google. Puedes intentarlo otra vez.'];
+      default:
+        return ['No pudimos ingresar', 'Ocurrió un problema al validar tus datos. Inténtalo de nuevo.'];
+    }
+  }
+
+  function cargando(on: boolean, texto = 'Ingresar'): void {
+    if (!submit) return;
+    submit.disabled = on;
+    submit.textContent = on ? 'Entrando…' : texto;
+  }
+
+  /* ─── PASO 2 · el código de seis dígitos ────────────────────────────────────────────────────────
+   * Se activa SOLO cuando Firebase responde `auth/multi-factor-auth-required`. Hasta que alguien
+   * inscriba un segundo factor eso no ocurre nunca, así que todo este bloque está dormido — pero
+   * tiene que existir ANTES de la primera inscripción: sin él, inscribirse es encerrarse fuera.  */
+  const paso1 = document.getElementById('ing-paso1');
+  const paso2 = document.getElementById('ing-paso2');
+  const cajaCodigo = document.getElementById('ing-codigo');
+  const digitos = Array.from(
+    cajaCodigo?.querySelectorAll<HTMLInputElement>('.ing__digito') ?? [],
+  );
+  const btn2fa = document.getElementById('ing-2fa-enviar') as HTMLButtonElement | null;
+  const alerta2 = document.getElementById('ing-2fa-error');
+  const alerta2H = document.getElementById('ing-2fa-error-h');
+  const alerta2P = document.getElementById('ing-2fa-error-p');
+  let reto: RetoSegundoFactor | null = null;
+
+  function avisar2(titulo: string, detalle: string): void {
+    if (alerta2H) alerta2H.textContent = titulo;
+    if (alerta2P) alerta2P.textContent = detalle;
+    alerta2?.removeAttribute('hidden');
+  }
+
+  /** A dónde va quien acaba de entrar. Vive aquí porque ahora hay DOS caminos que terminan igual. */
+  function irADestino(): void {
+    const destino = new URLSearchParams(location.search).get('volver');
+    location.href = destino && destino.startsWith('/') ? destino : '/favoritos';
+  }
+
+  function mostrarPaso2(r: RetoSegundoFactor): void {
+    reto = r;
+    alerta2?.setAttribute('hidden', '');
+    paso1?.setAttribute('hidden', '');
+    paso2?.removeAttribute('hidden');
+    digitos.forEach((d) => (d.value = ''));
+    digitos[0]?.focus();
+  }
+
+  function volverAPaso1(): void {
+    reto = null;
+    paso2?.setAttribute('hidden', '');
+    paso1?.removeAttribute('hidden');
+    cargando(false);
+  }
+
+  const codigoEscrito = (): string => digitos.map((d) => d.value).join('');
+
+  /* Un solo dígito por casilla, avance automático, y PEGAR reparte los seis de una.
+     Lo de pegar no es un lujo: los gestores de contraseñas que guardan el TOTP copian el código
+     entero, y sin esto solo entraría el primer dígito. */
+  digitos.forEach((casilla, i) => {
+    casilla.addEventListener('input', () => {
+      casilla.value = casilla.value.replace(/\D/g, '').slice(0, 1);
+      if (casilla.value && i < digitos.length - 1) digitos[i + 1]?.focus();
+      if (codigoEscrito().length === 6) void enviarCodigo();
+    });
+    casilla.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && !casilla.value && i > 0) digitos[i - 1]?.focus();
+      if (e.key === 'ArrowLeft' && i > 0) digitos[i - 1]?.focus();
+      if (e.key === 'ArrowRight' && i < digitos.length - 1) digitos[i + 1]?.focus();
+    });
+    casilla.addEventListener('paste', (e) => {
+      const texto = e.clipboardData?.getData('text') ?? '';
+      const soloNumeros = texto.replace(/\D/g, '').slice(0, 6);
+      if (!soloNumeros) return;
+      e.preventDefault();
+      soloNumeros.split('').forEach((n, k) => {
+        if (digitos[k]) digitos[k].value = n;
+      });
+      digitos[Math.min(soloNumeros.length, 5)]?.focus();
+      if (soloNumeros.length === 6) void enviarCodigo();
+    });
+  });
+
+  let enviando = false;
+  async function enviarCodigo(): Promise<void> {
+    if (!reto || enviando) return;
+    const codigo = codigoEscrito();
+    if (codigo.length !== 6) {
+      avisar2('Falta algún dígito', 'El código tiene seis números.');
+      return;
+    }
+    enviando = true;
+    alerta2?.setAttribute('hidden', '');
+    if (btn2fa) {
+      btn2fa.disabled = true;
+      btn2fa.textContent = 'Verificando…';
+    }
+    try {
+      await completarConCodigo(reto.resolver, reto.factores[0]?.id ?? '', codigo);
+      irADestino();
+    } catch (err) {
+      const [t, d] = explicarSegundoFactor((err as { code?: string })?.code || '');
+      avisar2(t, d);
+      digitos.forEach((x) => (x.value = ''));
+      digitos[0]?.focus();
+    } finally {
+      enviando = false;
+      if (btn2fa) {
+        btn2fa.disabled = false;
+        btn2fa.textContent = 'Entrar';
+      }
+    }
+  }
+
+  btn2fa?.addEventListener('click', () => void enviarCodigo());
+  document.getElementById('ing-2fa-cancelar')?.addEventListener('click', volverAPaso1);
+
+  /**
+   * Un único sitio donde se decide qué hacer con un error de ingreso. Antes cada camino (correo,
+   * Google) tenía su propio `catch` y si mañana se añade un tercero es fácil que se olvide el caso
+   * del segundo factor — que es justo el que deja a alguien fuera.
+   */
+  async function manejarErrorDeIngreso(err: unknown): Promise<void> {
+    if (pideSegundoFactor(err)) {
+      mostrarPaso2(await leerReto(err));
+      return;
+    }
+    const [t, d] = explicar((err as { code?: string })?.code || '');
+    avisar(t, d);
+    cargando(false);
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    limpiarAviso();
+    const correo = mail?.value.trim() || '';
+    const clave = pass?.value || '';
+    if (!correo || !clave) {
+      avisar('Faltan datos', 'Escribe tu correo y tu contraseña para continuar.');
+      return;
+    }
+    cargando(true);
+    try {
+      const { a, m } = await auth();
+      const recordar = (document.getElementById('ing-recordar') as HTMLInputElement | null)?.checked ?? true;
+      await m.setPersistence(a, recordar ? m.browserLocalPersistence : m.browserSessionPersistence);
+      await m.signInWithEmailAndPassword(a, correo, clave);
+      // Vuelve a donde venía (el enlace del header suele salir de favoritos).
+      irADestino();
+    } catch (err) {
+      await manejarErrorDeIngreso(err);
+    }
+  });
+
+  document.getElementById('ing-google')?.addEventListener('click', async () => {
+    limpiarAviso();
+    try {
+      const { a, m } = await auth();
+      await m.signInWithPopup(a, new m.GoogleAuthProvider());
+      irADestino();
+    } catch (err) {
+      await manejarErrorDeIngreso(err);
+    }
+  });
+
+  document.getElementById('ing-olvide')?.addEventListener('click', async () => {
+    limpiarAviso();
+    const correo = mail?.value.trim() || '';
+    if (!correo) {
+      avisar('Escribe tu correo', 'Necesitamos tu correo para enviarte el enlace de recuperación.');
+      mail?.focus();
+      return;
+    }
+    try {
+      const { a, m } = await auth();
+      await m.sendPasswordResetEmail(a, correo);
+      avisar('Revisa tu correo', `Enviamos un enlace a ${correo} para que crees una contraseña nueva.`);
+    } catch (err) {
+      const [t, d] = explicar((err as { code?: string })?.code || '');
+      avisar(t, d);
+    }
+  });
+
+  /* ── ALTA DE CUENTA (§154) ──────────────────────────────────────────────────────────────────
+   * ABIERTA por decisión del dueño el 2026-08-25. Llevaba cerrada desde §90 esperando su visto
+   * bueno, no por el gate legal — la Política de Tratamiento de Datos está publicada desde el 20 de
+   * agosto.
+   *
+   * ⚠️ RIESGO ACEPTADO A CONCIENCIA: el anti-bot está aplazado (§132.5), así que cualquiera con un
+   * correo puede tener SESIÓN. Lo que NO puede tener es permisos: el claim `admin` lo pone un
+   * trigger desde `usuarios/{uid}` (§99) y ninguna cuenta nueva lo trae. Una sesión sin claim no
+   * abre nada del panel ni lee un dato ajeno — eso lo sostienen las Rules, no esta pantalla.
+   *
+   * ⚖️ Y LA CASILLA NO ES DECORACIÓN. La Ley 1581 (art. 9) exige autorización PREVIA y expresa, y el
+   * Decreto 1377 (art. 5) exige CONSERVAR prueba de ella. Por eso: no viene marcada de fábrica, sin
+   * ella no se crea la cuenta, y al crearse se registra la prueba en el servidor —uid verificado,
+   * correo, IP, navegador y fecha— con `registrarEvento`. Una casilla marcada sin ese registro no
+   * prueba nada el día que alguien la reclame.
+   */
+  const alta = document.getElementById('ing-alta');
+  const altaForm = document.getElementById('ing-alta-form') as HTMLFormElement | null;
+
+  // `paso1` ya está declarado arriba (lo usa el paso del segundo factor): se REUTILIZA. Declararlo
+  // otra vez compila en el navegador y revienta el typecheck, que es el que tiene razón.
+  const verAlta = (si: boolean) => {
+    if (paso1) paso1.hidden = si;
+    if (alta) alta.hidden = !si;
+    limpiarAviso();
+    window.scrollTo({ top: 0 });
+  };
+
+  document.getElementById('ing-crear')?.addEventListener('click', () => verAlta(true));
+  document.getElementById('ing-volver-login')?.addEventListener('click', () => verAlta(false));
+
+  function avisarAlta(titulo: string, detalle: string): void {
+    const caja = document.getElementById('ing-alta-error');
+    const h = document.getElementById('ing-alta-error-h');
+    const p = document.getElementById('ing-alta-error-p');
+    if (h) h.textContent = titulo;
+    if (p) p.textContent = detalle;
+    caja?.removeAttribute('hidden');
+  }
+
+  altaForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    document.getElementById('ing-alta-error')?.setAttribute('hidden', '');
+
+    const correo = (document.getElementById('ing-alta-mail') as HTMLInputElement | null)?.value.trim() || '';
+    const clave = (document.getElementById('ing-alta-pass') as HTMLInputElement | null)?.value || '';
+    const autoriza = (document.getElementById('ing-alta-habeas') as HTMLInputElement | null)?.checked ?? false;
+
+    if (!correo || !clave) {
+      avisarAlta('Faltan datos', 'Escribe tu correo y una contraseña para continuar.');
+      return;
+    }
+    // El mínimo real lo impone Identity Platform (12). Se comprueba ANTES de llamar para no
+    // devolver un error de plataforma que no explica nada.
+    if (clave.length < 12) {
+      avisarAlta('La contraseña es muy corta', 'Necesita al menos 12 caracteres. Una frase que recuerdes funciona mejor que símbolos raros.');
+      return;
+    }
+    if (!autoriza) {
+      avisarAlta(
+        'Falta tu autorización',
+        'Sin tu autorización expresa no podemos tratar tus datos (Ley 1581, art. 9). Puedes leer la Política antes de marcarla.',
+      );
+      return;
+    }
+
+    const boton = document.getElementById('ing-alta-submit') as HTMLButtonElement | null;
+    if (boton) {
+      boton.disabled = true;
+      boton.textContent = 'Creando…';
+    }
+
+    try {
+      const { a, m } = await auth();
+      await m.createUserWithEmailAndPassword(a, correo, clave);
+
+      /*
+       * La verificación del correo se pide SIEMPRE y de inmediato. Es lo más barato que frena el
+       * registro basura mientras no exista el anti-bot, y de paso confirma que el correo por el que
+       * le vamos a escribir es suyo. No se bloquea la sesión por ella: se le dice.
+       */
+      if (a.currentUser) void m.sendEmailVerification(a.currentUser);
+
+      // La PRUEBA de la autorización, escrita por el servidor. Va sin esperar: si fallara, la
+      // persona ya tiene su cuenta y el reintento es nuestro problema, no suyo.
+      void llamarCallable('registrarEvento', {
+        accion: 'cuenta-creada',
+        origen: 'portal-ingresar',
+        detalle: 'Autorizó la Política de Tratamiento de Datos al crear la cuenta (Ley 1581 art. 9).',
+      });
+
+      irADestino();
+    } catch (err) {
+      const [t, d] = explicar((err as { code?: string })?.code || '');
+      avisarAlta(t, d);
+      if (boton) {
+        boton.disabled = false;
+        boton.textContent = 'Crear cuenta';
+      }
+    }
+  });
+</script>

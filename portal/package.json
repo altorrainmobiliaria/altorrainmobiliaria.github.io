@@ -1,0 +1,55 @@
+{
+  "name": "altorra-portal",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Portal ALTORRA Inmobiliaria — Astro + Cloudflare Workers (greenfield, MEGA-PLAN Ola 0)",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "_typecheck_por_que_astro_check": "`tsc --noEmit` NO MIRA LOS .astro. Se probo con una sonda deliberada (`const x: number = 'texto'`) dentro del <script> de una pagina: tsc la dio por buena y `astro check` la caso. Como casi toda la logica de navegador del portal vive en esos <script>, el gate llevaba desde siempre chequeando solo `src/lib` y `src/scripts` mientras se creia completo. Al encenderlo de verdad aparecieron 15 errores reales (ficha sin chequear por una regex en linea, `never` en estancias, un campo muerto en la home). `astro check` chequea .astro Y .ts, asi que sustituye a tsc, no se suma.",
+    "_typecheck_que": "GENERA SUS TIPOS ANTES DE MIRAR (ADR 125). `worker-configuration.d.ts` lo produce `wrangler types` desde wrangler.jsonc y esta en .gitignore: existia en la maquina de quien lo escribio y NO en CI, asi que el gate paso en local y llevaba 8 corridas ROJO en CI — bloqueando TODOS los deploys sin que nadie lo mirara. Un script que genera su propio prerrequisito no puede divergir entre local y CI.",
+    "typecheck": "wrangler types && astro check",
+    "catalogo:live": "node ./scripts/fixture-catalogo.mjs",
+    "catalogo:demo": "node ./scripts/fixture-catalogo.mjs --off",
+    "verify:build": "node ./scripts/verify-build.mjs",
+    "verify:css": "node ./scripts/verify-css-runtime.mjs",
+    "verify:tokens": "node ./scripts/verify-tokens.mjs",
+    "verify:controles": "node ./scripts/verify-controles.mjs",
+    "verify:enlaces": "node ./scripts/verify-enlaces.mjs",
+    "verify:huerfanos": "node ./scripts/verify-huerfanos.mjs",
+    "verify:claims": "node ./scripts/verify-claims.mjs",
+    "verify:data": "node ./scripts/verify-data-invariants.mjs",
+    "verify:seo": "node ./scripts/verify-seo.mjs",
+    "test": "vitest run",
+    "test:rules": "firebase emulators:exec --only firestore --config firebase/firebase.json --project demo-altorra \"vitest run --config vitest.rules.config.ts\"",
+    "seed:preview": "node ./firebase/seed/generar-propiedades.mjs --print",
+    "cf-types": "wrangler types",
+    "_verify_por_que_typecheck_y_test": "Estaban FUERA y `verify` se leia como «todo verde». El 26-ago un archivo nuevo (`gestion-liquidacion`) entro a main con 26 errores de tipos: `verify` paso, y el unico que los veia era CI, que corre `typecheck` aparte. Un comando que dice verificar y no corre lo que corre CI no verifica: informa. Van PRIMERO porque son los que fallan por construccion, antes de gastar un build.",
+    "verify": "npm run typecheck && npm run typecheck:functions && npm run test && npm run test:rules && npm run build && npm run verify:build && npm run verify:claims && npm run verify:controles && npm run verify:css && npm run verify:data && npm run verify:enlaces && npm run verify:huerfanos && npm run verify:seo && npm run verify:simbolos && npm run verify:tokens",
+    "typecheck:functions": "npm --prefix functions run typecheck",
+    "verify:simbolos": "node ./scripts/verify-simbolos.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^14.1.2",
+    "@protomaps/basemaps": "^5.7.2",
+    "astro": "^7.0.7",
+    "firebase": "^12.16.0",
+    "maplibre-gl": "^6.0.0",
+    "pmtiles": "^4.4.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@firebase/rules-unit-testing": "^5.0.1",
+    "firebase-admin": "^14.2.0",
+    "firebase-tools": "^15.28.1",
+    "typescript": "^6.0.3",
+    "vitest": "^3.2.7",
+    "wrangler": "^4.110.0"
+  }
+}

@@ -1,0 +1,97 @@
+---
+/*
+ * `/ficha` — DOS trabajos, los dos temporales.
+ *
+ * 1) **Compatibilidad**: `/ficha?id=…` es el enlace que las cards del SERP han venido emitiendo desde
+ *    §59, y que §60.5 dejó a propósito como forward-compatible. Ahora que existe la ruta canónica
+ *    (`/inmueble/<slug>`), este parámetro se resuelve con un **301** hacia ella. Un 301 y no un render:
+ *    dos URLs sirviendo el mismo inmueble se reparten el posicionamiento y ninguna gana.
+ *
+ * 2) **Andamio DEMO**: sin parámetro, pinta la propiedad de muestra del mockup. No es decoración —
+ *    mientras el catálogo sea DEMO (`PUBLIC_CATALOGO_SOURCE=demo`) las cards de la home, el SERP,
+ *    turismo y estancias enlazan aquí sin id, y sin esto todas esas rutas llevarían a un 404. El día
+ *    del cutover, cuando el catálogo sea real, este archivo entero se borra.
+ *
+ * ⚠️ La demo va SIEMPRE `noindex`: es un inmueble que no existe. Indexarla sería publicar un listing
+ * fabricado, que es exactamente el error que este proyecto ya cometió y tuvo que retirar (L-29).
+ */
+export const prerender = false;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import FichaInmueble from '../components/FichaInmueble.astro';
+import { SITE } from '../lib/config/site';
+import type { Propiedad } from '../lib/domain/propiedades';
+
+const param = (Astro.url.searchParams.get('id') || Astro.url.searchParams.get('slug') || '').trim();
+if (param) {
+  // Se redirige SIEMPRE que venga parámetro, exista o no: la ruta canónica es la dueña de decidir si
+  // el inmueble está publicado, y así el «no encontrado» tiene un solo sitio donde vivir.
+  return Astro.redirect(`/inmueble/${encodeURIComponent(param)}`, 301);
+}
+
+/**
+ * Propiedad de MUESTRA — los mismos datos del mockup `ALTORRA Ficha.dc.html`, ni uno más.
+ * Se declara como `Propiedad` real para que el andamio recorra EXACTAMENTE el mismo código que una
+ * propiedad de verdad: si la ficha real se rompe, esta se rompe igual y se ve en el acto.
+ */
+const DEMO: Propiedad = {
+  _version: 1,
+  createdAt: '2026-07-01T00:00:00.000Z',
+  updatedAt: '2026-08-01T00:00:00.000Z',
+  id: 'INM-202607-0001',
+  operacion: 'venta',
+  vertical: 'vivienda',
+  tipo: 'apartamento',
+  estado: 'disponible',
+  titulo: 'Apartamento con vista a la bahía',
+  descripcion:
+    'Apartamento de 142 m² en uno de los edificios más exclusivos de Castillogrande, con vista frontal a la Bahía de Cartagena. Sala y comedor de doble altura, cocina integral tipo isla y un balcón corrido que recorre todo el frente marino.\n\nTres alcobas con baño privado, alcoba principal con vestier y jacuzzi. El edificio cuenta con acceso controlado 24 horas, muelle privado, gimnasio y piscina infinita sobre la bahía. Entrega inmediata con acabados de lujo.',
+  slug: 'demo',
+  geo: { ciudad: 'Cartagena de Indias', zona: 'Norte', barrio: 'Castillogrande', lat: 10.393, lng: -75.56 },
+  specs: {
+    habitaciones: 3,
+    banos: 3,
+    areaConstruidaM2: 142,
+    areaPrivadaM2: 142,
+    parqueaderos: 2,
+    estrato: 6,
+    piso: 8,
+    antiguedadAnios: 5,
+  },
+  amenidades: {
+    piscina: true,
+    porteria24h: true,
+    gimnasio: true,
+    vistaAlMar: true,
+    ascensor: true,
+    aireAcondicionado: true,
+    balcon: true,
+  },
+  otrasAmenidades: ['Muelle privado'],
+  precio: { moneda: 'COP', valorVenta: 1_450_000_000, administracion: 1_200_000 },
+  imagenes: ['/assets/villa-pool.webp', '/assets/villa-modern.webp', '/assets/estate-golden.webp', '/assets/chalet-dusk.webp'],
+  imagenPortada: '/assets/villa-pool.webp',
+  // ⛔ SIN `verificadoAltorra` y SIN `ultimaConfirmacion` A PROPÓSITO. Son sellos de CONFIANZA: dicen
+  // que una persona de ALTORRA revisó este inmueble y confirmó que sigue disponible. Ponerlos sobre una
+  // propiedad que no existe es fabricar una verificación, que es peor que fabricar un listado. El
+  // mockup tampoco los tenía.
+};
+
+// La demo era una página ESTÁTICA y al pasar a SSR se quedó sin ninguna cabecera de caché: cada visita
+// ejecutaría el Worker para renderizar algo que no cambia nunca. Es una constante, se cachea como tal.
+Astro.response.headers.set('cache-control', 'public, s-maxage=3600');
+
+const canonical = new URL('/ficha', Astro.site ?? `https://${SITE.domain}`).href;
+---
+
+<BaseLayout
+  title="Apartamento con vista a la bahía, Castillogrande — ALTORRA"
+  description="Ejemplo de ficha de inmueble del portal ALTORRA."
+  noindex={true}
+>
+  <Header active="" />
+  <FichaInmueble p={DEMO} similares={[]} canonical={canonical} />
+  <Footer />
+</BaseLayout>

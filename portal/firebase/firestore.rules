@@ -1,0 +1,388 @@
+rules_version = '2';
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// REGLAS DE FIRESTORE — RULESET ÚNICO Y FUSIONADO (legacy + portal). ADR §100.
+//
+// 🔴 POR QUÉ ESTE ARCHIVO ES FUSIONADO Y NO EL DEL PORTAL A SECAS:
+// hasta hoy había DOS rulesets con el mismo nombre — uno en la raíz (el VIVO, del sitio legacy) y otro
+// aquí (el del portal, nunca desplegado). Desplegar este tal como estaba **mataba `admin.html`**: su
+// `deny-all` final tumbaba las colecciones que el panel legacy sigue usando (`loginAttempts`, `resenas`,
+// `blog`, `auditLog`, `drafts_activos`, `newsletter`, `analytics_events`, `system`, `usuarios/*/drafts`),
+// y el camino estaba trazado: `resetLoginAttempts()` corre dentro del `try` del login sin catch propio,
+// así que el rechazo salta al catch general y el dueño vería «Error inesperado» DESPUÉS de autenticar
+// bien. Firestore no fusiona rulesets: el último despliegue REEMPLAZA. Por eso hay uno solo, y por eso
+// los dos `firebase.json` apuntan a ESTE archivo.
+//
+// 🔴 PRERREQUISITO DE DESPLIEGUE, NO NEGOCIABLE (ADR §99):
+// los permisos se leen de CUSTOM CLAIMS (`token.admin`, `token.rol`), no de un `get()` a `usuarios`.
+// Eso cuesta CERO lecturas — un `get()` dentro de una regla se factura AUNQUE la petición se deniegue,
+// y en este portal cualquiera con un Gmail consigue estar autenticado, así que un bucle desde la
+// consola vaciaría el free-tier sin conseguir un dato. Pero implica un ORDEN:
+//   1) desplegar `functions:default` (trigger `claimsStaffSync` + `sincronizarClaimsV2`),
+//   2) el dueño pulsa «Sincronizar permisos» en admin.html → Usuarios,
+//   3) comprobar que admin.html sigue entrando y que `/gestion` abre el panel,
+//   4) SOLO ENTONCES desplegar estas reglas.
+// Si se despliegan antes de que existan los claims, NADIE es staff y el panel queda inaccesible. La
+// vuelta atrás es redesplegar el ruleset anterior (`_legacy/firestore.rules.PRE-FUSION`), dos minutos.
+//
+// POSTURA DE ESCRITURA: el destino es que toda escritura de estado pase por Cloud Functions (Admin SDK,
+// que bypassa estas reglas). Todavía NO se puede imponer: `js/admin-properties.js` escribe `propiedades`
+// desde el cliente y `js/admin-leads.js` actualiza `solicitudes`. Mientras esas Functions no existan,
+// esas dos escrituras siguen permitidas POR ROL y con `_version`. Lo que ya nace cerrado nace cerrado.
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── HELPERS ─────────────────────────────────────────────────────────────────────────────────
+    // Todos leen del TOKEN. Ninguno toca la base: cero lecturas facturables, y sin el vector de
+    // agotamiento de cuota que tenía la versión con `get()`.
+
+    function autenticado() { return request.auth != null; }
+    /** Rol del claim, sincronizado desde `usuarios/{uid}` por la Function `claimsStaffSync` (§99). */
+    function rol() { return request.auth.token.rol; }
+    /** Staff = cualquiera del equipo (super_admin, editor o viewer). Espeja `isStaff()` de storage.rules. */
+    function esStaff() { return autenticado() && request.auth.token.admin == true; }
+    function esSuperAdmin() { return esStaff() && rol() == 'super_admin'; }
+    function esEditorOMas() { return esStaff() && rol() in ['super_admin', 'editor']; }
+
+    // Concurrencia optimista (L-09): `_version` 1 al crear, +1 en cada update.
+    function versionValida() {
+      return request.resource.data._version == resource.data._version + 1
+          || (resource.data._version == null && request.resource.data._version == 1);
+    }
+    function versionCreacionValida() { return request.resource.data._version == 1; }
+
+    /**
+     * La calificación de huéspedes NO la escribe nadie desde el cliente — tampoco el staff (§281).
+     *
+     * 🎯 Esta es la regla que sostiene todo el diseño. Sin ella, `resenas: {promedio: 5, n: 99}` es
+     * un campo más que un editor puede teclear en el panel, y volveríamos exactamente al problema
+     * que la sección de «mejor valoradas» tenía: una nota que se pone sola. El promedio solo puede
+     * aparecer como resultado de una suma hecha en el servidor, sobre reseñas que existen.
+     *
+     * En CREATE se prohíbe el campo entero; en UPDATE se exige que no CAMBIE, que es distinto de
+     * prohibirlo: una propiedad que ya tiene agregado se sigue pudiendo editar en todo lo demás.
+     */
+    function noTocaResenas() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(['resenas']);
+    }
+    function sinResenasAlCrear() { return !request.resource.data.keys().hasAny(['resenas']); }
+
+    /**
+     * 🧾 UN PROYECTO PUBLICADO EXIGE SU LICENCIA DE CONSTRUCCIÓN (§286).
+     *
+     * El dominio ya lo dice —`problemasParaPublicarProyecto` devuelve 'sin-licencia'— pero el dominio
+     * solo corre en la aplicación: quien escriba por otro camino se lo salta. Aquí se cumple SIEMPRE.
+     * Es el mismo criterio dos veces a propósito, como el gate del RNT (§234): la licencia es lo que
+     * hace comprobable que el desarrollo existe, y §270 encontró SEIS proyectos inventados servidos.
+     *
+     * ⚠️ Se lee con `.get(campo, defecto)` y no directo: en las Rules, leer un campo AUSENTE tumba la
+     * condición entera, así que la versión directa denegaría cualquier proyecto sin `estado` — la
+     * misma trampa que `gateAlojamiento()` documenta unas líneas más arriba.
+     */
+    function gateLicencia() {
+      return !(request.resource.data.get('estado', '') in ['disponible', 'agotado'])
+          || (request.resource.data.get('licenciaConstruccion', '') is string
+              && request.resource.data.get('licenciaConstruccion', '').size() > 0);
+    }
+
+    /** Estados de PROYECTO que salen al público. Espeja `ESTADOS_PUBLICADOS` de `domain/proyectos.ts`. */
+    function proyectoPublicado() {
+      return resource.data.estado in ['disponible', 'agotado'];
+    }
+
+    /** Estados que salen en el catálogo público. Espeja `ESTADOS_PUBLICADOS` de `domain/catalogo.ts`. */
+    function estadoPublicado() {
+      return resource.data.estado in ['disponible', 'reservado', 'cerrado'];
+    }
+
+    /*
+     * GATE LEGAL DEL ALOJAMIENTO — las DOS mitades, aquí y no solo en el formulario (§233).
+     *
+     * `alta-propiedad.ts` ya exige el RNT y la situación de PH, pero `propiedades` se escribe
+     * DIRECTO desde el navegador: hasta hoy la frontera real solo comprobaba rol y `_version`, así
+     * que la obligación legal la sostenía únicamente un formulario — y un gate legal que vive en el
+     * formulario deja de existir el día que alguien cambia el formulario. Es el mismo patrón que
+     * costó el fallo de `honorariosPct` ([[L-63]]): la regla escrita en un lado y la frontera en otro.
+     *
+     * Solo muerde en `alojamiento`. Una venta o un arriendo no necesitan RNT, y exigírselo
+     * convertiría una obligación de un caso en un requisito inventado para todos.
+     *
+     * `sin-autorizacion` se rechaza aquí igual que en el dominio: no es un dato que falte, es la
+     * RESPUESTA — y la respuesta es que ese inmueble no se puede anunciar por días.
+     * Espeja `SITUACIONES_PH` de `domain/alta-propiedad.ts`.
+     */
+    function gateAlojamiento() {
+      // `.get()` con defecto y no acceso directo: en las Rules, leer un campo AUSENTE hace fallar la
+      // condicion entera, asi que la version directa denegaba cualquier propiedad sin `operacion` —
+      // lo caza una prueba de concurrencia que crea una con solo `estado` y `_version`.
+      return request.resource.data.get('operacion', '') != 'alojamiento'
+          || (request.resource.data.get('rnt', '') is string
+              && request.resource.data.get('rnt', '').size() > 0
+              && request.resource.data.get('situacionPH', '') in ['no-aplica', 'autoriza-expreso']);
+    }
+
+    // ── PROPIEDADES ─────────────────────────────────────────────────────────────────────────────
+    // FUSIÓN CON CRITERIO: el legacy tenía `allow read: if true`, o sea que CUALQUIERA podía leer un
+    // BORRADOR — un inmueble sin aprobar, con su precio y sus notas. Se adopta la whitelist del portal,
+    // que es más estricta, MÁS un escape de staff: sin él, el equipo perdería sus propias fichas de
+    // vendidos y arrendados en el panel.
+    match /propiedades/{propId} {
+      allow get: if esStaff() || estadoPublicado();
+      // LIST denegado al público: la SERP se sirve del índice denormalizado, no de queries (free-tier).
+      allow list: if esStaff();
+      allow create: if (esSuperAdmin() || (esEditorOMas() && versionCreacionValida()))
+                     && gateAlojamiento() && sinResenasAlCrear();
+      // El gate también en UPDATE: pasar un inmueble a `alojamiento` después de crearlo tendría
+      // exactamente el mismo efecto que crearlo así, y sería la puerta de atrás obvia.
+      allow update: if (esSuperAdmin() || (esEditorOMas() && versionValida()))
+                     && gateAlojamiento() && noTocaResenas();
+      allow delete: if esSuperAdmin();
+
+      // Historial de cambios — INMUTABLE, y desde §130 también SERVER-ONLY: `create: if esEditorOMas()`
+      // dejaba que el propio editor redactara el historial de sus cambios. Nadie escribía aquí
+      // (verificado en todo el código), así que cerrarlo no rompe nada y lo deja listo para `anotar()`.
+      match /auditLog/{logId} {
+        allow read: if esStaff();
+        allow create: if false;   // SOLO el servidor
+        allow update: if false;
+        allow delete: if esSuperAdmin();
+      }
+    }
+
+    /*
+     * ── PROYECTOS DE OBRA NUEVA (§286) ────────────────────────────────────────────────────────
+     *
+     * Mismo criterio que `propiedades`, y por las mismas razones: GET público SOLO de lo publicado
+     * —un borrador lleva precios y notas internas—, LIST denegado al público porque los listados se
+     * sirven del índice denormalizado y no de queries (free-tier), y escritura de staff con la
+     * disciplina de versión.
+     *
+     * Lo que añade: `gateLicencia()`, en CREATE y en UPDATE. En update también, porque pasar un
+     * proyecto a «disponible» después de crearlo tendría exactamente el mismo efecto que crearlo
+     * así — es la puerta de atrás obvia, y es la misma que `gateAlojamiento` cierra para el RNT.
+     */
+    match /proyectos/{proyId} {
+      allow get: if esStaff() || proyectoPublicado();
+      allow list: if esStaff();
+      allow create: if (esSuperAdmin() || (esEditorOMas() && versionCreacionValida())) && gateLicencia();
+      allow update: if (esSuperAdmin() || (esEditorOMas() && versionValida())) && gateLicencia();
+      allow delete: if esSuperAdmin();
+    }
+
+    // ── ÍNDICE DE CATÁLOGO (portal, §54) ────────────────────────────────────────────────────────
+    // GET público SOLO de los shards conocidos (allow-list explícita). Lo escribe solo la Function.
+    match /indices/{doc} {
+      allow get: if doc in ['catalogo-venta', 'catalogo-arriendo', 'catalogo-dias'];
+      allow list, write: if false;
+    }
+
+    // ── DISPONIBILIDAD (corta estancia, portal) ─────────────────────────────────────────────────
+    match /disponibilidad/{id} {
+      allow get: if true;
+      allow list: if esStaff();   // el calendario público se sirve por JSON cacheado, no por query
+      allow write: if false;      // la reserva es transaccional y vive en una Function
+    }
+
+    // ── SOLICITUDES / LEADS ─────────────────────────────────────────────────────────────────────
+    // Alta PÚBLICA acotada (§96): el endpoint del portal y los formularios escriben aquí sin sesión,
+    // pero con forma validada. `update` sigue abierto a editores porque `js/admin-leads.js` cambia el
+    // estado del lead desde el cliente.
+    match /solicitudes/{id} {
+      allow read: if esStaff();
+      allow create: if request.resource.data.estado == 'pendiente'
+                    && request.resource.data.consentimiento.autorizado == true
+                    && request.resource.data.nombre is string
+                    && request.resource.data.nombre.size() >= 2
+                    && request.resource.data.nombre.size() <= 80
+                    && request.resource.data.telefono is string
+                    && request.resource.data.telefono.size() <= 25
+                    && request.resource.data.emailSent == false;
+      allow update: if esEditorOMas();
+      allow delete: if esSuperAdmin();
+    }
+
+    // ── ALERTAS GUARDADAS (portal, §96) ─────────────────────────────────────────────────────────
+    // Nadie las LEE salvo staff: dentro va el token de la baja, y un token legible no protege nada.
+    match /alertas/{id} {
+      allow read: if esStaff();
+      allow create: if request.resource.data.keys().hasOnly(
+                         ['email', 'criterios', 'estado', 'token', 'consentimiento',
+                          'ultimoEnvio', 'enviados', 'createdAt', 'updatedAt', '_version'])
+                    && request.resource.data.estado == 'activa'
+                    && request.resource.data.enviados == 0
+                    && request.resource.data._version == 1
+                    && request.resource.data.email is string
+                    && request.resource.data.email.size() <= 120
+                    && request.resource.data.token is string
+                    && request.resource.data.token.size() >= 16
+                    && request.resource.data.consentimiento.autorizado == true
+                    && request.resource.data.criterios.operacion in ['venta', 'arriendo', 'alojamiento']
+                    && request.resource.data.criterios.tipos.size() <= 8
+                    && request.resource.data.criterios.zonas.size() <= 8;
+      // El paso a `baja` lo hace SOLO la Function del digest (Admin SDK).
+      allow update, delete: if false;
+    }
+
+    // Peticiones de BAJA (append-only): el permiso más pequeño que permite revocar sin dejar que el
+    // público edite `alertas`, y de paso deja rastro de la revocación (Ley 1581 art. 8).
+    match /bajasAlertas/{id} {
+      allow read: if esStaff();
+      allow create: if request.resource.data.keys().hasOnly(['alertaId', 'token', 'createdAt', 'aplicada'])
+                    && request.resource.data.alertaId is string
+                    && request.resource.data.alertaId.size() <= 64
+                    && request.resource.data.token is string
+                    && request.resource.data.token.size() <= 64
+                    && request.resource.data.aplicada == false;
+      allow update, delete: if false;
+    }
+
+    // ── INTERNO / PII (portal) — lectura solo staff; escritura solo Functions ────────────────────
+    match /captaciones/{id} { allow read: if esStaff(); allow write: if false; } // PII, dirección, comisión
+    match /actividades/{id} { allow read: if esStaff(); allow write: if false; }
+    match /expedientes/{id} { allow read: if esStaff(); allow write: if false; }
+    match /contratos/{id}   { allow read: if esStaff(); allow write: if false; }
+    match /pagos/{id}       { allow read: if esStaff(); allow write: if false; }
+    match /novedades/{id}   { allow read: if esStaff(); allow write: if false; }
+    // La BÓVEDA (§142). Aquí solo vive la FICHA del documento —tipo, finalidad, caducidad, ruta—; el
+    // archivo está en Storage, con sus propias reglas. La ficha se lee para saber QUÉ HAY y QUÉ FALTA
+    // sin descargar nada, que es medio módulo. Escritura solo por Function: la ruta y el tamaño los
+    // pone el servidor mirando el objeto real, no el navegador (ver `functions/src/documentos.ts`).
+    match /documentos/{id}  { allow read: if esStaff(); allow write: if false; }
+
+    // ── USUARIOS ────────────────────────────────────────────────────────────────────────────────
+    // Sin recursión: la versión anterior necesitaba LEER `usuarios` para saber si podías leer
+    // `usuarios`. Ahora manda el claim. Solo el super_admin LISTA el equipo — un viewer no tiene por
+    // qué ver quién más tiene acceso.
+    match /usuarios/{userId} {
+      allow get: if autenticado() && (request.auth.uid == userId || esSuperAdmin());
+      allow list: if esSuperAdmin();
+      // Escritura SOLO por las callables (`createManagedUserV2` y compañía), que bypassan estas reglas.
+      // Cerrarlo aquí es lo que impide que alguien se escriba su propio `rol` y el trigger de claims
+      // se lo convierta en permisos reales.
+      allow write: if false;
+
+      match /drafts/{draftId} {
+        allow read, write: if autenticado() && request.auth.uid == userId;
+      }
+    }
+
+    // ── CONFIG ──────────────────────────────────────────────────────────────────────────────────
+    // GET público salvo los dos docs sensibles. LIST solo staff.
+    match /config/{docId} {
+      allow get: if !(docId in ['gestion', 'counters']) || esStaff();
+      allow list: if esStaff();
+      allow write: if esSuperAdmin() || (esEditorOMas() && docId == 'counters');
+    }
+
+    // ── SYSTEM (invalidación de caché del legacy) ───────────────────────────────────────────────
+    // 🔧 AGUJERO CERRADO: antes decía `allow write: if isEditorOrAbove() || !exists(...)`, y esa
+    // segunda mitad dejaba que un ANÓNIMO creara cualquier documento nuevo en `system`. Solo editores.
+    // `js/admin-properties.js` escribe `system/meta` como editor, así que nada se rompe.
+    match /system/{docId} {
+      allow read: if true;
+      allow write: if esEditorOMas();
+    }
+
+    // ── LOGIN ATTEMPTS — CERRADO (§130) ─────────────────────────────────────────────────────────
+    // Estuvo abierto (`if true`) porque el contador se escribe ANTES de tener sesión. El comentario
+    // viejo reconocía media debilidad —«cualquiera puede resetear el contador de otro»— y la daba por
+    // inherente. La OTRA media, que nadie había nombrado, es la que lo condena: **el id del documento
+    // es el SHA-256 del correo, y un hash no es un secreto**. Cualquiera puede calcular el de
+    // `info@altorrainmobiliaria.co`, escribir `bloqueado:true` y dejar al dueño fuera 15 minutos, en
+    // bucle. Un candado que solo el atacante abre y solo la víctima sufre.
+    //
+    // No se movió al servidor: bloquear cuentas por intentos fallidos ES la puerta de la negación de
+    // servicio (OWASP ASVS 6.1.1 pide explícitamente que los controles «prevent malicious account
+    // lockout»). Quien protege de verdad contra fuerza bruta es el límite por IP de Firebase Auth,
+    // que vive en el servidor de Google y no se puede manipular desde aquí.
+    //
+    // Se deja el `match` en vez de borrarlo: sin él la colección caería en el deny-all final —el mismo
+    // efecto— pero un futuro lector no sabría que esto se decidió, y lo reintentaría.
+    match /loginAttempts/{emailHash} {
+      allow read, write: if false;
+    }
+
+    // ── LEGACY: contenido y operación del sitio viejo (lo usa `admin.html`) ─────────────────────
+    match /resenas/{id} {
+      allow read: if true;
+      allow create, update: if esEditorOMas();
+      allow delete: if esSuperAdmin();
+    }
+
+    match /blog/{postId} {
+      allow read: if true;
+      allow create: if esSuperAdmin() || (esEditorOMas() && versionCreacionValida());
+      allow update: if esSuperAdmin() || (esEditorOMas() && versionValida());
+      allow delete: if esSuperAdmin();
+    }
+
+    // ── BITÁCORA DE ACCESO Y DE CAMBIOS (§130) ──────────────────────────────────────────────────
+    // Antes: `create: if esEditorOMas()`. Es decir, la escribía el CLIENTE — y una bitácora que el
+    // vigilado puede redactar no es una bitácora. Nadie escribía en ella, así que cerrarla no rompe
+    // nada; ahora la escribe SOLO `registrarEvento` (Cloud Function), que bypassa estas reglas y pone
+    // el uid VERIFICADO del token, no el que diga el navegador.
+    //
+    // Lectura: solo el super_admin. Guarda IP y patrón de acceso de otras personas del equipo — dato
+    // personal de terceros, y el principio de minimización de la Ley 1581 no pide menos.
+    match /auditLog/{logId} {
+      allow read: if esSuperAdmin();
+      allow create: if false;   // SOLO el servidor
+      allow update: if false;   // INMUTABLE
+      allow delete: if esSuperAdmin();
+    }
+
+    // ── VENTAS (pipeline de compraventa, §151) ──────────────────────────────────────────────────
+    // Misma postura que expedientes/contratos (§100, §113): la ESCRITURA es server-only. Aquí no se
+    // guarda un estado cualquiera — se guarda en qué punto de una compraventa está una operación de
+    // cientos de millones, y el orden de esas etapas tiene consecuencias legales (art. 756 C.C.:
+    // hasta el registro, el vendedor sigue siendo el dueño). Eso lo impone `crearVenta`/`moverVenta`,
+    // que además escriben el historial con el uid del TOKEN: un historial que el interesado puede
+    // redactar no es un historial.
+    // LECTURA: staff. Lleva el nombre del comprador y cifras del negocio — no es dato público.
+    match /ventas/{ventaId} {
+      allow read: if esStaff();
+      allow write: if false;   // SOLO el servidor
+    }
+
+    // ── PERFIL DE INQUILINO (§152) ──────────────────────────────────────────────────────────────
+    // Lo LEE su titular (es suyo) y el staff (tiene que revisarlo). Lo ESCRIBE solo el servidor: el
+    // estado del proceso —enviado, verificado— no puede moverlo quien tiene interés en el resultado.
+    // ⚖️ Datos personales de alguien de FUERA del equipo: nadie más lo ve, y ni siquiera se puede
+    // listar la colección, que sería un censo de quién está buscando arriendo en la ciudad.
+    match /perfiles/{uid} {
+      allow get: if esStaff() || (request.auth != null && request.auth.uid == uid);
+      allow list: if esStaff();
+      allow write: if false;   // SOLO el servidor
+    }
+
+    match /drafts_activos/{userId} {
+      allow read: if esEditorOMas();
+      allow write: if esEditorOMas() && request.auth.uid == userId;
+      allow delete: if esEditorOMas();
+    }
+
+    // 🔧 AGUJERO CERRADO: `allow update: if true` dejaba que cualquiera reescribiera la suscripción de
+    // otro (correos incluidos). El alta pública se conserva; modificarla ya es cosa de editores.
+    // ⚠️ Esto rompe el re-alta del `js/newsletter.js` del sitio viejo, que está RETIRADO.
+    match /newsletter/{subId} {
+      allow create: if true;
+      allow read: if esStaff();
+      allow update: if esEditorOMas();
+      allow delete: if esSuperAdmin();
+    }
+
+    match /analytics_events/{eventId} {
+      allow create: if true;
+      allow read: if esStaff();
+      allow update: if false;
+      allow delete: if esSuperAdmin();
+    }
+
+    // ── DEFAULT: todo lo no declarado, DENEGADO ─────────────────────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

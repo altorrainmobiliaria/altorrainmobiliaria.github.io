@@ -1,0 +1,484 @@
+---
+import { srcsetDe, SIZES } from '../lib/img';
+/*
+ * Header / navegación COMPARTIDA — v3 (feedback Daniel 2026-07-12):
+ *   · Íconos PROFESIONALES: arte oficial de Lucide (UI) + Simple Icons (redes), embebido inline.
+ *     (astro-icon rompe con el runtime Cloudflare Workers → embebemos los paths @iconify; mismo arte,
+ *      sin dependencia de build/runtime, nítido en todos lados.)
+ *   · Wordmark más PEQUEÑO; "INMOBILIARIA" con interletrado ajustado por JS al ancho exacto de "ALTORRA".
+ *   · Emblema oficial (Canva) del dueño. · Auto-OCULTAR al bajar / revelar al subir (transform, sin reflow).
+ *   · Un solo material (vidrio) + UN acento dorado (CTA). Disciplina de color. Contacto/rutas REALES.
+ * Props: active = clave del ítem de nav actual.
+ */
+import { SITE } from '../lib/config/site';
+import { tipoCanonico } from '../lib/domain/shared';
+
+interface Props {
+  active?: string;
+}
+const { active = '' } = Astro.props;
+
+// Íconos oficiales (Lucide = stroke, Simple Icons = fill). El body ya trae fill/stroke → svg sin atributos.
+const icon: Record<string, string> = {
+  chevronDown: '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9l6 6l6-6"/>',
+  heart: '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676a.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/>',
+  userRound: '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></g>',
+  housePlus: '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12.35 21H5a2 2 0 0 1-2-2v-9a2 2 0 0 1 .71-1.53l7-6a2 2 0 0 1 2.58 0l7 6A2 2 0 0 1 21 10v2.35"/><path d="M14.8 12.4a1 1 0 0 0-.8-.4h-4a1 1 0 0 0-1 1v8m6-3h6m-3-3v6"/></g>',
+  menu: '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5h16M4 12h16M4 19h16"/>',
+  x: '<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6L6 18M6 6l12 12"/>',
+  badgeCheck: '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77a4 4 0 0 1 6.74 0a4 4 0 0 1 4.78 4.78a4 4 0 0 1 0 6.74a4 4 0 0 1-4.77 4.78a4 4 0 0 1-6.75 0a4 4 0 0 1-4.78-4.77a4 4 0 0 1 0-6.76"/><path d="m9 12l2 2l4-4"/></g>',
+  squarePen: '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></g>',
+  building2: '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M10 12h4m-4-4h4m0 13v-3a2 2 0 0 0-4 0v3"/><path d="M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"/><path d="M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"/></g>',
+  trendingUp: '<g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M16 7h6v6"/><path d="m22 7l-8.5 8.5l-5-5L2 17"/></g>',
+  whatsapp: '<path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967c-.273-.099-.471-.148-.67.15c-.197.297-.767.966-.94 1.164c-.173.199-.347.223-.644.075c-.297-.15-1.255-.463-2.39-1.475c-.883-.788-1.48-1.761-1.653-2.059c-.173-.297-.018-.458.13-.606c.134-.133.298-.347.446-.52s.198-.298.298-.497c.099-.198.05-.371-.025-.52s-.669-1.612-.916-2.207c-.242-.579-.487-.5-.669-.51a13 13 0 0 0-.57-.01c-.198 0-.52.074-.792.372c-.272.297-1.04 1.016-1.04 2.479c0 1.462 1.065 2.875 1.213 3.074s2.096 3.2 5.077 4.487c.709.306 1.262.489 1.694.625c.712.227 1.36.195 1.871.118c.571-.085 1.758-.719 2.006-1.413s.248-1.289.173-1.413c-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214l-3.741.982l.998-3.648l-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884c2.64 0 5.122 1.03 6.988 2.898a9.82 9.82 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.82 11.82 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.9 11.9 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.82 11.82 0 0 0-3.48-8.413"/>',
+};
+// Íconos de los paneles "rich" → clave del set.
+const richIcon: Record<string, string> = { check: 'badgeCheck', edit: 'squarePen', home: 'building2', chart: 'trendingUp' };
+
+/*
+ * EL MEGAMENÚ TENÍA 20 ENLACES Y DOS DESTINOS (§265). «Apartamentos», «Casas», «Penthouse»,
+ * «Locales», «Lotes», «Fincas» y las seis zonas de arriendo apuntaban TODAS a `/comprar` o
+ * `/arrendar` a secas: seis etiquetas distintas y la misma página. Un menú de navegación en el que
+ * elegir no cambia nada es la versión grande del «Ordenar por» que no ordenaba (§264).
+ *
+ * El destino se DERIVA de la etiqueta en vez de escribirse al lado: así el menú no puede volver a
+ * desincronizarse del vocabulario del dominio — si alguien añade una etiqueta sin puente,
+ * `tipoCanonico` devuelve `null` y el enlace se queda sin filtro de forma VISIBLE, no en silencio.
+ */
+const porTipo = (ruta: string, etiquetas: readonly string[]): [string, string][] =>
+  etiquetas.map((e) => {
+    const t = tipoCanonico(e);
+    return [e, t ? `${ruta}?tipo=${t}` : ruta];
+  });
+
+/** Las zonas son texto libre (el catálogo las guarda en `sector`): se codifican para la URL. */
+const porZona = (ruta: string, zonas: readonly string[]): [string, string][] =>
+  zonas.map((z) => [z, `${ruta}?zona=${encodeURIComponent(z)}`]);
+
+const nav = [
+  {
+    key: 'comprar', label: 'Comprar', href: '/comprar', type: 'mega',
+    cols: [
+      /*
+       * 🔴 AQUÍ HABÍA UNA COLUMNA «Por estado» con «Compra nuevo» y «Compra usado», y las DOS
+       * llevaban a `/comprar` (§282). Un menú que ofrece dos caminos y lleva al mismo sitio no es
+       * un filtro pendiente: es una promesa rota que el visitante descubre haciendo clic.
+       *
+       * El comentario anterior lo sabía —decía «PENDIENTE DEL DUEÑO: o el índice gana el campo, o la
+       * columna se retira»— y la dejaba puesta mientras tanto. Es el mismo motivo-promesa que §278:
+       * describe quién decidirá, no qué la retira, así que se queda hasta que alguien se acuerde.
+       *
+       * Se retira. Vuelve sola el día que exista la vertical de obra nueva (§270, ya en el
+       * mega-plan): entonces «Compra nuevo» tendrá a dónde llevar, y será un enlace de verdad.
+       */
+      { title: 'Por tipo', links: porTipo('/comprar', ['Apartamentos', 'Casas', 'Apartaestudios', 'Locales', 'Lotes', 'Fincas']) },
+    ],
+    /*
+     * 🔴 Este tile decía «Destacada · Penthouse en Bocagrande» y se sirve en las 45 páginas (§282).
+     * Con foto y el rótulo «Destacada», en un menú inmobiliario, eso se lee como UNA FICHA — y no
+     * hay tal penthouse: el enlace lleva a una búsqueda por zona, que hoy no devuelve nada.
+     *
+     * 🎯 Los otros dos tiles del menú ya eran editoriales («Vive la ciudad amurallada»), y por eso
+     * no mentían. Este pasa a decir lo que de verdad hace: invitar a ver una ZONA. Mismo diseño,
+     * misma foto, mismo destino — y ninguna afirmación sobre un inmueble que no existe.
+     */
+    featured: { img: '/assets/estate-golden.webp', eyebrow: 'Bocagrande', title: 'El barrio frente al mar', href: '/comprar?zona=Bocagrande' },
+  },
+  {
+    key: 'arrendar', label: 'Arrendar', href: '/arrendar', type: 'mega',
+    cols: [
+      { title: 'Por zona', links: porZona('/arrendar', ['Zona Norte', 'Centro Histórico', 'Bocagrande', 'Castillogrande', 'Manga', 'Getsemaní']) },
+      { title: 'Por tipo', links: porTipo('/arrendar', ['Apartamentos', 'Casas', 'Apartaestudios', 'Locales', 'Oficinas']) },
+    ],
+  },
+  {
+    key: 'vender', label: 'Vender', href: '/publicar', type: 'rich', align: 'left',
+    rich: [
+      { icon: 'check', title: 'Lo vendemos por ti', sub: 'Valoración, marketing y cierre, todo gestionado.', href: '/publicar' },
+      { icon: 'edit', title: 'Véndelo tú mismo', sub: 'Publica y administra desde tu panel.', href: '/publicar' },
+    ],
+  },
+  {
+    key: 'estancia', label: 'Corta estancia', href: '/estancias', type: 'mega', align: 'right',
+    cols: [
+      { title: 'Experiencias', links: [['Frente al mar', '/estancias'], ['Zona Colonial', '/estancias'], ['Zona Amurallada', '/estancias'], ['Rooftop & Piscina', '/estancias'], ['Zona Campestre', '/estancias']] },
+    ],
+    featured: { img: '/assets/villa-pool.webp', eyebrow: 'Estancias premium', title: 'Terrazas frente a la bahía', href: '/estancias' },
+  },
+  {
+    key: 'turismo', label: 'Turismo', href: '/turismo', type: 'rich', align: 'right',
+    rich: [
+      { icon: 'home', title: 'Turismo Inmobiliario', sub: 'Estadías, guías, fotografía y pasadías.', href: '/turismo' },
+      { icon: 'chart', title: 'Asesoría de Inversión Turística', sub: 'Rentabilidad y compra con retorno.', href: '/turismo#inversion' },
+    ],
+    featured: { img: '/assets/villa-modern.webp', eyebrow: 'Cartagena te espera', title: 'Vive la ciudad amurallada', href: '/turismo' },
+  },
+  {
+    key: 'servicios', label: 'Servicios', href: '/precios', type: 'mega', align: 'right',
+    cols: [
+      // ⚖️ «Avalúos» RETIRADO el 2026-08-22 (§105): reclamaba una línea de servicio regulada (Ley 1673,
+      // avaluadores del RAA) que ALTORRA no presta — confirmado por Daniel. Lo que sí ofrecemos, la
+      // estimación de precio, ya tiene su sitio y su nombre: el Rango ALTORRA.
+      //
+      // 🔴 2026-08-26 (§159): SEIS de estas siete entradas apuntaban a `#servicios`, un ancla que NO
+      // EXISTE en ninguna página del portal — el menú principal, en las 74 páginas, con seis destinos
+      // muertos. Misma familia que el `#nosotros` fantasma. Ahora cada una lleva a la página que de
+      // verdad responde a su nombre, y las dos que no tenían destino honesto —«Crédito de Vivienda»
+      // (no prestamos ese servicio) y «Pagos en Línea» (el carril de Wompi, detrás del gate del
+      // abogado)— se RETIRAN: una entrada de menú es una promesa, y prometer crédito es de lo más
+      // delicado que se puede poner en un sitio inmobiliario.
+      { title: 'Gestión', links: [['Administración y Arriendo', '/publicar'], ['Compra & Venta', '/comprar'], ['Gerencia de Proyectos', '/#proyectos']] },
+      { title: 'Valoración & Asesoría', links: [['Rango ALTORRA', '/rango-altorra'], ['Marketing Inmobiliario', '/publicar'], ['Invertir en Cartagena', '/invertir'], ['Programa de aliados', '/aliados']] },
+    ],
+  },
+  { key: 'nosotros', label: 'Nosotros', href: '/nosotros', type: 'link' },
+  { key: 'contacto', label: 'Contacto', href: '#contacto', type: 'link' },
+];
+---
+
+<header class="alt-hdr" data-hdr>
+  <div class="alt-hdr__bar">
+    <div class="alt-hdr__bar-in">
+      <a class="alt-hdr__logo" href="/" aria-label={`${SITE.name} — inicio`}>
+        <img class="alt-hdr__mark" src="/assets/altorra-emblema.webp" srcset={srcsetDe("/assets/altorra-emblema.webp")} sizes={SIZES.logo} alt="" width="29" height="40" />
+        <span class="alt-hdr__word">
+          <span class="alt-hdr__word-name">ALTORRA</span>
+          <span class="alt-hdr__word-sub">Inmobiliaria</span>
+        </span>
+      </a>
+
+      <nav class="alt-hdr__nav" aria-label="Principal">
+        {nav.map((item) => (
+          <div class={`alt-hdr__item${item.type !== 'link' ? ' has-mega' : ''}`}>
+            <a class="alt-hdr__top" href={item.href} aria-current={active === item.key ? 'page' : undefined} data-active={active === item.key}>
+              <span>
+                {item.label}
+                {item.type !== 'link' && <svg class="alt-hdr__cap" viewBox="0 0 24 24" aria-hidden="true" set:html={icon.chevronDown} />}
+              </span>
+              <span class="alt-hdr__uline"></span>
+            </a>
+
+            {item.type !== 'link' && (
+              <div class={`alt-hdr__pan align-${item.align || 'left'}`}>
+                <div class="alt-hdr__pan-card">
+                  {item.type === 'mega' && item.cols?.map((col) => (
+                    <div class="alt-hdr__col">
+                      <p class="alt-eyebrow alt-hdr__col-h">{col.title}</p>
+                      {col.links.map(([t, h]) => <a class="alt-hdr__lnk" href={h}>{t}</a>)}
+                    </div>
+                  ))}
+                  {item.type === 'rich' && (
+                    <div class="alt-hdr__rich">
+                      {item.rich?.map((r) => (
+                        <a class="alt-hdr__richlnk" href={r.href}>
+                          <span class="alt-hdr__richicon"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={icon[richIcon[r.icon]]}></svg></span>
+                          <span><span class="alt-hdr__richt">{r.title}</span><span class="alt-hdr__richs">{r.sub}</span></span>
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                  {item.featured && (
+                    <a class="alt-hdr__feat" href={item.featured.href}>
+                      <img src={item.featured.img} alt="" loading="lazy" decoding="async" />
+                      <span class="alt-hdr__feat-body">
+                        <span class="alt-hdr__feat-eb">{item.featured.eyebrow}</span>
+                        <span class="alt-hdr__feat-t">{item.featured.title}</span>
+                      </span>
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </nav>
+
+      <div class="alt-hdr__actions">
+        <a class="alt-hdr__icon" href={SITE.contact.whatsappLink} aria-label="WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={icon.whatsapp}></svg></a>
+        <a class="alt-hdr__icon" href="/favoritos" aria-label="Favoritos"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={icon.heart}></svg></a>
+        <a class="alt-hdr__login" href="/ingresar"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={icon.userRound}></svg><span>Ingresar</span></a>
+        <a class="alt-hdr__pub" href="/publicar"><svg viewBox="0 0 24 24" aria-hidden="true" set:html={icon.housePlus}></svg><span>Publica tu inmueble</span></a>
+        <button class="alt-hdr__burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="alt-drawer" data-drawer-toggle>
+          <svg class="alt-hdr__burger-o" viewBox="0 0 24 24" aria-hidden="true" set:html={icon.menu}></svg>
+          <svg class="alt-hdr__burger-x" viewBox="0 0 24 24" aria-hidden="true" set:html={icon.x}></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drawer móvil (vidrio) -->
+  <div class="alt-hdr__drawer" id="alt-drawer" data-open="false">
+    {nav.filter((n) => n.type !== 'link').map((item) => (
+      <details class="alt-hdr__det">
+        <summary>{item.label}<svg viewBox="0 0 24 24" aria-hidden="true" set:html={icon.chevronDown}></svg></summary>
+        <div class="alt-hdr__det-links">
+          {item.type === 'mega' && item.cols?.flatMap((c) => c.links).map(([t, h]) => <a href={h}>{t}</a>)}
+          {item.type === 'rich' && item.rich?.map((r) => <a href={r.href}>{r.title}</a>)}
+        </div>
+      </details>
+    ))}
+    <a class="alt-hdr__det-flat" href="/nosotros">Nosotros</a>
+    <a class="alt-hdr__det-flat" href="#contacto">Contacto</a>
+    <div class="alt-hdr__drawer-cta">
+      <a class="alt-hdr__pub" href="/publicar"><span>Publica tu inmueble</span></a>
+      <a class="alt-hdr__login" href="/ingresar"><span>Ingreso / Registro</span></a>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* ===== HEADER v3 — premium glass · íconos Lucide · auto-hide ===== */
+  .alt-hdr { position: sticky; top: 0; z-index: var(--alt-z-header); transition: transform 0.45s var(--alt-ease); }
+  .alt-hdr.is-hidden { transform: translateY(-100%); }
+
+  .alt-hdr__bar {
+    background: rgba(255, 255, 255, 0.55);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(27, 39, 51, 0.06);
+    transition: box-shadow 0.4s var(--alt-ease), background 0.4s var(--alt-ease), border-color 0.4s;
+  }
+  @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    .alt-hdr__bar { background: rgba(246, 249, 251, 0.98); }
+  }
+  .alt-hdr.is-scrolled .alt-hdr__bar {
+    background: rgba(255, 255, 255, 0.72);
+    border-color: transparent;
+    box-shadow: 0 12px 34px -18px rgba(6, 39, 67, 0.3);
+  }
+  .alt-hdr__bar-in {
+    padding-inline: clamp(18px, 3vw, 52px);
+    height: 72px; display: flex; align-items: center;
+  }
+
+  /* Logo — emblema metálico + wordmark en bloque. flex:none = va primero, el nav no se le monta. */
+  .alt-hdr__logo { flex: none; display: flex; align-items: center; gap: 11px; text-decoration: none; }
+  .alt-hdr__mark { display: block; height: 40px; width: auto; filter: drop-shadow(0 3px 7px rgba(166, 128, 30, 0.28)); transition: transform var(--alt-dur) var(--alt-ease); }
+  .alt-hdr__logo:hover .alt-hdr__mark { transform: translateY(-1px) scale(1.02); }
+  .alt-hdr__word { display: inline-flex; flex-direction: column; align-items: flex-start; line-height: 1; }
+  .alt-hdr__word-name { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 19px; letter-spacing: 0.14em; color: var(--alt-ink); white-space: nowrap; }
+  .alt-hdr__word-sub { font-size: 8px; font-weight: var(--alt-fw-bold); letter-spacing: 0.34em; text-transform: uppercase; color: var(--alt-link); margin-top: 4px; white-space: nowrap; }
+
+  /* Nav — ocupa el centro entre logo y acciones (con márgenes de aire); no puede montarse sobre el logo */
+  .alt-hdr__nav { flex: 1 1 0; min-width: 0; margin-inline: clamp(18px, 2.4vw, 52px) clamp(14px, 2vw, 40px); display: flex; justify-content: flex-start; align-items: center; gap: clamp(2px, 0.4vw, 8px); }
+  .alt-hdr__item { position: relative; }
+  .alt-hdr__top { display: inline-flex; flex-direction: column; align-items: center; gap: 5px; padding: 9px 10px; font-size: 13.5px; font-weight: var(--alt-fw-medium); color: var(--alt-ink); text-decoration: none; white-space: nowrap; }
+  .alt-hdr__top > span:first-child { display: inline-flex; align-items: center; gap: 5px; }
+  .alt-hdr__cap { width: 13px; height: 13px; color: var(--alt-text-muted); transition: transform var(--alt-dur) var(--alt-ease); }
+  .alt-hdr__uline { height: 2px; width: 20px; border-radius: 2px; background: var(--alt-grad-gold-underline); opacity: 0; transform: scaleX(0.25); transition: opacity var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease); }
+  .alt-hdr__top:hover { color: var(--alt-link); }
+  .alt-hdr__item:hover .alt-hdr__uline, .alt-hdr__top[data-active='true'] .alt-hdr__uline { opacity: 1; transform: scaleX(1); }
+  .alt-hdr__item:hover .alt-hdr__cap { transform: rotate(180deg); color: var(--alt-gold-raw); }
+
+  /* Paneles — vidrio esmerilado */
+  .alt-hdr__pan { position: absolute; top: 100%; padding-top: 14px; z-index: var(--alt-z-dropdown); opacity: 0; visibility: hidden; transform: translateY(6px); transition: opacity var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease), visibility var(--alt-dur); }
+  .alt-hdr__pan.align-left { left: 0; }
+  .alt-hdr__pan.align-right { right: 0; }
+  .alt-hdr__item:hover .alt-hdr__pan, .alt-hdr__item:focus-within .alt-hdr__pan { opacity: 1; visibility: visible; transform: translateY(0); }
+  .alt-hdr__pan-card {
+    background: rgba(255, 255, 255, 0.8);
+    -webkit-backdrop-filter: saturate(180%) blur(22px); backdrop-filter: saturate(180%) blur(22px);
+    border: 1px solid rgba(255, 255, 255, 0.7); border-radius: var(--alt-r-lg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 34px 76px -34px rgba(6, 39, 67, 0.4), 0 4px 14px -10px rgba(27, 39, 51, 0.14);
+    padding: 22px; display: flex; gap: 26px;
+  }
+  @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) { .alt-hdr__pan-card { background: var(--alt-white); } }
+  .alt-hdr__col { min-width: 150px; }
+  .alt-hdr__col-h { margin: 0 10px 8px; }
+  .alt-hdr__lnk { display: block; padding: 8px 10px; border-radius: var(--alt-r-sm); font-size: 13.5px; font-weight: var(--alt-fw-medium); color: var(--alt-text); text-decoration: none; white-space: nowrap; transition: background var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease); }
+  .alt-hdr__lnk:hover { background: rgba(255, 255, 255, 0.75); color: var(--alt-link); }
+  .alt-hdr__rich { display: flex; flex-direction: column; gap: 6px; width: 300px; }
+  .alt-hdr__richlnk { display: flex; gap: 13px; align-items: flex-start; padding: 12px; border-radius: var(--alt-r-sm); text-decoration: none; transition: background var(--alt-dur) var(--alt-ease); }
+  .alt-hdr__richlnk:hover { background: rgba(255, 255, 255, 0.75); }
+  .alt-hdr__richicon { flex: none; width: 40px; height: 40px; border-radius: 12px; background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(27, 39, 51, 0.08); display: inline-flex; align-items: center; justify-content: center; color: var(--alt-gold-raw); }
+  .alt-hdr__richicon svg { width: 19px; height: 19px; }
+  .alt-hdr__richt { display: block; font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
+  .alt-hdr__richs { display: block; font-size: 12px; color: var(--alt-text); margin-top: 2px; }
+
+  .alt-hdr__feat { position: relative; width: 206px; flex: none; border-radius: var(--alt-r-md); overflow: hidden; min-height: 216px; display: flex; align-items: flex-end; text-decoration: none; }
+  .alt-hdr__feat img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-slow) var(--alt-ease-card); }
+  .alt-hdr__feat:hover img { transform: scale(1.05); }
+  .alt-hdr__feat::after { content: ''; position: absolute; inset: 0; background: var(--alt-overlay-navy); }
+  .alt-hdr__feat-body { position: relative; padding: 16px; }
+  .alt-hdr__feat-eb { display: block; font-size: 9.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.16em; text-transform: uppercase; color: var(--alt-gold-bright); margin-bottom: 6px; }
+  .alt-hdr__feat-t { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 19px; line-height: 1.08; color: #fff; }
+
+  /* Acciones — controles fantasma + UN acento dorado */
+  .alt-hdr__actions { flex: none; display: flex; align-items: center; gap: 8px; }
+  .alt-hdr__icon {
+    display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%;
+    border: 1px solid rgba(27, 39, 51, 0.12); background: rgba(255, 255, 255, 0.4); color: var(--alt-ink);
+    transition: border-color var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease), background var(--alt-dur) var(--alt-ease);
+  }
+  .alt-hdr__icon svg { width: 18px; height: 18px; }
+  .alt-hdr__icon:hover { border-color: var(--alt-gold); color: var(--alt-link); background: rgba(255, 255, 255, 0.7); }
+  .alt-hdr__login {
+    display: inline-flex; align-items: center; gap: 7px; padding: 10px 17px; border-radius: var(--alt-r-pill); margin-left: 3px;
+    border: 1px solid rgba(27, 39, 51, 0.16); background: rgba(255, 255, 255, 0.4); color: var(--alt-ink);
+    font-weight: var(--alt-fw-semibold); font-size: 13px; white-space: nowrap; text-decoration: none;
+    transition: border-color var(--alt-dur) var(--alt-ease), background var(--alt-dur) var(--alt-ease);
+  }
+  .alt-hdr__login svg { width: 16px; height: 16px; }
+  .alt-hdr__login:hover { border-color: var(--alt-ink); background: rgba(255, 255, 255, 0.7); }
+  .alt-hdr__pub {
+    display: inline-flex; align-items: center; gap: 8px; padding: 11px 19px; border-radius: var(--alt-r-pill);
+    background: linear-gradient(180deg, var(--alt-gold-bright) 0%, var(--alt-gold) 48%, var(--alt-gold-raw) 100%);
+    color: var(--alt-ink);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -2px 5px rgba(120, 90, 20, 0.32), 0 10px 22px -10px rgba(166, 128, 30, 0.55);
+    font-weight: var(--alt-fw-bold); font-size: 13px; white-space: nowrap; text-decoration: none;
+    transition: transform var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease);
+  }
+  .alt-hdr__pub svg { width: 17px; height: 17px; }
+  .alt-hdr__pub:hover { transform: translateY(-1px); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -2px 5px rgba(120, 90, 20, 0.32), 0 14px 28px -10px rgba(166, 128, 30, 0.66); }
+  .alt-hdr__pub:active { transform: translateY(1px); box-shadow: inset 0 2px 6px rgba(120, 90, 20, 0.4); }
+  .alt-hdr__burger {
+    display: none; position: relative; width: 44px; height: 44px; border-radius: 13px;
+    border: 1px solid rgba(27, 39, 51, 0.12); background: rgba(255, 255, 255, 0.4); color: var(--alt-ink);
+    align-items: center; justify-content: center; cursor: pointer; transition: border-color var(--alt-dur) var(--alt-ease);
+  }
+  .alt-hdr__burger:hover { border-color: var(--alt-gold); }
+  .alt-hdr__burger svg { position: absolute; width: 22px; height: 22px; transition: opacity var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease); }
+  .alt-hdr__burger-x { opacity: 0; transform: rotate(-90deg) scale(0.7); }
+  .alt-hdr[data-drawer-open] .alt-hdr__burger-o { opacity: 0; transform: rotate(90deg) scale(0.7); }
+  .alt-hdr[data-drawer-open] .alt-hdr__burger-x { opacity: 1; transform: none; }
+
+  /* Drawer móvil — vidrio */
+  .alt-hdr__drawer {
+    position: absolute; top: calc(100% + 8px); left: clamp(12px, 3vw, 24px); right: clamp(12px, 3vw, 24px);
+    background: rgba(255, 255, 255, 0.85);
+    -webkit-backdrop-filter: saturate(180%) blur(24px); backdrop-filter: saturate(180%) blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.7); border-radius: var(--alt-r-lg);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 34px 60px -28px rgba(6, 39, 67, 0.45);
+    max-height: calc(100vh - 120px); overflow: auto; padding: 10px clamp(14px, 4vw, 22px) 20px;
+    z-index: var(--alt-z-drawer); opacity: 0; visibility: hidden; transform: translateY(-8px);
+    transition: opacity var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease), visibility var(--alt-dur);
+  }
+  @supports not ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) { .alt-hdr__drawer { background: var(--alt-white); } }
+  .alt-hdr__drawer[data-open='true'] { opacity: 1; visibility: visible; transform: none; }
+  .alt-hdr__det { border-bottom: 1px solid var(--alt-hairline); }
+  .alt-hdr__det summary { display: flex; align-items: center; justify-content: space-between; padding: 13px 6px; font-size: 16px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); cursor: pointer; list-style: none; }
+  .alt-hdr__det summary::-webkit-details-marker { display: none; }
+  .alt-hdr__det summary svg { width: 18px; height: 18px; color: var(--alt-text-muted); transition: transform var(--alt-dur) var(--alt-ease); }
+  .alt-hdr__det[open] summary svg { transform: rotate(180deg); }
+  .alt-hdr__det-links { padding: 2px 6px 12px; display: flex; flex-wrap: wrap; gap: 6px 18px; }
+  /*
+   * 🔴 EL MENÚ DEL TELÉFONO NO CUMPLÍA EL MÍNIMO TÁCTIL QUE ESTE PROYECTO DECLARA (§267).
+   *
+   * Medido a 375 px con el cajón abierto: **35 de sus 39 enlaces medían 35 px de alto**, con 6 px
+   * entre filas — y `tokens.css` declara `--alt-tap-min: 44px` con su motivo escrito al lado
+   * («área táctil mínima, HIG 2.5.5»). O sea que la regla existía, estaba nombrada, y la navegación
+   * principal del dispositivo por el que llega la mayoría de los clientes no la cumplía.
+   *
+   * 35 px de alto con 6 px de separación es la receta del toque equivocado: se pulsa «Casas» y se
+   * abre «Apartamentos». Y el que se equivoca no piensa «fallé yo», piensa que la web está rota.
+   *
+   * El texto NO cambia de tamaño: crece la CAJA. `min-height` + centrado vertical dan los 44 px sin
+   * tocar la tipografía sellada, y el token se usa en vez de un literal — si el mínimo cambia algún
+   * día, cambia aquí solo. La rejilla es de dos columnas, así que el cajón crece por FILA, no por
+   * enlace.
+   */
+  .alt-hdr__det-links a {
+    color: var(--alt-text);
+    font-size: 14px;
+    text-decoration: none;
+    min-height: var(--alt-tap-min);
+    display: flex;
+    align-items: center;
+  }
+  .alt-hdr__det-flat { display: block; padding: 13px 6px; font-size: 16px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); text-decoration: none; border-bottom: 1px solid var(--alt-hairline); }
+  .alt-hdr__drawer-cta { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+  .alt-hdr__drawer-cta .alt-hdr__pub, .alt-hdr__drawer-cta .alt-hdr__login { padding: 14px; border-radius: var(--alt-r-sm); font-size: 14px; justify-content: center; }
+
+  @media (max-width: 1299px) {
+    /*
+     * 🔴 Este `display:none` era GLOBAL por clase, y el cajón usa las MISMAS clases (§264). Así que
+     * en cualquier teléfono o tablet desaparecían también las copias del cajón: **no quedaba ni un
+     * enlace a «Ingresar» en toda la cabecera**, en el dispositivo por el que llega la mayoría de
+     * los clientes de una inmobiliaria en Cartagena. Y no se veía venir: la regla `.alt-hdr__drawer-cta
+     * .alt-hdr__login` de arriba les da estilo propio — o sea que estaban PENSADOS para verse ahí.
+     * Se acota a la barra de escritorio, que es lo único que sobra en pantalla estrecha.
+     */
+    .alt-hdr__nav, .alt-hdr__actions > .alt-hdr__login, .alt-hdr__actions > .alt-hdr__pub { display: none; }
+    .alt-hdr__burger { display: inline-flex; }
+    .alt-hdr__bar-in { height: 66px; }
+    .alt-hdr__actions { margin-left: auto; }
+  }
+  @media (min-width: 1300px) { .alt-hdr__burger { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .alt-hdr, .alt-hdr__bar, .alt-hdr__mark, .alt-hdr__pub { transition: none; } }
+</style>
+
+<script>
+  const hdr = document.querySelector('.alt-hdr');
+  const drawer = document.getElementById('alt-drawer');
+  const toggle = hdr?.querySelector('[data-drawer-toggle]');
+
+  toggle?.addEventListener('click', () => {
+    const open = drawer?.getAttribute('data-open') === 'true';
+    drawer?.setAttribute('data-open', String(!open));
+    toggle.setAttribute('aria-expanded', String(!open));
+    toggle.setAttribute('aria-label', open ? 'Abrir menú' : 'Cerrar menú');
+    hdr?.toggleAttribute('data-drawer-open', !open);
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1300 && drawer?.getAttribute('data-open') === 'true') {
+      drawer.setAttribute('data-open', 'false');
+      toggle?.setAttribute('aria-expanded', 'false');
+      hdr?.removeAttribute('data-drawer-open');
+    }
+  });
+
+  // Wordmark: iguala el interletrado de "INMOBILIARIA" al ancho exacto de "ALTORRA".
+  function fitWordmark() {
+    document.querySelectorAll('.alt-hdr__word').forEach((w) => {
+      const name = w.querySelector('.alt-hdr__word-name') as HTMLElement | null;
+      const sub = w.querySelector('.alt-hdr__word-sub') as HTMLElement | null;
+      if (!name || !sub) return;
+      sub.style.letterSpacing = '0';
+      const target = name.getBoundingClientRect().width;
+      const base = sub.getBoundingClientRect().width;
+      const gaps = (sub.textContent || '').trim().length;
+      if (gaps > 0 && target > base) sub.style.letterSpacing = ((target - base) / gaps) + 'px';
+    });
+  }
+  if ('fonts' in document) (document as any).fonts.ready.then(fitWordmark);
+  fitWordmark();
+  window.addEventListener('resize', fitWordmark);
+
+  // Scroll: sombra al bajar + AUTO-OCULTAR al bajar / revelar al subir (suave, sin reflow).
+  //
+  // 🎯 Y PUBLICA SU ALTURA REAL en `--alt-hdr-h` (§274). Cualquier barra `sticky` de una página
+  // necesita saber cuánto header tiene encima, y hasta ahora no había forma de saberlo: el token
+  // `--alt-header-h: 116px` describe la home (barra de utilidades 50 + barra principal 66) y en el
+  // SERP se miden 67. Una barra que se fiara de ese token se colocaría 49 px demasiado abajo.
+  // Se MIDE en vez de declararse, y vale 0 cuando el header está oculto — así la barra de filtros
+  // sube a ras y baja cuando el header reaparece, en vez de quedarse debajo de él.
+  //
+  // ⚠️ Solo se escribe cuando el estado CAMBIA, no en cada evento de scroll: tocar una propiedad
+  // personalizada del `:root` invalida el estilo de todo el documento, y hacerlo a 60 fps en un
+  // listener de scroll es justo el reflujo que este manejador dice evitar.
+  let lastY = window.scrollY;
+  let ocultoPrev: boolean | null = null;
+  const publicarAltura = (): void => {
+    if (!hdr) return;
+    const oculto = hdr.classList.contains('is-hidden');
+    const alto = oculto ? 0 : Math.round(hdr.getBoundingClientRect().height);
+    document.documentElement.style.setProperty('--alt-hdr-h', `${alto}px`);
+  };
+  const onScroll = () => {
+    const y = window.scrollY;
+    hdr?.classList.toggle('is-scrolled', y > 8);
+    const drawerOpen = drawer?.getAttribute('data-open') === 'true';
+    if (!drawerOpen) {
+      if (y > 160 && y > lastY + 4) hdr?.classList.add('is-hidden');
+      else if (y < lastY - 4 || y < 120) hdr?.classList.remove('is-hidden');
+    }
+    const oculto = hdr?.classList.contains('is-hidden') ?? false;
+    if (oculto !== ocultoPrev) { ocultoPrev = oculto; publicarAltura(); }
+    lastY = y;
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', publicarAltura);
+  onScroll();
+  publicarAltura();
+</script>

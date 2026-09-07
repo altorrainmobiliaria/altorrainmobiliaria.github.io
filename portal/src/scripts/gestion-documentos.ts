@@ -1,0 +1,590 @@
+/*
+ * DOCUMENTOS — la bóveda del expediente en el panel (gate B5, §142; mockup `ALTORRA Documentos`).
+ *
+ * LO PRIMERO QUE SE VE NO SON ARCHIVOS, SON HUECOS. La pantalla arranca por lo que FALTA y lo que
+ * CADUCA, porque un cajón de PDFs no cambia nada: el dueño ya tiene ese cajón en WhatsApp. Lo que hoy
+ * no puede contestar sin abrir carpetas es «¿qué me falta?», y eso lo calcula `lib/domain/documentos`.
+ *
+ * ⚠️ NUNCA `getDownloadURL()`. Esa función emite una URL con un token dentro: **cualquiera con ese
+ * enlace abre el archivo**, sin sesión y sin que las Reglas puedan impedirlo. Para la cédula de un
+ * arrendatario eso es una fuga esperando a un reenvío de WhatsApp. Se usa `getBlob()`, que descarga
+ * CON la sesión y sí pasa por las Reglas — y la pantalla lo dice, porque si no alguien va a intentar
+ * «copiar el enlace» y no va a entender por qué no puede.
+ *
+ * ⚠️ Y la ESCRITURA no pasa por aquí: `documentos` nace con `allow write: if false` (§100). El archivo
+ * sí sube directo a Storage —pasar 10 MB por una Function sería gastar memoria por nada— pero a una
+ * ruta que **acuña el servidor**, y el registro lo cierra el servidor mirando el objeto real. Este
+ * módulo conduce la conversación; no decide nada.
+ */
+
+import { cargarAuth } from './auth';
+import { llamarCallable as llamar } from './callable';
+import {
+  faltantes,
+  NOMBRE_DOCUMENTO,
+  porVencer,
+  TIPOS_MIME,
+  TOPE_BYTES,
+  vigente,
+  type Caducidad,
+  type Documento,
+  type TipoDocumento,
+} from '../lib/domain/documentos';
+import type { Contrato, Expediente } from '../lib/domain/gestion';
+import {
+  accesosDe,
+  cuandoEs,
+  hayMas,
+  TOPE_BITACORA,
+  VERBO,
+  type Acceso,
+  type EntradaCruda,
+} from '../lib/domain/bitacora';
+
+/** Tope de las consultas. `limit()` es obligatorio en este proyecto: sin él es una cuota abierta. */
+const TOPE = 200;
+
+const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T | null;
+
+/** Lo último que se cargó. Lo comparten las dos vistas para no consultar dos veces. */
+const cargados: { documentos: Documento[]; expedientes: Expediente[]; contratos: Contrato[] } = {
+  documentos: [],
+  expedientes: [],
+  contratos: [],
+};
+
+async function cargarFirestore() {
+  const { app } = await cargarAuth();
+  const mod = await import('firebase/firestore');
+  return { db: mod.getFirestore(app), mod };
+}
+
+/* ─── Pintado ────────────────────────────────────────────────────────────────────────────────── */
+
+function celda(txt: string, clase = ''): HTMLElement {
+  const s = document.createElement('span');
+  if (clase) s.className = clase;
+  s.textContent = txt;
+  return s;
+}
+
+function mensaje(txt: string): HTMLElement {
+  const f = document.createElement('div');
+  f.className = 'gx-tr gx-tr--msg';
+  f.appendChild(celda(txt, 'gx-muted'));
+  return f;
+}
+
+/** «hace 8 meses», «vence en 12 días». Un número crudo obliga a hacer la cuenta mentalmente. */
+function enPalabras(dias: number): string {
+  if (dias < 0) {
+    const d = Math.abs(dias);
+    if (d === 1) return 'venció ayer';
+    if (d < 30) return `venció hace ${d} días`;
+    const m = Math.round(d / 30);
+    return `venció hace ${m} ${m === 1 ? 'mes' : 'meses'}`;
+  }
+  if (dias === 0) return 'vence hoy';
+  if (dias === 1) return 'vence mañana';
+  return `vence en ${dias} días`;
+}
+
+const kb = (bytes: number): string =>
+  bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`;
+
+/* ─── Consulta ───────────────────────────────────────────────────────────────────────────────── */
+
+async function traerTodo(): Promise<void> {
+  const { db, mod } = await cargarFirestore();
+  const [docs, exps, ctrs] = await Promise.all([
+    mod.getDocs(mod.query(mod.collection(db, 'documentos'), mod.orderBy('createdAt', 'desc'), mod.limit(TOPE))),
+    mod.getDocs(mod.query(mod.collection(db, 'expedientes'), mod.orderBy('createdAt', 'desc'), mod.limit(TOPE))),
+    mod.getDocs(mod.query(mod.collection(db, 'contratos'), mod.orderBy('createdAt', 'desc'), mod.limit(TOPE))),
+  ]);
+  cargados.documentos = docs.docs.map((d) => ({ id: d.id, ...d.data() }) as Documento);
+  cargados.expedientes = exps.docs.map((d) => ({ id: d.id, ...d.data() }) as Expediente);
+  cargados.contratos = ctrs.docs.map((d) => ({ id: d.id, ...d.data() }) as Contrato);
+}
+
+/** Qué le falta a cada expediente, según los contratos que tenga. */
+function huecos(): { expediente: Expediente; falta: TipoDocumento[] }[] {
+  const out: { expediente: Expediente; falta: TipoDocumento[] }[] = [];
+  for (const e of cargados.expedientes) {
+    const tipos = [...new Set(cargados.contratos.filter((c) => c.expedienteId === e.id).map((c) => c.tipo))];
+    // Un expediente SIN contratos todavía no exige nada: pedirle papeles a algo que aún no se
+    // formalizó sería inventar un hueco. Aparece cuando su primer contrato existe.
+    if (!tipos.length) continue;
+    const falta = faltantes(
+      cargados.documentos.filter((d) => d.expedienteId === e.id),
+      tipos,
+    );
+    if (falta.length) out.push({ expediente: e, falta });
+  }
+  return out;
+}
+
+/* ─── Vista: qué falta ───────────────────────────────────────────────────────────────────────── */
+
+export async function montarDocumentos(): Promise<void> {
+  const conjunto = $('gx-doc-lista');
+  if (!conjunto) return;
+  conjunto.replaceChildren(mensaje('Cargando…'));
+
+  try {
+    await traerTodo();
+  } catch (e) {
+    // FALLA RUIDOSO: una bóveda que se ve vacía porque la consulta falló haría creer que no falta nada.
+    conjunto.replaceChildren(
+      mensaje('No pudimos cargar los documentos. Si acabas de recibir permisos, cierra sesión y vuelve a entrar.'),
+    );
+    console.error('[gestion] documentos:', e);
+    return;
+  }
+
+  const pendientes = huecos();
+  const caducan = porVencer(cargados.documentos, new Date().toISOString());
+
+  const set = (id: string, v: string) => {
+    const el = $(id);
+    if (el) el.textContent = v;
+  };
+  set('gx-doc-kpi-faltan', String(pendientes.length));
+  set('gx-doc-kpi-vencen', String(caducan.length));
+  set('gx-doc-kpi-total', String(cargados.documentos.filter(vigente).length));
+
+  const filas: HTMLElement[] = [];
+
+  // Primero lo que CADUCA: una póliza vencida cuesta más que un papel que falta.
+  for (const c of caducan) filas.push(filaCaducidad(c));
+  for (const p of pendientes) filas.push(filaHueco(p.expediente, p.falta));
+
+  conjunto.replaceChildren(
+    ...(filas.length
+      ? filas
+      : [mensaje(cargados.expedientes.length
+          ? 'No falta nada y no hay documentos por vencer.'
+          : 'Todavía no hay expedientes. Cuando abras el primero, aquí aparecerá lo que le falta.')]),
+  );
+}
+
+function filaCaducidad(c: Caducidad): HTMLElement {
+  const f = document.createElement('div');
+  f.className = 'gx-tr gx-doc-fila--aviso';
+  const q = document.createElement('div');
+  q.className = 'gx-cli gx-cli--apilada';
+  q.appendChild(celda(c.documento.expedienteId, 'gx-cod'));
+  q.appendChild(celda(NOMBRE_DOCUMENTO[c.documento.tipo], 'gx-cli__name'));
+  f.appendChild(q);
+  f.appendChild(celda(enPalabras(c.dias), c.vencido ? 'gx-doc-vencido' : ''));
+  f.appendChild(celda(c.documento.vence?.slice(0, 10) ?? '—', 'gx-muted'));
+  f.appendChild(botonVer(c.documento.expedienteId));
+  return f;
+}
+
+function filaHueco(e: Expediente, falta: TipoDocumento[]): HTMLElement {
+  const f = document.createElement('div');
+  f.className = 'gx-tr';
+  const q = document.createElement('div');
+  q.className = 'gx-cli gx-cli--apilada';
+  q.appendChild(celda(e.codigoLegacy || e.id, 'gx-cod'));
+  q.appendChild(celda(`${falta.length} ${falta.length === 1 ? 'documento' : 'documentos'} por subir`, 'gx-cli__name'));
+  f.appendChild(q);
+  f.appendChild(celda(falta.map((t) => NOMBRE_DOCUMENTO[t]).join(' · ')));
+  f.appendChild(botonVer(e.id));
+  return f;
+}
+
+/** «Ver» es un BOTÓN, no una fila que reacciona al clic: se alcanza con el teclado y se anuncia solo. */
+function botonVer(expedienteId: string): HTMLElement {
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'gx-link gx-link--btn';
+  b.textContent = 'Ver';
+  b.addEventListener('click', () => abrirExpediente(expedienteId));
+  return b;
+}
+
+/* ─── Subir ──────────────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Sube en tres tiempos: el servidor reserva la ruta, el navegador escribe en ELLA, el servidor
+ * confirma mirando el objeto real. Lo que el navegador nunca decide es dónde escribe ni cuánto pesa.
+ */
+export async function subirDocumento(
+  archivo: File,
+  meta: { expedienteId: string; tipo: TipoDocumento; finalidad: string; vence?: string; avisarDias?: number },
+  avisar: (txt: string) => void,
+): Promise<boolean> {
+  if (!TIPOS_MIME.includes(archivo.type as (typeof TIPOS_MIME)[number])) {
+    avisar('Solo se admiten PDF, JPG, PNG o WebP: es lo que sale de un escáner o de un teléfono.');
+    return false;
+  }
+  if (archivo.size > TOPE_BYTES) {
+    avisar(`El archivo pasa de ${Math.round(TOPE_BYTES / 1024 / 1024)} MB. Si es un escaneo, bájale la resolución.`);
+    return false;
+  }
+
+  avisar('Reservando el sitio…');
+  const preparado = await llamar('prepararDocumento', {
+    ...meta,
+    nombreArchivo: archivo.name,
+    contentType: archivo.type,
+    bytes: archivo.size,
+  });
+  if (!preparado.ok) {
+    avisar(preparado.mensaje);
+    return false;
+  }
+  const id = String(preparado.result.id ?? '');
+  const clave = String(preparado.result.claveStorage ?? '');
+  if (!id || !clave) {
+    avisar('El servidor no devolvió dónde guardar. Inténtalo de nuevo.');
+    return false;
+  }
+
+  avisar(`Subiendo ${kb(archivo.size)}…`);
+  try {
+    const { app } = await cargarAuth();
+    const st = await import('firebase/storage');
+    await st.uploadBytes(st.ref(st.getStorage(app), clave), archivo, { contentType: archivo.type });
+  } catch (e) {
+    // El registro queda en `subiendo` y se ve como tal: un hueco visible es mejor que uno silencioso.
+    avisar('No se pudo subir el archivo. El registro quedó a medias; vuelve a intentarlo.');
+    console.error('[documentos] subida:', e);
+    return false;
+  }
+
+  avisar('Comprobando…');
+  const confirmado = await llamar('confirmarDocumento', { id });
+  if (!confirmado.ok) {
+    avisar(confirmado.mensaje);
+    return false;
+  }
+  avisar(`Guardado como ${id}.`);
+  return true;
+}
+
+/* ─── Abrir ──────────────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Descarga CON la sesión y entrega el archivo al navegador.
+ *
+ * ⚠️ `getBlob`, NO `getDownloadURL`. La segunda emite una URL con token que abre cualquiera que la
+ * tenga, sin sesión y saltándose las Reglas. La primera pasa por las Reglas y no deja nada que
+ * reenviar. El `objectURL` que se crea aquí vive en esta pestaña y muere con ella — se revoca a
+ * propósito: si no, el blob se queda en memoria hasta recargar.
+ */
+export async function abrirDocumento(doc: Documento, avisar: (txt: string) => void): Promise<void> {
+  avisar('Abriendo…');
+  try {
+    const { app } = await cargarAuth();
+    const st = await import('firebase/storage');
+    const blob = await st.getBlob(st.ref(st.getStorage(app), doc.claveStorage));
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = doc.nombreArchivo || `${doc.id}`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    avisar('');
+
+    /*
+     * Queda ESCRITO quién lo abrió. Una bóveda sin bitácora de accesos es un archivador con la llave
+     * puesta: el día que alguien pregunte quién vio la cédula de un inquilino, o hay respuesta o no la
+     * hay. La escribe el SERVIDOR con el uid del token verificado (§130); desde aquí solo se avisa.
+     *
+     * No se espera (`void`) y va DESPUÉS de entregar el archivo, a propósito: una bitácora no debe
+     * poder retrasar —ni mucho menos impedir— que alguien abra un documento suyo.
+     */
+    void llamar('registrarEvento', {
+      accion: 'documento-abierto',
+      origen: 'portal-gestion',
+      objetivo: doc.id,
+      detalle: `${doc.tipo} · expediente ${doc.expedienteId}`,
+    });
+  } catch (e) {
+    avisar('No se pudo abrir. Si acabas de recibir permisos, cierra sesión y vuelve a entrar.');
+    console.error('[documentos] abrir:', e);
+  }
+}
+
+/** Retirar ≠ eliminar: deja de estar a la vista y queda constancia de quién y por qué. */
+export async function retirarDocumento(id: string, motivo: string, avisar: (txt: string) => void): Promise<boolean> {
+  const r = await llamar('retirarDocumento', { id, motivo });
+  if (r.ok) {
+    void llamar('registrarEvento', { accion: 'documento-retirado', origen: 'portal-gestion', objetivo: id, detalle: motivo });
+  }
+  avisar(r.ok ? 'Retirado.' : r.mensaje);
+  return r.ok;
+}
+
+/* ─── El expediente por dentro (mockup 2a) ───────────────────────────────────────────────────── */
+
+/**
+ * Abre un expediente y enseña lo que falta y lo que hay, en ese orden y con el mismo peso visual.
+ *
+ * Que un hueco se vea igual de importante que un archivo no es un capricho de diseño: si el que falta
+ * se pintara más flojo, se leería como opcional — y son precisamente los obligatorios.
+ */
+export function abrirExpediente(expedienteId: string): void {
+  const panel = $('gx-doc-detalle');
+  const lista = $('gx-doc-det-lista');
+  if (!panel || !lista) return;
+
+  const exp = cargados.expedientes.find((e) => e.id === expedienteId);
+  const tipos = [...new Set(cargados.contratos.filter((c) => c.expedienteId === expedienteId).map((c) => c.tipo))];
+  const suyos = cargados.documentos.filter((d) => d.expedienteId === expedienteId && vigente(d));
+  const falta = faltantes(suyos, tipos);
+
+  const titulo = $('gx-doc-det-titulo');
+  if (titulo) titulo.textContent = `${exp?.codigoLegacy || expedienteId} · Documentos`;
+  const resumen = $('gx-doc-det-resumen');
+  if (resumen) {
+    resumen.textContent = tipos.length
+      ? `Faltan ${falta.length} de ${falta.length + suyos.length}. La lista sale de sus contratos: ${tipos.join(' y ')}.`
+      : 'Todavía no tiene contratos, así que no se le exige ningún documento.';
+  }
+
+  // Cada documento aporta DOS nodos: su fila y el panel de bitácora, que nace plegado. Se devuelven
+  // juntos y planos porque la fila es una rejilla de tres columnas: meter el panel DENTRO la rompería.
+  const filas: HTMLElement[] = [...falta.map(filaFalta), ...suyos.flatMap(filaGuardado)];
+  lista.replaceChildren(...(filas.length ? filas : [mensaje('Sin documentos y sin nada pendiente.')]));
+  panel.removeAttribute('hidden');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function filaFalta(tipo: TipoDocumento): HTMLElement {
+  const f = document.createElement('div');
+  f.className = 'gx-tr gx-doc-falta';
+  f.appendChild(celda(NOMBRE_DOCUMENTO[tipo], 'gx-cod'));
+  f.appendChild(celda('falta — obligatorio', 'gx-muted'));
+  f.appendChild(celda(''));
+  return f;
+}
+
+function filaGuardado(d: Documento): HTMLElement[] {
+  const f = document.createElement('div');
+  f.className = 'gx-tr';
+  const q = document.createElement('div');
+  q.className = 'gx-cli gx-cli--apilada';
+  q.appendChild(celda(NOMBRE_DOCUMENTO[d.tipo], 'gx-cod'));
+  q.appendChild(celda(d.nombreArchivo, 'gx-cli__name'));
+  f.appendChild(q);
+  f.appendChild(celda(`${kb(d.bytes)}${d.vence ? ` · vence ${d.vence.slice(0, 10)}` : ' · sin caducidad'}`, 'gx-muted'));
+
+  const acc = document.createElement('span');
+  acc.className = 'gx-doc-acc';
+  const msg = $('gx-doc-det-msg');
+  const avisar = (t: string) => {
+    if (msg) msg.textContent = t;
+  };
+
+  const abrir = document.createElement('button');
+  abrir.type = 'button';
+  abrir.className = 'gx-link gx-link--btn';
+  abrir.textContent = 'Abrir';
+  abrir.addEventListener('click', () => void abrirDocumento(d, avisar));
+
+  const quitar = document.createElement('button');
+  quitar.type = 'button';
+  quitar.className = 'gx-link gx-link--btn gx-muted';
+  quitar.textContent = 'Retirar';
+  quitar.addEventListener('click', async () => {
+    // Se pide el MOTIVO, no una confirmación de «¿seguro?». Un «sí» no dice nada en seis meses;
+    // «lo reemplazó el contrato firmado del 3 de marzo» sí.
+    const motivo = window.prompt(`¿Por qué retiras «${NOMBRE_DOCUMENTO[d.tipo]}»? Queda escrito.`);
+    if (!motivo) return;
+    if (await retirarDocumento(d.id, motivo, avisar)) {
+      await montarDocumentos();
+      abrirExpediente(d.expedienteId);
+    }
+  });
+
+  /*
+   * «Quién lo abrió» — la mitad que faltaba de la bóveda (§148, artboard 4a). Escribir la bitácora
+   * y no poder leerla es exactamente igual de útil que no escribirla: el día que alguien pregunte
+   * quién vio la cédula de un inquilino, o hay respuesta o no la hay.
+   */
+  const panel = panelBitacora(d);
+  const historial = document.createElement('button');
+  historial.type = 'button';
+  historial.className = 'gx-link gx-link--btn';
+  historial.textContent = 'Quién lo abrió';
+  historial.setAttribute('aria-expanded', 'false');
+  historial.addEventListener('click', () => void alternarBitacora(d, panel, historial));
+
+  acc.appendChild(abrir);
+  acc.appendChild(historial);
+  acc.appendChild(quitar);
+  f.appendChild(acc);
+  return [f, panel];
+}
+
+/* ─── La bitácora de un documento (mockup 4a) ────────────────────────────────────────────────── */
+
+/** El panel plegado. Nace vacío: la consulta solo se hace si alguien lo abre. */
+function panelBitacora(d: Documento): HTMLElement {
+  const p = document.createElement('div');
+  p.className = 'gx-doc-bit';
+  p.id = `gx-doc-bit-${d.id}`;
+  p.hidden = true;
+  return p;
+}
+
+async function alternarBitacora(d: Documento, panel: HTMLElement, boton: HTMLButtonElement): Promise<void> {
+  if (!panel.hidden) {
+    panel.hidden = true;
+    boton.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  panel.hidden = false;
+  boton.setAttribute('aria-expanded', 'true');
+  panel.replaceChildren(avisoSinEnlace(), mensaje('Cargando la bitácora…'));
+
+  /*
+   * EL AVISO VA PRIMERO Y SIEMPRE, aunque la bitácora falle o esté vacía: explica por qué no existe
+   * un «copiar enlace», y esa es la parte que le ahorra a alguien intentar reenviar el documento.
+   */
+  const aviso = avisoSinEnlace();
+
+  // La bitácora la reservan las Reglas al super_admin: guarda IP y patrón de acceso de OTRAS personas
+  // del equipo (§130). No se intenta la consulta que se sabe denegada — se explica.
+  if (document.body.dataset.rol !== 'super_admin') {
+    panel.replaceChildren(
+      aviso,
+      mensaje('La bitácora de accesos solo la ve el administrador: guarda datos de acceso de otras personas del equipo.'),
+    );
+    return;
+  }
+
+  try {
+    const { accesos, cortada } = await traerBitacora(d.id);
+    const filas: HTMLElement[] = [aviso, tituloBitacora()];
+    if (accesos.length === 0) {
+      filas.push(mensaje('Todavía no lo ha abierto nadie.'));
+    } else {
+      for (const a of accesos) filas.push(filaAcceso(a));
+      if (cortada) filas.push(mensaje(`Se muestran los ${TOPE_BITACORA} accesos más recientes.`));
+    }
+    panel.replaceChildren(...filas);
+  } catch (e) {
+    // FALLA RUIDOSO: una bitácora que se ve vacía porque la consulta falló diría que nadie lo abrió.
+    panel.replaceChildren(aviso, mensaje('No pudimos cargar la bitácora de este documento.'));
+    console.error('[documentos] bitácora:', e);
+  }
+}
+
+async function traerBitacora(documentoId: string): Promise<{ accesos: Acceso[]; cortada: boolean }> {
+  const { db, mod } = await cargarFirestore();
+  const q = mod.query(
+    mod.collection(db, 'auditLog'),
+    mod.where('objetivo', '==', documentoId),
+    mod.orderBy('creadoEn', 'desc'),
+    mod.limit(TOPE_BITACORA),
+  );
+  const snap = await mod.getDocs(q);
+  const crudas = snap.docs.map((doc) => doc.data() as EntradaCruda);
+  return { accesos: accesosDe(documentoId, crudas), cortada: hayMas(crudas.length) };
+}
+
+function avisoSinEnlace(): HTMLElement {
+  const a = document.createElement('p');
+  a.className = 'gx-doc-bit__aviso';
+  const fuerte = document.createElement('strong');
+  fuerte.textContent = 'No hay enlace que se pueda copiar, y es a propósito.';
+  a.appendChild(fuerte);
+  a.appendChild(
+    document.createTextNode(
+      ' El archivo se descarga con tu sesión, y sin sesión no se abre. Un enlace con el documento dentro viaja por WhatsApp y ya no se puede recoger.',
+    ),
+  );
+  return a;
+}
+
+function tituloBitacora(): HTMLElement {
+  const t = document.createElement('p');
+  t.className = 'gx-doc-bit__k';
+  t.textContent = 'Quién lo ha abierto';
+  return t;
+}
+
+function filaAcceso(a: Acceso): HTMLElement {
+  const f = document.createElement('div');
+  f.className = 'gx-doc-bit__fila';
+  f.appendChild(celda(`${VERBO[a.accion]} · ${a.quien}`, 'gx-cod'));
+  f.appendChild(celda(cuandoEs(a.cuando), 'gx-muted'));
+  // El motivo del retiro es lo único que explica un hueco seis meses después. Si lo hay, se enseña.
+  f.appendChild(celda(a.detalle ?? '', 'gx-muted'));
+  return f;
+}
+
+/* ─── El formulario ──────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Cablea el formulario de subida.
+ *
+ * La casilla de autorización NO es decorativa: es el consentimiento del art. 9 de la Ley 1581 sobre
+ * datos de un TERCERO (la cédula del arrendatario no es nuestra). Sin ella no se sube, y se dice por
+ * qué — un formulario que bloquea sin explicar se lee como un error del sistema.
+ */
+export function montarFormularioDocumento(): void {
+  // Cerrar el detalle. Sin esto el panel se quedaría abierto sobre el expediente de antes al volver
+  // a la lista — y un panel que muestra datos de otro es peor que uno vacío.
+  $('gx-doc-det-cerrar')?.addEventListener('click', () => $('gx-doc-detalle')?.setAttribute('hidden', ''));
+
+  const form = $<HTMLFormElement>('gx-doc-form');
+  if (!form) return;
+  const msg = $('gx-doc-msg');
+  const avisar = (t: string) => {
+    if (msg) msg.textContent = t;
+  };
+  const val = (id: string) => ($(id) as HTMLInputElement | null)?.value.trim() ?? '';
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const archivo = ($('d-archivo') as HTMLInputElement | null)?.files?.[0];
+    if (!archivo) {
+      avisar('Elige el archivo que quieres guardar.');
+      return;
+    }
+    if (!($('d-autorizacion') as HTMLInputElement | null)?.checked) {
+      avisar('Marca la autorización: son datos de otra persona, y la ley pide decir que se cuenta con su permiso.');
+      return;
+    }
+
+    const boton = $<HTMLButtonElement>('gx-doc-guardar');
+    if (boton) {
+      boton.disabled = true;
+      boton.textContent = 'Guardando…';
+    }
+    try {
+      const ok = await subirDocumento(
+        archivo,
+        {
+          expedienteId: val('d-expediente'),
+          tipo: (($('d-tipo') as HTMLSelectElement | null)?.value ?? 'otro') as TipoDocumento,
+          finalidad: val('d-finalidad'),
+          ...(val('d-vence') ? { vence: val('d-vence') } : {}),
+        },
+        avisar,
+      );
+      if (ok) {
+        form.reset();
+        // Se recarga la lista: si el documento cerró un hueco, ese hueco debe desaparecer AHORA.
+        // Dejar la pantalla vieja después de escribir es lo que hace dudar de si se guardó.
+        await montarDocumentos();
+      }
+    } finally {
+      if (boton) {
+        boton.disabled = false;
+        boton.textContent = 'Guardar en la bóveda';
+      }
+    }
+  });
+}
+
+/** Para las pruebas y para la vista por expediente: lo último cargado, sin volver a consultar. */
+export const documentosDe = (expedienteId: string): Documento[] =>
+  cargados.documentos.filter((d) => d.expedienteId === expedienteId && vigente(d));

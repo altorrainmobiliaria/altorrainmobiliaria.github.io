@@ -1,0 +1,147 @@
+---
+/*
+ * LuCard — card de ANCHO FIJO para los rieles horizontales (`.alt-rail`).
+ * Réplica del `.lu-card` del mockup (ALTORRA Portal.dc.html L470-553, CSS L144-149),
+ * compartida por 4 secciones de la home: venta · estancias-list · valoradas · proyectos (ADR §32.9).
+ *
+ * ⚠️ NO confundir con PropertyCard: aquella es la card FLUIDA de las grillas (#destacadas).
+ * Esta es de ancho fijo, contenido CENTRADO, y trae 3 cosas que aquella no tiene:
+ * swatches de tipología, contador de tipologías y 2ª línea de precio (crédito/entrega).
+ *
+ * DISCIPLINA DE COLOR (§3.2): los swatches del mockup traían hex ajenos (#8a6d1f, #c7d3dd);
+ * aquí se mapean a tokens de la paleta oficial. Los gradientes de placeholder tras la foto
+ * (cálidos/verdosos/lilas en el mockup) se OMITEN: con WebP real nunca se ven.
+ */
+interface Props {
+  img: string;
+  alt: string;
+  imgPos?: string;         // object-position, p.ej. 'center 60%'
+  badge?: string;          // "En venta" | "Sobre planos" | "Corta estancia"…
+  zona: string;
+  title: string;
+  tagline?: string;        // "Vista abierta a la bahía."
+  swatches?: Array<'navy' | 'gold' | 'gold-bright' | 'silver'>;
+  tipologias?: string;     // "3 tipologías" | "única"
+  specs?: string[];        // ["3 hab.", "3 baños", "142 m²"]
+  price: string;           // "Desde $1.450M"
+  note?: string;           // "o crédito desde $6.2M/mes" | "entrega dic. 2026"
+  href: string;
+}
+const { img, alt, imgPos, badge, zona, title, tagline, swatches = [], tipologias, specs = [], price, note, href } = Astro.props;
+---
+
+<article class="alt-lucard">
+  <div class="alt-lucard__media">
+    <a href={href} aria-label={`Ver ${title}`}>
+      <img class="alt-lucard__img" src={img} alt={alt} loading="lazy" decoding="async" style={imgPos ? `object-position:${imgPos}` : undefined} />
+    </a>
+    {badge && <span class="alt-lucard__badge">{badge}</span>}
+    <button class="alt-lucard__fav" type="button" aria-label={`Guardar ${title} en favoritos`} aria-pressed="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"/></svg>
+    </button>
+  </div>
+
+  <div class="alt-lucard__body">
+    <p class="alt-lucard__zona">{zona}</p>
+    <h3 class="alt-lucard__title"><a href={href}>{title}</a></h3>
+    {tagline && <p class="alt-lucard__tag">{tagline}</p>}
+
+    {(swatches.length > 0 || tipologias) && (
+      <div class="alt-lucard__sw-row">
+        {swatches.map((s) => <span class={`alt-lucard__sw alt-lucard__sw--${s}`} aria-hidden="true"></span>)}
+        {tipologias && <span class="alt-lucard__tipo">{tipologias}</span>}
+      </div>
+    )}
+
+    {specs.length > 0 && (
+      <div class="alt-lucard__specs">
+        {specs.map((s, i) => (
+          <>
+            {i > 0 && <span class="alt-lucard__dot" aria-hidden="true"></span>}
+            <span>{s}</span>
+          </>
+        ))}
+      </div>
+    )}
+
+    <p class="alt-lucard__price">{price}</p>
+    {note && <p class="alt-lucard__note">{note}</p>}
+  </div>
+</article>
+
+<style>
+  .alt-lucard {
+    /* Ancho FIJO: es un riel, no una grilla que reflowea (mockup CSS L144) */
+    width: clamp(276px, 25vw, 330px);
+    border-radius: 22px;
+    overflow: hidden;
+    background: var(--alt-white);
+    box-shadow: var(--alt-elev-card);
+    transition: transform var(--alt-dur-slow) var(--alt-ease-card), box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+  }
+  .alt-lucard:hover { transform: translateY(-6px); box-shadow: var(--alt-elev-card-hover); }
+
+  .alt-lucard__media { position: relative; height: 222px; overflow: hidden; }
+  .alt-lucard__media a { display: block; height: 100%; }
+  .alt-lucard__img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-img, 1s) var(--alt-ease); }
+  .alt-lucard:hover .alt-lucard__img { transform: scale(1.06); }
+
+  .alt-lucard__badge {
+    position: absolute; top: 13px; left: 13px;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255, 255, 255, 0.94); padding: 6px 12px; border-radius: var(--alt-r-pill);
+    font-size: 9.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.14em; text-transform: uppercase; color: var(--alt-ink);
+  }
+  .alt-lucard__badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--alt-gold); }
+
+  .alt-lucard__fav {
+    position: absolute; top: 12px; right: 12px;
+    width: 33px; height: 33px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9); border: 1px solid var(--alt-gold); color: var(--alt-link);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    transition: background var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease);
+  }
+  .alt-lucard__fav svg { width: 16px; height: 16px; }
+  .alt-lucard__fav[aria-pressed='true'] { background: var(--alt-ink); color: var(--alt-gold-bright); }
+  .alt-lucard__fav[aria-pressed='true'] svg { fill: currentColor; }
+
+  /* Cuerpo CENTRADO — lo que distingue esta card de la genérica */
+  .alt-lucard__body { padding: 22px 22px 24px; text-align: center; }
+  .alt-lucard__zona {
+    font-size: 10.5px; font-weight: var(--alt-fw-bold); letter-spacing: var(--alt-tracking-eyebrow);
+    text-transform: uppercase; color: var(--alt-link); margin: 0 0 6px;
+  }
+  .alt-lucard__title {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: 25px; line-height: 1.05; color: var(--alt-ink); margin: 0 0 4px; letter-spacing: normal;
+  }
+  .alt-lucard__title a { color: inherit; text-decoration: none; }
+  .alt-lucard__title a:hover { color: var(--alt-link); }
+  /* a11y: el mockup usa #6b7c93 a 13px → reprueba AA. Token AA; la jerarquía la dan tamaño y peso. */
+  .alt-lucard__tag { font-size: 13px; line-height: 1.4; color: var(--alt-text); margin: 0 0 13px; }
+
+  .alt-lucard__sw-row { display: flex; justify-content: center; align-items: center; gap: 7px; margin-bottom: 15px; }
+  .alt-lucard__sw { width: 15px; height: 15px; border-radius: 50%; border: 1.5px solid var(--alt-hairline-2); transition: transform var(--alt-dur-fast) var(--alt-ease); }
+  .alt-lucard__sw:hover { transform: scale(1.22); }
+  /* Swatches SOLO en paleta oficial (el mockup traía #8a6d1f / #c7d3dd ajenos) */
+  .alt-lucard__sw--navy { background: var(--alt-navy); }
+  .alt-lucard__sw--gold { background: var(--alt-gold-raw); }
+  .alt-lucard__sw--gold-bright { background: var(--alt-gold-bright); }
+  .alt-lucard__sw--silver { background: var(--alt-gris-azulado); }
+  .alt-lucard__tipo { font-size: 11px; font-weight: var(--alt-fw-semibold); color: var(--alt-text); margin-left: 2px; }
+
+  .alt-lucard__specs {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    font-size: 12px; font-weight: var(--alt-fw-medium); color: var(--alt-text); margin-bottom: 16px; flex-wrap: wrap;
+  }
+  .alt-lucard__dot { width: 3px; height: 3px; border-radius: 50%; background: var(--alt-cloud); flex: none; }
+
+  .alt-lucard__price { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 22px; color: var(--alt-ink); margin: 0; }
+  .alt-lucard__note { font-size: 11.5px; color: var(--alt-text); margin: 3px 0 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .alt-lucard, .alt-lucard__img, .alt-lucard__sw { transition: none; }
+    .alt-lucard:hover { transform: none; }
+    .alt-lucard:hover .alt-lucard__img { transform: none; }
+  }
+</style>

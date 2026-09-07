@@ -1,0 +1,34 @@
+---
+/*
+ * Política de Tratamiento de Datos Personales — el documento V2 del kit fundacional, PUBLICADO.
+ *
+ * Hasta el 2026-08-20 esta ruta daba 404 mientras `/publicar` ya capturaba nombre y teléfono
+ * reales: incumplimiento del gate de `42-LEGAL` §6 (Ley 1581/2012 arts. 9 y 12). El texto NO se
+ * redactó aquí — se publica el del kit (`07-POLITICA-TRATAMIENTO-DATOS`, V2 · 2026-07-28), que
+ * ya está auditado; la copia vive en `src/content/legal/` para que se versione con el portal.
+ *
+ * ⚠️ La dirección física sigue pendiente (TODO-21, la entrega Daniel). El domicilio y los canales de
+ * notificación SÍ son reales, y la **matrícula de arrendador YA NO es un hueco**: es la 6636
+ * (Resolución del 23-jul-2026) y está en la tabla del §1 desde que la alcaldía la expidió — este
+ * comentario decía lo contrario y era él, no el documento, quien estaba desactualizado.
+ *
+ * 🔴 El markdown del kit NO lleva su propio `# TÍTULO`: lo pone `LegalLayout` con `title`. Lo llevaba,
+ * y la página imprimía el mismo encabezado dos veces seguidas (§160). Si algún día se vuelve a copiar
+ * un documento del kit tal cual, esa primera línea se quita.
+ */
+export const prerender = true;
+
+import LegalLayout from '../../layouts/LegalLayout.astro';
+import { LEGAL } from '../../lib/config/legal';
+import { Content } from '../../content/legal/politica-tratamiento-datos.md';
+---
+
+<LegalLayout
+  title={LEGAL.politicaDatos.titulo}
+  tituloSeo="Política de Tratamiento de Datos | ALTORRA"
+  description="Política de Tratamiento de Datos Personales de ALTORRA COMPANY S.A.S. — finalidades, derechos del titular y canales de atención (Ley 1581 de 2012)."
+  version={LEGAL.politicaDatos.version}
+  vigencia={LEGAL.politicaDatos.vigencia}
+>
+  <Content />
+</LegalLayout>

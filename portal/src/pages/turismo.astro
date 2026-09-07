@@ -1,0 +1,262 @@
+---
+/*
+ * TURISMO — landing de turismo + inversión turística (Ola 1). Réplica de ALTORRA Turismo.dc.html.
+ * Hero + zonas + experiencias + sección de inversión (navy) + CTA de contacto. Reutiliza Header/Footer.
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE } from '../lib/config/site';
+
+// ZONAS — las 6 del mockup, con sus textos EXACTOS (antes eran 4, con "Centro Histórico"
+// renombrada y "Manga" INVENTADA; faltaban Castillogrande, Rooftop & Piscina y Zona Campestre).
+const zonas = [
+  { img: '/assets/villa-pool.webp', k: 'Frente al mar', t: 'Bocagrande', d: 'Torres, playa y atardeceres. La Cartagena moderna con el Caribe a los pies.' },
+  { img: '/assets/estate-golden.webp', k: 'Historia viva', t: 'Ciudad Amurallada', d: 'Balcones coloniales, plazas y cinco siglos de historia a la vuelta de cada esquina.' },
+  { img: '/assets/chalet-dusk.webp', k: 'Bohemio & vibrante', t: 'Getsemaní', d: 'Arte urbano, música y la vida local más auténtica de la ciudad.' },
+  { img: '/assets/villa-modern.webp', k: 'Tranquilo & exclusivo', t: 'Castillogrande', d: 'Residencial y sereno, entre la bahía y el mar. Ideal para estancias largas.' },
+  { img: '/assets/hero-estancia.webp', k: 'Vistas & piscina', t: 'Rooftop & Piscina', d: 'Terrazas en las alturas para ver caer el sol sobre las murallas.' },
+  { img: '/assets/hero-invierte.webp', k: 'Naturaleza & calma', t: 'Zona Campestre', d: 'Fincas y casas de descanso a minutos de la ciudad, entre verde y brisa.' },
+];
+// SERVICIOS — los 4 del mockup, textos e íconos EXACTOS y en su orden (antes: "Guías locales"
+// renombrado y "Transporte privado" INVENTADO en lugar de "Concierge 24/7").
+const servicios = [
+  { i: '<path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/>', t: 'Guías turísticos certificados', d: 'Recorridos privados por la historia viva de Cartagena, con guías bilingües y anfitriones que la conocen de verdad.' },
+  { i: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.4"/>', t: 'Fotografía profesional', d: 'Sesiones para tu estadía, tu evento o tu propiedad. Capturamos Cartagena a tu medida, lista para presumir.' },
+  { i: '<path d="M3 18c3-1.5 4-3 4-6a5 5 0 0 1 10 0c0 3 1 4.5 4 6z"/><path d="M3 18h18"/><path d="M10 21h4"/>', t: 'Pasadías & actividades', d: 'Islas del Rosario, Barú, city tours, gastronomía y deportes náuticos. Diseñamos tu día perfecto de principio a fin.' },
+  { i: '<path d="M12 2a3 3 0 0 1 3 3v1a6 6 0 0 1 6 6v3l1.5 3h-21L3 15v-3a6 6 0 0 1 6-6V5a3 3 0 0 1 3-3z"/><path d="M9 21a3 3 0 0 0 6 0"/>', t: 'Concierge 24/7', d: 'Transporte, reservas, chef privado y todo lo que tu visita necesite, resuelto con una sola llamada.' },
+];
+
+// PASADÍAS — chips de la sección que faltaba (mockup L156-163).
+const pasadias = ['Islas del Rosario', 'Playa Barú', 'City tour histórico', 'Rumba en chiva', 'Gastronomía local', 'Atardeceres en velero'];
+// INVERSIÓN — las 3 del mockup (L180-194), textos e íconos EXACTOS. Antes: "Compra con propósito"
+// y "Operación llave en mano" habían DESAPARECIDO, sustituidas por "Gestión de la propiedad" y
+// "Marketing internacional" (inventada); la superviviente tenía la descripción reescrita (§32.24).
+const inversionPerks = [
+  { i: '<path d="M4 19V5"/><path d="m4 15 5-5 4 4 7-8"/>', t: 'Análisis de rentabilidad', d: 'Proyectamos ocupación, tarifa e ingresos antes de que inviertas. Decisiones con números, no con corazonadas.' },
+  { i: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/><path d="M11 8v6M8 11h6"/>', t: 'Compra con propósito', d: 'Seleccionamos inmuebles con vocación turística real: ubicación, demanda y potencial de valorización.' },
+  { i: '<path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-6h6v6"/>', t: 'Operación llave en mano', d: 'Administramos tu alojamiento y sus ingresos: reservas, huéspedes, mantenimiento y reportes mensuales.' },
+];
+---
+
+<BaseLayout
+  title="Turismo & Inversión en Cartagena — ALTORRA"
+  description="Estadías con alma y asesoría de inversión turística en Cartagena de Indias. Te ayudamos a elegir el barrio que hará de tu visita la experiencia correcta."
+  miga={[{ nombre: 'Turismo', ruta: '/turismo' }]}
+>
+  <Header active="turismo" />
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="tur-hero">
+      <span class="tur-hero__bg" style="background-image:url('/assets/villa-modern.webp')"></span>
+      <span class="tur-hero__wash"></span>
+      <div class="alt-container tur-hero__in">
+        <p class="alt-eyebrow">Turismo Inmobiliario</p>
+        <h1 class="tur-hero__h">Vive Cartagena como quien la habita.</h1>
+        <p class="tur-hero__p">Estadías con alma, experiencias curadas y una ciudad que se descubre mejor de la mano de quien la conoce. Unimos hospitalidad y bienes raíces para que tu visita —o tu inversión— sea inolvidable.</p>
+        <div class="tur-hero__cta">
+          <a class="alt-btn alt-btn--gold" href="/estancias">Explorar estadías<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+          <a class="alt-btn alt-btn--outline" href="#inversion">Asesoría de inversión</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Zonas -->
+    <section class="alt-section alt-section--alt">
+      <div class="alt-container">
+        <div class="tur-head">
+          <p class="alt-eyebrow">Dónde alojarte</p>
+          <h2>Zonas para tu estadía</h2>
+          <p class="tur-head__p">Cada rincón de Cartagena tiene un carácter propio. Te ayudamos a elegir el barrio que hará de tu visita la experiencia correcta.</p>
+        </div>
+        <div class="tur-zonas">
+          {zonas.map((z) => (
+            <a class="tur-zona" href="/estancias">
+              <span class="tur-zona__ph"><img src={z.img} alt={z.t} loading="lazy" decoding="async" /></span>
+              <span class="tur-zona__body">
+                <span class="tur-zona__k">{z.k}</span>
+                <span class="tur-zona__t">{z.t}</span>
+                <span class="tur-zona__d">{z.d}</span>
+                <span class="tur-zona__more">Ver estadías →</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- A tu servicio (el eyebrow decía "Experiencias": el mockup dice "A tu servicio") -->
+    <section class="alt-container alt-section">
+      <div class="tur-head">
+        <p class="alt-eyebrow">A tu servicio</p>
+        <h2>Todo para una experiencia impecable</h2>
+        <p class="tur-head__p">De la primera foto al último atardecer, coordinamos cada detalle para que solo te ocupes de disfrutar.</p>
+      </div>
+      <div class="tur-servicios">
+        {servicios.map((s) => (
+          <div class="tur-serv">
+            <span class="alt-chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={s.i}></svg></span>
+            <h3>{s.t}</h3>
+            <p>{s.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- PASADÍAS & RECREACIÓN — card partida foto+texto (réplica fiel del mockup, L146-168).
+         Era la sección AUSENTE de Turismo (§32.2). -->
+    <section class="alt-container tur-pasa">
+      <div class="tur-pasa__card">
+        <div class="tur-pasa__media">
+          <img src="/assets/hero-estancia.webp" alt="Islas del Rosario y Barú, cerca de Cartagena" loading="lazy" decoding="async" />
+        </div>
+        <div class="tur-pasa__text">
+          <p class="alt-eyebrow tur-pasa__eyebrow">Pasadías &amp; recreación</p>
+          <h2 class="tur-pasa__h">Cartagena, más allá de la ciudad</h2>
+          <p class="tur-pasa__p">El Caribe empieza donde termina la muralla. Islas de agua turquesa, playas de arena blanca y planes para cada tipo de viajero.</p>
+          <div class="tur-pasa__chips">
+            {pasadias.map((c) => <span class="tur-pasa__chip">{c}</span>)}
+          </div>
+          <a class="tur-pasa__cta" href="#contacto-turismo">Diseña tu pasadía
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Inversión (navy) — copy + GRID de 3 cards de vidrio + CTA (mockup L170-198).
+         ⛔ SIN foto ni tarjeta "+18%" inventada (retiradas §32.24 + §44-turismo): el mockup
+         no trae media ni cifra de retorno; publicar un retorno fabricado = riesgo legal. -->
+    <section id="inversion" class="tur-inv alt-on-ink" data-surface="ink">
+      <span class="tur-inv__glow" aria-hidden="true"></span>
+      <div class="alt-container tur-inv__in">
+        <div class="tur-inv__copy">
+          <p class="alt-eyebrow">Asesoría de Inversión Turística</p>
+          <h2 class="tur-inv__h">Invierte donde el mundo quiere quedarse.</h2>
+          <p class="tur-inv__p">Cartagena es uno de los destinos más deseados del Caribe. Te ayudamos a comprar el inmueble correcto y lo convertimos en un alojamiento rentable —sin que muevas un dedo.</p>
+        </div>
+        <div class="tur-inv__grid">
+          {inversionPerks.map((p) => (
+            <div class="tur-inv__card">
+              <span class="tur-inv__ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={p.i}></svg></span>
+              <h3 class="tur-inv__ct">{p.t}</h3>
+              <p class="tur-inv__cd">{p.d}</p>
+            </div>
+          ))}
+        </div>
+        <a class="alt-btn alt-btn--gold tur-inv__cta" href="#contacto-turismo">Agenda tu asesoría<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+      </div>
+    </section>
+
+    <!-- Contacto CTA -->
+    <section id="contacto-turismo" class="alt-container alt-section tur-contact">
+      <p class="alt-eyebrow">Tu Cartagena empieza aquí</p>
+      <h2 class="tur-contact__h">¿Listo para vivir la ciudad amurallada?</h2>
+      <p class="tur-contact__p">Cuéntanos qué buscas —una estadía, una experiencia o una inversión— y un asesor de turismo ALTORRA te acompañará en cada paso.</p>
+      <div class="tur-contact__cta">
+        <a class="alt-btn alt-btn--navy" href={SITE.contact.whatsappLink}>Escríbenos por WhatsApp<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+        <a class="alt-btn alt-btn--outline" href={`mailto:${SITE.contact.email}`}>{SITE.contact.email}</a>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* Hero */
+  .tur-hero { position: relative; overflow: hidden; background: var(--alt-white); }
+  .tur-hero__bg { position: absolute; inset: 0; background-size: cover; background-position: center right; opacity: 0.09; }
+  .tur-hero__wash { position: absolute; inset: 0; background: linear-gradient(100deg, #ffffff 44%, rgba(255, 255, 255, 0.8) 64%, rgba(242, 247, 251, 0.5)); }
+  .tur-hero__in { position: relative; max-width: 760px; padding-block: clamp(64px, 9vw, 120px); }
+  .tur-hero__h { font-size: var(--alt-fs-hero); line-height: 1.02; margin: var(--alt-space-3) 0 20px; }
+  .tur-hero__p { font-size: clamp(16px, 1.6vw, 19px); line-height: 1.6; color: var(--alt-text); max-width: 500px; margin-bottom: 34px; }
+  .tur-hero__cta { display: flex; gap: var(--alt-space-4); flex-wrap: wrap; }
+
+  .tur-head { max-width: 640px; margin-bottom: clamp(32px, 4vw, 52px); }
+  .tur-head h2 { margin-top: var(--alt-space-3); }
+  .tur-head__p { margin-top: var(--alt-space-3); font-size: 16.5px; line-height: 1.6; color: var(--alt-text); }
+
+  /* Zonas — card blanca, foto arriba (196px), cuerpo debajo sobre blanco (mockup L55-109) */
+  .tur-zonas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: clamp(20px, 2.2vw, 28px); }
+  .tur-zona { display: block; border-radius: var(--alt-r-lg); overflow: hidden; border: 1px solid var(--alt-hairline); background: var(--alt-white); box-shadow: var(--alt-elev-card); text-decoration: none; transition: transform var(--alt-dur-slow) var(--alt-ease-card), box-shadow var(--alt-dur-slow) var(--alt-ease-card); }
+  .tur-zona:hover { transform: translateY(-6px); box-shadow: var(--alt-elev-card-hover); }
+  .tur-zona__ph { display: block; height: 196px; overflow: hidden; }
+  .tur-zona__ph img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-slow) var(--alt-ease-card); }
+  .tur-zona:hover .tur-zona__ph img { transform: scale(1.05); }
+  .tur-zona__body { display: block; padding: 20px 20px 22px; }
+  .tur-zona__k { display: block; font-size: 10px; font-weight: var(--alt-fw-bold); letter-spacing: 0.16em; text-transform: uppercase; color: var(--alt-link); margin-bottom: 8px; }
+  .tur-zona__t { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 24px; color: var(--alt-ink); margin-bottom: 6px; }
+  .tur-zona__d { display: block; font-size: 14px; line-height: 1.55; color: var(--alt-text); margin-bottom: 14px; }
+  .tur-zona__more { display: block; font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-link); }
+
+  /* Servicios */
+  .tur-servicios { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 26px; }
+  .tur-serv .alt-chip { width: 48px; height: 48px; margin-bottom: 16px; }
+  .tur-serv .alt-chip svg { width: 22px; height: 22px; }
+  .tur-serv h3 { font-family: var(--alt-font-body); font-size: 18px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); margin-bottom: 9px; }
+  .tur-serv p { font-size: 14.5px; line-height: 1.6; color: var(--alt-text); }
+
+  /* Inversión (navy) — copy arriba + grid de 3 cards de vidrio + CTA (mockup L170-198) */
+  .tur-inv { position: relative; overflow: hidden; background: var(--alt-surface-ink); padding-block: clamp(56px, 7vw, 104px); }
+  .tur-inv__glow { position: absolute; top: -20%; left: -10%; width: 48%; height: 130%; background: radial-gradient(circle, rgba(212, 175, 55, 0.18), transparent 66%); pointer-events: none; }
+  .tur-inv__in { position: relative; }
+  .tur-inv__copy { max-width: 660px; margin-bottom: clamp(36px, 4vw, 48px); }
+  .tur-inv__h { color: #fff; margin: var(--alt-space-3) 0 16px; }
+  .tur-inv__p { font-size: clamp(15px, 1.5vw, 18px); line-height: 1.62; color: var(--alt-on-ink-muted); max-width: 560px; }
+  .tur-inv__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: clamp(18px, 2vw, 26px); margin-bottom: clamp(36px, 4vw, 48px); }
+  .tur-inv__card { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px; padding: 28px 26px; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .tur-inv__ico { width: 48px; height: 48px; border-radius: 12px; background: rgba(235, 210, 126, 0.14); display: inline-flex; align-items: center; justify-content: center; color: var(--alt-gold-bright); margin-bottom: 17px; }
+  .tur-inv__ico svg { width: 23px; height: 23px; stroke: currentColor; }
+  .tur-inv__ct { font-size: 18px; font-weight: var(--alt-fw-semibold); color: #fff; margin-bottom: 9px; }
+  .tur-inv__cd { font-size: 14px; line-height: 1.6; color: var(--alt-on-ink-muted); }
+
+  /* Contacto */
+  .tur-contact { text-align: center; max-width: 640px; }
+  .tur-contact__h { margin-top: var(--alt-space-3); font-size: clamp(34px, 5vw, 58px); line-height: 1.03; }
+  .tur-contact__p { margin: var(--alt-space-4) auto 0; font-size: 17px; line-height: 1.6; color: var(--alt-text); max-width: 520px; }
+  .tur-contact__cta { display: flex; gap: var(--alt-space-4); justify-content: center; flex-wrap: wrap; margin-top: var(--alt-space-6); }
+
+  /* ===== PASADÍAS & RECREACIÓN — card partida (foto que estira + texto) ===== */
+  .tur-pasa { padding-bottom: clamp(60px, 8vw, 100px); }
+  .tur-pasa__card {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr));
+    gap: clamp(28px, 4vw, 60px); align-items: center;
+    background: var(--alt-surface-alt); border: 1px solid rgba(27, 39, 51, 0.07);
+    border-radius: 26px; overflow: hidden;
+  }
+  /* La foto estira al alto de la card, no al revés */
+  .tur-pasa__media { position: relative; min-height: clamp(300px, 38vw, 460px); align-self: stretch; }
+  .tur-pasa__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .tur-pasa__text { padding: clamp(32px, 4vw, 56px) clamp(28px, 4vw, 52px) clamp(32px, 4vw, 56px) 0; }
+  /* El mockup usa .24em aquí (no el .28em habitual del eyebrow) */
+  .tur-pasa__eyebrow { letter-spacing: 0.24em; }
+  .tur-pasa__h {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(30px, 3.8vw, 46px); line-height: 1.05; letter-spacing: var(--alt-tracking-tight);
+    color: var(--alt-ink); margin: 13px 0 15px;
+  }
+  .tur-pasa__p { font-size: 16px; line-height: 1.62; color: var(--alt-text); margin: 0 0 24px; max-width: 460px; }
+  .tur-pasa__chips { display: flex; flex-wrap: wrap; gap: 9px; margin-bottom: 30px; }
+  .tur-pasa__chip {
+    padding: 8px 15px; border-radius: var(--alt-r-pill);
+    background: var(--alt-white); border: 1px solid var(--alt-hairline);
+    font-size: 13px; font-weight: var(--alt-fw-medium); color: var(--alt-ink);
+  }
+  .tur-pasa__cta {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 14px 28px; border-radius: var(--alt-r-pill);
+    background: var(--alt-ink); color: #fff; font-weight: var(--alt-fw-semibold); font-size: 14px; text-decoration: none;
+    transition: transform var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease);
+  }
+  .tur-pasa__cta svg { width: 15px; height: 15px; transition: transform var(--alt-dur) var(--alt-ease); }
+  .tur-pasa__cta:hover { transform: translateY(-1px); box-shadow: 0 16px 32px -16px rgba(6, 39, 67, 0.6); }
+  .tur-pasa__cta:hover svg { transform: translateX(3px); }
+
+  /* En una sola columna el padding-right asimétrico del texto descuadra */
+  @media (max-width: 760px) { .tur-pasa__text { padding: clamp(28px, 5vw, 40px); } }
+  @media (prefers-reduced-motion: reduce) { .tur-pasa__cta, .tur-pasa__cta svg { transition: none; } .tur-pasa__cta:hover { transform: none; } }
+</style>

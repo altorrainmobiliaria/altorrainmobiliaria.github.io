@@ -1,0 +1,677 @@
+/**
+ * admin-auth.js — Autenticación y RBAC del panel de administración
+ * Altorra Inmobiliaria
+ *
+ * Flujo:
+ *   1. signInWithEmailAndPassword()  ← el límite de fuerza bruta lo pone el proveedor, no nosotros
+ *   2. Cargar perfil usuarios/{uid} → rol
+ *   3. Verificar estado bloqueado / desactivado
+ *   4. Registrar el acceso en la bitácora (servidor)
+ *   5. applyRolePermissions() → mostrar/ocultar UI
+ *
+ * Seguridad:
+ *   - Timeout de sesión: 8 horas · Inactividad: 30 min (advertencia 1 min antes)
+ *   - Retry 3x con backoff al cargar perfil (fix bug "Access denied for UID")
+ *   - Recuperación de contraseña sin filtrar qué correos existen (§128)
+ *   - Bitácora de acceso escrita por el SERVIDOR (§130)
+ *
+ * ⚠️ Esto NO es una frontera de seguridad: corre en el navegador y decide qué se DIBUJA. La frontera
+ * son las Security Rules. Se dejó de imitar el patrón de Altorra Cars justamente por ahí: allá el
+ * segundo factor se resuelve con una variable de JavaScript (`_2faVerified`), y una variable del
+ * navegador no protege un dato del servidor (§130).
+ */
+
+(function () {
+  'use strict';
+
+  /* ─── Constantes ─────────────────────────────────────── */
+  const SESSION_MAX_MS    = 8 * 60 * 60 * 1000;   // 8 horas
+  const INACTIVITY_MS     = 30 * 60 * 1000;        // 30 min
+  const WARN_BEFORE_MS    = 60 * 1000;             // 1 min antes de expirar
+  const PROFILE_RETRY_MAX = 3;
+  // MAX_LOGIN_ATTEMPTS y LOCKOUT_MS se fueron con el candado de intentos (§130).
+
+  /* ─── Estado interno ──────────────────────────────────── */
+  let _inactivityTimer = null;
+  let _warnTimer       = null;
+  let _sessionStart    = null;
+  let _currentUser     = null;  // { uid, email, rol, nombre }
+  let _initialized     = false;
+
+  /* ─── Helpers de UI ───────────────────────────────────── */
+  function $(sel, ctx = document) { return ctx.querySelector(sel); }
+
+  function showLogin(msg = '') {
+    const loginScreen = $('#loginScreen');
+    const adminApp    = $('#adminApp');
+    if (loginScreen) loginScreen.style.display = 'flex';
+    if (adminApp) {
+      adminApp.classList.remove('visible');
+      adminApp.style.display = 'none';
+    }
+    // Volver al login SIEMPRE cierra el paso del código: si no, un fallo posterior dejaría la
+    // pantalla del segundo factor encima con un reto ya caducado, y el aviso se escribiría en el
+    // recuadro de abajo, tapado. Es la misma clase de desincronización de §133.
+    mostrarPantallaMfa(false);
+    if (msg) {
+      const errEl = $('#loginError');
+      if (errEl) { errEl.textContent = msg; errEl.hidden = false; }
+    }
+  }
+
+  function showApp() {
+    const loginScreen = $('#loginScreen');
+    const adminApp    = $('#adminApp');
+    if (loginScreen) loginScreen.style.display = 'none';
+    if (adminApp) {
+      // Nota: CSS tiene `#adminApp { display:none }` + HTML inline `style="display:none"`.
+      // Necesitamos ambos: clase .visible (`display:flex`) Y sobrescribir el inline.
+      adminApp.classList.add('visible');
+      adminApp.style.display = 'flex';
+    }
+  }
+
+  function showToast(msg, type = 'info') {
+    if (window.AltorraUtils && window.AltorraUtils.showToast) {
+      window.AltorraUtils.showToast(msg, type);
+      return;
+    }
+    const t = document.createElement('div');
+    t.className = `admin-toast toast-${type}`;
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3500);
+  }
+
+  function setLoginLoading(loading) {
+    const btn = $('#loginBtn');
+    if (!btn) return;
+    btn.disabled = loading;
+    btn.textContent = loading ? 'Verificando...' : 'Iniciar sesión';
+  }
+
+  /* ─── SEGUNDO FACTOR ──────────────────────────────────────────────────────────────────────────
+   * Esto NO inscribe a nadie: solo sabe TERMINAR un ingreso cuando la cuenta ya tiene un segundo
+   * factor activo. Y ese orden es deliberado.
+   *
+   * Firebase no avisa de que hará falta un código hasta que la contraseña ya fue aceptada: responde
+   * `auth/multi-factor-auth-required`. Un panel que no conozca ese código lo trata como un fallo
+   * cualquiera y contesta «correo o contraseña incorrectos» — con la contraseña buena escrita. El
+   * resultado no es un mensaje feo: es una persona encerrada fuera de su propio panel, exactamente
+   * como en §136, y esta vez se ve venir. Por eso el resolver se despliega ANTES de que exista
+   * ninguna pantalla para inscribirse.
+   *
+   * ⚠️ Mientras nadie tenga segundo factor, nada de esto se ejecuta jamás. El cambio es INERTE hasta
+   * el día que haga falta, que es la única forma segura de preparar un camino que todavía no se usa.
+   */
+  let _retoMfa = null;   // { resolver, idFactor } — vive solo entre la contraseña y el código.
+
+  function mostrarAvisoMfa(msg) {
+    const el = $('#mfaError');
+    if (el) { el.textContent = msg; el.hidden = false; }
+  }
+
+  function mostrarPantallaMfa(mostrar) {
+    const login = $('#loginForm');
+    const mfa   = $('#mfaForm');
+    if (login) login.hidden = mostrar;
+    if (mfa)   mfa.hidden   = !mostrar;
+    if (mostrar) {
+      const campo = $('#mfaCode');
+      if (campo) { campo.value = ''; campo.focus(); }
+    } else {
+      _retoMfa = null;
+      const el = $('#mfaError');
+      if (el) el.hidden = true;
+    }
+  }
+
+  /** Prepara el reto a partir del error y enseña el campo del código. */
+  async function pedirSegundoFactor(authErr) {
+    try {
+      const { getMultiFactorResolver } =
+        await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js');
+      const resolver = getMultiFactorResolver(window.auth, authErr);
+      // Solo se ofrecen los TOTP: es el único tipo que este proyecto inscribe. Ofrecer un método que
+      // no se sabe completar deja a la persona mirando un formulario que nunca va a aceptarla.
+      const totp = resolver.hints.filter((h) => h.factorId === 'totp');
+      if (!totp.length) {
+        showLogin('Tu cuenta pide un segundo factor que este panel todavía no sabe pedir. Escríbenos por WhatsApp al +57 300 243 9810.');
+        return;
+      }
+      _retoMfa = { resolver, idFactor: totp[0].uid };
+      mostrarPantallaMfa(true);
+    } catch (err) {
+      console.error('[AdminAuth] no se pudo preparar el segundo factor:', err);
+      showLogin('No pudimos continuar con la verificación en dos pasos. Inténtalo de nuevo.');
+    }
+  }
+
+  /** Traduce los códigos del segundo factor. «Error inesperado» manda a buscar donde no es. */
+  function explicarCodigo(code) {
+    switch (code) {
+      case 'auth/invalid-verification-code':
+      case 'auth/invalid-verification-id':
+        return 'Ese código no sirvió. Cambian cada 30 segundos: escribe el que aparece AHORA en tu aplicación.';
+      case 'auth/code-expired':
+        return 'El código ya venció. Escribe el que muestra tu aplicación en este momento.';
+      case 'auth/totp-challenge-timeout':
+        return 'Se acabó el tiempo. Vuelve atrás y escribe tu contraseña otra vez.';
+      case 'auth/too-many-requests':
+        return 'Demasiados intentos seguidos. Espera unos minutos antes de volver a probar.';
+      case 'auth/network-request-failed':
+        return 'No pudimos contactar el servidor. Revisa tu conexión e inténtalo de nuevo.';
+      default:
+        return 'No pudimos verificar el código. Revisa que la hora de tu teléfono esté en automático: si va adelantada o atrasada, los códigos no coinciden.';
+    }
+  }
+
+  /** Cablea el formulario del código. Se llama junto al del login, en el mismo sitio. */
+  function bindMfaForm() {
+    const form = $('#mfaForm');
+    if (!form) return;
+
+    form.querySelector('#mfaCancel')?.addEventListener('click', () => mostrarPantallaMfa(false));
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!_retoMfa) { mostrarPantallaMfa(false); return; }
+
+      // Los gestores de contraseñas pegan el código con un espacio en medio. Sin limpiarlo, un
+      // código correcto se rechaza y la culpa parece de quien lo escribió.
+      const codigo = ($('#mfaCode')?.value || '').replace(/\D/g, '').slice(0, 6);
+      if (codigo.length !== 6) { mostrarAvisoMfa('El código tiene seis números.'); return; }
+
+      const btn = $('#mfaBtn');
+      if (btn) { btn.disabled = true; btn.textContent = 'Verificando...'; }
+      const el = $('#mfaError');
+      if (el) el.hidden = true;
+
+      try {
+        const { TotpMultiFactorGenerator } =
+          await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js');
+        const assertion = TotpMultiFactorGenerator.assertionForSignIn(_retoMfa.idFactor, codigo);
+        const cred = await _retoMfa.resolver.resolveSignIn(assertion);
+        mostrarPantallaMfa(false);
+        await continuarConSesion(cred.user);
+      } catch (err) {
+        mostrarAvisoMfa(explicarCodigo(err && err.code));
+        const campo = $('#mfaCode');
+        if (campo) { campo.value = ''; campo.focus(); }
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Entrar'; }
+      }
+    });
+  }
+
+  /* ─── El candado de intentos: RETIRADO (§130) ─────────────────────────────────────────────────
+   * Aquí vivían `hashEmail`, `checkLoginAttempts`, `recordLoginFailure` y `resetLoginAttempts`:
+   * un contador en Firestore, indexado por el SHA-256 del correo, que bloqueaba la cuenta 15 minutos
+   * tras 5 fallos. Se retira entero, y no por simplificar:
+   *
+   *   · NO protegía — el contador vivía donde escribe el atacante. Poner `intentos:0` antes de cada
+   *     prueba lo desactivaba, y la regla lo permitía (`allow create, update: if true`).
+   *   · SÍ atacaba — un hash NO es un secreto. Cualquiera calcula el de `info@altorrainmobiliaria.co`,
+   *     escribe `bloqueado:true` y deja al dueño fuera. En bucle, indefinidamente.
+   *
+   * Quien protege de verdad es el límite por IP de **Firebase Auth**: vive en el servidor de Google,
+   * es anterior a nuestro código y no se puede tocar desde el navegador. Cuando salta, la propia
+   * librería devuelve `auth/too-many-requests`, que ya se traduce abajo.
+   *
+   * ⚠️ Bloquear una cuenta por intentos fallidos es, por diseño, una negación de servicio esperando
+   * a que alguien la use (OWASP ASVS 6.1.1: los controles anti-automatización deben *«prevent
+   * malicious account lockout»*). La defensa correcta no es contar en el cliente: es la protección
+   * anti-bot del proveedor — hoy APAGADA, y es de las cosas que hay que encender en la consola.
+   */
+
+  /* ─── Bitácora de acceso (§130) ───────────────────────────────────────────────────────────────
+   * La colección `auditLog` existía en las reglas desde siempre… y NADIE escribía en ella. Una
+   * bitácora declarada y vacía es peor que ninguna: quien la busque el día que pase algo creerá que
+   * hubo registro y no lo hubo.
+   *
+   * Se escribe desde el SERVIDOR a propósito. El navegador solo dispara la llamada; el uid, el correo
+   * y el rol los pone la Function leyéndolos del token verificado, y la IP la ve ella. Si lo escribiera
+   * el cliente, el vigilado estaría redactando su propia bitácora — y las reglas ahora lo prohíben
+   * (`create: if false`).
+   *
+   * ⚠️ Límite honesto: esto registra los ingresos que SALEN BIEN. Un intento fallido nunca llega a
+   * nuestro backend, así que registrarlos de verdad exige las *blocking functions* del proveedor.
+   * Queda dicho aquí para que nadie lea esta bitácora creyendo que ve los ataques.
+   */
+  async function registrarAcceso() {
+    try {
+      const { httpsCallable } =
+        await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-functions.js');
+      await httpsCallable(window.functions, 'registrarEvento')({
+        accion: 'acceso',
+        origen: 'panel-legacy',
+      });
+    } catch (err) {
+      // Nunca romper el login por la bitácora.
+      console.warn('[AdminAuth] no se pudo registrar el acceso:', err && err.code);
+    }
+  }
+
+  /* ─── Carga de perfil (§135) ───────────────────────────────────────────────────────────────────
+   * Devuelve `{ ok: true, perfil }` o `{ ok: false, causa, detalle }`. Antes devolvía `null` en TODOS
+   * los casos malos, y eso escondía dos problemas muy distintos bajo un solo mensaje:
+   *   · «tu ficha no existe»       → hay que crearla (cosa del administrador);
+   *   · «no pude leer tu ficha»    → red, permisos o caché (cosa del sistema).
+   * Al dueño se le decía siempre lo primero, aunque fuera lo segundo. Un diagnóstico falso manda a
+   * buscar el problema al sitio equivocado, que es peor que no dar ninguno.
+   *
+   * ⚠️ Y la razón por la que ahora se lee `getDocFromServer` y no `getDoc`: este panel tiene
+   * PERSISTENCIA OFFLINE. Con ella, si el SDK cree que no hay red, `getDoc` responde **desde la caché
+   * local**, y una ficha que nunca se guardó ahí vuelve como «no existe». O sea: una decisión de
+   * ACCESO tomada con un «no encontrado» que en realidad significa «no miré». `getDocFromServer`
+   * obliga a preguntarle al servidor y, si no puede, FALLA — que es la respuesta honesta.
+   */
+  async function loadUserProfile(uid, attempt = 1) {
+    const { getDocFromServer, doc } =
+      await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js');
+    try {
+      const snap = await getDocFromServer(doc(window.db, 'usuarios', uid));
+      if (!snap.exists()) return { ok: false, causa: 'no-existe' };
+      return { ok: true, perfil: snap.data() };
+    } catch (err) {
+      // `permission-denied` NO se reintenta: reintentar lo denegado solo retrasa el mensaje.
+      if (err?.code !== 'permission-denied' && attempt < PROFILE_RETRY_MAX) {
+        await new Promise(r => setTimeout(r, 500 * attempt));
+        return loadUserProfile(uid, attempt + 1);
+      }
+      console.error('[AdminAuth] no se pudo leer usuarios/' + uid, '→', err?.code, err?.message);
+      return {
+        ok: false,
+        causa: err?.code === 'permission-denied' ? 'denegado' : 'sin-lectura',
+        detalle: err?.code || 'desconocido',
+      };
+    }
+  }
+
+  /** Traduce el porqué a algo accionable. El código va al final para poder pedírselo por teléfono. */
+  function explicarPerfil(r) {
+    if (r.causa === 'no-existe') {
+      return 'Tu cuenta existe pero no tiene ficha en el equipo. Pídele a un administrador que te dé de alta.';
+    }
+    if (r.causa === 'denegado') {
+      return 'Tu cuenta no tiene permiso para entrar al panel. Pídele a un administrador que te lo dé.';
+    }
+    return 'No pudimos verificar tu perfil (conexión o servidor). Revisa tu internet y vuelve a intentarlo. [' +
+      (r.detalle || '?') + ']';
+  }
+
+  /* ─── RBAC — mostrar/ocultar UI según rol ──────────────── */
+  function applyRolePermissions(rol) {
+    // Elementos visibles solo para super_admin
+    document.querySelectorAll('[data-role="super_admin"]').forEach(el => {
+      el.style.display = (rol === 'super_admin') ? '' : 'none';
+    });
+    // Elementos visibles para editor o superior
+    document.querySelectorAll('[data-role="editor"]').forEach(el => {
+      el.style.display = (rol === 'super_admin' || rol === 'editor') ? '' : 'none';
+    });
+    // Texto de rol en sidebar
+    const rolBadge = $('#sidebarRole');
+    if (rolBadge) rolBadge.textContent = rol.replace('_', ' ');
+    // Nombre de usuario
+    const nameEl = $('#sidebarName');
+    if (nameEl && _currentUser) nameEl.textContent = _currentUser.nombre || _currentUser.email;
+  }
+
+  /* ─── Timeout e inactividad ────────────────────────────── */
+  function resetInactivity() {
+    clearTimeout(_inactivityTimer);
+    clearTimeout(_warnTimer);
+
+    // Check sesión máxima
+    if (_sessionStart && Date.now() - _sessionStart > SESSION_MAX_MS) {
+      signOut('Sesión expirada. Por favor vuelve a iniciar sesión.');
+      return;
+    }
+
+    _warnTimer = setTimeout(() => {
+      showToast('Tu sesión expirará en 1 minuto por inactividad.', 'warning');
+    }, INACTIVITY_MS - WARN_BEFORE_MS);
+
+    _inactivityTimer = setTimeout(() => {
+      signOut('Sesión cerrada por inactividad.');
+    }, INACTIVITY_MS);
+  }
+
+  function startInactivityWatch() {
+    ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'].forEach(ev => {
+      document.addEventListener(ev, resetInactivity, { passive: true });
+    });
+    resetInactivity();
+  }
+
+  function stopInactivityWatch() {
+    clearTimeout(_inactivityTimer);
+    clearTimeout(_warnTimer);
+    ['mousemove', 'keydown', 'click', 'touchstart', 'scroll'].forEach(ev => {
+      document.removeEventListener(ev, resetInactivity);
+    });
+  }
+
+  /* ─── Sign out ─────────────────────────────────────────── */
+  async function signOut(msg = '') {
+    stopInactivityWatch();
+    _currentUser = null;
+    _sessionStart = null;
+    try {
+      const { signOut: fbSignOut } =
+        await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js');
+      await fbSignOut(window.auth);
+    } catch { /* si falla el signout, igual limpiamos UI */ }
+    showLogin(msg);
+    // Avisar a otros módulos
+    window.dispatchEvent(new CustomEvent('altorra:admin-signout'));
+  }
+
+  /* ─── Login ────────────────────────────────────────────── */
+  /* ─── Recuperar contraseña (§128) ───────────────────────
+   * Firebase manda el correo por su propia infraestructura, NO por el SMTP de Gmail del proyecto:
+   * funciona aunque la contraseña de aplicación siga sin rotar.
+   *
+   * El mensaje es el MISMO exista o no la cuenta, a propósito: decir «ese correo no está
+   * registrado» convierte el formulario en un detector de qué direcciones tienen acceso al panel.
+   */
+  async function recuperarPassword() {
+    const btn   = document.getElementById('btnForgotPass');
+    const input = document.getElementById('loginEmail');
+    const email = (input && input.value || '').trim();
+    const err   = document.getElementById('loginError');
+
+    const decir = (msg) => { if (err) { err.textContent = msg; err.hidden = false; } };
+
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      decir('Escribe tu correo arriba y vuelve a pulsar aquí.');
+      if (input) input.focus();
+      return;
+    }
+    const original = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
+    try {
+      const { sendPasswordResetEmail } =
+        await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js');
+      await sendPasswordResetEmail(window.auth, email);
+      decir('Si ese correo tiene acceso al panel, le llega un enlace para cambiar la contraseña. Revisa también la carpeta de spam.');
+    } catch (e) {
+      console.error('[admin] sendPasswordResetEmail:', e);
+      // `auth/user-not-found` se trata como éxito por lo mismo de arriba: no se filtra quién existe.
+      if (e && e.code === 'auth/user-not-found') {
+        decir('Si ese correo tiene acceso al panel, le llega un enlace para cambiar la contraseña. Revisa también la carpeta de spam.');
+      } else if (e && e.code === 'auth/too-many-requests') {
+        decir('Demasiados intentos seguidos. Espera unos minutos y vuelve a intentarlo.');
+      } else {
+        decir('No pudimos enviar el correo. Revisa la conexión e inténtalo de nuevo.');
+      }
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = original || '¿Olvidaste tu contraseña?'; }
+    }
+  }
+
+  async function handleLogin(email, password) {
+    if (!window.db || !window.auth) {
+      showLogin('Firebase no está disponible aún. Intenta en unos segundos.');
+      return;
+    }
+
+    setLoginLoading(true);
+    const errEl = $('#loginError');
+    if (errEl) errEl.hidden = true;
+
+    try {
+      // 1. Autenticar con Firebase. El límite de fuerza bruta lo pone el propio proveedor (§130):
+      //    es por IP, vive en su servidor y devuelve `auth/too-many-requests` cuando salta.
+      const { signInWithEmailAndPassword } =
+        await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js');
+
+      let credential;
+      try {
+        credential = await signInWithEmailAndPassword(window.auth, email.trim(), password);
+      } catch (authErr) {
+        /* 1b. ¿Falta el SEGUNDO FACTOR? Entonces la contraseña era CORRECTA y solo queda el código.
+         * Sin esta rama, este mismo `catch` respondería «Correo o contraseña incorrectos» —una
+         * mentira— y encerraría fuera a quien acabara de activar su doble verificación. Por eso
+         * este código existe ANTES de que exista la pantalla que inscribe: el orden es resolver →
+         * inscribir → exigir, y saltárselo es un autoencierro. */
+        if (authErr && authErr.code === 'auth/multi-factor-auth-required') {
+          await pedirSegundoFactor(authErr);
+          setLoginLoading(false);
+          return;
+        }
+        // El mensaje NO distingue «no existe» de «clave mala»: decirlo convertiría el formulario en
+        // un detector de qué correos tienen acceso al panel (misma razón que en la recuperación, §128).
+        if (authErr && authErr.code === 'auth/too-many-requests') {
+          showLogin('Demasiados intentos seguidos desde esta conexión. Espera unos minutos y vuelve a intentarlo.');
+        } else if (authErr && authErr.code === 'auth/network-request-failed') {
+          showLogin('No pudimos contactar el servidor. Revisa tu conexión e inténtalo de nuevo.');
+        } else {
+          showLogin('Correo o contraseña incorrectos.');
+        }
+        setLoginLoading(false);
+        return;
+      }
+
+      await continuarConSesion(credential.user);
+
+    } catch (err) {
+      console.error('[AdminAuth] Error inesperado en login:', err);
+      showLogin('Error inesperado. Intenta de nuevo.');
+    } finally {
+      setLoginLoading(false);
+    }
+  }
+
+  /**
+   * Lo que pasa DESPUÉS de que Firebase acepta a alguien: perfil, permisos, bitácora y panel.
+   *
+   * Vive aparte porque ahora hay DOS caminos que terminan aquí —contraseña sola, y contraseña más
+   * código— y duplicar esta secuencia es cómo se pierde una comprobación en uno de los dos. Es la
+   * misma lección de §136 mirada de frente: un contrato con dos usos se migra entero o no se toca.
+   */
+  async function continuarConSesion(user) {
+    try {
+      const uid = user.uid;
+
+      /* 2b. Esperar a que la credencial esté REALMENTE lista antes de leer nada (§135).
+       * `signInWithEmailAndPassword` resuelve en cuanto el servidor acepta la contraseña, pero el
+       * token tarda un instante más en quedar disponible para Firestore. Leer en ese hueco devuelve
+       * `Missing or insufficient permissions` — que se lee como «no tienes permiso» cuando en realidad
+       * es «todavía no le he dicho quién eres». Los 3 reintentos de abajo existían por esto; pedir el
+       * token de forma explícita convierte una carrera en una espera. */
+      await user.getIdToken();
+
+      // 3. Cargar perfil desde Firestore
+      const res = await loadUserProfile(uid);
+      if (!res.ok) {
+        await signOut();
+        showLogin(explicarPerfil(res));
+        setLoginLoading(false);
+        return;
+      }
+      const profile = res.perfil;
+
+      // 4. Verificar que no está bloqueado en Firestore
+      if (profile.bloqueado || !profile.activo) {
+        await signOut();
+        showLogin('Tu cuenta está desactivada. Contacta al administrador.');
+        setLoginLoading(false);
+        return;
+      }
+
+      // 5. Verificar rol válido
+      const rolesValidos = ['super_admin', 'editor', 'viewer'];
+      if (!rolesValidos.includes(profile.rol)) {
+        await signOut();
+        showLogin('Rol no reconocido. Contacta al administrador.');
+        setLoginLoading(false);
+        return;
+      }
+
+      // 6. Login exitoso — dejarlo ESCRITO (§130). La bitácora la escribe el servidor con el uid del
+      //    token verificado; desde aquí solo se avisa. No se espera (`void`): si la red falla, el
+      //    registro se pierde pero la persona entra igual — una bitácora no debe poder tumbar el acceso.
+      void registrarAcceso();
+
+      _currentUser  = { uid, email: user.email, ...profile };
+      _sessionStart = Date.now();
+
+      applyRolePermissions(profile.rol);
+      showApp();
+      startInactivityWatch();
+
+      // Avisar a otros módulos
+      window.dispatchEvent(new CustomEvent('altorra:admin-ready', {
+        detail: { user: _currentUser }
+      }));
+
+    } catch (err) {
+      console.error('[AdminAuth] Error inesperado en login:', err);
+      showLogin('Error inesperado. Intenta de nuevo.');
+    } finally {
+      setLoginLoading(false);
+    }
+  }
+
+  /* ─── onAuthStateChanged — restaurar sesión ─────────────── */
+  async function initAuthListener() {
+    if (!window.auth) {
+      // Esperar a que Firebase esté listo
+      window.addEventListener('altorra:firebase-ready', () => initAuthListener(), { once: true });
+      return;
+    }
+
+    const { onAuthStateChanged } =
+      await import('https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js');
+
+    onAuthStateChanged(window.auth, async (fbUser) => {
+      if (!fbUser) {
+        showLogin();
+        return;
+      }
+
+      /* Usuario ya autenticado (recarga de página, o el eco del propio login).
+       *
+       * ⚠️ ESTE CALLSITE SE ME QUEDÓ ATRÁS (§136) y expulsaba a todo el mundo. Al cambiar
+       * `loadUserProfile` para que devolviera `{ ok, perfil }` en vez del perfil pelado (§135),
+       * actualicé `handleLogin` y NO éste. Aquí seguía leyendo `profile.activo` sobre el envoltorio:
+       * `undefined` → `!undefined` es `true` → `signOut()`. Entrabas bien y un instante después el
+       * oyente te echaba, y los «permission denied» del panel eran la CONSECUENCIA de quedarte sin
+       * sesión, no la causa. Un cambio de contrato con un callsite sin migrar (§3.2: los cambios son
+       * ADITIVOS; si no pueden serlo, se migran TODOS los callsites en el mismo commit).
+       */
+      const res = await loadUserProfile(fbUser.uid);
+      if (!res.ok) {
+        await signOut(explicarPerfil(res));
+        return;
+      }
+      const profile = res.perfil;
+      if (profile.bloqueado || !profile.activo) {
+        await signOut('Tu cuenta está desactivada. Contacta al administrador.');
+        return;
+      }
+
+      _currentUser  = { uid: fbUser.uid, email: fbUser.email, ...profile };
+      _sessionStart = Date.now();
+
+      applyRolePermissions(profile.rol);
+      showApp();
+      startInactivityWatch();
+
+      window.dispatchEvent(new CustomEvent('altorra:admin-ready', {
+        detail: { user: _currentUser }
+      }));
+    });
+  }
+
+  /* ─── Inicialización del formulario de login ─────────────── */
+  function bindLoginForm() {
+    const form = $('#loginForm');
+    if (!form) return;
+
+    // Recuperación de contraseña (§128): mismo sitio donde se cablea el login.
+    form.querySelector('#btnForgotPass')?.addEventListener('click', recuperarPassword);
+
+    // El paso del código se cablea AQUÍ, junto al login, y no en su propio arranque: dos puntos de
+    // inicialización distintos es cómo uno de los dos se queda sin cablear el día que se toque.
+    bindMfaForm();
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email    = (form.querySelector('#loginEmail') || form.querySelector('[name="email"]'))?.value || '';
+      const password = (form.querySelector('#loginPassword') || form.querySelector('[name="password"]'))?.value || '';
+      if (!email || !password) return;
+      await handleLogin(email, password);
+    });
+  }
+
+  /* ─── Botón de logout ─────────────────────────────────────── */
+  function bindLogout() {
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('#logoutBtn') || e.target.closest('[data-action="logout"]')) {
+        signOut();
+      }
+    });
+  }
+
+  /* ─── Navegación de secciones ─────────────────────────────── */
+  function bindNavigation() {
+    document.addEventListener('click', (e) => {
+      const navItem = e.target.closest('[data-section]');
+      if (!navItem) return;
+      const section = navItem.dataset.section;
+
+      // Activar ítem del sidebar
+      document.querySelectorAll('[data-section]').forEach(el => el.classList.remove('active'));
+      navItem.classList.add('active');
+
+      // Mostrar sección
+      document.querySelectorAll('.admin-section').forEach(el => {
+        el.classList.toggle('active', el.id === `section-${section}`);
+      });
+
+      // Cerrar drawer móvil
+      const sidebar = $('.admin-sidebar');
+      if (sidebar) sidebar.classList.remove('open');
+
+      // Disparar evento para que el módulo correspondiente cargue datos
+      window.dispatchEvent(new CustomEvent('altorra:admin-navigate', { detail: { section } }));
+    });
+
+    // Toggle móvil
+    const menuBtn = $('#sidebarToggle');
+    const sidebar = $('.admin-sidebar');
+    if (menuBtn && sidebar) {
+      menuBtn.addEventListener('click', () => sidebar.classList.toggle('open'));
+    }
+  }
+
+  /* ─── API pública ─────────────────────────────────────────── */
+  window.AdminAuth = {
+    getCurrentUser: () => _currentUser,
+    getRole:        () => _currentUser?.rol || null,
+    isSuperAdmin:   () => _currentUser?.rol === 'super_admin',
+    isEditor:       () => ['super_admin', 'editor'].includes(_currentUser?.rol),
+    signOut,
+    requireAuth(minRole = 'viewer') {
+      const roles = ['viewer', 'editor', 'super_admin'];
+      const userIdx = roles.indexOf(_currentUser?.rol);
+      const minIdx  = roles.indexOf(minRole);
+      return _currentUser && userIdx >= minIdx;
+    },
+  };
+
+  /* ─── Bootstrap ───────────────────────────────────────────── */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (!_initialized) {
+      _initialized = true;
+      bindLoginForm();
+      bindLogout();
+      bindNavigation();
+      initAuthListener();
+    }
+  });
+
+})();

@@ -1,0 +1,1749 @@
+---
+import { srcsetDe, SIZES } from '../lib/img';
+/*
+ * GESTIÓN — panel de administración (Ola 1). Réplica de ALTORRA Gestion.dc.html (mockup aprobado).
+ * Dashboard con 3 VISTAS por rol (Admin / Aliado / Propietario) que intercambian TODA la data
+ * vía segmentado. Datos DEMO estáticos — la capa real (auth + Firestore) es posterior.
+ * noindex SIEMPRE (interno). Sin Header/Footer públicos: layout propio con sidebar.
+ * Interactividad SIN innerHTML: las 3 vistas se renderizan server-side y se alternan con `hidden`
+ * (progressive enhancement, sin FOUC). Nota: "Demanda por zona" = medidores CSS del mockup aprobado.
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { ZONAS } from '../lib/content/zonas';
+import { TIPOS_INMUEBLE } from '../lib/domain/shared';
+import { NOMBRE_DOCUMENTO, TIPOS_DOCUMENTO } from '../lib/domain/documentos';
+
+const nav = [
+  { id: 'resumen', label: 'Resumen', active: true, icon: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>' },
+  { id: 'inmuebles', label: 'Inmuebles', icon: '<path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/>' },
+  // «Contratos» sale del mockup aprobado el 2026-08-22 (`ALTORRA Gestion-Alta.dc.html`). Se AÑADE:
+  // los que ya estaban vienen del mockup anterior, también aprobado, y quitarlos no lo pidió nadie.
+  { id: 'contratos', label: 'Contratos', icon: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h4"/>' },
+  // «Ventas» va junto a Contratos: son las dos formas en que una operación termina, y el
+  // operador que revisa una revisa la otra.
+  { id: 'ventas', label: 'Ventas', icon: '<path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="m9 14 2 2 4-4"/>' },
+  // «Liquidación» va pegada a Contratos porque se responde con el mismo dato: abierto un contrato,
+  // la pregunta siguiente es siempre «¿y cuánto le giro este mes?» (§167).
+  { id: 'liquidacion', label: 'Liquidación', icon: '<path d="M12 3v18"/><path d="M16.5 7.5c0-1.7-2-2.5-4.5-2.5S7.5 5.8 7.5 7.5 9.5 10 12 10s4.5 1 4.5 2.7-2 2.8-4.5 2.8-4.5-1-4.5-2.5"/>' },
+  // «Expedientes» es el agregado RAÍZ: contratos, pagos y novedades cuelgan de él. Va justo
+  // después de Contratos porque es donde el operador acaba cuando algo no cuadra.
+  { id: 'expedientes', label: 'Expedientes', icon: '<path d="M3 7.5A2 2 0 0 1 5 5.5h4l2 2.5h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M8 14h8"/>' },
+  // «Perfiles» va junto a Leads: los dos son personas esperando una respuesta nuestra, y la
+  // promesa de las 24 horas se incumple en el mismo sitio donde se incumple la de un lead.
+  { id: 'perfiles', label: 'Perfiles', icon: '<circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.4 3.1-5.6 7-5.6s7 2.2 7 5.6"/>' },
+  { id: 'leads', label: 'Leads', icon: '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.2 2.9-5.3 6.5-5.3s6.5 2.1 6.5 5.3"/><path d="M17 5.4A3.2 3.2 0 0 1 17 11.6M22 20c0-2.4-1.5-4.2-3.7-4.9"/>' },
+  /*
+   * `pronto` = la sección está en el menú del mockup pero todavía no existe. Hasta hoy estas dos
+   * entradas —y «Leads»— eran enlaces que al pulsarlos **no hacían absolutamente nada**: el enrutador
+   * hacía `if (!destino) return`. Desde fuera, un menú que no responde no se distingue de un panel
+   * roto, y es exactamente el «botón fantasma» de §126. Ahora se marcan y, al pulsarlas, DICEN qué
+   * pasa. Cuando la sección exista, se quita el `pronto` y se le da su destino.
+   */
+  { id: 'visitas', label: 'Visitas', pronto: true, icon: '<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>' },
+  { id: 'documentos', label: 'Documentos', icon: '<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M18 21H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8l5 5v11a2 2 0 0 1-2 2z"/><path d="M8 13h8M8 17h5"/>' },
+];
+
+/** Los tipos de documento, para el desplegable. La lista vive en el DOMINIO, no aquí. */
+const TIPOS_DOC = TIPOS_DOCUMENTO.map((id) => ({ id, nombre: NOMBRE_DOCUMENTO[id] }));
+
+/** Lo que se le dice a alguien que pulsa una sección que aún no existe. Nunca el silencio. */
+const NOTA_PRONTO: Record<string, string> = {
+  visitas: 'Las visitas se agendan hoy desde la ficha de cada inmueble y desde WhatsApp. La agenda del panel llega con el cutover.',
+};
+
+// Iconos por KPI (línea navy en tile mist) — mismo lenguaje visual del mockup, uno por métrica.
+const KPI_ICONS = [
+  '<path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/>',
+  '<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c0-3.2 2.9-5.3 6.5-5.3s6.5 2.1 6.5 5.3"/><path d="M17 5.4A3.2 3.2 0 0 1 17 11.6"/>',
+  '<rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>',
+  '<path d="M3 3v18h18"/><path d="M7 15l3.5-4 3 2.5L21 8"/>',
+];
+const TREND = '<path d="M6 15l6-6 6 6"/>';
+
+// --- Datos DEMO por rol (del mockup). `tone` = gold|navy (→ color de paleta AA en CSS). ---
+const DATA = {
+  admin: {
+    user: '—', userRole: '—', avatar: '',
+    greeting: 'Hola',
+    subtitle: 'Panel general · toda la operación ALTORRA',
+    tableTitle: 'Pipeline de leads',
+    kpis: [
+      { label: 'Inmuebles activos', value: '—' },
+      { label: 'Leads nuevos', value: '—' },
+      { label: 'Visitas esta semana', value: '—' },
+      { label: 'Ventas del mes', value: '—' },
+    ],
+  },
+  aliado: {
+    user: '—', userRole: '—', avatar: '',
+    greeting: 'Hola',
+    subtitle: 'Tu cartera como aliado · comisiones y leads',
+    tableTitle: 'Mis leads asignados',
+    kpis: [
+      { label: 'Mis inmuebles', value: '—' },
+      { label: 'Mis leads', value: '—' },
+      { label: 'Visitas agendadas', value: '—' },
+      { label: 'Comisión acumulada', value: '—' },
+    ],
+  },
+  prop: {
+    user: '—', userRole: '—', avatar: '',
+    greeting: 'Hola',
+    subtitle: 'Tu apartamento en Castillogrande · en venta',
+    tableTitle: 'Interesados en tu propiedad',
+    kpis: [
+      { label: 'Días publicado', value: '—' },
+      { label: 'Visitas realizadas', value: '—' },
+      { label: 'Interesados', value: '—' },
+      { label: 'Mejor oferta', value: '—' },
+    ],
+  },
+};
+
+// ── Opciones del formulario de ALTA (§108). Los valores salen del modelo SELLADO para que no puedan
+//    divergir: si mañana `TIPOS_INMUEBLE` gana un tipo, el desplegable lo tiene sin tocar esta página.
+const TIPOS: Array<[string, string]> = TIPOS_INMUEBLE.map((t) => [
+  t,
+  (t.charAt(0).toUpperCase() + t.slice(1)).replace(/_/g, ' '),
+]);
+const SPECS: Array<[string, string]> = [
+  ['habitaciones', 'Habitaciones'],
+  ['banos', 'Baños'],
+  ['areaConstruidaM2', 'Área m²'],
+  ['estrato', 'Estrato'],
+  ['parqueaderos', 'Parqueaderos'],
+  ['piso', 'Piso'],
+  ['pisosTotales', 'Pisos del edificio'],
+];
+const AMENIDADES = [
+  'Piscina', 'Gimnasio', 'Ascensor', 'Portería 24h', 'Balcón',
+  'Amoblado', 'Aire acondicionado', 'Terraza', 'Zona BBQ', 'Admite mascotas',
+];
+// El texto de cada estado dice su CONSECUENCIA, no su nombre. «Cerrado» es contraintuitivo a
+// propósito: NO retira el inmueble (decisión de SEO), y elegirlo mal no produce ninguna señal.
+const ESTADOS: Array<[string, string, string]> = [
+  ['borrador', 'Borrador', 'Solo lo ve el equipo. Es lo que se guarda por defecto.'],
+  ['disponible', 'Disponible', 'Sale al portal y a Google.'],
+  ['reservado', 'Reservado', 'SIGUE saliendo en el portal, con el aviso puesto.'],
+  ['cerrado', 'Vendido o arrendado', 'También SIGUE saliendo, con su aviso. Ayuda a que Google no pierda la página.'],
+  ['inactivo', 'Inactivo', 'Desaparece del portal. Es el que retira el inmueble de verdad.'],
+];
+
+const roles = Object.keys(DATA);
+// Solo los campos de texto por rol → se aplican con textContent (seguro, sin innerHTML).
+const strings = Object.fromEntries(
+  Object.entries(DATA).map(([r, d]) => [r, { user: d.user, userRole: d.userRole, avatar: d.avatar, greeting: d.greeting, subtitle: d.subtitle, tableTitle: d.tableTitle }])
+);
+
+/*
+ * 🔴 Aquí vivían cuatro zonas con su porcentaje —Bocagrande 92%, Castillogrande 85%…— servidas en
+ * el HTML del panel de administración (§275). No salían de ningún sitio: eran del mockup. Y una
+ * cifra inventada en el panel es peor que en el portal público, porque aquí alguien DECIDE con ella.
+ *
+ * 🎯 Y «demanda» tampoco era lo que se podía medir. Lo que ALTORRA tiene es de dónde llegan sus
+ * leads, que no es lo mismo: mide su propia captación, no el mercado. El panel lo dice con ese
+ * nombre —«Zonas más pedidas»— y lo calcula `montarZonas()` sobre los leads que la tabla ya trajo.
+ */
+
+const init = DATA.admin;
+---
+
+<BaseLayout title="Gestión — Panel ALTORRA" noindex>
+  {/*
+    PUERTA DE ACCESO (§98). El panel nace OCULTO y solo aparece cuando se ha comprobado que quien mira
+    tiene sesión y el permiso de staff. Sin esto, la interfaz completa de administración se le enseñaba
+    a cualquiera que escribiera la dirección.
+
+    ⚠️ Y hay que decirlo con todas las letras: **esto NO es la frontera de seguridad**. Corre en el
+    navegador y se salta con la consola abierta. La frontera real son las Security Rules de Firestore
+    (`isStaff()`), que deciden qué documentos se dejan leer pase lo que pase en la página — y que
+    todavía NO están desplegadas (TODO-17). Mientras el panel muestre datos DEMO no hay nada que
+    filtrar; el día que lea datos reales, lo que lo protege son las Rules, no este script.
+  */}
+  <div class="gx-gate" id="gx-gate" role="status">
+    <p class="gx-gate__t">Comprobando tu acceso…</p>
+  </div>
+
+  <div class="gx-gate" id="gx-denegado" hidden>
+    <p class="gx-gate__t">Esta zona es del equipo de ALTORRA.</p>
+    <p class="gx-gate__d">
+      Entraste con <span id="gx-quien">tu cuenta</span>, pero no tiene permisos de gestión. Si crees que
+      deberían dártelos, pídeselos a quien administra el portal.
+    </p>
+    <p class="gx-gate__d">
+      Si te acaban de dar el acceso, tu sesión todavía lleva los permisos de antes: pulsa
+      «Volver a comprobar».
+    </p>
+    <p class="gx-gate__acc">
+      <button class="alt-btn alt-btn--navy" type="button" id="gx-reintentar">Volver a comprobar</button>
+      <a class="alt-btn alt-btn--outline" href="/">Volver al portal</a>
+      <button class="alt-btn alt-btn--outline" type="button" id="gx-salir">Salir de la sesión</button>
+    </p>
+  </div>
+
+  <div class="gx-root" id="gx-panel" hidden>
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="gx-side">
+      <a class="gx-brand" href="/" aria-label="ALTORRA — volver al portal">
+        <img src="/assets/altorra-emblema.webp" srcset={srcsetDe("/assets/altorra-emblema.webp")} sizes={SIZES.logo} alt="" width="31" height="42" />
+        <span class="gx-brand__txt">
+          <span class="gx-brand__name">ALTORRA</span>
+          <span class="gx-brand__sub">GESTIÓN</span>
+        </span>
+      </a>
+
+      <nav class="gx-nav" aria-label="Secciones de gestión">
+        {nav.map((n) => (
+          <a href="#" class={`gx-nav__item${n.active ? ' is-on' : ''}`} data-nav={n.id} data-pronto={'pronto' in n ? '1' : undefined} aria-current={n.active ? 'page' : undefined}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" set:html={n.icon}></svg>
+            {n.label}
+            {'pronto' in n && <span class="gx-nav__pronto">pronto</span>}
+          </a>
+        ))}
+      </nav>
+
+      {/* Lo que responde una sección que aún no existe. Vive pegado al menú, que es donde se hizo
+          la pregunta: un aviso que aparece en otra parte de la pantalla no se ve. */}
+      <p class="gx-nav__nota" id="gx-nav-nota" role="status" hidden></p>
+      <script type="application/json" id="gx-nav-notas" set:html={JSON.stringify(NOTA_PRONTO)}></script>
+
+      <div class="gx-me">
+        <span class="gx-me__av" id="gx-avatar">{init.avatar}</span>
+        <div class="gx-me__id">
+          <div class="gx-me__name" id="gx-user">{init.user}</div>
+          <div class="gx-me__role" id="gx-user-role">{init.userRole}</div>
+        </div>
+      </div>
+
+      {/* La verificación en dos pasos se activa en «Mi seguridad», y el enlace vive AQUÍ —pegado a
+          quién eres— porque una pantalla de seguridad que nadie encuentra es una que nadie usa. */}
+      <a class="gx-me__seg" href="/seguridad">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.7l7.5 3v5.6c0 4.5-3.1 8.2-7.5 9.4-4.4-1.2-7.5-4.9-7.5-9.4V5.7z"/><path d="M9.3 12.1l1.9 1.9 3.6-3.7"/></svg>
+        Mi seguridad
+      </a>
+    </aside>
+
+    <!-- ===================== MAIN ===================== -->
+    <main class="gx-main" id="main">
+     <!-- Aviso de sesión a punto de cerrarse por inactividad (§130). Aparece 1 minuto antes, igual
+          que en el panel viejo: cerrar sin avisar hace perder lo que se estuviera escribiendo.
+          `role="status"` y no `alert`: es información, no una emergencia, y `alert` interrumpe al
+          lector de pantalla a mitad de frase. -->
+     <div class="gx-sesion" id="gx-aviso-sesion" role="status" hidden>
+       <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg>
+       <span>Tu sesión se cerrará en un minuto por inactividad. Mueve el ratón o escribe algo para seguir.</span>
+     </div>
+
+     <div id="gx-vista-panel">
+      <header class="gx-head">
+        <div>
+          <h1 class="gx-greet" id="gx-greeting">{init.greeting}</h1>
+          <p class="gx-sub" id="gx-subtitle">{init.subtitle}</p>
+        </div>
+        <div class="gx-head__actions">
+          <div class="gx-seg" role="tablist" aria-label="Vista por rol">
+            <button class="gx-seg__btn is-on" type="button" role="tab" aria-selected="true" data-role="admin">Admin</button>
+            <button class="gx-seg__btn" type="button" role="tab" aria-selected="false" data-role="aliado">Aliado</button>
+            <button class="gx-seg__btn" type="button" role="tab" aria-selected="false" data-role="prop">Propietario</button>
+          </div>
+          <button class="gx-new" type="button"><span aria-hidden="true">+</span>Nuevo inmueble</button>
+        </div>
+      </header>
+
+      <!-- KPIs (una grilla por rol; solo la activa visible) -->
+      <section class="gx-kpis">
+        {roles.map((role) => (
+          <div class="gx-kpi-set" data-set={role} hidden={role !== 'admin'}>
+            {DATA[role as keyof typeof DATA].kpis.map((k, i) => (
+              <div class="gx-kpi">
+                <div class="gx-kpi__top">
+                  <span class="gx-kpi__ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" set:html={KPI_ICONS[i]}></svg></span>
+                  
+                </div>
+                <div class="gx-kpi__val">{k.value}</div>
+                <div class="gx-kpi__lbl">{k.label}</div>
+              </div>
+            ))}
+          </div>
+        ))}
+      </section>
+
+      <!-- Tabla + aside -->
+      <section class="gx-grid">
+        <div class="gx-panel gx-table">
+          <div class="gx-panel__head">
+            <h2 id="gx-table-title">{init.tableTitle}</h2>
+            <div class="gx-head__actions">
+              <button class="alt-btn alt-btn--ghost gx-btn-fila" type="button" id="gx-leads-export">Exportar CSV</button>
+              <button class="gx-link gx-link--btn" type="button" id="gx-leads-vertodo">Ver todo &#8594;</button>
+            </div>
+          </div>
+          {/* Lo que responde «Ver todo». La consulta está topada a 50 por doctrina de free-tier, así
+              que la respuesta honesta depende de si ese tope se tocó o no — y se dice, en vez de
+              fingir una paginación que no existe. */}
+          <p class="gx-tabla-nota" id="gx-leads-nota" role="status" hidden></p>
+          <div class="gx-scrollx">
+            <div class="gx-table__inner">
+              <div class="gx-tr gx-tr--head">
+                <span>Cliente</span><span>Inmueble</span><span>Zona</span><span>Etapa</span><span class="gx-r">Valor</span>
+              </div>
+              {/*
+                  🔴 Aquí se servían SEIS clientes inventados con su valor —«Valentina Ríos ·
+                  $1.450M»— y el script solo repintaba el juego del admin, así que los otros dos
+                  roles seguían sirviendo ficción a un clic de pestaña (§275).
+
+                  Ya no se dibuja ninguna fila en el build: el marcado de una fila de lead vive en
+                  `pintarFila()`, que es donde vive el dato. Tenerlo también aquí eran dos sitios
+                  dibujando lo mismo y solo uno actualizándose.
+              */}
+              {roles.map((role) => (
+                <div class="gx-row-set" data-set={role} hidden={role !== 'admin'}>
+                  <div class="gx-tr gx-tr--msg"><span class="gx-muted">{role === 'admin' ? 'Cargando leads…' : 'Esta vista todavía no está conectada a datos reales.'}</span></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div class="gx-col">
+          <div class="gx-panel gx-pad">
+            <h2>Actividad reciente</h2>
+            {roles.map((role) => (
+              <div class="gx-act-set" data-set={role} hidden={role !== 'admin'}>
+                <p class="gx-vacio">{role === 'admin' ? 'Cargando actividad…' : 'Esta vista todavía no está conectada a datos reales.'}</p>
+              </div>
+            ))}
+          </div>
+
+          <div class="gx-panel gx-pad">
+            <h2>Zonas más pedidas</h2>
+            <p class="gx-psub" id="gx-zonas-base">Se calcula con los leads recibidos.</p>
+            <div class="gx-dem" id="gx-zonas">
+              <p class="gx-vacio">Cargando zonas…</p>
+            </div>
+          </div>
+        </div>
+      </section>
+     </div>
+
+     <!-- ══ INMUEBLES ═══════════════════════════════════════════════════════════════════════
+          Cierra el círculo que dejó abierto el alta (§110): sin esto se puede crear una propiedad y
+          no volver a verla desde el portal. La columna que justifica la pantalla es la última —«¿se
+          ve?»— y NO sale del estado: sale de `problemasParaPublicar()`, los mismos predicados que
+          construyen el índice del catálogo. Un «disponible» sin foto tampoco aparece.  -->
+     <div id="gx-vista-inmuebles" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-inm-volver">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Inmuebles</h1>
+          <p class="gx-sub" id="gx-inm-resumen"></p>
+        </div>
+        <div class="gx-head__actions">
+          <button class="alt-btn alt-btn--ghost" type="button" id="gx-inm-export">Exportar CSV</button>
+          <button class="gx-new gx-new--inm" type="button"><span aria-hidden="true">+</span>Nuevo inmueble</button>
+        </div>
+      </header>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--inm">
+            <div class="gx-tr gx-tr--head">
+              <span>Inmueble</span><span>Operación</span><span>Ubicación</span><span>Estado</span><span>¿Se ve?</span>
+            </div>
+            <div id="gx-inm-cuerpo"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Pendientes del sello</h2><span class="gx-psub" id="gx-vf-resumen"></span></div>
+        <p class="gx-psub gx-pad-x">El sello «Verificado por ALTORRA» es una promesa al comprador, no una etiqueta: se pone cuando alguien fue a ver el inmueble.</p>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--vf">
+            <div class="gx-tr gx-tr--head"><span>Inmueble</span><span>Qué falta</span><span></span></div>
+            <div id="gx-vf-lista"></div>
+          </div>
+        </div>
+        <div class="gx-aviso gx-aviso--form gx-pad-x" id="gx-vf-msg" role="status" aria-live="polite"></div>
+      </div>
+     </div>
+
+     <!-- ══ CONTRATOS ═══════════════════════════════════════════════════════════════════════
+          GESTIÓN v1 (§114). La AGENDA va ARRIBA y la lista debajo, a propósito: la lista contesta
+          «¿qué tengo?» y la agenda contesta «¿qué se me está pasando?», que es la pregunta que hizo
+          falta el módulo («se pierden los contratos, se olvidan fechas»).
+          El alta NO escribe Firestore: `contratos` nace con `allow write: if false` (§100) y la única
+          puerta es la callable `crearContrato`, que impone el gate del art. 16 (§113).  -->
+     <div id="gx-vista-novedades" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-nv-volver">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Expedientes y novedades</h1>
+          <p class="gx-sub">Un expediente por inmueble administrado. De él cuelgan sus contratos, sus pagos y sus novedades.</p>
+        </div>
+      </header>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Expedientes</h2></div>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--ex">
+            <div class="gx-tr gx-tr--head"><span>Expediente</span><span>Estado</span><span>Notas</span></div>
+            <div id="gx-ex-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-ex-form" novalidate>
+        <h2>Abrir un expediente</h2>
+        <p class="gx-psub">Hace falta decir de qué inmueble es: uno del catálogo o su código antiguo. Cualquiera de los dos basta.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="e-propiedad">Inmueble del catálogo</label><input class="alt-input" id="e-propiedad" type="text" placeholder="INM-202608-0003" /></div>
+          <div><label class="alt-label" for="e-legacy">o código antiguo</label><input class="alt-input" id="e-legacy" type="text" placeholder="ALT-AR-014" /></div>
+          <div><label class="alt-label" for="e-estado">Estado del arriendo</label><select class="alt-input" id="e-estado"></select></div>
+        </div>
+        <div class="gx-fgrid">
+          <div class="gx-ancho"><label class="alt-label" for="e-notas">Notas</label><input class="alt-input" id="e-notas" type="text" placeholder="Lo que haga falta recordar de este inmueble" /></div>
+        </div>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-ex-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-ex-guardar">Abrir expediente</button>
+        </div>
+      </form>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Novedades</h2><span class="gx-psub" id="gx-nv-resumen"></span></div>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--nv">
+            <div class="gx-tr gx-tr--head"><span>Novedad</span><span>Expediente</span><span>Estado</span><span>Plazo</span><span>Qué hacer</span></div>
+            <div id="gx-nv-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-nv-form" novalidate>
+        <h2>Registrar una novedad</h2>
+        <p class="gx-psub">El plazo de respuesta lo pone el sistema al guardarla: 48 horas desde que entra, no desde que alguien la mira.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="n-expediente">Expediente</label><input class="alt-input" id="n-expediente" type="text" placeholder="EXP-202608-0001" /></div>
+          <div>
+            <label class="alt-label" for="n-quien">La reporta</label>
+            <select class="alt-input" id="n-quien">
+              <option value="inquilino">El arrendatario</option>
+              <option value="propietario">El propietario</option>
+              <option value="admin">Nosotros</option>
+            </select>
+          </div>
+          <div><label class="alt-label" for="n-tipo">De qué es</label><input class="alt-input" id="n-tipo" type="text" placeholder="reparación · queja · solicitud" /></div>
+        </div>
+        <div class="gx-fgrid">
+          <div class="gx-ancho"><label class="alt-label" for="n-descripcion">Qué pasó</label><input class="alt-input" id="n-descripcion" type="text" placeholder="Fuga en el lavaplatos de la cocina" /></div>
+        </div>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-nv-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-nv-guardar">Registrar novedad</button>
+        </div>
+      </form>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-rv-form" novalidate>
+        <h2>Mover una novedad</h2>
+        <p class="gx-psub">Para darla por resuelta hay que escribir qué se hizo. Sin eso no se puede cerrar — a los tres meses nadie recordará si se atendió.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="r-id">Novedad</label><input class="alt-input" id="r-id" type="text" placeholder="NOV-202608-0001" /></div>
+          <div><label class="alt-label" for="r-estado">Nuevo estado</label><select class="alt-input" id="r-estado"></select></div>
+          <div><label class="alt-label" for="r-resolucion">Qué se hizo</label><input class="alt-input" id="r-resolucion" type="text" placeholder="Se cambió el sifón; el inquilino confirmó." /></div>
+        </div>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-rv-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-rv-guardar">Actualizar</button>
+        </div>
+      </form>
+
+    </div>
+
+     <div id="gx-vista-contratos" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-ct-volver">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Contratos</h1>
+          <p class="gx-sub" id="gx-ct-resumen"></p>
+        </div>
+      </header>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Qué viene</h2></div>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--agenda">
+            <div class="gx-tr gx-tr--head"><span>Hito</span><span>Fecha</span><span>Plazo</span><span>Detalle</span></div>
+            <div id="gx-ct-agenda"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Todos los contratos</h2></div>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--ct">
+            <div class="gx-tr gx-tr--head"><span>Contrato</span><span>Tipo</span><span>Canon</span><span>Estado</span><span>Vigencia</span></div>
+            <div id="gx-ct-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <!--
+        PREAVISO DE TERMINACION (§187 · ADR 233). Mockup: `design/mockups/ALTORRA Preaviso.dc.html`.
+        La FECHA LIMITE va ARRIBA a proposito: es la unica parte de esta pantalla que puede EVITAR el
+        dano; junto al veredicto seria un diagnostico post mortem. Y no hay boton de ENVIAR ni lo
+        habra: un correo electronico no es servicio postal autorizado (§185), y una pantalla que
+        parezca enviarlo haria que alguien creyera que ya aviso.
+      -->
+      <div class="gx-panel">
+        <div class="gx-panel__head"><h2>Preaviso de terminaci&#243;n</h2><span class="gx-psub" id="gx-pv-limite"></span></div>
+
+        <p class="gx-psub gx-pad-x">
+          La ley pide que el aviso sea escrito <em>y</em> viaje por servicio postal autorizado. El env&#237;o
+          se hace fuera de aqu&#237;; esto guarda la prueba de que se hizo y dice si lleg&#243; a tiempo.
+        </p>
+
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="gx-pv-contrato">Contrato</label><select class="alt-input" id="gx-pv-contrato"></select></div>
+          <div><label class="alt-label" for="gx-pv-quien">Qui&#233;n da el preaviso</label><select class="alt-input" id="gx-pv-quien"><option value="arrendador">El arrendador (el propietario)</option><option value="arrendatario">El arrendatario (el inquilino)</option></select></div>
+          <div><label class="alt-label" for="gx-pv-redactado">Fecha de redacci&#243;n</label><input class="alt-input" id="gx-pv-redactado" type="date" /></div>
+        </div>
+        <p class="gx-hint">La fecha de redacci&#243;n queda registrada, pero <strong>no es la que cuenta</strong>.</p>
+
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="gx-pv-operador">Operador postal</label><input class="alt-input" id="gx-pv-operador" type="text" placeholder="Servientrega, 4-72&#8230;" /></div>
+          <div><label class="alt-label" for="gx-pv-guia">N&#250;mero de gu&#237;a</label><input class="alt-input" id="gx-pv-guia" type="text" placeholder="1099887766" /></div>
+          <div><label class="alt-label" for="gx-pv-entregado">Entrega al destinatario &#183; opcional</label><input class="alt-input" id="gx-pv-entregado" type="date" /></div>
+        </div>
+        <p class="gx-hint">
+          El operador tiene que estar <strong>habilitado</strong>: lo que aporta el canal es que un
+          tercero autorizado certifique la entrega. La fecha de entrega no mueve el plazo; refuerza la prueba.
+        </p>
+
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="gx-pv-impuesto">Fecha de imposici&#243;n &#183; la que decide</label><input class="alt-input" id="gx-pv-impuesto" type="date" /></div>
+        </div>
+        <p class="gx-hint">
+          El d&#237;a en que se <strong>entreg&#243; al operador</strong>. Si se redact&#243; el lunes y se llev&#243; a la
+          oficina el viernes, para la ley se avis&#243; el viernes: de este dato depende que el contrato
+          termine o se prorrogue otro a&#241;o.
+        </p>
+
+        <div class="gx-pad-x">
+          <button class="alt-btn alt-btn--navy" type="button" id="gx-pv-guardar">Registrar evidencia</button>
+        </div>
+
+        <div class="gx-aviso" id="gx-pv-veredicto" hidden></div>
+      </div>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Cartera</h2><span class="gx-psub" id="gx-pg-resumen"></span></div>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--pg">
+            <div class="gx-tr gx-tr--head"><span>Concepto</span><span>Periodo</span><span>Esperado</span><span>Estado</span><span>Qué hacer</span></div>
+            <div id="gx-pg-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-pg-form" novalidate>
+        <h2>Registrar un pago</h2>
+        <p class="gx-psub">Solo se teclea lo que PASÓ. El monto esperado y la mora los calcula el contrato.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="p-contrato">Contrato</label><input class="alt-input" id="p-contrato" type="text" placeholder="CTR-202608-0001" /></div>
+          <div><label class="alt-label" for="p-periodo">Periodo</label><input class="alt-input" id="p-periodo" type="month" /></div>
+          <div>
+            <label class="alt-label" for="p-tipo">Concepto</label>
+            <select class="alt-input" id="p-tipo">
+              <option value="canon_inquilino">Canon del arrendatario</option>
+              <option value="payout_propietario">Giro al propietario</option>
+              <option value="honorarios">Honorarios</option>
+              <option value="servicios_publicos">Servicios públicos</option>
+            </select>
+          </div>
+        </div>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="p-recibido">Monto recibido</label><input class="alt-input" id="p-recibido" type="text" inputmode="numeric" placeholder="$ 2.800.000" /></div>
+          <div><label class="alt-label" for="p-fecha">Fecha del pago</label><input class="alt-input" id="p-fecha" type="date" /><p class="gx-hint">En blanco = todavía no ha pagado.</p></div>
+          <div><label class="alt-label" for="p-esperado">Monto (solo servicios)</label><input class="alt-input" id="p-esperado" type="text" inputmode="numeric" placeholder="$ 180.000" /><p class="gx-hint">Los demás salen del contrato.</p></div>
+        </div>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-pg-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-pg-guardar">Registrar pago</button>
+        </div>
+      </form>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-ct-form" novalidate>
+        <h2>Nuevo contrato</h2>
+        <p class="gx-psub">De las fechas de vigencia salen los avisos de renovación.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="c-expediente">Expediente</label><input class="alt-input" id="c-expediente" type="text" placeholder="EXP-202608-0001" /></div>
+          <div>
+            <label class="alt-label" for="c-tipo">Tipo</label>
+            <select class="alt-input" id="c-tipo"><option value="arriendo">Arriendo</option><option value="administracion">Administración</option></select>
+          </div>
+          <div>
+            <label class="alt-label" for="c-vertical">Vertical legal</label>
+            <select class="alt-input" id="c-vertical"><option value="vivienda">Vivienda</option><option value="comercial">Comercial</option><option value="turistico">Turístico</option></select>
+            <p class="gx-hint">En vivienda el depósito en dinero está prohibido (Ley 820, art. 16).</p>
+          </div>
+        </div>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="c-propietario">Propietario</label><input class="alt-input" id="c-propietario" type="text" placeholder="Nombre completo" /></div>
+          <div><label class="alt-label" for="c-arrendatario">Arrendatario</label><input class="alt-input" id="c-arrendatario" type="text" placeholder="Nombre completo" /></div>
+          <div>
+            <label class="alt-label" for="c-garantia">Garantía</label>
+            <select class="alt-input" id="c-garantia"><option value="">Sin definir</option><option value="poliza">Póliza</option><option value="codeudor">Codeudor</option><option value="deposito_no_vivienda">Depósito (solo comercial)</option></select>
+          </div>
+        </div>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="c-canon">Canon mensual</label><input class="alt-input" id="c-canon" type="text" inputmode="numeric" placeholder="$ 2.500.000" /></div>
+          <div><label class="alt-label" for="c-diaPago">Día de pago</label><input class="alt-input" id="c-diaPago" type="text" inputmode="numeric" placeholder="5" /><p class="gx-hint">Entre 1 y 28, para que exista en febrero.</p></div>
+          <div><label class="alt-label" for="c-honorarios">Honorarios %</label><input class="alt-input" id="c-honorarios" type="text" inputmode="numeric" placeholder="10" /></div>
+        </div>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="c-inicio">Inicio</label><input class="alt-input" id="c-inicio" type="date" /></div>
+          <div><label class="alt-label" for="c-fin">Fin</label><input class="alt-input" id="c-fin" type="date" /></div>
+          <div class="gx-celda-nota">
+            <div>
+              <label class="gx-check"><input type="checkbox" id="c-renovacion" checked /> Renovación automática</label>
+              <label class="gx-check"><input type="checkbox" id="c-ipc" /> Incremento anual (IPC)</label>
+            </div>
+          </div>
+        </div>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-ct-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-ct-guardar">Guardar contrato</button>
+        </div>
+      </form>
+     </div>
+
+     <!-- ══ NUEVO INMUEBLE ═══════════════════════════════════════════════════════════════════
+          Réplica del mockup `ALTORRA Gestion-Alta.dc.html`, aprobado por Daniel el 2026-08-22.
+          PANTALLA y no ventana emergente: son seis bloques más galería, y eso dentro de un modal
+          obliga a hacer scroll en una caja flotante.
+          NO hay lenguaje visual nuevo: los campos son las clases `alt-*` que ya usa `/publicar` y las
+          tarjetas los `gx-panel` del propio panel. Lo único nuevo es cómo se agrupan.  -->
+     <!-- ══ DOCUMENTOS ══════════════════════════════════════════════════════════════════════
+          La BÓVEDA del expediente (gate B5, §142; mockup `ALTORRA Documentos`).
+
+          ⚠️ La pantalla NO empieza por la lista de archivos: empieza por lo que FALTA y lo que
+          CADUCA. Un cajón de PDFs no cambia nada —el dueño ya tiene ese cajón en WhatsApp—; lo que
+          hoy no puede contestar sin abrir carpetas es «¿qué me falta?». Esa cuenta la hace
+          `lib/domain/documentos` con la LISTA CANÓNICA de lo que exige cada clase de expediente. -->
+     <div id="gx-vista-ventas" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-vta-volver-panel">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Ventas</h1>
+          <p class="gx-sub">Ordenadas por lo que hay que atender, no por etapa.</p>
+        </div>
+      </header>
+
+      <div class="gx-kpi-set">
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-vta-kpi-riesgo">—</div><div class="gx-kpi__lbl">escrituradas SIN registrar</div></div>
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-vta-kpi-soportes">—</div><div class="gx-kpi__lbl">con soportes pendientes</div></div>
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-vta-kpi-abiertas">—</div><div class="gx-kpi__lbl">abiertas</div></div>
+      </div>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Qué atender</h2></div>
+        <p class="gx-psub gx-pad-x">En Colombia la venta se perfecciona con el REGISTRO, no con la escritura (art. 756 C.C.). Por eso lo escriturado y sin registrar va primero: es el único punto donde todo parece terminado y no lo está.</p>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--doc">
+            <div class="gx-tr gx-tr--head"><span>Venta</span><span>Etapa</span><span>Qué pasa</span><span></span></div>
+            <div id="gx-vta-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gx-panel gx-table" id="gx-vta-detalle" hidden>
+        <div class="gx-panel__head">
+          <h2 id="gx-vta-det-titulo">Venta</h2>
+          <button class="gx-link gx-link--btn" type="button" id="gx-vta-det-cerrar">Cerrar</button>
+        </div>
+        <p class="gx-psub gx-pad-x" id="gx-vta-det-resumen"></p>
+        <div class="gx-pad-x gx-vta-escalera" id="gx-vta-det-escalera"></div>
+        <div class="gx-pad-x gx-vta-acciones" id="gx-vta-det-acciones"></div>
+        <p class="gx-psub gx-pad-x">Quién la ha movido</p>
+        <div class="gx-pad-x" id="gx-vta-det-historial"></div>
+        <div class="gx-aviso gx-aviso--form gx-pad-x" id="gx-vta-det-msg" role="status" aria-live="polite"></div>
+      </div>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-vta-form" novalidate>
+        <h2 class="gx-form__h">Abrir una venta</h2>
+        <p class="gx-psub">Nace en «Interés»: todavía no hay nada firmado ni prometido. El precio ofrecido es opcional.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="v-expediente">Expediente</label><input class="alt-input" id="v-expediente" type="text" placeholder="EXP-202608-0001" /></div>
+          <div><label class="alt-label" for="v-propiedad">Inmueble</label><input class="alt-input" id="v-propiedad" type="text" placeholder="INM-202608-0001" /></div>
+        </div>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="v-comprador">Comprador</label><input class="alt-input" id="v-comprador" type="text" placeholder="Nombre completo" /></div>
+          <div><label class="alt-label" for="v-precio">Precio ofrecido (opcional)</label><input class="alt-input" id="v-precio" type="text" inputmode="numeric" placeholder="480000000" /></div>
+        </div>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-vta-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-vta-guardar">Abrir venta</button>
+        </div>
+      </form>
+     </div>
+
+     <div id="gx-vista-liquidacion" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-liq-volver-panel">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Liquidaci&#243;n del mes</h1>
+          <p class="gx-sub">Lo que se le cobra al arrendatario y a d&#243;nde va cada peso. Es la cuenta que el propietario revisa: sale entera, no resumida.</p>
+        </div>
+      </header>
+
+      <div class="gx-panel gx-liq__barra">
+        <label class="gx-liq__campo">
+          <span>Contrato</span>
+          <select id="gx-liq-contrato"><option>Cargando&#8230;</option></select>
+        </label>
+        {/* La bandera que NO puede ser una constante (§166.1): sin este dato en el contrato, el
+            default es «no retiene» — el caso de vivienda. Marcarla por si acaso le restaría a cada
+            propietario un 3,5 % que nadie le practic&#243;. */}
+        <label class="gx-liq__check">
+          <input type="checkbox" id="gx-liq-retiene" />
+          <span>El arrendatario es agente de retenci&#243;n <em>(empresa que retiene el 3,5 % del canon)</em></span>
+        </label>
+      </div>
+
+      <div class="gx-panel gx-liq" id="gx-liq-cuerpo"></div>
+
+      {/* Lo que esta pantalla NO hace. Va aqu&#237; y no en un pie de p&#225;gina: se lee donde se decide. */}
+      <div class="gx-liq__nota">
+        <p><strong>Esta pantalla calcula y muestra; no mueve dinero.</strong> El giro se hace por fuera mientras no est&#233; la cuenta de comercio, y las tres condiciones del dictamen (&#167;165) siguen mandando: el dinero no reposa en cuenta de ALTORRA, el mandato dice recaudo y giro, y no se le ofrece a nadie sin contrato firmado.</p>
+      </div>
+
+      <!--
+        CERTIFICACION ANUAL AL PROPIETARIO (§168 · ADR 233). Mockup:
+        `design/mockups/ALTORRA Certificacion.dc.html`. NO es la pantalla de arriba: aquella calcula
+        el MES y esta suma el ANO, y responden preguntas distintas — «cuanto le giro este mes» frente
+        a «que declara usted». El D.1625/2016 art. 1.2.4.11 dice que el mandante declara sus ingresos
+        «segun la informacion que le suministre el mandatario»: este papel ES esa informacion, y se
+        lo entrega a su contador.
+      -->
+      <div class="gx-panel">
+        <div class="gx-panel__head"><h2>Certificaci&#243;n anual al propietario</h2><span class="gx-psub" id="gx-cf-cobertura"></span></div>
+
+        <p class="gx-psub gx-pad-x">
+          Lo que ALTORRA recibi&#243; y pag&#243; por cuenta del propietario durante el a&#241;o. Se imprime desde
+          aqu&#237;; por eso dice tambi&#233;n lo que <em>no</em> incluye.
+        </p>
+
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="gx-cf-contrato">Contrato</label><select class="alt-input" id="gx-cf-contrato"></select></div>
+          <div><label class="alt-label" for="gx-cf-ano">A&#241;o gravable</label><select class="alt-input" id="gx-cf-ano"></select></div>
+          <div><label class="alt-label" for="gx-cf-nit">NIT o c&#233;dula del propietario</label><input class="alt-input" id="gx-cf-nit" type="text" placeholder="1.047.xxx.xxx" /></div>
+        </div>
+        <p class="gx-hint">
+          Sin el documento del propietario el certificado <strong>no le sirve para declarar</strong>.
+          Si el contrato ya lo tiene guardado, sale relleno.
+        </p>
+
+        <div class="gx-pad-x">
+          <button class="alt-btn alt-btn--navy" type="button" id="gx-cf-armar">Armar certificaci&#243;n</button>
+          <button class="alt-btn alt-btn--outline" type="button" id="gx-cf-imprimir" hidden>Imprimir</button>
+        </div>
+
+        <div id="gx-cf-salida"></div>
+      </div>
+     </div>
+
+     <div id="gx-vista-perfiles" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-pf-volver-panel">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Perfiles</h1>
+          <p class="gx-sub">Ordenados por quién lleva más esperando. La promesa son 24 horas hábiles.</p>
+        </div>
+      </header>
+
+      <div class="gx-kpi-set">
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-pf-kpi-tarde">&#8212;</div><div class="gx-kpi__lbl">fuera del plazo prometido</div></div>
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-pf-kpi-cola">&#8212;</div><div class="gx-kpi__lbl">esperando revisi&#243;n</div></div>
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-pf-kpi-vigentes">&#8212;</div><div class="gx-kpi__lbl">verificados y vigentes</div></div>
+      </div>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>La cola de revisi&#243;n</h2></div>
+        <p class="gx-psub gx-pad-x">Sin puntaje ni sem&#225;foro de riesgo: sin contrato con una central, consultar a alguien es ilegal. Lo que se verifica son los documentos.</p>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--doc">
+            <div class="gx-tr gx-tr--head"><span>Aspirante</span><span>Estado</span><span>Espera</span><span></span></div>
+            <div id="gx-pf-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gx-panel gx-table" id="gx-pf-detalle" hidden>
+        <div class="gx-panel__head">
+          <h2 id="gx-pf-det-titulo">Perfil</h2>
+          <button class="gx-link gx-link--btn" type="button" id="gx-pf-det-cerrar">Cerrar</button>
+        </div>
+        <p class="gx-psub gx-pad-x" id="gx-pf-det-resumen"></p>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--docdet">
+            <div class="gx-tr gx-tr--head"><span>Documento</span><span>Archivo</span><span></span></div>
+            <div id="gx-pf-det-soportes"></div>
+          </div>
+        </div>
+        <p class="gx-doc-bit__aviso gx-pad-x"><strong>Estos papeles son de una persona de fuera.</strong> Se descargan con tu sesi&#243;n y no dejan enlace que reenviar. Abrir uno queda escrito con tu nombre y la fecha.</p>
+        <div class="gx-pad-x">
+          <label class="alt-label" for="gx-pf-obs">Si algo falta, escribe qu&#233;</label>
+          <input class="alt-input" id="gx-pf-obs" type="text" placeholder="La c&#233;dula est&#225; borrosa por el reverso." />
+          <p class="gx-psub">Este texto le llega a la persona tal cual. Quien lee &#171;la c&#233;dula est&#225; borrosa&#187; sube otra en dos minutos; quien lee &#171;rechazado&#187; se va.</p>
+        </div>
+        <div class="gx-pad-x gx-vta-acciones" id="gx-pf-det-acciones"></div>
+        <div class="gx-aviso gx-aviso--form gx-pad-x" id="gx-pf-det-msg" role="status" aria-live="polite"></div>
+      </div>
+     </div>
+
+     <div id="gx-vista-documentos" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-doc-volver">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Documentos</h1>
+          <p class="gx-sub">Lo primero no son los archivos: es lo que falta y lo que caduca.</p>
+        </div>
+      </header>
+
+      <div class="gx-kpi-set">
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-doc-kpi-faltan">—</div><div class="gx-kpi__lbl">expedientes con algo pendiente</div></div>
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-doc-kpi-vencen">—</div><div class="gx-kpi__lbl">documentos vencidos o por vencer</div></div>
+        <div class="gx-kpi"><div class="gx-kpi__val" id="gx-doc-kpi-total">—</div><div class="gx-kpi__lbl">documentos guardados</div></div>
+      </div>
+
+      <div class="gx-panel gx-table">
+        <div class="gx-panel__head"><h2>Qué falta y qué caduca</h2></div>
+        <p class="gx-psub gx-pad-x">Sale de la lista canónica por tipo de expediente, no de una nota mental: administración y arriendo piden cosas distintas.</p>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--doc">
+            <div class="gx-tr gx-tr--head"><span>Expediente</span><span>Qué pasa</span><span>Vence</span><span></span></div>
+            <div id="gx-doc-lista"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- El expediente POR DENTRO (mockup 2a). Aparece al pulsar «Ver» en una fila: lo que falta y
+           lo que hay, con el mismo peso visual — un hueco es tan dato como un archivo. -->
+      <div class="gx-panel gx-table" id="gx-doc-detalle" hidden>
+        <div class="gx-panel__head">
+          <h2 id="gx-doc-det-titulo">Expediente</h2>
+          <button class="gx-link gx-link--btn" type="button" id="gx-doc-det-cerrar">Cerrar</button>
+        </div>
+        <p class="gx-psub gx-pad-x" id="gx-doc-det-resumen"></p>
+        <div class="gx-scrollx">
+          <div class="gx-table__inner gx-table__inner--docdet">
+            <div class="gx-tr gx-tr--head"><span>Documento</span><span>Detalle</span><span></span></div>
+            <div id="gx-doc-det-lista"></div>
+          </div>
+        </div>
+        <div class="gx-aviso gx-aviso--form gx-pad-x" id="gx-doc-det-msg" role="status" aria-live="polite"></div>
+      </div>
+
+      <form class="gx-panel gx-pad gx-form" id="gx-doc-form" novalidate>
+        <h2 class="gx-form__h">Subir un documento</h2>
+        <p class="gx-psub">La finalidad y la caducidad se escriben AL SUBIR. Un archivo sin fecha de retiro se queda para siempre, y guardar de más es lo que la ley llama tratar sin necesidad.</p>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="d-expediente">Expediente</label><input class="alt-input" id="d-expediente" type="text" placeholder="EXP-202608-0001" /></div>
+          <div>
+            <label class="alt-label" for="d-tipo">Qué es</label>
+            <select class="alt-select" id="d-tipo">
+              {TIPOS_DOC.map((t) => <option value={t.id}>{t.nombre}</option>)}
+            </select>
+          </div>
+        </div>
+        <div class="gx-fgrid">
+          <div class="gx-ancho"><label class="alt-label" for="d-finalidad">Para qué se guarda</label><input class="alt-input" id="d-finalidad" type="text" placeholder="Administrar este inmueble" /></div>
+        </div>
+        <div class="gx-fgrid">
+          <div><label class="alt-label" for="d-vence">¿Caduca? (opcional)</label><input class="alt-input" id="d-vence" type="date" /></div>
+          <div><label class="alt-label" for="d-archivo">Archivo</label><input class="alt-input" id="d-archivo" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp" /></div>
+        </div>
+        <label class="gx-doc-check">
+          <input type="checkbox" id="d-autorizacion" />
+          <span>Este documento contiene datos personales de un tercero y cuento con su autorización para tratarlos con la finalidad escrita arriba. (Ley 1581 · art. 9)</span>
+        </label>
+        <div class="gx-pie">
+          <div class="gx-aviso gx-aviso--form" id="gx-doc-msg" role="status" aria-live="polite"></div>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-doc-guardar">Guardar en la bóveda</button>
+        </div>
+      </form>
+     </div>
+
+     <div id="gx-vista-alta" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-alta-volver">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Nuevo inmueble</h1>
+          <p class="gx-sub">Se guarda como borrador. Solo sale al portal cuando lo pongas en «Disponible».</p>
+        </div>
+      </header>
+
+      <!-- Aviso de visibilidad. Lo pinta `revisarAlta()`, que pregunta a los MISMOS predicados que usa
+           el índice del catálogo — no a una copia. Si dice «se verá», el listado no lo puede omitir:
+           es un contrato con test en las dos direcciones (§108). -->
+      <div class="gx-aviso" id="gx-alta-aviso" role="status" aria-live="polite" hidden></div>
+
+      <form class="gx-form" id="gx-alta-form" novalidate>
+        <section class="gx-panel gx-pad">
+          <h2>Qué es</h2>
+          <p class="gx-psub">La operación decide qué precio se pide y qué obligaciones legales aplican.</p>
+          <div class="gx-fgrid">
+            <div>
+              <label class="alt-label" for="a-operacion">Operación</label>
+              <select class="alt-input" id="a-operacion" name="operacion">
+                <option value="venta">Venta</option>
+                <option value="arriendo">Arriendo</option>
+                <option value="alojamiento">Alojamiento por días</option>
+              </select>
+            </div>
+            <div>
+              <label class="alt-label" for="a-tipo">Tipo</label>
+              <select class="alt-input" id="a-tipo" name="tipo">
+                {TIPOS.map((t) => <option value={t[0]}>{t[1]}</option>)}
+              </select>
+            </div>
+            <div>
+              <label class="alt-label" for="a-vertical">Vertical legal</label>
+              <select class="alt-input" id="a-vertical" name="vertical">
+                <option value="">Sugerida automáticamente</option>
+                <option value="vivienda">Vivienda</option>
+                <option value="comercial">Comercial</option>
+                <option value="turistico">Turístico</option>
+              </select>
+              <p class="gx-hint">Decide qué prohíbe la ley: en vivienda no se puede pedir depósito.</p>
+            </div>
+          </div>
+          <div class="gx-frow">
+            <label class="alt-label" for="a-titulo">Título</label>
+            <input class="alt-input" id="a-titulo" name="titulo" type="text" placeholder="Apartamento con vista al mar en Bocagrande" />
+            <p class="gx-hint">Es lo que se lee en la tarjeta del listado y en Google.</p>
+          </div>
+          <div class="gx-frow">
+            <label class="alt-label" for="a-descripcion">Descripción</label>
+            <textarea class="alt-input gx-ta" id="a-descripcion" name="descripcion" rows="4" placeholder="Cuenta lo que una foto no dice: la luz, el barrio, qué hay cerca."></textarea>
+          </div>
+        </section>
+
+        <section class="gx-panel gx-pad">
+          <h2>Dónde</h2>
+          <p class="gx-psub">Nunca se publica la dirección exacta. Solo barrio y ciudad.</p>
+          <div class="gx-fgrid">
+            <div>
+              <label class="alt-label" for="a-ciudad">Ciudad</label>
+              <input class="alt-input" id="a-ciudad" name="ciudad" type="text" value="Cartagena de Indias" />
+              <p class="gx-hint">De la ciudad depende que se muestre la matrícula de arrendador.</p>
+            </div>
+            <div>
+              <label class="alt-label" for="a-barrio">Barrio</label>
+              <input class="alt-input" id="a-barrio" name="barrio" type="text" list="a-barrios" placeholder="Bocagrande" />
+              <datalist id="a-barrios">{ZONAS.map((z) => <option value={z.nombre}></option>)}</datalist>
+            </div>
+            <div data-solo="alojamiento" hidden>
+              <label class="alt-label" for="a-rnt">RNT</label>
+              <input class="alt-input" id="a-rnt" name="rnt" type="text" placeholder="RNT-000000" />
+              <p class="gx-hint">Obligatorio por ley para anunciar hospedaje.</p>
+            </div>
+            <div data-solo="alojamiento" hidden>
+              <label class="alt-label" for="a-situacionPH">Reglamento de la copropiedad</label>
+              <select class="alt-input" id="a-situacionPH" name="situacionPH">
+                <option value="">Elige una opción</option>
+                <option value="autoriza-expreso">Autoriza expresamente el alquiler por días</option>
+                <option value="sin-autorizacion">No lo autoriza, o no dice nada</option>
+                <option value="no-aplica">El inmueble no está en propiedad horizontal</option>
+              </select>
+              <p class="gx-hint">
+                Si el reglamento calla, NO autoriza: la ley pide permiso expreso. Se puede llevar a votación de la
+                asamblea.
+              </p>
+            </div>
+          </div>
+          <div class="gx-fgrid">
+            <div><label class="alt-label" for="a-lat">Latitud</label><input class="alt-input" id="a-lat" name="lat" type="text" placeholder="10.399" /></div>
+            <div><label class="alt-label" for="a-lng">Longitud</label><input class="alt-input" id="a-lng" name="lng" type="text" placeholder="-75.554" /></div>
+            <div class="gx-celda-nota"><p class="gx-hint">Aproximadas, para el pin del mapa. Opcionales, y van las dos o ninguna.</p></div>
+          </div>
+        </section>
+
+        <section class="gx-panel gx-pad">
+          <h2>Cuánto</h2>
+          <p class="gx-psub">Solo se piden los precios de la operación elegida.</p>
+          <div class="gx-fgrid">
+            <div data-solo="venta">
+              <label class="alt-label" for="a-valorVenta">Valor de venta</label>
+              <input class="alt-input" id="a-valorVenta" name="valorVenta" type="text" inputmode="numeric" placeholder="$ 450.000.000" />
+            </div>
+            <div data-solo="arriendo" hidden>
+              <label class="alt-label" for="a-canon">Canon mensual</label>
+              <input class="alt-input" id="a-canon" name="canon" type="text" inputmode="numeric" placeholder="$ 4.500.000" />
+            </div>
+            <div data-solo="arriendo" hidden>
+              <label class="alt-label" for="a-administracion">Administración</label>
+              <input class="alt-input" id="a-administracion" name="administracion" type="text" inputmode="numeric" placeholder="$ 380.000" />
+              <p class="gx-hint">Aparte del canon, nunca dentro.</p>
+            </div>
+            <div data-solo="alojamiento" hidden>
+              <label class="alt-label" for="a-precioNoche">Precio por noche</label>
+              <input class="alt-input" id="a-precioNoche" name="precioNoche" type="text" inputmode="numeric" placeholder="$ 350.000" />
+            </div>
+          </div>
+        </section>
+
+        <section class="gx-panel gx-pad">
+          <h2>Cómo es</h2>
+          <p class="gx-psub">Lo que se deje en blanco simplemente no se muestra. No se inventa nada.</p>
+          <div class="gx-fgrid gx-fgrid--corta">
+            {SPECS.map((f) => (
+              <div>
+                <label class="alt-label" for={`a-${f[0]}`}>{f[1]}</label>
+                <input class="alt-input" id={`a-${f[0]}`} name={f[0]} type="text" inputmode="numeric" />
+              </div>
+            ))}
+          </div>
+          <div class="gx-frow">
+            <span class="alt-label">Amenidades</span>
+            <div class="gx-chips" id="gx-alta-amenidades">
+              {AMENIDADES.map((a) => (
+                <button class="gx-chip" type="button" aria-pressed="false" data-amenidad={a}>{a}</button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section class="gx-panel gx-pad">
+          <h2>Fotos</h2>
+          <p class="gx-psub">La primera es la portada: la que sale en el listado y al compartir por WhatsApp.</p>
+          <div class="gx-fotos" id="gx-alta-fotos"></div>
+          <label class="gx-subir" for="a-fotos">
+            <span aria-hidden="true">+</span> Añadir fotos
+            <input id="a-fotos" type="file" accept="image/*" multiple hidden />
+          </label>
+          <p class="gx-hint">Se convierten a WebP en tu navegador antes de subirse, así pesan una fracción y cargan rápido en móvil.</p>
+        </section>
+
+        <section class="gx-panel gx-pad">
+          <h2>Publicación</h2>
+          <p class="gx-psub">Tres grupos con consecuencias distintas. Elegir mal no da ningún aviso, así que aquí se dice.</p>
+          <div class="gx-estados">
+            {ESTADOS.map((e, i) => (
+              <label class={`gx-estado${i === 0 ? ' is-on' : ''}`}>
+                <input type="radio" name="estado" value={e[0]} checked={i === 0} />
+                <span><b>{e[1]}</b>{e[2]}</span>
+              </label>
+            ))}
+          </div>
+        </section>
+
+        <div class="gx-pie">
+          <p class="gx-pie__msg" id="gx-alta-msg" role="status" aria-live="polite"></p>
+          <button class="alt-btn alt-btn--outline" type="button" id="gx-alta-cancelar">Cancelar</button>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-alta-guardar">Guardar inmueble</button>
+        </div>
+      </form>
+     </div>
+    </main>
+  </div>
+
+  <script type="application/json" id="gx-strings" set:html={JSON.stringify(strings)}></script>
+</BaseLayout>
+
+<!--
+  ⚠️ LOS TRES BLOQUES DE ESTILO VAN `is:global` A PROPÓSITO (§117).
+
+  Astro acota el CSS añadiendo `data-astro-cid-XXXX` a los elementos DE LA PLANTILLA y repitiéndolo
+  en cada selector (`.gx-tr` compila a `.gx-tr[data-astro-cid-XXXX]`). Los nodos que crea el
+  navegador en tiempo de ejecución —que aquí son CASI TODO: las filas de leads, inmuebles, agenda,
+  contratos y cartera— no llevan ese atributo, así que NINGUNA regla les aplicaba. Se veían sin
+  rejilla, sin tarjeta y con la tipografía del cuerpo, y nada fallaba: el CSS simplemente no
+  existía para ellos.
+
+  Se globaliza el bloque entero en vez de ir marcando `:global(...)` regla a regla porque esa lista
+  habría que mantenerla cada vez que un script añade una clase nueva — y olvidarla no rompe el
+  build, solo despinta la pantalla. El namespace `gx-` es el que acota: no aparece en ninguna otra
+  página (`grep -rl "gx-" src/` → solo gestion.astro y sus cuatro scripts). Lo comprueba el gate
+  `npm run verify:css`.
+-->
+<style is:global>
+  /* Fila de MENSAJE de la tabla (vacío, cargando o error): ocupa el ancho y no parece un dato. */
+  .gx-tr--msg { grid-template-columns: 1fr !important; padding-block: 22px; }
+  .gx-tr--msg span { white-space: normal; }
+
+  /* Puerta de acceso: pantalla completa, centrada, con la tipografía y la paleta del portal. */
+  .gx-gate {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    text-align: center;
+    padding: clamp(2rem, 6vw, 4rem) 1.25rem;
+  }
+  .gx-gate__t {
+    font-family: var(--alt-font-display);
+    font-weight: var(--alt-fw-semibold);
+    font-size: clamp(1.4rem, 3.5vw, 2rem);
+    color: var(--alt-ink);
+    margin: 0;
+  }
+  .gx-gate__d { color: var(--alt-text); max-width: 34rem; line-height: 1.6; margin: 0; }
+  .gx-gate__acc { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 0.75rem 0 0; }
+</style>
+
+<style is:global>
+  .gx-root { display: flex; flex-wrap: wrap; min-height: 100vh; width: 100%; background: var(--alt-surface); }
+
+  /* ---- Sidebar ---- */
+  .gx-side { flex: 0 0 246px; background: var(--alt-surface-ink); color: var(--alt-on-ink-muted); display: flex; flex-direction: column; padding: 22px 16px; position: sticky; top: 0; align-self: flex-start; height: 100vh; min-width: 0; }
+  .gx-brand { display: flex; align-items: center; gap: 11px; padding: 6px 8px 22px; text-decoration: none; }
+  .gx-brand img { height: 42px; width: auto; }
+  .gx-brand__txt { display: flex; flex-direction: column; gap: 3px; line-height: 1; }
+  .gx-brand__name { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 20px; letter-spacing: var(--alt-tracking-wordmark); color: #fff; }
+  .gx-brand__sub { font-size: 7px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.4em; color: var(--alt-on-ink-muted); }
+  .gx-nav { display: flex; flex-direction: column; gap: 3px; margin-top: 8px; }
+  .gx-nav__item { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: var(--alt-r-sm); color: var(--alt-on-ink-muted); font-size: 14px; font-weight: var(--alt-fw-medium); text-decoration: none; transition: background var(--alt-dur-fast) var(--alt-ease), color var(--alt-dur-fast) var(--alt-ease); }
+  .gx-nav__item svg { width: 18px; height: 18px; flex: none; }
+  .gx-nav__item:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
+  .gx-nav__item.is-on { background: rgba(235, 210, 126, 0.14); color: var(--alt-gold-bright); font-weight: var(--alt-fw-semibold); }
+  .gx-nav__pronto { margin-left: auto; font-size: 9.5px; font-weight: var(--alt-fw-semibold); letter-spacing: .1em; text-transform: uppercase; color: var(--alt-gold-bright); opacity: .75; }
+  .gx-nav__nota { margin: 8px 12px 0; padding: 10px 12px; border-radius: var(--alt-r-sm); background: rgba(235, 210, 126, 0.1); border-left: 2px solid var(--alt-gold-bright); color: var(--alt-on-ink-muted); font-size: 12px; line-height: 1.6; }
+  .gx-nav__nota[hidden] { display: none; }
+  .gx-me { margin-top: auto; display: flex; align-items: center; gap: 11px; padding: 12px 10px; border-top: 1px solid var(--alt-hairline-ink); }
+  .gx-me__av { width: 38px; height: 38px; border-radius: 50%; background: var(--alt-navy); border: 1px solid rgba(235, 210, 126, 0.4); display: flex; align-items: center; justify-content: center; flex: none; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 15px; color: var(--alt-gold-bright); }
+  .gx-me__id { min-width: 0; }
+  .gx-me__name { font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gx-me__role { font-size: 11px; color: var(--alt-on-ink-muted); }
+  .gx-me__seg { display: flex; align-items: center; gap: 9px; padding: 9px 12px 12px; color: var(--alt-on-ink-muted); font-size: 12.5px; font-weight: var(--alt-fw-medium); text-decoration: none; }
+  .gx-me__seg:hover { color: var(--alt-gold-bright); }
+
+  /* ---- Main ---- */
+  .gx-main { flex: 1 1 620px; min-width: 0; padding: clamp(20px, 3vw, 38px) clamp(18px, 3.4vw, 44px); display: flex; flex-direction: column; gap: clamp(20px, 2.4vw, 30px); }
+  .gx-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; flex-wrap: wrap; }
+  .gx-greet { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(26px, 3.4vw, 38px); line-height: 1.05; color: var(--alt-ink); margin: 0 0 5px; letter-spacing: normal; }
+  .gx-sub { font-size: 14px; color: var(--alt-text); margin: 0; }
+  .gx-head__actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+
+  .gx-seg { display: flex; background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-sm); padding: 4px; gap: 2px; }
+  .gx-seg__btn { flex: 1; padding: 9px 15px; border: none; border-radius: 9px; cursor: pointer; font-size: 13px; font-weight: var(--alt-fw-semibold); font-family: var(--alt-font-body); white-space: nowrap; background: transparent; color: var(--alt-text); transition: background var(--alt-dur-fast) var(--alt-ease), color var(--alt-dur-fast) var(--alt-ease); }
+  .gx-seg__btn:hover { color: var(--alt-ink); }
+  .gx-seg__btn.is-on { background: var(--alt-navy); color: #fff; }
+
+  .gx-new { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: var(--alt-r-sm); background: var(--alt-navy); color: #fff; font-weight: var(--alt-fw-semibold); font-size: 13.5px; font-family: var(--alt-font-body); border: none; cursor: pointer; white-space: nowrap; transition: box-shadow var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease); }
+  .gx-new span { font-size: 17px; line-height: 1; color: var(--alt-gold-bright); }
+  .gx-new:hover { box-shadow: var(--alt-elev-nav-scroll); transform: translateY(-1px); }
+
+  /* ---- KPIs ---- */
+  .gx-kpi-set { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 16px; }
+  .gx-kpi-set[hidden] { display: none; }
+  .gx-kpi { background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-md); padding: 20px 22px; box-shadow: var(--alt-elev-panel); animation: gx-rise 0.5s var(--alt-ease) both; }
+  .gx-kpi__top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+  .gx-kpi__ic { width: 38px; height: 38px; border-radius: var(--alt-r-sm); background: var(--alt-mist); display: flex; align-items: center; justify-content: center; color: var(--alt-ink); }
+  .gx-kpi__ic svg { width: 18px; height: 18px; }
+  .gx-kpi__trend { display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px; border-radius: var(--alt-r-pill); background: var(--alt-mist); font-size: 11px; font-weight: var(--alt-fw-bold); color: var(--alt-link); }
+  .gx-kpi__trend svg { width: 11px; height: 11px; }
+  .gx-kpi__val { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 34px; line-height: 1; color: var(--alt-ink); margin-bottom: 5px; }
+  .gx-kpi__lbl { font-size: 12.5px; color: var(--alt-text); font-weight: var(--alt-fw-medium); }
+
+  /* ---- Grid tabla + aside ---- */
+  .gx-grid { display: flex; gap: clamp(18px, 2vw, 26px); flex-wrap: wrap; align-items: flex-start; }
+  .gx-panel { background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-lg); box-shadow: var(--alt-elev-panel); }
+  .gx-pad { padding: 22px 24px; }
+  .gx-table { flex: 2 1 460px; min-width: 0; overflow: hidden; }
+  .gx-col { flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+  .gx-panel__head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 22px 24px 16px; }
+  .gx-panel h2 { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 22px; color: var(--alt-ink); margin: 0; letter-spacing: normal; }
+  .gx-col .gx-panel h2 { font-size: 20px; margin-bottom: 18px; }
+  .gx-link { font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-link); white-space: nowrap; text-decoration: none; }
+  .gx-link:hover { text-decoration: underline; }
+  /* «Ver todo» era un `<a href="#">` sin nadie que lo escuchara: pulsarlo no hacía nada y encima
+     saltaba al principio de la página. Ahora es un botón —que es lo que siempre fue— y responde. */
+  .gx-link--btn { border: 0; background: none; padding: 0; font-family: inherit; cursor: pointer; }
+  .gx-tabla-nota { margin: 0 clamp(14px, 2vw, 22px) 14px; padding: 9px 12px; border-radius: var(--alt-r-sm); background: var(--alt-mist); border-left: 2px solid var(--alt-gold); color: var(--alt-text-soft); font-size: 12.5px; line-height: 1.6; }
+  .gx-tabla-nota[hidden] { display: none; }
+
+  .gx-scrollx { overflow-x: auto; }
+  .gx-scrollx::-webkit-scrollbar { height: 8px; }
+  .gx-scrollx::-webkit-scrollbar-thumb { background: var(--alt-hairline-2); border-radius: 8px; }
+  .gx-table__inner { min-width: 660px; }
+  .gx-row-set[hidden] { display: none; }
+  .gx-tr { display: grid; grid-template-columns: 1.7fr 1.5fr 1fr 1.1fr 1fr; gap: 12px; padding: 14px 24px; border-bottom: 1px solid var(--alt-hairline); align-items: center; }
+  .gx-tr--head { padding: 10px 24px; border-top: 1px solid var(--alt-hairline); font-size: 10.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text-muted); }
+  .gx-r { text-align: right; }
+  .gx-cli { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  /* En la cartera la celda no lleva avatar sino CÓDIGO + concepto, y en fila los dos se estorban:
+     «Giro al propietario» pedía 112px de los 99 que le quedaban. Apilados cada uno tiene la
+     columna entera, y es la forma habitual de una celda con identificador y subtítulo. */
+  .gx-cli--apilada { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .gx-cli__ini { width: 34px; height: 34px; border-radius: 50%; background: var(--alt-mist); display: flex; align-items: center; justify-content: center; flex: none; font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
+  .gx-cli__name { font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gx-muted { font-size: 13px; color: var(--alt-text); }
+  .gx-ell { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* Para las celdas que dan una INSTRUCCIÓN, no un identificador: cortar «Preaviso de terminación
+     por mora. Escrito, con constancia…» deja al operador sin la mitad que le dice qué hacer.
+     Dos líneas caben de sobra; los códigos y los rangos de fecha siguen con `gx-ell`. */
+  .gx-wrap { white-space: normal; line-height: 1.35; }
+  .gx-val { font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); white-space: nowrap; }
+  .gx-pill { display: inline-flex; align-items: center; padding: 5px 11px; border-radius: var(--alt-r-pill); font-size: 11.5px; font-weight: var(--alt-fw-semibold); background: var(--alt-mist); }
+  .gx-pill--gold { color: var(--alt-link); }
+  .gx-pill--navy { color: var(--alt-ink); }
+
+  /* ---- Actividad ---- */
+  .gx-act-set { display: flex; flex-direction: column; gap: 16px; }
+  .gx-act-set[hidden] { display: none; }
+  .gx-act { display: flex; gap: 13px; }
+  .gx-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; margin-top: 5px; }
+  .gx-dot--gold { background: var(--alt-gold-raw); }
+  .gx-dot--navy { background: var(--alt-ink); }
+  .gx-act__txt { font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); line-height: 1.35; }
+  .gx-act__time { font-size: 12px; color: var(--alt-text-muted); margin-top: 2px; }
+
+  /* ---- Demanda ---- */
+  .gx-dem { display: flex; flex-direction: column; gap: 14px; }
+  .gx-dem__lbl { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--alt-text); margin-bottom: 6px; }
+  .gx-dem__lbl span:first-child { font-weight: var(--alt-fw-medium); }
+  .gx-dem__track { height: 6px; border-radius: 6px; background: var(--alt-gris-claro); position: relative; }
+  .gx-dem__fill { position: absolute; left: 0; top: 0; bottom: 0; background: linear-gradient(90deg, var(--alt-gold), var(--alt-navy)); border-radius: 6px; }
+
+  @keyframes gx-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .gx-kpi { animation: none; } }
+
+  @media (max-width: 860px) {
+    .gx-side { flex-basis: 100%; height: auto; position: static; flex-direction: row; align-items: center; flex-wrap: wrap; gap: 10px; padding: 14px 18px; }
+    .gx-brand { padding: 0; }
+    .gx-nav { flex-direction: row; flex-wrap: wrap; margin-top: 0; margin-inline: auto; }
+    .gx-nav__item { padding: 9px 11px; }
+    .gx-me { margin-top: 0; border-top: 0; padding: 0; }
+  }
+</style>
+
+<style is:global>
+  .gx-table__inner--vf .gx-tr { grid-template-columns: 2.2fr 3fr 1fr; align-items: center; }
+
+  /* BÓVEDA (§142). Estas reglas se escriben A LA VEZ que el JavaScript que crea las filas: una clase
+     sin regla no falla, solo despinta — y eso es exactamente lo que costó §117 y §133. */
+  .gx-table__inner--doc .gx-tr { grid-template-columns: 1.8fr 3fr 1fr auto; align-items: center; }
+  .gx-doc-fila--aviso { background: var(--alt-mist); border-left: 3px solid var(--alt-gold); }
+  /* Vencido = navy con más peso + el dato al lado. NO rojo: la paleta no lo tiene, y el color por sí
+     solo tampoco sirve a quien no lo distingue (el texto ya dice «venció hace 5 meses»). */
+  .gx-doc-vencido { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
+  .gx-doc-check { display: flex; gap: 11px; align-items: flex-start; margin-top: 4px; padding: 13px 15px; border-radius: var(--alt-r-sm); background: var(--alt-mist); border-left: 3px solid var(--alt-gold); font-size: 13px; line-height: 1.65; color: var(--alt-text-soft); }
+  .gx-doc-check input { margin-top: 2px; flex: none; }
+  .gx-table__inner--docdet .gx-tr { grid-template-columns: 2fr 2.6fr auto; align-items: center; }
+  /* Un hueco pesa lo mismo que un archivo: si el que falta se viera más flojo, se leería como opcional. */
+  .gx-doc-falta { background: var(--alt-mist); border-left: 3px solid var(--alt-gold); }
+  .gx-doc-acc { display: inline-flex; gap: 12px; }
+  /* Bitácora de un documento (§148, artboard 4a). Nace plegada y se sangra bajo su fila para que se
+     lea como parte de ella y no como una fila más de la tabla. */
+  .gx-doc-bit { padding: 14px 18px 14px 34px; border-left: 3px solid var(--alt-gold); background: var(--alt-mist); }
+  .gx-doc-bit__aviso { margin: 0 0 12px; font-size: 13px; line-height: 1.65; color: var(--alt-text); }
+  .gx-doc-bit__aviso strong { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
+  .gx-doc-bit__k { margin: 0 0 8px; font-size: 11px; font-weight: var(--alt-fw-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text-soft); }
+  /* VENTAS (§151). La escalera de 7 peldaños: cumplidos en navy, el actual en oro, los que faltan en
+     plata. Solo el actual lleva su explicación — repetirla en los siete esconde la línea que hay que
+     leer. */
+  .gx-vta-escalera { display: flex; flex-direction: column; gap: 2px; margin: 16px 0 20px; }
+  .gx-vta-paso { display: flex; gap: 14px; align-items: flex-start; padding: 8px 0; }
+  .gx-vta-paso__n { width: 22px; height: 22px; border-radius: var(--alt-r-circle); background: var(--alt-surface-neu); color: var(--alt-text-soft); font-size: 11px; font-weight: var(--alt-fw-bold); display: flex; align-items: center; justify-content: center; flex: none; }
+  .gx-vta-paso.is-hecho .gx-vta-paso__n { background: var(--alt-ink); color: #fff; }
+  .gx-vta-paso.is-on .gx-vta-paso__n { background: var(--alt-gold); color: var(--alt-ink); }
+  .gx-vta-paso__t { font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-text-soft); }
+  .gx-vta-paso.is-hecho .gx-vta-paso__t, .gx-vta-paso.is-on .gx-vta-paso__t { color: var(--alt-ink); }
+  .gx-vta-paso__d { font-size: 12.5px; line-height: 1.55; color: var(--alt-text); margin-top: 2px; }
+  .gx-vta-acciones { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
+  /* La fila que hay que mirar HOY. Filete de oro, no rojo: el riesgo se dice con la paleta. */
+  .gx-vta-alerta { background: var(--alt-mist); border-left: 3px solid var(--alt-gold); }
+  .gx-doc-bit__fila { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 14px; padding: 9px 0; border-top: 1px solid var(--alt-hairline); font-size: 13px; }
+  .gx-btn-fila { padding: 7px 15px; font-size: 13px; }
+  .gx-pad-x { padding-inline: 20px; }
+
+  .gx-table__inner--ex .gx-tr { grid-template-columns: 2.2fr 1fr 2.6fr; }
+  .gx-table__inner--nv .gx-tr { grid-template-columns: 1.9fr 1.2fr 1fr 0.7fr 2.2fr; }
+  /* Campo que ocupa la fila entera: una descripción de una frase en un tercio de ancho se lee peor
+     que el problema que describe. Un solo nombre — `span 2` daba EXACTAMENTE lo mismo en esta
+     rejilla, y dos clases para un mismo resultado es como empieza a pudrirse una hoja de estilos. */
+  .gx-ancho { grid-column: 1 / -1; }
+
+  .gx-table__inner--pg .gx-tr { grid-template-columns: 1.6fr 1fr 1.1fr 1.2fr 2fr; }
+
+  /* ══ CONTRATOS (§114) ════════════════════════════════════════════════════════════════════ */
+  .gx-table__inner--agenda .gx-tr { grid-template-columns: 2fr 1fr 1fr 2.4fr; }
+  .gx-table__inner--ct .gx-tr { grid-template-columns: 2fr 1fr 1.2fr 1fr 1.6fr; }
+  .gx-check { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--alt-text); margin-bottom: 8px; }
+  .gx-check input { accent-color: var(--alt-surface-ink); }
+  /* El aviso del formulario ocupa el hueco del pie y solo aparece cuando tiene algo que decir. */
+  .gx-aviso--form { flex: 1 1 280px; margin: 0; font-size: 13px; }
+  .gx-aviso--form:empty { display: none; }
+  .gx-aviso--form ul { margin: 0; padding-left: 18px; color: var(--alt-text-soft); line-height: 1.6; }
+
+  /* ══ LISTADO DE INMUEBLES (§110) ═════════════════════════════════════════════════════════ */
+  .gx-table__inner--inm .gx-tr { grid-template-columns: 2.2fr 1fr 1.4fr 1.1fr 1fr; }
+  .gx-cod {
+    display: block;
+    font-size: 11px;
+    font-weight: var(--alt-fw-semibold);
+    letter-spacing: 0.04em;
+    color: var(--alt-text-muted);
+  }
+  /* «No se ve» en ORO: en esta paleta el oro es lo que pide atención, y el rojo no existe. */
+  .gx-vis__no { color: var(--alt-link); font-weight: var(--alt-fw-semibold); font-size: 13px; cursor: help; }
+  /* La fila entera abre el inmueble a editar. Con foco visible: se puede recorrer con el teclado. */
+  .gx-tr--click { cursor: pointer; transition: background var(--alt-dur-fast) var(--alt-ease); }
+  .gx-tr--click:hover { background: var(--alt-mist); }
+  .gx-tr--click:focus-visible { outline: 2px solid var(--alt-gold); outline-offset: -2px; }
+
+  /* ══ PANTALLA «NUEVO INMUEBLE» (§108) ══════════════════════════════════════════════════════
+     Todo sale de `tokens.css`. Ni un color suelto: la paleta es navy / dorado / plata / blanco, y
+     los estados NO usan verde ni rojo — la jerarquía se hace con oro (pide acción) y navy (reposo). */
+
+  .gx-volver {
+    background: none;
+    border: 0;
+    padding: 0 0 6px;
+    font: inherit;
+    font-size: 12.5px;
+    font-weight: var(--alt-fw-semibold);
+    color: var(--alt-link);
+    cursor: pointer;
+  }
+  .gx-volver:hover { text-decoration: underline; }
+
+  .gx-form { display: flex; flex-direction: column; gap: clamp(16px, 2vw, 22px); }
+  /* El `h2` de `.gx-panel` computa margen 0 aquí, así que el subtítulo necesita separación POSITIVA.
+     El `-10px` que había asumía un margen que no existe y montaba el texto encima del título. */
+  .gx-psub { font-size: 12.5px; color: var(--alt-text-soft); margin: 5px 0 18px; }
+  .gx-vacio { margin: 0; padding: 18px 0; font-size: 13.5px; color: var(--alt-text-soft); }
+
+  .gx-fgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+    gap: 16px;
+  }
+  .gx-fgrid + .gx-fgrid { margin-top: 16px; }
+  .gx-fgrid--corta { grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr)); }
+  .gx-frow { margin-top: 16px; }
+  .gx-hint { font-size: 11.5px; color: var(--alt-text-soft); margin: 6px 0 0; line-height: 1.45; }
+  /* Celda de la rejilla que solo lleva una nota: se alinea ABAJO, a la altura de los campos vecinos.
+     El `align-self` tiene que ir en la CELDA (el `div`), no en el párrafo — que es lo que fallaba: el
+     elemento de la rejilla es el contenedor, y el hijo no hereda su alineación. */
+  .gx-celda-nota { display: flex; align-items: flex-end; }
+  .gx-celda-nota .gx-hint { margin: 0 0 13px; }
+  .gx-ta { font-family: inherit; resize: vertical; }
+
+  /* Aviso de visibilidad: filo de oro, igual que el disclaimer de `/publicar`. Se lee como una nota
+     honesta, no como una alarma — porque «es un borrador» no es un error. */
+  .gx-aviso {
+    display: flex;
+    gap: 13px;
+    align-items: flex-start;
+    background: var(--alt-surface);
+    border: 1px solid var(--alt-hairline);
+    border-left: 3px solid var(--alt-gold);
+    border-radius: 14px;
+    padding: 15px 18px;
+    margin-bottom: 4px;
+  }
+  .gx-aviso__t { font-size: 13.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); margin: 0 0 5px; }
+  .gx-aviso ul { margin: 0; padding-left: 17px; font-size: 13px; color: var(--alt-text-soft); line-height: 1.65; }
+
+  /* Amenidades: píldora navy cuando está puesta, contorno cuando no. Mismo patrón que los chips del SERP. */
+  .gx-chips { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 10px; }
+  .gx-chip {
+    padding: 8px 15px;
+    border-radius: 999px;
+    border: 1px solid var(--alt-hairline-2);
+    background: var(--alt-surface);
+    color: var(--alt-text-soft);
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .2s, color .2s, border-color .2s;
+  }
+  .gx-chip[aria-pressed='true'] {
+    background: var(--alt-surface-ink);
+    border-color: var(--alt-surface-ink);
+    color: #fff;
+    font-weight: var(--alt-fw-medium);
+  }
+
+  /* Galería: la primera lleva el sello de PORTADA porque es la que decide la tarjeta y el enlace
+     compartido — no es decoración, es la consecuencia del orden. */
+  .gx-fotos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(150px, 100%), 1fr));
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+  .gx-fotos:empty { display: none; }
+  .gx-foto { position: relative; aspect-ratio: 4 / 3; border-radius: 13px; overflow: hidden; background: var(--alt-mist); }
+  .gx-foto img { width: 100%; height: 100%; object-fit: cover; }
+  .gx-foto__sello {
+    position: absolute; top: 9px; left: 9px;
+    padding: 4px 10px; border-radius: 999px;
+    background: var(--alt-gold); color: var(--alt-surface-ink);
+    font-size: 10.5px; font-weight: var(--alt-fw-bold); letter-spacing: .04em;
+  }
+  .gx-foto__x {
+    position: absolute; top: 8px; right: 8px;
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 0; background: rgba(6, 39, 67, .82); color: #fff;
+    font-size: 15px; line-height: 1; cursor: pointer;
+  }
+  .gx-foto--subiendo { display: flex; align-items: center; justify-content: center; }
+  .gx-foto--subiendo span { font-size: 12px; color: var(--alt-text-soft); }
+
+  .gx-subir {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 18px; border-radius: 12px;
+    border: 1px dashed var(--alt-hairline-2);
+    background: var(--alt-surface);
+    color: var(--alt-text-soft);
+    font-size: 13.5px; cursor: pointer;
+  }
+  .gx-subir span { font-size: 19px; line-height: 1; color: var(--alt-link); }
+
+  .gx-estados { display: flex; flex-direction: column; gap: 11px; }
+  .gx-estado {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 14px 17px; border: 1px solid var(--alt-hairline-2);
+    border-radius: 13px; cursor: pointer;
+  }
+  .gx-estado.is-on { border-color: var(--alt-surface-ink); background: var(--alt-mist); }
+  .gx-estado input { margin-top: 3px; accent-color: var(--alt-surface-ink); }
+  .gx-estado b { display: block; font-size: 14px; color: var(--alt-ink); }
+  .gx-estado span { font-size: 12.5px; color: var(--alt-text-soft); line-height: 1.5; }
+
+  .gx-pie { display: flex; justify-content: flex-end; align-items: center; gap: 12px; flex-wrap: wrap; padding-bottom: 12px; }
+  .gx-pie__msg { flex: 1 1 220px; margin: 0; font-size: 13px; color: var(--alt-text-soft); }
+  .gx-pie__msg:empty { display: none; }
+
+  /* Error de campo: el borde se pone dorado, no rojo (la paleta no tiene rojo), y el texto va debajo
+     del campo que lo causa — no en una lista al final que obliga a buscarlo. */
+  /* Anclada a `.gx-root`: `.alt-input` es del design system y con el bloque global esta regla
+     se aplicaría a TODO el sitio. `is-mal` la pone el script, por eso vive aquí y no en base. */
+  .gx-root .alt-input.is-mal { border-color: var(--alt-gold); }
+  .gx-err { font-size: 12px; color: var(--alt-link); margin: 5px 0 0; font-weight: var(--alt-fw-medium); }
+
+  /* ── Aviso de sesión por inactividad (§130) ────────────────────────────────────────────────
+     Navy sobre franja clara con filo dorado: la paleta no tiene rojo, y de todas formas esto no es
+     una alarma — es un aviso a tiempo. */
+  .gx-sesion {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; gap: 10px;
+    margin: 0 0 var(--alt-space-4);
+    padding: 12px 16px; border-radius: 12px;
+    background: var(--alt-surface-alt); border-left: 3px solid var(--alt-gold);
+    font-size: 13.5px; color: var(--alt-ink);
+  }
+  .gx-sesion svg { flex: 0 0 auto; color: var(--alt-link-lg); }
+  .gx-sesion[hidden] { display: none; }
+
+  /* ── El panel según el ROL (§130) ──────────────────────────────────────────────────────────
+     Quien entra con acceso de SOLO CONSULTA no ve los controles que escriben. Antes los veía todos
+     y la base se los rechazaba, que es la peor combinación: parece roto en vez de parecer vedado.
+
+     Se cuelga de `body[data-puede-editar]`, que pone el script al abrir el panel, y NO de una clase
+     por elemento. Así una pantalla nueva hereda la regla sin que nadie se acuerde de añadirla — que
+     es exactamente la clase de olvido que produce estos huecos.
+
+     ⚠️ SIN `:global()`, y no por gusto: este bloque ya es `<style is:global>`, y ahí Astro NO procesa
+     esa función — la deja escrita tal cual en el CSS servido. El navegador no sabe leerla y descarta
+     la regla ENTERA, en silencio. Lo escribí con `:global()` por costumbre, compiló sin una queja,
+     los cuatro gates pasaron, y solo apareció al mirar el CSS de verdad (§130, familia de §117).
+
+     ⚠️ Esto decide qué se DIBUJA. Quien impide de verdad la escritura es la Security Rule
+     (`esEditorOMas()`), que ya la denegaba y la sigue denegando. Ocultar no es proteger. */
+  body[data-puede-editar='false'] .gx-form,
+  body[data-puede-editar='false'] .gx-new,
+  body[data-puede-editar='false'] #gx-vista-alta { display: none; }
+
+  /* ═══ LIQUIDACIÓN (§167) — el comprobante del mes ═══
+     `is:global` como el resto del panel (§117): estas clases las crea el JS con `createElement`, y una
+     regla acotada por Astro no alcanza a un nodo sin el atributo `data-astro-cid-*`. */
+  /* CERTIFICACION ANUAL (ADR 233). Sobria a proposito: este bloque se IMPRIME y se entrega a un
+     contador, asi que se lee mejor con jerarquia tipografica que con color. Paleta de marca. */
+  .gx-cf__certifica { font-size: 14px; line-height: 1.75; color: var(--alt-text-soft, #5B6572); padding: 4px 20px 16px; max-width: 72ch; }
+  .gx-cf__fila { display: flex; justify-content: space-between; gap: 16px; padding: 12px 20px; border-bottom: 1px solid #F4F7F9; }
+  .gx-cf__concepto { display: block; font-size: 14.5px; font-weight: 500; color: var(--gx-navy, #062743); }
+  .gx-cf__detalle { display: block; font-size: 12.5px; line-height: 1.6; color: var(--alt-text-soft, #8A94A0); margin-top: 2px; max-width: 60ch; }
+  .gx-cf__monto { font-size: 15px; color: var(--gx-navy, #062743); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .gx-cf__monto--off { color: var(--alt-text-soft, #8A94A0); }
+  .gx-cf__total { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin: 16px 20px 4px; padding: 18px 20px; background: var(--gx-navy, #062743); border-radius: 14px; color: #fff; }
+  .gx-cf__total strong { font-family: var(--alt-font-display, serif); font-size: 26px; color: var(--alt-gold, #d4af37); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  @media print {
+    /*
+     * Al imprimir solo importa el certificado: los mandos y el resto del panel estorban.
+     *
+     * 🔴 Y ese «resto del panel» incluía algo peor que ruido (§263): el comprobante MENSUAL
+     * (`.gx-liq`) vive en el MISMO contenedor que la certificación anual, y la regla no lo ocultaba.
+     * El único botón de imprimir es el del certificado, así que el recorrido normal —entrar en
+     * Liquidación (se pinta el comprobante del contrato #1), bajar a Certificación, elegir el #7 e
+     * imprimir— producía un papel que empieza con el NOMBRE, EL CANON Y LAS CIFRAS DEL PROPIETARIO
+     * #1 y sigue con el certificado del #7. Ese papel se le entrega al contador del #7.
+     *
+     * No es solo estética: es el dato de una persona en el documento de otra.
+     */
+    .gx-fgrid, .gx-hint, .alt-btn, .gx-head, .gx-nav, .gx-liq__barra { display: none !important; }
+    .gx-liq, .gx-liq__nota { display: none !important; }
+  }
+  .gx-liq__barra { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; padding: 18px 20px; margin-bottom: 16px; }
+  .gx-liq__campo { flex: 1 1 300px; display: block; }
+  .gx-liq__campo > span { display: block; font-size: 12px; font-weight: 600; color: var(--gx-navy, #062743); margin-bottom: 6px; }
+  .gx-liq__campo select { width: 100%; padding: 11px 12px; border: 1px solid #DDE4EA; border-radius: 10px; font: inherit; font-size: 14px; color: var(--gx-navy, #062743); background: #fff; }
+  .gx-liq__check { flex: 1 1 340px; display: flex; align-items: flex-start; gap: 9px; font-size: 13.5px; line-height: 1.55; color: #5B6572; cursor: pointer; }
+  .gx-liq__check input { margin-top: 3px; flex: none; }
+  .gx-liq__check em { font-style: normal; color: #8A94A0; }
+
+  .gx-liq { padding: 28px 30px; }
+  .gx-liq__msg { margin: 0; font-size: 14px; color: #8A94A0; }
+
+  .gx-liq__top { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid #EDF1F5; }
+  .gx-liq__top-t { margin: 0; font-size: 16px; font-weight: 600; color: var(--gx-navy, #062743); }
+  .gx-liq__top-d { margin: 4px 0 0; font-size: 13px; color: #8A94A0; }
+  .gx-liq__top-n { margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 30px; font-weight: 600; color: var(--gx-navy, #062743); white-space: nowrap; }
+
+  .gx-liq__eyebrow { margin: 22px 0 10px; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: #8A94A0; font-weight: 600; }
+
+  .gx-liq__fila { display: flex; justify-content: space-between; gap: 16px; padding: 13px 0; border-bottom: 1px solid #F4F7F9; }
+  /* La línea que NO aplica se apaga, no se esconde: enseñarla es la mitad del punto (§167). */
+  .gx-liq__fila--nula { background: #FBFCFD; margin: 0 -12px; padding-left: 12px; padding-right: 12px; border-radius: 8px; }
+  .gx-liq__fila--nula .gx-liq__concepto, .gx-liq__fila--nula .gx-liq__monto { color: #5B6572; }
+  .gx-liq__concepto { font-size: 14.5px; color: var(--gx-navy, #062743); font-weight: 500; }
+  .gx-liq__destino { display: block; font-size: 12.5px; color: #8A94A0; margin-top: 2px; }
+  .gx-liq__destino strong { color: var(--gx-navy, #062743); }
+  .gx-liq__monto { font-size: 15px; color: var(--gx-navy, #062743); white-space: nowrap; }
+
+  .gx-liq__giro { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-top: 20px; padding: 20px 22px; background: var(--gx-navy, #062743); border-radius: 14px; }
+  .gx-liq__giro-t { margin: 0; font-size: 15px; font-weight: 600; color: #fff; }
+  .gx-liq__giro-d { margin: 4px 0 0; font-size: 12.5px; color: #BFC3C9; }
+  .gx-liq__giro-n { margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; color: #d4af37; white-space: nowrap; }
+
+  .gx-liq__cuadre { margin: 16px 0 0; padding-top: 14px; border-top: 1px dashed #DDE4EA; font-size: 12.5px; line-height: 1.7; color: #8A94A0; }
+  .gx-liq__cuadre strong { color: var(--gx-navy, #062743); }
+  /* Si no cuadrara, se ve en ORO y no en rojo: la disciplina de color de la marca no tiene rojo, y
+     un descuadre es un aviso para parar, no un error del sistema. */
+  .gx-liq__cuadre--mal { border-top: 2px solid #d4af37; color: var(--gx-navy, #062743); font-weight: 500; }
+
+  .gx-liq__problemas { border-left: 3px solid #d4af37; padding: 4px 0 4px 18px; }
+  .gx-liq__problemas-t { margin: 0 0 8px; font-size: 15px; font-weight: 600; color: var(--gx-navy, #062743); }
+  .gx-liq__problemas-d { margin: 0 0 6px; font-size: 13.5px; line-height: 1.65; color: #5B6572; }
+
+  .gx-liq__nota { margin-top: 18px; border-left: 3px solid #d4af37; background: #fff; border-radius: 0 14px 14px 0; padding: 16px 20px; }
+  .gx-liq__nota p { margin: 0; font-size: 13.5px; line-height: 1.75; color: #5B6572; }
+  .gx-liq__nota strong { color: var(--gx-navy, #062743); }
+
+  @media (max-width: 620px) {
+    .gx-liq { padding: 20px 18px; }
+    .gx-liq__top, .gx-liq__giro, .gx-liq__fila { flex-direction: column; align-items: flex-start; gap: 6px; }
+  }
+</style>
+
+<script>
+  /*
+   * PUERTA DE ACCESO del panel (§98). Ver la nota del markup: esto es UX y disuasión, no seguridad.
+   * La frontera real son las Security Rules; aquí solo se decide qué se le enseña a quién.
+   *
+   * El orden importa: se ESPERA a que Firebase restaure la sesión antes de decidir. Leer el usuario
+   * sin esperar devuelve `null` en la primera pintura aunque la persona esté dentro, y el panel la
+   * echaría al login cada vez que recarga — el error clásico de esta API.
+   */
+  import { estadoAcceso, salir, type EstadoAcceso } from '../scripts/auth';
+  import { montarExportLeads, montarLeads, montarVerTodoLeads } from '../scripts/gestion-leads';
+  import { montarAlta } from '../scripts/gestion-alta-ui';
+
+  const puerta = document.getElementById('gx-gate');
+  const denegado = document.getElementById('gx-denegado');
+  const panel = document.getElementById('gx-panel');
+
+  function mostrar(cual: HTMLElement | null): void {
+    for (const n of [puerta, denegado, panel]) if (n) n.hidden = n !== cual;
+  }
+
+  document.getElementById('gx-salir')?.addEventListener('click', () => void salir());
+
+  /* ── El panel según el ROL (§130) ────────────────────────────────────────────────────────────
+   * Antes, este panel solo preguntaba «¿eres del equipo?». Quien tuviera acceso de SOLO CONSULTA
+   * veía la misma pantalla que el dueño: los formularios de alta, los botones de guardar, todo. La
+   * base se lo habría denegado —esa parte sí estaba bien— pero la interfaz se lo ofrecía igual, y una
+   * interfaz que ofrece lo que la base va a rechazar enseña a la gente que el sistema está roto.
+   *
+   * Se marca en el `<body>` con `data-rol` en vez de recorrer nodos: así el CSS oculta lo que toque
+   * en la misma pintura, sin parpadeo, y una pantalla nueva hereda la regla sin acordarse de nada.
+   */
+  const NOMBRE_ROL: Record<string, string> = {
+    super_admin: 'Administrador',
+    editor: 'Editor',
+    viewer: 'Solo consulta',
+  };
+
+  function aplicarRol(r: Extract<EstadoAcceso, { estado: 'staff' }>): void {
+    document.body.dataset.rol = r.rol;
+    document.body.dataset.puedeEditar = String(r.puedeEditar);
+
+    // Se reutilizan los huecos que ya existían en la barra lateral —traían el nombre de DEMO— en vez
+    // de añadir otros: dos sitios distintos diciendo quién eres acaban contradiciéndose.
+    const rolEl = document.getElementById('gx-user-role');
+    if (rolEl) rolEl.textContent = NOMBRE_ROL[r.rol] || r.rol;
+    const nombreEl = document.getElementById('gx-user');
+    const avatarEl = document.getElementById('gx-avatar');
+    if (r.email) {
+      const usuario = r.email.split('@')[0];
+      if (nombreEl) { nombreEl.textContent = usuario; nombreEl.title = r.email; }
+      if (avatarEl) avatarEl.textContent = usuario.charAt(0).toUpperCase();
+      /*
+       * 🔴 El saludo salía del build como «Buenos días, Alejandro» y NADIE lo sustituía nunca (§266):
+       * cualquiera que entrara era recibido con el nombre de una persona inventada, sin hacer un solo
+       * clic. Se rellena aquí, junto al resto de la identidad, porque quién eres lo dice la SESIÓN.
+       */
+      const saludoEl = document.getElementById('gx-greeting');
+      if (saludoEl) saludoEl.textContent = `Hola, ${usuario}`;
+    }
+  }
+
+  /* ── Corte por inactividad (§130) ────────────────────────────────────────────────────────────
+   * El panel VIEJO cerraba la sesión a los 30 minutos sin actividad y avisaba un minuto antes. Al
+   * mudarnos al portal eso se perdió por el camino y nadie lo notó — es de las funciones que solo se
+   * echan de menos el día que hacen falta. Aquí abre contratos y cédulas escaneadas: un panel
+   * abierto en una pantalla que alguien dejó sola es la fuga más barata que existe.
+   */
+  const INACTIVIDAD_MS = 30 * 60 * 1000;
+  const AVISO_MS = 60 * 1000;
+  let tempCierre: number | undefined;
+  let tempAviso: number | undefined;
+
+  function reiniciarInactividad(): void {
+    window.clearTimeout(tempCierre);
+    window.clearTimeout(tempAviso);
+    document.getElementById('gx-aviso-sesion')?.setAttribute('hidden', '');
+    tempAviso = window.setTimeout(() => {
+      document.getElementById('gx-aviso-sesion')?.removeAttribute('hidden');
+    }, INACTIVIDAD_MS - AVISO_MS);
+    tempCierre = window.setTimeout(() => void salir(), INACTIVIDAD_MS);
+  }
+
+  function vigilarInactividad(): void {
+    // `passive` porque ninguno de estos necesita cancelar el evento, y sin él el navegador no puede
+    // adelantar el desplazamiento — se nota en móvil.
+    for (const ev of ['pointerdown', 'keydown', 'scroll', 'touchstart'] as const) {
+      document.addEventListener(ev, reiniciarInactividad, { passive: true });
+    }
+    reiniciarInactividad();
+  }
+
+  /** Todo lo que hay que encender cuando ya se sabe que quien mira es del equipo. */
+  function abrirPanel(r: Extract<EstadoAcceso, { estado: 'staff' }>): void {
+    aplicarRol(r);
+    mostrar(panel);
+    vigilarInactividad();
+    // Los datos REALES solo se piden cuando ya se sabe que quien mira es del equipo: pedir algo que
+    // las Rules van a denegar solo ensucia la consola y confunde al siguiente que la mire.
+    void montarLeads();
+    /*
+     * ⚠️ SE MONTA SIEMPRE, y antes NO. Aquí ponía `if (r.puedeEditar) montarAlta()`, y dentro de esa
+     * función vive —además del formulario de alta— **el enrutador de la barra lateral**. Consecuencia:
+     * a quien entra en modo «solo consulta» no se le cableaba el menú y NINGUNA sección respondía.
+     * Un panel entero mudo por una condición pensada para otra cosa.
+     *
+     * Navegar no es editar. Lo que impide escribir a un `viewer` sigue en pie y son las capas que de
+     * verdad mandan: las Security Rules (servidor), el CSS que esconde los controles de edición
+     * (`body[data-puede-editar='false']`), y la guarda dentro del propio botón «+ Nuevo inmueble».
+     * No cablear el código nunca fue una de esas capas — era un efecto colateral.
+     */
+    montarAlta();
+  }
+
+  /* Volver a comprobar FORZANDO el refresco del token. Los claims viajan dentro del token y este se
+     renueva cada hora, así que sin esto a quien le acaban de dar permiso le tocaba esperar o cerrar
+     sesión — y lo más probable es que pensara que algo estaba roto. */
+  montarExportLeads();
+  montarVerTodoLeads();
+  const reintentar = document.getElementById('gx-reintentar') as HTMLButtonElement | null;
+  reintentar?.addEventListener('click', async () => {
+    reintentar.disabled = true;
+    reintentar.textContent = 'Comprobando…';
+    const r = await estadoAcceso(true).catch(() => null);
+    if (r?.estado === 'staff') {
+      abrirPanel(r);
+      return;
+    }
+    reintentar.disabled = false;
+    reintentar.textContent = 'Volver a comprobar';
+  });
+
+  estadoAcceso()
+    .then((r) => {
+      if (r.estado === 'anonimo') {
+        // `volver` para que el login devuelva AQUÍ y no a favoritos: quien venía a gestionar no
+        // quiere acabar en su lista de favoritos después de escribir la contraseña.
+        window.location.href = '/ingresar?volver=' + encodeURIComponent('/gestion');
+        return;
+      }
+      if (r.estado === 'sin-permiso') {
+        const quien = document.getElementById('gx-quien');
+        if (quien && r.email) quien.textContent = r.email;
+        mostrar(denegado);
+        return;
+      }
+      abrirPanel(r);
+    })
+    .catch(() => {
+      // Si Auth no carga (red caída, bloqueador), NO se abre el panel: fail-closed. Y se dice por qué,
+      // en vez de dejar «Comprobando tu acceso…» girando para siempre.
+      if (puerta) {
+        puerta.innerHTML = '';
+        const t = document.createElement('p');
+        t.className = 'gx-gate__t';
+        t.textContent = 'No pudimos comprobar tu acceso.';
+        const d = document.createElement('p');
+        d.className = 'gx-gate__d';
+        d.textContent = 'Revisa tu conexión y recarga la página. Si usas un bloqueador, puede estar frenando el inicio de sesión.';
+        puerta.appendChild(t);
+        puerta.appendChild(d);
+      }
+    });
+
+  // Segmentado de 3 roles: alterna las vistas [data-set] (ya renderizadas) + textos (textContent).
+  // Sin innerHTML: los strings van por textContent y los bloques se muestran/ocultan con `hidden`.
+  type Str = { user: string; userRole: string; avatar: string; greeting: string; subtitle: string; tableTitle: string };
+  const STR: Record<string, Str> = JSON.parse(document.getElementById('gx-strings')!.textContent || '{}');
+  const set = (id: string, txt: string) => { const e = document.getElementById(id); if (e) e.textContent = txt; };
+
+  function show(role: string) {
+    const s = STR[role];
+    if (!s) return;
+    /*
+     * 🔴 Aquí también iban `gx-greeting`, `gx-user`, `gx-user-role` y `gx-avatar` (§266). Cambiar de
+     * pestaña BORRABA la identidad real que `aplicarRol()` acababa de escribir —nombre, rol y el
+     * correo en el `title`— y la dejaba sustituida por 'Alejandro C. / Administrador', 'Julián Peña'
+     * o 'María Elena V.'. Y `aplicarRol()` corre UNA vez, al resolver la sesión: nada la devolvía.
+     *
+     * 🎯 **La identidad la pone la SESIÓN; las pestañas cambian la VISTA, no la persona.** Son dos
+     * cosas distintas y compartían los mismos nodos, así que la última en escribir ganaba — y la
+     * última era siempre el mockup, porque corría con cada clic.
+     */
+    set('gx-subtitle', s.subtitle);
+    set('gx-table-title', s.tableTitle);
+    document.querySelectorAll<HTMLElement>('[data-set]').forEach((el) => {
+      el.hidden = el.dataset.set !== role;
+    });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.gx-seg__btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.gx-seg__btn').forEach((b) => {
+        b.classList.remove('is-on');
+        b.setAttribute('aria-selected', 'false');
+      });
+      btn.classList.add('is-on');
+      btn.setAttribute('aria-selected', 'true');
+      show(btn.dataset.role || 'admin');
+    });
+  });
+</script>

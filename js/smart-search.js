@@ -1,0 +1,800 @@
+/* ======================================================================
+   ALTORRA • Smart Search (V9 PRO)
+   - Typos (Damerau-Levenshtein <=1) sobre vocab dinàmico
+   - Rango de presupuesto: 350m, 0.35b, 250-400m, <=400m, >200m, MM/millones
+   - Features semánticos (ES/EN) + auto-aprendizaje desde JSON
+   - Re-ranking por popularidad (click feedback)
+   - Mobile-first: sin zoom iOS, scroll suave, dropdown estable (singleton)
+   ====================================================================== */
+(function () {
+  'use strict';
+
+  /* ---------- Config ---------- */
+  const MIN_CHARS = 2;
+  const MAX_SUGGESTIONS = 12;
+  const DEBOUNCE_MS = 200;
+  const MIN_W = 360, MAX_W = 920, VW_LIMIT = 0.96;
+  const RECENT_KEY = 'altorra:hero-recent-searches';
+  const RECENT_MAX = 5;
+
+  /* ---------- Utils ---------- */
+  const debounce = (fn, wait) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), wait); }; };
+  const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+  const norm = s => String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\w\s]/g,' ').replace(/\s+/g,' ').trim();
+  const clamp = (v, a, b)=>Math.max(a, Math.min(b, v));
+  const uniq  = arr => Array.from(new Set(arr));
+  const fuzzyScore = (n, h)=>{ n=n.toLowerCase(); let s=0,i=0,j=0; while(i<n.length&&j<h.length){ if(n[i]===h[j]){s++;i++;} j++; } return i===n.length? s/n.length : 0; };
+
+  /* ---------- Búsquedas recientes (localStorage) ---------- */
+  function getRecent(){
+    try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]').slice(0, RECENT_MAX); }
+    catch { return []; }
+  }
+  function saveRecent(term){
+    if (!term) return;
+    const t = String(term).trim();
+    if (t.length < MIN_CHARS) return;
+    try {
+      const arr = getRecent().filter(x => x.toLowerCase() !== t.toLowerCase());
+      arr.unshift(t);
+      localStorage.setItem(RECENT_KEY, JSON.stringify(arr.slice(0, RECENT_MAX)));
+    } catch {}
+  }
+  function removeRecent(term){
+    try {
+      const arr = getRecent().filter(x => x.toLowerCase() !== String(term).toLowerCase());
+      localStorage.setItem(RECENT_KEY, JSON.stringify(arr));
+    } catch {}
+  }
+
+  // Carga desde PropertyDatabase (fuente única: Firestore). Sin fetch a data.json.
+  async function loadData(){
+    // Esperar a que la DB esté lista
+    if (!(window.propertyDB && window.propertyDB.isLoaded)) {
+      await new Promise(resolve => {
+        if (window.propertyDB?.isLoaded) return resolve();
+        window.addEventListener('altorra:db-ready', resolve, { once: true });
+        setTimeout(resolve, 8000); // timeout de seguridad
+      });
+    }
+    return window.propertyDB ? window.propertyDB.properties.slice() : [];
+  }
+  const toArrayData = d => Array.isArray(d) ? d : (d && Array.isArray(d.properties) ? d.properties : Object.values(d||{}).find(Array.isArray) || []);
+
+  /* ---------- Vocab base (amenities/types con sinónimos) ---------- */
+  const FEATURE_SYNONYMS = {
+    'vista al mar': ['vista al mar','frente al mar','vista mar','ocean view','sea view','vista al oceano','vista oceano'],
+    'piscina':      ['piscina','alberca','pileta','swimming pool','pool'],
+    'balcon':       ['balcon','balcón','balcony'],
+    'terraza':      ['terraza','roof top','rooftop','azotea','solarium'],
+    'ascensor':     ['ascensor','elevador','elevator'],
+    'gimnasio':     ['gimnasio','gym','fitness center'],
+    'parqueadero':  ['parqueadero','garaje','garage','estacionamiento','parking'],
+    'porteria':     ['portería','porteria','vigilancia','seguridad 24/7','seguridad'],
+    'bbq':          ['bbq','asador','zona bbq','barbecue'],
+    'jacuzzi':      ['jacuzzi','hot tub'],
+    'sauna':        ['sauna'],
+    'mascotas':     ['pet friendly','admite mascotas','mascotas','petfriendly'],
+    'amoblado':     ['amoblado','amoblada','amueblado','amueblada','furnished'],
+    'aire':         ['aire acondicionado','aire','a/a','air conditioning'],
+    'vista':        ['vista','panoramica','panorámica','city view']
+  };
+  const TYPE_SYNONYMS = {
+    'apartamento': ['apartamento','apartaestudio','apto','apartment','flat','aparta estudio'],
+    'casa':        ['casa','casaquinta','house','townhouse'],
+    'lote':        ['lote','terreno','parcel','lot'],
+    'oficina':     ['oficina','office'],
+  };
+  const buildSynIndex = map => {
+    const idx = new Map();
+    Object.keys(map).forEach(canon => {
+      map[canon].forEach(v => idx.set(norm(v), canon));
+      idx.set(norm(canon), canon);
+    });
+    return idx;
+  };
+  const FEATURE_INDEX_BASE = buildSynIndex(FEATURE_SYNONYMS);
+  const TYPE_INDEX         = buildSynIndex(TYPE_SYNONYMS);
+
+  /* ---------- Corrección de typos (Damerau-Levenshtein) ---------- */
+  function dlDist1(a,b){ // true si distancia <=1 (conmutación incluida)
+    if (a===b) return true;
+    const la=a.length, lb=b.length;
+    if (Math.abs(la-lb)>1) return false;
+    // sustitución / inserción / borrado
+    let i=0,j=0, edits=0;
+    while(i<la && j<lb){
+      if(a[i]===b[j]){ i++; j++; continue; }
+      if(++edits>1) return false;
+      if(la>lb) i++; else if(lb>la) j++; else { i++; j++; }
+    }
+    if (i<la || j<lb) edits++;
+    if (edits<=1) return true;
+    // transposición (ab <-> ba)
+    if (la===lb && la>1){
+      for (let k=0;k<la-1;k++){
+        if (a[k]!==b[k]){
+          const aa=a.slice(0,k)+a[k+1]+a[k]+a.slice(k+2);
+          return aa===b;
+        }
+      }
+    }
+    return false;
+  }
+
+  /* ---------- Parseo de presupuesto ---------- */
+  function parseMoneyToken(tok){
+    // soporta 350m, 0.35b, 350-500m, <=400m, >=200m, 400MM, 400 millones, 400000000
+    const t = tok.replace(/\s/g,'').toLowerCase();
+    const mult = t.includes('b') ? 1e9 : (t.includes('mm')||t.includes('mill')||t.includes('millones')||t.includes('m')) ? 1e6 : 1;
+    // rango a-b
+    const mR = t.match(/^(\d+(?:\.\d+)?)[-–](\d+(?:\.\d+)?)(m|mm|b|)$/);
+    if (mR) return { min: Number(mR[1])* (mR[3]==='b'?1e9:(mR[3]?1e6:1)), max: Number(mR[2])*(mR[3]==='b'?1e9:(mR[3]?1e6:1)) };
+    // <=N  /  >=N
+    const mLE = t.match(/^(<=|<=|≤)(\d+(?:\.\d+)?)(m|mm|b|)$/);
+    if (mLE) return { min: null, max: Number(mLE[2])*(mLE[3]==='b'?1e9:(mLE[3]?1e6:1)) };
+    const mGE = t.match(/^(>=|>=|≥)(\d+(?:\.\d+)?)(m|mm|b|)$/);
+    if (mGE) return { min: Number(mGE[2])*(mGE[3]==='b'?1e9:(mGE[3]?1e6:1)), max: null };
+    // simple N (con sufijo opcional)
+    const mN = t.match(/^(\d{1,3}(?:[\.\,]?\d{3})+|\d+(?:\.\d+)?)(m|mm|b|)$/) || t.match(/^(\d+)(?:)$/);
+    if (mN){
+      const raw = Number(String(mN[1]).replace(/[^\d.]/g,''));
+      return { min: raw*mult, max: raw*mult };
+    }
+    return null;
+  }
+
+  /* ---------- Construcción de índice semántico dinámico ---------- */
+  function dynamicFeatureTerms(allProps){
+    const bag = new Set();
+    allProps.forEach(p=>{
+      if (Array.isArray(p.features)) p.features.forEach(f=>bag.add(norm(f)));
+      const bools = [
+        p.pool||p.piscina, p.balcon||p.balcony, p.ascensor||p.elevator,
+        p.gym||p.gimnasio, p.parqueadero||p.garage||p.estacionamiento||p.parking,
+        p.terraza||p.rooftop, p.oceanView||p.seaView||p.vistaMar, p.furnished||p.amoblado,
+        p.petFriendly||p.mascotas
+      ];
+      const names = ['piscina','balcon','ascensor','gimnasio','parqueadero','terraza','vista al mar','amoblado','mascotas'];
+      bools.forEach((v,i)=>{ if(v) bag.add(norm(names[i])); });
+    });
+    return Array.from(bag);
+  }
+
+  function buildVocab(allProps){
+    const terms = new Set();
+    allProps.forEach(p=>{
+      [p.city, p.neighborhood, p.barrio, p.type, p.id].forEach(v=>{ if(v) terms.add(norm(v)); });
+      // palabras destacadas en títulos
+      String(p.title||'').split(/\s+/).forEach(w=>{ if(w.length>=4) terms.add(norm(w)); });
+    });
+    // features base + dinámicas
+    Object.keys(FEATURE_SYNONYMS).forEach(k=>{ terms.add(norm(k)); FEATURE_SYNONYMS[k].forEach(s=>terms.add(norm(s))); });
+    dynamicFeatureTerms(allProps).forEach(t=>terms.add(norm(t)));
+    // tipos
+    Object.keys(TYPE_SYNONYMS).forEach(k=>{ terms.add(norm(k)); TYPE_SYNONYMS[k].forEach(s=>terms.add(norm(s))); });
+    return Array.from(terms).filter(Boolean);
+  }
+
+  /* ---------- Parseo de consulta ---------- */
+  function parseQuery(raw, vocab){
+    const qN = norm(raw);
+    // frases multi-palabra de features/types
+    const phrases = [];
+    function addPhrase(type, canon, v){
+      phrases.push({ type, canon, match:v });
+    }
+    // features
+    Object.keys(FEATURE_SYNONYMS).forEach(canon=>{
+      [canon, ...FEATURE_SYNONYMS[canon]].forEach(v=>{
+        const vv=norm(v); if(vv.includes(' ') && qN.includes(vv)) addPhrase('feature', canon, vv);
+      });
+    });
+    // types
+    Object.keys(TYPE_SYNONYMS).forEach(canon=>{
+      [canon, ...TYPE_SYNONYMS[canon]].forEach(v=>{
+        const vv=norm(v); if(vv.includes(' ') && qN.includes(vv)) addPhrase('type', canon, vv);
+      });
+    });
+
+    // quitar frases del texto
+    let rest = qN;
+    phrases.forEach(p=>{ rest = rest.replace(p.match,' ').replace(/\s+/g,' ').trim(); });
+
+    // tokens
+    let tokens = rest.split(' ').filter(Boolean);
+
+    // constraints
+    const constraints = { bedsMin:null, bathsMin:null, parkingMin:null, type:null, features:new Set(), priceMin:null, priceMax:null };
+
+    // atajos numéricos habitaciones/baños/garajes
+    tokens = tokens.filter(tok=>{
+      const m = tok.match(/^(\d+)(h|hab|habitaciones|b|ba|ban|banos|baños|g|gar|garage|park|parq|parqueadero)$/);
+      if(m){
+        const n=parseInt(m[1],10), k=m[2][0];
+        if(k==='h') constraints.bedsMin=Math.max(constraints.bedsMin||0,n);
+        else if(k==='b') constraints.bathsMin=Math.max(constraints.bathsMin||0,n);
+        else if(k==='g') constraints.parkingMin=Math.max(constraints.parkingMin||0,n);
+        return false;
+      }
+      // presupuesto
+      const money = parseMoneyToken(tok);
+      if(money){
+        if(money.min!=null) constraints.priceMin = Math.max(constraints.priceMin||0, money.min);
+        if(money.max!=null) constraints.priceMax = constraints.priceMax==null ? money.max : Math.min(constraints.priceMax, money.max);
+        return false;
+      }
+      return true;
+    });
+
+    // mapear tokens a features/types (mono-palabra) o corregir typos contra vocab
+    const mapped=[];
+    const originals=[];
+    let hadTypo=false;
+    tokens.forEach(tok=>{
+      const t = tok;
+      // features mono-palabra
+      const fCanon = FEATURE_INDEX_BASE.get(t);
+      if(fCanon){ constraints.features.add(fCanon); return; }
+      // type
+      const tCanon = TYPE_INDEX.get(t);
+      if(tCanon){ constraints.type=tCanon; return; }
+      // corrección de typo simple (si token largo y no numérico)
+      if (t.length>=4 && !/^\d+$/.test(t)) {
+        const candidate = vocab.find(v => dlDist1(t, v));
+        if (candidate && candidate !== t) {
+          mapped.push(candidate);
+          originals.push(t);
+          hadTypo = true;
+          return;
+        }
+      }
+      mapped.push(t);
+      originals.push(t);
+    });
+
+    return { phrases, tokens: mapped, originals, hadTypo, constraints };
+  }
+
+  /* ---------- Campos + índice de features por propiedad ---------- */
+  function featuresIndexFromProp(p){
+    const parts=[];
+    if(Array.isArray(p.features)) parts.push(...p.features.map(norm));
+    const bools = {
+      'piscina': p.pool||p.hasPool||p.piscina,
+      'balcon': p.balcon||p.balcony||p.hasBalcony,
+      'ascensor': p.ascensor||p.elevator||p.hasElevator,
+      'gimnasio': p.gym||p.gimnasio||p.hasGym,
+      'parqueadero': p.parqueadero||p.garage||p.estacionamiento||p.parking||p.hasParking,
+      'terraza': p.terraza||p.rooftop||p.roof||p.hasTerrace,
+      'vista al mar': p.oceanView||p.seaView||p.vistaMar,
+      'amoblado': p.furnished||p.amoblado,
+      'mascotas': p.petFriendly||p.mascotas
+    };
+    Object.keys(bools).forEach(k=>{ if(bools[k]) parts.push(k); });
+    // expandir a sinónimos
+    const expanded=[];
+    parts.forEach(tag=>{
+      const canon = FEATURE_INDEX_BASE.get(norm(tag)) || norm(tag);
+      expanded.push(canon);
+      const syns = FEATURE_SYNONYMS[canon];
+      if(syns) syns.forEach(s=>expanded.push(norm(s)));
+    });
+    return uniq(expanded).join(' ');
+  }
+
+  const fieldText = p => ({
+    title: norm(p.title),
+    city : norm(p.city),
+    hood : norm(p.neighborhood || p.barrio),
+    id   : norm(p.id),
+    type : norm(p.type),
+    desc : norm(p.description),
+    feats: featuresIndexFromProp(p)
+  });
+
+  function tokensHitStrong(tokens, f){
+    return tokens.every(tok =>
+      f.title.includes(tok)||f.hood.includes(tok)||f.city.includes(tok)||
+      f.id.includes(tok)   ||f.type.includes(tok)||f.feats.includes(tok)
+    );
+  }
+
+  /* ---------- Re-ranking por feedback ---------- */
+  function readClicks(){ try{ return JSON.parse(localStorage.getItem('altorra:ssrc:clicks')||'{}'); }catch{ return {}; } }
+  function writeClicks(map){ try{ localStorage.setItem('altorra:ssrc:clicks', JSON.stringify(map)); }catch{} }
+  function boostByClicks(id){
+    const clicks = readClicks()[id]||0;
+    return Math.log(1+clicks)*8; // boost suave
+  }
+  function registerClick(id){
+    const map = readClicks(); map[id]=(map[id]||0)+1; writeClicks(map);
+  }
+
+  function scoreProperty(tokens, qStr, f, constraints, p){
+    let s=0;
+    tokens.forEach(t=>{
+      if(f.title.includes(t)) s+=55;
+      if(f.hood .includes(t)) s+=45;
+      if(f.city .includes(t)) s+=35;
+      if(f.id   .includes(t)) s+=40;
+      if(f.type .includes(t)) s+=15;
+      if(f.feats.includes(t)) s+=70; // features muy relevantes
+    });
+    constraints.features.forEach(canon=>{ if(f.feats.includes(canon)) s+=85; });
+    if(constraints.type && f.type.includes(constraints.type)) s+=55;
+
+    const idx=[f.title,f.hood,f.city,f.id,f.type,f.desc,f.feats].join(' ');
+    s += fuzzyScore(qStr, idx)*18;
+
+    // filtros duros + boosts numéricos
+    const beds  = p.bedrooms ?? p.habitaciones ?? p.rooms ?? null;
+    const baths = p.bathrooms ?? p.banos ?? p.baños ?? null;
+    const park  = p.parking ?? p.parqueadero ?? p.garaje ?? p.garages ?? null;
+    const price = Number(p.price || p.precio || 0) || null;
+
+    if (constraints.bedsMin && beds != null)  { if(beds  < constraints.bedsMin)  return -1; else s+=22; }
+    if (constraints.bathsMin && baths != null){ if(baths < constraints.bathsMin) return -1; else s+=18; }
+    if (constraints.parkingMin && park != null){ if(park < constraints.parkingMin) return -1; else s+=14; }
+
+    if (constraints.priceMin!=null && price!=null && price < constraints.priceMin) return -1;
+    if (constraints.priceMax!=null && price!=null && price > constraints.priceMax) return -1;
+    if (constraints.priceMin!=null || constraints.priceMax!=null) s+=12;
+
+    // popularidad
+    s += boostByClicks(p.id);
+
+    return s;
+  }
+
+  async function searchProps(query, allProps, vocab){
+    if(!query || query.length<MIN_CHARS) return [];
+    const { tokens, originals, hadTypo, constraints } = parseQuery(query, vocab);
+    const qStr = norm(query);
+    const res = [];
+
+    for (const p of allProps){
+      const f = fieldText(p);
+      if(qStr.length>=3 && !tokensHitStrong(tokens, f)) continue;
+      const sc = scoreProperty(tokens, qStr, f, constraints, p);
+      if(sc>0) {
+        const matchedByOriginal = originals && originals.length
+          ? tokensHitStrong(originals, f)
+          : true;
+        res.push({ p, sc, f, isFuzzy: hadTypo && !matchedByOriginal });
+      }
+    }
+
+    if (res.length===0 && qStr.length>=3){
+      for (const p of allProps){
+        const f = fieldText(p);
+        const hasOne = tokens.some(tok =>
+          f.title.includes(tok)||f.hood.includes(tok)||f.city.includes(tok)||
+          f.id.includes(tok)||f.type.includes(tok)||f.feats.includes(tok)
+        );
+        if(!hasOne) continue;
+        const sc = scoreProperty(tokens, qStr, f, constraints, p);
+        if(sc>0) res.push({ p, sc, f, isFuzzy: hadTypo });
+      }
+    }
+
+    return res.sort((a,b)=>b.sc-a.sc).slice(0,MAX_SUGGESTIONS).map(r => ({ ...r.p, __isFuzzy: r.isFuzzy }));
+  }
+
+  /* ---------- Dropdown singleton (estable PC/móvil) ---------- */
+  const DD = (() => {
+    let dd=null, activeInput=null, lockedWidth=null, bound=false;
+    function ensure(){
+      if(dd) return dd;
+      dd = document.createElement('div');
+      dd.id='smart-search-dropdown';
+      dd.setAttribute('role','listbox');
+      dd.setAttribute('aria-label','Sugerencias');
+      dd.style.cssText = [
+        'position:absolute','top:0','left:0',
+        'background:#fff',
+        'border:1px solid rgba(0,0,0,.12)',
+        'border-radius:12px',
+        'box-shadow:0 12px 32px rgba(0,0,0,.18)',
+        'max-height:60vh',
+        'overflow-y:auto',
+        'overscroll-behavior:contain',
+        'touch-action:pan-y',
+        '-webkit-overflow-scrolling:touch',
+        'z-index:2147483647',
+        'display:none'
+      ].join(';');
+      dd.addEventListener('mousedown', e=>e.preventDefault()); // evita blur en desktop
+      document.body.appendChild(dd);
+      return dd;
+    }
+    function setActive(input, {lockWidth=false} = {}){
+      activeInput=input; ensure(); position({lockWidth});
+      if(!bound){
+        bound=true;
+        window.addEventListener('resize', ()=>position());
+        window.addEventListener('scroll',  ()=>position(), {passive:true});
+        window.addEventListener('orientationchange', ()=>setTimeout(()=>position({lockWidth:true}), 250));
+      }
+    }
+    function position({lockWidth=false} = {}){
+      if(!dd||!activeInput) return;
+      const r = activeInput.getBoundingClientRect();
+      const vw= Math.max(document.documentElement.clientWidth, window.innerWidth||0);
+      if(lockWidth || lockedWidth==null){
+        const desired=r.width;
+        lockedWidth = clamp(desired, MIN_W, Math.min(MAX_W, Math.floor(vw*VW_LIMIT)));
+      }
+      dd.style.top   = (r.top + window.scrollY + r.height + 6) + 'px';
+      dd.style.left  = (r.left + window.scrollX) + 'px';
+      dd.style.width = lockedWidth + 'px';
+    }
+    const show = ()=> {
+      dd.style.display='block';
+      if (activeInput) activeInput.setAttribute('aria-expanded', 'true');
+    };
+    const hide = ()=> {
+      dd.style.display='none'; lockedWidth=null;
+      if (activeInput) {
+        activeInput.setAttribute('aria-expanded', 'false');
+        activeInput.removeAttribute('aria-activedescendant');
+      }
+    };
+    const isOpen = ()=> dd && dd.style.display!=='none';
+    const el = ()=> dd || ensure();
+    return { setActive, position, show, hide, isOpen, el };
+  })();
+
+  /* ---------- Agrupación de sugerencias por barrio/tipo/ciudad ---------- */
+  const TYPE_LABEL = {
+    apartamento: 'Apartamentos',
+    casa: 'Casas',
+    lote: 'Lotes',
+    oficina: 'Oficinas',
+    bodega: 'Bodegas',
+    local: 'Locales'
+  };
+
+  function opToPage(op){
+    switch (op) {
+      case 'arrendar': return 'propiedades-arrendar.html';
+      case 'alojar':   return 'propiedades-alojamientos.html';
+      default:         return 'propiedades-comprar.html';
+    }
+  }
+
+  function buildGroupHref(group){
+    const op = document.getElementById('op')?.value || 'comprar';
+    const page = opToPage(op);
+    const params = new URLSearchParams();
+    if (group.kind === 'barrio') params.set('search', group.key);
+    else if (group.kind === 'tipo') {
+      params.set('type', group.key);
+      if (group.city) params.set('city', group.city);
+    }
+    else if (group.kind === 'ciudad') params.set('city', group.key);
+    const qs = params.toString();
+    return page + (qs ? '?' + qs : '');
+  }
+
+  function buildGroupSuggestions(query, allProps){
+    const q = norm(query);
+    if (q.length < MIN_CHARS) return [];
+
+    const byHood = new Map();
+    const byType = new Map();
+    const byCity = new Map();
+
+    for (const p of allProps) {
+      if (p.available === 0 || p.disponible === false) continue;
+
+      const hood = String(p.neighborhood || '').trim();
+      const city = String(p.city || '').trim();
+      const type = String(p.type || '').trim().toLowerCase();
+
+      if (hood && norm(hood).includes(q)) {
+        const k = hood;
+        const cur = byHood.get(k) || { kind: 'barrio', key: k, label: hood + (city ? ' · ' + city : ''), count: 0 };
+        cur.count++; byHood.set(k, cur);
+      }
+
+      if (type && (norm(type).includes(q) || (TYPE_LABEL[type] && norm(TYPE_LABEL[type]).includes(q)))) {
+        const k = type + '|' + city;
+        const cur = byType.get(k) || {
+          kind: 'tipo', key: type, city: city,
+          label: (TYPE_LABEL[type] || type) + (city ? ' en ' + city : ''),
+          count: 0
+        };
+        cur.count++; byType.set(k, cur);
+      }
+
+      if (city && norm(city).includes(q) && !hood) {
+        const k = city;
+        const cur = byCity.get(k) || { kind: 'ciudad', key: k, label: city, count: 0 };
+        cur.count++; byCity.set(k, cur);
+      }
+    }
+
+    const groups = [
+      ...byHood.values(),
+      ...byType.values(),
+      ...byCity.values()
+    ].filter(g => g.count >= 1);
+
+    groups.sort((a, b) => b.count - a.count);
+    return groups.slice(0, 3);
+  }
+
+  /* ---------- Highlight seguro ---------- */
+  function highlight(text, terms){
+    let out = esc(text);
+    terms.forEach(t=>{
+      if(!t || t.length<2) return;
+      const re = new RegExp(`(${t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`,'gi');
+      out = out.replace(re,'<mark>$1</mark>');
+    });
+    return out;
+  }
+
+  /* ---------- Render ---------- */
+  function renderGroups(groups){
+    if (!groups.length) return '';
+    const iconFor = k => k === 'barrio'
+      ? '<svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 2a6 6 0 016 6c0 4.5-6 10-6 10S4 12.5 4 8a6 6 0 016-6zm0 8a2 2 0 100-4 2 2 0 000 4z"/></svg>'
+      : k === 'tipo'
+      ? '<svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M3 9l7-6 7 6v8a1 1 0 01-1 1h-4v-5H8v5H4a1 1 0 01-1-1V9z"/></svg>'
+      : '<svg viewBox="0 0 20 20" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 18s-6-5.5-6-10a6 6 0 1112 0c0 4.5-6 10-6 10z"/></svg>';
+
+    const rows = groups.map((g, i) => {
+      const safeLabel = esc(g.label);
+      const plural = g.count === 1 ? 'propiedad' : 'propiedades';
+      return '<div class="ss-group-item" role="option" data-idx="' + i + '"' +
+             ' style="display:flex;gap:10px;padding:10px 14px;cursor:pointer;align-items:center;border-bottom:1px dashed rgba(0,0,0,.06)">' +
+               '<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:6px;background:#fff7e0;color:#b8860b;flex-shrink:0">' + iconFor(g.kind) + '</span>' +
+               '<span style="flex:1;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><strong>' + safeLabel + '</strong></span>' +
+               '<span style="background:#f3f4f6;color:#374151;font-size:.78rem;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap">' + g.count + ' ' + plural + '</span>' +
+             '</div>';
+    }).join('');
+    return '<div style="padding:8px 14px 4px;font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.06em">Sugerencias</div>' + rows;
+  }
+
+  function renderList(results, queryTerms, query, allProps){
+    const dd = DD.el();
+    const groups = query ? buildGroupSuggestions(query, allProps || []) : [];
+    if(!results.length && !groups.length){
+      dd.innerHTML = `<div style="padding:16px;text-align:center;color:#6b7280;font-size:.95rem">Sin resultados. Prueba con otra palabra.</div>`;
+      DD.show(); return;
+    }
+    dd.innerHTML = renderGroups(groups);
+    if (groups.length && results.length) {
+      dd.innerHTML += '<div style="padding:8px 14px 4px;font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.06em">Propiedades</div>';
+    }
+
+    let optIndex = 0;
+
+    dd.querySelectorAll('.ss-group-item').forEach(row => {
+      const i = parseInt(row.dataset.idx, 10);
+      const g = groups[i];
+      if (!g) return;
+      row.id = 'ss-opt-' + (optIndex++);
+      row.setAttribute('aria-selected', 'false');
+      row.addEventListener('mouseenter', () => { row.style.background = '#f9fafb'; });
+      row.addEventListener('mouseleave', () => { row.style.background = 'transparent'; });
+      row.addEventListener('click', () => {
+        const ae = document.activeElement;
+        if (ae && ae.id === 'f-search' && ae.value.trim()) saveRecent(ae.value.trim());
+        location.href = buildGroupHref(g);
+      });
+    });
+
+    results.forEach(p=>{
+      const row=document.createElement('div');
+      row.className='ss-item';
+      row.setAttribute('role','option');
+      row.setAttribute('aria-selected', 'false');
+      row.id = 'ss-opt-' + (optIndex++);
+      row.style.cssText='display:flex;gap:12px;padding:12px 14px;cursor:pointer;align-items:center';
+      row.onmouseenter=()=>row.style.background='#f9fafb';
+      row.onmouseleave=()=>row.style.background='transparent';
+
+      const titleHTML = highlight(p.title||'Propiedad', queryTerms);
+      const subline = [p.city, p.neighborhood].filter(Boolean).join(' · ');
+      const subHTML = highlight(subline, queryTerms);
+      const fuzzyBadge = p.__isFuzzy
+        ? '<span title="Resultado aproximado (typo corregido)" aria-label="Resultado aproximado" style="display:inline-block;margin-left:6px;background:#fff7e0;color:#b8860b;font-size:.7rem;font-weight:700;padding:1px 6px;border-radius:4px;vertical-align:middle">~</span>'
+        : '';
+
+      row.innerHTML=`
+        <img src="${p.image || '/assets/placeholder.webp'}" alt="${esc(p.title||'Propiedad')}"
+             style="width:60px;height:60px;object-fit:cover;border-radius:8px;flex-shrink:0">
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${titleHTML}${fuzzyBadge}</div>
+          <div style="color:#6b7280;font-size:.86rem">${subHTML}</div>
+        </div>
+        <div style="font-weight:900;color:#d4af37;white-space:nowrap">
+          ${p.price?`$${Number(p.price).toLocaleString('es-CO')} COP`:''}
+        </div>`;
+      row.addEventListener('click',()=>{
+        registerClick(p.id);
+        const ae = document.activeElement;
+        if (ae && ae.id === 'f-search' && ae.value.trim()) saveRecent(ae.value.trim());
+        location.href=`detalle-propiedad.html?id=${encodeURIComponent(p.id)}`;
+      });
+      dd.appendChild(row);
+    });
+    DD.show();
+  }
+
+  /* ---------- Tap-to-close que no interrumpe scroll ---------- */
+  function installTapToClose(input){
+    let startY=null, startX=null, moved=false;
+    const onStart = (e)=>{ const t=e.touches?e.touches[0]:e; startX=t.clientX; startY=t.clientY; moved=false; };
+    const onMove  = (e)=>{ if(startY==null) return; const t=e.touches?e.touches[0]:e; if(Math.abs(t.clientY-startY)>10||Math.abs(t.clientX-startX)>10) moved=true; };
+    const onEnd   = (e)=>{ if(!DD.isOpen()) return; const dd=DD.el(); const target=e.target; if(moved) return; if(!dd.contains(target) && target!==input) DD.hide(); };
+    document.addEventListener('touchstart', onStart, {passive:true});
+    document.addEventListener('touchmove',  onMove,  {passive:true});
+    document.addEventListener('touchend',   onEnd,   {passive:true});
+    document.addEventListener('mousedown', (e)=>{ const dd=DD.el(); if(DD.isOpen() && !dd.contains(e.target) && e.target!==input) DD.hide(); });
+  }
+
+  /* ---------- Evitar zoom iOS y mejorar teclado ---------- */
+  function enforceMobileInputStyles(input){
+    input.style.fontSize = '16px';
+    input.style.lineHeight = '1.4';
+    input.setAttribute('inputmode','search');
+    input.setAttribute('enterkeyhint','search');
+    input.setAttribute('autocomplete','off');
+    // ARIA combobox
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-controls', 'smart-search-dropdown');
+    input.setAttribute('aria-expanded', 'false');
+    input.setAttribute('aria-haspopup', 'listbox');
+  }
+
+  /* ---------- Render de búsquedas recientes ---------- */
+  function renderRecent(input){
+    const recent = getRecent();
+    if (!recent.length) { DD.hide(); return; }
+    const dd = DD.el();
+    DD.setActive(input, { lockWidth: true });
+
+    const clockSvg = '<svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14" aria-hidden="true" style="flex-shrink:0;color:#9ca3af"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd"/></svg>';
+
+    dd.innerHTML =
+      '<div style="padding:10px 14px 6px;font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.06em">Búsquedas recientes</div>' +
+      recent.map((term, i) => {
+        const safe = esc(term);
+        return '<div class="ss-recent-item" data-term="' + safe + '" role="option" aria-selected="false" id="ss-opt-' + i + '"' +
+               ' style="display:flex;gap:10px;padding:10px 14px;cursor:pointer;align-items:center">' +
+                 clockSvg +
+                 '<span style="flex:1;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + safe + '</span>' +
+                 '<button type="button" class="ss-recent-del" data-term="' + safe + '"' +
+                 ' aria-label="Eliminar búsqueda reciente"' +
+                 ' style="background:transparent;border:0;color:#9ca3af;font-size:1.2rem;line-height:1;cursor:pointer;padding:2px 8px;border-radius:6px">&times;</button>' +
+               '</div>';
+      }).join('');
+
+    dd.querySelectorAll('.ss-recent-item').forEach(row => {
+      row.addEventListener('mouseenter', () => { row.style.background = '#f9fafb'; });
+      row.addEventListener('mouseleave', () => { row.style.background = 'transparent'; });
+      row.addEventListener('click', (e) => {
+        if (e.target.closest('.ss-recent-del')) return;
+        const t = row.dataset.term;
+        input.value = t;
+        input.dispatchEvent(new Event('input'));
+        input.focus();
+      });
+    });
+    dd.querySelectorAll('.ss-recent-del').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        removeRecent(btn.dataset.term);
+        renderRecent(input);
+      });
+    });
+
+    DD.show();
+    DD.position();
+  }
+
+  /* ---------- Init ---------- */
+  document.addEventListener('DOMContentLoaded', async ()=>{
+    const inputs = document.querySelectorAll('#f-search, #f-city');
+    inputs.forEach(enforceMobileInputStyles);
+
+    let rawData = await loadData();
+    let props   = toArrayData(rawData);
+    let vocab   = buildVocab(props); // para typos y sinónimos emergentes
+
+    // Refrescar dataset cuando Firestore trae cambios
+    const reloadDataset = async () => {
+      rawData = await loadData();
+      props   = toArrayData(rawData);
+      vocab   = buildVocab(props);
+    };
+    window.addEventListener('altorra:db-refreshed', reloadDataset);
+    window.addEventListener('altorra:cache-invalidated', reloadDataset);
+
+    inputs.forEach(input=>{
+      const run = debounce(async ()=>{
+        const q = input.value.trim();
+        if(q.length<MIN_CHARS){ DD.hide(); return; }
+        DD.setActive(input, {lockWidth:true});
+        DD.el().innerHTML = '<div style="padding:16px;text-align:center;color:#6b7280">Buscando…</div>';
+        DD.show(); DD.position();
+        try{
+          const results = await searchProps(q, props, vocab);
+          const termsForHL = uniq(norm(q).split(' ').filter(Boolean));
+          renderList(results, termsForHL, q, props);
+          DD.position();
+        }catch(err){
+          console.error('[smart-search]',err);
+          DD.el().innerHTML = '<div style="padding:16px;text-align:center;color:#ef4444">Error de búsqueda</div>';
+          DD.show();
+        }
+      }, DEBOUNCE_MS);
+
+      input.addEventListener('input', run);
+      input.addEventListener('focus', () => {
+        // En el hero: si está vacío, mostrar búsquedas recientes en vez del dropdown vacío
+        if (input.id === 'f-search' && !input.value.trim()) {
+          renderRecent(input);
+        } else {
+          run();
+        }
+      });
+      installTapToClose(input);
+
+      // Teclado (desktop)
+      let current=-1;
+      const dd = DD.el();
+      const items=()=>dd.querySelectorAll('.ss-group-item, .ss-item, .ss-recent-item');
+      const highlightRow=i=>{
+        const list = items();
+        list.forEach(el => { el.style.background='transparent'; el.setAttribute('aria-selected','false'); });
+        if(i>=0 && i<list.length){
+          const el = list[i];
+          el.style.background='#eef2ff';
+          el.setAttribute('aria-selected','true');
+          el.scrollIntoView({block:'nearest'});
+          if (el.id) input.setAttribute('aria-activedescendant', el.id);
+        } else {
+          input.removeAttribute('aria-activedescendant');
+        }
+        current=i;
+      };
+      input.addEventListener('keydown',e=>{
+        if(!DD.isOpen()) return; const list=items(); if(!list.length) return;
+        if(e.key==='ArrowDown'){ e.preventDefault(); highlightRow(Math.min(list.length-1,current+1)); }
+        else if(e.key==='ArrowUp'){ e.preventDefault(); highlightRow(Math.max(0,current-1)); }
+        else if(e.key==='Enter'){ if(current>=0){ e.preventDefault(); list[current].click(); } }
+        else if(e.key==='Escape'){ DD.hide(); }
+      });
+    });
+
+    // Guardar búsqueda reciente al enviar el formulario del hero
+    const heroForm = document.getElementById('quickSearch');
+    if (heroForm) {
+      heroForm.addEventListener('submit', () => {
+        const q = document.getElementById('f-search')?.value.trim();
+        if (q) saveRecent(q);
+      });
+    }
+
+    // Atajo "/" para enfocar el hero search desde cualquier parte de la página
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+      const ae = document.activeElement;
+      if (ae && ['INPUT','TEXTAREA','SELECT'].includes(ae.tagName)) return;
+      if (ae && ae.isContentEditable) return;
+      const hero = document.getElementById('f-search');
+      if (!hero) return;
+      e.preventDefault();
+      hero.focus();
+      hero.select?.();
+      if (!hero.value.trim()) renderRecent(hero);
+    });
+  });
+})();

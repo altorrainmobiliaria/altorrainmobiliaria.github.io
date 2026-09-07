@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#E6EDF2; font-family:'Hanken Grotesk',sans-serif; -webkit-font-smoothing:antialiased; }
+</style>
+</helmet>
+
+<!--
+  ══════════════════════════════════════════════════════════════════
+  ALTORRA · VENTA — el pipeline de compraventa (Ola 2 · GESTIÓN v2, §151)
+
+  LA IDEA CENTRAL, en una frase: **esta pantalla no existe para celebrar ventas, existe para
+  enseñar cuál se va a caer.** Un tablero que ordena por etapa cuenta lo que ya sabes; el que
+  ordena por RIESGO te dice dónde meter la mano hoy.
+
+  ⚖️ LA REGLA QUE MANDA EN TODO EL DISEÑO. En Colombia la venta NO se perfecciona con la escritura,
+  sino con el REGISTRO (art. 756 C.C.). Entre la notaría y la inscripción en la ORIP hay días en los
+  que el vendedor sigue siendo el dueño de registro: puede caer un embargo, puede registrarse otro
+  título antes. Por eso `escritura` NO se pinta como final feliz — se pinta con aviso. Es el único
+  punto del proceso donde todo PARECE terminado y no lo está, y si la pantalla calla ahí, calla en
+  el peor sitio.
+
+  TRES DECISIONES QUE NO SON DE PINTAR:
+
+  1. 📋 **NO ES UN KANBAN, y es deliberado.** Siete columnas convierten el proceso en un juego de
+     tarjetas: se ve bonito con veinte ventas y vacío con tres, no cabe en un portátil, y sobre todo
+     ordena por ETAPA — que es justo lo que menos importa. Aquí es una LISTA ordenada por lo que
+     hay que atender: primero lo escriturado sin registrar, después lo que lleva más tiempo quieto.
+
+  2. 🔴 **El botón de «Registrada» pide el folio ANTES de dejar pulsarlo.** El número de matrícula
+     inmobiliaria ES el registro. Sin él, «registrada» es una casilla marcada — y la casilla que
+     dice que una venta terminó es exactamente la que no puede mentir. El servidor lo exige igual;
+     la pantalla lo dice antes para no hacer perder el viaje.
+
+  3. ✍️ **Devolver una venta EXIGE escribir por qué.** No un «¿seguro?», que en seis meses no dice
+     nada: el motivo. Una venta que se cae es información — la que retrocede en silencio esconde
+     justo lo que hay que ver.
+
+  PALETA: navy #062743 · dorado #D4AF37 · plata #BFC3C9 · fondo blanco / lienzo #E6EDF2.
+  SIN negro, SIN verde, SIN rojo — el riesgo se dice con oro + ícono, no con semáforo.
+  ══════════════════════════════════════════════════════════════════
+-->
+
+<section style="display:flex;flex-direction:column;gap:14px;padding:64px 64px 8px">
+  <h1 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:600;color:#062743;letter-spacing:-0.015em">Venta — las siete etapas</h1>
+  <p style="margin:0;max-width:900px;font-size:15.5px;line-height:1.75;color:#5B6B7A">
+    Tres pantallas. La primera es la lista, ordenada por <strong style="color:#062743;font-weight:600">lo
+    que hay que atender</strong> y no por etapa. La segunda es una venta por dentro: dónde va, qué la
+    sostiene y quién la movió. La tercera es el momento de moverla — con lo que el sistema exige antes
+    de dejarte.
+  </p>
+</section>
+
+<!-- ══════════════════════════ 1a · LA LISTA ══════════════════════════ -->
+<section style="padding:40px 64px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">1a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">Ventas · qué atender</h2>
+    <span style="font-size:13.5px;color:#5B6B7A">Ordenadas por riesgo, no por etapa. No es un kanban a propósito.</span>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:22px;padding:34px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-6px -6px 14px #FFFFFF;display:flex;flex-direction:column;gap:20px">
+
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <div style="flex:1;min-width:170px;background:#F4F7FA;border-radius:16px;padding:18px 20px;box-shadow:inset 3px 3px 7px rgba(6,39,67,0.06),inset -3px -3px 7px #FFFFFF">
+        <div style="font-size:28px;font-weight:700;color:#062743">1</div>
+        <div style="font-size:12.5px;color:#5B6B7A;margin-top:2px">escriturada sin registrar</div>
+      </div>
+      <div style="flex:1;min-width:170px;background:#F4F7FA;border-radius:16px;padding:18px 20px;box-shadow:inset 3px 3px 7px rgba(6,39,67,0.06),inset -3px -3px 7px #FFFFFF">
+        <div style="font-size:28px;font-weight:700;color:#062743">2</div>
+        <div style="font-size:12.5px;color:#5B6B7A;margin-top:2px">con soportes pendientes</div>
+      </div>
+      <div style="flex:1;min-width:170px;background:#F4F7FA;border-radius:16px;padding:18px 20px;box-shadow:inset 3px 3px 7px rgba(6,39,67,0.06),inset -3px -3px 7px #FFFFFF">
+        <div style="font-size:28px;font-weight:700;color:#062743">4</div>
+        <div style="font-size:12.5px;color:#5B6B7A;margin-top:2px">abiertas</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.6fr 1.1fr 1fr;gap:14px;padding:0 4px;font-size:11.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#8B9AA8">
+      <span>Venta</span><span>Etapa</span><span>Qué pasa</span>
+    </div>
+
+    <!-- la que hay que mirar HOY va primera, con filete de oro -->
+    <div style="display:grid;grid-template-columns:1.6fr 1.1fr 1fr;gap:14px;align-items:center;background:#FFFDF7;border-left:3px solid #D4AF37;border-radius:0 12px 12px 0;padding:15px 16px">
+      <div>
+        <div style="font-size:14.5px;font-weight:600;color:#062743">VTA-202608-0003 · Ana Restrepo</div>
+        <div style="font-size:12.5px;color:#8B9AA8">Apto. Castillogrande · $470.000.000</div>
+      </div>
+      <div style="font-size:13.5px;color:#062743;font-weight:600">Escritura pública</div>
+      <div style="font-size:13px;color:#5B6B7A;line-height:1.5">Firmada en notaría pero <strong style="color:#062743">SIN registrar</strong>: todavía no ha cambiado de dueño.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.6fr 1.1fr 1fr;gap:14px;align-items:center;background:#F4F7FA;border-radius:12px;padding:15px 16px">
+      <div>
+        <div style="font-size:14.5px;font-weight:600;color:#062743">VTA-202608-0001 · Jorge Villa</div>
+        <div style="font-size:12.5px;color:#8B9AA8">Casa Manga · $820.000.000</div>
+      </div>
+      <div style="font-size:13.5px;color:#062743;font-weight:600">Estudio de títulos</div>
+      <div style="font-size:13px;color:#5B6B7A;line-height:1.5">Falta el soporte: certificado de tradición.</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.6fr 1.1fr 1fr;gap:14px;align-items:center;background:#F4F7FA;border-radius:12px;padding:15px 16px">
+      <div>
+        <div style="font-size:14.5px;font-weight:600;color:#062743">VTA-202607-0002 · Marta Gil</div>
+        <div style="font-size:12.5px;color:#8B9AA8">Apto. Bocagrande</div>
+      </div>
+      <div style="font-size:13.5px;color:#062743;font-weight:600">Oferta</div>
+      <div style="font-size:13px;color:#8B9AA8;line-height:1.5">Sin novedades.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 2a · UNA VENTA POR DENTRO ══════════════════════════ -->
+<section style="padding:40px 64px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">2a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">La venta por dentro</h2>
+    <span style="font-size:13.5px;color:#5B6B7A">Dónde va, qué la sostiene, y quién la movió</span>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:22px;padding:34px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-6px -6px 14px #FFFFFF;display:flex;flex-direction:column;gap:26px">
+
+    <div>
+      <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:#062743">VTA-202608-0003 · Ana Restrepo</h3>
+      <p style="margin:5px 0 0;font-size:13.5px;color:#8B9AA8">Apto. Castillogrande · acordado $470.000.000 · expediente ALT-VT-0009</p>
+    </div>
+
+    <!-- LA ESCALERA. Cumplidas en navy, la actual en oro, las que faltan en plata. -->
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <span style="width:22px;height:22px;border-radius:50%;background:#062743;color:#FFF;font-size:11px;display:flex;align-items:center;justify-content:center;flex:none">✓</span>
+        <div style="padding-bottom:12px;border-left:2px solid #062743;margin-left:-23px;padding-left:34px">
+          <div style="font-size:14px;font-weight:600;color:#062743">Interés · Oferta · Estudio de títulos · Promesa · Crédito</div>
+          <div style="font-size:12.5px;color:#8B9AA8;margin-top:2px">Cumplidas entre el 2 de julio y el 14 de agosto</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <span style="width:22px;height:22px;border-radius:50%;background:#D4AF37;color:#062743;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none">6</span>
+        <div style="padding-bottom:12px;border-left:2px solid #D4AF37;margin-left:-23px;padding-left:34px">
+          <div style="font-size:14px;font-weight:600;color:#062743">Escritura pública</div>
+          <div style="font-size:12.5px;color:#5B6B7A;margin-top:2px">Firmada el 21 de agosto en la Notaría 3 de Cartagena. ⚠️ Todavía NO es dueña.</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <span style="width:22px;height:22px;border-radius:50%;background:#E6EDF2;color:#8B9AA8;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none">7</span>
+        <div style="padding-left:34px;margin-left:-23px">
+          <div style="font-size:14px;font-weight:600;color:#8B9AA8">Registro en la ORIP</div>
+          <div style="font-size:12.5px;color:#8B9AA8;margin-top:2px">Aquí, y solo aquí, la venta está hecha.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#FFFDF7;border-left:3px solid #D4AF37;border-radius:0 12px 12px 0;padding:16px 18px;font-size:13.5px;line-height:1.7;color:#5B6B7A">
+      <strong style="color:#062743;font-weight:600">Por qué la escritura no cierra la venta.</strong> El artículo 756 del Código Civil dice que la tradición de un inmueble se hace con la INSCRIPCIÓN del título en la Oficina de Registro. Hasta que eso ocurra, quien figura como dueño sigue siendo el vendedor.
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:9px">
+      <div style="font-size:11.5px;font-weight:600;letter-spacing:0.08em;color:#8B9AA8;text-transform:uppercase">Quién la ha movido</div>
+      <div style="display:grid;grid-template-columns:1.3fr 1fr 1.2fr;gap:14px;background:#F4F7FA;border-radius:12px;padding:12px 15px;font-size:13px;color:#5B6B7A">
+        <span style="color:#062743;font-weight:600">Crédito → Escritura</span><span>21 ago 2026</span><span>daniel@altorrainmobiliaria.co</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1.3fr 1fr 1.2fr;gap:14px;background:#F4F7FA;border-radius:12px;padding:12px 15px;font-size:13px;color:#5B6B7A">
+        <span style="color:#062743;font-weight:600">Promesa → Crédito</span><span>4 ago 2026</span><span>daniel@altorrainmobiliaria.co</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 3a · MOVERLA ══════════════════════════ -->
+<section style="padding:40px 64px 80px;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">3a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743">Moverla de etapa</h2>
+    <span style="font-size:13.5px;color:#5B6B7A">Lo que el sistema exige antes de dejarte</span>
+  </div>
+
+  <div style="background:#FFFFFF;border-radius:22px;padding:34px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-6px -6px 14px #FFFFFF;max-width:640px;display:flex;flex-direction:column;gap:20px">
+    <h3 style="margin:0;font-size:16px;font-weight:600;color:#062743">Marcar como registrada</h3>
+
+    <label style="display:flex;flex-direction:column;gap:7px">
+      <span style="font-size:13px;font-weight:600;color:#062743">Matrícula inmobiliaria</span>
+      <input placeholder="060-123456" style="border:1px solid rgba(27,39,51,0.16);border-radius:11px;padding:12px 14px;font-size:14px;font-family:'Hanken Grotesk',sans-serif;color:#062743">
+      <span style="font-size:12.5px;color:#5B6B7A;line-height:1.6">Sin este número no se puede marcar como registrada: ese número <strong style="color:#062743">es</strong> el registro.</span>
+    </label>
+
+    <div style="display:flex;gap:10px">
+      <button style="background:#062743;color:#FFF;border:0;border-radius:11px;padding:12px 22px;font-size:14px;font-weight:600;font-family:'Hanken Grotesk',sans-serif">Marcar registrada</button>
+      <button style="background:#FFF;color:#062743;border:1px solid rgba(27,39,51,0.16);border-radius:11px;padding:12px 22px;font-size:14px;font-weight:600;font-family:'Hanken Grotesk',sans-serif">Cancelar</button>
+    </div>
+
+    <div style="border-top:1px solid rgba(27,39,51,0.1);padding-top:20px;display:flex;flex-direction:column;gap:9px">
+      <h3 style="margin:0;font-size:16px;font-weight:600;color:#062743">Devolver a una etapa anterior</h3>
+      <p style="margin:0;font-size:13px;line-height:1.6;color:#5B6B7A">Se pide el <strong style="color:#062743">motivo</strong>, no una confirmación. Un «sí» no dice nada en seis meses; «el banco negó el crédito» sí.</p>
+      <input placeholder="¿Por qué se devuelve?" style="border:1px solid rgba(27,39,51,0.16);border-radius:11px;padding:12px 14px;font-size:14px;font-family:'Hanken Grotesk',sans-serif;color:#062743">
+    </div>
+  </div>
+</section>
+
+</x-dc>
+</body>
+</html>

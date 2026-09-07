@@ -1,0 +1,85 @@
+---
+/*
+ * ProjectCard — PÓSTER vertical de proyecto (obra nueva) para el riel de #proyectos.
+ * Réplica del mockup (ALTORRA Portal.dc.html L1188-1242).
+ *
+ * ⚠️ 5ª card del portal. Ninguna es intercambiable (ADR §32.9/§32.13):
+ *   · PropertyCard → FLUIDA, grillas. Caja blanca + sombra plana.
+ *   · LuCard       → FIJA 276-330px, CENTRADA, swatches + 2ª línea de precio.
+ *   · StayCard     → FIJA 230-262px, SIN caja, foto desnuda.
+ *   · RankCard     → FIJA 288-326px, NEUMÓRFICA, numeral calado + rating.
+ *   · ProjectCard  → FIJA 244-300px, **PÓSTER 3/4**: foto a sangre + scrim, sin cuerpo
+ *                    de texto; solo el NOMBRE del proyecto (Cormorant espaciado) + zona.
+ *
+ * `titleSize`/`titleTrack` vienen por dato: el mockup ajusta ÓPTICAMENTE el tamaño de
+ * cada nombre según su longitud (MAREA 31px vs CLAUSTRO 1620 27px). Es decisión de
+ * diseño, no ruido — se preserva en vez de inventar una regla automática.
+ */
+interface Props {
+  img: string;
+  alt: string;
+  name: string;        // "MAREA"
+  place: string;       // "Cra 1 · Bocagrande"
+  badge?: string;      // "Preventa"
+  titleSize?: string;  // clamp() del mockup
+  titleTrack?: string; // letter-spacing del mockup
+  href: string;
+}
+const { img, alt, name, place, badge, titleSize = 'clamp(25px, 2.3vw, 31px)', titleTrack = '0.14em', href } = Astro.props;
+---
+
+<a class="alt-projcard" href={href}>
+  <img src={img} alt={alt} loading="lazy" decoding="async" />
+  <span class="alt-projcard__scrim" aria-hidden="true"></span>
+  {badge && <span class="alt-projcard__badge">{badge}</span>}
+  <span class="alt-projcard__body">
+    <span class="alt-projcard__name" style={`font-size:${titleSize};letter-spacing:${titleTrack}`}>{name}</span>
+    <span class="alt-projcard__place">{place}</span>
+  </span>
+</a>
+
+<style>
+  .alt-projcard {
+    width: clamp(244px, 24vw, 300px);
+    position: relative;
+    display: block;
+    aspect-ratio: 3 / 4;
+    border-radius: 18px;
+    overflow: hidden;
+    text-decoration: none;
+    box-shadow: var(--alt-elev-card);
+    transition: transform var(--alt-dur-slow) var(--alt-ease-card), box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+  }
+  .alt-projcard:hover { transform: translateY(-6px); box-shadow: var(--alt-elev-card-hover); }
+  .alt-projcard img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-slow) var(--alt-ease-card); }
+  .alt-projcard:hover img { transform: scale(1.06); }
+
+  /* Scrim: el mockup usa rgba(9,17,25,…) = casi NEGRO (ajeno). Token oficial (base navy). */
+  .alt-projcard__scrim { position: absolute; inset: 0; background: var(--alt-scrim-img); }
+
+  .alt-projcard__badge {
+    position: absolute; top: 15px; left: 15px;
+    background: var(--alt-grad-gold); color: var(--alt-ink);
+    padding: 5px 13px; border-radius: var(--alt-r-pill);
+    font-size: 9px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
+  }
+
+  .alt-projcard__body { position: absolute; left: 0; right: 0; bottom: 0; padding: 24px 20px; text-align: center; }
+  .alt-projcard__name {
+    display: block;
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    color: #fff; line-height: 1; margin-bottom: 8px;
+    /* font-size + letter-spacing llegan inline: ajuste óptico por nombre (ver cabecera) */
+  }
+  .alt-projcard__place {
+    display: block;
+    font-size: 10.5px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.14em;
+    text-transform: uppercase; color: rgba(255, 255, 255, 0.82);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .alt-projcard, .alt-projcard img { transition: none; }
+    .alt-projcard:hover { transform: none; }
+    .alt-projcard:hover img { transform: none; }
+  }
+</style>

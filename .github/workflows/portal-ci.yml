@@ -1,0 +1,191 @@
+name: portal-ci
+
+# CI del PORTAL nuevo (portal/). Aislado del sitio viejo por filtros de path:
+# no interfiere con og-publish.yml ni bump-version.yml (este ultimo excluye portal/**).
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'portal/**'
+      - '.github/workflows/portal-ci.yml'
+  pull_request:
+    paths:
+      - 'portal/**'
+      - '.github/workflows/portal-ci.yml'
+
+# ENTORNO DEL BUILD — el interruptor que decide si el sitio se deja INDEXAR.
+#
+# Por defecto `staging`: el portal sale `noindex` + `Disallow: /`, que es lo correcto mientras vive en
+# *.workers.dev y no debe competir con el dominio real. En el CUTOVER, el dueño pone la variable de
+# repositorio `PORTAL_SITE_ENV=production` y el siguiente push publica un sitio indexable.
+#
+# Hasta hoy esta variable NO SE DECLARABA EN NINGÚN SITIO (§91 lo cazó, §102 lo arregla): todo build
+# de la historia del repo salió `noindex`, incluido el que iba al cutover — y se veía perfecto.
+#
+# 🛡️ La red debajo: `npm run verify:build` #6 FALLA si en modo producción sobrevive un `noindex` o un
+# `Disallow: /`. Así, si alguien pone la variable y algo está mal, el CI se pone ROJO en vez de
+# publicar un sitio que le pide a Google que lo borre.
+env:
+  PUBLIC_SITE_ENV: ${{ vars.PORTAL_SITE_ENV || 'staging' }}
+  # Fuente del catálogo del SERP. `demo` = las cards de muestra del mockup; `live` = el índice REAL.
+  # Es el segundo interruptor del cutover, y va aquí por la misma razón: si vive solo en la cabeza de
+  # quien despliega, el día del cutover se olvida y el portal se estrena con inmuebles inventados.
+  PUBLIC_CATALOGO_SOURCE: ${{ vars.PORTAL_CATALOGO_SOURCE || 'demo' }}
+  # Base pública de las imágenes en R2. Vacía ⇒ las claves se sirven desde la raíz del sitio, que es lo
+  # correcto con datos demo. Con catálogo real hay que ponerla, o las fotos dan 404 (§97.7).
+  PUBLIC_MEDIA_BASE: ${{ vars.PORTAL_MEDIA_BASE || '' }}
+
+permissions:
+  contents: read
+
+# Serializa corridas por rama para evitar deploys solapados (carrera a Workers).
+concurrency:
+  group: portal-ci-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build + verificar cableado híbrido
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: portal
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: portal/package-lock.json
+      # 🛡️ El ÚNICO gate de la RAÍZ, y hasta hoy su única aplicación era el hook de pre-commit
+      # — o sea `core.hooksPath`, que vive en `.git/config` y **no se clona** (§261). Un clon nuevo,
+      # otra máquina o un `--no-verify` y deja de correr sin decirlo: es [[L-56]] con el agravante
+      # de que protege al panel LEGACY, el único subsistema sin tests, sin tipos y sin build.
+      # Lo que caza costó dos horas y dejó al dueño FUERA de su propio panel (§136). No necesita
+      # dependencias, así que va antes del `npm ci`: falla en segundos si tiene que fallar.
+      # 🚨 Repo PÚBLICO: una credencial commiteada está cosechada antes de que nadie la note,
+      # y borrarla después no la invalida ni la saca del historial. «NUNCA commitear secrets» era
+      # doctrina sin mecanismo hasta §262. Sin dependencias: va antes del `npm ci`.
+      - name: Credenciales en un repo público (la doctrina, hecha gate)
+        working-directory: .
+        run: node scripts/verify-secretos.mjs
+      - name: Contratos de retorno del panel legacy (su hook no viaja en el clon)
+        working-directory: .
+        run: node scripts/verify-contratos-legacy.mjs
+      - run: npm ci
+      # 🛡️ Las pruebas de `firebase/tests/` importan `functions/src/*`, y ESE paquete tiene sus propias
+      # dependencias (`firebase-functions`, `firebase-admin`) que `npm ci` de `portal` no instala.
+      # Sin esto, en CI esos imports no resuelven, sus tipos degradan a `any` y el chequeo los da por
+      # buenos: LOCAL EN ROJO Y CI EN VERDE — el espejo de [[L-48]], y igual de inútil. Se comprobó
+      # con un error real que pase en CI y fallaba en la maquina (§142).
+      - name: Dependencias del codebase `portal` de Functions (o el typecheck miente en verde)
+        run: npm ci --prefix functions
+      # 🛡️ TYPECHECK antes que nada: `astro build` TRANSPILA sin comprobar tipos, así que un import roto
+      # o una firma cambiada llegan a producción sin un solo aviso. Lo demostró §113: `gestion-leads.ts`
+      # llevaba desde §101 con un error de tipos dentro, en `main`, y ningún gate lo vio.
+      - name: Tipos (lo que el build NO comprueba)
+        run: npm run typecheck
+      # 🛡️ Y las Functions APARTE (§176): el `tsconfig` del portal EXCLUYE `functions/`, asi que
+      # `astro check` no las mira. Solo entraban de refilon las que importa `firebase/tests/`. O sea:
+      # nueve Functions desplegadas —dinero, documentos, estado legal— sin gate de tipos. Se comprobo
+      # con un error deliberado: pasaba en verde. Es [[L-52]] otra vez, el gate que corre sobre
+      # archivos que nunca abre.
+      - name: Tipos de las Cloud Functions (el tsconfig del portal las excluye)
+        run: npm run typecheck:functions
+      # 🛡️ LAS PRUEBAS NO LAS CORRIA NADIE (§174). 855 pruebas unitarias —el gate del RNT, la
+      # prohibicion del deposito en vivienda, la liquidacion peso por peso, la ventana de la Ley 2300,
+      # la maquina de estados del mandato— y NINGUNA bloqueaba un despliegue: se escribian, se corrian
+      # a mano el dia que se escribian, y despues nada. Es el mismo hallazgo que ya esta escrito dos
+      # veces en este archivo («un gate que nadie invoca no protege nada»), aplicado esta vez a la red
+      # mas grande del proyecto.
+      - name: Pruebas unitarias (donde viven los invariantes legales)
+        run: npm run test
+      # 🛡️ Y LAS DEL EMULADOR (§177). Estaban fuera «porque necesitan Java», y ese motivo caduco el dia
+      # que se midio: 141 pruebas en 24 SEGUNDOS con el arranque del emulador incluido. Son las unicas
+      # que ejercitan las Security Rules y el codigo REAL de las Functions contra Firestore. El precio
+      # de tenerlas fuera ya se cobro: el gate de PH de §174 rompio una de ellas y estuvo rota en
+      # `main` sin que nada lo dijera, porque ningun gate la abria.
+      - name: Java para el emulador de Firestore
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Pruebas contra el EMULADOR (rules + Functions reales)
+        run: npm run test:rules
+      - name: CSS de runtime alcanzable (§117 — Astro acota y el JS crea nodos sin el atributo)
+        run: npm run verify:css
+      # 🛡️ Una `var(--x)` que nadie declaró NO es un error: el navegador descarta la propiedad y sigue.
+      # El emblema del login llevaba meses sin relieve por tres nombres inventados, con la página
+      # declarada «réplica fiel del mockup». Solo se ve midiendo en el navegador — o con este gate.
+      - name: Variables CSS que existen de verdad
+        run: npm run verify:tokens
+      # 🛡️ GEMELOS (§178): el mismo nombre exportado desde modulos distintos. Ningun otro gate puede
+      # verlo —las dos declaraciones son legitimas por separado— y ya costo dos hallazgos: dos
+      # `ESTADOS_MANDATO` con miembros distintos y dos `etiquetaTipo` que devolvian singular y plural.
+      # 🛡️ HUERFANOS (§222): un modulo con prueba propia y CERO consumidores pasa typecheck, test y
+      # verify:simbolos — la suite lo valida contra si mismo. Costo dos obligaciones legales escritas
+      # en codigo que nadie podia usar: la evidencia postal del preaviso (Ley 820) y la certificacion
+      # al propietario (D.1625). Deuda de 3 congelada con su motivo; una nueva rompe.
+      - name: Modulos que nadie importa
+        run: npm run verify:huerfanos
+      - name: Simbolos exportados por duplicado
+        run: npm run verify:simbolos
+      # 🛡️ Un boton que nadie escucha no falla: se pulsa y no pasa nada. Desde fuera es
+      # indistinguible de un panel roto (§126, y cuatro mas en el panel de gestion en una tarde).
+      - name: Controles que de verdad hacen algo
+        run: npm run verify:controles
+      # 🛡️ EXISTIA Y NO LO CORRIA NADIE (§142): ni el CI ni la rutina. Vigila el free-tier —cero SDK de
+      # Firestore en el portal, cero onSnapshot, cero lista/query sin acotar— y lo puse en rojo yo
+      # mismo dos veces el mismo dia sin enterarme. Un gate que nadie invoca no protege nada.
+      - name: Invariantes de datos (free-tier sagrado)
+        run: npm run verify:data
+      - run: npm run build
+      - name: Verificar render híbrido (mitigación R2/R3)
+        run: npm run verify:build
+      # 🛡️ DESPUES del build, y por el mismo motivo que `verify:enlaces` (§224): en la FUENTE una
+      # cifra y su etiqueta viven en campos distintos de un objeto —{ n: '+1.200', l: 'inmuebles
+      # cerrados' }— asi que ningun patron que exija el numero pegado al sustantivo puede verlas. En
+      # el HTML servido estan juntas, que es como las lee el visitante. Corriendo antes del build,
+      # este gate solo miraba la mitad que no hace dano.
+      - name: Cifras sin respaldo en paginas publicas (§123 · §224 — Ley 1480, cero-demo)
+        run: npm run verify:claims
+      # 🛡️ DESPUES del build a proposito: mira el HTML SERVIDO, donde los enlaces ya estan resueltos.
+      # Dos versiones que leian el codigo fuente pasaron en verde con un enlace roto delante.
+      - name: Enlaces internos que resuelven de verdad (§89)
+        run: npm run verify:enlaces
+      # 🛡️ DESPUES del build por la misma razon: el <title> lo compone el layout, asi que en la
+      # FUENTE no existe todavia. Juzga SOLO lo anunciado en el sitemap — el panel y el design
+      # system no los indexa nadie y exigirles copy comercial seria ruido.
+      - name: Titulo y descripcion de lo que Google vera (§232)
+        run: npm run verify:seo
+
+  deploy-staging:
+    name: Deploy a Cloudflare Workers (staging)
+    needs: build
+    # GATED: solo despliega cuando el dueño active la variable de repo `CF_DEPLOY_ENABLED`
+    # (tras crear su cuenta Cloudflare, crear el bucket R2 y cargar los secrets
+    # CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID). Antes de eso, este job se SALTA —
+    # no falla en rojo. Prerrequisitos completos: ver portal/README.md y docs/50-CONFIG-INFRA.
+    if: github.ref == 'refs/heads/main' && vars.CF_DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: portal
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: portal/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - name: Deploy (wrangler)
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: portal
+          # Fijar wrangler >=4.45 (auto-provisioning del KV SESSION) e igualar el devDep verificado local.
+          wranglerVersion: "4.110.0"
+          command: deploy

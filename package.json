@@ -1,0 +1,22 @@
+{
+  "name": "altorra-inmobiliaria",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node scripts/verify-secretos.mjs && node scripts/verify-contratos-legacy.mjs",
+    "generate": "node scripts/generate-properties.mjs",
+    "upload": "node scripts/upload-to-firestore.mjs",
+    "migrate-images": "node scripts/migrate-images-to-storage.mjs",
+    "delete-all-properties": "node scripts/delete-all-properties.mjs",
+    "backup": "node scripts/backup-firestore.mjs",
+    "verify:secretos": "node scripts/verify-secretos.mjs"
+  },
+  "dependencies": {
+    "firebase": "^12.9.0"
+  },
+  "devDependencies": {
+    "firebase-admin": "^13.0.0",
+    "sharp": "^0.33.0"
+  }
+}

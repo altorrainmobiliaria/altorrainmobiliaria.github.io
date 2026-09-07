@@ -1,0 +1,85 @@
+/* Mapa real MapLibre — swap del esquemático + pines navy/oro (TODO-30). Importado por altorra-map.ts.
+   Global (los contenedores .serp-map / .ficha-locmap viven en páginas distintas). */
+
+/* Lienzo del mapa: cubre el contenedor sellado, DETRÁS del esquemático hasta que el basemap pinta. */
+.alt-map__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.5s var(--alt-ease, ease);
+}
+[data-alt-map].is-live .alt-map__canvas { opacity: 1; }
+
+/* En vivo: ocultar SOLO el fondo esquemático + pines/nota esquemáticos (marcados data-schematic).
+   El chrome sellado del panel (zoom/dibujar) permanece encima del mapa. */
+[data-alt-map].is-live [data-schematic] {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* La atribución de MapLibre respeta la tipografía/discreción del sello. */
+.alt-map__canvas .maplibregl-ctrl-attrib {
+  font-size: 9.5px;
+  background: rgba(255, 255, 255, 0.72);
+}
+.alt-map__canvas .maplibregl-ctrl-attrib a { color: var(--alt-text-muted, #5a6b82); }
+
+/* ---- Pin-precio (marcador MapLibre) — espeja .serp-pin (blanco, navy, oro al resaltar) ---- */
+.alt-mappin {
+  position: relative;
+  background: var(--alt-white, #fff);
+  border: 1px solid var(--alt-hairline-2, rgba(27, 39, 51, 0.14));
+  color: var(--alt-ink, #1b2733);
+  font-family: inherit;
+  font-weight: var(--alt-fw-bold, 700);
+  font-size: 11.5px;
+  line-height: 1;
+  padding: 6px 11px;
+  border-radius: var(--alt-r-pill, 999px);
+  box-shadow: var(--alt-elev-pin, 0 8px 18px -8px rgba(27, 39, 51, 0.45));
+  white-space: nowrap;
+  cursor: pointer;
+  transform-origin: bottom center;
+  transition: transform var(--alt-dur, 0.2s) var(--alt-ease, ease),
+    border-color var(--alt-dur, 0.2s) var(--alt-ease, ease),
+    color var(--alt-dur, 0.2s) var(--alt-ease, ease);
+}
+.alt-mappin::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -4px;
+  width: 9px;
+  height: 9px;
+  background: inherit;
+  border-right: inherit;
+  border-bottom: inherit;
+  transform: translateX(-50%) rotate(45deg);
+}
+.alt-mappin:hover { transform: scale(1.06); z-index: 2; }
+.alt-mappin.is-on { border: 1.5px solid var(--alt-gold, #d4af37); color: var(--alt-link, #7d6119); }
+/* Resaltado al pasar por su card (emparejamiento card↔pin, §32.22). */
+.alt-mappin.is-hot {
+  border: 1.5px solid var(--alt-gold, #d4af37);
+  color: var(--alt-link, #7d6119);
+  transform: scale(1.14);
+  z-index: 3;
+}
+
+/* ---- Variante FICHA: marcador de ubicación (navy lleno, texto oro) — espeja .ficha-locmap__pin ---- */
+.alt-mappin--ficha {
+  background: var(--alt-ink, #062743);
+  color: var(--alt-gold-bright, #ebd27e);
+  border: 0;
+  box-shadow: 0 12px 26px -10px rgba(27, 39, 51, 0.6);
+  padding: 7px 13px;
+  font-size: 12px;
+}
+.alt-mappin--ficha:hover { transform: scale(1.05); }
+
+/* Respeto a reduced-motion: sin transición de opacidad ni de escala. */
+@media (prefers-reduced-motion: reduce) {
+  .alt-map__canvas,
+  .alt-mappin { transition: none; }
+}

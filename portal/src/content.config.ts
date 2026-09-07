@@ -1,0 +1,99 @@
+/*
+ * COLECCIONES DE CONTENIDO — hoy solo el Journal (TODO-48 · VISIÓN §5).
+ *
+ * POR QUÉ UNA COLECCIÓN Y NO IMPORTAR LOS `.md` A MANO, como hacen las páginas legales: porque el
+ * esquema de aquí abajo es un GATE. La regla editorial del Journal —«un artículo sin fuentes no se
+ * publica»— no se sostiene con buena voluntad; se sostiene porque `fuentes` es obligatoria y con al
+ * menos una entrada, así que un artículo sin fuentes ROMPE EL BUILD. Lo mismo con la categoría: es
+ * un enum cerrado de cuatro, y no hay forma de inventarse una quinta sin tocar este archivo y
+ * pensarlo. *Una regla que solo vive en un comentario es una sugerencia.*
+ *
+ * ⚠️ LO QUE NO ESTÁ AQUÍ, A PROPÓSITO: el tiempo de lectura. No es un campo del frontmatter porque
+ * un campo se escribe a mano, y a mano se escribe cualquier cosa — que es exactamente cómo la home
+ * acabó anunciando cuatro artículos con «8 min de lectura» que no existían (§138.3). Se CALCULA de
+ * las palabras del cuerpo, en `lib/content/journal.ts`.
+ *
+ * Las páginas legales (`src/content/legal/*.md`) siguen importándose directamente: son una por
+ * página, no se listan ni se filtran, y no ganarían nada con una colección.
+ */
+import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
+/* Los cuatro cajones NO se declaran aquí: son decisión editorial, o sea dominio. Este archivo los
+   importa para validarlos, y no al revés — si vivieran aquí, el módulo de dominio tendría que
+   importar `astro:content`, que solo existe dentro del build, y sus pruebas dejarían de correr. */
+import { CATEGORIAS } from './lib/content/journal';
+
+const journal = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/journal' }),
+  schema: z.object({
+    /** El H1 y la tarjeta: editorial, puede ser largo y explicativo. NO va al `<title>`. */
+    titulo: z.string().max(110),
+    /**
+     * El `<title>` de la pestaña y del resultado de búsqueda. Opcional; sin él se usa el editorial.
+     *
+     * 🔴 POR QUÉ EXISTE (§228). El `<title>` era `${titulo} | Journal ALTORRA`, y los títulos
+     * editoriales miden 85-90 caracteres: los ocho artículos salían con **103-108**, así que Google
+     * los corta a media frase. El arreglo NO es acortar el H1 —ahí el título largo INFORMA— sino
+     * separar las dos superficies: una habla con el lector que ya entró, la otra con el que decide
+     * si entra. El tope está donde corta el buscador, no donde nos parezca.
+     */
+    tituloSeo: z.string().max(60).optional(),
+    /** Bajada de la tarjeta: editorial. Google trunca cerca de 160, pero aquí cabe más a propósito. */
+    resumen: z.string().max(300),
+    /**
+     * La `<meta name="description">`. Opcional; sin ella se usa el resumen editorial.
+     *
+     * El comentario del `resumen` ya decía «Google trunca cerca de 160» **y el tope era 300**: la
+     * regla vivía escrita al lado de la restricción que la contradice, y siete artículos publicaron
+     * descripciones de 236-297 que salen cortadas a mitad. Un límite que se documenta y no se aplica
+     * es una nota, no un límite (§228).
+     */
+    resumenSeo: z.string().max(155).optional(),
+    /**
+     * A QUIÉN LE HABLA EL ARTÍCULO — y por tanto qué se le ofrece al final (§267).
+     *
+     * 🔴 La plantilla cerraba los NUEVE artículos con la misma llamada: «¿Va a entregar su inmueble
+     * en administración?» → «Entregar mi inmueble». En los dos escritos para el INQUILINO eso es
+     * absurdo y además contradice el propio texto: acaba de leer que su arrendador no puede cobrarle
+     * depósito, o que su aumento se pasó del tope, y se le pide que entregue un inmueble que no
+     * tiene. El cuerpo del artículo le prometía otra cosa —«lo revisamos con usted, no hace falta que
+     * sea un inmueble nuestro»— y el pie le ofrecía lo contrario.
+     *
+     * Con `default`: los siete artículos existentes no cambian ni un byte, y solo se marca lo que es
+     * distinto. Un campo que hay que poner en todos para arreglar dos se pone mal en alguno.
+     */
+    publico: z.enum(['propietario', 'arrendatario']).default('propietario'),
+    categoria: z.enum(CATEGORIAS),
+    /** Fecha REAL de publicación. La usa el orden del índice y el JSON-LD. */
+    fecha: z.coerce.date(),
+    /** Solo si el texto se revisó de verdad; se muestra como «última revisión». */
+    actualizado: z.coerce.date().optional(),
+    /** Portada: ruta de un asset que EXISTE en `public/assets` (lo vigila `verify:enlaces`). */
+    portada: z.string().startsWith('/assets/'),
+    portadaAlt: z.string().min(8),
+    /**
+     * La respuesta corta, en una o dos frases. Es el bloque «En corto» del artículo y lo que un
+     * motor de respuestas puede citar entero sin tener que resumir por su cuenta — que es el punto
+     * del AEO: si no le damos la frase, se la inventa él.
+     */
+    enCorto: z.string().min(40).max(600),
+    /**
+     * LAS FUENTES. Obligatorias y al menos una: es la diferencia entre «confíe en nosotros» y
+     * «compruébelo usted», y es lo único que hace defendible publicar sobre norma sin abogado.
+     */
+    fuentes: z
+      .array(
+        z.object({
+          titulo: z.string(),
+          entidad: z.string(),
+          // `z.url()`, no `z.string().url()`: la segunda quedó obsoleta en Zod 4 y el typecheck lo avisa.
+          url: z.url(),
+        }),
+      )
+      .min(1),
+    /** Un solo destacado manda en el índice y en la home. Si hay varios, gana el más reciente. */
+    destacado: z.boolean().default(false),
+  }),
+});
+
+export const collections = { journal };

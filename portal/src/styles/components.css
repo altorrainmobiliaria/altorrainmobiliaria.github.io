@@ -1,0 +1,1322 @@
+/*
+ * ============================================================================
+ * ALTORRA · D1 — PRIMITIVAS DE COMPONENTE (.alt-*)
+ * ============================================================================
+ * Depende de tokens.css + base.css. Réplica fiel de los mockups aprobados.
+ * Consumen la capa SEMÁNTICA de tokens (rol), no hex sueltos.
+ *
+ * Regla dual-mode:
+ *   · Variantes neumórficas (.nm-up / --neu) → SOLO sobre --alt-surface-neu (home/nav).
+ *   · Variantes planas (default) → sobre --alt-surface (#fff, páginas de contenido).
+ */
+
+/* ==========================================================================
+ * Superficies neumórficas — utilidades (solo sobre --alt-surface-neu / #E6EDF2)
+ * ======================================================================== */
+.nm-up    { box-shadow: var(--alt-nm-up); }
+.nm-up-sm { box-shadow: var(--alt-nm-up-sm); }
+.nm-in    { box-shadow: var(--alt-nm-in); }
+.nm-in-sm { box-shadow: var(--alt-nm-in-sm); }
+
+/* ==========================================================================
+ * Eyebrow — micro-título uppercase de marca
+ * ======================================================================== */
+.alt-eyebrow {
+  display: inline-block;
+  font-family: var(--alt-font-body);
+  font-size: var(--alt-fs-2xs);
+  font-weight: var(--alt-fw-bold);
+  letter-spacing: var(--alt-tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--alt-link); /* variante accesible (mockup usaba #a6801e) */
+}
+
+.alt-on-ink .alt-eyebrow,
+.alt-section--ink .alt-eyebrow {
+  color: var(--alt-on-ink-eyebrow);
+}
+
+/* ==========================================================================
+ * Wordmark — "ALTORRA / INMOBILIARIA" (respeta el sello de marca)
+ * ======================================================================== */
+.alt-wordmark {
+  font-family: var(--alt-font-display);
+  font-weight: var(--alt-fw-semibold);
+  font-size: 1.375rem;
+  letter-spacing: var(--alt-tracking-wordmark);
+  text-transform: uppercase;
+  color: var(--alt-text-strong);
+  line-height: 1;
+}
+
+.alt-wordmark small {
+  display: block;
+  font-family: var(--alt-font-body);
+  font-size: 0.5rem;
+  font-weight: var(--alt-fw-semibold);
+  letter-spacing: 0.42em;
+  color: var(--alt-text-muted);
+  margin-top: 0.25em;
+}
+
+/* ==========================================================================
+ * Botones — base + variantes
+ * ======================================================================== */
+.alt-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--alt-space-3);
+  min-height: var(--alt-tap-min);
+  padding: 14px 28px;
+  border-radius: var(--alt-r-pill);
+  font-family: var(--alt-font-body);
+  font-size: 0.9375rem; /* 15 */
+  font-weight: var(--alt-fw-semibold);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform var(--alt-dur) var(--alt-ease),
+    box-shadow var(--alt-dur) var(--alt-ease),
+    background-color var(--alt-dur) var(--alt-ease),
+    color var(--alt-dur) var(--alt-ease),
+    border-color var(--alt-dur) var(--alt-ease);
+}
+
+.alt-btn:hover { text-decoration: none; }
+
+/* Orbe de flecha (gesto de marca: rota -45° en hover) */
+.alt-btn__arw {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform var(--alt-dur) var(--alt-ease),
+    background-color var(--alt-dur) var(--alt-ease);
+}
+
+.alt-btn__arw svg {
+  width: 15px;
+  height: 15px;
+  transition: transform var(--alt-dur) var(--alt-ease), stroke var(--alt-dur) var(--alt-ease);
+}
+
+.alt-btn:hover .alt-btn__arw svg { transform: rotate(-45deg); }
+
+/* --- Primario oro (CTA de marca) --- */
+.alt-btn--gold {
+  background: var(--alt-grad-gold);
+  color: var(--alt-ink);
+  font-weight: var(--alt-fw-bold);
+  padding-left: 28px;
+  padding-right: 16px;
+}
+.alt-btn--gold .alt-btn__arw {
+  background: rgba(27, 39, 51, 0.16);
+}
+.alt-btn--gold .alt-btn__arw svg { stroke: var(--alt-ink); }
+.alt-btn--gold:hover {
+  transform: translateY(-2px);
+}
+.alt-btn--gold:hover .alt-btn__arw { background: var(--alt-ink); }
+.alt-btn--gold:hover .alt-btn__arw svg { stroke: var(--alt-gold-bright); }
+
+/* Sobre lienzo neumórfico, el CTA gana el brillo extruido */
+.alt-surface-neu .alt-btn--gold,
+[data-surface='neu'] .alt-btn--gold {
+  box-shadow: var(--alt-nm-up-glow);
+}
+
+/* --- Navy sólido (CTA de conversión real: agendar / reservar) --- */
+.alt-btn--navy {
+  background: var(--alt-ink);
+  color: #fff;
+  border-radius: var(--alt-r-sm);
+  padding: 15px 24px;
+}
+.alt-btn--navy .alt-btn__arw {
+  width: 26px;
+  height: 26px;
+  background: rgba(235, 210, 126, 0.18);
+}
+.alt-btn--navy .alt-btn__arw svg { stroke: var(--alt-gold-bright); }
+.alt-btn--navy:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px -14px rgba(6, 39, 67, 0.55);
+}
+.alt-btn--navy:hover .alt-btn__arw { background: var(--alt-gold-bright); }
+.alt-btn--navy:hover .alt-btn__arw svg { stroke: var(--alt-ink); }
+
+/* --- Outline navy (secundario sobre claro) --- */
+.alt-btn--outline {
+  background: transparent;
+  border: 1.5px solid var(--alt-hairline-strong);
+  color: var(--alt-text-strong);
+}
+.alt-btn--outline:hover {
+  border-color: var(--alt-gold);
+}
+
+/* --- Outline oro sobre navy --- */
+.alt-btn--on-ink {
+  background: transparent;
+  border: 1px solid rgba(235, 210, 126, 0.6);
+  color: var(--alt-gold-bright);
+  padding: 12px 24px;
+}
+.alt-btn--on-ink:hover {
+  background: var(--alt-gold-bright);
+  color: var(--alt-ink);
+  border-color: var(--alt-gold-bright);
+}
+
+/* --- Frost (glass esmerilado sobre imagen/banda oscura) --- */
+.alt-btn--frost {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  color: #fff;
+}
+.alt-btn--frost:hover {
+  background: #fff;
+  color: var(--alt-ink);
+}
+
+.alt-btn[disabled],
+.alt-btn[aria-disabled='true'] {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ==========================================================================
+ * Enlace con subrayado animado
+ * ======================================================================== */
+.alt-link-ul {
+  position: relative;
+  display: inline-block;
+  color: var(--alt-link);
+  font-weight: var(--alt-fw-semibold);
+  text-decoration: none;
+  padding-bottom: 2px;
+}
+.alt-link-ul::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--alt-gold);
+  transform: scaleX(1);
+  transform-origin: left;
+  transition: transform var(--alt-dur) var(--alt-ease);
+}
+.alt-link-ul:hover {
+  text-decoration: none;
+}
+.alt-link-ul:hover::after { transform: scaleX(0.4); }
+
+/* ==========================================================================
+ * Pill de filtro / toggle
+ * ======================================================================== */
+.alt-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--alt-space-2);
+  min-height: 40px;
+  padding: 9px 19px;
+  border-radius: var(--alt-r-pill);
+  border: 1px solid var(--alt-hairline-2);
+  background: var(--alt-surface);
+  color: var(--alt-text);
+  font-size: var(--alt-fs-sm);
+  font-weight: var(--alt-fw-medium);
+  transition: color var(--alt-dur) var(--alt-ease),
+    border-color var(--alt-dur) var(--alt-ease),
+    background-color var(--alt-dur) var(--alt-ease),
+    box-shadow var(--alt-dur) var(--alt-ease);
+}
+.alt-pill:hover { border-color: var(--alt-gold); color: var(--alt-text-strong); }
+.alt-pill.is-on,
+.alt-pill[aria-pressed='true'] {
+  border-color: var(--alt-gold);
+  background: var(--alt-mist);
+  color: var(--alt-link);
+  font-weight: var(--alt-fw-bold);
+}
+
+/* Variante neumórfica (home): sin borde, relieve up→in */
+.alt-pill--neu {
+  border: 0;
+  background: var(--alt-surface-neu);
+  box-shadow: var(--alt-nm-up-sm);
+}
+.alt-pill--neu:hover { box-shadow: var(--alt-nm-up-sm); }
+.alt-pill--neu.is-on,
+.alt-pill--neu[aria-pressed='true'] {
+  background: var(--alt-surface-neu);
+  box-shadow: var(--alt-nm-in-sm);
+}
+
+/* ==========================================================================
+ * Card base — plana (default) y neumórfica (--neu)
+ * ======================================================================== */
+.alt-card {
+  background: var(--alt-surface);
+  border-radius: var(--alt-r-lg);
+  box-shadow: var(--alt-elev-card);
+  overflow: hidden;
+  transition: transform var(--alt-dur-slow) var(--alt-ease-card),
+    box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+}
+.alt-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--alt-elev-card-hover), 0 0 0 1px rgba(212, 175, 55, 0.5); /* filo de oro sutil en hover */
+}
+.alt-card__media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+}
+.alt-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--alt-dur-slow) var(--alt-ease-card);
+}
+.alt-card:hover .alt-card__media img { transform: scale(1.05); }
+.alt-card__body {
+  padding: var(--alt-space-5);
+}
+
+/* Neumórfica (home) — con sheen de vidrio sutil (fusión premium) */
+.alt-card--neu {
+  background: var(--alt-surface-neu);
+  border-radius: var(--alt-r-xl);
+  box-shadow: var(--alt-nm-glass);
+}
+.alt-card--neu:hover {
+  box-shadow: var(--alt-nm-glass-hover), 0 30px 60px -34px rgba(6, 39, 67, 0.3);
+}
+
+/* Card oscura (secciones navy) */
+.alt-card--ink {
+  background: var(--alt-surface-ink);
+  color: var(--alt-on-ink);
+  border-radius: var(--alt-r-lg);
+  box-shadow: var(--alt-elev-panel);
+}
+
+/* ==========================================================================
+ * Orbe circular de flecha (Ver ficha)
+ * ======================================================================== */
+.alt-orb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--alt-surface);
+  border: 1.5px solid var(--alt-gold);
+  transition: transform var(--alt-dur) var(--alt-ease),
+    background var(--alt-dur) var(--alt-ease),
+    border-color var(--alt-dur) var(--alt-ease);
+}
+.alt-orb svg { width: 16px; height: 16px; stroke: var(--alt-link); transition: transform var(--alt-dur) var(--alt-ease), stroke var(--alt-dur) var(--alt-ease); }
+.alt-card:hover .alt-orb,
+.alt-orb:hover {
+  background: var(--alt-grad-gold);
+  border-color: transparent;
+  transform: scale(1.08);
+}
+.alt-card:hover .alt-orb svg,
+.alt-orb:hover svg { stroke: var(--alt-ink); transform: rotate(-45deg); }
+
+/* ==========================================================================
+ * Chip de icono (icon-tile)
+ * ======================================================================== */
+.alt-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--alt-r-sm);
+  background: var(--alt-mist);
+  flex-shrink: 0;
+}
+.alt-chip svg { width: 20px; height: 20px; stroke: var(--alt-link); }
+.alt-on-ink .alt-chip,
+.alt-section--ink .alt-chip {
+  background: rgba(235, 210, 126, 0.14);
+}
+.alt-on-ink .alt-chip svg,
+.alt-section--ink .alt-chip svg { stroke: var(--alt-gold-bright); }
+
+/* ==========================================================================
+ * Badge de estado comercial (sobre imagen)
+ * ======================================================================== */
+.alt-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--alt-space-2);
+  padding: 6px 12px;
+  border-radius: var(--alt-r-pill);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--alt-ink);
+  font-size: var(--alt-fs-2xs);
+  font-weight: var(--alt-fw-semibold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.alt-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--alt-gold);
+}
+.alt-badge--gold {
+  background: var(--alt-grad-gold);
+  color: var(--alt-ink);
+}
+.alt-badge--gold::before { display: none; }
+
+/* ==========================================================================
+ * Sello legal / confianza (RNT, matrícula, "Verificado por ALTORRA")
+ * NUEVO — no existía en los mockups (gap del diseño). Alinea con doctrina
+ * legal: best-effort, no certifica. Copy/valores → decisión Daniel + legal.
+ * ======================================================================== */
+.alt-seal {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--alt-space-2);
+  padding: 8px 14px;
+  border-radius: var(--alt-r-pill);
+  border: 1px solid var(--alt-gold);
+  background: var(--alt-surface);
+  color: var(--alt-link);
+  font-size: var(--alt-fs-xs);
+  font-weight: var(--alt-fw-semibold);
+}
+.alt-seal svg { width: 16px; height: 16px; stroke: currentColor; flex-shrink: 0; }
+.alt-on-ink .alt-seal,
+.alt-section--ink .alt-seal {
+  border-color: rgba(235, 210, 126, 0.5);
+  background: transparent;
+  color: var(--alt-gold-bright);
+}
+
+/* ==========================================================================
+ * Campos de formulario
+ * ======================================================================== */
+.alt-field {
+  display: flex;
+  align-items: center;
+  gap: var(--alt-space-3);
+  padding: 11px 16px;
+  border-radius: var(--alt-r-sm);
+  border: 1px solid var(--alt-hairline-2);
+  background: var(--alt-surface);
+}
+.alt-field svg { width: 18px; height: 18px; stroke: var(--alt-link); flex-shrink: 0; }
+.alt-field:focus-within { border-color: var(--alt-gold); outline: none; }
+.alt-field input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: var(--alt-fs-body);
+  font-weight: var(--alt-fw-medium);
+  color: var(--alt-text-strong);
+}
+
+.alt-label {
+  display: block;
+  margin-bottom: var(--alt-space-2);
+  font-size: var(--alt-fs-xs);
+  font-weight: var(--alt-fw-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--alt-text);
+}
+
+.alt-input,
+.alt-select {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: var(--alt-r-sm);
+  border: 1px solid var(--alt-hairline-strong);
+  background: var(--alt-surface);
+  font-size: var(--alt-fs-sm);
+  color: var(--alt-text-strong);
+  transition: border-color var(--alt-dur) var(--alt-ease);
+}
+
+/*
+ * EN MÓVIL, LOS CAMPOS A 16 px — y no es una preferencia tipográfica (§264).
+ *
+ * Safari en iOS **hace zoom automático** al enfocar cualquier campo cuya letra mida menos de 16 px,
+ * y **no deshace ese zoom al salir**. Con los campos a 14 (`--alt-fs-sm`), tocar «Nombre» amplía la
+ * página de golpe, el formulario se sale de pantalla, y el visitante tiene que pellizcar para volver
+ * — arrastrando una página ampliada hasta el botón de enviar. Medido: los 4 campos de `/estancias`
+ * estaban por debajo del umbral.
+ *
+ * ⚠️ La otra salida —`maximum-scale=1` en el viewport— **no se usa**: apaga el zoom para todo el
+ * mundo, incluida la gente que lo necesita para leer. Se arregla el tamaño, no se quita la lupa.
+ *
+ * 16 px es exactamente `--alt-fs-body`: el token que ya existe, no un literal nuevo. Y solo bajo el
+ * punto de ruptura — en escritorio el diseño sellado se queda como está.
+ */
+@media (max-width: 900px) {
+  .alt-input,
+  .alt-select,
+  .serp-search input,
+  .est-book__dates input {
+    font-size: var(--alt-fs-body);
+  }
+}
+.alt-input:focus,
+.alt-select:focus {
+  border-color: var(--alt-gold);
+  outline: none;
+}
+.alt-input[aria-invalid='true'] { border-color: var(--alt-error); }
+
+/* ==========================================================================
+ * Alertas / mensajes de estado (color + icono, distinguibles — SC 1.4.1)
+ * ======================================================================== */
+.alt-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--alt-space-3);
+  padding: var(--alt-space-4);
+  border-radius: var(--alt-r-sm);
+  border-left: 3px solid var(--alt-navy);
+  background: var(--alt-status-bg);   /* gris claro de paleta para TODAS */
+  color: var(--alt-text-strong);      /* texto navy legible (AA) — significado por ícono, no color */
+  font-size: var(--alt-fs-sm);
+  line-height: 1.55;
+}
+.alt-alert svg { width: 20px; height: 20px; flex-shrink: 0; stroke: currentColor; color: var(--alt-navy); }
+/* Solo el BORDE y el ÍCONO cambian de color (navy/oro); el texto queda navy. */
+.alt-alert--error   { border-color: var(--alt-error); }
+.alt-alert--error svg   { color: var(--alt-error); }
+.alt-alert--info    { border-color: var(--alt-info); }
+.alt-alert--info svg    { color: var(--alt-info); }
+.alt-alert--success { border-color: var(--alt-success); }
+.alt-alert--success svg { color: var(--alt-success); }
+.alt-alert--warning { border-color: var(--alt-warning); }
+.alt-alert--warning svg { color: var(--alt-warning); }
+
+/* ==========================================================================
+ * LIQUID GLASS — panel esmerilado (acento SUTIL). Fallback sólido sin backdrop-filter.
+ * ======================================================================== */
+.alt-glass {
+  background: var(--alt-glass-bg-strong); /* fallback opaco */
+  border: var(--alt-glass-border);
+  border-radius: var(--alt-r-lg);
+  box-shadow: var(--alt-glass-shadow), var(--alt-glass-sheen);
+}
+.alt-glass--dark {
+  background: var(--alt-ink); /* fallback */
+  border: var(--alt-glass-dark-border);
+  color: var(--alt-on-ink);
+  box-shadow: var(--alt-glass-shadow), var(--alt-glass-dark-sheen);
+}
+
+/* Barra de navegación sticky en vidrio (para el header de la home) */
+.alt-nav-glass {
+  background: var(--alt-glass-bg-strong); /* fallback */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: var(--alt-glass-sheen);
+}
+
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .alt-glass {
+    background: var(--alt-glass-bg);
+    -webkit-backdrop-filter: var(--alt-glass-blur);
+    backdrop-filter: var(--alt-glass-blur);
+  }
+  .alt-glass--dark {
+    background: var(--alt-glass-dark-bg);
+    -webkit-backdrop-filter: var(--alt-glass-blur);
+    backdrop-filter: var(--alt-glass-blur);
+  }
+  .alt-nav-glass {
+    background: var(--alt-glass-bg);
+    -webkit-backdrop-filter: var(--alt-glass-blur);
+    backdrop-filter: var(--alt-glass-blur);
+  }
+}
+
+/* ==========================================================================
+ * FIRMA PREMIUM ÚNICA — card "vitrina": neumorfismo (héroe) + sheen de vidrio
+ *   + filo metálico oro que se enciende en hover. Sobre --alt-surface-neu.
+ * ======================================================================== */
+.alt-card--vitrina {
+  position: relative;
+  background: var(--alt-surface-neu);
+  border-radius: var(--alt-r-xl);
+  box-shadow: var(--alt-nm-glass);
+  transition: transform var(--alt-dur-slow) var(--alt-ease-card),
+    box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+}
+/* Filo hairline oro (border de 1px con gradiente vía mask) — invisible en reposo */
+.alt-card--vitrina::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: var(--alt-grad-gold);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--alt-dur) var(--alt-ease);
+  pointer-events: none;
+}
+.alt-card--vitrina:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--alt-nm-glass-hover), 0 34px 66px -36px rgba(6, 39, 67, 0.3);
+}
+.alt-card--vitrina:hover::after {
+  opacity: 1;
+}
+
+/* Acento metálico: texto/filete en plata cepillada (par del oro) */
+.alt-metal-silver {
+  background: var(--alt-grad-silver);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Acento metálico dorado (texto) */
+.alt-metal-gold {
+  background: var(--alt-grad-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ==========================================================================
+ * DORADO PROTAGONISTA (mandato Daniel: el oro predomina)
+ * ======================================================================== */
+/* Filete/divisor de oro */
+.alt-divider {
+  height: 1px;
+  border: 0;
+  background: var(--alt-grad-gold-underline);
+}
+.alt-divider--center {
+  width: 72px;
+  margin-inline: auto;
+}
+/* Cinta de oro superior para cards destacadas */
+.alt-card--gold {
+  position: relative;
+}
+.alt-card--gold::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--alt-grad-gold);
+  border-radius: var(--alt-r-lg) var(--alt-r-lg) 0 0;
+}
+
+/* ==========================================================================
+ * BOTÓN "FROST" — vidrio esmerilado sobre imagen oscura. Réplica del `.btn-frost`
+ * del mockup (CSS L73-78). Liquid glass como ACENTO (§14 de tokens: con moderación).
+ * ======================================================================== */
+.alt-btn-frost {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px 16px 14px 26px;
+  border-radius: var(--alt-r-pill);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  font-family: var(--alt-font-body);
+  font-weight: var(--alt-fw-bold);
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  transition: background var(--alt-dur-slow) var(--alt-ease), color var(--alt-dur-slow) var(--alt-ease),
+    border-color var(--alt-dur-slow) var(--alt-ease);
+}
+/* Fallback: sin backdrop-filter el 14% de blanco no basta para separar del fondo */
+@supports not ((-webkit-backdrop-filter: blur(6px)) or (backdrop-filter: blur(6px))) {
+  .alt-btn-frost { background: rgba(6, 39, 67, 0.55); }
+}
+.alt-btn-frost__arw {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  transition: background var(--alt-dur-slow) var(--alt-ease);
+}
+.alt-btn-frost svg { width: 14px; height: 14px; stroke: #fff; fill: none; transition: stroke var(--alt-dur-slow) var(--alt-ease), transform var(--alt-dur-slow) var(--alt-ease); }
+.alt-btn-frost:hover { background: #fff; color: var(--alt-ink); border-color: #fff; }
+.alt-btn-frost:hover .alt-btn-frost__arw { background: var(--alt-gold); }
+.alt-btn-frost:hover svg { stroke: var(--alt-ink); transform: translateX(3px); }
+@media (prefers-reduced-motion: reduce) { .alt-btn-frost svg, .alt-btn-frost__arw { transition: none; } }
+
+/* ==========================================================================
+ * BOTÓN "SWEEP" — contorno navy que se rellena con un barrido de oro al hover.
+ * Réplica del `.btn-sweep` del mockup (CSS L55-60). CTA de las secciones editoriales.
+ * ======================================================================== */
+.alt-btn-sweep {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 30px;
+  border-radius: var(--alt-r-pill);
+  border: 1.5px solid var(--alt-ink);
+  color: var(--alt-ink);
+  font-family: var(--alt-font-body);
+  font-weight: var(--alt-fw-bold);
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  overflow: hidden;
+  isolation: isolate;
+  cursor: pointer;
+  transition: color var(--alt-dur-slow) var(--alt-ease), border-color var(--alt-dur-slow) var(--alt-ease);
+}
+.alt-btn-sweep::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--alt-grad-gold);
+  transform: translateX(-101%);
+  transition: transform var(--alt-dur-slow) var(--alt-ease);
+}
+.alt-btn-sweep:hover { border-color: var(--alt-gold); }
+.alt-btn-sweep:hover::before { transform: translateX(0); }
+.alt-btn-sweep svg { width: 16px; height: 16px; transition: transform var(--alt-dur-slow) var(--alt-ease); }
+.alt-btn-sweep:hover svg { transform: translateX(4px); }
+@media (prefers-reduced-motion: reduce) {
+  .alt-btn-sweep::before, .alt-btn-sweep svg { transition: none; }
+}
+
+/* ==========================================================================
+ * RIEL HORIZONTAL (carrusel scroll-snap) — abstracción REAL del diseño:
+ * el mockup lo comparte en 4 secciones de la home (venta · estancias-list ·
+ * valoradas · proyectos) bajo la clase `.arail` (ADR §32.9). Aquí es `.alt-rail`.
+ *
+ * Uso:
+ *   <div data-railwrap>                  ← ancla de los botones (mismo wrap)
+ *     <div class="alt-rail"> …hijos de ancho FIJO… </div>
+ *   </div>
+ *   <button class="alt-rnav" data-rail="prev|next">  ← puede ir en otro [data-railwrap]
+ *
+ * Sin JS el riel YA funciona (swipe + scroll-snap nativo); los botones son
+ * progressive enhancement y se ocultan en móvil (ahí manda el dedo).
+ * ======================================================================== */
+.alt-rail {
+  display: flex;
+  gap: clamp(15px, 1.6vw, 22px);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 2px;
+  padding: 6px 2px 10px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+.alt-rail::-webkit-scrollbar {
+  display: none;
+}
+.alt-rail > * {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
+
+/* Botones circulares prev/next del riel */
+.alt-rnav {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--alt-r-circle);
+  border: 1px solid var(--alt-hairline-strong);
+  background: var(--alt-white);
+  color: var(--alt-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--alt-dur) var(--alt-ease), border-color var(--alt-dur) var(--alt-ease),
+    color var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease);
+}
+.alt-rnav svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+}
+.alt-rnav:hover {
+  border-color: var(--alt-gold);
+  background: var(--alt-ink);
+  color: var(--alt-gold-bright);
+  transform: translateY(-1px);
+}
+/* Variante sobre superficie navy */
+.alt-rnav--ink {
+  border-color: rgba(235, 210, 126, 0.42);
+  background: transparent;
+  color: var(--alt-gold-bright);
+}
+.alt-rnav--ink:hover {
+  background: var(--alt-gold-bright);
+  color: var(--alt-ink);
+  border-color: var(--alt-gold-bright);
+}
+/* En los extremos del riel el botón se apaga (lo marca el JS) */
+.alt-rnav[disabled] {
+  opacity: 0.35;
+  pointer-events: none;
+}
+/* Móvil: manda el swipe — fuera los botones (fiel al mockup, CSS L143) */
+@media (max-width: 640px) {
+  .alt-rnav {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   JOURNAL — índice y artículo (TODO-48 · mockup `ALTORRA Journal.dc.html`)
+
+   Viven en la hoja GLOBAL y no en `<style>` de la página por una razón concreta: el cuerpo del
+   artículo sale de un markdown renderizado, y los estilos con ámbito de Astro no alcanzan al HTML
+   que produce `<Content />` — les falta el atributo de ámbito. Las clases `jrn-ley` y
+   `jrn-practica`, que se escriben DENTRO del markdown, solo pueden vivir aquí.
+   ========================================================================== */
+
+/* --- Índice ---------------------------------------------------------------- */
+.jrn-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 760px;
+  margin-bottom: 28px;
+}
+.jrn-head h1 {
+  font-family: var(--alt-font-display);
+  font-weight: var(--alt-fw-semibold);
+  font-size: clamp(30px, 4.4vw, 42px);
+  line-height: 1.05;
+  color: var(--alt-ink);
+  margin: 0;
+}
+
+.jrn-head__x {
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: var(--alt-text);
+  margin: 0;
+}
+
+/* Pastillas de categoría. Son <button>: filtran en el sitio, sin crear URLs — cuatro páginas de
+   categoría con dos vacías serían contenido delgado que nadie mantiene. */
+.jrn-pills {
+  display: flex;
+  gap: 11px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+.jrn-pill {
+  font-family: var(--alt-font-body);
+  font-size: 13px;
+  font-weight: var(--alt-fw-semibold);
+  color: var(--alt-ink);
+  background: var(--alt-surface-neu);
+  border: 0;
+  border-radius: var(--alt-r-pill);
+  padding: 9px 18px;
+  box-shadow: var(--alt-nm-in-sm);
+  cursor: pointer;
+}
+.jrn-pill[aria-pressed='true'] {
+  background: var(--alt-ink);
+  color: #ffffff;
+  box-shadow: none;
+}
+.jrn-pill__n {
+  color: var(--alt-text-muted);
+  margin-left: 5px;
+}
+.jrn-pill[aria-pressed='true'] .jrn-pill__n {
+  color: var(--alt-gold-bright);
+}
+
+.jrn-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 34px;
+  align-items: start;
+}
+.jrn-main {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.jrn-main__media,
+.jrn-row__media {
+  position: relative;
+  border-radius: var(--alt-r-lg);
+  overflow: hidden;
+  background: var(--alt-surface-neu);
+}
+.jrn-main__media {
+  aspect-ratio: 16 / 10;
+}
+.jrn-main__media img,
+.jrn-row__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.jrn-cat {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--alt-link);
+  padding: 6px 13px;
+  border-radius: var(--alt-r-pill);
+  font-size: 10.5px;
+  font-weight: var(--alt-fw-bold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.jrn-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--alt-text-soft);
+  flex-wrap: wrap;
+}
+.jrn-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: var(--alt-r-circle);
+  background: var(--alt-text-muted);
+}
+.jrn-main__t {
+  font-family: var(--alt-font-display);
+  font-weight: var(--alt-fw-semibold);
+  font-size: clamp(24px, 2.8vw, 34px);
+  line-height: 1.08;
+  color: var(--alt-ink);
+  margin: 0;
+}
+.jrn-main:hover .jrn-main__t,
+.jrn-row:hover .jrn-row__t {
+  color: var(--alt-link-lg);
+}
+.jrn-main__x {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--alt-text);
+  margin: 0;
+}
+
+.jrn-side {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.jrn-row {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  gap: 18px;
+  align-items: center;
+}
+.jrn-row__media {
+  aspect-ratio: 4 / 3;
+}
+.jrn-row__cat {
+  font-size: 10.5px;
+  font-weight: var(--alt-fw-bold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--alt-link);
+}
+.jrn-row__t {
+  font-family: var(--alt-font-display);
+  font-weight: var(--alt-fw-semibold);
+  font-size: 20px;
+  line-height: 1.12;
+  color: var(--alt-ink);
+  margin: 7px 0 6px;
+}
+.jrn-row__read {
+  font-size: 12px;
+  color: var(--alt-text-soft);
+}
+
+/* Estado vacío: el que se ve al filtrar por un cajón que todavía no tiene nada. */
+.jrn-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  padding: 56px 24px;
+}
+.jrn-vacio__icono {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--alt-r-circle);
+  background: var(--alt-surface-neu);
+  box-shadow: var(--alt-nm-in-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--alt-link-lg);
+}
+.jrn-vacio h2 {
+  font-family: var(--alt-font-display);
+  font-weight: var(--alt-fw-semibold);
+  font-size: 30px;
+  color: var(--alt-ink);
+  margin: 0;
+}
+.jrn-vacio p {
+  max-width: 520px;
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--alt-text);
+  margin: 0;
+}
+
+/* --- Artículo -------------------------------------------------------------- */
+.jrn-art {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.jrn-portada {
+  border-radius: var(--alt-r-lg);
+  overflow: hidden;
+  aspect-ratio: 16 / 7;
+  background: var(--alt-surface-neu);
+  margin-bottom: 32px;
+}
+.jrn-portada img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.jrn-art h1 {
+  font-family: var(--alt-font-display);
+  font-weight: var(--alt-fw-semibold);
+  font-size: clamp(28px, 4.6vw, 44px);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  color: var(--alt-ink);
+  margin: 12px 0;
+}
+.jrn-migas {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12.5px;
+  color: var(--alt-text-soft);
+}
+.jrn-migas__cat {
+  color: var(--alt-link);
+  font-weight: var(--alt-fw-semibold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 10.5px;
+}
+
+/* «En corto»: la respuesta que un motor de respuestas puede citar entera. */
+.jrn-corto {
+  background: var(--alt-surface-neu);
+  border-radius: var(--alt-r-lg);
+  padding: 26px 28px;
+  box-shadow: var(--alt-nm-in-sm);
+  margin: 30px 0;
+}
+.jrn-corto__k {
+  font-size: 10.5px;
+  font-weight: var(--alt-fw-bold);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--alt-link);
+  margin: 0 0 12px;
+}
+.jrn-corto p:last-child {
+  font-size: 16.5px;
+  line-height: 1.7;
+  color: var(--alt-ink);
+  margin: 0;
+}
+
+/* Cuerpo del markdown */
+/*
+ * TABLAS DEL JOURNAL — que no pierdan columnas en un teléfono (§264).
+ *
+ * 🔴 Medido a 375 px en la tabla de impuestos de compraventa: **479 px de tabla en un contenedor de
+ * 341** — desborda 138 px. El contenedor no tenía scroll y el `body` lleva `overflow-x: hidden`, así
+ * que lo que sobraba quedaba RECORTADO Y FUERA DE ALCANCE: no se veía y no se podía arrastrar hasta
+ * ello. Lo que se perdía era la última columna — «Por cada parte»—, o sea justo el número por el que
+ * alguien abre un artículo titulado «cuánto cuestan».
+ *
+ * 🎯 El arreglo YA EXISTA en este repositorio, en `LegalLayout`, con su comentario escrito
+ * («deben poder desplazarse en móvil sin romper la página»). Lo que faltaba era aplicarlo aquí: el
+ * mismo remedio puesto en un sitio y no en el otro, que es la familia que más veces ha aparecido.
+ *
+ * `display: block` es lo que le permite desbordar dentro de SÍ MISMA en vez de empujar la página;
+ * sin él, `overflow-x` sobre una `<table>` no hace nada.
+ */
+.jrn-cuerpo table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 0 0 20px;
+  font-size: 15px;
+}
+.jrn-cuerpo th,
+.jrn-cuerpo td {
+  border: 1px solid var(--alt-hairline, #e3e8ee);
+  padding: 9px 12px;
+  text-align: left;
+  vertical-align: top;
+  /* Las cifras no se parten a mitad: una tabla de dinero ilegible no es una tabla. */
+  white-space: nowrap;
+}
+.jrn-cuerpo th {
+  background: var(--alt-mist, #f2f6f9);
+  color: var(--alt-navy);
+  font-weight: var(--alt-fw-semibold, 600);
+}
+
+.jrn-cuerpo {
+  font-size: 16.5px;
+  line-height: 1.85;
+  color: var(--alt-text);
+}
+.jrn-cuerpo h2 {
+  font-family: var(--alt-font-display);
+  font-weight: var(--alt-fw-semibold);
+  font-size: 29px;
+  line-height: 1.15;
+  color: var(--alt-ink);
+  margin: 40px 0 14px;
+}
+.jrn-cuerpo h3 {
+  font-family: var(--alt-font-display);
+  font-weight: var(--alt-fw-semibold);
+  font-size: 23px;
+  line-height: 1.2;
+  color: var(--alt-ink);
+  margin: 30px 0 10px;
+}
+.jrn-cuerpo p,
+.jrn-cuerpo li {
+  margin: 0 0 18px;
+}
+.jrn-cuerpo strong {
+  color: var(--alt-ink);
+  font-weight: var(--alt-fw-semibold);
+}
+.jrn-cuerpo a {
+  color: var(--alt-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.jrn-cuerpo ol,
+.jrn-cuerpo ul {
+  padding-left: 22px;
+  margin: 0 0 18px;
+}
+.jrn-cuerpo hr {
+  border: 0;
+  border-top: 1px solid var(--alt-hairline);
+  margin: 34px 0;
+}
+.jrn-cuerpo em {
+  color: var(--alt-text-soft);
+}
+
+/* LOS DOS BLOQUES QUE NO SE PUEDEN CONFUNDIR.
+   La norma lleva filete de oro; la interpretación, borde punteado y sin color de marca. Que se vean
+   DISTINTOS es el punto: si el lector no puede separar «lo que dice la ley» de «lo que se entiende
+   en la práctica», estamos afirmando como ley algo que no lo es. */
+.jrn-ley,
+.jrn-practica {
+  border-radius: var(--alt-r-md);
+  padding: 22px 26px;
+  margin: 0 0 22px;
+}
+.jrn-ley {
+  border-left: 3px solid var(--alt-gold);
+  border-radius: 0 var(--alt-r-md) var(--alt-r-md) 0;
+  background: rgba(var(--alt-hairline-rgb), 0.03);
+}
+.jrn-practica {
+  border: 1px dashed var(--alt-hairline-strong);
+  background: var(--alt-surface);
+}
+.jrn-ley > :last-child,
+.jrn-practica > :last-child {
+  margin-bottom: 0;
+}
+.jrn-ley::before,
+.jrn-practica::before {
+  display: block;
+  font-size: 10.5px;
+  font-weight: var(--alt-fw-bold);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.jrn-ley::before {
+  content: 'Lo que dice la ley';
+  color: var(--alt-ink);
+}
+.jrn-practica::before {
+  content: 'En la práctica · interpretación, no texto legal';
+  color: var(--alt-text-soft);
+}
+
+/* Fuentes */
+.jrn-fuentes {
+  margin: 40px 0 0;
+}
+.jrn-fuentes__k {
+  font-size: 10.5px;
+  font-weight: var(--alt-fw-bold);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--alt-link);
+  margin: 0 0 8px;
+}
+.jrn-fuente {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--alt-surface-neu);
+  border-radius: var(--alt-r-sm);
+  padding: 15px 18px;
+  box-shadow: var(--alt-nm-in-sm);
+  margin-bottom: 11px;
+}
+.jrn-fuente__n {
+  font-size: 11px;
+  font-weight: var(--alt-fw-bold);
+  color: var(--alt-link);
+  letter-spacing: 0.08em;
+  padding-top: 3px;
+}
+.jrn-fuente__t {
+  font-size: 14.5px;
+  font-weight: var(--alt-fw-semibold);
+  color: var(--alt-ink);
+  display: block;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.jrn-fuente__e {
+  font-size: 12.5px;
+  color: var(--alt-text-soft);
+}
+.jrn-aviso {
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--alt-text-soft);
+  font-style: italic;
+  margin: 14px 0 0;
+}
+
+/* Cierre en navy + seguir leyendo */
+.jrn-cta {
+  background: var(--alt-surface-ink);
+  border-radius: var(--alt-r-xl);
+  padding: 32px 34px;
+  margin: 34px 0;
+}
+.jrn-cta h2 {
+  font-family: var(--alt-font-display);
+  font-weight: var(--alt-fw-semibold);
+  font-size: 28px;
+  line-height: 1.15;
+  color: var(--alt-on-ink);
+  margin: 0 0 12px;
+}
+.jrn-cta p {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--alt-on-ink-muted);
+  margin: 0 0 18px;
+}
+.jrn-cta__botones {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.jrn-sigue {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.jrn-sigue__card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  background: var(--alt-surface-neu);
+  border-radius: var(--alt-r-md);
+  padding: 18px 20px;
+}
+.jrn-sigue__cat {
+  font-size: 10.5px;
+  font-weight: var(--alt-fw-bold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--alt-text-soft);
+}
+.jrn-sigue__t {
+  font-family: var(--alt-font-display);
+  font-size: 19px;
+  font-weight: var(--alt-fw-semibold);
+  color: var(--alt-ink);
+  line-height: 1.15;
+}
+
+@media (max-width: 860px) {
+  .jrn-grid,
+  .jrn-sigue {
+    grid-template-columns: 1fr;
+  }
+  .jrn-row {
+    grid-template-columns: 104px 1fr;
+  }
+  .jrn-portada {
+    aspect-ratio: 16 / 9;
+  }
+}

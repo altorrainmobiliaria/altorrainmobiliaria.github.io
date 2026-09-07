@@ -1,0 +1,72 @@
+{
+  // Config de Cloudflare Workers para el portal (Astro 7 + @astrojs/cloudflare v14).
+  // `main` apunta al ENTRYPOINT UNIFICADO del adapter (Astro 6+): sirve `astro dev` y producción.
+  // NO apuntar a dist/server/entry.mjs (no existe en build-time -> rompe el @cloudflare/vite-plugin).
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "altorra-portal",
+  "main": "@astrojs/cloudflare/entrypoints/server",
+  "compatibility_date": "2026-04-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist/client",
+
+    // 🔴 EL MAPA DE 301 NO CORRIA. Medido en el worker de staging: toda URL del sitio viejo
+    // (`/propiedades-comprar.html`, `/el-laguito.html`, `/avaluo.html`…) devolvia 404, no 301. El
+    // middleware esta bien escrito y resuelve el redirect ANTES que nada — pero nunca llegaba a
+    // ejecutarse: la capa de assets de Cloudflare responde primero y, al no encontrar el archivo,
+    // sirve `404.html` sin invocar al Worker. La prueba: ese 404 llegaba SIN la cabecera
+    // `X-Robots-Tag`, que el middleware pone en toda respuesta fuera de produccion.
+    //
+    // Consecuencia si no se arregla: el dia del cutover, las 65 direcciones del sitio viejo
+    // —indexadas durante anos— empiezan a devolver 404 y su posicion se pierde sin un solo aviso.
+    // Es el gate del paso 5.5 del runbook, y habria fallado el dia que se ejecutara.
+    //
+    // `run_worker_first` con `/*.html` manda al Worker exactamente las rutas del legacy (las del
+    // portal son sin extension: `/comprar`, `/zona/x`). El archivo de verificacion de Search Console
+    // TAMBIEN pasa por el Worker a proposito: ahora es una ruta que responde 200, en vez de un asset
+    // al que la capa de assets le quitaba el `.html` con un 307 (§145).
+    "run_worker_first": ["/*.html"],
+
+    // UNA SOLA FORMA CANÓNICA DE CADA DIRECCIÓN, y que sea la que el sitio ya escribe.
+    // Sin esta clave la capa de assets usa `auto-trailing-slash`: `/journal` responde **307** hacia
+    // `/journal/`. Medido en el worker de staging, y le pasa a TODA página estática (`/comprar`,
+    // `/precios`, `/zona/x`), no solo a las nuevas. Nadie lo nota abriendo el sitio —el navegador
+    // sigue el salto— pero el coste es real y silencioso:
+    //   · los 65 redirects del sitio viejo aterrizan en una URL que a su vez redirige = CADENA;
+    //   · el `sitemap.xml` declara URLs que responden con redirección;
+    //   · y el `<link rel=canonical>` dice `/journal` mientras el servidor prefiere `/journal/`,
+    //     o sea dos señales en contra sobre cuál es la dirección buena.
+    // `drop-trailing-slash` hace que el servidor prefiera la MISMA forma que ya usan los enlaces
+    // internos, el sitemap, el canonical y el destino de cada 301. Valor verificado contra
+    // `node_modules/wrangler/config-schema.json` (enum de `html_handling`), no de memoria (L-14).
+    "html_handling": "drop-trailing-slash"
+  },
+  "observability": { "enabled": true },
+
+  // WORKERS CACHING — la premisa de TODO el modelo de coste del portal (`src/lib/data/cache.ts`).
+  // Estuvo SIN habilitar hasta el 2026-08-21 (§97.10): mientras tanto cada `s-maxage` que emitían las
+  // rutas era INERTE y cada visita pagaba sus lecturas de Firestore. La caché se sienta DELANTE del
+  // Worker, así que un acierto devuelve la respuesta sin ejecutarlo: cero lecturas.
+  // Clave verificada contra `node_modules/wrangler/config-schema.json` (definición `CacheOptions`),
+  // no de memoria (L-14).
+  //
+  // `cross_version_cache: false` A PROPÓSITO: hace que un DESPLIEGUE invalide lo cacheado. Hoy no
+  // existe la purga por tag (§60.4 lo dejó verificado: exige un secreto de Cloudflare), así que
+  // republicar es la ÚNICA palanca de invalidación que tenemos — y conviene que funcione.
+  "cache": { "enabled": true, "cross_version_cache": false },
+
+  // --- Bindings (los RECURSOS reales los crea el dueño en su cuenta CF; ver docs/50-CONFIG-INFRA) ---
+  // PRERREQUISITOS de deploy (documentados en README y en la guía Cloudflare de Ola 0.2):
+  //  · El token CF debe tener scope de CREACIÓN de recursos: Workers Scripts:Edit +
+  //    Workers KV Storage:Edit + Workers R2 Storage:Edit + Account Settings:Read.
+  //  · El bucket R2 abajo tiene nombre EXPLÍCITO -> NO se auto-crea: hay que crearlo antes
+  //    del primer deploy (`wrangler r2 bucket create altorra-portal-media`).
+  "r2_buckets": [
+    { "binding": "R2_MEDIA", "bucket_name": "altorra-portal-media" }
+  ]
+
+  // Sessions KV (binding "SESSION"): el adapter lo auto-cablea SIN id (binding draft). Wrangler
+  // lo auto-aprovisiona en el primer deploy vía auto-provisioning (OPEN BETA; requiere wrangler
+  // >=4.45 — el CI fija 4.110). Si el flujo beta cambiara, crear el namespace y fijar su id aquí.
+}

@@ -1,0 +1,25 @@
+---
+/*
+ * Aviso de Privacidad — texto del kit fundacional (`08-AVISO-PRIVACIDAD-Y-AUTORIZACIONES`,
+ * Parte 1, versión AV-V1 · 2026-07-25), PUBLICADO.
+ *
+ * Es obligatorio (D.1377/2013 arts. 14-15) y es el documento al que enlaza el checkbox de
+ * autorización de los formularios: el kit lo dice literal — «nunca se publica un formulario que
+ * capte datos sin ambos». Hasta el 2026-08-20 el footer enlazaba aquí y daba 404 en todo el sitio.
+ *
+ * El contenido NO se redactó: se estructuró para lectura web el texto ya auditado, sin alterarlo.
+ */
+export const prerender = true;
+
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { Content } from '../content/legal/aviso-privacidad.md';
+---
+
+<LegalLayout
+  title="Aviso de Privacidad"
+  description="Aviso de Privacidad de ALTORRA COMPANY S.A.S. — responsable, finalidades, transmisión de datos y derechos del titular (Decreto 1377 de 2013)."
+  version="AV-V1"
+  vigencia="25 de julio de 2026"
+>
+  <Content />
+</LegalLayout>

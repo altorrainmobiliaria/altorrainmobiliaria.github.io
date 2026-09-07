@@ -1,0 +1,142 @@
+---
+// Design system D1 (carril D) — SSoT de tokens + primitivas. Réplica de los mockups
+// aprobados (portal/design/mockups). El orden importa: tokens → base → components.
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/components.css';
+import JsonLdNegocio from '../components/JsonLdNegocio.astro';
+import { migaDe, type Tramo } from '../lib/seo/breadcrumbs';
+
+interface Props {
+  title: string;
+  description?: string;
+  noindex?: boolean;
+  /**
+   * Imagen de la tarjeta de enlace (Open Graph). Ruta del sitio (`/assets/x.webp`) o URL absoluta.
+   * La ficha de inmueble manda SU foto de portada; el resto usa la de marca.
+   */
+  image?: string;
+  /**
+   * Canonical EXPLÍCITO, para las rutas que se pueden alcanzar por más de una dirección.
+   * Caso real: la ficha responde tanto en `/inmueble/<slug>` como en `/inmueble/<id>`; sin esto cada
+   * una se declara canónica de sí misma y Google ve dos páginas con el mismo inmueble.
+   */
+  canonical?: string;
+  /**
+   * Migas de pan de la página, SIN el «Inicio» (lo pone `migaDe`). Al pasarlas, el layout emite el
+   * `BreadcrumbList` — así una página nueva las gana con una línea en vez de nueve copiadas.
+   *
+   * ⚠️ NO la pasan las páginas que ya construyen su propio `@graph` con más tipos dentro
+   * (`/precios` con su `FAQPage`, `/journal` con su `Blog`, las zonas con su `Place`): ahí la miga
+   * viaja en el mismo grafo que el resto y sacarla sería partir en dos lo que Google lee de una.
+   * Un `BreadcrumbList` por página, venga de donde venga — nunca los dos caminos a la vez.
+   */
+  miga?: Tramo[];
+}
+
+const {
+  title,
+  // Eslogan OFICIAL (`CLAUDE.md §1`); el anterior «gestión integral en soluciones inmobiliarias»
+  // quedó REEMPLAZADO. Y la marca se escribe SIEMPRE en mayúscula (voz §3.2), nunca «Altorra».
+  description = 'ALTORRA Inmobiliaria — Seguridad, Legalidad y Confianza. Cartagena de Indias.',
+  noindex = false,
+  image,
+  canonical: canonicalProp,
+  miga,
+} = Astro.props;
+
+// CANONICAL AUTORREFERENCIAL en TODA página (requisito de `search-console-setup-y-diagnostico` §2).
+// Se resuelve aquí y no página por página: un canonical que falta o apunta mal hace que Google
+// indexe otra URL en tu lugar, y es el tipo de error que nadie ve mirando la pantalla.
+// Siempre sobre el dominio de PRODUCCIÓN (`site` de astro.config), nunca sobre el host del request:
+// en staging el host es *.workers.dev y auto-referenciarlo enseñaría el staging.
+const canonical = new URL(canonicalProp ?? Astro.url.pathname, Astro.site ?? 'https://altorrainmobiliaria.co').href;
+
+/** Origen de PRODUCCIÓN, por la misma razón que el canonical: en staging el host es *.workers.dev. */
+const origen = (Astro.site ?? new URL('https://altorrainmobiliaria.co')).origin;
+
+// Indexable SOLO en build de producción; por defecto (staging *.workers.dev) => noindex (O3/T1).
+// `noindex` fuerza noindex SIEMPRE (páginas internas/admin: /gestion, /design-system).
+const indexable = import.meta.env.PUBLIC_SITE_ENV === 'production' && !noindex;
+
+// Imagen de la tarjeta de enlace, SIEMPRE absoluta: WhatsApp y Facebook no resuelven rutas relativas,
+// se limitan a no mostrar nada — y el fallo se ve solo al compartir, nunca en la página.
+const ogImage = new URL(image || '/assets/hero-keys.webp', Astro.site ?? 'https://altorrainmobiliaria.co').href;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {!indexable && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
+
+    {/*
+      TARJETA DE ENLACE (Open Graph + Twitter). El portal no emitía NINGUNA (§97): cada vez que alguien
+      compartía un inmueble por WhatsApp —que en Colombia es COMO se comparte un inmueble— salía un
+      enlace pelado, sin foto, sin título y sin precio. Es la diferencia entre que lo abran o no.
+      La imagen la manda la página (la ficha pone la foto de portada); el resto usa la de marca.
+    */}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="ALTORRA Inmobiliaria" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    {/*
+      Tipografía de marca (D1, DECIDIDA por Claude — Daniel delegó la fuente 2026-07-12):
+      Cormorant Garamond (display) + Hanken Grotesk (cuerpo/UI). Coherente con los mockups,
+      premium/editorial, distinta de Bersaglio (Fraunces+Manrope). Playfair NO se carga.
+      TODO perf (SEO-first): migrar a self-host woff2 subset latin + preload de las 2 caras críticas
+      (Cormorant 600, Hanken 400) para eliminar el handshake a fonts.gstatic.com y mejorar LCP.
+    */}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap"
+    />
+
+    {/* Identidad del negocio en JSON-LD, en TODAS las páginas (ADR §95). Va en el layout porque
+        quién es ALTORRA no cambia entre rutas, y porque repetirlo por página es la vía segura a
+        que una se quede sin él. Las páginas que además tienen structured data PROPIO (zonas,
+        precios, Rango) emiten su bloque aparte: varios JSON-LD por documento son válidos. */}
+    <JsonLdNegocio />
+
+    {/* Miga de pan, si la página la declaró. Sin ella Google enseña la URL cruda en el resultado
+        en vez de la ruta del sitio (§161).
+        ⚠️ `miga.length > 0` y no `miga?.length &&`: con un array VACÍO eso último evalúa a `0`, y
+        un `0` en una expresión de plantilla se PINTA — un cero suelto en mitad del `<head>`. */}
+    {miga && miga.length > 0 && (
+      <script
+        type="application/ld+json"
+        set:html={JSON.stringify({ '@context': 'https://schema.org', ...migaDe(origen, miga) })}
+        is:inline
+      />
+    )}
+  </head>
+  <body>
+    <slot />
+
+    {/* Favoritos (§89): cablea el corazon de CUALQUIER .alt-pcard de la pagina y deja su estado
+        sincronizado con lo guardado. Va en el layout porque las cards salen en home, SERP, ficha y
+        turismo: repetir el import en cada pagina seria la via segura a que una se quede sin el.
+        El modulo no toca la red y degrada solo si localStorage no esta disponible. */}
+    <script>
+      import { cablearCorazones } from '../scripts/favoritos';
+      cablearCorazones();
+      // La isla del SERP inyecta cards despues; se re-cablea cuando avisa (es idempotente).
+      document.addEventListener('altorra:catalogo-pintado', () => cablearCorazones());
+    </script>
+  </body>
+</html>

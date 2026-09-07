@@ -1,0 +1,51 @@
+// Helpers de CACHÉ para los CALLERS (páginas/endpoints). Este módulo NO cachea nada por sí mismo.
+//
+// El caché real es **Workers Caching** (`cache:{enabled:true}` en wrangler ≥4.69.0), que se sienta
+// DELANTE del Worker: un hit devuelve la respuesta SIN ejecutar el Worker → CERO lecturas Firestore.
+// "The cache belongs to the Worker, not to a domain" → funciona igual en staging (*.workers.dev) y en
+// prod (sello T8, verificado contra docs vivas de Cloudflare). El caller setea `Cache-Control` + el
+// header `Cache-Tag` en SU Response; la purga selectiva la dispara la Cloud Function `onWrite`
+// (endpoint interno autenticado por HMAC de tiempo constante → `ctx.cache.purge({ tags })`).
+//
+// ⚠️ POR QUÉ TTL LARGO (no corto): Workers Cache es POR-PoP (data-center). Un `s-maxage` bajo multiplica
+// las revalidaciones —y por tanto las lecturas Firestore— por el nº de PoPs con tráfico. Teniendo
+// purga-por-tag (que ya invalida al editar), la frescura la da la PURGA, no un TTL corto (comité OD1).
+// `stale-while-revalidate` se OMITE a propósito: no está verificado que Workers Cache lo honre y pelearía
+// con la purga; TTL efectivo = `s-maxage`.
+
+/** Tags de purga selectiva (deben coincidir con los que emite la Cloud Function al escribir). */
+export const cacheTagProp = (id: string): string => `prop:${id}`;
+export const cacheTagConfig = (doc: string): string => `config:${doc}`;
+export const cacheTagDisp = (propiedadId: string): string => `disp:${propiedadId}`;
+/** Tag del índice de catálogo por shard (OD-Catálogo §54): la Function `onWrite` purga `catalogo:{shard}`. */
+export const cacheTagCatalogo = (shard: string): string => `catalogo:${shard}`;
+
+/** Catálogo (SERP/mapa/similares): EDGE-ONLY purgeable — `s-maxage` (sin `max-age` → NO cachea en navegador,
+ *  donde la purga no llega; §54.8 deuda de headers). TTL = TECHO DURO de staleness (la purga por tag del
+ *  `onWrite` acelera; si falla, el TTL acota). 10 min: la frescura real la da la purga, no un TTL corto. */
+export const CACHE_CONTROL_CATALOGO = 'public, s-maxage=600';
+
+/** Ficha / config: casi-estáticos; frescura por purga → 1 día. **Presupone la purga desplegada.** */
+export const CACHE_CONTROL_FICHA = 'public, s-maxage=86400';
+
+/**
+ * Ficha MIENTRAS la purga no exista (estado de HOY — §60.4 lo dejó verificado: el endpoint de purga
+ * por tag exige un secreto de Cloudflare que todavía no está).
+ *
+ * La premisa del TTL largo de arriba es «la frescura la da la purga». Sin purga esa premisa es FALSA,
+ * y un día de caché significa que un inmueble vendido o retirado sigue publicado 24 horas — con su
+ * precio, su teléfono y su promesa. En una inmobiliaria eso no es un dato viejo: es una visita
+ * perdida y una conversación incómoda.
+ *
+ * 5 minutos es el techo de staleness que sí se puede defender sin purga. Cuesta más lecturas (una por
+ * PoP y ventana), pero el free-tier de Firestore aguanta de sobra con el catálogo real que viene.
+ * ⚠️ El día que la purga se despliegue, esta constante SE BORRA y la ficha vuelve a `CACHE_CONTROL_FICHA`.
+ */
+export const CACHE_CONTROL_FICHA_SIN_PURGA = 'public, s-maxage=300';
+/** Disponibilidad: time-sensitive (anti doble-reserva) → TTL corto + purga en el `onWrite`. */
+export const CACHE_CONTROL_DISPONIBILIDAD = 'public, s-maxage=60';
+/** No disponible / no encontrado: respuesta GENÉRICA (no filtra existencia); TTL corto para absorber
+ *  escaneos de ids inexistentes sin pegarle al origen en cada golpe. */
+export const CACHE_CONTROL_NOT_FOUND = 'public, s-maxage=120';
+/** Respuestas autenticadas / privadas: JAMÁS entran al caché (T2 — auth ⇒ no-store). */
+export const CACHE_CONTROL_PRIVATE = 'private, no-store';

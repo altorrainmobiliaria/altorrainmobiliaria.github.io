@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&amp;family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,500;1,600;1,700&amp;family=Hanken+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  html{scroll-behavior:smooth}
+  :root{--surface:#eaf0f7;--nm-d:rgba(6,39,67,.15);--nm-l:#ffffff;--nm-up:6px 6px 14px var(--nm-d),-6px -6px 13px var(--nm-l);--nm-up-sm:4px 4px 9px var(--nm-d),-4px -4px 8px var(--nm-l);--nm-in:inset 5px 5px 11px var(--nm-d),inset -5px -5px 10px var(--nm-l);--nm-in-sm:inset 3px 3px 7px var(--nm-d),inset -3px -3px 6px var(--nm-l)}
+  body{background:var(--surface);font-family:'Hanken Grotesk',Helvetica,Arial,sans-serif;color:#6b7c93;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  img{display:block;max-width:100%}
+  a{color:#A6801E;text-decoration:none}
+  a:hover{color:#A6801E}
+  input{font-family:inherit}
+  ::placeholder{color:#98a9ba;opacity:1}
+  @keyframes kb{from{transform:scale(1.06)}to{transform:scale(1)}}
+  @keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+  @keyframes kenburns{from{transform:scale(1.0)}to{transform:scale(1.12)}}
+  @keyframes bnrise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  .alt-banner{opacity:0;transition:opacity 1.1s ease}
+  .alt-banner[data-active="1"]{opacity:1}
+  .alt-banner[data-active="1"] .alt-bimg{animation:kenburns 8s ease-out both}
+  .alt-banner[data-active="1"] .alt-bc>*{animation:bnrise .9s cubic-bezier(.2,.7,.2,1) both}
+  .alt-banner[data-active="1"] .alt-bc>*:nth-child(2){animation-delay:.08s}
+  .alt-banner[data-active="1"] .alt-bc>*:nth-child(3){animation-delay:.16s}
+  .alt-banner[data-active="1"] .alt-bc>*:nth-child(4){animation-delay:.24s}
+  .alt-dot{cursor:pointer;transition:width .4s cubic-bezier(.2,.7,.2,1),background .4s}
+  .alt-harrow{cursor:pointer;transition:background .3s,border-color .3s,transform .3s}
+  .alt-harrow:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.6)}
+  @media(max-width:860px){.alt-trust{display:none!important}.alt-harrows{display:none!important}}
+  @media(max-width:720px){.alt-vdiv{display:none!important}}
+
+  /* ===== SISTEMA DE BOTONES — una personalidad por sección ===== */
+  .btn-sig{display:inline-flex;align-items:center;gap:13px;padding:14px 16px 14px 28px;border-radius:999px;background:linear-gradient(135deg,#EBD27E 0%,#D4AF37 52%,#A6801E 100%);color:#062743;font-family:'Hanken Grotesk';font-weight:700;font-size:15px;letter-spacing:.01em;transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s;cursor:pointer}
+  .btn-sig:hover{transform:translateY(-2px);color:#062743}
+  .btn-sig .arw{display:inline-flex;width:30px;height:30px;border-radius:50%;background:rgba(27,39,51,.16);align-items:center;justify-content:center;flex:none;transition:background .35s}
+  .btn-sig .arw svg{transition:transform .5s cubic-bezier(.2,.7,.2,1),stroke .35s;stroke:#062743}
+  .btn-sig:hover .arw{background:#062743}
+  .btn-sig:hover .arw svg,.btn-sig:active .arw svg{transform:translateX(3px);stroke:#EBD27E}
+  .btn-quiet{display:inline-flex;align-items:center;gap:8px;color:#fff;font-family:'Hanken Grotesk';font-weight:600;font-size:13.5px;letter-spacing:.02em;padding-bottom:6px;position:relative;cursor:pointer}
+  .btn-quiet::after{content:"";position:absolute;left:0;bottom:0;height:1.5px;width:100%;background:linear-gradient(90deg,#EBD27E,#D4AF37);transform:scaleX(.24);transform-origin:left;transition:transform .45s cubic-bezier(.2,.7,.2,1)}
+  .btn-quiet:hover{color:#fff}
+  .btn-quiet:hover::after{transform:scaleX(1)}
+  .btn-quiet svg{transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+  .btn-quiet:hover svg{transform:translateX(5px)}
+  .btn-sweep{position:relative;display:inline-flex;align-items:center;gap:10px;padding:15px 30px;border-radius:999px;border:1.5px solid #062743;color:#062743;font-family:'Hanken Grotesk';font-weight:700;font-size:14px;letter-spacing:.01em;overflow:hidden;isolation:isolate;transition:color .4s,border-color .4s;cursor:pointer}
+  .btn-sweep::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(135deg,#EBD27E,#D4AF37 55%,#A6801E);transform:translateX(-101%);transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+  .btn-sweep:hover{color:#062743;border-color:#D4AF37}
+  .btn-sweep:hover::before{transform:translateX(0)}
+  .btn-sweep svg{transition:transform .4s}
+  .btn-sweep:hover svg{transform:translateX(4px)}
+  .btn-count{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:999px;border:1px solid rgba(27,39,51,.18);color:#062743;font-family:'Hanken Grotesk';font-weight:600;font-size:13.5px;transition:border-color .35s,background .35s,color .35s;cursor:pointer}
+  .btn-count:hover{border-color:#D4AF37;background:#f2f6f9;color:#062743}
+  .btn-count b{font-weight:700;color:#A6801E}
+  .btn-count .trk{display:none}
+  .btn-count .trk svg{stroke:#EBD27E}
+  .btn-count:hover .trk svg{animation:slidethru .62s cubic-bezier(.5,0,.2,1)}
+  @keyframes slidethru{0%{transform:translateX(0)}45%{transform:translateX(30px);opacity:0}46%{transform:translateX(-30px);opacity:0}55%{opacity:1}100%{transform:translateX(0)}}
+  .p-card .orb{display:inline-flex;width:44px;height:44px;border-radius:50%;background:#fff;border:1.5px solid #D4AF37;align-items:center;justify-content:center;flex:none;transition:background .4s,border-color .4s,transform .35s,box-shadow .4s}
+  .p-card .orb svg{stroke:#A6801E;transition:transform .5s cubic-bezier(.2,.7,.2,1),stroke .4s}
+  .p-card:hover .orb{background:linear-gradient(135deg,#EBD27E,#D4AF37 55%,#A6801E);border-color:transparent;}
+  .p-card:hover .orb svg{transform:rotate(-45deg);stroke:#062743}
+  .orb:hover{transform:scale(1.08)}
+  .btn-frost{display:inline-flex;align-items:center;gap:11px;padding:14px 16px 14px 26px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.4);color:#fff;font-family:'Hanken Grotesk';font-weight:700;font-size:14px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background .4s,color .4s,border-color .4s;cursor:pointer}
+  .btn-frost .arw{display:inline-flex;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.2);align-items:center;justify-content:center;flex:none;transition:background .4s}
+  .btn-frost svg{stroke:#fff;transition:stroke .4s,transform .4s}
+  .btn-frost:hover{background:#fff;color:#062743;border-color:#fff}
+  .btn-frost:hover .arw{background:#D4AF37}
+  .btn-frost:hover svg{stroke:#062743;transform:translateX(3px)}
+  .btn-gn{display:inline-flex;align-items:center;gap:10px;padding:14px 26px;border-radius:999px;border:1.5px solid rgba(27,39,51,.22);color:#062743;background:transparent;font-family:'Hanken Grotesk';font-weight:600;font-size:14px;transition:border-color .35s,background .35s,box-shadow .35s,color .35s;cursor:pointer}
+  .btn-gn:hover{border-color:#062743;background:#f2f6f9;color:#062743;box-shadow:0 10px 26px -14px rgba(6,39,67,.4)}
+  .btn-gn svg{transition:transform .4s}
+  .btn-gn:hover svg{transform:scale(1.12)}
+  .btn-onnavy{display:inline-flex;align-items:center;gap:9px;padding:12px 24px;border-radius:999px;border:1px solid rgba(235,210,126,.6);color:#EBD27E;font-family:'Hanken Grotesk';font-weight:600;font-size:13.5px;transition:background .35s,color .35s,border-color .35s;cursor:pointer}
+  .btn-onnavy:hover{background:#EBD27E;color:#062743;border-color:#EBD27E}
+  .btn-onnavy svg{transition:transform .4s}
+  .btn-onnavy:hover svg{transform:translateX(4px)}
+  .link-ul{display:inline-flex;align-items:center;gap:9px;font-family:'Hanken Grotesk';font-weight:600;font-size:14px;color:#A6801E;position:relative;padding-bottom:4px;cursor:pointer}
+  .link-ul::after{content:"";position:absolute;left:0;bottom:0;height:1px;width:100%;background:#D4AF37;transform:scaleX(1);transform-origin:left;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+  .link-ul:hover{color:#A6801E}
+  .link-ul:hover::after{transform:scaleX(.4)}
+  .link-ul svg{display:none}
+  .link-ul:hover svg{transform:translateY(-2px)}
+
+
+
+
+  /* ===== HERO CAROUSEL v2 (responsive, per-banner sello) ===== */
+  .hero-car{position:relative;overflow:hidden;height:clamp(548px,60vh,580px)}
+  .hero-search{margin-top:clamp(-76px,-4.6vw,-60px)}
+  .alt-banner{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .9s ease}
+  .alt-banner[data-active="1"]{opacity:1;pointer-events:auto}
+  .alt-banner[data-active="1"] .alt-bimg{animation:kenburns 9s ease-out both}
+  .hero-wrap{position:relative;max-width:1300px;margin:0 auto;height:100%;box-sizing:border-box;padding:clamp(96px,11vh,112px) clamp(20px,5vw,64px) clamp(120px,12vh,138px);display:flex;align-items:center}
+  .hero-h{font-family:'Playfair Display',Georgia,serif;font-weight:700;line-height:1.03;letter-spacing:-.012em;margin:0;text-wrap:balance;font-size:clamp(33px,4.7vw,60px)}
+  .hero-eyb{display:flex;align-items:center;gap:13px;margin-bottom:18px;font-size:11.5px;font-weight:700;letter-spacing:.3em;text-transform:uppercase}
+  .hero-p{line-height:1.6;text-wrap:pretty;font-size:clamp(15px,1.4vw,18px)}
+  .alt-banner[data-active="1"] .hero-rise>*{animation:bnrise .8s cubic-bezier(.2,.7,.2,1) both}
+  .alt-banner[data-active="1"] .hero-rise>*:nth-child(2){animation-delay:.07s}
+  .alt-banner[data-active="1"] .hero-rise>*:nth-child(3){animation-delay:.14s}
+  .alt-banner[data-active="1"] .hero-rise>*:nth-child(4){animation-delay:.2s}
+  .split-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:clamp(26px,3.6vw,58px);align-items:center;width:100%}
+  .split-frame{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:16/9;box-shadow:0 44px 84px -34px rgba(9,17,25,.55)}
+  .split-frame img{width:100%;height:100%;object-fit:cover;display:block}
+  .hero-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;background:#f2f6f9;border:1px solid rgba(27,39,51,.08);font-size:12.5px;font-weight:600;color:#062743}
+  .hero-nav{position:absolute;left:0;right:0;bottom:clamp(92px,10vw,104px);z-index:5;display:flex;justify-content:center;pointer-events:none}
+  .hero-nav-in{max-width:1300px;width:100%;padding:0 clamp(20px,5vw,64px);display:flex}
+  .seg-row{display:flex;align-items:center;gap:9px;pointer-events:auto}
+  .seg{position:relative;height:5px;width:22px;border-radius:999px;background:rgba(255,255,255,.42);overflow:hidden;cursor:pointer;transition:width .5s cubic-bezier(.2,.7,.2,1),background .4s}
+  .seg[data-on="1"]{width:72px;background:rgba(255,255,255,.3)}
+  .seg .segfill{position:absolute;inset:0;width:0;background:linear-gradient(90deg,#EBD27E,#D4AF37);border-radius:999px}
+  .seg-row.on-light .seg{background:rgba(27,39,51,.18)}
+  .seg-row.on-light .seg[data-on="1"]{background:rgba(27,39,51,.12)}
+  @media(max-width:920px){
+    .split-grid{grid-template-columns:1fr;gap:22px}
+    .split-media{order:-1}
+  }
+  @media(max-width:640px){
+    .hero-car{height:clamp(600px,92vh,760px)}
+    .hero-wrap{padding-top:clamp(96px,14vh,116px);padding-bottom:128px}
+    .hero-hide-sm{display:none!important}
+    .hero-search{margin-top:-40px}
+    .split-frame{aspect-ratio:3/2}
+  }
+
+  /* ===== v3 · rails · listas · collage · proyectos · brokers · journal · redes ===== */
+  .arail{display:flex;gap:clamp(15px,1.6vw,22px);overflow-x:auto;scroll-snap-type:x mandatory;-ms-overflow-style:none;scrollbar-width:none;padding:6px 2px 10px;scroll-padding-left:2px}
+  .arail::-webkit-scrollbar{display:none}
+  .arail>*{scroll-snap-align:start;flex:0 0 auto}
+  .rnav{width:46px;height:46px;border-radius:50%;border:1px solid rgba(27,39,51,.2);background:#fff;color:#062743;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:background .3s,border-color .3s,color .3s,transform .3s}
+  .rnav:hover{border-color:#D4AF37;background:#062743;color:#EBD27E;transform:translateY(-1px)}
+  .rnav.dk{border-color:rgba(235,210,126,.42);background:transparent;color:#EBD27E}
+  .rnav.dk:hover{background:#EBD27E;color:#062743;border-color:#EBD27E}
+  @media(max-width:640px){.rnav{display:none!important}}
+  .lu-card{width:clamp(276px,25vw,330px);border-radius:22px;overflow:hidden;cursor:pointer;background:#fff;box-shadow:0 2px 6px rgba(27,39,51,.05),0 26px 54px -34px rgba(27,39,51,.24);transition:transform .5s cubic-bezier(.2,.75,.25,1),box-shadow .5s}
+  .lu-card:hover{transform:translateY(-6px);box-shadow:0 5px 10px rgba(27,39,51,.07),0 42px 78px -34px rgba(27,39,51,.34)}
+  .lu-card .lu-img{transition:transform 1s cubic-bezier(.2,.7,.2,1)}
+  .lu-card:hover .lu-img{transform:scale(1.06)}
+  .sw{width:15px;height:15px;border-radius:50%;border:1.5px solid rgba(27,39,51,.14);cursor:pointer;transition:transform .25s}
+  .sw:hover{transform:scale(1.22)}
+  .lrow{transition:transform .4s cubic-bezier(.2,.75,.25,1),box-shadow .4s,border-color .4s}
+  .lrow:hover{transform:translateX(4px);box-shadow:0 20px 46px -28px rgba(27,39,51,.42);border-color:rgba(212,175,55,.5)}
+  .lrow-img{transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+  .lrow:hover .lrow-img{transform:scale(1.06)}
+  .bnb{width:clamp(230px,20vw,262px)}
+  .bnb .bnb-img{transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+  .bnb:hover .bnb-img{transform:scale(1.07)}
+  .tcard{transition:transform .6s cubic-bezier(.2,.75,.25,1),box-shadow .6s}
+  .tcard .tcard-img{transition:transform 1.1s cubic-bezier(.2,.7,.2,1)}
+  .tcard:hover .tcard-img{transform:scale(1.07)}
+  .igc{position:relative;overflow:hidden;cursor:pointer;display:block}
+  .igc img{transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+  .igc:hover img{transform:scale(1.08)}
+  .igc .igov{position:absolute;inset:0;background:rgba(6,39,67,.44);display:flex;align-items:center;justify-content:center;gap:18px;opacity:0;transition:opacity .4s}
+  .igc:hover .igov{opacity:1}
+  .jcard .jimg{transition:transform 1s cubic-bezier(.2,.7,.2,1)}
+  .jcard:hover .jimg{transform:scale(1.05)}
+  .jcard .jh{transition:color .3s}
+  .jcard:hover .jh{color:#A6801E}
+  .rkrow{transition:background .35s,border-color .35s}
+  .rkrow:hover{background:rgba(235,210,126,.06);border-color:rgba(235,210,126,.34)}
+  .rkrow .rk-img{transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+  .rkrow:hover .rk-img{transform:scale(1.07)}
+  .op-pill{padding:9px 19px;border-radius:999px;border:1px solid rgba(27,39,51,.16);background:#fff;color:#6b7c93;font-family:'Hanken Grotesk';font-weight:600;font-size:13px;cursor:pointer;transition:all .3s;white-space:nowrap}
+  .op-pill:hover{border-color:#D4AF37;color:#062743}
+  .op-pill.on{background:#062743;color:#EBD27E;border-color:#062743}
+  .map-pin{position:absolute;transform:translate(-50%,-100%);cursor:pointer;transition:transform .3s}
+  .map-pin:hover{transform:translate(-50%,-100%) scale(1.14)}
+  @keyframes pinpulse{0%{transform:scale(1);opacity:.5}70%{transform:scale(2.4);opacity:0}100%{opacity:0}}
+  @keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .mq-track{display:flex;gap:14px;width:max-content;animation:mq 34s linear infinite}
+  .mq-mask{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent)}
+  @media(max-width:920px){.tilt-off{transform:none!important}}
+  .mgrid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:clamp(148px,14.5vw,180px);gap:14px}
+  .mtile{position:relative;border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:0 2px 5px rgba(27,39,51,.05),0 22px 46px -34px rgba(27,39,51,.3)}
+  .mtile img{width:100%;height:100%;object-fit:cover;transition:transform 1.05s cubic-bezier(.2,.7,.2,1)}
+  .mtile:hover img{transform:scale(1.06)}
+  .mtile .mbody{opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s}
+  .mtile:hover .mbody{opacity:1;transform:none}
+  @media(max-width:860px){.mgrid{grid-template-columns:repeat(2,1fr)}.mtile{grid-column:auto!important;grid-row:auto!important}.mtile .mbody{opacity:1;transform:none}}
+  @media(max-width:520px){.mgrid{grid-template-columns:1fr}}
+
+  /* ===== NEUMORFISMO · SOFT UI · LIQUID GLASS — sistema ALTORRA ===== */
+  .btn-count{background:var(--surface);border:0;box-shadow:var(--nm-up-sm);color:#062743}
+  .btn-count:hover{background:var(--surface);box-shadow:var(--nm-in-sm);border:0;color:#A6801E}
+  .btn-count b{color:#A6801E}
+  .btn-gn{background:var(--surface);border:0;box-shadow:var(--nm-up-sm)}
+  .btn-gn:hover{background:var(--surface);box-shadow:var(--nm-in-sm);color:#062743}
+  .btn-sweep{border:0;box-shadow:var(--nm-up)}
+  .op-pill{background:var(--surface);border:0;box-shadow:var(--nm-up-sm);color:#6b7c93}
+  .op-pill:hover{box-shadow:var(--nm-up-sm);color:#062743}
+  .op-pill.on{background:var(--surface);border:0;box-shadow:var(--nm-in-sm);color:#A6801E;font-weight:700}
+  .rnav{background:var(--surface);border:0;box-shadow:var(--nm-up)}
+  .rnav:hover{background:var(--surface);color:#A6801E;box-shadow:var(--nm-in);transform:none;border:0}
+  .hero-chip{background:var(--surface);border:0;box-shadow:var(--nm-up-sm)}
+  .btn-sig{box-shadow:var(--nm-up),inset 0 1px 0 rgba(255,255,255,.55)}
+  .btn-sig:hover{box-shadow:var(--nm-up-sm),inset 0 1px 0 rgba(255,255,255,.55);transform:translateY(-1px)}
+  .btn-sig .arw{background:rgba(6,39,67,.14);box-shadow:inset 2px 2px 4px rgba(6,39,67,.3),inset -1px -1px 3px rgba(255,255,255,.5)}
+  .lu-card{background:var(--surface);box-shadow:var(--nm-up)}
+  .lu-card:hover{box-shadow:var(--nm-up),0 30px 60px -34px rgba(6,39,67,.3);transform:translateY(-6px)}
+  .p-card .orb{background:var(--surface);border:0;box-shadow:var(--nm-up-sm)}
+  .p-card:hover .orb{background:linear-gradient(135deg,#EBD27E,#D4AF37 55%,#A6801E);box-shadow:var(--nm-up-sm)}
+  .lrow{background:var(--surface)!important;border:0!important;box-shadow:var(--nm-up)!important;border-radius:20px}
+  .lrow:hover{box-shadow:var(--nm-up),0 30px 60px -36px rgba(6,39,67,.28)!important}
+  .p-card{background:var(--surface)!important;border:0!important;box-shadow:var(--nm-up)!important}
+  .jcard{background:var(--surface)!important;border:0!important;box-shadow:var(--nm-up-sm)!important}
+
+  </style>
+<script src="./image-slot.js"></script>
+</helmet>
+
+<div style="width:100%;overflow:hidden">
+
+  <dc-import name="ALTORRA Header" active="inicio" hint-size="100%,94px" style="position:sticky;top:0;z-index:70;display:block"></dc-import>
+
+  <section id="top" style="position:relative;background:var(--surface)">
+    <div class="hero-car" data-carousel="">
+
+      <!-- B0 · VIVIENDA — luminoso full-bleed -->
+      <div class="alt-banner alt-full" data-b="0" data-active="1" data-nav="light" style="background:#fff">
+        <img class="alt-bimg" src="assets/hero-keys.jpg" alt="Vivienda en Cartagena" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:80% 24%">
+        <div style="position:absolute;inset:0;background:linear-gradient(92deg,rgba(255,255,255,.97) 0%,rgba(255,255,255,.9) 33%,rgba(255,255,255,.52) 56%,rgba(255,255,255,0) 80%)"></div>
+        <div style="position:absolute;inset:0;background:linear-gradient(0deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 24%)"></div>
+        <div class="hero-wrap">
+          <div class="hero-rise" style="max-width:640px">
+            <h1 class="hero-h" style="color:#062743;font-size:clamp(32px,4.4vw,54px);margin-bottom:16px">Cartagena <span style="color:#A6801E;white-space:nowrap">entera</span>, a la altura de tu decisión.</h1>
+            <p class="hero-p" style="color:#6b7c93;max-width:500px;margin:0 0 22px">Comprar, arrendar, invertir o alojarte por unos días — en cada zona de la ciudad, con el nivel que tu decisión merece.</p>
+            <a href="ALTORRA Resultados.dc.html" class="btn-sig">Explorar propiedades<span class="arw"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+            <div style="display:flex;align-items:center;gap:11px;margin-top:24px;flex-wrap:wrap">
+              <span style="font-size:10.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#6b7c93">Seguridad</span><span style="width:4px;height:4px;border-radius:50%;background:#D4AF37"></span>
+              <span style="font-size:10.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#6b7c93">Legalidad</span><span style="width:4px;height:4px;border-radius:50%;background:#D4AF37"></span>
+              <span style="font-size:10.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#6b7c93">Confianza</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B1 · INVERSIÓN — panel blanco sólido sobre imagen viva -->
+      <div class="alt-banner alt-full" data-b="1" data-active="0" data-nav="light" style="background:#fff">
+        <img class="alt-bimg" src="assets/hero-invierte.jpg" alt="Desarrollo residencial frente al mar en Cartagena" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 54%">
+        <div class="hero-wrap">
+          <div class="hero-rise" style="max-width:520px">
+            <div style="background:#fff;border-top:3px solid #D4AF37;border-radius:3px 3px 14px 14px;padding:clamp(22px,2.4vw,30px);box-shadow:0 46px 100px -38px rgba(27,39,51,.5)">
+              <h1 class="hero-h" style="color:#062743;font-size:clamp(29px,3.6vw,46px);margin-bottom:12px">Invierte donde la ciudad <span style="color:#A6801E;white-space:nowrap">crece</span>.</h1>
+              <div style="display:flex;align-items:stretch;border-top:1px solid rgba(27,39,51,.1);padding-top:16px;margin-bottom:18px">
+                <div style="flex:1;min-width:0"><div style="font-family:'Playfair Display',serif;font-size:clamp(22px,2.5vw,27px);font-weight:700;color:#062743;line-height:1">+12%</div><div style="font-size:11px;color:#98a9ba;font-weight:600;margin-top:5px;letter-spacing:.02em">valorización anual</div></div>
+                <div style="width:1px;background:rgba(27,39,51,.1);margin:2px clamp(10px,1.4vw,18px)"></div>
+                <div style="flex:1;min-width:0"><div style="font-family:'Playfair Display',serif;font-size:clamp(22px,2.5vw,27px);font-weight:700;color:#062743;line-height:1">8–11%</div><div style="font-size:11px;color:#98a9ba;font-weight:600;margin-top:5px;letter-spacing:.02em">ROI en USD</div></div>
+                <div style="width:1px;background:rgba(27,39,51,.1);margin:2px clamp(10px,1.4vw,18px)"></div>
+                <div style="flex:1;min-width:0"><div style="font-family:'Playfair Display',serif;font-size:clamp(22px,2.5vw,27px);font-weight:700;color:#062743;line-height:1">3</div><div style="font-size:11px;color:#98a9ba;font-weight:600;margin-top:5px;letter-spacing:.02em">zonas premium</div></div>
+              </div>
+              <a href="ALTORRA Portal.dc.html#invertir" style="display:inline-flex;align-items:center;padding:14px 30px;border-radius:999px;background:linear-gradient(135deg,#EBD27E,#D4AF37 55%,#A6801E);color:#062743;font-weight:700;font-size:14.5px;text-decoration:none;transition:transform .3s,box-shadow .3s" style-hover="transform:translateY(-2px);">Ver oportunidades</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B2 · CORTA ESTANCIA — full-bleed + tarjeta glass -->
+      <div class="alt-banner alt-full" data-b="2" data-active="0" data-nav="light" style="background:#fff">
+        <img class="alt-bimg" src="assets/hero-estancia.jpg" alt="Terraza con piscina al atardecer sobre el mar Caribe, Cartagena" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 46%">
+        <div class="hero-wrap">
+          <div class="hero-rise" style="max-width:560px">
+            <div style="background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.9);border-radius:24px;padding:clamp(20px,2.4vw,28px);box-shadow:0 44px 92px -34px rgba(27,39,51,.42)">
+              <h1 class="hero-h" style="color:#062743;font-size:clamp(29px,3.7vw,46px);margin-bottom:10px">Vive Cartagena por <span style="color:#A6801E;white-space:nowrap">unos días</span>.</h1>
+              <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;flex-wrap:wrap">
+                <span style="display:inline-flex;align-items:center;gap:7px"><svg width="16" height="16" viewBox="0 0 24 24" fill="#D4AF37" stroke="none"><path d="M12 2l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 18.6 6.1 20.8l1.3-6.6L2.5 9l6.6-.8z"></path></svg><span style="color:#062743;font-weight:700;font-size:14px">4.97</span><span style="color:#6b7c93;font-size:13px">· 128 reseñas</span></span>
+                <span style="width:4px;height:4px;border-radius:50%;background:rgba(27,39,51,.28)"></span>
+                <span style="color:#6b7c93;font-size:13px">Desde <b style="color:#A6801E">$420k</b> / noche</span>
+              </div>
+              <p class="hero-p" style="color:#6b7c93;margin:0 0 16px">Propiedades verificadas dentro de la ciudad amurallada, listas para habitar, con anfitrión que responde.</p>
+              <a href="ALTORRA Estancias.dc.html" style="display:inline-flex;align-items:center;gap:10px;padding:13px 24px;border-radius:999px;background:#fff;border:1.5px solid #D4AF37;color:#A6801E;font-weight:600;font-size:14px;text-decoration:none;transition:background .3s,color .3s,border-color .3s" style-hover="background:linear-gradient(135deg,#EBD27E,#D4AF37);color:#062743;border-color:transparent">Descubrir estancias</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B3 · PROPIETARIOS — split plata + índice de pasos -->
+      <div class="alt-banner alt-split" data-b="3" data-active="0" data-nav="light" style="background:var(--surface)">
+        <div class="hero-wrap">
+          <div class="split-grid hero-rise">
+            <div class="split-media">
+              <div class="split-frame"><img src="assets/villa-modern.jpg" alt="Administración de inmuebles"></div>
+            </div>
+            <div class="split-text" style="max-width:520px">
+              <h1 class="hero-h" style="color:#062743;margin-bottom:18px">Tu inmueble en las <span style="color:#A6801E;white-space:nowrap">mejores manos</span>.</h1>
+              <p class="hero-p" style="color:#6b7c93;max-width:440px;margin:0 0 16px">Lo publicamos, lo mostramos y lo administramos con el estándar ALTORRA, de principio a fin.</p>
+              <div style="display:flex;align-items:center;gap:13px;margin-bottom:20px;flex-wrap:wrap">
+                <span class="hero-step" style="display:flex;align-items:center;gap:8px"><span style="font-family:'Playfair Display',serif;font-size:15px;color:#A6801E">01</span><span style="font-size:13px;font-weight:600;color:#062743">Publicamos</span></span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(166,128,30,.55)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+                <span class="hero-step" style="display:flex;align-items:center;gap:8px"><span style="font-family:'Playfair Display',serif;font-size:15px;color:#A6801E">02</span><span style="font-size:13px;font-weight:600;color:#062743">Mostramos</span></span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(166,128,30,.55)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg>
+                <span class="hero-step" style="display:flex;align-items:center;gap:8px"><span style="font-family:'Playfair Display',serif;font-size:15px;color:#A6801E">03</span><span style="font-size:13px;font-weight:600;color:#062743">Administramos</span></span>
+              </div>
+              <a href="ALTORRA Publica.dc.html" style="display:inline-flex;align-items:center;gap:10px;padding:13px 26px;border-radius:999px;background:transparent;border:1.5px solid #D4AF37;color:#A6801E;font-weight:600;font-size:14px;text-decoration:none;transition:background .3s,color .3s,border-color .3s" style-hover="background:linear-gradient(135deg,#EBD27E,#D4AF37);color:#062743;border-color:transparent">Publicar mi inmueble</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Control: dots + barra de progreso (auto, sin flechas) -->
+      <div class="hero-nav">
+        <div class="hero-nav-in">
+          <div class="seg-row">
+            <span class="seg" data-seg-i="0" data-on="1"><span class="segfill"></span></span>
+            <span class="seg" data-seg-i="1"><span class="segfill"></span></span>
+            <span class="seg" data-seg-i="2"><span class="segfill"></span></span>
+            <span class="seg" data-seg-i="3"><span class="segfill"></span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-search" style="position:relative;z-index:6;max-width:1080px;margin-left:auto;margin-right:auto;padding:0 clamp(20px,5vw,40px)">
+      <div style="background:var(--surface);border:0;border-radius:26px;box-shadow:var(--nm-up),0 34px 80px -42px rgba(6,39,67,.42);padding:clamp(16px,1.6vw,20px)">
+        <div style="display:inline-flex;background:var(--surface);box-shadow:var(--nm-in-sm);border-radius:999px;padding:5px;gap:3px;flex-wrap:wrap">
+          <button onClick="{{ pickTab }}" data-seg="1" data-ph="¿En qué zona quieres comprar?" style="padding:9px 20px;border:0;border-radius:999px;background:var(--surface);box-shadow:4px 4px 9px rgba(6,39,67,.15),-4px -4px 8px #fff;color:#062743;font-family:'Hanken Grotesk';font-weight:600;font-size:13.5px;cursor:pointer;transition:background .3s,color .3s,box-shadow .3s">Comprar</button>
+          <button onClick="{{ pickTab }}" data-seg="1" data-ph="¿En qué zona quieres arrendar?" style="padding:9px 20px;border:0;border-radius:999px;background:transparent;color:#6b7c93;font-family:'Hanken Grotesk';font-weight:600;font-size:13.5px;cursor:pointer;transition:background .3s,color .3s,box-shadow .3s">Arrendar</button>
+          <button onClick="{{ pickTab }}" data-seg="1" data-ph="¿En qué zona te quieres alojar?" style="padding:9px 20px;border:0;border-radius:999px;background:transparent;color:#6b7c93;font-family:'Hanken Grotesk';font-weight:600;font-size:13.5px;cursor:pointer;transition:background .3s,color .3s,box-shadow .3s">Estancias</button>
+          <button onClick="{{ pickTab }}" data-seg="1" data-ph="¿En qué zona quieres invertir?" style="padding:9px 20px;border:0;border-radius:999px;background:transparent;color:#6b7c93;font-family:'Hanken Grotesk';font-weight:600;font-size:13.5px;cursor:pointer;transition:background .3s,color .3s,box-shadow .3s">Invertir</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:12px">
+          <div style="flex:1;min-width:200px;display:flex;align-items:center;gap:13px;padding:12px 18px;background:var(--surface);box-shadow:var(--nm-in-sm);border-radius:16px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.6"></circle></svg>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#98a9ba;margin-bottom:2px">Zona</div>
+              <input id="hero-field" placeholder="¿En qué zona quieres comprar?" style="width:100%;border:0;outline:none;background:none;font-size:15.5px;color:#062743;padding:0">
+            </div>
+          </div>
+          <div class="alt-vdiv" style="width:1px;align-self:stretch;background:rgba(27,39,51,.1);margin:6px 4px"></div>
+          <div style="min-width:150px;display:flex;align-items:center;gap:13px;padding:12px 18px;background:var(--surface);box-shadow:var(--nm-in-sm);border-radius:16px;cursor:pointer">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M3 10.5 12 4l9 6.5"></path><path d="M5 9.5V20h14V9.5"></path><path d="M9.5 20v-6h5v6"></path></svg>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#98a9ba;margin-bottom:2px">Tipo</div>
+              <div style="font-size:15.5px;color:#062743;white-space:nowrap">Todos</div>
+            </div>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#98a9ba" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M6 9l6 6 6-6"></path></svg>
+          </div>
+          <a href="ALTORRA Resultados.dc.html" aria-label="Buscar" style="flex:none;width:64px;height:64px;border-radius:50%;background:linear-gradient(145deg,#EBD27E 0%,#D4AF37 52%,#A6801E 100%);display:flex;align-items:center;justify-content:center;transition:transform .3s,box-shadow .3s;margin-left:auto;box-shadow:6px 6px 14px rgba(6,39,67,.22),-5px -5px 12px rgba(255,255,255,.7),inset 0 2px 3px rgba(255,255,255,.55),inset 0 -4px 7px rgba(120,90,20,.4)" style-hover="transform:scale(1.06);"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="#062743" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="maneras" style="max-width:1300px;margin:0 auto;padding:clamp(64px,9vw,124px) clamp(20px,5vw,64px)">
+    <div data-reveal="" style="max-width:640px;margin-bottom:clamp(40px,5vw,60px)">
+      <div style="margin-bottom:14px">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#A6801E">Cuatro maneras de vivir Cartagena</span>
+      </div>
+      <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(32px,4.4vw,52px);line-height:1.05;letter-spacing:-.01em;color:#062743;margin:0;text-wrap:balance">Una sola casa para cada decisión de vivienda.</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(430px,100%),1fr));gap:clamp(14px,1.6vw,22px)">
+
+      <div data-reveal="" style="position:relative;border-radius:22px;overflow:hidden;min-height:clamp(280px,27vw,360px);box-shadow:0 2px 6px rgba(27,39,51,.05),0 30px 60px -36px rgba(27,39,51,.36);transition:transform .55s cubic-bezier(.2,.75,.25,1),box-shadow .55s" style-hover="transform:translateY(-6px);box-shadow:0 6px 12px rgba(27,39,51,.08),0 44px 84px -34px rgba(27,39,51,.44)">
+        <image-slot id="man-comprar" shape="rect" fit="cover" src="assets/villa-modern.jpg" placeholder="Arrastra una foto" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 32%,rgba(27,39,51,.32) 60%,rgba(27,39,51,.87) 100%);pointer-events:none"></div>
+        <div style="position:absolute;left:0;right:0;bottom:0;padding:clamp(26px,2.6vw,34px);pointer-events:none">
+          <div style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:17px;color:#EBD27E;margin-bottom:8px">01</div>
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(28px,2.9vw,36px);line-height:1;color:#fff;margin:0 0 9px">Comprar</h3>
+          <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,.82);margin:0 0 16px;max-width:330px">Tu hogar o tu próxima inversión, con acompañamiento legal de principio a fin.</p>
+          <a href="ALTORRA Resultados.dc.html" class="btn-quiet">Explorar<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        </div>
+      </div>
+
+      <div data-reveal="" style="position:relative;border-radius:22px;overflow:hidden;min-height:clamp(280px,27vw,360px);box-shadow:0 2px 6px rgba(27,39,51,.05),0 30px 60px -36px rgba(27,39,51,.36);transition:transform .55s cubic-bezier(.2,.75,.25,1),box-shadow .55s" style-hover="transform:translateY(-6px);box-shadow:0 6px 12px rgba(27,39,51,.08),0 44px 84px -34px rgba(27,39,51,.44)">
+        <image-slot id="man-arrendar" shape="rect" fit="cover" src="assets/chalet-dusk.jpg" placeholder="Arrastra una foto" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 32%,rgba(27,39,51,.32) 60%,rgba(27,39,51,.87) 100%);pointer-events:none"></div>
+        <div style="position:absolute;left:0;right:0;bottom:0;padding:clamp(26px,2.6vw,34px);pointer-events:none">
+          <div style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:17px;color:#EBD27E;margin-bottom:8px">02</div>
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(28px,2.9vw,36px);line-height:1;color:#fff;margin:0 0 9px">Arrendar</h3>
+          <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,.82);margin:0 0 16px;max-width:330px">Contratos claros y estudios serios. Vive tranquilo, entrega tranquilo.</p>
+          <a href="ALTORRA Resultados.dc.html" class="btn-quiet">Explorar<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        </div>
+      </div>
+
+      <div data-reveal="" style="position:relative;border-radius:22px;overflow:hidden;min-height:clamp(280px,27vw,360px);box-shadow:0 2px 6px rgba(27,39,51,.05),0 30px 60px -36px rgba(27,39,51,.36);transition:transform .55s cubic-bezier(.2,.75,.25,1),box-shadow .55s" style-hover="transform:translateY(-6px);box-shadow:0 6px 12px rgba(27,39,51,.08),0 44px 84px -34px rgba(27,39,51,.44)">
+        <image-slot id="man-invertir" shape="rect" fit="cover" src="assets/estate-golden.jpg" placeholder="Arrastra una foto" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 32%,rgba(27,39,51,.32) 60%,rgba(27,39,51,.87) 100%);pointer-events:none"></div>
+        <div style="position:absolute;left:0;right:0;bottom:0;padding:clamp(26px,2.6vw,34px);pointer-events:none">
+          <div style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:17px;color:#EBD27E;margin-bottom:8px">03</div>
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(28px,2.9vw,36px);line-height:1;color:#fff;margin:0 0 9px">Invertir</h3>
+          <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,.82);margin:0 0 16px;max-width:330px">Rentabilidad y valorización en la ciudad amurallada, con cifras sobre la mesa.</p>
+          <a href="ALTORRA Portal.dc.html#invertir" class="btn-quiet">Explorar<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        </div>
+      </div>
+
+      <div data-reveal="" style="position:relative;border-radius:22px;overflow:hidden;min-height:clamp(280px,27vw,360px);box-shadow:0 2px 6px rgba(27,39,51,.05),0 30px 60px -36px rgba(27,39,51,.36);transition:transform .55s cubic-bezier(.2,.75,.25,1),box-shadow .55s" style-hover="transform:translateY(-6px);box-shadow:0 6px 12px rgba(27,39,51,.08),0 44px 84px -34px rgba(27,39,51,.44)">
+        <image-slot id="man-estancias" shape="rect" fit="cover" src="assets/villa-pool.jpg" placeholder="Arrastra una foto" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 32%,rgba(27,39,51,.32) 60%,rgba(27,39,51,.87) 100%);pointer-events:none"></div>
+        <div style="position:absolute;left:0;right:0;bottom:0;padding:clamp(26px,2.6vw,34px);pointer-events:none">
+          <div style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:17px;color:#EBD27E;margin-bottom:8px">04</div>
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(28px,2.9vw,36px);line-height:1;color:#fff;margin:0 0 9px">Estancias</h3>
+          <p style="font-size:14px;line-height:1.55;color:rgba(255,255,255,.82);margin:0 0 16px;max-width:330px">Vive Cartagena por unos días en propiedades verificadas, listas para habitar.</p>
+          <a href="ALTORRA Estancias.dc.html" class="btn-quiet">Explorar<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section style="background:#f2f6f9;color:#062743;overflow:hidden">
+    <div style="max-width:1300px;margin:0 auto;padding:0 clamp(20px,5vw,64px)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(400px,100%),1fr));gap:clamp(24px,4vw,64px);align-items:center">
+        <div data-reveal="" style="padding:clamp(56px,7vw,104px) 0">
+          <div style="margin-bottom:16px">
+            <span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#A6801E">Propiedad del día</span>
+          </div>
+          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(34px,4.4vw,54px);line-height:1.02;letter-spacing:-.01em;margin:0 0 18px;text-wrap:balance">Penthouse frente al mar, en Bocagrande.</h2>
+          <p style="font-size:clamp(15px,1.5vw,18px);line-height:1.62;color:#6b7c93;margin:0 0 32px;max-width:440px">Dos pisos, terraza privada con piscina y vista abierta a la bahía. La última unidad de un edificio icónico.</p>
+          <div style="display:flex;gap:clamp(24px,3.6vw,48px);flex-wrap:wrap;margin-bottom:34px">
+            <div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(26px,3vw,34px);line-height:1;margin-bottom:5px">4</div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#A6801E">Alcobas</div>
+            </div>
+            <div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(26px,3vw,34px);line-height:1;margin-bottom:5px">4</div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#A6801E">Baños</div>
+            </div>
+            <div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(26px,3vw,34px);line-height:1;margin-bottom:5px">320<span style="font-size:15px"> m²</span></div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#A6801E">Área</div>
+            </div>
+            <div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(26px,3vw,34px);line-height:1;margin-bottom:5px">3</div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#A6801E">Parqueaderos</div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:24px;flex-wrap:wrap">
+            <div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#6b7c93;margin-bottom:4px">Precio</div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(26px,3vw,34px);line-height:1">$3.200.000.000</div>
+            </div>
+            <a href="ALTORRA Ficha.dc.html" class="btn-sweep">Ver ficha completa<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+          </div>
+        </div>
+        <div data-reveal="" style="position:relative;align-self:stretch;min-height:clamp(340px,42vw,560px);margin:clamp(0px,3vw,40px) 0;border-radius:22px;overflow:hidden;box-shadow:0 40px 90px -40px rgba(6,39,67,.55)">
+          <image-slot id="feat-hero" shape="rect" fit="cover" src="assets/estate-golden.jpg" placeholder="Arrastra la foto principal" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="venta" style="background:#f2f6f9;overflow:hidden">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(60px,8vw,110px) clamp(20px,5vw,64px)">
+      <div data-reveal="" data-railwrap="" style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:clamp(30px,4vw,46px)">
+        <div>
+          <div style="margin-bottom:12px"><span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#A6801E">En venta</span></div>
+          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(31px,4.2vw,50px);line-height:1.02;letter-spacing:-.01em;color:#062743;margin:0">Explora el portafolio en venta.</h2>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <a href="ALTORRA Resultados.dc.html" class="link-ul">Comparar todas<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+          <div style="display:flex;gap:9px">
+            <button aria-label="Anterior" class="rnav" onClick="{{ railPrev }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+            <button aria-label="Siguiente" class="rnav" onClick="{{ railNext }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div data-railwrap="" data-reveal="">
+        <div class="arail">
+
+          <div class="lu-card">
+            <div style="position:relative;height:222px;overflow:hidden;background:linear-gradient(160deg,#e7eef4,#d3e0ea)">
+              <img class="lu-img" src="assets/villa-pool.jpg" alt="Apartamento en Castillogrande" style="width:100%;height:100%;object-fit:cover;object-position:center 60%">
+              <div style="position:absolute;top:13px;left:13px;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.94);padding:6px 12px;border-radius:999px;font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#062743"><span style="width:6px;height:6px;border-radius:50%;background:#D4AF37"></span>En venta</div>
+              <button onClick="{{ toggleFav }}" data-on="0" style="position:absolute;top:12px;right:12px;width:33px;height:33px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #D4AF37;color:#A6801E;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg></button>
+            </div>
+            <div style="padding:22px 22px 24px;text-align:center">
+              <div style="font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#A6801E;margin-bottom:6px">Castillogrande</div>
+              <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:25px;line-height:1.05;color:#062743;margin:0 0 4px">Torre Marea</h3>
+              <p style="font-size:13px;line-height:1.4;color:#6b7c93;margin:0 0 13px">Vista abierta a la bahía.</p>
+              <div style="display:flex;justify-content:center;gap:7px;margin-bottom:15px"><span class="sw" style="background:#062743"></span><span class="sw" style="background:#A6801E"></span><span class="sw" style="background:#c7d3dd"></span><span style="font-size:11px;font-weight:600;color:#98a9ba;align-self:center;margin-left:2px">3 tipologías</span></div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:14px;font-size:12px;font-weight:500;color:#6b7c93;margin-bottom:16px"><span>3 hab.</span><span style="width:3px;height:3px;border-radius:50%;background:#cdd8e2"></span><span>3 baños</span><span style="width:3px;height:3px;border-radius:50%;background:#cdd8e2"></span><span>142 m²</span></div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;color:#062743">Desde $1.450M</div>
+              <div style="font-size:11.5px;color:#98a9ba;margin-top:3px">o crédito desde $6.2M/mes</div>
+            </div>
+          </div>
+
+          <div class="lu-card">
+            <div style="position:relative;height:222px;overflow:hidden;background:linear-gradient(160deg,#efeae2,#e2d8c8)">
+              <img class="lu-img" src="assets/villa-modern.jpg" alt="Casa en Manga" style="width:100%;height:100%;object-fit:cover">
+              <div style="position:absolute;top:13px;left:13px;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.94);padding:6px 12px;border-radius:999px;font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#062743"><span style="width:6px;height:6px;border-radius:50%;background:#D4AF37"></span>En venta</div>
+              <button onClick="{{ toggleFav }}" data-on="0" style="position:absolute;top:12px;right:12px;width:33px;height:33px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #D4AF37;color:#A6801E;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg></button>
+            </div>
+            <div style="padding:22px 22px 24px;text-align:center">
+              <div style="font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#A6801E;margin-bottom:6px">Manga</div>
+              <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:25px;line-height:1.05;color:#062743;margin:0 0 4px">Casa Republicana</h3>
+              <p style="font-size:13px;line-height:1.4;color:#6b7c93;margin:0 0 13px">Patrimonio restaurado con alma.</p>
+              <div style="display:flex;justify-content:center;gap:7px;margin-bottom:15px"><span class="sw" style="background:#8a6d1f"></span><span class="sw" style="background:#062743"></span><span style="font-size:11px;font-weight:600;color:#98a9ba;align-self:center;margin-left:2px">2 tipologías</span></div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:14px;font-size:12px;font-weight:500;color:#6b7c93;margin-bottom:16px"><span>4 hab.</span><span style="width:3px;height:3px;border-radius:50%;background:#cdd8e2"></span><span>3 baños</span><span style="width:3px;height:3px;border-radius:50%;background:#cdd8e2"></span><span>210 m²</span></div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;color:#062743">Desde $980M</div>
+              <div style="font-size:11.5px;color:#98a9ba;margin-top:3px">o crédito desde $4.1M/mes</div>
+            </div>
+          </div>
+
+          <div class="lu-card">
+            <div style="position:relative;height:222px;overflow:hidden;background:linear-gradient(160deg,#e6ede9,#d0e0d6)">
+              <img class="lu-img" src="assets/estate-golden.jpg" alt="Villa en Bocagrande" style="width:100%;height:100%;object-fit:cover">
+              <div style="position:absolute;top:13px;left:13px;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.94);padding:6px 12px;border-radius:999px;font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#062743"><span style="width:6px;height:6px;border-radius:50%;background:#D4AF37"></span>En venta</div>
+              <button onClick="{{ toggleFav }}" data-on="0" style="position:absolute;top:12px;right:12px;width:33px;height:33px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #D4AF37;color:#A6801E;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg></button>
+            </div>
+            <div style="padding:22px 22px 24px;text-align:center">
+              <div style="font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#A6801E;margin-bottom:6px">Bocagrande</div>
+              <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:25px;line-height:1.05;color:#062743;margin:0 0 4px">Penthouse Dorado</h3>
+              <p style="font-size:13px;line-height:1.4;color:#6b7c93;margin:0 0 13px">Terraza privada con piscina.</p>
+              <div style="display:flex;justify-content:center;gap:7px;margin-bottom:15px"><span class="sw" style="background:#EBD27E"></span><span class="sw" style="background:#A6801E"></span><span class="sw" style="background:#062743"></span><span class="sw" style="background:#c7d3dd"></span><span style="font-size:11px;font-weight:600;color:#98a9ba;align-self:center;margin-left:2px">única</span></div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:14px;font-size:12px;font-weight:500;color:#6b7c93;margin-bottom:16px"><span>4 hab.</span><span style="width:3px;height:3px;border-radius:50%;background:#cdd8e2"></span><span>4 baños</span><span style="width:3px;height:3px;border-radius:50%;background:#cdd8e2"></span><span>320 m²</span></div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;color:#062743">Desde $3.200M</div>
+              <div style="font-size:11.5px;color:#98a9ba;margin-top:3px">o crédito desde $13.6M/mes</div>
+            </div>
+          </div>
+
+          <div class="lu-card">
+            <div style="position:relative;height:222px;overflow:hidden;background:linear-gradient(160deg,#e9e6ef,#d8d2e4)">
+              <img class="lu-img" src="assets/hero-invierte.jpg" alt="Proyecto en Centro Histórico" style="width:100%;height:100%;object-fit:cover">
+              <div style="position:absolute;top:13px;left:13px;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.94);padding:6px 12px;border-radius:999px;font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#062743"><span style="width:6px;height:6px;border-radius:50%;background:#D4AF37"></span>Sobre planos</div>
+              <button onClick="{{ toggleFav }}" data-on="0" style="position:absolute;top:12px;right:12px;width:33px;height:33px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #D4AF37;color:#A6801E;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg></button>
+            </div>
+            <div style="padding:22px 22px 24px;text-align:center">
+              <div style="font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#A6801E;margin-bottom:6px">Centro Histórico</div>
+              <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:25px;line-height:1.05;color:#062743;margin:0 0 4px">Claustro 1620</h3>
+              <p style="font-size:13px;line-height:1.4;color:#6b7c93;margin:0 0 13px">Lofts dentro de la muralla.</p>
+              <div style="display:flex;justify-content:center;gap:7px;margin-bottom:15px"><span class="sw" style="background:#062743"></span><span class="sw" style="background:#A6801E"></span><span class="sw" style="background:#c7d3dd"></span><span style="font-size:11px;font-weight:600;color:#98a9ba;align-self:center;margin-left:2px">4 tipologías</span></div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:14px;font-size:12px;font-weight:500;color:#6b7c93;margin-bottom:16px"><span>1–2 hab.</span><span style="width:3px;height:3px;border-radius:50%;background:#cdd8e2"></span><span>2 baños</span><span style="width:3px;height:3px;border-radius:50%;background:#cdd8e2"></span><span>68 m²</span></div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;color:#062743">Desde $720M</div>
+              <div style="font-size:11.5px;color:#98a9ba;margin-top:3px">entrega dic. 2026</div>
+            </div>
+          </div>
+
+          <div class="lu-card">
+            <div style="position:relative;height:222px;overflow:hidden;background:linear-gradient(160deg,#e7eef4,#cddbe6)">
+              <img class="lu-img" src="assets/hero-keys.jpg" alt="Apartamento en Getsemaní" style="width:100%;height:100%;object-fit:cover;object-position:center 40%">
+              <div style="position:absolute;top:13px;left:13px;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.94);padding:6px 12px;border-radius:999px;font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#062743"><span style="width:6px;height:6px;border-radius:50%;background:#D4AF37"></span>En venta</div>
+              <button onClick="{{ toggleFav }}" data-on="0" style="position:absolute;top:12px;right:12px;width:33px;height:33px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #D4AF37;color:#A6801E;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg></button>
+            </div>
+            <div style="padding:22px 22px 24px;text-align:center">
+              <div style="font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#A6801E;margin-bottom:6px">Getsemaní</div>
+              <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:25px;line-height:1.05;color:#062743;margin:0 0 4px">Casa Trinidad</h3>
+              <p style="font-size:13px;line-height:1.4;color:#6b7c93;margin:0 0 13px">Colonial con patio interior.</p>
+              <div style="display:flex;justify-content:center;gap:7px;margin-bottom:15px"><span class="sw" style="background:#A6801E"></span><span class="sw" style="background:#062743"></span><span style="font-size:11px;font-weight:600;color:#98a9ba;align-self:center;margin-left:2px">2 tipologías</span></div>
+              <div style="display:flex;align-items:center;justify-content:center;gap:14px;font-size:12px;font-weight:500;color:#6b7c93;margin-bottom:16px"><span>3 hab.</span><span style="width:3px;height:3px;border-radius:50%;background:#cdd8e2"></span><span>2 baños</span><span style="width:3px;height:3px;border-radius:50%;background:#cdd8e2"></span><span>128 m²</span></div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;color:#062743">Desde $1.180M</div>
+              <div style="font-size:11.5px;color:#98a9ba;margin-top:3px">o crédito desde $5M/mes</div>
+            </div>
+          </div>
+
+          <a href="ALTORRA Resultados.dc.html" class="lu-card" style="width:clamp(220px,18vw,244px);background:linear-gradient(155deg,#062743,#0a3556);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:34px 26px;text-decoration:none">
+            <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:44px;line-height:1;color:#EBD27E;margin-bottom:8px">128</div>
+            <div style="font-size:14px;line-height:1.5;color:rgba(255,255,255,.72);margin-bottom:22px">propiedades en venta en toda la ciudad</div>
+            <span class="btn-onnavy">Ver todas<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="destacadas" style="background:var(--surface);border-top:1px solid rgba(27,39,51,.07)">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(64px,9vw,124px) clamp(20px,5vw,64px)">
+      <div data-reveal="" style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:clamp(36px,5vw,54px)">
+        <div>
+          <div style="margin-bottom:13px">
+            <span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#A6801E">Selección ALTORRA</span>
+          </div>
+          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(32px,4.4vw,52px);line-height:1.02;letter-spacing:-.01em;color:#062743;margin:0">Destacadas esta semana</h2>
+        </div>
+        <a href="ALTORRA Resultados.dc.html" class="btn-count">Ver todas <b>128</b><span class="trk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:clamp(20px,2.4vw,32px)">
+
+        <div data-reveal="" class="p-card" style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 5px rgba(27,39,51,.04),0 26px 54px -34px rgba(27,39,51,.26);transition:transform .5s cubic-bezier(.2,.75,.25,1),box-shadow .5s" style-hover="transform:translateY(-7px);box-shadow:0 4px 8px rgba(27,39,51,.06),0 40px 76px -34px rgba(27,39,51,.34)">
+          <div style="position:relative;overflow:hidden">
+            <img src="assets/villa-pool.jpg" alt="Apartamento con vista a la bahía" style="width:100%;height:250px;object-fit:cover;transition:transform 1s cubic-bezier(.2,.7,.2,1)" style-hover="transform:scale(1.05)">
+            <button onClick="{{ toggleFav }}" data-on="0" style="position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #D4AF37;color:#A6801E;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg></button>
+            <div style="position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.94);padding:7px 13px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#062743"><span style="width:6px;height:6px;border-radius:50%;background:#D4AF37"></span>En venta</div>
+          </div>
+          <div style="padding:24px 24px 26px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px">
+              <span style="font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#A6801E">Castillogrande</span>
+              <div style="display:flex;align-items:center;gap:12px;font-size:12.5px;font-weight:500;color:#6b7c93"><span style="display:inline-flex;align-items:center;gap:5px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7"></path><path d="M3 15h18"></path><path d="M7 11V9h4v2"></path><path d="M13 11V9h4v2"></path></svg>3</span><span style="display:inline-flex;align-items:center;gap:5px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12V6.5a2 2 0 0 1 3.7-1"></path><path d="M3 12h18v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"></path><path d="M7.5 18l-1 2.5M16.5 18l1 2.5"></path></svg>3</span><span style="display:inline-flex;align-items:center;gap:5px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="1"></rect><path d="M9 4v3M4 9h3M15 20v-3M20 15h-3"></path></svg>142 m²</span></div>
+            </div>
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:24px;line-height:1.12;color:#062743;margin:0 0 16px">Apartamento con vista a la bahía</h3>
+            <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(27,39,51,.08);padding-top:15px">
+              <span style="font-weight:600;font-size:18px;color:#6b7c93"><span style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#98a9ba;margin-right:5px">Desde</span>$1.450.000.000</span>
+              <a href="ALTORRA Ficha.dc.html" aria-label="Ver ficha" class="orb"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+            </div>
+          </div>
+        </div>
+
+        <div data-reveal="" class="p-card" style="background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 2px 5px rgba(27,39,51,.04),0 26px 54px -34px rgba(27,39,51,.26);transition:transform .5s cubic-bezier(.2,.75,.25,1),box-shadow .5s" style-hover="transform:translateY(-7px);box-shadow:0 4px 8px rgba(27,39,51,.06),0 40px 76px -34px rgba(27,39,51,.34)">
+          <div style="position:relative;overflow:hidden">
+            <img src="assets/villa-modern.jpg" alt="Casa republicana restaurada" style="width:100%;height:250px;object-fit:cover;transition:transform 1s cubic-bezier(.2,.7,.2,1)" style-hover="transform:scale(1.05)">
+            <button onClick="{{ toggleFav }}" data-on="0" style="position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #D4AF37;color:#A6801E;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg></button>
+            <div style="position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.94);padding:7px 13px;border-radius:999px;font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#062743"><span style="width:6px;height:6px;border-radius:50%;background:#D4AF37"></span>En venta</div>
+          </div>
+          <div style="padding:24px 24px 26px">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px">
+              <span style="font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#A6801E">Manga</span>
+              <div style="display:flex;align-items:center;gap:12px;font-size:12.5px;font-weight:500;color:#6b7c93"><span style="display:inline-flex;align-items:center;gap:5px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7"></path><path d="M3 15h18"></path><path d="M7 11V9h4v2"></path><path d="M13 11V9h4v2"></path></svg>4</span><span style="display:inline-flex;align-items:center;gap:5px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12V6.5a2 2 0 0 1 3.7-1"></path><path d="M3 12h18v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"></path><path d="M7.5 18l-1 2.5M16.5 18l1 2.5"></path></svg>3</span><span style="display:inline-flex;align-items:center;gap:5px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="1"></rect><path d="M9 4v3M4 9h3M15 20v-3M20 15h-3"></path></svg>210 m²</span></div>
+            </div>
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:24px;line-height:1.12;color:#062743;margin:0 0 16px">Casa republicana restaurada</h3>
+            <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(27,39,51,.08);padding-top:15px">
+              <span style="font-weight:600;font-size:18px;color:#6b7c93"><span style="font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#98a9ba;margin-right:5px">Desde</span>$980.000.000</span>
+              <a href="ALTORRA Ficha.dc.html" aria-label="Ver ficha" class="orb"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+            </div>
+          </div>
+        </div>
+
+        <div data-reveal="" style="background:linear-gradient(155deg,#062743,#062743);border-radius:20px;overflow:hidden;box-shadow:0 2px 5px rgba(27,39,51,.04),0 26px 54px -34px rgba(27,39,51,.3);display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:38px 34px;min-height:250px">
+          <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(30px,3.4vw,42px);line-height:1;color:#fff;margin-bottom:10px">128 propiedades</div>
+          <p style="font-size:14.5px;line-height:1.55;color:rgba(255,255,255,.7);margin:0 0 26px;max-width:230px">en venta, arriendo y corta estancia en toda Cartagena.</p>
+          <a href="ALTORRA Resultados.dc.html" class="btn-onnavy">Ver todas<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="arriendo" style="background:var(--surface);border-top:1px solid rgba(27,39,51,.07)">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(60px,8vw,110px) clamp(20px,5vw,64px)">
+      <div data-reveal="" style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:clamp(28px,4vw,44px)">
+        <div>
+          <div style="margin-bottom:12px"><span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#A6801E">En arriendo</span></div>
+          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(31px,4.2vw,50px);line-height:1.02;letter-spacing:-.01em;color:#062743;margin:0">Arriendos, con o sin administración.</h2>
+        </div>
+        <a href="ALTORRA Resultados.dc.html" class="btn-count">Ver arriendos <b>83</b><span class="trk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+      </div>
+
+      <div data-reveal="" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:clamp(18px,2.2vw,26px)">
+        <span style="font-size:12.5px;font-weight:600;color:#6b7c93;margin-right:4px">Mostrar:</span>
+        <button class="op-pill on" data-val="todos" onClick="{{ filterAdmin }}">Todos</button>
+        <button class="op-pill" data-val="con" onClick="{{ filterAdmin }}">Con administración</button>
+        <button class="op-pill" data-val="sin" onClick="{{ filterAdmin }}">Sin administración</button>
+      </div>
+
+      <div id="arriendo-stack" style="display:flex;flex-direction:column;gap:clamp(14px,1.6vw,18px)">
+
+        <div data-reveal="" class="lrow" data-admin="con" style="display:flex;flex-wrap:wrap;background:#fff;border:1px solid rgba(27,39,51,.1);border-radius:18px;overflow:hidden">
+          <div style="position:relative;width:clamp(200px,24vw,264px);min-height:180px;flex:1 1 200px;overflow:hidden">
+            <img class="lrow-img" src="assets/villa-modern.jpg" alt="Apartamento en El Laguito" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:6px;background:rgba(6,39,67,.82);color:#fff;padding:5px 11px;border-radius:999px;font-size:11px;font-weight:600"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>14 fotos</div>
+          </div>
+          <div style="flex:3 1 320px;padding:22px 26px;display:flex;flex-direction:column;justify-content:center;gap:9px;min-width:260px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#A6801E">Arriendo</span><span style="width:5px;height:5px;border-radius:50%;background:#d4af37"></span><span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:#6b7c93"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>El Laguito, Bocagrande</span></div>
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:24px;line-height:1.08;color:#062743;margin:0">Apartamento amoblado frente a la playa</h3>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:2px">
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">88 m²</span>
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">2 hab.</span>
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">2 baños</span>
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">1 garaje</span>
+              <span style="font-size:12px;font-weight:600;color:#A6801E;background:rgba(212,175,55,.12);padding:5px 11px;border-radius:8px">Amoblado</span>
+            </div>
+          </div>
+          <div style="flex:1 1 220px;border-left:1px solid rgba(27,39,51,.08);padding:22px 26px;display:flex;flex-direction:column;justify-content:center;gap:12px;min-width:210px">
+            <div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.06em;color:#98a9ba;margin-bottom:2px">Administración incluida</div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:27px;line-height:1;color:#062743">$4.200.000<span style="font-family:'Hanken Grotesk';font-size:13px;font-weight:500;color:#98a9ba"> /mes</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <a href="ALTORRA Ficha.dc.html" class="btn-count">Contactar<span class="trk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+              <a href="ALTORRA Ficha.dc.html" class="link-ul" style="font-size:13px">Ver</a>
+            </div>
+          </div>
+        </div>
+
+        <div data-reveal="" class="lrow" data-admin="sin" style="display:flex;flex-wrap:wrap;background:#fff;border:1px solid rgba(27,39,51,.1);border-radius:18px;overflow:hidden">
+          <div style="position:relative;width:clamp(200px,24vw,264px);min-height:180px;flex:1 1 200px;overflow:hidden">
+            <img class="lrow-img" src="assets/hero-keys.jpg" alt="Apartaestudio en Getsemaní" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 42%">
+            <div style="position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:6px;background:rgba(6,39,67,.82);color:#fff;padding:5px 11px;border-radius:999px;font-size:11px;font-weight:600"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>9 fotos</div>
+          </div>
+          <div style="flex:3 1 320px;padding:22px 26px;display:flex;flex-direction:column;justify-content:center;gap:9px;min-width:260px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#A6801E">Arriendo</span><span style="width:5px;height:5px;border-radius:50%;background:#d4af37"></span><span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:#6b7c93"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Getsemaní</span></div>
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:24px;line-height:1.08;color:#062743;margin:0">Apartaestudio de diseño en barrio histórico</h3>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:2px">
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">42 m²</span>
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">1 hab.</span>
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">1 baño</span>
+              <span style="font-size:12px;font-weight:600;color:#A6801E;background:rgba(212,175,55,.12);padding:5px 11px;border-radius:8px">Estrenar</span>
+            </div>
+          </div>
+          <div style="flex:1 1 220px;border-left:1px solid rgba(27,39,51,.08);padding:22px 26px;display:flex;flex-direction:column;justify-content:center;gap:12px;min-width:210px">
+            <div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.06em;color:#98a9ba;margin-bottom:2px">No incluye administración</div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:27px;line-height:1;color:#062743">$1.900.000<span style="font-family:'Hanken Grotesk';font-size:13px;font-weight:500;color:#98a9ba"> /mes</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <a href="ALTORRA Ficha.dc.html" class="btn-count">Contactar<span class="trk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+              <a href="ALTORRA Ficha.dc.html" class="link-ul" style="font-size:13px">Ver</a>
+            </div>
+          </div>
+        </div>
+
+        <div data-reveal="" class="lrow" data-admin="sin" style="display:flex;flex-wrap:wrap;background:#fff;border:1px solid rgba(27,39,51,.1);border-radius:18px;overflow:hidden">
+          <div style="position:relative;width:clamp(200px,24vw,264px);min-height:180px;flex:1 1 200px;overflow:hidden">
+            <img class="lrow-img" src="assets/chalet-dusk.jpg" alt="Casa en Manga" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:6px;background:rgba(6,39,67,.82);color:#fff;padding:5px 11px;border-radius:999px;font-size:11px;font-weight:600"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>21 fotos</div>
+          </div>
+          <div style="flex:3 1 320px;padding:22px 26px;display:flex;flex-direction:column;justify-content:center;gap:9px;min-width:260px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#A6801E">Arriendo</span><span style="width:5px;height:5px;border-radius:50%;background:#d4af37"></span><span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:#6b7c93"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Manga</span></div>
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:24px;line-height:1.08;color:#062743;margin:0">Casa familiar con jardín y estudio</h3>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:2px">
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">185 m²</span>
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">4 hab.</span>
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">3 baños</span>
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">2 garajes</span>
+            </div>
+          </div>
+          <div style="flex:1 1 220px;border-left:1px solid rgba(27,39,51,.08);padding:22px 26px;display:flex;flex-direction:column;justify-content:center;gap:12px;min-width:210px">
+            <div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.06em;color:#98a9ba;margin-bottom:2px">+ administración $650.000</div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:27px;line-height:1;color:#062743">$6.500.000<span style="font-family:'Hanken Grotesk';font-size:13px;font-weight:500;color:#98a9ba"> /mes</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <a href="ALTORRA Ficha.dc.html" class="btn-count">Contactar<span class="trk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+              <a href="ALTORRA Ficha.dc.html" class="link-ul" style="font-size:13px">Ver</a>
+            </div>
+          </div>
+        </div>
+
+        <div data-reveal="" class="lrow" data-admin="con" style="display:flex;flex-wrap:wrap;background:#fff;border:1px solid rgba(27,39,51,.1);border-radius:18px;overflow:hidden">
+          <div style="position:relative;width:clamp(200px,24vw,264px);min-height:180px;flex:1 1 200px;overflow:hidden">
+            <img class="lrow-img" src="assets/villa-pool.jpg" alt="Apartamento en Castillogrande" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:6px;background:rgba(6,39,67,.82);color:#fff;padding:5px 11px;border-radius:999px;font-size:11px;font-weight:600"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg>17 fotos</div>
+          </div>
+          <div style="flex:3 1 320px;padding:22px 26px;display:flex;flex-direction:column;justify-content:center;gap:9px;min-width:260px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#A6801E">Arriendo</span><span style="width:5px;height:5px;border-radius:50%;background:#d4af37"></span><span style="display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:#6b7c93"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Castillogrande</span></div>
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:24px;line-height:1.08;color:#062743;margin:0">Apartamento con balcón y vista a la bahía</h3>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:2px">
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">120 m²</span>
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">3 hab.</span>
+              <span style="font-size:12px;font-weight:600;color:#062743;background:#f2f6f9;padding:5px 11px;border-radius:8px">2 baños</span>
+              <span style="font-size:12px;font-weight:600;color:#A6801E;background:rgba(212,175,55,.12);padding:5px 11px;border-radius:8px">Vista mar</span>
+            </div>
+          </div>
+          <div style="flex:1 1 220px;border-left:1px solid rgba(27,39,51,.08);padding:22px 26px;display:flex;flex-direction:column;justify-content:center;gap:12px;min-width:210px">
+            <div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.06em;color:#98a9ba;margin-bottom:2px">Administración incluida</div>
+              <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:27px;line-height:1;color:#062743">$5.100.000<span style="font-family:'Hanken Grotesk';font-size:13px;font-weight:500;color:#98a9ba"> /mes</span></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <a href="ALTORRA Ficha.dc.html" class="btn-count">Contactar<span class="trk"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+              <a href="ALTORRA Ficha.dc.html" class="link-ul" style="font-size:13px">Ver</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="estancias-list" style="background:#f2f6f9;overflow:hidden">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(60px,8vw,110px) clamp(20px,5vw,64px)">
+      <div data-reveal="" data-railwrap="" style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:clamp(28px,4vw,44px)">
+        <div>
+          <div style="margin-bottom:12px"><span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#A6801E">Corta estancia</span></div>
+          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(31px,4.2vw,50px);line-height:1.02;letter-spacing:-.01em;color:#062743;margin:0">Quédate unos días.</h2>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <a href="ALTORRA Estancias.dc.html" class="link-ul">Ver todas<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+          <div style="display:flex;gap:9px">
+            <button aria-label="Anterior" class="rnav" onClick="{{ railPrev }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+            <button aria-label="Siguiente" class="rnav" onClick="{{ railNext }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div data-railwrap="" data-reveal="">
+        <div class="arail">
+
+          <a href="ALTORRA Estancias.dc.html" class="bnb" style="text-decoration:none;display:block">
+            <div style="position:relative;border-radius:16px;overflow:hidden;height:200px;margin-bottom:12px">
+              <img class="bnb-img" src="assets/hero-estancia.jpg" alt="Terraza con piscina" style="width:100%;height:100%;object-fit:cover">
+              <div style="position:absolute;top:11px;left:11px;background:rgba(255,255,255,.94);padding:5px 11px;border-radius:999px;font-size:10.5px;font-weight:700;color:#062743">Favorito entre huéspedes</div>
+              <button onClick="{{ toggleFav }}" data-on="0" style="position:absolute;top:9px;right:9px;width:31px;height:31px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #D4AF37;color:#A6801E;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg></button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:700;color:#062743">Penthouse en Bocagrande</span><span style="font-size:12.5px;font-weight:600;color:#062743;white-space:nowrap"><span style="color:#D4AF37">★</span> 4.98</span></div>
+            <div style="font-size:12.5px;color:#6b7c93;margin:3px 0 6px">Vista al mar · 6 huéspedes</div>
+            <div style="font-size:13.5px;color:#062743"><b style="font-weight:700">$680.000</b> COP noche</div>
+          </a>
+
+          <a href="ALTORRA Estancias.dc.html" class="bnb" style="text-decoration:none;display:block">
+            <div style="position:relative;border-radius:16px;overflow:hidden;height:200px;margin-bottom:12px">
+              <img class="bnb-img" src="assets/chalet-dusk.jpg" alt="Casa colonial" style="width:100%;height:100%;object-fit:cover">
+              <div style="position:absolute;top:11px;left:11px;background:rgba(255,255,255,.94);padding:5px 11px;border-radius:999px;font-size:10.5px;font-weight:700;color:#062743">Favorito entre huéspedes</div>
+              <button onClick="{{ toggleFav }}" data-on="0" style="position:absolute;top:9px;right:9px;width:31px;height:31px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #D4AF37;color:#A6801E;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg></button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:700;color:#062743">Casa colonial en el Centro</span><span style="font-size:12.5px;font-weight:600;color:#062743;white-space:nowrap"><span style="color:#D4AF37">★</span> 4.91</span></div>
+            <div style="font-size:12.5px;color:#6b7c93;margin:3px 0 6px">Patio y piscina · 8 huéspedes</div>
+            <div style="font-size:13.5px;color:#062743"><b style="font-weight:700">$1.150.000</b> COP noche</div>
+          </a>
+
+          <a href="ALTORRA Estancias.dc.html" class="bnb" style="text-decoration:none;display:block">
+            <div style="position:relative;border-radius:16px;overflow:hidden;height:200px;margin-bottom:12px">
+              <img class="bnb-img" src="assets/villa-pool.jpg" alt="Apartamento El Laguito" style="width:100%;height:100%;object-fit:cover">
+              <button onClick="{{ toggleFav }}" data-on="0" style="position:absolute;top:9px;right:9px;width:31px;height:31px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #D4AF37;color:#A6801E;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg></button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:700;color:#062743">Apartamento en El Laguito</span><span style="font-size:12.5px;font-weight:600;color:#062743;white-space:nowrap"><span style="color:#D4AF37">★</span> 4.86</span></div>
+            <div style="font-size:12.5px;color:#6b7c93;margin:3px 0 6px">Frente a la playa · 4 huéspedes</div>
+            <div style="font-size:13.5px;color:#062743"><b style="font-weight:700">$420.000</b> COP noche</div>
+          </a>
+
+          <a href="ALTORRA Estancias.dc.html" class="bnb" style="text-decoration:none;display:block">
+            <div style="position:relative;border-radius:16px;overflow:hidden;height:200px;margin-bottom:12px">
+              <img class="bnb-img" src="assets/villa-modern.jpg" alt="Loft en Getsemaní" style="width:100%;height:100%;object-fit:cover">
+              <div style="position:absolute;top:11px;left:11px;background:rgba(255,255,255,.94);padding:5px 11px;border-radius:999px;font-size:10.5px;font-weight:700;color:#062743">Favorito entre huéspedes</div>
+              <button onClick="{{ toggleFav }}" data-on="0" style="position:absolute;top:9px;right:9px;width:31px;height:31px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #D4AF37;color:#A6801E;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg></button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:700;color:#062743">Loft de autor en Getsemaní</span><span style="font-size:12.5px;font-weight:600;color:#062743;white-space:nowrap"><span style="color:#D4AF37">★</span> 5.0</span></div>
+            <div style="font-size:12.5px;color:#6b7c93;margin:3px 0 6px">Diseño · 2 huéspedes</div>
+            <div style="font-size:13.5px;color:#062743"><b style="font-weight:700">$390.000</b> COP noche</div>
+          </a>
+
+          <a href="ALTORRA Estancias.dc.html" class="bnb" style="text-decoration:none;display:block">
+            <div style="position:relative;border-radius:16px;overflow:hidden;height:200px;margin-bottom:12px">
+              <img class="bnb-img" src="assets/estate-golden.jpg" alt="Villa en Manga" style="width:100%;height:100%;object-fit:cover">
+              <button onClick="{{ toggleFav }}" data-on="0" style="position:absolute;top:9px;right:9px;width:31px;height:31px;border-radius:50%;background:rgba(255,255,255,.9);border:1px solid #D4AF37;color:#A6801E;cursor:pointer;display:flex;align-items:center;justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg></button>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-size:14px;font-weight:700;color:#062743">Villa con piscina en Manga</span><span style="font-size:12.5px;font-weight:600;color:#062743;white-space:nowrap"><span style="color:#D4AF37">★</span> 4.94</span></div>
+            <div style="font-size:12.5px;color:#6b7c93;margin:3px 0 6px">Jardín privado · 10 huéspedes</div>
+            <div style="font-size:13.5px;color:#062743"><b style="font-weight:700">$1.480.000</b> COP noche</div>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="max-width:1300px;margin:0 auto;padding:clamp(64px,9vw,124px) clamp(20px,5vw,64px)">
+    <div data-reveal="" style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:clamp(32px,4vw,50px)">
+      <div style="max-width:640px">
+        <div style="margin-bottom:14px">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#A6801E">Explora por zona</span>
+        </div>
+        <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(32px,4.4vw,52px);line-height:1.05;letter-spacing:-.01em;color:#062743;margin:0;text-wrap:balance">Cada rincón de Cartagena tiene su propia manera de vivirse.</h2>
+      </div>
+      <a href="ALTORRA Resultados.dc.html" class="link-ul"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>Ver el mapa</a>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(210px,100%),1fr));gap:clamp(12px,1.4vw,18px)">
+
+      <div data-reveal="" style="position:relative;border-radius:18px;overflow:hidden;min-height:clamp(240px,25vw,300px);box-shadow:var(--nm-up);transition:transform .5s cubic-bezier(.2,.75,.25,1),box-shadow .5s" style-hover="transform:translateY(-5px);box-shadow:var(--nm-up),0 34px 66px -36px rgba(6,39,67,.3)">
+        <image-slot id="zona-boca" shape="rect" fit="cover" src="assets/villa-pool.jpg" placeholder="Foto de zona" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 42%,rgba(27,39,51,.84) 100%);pointer-events:none"></div>
+        <a href="ALTORRA Resultados.dc.html" style="position:absolute;left:0;right:0;bottom:0;padding:22px;display:block;color:#fff">
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:23px;line-height:1;margin:0 0 6px;color:#fff">Bocagrande</h3>
+          <div style="font-size:12px;font-weight:600;letter-spacing:.04em;color:#EBD27E">42 propiedades</div>
+        </a>
+      </div>
+
+      <div data-reveal="" style="position:relative;border-radius:18px;overflow:hidden;min-height:clamp(240px,25vw,300px);box-shadow:var(--nm-up);transition:transform .5s cubic-bezier(.2,.75,.25,1),box-shadow .5s" style-hover="transform:translateY(-5px);box-shadow:var(--nm-up),0 34px 66px -36px rgba(6,39,67,.3)">
+        <image-slot id="zona-castillo" shape="rect" fit="cover" src="assets/estate-golden.jpg" placeholder="Foto de zona" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 42%,rgba(27,39,51,.84) 100%);pointer-events:none"></div>
+        <a href="ALTORRA Resultados.dc.html" style="position:absolute;left:0;right:0;bottom:0;padding:22px;display:block;color:#fff">
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:23px;line-height:1;margin:0 0 6px;color:#fff">Castillogrande</h3>
+          <div style="font-size:12px;font-weight:600;letter-spacing:.04em;color:#EBD27E">18 propiedades</div>
+        </a>
+      </div>
+
+      <div data-reveal="" style="position:relative;border-radius:18px;overflow:hidden;min-height:clamp(240px,25vw,300px);box-shadow:var(--nm-up);transition:transform .5s cubic-bezier(.2,.75,.25,1),box-shadow .5s" style-hover="transform:translateY(-5px);box-shadow:var(--nm-up),0 34px 66px -36px rgba(6,39,67,.3)">
+        <image-slot id="zona-centro" shape="rect" fit="cover" src="assets/chalet-dusk.jpg" placeholder="Foto de zona" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 42%,rgba(27,39,51,.84) 100%);pointer-events:none"></div>
+        <a href="ALTORRA Resultados.dc.html" style="position:absolute;left:0;right:0;bottom:0;padding:22px;display:block;color:#fff">
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:23px;line-height:1;margin:0 0 6px;color:#fff">Centro Histórico</h3>
+          <div style="font-size:12px;font-weight:600;letter-spacing:.04em;color:#EBD27E">27 propiedades</div>
+        </a>
+      </div>
+
+      <div data-reveal="" style="position:relative;border-radius:18px;overflow:hidden;min-height:clamp(240px,25vw,300px);box-shadow:var(--nm-up);transition:transform .5s cubic-bezier(.2,.75,.25,1),box-shadow .5s" style-hover="transform:translateY(-5px);box-shadow:var(--nm-up),0 34px 66px -36px rgba(6,39,67,.3)">
+        <image-slot id="zona-manga" shape="rect" fit="cover" src="assets/villa-modern.jpg" placeholder="Foto de zona" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 42%,rgba(27,39,51,.84) 100%);pointer-events:none"></div>
+        <a href="ALTORRA Resultados.dc.html" style="position:absolute;left:0;right:0;bottom:0;padding:22px;display:block;color:#fff">
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:23px;line-height:1;margin:0 0 6px;color:#fff">Manga</h3>
+          <div style="font-size:12px;font-weight:600;letter-spacing:.04em;color:#EBD27E">21 propiedades</div>
+        </a>
+      </div>
+
+      <div data-reveal="" style="position:relative;border-radius:18px;overflow:hidden;min-height:clamp(240px,25vw,300px);box-shadow:var(--nm-up);transition:transform .5s cubic-bezier(.2,.75,.25,1),box-shadow .5s" style-hover="transform:translateY(-5px);box-shadow:var(--nm-up),0 34px 66px -36px rgba(6,39,67,.3)">
+        <image-slot id="zona-getsemani" shape="rect" fit="cover" src="assets/villa-pool.jpg" placeholder="Foto de zona" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 42%,rgba(27,39,51,.84) 100%);pointer-events:none"></div>
+        <a href="ALTORRA Resultados.dc.html" style="position:absolute;left:0;right:0;bottom:0;padding:22px;display:block;color:#fff">
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:23px;line-height:1;margin:0 0 6px;color:#fff">Getsemaní</h3>
+          <div style="font-size:12px;font-weight:600;letter-spacing:.04em;color:#EBD27E">14 propiedades</div>
+        </a>
+      </div>
+
+      <div data-reveal="" style="position:relative;border-radius:18px;overflow:hidden;min-height:clamp(240px,25vw,300px);box-shadow:var(--nm-up);transition:transform .5s cubic-bezier(.2,.75,.25,1),box-shadow .5s" style-hover="transform:translateY(-5px);box-shadow:var(--nm-up),0 34px 66px -36px rgba(6,39,67,.3)">
+        <image-slot id="zona-crespo" shape="rect" fit="cover" src="assets/estate-golden.jpg" placeholder="Foto de zona" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 42%,rgba(27,39,51,.84) 100%);pointer-events:none"></div>
+        <a href="ALTORRA Resultados.dc.html" style="position:absolute;left:0;right:0;bottom:0;padding:22px;display:block;color:#fff">
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:23px;line-height:1;margin:0 0 6px;color:#fff">Crespo</h3>
+          <div style="font-size:12px;font-weight:600;letter-spacing:.04em;color:#EBD27E">16 propiedades</div>
+        </a>
+      </div>
+
+      <div data-reveal="" style="position:relative;border-radius:18px;overflow:hidden;min-height:clamp(240px,25vw,300px);box-shadow:var(--nm-up);transition:transform .5s cubic-bezier(.2,.75,.25,1),box-shadow .5s" style-hover="transform:translateY(-5px);box-shadow:var(--nm-up),0 34px 66px -36px rgba(6,39,67,.3)">
+        <image-slot id="zona-marbella" shape="rect" fit="cover" src="assets/hero-invierte.jpg" placeholder="Foto de zona" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 42%,rgba(27,39,51,.84) 100%);pointer-events:none"></div>
+        <a href="ALTORRA Resultados.dc.html" style="position:absolute;left:0;right:0;bottom:0;padding:22px;display:block;color:#fff">
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:23px;line-height:1;margin:0 0 6px;color:#fff">Marbella</h3>
+          <div style="font-size:12px;font-weight:600;letter-spacing:.04em;color:#EBD27E">12 propiedades</div>
+        </a>
+      </div>
+
+      <div data-reveal="" style="position:relative;border-radius:18px;overflow:hidden;min-height:clamp(240px,25vw,300px);box-shadow:var(--nm-up);transition:transform .5s cubic-bezier(.2,.75,.25,1),box-shadow .5s" style-hover="transform:translateY(-5px);box-shadow:var(--nm-up),0 34px 66px -36px rgba(6,39,67,.3)">
+        <image-slot id="zona-boquilla" shape="rect" fit="cover" src="assets/hero-estancia.jpg" placeholder="Foto de zona" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 42%,rgba(27,39,51,.84) 100%);pointer-events:none"></div>
+        <a href="ALTORRA Resultados.dc.html" style="position:absolute;left:0;right:0;bottom:0;padding:22px;display:block;color:#fff">
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:23px;line-height:1;margin:0 0 6px;color:#fff">La Boquilla</h3>
+          <div style="font-size:12px;font-weight:600;letter-spacing:.04em;color:#EBD27E">33 propiedades</div>
+        </a>
+      </div>
+
+      <div data-reveal="" style="position:relative;border-radius:18px;overflow:hidden;min-height:clamp(240px,25vw,300px);box-shadow:var(--nm-up);transition:transform .5s cubic-bezier(.2,.75,.25,1),box-shadow .5s" style-hover="transform:translateY(-5px);box-shadow:var(--nm-up),0 34px 66px -36px rgba(6,39,67,.3)">
+        <image-slot id="zona-popa" shape="rect" fit="cover" src="assets/villa-modern.jpg" placeholder="Foto de zona" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 42%,rgba(27,39,51,.84) 100%);pointer-events:none"></div>
+        <a href="ALTORRA Resultados.dc.html" style="position:absolute;left:0;right:0;bottom:0;padding:22px;display:block;color:#fff">
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:23px;line-height:1;margin:0 0 6px;color:#fff">Pie de la Popa</h3>
+          <div style="font-size:12px;font-weight:600;letter-spacing:.04em;color:#EBD27E">9 propiedades</div>
+        </a>
+      </div>
+
+      <div data-reveal="" style="position:relative;border-radius:18px;overflow:hidden;min-height:clamp(240px,25vw,300px);box-shadow:var(--nm-up);transition:transform .5s cubic-bezier(.2,.75,.25,1),box-shadow .5s" style-hover="transform:translateY(-5px);box-shadow:var(--nm-up),0 34px 66px -36px rgba(6,39,67,.3)">
+        <image-slot id="zona-cabrero" shape="rect" fit="cover" src="assets/chalet-dusk.jpg" placeholder="Foto de zona" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(27,39,51,0) 42%,rgba(27,39,51,.84) 100%);pointer-events:none"></div>
+        <a href="ALTORRA Resultados.dc.html" style="position:absolute;left:0;right:0;bottom:0;padding:22px;display:block;color:#fff">
+          <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:23px;line-height:1;margin:0 0 6px;color:#fff">Cabrero</h3>
+          <div style="font-size:12px;font-weight:600;letter-spacing:.04em;color:#EBD27E">11 propiedades</div>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="cerca" style="background:var(--surface);border-top:1px solid rgba(27,39,51,.07)">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(60px,8vw,110px) clamp(20px,5vw,64px)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:clamp(30px,4vw,58px);align-items:center">
+
+        <div data-reveal="">
+          <div style="margin-bottom:13px"><span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#A6801E">Cerca de ti</span></div>
+          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(31px,4.2vw,50px);line-height:1.02;letter-spacing:-.01em;color:#062743;margin:0 0 16px;text-wrap:balance">Todo lo disponible a tu alrededor.</h2>
+          <p style="font-size:clamp(15px,1.5vw,17px);line-height:1.62;color:#6b7c93;margin:0 0 26px;max-width:440px">Venta, arriendo y corta estancia en un solo mapa. Elige qué buscas y sobrevuela tu sector favorito.</p>
+          <div style="background:#fff;border:1px solid rgba(27,39,51,.1);border-radius:18px;padding:20px;box-shadow:0 2px 6px rgba(27,39,51,.05),0 26px 54px -38px rgba(27,39,51,.3)">
+            <div style="display:flex;align-items:center;gap:10px;border:1px solid rgba(27,39,51,.14);border-radius:12px;padding:12px 15px;margin-bottom:14px">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+              <input id="cerca-field" placeholder="Barrio, zona o punto de referencia" style="border:none;outline:none;width:100%;font-size:14.5px;color:#062743;background:transparent">
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+              <button class="op-pill on" onClick="{{ pickOp }}">Venta</button>
+              <button class="op-pill" onClick="{{ pickOp }}">Arriendo</button>
+              <button class="op-pill" onClick="{{ pickOp }}">Corta estancia</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap">
+              <div style="font-size:12.5px;color:#6b7c93"><b style="color:#062743;font-weight:700">312</b> inmuebles en 3&nbsp;km</div>
+              <a href="ALTORRA Resultados.dc.html" class="btn-sig" style="padding:12px 14px 12px 22px;font-size:14px">Buscar en el mapa<span class="arw"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+            </div>
+          </div>
+        </div>
+
+        <div data-reveal="" style="position:relative;border-radius:22px;overflow:hidden;min-height:clamp(400px,44vw,500px);background:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px) 0 0/22px 22px,linear-gradient(155deg,#0b3a5e,#041f36);box-shadow:0 40px 90px -44px rgba(6,39,67,.6)">
+          <div style="position:absolute;top:-30%;left:20%;width:60%;height:60%;background:radial-gradient(circle,rgba(212,175,55,.16),transparent 70%);pointer-events:none"></div>
+          <svg viewBox="0 0 400 300" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;opacity:.28"><path d="M-10 90 L150 120 L250 70 L420 110" fill="none" stroke="rgba(235,210,126,.5)" stroke-width="1.4"></path><path d="M60 -10 L90 130 L70 320" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="1.2"></path><path d="M-10 210 L180 200 L300 250 L420 230" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.2"></path><path d="M300 -10 L280 140 L330 320" fill="none" stroke="rgba(235,210,126,.32)" stroke-width="1.2"></path></svg>
+
+          <div class="map-pin" style="top:34%;left:30%"><span style="position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:26px;height:26px;border-radius:50%;background:rgba(235,210,126,.32)"></span><div style="position:relative;display:flex;align-items:center;gap:6px;background:#EBD27E;color:#062743;padding:6px 11px;border-radius:999px;font-size:12px;font-weight:700;box-shadow:0 8px 18px -6px rgba(0,0,0,.5)">$1.450M</div></div>
+          <div class="map-pin" style="top:52%;left:58%"><span style="position:absolute;left:50%;bottom:2px;transform:translateX(-50%);width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.26)"></span><div style="position:relative;background:#fff;color:#062743;padding:6px 11px;border-radius:999px;font-size:12px;font-weight:700;box-shadow:0 8px 18px -6px rgba(0,0,0,.5)">$4.2M/mes</div></div>
+          <div class="map-pin" style="top:64%;left:37%"><svg width="26" height="26" viewBox="0 0 24 24" fill="#EBD27E" stroke="#062743" stroke-width="1.4"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.4" fill="#062743" stroke="none"></circle></svg></div>
+          <div class="map-pin" style="top:40%;left:73%"><svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(255,255,255,.85)" stroke="#062743" stroke-width="1.4"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.4" fill="#062743" stroke="none"></circle></svg></div>
+          <div class="map-pin" style="top:26%;left:52%"><svg width="20" height="20" viewBox="0 0 24 24" fill="rgba(255,255,255,.7)" stroke="#062743" stroke-width="1.4"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.4" fill="#062743" stroke="none"></circle></svg></div>
+
+          <div style="position:absolute;left:18px;bottom:18px;display:flex;align-items:center;gap:11px;background:#fff;border-radius:14px;padding:10px;box-shadow:0 16px 36px -18px rgba(0,0,0,.6);max-width:245px">
+            <img src="assets/villa-pool.jpg" alt="" style="width:58px;height:58px;border-radius:9px;object-fit:cover;flex:none">
+            <div style="min-width:0"><div style="font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#A6801E;margin-bottom:2px">Venta · Castillogrande</div><div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;color:#062743;line-height:1.05;margin-bottom:2px">Apto vista bahía</div><div style="font-size:12px;font-weight:700;color:#062743">$1.450.000.000</div></div>
+          </div>
+          <div style="position:absolute;right:18px;top:18px;display:flex;align-items:center;gap:11px;background:#fff;border-radius:14px;padding:10px;box-shadow:0 16px 36px -18px rgba(0,0,0,.6);max-width:230px">
+            <img src="assets/hero-estancia.jpg" alt="" style="width:52px;height:52px;border-radius:9px;object-fit:cover;flex:none">
+            <div style="min-width:0"><div style="font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#A6801E;margin-bottom:2px">Estancia · Bocagrande</div><div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:15px;color:#062743;line-height:1.05">$680.000 / noche</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="recientes" style="background:#f2f6f9;overflow:hidden">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(60px,8vw,110px) clamp(20px,5vw,64px)">
+      <div data-reveal="" style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:clamp(28px,4vw,44px)">
+        <div>
+          <div style="margin-bottom:12px"><span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#A6801E">Publicadas recientemente</span></div>
+          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(31px,4.2vw,50px);line-height:1.02;letter-spacing:-.01em;color:#062743;margin:0">Lo último que entró al portafolio.</h2>
+        </div>
+        <a href="ALTORRA Resultados.dc.html" class="link-ul">Ver todas<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      </div>
+
+      <div data-reveal="" class="mgrid">
+        <a href="ALTORRA Ficha.dc.html" class="mtile" style="grid-column:span 2;grid-row:span 2">
+          <img src="assets/estate-golden.jpg" alt="Villa en Bocagrande">
+          <div style="position:absolute;top:14px;left:14px;background:linear-gradient(135deg,#EBD27E,#A6801E);color:#062743;padding:5px 12px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Nuevo</div>
+          <div style="position:absolute;top:15px;right:14px;background:rgba(6,39,67,.66);color:#fff;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600">hace 2 h</div>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 46%,rgba(6,39,67,.9))"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;padding:22px;color:#fff">
+            <div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#EBD27E;margin-bottom:5px">Venta · Bocagrande</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(24px,2.6vw,32px);line-height:1.02;margin-bottom:5px">Villa frente al mar</div>
+            <div class="mbody" style="font-size:15px;font-weight:700">$3.200.000.000</div>
+          </div>
+        </a>
+
+        <a href="ALTORRA Ficha.dc.html" class="mtile" style="grid-column:4;grid-row:span 2">
+          <img src="assets/chalet-dusk.jpg" alt="Casa colonial">
+          <div style="position:absolute;top:14px;left:14px;background:linear-gradient(135deg,#EBD27E,#A6801E);color:#062743;padding:5px 12px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Nuevo</div>
+          <div style="position:absolute;top:15px;right:14px;background:rgba(6,39,67,.66);color:#fff;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:600">hace 5 h</div>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(6,39,67,.9))"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;padding:18px;color:#fff">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#EBD27E;margin-bottom:4px">Estancia · Centro</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:21px;line-height:1.04;margin-bottom:4px">Casa colonial</div>
+            <div class="mbody" style="font-size:13.5px;font-weight:700">$1.150.000 / noche</div>
+          </div>
+        </a>
+
+        <a href="ALTORRA Ficha.dc.html" class="mtile" style="grid-column:3;grid-row:1">
+          <img src="assets/villa-modern.jpg" alt="Apartaestudio">
+          <div style="position:absolute;top:12px;left:12px;background:linear-gradient(135deg,#EBD27E,#A6801E);color:#062743;padding:4px 10px;border-radius:999px;font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Nuevo</div>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(6,39,67,.88))"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;padding:15px;color:#fff">
+            <div style="font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#EBD27E;margin-bottom:3px">Arriendo · Manga</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17px;line-height:1">$1.9M / mes</div>
+          </div>
+        </a>
+
+        <a href="ALTORRA Ficha.dc.html" class="mtile" style="grid-column:3;grid-row:2">
+          <img src="assets/hero-invierte.jpg" alt="Loft de autor">
+          <div style="position:absolute;top:12px;left:12px;background:linear-gradient(135deg,#EBD27E,#A6801E);color:#062743;padding:4px 10px;border-radius:999px;font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Nuevo</div>
+          <div style="position:absolute;top:13px;right:12px;background:rgba(6,39,67,.66);color:#fff;padding:3px 9px;border-radius:999px;font-size:10.5px;font-weight:600">ayer</div>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(6,39,67,.88))"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;padding:15px;color:#fff">
+            <div style="font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#EBD27E;margin-bottom:3px">Venta · Getsemaní</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17px;line-height:1">$720M</div>
+          </div>
+        </a>
+
+        <a href="ALTORRA Ficha.dc.html" class="mtile" style="grid-column:span 2;grid-row:3">
+          <img src="assets/hero-keys.jpg" alt="Apartamento El Laguito">
+          <div style="position:absolute;top:12px;left:12px;background:linear-gradient(135deg,#EBD27E,#A6801E);color:#062743;padding:4px 10px;border-radius:999px;font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Nuevo</div>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 46%,rgba(6,39,67,.88))"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;padding:18px;color:#fff">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#EBD27E;margin-bottom:4px">Arriendo · El Laguito</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;line-height:1;margin-bottom:3px">Apto amoblado frente a la playa</div>
+            <div class="mbody" style="font-size:13.5px;font-weight:700">$4.200.000 / mes</div>
+          </div>
+        </a>
+
+        <a href="ALTORRA Ficha.dc.html" class="mtile" style="grid-column:3;grid-row:3">
+          <img src="assets/villa-pool.jpg" alt="Penthouse">
+          <div style="position:absolute;top:12px;left:12px;background:linear-gradient(135deg,#EBD27E,#A6801E);color:#062743;padding:4px 10px;border-radius:999px;font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Nuevo</div>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(6,39,67,.88))"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;padding:15px;color:#fff">
+            <div style="font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#EBD27E;margin-bottom:3px">Venta · Castillogrande</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17px;line-height:1">$2.4MM</div>
+          </div>
+        </a>
+
+        <a href="ALTORRA Ficha.dc.html" class="mtile" style="grid-column:4;grid-row:3">
+          <img src="assets/hero-estancia.jpg" alt="Terraza">
+          <div style="position:absolute;top:12px;left:12px;background:linear-gradient(135deg,#EBD27E,#A6801E);color:#062743;padding:4px 10px;border-radius:999px;font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase">Nuevo</div>
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 42%,rgba(6,39,67,.88))"></div>
+          <div style="position:absolute;left:0;right:0;bottom:0;padding:15px;color:#fff">
+            <div style="font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#EBD27E;margin-bottom:3px">Estancia · Bocagrande</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:16px;line-height:1">$680k / noche</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="valoradas" style="background:var(--surface);border-top:1px solid rgba(27,39,51,.07);overflow:hidden">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(60px,8vw,110px) clamp(20px,5vw,64px)">
+      <div data-reveal="" data-railwrap="" style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:clamp(30px,4vw,46px)">
+        <div style="max-width:560px">
+          <div style="margin-bottom:12px"><span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#A6801E">Mejor valoradas</span></div>
+          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(31px,4.2vw,50px);line-height:1.02;letter-spacing:-.01em;color:#062743;margin:0">Las más queridas por nuestros clientes.</h2>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <a href="ALTORRA Resultados.dc.html" class="btn-count">Ver ranking<span class="trk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+          <div style="display:flex;gap:9px">
+            <button aria-label="Anterior" class="rnav" onClick="{{ railPrev }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+            <button aria-label="Siguiente" class="rnav" onClick="{{ railNext }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg></button>
+          </div>
+        </div>
+      </div>
+
+      <div data-railwrap="" data-reveal="">
+        <div class="arail">
+
+          <a href="ALTORRA Ficha.dc.html" style="width:clamp(288px,26vw,326px);text-decoration:none;display:block;background:#fff;border:1px solid rgba(27,39,51,.1);border-radius:20px;overflow:hidden;box-shadow:var(--nm-up)">
+            <div style="position:relative;height:186px;overflow:hidden">
+              <img src="assets/estate-golden.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
+              <div style="position:absolute;top:8px;left:16px;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:64px;line-height:1;color:transparent;-webkit-text-stroke:1.4px rgba(235,210,126,.92);text-stroke:1.4px rgba(235,210,126,.92)">01</div>
+              <div style="position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:6px;background:rgba(6,39,67,.86);padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:600;color:#fff"><span style="color:#EBD27E">★</span> 4.99 · 214 reseñas</div>
+            </div>
+            <div style="padding:18px 20px 22px">
+              <div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#A6801E;margin-bottom:5px">Bocagrande</div>
+              <h3 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;line-height:1.04;color:#062743;margin:0 0 12px">Villa frente al mar</h3>
+              <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(27,39,51,.1);padding-top:13px"><span style="font-weight:600;font-size:15px;color:#062743">$3.200MM</span><span style="font-size:13px;font-weight:600;color:#A6801E">Ver ›</span></div>
+            </div>
+          </a>
+
+          <a href="ALTORRA Ficha.dc.html" style="width:clamp(288px,26vw,326px);text-decoration:none;display:block;background:#fff;border:1px solid rgba(27,39,51,.1);border-radius:20px;overflow:hidden;box-shadow:var(--nm-up)">
+            <div style="position:relative;height:186px;overflow:hidden">
+              <img src="assets/villa-pool.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
+              <div style="position:absolute;top:8px;left:16px;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:64px;line-height:1;color:transparent;-webkit-text-stroke:1.4px rgba(235,210,126,.92);text-stroke:1.4px rgba(235,210,126,.92)">02</div>
+              <div style="position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:6px;background:rgba(6,39,67,.86);padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:600;color:#fff"><span style="color:#EBD27E">★</span> 4.98 · 187 reseñas</div>
+            </div>
+            <div style="padding:18px 20px 22px">
+              <div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#A6801E;margin-bottom:5px">Castillogrande</div>
+              <h3 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;line-height:1.04;color:#062743;margin:0 0 12px">Apto vista a la bahía</h3>
+              <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(27,39,51,.1);padding-top:13px"><span style="font-weight:600;font-size:15px;color:#062743">$1.450MM</span><span style="font-size:13px;font-weight:600;color:#A6801E">Ver ›</span></div>
+            </div>
+          </a>
+
+          <a href="ALTORRA Ficha.dc.html" style="width:clamp(288px,26vw,326px);text-decoration:none;display:block;background:#fff;border:1px solid rgba(27,39,51,.1);border-radius:20px;overflow:hidden;box-shadow:var(--nm-up)">
+            <div style="position:relative;height:186px;overflow:hidden">
+              <img src="assets/chalet-dusk.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
+              <div style="position:absolute;top:8px;left:16px;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:64px;line-height:1;color:transparent;-webkit-text-stroke:1.4px rgba(235,210,126,.92);text-stroke:1.4px rgba(235,210,126,.92)">03</div>
+              <div style="position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:6px;background:rgba(6,39,67,.86);padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:600;color:#fff"><span style="color:#EBD27E">★</span> 4.96 · 156 reseñas</div>
+            </div>
+            <div style="padding:18px 20px 22px">
+              <div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#A6801E;margin-bottom:5px">Centro Histórico</div>
+              <h3 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;line-height:1.04;color:#062743;margin:0 0 12px">Casa colonial restaurada</h3>
+              <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(27,39,51,.1);padding-top:13px"><span style="font-weight:600;font-size:15px;color:#062743">$2.800MM</span><span style="font-size:13px;font-weight:600;color:#A6801E">Ver ›</span></div>
+            </div>
+          </a>
+
+          <a href="ALTORRA Ficha.dc.html" style="width:clamp(288px,26vw,326px);text-decoration:none;display:block;background:#fff;border:1px solid rgba(27,39,51,.1);border-radius:20px;overflow:hidden;box-shadow:var(--nm-up)">
+            <div style="position:relative;height:186px;overflow:hidden">
+              <img src="assets/villa-modern.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
+              <div style="position:absolute;top:8px;left:16px;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:64px;line-height:1;color:transparent;-webkit-text-stroke:1.4px rgba(235,210,126,.92);text-stroke:1.4px rgba(235,210,126,.92)">04</div>
+              <div style="position:absolute;left:14px;bottom:14px;display:flex;align-items:center;gap:6px;background:rgba(6,39,67,.86);padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:600;color:#fff"><span style="color:#EBD27E">★</span> 4.94 · 132 reseñas</div>
+            </div>
+            <div style="padding:18px 20px 22px">
+              <div style="font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#A6801E;margin-bottom:5px">Manga</div>
+              <h3 style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:22px;line-height:1.04;color:#062743;margin:0 0 12px">Casa con jardín y estudio</h3>
+              <div style="display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(27,39,51,.1);padding-top:13px"><span style="font-weight:600;font-size:15px;color:#062743">$6.5M/mes</span><span style="font-size:13px;font-weight:600;color:#A6801E">Ver ›</span></div>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="position:relative;overflow:hidden;min-height:clamp(420px,48vw,560px);display:flex;align-items:center">
+    <image-slot id="estancias-band" shape="rect" fit="cover" src="assets/chalet-dusk.jpg" placeholder="Arrastra una foto de estancia" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+    <div style="position:absolute;inset:0;background:linear-gradient(90deg,rgba(18,22,26,.88) 0%,rgba(18,22,26,.52) 42%,rgba(18,22,26,.06) 72%,rgba(18,22,26,0) 100%);pointer-events:none"></div>
+    <div style="position:relative;max-width:1300px;margin:0 auto;padding:clamp(48px,6vw,90px) clamp(20px,5vw,64px);width:100%;pointer-events:none">
+      <div data-reveal="" style="max-width:520px">
+        <div style="margin-bottom:16px">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#EBD27E">Corta estancia</span>
+        </div>
+        <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(32px,4.4vw,52px);line-height:1.04;letter-spacing:-.01em;color:#fff;margin:0 0 18px;text-wrap:balance">Vive Cartagena por unos días, como si fuera tuya.</h2>
+        <p style="font-size:clamp(15px,1.5vw,18px);line-height:1.62;color:rgba(255,255,255,.78);margin:0 0 30px;max-width:430px">Propiedades verificadas, listas para habitar, en el corazón de la ciudad amurallada.</p>
+        <a href="ALTORRA Estancias.dc.html" class="btn-frost" style="pointer-events:auto">Descubrir estancias<span class="arw"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+      </div>
+    </div>
+  </section>
+
+  <section id="proyectos" style="background:var(--surface);border-top:1px solid rgba(27,39,51,.07);overflow:hidden">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(64px,9vw,120px) clamp(20px,5vw,64px)">
+      <div data-reveal="" style="text-align:center;max-width:640px;margin:0 auto clamp(44px,6vw,76px)">
+        <div style="margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:#A6801E">Visita nuestros proyectos</span></div>
+        <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:clamp(34px,5vw,60px);line-height:1.02;letter-spacing:.01em;color:#062743;margin:0 0 18px">Obra nueva firmada ALTORRA.</h2>
+        <p style="font-size:clamp(15px,1.5vw,17px);line-height:1.65;color:#6b7c93;margin:0 0 30px">Desarrollos exclusivos en las mejores zonas de Cartagena — desde lofts dentro de la muralla hasta torres frente al mar. Recórrelos antes que nadie.</p>
+        <a href="ALTORRA Turismo.dc.html" style="display:inline-flex;align-items:center;gap:11px;padding:14px 32px;border:1px solid rgba(27,39,51,.22);border-radius:999px;color:#062743;font-weight:600;font-size:13px;letter-spacing:.14em;text-transform:uppercase;transition:background .35s,color .35s,border-color .35s" style-hover="background:#062743;color:#fff;border-color:#062743">Explorar todos</a>
+      </div>
+
+      <div data-railwrap="" data-reveal="">
+        <div style="display:flex;justify-content:flex-end;gap:9px;margin-bottom:clamp(18px,2vw,24px)">
+          <button aria-label="Anterior" class="rnav" onClick="{{ railPrev }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+          <button aria-label="Siguiente" class="rnav" onClick="{{ railNext }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg></button>
+        </div>
+        <div class="arail">
+
+          <a href="ALTORRA Ficha.dc.html" style="width:clamp(244px,24vw,300px);text-decoration:none;position:relative;border-radius:18px;overflow:hidden;aspect-ratio:3/4;box-shadow:0 2px 6px rgba(27,39,51,.06),0 30px 60px -38px rgba(27,39,51,.42)">
+            <img src="assets/hero-invierte.jpg" alt="Proyecto Marea" style="width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,17,25,.06) 0%,rgba(9,17,25,.1) 42%,rgba(9,17,25,.86) 100%)"></div>
+            <div style="position:absolute;left:0;right:0;bottom:0;padding:24px 20px;text-align:center">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(25px,2.3vw,31px);letter-spacing:.14em;color:#fff;line-height:1;margin-bottom:8px">MAREA</div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.82)">Cra 1 · Bocagrande</div>
+            </div>
+          </a>
+
+          <a href="ALTORRA Ficha.dc.html" style="width:clamp(244px,24vw,300px);text-decoration:none;position:relative;border-radius:18px;overflow:hidden;aspect-ratio:3/4;box-shadow:0 2px 6px rgba(27,39,51,.06),0 30px 60px -38px rgba(27,39,51,.42)">
+            <img src="assets/estate-golden.jpg" alt="Proyecto Serena" style="width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,17,25,.06) 0%,rgba(9,17,25,.1) 42%,rgba(9,17,25,.86) 100%)"></div>
+            <div style="position:absolute;top:15px;left:15px;background:linear-gradient(135deg,#EBD27E,#A6801E);color:#062743;padding:5px 13px;border-radius:999px;font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase">Preventa</div>
+            <div style="position:absolute;left:0;right:0;bottom:0;padding:24px 20px;text-align:center">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(25px,2.3vw,31px);letter-spacing:.14em;color:#fff;line-height:1;margin-bottom:8px">SERENA</div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.82)">Av. Santander · Marbella</div>
+            </div>
+          </a>
+
+          <a href="ALTORRA Ficha.dc.html" style="width:clamp(244px,24vw,300px);text-decoration:none;position:relative;border-radius:18px;overflow:hidden;aspect-ratio:3/4;box-shadow:0 2px 6px rgba(27,39,51,.06),0 30px 60px -38px rgba(27,39,51,.42)">
+            <img src="assets/villa-modern.jpg" alt="Proyecto Claustro 1620" style="width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,17,25,.06) 0%,rgba(9,17,25,.1) 42%,rgba(9,17,25,.86) 100%)"></div>
+            <div style="position:absolute;left:0;right:0;bottom:0;padding:24px 20px;text-align:center">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(21px,2vw,27px);letter-spacing:.12em;color:#fff;line-height:1;margin-bottom:8px">CLAUSTRO 1620</div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.82)">Calle del Curato · Centro</div>
+            </div>
+          </a>
+
+          <a href="ALTORRA Ficha.dc.html" style="width:clamp(244px,24vw,300px);text-decoration:none;position:relative;border-radius:18px;overflow:hidden;aspect-ratio:3/4;box-shadow:0 2px 6px rgba(27,39,51,.06),0 30px 60px -38px rgba(27,39,51,.42)">
+            <img src="assets/villa-pool.jpg" alt="Proyecto Altamar" style="width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,17,25,.06) 0%,rgba(9,17,25,.1) 42%,rgba(9,17,25,.86) 100%)"></div>
+            <div style="position:absolute;top:15px;left:15px;background:linear-gradient(135deg,#EBD27E,#A6801E);color:#062743;padding:5px 13px;border-radius:999px;font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase">Preventa</div>
+            <div style="position:absolute;left:0;right:0;bottom:0;padding:24px 20px;text-align:center">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(25px,2.3vw,31px);letter-spacing:.14em;color:#fff;line-height:1;margin-bottom:8px">ALTAMAR</div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.82)">Castillogrande</div>
+            </div>
+          </a>
+
+          <a href="ALTORRA Ficha.dc.html" style="width:clamp(244px,24vw,300px);text-decoration:none;position:relative;border-radius:18px;overflow:hidden;aspect-ratio:3/4;box-shadow:0 2px 6px rgba(27,39,51,.06),0 30px 60px -38px rgba(27,39,51,.42)">
+            <img src="assets/chalet-dusk.jpg" alt="Proyecto Bahía Norte" style="width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,17,25,.06) 0%,rgba(9,17,25,.1) 42%,rgba(9,17,25,.86) 100%)"></div>
+            <div style="position:absolute;left:0;right:0;bottom:0;padding:24px 20px;text-align:center">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(23px,2.1vw,29px);letter-spacing:.14em;color:#fff;line-height:1;margin-bottom:8px">BAHÍA NORTE</div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.82)">La Boquilla</div>
+            </div>
+          </a>
+
+          <a href="ALTORRA Ficha.dc.html" style="width:clamp(244px,24vw,300px);text-decoration:none;position:relative;border-radius:18px;overflow:hidden;aspect-ratio:3/4;box-shadow:0 2px 6px rgba(27,39,51,.06),0 30px 60px -38px rgba(27,39,51,.42)">
+            <img src="assets/hero-estancia.jpg" alt="Proyecto Muralla Loft" style="width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(9,17,25,.06) 0%,rgba(9,17,25,.1) 42%,rgba(9,17,25,.86) 100%)"></div>
+            <div style="position:absolute;left:0;right:0;bottom:0;padding:24px 20px;text-align:center">
+              <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(22px,2vw,28px);letter-spacing:.13em;color:#fff;line-height:1;margin-bottom:8px">MURALLA LOFT</div>
+              <div style="font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.82)">Getsemaní</div>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="invertir" style="max-width:1300px;margin:0 auto;padding:clamp(64px,9vw,124px) clamp(20px,5vw,64px)">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:clamp(40px,6vw,80px);align-items:center">
+      <div data-reveal="">
+        <div style="margin-bottom:14px">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#A6801E">Invertir en Cartagena</span>
+        </div>
+        <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(32px,4.4vw,52px);line-height:1.04;letter-spacing:-.01em;color:#062743;margin:0 0 20px;text-wrap:balance">Una ciudad que se valoriza mientras la disfrutas.</h2>
+        <p style="font-size:clamp(15px,1.5vw,18px);line-height:1.64;color:#6b7c93;margin:0 0 32px;max-width:480px">Analizamos zona, rentabilidad y liquidez para que tu decisión sea patrimonio, no una apuesta. Cifras claras, sin letra menuda.</p>
+        <a href="#" class="btn-gn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"></path></svg>Hablar con un asesor</a>
+      </div>
+      <div data-reveal="" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:clamp(14px,2vw,20px)">
+        <div style="background:#fff;border:1px solid rgba(27,39,51,.08);border-radius:18px;padding:26px 24px;box-shadow:0 2px 5px rgba(27,39,51,.04)">
+          <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(34px,4vw,46px);line-height:1;color:#A6801E;margin-bottom:8px">+7%</div>
+          <div style="font-size:13px;font-weight:500;line-height:1.4;color:#6b7c93">valorización anual promedio · zona norte</div>
+        </div>
+        <div style="background:#fff;border:1px solid rgba(27,39,51,.08);border-radius:18px;padding:26px 24px;box-shadow:0 2px 5px rgba(27,39,51,.04)">
+          <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(34px,4vw,46px);line-height:1;color:#A6801E;margin-bottom:8px">128</div>
+          <div style="font-size:13px;font-weight:500;line-height:1.4;color:#6b7c93">propiedades verificadas hoy</div>
+        </div>
+        <div style="background:#fff;border:1px solid rgba(27,39,51,.08);border-radius:18px;padding:26px 24px;box-shadow:0 2px 5px rgba(27,39,51,.04)">
+          <div style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(34px,4vw,46px);line-height:1;color:#A6801E;margin-bottom:8px">5 min</div>
+          <div style="font-size:13px;font-weight:500;line-height:1.4;color:#6b7c93">tiempo de respuesta promedio</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="brokers" style="background:#062743;color:#fff;position:relative;overflow:hidden">
+    <div style="position:absolute;top:-25%;right:-8%;width:52%;height:150%;background:radial-gradient(circle,rgba(212,175,55,.2),transparent 66%);pointer-events:none"></div>
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(56px,7vw,104px) clamp(20px,5vw,64px);position:relative">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:clamp(34px,4.5vw,68px);align-items:center">
+
+        <div data-reveal="">
+          <div style="margin-bottom:15px"><span style="font-size:11px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:#EBD27E">Red de brokers ALTORRA</span></div>
+          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(33px,4.6vw,56px);line-height:1.0;letter-spacing:-.01em;color:#fff;margin:0 0 18px;text-wrap:balance">Vende con la marca que abre puertas.</h2>
+          <p style="font-size:clamp(15px,1.5vw,18px);line-height:1.62;color:rgba(255,255,255,.72);margin:0 0 28px;max-width:470px">Únete a la red inmobiliaria más selecta de Cartagena. Nosotros ponemos la marca, los leads y el respaldo jurídico; tú, tu talento para cerrar.</p>
+          <div style="display:flex;flex-direction:column;gap:13px;margin-bottom:32px;max-width:440px">
+            <div style="display:flex;align-items:center;gap:13px"><span style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#EBD27E,#A6801E);display:inline-flex;align-items:center;justify-content:center;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#062743" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span><span style="font-size:14.5px;color:rgba(255,255,255,.9)">Comisiones entre las más competitivas del mercado</span></div>
+            <div style="display:flex;align-items:center;gap:13px"><span style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#EBD27E,#A6801E);display:inline-flex;align-items:center;justify-content:center;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#062743" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span><span style="font-size:14.5px;color:rgba(255,255,255,.9)">Leads calificados cada semana y CRM incluido</span></div>
+            <div style="display:flex;align-items:center;gap:13px"><span style="width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#EBD27E,#A6801E);display:inline-flex;align-items:center;justify-content:center;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#062743" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"></path></svg></span><span style="font-size:14.5px;color:rgba(255,255,255,.9)">Respaldo jurídico y de marca en cada operación</span></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap">
+            <a href="ALTORRA Publica.dc.html" class="btn-sig">Postúlate como broker<span class="arw"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span></a>
+            <a href="ALTORRA Turismo.dc.html" class="btn-onnavy">Conoce el modelo<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+          </div>
+        </div>
+
+        <div data-reveal="" style="position:relative;align-self:stretch;min-height:clamp(320px,38vw,440px);border-radius:22px;overflow:hidden;box-shadow:0 44px 92px -42px rgba(0,0,0,.7)">
+          <image-slot id="brokers-team" shape="rect" fit="cover" src="assets/villa-modern.jpg" placeholder="Arrastra una foto del equipo" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+          <div style="position:absolute;inset:0;background:linear-gradient(150deg,rgba(6,39,67,.5),rgba(6,39,67,0) 55%);pointer-events:none"></div>
+          <div style="position:absolute;left:18px;bottom:18px;right:18px;display:flex;gap:12px;flex-wrap:wrap">
+            <div style="background:rgba(255,255,255,.96);border-radius:14px;padding:14px 18px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)"><div style="font-family:'Cormorant Garamond',serif;font-weight:700;font-size:30px;line-height:1;color:#A6801E">180+</div><div style="font-size:11.5px;font-weight:600;color:#062743;margin-top:3px">brokers ya venden con ALTORRA</div></div>
+            <div style="background:rgba(255,255,255,.96);border-radius:14px;padding:14px 18px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)"><div style="font-family:'Cormorant Garamond',serif;font-weight:700;font-size:30px;line-height:1;color:#A6801E">48 h</div><div style="font-size:11.5px;font-weight:600;color:#062743;margin-top:3px">de tu postulación a tu primer lead</div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="journal" style="background:var(--surface);overflow:hidden">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(60px,8vw,110px) clamp(20px,5vw,64px)">
+      <div data-reveal="" style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:clamp(30px,4vw,46px)">
+        <div>
+          <div style="margin-bottom:12px"><span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#A6801E">El Journal</span></div>
+          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(31px,4.2vw,50px);line-height:1.02;letter-spacing:-.01em;color:#062743;margin:0">Ideas, guías y mercado.</h2>
+        </div>
+        <a href="#" class="link-ul">Ver todo el Journal<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr));gap:clamp(24px,3vw,44px);align-items:start">
+
+        <a href="#" class="jcard" data-reveal="" style="text-decoration:none;display:block">
+          <div style="position:relative;border-radius:20px;overflow:hidden;aspect-ratio:16/10;margin-bottom:20px;box-shadow:0 2px 5px rgba(27,39,51,.05),0 28px 56px -36px rgba(27,39,51,.32)">
+            <img class="jimg" src="assets/hero-invierte.jpg" alt="" style="width:100%;height:100%;object-fit:cover">
+            <div style="position:absolute;top:15px;left:15px;background:rgba(255,255,255,.95);color:#A6801E;padding:6px 13px;border-radius:999px;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase">Mercado</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;color:#98a9ba;margin-bottom:10px"><span>12 feb 2026</span><span style="width:3px;height:3px;border-radius:50%;background:#cdd8e2"></span><span>8 min de lectura</span></div>
+          <h3 class="jh" style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(24px,2.8vw,34px);line-height:1.08;color:#062743;margin:0 0 12px;text-wrap:balance">Guía 2026: dónde comprar en Cartagena antes de la próxima ola de valorización</h3>
+          <p style="font-size:15px;line-height:1.62;color:#6b7c93;margin:0;max-width:520px">Analizamos precio por m², proyección de obra nueva y liquidez zona por zona, para que tu compra sea patrimonio y no una apuesta.</p>
+        </a>
+
+        <div style="display:flex;flex-direction:column;gap:22px">
+
+          <a href="#" class="jcard" data-reveal="" style="text-decoration:none;display:flex;gap:18px;align-items:center">
+            <div style="position:relative;flex:none;width:clamp(110px,13vw,148px);aspect-ratio:1/1;border-radius:15px;overflow:hidden;box-shadow:0 2px 5px rgba(27,39,51,.05),0 18px 40px -30px rgba(27,39,51,.3)"><img class="jimg" src="assets/hero-estancia.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+            <div style="min-width:0"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#A6801E;margin-bottom:7px">Rentas</div><h3 class="jh" style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:20px;line-height:1.1;color:#062743;margin:0 0 8px">Corta estancia: renta tu propiedad sin dolores de cabeza</h3><div style="font-size:12px;font-weight:600;color:#98a9ba">5 min de lectura</div></div>
+          </a>
+
+          <a href="#" class="jcard" data-reveal="" style="text-decoration:none;display:flex;gap:18px;align-items:center">
+            <div style="position:relative;flex:none;width:clamp(110px,13vw,148px);aspect-ratio:1/1;border-radius:15px;overflow:hidden;box-shadow:0 2px 5px rgba(27,39,51,.05),0 18px 40px -30px rgba(27,39,51,.3)"><img class="jimg" src="assets/villa-pool.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+            <div style="min-width:0"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#A6801E;margin-bottom:7px">Inversión</div><h3 class="jh" style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:20px;line-height:1.1;color:#062743;margin:0 0 8px">Manga o Bocagrande: en cuál invertir según tu objetivo</h3><div style="font-size:12px;font-weight:600;color:#98a9ba">6 min de lectura</div></div>
+          </a>
+
+          <a href="#" class="jcard" data-reveal="" style="text-decoration:none;display:flex;gap:18px;align-items:center">
+            <div style="position:relative;flex:none;width:clamp(110px,13vw,148px);aspect-ratio:1/1;border-radius:15px;overflow:hidden;box-shadow:0 2px 5px rgba(27,39,51,.05),0 18px 40px -30px rgba(27,39,51,.3)"><img class="jimg" src="assets/villa-modern.jpg" alt="" style="width:100%;height:100%;object-fit:cover"></div>
+            <div style="min-width:0"><div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#A6801E;margin-bottom:7px">Legal</div><h3 class="jh" style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:20px;line-height:1.1;color:#062743;margin:0 0 8px">Checklist legal antes de firmar la promesa de compraventa</h3><div style="font-size:12px;font-weight:600;color:#98a9ba">4 min de lectura</div></div>
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="redes" style="background:#f2f6f9;overflow:hidden">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(56px,7vw,100px) clamp(20px,5vw,64px)">
+      <div data-reveal="" style="text-align:center;margin-bottom:clamp(30px,4vw,46px)">
+        <div style="margin-bottom:14px"><span style="font-size:11px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#A6801E">Síguenos en redes</span></div>
+        <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(30px,4vw,48px);line-height:1.04;letter-spacing:-.01em;color:#062743;margin:0 0 20px">Cartagena, todos los días.</h2>
+        <a href="#" style="display:inline-flex;align-items:center;gap:9px;background:linear-gradient(135deg,#EBD27E,#D4AF37 55%,#A6801E);color:#062743;padding:11px 22px;border-radius:999px;font-weight:700;font-size:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"></rect><circle cx="12" cy="12" r="4.2"></circle><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"></circle></svg>@altorra.co</a>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(160px,45%),1fr));gap:clamp(10px,1.3vw,16px)">
+
+        <a href="#" class="igc" style="border-radius:14px;aspect-ratio:1/1">
+          <img src="assets/estate-golden.jpg" alt="Publicación" style="width:100%;height:100%;object-fit:cover">
+          <div style="position:absolute;top:10px;right:10px;color:#fff"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h11l5 5v11H4z" opacity=".0"></path><path d="M8 5v14l11-7z"></path></svg></div>
+          <div class="igov"><span style="display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:700;font-size:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg>1.2k</span><span style="display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:700;font-size:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"></path></svg>48</span></div>
+        </a>
+
+        <a href="#" class="igc" style="border-radius:14px;aspect-ratio:1/1">
+          <img src="assets/hero-estancia.jpg" alt="Publicación" style="width:100%;height:100%;object-fit:cover">
+          <div class="igov"><span style="display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:700;font-size:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg>2.4k</span><span style="display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:700;font-size:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"></path></svg>91</span></div>
+        </a>
+
+        <a href="#" class="igc" style="border-radius:14px;aspect-ratio:1/1">
+          <img src="assets/villa-pool.jpg" alt="Publicación" style="width:100%;height:100%;object-fit:cover">
+          <div style="position:absolute;top:10px;right:10px;color:#fff"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></div>
+          <div class="igov"><span style="display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:700;font-size:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg>876</span><span style="display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:700;font-size:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"></path></svg>33</span></div>
+        </a>
+
+        <a href="#" class="igc" style="border-radius:14px;aspect-ratio:1/1">
+          <img src="assets/chalet-dusk.jpg" alt="Publicación" style="width:100%;height:100%;object-fit:cover">
+          <div class="igov"><span style="display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:700;font-size:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg>1.7k</span><span style="display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:700;font-size:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"></path></svg>62</span></div>
+        </a>
+
+        <a href="#" class="igc" style="border-radius:14px;aspect-ratio:1/1">
+          <img src="assets/hero-keys.jpg" alt="Publicación" style="width:100%;height:100%;object-fit:cover;object-position:center 40%">
+          <div class="igov"><span style="display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:700;font-size:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg>945</span><span style="display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:700;font-size:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"></path></svg>27</span></div>
+        </a>
+
+        <a href="#" class="igc" style="border-radius:14px;aspect-ratio:1/1">
+          <img src="assets/villa-modern.jpg" alt="Publicación" style="width:100%;height:100%;object-fit:cover">
+          <div style="position:absolute;top:10px;right:10px;color:#fff"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg></div>
+          <div class="igov"><span style="display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:700;font-size:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg>3.1k</span><span style="display:inline-flex;align-items:center;gap:6px;color:#fff;font-weight:700;font-size:14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"></path></svg>78</span></div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <footer style="background:#062743;color:rgba(255,255,255,.7)">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(40px,4.4vw,58px) clamp(20px,5vw,64px) 26px">
+      <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1.25fr;gap:clamp(26px,3vw,46px);padding-bottom:32px;border-bottom:1px solid rgba(255,255,255,.12)">
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <img src="assets/altorra-mark.png" alt="ALTORRA" style="height:44px;width:auto">
+            <span style="display:flex;flex-direction:column;gap:3px;line-height:1">
+              <span style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;letter-spacing:.16em;color:#fff">ALTORRA</span>
+              <span style="font-size:8px;font-weight:600;letter-spacing:.42em;color:rgba(255,255,255,.55)">INMOBILIARIA</span>
+            </span>
+          </div>
+          <p style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:19px;line-height:1.3;color:#EBD27E;margin:0 0 10px">Cartagena, a tu altura.</p>
+          <p style="font-size:13px;line-height:1.6;color:rgba(255,255,255,.55);margin:0 0 18px;max-width:270px">Inmobiliaria boutique en Cartagena de Indias: compra, arriendo, estancias e inversión con acompañamiento experto.</p>
+          <div style="display:flex;gap:10px">
+            <a href="#" aria-label="Instagram" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"></circle></svg></a>
+            <a href="#" aria-label="Facebook" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7h2.3l.35-2.7H13.5V9.55c0-.78.22-1.31 1.33-1.31h1.42V5.82c-.25-.03-1.09-.1-2.07-.1-2.05 0-3.46 1.25-3.46 3.55v1.98H8.4V14h2.32v7h2.78z"></path></svg></a>
+            <a href="#" aria-label="WhatsApp" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.5A8.5 8.5 0 0 0 4.6 16.3L3.6 20.4l4.2-1.1A8.5 8.5 0 1 0 12 3.5zm0 1.6a6.9 6.9 0 1 1-3.6 12.8l-.3-.2-2.5.66.67-2.43-.2-.3A6.9 6.9 0 0 1 12 5.1zm-2.3 3c-.16 0-.42.06-.64.3-.22.24-.85.83-.85 2.02s.87 2.34.99 2.5c.12.16 1.7 2.7 4.2 3.7 2.06.82 2.48.66 2.93.62.45-.04 1.45-.59 1.65-1.16.2-.57.2-1.06.14-1.16-.06-.1-.22-.16-.46-.28-.24-.12-1.45-.72-1.67-.8-.22-.08-.39-.12-.55.12-.16.24-.63.8-.77.96-.14.16-.28.18-.52.06-.24-.12-1.03-.38-1.96-1.21-.72-.64-1.21-1.44-1.35-1.68-.14-.24-.02-.37.1-.49.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.47-.4-.4-.55-.41h-.47z"></path></svg></a>
+            <a href="#" aria-label="LinkedIn" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 8.5H4.3V19h2.64V8.5zM5.62 4.3a1.53 1.53 0 1 0 0 3.06 1.53 1.53 0 0 0 0-3.06zM19.7 19h-2.63v-5.6c0-1.34-.48-2.25-1.68-2.25-.92 0-1.46.62-1.7 1.22-.09.21-.11.5-.11.8V19H10.9s.03-9.5 0-10.5h2.64v1.49c.35-.54.98-1.31 2.38-1.31 1.74 0 3.04 1.14 3.04 3.58V19z"></path></svg></a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Explorar</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="ALTORRA Resultados.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Comprar</a>
+            <a href="ALTORRA Resultados.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Arrendar</a>
+            <a href="ALTORRA Estancias.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Estancias</a>
+            <a href="ALTORRA Portal.dc.html#invertir" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Invertir</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Servicios</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="ALTORRA Publica.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Publica tu propiedad</a>
+            <a href="ALTORRA Publica.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Avalúo gratis</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Programa de aliados</a>
+            <a href="ALTORRA Gestion.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Panel de gestión</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Compañía</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Nosotros</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Journal</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Trabaja con nosotros</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Contacto</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Contacto</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="#" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></span><span>Cra 1 #5-100, Bocagrande<br>Cartagena de Indias</span></a>
+            <a href="tel:+573002439810" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.5.56 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.3a1 1 0 0 1 1 1c0 1.2.2 2.4.56 3.5a1 1 0 0 1-.24 1z"></path></svg></span><span>+57 300 243 9810</span></a>
+            <a href="mailto:info@altorrainmobiliaria.co" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg></span><span>info@altorrainmobiliaria.co</span></a>
+            <a href="#" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7.5V12l3 2"></path></svg></span><span>Lun–Sáb · 8:00am–6:00pm</span></a>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-top:20px">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:12px;color:rgba(255,255,255,.45)">
+          <span>© 2025 ALTORRA Company S.A.S.</span>
+          <span style="width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.28)"></span>
+          <span>Matrícula de Arrendador 000000</span>
+          <span style="width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.28)"></span>
+          <span>NIT 902.063.965-4</span>
+        </div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap">
+          <a href="#" style="font-size:12px;color:rgba(255,255,255,.55);transition:color .2s" style-hover="color:#EBD27E">Términos</a>
+          <a href="#" style="font-size:12px;color:rgba(255,255,255,.55);transition:color .2s" style-hover="color:#EBD27E">Privacidad</a>
+          <a href="#" style="font-size:12px;color:rgba(255,255,255,.55);transition:color .2s" style-hover="color:#EBD27E">Habeas Data</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  componentDidMount() {
+    // --- Hero carousel (intelligent auto-advance, no arrows) ---
+    const track = document.querySelector('[data-carousel]');
+    if (track) {
+      const banners = Array.prototype.slice.call(track.querySelectorAll('.alt-banner'));
+      const segs = Array.prototype.slice.call(track.querySelectorAll('.seg'));
+      const segRow = track.querySelector('.seg-row');
+      let idx = 0, timer = null;
+      const dwellFor = (b) => {
+        const h = b.querySelector('.hero-h'); const p = b.querySelector('.hero-p');
+        const txt = ((h ? h.textContent : '') + ' ' + (p ? p.textContent : '')).trim();
+        const words = txt ? txt.split(/\s+/).length : 8;
+        const extras = b.querySelectorAll('.hero-chip,.hero-step').length;
+        return Math.max(4200, Math.min(2600 + words * 235 + extras * 480, 11500));
+      };
+      const paint = (dwell) => {
+        segs.forEach((s, k) => {
+          s.setAttribute('data-on', k === idx ? '1' : '0');
+          const fl = s.querySelector('.segfill');
+          if (fl) { fl.style.transition = 'none'; fl.style.width = k < idx ? '100%' : '0%'; }
+        });
+        const af = segs[idx] && segs[idx].querySelector('.segfill');
+        if (af) { void af.offsetWidth; af.style.transition = 'width ' + dwell + 'ms linear'; af.style.width = '100%'; }
+      };
+      const show = (n) => {
+        idx = (n + banners.length) % banners.length;
+        const cur = banners[idx];
+        banners.forEach((b, k) => b.setAttribute('data-active', k === idx ? '1' : '0'));
+        if (segRow) segRow.classList.toggle('on-light', cur.getAttribute('data-nav') === 'light');
+        const dwell = dwellFor(cur);
+        paint(dwell);
+        clearTimeout(timer);
+        timer = setTimeout(() => show(idx + 1), dwell);
+      };
+      segs.forEach((s, k) => s.addEventListener('click', () => show(k)));
+      show(0);
+      this._carTimer = () => clearTimeout(timer);
+    }
+    // --- Subtle reveal on scroll (only elements below the fold, no flash) ---
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) {
+            en.target.style.opacity = '1';
+            en.target.style.transform = 'none';
+            io.unobserve(en.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-reveal]'), (el) => {
+        const r = el.getBoundingClientRect();
+        if (r.top > window.innerHeight * 0.92) {
+          el.style.opacity = '0';
+          el.style.transform = 'translateY(26px)';
+          el.style.transition = 'opacity .75s cubic-bezier(.2,.7,.2,1), transform .75s cubic-bezier(.2,.7,.2,1)';
+          io.observe(el);
+        }
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    if (this._carTimer) this._carTimer();
+  }
+
+  renderVals() {
+    return {
+      railPrev: (e) => { const w = e.currentTarget.closest('[data-railwrap]'); const r = w && w.querySelector('.arail'); if (r) r.scrollBy({ left: -Math.min(r.clientWidth * 0.82, 560), behavior: 'smooth' }); },
+      railNext: (e) => { const w = e.currentTarget.closest('[data-railwrap]'); const r = w && w.querySelector('.arail'); if (r) r.scrollBy({ left: Math.min(r.clientWidth * 0.82, 560), behavior: 'smooth' }); },
+      pickOp: (e) => { const b = e.currentTarget; Array.prototype.forEach.call(b.parentElement.children, (c) => { if (c.classList && c.classList.contains('op-pill')) c.classList.toggle('on', c === b); }); },
+      filterAdmin: (e) => { const b = e.currentTarget; const v = b.getAttribute('data-val'); Array.prototype.forEach.call(b.parentElement.children, (c) => { if (c.classList && c.classList.contains('op-pill')) c.classList.toggle('on', c === b); }); const stack = document.getElementById('arriendo-stack'); if (stack) Array.prototype.forEach.call(stack.children, (row) => { if (!row.getAttribute) return; const a = row.getAttribute('data-admin'); if (!a) return; row.style.display = (v === 'todos' || a === v) ? '' : 'none'; }); },
+      pickTab: (e) => {
+        const btn = e.currentTarget;
+        const list = btn.parentElement;
+        Array.prototype.forEach.call(list.children, (c) => {
+          if (!c.getAttribute || c.getAttribute('data-seg') !== '1') return;
+          const on = c === btn;
+          c.style.background = on ? 'var(--surface)' : 'transparent';
+          c.style.color = on ? '#062743' : '#6b7c93';
+          c.style.boxShadow = on ? '4px 4px 9px rgba(6,39,67,.15),-4px -4px 8px #fff' : 'none';
+        });
+        const ph = btn.getAttribute('data-ph');
+        const f = document.getElementById('hero-field');
+        if (f && ph) f.setAttribute('placeholder', ph);
+      },
+      toggleFav: (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const b = e.currentTarget;
+        const on = b.getAttribute('data-on') === '1';
+        b.setAttribute('data-on', on ? '0' : '1');
+        const hO = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg>';
+        const hF = '<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"></path></svg>';
+        b.style.background = on ? 'rgba(255,255,255,.9)' : '#fff';
+        b.style.color = on ? '#A6801E' : '#D4AF37';
+        b.style.borderColor = '#D4AF37';
+        b.innerHTML = on ? hO : hF;
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

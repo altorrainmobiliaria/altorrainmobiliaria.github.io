@@ -1,0 +1,32 @@
+---
+/*
+ * Términos y Condiciones de uso del Portal.
+ *
+ * Enlazada desde el footer de TODO el sitio; daba 404 hasta el 2026-08-20. `42-LEGAL` §Checklist
+ * de lanzamiento la exige para el MVP («T&C por vertical»).
+ *
+ * ⚠️ A diferencia de la Política y el Aviso —que salen del kit ya auditado— este texto NO existía:
+ * se redactó aquí. Es best-effort sobre norma colombiana y **no está validado por abogado** (la
+ * agenda del abogado está en `42-LEGAL`). Se ciñe a las reglas duras del cerebro para no crear
+ * riesgo: el estimador NUNCA se llama «avalúo» (Ley 1673/2013, regla §9), no se promete nada sobre
+ * pagos/reservas (el rail de dinero es Ola 2), el RNT se declara obligatorio para corta estancia
+ * (regla §3) y no se inventan tarifas.
+ *
+ * ⚠️ FALTA para cumplir Ley 820 art. 31: el número de Matrícula de Arrendador, que la Resolución
+ * 6636 otorga pero NO numera (el sistema lo asigna al inscribir). Cuando llegue, va aquí y en el
+ * footer. Ver `43-OPERACION §Matrícula`.
+ */
+export const prerender = true;
+
+import LegalLayout from '../layouts/LegalLayout.astro';
+import { Content } from '../content/legal/terminos.md';
+---
+
+<LegalLayout
+  title="Términos y Condiciones"
+  description="Términos y Condiciones de uso del portal de ALTORRA Inmobiliaria — naturaleza del servicio, información de los inmuebles, publicación y ley aplicable."
+  version="V1"
+  vigencia="20 de agosto de 2026"
+>
+  <Content />
+</LegalLayout>

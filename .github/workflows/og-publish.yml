@@ -1,0 +1,71 @@
+name: Generar páginas SEO (/p), imágenes OG (/og) y sitemap
+
+# ⛔ MODO OBRA (greenfield 2026-07-10): el sitio viejo quedó en mantenimiento con stubs de
+# redirect — este workflow regeneraría /p/*.html y sitemap.xml encima de los stubs.
+# Triggers automáticos (push/schedule/repository_dispatch) DESACTIVADOS; solo manual.
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "BASE para las URLs absolutas"
+        required: false
+        default: "https://altorrainmobiliaria.co"
+
+permissions:
+  contents: write   # para poder commitear a este repo
+
+concurrency:
+  group: og-publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Instalar dependencias
+        run: npm ci --ignore-scripts 2>/dev/null || npm install sharp firebase-admin
+
+      # ── Generar /p/*.html desde Firestore (única fuente de verdad) ────
+      - name: Generar páginas SEO desde Firestore
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+          BASE_URL: ${{ inputs.base_url || 'https://altorrainmobiliaria.co' }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REF: ${{ github.ref_name }}
+        run: |
+          if [[ -z "$GOOGLE_APPLICATION_CREDENTIALS_JSON" ]]; then
+            echo "❌ Falta el secret GOOGLE_APPLICATION_CREDENTIALS_JSON."
+            echo "   Configúralo en Settings → Secrets → Actions para que el workflow"
+            echo "   pueda leer las propiedades desde Firestore."
+            exit 1
+          fi
+          echo "$GOOGLE_APPLICATION_CREDENTIALS_JSON" > /tmp/sa.json
+          GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa.json node scripts/generate-properties.mjs
+          rm /tmp/sa.json
+
+      # ── Bump deploy-info.json ──────────────────────────────────────
+      - name: Bump deploy-info.json
+        run: |
+          mkdir -p data
+          echo "{\"version\":\"$(date -u +%Y-%m-%dT%H:%M:%S.000Z)\",\"commit\":\"${{ github.sha }}\",\"ref\":\"${{ github.ref_name }}\"}" > data/deploy-info.json
+
+      # ── Commit y push si hubo cambios ─────────────────────────────
+      - name: Commit & push si hubo cambios
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add p/ og/ sitemap.xml data/deploy-info.json
+          if [[ -n "$(git status --porcelain p/ og/ sitemap.xml data/deploy-info.json)" ]]; then
+            git commit -m "chore(seo): actualizar /p, /og, sitemap y deploy-info [skip ci]"
+            git push
+          else
+            echo "No hay cambios que commitear"
+          fi

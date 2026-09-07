@@ -1,0 +1,389 @@
+---
+import { LEGAL, TEXTO_AUTORIZACION, TEXTO_MARKETING, RUTA_AVISO } from '../lib/config/legal';
+/*
+ * PUBLICAR — "Publica tu inmueble" (Ola 1). Réplica de ALTORRA Publica.dc.html.
+ * Hero con formulario de VALORACIÓN (lead — nunca «avalúo»: B13/Ley 1673, ver §105) + "cuatro pasos" + 3 planes. Reutiliza Header/Footer.
+ * El form es client-side (validación + éxito). POST real a `solicitudes` (Cloud Function) = follow-up.
+ */
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { TARIFAS } from '../lib/content/tarifas';
+import { SITE } from '../lib/config/site';
+
+/*
+ * LA FRANJA DEL HERO — credenciales, no estadísticas (§280, decisión de Daniel el 31-ago).
+ *
+ * 🔴 Aquí decía «+1.200 inmuebles cerrados», «38 días promedio de venta» y «98% clientes
+ * satisfechos». Las tres eran del mockup y ninguna existe: ALTORRA no ha cerrado 1.200 inmuebles ni
+ * mide satisfacción. Y estaban **en la página donde un propietario decide entregarnos su inmueble**,
+ * que es donde una cifra falsa hace más daño.
+ *
+ * 🎯 La regla ya estaba escrita en `lib/content/tarifas.ts`, para la página de al lado: *«si algo no
+ * está decidido se dice que no está decidido; un hueco honesto no pierde clientes, una cifra que
+ * después hay que corregir sí»*. Esto es esa regla, una página más allá.
+ *
+ * Lo que las sustituye son tres hechos **comprobables**, y a un propietario cauto le dicen más que
+ * un «98%» que afirma todo el mundo: un número de matrícula que puede verificar, cuándo se le cobra
+ * (y cuándo NO), y que a su inquilino no le cobramos nada porque lo prohíbe la ley.
+ *
+ * ⚠️ Se DERIVAN de sus fuentes —`SITE` y el tarifario sellado— en vez de teclearse. Si la comisión
+ * cambia en `tarifas.ts`, esta franja la sigue sola; escrita a mano habría sido el gemelo de §271
+ * esperando a que alguien actualizara una de las dos.
+ */
+const tarifaVenta = TARIFAS.find((t) => t.id === 'venta');
+const stats = [
+  { n: SITE.matriculaArrendador, l: 'matrícula de arrendador' },
+  { n: tarifaVenta?.cifra ?? '—', l: 'y solo cuando se REGISTRA la venta' },
+  { n: '$0', l: 'paga el inquilino (Ley 820)' },
+];
+const pasos = [
+  { n: '01', t: 'Cuéntanos', d: 'Compártenos los datos de tu inmueble en dos minutos con el formulario.' },
+  { n: '02', t: 'Valoración experta', d: 'Un asesor visita, fotografía y define el precio justo con datos de mercado.' },
+  { n: '03', t: 'Publicamos', d: 'Tu propiedad en el portal, redes y nuestra red privada de compradores.' },
+  { n: '04', t: 'Cerramos', d: 'Coordinamos documentos, notaría y banco hasta la firma de la escritura.' },
+];
+// ⚖️ Aquí decía «Avalúo y fotografía profesional». El «Avalúo» se RETIRÓ el 2026-08-22 (§105):
+// Daniel confirmó que NO hay avaluador inscrito en el RAA detrás, y sin él ofrecerlo es reclamar una
+// actividad regulada (Ley 1673). La fotografía profesional SÍ es real, así que esa se queda: lo que
+// sobraba era la palabra, no el servicio.
+/*
+ * 🔴 Estas dos cadenas SE DERIVAN de `TARIFAS` (§263). Antes se escribían a mano aquí y decían dos
+ * cosas falsas en la página donde el propietario DECIDE:
+ *
+ *  · «Solo pagas cuando tu propiedad se vende» — pero esta misma página capta ARRIENDOS (su propio
+ *    h1 dice «Vende o arrienda», y el menú enlaza «Administración y Arriendo» aquí). La
+ *    administración de arriendo se cobra sobre CADA GIRO MENSUAL, no al vender. El agravante es el
+ *    rótulo de al lado: «sin costos ocultos» es lo que convierte una omisión en una promesa.
+ *  · «3%» a secas, mientras `/precios` dice que esa comisión se factura CON IVA. 3 % y 3,57 % no son
+ *    el mismo número: sobre una venta de $500.000.000 son $2.850.000 que nadie vio aquí.
+ *
+ * Derivarlas mata la divergencia de raíz — es lo que ya se hizo con el FAQPage de `/precios`.
+ */
+const tarifaDe = (id: string): { cifra: string; nota?: string } => {
+  const t = TARIFAS.find((x) => x.id === id);
+  if (!t) throw new Error(`publicar: cita la tarifa '${id}' y no existe en TARIFAS.`);
+  /*
+   * Una tarifa SIN cifra (las «a convenir») no se puede anunciar como precio: preferimos romper el
+   * build a imprimir «undefined %» en la pagina donde el propietario decide. Mensaje en ASCII: viaja
+   * en una cabecera HTTP cuando el fallo ocurre en SSR.
+   */
+  if (t.cifra === null) throw new Error(`publicar: la tarifa '${id}' no tiene cifra y se esta anunciando como precio.`);
+  return { cifra: t.cifra, nota: t.nota };
+};
+const conIva = (t: { cifra: string; nota?: string }) =>
+  t.cifra.includes('IVA') || !/factura con IVA/i.test(t.nota ?? '') ? t.cifra : `${t.cifra} + IVA`;
+
+const PRECIO_VENTA = conIva(tarifaDe('venta'));
+const SUBTITULO_PLANES =
+  `Sin costos ocultos: la comisión de venta (${PRECIO_VENTA}) se causa al registro, ` +
+  `y la administración de arriendo (${tarifaDe('administracion').cifra}) se descuenta de cada giro mensual.`;
+
+/*
+ * ⚠️ AQUI NO SE PROMETE UN ABOGADO (§263). La pagina ofrecia «Abogado dedicado» en el plan mas caro,
+ * «Acompañamiento legal» en el de 3 % y «todo el proceso juridico acompañado» en la franja de
+ * beneficios — y `docs/42-LEGAL` dice que ALTORRA **no presta asesoria juridica**. El propietario
+ * elegia el plan contando con un abogado que no existe, y lo descubria en el estudio de titulos:
+ * justo el momento de menos margen, y en el que un error legal se vuelve caro.
+ * Lo que queda escrito es lo que SI se hace: revisar documentos y coordinar notaria y titulos.
+ */
+const planes = [
+  { tier: 'Publicación', price: 'Gratis', sub: 'Publica y recibe contactos por tu cuenta.', perks: ['Ficha en el portal ALTORRA', 'Hasta 10 fotos', 'Contactos directos'], cta: 'Empezar gratis', featured: false },
+  { tier: 'Gestión Premium', price: PRECIO_VENTA, unit: 'al vender', sub: 'Nosotros gestionamos todo el proceso.', perks: ['Todo lo de Publicación', 'Fotografía profesional', 'Visitas y negociación gestionadas', 'Documentos y notaría coordinados'], cta: 'Pedir valoración', featured: true },
+  { tier: 'Concierge Élite', price: 'A medida', sub: 'Para propiedades de alto valor y exclusividad.', perks: ['Todo lo de Premium', 'Video y tour 3D', 'Marketing internacional', 'Estudio de titulos con abogado aliado'], cta: 'Hablar con un asesor', featured: false },
+];
+const check = '<path d="M20 6L9 17l-5-5"/>';
+
+// FRANJA DE BENEFICIOS — la sección que faltaba (mockup L221-228). Sin titular: 4 bloques
+// icono + h3 + texto. Íconos y textos EXACTOS del mockup.
+const beneficios = [
+  { i: '<circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>', t: 'Máxima exposición', d: 'Portal, redes y una red privada de compradores nacionales e internacionales.' },
+  { i: '<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>', t: 'Precio justo', d: 'Basado en datos reales del mercado de Cartagena, no en corazonadas.' },
+  { i: '<path d="M12 3l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V6z"/><path d="M9 12l2 2 4-4"/>', t: 'Documentos en regla', d: 'Revisamos tus documentos y coordinamos el estudio de títulos con un abogado aliado.' },
+  { i: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>', t: 'Seguridad total', d: 'Compradores verificados y pagos protegidos en cada etapa de la operación.' },
+];
+---
+
+<BaseLayout
+  title="Publica tu inmueble — ALTORRA Inmobiliaria"
+  description="Vende o arrienda tu inmueble en Cartagena de Indias con ALTORRA. Tú decides el precio; nosotros ponemos el respaldo y el acompañamiento legal."
+  miga={[{ nombre: 'Publica tu inmueble', ruta: '/publicar' }]}
+>
+  <Header active="vender" />
+
+  <main id="main">
+    <!-- Hero + formulario -->
+    <section class="pub-hero">
+      <span class="pub-hero__bg" style="background-image:url('/assets/villa-pool.webp')"></span>
+      <span class="pub-hero__wash"></span>
+      <div class="alt-container pub-hero__in">
+        <div class="pub-hero__copy">
+          <p class="alt-eyebrow">Propietarios</p>
+          <h1 class="pub-hero__h">Vende o arrienda con quien conoce Cartagena.</h1>
+          <p class="pub-hero__p">Valoración experta, fotografía profesional y una red de compradores calificados. Tú decides el precio; nosotros ponemos el respaldo.</p>
+          <div class="pub-stats">
+            {stats.map((s) => <div><span class="pub-stat__n">{s.n}</span><span class="pub-stat__l">{s.l}</span></div>)}
+          </div>
+        </div>
+
+        <div class="pub-form-wrap" id="empezar">
+          <form class="pub-form" id="pub-form" method="post" action="/api/solicitud" novalidate>
+            <!-- h2 + subtítulo FUERA de .pub-form__fields: el mockup los deja persistir como
+                 encabezado sobre el mensaje de éxito (el script oculta SOLO los campos). -->
+            <h2 class="pub-form__h">Pide tu valoración gratis</h2>
+            <p class="pub-form__sub">Respuesta de un asesor en menos de 24 horas.</p>
+            <p class="pub-form__aviso">
+              Es una estimación orientativa, no un avalúo comercial con validez legal. Si necesitas
+              ese documento, te decimos con quién hacerlo.
+            </p>
+            <div class="pub-form__fields">
+              <div><label class="alt-label" for="pub-name">Nombre</label><input class="alt-input" id="pub-name" name="nombre" type="text" placeholder="Tu nombre" required /></div>
+              <div><label class="alt-label" for="pub-phone">Teléfono</label><input class="alt-input" id="pub-phone" name="telefono" type="tel" placeholder="+57 300 000 0000" required /></div>
+              <div class="pub-form__grid">
+                <div><label class="alt-label" for="pub-zona">Zona</label>
+                  <select class="alt-select" id="pub-zona" name="zona"><option>Castillogrande</option><option>Bocagrande</option><option>Manga</option><option>Crespo</option><option>Centro Histórico</option><option>La Boquilla</option></select>
+                </div>
+                <div><label class="alt-label" for="pub-tipo">Tipo</label>
+                  <select class="alt-select" id="pub-tipo" name="tipo"><option>Apartamento</option><option>Casa</option><option>Lote</option><option>Oficina</option><option>Local</option></select>
+                </div>
+              </div>
+              <!-- GATE DE HABEAS DATA (Ley 1581/2012 art. 9 · D.1377/2013 art. 7 · kit `08` §2.2).
+                   NINGUNA casilla viene premarcada: el silencio no es autorización. El texto es el
+                   del kit, y su versión se sella en el lead junto con la versión de la Política. -->
+              <div class="pub-form__legal">
+                <label class="pub-check">
+                  <input type="checkbox" name="autorizacion" value="on" required />
+                  <span>
+                    {TEXTO_AUTORIZACION.p1}<a href={RUTA_AVISO} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkAviso}</a>{TEXTO_AUTORIZACION.p2}<a href={LEGAL.politicaDatos.ruta} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkPolitica}</a>{TEXTO_AUTORIZACION.p3}
+                  </span>
+                </label>
+                <label class="pub-check">
+                  <input type="checkbox" name="marketing" value="on" />
+                  <span>{TEXTO_MARKETING}</span>
+                </label>
+              </div>
+              <p class="pub-form__err" id="pub-legal" hidden>Para continuar necesitamos tu autorización de tratamiento de datos.</p>
+              <p class="pub-form__err" id="pub-err" hidden>Ingresa tu nombre y teléfono para continuar.</p>
+              <p class="pub-form__err" id="pub-net" hidden>No pudimos enviar tu solicitud. Revisa tu conexión e inténtalo de nuevo.</p>
+              <button class="alt-btn alt-btn--navy pub-form__submit" type="submit">Pedir valoración<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+            </div>
+            <div class="pub-form__ok" id="pub-ok" hidden>
+              <span class="pub-form__ok-ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" set:html={check}></svg></span>
+              <h3>¡Solicitud recibida!</h3>
+              <p>Un asesor ALTORRA te contactará en las próximas 24 horas para coordinar la visita.</p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cuatro pasos -->
+    <section class="alt-container alt-section pub-steps">
+      <div class="pub-center">
+        <p class="alt-eyebrow">Cómo funciona</p>
+        <h2>Cuatro pasos, cero complicaciones</h2>
+      </div>
+      <div class="pub-steps__grid">
+        {pasos.map((p) => (
+          <div class="pub-step">
+            <span class="pub-step__n">{p.n}</span>
+            <h3>{p.t}</h3>
+            <p>{p.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- Planes -->
+    <section class="pub-plans-band">
+      <div class="alt-container">
+        <div class="pub-center">
+          <p class="alt-eyebrow">Planes</p>
+          <h2>Elige cómo quieres vender</h2>
+          <p class="pub-plans__sub">{SUBTITULO_PLANES}</p>
+        </div>
+        <div class="pub-plans">
+          {planes.map((pl) => (
+            <div class={`pub-plan${pl.featured ? ' pub-plan--featured' : ''}`}>
+              {pl.featured && <span class="pub-plan__badge">Recomendado</span>}
+              <p class="pub-plan__tier">{pl.tier}</p>
+              <p class="pub-plan__price">{pl.price}{pl.unit && <span>{pl.unit}</span>}</p>
+              <p class="pub-plan__psub">{pl.sub}</p>
+              <div class="pub-plan__perks">
+                {pl.perks.map((perk) => (
+                  <div class="pub-plan__perk"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" set:html={check}></svg>{perk}</div>
+                ))}
+              </div>
+              <a class={pl.featured ? 'pub-plan__cta pub-plan__cta--gold' : 'pub-plan__cta'} href="#empezar">{pl.cta}</a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- FRANJA DE BENEFICIOS — era la sección AUSENTE de Publicar (§32.2).
+         Réplica fiel del mockup (L221-228): sin titular, 4 bloques icono + h3 + texto. -->
+    <section class="alt-container pub-benef">
+      <div class="pub-benef__grid">
+        {beneficios.map((b) => (
+          <div class="pub-benef__item">
+            <span class="pub-benef__ico">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={b.i}></svg>
+            </span>
+            <h3 class="pub-benef__t">{b.t}</h3>
+            <p class="pub-benef__d">{b.d}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  /* Bloque de consentimiento (gate de Habeas Data). Sobrio: no compite con el CTA. */
+  .pub-form__legal { display: grid; gap: 10px; margin: 4px 0 2px; }
+  .pub-check { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+  .pub-check input {
+    flex: none; width: 17px; height: 17px; margin-top: 2px; cursor: pointer;
+    accent-color: var(--alt-gold);
+  }
+  .pub-check span { font-size: 12.5px; line-height: 1.5; color: var(--alt-gray-600, #5b6572); }
+  .pub-check a { color: var(--alt-link); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* Hero */
+  .pub-hero { position: relative; overflow: hidden; background: var(--alt-white); }
+  .pub-hero__bg { position: absolute; inset: 0; background-size: cover; background-position: center right; opacity: 0.07; }
+  .pub-hero__wash { position: absolute; inset: 0; background: linear-gradient(100deg, #ffffff 46%, rgba(255, 255, 255, 0.8) 66%, rgba(242, 247, 251, 0.5)); }
+  .pub-hero__in { position: relative; display: flex; gap: clamp(32px, 5vw, 72px); align-items: center; flex-wrap: wrap; padding-block: clamp(52px, 7vw, 92px); }
+  .pub-hero__copy { flex: 1 1 440px; min-width: 300px; }
+  .pub-hero__h { font-size: clamp(38px, 5.6vw, 64px); line-height: 1.02; margin: var(--alt-space-3) 0 20px; }
+  .pub-hero__p { font-size: clamp(16px, 1.5vw, 18.5px); line-height: 1.62; color: var(--alt-text); max-width: 520px; margin-bottom: 34px; }
+  .pub-stats { display: flex; gap: clamp(24px, 4vw, 52px); flex-wrap: wrap; }
+  .pub-stat__n { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 34px; color: var(--alt-gold-raw); line-height: 1; }
+  .pub-stat__l { display: block; font-size: 12.5px; color: var(--alt-text); margin-top: 4px; }
+
+  /* Formulario */
+  .pub-form-wrap { flex: 1 1 360px; min-width: 300px; max-width: 440px; }
+  .pub-form { background: var(--alt-white); border-radius: var(--alt-r-2xl, 22px); padding: clamp(24px, 3vw, 34px); box-shadow: var(--alt-elev-form, 0 40px 90px -40px rgba(6, 39, 67, 0.55)); }
+  .pub-form__fields { display: flex; flex-direction: column; gap: 13px; }
+  .pub-form__h { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 26px; color: var(--alt-ink); letter-spacing: normal; margin-bottom: 3px; }
+  .pub-form__sub { font-size: 13.5px; color: var(--alt-text); margin-bottom: 10px; }
+  /* Aviso legal del estimador (B13 / Ley 1673). MISMO tratamiento que `.ra-hero__aviso` de
+     `/rango-altorra`: filo de oro a la izquierda, texto suave. Se lee como una nota honesta, no
+     como letra pequeña escondida — que es justo lo que la norma quiere evitar. */
+  .pub-form__aviso {
+    font-size: var(--alt-fs-sm);
+    color: var(--alt-text-soft);
+    margin: 0 0 18px;
+    padding-left: var(--alt-space-4);
+    border-left: 2px solid var(--alt-gold);
+  }
+  .pub-form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+  .pub-form__err { font-size: 12.5px; color: var(--alt-link); }
+  .pub-form__submit { margin-top: 4px; width: 100%; }
+  .pub-form__ok { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 18px 6px; }
+  .pub-form__ok-ico { width: 56px; height: 56px; border-radius: 50%; background: var(--alt-mist); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+  .pub-form__ok-ico svg { width: 26px; height: 26px; stroke: var(--alt-link); }
+  .pub-form__ok h3 { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 24px; color: var(--alt-ink); margin-bottom: 6px; letter-spacing: normal; }
+  .pub-form__ok p { font-size: 14px; color: var(--alt-text); line-height: 1.55; }
+
+  /* Pasos — el mockup usa clamp(56px,7vw,96px); el .alt-section genérico llegaba a 112px (§ fidelidad) */
+  .pub-steps { padding-block: clamp(56px, 7vw, 96px); }
+  .pub-center { text-align: center; margin-bottom: clamp(38px, 4vw, 58px); }
+  .pub-center h2 { margin-top: var(--alt-space-3); }
+  .pub-steps__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); gap: 26px; }
+  .pub-step__n { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 22px; color: var(--alt-gold); display: block; margin-bottom: 14px; }
+  .pub-step h3 { font-family: var(--alt-font-body); font-size: 18px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); margin-bottom: 9px; }
+  .pub-step p { font-size: 14.5px; line-height: 1.6; color: var(--alt-text); }
+
+  /* Planes */
+  .pub-plans-band { background: var(--alt-white); border-block: 1px solid var(--alt-hairline); padding-block: clamp(56px, 7vw, 92px); }
+  .pub-plans__sub { font-size: 16px; color: var(--alt-text); max-width: 520px; margin: 8px auto 0; }
+  .pub-plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 22px; align-items: stretch; }
+  .pub-plan { position: relative; background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: var(--alt-r-lg); padding: 32px 28px; display: flex; flex-direction: column; box-shadow: 0 2px 6px rgba(27, 39, 51, 0.04); }
+  .pub-plan--featured { background: var(--alt-surface-ink); border-color: transparent; box-shadow: var(--alt-elev-panel); transform: translateY(-6px); }
+  .pub-plan__badge { position: absolute; top: 20px; right: 22px; display: inline-flex; padding: 6px 12px; border-radius: var(--alt-r-pill); background: rgba(235, 210, 126, 0.16); font-size: 10.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-gold-bright); }
+  .pub-plan__tier { font-size: 12px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.16em; text-transform: uppercase; color: var(--alt-text); margin-bottom: 14px; }
+  .pub-plan--featured .pub-plan__tier { color: rgba(235, 210, 126, 0.85); }
+  .pub-plan__price { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 40px; color: var(--alt-ink); line-height: 1; margin-bottom: 6px; }
+  .pub-plan__price span { font-family: var(--alt-font-body); font-size: 14px; font-weight: var(--alt-fw-regular); color: var(--alt-text); margin-left: 6px; }
+  .pub-plan--featured .pub-plan__price { color: #fff; }
+  .pub-plan--featured .pub-plan__price span { color: rgba(255, 255, 255, 0.65); }
+  .pub-plan__psub { font-size: 13.5px; color: var(--alt-text); margin-bottom: 24px; }
+  .pub-plan--featured .pub-plan__psub { color: rgba(255, 255, 255, 0.68); }
+  .pub-plan__perks { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+  .pub-plan__perk { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--alt-text); }
+  .pub-plan__perk svg { width: 17px; height: 17px; stroke: var(--alt-gold-raw); flex: none; margin-top: 2px; }
+  .pub-plan--featured .pub-plan__perk { color: rgba(255, 255, 255, 0.9); }
+  .pub-plan--featured .pub-plan__perk svg { stroke: var(--alt-gold-bright); }
+  .pub-plan__cta { display: flex; align-items: center; justify-content: center; padding: 13px; border-radius: var(--alt-r-sm); border: 1px solid var(--alt-gold); color: var(--alt-link); font-weight: var(--alt-fw-semibold); font-size: 14.5px; margin-top: 28px; text-decoration: none; transition: background var(--alt-dur) var(--alt-ease), transform var(--alt-dur) var(--alt-ease); }
+  .pub-plan__cta:hover { background: var(--alt-mist); }
+  .pub-plan__cta--gold { background: var(--alt-gold-bright); border-color: transparent; color: var(--alt-ink); font-weight: var(--alt-fw-bold); }
+  .pub-plan__cta--gold:hover { background: var(--alt-gold-bright); transform: translateY(-1px); }
+
+  /* ===== FRANJA DE BENEFICIOS (sin titular: 4 bloques icono + h3 + texto) ===== */
+  .pub-benef { padding-block: clamp(56px, 7vw, 92px); }
+  .pub-benef__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); gap: 26px; }
+  .pub-benef__ico {
+    width: 46px; height: 46px; border-radius: 12px; background: var(--alt-mist);
+    display: flex; align-items: center; justify-content: center; color: var(--alt-gold-raw); margin-bottom: 16px;
+  }
+  .pub-benef__ico svg { width: 22px; height: 22px; }
+  .pub-benef__t { font-size: 17px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); margin: 0 0 8px; }
+  /* a11y: el mockup usa #6b7c93 a 14px → reprueba AA. Token AA. */
+  .pub-benef__d { font-size: 14px; line-height: 1.6; color: var(--alt-text); margin: 0; }
+</style>
+
+<script>
+  // Formulario de valoración — envío REAL a `solicitudes` vía /api/solicitud (§88).
+  // El <form> ya lleva method/action: sin JavaScript el POST nativo funciona igual y vuelve
+  // con ?ok=1. Esto solo lo mejora (sin recargar) y muestra el mismo estado de éxito.
+  const form = document.getElementById('pub-form') as HTMLFormElement | null;
+  const err = document.getElementById('pub-err');
+  const net = document.getElementById('pub-net');
+  const errLegal = document.getElementById('pub-legal');
+  const fields = document.querySelector('.pub-form__fields') as HTMLElement | null;
+  const ok = document.getElementById('pub-ok');
+  const btn = form?.querySelector('.pub-form__submit') as HTMLButtonElement | null;
+
+  const exito = () => { fields?.setAttribute('hidden', ''); ok?.removeAttribute('hidden'); };
+
+  // Camino SIN JavaScript: el endpoint redirigió con ?ok=1 y hay que pintar el éxito al cargar.
+  const q = new URLSearchParams(location.search);
+  if (q.get('ok') === '1') exito();
+  if (q.get('error') === '1') net?.removeAttribute('hidden');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = (document.getElementById('pub-name') as HTMLInputElement)?.value.trim();
+    const phone = (document.getElementById('pub-phone') as HTMLInputElement)?.value.trim();
+    if (!name || !phone) { err?.removeAttribute('hidden'); return; }
+    err?.setAttribute('hidden', '');
+
+    // Gate de Habeas Data también en el cliente: el servidor ya lo rechaza (422), pero un aviso
+    // aquí evita que el propietario pierda lo escrito. NUNCA se premarca ni se marca por él.
+    const autoriza = (form.querySelector('input[name="autorizacion"]') as HTMLInputElement | null)?.checked;
+    if (!autoriza) { errLegal?.removeAttribute('hidden'); return; }
+    errLegal?.setAttribute('hidden', '');
+    net?.setAttribute('hidden', '');
+
+    // Doble envío: un propietario impaciente da dos clics y crearía dos leads.
+    if (btn) { btn.disabled = true; btn.dataset.label = btn.textContent || ''; btn.textContent = 'Enviando…'; }
+    try {
+      const res = await fetch('/api/solicitud', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify(Object.fromEntries(new FormData(form) as unknown as Iterable<[string, string]>)),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      exito();
+    } catch {
+      net?.removeAttribute('hidden');
+      if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label || 'Pedir valoración'; }
+    }
+  });
+</script>

@@ -1,0 +1,191 @@
+// Mapa REAL del portal — MapLibre GL + Protomaps (.pmtiles) — TODO-30 / ADR §16.1.
+// Cliente ÚNICO compartido por la ficha y el SERP. Se ejecuta SOLO en el navegador (isla).
+//
+// DISEÑO (degradación limpia):
+//  · El basemap vive en un `.pmtiles` de Cartagena (~3.3 MB, generado con go-pmtiles) EMPACADO en
+//    `public/basemap/` y SERVIDO por la ruta Worker `/tiles/[file]` CON soporte de RANGE (§55.9).
+//    ⚠️ NO servirlo como asset estático plano: Cloudflare Static Assets IGNORA el header Range (200 +
+//    archivo entero) y pmtiles.js NECESITA range → el Worker trocea el rango (ADR §55.9). Cero R2/credenciales.
+//  · La URL es CONFIGURABLE (`PUBLIC_PMTILES_URL`); default = la ruta Worker. Si el archivo faltara, el
+//    mapa NO pinta y el ESQUEMÁTICO SELLADO permanece visible (fallback).
+//  · Al pintar el basemap real, el contenedor recibe `.is-live` → se oculta el esquemático y aparecen
+//    los pines-precio como marcadores MapLibre (se mueven con el mapa). El emparejamiento card↔pin
+//    (hover) sigue funcionando: los marcadores llevan `data-pin-idx` igual que los pines esquemáticos.
+//  · Paleta: basemap claro Protomaps + chrome del panel (zoom/nota) y pines en navy/oro (sello §32).
+//
+// glyphs/sprites de Protomaps = GitHub Pages estático (gratuito, no es API de pago). El .pmtiles y los
+// datos de propiedades son propios. Rotación deshabilitada (mapa urbano plano, sin gestos accidentales).
+
+// maplibre-gl v6 = ESM con named exports (ya no hay default export).
+import { Map as MapLibreMap, Marker, LngLatBounds, addProtocol, type ErrorEvent } from 'maplibre-gl';
+import { Protocol } from 'pmtiles';
+import { layers, namedFlavor } from '@protomaps/basemaps';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import './altorra-map.css';
+
+export interface PinData {
+  i: number; // índice para emparejar con su card (data-pin-idx)
+  lat: number;
+  lng: number;
+  label?: string; // precio corto, p.ej. "$980M"
+  active?: boolean; // pin resaltado por defecto (mockup: card 2 "is-on")
+}
+
+/** Estado por contenedor: permite REEMPLAZAR los pines cuando el catálogo real llega (isla del SERP). */
+interface EstadoMapa {
+  map: MapLibreMap;
+  marcadores: Marker[];
+  pinClass: string;
+  fit: boolean;
+}
+const estados = new WeakMap<HTMLElement, EstadoMapa>();
+
+function pintarPines(el: HTMLElement, pins: PinData[]): void {
+  const st = estados.get(el);
+  if (!st) return;
+  for (const m of st.marcadores) m.remove();
+  st.marcadores = [];
+
+  for (const p of pins) {
+    if (typeof p.lat !== 'number' || typeof p.lng !== 'number') continue;
+    const pin = document.createElement('button');
+    pin.type = 'button';
+    pin.className = st.pinClass;
+    if (p.active) pin.classList.add('is-on');
+    pin.dataset.pinIdx = String(p.i);
+    pin.textContent = p.label ?? '';
+    pin.setAttribute('aria-label', p.label ? `Propiedad · ${p.label}` : 'Propiedad');
+    st.marcadores.push(new Marker({ element: pin, anchor: 'bottom' }).setLngLat([p.lng, p.lat]).addTo(st.map));
+  }
+
+  if (st.fit && pins.length > 1) {
+    const b = new LngLatBounds();
+    for (const p of pins) if (typeof p.lat === 'number' && typeof p.lng === 'number') b.extend([p.lng, p.lat]);
+    st.map.fitBounds(b, { padding: 70, maxZoom: 15, duration: 0 });
+  }
+}
+
+/**
+ * Reemplaza los pines del mapa (los del catálogo REAL sustituyen a los del shell). Idempotente y
+ * seguro si el mapa aún no montó (WebGL no disponible): simplemente no hace nada.
+ */
+export function setMarkers(el: HTMLElement, pins: PinData[]): void {
+  pintarPines(el, pins);
+}
+
+// URL del basemap. Default = asset estático empacado con el sitio. Override por env para apuntar a la
+// ruta R2 (`/tiles/cartagena.pmtiles`) o a un `.pmtiles` remoto (p.ej. build.protomaps.com) en pruebas.
+const PMTILES_URL = (import.meta.env.PUBLIC_PMTILES_URL as string | undefined) || '/tiles/cartagena.pmtiles';
+
+let protocolReady = false;
+let booted = false;
+
+function initOne(el: HTMLElement): void {
+  const canvas = el.querySelector<HTMLElement>('[data-map-canvas]');
+  if (!canvas) return;
+
+  let pins: PinData[] = [];
+  try {
+    pins = JSON.parse(el.dataset.markers || '[]');
+  } catch {
+    pins = [];
+  }
+
+  const zoom = Number(el.dataset.zoom || '13');
+  const centerAttr = el.dataset.center; // "lng,lat"
+  const center: [number, number] = centerAttr
+    ? (centerAttr.split(',').map(Number) as [number, number])
+    : [-75.535, 10.41]; // Cartagena de Indias (fallback razonable)
+  const fit = el.dataset.fit === 'true';
+  const pinClass = el.dataset.pinClass || 'alt-mappin';
+
+  if (!protocolReady) {
+    addProtocol('pmtiles', new Protocol().tile);
+    protocolReady = true;
+  }
+
+  let map: MapLibreMap;
+  try {
+    map = new MapLibreMap({
+      container: canvas,
+      center,
+      zoom,
+      minZoom: 9,
+      maxZoom: 18,
+      attributionControl: { compact: true },
+      dragRotate: false,
+      pitchWithRotate: false,
+      style: {
+        version: 8,
+        glyphs: 'https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf',
+        sprite: 'https://protomaps.github.io/basemaps-assets/sprites/v4/light',
+        sources: {
+          protomaps: {
+            type: 'vector',
+            url: `pmtiles://${PMTILES_URL}`,
+            attribution:
+              '<a href="https://protomaps.com" target="_blank" rel="noopener">Protomaps</a> © <a href="https://openstreetmap.org" target="_blank" rel="noopener">OpenStreetMap</a>',
+          },
+        },
+        layers: layers('protomaps', namedFlavor('light'), { lang: 'es' }),
+      },
+    });
+  } catch {
+    // WebGL no disponible → queda el esquemático sellado. Nunca una caja rota.
+    return;
+  }
+
+  // Sonda de diagnóstico SOLO en dev: sin acceso al objeto `map` no hay forma de auditar por qué
+  // el basemap no pinta (los errores se silencian a propósito). No existe en el bundle de prod.
+  if (import.meta.env.DEV) (window as unknown as Record<string, unknown>).__altorraMap = map;
+
+  // Sin rotación (mapa urbano plano).
+  map.touchZoomRotate.disableRotation();
+
+  // Botones de zoom SELLADOS del panel (navy/oro), no los controles por defecto de MapLibre.
+  el.querySelector('[data-map-zoom="in"]')?.addEventListener('click', () => map.zoomIn());
+  el.querySelector('[data-map-zoom="out"]')?.addEventListener('click', () => map.zoomOut());
+
+  // Pines-precio como marcadores (se mueven con el mapa). Reusan el look sellado por la clase.
+  // El estado queda registrado para que la isla del catálogo pueda REEMPLAZARLOS (`setMarkers`).
+  estados.set(el, { map, marcadores: [], pinClass, fit });
+  pintarPines(el, pins);
+
+  // Subir la cortina del esquemático SOLO cuando la FUENTE pmtiles cargó de verdad (no en `load`:
+  // el estilo carga aunque el .pmtiles falle → `load` mostraría un mapa EN BLANCO). `isSourceLoaded`
+  // solo es true si los tiles del viewport llegaron. Sin .pmtiles → nunca va a vivo → esquemático se queda.
+  let wentLive = false;
+  const goLive = () => {
+    if (!wentLive) {
+      wentLive = true;
+      el.classList.add('is-live');
+    }
+  };
+  // Señal primaria: la FUENTE pmtiles cargó sus tiles del viewport.
+  map.on('sourcedata', (e) => {
+    if (e.sourceId === 'protomaps' && e.isSourceLoaded) goLive();
+  });
+  // Refuerzo: `idle` = mapa terminó de cargar+pintar. Solo subimos si la fuente está REALMENTE cargada
+  // (idle sin tiles = fuente rota → NO ir a vivo, quedarse en el esquemático).
+  map.on('idle', () => {
+    if (!wentLive && map.isSourceLoaded('protomaps')) goLive();
+  });
+
+  // Fallo de fuente/tiles (aún no hay .pmtiles, red caída): no hacemos nada — el default ES el
+  // esquemático sellado (no añadimos `is-live` hasta confirmar carga). Silenciamos para no ensuciar consola.
+  map.on('error', (e: ErrorEvent) => {
+    // En PROD, degradación silenciosa: el default ES el esquemático sellado, nunca una caja rota.
+    // En DEV gritamos: el silencio TOTAL es justo lo que dejó un basemap que no pintaba semanas sin
+    // diagnosticar — no había forma de saber por qué (TODO-30 / §55.9).
+    if (import.meta.env.DEV) console.error('[altorra-map] error de fuente/tiles →', e?.error?.message ?? e);
+  });
+}
+
+/** Inicializa todos los mapas de la página. Idempotente. */
+export function bootMaps(): void {
+  if (booted) return;
+  booted = true;
+  const run = () => document.querySelectorAll<HTMLElement>('[data-alt-map]').forEach(initOne);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run, { once: true });
+  else run();
+}

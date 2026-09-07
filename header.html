@@ -1,0 +1,167 @@
+<!-- header.html -->
+<header>
+  <div class="container">
+    <a class="brand" href="index.html" aria-label="Ir al inicio">
+      <img data-no-lazy="true" src="https://i.postimg.cc/SsPmBFXt/Chat-GPT-Image-9-ago-2025-10-31-20.png" alt="Logo de Altorra" width="60" height="60" decoding="async" fetchpriority="high"/>
+      <span class="name" style="display:none">Altorra Inmobiliaria</span>
+    </a>
+
+    <nav aria-label="Menú principal">
+      <div class="nav-list">
+        <div class="nav-item" data-size="compact">
+          <button class="nav-btn" data-panel="panel-propiedades" aria-controls="panel-propiedades" aria-expanded="false">Propiedades</button>
+        </div>
+        <div class="nav-item" data-size="compact">
+          <button class="nav-btn" data-panel="panel-inversion" aria-controls="panel-inversion" aria-expanded="false">Inversión</button>
+        </div>
+        <div class="nav-item" data-size="mega">
+          <button class="nav-btn" data-panel="panel-servicios" aria-controls="panel-servicios" aria-expanded="false">Servicios</button>
+        </div>
+        <div class="nav-item">
+          <a class="nav-btn" href="quienes-somos.html">Nosotros</a>
+        </div>
+        <div class="nav-item">
+          <a class="nav-btn" href="contacto.html">Contacto</a>
+        </div>
+      </div>
+    </nav>
+
+    <button id="navToggle" class="nav-toggle" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menú">
+      <span aria-hidden="true">☰</span> <span class="menu-label">Menú</span>
+    </button>
+  </div>
+</header>
+
+<!-- PANELS DESKTOP -->
+<div id="panel-propiedades" class="menu-panel panel-mega panel-servicios-2col" role="dialog" aria-modal="false" aria-hidden="true">
+  <div class="mega-grid">
+    <div class="mega-col">
+      <h4>Por operación</h4>
+      <a class="menu-link" href="propiedades-comprar.html">Comprar</a>
+      <a class="menu-link" href="propiedades-arrendar.html">Arrendar</a>
+      <a class="menu-link" href="propiedades-alojamientos.html">Rentar por días</a>
+      <a class="menu-link" href="mapa.html">Mapa interactivo</a>
+      <a class="menu-link" href="publicar-propiedad.html">Publicar propiedad</a>
+    </div>
+    <div class="mega-col">
+      <h4>Sectores</h4>
+      <a class="menu-link" href="serena-del-mar.html">Serena del Mar</a>
+      <a class="menu-link" href="karibana.html">Karibana</a>
+      <a class="menu-link" href="manzanillo-del-mar.html">Manzanillo del Mar</a>
+      <a class="menu-link" href="la-boquilla.html">La Boquilla</a>
+      <a class="menu-link" href="cielo-mar.html">Cielo Mar</a>
+      <a class="menu-link" href="san-diego.html">San Diego</a>
+      <a class="menu-link" href="el-laguito.html">El Laguito</a>
+      <a class="menu-link" href="marbella.html">Marbella</a>
+      <a class="menu-link" href="el-cabrero.html">El Cabrero</a>
+      <a class="menu-link" href="pie-de-la-popa.html">Pie de la Popa</a>
+      <a class="menu-link" href="alto-bosque.html">Alto Bosque</a>
+      <a class="menu-link" href="propiedades-baru.html">Barú</a>
+      <a class="menu-link" href="tierrabomba.html">Tierrabomba</a>
+    </div>
+  </div>
+</div>
+
+<div id="panel-inversion" class="menu-panel panel-compact" role="dialog" aria-modal="false" aria-hidden="true">
+  <a class="menu-link" href="invertir.html">Por qué invertir en Cartagena</a>
+  <a class="menu-link" href="simulador.html">Simulador hipotecario</a>
+  <a class="menu-link" href="invertir-airbnb-cartagena.html">Calculadora Airbnb</a>
+  <a class="menu-link" href="estudios-mercado-cartagena.html">Estudio de mercado 2026</a>
+  <a class="menu-link" href="blog.html">Blog inmobiliario</a>
+</div>
+
+<div id="panel-servicios" class="menu-panel panel-mega panel-servicios-2col" role="dialog" aria-modal="false" aria-hidden="true">
+  <div class="mega-grid">
+    <div class="mega-col">
+      <h4>Gestión inmobiliaria</h4>
+      <a class="menu-link" href="servicios-mantenimiento.html">Administración de inmuebles</a>
+      <a class="menu-link" href="servicios-mantenimiento.html">Avalúos</a>
+      <a class="menu-link" href="servicios-mantenimiento.html">Mantenimiento y reparaciones</a>
+      <a class="menu-link" href="servicios-mantenimiento.html">Mudanzas y logística</a>
+    </div>
+    <div class="mega-col">
+      <h4>Asesoría legal y contable</h4>
+      <a class="menu-link" href="servicios-mantenimiento.html">Servicios jurídicos</a>
+      <a class="menu-link" href="servicios-mantenimiento.html">Servicios contables</a>
+      <a class="menu-link" href="servicios-mantenimiento.html">Gestión de contratos</a>
+    </div>
+  </div>
+  <div class="mega-footer">
+    <a class="menu-link menu-link-featured" href="turismo-inmobiliario.html">
+      <span class="ml-title">Turismo inmobiliario</span>
+      <span class="ml-sub">Yates, pasadías en islas y experiencias en Cartagena</span>
+    </a>
+    <a class="menu-link menu-link-featured" href="foreign-investors.html" hreflang="en" lang="en" translate="no">
+      <span class="ml-title">🇺🇸 Foreign Investors Guide</span>
+      <span class="ml-sub">Buy property in Cartagena as a foreigner — legal & tax guide</span>
+    </a>
+  </div>
+</div>
+
+<!-- DRAWER MÓVIL -->
+<div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
+<aside id="mobileMenu" class="drawer" role="dialog" aria-modal="true" aria-labelledby="mobileMenuTitle" hidden>
+  <div class="block">
+    <h3 id="mobileMenuTitle" style="margin:0;font-weight:800;color:var(--gold)">Menú</h3>
+  </div>
+   <div class="block">
+    <h4>Mis Favoritos</h4>
+    <a href="favoritos.html">Ir a Mis Favoritos</a>
+      </div>
+  <div class="block">
+    <h4>Propiedades</h4>
+    <a href="propiedades-comprar.html">Comprar</a>
+    <a href="propiedades-arrendar.html">Arrendar</a>
+    <a href="propiedades-alojamientos.html">Rentar por días</a>
+    <a href="mapa.html">Mapa interactivo</a>
+  </div>
+  <div class="block">
+    <h4>Sectores de Cartagena</h4>
+    <a href="serena-del-mar.html">Serena del Mar</a>
+    <a href="karibana.html">Karibana</a>
+    <a href="manzanillo-del-mar.html">Manzanillo del Mar</a>
+    <a href="la-boquilla.html">La Boquilla</a>
+    <a href="cielo-mar.html">Cielo Mar</a>
+    <a href="san-diego.html">San Diego</a>
+    <a href="el-laguito.html">El Laguito</a>
+    <a href="marbella.html">Marbella</a>
+    <a href="el-cabrero.html">El Cabrero</a>
+    <a href="pie-de-la-popa.html">Pie de la Popa</a>
+    <a href="alto-bosque.html">Alto Bosque</a>
+    <a href="propiedades-baru.html">Barú</a>
+    <a href="tierrabomba.html">Tierrabomba</a>
+  </div>
+  <div class="block">
+    <h4>Inversión</h4>
+    <a href="invertir.html">Por qué invertir</a>
+    <a href="simulador.html">Simulador hipotecario</a>
+    <a href="invertir-airbnb-cartagena.html">Calculadora Airbnb</a>
+    <a href="estudios-mercado-cartagena.html">Estudio de mercado</a>
+    <a href="blog.html">Blog inmobiliario</a>
+    <a href="mapa.html">Mapa de propiedades</a>
+  </div>
+  <div class="block">
+    <h4>Gestión inmobiliaria</h4>
+    <a href="servicios-mantenimiento.html">Administración de inmuebles</a>
+    <a href="servicios-mantenimiento.html">Avalúos</a>
+    <a href="servicios-mantenimiento.html">Mantenimiento y reparaciones</a>
+    <a href="servicios-mantenimiento.html">Mudanzas y logística</a>
+    <h4 style="margin-top:12px">Asesoría legal y contable</h4>
+    <a href="servicios-mantenimiento.html">Servicios jurídicos</a>
+    <a href="servicios-mantenimiento.html">Servicios contables</a>
+    <a href="servicios-mantenimiento.html">Gestión de contratos</a>
+    <h4 style="margin-top:12px">Turismo inmobiliario</h4>
+    <a href="turismo-inmobiliario.html">Yates, pasadías y experiencias en Cartagena</a>
+  </div>
+  <div class="block">
+    <h4>Empresa</h4>
+    <a href="quienes-somos.html">Quiénes somos</a>
+    <a href="contacto.html">Contacto</a>
+  </div>
+  <div class="block">
+    <h4 lang="en" translate="no">🇺🇸 Foreign Investors</h4>
+    <a href="foreign-investors.html" hreflang="en" lang="en" translate="no">Foreign Investors Guide (EN)</a>
+  </div>
+</aside>
+
+

@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  body { margin:0; background:#E6EDF2; font-family:'Hanken Grotesk',sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:#062743; text-decoration:none; }
+  a:hover { color:#D4AF37; }
+  input { font-family:'Hanken Grotesk',sans-serif; }
+  button { font-family:'Hanken Grotesk',sans-serif; cursor:pointer; }
+  image-slot { --is-bg:#EDF2F6; }
+</style>
+<template id="__bundler_thumbnail">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#E6EDF2"/><circle cx="50" cy="50" r="26" fill="#FFFFFF"/><text x="50" y="62" text-anchor="middle" font-family="Georgia,serif" font-size="30" fill="#D4AF37">A</text></svg>
+</template>
+</helmet>
+
+<!--
+  ═══════════════════════════════════════════════════════════════════════════════════════════════
+  ALTORRA · ACCESO — rediseño del ingreso (TODO-47)
+
+  Encargo de Daniel el 2026-08-24: «el sistema de acceso de usuario es muy básico».
+
+  LA IDEA CENTRAL, en una frase: **una sola puerta, que pregunta primero QUIÉN eres y solo después
+  te pide lo que a ti te toca.** Hoy hay dos puertas distintas (el panel viejo y `/ingresar`) con
+  reglas distintas, mensajes distintos y candados distintos. Un cliente que solo quiere ver sus
+  favoritos y un administrador que abre expedientes con cédulas escaneadas NO deben pasar por el
+  mismo trámite — pero sí por la misma puerta, para que solo haya una que cuidar.
+
+  Por eso el paso 1 pide únicamente el correo. Con el correo ya se sabe si quien llama es cliente o
+  del equipo, y el paso 2 se adapta: al cliente se le ofrece entrar SIN contraseña (enlace al correo),
+  al equipo se le exige contraseña y segundo factor. Es el patrón de Google y Slack, y no es moda:
+  evita mostrarle a un atacante un formulario que le diga, por la forma, qué clase de cuenta encontró.
+
+  PALETA: navy #062743 · dorado #D4AF37 · plata #BFC3C9 · fondo blanco / lienzo neumórfico #E6EDF2.
+  SIN negro, SIN verde, SIN rojo — los estados se dicen con navy + oro + ícono (tokens.css manda).
+  ═══════════════════════════════════════════════════════════════════════════════════════════════
+-->
+
+<section style="display:flex;flex-direction:column;gap:14px;padding:64px 64px 8px">
+  <h1 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:600;color:#062743;letter-spacing:-0.015em">Acceso — una sola puerta</h1>
+  <p style="margin:0;max-width:900px;font-size:15.5px;line-height:1.75;color:#5B6B7A">
+    Siete pantallas. Las tres primeras son la puerta; la cuarta es el segundo factor del equipo; la quinta
+    abre las cuentas de cliente; la sexta y la séptima son lo que hoy no existe en ninguna parte:
+    <strong style="color:#062743;font-weight:600">dar de alta a alguien sin inventarle la contraseña</strong>, y
+    <strong style="color:#062743;font-weight:600">que cada quien vea y corte sus propias sesiones</strong>.
+  </p>
+</section>
+
+<!-- ══════════════════════════════════════ 1a · PASO 1 ══════════════════════════════════════ -->
+<section style="display:flex;flex-direction:column;gap:28px;padding:48px 64px 24px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">1a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743;letter-spacing:-0.01em">Paso 1 · ¿Quién eres?</h2>
+    <span style="font-size:14px;color:#8A97A3">Solo el correo. Con él se decide qué pedir después</span>
+  </div>
+
+  <div style="display:flex;gap:56px;align-items:flex-start;flex-wrap:wrap">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#8A97A3">Escritorio · 1440 × 900</div>
+      <div style="width:1440px;height:900px;background:#FFFFFF;border-radius:26px;overflow:hidden;position:relative;box-shadow:26px 26px 64px rgba(6,39,67,0.12),-18px -18px 48px #FFFFFF">
+        <div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0%, #F4F8FB 0%, #FFFFFF 62%)"></div>
+
+        <div style="position:absolute;top:0;left:0;right:0;height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 48px;box-sizing:border-box">
+          <a href="#" style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:500;color:#8A97A3;letter-spacing:0.04em">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg>
+            Volver al portal
+          </a>
+        </div>
+
+        <div style="position:relative;height:100%;display:flex;align-items:center;justify-content:center">
+          <div style="width:468px;display:flex;flex-direction:column;align-items:center;gap:26px">
+
+            <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+              <div style="width:74px;height:74px;border-radius:50%;background:#EDF2F6;display:flex;align-items:center;justify-content:center;box-shadow:10px 10px 22px rgba(6,39,67,0.13),-8px -8px 20px #FFFFFF">
+                <span style="font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;color:#D4AF37;line-height:1">A</span>
+              </div>
+              <div style="text-align:center">
+                <div style="font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:600;letter-spacing:0.22em;color:#062743;line-height:1">ALTORRA</div>
+                <div style="font-size:10px;font-weight:600;letter-spacing:0.44em;color:#BFC3C9;margin-top:5px">INMOBILIARIA</div>
+              </div>
+            </div>
+
+            <div style="text-align:center">
+              <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:#062743;letter-spacing:-0.01em">Entrar a ALTORRA</h3>
+              <p style="margin:8px 0 0;font-size:14.5px;color:#5B6B7A;line-height:1.6">Escribe tu correo y seguimos desde ahí.</p>
+            </div>
+
+            <div style="width:100%;display:flex;flex-direction:column;gap:18px">
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <label style="font-size:13px;font-weight:600;letter-spacing:0.02em;color:#062743">Correo electrónico</label>
+                <div style="height:52px;border-radius:14px;background:#F4F7FA;display:flex;align-items:center;padding:0 16px;box-shadow:inset 4px 4px 10px rgba(6,39,67,0.09),inset -4px -4px 10px #FFFFFF">
+                  <span style="font-size:15px;color:#062743">daniel@altorrainmobiliaria.co</span>
+                </div>
+              </div>
+
+              <button style="height:52px;border:0;border-radius:14px;background:linear-gradient(135deg,#EBD27E 0%,#D4AF37 52%,#A6801E 100%);color:#062743;font-size:15px;font-weight:700;letter-spacing:0.03em;box-shadow:8px 8px 20px rgba(166,128,30,0.28),-4px -4px 12px #FFFFFF">Continuar</button>
+
+              <div style="display:flex;align-items:center;gap:14px;color:#8A97A3;font-size:12.5px">
+                <span style="flex:1;height:1px;background:#E1E7ED"></span><span>o</span><span style="flex:1;height:1px;background:#E1E7ED"></span>
+              </div>
+
+              <button style="height:52px;border:1px solid #DCE3EA;border-radius:14px;background:#FFFFFF;color:#062743;font-size:14.5px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px">
+                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="#062743" d="M23.5 12.27c0-.79-.07-1.55-.2-2.27H12v4.51h6.47a5.54 5.54 0 0 1-2.4 3.64v3h3.87c2.26-2.09 3.56-5.17 3.56-8.88z"/><path fill="#062743" opacity=".75" d="M12 24c3.24 0 5.96-1.08 7.94-2.91l-3.87-3c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.29v3.09A12 12 0 0 0 12 24z"/><path fill="#062743" opacity=".5" d="M5.27 14.28a7.2 7.2 0 0 1 0-4.56V6.63H1.29a12 12 0 0 0 0 10.74z"/><path fill="#062743" opacity=".9" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.43-3.43C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.29 6.63l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z"/></svg>
+                Continuar con Google
+              </button>
+            </div>
+
+            <p style="margin:0;text-align:center;font-size:14px;color:#5B6B7A">¿Aún no tienes cuenta? <a href="#" style="font-weight:600;border-bottom:1px solid #D4AF37">Crear cuenta</a></p>
+            <p style="margin:0;text-align:center;font-size:12.5px;line-height:1.65;color:#BFC3C9;max-width:400px">Al continuar aceptas nuestros Términos y la <a href="#" style="color:#7D6119">Política de Tratamiento de Datos</a>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:12px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:#8A97A3">Móvil · 390 × 844</div>
+      <div style="width:390px;height:844px;background:#FFFFFF;border-radius:34px;overflow:hidden;position:relative;box-shadow:20px 20px 50px rgba(6,39,67,0.14),-14px -14px 38px #FFFFFF">
+        <div style="position:absolute;inset:0;background:radial-gradient(130% 60% at 50% 0%, #F4F8FB 0%, #FFFFFF 60%)"></div>
+        <div style="position:relative;padding:64px 26px;display:flex;flex-direction:column;align-items:center;gap:24px">
+          <div style="width:62px;height:62px;border-radius:50%;background:#EDF2F6;display:flex;align-items:center;justify-content:center;box-shadow:8px 8px 18px rgba(6,39,67,0.13),-6px -6px 16px #FFFFFF">
+            <span style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:#D4AF37;line-height:1">A</span>
+          </div>
+          <div style="text-align:center">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;letter-spacing:0.22em;color:#062743">ALTORRA</div>
+            <div style="font-size:9px;font-weight:600;letter-spacing:0.42em;color:#BFC3C9;margin-top:4px">INMOBILIARIA</div>
+          </div>
+          <h3 style="margin:10px 0 0;font-family:'Cormorant Garamond',serif;font-size:27px;font-weight:600;color:#062743">Entrar a ALTORRA</h3>
+          <p style="margin:0;text-align:center;font-size:14px;color:#5B6B7A;line-height:1.6">Escribe tu correo y seguimos desde ahí.</p>
+          <div style="width:100%;display:flex;flex-direction:column;gap:16px;margin-top:6px">
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <label style="font-size:12.5px;font-weight:600;color:#062743">Correo electrónico</label>
+              <div style="height:52px;border-radius:14px;background:#F4F7FA;display:flex;align-items:center;padding:0 15px;box-shadow:inset 4px 4px 10px rgba(6,39,67,0.09),inset -4px -4px 10px #FFFFFF">
+                <span style="font-size:14.5px;color:#8A97A3">nombre@correo.com</span>
+              </div>
+            </div>
+            <button style="height:52px;border:0;border-radius:14px;background:linear-gradient(135deg,#EBD27E 0%,#D4AF37 52%,#A6801E 100%);color:#062743;font-size:15px;font-weight:700;letter-spacing:0.03em;box-shadow:8px 8px 20px rgba(166,128,30,0.28),-4px -4px 12px #FFFFFF">Continuar</button>
+            <div style="display:flex;align-items:center;gap:12px;color:#8A97A3;font-size:12px"><span style="flex:1;height:1px;background:#E1E7ED"></span><span>o</span><span style="flex:1;height:1px;background:#E1E7ED"></span></div>
+            <button style="height:52px;border:1px solid #DCE3EA;border-radius:14px;background:#FFFFFF;color:#062743;font-size:14px;font-weight:600">Continuar con Google</button>
+          </div>
+          <p style="margin:6px 0 0;text-align:center;font-size:13.5px;color:#5B6B7A">¿Aún no tienes cuenta? <a href="#" style="font-weight:600;border-bottom:1px solid #D4AF37">Crear cuenta</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1120px;background:#FFFFFF;border-radius:18px;padding:24px 28px;box-shadow:10px 10px 28px rgba(6,39,67,0.07),-8px -8px 22px #FFFFFF;border-left:3px solid #D4AF37">
+    <div style="font-size:11.5px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#A6801E;margin-bottom:8px">Por qué el correo va solo</div>
+    <p style="margin:0;font-size:14.5px;line-height:1.75;color:#5B6B7A">
+      Un formulario que muestra «correo + contraseña» de una vez le está diciendo a cualquiera que
+      pase que ahí se entra con contraseña, y le deja probar combinaciones sin decirle nada a nadie.
+      Preguntando primero el correo, el sistema decide: al cliente le ofrece entrar sin contraseña, al
+      del equipo le exige contraseña y segundo factor. <strong style="color:#062743;font-weight:600">El
+      paso 1 se ve idéntico para todos</strong> — un atacante no aprende nada por mirarlo, y el
+      mensaje de error tampoco cambia según si la cuenta existe.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ 1b · PASO 2 CLIENTE ══════════════════════════════════════ -->
+<section style="display:flex;flex-direction:column;gap:28px;padding:48px 64px 24px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">1b</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743;letter-spacing:-0.01em">Paso 2 · Cliente</h2>
+    <span style="font-size:14px;color:#8A97A3">Puede entrar sin contraseña — le llega un enlace al correo</span>
+  </div>
+
+  <div style="width:1440px;height:760px;background:#FFFFFF;border-radius:26px;overflow:hidden;position:relative;box-shadow:26px 26px 64px rgba(6,39,67,0.12),-18px -18px 48px #FFFFFF">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0%, #F4F8FB 0%, #FFFFFF 62%)"></div>
+    <div style="position:relative;height:100%;display:flex;align-items:center;justify-content:center">
+      <div style="width:468px;display:flex;flex-direction:column;align-items:center;gap:24px">
+
+        <div style="display:flex;align-items:center;gap:12px;background:#F4F7FA;border-radius:100px;padding:9px 9px 9px 16px;box-shadow:inset 3px 3px 8px rgba(6,39,67,0.07),inset -3px -3px 8px #FFFFFF">
+          <span style="font-size:14px;color:#062743;font-weight:500">valentina.rios@correo.com</span>
+          <button style="border:0;background:#FFFFFF;border-radius:100px;padding:6px 13px;font-size:12.5px;font-weight:600;color:#7D6119;box-shadow:3px 3px 8px rgba(6,39,67,0.08)">Cambiar</button>
+        </div>
+
+        <div style="text-align:center">
+          <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:31px;font-weight:600;color:#062743">Bienvenida de nuevo</h3>
+          <p style="margin:8px 0 0;font-size:14.5px;color:#5B6B7A;line-height:1.6">Escribe tu contraseña, o entra sin ella.</p>
+        </div>
+
+        <div style="width:100%;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <label style="font-size:13px;font-weight:600;color:#062743">Contraseña</label>
+            <div style="height:52px;border-radius:14px;background:#F4F7FA;display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 16px;box-shadow:inset 4px 4px 10px rgba(6,39,67,0.09),inset -4px -4px 10px #FFFFFF">
+              <span style="font-size:17px;color:#062743;letter-spacing:0.14em">••••••••••••</span>
+              <button style="border:0;background:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#8A97A3">
+                <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:13.5px">
+            <label style="display:inline-flex;align-items:center;gap:9px;color:#5B6B7A">
+              <span style="width:19px;height:19px;border-radius:6px;background:linear-gradient(135deg,#EBD27E,#D4AF37);display:inline-flex;align-items:center;justify-content:center">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#062743" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+              </span>
+              Mantener sesión abierta
+            </label>
+            <a href="#" style="font-weight:600;color:#062743;border-bottom:1px solid #D4AF37">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <button style="height:52px;border:0;border-radius:14px;background:linear-gradient(135deg,#EBD27E 0%,#D4AF37 52%,#A6801E 100%);color:#062743;font-size:15px;font-weight:700;letter-spacing:0.03em;box-shadow:8px 8px 20px rgba(166,128,30,0.28),-4px -4px 12px #FFFFFF">Ingresar</button>
+
+          <div style="display:flex;align-items:center;gap:14px;color:#8A97A3;font-size:12.5px"><span style="flex:1;height:1px;background:#E1E7ED"></span><span>o</span><span style="flex:1;height:1px;background:#E1E7ED"></span></div>
+
+          <button style="height:52px;border:1px solid #DCE3EA;border-radius:14px;background:#FFFFFF;color:#062743;font-size:14.5px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.4"/><path d="M3 7l9 6 9-6"/></svg>
+            Enviarme un enlace para entrar
+          </button>
+          <p style="margin:0;text-align:center;font-size:12.5px;color:#8A97A3;line-height:1.6">Sin contraseña: te llega un enlace a tu correo y con un toque estás dentro.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ 1c · PASO 2 EQUIPO ══════════════════════════════════════ -->
+<section style="display:flex;flex-direction:column;gap:28px;padding:48px 64px 24px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">1c</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743;letter-spacing:-0.01em">Paso 2 · Equipo</h2>
+    <span style="font-size:14px;color:#8A97A3">Contraseña obligatoria. Sin enlace por correo — el correo es la vía de recuperación</span>
+  </div>
+
+  <div style="width:1440px;height:760px;background:#FFFFFF;border-radius:26px;overflow:hidden;position:relative;box-shadow:26px 26px 64px rgba(6,39,67,0.12),-18px -18px 48px #FFFFFF">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0%, #F4F8FB 0%, #FFFFFF 62%)"></div>
+    <div style="position:relative;height:100%;display:flex;align-items:center;justify-content:center">
+      <div style="width:468px;display:flex;flex-direction:column;align-items:center;gap:22px">
+
+        <div style="display:inline-flex;align-items:center;gap:9px;background:#062743;border-radius:100px;padding:8px 16px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#EBD27E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10.5" rx="2.2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>
+          <span style="font-size:11.5px;font-weight:700;letter-spacing:0.16em;color:#EBD27E">PANEL INTERNO</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;background:#F4F7FA;border-radius:100px;padding:9px 9px 9px 16px;box-shadow:inset 3px 3px 8px rgba(6,39,67,0.07),inset -3px -3px 8px #FFFFFF">
+          <span style="font-size:14px;color:#062743;font-weight:500">info@altorrainmobiliaria.co</span>
+          <button style="border:0;background:#FFFFFF;border-radius:100px;padding:6px 13px;font-size:12.5px;font-weight:600;color:#7D6119;box-shadow:3px 3px 8px rgba(6,39,67,0.08)">Cambiar</button>
+        </div>
+
+        <div style="text-align:center">
+          <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:31px;font-weight:600;color:#062743">Hola, Daniel</h3>
+          <p style="margin:8px 0 0;font-size:14.5px;color:#5B6B7A;line-height:1.6">Escribe tu contraseña para continuar.</p>
+        </div>
+
+        <div style="width:100%;display:flex;flex-direction:column;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <label style="font-size:13px;font-weight:600;color:#062743">Contraseña</label>
+            <div style="height:52px;border-radius:14px;background:#F4F7FA;display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 16px;box-shadow:inset 4px 4px 10px rgba(6,39,67,0.09),inset -4px -4px 10px #FFFFFF">
+              <span style="font-size:17px;color:#062743;letter-spacing:0.14em">•••••••••••••••</span>
+              <button style="border:0;background:none;width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:#8A97A3">
+                <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:flex-end;font-size:13.5px">
+            <a href="#" style="font-weight:600;color:#062743;border-bottom:1px solid #D4AF37">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <button style="height:52px;border:0;border-radius:14px;background:linear-gradient(135deg,#EBD27E 0%,#D4AF37 52%,#A6801E 100%);color:#062743;font-size:15px;font-weight:700;letter-spacing:0.03em;box-shadow:8px 8px 20px rgba(166,128,30,0.28),-4px -4px 12px #FFFFFF">Continuar</button>
+
+          <div style="display:flex;gap:12px;align-items:flex-start;background:#F4F7FA;border-radius:14px;padding:15px 17px;border-left:3px solid #D4AF37">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:0 0 auto;margin-top:1px"><path d="M12 22s8-4 8-10V5.5l-8-3-8 3V12c0 6 8 10 8 10z"/><path d="M9.2 12.2l2 2 3.6-3.8"/></svg>
+            <p style="margin:0;font-size:13.5px;line-height:1.65;color:#5B6B7A">Después te pediremos el <strong style="color:#062743;font-weight:600">código de tu aplicación de autenticación</strong>. Es obligatorio para el equipo: este panel abre contratos y cédulas escaneadas.</p>
+          </div>
+        </div>
+
+        <p style="margin:0;font-size:12.5px;color:#8A97A3;text-align:center;line-height:1.6">Aquí no ofrecemos entrar por enlace al correo: si alguien entrara a tu correo, entraría al panel.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ 2a · SEGUNDO FACTOR ══════════════════════════════════════ -->
+<section style="display:flex;flex-direction:column;gap:28px;padding:48px 64px 24px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">2a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743;letter-spacing:-0.01em">Paso 3 · Código de seis dígitos</h2>
+    <span style="font-size:14px;color:#8A97A3">Solo equipo. Aplicación de autenticación, no SMS</span>
+  </div>
+
+  <div style="width:1440px;height:720px;background:#FFFFFF;border-radius:26px;overflow:hidden;position:relative;box-shadow:26px 26px 64px rgba(6,39,67,0.12),-18px -18px 48px #FFFFFF">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0%, #F4F8FB 0%, #FFFFFF 62%)"></div>
+    <div style="position:relative;height:100%;display:flex;align-items:center;justify-content:center">
+      <div style="width:468px;display:flex;flex-direction:column;align-items:center;gap:26px">
+
+        <div style="width:74px;height:74px;border-radius:22px;background:#EDF2F6;display:flex;align-items:center;justify-content:center;box-shadow:10px 10px 22px rgba(6,39,67,0.13),-8px -8px 20px #FFFFFF">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.6"/><path d="M10.5 18.5h3"/></svg>
+        </div>
+
+        <div style="text-align:center">
+          <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:31px;font-weight:600;color:#062743">Confirma que eres tú</h3>
+          <p style="margin:10px 0 0;font-size:14.5px;color:#5B6B7A;line-height:1.65;max-width:390px">Abre tu aplicación de autenticación y escribe el código de seis dígitos que aparece para ALTORRA.</p>
+        </div>
+
+        <div style="display:flex;gap:11px">
+          <div style="width:56px;height:66px;border-radius:14px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:600;color:#062743;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">4</div>
+          <div style="width:56px;height:66px;border-radius:14px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:600;color:#062743;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">9</div>
+          <div style="width:56px;height:66px;border-radius:14px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:600;color:#062743;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">2</div>
+          <div style="width:56px;height:66px;border-radius:14px;background:#F4F7FA;display:flex;align-items:center;justify-content:center;box-shadow:inset 4px 4px 10px rgba(6,39,67,0.09),inset -4px -4px 10px #FFFFFF;border:2px solid #D4AF37"><span style="width:2px;height:26px;background:#062743;display:block"></span></div>
+          <div style="width:56px;height:66px;border-radius:14px;background:#F4F7FA;box-shadow:inset 4px 4px 10px rgba(6,39,67,0.09),inset -4px -4px 10px #FFFFFF"></div>
+          <div style="width:56px;height:66px;border-radius:14px;background:#F4F7FA;box-shadow:inset 4px 4px 10px rgba(6,39,67,0.09),inset -4px -4px 10px #FFFFFF"></div>
+        </div>
+
+        <div style="width:100%;display:flex;flex-direction:column;gap:14px">
+          <label style="display:inline-flex;align-items:center;gap:10px;font-size:13.5px;color:#5B6B7A;justify-content:center">
+            <span style="width:19px;height:19px;border-radius:6px;background:#F4F7FA;box-shadow:inset 3px 3px 7px rgba(6,39,67,0.10),inset -3px -3px 7px #FFFFFF"></span>
+            Confiar en este equipo durante 30 días
+          </label>
+          <button style="height:52px;border:0;border-radius:14px;background:linear-gradient(135deg,#EBD27E 0%,#D4AF37 52%,#A6801E 100%);color:#062743;font-size:15px;font-weight:700;letter-spacing:0.03em;box-shadow:8px 8px 20px rgba(166,128,30,0.28),-4px -4px 12px #FFFFFF">Entrar</button>
+          <a href="#" style="text-align:center;font-size:13.5px;font-weight:600;color:#062743;border-bottom:1px solid #D4AF37;align-self:center">Perdí mi teléfono — usar un código de respaldo</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1120px;background:#FFFFFF;border-radius:18px;padding:24px 28px;box-shadow:10px 10px 28px rgba(6,39,67,0.07),-8px -8px 22px #FFFFFF;border-left:3px solid #D4AF37">
+    <div style="font-size:11.5px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#A6801E;margin-bottom:8px">Aplicación, no SMS — y por qué importa la plata</div>
+    <p style="margin:0;font-size:14.5px;line-height:1.75;color:#5B6B7A">
+      El SMS se cobra por mensaje y además es el factor más débil que existe (se intercepta cambiando
+      la SIM). La aplicación de autenticación —Google Authenticator, o el mismo gestor de contraseñas—
+      <strong style="color:#062743;font-weight:600">no cuesta un peso por uso</strong> y es más segura.
+      Los códigos de respaldo se entregan UNA vez, al activarlo, y se guardan impresos o en el gestor:
+      son la única salida si se pierde el teléfono.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ 3a · CREAR CUENTA ══════════════════════════════════════ -->
+<section style="display:flex;flex-direction:column;gap:28px;padding:48px 64px 24px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">3a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743;letter-spacing:-0.01em">Crear cuenta · cliente</h2>
+    <span style="font-size:14px;color:#8A97A3">Con la autorización de datos explícita — Ley 1581, art. 9</span>
+  </div>
+
+  <div style="width:1440px;height:820px;background:#FFFFFF;border-radius:26px;overflow:hidden;position:relative;box-shadow:26px 26px 64px rgba(6,39,67,0.12),-18px -18px 48px #FFFFFF">
+    <div style="position:absolute;inset:0;background:radial-gradient(120% 80% at 50% 0%, #F4F8FB 0%, #FFFFFF 62%)"></div>
+    <div style="position:relative;height:100%;display:flex;align-items:center;justify-content:center">
+      <div style="width:500px;display:flex;flex-direction:column;align-items:center;gap:22px">
+
+        <div style="text-align:center">
+          <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:31px;font-weight:600;color:#062743">Crea tu cuenta</h3>
+          <p style="margin:8px 0 0;font-size:14.5px;color:#5B6B7A;line-height:1.6">Para guardar favoritos y seguir tus solicitudes.</p>
+        </div>
+
+        <div style="width:100%;display:flex;flex-direction:column;gap:15px">
+          <div style="display:flex;gap:14px">
+            <div style="flex:1;display:flex;flex-direction:column;gap:7px">
+              <label style="font-size:13px;font-weight:600;color:#062743">Nombre</label>
+              <div style="height:50px;border-radius:14px;background:#F4F7FA;display:flex;align-items:center;padding:0 15px;box-shadow:inset 4px 4px 10px rgba(6,39,67,0.09),inset -4px -4px 10px #FFFFFF"><span style="font-size:14.5px;color:#8A97A3">Valentina</span></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:7px">
+              <label style="font-size:13px;font-weight:600;color:#062743">Apellido</label>
+              <div style="height:50px;border-radius:14px;background:#F4F7FA;display:flex;align-items:center;padding:0 15px;box-shadow:inset 4px 4px 10px rgba(6,39,67,0.09),inset -4px -4px 10px #FFFFFF"><span style="font-size:14.5px;color:#8A97A3">Ríos</span></div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <label style="font-size:13px;font-weight:600;color:#062743">Correo electrónico</label>
+            <div style="height:50px;border-radius:14px;background:#F4F7FA;display:flex;align-items:center;padding:0 15px;box-shadow:inset 4px 4px 10px rgba(6,39,67,0.09),inset -4px -4px 10px #FFFFFF"><span style="font-size:14.5px;color:#8A97A3">nombre@correo.com</span></div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <label style="font-size:13px;font-weight:600;color:#062743">Contraseña</label>
+            <div style="height:50px;border-radius:14px;background:#F4F7FA;display:flex;align-items:center;justify-content:space-between;padding:0 12px 0 15px;box-shadow:inset 4px 4px 10px rgba(6,39,67,0.09),inset -4px -4px 10px #FFFFFF">
+              <span style="font-size:16px;color:#062743;letter-spacing:0.14em">••••••••••••</span>
+              <span style="font-size:12px;font-weight:600;color:#A6801E">Buena</span>
+            </div>
+            <div style="display:flex;gap:5px;margin-top:3px">
+              <span style="flex:1;height:4px;border-radius:100px;background:#D4AF37"></span>
+              <span style="flex:1;height:4px;border-radius:100px;background:#D4AF37"></span>
+              <span style="flex:1;height:4px;border-radius:100px;background:#D4AF37"></span>
+              <span style="flex:1;height:4px;border-radius:100px;background:#E1E7ED"></span>
+            </div>
+            <p style="margin:4px 0 0;font-size:12.5px;color:#8A97A3;line-height:1.6">Mínimo 10 caracteres. Una frase que recuerdes vale más que símbolos raros: <em>mi casa en manga 1998</em>.</p>
+          </div>
+
+          <label style="display:flex;gap:11px;align-items:flex-start;background:#F4F7FA;border-radius:14px;padding:15px 16px;box-shadow:inset 3px 3px 8px rgba(6,39,67,0.07),inset -3px -3px 8px #FFFFFF;cursor:pointer">
+            <span style="width:20px;height:20px;border-radius:6px;background:linear-gradient(135deg,#EBD27E,#D4AF37);display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;margin-top:1px">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#062743" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </span>
+            <span style="font-size:13.5px;line-height:1.65;color:#5B6B7A">Autorizo a ALTORRA Inmobiliaria a tratar mis datos personales conforme a su <a href="#" style="color:#7D6119;font-weight:600">Política de Tratamiento de Datos</a>.</span>
+          </label>
+
+          <button style="height:52px;border:0;border-radius:14px;background:linear-gradient(135deg,#EBD27E 0%,#D4AF37 52%,#A6801E 100%);color:#062743;font-size:15px;font-weight:700;letter-spacing:0.03em;box-shadow:8px 8px 20px rgba(166,128,30,0.28),-4px -4px 12px #FFFFFF">Crear cuenta</button>
+          <p style="margin:0;text-align:center;font-size:13.5px;color:#5B6B7A">¿Ya tienes cuenta? <a href="#" style="font-weight:600;border-bottom:1px solid #D4AF37">Entrar</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1120px;background:#FFFFFF;border-radius:18px;padding:24px 28px;box-shadow:10px 10px 28px rgba(6,39,67,0.07),-8px -8px 22px #FFFFFF;border-left:3px solid #D4AF37">
+    <div style="font-size:11.5px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#A6801E;margin-bottom:8px">La casilla NO viene marcada de fábrica</div>
+    <p style="margin:0;font-size:14.5px;line-height:1.75;color:#5B6B7A">
+      Aquí se dibuja marcada porque el mockup muestra el formulario ya diligenciado. En la pantalla real
+      arranca vacía: la Ley 1581 exige autorización <strong style="color:#062743;font-weight:600">previa,
+      expresa e informada</strong>, y una casilla premarcada no es ninguna de las tres. El botón no se
+      habilita hasta que la persona la marque, y la fecha y hora de esa autorización se guarda con la cuenta.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ 4a · ALTA DEL EQUIPO ══════════════════════════════════════ -->
+<section style="display:flex;flex-direction:column;gap:28px;padding:48px 64px 24px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">4a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743;letter-spacing:-0.01em">Equipo · invitar y suspender</h2>
+    <span style="font-size:14px;color:#8A97A3">Nadie le inventa la contraseña a nadie</span>
+  </div>
+
+  <div style="width:1440px;background:#FFFFFF;border-radius:26px;overflow:hidden;position:relative;box-shadow:26px 26px 64px rgba(6,39,67,0.12),-18px -18px 48px #FFFFFF;padding:38px 44px;box-sizing:border-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:26px">
+      <div>
+        <h3 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:#062743">Equipo</h3>
+        <p style="margin:6px 0 0;font-size:14px;color:#8A97A3">4 personas con acceso al panel</p>
+      </div>
+      <button style="height:46px;padding:0 22px;border:0;border-radius:13px;background:linear-gradient(135deg,#EBD27E 0%,#D4AF37 52%,#A6801E 100%);color:#062743;font-size:14px;font-weight:700;letter-spacing:0.02em;box-shadow:6px 6px 16px rgba(166,128,30,0.26)">Invitar a alguien</button>
+    </div>
+
+    <div style="border-radius:18px;overflow:hidden;box-shadow:0 2px 5px rgba(27,39,51,0.03),0 22px 46px -36px rgba(27,39,51,0.4)">
+      <div style="display:grid;grid-template-columns:2.2fr 1.3fr 1.1fr 1.2fr 1fr;gap:18px;padding:15px 22px;background:#F4F7FA;font-size:11.5px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#8A97A3">
+        <span>Persona</span><span>Rol</span><span>Segundo factor</span><span>Último ingreso</span><span style="text-align:right">Acciones</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2.2fr 1.3fr 1.1fr 1.2fr 1fr;gap:18px;padding:18px 22px;align-items:center;border-top:1px solid #EDF2F6">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:38px;height:38px;border-radius:11px;background:#062743;color:#EBD27E;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700">DR</span>
+          <div><div style="font-size:14.5px;font-weight:600;color:#062743">Daniel R.</div><div style="font-size:12.5px;color:#8A97A3">info@altorrainmobiliaria.co</div></div>
+        </div>
+        <span style="font-size:13px;font-weight:600;color:#062743;background:#F4F7FA;border-radius:100px;padding:6px 13px;justify-self:start">Super administrador</span>
+        <span style="display:inline-flex;align-items:center;gap:7px;font-size:13px;color:#5B6B7A"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Activo</span>
+        <span style="font-size:13px;color:#5B6B7A">Hoy, 9:14 a.&nbsp;m.</span>
+        <span style="text-align:right;font-size:13px;color:#BFC3C9">—</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2.2fr 1.3fr 1.1fr 1.2fr 1fr;gap:18px;padding:18px 22px;align-items:center;border-top:1px solid #EDF2F6">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:38px;height:38px;border-radius:11px;background:#EDF2F6;color:#062743;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700">KM</span>
+          <div><div style="font-size:14.5px;font-weight:600;color:#062743">Kary M.</div><div style="font-size:12.5px;color:#8A97A3">kary@altorrainmobiliaria.co</div></div>
+        </div>
+        <span style="font-size:13px;font-weight:600;color:#062743;background:#F4F7FA;border-radius:100px;padding:6px 13px;justify-self:start">Editor</span>
+        <span style="display:inline-flex;align-items:center;gap:7px;font-size:13px;color:#5B6B7A"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#062743" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 7.6v5"/><path d="M12 16.1h.01"/></svg>Pendiente</span>
+        <span style="font-size:13px;color:#5B6B7A">Ayer, 4:02 p.&nbsp;m.</span>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button style="border:1px solid #DCE3EA;background:#FFFFFF;border-radius:10px;padding:7px 13px;font-size:12.5px;font-weight:600;color:#062743">Suspender</button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2.2fr 1.3fr 1.1fr 1.2fr 1fr;gap:18px;padding:18px 22px;align-items:center;border-top:1px solid #EDF2F6;background:#FBFCFD">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:38px;height:38px;border-radius:11px;background:#EDF2F6;color:#BFC3C9;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700">JP</span>
+          <div><div style="font-size:14.5px;font-weight:600;color:#8A97A3">Juan P.</div><div style="font-size:12.5px;color:#BFC3C9">juan@altorrainmobiliaria.co</div></div>
+        </div>
+        <span style="font-size:13px;font-weight:600;color:#8A97A3;background:#F4F7FA;border-radius:100px;padding:6px 13px;justify-self:start">Consulta</span>
+        <span style="font-size:13px;color:#BFC3C9">—</span>
+        <span style="font-size:13px;color:#BFC3C9;font-style:italic">Suspendido</span>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button style="border:1px solid #DCE3EA;background:#FFFFFF;border-radius:10px;padding:7px 13px;font-size:12.5px;font-weight:600;color:#062743">Reactivar</button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2.2fr 1.3fr 1.1fr 1.2fr 1fr;gap:18px;padding:18px 22px;align-items:center;border-top:1px solid #EDF2F6">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="width:38px;height:38px;border-radius:11px;background:#F4F7FA;border:1.5px dashed #D4AF37;color:#A6801E;display:flex;align-items:center;justify-content:center;font-size:15px">✉</span>
+          <div><div style="font-size:14.5px;font-weight:600;color:#062743">Invitación enviada</div><div style="font-size:12.5px;color:#8A97A3">sofia@altorrainmobiliaria.co</div></div>
+        </div>
+        <span style="font-size:13px;font-weight:600;color:#062743;background:#F4F7FA;border-radius:100px;padding:6px 13px;justify-self:start">Editor</span>
+        <span style="font-size:13px;color:#BFC3C9">—</span>
+        <span style="font-size:13px;color:#5B6B7A">Vence en 46 h</span>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button style="border:1px solid #DCE3EA;background:#FFFFFF;border-radius:10px;padding:7px 13px;font-size:12.5px;font-weight:600;color:#062743">Reenviar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1120px;background:#FFFFFF;border-radius:18px;padding:24px 28px;box-shadow:10px 10px 28px rgba(6,39,67,0.07),-8px -8px 22px #FFFFFF;border-left:3px solid #D4AF37">
+    <div style="font-size:11.5px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#A6801E;margin-bottom:8px">Dos cambios de fondo, no de forma</div>
+    <p style="margin:0 0 10px;font-size:14.5px;line-height:1.75;color:#5B6B7A">
+      <strong style="color:#062743;font-weight:600">Invitar en vez de inventar.</strong> Hoy, para dar de
+      alta a alguien, el administrador le escribe una contraseña y se la manda por WhatsApp. Esa
+      contraseña queda en un chat para siempre y el administrador la conoce. La invitación manda un
+      enlace que caduca y deja que la persona elija su propia clave: nadie más la sabe nunca.
+    </p>
+    <p style="margin:0;font-size:14.5px;line-height:1.75;color:#5B6B7A">
+      <strong style="color:#062743;font-weight:600">Suspender en vez de borrar.</strong> Hoy la única
+      salida es «Eliminar», que borra la cuenta entera y no se deshace. Cuando alguien se va —o se va
+      de vacaciones, o hay una duda— lo que uno quiere es apagarle el acceso hoy y poder devolvérselo
+      mañana. Suspender corta la sesión en el acto; los expedientes que esa persona tocó siguen ahí.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════ 5a · MI SEGURIDAD ══════════════════════════════════════ -->
+<section style="display:flex;flex-direction:column;gap:28px;padding:48px 64px 90px">
+  <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+    <span style="font-size:13px;font-weight:700;letter-spacing:0.14em;color:#062743;background:#FFFFFF;border-radius:100px;padding:7px 14px;box-shadow:6px 6px 16px rgba(6,39,67,0.10),-5px -5px 14px #FFFFFF">5a</span>
+    <h2 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:#062743;letter-spacing:-0.01em">Mi seguridad</h2>
+    <span style="font-size:14px;color:#8A97A3">Lo que hoy no existe: ver dónde está abierta tu sesión y cerrarla</span>
+  </div>
+
+  <div style="width:1440px;background:#FFFFFF;border-radius:26px;box-shadow:26px 26px 64px rgba(6,39,67,0.12),-18px -18px 48px #FFFFFF;padding:40px 44px;box-sizing:border-box;display:flex;flex-direction:column;gap:28px">
+
+    <div style="display:flex;gap:24px;flex-wrap:wrap">
+      <div style="flex:1;min-width:420px;background:#F4F7FA;border-radius:18px;padding:26px 28px;box-shadow:inset 4px 4px 12px rgba(6,39,67,0.07),inset -4px -4px 12px #FFFFFF">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:18px">
+          <div>
+            <h4 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:600;color:#062743">Segundo factor</h4>
+            <p style="margin:8px 0 0;font-size:14px;line-height:1.65;color:#5B6B7A;max-width:340px">Activo desde el 24 de agosto. Aplicación de autenticación en tu teléfono.</p>
+          </div>
+          <span style="display:inline-flex;align-items:center;gap:7px;background:#FFFFFF;border-radius:100px;padding:8px 15px;font-size:12.5px;font-weight:700;color:#A6801E;box-shadow:4px 4px 12px rgba(6,39,67,0.08)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>ACTIVO
+          </span>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:20px">
+          <button style="border:1px solid #DCE3EA;background:#FFFFFF;border-radius:11px;padding:10px 16px;font-size:13px;font-weight:600;color:#062743">Ver códigos de respaldo</button>
+          <button style="border:1px solid #DCE3EA;background:#FFFFFF;border-radius:11px;padding:10px 16px;font-size:13px;font-weight:600;color:#062743">Cambiar de teléfono</button>
+        </div>
+      </div>
+
+      <div style="flex:1;min-width:420px;background:#F4F7FA;border-radius:18px;padding:26px 28px;box-shadow:inset 4px 4px 12px rgba(6,39,67,0.07),inset -4px -4px 12px #FFFFFF">
+        <h4 style="margin:0;font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:600;color:#062743">Contraseña</h4>
+        <p style="margin:8px 0 0;font-size:14px;line-height:1.65;color:#5B6B7A;max-width:340px">La cambiaste hace 3 meses. No te vamos a obligar a cambiarla otra vez: cambiarla por calendario no protege de nada.</p>
+        <button style="margin-top:20px;border:1px solid #DCE3EA;background:#FFFFFF;border-radius:11px;padding:10px 16px;font-size:13px;font-weight:600;color:#062743">Cambiar contraseña</button>
+      </div>
+    </div>
+
+    <div>
+      <h4 style="margin:0 0 4px;font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:600;color:#062743">Dónde tienes la sesión abierta</h4>
+      <p style="margin:0 0 18px;font-size:14px;color:#8A97A3">Si ves algo que no reconoces, ciérralo y cambia tu contraseña.</p>
+
+      <div style="border-radius:18px;overflow:hidden;box-shadow:0 2px 5px rgba(27,39,51,0.03),0 22px 46px -36px rgba(27,39,51,0.4)">
+        <div style="display:grid;grid-template-columns:2fr 1.6fr 1.4fr 1fr;gap:18px;padding:18px 22px;align-items:center;background:#FBFCFD">
+          <div style="display:flex;align-items:center;gap:13px">
+            <span style="width:38px;height:38px;border-radius:11px;background:#EDF2F6;display:flex;align-items:center;justify-content:center">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#062743" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8 20.5h8"/></svg>
+            </span>
+            <div><div style="font-size:14.5px;font-weight:600;color:#062743">Windows · Chrome</div><div style="font-size:12.5px;color:#A6801E;font-weight:600">Este equipo</div></div>
+          </div>
+          <span style="font-size:13.5px;color:#5B6B7A">Cartagena, Colombia</span>
+          <span style="font-size:13.5px;color:#5B6B7A">Activa ahora</span>
+          <span style="text-align:right;font-size:13px;color:#BFC3C9">—</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:2fr 1.6fr 1.4fr 1fr;gap:18px;padding:18px 22px;align-items:center;border-top:1px solid #EDF2F6">
+          <div style="display:flex;align-items:center;gap:13px">
+            <span style="width:38px;height:38px;border-radius:11px;background:#EDF2F6;display:flex;align-items:center;justify-content:center">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#062743" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2.5" width="11" height="19" rx="2.4"/><path d="M10.8 18.6h2.4"/></svg>
+            </span>
+            <div><div style="font-size:14.5px;font-weight:600;color:#062743">iPhone · Safari</div><div style="font-size:12.5px;color:#8A97A3">Hace 2 días</div></div>
+          </div>
+          <span style="font-size:13.5px;color:#5B6B7A">Cartagena, Colombia</span>
+          <span style="font-size:13.5px;color:#5B6B7A">Hace 2 días</span>
+          <div style="display:flex;justify-content:flex-end"><button style="border:1px solid #DCE3EA;background:#FFFFFF;border-radius:10px;padding:7px 13px;font-size:12.5px;font-weight:600;color:#062743">Cerrar</button></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:2fr 1.6fr 1.4fr 1fr;gap:18px;padding:18px 22px;align-items:center;border-top:1px solid #EDF2F6">
+          <div style="display:flex;align-items:center;gap:13px">
+            <span style="width:38px;height:38px;border-radius:11px;background:#FFF8E4;border:1.5px solid #D4AF37;display:flex;align-items:center;justify-content:center">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A6801E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.6L1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4"/><path d="M12 17.2h.01"/></svg>
+            </span>
+            <div><div style="font-size:14.5px;font-weight:600;color:#062743">Android · Chrome</div><div style="font-size:12.5px;color:#A6801E;font-weight:600">No reconocido</div></div>
+          </div>
+          <span style="font-size:13.5px;color:#5B6B7A">Bogotá, Colombia</span>
+          <span style="font-size:13.5px;color:#5B6B7A">Hace 6 h</span>
+          <div style="display:flex;justify-content:flex-end"><button style="border:0;background:#062743;color:#EBD27E;border-radius:10px;padding:8px 14px;font-size:12.5px;font-weight:700">Cerrar</button></div>
+        </div>
+      </div>
+
+      <button style="margin-top:18px;border:1px solid #DCE3EA;background:#FFFFFF;border-radius:12px;padding:12px 20px;font-size:13.5px;font-weight:600;color:#062743">Cerrar todas las demás sesiones</button>
+    </div>
+  </div>
+
+  <div style="max-width:1120px;background:#062743;border-radius:18px;padding:26px 30px;box-shadow:0 22px 46px -30px rgba(6,39,67,0.6)">
+    <div style="font-size:11.5px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#EBD27E;margin-bottom:10px">Lo que esta pantalla resuelve de verdad</div>
+    <p style="margin:0;font-size:14.5px;line-height:1.8;color:#E9EEF3">
+      Cuando alguien deja de trabajar en ALTORRA, hoy no hay forma de saber si su sesión sigue viva en
+      algún teléfono. Y cuando a alguien le roban el computador, tampoco. Esta pantalla convierte una
+      duda —«¿estará abierto en alguna parte?»— en un botón. Es la diferencia entre creer que se cerró
+      el acceso y <strong style="color:#EBD27E;font-weight:600">verlo cerrado</strong>.
+    </p>
+  </div>
+</section>
+
+</x-dc>
+</body>
+</html>

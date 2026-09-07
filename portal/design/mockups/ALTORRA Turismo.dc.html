@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&amp;family=Hanken+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  html{scroll-behavior:smooth}
+  body{background:#FFFFFF;font-family:'Hanken Grotesk',Helvetica,Arial,sans-serif;color:#6b7c93;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
+  img{display:block;max-width:100%}
+  a{color:#A6801E;text-decoration:none}
+  input{font-family:inherit}
+  ::placeholder{color:#98a9ba;opacity:1}
+  @keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+</style>
+<script src="./image-slot.js"></script>
+</helmet>
+
+<div style="width:100%;overflow:hidden;background:#FFFFFF">
+
+  <dc-import name="ALTORRA Header" active="turismo" hint-size="100%,116px" style="position:sticky;top:0;z-index:70;display:block"></dc-import>
+
+  <section style="position:relative;background:#FFFFFF;overflow:hidden">
+    <div style="position:absolute;inset:0;background-image:url('assets/villa-pool.jpg');background-size:cover;background-position:center right;opacity:.9"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(100deg,#FFFFFF 42%,rgba(255,255,255,.85) 58%,rgba(255,255,255,.15) 78%,rgba(255,255,255,0))"></div>
+    <div style="position:relative;max-width:1240px;margin:0 auto;padding:clamp(56px,8vw,104px) clamp(20px,5vw,64px)">
+      <div style="max-width:600px;animation:rise .9s cubic-bezier(.2,.7,.2,1) both">
+        <span style="font-size:11.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#A6801E">Turismo Inmobiliario</span>
+        <h1 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(40px,5.8vw,68px);line-height:1.02;letter-spacing:-.015em;color:#062743;margin:16px 0 20px">Vive Cartagena como quien la habita.</h1>
+        <p style="font-size:clamp(16px,1.6vw,19px);line-height:1.6;color:#6b7c93;margin:0 0 34px;max-width:500px">Estadías con alma, experiencias curadas y una ciudad que se descubre mejor de la mano de quien la conoce. Unimos hospitalidad y bienes raíces para que tu visita —o tu inversión— sea inolvidable.</p>
+        <div style="display:flex;gap:14px;flex-wrap:wrap">
+          <a href="ALTORRA Estancias.dc.html" style="display:inline-flex;align-items:center;gap:9px;padding:15px 30px;border-radius:999px;background:linear-gradient(135deg,#EBD27E 0%,#D4AF37 55%,#A6801E 100%);color:#062743;font-weight:700;font-size:14.5px;transition:transform .3s,box-shadow .3s" style-hover="transform:translateY(-2px);">Explorar estadías<span>→</span></a>
+          <a href="#inversion" style="display:inline-flex;align-items:center;gap:9px;padding:15px 28px;border-radius:999px;border:1px solid rgba(27,39,51,.2);color:#062743;font-weight:600;font-size:14.5px;transition:border-color .3s,background .3s" style-hover="border-color:#D4AF37;background:#f2f6f9">Asesoría de inversión</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#f2f6f9;border-top:1px solid rgba(27,39,51,.06)">
+    <div style="max-width:1240px;margin:0 auto;padding:clamp(60px,8vw,110px) clamp(20px,5vw,64px)">
+      <div style="max-width:620px;margin-bottom:clamp(36px,5vw,52px)">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#A6801E">Dónde alojarte</span>
+        <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(32px,4.4vw,52px);line-height:1.04;letter-spacing:-.01em;color:#062743;margin:13px 0 14px">Zonas para tu estadía</h2>
+        <p style="font-size:16.5px;line-height:1.6;color:#6b7c93;margin:0">Cada rincón de Cartagena tiene un carácter propio. Te ayudamos a elegir el barrio que hará de tu visita la experiencia correcta.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:clamp(20px,2.2vw,28px)">
+        <a href="ALTORRA Estancias.dc.html" style="display:block;border-radius:20px;overflow:hidden;border:1px solid rgba(27,39,51,.08);background:#fff;box-shadow:0 2px 5px rgba(27,39,51,.04);transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s" style-hover="transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(6,39,67,.3)">
+          <div style="height:196px"><img src="assets/estate-golden.jpg" alt="Bocagrande frente al mar" style="width:100%;height:100%;object-fit:cover"></div>
+          <div style="padding:20px 20px 22px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#A6801E;margin-bottom:8px">Frente al mar</div>
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:24px;color:#062743;margin:0 0 6px">Bocagrande</h3>
+            <p style="font-size:14px;line-height:1.55;color:#6b7c93;margin:0 0 14px">Torres, playa y atardeceres. La Cartagena moderna con el Caribe a los pies.</p>
+            <span style="font-size:13px;font-weight:600;color:#A6801E">Ver estadías →</span>
+          </div>
+        </a>
+        <a href="ALTORRA Estancias.dc.html" style="display:block;border-radius:20px;overflow:hidden;border:1px solid rgba(27,39,51,.08);background:#fff;box-shadow:0 2px 5px rgba(27,39,51,.04);transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s" style-hover="transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(6,39,67,.3)">
+          <div style="height:196px"><img src="assets/villa-modern.jpg" alt="Ciudad Amurallada" style="width:100%;height:100%;object-fit:cover"></div>
+          <div style="padding:20px 20px 22px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#A6801E;margin-bottom:8px">Historia viva</div>
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:24px;color:#062743;margin:0 0 6px">Ciudad Amurallada</h3>
+            <p style="font-size:14px;line-height:1.55;color:#6b7c93;margin:0 0 14px">Balcones coloniales, plazas y cinco siglos de historia a la vuelta de cada esquina.</p>
+            <span style="font-size:13px;font-weight:600;color:#A6801E">Ver estadías →</span>
+          </div>
+        </a>
+        <a href="ALTORRA Estancias.dc.html" style="display:block;border-radius:20px;overflow:hidden;border:1px solid rgba(27,39,51,.08);background:#fff;box-shadow:0 2px 5px rgba(27,39,51,.04);transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s" style-hover="transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(6,39,67,.3)">
+          <div style="height:196px"><image-slot id="turi-getsemani" shape="rect" fit="cover" placeholder="Foto de Getsemaní" style="width:100%;height:100%"></image-slot></div>
+          <div style="padding:20px 20px 22px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#A6801E;margin-bottom:8px">Bohemio &amp; vibrante</div>
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:24px;color:#062743;margin:0 0 6px">Getsemaní</h3>
+            <p style="font-size:14px;line-height:1.55;color:#6b7c93;margin:0 0 14px">Arte urbano, música y la vida local más auténtica de la ciudad.</p>
+            <span style="font-size:13px;font-weight:600;color:#A6801E">Ver estadías →</span>
+          </div>
+        </a>
+        <a href="ALTORRA Estancias.dc.html" style="display:block;border-radius:20px;overflow:hidden;border:1px solid rgba(27,39,51,.08);background:#fff;box-shadow:0 2px 5px rgba(27,39,51,.04);transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s" style-hover="transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(6,39,67,.3)">
+          <div style="height:196px"><img src="assets/villa-pool.jpg" alt="Castillogrande" style="width:100%;height:100%;object-fit:cover"></div>
+          <div style="padding:20px 20px 22px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#A6801E;margin-bottom:8px">Tranquilo &amp; exclusivo</div>
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:24px;color:#062743;margin:0 0 6px">Castillogrande</h3>
+            <p style="font-size:14px;line-height:1.55;color:#6b7c93;margin:0 0 14px">Residencial y sereno, entre la bahía y el mar. Ideal para estancias largas.</p>
+            <span style="font-size:13px;font-weight:600;color:#A6801E">Ver estadías →</span>
+          </div>
+        </a>
+        <a href="ALTORRA Estancias.dc.html" style="display:block;border-radius:20px;overflow:hidden;border:1px solid rgba(27,39,51,.08);background:#fff;box-shadow:0 2px 5px rgba(27,39,51,.04);transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s" style-hover="transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(6,39,67,.3)">
+          <div style="height:196px"><image-slot id="turi-rooftop" shape="rect" fit="cover" placeholder="Foto de rooftop / piscina" style="width:100%;height:100%"></image-slot></div>
+          <div style="padding:20px 20px 22px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#A6801E;margin-bottom:8px">Vistas &amp; piscina</div>
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:24px;color:#062743;margin:0 0 6px">Rooftop &amp; Piscina</h3>
+            <p style="font-size:14px;line-height:1.55;color:#6b7c93;margin:0 0 14px">Terrazas en las alturas para ver caer el sol sobre las murallas.</p>
+            <span style="font-size:13px;font-weight:600;color:#A6801E">Ver estadías →</span>
+          </div>
+        </a>
+        <a href="ALTORRA Estancias.dc.html" style="display:block;border-radius:20px;overflow:hidden;border:1px solid rgba(27,39,51,.08);background:#fff;box-shadow:0 2px 5px rgba(27,39,51,.04);transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s" style-hover="transform:translateY(-6px);box-shadow:0 30px 60px -34px rgba(6,39,67,.3)">
+          <div style="height:196px"><image-slot id="turi-campestre" shape="rect" fit="cover" placeholder="Foto zona campestre" style="width:100%;height:100%"></image-slot></div>
+          <div style="padding:20px 20px 22px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#A6801E;margin-bottom:8px">Naturaleza &amp; calma</div>
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:24px;color:#062743;margin:0 0 6px">Zona Campestre</h3>
+            <p style="font-size:14px;line-height:1.55;color:#6b7c93;margin:0 0 14px">Fincas y casas de descanso a minutos de la ciudad, entre verde y brisa.</p>
+            <span style="font-size:13px;font-weight:600;color:#A6801E">Ver estadías →</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#FFFFFF">
+    <div style="max-width:1240px;margin:0 auto;padding:clamp(60px,8vw,110px) clamp(20px,5vw,64px)">
+      <div style="max-width:640px;margin-bottom:clamp(36px,5vw,52px)">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#A6801E">A tu servicio</span>
+        <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(32px,4.4vw,52px);line-height:1.04;letter-spacing:-.01em;color:#062743;margin:13px 0 14px">Todo para una experiencia impecable</h2>
+        <p style="font-size:16.5px;line-height:1.6;color:#6b7c93;margin:0">De la primera foto al último atardecer, coordinamos cada detalle para que solo te ocupes de disfrutar.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:clamp(18px,2vw,26px)">
+        <div style="border:1px solid rgba(27,39,51,.08);border-radius:18px;padding:28px 26px;background:#fff;transition:transform .35s,box-shadow .35s,border-color .35s" style-hover="transform:translateY(-5px);box-shadow:0 26px 54px -34px rgba(6,39,67,.26);border-color:rgba(212,175,55,.4)">
+          <div style="width:50px;height:50px;border-radius:13px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;color:#A6801E;margin-bottom:18px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.6"></circle></svg></div>
+          <h3 style="font-size:18px;font-weight:600;color:#062743;margin:0 0 9px">Guías turísticos certificados</h3>
+          <p style="font-size:14px;line-height:1.6;color:#6b7c93;margin:0">Recorridos privados por la historia viva de Cartagena, con guías bilingües y anfitriones que la conocen de verdad.</p>
+        </div>
+        <div style="border:1px solid rgba(27,39,51,.08);border-radius:18px;padding:28px 26px;background:#fff;transition:transform .35s,box-shadow .35s,border-color .35s" style-hover="transform:translateY(-5px);box-shadow:0 26px 54px -34px rgba(6,39,67,.26);border-color:rgba(212,175,55,.4)">
+          <div style="width:50px;height:50px;border-radius:13px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;color:#A6801E;margin-bottom:18px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.4"></circle></svg></div>
+          <h3 style="font-size:18px;font-weight:600;color:#062743;margin:0 0 9px">Fotografía profesional</h3>
+          <p style="font-size:14px;line-height:1.6;color:#6b7c93;margin:0">Sesiones para tu estadía, tu evento o tu propiedad. Capturamos Cartagena a tu medida, lista para presumir.</p>
+        </div>
+        <div style="border:1px solid rgba(27,39,51,.08);border-radius:18px;padding:28px 26px;background:#fff;transition:transform .35s,box-shadow .35s,border-color .35s" style-hover="transform:translateY(-5px);box-shadow:0 26px 54px -34px rgba(6,39,67,.26);border-color:rgba(212,175,55,.4)">
+          <div style="width:50px;height:50px;border-radius:13px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;color:#A6801E;margin-bottom:18px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18c3-1.5 4-3 4-6a5 5 0 0 1 10 0c0 3 1 4.5 4 6z"></path><path d="M3 18h18"></path><path d="M10 21h4"></path></svg></div>
+          <h3 style="font-size:18px;font-weight:600;color:#062743;margin:0 0 9px">Pasadías &amp; actividades</h3>
+          <p style="font-size:14px;line-height:1.6;color:#6b7c93;margin:0">Islas del Rosario, Barú, city tours, gastronomía y deportes náuticos. Diseñamos tu día perfecto de principio a fin.</p>
+        </div>
+        <div style="border:1px solid rgba(27,39,51,.08);border-radius:18px;padding:28px 26px;background:#fff;transition:transform .35s,box-shadow .35s,border-color .35s" style-hover="transform:translateY(-5px);box-shadow:0 26px 54px -34px rgba(6,39,67,.26);border-color:rgba(212,175,55,.4)">
+          <div style="width:50px;height:50px;border-radius:13px;background:#f2f6f9;display:flex;align-items:center;justify-content:center;color:#A6801E;margin-bottom:18px"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 1 3 3v1a6 6 0 0 1 6 6v3l1.5 3h-21L3 15v-3a6 6 0 0 1 6-6V5a3 3 0 0 1 3-3z"></path><path d="M9 21a3 3 0 0 0 6 0"></path></svg></div>
+          <h3 style="font-size:18px;font-weight:600;color:#062743;margin:0 0 9px">Concierge 24/7</h3>
+          <p style="font-size:14px;line-height:1.6;color:#6b7c93;margin:0">Transporte, reservas, chef privado y todo lo que tu visita necesite, resuelto con una sola llamada.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:#FFFFFF">
+    <div style="max-width:1300px;margin:0 auto;padding:0 clamp(20px,5vw,64px) clamp(60px,8vw,100px)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(360px,100%),1fr));gap:clamp(28px,4vw,60px);align-items:center;background:#f2f6f9;border:1px solid rgba(27,39,51,.07);border-radius:26px;overflow:hidden">
+        <div style="position:relative;min-height:clamp(300px,38vw,460px);align-self:stretch">
+          <image-slot id="turi-islas" shape="rect" fit="cover" placeholder="Foto de Islas del Rosario / Barú" style="position:absolute;inset:0;width:100%;height:100%"></image-slot>
+        </div>
+        <div style="padding:clamp(32px,4vw,56px) clamp(28px,4vw,52px) clamp(32px,4vw,56px) 0">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#A6801E">Pasadías &amp; recreación</span>
+          <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(30px,3.8vw,46px);line-height:1.05;letter-spacing:-.01em;color:#062743;margin:13px 0 15px">Cartagena, más allá de la ciudad</h2>
+          <p style="font-size:16px;line-height:1.62;color:#6b7c93;margin:0 0 24px;max-width:460px">El Caribe empieza donde termina la muralla. Islas de agua turquesa, playas de arena blanca y planes para cada tipo de viajero.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:30px">
+            <span style="padding:8px 15px;border-radius:999px;background:#fff;border:1px solid rgba(27,39,51,.1);font-size:13px;font-weight:500;color:#062743">Islas del Rosario</span>
+            <span style="padding:8px 15px;border-radius:999px;background:#fff;border:1px solid rgba(27,39,51,.1);font-size:13px;font-weight:500;color:#062743">Playa Barú</span>
+            <span style="padding:8px 15px;border-radius:999px;background:#fff;border:1px solid rgba(27,39,51,.1);font-size:13px;font-weight:500;color:#062743">City tour histórico</span>
+            <span style="padding:8px 15px;border-radius:999px;background:#fff;border:1px solid rgba(27,39,51,.1);font-size:13px;font-weight:500;color:#062743">Rumba en chiva</span>
+            <span style="padding:8px 15px;border-radius:999px;background:#fff;border:1px solid rgba(27,39,51,.1);font-size:13px;font-weight:500;color:#062743">Gastronomía local</span>
+            <span style="padding:8px 15px;border-radius:999px;background:#fff;border:1px solid rgba(27,39,51,.1);font-size:13px;font-weight:500;color:#062743">Atardeceres en velero</span>
+          </div>
+          <a href="#contacto" style="display:inline-flex;align-items:center;gap:9px;padding:14px 28px;border-radius:999px;background:#062743;color:#fff;font-weight:600;font-size:14px;transition:background .3s,transform .3s,box-shadow .3s" style-hover="background:#062743;transform:translateY(-1px);box-shadow:0 16px 32px -16px rgba(6,39,67,.6)">Diseña tu pasadía<span>→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="inversion" style="background:#062743;color:#fff;overflow:hidden;position:relative;scroll-margin-top:120px">
+    <div style="position:absolute;inset:0;background-image:url('assets/estate-golden.jpg');background-size:cover;background-position:center;opacity:.14"></div>
+    <div style="position:absolute;inset:0;background:linear-gradient(115deg,#062743 46%,rgba(6,39,67,.82))"></div>
+    <div style="position:relative;max-width:1240px;margin:0 auto;padding:clamp(64px,8vw,116px) clamp(20px,5vw,64px)">
+      <div style="max-width:660px;margin-bottom:clamp(40px,5vw,56px)">
+        <span style="font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#EBD27E">Asesoría de Inversión Turística</span>
+        <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(34px,4.6vw,56px);line-height:1.03;letter-spacing:-.01em;color:#fff;margin:14px 0 16px">Invierte donde el mundo quiere quedarse.</h2>
+        <p style="font-size:17px;line-height:1.62;color:rgba(255,255,255,.8);margin:0;max-width:560px">Cartagena es uno de los destinos más deseados del Caribe. Te ayudamos a comprar el inmueble correcto y lo convertimos en un alojamiento rentable —sin que muevas un dedo.</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:clamp(18px,2vw,26px);margin-bottom:clamp(36px,4vw,48px)">
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:28px 26px;backdrop-filter:blur(6px)">
+          <div style="width:48px;height:48px;border-radius:12px;background:rgba(235,210,126,.14);display:flex;align-items:center;justify-content:center;color:#EBD27E;margin-bottom:17px"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5"></path><path d="m4 15 5-5 4 4 7-8"></path></svg></div>
+          <h3 style="font-size:18px;font-weight:600;color:#fff;margin:0 0 9px">Análisis de rentabilidad</h3>
+          <p style="font-size:14px;line-height:1.6;color:rgba(255,255,255,.68);margin:0">Proyectamos ocupación, tarifa e ingresos antes de que inviertas. Decisiones con números, no con corazonadas.</p>
+        </div>
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:28px 26px;backdrop-filter:blur(6px)">
+          <div style="width:48px;height:48px;border-radius:12px;background:rgba(235,210,126,.14);display:flex;align-items:center;justify-content:center;color:#EBD27E;margin-bottom:17px"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path><path d="M11 8v6M8 11h6"></path></svg></div>
+          <h3 style="font-size:18px;font-weight:600;color:#fff;margin:0 0 9px">Compra con propósito</h3>
+          <p style="font-size:14px;line-height:1.6;color:rgba(255,255,255,.68);margin:0">Seleccionamos inmuebles con vocación turística real: ubicación, demanda y potencial de valorización.</p>
+        </div>
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:28px 26px;backdrop-filter:blur(6px)">
+          <div style="width:48px;height:48px;border-radius:12px;background:rgba(235,210,126,.14);display:flex;align-items:center;justify-content:center;color:#EBD27E;margin-bottom:17px"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V9l9-6 9 6v12"></path><path d="M9 21v-6h6v6"></path></svg></div>
+          <h3 style="font-size:18px;font-weight:600;color:#fff;margin:0 0 9px">Operación llave en mano</h3>
+          <p style="font-size:14px;line-height:1.6;color:rgba(255,255,255,.68);margin:0">Administramos tu alojamiento y sus ingresos: reservas, huéspedes, mantenimiento y reportes mensuales.</p>
+        </div>
+      </div>
+      <a href="#contacto" style="display:inline-flex;align-items:center;gap:9px;padding:15px 32px;border-radius:999px;background:linear-gradient(135deg,#EBD27E 0%,#D4AF37 55%,#A6801E 100%);color:#062743;font-weight:700;font-size:14.5px;transition:transform .3s,box-shadow .3s" style-hover="transform:translateY(-2px);">Agenda tu asesoría<span>→</span></a>
+    </div>
+  </section>
+
+  <section id="contacto" style="background:#FFFFFF">
+    <div style="max-width:1000px;margin:0 auto;padding:clamp(64px,8vw,112px) clamp(20px,5vw,64px);text-align:center">
+      <span style="font-size:11px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:#A6801E">Tu Cartagena empieza aquí</span>
+      <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:clamp(34px,5vw,58px);line-height:1.03;letter-spacing:-.015em;color:#062743;margin:14px 0 18px;text-wrap:balance">¿Listo para vivir la ciudad amurallada?</h2>
+      <p style="font-size:17px;line-height:1.6;color:#6b7c93;margin:0 auto 34px;max-width:520px">Cuéntanos qué buscas —una estadía, una experiencia o una inversión— y un asesor de turismo ALTORRA te acompañará en cada paso.</p>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center">
+        <a href="tel:+576051234567" style="display:inline-flex;align-items:center;gap:9px;padding:15px 30px;border-radius:999px;background:linear-gradient(135deg,#EBD27E 0%,#D4AF37 55%,#A6801E 100%);color:#062743;font-weight:700;font-size:14.5px;transition:transform .3s,box-shadow .3s" style-hover="transform:translateY(-2px);">Habla con un asesor</a>
+        <a href="mailto:turismo@altorra.co" style="display:inline-flex;align-items:center;gap:9px;padding:15px 28px;border-radius:999px;border:1px solid rgba(27,39,51,.2);color:#062743;font-weight:600;font-size:14.5px;transition:border-color .3s,background .3s" style-hover="border-color:#D4AF37;background:#f2f6f9">turismo@altorra.co</a>
+      </div>
+    </div>
+  </section>
+
+  <footer style="background:#062743;color:rgba(255,255,255,.7)">
+    <div style="max-width:1300px;margin:0 auto;padding:clamp(40px,4.4vw,58px) clamp(20px,5vw,64px) 26px">
+      <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1.25fr;gap:clamp(26px,3vw,46px);padding-bottom:32px;border-bottom:1px solid rgba(255,255,255,.12)">
+        <div style="min-width:0">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <img src="assets/altorra-mark.png" alt="ALTORRA" style="height:44px;width:auto">
+            <span style="display:flex;flex-direction:column;gap:3px;line-height:1">
+              <span style="font-family:'Cormorant Garamond',Georgia,serif;font-weight:600;font-size:22px;letter-spacing:.16em;color:#fff">ALTORRA</span>
+              <span style="font-size:8px;font-weight:600;letter-spacing:.42em;color:rgba(255,255,255,.55)">INMOBILIARIA</span>
+            </span>
+          </div>
+          <p style="font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-size:19px;line-height:1.3;color:#EBD27E;margin:0 0 10px">Cartagena, a tu altura.</p>
+          <p style="font-size:13px;line-height:1.6;color:rgba(255,255,255,.55);margin:0 0 18px;max-width:270px">Inmobiliaria boutique en Cartagena de Indias: compra, arriendo, estancias e inversión con acompañamiento experto.</p>
+          <div style="display:flex;gap:10px">
+            <a href="#" aria-label="Instagram" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.5" cy="6.5" r="1.1" fill="currentColor" stroke="none"></circle></svg></a>
+            <a href="#" aria-label="Facebook" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 21v-7h2.3l.35-2.7H13.5V9.55c0-.78.22-1.31 1.33-1.31h1.42V5.82c-.25-.03-1.09-.1-2.07-.1-2.05 0-3.46 1.25-3.46 3.55v1.98H8.4V14h2.32v7h2.78z"></path></svg></a>
+            <a href="#" aria-label="WhatsApp" style="width:34px;height:34px;border-radius:50%;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.75);transition:background .25s,color .25s,border-color .25s" style-hover="background:#EBD27E;color:#062743;border-color:#EBD27E"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3.5A8.5 8.5 0 0 0 4.6 16.3L3.6 20.4l4.2-1.1A8.5 8.5 0 1 0 12 3.5zm0 1.6a6.9 6.9 0 1 1-3.6 12.8l-.3-.2-2.5.66.67-2.43-.2-.3A6.9 6.9 0 0 1 12 5.1z"></path></svg></a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Explorar</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="ALTORRA Resultados.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Comprar</a>
+            <a href="ALTORRA Resultados.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Arrendar</a>
+            <a href="ALTORRA Estancias.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Estancias</a>
+            <a href="ALTORRA Turismo.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Turismo</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Servicios</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="ALTORRA Publica.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Publica tu propiedad</a>
+            <a href="ALTORRA Turismo.dc.html#inversion" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Inversión turística</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Guías &amp; experiencias</a>
+            <a href="ALTORRA Gestion.dc.html" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Panel de gestión</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Compañía</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Nosotros</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Journal</a>
+            <a href="#" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Trabaja con nosotros</a>
+            <a href="#contacto" style="font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E">Contacto</a>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5);margin:0 0 15px">Contacto</div>
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <a href="#" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"></path><circle cx="12" cy="10" r="2.5"></circle></svg></span><span>Cra 1 #5-100, Bocagrande<br>Cartagena de Indias</span></a>
+            <a href="tel:+573002439810" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11 11 0 0 0 3.5.56 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.3a1 1 0 0 1 1 1c0 1.2.2 2.4.56 3.5a1 1 0 0 1-.24 1z"></path></svg></span><span>+57 300 243 9810</span></a>
+            <a href="mailto:turismo@altorra.co" style="display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(255,255,255,.72);transition:color .2s" style-hover="color:#EBD27E"><span style="flex:none;color:#D4AF37;margin-top:1px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg></span><span>turismo@altorra.co</span></a>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-top:20px">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;font-size:12px;color:rgba(255,255,255,.45)">
+          <span>© 2025 ALTORRA Company S.A.S.</span>
+          <span style="width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.28)"></span>
+          <span>Matrícula de Arrendador 000000</span>
+          <span style="width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.28)"></span>
+          <span>NIT 902.063.965-4</span>
+        </div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap">
+          <a href="#" style="font-size:12px;color:rgba(255,255,255,.55);transition:color .2s" style-hover="color:#EBD27E">Términos</a>
+          <a href="#" style="font-size:12px;color:rgba(255,255,255,.55);transition:color .2s" style-hover="color:#EBD27E">Privacidad</a>
+          <a href="#" style="font-size:12px;color:rgba(255,255,255,.55);transition:color .2s" style-hover="color:#EBD27E">Habeas Data</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div>
+</x-dc>
+</body>
+</html>

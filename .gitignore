@@ -1,0 +1,65 @@
+# Dependencias Node.js
+node_modules/
+.npm/
+
+# Backups de Firestore (pueden contener datos sensibles)
+backups/
+
+# Credenciales Firebase (NUNCA commitear)
+*.json.key
+serviceAccount.json
+service-account.json
+sa.json
+firebase-debug.log
+firebase-debug.*.log
+
+# Variables de entorno
+.env
+.env.local
+.env.production
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+__MACOSX/
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build output temporal
+.cache/
+dist/
+
+# Material estrategico interno del dueno (respaldado en brain-private/pauta) - NO al repo publico
+Brief_Dise*.docx
+
+# Workspace de Antigravity (sus skills adoptadas viven en el canon de la boveda, brain-private/skills/)
+.agents/
+_tmp-guia-*.pdf
+
+# Paquete de contexto de las auditorias del kit: contiene COPIAS INTEGRAS de los
+# contratos 03/04 y del contexto legal. Este repo es PUBLICO (GitHub Pages) -> jamas al repo.
+# Su casa definitiva es la boveda privada brain-private/altorrainmobiliaria/.
+.auditoria-contratos/
+
+# Cache de tipos generada por Astro (portal)
+.astro/
+
+# (F8, 2026-09-05) El cerebro documental (docs/, specs/, _legacy/, hooks/, el kernel de scripts/ y skills/) ya no
+# vive aqui: esta en ../brain-private/altorrainmobiliaria/ con su historia. Sus sidecars y flags
+# (docs/.estado-auto.md, .consolidacion-pendiente, .vigia-alerta, .guard-log, .sesiones/...) los ignora
+# el .gitignore de la boveda y los cobra el SessionStart desde alli.
+.playwright-mcp/
+
+# Carpetas que escriben plugins de terceros dentro del repo (incidente 2026-09-03).
+# No son nuestras y una de ellas llevaba un id de telemetria dentro.
+.semgrep/
+.remember/

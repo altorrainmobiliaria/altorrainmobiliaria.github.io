@@ -1,0 +1,2033 @@
+---
+// HOME (Ola 1) — réplica del mockup ALTORRA Portal.dc.html sobre el design system D1.
+// PÁGINA ESTÁTICA (prerenderizada) — declaración EXPLÍCITA (output:'server' => on-demand por defecto).
+export const prerender = true;
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import PropertyCard from '../components/PropertyCard.astro';
+import LuCard from '../components/LuCard.astro';
+import StayCard from '../components/StayCard.astro';
+import RankCard from '../components/RankCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import type { ComponentProps } from 'astro/types';
+import { etiquetaTipo, TIPOS_PUBLICOS } from '../lib/domain/shared';
+import { ETIQUETA_ESTADO_OBRA, puedePublicarseProyecto, type Proyecto } from '../lib/domain/proyectos';
+import { SITE } from '../lib/config/site';
+import { getCollection } from 'astro:content';
+import {
+  ETIQUETA,
+  destacadoYResto,
+  fechaLarga,
+  tiempoDeLectura,
+} from '../lib/content/journal';
+
+// PROYECTOS — riel de pósters 3/4 (réplica fiel del mockup #proyectos, L1172-1247).
+// titleSize/titleTrack = ajuste óptico por longitud del nombre, tal cual el mockup.
+/*
+ * 🚨 SEIS PROYECTOS DE OBRA NUEVA, INVENTADOS Y PUBLICADOS (§270).
+ *
+ * Aquí vivían MAREA, SERENA, CLAUSTRO 1620, ALTAMAR, BAHÍA NORTE y MURALLA LOFT — con DIRECCIÓN
+ * («Cra 1 · Bocagrande», «Av. Santander · Marbella», «Calle del Curato · Centro»), dos con badge
+ * **«Preventa»**, y todos enlazando a una ficha. Se servían en la portada bajo el titular «Obra
+ * nueva firmada ALTORRA», que afirma que ALTORRA tiene desarrollos firmados. No tiene ninguno.
+ *
+ * 🎯 No es una card de relleno como «Thomas Shelby»: un nombre de proyecto + una dirección + un
+ * badge de preventa es una OFERTA. Y «SERENA» roza el nombre de un desarrollo que existe de
+ * verdad en Cartagena. Eso es publicidad engañosa (Ley 1480, arts. 29-30) y la regla cero-demo
+ * del proyecto ([[L-29]]) lo prohíbe explícitamente.
+ *
+ * La SECCIÓN se queda —el dueño acaba de abrir la vertical de obra nueva (§270)— pero no se
+ * pinta mientras esté vacía. El diseño sobrevive para el día que haya un proyecto firmado; lo
+ * que no sobrevive es inventarlo mientras tanto.
+ */
+/*
+ * ¿HAY CATÁLOGO REAL? — el interruptor del que cuelga TODO el inventario de esta página (§276).
+ *
+ * 🔴 La portada servía SEIS conjuntos de inmuebles inventados: «Propiedad del día» con un
+ * penthouse de $3.200 millones · «Publicadas recientemente» con siete tiles y un «hace 2 h»
+ * escrito a mano · destacadas · arriendo · estancias · mejor valoradas · y los pines y minicards
+ * del mapa. Unos veinticinco inmuebles con precio, zona y specs. Ninguno existe.
+ *
+ * 🎯 Y el candado que debía impedirlo —`verify:build` #7, que bloquea un build de producción con
+ * catálogo de muestra— NO los veía: vigila `PUBLIC_CATALOGO_SOURCE`, y ninguna de estas secciones
+ * lee el catálogo. Un gate correcto cuyo DENOMINADOR excluye justo donde vive el problema. El
+ * arreglo es meterlas DENTRO del denominador, no añadir un segundo candado que mantener.
+ *
+ * ⚠️ CONSECUENCIA QUE HAY QUE SABER: en un build de producción estas secciones salen VACÍAS,
+ * porque la portada **no está cableada al catálogo** — ni una de las seis lee el índice real. Es
+ * trabajo de producto pendiente, no un descuido de este cambio: antes servía relleno bonito y
+ * ahora dice la verdad mientras se cablea. Una portada honesta y escueta es mejor que una que
+ * publica inventario que no existe.
+ */
+const HAY_CATALOGO_REAL = (import.meta.env.PUBLIC_CATALOGO_SOURCE ?? 'demo') === 'live';
+
+/*
+ * OBRA NUEVA en la portada (§284). La lista está vacía porque **no hay ningún proyecto publicado**,
+ * y §270 la dejó así después de encontrar seis inventados servidos aquí — uno de ellos rozando el
+ * nombre de un desarrollo real de Cartagena.
+ *
+ * 🎯 Lo que cambia ahora es el TIPO: ya no es una lista de props de tarjeta que alguien rellena a
+ * mano, sino `Proyecto[]` del dominio, y la tarjeta se DERIVA de él. Así el día que entre el primero
+ * no hay que acordarse de nada: si le falta la licencia o la constructora, `puedePublicarseProyecto`
+ * lo deja fuera, y su badge sale de su estado de obra en vez de escribirse.
+ *
+ * ⛔ El filtro NO es decorativo: es el mismo criterio que el gate `proyecto-sin-respaldo` vigila en
+ * el HTML servido. Aquí se decide qué entra; allí se comprueba que no entró otra cosa.
+ */
+const PROYECTOS_REALES: Proyecto[] = [];
+
+const proyectos: ComponentProps<typeof ProjectCard>[] = PROYECTOS_REALES
+  .filter(puedePublicarseProyecto)
+  .map((p) => ({
+    img: p.imagenPortada ?? p.imagenes[0],
+    alt: `${p.nombre}, proyecto de obra nueva en ${p.geo.barrio}`,
+    name: p.nombre,
+    // El «lugar» es barrio y ciudad, NUNCA la dirección exacta — misma regla que las propiedades.
+    place: `${p.geo.barrio} · ${p.geo.ciudad}`,
+    badge: ETIQUETA_ESTADO_OBRA[p.estadoObra],
+    href: `/proyecto/${p.slug}`,
+  }));
+
+// SELECCIÓN ALTORRA — riel de `RankCard` (mockup #valoradas, L1081-1155). Se llamaba «Mejor
+// valoradas»: un ranking necesita notas, y las que había eran inventadas (§123). La selección
+// es nuestra y eso sí lo podemos firmar.
+// Card NEUMÓRFICA con numeral calado; el mockup la pone sobre `var(--surface)` = lienzo neu.
+const valoradas = [
+  { img: '/assets/estate-golden.webp', alt: 'Villa frente al mar en Bocagrande', rank: '01', zona: 'Bocagrande', title: 'Villa frente al mar', price: '$3.200MM', href: '/ficha' },
+  { img: '/assets/villa-pool.webp', alt: 'Apartamento con vista a la bahía en Castillogrande', rank: '02', zona: 'Castillogrande', title: 'Apto vista a la bahía', price: '$1.450MM', href: '/ficha' },
+  { img: '/assets/chalet-dusk.webp', alt: 'Casa colonial restaurada en el Centro Histórico', rank: '03', zona: 'Centro Histórico', title: 'Casa colonial restaurada', price: '$2.800MM', href: '/ficha' },
+  { img: '/assets/villa-modern.webp', alt: 'Casa con jardín y estudio en Manga', rank: '04', zona: 'Manga', title: 'Casa con jardín y estudio', price: '$6.5M/mes', href: '/ficha' },
+];
+
+// CORTA ESTANCIA — riel de `StayCard` (réplica fiel del mockup #estancias-list, L760-835).
+// Card `.bnb` del mockup: SIN caja, foto desnuda + texto suelto. NO es LuCard (§32.11).
+const estancias = [
+  { img: '/assets/hero-estancia.webp', alt: 'Terraza con piscina frente al mar', title: 'Penthouse en Bocagrande', meta: 'Vista al mar · 6 huéspedes', price: '$680.000', href: '/estancias' },
+  { img: '/assets/chalet-dusk.webp', alt: 'Casa colonial con patio', title: 'Casa colonial en el Centro', meta: 'Patio y piscina · 8 huéspedes', price: '$1.150.000', href: '/estancias' },
+  { img: '/assets/villa-pool.webp', alt: 'Apartamento frente a la playa en El Laguito', title: 'Apartamento en El Laguito', meta: 'Frente a la playa · 4 huéspedes', price: '$420.000', href: '/estancias' },
+  { img: '/assets/villa-modern.webp', alt: 'Loft de autor en Getsemaní', title: 'Loft de autor en Getsemaní', meta: 'Diseño · 2 huéspedes', price: '$390.000', href: '/estancias' },
+  { img: '/assets/estate-golden.webp', alt: 'Villa con jardín privado en Manga', title: 'Villa con piscina en Manga', meta: 'Jardín privado · 10 huéspedes', price: '$1.480.000', href: '/estancias' },
+];
+
+// PROPIEDAD DEL DÍA — split editorial: UNA sola propiedad + 4 contadores (mockup L409-449).
+const pdiaStats = [
+  { n: '4', label: 'Alcobas' },
+  { n: '4', label: 'Baños' },
+  { n: '320', unit: 'm²', label: 'Área' },
+  { n: '3', label: 'Parqueaderos' },
+];
+
+// INVERTIR — 3 tarjetas de cifra del split (mockup L1259-1272).
+//
+// Las tres del mockup eran de tres clases distintas y solo una se podía firmar (§123):
+//   · «+7% valorización anual promedio · zona norte» — una MEDICIÓN de mercado sin fuente. Puede que
+//     sea cierta; da igual: publicarla sin de dónde sale la convierte en nuestra afirmación, y quien
+//     compre por ese número nos la reclamará a nosotros. Vuelve cuando tenga fuente citable
+//     (el «Índice ALTORRA» de Ola 3 nace justo para eso).
+//   · «128 propiedades verificadas hoy» — falso y comprobable: hoy no hay ninguna sellada (§119).
+//   · «5 min tiempo de respuesta promedio» — no era una medición, era el COMPROMISO del dueño
+//     (proceso R4). Etiquetarlo como «promedio» lo convierte en un dato que nadie mide; dicho como
+//     promesa es verdad y además obliga.
+//
+// Se quedan las que son verificables por quien las lea: la matrícula está en la Resolución 6636 y en
+// el footer, y el compromiso es nuestro.
+const invertirStats = [
+  { n: '5 min', d: 'nos comprometemos a responder' },
+  { n: '6636', d: 'matrícula de arrendador · Alcaldía de Cartagena' },
+];
+
+// EXPLORA POR ZONA — mosaico de 10 tiles de ZONA (no de propiedades) (mockup L837-940).
+const zonas = [
+  { t: 'Bocagrande', img: '/assets/villa-pool.webp' },
+  { t: 'Castillogrande', img: '/assets/estate-golden.webp' },
+  { t: 'Centro Histórico', img: '/assets/chalet-dusk.webp' },
+  { t: 'Manga', img: '/assets/villa-modern.webp' },
+  { t: 'Getsemaní', img: '/assets/villa-pool.webp' },
+  { t: 'Crespo', img: '/assets/estate-golden.webp' },
+  { t: 'Marbella', img: '/assets/hero-invierte.webp' },
+  { t: 'La Boquilla', img: '/assets/hero-estancia.webp' },
+  { t: 'Pie de la Popa', img: '/assets/villa-modern.webp' },
+  { t: 'Cabrero', img: '/assets/chalet-dusk.webp' },
+];
+
+/*
+ * RECIENTES — mosaico BENTO de 7 tiles con posicionamiento explícito (mockup L991-1079, CSS L183-190).
+ * `title` presente ⇒ el precio va en `.mbody` (aparece al hover). Sin `title` ⇒ el precio ES la línea
+ * principal y va siempre visible. Es la lógica del mockup, no una invención.
+ *
+ * 🔴 PERO ERAN SIETE INMUEBLES QUE NO EXISTEN, servidos en la PORTADA bajo «Lo último que entró al
+ * portafolio», con badge «Nuevo», precio de hasta $3.200 millones y un «hace 2 h» escrito a mano
+ * (§276). Dos afirmaciones falsas por tile, y la segunda es de una clase peor: **una marca de tiempo
+ * en el build es mentira el minuto después de compilar, y más mentira cada hora que pasa**. En
+ * producción se habría quedado congelada diciendo que algo entró hace dos horas, para siempre.
+ *
+ * 🎯 Y el candado que ya existe —`verify:build` #7, que impide un build de producción con catálogo
+ * de muestra— NO las cubría: vigila `PUBLIC_CATALOGO_SOURCE`, y esta sección no leía el catálogo.
+ * Un gate correcto cuyo DENOMINADOR excluye justo donde vive el problema.
+ *
+ * El arreglo es hacerlas depender de esa misma variable, o sea METERLAS EN EL DENOMINADOR, en vez de
+ * añadir un segundo candado que habría que acordarse de mantener. En `demo` se ve el diseño; en un
+ * build de producción la lista está vacía y la sección lo dice.
+ */
+const RECIENTES_DE_MUESTRA = [
+  { img: '/assets/estate-golden.webp', alt: 'Villa frente al mar en Bocagrande', col: 'span 2', row: 'span 2', size: 'xl', tag: 'Venta · Bocagrande', title: 'Villa frente al mar', price: '$3.200.000.000', time: 'hace 2 h' },
+  { img: '/assets/chalet-dusk.webp', alt: 'Casa colonial en el Centro', col: '4', row: 'span 2', size: 'md', tag: 'Estancia · Centro', title: 'Casa colonial', price: '$1.150.000 / noche', time: 'hace 5 h' },
+  { img: '/assets/villa-modern.webp', alt: 'Apartaestudio en Manga', col: '3', row: '1', size: 'sm', tag: 'Arriendo · Manga', price: '$1.9M / mes' },
+  { img: '/assets/hero-invierte.webp', alt: 'Loft de autor en Getsemaní', col: '3', row: '2', size: 'sm', tag: 'Venta · Getsemaní', price: '$720M', time: 'ayer' },
+  { img: '/assets/hero-keys.webp', alt: 'Apartamento amoblado en El Laguito', col: 'span 2', row: '3', size: 'md', tag: 'Arriendo · El Laguito', title: 'Apto amoblado frente a la playa', price: '$4.200.000 / mes' },
+  { img: '/assets/villa-pool.webp', alt: 'Penthouse en Castillogrande', col: '3', row: '3', size: 'sm', tag: 'Venta · Castillogrande', price: '$2.4MM' },
+  { img: '/assets/hero-estancia.webp', alt: 'Terraza en Bocagrande', col: '4', row: '3', size: 'sm', tag: 'Estancia · Bocagrande', price: '$680k / noche' },
+];
+const recientes = HAY_CATALOGO_REAL ? [] : RECIENTES_DE_MUESTRA;
+
+/*
+ * REDES — muro de 6 posts (mockup L1363-1394). `reel` = indicador de video (play) en 1, 3 y 6.
+ *
+ * 🔴 Traían «1.2k · 48», «3.1k · 78»… (§276). Eran likes y comentarios INVENTADOS del mockup, y no
+ * son un detalle decorativo: son una afirmación sobre la tracción del negocio, servida en la
+ * portada. Nadie ha medido eso, y no hay integración con Instagram que pudiera medirlo.
+ *
+ * Se retiran los números y se queda el muro: el diseño era una rejilla de fotos que lleva a la
+ * cuenta real, y eso sigue siendo verdad. Si algún día se conectan las métricas de verdad, vuelven
+ * con su fuente — pero entonces serán un dato y no un adorno.
+ */
+const posts = [
+  { img: '/assets/estate-golden.webp', reel: true },
+  { img: '/assets/hero-estancia.webp' },
+  { img: '/assets/villa-pool.webp', reel: true },
+  { img: '/assets/chalet-dusk.webp' },
+  { img: '/assets/hero-keys.webp', imgPos: 'center 40%' },
+  { img: '/assets/villa-modern.webp', reel: true },
+];
+
+// EN VENTA — riel horizontal de `LuCard` (réplica fiel del mockup #venta, L451-564).
+// Swatches en tokens de paleta (el mockup traía #8a6d1f/#c7d3dd ajenos → §3.2 disciplina estricta).
+// `swatches` tipado al UNION de la paleta (= prop de LuCard): sin la anotación, el literal infiere
+// `string[]` y no encaja en `Array<'navy'|'gold'|'gold-bright'|'silver'>` (astro check ts2322).
+type SwatchTok = 'navy' | 'gold' | 'gold-bright' | 'silver';
+const venta: Array<{
+  img: string; alt: string; imgPos?: string; badge: string; zona: string; title: string;
+  tagline: string; swatches: SwatchTok[]; tipologias: string; specs: string[];
+  price: string; note: string; href: string;
+}> = [
+  { img: '/assets/villa-pool.webp', alt: 'Apartamento en Castillogrande', imgPos: 'center 60%', badge: 'En venta', zona: 'Castillogrande', title: 'Torre Marea', tagline: 'Vista abierta a la bahía.', swatches: ['navy', 'gold', 'silver'], tipologias: '3 tipologías', specs: ['3 hab.', '3 baños', '142 m²'], price: 'Desde $1.450M', note: 'o crédito desde $6.2M/mes', href: '/ficha' },
+  { img: '/assets/villa-modern.webp', alt: 'Casa republicana en Manga', badge: 'En venta', zona: 'Manga', title: 'Casa Republicana', tagline: 'Patrimonio restaurado con alma.', swatches: ['gold', 'navy'], tipologias: '2 tipologías', specs: ['4 hab.', '3 baños', '210 m²'], price: 'Desde $980M', note: 'o crédito desde $4.1M/mes', href: '/ficha' },
+  { img: '/assets/estate-golden.webp', alt: 'Penthouse en Bocagrande', badge: 'En venta', zona: 'Bocagrande', title: 'Penthouse Dorado', tagline: 'Terraza privada con piscina.', swatches: ['gold-bright', 'gold', 'navy', 'silver'], tipologias: 'única', specs: ['4 hab.', '4 baños', '320 m²'], price: 'Desde $3.200M', note: 'o crédito desde $13.6M/mes', href: '/ficha' },
+  { img: '/assets/hero-invierte.webp', alt: 'Proyecto sobre planos en el Centro Histórico', badge: 'Sobre planos', zona: 'Centro Histórico', title: 'Claustro 1620', tagline: 'Lofts dentro de la muralla.', swatches: ['navy', 'gold', 'silver'], tipologias: '4 tipologías', specs: ['1–2 hab.', '2 baños', '68 m²'], price: 'Desde $720M', note: 'entrega dic. 2026', href: '/ficha' },
+  { img: '/assets/hero-keys.webp', alt: 'Casa colonial en Getsemaní', imgPos: 'center 40%', badge: 'En venta', zona: 'Getsemaní', title: 'Casa Trinidad', tagline: 'Colonial con patio interior.', swatches: ['gold', 'navy'], tipologias: '2 tipologías', specs: ['3 hab.', '2 baños', '128 m²'], price: 'Desde $1.180M', note: 'o crédito desde $5M/mes', href: '/ficha' },
+];
+
+// Datos DEMO (estáticos) — la conexión a Firestore real llega cuando haya inventario
+// (decisión SSG vs doc-índice DIFERIDA a Fable, TODO-22). Imágenes = placeholders del diseño.
+// DESTACADAS — las 2 del mockup (L580-625) + la card-CTA del "128". Esta es la ÚNICA sección
+// de la home donde el mockup SÍ usa la grilla genérica (`disenoPropio:false`, §32.9).
+// La 3ª card ("Penthouse frente al mar", $2.100.000.000) estaba INVENTADA: retirada (§32.23).
+const destacadas = [
+  { img: '/assets/villa-pool.webp', alt: 'Apartamento con vista a la bahía', badge: 'En venta', zona: 'Castillogrande', beds: 3, baths: 3, area: '142 m²', title: 'Apartamento con vista a la bahía', price: '$1.450.000.000', priceLabel: 'Desde', href: '/comprar' },
+  { img: '/assets/villa-modern.webp', alt: 'Casa republicana restaurada', badge: 'En venta', zona: 'Manga', beds: 4, baths: 3, area: '210 m²', title: 'Casa republicana restaurada', price: '$980.000.000', priceLabel: 'Desde', href: '/comprar' },
+];
+
+// ARRIENDO — lista horizontal con filtro con/sin administración (réplica fiel del mockup #arriendo).
+// Estructura RICA (specs, amenity, adminLabel, admin) — diseño PROPIO de la sección, NO PropertyCard.
+const arriendo = [
+  { img: '/assets/villa-modern.webp', alt: 'Apartamento amoblado en El Laguito', admin: 'con', photos: 14, zona: 'El Laguito, Bocagrande', title: 'Apartamento amoblado frente a la playa', specs: ['88 m²', '2 hab.', '2 baños', '1 garaje'], amenity: 'Amoblado', adminLabel: 'Administración incluida', price: '$4.200.000', href: '/arrendar' },
+  { img: '/assets/hero-keys.webp', alt: 'Apartaestudio en Getsemaní', admin: 'sin', photos: 9, zona: 'Getsemaní', title: 'Apartaestudio de diseño en barrio histórico', specs: ['42 m²', '1 hab.', '1 baño'], amenity: 'Estrenar', adminLabel: 'No incluye administración', price: '$1.900.000', href: '/arrendar', imgPos: 'center 42%' },
+  { img: '/assets/chalet-dusk.webp', alt: 'Casa familiar en Manga', admin: 'sin', photos: 21, zona: 'Manga', title: 'Casa familiar con jardín y estudio', specs: ['185 m²', '4 hab.', '3 baños', '2 garajes'], amenity: null, adminLabel: '+ administración $650.000', price: '$6.500.000', href: '/arrendar' },
+  { img: '/assets/villa-pool.webp', alt: 'Apartamento en Castillogrande', admin: 'con', photos: 17, zona: 'Castillogrande', title: 'Apartamento con balcón y vista a la bahía', specs: ['120 m²', '3 hab.', '2 baños'], amenity: 'Vista mar', adminLabel: 'Administración incluida', price: '$5.100.000', href: '/arrendar' },
+];
+
+// (El array `cerca` con 3 propiedades INVENTADAS se retiró en §32.18: no existían en el mockup.
+//  #cerca no es una grilla de cards — es el split buscador + mapa ilustrado.)
+
+/*
+ * Journal — 1 destacado + 3 horizontales. #journal, fotos EXACTAS del mockup (L1323/1334/1339/1345).
+ *
+ * ⚠️ HOY ESTÁ VACÍO A PROPÓSITO, y hay que decir por qué. Aquí vivían cuatro artículos con título,
+ * categoría, fecha («12 feb 2026») y tiempo de lectura («8 min») — y NINGUNO existe: los cuatro
+ * enlazaban a `/journal`, que es una página de «próximamente». Es la misma clase de invento que se
+ * retiró de las reseñas (§122) y de los conteos por zona (§123), y contra el que existe el gate
+ * `verify:claims`: en la home, que es la página que más se ve, y con fechas que dan apariencia de
+ * hemeroteca. Una promesa editorial que al pulsarla dice «está en camino» gasta confianza, que es
+ * justo lo que la marca vende.
+ *
+ * La sección NO se borra: se vuelve dependiente de datos. Con la lista vacía no se pinta, y el día
+ * que haya artículos REALES vuelve sola con el diseño aprobado intacto. Construir el Journal es
+ * trabajo propio y gateado por su mockup — está anotado en `docs/10`.
+ */
+interface ArticuloJournal {
+  img: string;
+  cat: string;
+  read: string;
+  title: string;
+  href: string;
+  date?: string;
+  excerpt?: string;
+}
+/*
+ * EL DESTACADO Y LOS TRES LATERALES — ya NO están vacíos: salen de la colección `journal`, que a
+ * partir de hoy tiene artículos de verdad (TODO-48). La sección volvió sola, con el diseño aprobado
+ * intacto, que era exactamente lo que se prometió al vaciarla.
+ *
+ * La fecha y el tiempo de lectura NO se escriben aquí: la primera es la del frontmatter y el segundo
+ * se calcula de las palabras del texto. Es la misma regla que se rompió en §138.3, ahora imposible
+ * de romper — no hay dónde teclear un «8 min».
+ */
+const publicados = await getCollection('journal');
+const { destacado: jDestacado, resto: jResto } = destacadoYResto(publicados);
+const aTarjeta = (a: (typeof publicados)[number]): ArticuloJournal => ({
+  img: a.data.portada,
+  cat: ETIQUETA[a.data.categoria],
+  read: tiempoDeLectura(a.body ?? ''),
+  title: a.data.titulo,
+  href: `/journal/${a.id}`,
+  date: fechaLarga(a.data.fecha),
+  excerpt: a.data.resumen,
+});
+const journalMain: ArticuloJournal | null = jDestacado ? aTarjeta(jDestacado) : null;
+const journalSide: ArticuloJournal[] = jResto.slice(0, 3).map(aTarjeta);
+const hayJournal = journalMain !== null || journalSide.length > 0;
+
+const brokerPerks = [
+  'Comisiones entre las más competitivas del mercado',
+  'Leads calificados cada semana y CRM incluido',
+  'Respaldo jurídico y de marca en cada operación',
+];
+
+// Pestañas del buscador del hero (buscar por operación).
+const tabs = [
+  { key: 'comprar', label: 'Comprar', ph: '¿En qué zona quieres comprar?' },
+  { key: 'arrendar', label: 'Arrendar', ph: '¿En qué zona quieres arrendar?' },
+  { key: 'estancias', label: 'Estancias', ph: '¿En qué zona te quieres alojar?' },
+  { key: 'invertir', label: 'Invertir', ph: '¿En qué zona quieres invertir?' },
+];
+
+// "Cuatro maneras de vivir Cartagena".
+const maneras = [
+  { n: '01', t: 'Comprar', img: '/assets/villa-modern.webp', d: 'Tu hogar o tu próxima inversión, con acompañamiento legal de principio a fin.', href: '/comprar' },
+  { n: '02', t: 'Arrendar', img: '/assets/chalet-dusk.webp', d: 'Contratos claros y estudios serios. Vive tranquilo, entrega tranquilo.', href: '/arrendar' },
+  { n: '03', t: 'Invertir', img: '/assets/estate-golden.webp', d: 'Rentabilidad y valorización en la ciudad amurallada, con cifras sobre la mesa.', href: '/invertir' },
+  { n: '04', t: 'Estancias', img: '/assets/villa-pool.webp', d: 'Vive Cartagena por unos días en propiedades verificadas, listas para habitar.', href: '/estancias' },
+];
+---
+
+<BaseLayout title={`${SITE.name} — ${SITE.slogan}`}>
+  <Header active="inicio" />
+
+  <main id="main">
+    <!-- HERO — carrusel de 4 banners + buscador superpuesto (réplica ALTORRA Portal.dc.html) -->
+    <section class="home-hero">
+      <div class="home-hero__car" data-carousel>
+
+        <!-- B0 · Vivienda -->
+        <div class="hbn hbn--full" data-b="0" data-active="1" data-nav="light">
+          <img class="hbn__img" src="/assets/hero-keys.webp" alt="Pareja recibiendo las llaves de su hogar en Cartagena" style="object-position:80% 24%" fetchpriority="high" />
+          <span class="hbn__wash hbn__wash--x" aria-hidden="true"></span>
+          <span class="hbn__wash hbn__wash--b" aria-hidden="true"></span>
+          <div class="hbn__wrap">
+            <div class="hbn__rise" style="max-width:640px">
+              <h1 class="hbn__h">Cartagena <span class="hbn__gold">entera</span>, a la altura de tu decisión.</h1>
+              <p class="hbn__p">Comprar, arrendar, invertir o alojarte por unos días — en cada zona de la ciudad, con el nivel que tu decisión merece.</p>
+              <a href="/comprar" class="hbtn-sig">Explorar propiedades<span class="hbtn-sig__arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
+              <div class="hbn__trust">
+                <span>Seguridad</span><span class="hbn__tdot"></span>
+                <span>Legalidad</span><span class="hbn__tdot"></span>
+                <span>Confianza</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- B1 · Inversión -->
+        <div class="hbn hbn--full" data-b="1" data-active="0" data-nav="light">
+          <img class="hbn__img" src="/assets/hero-invierte.webp" alt="Desarrollo residencial frente al mar en Cartagena" style="object-position:center 54%" loading="lazy" />
+          <div class="hbn__wrap">
+            <div class="hbn__rise" style="max-width:520px">
+              <div class="hbn__panel">
+                <h2 class="hbn__h">Invierte donde la ciudad <span class="hbn__gold">crece</span>.</h2>
+                <div class="hbn__stats">
+                  <div><b>+12%</b><span>valorización anual</span></div>
+                  <span class="hbn__statdiv" aria-hidden="true"></span>
+                  <div><b>8–11%</b><span>ROI en USD</span></div>
+                  <span class="hbn__statdiv" aria-hidden="true"></span>
+                  <div><b>3</b><span>zonas premium</span></div>
+                </div>
+                <a href="/invertir" class="hbtn-goldflat">Ver oportunidades</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- B2 · Corta estancia -->
+        <div class="hbn hbn--full" data-b="2" data-active="0" data-nav="light">
+          <img class="hbn__img" src="/assets/hero-estancia.webp" alt="Terraza con piscina al atardecer sobre el mar Caribe, Cartagena" style="object-position:center 46%" loading="lazy" />
+          <div class="hbn__wrap">
+            <div class="hbn__rise" style="max-width:560px">
+              <div class="hbn__glass alt-glass">
+                <h2 class="hbn__h">Vive Cartagena por <span class="hbn__gold">unos días</span>.</h2>
+                {/* La nota «4.97 · 128 reseñas» era inventada (§123). Se queda lo que SÍ es
+                    comprobable —el precio desde el que arrancan las estancias— y el punto
+                    separador se va con ella: separaba dos cosas y ahora solo hay una. */}
+                <div class="hbn__rate">
+                  <span class="hbn__from">Desde <b>$420k</b> / noche</span>
+                </div>
+                <p class="hbn__p">Propiedades verificadas dentro de la ciudad amurallada, listas para habitar, con anfitrión que responde.</p>
+                <a href="/estancias" class="hbtn-outline">Descubrir estancias</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- B3 · Propietarios (split) -->
+        <div class="hbn hbn--split" data-b="3" data-active="0" data-nav="light">
+          <div class="hbn__wrap">
+            <div class="hbn__split hbn__rise">
+              <div class="hbn__splitmedia"><div class="hbn__frame"><img src="/assets/villa-modern.webp" alt="Inmueble administrado por ALTORRA" loading="lazy" /></div></div>
+              <div class="hbn__splittext">
+                <h2 class="hbn__h">Tu inmueble en las <span class="hbn__gold">mejores manos</span>.</h2>
+                <p class="hbn__p">Lo publicamos, lo mostramos y lo administramos con el estándar ALTORRA, de principio a fin.</p>
+                <div class="hbn__steps">
+                  <span class="hbn__step"><b>01</b>Publicamos</span>
+                  <svg class="hbn__stepsep" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                  <span class="hbn__step"><b>02</b>Mostramos</span>
+                  <svg class="hbn__stepsep" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+                  <span class="hbn__step"><b>03</b>Administramos</span>
+                </div>
+                <a href="/publicar" class="hbtn-outline">Publicar mi inmueble</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Control: barra de progreso segmentada (auto, sin flechas) -->
+        <div class="home-hero__nav">
+          <div class="home-hero__navin">
+            <div class="hseg-row">
+              <span class="hseg" data-seg-i="0" data-on="1" role="button" tabindex="0" aria-label="Banner 1"><span class="hsegfill"></span></span>
+              <span class="hseg" data-seg-i="1" role="button" tabindex="0" aria-label="Banner 2"><span class="hsegfill"></span></span>
+              <span class="hseg" data-seg-i="2" role="button" tabindex="0" aria-label="Banner 3"><span class="hsegfill"></span></span>
+              <span class="hseg" data-seg-i="3" role="button" tabindex="0" aria-label="Banner 4"><span class="hsegfill"></span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Buscador segmentado neumórfico, superpuesto sobre el hero -->
+      <div class="home-search">
+        <div class="home-search__card" data-surface="neu">
+          <div class="home-search__tabs" role="tablist" aria-label="Buscar por operación">
+            {tabs.map((t, i) => (
+              <button class="home-search__tab" role="tab" type="button" aria-selected={i === 0 ? 'true' : 'false'} data-ph={t.ph} data-tab={t.key}>{t.label}</button>
+            ))}
+          </div>
+          <form class="home-search__row" action="/comprar" method="get" role="search">
+            <div class="home-search__field">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
+              <label>
+                <span class="home-search__lbl">Zona</span>
+                <input id="home-hero-field" name="zona" placeholder={tabs[0].ph} autocomplete="off" />
+              </label>
+            </div>
+            <span class="home-search__vdiv" aria-hidden="true"></span>
+            <div class="home-search__field home-search__field--type">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 4l9 6.5"/><path d="M5 9.5V20h14V9.5"/><path d="M9.5 20v-6h5v6"/></svg>
+              <label>
+                <span class="home-search__lbl">Tipo</span>
+                <select name="tipo">
+                  {/*
+                    UNA SOLA LISTA, DERIVADA DEL DOMINIO (§270). Aquí había seis opciones escritas a mano
+                    mientras `/alertas` ofrecía once: se podía pedir aviso de una bodega y no se podía
+                    buscar una. Ahora las dos salen de `TIPOS_PUBLICOS`, así que no pueden separarse.
+
+                    Y sale «Penthouse», que no era un tipo sino una etiqueta: comprobado contra los dos
+                    líderes del mercado, NINGUNO lo trata como tipo —Fincaraíz lo modela como el último
+                    valor del filtro «Piso»— y `schema.org/Penthouse` devuelve 404. Vuelve el día que las
+                    fichas lleven su piso, que es un hecho verificable; una etiqueta que se pone solo el
+                    dueño del último piso no la puede sellar nadie (§270).
+                  */}
+                  <option value="">Todos</option>
+                  {TIPOS_PUBLICOS.map((t) => <option value={t}>{etiquetaTipo(t)}</option>)}
+                </select>
+              </label>
+            </div>
+            <button class="home-search__go" type="submit" aria-label="Buscar">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="21" y2="21"/></svg>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- CUATRO MANERAS -->
+    <section class="alt-section alt-container">
+      <div class="home-maneras__head">
+        <p class="alt-eyebrow">Cuatro maneras de vivir Cartagena</p>
+        <h2>Una sola casa para cada decisión de vivienda.</h2>
+      </div>
+      <div class="home-maneras__grid">
+        {maneras.map((m) => (
+          <a class="home-manera" href={m.href}>
+            <img src={m.img} alt={m.t} loading="lazy" decoding="async" />
+            <span class="home-manera__scrim"></span>
+            <span class="home-manera__body">
+              <span class="home-manera__n">{m.n}</span>
+              <span class="home-manera__t">{m.t}</span>
+              <span class="home-manera__d">{m.d}</span>
+              <span class="home-manera__cta">Explorar
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- PROPIEDAD DEL DÍA — split editorial de UNA sola propiedad (réplica fiel del mockup, L409-449).
+         NO sale de PropertyCard: es una propiedad única con 4 contadores; su forma de dato ni siquiera cabe. -->
+    {/*
+      🔴 UNA SECCIÓN ENTERA DE PORTADA anunciando un inmueble que NO EXISTE (§276): «Penthouse
+      frente al mar, en Bocagrande — la última unidad de un edificio icónico», $3.200.000.000, con
+      sus estadísticas. Era el inventario inventado más prominente del sitio, y el candado #7 de
+      `verify:build` no lo veía porque esta sección no lee el catálogo.
+
+      Se apaga entera en un build con catálogo real: una «Propiedad del día» sin propiedad no tiene
+      estado vacío que valga — o hay una destacada de verdad, o la sección sobra. ⚠️ Se puede ocultar
+      porque NADA la enlaza; §270 enseñó que esconder una sección enlazada rompe sus anclas, y de eso
+      se encarga `verify:enlaces` si algún día alguien le pone una.
+    */}
+    {!HAY_CATALOGO_REAL && (
+      <section id="propiedad-dia" class="home-pdia">
+        <div class="alt-container home-pdia__in">
+          <div class="home-pdia__text">
+            <p class="alt-eyebrow">Propiedad del día</p>
+            <h2 class="home-pdia__h">Penthouse frente al mar, en Bocagrande.</h2>
+            <p class="home-pdia__p">Dos pisos, terraza privada con piscina y vista abierta a la bahía. La última unidad de un edificio icónico.</p>
+  
+            <div class="home-pdia__stats">
+              {pdiaStats.map((s) => (
+                <div class="home-pdia__stat">
+                  <span class="home-pdia__n">{s.n}{s.unit && <span class="home-pdia__unit"> {s.unit}</span>}</span>
+                  <span class="home-pdia__l">{s.label}</span>
+                </div>
+              ))}
+            </div>
+  
+            <div class="home-pdia__buy">
+              <div>
+                <span class="home-pdia__pricelbl">Precio</span>
+                <span class="home-pdia__price">$3.200.000.000</span>
+              </div>
+              <a class="alt-btn-sweep" href="/ficha">Ver ficha completa
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+          </div>
+  
+          <div class="home-pdia__media">
+            <img src="/assets/estate-golden.webp" alt="Penthouse frente al mar en Bocagrande" loading="lazy" decoding="async" />
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- EN VENTA — riel horizontal (réplica fiel del mockup #venta) -->
+    <!-- `data-railwrap` envuelve encabezado Y riel: en el mockup los botones viven en un
+         [data-railwrap] hermano del riel → su querySelector('.arail') no encuentra nada y
+         las flechas NO funcionan. Misma arquitectura, corregida (ADR §32.10). -->
+    <section id="venta" class="home-band home-band--alt home-railsec">
+      <div class="alt-container" data-railwrap>
+        <div class="home-sechead">
+          <div>
+            <p class="alt-eyebrow">En venta</p>
+            <h2>Explora el portafolio en venta.</h2>
+          </div>
+          <div class="home-railsec__tools">
+            <a class="alt-link-ul" href="/comprar">
+              Comparar todas
+            </a>
+            <div class="home-railsec__navbtns">
+              <button class="alt-rnav" type="button" data-rail="prev" aria-label="Ver propiedades anteriores">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <button class="alt-rnav" type="button" data-rail="next" aria-label="Ver más propiedades">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alt-rail" data-home-set="venta">
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Cargando propiedades en venta…{' '} Escríbenos por WhatsApp y te contamos qué tenemos hoy.</p>}
+          {(HAY_CATALOGO_REAL ? [] : venta).map((p) => <LuCard {...p} />)}
+          {/* El «128» era un conteo de MUESTRA cuya deuda declarada decía «sale en el cutover»,
+              o sea que dependía de que alguien se acordara. §276 enseñó lo que valen esas promesas:
+              ahora sale solo, colgado del mismo interruptor que el resto del inventario (§278). */}
+          <a class="home-railcta" href="/comprar">
+            {!HAY_CATALOGO_REAL && <span class="home-railcta__n">128</span>}
+            <span class="home-railcta__d">Ver las propiedades en venta en toda la ciudad</span>
+            <span class="alt-btn alt-btn--on-ink">Ver todas
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESTACADAS -->
+    <section id="destacadas" class="home-band">
+      <div class="alt-container">
+        <div class="home-sechead">
+          <div>
+            <p class="alt-eyebrow">Selección ALTORRA</p>
+            <h2>Destacadas esta semana</h2>
+          </div>
+          <a class="home-seelink" href="/comprar">Ver todas {!HAY_CATALOGO_REAL && <b>128</b>}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+        <div class="home-pgrid" data-home-set="destacadas">
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Cargando destacadas…</p>}
+          {(HAY_CATALOGO_REAL ? [] : destacadas).map((p) => <PropertyCard {...p} />)}
+          <div class="home-ctacard alt-card--ink">
+            {/* Decía «128 propiedades», que nadie había contado (§123). La tarjeta invita a ver
+                el catálogo: para eso no hace falta una cifra, y la que había era falsa. */}
+            <p class="home-ctacard__n">Todo el catálogo</p>
+            <p class="home-ctacard__d">en venta, arriendo y corta estancia en toda Cartagena.</p>
+            <a class="alt-btn alt-btn--on-ink" href="/comprar">Ver todas
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ARRIENDO — lista horizontal con filtro con/sin administración (réplica fiel del mockup #arriendo) -->
+    <section id="arriendo" class="home-band home-arr">
+      <div class="alt-container">
+        <div class="home-sechead">
+          <div>
+            <p class="alt-eyebrow">En arriendo</p>
+            <h2>Arriendos, con o sin administración.</h2>
+          </div>
+          <a class="home-seelink" href="/arrendar">Ver arriendos {!HAY_CATALOGO_REAL && <b>83</b>}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+
+        <div class="home-arr__filter" role="group" aria-label="Filtrar arriendos por administración">
+          <span class="home-arr__filterlbl">Mostrar:</span>
+          <button class="home-oppill is-on" type="button" data-val="todos" aria-pressed="true">Todos</button>
+          <button class="home-oppill" type="button" data-val="con" aria-pressed="false">Con administración</button>
+          <button class="home-oppill" type="button" data-val="sin" aria-pressed="false">Sin administración</button>
+        </div>
+
+        <div class="home-arr__stack" id="arriendo-stack" data-home-set="arriendo">
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Cargando arriendos…</p>}
+          {(HAY_CATALOGO_REAL ? [] : arriendo).map((p) => (
+            <article class="home-arr__row" data-admin={p.admin}>
+              <a class="home-arr__media" href={p.href} aria-label={`Ver ${p.title}`}>
+                <img src={p.img} alt={p.alt} loading="lazy" decoding="async" style={p.imgPos ? `object-position:${p.imgPos}` : undefined} />
+                <span class="home-arr__photos">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                  {p.photos} fotos
+                </span>
+              </a>
+              <div class="home-arr__info">
+                <div class="home-arr__topline">
+                  <span class="home-arr__kicker">Arriendo</span>
+                  <span class="home-arr__dot" aria-hidden="true"></span>
+                  <span class="home-arr__zona">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                    {p.zona}
+                  </span>
+                </div>
+                <h3 class="home-arr__title"><a href={p.href}>{p.title}</a></h3>
+                <div class="home-arr__chips">
+                  {p.specs.map((s) => <span class="home-arr__chip">{s}</span>)}
+                  {p.amenity && <span class="home-arr__chip home-arr__chip--gold">{p.amenity}</span>}
+                </div>
+              </div>
+              <div class="home-arr__aside">
+                <div>
+                  <span class="home-arr__adminlbl">{p.adminLabel}</span>
+                  <span class="home-arr__price">{p.price}<small> /mes</small></span>
+                </div>
+                <div class="home-arr__actions">
+                  <a class="home-arr__contact" href={p.href}>Contactar</a>
+                  <a class="alt-link-ul" href={p.href}>
+              Ver
+            </a>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <p class="home-arr__empty" id="arriendo-empty" hidden>No hay arriendos en esta categoría por ahora.</p>
+      </div>
+    </section>
+
+    <!-- CORTA ESTANCIA — riel de StayCard (réplica fiel del mockup #estancias-list) -->
+    <section id="estancias-list" class="home-band home-band--alt home-railsec">
+      <div class="alt-container" data-railwrap>
+        <div class="home-sechead">
+          <div>
+            <p class="alt-eyebrow">Corta estancia</p>
+            <h2>Quédate unos días.</h2>
+          </div>
+          <div class="home-railsec__tools">
+            <a class="alt-link-ul" href="/estancias">
+              Ver todas
+            </a>
+            <div class="home-railsec__navbtns">
+              <button class="alt-rnav" type="button" data-rail="prev" aria-label="Ver estancias anteriores">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <button class="alt-rnav" type="button" data-rail="next" aria-label="Ver más estancias">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alt-rail" data-home-set="estancias">
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Cargando alojamientos…</p>}
+          {(HAY_CATALOGO_REAL ? [] : estancias).map((s) => <StayCard {...s} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- EXPLORA POR ZONA — mosaico de 10 tiles de ZONA (réplica fiel del mockup, L837-940).
+         ⚠️ NO son cards de propiedad: cada tile es un BARRIO con su contador. -->
+    <section id="explora-zona" class="alt-container home-zonas">
+      <div class="home-sechead">
+        <div class="home-zonas__head">
+          <p class="alt-eyebrow">Explora por zona</p>
+          <h2 class="home-zonas__h">Cada rincón de Cartagena tiene su propia manera de vivirse.</h2>
+        </div>
+        <a class="alt-link-ul" href="/comprar">
+              Ver el mapa
+            </a>
+      </div>
+      <div class="home-zonas__grid">
+        {zonas.map((z) => (
+          <a class="home-zona" href="/comprar">
+            <img src={z.img} alt={`Propiedades en ${z.t}`} loading="lazy" decoding="async" />
+            <span class="home-zona__scrim" aria-hidden="true"></span>
+            <span class="home-zona__body">
+              <span class="home-zona__t">{z.t}</span>
+              {/* El conteo por zona («42 propiedades en Bocagrande») era inventado y, a
+                  diferencia del del SERP, no lo corregía nadie al cargar (§123). Se quitó del DATO
+                  pero la línea que lo pintaba se quedó atrás leyendo un campo que ya no existe:
+                  `undefined && …` no pinta nada, así que no se veía — parecía condicional y era
+                  código muerto. Vuelve cuando el índice del catálogo pueda contarlo de verdad. */}
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- CERCA DE TI — split BUSCADOR + MAPA ilustrado (réplica fiel del mockup #cerca, L942-989).
+         ⚠️ Era la divergencia GRAVE de §32.9: se había construido como grilla de 3 PropertyCard,
+         con titular reescrito y 3 propiedades INVENTADAS que no existen en el mockup.
+         El mapa es ILUSTRADO (SVG), como el diseño manda; MapLibre real = follow-up (ADR §16). -->
+    <section id="cerca" class="home-band home-cerca">
+      <div class="alt-container home-cerca__in">
+        <div class="home-cerca__text">
+          <p class="alt-eyebrow">Cerca de ti</p>
+          <h2 class="home-cerca__h">Todo lo disponible a tu alrededor.</h2>
+          <p class="home-cerca__p">Venta, arriendo y corta estancia en un solo mapa. Elige qué buscas y sobrevuela tu sector favorito.</p>
+
+          <div class="home-cerca__card">
+            <div class="home-cerca__field">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              <label class="alt-visually-hidden" for="cerca-field">Barrio, zona o punto de referencia</label>
+              <input id="cerca-field" name="zona" placeholder="Barrio, zona o punto de referencia" autocomplete="off" />
+            </div>
+            <div class="home-cerca__ops" role="group" aria-label="Elegir operación">
+              <button class="home-oppill is-on" type="button" data-op="comprar" aria-pressed="true">Venta</button>
+              <button class="home-oppill" type="button" data-op="arrendar" aria-pressed="false">Arriendo</button>
+              <button class="home-oppill" type="button" data-op="estancias" aria-pressed="false">Corta estancia</button>
+            </div>
+            <div class="home-cerca__foot">
+              {/* Conteo de muestra del mapa; mismo caso que el «128» (§278). Sin él, la frase
+                  tiene que decir otra cosa: «inmuebles en 3 km» a secas no afirma cuántos. */}
+              <p class="home-cerca__count">{HAY_CATALOGO_REAL ? 'Inmuebles a menos de 3\u00a0km' : null}{!HAY_CATALOGO_REAL && (<><b>312</b> inmuebles en 3&nbsp;km</>)}</p>
+              <a class="home-cerca__go" href="/comprar" data-cerca-go>Buscar en el mapa
+                <span class="home-cerca__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mapa ILUSTRADO (esquemático estilizado, no cartografía real) -->
+        <div class="home-map" role="img" aria-label="Mapa esquemático de Cartagena con propiedades disponibles">
+          <span class="home-map__glow" aria-hidden="true"></span>
+          <svg class="home-map__streets" viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M-10 90 L150 120 L250 70 L420 110" fill="none" stroke="rgba(235,210,126,.5)" stroke-width="1.4" />
+            <path d="M60 -10 L90 130 L70 320" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="1.2" />
+            <path d="M-10 210 L180 200 L300 250 L420 230" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.2" />
+            <path d="M300 -10 L280 140 L330 320" fill="none" stroke="rgba(235,210,126,.32)" stroke-width="1.2" />
+          </svg>
+
+          {/* Pines CON PRECIO y minicards: son inmuebles, no decoración (§276). Van con el mismo
+              interruptor que el catálogo, así que un build de producción no los sirve. */}
+          {!HAY_CATALOGO_REAL && (
+            <>
+              <span class="home-map__pin" style="top:34%;left:30%">
+                <span class="home-map__halo home-map__halo--gold" aria-hidden="true"></span>
+                <span class="home-map__price home-map__price--gold">$1.450M</span>
+              </span>
+              <span class="home-map__pin" style="top:52%;left:58%">
+                <span class="home-map__halo home-map__halo--white" aria-hidden="true"></span>
+                <span class="home-map__price home-map__price--white">$4.2M/mes</span>
+              </span>
+            </>
+          )}
+          <span class="home-map__pin" style="top:64%;left:37%">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="#EBD27E" stroke="#062743" stroke-width="1.4"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.4" fill="#062743" stroke="none"/></svg>
+          </span>
+          <span class="home-map__pin" style="top:40%;left:73%">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(255,255,255,.85)" stroke="#062743" stroke-width="1.4"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.4" fill="#062743" stroke="none"/></svg>
+          </span>
+          <span class="home-map__pin" style="top:26%;left:52%">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="rgba(255,255,255,.7)" stroke="#062743" stroke-width="1.4"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.4" fill="#062743" stroke="none"/></svg>
+          </span>
+
+          {!HAY_CATALOGO_REAL && (
+            <>
+              <span class="home-map__mini home-map__mini--bl">
+                <img src="/assets/villa-pool.webp" alt="" loading="lazy" decoding="async" />
+                <span class="home-map__minitxt">
+                  <span class="home-map__minitag">Venta · Castillogrande</span>
+                  <span class="home-map__minit">Apto vista bahía</span>
+                  <span class="home-map__minip">$1.450.000.000</span>
+                </span>
+              </span>
+              <span class="home-map__mini home-map__mini--tr">
+                <img src="/assets/hero-estancia.webp" alt="" loading="lazy" decoding="async" />
+                <span class="home-map__minitxt">
+                  <span class="home-map__minitag">Estancia · Bocagrande</span>
+                  <span class="home-map__minit">$680.000 / noche</span>
+                </span>
+              </span>
+            </>
+          )}
+        </div>
+      </div>
+    </section>
+
+    {/*
+        Plantilla de la tarjeta para la isla del catálogo (§277). Va vacía a propósito: la rellena
+        `construirCard()`, la misma que usa el SERP. Un `<template>` no se pinta ni carga sus
+        imágenes hasta que se clona, así que no cuesta nada estando ahí.
+    */}
+    {HAY_CATALOGO_REAL && (
+      <>
+        <template id="tpl-home-pcard">
+          <PropertyCard
+            nivel={2}
+            img="" alt="" badge="En venta" zona="" beds={0} baths={0} area="0 m²"
+            title="" price="" priceLabel="Desde" priceSuffix="/mes" href="#"
+          />
+        </template>
+
+        {/* ⚠️ A `LuCard` NO se le pasan `tagline`, `swatches`, `tipologias` ni `note`: el catálogo no
+            guarda nada de eso, así que esos nodos ni se emiten y la tarjeta sale más sobria que en
+            el mockup (§279). Rellenarlos con algo plausible es como empezó todo esto. `specs` sí va
+            —con tres huecos— porque el índice trae habitaciones, baños y área. */}
+        <template id="tpl-home-lucard">
+          <LuCard img="" alt="" badge="En venta" zona="" title="" specs={['', '', '']} price="" href="#" />
+        </template>
+
+        {/* ⚠️ Sin `rating` ni `reviews` sueltos: la isla escribe la nota Y su recuento en un solo
+            texto, porque §281 no permite que viajen separados. */}
+        <template id="tpl-home-rankcard">
+          <RankCard img="" alt="" rank="" rating="" zona="" title="" price="" href="#" />
+        </template>
+
+        <template id="tpl-home-staycard">
+          <StayCard img="" alt="" title="" meta="" price="" priceUnit="COP noche" href="#" />
+        </template>
+
+        {/* El tile del mosaico: mismo marcado que el de muestra, vacío. La ranura de la rejilla
+            (columna, fila, tamaño) la pone la isla, porque es LAYOUT y no dato. */}
+        <template id="tpl-home-tile">
+          <a class="home-rec__tile home-rec__tile--sm" href="#">
+            <img src="" alt="" loading="lazy" decoding="async" />
+            <span class="home-rec__new">Nuevo</span>
+            <span class="home-rec__time"></span>
+            <span class="home-rec__scrim" aria-hidden="true"></span>
+            <span class="home-rec__body">
+              <span class="home-rec__tag"></span>
+              <span class="home-rec__t"></span>
+              <span class="home-rec__price"></span>
+            </span>
+          </a>
+        </template>
+      </>
+    )}
+
+    <!-- RECIENTES — mosaico bento (réplica fiel del mockup #recientes) -->
+    <section id="recientes" class="home-band home-band--alt home-rec">
+      <div class="alt-container">
+        <div class="home-sechead">
+          <div>
+            <p class="alt-eyebrow">Publicadas recientemente</p>
+            <h2>Lo último que entró al portafolio.</h2>
+          </div>
+          <a class="alt-link-ul" href="/comprar">
+              Ver todas
+            </a>
+        </div>
+
+        {recientes.length === 0 && (
+          <p class="home-rec__vacio">
+            Estamos preparando la publicación del inventario. Mientras tanto, escríbenos por WhatsApp
+            y te contamos qué tenemos disponible hoy.
+          </p>
+        )}
+
+        <div class="home-rec__grid" data-home-set="recientes">
+          {recientes.map((r) => (
+            <a class={`home-rec__tile home-rec__tile--${r.size}`} href="/ficha" style={`grid-column:${r.col};grid-row:${r.row}`}>
+              <img src={r.img} alt={r.alt} loading="lazy" decoding="async" />
+              <span class="home-rec__new">Nuevo</span>
+              {r.time && <span class="home-rec__time">{r.time}</span>}
+              <span class="home-rec__scrim" aria-hidden="true"></span>
+              <span class="home-rec__body">
+                <span class="home-rec__tag">{r.tag}</span>
+                {r.title
+                  ? <><span class="home-rec__t">{r.title}</span><span class="home-rec__price home-rec__price--hover">{r.price}</span></>
+                  : <span class="home-rec__t">{r.price}</span>}
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- SELECCIÓN ALTORRA — riel de RankCard (mockup #valoradas). Ver §123. -->
+    <section id="valoradas" class="home-band home-band--neu home-railsec">
+      <div class="alt-container" data-railwrap>
+        <div class="home-sechead">
+          <div class="home-valoradas__head">
+            <p class="alt-eyebrow">Selección ALTORRA</p>
+            <h2>Las que enseñaríamos primero.</h2>
+          </div>
+          <div class="home-railsec__tools">
+            <a class="home-seelink" href="/comprar">Ver todas
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <div class="home-railsec__navbtns">
+              <button class="alt-rnav" type="button" data-rail="prev" aria-label="Ver valoradas anteriores">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+              </button>
+              <button class="alt-rnav" type="button" data-rail="next" aria-label="Ver más de la selección">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="alt-rail" data-home-set="valoradas">
+          {HAY_CATALOGO_REAL && <p class="home-vacio">Cargando valoraciones…</p>}
+          {(HAY_CATALOGO_REAL ? [] : valoradas).map((v) => <RankCard {...v} />)}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA CORTA ESTANCIA — banda full-bleed con scrim direccional (réplica fiel del mockup, L1157-1170) -->
+    <section id="cta-estancias" class="home-ctaband">
+      <img class="home-ctaband__img" src="/assets/chalet-dusk.webp" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+      <span class="home-ctaband__scrim" aria-hidden="true"></span>
+      <div class="alt-container home-ctaband__in">
+        <div class="home-ctaband__text">
+          <p class="alt-eyebrow home-ctaband__eyebrow">Corta estancia</p>
+          <h2 class="home-ctaband__h">Vive Cartagena por unos días, como si fuera tuya.</h2>
+          <p class="home-ctaband__p">Propiedades verificadas, listas para habitar, en el corazón de la ciudad amurallada.</p>
+          <a class="alt-btn-frost home-ctaband__cta" href="/estancias">Descubrir estancias
+            <span class="alt-btn-frost__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {/*
+      ⚠️ ESTA SECCIÓN NO SE PUEDE ESCONDER, aunque esté vacía (§270). Mi primer arreglo la ocultó
+      con una guarda y `verify:enlaces` lo cazó en el acto: **80 enlaces de 40 páginas** —la
+      cabecera y el pie de todo el sitio— aterrizan en `#proyectos`. Un ancla sin destino no da
+      error: deja al visitante donde estaba, viendo una web que no responde.
+      🎯 Cuando el contenido de una sección desaparece, lo que hay que revisar no es la sección: es
+      quién la ENLAZA.
+    */}
+    <section id="proyectos" class="home-band home-band--neu home-railsec home-proy">
+      <div class="alt-container" data-railwrap>
+        <div class="home-proy__head">
+          {/*
+            La copia decía «Obra nueva firmada ALTORRA» y «Desarrollos exclusivos … recórrelos antes
+            que nadie», con seis proyectos inventados debajo. Afirmaba tener desarrollos firmados.
+            Ahora dice lo que es cierto, y le habla a quien de verdad abre esta vertical: en Colombia
+            la obra nueva la publica la CONSTRUCTORA, no el particular — verificado contra Fincaraíz,
+            que directamente prohíbe a los particulares publicar «nuevo/planos» (§270).
+          */}
+          <p class="alt-eyebrow home-proy__eyebrow">Obra nueva</p>
+          <h2 class="home-proy__h">Proyectos, con la misma verificación que todo lo demás.</h2>
+          {proyectos.length > 0 ? (
+            <>
+              <p class="home-proy__p">Desarrollos en Cartagena, cada uno con su constructora y su estado de obra a la vista.</p>
+              <a class="home-proy__cta" href="/comprar">Explorar todos</a>
+            </>
+          ) : (
+            <p class="home-proy__p home-proy__vacio">
+              Todavía no publicamos proyectos de obra nueva: preferimos no anunciar ninguno antes de
+              poder verificarlo. ¿Es usted constructora y quiere el suyo aquí?
+              <a href={`${SITE.contact.whatsappLink}?text=${encodeURIComponent('Hola ALTORRA, represento una constructora y quiero publicar un proyecto de obra nueva.')}`} rel="noopener">Escríbanos por WhatsApp</a>.
+            </p>
+          )}
+        </div>
+
+        {proyectos.length > 0 && (
+        <div class="home-proy__navrow">
+          <button class="alt-rnav" type="button" data-rail="prev" aria-label="Ver proyectos anteriores">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button class="alt-rnav" type="button" data-rail="next" aria-label="Ver más proyectos">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+
+        )}
+
+        {proyectos.length > 0 && (
+        <div class="alt-rail">
+          {proyectos.map((p) => <ProjectCard {...p} />)}
+        </div>
+        )}
+      </div>
+    </section>
+
+    <!-- INVERTIR — split editorial: texto + 3 tarjetas de cifra (réplica fiel del mockup #invertir, L1249-1274) -->
+    <!-- ⚠️ NO es el banner B1 del hero ("Invierte donde la ciudad crece"): son cosas distintas (§32.9). -->
+    <section id="invertir" class="alt-container home-inv">
+      <div class="home-inv__in">
+        <div>
+          <p class="alt-eyebrow">Invertir en Cartagena</p>
+          <h2 class="home-inv__h">Una ciudad que se valoriza mientras la disfrutas.</h2>
+          <p class="home-inv__p">Analizamos zona, rentabilidad y liquidez para que tu decisión sea patrimonio, no una apuesta. Cifras claras, sin letra menuda.</p>
+          <!-- El mockup deja href="#"; aquí va el WhatsApp REAL (§32.2: contacto real ≠ placeholder) -->
+          <a class="home-inv__cta" href={SITE.contact.whatsappLink} target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>
+            Hablar con un asesor
+          </a>
+        </div>
+        <div class="home-inv__stats">
+          {invertirStats.map((s) => (
+            <div class="home-inv__card">
+              <span class="home-inv__n">{s.n}</span>
+              <span class="home-inv__d">{s.d}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- BROKERS (navy) -->
+    <section id="brokers" class="home-brokers alt-on-ink" data-surface="ink">
+      <span class="home-brokers__glow" aria-hidden="true"></span>
+      <div class="alt-container home-brokers__in">
+        <div>
+          <p class="alt-eyebrow">Red de brokers ALTORRA</p>
+          <h2 class="home-brokers__h">Vende con la marca que abre puertas.</h2>
+          <p class="home-brokers__p">Únete a la red inmobiliaria más selecta de Cartagena. Nosotros ponemos la marca, los leads y el respaldo jurídico; tú, tu talento para cerrar.</p>
+          <ul class="home-brokers__perks" role="list">
+            {brokerPerks.map((perk) => (
+              <li>
+                <span class="home-brokers__check"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+                {perk}
+              </li>
+            ))}
+          </ul>
+          <div class="home-brokers__cta">
+            <a class="alt-btn alt-btn--gold" href="/aliados">Postúlate como broker
+              <span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            </a>
+            <a class="alt-btn alt-btn--on-ink" href="/aliados">Conoce el modelo</a>
+          </div>
+        </div>
+        <div class="home-brokers__media">
+          <img src="/assets/villa-modern.webp" alt="Equipo de brokers ALTORRA" loading="lazy" decoding="async" />
+          <span class="home-brokers__media-scrim"></span>
+          <div class="home-brokers__stats">
+            <div class="alt-glass home-brokers__stat"><span class="home-brokers__stat-n">180+</span><span class="home-brokers__stat-l">brokers ya venden con ALTORRA</span></div>
+            <div class="alt-glass home-brokers__stat"><span class="home-brokers__stat-n">48 h</span><span class="home-brokers__stat-l">de tu postulación a tu primer lead</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- JOURNAL -->
+    <section id="journal" class="home-band" style={hayJournal ? undefined : 'display:none'}>
+      <div class="alt-container">
+        <div class="home-sechead">
+          <div>
+            <p class="alt-eyebrow">El Journal</p>
+            <h2>Ideas, guías y mercado.</h2>
+          </div>
+          <a class="alt-link-ul" href="/journal">
+              Ver todo el Journal
+            </a>
+        </div>
+        <div class="home-journal">
+          {journalMain && (
+            <a class="home-jmain" href={journalMain.href}>
+              <div class="home-jmain__media">
+                <img src={journalMain.img} alt="" loading="lazy" decoding="async" />
+                <span class="home-jcat">{journalMain.cat}</span>
+              </div>
+              <div class="home-jmeta"><span>{journalMain.date}</span><span class="home-jdot"></span><span>{journalMain.read}</span></div>
+              <h3 class="home-jmain__t">{journalMain.title}</h3>
+              <p class="home-jmain__x">{journalMain.excerpt}</p>
+            </a>
+          )}
+          <div class="home-jside">
+            {journalSide.map((j) => (
+              <a class="home-jrow" href={j.href}>
+                <div class="home-jrow__media"><img src={j.img} alt="" loading="lazy" decoding="async" /></div>
+                <div>
+                  <span class="home-jrow__cat">{j.cat}</span>
+                  <h3 class="home-jrow__t">{j.title}</h3>
+                  <span class="home-jrow__read">{j.read}</span>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- REDES — muro tipo Instagram (réplica fiel del mockup #redes, L1353-1398) -->
+    <!-- El mockup pone el handle "@altorra.co" con href="#": NO es el real. Aquí va
+         @altorrainmobiliaria + el enlace de SITE (§32.2: rutas reales ≠ placeholders). -->
+    <section id="redes" class="home-band home-band--alt home-redes">
+      <div class="alt-container">
+        <div class="home-redes__head">
+          <p class="alt-eyebrow">Síguenos en redes</p>
+          <h2 class="home-redes__h">Cartagena, todos los días.</h2>
+          <a class="home-redes__handle" href={SITE.social.instagram} target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor" stroke="none"/></svg>
+            @altorrainmobiliaria
+          </a>
+        </div>
+
+        <div class="home-redes__grid">
+          {posts.map((p) => (
+            <a class="home-redes__post" href={SITE.social.instagram} target="_blank" rel="noopener" aria-label="Ver el perfil de ALTORRA en Instagram">
+              <img src={p.img} alt="" loading="lazy" decoding="async" style={p.imgPos ? `object-position:${p.imgPos}` : undefined} />
+              {p.reel && (
+                <span class="home-redes__reel" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </span>
+              )}
+              {/* El overlay llevaba los dos contadores inventados y nada más (§276). En su sitio, lo
+                  único que esta tarjeta puede afirmar: que lleva a la cuenta. */}
+              <span class="home-redes__ov">
+                <span class="home-redes__stat">
+                  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 5.5A4.5 4.5 0 1 0 16.5 12 4.5 4.5 0 0 0 12 7.5zm0 2A2.5 2.5 0 1 1 9.5 12 2.5 2.5 0 0 1 12 9.5zM17.8 6a1.2 1.2 0 1 0 1.2 1.2A1.2 1.2 0 0 0 17.8 6z"/></svg>
+                  Ver en Instagram
+                </span>
+              </span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+
+  /* ===== HERO — carrusel de 4 banners + buscador superpuesto ===== */
+  .home-hero { position: relative; background: var(--alt-surface-neu); padding-bottom: clamp(40px, 6vw, 72px); }
+  .home-hero__car { position: relative; overflow: hidden; height: clamp(548px, 60vh, 580px); }
+
+  /* 🔴 `visibility`, y no solo `opacity` (§160). `opacity: 0` esconde el banner de los OJOS y de
+     nadie más: el nodo sigue en el árbol de accesibilidad, así que un lector de pantalla leía los
+     CUATRO titulares del héroe uno detrás de otro —incluidos los tres que no se ven— y `h1` los
+     cuatro. `pointer-events: none` tampoco ayuda: bloquea el ratón, no el tabulador.
+     `visibility: hidden` sí saca el subárbol del árbol de accesibilidad y del orden de foco. El
+     retardo de 0.9s al ocultar deja que la opacidad termine su transición: el fundido se ve igual. */
+  .hbn { position: absolute; inset: 0; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.9s ease, visibility 0s linear 0.9s; background: #fff; }
+  .hbn[data-active='1'] { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 0.9s ease, visibility 0s linear 0s; }
+  .hbn--split { background: var(--alt-surface-neu); }
+  .hbn__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .hbn[data-active='1'] .hbn__img { animation: hkenburns 9s ease-out both; }
+  @keyframes hkenburns { from { transform: scale(1); } to { transform: scale(1.12); } }
+
+  .hbn__wash { position: absolute; inset: 0; pointer-events: none; }
+  .hbn__wash--x { background: linear-gradient(92deg, rgba(255, 255, 255, 0.97) 0%, rgba(255, 255, 255, 0.9) 33%, rgba(255, 255, 255, 0.52) 56%, rgba(255, 255, 255, 0) 80%); }
+  .hbn__wash--b { background: linear-gradient(0deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 24%); }
+
+  .hbn__wrap { position: relative; max-width: var(--alt-container); margin: 0 auto; height: 100%; padding: clamp(88px, 10vh, 104px) var(--alt-gutter) clamp(118px, 12vh, 136px); display: flex; align-items: center; }
+  .hbn__rise > * { animation: hbnrise 0.85s var(--alt-ease) both; }
+  .hbn[data-active='1'] .hbn__rise > *:nth-child(2) { animation-delay: 0.08s; }
+  .hbn[data-active='1'] .hbn__rise > *:nth-child(3) { animation-delay: 0.16s; }
+  .hbn[data-active='1'] .hbn__rise > *:nth-child(4) { animation-delay: 0.24s; }
+  @keyframes hbnrise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .hbn[data-active='1'] .hbn__img { animation: none; } .hbn__rise > * { animation: none !important; } }
+
+  .hbn__h { font-family: var(--alt-font-display); font-weight: var(--alt-fw-bold); line-height: 1.03; letter-spacing: var(--alt-tracking-tight); color: var(--alt-ink); margin: 0 0 16px; font-size: clamp(32px, 4.4vw, 54px); text-wrap: balance; }
+  .hbn__gold { color: var(--alt-link-lg); white-space: nowrap; }
+  .hbn__p { font-size: clamp(15px, 1.4vw, 18px); line-height: 1.6; color: var(--alt-text); margin: 0 0 22px; max-width: 500px; }
+  .hbn__trust { display: flex; align-items: center; gap: 11px; margin-top: 24px; flex-wrap: wrap; }
+  .hbn__trust span:not(.hbn__tdot) { font-size: 10.5px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.2em; text-transform: uppercase; color: var(--alt-text); }
+  .hbn__tdot { width: 4px; height: 4px; border-radius: 50%; background: var(--alt-gold); }
+
+  /* Botones del hero */
+  .hbtn-sig { display: inline-flex; align-items: center; gap: 13px; padding: 14px 16px 14px 28px; border-radius: var(--alt-r-pill); background: var(--alt-grad-gold); color: var(--alt-ink); font-weight: var(--alt-fw-bold); font-size: 15px; text-decoration: none; box-shadow: var(--alt-nm-up), inset 0 1px 0 rgba(255, 255, 255, 0.55); transition: transform var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease); }
+  .hbtn-sig:hover { transform: translateY(-2px); }
+  .hbtn-sig__arw { display: inline-flex; width: 30px; height: 30px; border-radius: 50%; background: rgba(6, 39, 67, 0.14); align-items: center; justify-content: center; flex: none; transition: background var(--alt-dur) var(--alt-ease); }
+  .hbtn-sig__arw svg { width: 14px; height: 14px; stroke: var(--alt-ink); transition: transform var(--alt-dur) var(--alt-ease); }
+  .hbtn-sig:hover .hbtn-sig__arw { background: var(--alt-ink); }
+  .hbtn-sig:hover .hbtn-sig__arw svg { stroke: var(--alt-gold-bright); transform: translateX(3px); }
+  .hbtn-goldflat { display: inline-flex; align-items: center; padding: 14px 30px; border-radius: var(--alt-r-pill); background: var(--alt-grad-gold); color: var(--alt-ink); font-weight: var(--alt-fw-bold); font-size: 14.5px; text-decoration: none; transition: transform var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease); }
+  .hbtn-goldflat:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(166, 128, 30, 0.6); }
+  .hbtn-outline { display: inline-flex; align-items: center; gap: 10px; padding: 13px 26px; border-radius: var(--alt-r-pill); background: transparent; border: 1.5px solid var(--alt-gold); color: var(--alt-link); font-weight: var(--alt-fw-semibold); font-size: 14px; text-decoration: none; transition: background var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease), border-color var(--alt-dur) var(--alt-ease); }
+  .hbtn-outline:hover { background: var(--alt-grad-gold); color: var(--alt-ink); border-color: transparent; }
+
+  /* B1 panel blanco */
+  .hbn__panel { background: var(--alt-white); border-top: 3px solid var(--alt-gold); border-radius: 3px 3px 14px 14px; padding: clamp(22px, 2.4vw, 30px); box-shadow: 0 46px 100px -38px rgba(27, 39, 51, 0.5); }
+  .hbn__panel .hbn__h { font-size: clamp(28px, 3.5vw, 44px); margin-bottom: 12px; }
+  .hbn__stats { display: flex; align-items: stretch; border-top: 1px solid var(--alt-hairline); padding-top: 16px; margin-bottom: 18px; }
+  .hbn__stats > div { flex: 1; min-width: 0; }
+  .hbn__stats b { display: block; font-family: var(--alt-font-display); font-size: clamp(22px, 2.5vw, 27px); font-weight: var(--alt-fw-bold); color: var(--alt-ink); line-height: 1; }
+  .hbn__stats span:not(.hbn__statdiv) { display: block; font-size: 11px; color: var(--alt-text-muted); font-weight: var(--alt-fw-semibold); margin-top: 5px; }
+  .hbn__statdiv { width: 1px; background: var(--alt-hairline); margin: 2px clamp(10px, 1.4vw, 18px); }
+
+  /* B2 glass */
+  .hbn__glass { border-radius: var(--alt-r-xl); padding: clamp(20px, 2.4vw, 28px); }
+  .hbn__glass .hbn__h { font-size: clamp(28px, 3.6vw, 44px); margin-bottom: 10px; }
+  .hbn__rate { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
+  .hbn__star { display: inline-flex; align-items: center; gap: 6px; color: var(--alt-ink); font-weight: var(--alt-fw-bold); font-size: 14px; }
+  .hbn__star svg { width: 16px; height: 16px; color: var(--alt-gold); }
+  .hbn__star small { color: var(--alt-text); font-weight: var(--alt-fw-regular); font-size: 13px; }
+  .hbn__from { color: var(--alt-text); font-size: 13px; }
+  .hbn__from b { color: var(--alt-link); }
+
+  /* B3 split */
+  .hbn__split { display: grid; grid-template-columns: 1.02fr 0.98fr; gap: clamp(26px, 3.6vw, 58px); align-items: center; width: 100%; }
+  .hbn__frame { position: relative; border-radius: var(--alt-r-lg); overflow: hidden; aspect-ratio: 16 / 9; box-shadow: 0 44px 84px -34px rgba(9, 17, 25, 0.45); }
+  .hbn__frame img { width: 100%; height: 100%; object-fit: cover; }
+  .hbn__splittext { max-width: 520px; }
+  .hbn__splittext .hbn__h { margin-bottom: 18px; }
+  .hbn__steps { display: flex; align-items: center; gap: 13px; margin-bottom: 20px; flex-wrap: wrap; }
+  .hbn__step { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
+  .hbn__step b { font-family: var(--alt-font-display); font-size: 15px; color: var(--alt-link); font-weight: var(--alt-fw-semibold); }
+  .hbn__stepsep { width: 14px; height: 14px; stroke: rgba(166, 128, 30, 0.55); flex: none; }
+
+  /* Barra de progreso segmentada (dots) */
+  .home-hero__nav { position: absolute; left: 0; right: 0; bottom: clamp(90px, 10vw, 102px); z-index: 5; display: flex; justify-content: center; pointer-events: none; }
+  .home-hero__navin { max-width: var(--alt-container); width: 100%; padding: 0 var(--alt-gutter); display: flex; }
+  .hseg-row { display: flex; align-items: center; gap: 9px; pointer-events: auto; }
+  .hseg { position: relative; height: 5px; width: 22px; border-radius: var(--alt-r-pill); background: rgba(27, 39, 51, 0.2); overflow: hidden; cursor: pointer; transition: width 0.5s var(--alt-ease), background 0.4s; padding: 0; border: 0; }
+  .hseg[data-on='1'] { width: 72px; background: rgba(27, 39, 51, 0.12); }
+  .hsegfill { position: absolute; inset: 0; width: 0; background: var(--alt-grad-gold-underline); border-radius: var(--alt-r-pill); }
+
+  @media (max-width: 920px) {
+    .hbn__split { grid-template-columns: 1fr; gap: 22px; }
+    .hbn__splitmedia { order: -1; }
+  }
+  @media (max-width: 640px) {
+    .home-hero__car { height: clamp(600px, 92vh, 760px); }
+    .hbn__wrap { padding-top: clamp(90px, 14vh, 110px); padding-bottom: 128px; }
+    .hbn__wash--x { background: linear-gradient(0deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.4) 60%, rgba(255, 255, 255, 0) 100%); }
+    .hbn__frame { aspect-ratio: 3 / 2; }
+  }
+
+  /* Buscador neumórfico — superpuesto sobre el hero (sube dentro con margin negativo) */
+  .home-search { position: relative; z-index: 6; max-width: 1080px; margin: clamp(-76px, -4.6vw, -60px) auto 0; padding-inline: clamp(20px, 5vw, 40px); }
+  .home-search__card {
+    background: var(--alt-surface-neu);
+    border-radius: var(--alt-r-xl);
+    box-shadow: var(--alt-nm-glass), 0 34px 80px -42px rgba(6, 39, 67, 0.42);
+    padding: clamp(16px, 1.6vw, 20px);
+  }
+  .home-search__tabs {
+    display: inline-flex;
+    background: var(--alt-surface-neu);
+    box-shadow: var(--alt-nm-in-sm);
+    border-radius: var(--alt-r-pill);
+    padding: 5px;
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+  .home-search__tab {
+    padding: 9px 20px;
+    border: 0;
+    border-radius: var(--alt-r-pill);
+    background: transparent;
+    color: var(--alt-text);
+    font-family: var(--alt-font-body);
+    font-weight: var(--alt-fw-semibold);
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: color var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease);
+  }
+  .home-search__tab[aria-selected='true'] {
+    background: var(--alt-surface-neu);
+    box-shadow: var(--alt-nm-up-sm);
+    color: var(--alt-ink);
+  }
+  .home-search__row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+  .home-search__field {
+    flex: 1;
+    min-width: 200px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 12px 18px;
+    background: var(--alt-surface-neu);
+    box-shadow: var(--alt-nm-in-sm);
+    border-radius: var(--alt-r-md);
+  }
+  .home-search__field--type { flex: 0 1 190px; min-width: 160px; }
+  .home-search__field svg { width: 20px; height: 20px; stroke: var(--alt-gold-raw); flex: none; }
+  .home-search__field label { flex: 1; min-width: 0; display: block; }
+  .home-search__lbl {
+    display: block;
+    font-size: 10.5px;
+    font-weight: var(--alt-fw-bold);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--alt-text-muted);
+    margin-bottom: 2px;
+  }
+  .home-search__field input,
+  .home-search__field select {
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: none;
+    font-family: var(--alt-font-body);
+    font-size: 15.5px;
+    color: var(--alt-ink);
+    padding: 0;
+    cursor: pointer;
+  }
+  .home-search__field input { cursor: text; }
+  .home-search__vdiv { width: 1px; align-self: stretch; background: var(--alt-hairline); margin: 6px 4px; }
+  .home-search__go {
+    flex: none;
+    width: 64px;
+    height: 64px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--alt-grad-gold-145, linear-gradient(145deg, #ebd27e 0%, #d4af37 52%, #a6801e 100%));
+    box-shadow: var(--alt-nm-orb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    cursor: pointer;
+    transition: transform var(--alt-dur) var(--alt-ease);
+  }
+  .home-search__go svg { width: 23px; height: 23px; stroke: var(--alt-ink); }
+  .home-search__go:hover { transform: scale(1.06); }
+
+  /* CUATRO MANERAS */
+  .home-maneras__head { max-width: 640px; margin-bottom: clamp(32px, 5vw, 56px); }
+  .home-maneras__head h2 { margin-top: var(--alt-space-3); }
+  .home-maneras__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(430px, 100%), 1fr));
+    gap: var(--alt-gap-grid);
+  }
+  .home-manera {
+    position: relative;
+    display: block;
+    border-radius: var(--alt-r-xl);
+    overflow: hidden;
+    min-height: clamp(280px, 27vw, 360px);
+    box-shadow: var(--alt-elev-card);
+    text-decoration: none;
+    transition: transform var(--alt-dur-slow) var(--alt-ease-card), box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+  }
+  .home-manera img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-slow) var(--alt-ease-card); }
+  .home-manera__scrim { position: absolute; inset: 0; background: var(--alt-scrim-img); }
+  .home-manera:hover { transform: translateY(-6px); box-shadow: var(--alt-elev-card-hover); }
+  .home-manera:hover img { transform: scale(1.05); }
+  .home-manera__body { position: absolute; left: 0; right: 0; bottom: 0; padding: clamp(24px, 2.6vw, 34px); }
+  .home-manera__n { display: block; font-family: var(--alt-font-display); font-style: italic; font-size: 17px; color: var(--alt-gold-bright); margin-bottom: 8px; }
+  .home-manera__t { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(28px, 2.9vw, 36px); line-height: 1; color: #fff; margin-bottom: 9px; }
+  .home-manera__d { display: block; font-size: 14px; line-height: 1.55; color: rgba(255, 255, 255, 0.82); max-width: 330px; margin-bottom: 16px; }
+  .home-manera__cta { display: inline-flex; align-items: center; gap: 7px; font-weight: var(--alt-fw-semibold); font-size: 14px; color: #fff; }
+  .home-manera__cta svg { width: 15px; height: 15px; transition: transform var(--alt-dur) var(--alt-ease); }
+  .home-manera:hover .home-manera__cta svg { transform: translateX(4px); }
+
+  /* Bandas de secciones de propiedades */
+  .home-band { padding-block: clamp(60px, 8vw, 110px); border-top: 1px solid var(--alt-hairline); }
+  /* Ritmo de fondos del mockup: alterna banda mist (#f2f6f9) con lienzo neu (#E6EDF2).
+     El neu es el que permite el neumorfismo (cards con --alt-nm-up). */
+  .home-band--alt { background: var(--alt-surface-alt); }
+  .home-band--neu { background: var(--alt-surface-neu); }
+  .home-sechead { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: clamp(28px, 4vw, 48px); }
+  .home-sechead h2 { margin-top: var(--alt-space-3); }
+  .home-seelink {
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 11px 20px; border-radius: var(--alt-r-pill);
+    border: 1px solid var(--alt-hairline-2); background: var(--alt-white);
+    color: var(--alt-ink); font-weight: var(--alt-fw-semibold); font-size: 14px; text-decoration: none;
+    transition: border-color var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease);
+  }
+  .home-seelink b { color: var(--alt-link); }
+  .home-seelink svg { width: 14px; height: 14px; transition: transform var(--alt-dur) var(--alt-ease); }
+  .home-seelink:hover { border-color: var(--alt-gold); }
+  .home-seelink:hover svg { transform: translateX(4px); }
+
+  .home-pgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: clamp(20px, 2.4vw, 32px); }
+
+  /* Card CTA navy (rellena un slot del grid) */
+  .home-ctacard { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; padding: 38px 34px; min-height: 250px; }
+  .home-ctacard__n { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(30px, 3.4vw, 42px); line-height: 1; color: #fff; margin-bottom: 10px; }
+  .home-ctacard__d { font-size: 14.5px; line-height: 1.55; color: var(--alt-on-ink-muted); max-width: 230px; margin-bottom: 26px; }
+
+  /* BROKERS (navy) */
+  .home-brokers { position: relative; overflow: hidden; background: var(--alt-surface-ink); padding-block: clamp(56px, 7vw, 104px); }
+  .home-brokers__glow { position: absolute; top: -25%; right: -8%; width: 52%; height: 150%; background: radial-gradient(circle, rgba(212, 175, 55, 0.2), transparent 66%); pointer-events: none; }
+  .home-brokers__in { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: clamp(34px, 4.5vw, 68px); align-items: center; }
+  .home-brokers__h { color: #fff; margin: var(--alt-space-3) 0 18px; }
+  .home-brokers__p { font-size: clamp(15px, 1.5vw, 18px); line-height: 1.62; color: var(--alt-on-ink-muted); max-width: 470px; margin-bottom: 28px; }
+  .home-brokers__perks { display: flex; flex-direction: column; gap: 13px; margin-bottom: 32px; max-width: 440px; }
+  .home-brokers__perks li { display: flex; align-items: center; gap: 13px; font-size: 14.5px; color: var(--alt-on-ink); }
+  .home-brokers__check { flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--alt-grad-gold); display: inline-flex; align-items: center; justify-content: center; }
+  .home-brokers__check svg { width: 14px; height: 14px; stroke: var(--alt-ink); }
+  .home-brokers__cta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .home-brokers__media { position: relative; align-self: stretch; min-height: clamp(320px, 38vw, 440px); border-radius: var(--alt-r-2xl, 22px); overflow: hidden; box-shadow: 0 44px 92px -42px rgba(0, 0, 0, 0.6); }
+  .home-brokers__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .home-brokers__media-scrim { position: absolute; inset: 0; background: linear-gradient(150deg, rgba(6, 39, 67, 0.5), rgba(6, 39, 67, 0) 55%); }
+  .home-brokers__stats { position: absolute; left: 18px; right: 18px; bottom: 18px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .home-brokers__stat { padding: 14px 18px; border-radius: var(--alt-r-frame, 14px); }
+  .home-brokers__stat-n { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-bold); font-size: 30px; line-height: 1; color: var(--alt-gold-raw); }
+  .home-brokers__stat-l { display: block; font-size: 11.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); margin-top: 3px; }
+
+  /* JOURNAL */
+  .home-journal { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: clamp(24px, 3vw, 44px); align-items: start; }
+  .home-jmain { display: block; text-decoration: none; }
+  .home-jmain__media { position: relative; border-radius: var(--alt-r-xl); overflow: hidden; aspect-ratio: 16 / 10; margin-bottom: 20px; box-shadow: var(--alt-elev-card); }
+  .home-jmain__media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-slow) var(--alt-ease-card); }
+  .home-jmain:hover .home-jmain__media img { transform: scale(1.04); }
+  .home-jcat { position: absolute; top: 15px; left: 15px; background: rgba(255, 255, 255, 0.95); color: var(--alt-link); padding: 6px 13px; border-radius: var(--alt-r-pill); font-size: 10.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.12em; text-transform: uppercase; }
+  .home-jmeta { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-text-muted); margin-bottom: 10px; }
+  .home-jdot { width: 3px; height: 3px; border-radius: 50%; background: var(--alt-cloud); }
+  .home-jmain__t { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(24px, 2.8vw, 34px); line-height: 1.08; color: var(--alt-ink); margin-bottom: 12px; }
+  .home-jmain:hover .home-jmain__t { color: var(--alt-link); }
+  .home-jmain__x { font-size: 15px; line-height: 1.62; color: var(--alt-text); max-width: 520px; }
+  .home-jside { display: flex; flex-direction: column; gap: 22px; }
+  .home-jrow { display: flex; gap: 18px; align-items: center; text-decoration: none; }
+  .home-jrow__media { position: relative; flex: none; width: clamp(110px, 13vw, 148px); aspect-ratio: 1 / 1; border-radius: var(--alt-r-thumb, 15px); overflow: hidden; box-shadow: var(--alt-elev-card); }
+  .home-jrow__media img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-slow) var(--alt-ease-card); }
+  .home-jrow:hover .home-jrow__media img { transform: scale(1.05); }
+  .home-jrow__cat { display: block; font-size: 10px; font-weight: var(--alt-fw-bold); letter-spacing: 0.12em; text-transform: uppercase; color: var(--alt-link); margin-bottom: 7px; }
+  .home-jrow__t { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 20px; line-height: 1.1; color: var(--alt-ink); margin-bottom: 8px; }
+  .home-jrow:hover .home-jrow__t { color: var(--alt-link); }
+  .home-jrow__read { display: block; font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-text-muted); }
+
+  /* ===== LIENZO DE LA HOME =====
+     El mockup declara `body{background:var(--surface)}` con `--surface:#eaf0f7` → la home
+     entera vive sobre el LIENZO NEUMÓRFICO, no sobre blanco (ADR §32.15). El D1 ya lo previó:
+     `--alt-surface-neu` es OPT-IN para "home+nav". Scoped a esta página: el resto del portal
+     conserva el blanco por defecto (mandato de Daniel). Es lo que hace que el neumorfismo lea:
+     una card `--alt-nm-up` sobre blanco no tiene relieve, sobre #E6EDF2 sí. */
+  main { background: var(--alt-surface-neu); }
+
+  /* ===== EXPLORA POR ZONA — mosaico de 10 tiles de BARRIO ===== */
+  .home-zonas { padding-block: clamp(64px, 9vw, 124px); }
+  .home-zonas__head { max-width: 640px; }
+  .home-zonas__h {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(32px, 4.4vw, 52px); line-height: 1.05; letter-spacing: var(--alt-tracking-tight);
+    color: var(--alt-ink); margin: var(--alt-space-3) 0 0; text-wrap: balance;
+  }
+  .home-zonas__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: clamp(12px, 1.4vw, 18px); }
+  .home-zona {
+    position: relative; display: block; overflow: hidden;
+    border-radius: 18px; min-height: clamp(240px, 25vw, 300px);
+    text-decoration: none;
+    box-shadow: var(--alt-nm-up);
+    transition: transform var(--alt-dur-slow) var(--alt-ease-card), box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+  }
+  .home-zona:hover { transform: translateY(-5px); box-shadow: var(--alt-nm-up), 0 34px 66px -36px rgba(6, 39, 67, 0.3); }
+  .home-zona img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-slow) var(--alt-ease-card); }
+  .home-zona:hover img { transform: scale(1.05); }
+  .home-zona__scrim { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(27, 39, 51, 0) 42%, rgba(27, 39, 51, 0.84) 100%); }
+  .home-zona__body { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px; }
+  .home-zona__t { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 23px; line-height: 1; color: #fff; margin-bottom: 6px; }
+  .home-zona__n { display: block; font-size: 12px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.04em; color: var(--alt-gold-bright); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-zona, .home-zona img { transition: none; }
+    .home-zona:hover { transform: none; }
+    .home-zona:hover img { transform: none; }
+  }
+
+  /* ===== CERCA DE TI — split buscador + MAPA ilustrado ===== */
+  .home-cerca__in { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: clamp(30px, 4vw, 58px); align-items: center; }
+  .home-cerca__h {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(31px, 4.2vw, 50px); line-height: 1.02; letter-spacing: var(--alt-tracking-tight);
+    color: var(--alt-ink); margin: var(--alt-space-3) 0 16px; text-wrap: balance;
+  }
+  .home-cerca__p { font-size: clamp(15px, 1.5vw, 17px); line-height: 1.62; color: var(--alt-text); margin: 0 0 26px; max-width: 440px; }
+  .home-cerca__card {
+    background: var(--alt-white); border: 1px solid var(--alt-hairline); border-radius: 18px; padding: 20px;
+    box-shadow: 0 2px 6px rgba(27, 39, 51, 0.05), 0 26px 54px -38px rgba(27, 39, 51, 0.3);
+  }
+  .home-cerca__field {
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid var(--alt-hairline-2); border-radius: 12px; padding: 12px 15px; margin-bottom: 14px;
+  }
+  .home-cerca__field svg { width: 18px; height: 18px; stroke: var(--alt-gold-raw); flex: none; }
+  .home-cerca__field input { border: 0; outline: none; width: 100%; font-family: var(--alt-font-body); font-size: 14.5px; color: var(--alt-ink); background: transparent; }
+  .home-cerca__ops { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+  .home-cerca__foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .home-cerca__count { font-size: 12.5px; color: var(--alt-text); margin: 0; }
+  .home-cerca__count b { color: var(--alt-ink); font-weight: var(--alt-fw-bold); }
+  .home-cerca__go {
+    display: inline-flex; align-items: center; gap: 13px;
+    padding: 12px 14px 12px 22px; border-radius: var(--alt-r-pill);
+    background: var(--alt-grad-gold); color: var(--alt-ink);
+    font-weight: var(--alt-fw-bold); font-size: 14px; letter-spacing: 0.01em; text-decoration: none;
+    transition: transform var(--alt-dur) var(--alt-ease);
+  }
+  .home-cerca__go:hover { transform: translateY(-2px); }
+  .home-cerca__arw { display: inline-flex; width: 30px; height: 30px; border-radius: 50%; background: rgba(27, 39, 51, 0.16); align-items: center; justify-content: center; flex: none; transition: background var(--alt-dur) var(--alt-ease); }
+  .home-cerca__arw svg { width: 14px; height: 14px; stroke: var(--alt-ink); transition: transform var(--alt-dur-slow) var(--alt-ease), stroke var(--alt-dur) var(--alt-ease); }
+  .home-cerca__go:hover .home-cerca__arw { background: var(--alt-ink); }
+  .home-cerca__go:hover .home-cerca__arw svg { transform: translateX(3px); stroke: var(--alt-gold-bright); }
+
+  /* El MAPA: panel navy + trama de puntos + calles SVG + pins. Ilustrado, no cartografía. */
+  .home-map {
+    position: relative; border-radius: 22px; overflow: hidden;
+    min-height: clamp(400px, 44vw, 500px);
+    background: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px) 0 0 / 22px 22px,
+      var(--alt-grad-navy-map);
+    box-shadow: 0 40px 90px -44px rgba(6, 39, 67, 0.6);
+  }
+  .home-map__glow { position: absolute; top: -30%; left: 20%; width: 60%; height: 60%; pointer-events: none; background: radial-gradient(circle, rgba(212, 175, 55, 0.16), transparent 70%); }
+  .home-map__streets { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.28; }
+
+  .home-map__pin { position: absolute; transform: translate(-50%, -100%); display: inline-flex; transition: transform var(--alt-dur) var(--alt-ease); }
+  .home-map__pin:hover { transform: translate(-50%, -100%) scale(1.14); }
+  .home-map__halo { position: absolute; left: 50%; bottom: 2px; transform: translateX(-50%); border-radius: 50%; }
+  .home-map__halo--gold { width: 26px; height: 26px; background: rgba(235, 210, 126, 0.32); }
+  .home-map__halo--white { width: 24px; height: 24px; background: rgba(255, 255, 255, 0.26); }
+  .home-map__price {
+    position: relative; display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 11px; border-radius: var(--alt-r-pill);
+    font-size: 12px; font-weight: var(--alt-fw-bold); color: var(--alt-ink);
+    box-shadow: 0 8px 18px -6px rgba(6, 39, 67, 0.55);
+  }
+  .home-map__price--gold { background: var(--alt-gold-bright); }
+  .home-map__price--white { background: #fff; }
+
+  .home-map__mini {
+    position: absolute; display: flex; align-items: center; gap: 11px;
+    background: #fff; border-radius: 14px; padding: 10px;
+    box-shadow: 0 16px 36px -18px rgba(6, 39, 67, 0.6);
+  }
+  .home-map__mini--bl { left: 18px; bottom: 18px; max-width: 245px; }
+  .home-map__mini--tr { right: 18px; top: 18px; max-width: 230px; }
+  .home-map__mini img { width: 58px; height: 58px; border-radius: 9px; object-fit: cover; flex: none; }
+  .home-map__mini--tr img { width: 52px; height: 52px; }
+  .home-map__minitxt { min-width: 0; }
+  .home-map__minitag { display: block; font-size: 9.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.12em; text-transform: uppercase; color: var(--alt-link); margin-bottom: 2px; }
+  .home-map__minit { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 16px; color: var(--alt-ink); line-height: 1.05; margin-bottom: 2px; }
+  .home-map__minip { display: block; font-size: 12px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); }
+
+  /* Las mini-cards se apilan sobre el mapa: en pantallas chicas se estorban */
+  @media (max-width: 520px) { .home-map__mini--tr { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .home-map__pin, .home-cerca__go, .home-cerca__arw svg { transition: none; } .home-map__pin:hover { transform: translate(-50%, -100%); } }
+
+  /* ===== CTA CORTA ESTANCIA — banda full-bleed con scrim direccional ===== */
+  .home-ctaband { position: relative; overflow: hidden; min-height: clamp(420px, 48vw, 560px); display: flex; align-items: center; }
+  .home-ctaband__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  /* El scrim del mockup es rgba(18,22,26,…) = casi NEGRO (prohibido) → navy de paleta */
+  .home-ctaband__scrim {
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(90deg, rgba(6, 39, 67, 0.9) 0%, rgba(6, 39, 67, 0.56) 42%, rgba(6, 39, 67, 0.08) 72%, rgba(6, 39, 67, 0) 100%);
+  }
+  /* El wrapper no intercepta clics (deja pasar al fondo); solo el CTA es clicable — como el mockup */
+  .home-ctaband__in { position: relative; width: 100%; padding-block: clamp(48px, 6vw, 90px); pointer-events: none; }
+  .home-ctaband__text { max-width: 520px; }
+  .home-ctaband__eyebrow { color: var(--alt-gold-bright); margin-bottom: 16px; }
+  .home-ctaband__h {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(32px, 4.4vw, 52px); line-height: 1.04; letter-spacing: var(--alt-tracking-tight);
+    color: #fff; margin: 0 0 18px; text-wrap: balance;
+  }
+  .home-ctaband__p { font-size: clamp(15px, 1.5vw, 18px); line-height: 1.62; color: rgba(255, 255, 255, 0.78); margin: 0 0 30px; max-width: 430px; }
+  .home-ctaband__cta { pointer-events: auto; }
+
+  /* ===== REDES — muro tipo Instagram ===== */
+  .home-redes { overflow: hidden; padding-block: clamp(56px, 7vw, 100px); }
+  .home-redes__head { text-align: center; margin-bottom: clamp(30px, 4vw, 46px); }
+  .home-redes__h {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(30px, 4vw, 48px); line-height: 1.04; letter-spacing: var(--alt-tracking-tight);
+    color: var(--alt-ink); margin: var(--alt-space-3) 0 20px;
+  }
+  .home-redes__handle {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: var(--alt-grad-gold); color: var(--alt-ink);
+    padding: 11px 22px; border-radius: var(--alt-r-pill);
+    font-weight: var(--alt-fw-bold); font-size: 14px; text-decoration: none;
+    transition: transform var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease);
+  }
+  .home-redes__handle svg { width: 18px; height: 18px; }
+  .home-redes__handle:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(166, 128, 30, 0.6); }
+
+  .home-redes__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(160px, 45%), 1fr)); gap: clamp(10px, 1.3vw, 16px); }
+  .home-redes__post { position: relative; display: block; overflow: hidden; border-radius: 14px; aspect-ratio: 1 / 1; }
+  .home-redes__post img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--alt-ease); }
+  .home-redes__post:hover img { transform: scale(1.08); }
+  .home-redes__reel { position: absolute; top: 10px; right: 10px; color: #fff; display: inline-flex; }
+  .home-redes__reel svg { width: 18px; height: 18px; }
+  .home-redes__ov {
+    position: absolute; inset: 0; background: rgba(6, 39, 67, 0.44);
+    display: flex; align-items: center; justify-content: center; gap: 18px;
+    opacity: 0; transition: opacity var(--alt-dur-slow) var(--alt-ease);
+  }
+  .home-redes__post:hover .home-redes__ov, .home-redes__post:focus-visible .home-redes__ov { opacity: 1; }
+  .home-redes__stat { display: inline-flex; align-items: center; gap: 6px; color: #fff; font-weight: var(--alt-fw-bold); font-size: 14px; }
+  .home-redes__stat svg { width: 18px; height: 18px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-redes__post img, .home-redes__ov, .home-redes__handle { transition: none; }
+    .home-redes__post:hover img { transform: none; }
+    .home-redes__handle:hover { transform: none; }
+  }
+
+  /* ===== RECIENTES — mosaico BENTO (4 col, posicionamiento explícito por tile) ===== */
+  .home-rec { overflow: hidden; }
+  /* :global porque estos parrafos los crea la ISLA en runtime (§277) y no llevan el atributo
+     data-astro-cid con el que Astro acota sus reglas. Sin esto saldrian sin estilo — y lo caza
+     verify:css, que existe para exactamente esta trampa. */
+  :global(.home-vacio) { grid-column: 1 / -1; max-width: 62ch; margin: 0; font-size: 15.5px; line-height: 1.65; color: var(--alt-text); }
+  .home-rec__vacio { max-width: 62ch; margin: 0; font-size: 15.5px; line-height: 1.65; color: var(--alt-text); }
+  .home-rec__grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: clamp(148px, 14.5vw, 180px); gap: 14px; }
+  .home-rec__tile {
+    position: relative; overflow: hidden; border-radius: 18px; text-decoration: none; color: #fff;
+    box-shadow: 0 2px 5px rgba(27, 39, 51, 0.05), 0 22px 46px -34px rgba(27, 39, 51, 0.3);
+  }
+  .home-rec__tile img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.05s var(--alt-ease); }
+  .home-rec__tile:hover img { transform: scale(1.06); }
+
+  .home-rec__new {
+    position: absolute; top: 12px; left: 12px; z-index: 2;
+    background: var(--alt-grad-gold); color: var(--alt-ink);
+    padding: 4px 10px; border-radius: var(--alt-r-pill);
+    font-size: 9.5px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .home-rec__time {
+    position: absolute; top: 13px; right: 12px; z-index: 2;
+    background: rgba(6, 39, 67, 0.66); color: #fff;
+    padding: 3px 9px; border-radius: var(--alt-r-pill); font-size: 10.5px; font-weight: var(--alt-fw-semibold);
+  }
+  .home-rec__scrim { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 42%, rgba(6, 39, 67, 0.88)); }
+  .home-rec__body { position: absolute; left: 0; right: 0; bottom: 0; padding: 15px; }
+  .home-rec__tag { display: block; font-size: 9.5px; font-weight: var(--alt-fw-bold); letter-spacing: 0.12em; text-transform: uppercase; color: var(--alt-gold-bright); margin-bottom: 3px; }
+  .home-rec__t { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 17px; line-height: 1; }
+  .home-rec__price { display: block; font-size: 13.5px; font-weight: var(--alt-fw-bold); margin-top: 3px; }
+  /* El precio de los tiles CON título se revela al hover (mockup CSS L187-188) */
+  .home-rec__price--hover { opacity: 0; transform: translateY(8px); transition: opacity var(--alt-dur-slow) var(--alt-ease), transform var(--alt-dur-slow) var(--alt-ease); }
+  .home-rec__tile:hover .home-rec__price--hover, .home-rec__tile:focus-visible .home-rec__price--hover { opacity: 1; transform: none; }
+
+  /* Tamaños por jerarquía del bento */
+  .home-rec__tile--xl .home-rec__body { padding: 22px; }
+  .home-rec__tile--xl .home-rec__tag { font-size: 10.5px; letter-spacing: 0.14em; margin-bottom: 5px; }
+  .home-rec__tile--xl .home-rec__t { font-size: clamp(24px, 2.6vw, 32px); line-height: 1.02; }
+  .home-rec__tile--xl .home-rec__price { font-size: 15px; margin-top: 5px; }
+  .home-rec__tile--xl .home-rec__scrim { background: linear-gradient(180deg, transparent 46%, rgba(6, 39, 67, 0.9)); }
+  .home-rec__tile--md .home-rec__body { padding: 18px; }
+  .home-rec__tile--md .home-rec__tag { font-size: 10px; margin-bottom: 4px; }
+  .home-rec__tile--md .home-rec__t { font-size: 21px; line-height: 1.04; }
+  .home-rec__tile--md .home-rec__price { font-size: 13.5px; }
+
+  /* Móvil: el bento se aplana y el precio NO puede depender de hover (no hay dedo que "hoveree") */
+  @media (max-width: 860px) {
+    .home-rec__grid { grid-template-columns: repeat(2, 1fr); }
+    .home-rec__tile { grid-column: auto !important; grid-row: auto !important; }
+    .home-rec__price--hover { opacity: 1; transform: none; }
+  }
+  @media (max-width: 520px) { .home-rec__grid { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) {
+    .home-rec__tile img, .home-rec__price--hover { transition: none; }
+    .home-rec__tile:hover img { transform: none; }
+  }
+
+  /* ===== PROPIEDAD DEL DÍA — split editorial de UNA propiedad ===== */
+  .home-pdia { background: var(--alt-surface-alt); color: var(--alt-ink); overflow: hidden; }
+  /* Sin padding vertical en la sección: lo pone el texto, para que la foto pueda ESTIRARSE a su alto */
+  .home-pdia__in { padding-block: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr)); gap: clamp(24px, 4vw, 64px); align-items: center; }
+  .home-pdia__text { padding-block: clamp(56px, 7vw, 104px); }
+  .home-pdia__h {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(34px, 4.4vw, 54px); line-height: 1.02; letter-spacing: var(--alt-tracking-tight);
+    color: var(--alt-ink); margin: var(--alt-space-4) 0 18px; text-wrap: balance;
+  }
+  .home-pdia__p { font-size: clamp(15px, 1.5vw, 18px); line-height: 1.62; color: var(--alt-text); margin: 0 0 32px; max-width: 440px; }
+
+  /* Fila de 4 contadores — cifra display + etiqueta dorada */
+  .home-pdia__stats { display: flex; gap: clamp(24px, 3.6vw, 48px); flex-wrap: wrap; margin-bottom: 34px; }
+  .home-pdia__n {
+    display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(26px, 3vw, 34px); line-height: 1; color: var(--alt-ink); margin-bottom: 5px;
+  }
+  .home-pdia__unit { font-size: 15px; }
+  .home-pdia__l { display: block; font-size: 10.5px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.16em; text-transform: uppercase; color: var(--alt-link); }
+
+  .home-pdia__buy { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .home-pdia__pricelbl { display: block; font-size: 10.5px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.14em; text-transform: uppercase; color: var(--alt-text); margin-bottom: 4px; }
+  .home-pdia__price { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(26px, 3vw, 34px); line-height: 1; color: var(--alt-ink); }
+
+  /* La foto ESTIRA al alto del bloque de texto (align-self:stretch), no al revés */
+  .home-pdia__media {
+    position: relative; align-self: stretch; min-height: clamp(340px, 42vw, 560px);
+    margin-block: clamp(0px, 3vw, 40px); border-radius: 22px; overflow: hidden;
+    box-shadow: 0 40px 90px -40px rgba(6, 39, 67, 0.55);
+  }
+  .home-pdia__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
+  /* ===== INVERTIR — split editorial: texto + 3 tarjetas de cifra ===== */
+  .home-inv { padding-block: clamp(64px, 9vw, 124px); }
+  .home-inv__in { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: clamp(40px, 6vw, 80px); align-items: center; }
+  .home-inv__h {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(32px, 4.4vw, 52px); line-height: 1.04; letter-spacing: var(--alt-tracking-tight);
+    color: var(--alt-ink); margin: var(--alt-space-3) 0 20px; text-wrap: balance;
+  }
+  .home-inv__p { font-size: clamp(15px, 1.5vw, 18px); line-height: 1.64; color: var(--alt-text); margin: 0 0 32px; max-width: 480px; }
+  .home-inv__cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 26px; border-radius: var(--alt-r-pill);
+    border: 1.5px solid var(--alt-hairline-strong); background: transparent; color: var(--alt-ink);
+    font-weight: var(--alt-fw-semibold); font-size: 14px; text-decoration: none;
+    transition: border-color var(--alt-dur) var(--alt-ease), background var(--alt-dur) var(--alt-ease), box-shadow var(--alt-dur) var(--alt-ease);
+  }
+  .home-inv__cta svg { width: 16px; height: 16px; transition: transform var(--alt-dur-slow) var(--alt-ease); }
+  .home-inv__cta:hover { border-color: var(--alt-ink); background: var(--alt-mist); box-shadow: 0 10px 26px -14px rgba(6, 39, 67, 0.4); }
+  .home-inv__cta:hover svg { transform: scale(1.12); }
+
+  .home-inv__stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: clamp(14px, 2vw, 20px); }
+  .home-inv__card {
+    background: var(--alt-white); border: 1px solid rgba(27, 39, 51, 0.08);
+    border-radius: 18px; padding: 26px 24px; box-shadow: 0 2px 5px rgba(27, 39, 51, 0.04);
+  }
+  /* La cifra va en ORO grande (≥24px ⇒ --alt-link-lg cumple la regla 3:1) */
+  .home-inv__n {
+    display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
+    font-size: clamp(34px, 4vw, 46px); line-height: 1; color: var(--alt-link-lg); margin-bottom: 8px;
+  }
+  .home-inv__d { display: block; font-size: 13px; font-weight: var(--alt-fw-medium); line-height: 1.4; color: var(--alt-text); }
+
+  @media (prefers-reduced-motion: reduce) { .home-inv__cta svg { transition: none; } }
+
+  /* ===== SECCIONES-RIEL (venta · estancias · valoradas · proyectos) — chasis compartido ===== */
+  .home-railsec { overflow: hidden; border-top: 0; }
+  .home-railsec__tools { display: flex; align-items: center; gap: 16px; }
+  .home-railsec__navbtns { display: flex; gap: 9px; }
+  .home-valoradas__head { max-width: 560px; }
+
+  /* PROYECTOS — encabezado centrado, variante EDITORIAL del titular */
+  .home-proy { padding-block: clamp(64px, 9vw, 120px); }
+  .home-proy__head { text-align: center; max-width: 640px; margin: 0 auto clamp(44px, 6vw, 76px); }
+  .home-proy__eyebrow { letter-spacing: 0.32em; margin-bottom: 14px; }
+  /* Peso 500 e interletrado POSITIVO: distinto a los demás h2 (600 / -0.014em) — deliberado en el mockup */
+  .home-proy__h {
+    font-family: var(--alt-font-display); font-weight: var(--alt-fw-medium);
+    font-size: clamp(34px, 5vw, 60px); line-height: 1.02; letter-spacing: 0.01em;
+    color: var(--alt-ink); margin: 0 0 18px; text-wrap: balance;
+  }
+  .home-proy__p { font-size: clamp(15px, 1.5vw, 17px); line-height: 1.65; color: var(--alt-text); margin: 0 0 30px; }
+  .home-proy__cta {
+    display: inline-flex; align-items: center; gap: 11px;
+    padding: 14px 32px; border: 1px solid var(--alt-hairline-strong); border-radius: var(--alt-r-pill);
+    color: var(--alt-ink); font-weight: var(--alt-fw-semibold); font-size: 13px;
+    letter-spacing: 0.14em; text-transform: uppercase; text-decoration: none;
+    transition: background var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease), border-color var(--alt-dur) var(--alt-ease);
+  }
+  .home-proy__cta:hover { background: var(--alt-ink); color: var(--alt-gold-bright); border-color: var(--alt-ink); }
+  .home-proy__navrow { display: flex; justify-content: flex-end; gap: 9px; margin-bottom: clamp(18px, 2vw, 24px); }
+
+  /* Card-CTA navy DENTRO del riel (6ª tarjeta) */
+  .home-railcta {
+    width: clamp(220px, 18vw, 244px);
+    border-radius: 22px;
+    background: var(--alt-grad-navy-card);
+    box-shadow: var(--alt-elev-panel);
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 34px 26px; text-decoration: none;
+  }
+  .home-railcta__n { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 44px; line-height: 1; color: var(--alt-gold-bright); margin-bottom: 8px; }
+  .home-railcta__d { font-size: 14px; line-height: 1.5; color: var(--alt-on-ink-muted); margin-bottom: 22px; }
+
+  /* ===== ARRIENDO — lista horizontal con filtro (diseño propio de la sección) ===== */
+  /* Lienzo neumórfico (#E6EDF2 oficial) con filas blancas elevadas — fiel al mockup #arriendo. */
+  .home-arr { background: var(--alt-surface-neu); }
+
+  .home-arr__filter { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: clamp(20px, 2.4vw, 28px); }
+  .home-arr__filterlbl { font-size: 12.5px; font-weight: var(--alt-fw-semibold); color: var(--alt-text); margin-right: 4px; }
+  /* Pill de operacion — COMPARTIDO: filtro de #arriendo y selector de #cerca (el mockup usa
+     `.op-pill` en ambos). Neumorfico: vive sobre el lienzo neu. */
+  .home-oppill {
+    padding: 9px 19px; border: 0; border-radius: var(--alt-r-pill);
+    background: var(--alt-surface-neu); box-shadow: var(--alt-nm-up-sm);
+    color: var(--alt-text); font-family: var(--alt-font-body); font-weight: var(--alt-fw-semibold);
+    font-size: 13px; cursor: pointer; white-space: nowrap;
+    transition: box-shadow var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease);
+  }
+  .home-oppill:hover { color: var(--alt-ink); }
+  .home-oppill.is-on { box-shadow: var(--alt-nm-in-sm); color: var(--alt-link); font-weight: var(--alt-fw-bold); }
+
+  .home-arr__stack { display: flex; flex-direction: column; gap: clamp(14px, 1.6vw, 18px); }
+
+  .home-arr__row {
+    display: flex; flex-wrap: wrap; overflow: hidden;
+    background: var(--alt-white); border-radius: var(--alt-r-lg);
+    box-shadow: var(--alt-elev-card);
+    transition: transform var(--alt-dur-slow) var(--alt-ease-card), box-shadow var(--alt-dur-slow) var(--alt-ease-card);
+  }
+  .home-arr__row:hover { transform: translateX(4px); box-shadow: var(--alt-elev-card-hover), 0 0 0 1px rgba(212, 175, 55, 0.5); }
+  .home-arr__row[hidden] { display: none; }
+
+  .home-arr__media { position: relative; flex: 1 1 200px; width: clamp(200px, 24vw, 264px); min-height: 184px; overflow: hidden; text-decoration: none; }
+  .home-arr__media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform var(--alt-dur-img, 1s) var(--alt-ease); }
+  .home-arr__row:hover .home-arr__media img { transform: scale(1.06); }
+  .home-arr__photos {
+    position: absolute; left: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(6, 39, 67, 0.82); color: #fff; padding: 5px 11px; border-radius: var(--alt-r-pill);
+    font-size: 11px; font-weight: var(--alt-fw-semibold);
+  }
+  .home-arr__photos svg { width: 13px; height: 13px; }
+
+  .home-arr__info { flex: 3 1 320px; min-width: 260px; padding: 22px 26px; display: flex; flex-direction: column; justify-content: center; gap: 9px; }
+  .home-arr__topline { display: flex; align-items: center; gap: 10px; }
+  .home-arr__kicker { font-size: 10px; font-weight: var(--alt-fw-bold); letter-spacing: 0.14em; text-transform: uppercase; color: var(--alt-link); }
+  .home-arr__dot { width: 5px; height: 5px; border-radius: 50%; background: var(--alt-gold); flex: none; }
+  .home-arr__zona { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--alt-text); }
+  .home-arr__zona svg { width: 13px; height: 13px; stroke: var(--alt-gold-raw); flex: none; }
+  .home-arr__title { font-family: var(--alt-font-display); font-weight: var(--alt-fw-medium); font-size: 24px; line-height: 1.08; color: var(--alt-ink); margin: 0; letter-spacing: normal; }
+  .home-arr__title a { color: inherit; text-decoration: none; }
+  .home-arr__title a:hover { color: var(--alt-link); }
+  .home-arr__chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+  .home-arr__chip { font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); background: var(--alt-gray-50); padding: 5px 11px; border-radius: var(--alt-r-xs); }
+  .home-arr__chip--gold { color: var(--alt-link); background: rgba(212, 175, 55, 0.12); }
+
+  .home-arr__aside { flex: 1 1 220px; min-width: 210px; border-left: 1px solid var(--alt-hairline); padding: 22px 26px; display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+  .home-arr__adminlbl { display: block; font-size: 10.5px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.06em; color: var(--alt-text-muted); margin-bottom: 2px; }
+  .home-arr__price { display: block; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 27px; line-height: 1; color: var(--alt-ink); }
+  .home-arr__price small { font-family: var(--alt-font-body); font-size: 13px; font-weight: var(--alt-fw-medium); color: var(--alt-text-muted); }
+  .home-arr__actions { display: flex; align-items: center; gap: 14px; }
+  .home-arr__contact {
+    display: inline-flex; align-items: center; padding: 10px 20px; border-radius: var(--alt-r-pill);
+    border: 1px solid var(--alt-hairline-2); background: var(--alt-white);
+    color: var(--alt-ink); font-weight: var(--alt-fw-semibold); font-size: 13.5px; text-decoration: none;
+    transition: border-color var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease), background var(--alt-dur) var(--alt-ease);
+  }
+  .home-arr__contact:hover { border-color: var(--alt-gold); color: var(--alt-link); background: var(--alt-gray-50); }
+
+  .home-arr__empty { margin-top: 20px; font-size: 14.5px; color: var(--alt-text); }
+
+  @media (max-width: 720px) {
+    .home-arr__media { flex-basis: 100%; width: 100%; min-height: 200px; }
+    .home-arr__aside { border-left: 0; border-top: 1px solid var(--alt-hairline); flex-basis: 100%; }
+    .home-arr__row:hover { transform: none; }
+  }
+
+  /*
+   * CAMPOS A 16 px EN MÓVIL — y no es una preferencia tipográfica (§264).
+   *
+   * Safari en iOS hace zoom automático al enfocar cualquier campo por debajo de 16 px y **no
+   * deshace ese zoom al salir**: quien toca el buscador se queda con la página ampliada y tiene
+   * que pellizcar para volver. Medido en el navegador a 375 px: el buscador del hero se quedaba en 15,5 px y el de «cerca de ti» en 14,5.
+   *
+   * ⚠️ Va AL FINAL del bloque a propósito. `@media` **no añade especificidad**: esta regla pesa
+   * exactamente lo mismo que la que debe vencer (Astro acota AMBAS con el mismo
+   * `[data-astro-cid-…]`), así que entre iguales decide el ORDEN DE APARICIÓN. Puesta arriba —
+   * como estaba en el primer intento— se compila, se sirve, y pierde en silencio.
+   *
+   * Tampoco se usa `maximum-scale=1`: eso apagaría el zoom para todo el mundo, incluida la
+   * gente que lo necesita para leer. Se arregla el tamaño, no se quita la lupa.
+   */
+  @media (max-width: 900px) {
+    .home-search__field input,
+    .home-search__field select,
+    .home-cerca__field input {
+      font-size: var(--alt-fs-body);
+    }
+  }
+
+</style>
+
+<script>
+  // El catálogo real de la portada (§277). Import dinámico: si no hay catálogo que pintar, el módulo
+  // ni se descarga — la portada es la página más visitada y no debe pagar por lo que no usa.
+  import('../scripts/home-catalogo').then((m) => m.bootHomeCatalogo()).catch(() => {
+    /* sin catálogo la portada se queda con sus estados honestos; nunca con relleno */
+  });
+
+  // Cambio de pestaña del buscador → actualiza pill activo, placeholder y destino.
+  const tabsEl = document.querySelector('.home-search__tabs');
+  const input = document.getElementById('home-hero-field') as HTMLInputElement | null;
+  const form = document.querySelector('.home-search__row') as HTMLFormElement | null;
+  tabsEl?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('.home-search__tab') as HTMLElement | null;
+    if (!btn) return;
+    tabsEl.querySelectorAll('.home-search__tab').forEach((b) => b.setAttribute('aria-selected', 'false'));
+    btn.setAttribute('aria-selected', 'true');
+    if (input && btn.dataset.ph) input.placeholder = btn.dataset.ph;
+    if (form && btn.dataset.tab) form.setAttribute('action', '/' + btn.dataset.tab);
+  });
+
+  // Hero carrusel — auto-advance inteligente (dwell por longitud de texto), sin flechas.
+  const track = document.querySelector('[data-carousel]');
+  if (track) {
+    const banners = Array.from(track.querySelectorAll<HTMLElement>('.hbn'));
+    const segs = Array.from(track.querySelectorAll<HTMLElement>('.hseg'));
+    let idx = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const dwellFor = (b: HTMLElement) => {
+      const h = b.querySelector('.hbn__h');
+      const p = b.querySelector('.hbn__p');
+      const txt = ((h?.textContent || '') + ' ' + (p?.textContent || '')).trim();
+      const words = txt ? txt.split(/\s+/).length : 8;
+      const extras = b.querySelectorAll('.hbn__step, .hbn__stats > div').length;
+      return Math.max(4200, Math.min(2600 + words * 235 + extras * 480, 11500));
+    };
+    const paint = (dwell: number) => {
+      segs.forEach((s, k) => {
+        s.setAttribute('data-on', k === idx ? '1' : '0');
+        const fl = s.querySelector<HTMLElement>('.hsegfill');
+        if (fl) { fl.style.transition = 'none'; fl.style.width = k < idx ? '100%' : '0%'; }
+      });
+      const af = segs[idx]?.querySelector<HTMLElement>('.hsegfill');
+      if (af) { void af.offsetWidth; af.style.transition = 'width ' + dwell + 'ms linear'; af.style.width = '100%'; }
+    };
+    const show = (n: number) => {
+      idx = (n + banners.length) % banners.length;
+      banners.forEach((b, k) => b.setAttribute('data-active', k === idx ? '1' : '0'));
+      const dwell = dwellFor(banners[idx]);
+      paint(dwell);
+      clearTimeout(timer);
+      timer = setTimeout(() => show(idx + 1), dwell);
+    };
+    segs.forEach((s, k) => {
+      s.addEventListener('click', () => show(k));
+      s.addEventListener('keydown', (e) => {
+        const key = (e as KeyboardEvent).key;
+        if (key === 'Enter' || key === ' ') { e.preventDefault(); show(k); }
+      });
+    });
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      banners.forEach((b, k) => b.setAttribute('data-active', k === 0 ? '1' : '0'));
+    } else {
+      show(0);
+    }
+  }
+
+  // RIELES (`.alt-rail`) — genérico: sirve a los 4 carruseles de la home (venta/estancias/
+  // valoradas/proyectos, ADR §32.9). Sin JS el riel ya funciona (swipe + scroll-snap nativo);
+  // los botones son mejora progresiva y se apagan en los extremos.
+  document.querySelectorAll<HTMLElement>('[data-railwrap]').forEach((wrap) => {
+    const rail = wrap.querySelector<HTMLElement>('.alt-rail');
+    if (!rail) return;
+    const btns = Array.from(wrap.querySelectorAll<HTMLButtonElement>('.alt-rnav'));
+    if (!btns.length) return;
+    const step = () => Math.min(rail.clientWidth * 0.82, 560);
+    const sync = () => {
+      const max = rail.scrollWidth - rail.clientWidth - 1;
+      btns.forEach((b) => {
+        const atEdge = b.dataset.rail === 'prev' ? rail.scrollLeft <= 1 : rail.scrollLeft >= max;
+        b.toggleAttribute('disabled', atEdge);
+      });
+    };
+    const suave = () => (window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth') as ScrollBehavior;
+    btns.forEach((b) => b.addEventListener('click', () => {
+      rail.scrollBy({ left: (b.dataset.rail === 'prev' ? -1 : 1) * step(), behavior: suave() });
+    }));
+    rail.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync, { passive: true });
+    sync();
+  });
+
+  // FAVORITOS — delegado para las TRES cards con corazón (§32.24).
+  // Antes solo capturaba `.alt-lucard__fav` ⇒ el corazón estaba MUERTO en 8 de 13 cards
+  // (PropertyCard de #destacadas y StayCard de #estancias-list).
+  // preventDefault/stopPropagation NO es opcional: en StayCard el <button> vive DENTRO del <a>
+  // de la card, así que sin esto el clic burbujea y NAVEGA en vez de guardar. El mockup ya lo
+  // resolvía así (su toggleFav abre con ambos).
+  document.addEventListener('click', (e) => {
+    const fav = (e.target as HTMLElement).closest(
+      '.alt-lucard__fav, .alt-staycard__fav, .alt-pcard__fav'
+    ) as HTMLElement | null;
+    if (!fav) return;
+    e.preventDefault();
+    e.stopPropagation();
+    fav.setAttribute('aria-pressed', fav.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+  });
+
+  // CERCA — selector de operación: marca el pill y apunta el CTA al destino real.
+  // (El mockup solo alterna la clase; aquí además el botón lleva a donde dice.)
+  const cercaOps = document.querySelector('.home-cerca__ops');
+  if (cercaOps) {
+    const pills = Array.from(cercaOps.querySelectorAll<HTMLElement>('.home-oppill'));
+    const go = document.querySelector<HTMLAnchorElement>('[data-cerca-go]');
+    const field = document.getElementById('cerca-field') as HTMLInputElement | null;
+    cercaOps.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest('.home-oppill') as HTMLElement | null;
+      if (!btn) return;
+      pills.forEach((p) => {
+        const on = p === btn;
+        p.classList.toggle('is-on', on);
+        p.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      if (go && btn.dataset.op) {
+        const zona = field?.value.trim();
+        go.href = '/' + btn.dataset.op + (zona ? '?zona=' + encodeURIComponent(zona) : '');
+      }
+    });
+  }
+
+  // ARRIENDO — filtro con/sin administración: muestra/oculta filas por data-admin.
+  const arrFilter = document.querySelector('.home-arr__filter');
+  if (arrFilter) {
+    const arrPills = Array.from(arrFilter.querySelectorAll<HTMLElement>('.home-oppill'));
+    const arrRows = Array.from(document.querySelectorAll<HTMLElement>('#arriendo-stack .home-arr__row'));
+    const arrEmpty = document.getElementById('arriendo-empty');
+    arrFilter.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest('.home-oppill') as HTMLElement | null;
+      if (!btn) return;
+      const val = btn.dataset.val || 'todos';
+      arrPills.forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle('is-on', on);
+        b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      let visible = 0;
+      arrRows.forEach((row) => {
+        const show = val === 'todos' || row.dataset.admin === val;
+        row.hidden = !show;
+        if (show) visible++;
+      });
+      if (arrEmpty) arrEmpty.hidden = visible !== 0;
+    });
+  }
+</script>
