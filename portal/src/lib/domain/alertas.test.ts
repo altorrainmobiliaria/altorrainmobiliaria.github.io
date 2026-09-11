@@ -3,6 +3,7 @@ import {
   clave,
   coincide,
   criteriosAQuery,
+  formatoPrecioResumen,
   normalizarCriterios,
   operacionARuta,
   resumenCriterios,
@@ -132,6 +133,40 @@ describe('coincide', () => {
   it('aguanta un sector vacío sin reventar', () => {
     expect(coincide(criterios({ zonas: ['Manga'] }), res({ sector: '' }))).toBe(false);
     expect(coincide(criterios(), res({ sector: '' }))).toBe(true);
+  });
+
+  // §284 — OBRA NUEVA. Un proyecto no tiene UN precio: tiene `[precio, precioHasta]`. La pregunta
+  // deja de ser «¿está dentro?» y pasa a ser «¿se cruzan los dos intervalos?».
+  it('🎯 un proyecto entra si su RANGO se cruza con el filtro, aunque su «desde» quede fuera', () => {
+    // Vende de $450M a $900M. Alguien busca DESDE $600M: sí tiene apartamentos para él.
+    const proyecto = res({ precio: 450_000_000, precioHasta: 900_000_000 });
+    expect(coincide(criterios({ precioMin: 600_000_000 }), proyecto)).toBe(true);
+    // Y al revés: busca HASTA $300M, y ni su unidad más barata llega. No se cruza.
+    expect(coincide(criterios({ precioMax: 300_000_000 }), proyecto)).toBe(false);
+  });
+
+  it('un rango que queda ENTERO por encima del filtro no se cuela', () => {
+    const caro = res({ precio: 1_000_000_000, precioHasta: 2_000_000_000 });
+    expect(coincide(criterios({ precioMin: 100_000_000, precioMax: 900_000_000 }), caro)).toBe(false);
+  });
+
+  it('NO-REGRESIÓN: sin `precioHasta` el solape se reduce EXACTAMENTE al filtro de siempre', () => {
+    // El intervalo degenera al punto [precio, precio]; estos son los bordes del test de arriba.
+    const c = criterios({ precioMin: 400_000_000, precioMax: 450_000_000 });
+    expect(coincide(c, res({ precio: 450_000_000 }))).toBe(true);
+    expect(coincide(c, res({ precio: 450_000_001 }))).toBe(false);
+    expect(coincide(c, res({ precio: 399_999_999 }))).toBe(false);
+  });
+});
+
+describe('formatoPrecioResumen — un «desde» no se dice como si fuera el precio (§284)', () => {
+  it('con rango dice «Desde»; sin rango, el precio a secas', () => {
+    expect(formatoPrecioResumen(res({ precio: 450_000_000, precioHasta: 900_000_000 }))).toMatch(/^Desde /);
+    expect(formatoPrecioResumen(res({ precio: 450_000_000 }))).not.toMatch(/^Desde /);
+  });
+
+  it('no inventa un rango cuando el techo es el mismo número', () => {
+    expect(formatoPrecioResumen(res({ precio: 450_000_000, precioHasta: 450_000_000 }))).not.toMatch(/^Desde /);
   });
 });
 

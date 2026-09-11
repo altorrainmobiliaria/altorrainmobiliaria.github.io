@@ -1,14 +1,18 @@
 import { describe, it, expect } from 'vitest';
 import {
+  claseDe,
   construirIndices,
   esPublicada,
   explicarProblema,
   precioDisplay,
   problemasParaPublicar,
   propiedadAResumen,
+  proyectoAResumen,
+  rutaDeResumen,
 } from './catalogo';
 import type { ProblemaPublicacion } from './catalogo';
 import type { Propiedad } from './propiedades';
+import type { Proyecto } from './proyectos';
 
 // Construcción del índice de catálogo (camino de ESCRITURA, §54.4). Lógica PURA → sin emulador.
 // Cubre: filtro de publicadas (anti-oráculo) · sharding · precio por operación · coords nullable ·
@@ -327,5 +331,161 @@ describe('problemasParaPublicar — el escritor pregunta con las reglas del lect
       expect(explicarProblema(m).length).toBeGreaterThan(20);
       expect(explicarProblema(m)).not.toContain('undefined');
     }
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// §284.5 — OBRA NUEVA EN EL ÍNDICE. Ésta era LA pieza que bloqueaba la vertical entera: el índice
+// guardaba `precio` como un entero y un proyecto tiene RANGO. Lo que se fija aquí no es que
+// «funcione», es que el rango sea DERIVADO (imposible de desviar de sus tipologías), que la card no
+// se contradiga consigo misma, y que un inmueble corriente siga saliendo BYTE A BYTE igual que antes.
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+function pry(over: Partial<Proyecto> = {}): Proyecto {
+  return {
+    _version: 1,
+    createdAt: '2026-08-01T00:00:00Z',
+    updatedAt: '2026-08-20T00:00:00Z',
+    id: 'PRY-202608-0001',
+    slug: 'torre-marea',
+    nombre: 'Torre Marea',
+    constructora: 'Constructora Caribe S.A.S',
+    licenciaConstruccion: 'LC-2026-0345',
+    curaduria: 'Curaduria Urbana No. 1 de Cartagena',
+    estadoObra: 'preventa',
+    descripcion: 'Proyecto frente al mar.',
+    geo: { ciudad: 'Cartagena', barrio: 'Bocagrande', lat: 10.399, lng: -75.554 },
+    tipologias: [
+      { nombre: 'Tipo B', tipo: 'apartamento', areaM2: 96, habitaciones: 3, banos: 2, desde: 720_000_000 },
+      { nombre: 'Tipo A', tipo: 'apartamento', areaM2: 68, habitaciones: 2, banos: 2, desde: 450_000_000 },
+    ],
+    imagenes: ['pry/marea/portada.webp'],
+    estado: 'disponible',
+    ...over,
+  } as Proyecto;
+}
+
+describe('proyectoAResumen — el precio es DERIVADO, no un campo que alguien teclea (§284.3)', () => {
+  it('el «desde» sale de la tipología más barata y el «hasta» de la más cara', () => {
+    const r = proyectoAResumen(pry());
+    expect('resumen' in r).toBe(true);
+    if (!('resumen' in r)) return;
+    expect(r.resumen.precio).toBe(450_000_000);
+    expect(r.resumen.precioHasta).toBe(720_000_000);
+  });
+
+  it('🎯 la card NO se contradice: tipo/hab/área son los de la tipología que pone el «Desde»', () => {
+    // El orden del array es el que alguien tecleó: la de entrada es «Tipo A», la SEGUNDA.
+    const r = proyectoAResumen(pry());
+    if (!('resumen' in r)) throw new Error('debia entrar');
+    expect(r.resumen.precio).toBe(450_000_000);
+    expect(r.resumen.hab).toBe(2);
+    expect(r.resumen.ban).toBe(2);
+    expect(r.resumen.area).toBe(68);
+  });
+
+  it('una sola tipología NO es un rango: `precioHasta` ni siquiera viaja', () => {
+    const r = proyectoAResumen(pry({ tipologias: [pry().tipologias[1]] }));
+    if (!('resumen' in r)) throw new Error('debia entrar');
+    expect(r.resumen.precioHasta).toBeUndefined();
+    expect(r.resumen.precio).toBe(450_000_000);
+  });
+
+  it('un 0 colado NO pone «Desde $0»: se descarta la tipología, no se arrastra', () => {
+    const conCero = pry({
+      tipologias: [
+        { nombre: 'Fantasma', tipo: 'apartamento', areaM2: 50, habitaciones: 1, banos: 1, desde: 0 },
+        ...pry().tipologias,
+      ],
+    });
+    const r = proyectoAResumen(conCero);
+    if (!('resumen' in r)) throw new Error('debia entrar');
+    expect(r.resumen.precio).toBe(450_000_000);
+  });
+
+  it('va al shard de VENTA, con su clase y el estado de obra como CLAVE (no como etiqueta)', () => {
+    const { indices } = construirIndices([], '2026-08-22T00:00:00Z', [pry()]);
+    expect(indices.venta.items).toHaveLength(1);
+    expect(indices.arriendo.items).toHaveLength(0);
+    expect(indices.dias.items).toHaveLength(0);
+    expect(indices.venta.items[0]).toMatchObject({
+      id: 'PRY-202608-0001',
+      operacion: 'venta',
+      clase: 'proyecto',
+      badges: ['preventa'],
+      sector: 'Bocagrande',
+    });
+  });
+
+  it('🧾 sin LICENCIA no entra — el mismo criterio que las Rules (§286), en el dato', () => {
+    const { indices, omitidas } = construirIndices([], '2026-08-22T00:00:00Z', [
+      pry({ licenciaConstruccion: undefined }),
+    ]);
+    expect(indices.venta.items).toHaveLength(0);
+    expect(omitidas).toEqual([{ id: 'PRY-202608-0001', motivo: 'sin-licencia' }]);
+  });
+
+  it('un «70% vendido» sin quién lo dijo bloquea la publicación (Ley 1480)', () => {
+    const { omitidas } = construirIndices([], '2026-08-22T00:00:00Z', [
+      pry({ porcentajeVendido: { valor: 70, fuente: '  ', fecha: '2026-08-01T00:00:00Z' } }),
+    ]);
+    expect(omitidas[0].motivo).toBe('vendido-sin-fuente');
+  });
+
+  it('un BORRADOR no se omite: no se mira (§54.4 cond.4, igual que una propiedad)', () => {
+    const { indices, omitidas } = construirIndices([], '2026-08-22T00:00:00Z', [pry({ estado: 'borrador' })]);
+    expect(indices.venta.items).toHaveLength(0);
+    expect(omitidas).toEqual([]); // ni siquiera se reporta: nunca fue candidato
+  });
+
+  it('`agotado` SÍ sale — una ficha vendida sigue siendo una ficha legítima', () => {
+    const { indices } = construirIndices([], '2026-08-22T00:00:00Z', [pry({ estado: 'agotado' })]);
+    expect(indices.venta.items).toHaveLength(1);
+  });
+
+  it('el rebuild sigue siendo DETERMINISTA con las dos colecciones mezcladas (§54.4 cond.1)', () => {
+    const props = [prop({ id: 'INM-202607-0001' }), prop({ id: 'INM-202607-0002' })];
+    const pryes = [pry(), pry({ id: 'PRY-202608-0002', slug: 'claustro-1620' })];
+    const a = construirIndices(props, '2026-08-22T00:00:00Z', pryes);
+    const b = construirIndices([...props].reverse(), '2026-08-22T00:00:00Z', [...pryes].reverse());
+    expect(JSON.stringify(a.indices)).toBe(JSON.stringify(b.indices));
+  });
+});
+
+describe('rutaDeResumen / claseDe — a dónde lleva la card (§284.5)', () => {
+  it('🔴 un proyecto NO enlaza a /inmueble: ahí vive un 404 con aspecto de card correcta', () => {
+    const { indices } = construirIndices([], '2026-08-22T00:00:00Z', [pry()]);
+    expect(rutaDeResumen(indices.venta.items[0])).toBe('/proyecto/torre-marea');
+  });
+
+  it('sin `clase` es un inmueble — el default vive en UN sitio', () => {
+    const r = propiedadAResumen(prop({ slug: 'apto-bocagrande' }));
+    if (!('resumen' in r)) throw new Error('debia entrar');
+    expect(r.resumen.clase).toBeUndefined();
+    expect(claseDe(r.resumen)).toBe('inmueble');
+    expect(rutaDeResumen(r.resumen)).toBe('/inmueble/apto-bocagrande');
+  });
+
+  it('sin slug cae al id, que siempre existe', () => {
+    expect(rutaDeResumen({ id: 'PRY-1', slug: '', clase: 'proyecto' })).toBe('/proyecto/PRY-1');
+  });
+});
+
+describe('NO-REGRESIÓN — un inmueble sale exactamente igual que antes de la vertical', () => {
+  it('la proyección de una propiedad no ganó ni un campo', () => {
+    const r = propiedadAResumen(prop({ slug: 'apto-bocagrande' }));
+    if (!('resumen' in r)) throw new Error('debia entrar');
+    expect(r.resumen.precioHasta).toBeUndefined();
+    expect(r.resumen.clase).toBeUndefined();
+  });
+
+  it('`construirIndices` sin proyectos da el MISMO byte que con el tercer argumento vacío', () => {
+    const props = [
+      prop(),
+      prop({ id: 'INM-202607-0002', operacion: 'arriendo', precio: { moneda: 'COP', canon: 4_000_000 } }),
+    ];
+    const sin = construirIndices(props, '2026-08-22T00:00:00Z');
+    const con = construirIndices(props, '2026-08-22T00:00:00Z', []);
+    expect(JSON.stringify(sin)).toBe(JSON.stringify(con));
   });
 });

@@ -122,21 +122,42 @@ async function rebuildYLoguear(motivo: string): Promise<void> {
 }
 
 /**
+ * Lo que hace CUALQUIER escritura que invalide el índice: reconstruir, o encolar si se acaba de
+ * reconstruir. Vive en una función porque desde §284.5 lo disparan DOS colecciones, y copiar las seis
+ * líneas de la coalescencia en el segundo trigger es exactamente cómo se desincronizan: el día que la
+ * ventana cambie, cambiaría en uno solo y nadie vería el otro.
+ */
+async function invalidarCatalogo(motivo: string): Promise<void> {
+  const { lastRunMs } = await estadoControl();
+  if (lastRunMs && Date.now() - lastRunMs < VENTANA_MS) {
+    // Dentro de la ventana: NO se descarta — se encola para el barrido (anti-pérdida).
+    await db().doc(DOC_CONTROL).set({ pending: true }, { merge: true });
+    logger.info(`[catalogo] ${motivo} en ventana de coalescencia → encolado (pending=true)`);
+    return;
+  }
+  await rebuildYLoguear(motivo);
+}
+
+/**
  * Cualquier escritura en `propiedades` reconstruye el índice. `retry: true` es SEGURO porque el rebuild
  * es idempotente y converge (§57.2) — así un fallo transitorio no deja el índice desfasado.
  */
 export const catalogoOnPropiedadWrite = onDocumentWritten(
   { document: 'propiedades/{propId}', region: REGION, retry: true },
-  async () => {
-    const { lastRunMs } = await estadoControl();
-    if (lastRunMs && Date.now() - lastRunMs < VENTANA_MS) {
-      // Dentro de la ventana: NO se descarta — se encola para el barrido (anti-pérdida).
-      await db().doc(DOC_CONTROL).set({ pending: true }, { merge: true });
-      logger.info('[catalogo] en ventana de coalescencia → encolado (pending=true)');
-      return;
-    }
-    await rebuildYLoguear('onWrite');
-  },
+  () => invalidarCatalogo('onWrite'),
+);
+
+/**
+ * Ídem para OBRA NUEVA (§284.5). **Sin este trigger la proyección no serviría de nada**: un proyecto
+ * podría publicarse y no aparecer jamás en `/comprar` hasta que alguien tocara una propiedad
+ * cualquiera — un fallo que se ve como «el índice va con retraso» y no como «falta un disparador».
+ *
+ * El rebuild es TOTAL, así que este trigger no necesita saber qué cambió: reconstruye las dos
+ * colecciones igual que el otro. Por eso comparte la ventana de coalescencia y no la duplica.
+ */
+export const catalogoOnProyectoWrite = onDocumentWritten(
+  { document: 'proyectos/{pryId}', region: REGION, retry: true },
+  () => invalidarCatalogo('onWriteProyecto'),
 );
 
 /**

@@ -16,6 +16,7 @@
  */
 import { urlMedia } from '../lib/media';
 import { pesos } from '../lib/domain/dinero';
+import { rutaDeResumen } from '../lib/domain/catalogo';
 import type { CatalogoResumen } from '../lib/domain/catalogo';
 // El tipo de operación y la etiqueta del badge tienen DUEÑO en el dominio; aquí había copias a mano
 // (§277). Las cazó `verify:simbolos` al exportarlas: por separado las dos eran legítimas, y por eso
@@ -77,11 +78,12 @@ export function precioPin(v: number, op: Operacion): string {
 }
 
 /**
- * Ficha del inmueble — la ruta CANÓNICA (§97). Antes apuntaba a `/ficha?id=…`, que hoy responde un 301
- * hacia aquí: enlazar el destino final ahorra un salto por card y evita repartir el posicionamiento
- * entre dos URLs. El `slug` manda; sin slug, el id, que siempre existe.
+ * Ficha del item — la ruta CANÓNICA (§97). **Delega en `rutaDeResumen`, el dueño único** (§284.5):
+ * desde que obra nueva entra al mismo shard de venta, «la URL de una card» dejó de tener una sola
+ * respuesta, y tenerla escrita aquí Y en el correo del digest era la forma de que una de las dos se
+ * quedara vieja. Se conserva el nombre porque lo usan tres scripts; lo que ya no tiene es lógica.
  */
-export const hrefFicha = (it: CatalogoItem): string => `/inmueble/${encodeURIComponent(it.slug || it.id)}`;
+export const hrefFicha = (it: CatalogoItem): string => rutaDeResumen(it);
 
 export function texto(root: ParentNode, sel: string, valor: string | null): void {
   const el = root.querySelector<HTMLElement>(sel);
@@ -141,7 +143,16 @@ export function construirCard(tpl: HTMLTemplateElement, it: CatalogoItem, idx: n
   // que no se puede depender de encontrar un nodo de texto previo.
   const precio = frag.querySelector<HTMLElement>('.alt-pcard__price');
   if (precio) {
-    precio.querySelector('.alt-pcard__price-lbl')?.remove(); // "Desde" es del demo; el dato real es exacto
+    // El «Desde» del template se quita porque el precio de un inmueble es EXACTO… pero el de un
+    // proyecto de obra nueva no lo es: es el de su tipología más barata (§284). Ahí la etiqueta del
+    // mockup deja de ser adorno del demo y pasa a ser la única palabra que hace cierta la cifra —
+    // sin ella la card afirma que el desarrollo cuesta $450M, que es la clase de dato correcto y
+    // frase falsa que §280 tuvo que arrancar de `/publicar`. Se REUTILIZA el elemento del mockup; no
+    // se inventa ninguno.
+    const etiqueta = precio.querySelector('.alt-pcard__price-lbl');
+    if (it.precioHasta != null && it.precioHasta > it.precio) {
+      if (etiqueta) etiqueta.textContent = 'Desde';
+    } else etiqueta?.remove();
     const sfx = precio.querySelector<HTMLElement>('.alt-pcard__price-sfx');
     for (const n of Array.from(precio.childNodes)) if (n.nodeType === Node.TEXT_NODE) n.remove();
     precio.insertBefore(document.createTextNode(precioCard(it.precio)), sfx); // sfx null ⇒ al final

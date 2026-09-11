@@ -20,14 +20,14 @@ import {
   resumenCriterios,
   operacionARuta,
   criteriosAQuery,
-  formatoPrecio,
+  formatoPrecioResumen,
   etiquetaOperacion,
   TOPE_ALERTAS_POR_CORRIDA,
   TOPE_CORREOS_POR_CORRIDA,
 } from '../../src/lib/domain/alertas';
 import type { Alerta, CriteriosAlerta } from '../../src/lib/domain/alertas';
 import type { CatalogoResumen } from '../../src/lib/domain/catalogo';
-import { CATALOGO_SHARDS, operacionAShard } from '../../src/lib/domain/catalogo';
+import { CATALOGO_SHARDS, operacionAShard, rutaDeResumen } from '../../src/lib/domain/catalogo';
 import { normFecha, refShard } from './catalogo-rebuild';
 
 /** Dominio público. Los enlaces de un correo NUNCA pueden apuntar al staging. */
@@ -171,14 +171,17 @@ export function cuerpoDigest(
 
   const filasHtml = items
     .map((it) => {
-      const url = `${SITE_URL}/ficha?id=${encodeURIComponent(it.id)}`;
+      // Ruta CANÓNICA por el dueño único (§284.5): `/ficha?id=` era un 301 para un inmueble y un 404
+      // para un proyecto, porque ese endpoint busca en `propiedades`. Un enlace muerto en un correo
+      // no se puede corregir después: ya salió.
+      const url = `${SITE_URL}${rutaDeResumen(it)}`;
       const meta = [it.hab ? `${it.hab} hab` : '', it.ban ? `${it.ban} baños` : '', it.area ? `${it.area} m²` : '']
         .filter(Boolean)
         .join(' · ');
       return `<tr><td style="padding:14px 0;border-bottom:1px solid #e6edf2">
   <a href="${esc(url)}" style="color:#062743;font-size:16px;font-weight:600;text-decoration:none">${esc(it.titulo)}</a>
   <div style="color:#5a6b82;font-size:14px;margin-top:4px">${esc(it.sector || 'Cartagena')}${meta ? ` · ${esc(meta)}` : ''}</div>
-  <div style="color:#7d6119;font-size:15px;font-weight:600;margin-top:4px">${esc(formatoPrecio(it.precio, it.operacion))}</div>
+  <div style="color:#7d6119;font-size:15px;font-weight:600;margin-top:4px">${esc(formatoPrecioResumen(it))}</div>
 </td></tr>`;
     })
     .join('\n');
@@ -205,7 +208,7 @@ export function cuerpoDigest(
     'Entró algo que estabas buscando.',
     `Tu alerta: ${resumen}`,
     '',
-    ...items.map((it) => `- ${it.titulo} (${it.sector || 'Cartagena'}) ${formatoPrecio(it.precio, it.operacion)}\n  ${SITE_URL}/ficha?id=${it.id}`),
+    ...items.map((it) => `- ${it.titulo} (${it.sector || 'Cartagena'}) ${formatoPrecioResumen(it)}\n  ${SITE_URL}${rutaDeResumen(it)}`),
     restantes > 0 ? `\nY ${restantes} más que también cumplen lo que pediste.` : '',
     '',
     `Ver la búsqueda completa: ${urlBusqueda}`,

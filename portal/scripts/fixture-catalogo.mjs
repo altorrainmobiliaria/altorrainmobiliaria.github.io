@@ -55,6 +55,21 @@ const inmueble = (id, titulo, tipo, sector, precio, lat, lng, pub, hab, ban, are
   thumb: '/assets/villa-pool.webp', badges: ['En venta'], pub,
 });
 
+/**
+ * Un PROYECTO de obra nueva (§284.5) — la forma que produce `proyectoAResumen`: `clase: 'proyecto'`,
+ * precio en RANGO y su estado de obra como clave del badge.
+ *
+ * ⚠️ Va aquí por la misma razón que arriba: sin un item con `precioHasta`, el «Desde» de la tarjeta
+ * y la ruta `/proyecto/…` no los ejecuta nadie en la página, y las pruebas unitarias de los dos
+ * pasarían igual. Un fixture que solo tiene el caso fácil mide el caso fácil.
+ */
+const proyecto = (id, titulo, tipo, sector, desde, hasta, lat, lng, pub, hab, ban, area, estadoObra) => ({
+  id, slug: id, titulo, operacion: 'venta', clase: 'proyecto', tipo,
+  precio: desde, precioHasta: hasta, sector,
+  coords: { lat, lng }, hab, ban, area,
+  thumb: '/assets/villa-pool.webp', badges: [estadoObra], pub,
+});
+
 const cuerpo = {
   ok: true,
   items: [
@@ -66,6 +81,10 @@ const cuerpo = {
     // tarjeta de arriendo mal construida se habria visto perfecta (§273.5 otra vez, §279).
     inmueble('bq1', 'Apartamento amoblado en El Laguito', 'apartamento', 'El Laguito', 4_200_000, 10.4, -75.56, '2026-08-25', 2, 2, 78, 'arriendo'),
     inmueble('tb1', 'Cabana frente al mar en Tierrabomba', 'cabana', 'Tierrabomba', 680_000, 10.36, -75.53, '2026-08-28', 3, 2, 95, 'alojamiento'),
+    // Obra nueva, en el MISMO shard de venta que lo usado: es el eje ortogonal nuevo/usado (§270),
+    // no una seccion aparte. Su rango cruza los precios de los otros, que es lo que hace visible si
+    // el filtro compara solape o pertenencia.
+    proyecto('pry1', 'Torre Marea', 'apartamento', 'Bocagrande', 450_000_000, 900_000_000, 10.403, -75.552, '2026-08-30', 2, 2, 68, 'preventa'),
   ],
 };
 

@@ -9,6 +9,13 @@ import type { AgregadoResenas } from './resenas';
 import type { ISODate, COP, Operacion, TipoInmueble, EstadoPropiedad } from './shared';
 import { portadaDe, motivoLegalNoPublicable } from './propiedades';
 import type { MotivoLegal, Propiedad } from './propiedades';
+import {
+  rangoDePrecios,
+  tipologiaDeEntrada,
+  problemasParaPublicarProyecto,
+  esPublicadoProyecto,
+} from './proyectos';
+import type { ProblemaProyecto, Proyecto, Tipologia } from './proyectos';
 
 /** Shards del índice por operación (doc `indices/catalogo-{shard}`). Sharding desde el día 1 (§54.4): el
  *  límite de 1 MiB por doc coincide con el tripwire de búsqueda (~2K listings) → el mecanismo expira donde debe. */
@@ -30,6 +37,13 @@ export function rutaAShard(ruta: string): CatalogoShard | null {
 }
 
 /**
+ * Qué hay al otro lado de la card. Desde §284 el índice mezcla DOS entidades en el mismo shard de
+ * venta: inmuebles de la colección `propiedades` y proyectos de obra nueva de `proyectos`.
+ */
+export const CLASES_FICHA = ['inmueble', 'proyecto'] as const;
+export type ClaseFicha = (typeof CLASES_FICHA)[number];
+
+/**
  * Resumen DENORMALIZADO de una propiedad publicada (~0.4-0.6KB). Contrato del comité (§54.4): TÍTULO y SLUG
  * son OBLIGATORIOS (sin ellos no se pinta una card ni se enlaza la ficha — refutación a Gemini). Se EXCLUYE
  * a propósito (vive en la ficha SSR, no inflar el índice): descripción, galería, amenities, historial, PII.
@@ -41,6 +55,25 @@ export interface CatalogoResumen {
   operacion: Operacion;
   tipo: TipoInmueble;
   precio: COP; // display: valorVenta | canon | precioNoche según operación
+  /**
+   * Techo del rango, solo en OBRA NUEVA (§284): un proyecto no cuesta un número, cuesta
+   * **desde-hasta**. Un inmueble corriente NO lo lleva y su intervalo degenera al punto
+   * `[precio, precio]` — por eso `precio` sigue significando lo mismo para todos (lo que se ordena
+   * y lo que se muestra) y nadie tuvo que cambiar de campo. Quien filtre por precio compara
+   * SOLAPE, no pertenencia: `precioHasta ?? precio` es el techo de cualquier item.
+   */
+  precioHasta?: COP;
+  /**
+   * Qué clase de ficha hay al otro lado del enlace. **Ausente = `inmueble`**, que es el 99 % de los
+   * items: escribir la constante en cada uno costaría ~21 bytes × N contra el tope de 1 MiB del
+   * shard (§54.4) sin decir nada nuevo — la misma economía que ya siguen `badges`, `hab` y `resenas`.
+   * Se lee SIEMPRE por `claseDe()`, nunca a pelo, para que el default viva en un solo sitio.
+   *
+   * 🎯 No es decoración: es lo que decide la RUTA (`/proyecto/…` vs `/inmueble/…`). Sin este campo,
+   * inyectar obra nueva en el shard de venta habría enlazado cada proyecto a `/inmueble/PRY-…`, que
+   * es un 404 con aspecto de card correcta.
+   */
+  clase?: ClaseFicha;
   sector: string; // geo.barrio (filtro + "similares")
   coords: { lat: number; lng: number } | null; // centroide; null → card SÍ, pin NO (mapa TODO-30)
   hab?: number;
@@ -73,6 +106,25 @@ export function catalogoVacio(): CatalogoIndice {
   return { _version: 0, items: [] };
 }
 
+/** Lector ÚNICO de `clase`: el default «inmueble» vive aquí y en ningún otro sitio. */
+export const claseDe = (r: Pick<CatalogoResumen, 'clase'>): ClaseFicha => r.clase ?? 'inmueble';
+
+/**
+ * DUEÑO ÚNICO de «¿a qué URL lleva esta card?». Antes había DOS respuestas escritas aparte —
+ * `hrefFicha()` en el script de las cards y un `/ficha?id=…` en el correo del digest— y las dos
+ * daban por hecho que todo item del índice es un inmueble. En el momento en que obra nueva entra al
+ * shard de venta esa suposición produce 404 con aspecto de acierto: card correcta, foto correcta,
+ * precio correcto, enlace muerto. Es la clase de fallo que no rompe nada y se indexa (§285.3).
+ *
+ * El `slug` manda; sin slug, el id, que siempre existe. Se enlaza el destino FINAL (nunca
+ * `/ficha?id=`, que responde un 301): ahorra un salto por card y no reparte el posicionamiento
+ * entre dos URLs.
+ */
+export function rutaDeResumen(r: Pick<CatalogoResumen, 'clase' | 'slug' | 'id'>): string {
+  const s = encodeURIComponent(r.slug || r.id);
+  return claseDe(r) === 'proyecto' ? `/proyecto/${s}` : `/inmueble/${s}`;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // CONSTRUCCIÓN DEL ÍNDICE (camino de ESCRITURA, §54.4) — lógica PURA y determinista.
 // La ejecuta la Cloud Function `onWrite(propiedades)` con un REBUILD TOTAL idempotente. Vive aquí (dominio)
@@ -93,10 +145,20 @@ export function precioDisplay(p: Pick<Propiedad, 'operacion' | 'precio'>): COP |
   return p.precio?.precioNoche ?? null; // alojamiento
 }
 
-/** Motivo por el que una propiedad PUBLICADA no pudo entrar al índice (se REPORTA, no se oculta en silencio). */
+/** Motivos de omisión de un INMUEBLE — el vocabulario de `propiedades`. */
+export type MotivoInmueble = 'sin-precio' | 'sin-imagen' | 'sin-titulo' | 'esquema-legacy' | MotivoLegal;
+
+/**
+ * Motivo por el que algo PUBLICADO no pudo entrar al índice (se REPORTA, no se oculta en silencio).
+ *
+ * Los dos vocabularios se mantienen SEPARADOS y solo se unen aquí, en el contenedor: un inmueble no
+ * puede estar «sin-licencia» y un proyecto no puede estar «sin-rnt». Fundirlos en una lista sola
+ * habría obligado al formulario de alta de inmuebles a explicar motivos que su pantalla no puede
+ * producir — y un desplegable de errores imposibles es ruido que enseña a ignorar los reales.
+ */
 export interface OmitidaCatalogo {
   id: string;
-  motivo: 'sin-precio' | 'sin-imagen' | 'sin-titulo' | 'esquema-legacy' | MotivoLegal;
+  motivo: MotivoInmueble | ProblemaProyecto;
 }
 
 /**
@@ -131,8 +193,8 @@ export function esEsquemaLegacy(p: Pick<Propiedad, 'operacion' | 'precio'>): boo
  * y solo entonces descubre que además falta el precio. Extraerlos aquí permite las dos cosas sin que
  * nadie duplique una condición — que es exactamente cómo se abrió el hueco de §103.
  */
-export function motivosDeOmision(p: Propiedad): OmitidaCatalogo['motivo'][] {
-  const out: OmitidaCatalogo['motivo'][] = [];
+export function motivosDeOmision(p: Propiedad): MotivoInmueble[] {
+  const out: MotivoInmueble[] = [];
   if (!p.titulo) out.push('sin-titulo');
   // ANTES que nada lo demás: un documento del panel viejo no tiene «un campo mal», tiene OTRO modelo.
   if (esEsquemaLegacy(p)) out.push('esquema-legacy');
@@ -187,12 +249,67 @@ export function propiedadAResumen(p: Propiedad): { resumen: CatalogoResumen } | 
   };
 }
 
+/**
+ * OBRA NUEVA → resumen del catálogo (§284.5). **Ésta es la pieza que desbloqueaba la vertical**: el
+ * MEGA-PLAN la nombra como el único impedimento real («mientras el índice no admita rango, la
+ * vertical no cabe aunque sobre tiempo»), y no era de calendario sino de contrato.
+ *
+ * Tres decisiones, todas del mismo principio — **derivar, no teclear** (§284.3):
+ *  · el precio sale de `rangoDePrecios()`, así que un «Desde $450M» que no case con ninguna
+ *    tipología es imposible por construcción;
+ *  · el tipo/hab/baños/área salen de la tipología de ENTRADA, la que pone esa cifra, para que la
+ *    card no describa un apartamento que no se vende;
+ *  · los motivos de omisión son los de `problemasParaPublicarProyecto()`, el MISMO predicado que
+ *    usan la ficha y el gate — el escritor invoca al lector en vez de repetir sus condiciones.
+ *
+ * `estado-no-publicado` no llega hasta aquí: lo filtra `construirIndices` antes, igual que con las
+ * propiedades. Un borrador no se «omite», simplemente no se mira.
+ */
+export function proyectoAResumen(p: Proyecto): { resumen: CatalogoResumen } | { omitida: OmitidaCatalogo } {
+  const problemas = problemasParaPublicarProyecto(p).filter((m) => m !== 'estado-no-publicado');
+  if (problemas.length) return { omitida: { id: p.id, motivo: problemas[0] } };
+
+  // Los tres no-null están garantizados por los problemas de arriba (sin-precio / sin-tipologias /
+  // sin-imagen bloquean antes de llegar): se afirman aquí y el test lo fija, en vez de fingir
+  // defensas que nunca corren.
+  const rango = rangoDePrecios(p.tipologias) as { desde: COP; hasta: COP };
+  const entrada = tipologiaDeEntrada(p.tipologias) as Tipologia;
+  const thumb = p.imagenPortada ?? p.imagenes[0];
+
+  return {
+    resumen: {
+      id: p.id,
+      slug: p.slug,
+      titulo: p.nombre,
+      // Un proyecto se VENDE. Va al shard de venta y aparece en /comprar junto a lo usado, que es el
+      // eje ortogonal nuevo/usado del diseño (§270) y no una sección aparte del menú.
+      operacion: 'venta',
+      tipo: entrada.tipo,
+      precio: rango.desde,
+      // Solo viaja si de verdad hay rango: un proyecto de una sola tipología NO es un intervalo, y
+      // escribir `hasta === desde` invitaría a pintar «Desde $450M hasta $450M».
+      ...(rango.hasta > rango.desde ? { precioHasta: rango.hasta } : {}),
+      clase: 'proyecto',
+      sector: p.geo.barrio ?? '',
+      coords: p.geo.lat != null && p.geo.lng != null ? { lat: p.geo.lat, lng: p.geo.lng } : null,
+      hab: entrada.habitaciones,
+      ban: entrada.banos,
+      area: entrada.areaM2,
+      thumb,
+      // CLAVE, no etiqueta — igual que 'verificado'/'destacado'. «En preventa» es texto de pantalla y
+      // vive en `ETIQUETA_ESTADO_OBRA`, del lado de la vista.
+      badges: [p.estadoObra],
+      pub: p.updatedAt,
+    },
+  };
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // EL CONTRATO DEL ESCRITOR (§108) — lo que el formulario de alta debe preguntarse ANTES de guardar
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Un motivo de omisión, más el que solo tiene sentido para quien está editando. */
-export type ProblemaPublicacion = OmitidaCatalogo['motivo'] | 'estado-no-publicado';
+/** Un motivo de omisión de INMUEBLE, más el que solo tiene sentido para quien está editando. */
+export type ProblemaPublicacion = MotivoInmueble | 'estado-no-publicado';
 
 /**
  * ¿Por qué esta propiedad NO se vería en el catálogo si se guardara así?
@@ -250,11 +367,25 @@ export interface ResultadoIndices {
 }
 
 /**
- * REBUILD TOTAL de los 3 shards desde el estado VIVO de `propiedades`. **Idempotente y determinista**
- * (mismo input → mismo output byte-a-byte): ordena por `pub` desc y desempata por `id` asc, así dos
- * ejecuciones concurrentes convergen al MISMO doc (§54.4 cond.1: patch incremental PROHIBIDO).
+ * REBUILD TOTAL de los 3 shards desde el estado VIVO de `propiedades` **y de `proyectos`**.
+ * **Idempotente y determinista** (mismo input → mismo output byte-a-byte): ordena por `pub` desc y
+ * desempata por `id` asc, así dos ejecuciones concurrentes convergen al MISMO doc (§54.4 cond.1:
+ * patch incremental PROHIBIDO).
+ *
+ * 🏗️ La obra nueva entra al shard de **venta**, no a un cuarto shard suyo. Pesó el free-tier: el
+ * SERP de `/comprar` lee UN doc, y separarlos lo habría convertido en dos GET por visita en la
+ * página más transitada del portal — pagar el doble en la caliente para ahorrar un `if` en la fría.
+ * Un cuarto shard además habría obligado a fusionar y reordenar en los cuatro consumidores (SERP,
+ * mapa, similares, digest), que es donde se desincronizan las listas.
+ *
+ * `proyectos` es OPCIONAL a propósito: las pruebas que solo miran inmuebles no tienen que aprender
+ * una vertical que no les toca.
  */
-export function construirIndices(propiedades: Propiedad[], actualizado: ISODate): ResultadoIndices {
+export function construirIndices(
+  propiedades: Propiedad[],
+  actualizado: ISODate,
+  proyectos: Proyecto[] = [],
+): ResultadoIndices {
   const indices: Record<CatalogoShard, IndiceConstruido> = {
     venta: { items: [], actualizado },
     arriendo: { items: [], actualizado },
@@ -270,6 +401,16 @@ export function construirIndices(propiedades: Propiedad[], actualizado: ISODate)
       continue;
     }
     indices[operacionAShard(p.operacion)].items.push(r.resumen);
+  }
+
+  for (const p of proyectos) {
+    if (!esPublicadoProyecto(p)) continue; // misma regla que arriba: un borrador no se mira
+    const r = proyectoAResumen(p);
+    if ('omitida' in r) {
+      omitidas.push(r.omitida);
+      continue;
+    }
+    indices.venta.items.push(r.resumen);
   }
 
   for (const shard of CATALOGO_SHARDS) {

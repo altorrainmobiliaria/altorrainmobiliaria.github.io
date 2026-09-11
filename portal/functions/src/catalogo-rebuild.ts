@@ -12,6 +12,8 @@ import {
   type OmitidaCatalogo,
 } from '../../src/lib/domain/catalogo';
 import type { Propiedad } from '../../src/lib/domain/propiedades';
+import { ESTADOS_PUBLICADOS_PROYECTO } from '../../src/lib/domain/proyectos';
+import type { Proyecto } from '../../src/lib/domain/proyectos';
 
 /** Tope de seguridad del rebuild: alineado al tripwire de búsqueda (~2K listings, §54.4 cond.1). */
 export const LIMITE_SEGURIDAD = 2000;
@@ -26,6 +28,9 @@ export interface ReporteRebuild {
   snapshotAt: string;
   motivo: string;
   leidas: number;
+  /** Proyectos de obra nueva leídos (§284.5). Se cuenta APARTE de `leidas` porque son otra colección
+   *  y otro gate: un «leídas=12» que mezclara las dos no diría cuál de las dos consultas falló. */
+  leidosProyectos: number;
   porShard: Record<CatalogoShard, { items: number; bytes: number; escrito: boolean }>;
   omitidas: OmitidaCatalogo[];
 }
@@ -62,6 +67,31 @@ export async function leerPublicadas(db: Firestore): Promise<Propiedad[]> {
 }
 
 /**
+ * Lee los proyectos de OBRA NUEVA publicados (§284.5). Colección aparte porque un proyecto no es un
+ * inmueble con campos extra: agrupa tipologías, tiene licencia y su propio namespace `PRY-…`.
+ *
+ * Mismo tope de seguridad que las propiedades aunque los proyectos sean pocos: un tope que depende de
+ * cuántos «se espera» tener es el que no está el día que alguien carga un lote.
+ */
+export async function leerProyectos(db: Firestore): Promise<Proyecto[]> {
+  const snap = await db
+    .collection('proyectos')
+    .where('estado', 'in', [...ESTADOS_PUBLICADOS_PROYECTO])
+    .limit(LIMITE_SEGURIDAD)
+    .get();
+
+  return snap.docs.map((d) => {
+    const data = d.data() as Record<string, unknown>;
+    return {
+      ...data,
+      id: (data.id as string) ?? d.id,
+      createdAt: normFecha(data.createdAt),
+      updatedAt: normFecha(data.updatedAt),
+    } as Proyecto;
+  });
+}
+
+/**
  * REBUILD TOTAL idempotente de los 3 shards (§54.4 cond.1). La query va FUERA de la transacción (leer 2K
  * docs dentro sería inviable); la transacción solo toca los 3 docs del índice + el control.
  *
@@ -72,8 +102,10 @@ export async function leerPublicadas(db: Firestore): Promise<Propiedad[]> {
  */
 export async function rebuildCatalogo(db: Firestore, motivo: string): Promise<ReporteRebuild> {
   const snapshotAt = new Date().toISOString();
-  const propiedades = await leerPublicadas(db);
-  const { indices, omitidas } = construirIndices(propiedades, snapshotAt);
+  // En paralelo: son dos colecciones independientes y encadenarlas solo alargaría la ventana entre el
+  // `snapshotAt` y la escritura, que es justo la que la guarda anti-adelantamiento tiene que cubrir.
+  const [propiedades, proyectos] = await Promise.all([leerPublicadas(db), leerProyectos(db)]);
+  const { indices, omitidas } = construirIndices(propiedades, snapshotAt, proyectos);
 
   const porShard = {} as ReporteRebuild['porShard'];
 
@@ -107,6 +139,7 @@ export async function rebuildCatalogo(db: Firestore, motivo: string): Promise<Re
         pending: false,
         motivo,
         leidas: propiedades.length,
+        leidosProyectos: proyectos.length,
         omitidas: omitidas.length,
         omitidasPorMotivo: contarPorMotivo(omitidas),
       },
@@ -114,7 +147,14 @@ export async function rebuildCatalogo(db: Firestore, motivo: string): Promise<Re
     );
   });
 
-  return { snapshotAt, motivo, leidas: propiedades.length, porShard, omitidas };
+  return {
+    snapshotAt,
+    motivo,
+    leidas: propiedades.length,
+    leidosProyectos: proyectos.length,
+    porShard,
+    omitidas,
+  };
 }
 
 /** Cuántas omitidas por cada motivo — `{ 'esquema-legacy': 5 }` responde solo la pregunta del cutover. */
@@ -128,7 +168,7 @@ export function contarPorMotivo(omitidas: OmitidaCatalogo[]): Record<string, num
 /** Líneas de log del reporte — las omitidas y el tamaño son SEÑAL operativa, no ruido (§57.2). */
 export function lineasReporte(r: ReporteRebuild): string[] {
   const out = [
-    `[catalogo] rebuild(${r.motivo}) · leídas=${r.leidas} · ` +
+    `[catalogo] rebuild(${r.motivo}) · leídas=${r.leidas} · proyectos=${r.leidosProyectos} · ` +
       CATALOGO_SHARDS.map((s) => `${s}=${r.porShard[s]?.items ?? 0}${r.porShard[s]?.escrito ? '' : '(omitido:adelantado)'}`).join(' · '),
   ];
   for (const s of CATALOGO_SHARDS) {

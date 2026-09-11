@@ -151,6 +151,24 @@ describe('coincideBusqueda — las dos trampas del cero silencioso', () => {
     expect(coincideBusqueda({ sector: 'Manga', tipo: 'casa' }, busq({ zona: 'a', tipo: '' }))).toBe(false);
   });
 
+  // §284 — OBRA NUEVA. El SERP tiene su PROPIO filtro de precio, aparte del de las alertas: los dos
+  // leen la misma lista, así que los dos tienen que responder igual o uno esconde lo que el otro
+  // manda por correo ([[L-45]]).
+  it('🎯 un proyecto entra si su RANGO cruza el filtro, aunque su «desde» quede por debajo', () => {
+    const proyecto = { sector: 'Bocagrande', tipo: 'apartamento', precio: 450_000_000, precioHasta: 900_000_000 };
+    expect(coincideBusqueda(proyecto, busq({ precioMin: 600_000_000 }))).toBe(true);
+    expect(coincideBusqueda(proyecto, busq({ precioMax: 300_000_000 }))).toBe(false);
+    expect(coincideBusqueda(proyecto, busq({ precioMin: 950_000_000 }))).toBe(false);
+  });
+
+  it('NO-REGRESIÓN: sin `precioHasta` el filtro de precio se comporta igual que siempre', () => {
+    const inmueble = { sector: 'Manga', tipo: 'casa', precio: 500_000_000 };
+    expect(coincideBusqueda(inmueble, busq({ precioMin: 400_000_000 }))).toBe(true);
+    expect(coincideBusqueda(inmueble, busq({ precioMin: 600_000_000 }))).toBe(false);
+    expect(coincideBusqueda(inmueble, busq({ precioMax: 500_000_000 }))).toBe(true);
+    expect(coincideBusqueda(inmueble, busq({ precioMax: 499_999_999 }))).toBe(false);
+  });
+
   it('los dos criterios se exigen A LA VEZ, no uno u otro', () => {
     expect(filtrarCatalogo(CIUDAD, busq({ zona: 'Manga', tipo: 'casa' })).map((x) => x.id)).toEqual(['casona']);
     expect(filtrarCatalogo(CIUDAD, busq({ zona: 'Manga', tipo: 'local' }))).toEqual([]);

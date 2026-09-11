@@ -120,6 +120,31 @@ export function rangoDePrecios(tipologias: readonly Tipologia[]): RangoPrecio | 
   return { desde: Math.min(...precios), hasta: Math.max(...precios) };
 }
 
+/**
+ * La tipología que pone el «Desde» — la más barata de las que tienen precio usable.
+ *
+ * 🎯 Existe porque la tarjeta del listado tiene UN tipo, UNAS habitaciones y UN área, y un proyecto
+ * tiene varias de cada. La salida no es elegir «la primera» (que es el orden en que alguien las
+ * tecleó, o sea nada) ni promediarlas (que inventa un apartamento que no se vende): es usar **la
+ * misma tipología de la que sale la cifra que se muestra**. Así la card no se contradice consigo
+ * misma — «Desde $450M · 2 hab · 68 m²» describe un apartamento que existe.
+ *
+ * ⚠️ Limitación CONOCIDA y aceptada: si un proyecto mezcla tipos (apartamentos y locales), el
+ * listado lo clasifica por el tipo de la tipología de entrada, así que un filtro por el OTRO tipo no
+ * lo encuentra. Se sub-representa, nunca se miente — y ése es el lado seguro del error. Resolverlo
+ * de verdad es hacer del `tipo` del índice un conjunto, que es otra decisión y otro coste de bytes.
+ *
+ * Desempata por nombre para que dos tipologías al mismo precio den SIEMPRE la misma card: el rebuild
+ * total tiene que ser determinista byte a byte (§54.4 cond.1) o dos corridas convergen a docs distintos.
+ */
+export function tipologiaDeEntrada(tipologias: readonly Tipologia[]): Tipologia | null {
+  const usables = tipologias.filter((t) => typeof t.desde === 'number' && Number.isFinite(t.desde) && t.desde > 0);
+  if (!usables.length) return null;
+  return usables.reduce((a, b) =>
+    a.desde === b.desde ? ((a.nombre ?? '') <= (b.nombre ?? '') ? a : b) : a.desde < b.desde ? a : b,
+  );
+}
+
 /** Motivos por los que un proyecto NO puede salir al portal. Mismo patrón que `catalogo.ts` (§104). */
 export const PROBLEMAS_PROYECTO = [
   'estado-no-publicado',
@@ -134,7 +159,17 @@ export const PROBLEMAS_PROYECTO = [
 ] as const;
 export type ProblemaProyecto = (typeof PROBLEMAS_PROYECTO)[number];
 
-const ESTADOS_PUBLICADOS: ReadonlySet<Proyecto['estado']> = new Set(['disponible', 'agotado']);
+/**
+ * Estados que SÍ salen al portal. `agotado` entra a propósito: un proyecto vendido sigue siendo una
+ * ficha legítima (y su JSON-LD lo declara `SoldOut`), igual que una propiedad `cerrado`.
+ * Espeja la whitelist de `firestore.rules` (§286), como su gemela de `catalogo.ts`.
+ */
+export const ESTADOS_PUBLICADOS_PROYECTO: readonly Proyecto['estado'][] = ['disponible', 'agotado'];
+
+const ESTADOS_PUBLICADOS: ReadonlySet<Proyecto['estado']> = new Set(ESTADOS_PUBLICADOS_PROYECTO);
+
+/** ¿Este proyecto está en un estado público? Gemela de `esPublicada()` (§54.4 cond.4: los borradores JAMÁS entran). */
+export const esPublicadoProyecto = (p: Pick<Proyecto, 'estado'>): boolean => ESTADOS_PUBLICADOS.has(p.estado);
 
 /**
  * Qué le falta a este proyecto para poder publicarse.

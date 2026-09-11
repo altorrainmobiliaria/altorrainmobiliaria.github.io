@@ -218,7 +218,14 @@ export function coincide(c: CriteriosAlerta, r: CatalogoResumen): boolean {
   if (r.operacion !== c.operacion) return false;
   if (c.tipos.length && !c.tipos.includes(r.tipo)) return false;
   if (c.zonas.length && !c.zonas.some((z) => clave(z) === clave(r.sector ?? ''))) return false;
-  if (c.precioMin != null && r.precio < c.precioMin) return false;
+  // PRECIO POR SOLAPE, no por pertenencia (§284). Un inmueble tiene un precio; un proyecto de obra
+  // nueva tiene un intervalo `[precio, precioHasta]`. Preguntar «¿está el precio dentro del filtro?»
+  // funciona para el punto y MIENTE para el rango: un proyecto de $450M a $900M quedaría fuera de una
+  // alerta «desde $600M» aunque venda apartamentos de $700M. La pregunta correcta es si los dos
+  // intervalos se cruzan. Para un inmueble `techo === r.precio`, así que esto se reduce EXACTAMENTE a
+  // las dos líneas de antes — el rango es el caso general y el precio suelto su caso degenerado.
+  const techo = r.precioHasta ?? r.precio;
+  if (c.precioMin != null && techo < c.precioMin) return false;
   if (c.precioMax != null && r.precio > c.precioMax) return false;
   // `hab` es opcional en el resumen. Un inmueble SIN el dato no se cuela en una alerta que pide un
   // mínimo: prometer 3 habitaciones y mandar algo que no sabemos si las tiene es peor que no mandar.
@@ -262,6 +269,22 @@ export function formatoPrecio(v: COP, op: Operacion): string {
   if (op === 'arriendo') return `${base} al mes`;
   if (op === 'alojamiento') return `${base} por noche`;
   return base;
+}
+
+/**
+ * El precio de un item del catálogo, dicho con verdad (§284).
+ *
+ * 🎯 Un proyecto de obra nueva NO cuesta su `precio`: ése es el de entrada. Escribir «$450.000.000»
+ * a secas junto al nombre de un desarrollo afirma que ése es su precio, y no lo es — es el de la
+ * tipología más barata. Es exactamente la clase de cifra que §280 tuvo que arrancar de `/publicar`:
+ * correcta en el dato y falsa en la frase. Con rango se dice **«Desde …»**, que es lo que significa.
+ *
+ * Vive junto a `formatoPrecio` porque el correo del digest es hoy su único consumidor y ahí es donde
+ * la mentira llegaría a una bandeja de entrada, ya fuera de nuestro control.
+ */
+export function formatoPrecioResumen(r: Pick<CatalogoResumen, 'precio' | 'precioHasta' | 'operacion'>): string {
+  const base = formatoPrecio(r.precio, r.operacion);
+  return r.precioHasta != null && r.precioHasta > r.precio ? `Desde ${base}` : base;
 }
 
 /** Resumen legible de los criterios. Se muestra al confirmar y encabeza cada correo. */

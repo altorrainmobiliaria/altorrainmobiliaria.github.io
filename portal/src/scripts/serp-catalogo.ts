@@ -148,7 +148,16 @@ const norm = (v: string): string =>
   v.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 
 /** Lo que el filtro necesita de una ficha. Los numéricos son opcionales: no toda ficha los trae. */
-type Filtrable = { sector: string; tipo: string; precio?: number; hab?: number; ban?: number; area?: number };
+type Filtrable = {
+  sector: string;
+  tipo: string;
+  precio?: number;
+  /** Techo del rango en OBRA NUEVA (§284). Ausente en un inmueble: su intervalo es un punto. */
+  precioHasta?: number;
+  hab?: number;
+  ban?: number;
+  area?: number;
+};
 
 /**
  * ¿Este inmueble está POR ENCIMA del mínimo que se pidió?
@@ -188,7 +197,13 @@ export function coincideBusqueda(it: Filtrable, b: Busqueda): boolean {
     const encaja = (z.length >= 3 && sec.includes(z)) || (sec.length >= 3 && z.includes(sec));
     if (!encaja) return false;
   }
-  if (b.precioMin != null && !alMenos(it.precio, b.precioMin)) return false;
+  // PRECIO POR SOLAPE (§284) — el MISMO criterio que `coincide()` de las alertas, porque son dos
+  // lectores de la misma lista y dos lectores que discrepen sobre qué encaja es el bug siguiente
+  // ([[L-45]]). Un proyecto de obra nueva ocupa `[precio, precioHasta]`: preguntar «¿está dentro?»
+  // lo escondería de una búsqueda «desde $600M» aunque venda apartamentos de $700M. Para un
+  // inmueble `techo === precio` y esto se reduce EXACTAMENTE a las dos líneas de antes.
+  const techo = it.precioHasta ?? it.precio;
+  if (b.precioMin != null && !alMenos(techo, b.precioMin)) return false;
   if (b.precioMax != null && !(typeof it.precio === 'number' && it.precio <= b.precioMax)) return false;
   if (!alMenos(it.hab, b.habMin)) return false;
   if (!alMenos(it.ban, b.banMin)) return false;
