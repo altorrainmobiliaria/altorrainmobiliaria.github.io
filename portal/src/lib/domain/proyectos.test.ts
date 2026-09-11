@@ -6,8 +6,12 @@ import {
   explicarProblemaProyecto,
   problemasParaPublicarProyecto,
   puedePublicarseProyecto,
+  entregaTexto,
   jsonLdProyecto,
+  licenciaTexto,
   rangoDePrecios,
+  rutaProyecto,
+  vendidoTexto,
   PROBLEMAS_PROYECTO,
   type Proyecto,
   type Tipologia,
@@ -171,5 +175,49 @@ describe('jsonLdProyecto — un Offer por tipología, y el bug de La Haus cortad
     const doc = jsonLdProyecto(proyecto({ tipologias: [tipo('a', 300_000_000), tipo('mala', 0)] }), URL);
     const ofertas = (doc as Record<string, unknown>).offers as Array<Record<string, unknown>>;
     expect(ofertas).toHaveLength(1);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// §307 — LO QUE LA FICHA AFIRMA. Tres textos, y los tres son donde mira la Ley 1480: la entrega
+// (una promesa de plazo que no hacemos nosotros), el % vendido (urgencia que no medimos) y la
+// licencia (lo único que hace comprobable que el desarrollo existe).
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+describe('los textos de la ficha de obra nueva (§307)', () => {
+  it('🎯 la entrega SIEMPRE dice «estimada» — en preventa las fechas se corren', () => {
+    const t = entregaTexto({ entregaEstimada: '2027-03-15T00:00:00Z' });
+    expect(t).toContain('estimada');
+    expect(t).toContain('2027');
+  });
+
+  it('sin fecha de entrega no se escribe «por definir»: no se escribe nada', () => {
+    expect(entregaTexto({ entregaEstimada: undefined })).toBeNull();
+    expect(entregaTexto({ entregaEstimada: 'cuando salga' })).toBeNull();
+  });
+
+  it('🔴 el «% vendido» sin FUENTE no se pinta: es urgencia que ALTORRA no mide', () => {
+    expect(vendidoTexto({ porcentajeVendido: undefined })).toBeNull();
+    expect(vendidoTexto({ porcentajeVendido: { valor: 70, fuente: '  ', fecha: '2026-08-01T00:00:00Z' } })).toBeNull();
+  });
+
+  it('con fuente, viaja QUIÉN lo dijo y CUÁNDO — para que se pueda no creer', () => {
+    const t = vendidoTexto({ porcentajeVendido: { valor: 70, fuente: 'Constructora Caribe', fecha: '2026-08-01T00:00:00Z' } });
+    expect(t).toContain('70%');
+    expect(t).toContain('Constructora Caribe');
+    expect(t).toContain('2026');
+  });
+
+  it('🧾 la licencia se enseña con su curaduría cuando la hay, y nada si falta el número', () => {
+    expect(licenciaTexto({ licenciaConstruccion: 'LC-2026-0345', curaduria: 'Curaduría 1' })).toBe(
+      'Licencia de construcción LC-2026-0345 · Curaduría 1',
+    );
+    expect(licenciaTexto({ licenciaConstruccion: 'LC-2026-0345' })).toBe('Licencia de construcción LC-2026-0345');
+    expect(licenciaTexto({ licenciaConstruccion: '  ' })).toBeNull();
+  });
+
+  it('la ruta canónica vive bajo `/proyecto/`, nunca bajo `/inmueble/`', () => {
+    expect(rutaProyecto({ slug: 'torre-marea', id: 'PRY-202608-0001' })).toBe('/proyecto/torre-marea');
+    expect(rutaProyecto({ slug: '', id: 'PRY-202608-0001' })).toBe('/proyecto/PRY-202608-0001');
   });
 });

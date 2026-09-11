@@ -1,0 +1,268 @@
+---
+/*
+ * FICHA DE OBRA NUEVA — `/proyecto/<slug>` (§307). La QUINTA línea de negocio, por fin visible.
+ *
+ * Lo que había hasta hoy: modelo (§284), JSON-LD (§285), Rules (§286) e índice con rango (§301)…
+ * y NINGUNA ruta. `jsonLdProyecto` llevaba con **cero consumidores** desde que se escribió — [[L-87]]
+ * en nuestra propia casa. Esta página es su consumidor y el último tramo de la vertical.
+ *
+ * ⚠️ NAMESPACE PROPIO, no `/inmueble/`: un proyecto no es un inmueble con campos extra, es un
+ * CONTENEDOR de tipologías (§270). Metrocuadrado hace lo mismo y por la misma razón.
+ *
+ * 🎨 SOBRE EL DISEÑO. No se inventó una pantalla: se usan las primitivas selladas del design system
+ * (`tokens.css`, `.alt-*`) y la MISMA estructura que la ficha de inmueble, que sí tiene mockup
+ * aprobado. Lo propio de obra nueva —la tabla de tipologías y el bloque de licencia— se resuelve con
+ * las mismas primitivas. Daniel puede rediseñarla cuando quiera; lo que no podía era no existir.
+ */
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { buscarProyecto } from '../../lib/data/buscar-proyecto';
+import {
+  CACHE_CONTROL_FICHA_SIN_PURGA,
+  CACHE_CONTROL_NOT_FOUND,
+  CACHE_CONTROL_PRIVATE,
+  cacheTagCatalogo,
+  cacheTagProyecto,
+} from '../../lib/data/cache';
+import {
+  entregaTexto,
+  ETIQUETA_ESTADO_OBRA,
+  jsonLdProyecto,
+  licenciaTexto,
+  rangoDePrecios,
+  rutaProyecto,
+  vendidoTexto,
+} from '../../lib/domain/proyectos';
+import { pesos } from '../../lib/domain/dinero';
+import { etiquetaTipo } from '../../lib/domain/shared';
+import { urlMedia } from '../../lib/media';
+import { SITE } from '../../lib/config/site';
+
+const slug = Astro.params.slug ?? '';
+const r = await buscarProyecto(Astro.locals.altorra, slug);
+
+const base = Astro.site ?? `https://${SITE.domain}`;
+const canonical = r.estado === 'ok' ? new URL(rutaProyecto(r.p), base).href : '';
+
+if (r.estado === 'ok') {
+  Astro.response.headers.set('cache-control', CACHE_CONTROL_FICHA_SIN_PURGA);
+  // DOS tags: el proyecto y el shard de venta, porque el slug se resuelve POR el índice — republicar
+  // el catálogo tiene que poder alcanzar esta página.
+  Astro.response.headers.set('cache-tag', `${cacheTagProyecto(r.p.id)},${cacheTagCatalogo('venta')}`);
+} else if (r.estado === 'no-encontrada') {
+  Astro.response.status = 404;
+  Astro.response.headers.set('cache-control', CACHE_CONTROL_NOT_FOUND);
+} else {
+  Astro.response.status = 503;
+  Astro.response.headers.set('cache-control', CACHE_CONTROL_PRIVATE);
+}
+
+const p = r.estado === 'ok' ? r.p : null;
+const rango = p ? rangoDePrecios(p.tipologias) : null;
+const imagenes = p ? [p.imagenPortada, ...p.imagenes].filter((x): x is string => Boolean(x)) : [];
+const portada = imagenes[0] ?? '';
+// `jsonLdProyecto` se niega solo si el proyecto no se puede publicar o la URL no es absoluta: no
+// afirmamos en JSON lo que la página no muestra (§285.3).
+const jsonLd = p ? jsonLdProyecto(p, canonical, imagenes.map(urlMedia)) : null;
+
+const licencia = p ? licenciaTexto(p) : null;
+const entrega = p ? entregaTexto(p) : null;
+const vendido = p ? vendidoTexto(p) : null;
+
+const title = p ? `${p.nombre} — obra nueva en ${p.geo.barrio}, Cartagena` : 'Proyecto no disponible — ALTORRA';
+const description = p
+  ? `${p.nombre}: ${ETIQUETA_ESTADO_OBRA[p.estadoObra].toLowerCase()} en ${p.geo.barrio}, por ${p.constructora}.` +
+    (rango ? ` Desde ${pesos(rango.desde)}.` : '')
+  : 'Este proyecto ya no está publicado. Mira el resto del catálogo de ALTORRA en Cartagena.';
+
+const wa = p
+  ? `${SITE.contact.whatsappLink}?text=${encodeURIComponent(`Hola ALTORRA, me interesa el proyecto ${p.nombre} en ${p.geo.barrio}.`)}`
+  : SITE.contact.whatsappLink;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  noindex={r.estado !== 'ok'}
+  image={portada ? urlMedia(portada) : undefined}
+  canonical={p ? rutaProyecto(p) : undefined}
+>
+  <Header active="" />
+
+  {p ? (
+    <main id="main" class="pry">
+      {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+
+      <div class="alt-container">
+        <nav class="pry__migas" aria-label="Ruta de navegación">
+          <a href="/">Inicio</a> <span aria-hidden="true">·</span> <a href="/comprar">Comprar</a>
+          <span aria-hidden="true">·</span> <span>Obra nueva</span>
+        </nav>
+
+        <header class="pry__head">
+          <p class="alt-eyebrow">{ETIQUETA_ESTADO_OBRA[p.estadoObra]} · {p.geo.barrio}</p>
+          <h1 class="pry__h1">{p.nombre}</h1>
+          <p class="pry__constructora">Construye <strong>{p.constructora}</strong></p>
+        </header>
+
+        {portada && (
+          <figure class="pry__foto">
+            <img
+              src={urlMedia(portada)}
+              alt={`${p.nombre}, proyecto de obra nueva en ${p.geo.barrio}`}
+              fetchpriority="high"
+              decoding="async"
+            />
+          </figure>
+        )}
+
+        <section class="pry__cuerpo">
+          <div class="pry__main">
+            {rango && (
+              <p class="pry__precio">
+                <span class="pry__precio-lbl">Desde</span> {pesos(rango.desde)}
+                {rango.hasta > rango.desde && <span class="pry__precio-sfx"> hasta {pesos(rango.hasta)}</span>}
+              </p>
+            )}
+
+            <p class="pry__desc">{p.descripcion}</p>
+
+            {/* 🎯 LAS TIPOLOGÍAS SON EL PRODUCTO. «Torre Marea» no se vende: se venden sus
+                apartamentos de 1, 2 y 3 alcobas (§284.2). Por eso la tabla es el bloque central y
+                no un anexo — y cada «desde» es el de UNA tipología que existe, no una cifra suelta. */}
+            {p.tipologias.length > 0 && (
+              <div class="pry__tip">
+                <h2 class="pry__h2">Tipologías</h2>
+                <div class="pry__tabla-wrap">
+                  <table class="pry__tabla">
+                    <thead>
+                      <tr><th scope="col">Tipo</th><th scope="col">Área</th><th scope="col">Alcobas</th><th scope="col">Baños</th><th scope="col">Desde</th></tr>
+                    </thead>
+                    <tbody>
+                      {p.tipologias.map((t) => (
+                        <tr>
+                          <th scope="row">{t.nombre} <span class="pry__tip-tipo">{etiquetaTipo(t.tipo)}</span></th>
+                          <td>{t.areaM2} m²</td>
+                          <td>{t.habitaciones}</td>
+                          <td>{t.banos}</td>
+                          <td>{pesos(t.desde)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <aside class="pry__lado">
+            {/* 🧾 LA LICENCIA ES EL ARGUMENTO, no letra pequeña: es lo que separa «este desarrollo
+                existe» de «alguien nos mandó unos renders» (§284.4). Va arriba y se lee. */}
+            {licencia && (
+              <p class="pry__dato pry__dato--sello">{licencia}</p>
+            )}
+            {entrega && <p class="pry__dato">{entrega}</p>}
+            {p.cuotaInicialPct != null && <p class="pry__dato">Cuota inicial: {p.cuotaInicialPct}%</p>}
+            {p.subsidio && <p class="pry__dato">Aplica a subsidio de vivienda</p>}
+            {vendido && <p class="pry__dato pry__dato--terceros">{vendido}</p>}
+            {p.salaDeVentas && (
+              <p class="pry__dato">
+                Sala de ventas: {p.salaDeVentas.direccion} · {p.salaDeVentas.horario}
+              </p>
+            )}
+
+            <a class="alt-btn alt-btn--navy pry__cta" href={wa} rel="noopener">Preguntar por WhatsApp</a>
+          </aside>
+        </section>
+      </div>
+    </main>
+  ) : (
+    <main id="main" class="pnf">
+      <div class="alt-container pnf__in">
+        <p class="alt-eyebrow">{r.estado === 'error' ? 'Error temporal' : 'Publicación no disponible'}</p>
+        <h1 class="pnf__h1">
+          {r.estado === 'error' ? 'No pudimos cargar este proyecto.' : 'Este proyecto ya no está publicado.'}
+        </h1>
+        <p class="pnf__p">
+          {r.estado === 'error'
+            ? 'Fue un problema de nuestro lado. Vuelve a intentarlo en un momento, o escríbenos y te lo contamos por WhatsApp.'
+            : 'Puede que se haya agotado o retirado. Te ayudamos a encontrar algo parecido: dinos qué buscas y te avisamos.'}
+        </p>
+        <div class="pnf__cta">
+          <a class="alt-btn alt-btn--navy" href="/comprar">Ver el catálogo</a>
+          <a class="alt-btn alt-btn--outline" href="/alertas">Crear una alerta</a>
+        </div>
+      </div>
+    </main>
+  )}
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .pry { padding-block: clamp(1.5rem, 4vw, 2.5rem) clamp(3rem, 7vw, 5rem); }
+  .pry__migas { font-size: 0.82rem; color: var(--alt-text); margin-bottom: 1.25rem; }
+  .pry__migas a { color: var(--alt-link); text-decoration: none; }
+  .pry__migas a:hover { text-decoration: underline; }
+
+  .pry__head { margin-bottom: 1.5rem; }
+  .pry__h1 {
+    font-family: var(--alt-font-display);
+    font-weight: var(--alt-fw-semibold);
+    font-size: clamp(2rem, 5vw, 3.1rem);
+    color: var(--alt-ink);
+    line-height: 1.1;
+    margin: 0.35rem 0 0.5rem;
+  }
+  .pry__constructora { margin: 0; color: var(--alt-text); }
+
+  .pry__foto { margin: 0 0 2rem; border-radius: var(--alt-r-lg, 18px); overflow: hidden; }
+  .pry__foto img { display: block; width: 100%; height: auto; object-fit: cover; }
+
+  .pry__cuerpo { display: grid; gap: clamp(1.5rem, 4vw, 2.5rem); }
+  @media (min-width: 60rem) { .pry__cuerpo { grid-template-columns: minmax(0, 1fr) 20rem; } }
+
+  .pry__precio { margin: 0 0 1rem; font-size: clamp(1.5rem, 3vw, 2rem); color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
+  .pry__precio-lbl { font-size: 0.72em; letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text); }
+  .pry__precio-sfx { font-size: 0.6em; font-weight: 400; color: var(--alt-text); }
+
+  .pry__desc { color: var(--alt-text); line-height: 1.7; margin: 0 0 2rem; }
+
+  .pry__h2 {
+    font-family: var(--alt-font-display);
+    font-weight: var(--alt-fw-semibold);
+    font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+    color: var(--alt-ink);
+    margin: 0 0 0.85rem;
+  }
+  /* La tabla scrollea DENTRO de su caja: cinco columnas no caben en un móvil y el que se mueve no
+     puede ser el cuerpo de la página. */
+  .pry__tabla-wrap { overflow-x: auto; }
+  .pry__tabla { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+  .pry__tabla th, .pry__tabla td { padding: 0.7rem 0.6rem; text-align: left; border-bottom: 1px solid var(--alt-line, rgba(6,39,67,0.12)); }
+  .pry__tabla thead th { font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--alt-text); font-weight: var(--alt-fw-semibold); }
+  .pry__tabla tbody th { font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
+  .pry__tip-tipo { display: block; font-size: 0.78rem; font-weight: 400; color: var(--alt-text); }
+
+  .pry__lado { display: flex; flex-direction: column; gap: 0.7rem; align-self: start; }
+  .pry__dato { margin: 0; font-size: 0.9rem; color: var(--alt-text); line-height: 1.55; }
+  .pry__dato--sello { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
+  /* Lo que dice un tercero se ve como lo que es: más tenue, y con su fuente dentro del texto. */
+  .pry__dato--terceros { font-size: 0.82rem; font-style: italic; }
+  .pry__cta { margin-top: 0.8rem; text-align: center; }
+
+  .pnf__in { max-width: 44rem; padding-block: clamp(3rem, 8vw, 6rem); }
+  .pnf__h1 {
+    font-family: var(--alt-font-display);
+    font-weight: var(--alt-fw-semibold);
+    font-size: clamp(1.9rem, 4.5vw, 2.8rem);
+    color: var(--alt-ink);
+    line-height: 1.15;
+    margin: 0.4rem 0 0.9rem;
+  }
+  .pnf__p { color: var(--alt-text); line-height: 1.65; margin: 0 0 1.75rem; }
+  .pnf__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+</style>

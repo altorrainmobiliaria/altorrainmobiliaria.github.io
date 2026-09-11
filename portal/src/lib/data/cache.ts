@@ -19,6 +19,8 @@ export const cacheTagConfig = (doc: string): string => `config:${doc}`;
 export const cacheTagDisp = (propiedadId: string): string => `disp:${propiedadId}`;
 /** Tag del índice de catálogo por shard (OD-Catálogo §54): la Function `onWrite` purga `catalogo:{shard}`. */
 export const cacheTagCatalogo = (shard: string): string => `catalogo:${shard}`;
+/** OBRA NUEVA (§307). Namespace propio: un proyecto no es un `prop:` — purgar uno no purga al otro. */
+export const cacheTagProyecto = (id: string): string => `pry:${id}`;
 
 /** Catálogo (SERP/mapa/similares): EDGE-ONLY purgeable — `s-maxage` (sin `max-age` → NO cachea en navegador,
  *  donde la purga no llega; §54.8 deuda de headers). TTL = TECHO DURO de staleness (la purga por tag del

@@ -8,6 +8,7 @@
 
 import { getDoc, type LowLevelResult } from './firestore-rest';
 import type { Propiedad, Disponibilidad } from '../domain/propiedades';
+import type { Proyecto } from '../domain/proyectos';
 import type { ConfigGeneral } from '../domain/config';
 import { docIdDisponibilidad } from '../domain/disponibilidad';
 import { CATALOGO_SHARDS, catalogoVacio, type CatalogoIndice, type CatalogoShard } from '../domain/catalogo';
@@ -79,6 +80,8 @@ function toPublic<T>(r: LowLevelResult): ReadResult<T> {
 
 export interface DataClient {
   propiedades: { get(id: string): Promise<ReadResult<Propiedad>> };
+  /** OBRA NUEVA (§307). GET puntual por id `PRY-…`; el slug se resuelve por el índice, como la ficha. */
+  proyectos: { get(id: string): Promise<ReadResult<Proyecto>> };
   config: {
     /** Lectura genérica de un doc de `config` (rechaza `gestion`/`counters` sin ir a la red). */
     get(doc: string): Promise<ReadResult<Record<string, unknown>>>;
@@ -125,6 +128,12 @@ export function getDataClient(env?: RuntimeEnv, opts?: { fetchImpl?: typeof fetc
       async get(id) {
         if (!ID_RE.test(id)) return { ok: false, reason: 'unavailable' };
         return toPublic<Propiedad>(await read(['propiedades', id]));
+      },
+    },
+    proyectos: {
+      async get(id) {
+        if (!ID_RE.test(id)) return { ok: false, reason: 'unavailable' };
+        return toPublic<Proyecto>(await read(['proyectos', id]));
       },
     },
     config: {

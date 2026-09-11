@@ -221,6 +221,64 @@ export function explicarProblemaProyecto(m: ProblemaProyecto): string {
 }
 
 /*
+ * ══ LO QUE LA FICHA DICE (§307) ════════════════════════════════════════════════════════════════
+ * Texto, no marcado: aquí se decide QUÉ se afirma y con qué palabras; la página decide cómo se ve.
+ * Separado porque las afirmaciones de una obra nueva son justo donde la Ley 1480 mira —entrega,
+ * porcentaje vendido, precios «desde»— y esas se prueban sin abrir un navegador.
+ */
+
+/** La URL canónica de un proyecto. Namespace propio: un proyecto NO vive bajo `/inmueble/` (§270). */
+export const rutaProyecto = (p: Pick<Proyecto, 'slug' | 'id'>): string =>
+  `/proyecto/${encodeURIComponent(p.slug || p.id)}`;
+
+/**
+ * La entrega, dicha con la palabra que la hace honesta.
+ *
+ * ⚠️ **Siempre «estimada»**, nunca una fecha a secas. En preventa la entrega se corre —es lo normal
+ * del sector— y publicar «Entrega: marzo 2027» es una promesa de plazo que ALTORRA no controla y que
+ * no hizo: la hace la constructora. Devuelve `null` si no hay dato, en vez de escribir «por definir»,
+ * que ocupa sitio para no decir nada.
+ */
+export function entregaTexto(p: Pick<Proyecto, 'entregaEstimada'>): string | null {
+  const t = Date.parse(p.entregaEstimada ?? '');
+  if (!Number.isFinite(t)) return null;
+  const cuando = new Intl.DateTimeFormat('es-CO', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(t));
+  return `Entrega estimada: ${cuando}`;
+}
+
+/**
+ * El «% vendido», o NADA.
+ *
+ * 🔴 Es una afirmación de URGENCIA —de las que persigue la Ley 1480— y ALTORRA no la mide: la dice la
+ * constructora. Por eso el modelo la guarda como `DatoDeTercero` y por eso aquí viaja SIEMPRE con
+ * quién lo dijo y cuándo. Sin fuente no se pinta; y un dato de hace ocho meses se muestra con su
+ * fecha, para que el visitante pueda no creérselo.
+ */
+export function vendidoTexto(p: Pick<Proyecto, 'porcentajeVendido'>): string | null {
+  const v = p.porcentajeVendido;
+  if (!v || !v.fuente?.trim() || !Number.isFinite(v.valor)) return null;
+  const t = Date.parse(v.fecha ?? '');
+  if (!Number.isFinite(t)) return null;
+  const cuando = new Intl.DateTimeFormat('es-CO', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(t));
+  return `${v.valor}% vendido según ${v.fuente.trim()} (${cuando})`;
+}
+
+/**
+ * La licencia, que es LO QUE HACE COMPROBABLE que el desarrollo existe (§284.4).
+ *
+ * No es letra pequeña: es el argumento. En Colombia la licencia la expide una curaduría urbana, es un
+ * acto administrativo PÚBLICO, y cualquiera puede verificar el número. Enseñarla es la diferencia
+ * entre «este proyecto existe» y «alguien nos mandó unos renders» — que es literalmente lo que §270
+ * encontró publicado en la portada.
+ */
+export function licenciaTexto(p: Pick<Proyecto, 'licenciaConstruccion' | 'curaduria'>): string | null {
+  const n = p.licenciaConstruccion?.trim();
+  if (!n) return null;
+  const c = p.curaduria?.trim();
+  return c ? `Licencia de construcción ${n} · ${c}` : `Licencia de construcción ${n}`;
+}
+
+/*
  * ══ JSON-LD DE UN PROYECTO — un `Offer` por TIPOLOGÍA (§285) ═══════════════════════════════════
  *
  * El patrón sale de la investigación de julio (bóveda `2026-07-10-r1-competencia`), donde se midió
