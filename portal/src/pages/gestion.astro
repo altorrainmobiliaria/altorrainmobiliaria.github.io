@@ -1044,6 +1044,11 @@ const init = DATA.admin;
 
         <div class="gx-pie">
           <p class="gx-pie__msg" id="gx-alta-msg" role="status" aria-live="polite"></p>
+          {/* 🕘 CONFIRMAR VIGENCIA (§306) — botón PROPIO, y no un efecto de «Guardar», a propósito:
+              si guardar confirmara, corregir una errata del título le diría a un comprador
+              «Confirmada hoy» en la ficha. Nace `hidden`: solo tiene sentido sobre un inmueble que ya
+              existe, así que el alta no lo ve. */}
+          <button class="alt-btn alt-btn--outline" type="button" id="gx-alta-confirmar" hidden>Sigue vigente</button>
           <button class="alt-btn alt-btn--outline" type="button" id="gx-alta-cancelar">Cancelar</button>
           <button class="alt-btn alt-btn--navy" type="submit" id="gx-alta-guardar">Guardar inmueble</button>
         </div>

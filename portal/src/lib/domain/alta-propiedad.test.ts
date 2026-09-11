@@ -484,6 +484,25 @@ describe('construirEdicion — lo que una edición NO puede reinventar (§111)',
     expect(r.ok && r.propiedad.priceHistory).toEqual([{ fecha: AHORA.toISOString(), valor: 3_500_000 }]);
   });
 
+  it('🔴 §306: la confirmación de vigencia SOBREVIVE a la edición… y NO se renueva', () => {
+    // Las dos mitades importan. Si se perdiera, la ficha dejaría de decir «Confirmada hace N días»
+    // en el primer guardado. Si se RENOVARA, corregir una errata del título le estaría diciendo a un
+    // comprador que alguien llamó al propietario hoy — y eso sí es mentir, no perder un dato.
+    const confirmadaEl = '2026-08-01T09:00:00.000Z';
+    const base = { ...BASE, operacion: 'venta' as const, ultimaConfirmacion: confirmadaEl };
+    const r = construirEdicion(
+      entrada({ imagenes: ['props/INM-202607-0042/1.webp'], titulo: 'Título corregido' }),
+      base,
+      AHORA,
+    );
+    expect(r.ok && r.propiedad.ultimaConfirmacion).toBe(confirmadaEl);
+  });
+
+  it('una propiedad que nunca se confirmó sigue sin fecha tras editarla (no se inventa)', () => {
+    const r = construirEdicion(entrada({ imagenes: ['props/INM-202607-0042/1.webp'] }), { ...BASE, operacion: 'venta' as const }, AHORA);
+    expect(r.ok && r.propiedad.ultimaConfirmacion).toBeUndefined();
+  });
+
   it('`baseDe` lleva el historial y la operación: si no pasan por ahí, se pierden', () => {
     const r = construir();
     if (!r.ok) throw new Error('debia construir');

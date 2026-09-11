@@ -22,6 +22,7 @@ import {
   VERTICALES,
   type COP,
   type Geo,
+  type ISODate,
   type EstadoPropiedad,
   type Operacion,
   type SituacionPH,
@@ -491,6 +492,13 @@ export interface BaseEdicion {
    * es el lado conservador (serie nueva, nunca una caída inventada).
    */
   operacion?: Operacion;
+  /**
+   * La última CONFIRMACIÓN de vigencia (§306). Va por la misma puerta que el sello y el historial, y
+   * por la misma razón: el documento se reescribe entero. ⚠️ Se CONSERVA tal cual, nunca se renueva
+   * al editar — confirmar es un acto deliberado, y estamparlo al guardar haría que corregir una
+   * errata le dijera a un comprador «Confirmada hoy».
+   */
+  ultimaConfirmacion?: ISODate;
   /** El `_version` que se leyó al abrir. Es el testigo del control de concurrencia. */
   version: number;
   /**
@@ -568,6 +576,10 @@ export function construirEdicion(entrada: EntradaAlta, base: BaseEdicion, ahora:
   });
   if (!propiedad.priceHistory.length) delete propiedad.priceHistory;
 
+  // 🕘 La confirmación de vigencia SOBREVIVE a la edición, sin renovarse (§306). Renovarla aquí
+  // convertiría cualquier guardado en un «Confirmada hoy» delante de un comprador.
+  if (base.ultimaConfirmacion) propiedad.ultimaConfirmacion = base.ultimaConfirmacion;
+
   return { ok: true, propiedad };
 }
 
@@ -582,6 +594,7 @@ export function baseDe(p: Propiedad): BaseEdicion {
     // ENTERO, así que lo que no pase por aquí desaparece. Mismo mecanismo que se llevó el sello (§263).
     operacion: p.operacion,
     ...(p.priceHistory?.length ? { priceHistory: p.priceHistory } : {}),
+    ...(p.ultimaConfirmacion ? { ultimaConfirmacion: p.ultimaConfirmacion } : {}),
     ...(p.autorizacionPH ? { autorizacionPH: p.autorizacionPH } : {}),
     ...(p.verificadoAltorra ? { verificadoAltorra: true as const, verificadoEn: p.verificadoEn } : {}),
   };

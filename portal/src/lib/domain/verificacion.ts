@@ -84,3 +84,91 @@ export function selloDeVerificacion(
     updatedAt: iso,
   };
 }
+
+/*
+ * ══ VIGENCIA — «Confirmada hace N días» (§306) ═════════════════════════════════════════════════
+ *
+ * 🔴 EL HUECO. `frescuraTexto()` (en `ficha.ts`) lee `Propiedad.ultimaConfirmacion` y la ficha pinta
+ * su línea… y **nadie escribía ese campo**. Medido el 2026-09-11: cero escritores en todo el repo.
+ * O sea que «frescura verificada de los avisos» —uno de los ocho diferenciales declarados en
+ * `specs/VISION-FUNCIONAL-PRODUCTO.md §8`— era una línea que **no aparecía nunca**. Es [[L-87]] por
+ * sexta vez: lector, tipo, pruebas y comentario, sin nadie al otro lado.
+ *
+ * 🎯 CONFIRMAR ES UN ACTO DELIBERADO, NO UN EFECTO SECUNDARIO DE EDITAR. Si guardar una edición
+ * estampara la fecha, corregir una errata del título haría que la ficha dijera «Confirmada hoy» —
+ * afirmando ante un comprador que alguien llamó al propietario cuando lo único que pasó fue que se
+ * arregló una coma. Es el gemelo exacto del historial de precio (§305), y aquí miente más caro:
+ * la frescura es el argumento de confianza contra los portales llenos de avisos muertos.
+ *
+ * ⚠️ SEPARADO DEL SELLO a propósito. `verificadoEn` responde «¿alguien revisó que este aviso es
+ * legítimo?» (una vez, y se caduca por otra vía); `ultimaConfirmacion` responde «¿sigue disponible y
+ * a este precio?» (recurrente). Fundirlos obligaría a re-verificar el inmueble entero cada mes o a
+ * que el sello envejeciera en silencio.
+ */
+
+/**
+ * Cada cuántos días conviene volver a confirmar.
+ *
+ * No es un número inventado: el mercado colombiano CADUCA los avisos a los 90 días y ALTORRA
+ * publica «sin caducidad» como diferencial (R1 op.6). Prometer eso sin confirmar nada sería el aviso
+ * muerto de siempre con mejor titular — así que la contrapartida honesta es confirmar cada 30, que
+ * deja cualquier ficha a menos de un mes de haber sido comprobada.
+ */
+export const DIAS_PARA_RECONFIRMAR = 30;
+
+/** Días desde la última confirmación. `null` si nunca se confirmó — que NO es lo mismo que «hace mucho». */
+export function diasSinConfirmar(p: Pick<Propiedad, 'ultimaConfirmacion'>, ahora: Date = new Date()): number | null {
+  const t = Date.parse(p.ultimaConfirmacion ?? '');
+  if (!Number.isFinite(t)) return null;
+  const dias = Math.floor((ahora.getTime() - t) / 86_400_000);
+  return dias < 0 ? null : dias;
+}
+
+/**
+ * ¿Toca volver a confirmarla?
+ *
+ * **Nunca confirmada ⇒ SÍ.** Es el caso más importante y el más fácil de dejar fuera por un `??`
+ * distraído: un inmueble que jamás se confirmó es precisamente el que hay que llamar, no uno que se
+ * salta la cola por no tener fecha.
+ */
+export function necesitaConfirmacion(
+  p: Pick<Propiedad, 'ultimaConfirmacion'>,
+  ahora: Date = new Date(),
+  tope: number = DIAS_PARA_RECONFIRMAR,
+): boolean {
+  const dias = diasSinConfirmar(p, ahora);
+  return dias === null || dias >= tope;
+}
+
+/**
+ * La cola de «hay que llamar a estos propietarios»: las que más tiempo llevan sin confirmar, primero.
+ *
+ * 🎯 Existe porque **un sello de frescura que nadie refresca es peor que no tenerlo**: convierte una
+ * promesa de confianza en una fecha vieja escrita en grande. La operación tiene que poder ver a
+ * quién le toca sin buscarlo a mano.
+ */
+export function colaDeConfirmacion(
+  props: readonly Propiedad[],
+  ahora: Date = new Date(),
+  tope: number = DIAS_PARA_RECONFIRMAR,
+): Propiedad[] {
+  return props
+    .filter((p) => necesitaConfirmacion(p, ahora, tope))
+    .sort((a, b) => (diasSinConfirmar(b, ahora) ?? Infinity) - (diasSinConfirmar(a, ahora) ?? Infinity));
+}
+
+/**
+ * El parche que confirma la vigencia. Puro, como el del sello: quien escribe decide la transacción.
+ *
+ * Devuelve `null` si se confirmó HOY — no por ahorrar una escritura, sino porque dos confirmaciones
+ * el mismo día no dicen nada nuevo y cada una gasta un `_version` que sirve para detectar conflictos
+ * de edición reales.
+ */
+export function confirmacionDeVigencia(
+  p: Pick<Propiedad, 'ultimaConfirmacion' | '_version'>,
+  ahora: Date = new Date(),
+): { ultimaConfirmacion: string; _version: number; updatedAt: string } | null {
+  if (diasSinConfirmar(p, ahora) === 0) return null;
+  const iso = ahora.toISOString();
+  return { ultimaConfirmacion: iso, _version: (p._version ?? 0) + 1, updatedAt: iso };
+}

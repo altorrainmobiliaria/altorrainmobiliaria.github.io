@@ -15,8 +15,16 @@
  */
 
 import { cargarAuth } from './auth';
-import { acunarCodigo, guardarEdicion, guardarPropiedadNueva, explicarFallo } from './gestion-alta';
+import {
+  acunarCodigo,
+  confirmarVigencia,
+  explicarConfirmacion,
+  guardarEdicion,
+  guardarPropiedadNueva,
+  explicarFallo,
+} from './gestion-alta';
 import { baseDe, entradaDe, revisarAlta, type BaseEdicion, type EntradaAlta } from '../lib/domain/alta-propiedad';
+import { diasSinConfirmar } from '../lib/domain/verificacion';
 import { explicarProblema } from '../lib/domain/catalogo';
 import { TOPE_IMAGENES } from '../lib/media-subida';
 import { urlMedia } from '../lib/media';
@@ -231,6 +239,21 @@ async function aWebp(bitmap: ImageBitmap, lado: number, calidad: number): Promis
 }
 
 /**
+ * Pinta el botón de vigencia con lo que de verdad hace falta saber: cuántos días lleva sin
+ * confirmarse. «Confirmar» a secas no dice si tocarlo cambia algo — y un botón del que no se sabe si
+ * hace falta no se pulsa nunca, que es como una cola de mantenimiento se queda sin hacer.
+ */
+function pintarConfirmacion(p: Pick<Propiedad, 'ultimaConfirmacion'>): void {
+  const btn = $('gx-alta-confirmar') as HTMLButtonElement | null;
+  if (!btn) return;
+  btn.hidden = false;
+  const dias = diasSinConfirmar(p);
+  btn.textContent =
+    dias === null ? 'Sin confirmar nunca' : dias === 0 ? 'Confirmada hoy' : `Sigue vigente (${dias} d)`;
+  btn.disabled = dias === 0;
+}
+
+/**
  * Las DOS derivadas de una foto (§304): la que se ve en la ficha y la miniatura de los listados.
  *
  * 🔴 Hasta §304 solo se producía la primera, y el índice del catálogo la usaba TAMBIÉN como tarjeta:
@@ -371,6 +394,9 @@ export function montarAlta(): void {
     edicion = null;
     limpiarFormulario();
     tituloPantalla('Nuevo inmueble', 'Se guarda como borrador. Solo sale al portal cuando lo pongas en «Disponible».', 'Guardar inmueble');
+    // En un inmueble que aún no existe no hay vigencia que confirmar (§306).
+    const conf = $('gx-alta-confirmar') as HTMLButtonElement | null;
+    if (conf) conf.hidden = true;
     ver('alta');
     pintarAviso();
     if (codigo) return;
@@ -494,12 +520,36 @@ export function montarAlta(): void {
     escribirEntrada(entradaDe(p));
     limpiarErrores();
     tituloPantalla(p.titulo || p.id, `Editando ${p.id}. El enlace público no cambia aunque cambies el título.`, 'Guardar cambios');
+    pintarConfirmacion(p);
     ver('alta');
     ajustarPorOperacion();
     pintarAviso();
   });
   $('gx-alta-volver')?.addEventListener('click', () => ver(null));
   $('gx-alta-cancelar')?.addEventListener('click', () => ver(null));
+
+  /*
+   * 🕘 CONFIRMAR VIGENCIA (§306) — el botón que hacía falta para que «frescura verificada» exista.
+   *
+   * Dice CUÁNTO lleva sin confirmarse, no solo «confirmar»: sin ese número el operador no sabe si
+   * pulsarlo cambia algo, y un botón que no se sabe si hace falta no se pulsa. Y desaparece en el
+   * ALTA, donde no hay nada que confirmar todavía.
+   */
+  $('gx-alta-confirmar')?.addEventListener('click', async () => {
+    const btn = $('gx-alta-confirmar');
+    const msg = $('gx-alta-msg');
+    if (!btn || !edicion) return;
+    (btn as HTMLButtonElement).disabled = true;
+    const r = await confirmarVigencia(edicion.id);
+    (btn as HTMLButtonElement).disabled = false;
+    if (r.ok) {
+      edicion = { ...edicion, ultimaConfirmacion: r.ultimaConfirmacion };
+      pintarConfirmacion({ ultimaConfirmacion: r.ultimaConfirmacion });
+      if (msg) msg.textContent = 'Confirmada. La ficha ya lo dice.';
+      return;
+    }
+    if (msg) msg.textContent = explicarConfirmacion(r);
+  });
 
   // El aviso se recalcula con cada tecla: la pregunta «¿esto se va a ver?» tiene respuesta en todo
   // momento, así que esconderla hasta pulsar Guardar sería esconderla a propósito.

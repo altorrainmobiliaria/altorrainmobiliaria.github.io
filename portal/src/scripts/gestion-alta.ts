@@ -21,7 +21,13 @@
  */
 
 import { cargarAuth } from './auth';
-import { reparosParaSellar, selloDeVerificacion, explicarReparo, type ReparoVerificacion } from '../lib/domain/verificacion';
+import {
+  confirmacionDeVigencia,
+  reparosParaSellar,
+  selloDeVerificacion,
+  explicarReparo,
+  type ReparoVerificacion,
+} from '../lib/domain/verificacion';
 import { construirEdicion, construirPropiedad, claveContador, codigoPropiedad, TOPE_SECUENCIA } from '../lib/domain/alta-propiedad';
 import type { BaseEdicion, ContextoAlta, EntradaAlta, ErrorCampo } from '../lib/domain/alta-propiedad';
 import type { Propiedad } from '../lib/domain/propiedades';
@@ -320,6 +326,40 @@ export function marcarVerificada(id: string, ahora: Date = new Date()): Promise<
     (tx, refs) => cuerpoDeSello(tx, refs, id, ahora),
     (fallo) => ({ ok: false, fallo }) as ResultadoSello,
   );
+}
+
+export type ResultadoConfirmacion =
+  | { ok: true; id: string; ultimaConfirmacion: string }
+  | { ok: false; fallo: FalloAlta }
+  | { ok: false; motivo: 'ya-confirmada-hoy' };
+
+/**
+ * Confirma que el inmueble SIGUE vigente (§306) — disponible y a este precio.
+ *
+ * 🎯 Es un acto DELIBERADO y por eso tiene su propia puerta en vez de colgarse del guardado: si
+ * editar confirmara, corregir una errata del título haría que la ficha le dijera a un comprador
+ * «Confirmada hoy». La frescura es el argumento de confianza contra los portales llenos de avisos
+ * muertos; estamparla sola la convierte en el mismo aviso muerto con mejor titular.
+ *
+ * `merge: true` igual que el sello: esto toca UN campo, no reescribe el documento.
+ */
+export function confirmarVigencia(id: string, ahora: Date = new Date()): Promise<ResultadoConfirmacion> {
+  return enTransaccion(async (tx, refs) => {
+    const snap = await tx.get(refs.propiedad(id));
+    if (!snap.exists()) return { ok: false, fallo: { tipo: 'no-existe', codigo: id } } as ResultadoConfirmacion;
+
+    const viva = { ...(snap.data() as object), id } as Propiedad;
+    const parche = confirmacionDeVigencia(viva, ahora);
+    if (!parche) return { ok: false, motivo: 'ya-confirmada-hoy' } as ResultadoConfirmacion;
+
+    tx.set(refs.propiedad(id), parche, { merge: true });
+    return { ok: true, id, ultimaConfirmacion: parche.ultimaConfirmacion } as ResultadoConfirmacion;
+  }, (fallo) => ({ ok: false, fallo }) as ResultadoConfirmacion);
+}
+
+/** El resultado de confirmar, dicho para quien está mirando la cola. */
+export function explicarConfirmacion(r: Extract<ResultadoConfirmacion, { ok: false }>): string {
+  return 'motivo' in r ? 'Esta ya se confirmó hoy. Recarga la lista.' : explicarFallo(r.fallo);
 }
 
 /** El resultado del sello, dicho para quien está mirando la cola. */
