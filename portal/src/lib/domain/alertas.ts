@@ -294,12 +294,24 @@ export function resumenCriterios(c: CriteriosAlerta): string {
   partes.push(etiquetaOperacion(c.operacion));
   partes.push(c.zonas.length ? `en ${c.zonas.join(', ')}` : 'en Cartagena');
   if (c.habMin != null) partes.push(`desde ${c.habMin} habitaciones`);
+  /*
+   * 🔴 EL TOPE SE DICE CON SU UNIDAD (§315). Esto usaba `pesos()` pelado, así que una alerta de
+   * corta estancia se confirmaba —y encabezaba cada correo— como «hasta $500.000», sin decir que el
+   * filtro compara contra el precio POR NOCHE (`coincide()` mide contra `r.precio`, que en
+   * alojamiento es la noche). Quien lo leyera pensando en el presupuesto de su viaje recibiría
+   * alojamientos de $500.000 la noche durante semanas sin entender por qué.
+   *
+   * Y no hacía falta inventar nada: `formatoPrecio` —dos funciones más arriba, en este mismo
+   * fichero— ya dice «al mes» y «por noche» según la operación. El dato estaba; solo no se usaba
+   * donde más se lee. Un límite sin unidad no es un límite, es una cifra.
+   */
+  const conUnidad = (v: COP) => formatoPrecio(v, c.operacion);
   if (c.precioMin != null && c.precioMax != null) {
-    partes.push(`entre ${pesos(c.precioMin)} y ${pesos(c.precioMax)}`);
+    partes.push(`entre ${pesos(c.precioMin)} y ${conUnidad(c.precioMax)}`);
   } else if (c.precioMax != null) {
-    partes.push(`hasta ${pesos(c.precioMax)}`);
+    partes.push(`hasta ${conUnidad(c.precioMax)}`);
   } else if (c.precioMin != null) {
-    partes.push(`desde ${pesos(c.precioMin)}`);
+    partes.push(`desde ${conUnidad(c.precioMin)}`);
   }
   return partes.join(' ');
 }

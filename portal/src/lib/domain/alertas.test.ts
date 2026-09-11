@@ -233,3 +233,48 @@ describe('texto para personas', () => {
     expect(clave('  Centro  HISTÓRICO ')).toBe('centro historico');
   });
 });
+
+
+/*
+ * 🏷️ EL TOPE DE PRECIO SE DICE CON SU UNIDAD (§315).
+ *
+ * `coincide()` compara el tope contra `r.precio`, que es el precio de DISPLAY: mensual en arriendo y
+ * POR NOCHE en corta estancia. El resumen lo decia con `pesos()` pelado —«hasta $500.000»—, asi que
+ * quien pusiera el presupuesto de su viaje en una alerta «Por dias» recibiria alojamientos de ese
+ * precio cada noche, y el texto que confirma la alerta y encabeza cada correo no lo corregia.
+ *
+ * Se prueba el TEXTO y no el filtro a proposito: el filtro ya estaba bien. Lo que estaba mal era lo
+ * que la persona lee para saber que pidio.
+ */
+describe('🏷️ resumenCriterios dice la UNIDAD del precio (§315)', () => {
+  const criterios = (over = {}) =>
+    normalizarCriterios({ operacion: 'alojamiento', precioMax: '500000', ...over });
+
+  it('en corta estancia el tope se lee «por noche»', () => {
+    expect(resumenCriterios(criterios())).toContain('por noche');
+  });
+
+  it('en arriendo se lee «al mes»', () => {
+    expect(resumenCriterios(criterios({ operacion: 'arriendo' }))).toContain('al mes');
+  });
+
+  it('en VENTA no se inventa unidad: un precio de venta no es periodico', () => {
+    const t = resumenCriterios(criterios({ operacion: 'venta' }));
+    expect(t).not.toContain('por noche');
+    expect(t).not.toContain('al mes');
+    expect(t).toContain('hasta');
+  });
+
+  it('el rango también la lleva, y solo en el extremo que la necesita', () => {
+    // «entre $300.000 y $500.000 por noche» — repetir la unidad en los dos extremos se lee peor y no
+    // añade informacion: la unidad es del RANGO, no de cada numero.
+    const t = resumenCriterios(criterios({ precioMin: '300000' }));
+    expect(t).toContain('por noche');
+    expect(t.match(/por noche/g)).toHaveLength(1);
+  });
+
+  it('sin tope no aparece unidad suelta', () => {
+    const t = resumenCriterios(normalizarCriterios({ operacion: 'alojamiento' }));
+    expect(t).not.toContain('por noche');
+  });
+});

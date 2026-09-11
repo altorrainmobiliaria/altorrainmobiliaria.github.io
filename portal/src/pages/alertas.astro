@@ -43,6 +43,10 @@ const q = Object.fromEntries(Astro.url.searchParams);
 // La MISMA función que usa el endpoint. Si la página interpretara los criterios por su cuenta, lo que
 // se ve en pantalla y lo que se guarda podrían separarse sin que nada fallara.
 const criterios = normalizarCriterios(q);
+/* §315 — la unidad del tope de precio depende de la operación: el filtro compara contra el precio de
+   display, mensual en arriendo y POR NOCHE en corta estancia. Se pinta desde el servidor con la
+   operación guardada y el script la re-rotula al cambiar el select. */
+const unidadPrecio = criterios.operacion === 'arriendo' ? ' al mes' : criterios.operacion === 'alojamiento' ? ' por noche' : '';
 
 const ok = Astro.url.searchParams.get('ok') === '1';
 const error = Astro.url.searchParams.get('error');
@@ -143,7 +147,7 @@ const jsonLd = {
                   </select>
                 </div>
                 <div>
-                  <label class="alt-label" for="al-min">Desde (COP)</label>
+                  <label class="alt-label" for="al-min" id="al-lbl-min">Desde (COP){unidadPrecio}</label>
                   <input
                     class="alt-input"
                     id="al-min"
@@ -155,7 +159,7 @@ const jsonLd = {
                   />
                 </div>
                 <div>
-                  <label class="alt-label" for="al-max">Hasta (COP)</label>
+                  <label class="alt-label" for="al-max" id="al-lbl-max">Hasta (COP){unidadPrecio}</label>
                   <input
                     class="alt-input"
                     id="al-max"
@@ -240,8 +244,31 @@ const jsonLd = {
     const hiddenOp = document.getElementById('al-operacion') as HTMLInputElement | null;
     const err = document.getElementById('al-err') as HTMLParagraphElement | null;
 
+    /*
+     * 🔴 LA UNIDAD DEL TOPE DE PRECIO CAMBIA CON LA OPERACIÓN (§315). El filtro compara contra el
+     * precio de display, que en arriendo es el canon MENSUAL y en corta estancia es la NOCHE. Con la
+     * etiqueta muda —«Hasta (COP)»— alguien que eligiera «Por días» y escribiera el presupuesto de su
+     * viaje recibiría alojamientos de ese precio POR NOCHE, y nada en la pantalla lo corregía.
+     *
+     * Va en este script y no en una isla nueva porque el listener ya existía para sincronizar el
+     * `<input hidden>`. ⚠️ Sin JS la etiqueta se queda con el texto que el servidor pintó según la
+     * operación guardada — que es el caso correcto al abrir la página, así que la mejora progresiva
+     * no deja a nadie peor.
+     */
+    const unidadPrecio = (op: string) =>
+      op === 'arriendo' ? ' al mes' : op === 'alojamiento' ? ' por noche' : '';
+    const rotularPrecio = () => {
+      const u = unidadPrecio(selOp?.value ?? '');
+      const min = document.getElementById('al-lbl-min');
+      const max = document.getElementById('al-lbl-max');
+      if (min) min.textContent = `Desde (COP)${u}`;
+      if (max) max.textContent = `Hasta (COP)${u}`;
+    };
+    rotularPrecio();
+
     selOp?.addEventListener('change', () => {
       if (hiddenOp && selOp) hiddenOp.value = selOp.value;
+      rotularPrecio();
     });
 
     const fallar = (msg: string) => {
