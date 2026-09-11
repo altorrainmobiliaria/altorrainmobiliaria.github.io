@@ -34,6 +34,10 @@ import type { Propiedad } from '../lib/domain/propiedades';
 const LADO_MAX = 1600;
 /** Calidad WebP. 0.82 es el punto donde una foto de inmueble deja de mejorar a ojo. */
 const CALIDAD = 0.82;
+/** Lado de la MINIATURA (§304). La tarjeta más grande del portal mide ~330 px: 480 cubre densidad ×2. */
+const LADO_THUMB = 480;
+/** Calidad de la miniatura. Más baja a propósito: a ese tamaño no se nota y es lo que la deja bajo 150 KB. */
+const CALIDAD_THUMB = 0.7;
 
 interface FotoEnCurso {
   /** Clave de R2 una vez subida; vacía mientras sube. */
@@ -209,30 +213,76 @@ function pintarFotos(): void {
 // FOTOS — convertir en el navegador y subir
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Archivo del disco → Blob WebP reescalado. Devuelve `null` si el navegador no sabe hacer WebP. */
-async function aWebp(file: File): Promise<Blob | null> {
-  const bitmap = await createImageBitmap(file);
-  const escala = Math.min(1, LADO_MAX / Math.max(bitmap.width, bitmap.height));
+/**
+ * Archivo del disco → Blob WebP reescalado al lado mayor pedido. `null` si el navegador no sabe WebP.
+ *
+ * El bitmap se crea UNA vez por foto y se reutiliza para las dos derivadas: decodificar una foto de
+ * 15 MB dos veces es el tipo de derroche que no se nota en una y sí en treinta.
+ */
+async function aWebp(bitmap: ImageBitmap, lado: number, calidad: number): Promise<Blob | null> {
+  const escala = Math.min(1, lado / Math.max(bitmap.width, bitmap.height));
   const w = Math.round(bitmap.width * escala);
   const h = Math.round(bitmap.height * escala);
   const lienzo = document.createElement('canvas');
   lienzo.width = w;
   lienzo.height = h;
   lienzo.getContext('2d')?.drawImage(bitmap, 0, 0, w, h);
-  bitmap.close();
-  return new Promise((res) => lienzo.toBlob((b) => res(b && b.type === 'image/webp' ? b : null), 'image/webp', CALIDAD));
+  return new Promise((res) => lienzo.toBlob((b) => res(b && b.type === 'image/webp' ? b : null), 'image/webp', calidad));
 }
 
-/** Sube una foto y devuelve su CLAVE de R2 (`props/<CÓDIGO>/N.webp`), o `null` si falló. */
-async function subir(blob: Blob, codigo: string, indice: number, token: string): Promise<string | null> {
-  const resp = await fetch(`/api/media/subir?propiedad=${encodeURIComponent(codigo)}&n=${indice}`, {
-    method: 'POST',
-    headers: { 'content-type': 'image/webp', authorization: `Bearer ${token}` },
-    body: blob,
-  }).catch(() => null);
-  if (!resp?.ok) return null;
-  const j = (await resp.json().catch(() => null)) as { clave?: string } | null;
-  return j?.clave ?? null;
+/**
+ * Las DOS derivadas de una foto (§304): la que se ve en la ficha y la miniatura de los listados.
+ *
+ * 🔴 Hasta §304 solo se producía la primera, y el índice del catálogo la usaba TAMBIÉN como tarjeta:
+ * una SERP de nueve resultados iba a servir hasta 27 MB, con el contrato del catálogo prometiendo
+ * «<150KB» por tarjeta. No es que alguien mintiera — es que no había de dónde sacar un thumb.
+ *
+ * 480 px de lado y calidad 0.7 dejan la miniatura muy por debajo del tope de 150 KB; la tarjeta más
+ * grande del portal mide ~330 px, así que 480 cubre pantallas de densidad doble sin pasarse.
+ */
+async function derivadas(file: File): Promise<{ full: Blob; thumb: Blob } | null> {
+  const bitmap = await createImageBitmap(file);
+  try {
+    const full = await aWebp(bitmap, LADO_MAX, CALIDAD);
+    const thumb = await aWebp(bitmap, LADO_THUMB, CALIDAD_THUMB);
+    return full && thumb ? { full, thumb } : null;
+  } finally {
+    bitmap.close();
+  }
+}
+
+/**
+ * Sube la foto Y su miniatura; devuelve la CLAVE de la foto (`props/<CÓDIGO>/N.webp`) o `null`.
+ *
+ * ⚠️ **TODO O NADA.** Si el thumb no sube, la foto NO cuenta. Una foto sin su miniatura es una foto
+ * que el listado servirá a tamaño completo — exactamente el defecto que §304 arregla, reaparecido en
+ * una sola tarjeta y sin que nada falle: la imagen carga, solo que pesa veinte veces más. La clave del
+ * thumb no se guarda en ningún sitio: se DERIVA de la de la foto (`claveThumb`), así que no pueden
+ * discrepar.
+ */
+async function subir(
+  blobs: { full: Blob; thumb: Blob },
+  codigo: string,
+  indice: number,
+  token: string,
+): Promise<string | null> {
+  const una = async (blob: Blob, v: 'full' | 'thumb'): Promise<string | null> => {
+    const resp = await fetch(
+      `/api/media/subir?propiedad=${encodeURIComponent(codigo)}&n=${indice}&v=${v}`,
+      {
+        method: 'POST',
+        headers: { 'content-type': 'image/webp', authorization: `Bearer ${token}` },
+        body: blob,
+      },
+    ).catch(() => null);
+    if (!resp?.ok) return null;
+    const j = (await resp.json().catch(() => null)) as { clave?: string } | null;
+    return j?.clave ?? null;
+  };
+
+  const clave = await una(blobs.full, 'full');
+  if (!clave) return null;
+  return (await una(blobs.thumb, 'thumb')) ? clave : null;
 }
 
 async function tokenActual(): Promise<string | null> {
@@ -492,20 +542,20 @@ export function montarAlta(): void {
       const hueco: FotoEnCurso = { clave: '', previa: '', estado: 'subiendo' };
       fotos.push(hueco);
       pintarFotos();
-      const blob = await aWebp(file).catch(() => null);
-      if (!blob) {
+      const blobs = await derivadas(file).catch(() => null);
+      if (!blobs) {
         hueco.estado = 'fallo';
         hueco.previa = URL.createObjectURL(file);
         pintarFotos();
         continue;
       }
-      const clave = await subir(blob, codigo, fotos.indexOf(hueco) + 1, token);
+      const clave = await subir(blobs, codigo, fotos.indexOf(hueco) + 1, token);
       if (clave) {
         hueco.clave = clave;
         hueco.estado = 'lista';
       } else {
         hueco.estado = 'fallo';
-        hueco.previa = URL.createObjectURL(blob);
+        hueco.previa = URL.createObjectURL(blobs.full);
       }
       pintarFotos();
       pintarAviso();

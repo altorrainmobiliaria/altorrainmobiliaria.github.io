@@ -13,6 +13,7 @@ import {
 import type { ProblemaPublicacion } from './catalogo';
 import type { Propiedad } from './propiedades';
 import type { Proyecto } from './proyectos';
+import { esClaveThumb } from '../media-subida';
 
 // Construcción del índice de catálogo (camino de ESCRITURA, §54.4). Lógica PURA → sin emulador.
 // Cubre: filtro de publicadas (anti-oráculo) · sharding · precio por operación · coords nullable ·
@@ -468,6 +469,45 @@ describe('rutaDeResumen / claseDe — a dónde lleva la card (§284.5)', () => {
 
   it('sin slug cae al id, que siempre existe', () => {
     expect(rutaDeResumen({ id: 'PRY-1', slug: '', clase: 'proyecto' })).toBe('/proyecto/PRY-1');
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// §304 — EL ÍNDICE LLEVA EL THUMB, NO LA FOTO. El contrato de `CatalogoResumen.thumb` decía
+// «<150KB» mientras se le escribía la imagen de 1600 px: nueve tarjetas, hasta 27 MB. Esta prueba
+// es lo que impide que vuelva, y vale para las DOS entidades del shard de venta.
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+describe('thumb del catálogo — la miniatura, nunca la foto (§304)', () => {
+  it('🎯 una propiedad con foto de R2 entra al índice con la clave del THUMB', () => {
+    const r = propiedadAResumen(prop({ imagenes: ['props/INM-202607-0001/1.webp'], imagenPortada: undefined }));
+    if (!('resumen' in r)) throw new Error('debia entrar');
+    expect(r.resumen.thumb).toBe('props/INM-202607-0001/1-thumb.webp');
+    expect(esClaveThumb(r.resumen.thumb)).toBe(true);
+  });
+
+  it('🎯 y un PROYECTO de obra nueva también: el mismo shard, la misma regla', () => {
+    const { indices } = construirIndices([], '2026-08-22T00:00:00Z', [
+      pry({ imagenes: ['props/INM-202608-0009/1.webp'], imagenPortada: undefined }),
+    ]);
+    expect(indices.venta.items[0].thumb).toBe('props/INM-202608-0009/1-thumb.webp');
+  });
+
+  it('respeta `imagenPortada` cuando la hay, y le saca SU thumb', () => {
+    const r = propiedadAResumen(prop({ imagenPortada: 'props/INM-202607-0001/7.webp' }));
+    if (!('resumen' in r)) throw new Error('debia entrar');
+    expect(r.resumen.thumb).toBe('props/INM-202607-0001/7-thumb.webp');
+  });
+
+  it('🔴 los datos DEMO salen intactos: no se les inventa una miniatura que nadie subió', () => {
+    const r = propiedadAResumen(prop({ imagenes: ['/assets/villa-pool.webp'], imagenPortada: undefined }));
+    if (!('resumen' in r)) throw new Error('debia entrar');
+    expect(r.resumen.thumb).toBe('/assets/villa-pool.webp');
+  });
+
+  it('sin imagen sigue omitiéndose por `sin-imagen`, no entrando con un thumb vacío', () => {
+    const r = propiedadAResumen(prop({ imagenes: [], imagenPortada: undefined }));
+    expect(r).toEqual({ omitida: { id: 'INM-202607-0001', motivo: 'sin-imagen' } });
   });
 });
 

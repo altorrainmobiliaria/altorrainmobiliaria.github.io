@@ -15,6 +15,7 @@ import {
   problemasParaPublicarProyecto,
   esPublicadoProyecto,
 } from './proyectos';
+import { claveThumb } from '../media-subida';
 import type { ProblemaProyecto, Proyecto, Tipologia } from './proyectos';
 
 /** Shards del índice por operación (doc `indices/catalogo-{shard}`). Sharding desde el día 1 (§54.4): el
@@ -221,7 +222,10 @@ export function propiedadAResumen(p: Propiedad): { resumen: CatalogoResumen } | 
   const motivos = motivosDeOmision(p);
   if (motivos.length) return { omitida: { id: p.id, motivo: motivos[0] } };
   const precio = precioDisplay(p) as COP;
-  const thumb = portadaDe(p);
+  // 🖼️ EL THUMB, NO LA FOTO (§304). `portadaDe` devuelve la imagen de 1600 px; esta línea servía esa
+  // misma imagen como tarjeta, con el contrato de este campo prometiendo «<150KB» dos líneas más
+  // arriba. Nueve tarjetas = hasta 27 MB. La clave del thumb se DERIVA de la de la foto.
+  const thumb = claveThumb(portadaDe(p));
 
   // Badges SOLO desde flags REALES del dominio (nada inventado, L-29); máx 2.
   const badges: string[] = [];
@@ -274,7 +278,7 @@ export function proyectoAResumen(p: Proyecto): { resumen: CatalogoResumen } | { 
   // defensas que nunca corren.
   const rango = rangoDePrecios(p.tipologias) as { desde: COP; hasta: COP };
   const entrada = tipologiaDeEntrada(p.tipologias) as Tipologia;
-  const thumb = p.imagenPortada ?? p.imagenes[0];
+  const thumb = claveThumb(p.imagenPortada ?? p.imagenes[0]); // el thumb, no la foto (§304)
 
   return {
     resumen: {

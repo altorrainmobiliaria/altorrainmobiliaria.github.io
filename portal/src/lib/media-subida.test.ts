@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
   claveImagen,
+  claveThumb,
   claveValida,
+  esClaveThumb,
   explicarRechazo,
+  topeDe,
   TOPE_BYTES,
+  TOPE_BYTES_THUMB,
   TOPE_IMAGENES,
   validarCuerpo,
 } from './media-subida';
@@ -100,5 +104,69 @@ describe('explicarRechazo — un 400 sin explicación es una llamada de teléfon
       expect(txt.length).toBeGreaterThan(10);
       expect(txt).not.toContain('undefined');
     }
+  });
+
+  it('el tope que se nombra es el de SU variante, no el de la otra', () => {
+    expect(explicarRechazo('demasiado-grande', 'thumb')).toContain('KB');
+    expect(explicarRechazo('demasiado-grande', 'full')).toContain('MB');
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// §304 — LAS DOS DERIVADAS. «Nunca servir originales» estaba adoptado como invariante VERIFICABLE
+// y se cumplía a medias: había una sola talla y el índice la usaba como tarjeta. Lo que se fija
+// aquí es que el thumb se DERIVE (no se pueda equivocar) y que lo que no es una clave de R2 salga
+// intacto — inventarle un `-thumb` a una ruta demo es un 404 en cada tarjeta.
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+describe('claveImagen con variante · claveThumb — el thumb se deriva, no se teclea', () => {
+  it('la variante cambia el nombre, no la carpeta', () => {
+    expect(claveImagen('INM-202608-0001', 3)).toEqual({ ok: true, clave: 'props/INM-202608-0001/3.webp' });
+    expect(claveImagen('INM-202608-0001', 3, 'full')).toEqual({ ok: true, clave: 'props/INM-202608-0001/3.webp' });
+    expect(claveImagen('INM-202608-0001', 3, 'thumb')).toEqual({ ok: true, clave: 'props/INM-202608-0001/3-thumb.webp' });
+  });
+
+  it('🎯 `claveThumb` de una foto es su miniatura, y de su miniatura es ella misma (idempotente)', () => {
+    const full = 'props/INM-202608-0001/3.webp';
+    const thumb = 'props/INM-202608-0001/3-thumb.webp';
+    expect(claveThumb(full)).toBe(thumb);
+    expect(claveThumb(thumb)).toBe(thumb); // no encadena `-thumb-thumb`
+  });
+
+  it('🔴 lo que NO es clave de R2 sale INTACTO: inventarle un thumb es un 404 en cada tarjeta', () => {
+    for (const x of ['/assets/villa-pool.webp', 'https://cdn.ajeno/x.webp', '', 'props/otra-cosa.webp']) {
+      expect(claveThumb(x)).toBe(x);
+    }
+  });
+
+  it('la clave del thumb es tan VÁLIDA como la de la foto (si no, el endpoint la rechazaría)', () => {
+    expect(claveValida('props/INM-202608-0001/3-thumb.webp')).toBe(true);
+    expect(esClaveThumb('props/INM-202608-0001/3-thumb.webp')).toBe(true);
+    expect(esClaveThumb('props/INM-202608-0001/3.webp')).toBe(false);
+  });
+
+  it('y sigue sin colarse una URL disfrazada por la puerta del thumb', () => {
+    expect(claveValida('https://ajeno/props/INM-202608-0001/3-thumb.webp')).toBe(false);
+    expect(claveValida('/props/INM-202608-0001/3-thumb.webp')).toBe(false);
+    expect(claveValida('props/../INM-202608-0001/3-thumb.webp')).toBe(false);
+  });
+});
+
+describe('topeDe / validarCuerpo por variante — el thumb no puede pesar como la foto', () => {
+  it('🎯 un WebP de 1 MB pasa como foto y NO pasa como miniatura', () => {
+    const unMega = 1024 * 1024;
+    expect(validarCuerpo('image/webp', unMega, 'full')).toEqual({ ok: true });
+    expect(validarCuerpo('image/webp', unMega, 'thumb')).toEqual({ ok: false, motivo: 'demasiado-grande' });
+  });
+
+  it('los bordes de cada tope', () => {
+    expect(validarCuerpo('image/webp', TOPE_BYTES_THUMB, 'thumb')).toEqual({ ok: true });
+    expect(validarCuerpo('image/webp', TOPE_BYTES_THUMB + 1, 'thumb')).toEqual({ ok: false, motivo: 'demasiado-grande' });
+    expect(topeDe('thumb')).toBeLessThan(topeDe('full'));
+  });
+
+  it('sin variante se comporta como antes (la foto): no hay regresión en el camino viejo', () => {
+    expect(validarCuerpo('image/webp', TOPE_BYTES)).toEqual({ ok: true });
+    expect(validarCuerpo('image/webp', TOPE_BYTES + 1)).toEqual({ ok: false, motivo: 'demasiado-grande' });
   });
 });
