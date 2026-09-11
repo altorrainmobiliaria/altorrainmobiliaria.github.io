@@ -397,7 +397,19 @@ const SENAL_DINERO = /\$\s?\d[\d.,]{2,}/g;
 const SENAL_ESTANCIA = /\b(?:noches?|estad[ií]as?|hu[eé]sped(?:es)?|por\s+d[ií]as|check[-\s]?in)\b/i;
 /** Caracteres a cada lado del importe. 80 ≈ una línea de desglose; más empieza a alcanzar el menú. */
 const VENTANA_PRECIO = 80;
-const SENAL_RESERVA = /Solicitar estas fechas|Enviar solicitud|<form/i;
+/*
+ * ⛔ AQUI HABIA UNA SEGUNDA CONDICION Y ERA LEGALMENTE INCORRECTA (§316).
+ *
+ * `SENAL_RESERVA = /Solicitar estas fechas|Enviar solicitud|<form/i` exigia que la pagina ademas
+ * ofreciera RESERVAR — y la Ley 300/1996 no dice eso: el RNT va en TODA publicidad de alojamiento
+ * turistico, ofrezca o no un formulario. Ademas este negocio convierte por WhatsApp, no por `<form>`:
+ * la ficha real remata con `<a href={whatsappLink}>Solicitar informacion</a>` («informacion», no
+ * «estas fechas»), asi que el patron dominante del sitio no casaba ninguna de las tres alternativas.
+ *
+ * 📊 Medido sobre `portal/dist/client` antes de quitarla: con la condicion, 2 paginas juzgadas; sin
+ * ella, las MISMAS 2. Cero cambio hoy — es red preventiva, igual que el ensanche de §314. Lo que se
+ * retira no es cobertura, es una excusa para no mirar.
+ */
 
 /** ¿Hay un importe con vocabulario de estadía PEGADO? */
 function anunciaEstadia(texto) {
@@ -457,7 +469,7 @@ if (ES_PROD) {
       .replace(/<template\b[^>]*>[\s\S]*?<\/template>/gi, '')
       .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
     const texto = cuerpo.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-    if (!anunciaEstadia(texto) || !SENAL_RESERVA.test(cuerpo)) continue;
+    if (!anunciaEstadia(texto)) continue;
     // El RNT puede escribirse de varias formas; se acepta cualquiera con su número al lado.
     if (/\bRNT\b[^.]{0,40}\d/i.test(texto)) continue;
     sinRnt.push(relative(resolve(root, 'dist/client'), f).replace(/\\/g, '/'));
@@ -569,13 +581,26 @@ const MOVIL_CO = /(?:\+57[\s.-]?|tel:|wa\.me\/57|\b)3\d{2}[\s.-]\d{3}[\s.-]?\d{4
 const CORREO_CUALQUIERA = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
 const FUERA = /(^|[\\/])(node_modules|\.git|_legacy|backups|design|dist|skills)([\\/]|$)/;
 
-/** TODO lo que el dominio sirve: el legacy de la raiz Y el portal construido. */
-function servidoPorElDominio(dir, acc = []) {
+/**
+ * TODO lo que el dominio sirve: el legacy de la raiz Y el portal construido.
+ *
+ * 🔴 `FUERA` SE MIDE CONTRA LA RUTA RELATIVA A `base`, NO CONTRA LA ABSOLUTA (§316). Antes se
+ * probaba sobre la ruta completa de cada hijo, y `FUERA` lleva el segmento `dist`: al recorrer
+ * `portal/dist/client`, el PRIMER hijo ya casaba (`…/portal/dist/client/index.html`) y la rama del
+ * portal devolvia **CERO ficheros**. O sea que el gate anunciaba «127 fichero(s) SERVIDOS por el
+ * dominio (legacy + portal)» **sin abrir un solo fichero del portal**: los 127 eran todos del legacy.
+ *
+ * Es exactamente la averia de §250 —mirar el sitio equivocado— reaparecida DENTRO del gate que se
+ * escribio para no repetirla, y en el unico control que no tiene otra red: si el movil PERSONAL del
+ * dueno acabara en una pagina del portal, esto decia verde. Con la ruta relativa, el `dist` del
+ * legacy sigue excluyendose (ahi si es un subdirectorio) y el del portal deja de auto-excluirse.
+ */
+function servidoPorElDominio(dir, acc = [], base = dir) {
   if (!existsSync(dir)) return acc;
   for (const n of readdirSync(dir)) {
     const p = resolve(dir, n);
-    if (FUERA.test(p)) continue;
-    if (statSync(p).isDirectory()) servidoPorElDominio(p, acc);
+    if (FUERA.test(relative(base, p))) continue;
+    if (statSync(p).isDirectory()) servidoPorElDominio(p, acc, base);
     else if (/\.(html|js|json|webmanifest|xml)$/i.test(n)) acc.push(p);
   }
   return acc;
