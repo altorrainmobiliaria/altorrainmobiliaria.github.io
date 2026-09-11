@@ -25,6 +25,7 @@ import {
 } from './gestion-alta';
 import { baseDe, entradaDe, revisarAlta, type BaseEdicion, type EntradaAlta } from '../lib/domain/alta-propiedad';
 import { diasSinConfirmar } from '../lib/domain/verificacion';
+import { montarAltaProyecto } from './gestion-alta-proyecto';
 import { explicarProblema } from '../lib/domain/catalogo';
 import { TOPE_IMAGENES } from '../lib/media-subida';
 import { urlMedia } from '../lib/media';
@@ -361,13 +362,15 @@ export function montarAlta(): void {
   const vistaVentas = $('gx-vista-ventas');
   const vistaPerfiles = $('gx-vista-perfiles');
   const vistaLiquidacion = $('gx-vista-liquidacion');
+  const vistaAltaPry = $('gx-vista-alta-pry');
   const ver = (
     cual:
-      | 'alta' | 'inmuebles' | 'contratos' | 'novedades' | 'documentos' | 'ventas' | 'perfiles'
+      | 'alta' | 'alta-pry' | 'inmuebles' | 'contratos' | 'novedades' | 'documentos' | 'ventas' | 'perfiles'
       | 'liquidacion' | null,
   ) => {
     vistaPanel.hidden = cual !== null;
     vistaAlta.hidden = cual !== 'alta';
+    if (vistaAltaPry) vistaAltaPry.hidden = cual !== 'alta-pry';
     if (vistaInmuebles) vistaInmuebles.hidden = cual !== 'inmuebles';
     if (vistaContratos) vistaContratos.hidden = cual !== 'contratos';
     if (vistaNovedades) vistaNovedades.hidden = cual !== 'novedades';
@@ -510,6 +513,10 @@ export function montarAlta(): void {
   montarRegistroPago();
   montarFormularios();
   montarExportInmuebles();
+  // 🏗️ La QUINTA línea (§309). Vive en su propio módulo —no es una pestaña de esta pantalla— porque
+  // un proyecto es un contenedor de tipologías, no un inmueble con campos extra (§270). Recibe `ver`
+  // para no duplicar el conmutador de vistas, que es el que sabe esconder a los demás.
+  montarAltaProyecto(ver as (cual: string | null) => void);
 
   // El listado avisa; esta pantalla es la única que sabe pintar un inmueble.
   document.addEventListener('altorra:editar-inmueble', (ev) => {

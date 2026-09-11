@@ -13,6 +13,7 @@ export const prerender = true;
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { ZONAS } from '../lib/content/zonas';
 import { TIPOS_INMUEBLE } from '../lib/domain/shared';
+import { ESTADOS_OBRA, ETIQUETA_ESTADO_OBRA } from '../lib/domain/proyectos';
 import { NOMBRE_DOCUMENTO, TIPOS_DOCUMENTO } from '../lib/domain/documentos';
 
 const nav = [
@@ -108,6 +109,8 @@ const TIPOS: Array<[string, string]> = TIPOS_INMUEBLE.map((t) => [
   t,
   (t.charAt(0).toUpperCase() + t.slice(1)).replace(/_/g, ' '),
 ]);
+/** Estados de obra — del modelo SELLADO (§284), con sus etiquetas. Ni una lista pegada a mano. */
+const ESTADOS_OBRA_OPC: Array<[string, string]> = ESTADOS_OBRA.map((e) => [e, ETIQUETA_ESTADO_OBRA[e]]);
 const SPECS: Array<[string, string]> = [
   ['habitaciones', 'Habitaciones'],
   ['banos', 'Baños'],
@@ -249,6 +252,7 @@ const init = DATA.admin;
             <button class="gx-seg__btn" type="button" role="tab" aria-selected="false" data-role="prop">Propietario</button>
           </div>
           <button class="gx-new" type="button"><span aria-hidden="true">+</span>Nuevo inmueble</button>
+          <button class="gx-new-pry" type="button"><span aria-hidden="true">+</span>Obra nueva</button>
         </div>
       </header>
 
@@ -1054,6 +1058,168 @@ const init = DATA.admin;
         </div>
       </form>
      </div>
+
+     {/* ══ ALTA DE OBRA NUEVA (§309) ══════════════════════════════════════════════════════════════
+         La QUINTA línea. Formulario propio y no una pestaña del de inmuebles: un proyecto no es un
+         inmueble con campos extra, es un CONTENEDOR de tipologías (§270), y meterlo en el mismo
+         formulario habría obligado a esconder media pantalla según una casilla.
+         Los avisos que pinta salen de `problemasParaPublicarProyecto` — el MISMO predicado del
+         índice, la ficha y el JSON-LD—, así que lo que aquí diga «se verá», el catálogo no lo omite. */}
+     <div id="gx-vista-alta-pry" hidden>
+      <header class="gx-head">
+        <div>
+          <button class="gx-volver" type="button" id="gx-pry-volver">&#8592; Volver al panel</button>
+          <h1 class="gx-greet">Nuevo proyecto de obra nueva</h1>
+          <p class="gx-sub">Se guarda como borrador. Puedes ir completándolo: las tipologías suelen llegar después.</p>
+        </div>
+      </header>
+
+      <div class="gx-aviso" id="gx-pry-aviso" role="status" aria-live="polite" hidden></div>
+
+      <form class="gx-form" id="gx-pry-form" novalidate>
+        <section class="gx-panel gx-pad">
+          <h2>El proyecto</h2>
+          <p class="gx-psub">En obra nueva quien vende es la constructora, y el visitante tiene derecho a saber quién construye.</p>
+          <div class="gx-fgrid">
+            <div>
+              {/* `p-proyecto`, no `p-nombre`: `verify:controles` lee «nombre» como dato PERSONAL y
+                  exige habeas data (Ley 1581). Aquí el nombre es el de un edificio, no el de una
+                  persona — así que el campo estaba MAL NOMBRADO, y el gate tenía razón en sospechar.
+                  Se corrige el nombre, no se silencia el gate. */}
+              <label class="alt-label" for="p-proyecto">Nombre del proyecto</label>
+              <input class="alt-input" id="p-proyecto" name="proyecto" type="text" placeholder="Torre Marea" />
+            </div>
+            <div>
+              <label class="alt-label" for="p-constructora">Constructora</label>
+              <input class="alt-input" id="p-constructora" name="constructora" type="text" placeholder="Constructora Caribe S.A.S" />
+            </div>
+            <div>
+              <label class="alt-label" for="p-estadoObra">Estado de obra</label>
+              <select class="alt-input" id="p-estadoObra" name="estadoObra">
+                {ESTADOS_OBRA_OPC.map((o) => <option value={o[0]}>{o[1]}</option>)}
+              </select>
+            </div>
+          </div>
+          <div class="gx-frow">
+            <label class="alt-label" for="p-descripcion">Descripción</label>
+            <textarea class="alt-input gx-ta" id="p-descripcion" name="descripcion" rows="4" placeholder="Qué lo hace distinto: la vista, el barrio, qué hay cerca."></textarea>
+          </div>
+          <div class="gx-fgrid">
+            <div>
+              <label class="alt-label" for="p-ciudad">Ciudad</label>
+              <input class="alt-input" id="p-ciudad" name="ciudad" type="text" value="Cartagena de Indias" />
+            </div>
+            <div>
+              <label class="alt-label" for="p-barrio">Barrio</label>
+              <input class="alt-input" id="p-barrio" name="barrio" type="text" placeholder="Bocagrande" />
+            </div>
+            <div>
+              <label class="alt-label" for="p-estado">Estado</label>
+              <select class="alt-input" id="p-estado" name="estado">
+                <option value="borrador">Borrador</option>
+                <option value="disponible">Disponible</option>
+                <option value="agotado">Agotado</option>
+                <option value="inactivo">Inactivo</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section class="gx-panel gx-pad">
+          <h2>La licencia</h2>
+          <p class="gx-psub">
+            Es lo que permite comprobar que el proyecto existe: la expide una curaduría urbana y es
+            pública. Sin ella no se publica — estaríamos anunciando unos renders.
+          </p>
+          <div class="gx-fgrid">
+            <div>
+              <label class="alt-label" for="p-licencia">Número de licencia de construcción</label>
+              <input class="alt-input" id="p-licencia" name="licenciaConstruccion" type="text" placeholder="LC-2026-0345" />
+            </div>
+            <div>
+              <label class="alt-label" for="p-curaduria">Curaduría que la expidió</label>
+              <input class="alt-input" id="p-curaduria" name="curaduria" type="text" placeholder="Curaduría Urbana No. 1 de Cartagena" />
+            </div>
+            <div>
+              <label class="alt-label" for="p-entrega">Entrega estimada</label>
+              <input class="alt-input" id="p-entrega" name="entregaEstimada" type="month" />
+              <p class="gx-hint">Se publica SIEMPRE como «estimada»: en preventa las fechas se corren.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* 🎯 LAS TIPOLOGÍAS SON EL PRODUCTO. «Torre Marea» no se vende: se venden sus apartamentos
+            de 1, 2 y 3 alcobas. De aquí sale el «Desde» del listado — no hay campo de precio que
+            teclear, y por eso un «Desde $450M» no puede desviarse de lo que hay abajo (§284.3). */}
+        <section class="gx-panel gx-pad">
+          <h2>Tipologías</h2>
+          <p class="gx-psub">
+            De aquí sale el precio: el «Desde» del listado es el de la tipología más barata. No hay
+            campo de precio del proyecto, y así no puede decir una cifra que no venda nadie.
+          </p>
+          <div id="gx-pry-tips"></div>
+          <button class="alt-btn alt-btn--outline" type="button" id="gx-pry-add-tip">+ Añadir tipología</button>
+
+          {/* La fila se CLONA de aquí, nunca se arma con `innerHTML` (§31). Los tipos del desplegable
+              los rellena el script desde `TIPOS_PUBLICOS`, el modelo sellado. */}
+          <template id="tpl-gx-tip">
+            <div class="gx-tip">
+              <input class="alt-input gx-tip__c" data-c="nombre" type="text" placeholder="Tipo A" aria-label="Nombre de la tipología" />
+              <select class="alt-input gx-tip__c" data-c="tipo" aria-label="Tipo de inmueble"></select>
+              <input class="alt-input gx-tip__c" data-c="areaM2" type="text" inputmode="decimal" placeholder="m²" aria-label="Área en metros cuadrados" />
+              <input class="alt-input gx-tip__c" data-c="habitaciones" type="text" inputmode="numeric" placeholder="Alcobas" aria-label="Alcobas" />
+              <input class="alt-input gx-tip__c" data-c="banos" type="text" inputmode="numeric" placeholder="Baños" aria-label="Baños" />
+              <input class="alt-input gx-tip__c" data-c="desde" type="text" inputmode="numeric" placeholder="Desde $" aria-label="Precio desde" />
+              <input class="alt-input gx-tip__c" data-c="disponibles" type="text" inputmode="numeric" placeholder="Quedan" aria-label="Unidades disponibles" />
+              {/* `data-quitar="1"` CON valor, no el atributo pelado: `verify:controles` busca quién
+                  lee cada `data-*` y su patrón exige el `=` — sin él, este botón figura como un
+                  control que no hace nada, que es justo lo que el gate existe para cazar (§126). */}
+              <button class="gx-tip__x" type="button" data-quitar="1" aria-label="Quitar esta tipología">×</button>
+            </div>
+          </template>
+        </section>
+
+        <section class="gx-panel gx-pad">
+          <h2>Comercial</h2>
+          <div class="gx-fgrid">
+            <div>
+              <label class="alt-label" for="p-cuota">Cuota inicial (%)</label>
+              <input class="alt-input" id="p-cuota" name="cuotaInicialPct" type="text" inputmode="decimal" placeholder="30" />
+            </div>
+            <div>
+              <label class="alt-label" for="p-vendido">% vendido</label>
+              <input class="alt-input" id="p-vendido" name="vendidoPct" type="text" inputmode="numeric" placeholder="70" />
+            </div>
+            <div>
+              <label class="alt-label" for="p-vendido-fuente">¿Quién informó ese %?</label>
+              <input class="alt-input" id="p-vendido-fuente" name="vendidoFuente" type="text" placeholder="Constructora Caribe" />
+              <p class="gx-hint">Obligatorio si publicas el porcentaje: es una afirmación de urgencia y no la medimos nosotros.</p>
+            </div>
+          </div>
+          <div class="gx-fgrid">
+            <div>
+              <label class="alt-label" for="p-sala-dir">Sala de ventas — dirección</label>
+              <input class="alt-input" id="p-sala-dir" name="salaDireccion" type="text" placeholder="Cra 1 #10-20" />
+            </div>
+            <div>
+              <label class="alt-label" for="p-sala-hor">Sala de ventas — horario</label>
+              <input class="alt-input" id="p-sala-hor" name="salaHorario" type="text" placeholder="L-V 9:00-18:00, S 9:00-13:00" />
+            </div>
+            <div class="gx-check">
+              <label class="alt-label" for="p-subsidio">
+                <input id="p-subsidio" name="subsidio" type="checkbox" /> Aplica a subsidio de vivienda
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <div class="gx-pie">
+          <p class="gx-pie__msg" id="gx-pry-msg" role="status" aria-live="polite"></p>
+          <button class="alt-btn alt-btn--outline" type="button" id="gx-pry-cancelar">Cancelar</button>
+          <button class="alt-btn alt-btn--navy" type="submit" id="gx-pry-guardar">Guardar proyecto</button>
+        </div>
+      </form>
+     </div>
     </main>
   </div>
 
@@ -1428,6 +1594,18 @@ const init = DATA.admin;
   .gx-pie { display: flex; justify-content: flex-end; align-items: center; gap: 12px; flex-wrap: wrap; padding-bottom: 12px; }
   .gx-pie__msg { flex: 1 1 220px; margin: 0; font-size: 13px; color: var(--alt-text-soft); }
   .gx-pie__msg:empty { display: none; }
+
+  /* 🏗️ FILAS DE TIPOLOGÍA (§309). El script las CLONA del template, así que sus clases tienen que
+     vivir en un bloque global o la regla no les aplica jamás — sin error y con el build verde (§117).
+     El botón «+ Obra nueva» comparte el chasis del de inmuebles pero en contorno: es la acción
+     secundaria de la cabecera, y dos botones sólidos compiten entre sí. */
+  .gx-new-pry { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: var(--alt-r-sm); background: transparent; color: var(--alt-navy); font-weight: var(--alt-fw-semibold); font-size: 13.5px; font-family: var(--alt-font-body); border: 1px solid var(--alt-navy); cursor: pointer; white-space: nowrap; }
+  .gx-new-pry span { font-size: 17px; line-height: 1; color: var(--alt-gold-bright); }
+  .gx-new-pry:hover { background: var(--alt-navy); color: #fff; }
+  .gx-tip { display: grid; grid-template-columns: repeat(auto-fit, minmax(88px, 1fr)) 34px; gap: 8px; align-items: center; margin-bottom: 10px; }
+  .gx-tip__c { min-width: 0; }
+  .gx-tip__x { width: 34px; height: 34px; border-radius: var(--alt-r-sm); border: 1px solid var(--alt-line, rgba(6,39,67,0.18)); background: transparent; color: var(--alt-text-soft); font-size: 17px; line-height: 1; cursor: pointer; }
+  .gx-tip__x:hover { color: var(--alt-navy); border-color: var(--alt-navy); }
 
   /* Error de campo: el borde se pone dorado, no rojo (la paleta no tiene rojo), y el texto va debajo
      del campo que lo causa — no en una lista al final que obliga a buscarlo. */
