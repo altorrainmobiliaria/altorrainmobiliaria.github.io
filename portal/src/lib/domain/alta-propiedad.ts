@@ -40,10 +40,10 @@ import {
  * el número no tendrían ninguna relación. El precio es un documento con una clave por mes, que no es
  * precio ninguno.
  */
-export function claveContador(fecha: Date): string {
+export function claveContador(fecha: Date, prefijo: 'INM' | 'PRY' = 'INM'): string {
   const y = fecha.getUTCFullYear();
   const m = String(fecha.getUTCMonth() + 1).padStart(2, '0');
-  return `INM-${y}${m}`;
+  return `${prefijo}-${y}${m}`;
 }
 
 /** Tope de la secuencia mensual. `NNNN` son 4 dígitos y el resto del sistema lo da por hecho. */

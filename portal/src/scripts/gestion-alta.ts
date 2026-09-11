@@ -29,6 +29,8 @@ import {
   type ReparoVerificacion,
 } from '../lib/domain/verificacion';
 import { construirEdicion, construirPropiedad, claveContador, codigoPropiedad, TOPE_SECUENCIA } from '../lib/domain/alta-propiedad';
+import { claveContadorProyecto, construirProyecto, type EntradaProyecto } from '../lib/domain/alta-proyecto';
+import type { Proyecto } from '../lib/domain/proyectos';
 import type { BaseEdicion, ContextoAlta, EntradaAlta, ErrorCampo } from '../lib/domain/alta-propiedad';
 import type { Propiedad } from '../lib/domain/propiedades';
 
@@ -69,6 +71,8 @@ export interface RefsAlta {
   contadores: unknown;
   /** Devuelve la referencia del documento de una propiedad por su código. */
   propiedad: (codigo: string) => unknown;
+  /** Ídem para un PROYECTO de obra nueva (§308). Colección distinta, namespace distinto. */
+  proyecto: (codigo: string) => unknown;
 }
 
 export type ResultadoCodigoAcunado =
@@ -165,6 +169,7 @@ async function enTransaccion<T>(
   const refs: RefsAlta = {
     contadores: mod.doc(db, DOC_CONTADORES[0], DOC_CONTADORES[1]),
     propiedad: (codigo: string) => mod.doc(db, 'propiedades', codigo),
+    proyecto: (codigo: string) => mod.doc(db, 'proyectos', codigo),
   };
 
   try {
@@ -355,6 +360,77 @@ export function confirmarVigencia(id: string, ahora: Date = new Date()): Promise
     tx.set(refs.propiedad(id), parche, { merge: true });
     return { ok: true, id, ultimaConfirmacion: parche.ultimaConfirmacion } as ResultadoConfirmacion;
   }, (fallo) => ({ ok: false, fallo }) as ResultadoConfirmacion);
+}
+
+/*
+ * ══ OBRA NUEVA — acuñar y guardar un PROYECTO (§308) ═══════════════════════════════════════════
+ *
+ * Gemelas de las de arriba y NO una copia: comparten `enTransaccion`, el contador (con su prefijo) y
+ * el salto anti-colisión. Lo único propio es la COLECCIÓN y el constructor del documento. Duplicar
+ * la transacción habría duplicado también la red que pone —el `get` DENTRO de la transacción que
+ * impide sobrescribir un documento existente— y esa es justo la que no se puede perder por copia.
+ */
+
+export async function cuerpoDeAcunarProyecto(tx: TxAlta, refs: RefsAlta, ahora: Date): Promise<ResultadoCodigoAcunado> {
+  const claveMes = claveContadorProyecto(ahora);
+  const snap = await tx.get(refs.contadores);
+  let secuencia = siguienteSecuencia(snap.data(), claveMes);
+
+  for (let salto = 0; salto < MAX_SALTOS; salto++) {
+    const codigo = codigoPropiedad(claveMes, secuencia);
+    if (!codigo.ok) return { ok: false, fallo: { tipo: 'secuencia-agotada' } };
+    if (!(await tx.get(refs.proyecto(codigo.codigo))).exists()) {
+      // Merge: el doc de contadores lo comparten TODAS las secuencias —los otros meses, los `INM-` y
+      // los del panel viejo—, y escribirlo entero las borraría.
+      tx.set(refs.contadores, { [claveMes]: secuencia }, { merge: true });
+      return { ok: true, codigo: codigo.codigo };
+    }
+    secuencia++;
+  }
+  return { ok: false, fallo: { tipo: 'id-ocupado', codigo: `${claveMes}-*` } };
+}
+
+export type ResultadoGuardadoProyecto =
+  | { ok: true; proyecto: Proyecto }
+  | { ok: false; fallo: FalloAlta };
+
+export async function cuerpoDeAltaProyecto(
+  tx: TxAlta,
+  refs: RefsAlta,
+  entrada: EntradaProyecto,
+  codigo: string,
+  ahora: Date,
+): Promise<ResultadoGuardadoProyecto> {
+  const construido = construirProyecto(entrada, { codigo, ahora });
+  if (!construido.ok) return { ok: false, fallo: { tipo: 'validacion', errores: construido.errores } };
+
+  // 🔴 La misma red que en el alta de inmuebles: las Rules NO aplican el compare-and-set al
+  // super_admin, así que sin este `get` DENTRO de la transacción, escribir sobre un código ocupado
+  // BORRARÍA el proyecto que hubiera ahí.
+  if ((await tx.get(refs.proyecto(codigo))).exists()) return { ok: false, fallo: { tipo: 'id-ocupado', codigo } };
+
+  tx.set(refs.proyecto(codigo), construido.proyecto); // ENTERO, sin merge (L-09: `set` para crear)
+  return { ok: true, proyecto: construido.proyecto };
+}
+
+/** Acuña el código del proyecto. Se llama al ABRIR el formulario: las fotos lo necesitan. */
+export function acunarCodigoProyecto(ahora: Date = new Date()): Promise<ResultadoCodigoAcunado> {
+  return enTransaccion(
+    (tx, refs) => cuerpoDeAcunarProyecto(tx, refs, ahora),
+    (fallo) => ({ ok: false, fallo }) as ResultadoCodigoAcunado,
+  );
+}
+
+/** Guarda el proyecto con el código ya acuñado. */
+export function guardarProyectoNuevo(
+  entrada: EntradaProyecto,
+  codigo: string,
+  ahora: Date = new Date(),
+): Promise<ResultadoGuardadoProyecto> {
+  return enTransaccion(
+    (tx, refs) => cuerpoDeAltaProyecto(tx, refs, entrada, codigo, ahora),
+    (fallo) => ({ ok: false, fallo }) as ResultadoGuardadoProyecto,
+  );
 }
 
 /** El resultado de confirmar, dicho para quien está mirando la cola. */

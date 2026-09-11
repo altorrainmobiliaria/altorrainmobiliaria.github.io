@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   cuerpoDeAcunar,
+  cuerpoDeAcunarProyecto,
   cuerpoDeAlta,
+  cuerpoDeAltaProyecto,
   cuerpoDeEdicion,
   explicarFallo,
   siguienteSecuencia,
@@ -38,6 +40,7 @@ function txFalsa(opciones: { contadores?: Record<string, unknown>; ocupados?: st
   const refs: RefsAlta = {
     contadores: 'config/counters',
     propiedad: (codigo) => `propiedades/${codigo}`,
+    proyecto: (codigo) => `proyectos/${codigo}`,
   };
   const tx: TxAlta = {
     async get(ref) {
@@ -190,7 +193,7 @@ describe('🎯 cuerpoDeEdicion — el control de concurrencia que las Rules NO p
   /** `tx` falsa con un documento existente y su `_version`. */
   function txConDoc(version: number | undefined, existe = true) {
     const escrituras: Array<{ ref: string; datos: unknown; merge: boolean }> = [];
-    const refs: RefsAlta = { contadores: 'config/counters', propiedad: (c) => `propiedades/${c}` };
+    const refs: RefsAlta = { contadores: 'config/counters', propiedad: (c) => `propiedades/${c}`, proyecto: (c) => `proyectos/${c}` };
     const tx: TxAlta = {
       async get() {
         return { exists: () => existe, data: () => (existe ? { _version: version } : undefined) };
@@ -245,5 +248,63 @@ describe('🎯 cuerpoDeEdicion — el control de concurrencia que las Rules NO p
     expect(explicarFallo({ tipo: 'cambio-de-otro', codigo: ID })).toMatch(/no se guardó|no se guardo/i);
     expect(explicarFallo({ tipo: 'cambio-de-otro', codigo: ID })).toContain(ID);
     expect(explicarFallo({ tipo: 'no-existe', codigo: ID })).toContain(ID);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// §308 — LA PUERTA DE OBRA NUEVA. Gemela de la de arriba y NO una copia: comparte la transacción,
+// el contador y el salto anti-colisión. Lo que se prueba aquí es que comparte también la RED — el
+// `get` dentro de la transacción que impide sobrescribir un documento existente.
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+describe('cuerpoDeAcunarProyecto / cuerpoDeAltaProyecto (§308)', () => {
+  const AHORA = new Date('2026-08-22T10:00:00.000Z');
+
+  const entradaPry = (over = {}) => ({
+    nombre: 'Torre Marea',
+    constructora: 'Constructora Caribe S.A.S',
+    licenciaConstruccion: 'LC-2026-0345',
+    estadoObra: 'preventa',
+    descripcion: 'Frente al mar.',
+    barrio: 'Bocagrande',
+    imagenes: ['pry/marea/1.webp'],
+    estado: 'disponible',
+    tipologias: [{ nombre: 'Tipo A', tipo: 'apartamento', areaM2: '68', habitaciones: '2', banos: '2', desde: '450000000' }],
+    ...over,
+  });
+
+  it('acuña en el namespace `PRY-`, y el contador se escribe con MERGE', async () => {
+    const { tx, refs, escrituras } = txFalsa({ contadores: { 'INM-202608': 12 } });
+    const r = await cuerpoDeAcunarProyecto(tx, refs, AHORA);
+    expect(r).toEqual({ ok: true, codigo: 'PRY-202608-0001' }); // el contador de INM no le afecta
+    expect(escrituras[0].merge).toBe(true); // sin merge borraría las secuencias de los otros meses
+  });
+
+  it('salta un código ya ocupado en vez de pisarlo', async () => {
+    const { tx, refs } = txFalsa({ ocupados: ['PRY-202608-0001'] });
+    expect(await cuerpoDeAcunarProyecto(tx, refs, AHORA)).toEqual({ ok: true, codigo: 'PRY-202608-0002' });
+  });
+
+  it('escribe en `proyectos/`, no en `propiedades/`, y ENTERO (sin merge)', async () => {
+    const { tx, refs, escrituras } = txFalsa();
+    const r = await cuerpoDeAltaProyecto(tx, refs, entradaPry(), 'PRY-202608-0007', AHORA);
+    expect(r.ok).toBe(true);
+    expect(escrituras[0].ref).toBe('proyectos/PRY-202608-0007');
+    expect(escrituras[0].merge).toBe(false);
+  });
+
+  it('🔴 NO sobrescribe un proyecto existente: las Rules no frenan al super_admin', async () => {
+    const { tx, refs, escrituras } = txFalsa({ ocupados: ['PRY-202608-0007'] });
+    const r = await cuerpoDeAltaProyecto(tx, refs, entradaPry(), 'PRY-202608-0007', AHORA);
+    expect(r.ok).toBe(false);
+    expect(!r.ok && r.fallo.tipo).toBe('id-ocupado');
+    expect(escrituras).toHaveLength(0); // y no escribió NADA
+  });
+
+  it('un proyecto inválido falla en VALIDACIÓN sin gastar una lectura del documento', async () => {
+    const { tx, refs, lecturas } = txFalsa();
+    const r = await cuerpoDeAltaProyecto(tx, refs, entradaPry({ nombre: '' }), 'PRY-202608-0007', AHORA);
+    expect(!r.ok && r.fallo.tipo).toBe('validacion');
+    expect(lecturas).toHaveLength(0);
   });
 });
