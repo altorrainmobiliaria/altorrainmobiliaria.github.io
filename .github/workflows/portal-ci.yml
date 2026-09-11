@@ -189,3 +189,20 @@ jobs:
           # Fijar wrangler >=4.45 (auto-provisioning del KV SESSION) e igualar el devDep verificado local.
           wranglerVersion: "4.110.0"
           command: deploy
+      # 🛡️ EL CI TERMINABA AQUI, y ese era el hueco: todos los gates de arriba miran el CODIGO o el
+      # BUILD, ninguno el sitio SERVIDO. Si el despliegue aterrizaba roto —un binding que no existe en
+      # la cuenta, una variable que en local estaba y en el Worker no, un bundle a medio subir— el CI
+      # quedaba VERDE y el sitio caido. Hasta hoy esa comprobacion la hacia una persona con `curl`
+      # cada pocos dias y la anotaba en el cerebro con un sello; un sello caduca solo, un gate no.
+      #
+      # Comprueba cuatro cosas: que responden las rutas DERIVADAS del build (no una lista a mano, que
+      # envejece) · que el SSR corre de verdad (`/api/health`) · que lo inventado da 404 —sin esto las
+      # otras dos valen cero, porque un enrutado que responda 200 a todo las pondria en verde— y el
+      # presupuesto TTFB p75<800ms que el MEGA-PLAN §4.5 daba por INTEGRADO y no existia en ningun
+      # sitio. Estrenado POR ROTURA: se le vio fallar en las cuatro averias antes de creerle.
+      #
+      # La URL es una variable de repo para que el CUTOVER la apunte al dominio real sin tocar el YAML.
+      - name: El sitio DESPLEGADO responde, y a tiempo (§4.5 — TTFB p75 < 800 ms)
+        env:
+          VERIFY_VIVO_URL: ${{ vars.PORTAL_URL_VIVA || 'https://altorra-portal.altorrainmobiliaria.workers.dev' }}
+        run: npm run verify:vivo

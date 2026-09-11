@@ -144,6 +144,28 @@ const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const ciPath = resolve(root, '..', '.github/workflows/portal-ci.yml');
 const ci = existsSync(ciPath) ? readFileSync(ciPath, 'utf8') : '';
 const gates = Object.keys(pkg.scripts ?? {}).filter((k) => k.startsWith('verify:'));
+
+/*
+ * GATES POST-DEPLOY — la única categoría que NO va en `npm run verify`, declarada aquí CON SU MOTIVO.
+ *
+ * 🎯 Por qué existe esta lista en vez de dejar que el de abajo los exija a todos. `npm run verify`
+ * corre ANTES del build y sin sitio al que apuntar; un gate que mide lo SERVIDO metido ahí daría
+ * rojos falsos por construcción —añades una página en local, todavía no está desplegada, 404— y un
+ * gate que se pone rojo cuando no pasa nada malo enseña a ignorar el rojo. Eso es peor que no tenerlo.
+ *
+ * ⚠️ Y no es una puerta de escape: a estos se les exige MÁS, no menos (ver el candado de abajo).
+ * Estar aquí obliga a estar en el CI Y a estar FUERA del atajo — o sea que ni se puede colar uno
+ * ordinario para librarlo del atajo, ni se puede dejar este sin invocar en ningún sitio.
+ */
+const POST_DEPLOY = new Map([
+  [
+    'verify:vivo',
+    'mide el sitio SERVIDO (rutas del build, SSR vivo, 404 de lo inventado, TTFB p75<800ms del ' +
+      'MEGA-PLAN §4.5): solo tiene sentido DESPUÉS del deploy y con una URL. Corre en el job ' +
+      '`deploy-staging` de portal-ci.',
+  ],
+]);
+
 const sueltos = gates.filter((g) => !ci.includes(`npm run ${g}`));
 check(
   `los ${gates.length} gates verify:* están cableados al CI`,
@@ -152,7 +174,7 @@ check(
 );
 
 /*
- * Y que `npm run verify` los corra TODOS (§157).
+ * Y que `npm run verify` los corra TODOS (§157) — salvo los POST-DEPLOY declarados arriba.
  *
  * Por qué existe este segundo candado: el de arriba comprueba que el CI los invoque, y eso llega
  * TARDE — el CI corre después de empujar. En local hay que acordarse de siete nombres, y el día que
@@ -162,14 +184,38 @@ check(
  * nombre a nombre los contenga. *Un atajo que envejece es peor que no tenerlo: se confía en él.*
  */
 const agregado = pkg.scripts?.verify ?? '';
-const fuera = gates.filter((g) => !agregado.includes(`npm run ${g}`));
+const locales = gates.filter((g) => !POST_DEPLOY.has(g));
+const fuera = locales.filter((g) => !agregado.includes(`npm run ${g}`));
 check(
-  '`npm run verify` corre TODOS los gates',
+  '`npm run verify` corre TODOS los gates locales',
   agregado !== '' && fuera.length === 0,
   fuera.length
-    ? `fuera del atajo: ${fuera.join(', ')} — en local nadie recuerda ${gates.length} nombres`
-    : `${gates.length} gates en un solo comando`,
+    ? `fuera del atajo: ${fuera.join(', ')} — en local nadie recuerda ${locales.length} nombres`
+    : `${locales.length} gates en un solo comando` +
+      (POST_DEPLOY.size ? ` (+${POST_DEPLOY.size} post-deploy, declarado[s] con su motivo)` : ''),
 );
+
+/*
+ * Y el reverso, que es el que impide que «post-deploy» se convierta en un cajón: un gate declarado
+ * aquí tiene que estar FUERA del atajo (si está dentro, la declaración sobra y miente sobre por qué
+ * existe) y DENTRO del CI (si no, se declaró para no correrlo en ninguna parte).
+ */
+for (const [g, motivo] of POST_DEPLOY) {
+  const existe = gates.includes(g);
+  const enAtajo = agregado.includes(`npm run ${g}`);
+  const enCi = ci.includes(`npm run ${g}`);
+  check(
+    `post-deploy \`${g}\`: fuera del atajo local y DENTRO del CI`,
+    existe && !enAtajo && enCi,
+    !existe
+      ? 'declarado post-deploy pero no existe en package.json — borra la declaración o el gate'
+      : enAtajo
+        ? 'está dentro de `npm run verify`: o no es post-deploy, o el atajo va a dar rojos falsos'
+        : !enCi
+          ? 'no está en portal-ci.yml — fuera del atajo Y fuera del CI es un gate que no corre en ninguna parte'
+          : motivo,
+  );
+}
 
 /*
  * Y LOS DOS QUE NO SE LLAMAN `verify:*` (§174).

@@ -23,6 +23,8 @@
     "verify:claims": "node ./scripts/verify-claims.mjs",
     "verify:data": "node ./scripts/verify-data-invariants.mjs",
     "verify:seo": "node ./scripts/verify-seo.mjs",
+    "_verify_vivo_por_que_no_esta_en_verify": "Mide el sitio SERVIDO, asi que solo tiene sentido DESPUES de un deploy y con una URL a la que apuntar. Dentro de `verify` (la suite local, que corre sin sitio) se saltaria siempre, y un gate que se salta solo es el que un dia deja de mirar sin decirlo. Vive en portal-ci, en el job de deploy, donde la URL existe.",
+    "verify:vivo": "node ./scripts/verify-vivo.mjs",
     "test": "vitest run",
     "test:rules": "firebase emulators:exec --only firestore --config firebase/firebase.json --project demo-altorra \"vitest run --config vitest.rules.config.ts\"",
     "seed:preview": "node ./firebase/seed/generar-propiedades.mjs --print",
