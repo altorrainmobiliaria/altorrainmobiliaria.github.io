@@ -366,12 +366,20 @@ const maneras = [
             <div class="hbn__rise" style="max-width:560px">
               <div class="hbn__glass alt-glass">
                 <h2 class="hbn__h">Vive Cartagena por <span class="hbn__gold">unos días</span>.</h2>
-                {/* La nota «4.97 · 128 reseñas» era inventada (§123). Se queda lo que SÍ es
-                    comprobable —el precio desde el que arrancan las estancias— y el punto
-                    separador se va con ella: separaba dos cosas y ahora solo hay una. */}
-                <div class="hbn__rate">
-                  <span class="hbn__from">Desde <b>$420k</b> / noche</span>
-                </div>
+                {/* §123 quitó de aquí la nota inventada «4.97 · 128 reseñas» y CONSERVÓ el precio
+                    «porque SÍ es comprobable». No lo era, y §312 lo midió: (1) no hay inventario de
+                    corta estancia publicado, así que no existe un precio «desde el que arrancan las
+                    estancias»; (2) era la ÚNICA afirmación de precio de la portada sin el gate
+                    `HAY_CATALOGO_REAL` —sus veinte hermanas lo llevan—; y (3) ni siquiera cuadraba
+                    con los datos falsos que resumía: la StayCard más barata es $390.000, no $420k.
+                    Un «Desde» inventado sobre datos inventados.
+
+                    Se RETIRA en vez de gatearse: gatearlo lo dejaría salir el día del cutover, que es
+                    justo cuando pasaría de ser un número de maqueta a una oferta pública. Y la regla
+                    de la casa ya estaba escrita en `content/tarifas.ts` —«prohibido precios desde» y
+                    «un hueco honesto no pierde clientes; una cifra que después hay que corregir sí»—;
+                    lo que faltaba no era la doctrina, era aplicarla aquí. Cuando haya catálogo, este
+                    sitio lo ocupa una cifra DERIVADA del índice, no tecleada. */}
                 <p class="hbn__p">Propiedades verificadas dentro de la ciudad amurallada, listas para habitar, con anfitrión que responde.</p>
                 <a href="/estancias" class="hbtn-outline">Descubrir estancias</a>
               </div>
@@ -1209,12 +1217,10 @@ const maneras = [
   /* B2 glass */
   .hbn__glass { border-radius: var(--alt-r-xl); padding: clamp(20px, 2.4vw, 28px); }
   .hbn__glass .hbn__h { font-size: clamp(28px, 3.6vw, 44px); margin-bottom: 10px; }
-  .hbn__rate { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
-  .hbn__star { display: inline-flex; align-items: center; gap: 6px; color: var(--alt-ink); font-weight: var(--alt-fw-bold); font-size: 14px; }
-  .hbn__star svg { width: 16px; height: 16px; color: var(--alt-gold); }
-  .hbn__star small { color: var(--alt-text); font-weight: var(--alt-fw-regular); font-size: 13px; }
-  .hbn__from { color: var(--alt-text); font-size: 13px; }
-  .hbn__from b { color: var(--alt-link); }
+  /* Aquí vivían `.hbn__rate`, `.hbn__star` (×3) y `.hbn__from` (×2): el estilo de la nota de reseñas
+     inventada y del precio «Desde». La nota se retiró en §123 y su CSS se quedó sola; el precio se
+     retiró en §312. Se van las seis reglas juntas — CSS que no tiene quien la use no la ve ningún
+     gate y sobrevive a varias limpiezas seguidas. */
 
   /* B3 split */
   .hbn__split { display: grid; grid-template-columns: 1.02fr 0.98fr; gap: clamp(26px, 3.6vw, 58px); align-items: center; width: 100%; }

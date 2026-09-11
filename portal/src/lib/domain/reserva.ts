@@ -12,6 +12,9 @@
  * regla, un dueño ([[L-45]]).
  */
 
+import type { COP } from './shared';
+import type { Precio } from './propiedades';
+
 /** Tope de noches de una estancia. Más que esto es un arriendo, y ese es otro producto y otra ley. */
 export const NOCHES_MAX = 90;
 
@@ -44,6 +47,66 @@ export function noches(llegada: string, salida: string): number {
   const b = Date.parse(`${salida}T00:00:00Z`);
   if (!Number.isFinite(a) || !Number.isFinite(b)) return 0;
   return Math.max(0, Math.round((b - a) / 86_400_000));
+}
+
+/**
+ * LO QUE CUESTA UNA ESTADÍA, DESGLOSADO (§312).
+ *
+ * 🔴 POR QUÉ EXISTE. `Precio.precioAseo` afirmaba en su propio comentario que «se suma al total de la
+ * estadía; el total se muestra desde la card», y ese total **no existía en ningún sitio**: aquí se
+ * contaban las noches y nunca se multiplicaban (el comentario de `noches()` llega a hablar de «el
+ * total», que tampoco existía), y `catalogo.precioDisplay` devuelve la noche pelada. La única cuenta
+ * del repo vivía en literales de una página demo. Familia de [[L-87]].
+ *
+ * ⚖️ Y NO ES SOLO ORDEN: el Estatuto del Consumidor (Ley 1480/2011 art. 26) exige el precio TOTAL
+ * desde el principio. Es la misma norma que `ficha.ts` ya cita contra el *drip pricing* del doble-precio
+ * de arriendo; lo que allí es la administración, aquí es el aseo.
+ *
+ * 🎯 DEVUELVE EL DESGLOSE, NO UN NÚMERO. Un total sin partes es tan opaco como una noche sin total:
+ * quien lo lee no puede comprobarlo ni saber qué cambia si se queda una noche menos. La doctrina de
+ * transparencia de este portal es enseñar los sumandos, no solo la suma.
+ *
+ * ⚠️ **EL ASEO SE COBRA UNA VEZ, NO POR NOCHE.** Es lo que dice el campo y lo que hace el mercado.
+ * Multiplicarlo sería inflar la cuenta justo en el cargo que más molesta al huésped.
+ *
+ * ⛔ **NO HAY CARGO POR SERVICIO, y su ausencia es la decisión.** La página demo cobraba al huésped un
+ * `SERVICE_RATE = 0.1` que (a) no tiene campo en `Precio`, (b) contradice el tarifario SELLADO
+ * (`content/tarifas.ts`: la línea de alojamiento va con `cifra: null` —«no está decidida y se dice»— y
+ * la paga **el propietario**, no el huésped) y (c) el MEGA-PLAN declara pendiente «por definir con el
+ * rail de pago». Un porcentaje que nadie decidió, cobrado a un consumidor, es peor que omitir el total:
+ * omitir calla, esto AFIRMA. Si algún día existe, entra como campo del modelo y con el gate del dueño.
+ *
+ * `null` —y no un cero— cuando no hay precio por noche o las fechas no dan una estadía: un cero
+ * afirmaría que es gratis.
+ */
+export interface DesgloseEstadia {
+  noches: number;
+  precioNoche: COP;
+  /** `precioNoche × noches`. */
+  alojamiento: COP;
+  /** Una sola vez por estadía. `0` cuando no se cobra. */
+  aseo: COP;
+  total: COP;
+}
+
+export function desgloseEstadia(
+  precio: Pick<Precio, 'precioNoche' | 'precioAseo'> | undefined,
+  llegada: string,
+  salida: string,
+): DesgloseEstadia | null {
+  const porNoche = precio?.precioNoche;
+  if (typeof porNoche !== 'number' || !Number.isFinite(porNoche) || porNoche <= 0) return null;
+
+  const n = noches(llegada, salida);
+  if (n <= 0 || n > NOCHES_MAX) return null;
+
+  // Un aseo negativo o no finito se trata como ausente, no se resta: un cargo que BAJA el total es un
+  // dato corrupto, y arrastrarlo publicaría una cifra menor que la que se va a cobrar.
+  const bruto = precio?.precioAseo;
+  const aseo = typeof bruto === 'number' && Number.isFinite(bruto) && bruto > 0 ? bruto : 0;
+
+  const alojamiento = porNoche * n;
+  return { noches: n, precioNoche: porNoche, alojamiento, aseo, total: alojamiento + aseo };
 }
 
 /**

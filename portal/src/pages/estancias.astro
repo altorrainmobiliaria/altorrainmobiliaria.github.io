@@ -224,11 +224,15 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
             <button class="alt-btn alt-btn--navy est-book__cta" type="submit" id="est-enviar">Enviar solicitud</button>
             <p class="est-err" id="est-err" role="alert" hidden></p>
           </form>
+          {/* ⛔ AQUÍ VIVÍA UNA LÍNEA «Servicio ALTORRA» del 10% (§312). Se retira, no se recalcula: no
+              tiene campo en `Precio`, contradice el tarifario SELLADO —`content/tarifas.ts` da la línea
+              de alojamiento con `cifra: null` y a cargo del PROPIETARIO— y el MEGA-PLAN la declara
+              pendiente. Un porcentaje que nadie decidió, cobrado a un huésped, no es un placeholder:
+              es una afirmación. El desglose lo calcula ahora `desgloseEstadia()` del dominio. */}
           <div class="est-book__lines">
             <div class="est-line"><span id="est-line">$850.000 × 3 noches</span><span id="est-subtotal">$2.550.000</span></div>
-            <div class="est-line"><span>Tarifa de limpieza</span><span>$180.000</span></div>
-            <div class="est-line"><span>Servicio ALTORRA</span><span id="est-service">$255.000</span></div>
-            <div class="est-line est-line--total"><span>Total</span><span id="est-total">$2.985.000</span></div>
+            <div class="est-line"><span>Tarifa de limpieza</span><span id="est-aseo">$180.000</span></div>
+            <div class="est-line est-line--total"><span>Total</span><span id="est-total">$2.730.000</span></div>
           </div>
           <div class="alt-alert alt-alert--success est-confirm" id="est-confirm" hidden>
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
@@ -370,15 +374,26 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
 </style>
 
 <script>
-  import { explicarProblemaReserva, noches, problemasDeReserva } from '../lib/domain/reserva';
+  import { desgloseEstadia, explicarProblemaReserva, problemasDeReserva } from '../lib/domain/reserva';
 
   /** Hoy en `YYYY-MM-DD` LOCAL: el visitante elige fechas en su calendario, no en UTC. */
   const hoyISO = () => {
     const d = new Date();
     return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   };
-  // Reserva: recalcula noches/subtotal/servicio/total según fechas; stepper de huéspedes; confirmar.
-  const PRICE = 850000, CLEANING = 180000, SERVICE_RATE = 0.1;
+  /*
+   * Reserva: recalcula el desglose según las fechas; stepper de huéspedes; confirmar.
+   *
+   * ⚠️ Estas dos cifras son del MOCKUP — esta página sigue siendo la réplica, sin inventario detrás
+   * (lo dice el propio lead: «sin inventario publicado todavía»). Cuando se cablee a una propiedad
+   * real salen de `p.precio`, y la CUENTA no cambia: ya la hace el dominio.
+   *
+   * ⛔ Antes había aquí un tercer número, `SERVICE_RATE = 0.1`, y no era un placeholder como estos
+   * dos: `precioNoche` y `precioAseo` existen en el modelo y esperan su dato, mientras que el
+   * porcentaje de servicio no existe, no está decidido (`content/tarifas.ts` lo publica como «no
+   * decidido») y el tarifario lo pone a cargo del PROPIETARIO. Se retiró (§312).
+   */
+  const PRICE = 850000, CLEANING = 180000;
   const fmt = (n: number) => '$' + n.toLocaleString('es-CO');
   const $ = (id: string) => document.getElementById(id);
   let guests = 2;
@@ -386,19 +401,21 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
   function recalc() {
     const ci = ($('est-ci') as HTMLInputElement)?.value;
     const co = ($('est-co') as HTMLInputElement)?.value;
-    // `noches()` del dominio, no una resta aquí: la misma cuenta la hace el endpoint al validar, y
-    // dos implementaciones de la misma regla acaban discrepando en el caso raro ([[L-45]]). La de
-    // aquí además usaba `new Date(co)` sobre un `YYYY-MM-DD`, que se interpreta en UTC mientras el
-    // navegador está en UTC-5: a ciertas horas la cuenta salía con un día de más.
-    const nights = ci && co ? noches(ci, co) : 0;
-    const subtotal = PRICE * nights;
-    const service = Math.round(subtotal * SERVICE_RATE);
-    const total = nights > 0 ? subtotal + CLEANING + service : 0;
+    /*
+     * El DESGLOSE lo hace el dominio, no esta página. La cuenta de aquí era la única del repo que
+     * sumaba una estadía, y por eso pudo llevar un cargo que nadie había decidido: una aritmética que
+     * vive en una pantalla no la revisa nadie. `desgloseEstadia` también hereda `noches()` —la misma
+     * cuenta que hace el endpoint al validar—, que era ya la razón de no restar fechas a mano
+     * ([[L-45]]): `new Date(co)` sobre un `YYYY-MM-DD` se lee en UTC con el navegador en UTC-5, y a
+     * ciertas horas salía un día de más.
+     */
+    const d = desgloseEstadia({ precioNoche: PRICE, precioAseo: CLEANING }, ci ?? '', co ?? '');
+    const nights = d?.noches ?? 0;
     const nLbl = nights === 1 ? ' noche' : ' noches';
     if ($('est-line')) $('est-line')!.textContent = `${fmt(PRICE)} × ${nights}${nLbl}`;
-    if ($('est-subtotal')) $('est-subtotal')!.textContent = fmt(subtotal);
-    if ($('est-service')) $('est-service')!.textContent = fmt(service);
-    if ($('est-total')) $('est-total')!.textContent = fmt(total);
+    if ($('est-subtotal')) $('est-subtotal')!.textContent = fmt(d?.alojamiento ?? 0);
+    if ($('est-aseo')) $('est-aseo')!.textContent = fmt(d?.aseo ?? 0);
+    if ($('est-total')) $('est-total')!.textContent = fmt(d?.total ?? 0);
   }
   function setGuests(g: number) {
     guests = Math.max(1, Math.min(8, g));

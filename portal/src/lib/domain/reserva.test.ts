@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  desgloseEstadia,
   explicarProblemaReserva,
   HUESPEDES_MAX,
   noches,
@@ -86,5 +87,74 @@ describe('resumenReserva', () => {
     expect(resumenReserva({ llegada: '2026-09-01', salida: '2026-09-02', huespedes: 1 })).toBe(
       'Corta estancia · 2026-09-01 → 2026-09-02 (1 noche) · 1 huésped',
     );
+  });
+});
+
+/*
+ * 🧾 EL TOTAL DE LA ESTADÍA (§312). `precioAseo` prometía en su comentario un total que no existía en
+ * ningún sitio del repo: aquí se contaban las noches y nunca se multiplicaban. La única cuenta viva
+ * estaba en literales de la página demo — y llevaba dentro un cargo del 10% que nadie había decidido.
+ *
+ * Se prueba el DESGLOSE, no solo la suma: un total que cuadra por casualidad (aseo cobrado por noche
+ * en una estadía de una noche, por ejemplo) pasaría una prueba que solo mirase el total.
+ */
+describe('🧾 desgloseEstadia — el total que la ficha prometía (§312)', () => {
+  const PRECIO = { precioNoche: 350_000, precioAseo: 90_000 };
+
+  it('suma las noches y añade el aseo UNA vez', () => {
+    const d = desgloseEstadia(PRECIO, '2026-09-01', '2026-09-06');
+    expect(d).not.toBeNull();
+    expect(d).toEqual({
+      noches: 5,
+      precioNoche: 350_000,
+      alojamiento: 1_750_000,
+      aseo: 90_000,
+      total: 1_840_000,
+    });
+  });
+
+  it('el aseo NO se multiplica por noches — se ve en que 2 noches y 4 pagan el mismo aseo', () => {
+    expect(desgloseEstadia(PRECIO, '2026-09-01', '2026-09-03')?.aseo).toBe(90_000);
+    expect(desgloseEstadia(PRECIO, '2026-09-01', '2026-09-05')?.aseo).toBe(90_000);
+  });
+
+  it('sin aseo el total es el alojamiento, y el aseo es 0 — nunca undefined en una cuenta', () => {
+    const d = desgloseEstadia({ precioNoche: 350_000 }, '2026-09-01', '2026-09-03');
+    expect(d?.aseo).toBe(0);
+    expect(d?.total).toBe(700_000);
+  });
+
+  it('NO existe cargo por servicio: el total es exactamente alojamiento + aseo', () => {
+    const d = desgloseEstadia(PRECIO, '2026-09-01', '2026-09-04');
+    // Con el 10% retirado esto es una identidad; con él era falso por $105.000. La prueba existe para
+    // que reintroducir un porcentaje al huésped tenga que romper algo antes de llegar a producción.
+    expect(d!.total).toBe(d!.alojamiento + d!.aseo);
+  });
+
+  it('sin precio por noche devuelve null, no un cero: un cero afirmaría que es gratis', () => {
+    expect(desgloseEstadia({}, '2026-09-01', '2026-09-04')).toBeNull();
+    expect(desgloseEstadia({ precioNoche: 0 }, '2026-09-01', '2026-09-04')).toBeNull();
+    expect(desgloseEstadia(undefined, '2026-09-01', '2026-09-04')).toBeNull();
+  });
+
+  it('fechas que no son una estadía devuelven null', () => {
+    expect(desgloseEstadia(PRECIO, '2026-09-04', '2026-09-01')).toBeNull(); // salida antes
+    expect(desgloseEstadia(PRECIO, '2026-09-01', '2026-09-01')).toBeNull(); // cero noches
+    expect(desgloseEstadia(PRECIO, '', '')).toBeNull();
+    expect(desgloseEstadia(PRECIO, 'mañana', 'pasado')).toBeNull();
+  });
+
+  it('el tope de noches se cotiza, y una más ya no: es otro producto y otra ley', () => {
+    // La frontera exacta, en las dos direcciones. `problemasDeReserva` rechaza por encima de
+    // NOCHES_MAX, así que cotizar una estadía que el endpoint va a rechazar sería enseñar un precio
+    // por algo que no se puede pedir.
+    expect(desgloseEstadia(PRECIO, '2026-09-01', '2026-11-30')?.noches).toBe(NOCHES_MAX); // 90 justas
+    expect(desgloseEstadia(PRECIO, '2026-09-01', '2026-12-01')).toBeNull(); // 91
+  });
+
+  it('un aseo corrupto se ignora, NUNCA se resta del total', () => {
+    // Un cargo que BAJA el total publicaría una cifra menor que la que se va a cobrar.
+    expect(desgloseEstadia({ precioNoche: 350_000, precioAseo: -50_000 }, '2026-09-01', '2026-09-03')?.total).toBe(700_000);
+    expect(desgloseEstadia({ precioNoche: 350_000, precioAseo: NaN }, '2026-09-01', '2026-09-03')?.total).toBe(700_000);
   });
 });

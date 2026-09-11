@@ -123,6 +123,37 @@ const PATRONES = [
     que: 'un RANGO de rentabilidad es una medición de mercado, y sin fuente pasa a ser nuestra' },
   { id: 'porcentaje-negocio', re: /\b\d{1,3}(?:[.,]\d)?\s?%\s*(?:de\s+)?(?:clientes|propietarios|inquilinos|usuarios)\s+(?:satisfech|content|recomend)/gi,
     que: 'un porcentaje de satisfacción afirma que existe una medición detrás' },
+  /*
+   * §312 — LA FAMILIA QUE FALTABA: EL TÉRMINO COMERCIAL, no la medición.
+   *
+   * Los diez patrones de arriba cazan cifras que afirman un HECHO comprobable (128 reseñas, 42
+   * propiedades, 8-11% de ROI). Ninguno miraba DINERO, y por ahí pasó lo peor que ha tenido este
+   * gate delante: el widget de `/estancias` le cobraba al huésped un `SERVICE_RATE = 0.1` —una línea
+   * «Servicio ALTORRA» dentro del total— que (a) no tiene campo en el modelo `Precio`, (b) contradice
+   * el tarifario SELLADO por el dueño, donde la línea de alojamiento va con `cifra: null` («no está
+   * decidida y se dice») y a cargo del PROPIETARIO, y (c) el MEGA-PLAN declara pendiente.
+   *
+   * 🎯 LA DISTINCIÓN QUE HACE ÚTIL A ESTE PATRÓN. Una réplica de mockup llega llena de cifras de
+   * relleno y eso es normal: `PRICE = 850000` es un marcador de `precio.precioNoche`, un campo que
+   * EXISTE y espera su dato. Un porcentaje de comisión no es marcador de nada — no hay campo que lo
+   * reciba, así que no está esperando un dato: está afirmando una condición comercial. La diferencia
+   * entre un hueco y una afirmación es justo la que este gate lleva diez patrones defendiendo.
+   *
+   * ⚠️ Exige `= <dígito>`: `const SERVICIOS = [...]` (una lista) no casa, y ésa es la forma en que el
+   * sitio nombra sus servicios de verdad. Un rango legítimo futuro (el IVA, una tarifa ya decidida por
+   * el dueño) se declara en `x-claimsVerificados` con su fuente — que es el gate entero: no prohíbe
+   * cifras, obliga a decir quién las firma.
+   */
+  /*
+   * 🧪 El prefijo va con `*`, no con `[A-Za-z_$][…]*`. La primera redacción exigía al menos UN
+   * carácter antes de la palabra clave y por eso no veía `SERVICE_RATE = 0.1` — el identificador que
+   * motivó el patrón, que la lleva al principio. Pasó en verde y solo salió al reintroducir el
+   * defecto a propósito y medir. Un gate que no se prueba contra su propio caso es una declaración
+   * de intenciones (§38a).
+   */
+  { id: 'tarifa-al-cliente',
+    re: /\b[A-Za-z0-9_$]*(?:servicio|service|comisi[oó]n|comision|commission|tarifa|fee|honorari|recargo)[A-Za-z0-9_$]*\s*=\s*-?\d/gi,
+    que: 'una comisión o recargo escrito en una página es un término COMERCIAL, y su dueño es el tarifario, no la plantilla' },
   { id: 'promedio', re: /\b\d{1,4}\s*(?:d[ií]as?|horas?|meses?|semanas?)\s+(?:de\s+)?promedio|promedio\s+(?:de\s+\w+\s+)?(?:en\s+)?\d{1,4}\s*(?:d[ií]as?|horas?|meses?)/gi,
     que: 'un promedio afirma que se midieron muchos casos — o es una promesa disfrazada de dato' },
 ];
