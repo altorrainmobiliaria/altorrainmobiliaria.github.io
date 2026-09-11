@@ -15,6 +15,8 @@ import {
   type EntradaAlta,
 } from './alta-propiedad';
 import { construirIndices, problemasParaPublicar } from './catalogo';
+import { fichaTecnica, precioFicha, specsVisibles } from './ficha';
+import { reparosParaSellar } from './verificacion';
 
 // Alta de propiedad (§108). Lo que se prueba aquí es la frontera donde un formulario se convierte en
 // un documento del modelo sellado — y sobre todo el CONTRATO: lo que este módulo acepta construir como
@@ -546,5 +548,101 @@ describe('entradaDe / baseDe — el camino de vuelta', () => {
     const r = construir();
     if (!r.ok) return;
     expect(baseDe(r.propiedad).version).toBe(1);
+  });
+});
+
+/*
+ * 🕳️ SEIS CAMPOS QUE LA FICHA SABÍA PINTAR Y EL ALTA NO PODÍA PRODUCIR ([[L-87]], §311).
+ *
+ * `fichaTecnica` tenía su fila para los baños sociales, la clase de parqueadero y el cuarto útil;
+ * `specsVisibles`, su casilla de «Estreno» y de área privada; `precioFicha`, su línea de aseo. Todos
+ * con lector, tipo y pruebas… y el formulario no preguntaba ninguno: el único sitio del repo donde
+ * aparecían escritos eran dos literales de la página DEMO (`pages/ficha.astro`), que es lo que hacía
+ * que la pantalla de muestra se viera completa y la real no pudiera estarlo nunca.
+ *
+ * Las pruebas van contra el LECTOR a propósito, no contra el documento: comprobar que el campo se
+ * guarda no demuestra que alguien lo enseñe, y eso es exactamente lo que ya estaba demostrado.
+ */
+describe('🕳️ el escritor de los seis campos huérfanos (§311)', () => {
+  const ALOJAMIENTO: Partial<EntradaAlta> = {
+    operacion: 'alojamiento',
+    valorVenta: '',
+    precioNoche: '350000',
+    rnt: 'RNT-123456',
+    situacionPH: 'autoriza-expreso',
+  };
+
+  it('la ficha técnica enseña las tres filas que antes no podían existir', () => {
+    const r = construir({ banosSociales: '1', tipoParqueadero: 'cubierto', cuartoUtil: 'si' });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const filas = new Map(fichaTecnica(r.propiedad));
+    expect(filas.get('Baños sociales')).toBe('1');
+    expect(filas.get('Parqueadero')).toBe('Cubierto');
+    expect(filas.get('Cuarto útil')).toBe('Sí');
+  });
+
+  it('«Estreno» sale con antigüedad 0 — el caso que un mínimo de 1 habría descartado', () => {
+    const r = construir({ antiguedadAnios: '0' });
+    if (!r.ok) return;
+    expect(r.propiedad.specs.antiguedadAnios).toBe(0);
+    expect(specsVisibles(r.propiedad)).toEqual(
+      expect.arrayContaining([{ icono: 'anio', valor: 'Nuevo', etiqueta: 'Estreno' }]),
+    );
+  });
+
+  it('el aseo aparece en el precio de la ficha, separado de la noche (Ley 1480 art. 26)', () => {
+    const r = construir({ ...ALOJAMIENTO, precioAseo: '90000' });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.propiedad.precio.precioAseo).toBe(90000);
+    expect(precioFicha(r.propiedad)?.sub).toContain('Aseo');
+  });
+
+  it('un área PRIVADA basta para poder sellar: antes quedaba «sin-area» teniéndola', () => {
+    const r = construir({ areaConstruidaM2: '', areaPrivadaM2: '142' });
+    if (!r.ok) return;
+    expect(r.propiedad.specs.areaPrivadaM2).toBe(142);
+    expect(reparosParaSellar(r.propiedad)).not.toContain('sin-area');
+  });
+
+  it('el cuarto útil tiene TRES estados y el «no» se guarda, no se pierde', () => {
+    const no = construir({ cuartoUtil: 'no' });
+    expect(no.ok).toBe(true);
+    if (!no.ok) return;
+    expect(no.propiedad.specs.cuartoUtil).toBe(false);
+
+    // Y «sin declarar» NO es un «no»: el campo no llega a existir. La ficha las pinta igual, pero el
+    // operador que reabre el formulario tiene que ver si le queda una pregunta por hacer.
+    const sinDeclarar = construir({ cuartoUtil: '' });
+    if (!sinDeclarar.ok) return;
+    expect('cuartoUtil' in sinDeclarar.propiedad.specs).toBe(false);
+  });
+
+  it('una clase de parqueadero fuera de la lista se RECHAZA, no se traga en silencio', () => {
+    const r = construir({ tipoParqueadero: 'helipuerto' });
+    expect(r.ok).toBe(false);
+    if (r.ok) return;
+    expect(r.errores.map((e) => e.campo)).toContain('tipoParqueadero');
+  });
+
+  it('los seis sobreviven a una edición — incluido el «no» del cuarto útil', () => {
+    const original = construir({
+      ...ALOJAMIENTO,
+      banosSociales: '1',
+      areaPrivadaM2: '142',
+      tipoParqueadero: 'comunal',
+      cuartoUtil: 'no',
+      antiguedadAnios: '5',
+      precioAseo: '90000',
+    });
+    expect(original.ok).toBe(true);
+    if (!original.ok) return;
+    const vuelta = construirEdicion(entradaDe(original.propiedad), baseDe(original.propiedad), AHORA);
+    expect(vuelta.ok).toBe(true);
+    if (!vuelta.ok) return;
+    expect(vuelta.propiedad.specs).toEqual(original.propiedad.specs);
+    expect(vuelta.propiedad.precio).toEqual(original.propiedad.precio);
+    expect(vuelta.propiedad.specs.cuartoUtil).toBe(false);
   });
 });

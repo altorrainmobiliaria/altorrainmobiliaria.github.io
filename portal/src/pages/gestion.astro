@@ -14,6 +14,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { ZONAS } from '../lib/content/zonas';
 import { TIPOS_INMUEBLE } from '../lib/domain/shared';
 import { ESTADOS_OBRA, ETIQUETA_ESTADO_OBRA } from '../lib/domain/proyectos';
+import { TIPOS_PARQUEADERO } from '../lib/domain/propiedades';
 import { NOMBRE_DOCUMENTO, TIPOS_DOCUMENTO } from '../lib/domain/documentos';
 
 const nav = [
@@ -114,12 +115,20 @@ const ESTADOS_OBRA_OPC: Array<[string, string]> = ESTADOS_OBRA.map((e) => [e, ET
 const SPECS: Array<[string, string]> = [
   ['habitaciones', 'Habitaciones'],
   ['banos', 'Baños'],
-  ['areaConstruidaM2', 'Área m²'],
+  ['banosSociales', 'Baños sociales'],
+  ['areaConstruidaM2', 'Área construida m²'],
+  ['areaPrivadaM2', 'Área privada m²'],
   ['estrato', 'Estrato'],
   ['parqueaderos', 'Parqueaderos'],
   ['piso', 'Piso'],
   ['pisosTotales', 'Pisos del edificio'],
+  ['antiguedadAnios', 'Años de antigüedad'],
 ];
+/** Clases de parqueadero — del modelo, mapeadas. Ni una lista pegada a mano (ídem `ESTADOS_OBRA_OPC`). */
+const PARQUEADEROS: Array<[string, string]> = TIPOS_PARQUEADERO.map((t) => [
+  t,
+  t.charAt(0).toUpperCase() + t.slice(1),
+]);
 const AMENIDADES = [
   'Piscina', 'Gimnasio', 'Ascensor', 'Portería 24h', 'Balcón',
   'Amoblado', 'Aire acondicionado', 'Terraza', 'Zona BBQ', 'Admite mascotas',
@@ -998,6 +1007,11 @@ const init = DATA.admin;
               <label class="alt-label" for="a-precioNoche">Precio por noche</label>
               <input class="alt-input" id="a-precioNoche" name="precioNoche" type="text" inputmode="numeric" placeholder="$ 350.000" />
             </div>
+            <div data-solo="alojamiento" hidden>
+              <label class="alt-label" for="a-precioAseo">Aseo por estadía</label>
+              <input class="alt-input" id="a-precioAseo" name="precioAseo" type="text" inputmode="numeric" placeholder="$ 90.000" />
+              <p class="gx-hint">Se cobra una vez, no por noche. Si se dice al final es sobrecosto oculto y la ley lo prohíbe.</p>
+            </div>
           </div>
         </section>
 
@@ -1011,6 +1025,23 @@ const init = DATA.admin;
                 <input class="alt-input" id={`a-${f[0]}`} name={f[0]} type="text" inputmode="numeric" />
               </div>
             ))}
+            <div>
+              <label class="alt-label" for="a-tipoParqueadero">Clase de parqueadero</label>
+              <select class="alt-input" id="a-tipoParqueadero" name="tipoParqueadero">
+                <option value="">Sin declarar</option>
+                {PARQUEADEROS.map((p) => <option value={p[0]}>{p[1]}</option>)}
+              </select>
+            </div>
+            {/* Tres estados, no una casilla: «no lo sé» es la respuesta más común en un alta a medio
+                llenar, y una casilla sin marcar no la sabe distinguir de un «no». */}
+            <div>
+              <label class="alt-label" for="a-cuartoUtil">Cuarto útil</label>
+              <select class="alt-input" id="a-cuartoUtil" name="cuartoUtil">
+                <option value="">Sin declarar</option>
+                <option value="si">Sí</option>
+                <option value="no">No</option>
+              </select>
+            </div>
           </div>
           <div class="gx-frow">
             <span class="alt-label">Amenidades</span>

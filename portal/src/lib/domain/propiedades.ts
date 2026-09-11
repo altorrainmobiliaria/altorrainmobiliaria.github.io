@@ -23,6 +23,15 @@ export interface PriceHistoryEntry {
   valor: COP;
 }
 
+/**
+ * Clases de parqueadero. Lista `as const` y no una unión suelta por la razón del resto del modelo
+ * (`TIPOS_GARANTIA`, `SITUACIONES_PH`): el `<select>` del alta la MAPEA en vez de pegarla a mano, así
+ * que añadir una clase no puede dejar el formulario ofreciendo un juego de opciones y el tipo
+ * aceptando otro.
+ */
+export const TIPOS_PARQUEADERO = ['cubierto', 'descubierto', 'comunal', 'ninguno'] as const;
+export type TipoParqueadero = (typeof TIPOS_PARQUEADERO)[number];
+
 /** Specs físicas — subset PÚBLICO de FTI-01. */
 export interface SpecsInmueble {
   habitaciones?: number;
@@ -32,7 +41,7 @@ export interface SpecsInmueble {
   areaPrivadaM2?: number;
   estrato?: number;
   parqueaderos?: number;
-  tipoParqueadero?: 'cubierto' | 'descubierto' | 'comunal' | 'ninguno';
+  tipoParqueadero?: TipoParqueadero;
   cuartoUtil?: boolean; // "depósito/cuarto útil" físico — NO confundir con depósito-garantía (prohibido, OD9)
   piso?: number;
   /**

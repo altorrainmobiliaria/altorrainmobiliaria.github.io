@@ -72,8 +72,9 @@ const val = (id: string) => ($(id) as HTMLInputElement | null)?.value ?? '';
 function leerEntrada(): EntradaAlta {
   const campos = [
     'operacion', 'tipo', 'vertical', 'titulo', 'descripcion', 'ciudad', 'barrio', 'rnt', 'situacionPH',
-    'lat', 'lng', 'valorVenta', 'canon', 'administracion', 'precioNoche',
-    'habitaciones', 'banos', 'areaConstruidaM2', 'estrato', 'parqueaderos', 'piso', 'pisosTotales',
+    'lat', 'lng', 'valorVenta', 'canon', 'administracion', 'precioNoche', 'precioAseo',
+    'habitaciones', 'banos', 'banosSociales', 'areaConstruidaM2', 'areaPrivadaM2', 'estrato',
+    'parqueaderos', 'tipoParqueadero', 'cuartoUtil', 'piso', 'pisosTotales', 'antiguedadAnios',
   ] as const;
   const e = Object.fromEntries(campos.map((c) => [c, val(`a-${c}`)])) as unknown as EntradaAlta;
   e.estado = (document.querySelector<HTMLInputElement>('input[name="estado"]:checked')?.value) || 'borrador';

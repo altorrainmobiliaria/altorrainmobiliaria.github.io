@@ -11,7 +11,8 @@
 
 import { claveValida } from '../media-subida';
 import { precioDisplay, problemasParaPublicar, type ProblemaPublicacion } from './catalogo';
-import type { Amenidades, AutorizacionPH, Precio, PriceHistoryEntry, SpecsInmueble } from './propiedades';
+import { TIPOS_PARQUEADERO } from './propiedades';
+import type { Amenidades, AutorizacionPH, Precio, PriceHistoryEntry, SpecsInmueble, TipoParqueadero } from './propiedades';
 import type { Propiedad } from './propiedades';
 import { reparosParaSellar } from './verificacion';
 import {
@@ -153,13 +154,26 @@ export interface EntradaAlta {
   canon?: string | number;
   administracion?: string | number;
   precioNoche?: string | number;
+  /** Aseo de la estadía (alojamiento). Va APARTE de la noche: es lo que exige decir la Ley 1480 art. 26. */
+  precioAseo?: string | number;
   habitaciones?: string | number;
   banos?: string | number;
+  banosSociales?: string | number;
   areaConstruidaM2?: string | number;
+  areaPrivadaM2?: string | number;
   estrato?: string | number;
   parqueaderos?: string | number;
+  /** Clase de parqueadero. Se valida contra `TIPOS_PARQUEADERO`; vacío = no se declara. */
+  tipoParqueadero?: string;
+  /**
+   * Cuarto útil, en TRES estados: `''` no lo sé · `si` · `no`. Es un `<select>` y no una casilla a
+   * propósito — una casilla solo sabe decir sí y no, y «no lo sé» es la respuesta más común en un alta
+   * a medio llenar. Guardar `false` por no haber marcado nada sería inventarse un dato.
+   */
+  cuartoUtil?: string;
   piso?: string | number;
   pisosTotales?: string | number;
+  antiguedadAnios?: string | number;
   /** CLAVES de R2 devueltas por `/api/media/subir`. Nunca URLs. */
   imagenes?: string[];
   amenidades?: Amenidades;
@@ -233,6 +247,20 @@ function entero(v: unknown, minimo = 0): number | undefined {
   if (n == null) return undefined;
   const i = Math.trunc(n);
   return i >= minimo ? i : undefined;
+}
+
+/**
+ * Tres estados desde un `<select>`: `si` → `true`, `no` → `false`, cualquier otra cosa → `undefined`.
+ *
+ * El `false` se GUARDA, y esa es la decisión: «preguntamos y no tiene cuarto útil» no es lo mismo que
+ * «nadie lo ha mirado». La ficha las pinta igual —`if (s.cuartoUtil)`— pero el operador que reabre el
+ * formulario ve la diferencia, y es él quien tiene que saber si le queda una pregunta por hacer.
+ */
+function triEstado(v: unknown): boolean | undefined {
+  const t = txt(v).toLowerCase();
+  if (t === 'si' || t === 'sí') return true;
+  if (t === 'no') return false;
+  return undefined;
 }
 
 /**
@@ -312,6 +340,14 @@ export function construirPropiedad(entrada: EntradaAlta, ctx: ContextoAlta): Res
   const vertical = (verticalDada || (puedeSugerir ? verticalSugerida(operacion, tipo) : '')) as Vertical;
   if (!(VERTICALES as readonly string[]).includes(vertical)) err('vertical', 'Vertical no válida.');
 
+  // Se RECHAZA en vez de descartarse en silencio (igual que `vertical`): el valor sale de un `<select>`
+  // cerrado, así que uno que no esté en la lista no es un descuido del operador — es que algo lo mandó
+  // por otro camino, y tragárselo escribiría un valor que ningún lector sabe pintar.
+  const tipoParqueadero = txt(entrada.tipoParqueadero);
+  if (tipoParqueadero && !(TIPOS_PARQUEADERO as readonly string[]).includes(tipoParqueadero)) {
+    err('tipoParqueadero', 'Clase de parqueadero no válida.');
+  }
+
   if (errores.length) return { ok: false, errores };
 
   const geo: Geo = { ciudad, barrio };
@@ -331,11 +367,21 @@ export function construirPropiedad(entrada: EntradaAlta, ctx: ContextoAlta): Res
   };
   asignar('habitaciones', entero(entrada.habitaciones));
   asignar('banos', entero(entrada.banos));
+  asignar('banosSociales', entero(entrada.banosSociales));
   asignar('areaConstruidaM2', numeroDecimal(entrada.areaConstruidaM2));
+  // El área PRIVADA no es un adorno: `reparosParaSellar` pide un área para poder sellar y acepta
+  // cualquiera de las dos, así que mientras el formulario solo preguntara la construida, un inmueble
+  // medido en privada quedaba `sin-area` y no se podía verificar por un dato que sí existía.
+  asignar('areaPrivadaM2', numeroDecimal(entrada.areaPrivadaM2));
   asignar('estrato', entero(entrada.estrato, 1));
   asignar('parqueaderos', entero(entrada.parqueaderos));
+  asignar('tipoParqueadero', (tipoParqueadero || undefined) as TipoParqueadero | undefined);
+  asignar('cuartoUtil', triEstado(entrada.cuartoUtil));
   asignar('piso', entero(entrada.piso, 1));
   asignar('pisosTotales', entero(entrada.pisosTotales, 1));
+  // 0 es «a estrenar» y es un dato, no un hueco: `specsVisibles` lo pinta como «Estreno». Por eso el
+  // mínimo es 0 y no 1 — con mínimo 1 el año cero se habría descartado justo en el caso que más vende.
+  asignar('antiguedadAnios', entero(entrada.antiguedadAnios, 0));
 
   const iso = ctx.ahora.toISOString();
   const propiedad: Propiedad = {
@@ -629,13 +675,21 @@ export function entradaDe(p: Propiedad): EntradaAlta {
     canon: n(p.precio?.canon),
     administracion: n(p.precio?.administracion),
     precioNoche: n(p.precio?.precioNoche),
+    precioAseo: n(p.precio?.precioAseo),
     habitaciones: n(p.specs?.habitaciones),
     banos: n(p.specs?.banos),
+    banosSociales: n(p.specs?.banosSociales),
     areaConstruidaM2: n(p.specs?.areaConstruidaM2),
+    areaPrivadaM2: n(p.specs?.areaPrivadaM2),
     estrato: n(p.specs?.estrato),
     parqueaderos: n(p.specs?.parqueaderos),
+    tipoParqueadero: p.specs?.tipoParqueadero ?? '',
+    // `false` tiene que volver como «no», no como vacío: si volviera vacío, abrir y guardar un inmueble
+    // del que ya se sabe que NO tiene cuarto útil borraría ese dato y lo devolvería a «nadie lo ha mirado».
+    cuartoUtil: p.specs?.cuartoUtil == null ? '' : p.specs.cuartoUtil ? 'si' : 'no',
     piso: n(p.specs?.piso),
     pisosTotales: n(p.specs?.pisosTotales),
+    antiguedadAnios: n(p.specs?.antiguedadAnios),
     imagenes: [...(p.imagenes ?? [])],
     amenidades: { ...(p.amenidades ?? {}) },
   };
@@ -664,6 +718,11 @@ function precioDeEntrada(
     const n = numeroCop(e.precioNoche);
     if (!n || n <= 0) err('precioNoche', 'El precio por noche es obligatorio.');
     else precio.precioNoche = n;
+    // El aseo va SEPARADO de la noche por la misma razón que la administración del canon, y con una
+    // norma detrás: el Estatuto del Consumidor (Ley 1480 art. 26) pide el precio total desde el
+    // principio. Un aseo que aparece al final de la conversación es «drip pricing».
+    const aseo = numeroCop(e.precioAseo);
+    if (aseo != null && aseo > 0) precio.precioAseo = aseo;
   }
   return precio;
 }
