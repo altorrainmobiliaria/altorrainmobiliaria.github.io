@@ -436,6 +436,62 @@ describe('construirEdicion — lo que una edición NO puede reinventar (§111)',
     expect(editar().ok && (editar() as { propiedad: { _version: number } }).propiedad._version).toBe(7);
   });
 
+  // ═════════════════════════════════════════════════════════════════════════════════════════════
+  // §305 — HISTORIAL DE PRECIO. `priceHistory` estaba declarado desde Ola 0, la ficha lo pinta y
+  // `historialPrecio()` lo lee con sus pruebas… y NADIE lo escribía. Encima la edición reescribe el
+  // documento entero, así que aunque alguien lo llenara, el siguiente guardado lo borraba — el mismo
+  // mecanismo que se llevó el sello de verificación en §263.
+  // ═════════════════════════════════════════════════════════════════════════════════════════════
+
+  it('🎯 el alta ABRE el historial con el precio de salida (sin él no hay contra qué comparar)', () => {
+    const r = construir();
+    expect(r.ok && r.propiedad.priceHistory).toEqual([{ fecha: AHORA.toISOString(), valor: 450_000_000 }]);
+  });
+
+  it('🎯 bajar el precio AÑADE una entrada, y la ficha ya puede decir «bajó»', () => {
+    const base = { ...BASE, operacion: 'venta' as const, priceHistory: [{ fecha: '2026-07-15T08:00:00.000Z', valor: 450_000_000 }] };
+    const r = construirEdicion(entrada({ imagenes: ['props/INM-202607-0042/1.webp'], valorVenta: '399000000' }), base, AHORA);
+    expect(r.ok && r.propiedad.priceHistory).toEqual([
+      { fecha: '2026-07-15T08:00:00.000Z', valor: 450_000_000 },
+      { fecha: AHORA.toISOString(), valor: 399_000_000 },
+    ]);
+  });
+
+  it('🔴 NO-REGRESIÓN DE §263: una edición que no toca el precio CONSERVA el historial', () => {
+    const previo = [
+      { fecha: '2026-07-15T08:00:00.000Z', valor: 450_000_000 },
+      { fecha: '2026-08-01T08:00:00.000Z', valor: 420_000_000 },
+    ];
+    const base = { ...BASE, operacion: 'venta' as const, priceHistory: previo };
+    const r = construirEdicion(
+      entrada({ imagenes: ['props/INM-202607-0042/1.webp'], valorVenta: '420000000', titulo: 'Otro título' }),
+      base,
+      AHORA,
+    );
+    // Ni lo borra ni añade una fila por una errata del título: el precio no se movió.
+    expect(r.ok && r.propiedad.priceHistory).toEqual(previo);
+  });
+
+  it('🎯 cambiar de VENTA a ARRIENDO no es una bajada de precio: la serie empieza de cero', () => {
+    // Encadenarlas pintaría una caída de $450.000.000 a $3.500.000 — la más espectacular del portal,
+    // y mentira: son dos productos con dos escalas que no se comparan.
+    const base = { ...BASE, operacion: 'venta' as const, priceHistory: [{ fecha: '2026-07-15T08:00:00.000Z', valor: 450_000_000 }] };
+    const r = construirEdicion(
+      entrada({ imagenes: ['props/INM-202607-0042/1.webp'], operacion: 'arriendo', valorVenta: '', canon: '3500000' }),
+      base,
+      AHORA,
+    );
+    expect(r.ok && r.propiedad.priceHistory).toEqual([{ fecha: AHORA.toISOString(), valor: 3_500_000 }]);
+  });
+
+  it('`baseDe` lleva el historial y la operación: si no pasan por ahí, se pierden', () => {
+    const r = construir();
+    if (!r.ok) throw new Error('debia construir');
+    const b = baseDe(r.propiedad);
+    expect(b.priceHistory).toEqual([{ fecha: AHORA.toISOString(), valor: 450_000_000 }]);
+    expect(b.operacion).toBe('venta');
+  });
+
   it('conserva el id y sigue validando como el alta', () => {
     const r = editar();
     expect(r.ok && r.propiedad.id).toBe('INM-202607-0042');

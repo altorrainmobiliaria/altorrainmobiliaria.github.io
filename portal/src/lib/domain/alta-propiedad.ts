@@ -10,8 +10,8 @@
  */
 
 import { claveValida } from '../media-subida';
-import { problemasParaPublicar, type ProblemaPublicacion } from './catalogo';
-import type { Amenidades, AutorizacionPH, Precio, SpecsInmueble } from './propiedades';
+import { precioDisplay, problemasParaPublicar, type ProblemaPublicacion } from './catalogo';
+import type { Amenidades, AutorizacionPH, Precio, PriceHistoryEntry, SpecsInmueble } from './propiedades';
 import type { Propiedad } from './propiedades';
 import { reparosParaSellar } from './verificacion';
 import {
@@ -20,6 +20,7 @@ import {
   SITUACIONES_PH,
   TIPOS_INMUEBLE,
   VERTICALES,
+  type COP,
   type Geo,
   type EstadoPropiedad,
   type Operacion,
@@ -363,6 +364,12 @@ export function construirPropiedad(entrada: EntradaAlta, ctx: ContextoAlta): Res
     propiedad.autorizacionPH = declaracion;
   }
 
+  // 💲 El PRECIO DE SALIDA abre el historial (§305). Sin esta línea el primer cambio de precio dejaría
+  // UNA entrada suelta, y con una sola no hay contra qué comparar: la ficha no podría decir «bajó»,
+  // que es justo la transparencia que este portal vende. La serie empieza el día que se publica.
+  const salida = precioDisplay(propiedad);
+  if (salida != null) propiedad.priceHistory = [{ fecha: iso, valor: salida }];
+
   return { ok: true, propiedad };
 }
 
@@ -402,11 +409,88 @@ export function revisarAlta(entrada: EntradaAlta, ahora: Date): RevisionAlta {
 /**
  * Lo que un inmueble YA TIENE y una edición no puede reinventar. Se captura al ABRIR el formulario.
  */
+/**
+ * Tope del historial en el documento. El `priceHistory` vive en el doc de la propiedad, que se LEE
+ * entero en cada ficha SSR: dejarlo crecer sin fin es pagar lectura por un dato que nadie mira más
+ * allá de las últimas filas. Diez cambios de precio son muchos más de los que tiene un inmueble real.
+ *
+ * Se recortan los MÁS VIEJOS y la serie queda CONTIGUA. Conservar el primero y saltar al final sería
+ * más interesante de leer y dejaría un hueco mudo: `historialPrecio()` calcula «subió/bajó»
+ * comparando entradas consecutivas, y una serie con agujeros no avisa de que le faltan tramos.
+ */
+export const TOPE_HISTORIAL_PRECIO = 10;
+
+/**
+ * El historial de precio DESPUÉS de esta edición (§305).
+ *
+ * 🔴 POR QUÉ EXISTE. `Propiedad.priceHistory` estaba declarado desde Ola 0, la ficha lo pinta y
+ * `historialPrecio()` lo lee con sus pruebas… y **nadie lo escribía nunca**: el comentario del campo
+ * llegó a decir «la Function que escribe lo poda», nombrando algo que no existía. La sección de
+ * historial de la ficha —uno de los diferenciales declarados del portal, «transparencia radical de
+ * precios»— iba a estar vacía para siempre. Y encima `guardarEdicion` escribe el documento COMPLETO
+ * (`tx.set` sin merge), así que aunque alguien lo hubiera llenado, la siguiente edición lo borraba:
+ * es el mismo mecanismo que se llevó por delante el sello de verificación en §263.
+ *
+ * 🎯 LO ESCRIBE EL SERVIDOR, DERIVÁNDOLO DEL CAMBIO REAL. No viaja en `EntradaAlta` y no debe:
+ * *un historial que el interesado puede redactar no es un historial* (§151). Se compara el precio de
+ * display anterior con el nuevo y solo eso decide si hay entrada.
+ *
+ * ⚠️ **Una edición que NO toca el precio no añade nada.** Corregir una errata del título no es un
+ * cambio de precio, y sin esta condición la ficha acabaría enseñando catorce filas idénticas y un
+ * inmueble parecería volátil por culpa de las comas que le arreglaron.
+ */
+export function historialActualizado(opciones: {
+  anterior?: readonly PriceHistoryEntry[];
+  precioNuevo: COP | null;
+  /** ¿La serie previa sigue siendo comparable? `false` cuando cambió la OPERACIÓN (ver abajo). */
+  comparable: boolean;
+  ahora: Date;
+}): PriceHistoryEntry[] {
+  /*
+   * ⚠️ NO recibe el «precio anterior». La primera versión lo pedía y no lo miraba: el precio anterior
+   * ES la última entrada de la serie, por construcción. Un parámetro que nadie lee miente sobre lo
+   * que la función necesita y, peor, invita a pasarle un valor calculado de otra forma — el día que
+   * los dos discrepen, gana el que no se usa y nadie entiende por qué.
+   */
+  const { anterior, precioNuevo, comparable, ahora } = opciones;
+  const previo = (anterior ?? []).filter((e) => e && typeof e.valor === 'number' && Number.isFinite(Date.parse(e.fecha)));
+
+  // Sin precio nuevo no hay nada que anotar; el inmueble además no es publicable (`sin-precio`).
+  if (precioNuevo == null) return [...previo];
+
+  const entrada: PriceHistoryEntry = { fecha: ahora.toISOString(), valor: precioNuevo };
+
+  /*
+   * 🎯 CAMBIÓ LA OPERACIÓN ⇒ SERIE NUEVA. Un inmueble que pasa de venta a arriendo no «bajó de
+   * $600.000.000 a $3.500.000»: son dos productos distintos con dos precios que no se comparan. Dejar
+   * la serie anterior pintaría la caída más espectacular del portal, y sería mentira. Es el mismo
+   * error que evita `numeroDeDinero` frente a `numeroDecimal`: dos dominios bajo un mismo tipo.
+   */
+  if (!comparable || !previo.length) return [entrada];
+
+  // Mismo precio ⇒ no hubo cambio de precio, hubo una edición. No se anota.
+  if (previo[previo.length - 1].valor === precioNuevo) return [...previo];
+
+  return [...previo, entrada].slice(-TOPE_HISTORIAL_PRECIO);
+}
+
 export interface BaseEdicion {
   id: string;
   /** CONGELADO. Regenerarlo cambiaría la URL pública de un inmueble ya indexado. */
   slug: string;
   createdAt: string;
+  /**
+   * El PRECIO y el HISTORIAL que ya tenía el documento. Viajan por la misma razón que el sello de
+   * §263: la edición reescribe el documento entero, así que lo que no se le pase se pierde en
+   * silencio — y aquí «en silencio» significa que el historial de precios se vacía solo.
+   */
+  priceHistory?: PriceHistoryEntry[];
+  /**
+   * La OPERACIÓN que tenía. Decide si la serie de precios sigue siendo comparable: pasar de venta a
+   * arriendo no es una bajada de precio, es otro producto. Ausente ⇒ se trata como no comparable, que
+   * es el lado conservador (serie nueva, nunca una caída inventada).
+   */
+  operacion?: Operacion;
   /** El `_version` que se leyó al abrir. Es el testigo del control de concurrencia. */
   version: number;
   /**
@@ -467,6 +551,23 @@ export function construirEdicion(entrada: EntradaAlta, base: BaseEdicion, ahora:
     propiedad.verificadoAltorra = true;
     if (base.verificadoEn) propiedad.verificadoEn = base.verificadoEn;
   }
+
+  /*
+   * 💲 EL HISTORIAL DE PRECIO (§305). `construirPropiedad` acaba de sembrar una serie NUEVA con el
+   * precio del formulario —correcto al crear, destructivo al editar—, así que aquí se sustituye por
+   * la serie real: la que ya tenía más la entrada de este cambio, si es que lo hubo.
+   *
+   * `comparable` es falso cuando cambió la OPERACIÓN: venta y arriendo no comparten escala de precio
+   * y encadenarlas pintaría una caída espectacular que nunca ocurrió.
+   */
+  propiedad.priceHistory = historialActualizado({
+    anterior: base.priceHistory,
+    precioNuevo: precioDisplay(propiedad),
+    comparable: base.operacion === propiedad.operacion,
+    ahora,
+  });
+  if (!propiedad.priceHistory.length) delete propiedad.priceHistory;
+
   return { ok: true, propiedad };
 }
 
@@ -477,6 +578,10 @@ export function baseDe(p: Propiedad): BaseEdicion {
     slug: p.slug ?? '',
     createdAt: p.createdAt,
     version: typeof p._version === 'number' ? p._version : 0,
+    // 💲 §305: sin estos dos, cada edición vaciaba el historial de precio — el documento se reescribe
+    // ENTERO, así que lo que no pase por aquí desaparece. Mismo mecanismo que se llevó el sello (§263).
+    operacion: p.operacion,
+    ...(p.priceHistory?.length ? { priceHistory: p.priceHistory } : {}),
     ...(p.autorizacionPH ? { autorizacionPH: p.autorizacionPH } : {}),
     ...(p.verificadoAltorra ? { verificadoAltorra: true as const, verificadoEn: p.verificadoEn } : {}),
   };
