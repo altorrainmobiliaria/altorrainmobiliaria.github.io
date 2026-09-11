@@ -579,7 +579,21 @@ const CORREOS_DE_EJEMPLO = new Set(['tu@correo.com', 'your@email.com', 'nombre@c
 /** Exige separador, prefijo de pais o contexto de telefono: si no, casan constantes numericas. */
 const MOVIL_CO = /(?:\+57[\s.-]?|tel:|wa\.me\/57|\b)3\d{2}[\s.-]\d{3}[\s.-]?\d{4}|\+?573\d{9}/g;
 const CORREO_CUALQUIERA = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
-const FUERA = /(^|[\\/])(node_modules|\.git|_legacy|backups|design|dist|skills)([\\/]|$)/;
+const FUERA = /(^|[\\/])(node_modules|\.git|_legacy|backups|design|skills)([\\/]|$)/;
+/**
+ * 🔴 `dist` YA NO ESTA EN `FUERA` (§316.5). Estaba para excluir el `dist/` del LEGACY, pero forzaba a
+ * llamar a cada rama con su propia `base` para que el `dist` del portal no se auto-excluyera — un
+ * mecanismo que ya fallo una vez (§316.1) y que volveria a fallar con la siguiente rama que alguien
+ * anada. El `dist/` del legacy se excluye ahora por NOMBRE, donde se ve.
+ */
+const DIST_DEL_LEGACY = resolve(root, '..', 'dist');
+/**
+ * Un correo en un aviso de LICENCIA de una dependencia empaquetada no es un contacto publicado: es el
+ * autor de una libreria, dentro del texto legal que obliga a conservar. 📊 Medido: al abrir el bundle
+ * SSR aparece UNO —`shorthash`, «Copyright (c) 2013 Bibig <…>»— y es el unico de los 258 ficheros.
+ * ⚠️ Exime CORREOS, jamas telefonos: no hay aviso de licencia que lleve un movil colombiano.
+ */
+const AVISO_DE_LICENCIA = /copyright\s*\(c\)|@license|@author|the mit license|permission is hereby granted/i;
 
 /**
  * TODO lo que el dominio sirve: el legacy de la raiz Y el portal construido.
@@ -592,16 +606,24 @@ const FUERA = /(^|[\\/])(node_modules|\.git|_legacy|backups|design|dist|skills)(
  *
  * Es exactamente la averia de §250 —mirar el sitio equivocado— reaparecida DENTRO del gate que se
  * escribio para no repetirla, y en el unico control que no tiene otra red: si el movil PERSONAL del
- * dueno acabara en una pagina del portal, esto decia verde. Con la ruta relativa, el `dist` del
- * legacy sigue excluyendose (ahi si es un subdirectorio) y el del portal deja de auto-excluirse.
+ * dueno acabara en una pagina del portal, esto decia verde.
+ *
+ * 🔴 Y FALTABA LA TERCERA SUPERFICIE: el BUNDLE SSR (§316.5). Con `dist/client` ya recorrido, el gate
+ * seguia sin ver `dist/server/*.mjs` por DOS motivos a la vez —la extension `.mjs` no estaba en la
+ * lista, y el recorrido no llegaba alli—, y ahi es donde vive el HTML de la ficha de inmueble y del
+ * proyecto de obra: paginas que se renderizan en el Worker y NO existen como fichero en `client`.
+ * O sea que las dos paginas que mas contacto publican eran justo las que nadie miraba. Un bundle no
+ * se sirve como fichero, pero su contenido SI se emite al publico: el criterio de este gate es
+ * «¿puede llegar a un desconocido?», no «¿se descarga con esa URL?».
+ * 📊 127 (§316.1) → 202 → **258** ficheros.
  */
-function servidoPorElDominio(dir, acc = [], base = dir) {
+function servidoPorElDominio(dir, acc = []) {
   if (!existsSync(dir)) return acc;
   for (const n of readdirSync(dir)) {
     const p = resolve(dir, n);
-    if (FUERA.test(relative(base, p))) continue;
-    if (statSync(p).isDirectory()) servidoPorElDominio(p, acc, base);
-    else if (/\.(html|js|json|webmanifest|xml)$/i.test(n)) acc.push(p);
+    if (FUERA.test(p) || p === DIST_DEL_LEGACY) continue;
+    if (statSync(p).isDirectory()) servidoPorElDominio(p, acc);
+    else if (/\.(html|js|mjs|json|webmanifest|xml)$/i.test(n)) acc.push(p);
   }
   return acc;
 }
@@ -609,6 +631,7 @@ const RAIZ_REPO = resolve(root, '..');
 const superficie = [
   ...servidoPorElDominio(RAIZ_REPO).filter((p) => !p.startsWith(resolve(root) + sep)),
   ...servidoPorElDominio(resolve(root, 'dist/client')),
+  ...servidoPorElDominio(resolve(root, 'dist/server')),
 ];
 
 const fugas = [];
@@ -625,6 +648,11 @@ for (const f of superficie) {
     const c = m[0].toLowerCase();
     if (c === MAIL_DEL_NEGOCIO || c.endsWith('@altorrainmobiliaria.co')) continue;
     if (CORREOS_DE_EJEMPLO.has(c) || c.endsWith('.gserviceaccount.com')) continue;
+    // Solo SU LINEA, no una ventana: una comprobacion por cercania no distingue dos cosas que estan
+    // cerca (§316), y aqui eso significaria que basta poner un contacto al lado de un MIT para colarlo.
+    const finDeLinea = limpio.indexOf('\n', m.index);
+    const suLinea = limpio.slice(limpio.lastIndexOf('\n', m.index) + 1, finDeLinea === -1 ? undefined : finDeLinea);
+    if (AVISO_DE_LICENCIA.test(suLinea)) continue;
     fugas.push(`${donde} → ${c}`);
   }
 }
