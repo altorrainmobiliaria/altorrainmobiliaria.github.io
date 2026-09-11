@@ -70,6 +70,35 @@ service cloud.firestore {
     function sinResenasAlCrear() { return !request.resource.data.keys().hasAny(['resenas']); }
 
     /**
+     * 🔒 LA PROYECCIÓN PÚBLICA SOLO PUEDE TENER LOS CAMPOS PÚBLICOS (§313).
+     *
+     * `propiedades` es la ÚNICA colección de negocio que el público puede leer
+     * (`allow get: if esStaff() || estadoPublicado()`). Hasta hoy, lo que impedía que un dato interno
+     * —la comisión pactada, el teléfono del propietario, la dirección exacta— acabara dentro de ese
+     * documento era un COMENTARIO en `domain/propiedades.ts`. Un editor podía escribirlo y quedaba
+     * legible por cualquiera en cuanto el inmueble se publicase; el índice lo habría copiado con su
+     * spread sin mirar.
+     *
+     * La lista NO se mantiene a mano: es el espejo de `CAMPOS_PUBLICOS_PROPIEDAD`, que en TypeScript
+     * deriva de `Record<keyof Propiedad, true>` —o sea que el compilador obliga a que esté completa— y
+     * que `verify:data` compara contra ESTA lista en cada build. Si alguien añade un campo al modelo y
+     * no lo añade aquí, el gate lo para antes de que el guardado empiece a fallar en producción.
+     *
+     * ⚠️ Se aplica a create Y a update: `request.resource.data` es el documento RESULTANTE, no el
+     * delta, así que un `merge` que añada una clave prohibida también cae aquí. Y va en AMBOS por lo
+     * mismo que `gateAlojamiento()`: cerrar solo el create deja la puerta de atrás obvia.
+     */
+    function soloCamposPublicos() {
+      return request.resource.data.keys().hasOnly([
+        '_version', 'amenidades', 'autorizacionPH', 'codigoLegacy', 'createdAt', 'descripcion',
+        'estado', 'featured', 'geo', 'id', 'imagenPortada', 'imagenes', 'operacion',
+        'otrasAmenidades', 'precio', 'priceHistory', 'prioridad', 'resenas', 'rnt', 'slug',
+        'specs', 'tipo', 'titulo', 'ultimaConfirmacion', 'updatedAt', 'verificadoAltorra',
+        'verificadoEn', 'vertical'
+      ]);
+    }
+
+    /**
      * 🧾 UN PROYECTO PUBLICADO EXIGE SU LICENCIA DE CONSTRUCCIÓN (§286).
      *
      * El dominio ya lo dice —`problemasParaPublicarProyecto` devuelve 'sin-licencia'— pero el dominio
@@ -117,10 +146,22 @@ service cloud.firestore {
       // `.get()` con defecto y no acceso directo: en las Rules, leer un campo AUSENTE hace fallar la
       // condicion entera, asi que la version directa denegaba cualquier propiedad sin `operacion` —
       // lo caza una prueba de concurrencia que crea una con solo `estado` y `_version`.
+      //
+      // 🔴 LEÍA UN CAMPO QUE NINGÚN DOCUMENTO REAL TIENE (§313). Esta condición pedía un
+      // `situacionPH` de PRIMER NIVEL. `situacionPH` es un campo del FORMULARIO (`EntradaAlta`); lo
+      // que se guarda es `autorizacionPH: { situacion, declaradaEn }` (§174). O sea que el gate
+      // denegaba TODO alojamiento legítimo escrito por el panel —que escribe desde el cliente y
+      // pasa por estas reglas—, dejando la quinta vertical imposible de dar de alta. Fail-closed en
+      // el lado equivocado: no colaba nada ilegal, pero tampoco dejaba pasar lo legal.
+      //
+      // No se vio porque las PRUEBAS escribían la forma de la REGLA en vez de la del MODELO — el
+      // defecto de §179, una prueba que confirma lo que el código ya cree. Y el espejo de `verify:data`
+      // tampoco podía verlo: compara la LISTA DE VALORES, no el CAMPO del que se leen.
       return request.resource.data.get('operacion', '') != 'alojamiento'
           || (request.resource.data.get('rnt', '') is string
               && request.resource.data.get('rnt', '').size() > 0
-              && request.resource.data.get('situacionPH', '') in ['no-aplica', 'autoriza-expreso']);
+              && request.resource.data.get('autorizacionPH', {}).get('situacion', '')
+                   in ['no-aplica', 'autoriza-expreso']);
     }
 
     // ── PROPIEDADES ─────────────────────────────────────────────────────────────────────────────
@@ -133,11 +174,11 @@ service cloud.firestore {
       // LIST denegado al público: la SERP se sirve del índice denormalizado, no de queries (free-tier).
       allow list: if esStaff();
       allow create: if (esSuperAdmin() || (esEditorOMas() && versionCreacionValida()))
-                     && gateAlojamiento() && sinResenasAlCrear();
+                     && gateAlojamiento() && sinResenasAlCrear() && soloCamposPublicos();
       // El gate también en UPDATE: pasar un inmueble a `alojamiento` después de crearlo tendría
       // exactamente el mismo efecto que crearlo así, y sería la puerta de atrás obvia.
       allow update: if (esSuperAdmin() || (esEditorOMas() && versionValida()))
-                     && gateAlojamiento() && noTocaResenas();
+                     && gateAlojamiento() && noTocaResenas() && soloCamposPublicos();
       allow delete: if esSuperAdmin();
 
       // Historial de cambios — INMUTABLE, y desde §130 también SERVER-ONLY: `create: if esEditorOMas()`

@@ -109,6 +109,45 @@ export interface Propiedad extends Versioned, Auditable {
   ultimaConfirmacion?: ISODate; // frescura: re-confirmar 30-60d → inactivo (nunca borrar)
 }
 
+/*
+ * ─────────────────────────────────────────────────────────────────────────────
+ * LA LISTA BLANCA DE LA PROYECCIÓN PÚBLICA (§313)
+ * ─────────────────────────────────────────────────────────────────────────────
+ *
+ * 🔴 POR QUÉ EXISTE. El comentario de `Propiedad` dice «⛔ JAMÁS incluir PII de propietario, dirección
+ * exacta, matrícula inmobiliaria ni comisión», y hasta hoy eso era **exactamente un comentario**: las
+ * Rules de `propiedades` permitían `create/update` a un editor con `versionValida() && gateAlojamiento()
+ * && noTocaResenas()` y **ningún `keys().hasOnly(...)`**. Medido: un editor podía escribir un
+ * `comisionPct` —o el teléfono del propietario— dentro del documento público, y quedaba de LECTURA
+ * PÚBLICA en cuanto el inmueble se publicara (`allow get: if esStaff() || estadoPublicado()`). El
+ * índice lo habría propagado sin mirar: `catalogo-rebuild` copia el documento con un spread.
+ *
+ * El proyecto ya sabía la técnica —`hasOnly` se usa en otras dos colecciones—; simplemente no estaba
+ * aquí, que es la única colección de las tres que el público puede leer.
+ *
+ * 🎯 LA LISTA LA MANTIENE EL COMPILADOR, NO LA MEMORIA. El `Record<keyof Propiedad, true>` obliga a que
+ * estén TODAS las claves de la interfaz: añadir un campo a `Propiedad` y olvidarse de esta lista **no
+ * compila**. Una lista blanca que hay que acordarse de actualizar se convierte, en tres meses, en un
+ * campo nuevo que no se puede guardar — y el error que da Firestore en ese caso no nombra la lista.
+ * El espejo contra las Rules lo comprueba `verify:data`, así que la cadena entera queda cerrada:
+ * interfaz → (compilador) → esta lista → (gate) → Rules.
+ *
+ * ⚠️ Lo que esta lista NO hace: no decide qué se ENSEÑA (eso es de `ficha.ts` y del índice). Decide qué
+ * puede EXISTIR en el documento público. Un dato interno que nunca llega al documento no se puede
+ * filtrar por descuido de una plantilla.
+ */
+const CLAVES_PUBLICAS: Record<keyof Propiedad, true> = {
+  _version: true, createdAt: true, updatedAt: true,
+  id: true, codigoLegacy: true, operacion: true, vertical: true, tipo: true, estado: true,
+  titulo: true, descripcion: true, slug: true, geo: true, specs: true, amenidades: true,
+  otrasAmenidades: true, precio: true, priceHistory: true, rnt: true, autorizacionPH: true,
+  imagenes: true, imagenPortada: true, featured: true, prioridad: true, resenas: true,
+  verificadoAltorra: true, verificadoEn: true, ultimaConfirmacion: true,
+};
+
+/** Los ÚNICOS campos que puede tener un documento de `propiedades`. Espejo de `firestore.rules`. */
+export const CAMPOS_PUBLICOS_PROPIEDAD: readonly string[] = Object.keys(CLAVES_PUBLICAS).sort();
+
 /** Garantía de arriendo (OD9): en VIVIENDA el depósito en dinero está PROHIBIDO (art. 16 Ley 820). */
 export const TIPOS_GARANTIA = ['poliza', 'codeudor', 'deposito_no_vivienda'] as const;
 export type TipoGarantia = (typeof TIPOS_GARANTIA)[number];

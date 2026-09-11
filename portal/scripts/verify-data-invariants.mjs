@@ -159,6 +159,22 @@ const listaDe = (texto, re) => {
 const listaDeHelper = (helper, re) =>
   listaDe((rules.match(new RegExp(`function ${helper}\\(\\)[\\s\\S]{0,600}?\\n\\s*}`)) ?? [''])[0], re);
 
+/**
+ * Las CLAVES de un `Record<..., true>` de TypeScript, ordenadas (§313).
+ *
+ * Va aparte de `listaDe` porque no es una lista: es un objeto cuyas claves SON el dato, y el valor
+ * (`true`) solo existe para que el tipo `Record<keyof X, true>` obligue al compilador a exigirlas
+ * todas. Reutilizar el extractor de listas habría devuelto `null` en silencio — y un comparador que
+ * no encuentra nada que comparar y pasa en verde es el gate que miente ([[L-52]]); aquí `compara()`
+ * lo trata como error, que es lo correcto.
+ */
+const clavesDeRecord = (texto, nombre) => {
+  const m = texto.match(new RegExp(`const ${nombre}[^=]*=\\s*\\{([\\s\\S]*?)\\n\\};`));
+  if (!m) return null;
+  const claves = [...m[1].matchAll(/([A-Za-z_$][\w$]*)\s*:\s*true/g)].map((x) => x[1]);
+  return claves.length ? claves.sort() : null;
+};
+
 const compara = (nombre, enRules, enCodigo, pista) => {
   if (!enRules || !enCodigo) {
     espejos.push({ nombre, error: `no se pudo LEER ${!enRules ? 'las Rules' : 'el código'} (${pista})` });
@@ -172,6 +188,7 @@ const compara = (nombre, enRules, enCodigo, pista) => {
 const catalogoTs = readFileSync(resolve(srcDir, 'lib/domain/catalogo.ts'), 'utf8');
 const tokenTs = readFileSync(resolve(srcDir, 'lib/auth/verificar-id-token.ts'), 'utf8');
 const proyectosTs = readFileSync(resolve(srcDir, 'lib/domain/proyectos.ts'), 'utf8');
+const propiedadesTs = readFileSync(resolve(srcDir, 'lib/domain/propiedades.ts'), 'utf8');
 
 // El dominio escribe la lista de proyectos como `new Set([...])` y la de propiedades como array
 // suelto: el paréntesis opcional es lo único que separa a los dos, no dos regex distintas.
@@ -183,6 +200,25 @@ compara(
   listaDeHelper('estadoPublicado', /resource\.data\.estado in \(?(\[[^\]]+\])/),
   listaDe(catalogoTs, RE_ESTADOS_TS),
   'estadoPublicado() / catalogo.ts ESTADOS_PUBLICADOS',
+);
+
+/*
+ * 1-ter. LA LISTA BLANCA DE CAMPOS de la proyección pública (§313).
+ *
+ * Es el espejo que más cuesta si se rompe, y de una forma distinta a los demás: cuando los espejos de
+ * ESTADOS divergen se publica de menos o de más — un problema de inventario. Cuando diverge ÉSTE, o
+ * bien deja de poder guardarse un campo legítimo (fallo ruidoso, se ve enseguida), o bien —y esto es
+ * lo que importa— alguien añade una clave a las Rules que el modelo no conoce y abre un hueco por el
+ * que puede entrar un dato interno a un documento de LECTURA PÚBLICA.
+ *
+ * La mitad TS no se puede desincronizar del modelo (la deriva `Record<keyof Propiedad, true>`, así que
+ * el compilador la obliga); esta sonda cierra la otra mitad, que es la que ningún compilador ve.
+ */
+compara(
+  'campos públicos (propiedades)',
+  listaDeHelper('soloCamposPublicos', /keys\(\)\.hasOnly\(\s*(\[[^\]]+\])/),
+  clavesDeRecord(propiedadesTs, 'CLAVES_PUBLICAS'),
+  'soloCamposPublicos() / propiedades.ts CLAVES_PUBLICAS',
 );
 
 /*
@@ -226,11 +262,24 @@ compara(
  */
 const altaTs = readFileSync(resolve(srcDir, 'lib/domain/shared.ts'), 'utf8');
 const todasPH = listaDe(altaTs, /SITUACIONES_PH[^=]*=\s*(\[[^\]]+\])/);
+/*
+ * ⚠️ §313 — ESTE ESPEJO COMPARA LA LISTA, NO EL CAMPO, Y ESA ES SU FRONTERA.
+ *
+ * El patrón leía `get('situacionPH', '')` y cuadraba en verde mientras la regla pedía un campo de
+ * PRIMER NIVEL que **ningún documento real tiene**: el modelo guarda `autorizacionPH.situacion`
+ * (§174). Los dos lados conocían el mismo VOCABULARIO —por eso el espejo pasaba— y leían sitios
+ * distintos, así que el gate legal denegaba todo alojamiento legítimo.
+ *
+ * 🎯 La lección, que vale para cualquier espejo: **coincidir en los valores no es coincidir en el
+ * campo**. Lo que cierra ese hueco no es este comparador sino una prueba de emulador que escriba la
+ * forma del MODELO (las hay, en `firebase/tests/rules.test.ts`); aquí lo único que se puede hacer es
+ * anclar el patrón a la ruta nueva y dejar escrito lo que NO comprueba.
+ */
 compara(
   'situaciones de PH que permiten alojamiento',
-  listaDe(rules, /get\('situacionPH', ''\) in (\[[^\]]+\])/),
+  listaDe(rules, /get\('autorizacionPH', \{\}\)\.get\('situacion', ''\)\s*\n?\s*in (\[[^\]]+\])/),
   todasPH ? todasPH.filter((x) => x !== 'sin-autorizacion') : null,
-  "situacionPH in [...] / SITUACIONES_PH menos 'sin-autorizacion'",
+  "autorizacionPH.situacion in [...] / SITUACIONES_PH menos 'sin-autorizacion'",
 );
 
 if (espejos.length) {
@@ -240,4 +289,4 @@ if (espejos.length) {
   console.error('   publican fichas que las Rules niegan, o hay inventario que nadie indexa (§179).');
   process.exit(1);
 }
-console.log('✅ verify:data — los 5 espejos de `firestore.rules` (estados de propiedad · los 2 de proyecto · roles · PH del alojamiento) cuadran con el código.');
+console.log('✅ verify:data — los 6 espejos de `firestore.rules` (estados de propiedad · los 2 de proyecto · roles · PH del alojamiento · campos públicos) cuadran con el código.');

@@ -563,11 +563,22 @@ describe('el staff conserva sus propias fichas (el escape que evita perder el ca
 describe('alojamiento — el RNT y el reglamento de PH se exigen en las REGLAS, no solo en el formulario', () => {
   beforeEach(seed);
 
-  const alojamiento = (extra: Record<string, unknown>) => ({
+  /*
+   * ⚠️ ESCRIBE LA FORMA DEL MODELO, NO LA DE LA REGLA (§313). Este helper mandaba un `situacionPH`
+   * de primer nivel porque era lo que la regla leía — y ningún documento real lo tiene: el modelo
+   * guarda `autorizacionPH: { situacion, declaradaEn }` (§174). Con eso, las pruebas confirmaban la
+   * creencia de la regla en vez de contrastarla contra el escritor, y tapaban que el gate denegaba
+   * TODO alojamiento legítimo. Una prueba que le pregunta al código lo que el código ya cree no es
+   * una prueba (§179).
+   */
+  const alojamiento = ({ situacionPH, ...extra }: Record<string, unknown>) => ({
     _version: 1,
     estado: 'borrador',
     titulo: 'Casa con piscina',
     operacion: 'alojamiento',
+    ...(situacionPH === undefined
+      ? {}
+      : { autorizacionPH: { situacion: situacionPH, declaradaEn: '2026-09-11T00:00:00Z' } }),
     ...extra,
   });
 
@@ -631,6 +642,63 @@ describe('alojamiento — el RNT y el reglamento de PH se exigen en las REGLAS, 
         estado: 'borrador',
         titulo: 'Apto en venta',
         operacion: 'alojamiento',
+      }),
+    );
+  });
+});
+
+
+/*
+ * 🔒 LA COMISIÓN Y LA PII NO PUEDEN ENTRAR AL DOCUMENTO PÚBLICO (§313).
+ *
+ * `propiedades` es la única colección de negocio con lectura pública. El modelo lo decía desde Ola 0
+ * —«⛔ JAMÁS incluir PII de propietario, dirección exacta, matrícula inmobiliaria ni comisión»— y era
+ * un COMENTARIO: las Rules no validaban la lista de campos, así que un editor podía escribir el
+ * porcentaje pactado o el teléfono del dueño y quedaba legible por cualquiera al publicar.
+ *
+ * Daniel lo decidió explícitamente el 2026-09-11: «la comisión no se le muestra al huésped». Estas
+ * pruebas son lo que convierte esa frase en algo que el sistema impide, no algo que hay que recordar.
+ */
+describe('propiedades · lista blanca de campos — lo interno NO entra (§313)', () => {
+  beforeEach(seed);
+
+  it('🔴 editor NO puede crear una propiedad con `comisionPct`', async () => {
+    await assertFails(
+      setDoc(doc(editor(), 'propiedades/INM-10'), {
+        _version: 1, estado: 'borrador', titulo: 'Con comision', comisionPct: 12,
+      }),
+    );
+  });
+
+  it('🔴 editor NO puede AÑADIR `comisionPct` a una propiedad existente', async () => {
+    await assertFails(updateDoc(doc(editor(), 'propiedades/INM-1'), { _version: 2, comisionPct: 12 }));
+  });
+
+  it('🔴 TAMPOCO el super_admin: la lista blanca va fuera del `||` de rol', async () => {
+    // No es un detalle de redaccion. Si la guarda colgara de la rama de editor, el rol mas alto seria
+    // justo el que puede publicar el dato interno — y es el rol que usa quien administra de verdad.
+    await assertFails(updateDoc(doc(superAdmin(), 'propiedades/INM-1'), { comisionPct: 12 }));
+  });
+
+  it('🔴 ni la PII del propietario, ni la direccion exacta, ni la matricula', async () => {
+    await assertFails(
+      updateDoc(doc(superAdmin(), 'propiedades/INM-1'), { propietario: { nombre: 'Catalina', telefono: '300' } }),
+    );
+    await assertFails(updateDoc(doc(superAdmin(), 'propiedades/INM-1'), { direccionExacta: 'Cra 1 #2-3' }));
+    await assertFails(updateDoc(doc(superAdmin(), 'propiedades/INM-1'), { matriculaInmobiliaria: '060-12345' }));
+  });
+
+  it('un alta LEGITIMA con campos del modelo sigue pasando', async () => {
+    // 🎯 El control POSITIVO. Sin el, haber cerrado la coleccion entera se veria tan verde como
+    // haberla cerrado bien: las cuatro denegaciones de arriba pasarian exactamente igual.
+    await assertSucceeds(
+      setDoc(doc(editor(), 'propiedades/INM-11'), {
+        _version: 1, id: 'INM-11', operacion: 'venta', vertical: 'vivienda', tipo: 'apartamento',
+        estado: 'borrador', titulo: 'Legitima', descripcion: 'x', slug: 'legitima-inm-11',
+        geo: { ciudad: 'Cartagena de Indias', barrio: 'Bocagrande' }, specs: { habitaciones: 3 },
+        amenidades: {}, precio: { moneda: 'COP', valorVenta: 450000000 },
+        imagenes: ['props/INM-11/1.webp'], imagenPortada: 'props/INM-11/1.webp',
+        createdAt: '2026-09-11T00:00:00Z', updatedAt: '2026-09-11T00:00:00Z',
       }),
     );
   });
