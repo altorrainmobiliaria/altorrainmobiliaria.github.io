@@ -285,7 +285,18 @@ if (existsSync(DIST)) {
          * Un patron alternado lee UNA alternativa, no las dos.
          */
         const attrs = [c[0].match(/name="([^"]*)"/i)?.[1], c[0].match(/id="([^"]*)"/i)?.[1]];
-        if (attrs.some((a) => a && /autoriz|habeas|auth/i.test(a))) return true;
+        /*
+         * ⚠️ `auth` NO va en este patrón (§316.5). Estaba, y era un agujero: `auth` casa con
+         * AUTENTICACIÓN —`oauth`, `authToken`, `data-auth`—, que es justo lo contrario de una
+         * autorización de tratamiento de datos. Cualquier casilla de un formulario de acceso
+         * habría contado como el consentimiento de la Ley 1581.
+         *
+         * 📊 Medido antes de retirarlo: la única casilla de las 12 del build que casaba `auth` sin
+         * casar `autoriz|habeas` es la de `/estancias`, `id="est-auth"` — y ese MISMO input lleva
+         * `name="autorizacion"`, que ya casa. Con el token y sin él: los mismos 4 formularios
+         * juzgados, verde igual. *Lo que se retira no es cobertura: es una excusa para no mirar* (§316.2).
+         */
+        if (attrs.some((a) => a && /autoriz|habeas/i.test(a))) return true;
         /*
          * Sin nombre revelador, se mira SU etiqueta, no una ventana de texto. La versión con
          * ventana de 600 caracteres seguía en verde tras quitar la casilla de la autorización:
