@@ -29,7 +29,8 @@ import { etiquetaTipo } from './shared';
 import { pesos } from './dinero';
 import type { Propiedad } from './propiedades';
 import type { CatalogoResumen } from './catalogo';
-import { operacionAShard } from './catalogo';
+import { claseDe, operacionAShard } from './catalogo';
+import { ESTADOS_OBRA, ETIQUETA_ESTADO_OBRA, type EstadoObra } from './proyectos';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // FORMATO
@@ -43,6 +44,28 @@ export const sufijoPrecio = (op: Operacion): string =>
 
 export const etiquetaBadge = (op: Operacion): string =>
   op === 'venta' ? 'En venta' : op === 'arriendo' ? 'Arriendo' : 'Corta estancia';
+
+/**
+ * El sello de UNA TARJETA del catálogo (§310) — DUEÑO ÚNICO.
+ *
+ * 🔴 Por qué no basta `etiquetaBadge(operacion)`: desde §301 el shard de venta mezcla inmuebles y
+ * proyectos de obra nueva, y a un proyecto en preventa la tarjeta le ponía «En venta». No es falso,
+ * es **menos verdad**: lo que distingue a una obra nueva es su ESTADO DE OBRA —preventa, en
+ * construcción, entrega inmediata—, que es lo que cambia la decisión de quien mira (cuándo entra,
+ * cuánto paga por adelantado). Los dos líderes del mercado lo sellan así, y por eso el dato ya
+ * viajaba en `badges` desde §301: **viajaba y no lo pintaba nadie** ([[L-87]]).
+ *
+ * La clave viaja, la ETIQUETA se resuelve aquí: en el índice se guarda `'preventa'`, no «En
+ * preventa». Un shard con texto de pantalla dentro es un shard que hay que reconstruir entero el día
+ * que se cambie una palabra.
+ */
+export function etiquetaBadgeResumen(r: Pick<CatalogoResumen, 'clase' | 'operacion' | 'badges'>): string {
+  if (claseDe(r) === 'proyecto') {
+    const estado = (r.badges ?? []).find((b): b is EstadoObra => (ESTADOS_OBRA as readonly string[]).includes(b));
+    if (estado) return ETIQUETA_ESTADO_OBRA[estado];
+  }
+  return etiquetaBadge(r.operacion);
+}
 
 export const rutaOperacion = (op: Operacion): string =>
   op === 'venta' ? '/comprar' : op === 'arriendo' ? '/arrendar' : '/estancias';

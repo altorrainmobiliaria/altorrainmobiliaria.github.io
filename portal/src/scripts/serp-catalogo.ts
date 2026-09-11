@@ -14,6 +14,7 @@ import { setMarkers, type PinData } from './altorra-map';
 import { urlMedia } from '../lib/media';
 import { pesos } from '../lib/domain/dinero';
 import { etiquetaTipo, tipoCanonico } from '../lib/domain/shared';
+import { claseDe } from '../lib/domain/catalogo';
 
 import {
   construirCard,
@@ -21,7 +22,7 @@ import {
   URL_OVERRIDE,
   hrefFicha,
   montoCorto,
-  precioPin,
+  precioPinItem,
   sufijoCompacto,
   texto,
   type CatalogoItem,
@@ -78,6 +79,14 @@ export interface Busqueda {
   banMin: number | null;
   /** Área construida en m². */
   areaMin: number | null;
+  /**
+   * 🏗️ EJE NUEVO/USADO (§310), ortogonal a todo lo demás — no una sección del menú (§270).
+   *
+   * `'ambos'` por DEFECTO y no `'usada'`: el catálogo de venta mezcla las dos cosas desde §301, y
+   * arrancar filtrando escondería inventario sin que nadie lo pidiera. Quien busca obra nueva la
+   * pide; quien no, las ve todas — que es lo que hacen los dos líderes del mercado.
+   */
+  obra: 'ambos' | 'nueva' | 'usada';
 }
 
 /**
@@ -140,6 +149,9 @@ export function busquedaDeUrl(search: string): Busqueda {
     habMin: numeroDeUrl(q.get('hab')),
     banMin: numeroDeUrl(q.get('ban')),
     areaMin: numeroDeUrl(q.get('area')),
+    // Cualquier valor que no sea de la lista cae en `ambos`, que es el que NO esconde nada: una URL
+    // mal copiada no puede hacer desaparecer inventario (mismo criterio que `numeroDeUrl`).
+    obra: ((v) => (v === 'nueva' || v === 'usada' ? v : 'ambos'))((q.get('obra') ?? '').trim()),
   };
 }
 
@@ -157,6 +169,8 @@ type Filtrable = {
   hab?: number;
   ban?: number;
   area?: number;
+  /** `'proyecto'` en obra nueva; ausente = inmueble (§301). Lo lee `claseDe`, nunca a pelo. */
+  clase?: 'inmueble' | 'proyecto';
 };
 
 /**
@@ -208,6 +222,11 @@ export function coincideBusqueda(it: Filtrable, b: Busqueda): boolean {
   if (!alMenos(it.hab, b.habMin)) return false;
   if (!alMenos(it.ban, b.banMin)) return false;
   if (!alMenos(it.area, b.areaMin)) return false;
+  // 🏗️ El eje nuevo/usado (§310). `ambos` no filtra: es el default y no puede esconder inventario.
+  if (b.obra !== 'ambos') {
+    const esProyecto = claseDe(it) === 'proyecto';
+    if (b.obra === 'nueva' ? !esProyecto : esProyecto) return false;
+  }
   return true;
 }
 
@@ -220,7 +239,7 @@ export function coincideBusqueda(it: Filtrable, b: Busqueda): boolean {
  * respuesta correcta por su cuenta. No hay error hasta que las comparas.
  */
 export const hayCriterio = (b: Busqueda): boolean =>
-  Boolean(b.zona || b.tipo || b.precioMin || b.precioMax || b.habMin || b.banMin || b.areaMin);
+  Boolean(b.zona || b.tipo || b.precioMin || b.precioMax || b.habMin || b.banMin || b.areaMin || b.obra !== 'ambos');
 
 /** NUNCA muta la lista que recibe: el orden que entrega el servidor es «Relevancia» y hay que poder volver. */
 export function filtrarCatalogo(items: readonly CatalogoItem[], b: Busqueda): CatalogoItem[] {
@@ -264,6 +283,9 @@ export function reflejarBusqueda(b: Busqueda): void {
     hab: b.habMin?.toString() ?? '',
     ban: b.banMin?.toString() ?? '',
     area: b.areaMin?.toString() ?? '',
+    // `ambos` viaja como cadena vacía: es el valor del `<option>` neutro, y así el selector se
+    // repinta solo desde la URL como todos los demás campos.
+    obra: b.obra === 'ambos' ? '' : b.obra,
   };
   for (const [nombre, valor] of Object.entries(valores)) {
     const campo = document.querySelector(`.serp-f [name="${nombre}"]`) as HTMLInputElement | HTMLSelectElement | null;
@@ -403,7 +425,9 @@ export async function bootCatalogo(): Promise<void> {
     const pines: PinData[] = lista
       .map((it, i) => ({ it, i }))
       .filter(({ it }) => it.coords != null)
-      .map(({ it, i }) => ({ i, lat: it.coords!.lat, lng: it.coords!.lng, label: precioPin(it.precio, it.operacion) }));
+      // `precioPinItem` y no `precioPin`: un proyecto de obra nueva tiene RANGO, y un pin que diga
+      // «$450M» a secas afirma un precio que no existe (§310).
+      .map(({ it, i }) => ({ i, lat: it.coords!.lat, lng: it.coords!.lng, label: precioPinItem(it) }));
     setMarkersSeguro(raiz, pines);
   };
 

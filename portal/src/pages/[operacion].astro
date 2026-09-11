@@ -162,6 +162,21 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
               </select>
             </label>
             <label class="serp-f__campo"><span>Área mínima (m²)</span><input type="number" name="area" min="0" step="10" inputmode="numeric" placeholder="Sin mínimo" /></label>
+            {/* 🏗️ EJE NUEVO/USADO (§310 · §270). SOLO en `/comprar`: en arriendo y estancias no hay
+                obra nueva, y un control que no puede cambiar nada es peor que ninguno — es
+                exactamente lo que advierte el comentario del bloque de arriba. «Ambos» va PRIMERO y
+                vacío porque es el default: arrancar filtrando escondería inventario sin que nadie
+                lo pidiera. */}
+            {op === 'comprar' && (
+              <label class="serp-f__campo">
+                <span>Obra</span>
+                <select name="obra">
+                  <option value="">Nueva y usada</option>
+                  <option value="nueva">Solo obra nueva</option>
+                  <option value="usada">Solo usada</option>
+                </select>
+              </label>
+            )}
             <button class="serp-f__go" type="submit">Aplicar</button>
           </div>
         </details>

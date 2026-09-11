@@ -21,7 +21,7 @@ import type { CatalogoResumen } from '../lib/domain/catalogo';
 // El tipo de operación y la etiqueta del badge tienen DUEÑO en el dominio; aquí había copias a mano
 // (§277). Las cazó `verify:simbolos` al exportarlas: por separado las dos eran legítimas, y por eso
 // no las veía ningún otro gate.
-import { etiquetaBadge } from '../lib/domain/ficha';
+import { etiquetaBadgeResumen } from '../lib/domain/ficha';
 import type { Operacion } from '../lib/domain/shared';
 
 /**
@@ -78,6 +78,16 @@ export function precioPin(v: number, op: Operacion): string {
 }
 
 /**
+ * El pin de UN ITEM del catálogo (§310). Un proyecto de obra nueva no cuesta su `precio`: ése es el
+ * de entrada, y un pin que diga «$450M» a secas afirma un precio que no existe.
+ *
+ * Se antepone «Desde» y no un «+» detrás: el signo hay que descifrarlo y encima se confunde con un
+ * «más de», que es lo contrario de lo que dice el dato. Cabe: el pin ya estira con el sufijo «/mes».
+ */
+export const precioPinItem = (it: CatalogoItem): string =>
+  (it.precioHasta != null && it.precioHasta > it.precio ? 'Desde ' : '') + precioPin(it.precio, it.operacion);
+
+/**
  * Ficha del item — la ruta CANÓNICA (§97). **Delega en `rutaDeResumen`, el dueño único** (§284.5):
  * desde que obra nueva entra al mismo shard de venta, «la URL de una card» dejó de tener una sola
  * respuesta, y tenerla escrita aquí Y en el correo del digest era la forma de que una de las dos se
@@ -108,7 +118,9 @@ export function construirCard(tpl: HTMLTemplateElement, it: CatalogoItem, idx: n
     img.src = urlMedia(it.thumb);
     img.alt = it.titulo;
   }
-  texto(frag, '.alt-pcard__badge', etiquetaBadge(it.operacion));
+  // El sello lo decide el DOMINIO (§310): un proyecto en preventa no dice «En venta», dice «En
+  // preventa» — que es lo que cambia la decisión de quien mira.
+  texto(frag, '.alt-pcard__badge', etiquetaBadgeResumen(it));
   texto(frag, '.alt-pcard__zona', it.sector);
 
   // Specs: el template trae los 3; se ELIMINA el que no tenga dato (no se inventa, L-29).

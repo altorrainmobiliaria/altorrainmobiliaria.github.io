@@ -19,7 +19,7 @@ type Item = Parameters<typeof ordenarCatalogo>[0][number];
 
 // Fabrica de `Busqueda`: los criterios numericos de §273 nacen vacios salvo que la prueba diga otra cosa.
 const busq = (over: Partial<Busqueda> = {}): Busqueda =>
-  ({ zona: '', tipo: '', precioMin: null, precioMax: null, habMin: null, banMin: null, areaMin: null, ...over });
+  ({ zona: '', tipo: '', precioMin: null, precioMax: null, habMin: null, banMin: null, areaMin: null, obra: 'ambos', ...over });
 
 const item = (id: string, precio: number, pub: string): Item =>
   ({ id, slug: id, titulo: id, operacion: 'venta', tipo: 'apartamento', precio, sector: 'Manga',
@@ -169,6 +169,36 @@ describe('coincideBusqueda — las dos trampas del cero silencioso', () => {
     expect(coincideBusqueda(inmueble, busq({ precioMax: 499_999_999 }))).toBe(false);
   });
 
+  // §310 — EL EJE NUEVO/USADO. Ortogonal a todo lo demás (§270): no es una sección del menú, es un
+  // filtro que se cruza con la zona, el tipo y el precio.
+  const usado = { sector: 'Manga', tipo: 'casa' };
+  const nuevo = { sector: 'Bocagrande', tipo: 'apartamento', clase: 'proyecto' as const };
+
+  it('🎯 «ambos» es el DEFAULT y no esconde nada: los dos pasan', () => {
+    expect(coincideBusqueda(usado, busq())).toBe(true);
+    expect(coincideBusqueda(nuevo, busq())).toBe(true);
+  });
+
+  it('«nueva» deja solo los proyectos; «usada», solo los inmuebles', () => {
+    expect(coincideBusqueda(nuevo, busq({ obra: 'nueva' }))).toBe(true);
+    expect(coincideBusqueda(usado, busq({ obra: 'nueva' }))).toBe(false);
+    expect(coincideBusqueda(usado, busq({ obra: 'usada' }))).toBe(true);
+    expect(coincideBusqueda(nuevo, busq({ obra: 'usada' }))).toBe(false);
+  });
+
+  it('🔴 una URL con `obra` inventada NO esconde inventario: cae en «ambos»', () => {
+    // El gemelo de `numeroDeUrl`: una URL mal copiada no puede hacer desaparecer resultados, porque
+    // cero resultados no se distingue de «no hay nada» (§265).
+    expect(busquedaDeUrl('?obra=sobreplanos').obra).toBe('ambos');
+    expect(busquedaDeUrl('?obra=').obra).toBe('ambos');
+    expect(busquedaDeUrl('?obra=nueva').obra).toBe('nueva');
+  });
+
+  it('el eje se CRUZA con los demás, no los reemplaza', () => {
+    expect(coincideBusqueda(nuevo, busq({ obra: 'nueva', zona: 'Bocagrande' }))).toBe(true);
+    expect(coincideBusqueda(nuevo, busq({ obra: 'nueva', zona: 'Manga' }))).toBe(false);
+  });
+
   it('los dos criterios se exigen A LA VEZ, no uno u otro', () => {
     expect(filtrarCatalogo(CIUDAD, busq({ zona: 'Manga', tipo: 'casa' })).map((x) => x.id)).toEqual(['casona']);
     expect(filtrarCatalogo(CIUDAD, busq({ zona: 'Manga', tipo: 'local' }))).toEqual([]);
@@ -229,7 +259,7 @@ it('🔴 la CIUDAD no es un sector: escribirla no deja cero resultados', () => {
   it('hayCriterio ve TODOS los criterios — y esta prueba caza al que añada uno y olvide la lista', () => {
     const muestras = [
       busq({ zona: 'Manga' }), busq({ tipo: 'casa' }), busq({ precioMin: 1 }), busq({ precioMax: 1 }),
-      busq({ habMin: 1 }), busq({ banMin: 1 }), busq({ areaMin: 1 }),
+      busq({ habMin: 1 }), busq({ banMin: 1 }), busq({ areaMin: 1 }), busq({ obra: 'nueva' }),
     ];
     expect(muestras.every(hayCriterio)).toBe(true);
     expect(hayCriterio(busq())).toBe(false);
