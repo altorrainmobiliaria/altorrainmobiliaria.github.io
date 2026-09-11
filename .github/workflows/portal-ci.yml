@@ -130,16 +130,18 @@ jobs:
         run: npm run verify:huerfanos
       - name: Simbolos exportados por duplicado
         run: npm run verify:simbolos
-      # 🛡️ Un boton que nadie escucha no falla: se pulsa y no pasa nada. Desde fuera es
-      # indistinguible de un panel roto (§126, y cuatro mas en el panel de gestion en una tarde).
-      - name: Controles que de verdad hacen algo
-        run: npm run verify:controles
       # 🛡️ EXISTIA Y NO LO CORRIA NADIE (§142): ni el CI ni la rutina. Vigila el free-tier —cero SDK de
       # Firestore en el portal, cero onSnapshot, cero lista/query sin acotar— y lo puse en rojo yo
       # mismo dos veces el mismo dia sin enterarme. Un gate que nadie invoca no protege nada.
       - name: Invariantes de datos (free-tier sagrado)
         run: npm run verify:data
       - run: npm run build
+      # 🛡️ DESPUES del build (§316). Estaba ANTES, y `dist/` esta en .gitignore: en un runner limpio
+      # no existia, asi que sus dos sondas sobre el HTML servido —incluida la de la AUTORIZACION de
+      # datos, Ley 1581— se saltaban EN SILENCIO y el paso salia verde hablando solo de botones.
+      # En local no se notaba porque `npm run verify` construye antes.
+      - name: Controles que de verdad hacen algo (y la autorizacion de datos, Ley 1581)
+        run: npm run verify:controles
       - name: Verificar render híbrido (mitigación R2/R3)
         run: npm run verify:build
       # 🛡️ DESPUES del build, y por el mismo motivo que `verify:enlaces` (§224): en la FUENTE una

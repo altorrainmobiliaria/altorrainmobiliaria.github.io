@@ -230,6 +230,24 @@ if (existsSync(DIST)) {
  * tratar — la autorización se dio al crear la cuenta—, y exigírsela sería ruido, que es como se
  * aprende a ignorar un gate.
  */
+/*
+ * 🔒 SI NO PUEDE MIRAR, NO CALLA (§316). Esta sonda —la de la AUTORIZACIÓN de datos, Ley 1581— vivía
+ * tras un `if (existsSync(DIST))` SIN rama `else`. En el CI corría ANTES de `npm run build` y `dist/`
+ * está en `.gitignore`, así que en un runner limpio no existía: el gate legal se saltaba entero y el
+ * paso salía ✅ hablando solo de botones. En local nunca se vio, porque `npm run verify` construye
+ * primero. Es [[L-52]] en su forma más cara: un comprobador que no encuentra nada que comprobar y
+ * dice que todo bien.
+ *
+ * Se arregló el orden del CI, y además se cierra por aquí: si alguien vuelve a invocarlo sin build,
+ * PARA en vez de fingir. Lo que protege es que ningún formulario capte datos personales sin
+ * autorización previa, expresa e informada (Ley 1581/2012 · D.1377/2013 art. 5).
+ */
+if (!existsSync(DIST)) {
+  console.error('❌ verify:controles — no hay `dist/`, así que las sondas sobre el HTML SERVIDO no pueden correr.');
+  console.error('   Una de ellas es la AUTORIZACIÓN de datos (Ley 1581). Construye primero: `npm run build`.');
+  process.exit(1);
+}
+
 if (existsSync(DIST)) {
   const PERSONAL = /type="(email|tel)"|(?:name|id)="[^"]*(nombre|email|telefono|whatsapp|celular|cedula)/i;
   const SOLO_LOGIN = /id="[^"]*(login|ingreso|signin)|data-form="login"/i;
