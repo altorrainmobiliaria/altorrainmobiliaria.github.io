@@ -376,8 +376,61 @@ if (existsSync(sitemapPath)) {
  * andamio legítimo, igual que el catálogo demo. El día que se compile con `PUBLIC_SITE_ENV=production`
  * hay que tener el RNT o retirar el anuncio, que es exactamente la decisión que el gate fuerza.
  */
-const SENAL_PRECIO = /\$\s?\d[\d.,]*\s*(?:\/|por\s)\s*noche/i;
+/*
+ * 🎯 QUÉ CUENTA COMO «ANUNCIAR UNA ESTADÍA» (§314).
+ *
+ * 🔴 La versión anterior era `/\$\s?\d[\d.,]*\s*(?:\/|por\s)\s*noche/i`: exigía que el dinero y la
+ * palabra «noche» vinieran FUNDIDOS en una sola frase, «$850.000 / noche». Una página que anunciara
+ * la misma estadía con un TOTAL —«Total $2.730.000 por 5 noches»—, con un «Desde $420.000», con una
+ * tarifa semanal o con un desglose tipo carrito **no casaba**, el bucle hacía `continue` y la
+ * comprobación del RNT, que va DESPUÉS, no llegaba a correr. En VERDE. Es una señal LÉXICA estrecha
+ * para una pregunta SEMÁNTICA, y se evade reescribiendo la frase — la misma forma de fallo que §312
+ * (ningún patrón de dinero) y §313 (leer el campo equivocado).
+ *
+ * 🎯 Y LA SOLUCIÓN NO ES «BUSCAR LAS DOS COSAS EN LA PÁGINA»: medido sobre el sitio servido, eso
+ * marca `/comprar` y `/arrendar`, porque «Corta estancia» es un enlace del MENÚ y sale en las 45
+ * páginas. Un gate que grita sobre lo correcto enseña a ignorarlo entero. Lo que distingue a una
+ * página que ANUNCIA una estadía no es que las dos señales existan: es que estén **JUNTAS**.
+ * De ahí la ventana de proximidad.
+ */
+const SENAL_DINERO = /\$\s?\d[\d.,]{2,}/g;
+const SENAL_ESTANCIA = /\b(?:noches?|estad[ií]as?|hu[eé]sped(?:es)?|por\s+d[ií]as|check[-\s]?in)\b/i;
+/** Caracteres a cada lado del importe. 80 ≈ una línea de desglose; más empieza a alcanzar el menú. */
+const VENTANA_PRECIO = 80;
 const SENAL_RESERVA = /Solicitar estas fechas|Enviar solicitud|<form/i;
+
+/** ¿Hay un importe con vocabulario de estadía PEGADO? */
+function anunciaEstadia(texto) {
+  for (const m of texto.matchAll(SENAL_DINERO)) {
+    const ctx = texto.slice(Math.max(0, m.index - VENTANA_PRECIO), m.index + m[0].length + VENTANA_PRECIO);
+    if (SENAL_ESTANCIA.test(ctx)) return true;
+  }
+  return false;
+}
+
+/*
+ * 🧪 SONDA DE `anunciaEstadia` — corre en cada build, con los casos que la versión vieja dejaba pasar.
+ *
+ * Va aquí y no en un `.test.ts` a propósito: este fichero es el gate, y un gate cuya señal no se
+ * prueba contra su propio caso es una declaración de intenciones (§38a). Los tres últimos son
+ * controles NEGATIVOS — sin ellos, «caza lo que debe» y «caza todo» se ven igual de verdes.
+ */
+for (const [texto, debe] of [
+  ['Villa en Bocagrande. Total $2.730.000 por 5 noches.', true],
+  ['Alojamiento en el Centro. Desde $420.000 · 2 huéspedes · check-in 24 h', true],
+  ['Casa colonial. $4.500.000 la semana, 7 noches mínimo.', true],
+  ['Alojamiento $1.750.000 Aseo $90.000 Total $1.840.000 · 5 noches', true],
+  ['Penthouse. $850.000 / noche.', true],
+  ['Apartamento en venta $450.000.000 · 3 habitaciones', false],
+  ['Apartaestudio $1.900.000 / mes + administración $380.000', false],
+  [`Menú: Comprar Arrendar Corta estancia. ${'x'.repeat(200)} Apartamento $450.000.000 en venta`, false],
+]) {
+  if (anunciaEstadia(texto) !== debe) {
+    console.error(`❌ verify:build — la sonda de \`anunciaEstadia\` falla: esperaba ${debe} en «${texto.slice(0, 60)}…».`);
+    console.error('   El gate del RNT depende de esta señal; con ella rota, el chequeo legal se salta EN VERDE.');
+    process.exit(1);
+  }
+}
 
 /** Recorre el HTML SERVIDO. No existia un helper para esto: `astroPages` mira el fuente. */
 function htmlServido(dir, acc = []) {
@@ -404,7 +457,7 @@ if (ES_PROD) {
       .replace(/<template\b[^>]*>[\s\S]*?<\/template>/gi, '')
       .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
     const texto = cuerpo.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-    if (!SENAL_PRECIO.test(texto) || !SENAL_RESERVA.test(cuerpo)) continue;
+    if (!anunciaEstadia(texto) || !SENAL_RESERVA.test(cuerpo)) continue;
     // El RNT puede escribirse de varias formas; se acepta cualquiera con su número al lado.
     if (/\bRNT\b[^.]{0,40}\d/i.test(texto)) continue;
     sinRnt.push(relative(resolve(root, 'dist/client'), f).replace(/\\/g, '/'));
@@ -416,7 +469,7 @@ checks.push({
     : 'RNT en publicidad de alojamiento — no se juzga en staging (build no indexable)',
   ok: sinRnt.length === 0,
   detail: sinRnt.length
-    ? `${sinRnt.length} pagina(s) con precio por noche y formulario, sin RNT: ${sinRnt.join(', ')}`
+    ? `${sinRnt.length} pagina(s) que anuncian una estadia (importe + noches/huespedes/check-in juntos) con formulario y sin RNT: ${sinRnt.join(', ')}`
     : ES_PROD
       ? 'comprobado sobre el HTML servido'
       : 'se activa con PUBLIC_SITE_ENV=production',
