@@ -51,6 +51,13 @@ export { crearVenta, moverVenta } from './venta-escritura';
 // preaviso impuesto tarde se archiva igual y el contrato NO cambia de estado: se prorroga.
 export { registrarPreaviso } from './preaviso-escritura';
 
+// RETENCION DE NOCHES (corta estancia, §303). `disponibilidad` llevaba desde Ola 0 con
+// `allow write: if false` y la nota «la reserva es transaccional y vive en una Function» — y esa
+// Function NO EXISTIA: no habia forma de marcar una noche como ocupada por ningun camino. La
+// garantia entera es que las noches se leen DENTRO de la transaccion; medido rompiendola a
+// proposito, seis reservas simultaneas ganaban las SEIS.
+export { retenerFechas, liberarFechas } from './reserva-escritura';
+
 // La bitacora que el ruleset ya daba por hecha y nadie habia escrito (§263): cinco llamadas del
 // portal apuntaban a `registrarEvento`, incluida la prueba del consentimiento de habeas data.
 export { registrarEvento } from './auditoria';

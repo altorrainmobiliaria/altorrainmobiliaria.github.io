@@ -182,7 +182,23 @@ service cloud.firestore {
     match /disponibilidad/{id} {
       allow get: if true;
       allow list: if esStaff();   // el calendario público se sirve por JSON cacheado, no por query
-      allow write: if false;      // la reserva es transaccional y vive en una Function
+      // La reserva es transaccional y vive en `functions/reserva-escritura.ts` (§303). Esta línea
+      // llevaba desde Ola 0 nombrando una Function que no existía: nadie podía ocupar una noche.
+      allow write: if false;
+    }
+
+    // ── RESERVAS (corta estancia) ───────────────────────────────────────────────────────────────
+    // Deny-all por defecto hasta §303. Se declara EXPLÍCITAMENTE porque una colección sin bloque es
+    // indistinguible de una olvidada, y aquí hay fechas y huéspedes de una persona concreta.
+    //
+    // ⚠️ Escritura CERRADA a todos, staff incluido: una reserva que se pueda editar desde el cliente
+    // es una noche que se puede liberar sin liberar su documento — y ahí es donde vuelve el
+    // overbooking por la puerta de atrás. Todo pasa por la Function transaccional (Admin SDK, que no
+    // ve estas reglas). El titular verá la suya cuando exista su pantalla; hoy no la hay, y abrir un
+    // permiso «para cuando haga falta» es dejarlo abierto sin que nadie lo esté mirando.
+    match /reservas/{id} {
+      allow get, list: if esStaff();
+      allow write: if false;
     }
 
     // ── SOLICITUDES / LEADS ─────────────────────────────────────────────────────────────────────

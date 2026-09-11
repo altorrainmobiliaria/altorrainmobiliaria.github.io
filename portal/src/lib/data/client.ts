@@ -9,6 +9,7 @@
 import { getDoc, type LowLevelResult } from './firestore-rest';
 import type { Propiedad, Disponibilidad } from '../domain/propiedades';
 import type { ConfigGeneral } from '../domain/config';
+import { docIdDisponibilidad } from '../domain/disponibilidad';
 import { CATALOGO_SHARDS, catalogoVacio, type CatalogoIndice, type CatalogoShard } from '../domain/catalogo';
 import { FIREBASE_PUBLICO } from '../config/firebase-publico';
 
@@ -138,8 +139,10 @@ export function getDataClient(env?: RuntimeEnv, opts?: { fetchImpl?: typeof fetc
     disponibilidad: {
       async get(propiedadId, fecha) {
         if (!ID_RE.test(propiedadId) || !FECHA_RE.test(fecha)) return { ok: false, reason: 'unavailable' };
-        // docId determinista, top-level, byte-idéntico al que escribirá la Cloud Function (OD6/anti-overbooking).
-        return toPublic<Disponibilidad>(await read(['disponibilidad', `${propiedadId}_${fecha}`]));
+        // docId por el DUEÑO ÚNICO del dominio (§303): aquí estaba compuesto a mano con la promesa de
+        // ser «byte-idéntico al que escribirá la Cloud Function». Desde que esa Function existe, la
+        // promesa se cumple porque los dos llaman a la misma función, no porque coincidan dos plantillas.
+        return toPublic<Disponibilidad>(await read(['disponibilidad', docIdDisponibilidad(propiedadId, fecha)]));
       },
     },
     catalogo: {

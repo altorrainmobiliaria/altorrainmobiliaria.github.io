@@ -126,9 +126,13 @@ export interface Captacion extends Versioned, Auditable {
 
 /**
  * `disponibilidad` — corta estancia, RACE-SAFE por diseño (unidad de fecha inmutable).
- * docId sugerido `${propiedadId}_${fecha}`. La reserva se hace SIEMPRE server-side (Admin SDK en
- * Function) dentro de una transacción que lee disponibilidad DENTRO de la transacción (anti-overbooking,
- * gate de salida de Ola 2). El SCHEMA se sella ya; el rail de pago entra en Ola 2.
+ *
+ * ✅ **CONSTRUIDA en §303** — esta nota describía desde Ola 0 una Function que no existía, y estuvo
+ * así hasta el 2026-09-11: `allow write: if false` en las Rules apuntando a un vacío, o sea ninguna
+ * noche ocupable por ningún camino. Hoy la reserva se hace server-side en
+ * `functions/src/reserva-escritura.ts`, dentro de una transacción que lee la disponibilidad DENTRO
+ * de la transacción; las noches que ocupa una estancia las decide `domain/disponibilidad.ts`, que
+ * también es el dueño único del docId `${propiedadId}_${fecha}`. El rail de pago sigue aparte.
  */
 export const ESTADOS_DISPONIBILIDAD = ['libre', 'bloqueado', 'reservado'] as const;
 export type EstadoDisponibilidad = (typeof ESTADOS_DISPONIBILIDAD)[number];
