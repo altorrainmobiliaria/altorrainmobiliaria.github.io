@@ -1,0 +1,14 @@
+# Este PC tiene `core.autocrlf=true` en la configuración de SISTEMA de Git for Windows, así que
+# git convierte los finales de línea al sacar los ficheros del repo. Para casi todo da igual.
+# Para estos NO:
+#
+# · `CNAME` lo lee GitHub Pages para servir el dominio propio, y un `\r` al final convierte
+#   «altorrainmobiliaria.co» en un nombre de host que no existe → el dominio se cae. Medido el
+#   2026-09-12: hoy el fichero NO tiene CR, pero solo porque no termina en salto de línea; en
+#   cuanto alguien lo edite y lo guarde con Enter, `autocrlf` hace el resto. Esto es un seguro
+#   de coste cero sobre un fichero que el `CLAUDE.md` de este repo declara intocable.
+CNAME -text
+
+# · `.nojekyll` es un marcador vacío y su contenido no importa, pero se declara por la misma
+#   razón: que nadie tenga que volver a preguntárselo.
+.nojekyll -text
