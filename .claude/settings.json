@@ -116,6 +116,15 @@
             "statusMessage": "🛡️ guard-destructivo (2ª capa)…"
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ../brain-private/scripts/ga4-canario.mjs"
+          }
+        ]
       }
     ],
     "PreCompact": [
