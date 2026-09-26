@@ -20,11 +20,11 @@ fuentes:
     url: 'https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=175266'
 ---
 
-Cartagena vive del turismo, y cada temporada aparecen apartamentos nuevos en las plataformas de alquiler por noches. Muchos operan sin cumplir dos requisitos que no son opcionales: el registro nacional de turismo y el permiso de la copropiedad.
+Cartagena vive del turismo, y cada temporada aparecen apartamentos nuevos en las plataformas de alquiler por noches. Para operar hacen falta dos requisitos que no son opcionales: el registro nacional de turismo y, si el inmueble está sometido a propiedad horizontal, el permiso de la copropiedad.
 
-Los dos se pueden resolver. Lo que no se puede es operar sin ellos y suponer que no pasa nada, porque lo que está en juego no es una multa simbólica: es la posibilidad de que le cierren el alojamiento o le saquen los anuncios de las plataformas.
+Los dos se pueden resolver. Lo que no se puede es operar sin ellos y suponer que no pasa nada, porque lo que está en juego es que le cierren el alojamiento o le saquen los anuncios de las plataformas.
 
-## El RNT va antes de operar, no después
+## El RNT va antes de operar
 
 <div class="jrn-ley">
 
@@ -34,7 +34,7 @@ Los dos se pueden resolver. Lo que no se puede es operar sin ellos y suponer que
 
 </div>
 
-«Vivienda turística» no es una categoría marginal: el reglamento la define como las unidades privadas, casas y demás construcciones destinadas total o parcialmente a prestar alojamiento turístico. Un apartamento que se alquila por noches entra ahí.
+El reglamento define la «vivienda turística» como las unidades privadas, casas y demás construcciones destinadas total o parcialmente a prestar alojamiento turístico. Un apartamento que se alquila por noches entra ahí.
 
 ### El número, en la publicidad
 
@@ -46,9 +46,9 @@ Los dos se pueden resolver. Lo que no se puede es operar sin ellos y suponer que
 
 Igual que la matrícula de arrendador en el arriendo de vivienda, este número es de los pocos requisitos que un huésped puede verificar desde afuera antes de reservar.
 
-## El permiso de la copropiedad: el que más sorprende
+## El permiso de la copropiedad
 
-Este es el que más problemas causa en Cartagena, porque buena parte del inventario está en edificios.
+Aplica a toda vivienda turística en un inmueble sometido a propiedad horizontal, y en Cartagena buena parte del inventario está en edificios.
 
 <div class="jrn-ley">
 
@@ -60,9 +60,9 @@ La Ley 675 de 2001, que rige la propiedad horizontal, somete el uso de cada unid
 
 <div class="jrn-practica">
 
-**Qué hacer si su reglamento no lo dice.** La vía es la asamblea: quien aspira al uso turístico puede promover la votación para obtener el permiso y la modificación del reglamento. No es rápido, pero es el camino previsto — y es mucho más barato que operar un año y que la copropiedad lo pare.
+**Qué hacer si su reglamento no lo dice.** La vía es la asamblea: quien aspira al uso turístico puede promover la votación para obtener el permiso y la modificación del reglamento. No es rápido, pero es el camino previsto, y es mucho más barato que operar un año y que la copropiedad lo pare.
 
-Y una precisión sobre quién responde: al inscribirse, la autorización se **declara**. Que sea una declaración del prestador y no una verificación documental de la plataforma no la vuelve opcional: significa que la responsabilidad de que sea cierta es enteramente suya.
+Y una precisión sobre quién responde: al inscribirse, la autorización se **declara**. Que sea una declaración del prestador, sin verificación documental de la plataforma, no la vuelve opcional. La responsabilidad de que sea cierta es enteramente suya.
 
 </div>
 
@@ -74,11 +74,11 @@ Y una precisión sobre quién responde: al inscribirse, la autorización se **de
 
 </div>
 
-Cinco años de cancelación no es una pausa: para un inmueble que se compró pensando en la renta turística, es un cambio de modelo de negocio.
+Para un inmueble que se compró pensando en la renta turística, cinco años de cancelación obligan a cambiar de modelo de negocio.
 
 ## Y las plataformas también tienen obligaciones
 
-Es la parte que menos se conoce, y explica por qué a veces desaparecen anuncios.
+Esas obligaciones explican por qué a veces desaparecen anuncios.
 
 <div class="jrn-ley">
 
@@ -86,21 +86,21 @@ Es la parte que menos se conoce, y explica por qué a veces desaparecen anuncios
 
 </div>
 
-Dicho de otro modo: aunque nadie lo denuncie, el anuncio de un alojamiento sin RNT vigente está sujeto a ser retirado por la propia plataforma, normalmente en plena temporada.
+Dicho de otro modo: aunque nadie lo denuncie, la propia plataforma está obligada a retirar el anuncio de un alojamiento sin RNT vigente, incluso en plena temporada.
 
 <div class="jrn-practica">
 
-**Un aviso sobre la vigencia de estas reglas.** En 2026 el Ministerio de Comercio, Industria y Turismo publicó para comentarios un borrador de decreto que endurecería varios de estos puntos —entre ellos, exigir prueba y no solo declaración de la autorización de la propiedad horizontal, y verificación periódica de la vigencia del RNT por parte de las plataformas—. No podemos afirmar en qué estado se encuentra hoy ese trámite; antes de tomar una decisión de inversión, conviene confirmar el texto vigente.
+**Un aviso sobre la vigencia de estas reglas.** En 2026 el Ministerio de Comercio, Industria y Turismo publicó para comentarios un borrador de decreto que endurecería varios de estos puntos (entre ellos, exigir prueba y no solo declaración de la autorización de la propiedad horizontal, y verificación periódica de la vigencia del RNT por parte de las plataformas). No podemos afirmar en qué estado se encuentra hoy ese trámite; antes de tomar una decisión de inversión, conviene confirmar el texto vigente.
 
 </div>
 
 ## La lista corta, antes de publicar
 
 1. **RNT inscrito y vigente**, a nombre de quien presta el servicio, actualizado este año.
-2. **Reglamento de propiedad horizontal** que autorice expresamente el alojamiento turístico —o el acta de asamblea que lo haya aprobado—.
+2. **Reglamento de propiedad horizontal** que autorice expresamente el alojamiento turístico, o el acta de asamblea que lo haya aprobado.
 3. **El número de RNT visible** en el anuncio y en cualquier publicidad.
 
-Si los tres están, el resto es operación. Si falta alguno, lo que hay no es un alojamiento turístico: es un riesgo con reservas confirmadas.
+Si los tres están, el resto es operación. Si falta alguno, resuélvalo antes de publicar el anuncio.
 
 ---
 

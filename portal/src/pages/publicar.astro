@@ -41,9 +41,9 @@ const stats = [
 ];
 const pasos = [
   { n: '01', t: 'Cuéntanos', d: 'Compártenos los datos de tu inmueble en dos minutos con el formulario.' },
-  { n: '02', t: 'Valoración experta', d: 'Un asesor visita, fotografía y define el precio justo con datos de mercado.' },
-  { n: '03', t: 'Publicamos', d: 'Tu propiedad en el portal, redes y nuestra red privada de compradores.' },
-  { n: '04', t: 'Cerramos', d: 'Coordinamos documentos, notaría y banco hasta la firma de la escritura.' },
+  { n: '02', t: 'Valoramos', d: 'Un asesor visita tu inmueble, lo fotografía y te da un rango orientativo de precio.' },
+  { n: '03', t: 'Publicamos', d: 'Subimos tu ficha al portal ALTORRA y atendemos las visitas de los interesados.' },
+  { n: '04', t: 'Cerramos', d: 'Revisamos el contrato de arriendo o coordinamos notaría y banco para la escritura.' },
 ];
 // ⚖️ Aquí decía «Avalúo y fotografía profesional». El «Avalúo» se RETIRÓ el 2026-08-22 (§105):
 // Daniel confirmó que NO hay avaluador inscrito en el RAA detrás, y sin él ofrecerlo es reclamar una
@@ -91,24 +91,24 @@ const SUBTITULO_PLANES =
  */
 const planes = [
   { tier: 'Publicación', price: 'Gratis', sub: 'Publica y recibe contactos por tu cuenta.', perks: ['Ficha en el portal ALTORRA', 'Hasta 10 fotos', 'Contactos directos'], cta: 'Empezar gratis', featured: false },
-  { tier: 'Gestión Premium', price: PRECIO_VENTA, unit: 'al vender', sub: 'Nosotros gestionamos todo el proceso.', perks: ['Todo lo de Publicación', 'Fotografía profesional', 'Visitas y negociación gestionadas', 'Documentos y notaría coordinados'], cta: 'Pedir valoración', featured: true },
-  { tier: 'Concierge Élite', price: 'A medida', sub: 'Para propiedades de alto valor y exclusividad.', perks: ['Todo lo de Premium', 'Video y tour 3D', 'Marketing internacional', 'Estudio de titulos con abogado aliado'], cta: 'Hablar con un asesor', featured: false },
+  { tier: 'Venta completa', price: PRECIO_VENTA, unit: 'al vender', sub: 'Nosotros gestionamos todo el proceso.', perks: ['Todo lo de Publicación', 'Fotografía profesional', 'Visitas y negociación gestionadas', 'Documentos y notaría coordinados'], cta: 'Pedir valoración', featured: true },
+  { tier: 'Gestión personalizada', price: 'A medida', sub: 'Armamos el plan contigo, según lo que necesite tu inmueble.', perks: ['Todo lo de Venta completa', 'Video y tour 3D', 'Marketing internacional', 'Estudio de títulos con abogado aliado'], cta: 'Hablar con un asesor', featured: false },
 ];
 const check = '<path d="M20 6L9 17l-5-5"/>';
 
 // FRANJA DE BENEFICIOS — la sección que faltaba (mockup L221-228). Sin titular: 4 bloques
-// icono + h3 + texto. Íconos y textos EXACTOS del mockup.
+// icono + h3 + texto. Íconos EXACTOS del mockup; los textos, reescritos a la voz de marca.
 const beneficios = [
-  { i: '<circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>', t: 'Máxima exposición', d: 'Portal, redes y una red privada de compradores nacionales e internacionales.' },
-  { i: '<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>', t: 'Precio justo', d: 'Basado en datos reales del mercado de Cartagena, no en corazonadas.' },
+  { i: '<circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>', t: 'A la vista de quien busca', d: 'Tu inmueble, con su ficha y sus fotos, en el portal ALTORRA y en nuestras redes.' },
+  { i: '<path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/>', t: 'Precio con fundamento', d: 'Estimamos un rango orientativo de precio con datos del mercado de Cartagena y te explicamos con calma de dónde sale.' },
   { i: '<path d="M12 3l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V6z"/><path d="M9 12l2 2 4-4"/>', t: 'Documentos en regla', d: 'Revisamos tus documentos y coordinamos el estudio de títulos con un abogado aliado.' },
-  { i: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>', t: 'Seguridad total', d: 'Compradores verificados y pagos protegidos en cada etapa de la operación.' },
+  { i: '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>', t: 'Damos la cara', d: 'Si nos encargas la operación, respondemos con nuestro nombre por cada firma.' },
 ];
 ---
 
 <BaseLayout
   title="Publica tu inmueble — ALTORRA Inmobiliaria"
-  description="Vende o arrienda tu inmueble en Cartagena de Indias con ALTORRA. Tú decides el precio; nosotros ponemos el respaldo y el acompañamiento legal."
+  description="Vende o arrienda tu inmueble en Cartagena de Indias con ALTORRA. Tú decides el precio; nosotros revisamos los papeles y te acompañamos hasta la firma."
   miga={[{ nombre: 'Publica tu inmueble', ruta: '/publicar' }]}
 >
   <Header active="vender" />
@@ -122,7 +122,7 @@ const beneficios = [
         <div class="pub-hero__copy">
           <p class="alt-eyebrow">Propietarios</p>
           <h1 class="pub-hero__h">Vende o arrienda con quien conoce Cartagena.</h1>
-          <p class="pub-hero__p">Valoración experta, fotografía profesional y una red de compradores calificados. Tú decides el precio; nosotros ponemos el respaldo.</p>
+          <p class="pub-hero__p">Valoración con datos de mercado y fotografía profesional. Tú decides el precio; si quieres, nosotros atendemos las visitas y coordinamos los documentos.</p>
           <div class="pub-stats">
             {stats.map((s) => <div><span class="pub-stat__n">{s.n}</span><span class="pub-stat__l">{s.l}</span></div>)}
           </div>
@@ -183,7 +183,7 @@ const beneficios = [
     <section class="alt-container alt-section pub-steps">
       <div class="pub-center">
         <p class="alt-eyebrow">Cómo funciona</p>
-        <h2>Cuatro pasos, cero complicaciones</h2>
+        <h2>Cuatro pasos hasta la firma</h2>
       </div>
       <div class="pub-steps__grid">
         {pasos.map((p) => (

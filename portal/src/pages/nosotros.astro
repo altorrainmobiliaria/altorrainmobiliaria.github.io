@@ -27,7 +27,7 @@ import { SITE } from '../lib/config/site';
 import { migaDe } from '../lib/seo/breadcrumbs';
 
 const DESCRIPCION =
-  'Quiénes somos: una inmobiliaria de Cartagena que pone por delante lo que se puede comprobar — razón social, NIT y matrícula de arrendador a la vista.';
+  `Quiénes somos: una inmobiliaria de Cartagena con razón social, NIT y Matrícula de Arrendador No. ${SITE.matriculaArrendador} a la vista, para que usted los compruebe.`;
 
 const waTexto = encodeURIComponent('Hola ALTORRA, quisiera hablar con alguien del equipo.');
 
@@ -38,7 +38,7 @@ const waTexto = encodeURIComponent('Hola ALTORRA, quisiera hablar con alguien de
 const COMO_TRABAJAMOS = [
   {
     t: 'Los papeles, a la vista',
-    d: 'Nuestra matrícula de arrendador está en el pie de cada página y en cada ficha de arriendo que administramos, porque la Ley 820 lo exige en toda publicidad — y porque es lo primero que debería preguntarle a cualquiera.',
+    d: 'Nuestra matrícula de arrendador está en el pie de cada página y en cada ficha de arriendo que administramos, porque la Ley 820 lo exige en toda publicidad.',
   },
   {
     t: 'No le cobramos al arrendatario',
@@ -72,7 +72,7 @@ const jsonLd = {
         <p class="alt-eyebrow">{SITE.city}</p>
         <h1 class="nos-h">{SITE.slogan}</h1>
         <p class="nos-lead">
-          No es un lema de campaña: es el orden en que tomamos las decisiones. Primero que sea
+          Ese es el orden en que tomamos las decisiones. Primero que sea
           seguro, después que sea legal, y la confianza viene de que las dos primeras se puedan
           comprobar sin llamarnos.
         </p>
@@ -91,7 +91,7 @@ const jsonLd = {
           Tenemos <strong>Matrícula de Arrendador No. {SITE.matriculaArrendador}</strong>, otorgada
           por la Alcaldía de Cartagena. Ese número aparece en el pie de todas las páginas de este
           sitio, y puede comprobarlo ante la alcaldía. Si alguna vez le ofrecen administrarle un
-          inmueble de vivienda sin ese número, esa es la primera pregunta que conviene hacer — se lo
+          inmueble de vivienda sin ese número, esa es la primera pregunta que conviene hacer. Se lo
           explicamos con la ley en la mano en
           <a href="/journal/matricula-de-arrendador">este artículo</a>.
         </p>
@@ -102,7 +102,7 @@ const jsonLd = {
       <div class="alt-container">
         <h2 class="nos-h2">Cómo trabajamos</h2>
         <p class="nos-p">
-          Son decisiones, no logros. Un logro habría que demostrarlo con datos; una decisión se
+          Son decisiones nuestras, y cada una se
           comprueba abriendo el sitio.
         </p>
         <div class="nos-grid">
@@ -123,7 +123,7 @@ const jsonLd = {
         <h2 class="nos-h2">Lo que todavía no le vamos a contar</h2>
         <p class="nos-p">
           Cuántos inmuebles hemos vendido, cuántas familias hemos acomodado o cuántos años llevamos.
-          No porque sea secreto: porque <strong>todavía no tenemos esos números publicados de forma
+          <strong>Todavía no tenemos esos números publicados de forma
           que usted pueda comprobarlos</strong>, y ponerlos aquí sin eso sería pedirle que nos crea. Preferimos
           que nos juzgue por lo que sí puede verificar hoy.
         </p>

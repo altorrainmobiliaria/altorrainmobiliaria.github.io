@@ -200,7 +200,7 @@ export const ZONAS: Zona[] = [
     descripcion:
       'Manzanillo del Mar, en el norte y con playa amplia. Zona de desarrollo con vocación de descanso. Qué mirar antes de comprar.',
     cuerpo:
-      'Manzanillo del Mar queda más al norte, con playa amplia y menos densidad que los sectores cercanos a la ciudad. Es zona de casas de descanso y proyectos de baja altura, con un ritmo distinto al del casco urbano. La distancia es parte del atractivo y también parte de lo que hay que pensar: conviene tener claro cómo se resuelve el día a día antes de decidir. Te lo planteamos de frente en la visita, con la ruta hecha, para que la distancia sea una decisión y no una sorpresa.',
+      'Manzanillo del Mar queda más al norte, con playa amplia y menos densidad que los sectores cercanos a la ciudad. Es zona de casas de descanso y proyectos de baja altura, con un ritmo distinto al del casco urbano. La distancia es parte del atractivo y también parte de lo que hay que pensar: conviene tener claro cómo se resuelve el día a día antes de decidir. Te lo planteamos de frente en la visita, con la ruta hecha.',
     rasgos: [
       'Playa amplia con baja densidad de construcción',
       'Vocación de casa de descanso',
@@ -236,7 +236,7 @@ export const ZONAS: Zona[] = [
     descripcion:
       'Serena del Mar, ciudad planificada al norte con hospital y universidad. Qué la distingue y para quién tiene sentido.',
     cuerpo:
-      'Serena del Mar es un desarrollo planificado al norte de Cartagena, concebido como ciudad y no como conjunto: nació con hospital, sede universitaria y su propia trama urbana. Eso lo separa del resto de la oferta de la Zona Norte, porque el entorno no depende de lo que se construya después. Para quien compra, la pregunta útil es en qué etapa está lo que le interesa y qué queda por entregar. Esa información la pedimos y la verificamos antes de acompañarte a ver, para que compares lo que existe con lo que está en plano.',
+      'Serena del Mar es un desarrollo planificado al norte de Cartagena, concebido como ciudad: nació con hospital, sede universitaria y su propia trama urbana. Eso lo separa del resto de la oferta de la Zona Norte, porque el entorno no depende de lo que se construya después. Para quien compra, la pregunta útil es en qué etapa está lo que le interesa y qué queda por entregar. Esa información la pedimos y la verificamos antes de acompañarte a ver, para que compares lo que existe con lo que está en plano.',
     rasgos: [
       'Desarrollo planificado con trama urbana propia',
       'Hospital y sede universitaria dentro del proyecto',
@@ -272,7 +272,7 @@ export const ZONAS: Zona[] = [
     descripcion:
       'Barú, al sur, con playas de arena blanca y agua clara. Zona de casas de descanso y proyecto turístico. Qué revisar.',
     cuerpo:
-      'Barú se extiende al sur de la bahía, con las playas de arena blanca que la hicieron conocida. Es zona de casas de descanso, hotelería pequeña y proyectos con vocación turística. Como toda zona costera de alto atractivo, aquí la revisión de títulos, linderos y permisos ambientales es la parte seria del trabajo, y no siempre es rápida. Preferimos tomarnos ese tiempo contigo. Un negocio en Barú se hace bien cuando el expediente está completo, no cuando el paisaje convence.',
+      'Barú se extiende al sur de la bahía, con las playas de arena blanca que la hicieron conocida. Es zona de casas de descanso, hotelería pequeña y proyectos con vocación turística. Como toda zona costera de alto atractivo, aquí la revisión de títulos, linderos y permisos ambientales es la parte seria del trabajo, y no siempre es rápida. Preferimos tomarnos ese tiempo contigo y llegar a la firma con el expediente completo.',
     rasgos: [
       'Playas de arena blanca al sur de la bahía',
       'Casas de descanso y hotelería de pequeño formato',

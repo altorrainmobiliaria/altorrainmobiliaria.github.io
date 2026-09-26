@@ -290,9 +290,9 @@ const journalSide: ArticuloJournal[] = jResto.slice(0, 3).map(aTarjeta);
 const hayJournal = journalMain !== null || journalSide.length > 0;
 
 const brokerPerks = [
-  'Comisiones entre las más competitivas del mercado',
-  'Leads calificados cada semana y CRM incluido',
-  'Respaldo jurídico y de marca en cada operación',
+  'Comisiones acordadas al principio y por escrito',
+  'Un expediente por inmueble que registra quién abre cada documento',
+  'Modelos de contrato revisados',
 ];
 
 // Pestañas del buscador del hero (buscar por operación).
@@ -307,8 +307,8 @@ const tabs = [
 const maneras = [
   { n: '01', t: 'Comprar', img: '/assets/villa-modern.webp', d: 'Tu hogar o tu próxima inversión, con acompañamiento legal de principio a fin.', href: '/comprar' },
   { n: '02', t: 'Arrendar', img: '/assets/chalet-dusk.webp', d: 'Contratos claros y estudios serios. Vive tranquilo, entrega tranquilo.', href: '/arrendar' },
-  { n: '03', t: 'Invertir', img: '/assets/estate-golden.webp', d: 'Rentabilidad y valorización en la ciudad amurallada, con cifras sobre la mesa.', href: '/invertir' },
-  { n: '04', t: 'Estancias', img: '/assets/villa-pool.webp', d: 'Vive Cartagena por unos días en propiedades verificadas, listas para habitar.', href: '/estancias' },
+  { n: '03', t: 'Invertir', img: '/assets/estate-golden.webp', d: 'Comprar para rentar. Si es por días, miramos el reglamento del edificio antes que el precio.', href: '/invertir' },
+  { n: '04', t: 'Estancias', img: '/assets/villa-pool.webp', d: 'Tu estadía por noches, con la limpieza aparte y el total a la vista.', href: '/estancias' },
 ];
 ---
 
@@ -328,7 +328,7 @@ const maneras = [
           <div class="hbn__wrap">
             <div class="hbn__rise" style="max-width:640px">
               <h1 class="hbn__h">Cartagena <span class="hbn__gold">entera</span>, a la altura de tu decisión.</h1>
-              <p class="hbn__p">Comprar, arrendar, invertir o alojarte por unos días — en cada zona de la ciudad, con el nivel que tu decisión merece.</p>
+              <p class="hbn__p">Comprar, arrendar, invertir o alojarte por unos días, con un equipo que responde por cada firma.</p>
               <a href="/comprar" class="hbtn-sig">Explorar propiedades<span class="hbtn-sig__arw"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></a>
               <div class="hbn__trust">
                 <span>Seguridad</span><span class="hbn__tdot"></span>
@@ -347,13 +347,13 @@ const maneras = [
               <div class="hbn__panel">
                 <h2 class="hbn__h">Invierte donde la ciudad <span class="hbn__gold">crece</span>.</h2>
                 <div class="hbn__stats">
-                  <div><b>+12%</b><span>valorización anual</span></div>
+                  <div><b>3</b><span>revisiones antes de firmar</span></div>
                   <span class="hbn__statdiv" aria-hidden="true"></span>
-                  <div><b>8–11%</b><span>ROI en USD</span></div>
+                  <div><b>Meses</b><span>arriendo bajo la Ley 820</span></div>
                   <span class="hbn__statdiv" aria-hidden="true"></span>
-                  <div><b>3</b><span>zonas premium</span></div>
+                  <div><b>Días</b><span>alquiler que exige RNT</span></div>
                 </div>
-                <a href="/invertir" class="hbtn-goldflat">Ver oportunidades</a>
+                <a href="/invertir" class="hbtn-goldflat">Ver cómo invertir</a>
               </div>
             </div>
           </div>
@@ -380,7 +380,7 @@ const maneras = [
                     «un hueco honesto no pierde clientes; una cifra que después hay que corregir sí»—;
                     lo que faltaba no era la doctrina, era aplicarla aquí. Cuando haya catálogo, este
                     sitio lo ocupa una cifra DERIVADA del índice, no tecleada. */}
-                <p class="hbn__p">Propiedades verificadas dentro de la ciudad amurallada, listas para habitar, con anfitrión que responde.</p>
+                <p class="hbn__p">Te recibimos con un check-in sin enredos y alguien pendiente de tu estadía.</p>
                 <a href="/estancias" class="hbtn-outline">Descubrir estancias</a>
               </div>
             </div>
@@ -601,7 +601,7 @@ const maneras = [
             {/* Decía «128 propiedades», que nadie había contado (§123). La tarjeta invita a ver
                 el catálogo: para eso no hace falta una cifra, y la que había era falsa. */}
             <p class="home-ctacard__n">Todo el catálogo</p>
-            <p class="home-ctacard__d">en venta, arriendo y corta estancia en toda Cartagena.</p>
+            <p class="home-ctacard__d">en venta y arriendo.</p>
             <a class="alt-btn alt-btn--on-ink" href="/comprar">Ver todas
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </a>
@@ -953,8 +953,8 @@ const maneras = [
       <div class="alt-container home-ctaband__in">
         <div class="home-ctaband__text">
           <p class="alt-eyebrow home-ctaband__eyebrow">Corta estancia</p>
-          <h2 class="home-ctaband__h">Vive Cartagena por unos días, como si fuera tuya.</h2>
-          <p class="home-ctaband__p">Propiedades verificadas, listas para habitar, en el corazón de la ciudad amurallada.</p>
+          <h2 class="home-ctaband__h">Cuéntanos tus fechas y te proponemos dónde quedarte.</h2>
+          <p class="home-ctaband__p">Te escribimos por WhatsApp con lo que tengamos disponible en esos días.</p>
           <a class="alt-btn-frost home-ctaband__cta" href="/estancias">Descubrir estancias
             <span class="alt-btn-frost__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
           </a>
@@ -1022,8 +1022,8 @@ const maneras = [
       <div class="home-inv__in">
         <div>
           <p class="alt-eyebrow">Invertir en Cartagena</p>
-          <h2 class="home-inv__h">Una ciudad que se valoriza mientras la disfrutas.</h2>
-          <p class="home-inv__p">Analizamos zona, rentabilidad y liquidez para que tu decisión sea patrimonio, no una apuesta. Cifras claras, sin letra menuda.</p>
+          <h2 class="home-inv__h">Con ALTORRA se invierte con calma y con la palabra por delante.</h2>
+          <p class="home-inv__p">Antes de que firmes la promesa de compraventa, miramos contigo la zona y leemos entero el certificado de tradición.</p>
           <!-- El mockup deja href="#"; aquí va el WhatsApp REAL (§32.2: contacto real ≠ placeholder) -->
           <a class="home-inv__cta" href={SITE.contact.whatsappLink} target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>
@@ -1046,9 +1046,9 @@ const maneras = [
       <span class="home-brokers__glow" aria-hidden="true"></span>
       <div class="alt-container home-brokers__in">
         <div>
-          <p class="alt-eyebrow">Red de brokers ALTORRA</p>
-          <h2 class="home-brokers__h">Vende con la marca que abre puertas.</h2>
-          <p class="home-brokers__p">Únete a la red inmobiliaria más selecta de Cartagena. Nosotros ponemos la marca, los leads y el respaldo jurídico; tú, tu talento para cerrar.</p>
+          <p class="alt-eyebrow">Programa de aliados</p>
+          <h2 class="home-brokers__h">Vende con una empresa que existe y responde.</h2>
+          <p class="home-brokers__p">Trabajamos con brokers y agentes independientes en Cartagena. Nosotros ponemos la empresa, los contratos y el seguimiento; tú, el negocio.</p>
           <ul class="home-brokers__perks" role="list">
             {brokerPerks.map((perk) => (
               <li>
@@ -1058,18 +1058,18 @@ const maneras = [
             ))}
           </ul>
           <div class="home-brokers__cta">
-            <a class="alt-btn alt-btn--gold" href="/aliados">Postúlate como broker
+            <a class="alt-btn alt-btn--gold" href="/aliados">Quiero ser aliado
               <span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
             </a>
             <a class="alt-btn alt-btn--on-ink" href="/aliados">Conoce el modelo</a>
           </div>
         </div>
         <div class="home-brokers__media">
-          <img src="/assets/villa-modern.webp" alt="Equipo de brokers ALTORRA" loading="lazy" decoding="async" />
+          <img src="/assets/villa-modern.webp" alt="Casa moderna de dos pisos con fachada de madera y vidrio" loading="lazy" decoding="async" />
           <span class="home-brokers__media-scrim"></span>
           <div class="home-brokers__stats">
-            <div class="alt-glass home-brokers__stat"><span class="home-brokers__stat-n">180+</span><span class="home-brokers__stat-l">brokers ya venden con ALTORRA</span></div>
-            <div class="alt-glass home-brokers__stat"><span class="home-brokers__stat-n">48 h</span><span class="home-brokers__stat-l">de tu postulación a tu primer lead</span></div>
+            <div class="alt-glass home-brokers__stat"><span class="home-brokers__stat-n">Por etapas</span><span class="home-brokers__stat-l">de la oferta a la escritura registrada</span></div>
+            <div class="alt-glass home-brokers__stat"><span class="home-brokers__stat-n">Sin exclusividad</span><span class="home-brokers__stat-l">ni franquicia de por medio</span></div>
           </div>
         </div>
       </div>

@@ -15,7 +15,7 @@ fuentes:
     url: 'https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=8738'
 ---
 
-Cada año, por estas fechas, la misma conversación: el arrendador anuncia el aumento y el arrendatario no sabe si la cifra es legal. Casi siempre lo es. A veces no. Y la diferencia se puede comprobar en dos minutos, porque la ley no dejó ese número al criterio de nadie.
+Cada año, por estas fechas, la misma conversación: el arrendador anuncia el aumento y el arrendatario no sabe si la cifra es legal. Eso se puede comprobar en dos minutos, porque la ley no dejó ese número al criterio de nadie.
 
 ## El techo del aumento: el IPC del año anterior, y ni un peso más
 
@@ -25,11 +25,11 @@ Conviene leer esa frase despacio, porque tiene tres condiciones metidas en una l
 
 1. **Cada doce meses.** No cada año calendario. Si el contrato empezó en junio, el aumento cabe en junio del año siguiente, no en enero.
 2. **Bajo un mismo precio.** El reloj de los doce meses cuenta desde el último cambio de canon, no desde la firma.
-3. **Hasta el 100 % del IPC del año calendario anterior.** Es un techo, no una cifra obligatoria: se puede subir menos, o no subir. Lo que no se puede es pasarse.
+3. **Hasta el 100 % del IPC del año calendario anterior.** Es un techo: se puede subir menos, o no subir. Lo que no se puede es pasarse.
 
 Y ojo con cuál IPC: el del **año calendario inmediatamente anterior**, que publica el DANE. No la inflación de los últimos doce meses móviles, ni la proyectada, ni la de un mes suelto.
 
-## El otro límite, el que casi nadie conoce
+## El otro límite: el canon desde el primer día
 
 El artículo 18 pone un techo distinto y anterior: **el canon mensual no puede exceder el 1 % del valor comercial del inmueble**. Y para que ese «valor comercial» no sea un número inventado, el mismo artículo añade que **la estimación comercial no puede exceder el equivalente a dos veces el avalúo catastral vigente**.
 
@@ -50,17 +50,17 @@ El cálculo es ése y no tiene truco. Lo único que hay que tener a la mano es e
 
 ## Qué hacer si el aumento se pasa
 
-Lo primero, y suele bastar: **decirlo con la norma en la mano**. La mayoría de los aumentos excesivos no son mala fe, son una cuenta hecha de memoria o una costumbre heredada de años de inflación alta. Una conversación con el artículo 20 delante suele resolverlo.
+Lo primero, y suele bastar: **decirlo con la norma en la mano**. Un aumento excesivo puede salir de una cuenta hecha de memoria o de una costumbre heredada de años de inflación alta, sin mala fe de por medio. Una conversación con el artículo 20 delante suele resolverlo.
 
 Si no se resuelve, conviene saber dos cosas. Que un aumento por encima del tope no obliga por el hecho de estar escrito en un otrosí, y que pagar el canon nuevo durante meses complica el reclamo aunque no lo elimine. Por eso lo importante es plantearlo **antes** de empezar a pagarlo.
 
-Y si es usted quien arrienda: aplicar el tope correcto no es solo cumplir la ley, es evitar una discusión que le puede costar el inquilino. Un arrendatario que se queda cinco años vale más que un 3 % de más en el segundo.
+Y si es usted quien arrienda: aplicar el tope correcto también le evita una discusión que le puede costar el inquilino. Un arrendatario que se queda cinco años vale más que un 3 % de más en el segundo.
 
 ## Cómo lo manejamos nosotros
 
-En los contratos que administramos, el reajuste no es una decisión que alguien recuerde en su momento: queda pactado desde el principio y **la agenda del panel avisa antes de que llegue la fecha**, contada desde el último cambio de canon.
+En los contratos que administramos, el reajuste queda pactado desde el principio y **la agenda del panel avisa antes de que llegue la fecha**, contada desde el último cambio de canon.
 
-La cifra la tomamos del **IPC que publica el DANE**, no de un número redondo, y se la enviamos con la fuente para que pueda comprobarla. Es un detalle pequeño y explica bastante de por qué la mayoría de nuestras renovaciones no tienen discusión: un aumento que se puede verificar no se negocia, se lee.
+La cifra la tomamos del **IPC que publica el DANE**, no de un número redondo, y se la enviamos con la fuente para que pueda comprobarla. Es un detalle pequeño: un aumento que se puede verificar deja poco que discutir.
 
 ## Lo que conviene recordar
 

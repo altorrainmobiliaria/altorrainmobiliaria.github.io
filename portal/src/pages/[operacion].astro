@@ -12,6 +12,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import PropertyCard from '../components/PropertyCard.astro';
 import { TIPOS_PUBLICOS, etiquetaTipo } from '../lib/domain/shared';
+import { SITE } from '../lib/config/site';
 
 export function getStaticPaths() {
   // SPLIT INTENCIONAL del SERP mixto del mockup (§32.22): /comprar + /arrendar.
@@ -70,8 +71,8 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
 <BaseLayout
   title={`${op === 'comprar' ? 'Comprar' : 'Arrendar'} en Cartagena — ALTORRA`}
   description={op === 'comprar'
-    ? 'Inmuebles en venta en Cartagena de Indias: busca por ubicación, compara y agenda tu visita. Acompañamiento legal de ALTORRA Inmobiliaria.'
-    : 'Inmuebles en arriendo en Cartagena de Indias: busca por ubicación y encuentra tu próximo hogar, con contrato y respaldo legal de ALTORRA.'}
+    ? 'Inmuebles en venta en Cartagena de Indias: busca por ubicación, compara y agenda tu visita. ALTORRA revisa los papeles de cada uno antes de mostrártelo.'
+    : `Arriendos en Cartagena de Indias: busca por zona y agenda tu visita. ALTORRA, Matrícula de Arrendador No. ${SITE.matriculaArrendador}, responde por cada contrato que administra.`}
   miga={[{ nombre: op === 'comprar' ? 'Comprar' : 'Arrendar', ruta: `/${op}` }]}
 >
   <Header active={op} />

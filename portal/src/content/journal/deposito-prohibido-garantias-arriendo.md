@@ -18,9 +18,9 @@ fuentes:
     url: 'https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=10482'
 ---
 
-«Un mes de arriendo por adelantado y un mes de depósito» es una frase que se sigue oyendo en Colombia. En el arriendo de vivienda, la segunda mitad de esa frase es ilegal — y lo es desde 2003.
+«Un mes de arriendo por adelantado y un mes de depósito» es una frase que se sigue oyendo en Colombia. En el arriendo de vivienda, la segunda mitad de esa frase es ilegal, y lo es desde 2003.
 
-Conviene saberlo por los dos lados. Si usted va a arrendar, para no pagar lo que no debe. Si usted es propietario, porque una cláusula así en su contrato no es solo inexigible: es sancionable.
+Conviene saberlo por los dos lados. Si usted va a arrendar, para no pagar lo que no debe. Si usted es propietario, porque una cláusula así en su contrato, además de inexigible, es sancionable.
 
 ## Lo que está prohibido
 
@@ -30,7 +30,7 @@ Conviene saberlo por los dos lados. Si usted va a arrendar, para no pagar lo que
 
 </div>
 
-Esa última frase es la que cierra la puerta de verdad. La prohibición no es a la palabra «depósito»: es a la figura. Un «mes de garantía», una «reserva» que no se devuelve, un pagaré en blanco «por si acaso» o un cobro que aparece en un anexo firmado aparte son, en el fondo, lo mismo — y la ley se anticipó a los nombres.
+Esa última frase es la que cierra la puerta de verdad. La prohibición alcanza a la figura, se llame como se llame. Un «mes de garantía», una «reserva» que no se devuelve, un pagaré en blanco «por si acaso» o un cobro que aparece en un anexo firmado aparte son, en el fondo, lo mismo. La ley se anticipó a los nombres.
 
 <div class="jrn-practica">
 
@@ -58,11 +58,11 @@ El detalle que cambia todo es a nombre de quién queda el dinero: la garantía s
 
 </div>
 
-Es un cálculo, no una cifra al ojo. Si el número que le piden no se puede reconstruir con esa fórmula, pídalo por escrito con las facturas que lo sustentan.
+Es un cálculo, y se puede comprobar. Si el número que le piden no se puede reconstruir con esa fórmula, pídalo por escrito con las facturas que lo sustentan.
 
 ### Cómo se devuelve
 
-El arrendador debe **denunciar** el contrato ante las empresas de servicios públicos —con un formato mínimo: las partes, la dirección, las fechas y el tipo de garantía—, que es lo que rompe su solidaridad. Cuando denuncia la terminación, la institución devuelve el depósito dentro de los **veinte días hábiles** siguientes, descontando los servicios ya causados.
+El arrendador debe **denunciar** el contrato ante las empresas de servicios públicos (con un formato mínimo: las partes, la dirección, las fechas y el tipo de garantía), que es lo que rompe su solidaridad. Cuando denuncia la terminación, la institución devuelve el depósito dentro de los **veinte días hábiles** siguientes, descontando los servicios ya causados.
 
 ## El cobro de «estudio de documentos»
 
@@ -78,7 +78,7 @@ Lo que sí podemos decir sin matices es lo que hacemos nosotros: en ALTORRA el a
 
 </div>
 
-## De paso: dos límites más que casi nadie conoce
+## Dos límites más: el canon y su reajuste
 
 <div class="jrn-ley">
 
@@ -88,7 +88,7 @@ Lo que sí podemos decir sin matices es lo que hacemos nosotros: en ALTORRA el a
 
 </div>
 
-Un incremento a los ocho meses, o por encima del IPC del año anterior, no es negociación dura: es un incumplimiento del contrato de arrendamiento de vivienda.
+Un incremento a los ocho meses, o por encima del IPC del año anterior, es un incumplimiento del contrato de arrendamiento de vivienda.
 
 ## Si ya le cobraron
 

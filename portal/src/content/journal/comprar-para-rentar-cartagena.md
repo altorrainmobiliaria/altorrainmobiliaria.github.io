@@ -20,9 +20,9 @@ fuentes:
     url: 'https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=175266'
 ---
 
-«Compro para rentarlo» es la frase con la que empiezan muchas conversaciones en Cartagena. Casi siempre falta la segunda mitad: rentarlo *cómo*.
+«Compro para rentarlo» es la frase con la que empiezan muchas conversaciones en Cartagena. Le falta la segunda mitad: rentarlo *cómo*.
 
-Arrendar por meses y alquilar por noches no son dos velocidades del mismo negocio. Son dos marcos legales distintos, con obligaciones distintas, y la decisión conviene tomarla **antes** de comprar —porque hay inmuebles donde uno de los dos modelos, sencillamente, no es legal.
+Arrendar por meses y alquilar por noches son dos marcos legales distintos, con obligaciones distintas. La decisión conviene tomarla **antes** de comprar, porque hay inmuebles donde uno de los dos modelos, sencillamente, no es legal.
 
 ## Arrendar por meses: la Ley 820 manda
 
@@ -38,7 +38,7 @@ Para el propietario esto significa tres cosas concretas: no puede pedir un mes d
 
 La contrapartida es la que hace atractivo el modelo: un contrato de doce meses que se **renueva automáticamente** si nadie da preaviso, un ingreso predecible y una operación de bajo roce. Y si el inmueble se entrega en administración, quien administra asume la **gestión**: el recaudo, el giro, las novedades y el trato con el arrendatario.
 
-⚠️ **Lo que NO se traslada es la matrícula de arrendador.** Es un error caro y muy extendido. Esa obligación se pega a **la actividad de cada quien**, no al inmueble ni al contrato: la Ley 820 obliga a matricularse a quien arrienda vivienda urbana como actividad principal, a quien hace intermediación, y al **propietario con más de cinco contratos** —además de presumirla en quien aparezca arrendando más de diez inmuebles en un municipio (art. 28)—. Si usted cruza uno de esos umbrales, **sigue obligado aunque su administrador también lo esté**, y la multa llega hasta **cien salarios mínimos** (art. 34). Firmar un contrato de administración no le exime; lo que hace es añadir un obligado, no sustituirlo. Con un solo apartamento arrendado no hay obligación para usted, y ahí la de su administrador es la única que importa — [cómo funciona la matrícula, y por qué conviene pedirla antes de firmar](/journal/matricula-de-arrendador).
+⚠️ **Lo que NO se traslada es la matrícula de arrendador.** Creer lo contrario es un error caro. Esa obligación sigue a **la actividad de cada quien** y no pasa con el inmueble ni con el contrato: la Ley 820 obliga a matricularse a quien arrienda vivienda urbana como actividad principal, a quien hace intermediación y al **propietario con más de cinco contratos**, y presume la actividad en quien aparezca arrendando más de diez inmuebles en un municipio (art. 28). Si usted cruza uno de esos umbrales, **sigue obligado aunque su administrador también lo esté**, y la multa llega hasta **cien salarios mínimos** (art. 34). Con un solo apartamento arrendado no hay obligación para usted, y ahí la de su administrador es la única que importa: [cómo funciona la matrícula, y por qué conviene pedirla antes de firmar](/journal/matricula-de-arrendador).
 
 </div>
 
@@ -55,11 +55,11 @@ Zonas donde este modelo tiene sentido real, según lo que se mueve en cada una:
 
 </div>
 
-Ese segundo requisito es el que decide compras en Cartagena, y casi nadie lo mira antes de la promesa. Un apartamento en un edificio cuyo reglamento no autoriza el uso turístico **no se puede alquilar por noches**, por bonito que sea el balcón y por buena que sea la ocupación de la zona. La vía para cambiarlo existe —promover la votación en la asamblea—, pero no es rápida y no depende de usted solo.
+Ese segundo requisito decide compras en Cartagena: revíselo antes de firmar la promesa. Un apartamento en un edificio cuyo reglamento no autoriza el uso turístico **no se puede alquilar por noches**, por bonito que sea el balcón y por buena que sea la ocupación de la zona. La vía para cambiarlo es promover la votación en la asamblea, pero no es rápida y no depende de usted solo.
 
 <div class="jrn-practica">
 
-Y hay un tercero que a veces sorprende: las plataformas están obligadas a **retirar** los anuncios de prestadores sin RNT activo. Es decir que el riesgo no es solo una sanción lejana de la Superintendencia; es que el anuncio desaparezca en plena temporada.
+Y hay un tercer punto: las plataformas están obligadas a **retirar** los anuncios de prestadores sin RNT activo. Así que, además del riesgo de una sanción de la Superintendencia, el anuncio puede desaparecer en plena temporada.
 
 </div>
 
@@ -69,12 +69,12 @@ Zonas donde la corta estancia es parte del paisaje del negocio:
 ## Las tres preguntas, antes de la promesa
 
 1. **¿El reglamento de propiedad horizontal autoriza el uso turístico?** Si el plan es alquilar por días, esta pregunta va primero que el precio. Se responde leyendo el reglamento, no preguntando en portería.
-2. **¿Quién va a figurar como arrendador o como prestador?** Si es usted y va a repetir, mire el artículo 28 de la Ley 820 y el RNT. Si delega, pida el número de matrícula de quien administra —y que esté en el municipio del inmueble—.
+2. **¿Quién va a figurar como arrendador o como prestador?** Si es usted y va a repetir, mire el artículo 28 de la Ley 820 y el RNT. Si delega, pida el número de matrícula de quien administra, y que esté en el municipio del inmueble.
 3. **¿El expediente del inmueble está completo?** En las zonas de desarrollo reciente y en las islas, la revisión documental pesa más que en el resto de la ciudad. El paisaje no arregla un papel que falta.
 
 ## Y una cosa que no le vamos a decir
 
-Cuál de los dos modelos «rinde más». No publicamos rentabilidades ni proyecciones de ocupación: dependen del inmueble, del mes, del estado de la unidad y de cómo se opere, y una cifra puesta aquí sería una promesa que nadie puede sostener. Lo que sí podemos es mirar su caso concreto con los números que existan de verdad — los suyos, no los de un promedio.
+Cuál de los dos modelos «rinde más». No publicamos rentabilidades ni proyecciones de ocupación: dependen del inmueble, del mes, del estado de la unidad y de cómo se opere, y una cifra puesta aquí sería una promesa que nadie puede sostener. Lo que sí podemos es mirar su caso concreto con los números que existan de verdad: los suyos.
 
 Si ya sabe qué zona le interesa, cada una tiene su página con lo que sí se puede afirmar: [ver las zonas de Cartagena](/invertir).
 

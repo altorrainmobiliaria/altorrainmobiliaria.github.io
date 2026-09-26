@@ -62,7 +62,7 @@ const MODELOS = [
       'El número de RNT visible en toda la publicidad, incluidos los anuncios de plataformas.',
     ],
     paraQuien:
-      'Para quien acepta una operación con más movimiento —limpieza, atención, temporadas— a cambio de un modelo distinto.',
+      'Para quien acepta más operación diaria: limpieza, atención al huésped y manejo de temporadas.',
     zonas: [
       ['El Laguito', '/zona/el-laguito'],
       ['San Diego', '/zona/san-diego'],
@@ -76,15 +76,15 @@ const MODELOS = [
 const ANTES_DE_FIRMAR = [
   {
     t: 'El certificado de tradición, leído entero',
-    d: 'Hipotecas, limitaciones de dominio, sucesiones sin liquidar. Se pide y se lee ANTES de la promesa, no después: la promesa ya compromete.',
+    d: 'Hipotecas, limitaciones de dominio, sucesiones sin liquidar. Se pide y se lee ANTES de firmar la promesa, porque la promesa ya compromete.',
   },
   {
     t: 'El reglamento de la copropiedad',
-    d: 'Si el plan es alquilar por días, esta pregunta va antes que el precio. Se responde leyendo el reglamento, no preguntando en portería.',
+    d: 'Si el plan es alquilar por días, el reglamento se lee antes de hablar de precio.',
   },
   {
     t: 'Quién va a figurar como arrendador o prestador',
-    d: 'Si repite, le aplican la matrícula de arrendador o el RNT. Si delega, pida el número de quien administra — y que sea del municipio del inmueble.',
+    d: 'Si repite, le aplican la matrícula de arrendador o el RNT. Si delega, pida el número de quien administra y confirme que sea del municipio del inmueble.',
   },
 ];
 
@@ -115,7 +115,7 @@ const jsonLd = {
 
     <section class="alt-section">
       <div class="alt-container">
-        <h2 class="inv-h2">Dos modelos, y no son dos velocidades del mismo</h2>
+        <h2 class="inv-h2">Dos modelos, cada uno con su ley</h2>
         <p class="inv-p">
           Comprar para rentar por meses y comprar para alquilar por noches son negocios distintos con
           marcos legales distintos. La decisión conviene tomarla <strong>antes</strong> de comprar,
@@ -176,13 +176,13 @@ const jsonLd = {
         <p class="inv-p">
           <strong>Rentabilidades ni proyecciones de ocupación por zona.</strong> Dependen del
           inmueble, del mes, del estado de la unidad y de cómo se opere; una cifra puesta en una
-          página sería una promesa que nadie puede sostener, y en la página de quien va a poner
-          dinero eso no es un adorno: es un daño.
+          página sería una promesa que nadie puede sostener, y esa promesa la terminaría pagando
+          usted, que es quien pone el dinero.
         </p>
         <p class="inv-p">
-          Lo que sí hacemos es mirar su caso con los números que existan de verdad —los del inmueble
-          concreto, no los de un promedio—. Para eso hay que hablar, y por eso esta página termina en
-          una conversación y no en una calculadora.
+          Lo que hacemos es mirar su caso con los números que existan de verdad: los del inmueble
+          concreto que le interesa. Para eso hay que hablar. Escríbanos y lo revisamos
+          con usted.
         </p>
         <div class="inv-cta">
           <a class="alt-btn alt-btn--gold" href={`${SITE.contact.whatsappLink}?text=${waTexto}`} rel="noopener">Hablar con un asesor</a>

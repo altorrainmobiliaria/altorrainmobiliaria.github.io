@@ -1,6 +1,6 @@
 ---
 titulo: 'La matrícula de arrendador: qué es, quién la necesita y por qué debe estar a la vista'
-resumen: 'En Colombia, quien vive de arrendar o de intermediar arriendos de vivienda tiene que estar matriculado ante la alcaldía de su municipio — y anunciarse sin ese número es sancionable. Qué exige la Ley 820 de 2003, dónde debe aparecer el número y cómo comprobar el de cualquiera. Incluido el nuestro.'
+resumen: 'En Colombia, quien vive de arrendar o de intermediar arriendos de vivienda tiene que estar matriculado ante la alcaldía de su municipio, y anunciarse sin ese número es sancionable. Qué exige la Ley 820 de 2003, dónde debe aparecer el número y cómo comprobar el de cualquiera. Incluido el nuestro.'
 tituloSeo: 'Matrícula de arrendador: qué es y quién la necesita'
 resumenSeo: 'Quien vive de arrendar vivienda debe matricularse ante la alcaldía, y anunciarse sin ese número es sancionable. Cómo comprobar el de cualquiera.'
 categoria: 'ley-y-contratos'
@@ -8,7 +8,7 @@ fecha: 2026-08-25
 portada: '/assets/estate-golden.webp'
 portadaAlt: 'Fachada de un edificio residencial en Cartagena con la luz del atardecer'
 destacado: true
-enCorto: 'Si usted vive de arrendar viviendas —propias o de terceros— o de poner en contacto a arrendadores con arrendatarios, en un municipio de más de 15.000 habitantes debe matricularse ante la alcaldía. Y al anunciarse debe indicar el número de matrícula vigente. Lo dice la Ley 820 de 2003, artículos 28 y 31.'
+enCorto: 'Si usted vive de arrendar viviendas (propias o de terceros) o de poner en contacto a arrendadores con arrendatarios, en un municipio de más de 15.000 habitantes debe matricularse ante la alcaldía. Y al anunciarse debe indicar el número de matrícula vigente. Lo dice la Ley 820 de 2003, artículos 28 y 31.'
 fuentes:
   - titulo: 'Ley 820 de 2003 — régimen de arrendamiento de vivienda urbana'
     entidad: 'Función Pública · Gestor Normativo'
@@ -21,13 +21,13 @@ fuentes:
     url: 'https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=77216'
 ---
 
-La mayoría de quienes arriendan en Colombia nunca han oído hablar de la matrícula de arrendador. No es un trámite oscuro ni opcional: es el registro que la ley exige para ejercer la actividad, y ejercerla sin él puede costar multas de hasta cien salarios mínimos.
+La matrícula de arrendador es el registro que la ley exige a quien vive de arrendar o de intermediar arriendos de vivienda. Quien ejerce esa actividad sin matrícula, o se anuncia sin el número vigente, se expone a multas de hasta cien salarios mínimos.
 
-Vale la pena entenderla por dos razones. Si usted arrienda, para saber si le aplica. Y si usted va a entregar su inmueble a una inmobiliaria, porque es la primera pregunta que debería hacerle —y la más fácil de comprobar.
+Vale la pena entenderla por dos razones. Si usted arrienda, para saber si le aplica. Y si usted va a entregar su inmueble a una inmobiliaria, porque es la primera pregunta que debería hacerle, y la más fácil de comprobar.
 
 ## Quién está obligado
 
-La obligación no depende de tener oficina ni aviso en la calle, sino de la actividad.
+Lo que cuenta es la actividad, tenga o no oficina y aviso en la calle.
 
 <div class="jrn-ley">
 
@@ -37,15 +37,15 @@ La obligación no depende de tener oficina ni aviso en la calle, sino de la acti
 
 <div class="jrn-practica">
 
-Un propietario con un solo apartamento arrendado no está obligado. Quien administra los cuatro de la familia, tampoco — hasta que pasa de cinco contratos. La frontera que traza la ley es la actividad habitual, no la escritura. Y ojo con la presunción de los diez inmuebles: no exige demostrar que usted vive de esto, basta con que aparezca arrendando esa cantidad en un municipio.
+Un propietario con un solo apartamento arrendado no está obligado. Quien administra los cuatro de la familia, tampoco, hasta que pasa de cinco contratos. La frontera que traza la ley es la actividad habitual. Y ojo con la presunción de los diez inmuebles: no exige demostrar que usted vive de esto, basta con que aparezca arrendando esa cantidad en un municipio.
 
 </div>
 
-Quien inicia la actividad tiene diez días para registrarse, y la matrícula se pide con la existencia y representación legal o el registro mercantil, más los **modelos de contrato** de arrendamiento y de administración que la empresa va a usar. Ese último requisito es el que más sorprende: la alcaldía no solo registra quién arrienda, también revisa con qué papeles lo hace.
+Quien inicia la actividad tiene diez días para registrarse, y la matrícula se pide con la existencia y representación legal o el registro mercantil, más los **modelos de contrato** de arrendamiento y de administración que la empresa va a usar. Así, además de registrar quién arrienda, la alcaldía revisa esos modelos.
 
 ## El número tiene que estar en la publicidad
 
-Esta es la parte que casi nadie cumple, y la más sencilla de verificar desde afuera.
+Es la parte más sencilla de verificar desde afuera: basta con mirar un anuncio.
 
 <div class="jrn-ley">
 
@@ -57,9 +57,9 @@ No dice «en la página de contacto» ni «cuando se lo pidan»: dice en todos l
 
 En este sitio nuestro número está en el pie de cada página, y también en la ficha de cada inmueble de arriendo que administramos.
 
-## Es por municipio, no nacional
+## Una matrícula por cada municipio
 
-Es el detalle que más confusión causa cuando una inmobiliaria opera en varias ciudades.
+Importa sobre todo a la inmobiliaria que trabaja en más de una ciudad.
 
 <div class="jrn-ley">
 
@@ -81,7 +81,7 @@ La matrícula se otorga por una sola vez, tiene vigencia de un año y la autorid
 
 <div class="jrn-practica">
 
-Para quien entrega su inmueble, el riesgo no es la multa ajena: es que la empresa que administra su propiedad quede suspendida y no pueda seguir haciéndolo. Por eso conviene preguntar por la matrícula **antes** de firmar el contrato de administración, no después.
+Para quien entrega su inmueble, el riesgo está en que la empresa que administra su propiedad quede suspendida y no pueda seguir haciéndolo. Por eso conviene preguntar por la matrícula **antes** de firmar el contrato de administración.
 
 </div>
 
@@ -89,7 +89,7 @@ Para quien entrega su inmueble, el riesgo no es la multa ajena: es que la empres
 
 Tres preguntas bastan, y las tres tienen respuesta verificable:
 
-1. **¿Cuál es su número de matrícula de arrendador?** Si la respuesta es «estamos en trámite» o «no aplica para nosotros», pida que le expliquen por qué —los criterios del artículo 28 son los de arriba.
+1. **¿Cuál es su número de matrícula de arrendador?** Si la respuesta es «estamos en trámite» o «no aplica para nosotros», pida que le expliquen por qué. Los criterios del artículo 28 son los de arriba.
 2. **¿De qué municipio es?** Tiene que ser del municipio donde está el inmueble.
 3. **¿Dónde figura publicada?** Debe estar en sus anuncios. Si el número existe pero no aparece en ninguna publicidad, ya hay un incumplimiento del artículo 31.
 
