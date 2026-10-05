@@ -12,6 +12,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["--prefix", "portal", "run", "dev", "--", "--port", "4321"],
       "port": 4321
+    },
+    {
+      "name": "portal-build",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "portal", "run", "preview", "--", "--port", "8799"],
+      "port": 8799
     }
   ]
 }

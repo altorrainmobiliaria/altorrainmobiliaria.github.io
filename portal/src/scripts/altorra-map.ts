@@ -17,7 +17,16 @@
 // datos de propiedades son propios. Rotación deshabilitada (mapa urbano plano, sin gestos accidentales).
 
 // maplibre-gl v6 = ESM con named exports (ya no hay default export).
-import { Map as MapLibreMap, Marker, LngLatBounds, addProtocol, type ErrorEvent } from 'maplibre-gl';
+import { Map as MapLibreMap, Marker, LngLatBounds, addProtocol, setWorkerUrl, type ErrorEvent } from 'maplibre-gl';
+// 🔴 EL WORKER (5-oct-2026). MapLibre 6 calcula la URL de su worker RELATIVA a su propio fichero
+// (`new URL('./maplibre-gl-worker.mjs', import.meta.url)`). Empaquetado por Vite dentro de este chunk,
+// eso apunta a `/_astro/maplibre-gl-worker.mjs`, que el build NUNCA emitía: 404, el evento `error`
+// «Worker failed to load» y el basemap sin pintar — se quedaba el esquemático, que es justo el
+// fallback, así que el fallo se veía como «degradación limpia» y no como avería. Lo destapó una
+// revisión adversarial abriendo /comprar en un navegador; el smoke por códigos HTTP no lo veía.
+// `?worker&url` hace que Vite empaquete el worker (con su `maplibre-gl-shared.mjs`) como fichero
+// propio y nos dé su URL; `setWorkerUrl` se la dice a MapLibre ANTES de crear ningún mapa.
+import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { Protocol } from 'pmtiles';
 import { layers, namedFlavor } from '@protomaps/basemaps';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -100,6 +109,7 @@ function initOne(el: HTMLElement): void {
   const pinClass = el.dataset.pinClass || 'alt-mappin';
 
   if (!protocolReady) {
+    setWorkerUrl(maplibreWorkerUrl); // antes del primer mapa: ver la cabecera (§ EL WORKER)
     addProtocol('pmtiles', new Protocol().tile);
     protocolReady = true;
   }
