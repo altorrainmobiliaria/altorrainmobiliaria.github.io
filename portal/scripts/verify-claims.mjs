@@ -171,17 +171,19 @@ if (existsSync(mp)) {
 // #15 del manifest marca la clave como desconocida — y tiene razón: no es suya.
 /*
  * DEUDA CONGELADA, con el contrato de siempre: solo puede BAJAR y una cifra NUEVA rompe el CI.
- * Estas cuatro las encontró §215 a mano en el sitio construido y **no se pueden quitar desde aquí**:
- * salen de un mockup aprobado, y retirarlas cambia el diseño de dos pantallas. La decisión es de
- * Daniel (citar la fuente, o sustituirlas por lo verificable) y está en su brief. Congelarlas es lo
- * que permite que el gate exista HOY en vez de esperar al arreglo: sin esto, añadir los patrones
- * dejaba el repositorio en rojo con una salida que exige mockup.
+ * Nació para las cifras que §215 encontró a mano en el sitio construido —las del hero de la home y
+ * las de `/publicar`—: salían de un mockup aprobado y quitarlas era decisión de Daniel. Congelarlas
+ * permitió que el gate existiera HOY en vez de esperar al arreglo: sin esto, añadir los patrones
+ * dejaba el repositorio en rojo con una salida que exige mockup. De aquellas ya no queda ninguna
+ * (abajo, cuándo se fue cada una); lo que sigue congelado es el catálogo de MUESTRA de staging.
  */
 const DEUDA_DECLARADA = [
-  // — Las dos del HERO de la home (§215.1). Sin fuente citable; quitarlas cambia el diseño de la
-  //   primera pantalla, así que la decisión (citar o sustituir) es del dueño y está en su brief.
-  ['+12% valorizaci', 'hero de la home: medición de mercado sin fuente — §215.1, decide el dueño'],
-  ['8–11% ROI', 'hero de la home: rango de rentabilidad sin fuente — §215.1, decide el dueño'],
+  // 🗑️ RETIRADAS las dos del HERO de la home (§215.1): «+12% valorización anual» y «8–11% ROI en
+  //    USD». El commit dd2de32 (26-sep) las quitó del portal, pero sus líneas seguían aquí, y una
+  //    deuda que ya no corresponde a nada no vigila: TAPA. La cifra iba en un <b> y su etiqueta en
+  //    un <span>, así que la fuente no las ve juntas y solo las caza el barrido de lo SERVIDO —
+  //    justo el que esta lista exime—. Medido con una sonda antes de quitarlas: con el marcado
+  //    original del hero reintroducido, el gate pasaba en verde; sin estas líneas, falla y las nombra.
   // 🗑️ RETIRADAS las tres de `/publicar` (§280). No se «cerraron»: DEJARON DE EXISTIR. Daniel
   //    decidió el 31-ago sustituirlas por credenciales verificables —matrícula 6636, la comisión
   //    del tarifario sellado y el $0 del inquilino por Ley 820—, así que ya no hay nada que
@@ -190,11 +192,14 @@ const DEUDA_DECLARADA = [
   // — Datos de MUESTRA del catálogo vacío. No son afirmaciones fabricadas a mano: son el relleno
   //   que el paso 5.3 del cutover retira cuando entre el inventario real (§213-§214, callejón «los
   //   datos del portal son DEMO»). Se congelan aquí para que el gate pueda existir antes del cutover.
-  // ⚠️ El motivo de estas tres CAMBIÓ (§278). Decía «sale en el cutover», que es una promesa que
+  // ⚠️ El motivo de estas (eran tres; desde el 5-oct, dos) CAMBIÓ (§278). Decía «sale en el cutover», que es una promesa que
   // alguien tiene que cumplir; §276 mostró lo que valen. Ahora cuelgan de `HAY_CATALOGO_REAL`, así
   // que salen SOLAS en cualquier build de producción. Siguen declaradas porque el build de STAGING
   // —el que este gate mira a diario— las sigue sirviendo a propósito: son el diseño de muestra.
-  ['128 propiedades', 'home: conteo de muestra. En producción NO se sirve (cuelga del interruptor, §278)'],
+  // 🗑️ RETIRADA (5-oct): «128 propiedades». Ya no la sirve nada: §123 la quitó de la tarjeta
+  //    (index.astro:601 lo cuenta en un comentario de Astro, que no se publica). Medido en el build
+  //    de staging con un contador de uso: solo «312 inmuebles» y «arriendos 83» casaban. Una
+  //    entrada sin uso no vigila: deja pasar la cifra el día que vuelva.
   ['312 inmuebles', 'home (mapa): conteo de muestra. En producción NO se sirve (§278)'],
   // El tercero de la familia, y el que el patrón no veía por estar escrito al revés (§263).
   ['arriendos 83', 'home: conteo de muestra del enlace a /arrendar. En producción NO se sirve (§278)'],
