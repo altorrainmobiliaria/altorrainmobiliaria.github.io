@@ -558,6 +558,11 @@ checks.push({
  *     los sirva —4,7 MB de skills, 15 MB de mockups— es OTRO problema y tiene su propia ficha; meterlos
  *     aqui llenaria el gate de ruido ajeno, que es como se aprende a ignorarlo.
  *   · `_legacy/`, `backups/`, `node_modules/`, `.git/` — no los sirve el dominio (`backups/` da 404).
+ *   · `.claude/` — tampoco: Jekyll no publica lo que empieza por punto (_config.yml:5-6) y
+ *     `/.claude/settings.json` da 404 (medido el 5-oct). Dentro viven las COPIAS DE TRABAJO de los
+ *     agentes (`.claude/worktrees/*`, cada una con su `package-lock.json`): con ellas en disco este
+ *     gate salía ROJO en local por un correo de licencia de una dependencia ajena, y en el CI —que no
+ *     tiene esas copias— verde. Un rojo que solo existe en una máquina enseña a ignorar el gate.
  *   · Direcciones de EJEMPLO de las traducciones: son marcadores de un campo, no contactos.
  *   · El movil exige separador, prefijo `+57` o contexto `tel:`/`wa.me`: sin eso, constantes de una
  *     funcion hash del bundle del mapa (`3266489909`) se leian como telefonos.
@@ -579,7 +584,7 @@ const CORREOS_DE_EJEMPLO = new Set(['tu@correo.com', 'your@email.com', 'nombre@c
 /** Exige separador, prefijo de pais o contexto de telefono: si no, casan constantes numericas. */
 const MOVIL_CO = /(?:\+57[\s.-]?|tel:|wa\.me\/57|\b)3\d{2}[\s.-]\d{3}[\s.-]?\d{4}|\+?573\d{9}/g;
 const CORREO_CUALQUIERA = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
-const FUERA = /(^|[\\/])(node_modules|\.git|_legacy|backups|design|skills)([\\/]|$)/;
+const FUERA = /(^|[\\/])(node_modules|\.git|\.claude|_legacy|backups|design|skills)([\\/]|$)/;
 /**
  * 🔴 `dist` YA NO ESTA EN `FUERA` (§316.5). Estaba para excluir el `dist/` del LEGACY, pero forzaba a
  * llamar a cada rama con su propia `base` para que el `dist` del portal no se auto-excluyera — un
