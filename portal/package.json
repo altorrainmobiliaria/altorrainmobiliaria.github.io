@@ -21,6 +21,8 @@
     "verify:enlaces": "node ./scripts/verify-enlaces.mjs",
     "verify:huerfanos": "node ./scripts/verify-huerfanos.mjs",
     "verify:claims": "node ./scripts/verify-claims.mjs",
+    "_verify_comentarios_por_que": "Un `<!-- -->` en una plantilla .astro NO es privado: Astro lo copia al HTML y se lee con «ver codigo fuente». Medido el 5-oct antes de convertirlos: 245 comentarios en las 45 paginas prerenderizadas, con notas internas de riesgo legal (/turismo) y de arquitectura del panel (/gestion). Mira el HTML servido Y la plantilla, porque la ficha y el proyecto los compone el Worker y no existen como fichero en dist.",
+    "verify:comentarios": "node ./scripts/verify-comentarios.mjs",
     "verify:data": "node ./scripts/verify-data-invariants.mjs",
     "verify:seo": "node ./scripts/verify-seo.mjs",
     "_verify_vivo_por_que_no_esta_en_verify": "Mide el sitio SERVIDO, asi que solo tiene sentido DESPUES de un deploy y con una URL a la que apuntar. Dentro de `verify` (la suite local, que corre sin sitio) se saltaria siempre, y un gate que se salta solo es el que un dia deja de mirar sin decirlo. Vive en portal-ci, en el job de deploy, donde la URL existe.",
@@ -30,7 +32,7 @@
     "seed:preview": "node ./firebase/seed/generar-propiedades.mjs --print",
     "cf-types": "wrangler types",
     "_verify_por_que_typecheck_y_test": "Estaban FUERA y `verify` se leia como «todo verde». El 26-ago un archivo nuevo (`gestion-liquidacion`) entro a main con 26 errores de tipos: `verify` paso, y el unico que los veia era CI, que corre `typecheck` aparte. Un comando que dice verificar y no corre lo que corre CI no verifica: informa. Van PRIMERO porque son los que fallan por construccion, antes de gastar un build.",
-    "verify": "npm run typecheck && npm run typecheck:functions && npm run test && npm run test:rules && npm run build && npm run verify:build && npm run verify:claims && npm run verify:controles && npm run verify:css && npm run verify:data && npm run verify:enlaces && npm run verify:huerfanos && npm run verify:seo && npm run verify:simbolos && npm run verify:tokens",
+    "verify": "npm run typecheck && npm run typecheck:functions && npm run test && npm run test:rules && npm run build && npm run verify:build && npm run verify:claims && npm run verify:comentarios && npm run verify:controles && npm run verify:css && npm run verify:data && npm run verify:enlaces && npm run verify:huerfanos && npm run verify:seo && npm run verify:simbolos && npm run verify:tokens",
     "typecheck:functions": "npm --prefix functions run typecheck",
     "verify:simbolos": "node ./scripts/verify-simbolos.mjs"
   },

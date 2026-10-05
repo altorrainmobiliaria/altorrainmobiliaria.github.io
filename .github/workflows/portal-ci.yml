@@ -151,6 +151,13 @@ jobs:
       # este gate solo miraba la mitad que no hace dano.
       - name: Cifras sin respaldo en paginas publicas (§123 · §224 — Ley 1480, cero-demo)
         run: npm run verify:claims
+      # 🛡️ DESPUES del build: un `<!-- -->` en una plantilla NO es privado, Astro lo copia al HTML y
+      # cualquiera lo lee con «ver codigo fuente». Medido el 5-oct antes de convertirlos: 245 en las 45
+      # paginas prerenderizadas, con notas internas de riesgo legal (/turismo) y de arquitectura del
+      # panel (/gestion). Mira el HTML servido Y la plantilla .astro: la ficha y el proyecto los compone
+      # el Worker y no existen como fichero en dist, asi que solo la fuente los ve.
+      - name: Comentarios internos que llegarian al HTML publico
+        run: npm run verify:comentarios
       # 🛡️ DESPUES del build a proposito: mira el HTML SERVIDO, donde los enlaces ya estan resueltos.
       # Dos versiones que leian el codigo fuente pasaron en verde con un enlace roto delante.
       - name: Enlaces internos que resuelven de verdad (§89)
