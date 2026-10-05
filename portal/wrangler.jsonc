@@ -68,5 +68,6 @@
 
   // Sessions KV (binding "SESSION"): el adapter lo auto-cablea SIN id (binding draft). Wrangler
   // lo auto-aprovisiona en el primer deploy vía auto-provisioning (OPEN BETA; requiere wrangler
-  // >=4.45 — el CI fija 4.110). Si el flujo beta cambiara, crear el namespace y fijar su id aquí.
+  // >=4.45 — el CI fija la MISMA del lock, hoy 4.147.0). Si el flujo beta cambiara, crear el
+  // namespace y fijar su id aquí.
 }

@@ -196,7 +196,12 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: portal
           # Fijar wrangler >=4.45 (auto-provisioning del KV SESSION) e igualar el devDep verificado local.
-          wranglerVersion: "4.110.0"
+          # IGUAL A LA DEL LOCK, no "una que funcione": el build lo hace @cloudflare/vite-plugin con la
+          # wrangler del lock (1.62.5 -> 4.147.0 exacta) y el adapter 14.3.x exige wrangler >=4.125. Si
+          # aqui se fija otra, la action reinstala esa encima y despliega con una wrangler que NO hizo el
+          # build ni paso los gates. Ademas wrangler 4.36-4.119 arrastra un miniflare con avisos de npm audit.
+          # Al subir wrangler en package-lock.json, subir ESTE numero en el mismo commit.
+          wranglerVersion: "4.147.0"
           command: deploy
       # 🛡️ EL CI TERMINABA AQUI, y ese era el hueco: todos los gates de arriba miran el CODIGO o el
       # BUILD, ninguno el sitio SERVIDO. Si el despliegue aterrizaba roto —un binding que no existe en
