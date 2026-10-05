@@ -41,8 +41,8 @@ export interface Redirect {
  * zonas y sus reglas, pero NO que `/zona/<slug>` llegue a construirse — y no dice absolutamente
  * nada de los ~53 redirects MANUALES de abajo, cuyos destinos son cadenas escritas a mano. Quien
  * leyera esa frase cerraría la búsqueda justo antes de mirar lo que sí podía romperse.
- * Ahora lo comprueba un gate de verdad: la sonda 2b de `verify-enlaces.mjs` exige que **los 28
- * destinos existan en el build**, y falla nombrando el que no.
+ * Ahora lo comprueba un gate de verdad: la sonda 2b de `verify-enlaces.mjs` exige que **TODOS los
+ * destinos existan en el build** (los cuenta ella sola), y falla nombrando el que no.
  *
  * Excepción `baru`: en el sitio viejo su URL era `/propiedades-baru.html`, no `/baru.html`, así que
  * su entrada va abajo a mano. Las demás siguen el patrón `/<slug>.html`.
@@ -110,8 +110,10 @@ const REDIRECTS_MANUALES: Redirect[] = [
 
   // ── Institucional y legal ───────────────────────────────────────────────────────────────────
   { de: '/privacidad.html', a: '/privacidad' },
-  { de: '/quienes-somos.html', a: '/' },
-  { de: '/equipo.html', a: '/' },
+  // `/nosotros` existe desde el 26-ago (§159.1) y responde la misma intención: quiénes somos y con
+  // quién se habla. Apuntaban a `/` porque cuando se escribió el mapa esa página aún no existía.
+  { de: '/quienes-somos.html', a: '/nosotros' },
+  { de: '/equipo.html', a: '/nosotros' },
   { de: '/contacto.html', a: '/' },                 // el contacto vive en los CTA de WhatsApp del portal
   { de: '/faq.html', a: '/' },
   { de: '/gracias.html', a: '/' },
