@@ -80,7 +80,7 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
   <Header active="estancia" />
 
   <main id="main">
-    <!-- Cabecera + galería (sin breadcrumb: el mockup pasa del header directo al eyebrow+H1) -->
+    {/* Cabecera + galería (sin breadcrumb: el mockup pasa del header directo al eyebrow+H1) */}
     <div class="est-top">
       <div class="est-head">
         <div>
@@ -118,7 +118,7 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
       </div>
     </div>
 
-    <!-- Info + reserva -->
+    {/* Info + reserva */}
     <div class="est-body">
       <div class="est-main-col">
         <div class="est-meta">
@@ -187,7 +187,7 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
         )}
       </div>
 
-      <!-- Widget de reserva -->
+      {/* Widget de reserva */}
       <aside class="est-aside" id="reservar">
         <div class="est-book">
           <div class="est-book__top">
@@ -210,8 +210,8 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
           <button class="alt-btn alt-btn--navy est-book__cta" id="est-reservar" type="button">Solicitar estas fechas<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
           <p class="est-book__note">No es una reserva ni se cobra nada: te confirmamos disponibilidad por WhatsApp.</p>
 
-          <!-- Paso de contacto. Aparece al pedir las fechas: pedir nombre y teléfono ANTES de que
-               nadie haya elegido nada es la forma más rápida de que se vayan. -->
+          {/* Paso de contacto. Aparece al pedir las fechas: pedir nombre y teléfono ANTES de que
+               nadie haya elegido nada es la forma más rápida de que se vayan. */}
           <form class="est-datos" id="est-datos" hidden novalidate>
             <label class="est-f"><span>Tu nombre</span><input class="alt-input" type="text" id="est-nombre" name="nombre" autocomplete="name" required /></label>
             <label class="est-f"><span>WhatsApp</span><input class="alt-input" type="tel" id="est-tel" name="telefono" autocomplete="tel" placeholder="300 123 4567" required /></label>

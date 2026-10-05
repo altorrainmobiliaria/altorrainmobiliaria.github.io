@@ -316,11 +316,11 @@ const maneras = [
   <Header active="inicio" />
 
   <main id="main">
-    <!-- HERO — carrusel de 4 banners + buscador superpuesto (réplica ALTORRA Portal.dc.html) -->
+    {/* HERO — carrusel de 4 banners + buscador superpuesto (réplica ALTORRA Portal.dc.html) */}
     <section class="home-hero">
       <div class="home-hero__car" data-carousel>
 
-        <!-- B0 · Vivienda -->
+        {/* B0 · Vivienda */}
         <div class="hbn hbn--full" data-b="0" data-active="1" data-nav="light">
           <img class="hbn__img" src="/assets/hero-keys.webp" alt="Pareja recibiendo las llaves de su hogar en Cartagena" style="object-position:80% 24%" fetchpriority="high" />
           <span class="hbn__wash hbn__wash--x" aria-hidden="true"></span>
@@ -339,7 +339,7 @@ const maneras = [
           </div>
         </div>
 
-        <!-- B1 · Inversión -->
+        {/* B1 · Inversión */}
         <div class="hbn hbn--full" data-b="1" data-active="0" data-nav="light">
           <img class="hbn__img" src="/assets/hero-invierte.webp" alt="Desarrollo residencial frente al mar en Cartagena" style="object-position:center 54%" loading="lazy" />
           <div class="hbn__wrap">
@@ -359,7 +359,7 @@ const maneras = [
           </div>
         </div>
 
-        <!-- B2 · Corta estancia -->
+        {/* B2 · Corta estancia */}
         <div class="hbn hbn--full" data-b="2" data-active="0" data-nav="light">
           <img class="hbn__img" src="/assets/hero-estancia.webp" alt="Terraza con piscina al atardecer sobre el mar Caribe, Cartagena" style="object-position:center 46%" loading="lazy" />
           <div class="hbn__wrap">
@@ -387,7 +387,7 @@ const maneras = [
           </div>
         </div>
 
-        <!-- B3 · Propietarios (split) -->
+        {/* B3 · Propietarios (split) */}
         <div class="hbn hbn--split" data-b="3" data-active="0" data-nav="light">
           <div class="hbn__wrap">
             <div class="hbn__split hbn__rise">
@@ -408,7 +408,7 @@ const maneras = [
           </div>
         </div>
 
-        <!-- Control: barra de progreso segmentada (auto, sin flechas) -->
+        {/* Control: barra de progreso segmentada (auto, sin flechas) */}
         <div class="home-hero__nav">
           <div class="home-hero__navin">
             <div class="hseg-row">
@@ -421,7 +421,7 @@ const maneras = [
         </div>
       </div>
 
-      <!-- Buscador segmentado neumórfico, superpuesto sobre el hero -->
+      {/* Buscador segmentado neumórfico, superpuesto sobre el hero */}
       <div class="home-search">
         <div class="home-search__card" data-surface="neu">
           <div class="home-search__tabs" role="tablist" aria-label="Buscar por operación">
@@ -467,7 +467,7 @@ const maneras = [
       </div>
     </section>
 
-    <!-- CUATRO MANERAS -->
+    {/* CUATRO MANERAS */}
     <section class="alt-section alt-container">
       <div class="home-maneras__head">
         <p class="alt-eyebrow">Cuatro maneras de vivir Cartagena</p>
@@ -491,8 +491,8 @@ const maneras = [
       </div>
     </section>
 
-    <!-- PROPIEDAD DEL DÍA — split editorial de UNA sola propiedad (réplica fiel del mockup, L409-449).
-         NO sale de PropertyCard: es una propiedad única con 4 contadores; su forma de dato ni siquiera cabe. -->
+    {/* PROPIEDAD DEL DÍA — split editorial de UNA sola propiedad (réplica fiel del mockup, L409-449).
+         NO sale de PropertyCard: es una propiedad única con 4 contadores; su forma de dato ni siquiera cabe. */}
     {/*
       🔴 UNA SECCIÓN ENTERA DE PORTADA anunciando un inmueble que NO EXISTE (§276): «Penthouse
       frente al mar, en Bocagrande — la última unidad de un edificio icónico», $3.200.000.000, con
@@ -539,10 +539,10 @@ const maneras = [
       </section>
     )}
 
-    <!-- EN VENTA — riel horizontal (réplica fiel del mockup #venta) -->
-    <!-- `data-railwrap` envuelve encabezado Y riel: en el mockup los botones viven en un
+    {/* EN VENTA — riel horizontal (réplica fiel del mockup #venta) */}
+    {/* `data-railwrap` envuelve encabezado Y riel: en el mockup los botones viven en un
          [data-railwrap] hermano del riel → su querySelector('.arail') no encuentra nada y
-         las flechas NO funcionan. Misma arquitectura, corregida (ADR §32.10). -->
+         las flechas NO funcionan. Misma arquitectura, corregida (ADR §32.10). */}
     <section id="venta" class="home-band home-band--alt home-railsec">
       <div class="alt-container" data-railwrap>
         <div class="home-sechead">
@@ -582,7 +582,7 @@ const maneras = [
       </div>
     </section>
 
-    <!-- DESTACADAS -->
+    {/* DESTACADAS */}
     <section id="destacadas" class="home-band">
       <div class="alt-container">
         <div class="home-sechead">
@@ -610,7 +610,7 @@ const maneras = [
       </div>
     </section>
 
-    <!-- ARRIENDO — lista horizontal con filtro con/sin administración (réplica fiel del mockup #arriendo) -->
+    {/* ARRIENDO — lista horizontal con filtro con/sin administración (réplica fiel del mockup #arriendo) */}
     <section id="arriendo" class="home-band home-arr">
       <div class="alt-container">
         <div class="home-sechead">
@@ -676,7 +676,7 @@ const maneras = [
       </div>
     </section>
 
-    <!-- CORTA ESTANCIA — riel de StayCard (réplica fiel del mockup #estancias-list) -->
+    {/* CORTA ESTANCIA — riel de StayCard (réplica fiel del mockup #estancias-list) */}
     <section id="estancias-list" class="home-band home-band--alt home-railsec">
       <div class="alt-container" data-railwrap>
         <div class="home-sechead">
@@ -706,8 +706,8 @@ const maneras = [
       </div>
     </section>
 
-    <!-- EXPLORA POR ZONA — mosaico de 10 tiles de ZONA (réplica fiel del mockup, L837-940).
-         ⚠️ NO son cards de propiedad: cada tile es un BARRIO con su contador. -->
+    {/* EXPLORA POR ZONA — mosaico de 10 tiles de ZONA (réplica fiel del mockup, L837-940).
+         ⚠️ NO son cards de propiedad: cada tile es un BARRIO con su contador. */}
     <section id="explora-zona" class="alt-container home-zonas">
       <div class="home-sechead">
         <div class="home-zonas__head">
@@ -736,10 +736,10 @@ const maneras = [
       </div>
     </section>
 
-    <!-- CERCA DE TI — split BUSCADOR + MAPA ilustrado (réplica fiel del mockup #cerca, L942-989).
+    {/* CERCA DE TI — split BUSCADOR + MAPA ilustrado (réplica fiel del mockup #cerca, L942-989).
          ⚠️ Era la divergencia GRAVE de §32.9: se había construido como grilla de 3 PropertyCard,
          con titular reescrito y 3 propiedades INVENTADAS que no existen en el mockup.
-         El mapa es ILUSTRADO (SVG), como el diseño manda; MapLibre real = follow-up (ADR §16). -->
+         El mapa es ILUSTRADO (SVG), como el diseño manda; MapLibre real = follow-up (ADR §16). */}
     <section id="cerca" class="home-band home-cerca">
       <div class="alt-container home-cerca__in">
         <div class="home-cerca__text">
@@ -769,7 +769,7 @@ const maneras = [
           </div>
         </div>
 
-        <!-- Mapa ILUSTRADO (esquemático estilizado, no cartografía real) -->
+        {/* Mapa ILUSTRADO (esquemático estilizado, no cartografía real) */}
         <div class="home-map" role="img" aria-label="Mapa esquemático de Cartagena con propiedades disponibles">
           <span class="home-map__glow" aria-hidden="true"></span>
           <svg class="home-map__streets" viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true">
@@ -877,7 +877,7 @@ const maneras = [
       </>
     )}
 
-    <!-- RECIENTES — mosaico bento (réplica fiel del mockup #recientes) -->
+    {/* RECIENTES — mosaico bento (réplica fiel del mockup #recientes) */}
     <section id="recientes" class="home-band home-band--alt home-rec">
       <div class="alt-container">
         <div class="home-sechead">
@@ -916,7 +916,7 @@ const maneras = [
       </div>
     </section>
 
-    <!-- SELECCIÓN ALTORRA — riel de RankCard (mockup #valoradas). Ver §123. -->
+    {/* SELECCIÓN ALTORRA — riel de RankCard (mockup #valoradas). Ver §123. */}
     <section id="valoradas" class="home-band home-band--neu home-railsec">
       <div class="alt-container" data-railwrap>
         <div class="home-sechead">
@@ -946,7 +946,7 @@ const maneras = [
       </div>
     </section>
 
-    <!-- CTA CORTA ESTANCIA — banda full-bleed con scrim direccional (réplica fiel del mockup, L1157-1170) -->
+    {/* CTA CORTA ESTANCIA — banda full-bleed con scrim direccional (réplica fiel del mockup, L1157-1170) */}
     <section id="cta-estancias" class="home-ctaband">
       <img class="home-ctaband__img" src="/assets/chalet-dusk.webp" alt="" aria-hidden="true" loading="lazy" decoding="async" />
       <span class="home-ctaband__scrim" aria-hidden="true"></span>
@@ -1016,15 +1016,15 @@ const maneras = [
       </div>
     </section>
 
-    <!-- INVERTIR — split editorial: texto + 3 tarjetas de cifra (réplica fiel del mockup #invertir, L1249-1274) -->
-    <!-- ⚠️ NO es el banner B1 del hero ("Invierte donde la ciudad crece"): son cosas distintas (§32.9). -->
+    {/* INVERTIR — split editorial: texto + 3 tarjetas de cifra (réplica fiel del mockup #invertir, L1249-1274) */}
+    {/* ⚠️ NO es el banner B1 del hero ("Invierte donde la ciudad crece"): son cosas distintas (§32.9). */}
     <section id="invertir" class="alt-container home-inv">
       <div class="home-inv__in">
         <div>
           <p class="alt-eyebrow">Invertir en Cartagena</p>
           <h2 class="home-inv__h">Con ALTORRA se invierte con calma y con la palabra por delante.</h2>
           <p class="home-inv__p">Antes de que firmes la promesa de compraventa, miramos contigo la zona y leemos entero el certificado de tradición.</p>
-          <!-- El mockup deja href="#"; aquí va el WhatsApp REAL (§32.2: contacto real ≠ placeholder) -->
+          {/* El mockup deja href="#"; aquí va el WhatsApp REAL (§32.2: contacto real ≠ placeholder) */}
           <a class="home-inv__cta" href={SITE.contact.whatsappLink} target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.6-.8L3 21l1.9-5.7A8.38 8.38 0 0 1 4 11.5 8.5 8.5 0 0 1 12.5 3 8.38 8.38 0 0 1 21 11.5z"/></svg>
             Hablar con un asesor
@@ -1041,7 +1041,7 @@ const maneras = [
       </div>
     </section>
 
-    <!-- BROKERS (navy) -->
+    {/* BROKERS (navy) */}
     <section id="brokers" class="home-brokers alt-on-ink" data-surface="ink">
       <span class="home-brokers__glow" aria-hidden="true"></span>
       <div class="alt-container home-brokers__in">
@@ -1075,7 +1075,7 @@ const maneras = [
       </div>
     </section>
 
-    <!-- JOURNAL -->
+    {/* JOURNAL */}
     <section id="journal" class="home-band" style={hayJournal ? undefined : 'display:none'}>
       <div class="alt-container">
         <div class="home-sechead">
@@ -1114,9 +1114,9 @@ const maneras = [
         </div>
       </div>
     </section>
-    <!-- REDES — muro tipo Instagram (réplica fiel del mockup #redes, L1353-1398) -->
-    <!-- El mockup pone el handle "@altorra.co" con href="#": NO es el real. Aquí va
-         @altorrainmobiliaria + el enlace de SITE (§32.2: rutas reales ≠ placeholders). -->
+    {/* REDES — muro tipo Instagram (réplica fiel del mockup #redes, L1353-1398) */}
+    {/* El mockup pone el handle "@altorra.co" con href="#": NO es el real. Aquí va
+         @altorrainmobiliaria + el enlace de SITE (§32.2: rutas reales ≠ placeholders). */}
     <section id="redes" class="home-band home-band--alt home-redes">
       <div class="alt-container">
         <div class="home-redes__head">

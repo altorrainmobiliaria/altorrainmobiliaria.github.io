@@ -32,7 +32,7 @@ const icon = {
 <footer class="alt-ft" id="contacto">
   <div class="alt-ft__in">
     <div class="alt-ft__grid">
-      <!-- Marca -->
+      {/* Marca */}
       <div class="alt-ft__brand">
         <div class="alt-ft__logo">
           <img src="/assets/altorra-emblema.webp" srcset={srcsetDe("/assets/altorra-emblema.webp")} sizes={SIZES.logo} alt="" width="32" height="44" />
@@ -48,7 +48,7 @@ const icon = {
         </div>
       </div>
 
-      <!-- Columnas de enlaces -->
+      {/* Columnas de enlaces */}
       {cols.map((col) => (
         <nav class="alt-ft__col" aria-label={col.title}>
           <p class="alt-ft__col-h">{col.title}</p>
@@ -56,7 +56,7 @@ const icon = {
         </nav>
       ))}
 
-      <!-- Contacto -->
+      {/* Contacto */}
       <div class="alt-ft__col">
         <p class="alt-ft__col-h">Contacto</p>
         <span class="alt-ft__ci"><span set:html={`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icon.pin}</svg>`}></span><span>{SITE.city}</span></span>

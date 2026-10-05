@@ -114,7 +114,7 @@ const beneficios = [
   <Header active="vender" />
 
   <main id="main">
-    <!-- Hero + formulario -->
+    {/* Hero + formulario */}
     <section class="pub-hero">
       <span class="pub-hero__bg" style="background-image:url('/assets/villa-pool.webp')"></span>
       <span class="pub-hero__wash"></span>
@@ -130,8 +130,8 @@ const beneficios = [
 
         <div class="pub-form-wrap" id="empezar">
           <form class="pub-form" id="pub-form" method="post" action="/api/solicitud" novalidate>
-            <!-- h2 + subtítulo FUERA de .pub-form__fields: el mockup los deja persistir como
-                 encabezado sobre el mensaje de éxito (el script oculta SOLO los campos). -->
+            {/* h2 + subtítulo FUERA de .pub-form__fields: el mockup los deja persistir como
+                 encabezado sobre el mensaje de éxito (el script oculta SOLO los campos). */}
             <h2 class="pub-form__h">Pide tu valoración gratis</h2>
             <p class="pub-form__sub">Respuesta de un asesor en menos de 24 horas.</p>
             <p class="pub-form__aviso">
@@ -149,9 +149,9 @@ const beneficios = [
                   <select class="alt-select" id="pub-tipo" name="tipo"><option>Apartamento</option><option>Casa</option><option>Lote</option><option>Oficina</option><option>Local</option></select>
                 </div>
               </div>
-              <!-- GATE DE HABEAS DATA (Ley 1581/2012 art. 9 · D.1377/2013 art. 7 · kit `08` §2.2).
+              {/* GATE DE HABEAS DATA (Ley 1581/2012 art. 9 · D.1377/2013 art. 7 · kit `08` §2.2).
                    NINGUNA casilla viene premarcada: el silencio no es autorización. El texto es el
-                   del kit, y su versión se sella en el lead junto con la versión de la Política. -->
+                   del kit, y su versión se sella en el lead junto con la versión de la Política. */}
               <div class="pub-form__legal">
                 <label class="pub-check">
                   <input type="checkbox" name="autorizacion" value="on" required />
@@ -179,7 +179,7 @@ const beneficios = [
       </div>
     </section>
 
-    <!-- Cuatro pasos -->
+    {/* Cuatro pasos */}
     <section class="alt-container alt-section pub-steps">
       <div class="pub-center">
         <p class="alt-eyebrow">Cómo funciona</p>
@@ -196,7 +196,7 @@ const beneficios = [
       </div>
     </section>
 
-    <!-- Planes -->
+    {/* Planes */}
     <section class="pub-plans-band">
       <div class="alt-container">
         <div class="pub-center">
@@ -223,8 +223,8 @@ const beneficios = [
       </div>
     </section>
 
-    <!-- FRANJA DE BENEFICIOS — era la sección AUSENTE de Publicar (§32.2).
-         Réplica fiel del mockup (L221-228): sin titular, 4 bloques icono + h3 + texto. -->
+    {/* FRANJA DE BENEFICIOS — era la sección AUSENTE de Publicar (§32.2).
+         Réplica fiel del mockup (L221-228): sin titular, 4 bloques icono + h3 + texto. */}
     <section class="alt-container pub-benef">
       <div class="pub-benef__grid">
         {beneficios.map((b) => (

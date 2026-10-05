@@ -78,7 +78,7 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
   <Header active={op} />
 
   <main id="main">
-    <!-- Barra de filtros (glass sticky) -->
+    {/* Barra de filtros (glass sticky) */}
     <div class="serp-filter alt-nav-glass">
       {/*
         🔴 Esto era un `<div>` con un `<input>` suelto: sin formulario y sin nadie escuchando (§265).
@@ -197,7 +197,7 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
       </form>
     </div>
 
-    <!-- Cabecera de resultados -->
+    {/* Cabecera de resultados */}
     <div class="serp-head">
       <div>
         <p class="alt-eyebrow">Resultados</p>
@@ -219,7 +219,7 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
       </div>
     </div>
 
-    <!-- Layout: resultados + mapa. `data-serp` = raíz de la isla del catálogo real (§59). -->
+    {/* Layout: resultados + mapa. `data-serp` = raíz de la isla del catálogo real (§59). */}
     <div class="serp-body" data-serp={op}>
       <div class="serp-list">
         <div class="serp-grid">

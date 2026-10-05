@@ -196,7 +196,7 @@ const init = DATA.admin;
   </div>
 
   <div class="gx-root" id="gx-panel" hidden>
-    <!-- ===================== SIDEBAR ===================== -->
+    {/* ===================== SIDEBAR ===================== */}
     <aside class="gx-side">
       <a class="gx-brand" href="/" aria-label="ALTORRA — volver al portal">
         <img src="/assets/altorra-emblema.webp" srcset={srcsetDe("/assets/altorra-emblema.webp")} sizes={SIZES.logo} alt="" width="31" height="42" />
@@ -237,12 +237,12 @@ const init = DATA.admin;
       </a>
     </aside>
 
-    <!-- ===================== MAIN ===================== -->
+    {/* ===================== MAIN ===================== */}
     <main class="gx-main" id="main">
-     <!-- Aviso de sesión a punto de cerrarse por inactividad (§130). Aparece 1 minuto antes, igual
+     {/* Aviso de sesión a punto de cerrarse por inactividad (§130). Aparece 1 minuto antes, igual
           que en el panel viejo: cerrar sin avisar hace perder lo que se estuviera escribiendo.
           `role="status"` y no `alert`: es información, no una emergencia, y `alert` interrumpe al
-          lector de pantalla a mitad de frase. -->
+          lector de pantalla a mitad de frase. */}
      <div class="gx-sesion" id="gx-aviso-sesion" role="status" hidden>
        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 1.8"/></svg>
        <span>Tu sesión se cerrará en un minuto por inactividad. Mueve el ratón o escribe algo para seguir.</span>
@@ -265,7 +265,7 @@ const init = DATA.admin;
         </div>
       </header>
 
-      <!-- KPIs (una grilla por rol; solo la activa visible) -->
+      {/* KPIs (una grilla por rol; solo la activa visible) */}
       <section class="gx-kpis">
         {roles.map((role) => (
           <div class="gx-kpi-set" data-set={role} hidden={role !== 'admin'}>
@@ -283,7 +283,7 @@ const init = DATA.admin;
         ))}
       </section>
 
-      <!-- Tabla + aside -->
+      {/* Tabla + aside */}
       <section class="gx-grid">
         <div class="gx-panel gx-table">
           <div class="gx-panel__head">
@@ -341,11 +341,11 @@ const init = DATA.admin;
       </section>
      </div>
 
-     <!-- ══ INMUEBLES ═══════════════════════════════════════════════════════════════════════
+     {/* ══ INMUEBLES ═══════════════════════════════════════════════════════════════════════
           Cierra el círculo que dejó abierto el alta (§110): sin esto se puede crear una propiedad y
           no volver a verla desde el portal. La columna que justifica la pantalla es la última —«¿se
           ve?»— y NO sale del estado: sale de `problemasParaPublicar()`, los mismos predicados que
-          construyen el índice del catálogo. Un «disponible» sin foto tampoco aparece.  -->
+          construyen el índice del catálogo. Un «disponible» sin foto tampoco aparece.  */}
      <div id="gx-vista-inmuebles" hidden>
       <header class="gx-head">
         <div>
@@ -383,12 +383,12 @@ const init = DATA.admin;
       </div>
      </div>
 
-     <!-- ══ CONTRATOS ═══════════════════════════════════════════════════════════════════════
+     {/* ══ CONTRATOS ═══════════════════════════════════════════════════════════════════════
           GESTIÓN v1 (§114). La AGENDA va ARRIBA y la lista debajo, a propósito: la lista contesta
           «¿qué tengo?» y la agenda contesta «¿qué se me está pasando?», que es la pregunta que hizo
           falta el módulo («se pierden los contratos, se olvidan fechas»).
           El alta NO escribe Firestore: `contratos` nace con `allow write: if false` (§100) y la única
-          puerta es la callable `crearContrato`, que impone el gate del art. 16 (§113).  -->
+          puerta es la callable `crearContrato`, que impone el gate del art. 16 (§113).  */}
      <div id="gx-vista-novedades" hidden>
       <header class="gx-head">
         <div>
@@ -504,13 +504,13 @@ const init = DATA.admin;
         </div>
       </div>
 
-      <!--
+      {/*
         PREAVISO DE TERMINACION (§187 · ADR 233). Mockup: `design/mockups/ALTORRA Preaviso.dc.html`.
         La FECHA LIMITE va ARRIBA a proposito: es la unica parte de esta pantalla que puede EVITAR el
         dano; junto al veredicto seria un diagnostico post mortem. Y no hay boton de ENVIAR ni lo
         habra: un correo electronico no es servicio postal autorizado (§185), y una pantalla que
         parezca enviarlo haria que alguien creyera que ya aviso.
-      -->
+      */}
       <div class="gx-panel">
         <div class="gx-panel__head"><h2>Preaviso de terminaci&#243;n</h2><span class="gx-psub" id="gx-pv-limite"></span></div>
 
@@ -634,19 +634,19 @@ const init = DATA.admin;
       </form>
      </div>
 
-     <!-- ══ NUEVO INMUEBLE ═══════════════════════════════════════════════════════════════════
+     {/* ══ NUEVO INMUEBLE ═══════════════════════════════════════════════════════════════════
           Réplica del mockup `ALTORRA Gestion-Alta.dc.html`, aprobado por Daniel el 2026-08-22.
           PANTALLA y no ventana emergente: son seis bloques más galería, y eso dentro de un modal
           obliga a hacer scroll en una caja flotante.
           NO hay lenguaje visual nuevo: los campos son las clases `alt-*` que ya usa `/publicar` y las
-          tarjetas los `gx-panel` del propio panel. Lo único nuevo es cómo se agrupan.  -->
-     <!-- ══ DOCUMENTOS ══════════════════════════════════════════════════════════════════════
+          tarjetas los `gx-panel` del propio panel. Lo único nuevo es cómo se agrupan.  */}
+     {/* ══ DOCUMENTOS ══════════════════════════════════════════════════════════════════════
           La BÓVEDA del expediente (gate B5, §142; mockup `ALTORRA Documentos`).
 
           ⚠️ La pantalla NO empieza por la lista de archivos: empieza por lo que FALTA y lo que
           CADUCA. Un cajón de PDFs no cambia nada —el dueño ya tiene ese cajón en WhatsApp—; lo que
           hoy no puede contestar sin abrir carpetas es «¿qué me falta?». Esa cuenta la hace
-          `lib/domain/documentos` con la LISTA CANÓNICA de lo que exige cada clase de expediente. -->
+          `lib/domain/documentos` con la LISTA CANÓNICA de lo que exige cada clase de expediente. */}
      <div id="gx-vista-ventas" hidden>
       <header class="gx-head">
         <div>
@@ -734,14 +734,14 @@ const init = DATA.admin;
         <p><strong>Esta pantalla calcula y muestra; no mueve dinero.</strong> El giro se hace por fuera mientras no est&#233; la cuenta de comercio, y las tres condiciones del dictamen (&#167;165) siguen mandando: el dinero no reposa en cuenta de ALTORRA, el mandato dice recaudo y giro, y no se le ofrece a nadie sin contrato firmado.</p>
       </div>
 
-      <!--
+      {/*
         CERTIFICACION ANUAL AL PROPIETARIO (§168 · ADR 233). Mockup:
         `design/mockups/ALTORRA Certificacion.dc.html`. NO es la pantalla de arriba: aquella calcula
         el MES y esta suma el ANO, y responden preguntas distintas — «cuanto le giro este mes» frente
         a «que declara usted». El D.1625/2016 art. 1.2.4.11 dice que el mandante declara sus ingresos
         «segun la informacion que le suministre el mandatario»: este papel ES esa informacion, y se
         lo entrega a su contador.
-      -->
+      */}
       <div class="gx-panel">
         <div class="gx-panel__head"><h2>Certificaci&#243;n anual al propietario</h2><span class="gx-psub" id="gx-cf-cobertura"></span></div>
 
@@ -844,8 +844,8 @@ const init = DATA.admin;
         </div>
       </div>
 
-      <!-- El expediente POR DENTRO (mockup 2a). Aparece al pulsar «Ver» en una fila: lo que falta y
-           lo que hay, con el mismo peso visual — un hueco es tan dato como un archivo. -->
+      {/* El expediente POR DENTRO (mockup 2a). Aparece al pulsar «Ver» en una fila: lo que falta y
+           lo que hay, con el mismo peso visual — un hueco es tan dato como un archivo. */}
       <div class="gx-panel gx-table" id="gx-doc-detalle" hidden>
         <div class="gx-panel__head">
           <h2 id="gx-doc-det-titulo">Expediente</h2>
@@ -900,9 +900,9 @@ const init = DATA.admin;
         </div>
       </header>
 
-      <!-- Aviso de visibilidad. Lo pinta `revisarAlta()`, que pregunta a los MISMOS predicados que usa
+      {/* Aviso de visibilidad. Lo pinta `revisarAlta()`, que pregunta a los MISMOS predicados que usa
            el índice del catálogo — no a una copia. Si dice «se verá», el listado no lo puede omitir:
-           es un contrato con test en las dos direcciones (§108). -->
+           es un contrato con test en las dos direcciones (§108). */}
       <div class="gx-aviso" id="gx-alta-aviso" role="status" aria-live="polite" hidden></div>
 
       <form class="gx-form" id="gx-alta-form" novalidate>
@@ -1257,7 +1257,7 @@ const init = DATA.admin;
   <script type="application/json" id="gx-strings" set:html={JSON.stringify(strings)}></script>
 </BaseLayout>
 
-<!--
+{/*
   ⚠️ LOS TRES BLOQUES DE ESTILO VAN `is:global` A PROPÓSITO (§117).
 
   Astro acota el CSS añadiendo `data-astro-cid-XXXX` a los elementos DE LA PLANTILLA y repitiéndolo
@@ -1272,7 +1272,7 @@ const init = DATA.admin;
   build, solo despinta la pantalla. El namespace `gx-` es el que acota: no aparece en ninguna otra
   página (`grep -rl "gx-" src/` → solo gestion.astro y sus cuatro scripts). Lo comprueba el gate
   `npm run verify:css`.
--->
+*/}
 <style is:global>
   /* Fila de MENSAJE de la tabla (vacío, cargando o error): ocupa el ancho y no parece un dato. */
   .gx-tr--msg { grid-template-columns: 1fr !important; padding-block: 22px; }
