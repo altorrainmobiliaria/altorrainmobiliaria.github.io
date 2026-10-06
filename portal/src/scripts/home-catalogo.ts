@@ -23,18 +23,27 @@
  *    caché de borde (§54). La portada es la página más visitada: si leyera Firestore, sería la que
  *    se come el free-tier.
  */
-import { construirCard, FUENTE, URL_OVERRIDE, hrefFicha, precioCard, sufijoCompacto, texto, type CatalogoItem } from './catalogo-card';
+import {
+  construirCard,
+  datosStayCard,
+  FUENTE,
+  masRecientePrimero,
+  parrafoVacio,
+  pintarStay,
+  precioCard,
+  rellenarMedia,
+  sufijoCompacto,
+  texto,
+  TEXTO_ERROR_CARGA,
+  TEXTO_SIN_ALOJAMIENTOS,
+  traerShard,
+  type CatalogoItem,
+  type Pintor,
+  type RutaCatalogo,
+} from './catalogo-card';
 import { etiquetaBadge } from '../lib/domain/ficha';
-import { etiquetaTipo, tipoCanonico } from '../lib/domain/shared';
 import { notaVisible, textoNota } from '../lib/domain/resenas';
 import { haceCuanto } from '../lib/domain/tiempo';
-import { urlMedia } from '../lib/media';
-
-/** Ruta pública → shard. Las mismas tres que sirve `api/catalogo/[operacion].json.ts`. */
-type RutaCatalogo = 'comprar' | 'arrendar' | 'estancias';
-
-/** Construye el nodo de una tarjeta a partir de su plantilla. `null` = no se pudo. */
-type Pintor = (tpl: HTMLTemplateElement, it: CatalogoItem, i: number) => DocumentFragment | null;
 
 interface Seccion {
   /** Atributo que marca el contenedor en el HTML. */
@@ -50,9 +59,6 @@ interface Seccion {
   pintar: Pintor;
 }
 
-/** Los más recientes primero. `pub` es una fecha ISO, así que ordena bien como texto. */
-const porFecha = (a: CatalogoItem, b: CatalogoItem): number => (b.pub ?? '').localeCompare(a.pub ?? '');
-
 /**
  * De mayor nota a menor. Lo que NO tiene nota enseñable va al final y `pintarRank` lo descarta —
  * ordenar por un promedio ausente pondría lo desconocido por delante de lo bueno.
@@ -65,31 +71,14 @@ const fechaDe = (it: CatalogoItem): Date | null => {
   return Number.isFinite(t) ? new Date(t) : null;
 };
 
-/** Etiqueta legible del tipo, o cadena vacía si el valor no es del vocabulario. */
-const tipoLegible = (it: CatalogoItem): string => {
-  const t = tipoCanonico(it.tipo ?? '');
-  return t ? etiquetaTipo(t) : '';
-};
-
 /** Precio con su sufijo compacto: «$450.000.000» · «$4.200.000/mes». */
 const precioConSufijo = (it: CatalogoItem): string => `${precioCard(it.precio)}${sufijoCompacto(it.operacion)}`;
-
-/** Imagen y enlace, que son iguales en las tres tarjetas. */
-function media(frag: DocumentFragment, it: CatalogoItem, selImg: string): void {
-  const img = frag.querySelector<HTMLImageElement>(selImg);
-  if (img) {
-    img.src = urlMedia(it.thumb);
-    // El `alt` describe lo que se ve, y lo que sabemos del inmueble es su tipo y su zona.
-    img.alt = [tipoLegible(it), it.sector].filter(Boolean).join(' en ') || it.titulo;
-  }
-  for (const a of Array.from(frag.querySelectorAll<HTMLAnchorElement>('a[href]'))) a.href = hrefFicha(it);
-}
 
 /** Tarjeta grande del carrusel de venta (`LuCard`). */
 const pintarLu: Pintor = (tpl, it) => {
   const frag = tpl.content.cloneNode(true) as DocumentFragment;
   if (!frag.querySelector('.alt-lucard')) return null;
-  media(frag, it, '.alt-lucard__img');
+  rellenarMedia(frag, it, '.alt-lucard__img');
   texto(frag, '.alt-lucard__zona', it.sector || null);
   texto(frag, '.alt-lucard__title a', it.titulo);
   texto(frag, '.alt-lucard__badge', etiquetaBadge(it.operacion));
@@ -124,21 +113,6 @@ const pintarLu: Pintor = (tpl, it) => {
   return frag;
 };
 
-/** Tarjeta de alojamiento por días (`StayCard`). */
-const pintarStay: Pintor = (tpl, it) => {
-  const frag = tpl.content.cloneNode(true) as DocumentFragment;
-  if (!frag.querySelector('.alt-staycard')) return null;
-  media(frag, it, '.alt-staycard__img');
-  texto(frag, '.alt-staycard__t', it.titulo);
-  // ⚠️ `meta` es OBLIGATORIO en la tarjeta y el mockup lo llenaba con «Vista al mar · 6 huéspedes».
-  // El índice no guarda ni la vista ni el aforo. Se compone con lo que SÍ consta —zona y tipo—, que
-  // es información de verdad; inventar un número de huéspedes en un alojamiento sería, además de
-  // falso, la clase de dato con el que alguien reserva.
-  texto(frag, '.alt-staycard__meta', [it.sector, tipoLegible(it)].filter(Boolean).join(' · ') || null);
-  texto(frag, '.alt-staycard__price b', precioCard(it.precio));
-  return frag;
-};
-
 /** Posiciones del mosaico bento, en el orden del mockup. Son LAYOUT, no dato. */
 const RANURAS = [
   { col: 'span 2', row: 'span 2', size: 'xl' },
@@ -162,7 +136,7 @@ const pintarTile: Pintor = (tpl, it, i) => {
   tile.className = `home-rec__tile home-rec__tile--${ranura.size}`;
   tile.style.gridColumn = ranura.col;
   tile.style.gridRow = ranura.row;
-  media(frag, it, 'img');
+  rellenarMedia(frag, it, 'img');
   texto(frag, '.home-rec__tag', [etiquetaBadge(it.operacion), it.sector].filter(Boolean).join(' · '));
   texto(frag, '.home-rec__t', it.titulo);
   texto(frag, '.home-rec__price', precioConSufijo(it));
@@ -184,13 +158,25 @@ const pintarTile: Pintor = (tpl, it, i) => {
  * es exactamente lo contrario de lo que hacía antes, cuando enseñaba cuatro notas inventadas.
  *
  * El orden es por NOTA, no por fecha: es lo único que justifica que la sección se llame así.
+ *
+ * ⚖️ FAIL-CLOSED CON EL RNT, como `pintarStay`. Esta sección bebe del shard de estancias y pinta
+ * «$X/noche»: es publicidad de hospedaje, y sin su RNT exhibible Y un hueco `[data-rnt]` en la
+ * plantilla donde ponerlo, no sale. ⚠️ PENDIENTE: `RankCard.astro` aún no trae ese hueco, así que
+ * hoy NINGUNA estadía entra aquí, por mucha nota que tenga — el precio por noche no sale sin número.
+ * Venta y arriendo no lo necesitan; una operación desconocida, sí (no se sabe qué anuncia).
  */
 const pintarRank: Pintor = (tpl, it, i) => {
   const nota = notaVisible(it.resenas);
   if (!nota) return null; // sin nota enseñable no entra: la sección es de valoradas, no de todas
   const frag = tpl.content.cloneNode(true) as DocumentFragment;
   if (!frag.querySelector('.alt-rankcard')) return null;
-  media(frag, it, '.alt-rankcard__media img');
+  if (it.operacion !== 'venta' && it.operacion !== 'arriendo') {
+    const estadia = datosStayCard(it);
+    const hueco = frag.querySelector<HTMLElement>('[data-rnt]');
+    if (!estadia || !hueco) return null;
+    hueco.textContent = estadia.rnt;
+  }
+  rellenarMedia(frag, it, '.alt-rankcard__media img');
   texto(frag, '.alt-rankcard__rank', String(i + 1).padStart(2, '0'));
   texto(frag, '.alt-rankcard__zona', it.sector || null);
   texto(frag, '.alt-rankcard__t', it.titulo);
@@ -204,30 +190,13 @@ const SECCIONES: readonly Seccion[] = [
   { set: 'venta', ruta: 'comprar', tpl: '#tpl-home-lucard', cuantas: 5, vacio: 'Todavía no hay propiedades en venta publicadas.', pintar: pintarLu },
   { set: 'destacadas', ruta: 'comprar', tpl: '#tpl-home-pcard', cuantas: 2, vacio: 'Todavía no hay destacadas publicadas.', pintar: construirCard },
   { set: 'arriendo', ruta: 'arrendar', tpl: '#tpl-home-pcard', cuantas: 3, vacio: 'Todavía no hay inmuebles en arriendo publicados.', pintar: construirCard },
-  { set: 'estancias', ruta: 'estancias', tpl: '#tpl-home-staycard', cuantas: 5, vacio: 'Todavía no hay alojamientos por días publicados.', pintar: pintarStay },
+  { set: 'estancias', ruta: 'estancias', tpl: '#tpl-home-staycard', cuantas: 5, vacio: TEXTO_SIN_ALOJAMIENTOS, pintar: pintarStay },
   { set: 'valoradas', ruta: 'estancias', tpl: '#tpl-home-rankcard', cuantas: 4, orden: 'nota', vacio: 'Aún no hay propiedades con reseñas suficientes para valorarlas.', pintar: pintarRank },
   { set: 'recientes', ruta: 'comprar', tpl: '#tpl-home-tile', cuantas: RANURAS.length, vacio: 'Estamos preparando la publicación del inventario. Escríbenos por WhatsApp y te contamos qué tenemos disponible hoy.', pintar: pintarTile },
 ];
 
-async function traerShard(ruta: RutaCatalogo): Promise<CatalogoItem[] | null> {
-  const url = URL_OVERRIDE ?? `/api/catalogo/${ruta}.json`;
-  try {
-    const res = await fetch(url, { headers: { accept: 'application/json' } });
-    const body = (await res.json()) as { ok?: boolean; items?: CatalogoItem[] };
-    if (!res.ok || body.ok === false || !Array.isArray(body.items)) return null;
-    return body.items;
-  } catch {
-    return null;
-  }
-}
-
-/** El párrafo de vacío que ya usa la portada, para no inventar una clase nueva. */
-function parrafoVacio(texto: string): HTMLParagraphElement {
-  const p = document.createElement('p');
-  p.className = 'home-vacio';
-  p.textContent = texto;
-  return p;
-}
+/** El párrafo de vacío de la portada: su clase es `:global(.home-vacio)` en `index.astro`. */
+const vacio = (t: string): HTMLParagraphElement => parrafoVacio('home-vacio', t);
 
 export async function bootHomeCatalogo(): Promise<void> {
   if (FUENTE !== 'live') return; // modo DEMO: las tarjetas de muestra son del diseño, no se tocan.
@@ -248,33 +217,40 @@ export async function bootHomeCatalogo(): Promise<void> {
     // tenemos datos. Sin esto habría un tercer estado sin tratar, y el compilador lo dijo.
     const items = porRuta.get(seccion.ruta) ?? null;
     if (items === null) {
-      caja.replaceChildren(parrafoVacio('No pudimos cargar esta sección. Recarga la página en un momento.'));
+      caja.replaceChildren(vacio(TEXTO_ERROR_CARGA));
       continue;
     }
     if (!items.length) {
-      caja.replaceChildren(parrafoVacio(seccion.vacio));
+      caja.replaceChildren(vacio(seccion.vacio));
       continue;
     }
 
     const frag = document.createDocumentFragment();
     let fallidas = 0;
-    const ordenados = seccion.orden === 'nota' ? [...items].sort(porNota) : [...items].sort(porFecha);
-    ordenados.slice(0, seccion.cuantas).forEach((it, i) => {
+    const ordenados = seccion.orden === 'nota' ? [...items].sort(porNota) : [...items].sort(masRecientePrimero);
+    // Se recorre hasta LLENAR el tope, no se recortan los N primeros: un pintor que descarta (sin RNT,
+    // sin nota) dejaba la fila corta teniendo más inventario detrás. `i` es la posición EN LA FILA —
+    // el número del ranking y la ranura del mosaico—, no la del ítem en la lista.
+    let i = 0;
+    for (const it of ordenados) {
+      if (i >= seccion.cuantas) break;
       try {
         const card = seccion.pintar(tpl, it, i);
-        if (card) frag.appendChild(card);
-        else fallidas++;
+        if (card) {
+          frag.appendChild(card);
+          i++;
+        } else fallidas++;
       } catch {
         fallidas++;
       }
-    });
-    if (fallidas) console.warn(`[home] ${fallidas} card(s) no se pudieron construir en «${seccion.set}»`);
+    }
+    if (fallidas) console.warn(`[home] ${fallidas} ítem(s) sin pintar en «${seccion.set}» (descartados por el pintor o rotos)`);
     // Si NINGUNA se pudo construir, la sección queda con su estado honesto y no medio pintada.
     if (frag.childNodes.length) {
       caja.replaceChildren(frag);
       pintadas++;
     } else {
-      caja.replaceChildren(parrafoVacio(seccion.vacio));
+      caja.replaceChildren(vacio(seccion.vacio));
     }
   }
 

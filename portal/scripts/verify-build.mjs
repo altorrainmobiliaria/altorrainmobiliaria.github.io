@@ -4,7 +4,7 @@
 // `astro build` (job `build` de portal-ci.yml). Falla ruidosamente (exit 1).
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
-import { anunciaEstadia, juzgarEstadias, muestraRnt, textoVisible, VENTANA_RNT } from './lib/senales-estadia.mjs';
+import { anunciaEstadia, importesEnTexto, juzgarEstadias, muestraRnt, textoVisible, VENTANA_RNT } from './lib/senales-estadia.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const checks = [];
@@ -373,11 +373,13 @@ if (existsSync(sitemapPath)) {
  * aquí se impide PUBLICARLO. Un inmueble creado antes del gate, o una página escrita a mano, no
  * pasan por aquella puerta — pero sí por ésta, que mira el artefacto SERVIDO.
  * ⚠️ El servido PRERENDERIZADO, y nada más. Lo que pinta el navegador desde `/api/catalogo/*.json`
- * (las islas de la portada y del SERP, y `/estancias` cuando pase al catálogo real) llega como
- * `<template>` vacío, y las fichas `/inmueble/<slug>` son SSR: ninguno está en `dist/client`. Por eso
- * el resultado dice CUÁNTOS importes juzgó — «0 juzgados» no es «todo en regla», es «nada que ver
- * desde aquí». A esos los cubre el dominio (sin RNT no entran al índice ni abren ficha), que garantiza
- * que el RNT EXISTA, no que la tarjeta lo MUESTRE.
+ * (las islas de la portada, del SERP y de `/estancias`) llega como `<template>` vacío, y las fichas
+ * `/inmueble/<slug>` son SSR: ninguno está en `dist/client`. Por eso el resultado dice CUÁNTOS
+ * importes juzgó — «0 juzgados» no es «todo en regla», es «nada que ver desde aquí». A esos los cubre
+ * el dominio (sin RNT no entran al índice ni abren ficha), que garantiza que el RNT EXISTA, y
+ * `pintarStay`, que no pinta una StayCard sin él (`catalogo-card.test.ts`). La RankCard de
+ * «valoradas» también bebe del shard de estancias: `pintarRank` exige lo mismo, y como su plantilla
+ * aún no trae el hueco `[data-rnt]`, hoy no pinta ninguna estadía.
  *
  * 🎯 POR IMPORTE, NO POR PÁGINA. Antes bastaba un RNT en cualquier punto de la página: uno en el pie
  * daba por cubiertas todas las tarifas de arriba. Ahora cada importe de estadía necesita un RNT
@@ -475,6 +477,19 @@ for (const [html, sinCubrir] of [
   if (n !== sinCubrir) fallosSenal.push(`textoVisible: esperaba ${sinCubrir} sin RNT y salieron ${n} en «${html.slice(0, 60)}»`);
 }
 
+// ¿Cuántos importes hay, sean de lo que sean? Es la señal de la sonda de `/estancias`, más abajo: lo
+// que la plantilla no pinta no cuenta; lo que va oculto, sí (se muestra al interactuar).
+for (const [html, cuantos] of [
+  ['<p>Cuéntanos tus fechas</p><p>No es una reserva ni se cobra nada.</p>', 0],
+  ['<p>WhatsApp +57 300 243 9810 · RNT 100001</p>', 0],
+  ['<template><b>$850.000</b> COP noche</template><p>Cargando alojamientos…</p>', 0],
+  ['<p>Apartamento en venta $450.000.000</p>', 1], // no pregunta de qué es el importe
+  ['<p>$850.000 / noche</p><div hidden>Aseo $ 180.000</div>', 2],
+]) {
+  const n = importesEnTexto(textoVisible(html).texto).length;
+  if (n !== cuantos) fallosSenal.push(`importesEnTexto: esperaba ${cuantos} importe(s) y salieron ${n} en «${html.slice(0, 60)}»`);
+}
+
 if (fallosSenal.length) {
   console.error('❌ verify:build — la autoprueba de las señales de estadía/RNT falla:');
   for (const f of fallosSenal) console.error(`   · ${f}`);
@@ -520,8 +535,48 @@ checks.push({
       ? 'se activa con PUBLIC_SITE_ENV=production'
       : importesJuzgados
         ? `${importesJuzgados} importe(s) de estadia en ${paginasJuzgadas} pagina(s) del HTML prerenderizado, cada uno con un RNT visible a ≤${VENTANA_RNT} caracteres (una distancia, no «uno por tarjeta»)`
-        : 'NADA juzgado: 0 importes de estadia en el HTML prerenderizado. Lo que pintan las islas (/api/catalogo/*.json) y las fichas SSR no pasa por aqui: el dominio garantiza que tengan RNT, no que la tarjeta lo muestre',
+        : 'NADA juzgado: 0 importes de estadia en el HTML prerenderizado. Lo que pintan las islas (/api/catalogo/*.json) y las fichas SSR no pasa por aqui: el dominio garantiza que tengan RNT y pintarStay que la StayCard lo muestre',
 });
+
+/*
+ * ── SONDA: /estancias NO ESCRIBE NINGÚN IMPORTE CON «$» ─────────────────────────────
+ *
+ * QUÉ CAZA. La vuelta de la casa FICTICIA. Hasta el 6-oct-2026 `/estancias` era la réplica del
+ * mockup: un alojamiento que no existe, «$850.000 / noche» y su desglose. Ahora la página no afirma
+ * ningún precio por sí misma: los precios llegan con cada tarjeta REAL, que pinta la isla desde el
+ * catálogo y nunca sin su RNT al lado (`pintarStay`). En su HTML prerenderizado no cabe, por tanto,
+ * NINGÚN importe —de estadía o de lo que sea—: el que aparezca es un precio escrito a mano.
+ *
+ * A DIFERENCIA DE LA SONDA DEL RNT, MUERDE EN TODOS LOS MODOS. Aquella deja pasar el staging porque
+ * allí un anuncio con precio es andamio; aquí no hay andamio legítimo, y así la vigila también el CI,
+ * que construye staging.
+ *
+ * Qué texto se lee lo decide `textoVisible`: fuera `<template>`, `<script>` y `<style>`; DENTRO lo
+ * oculto, el `<title>` y el `<noscript>`. Sin la página, rojo: un ✅ sobre un fichero que no se abrió
+ * es un ✅ sobre nada.
+ *
+ * ⚠️ LÍMITES, dichos para que el ✅ no prometa más de lo que mide:
+ *   · Solo ve importes con «$» delante (la señal única de `senales-estadia.mjs`). Un «850.000 COP»
+ *     sin signo pasaría.
+ *   · Lee la página ENTERA, cabecera y pie compartidos incluidos: un importe que entre al menú pone
+ *     esta página en rojo aunque no hable de ningún alojamiento. El mensaje lo dice.
+ */
+const estanciasHtml = ['dist/client/estancias/index.html', 'dist/client/estancias.html']
+  .map((p) => resolve(root, p))
+  .find((p) => existsSync(p));
+const importesEstancias = estanciasHtml ? importesEnTexto(textoVisible(readFileSync(estanciasHtml, 'utf8')).texto) : null;
+check(
+  '/estancias no escribe ningún importe con «$» en su HTML (la casa ficticia no vuelve)',
+  importesEstancias !== null && importesEstancias.length === 0,
+  importesEstancias === null
+    ? 'no existe dist/client/estancias/index.html: no hay página que juzgar, y eso no es un ✅'
+    : importesEstancias.length
+      ? `${importesEstancias.length} importe(s) con «$» en la página, cabecera y pie incluidos: ` +
+        `${importesEstancias.slice(0, 3).map((i) => i.importe).join(', ')}. Los precios de /estancias los trae ` +
+        'cada tarjeta REAL desde el catálogo, con su RNT al lado; uno escrito en la página, o en el ' +
+        'menú o el pie que comparte, es un precio que ningún alojamiento respalda.'
+      : '0 importes con «$» en el texto visible, lo oculto, el <title> y el <noscript> (sin «$» no se ve)',
+);
 
 /*
  * ── SONDA: NINGUNA IMAGEN PESADA EN LA RUTA CRÍTICA (§238) ──────────────────────────

@@ -1,198 +1,82 @@
 ---
 /*
- * ESTANCIAS — detalle de alojamiento / corta estancia (Ola 1). Réplica de ALTORRA Estancias.dc.html.
- * Widget de reserva FUNCIONAL (fechas → recalcula noches/subtotal/servicio/total). Reutiliza Header/Footer.
- * "No se hará ningún cargo por ahora" — el pago real (Wompi custodia) es Ola 2. Hoy = solicitud de reserva.
+ * ESTANCIAS — corta estancia (Ola 1). Esqueleto de ALTORRA Estancias.dc.html: cabecera
+ * `.est-top/.est-head` y cuerpo a dos columnas `.est-body`, con las tarjetas REALES del shard `dias`
+ * en la columna principal y, en el aside, la SOLICITUD de fechas, sin precio.
+ *
+ * ⛔ Aquí vivía una casa FICTICIA: galería, «Lo que ofrece», aforo de 8 y $850.000 la noche con su
+ * desglose, sobre un alojamiento que no existe. El aviso de «ejemplo» no lo arreglaba: un precio por
+ * noche es publicidad de hospedaje, y la Ley 300/1996 le exige un RNT que esa casa no podía tener.
+ * El diseño completo del mockup (galería, servicios, panel con precio) va a la ficha de CADA
+ * alojamiento, que sí tiene su número. `verify:build` pone en rojo cualquier importe con «$» que
+ * vuelva a este HTML, en todos los modos.
+ *
+ * Hoy es una solicitud, no una reserva: el pago protegido (Wompi custodia) es Ola 2.
  */
 export const prerender = true;
 
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import StayCard from '../components/StayCard.astro';
 import { LEGAL, TEXTO_AUTORIZACION, RUTA_AVISO } from '../lib/config/legal';
-
-// Galería del mockup (L118-129): 3 fotos en mosaico. [0] principal (villa-pool),
-// [1] Interior (villa-modern — el mockup usa villa-modern para Interior, no chalet-dusk),
-// [2] Terraza (estate-golden, lleva el botón "Ver 18 fotos"). SIN tira de miniaturas (era invento).
-const gallery = ['/assets/villa-pool.webp', '/assets/villa-modern.webp', '/assets/estate-golden.webp'];
-const meta = [
-  // Los 4 del mockup (L136-139) con sus íconos exactos. Antes eran 3: faltaba "5 camas"
-  // y "habitaciones" estaba renombrado a "alcobas" (§32.2).
-  { i: '<circle cx="9" cy="8" r="3.4"/><path d="M2 20c0-3.3 3-5.5 7-5.5s7 2.2 7 5.5"/><path d="M17 5.2A3.4 3.4 0 0 1 17 12M22 20c0-2.6-1.6-4.5-4-5.2"/>', v: '8', l: 'huéspedes' },
-  { i: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v6"/>', v: '4', l: 'habitaciones' },
-  { i: '<path d="M2 4v16"/><path d="M2 9h16a3 3 0 0 1 3 3v8"/><path d="M2 15h20"/>', v: '5', l: 'camas' },
-  { i: '<path d="M5 12V6a2 2 0 0 1 4 0"/><path d="M4 12h16a1 1 0 0 1 1 1v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-2a1 1 0 0 1 1-1z"/><path d="M7 19l-1 2M18 19l1 2"/>', v: '3', l: 'baños' },
-];
-// LO QUE OFRECE — los 8 del mockup (L148-157), textos y ORDEN exactos (§32.24).
-// Antes: "Seguridad 24 h" y "Zona colonial" estaban INVENTADOS y ocupaban el sitio de
-// "Check-in 24 horas" y "Conserjería 24/7", que faltaban. Además el ícono escudo+check
-// (que era el de Conserjería) se había reciclado para "Seguridad", disimulando la sustitución.
-const ofrece = [
-  { i: '<path d="M5 12.5a10 10 0 0 1 14 0M8 15.5a6 6 0 0 1 8 0"/><circle cx="12" cy="19" r="1"/><path d="M2 9a15 15 0 0 1 20 0"/>', t: 'WiFi de alta velocidad' },
-  { i: '<path d="M2 15c2 0 2 1.6 4 1.6s2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6"/><path d="M2 19c2 0 2 1.6 4 1.6s2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6"/><path d="M9 11V5a2 2 0 0 1 4 0"/>', t: 'Piscina privada' },
-  { i: '<path d="M4 8h9a2.5 2.5 0 1 0-2.5-2.5M4 12h13a2.5 2.5 0 1 1-2.5 2.5M4 16h8a2.5 2.5 0 1 1-2.5 2.5"/>', t: 'Aire acondicionado' },
-  { i: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 3v6h8V3M9 13h.01M9 17h.01"/>', t: 'Cocina equipada' },
-  { i: '<path d="M5 13l1.6-4.8A2 2 0 0 1 8.5 7h7a2 2 0 0 1 1.9 1.2L19 13"/><path d="M4 13h16a1 1 0 0 1 1 1v4H3v-4a1 1 0 0 1 1-1z"/><circle cx="7.5" cy="18" r="1.4"/><circle cx="16.5" cy="18" r="1.4"/>', t: 'Parqueadero incluido' },
-  { i: '<circle cx="12" cy="7" r="3"/><path d="M3 17h18M5 17v-2M19 17v-2M12 10v7"/>', t: 'Terraza con vista' },
-  { i: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', t: 'Check-in 24 horas' },
-  { i: '<path d="M12 3l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V6z"/><path d="M9 12l2 2 4-4"/>', t: 'Conserjería 24/7' },
-];
-
-// RESEÑAS — la sección que faltaba (mockup L171-189). 4 barras + 2 reseñas, textos exactos.
-/*
- * ⛔ CERO-DEMO (§122). Aquí vivían un anfitrión («Alejandro C., Superanfitrión, 6 años en ALTORRA»),
- * dos reseñas firmadas con nombre y fecha, un «4.97 · 128 reseñas» y sus cuatro barras de nota.
- * TODO inventado, en una página PÚBLICA enlazada desde el menú principal.
- *
- * No es una licencia de maqueta: un testimonio fabricado es publicidad engañosa (Ley 1480, arts.
- * 29-30) y contradice la regla del propio proyecto — «solo data REAL: nunca rating, sameAs u origen
- * inventado» ([[L-29]]). Marcarlo como «ejemplo» tampoco valdría: la etiqueta se pierde en una
- * captura de pantalla, la reseña no.
- *
- * Las secciones NO se borraron: se volvieron dependientes de datos. Con las listas vacías no se
- * pintan, y el día que haya reseñas REALES vuelven solas con el diseño aprobado intacto.
- */
-interface Resenas {
-  notas: { l: string; v: string; pct: number }[];
-  resenas: { ini: string; quien: string; cuando: string; txt: string }[];
-  puntuacion: { nota: string; total: number } | null;
-  anfitrion: { ini: string; nombre: string; rol: string } | null;
-}
+import { SITE } from '../lib/config/site';
+import { FUENTE, TEXTO_SIN_ALOJAMIENTOS } from '../scripts/catalogo-card';
 
 /*
- * Vienen de una FUNCION y no de cuatro `const … = null`, y no es adorno: a un `const` anotado
- * `X | null` e inicializado a `null`, TypeScript le estrecha el tipo a `null`, y dentro de
- * `puntuacion && (…)` la variable pasa a ser `never`. Resultado: `.nota` y `.total` daban error y
- * TODO el bloque de resenas quedaba fuera del chequeo — justo el que hay que revisar el dia que
- * lleguen datos de verdad. El tipo de retorno declarado corta ese estrechamiento y marca la costura
- * por donde entraran los datos reales.
+ * El interruptor de la portada (§276), leído de su dueño (`FUENTE`): con catálogo real el HTML dice
+ * «Cargando…» y la isla pinta lo que haya; en demo NO hay tarjetas de muestra, el HTML trae
+ * directamente el vacío honesto.
  */
-function datosDeResenas(): Resenas {
-  return { notas: [], resenas: [], puntuacion: null, anfitrion: null };
-}
-const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
+const HAY_CATALOGO_REAL = FUENTE === 'live';
+
+// Sin `description` propia, A PROPÓSITO: comparte la del sitio hasta que el RNT de la plataforma esté
+// verificado. El motivo vive en `COMPARTIDA_OK` de `scripts/verify-seo.mjs`.
 ---
 
 <BaseLayout
-  title="Casa con piscina y terraza colonial — Estancias ALTORRA"
+  title="Corta estancia en Cartagena — ALTORRA"
   miga={[{ nombre: 'Corta estancia', ruta: '/estancias' }]}
 >
   <Header active="estancia" />
 
   <main id="main">
-    {/* Cabecera + galería (sin breadcrumb: el mockup pasa del header directo al eyebrow+H1) */}
+    {/* Textos aprobados de la sección #estancias-list del mockup del Portal. */}
     <div class="est-top">
       <div class="est-head">
-        <div>
-          {/*
-              El aviso de que este alojamiento es un EJEMPLO ya existía, y está bien redactado — pero
-              vivía al FINAL del panel de reserva, debajo del total (§282). Quien no llegue hasta ahí
-              lee una ficha completa con su precio y su formulario y no sabe que no hay tal casa.
-
-              🎯 *Un descargo que llega después de la decisión no es un descargo: es una nota al pie.*
-              Se duplica aquí arriba, pegado al titular, para que se sepa ANTES de invertir atención.
-              El de abajo se queda: es el que se lee justo antes de pulsar «Solicitar», y ese momento
-              también merece su aviso.
-          */}
-          <p class="alt-eyebrow">Centro Histórico · Cartagena</p>
-          <h1 class="est-h1">Casa con piscina y terraza colonial</h1>
-          <p class="est-ejemplo"><b>Alojamiento de ejemplo.</b> Todavía no publicamos el inventario de
-            corta estancia. Cuéntanos tus fechas y te proponemos lo que tengamos disponible.</p>
-        </div>
-        <div class="est-head__tags">
-          {puntuacion && (
-            <span class="est-rating"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"/></svg> {puntuacion.nota} · {puntuacion.total} reseñas</span>
-          )}
-          {anfitrion && (
-            <span class="alt-seal est-verif"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2l7 4v6c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6l7-4z"/><path d="M9 12l2 2 4-4"/></svg> Anfitrión verificado</span>
-          )}
-        </div>
-      </div>
-      <div class="est-gal">
-        <div class="est-gal__main"><img id="est-main" src={gallery[0]} alt="Vista principal del alojamiento" fetchpriority="high" /></div>
-        <div class="est-gal__cell"><img src={gallery[1]} alt="Interior" loading="lazy" /></div>
-        <div class="est-gal__cell">
-          <img src={gallery[2]} alt="Terraza" loading="lazy" />
-          <button class="est-gal__more" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>Ver 18 fotos</button>
-        </div>
+        <p class="alt-eyebrow">Corta estancia</p>
+        <h1 class="est-h1">Quédate unos días.</h1>
       </div>
     </div>
 
-    {/* Info + reserva */}
     <div class="est-body">
       <div class="est-main-col">
-        <div class="est-meta">
-          {meta.map((m) => (
-            <span class="est-metaitem"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" set:html={m.i}></svg><b>{m.v}</b> {m.l}</span>
-          ))}
+        {/* `aria-live` + `aria-busy`: quien usa lector de pantalla oye el resultado (las tarjetas, el
+            vacío o el error) cuando la isla termina, no solo «Cargando…». */}
+        <div class="est-cards" data-estancias-set aria-live="polite" aria-busy={HAY_CATALOGO_REAL ? 'true' : undefined}>
+          {HAY_CATALOGO_REAL
+            ? <p class="est-vacio">Cargando alojamientos…</p>
+            : <p class="est-vacio">{TEXTO_SIN_ALOJAMIENTOS}</p>}
         </div>
+        <noscript>
+          <p class="est-vacio">Sin JavaScript esta página no puede cargar los alojamientos ni enviar tu solicitud.
+            Escríbenos por <a href={SITE.contact.whatsappLink} rel="noopener">WhatsApp</a> y te contamos qué tenemos para tus fechas.</p>
+        </noscript>
 
-        <div class="est-sec est-sec--desc">
-          <p>Casa colonial restaurada en el corazón de la Ciudad Amurallada, a dos cuadras de la Plaza Santo Domingo. Patio central con piscina, terraza en la azotea con vista a las cúpulas y noches frescas de brisa marina.</p>
-          <p>Cuatro alcobas climatizadas, cocina equipada y servicio de conserjería. Pensada para familias y grupos de hasta ocho huéspedes.</p>
-        </div>
-
-        <div class="est-sec">
-          <h2>Lo que ofrece este lugar</h2>
-          <div class="est-ofrece">
-            {ofrece.map((o) => (
-              <div class="est-amenity"><span class="alt-chip"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={o.i}></svg></span>{o.t}</div>
-            ))}
-          </div>
-        </div>
-
-        {anfitrion && (
-          <div class="est-sec est-host">
-            <span class="est-host__ini">{anfitrion.ini}</span>
-            <div>
-              <p class="est-host__name">Anfitrión: {anfitrion.nombre}</p>
-              <p class="est-host__role">{anfitrion.rol}</p>
-            </div>
-          </div>
-        )}
-
-        {/* RESEÑAS (mockup L171-189). Solo se pinta con reseñas REALES — §122. */}
-        {resenas.length > 0 && (
-          <div class="est-sec est-rev">
-            <h2 class="est-rev__h">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"/></svg>
-              {puntuacion ? `${puntuacion.nota} · ${puntuacion.total} reseñas` : `${resenas.length} reseñas`}
-            </h2>
-
-            <div class="est-rev__notas">
-              {notas.map((n) => (
-                <div class="est-rev__nota">
-                  <span class="est-rev__nl">{n.l}</span>
-                  <span class="est-rev__track"><span class="est-rev__fill" style={`width:${n.pct}%`}></span></span>
-                  <span class="est-rev__nv">{n.v}</span>
-                </div>
-              ))}
-            </div>
-
-            <div class="est-rev__list">
-              {resenas.map((r) => (
-                <article class="est-rev__item">
-                  <div class="est-rev__who">
-                    <span class="est-rev__ini" aria-hidden="true">{r.ini}</span>
-                    <div>
-                      <p class="est-rev__name">{r.quien}</p>
-                      <p class="est-rev__when">{r.cuando}</p>
-                    </div>
-                  </div>
-                  <p class="est-rev__txt">{r.txt}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* La tarjeta la pinta la isla clonando ESTA plantilla, la misma `StayCard` de la portada.
+            `rnt=""` emite su hueco del RNT: sin él `pintarStay` no pinta, y un precio por noche no
+            sale sin su número. `favorito={false}` quita el corazón: aquí nadie lo escucha, y un botón
+            que dice «Guardar en favoritos» y abre la ficha promete lo que no hace. */}
+        <template id="tpl-estancias-staycard">
+          <StayCard img="" alt="" title="" meta="" price="" priceUnit="COP noche" href="#" rnt="" favorito={false} />
+        </template>
       </div>
 
-      {/* Widget de reserva */}
+      {/* Solicitud de fechas, en modo CONSULTA: no hay alojamiento elegido, así que no hay precio que
+          enseñar. El envío a /api/solicitud (formulario `reserva-estancia`) es el de siempre. */}
       <aside class="est-aside" id="reservar">
         <div class="est-book">
-          <div class="est-book__top">
-            <p class="est-book__price"><b>$850.000</b> / noche</p>
-          </div>
+          <h2 class="est-book__h">Cuéntanos tus fechas</h2>
           <div class="est-book__box">
             <div class="est-book__dates">
               <label><span>Llegada</span><input type="date" id="est-ci" /></label>
@@ -222,25 +106,16 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
               </span>
             </label>
             <button class="alt-btn alt-btn--navy est-book__cta" type="submit" id="est-enviar">Enviar solicitud</button>
-            <p class="est-err" id="est-err" role="alert" hidden></p>
           </form>
-          {/* ⛔ AQUÍ VIVÍA UNA LÍNEA «Servicio ALTORRA» del 10% (§312). Se retira, no se recalcula: no
-              tiene campo en `Precio`, contradice el tarifario SELLADO —`content/tarifas.ts` da la línea
-              de alojamiento con `cifra: null` y a cargo del PROPIETARIO— y el MEGA-PLAN la declara
-              pendiente. Un porcentaje que nadie decidió, cobrado a un huésped, no es un placeholder:
-              es una afirmación. El desglose lo calcula ahora `desgloseEstadia()` del dominio. */}
-          <div class="est-book__lines">
-            <div class="est-line"><span id="est-line">$850.000 × 3 noches</span><span id="est-subtotal">$2.550.000</span></div>
-            <div class="est-line"><span>Tarifa de limpieza</span><span id="est-aseo">$180.000</span></div>
-            <div class="est-line est-line--total"><span>Total</span><span id="est-total">$2.730.000</span></div>
-          </div>
-          <div class="alt-alert alt-alert--success est-confirm" id="est-confirm" hidden>
+          {/* El error vive FUERA del formulario: también avisa de unas fechas no válidas, y entonces el
+              formulario sigue `hidden` — dentro de él, el aviso ni se veía ni se anunciaba. */}
+          <p class="est-err" id="est-err" role="alert" hidden></p>
+          <div class="alt-alert alt-alert--success est-confirm" id="est-confirm" role="status" tabindex="-1" hidden>
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
             <span>Recibimos tu solicitud. Te escribimos por WhatsApp para confirmar disponibilidad: <b>todavía no es una reserva</b>.</span>
           </div>
         </div>
-        <p class="est-cancel">Este alojamiento es un <b>ejemplo</b>: todavía no publicamos el inventario de corta
-          estancia. Cuéntanos tus fechas y te proponemos lo que tengamos disponible.</p>
+        <p class="est-cancel">Te proponemos lo que tengamos disponible para esas fechas.</p>
       </aside>
     </div>
   </main>
@@ -250,59 +125,28 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
 
 <style>
   .est-top { max-width: 1300px; margin-inline: auto; padding: 26px clamp(16px, 4vw, 48px) 0; }
-  .est-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 18px; }
-  /* El aviso de «ejemplo» junto al titular: legible, sin gritar, y con la franja de color que ya
-     usa el resto del portal para lo informativo. */
-  .est-ejemplo { margin: 10px 0 0; max-width: 62ch; font-size: 14px; line-height: 1.6; color: var(--alt-text); border-left: 3px solid var(--alt-gold); padding-left: 12px; }
   .est-h1 { margin-top: var(--alt-space-2); font-size: clamp(30px, 4.4vw, 48px); line-height: 1.02; }
-  .est-head__tags { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-  .est-rating { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
-  .est-rating svg { width: 14px; height: 14px; color: var(--alt-gold); }
-
-  .est-gal { display: grid; grid-template-columns: 1.6fr 1fr; grid-auto-rows: 1fr; gap: 12px; height: clamp(300px, 42vw, 440px); }
-  .est-gal__main { grid-row: span 2; }
-  .est-gal__main, .est-gal__cell { position: relative; border-radius: var(--alt-r-lg); overflow: hidden; }
-  .est-gal__main img, .est-gal__cell img { width: 100%; height: 100%; object-fit: cover; }
-  .est-gal__more { position: absolute; right: 16px; bottom: 16px; display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.95); padding: 11px 18px; border-radius: var(--alt-r-sm); border: 0; cursor: pointer; font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); box-shadow: 0 8px 22px -10px rgba(27, 39, 51, 0.45); transition: color var(--alt-dur) var(--alt-ease); }
-  .est-gal__more svg { width: 16px; height: 16px; }
-  .est-gal__more:hover { color: var(--alt-link); }
 
   .est-body { max-width: 1300px; margin-inline: auto; padding: 34px clamp(16px, 4vw, 48px) 64px; display: flex; gap: clamp(28px, 3.4vw, 56px); flex-wrap: wrap; align-items: flex-start; }
   .est-main-col { flex: 1 1 540px; min-width: 300px; }
-  .est-meta { display: flex; gap: clamp(16px, 3vw, 34px); flex-wrap: wrap; padding-bottom: 26px; border-bottom: 1px solid var(--alt-hairline); }
-  .est-metaitem { display: inline-flex; align-items: center; gap: 9px; font-size: 15px; color: var(--alt-ink); }
-  .est-metaitem svg { width: 19px; height: 19px; stroke: var(--alt-gold-raw); }
-  .est-metaitem b { font-weight: var(--alt-fw-bold); }
+  /* Las StayCard son de ancho FIJO: la rejilla solo las deja fluir y saltar de línea. */
+  .est-cards { display: flex; flex-wrap: wrap; gap: var(--alt-space-7) var(--alt-gap-grid); }
+  /* :global porque el párrafo de vacío o de error lo crea la ISLA y no lleva el atributo con el que
+     Astro acota sus reglas (verify:css). Es el mismo estilo que `.home-vacio` de la portada. */
+  :global(.est-vacio) { max-width: 62ch; margin: 0; font-size: 15.5px; line-height: 1.65; color: var(--alt-text); }
 
-  .est-sec { padding: 30px 0; border-bottom: 1px solid var(--alt-hairline); }
-  .est-sec--desc p { font-size: 15.5px; line-height: 1.72; color: var(--alt-text); margin-bottom: 14px; }
-  .est-sec--desc p:last-child { margin-bottom: 0; }
-  .est-sec h2 { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 26px; color: var(--alt-ink); letter-spacing: normal; margin-bottom: 20px; }
-  .est-ofrece { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: 16px 26px; }
-  .est-amenity { display: flex; align-items: center; gap: 12px; font-size: 14.5px; color: var(--alt-ink); }
-  .est-amenity .alt-chip { width: 40px; height: 40px; }
-  .est-amenity .alt-chip svg { width: 19px; height: 19px; }
-  .est-host { display: flex; align-items: center; gap: 15px; border-bottom: 0; }
-  .est-host__ini { width: 56px; height: 56px; border-radius: 50%; background: var(--alt-ink); display: flex; align-items: center; justify-content: center; flex: none; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 20px; color: var(--alt-gold-bright); }
-  .est-host__name { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 22px; color: var(--alt-ink); }
-  .est-host__role { font-size: 13px; color: var(--alt-text); margin-top: 2px; }
-
-  /* Widget de reserva */
+  /* Panel de solicitud */
   .est-aside { flex: 1 1 340px; min-width: 300px; position: sticky; top: 92px; align-self: flex-start; }
   .est-book { background: var(--alt-white); border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-lg); padding: 24px; box-shadow: var(--alt-elev-booking, 0 34px 64px -40px rgba(27, 39, 51, 0.45)); }
-  .est-book__top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 20px; }
-  .est-book__price { font-size: 14px; color: var(--alt-text); }
-  .est-book__price b { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 32px; color: var(--alt-ink); }
-  .est-book__rate { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); }
-  .est-book__rate svg { width: 14px; height: 14px; color: var(--alt-gold); }
+  /* En el hueco del precio del mockup: aquí no hay alojamiento elegido, así que no hay precio. */
+  .est-book__h { margin: 0 0 var(--alt-space-5); font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: var(--alt-fs-h3); line-height: 1.1; letter-spacing: normal; color: var(--alt-ink); }
   .est-book__box { border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-frame, 14px); overflow: hidden; margin-bottom: 16px; }
   .est-book__dates { display: grid; grid-template-columns: 1fr 1fr; }
   /*
    * 🔴 `min-width: 0` NO es cosmético (§264). Una celda de grid se niega por defecto a encoger por
    * debajo del ancho intrínseco de su contenido, así que estas dos columnas `1fr 1fr` sumaban 315 px
    * dentro de una caja de 291: medido a 375 px, el campo «Salida» **sobresalía 24 px** y la caja lo
-   * recortaba con su `overflow: hidden`. El huésped veía la fecha de entrada entera y la de salida
-   * cortada, en el formulario con el que iba a reservar.
+   * recortaba con su `overflow: hidden`.
    */
   .est-book__dates label { padding: 12px 14px; border-bottom: 1px solid var(--alt-hairline); cursor: pointer; min-width: 0; }
   .est-book__dates label:first-child { border-right: 1px solid var(--alt-hairline); }
@@ -311,8 +155,7 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
   /*
    * Las fechas a 16 px en movil, por el zoom de iOS (§264). La regla general vive en
    * `components.css`, pero estos dos campos los estila ESTE fichero, y el acotado que Astro le pone
-   * gana en especificidad: la override tiene que estar junto a la regla que debe vencer, no pelear
-   * desde fuera. Medido: con la global sola, 2 de los 4 campos de la pagina seguian en 14.
+   * gana en especificidad: la override tiene que estar junto a la regla que debe vencer.
    */
   @media (max-width: 900px) {
     .est-book__dates input { font-size: var(--alt-fs-body); }
@@ -325,107 +168,43 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
   .est-book__stepper > span { font-size: 15px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); min-width: 16px; text-align: center; }
   .est-book__cta { width: 100%; }
   .est-book__note { text-align: center; font-size: 12px; color: var(--alt-text); margin-top: 12px; }
-  .est-book__lines { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--alt-hairline); display: flex; flex-direction: column; gap: 11px; }
-  .est-line { display: flex; justify-content: space-between; font-size: 14px; color: var(--alt-text); }
-  .est-line--total { padding-top: 13px; border-top: 1px solid var(--alt-hairline); margin-top: 2px; }
-  .est-line--total span { font-size: 16px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); }
   /* Paso de contacto (§122): aparece bajo el CTA cuando las fechas ya son válidas. */
   .est-datos { display: grid; gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--alt-hairline); }
   .est-f { display: grid; gap: 5px; font-size: 12.5px; color: var(--alt-text); }
   .est-check { display: flex; gap: 9px; align-items: flex-start; font-size: 11.5px; line-height: 1.45; color: var(--alt-text-muted); }
   .est-check input { margin-top: 2px; flex: 0 0 auto; }
   .est-check a { color: var(--alt-navy); }
-  /* El error va en dorado y con ícono implícito: la paleta no tiene rojo (identidad de marca). */
-  .est-err { font-size: 12.5px; line-height: 1.4; color: var(--alt-ink); background: var(--alt-mist); border-left: 3px solid var(--alt-gold); padding: 9px 11px; border-radius: 8px; }
+  /* El error va en dorado: la paleta no tiene rojo (identidad de marca). */
+  .est-err { margin-top: var(--alt-space-3); font-size: 12.5px; line-height: 1.4; color: var(--alt-ink); background: var(--alt-mist); border-left: 3px solid var(--alt-gold); padding: 9px 11px; border-radius: 8px; }
   .est-confirm { margin-top: 16px; }
   .est-cancel { text-align: center; font-size: 12px; color: var(--alt-text); margin-top: 14px; }
-
-  @media (max-width: 620px) {
-    .est-gal { grid-template-columns: 1fr; grid-auto-rows: auto; height: auto; }
-    .est-gal__main { grid-row: auto; }
-    .est-gal__main, .est-gal__cell { aspect-ratio: 16 / 10; }
-  }
-
-  /* ===== RESEÑAS ===== */
-  .est-rev__h {
-    display: flex; align-items: center; gap: 10px;
-    font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold);
-    font-size: 26px; color: var(--alt-ink); margin: 0 0 22px; letter-spacing: normal;
-  }
-  .est-rev__h svg { width: 20px; height: 20px; color: var(--alt-gold); flex: none; }
-
-  .est-rev__notas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 14px 40px; margin-bottom: 28px; }
-  .est-rev__nota { display: flex; align-items: center; gap: 14px; }
-  .est-rev__nl { font-size: 13.5px; color: var(--alt-text); width: 100px; flex: none; }
-  .est-rev__track { flex: 1; height: 4px; border-radius: 4px; background: var(--alt-gris-claro); position: relative; }
-  .est-rev__fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--alt-ink); border-radius: 4px; }
-  .est-rev__nv { font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); flex: none; }
-
-  .est-rev__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 24px; }
-  .est-rev__who { display: flex; align-items: center; gap: 11px; margin-bottom: 10px; }
-  .est-rev__ini {
-    width: 42px; height: 42px; border-radius: 50%; flex: none;
-    background: var(--alt-mist); display: flex; align-items: center; justify-content: center;
-    font-weight: var(--alt-fw-semibold); font-size: 15px; color: var(--alt-ink);
-  }
-  .est-rev__name { font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); margin: 0; }
-  .est-rev__when { font-size: 12px; color: var(--alt-text); margin: 0; }
-  .est-rev__txt { font-size: 14px; line-height: 1.65; color: var(--alt-text); margin: 0; }
 </style>
 
 <script>
-  import { desgloseEstadia, explicarProblemaReserva, problemasDeReserva } from '../lib/domain/reserva';
+  import { bootEstanciasCatalogo } from '../scripts/estancias-catalogo';
+  import { explicarProblemaReserva, HUESPEDES_MAX, problemasDeReserva } from '../lib/domain/reserva';
 
-  /** Hoy en `YYYY-MM-DD` LOCAL: el visitante elige fechas en su calendario, no en UTC. */
-  const hoyISO = () => {
-    const d = new Date();
-    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-  };
-  /*
-   * Reserva: recalcula el desglose según las fechas; stepper de huéspedes; confirmar.
-   *
-   * ⚠️ Estas dos cifras son del MOCKUP — esta página sigue siendo la réplica, sin inventario detrás
-   * (lo dice el propio lead: «sin inventario publicado todavía»). Cuando se cablee a una propiedad
-   * real salen de `p.precio`, y la CUENTA no cambia: ya la hace el dominio.
-   *
-   * ⛔ Antes había aquí un tercer número, `SERVICE_RATE = 0.1`, y no era un placeholder como estos
-   * dos: `precioNoche` y `precioAseo` existen en el modelo y esperan su dato, mientras que el
-   * porcentaje de servicio no existe, no está decidido (`content/tarifas.ts` lo publica como «no
-   * decidido») y el tarifario lo pone a cargo del PROPIETARIO. Se retiró (§312).
-   */
-  const PRICE = 850000, CLEANING = 180000;
-  const fmt = (n: number) => '$' + n.toLocaleString('es-CO');
+  // Los alojamientos reales (shard `dias`). La isla atrapa sus propios fallos y deja el texto de
+  // error; este `catch` es solo la red por si algo escapara.
+  bootEstanciasCatalogo().catch(() => {
+    /* nunca relleno: lo peor que queda es el estado que ya trae el HTML */
+  });
+
+  /** Un día en `YYYY-MM-DD` LOCAL: el visitante elige fechas en su calendario, no en UTC. */
+  const iso = (d: Date) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const $ = (id: string) => document.getElementById(id);
   let guests = 2;
 
-  function recalc() {
-    const ci = ($('est-ci') as HTMLInputElement)?.value;
-    const co = ($('est-co') as HTMLInputElement)?.value;
-    /*
-     * El DESGLOSE lo hace el dominio, no esta página. La cuenta de aquí era la única del repo que
-     * sumaba una estadía, y por eso pudo llevar un cargo que nadie había decidido: una aritmética que
-     * vive en una pantalla no la revisa nadie. `desgloseEstadia` también hereda `noches()` —la misma
-     * cuenta que hace el endpoint al validar—, que era ya la razón de no restar fechas a mano
-     * ([[L-45]]): `new Date(co)` sobre un `YYYY-MM-DD` se lee en UTC con el navegador en UTC-5, y a
-     * ciertas horas salía un día de más.
-     */
-    const d = desgloseEstadia({ precioNoche: PRICE, precioAseo: CLEANING }, ci ?? '', co ?? '');
-    const nights = d?.noches ?? 0;
-    const nLbl = nights === 1 ? ' noche' : ' noches';
-    if ($('est-line')) $('est-line')!.textContent = `${fmt(PRICE)} × ${nights}${nLbl}`;
-    if ($('est-subtotal')) $('est-subtotal')!.textContent = fmt(d?.alojamiento ?? 0);
-    if ($('est-aseo')) $('est-aseo')!.textContent = fmt(d?.aseo ?? 0);
-    if ($('est-total')) $('est-total')!.textContent = fmt(d?.total ?? 0);
-  }
+  // El tope es el del DOMINIO, el mismo que impone el endpoint: si el panel dejara pedir más, el
+  // visitante se enteraría con un 422 después de escribir sus datos.
   function setGuests(g: number) {
-    guests = Math.max(1, Math.min(8, g));
+    guests = Math.max(1, Math.min(HUESPEDES_MAX, g));
     if ($('est-guests')) $('est-guests')!.textContent = String(guests);
     if ($('est-guests-label')) $('est-guests-label')!.textContent = guests === 1 ? '1 huésped' : `${guests} huéspedes`;
   }
-  $('est-ci')?.addEventListener('change', recalc);
-  $('est-co')?.addEventListener('change', recalc);
   $('est-dec')?.addEventListener('click', () => setGuests(guests - 1));
   $('est-inc')?.addEventListener('click', () => setGuests(guests + 1));
+
   // ── SOLICITUD REAL (§122) ──────────────────────────────────────────────────────────────────
   // Antes esto era `removeAttribute('hidden')` sobre el mensaje de éxito: el visitante leía
   // «Solicitud enviada» y no se enviaba NADA. Un fallo silencioso que además mentía.
@@ -439,7 +218,7 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
   $('est-reservar')?.addEventListener('click', () => {
     const ci = ($('est-ci') as HTMLInputElement | null)?.value ?? '';
     const co = ($('est-co') as HTMLInputElement | null)?.value ?? '';
-    const malos = problemasDeReserva({ llegada: ci, salida: co, huespedes: guests }, hoyISO());
+    const malos = problemasDeReserva({ llegada: ci, salida: co, huespedes: guests }, iso(new Date()));
     if (malos.length) { err(malos.map(explicarProblemaReserva).join(' ')); return; }
     $('est-err')?.setAttribute('hidden', '');
     $('est-datos')?.removeAttribute('hidden');
@@ -483,20 +262,20 @@ const { notas, resenas, puntuacion, anfitrion } = datosDeResenas();
       }
       $('est-datos')?.setAttribute('hidden', '');
       $('est-confirm')?.removeAttribute('hidden');
+      // El foco estaba en el botón que se acaba de ocultar: sin esto se pierde y el lector de
+      // pantalla no llega a la confirmación.
+      $('est-confirm')?.focus();
     } catch {
       err('No pudimos conectar. Revisa tu conexión o escríbenos por WhatsApp.');
       if (btn) { btn.disabled = false; btn.textContent = 'Enviar solicitud'; }
     }
   });
 
-  // Prellenar fechas: llegada hoy+7, salida hoy+10 + fijar mínimos (como el mockup, componentDidMount).
-  // Antes los inputs nacían vacíos y "$850.000 × 3 noches" era texto estático mentiroso; sin `min` se
-  // podían elegir fechas pasadas.
-  const iso = (d: Date) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  // Fechas prellenadas (llegada hoy+7, salida hoy+10) y con mínimo, para que no se puedan elegir
+  // días pasados.
   const now = new Date();
   const ciEl = $('est-ci') as HTMLInputElement | null;
   const coEl = $('est-co') as HTMLInputElement | null;
   if (ciEl) { ciEl.value = iso(new Date(now.getTime() + 7 * 864e5)); ciEl.min = iso(now); }
   if (coEl) { coEl.value = iso(new Date(now.getTime() + 10 * 864e5)); coEl.min = iso(new Date(now.getTime() + 864e5)); }
-  recalc();
 </script>

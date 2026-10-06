@@ -40,9 +40,10 @@ const COMPARTIDA_OK = new Map([
   ],
   [
     '/estancias',
-    'Anuncia alojamiento por días y el RNT todavía no está (§178-§179). Escribirle publicidad ' +
-      'mejor AMPLÍA la superficie de anuncio justo en lo que hoy es el bloqueo legal. Se le pone ' +
-      'descripción propia el día que llegue el número, no antes.',
+    'Anuncia corta estancia y el RNT de la PLATAFORMA sigue declarado sin verificar (§178-§179, ' +
+      '42-LEGAL regla 3). Ya no hay casa de ejemplo —cada tarjeta lleva el RNT de su alojamiento—, ' +
+      'pero una descripción propia AMPLÍA la superficie de anuncio justo en el bloqueo legal. Se le ' +
+      'pone el día que ese número esté verificado, no antes.',
   ],
 ]);
 

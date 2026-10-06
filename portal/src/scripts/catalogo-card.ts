@@ -1,9 +1,10 @@
 /*
  * LO COMPARTIDO DEL CATÁLOGO — el ítem, de dónde se lee, y cómo se pinta una tarjeta (§277).
  *
- * Vive aparte porque lo usan DOS islas: la del SERP (`serp-catalogo.ts`) y la de la portada
- * (`home-catalogo.ts`). Al principio la portada importaba directamente del SERP, y el gate
- * `verify:css` lo cazó por un camino inesperado: se quejó de que la portada «busca ids que la página
+ * Vive aparte porque lo usan TRES islas: la del SERP (`serp-catalogo.ts`), la de la portada
+ * (`home-catalogo.ts`) y la de `/estancias` (`estancias-catalogo.ts`), que pinta la MISMA `StayCard`
+ * que la portada con el mismo pintor. Al principio la portada importaba directamente del SERP, y el
+ * gate `verify:css` lo cazó por un camino inesperado: se quejó de que la portada «busca ids que la página
  * NO declara» —`serp-order`, el desplegable de ordenar del SERP—, porque importar ese módulo
  * arrastra el módulo ENTERO, con su boot, su mapa y sus selectores.
  *
@@ -16,12 +17,14 @@
  */
 import { urlMedia } from '../lib/media';
 import { pesos } from '../lib/domain/dinero';
-import { rutaDeResumen } from '../lib/domain/catalogo';
+import { esAnunciable, rutaDeResumen } from '../lib/domain/catalogo';
 import type { CatalogoResumen } from '../lib/domain/catalogo';
+import { numeroRnt, textoRnt } from '../lib/domain/rnt';
 // El tipo de operación y la etiqueta del badge tienen DUEÑO en el dominio; aquí había copias a mano
 // (§277). Las cazó `verify:simbolos` al exportarlas: por separado las dos eran legítimas, y por eso
 // no las veía ningún otro gate.
 import { etiquetaBadgeResumen } from '../lib/domain/ficha';
+import { etiquetaTipo, tipoCanonico } from '../lib/domain/shared';
 import type { Operacion } from '../lib/domain/shared';
 
 /**
@@ -40,7 +43,56 @@ export const FUENTE = (import.meta.env.PUBLIC_CATALOGO_SOURCE as string | undefi
 export const URL_OVERRIDE = import.meta.env.PUBLIC_CATALOGO_URL as string | undefined;
 export const nf = new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 });
 
+/** Ruta pública → shard. Las mismas tres que sirve `api/catalogo/[operacion].json.ts`. */
+export type RutaCatalogo = 'comprar' | 'arrendar' | 'estancias';
 
+/** Construye el nodo de una tarjeta a partir de su plantilla. `null` = no se pudo, o no se debe. */
+export type Pintor = (tpl: HTMLTemplateElement, it: CatalogoItem, i: number) => DocumentFragment | null;
+
+/**
+ * Los dos estados honestos que comparten la portada y `/estancias`, con las mismas palabras (§276).
+ * «No hay inventario» y «no pudimos preguntarlo» se dicen DISTINTO: el segundo se arregla recargando.
+ */
+export const TEXTO_SIN_ALOJAMIENTOS = 'Todavía no hay alojamientos por días publicados.';
+export const TEXTO_ERROR_CARGA = 'No pudimos cargar esta sección. Recarga la página en un momento.';
+
+/**
+ * Los más recientes primero. `pub` es una fecha ISO, así que ordena bien como texto.
+ *
+ * ⚠️ Un `pub` que no sea texto cuenta como «sin fecha» (al final): un `sort` que lanza no descarta
+ * UN ítem, tumba la sección entera y la deja en «Cargando…».
+ */
+const pubDe = (it: CatalogoItem): string => (typeof it?.pub === 'string' ? it.pub : '');
+export const masRecientePrimero = (a: CatalogoItem, b: CatalogoItem): number => pubDe(b).localeCompare(pubDe(a));
+
+/**
+ * El shard de una ruta, o `null` si no se pudo leer. Una petición por shard y ninguna a Firestore:
+ * estos JSON los sirve el Worker desde su caché de borde (§54).
+ */
+export async function traerShard(ruta: RutaCatalogo): Promise<CatalogoItem[] | null> {
+  const url = URL_OVERRIDE ?? `/api/catalogo/${ruta}.json`;
+  try {
+    const res = await fetch(url, { headers: { accept: 'application/json' } });
+    const body = (await res.json()) as { ok?: boolean; items?: CatalogoItem[] };
+    if (!res.ok || body.ok === false || !Array.isArray(body.items)) return null;
+    return body.items;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * El párrafo de un estado vacío o de error, con la clase de la página que lo pide.
+ *
+ * ⚠️ `verify:css` NO ve una clase que llega por parámetro: quien llame declara la suya en
+ * `:global()`, porque este nodo lo crea el JS y no lleva el atributo con el que Astro acota.
+ */
+export function parrafoVacio(clase: string, texto: string): HTMLParagraphElement {
+  const p = document.createElement('p');
+  p.className = clase;
+  p.textContent = texto;
+  return p;
+}
 
 /**
  * Sufijo COMPACTO, sin espacios: «$8,5M/mes» · «$400K/noche».
@@ -100,6 +152,23 @@ export function texto(root: ParentNode, sel: string, valor: string | null): void
   if (!el) return;
   if (valor === null) el.remove();
   else el.textContent = valor;
+}
+
+/** Etiqueta legible del tipo, o cadena vacía si el valor no es del vocabulario. */
+const tipoLegible = (it: CatalogoItem): string => {
+  const t = tipoCanonico(it.tipo ?? '');
+  return t ? etiquetaTipo(t) : '';
+};
+
+/** Imagen y enlace, que son iguales en las tarjetas que se clonan de un `<template>`. */
+export function rellenarMedia(frag: DocumentFragment, it: CatalogoItem, selImg: string): void {
+  const img = frag.querySelector<HTMLImageElement>(selImg);
+  if (img) {
+    img.src = urlMedia(it.thumb);
+    // El `alt` describe lo que se ve, y lo que sabemos del inmueble es su tipo y su zona.
+    img.alt = [tipoLegible(it), it.sector].filter(Boolean).join(' en ') || it.titulo;
+  }
+  for (const a of Array.from(frag.querySelectorAll<HTMLAnchorElement>('a[href]'))) a.href = hrefFicha(it);
 }
 
 /** Rellena un clon del `<template>` de PropertyCard con los datos reales. */
@@ -175,3 +244,63 @@ export function construirCard(tpl: HTMLTemplateElement, it: CatalogoItem, idx: n
   }
   return frag;
 }
+
+/** Lo que pinta una `StayCard`, decidido sin DOM. */
+export interface DatosStayCard {
+  titulo: string;
+  /** Zona y tipo, que es lo que SÍ consta; `null` si no consta ninguno (el nodo se quita). */
+  meta: string | null;
+  precio: string;
+  /** «RNT 100001», por `textoRnt`: va pegado al precio, en el mismo anuncio. */
+  rnt: string;
+}
+
+/**
+ * LA TARJETA DE ALOJAMIENTO, FAIL-CLOSED (Ley 300/1996).
+ *
+ * Una `StayCard` es publicidad de hospedaje: foto y precio por noche. La ley exige el número del RNT
+ * en TODA publicidad de alojamiento turístico, así que la respuesta a «¿y si no hay número?» no es
+ * una tarjeta sin él: es NINGUNA tarjeta (`null`). `esAnunciable` va primero porque es el dueño de
+ * «¿esto se puede anunciar?» (y el que no se cae con un ítem que ni es un objeto); el `numeroRnt` de
+ * después da el número que se exhibe.
+ *
+ * Venta y arriendo tampoco: esta tarjeta dice «COP noche», y un apartamento de $450 millones «por
+ * noche» es un dato falso con aspecto de anuncio.
+ *
+ * ⚠️ `meta` se compone con zona y tipo. El índice no guarda la vista ni el aforo, y un número de
+ * huéspedes inventado en un alojamiento es la clase de dato con el que alguien reserva.
+ */
+export function datosStayCard(it: CatalogoItem): DatosStayCard | null {
+  if (!esAnunciable(it) || it.operacion !== 'alojamiento') return null;
+  const numero = numeroRnt(it.rnt);
+  if (numero === null) return null;
+  return {
+    titulo: it.titulo,
+    meta: [it.sector, tipoLegible(it)].filter(Boolean).join(' · ') || null,
+    precio: precioCard(it.precio),
+    rnt: textoRnt(numero),
+  };
+}
+
+/**
+ * Tarjeta de alojamiento por días (`StayCard`), clonada de su `<template>`. La usan la portada y
+ * `/estancias`. Sin `datosStayCard` no hay tarjeta, y sin el hueco `[data-rnt]` en la plantilla
+ * tampoco: un precio por noche no sale sin el sitio donde va su RNT.
+ */
+export const pintarStay: Pintor = (tpl, it) => {
+  const datos = datosStayCard(it);
+  if (!datos) return null;
+  const frag = tpl.content.cloneNode(true) as DocumentFragment;
+  const card = frag.querySelector<HTMLElement>('.alt-staycard');
+  const rnt = card?.querySelector<HTMLElement>('[data-rnt]');
+  if (!card || !rnt) return null;
+  rellenarMedia(frag, it, '.alt-staycard__img');
+  texto(frag, '.alt-staycard__t', datos.titulo);
+  texto(frag, '.alt-staycard__meta', datos.meta);
+  texto(frag, '.alt-staycard__price b', datos.precio);
+  rnt.textContent = datos.rnt;
+  // La plantilla nace con `title=""` y su corazón diría «Guardar  en favoritos» (en /estancias la
+  // plantilla no lo trae: `favorito={false}`).
+  frag.querySelector('.alt-staycard__fav')?.setAttribute('aria-label', `Guardar ${datos.titulo} en favoritos`);
+  return frag;
+};

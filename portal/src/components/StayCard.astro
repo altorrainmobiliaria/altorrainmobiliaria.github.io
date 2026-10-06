@@ -24,17 +24,28 @@ interface Props {
   price: string;       // "$680.000"
   priceUnit?: string;  // "COP noche"
   href: string;
+  /* RNT (Ley 300/1996): el número va en TODA publicidad de alojamiento turístico, y esta tarjeta lo
+     es — foto y precio por noche. Si la prop viene, aunque sea `''` (así la pasa un `<template>`),
+     se emite su hueco `[data-rnt]` pegado al precio y la isla lo rellena (`pintarStay`). Sin la
+     prop no hay hueco: las tarjetas de MUESTRA de la portada en demo. */
+  rnt?: string;
+  /* El corazón vive DENTRO del `<a>`: solo guarda (o al menos no navega) donde la página le pone un
+     oyente que hace `preventDefault`. Donde no lo hay, `false` lo quita: un botón «Guardar en
+     favoritos» que abre la ficha dice una cosa y hace otra. */
+  favorito?: boolean;
 }
-const { img, alt, imgPos, badge, title, rating, meta, price, priceUnit = 'COP noche', href } = Astro.props;
+const { img, alt, imgPos, badge, title, rating, meta, price, priceUnit = 'COP noche', href, rnt, favorito = true } = Astro.props;
 ---
 
 <a class="alt-staycard" href={href}>
   <div class="alt-staycard__media">
     <img class="alt-staycard__img" src={img} alt={alt} loading="lazy" decoding="async" style={imgPos ? `object-position:${imgPos}` : undefined} />
     {badge && <span class="alt-staycard__badge">{badge}</span>}
-    <button class="alt-staycard__fav" type="button" aria-label={`Guardar ${title} en favoritos`} aria-pressed="false">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"/></svg>
-    </button>
+    {favorito && (
+      <button class="alt-staycard__fav" type="button" aria-label={`Guardar ${title} en favoritos`} aria-pressed="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.5s-7.2-4.6-9.4-9.1C1.2 8.3 2.7 5 6 5c2 0 3.3 1.2 4 2.4C10.7 6.2 12 5 14 5c3.3 0 4.8 3.3 3.4 6.4-2.2 4.5-9.4 9.1-9.4 9.1z"/></svg>
+      </button>
+    )}
   </div>
 
   <div class="alt-staycard__head">
@@ -48,6 +59,7 @@ const { img, alt, imgPos, badge, title, rating, meta, price, priceUnit = 'COP no
   </div>
   <p class="alt-staycard__meta">{meta}</p>
   <p class="alt-staycard__price"><b>{price}</b> {priceUnit}</p>
+  {rnt !== undefined && <p class="alt-staycard__rnt" data-rnt>{rnt}</p>}
 </a>
 
 <style>
@@ -84,6 +96,8 @@ const { img, alt, imgPos, badge, title, rating, meta, price, priceUnit = 'COP no
   .alt-staycard__meta { font-size: 12.5px; color: var(--alt-text); margin: 3px 0 6px; }
   .alt-staycard__price { font-size: 13.5px; color: var(--alt-ink); margin: 0; }
   .alt-staycard__price b { font-weight: var(--alt-fw-bold); }
+  /* Una línea pequeña bajo el precio, con el token AA de `meta`: se tiene que poder LEER. */
+  .alt-staycard__rnt { font-size: var(--alt-fs-xs); color: var(--alt-text); margin: var(--alt-space-1) 0 0; }
 
   @media (prefers-reduced-motion: reduce) {
     .alt-staycard__img { transition: none; }

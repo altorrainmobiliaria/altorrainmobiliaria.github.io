@@ -304,11 +304,13 @@ const tabs = [
 ];
 
 // "Cuatro maneras de vivir Cartagena".
+// La 04 decía además «y el total a la vista»: lo respaldaba el desglose de la casa de ejemplo de
+// /estancias, que ya no existe, y hoy ninguna página enseña el total de una estadía.
 const maneras = [
   { n: '01', t: 'Comprar', img: '/assets/villa-modern.webp', d: 'Tu hogar o tu próxima inversión, con acompañamiento legal de principio a fin.', href: '/comprar' },
   { n: '02', t: 'Arrendar', img: '/assets/chalet-dusk.webp', d: 'Contratos claros y estudios serios. Vive tranquilo, entrega tranquilo.', href: '/arrendar' },
   { n: '03', t: 'Invertir', img: '/assets/estate-golden.webp', d: 'Comprar para rentar. Si es por días, miramos el reglamento del edificio antes que el precio.', href: '/invertir' },
-  { n: '04', t: 'Estancias', img: '/assets/villa-pool.webp', d: 'Tu estadía por noches, con la limpieza aparte y el total a la vista.', href: '/estancias' },
+  { n: '04', t: 'Estancias', img: '/assets/villa-pool.webp', d: 'Tu estadía por noches, con la limpieza aparte.', href: '/estancias' },
 ];
 ---
 
@@ -855,8 +857,10 @@ const maneras = [
           <RankCard img="" alt="" rank="" rating="" zona="" title="" price="" href="#" />
         </template>
 
+        {/* `rnt=""` emite el hueco del RNT para que la isla lo rellene: sin él, `pintarStay` no pinta
+            la tarjeta — un precio por noche no sale sin su número de registro (Ley 300/1996). */}
         <template id="tpl-home-staycard">
-          <StayCard img="" alt="" title="" meta="" price="" priceUnit="COP noche" href="#" />
+          <StayCard img="" alt="" title="" meta="" price="" priceUnit="COP noche" href="#" rnt="" />
         </template>
 
         {/* El tile del mosaico: mismo marcado que el de muestra, vacío. La ranura de la rejilla

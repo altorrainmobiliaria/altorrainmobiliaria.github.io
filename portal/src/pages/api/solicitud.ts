@@ -182,9 +182,10 @@ export const POST: APIRoute = async ({ request }) => {
             llegada: estancia.llegada,
             salida: estancia.salida,
             huespedes: estancia.huespedes,
-            // Se dice en el propio dato: el catálogo de estancias todavía es un EJEMPLO (TODO-22).
-            // Sin esta línea, quien atienda el lead creería que hay un alojamiento concreto reservado.
-            sobre: 'consulta general de corta estancia — sin inventario publicado todavía',
+            // Se dice en el propio dato: la solicitud sale del panel GENERAL de /estancias, no de la
+            // ficha de un alojamiento. Sin esta línea, quien atienda el lead creería que hay uno
+            // concreto pedido para esas fechas.
+            sobre: 'consulta general de corta estancia — sin alojamiento elegido',
           }
         : {}),
     },

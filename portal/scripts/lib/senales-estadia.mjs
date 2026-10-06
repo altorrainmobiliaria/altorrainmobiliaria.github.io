@@ -48,15 +48,20 @@ const VENTANA_PRECIO = 80;
  * retira no es cobertura, es una excusa para no mirar.
  */
 
+/**
+ * TODOS los importes del texto, con su posición, sean de una estadía o de cualquier otra cosa. Es la
+ * señal de la sonda de `/estancias` (su HTML no escribe ningún precio) y la base de
+ * `importesDeEstadia`: «qué es un importe» tiene una sola regex.
+ */
+export function importesEnTexto(texto) {
+  return [...texto.matchAll(SENAL_DINERO)].map((m) => ({ importe: m[0], inicio: m.index, fin: m.index + m[0].length }));
+}
+
 /** Cada importe que tiene vocabulario de estadía PEGADO, con su posición en el texto. */
 function importesDeEstadia(texto) {
-  const out = [];
-  for (const m of texto.matchAll(SENAL_DINERO)) {
-    const fin = m.index + m[0].length;
-    const ctx = texto.slice(Math.max(0, m.index - VENTANA_PRECIO), fin + VENTANA_PRECIO);
-    if (SENAL_ESTANCIA.test(ctx)) out.push({ importe: m[0], inicio: m.index, fin });
-  }
-  return out;
+  return importesEnTexto(texto).filter(({ inicio, fin }) =>
+    SENAL_ESTANCIA.test(texto.slice(Math.max(0, inicio - VENTANA_PRECIO), fin + VENTANA_PRECIO)),
+  );
 }
 
 /** ¿Hay al menos un importe con vocabulario de estadía PEGADO? */
