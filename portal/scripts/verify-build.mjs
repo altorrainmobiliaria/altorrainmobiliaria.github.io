@@ -4,6 +4,7 @@
 // `astro build` (job `build` de portal-ci.yml). Falla ruidosamente (exit 1).
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { relative, resolve, sep } from 'node:path';
+import { anunciaEstadia, juzgarEstadias, muestraRnt, textoVisible, VENTANA_RNT } from './lib/senales-estadia.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const checks = [];
@@ -357,76 +358,49 @@ if (existsSync(sitemapPath)) {
 /*
  * ── SONDA: NO SE ANUNCIA ALOJAMIENTO SIN RNT (§234) ─────────────────────────────────
  *
- * QUÉ CAZA. Un build de PRODUCCIÓN en el que una página anuncia hospedaje por días —precio y
- * formulario de reserva— sin el número de RNT a la vista. La Ley 300/1996 y su reglamento exigen
- * ese número en TODA publicidad de alojamiento turístico; sin él, la publicidad es irregular por
- * mucho que el inmueble exista y el precio sea correcto.
+ * QUÉ CAZA. Un build de PRODUCCIÓN en el que una página anuncia hospedaje por días —un importe con
+ * vocabulario de estadía al lado— sin el número de RNT a la vista de ESE anuncio. La Ley 300/1996 y
+ * su reglamento exigen ese número en TODA publicidad de alojamiento turístico; sin él, la publicidad
+ * es irregular por mucho que el inmueble exista y el precio sea correcto.
  *
- * POR QUÉ UN GATE Y NO UNA NOTA EN EL RUNBOOK. Hoy `/estancias` publica «$850.000 / noche» con su
- * formulario y sin RNT, y lo único que lo protege es que staging va `noindex`. Eso está escrito en
- * el brief del dueño como una pelota suya… y una pelota es una promesa, no un mecanismo: el día del
- * cutover la página se ve **perfecta** para un humano. Hermana exacta de las sondas #6
- * (indexabilidad) y del catálogo demo: las tres fallan igual, en silencio y con buen aspecto.
+ * POR QUÉ UN GATE Y NO UNA NOTA EN EL RUNBOOK. Una página de estancias con precio y sin RNT se ve
+ * **perfecta** para un humano, y mientras el sitio es staging lo único que la protege es el `noindex`.
+ * Dejarlo escrito como pelota del dueño en un brief es una promesa, no un mecanismo. Hermana exacta
+ * de las sondas #6 (indexabilidad) y del catálogo demo: las tres fallan igual, en silencio y con
+ * buen aspecto.
  *
  * 🎯 Y ES EL COMPLEMENTO DEL GATE DE LAS RULES (§234): allí se impide CREAR un alojamiento sin RNT;
  * aquí se impide PUBLICARLO. Un inmueble creado antes del gate, o una página escrita a mano, no
  * pasan por aquella puerta — pero sí por ésta, que mira el artefacto SERVIDO.
+ * ⚠️ El servido PRERENDERIZADO, y nada más. Lo que pinta el navegador desde `/api/catalogo/*.json`
+ * (las islas de la portada y del SERP, y `/estancias` cuando pase al catálogo real) llega como
+ * `<template>` vacío, y las fichas `/inmueble/<slug>` son SSR: ninguno está en `dist/client`. Por eso
+ * el resultado dice CUÁNTOS importes juzgó — «0 juzgados» no es «todo en regla», es «nada que ver
+ * desde aquí». A esos los cubre el dominio (sin RNT no entran al índice ni abren ficha), que garantiza
+ * que el RNT EXISTA, no que la tarjeta lo MUESTRE.
+ *
+ * 🎯 POR IMPORTE, NO POR PÁGINA. Antes bastaba un RNT en cualquier punto de la página: uno en el pie
+ * daba por cubiertas todas las tarifas de arriba. Ahora cada importe de estadía necesita un RNT
+ * VÁLIDO y VISIBLE a ≤ `VENTANA_RNT` caracteres; qué cuenta como anuncio, qué cuenta como RNT, qué
+ * texto se lee y por qué esa distancia viven en `lib/senales-estadia.mjs`, su único dueño.
+ * ⚠️ Una distancia no es «uno por tarjeta»: en una rejilla, el RNT de una tarjeta cubre a sus vecinas.
  *
  * NO muerde en staging, y es deliberado: mientras el sitio no es público la página con precio es un
  * andamio legítimo, igual que el catálogo demo. El día que se compile con `PUBLIC_SITE_ENV=production`
  * hay que tener el RNT o retirar el anuncio, que es exactamente la decisión que el gate fuerza.
  */
-/*
- * 🎯 QUÉ CUENTA COMO «ANUNCIAR UNA ESTADÍA» (§314).
- *
- * 🔴 La versión anterior era `/\$\s?\d[\d.,]*\s*(?:\/|por\s)\s*noche/i`: exigía que el dinero y la
- * palabra «noche» vinieran FUNDIDOS en una sola frase, «$850.000 / noche». Una página que anunciara
- * la misma estadía con un TOTAL —«Total $2.730.000 por 5 noches»—, con un «Desde $420.000», con una
- * tarifa semanal o con un desglose tipo carrito **no casaba**, el bucle hacía `continue` y la
- * comprobación del RNT, que va DESPUÉS, no llegaba a correr. En VERDE. Es una señal LÉXICA estrecha
- * para una pregunta SEMÁNTICA, y se evade reescribiendo la frase — la misma forma de fallo que §312
- * (ningún patrón de dinero) y §313 (leer el campo equivocado).
- *
- * 🎯 Y LA SOLUCIÓN NO ES «BUSCAR LAS DOS COSAS EN LA PÁGINA»: medido sobre el sitio servido, eso
- * marca `/comprar` y `/arrendar`, porque «Corta estancia» es un enlace del MENÚ y sale en las 45
- * páginas. Un gate que grita sobre lo correcto enseña a ignorarlo entero. Lo que distingue a una
- * página que ANUNCIA una estadía no es que las dos señales existan: es que estén **JUNTAS**.
- * De ahí la ventana de proximidad.
- */
-const SENAL_DINERO = /\$\s?\d[\d.,]{2,}/g;
-const SENAL_ESTANCIA = /\b(?:noches?|estad[ií]as?|hu[eé]sped(?:es)?|por\s+d[ií]as|check[-\s]?in)\b/i;
-/** Caracteres a cada lado del importe. 80 ≈ una línea de desglose; más empieza a alcanzar el menú. */
-const VENTANA_PRECIO = 80;
-/*
- * ⛔ AQUI HABIA UNA SEGUNDA CONDICION Y ERA LEGALMENTE INCORRECTA (§316).
- *
- * `SENAL_RESERVA = /Solicitar estas fechas|Enviar solicitud|<form/i` exigia que la pagina ademas
- * ofreciera RESERVAR — y la Ley 300/1996 no dice eso: el RNT va en TODA publicidad de alojamiento
- * turistico, ofrezca o no un formulario. Ademas este negocio convierte por WhatsApp, no por `<form>`:
- * la ficha real remata con `<a href={whatsappLink}>Solicitar informacion</a>` («informacion», no
- * «estas fechas»), asi que el patron dominante del sitio no casaba ninguna de las tres alternativas.
- *
- * 📊 Medido sobre `portal/dist/client` antes de quitarla: con la condicion, 2 paginas juzgadas; sin
- * ella, las MISMAS 2. Cero cambio hoy — es red preventiva, igual que el ensanche de §314. Lo que se
- * retira no es cobertura, es una excusa para no mirar.
- */
-
-/** ¿Hay un importe con vocabulario de estadía PEGADO? */
-function anunciaEstadia(texto) {
-  for (const m of texto.matchAll(SENAL_DINERO)) {
-    const ctx = texto.slice(Math.max(0, m.index - VENTANA_PRECIO), m.index + m[0].length + VENTANA_PRECIO);
-    if (SENAL_ESTANCIA.test(ctx)) return true;
-  }
-  return false;
-}
 
 /*
- * 🧪 SONDA DE `anunciaEstadia` — corre en cada build, con los casos que la versión vieja dejaba pasar.
+ * 🧪 AUTOPRUEBA DE LAS SEÑALES — corre en cada build, staging incluido.
  *
  * Va aquí y no en un `.test.ts` a propósito: este fichero es el gate, y un gate cuya señal no se
- * prueba contra su propio caso es una declaración de intenciones (§38a). Los tres últimos son
- * controles NEGATIVOS — sin ellos, «caza lo que debe» y «caza todo» se ven igual de verdes.
+ * prueba contra su propio caso es una declaración de intenciones (§38a). En cada tabla van controles
+ * NEGATIVOS — sin ellos, «caza lo que debe» y «caza todo» se ven igual de verdes.
  */
+const fallosSenal = [];
+
+// ¿Es un anuncio de estadía? Los cuatro primeros son los que la versión vieja dejaba pasar; el quinto
+// («$850.000 / noche») ya lo cazaba, y sigue aquí para que el ensanche no lo pierda.
 for (const [texto, debe] of [
   ['Villa en Bocagrande. Total $2.730.000 por 5 noches.', true],
   ['Alojamiento en el Centro. Desde $420.000 · 2 huéspedes · check-in 24 h', true],
@@ -437,11 +411,75 @@ for (const [texto, debe] of [
   ['Apartaestudio $1.900.000 / mes + administración $380.000', false],
   [`Menú: Comprar Arrendar Corta estancia. ${'x'.repeat(200)} Apartamento $450.000.000 en venta`, false],
 ]) {
-  if (anunciaEstadia(texto) !== debe) {
-    console.error(`❌ verify:build — la sonda de \`anunciaEstadia\` falla: esperaba ${debe} en «${texto.slice(0, 60)}…».`);
-    console.error('   El gate del RNT depende de esta señal; con ella rota, el chequeo legal se salta EN VERDE.');
-    process.exit(1);
-  }
+  if (anunciaEstadia(texto) !== debe) fallosSenal.push(`anunciaEstadia: esperaba ${debe} en «${texto.slice(0, 60)}»`);
+}
+
+// ¿Exhibe el RNT con su número? Los negativos son frases que HABLAN del RNT sin mostrarlo, o cifras
+// que no son un número de registro.
+for (const [texto, debe] of [
+  ['RNT 100001', true],
+  ['RNT: 100001', true],
+  ['RNT No. 100001', true],
+  ['RNT n.º 98765', true],
+  ['Registro Nacional de Turismo (RNT) 100001', true],
+  ['Registro Nacional de Turismo (RNT) n.º 98765', true],
+  ['RNT RNT-100001', true], // la ficha: etiqueta «RNT» + el valor tal como lo guarda el dominio
+  ['RNT # 100001', true],
+  ['RNT número 100001', true],
+  ['RNT No 100001', true],
+  ['RNT Nro. 123456', true],
+  ['RNT N° 54321', true],
+  ['R.N.T. 12345', true],
+  ['RNT · 123456', true],
+  ['RNT – 123456', true],
+  ['Registro Nacional de Turismo No. 12345', true],
+  ['RNT (Ley 300 de 1996)', false],
+  ['exige RNT y 3 revisiones', false],
+  ['RNT pendiente', false],
+  ['RNT 123', false],
+  ['RNT 3 2 85 m²', false], // una tarjeta aplanada: habitaciones, baños, área
+  ['Renovación del RNT 2026', false],
+  ['RNT-000000', false],
+  ['RNT - 1558 de 2012', false],
+]) {
+  if (muestraRnt(texto) !== debe) fallosSenal.push(`muestraRnt: esperaba ${debe} en «${texto}»`);
+}
+
+// ¿Cuántos importes de estadía quedan SIN un RNT a su alcance? Los bordes van a los DOS lados.
+for (const [texto, sinCubrir] of [
+  ['Penthouse. $850.000 / noche. RNT 100001', 0],
+  ['Penthouse. $850.000 / noche. RNT pendiente', 1],
+  [`Penthouse. $850.000 / noche. ${'x'.repeat(2000)} RNT 100001`, 1],
+  [`RNT 100001 ${'x'.repeat(VENTANA_RNT - 2)} $850.000 / noche`, 0], // RNT ANTES, a VENTANA_RNT justos
+  [`RNT 100001 ${'x'.repeat(VENTANA_RNT - 1)} $850.000 / noche`, 1], // uno más y ya no cubre
+  [`Por noche $850.000 ${'x'.repeat(VENTANA_RNT - 2)} RNT 100001`, 0], // RNT DESPUÉS, a VENTANA_RNT justos
+  [`Por noche $850.000 ${'x'.repeat(VENTANA_RNT - 1)} RNT 100001`, 1],
+  [`Casa A $850.000 / noche · RNT 100001. ${'x'.repeat(2000)} Casa B $420.000 / noche`, 1],
+  ['Apartamento en venta $450.000.000 · 3 habitaciones', 0],
+]) {
+  const n = juzgarEstadias(texto).sinRnt.length;
+  if (n !== sinCubrir) fallosSenal.push(`juzgarEstadias: esperaba ${sinCubrir} sin RNT y salieron ${n} en «${texto.slice(0, 60)}»`);
+}
+
+// ¿Qué texto se lee? Sobre HTML: un RNT que el visitante no ve no cubre el precio que sí ve.
+for (const [html, sinCubrir] of [
+  ['<p>$850.000 / noche</p><p>RNT&nbsp;100001</p>', 0],
+  ['<p>$850.000 / noche</p><span class="alt-visually-hidden">RNT 100001</span>', 1],
+  ['<title>RNT 100001</title><p>$850.000 / noche</p>', 1],
+  ['<div hidden><div>Paso 2</div>RNT 100001</div><p>$850.000 / noche</p>', 1], // no acaba en el 1.er </div>
+  ['<p>$850.000 / noche · RNT <span aria-hidden="true">100001</span></p>', 1], // sigla a la vista, número no
+  ['<div hidden><p>Total $2.550.000 por 3 noches · RNT 100001</p></div>', 0], // aparecen a la vez
+]) {
+  const { texto, ocultos } = textoVisible(html);
+  const n = juzgarEstadias(texto, ocultos).sinRnt.length;
+  if (n !== sinCubrir) fallosSenal.push(`textoVisible: esperaba ${sinCubrir} sin RNT y salieron ${n} en «${html.slice(0, 60)}»`);
+}
+
+if (fallosSenal.length) {
+  console.error('❌ verify:build — la autoprueba de las señales de estadía/RNT falla:');
+  for (const f of fallosSenal) console.error(`   · ${f}`);
+  console.error('   El gate del RNT depende de estas señales; con ellas rotas, el chequeo legal se salta EN VERDE.');
+  process.exit(1);
 }
 
 /** Recorre el HTML SERVIDO. No existia un helper para esto: `astroPages` mira el fuente. */
@@ -456,23 +494,19 @@ function htmlServido(dir, acc = []) {
 }
 
 const sinRnt = [];
+// Cuántos importes y páginas se JUZGARON: sin este número, «0 juzgados» y «todos con RNT» se ven igual.
+let importesJuzgados = 0;
+let paginasJuzgadas = 0;
 if (ES_PROD) {
   for (const f of htmlServido(resolve(root, 'dist/client'))) {
-    const html = readFileSync(f, 'utf8');
-    /*
-     * Se compara sobre el TEXTO, no sobre el marcado. La primera version buscaba el patron en el
-     * HTML crudo y se le escapaba `/estancias`, donde el precio y «/ noche» viven en elementos
-     * distintos: cazaba la portada y NO la pagina que el brief senalaba. Medir el marcado cuando
-     * lo que importa es lo que LEE una persona ([[L-62]]).
-     */
-    const cuerpo = html
-      .replace(/<template\b[^>]*>[\s\S]*?<\/template>/gi, '')
-      .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ');
-    const texto = cuerpo.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
-    if (!anunciaEstadia(texto)) continue;
-    // El RNT puede escribirse de varias formas; se acepta cualquiera con su número al lado.
-    if (/\bRNT\b[^.]{0,40}\d/i.test(texto)) continue;
-    sinRnt.push(relative(resolve(root, 'dist/client'), f).replace(/\\/g, '/'));
+    const { texto, ocultos } = textoVisible(readFileSync(f, 'utf8'));
+    const { importes, sinRnt: sueltos } = juzgarEstadias(texto, ocultos);
+    if (!importes) continue;
+    importesJuzgados += importes;
+    paginasJuzgadas += 1;
+    if (!sueltos.length) continue;
+    const pagina = relative(resolve(root, 'dist/client'), f).replace(/\\/g, '/');
+    sinRnt.push(`${pagina} (${sueltos.length} importe(s) sin RNT: ${sueltos.slice(0, 3).map((s) => s.importe).join(', ')})`);
   }
 }
 checks.push({
@@ -481,10 +515,12 @@ checks.push({
     : 'RNT en publicidad de alojamiento — no se juzga en staging (build no indexable)',
   ok: sinRnt.length === 0,
   detail: sinRnt.length
-    ? `${sinRnt.length} pagina(s) que anuncian una estadia (importe + noches/huespedes/check-in juntos) con formulario y sin RNT: ${sinRnt.join(', ')}`
-    : ES_PROD
-      ? 'comprobado sobre el HTML servido'
-      : 'se activa con PUBLIC_SITE_ENV=production',
+    ? `${sinRnt.length} pagina(s) con un importe de estadia (junto a noches/huespedes/check-in) sin un RNT valido y visible a ≤${VENTANA_RNT} caracteres: ${sinRnt.join(' · ')}`
+    : !ES_PROD
+      ? 'se activa con PUBLIC_SITE_ENV=production'
+      : importesJuzgados
+        ? `${importesJuzgados} importe(s) de estadia en ${paginasJuzgadas} pagina(s) del HTML prerenderizado, cada uno con un RNT visible a ≤${VENTANA_RNT} caracteres (una distancia, no «uno por tarjeta»)`
+        : 'NADA juzgado: 0 importes de estadia en el HTML prerenderizado. Lo que pintan las islas (/api/catalogo/*.json) y las fichas SSR no pasa por aqui: el dominio garantiza que tengan RNT, no que la tarjeta lo muestre',
 });
 
 /*
