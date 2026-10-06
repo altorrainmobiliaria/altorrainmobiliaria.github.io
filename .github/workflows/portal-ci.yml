@@ -168,6 +168,39 @@ jobs:
       - name: Titulo y descripcion de lo que Google vera (§232)
         run: npm run verify:seo
 
+  # 🛡️ ENSAYO DE LANZAMIENTO (§326.4). El job de arriba construye STAGING, así que las sondas que
+  # solo juzgan en producción —el RNT de los anuncios de alojamiento (Ley 300/1996), cero tarjetas de
+  # muestra con el catálogo real, sin `noindex`— NUNCA corrían en CI: solo en el portátil de quien se
+  # acordara. El 5-oct el ensayo local destapó /estancias con una casa inventada a precio por noche;
+  # el 6-oct, /comprar sirviendo seis tarjetas de muestra con el catálogo «real». Aquí se construye
+  # como el día del cambio de dominio, en cada push, sin desplegar nada y sin secretos.
+  # No bloquea el deploy de staging (un fallo de producción no daña staging), pero deja el CI en
+  # ROJO a la vista: el lanzamiento ya no se descubre el día del lanzamiento.
+  ensayo-lanzamiento:
+    name: Ensayo del build de LANZAMIENTO (producción + catálogo real)
+    runs-on: ubuntu-latest
+    env:
+      PUBLIC_SITE_ENV: production
+      PUBLIC_CATALOGO_SOURCE: live
+    defaults:
+      run:
+        working-directory: portal
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: portal/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - name: Cableado de producción (RNT, cero-demo, indexable, catálogo real)
+        run: npm run verify:build
+      - name: Formularios con su autorización de datos (Ley 1581)
+        run: npm run verify:controles
+      - name: Título y descripción de lo que Google verá
+        run: npm run verify:seo
+
   deploy-staging:
     name: Deploy a Cloudflare Workers (staging)
     needs: build
