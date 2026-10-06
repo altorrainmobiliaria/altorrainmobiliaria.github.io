@@ -22,7 +22,7 @@ import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import * as logger from 'firebase-functions/logger';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
 import { asuntoDeLead, contactabilidad, cuerpoDeLead } from '../../src/lib/domain/lead-aviso';
-import type { Solicitud } from '../../src/lib/domain/crm';
+import { solicitudDeDocumento, type Solicitud } from '../../src/lib/domain/crm';
 import { camposDe, puntuar, tipoDe, type CampoLead } from '../../src/lib/domain/lead-score';
 
 /** A dónde llega el aviso. Es el buzón del negocio, nunca el personal del dueño. */
@@ -54,21 +54,28 @@ export async function avisarLead(s: Solicitud, opts: OpcionesAviso): Promise<Rep
 
   const asunto = asuntoDeLead(s);
   const fetchImpl = opts.fetchImpl ?? globalThis.fetch;
-  const res = await fetchImpl('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      authorization: `Bearer ${opts.apiKeyResend}`,
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: REMITENTE,
-      to: [DESTINO],
-      subject: asunto,
-      text: cuerpoDeLead(s, `${PANEL}?lead=${encodeURIComponent(s.id ?? '')}`),
-      // Responder al correo va al INTERESADO, no a nosotros: ahorra copiar y pegar la dirección.
-      ...(s.contacto.email?.trim() ? { reply_to: s.contacto.email.trim() } : {}),
-    }),
-  });
+  // Un corte de red tampoco lanza: con `retry: false` una excepción aquí se llevaba por delante el
+  // aviso Y el puntaje, y el log decía un error genérico en vez de «NO avisado».
+  let res: Response;
+  try {
+    res = await fetchImpl('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${opts.apiKeyResend}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: REMITENTE,
+        to: [DESTINO],
+        subject: asunto,
+        text: cuerpoDeLead(s, `${PANEL}?lead=${encodeURIComponent(s.id ?? '')}`),
+        // Responder al correo va al INTERESADO, no a nosotros: ahorra copiar y pegar la dirección.
+        ...(s.contacto.email?.trim() ? { reply_to: s.contacto.email.trim() } : {}),
+      }),
+    });
+  } catch {
+    return { enviado: false, motivo: 'fallo-envio', asunto };
+  }
 
   return res.ok
     ? { enviado: true, status: res.status, asunto }
@@ -83,6 +90,9 @@ export function camposLlenosDe(s: Solicitud): CampoLead[] {
   if (s.contacto?.email?.trim()) out.push('email');
   if (s.mensaje?.trim()) out.push('mensaje');
   if (s.propiedadId?.trim()) out.push('propiedad');
+  // Las fechas de una estancia son la `cita` de ese formulario (`CAMPOS_POR_ORIGEN`). Sin esta
+  // línea el campo se ofrecía y nunca se contaba: quien ponía fechas puntuaba como quien no.
+  if (s.fechas?.llegada && s.fechas.salida) out.push('cita');
   return out;
 }
 
@@ -101,13 +111,18 @@ export async function procesarLeadNuevo(
   s: Solicitud,
   opts: OpcionesAviso,
 ): Promise<ReporteAviso> {
+  // El ORIGEN (la clave del formulario) es lo que indexan las tablas del puntaje; `source` solo
+  // queda de respaldo para documentos con la forma del modelo.
+  const origen = s.origen || s.source || '';
   const puntaje = puntuar({
-    tipo: (s as { tipo?: string }).tipo ?? tipoDe(s.source ?? ''),
-    camposOfrecidos: camposDe(s.source ?? ''),
+    tipo: (s as { tipo?: string }).tipo ?? tipoDe(origen),
+    camposOfrecidos: camposDe(origen),
     camposLlenos: camposLlenosDe(s),
   });
 
-  const r = await avisarLead(s, opts);
+  // El correo lleva el puntaje RECIÉN calculado: antes recibía el documento sin puntuar, así que el
+  // «[A]» del asunto no salía nunca — y uno creado a mano con `leadTier: 'A'` sí lo habría lucido.
+  const r = await avisarLead({ ...s, leadScore: puntaje.score, leadTier: puntaje.tier }, opts);
 
   await db.doc(`solicitudes/${id}`).set(
     {
@@ -118,6 +133,20 @@ export async function procesarLeadNuevo(
     { merge: true },
   );
   return r;
+}
+
+/**
+ * Lo que hace el trigger con el documento CRUDO: traducirlo y procesarlo. Vive aquí, y no dentro
+ * del trigger, para que las pruebas pasen por la MISMA línea que producción — el fallo de los avisos
+ * estaba justo en un cast de esa línea, y ninguna prueba la recorría.
+ */
+export function alCrearSolicitud(
+  db: Firestore,
+  id: string,
+  datos: Record<string, unknown>,
+  opts: OpcionesAviso,
+): Promise<ReporteAviso> {
+  return procesarLeadNuevo(db, id, solicitudDeDocumento(id, datos), opts);
 }
 
 /** Lo que se registra. Un aviso que no salió tiene que dejar rastro: así se perdieron los 16. */
@@ -137,18 +166,18 @@ export const construirTriggerLead = (region: string, secrets: unknown[], clave: 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     { document: 'solicitudes/{solId}', region, secrets: secrets as any, retry: false },
     async (event) => {
-      const datos = event.data?.data() as Solicitud | undefined;
+      const datos = event.data?.data();
       if (!datos) return;
       const id = event.params.solId;
-      const s = { ...datos, id } as Solicitud;
-
-      if (contactabilidad(s) === 'NINGUNO') {
+      // Se TRADUCE, no se castea: el portal guarda el contacto suelto y el cast lo dejaba en
+      // `undefined` sin que el compilador pudiera decir nada (`solicitudDeDocumento`, crm.ts).
+      if (contactabilidad(solicitudDeDocumento(id, datos)) === 'NINGUNO') {
         // Se avisa IGUAL: un lead sin contacto es una señal de que el formulario está mal, y
         // enterarse hoy vale más que un buzón limpio.
         logger.warn(`[lead] ${id} llegó SIN forma de contacto — revisar el formulario de origen`);
       }
 
-      const r = await procesarLeadNuevo(getFirestore(), id, s, { apiKeyResend: clave() });
+      const r = await alCrearSolicitud(getFirestore(), id, datos, { apiKeyResend: clave() });
       for (const l of lineasAviso(id, r)) (r.enviado ? logger.info : logger.error)(l);
     },
   );

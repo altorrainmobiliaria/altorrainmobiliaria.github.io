@@ -72,3 +72,11 @@ describe('cuerpo — todo lo necesario para llamar SIN abrir el panel', () => {
     expect(cuerpoDeLead(lead({ contacto: { nombre: 'A' } }), PANEL)).toMatch(/NO dejó forma de contacto/);
   });
 });
+
+describe('asunto — lo que viene del documento no cuela cabeceras', () => {
+  it('quita saltos de línea y caracteres de control del nombre', () => {
+    const a = asuntoDeLead(lead({ contacto: { nombre: 'Ana\r\nBcc: z@z.co', telefono: '300' } }));
+    expect(a).not.toMatch(/[\r\n]/);
+    expect(a).toContain('Ana  Bcc: z@z.co');
+  });
+});

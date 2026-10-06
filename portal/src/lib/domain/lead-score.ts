@@ -75,7 +75,9 @@ export const CAMPOS_POR_ORIGEN: Record<string, readonly CampoLead[]> = {
 
 /** Lo que ofrece un origen desconocido: lo mínimo, para no premiar ni castigar de más. */
 export function camposDe(origen: string): readonly CampoLead[] {
-  return CAMPOS_POR_ORIGEN[origen] ?? ['nombre', 'telefono'];
+  // `Object.hasOwn` y no `[origen] ??`: el origen viene del documento, y un `constructor` o un
+  // `__proto__` devolvían una propiedad del prototipo que luego tumbaba el puntaje.
+  return Object.hasOwn(CAMPOS_POR_ORIGEN, origen) ? CAMPOS_POR_ORIGEN[origen] : ['nombre', 'telefono'];
 }
 
 /**
@@ -92,7 +94,7 @@ export const TIPO_POR_ORIGEN: Record<string, string> = {
 
 /** El tipo de un origen. `otro` si no se conoce: puntúa bajo, pero de forma explícita y no por olvido. */
 export function tipoDe(origen: string): string {
-  return TIPO_POR_ORIGEN[origen] ?? 'otro';
+  return Object.hasOwn(TIPO_POR_ORIGEN, origen) ? TIPO_POR_ORIGEN[origen] : 'otro';
 }
 
 export interface EntradaScore {
@@ -145,7 +147,7 @@ export function puntuar(e: EntradaScore): ResultadoScore {
     }
   }
 
-  const intencion = (INTENCION[e.tipo] ?? INTENCION.otro) / INTENCION_MAXIMA;
+  const intencion = (Object.hasOwn(INTENCION, e.tipo) ? INTENCION[e.tipo] : INTENCION.otro) / INTENCION_MAXIMA;
   // Un formulario que no pide NADA no puede demostrar nada: el relleno es 0, no 1 por vacuidad.
   const relleno = posible > 0 ? ganado / posible : 0;
   const proporcion = 0.5 * intencion + 0.5 * relleno;

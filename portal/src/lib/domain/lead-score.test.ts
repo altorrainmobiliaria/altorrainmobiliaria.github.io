@@ -3,6 +3,7 @@ import {
   CAMPOS_POR_ORIGEN,
   INTENCION,
   TIPO_POR_ORIGEN,
+  camposDe,
   puntuar,
   techoAlcanzable,
   tierDe,
@@ -130,5 +131,14 @@ describe('🔗 cada formulario declara un tipo que la tabla de intencion CONOCE 
   it('un origen desconocido cae en `otro` de forma explicita, no por accidente', () => {
     expect(tipoDe('lo-que-sea')).toBe('otro');
     expect(INTENCION.otro).toBeDefined();
+  });
+});
+
+describe('un origen que viene del documento no puede leer el prototipo', () => {
+  it('«constructor» o «__proto__» caen en lo mínimo, no en una función', () => {
+    expect(camposDe('constructor')).toEqual(['nombre', 'telefono']);
+    expect(tipoDe('__proto__')).toBe('otro');
+    const r = puntuar({ tipo: 'toString', camposOfrecidos: ['nombre'], camposLlenos: ['nombre'] });
+    expect(Number.isFinite(r.score)).toBe(true);
   });
 });

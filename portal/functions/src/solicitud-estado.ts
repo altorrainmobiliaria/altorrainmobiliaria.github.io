@@ -20,7 +20,7 @@
  * ignorar nuestros correos, y el que de verdad importa llega el día que ya nadie los abre.
  */
 
-import type { EstadoSolicitud, Solicitud } from '../../src/lib/domain/crm';
+import { contactoDe, type EstadoSolicitud, type Solicitud } from '../../src/lib/domain/crm';
 
 const REMITENTE = 'ALTORRA <no-responder@altorrainmobiliaria.co>';
 const RESPONDER_A = 'info@altorrainmobiliaria.co';
@@ -69,15 +69,21 @@ export const AVISO_POR_ESTADO: Partial<Record<EstadoSolicitud, { asunto: string;
 
 export interface ReporteEstado {
   enviado: boolean;
-  motivo?: 'sin-cambio' | 'estado-sin-aviso' | 'sin-email' | 'sin-clave' | 'fallo-envio';
+  motivo?: 'sin-cambio' | 'estado-sin-aviso' | 'sin-email' | 'sin-consentimiento' | 'sin-clave' | 'fallo-envio';
   status?: number;
   asunto?: string;
 }
 
-/** El saludo con nombre solo si lo tenemos. «Hola :» delata un correo automático mal hecho. */
+/**
+ * El saludo con nombre solo si lo tenemos. «Hola :» delata un correo automático mal hecho.
+ *
+ * Y solo si PARECE un nombre: letras, apóstrofo o guion. El nombre lo escribe quien llena el
+ * formulario —o quien crea el documento a mano por REST—, y sin este filtro un «nombre» como
+ * `https://…` viajaba dentro de un correo con nuestro remitente.
+ */
 export function saludo(nombre?: string): string {
   const n = (nombre ?? '').trim().split(/\s+/)[0];
-  return n ? ` ${n}` : '';
+  return n && /^\p{L}[\p{L}'-]{0,29}$/u.test(n) ? ` ${n}` : '';
 }
 
 /**
@@ -107,27 +113,41 @@ export async function avisarCambioDeEstado(
   ];
   if (!plantilla) return { enviado: false, motivo: 'estado-sin-aviso' };
 
-  const email = (despues?.contacto?.email ?? '').trim();
+  // El portal guarda el contacto SUELTO (`/api/solicitud`); leer solo `contacto.email` dejaba sin
+  // aviso a quien sí había dado su correo. `contactoDe` lee las dos formas (crm.ts).
+  const contacto = contactoDe(despues as Record<string, unknown>);
+  const email = contacto.email ?? '';
   if (!email) return { enviado: false, motivo: 'sin-email' };
+  // 🔴 Sin la autorización GUARDADA no se escribe. Todo lead del portal la trae (`/api/solicitud`
+  // la exige y la registra); los del sitio viejo no. Leer el correo suelto —lo que arregla esta
+  // versión— sin esta guarda habría escrito a esa gente meses después, al cerrar sus solicitudes.
+  const consentimiento = (despues as { consentimiento?: { autorizado?: unknown } }).consentimiento;
+  if (consentimiento?.autorizado !== true) return { enviado: false, motivo: 'sin-consentimiento' };
   if (!opts.apiKeyResend) return { enviado: false, motivo: 'sin-clave', asunto: plantilla.asunto };
 
   const fetchImpl = opts.fetchImpl ?? globalThis.fetch;
-  const res = await fetchImpl('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      authorization: `Bearer ${opts.apiKeyResend}`,
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: REMITENTE,
-      to: [email],
-      subject: plantilla.asunto,
-      text: plantilla.cuerpo.replace('{nombre}', saludo(despues?.contacto?.nombre)),
-      // Responder va al buzón REAL: un «no-responder» que además ignora respuestas es una puerta
-      // cerrada con un cartel que dice «pase».
-      reply_to: RESPONDER_A,
-    }),
-  });
+  // Un corte de red tampoco lanza: «no lanza» es la promesa de esta función (ver arriba).
+  let res: Response;
+  try {
+    res = await fetchImpl('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${opts.apiKeyResend}`,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: REMITENTE,
+        to: [email],
+        subject: plantilla.asunto,
+        text: plantilla.cuerpo.replace('{nombre}', saludo(contacto.nombre)),
+        // Responder va al buzón REAL: un «no-responder» que además ignora respuestas es una puerta
+        // cerrada con un cartel que dice «pase».
+        reply_to: RESPONDER_A,
+      }),
+    });
+  } catch {
+    return { enviado: false, motivo: 'fallo-envio', asunto: plantilla.asunto };
+  }
 
   return res.ok
     ? { enviado: true, status: res.status, asunto: plantilla.asunto }
@@ -141,8 +161,9 @@ export function lineaDeEstado(id: string, r: ReporteEstado): string {
     'sin-cambio': 'el estado no cambió',
     'estado-sin-aviso': 'ese estado no se le avisa al cliente, a propósito',
     'sin-email': 'la solicitud no trae correo',
+    'sin-consentimiento': 'la solicitud no guarda la autorización de datos (Ley 1581)',
     'sin-clave': 'falta la clave de Resend (el secreto sigue con su centinela)',
-    'fallo-envio': `Resend respondió ${r.status}`,
+    'fallo-envio': r.status ? `Resend respondió ${r.status}` : 'no se pudo conectar con Resend',
   };
   return `solicitud ${id}: NO se avisó — ${porque[r.motivo ?? ''] ?? 'motivo desconocido'}`;
 }

@@ -40,7 +40,10 @@ export function asuntoDeLead(s: Solicitud): string {
   const op = s.operacionInteres ? etiquetaOperacion(s.operacionInteres) : 'Contacto';
   const quien = s.contacto?.nombre?.trim() || 'sin nombre';
   const alerta = contactabilidad(s) === 'NINGUNO' ? ' ⚠️ SIN CONTACTO' : '';
-  return `${tier}${op} · ${quien}${alerta}`;
+  // Sin caracteres de control ni separadores de línea: el nombre llega del documento, y un salto de
+  // línea en un asunto es la forma clásica de colar cabeceras. El endpoint ya los quita; esto cubre
+  // al que escribe por REST saltándose el endpoint.
+  return `${tier}${op} · ${quien}${alerta}`.replace(/[\p{Cc}\u2028\u2029\u202a-\u202e\u2066-\u2069]/gu, ' ');
 }
 
 function etiquetaOperacion(op: string): string {
@@ -69,7 +72,7 @@ export function cuerpoDeLead(s: Solicitud, urlPanel: string): string {
   if (s.operacionInteres) l.push(`Interés: ${etiquetaOperacion(s.operacionInteres)}`);
   if (s.propiedadId) l.push(`Inmueble: ${s.propiedadId}`);
   if (s.leadScore != null) l.push(`Score: ${s.leadScore}${s.leadTier ? ` (${s.leadTier})` : ''}`);
-  l.push(`Origen: ${s.source}`);
+  l.push(`Origen: ${s.origen || s.source || '—'}`);
   if (s.mensaje?.trim()) {
     l.push('');
     l.push('Mensaje:');

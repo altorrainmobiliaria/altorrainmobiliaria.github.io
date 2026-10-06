@@ -33,6 +33,8 @@ const sol = (estado: string, extra: Record<string, unknown> = {}): Partial<Solic
   ({
     estado,
     contacto: { nombre: 'Ana Restrepo', email: 'ana@example.com' },
+    // Lo que guarda `/api/solicitud` de todo lead: sin esto no se le escribe a nadie.
+    consentimiento: { autorizado: true },
     ...extra,
   }) as Partial<Solicitud>;
 
@@ -124,6 +126,55 @@ describe('nunca lanza, y el motivo que registra es el REAL', () => {
 });
 
 describe('el correo que le llega a una persona', () => {
+  it('🔴 lee el contacto SUELTO, que es como lo guarda /api/solicitud', async () => {
+    // Antes solo miraba `contacto.email`: a un lead del portal con correo nunca le habría llegado
+    // el aviso, y además con un saludo sin nombre.
+    const plano = {
+      estado: 'contactado',
+      nombre: 'Luis Pérez',
+      telefono: '3011234567',
+      email: 'luis@example.com',
+      consentimiento: { autorizado: true },
+    };
+    const { llamadas, fetchImpl } = espia();
+    const r = await avisarCambioDeEstado(
+      // `pendiente` es el estado que escribe el portal, aunque el modelo aún no lo nombre.
+      { estado: 'pendiente' } as unknown as Partial<Solicitud>,
+      plano as Partial<Solicitud>,
+      {
+        apiKeyResend: CLAVE,
+        fetchImpl,
+      },
+    );
+    expect(r.enviado).toBe(true);
+    expect(llamadas[0].cuerpo.to).toEqual(['luis@example.com']);
+    expect(String(llamadas[0].cuerpo.text)).toContain('Hola Luis');
+  });
+
+  it('🔴 sin la autorización GUARDADA no se escribe (los leads del sitio viejo no la tienen)', async () => {
+    const { llamadas, fetchImpl } = espia();
+    const viejo = { estado: 'cerrado', nombre: 'Marta', email: 'marta@example.com' } as Partial<Solicitud>;
+    const r = await avisarCambioDeEstado(sol('nuevo'), viejo, { apiKeyResend: CLAVE, fetchImpl });
+    expect(r).toMatchObject({ enviado: false, motivo: 'sin-consentimiento' });
+    expect(llamadas).toHaveLength(0);
+    expect(lineaDeEstado('S1', r)).toContain('autorización de datos');
+  });
+
+  it('un corte de red NO lanza: queda como fallo de envío', async () => {
+    const roto = (async () => {
+      throw new Error('ECONNRESET');
+    }) as unknown as typeof fetch;
+    const r = await avisarCambioDeEstado(sol('nuevo'), sol('contactado'), { apiKeyResend: CLAVE, fetchImpl: roto });
+    expect(r).toMatchObject({ enviado: false, motivo: 'fallo-envio' });
+    expect(lineaDeEstado('S1', r)).toContain('no se pudo conectar');
+  });
+
+  it('el saludo solo lleva algo que parezca un nombre (nunca un enlace)', () => {
+    expect(saludo('https://phish.example/x')).toBe('');
+    expect(saludo('María-José')).toBe(' María-José');
+    expect(saludo("D'Angelo Ruiz")).toBe(" D'Angelo");
+  });
+
   it('saluda por el nombre de pila, no por el nombre completo', () => {
     expect(saludo('Ana María Restrepo')).toBe(' Ana');
     expect(saludo('  ')).toBe('');
