@@ -29,7 +29,8 @@ import { etiquetaTipo } from './shared';
 import { pesos } from './dinero';
 import type { Propiedad } from './propiedades';
 import type { CatalogoResumen } from './catalogo';
-import { claseDe, operacionAShard } from './catalogo';
+import { claseDe, esAnunciable, operacionAShard } from './catalogo';
+import { numeroRnt, textoRnt } from './rnt';
 import { ESTADOS_OBRA, ETIQUETA_ESTADO_OBRA, type EstadoObra } from './proyectos';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -97,6 +98,8 @@ export interface PrecioFicha {
   valor: string;
   /** Línea secundaria REAL (precio por m², administración). Vacía si no hay nada que decir. */
   sub: string;
+  /** «RNT 100001» en alojamiento, para pintarlo PEGADO al precio por noche; `null` en venta y arriendo. */
+  rnt: string | null;
 }
 
 /**
@@ -105,11 +108,23 @@ export interface PrecioFicha {
  *
  * El $/m² se calcula SOLO si existen las dos cifras; y solo en venta, porque un «precio por metro» de
  * un canon mensual no significa nada para un arrendatario.
+ *
+ * ⚖️ El precio por noche lleva su RNT AL LADO (Ley 300/1996: el número va en toda publicidad de
+ * alojamiento turístico, y el bloque de precio es la publicidad más visible de la ficha). Sin número
+ * exhibible el precio no sale —`null`, y la ficha dice «A consultar»—: el gate de publicación ya no
+ * deja llegar aquí a un alojamiento sin RNT, y si alguna vez llega, falla cerrado.
  */
 export function precioFicha(p: Propiedad): PrecioFicha | null {
   const op = p.operacion;
   const valor = op === 'venta' ? p.precio?.valorVenta : op === 'arriendo' ? p.precio?.canon : p.precio?.precioNoche;
   if (valor == null) return null;
+  // Lo que no es venta ni arriendo se cobra por noche (la línea de arriba): ahí el RNT es obligatorio.
+  let rnt: string | null = null;
+  if (op !== 'venta' && op !== 'arriendo') {
+    const numero = numeroRnt(p.rnt);
+    if (numero === null) return null;
+    rnt = textoRnt(numero);
+  }
 
   const etiqueta = op === 'venta' ? 'Precio de venta' : op === 'arriendo' ? 'Canon mensual' : 'Precio por noche';
 
@@ -129,7 +144,7 @@ export function precioFicha(p: Propiedad): PrecioFicha | null {
     partes.push(`Aseo ${pesos(p.precio.precioAseo)} por estadía`);
   }
 
-  return { etiqueta, valor: `${pesos(valor)}${sufijoPrecio(op)}`, sub: partes.join(' · ') };
+  return { etiqueta, valor: `${pesos(valor)}${sufijoPrecio(op)}`, sub: partes.join(' · '), rnt };
 }
 
 /** Valor numérico del precio para la operación (JSON-LD y comparaciones). `null` si no hay. */
@@ -209,8 +224,11 @@ export function fichaTecnica(p: Propiedad): Array<[string, string]> {
   if (s.estrato != null) filas.push(['Estrato', String(s.estrato)]);
   if (p.codigoLegacy) filas.push(['Código', p.codigoLegacy]);
   // RNT: OBLIGATORIO y visible en alojamiento (gate B3). Si la propiedad es turística y NO lo trae, la
-  // fila no se inventa: el hueco es la señal de que esa publicación no debería estar viva.
-  if (p.operacion === 'alojamiento' && p.rnt) filas.push(['RNT', p.rnt]);
+  // fila no se inventa: el hueco es la señal de que esa publicación no debería estar viva. Va el
+  // número NORMALIZADO (`numeroRnt`), el mismo que exhiben el bloque de precio y las tarjetas: lo
+  // tecleado («R.N.T. No. 12.345») y lo exhibido no pueden ser dos versiones del mismo registro.
+  const numero = p.operacion === 'alojamiento' ? numeroRnt(p.rnt) : null;
+  if (numero !== null) filas.push(['RNT', numero]);
   return filas;
 }
 
@@ -324,6 +342,11 @@ export function historialPrecio(p: Propiedad): CambioPrecio[] {
  * Propiedades similares: misma operación (el índice ya viene por shard), NUNCA ella misma, y con el
  * mismo sector primero. Sin puntuaciones inventadas: se ordena por cercanía de sector y luego por
  * precio parecido, que es lo que compara una persona mirando dos fichas.
+ *
+ * ⚖️ Solo lo ANUNCIABLE (`esAnunciable`): cada similar es una tarjeta con foto y precio, y una
+ * estadía sin RNT exhibible no sale — ni siquiera en la ficha de otra. La que sale lleva su número
+ * junto al precio por noche (`rntDeResumen`, en la plantilla). La lectura del shard ya filtra igual
+ * (`buscar-ficha.ts`); aquí se repite porque ESTA es la función que decide qué se pinta.
  */
 export function similares(items: readonly CatalogoResumen[], p: Propiedad, tope = 3): CatalogoResumen[] {
   const shard = operacionAShard(p.operacion);
@@ -331,7 +354,7 @@ export function similares(items: readonly CatalogoResumen[], p: Propiedad, tope 
   const sector = (p.geo?.barrio ?? '').toLowerCase();
 
   return [...items]
-    .filter((r) => r.id !== p.id && operacionAShard(r.operacion) === shard)
+    .filter((r) => esAnunciable(r) && r.id !== p.id && operacionAShard(r.operacion) === shard)
     .sort((a, b) => {
       const sa = (a.sector ?? '').toLowerCase() === sector ? 0 : 1;
       const sb = (b.sector ?? '').toLowerCase() === sector ? 0 : 1;

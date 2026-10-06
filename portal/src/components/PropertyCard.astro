@@ -16,6 +16,13 @@ interface Props {
   price: string;          // "$1.450.000.000"
   priceLabel?: string;    // "Desde" | "Canon" | "Noche"
   priceSuffix?: string;   // "/mes" | "/noche"
+  /*
+   * RNT (Ley 300/1996): cuando la card anuncia un alojamiento —precio «/noche»—, su número va pegado
+   * al precio: «RNT 100001» (`rntDeResumen`). Mismo contrato que `StayCard` y `RankCard`: con la
+   * prop, aunque sea `''` (así la pasa un `<template>`), se emite el hueco `[data-rnt]`; sin ella,
+   * no hay hueco — venta y arriendo, que no lo llevan. Aditivo: sin el prop, nada cambia.
+   */
+  rnt?: string;
   href: string;
   pin?: string;           // id del pin del mapa al que ilumina esta card (SERP, §32.22)
   /** Id del DOCUMENTO del inmueble. Lo usa favoritos como clave estable: el slug y la URL pueden
@@ -30,7 +37,7 @@ interface Props {
    */
   nivel?: 2 | 3;
 }
-const { img, alt, badge, zona, beds, baths, area, title, price, priceLabel, priceSuffix, href, pin, inmId, nivel = 3 } = Astro.props;
+const { img, alt, badge, zona, beds, baths, area, title, price, priceLabel, priceSuffix, rnt, href, pin, inmId, nivel = 3 } = Astro.props;
 /** Etiqueta dinamica: en mayuscula porque Astro trata las minusculas como etiqueta HTML literal. */
 const Titulo = `h${nivel}` as 'h2' | 'h3';
 
@@ -62,6 +69,7 @@ const specIcon = {
     <div class="alt-pcard__foot">
       <span class="alt-pcard__price">
         {priceLabel && <span class="alt-pcard__price-lbl">{priceLabel}</span>}{price}{priceSuffix && <span class="alt-pcard__price-sfx">{priceSuffix}</span>}
+        {rnt !== undefined && <span class="alt-pcard__rnt" data-rnt>{rnt}</span>}
       </span>
       <a class="alt-pcard__orb" href={href} aria-label={`Ver ${title}`}>
         <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -118,6 +126,9 @@ const specIcon = {
   .alt-pcard__price { font-weight: var(--alt-fw-semibold); font-size: 18px; color: var(--alt-text); }
   .alt-pcard__price-lbl { font-size: 10.5px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text-muted); margin-right: 5px; }
   .alt-pcard__price-sfx { font-size: 13px; font-weight: var(--alt-fw-medium); color: var(--alt-text-muted); margin-left: 3px; }
+  /* Debajo de la cifra, dentro del mismo bloque de precio: con el token AA del cuerpo (`--alt-text`),
+     no con el decorativo del sufijo — el RNT se tiene que poder LEER. */
+  .alt-pcard__rnt { display: block; font-size: var(--alt-fs-xs); font-weight: var(--alt-fw-medium); color: var(--alt-text); margin-top: 2px; }
 
   .alt-pcard__orb {
     flex: none; display: inline-flex; align-items: center; justify-content: center;

@@ -17,9 +17,8 @@
  */
 import { urlMedia } from '../lib/media';
 import { pesos } from '../lib/domain/dinero';
-import { esAnunciable, rutaDeResumen } from '../lib/domain/catalogo';
+import { esAnunciable, rntDeResumen, rutaDeResumen } from '../lib/domain/catalogo';
 import type { CatalogoResumen } from '../lib/domain/catalogo';
-import { numeroRnt, textoRnt } from '../lib/domain/rnt';
 // El tipo de operación y la etiqueta del badge tienen DUEÑO en el dominio; aquí había copias a mano
 // (§277). Las cazó `verify:simbolos` al exportarlas: por separado las dos eran legítimas, y por eso
 // no las veía ningún otro gate.
@@ -251,7 +250,7 @@ export interface DatosStayCard {
   /** Zona y tipo, que es lo que SÍ consta; `null` si no consta ninguno (el nodo se quita). */
   meta: string | null;
   precio: string;
-  /** «RNT 100001», por `textoRnt`: va pegado al precio, en el mismo anuncio. */
+  /** «RNT 100001», por `rntDeResumen`: va pegado al precio, en el mismo anuncio. */
   rnt: string;
 }
 
@@ -261,8 +260,8 @@ export interface DatosStayCard {
  * Una `StayCard` es publicidad de hospedaje: foto y precio por noche. La ley exige el número del RNT
  * en TODA publicidad de alojamiento turístico, así que la respuesta a «¿y si no hay número?» no es
  * una tarjeta sin él: es NINGUNA tarjeta (`null`). `esAnunciable` va primero porque es el dueño de
- * «¿esto se puede anunciar?» (y el que no se cae con un ítem que ni es un objeto); el `numeroRnt` de
- * después da el número que se exhibe.
+ * «¿esto se puede anunciar?» (y el que no se cae con un ítem que ni es un objeto); `rntDeResumen`
+ * da el número que se exhibe, con el mismo formato que la ficha y el correo de alertas.
  *
  * Venta y arriendo tampoco: esta tarjeta dice «COP noche», y un apartamento de $450 millones «por
  * noche» es un dato falso con aspecto de anuncio.
@@ -272,13 +271,13 @@ export interface DatosStayCard {
  */
 export function datosStayCard(it: CatalogoItem): DatosStayCard | null {
   if (!esAnunciable(it) || it.operacion !== 'alojamiento') return null;
-  const numero = numeroRnt(it.rnt);
-  if (numero === null) return null;
+  const rnt = rntDeResumen(it);
+  if (rnt === null) return null;
   return {
     titulo: it.titulo,
     meta: [it.sector, tipoLegible(it)].filter(Boolean).join(' · ') || null,
     precio: precioCard(it.precio),
-    rnt: textoRnt(numero),
+    rnt,
   };
 }
 

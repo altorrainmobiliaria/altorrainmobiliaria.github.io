@@ -23,6 +23,7 @@ import {
 import { portadaDe, publicable } from './propiedades';
 import type { Propiedad } from './propiedades';
 import type { CatalogoResumen } from './catalogo';
+import { rntDeResumen } from './catalogo';
 
 // Modelo de VISTA de la ficha (ADR §60 → §97). Lo que se protege aquí es UNA regla: un bloque sin dato
 // se OMITE y jamás hereda el valor del demo. Casi cada test comprueba una AUSENCIA, porque el fallo que
@@ -111,6 +112,30 @@ describe('precio', () => {
   });
 });
 
+describe('⚖️ precio por noche ⇒ RNT al lado (Ley 300/1996)', () => {
+  const noche = (rnt?: string) =>
+    prop({ operacion: 'alojamiento', rnt, precio: { moneda: 'COP', precioNoche: 680_000 } });
+
+  it('el bloque de precio trae el RNT normalizado, no lo que se tecleó', () => {
+    const r = precioFicha(noche('R.N.T. No. 12.345'))!;
+    expect(r.valor).toBe('$680.000 / noche');
+    expect(r.rnt).toBe('RNT 12345');
+  });
+
+  it('venta y arriendo no llevan RNT', () => {
+    expect(precioFicha(prop())!.rnt).toBeNull();
+    expect(precioFicha(prop({ operacion: 'arriendo', precio: { moneda: 'COP', canon: 8_500_000 } }))!.rnt).toBeNull();
+  });
+
+  it.each([
+    ['sin rnt', undefined],
+    ['«pendiente»', 'pendiente'],
+    ['la plantilla del panel sin rellenar', 'RNT-000000'],
+  ])('%s → sin precio (falla cerrado: «A consultar», nunca una noche sin número)', (_caso, rnt) => {
+    expect(precioFicha(noche(rnt))).toBeNull();
+  });
+});
+
 describe('specs y ficha técnica', () => {
   it('solo salen las specs con dato, en orden', () => {
     const r = specsVisibles(prop({ specs: { habitaciones: 2, areaConstruidaM2: 80 } }));
@@ -136,9 +161,16 @@ describe('specs y ficha técnica', () => {
 
   it('el RNT sale en alojamiento cuando existe, y NO se inventa cuando falta', () => {
     const con = fichaTecnica(prop({ operacion: 'alojamiento', rnt: 'RNT-100001', precio: { moneda: 'COP', precioNoche: 400_000 } }));
-    expect(con.some(([k, v]) => k === 'RNT' && v === 'RNT-100001')).toBe(true);
+    expect(con.filter(([k]) => k === 'RNT')).toEqual([['RNT', '100001']]);
     const sin = fichaTecnica(prop({ operacion: 'alojamiento', precio: { moneda: 'COP', precioNoche: 400_000 } }));
     expect(sin.some(([k]) => k === 'RNT')).toBe(false);
+  });
+
+  it('la fila del RNT lleva el número NORMALIZADO, y «pendiente» no es un número', () => {
+    const tecleado = fichaTecnica(prop({ operacion: 'alojamiento', rnt: 'R.N.T. No. 12.345', precio: { moneda: 'COP', precioNoche: 1 } }));
+    expect(tecleado.filter(([k]) => k === 'RNT')).toEqual([['RNT', '12345']]);
+    const pendiente = fichaTecnica(prop({ operacion: 'alojamiento', rnt: 'pendiente', precio: { moneda: 'COP', precioNoche: 1 } }));
+    expect(pendiente.some(([k]) => k === 'RNT')).toBe(false);
   });
 });
 
@@ -217,6 +249,25 @@ describe('similares', () => {
   it('respeta el tope', () => {
     const items = Array.from({ length: 9 }, (_, i) => res({ id: `i${i}` }));
     expect(similares(items, prop(), 3)).toHaveLength(3);
+  });
+
+  it('⚖️ una estadía sin RNT exhibible no sale; la que sale lleva su número', () => {
+    const yo = prop({ operacion: 'alojamiento', rnt: '100001', precio: { moneda: 'COP', precioNoche: 500_000 } });
+    const items = [
+      res({ id: 'con', operacion: 'alojamiento', rnt: '200002', precio: 450_000 }),
+      res({ id: 'sin', operacion: 'alojamiento', precio: 480_000 }),
+      res({ id: 'pend', operacion: 'alojamiento', rnt: 'pendiente', precio: 490_000 }),
+    ];
+    const elegidas = similares(items, yo);
+    expect(elegidas.map((r) => r.id)).toEqual(['con']);
+    // Lo que pinta la tarjeta junto al «/ noche»: cada alojamiento elegido tiene su «RNT n».
+    expect(elegidas.map(rntDeResumen)).toEqual(['RNT 200002']);
+  });
+
+  it('venta y arriendo no necesitan RNT, ni se les pinta uno', () => {
+    const elegidas = similares([res({ id: 'v' })], prop());
+    expect(elegidas.map((r) => r.id)).toEqual(['v']);
+    expect(rntDeResumen(elegidas[0])).toBeNull();
   });
 });
 

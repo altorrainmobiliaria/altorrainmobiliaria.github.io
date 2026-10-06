@@ -71,12 +71,12 @@ const arrow = '<path d="M5 12h14M13 6l6 6-6 6"/>';
         </div>
       </section>
 
-      {/* Molde de la card: el PropertyCard REAL con todas sus partes opcionales presentes; el script
-          borra las que no apliquen. No se muestra ni se indexa (<template>). */}
+      {/* Molde de la card: el PropertyCard REAL con todas sus partes opcionales presentes —el hueco
+          del RNT incluido—; el script borra las que no apliquen. No se muestra ni se indexa (<template>). */}
       <template id="tpl-pcard">
         <PropertyCard
           img="" alt="" badge="En venta" zona="" beds={0} baths={0} area="0 m²"
-          title="" price="" priceLabel="Desde" priceSuffix="/mes" href="#"
+          title="" price="" priceLabel="Desde" priceSuffix="/mes" rnt="" href="#"
         />
       </template>
     </div>
@@ -164,6 +164,11 @@ const arrow = '<path d="M5 12h14M13 6l6 6-6 6"/>';
 
     texto(frag, '.alt-pcard__price-lbl', f.precioLabel || null);
     texto(frag, '.alt-pcard__price-sfx', f.precioSufijo || null);
+    texto(frag, '.alt-pcard__rnt', f.rnt || null);
+    // ⚖️ Ley 300/1996: un precio por noche no se exhibe sin su RNT. Un favorito de alojamiento
+    // guardado antes de que la card lo llevara no lo trae, y su número no se puede reconstruir aquí:
+    // se queda la tarjeta y se va el precio — la ficha, a un clic, lo da con su RNT al lado.
+    if (!f.rnt && /noche/i.test(f.precioSufijo)) frag.querySelector('.alt-pcard__price')?.remove();
     // El importe es el nodo de texto suelto dentro de `.alt-pcard__price`, entre etiqueta y sufijo.
     const precio = frag.querySelector('.alt-pcard__price');
     if (precio) {

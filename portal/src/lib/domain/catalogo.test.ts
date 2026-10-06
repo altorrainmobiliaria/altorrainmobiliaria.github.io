@@ -9,6 +9,7 @@ import {
   problemasParaPublicar,
   propiedadAResumen,
   proyectoAResumen,
+  rntDeResumen,
   rutaDeResumen,
 } from './catalogo';
 import type { ProblemaPublicacion } from './catalogo';
@@ -598,6 +599,19 @@ describe('el RNT en el índice — solo en alojamiento, y solo el número', () =
     expect([null, { operacion: 'venta' }].filter((it) => esAnunciable(it as never))).toEqual([{ operacion: 'venta' }]);
   });
 
+  it('rntDeResumen: lo que exhibe un anuncio junto a su precio, con la sigla del dueño (`textoRnt`)', () => {
+    expect(rntDeResumen({ operacion: 'alojamiento', rnt: '100001' })).toBe('RNT 100001');
+    expect(rntDeResumen({ operacion: 'alojamiento', rnt: 'R.N.T. No. 12.345' })).toBe('RNT 12345');
+    // Una operación desconocida con número también lo exhibe: `esAnunciable` la dejó pasar por él.
+    expect(rntDeResumen({ operacion: 'dias', rnt: '100001' } as never)).toBe('RNT 100001');
+    // Venta y arriendo no lo llevan, aunque el ítem traiga algo en el campo.
+    expect(rntDeResumen({ operacion: 'venta', rnt: '100001' })).toBeNull();
+    expect(rntDeResumen({ operacion: 'arriendo' })).toBeNull();
+    // Lo no anunciable tampoco: no hay número que poner, y quien pinta ya lo descartó.
+    expect(rntDeResumen({ operacion: 'alojamiento', rnt: 'pendiente' })).toBeNull();
+    expect(rntDeResumen(null as never)).toBeNull();
+  });
+
   it('🎯 INVARIANTE: todo lo que el rebuild mete en «dias» es anunciable', () => {
     const { indices, omitidas } = construirIndices(
       [
@@ -613,6 +627,8 @@ describe('el RNT en el índice — solo en alojamiento, y solo el número', () =
     // Primero que NO esté vacío: un «todos cumplen» sobre una lista vacía es verdad y no dice nada.
     expect(indices.dias.items.map((i) => i.id).sort()).toEqual(['D-OK', 'D-PUNTOS']);
     expect(indices.dias.items.every(esAnunciable)).toBe(true);
+    // …y cada una tiene un número que poner junto a su precio por noche.
+    expect(indices.dias.items.map(rntDeResumen).sort()).toEqual(['RNT 100001', 'RNT 12345']);
     expect(omitidas.map((o) => o.motivo)).toEqual(['sin-rnt', 'sin-rnt', 'sin-rnt', 'sin-rnt']);
   });
 });

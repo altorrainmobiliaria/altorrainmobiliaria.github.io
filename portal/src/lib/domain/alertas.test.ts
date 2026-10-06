@@ -170,6 +170,22 @@ describe('formatoPrecioResumen — un «desde» no se dice como si fuera el prec
   });
 });
 
+describe('⚖️ formatoPrecioResumen — la noche sale con su RNT pegado (Ley 300/1996)', () => {
+  it('un alojamiento: «$X por noche · RNT n», con el número normalizado', () => {
+    expect(formatoPrecioResumen(res({ operacion: 'alojamiento', precio: 680_000, rnt: '100001' }))).toBe(
+      '$680.000 por noche · RNT 100001',
+    );
+    expect(formatoPrecioResumen(res({ operacion: 'alojamiento', precio: 680_000, rnt: 'RNT No. 12.345' }))).toBe(
+      '$680.000 por noche · RNT 12345',
+    );
+  });
+
+  it('venta y arriendo no llevan RNT, aunque el ítem traiga uno', () => {
+    expect(formatoPrecioResumen(res({ rnt: '100001' }))).not.toContain('RNT');
+    expect(formatoPrecioResumen(res({ operacion: 'arriendo', precio: 4_000_000, rnt: '100001' }))).toBe('$4.000.000 al mes');
+  });
+});
+
 describe('seleccionarNovedades', () => {
   const desde = '2026-08-19T00:00:00.000Z';
 
@@ -206,6 +222,16 @@ describe('seleccionarNovedades', () => {
 
   it('con un corte inválido no inventa novedades', () => {
     expect(seleccionarNovedades(criterios(), [res()], 'nunca').total).toBe(0);
+  });
+
+  it('⚖️ una estadía sin RNT exhibible NO va en el correo, ni cuenta en el «y N más»', () => {
+    const c = criterios({ operacion: 'alojamiento' });
+    const aloj = (id: string, rnt?: string) => res({ id, operacion: 'alojamiento', precio: 680_000, rnt });
+    const r = seleccionarNovedades(c, [aloj('con', '100001'), aloj('sin'), aloj('pend', 'pendiente')], desde);
+    expect(r.items.map((i) => i.id)).toEqual(['con']);
+    expect(r.total).toBe(1);
+    // Y la que va, va con su número junto al precio.
+    expect(formatoPrecioResumen(r.items[0])).toContain('por noche · RNT 100001');
   });
 });
 

@@ -25,6 +25,12 @@ export interface FavoritoGuardado {
   precio: string;
   precioLabel: string;
   precioSufijo: string;
+  /**
+   * «RNT 100001» si la card anunciaba un alojamiento (Ley 300/1996: el número va con el precio por
+   * noche). Opcional porque los favoritos guardados antes de que la card lo llevara no lo traen, y
+   * `/favoritos` no exhibe su precio por noche sin él.
+   */
+  rnt?: string;
   specs: { tipo: string; valor: string }[];
   guardadoEn: string; // ISO
 }
@@ -98,6 +104,8 @@ export function instantanea(card: HTMLElement, id: string): FavoritoGuardado {
     })(),
     precioLabel: t('.alt-pcard__price-lbl'),
     precioSufijo: t('.alt-pcard__price-sfx'),
+    // El RNT es un elemento, no un nodo de texto suelto: no se cuela en `precio` de arriba.
+    rnt: t('.alt-pcard__rnt'),
     // Cada spec viaja CON su tipo (bed|bath|area). Guardar solo los valores obligaba a confiar en
     // el orden, y el orden cambia en cuanto una card omite una spec (un lote no tiene banos).
     specs: [...card.querySelectorAll<HTMLElement>('.alt-pcard__specs span')].map((s) => ({

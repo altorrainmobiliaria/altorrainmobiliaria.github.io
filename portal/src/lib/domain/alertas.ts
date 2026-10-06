@@ -20,6 +20,7 @@ import type { COP, ISODate, Operacion, TipoInmueble } from './shared';
 import { pesos } from './dinero';
 import { etiquetaTipoPlural, OPERACIONES, TIPOS_INMUEBLE } from './shared';
 import type { CatalogoResumen } from './catalogo';
+import { esAnunciable, rntDeResumen } from './catalogo';
 import type { PruebaConsentimiento } from '../config/legal';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -238,6 +239,10 @@ export function coincide(c: CriteriosAlerta, r: CatalogoResumen): boolean {
  *
  * Ordena por publicación descendente (lo más nuevo arriba) y recorta al tope del correo. Devuelve
  * también el TOTAL sin recortar, porque el correo dice «y N más» y ese número tiene que ser cierto.
+ *
+ * ⚖️ Solo lo ANUNCIABLE (`esAnunciable`): el correo pone título y precio por noche, o sea que es
+ * publicidad de hospedaje, y una estadía sin RNT exhibible no va — ni en la lista ni en el «y N
+ * más». El digest lee el índice que escribió la Function DESPLEGADA, que puede ser anterior al gate.
  */
 export function seleccionarNovedades(
   c: CriteriosAlerta,
@@ -248,7 +253,7 @@ export function seleccionarNovedades(
   if (!Number.isFinite(corte)) return { items: [], total: 0 };
 
   const nuevas = items
-    .filter((r) => coincide(c, r))
+    .filter((r) => esAnunciable(r) && coincide(c, r))
     .filter((r) => {
       const t = Date.parse(r.pub ?? '');
       // Sin fecha utilizable NO cuenta como novedad: sin corte fiable, cada corrida lo reenviaría.
@@ -281,10 +286,17 @@ export function formatoPrecio(v: COP, op: Operacion): string {
  *
  * Vive junto a `formatoPrecio` porque el correo del digest es hoy su único consumidor y ahí es donde
  * la mentira llegaría a una bandeja de entrada, ya fuera de nuestro control.
+ *
+ * ⚖️ Y por la misma razón un alojamiento lleva su RNT pegado: «$680.000 por noche · RNT 100001»
+ * (Ley 300/1996, el número en toda publicidad de alojamiento turístico). Lo da `rntDeResumen`, el
+ * mismo formato que las tarjetas y la ficha; la estadía que no lo tiene ya no llega aquí
+ * (`seleccionarNovedades`).
  */
-export function formatoPrecioResumen(r: Pick<CatalogoResumen, 'precio' | 'precioHasta' | 'operacion'>): string {
+export function formatoPrecioResumen(r: Pick<CatalogoResumen, 'precio' | 'precioHasta' | 'operacion' | 'rnt'>): string {
   const base = formatoPrecio(r.precio, r.operacion);
-  return r.precioHasta != null && r.precioHasta > r.precio ? `Desde ${base}` : base;
+  const precio = r.precioHasta != null && r.precioHasta > r.precio ? `Desde ${base}` : base;
+  const rnt = rntDeResumen(r);
+  return rnt ? `${precio} · ${rnt}` : precio;
 }
 
 /** Resumen legible de los criterios. Se muestra al confirmar y encabeza cada correo. */

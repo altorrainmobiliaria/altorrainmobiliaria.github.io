@@ -138,8 +138,8 @@ export async function buscarFicha(cliente: DataClient, parametro: string): Promi
   // de recomendaciones no justifica esconder el inmueble.
   // ⚖️ Las similares son tarjetas con foto y precio por noche, o sea publicidad: pasan por el mismo
   // `esAnunciable` que el endpoint del catálogo, para que un índice escrito por la Function anterior
-  // no cuele un alojamiento sin número de RNT en la ficha de otro.
-  // ⚠️ PENDIENTE: `PropertyCard` aún no exhibe el RNT ni de las que sí lo traen (`textoRnt`).
+  // no cuele un alojamiento sin número de RNT en la ficha de otro. Las que pasan lo exhiben junto al
+  // precio por noche (`rntDeResumen` → `PropertyCard`, en `FichaInmueble`).
   const shard = await leerShard(cliente, operacionAShard(r.data.operacion));
   return { estado: 'ok', p: r.data, similares: shard.ok ? shard.items.filter(esAnunciable) : [] };
 }

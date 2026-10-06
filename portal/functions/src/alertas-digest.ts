@@ -178,6 +178,9 @@ export function cuerpoDigest(
       const meta = [it.hab ? `${it.hab} hab` : '', it.ban ? `${it.ban} baños` : '', it.area ? `${it.area} m²` : '']
         .filter(Boolean)
         .join(' · ');
+      // ⚖️ El precio de un alojamiento sale con su RNT pegado («$X por noche · RNT n»): lo pone
+      // `formatoPrecioResumen`, y aquí y en el texto plano va la MISMA cadena. La estadía sin número
+      // ni llega a esta lista: `seleccionarNovedades` solo deja pasar lo anunciable (Ley 300/1996).
       return `<tr><td style="padding:14px 0;border-bottom:1px solid #e6edf2">
   <a href="${esc(url)}" style="color:#062743;font-size:16px;font-weight:600;text-decoration:none">${esc(it.titulo)}</a>
   <div style="color:#5a6b82;font-size:14px;margin-top:4px">${esc(it.sector || 'Cartagena')}${meta ? ` · ${esc(meta)}` : ''}</div>

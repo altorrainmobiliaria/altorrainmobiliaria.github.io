@@ -8,34 +8,40 @@
  *   · LuCard       → FIJA 276-330px, cuerpo CENTRADO, swatches + 2ª línea de precio.
  *   · StayCard     → FIJA 230-262px, SIN caja, foto desnuda + texto suelto.
  *   · RankCard     → FIJA 288-326px, NEUMÓRFICA (--alt-nm-up: vive sobre lienzo neu),
- *                    numeral gigante CALADO en oro + píldora de rating con reseñas.
+ *                    numeral gigante CALADO en oro + píldora de nota con su recuento.
  * El riel `.alt-rail` se comparte; la card NO (L-24).
  */
 interface Props {
   img: string;
   alt: string;
   rank: string;        // "01"
-  /* OPCIONALES desde §123: una nota y un conteo de reseñas son AFIRMACIONES sobre la
-     realidad, no adorno de tarjeta. Sin reseñas verdaderas detrás, la píldora NO se pinta —
-     y el día que las haya, vuelve sola. */
-  rating?: string;     // "4.99"
-  reviews?: string;    // "214 reseñas"
+  /* OPCIONAL desde §123: una nota es una AFIRMACIÓN sobre la realidad, no adorno de tarjeta, y
+     va en UN solo texto con su recuento («4,8 · 12 reseñas», `textoNota`) porque §281 no deja que
+     viajen separados. Sin la prop no hay píldora; con `''` (así la pasa el `<template>`) se emite
+     vacía y la isla la rellena (`pintarRank`).
+     🔴 Antes eran dos props, `rating` y `reviews`, y la píldora exigía las dos: la plantilla pasaba
+     solo `rating=""`, así que no se emitía NUNCA y la sección «valoradas» salía sin una sola nota. */
+  nota?: string;       // "4,8 · 12 reseñas"
   zona: string;
   title: string;
   price: string;       // "$3.200MM" | "$6.5M/mes"
+  /* RNT (Ley 300/1996): si la tarjeta anuncia un alojamiento, su número va pegado al precio por
+     noche. Mismo contrato que `StayCard`: con la prop, aunque sea `''`, se emite el hueco
+     `[data-rnt]`; sin ella, no (venta, arriendo y las tarjetas de MUESTRA de la portada). */
+  rnt?: string;
   href: string;
 }
-const { img, alt, rank, rating, reviews, zona, title, price, href } = Astro.props;
+const { img, alt, rank, nota, zona, title, price, rnt, href } = Astro.props;
 ---
 
 <a class="alt-rankcard" href={href}>
   <div class="alt-rankcard__media">
     <img src={img} alt={alt} loading="lazy" decoding="async" />
     <span class="alt-rankcard__rank" aria-hidden="true">{rank}</span>
-    {rating && reviews && (
+    {nota !== undefined && (
       <span class="alt-rankcard__rate">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.2 6.6.8-4.9 4.6 1.3 6.6L12 18.6 6.1 20.8l1.3-6.6L2.5 9l6.6-.8z"/></svg>
-        {rating} · {reviews}
+        <span class="alt-rankcard__nota">{nota}</span>
       </span>
     )}
   </div>
@@ -43,7 +49,10 @@ const { img, alt, rank, rating, reviews, zona, title, price, href } = Astro.prop
     <p class="alt-rankcard__zona">{zona}</p>
     <h3 class="alt-rankcard__t">{title}</h3>
     <div class="alt-rankcard__foot">
-      <span class="alt-rankcard__price">{price}</span>
+      <span class="alt-rankcard__cifra">
+        <span class="alt-rankcard__price">{price}</span>
+        {rnt !== undefined && <span class="alt-rankcard__rnt" data-rnt>{rnt}</span>}
+      </span>
       <span class="alt-rankcard__ver">Ver
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
       </span>
@@ -106,7 +115,11 @@ const { img, alt, rank, rating, reviews, zona, title, price, href } = Astro.prop
     display: flex; align-items: center; justify-content: space-between;
     border-top: 1px solid var(--alt-hairline); padding-top: 13px;
   }
+  /* Precio y, debajo, su RNT: los dos a la izquierda del «Ver», en el mismo bloque. */
+  .alt-rankcard__cifra { display: flex; flex-direction: column; gap: 2px; }
   .alt-rankcard__price { font-weight: var(--alt-fw-semibold); font-size: 15px; color: var(--alt-ink); }
+  /* El mismo token AA que el RNT de `StayCard`: pequeño, pero se tiene que poder LEER. */
+  .alt-rankcard__rnt { font-size: var(--alt-fs-xs); color: var(--alt-text); }
   .alt-rankcard__ver { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-link); }
   .alt-rankcard__ver svg { width: 13px; height: 13px; transition: transform var(--alt-dur) var(--alt-ease); }
   .alt-rankcard:hover .alt-rankcard__ver svg { transform: translateX(3px); }

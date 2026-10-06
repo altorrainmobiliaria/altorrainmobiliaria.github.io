@@ -10,10 +10,10 @@
  * 🎯 Lo preguntan todos al MISMO sitio: el gate de publicación (`motivoLegalNoPublicable`, y con él
  * la ficha vía `publicable`), el alta del panel (`construirPropiedad`), el índice
  * (`propiedadAResumen`) y los lectores del índice que pintan tarjetas (`esAnunciable`: el endpoint
- * del catálogo y las «similares» de la ficha). Si cada uno decidiera por su cuenta qué es «un RNT»,
- * el día que diverjan se guarda algo que el índice descarta en silencio — la clase de §103.
- * ⚠️ PENDIENTE: el correo de alertas (`functions/src/alertas-digest.ts`) lee el índice sin preguntar
- * aquí, y su plantilla no exhibe el número aunque el ítem ya lo traiga.
+ * del catálogo, las «similares» de la ficha y el correo de alertas). Si cada uno decidiera por su
+ * cuenta qué es «un RNT», el día que diverjan se guarda algo que el índice descarta en silencio — la
+ * clase de §103. Y lo que se EXHIBE junto a un precio sale de `rntDeResumen` (`catalogo.ts`) en las
+ * tarjetas y el correo, y de `precioFicha` en la ficha: los dos terminan en `textoRnt`.
  *
  * ⚠️ Lo que NO sabe: si el número existe en el registro. Comprueba la FORMA, no la verdad.
  */
@@ -66,7 +66,8 @@ const ANIO = /^(?:19|20)\d\d$/;
  * «RNT-000000» es la plantilla del campo del panel sin rellenar, no un registro.
  *
  * 🎯 Lo que acepta, exhibido con `textoRnt` —y también tal cual tras la etiqueta «RNT», que es como
- * lo pinta hoy la ficha—, lo reconoce la sonda del build; `rnt.test.ts` lo comprueba caso a caso.
+ * lo pinta la fila de la ficha técnica—, lo reconoce la sonda del build; `rnt.test.ts` lo comprueba
+ * caso a caso.
  * Al revés no: la sonda lee páginas enteras y admite texto detrás del número y cifras unidas con
  * guion, que aquí no valen.
  *
@@ -86,11 +87,9 @@ export function numeroRnt(raw: string | null | undefined): string | null {
 }
 
 /**
- * El RNT tal como se EXHIBE a partir del índice: `RNT 100001`. Recibe el número ya normalizado por
- * `numeroRnt`, no el texto del operador. Lo usará la tarjeta de alojamiento, que solo tiene el ítem
- * del índice; ⚠️ PENDIENTE: la ficha (`ficha.ts`) aún pinta el texto tal como se tecleó tras la
- * etiqueta «RNT». Es el mismo número —lo que acepta `numeroRnt` solo puede diferir en la sigla y
- * en los puntos de miles—, pero no el mismo formato hasta que pase por aquí.
+ * El RNT tal como se EXHIBE: `RNT 100001`. Recibe el número ya normalizado por `numeroRnt`, no el
+ * texto del operador, así que la ficha, las tarjetas y el correo enseñan el MISMO formato aunque el
+ * panel lo tecleara como «R.N.T. No. 12.345».
  */
 export function textoRnt(numero: string): string {
   return `RNT ${numero}`;

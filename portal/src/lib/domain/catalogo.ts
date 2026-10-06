@@ -9,7 +9,7 @@ import type { AgregadoResenas } from './resenas';
 import type { ISODate, COP, Operacion, TipoInmueble, EstadoPropiedad } from './shared';
 import { portadaDe, motivoLegalNoPublicable } from './propiedades';
 import type { MotivoLegal, Propiedad } from './propiedades';
-import { numeroRnt } from './rnt';
+import { numeroRnt, textoRnt } from './rnt';
 import {
   rangoDePrecios,
   tipologiaDeEntrada,
@@ -157,6 +157,22 @@ export function rutaDeResumen(r: Pick<CatalogoResumen, 'clase' | 'slug' | 'id'>)
 export function esAnunciable(it: Pick<CatalogoResumen, 'operacion' | 'rnt'>): boolean {
   if (typeof it !== 'object' || it === null) return false;
   return it.operacion === 'venta' || it.operacion === 'arriendo' || numeroRnt(it.rnt) !== null;
+}
+
+/**
+ * El RNT que exhibe un ANUNCIO de este ítem junto a su precio, ya con su sigla: «RNT 100001».
+ * `null` si no lleva: venta y arriendo, o un ítem que no es anunciable.
+ *
+ * 🎯 Es la pareja de `esAnunciable` y se leen juntos: aquel decide si el ítem sale, este qué número
+ * sale con él. Lo piden todas las superficies que ponen un precio por noche —las tarjetas de la
+ * portada y de /estancias (vía `datosStayCard`), las «similares» de la ficha y el correo de
+ * alertas—: si cada una compusiera `numeroRnt` + `textoRnt` a su manera, el formato exhibido
+ * tendría cuatro dueños.
+ */
+export function rntDeResumen(it: Pick<CatalogoResumen, 'operacion' | 'rnt'>): string | null {
+  if (!esAnunciable(it) || it.operacion === 'venta' || it.operacion === 'arriendo') return null;
+  const numero = numeroRnt(it.rnt);
+  return numero === null ? null : textoRnt(numero);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

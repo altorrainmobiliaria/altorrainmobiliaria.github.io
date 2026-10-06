@@ -160,19 +160,21 @@ const pintarTile: Pintor = (tpl, it, i) => {
  * El orden es por NOTA, no por fecha: es lo único que justifica que la sección se llame así.
  *
  * ⚖️ FAIL-CLOSED CON EL RNT, como `pintarStay`. Esta sección bebe del shard de estancias y pinta
- * «$X/noche»: es publicidad de hospedaje, y sin su RNT exhibible Y un hueco `[data-rnt]` en la
- * plantilla donde ponerlo, no sale. ⚠️ PENDIENTE: `RankCard.astro` aún no trae ese hueco, así que
- * hoy NINGUNA estadía entra aquí, por mucha nota que tenga — el precio por noche no sale sin número.
- * Venta y arriendo no lo necesitan; una operación desconocida, sí (no se sabe qué anuncia).
+ * «$X/noche»: es publicidad de hospedaje, y sin su RNT exhibible (`datosStayCard`) Y el hueco
+ * `[data-rnt]` de la plantilla donde ponerlo, pegado al precio, no sale. Venta y arriendo no lo
+ * llevan y su hueco se quita; una operación desconocida no entra (no se sabe qué anuncia).
  */
 const pintarRank: Pintor = (tpl, it, i) => {
   const nota = notaVisible(it.resenas);
   if (!nota) return null; // sin nota enseñable no entra: la sección es de valoradas, no de todas
   const frag = tpl.content.cloneNode(true) as DocumentFragment;
-  if (!frag.querySelector('.alt-rankcard')) return null;
-  if (it.operacion !== 'venta' && it.operacion !== 'arriendo') {
+  // La píldora es el motivo de la sección: sin su hueco, la tarjeta no dice por qué está aquí.
+  const pildora = frag.querySelector<HTMLElement>('.alt-rankcard__nota');
+  if (!frag.querySelector('.alt-rankcard') || !pildora) return null;
+  const hueco = frag.querySelector<HTMLElement>('[data-rnt]');
+  if (it.operacion === 'venta' || it.operacion === 'arriendo') hueco?.remove();
+  else {
     const estadia = datosStayCard(it);
-    const hueco = frag.querySelector<HTMLElement>('[data-rnt]');
     if (!estadia || !hueco) return null;
     hueco.textContent = estadia.rnt;
   }
@@ -181,8 +183,9 @@ const pintarRank: Pintor = (tpl, it, i) => {
   texto(frag, '.alt-rankcard__zona', it.sector || null);
   texto(frag, '.alt-rankcard__t', it.titulo);
   texto(frag, '.alt-rankcard__price', precioConSufijo(it));
-  // La nota y su recuento van JUNTOS, en un solo texto: es la regla 3 de §281 hecha marcado.
-  texto(frag, '.alt-rankcard__rate', textoNota(nota));
+  // La nota y su recuento van JUNTOS, en un solo texto: es la regla 3 de §281 hecha marcado. Se
+  // escribe en el texto de la píldora y no en la píldora entera, que se llevaría la estrella.
+  pildora.textContent = textoNota(nota);
   return frag;
 };
 

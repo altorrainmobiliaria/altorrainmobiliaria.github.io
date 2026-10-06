@@ -27,6 +27,7 @@ import PropertyCard from './PropertyCard.astro';
 import type { Propiedad } from '../lib/domain/propiedades';
 import { portadaDe } from '../lib/domain/propiedades';
 import type { CatalogoResumen } from '../lib/domain/catalogo';
+import { rntDeResumen } from '../lib/domain/catalogo';
 import { ZONAS } from '../lib/content/zonas';
 import {
   amenidadesVisibles,
@@ -212,6 +213,9 @@ const ICO_WA =
           <>
             <p class="ficha-price__lbl">{precio.etiqueta}</p>
             <p class="ficha-price__val">{precio.valor}</p>
+            {/* Ley 300/1996: el precio por noche no sale sin su número de RNT, y va AQUÍ, pegado a
+                la cifra — no tres secciones más abajo en la ficha técnica. */}
+            {precio.rnt && <p class="ficha-price__rnt">{precio.rnt}</p>}
             {precio.sub && <p class="ficha-price__sub">{precio.sub}</p>}
           </>
         ) : (
@@ -373,7 +377,9 @@ const ICO_WA =
         <div class="ficha-similar">
           {/* SIN `badge` a propósito, como en el mockup: todas las similares comparten la operación de
               la propiedad que estás viendo, así que tres etiquetas «En venta» seguidas no informan de
-              nada. En el SERP sí van, porque allí el listado puede mezclar operaciones. */}
+              nada. En el SERP sí van, porque allí el listado puede mezclar operaciones.
+              Un alojamiento lleva su «RNT n» junto al precio por noche; `similares()` ya dejó fuera
+              al que no tiene número, y en venta y arriendo `rntDeResumen` da `null` y no hay hueco. */}
           {similares.map((s) => (
             <PropertyCard
               img={urlMedia(s.thumb)}
@@ -386,6 +392,7 @@ const ICO_WA =
               title={s.titulo}
               price={pesos(s.precio)}
               priceSuffix={sufijoPrecio(s.operacion).trim()}
+              rnt={rntDeResumen(s) ?? undefined}
               href={rutaFicha(s)}
             />
           ))}
@@ -496,6 +503,10 @@ const ICO_WA =
   .ficha-price__lbl { font-size: 12px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.14em; text-transform: uppercase; color: var(--alt-text); margin-bottom: 6px; }
   .ficha-price__val { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 38px; line-height: 1; color: var(--alt-ink); margin-bottom: 4px; }
   .ficha-price__sub { font-size: 13px; color: var(--alt-text); margin-bottom: 22px; }
+  /* El RNT bajo la cifra: legible (token AA del cuerpo) y sin competir con el precio. */
+  .ficha-price__rnt { font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-text); margin-bottom: 4px; }
+  /* Sin línea de aseo, el botón venía pegado al RNT: le toca el aire que daría `__sub`. */
+  .ficha-price__rnt + .ficha-price__cta { margin-top: 18px; }
   .ficha-price__cta { width: 100%; }
   .ficha-price__alt { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; margin-top: 10px; padding: 14px; border-radius: var(--alt-r-sm); background: var(--alt-white); border: 1px solid var(--alt-gold); color: var(--alt-link); font-weight: var(--alt-fw-semibold); font-size: 14.5px; text-decoration: none; transition: background var(--alt-dur) var(--alt-ease); }
   .ficha-price__alt:hover { background: var(--alt-mist); }
