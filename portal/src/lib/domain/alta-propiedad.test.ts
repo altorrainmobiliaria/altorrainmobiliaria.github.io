@@ -252,6 +252,54 @@ describe('🔴 construirPropiedad — lo que NO deja guardar', () => {
     expect(conRnt.ok).toBe(true);
   });
 
+  it('🔴 un RNT SIN NÚMERO tampoco: «pendiente» no es un registro que se pueda exhibir', () => {
+    const base = { operacion: 'alojamiento', valorVenta: '', precioNoche: '350000', situacionPH: 'autoriza-expreso' };
+    const vacio = construir(base);
+    const mensajeVacio = vacio.ok ? '' : vacio.errores.find((e) => e.campo === 'rnt')?.mensaje;
+    for (const rnt of ['pendiente', 'en trámite desde 2024', 'R-1', 'RNT 123', 'RNT 87654-2025', '300 243 9810']) {
+      const r = construir({ ...base, rnt });
+      expect(r.ok, rnt).toBe(false);
+      if (r.ok) continue;
+      // El mensaje dice QUÉ forma tiene que tener el número, no solo que falta: comparte «número» con
+      // el del campo vacío, así que se mira lo que solo dice este.
+      const mensaje = r.errores.find((e) => e.campo === 'rnt')?.mensaje;
+      expect(mensaje, rnt).toMatch(/de 4 a 8 cifras/);
+      expect(mensaje, rnt).not.toBe(mensajeVacio);
+    }
+  });
+
+  it('🔴 sin número tampoco se guarda como BORRADOR ni como inactivo, ni al editar un documento viejo', () => {
+    // Fail-closed en todos los estados, como ya pasaba con el campo vacío: un borrador es un
+    // publicado a un cambio de estado. Un documento guardado antes con «pendiente» exige el número
+    // en su siguiente edición.
+    const base = { operacion: 'alojamiento', valorVenta: '', precioNoche: '350000', situacionPH: 'autoriza-expreso', rnt: 'pendiente' };
+    for (const estado of ['borrador', 'inactivo']) {
+      expect(errores({ ...base, estado }), estado).toContain('rnt');
+    }
+    const edicion = construirEdicion(
+      entrada({ ...base, estado: 'inactivo' }),
+      { id: CODIGO, slug: 'cabana-1', createdAt: '2026-01-01T00:00:00.000Z', version: 2 },
+      AHORA,
+    );
+    expect(edicion.ok).toBe(false);
+    if (!edicion.ok) expect(edicion.errores.map((e) => e.campo)).toContain('rnt');
+  });
+
+  it('🎯 el escritor y el lector cuentan el RNT igual: lo que el alta acepta, el índice lo lleva', () => {
+    const r = construir({
+      operacion: 'alojamiento',
+      valorVenta: '',
+      precioNoche: '350000',
+      rnt: 'RNT No. 12.345',
+      situacionPH: 'autoriza-expreso',
+    });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const { indices, omitidas } = construirIndices([r.propiedad], AHORA.toISOString());
+    expect(omitidas).toEqual([]);
+    expect(indices.dias.items[0]?.rnt).toBe('12345');
+  });
+
   it('un alojamiento sin declarar el reglamento de PH tampoco se guarda', () => {
     const base = { operacion: 'alojamiento', valorVenta: '', precioNoche: '350000', rnt: 'RNT-100001' };
     expect(errores(base)).toContain('situacionPH');
@@ -291,7 +339,7 @@ describe('🔴 construirPropiedad — lo que NO deja guardar', () => {
   it('exige el precio QUE CORRESPONDE a la operación', () => {
     expect(errores({ valorVenta: '' })).toContain('valorVenta');
     expect(errores({ operacion: 'arriendo', valorVenta: '450000000', canon: '' })).toContain('canon');
-    expect(errores({ operacion: 'alojamiento', rnt: 'RNT-1', valorVenta: '1', precioNoche: '' })).toContain('precioNoche');
+    expect(errores({ operacion: 'alojamiento', rnt: 'RNT-100001', valorVenta: '1', precioNoche: '' })).toContain('precioNoche');
   });
 
   it('🔴 rechaza imágenes que no son claves nuestras (URLs de terceros)', () => {

@@ -23,7 +23,7 @@
 import type { DataClient } from './client';
 import type { Propiedad } from '../domain/propiedades';
 import type { CatalogoResumen, CatalogoShard } from '../domain/catalogo';
-import { CATALOGO_SHARDS, esEsquemaLegacy, esPublicada, operacionAShard } from '../domain/catalogo';
+import { CATALOGO_SHARDS, esAnunciable, esEsquemaLegacy, esPublicada, operacionAShard } from '../domain/catalogo';
 
 /** Id canónico de propiedad: `INM-YYYYMM-XXXX` (contador atómico, OD8). */
 export const ID_PROPIEDAD_RE = /^INM-\d{6}-\d{4}$/i;
@@ -136,6 +136,10 @@ export async function buscarFicha(cliente: DataClient, parametro: string): Promi
 
   // Para «similares». Si este shard falla, la ficha se publica igual SIN similares: perder una banda
   // de recomendaciones no justifica esconder el inmueble.
+  // ⚖️ Las similares son tarjetas con foto y precio por noche, o sea publicidad: pasan por el mismo
+  // `esAnunciable` que el endpoint del catálogo, para que un índice escrito por la Function anterior
+  // no cuele un alojamiento sin número de RNT en la ficha de otro.
+  // ⚠️ PENDIENTE: `PropertyCard` aún no exhibe el RNT ni de las que sí lo traen (`textoRnt`).
   const shard = await leerShard(cliente, operacionAShard(r.data.operacion));
-  return { estado: 'ok', p: r.data, similares: shard.ok ? shard.items : [] };
+  return { estado: 'ok', p: r.data, similares: shard.ok ? shard.items.filter(esAnunciable) : [] };
 }

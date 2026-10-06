@@ -38,7 +38,7 @@ describe('filaInmueble — la presentación', () => {
   });
 
   it('traduce operación y estado, no enseña la clave interna', () => {
-    expect(filaInmueble(prop({ operacion: 'alojamiento', precio: { moneda: 'COP', precioNoche: 1 }, rnt: 'R-1' })).operacion).toBe('Por días');
+    expect(filaInmueble(prop({ operacion: 'alojamiento', precio: { moneda: 'COP', precioNoche: 1 }, rnt: 'RNT-100001' })).operacion).toBe('Por días');
     expect(filaInmueble(prop({ estado: 'cerrado' })).estado).toBe('Vendido/arrendado');
     expect(filaInmueble(prop({ estado: 'en_verificacion' })).estado).toBe('En verificación');
   });

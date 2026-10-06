@@ -8,7 +8,7 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { rutaAShard } from '../../../lib/domain/catalogo';
+import { esAnunciable, rutaAShard } from '../../../lib/domain/catalogo';
 import { cacheTagCatalogo, CACHE_CONTROL_CATALOGO, CACHE_CONTROL_NOT_FOUND, CACHE_CONTROL_PRIVATE } from '../../../lib/data/cache';
 
 export const GET: APIRoute = async ({ params, locals }) => {
@@ -25,7 +25,17 @@ export const GET: APIRoute = async ({ params, locals }) => {
   }
 
   // Forma pública limpia (no filtra el id interno del doc índice). El vacío canónico sale como items:[].
-  const body = { ok: true, shard, version: r.data._version, actualizado: r.data.actualizado, items: r.data.items };
+  // ⚖️ `esAnunciable` filtra AQUÍ además de en el rebuild: un índice escrito por la Function anterior
+  // trae alojamientos sin `rnt`, y servirlos sería publicidad de hospedaje sin el número del RNT.
+  const items = r.data.items.filter(esAnunciable);
+  // Descartar sin rastro escondería el olvido que lo provoca: si la Function del índice no se
+  // redespliega (va a mano) y reconstruye, /estancias sale vacía y nadie sabe por qué. Una línea por
+  // fallo de caché, no por visita: la respuesta va cacheada en el borde.
+  const descartados = r.data.items.length - items.length;
+  if (descartados > 0) {
+    console.warn(`[catalogo] ${shard}: ${descartados} ítem(s) fuera del JSON por no ser anunciables (alojamiento sin número de RNT); ¿falta redesplegar la Function y reconstruir el índice?`);
+  }
+  const body = { ok: true, shard, version: r.data._version, actualizado: r.data.actualizado, items };
   return new Response(JSON.stringify(body), {
     status: 200,
     headers: {

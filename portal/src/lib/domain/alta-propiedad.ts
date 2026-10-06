@@ -14,6 +14,7 @@ import { precioDisplay, problemasParaPublicar, type ProblemaPublicacion } from '
 import { TIPOS_PARQUEADERO } from './propiedades';
 import type { Amenidades, AutorizacionPH, Precio, PriceHistoryEntry, SpecsInmueble, TipoParqueadero } from './propiedades';
 import type { Propiedad } from './propiedades';
+import { numeroRnt } from './rnt';
 import { reparosParaSellar } from './verificacion';
 import {
   ESTADOS_PROPIEDAD,
@@ -296,9 +297,30 @@ export function construirPropiedad(entrada: EntradaAlta, ctx: ContextoAlta): Res
   const barrio = txt(entrada.barrio);
   if (!barrio) err('barrio', 'El barrio es obligatorio: es la ubicación que se publica.');
 
+  // El escritor llama al LECTOR: `numeroRnt` es el mismo predicado con el que el gate de publicación
+  // y el índice deciden si hay RNT. Con la condición vieja (`!rnt`) un «pendiente» se guardaba sin
+  // queja; ahora que el lector exige el número, ese inmueble no saldría en ningún sitio, y sin este
+  // aviso lo descubriría el operador después — el silencio de §103.
+  // Vale para TODOS los estados, como ya valía el campo vacío: tampoco se guarda un borrador ni se
+  // pasa a inactivo un alojamiento sin número (`construirEdicion` valida igual), y un documento viejo
+  // con «pendiente» exige escribir el número en la siguiente edición. Fail-closed a propósito: un
+  // borrador hoy es un publicado mañana con un solo cambio de estado.
+  // ⚠️ PENDIENTE: `gateAlojamiento()` de `firestore.rules` sigue aceptando cualquier texto no vacío.
+  // Cerrar allí la FORMA exige desplegar reglas con canario; hasta entonces, un RNT sin número escrito
+  // por otro camino lo para el lector (no entra al índice ni abre ficha), no la frontera.
   const rnt = txt(entrada.rnt);
-  if (operacion === 'alojamiento' && !rnt) {
-    err('rnt', 'Un alojamiento turístico necesita su número de RNT para poder anunciarse (obligación legal).');
+  if (operacion === 'alojamiento') {
+    if (!rnt) {
+      err('rnt', 'Un alojamiento turístico necesita su número de RNT para poder anunciarse (obligación legal).');
+    } else if (numeroRnt(rnt) === null) {
+      err(
+        'rnt',
+        'Escribe solo el número del RNT, de 4 a 8 cifras, con o sin la sigla delante: por ejemplo ' +
+          '«RNT 12345» o «12.345». Nada detrás del número, ni cifras sueltas separadas por espacios ' +
+          'o guiones, ni un año como «2026». «Pendiente» o «en trámite» no sirven: sin el número, ' +
+          'el alojamiento no se puede anunciar.',
+      );
+    }
   }
 
   // La OTRA mitad del gate B3. Se pide junto al RNT porque son la misma decisión: si el inmueble

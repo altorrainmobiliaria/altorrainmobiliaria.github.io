@@ -9,6 +9,7 @@ import type { AgregadoResenas } from './resenas';
 import type { ISODate, COP, Operacion, TipoInmueble, EstadoPropiedad } from './shared';
 import { portadaDe, motivoLegalNoPublicable } from './propiedades';
 import type { MotivoLegal, Propiedad } from './propiedades';
+import { numeroRnt } from './rnt';
 import {
   rangoDePrecios,
   tipologiaDeEntrada,
@@ -89,6 +90,17 @@ export interface CatalogoResumen {
    * Ausente = esta propiedad no tiene reseñas suficientes; NO es un cero.
    */
   resenas?: AgregadoResenas;
+  /**
+   * Número de RNT en DÍGITOS (`numeroRnt`), **solo en `alojamiento`**; la sigla la pondrá `textoRnt`
+   * al pintar la tarjeta, para que el formato exhibido tenga un dueño.
+   *
+   * ⚖️ Viaja al índice porque la Ley 300/1996 exige el número en TODA publicidad de alojamiento
+   * turístico, y la tarjeta ya es publicidad: lleva foto y precio por noche. La tarjeta no abre la
+   * ficha —el índice existe para que no haga falta—, así que si el número no viene aquí, no tiene de
+   * dónde sacarlo. En venta y arriendo NO viaja, ni como `undefined`: esos ítems salen byte a byte
+   * como antes y no pagan bytes contra el tope de 1 MiB del shard por un dato que no les toca.
+   */
+  rnt?: string;
 }
 
 /**
@@ -124,6 +136,27 @@ export const claseDe = (r: Pick<CatalogoResumen, 'clase'>): ClaseFicha => r.clas
 export function rutaDeResumen(r: Pick<CatalogoResumen, 'clase' | 'slug' | 'id'>): string {
   const s = encodeURIComponent(r.slug || r.id);
   return claseDe(r) === 'proyecto' ? `/proyecto/${s}` : `/inmueble/${s}`;
+}
+
+/**
+ * ¿Se puede pintar este ítem del índice como ANUNCIO? Venta y arriendo, siempre; cualquier otra
+ * cosa, solo si trae su RNT con número.
+ *
+ * 🛡️ Defensa en profundidad del lado de LECTURA. `propiedadAResumen` ya no deja entrar un alojamiento
+ * sin RNT, pero el índice que haya en Firestore lo escribió la Function desplegada, y hasta que alguien
+ * la redespliegue A MANO (`functions:portal`) y corra un rebuild, sus alojamientos no traen el campo.
+ * Pintarlos sería anunciar hospedaje sin el número que la ley exige ver. Mientras tanto /estancias
+ * sale sin esas tarjetas —no se arregla solo: el endpoint lo deja escrito en el log del Worker—; una
+ * tarjeta de más sin registro es la multa que el gate B3 existe para evitar.
+ *
+ * Se pregunta por venta/arriendo y no por `!== 'alojamiento'` porque `operacionAShard` manda a 'dias'
+ * TODO lo que no es venta ni arriendo: un ítem sin `operacion` o con una desconocida (un índice
+ * editado a mano) tiene que demostrar su RNT como cualquier estadía. Y un ítem que ni siquiera es un
+ * objeto no es un anuncio: se cae él, no el shard entero con un 500 al leerle la `operacion`.
+ */
+export function esAnunciable(it: Pick<CatalogoResumen, 'operacion' | 'rnt'>): boolean {
+  if (typeof it !== 'object' || it === null) return false;
+  return it.operacion === 'venta' || it.operacion === 'arriendo' || numeroRnt(it.rnt) !== null;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -249,6 +282,9 @@ export function propiedadAResumen(p: Propiedad): { resumen: CatalogoResumen } | 
       thumb,
       ...(badges.length ? { badges: badges.slice(0, 2) } : {}),
       pub: p.updatedAt,
+      // Al FINAL y por spread: lo que no es alojamiento no gana ni la clave. El no-null está
+      // garantizado: `motivosDeOmision` ya descartó, como `sin-rnt`, el alojamiento sin número.
+      ...(p.operacion === 'alojamiento' ? { rnt: numeroRnt(p.rnt) as string } : {}),
     },
   };
 }
@@ -350,7 +386,7 @@ export function explicarProblema(m: ProblemaPublicacion): string {
     case 'esquema-legacy':
       return 'Este documento tiene el formato del panel antiguo. Hay que volver a capturarlo desde aquí.';
     case 'sin-rnt':
-      return 'Un alojamiento turístico necesita su número de RNT para poder anunciarse. Es obligación legal, no un dato de más.';
+      return 'Un alojamiento turístico necesita su número de RNT para poder anunciarse, y tiene que ser el número: «pendiente» o «en trámite» no cuentan. Es obligación legal, no un dato de más.';
     case 'sin-autorizacion-ph':
       return 'Falta declarar que el reglamento de la copropiedad autoriza EXPRESAMENTE el alquiler por días. Que el reglamento no lo prohíba no basta: si calla, no autoriza. Si el inmueble no está en propiedad horizontal, márcalo como tal.';
     case 'sin-precio':

@@ -80,7 +80,16 @@ const cuerpo = {
     // Una de arriendo y una de corta estancia: sin ellas TODAS las fichas eran de venta, y una
     // tarjeta de arriendo mal construida se habria visto perfecta (§273.5 otra vez, §279).
     inmueble('bq1', 'Apartamento amoblado en El Laguito', 'apartamento', 'El Laguito', 4_200_000, 10.4, -75.56, '2026-08-25', 2, 2, 78, 'arriendo'),
-    inmueble('tb1', 'Cabana frente al mar en Tierrabomba', 'cabana', 'Tierrabomba', 680_000, 10.36, -75.53, '2026-08-28', 3, 2, 95, 'alojamiento'),
+    // El alojamiento lleva su RNT en DIGITOS, que es la forma en que `propiedadAResumen` lo escribe al
+    // indice: sin el, la tarjeta seria publicidad de hospedaje sin el numero que exige la ley.
+    { ...inmueble('tb1', 'Cabana frente al mar en Tierrabomba', 'cabana', 'Tierrabomba', 680_000, 10.36, -75.53, '2026-08-28', 3, 2, 95, 'alojamiento'), rnt: '100001' },
+    // 🧪 CASO DE PRUEBA, no un inmueble: un alojamiento SIN `rnt`, la forma que trae un indice escrito
+    // por la Function anterior. Esta tarjeta NO debe pintarse en /estancias (`esAnunciable`); si se
+    // ve, quien la pinta no esta preguntando. Como el fixture no pasa por `/api/catalogo/…` (es una
+    // URL `data:`), el filtro del endpoint no la toca: lo que se mide es la isla. ⚠️ Por la URL
+    // unica de abajo, /comprar y la portada tambien la reciben y la pintan: en produccion su shard
+    // nunca trae alojamientos, asi que ahi verla es el limite conocido del fixture, no un fallo.
+    inmueble('tb2-sin-rnt', 'PRUEBA sin RNT: no debe pintarse', 'cabana', 'Tierrabomba', 520_000, 10.361, -75.531, '2026-08-27', 2, 1, 60, 'alojamiento'),
     // Obra nueva, en el MISMO shard de venta que lo usado: es el eje ortogonal nuevo/usado (§270),
     // no una seccion aparte. Su rango cruza los precios de los otros, que es lo que hace visible si
     // el filtro compara solape o pertenencia.

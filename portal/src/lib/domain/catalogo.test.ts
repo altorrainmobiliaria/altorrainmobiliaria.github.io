@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   claseDe,
   construirIndices,
+  esAnunciable,
   esPublicada,
   explicarProblema,
   precioDisplay,
@@ -11,6 +12,7 @@ import {
   rutaDeResumen,
 } from './catalogo';
 import type { ProblemaPublicacion } from './catalogo';
+import { motivoLegalNoPublicable } from './propiedades';
 import type { Propiedad } from './propiedades';
 import type { Proyecto } from './proyectos';
 import { esClaveThumb } from '../media-subida';
@@ -527,5 +529,90 @@ describe('NO-REGRESIÓN — un inmueble sale exactamente igual que antes de la v
     const sin = construirIndices(props, '2026-08-22T00:00:00Z');
     const con = construirIndices(props, '2026-08-22T00:00:00Z', []);
     expect(JSON.stringify(sin)).toBe(JSON.stringify(con));
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+// EL RNT VIAJA AL ÍNDICE. La tarjeta de un alojamiento ya es publicidad (foto y precio por noche) y
+// no abre la ficha, así que el número que exige la Ley 300/1996 tiene que venir en el ítem. Y lo que
+// no es alojamiento no puede notar nada: ni una clave, ni un byte.
+// ═══════════════════════════════════════════════════════════════════════════════════════════════
+
+describe('el RNT en el índice — solo en alojamiento, y solo el número', () => {
+  const PH = { situacion: 'autoriza-expreso' as const, declaradaEn: '2026-08-26T00:00:00Z' };
+  const aloj = (over: Partial<Propiedad> = {}) =>
+    prop({ operacion: 'alojamiento', precio: { moneda: 'COP', precioNoche: 350_000 }, autorizacionPH: PH, ...over });
+
+  it('🔴 un «pendiente» en el campo es un RNT que FALTA, no uno que se tiene', () => {
+    expect(motivoLegalNoPublicable(aloj({ rnt: 'pendiente' }))).toBe('sin-rnt');
+    expect(motivoLegalNoPublicable(aloj({ rnt: 'RNT 123' }))).toBe('sin-rnt');
+    expect(motivoLegalNoPublicable(aloj({ rnt: 'RNT-100001' }))).toBeNull();
+  });
+
+  it('🎯 el resumen de un alojamiento lleva el número en dígitos', () => {
+    const r = propiedadAResumen(aloj({ rnt: 'RNT-100001' }));
+    if (!('resumen' in r)) throw new Error('debia entrar');
+    expect(r.resumen.rnt).toBe('100001');
+  });
+
+  it('🔴 venta y arriendo salen BYTE A BYTE como antes, aunque el documento traiga un `rnt`', () => {
+    // Literales capturados ejecutando el código ANTERIOR a este cambio con estas mismas entradas.
+    // `JSON.stringify` mira también el ORDEN de las claves: una clave nueva en medio lo rompe.
+    const venta = propiedadAResumen(prop({ slug: 'apto-bocagrande', rnt: 'RNT-100001', verificadoAltorra: true }));
+    // El `rnt` va en las entradas de los dos a propósito: es lo que podría arrastrar la clave nueva.
+    // El código anterior no lo leía fuera de alojamiento, así que el literal capturado no depende de él.
+    const arriendo = propiedadAResumen(
+      prop({ id: 'INM-202607-0002', operacion: 'arriendo', precio: { moneda: 'COP', canon: 4_000_000 }, rnt: 'RNT-100001' }),
+    );
+    if (!('resumen' in venta) || !('resumen' in arriendo)) throw new Error('debian entrar');
+    expect(JSON.stringify(venta.resumen)).toBe(
+      '{"id":"INM-202607-0001","slug":"apto-bocagrande","titulo":"Apto en Bocagrande","operacion":"venta",' +
+        '"tipo":"apartamento","precio":450000000,"sector":"Bocagrande","coords":{"lat":10.399,"lng":-75.554},' +
+        '"hab":3,"ban":2,"area":120,"thumb":"props/a/thumb.webp","badges":["verificado"],"pub":"2026-07-10T00:00:00Z"}',
+    );
+    expect(JSON.stringify(arriendo.resumen)).toBe(
+      '{"id":"INM-202607-0002","slug":"INM-202607-0002","titulo":"Apto en Bocagrande","operacion":"arriendo",' +
+        '"tipo":"apartamento","precio":4000000,"sector":"Bocagrande","coords":{"lat":10.399,"lng":-75.554},' +
+        '"hab":3,"ban":2,"area":120,"thumb":"props/a/thumb.webp","pub":"2026-07-10T00:00:00Z"}',
+    );
+    // Ni siquiera como `undefined`: `toEqual` lo perdonaría, `in` no.
+    expect('rnt' in venta.resumen).toBe(false);
+    expect('rnt' in arriendo.resumen).toBe(false);
+  });
+
+  it('esAnunciable: un alojamiento sin número NO se anuncia; lo demás, siempre', () => {
+    expect(esAnunciable({ operacion: 'alojamiento' })).toBe(false); // el índice de la Function anterior
+    expect(esAnunciable({ operacion: 'alojamiento', rnt: 'pendiente' })).toBe(false);
+    expect(esAnunciable({ operacion: 'alojamiento', rnt: '100001' })).toBe(true);
+    expect(esAnunciable({ operacion: 'venta' })).toBe(true);
+    expect(esAnunciable({ operacion: 'arriendo' })).toBe(true);
+  });
+
+  it('🔴 esAnunciable falla CERRADO con lo que el índice no debería traer', () => {
+    // Sin `operacion`, o con una que no existe: `operacionAShard` la habría mandado a 'dias', así
+    // que tiene que demostrar su RNT como cualquier estadía.
+    expect(esAnunciable({} as never)).toBe(false);
+    expect(esAnunciable({ operacion: 'dias' } as never)).toBe(false);
+    expect(esAnunciable({ operacion: 'dias', rnt: '100001' } as never)).toBe(true);
+    // Un ítem nulo se cae él solo: antes de esto, leerle la `operacion` tumbaba el shard con un 500.
+    expect([null, { operacion: 'venta' }].filter((it) => esAnunciable(it as never))).toEqual([{ operacion: 'venta' }]);
+  });
+
+  it('🎯 INVARIANTE: todo lo que el rebuild mete en «dias» es anunciable', () => {
+    const { indices, omitidas } = construirIndices(
+      [
+        aloj({ id: 'D-OK', rnt: 'RNT-100001' }),
+        aloj({ id: 'D-PUNTOS', rnt: 'RNT No. 12.345' }),
+        aloj({ id: 'D-PENDIENTE', rnt: 'pendiente' }),
+        aloj({ id: 'D-CORTO', rnt: 'RNT 123' }),
+        aloj({ id: 'D-BLANCO', rnt: '   ' }),
+        aloj({ id: 'D-SIN' }),
+      ],
+      '2026-10-06T00:00:00Z',
+    );
+    // Primero que NO esté vacío: un «todos cumplen» sobre una lista vacía es verdad y no dice nada.
+    expect(indices.dias.items.map((i) => i.id).sort()).toEqual(['D-OK', 'D-PUNTOS']);
+    expect(indices.dias.items.every(esAnunciable)).toBe(true);
+    expect(omitidas.map((o) => o.motivo)).toEqual(['sin-rnt', 'sin-rnt', 'sin-rnt', 'sin-rnt']);
   });
 });

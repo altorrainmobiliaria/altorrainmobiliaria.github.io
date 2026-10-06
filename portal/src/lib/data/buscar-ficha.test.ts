@@ -160,6 +160,29 @@ describe('buscarFicha', () => {
     expect(await buscarFicha(cliente, 'INM-202607-0001')).toEqual({ estado: 'error' });
   });
 
+  it('⚖️ las SIMILARES de un alojamiento no cuelan uno sin número de RNT (índice de la Function anterior)', async () => {
+    const { cliente } = clienteFalso({
+      props: {
+        'INM-202607-0001': propiedad({
+          operacion: 'alojamiento',
+          precio: { moneda: 'COP', precioNoche: 350_000 },
+          rnt: 'RNT-100001',
+          autorizacionPH: { situacion: 'autoriza-expreso', declaradaEn: '2026-08-26T00:00:00Z' },
+        }),
+      },
+      shards: {
+        dias: [
+          resumen({ id: 'D-SIN', operacion: 'alojamiento' }),
+          resumen({ id: 'D-PENDIENTE', operacion: 'alojamiento', rnt: 'pendiente' }),
+          resumen({ id: 'D-OK', operacion: 'alojamiento', rnt: '100002' }),
+        ],
+      },
+    });
+    const r = await buscarFicha(cliente, 'INM-202607-0001');
+    expect(r.estado).toBe('ok');
+    if (r.estado === 'ok') expect(r.similares.map((s) => s.id)).toEqual(['D-OK']);
+  });
+
   it('si falla el shard de SIMILARES, la ficha se publica igual (sin similares)', async () => {
     const { cliente } = clienteFalso({
       props: { 'INM-202607-0001': propiedad() },

@@ -3,6 +3,7 @@ import type {
   SituacionPH,
 } from './shared';
 import type { AgregadoResenas } from './resenas';
+import { numeroRnt } from './rnt';
 
 /** Precio con DOBLE-PRECIO en arriendo (canon + administración) — diferenciador de transparencia (R1). */
 export interface Precio {
@@ -84,7 +85,10 @@ export interface Propiedad extends Versioned, Auditable {
   precio: Precio;
   /** Capado a los últimos N cambios en la proyección pública (la Function que escribe lo poda) — doc lean. */
   priceHistory?: PriceHistoryEntry[];
-  /** RNT — OBLIGATORIO y bloqueante cuando `operacion==='alojamiento'` (gate B3). */
+  /**
+   * RNT — OBLIGATORIO y bloqueante cuando `operacion==='alojamiento'` (gate B3). Se guarda como lo
+   * tecleó el operador; qué cuenta como número lo decide `numeroRnt` (`./rnt`), no quien lo lea.
+   */
   rnt?: string;
   /**
    * La OTRA mitad del gate B3: autorización del reglamento de PH para el uso turístico.
@@ -250,7 +254,8 @@ export type MotivoLegal = 'sin-rnt' | 'sin-autorizacion-ph';
  * mandaba a buscar el RNT que ya tenía.
  *
  * (1) **Sin RNT**: el Registro Nacional de Turismo es obligatorio para prestar hospedaje, y
- *     anunciarse sin él expone a cierre inmediato (`43 §Marco legal`, gate B3).
+ *     anunciarse sin él expone a cierre inmediato (`43 §Marco legal`, gate B3). Cuenta el NÚMERO
+ *     (`numeroRnt`), no cualquier texto: un «pendiente» en el campo es un RNT que falta.
  * (2) **Sin autorización de PH**: el reglamento debe autorizar el uso turístico de forma EXPRESA;
  *     el silencio no sirve (ver `SITUACIONES_PH`). Publicar una unidad de un edificio que no lo
  *     permite expone al propietario a las sanciones del art. 59 de la Ley 675 y a nosotros a haberlo
@@ -261,7 +266,7 @@ export type MotivoLegal = 'sin-rnt' | 'sin-autorizacion-ph';
  */
 export function motivoLegalNoPublicable(p: Propiedad): MotivoLegal | null {
   if (p.operacion !== 'alojamiento') return null;
-  if (!p.rnt?.trim()) return 'sin-rnt';
+  if (numeroRnt(p.rnt) === null) return 'sin-rnt';
   if (p.autorizacionPH?.situacion !== 'no-aplica' && p.autorizacionPH?.situacion !== 'autoriza-expreso') {
     return 'sin-autorizacion-ph';
   }
