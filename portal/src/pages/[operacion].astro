@@ -13,6 +13,7 @@ import Footer from '../components/Footer.astro';
 import PropertyCard from '../components/PropertyCard.astro';
 import { TIPOS_PUBLICOS, etiquetaTipo } from '../lib/domain/shared';
 import { SITE } from '../lib/config/site';
+import { FUENTE } from '../scripts/catalogo-card';
 
 export function getStaticPaths() {
   // SPLIT INTENCIONAL del SERP mixto del mockup (§32.22): /comprar + /arrendar.
@@ -59,13 +60,23 @@ export function getStaticPaths() {
 }
 
 const { op, props: results, pins, zones } = Astro.props;
+/*
+ * 🔴 CERO-DEMO CON EL CATÁLOGO REAL. Las tarjetas, los pines y el «Cargar más» de arriba son de
+ * MUESTRA, y este shell los prerenderizaba SIEMPRE: con `PUBLIC_CATALOGO_SOURCE=live` el build de
+ * lanzamiento servía en /comprar seis tarjetas inventadas (una de $1.450.000.000) enlazando a la ficha
+ * de muestra, hasta que la isla las reemplazaba — y para un buscador o un visitante sin JS, se
+ * quedaban. La portada y /estancias ya leían el interruptor; aquí faltaba. Se lee de su dueño.
+ */
+const HAY_CATALOGO_REAL = FUENTE === 'live';
+const tarjetas = HAY_CATALOGO_REAL ? [] : results;
+const pines = HAY_CATALOGO_REAL ? [] : pins;
 // El galon de cada chip. Va como cadena y no como JSX porque el frontmatter de Astro es TS puro:
 // aqui no se puede escribir marcado, y repetirlo cuatro veces en el cuerpo seria copia-pega.
 const chevron =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
 
 // Marcadores del mapa real (TODO-30): mismo índice `i` que la card → emparejamiento card↔pin.
-const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.label, active: !!p.on }));
+const mapMarkers = pines.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.label, active: !!p.on }));
 ---
 
 <BaseLayout
@@ -224,7 +235,10 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
       <div class="serp-list">
         <div class="serp-grid">
           {/* Las primeras 4 cards se enlazan con los 4 pins del mapa (hover-pin, §32.22) */}
-          {results.map((p, i) => <PropertyCard {...p} nivel={2} pin={i < pins.length ? String(i) : undefined} />)}
+          {HAY_CATALOGO_REAL && (
+            <div class="serp-msg" role="status"><p class="serp-msg__t">Cargando propiedades…</p></div>
+          )}
+          {tarjetas.map((p, i) => <PropertyCard {...p} nivel={2} pin={i < pines.length ? String(i) : undefined} />)}
         </div>
 
         {/* MOLDE de card para la isla del catálogo REAL: lo renderiza el MISMO `PropertyCard`, así el
@@ -237,11 +251,13 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
             title="" price="" priceLabel="Desde" priceSuffix="/mes" href="#"
           />
         </template>
-        <div class="serp-more">
+        {/* «Cargar más» es paginación aún NO implementada: con el catálogo real no se promete (la isla
+            también lo quita, pero el HTML no debe nacer con él). */}
+        {!HAY_CATALOGO_REAL && <div class="serp-more">
           <a class="alt-btn alt-btn--outline" href="#">Cargar más propiedades
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
           </a>
-        </div>
+        </div>}
       </div>
 
       <aside class="serp-aside">
@@ -260,7 +276,7 @@ const mapMarkers = pins.map((p, i) => ({ i, lat: p.lat, lng: p.lng, label: p.lab
           <span class="serp-map__road serp-map__road--3" data-schematic></span>
           <span class="serp-map__bay" data-schematic>Bahía de Cartagena</span>
           {zones.map((z) => <span class="serp-map__zone" data-schematic style={`left:${z.left};top:${z.top}`}>{z.t}</span>)}
-          {pins.map((pin, i) => (
+          {pines.map((pin, i) => (
             <span class={`serp-pin${pin.on ? ' is-on' : ''}`} data-schematic data-pin-idx={i} style={`left:${pin.left};top:${pin.top}`}>{pin.label}</span>
           ))}
           {/* Chrome del panel (permanece sobre el mapa vivo). Zoom cableado a MapLibre. */}

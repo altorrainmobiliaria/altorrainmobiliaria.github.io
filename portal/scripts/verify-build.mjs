@@ -579,6 +579,35 @@ check(
 );
 
 /*
+ * ── SONDA: CON EL CATÁLOGO REAL NO SE SIRVEN TARJETAS DE MUESTRA (cero-demo) ──────────────
+ *
+ * QUÉ CAZA. El chequeo de arriba («catálogo REAL en producción») solo miraba la VARIABLE: con
+ * `PUBLIC_CATALOGO_SOURCE=live` daba ✅ mientras /comprar y /arrendar seguían prerenderizando sus
+ * tarjetas de muestra —seis en /comprar, una de $1.450.000.000— porque `[operacion].astro` no leía el
+ * interruptor. Esto mira el EFECTO: toda tarjeta de muestra enlaza a la ficha de muestra, `/ficha` a
+ * pelo (las reales van a `/inmueble/<slug>`), así que un solo `href="/ficha"` en el HTML servido es una
+ * tarjeta inventada a la vista. Los `<template>` no cuentan: son moldes vacíos que la isla rellena.
+ *
+ * Solo en producción: en staging la muestra es el estado normal y va `noindex`.
+ */
+if (ES_PROD) {
+  const conMuestra = htmlServido(resolve(root, 'dist/client'))
+    .map((f) => {
+      const html = readFileSync(f, 'utf8').replace(/<template[\s\S]*?<\/template>/gi, '');
+      return { f: relative(resolve(root, 'dist/client'), f).replace(/\\/g, '/'), n: (html.match(/href="\/ficha"/g) || []).length };
+    })
+    .filter((x) => x.n > 0);
+  check(
+    'con el catálogo real ninguna página sirve tarjetas de MUESTRA (enlaces a la ficha de muestra)',
+    conMuestra.length === 0,
+    conMuestra.length
+      ? `${conMuestra.length} página(s): ${conMuestra.slice(0, 5).map((x) => `${x.f} (${x.n})`).join(', ')}. ` +
+        'Una tarjeta que enlaza a /ficha sin id es de muestra: con catálogo live no se prerenderiza.'
+      : '0 enlaces a /ficha sin id en el HTML servido (sin contar los <template>)',
+  );
+}
+
+/*
  * ── SONDA: NINGUNA IMAGEN PESADA EN LA RUTA CRÍTICA (§238) ──────────────────────────
  *
  * QUÉ CAZA. Una imagen de más de 20 KB que el navegador descarga ANTES del primer pintado sin ser

@@ -23,12 +23,25 @@ import Footer from '../components/Footer.astro';
 import FichaInmueble from '../components/FichaInmueble.astro';
 import { SITE } from '../lib/config/site';
 import type { Propiedad } from '../lib/domain/propiedades';
+import { FUENTE } from '../scripts/catalogo-card';
 
 const param = (Astro.url.searchParams.get('id') || Astro.url.searchParams.get('slug') || '').trim();
 if (param) {
   // Se redirige SIEMPRE que venga parámetro, exista o no: la ruta canónica es la dueña de decidir si
   // el inmueble está publicado, y así el «no encontrado» tiene un solo sitio donde vivir.
   return Astro.redirect(`/inmueble/${encodeURIComponent(param)}`, 301);
+}
+/*
+ * 🔴 Con el catálogo REAL el andamio no se sirve: ya nada enlaza aquí sin id (las tarjetas de muestra
+ * no se prerenderizan, ver `[operacion].astro`), y quien llegue a `/ficha` a pelo no puede encontrarse
+ * un inmueble que no existe con nuestro sello, aunque vaya `noindex`. 404 mínimo, como la ruta de las
+ * páginas viejas: este camino ya no tiene nada que enseñar.
+ */
+if (FUENTE === 'live') {
+  return new Response('No encontrado.', {
+    status: 404,
+    headers: { 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' },
+  });
 }
 
 /**
