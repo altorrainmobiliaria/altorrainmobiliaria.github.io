@@ -22,7 +22,7 @@ import { createDoc } from '../../lib/data/firestore-rest';
 import { FIRESTORE_DESARROLLO, getPublicFirebaseConfig } from '../../lib/data/client';
 import { LEGAL } from '../../lib/config/legal';
 import { ZONAS as ZONAS_LANDING } from '../../lib/content/zonas';
-import { explicarProblemaReserva, lineasDesglose, problemasDeReserva, resumenReserva } from '../../lib/domain/reserva';
+import { explicarProblemaReserva, hoyEnCartagena, lineasDesglose, problemasDeReserva, resumenReserva } from '../../lib/domain/reserva';
 import { tipoDe } from '../../lib/domain/lead-score';
 import { comprobarAlojamiento, type AlojamientoPedido } from '../../lib/data/alojamiento-pedido';
 
@@ -89,24 +89,30 @@ const TEL_RE = /^[+()\d][\d\s()+-]{6,19}$/;
 const SPAM_RE = /(https?:\/\/|www\.|\[url|<a\s)/i;
 
 /**
- * Qué alojamiento pide la solicitud, dicho para quien la atiende (§329). Las cuatro salidas se
- * DISTINGUEN a propósito: «sin elegir», «elegido y comprobado», «elegido pero la base no respondió» y
- * «pidió uno que ya no está publicado» llevan a cuatro llamadas distintas.
+ * Qué alojamiento pide la solicitud, dicho para quien la atiende (§329). Las cinco salidas se
+ * DISTINGUEN a propósito: «sin elegir», «elegido y comprobado», «elegido pero la base no respondió»,
+ * «pidió uno que ya no está publicado» y «pidió uno reservado o cerrado» llevan a llamadas distintas.
  */
 function sobreEstancia(a: AlojamientoPedido | null): string {
   if (!a) return 'consulta general de corta estancia — sin alojamiento elegido';
   if (a.estado === 'ok') return `alojamiento elegido: ${a.titulo || a.id} (${a.id})`;
   if (a.estado === 'sin-comprobar') return `alojamiento elegido: ${a.id} — no se pudo comprobar al recibir la solicitud`;
+  if (a.estado === 'no-disponible') return `consulta general — pidió el alojamiento ${a.id}, que figura como «${a.motivo}»`;
   return `consulta general — pidió el alojamiento ${a.id}, que ya no está publicado`;
 }
 
 /**
  * La línea del correo: las fechas y, si el alojamiento se comprobó, cuál es y lo que suma la estadía
  * con el precio del DOCUMENTO — las mismas palabras del desglose de la ficha (`lineasDesglose`).
+ *
+ * Si se pidió uno que NO se pudo dar por elegido, la línea lo dice con las palabras de `sobre`: es el
+ * único campo que llega al correo y al panel (`crm.ts` lo lee como mensaje), y sin él el equipo nunca
+ * sabría qué alojamiento pidió el visitante.
  */
 function descripcionEstancia(e: { llegada: string; salida: string; huespedes: number }, a: AlojamientoPedido | null): string {
   const base = resumenReserva(e);
-  if (a?.estado !== 'ok') return base;
+  if (!a) return base;
+  if (a.estado !== 'ok') return `${base} · ${sobreEstancia(a)}`;
   const partes = [base, a.titulo || a.id];
   if (a.desglose) {
     const l = lineasDesglose(a.desglose);
@@ -176,7 +182,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
       salida: limpiar(campos.salida, 10),
       huespedes: Number(campos.huespedes),
     };
-    const malos = problemasDeReserva(cand, new Date().toISOString().slice(0, 10));
+    // «Hoy» es el de CARTAGENA, el mismo que usan la ficha y el navegador (`hoyEnCartagena`): con el
+    // día UTC, de 7 de la noche a medianoche se rechazaba una llegada «hoy» que la ficha dejaba elegir.
+    const malos = problemasDeReserva(cand, hoyEnCartagena());
     if (malos.length) {
       return json({ ok: false, reason: 'estancia', mensajes: malos.map(explicarProblemaReserva) }, 422);
     }
@@ -186,8 +194,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     alojamiento = await comprobarAlojamiento(locals?.altorra, limpiar(campos.propiedadId, 40), cand);
   }
   // El id se guarda cuando hay un alojamiento ELEGIDO (comprobado o sin poder comprobar); uno que ya
-  // no está publicado no se le da al equipo como elegido — queda dicho en `sobre`.
-  const propiedadId = alojamiento && alojamiento.estado !== 'no-publicado' ? alojamiento.id : null;
+  // no está publicado, o que está reservado o cerrado, no se le da al equipo como elegido — queda
+  // dicho en `sobre` y en la descripción.
+  const propiedadId =
+    alojamiento?.estado === 'ok' || alojamiento?.estado === 'sin-comprobar' ? alojamiento.id : null;
 
   // 3) Documento. `tipo` es el tipo de LEAD (taxonomía de `onNewSolicitud`), NO el tipo de inmueble:
   //    el `<select name="tipo">` del form es el del inmueble y viaja en `datosExtra.tipoInmueble`.

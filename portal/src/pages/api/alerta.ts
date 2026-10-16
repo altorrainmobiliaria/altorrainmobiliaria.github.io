@@ -16,7 +16,7 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { createDoc } from '../../lib/data/firestore-rest';
-import { getPublicFirebaseConfig } from '../../lib/data/client';
+import { FIRESTORE_DESARROLLO, getPublicFirebaseConfig } from '../../lib/data/client';
 import { LEGAL } from '../../lib/config/legal';
 import { criteriosAQuery, normalizarCriterios } from '../../lib/domain/alertas';
 import type { Alerta } from '../../lib/domain/alertas';
@@ -115,9 +115,12 @@ export const POST: APIRoute = async ({ request }) => {
 
   // Sin argumento a propósito: `Astro.locals.runtime.env` fue REMOVIDO en Astro v6 ([[L-33]]).
   const cfg = getPublicFirebaseConfig();
+  // `FIRESTORE_DESARROLLO`: en `astro dev` con el emulador puesto, la alerta de prueba va al emulador y
+  // no a producción; en el Worker es `undefined` y no cambia nada (ver `client.ts`).
   const r = await createDoc('alertas', doc as unknown as Record<string, unknown>, {
     apiKey: cfg.apiKey,
     projectId: cfg.projectId,
+    baseUrl: FIRESTORE_DESARROLLO,
   });
 
   if (!r.ok) {

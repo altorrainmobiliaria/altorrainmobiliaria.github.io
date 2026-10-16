@@ -69,7 +69,9 @@ function resolveConfig(env?: RuntimeEnv): { apiKey: string; projectId: string } 
  * `astro dev` iban siempre contra la base de PRODUCCIÓN: la ficha de un alojamiento no se podía ver
  * sin uno publicado de verdad, y probar la solicitud escribía un lead real (§327.4 lo dejó sin enviar
  * por eso). Con `FIRESTORE_EMULATOR_URL=http://127.0.0.1:8080/v1` en `.env.development.local`, las
- * dos cosas van al emulador local.
+ * dos cosas van al emulador local. CUBRE: toda lectura del `DataClient` y las TRES escrituras del
+ * servidor (`/api/solicitud`, `/api/alerta`, `/api/alerta/baja`). Un endpoint nuevo que escriba con
+ * `createDoc` tiene que pasar `baseUrl: FIRESTORE_DESARROLLO` o, en desarrollo, escribirá en producción.
  *
  * ⛔ `import.meta.env.DEV` es `false` en `astro build`: en el Worker esto es `undefined` siempre y el
  * bundler lo elimina. Sin la variable, desarrollo se comporta como hasta hoy. Privada (sin `PUBLIC_`):

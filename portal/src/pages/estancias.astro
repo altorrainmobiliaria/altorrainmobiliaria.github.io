@@ -83,7 +83,7 @@ const HAY_CATALOGO_REAL = FUENTE === 'live';
               <label><span>Salida</span><input type="date" id="est-co" /></label>
             </div>
             <div class="est-book__guests">
-              <div><span class="est-book__glbl">Huéspedes</span><span id="est-guests-label">2 huéspedes</span></div>
+              <div><span class="est-book__glbl">Huéspedes</span><span id="est-guests-label" aria-live="polite">2 huéspedes</span></div>
               <div class="est-book__stepper">
                 <button type="button" id="est-dec" aria-label="Menos huéspedes">−</button>
                 <span id="est-guests">2</span>
@@ -137,6 +137,10 @@ const HAY_CATALOGO_REAL = FUENTE === 'live';
 
   /* Panel de solicitud */
   .est-aside { flex: 1 1 340px; min-width: 300px; position: sticky; top: 92px; align-self: flex-start; }
+  /* Con el paso de contacto abierto el panel puede medir más que la ventana: pegado arriba, su final
+     —«Enviar solicitud»— queda fuera de alcance. Deja de ser fijo mientras el formulario o la
+     confirmación están a la vista (§329, la misma trampa de la ficha de alojamiento). */
+  .est-aside:has(.est-datos:not([hidden])), .est-aside:has(.est-confirm:not([hidden])) { position: static; }
   .est-book { background: var(--alt-white); border: 1px solid var(--alt-hairline-2); border-radius: var(--alt-r-lg); padding: 24px; box-shadow: var(--alt-elev-booking, 0 34px 64px -40px rgba(27, 39, 51, 0.45)); }
   /* En el hueco del precio del mockup: aquí no hay alojamiento elegido, así que no hay precio. */
   .est-book__h { margin: 0 0 var(--alt-space-5); font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: var(--alt-fs-h3); line-height: 1.1; letter-spacing: normal; color: var(--alt-ink); }
@@ -152,6 +156,10 @@ const HAY_CATALOGO_REAL = FUENTE === 'live';
   .est-book__dates label:first-child { border-right: 1px solid var(--alt-hairline); }
   .est-book__dates span, .est-book__glbl { display: block; font-size: 10px; font-weight: var(--alt-fw-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text); margin-bottom: 3px; }
   .est-book__dates input { border: none; outline: none; font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); width: 100%; background: transparent; padding: 0; font-family: var(--alt-font-body); }
+  /* `outline: none` sin reponerlo dejaba las fechas SIN foco visible al teclado (§329): anillo navy, el
+     token de foco sobre fondo claro. `:focus`, no `:focus-visible`: con teclado, en Chrome, un campo de fecha
+     no la cumple (el foco va a su segmento interno). */
+  .est-book__dates input:focus { outline: var(--alt-focus-width) solid var(--alt-focus-color); outline-offset: var(--alt-focus-offset); }
   /*
    * Las fechas a 16 px en movil, por el zoom de iOS (§264). La regla general vive en
    * `components.css`, pero estos dos campos los estila ESTE fichero, y el acotado que Astro le pone
@@ -171,9 +179,11 @@ const HAY_CATALOGO_REAL = FUENTE === 'live';
   /* Paso de contacto (§122): aparece bajo el CTA cuando las fechas ya son válidas. */
   .est-datos { display: grid; gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--alt-hairline); }
   .est-f { display: grid; gap: 5px; font-size: 12.5px; color: var(--alt-text); }
-  .est-check { display: flex; gap: 9px; align-items: flex-start; font-size: 11.5px; line-height: 1.45; color: var(--alt-text-muted); }
+  /* La autorización de datos (Ley 1581) se LEE antes de marcarla: gris AA del cuerpo, no el decorativo
+     (--alt-text-muted daba 2,4:1). Los enlaces subrayados: no se distinguen solo por el color (§329). */
+  .est-check { display: flex; gap: 9px; align-items: flex-start; font-size: 11.5px; line-height: 1.45; color: var(--alt-text); }
   .est-check input { margin-top: 2px; flex: 0 0 auto; }
-  .est-check a { color: var(--alt-navy); }
+  .est-check a { color: var(--alt-navy); text-decoration: underline; }
   /* El error va en dorado: la paleta no tiene rojo (identidad de marca). */
   .est-err { margin-top: var(--alt-space-3); font-size: 12.5px; line-height: 1.4; color: var(--alt-ink); background: var(--alt-mist); border-left: 3px solid var(--alt-gold); padding: 9px 11px; border-radius: 8px; }
   .est-confirm { margin-top: 16px; }
@@ -182,7 +192,16 @@ const HAY_CATALOGO_REAL = FUENTE === 'live';
 
 <script>
   import { bootEstanciasCatalogo } from '../scripts/estancias-catalogo';
-  import { explicarProblemaReserva, HUESPEDES_MAX, problemasDeReserva } from '../lib/domain/reserva';
+  import {
+    explicarProblemaReserva,
+    explicarRechazoSolicitud,
+    fechasSugeridas,
+    hoyEnCartagena,
+    HUESPEDES_MAX,
+    problemasDeReserva,
+    sumarDias,
+    type RechazoSolicitud,
+  } from '../lib/domain/reserva';
 
   // Los alojamientos reales (shard `dias`). La isla atrapa sus propios fallos y deja el texto de
   // error; este `catch` es solo la red por si algo escapara.
@@ -190,9 +209,10 @@ const HAY_CATALOGO_REAL = FUENTE === 'live';
     /* nunca relleno: lo peor que queda es el estado que ya trae el HTML */
   });
 
-  /** Un día en `YYYY-MM-DD` LOCAL: el visitante elige fechas en su calendario, no en UTC. */
-  const iso = (d: Date) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const $ = (id: string) => document.getElementById(id);
+  // El día de CARTAGENA, el mismo con el que el servidor valida la llegada (`hoyEnCartagena`, §329):
+  // con el reloj local, de 7 de la noche a medianoche —o desde otro huso— discrepaban.
+  const hoy = hoyEnCartagena();
   let guests = 2;
 
   // El tope es el del DOMINIO, el mismo que impone el endpoint: si el panel dejara pedir más, el
@@ -218,9 +238,12 @@ const HAY_CATALOGO_REAL = FUENTE === 'live';
   $('est-reservar')?.addEventListener('click', () => {
     const ci = ($('est-ci') as HTMLInputElement | null)?.value ?? '';
     const co = ($('est-co') as HTMLInputElement | null)?.value ?? '';
-    const malos = problemasDeReserva({ llegada: ci, salida: co, huespedes: guests }, iso(new Date()));
+    // En el momento del clic: una pestaña abierta desde ayer no puede validar con el «hoy» de ayer.
+    const malos = problemasDeReserva({ llegada: ci, salida: co, huespedes: guests }, hoyEnCartagena());
     if (malos.length) { err(malos.map(explicarProblemaReserva).join(' ')); return; }
     $('est-err')?.setAttribute('hidden', '');
+    // Una segunda solicitud (otras fechas) empieza sin la confirmación de la anterior.
+    $('est-confirm')?.setAttribute('hidden', '');
     $('est-datos')?.removeAttribute('hidden');
     ($('est-nombre') as HTMLInputElement | null)?.focus();
   });
@@ -254,12 +277,18 @@ const HAY_CATALOGO_REAL = FUENTE === 'live';
           huespedes: guests,
         }),
       });
-      const cuerpo = (await res.json().catch(() => null)) as { ok?: boolean; mensajes?: string[] } | null;
+      const cuerpo = (await res.json().catch(() => null)) as RechazoSolicitud | null;
       if (!res.ok || !cuerpo?.ok) {
-        err(cuerpo?.mensajes?.join(' ') || 'No pudimos enviar la solicitud. Intenta de nuevo o escríbenos por WhatsApp.');
+        // Qué corregir (teléfono, nombre, fechas), no un «intenta de nuevo» que da el mismo rechazo.
+        err(explicarRechazoSolicitud(cuerpo));
         if (btn) { btn.disabled = false; btn.textContent = 'Enviar solicitud'; }
         return;
       }
+      // Como nuevo para una segunda solicitud: botón activo y la autorización SIN marcar — cada
+      // solicitud la pide de nuevo (Ley 1581: nunca premarcada). Antes el botón se quedaba en
+      // «Enviando…» y bloqueado si se volvía a pedir.
+      ($('est-datos') as HTMLFormElement | null)?.reset();
+      if (btn) { btn.disabled = false; btn.textContent = 'Enviar solicitud'; }
       $('est-datos')?.setAttribute('hidden', '');
       $('est-confirm')?.removeAttribute('hidden');
       // El foco estaba en el botón que se acaba de ocultar: sin esto se pierde y el lector de
@@ -271,11 +300,11 @@ const HAY_CATALOGO_REAL = FUENTE === 'live';
     }
   });
 
-  // Fechas prellenadas (llegada hoy+7, salida hoy+10) y con mínimo, para que no se puedan elegir
-  // días pasados.
-  const now = new Date();
+  // Fechas prellenadas (las de `fechasSugeridas`, las mismas que propone la ficha) y con mínimo, para
+  // que no se puedan elegir días pasados.
+  const sugeridas = fechasSugeridas(hoy);
   const ciEl = $('est-ci') as HTMLInputElement | null;
   const coEl = $('est-co') as HTMLInputElement | null;
-  if (ciEl) { ciEl.value = iso(new Date(now.getTime() + 7 * 864e5)); ciEl.min = iso(now); }
-  if (coEl) { coEl.value = iso(new Date(now.getTime() + 10 * 864e5)); coEl.min = iso(new Date(now.getTime() + 864e5)); }
+  if (ciEl) { ciEl.value = sugeridas.llegada; ciEl.min = hoy; }
+  if (coEl) { coEl.value = sugeridas.salida; coEl.min = sumarDias(hoy, 1); }
 </script>

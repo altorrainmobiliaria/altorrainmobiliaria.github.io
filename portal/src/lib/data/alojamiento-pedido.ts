@@ -10,8 +10,9 @@
  * documento: un `POST` se fabrica desde la consola en diez segundos, y un total escrito por el cliente
  * llegaría al correo del equipo como si fuera nuestro.
  *
- * ⚖️ Y NUNCA SE PIERDE EL LEAD por esta comprobación: si el inmueble ya no está publicado se guarda
- * como consulta general (diciendo qué pidió), y si la base no responde se guarda el id marcado como
+ * ⚖️ Y NUNCA SE PIERDE EL LEAD por esta comprobación: si el inmueble ya no está publicado —o lo está
+ * pero reservado o cerrado— se guarda como consulta general (diciendo qué pidió y por qué no se dio por
+ * elegido), y si la base no responde se guarda el id marcado como
  * «sin comprobar». Lo único que se descarta es un id sin la forma canónica: eso no es una elección,
  * es basura, y un bot no puede colarle al equipo un «inmueble» que no existe.
  */
@@ -20,13 +21,20 @@ import type { DataClient } from './client';
 import { ID_PROPIEDAD_RE } from './buscar-ficha';
 import { esEsquemaLegacy, esPublicada } from '../domain/catalogo';
 import { publicable } from '../domain/propiedades';
+import { avisoEstado } from '../domain/ficha';
 import { desgloseEstadia, type DesgloseEstadia } from '../domain/reserva';
 
 export type AlojamientoPedido =
-  /** Existe, está publicado, es un alojamiento con su RNT: el lead lo lleva con su total. */
+  /** Existe, está publicado, es un alojamiento con su RNT y está DISPONIBLE: el lead lo lleva con su total. */
   | { estado: 'ok'; id: string; titulo: string; desglose: DesgloseEstadia | null }
-  /** Tiene la forma de un id nuestro pero no es un alojamiento publicado (vendido, retirado, borrador). */
+  /** Tiene la forma de un id nuestro pero no es un alojamiento publicado (retirado, borrador, sin RNT). */
   | { estado: 'no-publicado'; id: string }
+  /**
+   * Publicado, pero la ficha no admite solicitudes: reservado, cerrado o inactivo (`motivo` es el
+   * título del aviso de la ficha: «Reservado», «No disponible»…). Llega por una página en caché o un
+   * `POST` fabricado; darlo por elegido y con total sería prometer lo que la propia ficha niega.
+   */
+  | { estado: 'no-disponible'; id: string; motivo: string }
   /** La base no respondió: no se puede afirmar ni negar. */
   | { estado: 'sin-comprobar'; id: string };
 
@@ -53,6 +61,10 @@ export async function comprobarAlojamiento(
   if (!esPublicada(p) || esEsquemaLegacy(p) || !publicable(p) || p.operacion !== 'alojamiento') {
     return { estado: 'no-publicado', id };
   }
+  // El MISMO predicado con el que la ficha esconde el formulario (`admiteVisita`): todo estado que no
+  // sea `disponible` lleva aviso y ninguno admite solicitud.
+  const aviso = avisoEstado(p);
+  if (aviso) return { estado: 'no-disponible', id, motivo: aviso.titulo };
   return {
     estado: 'ok',
     id,

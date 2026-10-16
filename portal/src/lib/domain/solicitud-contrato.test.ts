@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { contactoDe, solicitudDeDocumento } from './crm';
 import { asuntoDeLead, contactabilidad, cuerpoDeLead } from './lead-aviso';
 
@@ -154,6 +154,22 @@ describe('una solicitud desde la ficha de un alojamiento lleva su propiedadId', 
         'consulta general — pidió el alojamiento INM-202610-0001, que ya no está publicado',
       );
       expect((doc.datosExtra as Record<string, unknown>).descripcion).not.toContain('total');
+      // Y el equipo se ENTERA de cuál pidió: la descripción es lo único que llega al correo (§329).
+      expect((doc.datosExtra as Record<string, unknown>).descripcion).toContain('pidió el alojamiento INM-202610-0001');
+    }
+  });
+
+  it('reservado o cerrado: la ficha no admite solicitud, así que ni se da por elegido ni lleva total', async () => {
+    for (const [estado, motivo] of [['reservado', 'Reservado'], ['cerrado', 'Ya arrendado']] as const) {
+      escritos.length = 0;
+      const doc = await enviar({ ...base(), propiedadId: 'INM-202610-0001' }, cliente({ ok: true, data: { ...ALOJ, estado } }));
+      expect(doc.propiedadId).toBeUndefined();
+      const extra = doc.datosExtra as Record<string, unknown>;
+      const sobre = `consulta general — pidió el alojamiento INM-202610-0001, que figura como «${motivo}»`;
+      expect(extra.sobre).toBe(sobre);
+      expect(extra.descripcion).toContain(sobre);
+      expect(extra.descripcion).not.toContain('total');
+      expect(cuerpoDeLead(solicitudDeDocumento('SOL-CONTRATO', doc), PANEL)).toContain(sobre);
     }
   });
 
@@ -163,6 +179,7 @@ describe('una solicitud desde la ficha de un alojamiento lleva su propiedadId', 
     expect((doc.datosExtra as Record<string, unknown>).sobre).toBe(
       'alojamiento elegido: INM-202610-0001 — no se pudo comprobar al recibir la solicitud',
     );
+    expect((doc.datosExtra as Record<string, unknown>).descripcion).toContain('INM-202610-0001 — no se pudo comprobar');
   });
 
   it('un id sin forma canónica es basura, no una elección: ni se consulta ni se guarda', async () => {
@@ -220,5 +237,36 @@ describe('solicitudDeDocumento — las dos formas que hay guardadas', () => {
       email: 'ana@example.com',
     });
     expect(contactoDe(undefined)).toEqual({ nombre: '', telefono: '', email: '' });
+  });
+});
+
+describe('el «hoy» del servidor es el de Cartagena (§329)', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+  const pedir = (llegada: string, salida: string) =>
+    POST({
+      request: new Request('https://altorrainmobiliaria.co/api/solicitud', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify({ formulario: 'reserva-estancia', nombre: 'Ana Restrepo', telefono: '300 123 4567', autorizacion: 'on', llegada, salida, huespedes: 2 }),
+      }),
+      locals: {},
+    } as unknown as Parameters<typeof POST>[0]);
+
+  it('a las 10 de la noche en Cartagena —ya «mañana» en UTC— una llegada HOY se acepta', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-17T03:00:00Z')); // viernes 16-oct, 22:00 en Cartagena
+    const res = await pedir('2026-10-16', '2026-10-18');
+    expect(res.status).toBe(200);
+    expect((escritos[0].datosExtra as Record<string, unknown>).llegada).toBe('2026-10-16');
+  });
+
+  it('y el día anterior de Cartagena sigue siendo pasado', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-10-17T03:00:00Z'));
+    const res = await pedir('2026-10-15', '2026-10-18');
+    expect(res.status).toBe(422);
+    expect(escritos).toHaveLength(0);
   });
 });

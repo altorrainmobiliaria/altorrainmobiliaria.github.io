@@ -168,6 +168,20 @@ export function fechasSugeridas(hoy: string): { llegada: string; salida: string 
 }
 
 /**
+ * El día de HOY en Cartagena, `YYYY-MM-DD` — el único «hoy» de una estancia (§329). Lo usan el
+ * endpoint (al validar la llegada), la ficha (al proponer fechas) y el navegador (mínimo del
+ * calendario). Con tres relojes distintos, de 7 de la noche a medianoche el servidor —en UTC, ya
+ * «mañana»— rechazaba una llegada «hoy» que la ficha dejaba elegir; y la fecha que importa es la del
+ * lugar donde está el alojamiento, no la del huso de quien lo mira.
+ *
+ * Colombia no tiene horario de verano: UTC−5 fijo, sin depender de la base de zonas horarias del
+ * runtime (Worker, navegador o Node). `ahora` se inyecta para poder probar los bordes.
+ */
+export function hoyEnCartagena(ahora: Date = new Date()): string {
+  return new Date(ahora.getTime() - 5 * 3_600_000).toISOString().slice(0, 10);
+}
+
+/**
  * Qué impide aceptar la solicitud.
  *
  * `salida-antes-de-llegada` incluye el caso de MISMO día: una estancia de cero noches no es una
@@ -208,6 +222,34 @@ export function explicarProblemaReserva(p: ProblemaReserva): string {
     'huespedes-invalidos': `Dinos cuántas personas son (entre 1 y ${HUESPEDES_MAX}).`,
   };
   return t[p];
+}
+
+/** Lo que responde `/api/solicitud` cuando NO acepta la solicitud (400, 413 o 422). */
+export interface RechazoSolicitud {
+  ok?: boolean;
+  reason?: string;
+  mensajes?: string[];
+}
+
+/**
+ * Lo que lee el visitante cuando `/api/solicitud` no acepta su solicitud de estancia (§329). Los dos
+ * paneles (la ficha y /estancias) solo leían `mensajes`, que trae únicamente el rechazo por FECHAS: un
+ * teléfono o un nombre rechazados salían como «No pudimos enviar la solicitud. Intenta de nuevo», y
+ * reintentar con el mismo dato da el mismo 422 — un bucle sin salida. Cada `reason` del endpoint dice
+ * aquí QUÉ corregir.
+ */
+export function explicarRechazoSolicitud(r: RechazoSolicitud | null): string {
+  if (r?.mensajes?.length) return r.mensajes.join(' ');
+  switch (r?.reason) {
+    case 'telefono':
+      return 'Revisa tu WhatsApp: escribe solo números; puedes usar espacios, +, - o paréntesis.';
+    case 'nombre':
+      return 'Revisa tu nombre: escríbelo sin enlaces.';
+    case 'autorizacion':
+      return 'Marca la autorización de datos para poder responderte.';
+    default:
+      return 'No pudimos enviar la solicitud. Intenta de nuevo o escríbenos por WhatsApp.';
+  }
 }
 
 /**

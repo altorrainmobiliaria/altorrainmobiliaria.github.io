@@ -237,9 +237,14 @@ export function fichaTecnica(p: Propiedad): Array<[string, string]> {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Etiquetas de las amenidades que el modelo usa hoy (las mismas 12 del seed, que es el único sitio
- * donde el vocabulario está escrito). Una clave desconocida NO se descarta: se humaniza y se muestra,
- * porque el dato lo puso una persona y esconderlo sería perder inventario real.
+ * Etiquetas de las amenidades, por su clave CANÓNICA (la del seed: `porteria24h`). Una clave
+ * desconocida NO se descarta: se humaniza y se muestra, porque el dato lo puso una persona y
+ * esconderlo sería perder inventario real.
+ *
+ * ⚠️ HAY DOS VOCABULARIOS EN LA BASE (§329). El seed guarda la clave (`{ porteria24h: true }`), pero el
+ * alta del panel (`/gestion` → `alta-propiedad.ts`) guarda la ETIQUETA tal cual la ofrece
+ * (`{ 'Portería 24h': true }`) — y es el único camino de producción. Por eso toda lectura pasa por
+ * `claveAmenidad`: sin ella, ningún alojamiento real encontraba su icono.
  */
 const AMENIDAD_LABEL: Record<string, string> = {
   piscina: 'Piscina',
@@ -255,6 +260,30 @@ const AMENIDAD_LABEL: Record<string, string> = {
   terraza: 'Terraza',
   parqueaderoVisitantes: 'Parqueadero de visitantes',
 };
+
+/** Etiqueta reducida para comparar: sin tildes, en minúscula, «24 horas» = «24h». */
+function reducirEtiqueta(s: string): string {
+  return s
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b24 horas\b/, '24h');
+}
+
+/** Etiqueta reducida → clave canónica, derivada de `AMENIDAD_LABEL` (una sola lista que mantener). */
+const CLAVE_DE_ETIQUETA = new Map(Object.entries(AMENIDAD_LABEL).map(([k, v]) => [reducirEtiqueta(v), k]));
+
+/**
+ * La clave CANÓNICA de una amenidad, venga del seed (`porteria24h`) o del panel (`Portería 24h`);
+ * `null` si no es del vocabulario conocido (`Amoblado`, `Admite mascotas`…). `Object.hasOwn` y un
+ * `Map`, no `in`: una clave `constructor` en el documento no puede pasar por amenidad conocida.
+ */
+export function claveAmenidad(k: string): string | null {
+  if (Object.hasOwn(AMENIDAD_LABEL, k)) return k;
+  return CLAVE_DE_ETIQUETA.get(reducirEtiqueta(k)) ?? null;
+}
 
 /** `vistaAlMar` → «Vista al mar». Separa camelCase y pone mayúscula inicial. */
 export function humanizarAmenidad(clave: string): string {
@@ -274,7 +303,7 @@ export function amenidadesVisibles(p: Propiedad): string[] {
   return amenidadesDetalladas(p).map((a) => a.etiqueta);
 }
 
-/** Una amenidad con su CLAVE del modelo, para que la plantilla elija el icono; `null` en las libres. */
+/** Una amenidad con su clave CANÓNICA (`claveAmenidad`) para que la plantilla elija el icono; `null` si no la tiene. */
 export interface AmenidadVisible {
   clave: string | null;
   etiqueta: string;
@@ -289,7 +318,12 @@ export interface AmenidadVisible {
 export function amenidadesDetalladas(p: Propiedad): AmenidadVisible[] {
   const marcadas = Object.entries(p.amenidades ?? {})
     .filter(([, v]) => v === true)
-    .map(([k]) => ({ clave: k, etiqueta: AMENIDAD_LABEL[k] ?? humanizarAmenidad(k) }));
+    .map(([k]) => {
+      const clave = claveAmenidad(k);
+      // Con clave conocida, su etiqueta canónica: así «Zona BBQ» del panel no sale «Zona bbq» y la
+      // misma amenidad escrita en los dos vocabularios no se pinta dos veces.
+      return { clave, etiqueta: clave ? AMENIDAD_LABEL[clave] : humanizarAmenidad(k) };
+    });
   const otras = (p.otrasAmenidades ?? [])
     .map((s) => String(s).trim())
     .filter(Boolean)

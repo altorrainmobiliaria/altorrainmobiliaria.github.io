@@ -74,7 +74,8 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
         {est.nota && (
           <p class="fe-nota">
             <svg class="fe-estrella" viewBox="0 0 24 24" aria-hidden="true" set:html={ICO_STAR}></svg>
-            {est.nota}
+            <b>{est.notaCorta}</b>
+            {est.notaRecuento && <span class="fe-nota__n">· {est.notaRecuento}</span>}
           </p>
         )}
         {/* El mockup dice «Anfitrión verificado». Aquí el sello es el de ALTORRA, que es el que
@@ -114,7 +115,7 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
     {todas.length > 1 && (
       <div id="fe-galeria" class="fe-thumbs">
         {todas.map((g, i) => (
-          <button class={`fe-thumb${i === 0 ? ' is-on' : ''}`} type="button" data-src={g} aria-label={`Ver la foto ${i + 1}`}>
+          <button class={`fe-thumb${i === 0 ? ' is-on' : ''}`} type="button" data-src={g} aria-label={`Ver la foto ${i + 1}`} aria-pressed={i === 0 ? 'true' : 'false'}>
             <img src={g} alt="" loading="lazy" decoding="async" />
           </button>
         ))}
@@ -202,7 +203,7 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
               <label><span>Salida</span><input type="date" id="fe-co" value={est.sugeridas.salida} /></label>
             </div>
             <div class="fe-book__guests">
-              <div><span class="fe-book__glbl">Huéspedes</span><span id="fe-guests-label">2 huéspedes</span></div>
+              <div><span class="fe-book__glbl">Huéspedes</span><span id="fe-guests-label" aria-live="polite">2 huéspedes</span></div>
               <div class="fe-book__stepper">
                 <button type="button" id="fe-dec" aria-label="Menos huéspedes">−</button>
                 <span id="fe-guests">2</span>
@@ -217,7 +218,7 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
           {/* EL TOTAL A LA VISTA (Ley 1480 art. 26): noches × precio, la limpieza una sola vez, y la
               suma. Lo escribe `lineasDesglose`, el mismo que usa el navegador al cambiar las fechas. */}
           {est.desglose && (
-            <div class="fe-desglose" id="fe-desglose" aria-live="polite">
+            <div class="fe-desglose" id="fe-desglose" aria-live="polite" aria-atomic="true">
               <p class="fe-desglose__row"><span class="fe-desglose__c" id="fe-linea">{est.desglose.alojamiento.concepto}</span><span id="fe-subtotal">{est.desglose.alojamiento.valor}</span></p>
               {est.desglose.limpieza && (
                 <p class="fe-desglose__row"><span class="fe-desglose__c">{est.desglose.limpieza.concepto}</span><span>{est.desglose.limpieza.valor}</span></p>
@@ -256,6 +257,10 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
         </>
       )}
     </div>
+    {/* Bajo la tarjeta, en el hueco donde el mockup pone «Cancelación gratuita hasta 5 días antes»
+        (sin política modelada: no va). El código es el mismo que enseña la ficha de venta y arriendo,
+        y con el que el visitante pregunta por WhatsApp. */}
+    <p class="fe-cod">Código {p.id}</p>
   </aside>
 </div>
 
@@ -266,7 +271,10 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
   .fe-h1 { margin: 0; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(30px, 4.4vw, 48px); line-height: 1.02; letter-spacing: -0.01em; color: var(--alt-ink); }
   .fe-head__meta { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
   .fe-estrella { width: 17px; height: 17px; fill: var(--alt-gold); stroke: var(--alt-gold); stroke-width: 1; flex: none; }
-  .fe-nota { display: flex; align-items: center; gap: 7px; margin: 0; font-size: 15px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); }
+  .fe-nota { display: flex; align-items: center; gap: 7px; margin: 0; font-size: 15px; color: var(--alt-ink); }
+  .fe-nota b { font-weight: var(--alt-fw-bold); }
+  /* El recuento, como en el mockup: más pequeño, sin negrita y en el gris AA del cuerpo. */
+  .fe-nota__n { font-size: 13.5px; color: var(--alt-text); }
   .fe-sello { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: var(--alt-r-pill, 999px); background: var(--alt-mist); font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-link); }
   .fe-sello svg { width: 13px; height: 13px; }
 
@@ -287,6 +295,8 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
   .fe-thumb { width: 96px; height: 66px; border-radius: 10px; overflow: hidden; cursor: pointer; padding: 0; border: 0; background: none; outline: 2px solid transparent; outline-offset: 1px; transition: outline-color var(--alt-dur) var(--alt-ease); }
   .fe-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .fe-thumb.is-on { outline-color: var(--alt-gold); }
+  /* Foco de teclado en navy (token de foco): con el anillo transparente era invisible. */
+  .fe-thumb:focus-visible { outline-color: var(--alt-focus-color); }
 
   /* Cuerpo a dos columnas */
   .fe-body { max-width: 1300px; margin-inline: auto; padding: 34px clamp(16px, 4vw, 48px) 60px; display: flex; gap: clamp(28px, 3.6vw, 60px); flex-wrap: wrap; align-items: flex-start; }
@@ -314,6 +324,11 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
 
   /* Panel fijo */
   .fe-aside { flex: 1 1 340px; min-width: 0; position: sticky; top: 92px; align-self: flex-start; }
+  /* Con el paso de contacto abierto el panel mide más que una ventana de portátil, y pegado arriba su
+     final —«Enviar solicitud»— quedaba fuera de alcance hasta el pie de la columna. Deja de ser fijo
+     mientras el formulario o la confirmación están a la vista. */
+  .fe-aside:has(.fe-datos:not([hidden])), .fe-aside:has(.fe-confirm:not([hidden])) { position: static; }
+  .fe-cod { text-align: center; font-size: 12px; color: var(--alt-text); margin: 14px 0 0; }
   .fe-book { background: var(--alt-white); border: 1px solid rgba(27, 39, 51, 0.12); border-radius: var(--alt-r-lg); padding: 24px; box-shadow: 0 2px 6px rgba(27, 39, 51, 0.04), 0 34px 64px -40px rgba(27, 39, 51, 0.45); }
   .fe-book__price { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
   .fe-book__price p { margin: 0; }
@@ -332,7 +347,10 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
   .fe-book__dates label:first-child { border-right: 1px solid var(--alt-hairline); }
   .fe-book__dates span, .fe-book__glbl { display: block; font-size: 10px; font-weight: var(--alt-fw-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text); margin-bottom: 3px; }
   .fe-book__dates input { border: none; outline: none; font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); width: 100%; background: transparent; padding: 0; font-family: var(--alt-font-body); }
-  .fe-book__dates input:focus-visible { outline: 2px solid var(--alt-gold); outline-offset: 2px; }
+  /* Anillo navy (token de foco): el oro sobre blanco da 2,1:1 y el token lo reserva para fondos navy.
+     `:focus` y no `:focus-visible`: en Chrome un campo de fecha enfocado con TECLADO no la cumple (el
+     foco va a su segmento interno) — medido en §329 —, y en un campo editable el anillo al clic es lo normal. */
+  .fe-book__dates input:focus { outline: var(--alt-focus-width) solid var(--alt-focus-color); outline-offset: var(--alt-focus-offset); }
   /* 16 px en móvil por el zoom de iOS (§264); la regla general no gana a este acotado. */
   @media (max-width: 900px) {
     .fe-book__dates input { font-size: var(--alt-fs-body); }
@@ -359,9 +377,11 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
   /* Paso de contacto */
   .fe-datos { display: grid; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--alt-hairline); }
   .fe-f { display: grid; gap: 5px; font-size: 12.5px; color: var(--alt-text); }
-  .fe-check { display: flex; gap: 9px; align-items: flex-start; font-size: 11.5px; line-height: 1.45; color: var(--alt-text-muted); }
+  /* La autorización de datos (Ley 1581) se LEE antes de marcarla: gris AA del cuerpo, no el decorativo
+     (--alt-text-muted daba 2,4:1). Los enlaces subrayados: no se distinguen solo por el color. */
+  .fe-check { display: flex; gap: 9px; align-items: flex-start; font-size: 11.5px; line-height: 1.45; color: var(--alt-text); }
   .fe-check input { margin-top: 2px; flex: 0 0 auto; }
-  .fe-check a { color: var(--alt-navy); }
+  .fe-check a { color: var(--alt-navy); text-decoration: underline; }
   /* El error va en dorado: la paleta no tiene rojo. */
   .fe-err { margin-top: var(--alt-space-3); font-size: 12.5px; line-height: 1.4; color: var(--alt-ink); background: var(--alt-mist); border-left: 3px solid var(--alt-gold); padding: 9px 11px; border-radius: 8px; }
   .fe-confirm { margin-top: 16px; }
@@ -377,7 +397,18 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
 </style>
 
 <script>
-  import { desgloseEstadia, explicarProblemaReserva, HUESPEDES_MAX, lineasDesglose, problemasDeReserva } from '../lib/domain/reserva';
+  import {
+    desgloseEstadia,
+    explicarProblemaReserva,
+    explicarRechazoSolicitud,
+    fechasSugeridas,
+    hoyEnCartagena,
+    HUESPEDES_MAX,
+    lineasDesglose,
+    problemasDeReserva,
+    sumarDias,
+    type RechazoSolicitud,
+  } from '../lib/domain/reserva';
 
   const raiz = document.querySelector<HTMLElement>('[data-ficha-estancia]');
   const $ = (id: string) => document.getElementById(id);
@@ -388,14 +419,16 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
     btn.addEventListener('click', () => {
       const src = btn.dataset.src;
       if (principal && src) principal.src = src;
-      document.querySelectorAll('.fe-thumb').forEach((b) => b.classList.remove('is-on'));
+      document.querySelectorAll('.fe-thumb').forEach((b) => {
+        b.classList.remove('is-on');
+        b.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('is-on');
+      btn.setAttribute('aria-pressed', 'true');
     });
   });
 
   if (raiz && $('fe-pedir')) {
-    /** Un día en `YYYY-MM-DD` LOCAL: el visitante elige fechas en su calendario, no en UTC. */
-    const iso = (d: Date) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     const propiedadId = raiz.dataset.propiedad ?? '';
     const noche = Number(raiz.dataset.noche);
     const aseo = Number(raiz.dataset.aseo);
@@ -434,18 +467,21 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
       caja.removeAttribute('hidden');
     }
 
-    // Mínimos en el día LOCAL. Si la página vino de caché con una llegada que ya pasó, se proponen
-    // fechas nuevas en vez de dejar al visitante con un error que no provocó.
-    const hoy = iso(new Date());
+    // Mínimos en el día de CARTAGENA, el mismo con el que el servidor valida (`hoyEnCartagena`): con el
+    // reloj local, a un visitante de otro huso —o de noche— el calendario y el servidor discrepaban.
+    // Si la página vino de caché con una llegada que ya pasó, se proponen fechas nuevas en vez de
+    // dejar al visitante con un error que no provocó.
+    const hoy = hoyEnCartagena();
     if (ci) ci.min = hoy;
     if (ci && co && ci.value < hoy) {
-      ci.value = iso(new Date(Date.now() + 7 * 864e5));
-      co.value = iso(new Date(Date.now() + 10 * 864e5));
+      const f = fechasSugeridas(hoy);
+      ci.value = f.llegada;
+      co.value = f.salida;
     }
     const ajustarSalida = () => {
       if (!ci || !co || !ci.value) return;
-      const t = Date.parse(`${ci.value}T00:00:00`);
-      if (Number.isFinite(t)) co.min = iso(new Date(t + 864e5));
+      const s = sumarDias(ci.value, 1);
+      if (s) co.min = s;
     };
     ajustarSalida();
     recalcular();
@@ -453,9 +489,12 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
     co?.addEventListener('change', recalcular);
 
     $('fe-pedir')?.addEventListener('click', () => {
-      const malos = problemasDeReserva({ llegada: ci?.value ?? '', salida: co?.value ?? '', huespedes: guests }, hoy);
+      // En el momento del clic: una pestaña abierta desde ayer no puede validar con el «hoy» de ayer.
+      const malos = problemasDeReserva({ llegada: ci?.value ?? '', salida: co?.value ?? '', huespedes: guests }, hoyEnCartagena());
       if (malos.length) { err(malos.map(explicarProblemaReserva).join(' ')); return; }
       $('fe-err')?.setAttribute('hidden', '');
+      // Una segunda solicitud (otras fechas) empieza sin la confirmación de la anterior.
+      $('fe-confirm')?.setAttribute('hidden', '');
       $('fe-datos')?.removeAttribute('hidden');
       ($('fe-nombre') as HTMLInputElement | null)?.focus();
     });
@@ -491,12 +530,17 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
             huespedes: guests,
           }),
         });
-        const cuerpo = (await res.json().catch(() => null)) as { ok?: boolean; mensajes?: string[] } | null;
+        const cuerpo = (await res.json().catch(() => null)) as RechazoSolicitud | null;
         if (!res.ok || !cuerpo?.ok) {
-          err(cuerpo?.mensajes?.join(' ') || 'No pudimos enviar la solicitud. Intenta de nuevo o escríbenos por WhatsApp.');
+          // Qué corregir (teléfono, nombre, fechas), no un «intenta de nuevo» que da el mismo rechazo.
+          err(explicarRechazoSolicitud(cuerpo));
           if (btn) { btn.disabled = false; btn.textContent = 'Enviar solicitud'; }
           return;
         }
+        // El formulario queda como nuevo para una segunda solicitud: botón activo y la autorización
+        // SIN marcar — cada solicitud la pide de nuevo (Ley 1581: nunca premarcada).
+        ($('fe-datos') as HTMLFormElement | null)?.reset();
+        if (btn) { btn.disabled = false; btn.textContent = 'Enviar solicitud'; }
         $('fe-datos')?.setAttribute('hidden', '');
         $('fe-confirm')?.removeAttribute('hidden');
         // El foco estaba en el botón que se acaba de ocultar: sin esto el lector de pantalla no llega

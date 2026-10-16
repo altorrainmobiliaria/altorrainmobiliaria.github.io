@@ -26,6 +26,7 @@ import { urlMedia } from '../lib/media';
 import PropertyCard from './PropertyCard.astro';
 import FichaEstancia from './FichaEstancia.astro';
 import { fichaEstancia } from '../lib/domain/ficha-estancia';
+import { hoyEnCartagena } from '../lib/domain/reserva';
 import type { Propiedad } from '../lib/domain/propiedades';
 import { portadaDe } from '../lib/domain/propiedades';
 import type { CatalogoResumen } from '../lib/domain/catalogo';
@@ -88,9 +89,9 @@ const marcadores = tieneMapa ? [{ i: 0, lat: p.geo.lat, lng: p.geo.lng, label: p
  * ofrece este lugar» y el panel con fechas, huéspedes y el total—, en vez del bloque de «Agendar
  * visita» de la venta y el arriendo, que a quien busca unas noches no le sirve. `null` en venta, en
  * arriendo y en un alojamiento sin RNT exhibible (fail-closed: entonces no hay panel de precio). El día
- * se toma en UTC: solo fija las fechas con las que abre el panel, y el navegador las corrige a su día.
+ * es el de CARTAGENA (`hoyEnCartagena`), el mismo con el que el endpoint valida la llegada.
  */
-const est = fichaEstancia(p, new Date().toISOString().slice(0, 10));
+const est = fichaEstancia(p, hoyEnCartagena());
 
 const waVisita = encodeURIComponent(mensajeWhatsApp(p, 'visita'));
 const waInfo = encodeURIComponent(mensajeWhatsApp(p, 'info'));
@@ -167,7 +168,7 @@ const ICO_WA =
       {imagenes.length > 1 && (
         <div id="galeria" class="ficha-thumbs">
           {[portada, ...secundarias].map((g, i) => (
-            <button class={`ficha-thumb${i === 0 ? ' is-on' : ''}`} type="button" data-src={g}>
+            <button class={`ficha-thumb${i === 0 ? ' is-on' : ''}`} type="button" data-src={g} aria-pressed={i === 0 ? 'true' : 'false'}>
               <img src={g} alt={`Foto ${i + 1}`} loading="lazy" decoding="async" />
             </button>
           ))}
@@ -322,7 +323,11 @@ const ICO_WA =
       )}
     </section>
 
-    {historial.length > 0 && (
+    {/* ⚖️ NO en un alojamiento (§329): cada fila es un precio «/ noche» y aquí iría sin su RNT pegado
+        (Ley 300/1996) — y el mockup de Estancias no tiene historial. Todo alta abre la serie
+        (`priceHistory`), así que en un alojamiento real esta sección saldría SIEMPRE. Se mira la OPERACIÓN y
+        no `est`: un alojamiento sin RNT exhibible cae a esta plantilla, y ahí tampoco puede salir. */}
+    {p.operacion !== 'alojamiento' && historial.length > 0 && (
       <section class="ficha-sec">
         <h2>Historial de precio</h2>
         <div class="ficha-hist">
@@ -426,8 +431,12 @@ const ICO_WA =
     btn.addEventListener('click', () => {
       const src = (btn as HTMLElement).dataset.src;
       if (main && src) main.src = src;
-      document.querySelectorAll('.ficha-thumb').forEach((b) => b.classList.remove('is-on'));
+      document.querySelectorAll('.ficha-thumb').forEach((b) => {
+        b.classList.remove('is-on');
+        b.setAttribute('aria-pressed', 'false');
+      });
       btn.classList.add('is-on');
+      btn.setAttribute('aria-pressed', 'true');
     });
   });
 
@@ -490,6 +499,8 @@ const ICO_WA =
   .ficha-thumb { width: 96px; height: 66px; border-radius: var(--alt-r-chip, 10px); overflow: hidden; cursor: pointer; padding: 0; border: 0; background: none; outline: 2px solid transparent; outline-offset: 1px; transition: outline-color var(--alt-dur) var(--alt-ease); }
   .ficha-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .ficha-thumb.is-on { outline-color: var(--alt-gold); }
+  /* El foco de teclado en navy (token de foco): el anillo transparente lo dejaba invisible (§329). */
+  .ficha-thumb:focus-visible { outline-color: var(--alt-focus-color); }
 
   /* Body */
   .ficha-body { max-width: 1300px; margin-inline: auto; padding: 34px clamp(16px, 4vw, 48px) 6px; display: flex; gap: clamp(28px, 3.4vw, 56px); flex-wrap: wrap; align-items: flex-start; }

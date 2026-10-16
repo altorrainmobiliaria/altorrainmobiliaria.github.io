@@ -19,7 +19,7 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { createDoc } from '../../../lib/data/firestore-rest';
-import { getPublicFirebaseConfig } from '../../../lib/data/client';
+import { FIRESTORE_DESARROLLO, getPublicFirebaseConfig } from '../../../lib/data/client';
 import type { BajaAlerta } from '../../../lib/domain/alertas';
 
 const MAX_BODY = 2048;
@@ -64,9 +64,11 @@ export const POST: APIRoute = async ({ request, url }) => {
   };
 
   const cfg = getPublicFirebaseConfig();
+  // En desarrollo con el emulador puesto, al emulador; en el Worker, `undefined` (ver `client.ts`).
   const r = await createDoc('bajasAlertas', doc as unknown as Record<string, unknown>, {
     apiKey: cfg.apiKey,
     projectId: cfg.projectId,
+    baseUrl: FIRESTORE_DESARROLLO,
   });
 
   if (unClick) return new Response(r.ok ? 'ok' : 'error', { status: r.ok ? 200 : 502 });

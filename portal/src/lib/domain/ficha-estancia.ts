@@ -35,6 +35,11 @@ export interface FichaEstancia {
   nota: string | null;
   /** «4,9» — la cifra sola, junto al precio. Sale de la MISMA nota: nunca hay una sin la otra. */
   notaCorta: string | null;
+  /**
+   * «12 reseñas» — el recuento solo. La cabecera del mockup pinta la cifra en negrita y el recuento
+   * aparte, más pequeño y en gris; el texto es el mismo de `nota`, partido, no reescrito.
+   */
+  notaRecuento: string | null;
   /** «RNT 100001». Nunca falta: sin número exhibible no hay ficha de alojamiento (`null` arriba). */
   rnt: string;
   /** El precio por noche escrito y en número (el navegador recalcula con él), o `null` si no hay. */
@@ -77,6 +82,7 @@ export function fichaEstancia(p: Propiedad, hoy: string): FichaEstancia | null {
     // La cifra es el trozo de `textoNota` antes del «·», no un segundo formateo: si mañana la nota se
     // escribe con otra precisión, el panel y la cabecera no pueden decir dos números distintos.
     notaCorta: nota ? textoNota(nota).split(' · ')[0] : null,
+    notaRecuento: nota ? textoNota(nota).split(' · ').slice(1).join(' · ') || null : null,
     rnt: textoRnt(numero),
     noche,
     aseo: aseoDe(p.precio),

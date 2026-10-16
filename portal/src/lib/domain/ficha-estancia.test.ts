@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { fichaEstancia } from './ficha-estancia';
-import { aseoDe, desgloseEstadia, fechasSugeridas, lineasDesglose, sumarDias } from './reserva';
+import { aseoDe, desgloseEstadia, explicarRechazoSolicitud, fechasSugeridas, hoyEnCartagena, lineasDesglose, sumarDias } from './reserva';
 import { amenidadesDetalladas, amenidadesVisibles } from './ficha';
 import type { Propiedad } from './propiedades';
 
@@ -89,9 +89,13 @@ describe('fichaEstancia — solo un alojamiento con su RNT tiene panel de precio
   it('la nota sale solo con el mínimo de reseñas, y la cifra corta es la MISMA de la cabecera', () => {
     expect(fichaEstancia(aloj({ resenas: { promedio: 4.9, n: 2, actualizado: HOY } }), HOY)?.nota).toBeNull();
     expect(fichaEstancia(aloj({ resenas: { promedio: 4.9, n: 2, actualizado: HOY } }), HOY)?.notaCorta).toBeNull();
+    expect(fichaEstancia(aloj({ resenas: { promedio: 4.9, n: 2, actualizado: HOY } }), HOY)?.notaRecuento).toBeNull();
     const f = fichaEstancia(aloj({ resenas: { promedio: 4.87, n: 12, actualizado: HOY } }), HOY)!;
     expect(f.nota).toBe('4,9 · 12 reseñas');
     expect(f.notaCorta).toBe('4,9');
+    // La cabecera las pinta por separado (cifra en negrita, recuento aparte): juntas son la misma nota.
+    expect(f.notaRecuento).toBe('12 reseñas');
+    expect(`${f.notaCorta} · ${f.notaRecuento}`).toBe(f.nota);
   });
 
   it('el lugar es barrio · ciudad, y sin barrio no deja un «·» colgando', () => {
@@ -140,13 +144,60 @@ describe('sumarDias / fechasSugeridas', () => {
 });
 
 describe('amenidadesDetalladas — «Lo que ofrece este lugar» con la clave para el icono', () => {
-  it('mismas etiquetas y mismo orden que amenidadesVisibles, con su clave', () => {
+  it('mismas etiquetas y mismo orden que amenidadesVisibles, con su clave canónica (o null)', () => {
     const p = aloj({ amenidades: { piscina: true, gimnasio: false, wifiRapido: true }, otrasAmenidades: ['Muelle', 'Piscina'] });
     expect(amenidadesDetalladas(p)).toEqual([
       { clave: 'piscina', etiqueta: 'Piscina' },
-      { clave: 'wifiRapido', etiqueta: 'Wifi rapido' },
+      { clave: null, etiqueta: 'Wifi rapido' },
       { clave: null, etiqueta: 'Muelle' },
     ]);
     expect(amenidadesVisibles(p)).toEqual(['Piscina', 'Wifi rapido', 'Muelle']);
+  });
+
+  it('lo que guarda el PANEL (la etiqueta como clave) también encuentra su icono', () => {
+    // La forma exacta que escribe el alta de /gestion: `{ [etiqueta]: true }` (gestion-alta-ui.ts).
+    const p = aloj({
+      amenidades: { Piscina: true, 'Aire acondicionado': true, 'Portería 24h': true, Terraza: true, 'Zona BBQ': true, Amoblado: true },
+    });
+    expect(amenidadesDetalladas(p)).toEqual([
+      { clave: 'piscina', etiqueta: 'Piscina' },
+      { clave: 'aireAcondicionado', etiqueta: 'Aire acondicionado' },
+      { clave: 'porteria24h', etiqueta: 'Portería 24 horas' },
+      { clave: 'terraza', etiqueta: 'Terraza' },
+      { clave: 'zonaBBQ', etiqueta: 'Zona BBQ' },
+      { clave: null, etiqueta: 'Amoblado' },
+    ]);
+  });
+
+  it('la misma amenidad en los dos vocabularios sale UNA vez, y `constructor` no es una amenidad conocida', () => {
+    const p = aloj({ amenidades: { piscina: true, Piscina: true, constructor: true } });
+    expect(amenidadesDetalladas(p)).toEqual([
+      { clave: 'piscina', etiqueta: 'Piscina' },
+      { clave: null, etiqueta: 'Constructor' },
+    ]);
+  });
+});
+
+describe('hoyEnCartagena — el único «hoy» de una estancia', () => {
+  it('es UTC−5: de 7 de la noche a medianoche UTC ya va un día por delante, Cartagena no', () => {
+    expect(hoyEnCartagena(new Date('2026-10-17T03:00:00Z'))).toBe('2026-10-16'); // 22:00 del 16
+    expect(hoyEnCartagena(new Date('2026-10-17T04:59:59Z'))).toBe('2026-10-16'); // 23:59:59 del 16
+    expect(hoyEnCartagena(new Date('2026-10-17T05:00:00Z'))).toBe('2026-10-17'); // medianoche del 17
+    expect(hoyEnCartagena(new Date('2027-01-01T04:00:00Z'))).toBe('2026-12-31');
+  });
+});
+
+describe('explicarRechazoSolicitud — qué corregir cuando el endpoint no acepta', () => {
+  it('las fechas traen su propio mensaje; teléfono y nombre dicen qué arreglar', () => {
+    expect(explicarRechazoSolicitud({ ok: false, reason: 'estancia', mensajes: ['Falta la fecha de salida.'] })).toBe('Falta la fecha de salida.');
+    expect(explicarRechazoSolicitud({ ok: false, reason: 'telefono' })).toMatch(/^Revisa tu WhatsApp/);
+    expect(explicarRechazoSolicitud({ ok: false, reason: 'nombre' })).toMatch(/^Revisa tu nombre/);
+    expect(explicarRechazoSolicitud({ ok: false, reason: 'autorizacion' })).toMatch(/autorización de datos/);
+  });
+
+  it('lo desconocido o un cuerpo ilegible es el fallo genérico, nunca vacío', () => {
+    expect(explicarRechazoSolicitud(null)).toMatch(/^No pudimos enviar la solicitud/);
+    expect(explicarRechazoSolicitud({ ok: false, reason: 'too-large' })).toMatch(/^No pudimos enviar la solicitud/);
+    expect(explicarRechazoSolicitud({ ok: false, mensajes: [] })).toMatch(/^No pudimos enviar la solicitud/);
   });
 });
