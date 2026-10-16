@@ -252,7 +252,7 @@ export function explicarRechazoSolicitud(r: RechazoSolicitud | null): string {
   if (r?.mensajes?.length) return r.mensajes.join(' ');
   switch (r?.reason) {
     case 'telefono':
-      return 'Revisa tu WhatsApp: escribe solo números; puedes usar espacios, +, - o paréntesis.';
+      return 'Revisa tu WhatsApp: escribe el número completo; puedes usar espacios, puntos, +, - o paréntesis.';
     case 'nombre':
       return 'Revisa tu nombre: escríbelo sin enlaces.';
     case 'autorizacion':

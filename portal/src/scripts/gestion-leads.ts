@@ -26,6 +26,7 @@ import { aCsv, nombreExport, type Columna } from '../lib/domain/csv';
 export { haceCuanto } from '../lib/domain/tiempo';
 import { haceCuanto } from '../lib/domain/tiempo';
 import { descargarTexto } from './descargar';
+import { numeroWhatsApp } from '../lib/domain/telefono';
 
 /** Tope de la consulta. `limit()` es OBLIGATORIO en este proyecto: una query sin él es una cuota abierta. */
 const TOPE = 50;
@@ -132,10 +133,18 @@ function pintarFila(lead: Lead): HTMLElement {
   // un número a mano — ese roce es la diferencia entre llamar en 5 minutos o en 5 horas.
   const contacto = document.createElement('span');
   contacto.className = 'gx-muted gx-ell';
-  if (lead.telefono) {
+  // El número internacional sale del dominio (`telefono.ts`): con los dígitos tal cual, «300 123
+  // 4567» daba `wa.me/3001234567`, sin el 57, y WhatsApp no abría el chat de nadie.
+  const numero = lead.telefono ? numeroWhatsApp(lead.telefono) : null;
+  if (lead.telefono && !numero) {
+    // Sin país reconocible no se adivina: se enseña el número para llamarlo, sin un enlace que
+    // abriría el chat de un desconocido.
+    contacto.textContent = lead.telefono;
+    contacto.title = 'No se pudo armar el enlace de WhatsApp: el número no dice de qué país es.';
+  } else if (numero) {
     const wa = document.createElement('a');
     wa.className = 'gx-link';
-    wa.href = `https://wa.me/${lead.telefono.replace(/\D/g, '')}?text=${encodeURIComponent(
+    wa.href = `https://wa.me/${numero}?text=${encodeURIComponent(
       `Hola ${lead.nombre.split(/\s+/)[0]}, te escribo de ALTORRA Inmobiliaria.`,
     )}`;
     wa.rel = 'noopener';

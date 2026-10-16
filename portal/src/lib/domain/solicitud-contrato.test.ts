@@ -86,6 +86,23 @@ describe('lo que escribe /api/solicitud lo entiende el aviso de lead', () => {
     expect(s.fechas).toBeUndefined();
     expect(contactabilidad(s)).toBe('telefono');
   });
+
+  it('un teléfono escrito con puntos se acepta y se guarda tal cual lo tecleó (§330)', async () => {
+    const doc = await enviar({ nombre: 'Luis Pérez', telefono: '300.123.4567', autorizacion: 'on' });
+    expect(doc.telefono).toBe('300.123.4567');
+  });
+
+  it('lo que solo tiene la forma de un teléfono, sin sus dígitos, se rechaza con 422', async () => {
+    const request = new Request('https://altorrainmobiliaria.co/api/solicitud', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({ nombre: 'Luis Pérez', telefono: '(((((((', autorizacion: 'on' }),
+    });
+    const res = await POST({ request } as unknown as Parameters<typeof POST>[0]);
+    expect(res.status).toBe(422);
+    expect(await res.json()).toMatchObject({ ok: false, reason: 'telefono' });
+    expect(escritos).toHaveLength(0);
+  });
 });
 
 /*

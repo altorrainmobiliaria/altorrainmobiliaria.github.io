@@ -24,6 +24,7 @@ import { LEGAL } from '../../lib/config/legal';
 import { ZONAS as ZONAS_LANDING } from '../../lib/content/zonas';
 import { explicarProblemaReserva, hoyEnCartagena, lineasDesglose, problemasDeReserva, resumenReserva } from '../../lib/domain/reserva';
 import { tipoDe } from '../../lib/domain/lead-score';
+import { telefonoValido } from '../../lib/domain/telefono';
 import { comprobarAlojamiento, type AlojamientoPedido } from '../../lib/data/alojamiento-pedido';
 
 /** Tope de bytes del cuerpo: un lead legítimo son ~300 bytes. Corta payloads de abuso antes de parsear. */
@@ -81,9 +82,6 @@ const FORMULARIO_POR_DEFECTO = 'publicar-propiedad';
 // "corta" [ -] es un RANGO espacio..guion que borraria los espacios de un nombre compuesto.
 const limpiar = (v: unknown, max: number): string =>
   typeof v === 'string' ? v.replace(/[\u0000-\u001f\u007f]/g, '').trim().slice(0, max) : '';
-
-/** Teléfono colombiano tolerante: dígitos, espacios, +, guiones y paréntesis; 7-20 caracteres útiles. */
-const TEL_RE = /^[+()\d][\d\s()+-]{6,19}$/;
 
 /** Un nombre con URL dentro es spam de bot, no un propietario. */
 const SPAM_RE = /(https?:\/\/|www\.|\[url|<a\s)/i;
@@ -147,7 +145,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const nombre = limpiar(campos.nombre, 80);
   const telefono = limpiar(campos.telefono, 25);
   if (nombre.length < 2 || SPAM_RE.test(nombre)) return json({ ok: false, reason: 'nombre' }, 422);
-  if (!TEL_RE.test(telefono)) return json({ ok: false, reason: 'telefono' }, 422);
+  // La regla vive en el dominio (`telefono.ts`): es la misma que usa el panel para el enlace de WhatsApp.
+  if (!telefonoValido(telefono)) return json({ ok: false, reason: 'telefono' }, 422);
 
   // 2b) GATE DE HABEAS DATA (Ley 1581/2012 art. 9 · D.1377/2013 art. 7 · kit `08` §2.2).
   //     «El backend nunca envía el dato a la base si la casilla principal no está marcada» y
