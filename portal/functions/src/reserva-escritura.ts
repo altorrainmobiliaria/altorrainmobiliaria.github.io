@@ -57,10 +57,10 @@ const texto = (v: unknown): string => (typeof v === 'string' ? v.trim() : '');
 
 /**
  * Tope de noches por transacción. Firestore admite 500 documentos por transacción y una estancia de
- * 90 noches toca 90 + 1: sobra sitio. El tope real lo pone el NEGOCIO (`NOCHES_MAX`), no el motor —
- * por encima de 90 noches ya no es una estancia turística, es un arriendo, y es otro producto y otra
- * ley. Se comprueba aquí ADEMÁS de en el dominio porque una puerta que confía en que la llamen bien
- * no es una puerta.
+ * `NOCHES_MAX` noches toca `NOCHES_MAX` + 1: sobra sitio. El tope real lo pone la LEY (`NOCHES_MAX`,
+ * con su norma citada en el dominio), no el motor — desde 30 días ya no es hospedaje, es un arriendo,
+ * y es otro producto y otra ley. Se comprueba aquí ADEMÁS de en el dominio porque una puerta que
+ * confía en que la llamen bien no es una puerta.
  */
 const TOPE_DOCS_TRANSACCION = 500;
 

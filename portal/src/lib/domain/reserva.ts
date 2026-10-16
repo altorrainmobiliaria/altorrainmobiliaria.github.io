@@ -16,8 +16,18 @@ import type { COP } from './shared';
 import type { Precio } from './propiedades';
 import { pesos } from './dinero';
 
-/** Tope de noches de una estancia. Más que esto es un arriendo, y ese es otro producto y otra ley. */
-export const NOCHES_MAX = 90;
+/**
+ * Tope de noches de una estancia. Desde 30 días ya no es hospedaje: es un arriendo, y ese es otro
+ * producto y otra ley (Ley 820 de 2003).
+ *
+ * ⚖️ La frontera la pone la ley, no el negocio. El contrato de hospedaje es el que dura «por un plazo
+ * inferior a 30 días» (Ley 300 de 1996 art. 79, modificado por la Ley 2068 de 2020 art. 21), y presta
+ * servicios de vivienda turística quien arrienda «por periodos inferiores a 30 días» (Ley 1101 de 2006
+ * art. 3 par. 1, modificado por la Ley 2068 art. 37). Una estancia de N noches dura N días —de la
+ * llegada a la salida—, así que 29 es la última que cabe por debajo de 30. Antes valía 90, y dejaba
+ * pedir como «estancia» lo que la ley llama arriendo (§330).
+ */
+export const NOCHES_MAX = 29;
 
 /** Tope de huéspedes por solicitud. Por encima es un evento, y eso se cotiza hablando. */
 export const HUESPEDES_MAX = 20;
@@ -218,7 +228,7 @@ export function explicarProblemaReserva(p: ProblemaReserva): string {
     'sin-salida': 'Falta la fecha de salida.',
     'llegada-en-pasado': 'La llegada no puede ser antes de hoy.',
     'salida-antes-de-llegada': 'La salida tiene que ser al menos un día después de la llegada.',
-    'demasiadas-noches': `Para estancias de más de ${NOCHES_MAX} noches hablamos de arriendo: escríbenos y lo vemos.`,
+    'demasiadas-noches': `Una estancia por días llega hasta ${NOCHES_MAX} noches; desde ${NOCHES_MAX + 1} ya es un arriendo: escríbenos y lo vemos.`,
     'huespedes-invalidos': `Dinos cuántas personas son (entre 1 y ${HUESPEDES_MAX}).`,
   };
   return t[p];

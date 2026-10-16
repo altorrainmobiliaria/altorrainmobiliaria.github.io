@@ -148,8 +148,18 @@ describe('🧾 desgloseEstadia — el total que la ficha prometía (§312)', () 
     // La frontera exacta, en las dos direcciones. `problemasDeReserva` rechaza por encima de
     // NOCHES_MAX, así que cotizar una estadía que el endpoint va a rechazar sería enseñar un precio
     // por algo que no se puede pedir.
-    expect(desgloseEstadia(PRECIO, '2026-09-01', '2026-11-30')?.noches).toBe(NOCHES_MAX); // 90 justas
-    expect(desgloseEstadia(PRECIO, '2026-09-01', '2026-12-01')).toBeNull(); // 91
+    expect(desgloseEstadia(PRECIO, '2026-09-01', '2026-09-30')?.noches).toBe(NOCHES_MAX); // 29 justas
+    expect(desgloseEstadia(PRECIO, '2026-09-01', '2026-10-01')).toBeNull(); // 30
+  });
+
+  it('el tope queda por DEBAJO de 30 días: desde ahí la ley lo llama arriendo, no hospedaje', () => {
+    // Ley 300/1996 art. 79 (mod. Ley 2068/2020 art. 21): hospedaje = «plazo inferior a 30 días».
+    // Esta prueba existe para que subir el tope sea una decisión legal escrita, no un número tocado.
+    expect(NOCHES_MAX).toBeLessThan(30);
+    expect(problemasDeReserva({ llegada: '2026-09-01', salida: '2026-09-30', huespedes: 2 }, HOY)).toEqual([]);
+    expect(problemasDeReserva({ llegada: '2026-09-01', salida: '2026-10-01', huespedes: 2 }, HOY)).toContain(
+      'demasiadas-noches',
+    );
   });
 
   it('un aseo corrupto se ignora, NUNCA se resta del total', () => {
