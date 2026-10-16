@@ -24,6 +24,8 @@
 import { SITE } from '../lib/config/site';
 import { urlMedia } from '../lib/media';
 import PropertyCard from './PropertyCard.astro';
+import FichaEstancia from './FichaEstancia.astro';
+import { fichaEstancia } from '../lib/domain/ficha-estancia';
 import type { Propiedad } from '../lib/domain/propiedades';
 import { portadaDe } from '../lib/domain/propiedades';
 import type { CatalogoResumen } from '../lib/domain/catalogo';
@@ -81,6 +83,15 @@ const aviso = avisoEstado(p);
 const tieneMapa = p.geo?.lat != null && p.geo?.lng != null;
 const marcadores = tieneMapa ? [{ i: 0, lat: p.geo.lat, lng: p.geo.lng, label: p.geo.barrio || 'Cartagena' }] : [];
 
+/*
+ * UN ALOJAMIENTO LLEVA SU PROPIO DISEÑO (§329): el del mockup «ALTORRA Estancias» —galería, «Lo que
+ * ofrece este lugar» y el panel con fechas, huéspedes y el total—, en vez del bloque de «Agendar
+ * visita» de la venta y el arriendo, que a quien busca unas noches no le sirve. `null` en venta, en
+ * arriendo y en un alojamiento sin RNT exhibible (fail-closed: entonces no hay panel de precio). El día
+ * se toma en UTC: solo fija las fechas con las que abre el panel, y el navegador las corrige a su día.
+ */
+const est = fichaEstancia(p, new Date().toISOString().slice(0, 10));
+
 const waVisita = encodeURIComponent(mensajeWhatsApp(p, 'visita'));
 const waInfo = encodeURIComponent(mensajeWhatsApp(p, 'info'));
 
@@ -129,6 +140,7 @@ const ICO_WA =
     ))}
   </nav>
 
+  {est ? <FichaEstancia p={p} est={est} /> : (<>
   {/* Galería. Sin fotos NO se pinta el bloque: un marco vacío se lee como error de la página. */}
   {portada && (
     <div class="ficha-gal-wrap">
@@ -276,9 +288,11 @@ const ICO_WA =
       )}
     </aside>
   </div>
+  </>)}
 
   <div class="ficha-secs">
-    {amenidades.length > 0 && (
+    {/* En un alojamiento las amenidades ya salieron arriba, como «Lo que ofrece este lugar». */}
+    {!est && amenidades.length > 0 && (
       <section class="ficha-sec">
         <h2>Amenidades</h2>
         <div class="ficha-amenities">
@@ -456,7 +470,10 @@ const ICO_WA =
   .ficha-bc a { color: var(--alt-text); text-decoration: none; }
   .ficha-bc a:hover { color: var(--alt-link); }
   .ficha-bc span { color: var(--alt-track); }
-  .ficha-bc__cur { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
+  /* `.ficha-bc` delante NO es adorno: el nombre de la página actual también es un `span`, y la regla de
+     los separadores (0,1,1) le ganaba a esta (0,1,0) — se pintaba en el gris de los separadores, casi
+     invisible sobre blanco. Visto en el pantallazo de la ficha de alojamiento (§329). */
+  .ficha-bc .ficha-bc__cur { color: var(--alt-ink); font-weight: var(--alt-fw-semibold); }
 
   /* Galería */
   .ficha-gal-wrap { max-width: 1300px; margin-inline: auto; padding: 18px clamp(16px, 4vw, 48px) 0; }

@@ -63,6 +63,23 @@ function resolveConfig(env?: RuntimeEnv): { apiKey: string; projectId: string } 
 }
 
 /**
+ * 🧪 EL EMULADOR DE FIRESTORE, SOLO EN DESARROLLO (§329).
+ *
+ * Las páginas SSR (la ficha, el endpoint de leads) leen y escriben en el SERVIDOR, así que en
+ * `astro dev` iban siempre contra la base de PRODUCCIÓN: la ficha de un alojamiento no se podía ver
+ * sin uno publicado de verdad, y probar la solicitud escribía un lead real (§327.4 lo dejó sin enviar
+ * por eso). Con `FIRESTORE_EMULATOR_URL=http://127.0.0.1:8080/v1` en `.env.development.local`, las
+ * dos cosas van al emulador local.
+ *
+ * ⛔ `import.meta.env.DEV` es `false` en `astro build`: en el Worker esto es `undefined` siempre y el
+ * bundler lo elimina. Sin la variable, desarrollo se comporta como hasta hoy. Privada (sin `PUBLIC_`):
+ * no tiene nada que hacer en el navegador.
+ */
+export const FIRESTORE_DESARROLLO: string | undefined = import.meta.env.DEV
+  ? import.meta.env.FIRESTORE_EMULATOR_URL || undefined
+  : undefined;
+
+/**
  * Config PÚBLICA para consumidores que NO son el cliente de lectura. Hoy: el endpoint de leads
  * (`/api/solicitud`), que ESCRIBE y por eso NO cuelga del `DataClient` — este sigue siendo read-only
  * por contrato (§88). Misma cascada de resolución: env de runtime → build-time → constante.
@@ -108,7 +125,7 @@ export interface DataClient {
 export function getDataClient(env?: RuntimeEnv, opts?: { fetchImpl?: typeof fetch; baseUrl?: string }): DataClient {
   const { apiKey, projectId } = resolveConfig(env);
   const fetchImpl = opts?.fetchImpl;
-  const baseUrl = opts?.baseUrl;
+  const baseUrl = opts?.baseUrl ?? FIRESTORE_DESARROLLO;
   // Memo POR-REQUEST: dos lecturas del mismo doc en un render = 1 fetch. Vive con la instancia
   // (que es request-scoped por construcción — ver la advertencia anti-hoist de arriba).
   const memo = new Map<string, Promise<LowLevelResult>>();

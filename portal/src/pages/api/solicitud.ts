@@ -19,11 +19,12 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { createDoc } from '../../lib/data/firestore-rest';
-import { getPublicFirebaseConfig } from '../../lib/data/client';
+import { FIRESTORE_DESARROLLO, getPublicFirebaseConfig } from '../../lib/data/client';
 import { LEGAL } from '../../lib/config/legal';
 import { ZONAS as ZONAS_LANDING } from '../../lib/content/zonas';
-import { explicarProblemaReserva, problemasDeReserva, resumenReserva } from '../../lib/domain/reserva';
+import { explicarProblemaReserva, lineasDesglose, problemasDeReserva, resumenReserva } from '../../lib/domain/reserva';
 import { tipoDe } from '../../lib/domain/lead-score';
+import { comprobarAlojamiento, type AlojamientoPedido } from '../../lib/data/alojamiento-pedido';
 
 /** Tope de bytes del cuerpo: un lead legítimo son ~300 bytes. Corta payloads de abuso antes de parsear. */
 const MAX_BODY = 4096;
@@ -87,6 +88,33 @@ const TEL_RE = /^[+()\d][\d\s()+-]{6,19}$/;
 /** Un nombre con URL dentro es spam de bot, no un propietario. */
 const SPAM_RE = /(https?:\/\/|www\.|\[url|<a\s)/i;
 
+/**
+ * Qué alojamiento pide la solicitud, dicho para quien la atiende (§329). Las cuatro salidas se
+ * DISTINGUEN a propósito: «sin elegir», «elegido y comprobado», «elegido pero la base no respondió» y
+ * «pidió uno que ya no está publicado» llevan a cuatro llamadas distintas.
+ */
+function sobreEstancia(a: AlojamientoPedido | null): string {
+  if (!a) return 'consulta general de corta estancia — sin alojamiento elegido';
+  if (a.estado === 'ok') return `alojamiento elegido: ${a.titulo || a.id} (${a.id})`;
+  if (a.estado === 'sin-comprobar') return `alojamiento elegido: ${a.id} — no se pudo comprobar al recibir la solicitud`;
+  return `consulta general — pidió el alojamiento ${a.id}, que ya no está publicado`;
+}
+
+/**
+ * La línea del correo: las fechas y, si el alojamiento se comprobó, cuál es y lo que suma la estadía
+ * con el precio del DOCUMENTO — las mismas palabras del desglose de la ficha (`lineasDesglose`).
+ */
+function descripcionEstancia(e: { llegada: string; salida: string; huespedes: number }, a: AlojamientoPedido | null): string {
+  const base = resumenReserva(e);
+  if (a?.estado !== 'ok') return base;
+  const partes = [base, a.titulo || a.id];
+  if (a.desglose) {
+    const l = lineasDesglose(a.desglose);
+    partes.push(`total ${l.total} (${l.alojamiento.concepto}${l.limpieza ? ` + limpieza ${l.limpieza.valor}` : ''})`);
+  }
+  return partes.join(' · ');
+}
+
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -94,7 +122,7 @@ function json(body: unknown, status: number): Response {
   });
 }
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   // 1) Cuerpo: acepta el POST nativo del form (urlencoded) y el fetch de la isla (JSON).
   const ct = request.headers.get('content-type') || '';
   const raw = await request.text();
@@ -141,6 +169,7 @@ export const POST: APIRoute = async ({ request }) => {
   //     desde la consola en diez segundos, y una solicitud para llegar «ayer» es una llamada
   //     desperdiciada de alguien del equipo.
   let estancia: { llegada: string; salida: string; huespedes: number } | null = null;
+  let alojamiento: AlojamientoPedido | null = null;
   if (formulario === 'reserva-estancia') {
     const cand = {
       llegada: limpiar(campos.llegada, 10),
@@ -152,7 +181,13 @@ export const POST: APIRoute = async ({ request }) => {
       return json({ ok: false, reason: 'estancia', mensajes: malos.map(explicarProblemaReserva) }, 422);
     }
     estancia = cand;
+    // 2e) Desde la ficha de un alojamiento viaja CUÁL (§329). Se comprueba contra el documento y el
+    //     total sale de su precio, no del navegador; ver `alojamiento-pedido.ts`.
+    alojamiento = await comprobarAlojamiento(locals?.altorra, limpiar(campos.propiedadId, 40), cand);
   }
+  // El id se guarda cuando hay un alojamiento ELEGIDO (comprobado o sin poder comprobar); uno que ya
+  // no está publicado no se le da al equipo como elegido — queda dicho en `sobre`.
+  const propiedadId = alojamiento && alojamiento.estado !== 'no-publicado' ? alojamiento.id : null;
 
   // 3) Documento. `tipo` es el tipo de LEAD (taxonomía de `onNewSolicitud`), NO el tipo de inmueble:
   //    el `<select name="tipo">` del form es el del inmueble y viaja en `datosExtra.tipoInmueble`.
@@ -165,6 +200,8 @@ export const POST: APIRoute = async ({ request }) => {
     email: '', // el mockup no pide correo — ver §88: cuesta 10 puntos de lead score
     tipo: tipoLead ?? tipoDe(origen),
     origen,
+    // Donde lo leen el aviso de lead y el panel (`solicitudDeDocumento`): arriba, no en `datosExtra`.
+    ...(propiedadId ? { propiedadId } : {}),
     datosExtra: {
       zona,
       ciudad: zona ? `${zona}, Cartagena` : 'Cartagena',
@@ -176,16 +213,16 @@ export const POST: APIRoute = async ({ request }) => {
       // La descripción es lo único del correo que puede llevar las fechas: la plantilla vive en una
       // Function del legacy que no se puede tocar hasta el cutover, así que lo que no venga escrito
       // en el documento no aparece en el correo.
-      descripcion: estancia ? resumenReserva(estancia) : '',
+      descripcion: estancia ? descripcionEstancia(estancia, alojamiento) : '',
       ...(estancia
         ? {
             llegada: estancia.llegada,
             salida: estancia.salida,
             huespedes: estancia.huespedes,
-            // Se dice en el propio dato: la solicitud sale del panel GENERAL de /estancias, no de la
-            // ficha de un alojamiento. Sin esta línea, quien atienda el lead creería que hay uno
-            // concreto pedido para esas fechas.
-            sobre: 'consulta general de corta estancia — sin alojamiento elegido',
+            // Se dice en el propio dato si hay un alojamiento elegido o no. Sin esta línea, quien
+            // atienda una consulta del panel GENERAL de /estancias creería que hay uno concreto pedido
+            // para esas fechas — y al revés con la de una ficha.
+            sobre: sobreEstancia(alojamiento),
           }
         : {}),
     },
@@ -213,7 +250,9 @@ export const POST: APIRoute = async ({ request }) => {
   // vivo otra vez aqui) y el override por env de runtime es hook post-MVP — `client.ts` ya resuelve
   // build-time -> constante. Es lo mismo que hace `middleware.ts` con el cliente de lectura.
   const cfg = getPublicFirebaseConfig();
-  const r = await createDoc('solicitudes', doc, { apiKey: cfg.apiKey, projectId: cfg.projectId });
+  // `FIRESTORE_DESARROLLO` es `undefined` fuera de `astro dev` (ver `client.ts`): en el Worker se
+  // escribe en producción como siempre; en desarrollo, si está puesto, en el emulador.
+  const r = await createDoc('solicitudes', doc, { apiKey: cfg.apiKey, projectId: cfg.projectId, baseUrl: FIRESTORE_DESARROLLO });
 
   // 4) Respuesta. Sin JS el navegador siguió un POST normal → 303 de vuelta a la página (patrón
   //    POST-Redirect-GET, así un F5 no reenvía el lead). Con JS la isla lee el JSON.

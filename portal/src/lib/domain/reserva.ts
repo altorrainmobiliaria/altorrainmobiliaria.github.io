@@ -14,6 +14,7 @@
 
 import type { COP } from './shared';
 import type { Precio } from './propiedades';
+import { pesos } from './dinero';
 
 /** Tope de noches de una estancia. Más que esto es un arriendo, y ese es otro producto y otra ley. */
 export const NOCHES_MAX = 90;
@@ -100,13 +101,70 @@ export function desgloseEstadia(
   const n = noches(llegada, salida);
   if (n <= 0 || n > NOCHES_MAX) return null;
 
-  // Un aseo negativo o no finito se trata como ausente, no se resta: un cargo que BAJA el total es un
-  // dato corrupto, y arrastrarlo publicaría una cifra menor que la que se va a cobrar.
-  const bruto = precio?.precioAseo;
-  const aseo = typeof bruto === 'number' && Number.isFinite(bruto) && bruto > 0 ? bruto : 0;
-
+  const aseo = aseoDe(precio);
   const alojamiento = porNoche * n;
   return { noches: n, precioNoche: porNoche, alojamiento, aseo, total: alojamiento + aseo };
+}
+
+/**
+ * El aseo que de verdad se cobra, una vez por estadía. Dueño único: lo usan el desglose y la ficha,
+ * que decide con él si pinta la línea de limpieza — si cada uno lo leyera a su manera, la ficha
+ * podría enseñar una línea de limpieza que el total no suma.
+ *
+ * Un aseo negativo o no finito se trata como ausente, no se resta: un cargo que BAJA el total es un
+ * dato corrupto, y arrastrarlo publicaría una cifra menor que la que se va a cobrar.
+ */
+export function aseoDe(precio: Pick<Precio, 'precioAseo'> | undefined): COP {
+  const bruto = precio?.precioAseo;
+  return typeof bruto === 'number' && Number.isFinite(bruto) && bruto > 0 ? bruto : 0;
+}
+
+/** Una línea del desglose tal como se lee: el concepto a la izquierda y su importe a la derecha. */
+export interface LineaDesglose {
+  concepto: string;
+  valor: string;
+}
+
+/** El desglose ESCRITO, listo para pintar. La limpieza es `null` cuando no se cobra: no hay línea en cero. */
+export interface DesgloseEscrito {
+  alojamiento: LineaDesglose;
+  limpieza: LineaDesglose | null;
+  total: string;
+}
+
+/**
+ * Las líneas que ve el huésped (§329). Las escribe UN solo sitio porque las pintan DOS: el servidor
+ * en el HTML de la ficha y el navegador cada vez que cambian las fechas. Con dos redacciones, la
+ * página diría «3 noches» al cargar y «3 noche» al tocar un campo.
+ *
+ * ⛔ Sin línea de «servicio»: ver `desgloseEstadia` — no existe un cargo así y su ausencia es la
+ * decisión.
+ */
+export function lineasDesglose(d: DesgloseEstadia): DesgloseEscrito {
+  return {
+    alojamiento: {
+      concepto: `${pesos(d.precioNoche)} × ${d.noches} ${d.noches === 1 ? 'noche' : 'noches'}`,
+      valor: pesos(d.alojamiento),
+    },
+    limpieza: d.aseo > 0 ? { concepto: 'Tarifa de limpieza', valor: pesos(d.aseo) } : null,
+    total: pesos(d.total),
+  };
+}
+
+/** `YYYY-MM-DD` + N días, contado en UTC para que un cambio de horario no se coma ni repita un día. */
+export function sumarDias(dia: string, n: number): string {
+  const t = Date.parse(`${dia}T00:00:00Z`);
+  if (!DIA.test(dia) || !Number.isFinite(t)) return '';
+  return new Date(t + n * 86_400_000).toISOString().slice(0, 10);
+}
+
+/**
+ * Las fechas con las que abre el panel: llegada dentro de una semana, tres noches. Son las del
+ * mockup y las de /estancias, y viven aquí para que el HTML del servidor y el navegador propongan
+ * la MISMA estadía — y el total que se lee al cargar sea el de las fechas que se ven.
+ */
+export function fechasSugeridas(hoy: string): { llegada: string; salida: string } {
+  return { llegada: sumarDias(hoy, 7), salida: sumarDias(hoy, 10) };
 }
 
 /**

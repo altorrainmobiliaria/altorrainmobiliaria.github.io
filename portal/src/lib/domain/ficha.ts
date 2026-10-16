@@ -271,11 +271,37 @@ export function humanizarAmenidad(clave: string): string {
  * pintarla sería justo lo contrario de lo que dice el dato.
  */
 export function amenidadesVisibles(p: Propiedad): string[] {
+  return amenidadesDetalladas(p).map((a) => a.etiqueta);
+}
+
+/** Una amenidad con su CLAVE del modelo, para que la plantilla elija el icono; `null` en las libres. */
+export interface AmenidadVisible {
+  clave: string | null;
+  etiqueta: string;
+}
+
+/**
+ * Las mismas amenidades de `amenidadesVisibles`, en el mismo orden y sin repetir etiqueta, pero
+ * diciendo de qué clave sale cada una. «Lo que ofrece este lugar» de la ficha de un alojamiento
+ * (§329) pinta un icono por servicio, y el icono se decide por la clave, no por el texto: una
+ * etiqueta se puede reescribir mañana y el icono no tiene por qué perderse con ella.
+ */
+export function amenidadesDetalladas(p: Propiedad): AmenidadVisible[] {
   const marcadas = Object.entries(p.amenidades ?? {})
     .filter(([, v]) => v === true)
-    .map(([k]) => AMENIDAD_LABEL[k] ?? humanizarAmenidad(k));
-  const otras = (p.otrasAmenidades ?? []).map((s) => String(s).trim()).filter(Boolean);
-  return [...new Set([...marcadas, ...otras])];
+    .map(([k]) => ({ clave: k, etiqueta: AMENIDAD_LABEL[k] ?? humanizarAmenidad(k) }));
+  const otras = (p.otrasAmenidades ?? [])
+    .map((s) => String(s).trim())
+    .filter(Boolean)
+    .map((etiqueta) => ({ clave: null, etiqueta }));
+  const vistas = new Set<string>();
+  const out: AmenidadVisible[] = [];
+  for (const a of [...marcadas, ...otras]) {
+    if (vistas.has(a.etiqueta)) continue;
+    vistas.add(a.etiqueta);
+    out.push(a);
+  }
+  return out;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

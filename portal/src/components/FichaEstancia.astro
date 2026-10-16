@@ -1,0 +1,511 @@
+---
+/*
+ * FICHA DE UN ALOJAMIENTO — el diseño «ALTORRA Estancias.dc.html» sobre un inmueble REAL (§329).
+ *
+ * Lo pinta `FichaInmueble` en lugar de su galería y su cuerpo cuando la propiedad es un alojamiento
+ * con su RNT (`fichaEstancia` ≠ `null`). La ficha técnica, la ubicación y las similares siguen siendo
+ * las de `FichaInmueble`: son el mismo inmueble y no tienen por qué tener dos dueños.
+ *
+ * Orden del mockup, sección por sección ([[L-24]]): cabecera (lugar, título, nota, sello) · galería ·
+ * fila de capacidad · descripción · «Lo que ofrece este lugar» · quién atiende · reseñas · y el panel
+ * fijo con precio por noche, fechas, huéspedes, solicitud y desglose. Lo que el mockup trae sin dato
+ * que lo respalde NO está, y por qué, en la cabecera de `domain/ficha-estancia.ts`.
+ *
+ * ⚖️ EL RNT VA PEGADO AL PRECIO (Ley 300/1996), justo debajo de la cifra por noche, y el desglose
+ * vive en la misma tarjeta: el número no queda a tres secciones de ningún importe.
+ */
+import type { Propiedad } from '../lib/domain/propiedades';
+import { portadaDe } from '../lib/domain/propiedades';
+import type { FichaEstancia } from '../lib/domain/ficha-estancia';
+import { amenidadesDetalladas, mensajeWhatsApp, rutaOperacion, specsVisibles } from '../lib/domain/ficha';
+import { urlMedia } from '../lib/media';
+import { LEGAL, TEXTO_AUTORIZACION, RUTA_AVISO } from '../lib/config/legal';
+import { SITE } from '../lib/config/site';
+
+interface Props {
+  p: Propiedad;
+  est: FichaEstancia;
+}
+
+const { p, est } = Astro.props;
+
+const imagenes = (p.imagenes ?? []).map(urlMedia).filter(Boolean);
+const portada = urlMedia(portadaDe(p));
+const secundarias = imagenes.filter((src) => src !== portada);
+const todas = [...new Set([portada, ...imagenes].filter(Boolean))];
+
+// La fila de capacidad del mockup son huéspedes, habitaciones, camas y baños. El modelo tiene las
+// habitaciones y los baños; los otros dos no existen, y una cifra de aforo inventada es la que más
+// daño hace (quien viene con seis personas se fía de ella).
+const capacidad = specsVisibles(p).filter((s) => s.icono === 'hab' || s.icono === 'bano');
+const ofrece = amenidadesDetalladas(p);
+const admite = est.aviso?.admiteVisita !== false;
+const waInfo = encodeURIComponent(mensajeWhatsApp(p, 'info'));
+const PARRAFOS = /\n{2,}/;
+
+// Iconos del mockup. La plantilla es dueña del SVG; el dominio solo dice qué servicio es (su clave).
+const ICO_CAP: Record<string, string> = {
+  hab: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v6"/>',
+  bano: '<path d="M5 12V6a2 2 0 0 1 4 0"/><path d="M4 12h16a1 1 0 0 1 1 1v2a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-2a1 1 0 0 1 1-1z"/><path d="M7 19l-1 2M18 19l1 2"/>',
+};
+const ICO_OFRECE: Record<string, string> = {
+  piscina: '<path d="M2 15c2 0 2 1.6 4 1.6s2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6"/><path d="M2 19c2 0 2 1.6 4 1.6s2-1.6 4-1.6 2 1.6 4 1.6 2-1.6 4-1.6 2 1.6 4 1.6"/><path d="M9 11V5a2 2 0 0 1 4 0"/>',
+  aireAcondicionado: '<path d="M4 8h9a2.5 2.5 0 1 0-2.5-2.5M4 12h13a2.5 2.5 0 1 1-2.5 2.5M4 16h8a2.5 2.5 0 1 1-2.5 2.5"/>',
+  cocinaIntegral: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 3v6h8V3M8 13h.01M8 17h.01"/>',
+  parqueaderoVisitantes: '<path d="M5 13l1.6-4.8A2 2 0 0 1 8.5 7h7a2 2 0 0 1 1.9 1.2L19 13"/><path d="M4 13h16a1 1 0 0 1 1 1v4H3v-4a1 1 0 0 1 1-1z"/><circle cx="7.5" cy="18" r="1.4"/><circle cx="16.5" cy="18" r="1.4"/>',
+  terraza: '<circle cx="12" cy="7" r="3"/><path d="M3 17h18M5 17v-2M19 17v-2M12 10v7"/>',
+  porteria24h: '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><path d="M9 12l2 2 4-4"/>',
+};
+// Un servicio sin icono propio lleva la marca de verificación de la ficha: perderlo por no tener
+// dibujo sería esconder inventario real.
+const ICO_CHECK = '<path d="M20 6 9 17l-5-5"/>';
+const ICO_STAR = '<path d="M12 2l2.9 6.3 6.9.6-5.2 4.6 1.5 6.8L12 17.4 5.9 20.9l1.5-6.8L2.2 9.5l6.9-.6z"/>';
+const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><path d="M9 12l2 2 4-4"/>';
+---
+
+<div class="fe-top">
+  <div class="fe-head">
+    <div>
+      {est.lugar && <p class="fe-lugar">{est.lugar}</p>}
+      <h1 class="fe-h1">{p.titulo}</h1>
+    </div>
+    {(est.nota || p.verificadoAltorra) && (
+      <div class="fe-head__meta">
+        {est.nota && (
+          <p class="fe-nota">
+            <svg class="fe-estrella" viewBox="0 0 24 24" aria-hidden="true" set:html={ICO_STAR}></svg>
+            {est.nota}
+          </p>
+        )}
+        {/* El mockup dice «Anfitrión verificado». Aquí el sello es el de ALTORRA, que es el que
+            existe en el modelo y el que alguien de verdad puso (`verificadoAltorra`). */}
+        {p.verificadoAltorra && (
+          <span class="fe-sello">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={ICO_SELLO}></svg>
+            Verificado por ALTORRA
+          </span>
+        )}
+      </div>
+    )}
+  </div>
+</div>
+
+{/* Galería. Sin fotos no se pinta: un marco vacío se lee como una página rota. */}
+{portada && (
+  <div class="fe-gal-wrap">
+    <div class={`fe-gal${secundarias.length === 0 ? ' fe-gal--sola' : secundarias.length === 1 ? ' fe-gal--par' : ''}`}>
+      <div class="fe-gal__main">
+        <img id="fe-main" src={portada} alt={p.titulo} fetchpriority="high" />
+      </div>
+      {secundarias.slice(0, 2).map((src, i) => (
+        <div class="fe-gal__cell">
+          <img src={src} alt={`${p.titulo} — foto ${i + 2}`} loading="lazy" decoding="async" />
+          {/* «Ver N fotos» lleva a las miniaturas: el mockup dibuja el botón y no dice adónde va, y un
+              botón que no hace nada se lee como un fallo. */}
+          {i === secundarias.slice(0, 2).length - 1 && todas.length > 3 && (
+            <a class="fe-gal__more" href="#fe-galeria">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              Ver {todas.length} fotos
+            </a>
+          )}
+        </div>
+      ))}
+    </div>
+    {todas.length > 1 && (
+      <div id="fe-galeria" class="fe-thumbs">
+        {todas.map((g, i) => (
+          <button class={`fe-thumb${i === 0 ? ' is-on' : ''}`} type="button" data-src={g} aria-label={`Ver la foto ${i + 1}`}>
+            <img src={g} alt="" loading="lazy" decoding="async" />
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+)}
+
+<div class="fe-body">
+  <div class="fe-main-col">
+    {capacidad.length > 0 && (
+      <div class="fe-cap">
+        {capacidad.map((s) => (
+          <p class="fe-cap__item">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={ICO_CAP[s.icono]}></svg>
+            <span><b>{s.valor}</b> {s.etiqueta.toLowerCase()}</span>
+          </p>
+        ))}
+      </div>
+    )}
+
+    {p.descripcion && (
+      <div class="fe-sec fe-desc">
+        {p.descripcion.split(PARRAFOS).map((par) => <p>{par.trim()}</p>)}
+      </div>
+    )}
+
+    {ofrece.length > 0 && (
+      <section class="fe-sec">
+        <h2 class="fe-h2">Lo que ofrece este lugar</h2>
+        <ul class="fe-ofrece">
+          {ofrece.map((a) => (
+            <li class="fe-ofrece__item">
+              <span class="fe-ofrece__ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={(a.clave && ICO_OFRECE[a.clave]) || ICO_CHECK}></svg></span>
+              {a.etiqueta}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    {/* QUIÉN ATIENDE. El mockup trae un anfitrión con nombre, «Superanfitrión» y años en ALTORRA: no
+        existe en el modelo, y ponerle cara sería inventar una persona (§60.3). Va el equipo, con las
+        mismas palabras que la ficha de venta y arriendo. */}
+    <div class="fe-sec fe-quien">
+      <span class="fe-quien__ini" aria-hidden="true">AL</span>
+      <div>
+        <p class="fe-quien__name">Equipo ALTORRA</p>
+        <p class="fe-quien__role">Te atiende un asesor de la zona</p>
+      </div>
+    </div>
+
+    {/* Reseñas: solo la nota con su recuento, que es lo que guarda el agregado. Las barras por
+        categoría y las citas del mockup necesitarían reseñas que el modelo no tiene. */}
+    {est.nota && (
+      <div class="fe-sec fe-resenas">
+        <svg class="fe-estrella" viewBox="0 0 24 24" aria-hidden="true" set:html={ICO_STAR}></svg>
+        <p class="fe-resenas__h">{est.nota}</p>
+      </div>
+    )}
+  </div>
+
+  <aside class="fe-aside" id="reservar">
+    <div class="fe-book" data-ficha-estancia data-propiedad={p.id} data-noche={est.noche ? String(est.noche.valor) : ''} data-aseo={String(est.aseo)}>
+      <div class="fe-book__price">
+        {est.noche
+          ? <p><span class="fe-book__val">{est.noche.texto}</span><span class="fe-book__per"> / noche</span></p>
+          : <p><span class="fe-book__val fe-book__val--consultar">Precio a consultar</span></p>}
+        {est.notaCorta && (
+          <p class="fe-book__nota"><svg class="fe-estrella" viewBox="0 0 24 24" aria-hidden="true" set:html={ICO_STAR}></svg>{est.notaCorta}</p>
+        )}
+      </div>
+      {/* Ley 300/1996: el número va PEGADO al precio por noche, no en la ficha técnica de abajo. */}
+      <p class="fe-book__rnt">{est.rnt}</p>
+
+      {est.aviso && (
+        <p class="fe-estado" role="status"><strong>{est.aviso.titulo}.</strong> {est.aviso.detalle}</p>
+      )}
+
+      {admite ? (
+        <>
+          <div class="fe-book__box">
+            <div class="fe-book__dates">
+              <label><span>Llegada</span><input type="date" id="fe-ci" value={est.sugeridas.llegada} /></label>
+              <label><span>Salida</span><input type="date" id="fe-co" value={est.sugeridas.salida} /></label>
+            </div>
+            <div class="fe-book__guests">
+              <div><span class="fe-book__glbl">Huéspedes</span><span id="fe-guests-label">2 huéspedes</span></div>
+              <div class="fe-book__stepper">
+                <button type="button" id="fe-dec" aria-label="Menos huéspedes">−</button>
+                <span id="fe-guests">2</span>
+                <button type="button" id="fe-inc" aria-label="Más huéspedes">+</button>
+              </div>
+            </div>
+          </div>
+
+          <button class="alt-btn alt-btn--navy fe-book__cta" id="fe-pedir" type="button">Solicitar estas fechas<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button>
+          <p class="fe-book__note">No es una reserva ni se cobra nada: te confirmamos disponibilidad por WhatsApp.</p>
+
+          {/* EL TOTAL A LA VISTA (Ley 1480 art. 26): noches × precio, la limpieza una sola vez, y la
+              suma. Lo escribe `lineasDesglose`, el mismo que usa el navegador al cambiar las fechas. */}
+          {est.desglose && (
+            <div class="fe-desglose" id="fe-desglose" aria-live="polite">
+              <p class="fe-desglose__row"><span class="fe-desglose__c" id="fe-linea">{est.desglose.alojamiento.concepto}</span><span id="fe-subtotal">{est.desglose.alojamiento.valor}</span></p>
+              {est.desglose.limpieza && (
+                <p class="fe-desglose__row"><span class="fe-desglose__c">{est.desglose.limpieza.concepto}</span><span>{est.desglose.limpieza.valor}</span></p>
+              )}
+              <p class="fe-desglose__total"><span>Total</span><span id="fe-total">{est.desglose.total}</span></p>
+            </div>
+          )}
+
+          {/* Paso de contacto: aparece al pedir las fechas, como en /estancias (§122). */}
+          <form class="fe-datos" id="fe-datos" hidden novalidate>
+            <label class="fe-f"><span>Tu nombre</span><input class="alt-input" type="text" id="fe-nombre" name="nombre" autocomplete="name" required /></label>
+            <label class="fe-f"><span>WhatsApp</span><input class="alt-input" type="tel" id="fe-tel" name="telefono" autocomplete="tel" placeholder="300 123 4567" required /></label>
+            <label class="fe-check">
+              <input type="checkbox" id="fe-auth" name="autorizacion" value="on" required />
+              <span>
+                {TEXTO_AUTORIZACION.p1}<a href={RUTA_AVISO} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkAviso}</a>{TEXTO_AUTORIZACION.p2}<a href={LEGAL.politicaDatos.ruta} target="_blank" rel="noopener">{TEXTO_AUTORIZACION.linkPolitica}</a>{TEXTO_AUTORIZACION.p3}
+              </span>
+            </label>
+            <button class="alt-btn alt-btn--navy fe-book__cta" type="submit" id="fe-enviar">Enviar solicitud</button>
+          </form>
+          <p class="fe-err" id="fe-err" role="alert" hidden></p>
+          <div class="alt-alert alt-alert--success fe-confirm" id="fe-confirm" role="status" tabindex="-1" hidden>
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+            <span>Recibimos tu solicitud para este alojamiento. Te escribimos por WhatsApp para confirmar disponibilidad: <b>todavía no es una reserva</b>.</span>
+          </div>
+          <noscript>
+            <p class="fe-book__note">Sin JavaScript no podemos calcular tu estadía ni enviar la solicitud. Escríbenos por <a href={`${SITE.contact.whatsappLink}?text=${waInfo}`} rel="noopener">WhatsApp</a>.</p>
+          </noscript>
+        </>
+      ) : (
+        <>
+          <a class="alt-btn alt-btn--navy fe-book__cta" href={rutaOperacion(p.operacion)}>
+            Ver otros alojamientos<span class="alt-btn__arw"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </a>
+          <a class="fe-book__alt" href={`${SITE.contact.whatsappLink}?text=${waInfo}`} rel="noopener">Avísenme si se libera</a>
+        </>
+      )}
+    </div>
+  </aside>
+</div>
+
+<style>
+  .fe-top { max-width: 1300px; margin-inline: auto; padding: 22px clamp(16px, 4vw, 48px) 0; }
+  .fe-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+  .fe-lugar { margin: 0 0 9px; font-size: 11px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.2em; text-transform: uppercase; color: var(--alt-link); }
+  .fe-h1 { margin: 0; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: clamp(30px, 4.4vw, 48px); line-height: 1.02; letter-spacing: -0.01em; color: var(--alt-ink); }
+  .fe-head__meta { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+  .fe-estrella { width: 17px; height: 17px; fill: var(--alt-gold); stroke: var(--alt-gold); stroke-width: 1; flex: none; }
+  .fe-nota { display: flex; align-items: center; gap: 7px; margin: 0; font-size: 15px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); }
+  .fe-sello { display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: var(--alt-r-pill, 999px); background: var(--alt-mist); font-size: 12px; font-weight: var(--alt-fw-semibold); color: var(--alt-link); }
+  .fe-sello svg { width: 13px; height: 13px; }
+
+  /* Galería — la rejilla del mockup: principal a dos filas y dos celdas, 10 px de aire. */
+  .fe-gal-wrap { max-width: 1300px; margin-inline: auto; padding: 10px clamp(16px, 4vw, 48px) 0; }
+  .fe-gal { display: grid; grid-template-columns: 1.6fr 1fr; grid-auto-rows: 1fr; gap: 10px; height: clamp(300px, 42vw, 440px); }
+  .fe-gal__main { position: relative; grid-row: span 2; border-radius: var(--alt-r-lg); overflow: hidden; }
+  .fe-gal__cell { position: relative; border-radius: var(--alt-r-lg); overflow: hidden; }
+  .fe-gal img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fe-gal__more { position: absolute; right: 16px; bottom: 16px; display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.95); padding: 11px 18px; border-radius: var(--alt-r-sm); font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); text-decoration: none; box-shadow: 0 8px 22px -10px rgba(27, 39, 51, 0.45); }
+  .fe-gal__more svg { width: 16px; height: 16px; }
+  .fe-gal__more:hover { color: var(--alt-link); }
+  .fe-gal--par { grid-auto-rows: auto; height: clamp(260px, 36vw, 400px); }
+  .fe-gal--par .fe-gal__main { grid-row: span 1; }
+  .fe-gal--sola { grid-template-columns: 1fr; }
+  .fe-gal--sola .fe-gal__main { grid-row: span 1; }
+  .fe-thumbs { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .fe-thumb { width: 96px; height: 66px; border-radius: 10px; overflow: hidden; cursor: pointer; padding: 0; border: 0; background: none; outline: 2px solid transparent; outline-offset: 1px; transition: outline-color var(--alt-dur) var(--alt-ease); }
+  .fe-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .fe-thumb.is-on { outline-color: var(--alt-gold); }
+
+  /* Cuerpo a dos columnas */
+  .fe-body { max-width: 1300px; margin-inline: auto; padding: 34px clamp(16px, 4vw, 48px) 60px; display: flex; gap: clamp(28px, 3.6vw, 60px); flex-wrap: wrap; align-items: flex-start; }
+  .fe-main-col { flex: 1 1 520px; min-width: 0; }
+  .fe-cap { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; padding-bottom: 26px; border-bottom: 1px solid var(--alt-hairline); }
+  .fe-cap__item { display: flex; align-items: center; gap: 9px; margin: 0; font-size: 15px; color: var(--alt-ink); }
+  .fe-cap__item svg { width: 19px; height: 19px; stroke: var(--alt-gold-raw); }
+  .fe-cap__item b { font-weight: var(--alt-fw-bold); }
+  .fe-sec { padding: 28px 0; border-bottom: 1px solid var(--alt-hairline); }
+  .fe-sec:last-child { border-bottom: 0; }
+  .fe-desc p { font-size: 15.5px; line-height: 1.72; color: var(--alt-text); margin: 0 0 14px; }
+  .fe-desc p:last-child { margin-bottom: 0; }
+  .fe-h2 { margin: 0 0 20px; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 26px; letter-spacing: normal; color: var(--alt-ink); }
+  .fe-ofrece { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 16px 22px; }
+  .fe-ofrece__item { display: flex; align-items: center; gap: 12px; font-size: 14.5px; color: var(--alt-ink); }
+  .fe-ofrece__ico { width: 40px; height: 40px; border-radius: 10px; background: var(--alt-mist); display: flex; align-items: center; justify-content: center; flex: none; }
+  .fe-ofrece__ico svg { width: 19px; height: 19px; stroke: var(--alt-gold-raw); }
+  .fe-quien { display: flex; align-items: center; gap: 16px; }
+  .fe-quien__ini { width: 60px; height: 60px; border-radius: 50%; background: var(--alt-ink); display: flex; align-items: center; justify-content: center; flex: none; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 22px; color: var(--alt-gold-bright); }
+  .fe-quien__name { margin: 0; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 22px; color: var(--alt-ink); }
+  .fe-quien__role { margin: 0; font-size: 13px; color: var(--alt-text); }
+  .fe-resenas { display: flex; align-items: center; gap: 10px; }
+  .fe-resenas .fe-estrella { width: 20px; height: 20px; }
+  .fe-resenas__h { margin: 0; font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 26px; color: var(--alt-ink); }
+
+  /* Panel fijo */
+  .fe-aside { flex: 1 1 340px; min-width: 0; position: sticky; top: 92px; align-self: flex-start; }
+  .fe-book { background: var(--alt-white); border: 1px solid rgba(27, 39, 51, 0.12); border-radius: var(--alt-r-lg); padding: 24px; box-shadow: 0 2px 6px rgba(27, 39, 51, 0.04), 0 34px 64px -40px rgba(27, 39, 51, 0.45); }
+  .fe-book__price { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+  .fe-book__price p { margin: 0; }
+  .fe-book__val { font-family: var(--alt-font-display); font-weight: var(--alt-fw-semibold); font-size: 32px; color: var(--alt-ink); }
+  .fe-book__val--consultar { font-size: 26px; color: var(--alt-text); }
+  .fe-book__per { font-size: 14px; color: var(--alt-text); }
+  .fe-book__nota { display: flex; align-items: center; gap: 5px; font-size: 13px; font-weight: var(--alt-fw-bold); color: var(--alt-ink); }
+  .fe-book__nota .fe-estrella { width: 14px; height: 14px; }
+  /* El RNT bajo la cifra: legible (token AA del cuerpo) y sin competir con el precio. */
+  .fe-book__rnt { margin: 0 0 18px; font-size: 13px; font-weight: var(--alt-fw-semibold); color: var(--alt-text); }
+  .fe-book__box { border: 1px solid var(--alt-hairline-2); border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
+  .fe-book__dates { display: grid; grid-template-columns: 1fr 1fr; }
+  /* `min-width: 0`: sin él las dos columnas no encogen por debajo del ancho del campo de fecha y la
+     «Salida» sobresale de la caja a 375 px (§264, la misma trampa de /estancias). */
+  .fe-book__dates label { padding: 12px 14px; border-bottom: 1px solid var(--alt-hairline); cursor: pointer; min-width: 0; }
+  .fe-book__dates label:first-child { border-right: 1px solid var(--alt-hairline); }
+  .fe-book__dates span, .fe-book__glbl { display: block; font-size: 10px; font-weight: var(--alt-fw-bold); letter-spacing: 0.1em; text-transform: uppercase; color: var(--alt-text); margin-bottom: 3px; }
+  .fe-book__dates input { border: none; outline: none; font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); width: 100%; background: transparent; padding: 0; font-family: var(--alt-font-body); }
+  .fe-book__dates input:focus-visible { outline: 2px solid var(--alt-gold); outline-offset: 2px; }
+  /* 16 px en móvil por el zoom de iOS (§264); la regla general no gana a este acotado. */
+  @media (max-width: 900px) {
+    .fe-book__dates input { font-size: var(--alt-fs-body); }
+  }
+  .fe-book__guests { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; }
+  .fe-book__guests > div:first-child span:last-child { font-size: 14px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); }
+  .fe-book__stepper { display: flex; align-items: center; gap: 12px; }
+  .fe-book__stepper button { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--alt-hairline-strong); background: var(--alt-white); color: var(--alt-ink); font-size: 18px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color var(--alt-dur) var(--alt-ease), color var(--alt-dur) var(--alt-ease); }
+  .fe-book__stepper button:hover { border-color: var(--alt-gold); color: var(--alt-link); }
+  .fe-book__stepper > span { font-size: 15px; font-weight: var(--alt-fw-semibold); color: var(--alt-ink); min-width: 16px; text-align: center; }
+  .fe-book__cta { width: 100%; }
+  .fe-book__note { text-align: center; font-size: 12px; color: var(--alt-text); margin: 12px 0 0; }
+  .fe-book__alt { display: flex; align-items: center; justify-content: center; width: 100%; margin-top: 10px; padding: 14px; border-radius: var(--alt-r-sm); border: 1px solid var(--alt-gold); color: var(--alt-link); font-weight: var(--alt-fw-semibold); font-size: 14.5px; text-decoration: none; }
+  .fe-book__alt:hover { background: var(--alt-mist); }
+
+  /* Desglose — el total a la vista */
+  .fe-desglose { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--alt-hairline); display: flex; flex-direction: column; gap: 11px; }
+  .fe-desglose__row { display: flex; justify-content: space-between; gap: 12px; margin: 0; font-size: 14px; color: var(--alt-text); }
+  .fe-desglose__c { text-decoration: underline; text-decoration-color: rgba(27, 39, 51, 0.2); }
+  .fe-desglose__total { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 2px 0 0; padding-top: 13px; border-top: 1px solid var(--alt-hairline); font-weight: var(--alt-fw-bold); color: var(--alt-ink); }
+  .fe-desglose__total span:first-child { font-size: 15.5px; }
+  .fe-desglose__total span:last-child { font-size: 17px; }
+
+  /* Paso de contacto */
+  .fe-datos { display: grid; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--alt-hairline); }
+  .fe-f { display: grid; gap: 5px; font-size: 12.5px; color: var(--alt-text); }
+  .fe-check { display: flex; gap: 9px; align-items: flex-start; font-size: 11.5px; line-height: 1.45; color: var(--alt-text-muted); }
+  .fe-check input { margin-top: 2px; flex: 0 0 auto; }
+  .fe-check a { color: var(--alt-navy); }
+  /* El error va en dorado: la paleta no tiene rojo. */
+  .fe-err { margin-top: var(--alt-space-3); font-size: 12.5px; line-height: 1.4; color: var(--alt-ink); background: var(--alt-mist); border-left: 3px solid var(--alt-gold); padding: 9px 11px; border-radius: 8px; }
+  .fe-confirm { margin-top: 16px; }
+  /* Reservado / cerrado. Navy y peso, sin rojo. */
+  .fe-estado { background: var(--alt-status-bg); border-left: 3px solid var(--alt-ink); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--alt-text); line-height: 1.55; margin: 0 0 16px; }
+  .fe-estado strong { color: var(--alt-ink); }
+
+  @media (max-width: 620px) {
+    .fe-gal { grid-template-columns: 1fr; height: auto; }
+    .fe-gal__main { grid-row: auto; aspect-ratio: 16 / 10; }
+    .fe-gal__cell { aspect-ratio: 16 / 10; }
+  }
+</style>
+
+<script>
+  import { desgloseEstadia, explicarProblemaReserva, HUESPEDES_MAX, lineasDesglose, problemasDeReserva } from '../lib/domain/reserva';
+
+  const raiz = document.querySelector<HTMLElement>('[data-ficha-estancia]');
+  const $ = (id: string) => document.getElementById(id);
+
+  // Galería: la miniatura cambia la foto principal.
+  const principal = $('fe-main') as HTMLImageElement | null;
+  document.querySelectorAll<HTMLElement>('.fe-thumb[data-src]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const src = btn.dataset.src;
+      if (principal && src) principal.src = src;
+      document.querySelectorAll('.fe-thumb').forEach((b) => b.classList.remove('is-on'));
+      btn.classList.add('is-on');
+    });
+  });
+
+  if (raiz && $('fe-pedir')) {
+    /** Un día en `YYYY-MM-DD` LOCAL: el visitante elige fechas en su calendario, no en UTC. */
+    const iso = (d: Date) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    const propiedadId = raiz.dataset.propiedad ?? '';
+    const noche = Number(raiz.dataset.noche);
+    const aseo = Number(raiz.dataset.aseo);
+    const precio = Number.isFinite(noche) && noche > 0 ? { precioNoche: noche, precioAseo: aseo } : undefined;
+    const ci = $('fe-ci') as HTMLInputElement | null;
+    const co = $('fe-co') as HTMLInputElement | null;
+    let guests = 2;
+
+    const err = (txt: string) => {
+      const e = $('fe-err');
+      if (!e) return;
+      e.textContent = txt;
+      e.removeAttribute('hidden');
+    };
+
+    // El tope es el del DOMINIO, el mismo que impone el endpoint.
+    function setGuests(g: number) {
+      guests = Math.max(1, Math.min(HUESPEDES_MAX, g));
+      if ($('fe-guests')) $('fe-guests')!.textContent = String(guests);
+      if ($('fe-guests-label')) $('fe-guests-label')!.textContent = guests === 1 ? '1 huésped' : `${guests} huéspedes`;
+    }
+    $('fe-dec')?.addEventListener('click', () => setGuests(guests - 1));
+    $('fe-inc')?.addEventListener('click', () => setGuests(guests + 1));
+
+    // El desglose de las fechas ELEGIDAS, con las mismas palabras que escribió el servidor. Fechas
+    // que no dan una estadía esconden el bloque: un total de cero noches no es un total.
+    function recalcular() {
+      const caja = $('fe-desglose');
+      if (!caja) return;
+      const d = desgloseEstadia(precio, ci?.value ?? '', co?.value ?? '');
+      if (!d) { caja.setAttribute('hidden', ''); return; }
+      const l = lineasDesglose(d);
+      if ($('fe-linea')) $('fe-linea')!.textContent = l.alojamiento.concepto;
+      if ($('fe-subtotal')) $('fe-subtotal')!.textContent = l.alojamiento.valor;
+      if ($('fe-total')) $('fe-total')!.textContent = l.total;
+      caja.removeAttribute('hidden');
+    }
+
+    // Mínimos en el día LOCAL. Si la página vino de caché con una llegada que ya pasó, se proponen
+    // fechas nuevas en vez de dejar al visitante con un error que no provocó.
+    const hoy = iso(new Date());
+    if (ci) ci.min = hoy;
+    if (ci && co && ci.value < hoy) {
+      ci.value = iso(new Date(Date.now() + 7 * 864e5));
+      co.value = iso(new Date(Date.now() + 10 * 864e5));
+    }
+    const ajustarSalida = () => {
+      if (!ci || !co || !ci.value) return;
+      const t = Date.parse(`${ci.value}T00:00:00`);
+      if (Number.isFinite(t)) co.min = iso(new Date(t + 864e5));
+    };
+    ajustarSalida();
+    recalcular();
+    ci?.addEventListener('change', () => { ajustarSalida(); recalcular(); });
+    co?.addEventListener('change', recalcular);
+
+    $('fe-pedir')?.addEventListener('click', () => {
+      const malos = problemasDeReserva({ llegada: ci?.value ?? '', salida: co?.value ?? '', huespedes: guests }, hoy);
+      if (malos.length) { err(malos.map(explicarProblemaReserva).join(' ')); return; }
+      $('fe-err')?.setAttribute('hidden', '');
+      $('fe-datos')?.removeAttribute('hidden');
+      ($('fe-nombre') as HTMLInputElement | null)?.focus();
+    });
+
+    $('fe-datos')?.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const btn = $('fe-enviar') as HTMLButtonElement | null;
+      const nombre = (($('fe-nombre') as HTMLInputElement | null)?.value ?? '').trim();
+      const telefono = (($('fe-tel') as HTMLInputElement | null)?.value ?? '').trim();
+      const autoriza = ($('fe-auth') as HTMLInputElement | null)?.checked;
+
+      if (nombre.length < 2) { err('Dinos cómo te llamas.'); return; }
+      if (telefono.length < 7) { err('Necesitamos un WhatsApp para confirmarte.'); return; }
+      // NUNCA se premarca ni se marca por él: el silencio no es autorización (Ley 1581 art. 9).
+      if (!autoriza) { err('Marca la autorización de datos para poder responderte.'); return; }
+      $('fe-err')?.setAttribute('hidden', '');
+
+      if (btn) { btn.disabled = true; btn.textContent = 'Enviando…'; }
+      try {
+        const res = await fetch('/api/solicitud', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          body: JSON.stringify({
+            formulario: 'reserva-estancia',
+            // EL ALOJAMIENTO ELEGIDO (§329). El servidor lo comprueba y calcula el total por su
+            // cuenta: de aquí solo viaja CUÁL es, nunca cuánto cuesta.
+            propiedadId,
+            nombre,
+            telefono,
+            autorizacion: 'on',
+            llegada: ci?.value ?? '',
+            salida: co?.value ?? '',
+            huespedes: guests,
+          }),
+        });
+        const cuerpo = (await res.json().catch(() => null)) as { ok?: boolean; mensajes?: string[] } | null;
+        if (!res.ok || !cuerpo?.ok) {
+          err(cuerpo?.mensajes?.join(' ') || 'No pudimos enviar la solicitud. Intenta de nuevo o escríbenos por WhatsApp.');
+          if (btn) { btn.disabled = false; btn.textContent = 'Enviar solicitud'; }
+          return;
+        }
+        $('fe-datos')?.setAttribute('hidden', '');
+        $('fe-confirm')?.removeAttribute('hidden');
+        // El foco estaba en el botón que se acaba de ocultar: sin esto el lector de pantalla no llega
+        // a la confirmación.
+        $('fe-confirm')?.focus();
+      } catch {
+        err('No pudimos conectar. Revisa tu conexión o escríbenos por WhatsApp.');
+        if (btn) { btn.disabled = false; btn.textContent = 'Enviar solicitud'; }
+      }
+    });
+  }
+</script>

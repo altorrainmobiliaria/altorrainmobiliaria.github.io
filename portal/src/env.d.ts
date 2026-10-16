@@ -10,6 +10,8 @@ interface ImportMetaEnv {
   readonly PUBLIC_CATALOGO_URL?: string;
   /** Base pública de los binarios en R2 (thumbs). Vacío ⇒ la key se usa tal cual. */
   readonly PUBLIC_MEDIA_BASE?: string;
+  /** SOLO DESARROLLO: base REST del emulador de Firestore (`http://127.0.0.1:8080/v1`). Ver `FIRESTORE_DESARROLLO`. */
+  readonly FIRESTORE_EMULATOR_URL?: string;
 }
 interface ImportMeta {
   readonly env: ImportMetaEnv;
