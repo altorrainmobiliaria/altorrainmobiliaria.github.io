@@ -115,7 +115,8 @@ const specIcon = {
   .alt-pcard__meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
   .alt-pcard__zona { font-size: 11px; font-weight: var(--alt-fw-semibold); letter-spacing: 0.18em; text-transform: uppercase; color: var(--alt-link); }
   .alt-pcard__specs { display: flex; align-items: center; gap: 12px; font-size: 12.5px; font-weight: var(--alt-fw-medium); color: var(--alt-text); }
-  .alt-pcard__specs span { display: inline-flex; align-items: center; gap: 5px; }
+  /* `nowrap`: en una tarjeta estrecha (las «similares» de la ficha) «85 m²» se partía en dos líneas. */
+  .alt-pcard__specs span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
   .alt-pcard__specs svg { width: 15px; height: 15px; stroke: var(--alt-gold-raw); }
 
   .alt-pcard__title { font-family: var(--alt-font-display); font-weight: var(--alt-fw-medium); font-size: 24px; line-height: 1.12; color: var(--alt-ink); margin-bottom: 16px; letter-spacing: normal; }

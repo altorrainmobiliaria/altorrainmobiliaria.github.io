@@ -389,11 +389,9 @@ const ICO_SELLO = '<path d="M12 2l7 3v6c0 4.2-3 7.4-7 8.4-4-1-7-4.2-7-8.4V5z"/><
   .fe-estado { background: var(--alt-status-bg); border-left: 3px solid var(--alt-ink); border-radius: 8px; padding: 12px 14px; font-size: 13px; color: var(--alt-text); line-height: 1.55; margin: 0 0 16px; }
   .fe-estado strong { color: var(--alt-ink); }
 
-  @media (max-width: 620px) {
-    .fe-gal { grid-template-columns: 1fr; height: auto; }
-    .fe-gal__main { grid-row: auto; aspect-ratio: 16 / 10; }
-    .fe-gal__cell { aspect-ratio: 16 / 10; }
-  }
+  /* Sin regla de móvil para la galería, como el mockup aprobado (§330, pelota 58): conserva sus dos
+     columnas con 300 px de alto (el `clamp` de `.fe-gal`). La versión anterior apilaba las tres fotos
+     a todo lo ancho y empujaba el precio y el formulario unos 800 px hacia abajo en un teléfono. */
 </style>
 
 <script>
