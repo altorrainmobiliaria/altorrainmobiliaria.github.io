@@ -18,11 +18,11 @@
  * Una sola escritura por lead: la transacción comprueba que nadie lo marcó antes, así que un doble
  * clic o dos personas a la vez no mueven la hora. Si otra persona ya lo marcó, se devuelve SU hora.
  *
- * ⚠️ LO QUE HOY GARANTIZA EL CLIENTE, NO EL SERVIDOR: que la hora sea la del servidor y que la marca
- * sea de una sola escritura lo asegura ESTA transacción. Las Rules dejan a un editor escribir
- * cualquier campo de `solicitudes` (lo necesita el panel viejo), así que un editor con la consola
- * abierta podría poner otra hora. Sellarlo en las Rules (`contactadoAt == request.time`, inmutable
- * una vez puesto) pide desplegarlas con su canario: queda como paso aparte (§330).
+ * 🔒 DESDE §331 LO GARANTIZAN TAMBIÉN LAS RULES: si un update toca `contactadoAt`/`contactadoPor`,
+ * exigen que antes no hubiera marca, que la hora sea `request.time` y el uid el del token. Así que
+ * esta escritura tiene que seguir siendo EXACTAMENTE `serverTimestamp()` + el uid de la sesión: una
+ * hora del PC o el uid de otro dan `permiso`. La transacción sigue haciendo falta para devolver «ya»
+ * con la hora de la PRIMERA marca en vez de un error.
  *
  * ⚠️ Depende de `allow update: if esEditorOMas()` en `solicitudes` (firestore.rules), que existe porque
  * el panel viejo cambia el estado desde el navegador. Si el cutover lo cierra, este botón muere: la

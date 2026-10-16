@@ -136,8 +136,8 @@ export async function getDoc(segments: readonly string[], opts: GetDocOptions): 
 
 // ─── ESCRITURA (añadido §88 — leads del formulario público) ─────────────────────────────────────
 // La capa nació read-only. La ÚNICA escritura pública que existe es la creación de un lead en
-// `solicitudes`, cuya Rule dice `allow create: if true` (verificada contra las reglas VIVAS el
-// 2026-08-19, no contra el archivo del repo). Sigue el mismo contrato que las lecturas: edge-safe
+// `solicitudes`, con un `create` anónimo de forma acotada (§96, §331: un `Date` viaja como
+// `timestampValue`, que es lo que la Rule exige en `createdAt`). Sigue el mismo contrato que las lecturas: edge-safe
 // (solo `fetch`/`URL`), sin SDK, y **no lanza NUNCA**.
 
 /** Codifica un valor JS → formato REST tipado. Inverso de `decodeValue`, acotado a lo que escribimos. */

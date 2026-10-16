@@ -246,6 +246,29 @@ service cloud.firestore {
     // Alta PÚBLICA acotada (§96): el endpoint del portal y los formularios escriben aquí sin sesión,
     // pero con forma validada. `update` sigue abierto a editores porque `js/admin-leads.js` cambia el
     // estado del lead desde el cliente.
+    //
+    // ⏱️ EL PLAZO DE 5 MINUTOS SE MIDE ENTRE DOS SELLOS, y los dos se cierran AQUÍ (§331). Hasta hoy
+    // los guardaba el cliente: el panel ignoraba fechas futuras y la transacción de «Marcar
+    // contactado» ponía la hora del servidor. Pero un cliente se cambia, y un editor con la consola
+    // abierta no pasa por él.
+    //   · `createdAt` (create, anónimo): un Timestamp que no va más de 5 min por delante del servidor.
+    //     Un lead fechado en 2099 no tendría plazo nunca y cegaría el cursor del sondeo del panel.
+    //     SIN cota por abajo a propósito: un lead viejo que se cuele no rompe nada, y una cota que
+    //     el reloj del Worker pudiera rozar sí rompería la captación, que es lo que no se toca.
+    //   · `contactadoAt`/`contactadoPor` (update, editor): nadie nace contactado; la marca se pone UNA
+    //     vez, con la hora del servidor y el uid de quien la pone, y después no se mueve ni se borra.
+    //   · `createdAt` tampoco cambia en update: si no, la cota del create se esquivaría editándolo.
+    // Censo de escritores (16-oct): el endpoint manda `Date` → `timestampValue`; los formularios del
+    // legacy, `serverTimestamp()`; la marca solo la escribe `marcarContactadoEn`
+    // (`src/scripts/gestion-leads-contacto.ts`), en una transacción con `serverTimestamp()`.
+    function contactoSinTocar() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(['contactadoAt', 'contactadoPor']);
+    }
+    function contactoSelladoAhora() {
+      return resource.data.get('contactadoAt', null) == null
+          && request.resource.data.get('contactadoAt', null) == request.time
+          && request.resource.data.get('contactadoPor', '') == request.auth.uid;
+    }
     match /solicitudes/{id} {
       allow read: if esStaff();
       allow create: if request.resource.data.estado == 'pendiente'
@@ -255,8 +278,13 @@ service cloud.firestore {
                     && request.resource.data.nombre.size() <= 80
                     && request.resource.data.telefono is string
                     && request.resource.data.telefono.size() <= 25
-                    && request.resource.data.emailSent == false;
-      allow update: if esEditorOMas();
+                    && request.resource.data.emailSent == false
+                    && request.resource.data.get('createdAt', null) is timestamp
+                    && request.resource.data.createdAt <= request.time + duration.value(5, 'm')
+                    && !request.resource.data.keys().hasAny(['contactadoAt', 'contactadoPor']);
+      allow update: if esEditorOMas()
+                    && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['createdAt'])
+                    && (contactoSinTocar() || contactoSelladoAhora());
       allow delete: if esSuperAdmin();
     }
 

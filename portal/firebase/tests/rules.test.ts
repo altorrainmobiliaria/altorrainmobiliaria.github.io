@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   assertFails,
   assertSucceeds,
@@ -10,6 +10,7 @@ import {
 import {
   collection,
   deleteDoc,
+  deleteField,
   doc,
   getDoc,
   getDocs,
@@ -24,6 +25,26 @@ import {
   type Firestore,
 } from 'firebase/firestore';
 import { marcarContactadoEn } from '../../src/scripts/gestion-leads-contacto';
+
+/*
+ * El endpoint `/api/solicitud` escribe por REST con `createDoc`. Aquí se envuelve el REAL para que
+ * vaya SIEMPRE al emulador (proyecto `demo-altorra`): sin esto, una prueba podría escribir un lead en
+ * PRODUCCIÓN. Sin `FIRESTORE_EMULATOR_HOST` (fuera de `emulators:exec`) la escritura se niega a salir.
+ */
+const escritosEmulador = vi.hoisted(() => [] as string[]);
+vi.mock('../../src/lib/data/firestore-rest', async (importOriginal) => {
+  const real = await importOriginal<typeof import('../../src/lib/data/firestore-rest')>();
+  return {
+    ...real,
+    createDoc: async (coleccion: string, data: Record<string, unknown>, opts: Parameters<typeof real.createDoc>[2]) => {
+      const host = process.env.FIRESTORE_EMULATOR_HOST;
+      if (!host) throw new Error('sin FIRESTORE_EMULATOR_HOST: esta prueba no escribe fuera del emulador');
+      const r = await real.createDoc(coleccion, data, { ...opts, projectId: 'demo-altorra', baseUrl: `http://${host}/v1` });
+      if (r.ok) escritosEmulador.push(r.id);
+      return r;
+    },
+  };
+});
 
 // T6 (plan endurecido): verifica las Rules del portal (parte 2) contra el emulador. Owner-free (Java local).
 // projectId `demo-*` → rules-unit-testing NUNCA toca el backend real.
@@ -239,12 +260,18 @@ describe('captaciones (PII) — solo staff; write siempre denegado', () => {
 // camino feliz funcione, sino que todo lo demás (leer, editar, borrar, colar campos) sigue cerrado.
 // ─────────────────────────────────────────────────────────────────────────────
 
+/*
+ * `createdAt` como TIMESTAMP, que es lo que llega de verdad: el endpoint manda un `Date` (→
+ * `timestampValue`) y el legacy `serverTimestamp()`. Desde §331 las Rules lo exigen; un fixture sin
+ * él probaba un lead que ningún formulario escribe.
+ */
 const LEAD_OK = {
   nombre: 'Daniela Restrepo',
   telefono: '3002439810',
   estado: 'pendiente',
   emailSent: false,
   consentimiento: { autorizado: true },
+  createdAt: Timestamp.now(),
 };
 
 const ALERTA_OK = {
@@ -276,6 +303,55 @@ describe('solicitudes — alta pública acotada (el endpoint del portal escribe 
   });
   it('anónimo READ de un lead → DENEGADO (son datos de otra persona)', async () => {
     await assertFails(getDoc(doc(anon(), 'solicitudes/lead-1')));
+  });
+
+  // ── §331: la hora de entrada es la que mide el plazo de 5 minutos ──
+  it('el lead del legacy (`serverTimestamp()`) sigue entrando', async () => {
+    await assertSucceeds(setDoc(doc(anon(), 'solicitudes/lead-5'), { ...LEAD_OK, createdAt: serverTimestamp() }));
+  });
+  it('un reloj adelantado unos minutos (4) se tolera; 6 ya no', async () => {
+    const enMin = (m: number) => Timestamp.fromMillis(Date.now() + m * 60_000);
+    await assertSucceeds(setDoc(doc(anon(), 'solicitudes/lead-6'), { ...LEAD_OK, createdAt: enMin(4) }));
+    await assertFails(setDoc(doc(anon(), 'solicitudes/lead-7'), { ...LEAD_OK, createdAt: enMin(6) }));
+  });
+  it('🔒 `createdAt` fechado en 2099 → DENEGADO (no tendría plazo nunca y cegaría el sondeo del panel)', async () => {
+    const futuro = Timestamp.fromDate(new Date('2099-01-01T15:00:00.000Z'));
+    await assertFails(setDoc(doc(anon(), 'solicitudes/lead-8'), { ...LEAD_OK, createdAt: futuro }));
+  });
+  it('🔒 `createdAt` como TEXTO o ausente → DENEGADO (no se puede ordenar ni medir)', async () => {
+    await assertFails(setDoc(doc(anon(), 'solicitudes/lead-9'), { ...LEAD_OK, createdAt: '2026-10-16T15:00:00.000Z' }));
+    const { createdAt: _sinFecha, ...sinFecha } = LEAD_OK;
+    await assertFails(setDoc(doc(anon(), 'solicitudes/lead-10'), sinFecha));
+  });
+  it('🔒 nadie NACE contactado: `contactadoAt` o `contactadoPor` al crear → DENEGADO', async () => {
+    await assertFails(setDoc(doc(anon(), 'solicitudes/lead-11'), { ...LEAD_OK, contactadoAt: serverTimestamp() }));
+    await assertFails(setDoc(doc(anon(), 'solicitudes/lead-12'), { ...LEAD_OK, contactadoPor: 'editor-uid' }));
+  });
+
+  /*
+   * 🐤 EL CANARIO DE LA CAPTACIÓN: el lead lo escribe el ENDPOINT REAL (`POST /api/solicitud`) con su
+   * codificador REST real, anónimo como en producción — y contra el EMULADOR, nunca contra
+   * producción: el `createDoc` del módulo se envuelve para forzar el proyecto `demo-altorra` y la URL
+   * del emulador. Un documento tecleado en la prueba confirmaría lo que la prueba cree; este confirma
+   * lo que el formulario manda ([[L-88]] (a)).
+   */
+  it('🐤 el formulario de /publicar, por el endpoint real, entra con `createdAt` Timestamp', async () => {
+    const { POST } = await import('../../src/pages/api/solicitud');
+    escritosEmulador.length = 0;
+    const request = new Request('https://altorrainmobiliaria.co/api/solicitud', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', accept: 'application/json' },
+      body: JSON.stringify({ formulario: 'publicar-propiedad', nombre: 'Daniela Restrepo', telefono: '300 123 4567', autorizacion: 'on' }),
+    });
+    const res = await POST({ request, locals: {} } as unknown as Parameters<typeof POST>[0]);
+    expect(await res.json()).toEqual({ ok: true });
+    expect(escritosEmulador).toHaveLength(1);
+    let d: Record<string, unknown> = {};
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      d = (await getDoc(doc(ctx.firestore(), `solicitudes/${escritosEmulador[0]}`))).data() ?? {};
+    });
+    expect(d.createdAt).toBeInstanceOf(Timestamp);
+    expect(d.origen).toBe('portal-publicar');
   });
 });
 
@@ -349,6 +425,31 @@ describe('🔒 solicitudes — /gestion marca el contacto con el `update` de edi
   it('🐤 canario: la escritura LITERAL del panel viejo (js/admin-leads.js) sigue pasando para el editor, no para el viewer', async () => {
     await assertSucceeds(updateDoc(doc(editor(), 'solicitudes/lead-sla'), { estado: 'en_gestion', updatedAt: serverTimestamp() }));
     await assertFails(updateDoc(doc(staff(), 'solicitudes/lead-sla'), { estado: 'cerrado', updatedAt: serverTimestamp() }));
+  });
+
+  // ── §331: la marca la sella el SERVIDOR, no la transacción del panel ──
+  // Lo que un editor con la consola abierta podía escribir hasta hoy, sin pasar por `marcarContactadoEn`.
+  const ref = () => doc(editor(), 'solicitudes/lead-sla');
+  const OTRA_HORA = Timestamp.fromDate(new Date('2026-10-16T15:01:00.000Z'));
+
+  it('🔒 marcar con OTRA hora que la del servidor → DENEGADO (un «a tiempo» que no fue)', async () => {
+    await assertFails(updateDoc(ref(), { contactadoAt: OTRA_HORA, contactadoPor: 'editor-uid' }));
+  });
+  it('🔒 marcar en nombre de OTRO → DENEGADO; y la firma sola, sin hora, tampoco', async () => {
+    await assertFails(updateDoc(ref(), { contactadoAt: serverTimestamp(), contactadoPor: 'super-uid' }));
+    await assertFails(updateDoc(ref(), { contactadoPor: 'editor-uid' }));
+  });
+  it('🔒 una marca puesta NO se reescribe, no cambia de dueño y no se borra', async () => {
+    expect((await marcar(editor(), 'editor-uid')).ok).toBe(true);
+    await assertFails(updateDoc(ref(), { contactadoAt: serverTimestamp(), contactadoPor: 'editor-uid' }));
+    await assertFails(updateDoc(doc(superAdmin(), 'solicitudes/lead-sla'), { contactadoPor: 'super-uid' }));
+    await assertFails(updateDoc(ref(), { contactadoAt: deleteField(), contactadoPor: deleteField() }));
+    // …y el lead marcado se sigue gestionando con el panel viejo: el cambio de estado no toca la marca.
+    await assertSucceeds(updateDoc(ref(), { estado: 'en_gestion', updatedAt: serverTimestamp() }));
+  });
+  it('🔒 `createdAt` no se edita después: si no, la cota del alta se esquivaría por el update', async () => {
+    await assertFails(updateDoc(ref(), { createdAt: Timestamp.fromDate(new Date('2099-01-01T15:00:00.000Z')) }));
+    await assertFails(updateDoc(ref(), { createdAt: serverTimestamp() }));
   });
 });
 

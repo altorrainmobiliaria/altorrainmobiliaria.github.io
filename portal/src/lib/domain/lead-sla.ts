@@ -53,8 +53,9 @@ const MAX_DIAS = 15;
 /**
  * Cuánto puede ir por delante del reloj del PC una hora de entrada antes de tratarla como inválida.
  * Los leads los fecha el servidor; un PC atrasado unos minutos es normal, diez ya no. Lo usa también
- * el cursor del sondeo del panel: un `createdAt` en 2099 —el `create` de las Rules es anónimo y no
- * mira la fecha— lo dejaría ciego para siempre.
+ * el cursor del sondeo del panel: un `createdAt` en 2099 lo dejaría ciego para siempre. Desde §331
+ * las Rules ya no dejan CREAR uno así (≤ 5 min por delante del servidor), pero la defensa se queda:
+ * cubre los leads escritos antes y `updatedAt`, que las Rules no acotan.
  */
 export const MARGEN_FUTURO_MS = 10 * 60_000;
 

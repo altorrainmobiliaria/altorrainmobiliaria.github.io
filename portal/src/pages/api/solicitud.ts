@@ -10,8 +10,9 @@
 //   · CERO peso extra en el cliente (el SDK modular de Firestore son ~100KB; aquí no entra ninguno).
 //   · El formulario funciona SIN JavaScript (POST nativo → 303 a la misma página con ?ok=1).
 //   · La validación vive en el servidor, donde no se puede saltar desde la consola.
-// Las Security Rules siguen siendo la frontera real: `solicitudes` tiene `allow create: if true`
-// (verificado contra las reglas VIVAS de producción el 2026-08-19, no contra el archivo del repo).
+// Las Security Rules siguen siendo la frontera real: el `create` anónimo de `solicitudes` exige la
+// forma de abajo (§96) y, desde §331, `createdAt` Timestamp ≤ 5 min por delante del servidor y nada
+// de `contactadoAt`/`contactadoPor`. Si cambias lo que se escribe, mira `firebase/firestore.rules`.
 //
 // ⚠️ NO escribe nada más que `solicitudes`. Cualquier otra colección exige repensar las Rules.
 

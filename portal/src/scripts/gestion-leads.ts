@@ -643,9 +643,9 @@ type Docs = readonly import('firebase/firestore').QueryDocumentSnapshot[];
 
 /**
  * El valor crudo más reciente de `campo` entre estos documentos y el cursor `actual` (solo
- * Timestamps). Lo que va más de 10 minutos por delante del reloj NO cuenta: el `create` de las Rules
- * es anónimo y no mira la fecha, y un solo lead fechado en 2099 dejaría el sondeo ciego para siempre
- * —sin error, así que ni la nota de alerta lo diría—, también tras recargar.
+ * Timestamps). Lo que va más de 10 minutos por delante del reloj NO cuenta: un solo lead fechado en
+ * 2099 dejaría el sondeo ciego para siempre —sin error, así que ni la nota de alerta lo diría—,
+ * también tras recargar. Las Rules acotan `createdAt` desde §331, pero no `updatedAt` ni lo ya escrito.
  */
 function masReciente(docs: Docs, campo: 'createdAt' | 'updatedAt', actual: Ts | null, mod: typeof import('firebase/firestore')): Ts | null {
   const tope = Date.now() + MARGEN_FUTURO_MS;
