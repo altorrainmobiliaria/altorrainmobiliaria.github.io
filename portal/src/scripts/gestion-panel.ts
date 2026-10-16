@@ -22,6 +22,7 @@
  */
 
 import { cargarAuth } from './auth';
+import { cargarFirestore } from './gestion-firestore';
 
 /** Tope de las consultas. Obligatorio en este proyecto: sin `limit()` es una cuota abierta. */
 const TOPE = 200;
@@ -99,9 +100,7 @@ export async function montarTablero(): Promise<void> {
   const ventas = buscar(/venta/);
 
   try {
-    const { app } = await cargarAuth();
-    const mod = await import('firebase/firestore');
-    const db = mod.getFirestore(app);
+    const { db, mod } = await cargarFirestore();
 
     if (inmuebles) {
       /*

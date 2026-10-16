@@ -14,6 +14,7 @@
  */
 
 import { cargarAuth } from './auth';
+import { cargarFirestore } from './gestion-firestore';
 import { accionDeMora, agenda, estadoDePago, type Hito, type Urgencia } from '../lib/domain/agenda';
 import { explicarProblemaContrato, problemasDeContrato, type Contrato, type Pago } from '../lib/domain/gestion';
 import { formatoPrecio } from '../lib/domain/alertas';
@@ -51,11 +52,6 @@ export function tonoDeUrgencia(u: Urgencia): 'gold' | 'navy' {
   return u === 'vencido' || u === 'hoy' || u === 'semana' ? 'gold' : 'navy';
 }
 
-async function cargarFirestore() {
-  const { app } = await cargarAuth();
-  const mod = await import('firebase/firestore');
-  return { db: mod.getFirestore(app), mod };
-}
 
 function celda(txt: string, clase = ''): HTMLElement {
   const s = document.createElement('span');

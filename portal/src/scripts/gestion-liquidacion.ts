@@ -25,6 +25,7 @@
  */
 
 import { cargarAuth } from './auth';
+import { cargarFirestore } from './gestion-firestore';
 import type { Contrato, Pago } from '../lib/domain/gestion';
 import { montarCertificacion } from './gestion-certificacion';
 import {
@@ -69,16 +70,6 @@ const conNegrita = (clase: string, fuerte: string, resto: string): HTMLElement =
   return p;
 };
 
-/** El SDK entra por import dinámico, como en el resto del panel: no lo carga quien no abre la vista. */
-async function cargarFirestore() {
-  const [{ getApps, initializeApp }, mod] = await Promise.all([
-    import('firebase/app'),
-    import('firebase/firestore'),
-  ]);
-  const { FIREBASE_PUBLICO } = await import('../lib/config/firebase-publico');
-  const app = getApps()[0] ?? initializeApp(FIREBASE_PUBLICO);
-  return { db: mod.getFirestore(app), mod };
-}
 
 /** Contratos cargados, para no volver a la red al cambiar de contrato en el desplegable. */
 let cargados: Contrato[] = [];

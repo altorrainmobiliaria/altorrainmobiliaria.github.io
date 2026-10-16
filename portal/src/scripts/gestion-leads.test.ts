@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { etiquetaOrigen, haceCuanto, iniciales, normalizar, tonoEstado, zonasDeLeads } from './gestion-leads';
+import { correoMudo, etiquetaEstado, etiquetaOrigen, haceCuanto, iniciales, normalizar, tonoEstado, zonasDeLeads } from './gestion-leads';
 import type { Lead } from './gestion-leads';
 
 // Bandeja de leads del panel (ADR §101). Lo que se prueba aquí es la NORMALIZACIÓN, que es donde este
@@ -119,5 +119,46 @@ describe('zonasDeLeads (§275) — de dónde vienen los leads, contado sobre los
 
   it('sin leads no inventa nada', () => {
     expect(zonasDeLeads([])).toEqual([]);
+  });
+});
+
+describe('el plazo de 5 minutos en la bandeja (§330)', () => {
+  it('normalizar lee la marca de contacto con las dos formas, y la basura queda en null', () => {
+    const fecha = new Date('2026-10-16T15:03:00.000Z');
+    expect(normalizar('a', { contactadoAt: { toDate: () => fecha } }).contactadoAt?.toISOString()).toBe(fecha.toISOString());
+    expect(normalizar('b', { contactadoAt: '2026-10-16T15:03:00.000Z' }).contactadoAt?.toISOString()).toBe(fecha.toISOString());
+    expect(normalizar('c', { contactadoAt: 'ayer' }).contactadoAt).toBeNull();
+    expect(normalizar('d', {}).contactadoAt).toBeNull();
+  });
+
+  it('el estado se enseña en cristiano, con los dos vocabularios', () => {
+    const e = (estado: string, contactadoAt: Date | null = null) => etiquetaEstado({ estado, contactadoAt });
+    expect(e('pendiente')).toBe('Nuevo');
+    expect(e('nuevo')).toBe('Nuevo');
+    expect(e('en_gestion')).toBe('Contactado');
+    expect(e('visita_agendada')).toBe('Visita agendada');
+    expect(e('constructor')).toBe('constructor');
+    // Lo que escribe «Marcar contactado»: la hora, sin tocar el estado.
+    expect(e('pendiente', new Date())).toBe('Contactado');
+    // Un estado posterior manda sobre la marca: «Visita» dice más que «Contactado».
+    expect(e('visita', new Date())).toBe('Visita');
+  });
+
+  it('«nuevo» también pide acción, como «pendiente»', () => {
+    expect(tonoEstado('nuevo')).toBe('gold');
+  });
+
+  it('el correo está mudo si el último lead puntuado no se avisó; sin puntuados no se afirma nada', () => {
+    const l = (puntuado: boolean, avisado: boolean) => ({ puntuado, avisado });
+    expect(correoMudo([l(false, false), l(true, false), l(true, true)])).toBe(true);
+    expect(correoMudo([l(true, true), l(true, false)])).toBe(false);
+    expect(correoMudo([l(false, false)])).toBe(false);
+    expect(correoMudo([])).toBe(false);
+  });
+
+  it('normalizar sabe si la Function puntuó y si el correo salió', () => {
+    expect(normalizar('a', { leadScore: 62, avisoEnviadoEl: '2026-10-16T15:00:00.000Z' })).toMatchObject({ puntuado: true, avisado: true });
+    expect(normalizar('b', { leadScore: 62 })).toMatchObject({ puntuado: true, avisado: false });
+    expect(normalizar('c', {})).toMatchObject({ puntuado: false, avisado: false });
   });
 });

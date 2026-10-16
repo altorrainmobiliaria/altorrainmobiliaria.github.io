@@ -15,6 +15,7 @@
  */
 
 import { cargarAuth } from './auth';
+import { cargarFirestore } from './gestion-firestore';
 import { accionDeSla, estadoDeSla } from '../lib/domain/agenda';
 import {
   ESTADOS_EXPEDIENTE,
@@ -54,11 +55,6 @@ function identificador(codigo: string, sub: string): HTMLElement {
   return q;
 }
 
-async function cargarFirestore() {
-  const { app } = await cargarAuth();
-  const mod = await import('firebase/firestore');
-  return { db: mod.getFirestore(app), mod };
-}
 
 /**
  * Llama a una callable por HTTP plano.

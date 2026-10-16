@@ -11,7 +11,7 @@
 
 /**
  * Lo que se acepta escribir: dígitos y los separadores con que la gente escribe un número en
- * Colombia —espacios, puntos («300.123.4567»), guiones, paréntesis y el «+» del prefijo—, de 7 a 20
+ * Colombia —espacios, puntos (el móvil escrito de tres en tres con puntos), guiones, paréntesis y el «+» del prefijo—, de 7 a 20
  * caracteres. Los puntos se aceptan desde §330: rechazarlos devolvía un error a alguien que había
  * escrito bien su número.
  */
@@ -39,10 +39,11 @@ export function telefonoValido(t: string): boolean {
  * El número en formato internacional, solo dígitos —lo que pide `wa.me/`—, o `null` si no se puede
  * saber de qué país es.
  *
- * 🔴 POR QUÉ EXISTE. El panel armaba `wa.me/` con los dígitos tal cual: «300 123 4567» —lo que el
- * propio formulario sugiere escribir— daba `wa.me/3001234567`, y WhatsApp lo lee como un número
- * internacional que no existe. El botón que tiene que permitir responder en 5 minutos no abría el
- * chat de nadie.
+ * 🔴 POR QUÉ EXISTE. El panel armaba `wa.me/` con los dígitos tal cual: un móvil escrito con sus
+ * 10 dígitos —lo que el propio formulario sugiere— salía sin el 57 delante, y WhatsApp lo lee como
+ * un número internacional que no existe. El botón que tiene que permitir responder en 5 minutos no
+ * abría el chat de nadie. (Sin números de ejemplo en este comentario: el build del servidor conserva
+ * los comentarios y `verify:build` caza todo teléfono publicado que no sea el del negocio.)
  *
  * Las reglas son las de la marcación colombiana a 10 dígitos (CRC, vigente desde el 1-dic-2021): un
  * móvil son 10 dígitos que empiezan por 3; un fijo, 10 que empiezan por 60 (Cartagena: 605).

@@ -61,6 +61,19 @@ describe('de qué se avisa y de qué NO', () => {
     expect(llamadas).toHaveLength(0);
   });
 
+  it('🔕 «Marcar contactado» del panel (§330) no le escribe al cliente: sella la hora, no cambia el estado', async () => {
+    // Si esto avisara, el cliente recibiría «uno de nosotros te va a escribir» justo DESPUÉS de que
+    // le escribiéramos. Es lo que escribe `marcarContactadoEn`: contactadoAt + contactadoPor + updatedAt.
+    const { llamadas, fetchImpl } = espia();
+    const r = await avisarCambioDeEstado(
+      sol('pendiente'),
+      sol('pendiente', { contactadoAt: '2026-10-16T15:03:00.000Z', contactadoPor: 'editor-uid' }),
+      { apiKeyResend: CLAVE, fetchImpl },
+    );
+    expect(r.motivo).toBe('sin-cambio');
+    expect(llamadas).toHaveLength(0);
+  });
+
   it('🔕 los estados internos NO le llegan al cliente', async () => {
     for (const interno of ['calificado', 'nurturing', 'visita_realizada', 'oferta_presentada']) {
       const { llamadas, fetchImpl } = espia();

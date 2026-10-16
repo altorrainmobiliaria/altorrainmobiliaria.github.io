@@ -17,6 +17,7 @@
  */
 
 import { cargarAuth } from './auth';
+import { cargarFirestore } from './gestion-firestore';
 import { colaDeVerificacion, esperaSello, explicarReparo, reparosParaSellar } from '../lib/domain/verificacion';
 import { aCsv, nombreExport, type Columna } from '../lib/domain/csv';
 import { descargarTexto } from './descargar';
@@ -91,11 +92,6 @@ export function cuentaInvisibles(filas: FilaInmueble[]): number {
   return filas.filter((f) => !f.visible).length;
 }
 
-async function cargarFirestore() {
-  const { app } = await cargarAuth();
-  const mod = await import('firebase/firestore');
-  return { db: mod.getFirestore(app), mod };
-}
 
 function celda(texto: string, clase = ''): HTMLElement {
   const s = document.createElement('span');

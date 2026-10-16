@@ -17,6 +17,7 @@
  */
 
 import { cargarAuth } from './auth';
+import { cargarFirestore } from './gestion-firestore';
 import { llamarCallable as llamar } from './callable';
 import {
   avisosDe,
@@ -39,11 +40,6 @@ const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getEleme
 
 const cargado: { ventas: Venta[]; documentos: Documento[] } = { ventas: [], documentos: [] };
 
-async function cargarFirestore() {
-  const { app } = await cargarAuth();
-  const mod = await import('firebase/firestore');
-  return { db: mod.getFirestore(app), mod };
-}
 
 function celda(txt: string, clase = ''): HTMLElement {
   const s = document.createElement('span');

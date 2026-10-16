@@ -21,6 +21,7 @@
  */
 
 import { cargarAuth } from './auth';
+import { cargarFirestore } from './gestion-firestore';
 import {
   confirmacionDeVigencia,
   reparosParaSellar,
@@ -146,12 +147,6 @@ export async function cuerpoDeAlta(
   return { ok: true, propiedad: construida.propiedad };
 }
 
-/** Carga Firestore reusando la app que ya inicializó Auth (no se inicializa dos veces). */
-async function cargarFirestore() {
-  const { app } = await cargarAuth();
-  const mod = await import('firebase/firestore');
-  return { db: mod.getFirestore(app), mod };
-}
 
 /** Envuelve una transacción de Firestore con la cara abstracta que usan los cuerpos. */
 async function enTransaccion<T>(

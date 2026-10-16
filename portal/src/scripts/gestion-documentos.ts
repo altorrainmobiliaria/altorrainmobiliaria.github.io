@@ -18,6 +18,7 @@
  */
 
 import { cargarAuth } from './auth';
+import { cargarFirestore } from './gestion-firestore';
 import { llamarCallable as llamar } from './callable';
 import {
   faltantes,
@@ -53,11 +54,6 @@ const cargados: { documentos: Documento[]; expedientes: Expediente[]; contratos:
   contratos: [],
 };
 
-async function cargarFirestore() {
-  const { app } = await cargarAuth();
-  const mod = await import('firebase/firestore');
-  return { db: mod.getFirestore(app), mod };
-}
 
 /* ─── Pintado ────────────────────────────────────────────────────────────────────────────────── */
 

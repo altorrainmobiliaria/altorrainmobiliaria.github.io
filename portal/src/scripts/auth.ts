@@ -26,6 +26,26 @@ export interface AuthCargado {
 
 let promesa: Promise<AuthCargado> | null = null;
 
+/**
+ * 🧪 LOS EMULADORES DE AUTH Y FIRESTORE PARA EL NAVEGADOR, SOLO EN DESARROLLO (§330).
+ *
+ * El gancho de §329 (`FIRESTORE_DESARROLLO`) solo cubre lo que lee y escribe el SERVIDOR. El panel
+ * `/gestion` habla con Firebase desde el NAVEGADOR, así que en `astro dev` iba contra la base y las
+ * cuentas de PRODUCCIÓN: no había forma de ver la bandeja con leads de prueba ni de probar un botón
+ * que escribe sin escribir en datos reales. Con `PUBLIC_EMULADORES_PANEL=127.0.0.1` en
+ * `.env.development.local`, la app arranca con el proyecto **`demo-altorra`** y se conecta a los
+ * emuladores (Auth 9099, Firestore 8080).
+ *
+ * ⛔ Por qué el proyecto `demo-`: es el que Firebase reserva para emuladores y NO existe en la nube.
+ * Si la conexión fallara, el navegador no podría escribir en producción por accidente — no hay a
+ * dónde. `import.meta.env.DEV` es `false` en `astro build`, así que en el Worker esto no existe.
+ * Aquí se conecta Auth; Firestore lo conecta `gestion-firestore.ts`, la única puerta del panel a la
+ * base (este archivo lo cargan páginas públicas, y el gate `verify:data` le prohíbe ese SDK).
+ */
+export const EMULADORES_PANEL: string | undefined = import.meta.env.DEV
+  ? import.meta.env.PUBLIC_EMULADORES_PANEL || undefined
+  : undefined;
+
 /** Carga (una sola vez por página) Firebase App + Auth con la config pública del portal. */
 export function cargarAuth(): Promise<AuthCargado> {
   if (!promesa) {
@@ -34,6 +54,12 @@ export function cargarAuth(): Promise<AuthCargado> {
         import('firebase/app'),
         import('firebase/auth'),
       ]);
+      if (EMULADORES_PANEL) {
+        const app = getApps().length ? getApps()[0] : initializeApp({ ...FIREBASE_PUBLICO, projectId: 'demo-altorra' });
+        const auth = mod.getAuth(app);
+        mod.connectAuthEmulator(auth, `http://${EMULADORES_PANEL}:9099`, { disableWarnings: true });
+        return { auth, mod, app };
+      }
       const app = getApps().length ? getApps()[0] : initializeApp({ ...FIREBASE_PUBLICO });
       return { auth: mod.getAuth(app), mod, app };
     })();

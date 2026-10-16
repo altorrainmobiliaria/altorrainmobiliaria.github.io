@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { afterAll, beforeAll, beforeEach, describe, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import {
   assertFails,
   assertSucceeds,
@@ -16,10 +16,14 @@ import {
   limit,
   orderBy,
   query,
+  serverTimestamp,
   setDoc,
+  Timestamp,
   updateDoc,
   where,
+  type Firestore,
 } from 'firebase/firestore';
+import { marcarContactadoEn } from '../../src/scripts/gestion-leads-contacto';
 
 // T6 (plan endurecido): verifica las Rules del portal (parte 2) contra el emulador. Owner-free (Java local).
 // projectId `demo-*` → rules-unit-testing NUNCA toca el backend real.
@@ -272,6 +276,79 @@ describe('solicitudes — alta pública acotada (el endpoint del portal escribe 
   });
   it('anónimo READ de un lead → DENEGADO (son datos de otra persona)', async () => {
     await assertFails(getDoc(doc(anon(), 'solicitudes/lead-1')));
+  });
+});
+
+/*
+ * 🔒 ALARMA (§330): «Marcar contactado» de /gestion escribe con el `allow update: if esEditorOMas()`
+ * de `solicitudes`, el mismo que usa el panel viejo para cambiar el estado. Si el cutover cierra ese
+ * `update`, el botón muere en silencio — y estas pruebas se ponen en rojo en el CI. La salida es
+ * mover la marca a una callable ANTES de cerrarlo.
+ *
+ * Se ejecuta la función REAL del panel (`marcarContactadoEn`), no una copia de su escritura: si la
+ * transacción cambia, la prueba prueba lo que cambió.
+ */
+describe('🔒 solicitudes — /gestion marca el contacto con el `update` de editores (§330)', () => {
+  const ENTRO = Timestamp.fromDate(new Date('2026-10-16T15:00:00.000Z'));
+  beforeEach(async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'solicitudes/lead-sla'), { ...LEAD_OK, email: 'ana@example.com', createdAt: ENTRO });
+    });
+  });
+  const leer = async (): Promise<Record<string, unknown>> => {
+    let d: Record<string, unknown> = {};
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      d = (await getDoc(doc(ctx.firestore(), 'solicitudes/lead-sla'))).data() ?? {};
+    });
+    return d;
+  };
+  const marcar = async (db: unknown, uid: string, id = 'lead-sla') =>
+    marcarContactadoEn(await import('firebase/firestore'), db as Firestore, id, uid);
+
+  it('el editor marca: hora del SERVIDOR, su uid, y el estado NO cambia (no despierta ningún correo)', async () => {
+    const r = await marcar(editor(), 'editor-uid');
+    const d = await leer();
+    expect(r.ok).toBe(true);
+    expect(d.estado).toBe('pendiente');
+    expect(d.contactadoAt).toBeInstanceOf(Timestamp);
+    expect(d.contactadoPor).toBe('editor-uid');
+    expect(r.ok && r.contactadoAt?.getTime()).toBe((d.contactadoAt as Timestamp).toMillis());
+  });
+
+  it('una segunda marca no mueve la hora: devuelve «ya» con la PRIMERA', async () => {
+    await marcar(editor(), 'editor-uid');
+    const primera = (await leer()).contactadoAt as Timestamp;
+    const r = await marcar(superAdmin(), 'super-uid');
+    const d = await leer();
+    // Y dice QUIÉN lo marcó: el aviso no puede afirmar «otra persona» si fue quien mira.
+    expect(r).toMatchObject({ ok: false, motivo: 'ya', contactadoPor: 'editor-uid' });
+    expect((d.contactadoAt as Timestamp).isEqual(primera)).toBe(true);
+    expect(d.contactadoPor).toBe('editor-uid');
+  });
+
+  it('el super_admin también puede marcar', async () => {
+    expect((await marcar(superAdmin(), 'super-uid')).ok).toBe(true);
+  });
+
+  it('el de solo consulta NO: «permiso», y el documento queda intacto', async () => {
+    const r = await marcar(staff(), 'viewer-uid');
+    const d = await leer();
+    expect(r).toEqual({ ok: false, motivo: 'permiso' });
+    expect(d.contactadoAt).toBeUndefined();
+  });
+
+  it('sin sesión no hay marca (y no se intenta escribir)', async () => {
+    expect(await marcar(editor(), '')).toEqual({ ok: false, motivo: 'sesion' });
+    await assertFails(updateDoc(doc(anon(), 'solicitudes/lead-sla'), { contactadoAt: serverTimestamp() }));
+  });
+
+  it('un lead que ya no existe → «no-existe», sin crear nada', async () => {
+    expect(await marcar(editor(), 'editor-uid', 'no-existe')).toEqual({ ok: false, motivo: 'no-existe' });
+  });
+
+  it('🐤 canario: la escritura LITERAL del panel viejo (js/admin-leads.js) sigue pasando para el editor, no para el viewer', async () => {
+    await assertSucceeds(updateDoc(doc(editor(), 'solicitudes/lead-sla'), { estado: 'en_gestion', updatedAt: serverTimestamp() }));
+    await assertFails(updateDoc(doc(staff(), 'solicitudes/lead-sla'), { estado: 'cerrado', updatedAt: serverTimestamp() }));
   });
 });
 
