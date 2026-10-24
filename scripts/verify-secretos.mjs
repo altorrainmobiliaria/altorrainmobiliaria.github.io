@@ -178,6 +178,58 @@ for (const rel of archivos()) {
 }
 
 /*
+ * PAQUETE 10 (2026-10-23) · TODO secretos-segunda-pasada (3): EN UN HOOK, TAMBIÉN LO PREPARADO. El barrido de arriba
+ * lee el DISCO, y lo que el commit escribe es el ÍNDICE: un secreto preparado con `git add` y borrado después SOLO del
+ * disco (sin volver a prepararlo) entraba en el commit con este gate en verde. Cuando corre dentro de un hook (git pone
+ * `GIT_INDEX_FILE` en todos), se barre ADEMÁS el blob preparado de cada fichero que el commit añade o cambia y que no
+ * es, salvo el fin de línea, lo que ya se barrió en disco. Es UNIÓN, no sustitución: el disco se sigue mirando, porque
+ * un secreto suelto en el árbol está a un `git add` de entrar. Falla CERRADO si git no da la lista o los blobs.
+ */
+let preparados = 0;
+if (process.env.GIT_INDEX_FILE) {
+  const cerrado = (que) => {
+    console.error('');
+    console.error(`❌ verify:secretos — en el hook, git no dio ${que}: lo que este commit va a escribir NO se pudo barrer.`);
+    process.exit(1);
+  };
+  let raw;
+  try { raw = execFileSync('git', ['-C', RAIZ, 'diff', '--cached', '--raw', '-z', '--no-abbrev', '--no-renames', '--diff-filter=AMT'], { maxBuffer: 256 * 1024 * 1024 }); } catch { cerrado('la lista de lo preparado (`git diff --cached`)'); }
+  const partes = raw.toString('utf8').split('\0');
+  const cambiados = [];
+  for (let i = 0; i + 1 < partes.length; i += 2) {
+    const m = partes[i].match(/^:\d{6} (\d{6}) [0-9a-f]{40} ([0-9a-f]{40}) [AMT]$/);
+    if (!m) cerrado(`una línea de \`git diff --raw\` que se entienda («${partes[i].slice(0, 60)}»)`);
+    const rel = partes[i + 1];
+    if (m[1] === '160000' || EXENTOS.has(rel) || BINARIO.test(rel) || rel.split('/').some((seg) => FUERA.has(seg))) continue;
+    cambiados.push({ rel, oid: m[2] });
+  }
+  if (cambiados.length) {
+    let out;
+    try { out = execFileSync('git', ['-C', RAIZ, 'cat-file', '--batch'], { input: `${cambiados.map((c) => c.oid).join('\n')}\n`, maxBuffer: 256 * 1024 * 1024 }); } catch { cerrado('los blobs preparados (`git cat-file --batch`)'); }
+    const sinCR = (b) => b.toString('latin1').replace(/\r\n/g, '\n');
+    let i = 0;
+    for (const c of cambiados) {
+      const nl = out.indexOf(10, i);
+      const cab = nl < 0 ? null : out.subarray(i, nl).toString('utf8').match(/^([0-9a-f]{40}) blob (\d+)$/);
+      if (!cab || cab[1] !== c.oid) cerrado(`el blob de ${c.rel}`);
+      const blob = out.subarray(nl + 1, nl + 1 + Number(cab[2]));
+      i = nl + 1 + Number(cab[2]) + 1;
+      let disco = null;
+      try { disco = readFileSync(join(RAIZ, c.rel)); } catch { /* borrado del disco: justo el caso */ }
+      if (disco && sinCR(disco) === sinCR(blob)) continue;   // ya se barrió arriba
+      const [src] = comoTexto(blob);
+      if (src.slice(0, 8192).includes('\u0000')) continue;   // binario por contenido, como arriba
+      preparados++;
+      for (const [nombre, pat] of PATRONES) {
+        const m = src.match(pat);
+        if (!m) continue;
+        fallos.push({ rel: `${c.rel} (lo PREPARADO, no el disco)`, linea: src.slice(0, m.index).split('\n').length, nombre });
+      }
+    }
+  }
+}
+
+/*
  * ANTI-VACÍO. Un ✅ sobre cero ficheros es la forma de mentir que más veces ha cazado este cerebro:
  * si el barrido deja de encontrar el árbol —una ruta mal resuelta, un `FUERA` de más— el gate pasa
  * en verde precisamente cuando ha dejado de mirar. El umbral es holgado a propósito: no vigila un
@@ -213,3 +265,4 @@ const listados = mirados + binarios + exentos + ilegibles;
 console.log(`✅ verify:secretos — ${mirados} de ${listados} fichero(s) listados por git barridos con ${PATRONES.length} patrones: ninguna credencial en el repo público.`);
 console.log(`   saltados ${listados - mirados}: ${binarios} binario(s) por CONTENIDO (NUL en los primeros 8 KB) · ${exentos} exento(s) declarados uno a uno CON motivo · ${ilegibles} ilegible(s). Los binarios por EXTENSIÓN ni siquiera entran en la lista (denylist \`BINARIO\`).`);
 console.log(`   de los barridos, ${utf16} en UTF-16 con BOM: decodificados antes de buscar, no tomados por binario.`);
+if (process.env.GIT_INDEX_FILE) console.log(`   en el hook, además, ${preparados} fichero(s) PREPARADOS que no son lo del disco: barridos tal como van a commitearse.`);
