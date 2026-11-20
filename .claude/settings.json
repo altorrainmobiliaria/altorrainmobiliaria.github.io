@@ -112,7 +112,7 @@
           {
             "type": "command",
             "command": "node \"$CLAUDE_PROJECT_DIR/../brain-private/kernel/guard-destructivo.mjs\" --root \"$CLAUDE_PROJECT_DIR/../brain-private/altorrainmobiliaria\"",
-            "timeout": 5,
+            "timeout": 20,
             "statusMessage": "🛡️ guard-destructivo (2ª capa)…"
           }
         ]
