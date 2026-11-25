@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 export default defineConfig({
   /*
    * ⚠️ UNA SOLA COPIA DEL ADMIN SDK (§141). En este repo conviven CUATRO `firebase-admin`
-   * (raíz 13.8, functions/ 13.8, portal/ 14.2, portal/functions/ 13.10) y cada copia lleva su PROPIO
+   * (raíz 13.10, functions/ 14.5, portal/ 14.5, portal/functions/ 14.5 — medido el 24-nov) y cada copia lleva su PROPIO
    * registro de apps. Sin esto, una prueba que inicializa la app con la copia de `portal/` y una
    * Function que llama a `getFirestore()` con la de `portal/functions/` no se ven: la segunda falla
    * con `app/no-app` aunque la app exista.
