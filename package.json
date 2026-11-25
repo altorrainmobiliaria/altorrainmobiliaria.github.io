@@ -17,6 +17,11 @@
   },
   "devDependencies": {
     "firebase-admin": "^13.0.0",
-    "sharp": "^0.33.0"
+    "sharp": "^0.35.5"
+  },
+  "overrides": {
+    "@firebase/firestore": {
+      "@grpc/grpc-js": "^1.14.7"
+    }
   }
 }
